@@ -1,0 +1,62 @@
+{
+  "t_so_child": {
+    "id": {
+      "name": "Id",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 36
+    },
+    "so_master_id": {
+      "name": "Order Number",
+      "type": "number",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 36
+    },
+    "item_id": {
+      "name": "Item Name",
+      "type": "number",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 36
+    },
+    "item_rate": {
+      "name": "Item Rate",
+      "type": "number",
+      "required": true
+    },
+    "order_item_qty": {
+      "name": "Order Item Qty",
+      "type": "number",
+      "required": true
+    },
+    "return_item_qty": {
+      "name": "Return Item Qty",
+      "type": "number",
+      "required": false
+    },
+    "item_qty": {
+      "name": "Item Qty",
+      "type": "number",
+      "required": true
+    },
+    "discount_amount": {
+      "name": "Discount Amount",
+      "type": "number",
+      "required": false
+    },
+    "item_amount": {
+      "name": "Item Amount",
+      "type": "number",
+      "required": true
+    },
+    "item_note": {
+      "name": "Item Note",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 255
+    }
+  }
+}

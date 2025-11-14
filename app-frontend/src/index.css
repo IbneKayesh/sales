@@ -1,0 +1,618 @@
+:root {
+  /* Modern Neon-Inspired Color Palette */
+  --bg-primary: #0a0a0a; /* Deep black for base */
+  --bg-secondary: #1a1a2e; /* Dark blue-black */
+  --bg-accent: #16213e; /* Navy blue */
+  --text-primary: #ffffff; /* Pure white */
+  --text-secondary: #e0e0e0; /* Light gray */
+  --text-muted: #a0a0a0; /* Muted gray */
+
+  /* Vibrant Accent Colors */
+  --accent-purple: #8b5cf6; /* Bright purple */
+  --accent-pink: #ec4899; /* Hot pink */
+  --accent-cyan: #06b6d4; /* Electric cyan */
+  --accent-blue: #3b82f6; /* Vivid blue */
+
+  /* Gradient Definitions */
+  --gradient-main: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-pink) 50%, var(--accent-cyan) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+  --gradient-bg: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-accent) 100%);
+
+  /* Translucent Overlays */
+  --overlay-light: rgba(255, 255, 255, 0.1);
+  --overlay-medium: rgba(255, 255, 255, 0.2);
+  --overlay-heavy: rgba(255, 255, 255, 0.3);
+
+  /* Border Colors */
+  --border-light: rgba(255, 255, 255, 0.1);
+  --border-medium: rgba(255, 255, 255, 0.2);
+
+  /* Animation Colors */
+  --flame-one: #ff0080; /* Neon magenta */
+  --flame-two: #ff8000; /* Neon orange */
+  --flame-three: #8000ff; /* Neon purple */
+
+  /* Backward Compatibility */
+  --text-white: var(--text-primary);
+  --bg-light: var(--bg-secondary);
+  --bg-dark: var(--bg-primary);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* use the modern gradient across the whole app */
+  background: var(--gradient-bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* Custom Buttons - only apply to elements with custom-btn class or specific selectors */
+/* .custom-btn,
+button.custom-btn,
+.btn {
+  background: var(--gradient-main);
+  color: var(--text-white);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.custom-btn:hover,
+button.custom-btn:hover,
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.12);
+} */
+
+/* Custom Form controls - only apply to elements with custom-form class or specific selectors */
+.custom-form input,
+.custom-form textarea,
+.custom-form select,
+input.custom-form,
+textarea.custom-form,
+select.custom-form {
+  background: var(--overlay-light);
+  color: var(--text-primary);
+  border: 1px solid var(--border-light);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  outline: none;
+}
+
+.custom-form input::placeholder,
+.custom-form textarea::placeholder,
+input.custom-form::placeholder,
+textarea.custom-form::placeholder {
+  color: var(--text-muted);
+}
+
+/* Make sure native form focus is visible */
+.custom-form input:focus,
+.custom-form textarea:focus,
+.custom-form select:focus,
+input.custom-form:focus,
+textarea.custom-form:focus,
+select.custom-form:focus {
+  box-shadow: 0 0 0 4px var(--accent-purple);
+  border-color: var(--accent-purple);
+}
+
+/* Utility: ensure containers are transparent so body gradient shows through */
+.app-root,
+.app,
+.page {
+  background: transparent;
+}
+
+/* Override PrimeReact styles to prevent custom CSS interference */
+/* .p-button {
+  background: inherit !important;
+  color: inherit !important;
+  border: inherit !important;
+  box-shadow: inherit !important;
+}
+
+.p-button:hover {
+  background: inherit !important;
+  color: inherit !important;
+  box-shadow: inherit !important;
+}
+
+.p-confirm-dialog .p-button {
+  background: inherit !important;
+  color: inherit !important;
+  border: inherit !important;
+}
+
+.p-toast .p-toast-message .p-toast-message-close {
+  background: inherit !important;
+  color: inherit !important;
+}
+
+.p-confirm-dialog .p-dialog-footer {
+  flex-direction: row !important;
+} */
+
+
+
+
+
+
+
+
+.flame-box {
+	position: fixed;
+	top: 0;
+	transform: rotate(80deg);
+	left: 0;
+}
+
+.flame-wave {
+	position: fixed;
+	top: 0;
+	left: 0;
+	opacity: 0.4;
+	position: absolute;
+	top: 3%;
+	left: 10%;
+	width: 1500px;
+	height: 1300px;
+	margin-left: -150px;
+	margin-top: -250px;
+	transform-origin: 50% 48%;
+	border-radius: 43%;
+	animation: drift 15s infinite linear;
+}
+
+/* Core flame */
+.flame-wave.-one {
+	background: var(--flame-one);
+	opacity: 0.8;
+	animation-duration: 14s;
+	/* background-image: url('https://picsum.photos/1500/1300');
+	background-size: cover;
+	background-repeat: no-repeat; */
+}
+
+/* Middle flame */
+.flame-wave.-two {
+	background: var(--flame-two);
+	opacity: 0.5;
+	animation-duration: 16s;
+	/* background-image: url('https://picsum.photos/1500/1300');
+	background-size: cover;
+	background-repeat: no-repeat; */
+}
+
+/* Outer flame */
+.flame-wave.-three {
+	background: var(--flame-three);
+	opacity: 0.4;
+	animation-duration: 15s;
+	/* background-image: url('https://picsum.photos/1500/1300');
+	background-size: cover;
+	background-repeat: no-repeat; */
+}
+
+.flame-box:after {
+	content: '';
+	display: block;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 11;
+	transform: translate3d(0, 0, 0);
+}
+
+@keyframes drift {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+
+
+
+.circles{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.circles li{
+    position: absolute;
+    display: block;
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    background: var(--overlay-medium);
+    animation: animate 25s linear infinite;
+    bottom: -150px;
+
+}
+
+.circles li:nth-child(1){
+    left: 25%;
+    width: 80px;
+    height: 80px;
+    animation-delay: 0s;
+    background-image: url('https://picsum.photos/80/80');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+
+.circles li:nth-child(2){
+    left: 10%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 2s;
+    animation-duration: 12s;
+    background-image: url('https://picsum.photos/20/20');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.circles li:nth-child(3){
+    left: 70%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 4s;
+    background-image: url('https://picsum.photos/20/20');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.circles li:nth-child(4){
+    left: 40%;
+    width: 60px;
+    height: 60px;
+    animation-delay: 0s;
+    animation-duration: 18s;
+    background-image: url('https://picsum.photos/60/60');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.circles li:nth-child(5){
+    left: 65%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 0s;
+    background-image: url('https://picsum.photos/20/20');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.circles li:nth-child(6){
+    left: 75%;
+    width: 110px;
+    height: 110px;
+    animation-delay: 3s;
+    background-image: url('https://picsum.photos/110/110');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.circles li:nth-child(7){
+    left: 35%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 7s;
+    background-image: url('https://picsum.photos/150/150');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.circles li:nth-child(8){
+    left: 50%;
+    width: 25px;
+    height: 25px;
+    animation-delay: 15s;
+    animation-duration: 45s;
+    background-image: url('https://picsum.photos/25/25');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.circles li:nth-child(9){
+    left: 20%;
+    width: 15px;
+    height: 15px;
+    animation-delay: 2s;
+    animation-duration: 35s;
+    background-image: url('https://picsum.photos/15/15');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.circles li:nth-child(10){
+    left: 85%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 0s;
+    animation-duration: 11s;
+    background-image: url('https://picsum.photos/150/150');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+
+
+@keyframes animate {
+
+    0%{
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+    }
+
+    100%{
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+    }
+
+}
+
+
+.wobble {
+  animation: wobble 0.8s ease-in-out;
+}
+
+@keyframes wobble {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(-3deg); }
+  30% { transform: rotate(3deg); }
+  45% { transform: rotate(-2deg); }
+  60% { transform: rotate(2deg); }
+  75% { transform: rotate(-1deg); }
+  100% { transform: rotate(0deg); }
+}
+
+
+.pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+
+@keyframes wobble-failed {
+  0% { transform: translateX(0); }
+  10% { transform: translateX(-5px); }
+  20% { transform: translateX(5px); }
+  30% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  50% { transform: translateX(-5px); }
+  60% { transform: translateX(5px); }
+  70% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+  90% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+.falling-letter {
+  position: absolute;
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--text-primary);
+  pointer-events: none;
+  animation: fall-down 6s ease-in-out forwards;
+  z-index: 10;
+}
+
+.falling-letter.password {
+  top: 180px; /* Approximate position below password input */
+  /* left and transform set dynamically in JS for horizontal spread */
+}
+
+@keyframes fall-down {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(calc(100vh)) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.bouncing-elements{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.bouncing-elements li{
+    position: absolute;
+    display: block;
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    background: var(--overlay-heavy);
+    animation: bounce-fall 25s linear infinite;
+    top: -150px;
+
+}
+
+.bouncing-elements li:nth-child(1){
+    left: 25%;
+    width: 80px;
+    height: 80px;
+    animation-delay: 0s;
+    background-image: url('https://picsum.photos/80/80');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+
+.bouncing-elements li:nth-child(2){
+    left: 10%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 2s;
+    animation-duration: 12s;
+    background-image: url('https://picsum.photos/20/20');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.bouncing-elements li:nth-child(3){
+    left: 70%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 4s;
+    background-image: url('https://picsum.photos/20/20');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.bouncing-elements li:nth-child(4){
+    left: 40%;
+    width: 60px;
+    height: 60px;
+    animation-delay: 0s;
+    animation-duration: 18s;
+    background-image: url('https://picsum.photos/60/60');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.bouncing-elements li:nth-child(5){
+    left: 65%;
+    width: 20px;
+    height: 20px;
+    animation-delay: 0s;
+    background-image: url('https://picsum.photos/20/20');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.bouncing-elements li:nth-child(6){
+    left: 75%;
+    width: 110px;
+    height: 110px;
+    animation-delay: 3s;
+    background-image: url('https://picsum.photos/110/110');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.bouncing-elements li:nth-child(7){
+    left: 35%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 7s;
+    background-image: url('https://picsum.photos/150/150');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.bouncing-elements li:nth-child(8){
+    left: 50%;
+    width: 25px;
+    height: 25px;
+    animation-delay: 15s;
+    animation-duration: 45s;
+    background-image: url('https://picsum.photos/25/25');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.bouncing-elements li:nth-child(9){
+    left: 20%;
+    width: 15px;
+    height: 15px;
+    animation-delay: 2s;
+    animation-duration: 35s;
+    background-image: url('https://picsum.photos/15/15');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.bouncing-elements li:nth-child(10){
+    left: 85%;
+    width: 150px;
+    height: 150px;
+    animation-delay: 0s;
+    animation-duration: 11s;
+    background-image: url('https://picsum.photos/150/150');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+@keyframes bounce-fall {
+    0%{
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+    }
+    60%{
+        transform: translateY(calc(100vh - 20px)) rotate(180deg);
+        opacity: 1;
+        border-radius: 50%;
+    }
+    65%{
+        transform: translateY(calc(100vh - 50px)) rotate(180deg);
+        opacity: 0.95;
+        border-radius: 50%;
+    }
+    70%{
+        transform: translateY(calc(100vh - 60px)) rotate(180deg);
+        opacity: 0.9;
+        border-radius: 50%;
+    }
+    75%{
+        transform: translateY(calc(100vh - 40px)) rotate(180deg);
+        opacity: 0.85;
+        border-radius: 50%;
+    }
+    80%{
+        transform: translateY(calc(100vh - 60px)) rotate(180deg);
+        opacity: 0.8;
+        border-radius: 50%;
+    }
+    85%{
+        transform: translateY(calc(100vh - 35px)) rotate(180deg);
+        opacity: 0.7;
+        border-radius: 50%;
+    }
+    90%{
+        transform: translateY(calc(100vh - 25px)) rotate(180deg);
+        opacity: 0.6;
+        border-radius: 50%;
+    }
+    95%{
+        transform: translateY(calc(100vh - 68px)) rotate(180deg);
+        opacity: 0.4;
+        border-radius: 50%;
+    }
+    100%{
+        transform: translateY(calc(100vh - 40px)) rotate(180deg);
+        opacity: 0;
+        border-radius: 50%;
+    }
+}

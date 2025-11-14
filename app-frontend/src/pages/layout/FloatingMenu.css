@@ -1,0 +1,79 @@
+.floating-menu-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.floating-menu-btn {
+  background: var(--overlay-light);
+  border: 1px solid var(--border-light);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
+}
+
+.floating-menu-btn:hover {
+  background: var(--overlay-medium);
+  transform: scale(1.05);
+}
+
+.floating-menu-btn .pi {
+  color: var(--text-primary);
+  font-size: 1.2rem;
+}
+
+.floating-menu {
+  background: var(--overlay-medium);
+  border: 1px solid var(--border-medium);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.floating-menu .p-menuitem-link {
+  color: var(--text-primary) !important;
+  background: transparent !important;
+  border-radius: 6px;
+  margin: 2px 4px;
+  transition: all 0.2s ease;
+}
+
+.floating-menu .p-menuitem-link:hover {
+  color: var(--text-primary) !important;
+  background: var(--overlay-heavy) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.floating-menu .p-menuitem-link .p-menuitem-icon {
+  color: var(--text-primary) !important;
+}
+
+.floating-menu .p-menuitem-link:hover .p-menuitem-icon {
+  color: var(--accent-blue) !important;
+}
+
+.floating-menu .p-menuitem-text {
+  color: var(--text-primary) !important;
+}
+
+.floating-menu .p-menuitem-link:hover .p-menuitem-text {
+  color: var(--accent-blue) !important;
+}
+
+.floating-menu .p-menu-separator {
+  border-top: 1px solid var(--border-medium);
+  margin: 4px 0;
+}

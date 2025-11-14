@@ -1,0 +1,42 @@
+{
+  "t_bank": {
+    "bank_id": {
+      "name": "Id",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 36
+    },
+    "bank_name": {
+      "name": "Bank Name",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "bank_address": {
+      "name": "Bank Address",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 255
+    },
+    "routing_number": {
+      "name": "Routing Number",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 50
+    },
+    "debit_balance": {
+      "name": "Debit Balance",
+      "type": "number",
+      "required": false
+    },
+    "credit_balance": {
+      "name": "Credit Balance",
+      "type": "number",
+      "required": false
+    }
+  }
+}
