@@ -10,7 +10,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave, units,
   return (
     <div className="p-1">
       <div className="grid">
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-5">
           <label
             htmlFor="item_name"
             className="block text-900 font-medium mb-2"
@@ -28,7 +28,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave, units,
             <small className="mb-3 text-red-500">{errors.item_name}</small>
           )}
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-7">
           <label
             htmlFor="item_description"
             className="block text-900 font-medium mb-2"
@@ -46,7 +46,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave, units,
             <small className="mb-3 text-red-500">{errors.item_description}</small>
           )}
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="category_id"
             className="block text-900 font-medium mb-2"
@@ -67,7 +67,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave, units,
             <small className="mb-3 text-red-500">{errors.category_id}</small>
           )}
         </div>
-        <div className="col-12 md:col-4">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="small_unit_id"
             className="block text-900 font-medium mb-2"
@@ -88,7 +88,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave, units,
             <small className="mb-3 text-red-500">{errors.small_unit_id}</small>
           )}
         </div>
-        <div className="col-12 md:col-4">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="unit_difference_qty"
             className="block text-900 font-medium mb-2"
@@ -106,7 +106,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave, units,
             <small className="mb-3 text-red-500">{errors.unit_difference_qty}</small>
           )}
         </div>
-        <div className="col-12 md:col-4">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="big_unit_id"
             className="block text-900 font-medium mb-2"

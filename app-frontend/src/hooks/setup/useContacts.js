@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { contactsAPI } from "@/utils/api";
+import { generateGuid } from "@/utils/guid";
 
 import validate from "@/models/validator";
 import t_contacts from "@/models/setup/t_contacts.json";
@@ -24,7 +25,7 @@ export const useContacts = () => {
         const data = await contactsAPI.getAll();
         setContacts(data);
       } catch (error) {
-        console.error('Error loading contacts:', error);
+        console.error("Error loading contacts:", error);
         setToastBox({
           severity: "error",
           summary: "Error",
@@ -82,7 +83,7 @@ export const useContacts = () => {
       };
       setToastBox(toastBox);
     } catch (error) {
-      console.error('Error deleting contact:', error);
+      console.error("Error deleting contact:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
@@ -105,7 +106,10 @@ export const useContacts = () => {
         let updatedContacts;
         if (formDataContact.contact_id) {
           // Edit existing
-          const updatedContact = await contactsAPI.update(formDataContact.contact_id, formDataContact);
+          const updatedContact = await contactsAPI.update(
+            formDataContact.contact_id,
+            formDataContact
+          );
           updatedContacts = contacts.map((c) =>
             c.contact_id === formDataContact.contact_id ? updatedContact : c
           );
@@ -118,7 +122,9 @@ export const useContacts = () => {
           setToastBox(toastBox);
         } else {
           // Add new
-          const newContact = await contactsAPI.create(formDataContact);
+          const newContactData = { ...formDataContact, contact_id: generateGuid() };
+
+          const newContact = await contactsAPI.create(newContactData);
           updatedContacts = [...contacts, newContact];
 
           const toastBox = {
@@ -133,7 +139,7 @@ export const useContacts = () => {
         handleClear();
         setCurrentView("list");
       } catch (error) {
-        console.error('Error saving contact:', error);
+        console.error("Error saving contact:", error);
         setToastBox({
           severity: "error",
           summary: "Error",

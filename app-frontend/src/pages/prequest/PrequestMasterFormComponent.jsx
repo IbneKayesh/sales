@@ -17,7 +17,7 @@ const PrequestMasterFormComponent = ({ isBusy, errors, formData, onChange, onSav
             htmlFor="transaction_date"
             className="block text-900 font-medium mb-2"
           >
-            {t_po_master.t_po_master.transaction_date.name} <span className="text-red-500">*</span>
+            {t_po_master.t_po_master.po_date.name} <span className="text-red-500">*</span>
           </label>
           <Calendar
             name="transaction_date"
@@ -57,7 +57,7 @@ const PrequestMasterFormComponent = ({ isBusy, errors, formData, onChange, onSav
             htmlFor="transaction_note"
             className="block text-900 font-medium mb-2"
           >
-            {t_po_master.t_po_master.transaction_note.name}
+            {t_po_master.t_po_master.po_note.name}
           </label>
           <InputText
             name="transaction_note"

@@ -136,9 +136,9 @@ const initTables = () => {
     db.run(`
       CREATE TABLE IF NOT EXISTS po_master (
         po_master_id TEXT PRIMARY KEY,
-        transaction_date TEXT NOT NULL,
+        po_date TEXT NOT NULL,
         contacts_id TEXT NOT NULL,
-        transaction_note TEXT,
+        po_note TEXT,
         total_amount REAL DEFAULT 0,
         paid_amount REAL DEFAULT 0,
         is_paid BOOLEAN DEFAULT 0,
@@ -170,9 +170,9 @@ const initTables = () => {
     db.run(`
       CREATE TABLE IF NOT EXISTS so_master (
         so_master_id TEXT PRIMARY KEY,
-        transaction_date TEXT NOT NULL,
+        so_date TEXT NOT NULL,
         contacts_id TEXT NOT NULL,
-        transaction_note TEXT,
+        so_note TEXT,
         total_amount REAL DEFAULT 0,
         paid_amount REAL DEFAULT 0,
         is_paid BOOLEAN DEFAULT 0,

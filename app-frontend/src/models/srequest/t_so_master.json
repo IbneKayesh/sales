@@ -7,21 +7,21 @@
       "minLength": 0,
       "maxLength": 36
     },
-    "transaction_date": {
-      "name": "Transaction Date",
+    "so_date": {
+      "name": "Date",
       "type": "string",
       "required": true,
       "format": "date"
     },
     "contacts_id": {
       "name": "Customer Name",
-      "type": "number",
+      "type": "string",
       "required": true,
       "minLength": 1,
       "maxLength": 36
     },
-    "transaction_note": {
-      "name": "Transaction Note",
+    "so_note": {
+      "name": "Note",
       "type": "string",
       "required": false,
       "minLength": 0,

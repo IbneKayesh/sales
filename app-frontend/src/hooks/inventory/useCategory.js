@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { categoriesAPI } from "@/utils/api";
+import { generateGuid } from "@/utils/guid";
 
 import validate from "@/models/validator";
 import t_category from "@/models/inventory/t_category.json";
@@ -23,7 +24,7 @@ export const useCategory = () => {
         const data = await categoriesAPI.getAll();
         setCategories(data);
       } catch (error) {
-        console.error('Error loading categories:', error);
+        console.error("Error loading categories:", error);
         setToastBox({
           severity: "error",
           summary: "Error",
@@ -80,7 +81,7 @@ export const useCategory = () => {
       };
       setToastBox(toastBox);
     } catch (error) {
-      console.error('Error deleting category:', error);
+      console.error("Error deleting category:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
@@ -103,7 +104,10 @@ export const useCategory = () => {
         let updatedCategories;
         if (formDataCategory.category_id) {
           // Edit existing
-          const updatedCategory = await categoriesAPI.update(formDataCategory.category_id, formDataCategory);
+          const updatedCategory = await categoriesAPI.update(
+            formDataCategory.category_id,
+            formDataCategory
+          );
           updatedCategories = categories.map((c) =>
             c.category_id === formDataCategory.category_id ? updatedCategory : c
           );
@@ -116,7 +120,12 @@ export const useCategory = () => {
           setToastBox(toastBox);
         } else {
           // Add new
-          const newCategory = await categoriesAPI.create(formDataCategory);
+          const newCategoryData = {
+            ...formDataCategory,
+            category_id: generateGuid(),
+          };
+
+          const newCategory = await categoriesAPI.create(newCategoryData);
           updatedCategories = [...categories, newCategory];
 
           const toastBox = {
@@ -131,7 +140,7 @@ export const useCategory = () => {
         handleClear();
         setCurrentView("list");
       } catch (error) {
-        console.error('Error saving category:', error);
+        console.error("Error saving category:", error);
         setToastBox({
           severity: "error",
           summary: "Error",

@@ -17,7 +17,7 @@ const SrequestMasterFormComponent = ({ isBusy, errors, formData, onChange, onSav
             htmlFor="transaction_date"
             className="block text-900 font-medium mb-2"
           >
-            {t_so_master.t_so_master.transaction_date.name} <span className="text-red-500">*</span>
+            {t_so_master.t_so_master.so_date.name} <span className="text-red-500">*</span>
           </label>
           <Calendar
             name="transaction_date"
@@ -57,7 +57,7 @@ const SrequestMasterFormComponent = ({ isBusy, errors, formData, onChange, onSav
             htmlFor="transaction_note"
             className="block text-900 font-medium mb-2"
           >
-            {t_so_master.t_so_master.transaction_note.name}
+            {t_so_master.t_so_master.so_note.name}
           </label>
           <InputText
             name="transaction_note"
