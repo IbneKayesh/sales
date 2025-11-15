@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
+      //console.log(username, password)
       const response = await authAPI.login({ username, password });
       if (response.success) {
         setUser(response.user);

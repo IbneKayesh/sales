@@ -30,34 +30,37 @@ router.get('/:id', (req, res) => {
 
 // Create new contact
 router.post('/', (req, res) => {
-  const { contact_name, contact_address, contact_type } = req.body;
+  const { contact_id, contact_name, contact_address, contact_type } = req.body;
 
   if (!contact_name) {
     return res.status(400).json({ error: 'Contact name is required' });
   }
 
+  if (!contact_id) {
+    return res.status(400).json({ error: 'Contact ID is required' });
+  }
+
   const sql = `
-    INSERT INTO contacts (contact_name, contact_address, contact_type)
-    VALUES (?, ?, ?)
+    INSERT INTO contacts (contact_id, contact_name, contact_address, contact_type)
+    VALUES (?, ?, ?, ?)
   `;
-  const params = [contact_name, contact_address || '', contact_type || ''];
+  const params = [contact_id, contact_name, contact_address || '', contact_type || ''];
 
   db.run(sql, params, function(err) {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
-    res.status(201).json({ contact_id: this.lastID, ...req.body });
+    res.status(201).json({ contact_id, ...req.body });
   });
 });
 
 // Update contact
-router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const { contact_name, contact_address, contact_type } = req.body;
+router.post('/update', (req, res) => {
+  const { id, contact_name, contact_address, contact_type } = req.body;
 
-  if (!contact_name) {
-    return res.status(400).json({ error: 'Contact name is required' });
+  if (!id || !contact_name) {
+    return res.status(400).json({ error: 'Contact ID and name are required' });
   }
 
   const sql = `
@@ -78,13 +81,17 @@ router.put('/:id', (req, res) => {
     if (this.changes === 0) {
       return res.status(404).json({ error: 'Contact not found' });
     }
-    res.json({ contact_id: id, ...req.body });
+    res.json({ contact_id: id, contact_name, contact_address, contact_type });
   });
 });
 
 // Delete contact
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
+router.post('/delete', (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: 'Contact ID is required' });
+  }
 
   db.run('DELETE FROM contacts WHERE contact_id = ?', [id], function(err) {
     if (err) {

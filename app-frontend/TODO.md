@@ -1,28 +1,15 @@
-example schema
-src/models/setup/t_bank.json
+task 1
 
-schema implementation
-src/hooks/setup/useBank.js
-src/pages/setup/bank/*.jsx
+  find layout.jsx and fix url groups
+  //bank related urls goes to Accounts group
+  //Items, Units, Category goes to Inventory group
+  //Contacts, Users goes to Setup group
 
-todo :: need implementation of below schema's
-src/models/setup/t_bank_account.json
-src/models/setup/t_units.json
-src/models/setup/t_items.json
-src/models/setup/t_contacts.json
 
-New TODO based on context:
-- [x] Implement Bank Account Management
-  - [x] Create hook: src/hooks/setup/useBankAccount.js
-  - [x] Create pages: src/pages/setup/bankaccount/BankAccountPage.jsx, BankAccountListComponent.jsx, BankAccountFormComponent.jsx
-- [x] Implement Units Management
-  - [x] Create hook: src/hooks/setup/useUnits.js
-  - [x] Create pages: src/pages/setup/units/UnitsPage.jsx, UnitsListComponent.jsx, UnitsFormComponent.jsx
-- [x] Implement Items Management
-  - [x] Create hook: src/hooks/setup/useItems.js
-  - [x] Create pages: src/pages/setup/items/ItemsPage.jsx, ItemsListComponent.jsx, ItemsFormComponent.jsx
-- [x] Implement Contacts Management
-  - [x] Create hook: src/hooks/setup/useContacts.js
-  - [x] Create pages: src/pages/setup/contacts/ContactsPage.jsx, ContactsListComponent.jsx, ContactsFormComponent.jsx
+task 2
+  //update routes, urls as group name
+  //update folder/directory as group name
+  //move required files and imports as group name
 
-Help to implement these step by step.
+  task 3
+  //use @ instead ../ for root folder as vite config

@@ -6,6 +6,7 @@ const apiRequest = async (endpoint, options = {}) => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
+      'api-hard-code-key': 'my-secret-key-12345',
       ...options.headers,
     },
     ...options,
@@ -45,12 +46,13 @@ export const banksAPI = {
     method: 'POST',
     body: JSON.stringify(bank),
   }),
-  update: (id, bank) => apiRequest(`/banks/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(bank),
+  update: (id, bank) => apiRequest('/banks/update', {
+    method: 'POST',
+    body: JSON.stringify({ id, ...bank }),
   }),
-  delete: (id) => apiRequest(`/banks/${id}`, {
-    method: 'DELETE',
+  delete: (id) => apiRequest('/banks/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
   }),
 };
 
@@ -62,12 +64,13 @@ export const bankAccountsAPI = {
     method: 'POST',
     body: JSON.stringify(account),
   }),
-  update: (id, account) => apiRequest(`/bank-accounts/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(account),
+  update: (id, account) => apiRequest('/bank-accounts/update', {
+    method: 'POST',
+    body: JSON.stringify({ id, ...account }),
   }),
-  delete: (id) => apiRequest(`/bank-accounts/${id}`, {
-    method: 'DELETE',
+  delete: (id) => apiRequest('/bank-accounts/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
   }),
 };
 
@@ -79,12 +82,13 @@ export const bankTransactionsAPI = {
     method: 'POST',
     body: JSON.stringify(transaction),
   }),
-  update: (id, transaction) => apiRequest(`/bank-transactions/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(transaction),
+  update: (id, transaction) => apiRequest('/bank-transactions/update', {
+    method: 'POST',
+    body: JSON.stringify({ id, ...transaction }),
   }),
-  delete: (id) => apiRequest(`/bank-transactions/${id}`, {
-    method: 'DELETE',
+  delete: (id) => apiRequest('/bank-transactions/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
   }),
 };
 
@@ -96,12 +100,13 @@ export const poMasterAPI = {
     method: 'POST',
     body: JSON.stringify(po),
   }),
-  update: (id, po) => apiRequest(`/po-master/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(po),
+  update: (id, po) => apiRequest('/po-master/update', {
+    method: 'POST',
+    body: JSON.stringify({ id, ...po }),
   }),
-  delete: (id) => apiRequest(`/po-master/${id}`, {
-    method: 'DELETE',
+  delete: (id) => apiRequest('/po-master/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
   }),
 };
 
@@ -114,12 +119,13 @@ export const poChildAPI = {
     method: 'POST',
     body: JSON.stringify(poChild),
   }),
-  update: (id, poChild) => apiRequest(`/po-child/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(poChild),
+  update: (id, poChild) => apiRequest('/po-child/update', {
+    method: 'POST',
+    body: JSON.stringify({ id, ...poChild }),
   }),
-  delete: (id) => apiRequest(`/po-child/${id}`, {
-    method: 'DELETE',
+  delete: (id) => apiRequest('/po-child/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
   }),
 };
 
@@ -131,12 +137,13 @@ export const soMasterAPI = {
     method: 'POST',
     body: JSON.stringify(so),
   }),
-  update: (id, so) => apiRequest(`/so-master/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(so),
+  update: (id, so) => apiRequest('/so-master/update', {
+    method: 'POST',
+    body: JSON.stringify({ id, ...so }),
   }),
-  delete: (id) => apiRequest(`/so-master/${id}`, {
-    method: 'DELETE',
+  delete: (id) => apiRequest('/so-master/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
   }),
 };
 
@@ -149,12 +156,13 @@ export const soChildAPI = {
     method: 'POST',
     body: JSON.stringify(soChild),
   }),
-  update: (id, soChild) => apiRequest(`/so-child/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(soChild),
+  update: (id, soChild) => apiRequest('/so-child/update', {
+    method: 'POST',
+    body: JSON.stringify({ id, ...soChild }),
   }),
-  delete: (id) => apiRequest(`/so-child/${id}`, {
-    method: 'DELETE',
+  delete: (id) => apiRequest('/so-child/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
   }),
 };
 
@@ -166,12 +174,13 @@ export const contactsAPI = {
     method: 'POST',
     body: JSON.stringify(contact),
   }),
-  update: (id, contact) => apiRequest(`/contacts/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(contact),
+  update: (id, contact) => apiRequest('/contacts/update', {
+    method: 'POST',
+    body: JSON.stringify({ id, ...contact }),
   }),
-  delete: (id) => apiRequest(`/contacts/${id}`, {
-    method: 'DELETE',
+  delete: (id) => apiRequest('/contacts/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
   }),
 };
 
@@ -183,12 +192,13 @@ export const unitsAPI = {
     method: 'POST',
     body: JSON.stringify(unit),
   }),
-  update: (id, unit) => apiRequest(`/units/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(unit),
+  update: (id, unit) => apiRequest('/units/update', {
+    method: 'POST',
+    body: JSON.stringify({ id, ...unit }),
   }),
-  delete: (id) => apiRequest(`/units/${id}`, {
-    method: 'DELETE',
+  delete: (id) => apiRequest('/units/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
   }),
 };
 
@@ -200,11 +210,48 @@ export const itemsAPI = {
     method: 'POST',
     body: JSON.stringify(item),
   }),
-  update: (id, item) => apiRequest(`/items/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(item),
+  update: (id, item) => apiRequest('/items/update', {
+    method: 'POST',
+    body: JSON.stringify({ id, ...item }),
   }),
-  delete: (id) => apiRequest(`/items/${id}`, {
-    method: 'DELETE',
+  delete: (id) => apiRequest('/items/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
+  }),
+};
+
+// Categories API
+export const categoriesAPI = {
+  getAll: () => apiRequest('/categories'),
+  getById: (id) => apiRequest(`/categories/${id}`),
+  create: (category) => apiRequest('/categories', {
+    method: 'POST',
+    body: JSON.stringify(category),
+  }),
+  update: (id, category) => apiRequest('/categories/update', {
+    method: 'POST',
+    body: JSON.stringify({ id, ...category }),
+  }),
+  delete: (id) => apiRequest('/categories/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
+  }),
+};
+
+// Users API
+export const usersAPI = {
+  getAll: () => apiRequest('/users'),
+  getById: (id) => apiRequest(`/users/${id}`),
+  create: (user) => apiRequest('/users', {
+    method: 'POST',
+    body: JSON.stringify(user),
+  }),
+  update: (id, user) => apiRequest('/users/update', {
+    method: 'POST',
+    body: JSON.stringify({ id, ...user }),
+  }),
+  delete: (id) => apiRequest('/users/delete', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
   }),
 };

@@ -31,18 +31,34 @@ const Layout = () => {
       ],
     },
     {
+      name: "Accounts",
+      icon: "pi pi-money-bill",
+      submenus: [
+        { id: 3, name: "Bank", url: "/home/accounts/bank", icon: "pi pi-building" },
+        { id: 4, name: "Bank Account", url: "/home/accounts/bank-account", icon: "pi pi-user" },
+        { id: 8, name: "Bank Transaction", url: "/home/accounts/bank-transaction", icon: "pi pi-money-bill" },
+      ],
+    },
+    {
+      name: "Inventory",
+      icon: "pi pi-box",
+      submenus: [
+        { id: 5, name: "Items", url: "/home/inventory/items", icon: "pi pi-box" },
+        { id: 6, name: "Units", url: "/home/inventory/units", icon: "pi pi-tags" },
+        { id: 9, name: "Category", url: "/home/inventory/category", icon: "pi pi-tags" },
+      ],
+    },
+    {
       name: "Setup",
       icon: "pi pi-cog",
       submenus: [
-        { id: 3, name: "Bank", url: "/home/setup/bank", icon: "pi pi-building" },
-        { id: 4, name: "Bank Account", url: "/home/setup/bank-account", icon: "pi pi-user" },
-        { id: 8, name: "Bank Transaction", url: "/home/setup/bank-transaction", icon: "pi pi-money-bill" },
-        { id: 5, name: "Items", url: "/home/setup/items", icon: "pi pi-box" },
-        { id: 6, name: "Units", url: "/home/setup/units", icon: "pi pi-tags" },
         { id: 7, name: "Contacts", url: "/home/setup/contacts", icon: "pi pi-users" },
+        { id: 10, name: "Users", url: "/home/setup/users", icon: "pi pi-users" },
       ],
     },
   ];
+
+
 
   return (
     <div className="app-page">

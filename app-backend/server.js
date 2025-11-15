@@ -15,6 +15,8 @@ const soChildRoutes = require('./routes/soChild');
 const contactRoutes = require('./routes/contacts');
 const unitRoutes = require('./routes/units');
 const itemRoutes = require('./routes/items');
+const categoryRoutes = require('./routes/categories');
+const userRoutes = require('./routes/users');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -23,6 +25,18 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// API Key validation middleware
+app.use('/api', (req, res, next) => {
+  const apiKey = req.headers['api-hard-code-key'];
+  const validKey = 'my-secret-key-12345';
+
+  if (!apiKey || apiKey !== validKey) {
+    return res.status(401).json({ error: 'Invalid or missing API key' });
+  }
+
+  next();
+});
 
 // Initialize database
 initTables();
@@ -39,6 +53,8 @@ app.use('/api/so-child', soChildRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/units', unitRoutes);
 app.use('/api/items', itemRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/users', userRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

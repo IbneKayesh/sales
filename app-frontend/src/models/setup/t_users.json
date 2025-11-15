@@ -1,0 +1,39 @@
+{
+  "t_users": {
+    "user_id": {
+      "name": "Id",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 36
+    },
+    "username": {
+      "name": "Username",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "password": {
+      "name": "Password",
+      "type": "string",
+      "required": true,
+      "minLength": 6,
+      "maxLength": 255
+    },
+    "email": {
+      "name": "Email",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "role": {
+      "name": "Role",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 50
+    }
+  }
+}

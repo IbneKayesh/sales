@@ -19,17 +19,20 @@ const initTables = () => {
   db.serialize(() => {
     db.run(`
       CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT PRIMARY KEY,
         username TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        email TEXT,
+        role TEXT DEFAULT 'User',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
     // Banks table
     db.run(`
       CREATE TABLE IF NOT EXISTS banks (
-        bank_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        bank_id TEXT PRIMARY KEY,
         bank_name TEXT NOT NULL,
         bank_address TEXT,
         routing_number TEXT,
@@ -43,8 +46,8 @@ const initTables = () => {
     // Bank Accounts table
     db.run(`
       CREATE TABLE IF NOT EXISTS bank_accounts (
-        bank_account_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        bank_id INTEGER,
+        bank_account_id TEXT PRIMARY KEY,
+        bank_id TEXT,
         account_name TEXT NOT NULL,
         account_number TEXT NOT NULL,
         opening_date TEXT,
@@ -59,7 +62,7 @@ const initTables = () => {
     // Contacts table
     db.run(`
       CREATE TABLE IF NOT EXISTS contacts (
-        contact_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        contact_id TEXT PRIMARY KEY,
         contact_name TEXT NOT NULL,
         contact_address TEXT,
         contact_type TEXT,
@@ -68,10 +71,21 @@ const initTables = () => {
       )
     `);
 
+    // Categories table
+    db.run(`
+      CREATE TABLE IF NOT EXISTS categories (
+        category_id TEXT PRIMARY KEY,
+        category_name TEXT NOT NULL,
+        category_description TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Units table
     db.run(`
       CREATE TABLE IF NOT EXISTS units (
-        unit_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        unit_id TEXT PRIMARY KEY,
         unit_name TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -81,12 +95,13 @@ const initTables = () => {
     // Items table
     db.run(`
       CREATE TABLE IF NOT EXISTS items (
-        item_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        item_id TEXT PRIMARY KEY,
         item_name TEXT NOT NULL,
         item_description TEXT,
-        small_unit_id INTEGER,
+        category_id TEXT,
+        small_unit_id TEXT,
         unit_difference_qty INTEGER DEFAULT 1,
-        big_unit_id INTEGER,
+        big_unit_id TEXT,
         stock_qty REAL DEFAULT 0,
         purchase_rate REAL DEFAULT 0,
         sales_rate REAL DEFAULT 0,
@@ -94,6 +109,7 @@ const initTables = () => {
         approx_profit REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (category_id) REFERENCES categories (category_id),
         FOREIGN KEY (small_unit_id) REFERENCES units (unit_id),
         FOREIGN KEY (big_unit_id) REFERENCES units (unit_id)
       )
@@ -102,8 +118,8 @@ const initTables = () => {
     // Bank Transactions table
     db.run(`
       CREATE TABLE IF NOT EXISTS bank_transactions (
-        bank_transactions_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        bank_account_id INTEGER NOT NULL,
+        bank_transactions_id TEXT PRIMARY KEY,
+        bank_account_id TEXT NOT NULL,
         transaction_date TEXT NOT NULL,
         transaction_name TEXT NOT NULL,
         reference_no TEXT,
@@ -119,9 +135,9 @@ const initTables = () => {
     // Purchase Order Master table
     db.run(`
       CREATE TABLE IF NOT EXISTS po_master (
-        po_master_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        po_master_id TEXT PRIMARY KEY,
         transaction_date TEXT NOT NULL,
-        contacts_id INTEGER NOT NULL,
+        contacts_id TEXT NOT NULL,
         transaction_note TEXT,
         total_amount REAL DEFAULT 0,
         paid_amount REAL DEFAULT 0,
@@ -135,9 +151,9 @@ const initTables = () => {
     // Purchase Order Child table
     db.run(`
       CREATE TABLE IF NOT EXISTS po_child (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        po_master_id INTEGER NOT NULL,
-        item_id INTEGER NOT NULL,
+        id TEXT PRIMARY KEY,
+        po_master_id TEXT NOT NULL,
+        item_id TEXT NOT NULL,
         item_rate REAL NOT NULL,
         item_qty REAL NOT NULL,
         discount_amount REAL DEFAULT 0,
@@ -153,9 +169,9 @@ const initTables = () => {
     // Sales Order Master table
     db.run(`
       CREATE TABLE IF NOT EXISTS so_master (
-        so_master_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        so_master_id TEXT PRIMARY KEY,
         transaction_date TEXT NOT NULL,
-        contacts_id INTEGER NOT NULL,
+        contacts_id TEXT NOT NULL,
         transaction_note TEXT,
         total_amount REAL DEFAULT 0,
         paid_amount REAL DEFAULT 0,
@@ -169,9 +185,9 @@ const initTables = () => {
     // Sales Order Child table
     db.run(`
       CREATE TABLE IF NOT EXISTS so_child (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        so_master_id INTEGER NOT NULL,
-        item_id INTEGER NOT NULL,
+        id TEXT PRIMARY KEY,
+        so_master_id TEXT NOT NULL,
+        item_id TEXT NOT NULL,
         item_rate REAL NOT NULL,
         order_item_qty REAL NOT NULL,
         return_item_qty REAL DEFAULT 0,
@@ -190,9 +206,9 @@ const initTables = () => {
       } else {
         // Insert default users after tables are created
         db.run(`
-          INSERT OR IGNORE INTO users (username, password) VALUES
-          ('admin', 'password'),
-          ('user', '123456')
+          INSERT OR IGNORE INTO users (user_id, username, password, email, role) VALUES
+          ('1', 'admin', 'password', 'admin@example.com', 'Admin'),
+          ('2', 'user', '123456', 'user@example.com', 'User')
         `, (err) => {
           if (err) {
             console.error('Error inserting default users:', err);

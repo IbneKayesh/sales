@@ -1,0 +1,25 @@
+{
+  "t_category": {
+    "category_id": {
+      "name": "Id",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 36
+    },
+    "category_name": {
+      "name": "Category Name",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "category_description": {
+      "name": "Category Description",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 255
+    }
+  }
+}

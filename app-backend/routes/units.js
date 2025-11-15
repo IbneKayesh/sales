@@ -30,34 +30,37 @@ router.get('/:id', (req, res) => {
 
 // Create new unit
 router.post('/', (req, res) => {
-  const { unit_name } = req.body;
+  const { unit_id, unit_name } = req.body;
 
   if (!unit_name) {
     return res.status(400).json({ error: 'Unit name is required' });
   }
 
+  if (!unit_id) {
+    return res.status(400).json({ error: 'Unit ID is required' });
+  }
+
   const sql = `
-    INSERT INTO units (unit_name)
-    VALUES (?)
+    INSERT INTO units (unit_id, unit_name)
+    VALUES (?, ?)
   `;
-  const params = [unit_name];
+  const params = [unit_id, unit_name];
 
   db.run(sql, params, function(err) {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
-    res.status(201).json({ unit_id: this.lastID, ...req.body });
+    res.status(201).json({ unit_id, ...req.body });
   });
 });
 
 // Update unit
-router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const { unit_name } = req.body;
+router.post('/update', (req, res) => {
+  const { id, unit_name } = req.body;
 
-  if (!unit_name) {
-    return res.status(400).json({ error: 'Unit name is required' });
+  if (!id || !unit_name) {
+    return res.status(400).json({ error: 'Unit ID and name are required' });
   }
 
   const sql = `
@@ -76,13 +79,17 @@ router.put('/:id', (req, res) => {
     if (this.changes === 0) {
       return res.status(404).json({ error: 'Unit not found' });
     }
-    res.json({ unit_id: id, ...req.body });
+    res.json({ unit_id: id, unit_name });
   });
 });
 
 // Delete unit
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
+router.post('/delete', (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: 'Unit ID is required' });
+  }
 
   db.run('DELETE FROM units WHERE unit_id = ?', [id], function(err) {
     if (err) {

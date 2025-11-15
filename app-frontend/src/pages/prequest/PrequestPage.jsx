@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { usePoMaster } from "@/hooks/prequest/usePoMaster";
 import { usePoChild } from "@/hooks/prequest/usePoChild";
 import { useContacts } from "@/hooks/setup/useContacts";
-import { useItems } from "@/hooks/setup/useItems";
+import { useItems } from "@/hooks/inventory/useItems";
 import PrequestMasterListComponent from "./PrequestMasterListComponent";
 import PrequestMasterFormComponent from "./PrequestMasterFormComponent";
 import PrequestChildListComponent from "./PrequestChildListComponent";

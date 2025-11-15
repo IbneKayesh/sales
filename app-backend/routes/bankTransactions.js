@@ -45,6 +45,7 @@ router.get('/:id', (req, res) => {
 // Create new bank transaction
 router.post('/', (req, res) => {
   const {
+    bank_transactions_id,
     bank_account_id,
     transaction_date,
     transaction_name,
@@ -58,14 +59,19 @@ router.post('/', (req, res) => {
     return res.status(400).json({ error: 'Bank account, transaction date, and transaction name are required' });
   }
 
+  if (!bank_transactions_id) {
+    return res.status(400).json({ error: 'Bank transactions ID is required' });
+  }
+
   const sql = `
     INSERT INTO bank_transactions (
-      bank_account_id, transaction_date, transaction_name, reference_no,
+      bank_transactions_id, bank_account_id, transaction_date, transaction_name, reference_no,
       transaction_details, debit_amount, credit_amount
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
   const params = [
+    bank_transactions_id,
     bank_account_id,
     transaction_date,
     transaction_name,
@@ -80,14 +86,13 @@ router.post('/', (req, res) => {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
-    res.status(201).json({ bank_transactions_id: this.lastID, ...req.body });
+    res.status(201).json({ bank_transactions_id, ...req.body });
   });
 });
 
 // Update bank transaction
-router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const {
+router.post('/update', (req, res) => {
+  const { id,
     bank_account_id,
     transaction_date,
     transaction_name,
@@ -97,8 +102,8 @@ router.put('/:id', (req, res) => {
     credit_amount
   } = req.body;
 
-  if (!bank_account_id || !transaction_date || !transaction_name) {
-    return res.status(400).json({ error: 'Bank account, transaction date, and transaction name are required' });
+  if (!id || !bank_account_id || !transaction_date || !transaction_name) {
+    return res.status(400).json({ error: 'Transaction ID, bank account, transaction date, and transaction name are required' });
   }
 
   const sql = `
@@ -132,13 +137,17 @@ router.put('/:id', (req, res) => {
     if (this.changes === 0) {
       return res.status(404).json({ error: 'Bank transaction not found' });
     }
-    res.json({ bank_transactions_id: id, ...req.body });
+    res.json({ bank_transactions_id: id, bank_account_id, transaction_date, transaction_name, reference_no, transaction_details, debit_amount, credit_amount });
   });
 });
 
 // Delete bank transaction
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
+router.post('/delete', (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: 'Bank transaction ID is required' });
+  }
 
   db.run('DELETE FROM bank_transactions WHERE bank_transactions_id = ?', [id], function(err) {
     if (err) {

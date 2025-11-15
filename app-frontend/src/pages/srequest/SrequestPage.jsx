@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSoMaster } from "@/hooks/srequest/useSoMaster";
 import { useSoChild } from "@/hooks/srequest/useSoChild";
 import { useContacts } from "@/hooks/setup/useContacts";
-import { useItems } from "@/hooks/setup/useItems";
+import { useItems } from "@/hooks/inventory/useItems";
 import SrequestMasterListComponent from "./SrequestMasterListComponent";
 import SrequestMasterFormComponent from "./SrequestMasterFormComponent";
 import SrequestChildListComponent from "./SrequestChildListComponent";

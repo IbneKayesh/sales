@@ -1,0 +1,65 @@
+import React, { useState, useEffect } from "react";
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+import { Card } from "primereact/card";
+import t_category from "@/models/inventory/t_category.json";
+
+const CategoryFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
+
+  return (
+    <div className="p-1">
+      <div className="grid">
+        <div className="col-12 md:col-6">
+          <label
+            htmlFor="category_name"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_category.t_category.category_name.name} <span className="text-red-500">*</span>
+          </label>
+          <InputText
+            name="category_name"
+            value={formData.category_name}
+            onChange={(e) => onChange("category_name", e.target.value)}
+            className={`w-full ${errors.category_name ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_category.t_category.category_name.name}`}
+          />
+          {errors.category_name && (
+            <small className="mb-3 text-red-500">{errors.category_name}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-6">
+          <label
+            htmlFor="category_description"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_category.t_category.category_description.name}
+          </label>
+          <InputText
+            name="category_description"
+            value={formData.category_description}
+            onChange={(e) => onChange("category_description", e.target.value)}
+            className={`w-full ${errors.category_description ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_category.t_category.category_description.name}`}
+          />
+          {errors.category_description && (
+            <small className="mb-3 text-red-500">{errors.category_description}</small>
+          )}
+        </div>
+        <div className="col-12">
+          <div className="flex flex-row-reverse flex-wrap">
+            <Button
+              type="button"
+              onClick={(e) => onSave(e)}
+              label={formData.category_id ? "Update" : "Save"}
+              icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
+              severity="success"
+              loading={isBusy}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CategoryFormComponent;

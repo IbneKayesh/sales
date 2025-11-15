@@ -22,7 +22,13 @@ router.get('/', (req, res) => {
 // Get bank account by ID
 router.get('/:id', (req, res) => {
   const { id } = req.params;
-  db.get('SELECT * FROM bank_accounts WHERE bank_account_id = ?', [id], (err, row) => {
+  const sql = `
+    SELECT ba.*, b.bank_name
+    FROM bank_accounts ba
+    LEFT JOIN banks b ON ba.bank_id = b.bank_id
+    WHERE ba.bank_account_id = ?
+  `;
+  db.get(sql, [id], (err, row) => {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Internal server error' });
@@ -36,34 +42,37 @@ router.get('/:id', (req, res) => {
 
 // Create new bank account
 router.post('/', (req, res) => {
-  const { bank_id, account_name, account_number, opening_date, debit_balance, credit_balance } = req.body;
+  const { bank_account_id, bank_id, account_name, account_number, opening_date, debit_balance, credit_balance } = req.body;
 
   if (!account_name || !account_number) {
     return res.status(400).json({ error: 'Account name and number are required' });
   }
 
+  if (!bank_account_id) {
+    return res.status(400).json({ error: 'Bank account ID is required' });
+  }
+
   const sql = `
-    INSERT INTO bank_accounts (bank_id, account_name, account_number, opening_date, debit_balance, credit_balance)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO bank_accounts (bank_account_id, bank_id, account_name, account_number, opening_date, debit_balance, credit_balance)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
-  const params = [bank_id || null, account_name, account_number, opening_date || '', debit_balance || 0, credit_balance || 0];
+  const params = [bank_account_id, bank_id || null, account_name, account_number, opening_date || '', debit_balance || 0, credit_balance || 0];
 
   db.run(sql, params, function(err) {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
-    res.status(201).json({ bank_account_id: this.lastID, ...req.body });
+    res.status(201).json({ bank_account_id, ...req.body });
   });
 });
 
 // Update bank account
-router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const { bank_id, account_name, account_number, opening_date, debit_balance, credit_balance } = req.body;
+router.post('/update', (req, res) => {
+  const { id, bank_id, account_name, account_number, opening_date, debit_balance, credit_balance } = req.body;
 
-  if (!account_name || !account_number) {
-    return res.status(400).json({ error: 'Account name and number are required' });
+  if (!id || !account_name || !account_number) {
+    return res.status(400).json({ error: 'Account ID, name and number are required' });
   }
 
   const sql = `
@@ -87,13 +96,17 @@ router.put('/:id', (req, res) => {
     if (this.changes === 0) {
       return res.status(404).json({ error: 'Bank account not found' });
     }
-    res.json({ bank_account_id: id, ...req.body });
+    res.json({ bank_account_id: id, bank_id, account_name, account_number, opening_date, debit_balance, credit_balance });
   });
 });
 
 // Delete bank account
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
+router.post('/delete', (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: 'Bank account ID is required' });
+  }
 
   db.run('DELETE FROM bank_accounts WHERE bank_account_id = ?', [id], function(err) {
     if (err) {

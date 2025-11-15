@@ -30,34 +30,37 @@ router.get('/:id', (req, res) => {
 
 // Create new bank
 router.post('/', (req, res) => {
-  const { bank_name, bank_address, routing_number, debit_balance, credit_balance } = req.body;
+  const { bank_id, bank_name, bank_address, routing_number, debit_balance, credit_balance } = req.body;
 
   if (!bank_name) {
     return res.status(400).json({ error: 'Bank name is required' });
   }
 
+  if (!bank_id) {
+    return res.status(400).json({ error: 'Bank ID is required' });
+  }
+
   const sql = `
-    INSERT INTO banks (bank_name, bank_address, routing_number, debit_balance, credit_balance)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO banks (bank_id, bank_name, bank_address, routing_number, debit_balance, credit_balance)
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
-  const params = [bank_name, bank_address || '', routing_number || '', debit_balance || 0, credit_balance || 0];
+  const params = [bank_id, bank_name, bank_address || '', routing_number || '', debit_balance || 0, credit_balance || 0];
 
   db.run(sql, params, function(err) {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
-    res.status(201).json({ bank_id: this.lastID, ...req.body });
+    res.status(201).json({ bank_id, ...req.body });
   });
 });
 
 // Update bank
-router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const { bank_name, bank_address, routing_number, debit_balance, credit_balance } = req.body;
+router.post('/update', (req, res) => {
+  const { id, bank_name, bank_address, routing_number, debit_balance, credit_balance } = req.body;
 
-  if (!bank_name) {
-    return res.status(400).json({ error: 'Bank name is required' });
+  if (!id || !bank_name) {
+    return res.status(400).json({ error: 'Bank ID and name are required' });
   }
 
   const sql = `
@@ -80,13 +83,17 @@ router.put('/:id', (req, res) => {
     if (this.changes === 0) {
       return res.status(404).json({ error: 'Bank not found' });
     }
-    res.json({ bank_id: id, ...req.body });
+    res.json({ bank_id: id, bank_name, bank_address, routing_number, debit_balance, credit_balance });
   });
 });
 
 // Delete bank
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
+router.post('/delete', (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: 'Bank ID is required' });
+  }
 
   db.run('DELETE FROM banks WHERE bank_id = ?', [id], function(err) {
     if (err) {

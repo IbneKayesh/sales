@@ -15,7 +15,7 @@
     },
     "contacts_id": {
       "name": "Supplier Name",
-      "type": "number",
+      "type": "string",
       "required": true,
       "minLength": 1,
       "maxLength": 36

@@ -15,12 +15,14 @@ import Layout from "./pages/layout/Layout.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import PrequestPage from "./pages/prequest/PrequestPage.jsx";
 import SrequestPage from "./pages/srequest/SrequestPage.jsx";
-import BankPage from "./pages/setup/bank/BankPage.jsx";
-import BankAccountPage from "./pages/setup/bankaccount/BankAccountPage.jsx";
-import BankTransactionPage from "./pages/setup/banktransaction/BankTransactionPage.jsx";
-import ItemsPage from "./pages/setup/items/ItemsPage.jsx";
-import UnitsPage from "./pages/setup/units/UnitsPage.jsx";
+import BankPage from "./pages/accounts/bank/BankPage.jsx";
+import BankAccountPage from "./pages/accounts/bankaccount/BankAccountPage.jsx";
+import BankTransactionPage from "./pages/accounts/banktransaction/BankTransactionPage.jsx";
+import ItemsPage from "./pages/inventory/items/ItemsPage.jsx";
+import UnitsPage from "./pages/inventory/units/UnitsPage.jsx";
+import CategoryPage from "./pages/inventory/category/CategoryPage.jsx";
 import ContactsPage from "./pages/setup/contacts/ContactsPage.jsx";
+import UsersPage from "./pages/setup/users/UsersPage.jsx";
 
 function App() {
   const toast = useRef(null);
@@ -54,12 +56,14 @@ function AppRoutes({ toast }) {
         <Route index element={<HomePage />} />
         <Route path="prequest" element={<PrequestPage />} />
         <Route path="srequest" element={<SrequestPage />} />
-        <Route path="setup/bank" element={<BankPage />} />
-        <Route path="setup/bank-account" element={<BankAccountPage />} />
-        <Route path="setup/bank-transaction" element={<BankTransactionPage />} />
-        <Route path="setup/items" element={<ItemsPage />} />
-        <Route path="setup/units" element={<UnitsPage />} />
+        <Route path="accounts/bank" element={<BankPage />} />
+        <Route path="accounts/bank-account" element={<BankAccountPage />} />
+        <Route path="accounts/bank-transaction" element={<BankTransactionPage />} />
+        <Route path="inventory/items" element={<ItemsPage />} />
+        <Route path="inventory/units" element={<UnitsPage />} />
+        <Route path="inventory/category" element={<CategoryPage />} />
         <Route path="setup/contacts" element={<ContactsPage />} />
+        <Route path="setup/users" element={<UsersPage />} />
       </Route>
     </Routes>
   );
