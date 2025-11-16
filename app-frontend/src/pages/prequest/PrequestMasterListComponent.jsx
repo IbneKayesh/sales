@@ -50,7 +50,7 @@ const PrequestMasterListComponent = ({
           size="small"
           tooltip="Edit"
           tooltipOptions={{ position: "top" }}
-          onClick={() => onSelect(rowData.po_master_id)}
+          onClick={() => onSelect(rowData)}
           model={menuItems}
           disabled={rowData.ismodified}
         />

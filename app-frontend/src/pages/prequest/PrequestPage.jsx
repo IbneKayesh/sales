@@ -146,8 +146,8 @@ const PrequestPage = () => {
     );
   };
 
-  const handleMasterSelect = (masterId) => {
-    setSelectedMasterId(masterId);
+  const handleMasterSelect = (rowData) => {
+    setSelectedMasterId(rowData.order_no);
     setActiveTab(1); // Switch to child tab
   };
 
