@@ -1,13 +1,9 @@
-import React, { useState, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Button } from "primereact/button";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
-import { Toast } from "primereact/toast";
-import { Card } from "primereact/card";
+import { SplitButton } from "primereact/splitbutton";
 
 const ContactsListComponent = ({ dataList, onEdit, onDelete }) => {
-
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.contact_name}"?`,
@@ -22,24 +18,34 @@ const ContactsListComponent = ({ dataList, onEdit, onDelete }) => {
     });
   };
 
+  const currentBalanceTemplate = (rowData) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "BDT",
+    }).format(rowData.current_balance);
+  };
+
   const actionTemplate = (rowData) => {
+    let menuItems = [
+      {
+        label: "Delete",
+        icon: "pi pi-trash text-red-400",
+        command: () => {
+          handleDelete(rowData);
+        },
+        disabled: rowData.ismodified,
+      },
+    ];
     return (
-      <div className="d-flex flex-nowrap gap-2">
-        <Button
+      <div className="flex flex-wrap gap-2">
+        <SplitButton
           icon="pi pi-pencil"
-          onClick={() => onEdit(rowData)}
+          size="small"
           tooltip="Edit"
           tooltipOptions={{ position: "top" }}
-          size="small"
-          severity="primary"
-        />
-        <Button
-          icon="pi pi-trash"
-          onClick={() => handleDelete(rowData)}
-          tooltip="Delete"
-          tooltipOptions={{ position: "top" }}
-          size="small"
-          severity="danger"
+          onClick={() => onEdit(rowData)}
+          model={menuItems}
+          disabled={rowData.ismodified}
         />
       </div>
     );
@@ -61,6 +67,11 @@ const ContactsListComponent = ({ dataList, onEdit, onDelete }) => {
         <Column field="contact_name" header="Contact Name" sortable />
         <Column field="contact_address" header="Contact Address" />
         <Column field="contact_type" header="Contact Type" />
+        <Column
+          field="current_balance"
+          header="Current Balance"
+          body={currentBalanceTemplate}
+        />
         <Column
           header="Actions"
           body={actionTemplate}

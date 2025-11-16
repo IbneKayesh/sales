@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { itemsAPI } from "@/utils/api";
+import { itemsAPI } from "@/api/itemsAPI";
 import { generateGuid } from "@/utils/guid";
 
 import validate from "@/models/validator";
@@ -19,6 +19,7 @@ export const useItems = () => {
     small_unit_id: "",
     unit_difference_qty: 1,
     big_unit_id: "",
+    order_qty: 0,
     stock_qty: 0,
     purchase_rate: 0,
     sales_rate: 0,
@@ -26,21 +27,31 @@ export const useItems = () => {
     approx_profit: 0,
   });
 
-  // Load items from API on mount
-  useEffect(() => {
-    const loadItems = async () => {
-      try {
-        const data = await itemsAPI.getAll();
-        setItems(data);
-      } catch (error) {
-        console.error('Error loading items:', error);
+  const loadItems = async (resetModified = false) => {
+    try {
+      const data = await itemsAPI.getAll();
+      setItems(data);
+      if (resetModified) {
         setToastBox({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to load items from server",
+          severity: "info",
+          summary: "Refreshed",
+          detail: "Data refreshed from database.",
         });
       }
-    };
+    } catch (error) {
+      console.error("Error loading items:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: resetModified
+          ? "Failed to refresh data from server"
+          : "Failed to load items from server",
+      });
+    }
+  };
+
+  // Load items from API on mount
+  useEffect(() => {
     loadItems();
   }, []);
 
@@ -60,8 +71,9 @@ export const useItems = () => {
       item_description: "",
       category_id: "",
       small_unit_id: "",
-      unit_difference_qty: 0,
+      unit_difference_qty: 1,
       big_unit_id: "",
+      order_qty: 0,
       stock_qty: 0,
       purchase_rate: 0,
       sales_rate: 0,
@@ -92,14 +104,13 @@ export const useItems = () => {
       const updatedItems = items.filter((i) => i.item_id !== id);
       setItems(updatedItems);
 
-      const toastBox = {
+      setToastBox({
         severity: "info",
         summary: "Deleted",
         detail: `Deleted successfully.`,
-      };
-      setToastBox(toastBox);
+      });
     } catch (error) {
-      console.error('Error deleting item:', error);
+      console.error("Error deleting item:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
@@ -108,59 +119,94 @@ export const useItems = () => {
     }
   };
 
+  const handleRefresh = () => {
+    loadItems(true);
+  };
+
   const handleSaveItem = async (e) => {
     e.preventDefault();
     setIsBusy(true);
 
     const newErrors = validate(formDataItem, t_items.t_items);
     setErrors(newErrors);
-
     console.log("handleSaveItem: " + JSON.stringify(newErrors));
 
-    if (Object.keys(newErrors).length === 0) {
-      try {
-        let updatedItems;
-        if (formDataItem.item_id) {
-          // Edit existing
-          const updatedItem = await itemsAPI.update(formDataItem.item_id, formDataItem);
-          updatedItems = items.map((i) =>
-            i.item_id === formDataItem.item_id ? updatedItem : i
-          );
+    if (Object.keys(newErrors).length > 0) {
+      setIsBusy(false);
+      return;
+    }
 
-          const toastBox = {
-            severity: "success",
-            summary: "Success",
-            detail: `"${formDataItem.item_name}" updated successfully.`,
-          };
-          setToastBox(toastBox);
-        } else {
-          // Add new
-          const newItemData = { ...formDataItem, item_id: generateGuid() };
-          const newItem = await itemsAPI.create(newItemData);
-          updatedItems = [...items, newItem];
+    try {
+      let updatedItems;
+      // ---- Calculate profit before save ----
+      const approxProfit = calculateApproxProfit(formDataItem);
 
-          const toastBox = {
-            severity: "success",
-            summary: "Success",
-            detail: `"${formDataItem.item_name}" added successfully.`,
-          };
-          setToastBox(toastBox);
-        }
-        setItems(updatedItems);
+      // Build data object with profit included
+      const itemData = {
+        ...formDataItem,
+        approx_profit: approxProfit,
+      };
 
-        handleClear();
-        setCurrentView("list");
-      } catch (error) {
-        console.error('Error saving item:', error);
+      if (formDataItem.item_id) {
+        // Edit existing
+        const updatedItem = await itemsAPI.update(
+          formDataItem.item_id,
+          itemData
+        );
+        updatedItem.ismodified = true;
+        updatedItems = items.map((i) =>
+          i.item_id === formDataItem.item_id ? updatedItem : i
+        );
+
         setToastBox({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to save item",
+          severity: "success",
+          summary: "Success",
+          detail: `"${formDataItem.item_name}" updated successfully.`,
+        });
+      } else {
+        // Add new
+        const newItemData = { ...itemData, item_id: generateGuid() };
+        const newItem = await itemsAPI.create(newItemData);
+        newItem.ismodified = true;
+        updatedItems = [...items, newItem];
+
+        setToastBox({
+          severity: "success",
+          summary: "Success",
+          detail: `"${formDataItem.item_name}" added successfully.`,
         });
       }
+      setItems(updatedItems);
+
+      handleClear();
+      setCurrentView("list");
+    } catch (error) {
+      console.error("Error saving item:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to save item",
+      });
     }
 
     setIsBusy(false);
+  };
+
+  const calculateApproxProfit = (item) => {
+    const purchase = Number(item.purchase_rate || 0);
+    const sales = Number(item.sales_rate || 0);
+    const discountPercent = Number(item.discount_percent || 0);
+
+    // Discount is applied on SALES price
+    const discountAmount = sales * (discountPercent / 100);
+
+    // Final selling price after discount
+    const finalSellingPrice = sales - discountAmount;
+
+    // Profit = final selling price - purchase price
+    const approxProfit = finalSellingPrice - purchase;
+
+    return approxProfit;
   };
 
   return {
@@ -175,6 +221,7 @@ export const useItems = () => {
     handleAddNew,
     handleEditItem,
     handleDeleteItem,
+    handleRefresh,
     handleSaveItem,
   };
 };

@@ -20,11 +20,12 @@ const UnitsPage = () => {
     handleAddNew,
     handleEditUnit,
     handleDeleteUnit,
+    handleRefresh,
     handleSaveUnit,
   } = useUnits();
 
   useEffect(() => {
-    if (toastBox) {
+    if (toastBox && toast.current) {
       toast.current.show({
         severity: toastBox.severity,
         summary: toastBox.summary,
@@ -34,34 +35,46 @@ const UnitsPage = () => {
     }
   }, [toastBox]);
 
- const getHeader = () => {
-  const isList = currentView === "list";
+  const getHeader = () => {
+    const isList = currentView === "list";
 
-  return (
-    <div className="flex align-items-center justify-content-between">
-      <h2 className="m-0">
-        {isList ? "Units List" : formDataUnit.unit_id ? "Edit Unit" : "Add New Unit"}
-      </h2>
+    return (
+      <div className="flex align-items-center justify-content-between">
+        <h3 className="m-0">
+          {isList
+            ? "Units List"
+            : formDataUnit.unit_id
+            ? "Edit Unit"
+            : "Add New Unit"}
+        </h3>
 
-      {isList ? (
-        <Button
-          label="New Unit"
-          icon="pi pi-plus"
-          className="p-button-primary"
-          onClick={handleAddNew}
-        />
-      ) : (
-        <Button
-          type="button"
-          label="Units List"
-          icon="pi pi-arrow-left"
-          onClick={handleCancel}
-        />
-      )}
-    </div>
-  );
-};
-
+        {isList ? (
+          <div className="flex gap-2">
+            <Button
+              label="Refresh"
+              icon="pi pi-refresh"
+              size="small"
+              severity="secondary"
+              onClick={handleRefresh}
+            />
+            <Button
+              label="New Unit"
+              icon="pi pi-plus"
+              size="small"
+              onClick={handleAddNew}
+            />
+          </div>
+        ) : (
+          <Button
+            label="Units List"
+            icon="pi pi-arrow-left"
+            size="small"
+            onClick={handleCancel}
+          />
+        )}
+      </div>
+    );
+  };
 
   return (
     <>

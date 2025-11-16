@@ -13,7 +13,8 @@ const UnitsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
             htmlFor="unit_name"
             className="block text-900 font-medium mb-2"
           >
-            {t_units.t_units.unit_name.name} <span className="text-red-500">*</span>
+            {t_units.t_units.unit_name.name}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <InputText
             name="unit_name"
@@ -34,6 +35,7 @@ const UnitsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
               label={formData.unit_id ? "Update" : "Save"}
               icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
               severity="success"
+              size="small"
               loading={isBusy}
             />
           </div>

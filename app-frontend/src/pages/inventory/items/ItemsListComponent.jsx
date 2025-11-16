@@ -1,13 +1,9 @@
-import React, { useState, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Button } from "primereact/button";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
-import { Toast } from "primereact/toast";
-import { Card } from "primereact/card";
+import { SplitButton } from "primereact/splitbutton";
 
 const ItemsListComponent = ({ dataList, onEdit, onDelete }) => {
-
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.item_name}"?`,
@@ -23,23 +19,26 @@ const ItemsListComponent = ({ dataList, onEdit, onDelete }) => {
   };
 
   const actionTemplate = (rowData) => {
+    let menuItems = [
+      {
+        label: "Delete",
+        icon: "pi pi-trash text-red-400",
+        command: () => {
+          handleDelete(rowData);
+        },
+        disabled: rowData.ismodified,
+      },
+    ];
     return (
-      <div className="d-flex flex-nowrap gap-2">
-        <Button
+      <div className="flex flex-wrap gap-2">
+        <SplitButton
           icon="pi pi-pencil"
-          onClick={() => onEdit(rowData)}
+          size="small"
           tooltip="Edit"
           tooltipOptions={{ position: "top" }}
-          size="small"
-          severity="primary"
-        />
-        <Button
-          icon="pi pi-trash"
-          onClick={() => handleDelete(rowData)}
-          tooltip="Delete"
-          tooltipOptions={{ position: "top" }}
-          size="small"
-          severity="danger"
+          onClick={() => onEdit(rowData)}
+          model={menuItems}
+          disabled={rowData.ismodified}
         />
       </div>
     );
@@ -48,21 +47,21 @@ const ItemsListComponent = ({ dataList, onEdit, onDelete }) => {
   const purchaseRateTemplate = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "BDT",
     }).format(rowData.purchase_rate);
   };
 
   const salesRateTemplate = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "BDT",
     }).format(rowData.sales_rate);
   };
 
   const approxProfitTemplate = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "BDT",
     }).format(rowData.approx_profit);
   };
 
@@ -85,7 +84,8 @@ const ItemsListComponent = ({ dataList, onEdit, onDelete }) => {
         <Column field="small_unit_name" header="Small Unit" />
         <Column field="unit_difference_qty" header="Unit Diff Qty" />
         <Column field="big_unit_name" header="Big Unit" />
-        <Column field="stock_qty" header="Stock Qty" />
+        <Column field="order_qty" header="Order Qty" sortable />
+        <Column field="stock_qty" header="Stock Qty" sortable />
         <Column
           field="purchase_rate"
           header="Purchase Rate"

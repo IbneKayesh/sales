@@ -17,6 +17,7 @@ const unitRoutes = require('./routes/units');
 const itemRoutes = require('./routes/items');
 const categoryRoutes = require('./routes/categories');
 const userRoutes = require('./routes/users');
+const closingProcessRoutes = require('./routes/closingProcess');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -28,8 +29,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // API Key validation middleware
 app.use('/api', (req, res, next) => {
-  const apiKey = req.headers['api-hard-code-key'];
-  const validKey = 'my-secret-key-12345';
+  const apiKey = req.headers['app-api-key'];
+  const validKey = 'sand-grain-digital-2025';
 
   if (!apiKey || apiKey !== validKey) {
     return res.status(401).json({ error: 'Invalid or missing API key' });
@@ -55,6 +56,7 @@ app.use('/api/units', unitRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/closing-process', closingProcessRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

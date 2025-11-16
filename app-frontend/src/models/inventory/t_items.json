@@ -38,7 +38,7 @@
     "unit_difference_qty": {
       "name": "Unit Difference Qty",
       "type": "number",
-      "required": false
+      "required": true
     },
     "big_unit_id": {
       "name": "Big Unit Name",
@@ -47,18 +47,23 @@
       "minLength": 1,
       "maxLength": 36
     },
+    "order_qty": {
+      "name": "Order Qty",
+      "type": "number",
+      "required": false
+    },
     "stock_qty": {
       "name": "Stock Qty",
       "type": "number",
       "required": false
     },
     "purchase_rate": {
-      "name": "Purchase Rate",
+      "name": "Purchase Rate (SU)",
       "type": "number",
       "required": false
     },
     "sales_rate": {
-      "name": "Sales Rate",
+      "name": "Sales Rate (SU)",
       "type": "number",
       "required": false
     },

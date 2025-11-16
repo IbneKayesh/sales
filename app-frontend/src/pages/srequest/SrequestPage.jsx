@@ -51,7 +51,7 @@ const SrequestPage = () => {
   const [selectedMasterId, setSelectedMasterId] = useState(null);
 
   useEffect(() => {
-    if (masterToastBox) {
+    if (masterToastBox && toast.current) {
       toast.current.show({
         severity: masterToastBox.severity,
         summary: masterToastBox.summary,
@@ -62,7 +62,7 @@ const SrequestPage = () => {
   }, [masterToastBox]);
 
   useEffect(() => {
-    if (childToastBox) {
+    if (childToastBox && toast.current) {
       toast.current.show({
         severity: childToastBox.severity,
         summary: childToastBox.summary,
@@ -78,7 +78,11 @@ const SrequestPage = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <h2 className="m-0">
-          {isList ? "Sales Order Masters" : formDataSoMaster.so_master_id ? "Edit Sales Order" : "Add New Sales Order"}
+          {isList
+            ? "Sales Order Masters"
+            : formDataSoMaster.so_master_id
+            ? "Edit Sales Order"
+            : "Add New Sales Order"}
         </h2>
 
         {isList ? (
@@ -106,7 +110,11 @@ const SrequestPage = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <h2 className="m-0">
-          {isList ? "Sales Order Items" : formDataSoChild.id ? "Edit Item" : "Add New Item"}
+          {isList
+            ? "Sales Order Items"
+            : formDataSoChild.id
+            ? "Edit Item"
+            : "Add New Item"}
         </h2>
 
         {isList ? (
@@ -136,9 +144,15 @@ const SrequestPage = () => {
   return (
     <>
       <Toast ref={toast} />
-      <TabView activeIndex={activeTab} onTabChange={(e) => setActiveTab(e.index)}>
+      <TabView
+        activeIndex={activeTab}
+        onTabChange={(e) => setActiveTab(e.index)}
+      >
         <TabPanel header="Sales Orders">
-          <Card header={getMasterHeader()} className="bg-dark-200 border-round p-3">
+          <Card
+            header={getMasterHeader()}
+            className="bg-dark-200 border-round p-3"
+          >
             {masterCurrentView === "list" ? (
               <SrequestMasterListComponent
                 dataList={soMasters}
@@ -159,10 +173,16 @@ const SrequestPage = () => {
           </Card>
         </TabPanel>
         <TabPanel header="Order Items">
-          <Card header={getChildHeader()} className="bg-dark-200 border-round p-3">
+          <Card
+            header={getChildHeader()}
+            className="bg-dark-200 border-round p-3"
+          >
             {childCurrentView === "list" ? (
               <SrequestChildListComponent
-                dataList={soChildren.filter(child => !selectedMasterId || child.so_master_id === selectedMasterId)}
+                dataList={soChildren.filter(
+                  (child) =>
+                    !selectedMasterId || child.so_master_id === selectedMasterId
+                )}
                 onEdit={handleEditSoChild}
                 onDelete={handleDeleteSoChild}
                 selectedMasterId={selectedMasterId}

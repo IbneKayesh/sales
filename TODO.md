@@ -1,0 +1,2 @@
+- [ ] Update usePoMaster.js: Change 'transaction_date' to 'order_date', 'transaction_note' to 'order_note', add 'order_type', 'order_no', 'ref_no' to formDataPoMaster
+- [ ] Update usePoChild.js: Add 'order_qty' to formDataPoChild

@@ -1,13 +1,9 @@
-import React, { useState, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Button } from "primereact/button";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
-import { Toast } from "primereact/toast";
-import { Card } from "primereact/card";
+import { SplitButton } from "primereact/splitbutton";
 
 const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
-
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.category_name}"?`,
@@ -23,23 +19,26 @@ const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
   };
 
   const actionTemplate = (rowData) => {
+    let menuItems = [
+      {
+        label: "Delete",
+        icon: "pi pi-trash text-red-400",
+        command: () => {
+          handleDelete(rowData);
+        },
+        disabled: rowData.ismodified,
+      },
+    ];
     return (
-      <div className="d-flex flex-nowrap gap-2">
-        <Button
+      <div className="flex flex-wrap gap-2">
+        <SplitButton
           icon="pi pi-pencil"
-          onClick={() => onEdit(rowData)}
+          size="small"
           tooltip="Edit"
           tooltipOptions={{ position: "top" }}
-          size="small"
-          severity="primary"
-        />
-        <Button
-          icon="pi pi-trash"
-          onClick={() => handleDelete(rowData)}
-          tooltip="Delete"
-          tooltipOptions={{ position: "top" }}
-          size="small"
-          severity="danger"
+          onClick={() => onEdit(rowData)}
+          model={menuItems}
+          disabled={rowData.ismodified}
         />
       </div>
     );
@@ -59,7 +58,6 @@ const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
         size="small"
       >
         <Column field="category_name" header="Category Name" sortable />
-        <Column field="category_description" header="Category Description" />
         <Column
           header="Actions"
           body={actionTemplate}

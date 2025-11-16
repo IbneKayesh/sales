@@ -18,7 +18,7 @@ router.post('/login', (req, res) => {
 
     if (row) {
       // In a real app, you'd use JWT or sessions here
-      res.json({ success: true, user: { username: row.username, id: row.id } });
+      res.json({ success: true, user: { username: row.username, user_id: row.user_id } });
     } else {
       res.status(401).json({ success: false, error: 'Invalid username or password' });
     }

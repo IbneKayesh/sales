@@ -20,11 +20,13 @@ const UsersPage = () => {
     handleAddNew,
     handleEditUser,
     handleDeleteUser,
+    handleRefresh,
     handleSaveUser,
+    roleOptions,
   } = useUsers();
 
   useEffect(() => {
-    if (toastBox) {
+    if (toastBox && toast.current) {
       toast.current.show({
         severity: toastBox.severity,
         summary: toastBox.summary,
@@ -34,34 +36,46 @@ const UsersPage = () => {
     }
   }, [toastBox]);
 
- const getHeader = () => {
-  const isList = currentView === "list";
+  const getHeader = () => {
+    const isList = currentView === "list";
 
-  return (
-    <div className="flex align-items-center justify-content-between">
-      <h2 className="m-0">
-        {isList ? "Users List" : formDataUser.user_id ? "Edit User" : "Add New User"}
-      </h2>
+    return (
+      <div className="flex align-items-center justify-content-between">
+        <h3 className="m-0">
+          {isList
+            ? "Users List"
+            : formDataUser.user_id
+            ? "Edit User"
+            : "Add New User"}
+        </h3>
 
-      {isList ? (
-        <Button
-          label="New User"
-          icon="pi pi-plus"
-          className="p-button-primary"
-          onClick={handleAddNew}
-        />
-      ) : (
-        <Button
-          type="button"
-          label="Users List"
-          icon="pi pi-arrow-left"
-          onClick={handleCancel}
-        />
-      )}
-    </div>
-  );
-};
-
+        {isList ? (
+          <div className="flex gap-2">
+            <Button
+              label="Refresh"
+              icon="pi pi-refresh"
+              size="small"
+              severity="secondary"
+              onClick={handleRefresh}
+            />
+            <Button
+              label="New User"
+              icon="pi pi-plus"
+              size="small"
+              onClick={handleAddNew}
+            />
+          </div>
+        ) : (
+          <Button
+            label="Users List"
+            icon="pi pi-arrow-left"
+            size="small"
+            onClick={handleCancel}
+          />
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -80,6 +94,7 @@ const UsersPage = () => {
             formData={formDataUser}
             onChange={handleChange}
             onSave={handleSaveUser}
+            roleOptions={roleOptions}
           />
         )}
       </Card>

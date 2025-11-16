@@ -37,17 +37,17 @@
     "transaction_details": {
       "name": "Transaction Details",
       "type": "string",
-      "required": false,
-      "minLength": 0,
+      "required": true,
+      "minLength": 1,
       "maxLength": 255
     },
     "debit_amount": {
-      "name": "Debit Amount",
+      "name": "Debit Amount (+)",
       "type": "number",
       "required": false
     },
     "credit_amount": {
-      "name": "Credit Amount",
+      "name": "Credit Amount (-)",
       "type": "number",
       "required": false
     }

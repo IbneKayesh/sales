@@ -3,7 +3,7 @@
   flex-direction: column;
   height: 99vh;
   background: var(--gradient-bg);
-  margin-bottom: 20px;
+  margin-bottom: 8px;
   border-radius: 16px;
   position: relative;
   overflow: hidden;

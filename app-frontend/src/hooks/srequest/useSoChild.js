@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { soChildAPI } from "@/utils/api";
+import { soChildAPI } from "@/api/soChildAPI";
 
 import validate from "@/models/validator";
 import t_so_child from "@/models/srequest/t_so_child.json";

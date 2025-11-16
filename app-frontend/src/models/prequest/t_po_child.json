@@ -8,7 +8,7 @@
       "maxLength": 36
     },
     "po_master_id": {
-      "name": "Order Number",
+      "name": "Order No",
       "type": "string",
       "required": true,
       "minLength": 1,
@@ -47,6 +47,11 @@
       "required": false,
       "minLength": 0,
       "maxLength": 255
+    },
+    "order_qty": {
+      "name": "Order Qty",
+      "type": "number",
+      "required": false
     }
   }
 }

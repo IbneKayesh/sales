@@ -21,12 +21,13 @@ const BankAccountPage = () => {
     handleAddNew,
     handleEditBankAccount,
     handleDeleteBankAccount,
+    handleRefresh,
     handleSaveBankAccount,
   } = useBankAccount();
   const { banks } = useBank();
 
   useEffect(() => {
-    if (toastBox) {
+    if (toastBox && toast.current) {
       toast.current.show({
         severity: toastBox.severity,
         summary: toastBox.summary,
@@ -36,34 +37,46 @@ const BankAccountPage = () => {
     }
   }, [toastBox]);
 
- const getHeader = () => {
-  const isList = currentView === "list";
+  const getHeader = () => {
+    const isList = currentView === "list";
 
-  return (
-    <div className="flex align-items-center justify-content-between">
-      <h2 className="m-0">
-        {isList ? "Bank Account List" : formDataBankAccount.bank_account_id ? "Edit Bank Account" : "Add New Bank Account"}
-      </h2>
+    return (
+      <div className="flex align-items-center justify-content-between">
+        <h3 className="m-0">
+          {isList
+            ? "Bank Account List"
+            : formDataBankAccount.bank_account_id
+            ? "Edit Bank Account"
+            : "Add New Bank Account"}
+        </h3>
 
-      {isList ? (
-        <Button
-          label="New Bank Account"
-          icon="pi pi-plus"
-          className="p-button-primary"
-          onClick={handleAddNew}
-        />
-      ) : (
-        <Button
-          type="button"
-          label="Bank Account List"
-          icon="pi pi-arrow-left"
-          onClick={handleCancel}
-        />
-      )}
-    </div>
-  );
-};
-
+        {isList ? (
+          <div className="flex gap-2">
+            <Button
+              label="Refresh"
+              icon="pi pi-refresh"
+              size="small"
+              severity="secondary"
+              onClick={handleRefresh}
+            />
+            <Button
+              label="New Bank Account"
+              icon="pi pi-plus"
+              size="small"
+              onClick={handleAddNew}
+            />
+          </div>
+        ) : (
+          <Button
+            label="Bank Account List"
+            icon="pi pi-arrow-left"
+            size="small"
+            onClick={handleCancel}
+          />
+        )}
+      </div>
+    );
+  };
 
   return (
     <>

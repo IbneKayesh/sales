@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { soMasterAPI } from "@/utils/api";
+import { soMasterAPI } from "@/api/soMasterAPI";
 
 import validate from "@/models/validator";
 import t_so_master from "@/models/srequest/t_so_master.json";

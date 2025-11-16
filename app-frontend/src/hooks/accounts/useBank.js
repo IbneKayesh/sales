@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { banksAPI } from "@/utils/api";
+import { banksAPI } from "@/api/banksAPI";
 import { generateGuid } from "@/utils/guid";
 
 import validate from "@/models/validator";
@@ -18,23 +18,34 @@ export const useBank = () => {
     routing_number: "",
     debit_balance: 0,
     credit_balance: 0,
+    current_balance: 0,
   });
+
+  const loadBanks = async (resetModified = false) => {
+    try {
+      const data = await banksAPI.getAll();
+      setBanks(data);
+      if (resetModified) {
+        setToastBox({
+          severity: "info",
+          summary: "Refreshed",
+          detail: "Data refreshed from database.",
+        });
+      }
+    } catch (error) {
+      console.error("Error loading banks:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: resetModified
+          ? "Failed to refresh data from server"
+          : "Failed to load banks from server",
+      });
+    }
+  };
 
   // Load banks from API on mount
   useEffect(() => {
-    const loadBanks = async () => {
-      try {
-        const data = await banksAPI.getAll();
-        setBanks(data);
-      } catch (error) {
-        console.error('Error loading banks:', error);
-        setToastBox({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to load banks from server",
-        });
-      }
-    };
     loadBanks();
   }, []);
 
@@ -55,6 +66,7 @@ export const useBank = () => {
       routing_number: "",
       debit_balance: 0,
       credit_balance: 0,
+      current_balance: 0,
     });
     setErrors({});
   };
@@ -80,14 +92,13 @@ export const useBank = () => {
       const updatedBanks = banks.filter((b) => b.bank_id !== id);
       setBanks(updatedBanks);
 
-      const toastBox = {
+      setToastBox({
         severity: "info",
         summary: "Deleted",
         detail: `Deleted successfully.`,
-      };
-      setToastBox(toastBox);
+      });
     } catch (error) {
-      console.error('Error deleting bank:', error);
+      console.error("Error deleting bank:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
@@ -96,56 +107,65 @@ export const useBank = () => {
     }
   };
 
+  const handleRefresh = () => {
+    loadBanks(true);
+  };
+
   const handleSaveBank = async (e) => {
     e.preventDefault();
     setIsBusy(true);
 
     const newErrors = validate(formDataBank, t_bank.t_bank);
     setErrors(newErrors);
-
     console.log("handleSaveBank: " + JSON.stringify(newErrors));
 
-    if (Object.keys(newErrors).length === 0) {
-      try {
-        let updatedBanks;
-        if (formDataBank.bank_id) {
-          // Edit existing
-          const updatedBank = await banksAPI.update(formDataBank.bank_id, formDataBank);
-          updatedBanks = banks.map((b) =>
-            b.bank_id === formDataBank.bank_id ? updatedBank : b
-          );
+    if (Object.keys(newErrors).length > 0) {
+      setIsBusy(false);
+      return;
+    }
 
-          const toastBox = {
-            severity: "success",
-            summary: "Success",
-            detail: `"${formDataBank.bank_name}" updated successfully.`,
-          };
-          setToastBox(toastBox);
-        } else {
-          // Add new
-          const newBankData = { ...formDataBank, bank_id: generateGuid() };
-          const newBank = await banksAPI.create(newBankData);
-          updatedBanks = [...banks, newBank];
+    try {
+      let updatedBanks;
+      if (formDataBank.bank_id) {
+        // Edit existing
+        const updatedBank = await banksAPI.update(
+          formDataBank.bank_id,
+          formDataBank
+        );
+        updatedBank.ismodified = true;
+        updatedBanks = banks.map((b) =>
+          b.bank_id === formDataBank.bank_id ? updatedBank : b
+        );
 
-          const toastBox = {
-            severity: "success",
-            summary: "Success",
-            detail: `"${formDataBank.bank_name}" added successfully.`,
-          };
-          setToastBox(toastBox);
-        }
-        setBanks(updatedBanks);
-
-        handleClear();
-        setCurrentView("list");
-      } catch (error) {
-        console.error('Error saving bank:', error);
         setToastBox({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to save bank",
+          severity: "success",
+          summary: "Success",
+          detail: `"${formDataBank.bank_name}" updated successfully.`,
+        });
+      } else {
+        // Add new
+        const newBankData = { ...formDataBank, bank_id: generateGuid() };
+        const newBank = await banksAPI.create(newBankData);
+        newBank.ismodified = true;
+        updatedBanks = [...banks, newBank];
+
+        setToastBox({
+          severity: "success",
+          summary: "Success",
+          detail: `"${formDataBank.bank_name}" added successfully.`,
         });
       }
+      setBanks(updatedBanks);
+
+      handleClear();
+      setCurrentView("list");
+    } catch (error) {
+      console.error("Error saving bank:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to save bank",
+      });
     }
 
     setIsBusy(false);
@@ -163,6 +183,7 @@ export const useBank = () => {
     handleAddNew,
     handleEditBank,
     handleDeleteBank,
+    handleRefresh,
     handleSaveBank,
   };
 };

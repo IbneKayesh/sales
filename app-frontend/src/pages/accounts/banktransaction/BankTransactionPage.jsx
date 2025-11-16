@@ -21,12 +21,14 @@ const BankTransactionPage = () => {
     handleAddNew,
     handleEditBankTransaction,
     handleDeleteBankTransaction,
+    handleRefresh,
     handleSaveBankTransaction,
+    transOptions,
   } = useBankTransaction();
   const { bankAccounts } = useBankAccount();
 
   useEffect(() => {
-    if (toastBox) {
+    if (toastBox && toast.current) {
       toast.current.show({
         severity: toastBox.severity,
         summary: toastBox.summary,
@@ -36,34 +38,46 @@ const BankTransactionPage = () => {
     }
   }, [toastBox]);
 
- const getHeader = () => {
-  const isList = currentView === "list";
+  const getHeader = () => {
+    const isList = currentView === "list";
 
-  return (
-    <div className="flex align-items-center justify-content-between">
-      <h2 className="m-0">
-        {isList ? "Bank Transaction List" : formDataBankTransaction.bank_transactions_id ? "Edit Bank Transaction" : "Add New Bank Transaction"}
-      </h2>
+    return (
+      <div className="flex align-items-center justify-content-between">
+        <h3 className="m-0">
+          {isList
+            ? "Bank Transaction List"
+            : formDataBankTransaction.bank_transactions_id
+            ? "Edit Bank Transaction"
+            : "Add New Bank Transaction"}
+        </h3>
 
-      {isList ? (
-        <Button
-          label="New Bank Transaction"
-          icon="pi pi-plus"
-          className="p-button-primary"
-          onClick={handleAddNew}
-        />
-      ) : (
-        <Button
-          type="button"
-          label="Bank Transaction List"
-          icon="pi pi-arrow-left"
-          onClick={handleCancel}
-        />
-      )}
-    </div>
-  );
-};
-
+        {isList ? (
+          <div className="flex gap-2">
+            <Button
+              label="Refresh"
+              icon="pi pi-refresh"
+              size="small"
+              severity="secondary"
+              onClick={handleRefresh}
+            />
+            <Button
+              label="New Bank Transaction"
+              icon="pi pi-plus"
+              size="small"
+              onClick={handleAddNew}
+            />
+          </div>
+        ) : (
+          <Button
+            label="Bank Transaction List"
+            icon="pi pi-arrow-left"
+            size="small"
+            onClick={handleCancel}
+          />
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -83,6 +97,7 @@ const BankTransactionPage = () => {
             onChange={handleChange}
             onSave={handleSaveBankTransaction}
             bankAccounts={bankAccounts}
+            transOptions={transOptions}
           />
         )}
       </Card>

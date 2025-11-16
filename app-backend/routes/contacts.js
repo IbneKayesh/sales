@@ -4,7 +4,7 @@ const router = express.Router();
 
 // Get all contacts
 router.get('/', (req, res) => {
-  db.all('SELECT * FROM contacts ORDER BY contact_id', [], (err, rows) => {
+  db.all('SELECT c.*,0 AS ismodified FROM contacts c ORDER BY c.contact_id', [], (err, rows) => {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Internal server error' });
@@ -41,8 +41,8 @@ router.post('/', (req, res) => {
   }
 
   const sql = `
-    INSERT INTO contacts (contact_id, contact_name, contact_address, contact_type)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO contacts (contact_id, contact_name, contact_address, contact_type, current_balance)
+    VALUES (?, ?, ?, ?, 0)
   `;
   const params = [contact_id, contact_name, contact_address || '', contact_type || ''];
 
@@ -93,7 +93,7 @@ router.post('/delete', (req, res) => {
     return res.status(400).json({ error: 'Contact ID is required' });
   }
 
-  db.run('DELETE FROM contacts WHERE contact_id = ?', [id], function(err) {
+  db.run('DELETE FROM contacts WHERE contact_id = ? AND current_balance = 0', [id], function(err) {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Internal server error' });

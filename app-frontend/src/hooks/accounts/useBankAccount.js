@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { bankAccountsAPI } from "@/utils/api";
+import { bankAccountsAPI } from "@/api/bankAccountsAPI";
 import { generateGuid } from "@/utils/guid";
 
 import validate from "@/models/validator";
@@ -16,26 +16,37 @@ export const useBankAccount = () => {
     bank_id: "",
     account_name: "",
     account_number: "",
-    opening_date: "",
+    opening_date: new Date().toISOString().split("T")[0],
     debit_balance: 0,
     credit_balance: 0,
+    current_balance: 0,
   });
+
+  const loadBankAccounts = async (resetModified = false) => {
+    try {
+      const data = await bankAccountsAPI.getAll();
+      setBankAccounts(data);
+      if (resetModified) {
+        setToastBox({
+          severity: "info",
+          summary: "Refreshed",
+          detail: "Data refreshed from database.",
+        });
+      }
+    } catch (error) {
+      console.error("Error loading bank accounts:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: resetModified
+          ? "Failed to refresh data from server"
+          : "Failed to load bank accounts from server",
+      });
+    }
+  };
 
   // Load bankAccounts from API on mount
   useEffect(() => {
-    const loadBankAccounts = async () => {
-      try {
-        const data = await bankAccountsAPI.getAll();
-        setBankAccounts(data);
-      } catch (error) {
-        console.error('Error loading bank accounts:', error);
-        setToastBox({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to load bank accounts from server",
-        });
-      }
-    };
     loadBankAccounts();
   }, []);
 
@@ -54,9 +65,10 @@ export const useBankAccount = () => {
       bank_id: "",
       account_name: "",
       account_number: "",
-      opening_date: "",
+      opening_date: new Date().toISOString().split("T")[0],
       debit_balance: 0,
       credit_balance: 0,
+      current_balance: 0,
     });
     setErrors({});
   };
@@ -79,17 +91,18 @@ export const useBankAccount = () => {
   const handleDeleteBankAccount = async (id) => {
     try {
       await bankAccountsAPI.delete(id);
-      const updatedBankAccounts = bankAccounts.filter((b) => b.bank_account_id !== id);
+      const updatedBankAccounts = bankAccounts.filter(
+        (b) => b.bank_account_id !== id
+      );
       setBankAccounts(updatedBankAccounts);
 
-      const toastBox = {
+      setToastBox({
         severity: "info",
         summary: "Deleted",
         detail: `Deleted successfully.`,
-      };
-      setToastBox(toastBox);
+      });
     } catch (error) {
-      console.error('Error deleting bank account:', error);
+      console.error("Error deleting bank account:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
@@ -98,56 +111,68 @@ export const useBankAccount = () => {
     }
   };
 
+  const handleRefresh = () => {
+    loadBankAccounts(true);
+  };
+
   const handleSaveBankAccount = async (e) => {
     e.preventDefault();
     setIsBusy(true);
 
-    const newErrors = validate(formDataBankAccount, t_bank_account.t_bank_account);
+    const newErrors = validate(
+      formDataBankAccount,
+      t_bank_account.t_bank_account
+    );
     setErrors(newErrors);
-
     console.log("handleSaveBankAccount: " + JSON.stringify(newErrors));
 
-    if (Object.keys(newErrors).length === 0) {
-      try {
-        let updatedBankAccounts;
-        if (formDataBankAccount.bank_account_id) {
-          // Edit existing
-          const updatedAccount = await bankAccountsAPI.update(formDataBankAccount.bank_account_id, formDataBankAccount);
-          updatedBankAccounts = bankAccounts.map((b) =>
-            b.bank_account_id === formDataBankAccount.bank_account_id ? updatedAccount : b
-          );
+    try {
+      let updatedBankAccounts;
+      if (formDataBankAccount.bank_account_id) {
+        // Edit existing
+        const updatedAccount = await bankAccountsAPI.update(
+          formDataBankAccount.bank_account_id,
+          formDataBankAccount
+        );
+        updatedAccount.ismodified = true;
+        updatedBankAccounts = bankAccounts.map((b) =>
+          b.bank_account_id === formDataBankAccount.bank_account_id
+            ? updatedAccount
+            : b
+        );
 
-          const toastBox = {
-            severity: "success",
-            summary: "Success",
-            detail: `"${formDataBankAccount.account_name}" updated successfully.`,
-          };
-          setToastBox(toastBox);
-        } else {
-          // Add new
-          const newAccountData = { ...formDataBankAccount, bank_account_id: generateGuid() };
-          const newAccount = await bankAccountsAPI.create(newAccountData);
-          updatedBankAccounts = [...bankAccounts, newAccount];
-
-          const toastBox = {
-            severity: "success",
-            summary: "Success",
-            detail: `"${formDataBankAccount.account_name}" added successfully.`,
-          };
-          setToastBox(toastBox);
-        }
-        setBankAccounts(updatedBankAccounts);
-
-        handleClear();
-        setCurrentView("list");
-      } catch (error) {
-        console.error('Error saving bank account:', error);
         setToastBox({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to save bank account",
+          severity: "success",
+          summary: "Success",
+          detail: `"${formDataBankAccount.account_name}" updated successfully.`,
+        });
+      } else {
+        // Add new
+        const newAccountData = {
+          ...formDataBankAccount,
+          bank_account_id: generateGuid(),
+        };
+        const newAccount = await bankAccountsAPI.create(newAccountData);
+        newAccount.ismodified = true;
+        updatedBankAccounts = [...bankAccounts, newAccount];
+
+        setToastBox({
+          severity: "success",
+          summary: "Success",
+          detail: `"${formDataBankAccount.account_name}" added successfully.`,
         });
       }
+      setBankAccounts(updatedBankAccounts);
+
+      handleClear();
+      setCurrentView("list");
+    } catch (error) {
+      console.error("Error saving bank account:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to save bank account",
+      });
     }
 
     setIsBusy(false);
@@ -165,6 +190,7 @@ export const useBankAccount = () => {
     handleAddNew,
     handleEditBankAccount,
     handleDeleteBankAccount,
+    handleRefresh,
     handleSaveBankAccount,
   };
 };

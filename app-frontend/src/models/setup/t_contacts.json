@@ -22,11 +22,16 @@
       "maxLength": 255
     },
     "contact_type": {
-      "name": "Contact Type (Customer/Supplier)",
+      "name": "Type",
       "type": "string",
       "required": true,
       "minLength": 1,
       "maxLength": 255
+    },
+    "current_balance": {
+      "name": "Current Balance",
+      "type": "number",
+      "required": false
     }
   }
 }

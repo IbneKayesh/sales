@@ -150,6 +150,24 @@ const PrequestChildFormComponent = ({ isBusy, errors, formData, onChange, onSave
             <small className="mb-3 text-red-500">{errors.item_note}</small>
           )}
         </div>
+        <div className="col-12 md:col-6">
+          <label
+            htmlFor="order_qty"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_po_child.t_po_child.order_qty.name}
+          </label>
+          <InputNumber
+            name="order_qty"
+            value={formData.order_qty}
+            onValueChange={(e) => onChange("order_qty", e.value)}
+            className={`w-full ${errors.order_qty ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_po_child.t_po_child.order_qty.name}`}
+          />
+          {errors.order_qty && (
+            <small className="mb-3 text-red-500">{errors.order_qty}</small>
+          )}
+        </div>
         <div className="col-12">
           <div className="flex flex-row-reverse flex-wrap">
             <Button
@@ -158,6 +176,7 @@ const PrequestChildFormComponent = ({ isBusy, errors, formData, onChange, onSave
               label={formData.id ? "Update" : "Save"}
               icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
               severity="success"
+              size="small"
               loading={isBusy}
             />
           </div>

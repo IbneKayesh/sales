@@ -4,7 +4,7 @@ const router = express.Router();
 
 // Get all categories
 router.get('/', (req, res) => {
-  db.all('SELECT * FROM categories ORDER BY category_id', [], (err, rows) => {
+  db.all('SELECT c.*,0 AS ismodified FROM categories c ORDER BY c.category_id', [], (err, rows) => {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Internal server error' });
@@ -30,7 +30,7 @@ router.get('/:id', (req, res) => {
 
 // Create new category
 router.post('/', (req, res) => {
-  const { category_id, category_name, category_description } = req.body;
+  const { category_id, category_name } = req.body;
 
   if (!category_name) {
     return res.status(400).json({ error: 'Category name is required' });
@@ -41,10 +41,10 @@ router.post('/', (req, res) => {
   }
 
   const sql = `
-    INSERT INTO categories (category_id, category_name, category_description)
-    VALUES (?, ?, ?)
+    INSERT INTO categories (category_id, category_name)
+    VALUES (?, ?)
   `;
-  const params = [category_id, category_name, category_description];
+  const params = [category_id, category_name];
 
   db.run(sql, params, function(err) {
     if (err) {
@@ -57,7 +57,7 @@ router.post('/', (req, res) => {
 
 // Update category
 router.post('/update', (req, res) => {
-  const { id, category_name, category_description } = req.body;
+  const { id, category_name } = req.body;
 
   if (!id || !category_name) {
     return res.status(400).json({ error: 'Category ID and name are required' });
@@ -66,11 +66,10 @@ router.post('/update', (req, res) => {
   const sql = `
     UPDATE categories SET
       category_name = ?,
-      category_description = ?,
       updated_at = CURRENT_TIMESTAMP
     WHERE category_id = ?
   `;
-  const params = [category_name, category_description, id];
+  const params = [category_name, id];
 
   db.run(sql, params, function(err) {
     if (err) {
@@ -80,7 +79,7 @@ router.post('/update', (req, res) => {
     if (this.changes === 0) {
       return res.status(404).json({ error: 'Category not found' });
     }
-    res.json({ category_id: id, category_name, category_description });
+    res.json({ category_id: id, category_name });
   });
 });
 

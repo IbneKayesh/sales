@@ -5,7 +5,7 @@ const router = express.Router();
 // Get all purchase order children
 router.get('/', (req, res) => {
   const sql = `
-    SELECT poc.*, i.item_name, u1.unit_name as small_unit_name, u2.unit_name as big_unit_name
+    SELECT poc.*, i.item_name, u1.unit_name as small_unit_name, u2.unit_name as big_unit_name, 0 AS ismodified
     FROM po_child poc
     LEFT JOIN items i ON poc.item_id = i.item_id
     LEFT JOIN units u1 ON i.small_unit_id = u1.unit_id
@@ -67,34 +67,33 @@ router.get('/:id', (req, res) => {
 
 // Create new purchase order child
 router.post('/', (req, res) => {
-  const { po_master_id, item_id, item_rate, item_qty, discount_amount, item_amount, item_note } = req.body;
+  const { id, po_master_id, item_id, item_rate, item_qty, discount_amount, item_amount, item_note, order_qty } = req.body;
 
-  if (!po_master_id || !item_id || !item_rate || !item_qty || !item_amount) {
-    return res.status(400).json({ error: 'Master ID, item ID, rate, quantity, and amount are required' });
+  if (!id || !po_master_id || !item_id || !item_rate || !item_qty || !item_amount || !order_qty) {
+    return res.status(400).json({ error: 'ID, master ID, item ID, rate, quantity, amount, and order qty are required' });
   }
 
   const sql = `
-    INSERT INTO po_child (po_master_id, item_id, item_rate, item_qty, discount_amount, item_amount, item_note)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO po_child (id, po_master_id, item_id, item_rate, item_qty, discount_amount, item_amount, item_note, order_qty)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
-  const params = [po_master_id, item_id, item_rate, item_qty, discount_amount || 0, item_amount, item_note || ''];
+  const params = [id, po_master_id, item_id, item_rate, item_qty, discount_amount || 0, item_amount, item_note || '', order_qty];
 
   db.run(sql, params, function(err) {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
-    res.status(201).json({ id: this.lastID, ...req.body });
+    res.status(201).json({ id, ...req.body });
   });
 });
 
 // Update purchase order child
-router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const { po_master_id, item_id, item_rate, item_qty, discount_amount, item_amount, item_note } = req.body;
+router.post('/update', (req, res) => {
+  const { id, po_master_id, item_id, item_rate, item_qty, discount_amount, item_amount, item_note, order_qty } = req.body;
 
-  if (!po_master_id || !item_id || !item_rate || !item_qty || !item_amount) {
-    return res.status(400).json({ error: 'Master ID, item ID, rate, quantity, and amount are required' });
+  if (!id || !po_master_id || !item_id || !item_rate || !item_qty || !item_amount || !order_qty) {
+    return res.status(400).json({ error: 'ID, master ID, item ID, rate, quantity, amount, and order qty are required' });
   }
 
   const sql = `
@@ -106,10 +105,11 @@ router.put('/:id', (req, res) => {
       discount_amount = ?,
       item_amount = ?,
       item_note = ?,
+      order_qty = ?,
       updated_at = CURRENT_TIMESTAMP
     WHERE id = ?
   `;
-  const params = [po_master_id, item_id, item_rate, item_qty, discount_amount || 0, item_amount, item_note || '', id];
+  const params = [po_master_id, item_id, item_rate, item_qty, discount_amount || 0, item_amount, item_note || '', order_qty, id];
 
   db.run(sql, params, function(err) {
     if (err) {
@@ -119,13 +119,17 @@ router.put('/:id', (req, res) => {
     if (this.changes === 0) {
       return res.status(404).json({ error: 'Purchase order item not found' });
     }
-    res.json({ id: id, ...req.body });
+    res.json({ id, ...req.body });
   });
 });
 
 // Delete purchase order child
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
+router.post('/delete', (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: 'ID is required' });
+  }
 
   db.run('DELETE FROM po_child WHERE id = ?', [id], function(err) {
     if (err) {

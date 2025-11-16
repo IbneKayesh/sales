@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useItems } from "@/hooks/inventory/useItems";
-import { useUnits } from "@/hooks/inventory/useUnits";
-import { useCategory } from "@/hooks/inventory/useCategory";
 import ItemsListComponent from "./ItemsListComponent";
 import ItemsFormComponent from "./ItemsFormComponent";
 import { Card } from "primereact/card";
@@ -22,13 +20,12 @@ const ItemsPage = () => {
     handleAddNew,
     handleEditItem,
     handleDeleteItem,
+    handleRefresh,
     handleSaveItem,
   } = useItems();
-  const { units } = useUnits();
-  const { categories } = useCategory();
 
   useEffect(() => {
-    if (toastBox) {
+    if (toastBox && toast.current) {
       toast.current.show({
         severity: toastBox.severity,
         summary: toastBox.summary,
@@ -38,34 +35,47 @@ const ItemsPage = () => {
     }
   }, [toastBox]);
 
- const getHeader = () => {
-  const isList = currentView === "list";
+  const getHeader = () => {
+    const isList = currentView === "list";
 
-  return (
-    <div className="flex align-items-center justify-content-between">
-      <h2 className="m-0">
-        {isList ? "Items List" : formDataItem.item_id ? "Edit Item" : "Add New Item"}
-      </h2>
+    return (
+      <div className="flex align-items-center justify-content-between">
+        <h3 className="m-0">
+          {isList
+            ? "Items List"
+            : formDataItem.item_id
+            ? "Edit Item"
+            : "Add New Item"}
+        </h3>
 
-      {isList ? (
-        <Button
-          label="New Item"
-          icon="pi pi-plus"
-          className="p-button-primary"
-          onClick={handleAddNew}
-        />
-      ) : (
-        <Button
-          type="button"
-          label="Items List"
-          icon="pi pi-arrow-left"
-          onClick={handleCancel}
-        />
-      )}
-    </div>
-  );
-};
-
+        {isList ? (
+          <div className="flex gap-2">
+            {" "}
+            <Button
+              label="Refresh"
+              icon="pi pi-refresh"
+              size="small"
+              severity="secondary"
+              onClick={handleRefresh}
+            />
+            <Button
+              label="New Item"
+              icon="pi pi-plus"
+              size="small"
+              onClick={handleAddNew}
+            />
+          </div>
+        ) : (
+          <Button
+            label="Items List"
+            icon="pi pi-arrow-left"
+            size="small"
+            onClick={handleCancel}
+          />
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -84,8 +94,6 @@ const ItemsPage = () => {
             formData={formDataItem}
             onChange={handleChange}
             onSave={handleSaveItem}
-            units={units}
-            categories={categories}
           />
         )}
       </Card>

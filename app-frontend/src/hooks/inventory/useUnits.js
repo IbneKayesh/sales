@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { unitsAPI } from "@/utils/api";
+import { unitsAPI } from "@/api/unitsAPI";
 import { generateGuid } from "@/utils/guid";
 
 import validate from "@/models/validator";
@@ -16,21 +16,31 @@ export const useUnits = () => {
     unit_name: "",
   });
 
-  // Load units from API on mount
-  useEffect(() => {
-    const loadUnits = async () => {
-      try {
-        const data = await unitsAPI.getAll();
-        setUnits(data);
-      } catch (error) {
-        console.error("Error loading units:", error);
+  const loadUnits = async (resetModified = false) => {
+    try {
+      const data = await unitsAPI.getAll();
+      setUnits(data);
+      if (resetModified) {
         setToastBox({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to load units from server",
+          severity: "info",
+          summary: "Refreshed",
+          detail: "Data refreshed from database.",
         });
       }
-    };
+    } catch (error) {
+      console.error("Error loading units:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: resetModified
+          ? "Failed to refresh data from server"
+          : "Failed to load units from server",
+      });
+    }
+  };
+
+  // Load units from API on mount
+  useEffect(() => {
     loadUnits();
   }, []);
 
@@ -74,12 +84,11 @@ export const useUnits = () => {
       const updatedUnits = units.filter((u) => u.unit_id !== id);
       setUnits(updatedUnits);
 
-      const toastBox = {
+      setToastBox({
         severity: "info",
         summary: "Deleted",
         detail: `Deleted successfully.`,
-      };
-      setToastBox(toastBox);
+      });
     } catch (error) {
       console.error("Error deleting unit:", error);
       setToastBox({
@@ -90,62 +99,67 @@ export const useUnits = () => {
     }
   };
 
+  const handleRefresh = () => {
+    loadUnits(true);
+  };
+
   const handleSaveUnit = async (e) => {
     e.preventDefault();
     setIsBusy(true);
 
     const newErrors = validate(formDataUnit, t_units.t_units);
     setErrors(newErrors);
-
     console.log("handleSaveUnit: " + JSON.stringify(formDataUnit));
 
-    if (Object.keys(newErrors).length === 0) {
-      try {
-        let updatedUnits;
-        if (formDataUnit.unit_id) {
-          // Edit existing
-          const updatedUnit = await unitsAPI.update(
-            formDataUnit.unit_id,
-            formDataUnit
-          );
-          updatedUnits = units.map((u) =>
-            u.unit_id === formDataUnit.unit_id ? updatedUnit : u
-          );
+    if (Object.keys(newErrors).length > 0) {
+      setIsBusy(false);
+      return;
+    }
 
-          const toastBox = {
-            severity: "success",
-            summary: "Success",
-            detail: `"${formDataUnit.unit_name}" updated successfully.`,
-          };
-          setToastBox(toastBox);
-        } else {
-          // Add new
-          const newUnitData = { ...formDataUnit, unit_id: generateGuid() };
+    try {
+      let updatedUnits;
+      if (formDataUnit.unit_id) {
+        // Edit existing
+        const updatedUnit = await unitsAPI.update(
+          formDataUnit.unit_id,
+          formDataUnit
+        );
+        updatedUnit.ismodified = true;
+        updatedUnits = units.map((u) =>
+          u.unit_id === formDataUnit.unit_id ? updatedUnit : u
+        );
 
-          console.log("newUnitData: " + JSON.stringify(newUnitData));
-
-          const newUnit = await unitsAPI.create(newUnitData);
-          updatedUnits = [...units, newUnit];
-
-          const toastBox = {
-            severity: "success",
-            summary: "Success",
-            detail: `"${formDataUnit.unit_name}" added successfully.`,
-          };
-          setToastBox(toastBox);
-        }
-        setUnits(updatedUnits);
-
-        handleClear();
-        setCurrentView("list");
-      } catch (error) {
-        console.error("Error saving unit:", error);
         setToastBox({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to save unit",
+          severity: "success",
+          summary: "Success",
+          detail: `"${formDataUnit.unit_name}" updated successfully.`,
+        });
+      } else {
+        // Add new
+        const newUnitData = { ...formDataUnit, unit_id: generateGuid() };
+        //console.log("newUnitData: " + JSON.stringify(newUnitData));
+
+        const newUnit = await unitsAPI.create(newUnitData);
+        newUnit.ismodified = true;
+        updatedUnits = [...units, newUnit];
+
+        setToastBox({
+          severity: "success",
+          summary: "Success",
+          detail: `"${formDataUnit.unit_name}" added successfully.`,
         });
       }
+      setUnits(updatedUnits);
+
+      handleClear();
+      setCurrentView("list");
+    } catch (error) {
+      console.error("Error saving unit:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to save unit",
+      });
     }
 
     setIsBusy(false);
@@ -163,6 +177,7 @@ export const useUnits = () => {
     handleAddNew,
     handleEditUnit,
     handleDeleteUnit,
+    handleRefresh,
     handleSaveUnit,
   };
 };

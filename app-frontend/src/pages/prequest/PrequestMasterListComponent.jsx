@@ -1,16 +1,18 @@
-import React, { useState, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
-import { Toast } from "primereact/toast";
-import { Card } from "primereact/card";
+import { SplitButton } from "primereact/splitbutton";
 
-const PrequestMasterListComponent = ({ dataList, onEdit, onDelete, onSelect }) => {
-
+const PrequestMasterListComponent = ({
+  dataList,
+  onEdit,
+  onDelete,
+  onSelect,
+}) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete purchase order "${rowData.po_master_id}"?`,
+      message: `Are you sure you want to delete ${rowData.order_type} "${rowData.order_no}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -23,31 +25,34 @@ const PrequestMasterListComponent = ({ dataList, onEdit, onDelete, onSelect }) =
   };
 
   const actionTemplate = (rowData) => {
+    let menuItems = [
+      {
+        label: "Edit",
+        icon: "pi pi-pencil",
+        command: () => {
+          onEdit(rowData);
+        },
+        disabled: rowData.ismodified,
+      },
+      {
+        label: "Delete",
+        icon: "pi pi-trash text-red-400",
+        command: () => {
+          handleDelete(rowData);
+        },
+        disabled: rowData.ismodified,
+      },
+    ];
     return (
-      <div className="d-flex flex-nowrap gap-2">
-        <Button
+      <div className="flex flex-wrap gap-2">
+        <SplitButton
           icon="pi pi-eye"
-          onClick={() => onSelect(rowData.po_master_id)}
-          tooltip="View Items"
-          tooltipOptions={{ position: "top" }}
           size="small"
-          severity="info"
-        />
-        <Button
-          icon="pi pi-pencil"
-          onClick={() => onEdit(rowData)}
           tooltip="Edit"
           tooltipOptions={{ position: "top" }}
-          size="small"
-          severity="primary"
-        />
-        <Button
-          icon="pi pi-trash"
-          onClick={() => handleDelete(rowData)}
-          tooltip="Delete"
-          tooltipOptions={{ position: "top" }}
-          size="small"
-          severity="danger"
+          onClick={() => onSelect(rowData.po_master_id)}
+          model={menuItems}
+          disabled={rowData.ismodified}
         />
       </div>
     );
@@ -56,14 +61,14 @@ const PrequestMasterListComponent = ({ dataList, onEdit, onDelete, onSelect }) =
   const totalAmountTemplate = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "BDT",
     }).format(rowData.total_amount);
   };
 
   const paidAmountTemplate = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "BDT",
     }).format(rowData.paid_amount);
   };
 
@@ -84,10 +89,12 @@ const PrequestMasterListComponent = ({ dataList, onEdit, onDelete, onSelect }) =
         className="bg-dark-300"
         size="small"
       >
-        <Column field="po_master_id" header="PO ID" sortable />
-        <Column field="transaction_date" header="Date" sortable />
+        <Column field="order_type" header="Order Type" sortable />
+        <Column field="order_no" header="Order No" sortable />
+        <Column field="order_date" header="Date" sortable />
         <Column field="contact_name" header="Contact" sortable />
-        <Column field="transaction_note" header="Note" />
+        <Column field="ref_no" header="Ref. Order" sortable />
+        <Column field="order_note" header="Note" />
         <Column
           field="total_amount"
           header="Total Amount"

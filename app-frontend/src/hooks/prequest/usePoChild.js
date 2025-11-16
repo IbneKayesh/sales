@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { poChildAPI } from "@/utils/api";
+import { poChildAPI } from "@/api/poChildAPI";
 
 import validate from "@/models/validator";
 import t_po_child from "@/models/prequest/t_po_child.json";
@@ -19,6 +19,7 @@ export const usePoChild = () => {
     discount_amount: 0,
     item_amount: 0,
     item_note: "",
+    order_qty: 0,
   });
 
   // Load poChildren from API on mount
@@ -58,6 +59,7 @@ export const usePoChild = () => {
       discount_amount: 0,
       item_amount: 0,
       item_note: "",
+      order_qty: 0,
     });
     setErrors({});
   };

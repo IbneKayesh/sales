@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
-import { Card } from "primereact/card";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import t_bank_account from "@/models/accounts/t_bank_account.json";
@@ -11,7 +9,7 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave, 
   return (
     <div className="p-1">
       <div className="grid">
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="bank_id"
             className="block text-900 font-medium mb-2"
@@ -32,7 +30,7 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave, 
             <small className="mb-3 text-red-500">{errors.bank_id}</small>
           )}
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="account_name"
             className="block text-900 font-medium mb-2"
@@ -50,7 +48,7 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave, 
             <small className="mb-3 text-red-500">{errors.account_name}</small>
           )}
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="account_number"
             className="block text-900 font-medium mb-2"
@@ -68,7 +66,7 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave, 
             <small className="mb-3 text-red-500">{errors.account_number}</small>
           )}
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="opening_date"
             className="block text-900 font-medium mb-2"
@@ -88,7 +86,7 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave, 
           )}
         </div>
 
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="debit_balance"
             className="block text-900 font-medium mb-2"
@@ -100,7 +98,7 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave, 
             value={formData.debit_balance}
             onValueChange={(e) => onChange("debit_balance", e.value)}
             mode="currency"
-            currency="USD"
+            currency="BDT"
             locale="en-US"
             className={`w-full ${errors.debit_balance ? "p-invalid" : ""}`}
             disabled
@@ -109,8 +107,7 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave, 
             <small className="mb-3 text-red-500">{errors.debit_balance}</small>
           )}
         </div>
-
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="credit_balance"
             className="block text-900 font-medium mb-2"
@@ -122,13 +119,34 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave, 
             value={formData.credit_balance}
             onValueChange={(e) => onChange("credit_balance", e.value)}
             mode="currency"
-            currency="USD"
+            currency="BDT"
             locale="en-US"
             className={`w-full ${errors.credit_balance ? "p-invalid" : ""}`}
             disabled
           />
           {errors.credit_balance && (
             <small className="mb-3 text-red-500">{errors.credit_balance}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-4">
+          <label
+            htmlFor="current_balance"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_bank_account.t_bank_account.current_balance.name}
+          </label>
+          <InputNumber
+            name="current_balance"
+            value={formData.current_balance}
+            onValueChange={(e) => onChange("current_balance", e.value)}
+            mode="currency"
+            currency="BDT"
+            locale="en-US"
+            className={`w-full ${errors.current_balance ? "p-invalid" : ""}`}
+            disabled
+          />
+          {errors.current_balance && (
+            <small className="mb-3 text-red-500">{errors.current_balance}</small>
           )}
         </div>
         <div className="col-12">
@@ -139,6 +157,7 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave, 
               label={formData.bank_account_id ? "Update" : "Save"}
               icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
               severity="success"
+              size="small"
               loading={isBusy}
             />
           </div>

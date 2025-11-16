@@ -29,12 +29,17 @@
       "maxLength": 50
     },
     "debit_balance": {
-      "name": "Debit Balance",
+      "name": "Debit",
       "type": "number",
       "required": false
     },
     "credit_balance": {
-      "name": "Credit Balance",
+      "name": "Credit",
+      "type": "number",
+      "required": false
+    },
+    "current_balance": {
+      "name": "Balance",
       "type": "number",
       "required": false
     }

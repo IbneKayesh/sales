@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { usePoMaster } from "@/hooks/prequest/usePoMaster";
 import { usePoChild } from "@/hooks/prequest/usePoChild";
-import { useContacts } from "@/hooks/setup/useContacts";
 import { useItems } from "@/hooks/inventory/useItems";
 import PrequestMasterListComponent from "./PrequestMasterListComponent";
 import PrequestMasterFormComponent from "./PrequestMasterFormComponent";
@@ -26,7 +25,10 @@ const PrequestPage = () => {
     handleAddNew: handleMasterAddNew,
     handleEditPoMaster,
     handleDeletePoMaster,
+    handleRefresh,
     handleSavePoMaster,
+    poTypeOptions,
+    refNoOptions,
   } = usePoMaster();
 
   const {
@@ -44,14 +46,13 @@ const PrequestPage = () => {
     handleSavePoChild,
   } = usePoChild();
 
-  const { contacts } = useContacts();
   const { items } = useItems();
 
   const [activeTab, setActiveTab] = useState(0);
   const [selectedMasterId, setSelectedMasterId] = useState(null);
 
   useEffect(() => {
-    if (masterToastBox) {
+    if (masterToastBox && toast.current) {
       toast.current.show({
         severity: masterToastBox.severity,
         summary: masterToastBox.summary,
@@ -62,7 +63,7 @@ const PrequestPage = () => {
   }, [masterToastBox]);
 
   useEffect(() => {
-    if (childToastBox) {
+    if (childToastBox && toast.current) {
       toast.current.show({
         severity: childToastBox.severity,
         summary: childToastBox.summary,
@@ -77,22 +78,35 @@ const PrequestPage = () => {
 
     return (
       <div className="flex align-items-center justify-content-between">
-        <h2 className="m-0">
-          {isList ? "Purchase Order Masters" : formDataPoMaster.po_master_id ? "Edit Purchase Order" : "Add New Purchase Order"}
-        </h2>
+        <h3 className="m-0">
+          {isList
+            ? "Purchase Order"
+            : formDataPoMaster.po_master_id
+            ? "Edit Purchase Order"
+            : "Add New Purchase Order"}
+        </h3>
 
         {isList ? (
-          <Button
-            label="New Purchase Order"
-            icon="pi pi-plus"
-            className="p-button-primary"
-            onClick={handleMasterAddNew}
-          />
+          <div className="flex gap-2">
+            <Button
+              label="Refresh"
+              icon="pi pi-refresh"
+              size="small"
+              severity="secondary"
+              onClick={handleRefresh}
+            />
+            <Button
+              label="New Purchase Order"
+              icon="pi pi-plus"
+              size="small"
+              onClick={handleMasterAddNew}
+            />
+          </div>
         ) : (
           <Button
-            type="button"
             label="Purchase Orders"
             icon="pi pi-arrow-left"
+            size="small"
             onClick={handleMasterCancel}
           />
         )}
@@ -106,21 +120,25 @@ const PrequestPage = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <h2 className="m-0">
-          {isList ? "Purchase Order Items" : formDataPoChild.id ? "Edit Item" : "Add New Item"}
+          {isList
+            ? "Purchase Order Items"
+            : formDataPoChild.id
+            ? "Edit Item"
+            : "Add New Item"}
         </h2>
 
         {isList ? (
           <Button
             label="New Item"
             icon="pi pi-plus"
-            className="p-button-primary"
+            size="small"
             onClick={handleChildAddNew}
           />
         ) : (
           <Button
-            type="button"
             label="Items"
             icon="pi pi-arrow-left"
+            size="small"
             onClick={handleChildCancel}
           />
         )}
@@ -136,9 +154,15 @@ const PrequestPage = () => {
   return (
     <>
       <Toast ref={toast} />
-      <TabView activeIndex={activeTab} onTabChange={(e) => setActiveTab(e.index)}>
+      <TabView
+        activeIndex={activeTab}
+        onTabChange={(e) => setActiveTab(e.index)}
+      >
         <TabPanel header="Purchase Orders">
-          <Card header={getMasterHeader()} className="bg-dark-200 border-round p-3">
+          <Card
+            header={getMasterHeader()}
+            className="bg-dark-200 border-round p-3"
+          >
             {masterCurrentView === "list" ? (
               <PrequestMasterListComponent
                 dataList={poMasters}
@@ -153,16 +177,23 @@ const PrequestPage = () => {
                 formData={formDataPoMaster}
                 onChange={handleMasterChange}
                 onSave={handleSavePoMaster}
-                contacts={contacts}
+                poTypeOptions={poTypeOptions}
+                refNoOptions={refNoOptions}
               />
             )}
           </Card>
         </TabPanel>
         <TabPanel header="Order Items">
-          <Card header={getChildHeader()} className="bg-dark-200 border-round p-3">
+          <Card
+            header={getChildHeader()}
+            className="bg-dark-200 border-round p-3"
+          >
             {childCurrentView === "list" ? (
               <PrequestChildListComponent
-                dataList={poChildren.filter(child => !selectedMasterId || child.po_master_id === selectedMasterId)}
+                dataList={poChildren.filter(
+                  (child) =>
+                    !selectedMasterId || child.po_master_id === selectedMasterId
+                )}
                 onEdit={handleEditPoChild}
                 onDelete={handleDeletePoChild}
                 selectedMasterId={selectedMasterId}

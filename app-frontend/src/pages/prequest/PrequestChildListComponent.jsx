@@ -105,6 +105,7 @@ const PrequestChildListComponent = ({ dataList, onEdit, onDelete, selectedMaster
           sortable
         />
         <Column field="item_note" header="Note" />
+        <Column field="order_qty" header="Order Qty" sortable />
         <Column
           header="Actions"
           body={actionTemplate}

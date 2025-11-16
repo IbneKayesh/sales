@@ -20,11 +20,13 @@ const ContactsPage = () => {
     handleAddNew,
     handleEditContact,
     handleDeleteContact,
+    handleRefresh,
     handleSaveContact,
+    contactTypeOptions,
   } = useContacts();
 
   useEffect(() => {
-    if (toastBox) {
+    if (toastBox && toast.current) {
       toast.current.show({
         severity: toastBox.severity,
         summary: toastBox.summary,
@@ -34,34 +36,46 @@ const ContactsPage = () => {
     }
   }, [toastBox]);
 
- const getHeader = () => {
-  const isList = currentView === "list";
+  const getHeader = () => {
+    const isList = currentView === "list";
 
-  return (
-    <div className="flex align-items-center justify-content-between">
-      <h2 className="m-0">
-        {isList ? "Contacts List" : formDataContact.contact_id ? "Edit Contact" : "Add New Contact"}
-      </h2>
+    return (
+      <div className="flex align-items-center justify-content-between">
+        <h3 className="m-0">
+          {isList
+            ? "Contacts"
+            : formDataContact.contact_id
+            ? "Edit Contact"
+            : "Add New Contact"}
+        </h3>
 
-      {isList ? (
-        <Button
-          label="New Contact"
-          icon="pi pi-plus"
-          className="p-button-primary"
-          onClick={handleAddNew}
-        />
-      ) : (
-        <Button
-          type="button"
-          label="Contacts List"
-          icon="pi pi-arrow-left"
-          onClick={handleCancel}
-        />
-      )}
-    </div>
-  );
-};
-
+        {isList ? (
+          <div className="flex gap-2">
+            <Button
+              label="Refresh"
+              icon="pi pi-refresh"
+              size="small"
+              severity="secondary"
+              onClick={handleRefresh}
+            />
+            <Button
+              label="New Contact"
+              icon="pi pi-plus"
+              size="small"
+              onClick={handleAddNew}
+            />
+          </div>
+        ) : (
+          <Button
+            label="Contacts List"
+            icon="pi pi-arrow-left"
+            size="small"
+            onClick={handleCancel}
+          />
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -80,6 +94,7 @@ const ContactsPage = () => {
             formData={formDataContact}
             onChange={handleChange}
             onSave={handleSaveContact}
+            contactTypeOptions={contactTypeOptions}
           />
         )}
       </Card>

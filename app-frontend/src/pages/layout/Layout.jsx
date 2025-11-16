@@ -17,43 +17,44 @@ const Layout = () => {
   }, []);
   const menus = [
     {
-      name: "Purchase",
-      icon: "pi pi-shopping-cart",
-      submenus: [
-        { id: 1, name: "Purchase Request", url: "/home/prequest", icon: "pi pi-file" },
-      ],
-    },
-    {
       name: "Sales",
       icon: "pi pi-shopping-bag",
       submenus: [
-        { id: 2, name: "Sales Request", url: "/home/srequest", icon: "pi pi-file" },
+        { id: "sl1", name: "Sales Request", url: "/home/srequest", icon: "pi pi-file" },
+      ],
+    },    {
+      name: "Purchase",
+      icon: "pi pi-shopping-cart",
+      submenus: [
+        { id: "pr1", name: "Purchase Request", url: "/home/prequest", icon: "pi pi-file" },
       ],
     },
     {
       name: "Accounts",
       icon: "pi pi-money-bill",
       submenus: [
-        { id: 3, name: "Bank", url: "/home/accounts/bank", icon: "pi pi-building" },
-        { id: 4, name: "Bank Account", url: "/home/accounts/bank-account", icon: "pi pi-user" },
-        { id: 8, name: "Bank Transaction", url: "/home/accounts/bank-transaction", icon: "pi pi-money-bill" },
+        { id: "ac1", name: "Bank", url: "/home/accounts/bank", icon: "pi pi-building" },
+        { id: "ac2", name: "Bank Account", url: "/home/accounts/bank-account", icon: "pi pi-user" },
+        { id: "ac3", name: "Bank Transaction", url: "/home/accounts/bank-transaction", icon: "pi pi-money-bill" },
       ],
     },
     {
       name: "Inventory",
       icon: "pi pi-box",
       submenus: [
-        { id: 5, name: "Items", url: "/home/inventory/items", icon: "pi pi-box" },
-        { id: 6, name: "Units", url: "/home/inventory/units", icon: "pi pi-tags" },
-        { id: 9, name: "Category", url: "/home/inventory/category", icon: "pi pi-tags" },
+        { id: "in1", name: "Items", url: "/home/inventory/items", icon: "pi pi-box" },
+        { id: "in2", name: "Units", url: "/home/inventory/units", icon: "pi pi-tags" },
+        { id: "in3", name: "Category", url: "/home/inventory/category", icon: "pi pi-list-check" },
       ],
     },
     {
       name: "Setup",
       icon: "pi pi-cog",
       submenus: [
-        { id: 7, name: "Contacts", url: "/home/setup/contacts", icon: "pi pi-users" },
-        { id: 10, name: "Users", url: "/home/setup/users", icon: "pi pi-users" },
+        { id: "st1", name: "Closing", url: "/home/setup/closing-process", icon: "pi pi-sparkles" },
+        { id: "st2", name: "Contacts", url: "/home/setup/contacts", icon: "pi pi-address-book" },
+        { id: "st3", name: "Users", url: "/home/setup/users", icon: "pi pi-users" },
+        { id: "st4", name: "Change Password", url: "/home/setup/change-password", icon: "pi pi-unlock" },
       ],
     },
   ];

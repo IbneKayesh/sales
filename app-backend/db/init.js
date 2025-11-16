@@ -38,6 +38,7 @@ const initTables = () => {
         routing_number TEXT,
         debit_balance REAL DEFAULT 0,
         credit_balance REAL DEFAULT 0,
+        current_balance REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -53,6 +54,7 @@ const initTables = () => {
         opening_date TEXT,
         debit_balance REAL DEFAULT 0,
         credit_balance REAL DEFAULT 0,
+        current_balance REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (bank_id) REFERENCES banks (bank_id)
@@ -66,6 +68,7 @@ const initTables = () => {
         contact_name TEXT NOT NULL,
         contact_address TEXT,
         contact_type TEXT,
+        current_balance REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -76,7 +79,6 @@ const initTables = () => {
       CREATE TABLE IF NOT EXISTS categories (
         category_id TEXT PRIMARY KEY,
         category_name TEXT NOT NULL,
-        category_description TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -102,6 +104,7 @@ const initTables = () => {
         small_unit_id TEXT,
         unit_difference_qty INTEGER DEFAULT 1,
         big_unit_id TEXT,
+        order_qty REAL DEFAULT 0,
         stock_qty REAL DEFAULT 0,
         purchase_rate REAL DEFAULT 0,
         sales_rate REAL DEFAULT 0,
@@ -136,9 +139,12 @@ const initTables = () => {
     db.run(`
       CREATE TABLE IF NOT EXISTS po_master (
         po_master_id TEXT PRIMARY KEY,
-        po_date TEXT NOT NULL,
+        order_type TEXT NOT NULL,
+        order_no TEXT NOT NULL,
+        order_date TEXT NOT NULL,
         contacts_id TEXT NOT NULL,
-        po_note TEXT,
+        ref_no TEXT NOT NULL,
+        order_note TEXT,
         total_amount REAL DEFAULT 0,
         paid_amount REAL DEFAULT 0,
         is_paid BOOLEAN DEFAULT 0,
@@ -159,6 +165,7 @@ const initTables = () => {
         discount_amount REAL DEFAULT 0,
         item_amount REAL NOT NULL,
         item_note TEXT,
+        order_qty REAL NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (po_master_id) REFERENCES po_master (po_master_id),

@@ -1,25 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { Card } from "primereact/card";
 import { Dropdown } from "primereact/dropdown";
 import t_contacts from "@/models/setup/t_contacts.json";
 
-const ContactsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
-  const contactTypeOptions = [
-    { label: "Customer", value: "Customer" },
-    { label: "Supplier", value: "Supplier" },
-  ];
-
+const ContactsFormComponent = ({
+  isBusy,
+  errors,
+  formData,
+  onChange,
+  onSave,
+  contactTypeOptions,
+}) => {
   return (
     <div className="p-1">
       <div className="grid">
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="contact_name"
             className="block text-900 font-medium mb-2"
           >
-            {t_contacts.t_contacts.contact_name.name} <span className="text-red-500">*</span>
+            {t_contacts.t_contacts.contact_name.name}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <InputText
             name="contact_name"
@@ -32,7 +34,7 @@ const ContactsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =
             <small className="mb-3 text-red-500">{errors.contact_name}</small>
           )}
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-5">
           <label
             htmlFor="contact_address"
             className="block text-900 font-medium mb-2"
@@ -47,15 +49,18 @@ const ContactsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =
             placeholder={`Enter ${t_contacts.t_contacts.contact_address.name}`}
           />
           {errors.contact_address && (
-            <small className="mb-3 text-red-500">{errors.contact_address}</small>
+            <small className="mb-3 text-red-500">
+              {errors.contact_address}
+            </small>
           )}
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="contact_type"
             className="block text-900 font-medium mb-2"
           >
-            {t_contacts.t_contacts.contact_type.name} <span className="text-red-500">*</span>
+            {t_contacts.t_contacts.contact_type.name}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <Dropdown
             name="contact_type"
@@ -77,6 +82,7 @@ const ContactsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =
               label={formData.contact_id ? "Update" : "Save"}
               icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
               severity="success"
+              size="small"
               loading={isBusy}
             />
           </div>

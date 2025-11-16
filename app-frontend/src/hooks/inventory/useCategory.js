@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { categoriesAPI } from "@/utils/api";
+import { categoriesAPI } from "@/api/categoriesAPI";
 import { generateGuid } from "@/utils/guid";
 
 import validate from "@/models/validator";
@@ -14,24 +14,33 @@ export const useCategory = () => {
   const [errors, setErrors] = useState({});
   const [formDataCategory, setFormDataCategory] = useState({
     category_name: "",
-    category_description: "",
   });
+
+  const loadCategories = async (resetModified = false) => {
+    try {
+      const data = await categoriesAPI.getAll();
+      setCategories(data);
+      if (resetModified) {
+        setToastBox({
+          severity: "info",
+          summary: "Refreshed",
+          detail: "Data refreshed from database.",
+        });
+      }
+    } catch (error) {
+      console.error("Error loading categories:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: resetModified
+          ? "Failed to refresh data from server"
+          : "Failed to load categories from server",
+      });
+    }
+  };
 
   // Load categories from API on mount
   useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const data = await categoriesAPI.getAll();
-        setCategories(data);
-      } catch (error) {
-        console.error("Error loading categories:", error);
-        setToastBox({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to load categories from server",
-        });
-      }
-    };
     loadCategories();
   }, []);
 
@@ -48,7 +57,6 @@ export const useCategory = () => {
     setFormDataCategory({
       category_id: "",
       category_name: "",
-      category_description: "",
     });
     setErrors({});
   };
@@ -74,12 +82,11 @@ export const useCategory = () => {
       const updatedCategories = categories.filter((c) => c.category_id !== id);
       setCategories(updatedCategories);
 
-      const toastBox = {
+      setToastBox({
         severity: "info",
         summary: "Deleted",
         detail: `Deleted successfully.`,
-      };
-      setToastBox(toastBox);
+      });
     } catch (error) {
       console.error("Error deleting category:", error);
       setToastBox({
@@ -89,6 +96,9 @@ export const useCategory = () => {
       });
     }
   };
+  const handleRefresh = () => {
+    loadCategories(true);
+  };
 
   const handleSaveCategory = async (e) => {
     e.preventDefault();
@@ -96,57 +106,59 @@ export const useCategory = () => {
 
     const newErrors = validate(formDataCategory, t_category.t_category);
     setErrors(newErrors);
-
     console.log("handleSaveCategory: " + JSON.stringify(newErrors));
 
-    if (Object.keys(newErrors).length === 0) {
-      try {
-        let updatedCategories;
-        if (formDataCategory.category_id) {
-          // Edit existing
-          const updatedCategory = await categoriesAPI.update(
-            formDataCategory.category_id,
-            formDataCategory
-          );
-          updatedCategories = categories.map((c) =>
-            c.category_id === formDataCategory.category_id ? updatedCategory : c
-          );
+    if (Object.keys(newErrors).length > 0) {
+      setIsBusy(false);
+      return;
+    }
 
-          const toastBox = {
-            severity: "success",
-            summary: "Success",
-            detail: `"${formDataCategory.category_name}" updated successfully.`,
-          };
-          setToastBox(toastBox);
-        } else {
-          // Add new
-          const newCategoryData = {
-            ...formDataCategory,
-            category_id: generateGuid(),
-          };
+    try {
+      let updatedCategories;
+      if (formDataCategory.category_id) {
+        // Edit existing
+        const updatedCategory = await categoriesAPI.update(
+          formDataCategory.category_id,
+          formDataCategory
+        );
+        updatedCategory.ismodified = true;
+        updatedCategories = categories.map((c) =>
+          c.category_id === formDataCategory.category_id ? updatedCategory : c
+        );
 
-          const newCategory = await categoriesAPI.create(newCategoryData);
-          updatedCategories = [...categories, newCategory];
-
-          const toastBox = {
-            severity: "success",
-            summary: "Success",
-            detail: `"${formDataCategory.category_name}" added successfully.`,
-          };
-          setToastBox(toastBox);
-        }
-        setCategories(updatedCategories);
-
-        handleClear();
-        setCurrentView("list");
-      } catch (error) {
-        console.error("Error saving category:", error);
         setToastBox({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to save category",
+          severity: "success",
+          summary: "Success",
+          detail: `"${formDataCategory.category_name}" updated successfully.`,
+        });
+      } else {
+        // Add new
+        const newCategoryData = {
+          ...formDataCategory,
+          category_id: generateGuid(),
+        };
+
+        const newCategory = await categoriesAPI.create(newCategoryData);
+        newCategory.ismodified = true;
+        updatedCategories = [...categories, newCategory];
+
+        setToastBox({
+          severity: "success",
+          summary: "Success",
+          detail: `"${formDataCategory.category_name}" added successfully.`,
         });
       }
+      setCategories(updatedCategories);
+
+      handleClear();
+      setCurrentView("list");
+    } catch (error) {
+      console.error("Error saving category:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to save category",
+      });
     }
 
     setIsBusy(false);
@@ -164,6 +176,7 @@ export const useCategory = () => {
     handleAddNew,
     handleEditCategory,
     handleDeleteCategory,
+    handleRefresh,
     handleSaveCategory,
   };
 };

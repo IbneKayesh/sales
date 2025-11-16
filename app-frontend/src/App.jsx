@@ -23,6 +23,8 @@ import UnitsPage from "./pages/inventory/units/UnitsPage.jsx";
 import CategoryPage from "./pages/inventory/category/CategoryPage.jsx";
 import ContactsPage from "./pages/setup/contacts/ContactsPage.jsx";
 import UsersPage from "./pages/setup/users/UsersPage.jsx";
+import ChangePasswordPage from "./pages/setup/changepassword/ChangePasswordPage.jsx";
+import ClosingProcessPage from "./pages/setup/closingprocess/ClosingProcessPage.jsx";
 
 function App() {
   const toast = useRef(null);
@@ -64,6 +66,8 @@ function AppRoutes({ toast }) {
         <Route path="inventory/category" element={<CategoryPage />} />
         <Route path="setup/contacts" element={<ContactsPage />} />
         <Route path="setup/users" element={<UsersPage />} />
+        <Route path="setup/change-password" element={<ChangePasswordPage />} />
+        <Route path="setup/closing-process" element={<ClosingProcessPage />} />
       </Route>
     </Routes>
   );
