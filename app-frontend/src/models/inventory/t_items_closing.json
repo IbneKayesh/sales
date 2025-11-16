@@ -1,0 +1,35 @@
+{
+  "t_items_closing": {
+    "id": {
+      "name": "Id",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 36
+    },
+    "item_id": {
+      "name": "Item Id",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 36
+    },
+    "closing_mmyy": {
+      "name": "Closing MMYY",
+      "type": "string",
+      "required": false,
+      "minLength": 1,
+      "maxLength": 36
+    },
+    "in_qty": {
+      "name": "In Qty",
+      "type": "number",
+      "required": false
+    },
+    "out_qty": {
+      "name": "Out Qty",
+      "type": "number",
+      "required": false
+    }
+  }
+}

@@ -1,2 +1,7 @@
-- [ ] Update usePoMaster.js: Change 'transaction_date' to 'order_date', 'transaction_note' to 'order_note', add 'order_type', 'order_no', 'ref_no' to formDataPoMaster
-- [ ] Update usePoChild.js: Add 'order_qty' to formDataPoChild
+# TODO: Convert PrequestChildFormComponent and PrequestChildListComponent to Editable DataTable
+
+## Steps:
+1. ✅ Create PrequestChildEditableTableComponent.jsx with dropdown + add button, editable datatable, delete actions, save all button.
+2. ✅ Update PrequestPage.jsx to use the new component instead of form/list toggle.
+3. ✅ Update usePoChild.js to add handleSaveAll for bulk operations (create, update, delete).
+4. Test the implementation.

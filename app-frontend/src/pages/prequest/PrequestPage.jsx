@@ -4,14 +4,18 @@ import { usePoChild } from "@/hooks/prequest/usePoChild";
 import { useItems } from "@/hooks/inventory/useItems";
 import PrequestMasterListComponent from "./PrequestMasterListComponent";
 import PrequestMasterFormComponent from "./PrequestMasterFormComponent";
-import PrequestChildListComponent from "./PrequestChildListComponent";
-import PrequestChildFormComponent from "./PrequestChildFormComponent";
+import PrequestChildEditableTableComponent from "./PrequestChildEditableTableComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { TabView, TabPanel } from "primereact/tabview";
 
 const PrequestPage = () => {
+  const { items } = useItems();
+
+  const [activeTab, setActiveTab] = useState(0);
+  const [selectedMasterId, setSelectedMasterId] = useState(null);
+
   const toast = useRef(null);
   const {
     poMasters,
@@ -35,21 +39,8 @@ const PrequestPage = () => {
     poChildren,
     toastBox: childToastBox,
     isBusy: childIsBusy,
-    currentView: childCurrentView,
-    errors: childErrors,
-    formDataPoChild,
-    handleChange: handleChildChange,
-    handleCancel: handleChildCancel,
-    handleAddNew: handleChildAddNew,
-    handleEditPoChild,
-    handleDeletePoChild,
-    handleSavePoChild,
-  } = usePoChild();
-
-  const { items } = useItems();
-
-  const [activeTab, setActiveTab] = useState(0);
-  const [selectedMasterId, setSelectedMasterId] = useState(null);
+    handleSaveAll,
+  } = usePoChild(selectedMasterId?.po_master_id);
 
   useEffect(() => {
     if (masterToastBox && toast.current) {
@@ -115,39 +106,17 @@ const PrequestPage = () => {
   };
 
   const getChildHeader = () => {
-    const isList = childCurrentView === "list";
-
     return (
       <div className="flex align-items-center justify-content-between">
-        <h2 className="m-0">
-          {isList
-            ? "Purchase Order Items"
-            : formDataPoChild.id
-            ? "Edit Item"
-            : "Add New Item"}
-        </h2>
-
-        {isList ? (
-          <Button
-            label="New Item"
-            icon="pi pi-plus"
-            size="small"
-            onClick={handleChildAddNew}
-          />
-        ) : (
-          <Button
-            label="Items"
-            icon="pi pi-arrow-left"
-            size="small"
-            onClick={handleChildCancel}
-          />
-        )}
+        <h4 className="m-0">
+          {selectedMasterId?.order_no} ({selectedMasterId?.ref_no})
+        </h4>
       </div>
     );
   };
 
   const handleMasterSelect = (rowData) => {
-    setSelectedMasterId(rowData.order_no);
+    setSelectedMasterId(rowData);
     setActiveTab(1); // Switch to child tab
   };
 
@@ -161,7 +130,7 @@ const PrequestPage = () => {
         <TabPanel header="Purchase Orders">
           <Card
             header={getMasterHeader()}
-            className="bg-dark-200 border-round p-3"
+            className="bg-dark-200 border-round p-2"
           >
             {masterCurrentView === "list" ? (
               <PrequestMasterListComponent
@@ -186,29 +155,14 @@ const PrequestPage = () => {
         <TabPanel header="Order Items">
           <Card
             header={getChildHeader()}
-            className="bg-dark-200 border-round p-3"
+            className="bg-dark-200 border-round p-2"
           >
-            {childCurrentView === "list" ? (
-              <PrequestChildListComponent
-                dataList={poChildren.filter(
-                  (child) =>
-                    !selectedMasterId || child.po_master_id === selectedMasterId
-                )}
-                onEdit={handleEditPoChild}
-                onDelete={handleDeletePoChild}
-                selectedMasterId={selectedMasterId}
-              />
-            ) : (
-              <PrequestChildFormComponent
-                isBusy={childIsBusy}
-                errors={childErrors}
-                formData={formDataPoChild}
-                onChange={handleChildChange}
-                onSave={handleSavePoChild}
-                items={items}
-                poMasters={poMasters}
-              />
-            )}
+            <PrequestChildEditableTableComponent
+              selectedMasterId={selectedMasterId}
+              poChildren={poChildren}
+              items={items}
+              onSaveAll={handleSaveAll}
+            />
           </Card>
         </TabPanel>
       </TabView>
