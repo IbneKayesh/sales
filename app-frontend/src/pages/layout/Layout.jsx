@@ -33,9 +33,8 @@ const Layout = () => {
       name: "Accounts",
       icon: "pi pi-money-bill",
       submenus: [
-        { id: "ac1", name: "Bank", url: "/home/accounts/bank", icon: "pi pi-building" },
-        { id: "ac2", name: "Bank Account", url: "/home/accounts/bank-account", icon: "pi pi-user" },
-        { id: "ac3", name: "Bank Transaction", url: "/home/accounts/bank-transaction", icon: "pi pi-money-bill" },
+        { id: "ac1", name: "Bank Account", url: "/home/accounts/bank-account", icon: "pi pi-user" },
+        { id: "ac2", name: "Bank Transaction", url: "/home/accounts/bank-transaction", icon: "pi pi-money-bill" },
       ],
     },
     {

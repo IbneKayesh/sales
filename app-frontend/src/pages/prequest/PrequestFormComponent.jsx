@@ -60,7 +60,7 @@ const PrequestFormComponent = ({
       discount_amount: 0,
       item_amount: item.purchase_rate * 1, // Will be re-calculated on edit save
       item_note: "",
-      order_qty: 0, // Will be calculate on edit save
+      received_qty: 0, // Will be calculate on edit save
       ismodified: 1, // Flag for new items
     };
 
@@ -87,7 +87,7 @@ const PrequestFormComponent = ({
     // Calculate item_amount
     newData.item_amount =
       (newData.item_rate * newData.item_qty) - newData.discount_amount;
-    newData.order_qty = 0;
+    newData.received_qty = 0;
     newData.ismodified = 1;
     let _localItems = [...orderChildItems];
     _localItems[index] = newData;
@@ -177,16 +177,16 @@ const PrequestFormComponent = ({
     return <ConvertedQtyComponent qty={rowData.item_qty} rowData={rowData} />;
   };
 
-  const order_qtyBody = (rowData) => {
-    return <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} />;
+  const received_qtyBody = (rowData) => {
+    return <ConvertedQtyComponent qty={rowData.received_qty} rowData={rowData} />;
   };
 
   const totalItemQty = orderChildItems.reduce(
     (sum, item) => sum + (item.item_qty || 0),
     0
   );
-  const totalOrderQty = orderChildItems.reduce(
-    (sum, item) => sum + (item.order_qty || 0),
+  const totalReceivedQty = orderChildItems.reduce(
+    (sum, item) => sum + (item.received_qty || 0),
     0
   );
   const totalItemAmount = orderChildItems.reduce(
@@ -473,10 +473,10 @@ const PrequestFormComponent = ({
           />
           <Column field="item_note" header="Note" editor={textEditor} />
           <Column
-            field="order_qty"
-            header="PR Qty"
-            body={order_qtyBody}
-            footer={totalOrderQty}
+            field="received_qty"
+            header="Received Qty"
+            body={received_qtyBody}
+            footer={totalReceivedQty}
           />
           <Column
             rowEditor

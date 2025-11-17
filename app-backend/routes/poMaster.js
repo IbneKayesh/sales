@@ -138,7 +138,7 @@ router.post("/", (req, res) => {
       // Insert children one by one
       const sqlChild = `
         INSERT INTO po_child 
-        (id, po_master_id, item_id, item_rate, item_qty, discount_amount, item_amount, item_note, order_qty)
+        (id, po_master_id, item_id, item_rate, item_qty, discount_amount, item_amount, item_note, received_qty)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
@@ -153,7 +153,7 @@ router.post("/", (req, res) => {
           child.discount_amount || 0,
           child.item_amount,
           child.item_note || "",
-          child.order_qty,
+          child.received_qty,
         ];
 
         db.run(sqlChild, paramsChild, function (err) {
@@ -245,7 +245,7 @@ router.post("/update", (req, res) => {
     if (childs_create && Array.isArray(childs_create)) {
       childs_create.forEach((item) => {
         const sqlChildCreate = `
-          INSERT INTO po_child (id, po_master_id, item_id, item_rate, item_qty, discount_amount, item_amount, item_note, order_qty)
+          INSERT INTO po_child (id, po_master_id, item_id, item_rate, item_qty, discount_amount, item_amount, item_note, received_qty)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const paramsChildCreate = [
@@ -257,7 +257,7 @@ router.post("/update", (req, res) => {
           item.discount_amount || 0,
           item.item_amount,
           item.item_note || "",
-          item.order_qty,
+          item.received_qty,
         ];
         db.run(sqlChildCreate, paramsChildCreate, function (err) {
           if (err) console.error("Child create error:", err);
@@ -269,26 +269,22 @@ router.post("/update", (req, res) => {
       childs_update.forEach((item) => {
         const sqlChildUpdate = `
           UPDATE po_child SET
-            po_master_id = ?,
-            item_id = ?,
             item_rate = ?,
             item_qty = ?,
             discount_amount = ?,
             item_amount = ?,
             item_note = ?,
-            order_qty = ?,
+            received_qty = ?,
             updated_at = CURRENT_TIMESTAMP
           WHERE id = ?
         `;
         const paramsChildUpdate = [
-          po_master_id,
-          item.item_id,
           item.item_rate,
           item.item_qty,
           item.discount_amount || 0,
           item.item_amount,
           item.item_note || "",
-          item.order_qty,
+          item.received_qty,
           item.id,
         ];
         db.run(sqlChildUpdate, paramsChildUpdate, function (err) {

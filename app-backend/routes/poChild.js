@@ -46,7 +46,7 @@ router.get("/master/:masterId", (req, res) => {
 router.get("/order/:orderNo", (req, res) => {
   const { orderNo } = req.params;
   const sql = `
-    SELECT poc.id, poc.po_master_id, poc.item_id, poc.item_rate, poc.item_qty - IFNULL(poc_prv.item_qty, 0) AS item_qty, poc.discount_amount, poc.item_amount, poc.item_note, poc.order_qty,
+    SELECT poc.id, poc.po_master_id, poc.item_id, poc.item_rate, poc.item_qty  -IFNULL(SUM(poc_prv.item_qty),0) AS item_qty, poc.discount_amount, poc.item_amount, poc.item_note, poc.received_qty,
     i.item_name, i.unit_difference_qty, u1.unit_name as small_unit_name, u2.unit_name as big_unit_name, 0 AS ismodified
     FROM po_child poc
     LEFT JOIN items i ON poc.item_id = i.item_id
@@ -56,6 +56,8 @@ router.get("/order/:orderNo", (req, res) => {
     LEFT JOIN po_master pom_prv on pom.order_no = pom_prv.ref_no
     LEFT JOIN po_child poc_prv on pom_prv.po_master_id = poc_prv.po_master_id
     WHERE pom.order_no = ?
+	  GROUP BY poc.id, poc.po_master_id, poc.item_id, poc.item_rate, poc.item_qty , poc.discount_amount, poc.item_amount, poc.item_note, poc.received_qty,
+    i.item_name, i.unit_difference_qty, u1.unit_name, u2.unit_name
     ORDER BY poc.id
   `;
   db.all(sql, [orderNo], (err, rows) => {

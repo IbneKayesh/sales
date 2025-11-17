@@ -13,7 +13,7 @@ export const useBankAccount = () => {
 
   const [errors, setErrors] = useState({});
   const [formDataBankAccount, setFormDataBankAccount] = useState({
-    bank_id: "",
+    bank_name: "",
     account_name: "",
     account_number: "",
     opening_date: new Date().toISOString().split("T")[0],
@@ -62,7 +62,7 @@ export const useBankAccount = () => {
   const handleClear = () => {
     setFormDataBankAccount({
       bank_account_id: "",
-      bank_id: "",
+      bank_name: "",
       account_name: "",
       account_number: "",
       opening_date: new Date().toISOString().split("T")[0],

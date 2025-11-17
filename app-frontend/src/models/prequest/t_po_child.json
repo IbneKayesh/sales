@@ -48,8 +48,8 @@
       "minLength": 0,
       "maxLength": 255
     },
-    "order_qty": {
-      "name": "Order Qty",
+    "received_qty": {
+      "name": "Received Qty",
       "type": "number",
       "required": false
     }

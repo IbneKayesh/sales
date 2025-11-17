@@ -5,7 +5,6 @@ const { initTables } = require('./db/init');
 
 // Import routes
 const authRoutes = require('./routes/auth');
-const bankRoutes = require('./routes/banks');
 const bankAccountRoutes = require('./routes/bankAccounts');
 const bankTransactionRoutes = require('./routes/bankTransactions');
 const poMasterRoutes = require('./routes/poMaster');
@@ -44,7 +43,6 @@ initTables();
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/banks', bankRoutes);
 app.use('/api/bank-accounts', bankAccountRoutes);
 app.use('/api/bank-transactions', bankTransactionRoutes);
 app.use('/api/po-master', poMasterRoutes);

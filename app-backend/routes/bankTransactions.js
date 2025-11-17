@@ -5,10 +5,9 @@ const router = express.Router();
 // Get all bank transactions
 router.get('/', (req, res) => {
   const sql = `
-    SELECT bt.*, ba.account_name, b.bank_name, 0 AS ismodified
+    SELECT bt.*, ba.account_name, 0 AS ismodified
     FROM bank_transactions bt
     LEFT JOIN bank_accounts ba ON bt.bank_account_id = ba.bank_account_id
-    LEFT JOIN banks b ON ba.bank_id = b.bank_id
     ORDER BY bt.transaction_date DESC, bt.bank_transactions_id DESC
   `;
   db.all(sql, [], (err, rows) => {
@@ -24,10 +23,9 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   const { id } = req.params;
   const sql = `
-    SELECT bt.*, ba.account_name, b.bank_name
+    SELECT bt.*, ba.account_name
     FROM bank_transactions bt
     LEFT JOIN bank_accounts ba ON bt.bank_account_id = ba.bank_account_id
-    LEFT JOIN banks b ON ba.bank_id = b.bank_id
     WHERE bt.bank_transactions_id = ?
   `;
   db.get(sql, [id], (err, row) => {

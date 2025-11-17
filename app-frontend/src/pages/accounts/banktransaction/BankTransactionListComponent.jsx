@@ -74,7 +74,6 @@ const BankTransactionListComponent = ({ dataList, onEdit, onDelete }) => {
         size="small"
       >
         <Column field="account_name" header="Account Name" sortable />
-        <Column field="bank_name" header="Bank Name" sortable />
         <Column field="transaction_date" header="Transaction Date" sortable />
         <Column field="transaction_name" header="Transaction Name" sortable />
         <Column field="reference_no" header="Reference No" />

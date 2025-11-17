@@ -5,9 +5,8 @@ const router = express.Router();
 // Get all bank accounts
 router.get("/", (req, res) => {
   const sql = `
-    SELECT ba.*, b.bank_name, 0 AS ismodified
+    SELECT ba.*, 0 AS ismodified
     FROM bank_accounts ba
-    LEFT JOIN banks b ON ba.bank_id = b.bank_id
     ORDER BY ba.bank_account_id
   `;
   db.all(sql, [], (err, rows) => {
@@ -23,9 +22,8 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   const { id } = req.params;
   const sql = `
-    SELECT ba.*, b.bank_name
+    SELECT ba.*
     FROM bank_accounts ba
-    LEFT JOIN banks b ON ba.bank_id = b.bank_id
     WHERE ba.bank_account_id = ?
   `;
   db.get(sql, [id], (err, row) => {
@@ -44,7 +42,7 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   const {
     bank_account_id,
-    bank_id,
+    bank_name,
     account_name,
     account_number,
     opening_date,
@@ -53,23 +51,19 @@ router.post("/", (req, res) => {
     current_balance,
   } = req.body;
 
-  if (!account_name || !account_number) {
+  if (!bank_account_id || !bank_name || !account_name || !account_number) {
     return res
       .status(400)
-      .json({ error: "Account name and number are required" });
-  }
-
-  if (!bank_account_id) {
-    return res.status(400).json({ error: "Bank account ID is required" });
+      .json({ error: "Bank Account ID, Bank Name, Account name and number are required" });
   }
 
   const sql = `
-    INSERT INTO bank_accounts (bank_account_id, bank_id, account_name, account_number, opening_date, debit_balance, credit_balance, current_balance)
+    INSERT INTO bank_accounts (bank_account_id, bank_name, account_name, account_number, opening_date, debit_balance, credit_balance, current_balance)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
   const params = [
     bank_account_id,
-    bank_id || null,
+    bank_name,
     account_name,
     account_number,
     opening_date || "",
@@ -91,7 +85,7 @@ router.post("/", (req, res) => {
 router.post("/update", (req, res) => {
   const {
     id,
-    bank_id,
+    bank_name,
     account_name,
     account_number,
     opening_date,
@@ -100,15 +94,15 @@ router.post("/update", (req, res) => {
     current_balance,
   } = req.body;
 
-  if (!id || !account_name || !account_number) {
+  if (!id || !bank_name  || !account_name || !account_number) {
     return res
       .status(400)
-      .json({ error: "Account ID, name and number are required" });
+      .json({ error: "Account ID, bank name, account name and number are required" });
   }
 
   const sql = `
     UPDATE bank_accounts SET
-      bank_id = ?,
+      bank_name = ?,
       account_name = ?,
       account_number = ?,
       opening_date = ?,
@@ -120,7 +114,7 @@ router.post("/update", (req, res) => {
   // current_balance = ?,
 
   const params = [
-    bank_id || null,
+    bank_name,
     account_name,
     account_number,
     opening_date || "",
@@ -140,7 +134,7 @@ router.post("/update", (req, res) => {
     }
     res.json({
       bank_account_id: id,
-      bank_id,
+      bank_name,
       account_name,
       account_number,
       opening_date,

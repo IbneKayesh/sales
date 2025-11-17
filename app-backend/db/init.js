@@ -29,26 +29,11 @@ const initTables = () => {
       )
     `);
 
-    // Banks table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS banks (
-        bank_id TEXT PRIMARY KEY,
-        bank_name TEXT NOT NULL,
-        bank_address TEXT,
-        routing_number TEXT,
-        debit_balance REAL DEFAULT 0,
-        credit_balance REAL DEFAULT 0,
-        current_balance REAL DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
     // Bank Accounts table
     db.run(`
       CREATE TABLE IF NOT EXISTS bank_accounts (
         bank_account_id TEXT PRIMARY KEY,
-        bank_id TEXT,
+        bank_name TEXT NOT NULL,
         account_name TEXT NOT NULL,
         account_number TEXT NOT NULL,
         opening_date TEXT,
@@ -56,8 +41,7 @@ const initTables = () => {
         credit_balance REAL DEFAULT 0,
         current_balance REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (bank_id) REFERENCES banks (bank_id) ON DELETE RESTRICT
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
@@ -165,7 +149,7 @@ const initTables = () => {
         discount_amount REAL DEFAULT 0,
         item_amount REAL NOT NULL,
         item_note TEXT,
-        order_qty REAL NOT NULL,
+        received_qty REAL NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (po_master_id) REFERENCES po_master (po_master_id) ON DELETE RESTRICT,

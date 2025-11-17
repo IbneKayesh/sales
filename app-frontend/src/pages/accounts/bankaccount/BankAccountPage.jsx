@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useBankAccount } from "@/hooks/accounts/useBankAccount";
-import { useBank } from "@/hooks/accounts/useBank";
 import BankAccountListComponent from "./BankAccountListComponent";
 import BankAccountFormComponent from "./BankAccountFormComponent";
 import { Card } from "primereact/card";
@@ -24,7 +23,6 @@ const BankAccountPage = () => {
     handleRefresh,
     handleSaveBankAccount,
   } = useBankAccount();
-  const { banks } = useBank();
 
   useEffect(() => {
     if (toastBox && toast.current) {
@@ -95,7 +93,6 @@ const BankAccountPage = () => {
             formData={formDataBankAccount}
             onChange={handleChange}
             onSave={handleSaveBankAccount}
-            banks={banks}
           />
         )}
       </Card>

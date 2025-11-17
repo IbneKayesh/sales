@@ -72,9 +72,9 @@ const BankAccountListComponent = ({ dataList, onEdit, onDelete }) => {
         className="bg-dark-300"
         size="small"
       >
+        <Column field="bank_name" header="Bank Name" />
         <Column field="account_name" header="Account Name" sortable />
         <Column field="account_number" header="Account Number" />
-        <Column field="bank_name" header="Bank Name" />
         <Column field="opening_date" header="Opening Date" />
         <Column
           field="debit_balance"

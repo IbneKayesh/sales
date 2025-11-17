@@ -15,7 +15,7 @@ export const usePoMaster = () => {
   const [errors, setErrors] = useState({});
   const [formDataPoMaster, setFormDataPoMaster] = useState({
     order_type: "",
-    order_no: "Auto[ON#0001]",
+    order_no: "AUTO[SGD#0001]",
     order_date: new Date().toISOString().split("T")[0],
     contacts_id: "",
     ref_no: "No Ref",
@@ -34,7 +34,7 @@ export const usePoMaster = () => {
     discount_amount: 0,
     item_amount: 0,
     item_note: "",
-    order_qty: 0,
+    received_qty: 0,
     ismodified: 0,
   });
 
@@ -160,7 +160,7 @@ export const usePoMaster = () => {
     );
 
     if (field === "ref_no" && value) {
-      console.log("ref_no " + value);
+      //console.log("ref_no " + value);
       await loadPoChildrenByOrderNo(value);
     }
     setErrors(newErrors);
@@ -170,7 +170,7 @@ export const usePoMaster = () => {
     setFormDataPoMaster({
       po_master_id: "",
       order_type: "",
-      order_no: "Auto[ON#0001]",
+      order_no: "AUTO[SGD#0001]",
       order_date: new Date().toISOString().split("T")[0],
       contacts_id: "",
       ref_no: "No Ref",
@@ -190,7 +190,7 @@ export const usePoMaster = () => {
       discount_amount: 0,
       item_amount: 0,
       item_note: "",
-      order_qty: 0,
+      received_qty: 0,
       ismodified: 0,
     });
 
@@ -254,10 +254,10 @@ export const usePoMaster = () => {
       }
 
       //Step 1 : used in Step 2
-      const total_amount = orderChildItems.reduce(
-        (sum, i) => sum + Number(i.item_amount || 0),
-        0
-      );
+      // const total_amount = orderChildItems.reduce(
+      //   (sum, i) => sum + Number(i.item_amount || 0),
+      //   0
+      // );
 
       //Step 2 : used in Step 3 (paid_amount)
       // if (formDataPoMaster.order_type === "Purchase Receive") {
@@ -273,7 +273,7 @@ export const usePoMaster = () => {
       //     setOrderChildItems((prev) => {
       //       const updatedItems = prev.map((item) => ({
       //         ...item,
-      //         order_qty: item.item_qty,
+      //         received_qty: item.item_qty,
       //       }));
       //       //console.log("orderChildItems " + JSON.stringify(updatedItems));
       //       return updatedItems;
@@ -310,7 +310,6 @@ export const usePoMaster = () => {
 
         const newPoMasterData = {
           ...formDataPoMaster,
-          total_amount,
           ismodified: true,
           childs_create: childs,
           childs_update: toUpdateChildItems,
@@ -344,7 +343,6 @@ export const usePoMaster = () => {
         const newPoMasterData = {
           ...formDataPoMaster,
           po_master_id,
-          total_amount,
           ismodified: true,
           childs,
         };

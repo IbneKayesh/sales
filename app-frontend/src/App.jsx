@@ -15,7 +15,6 @@ import Layout from "./pages/layout/Layout.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import PrequestPage from "./pages/prequest/PrequestPage.jsx";
 import SrequestPage from "./pages/srequest/SrequestPage.jsx";
-import BankPage from "./pages/accounts/bank/BankPage.jsx";
 import BankAccountPage from "./pages/accounts/bankaccount/BankAccountPage.jsx";
 import BankTransactionPage from "./pages/accounts/banktransaction/BankTransactionPage.jsx";
 import ItemsPage from "./pages/inventory/items/ItemsPage.jsx";
@@ -58,7 +57,6 @@ function AppRoutes({ toast }) {
         <Route index element={<HomePage />} />
         <Route path="prequest" element={<PrequestPage />} />
         <Route path="srequest" element={<SrequestPage />} />
-        <Route path="accounts/bank" element={<BankPage />} />
         <Route path="accounts/bank-account" element={<BankAccountPage />} />
         <Route path="accounts/bank-transaction" element={<BankTransactionPage />} />
         <Route path="inventory/items" element={<ItemsPage />} />

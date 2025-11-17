@@ -42,6 +42,15 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
+  const trnShortBody = (rowData) => {
+    if (!rowData.order_type) return "";
+
+    return rowData.order_type
+      .split(" ") // split string into words
+      .map((word) => word[0].toUpperCase()) // take first char of each word
+      .join(""); // join them together
+  };
+
   const totalAmountTemplate = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -73,12 +82,16 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
         className="bg-dark-300"
         size="small"
       >
-        <Column field="order_type" header="Order Type" sortable />
+        <Column
+          field="order_type"
+          header="Type"
+          sortable
+          body={trnShortBody}
+        />
         <Column field="order_no" header="Order No" sortable />
         <Column field="order_date" header="Date" sortable />
         <Column field="contact_name" header="Contact" sortable />
         <Column field="ref_no" header="Ref. Order" sortable />
-        <Column field="order_note" header="Note" />
         <Column
           field="total_amount"
           header="Total Amount"

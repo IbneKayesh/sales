@@ -2,32 +2,28 @@ import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
-import { Dropdown } from "primereact/dropdown";
 import t_bank_account from "@/models/accounts/t_bank_account.json";
 
-const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave, banks }) => {
+const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
   return (
     <div className="p-1">
       <div className="grid">
         <div className="col-12 md:col-3">
           <label
-            htmlFor="bank_id"
+            htmlFor="bank_name"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_account.t_bank_account.bank_id.name} <span className="text-red-500">*</span>
+            {t_bank_account.t_bank_account.bank_name.name} <span className="text-red-500">*</span>
           </label>
-          <Dropdown
-            name="bank_id"
-            value={formData.bank_id}
-            options={banks.map(bank => ({ label: bank.bank_name, value: bank.bank_id }))}
-            onChange={(e) => onChange("bank_id", e.value)}
-            className={`w-full ${errors.bank_id ? "p-invalid" : ""}`}
-            placeholder={`Select ${t_bank_account.t_bank_account.bank_id.name}`}
-            optionLabel="label"
-            optionValue="value"
+         <InputText
+            name="bank_name"
+            value={formData.bank_name}
+            onChange={(e) => onChange("bank_name", e.target.value)}
+            className={`w-full ${errors.bank_name ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_bank_account.t_bank_account.bank_name.name}`}
           />
-          {errors.bank_id && (
-            <small className="mb-3 text-red-500">{errors.bank_id}</small>
+          {errors.bank_name && (
+            <small className="mb-3 text-red-500">{errors.bank_name}</small>
           )}
         </div>
         <div className="col-12 md:col-3">
