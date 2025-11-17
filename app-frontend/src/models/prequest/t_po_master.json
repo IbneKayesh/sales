@@ -60,7 +60,7 @@
     },
     "is_paid": {
       "name": "Is Paid",
-      "type": "boolean",
+      "type": "number",
       "required": false
     }
   }

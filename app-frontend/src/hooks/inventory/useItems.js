@@ -24,7 +24,7 @@ export const useItems = () => {
     purchase_rate: 0,
     sales_rate: 0,
     discount_percent: 0,
-    approx_profit: 0,
+    margin_rate: 0,
   });
 
   const loadItems = async (resetModified = false) => {
@@ -78,7 +78,7 @@ export const useItems = () => {
       purchase_rate: 0,
       sales_rate: 0,
       discount_percent: 0,
-      approx_profit: 0,
+      margin_rate: 0,
     });
     setErrors({});
   };
@@ -131,6 +131,28 @@ export const useItems = () => {
     setErrors(newErrors);
     console.log("handleSaveItem: " + JSON.stringify(newErrors));
 
+    const { small_unit_id, big_unit_id, unit_difference_qty } = formDataItem;
+
+    if (small_unit_id === big_unit_id && unit_difference_qty > 1) {
+      setToastBox({
+        severity: "warn",
+        summary: "Warning",
+        detail:
+          "If Small Unit and Big Unit are the same, Unit Difference Qty must be 1.",
+      });
+      setIsBusy(false);
+      return;
+    } else if (small_unit_id !== big_unit_id && unit_difference_qty < 2) {
+      setToastBox({
+        severity: "warn",
+        summary: "Warning",
+        detail:
+          "If Small Unit and Big Unit are different, Unit Difference Qty must be greater than 1.",
+      });
+      setIsBusy(false);
+      return;
+    }
+
     if (Object.keys(newErrors).length > 0) {
       setIsBusy(false);
       return;
@@ -144,7 +166,7 @@ export const useItems = () => {
       // Build data object with profit included
       const itemData = {
         ...formDataItem,
-        approx_profit: approxProfit,
+        margin_rate: approxProfit,
       };
 
       if (formDataItem.item_id) {

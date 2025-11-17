@@ -57,7 +57,7 @@ const initTables = () => {
         current_balance REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (bank_id) REFERENCES banks (bank_id)
+        FOREIGN KEY (bank_id) REFERENCES banks (bank_id) ON DELETE RESTRICT
       )
     `);
 
@@ -109,12 +109,12 @@ const initTables = () => {
         purchase_rate REAL DEFAULT 0,
         sales_rate REAL DEFAULT 0,
         discount_percent REAL DEFAULT 0,
-        approx_profit REAL DEFAULT 0,
+        margin_rate REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (category_id) REFERENCES categories (category_id),
-        FOREIGN KEY (small_unit_id) REFERENCES units (unit_id),
-        FOREIGN KEY (big_unit_id) REFERENCES units (unit_id)
+        FOREIGN KEY (category_id) REFERENCES categories (category_id) ON DELETE RESTRICT,
+        FOREIGN KEY (small_unit_id) REFERENCES units (unit_id) ON DELETE RESTRICT,
+        FOREIGN KEY (big_unit_id) REFERENCES units (unit_id) ON DELETE RESTRICT
       )
     `);
 
@@ -131,7 +131,7 @@ const initTables = () => {
         credit_amount REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (bank_account_id) REFERENCES bank_accounts (bank_account_id)
+        FOREIGN KEY (bank_account_id) REFERENCES bank_accounts (bank_account_id) ON DELETE RESTRICT
       )
     `);
 
@@ -150,7 +150,7 @@ const initTables = () => {
         is_paid BOOLEAN DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (contacts_id) REFERENCES contacts (contact_id)
+        FOREIGN KEY (contacts_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
       )
     `);
 
@@ -168,8 +168,8 @@ const initTables = () => {
         order_qty REAL NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (po_master_id) REFERENCES po_master (po_master_id),
-        FOREIGN KEY (item_id) REFERENCES items (item_id)
+        FOREIGN KEY (po_master_id) REFERENCES po_master (po_master_id) ON DELETE RESTRICT,
+        FOREIGN KEY (item_id) REFERENCES items (item_id) ON DELETE RESTRICT
       )
     `);
 
@@ -185,7 +185,7 @@ const initTables = () => {
         is_paid BOOLEAN DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (contacts_id) REFERENCES contacts (contact_id)
+        FOREIGN KEY (contacts_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
       )
     `);
 
@@ -204,8 +204,8 @@ const initTables = () => {
         item_note TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (so_master_id) REFERENCES so_master (so_master_id),
-        FOREIGN KEY (item_id) REFERENCES items (item_id)
+        FOREIGN KEY (so_master_id) REFERENCES so_master (so_master_id) ON DELETE RESTRICT,
+        FOREIGN KEY (item_id) REFERENCES items (item_id) ON DELETE RESTRICT
       )
     `, (err) => {
       if (err) {

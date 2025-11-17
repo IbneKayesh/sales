@@ -2,14 +2,8 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
-import { SplitButton } from "primereact/splitbutton";
 
-const PrequestMasterListComponent = ({
-  dataList,
-  onEdit,
-  onDelete,
-  onSelect,
-}) => {
+const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete ${rowData.order_type} "${rowData.order_no}"?`,
@@ -25,34 +19,24 @@ const PrequestMasterListComponent = ({
   };
 
   const actionTemplate = (rowData) => {
-    let menuItems = [
-      {
-        label: "Edit",
-        icon: "pi pi-pencil",
-        command: () => {
-          onEdit(rowData);
-        },
-        disabled: rowData.ismodified,
-      },
-      {
-        label: "Delete",
-        icon: "pi pi-trash text-red-400",
-        command: () => {
-          handleDelete(rowData);
-        },
-        disabled: rowData.ismodified,
-      },
-    ];
     return (
       <div className="flex flex-wrap gap-2">
-        <SplitButton
-          icon="pi pi-eye"
+        <Button
+          icon="pi pi-pencil"
           size="small"
           tooltip="Edit"
           tooltipOptions={{ position: "top" }}
-          onClick={() => onSelect(rowData)}
-          model={menuItems}
+          onClick={() => onEdit(rowData)}
           disabled={rowData.ismodified}
+        />
+        <Button
+          icon="pi pi-trash"
+          size="small"
+          tooltip="Delete"
+          tooltipOptions={{ position: "top" }}
+          onClick={() => handleDelete(rowData)}
+          disabled={rowData.ismodified}
+          severity="danger"
         />
       </div>
     );
@@ -84,7 +68,7 @@ const PrequestMasterListComponent = ({
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25]}
-        emptyMessage="No purchase orders found."
+        emptyMessage="No orders found."
         responsiveLayout="scroll"
         className="bg-dark-300"
         size="small"
@@ -123,4 +107,4 @@ const PrequestMasterListComponent = ({
   );
 };
 
-export default PrequestMasterListComponent;
+export default PrequestListComponent;

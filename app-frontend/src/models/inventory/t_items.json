@@ -74,8 +74,8 @@
       "minimum": 0,
       "maximum": 100
     },
-    "approx_profit": {
-      "name": "Approx Profit",
+    "margin_rate": {
+      "name": "Margin Rate",
       "type": "number",
       "required": false
     }

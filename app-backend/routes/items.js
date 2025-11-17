@@ -51,7 +51,7 @@ router.post("/", (req, res) => {
     purchase_rate,
     sales_rate,
     discount_percent,
-    approx_profit,
+    margin_rate,
   } = req.body;
 
   if (!item_name) {
@@ -65,7 +65,7 @@ router.post("/", (req, res) => {
   const sql = `
     INSERT INTO items (
       item_id, item_name, item_description, category_id, small_unit_id, unit_difference_qty,
-      big_unit_id, order_qty, stock_qty, purchase_rate, sales_rate, discount_percent, approx_profit
+      big_unit_id, order_qty, stock_qty, purchase_rate, sales_rate, discount_percent, margin_rate
     )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
@@ -82,7 +82,7 @@ router.post("/", (req, res) => {
     purchase_rate || 0,
     sales_rate || 0,
     discount_percent || 0,
-    approx_profit || 0,
+    margin_rate || 0,
   ];
 
   db.run(sql, params, function (err) {
@@ -109,7 +109,7 @@ router.post("/update", (req, res) => {
     purchase_rate,
     sales_rate,
     discount_percent,
-    approx_profit,
+    margin_rate,
   } = req.body;
 
   if (!id || !item_name) {
@@ -127,7 +127,7 @@ router.post("/update", (req, res) => {
       purchase_rate = ?,
       sales_rate = ?,
       discount_percent = ?,
-      approx_profit = ?,
+      margin_rate = ?,
       updated_at = CURRENT_TIMESTAMP
     WHERE item_id = ?
   `;
@@ -147,7 +147,7 @@ router.post("/update", (req, res) => {
     purchase_rate || 0,
     sales_rate || 0,
     discount_percent || 0,
-    approx_profit || 0,
+    margin_rate || 0,
     id,
   ];
 
@@ -171,7 +171,7 @@ router.post("/update", (req, res) => {
       purchase_rate,
       sales_rate,
       discount_percent,
-      approx_profit,
+      margin_rate,
     });
   });
 });

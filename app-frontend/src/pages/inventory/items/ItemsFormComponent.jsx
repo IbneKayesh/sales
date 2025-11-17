@@ -260,24 +260,24 @@ const ItemsFormComponent = ({
         </div>
         <div className="col-12 md:col-3">
           <label
-            htmlFor="approx_profit"
+            htmlFor="margin_rate"
             className="block text-900 font-medium mb-2"
           >
-            {t_items.t_items.approx_profit.name}
+            {t_items.t_items.margin_rate.name}
           </label>
           <InputNumber
-            name="approx_profit"
-            value={formData.approx_profit}
-            onValueChange={(e) => onChange("approx_profit", e.value)}
+            name="margin_rate"
+            value={formData.margin_rate}
+            onValueChange={(e) => onChange("margin_rate", e.value)}
             mode="currency"
             currency="BDT"
             locale="en-US"
-            className={`w-full ${errors.approx_profit ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_items.t_items.approx_profit.name}`}
+            className={`w-full ${errors.margin_rate ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_items.t_items.margin_rate.name}`}
             disabled
           />
-          {errors.approx_profit && (
-            <small className="mb-3 text-red-500">{errors.approx_profit}</small>
+          {errors.margin_rate && (
+            <small className="mb-3 text-red-500">{errors.margin_rate}</small>
           )}
         </div>
         <div className="col-12">

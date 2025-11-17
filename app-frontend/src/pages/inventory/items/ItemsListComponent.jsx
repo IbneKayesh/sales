@@ -62,7 +62,7 @@ const ItemsListComponent = ({ dataList, onEdit, onDelete }) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
-    }).format(rowData.approx_profit);
+    }).format(rowData.margin_rate);
   };
 
   return (
@@ -100,7 +100,7 @@ const ItemsListComponent = ({ dataList, onEdit, onDelete }) => {
         />
         <Column field="discount_percent" header="Discount %" />
         <Column
-          field="approx_profit"
+          field="margin_rate"
           header="Approx Profit"
           body={approxProfitTemplate}
           sortable
