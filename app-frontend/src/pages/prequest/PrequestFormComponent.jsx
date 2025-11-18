@@ -367,29 +367,10 @@ const PrequestFormComponent = ({
             currency="BDT"
             locale="en-US"
             className={`w-full ${errors.paid_amount ? "p-invalid" : ""}`}
+            disabled={formData.ref_no.length > 6 && formData.order_type === "Purchase Receive"}
           />
           {errors.paid_amount && (
             <small className="mb-3 text-red-500">{errors.paid_amount}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-6">
-          <label htmlFor="is_paid" className="block text-900 font-medium mb-2">
-            {t_po_master.t_po_master.is_paid.name}
-          </label>
-          <div className="flex align-items-center">
-            <Checkbox
-              name="is_paid"
-              checked={formData.is_paid}
-              onChange={(e) => onChange("is_paid", e.checked)}
-              className={errors.is_paid ? "p-invalid" : ""}
-              disabled
-            />
-            <label htmlFor="is_paid" className="ml-2">
-              Paid
-            </label>
-          </div>
-          {errors.is_paid && (
-            <small className="mb-3 text-red-500">{errors.is_paid}</small>
           )}
         </div>
       </div>
@@ -503,7 +484,7 @@ const PrequestFormComponent = ({
             severity="success"
             size="small"
             loading={isBusy || editingRows.length > 0}
-            disabled={orderChildItems && orderChildItems.length < 1}
+            disabled={(orderChildItems && orderChildItems.length < 1) || (formData.is_complete && formData.is_paid)}
           />
         </div>
       </div>

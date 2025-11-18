@@ -48,7 +48,7 @@ const PrequestPage = () => {
           {isList
             ? "Order List"
             : formDataPoMaster?.po_master_id 
-            ? `Edit PO: ${formDataPoMaster.order_no}`
+            ? `Edit PO: ${formDataPoMaster.order_no} for ${formDataPoMaster.ref_no}`
             : "Add New PO"}
         </h3>
 

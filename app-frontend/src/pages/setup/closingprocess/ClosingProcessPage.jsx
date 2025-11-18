@@ -9,7 +9,7 @@ const ClosingProcessPage = () => {
   const [loadingBank, setLoadingBank] = useState(false);
   const [loadingItem, setLoadingItem] = useState(false);
   const toast = useRef(null);
-  const { updateBankTransaction, updateItemProfit } = useClosingProcess();
+  const { updateBankTransaction, updateItem } = useClosingProcess();
 
   const handleUpdateBankTransaction = async () => {
     setLoadingBank(true);
@@ -33,22 +33,22 @@ const ClosingProcessPage = () => {
     }
   };
 
-  const handleUpdateItemProfit = async () => {
+  const handleUpdateItem = async () => {
     setLoadingItem(true);
     try {
       // Assuming a dummy id for now, replace with actual logic
       const id = "sgd";
-      await updateItemProfit(id);
+      await updateItem(id);
       toast.current.show({
         severity: "success",
         summary: "Success",
-        detail: "Item profit updated successfully",
+        detail: "Item updated successfully",
       });
     } catch (error) {
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: "Failed to update item profit",
+        detail: "Failed to update item",
       });
     } finally {
       setLoadingItem(false);
@@ -56,28 +56,49 @@ const ClosingProcessPage = () => {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 max-w-6xl mx-auto">
       <Toast ref={toast} />
-      <h1 className="text-2xl font-bold mb-4">Closing Process</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card title="Update Bank Transactions" className="shadow-lg">
-          <p className="mb-4">Update debit and credit balances for bank accounts and banks based on transactions.</p>
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-100 mb-2">Closing Process</h1>
+        <p className="text-gray-300">Perform end-of-period updates for bank transactions and item data.</p>
+      </div>
+      <div className="flex flex-col md:flex-row gap-6 justify-center items-stretch">
+        <Card
+          title="Update Bank Transactions"
+          className="shadow-lg flex-1 min-h-[200px] flex flex-col"
+          subTitle="Balance Reconciliation"
+        >
+          <div className="flex-grow">
+            <p className="text-gray-700 mb-4">
+              Update debit and credit balances for bank accounts and banks based on transactions.
+            </p>
+          </div>
           <Button
             label="Update Bank Transactions"
             icon="pi pi-refresh"
             loading={loadingBank}
             onClick={handleUpdateBankTransaction}
             className="w-full"
+            severity="info"
           />
         </Card>
-        <Card title="Update Item Profit" className="shadow-lg">
-          <p className="mb-4">Calculate and update approximate profit for items based on purchase and sales rates with discount.</p>
+        <Card
+          title="Update Item Data"
+          className="shadow-lg flex-1 min-h-[200px] flex flex-col"
+          subTitle="Comprehensive Calculations"
+        >
+          <div className="flex-grow">
+            <p className="text-gray-700 mb-4">
+              Calculate and update various item metrics including margins, orders, stock levels, and other derived values based on purchase and sales data.
+            </p>
+          </div>
           <Button
-            label="Update Item Profit"
+            label="Update Item Data"
             icon="pi pi-calculator"
             loading={loadingItem}
-            onClick={handleUpdateItemProfit}
+            onClick={handleUpdateItem}
             className="w-full"
+            severity="success"
           />
         </Card>
       </div>

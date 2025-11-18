@@ -23,6 +23,7 @@ export const usePoMaster = () => {
     total_amount: 0,
     paid_amount: 0,
     is_paid: 0,
+    is_complete: 0,
     ismodified: 0,
   });
 
@@ -49,7 +50,7 @@ export const usePoMaster = () => {
     } else if (formDataPoMaster.order_type === "Purchase Receive") {
       const options = poMasters
         .filter(
-          (po) => po.order_type === "Purchase Booking" && po.is_paid === 0
+          (po) => po.order_type === "Purchase Booking" && po.is_complete === 0
         )
         .map((po) => ({
           label: po.order_no,
@@ -127,9 +128,9 @@ export const usePoMaster = () => {
 
   const handleChange = async (field, value) => {
     let processedValue = value;
-    if (field === "is_paid") {
-      processedValue = value ? 1 : 0;
-    }
+    // if (field === "is_paid") {
+    //   processedValue = value ? 1 : 0;
+    // }
 
     setFormDataPoMaster((prev) => {
       const updatedData = { ...prev, [field]: processedValue };
@@ -178,6 +179,7 @@ export const usePoMaster = () => {
       total_amount: 0,
       paid_amount: 0,
       is_paid: 0,
+      is_complete: 0,
       ismodified: 0,
     });
     setErrors({});

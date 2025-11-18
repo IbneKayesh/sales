@@ -6,14 +6,14 @@ const useClosingProcess = () => {
     return response.data;
   };
 
-  const updateItemProfit = async (id) => {
-    const response = await closingProcessAPI.updateItemProfit(id);
+  const updateItem = async (id) => {
+    const response = await closingProcessAPI.updateItem(id);
     return response.data;
   };
 
   return {
     updateBankTransaction,
-    updateItemProfit,
+    updateItem,
   };
 };
 

@@ -7,8 +7,8 @@ export const closingProcessAPI = {
       method: "POST",
       body: JSON.stringify({ id }),
     }),
-  updateItemProfit: (id) =>
-    apiRequest("/closing-process/update-item-profit", {
+  updateItem: (id) =>
+    apiRequest("/closing-process/update-item", {
       method: "POST",
       body: JSON.stringify({ id }),
     }),

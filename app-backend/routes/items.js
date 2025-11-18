@@ -10,7 +10,7 @@ router.get("/", (req, res) => {
     LEFT JOIN units su ON i.small_unit_id = su.unit_id
     LEFT JOIN units bu ON i.big_unit_id = bu.unit_id
     LEFT JOIN categories c ON i.category_id = c.category_id
-    ORDER BY i.item_id
+    ORDER BY i.order_qty DESC, i.stock_qty DESC
   `;
   db.all(sql, [], (err, rows) => {
     if (err) {

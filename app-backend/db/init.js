@@ -132,6 +132,7 @@ const initTables = () => {
         total_amount REAL DEFAULT 0,
         paid_amount REAL DEFAULT 0,
         is_paid BOOLEAN DEFAULT 0,
+        is_complete BOOLEAN DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (contacts_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
