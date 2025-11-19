@@ -30,16 +30,19 @@ const PrequestFormComponent = ({
   const [selectedItem, setSelectedItem] = useState(null);
   const [editingRows, setEditingRows] = useState([]);
   const [disabledItemAdd, setDisabledItemAdd] = useState(false);
-  
-  useEffect (()=>{
-    if(formData.ref_no !== "-" && formData.ref_no !== "No Ref"){
-      setDisabledItemAdd(true);
-      setSelectedItem(null);
-    }else{
-      setDisabledItemAdd(false);
-    }
 
-  },[formData.ref_no])
+  useEffect(() => {
+    const shouldDisable =
+      !formData.order_type ||
+      !formData.contacts_id ||
+      formData.ref_no !== "No Ref" ||
+      formData.is_complete;
+
+    setDisabledItemAdd(shouldDisable);
+    if (shouldDisable) {
+      setSelectedItem(null);
+    }
+  }, [formData.order_type, formData.contacts_id, formData.ref_no, formData.is_complete]);
 
   const handleAddItem = () => {
     if (!selectedItem) return;
@@ -86,7 +89,7 @@ const PrequestFormComponent = ({
     let { newData, index } = event;
     // Calculate item_amount
     newData.item_amount =
-      (newData.item_rate * newData.item_qty) - newData.discount_amount;
+      newData.item_rate * newData.item_qty - newData.discount_amount;
     newData.received_qty = 0;
     newData.ismodified = 1;
     let _localItems = [...orderChildItems];
@@ -178,7 +181,9 @@ const PrequestFormComponent = ({
   };
 
   const received_qtyBody = (rowData) => {
-    return <ConvertedQtyComponent qty={rowData.received_qty} rowData={rowData} />;
+    return (
+      <ConvertedQtyComponent qty={rowData.received_qty} rowData={rowData} />
+    );
   };
 
   const totalItemQty = orderChildItems.reduce(
@@ -367,7 +372,10 @@ const PrequestFormComponent = ({
             currency="BDT"
             locale="en-US"
             className={`w-full ${errors.paid_amount ? "p-invalid" : ""}`}
-            disabled={formData.ref_no.length > 6 && formData.order_type === "Purchase Receive"}
+            disabled={
+              formData.ref_no.length > 6 &&
+              formData.order_type === "Purchase Receive"
+            }
           />
           {errors.paid_amount && (
             <small className="mb-3 text-red-500">{errors.paid_amount}</small>
@@ -386,6 +394,8 @@ const PrequestFormComponent = ({
             }))}
             onChange={(e) => setSelectedItem(e.value)}
             placeholder="Select Item"
+            optionLabel="label"
+            optionValue="value"
             className="w-full"
             disabled={disabledItemAdd}
           />
@@ -484,7 +494,10 @@ const PrequestFormComponent = ({
             severity="success"
             size="small"
             loading={isBusy || editingRows.length > 0}
-            disabled={(orderChildItems && orderChildItems.length < 1) || (formData.is_complete && formData.is_paid)}
+            disabled={
+              (orderChildItems && orderChildItems.length < 1) ||
+              (formData.is_complete && formData.is_paid)
+            }
           />
         </div>
       </div>

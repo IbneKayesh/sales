@@ -2,9 +2,16 @@ import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
+import { Checkbox } from "primereact/checkbox";
 import t_bank_account from "@/models/accounts/t_bank_account.json";
 
-const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
+const BankAccountFormComponent = ({
+  isBusy,
+  errors,
+  formData,
+  onChange,
+  onSave,
+}) => {
   return (
     <div className="p-1">
       <div className="grid">
@@ -13,9 +20,10 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave }
             htmlFor="bank_name"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_account.t_bank_account.bank_name.name} <span className="text-red-500">*</span>
+            {t_bank_account.t_bank_account.bank_name.name}{" "}
+            <span className="text-red-500">*</span>
           </label>
-         <InputText
+          <InputText
             name="bank_name"
             value={formData.bank_name}
             onChange={(e) => onChange("bank_name", e.target.value)}
@@ -31,7 +39,8 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave }
             htmlFor="account_name"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_account.t_bank_account.account_name.name} <span className="text-red-500">*</span>
+            {t_bank_account.t_bank_account.account_name.name}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <InputText
             name="account_name"
@@ -49,7 +58,8 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave }
             htmlFor="account_number"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_account.t_bank_account.account_number.name} <span className="text-red-500">*</span>
+            {t_bank_account.t_bank_account.account_number.name}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <InputText
             name="account_number"
@@ -67,12 +77,20 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave }
             htmlFor="opening_date"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_account.t_bank_account.opening_date.name} <span className="text-red-500">*</span>
+            {t_bank_account.t_bank_account.opening_date.name}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <Calendar
             name="opening_date"
-            value={formData.opening_date ? new Date(formData.opening_date) : null}
-            onChange={(e) => onChange("opening_date", e.value ? e.value.toISOString().split('T')[0] : "")}
+            value={
+              formData.opening_date ? new Date(formData.opening_date) : null
+            }
+            onChange={(e) =>
+              onChange(
+                "opening_date",
+                e.value ? e.value.toISOString().split("T")[0] : ""
+              )
+            }
             className={`w-full ${errors.opening_date ? "p-invalid" : ""}`}
             dateFormat="yy-mm-dd"
             placeholder={`Select ${t_bank_account.t_bank_account.opening_date.name}`}
@@ -142,7 +160,32 @@ const BankAccountFormComponent = ({ isBusy, errors, formData, onChange, onSave }
             disabled
           />
           {errors.current_balance && (
-            <small className="mb-3 text-red-500">{errors.current_balance}</small>
+            <small className="mb-3 text-red-500">
+              {errors.current_balance}
+            </small>
+          )}
+        </div>
+        <div className="col-12 md:col-4">
+          <label
+            htmlFor="is_default"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_bank_account.t_bank_account.is_default.name}
+          </label>
+          <div className="flex align-items-center">
+            <Checkbox
+              inputId="is_default"
+              name="is_default"
+              checked={formData.is_default === 1}
+              onChange={(e) => onChange("is_default", e.checked ? 1 : 0)}
+              className={`${errors.is_default ? "p-invalid" : ""}`}
+            />
+            <label htmlFor="is_default" className="ml-2">
+              Yes
+            </label>
+          </div>
+          {errors.is_default && (
+            <small className="mb-3 text-red-500">{errors.is_default}</small>
           )}
         </div>
         <div className="col-12">

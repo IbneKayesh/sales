@@ -20,6 +20,7 @@ export const useBankAccount = () => {
     debit_balance: 0,
     credit_balance: 0,
     current_balance: 0,
+    is_default: 0,
   });
 
   const loadBankAccounts = async (resetModified = false) => {
@@ -54,14 +55,13 @@ export const useBankAccount = () => {
     setFormDataBankAccount((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate(
       { ...formDataBankAccount, [field]: value },
-      t_bank_account.t_bank_account
+      t_units.t_units
     );
     setErrors(newErrors);
   };
 
   const handleClear = () => {
     setFormDataBankAccount({
-      bank_account_id: "",
       bank_name: "",
       account_name: "",
       account_number: "",
@@ -69,6 +69,7 @@ export const useBankAccount = () => {
       debit_balance: 0,
       credit_balance: 0,
       current_balance: 0,
+      is_default: 0,
     });
     setErrors({});
   };
@@ -84,6 +85,8 @@ export const useBankAccount = () => {
   };
 
   const handleEditBankAccount = (bankAccount) => {
+    console.log("bankAccount: " + JSON.stringify(bankAccount));
+
     setFormDataBankAccount(bankAccount);
     setCurrentView("form");
   };
@@ -124,7 +127,14 @@ export const useBankAccount = () => {
       t_bank_account.t_bank_account
     );
     setErrors(newErrors);
-    console.log("handleSaveBankAccount: " + JSON.stringify(newErrors));
+    console.log(
+      "handleSaveBankAccount: " + JSON.stringify(formDataBankAccount)
+    );
+
+    if (Object.keys(newErrors).length > 0) {
+      setIsBusy(false);
+      return;
+    }
 
     try {
       let updatedBankAccounts;

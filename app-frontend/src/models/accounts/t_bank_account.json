@@ -48,6 +48,11 @@
       "name": "Balance",
       "type": "number",
       "required": false
+    },
+    "is_default": {
+      "name": "Is Default",
+      "type": "number",
+      "required": false
     }
   }
 }

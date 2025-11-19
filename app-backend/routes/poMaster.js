@@ -36,10 +36,41 @@ function generate_order_number(order_type, callback) {
 
 // Get all purchase order masters
 router.get("/", (req, res) => {
+  const filter = req.query.filter || "default";
+  let whereClause = "";
+
+  switch (filter) {
+    case "7days":
+      whereClause =
+        "WHERE pom.is_paid = 1 AND pom.is_complete = 1 AND pom.order_date >= date('now', '-7 days')";
+      break;
+    case "30days":
+      whereClause =
+        "WHERE pom.is_paid = 1 AND pom.is_complete = 1 AND pom.order_date >= date('now', '-30 days')";
+      break;
+    case "90days":
+      whereClause =
+        "WHERE pom.is_paid = 1 AND pom.is_complete = 1 AND pom.order_date >= date('now', '-90 days')";
+      break;
+    case "alldays":
+      whereClause = "WHERE pom.is_paid = 1 AND pom.is_complete = 1";
+      break;
+    case "default":
+    default:
+      //add another logic to default
+      //show all of is_paid = 0 and is complete = 0
+      //1. new logic show is_paid = 1 and is_complete = 1 for todays
+      //2. or todays all
+      whereClause =
+        "WHERE (pom.is_paid = 0 AND pom.is_complete = 0) OR (pom.order_date = date('now'))";
+      break;
+  }
+
   const sql = `
     SELECT pom.*, c.contact_name, 0 AS ismodified
     FROM po_master pom
     LEFT JOIN contacts c ON pom.contacts_id = c.contact_id
+    ${whereClause}
     ORDER BY pom.is_paid ASC, pom.is_complete ASC
   `;
   db.all(sql, [], (err, rows) => {
@@ -424,21 +455,10 @@ function processData(po_master_id, order_type, ref_no) {
           }
         });
       });
+    }
 
-      // Mark as complete when incomplete and for purchase received
-      const sql_d = `UPDATE po_master
-              SET is_complete = 1
-              WHERE is_complete = 0
-              AND po_master_id = ?`;
-
-      db.run(sql_d, [po_master_id], function (err) {
-        if (err) {
-          console.error("Database error in sql_e:", err);
-        }
-      });
-
-      //Mark as complete when incomplete and for purchase booking > order no > (as child purchase receive ref no)
-      const sql_f = `UPDATE po_master
+    //Mark as complete when incomplete
+    const sql_f = `UPDATE po_master
             SET is_complete = (
                 SELECT 
                     CASE WHEN SUM(poc.item_qty - poc.received_qty) > 0 THEN 0
@@ -449,14 +469,13 @@ function processData(po_master_id, order_type, ref_no) {
                   ON poc.po_master_id = pom.po_master_id
                 WHERE pom.order_no = po_master.order_no
             )
-            WHERE po_master.order_no = ?`;
+            WHERE po_master.is_complete = 0`;
 
-      db.run(sql_f, [ref_no], function (err) {
-        if (err) {
-          console.error("Database error in sql_e:", err);
-        }
-      });
-    }
+    db.run(sql_f, [], function (err) {
+      if (err) {
+        console.error("Database error in sql_e:", err);
+      }
+    });
 
     // Mark as paid when paid and total are same
     const sql_e = `UPDATE po_master

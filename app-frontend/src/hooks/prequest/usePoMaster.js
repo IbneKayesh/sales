@@ -13,6 +13,15 @@ export const usePoMaster = () => {
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
+  const [selectedFilter, setSelectedFilter] = useState("default");
+
+  const filterOptions = [
+    { label: "Default", value: "default" },
+    { label: "Last 7 Days", value: "7days" },
+    { label: "Last 30 Days", value: "30days" },
+    { label: "Last 90 Days", value: "90days" },
+    { label: "All Days", value: "alldays" },
+  ];
   const [formDataPoMaster, setFormDataPoMaster] = useState({
     order_type: "",
     order_no: "AUTO[SGD#0001]",
@@ -64,9 +73,9 @@ export const usePoMaster = () => {
     }
   }, [formDataPoMaster.order_type, poMasters]);
 
-  const loadPoMasters = async (resetModified = false) => {
+  const loadPoMasters = async (filter = "default", resetModified = false) => {
     try {
-      const data = await poMasterAPI.getAll();
+      const data = await poMasterAPI.getAll(filter);
       setPoMasters(data);
       if (resetModified) {
         setToastBox({
@@ -89,8 +98,8 @@ export const usePoMaster = () => {
 
   // Load poMasters from API on mount
   useEffect(() => {
-    loadPoMasters();
-  }, []);
+    loadPoMasters(selectedFilter);
+  }, [selectedFilter]);
 
   const [orderChildItems, setOrderChildItems] = useState([]);
   const [orderChildItemsStore, setOrderChildItemsStore] = useState([]);
@@ -238,7 +247,11 @@ export const usePoMaster = () => {
   };
 
   const handleRefresh = () => {
-    loadPoMasters(true);
+    loadPoMasters(selectedFilter, true);
+  };
+
+  const handleFilterChange = (filter) => {
+    setSelectedFilter(filter);
   };
 
   const handleSaveAll = async (e) => {
@@ -254,39 +267,6 @@ export const usePoMaster = () => {
         setIsBusy(false);
         return;
       }
-
-      //Step 1 : used in Step 2
-      // const total_amount = orderChildItems.reduce(
-      //   (sum, i) => sum + Number(i.item_amount || 0),
-      //   0
-      // );
-
-      //Step 2 : used in Step 3 (paid_amount)
-      // if (formDataPoMaster.order_type === "Purchase Receive") {
-      //   //console.log("orderChildItems " + JSON.stringify(orderChildItems));
-
-      //   //if receive creates from booking then full paid
-      //   if (
-      //     formDataPoMaster.ref_no !== "-" &&
-      //     formDataPoMaster.ref_no !== "No Ref"
-      //   ) {
-      //     formDataPoMaster.paid_amount = total_amount;
-
-      //     setOrderChildItems((prev) => {
-      //       const updatedItems = prev.map((item) => ({
-      //         ...item,
-      //         received_qty: item.item_qty,
-      //       }));
-      //       //console.log("orderChildItems " + JSON.stringify(updatedItems));
-      //       return updatedItems;
-      //     });
-      //   }
-      // }
-
-      //Step 3 :
-      // const is_paid =
-      //   Number(total_amount) === Number(formDataPoMaster.paid_amount || 0);
-
       if (formDataPoMaster.po_master_id) {
         // Edit existing
         // 1️⃣ Items to CREATE (new items have po_master_id === "sgd")
@@ -385,12 +365,15 @@ export const usePoMaster = () => {
     currentView,
     errors,
     formDataPoMaster,
+    selectedFilter,
+    filterOptions,
     handleChange,
     handleCancel,
     handleAddNew,
     handleEditPoMaster,
     handleDeletePoMaster,
     handleRefresh,
+    handleFilterChange,
     handleSaveAll,
     poTypeOptions,
     refNoOptions,

@@ -2,7 +2,7 @@ import { apiRequest } from '@/utils/api.js';
 
 // Purchase Order Master API
 export const poMasterAPI = {
-  getAll: () => apiRequest('/po-master'),
+  getAll: (filter = 'default') => apiRequest(`/po-master?filter=${filter}`),
   getById: (id) => apiRequest(`/po-master/${id}`),
   create: (po) => apiRequest('/po-master', {
     method: 'POST',

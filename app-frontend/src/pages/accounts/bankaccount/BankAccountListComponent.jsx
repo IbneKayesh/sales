@@ -1,6 +1,5 @@
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Button } from "primereact/button";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 
@@ -97,6 +96,12 @@ const BankAccountListComponent = ({ dataList, onEdit, onDelete }) => {
               currency: "BDT",
             }).format(rowData.current_balance)
           }
+          sortable
+        />
+        <Column
+          field="is_default"
+          header="Is Default"
+          body={(rowData) => (rowData.is_default === 1 ? "Yes" : "No")}
           sortable
         />
         <Column

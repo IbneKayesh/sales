@@ -49,6 +49,7 @@ router.post("/", (req, res) => {
     debit_balance,
     credit_balance,
     current_balance,
+    is_default,
   } = req.body;
 
   if (!bank_account_id || !bank_name || !account_name || !account_number) {
@@ -58,8 +59,8 @@ router.post("/", (req, res) => {
   }
 
   const sql = `
-    INSERT INTO bank_accounts (bank_account_id, bank_name, account_name, account_number, opening_date, debit_balance, credit_balance, current_balance)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO bank_accounts (bank_account_id, bank_name, account_name, account_number, opening_date, debit_balance, credit_balance, current_balance, is_default)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
   const params = [
     bank_account_id,
@@ -70,6 +71,7 @@ router.post("/", (req, res) => {
     debit_balance || 0,
     credit_balance || 0,
     current_balance || 0,
+    is_default || 0,
   ];
 
   db.run(sql, params, function (err) {
@@ -92,6 +94,7 @@ router.post("/update", (req, res) => {
     debit_balance,
     credit_balance,
     current_balance,
+    is_default,
   } = req.body;
 
   if (!id || !bank_name  || !account_name || !account_number) {
@@ -106,6 +109,7 @@ router.post("/update", (req, res) => {
       account_name = ?,
       account_number = ?,
       opening_date = ?,
+      is_default = ?,
       updated_at = CURRENT_TIMESTAMP
     WHERE bank_account_id = ?
   `;
@@ -118,6 +122,7 @@ router.post("/update", (req, res) => {
     account_name,
     account_number,
     opening_date || "",
+    is_default || 0,
     // debit_balance || 0,
     // credit_balance || 0,
     // current_balance || 0,
@@ -141,6 +146,7 @@ router.post("/update", (req, res) => {
       debit_balance,
       credit_balance,
       current_balance,
+      is_default,
     });
   });
 });

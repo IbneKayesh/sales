@@ -40,6 +40,7 @@ const initTables = () => {
         debit_balance REAL DEFAULT 0,
         credit_balance REAL DEFAULT 0,
         current_balance REAL DEFAULT 0,
+        is_default INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )

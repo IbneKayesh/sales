@@ -4,6 +4,7 @@ import PrequestListComponent from "./PrequestListComponent";
 import PrequestFormComponent from "./PrequestFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
+import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 
 const PrequestPage = () => {
@@ -17,12 +18,15 @@ const PrequestPage = () => {
     currentView,
     errors,
     formDataPoMaster,
+    selectedFilter,
+    filterOptions,
     handleChange,
     handleCancel,
     handleAddNew,
     handleEditPoMaster,
     handleDeletePoMaster,
     handleRefresh,
+    handleFilterChange,
     handleSaveAll,
     poTypeOptions,
     refNoOptions,
@@ -54,12 +58,14 @@ const PrequestPage = () => {
 
         {isList ? (
           <div className="flex gap-2">
-            <Button
-              label="Refresh"
-              icon="pi pi-refresh"
-              size="small"
-              severity="secondary"
-              onClick={handleRefresh}
+            <Dropdown
+              value={selectedFilter}
+              options={filterOptions}
+              onChange={(e) => handleFilterChange(e.value)}
+              placeholder="Select Filter"
+              optionLabel="label"
+              optionValue="value"
+              className="w-full md:w-auto"
             />
             <Button
               label="New PO"
