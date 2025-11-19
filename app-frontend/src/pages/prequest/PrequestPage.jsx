@@ -66,6 +66,7 @@ const PrequestPage = () => {
               optionLabel="label"
               optionValue="value"
               className="w-full md:w-auto"
+              size="small"
             />
             <Button
               label="New PO"

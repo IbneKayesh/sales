@@ -58,6 +58,7 @@ const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
         size="small"
       >
         <Column field="category_name" header="Category Name" sortable />
+        <Column field="item_count" header="Total Items" sortable />
         <Column
           header="Actions"
           body={actionTemplate}

@@ -24,6 +24,7 @@ import ContactsPage from "./pages/setup/contacts/ContactsPage.jsx";
 import UsersPage from "./pages/setup/users/UsersPage.jsx";
 import ChangePasswordPage from "./pages/setup/changepassword/ChangePasswordPage.jsx";
 import ClosingProcessPage from "./pages/setup/closingprocess/ClosingProcessPage.jsx";
+import BackupPage from "./pages/setup/backup/BackupPage.jsx";
 
 function App() {
   const toast = useRef(null);
@@ -66,6 +67,7 @@ function AppRoutes({ toast }) {
         <Route path="setup/users" element={<UsersPage />} />
         <Route path="setup/change-password" element={<ChangePasswordPage />} />
         <Route path="setup/closing-process" element={<ClosingProcessPage />} />
+        <Route path="setup/backup" element={<BackupPage />} />
       </Route>
     </Routes>
   );

@@ -27,9 +27,22 @@ export const useItems = () => {
     margin_rate: 0,
   });
 
-  const loadItems = async (resetModified = false) => {
+  const [selectedFilter, setSelectedFilter] = useState("default");
+  const filterOptions = [
+    { label: "Default", value: "default" },
+    { label: "In Order", value: "orders" },
+    { label: "In Stock", value: "stock" },
+    { label: "Nill Stock", value: "nillstock" },
+    { label: "No Purchase Rate", value: "nopr" },
+    { label: "No Sale Rate", value: "nosr" },
+    { label: "With Discount", value: "wd" },
+    { label: "Without Discount", value: "wod" },
+    { label: "All Items", value: "allitems" },
+  ];
+
+  const loadItems = async (filter = "default", resetModified = false) => {
     try {
-      const data = await itemsAPI.getAll();
+      const data = await itemsAPI.getAll(filter);
       setItems(data);
       if (resetModified) {
         setToastBox({
@@ -52,8 +65,8 @@ export const useItems = () => {
 
   // Load items from API on mount
   useEffect(() => {
-    loadItems();
-  }, []);
+    loadItems(selectedFilter);
+  }, [selectedFilter]);
 
   const handleChange = (field, value) => {
     setFormDataItem((prev) => ({ ...prev, [field]: value }));
@@ -121,6 +134,10 @@ export const useItems = () => {
 
   const handleRefresh = () => {
     loadItems(true);
+  };
+
+  const handleFilterChange = (filter) => {
+    setSelectedFilter(filter);
   };
 
   const handleSaveItem = async (e) => {
@@ -238,12 +255,15 @@ export const useItems = () => {
     currentView,
     errors,
     formDataItem,
+    selectedFilter,
+    filterOptions,
     handleChange,
     handleCancel,
     handleAddNew,
     handleEditItem,
     handleDeleteItem,
     handleRefresh,
+    handleFilterChange,
     handleSaveItem,
   };
 };

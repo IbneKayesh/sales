@@ -1,15 +1,15 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+const sqlite3 = require("sqlite3").verbose();
+const path = require("path");
 
 // Create database path
-const dbPath = path.join(__dirname, '../database.db');
+const dbPath = path.join(__dirname, "../database.db");
 
 // Create database connection
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
-    console.error('Error opening database:', err.message);
+    console.error("Error opening database:", err.message);
   } else {
-    console.log('Connected to SQLite database.');
+    console.log("Connected to SQLite database.");
   }
 });
 
@@ -176,8 +176,8 @@ const initTables = () => {
     `);
 
     // Sales Order Child table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS so_child (
+    db.run(
+      `CREATE TABLE IF NOT EXISTS so_child (
         id TEXT PRIMARY KEY,
         so_master_id TEXT NOT NULL,
         item_id TEXT NOT NULL,
@@ -193,25 +193,111 @@ const initTables = () => {
         FOREIGN KEY (so_master_id) REFERENCES so_master (so_master_id) ON DELETE RESTRICT,
         FOREIGN KEY (item_id) REFERENCES items (item_id) ON DELETE RESTRICT
       )
+    `,
+      (err) => {
+        if (err) {
+          console.error("Error creating tables:", err);
+        } else {
+          // Initialize data after tables are created
+          initData(() => {
+            console.log("Database tables initialized and default data inserted.");
+          });
+        }
+      }
+    );
+  });
+};
+
+// Initialize default data
+const initData = (callback) => {
+  db.serialize(() => {
+    // Insert default users
+    db.run(`
+      INSERT OR IGNORE INTO users (user_id, username, password, email, role) VALUES
+      ('1', 'admin', 'password', 'admin@example.com', 'Admin'),
+      ('2', 'user', '123456', 'user@example.com', 'User')
     `, (err) => {
       if (err) {
-        console.error('Error creating tables:', err);
+        console.error("Error inserting default users:", err);
       } else {
-        // Insert default users after tables are created
-        db.run(`
-          INSERT OR IGNORE INTO users (user_id, username, password, email, role) VALUES
-          ('1', 'admin', 'password', 'admin@example.com', 'Admin'),
-          ('2', 'user', '123456', 'user@example.com', 'User')
-        `, (err) => {
-          if (err) {
-            console.error('Error inserting default users:', err);
-          } else {
-            console.log('Database tables initialized and default users inserted.');
-          }
-        });
+        console.log("Default users inserted.");
+      }
+    });
+
+    // Insert default bank account
+    db.run(`
+      INSERT OR IGNORE INTO bank_accounts (bank_account_id, bank_name, account_name, account_number, opening_date, debit_balance, credit_balance, current_balance, is_default) VALUES
+      ('1', 'Petty Cash', 'Daily Cash Book', '1234-5678-9012', strftime('%Y-%m-%d', 'now'), 0, 0, 0, 1)
+    `, (err) => {
+      if (err) {
+        console.error("Error inserting default bank account:", err);
+      } else {
+        console.log("Default bank account inserted.");
+      }
+    });
+
+    // Insert default contacts
+    db.run(`
+      INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_address, contact_type, current_balance) VALUES
+      ('1', 'ABC Suppliers', '', 'Supplier', 0),
+      ('2', 'XYZ Customer', '', 'Customer', 0)
+    `, (err) => {
+      if (err) {
+        console.error("Error inserting default contacts:", err);
+      } else {
+        console.log("Default contacts inserted.");
+      }
+    });
+
+    // Insert default categories
+    db.run(`
+      INSERT OR IGNORE INTO categories (category_id, category_name) VALUES
+      ('1', 'Laptop'),
+      ('2', 'Mobile')
+    `, (err) => {
+      if (err) {
+        console.error("Error inserting default categories:", err);
+      } else {
+        console.log("Default categories inserted.");
+      }
+    });
+
+    // Insert default units
+    db.run(`
+      INSERT OR IGNORE INTO units (unit_id, unit_name) VALUES
+      ('1', 'Pcs'),
+      ('2', 'Box')
+    `, (err) => {
+      if (err) {
+        console.error("Error inserting default units:", err);
+      } else {
+        console.log("Default units inserted.");
+      }
+    });
+
+    // Insert default items
+    db.run(`
+      INSERT OR IGNORE INTO items (item_id, item_name, item_description, category_id, small_unit_id, unit_difference_qty, big_unit_id, order_qty, stock_qty, purchase_rate, sales_rate, discount_percent, margin_rate) VALUES
+      ('1', 'Macbook Air 16/256', '', '1', '1', 10, '2', 0, 0, 105, 110, 0, 0),
+      ('2', 'iPhone 14', '', '2', '1', 10, '2', 0, 0, 55, 72, 0, 0),
+      ('3', 'Samsung Galaxy S23', '', '2', '1', 10, '2', 0, 0, 85, 92, 0, 0),
+      ('4', 'Dell XPS 13', '', '1', '1', 10, '2', 0, 0, 82, 92, 0, 0),
+      ('5', 'Google Pixel 7', '', '2', '1', 10, '2', 0, 0, 68, 73, 0, 0),
+      ('6', 'HP Pavilion', '', '1', '1', 10, '2', 0, 0, 85, 94, 0, 0),
+      ('7', 'OnePlus 11', '', '2', '1', 10, '2', 0, 0, 78, 81, 0, 0),
+      ('8', 'Lenovo ThinkPad', '', '1', '1', 10, '2', 0, 0, 120, 135, 0, 0),
+      ('9', 'Sony Xperia', '', '2', '1', 10, '2', 0, 0, 45, 48, 0, 0),
+      ('10', 'Asus ROG', '', '1', '1', 10, '2', 0, 0, 142, 165, 0, 0),
+      ('11', 'IP Phone', '', '1', '1', 10, '2', 0, 0, 15, 23, 0, 0)
+    `, (err) => {
+      if (err) {
+        console.error("Error inserting default items:", err);
+      } else {
+        console.log("Default items inserted.");
+        if (callback) callback();
       }
     });
   });
 };
 
-module.exports = { db, initTables };
+module.exports = { db, initTables, initData };

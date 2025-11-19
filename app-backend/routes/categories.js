@@ -4,7 +4,13 @@ const router = express.Router();
 
 // Get all categories
 router.get('/', (req, res) => {
-  db.all('SELECT c.*,0 AS ismodified FROM categories c ORDER BY c.category_id', [], (err, rows) => {
+  db.all(`
+    SELECT c.*, 0 AS ismodified, COUNT(i.item_id) AS item_count
+    FROM categories c
+    LEFT JOIN items i ON c.category_id = i.category_id
+    GROUP BY c.category_id
+    ORDER BY c.category_id
+  `, [], (err, rows) => {
     if (err) {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Internal server error' });

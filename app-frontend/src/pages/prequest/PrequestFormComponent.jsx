@@ -25,7 +25,7 @@ const PrequestFormComponent = ({
   setOrderChildItems,
   onSaveAll,
 }) => {
-  const { items } = useItems();
+  const { items, handleFilterChange } = useItems();
   const { contacts } = useContacts();
   const [selectedItem, setSelectedItem] = useState(null);
   const [editingRows, setEditingRows] = useState([]);
@@ -42,10 +42,21 @@ const PrequestFormComponent = ({
     if (shouldDisable) {
       setSelectedItem(null);
     }
+
+    handleFilterChange("allitems")
   }, [formData.order_type, formData.contacts_id, formData.ref_no, formData.is_complete]);
+
 
   const handleAddItem = () => {
     if (!selectedItem) return;
+
+    // Check if item is already added
+    const existingItem = orderChildItems.find((i) => i.item_id === selectedItem);
+    if (existingItem) {
+      // Item already exists, do not add duplicate
+      setSelectedItem(null);
+      return;
+    }
 
     const item = items.find((i) => i.item_id === selectedItem);
     if (!item) return;

@@ -57,10 +57,6 @@ router.get("/", (req, res) => {
       break;
     case "default":
     default:
-      //add another logic to default
-      //show all of is_paid = 0 and is complete = 0
-      //1. new logic show is_paid = 1 and is_complete = 1 for todays
-      //2. or todays all
       whereClause =
         "WHERE (pom.is_paid = 0 AND pom.is_complete = 0) OR (pom.order_date = date('now'))";
       break;
@@ -153,9 +149,9 @@ router.post("/", (req, res) => {
       contacts_id,
       ref_no,
       order_note || "",
-      total_amount || 0,
-      paid_amount || 0,
-      is_paid || 0,
+      0,
+      0,
+      0,
       0,
     ];
 
@@ -185,16 +181,16 @@ router.post("/", (req, res) => {
           child.discount_amount || 0,
           child.item_amount,
           child.item_note || "",
-          child.received_qty,
+          0,
         ];
 
         db.run(sqlChild, paramsChild, function (err) {
           if (err) console.error("Child insert error:", err);
+
+          //execute invoice data processing
+          processInvoiceData(po_master_id, order_type, ref_no);
         });
       });
-
-      //ensure process
-      processData(po_master_id, order_type, ref_no);
 
       res.status(201).json({
         message: "Purchase Order created successfully!",
@@ -370,50 +366,49 @@ router.post("/delete", (req, res) => {
   });
 });
 
-function processData(po_master_id, order_type, ref_no) {
-  // Update total_amount in po_master
-  const sql_a = `
+function processInvoiceData(po_master_id, order_type, ref_no) {
+  //sum childs item amount and update total_amount in po_master
+  const sql_total_amount = `
     UPDATE po_master
     SET total_amount = (
       SELECT IFNULL(SUM(poc.item_rate * poc.item_qty - poc.discount_amount), 0)
       FROM po_child poc
       WHERE poc.po_master_id = po_master.po_master_id
     )
-    WHERE po_master_id = ?
+    WHERE is_complete = 0
+    AND po_master_id = ?
   `;
 
-  db.run(sql_a, [po_master_id], function (err) {
+  db.run(sql_total_amount, [po_master_id], function (err) {
     if (err) {
-      console.error("Database error in sql_a:", err);
+      console.error("Database error in sql_total_amount:", err);
       return;
     }
 
     if (order_type === "Purchase Receive") {
-      // Update paid_amount for Purchase Receive
-      const sql_b = `
+      //if created from a reference, mark it as paid and complete
+      const sql_paid_amount = `
         UPDATE po_master
-        SET paid_amount = total_amount
-        WHERE ref_no <> 'No Ref'
-        AND order_type = 'Purchase Receive'
+        SET paid_amount = total_amount, is_paid = 1
+        WHERE is_complete = 0
         AND po_master_id = ?
+        AND ref_no <> 'No Ref'
+        AND order_type = 'Purchase Receive'
+        AND is_paid = 0
       `;
 
-      db.run(sql_b, [po_master_id], function (err) {
+      db.run(sql_paid_amount, [po_master_id], function (err) {
         if (err) {
-          console.error("Database error in sql_b:", err);
-          return;
+          console.error("Database error in sql_paid_amount:", err);
+          //return; Go to next SQL
         }
       });
 
-      // Update received_qty for purchase booking
-      const sql_c = `WITH a AS (
-          SELECT
-            pom.ref_no,
-            poc.item_id,
-            SUM(poc.item_qty) AS item_qty
+      //Update "Purchase Booking.received_qty" from "Purchase Receive.item_qty"
+      const sql_update_received_qty = `WITH a AS (
+          SELECT pom.ref_no, poc.item_id, SUM(poc.item_qty) AS item_qty
           FROM po_child poc
-          JOIN po_master pom
-            ON poc.po_master_id = pom.po_master_id
+          JOIN po_master pom ON poc.po_master_id = pom.po_master_id
           WHERE pom.ref_no = ?
           GROUP BY pom.ref_no, poc.item_id
         )
@@ -431,49 +426,47 @@ function processData(po_master_id, order_type, ref_no) {
           WHERE a.item_id = po_child.item_id
         )`;
 
-      db.run(sql_c, [ref_no], function (err) {
+      db.run(sql_update_received_qty, [ref_no], function (err) {
         if (err) {
-          console.error("Database error in sql_c:", err);
-          return;
+          console.error("Database error in sql_update_received_qty:", err);
+          //return; Go to next SQL
         }
 
-        // Update received_qty for purchase receive
-        const sql_d = `UPDATE po_child
+        // Update "Purchase Receive.received_qty"
+        const sql_update_received_qty2 = `UPDATE po_child
             SET received_qty = item_qty
             WHERE EXISTS (
-              SELECT 1
-              FROM po_master pom
+              SELECT 1 FROM po_master pom
               WHERE po_child.po_master_id = pom.po_master_id
-                AND pom.order_type = 'Purchase Receive'
-                AND pom.po_master_id = ?
+              AND pom.order_type = 'Purchase Receive'
+              AND pom.po_master_id = ?
             )`;
 
-        db.run(sql_d, [po_master_id], function (err) {
+        db.run(sql_update_received_qty2, [po_master_id], function (err) {
           if (err) {
-            console.error("Database error in sql_d:", err);
-            return;
+            console.error("Database error in sql_update_received_qty2:", err);
+            //return; Go to next SQL
           }
         });
       });
+    } else {
+      //do nothing
     }
 
     //Mark as complete when incomplete
-    const sql_f = `UPDATE po_master
+    const sql_mark_as_complete = `UPDATE po_master
             SET is_complete = (
-                SELECT 
-                    CASE WHEN SUM(poc.item_qty - poc.received_qty) > 0 THEN 0
-                        ELSE 1 
-                    END
+                SELECT CASE WHEN SUM(poc.item_qty - poc.received_qty) > 0 THEN 0 ELSE 1 END
                 FROM po_child poc
-                JOIN po_master pom 
-                  ON poc.po_master_id = pom.po_master_id
+                JOIN po_master pom ON poc.po_master_id = pom.po_master_id
                 WHERE pom.order_no = po_master.order_no
             )
             WHERE po_master.is_complete = 0`;
 
-    db.run(sql_f, [], function (err) {
+    db.run(sql_mark_as_complete, [], function (err) {
       if (err) {
-        console.error("Database error in sql_e:", err);
+        console.error("Database error in sql_mark_as_complete:", err);
+        //return; Go to next SQL
       }
     });
 
@@ -482,7 +475,7 @@ function processData(po_master_id, order_type, ref_no) {
               SET is_paid = 1
               WHERE is_paid = 0
               AND total_amount = paid_amount
-              AND po_master_id = ?`;
+              AND po_master_id = ? `;
 
     db.run(sql_e, [po_master_id], function (err) {
       if (err) {

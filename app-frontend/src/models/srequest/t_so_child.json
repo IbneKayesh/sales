@@ -8,7 +8,7 @@
       "maxLength": 36
     },
     "so_master_id": {
-      "name": "Order Number",
+      "name": "Order No",
       "type": "string",
       "required": true,
       "minLength": 1,
@@ -26,13 +26,18 @@
       "type": "number",
       "required": true
     },
-    "order_item_qty": {
-      "name": "Order Item Qty",
+    "booking_qty": {
+      "name": "Booking Qty",
       "type": "number",
-      "required": true
+      "required": false
     },
-    "return_item_qty": {
-      "name": "Return Item Qty",
+    "order_qty": {
+      "name": "Order Qty",
+      "type": "number",
+      "required": false
+    },
+    "return_qty": {
+      "name": "Return Qty",
       "type": "number",
       "required": false
     },
@@ -40,6 +45,21 @@
       "name": "Item Qty",
       "type": "number",
       "required": true
+    },
+    "booking_amount": {
+      "name": "Booking Amount",
+      "type": "number",
+      "required": false
+    },
+    "order_amount": {
+      "name": "Order Amount",
+      "type": "number",
+      "required": false
+    },
+    "return_amount": {
+      "name": "Return Amount",
+      "type": "number",
+      "required": false
     },
     "discount_amount": {
       "name": "Discount Amount",
@@ -49,7 +69,7 @@
     "item_amount": {
       "name": "Item Amount",
       "type": "number",
-      "required": true
+      "required": false
     },
     "item_note": {
       "name": "Item Note",
