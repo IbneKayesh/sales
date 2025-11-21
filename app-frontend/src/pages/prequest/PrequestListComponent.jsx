@@ -70,6 +70,7 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
   };
 
   const isPaidTemplate = (rowData) => {
+    //console.log("rowData " + JSON.stringify(rowData))
     return (
       <>
         {rowData.is_paid ? (
@@ -77,10 +78,15 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
         ) : (
           <Badge value="Unpaid" severity="danger" className="mr-1"></Badge>
         )}
-        {rowData.is_complete ? (
-          <Badge value="Complete" severity="info"></Badge>
+        {rowData.is_posted ? (
+          <Badge value="Posted" severity="success" className="mr-1"></Badge>
         ) : (
-          <Badge value="Pending" severity="warning"></Badge>
+          <Badge value="Unposted" severity="danger" className="mr-1"></Badge>
+        )}
+        {rowData.is_completed ? (
+          <Badge value="Completed" severity="info"></Badge>
+        ) : (
+          <Badge value="Incomplete" severity="warning"></Badge>
         )}
       </>
     );
@@ -89,8 +95,10 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
   // Summary calculations for table footer
   const totalPaid = dataList.filter((item) => item.is_paid).length;
   const totalUnpaid = dataList.filter((item) => !item.is_paid).length;
-  const totalComplete = dataList.filter((item) => item.is_complete).length;
-  const totalPending = dataList.filter((item) => !item.is_complete).length;
+  const totalPosted = dataList.filter((item) => item.is_posted).length;
+  const totalUnposted = dataList.filter((item) => !item.is_posted).length;
+  const totalCompleted = dataList.filter((item) => item.is_completed).length;
+  const totalIncomplete = dataList.filter((item) => !item.is_completed).length;
   const totalUnpaidValue = dataList
     .filter((item) => !item.is_paid)
     .reduce(
@@ -134,16 +142,30 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
                 className="mr-1"
               />
             )}
-            {totalComplete > 0 && (
+            {totalPosted > 0 && (
               <Badge
-                value={`Complete: ${totalComplete}`}
+                value={`Posted: ${totalPosted}`}
+                severity="success"
+                className="mr-1"
+              />
+            )}
+            {totalUnposted > 0 && (
+              <Badge
+                value={`Unposted: ${totalUnposted}`}
+                severity="danger"
+                className="mr-1"
+              />
+            )}
+            {totalCompleted > 0 && (
+              <Badge
+                value={`Completed: ${totalCompleted}`}
                 severity="info"
                 className="mr-1"
               />
             )}
-            {totalPending > 0 && (
+            {totalIncomplete > 0 && (
               <Badge
-                value={`Pending: ${totalPending}`}
+                value={`Incomplete: ${totalIncomplete}`}
                 severity="warning"
                 className="mr-1"
               />

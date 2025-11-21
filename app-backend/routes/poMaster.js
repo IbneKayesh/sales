@@ -47,23 +47,24 @@ router.get("/", (req, res) => {
   switch (filter) {
     case "7days":
       whereClause +=
-        "AND pom.is_paid = 1 AND pom.is_complete = 1 AND pom.order_date >= date('now', '-7 days')";
+        "AND pom.is_paid = 1 AND pom.is_posted = 1 AND pom.is_completed = 1 AND pom.order_date >= date('now', '-7 days')";
       break;
     case "30days":
       whereClause +=
-        "AND pom.is_paid = 1 AND pom.is_complete = 1 AND pom.order_date >= date('now', '-30 days')";
+        "AND pom.is_paid = 1 AND pom.is_posted = 1 AND pom.is_completed = 1 AND pom.order_date >= date('now', '-30 days')";
       break;
     case "90days":
       whereClause +=
-        "AND pom.is_paid = 1 AND pom.is_complete = 1 AND pom.order_date >= date('now', '-90 days')";
+        "AND pom.is_paid = 1 AND pom.is_posted = 1 AND pom.is_completed = 1 AND pom.order_date >= date('now', '-90 days')";
       break;
     case "alldays":
-      whereClause += "AND pom.is_paid = 1 AND pom.is_complete = 1";
+      whereClause +=
+        "AND pom.is_paid = 1 AND pom.is_posted = 1 AND pom.is_completed = 1";
       break;
     case "default":
     default:
       whereClause +=
-        "AND (pom.is_paid = 0 AND pom.is_complete = 0) OR (pom.order_date = date('now'))";
+        "AND (pom.is_paid = 0 AND pom.is_posted = 0 AND pom.is_completed = 0) OR (pom.order_date = date('now'))";
       break;
   }
   const sql = `
@@ -71,7 +72,7 @@ router.get("/", (req, res) => {
     FROM po_master pom
     LEFT JOIN contacts c ON pom.contacts_id = c.contact_id
     ${whereClause}
-    ORDER BY pom.is_paid ASC, pom.is_complete ASC
+    ORDER BY pom.is_paid ASC, pom.is_completed ASC
   `;
   //console.log(sql);
 
@@ -114,9 +115,14 @@ router.post("/", (req, res) => {
     contacts_id,
     ref_no,
     order_note,
+    order_amount,
+    discount_amount,
     total_amount,
     paid_amount,
+    cost_amount,
     is_paid,
+    is_posted,
+    is_completed,
     childs,
   } = req.body;
 
@@ -125,13 +131,12 @@ router.post("/", (req, res) => {
     !order_type ||
     !order_date ||
     !contacts_id ||
-    !ref_no ||
     !childs ||
     !Array.isArray(childs)
   ) {
     return res.status(400).json({
       error:
-        "PO Master ID, order type, order date, contacts, ref no and childs are required",
+        "Master ID, order type, order date, contacts and childs are required",
     });
   }
 
@@ -144,8 +149,8 @@ router.post("/", (req, res) => {
     }
 
     const sqlMaster = `
-      INSERT INTO po_master (po_master_id, order_type, order_no, order_date, contacts_id, ref_no, order_note, total_amount, paid_amount, is_paid, is_complete)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO po_master (po_master_id, order_type, order_no, order_date, contacts_id, ref_no, order_note, order_amount, discount_amount, total_amount, paid_amount, cost_amount, is_paid, is_posted)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const masterParams = [
       po_master_id,
@@ -153,12 +158,15 @@ router.post("/", (req, res) => {
       order_no,
       order_date,
       contacts_id,
-      ref_no,
+      ref_no || "",
       order_note || "",
-      0,
-      0,
-      0,
-      0,
+      order_amount || 0,
+      discount_amount || 0,
+      total_amount || 0,
+      paid_amount || 0,
+      cost_amount || 0,
+      is_paid || 0,
+      is_posted || 0,
     ];
 
     //add here // Create new purchase order child
@@ -172,8 +180,8 @@ router.post("/", (req, res) => {
       // Insert children one by one
       const sqlChild = `
         INSERT INTO po_child 
-        (id, po_master_id, item_id, item_rate, item_qty, discount_amount, item_amount, item_note, received_qty)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (id, po_master_id, item_id, item_rate, booking_qty, order_qty, discount_percent, discount_amount, item_amount, cost_rate, item_note, ref_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
       childs.forEach((child) => {
@@ -183,18 +191,21 @@ router.post("/", (req, res) => {
           po_master_id,
           child.item_id,
           child.item_rate,
-          child.item_qty,
+          child.booking_qty || 0,
+          child.order_qty || 0,
+          child.discount_percent || 0,
           child.discount_amount || 0,
-          child.item_amount,
+          child.item_amount || 0,
+          child.cost_rate || 0,
           child.item_note || "",
-          0,
+          child.ref_id || "",
         ];
 
         db.run(sqlChild, paramsChild, function (err) {
           if (err) console.error("Child insert error:", err);
 
           //execute invoice data processing
-          processInvoiceData(po_master_id, order_type, ref_no);
+          //processInvoiceData(po_master_id, order_type, ref_no);
         });
       });
 

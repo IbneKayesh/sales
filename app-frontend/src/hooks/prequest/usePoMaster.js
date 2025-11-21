@@ -30,30 +30,35 @@ export const usePoMaster = () => {
   ];
 
   const [formDataPoMaster, setFormDataPoMaster] = useState({
-    order_type: "",
+    po_master_id: "",
+    order_type: selectedPoType,
     order_no: "AUTO[SGD#0001]",
     order_date: new Date().toISOString().split("T")[0],
     contacts_id: "",
     ref_no: "No Ref",
     order_note: "",
+    order_amount: 0,
+    discount_amount: 0,
     total_amount: 0,
     paid_amount: 0,
+    cost_amount: 0,
     is_paid: 0,
-    is_complete: 0,
+    is_posted: 0,
+    is_completed: 0,
     ismodified: 0,
   });
 
-  const [formDataPoChild, setFormDataPoChild] = useState({
-    po_master_id: "",
-    item_id: "",
-    item_rate: 0,
-    item_qty: 0,
-    discount_amount: 0,
-    item_amount: 0,
-    item_note: "",
-    received_qty: 0,
-    ismodified: 0,
-  });
+  // const [formDataPoChild, setFormDataPoChild] = useState({
+  //   po_master_id: "",
+  //   item_id: "",
+  //   item_rate: 0,
+  //   item_qty: 0,
+  //   discount_amount: 0,
+  //   item_amount: 0,
+  //   item_note: "",
+  //   received_qty: 0,
+  //   ismodified: 0,
+  // });
 
   const refNoOptions = useMemo(() => {
     if (formDataPoMaster.order_type === "Purchase Booking") {
@@ -123,6 +128,7 @@ export const usePoMaster = () => {
       });
     }
   };
+
   const loadPoChildrenByOrderNo = async (orderno) => {
     setOrderChildItems([]);
     try {
@@ -139,6 +145,52 @@ export const usePoMaster = () => {
     }
   };
 
+  // Effect to update formDataPoMaster amounts based on orderChildItems
+  useEffect(() => {
+    const order_amount = orderChildItems?.reduce(
+      (total, row) => total + (row.booking_qty || 0) * (row.item_rate || 0),
+      0
+    );
+    const discount_amount = orderChildItems?.reduce(
+      (total, row) => total + (row.discount_amount || 0),
+      0
+    );
+    const total_amount = orderChildItems?.reduce(
+      (total, row) => total + (row.item_amount || 0),
+      0
+    );
+
+    setFormDataPoMaster((prev) => ({
+      ...prev,
+      order_amount,
+      discount_amount,
+      total_amount,
+    }));
+  }, [orderChildItems]);
+
+  //Effect to update orderChildItems cost_rate based on orderChildItems and cost_amount
+  const costRate = useMemo(() => {
+    const totalBookingQty = orderChildItems.reduce(
+      (sum, item) => sum + (item.booking_qty || 0),
+      0
+    );
+    const costAmount =
+      formDataPoMaster.cost_amount > 0 ? formDataPoMaster.cost_amount : 0;
+    return costAmount / (totalBookingQty || 1);
+  }, [orderChildItems, formDataPoMaster.cost_amount]);
+
+  useEffect(() => {
+    setOrderChildItems((prevItems) =>
+      prevItems.map((item) => {
+        const costRateItem = item.item_amount / (item.booking_qty || 1);
+        return {
+          ...item,
+          cost_rate: costRateItem + costRate,
+        };
+      })
+    );
+  }, [costRate]);
+
   const handleChange = async (field, value) => {
     let processedValue = value;
     // if (field === "is_paid") {
@@ -151,7 +203,7 @@ export const usePoMaster = () => {
       // Reset ref_no when order_type changes
       if (field === "order_type") {
         if (value === "Purchase Booking") {
-          updatedData.ref_no = "No Ref";
+          //updatedData.ref_no = "No Ref";
         } else if (value === "Purchase Receive") {
           // Set to first available option or empty
           // const availableRefs = poMasters.filter(
@@ -159,9 +211,9 @@ export const usePoMaster = () => {
           // );
           // updatedData.ref_no =
           //   availableRefs.length > 0 ? availableRefs[0].order_no : "";
-          updatedData.ref_no = "-";
+          //updatedData.ref_no = "-";
         } else {
-          updatedData.ref_no = "-";
+          //updatedData.ref_no = "-";
         }
       }
 
@@ -173,10 +225,10 @@ export const usePoMaster = () => {
       t_po_master.t_po_master
     );
 
-    if (field === "ref_no" && value) {
-      //console.log("ref_no " + value);
-      await loadPoChildrenByOrderNo(value);
-    }
+    // if (field === "ref_no" && value) {
+    //   //console.log("ref_no " + value);
+    //   await loadPoChildrenByOrderNo(value);
+    // }
     setErrors(newErrors);
   };
 
@@ -189,25 +241,29 @@ export const usePoMaster = () => {
       contacts_id: "",
       ref_no: "No Ref",
       order_note: "",
+      order_amount: 0,
+      discount_amount: 0,
       total_amount: 0,
       paid_amount: 0,
+      cost_amount: 0,
       is_paid: 0,
-      is_complete: 0,
+      is_posted: 0,
+      is_completed: 0,
       ismodified: 0,
     });
     setErrors({});
 
-    setFormDataPoChild({
-      po_master_id: "",
-      item_id: "",
-      item_rate: 0,
-      item_qty: 0,
-      discount_amount: 0,
-      item_amount: 0,
-      item_note: "",
-      received_qty: 0,
-      ismodified: 0,
-    });
+    // setFormDataPoChild({
+    //   po_master_id: "",
+    //   item_id: "",
+    //   item_rate: 0,
+    //   item_qty: 0,
+    //   discount_amount: 0,
+    //   item_amount: 0,
+    //   item_note: "",
+    //   received_qty: 0,
+    //   ismodified: 0,
+    // });
 
     setOrderChildItems([]);
   };
@@ -300,6 +356,8 @@ export const usePoMaster = () => {
 
         const newPoMasterData = {
           ...formDataPoMaster,
+          is_paid:
+            formDataPoMaster.total_amount === formDataPoMaster.paid_amount,
           ismodified: true,
           childs_create: childs,
           childs_update: toUpdateChildItems,
@@ -333,6 +391,8 @@ export const usePoMaster = () => {
         const newPoMasterData = {
           ...formDataPoMaster,
           po_master_id,
+          is_paid:
+            formDataPoMaster.total_amount === formDataPoMaster.paid_amount,
           ismodified: true,
           childs,
         };

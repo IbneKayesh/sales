@@ -10,6 +10,7 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { generateGuid } from "@/utils/guid";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
+import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 import t_po_master from "@/models/prequest/t_po_master.json";
 import { useContacts } from "@/hooks/setup/useContacts";
 import { useItems } from "@/hooks/inventory/useItems";
@@ -19,37 +20,19 @@ const PrequestFormComponent = ({
   errors,
   formData,
   onChange,
-  poTypeOptions,
-  refNoOptions,
   orderChildItems,
   setOrderChildItems,
   onSaveAll,
 }) => {
-  const { items, handleFilterChange } = useItems();
-  const { contacts } = useContacts();
+  const { itemsPurchase, handleFilterChange } = useItems();
+  const { contactsSupplier } = useContacts();
   const [selectedItem, setSelectedItem] = useState(null);
   const [editingRows, setEditingRows] = useState([]);
   const [disabledItemAdd, setDisabledItemAdd] = useState(false);
 
   useEffect(() => {
-    const shouldDisable =
-      !formData.order_type ||
-      !formData.contacts_id ||
-      formData.ref_no !== "No Ref" ||
-      formData.is_complete;
-
-    setDisabledItemAdd(shouldDisable);
-    if (shouldDisable) {
-      setSelectedItem(null);
-    }
-
     handleFilterChange("allitems");
-  }, [
-    formData.order_type,
-    formData.contacts_id,
-    formData.ref_no,
-    formData.is_complete,
-  ]);
+  }, []);
 
   const handleAddItem = () => {
     if (!selectedItem) return;
@@ -64,7 +47,7 @@ const PrequestFormComponent = ({
       return;
     }
 
-    const item = items.find((i) => i.item_id === selectedItem);
+    const item = itemsPurchase.find((i) => i.item_id === selectedItem);
     if (!item) return;
 
     const newRow = {
@@ -73,14 +56,16 @@ const PrequestFormComponent = ({
       item_id: selectedItem,
       item_name: item.item_name,
       item_rate: item.purchase_rate,
-      item_qty: 1,
+      booking_qty: 1,
+      order_qty: 0,
+      discount_percent: 0,
+      discount_amount: 0,
+      item_amount: item.purchase_rate * 1, // Will be re-calculated on edit save,
+      cost_rate: item.purchase_rate,
+      item_note: "",
       unit_difference_qty: item.unit_difference_qty,
       small_unit_name: item.small_unit_name,
       big_unit_name: item.big_unit_name,
-      discount_amount: 0,
-      item_amount: item.purchase_rate * 1, // Will be re-calculated on edit save
-      item_note: "",
-      received_qty: 0, // Will be calculate on edit save
       ismodified: 1, // Flag for new items
     };
 
@@ -105,16 +90,17 @@ const PrequestFormComponent = ({
   const onRowEditSave = (event) => {
     let { newData, index } = event;
     // Calculate item_amount
-    const newItemQty =
-      newData.received_qty === 0
-        ? newData.item_qty
-        : newData.received_qty > 0 && newData.item_qty > newData.received_qty
-        ? newData.received_qty
-        : newData.item_qty;
-    newData.item_qty = newItemQty;
-    newData.item_amount =
-      newData.item_rate * newData.item_qty - newData.discount_amount;
-    newData.received_qty = 0;
+    const discountAmount = newData.discount_amount;
+
+    const itemAmount = newData.item_rate * newData.booking_qty;
+    newData.item_amount = itemAmount - discountAmount;
+
+    const discountPercent =
+      itemAmount > 0
+        ? Math.round((discountAmount / itemAmount) * 100 * 100) / 100
+        : 0;
+    newData.discount_percent = discountPercent;
+
     newData.ismodified = 1;
     let _localItems = [...orderChildItems];
     _localItems[index] = newData;
@@ -180,48 +166,84 @@ const PrequestFormComponent = ({
   };
 
   const itemRateTemplate = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
+    const formattedItemRate = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
     }).format(rowData.item_rate);
+    const formattedCostRate = Number(rowData.cost_rate).toFixed(2);
+    return `${formattedItemRate} (${formattedCostRate})`;
+  };
+
+  const bookingQtyTemplate = (rowData) => {
+    return `${rowData.booking_qty} ${rowData.small_unit_name} (${rowData.order_qty})`;
+  };
+
+  const totalBookingQty = orderChildItems.reduce(
+    (sum, item) => sum + (item.booking_qty || 0),
+    0
+  );
+
+  const totalOrderQty = orderChildItems.reduce(
+    (sum, item) => sum + (item.order_qty || 0),
+    0
+  );
+
+  const totalBookingQtyTemplate = () => {
+    return `${totalBookingQty} (${totalOrderQty})`;
   };
 
   const discountAmountTemplate = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
+    const discountAmount = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
     }).format(rowData.discount_amount);
+
+    return `${discountAmount} (${rowData.discount_percent}%)`;
+  };
+
+  const totalDiscountAmount = orderChildItems.reduce(
+    (sum, item) => sum + (item.discount_amount || 0),
+    0
+  );
+
+  const discountAmountFooterTemplate = (rowData) => {
+    const discountAmount = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "BDT",
+    }).format(totalDiscountAmount);
+
+    return `${discountAmount}`;
   };
 
   const itemAmountTemplate = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
+    //console.log("rowData" + JSON.stringify(rowData))
+    const itemAmount = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
     }).format(rowData.item_amount);
+
+    const itemAmountF = rowData.item_rate * rowData.booking_qty;
+
+    return `${itemAmount} (${itemAmountF})`;
   };
 
   const convertedQtyTemplate = (rowData) => {
-    return <ConvertedQtyComponent qty={rowData.item_qty} rowData={rowData} />;
-  };
-
-  const received_qtyBody = (rowData) => {
     return (
-      <ConvertedQtyComponent qty={rowData.received_qty} rowData={rowData} />
+      <>
+        <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} /> (
+        <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} />)
+      </>
     );
   };
 
-  const totalItemQty = orderChildItems.reduce(
-    (sum, item) => sum + (item.item_qty || 0),
-    0
-  );
-  const totalReceivedQty = orderChildItems.reduce(
-    (sum, item) => sum + (item.received_qty || 0),
-    0
-  );
   const totalItemAmount = orderChildItems.reduce(
     (sum, item) => sum + (item.item_amount || 0),
     0
   );
+
+  const itemAmountFooterTemplate = () => {
+    return <ConvertedBDTCurrency value={totalItemAmount} asWords={true} />;
+  };
 
   return (
     <div className="p-1">
@@ -230,7 +252,7 @@ const PrequestFormComponent = ({
       <div className="grid">
         <div className="col-12 md:col-3">
           <label htmlFor="order_no" className="block text-900 font-medium mb-2">
-            {t_po_master.t_po_master.order_no.name}{" "}
+            {t_po_master.t_po_master.order_no.name}
             <span className="text-red-500">*</span>
           </label>
           <InputText
@@ -245,12 +267,12 @@ const PrequestFormComponent = ({
             <small className="mb-3 text-red-500">{errors.order_no}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="order_date"
             className="block text-900 font-medium mb-2"
           >
-            {t_po_master.t_po_master.order_date.name}{" "}
+            {t_po_master.t_po_master.order_date.name}
             <span className="text-red-500">*</span>
           </label>
           <Calendar
@@ -275,22 +297,13 @@ const PrequestFormComponent = ({
             htmlFor="contacts_id"
             className="block text-900 font-medium mb-2"
           >
-            {t_po_master.t_po_master.contacts_id.name}{" "}
+            {t_po_master.t_po_master.contacts_id.name}
             <span className="text-red-500">*</span>
           </label>
           <Dropdown
             name="contacts_id"
             value={formData.contacts_id}
-            options={contacts
-              .filter(
-                (contact) =>
-                  contact.contact_type === "Both" ||
-                  contact.contact_type === "Supplier"
-              )
-              .map((contact) => ({
-                label: contact.contact_name,
-                value: contact.contact_id,
-              }))}
+            options={contactsSupplier}
             onChange={(e) => onChange("contacts_id", e.value)}
             className={`w-full ${errors.contacts_id ? "p-invalid" : ""}`}
             placeholder={`Select ${t_po_master.t_po_master.contacts_id.name}`}
@@ -301,7 +314,22 @@ const PrequestFormComponent = ({
             <small className="mb-3 text-red-500">{errors.contacts_id}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
+          <label htmlFor="ref_no" className="block text-900 font-medium mb-2">
+            {t_po_master.t_po_master.ref_no.name}
+          </label>
+          <InputText
+            name="ref_no"
+            value={formData.ref_no}
+            onChange={(e) => onChange("ref_no", e.target.value)}
+            className={`w-full ${errors.ref_no ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_po_master.t_po_master.ref_no.name}`}
+          />
+          {errors.ref_no && (
+            <small className="mb-3 text-red-500">{errors.ref_no}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-2">
           <label
             htmlFor="order_note"
             className="block text-900 font-medium mb-2"
@@ -319,7 +347,53 @@ const PrequestFormComponent = ({
             <small className="mb-3 text-red-500">{errors.order_note}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
+          <label
+            htmlFor="order_amount"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_po_master.t_po_master.order_amount.name}
+          </label>
+          <InputNumber
+            name="order_amount"
+            value={formData.order_amount}
+            onValueChange={(e) => onChange("order_amount", e.value)}
+            mode="currency"
+            currency="BDT"
+            locale="en-US"
+            inputStyle={{ width: "100%" }}
+            className={`w-full ${errors.order_amount ? "p-invalid" : ""}`}
+            disabled
+          />
+          {errors.order_amount && (
+            <small className="mb-3 text-red-500">{errors.order_amount}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-2">
+          <label
+            htmlFor="discount_amount"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_po_master.t_po_master.discount_amount.name}
+          </label>
+          <InputNumber
+            name="discount_amount"
+            value={formData.discount_amount}
+            onValueChange={(e) => onChange("discount_amount", e.value)}
+            mode="currency"
+            currency="BDT"
+            locale="en-US"
+            inputStyle={{ width: "100%" }}
+            className={`w-full ${errors.discount_amount ? "p-invalid" : ""}`}
+            disabled
+          />
+          {errors.discount_amount && (
+            <small className="mb-3 text-red-500">
+              {errors.discount_amount}
+            </small>
+          )}
+        </div>
+        <div className="col-12 md:col-2">
           <label
             htmlFor="total_amount"
             className="block text-900 font-medium mb-2"
@@ -333,6 +407,7 @@ const PrequestFormComponent = ({
             mode="currency"
             currency="BDT"
             locale="en-US"
+            inputStyle={{ width: "100%" }}
             className={`w-full ${errors.total_amount ? "p-invalid" : ""}`}
             disabled
           />
@@ -340,7 +415,7 @@ const PrequestFormComponent = ({
             <small className="mb-3 text-red-500">{errors.total_amount}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="paid_amount"
             className="block text-900 font-medium mb-2"
@@ -354,14 +429,48 @@ const PrequestFormComponent = ({
             mode="currency"
             currency="BDT"
             locale="en-US"
+            inputStyle={{ width: "100%" }}
             className={`w-full ${errors.paid_amount ? "p-invalid" : ""}`}
-            disabled={
-              formData.ref_no.length > 6 &&
-              formData.order_type === "Purchase Receive"
-            }
           />
           {errors.paid_amount && (
             <small className="mb-3 text-red-500">{errors.paid_amount}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-2">
+          <label
+            htmlFor="cost_amount"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_po_master.t_po_master.cost_amount.name}
+          </label>
+          <InputNumber
+            name="cost_amount"
+            value={formData.cost_amount}
+            onValueChange={(e) => onChange("cost_amount", e.value)}
+            mode="currency"
+            currency="BDT"
+            locale="en-US"
+            inputStyle={{ width: "100%" }}
+            className={`w-full ${errors.cost_amount ? "p-invalid" : ""}`}
+          />
+          {errors.cost_amount && (
+            <small className="mb-3 text-red-500">{errors.cost_amount}</small>
+          )}
+        </div>
+
+        
+        <div className="col-12 md:col-2">
+          <label htmlFor="is_posted" className="block text-900 font-medium mb-2">
+            {t_po_master.t_po_master.is_posted.name}
+          </label>
+          <Checkbox
+            name="is_posted"
+            checked={formData.is_posted === 1}
+            onChange={(e) => onChange("is_posted", e.checked ? 1 : 0)}
+            className={`w-full ${errors.is_posted ? "p-invalid" : ""}`}
+          />
+          {errors.is_posted && (
+            <small className="mb-3 text-red-500">{errors.is_posted}</small>
           )}
         </div>
       </div>
@@ -371,7 +480,7 @@ const PrequestFormComponent = ({
         <div className="flex align-items-center gap-2 mb-2">
           <Dropdown
             value={selectedItem}
-            options={items.map((item) => ({
+            options={itemsPurchase.map((item) => ({
               label: item.item_name,
               value: item.item_id,
             }))}
@@ -380,13 +489,11 @@ const PrequestFormComponent = ({
             optionLabel="label"
             optionValue="value"
             className="w-full"
-            disabled={disabledItemAdd}
           />
           <Button
             label="Add"
             icon="pi pi-plus"
             onClick={handleAddItem}
-            disabled={!selectedItem}
             size="small"
           />
         </div>
@@ -419,39 +526,35 @@ const PrequestFormComponent = ({
             editor={itemRateEditor}
           />
           <Column
-            field="item_qty"
-            header="Quantity"
+            field="booking_qty"
+            header="Qty"
+            body={bookingQtyTemplate}
             editor={numberEditor}
-            footer={totalItemQty}
+            footer={totalBookingQtyTemplate}
           />
-          <Column field="small_unit_name" header="Unit" />
-          <Column header="Bulk" body={convertedQtyTemplate} />
           <Column
             field="discount_amount"
             header="Discount"
             body={discountAmountTemplate}
             editor={itemRateEditor}
+            footer={discountAmountFooterTemplate}
           />
           <Column
             field="item_amount"
             header="Amount"
             body={itemAmountTemplate}
             footer={
-              <>
-                {new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: "BDT",
-                }).format(totalItemAmount)}
-              </>
+              itemAmountFooterTemplate
+              // <>
+              //   {new Intl.NumberFormat("en-US", {
+              //     style: "currency",
+              //     currency: "BDT",
+              //   }).format(totalItemAmount)}
+              // </>
             }
           />
+          <Column header="Bulk" body={convertedQtyTemplate} />
           <Column field="item_note" header="Note" editor={textEditor} />
-          <Column
-            field="received_qty"
-            header="Received Qty"
-            body={received_qtyBody}
-            footer={totalReceivedQty}
-          />
           <Column
             rowEditor
             headerStyle={{ width: "5%", minWidth: "8rem" }}

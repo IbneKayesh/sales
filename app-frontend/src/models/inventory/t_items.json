@@ -7,6 +7,13 @@
       "minLength": 0,
       "maxLength": 36
     },
+    "item_code": {
+      "name": "Item Code",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 50
+    },
     "item_name": {
       "name": "Item Name",
       "type": "string",

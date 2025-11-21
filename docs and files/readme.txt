@@ -1,4 +1,12 @@
-need to organize all process in central
+Error List -
+
+Purchase Booking
+
+1. Enter cost amount
+2. Add discount to item
+
+Error : Costing rate not affected
+Resolve : Must enter Cost Amount after adding all items
 
 
 WITH summed_po AS (

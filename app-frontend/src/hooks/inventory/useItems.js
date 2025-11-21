@@ -40,10 +40,15 @@ export const useItems = () => {
     { label: "All Items", value: "allitems" },
   ];
 
+  const [itemsPurchase, setItemsPurchase] = useState([]); // Initialize with empty array
+
   const loadItems = async (filter = "default", resetModified = false) => {
     try {
       const data = await itemsAPI.getAll(filter);
       setItems(data);
+
+      setItemsPurchase(data);
+
       if (resetModified) {
         setToastBox({
           severity: "info",
@@ -265,5 +270,6 @@ export const useItems = () => {
     handleRefresh,
     handleFilterChange,
     handleSaveItem,
+    itemsPurchase,
   };
 };

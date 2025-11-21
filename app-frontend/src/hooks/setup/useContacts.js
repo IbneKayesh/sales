@@ -23,11 +23,26 @@ export const useContacts = () => {
     { label: "Supplier", value: "Supplier" },
     { label: "Both", value: "Both" },
   ];
+  const [contactsSupplier, setContactsSupplier] = useState([]); // Initialize with empty array
 
   const loadContacts = async (resetModified = false) => {
     try {
       const data = await contactsAPI.getAll();
       setContacts(data);
+
+      const supplierList = data
+        .filter(
+          (contact) =>
+            contact.contact_type === "Both" ||
+            contact.contact_type === "Supplier"
+        )
+        .map((contact) => ({
+          label: contact.contact_name,
+          value: contact.contact_id,
+        }));
+
+      setContactsSupplier(supplierList);
+
       if (resetModified) {
         setToastBox({
           severity: "info",
@@ -190,5 +205,6 @@ export const useContacts = () => {
     handleRefresh,
     handleSaveContact,
     contactTypeOptions,
+    contactsSupplier,
   };
 };
