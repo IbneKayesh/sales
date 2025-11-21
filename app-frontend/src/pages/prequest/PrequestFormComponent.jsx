@@ -43,15 +43,21 @@ const PrequestFormComponent = ({
       setSelectedItem(null);
     }
 
-    handleFilterChange("allitems")
-  }, [formData.order_type, formData.contacts_id, formData.ref_no, formData.is_complete]);
-
+    handleFilterChange("allitems");
+  }, [
+    formData.order_type,
+    formData.contacts_id,
+    formData.ref_no,
+    formData.is_complete,
+  ]);
 
   const handleAddItem = () => {
     if (!selectedItem) return;
 
     // Check if item is already added
-    const existingItem = orderChildItems.find((i) => i.item_id === selectedItem);
+    const existingItem = orderChildItems.find(
+      (i) => i.item_id === selectedItem
+    );
     if (existingItem) {
       // Item already exists, do not add duplicate
       setSelectedItem(null);
@@ -99,6 +105,13 @@ const PrequestFormComponent = ({
   const onRowEditSave = (event) => {
     let { newData, index } = event;
     // Calculate item_amount
+    const newItemQty =
+      newData.received_qty === 0
+        ? newData.item_qty
+        : newData.received_qty > 0 && newData.item_qty > newData.received_qty
+        ? newData.received_qty
+        : newData.item_qty;
+    newData.item_qty = newItemQty;
     newData.item_amount =
       newData.item_rate * newData.item_qty - newData.discount_amount;
     newData.received_qty = 0;
@@ -216,27 +229,6 @@ const PrequestFormComponent = ({
       {/* Master Form */}
       <div className="grid">
         <div className="col-12 md:col-3">
-          <label
-            htmlFor="order_type"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_po_master.t_po_master.order_type.name}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <Dropdown
-            name="order_type"
-            value={formData.order_type}
-            options={poTypeOptions}
-            onChange={(e) => onChange("order_type", e.value)}
-            className={`w-full ${errors.order_type ? "p-invalid" : ""}`}
-            placeholder={`Select ${t_po_master.t_po_master.order_type.name}`}
-            disabled={formData.po_master_id}
-          />
-          {errors.order_type && (
-            <small className="mb-3 text-red-500">{errors.order_type}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-3">
           <label htmlFor="order_no" className="block text-900 font-medium mb-2">
             {t_po_master.t_po_master.order_no.name}{" "}
             <span className="text-red-500">*</span>
@@ -307,26 +299,6 @@ const PrequestFormComponent = ({
           />
           {errors.contacts_id && (
             <small className="mb-3 text-red-500">{errors.contacts_id}</small>
-          )}
-        </div>
-
-        <div className="col-12 md:col-3">
-          <label htmlFor="ref_no" className="block text-900 font-medium mb-2">
-            {t_po_master.t_po_master.ref_no.name}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <Dropdown
-            name="ref_no"
-            value={formData.ref_no}
-            options={refNoOptions}
-            onChange={(e) => onChange("ref_no", e.value)}
-            className={`w-full ${errors.ref_no ? "p-invalid" : ""}`}
-            placeholder={`Select ${t_po_master.t_po_master.ref_no.name}`}
-            optionLabel="label"
-            optionValue="value"
-          />
-          {errors.ref_no && (
-            <small className="mb-3 text-red-500">{errors.ref_no}</small>
           )}
         </div>
         <div className="col-12 md:col-3">

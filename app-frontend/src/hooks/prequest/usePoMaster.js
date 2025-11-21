@@ -13,7 +13,13 @@ export const usePoMaster = () => {
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
+  const [selectedPoType, setSelectedPoType] = useState("Purchase Booking");
   const [selectedFilter, setSelectedFilter] = useState("default");
+
+  const poTypeOptions = [
+    { label: "Purchase Booking", value: "Purchase Booking" },
+    { label: "Purchase Receive", value: "Purchase Receive" },
+  ];
 
   const filterOptions = [
     { label: "Default", value: "default" },
@@ -22,6 +28,7 @@ export const usePoMaster = () => {
     { label: "Last 90 Days", value: "90days" },
     { label: "All Days", value: "alldays" },
   ];
+
   const [formDataPoMaster, setFormDataPoMaster] = useState({
     order_type: "",
     order_no: "AUTO[SGD#0001]",
@@ -48,11 +55,6 @@ export const usePoMaster = () => {
     ismodified: 0,
   });
 
-  const poTypeOptions = [
-    { label: "Purchase Booking", value: "Purchase Booking" },
-    { label: "Purchase Receive", value: "Purchase Receive" },
-  ];
-
   const refNoOptions = useMemo(() => {
     if (formDataPoMaster.order_type === "Purchase Booking") {
       return [{ label: "No Ref", value: "No Ref" }];
@@ -75,7 +77,9 @@ export const usePoMaster = () => {
 
   const loadPoMasters = async (filter = "default", resetModified = false) => {
     try {
-      const data = await poMasterAPI.getAll(filter);
+      const data = await poMasterAPI.getAll(selectedPoType, filter);
+      //console.log("poType " + selectedPoType);
+      //console.log("data " + JSON.stringify(data));
       setPoMasters(data);
       if (resetModified) {
         setToastBox({
@@ -99,7 +103,7 @@ export const usePoMaster = () => {
   // Load poMasters from API on mount
   useEffect(() => {
     loadPoMasters(selectedFilter);
-  }, [selectedFilter]);
+  }, [selectedFilter, selectedPoType]);
 
   const [orderChildItems, setOrderChildItems] = useState([]);
   const [orderChildItemsStore, setOrderChildItemsStore] = useState([]);
@@ -179,7 +183,7 @@ export const usePoMaster = () => {
   const handleClear = () => {
     setFormDataPoMaster({
       po_master_id: "",
-      order_type: "",
+      order_type: selectedPoType,
       order_no: "AUTO[SGD#0001]",
       order_date: new Date().toISOString().split("T")[0],
       contacts_id: "",
@@ -252,6 +256,10 @@ export const usePoMaster = () => {
 
   const handleFilterChange = (filter) => {
     setSelectedFilter(filter);
+  };
+
+  const handlePoTypeChange = (filter) => {
+    setSelectedPoType(filter);
   };
 
   const handleSaveAll = async (e) => {
@@ -375,7 +383,9 @@ export const usePoMaster = () => {
     handleRefresh,
     handleFilterChange,
     handleSaveAll,
-    poTypeOptions,
     refNoOptions,
+    poTypeOptions,
+    selectedPoType,
+    handlePoTypeChange,
   };
 };

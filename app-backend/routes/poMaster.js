@@ -36,32 +36,36 @@ function generate_order_number(order_type, callback) {
 
 // Get all purchase order masters
 router.get("/", (req, res) => {
+  const orderType = req.query.orderType || "-";
   const filter = req.query.filter || "default";
   let whereClause = "";
 
+  if (orderType) {
+    whereClause = "WHERE pom.order_type = '" + orderType + "'";
+  }
+
   switch (filter) {
     case "7days":
-      whereClause =
-        "WHERE pom.is_paid = 1 AND pom.is_complete = 1 AND pom.order_date >= date('now', '-7 days')";
+      whereClause +=
+        "AND pom.is_paid = 1 AND pom.is_complete = 1 AND pom.order_date >= date('now', '-7 days')";
       break;
     case "30days":
-      whereClause =
-        "WHERE pom.is_paid = 1 AND pom.is_complete = 1 AND pom.order_date >= date('now', '-30 days')";
+      whereClause +=
+        "AND pom.is_paid = 1 AND pom.is_complete = 1 AND pom.order_date >= date('now', '-30 days')";
       break;
     case "90days":
-      whereClause =
-        "WHERE pom.is_paid = 1 AND pom.is_complete = 1 AND pom.order_date >= date('now', '-90 days')";
+      whereClause +=
+        "AND pom.is_paid = 1 AND pom.is_complete = 1 AND pom.order_date >= date('now', '-90 days')";
       break;
     case "alldays":
-      whereClause = "WHERE pom.is_paid = 1 AND pom.is_complete = 1";
+      whereClause += "AND pom.is_paid = 1 AND pom.is_complete = 1";
       break;
     case "default":
     default:
-      whereClause =
-        "WHERE (pom.is_paid = 0 AND pom.is_complete = 0) OR (pom.order_date = date('now'))";
+      whereClause +=
+        "AND (pom.is_paid = 0 AND pom.is_complete = 0) OR (pom.order_date = date('now'))";
       break;
   }
-
   const sql = `
     SELECT pom.*, c.contact_name, 0 AS ismodified
     FROM po_master pom
@@ -69,6 +73,8 @@ router.get("/", (req, res) => {
     ${whereClause}
     ORDER BY pom.is_paid ASC, pom.is_complete ASC
   `;
+  //console.log(sql);
+
   db.all(sql, [], (err, rows) => {
     if (err) {
       console.error("Database error:", err);

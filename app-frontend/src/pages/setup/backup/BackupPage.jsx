@@ -167,17 +167,19 @@ const BackupPage = () => {
 
     setLoading(true);
     try {
-      if (deleteType === 'backup') {
+      if (deleteType === "backup") {
         await backupAPI.deleteBackup(fileToDelete.name);
         loadBackups();
-      } else if (deleteType === 'export') {
+      } else if (deleteType === "export") {
         await backupAPI.deleteExport(fileToDelete.name);
         loadExports();
       }
       toast.current.show({
         severity: "success",
         summary: "Success",
-        detail: `${deleteType.charAt(0).toUpperCase() + deleteType.slice(1)} deleted successfully`,
+        detail: `${
+          deleteType.charAt(0).toUpperCase() + deleteType.slice(1)
+        } deleted successfully`,
       });
       setDeleteDialog(false);
       setFileToDelete(null);
@@ -197,17 +199,17 @@ const BackupPage = () => {
     setLoading(true);
     try {
       let blob;
-      if (type === 'backup') {
+      if (type === "backup") {
         blob = await backupAPI.downloadBackup(file.name);
-      } else if (type === 'export') {
+      } else if (type === "export") {
         blob = await backupAPI.downloadExport(file.name);
       }
 
       // Create download link
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = file.name + (file.type === 'folder' ? '.zip' : '');
+      a.download = file.name + (file.type === "folder" ? ".zip" : "");
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -244,20 +246,35 @@ const BackupPage = () => {
     );
     if (match) {
       // Convert "2025-11-19T08-43-56-129Z" to "2025-11-19T08:43:56.129Z"
-      const isoString = match[1].replace(/T(\d{2})-(\d{2})-(\d{2})-(\d{3})Z/, "T$1:$2:$3.$4Z");
+      const isoString = match[1].replace(
+        /T(\d{2})-(\d{2})-(\d{2})-(\d{3})Z/,
+        "T$1:$2:$3.$4Z"
+      );
       return new Date(isoString).toLocaleString();
     }
     return filename;
   };
 
   return (
-    <div className="p-4">
+    <>
       <Toast ref={toast} />
-      <h1 className="text-2xl font-bold mb-4">Backup & Export</h1>
+      <div className="p-4">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-100 mb-2">
+            Backup, Restore and Export
+          </h1>
+          <p className="text-gray-300">Perform backup your full data.</p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <Card title="Database Backup" className="shadow-md">
-          <div className="space-y-4">
+        <div className="grid">
+          <Card
+            title="Database Backup"
+            className="shadow-lg md:col-5 m-2"
+            subTitle="Create and manage full database backups"
+          >
+            <div className="flex-grow">
+              <p className="text-gray-700 mb-4">Backup full database</p>
+            </div>
             <Button
               label="Create Backup"
               icon="pi pi-save"
@@ -265,137 +282,150 @@ const BackupPage = () => {
               loading={loading}
               className="w-full"
             />
-          </div>
-        </Card>
+          </Card>
 
-        <Card title="Export to CSV" className="shadow-md">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Select Table
-              </label>
-              <Dropdown
-                value={selectedTable}
-                options={tables}
-                onChange={(e) => setSelectedTable(e.value)}
-                placeholder="Choose a table"
-                className="w-full"
+          <Card
+            title="Export to CSV"
+            className="shadow-lg md:col-5 m-2"
+            subTitle="Export data tables to CSV format"
+          >
+            <div className="flex-grow">
+              <p className="text-gray-700 mb-4">write something</p>
+            </div>
+            <div className="col-12">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Select Table
+                </label>
+                <Dropdown
+                  value={selectedTable}
+                  options={tables}
+                  onChange={(e) => setSelectedTable(e.value)}
+                  placeholder="Choose a table"
+                  className="w-full mb-2"
+                />
+              </div>
+              <Button
+                label="Export Table"
+                icon="pi pi-download"
+                onClick={handleExportTable}
+                loading={loading}
+                disabled={!selectedTable}
+                className="m-1"
+              />
+              <Button
+                label="Export All Tables"
+                icon="pi pi-download"
+                severity="info"
+                onClick={handleExportAll}
+                loading={loading}
+                className="m-1"
               />
             </div>
-            <Button
-              label="Export Table"
-              icon="pi pi-download"
-              onClick={handleExportTable}
-              loading={loading}
-              disabled={!selectedTable}
-              className="w-full"
-            />
-            <Button
-              label="Export All Tables"
-              icon="pi pi-download"
-              severity="info"
-              onClick={handleExportAll}
-              loading={loading}
-              className="w-full"
-            />
-          </div>
-        </Card>
-      </div>
+          </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card title="Backup Files" className="shadow-md">
-          <DataTable
-            value={backups}
-            paginator
-            rows={5}
-            className="p-datatable-sm"
+          <Card
+            title="Backup Files"
+            className="shadow-lg md:col-5 m-2"
+            subTitle="View and manage existing backup files"
           >
-            <Column field="name" header="File Name" sortable />
-            <Column
-              field="size"
-              header="Size"
-              body={(row) => formatSize(row.size)}
-              sortable
-            />
-            <Column
-              header="Created"
-              body={(row) => formatDate(row.name)}
-              sortable
-            />
-            <Column
-              header="Actions"
-              body={(row) => (
-                <div className="flex gap-2">
-                  <Button
-                    icon="pi pi-refresh"
-                    severity="warning"
-                    size="small"
-                    onClick={() => {
-                      setSelectedBackup(row);
-                      setRestoreDialog(true);
-                    }}
-                    tooltip="Restore"
-                  />
-                  <Button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    size="small"
-                    onClick={() => openDeleteDialog(row, 'backup')}
-                    tooltip="Delete"
-                  />
-                </div>
-              )}
-            />
-          </DataTable>
-        </Card>
+            <DataTable
+              value={backups}
+              paginator
+              rows={5}
+              className="p-datatable-sm"
+            >
+              <Column field="name" header="File Name" sortable />
+              <Column
+                field="size"
+                header="Size"
+                body={(row) => formatSize(row.size)}
+                sortable
+              />
+              <Column
+                header="Created"
+                body={(row) => formatDate(row.name)}
+                sortable
+              />
+              <Column
+                header="Actions"
+                body={(row) => (
+                  <div className="flex gap-2">
+                    <Button
+                      icon="pi pi-refresh"
+                      severity="warning"
+                      size="small"
+                      onClick={() => {
+                        setSelectedBackup(row);
+                        setRestoreDialog(true);
+                      }}
+                      tooltip="Restore"
+                    />
+                    <Button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      size="small"
+                      onClick={() => openDeleteDialog(row, "backup")}
+                      tooltip="Delete"
+                    />
+                  </div>
+                )}
+              />
+            </DataTable>
+          </Card>
 
-        <Card title="Export Files" className="shadow-md">
-          <DataTable
-            value={exports}
-            paginator
-            rows={5}
-            className="p-datatable-sm"
+          <Card
+            title="Export Files"
+            className="shadow-lg md:col-5 m-2"
+            subTitle="View and manage exported CSV files"
           >
-            <Column field="name" header="File Name" sortable />
-            <Column
-              field="size"
-              header="Size"
-              body={(row) => formatSize(row.size)}
-              sortable
-            />
-            <Column
-              header="Created"
-              body={(row) => formatDate(row.name)}
-              sortable
-            />
-            <Column
-              header="Type"
-              body={(row) => row.type === 'folder' ? 'Folder' : 'File'}
-              sortable
-            />
-            <Column
-              header="Actions"
-              body={(row) => (
-                <div className="flex gap-2">
-                  <Button
-                    icon="pi pi-download"
-                    severity="success"
-                    size="small"
-                    onClick={() => handleDownload(row, 'export')}
-                    tooltip="Download"
-                  />
-                  <Button
-                    icon="pi pi-trash"
-                    severity="danger"
-                    size="small"
-                    onClick={() => openDeleteDialog(row, 'export')}
-                    tooltip="Delete"
-                  />
-                </div>
-              )}
-            />
-          </DataTable>
-        </Card>
+            <DataTable
+              value={exports}
+              paginator
+              rows={5}
+              className="p-datatable-sm"
+            >
+              <Column field="name" header="File Name" sortable />
+              <Column
+                field="size"
+                header="Size"
+                body={(row) => formatSize(row.size)}
+                sortable
+              />
+              <Column
+                header="Created"
+                body={(row) => formatDate(row.name)}
+                sortable
+              />
+              <Column
+                header="Type"
+                body={(row) => (row.type === "folder" ? "Folder" : "File")}
+                sortable
+              />
+              <Column
+                header="Actions"
+                body={(row) => (
+                  <div className="flex gap-2">
+                    <Button
+                      icon="pi pi-download"
+                      severity="success"
+                      size="small"
+                      onClick={() => handleDownload(row, "export")}
+                      tooltip="Download"
+                    />
+                    <Button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      size="small"
+                      onClick={() => openDeleteDialog(row, "export")}
+                      tooltip="Delete"
+                    />
+                  </div>
+                )}
+              />
+            </DataTable>
+          </Card>
+        </div>
       </div>
 
       <Dialog
@@ -463,7 +493,7 @@ const BackupPage = () => {
           This action cannot be undone.
         </p>
       </Dialog>
-    </div>
+    </>
   );
 };
 

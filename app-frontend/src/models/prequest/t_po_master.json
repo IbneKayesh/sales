@@ -48,8 +48,23 @@
       "minLength": 0,
       "maxLength": 255
     },
+    "cost_amount": {
+      "name": "Net Amount",
+      "type": "number",
+      "required": false
+    },
     "total_amount": {
       "name": "Total Amount",
+      "type": "number",
+      "required": false
+    },
+    "discount_amount": {
+      "name": "Discount Amount",
+      "type": "number",
+      "required": false
+    },
+    "net_amount": {
+      "name": "Net Amount",
       "type": "number",
       "required": false
     },
@@ -63,8 +78,8 @@
       "type": "number",
       "required": false
     },
-    "is_complete": {
-      "name": "Is Paid",
+    "is_posted": {
+      "name": "Is Posted",
       "type": "number",
       "required": false
     }

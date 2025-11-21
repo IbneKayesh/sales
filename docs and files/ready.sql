@@ -1,1 +1,1 @@
---purchase booking > full paid then show another flag until complete receive
+item > demand qty, based on daily sales volume generate

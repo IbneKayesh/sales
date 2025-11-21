@@ -28,8 +28,10 @@ const PrequestPage = () => {
     handleRefresh,
     handleFilterChange,
     handleSaveAll,
-    poTypeOptions,
     refNoOptions,
+    poTypeOptions,
+    selectedPoType,
+    handlePoTypeChange,
   } = usePoMaster();
 
   useEffect(() => {
@@ -51,13 +53,23 @@ const PrequestPage = () => {
         <h3 className="m-0">
           {isList
             ? "Order List"
-            : formDataPoMaster?.po_master_id 
-            ? `Edit PO: ${formDataPoMaster.order_no} for ${formDataPoMaster.ref_no}`
-            : "Add New PO"}
+            : formDataPoMaster?.po_master_id
+            ? `Edit ${selectedPoType}: ${formDataPoMaster.order_no} for ${formDataPoMaster.ref_no}`
+            : `Add New ${selectedPoType}`}
         </h3>
 
         {isList ? (
           <div className="flex gap-2">
+            <Dropdown
+              value={selectedPoType}
+              options={poTypeOptions}
+              onChange={(e) => handlePoTypeChange(e.value)}
+              placeholder="Select Filter"
+              optionLabel="label"
+              optionValue="value"
+              className="w-full md:w-auto"
+              size="small"
+            />
             <Dropdown
               value={selectedFilter}
               options={filterOptions}
@@ -69,7 +81,7 @@ const PrequestPage = () => {
               size="small"
             />
             <Button
-              label="New PO"
+              label={"New " + selectedPoType}
               icon="pi pi-plus"
               size="small"
               onClick={handleAddNew}
