@@ -41,7 +41,7 @@ router.get("/", (req, res) => {
   let whereClause = "";
 
   if (orderType) {
-    whereClause = "WHERE pom.order_type = '" + orderType + "'";
+    whereClause = "WHERE pom.order_type = '" + orderType + "' ";
   }
 
   switch (filter) {
@@ -64,11 +64,11 @@ router.get("/", (req, res) => {
     case "default":
     default:
       whereClause +=
-        "AND (pom.is_paid = 0 AND pom.is_posted = 0 AND pom.is_completed = 0) OR (pom.order_date = date('now'))";
+        "AND ((pom.is_paid = 0 AND pom.is_posted = 0 AND pom.is_completed = 0) OR (pom.order_date = date('now')))";
       break;
   }
   const sql = `
-    SELECT pom.*, c.contact_name, 0 AS ismodified
+    SELECT pom.*, c.contact_name, is_posted AS isedit , 0 AS ismodified
     FROM po_master pom
     LEFT JOIN contacts c ON pom.contacts_id = c.contact_id
     ${whereClause}
@@ -186,7 +186,7 @@ router.post("/", (req, res) => {
 
       childs_create.forEach((child) => {
         //console.log("child " + JSON.stringify(child));
-        const itemQty = order_type === ""
+        const itemQty = order_type === "";
         const paramsChild = [
           child.id,
           po_master_id,
@@ -244,12 +244,7 @@ router.post("/update", (req, res) => {
 
   //console.log("req.body " + JSON.stringify(req.body))
 
-  if (
-    !po_master_id ||
-    !order_type ||
-    !order_date ||
-    !contacts_id
-  ) {
+  if (!po_master_id || !order_type || !order_date || !contacts_id) {
     return res.status(400).json({
       error:
         "Master ID, order type, order date, contacts and childs are required",
@@ -399,7 +394,8 @@ router.post("/delete", (req, res) => {
   });
 });
 
-function processInvoiceData(po_master_id, order_type, ref_no) {
+
+function processInvoiceData_old(po_master_id, order_type, ref_no) {
   //sum childs item amount and update total_amount in po_master
   const sql_total_amount = `
     UPDATE po_master

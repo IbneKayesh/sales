@@ -20,6 +20,13 @@
       "required": true,
       "format": "date"
     },
+    "contacts_id": {
+      "name": "Contact Name",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 36
+    },
     "transaction_name": {
       "name": "Transaction Name",
       "type": "string",

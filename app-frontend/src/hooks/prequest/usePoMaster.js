@@ -20,6 +20,7 @@ export const usePoMaster = () => {
     { label: "Purchase Booking", value: "Purchase Booking" },
     { label: "Purchase Receive", value: "Purchase Receive" },
     { label: "Purchase Order", value: "Purchase Order" },
+    { label: "Purchase Return", value: "Purchase Return" },
   ];
 
   const filterOptions = [
@@ -148,6 +149,23 @@ export const usePoMaster = () => {
     }
   };
 
+  //for Purchase return
+  const loadPurchaseReturnsPoChild = async (supplierId) => {
+    setOrderChildItems([]);
+    try {
+      const data = await poChildAPI.getReturnsBySupplierId(supplierId);
+      setOrderChildItems(data);
+      setOrderChildItemsStore(data);
+    } catch (error) {
+      console.error("Error loading purchase booking items:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to load purchase booking items from server",
+      });
+    }
+  };
+
   // Effect to update formDataPoMaster amounts based on orderChildItems
   useEffect(() => {
     const order_amount = orderChildItems?.reduce(
@@ -234,9 +252,20 @@ export const usePoMaster = () => {
       value &&
       formDataPoMaster.order_type === "Purchase Receive"
     ) {
-      console.log("contacts_id " + value);
+      //console.log("contacts_id " + value);
       await loadPurchaseBookingPoChild(value);
     }
+
+    //load child for return
+    if (
+      field === "contacts_id" &&
+      value &&
+      formDataPoMaster.order_type === "Purchase Return"
+    ) {
+      //console.log("contacts_id " + value);
+      await loadPurchaseReturnsPoChild(value);
+    }
+
     setErrors(newErrors);
   };
 
@@ -339,8 +368,6 @@ export const usePoMaster = () => {
         setIsBusy(false);
         return;
       }
-
-      
 
       if (formDataPoMaster.po_master_id) {
         // Edit existing

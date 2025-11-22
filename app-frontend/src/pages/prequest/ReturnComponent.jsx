@@ -15,7 +15,7 @@ import t_po_master from "@/models/prequest/t_po_master.json";
 import { useContacts } from "@/hooks/setup/useContacts";
 import { useItems } from "@/hooks/inventory/useItems";
 
-const BookingComponent = ({
+const ReturnComponent = ({
   isBusy,
   errors,
   formData,
@@ -56,7 +56,7 @@ const BookingComponent = ({
       item_id: selectedItem,
       item_name: item.item_name,
       item_rate: item.purchase_rate,
-      booking_qty: 1,
+      booking_qty: 0,
       order_qty: 0,
       discount_percent: 0,
       discount_amount: 0,
@@ -93,7 +93,7 @@ const BookingComponent = ({
 
     const discountAmount = newData.discount_amount;
 
-    const itemAmount = newData.item_rate * newData.booking_qty;
+    const itemAmount = newData.item_rate * newData.order_qty;
     newData.item_amount = itemAmount - discountAmount;
 
     const discountPercent =
@@ -176,8 +176,8 @@ const BookingComponent = ({
     return `${formattedItemRate} (${formattedCostRate})`;
   };
 
-  const bookingQtyTemplate = (rowData) => {
-    return `${rowData.booking_qty} ${rowData.small_unit_name} (${rowData.order_qty})`;
+  const orderQtyTemplate = (rowData) => {
+    return `${rowData.order_qty} ${rowData.small_unit_name} (${rowData.booking_qty})`;
   };
 
   const totalBookingQty = orderChildItems.reduce(
@@ -190,8 +190,8 @@ const BookingComponent = ({
     0
   );
 
-  const totalBookingQtyTemplate = () => {
-    return `${totalBookingQty} (${totalOrderQty})`;
+  const totalOrderQtyTemplate = () => {
+    return `${totalOrderQty} (${totalBookingQty})`;
   };
 
   const discountAmountTemplate = (rowData) => {
@@ -232,8 +232,8 @@ const BookingComponent = ({
   const convertedQtyTemplate = (rowData) => {
     return (
       <>
-        <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} /> (
-        <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} />)
+        <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} /> (
+        <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} />)
       </>
     );
   };
@@ -433,6 +433,7 @@ const BookingComponent = ({
             locale="en-US"
             inputStyle={{ width: "100%" }}
             className={`w-full ${errors.paid_amount ? "p-invalid" : ""}`}
+            disabled
           />
           {errors.paid_amount && (
             <small className="mb-3 text-red-500">{errors.paid_amount}</small>
@@ -481,26 +482,6 @@ const BookingComponent = ({
 
       {/* Child Editable Table */}
       <div className="mt-2">
-        <div className="flex align-items-center gap-2 mb-2">
-          <Dropdown
-            value={selectedItem}
-            options={itemsPurchase.map((item) => ({
-              label: item.item_name,
-              value: item.item_id,
-            }))}
-            onChange={(e) => setSelectedItem(e.value)}
-            placeholder="Select Item"
-            optionLabel="label"
-            optionValue="value"
-            className="w-full"
-          />
-          <Button
-            label="Add"
-            icon="pi pi-plus"
-            onClick={handleAddItem}
-            size="small"
-          />
-        </div>
         <DataTable
           value={orderChildItems}
           editMode="row"
@@ -530,11 +511,11 @@ const BookingComponent = ({
             editor={itemRateEditor}
           />
           <Column
-            field="booking_qty"
-            header="Booking Qty"
-            body={bookingQtyTemplate}
+            field="order_qty"
+            header="Order Qty"
+            body={orderQtyTemplate}
             editor={numberEditor}
-            footer={totalBookingQtyTemplate}
+            footer={totalOrderQtyTemplate}
           />
           <Column
             field="discount_amount"
@@ -587,4 +568,4 @@ const BookingComponent = ({
   );
 };
 
-export default BookingComponent;
+export default ReturnComponent;

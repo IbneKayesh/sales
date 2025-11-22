@@ -234,10 +234,10 @@ router.post("/update-item", (req, res) => {
   db.run(sql, [], function (err) {
     if (err) {
       console.error("Database error:", err);
-      return res.status(500).json({ error: "Internal server error" });
+      //return res.status(500).json({ error: "Internal server error" });
     }
     if (this.changes === 0) {
-      return res.status(404).json({ error: "Data not found" });
+      //return res.status(404).json({ error: "Data not found" });
     }
     res.json({ id });
   });
@@ -246,18 +246,20 @@ router.post("/update-item", (req, res) => {
 
   const sql_b = `UPDATE items
           SET order_qty = (
-              SELECT IFNULL(SUM(poc.item_qty - poc.received_qty), 0)
+              SELECT IFNULL(SUM(poc.booking_qty - poc.order_qty), 0)
               FROM po_child poc
               JOIN po_master pom 
                   ON poc.po_master_id = pom.po_master_id
               WHERE poc.item_id = items.item_id
             AND pom.order_type = 'Purchase Booking'
+            AND pom.is_posted = 1
+            AND pom.is_completed = 0
           )`;
 
   db.run(sql_b, [], function (err) {
     if (err) {
       console.error("Database error in sql_b:", err);
-      return;
+      r//eturn;
     }
   });
 
@@ -267,18 +269,19 @@ router.post("/update-item", (req, res) => {
 
   const sql_c = `UPDATE items
           SET stock_qty = (
-              SELECT IFNULL(SUM(poc.item_qty), 0)
+              SELECT IFNULL(SUM(poc.order_qty), 0)
               FROM po_child poc
               JOIN po_master pom 
                   ON poc.po_master_id = pom.po_master_id
               WHERE poc.item_id = items.item_id
-            AND pom.order_type = 'Purchase Receive'
+            AND pom.order_type IN ('Purchase Receive','Purchase Order')
+            AND pom.is_posted = 1
           )`;
 
   db.run(sql_c, [], function (err) {
     if (err) {
       console.error("Database error in sql_b:", err);
-      return;
+      //return;
     }
   });
 });

@@ -15,7 +15,7 @@ import t_po_master from "@/models/prequest/t_po_master.json";
 import { useContacts } from "@/hooks/setup/useContacts";
 import { useItems } from "@/hooks/inventory/useItems";
 
-const BookingComponent = ({
+const OrderComponent = ({
   isBusy,
   errors,
   formData,
@@ -57,7 +57,7 @@ const BookingComponent = ({
       item_name: item.item_name,
       item_rate: item.purchase_rate,
       booking_qty: 1,
-      order_qty: 0,
+      order_qty: 1,
       discount_percent: 0,
       discount_amount: 0,
       item_amount: item.purchase_rate * 1, // Will be re-calculated on edit save,
@@ -90,6 +90,8 @@ const BookingComponent = ({
   const onRowEditSave = (event) => {
     let { newData, index } = event;
     // Calculate item_amount
+
+    newData.order_qty = newData.booking_qty;
 
     const discountAmount = newData.discount_amount;
 
@@ -577,8 +579,7 @@ const BookingComponent = ({
             size="small"
             loading={isBusy || editingRows.length > 0}
             disabled={
-              (orderChildItems && orderChildItems.length < 1) ||
-              (formData.isedit)
+              (orderChildItems && orderChildItems.length < 1) || formData.isedit
             }
           />
         </div>
@@ -587,4 +588,4 @@ const BookingComponent = ({
   );
 };
 
-export default BookingComponent;
+export default OrderComponent;

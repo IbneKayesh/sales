@@ -559,7 +559,7 @@ const ReceiveComponent = ({
             loading={isBusy || editingRows.length > 0}
             disabled={
               (orderChildItems && orderChildItems.length < 1) ||
-              (formData.is_completed)
+              (formData.isedit)
             }
           />
         </div>

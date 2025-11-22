@@ -5,6 +5,8 @@ export const poChildAPI = {
   //getAll: () => apiRequest('/po-child'),
   getByMasterId: (masterId) => apiRequest(`/po-child/master/${masterId}`),
   getBySupplierId: (supplierId) => apiRequest(`/po-child/booking/${supplierId}`),
+  getReturnsBySupplierId: (supplierId) => apiRequest(`/po-child/returns/${supplierId}`),
+  
   // getById: (id) => apiRequest(`/po-child/${id}`),
   // create: (poChild) => apiRequest('/po-child', {
   //   method: 'POST',

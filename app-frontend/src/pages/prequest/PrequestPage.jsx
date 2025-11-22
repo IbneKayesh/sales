@@ -7,6 +7,8 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
+import OrderComponent from "./OrderComponent";
+import ReturnComponent from "./ReturnComponent";
 
 const PrequestPage = () => {
   const toast = useRef(null);
@@ -129,6 +131,32 @@ const PrequestPage = () => {
             )}
             {formDataPoMaster.order_type === "Purchase Receive" && (
               <ReceiveComponent
+                isBusy={isBusy}
+                errors={errors}
+                formData={formDataPoMaster}
+                onChange={handleChange}
+                poTypeOptions={poTypeOptions}
+                refNoOptions={refNoOptions}
+                orderChildItems={orderChildItems}
+                setOrderChildItems={setOrderChildItems}
+                onSaveAll={handleSaveAll}
+              />
+            )}
+            {formDataPoMaster.order_type === "Purchase Order" && (
+              <OrderComponent
+                isBusy={isBusy}
+                errors={errors}
+                formData={formDataPoMaster}
+                onChange={handleChange}
+                poTypeOptions={poTypeOptions}
+                refNoOptions={refNoOptions}
+                orderChildItems={orderChildItems}
+                setOrderChildItems={setOrderChildItems}
+                onSaveAll={handleSaveAll}
+              />
+            )}
+            {formDataPoMaster.order_type === "Purchase Return" && (
+              <ReturnComponent
                 isBusy={isBusy}
                 errors={errors}
                 formData={formDataPoMaster}
