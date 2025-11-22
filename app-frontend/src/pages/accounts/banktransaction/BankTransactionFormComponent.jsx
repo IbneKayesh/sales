@@ -17,7 +17,7 @@ const BankTransactionFormComponent = ({
   return (
     <div className="p-1">
       <div className="grid">
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="bank_account_id"
             className="block text-900 font-medium mb-2"
@@ -44,7 +44,7 @@ const BankTransactionFormComponent = ({
             </small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="transaction_date"
             className="block text-900 font-medium mb-2"
@@ -110,7 +110,7 @@ const BankTransactionFormComponent = ({
             <small className="mb-3 text-red-500">{errors.reference_no}</small>
           )}
         </div>
-        <div className="col-12 md:col-8">
+        <div className="col-12 md:col-6">
           <label
             htmlFor="transaction_details"
             className="block text-900 font-medium mb-2"
@@ -132,7 +132,7 @@ const BankTransactionFormComponent = ({
             </small>
           )}
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="debit_amount"
             className="block text-900 font-medium mb-2"
@@ -153,7 +153,7 @@ const BankTransactionFormComponent = ({
             <small className="mb-3 text-red-500">{errors.debit_amount}</small>
           )}
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="credit_amount"
             className="block text-900 font-medium mb-2"

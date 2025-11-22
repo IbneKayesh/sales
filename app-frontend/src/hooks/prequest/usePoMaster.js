@@ -19,6 +19,7 @@ export const usePoMaster = () => {
   const poTypeOptions = [
     { label: "Purchase Booking", value: "Purchase Booking" },
     { label: "Purchase Receive", value: "Purchase Receive" },
+    { label: "Purchase Order", value: "Purchase Order" },
   ];
 
   const filterOptions = [
@@ -113,6 +114,7 @@ export const usePoMaster = () => {
   const [orderChildItems, setOrderChildItems] = useState([]);
   const [orderChildItemsStore, setOrderChildItemsStore] = useState([]);
 
+  //for edit
   const loadPoChildren = async (po_master_id) => {
     setOrderChildItems([]);
     try {
@@ -129,18 +131,19 @@ export const usePoMaster = () => {
     }
   };
 
-  const loadPoChildrenByOrderNo = async (orderno) => {
+  //for Purchase Receive
+  const loadPurchaseBookingPoChild = async (supplierId) => {
     setOrderChildItems([]);
     try {
-      const data = await poChildAPI.getByOrderNo(orderno);
+      const data = await poChildAPI.getBySupplierId(supplierId);
       setOrderChildItems(data);
       setOrderChildItemsStore(data);
     } catch (error) {
-      console.error("Error loading purchase order items:", error);
+      console.error("Error loading purchase booking items:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to load purchase order items from server",
+        detail: "Failed to load purchase booking items from server",
       });
     }
   };
@@ -225,10 +228,15 @@ export const usePoMaster = () => {
       t_po_master.t_po_master
     );
 
-    // if (field === "ref_no" && value) {
-    //   //console.log("ref_no " + value);
-    //   await loadPoChildrenByOrderNo(value);
-    // }
+    //load child for receive
+    if (
+      field === "contacts_id" &&
+      value &&
+      formDataPoMaster.order_type === "Purchase Receive"
+    ) {
+      console.log("contacts_id " + value);
+      await loadPurchaseBookingPoChild(value);
+    }
     setErrors(newErrors);
   };
 
@@ -331,6 +339,9 @@ export const usePoMaster = () => {
         setIsBusy(false);
         return;
       }
+
+      
+
       if (formDataPoMaster.po_master_id) {
         // Edit existing
         // 1️⃣ Items to CREATE (new items have po_master_id === "sgd")
@@ -383,7 +394,7 @@ export const usePoMaster = () => {
         // Add new
         const po_master_id = generateGuid();
         // assign new GUID to each child
-        const childs = orderChildItems.map((item) => ({
+        const childs_create = orderChildItems.map((item) => ({
           ...item,
           id: generateGuid(),
         }));
@@ -394,7 +405,7 @@ export const usePoMaster = () => {
           is_paid:
             formDataPoMaster.total_amount === formDataPoMaster.paid_amount,
           ismodified: true,
-          childs,
+          childs_create,
         };
         //console.log("newPoMasterData " + JSON.stringify(newPoMasterData));
         const newPoMaster = await poMasterAPI.create(newPoMasterData);

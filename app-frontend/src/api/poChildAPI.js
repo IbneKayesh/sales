@@ -4,7 +4,7 @@ import { apiRequest } from "@/utils/api.js";
 export const poChildAPI = {
   //getAll: () => apiRequest('/po-child'),
   getByMasterId: (masterId) => apiRequest(`/po-child/master/${masterId}`),
-  getByOrderNo: (orderNo) => apiRequest(`/po-child/order/${orderNo}`),
+  getBySupplierId: (supplierId) => apiRequest(`/po-child/booking/${supplierId}`),
   // getById: (id) => apiRequest(`/po-child/${id}`),
   // create: (poChild) => apiRequest('/po-child', {
   //   method: 'POST',

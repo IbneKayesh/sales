@@ -9,40 +9,32 @@ router.get("/", (req, res) => {
 
   switch (filter) {
     case "orders":
-      whereClause =
-        "WHERE i.order_qty > 0";
+      whereClause = "WHERE i.order_qty > 0";
       break;
     case "stock":
-      whereClause =
-        "WHERE i.stock_qty > 0";
+      whereClause = "WHERE i.stock_qty > 0";
       break;
     case "nillstock":
-      whereClause =
-        "WHERE i.stock_qty < 1";
+      whereClause = "WHERE i.stock_qty < 1";
       break;
     case "nopr":
-      whereClause =
-        "WHERE i.purchase_rate = 0";
+      whereClause = "WHERE i.purchase_rate = 0";
       break;
     case "nosr":
-      whereClause =
-        "WHERE i.sales_rate = 0";
+      whereClause = "WHERE i.sales_rate = 0";
       break;
     case "wd":
-      whereClause =
-        "WHERE i.discount_percent > 0";
+      whereClause = "WHERE i.discount_percent > 0";
       break;
     case "wod":
-      whereClause =
-        "WHERE i.discount_percent = 0";
+      whereClause = "WHERE i.discount_percent = 0";
       break;
     case "allitems":
       whereClause = "WHERE 1 = 1";
       break;
     case "default":
     default:
-      whereClause =
-        "WHERE i.stock_qty > 0";
+      whereClause = "WHERE i.stock_qty > 0";
       break;
   }
 
@@ -83,6 +75,7 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   const {
     item_id,
+    item_code,
     item_name,
     item_description,
     category_id,
@@ -107,13 +100,14 @@ router.post("/", (req, res) => {
 
   const sql = `
     INSERT INTO items (
-      item_id, item_name, item_description, category_id, small_unit_id, unit_difference_qty,
+      item_id, item_code, item_name, item_description, category_id, small_unit_id, unit_difference_qty,
       big_unit_id, order_qty, stock_qty, purchase_rate, sales_rate, discount_percent, margin_rate
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
   const params = [
     item_id,
+    item_code || "",
     item_name,
     item_description || "",
     category_id || null,
@@ -141,6 +135,7 @@ router.post("/", (req, res) => {
 router.post("/update", (req, res) => {
   const {
     id,
+    item_code ,
     item_name,
     item_description,
     category_id,
@@ -161,6 +156,7 @@ router.post("/update", (req, res) => {
 
   const sql = `
     UPDATE items SET
+      item_code = ?,
       item_name = ?,
       item_description = ?,
       category_id = ?,
@@ -179,6 +175,7 @@ router.post("/update", (req, res) => {
   // stock_qty = ?,
 
   const params = [
+    item_code || "",
     item_name,
     item_description || "",
     category_id || null,
@@ -204,6 +201,7 @@ router.post("/update", (req, res) => {
     }
     res.json({
       item_id: id,
+      item_code,
       item_name,
       item_description,
       small_unit_id,

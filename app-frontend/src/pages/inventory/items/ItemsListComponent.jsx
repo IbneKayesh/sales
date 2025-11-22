@@ -61,6 +61,10 @@ const ItemsListComponent = ({ dataList, onEdit, onDelete }) => {
       </div>
     );
   };
+
+  const item_nameTemplate = (rowData) => {
+    return `${rowData.item_code} - ${rowData.item_name}`;
+  }
   const order_qtyTemplate = (rowData) => {
     return <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} />;
   };
@@ -123,7 +127,7 @@ const ItemsListComponent = ({ dataList, onEdit, onDelete }) => {
         className="bg-dark-300"
         size="small"
       >
-        <Column field="item_name" header="Item Name" sortable footer={`Total Items: ${totalItems}`} />
+        <Column field="item_name" header="Item Name"  body={item_nameTemplate} footer={`Total Items: ${totalItems}`} sortable />
         <Column
           field="order_qty"
           header="Order Qty"

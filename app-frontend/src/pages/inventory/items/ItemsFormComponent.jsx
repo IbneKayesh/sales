@@ -6,19 +6,31 @@ import t_items from "@/models/inventory/t_items.json";
 import { useUnits } from "@/hooks/inventory/useUnits";
 import { useCategory } from "@/hooks/inventory/useCategory";
 
-const ItemsFormComponent = ({
-  isBusy,
-  errors,
-  formData,
-  onChange,
-  onSave,
-}) => {
+const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
   const { units } = useUnits();
   const { categories } = useCategory();
 
   return (
     <div className="p-1">
       <div className="grid">
+        <div className="col-12 md:col-2">
+          <label
+            htmlFor="item_code"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_items.t_items.item_code.name}
+          </label>
+          <InputText
+            name="item_code"
+            value={formData.item_code}
+            onChange={(e) => onChange("item_code", e.target.value)}
+            className={`w-full ${errors.item_code ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_items.t_items.item_code.name}`}
+          />
+          {errors.item_code && (
+            <small className="mb-3 text-red-500">{errors.item_code}</small>
+          )}
+        </div>
         <div className="col-12 md:col-4">
           <label
             htmlFor="item_name"
@@ -58,7 +70,7 @@ const ItemsFormComponent = ({
             </small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="category_id"
             className="block text-900 font-medium mb-2"
@@ -83,7 +95,7 @@ const ItemsFormComponent = ({
             <small className="mb-3 text-red-500">{errors.category_id}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="small_unit_id"
             className="block text-900 font-medium mb-2"
@@ -108,7 +120,7 @@ const ItemsFormComponent = ({
             <small className="mb-3 text-red-500">{errors.small_unit_id}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="unit_difference_qty"
             className="block text-900 font-medium mb-2"
@@ -130,7 +142,7 @@ const ItemsFormComponent = ({
             </small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="big_unit_id"
             className="block text-900 font-medium mb-2"
@@ -155,7 +167,7 @@ const ItemsFormComponent = ({
             <small className="mb-3 text-red-500">{errors.big_unit_id}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="order_qty"
             className="block text-900 font-medium mb-2"
@@ -174,7 +186,7 @@ const ItemsFormComponent = ({
             <small className="mb-3 text-red-500">{errors.order_qty}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="stock_qty"
             className="block text-900 font-medium mb-2"
@@ -193,7 +205,7 @@ const ItemsFormComponent = ({
             <small className="mb-3 text-red-500">{errors.stock_qty}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="purchase_rate"
             className="block text-900 font-medium mb-2"
@@ -214,7 +226,7 @@ const ItemsFormComponent = ({
             <small className="mb-3 text-red-500">{errors.purchase_rate}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="sales_rate"
             className="block text-900 font-medium mb-2"
@@ -235,7 +247,7 @@ const ItemsFormComponent = ({
             <small className="mb-3 text-red-500">{errors.sales_rate}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="discount_percent"
             className="block text-900 font-medium mb-2"
@@ -258,7 +270,7 @@ const ItemsFormComponent = ({
             </small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="margin_rate"
             className="block text-900 font-medium mb-2"

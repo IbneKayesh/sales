@@ -30,7 +30,9 @@ export const useBankTransaction = () => {
     { label: "Discount Received (+)", value: "Discount Received" },
 
     // Purchases & Stock
-    { label: "Purchase (-)", value: "Purchase" },
+    { label: "Purchase Booking (-)", value: "Purchase Booking" },
+    { label: "Purchase Receive (+)", value: "Purchase Receive" },
+    { label: "Purchase Order (-)", value: "Purchase Order" },
     { label: "Purchase Return (+)", value: "Purchase Return" },
     { label: "Stock Adjustment (+/-)", value: "Stock Adjustment" },
 

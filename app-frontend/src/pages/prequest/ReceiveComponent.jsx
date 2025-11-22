@@ -15,7 +15,7 @@ import t_po_master from "@/models/prequest/t_po_master.json";
 import { useContacts } from "@/hooks/setup/useContacts";
 import { useItems } from "@/hooks/inventory/useItems";
 
-const PrequestFormComponent = ({
+const ReceiveComponent = ({
   isBusy,
   errors,
   formData,
@@ -56,7 +56,7 @@ const PrequestFormComponent = ({
       item_id: selectedItem,
       item_name: item.item_name,
       item_rate: item.purchase_rate,
-      booking_qty: 1,
+      booking_qty: 0,
       order_qty: 0,
       discount_percent: 0,
       discount_amount: 0,
@@ -90,9 +90,10 @@ const PrequestFormComponent = ({
   const onRowEditSave = (event) => {
     let { newData, index } = event;
     // Calculate item_amount
+
     const discountAmount = newData.discount_amount;
 
-    const itemAmount = newData.item_rate * newData.booking_qty;
+    const itemAmount = newData.item_rate * newData.order_qty;
     newData.item_amount = itemAmount - discountAmount;
 
     const discountPercent =
@@ -102,6 +103,7 @@ const PrequestFormComponent = ({
     newData.discount_percent = discountPercent;
 
     newData.ismodified = 1;
+
     let _localItems = [...orderChildItems];
     _localItems[index] = newData;
     setOrderChildItems(_localItems);
@@ -174,8 +176,8 @@ const PrequestFormComponent = ({
     return `${formattedItemRate} (${formattedCostRate})`;
   };
 
-  const bookingQtyTemplate = (rowData) => {
-    return `${rowData.booking_qty} ${rowData.small_unit_name} (${rowData.order_qty})`;
+  const orderQtyTemplate = (rowData) => {
+    return `${rowData.order_qty} ${rowData.small_unit_name} (${rowData.booking_qty})`;
   };
 
   const totalBookingQty = orderChildItems.reduce(
@@ -188,8 +190,8 @@ const PrequestFormComponent = ({
     0
   );
 
-  const totalBookingQtyTemplate = () => {
-    return `${totalBookingQty} (${totalOrderQty})`;
+  const totalOrderQtyTemplate = () => {
+    return `${totalOrderQty} (${totalBookingQty})`;
   };
 
   const discountAmountTemplate = (rowData) => {
@@ -230,8 +232,8 @@ const PrequestFormComponent = ({
   const convertedQtyTemplate = (rowData) => {
     return (
       <>
-        <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} /> (
-        <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} />)
+        <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} /> (
+        <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} />)
       </>
     );
   };
@@ -431,6 +433,7 @@ const PrequestFormComponent = ({
             locale="en-US"
             inputStyle={{ width: "100%" }}
             className={`w-full ${errors.paid_amount ? "p-invalid" : ""}`}
+            disabled
           />
           {errors.paid_amount && (
             <small className="mb-3 text-red-500">{errors.paid_amount}</small>
@@ -458,9 +461,11 @@ const PrequestFormComponent = ({
           )}
         </div>
 
-        
         <div className="col-12 md:col-2">
-          <label htmlFor="is_posted" className="block text-900 font-medium mb-2">
+          <label
+            htmlFor="is_posted"
+            className="block text-900 font-medium mb-2"
+          >
             {t_po_master.t_po_master.is_posted.name}
           </label>
           <Checkbox
@@ -477,26 +482,6 @@ const PrequestFormComponent = ({
 
       {/* Child Editable Table */}
       <div className="mt-2">
-        <div className="flex align-items-center gap-2 mb-2">
-          <Dropdown
-            value={selectedItem}
-            options={itemsPurchase.map((item) => ({
-              label: item.item_name,
-              value: item.item_id,
-            }))}
-            onChange={(e) => setSelectedItem(e.value)}
-            placeholder="Select Item"
-            optionLabel="label"
-            optionValue="value"
-            className="w-full"
-          />
-          <Button
-            label="Add"
-            icon="pi pi-plus"
-            onClick={handleAddItem}
-            size="small"
-          />
-        </div>
         <DataTable
           value={orderChildItems}
           editMode="row"
@@ -526,11 +511,11 @@ const PrequestFormComponent = ({
             editor={itemRateEditor}
           />
           <Column
-            field="booking_qty"
-            header="Qty"
-            body={bookingQtyTemplate}
+            field="order_qty"
+            header="Order Qty"
+            body={orderQtyTemplate}
             editor={numberEditor}
-            footer={totalBookingQtyTemplate}
+            footer={totalOrderQtyTemplate}
           />
           <Column
             field="discount_amount"
@@ -543,15 +528,7 @@ const PrequestFormComponent = ({
             field="item_amount"
             header="Amount"
             body={itemAmountTemplate}
-            footer={
-              itemAmountFooterTemplate
-              // <>
-              //   {new Intl.NumberFormat("en-US", {
-              //     style: "currency",
-              //     currency: "BDT",
-              //   }).format(totalItemAmount)}
-              // </>
-            }
+            footer={itemAmountFooterTemplate}
           />
           <Column header="Bulk" body={convertedQtyTemplate} />
           <Column field="item_note" header="Note" editor={textEditor} />
@@ -582,7 +559,7 @@ const PrequestFormComponent = ({
             loading={isBusy || editingRows.length > 0}
             disabled={
               (orderChildItems && orderChildItems.length < 1) ||
-              (formData.is_complete && formData.is_paid)
+              (formData.is_completed)
             }
           />
         </div>
@@ -591,4 +568,4 @@ const PrequestFormComponent = ({
   );
 };
 
-export default PrequestFormComponent;
+export default ReceiveComponent;

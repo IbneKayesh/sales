@@ -83,6 +83,7 @@ const initTables = () => {
     db.run(`
       CREATE TABLE IF NOT EXISTS items (
         item_id TEXT PRIMARY KEY,
+        item_code TEXT,
         item_name TEXT NOT NULL,
         item_description TEXT,
         category_id TEXT,
@@ -207,7 +208,9 @@ const initTables = () => {
         } else {
           // Initialize data after tables are created
           initData(() => {
-            console.log("Database tables initialized and default data inserted.");
+            console.log(
+              "Database tables initialized and default data inserted."
+            );
           });
         }
       }
@@ -219,91 +222,135 @@ const initTables = () => {
 const initData = (callback) => {
   db.serialize(() => {
     // Insert default users
-    db.run(`
+    db.run(
+      `
       INSERT OR IGNORE INTO users (user_id, username, password, email, role) VALUES
       ('1', 'admin', 'password', 'admin@example.com', 'Admin'),
       ('2', 'user', '123456', 'user@example.com', 'User')
-    `, (err) => {
-      if (err) {
-        console.error("Error inserting default users:", err);
-      } else {
-        console.log("Default users inserted.");
+    `,
+      (err) => {
+        if (err) {
+          console.error("Error inserting default users:", err);
+        } else {
+          console.log("Default users inserted.");
+        }
       }
-    });
+    );
 
     // Insert default bank account
-    db.run(`
+    db.run(
+      `
       INSERT OR IGNORE INTO bank_accounts (bank_account_id, bank_name, account_name, account_number, opening_date, debit_balance, credit_balance, current_balance, is_default) VALUES
       ('1', 'Petty Cash', 'Daily Cash Book', '1234-5678-9012', strftime('%Y-%m-%d', 'now'), 0, 0, 0, 1)
-    `, (err) => {
-      if (err) {
-        console.error("Error inserting default bank account:", err);
-      } else {
-        console.log("Default bank account inserted.");
+    `,
+      (err) => {
+        if (err) {
+          console.error("Error inserting default bank account:", err);
+        } else {
+          console.log("Default bank account inserted.");
+        }
       }
-    });
+    );
 
     // Insert default contacts
-    db.run(`
+    db.run(
+      `
       INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_address, contact_type, current_balance) VALUES
       ('1', 'ABC Suppliers', '', 'Supplier', 0),
       ('2', 'XYZ Customer', '', 'Customer', 0)
-    `, (err) => {
-      if (err) {
-        console.error("Error inserting default contacts:", err);
-      } else {
-        console.log("Default contacts inserted.");
+    `,
+      (err) => {
+        if (err) {
+          console.error("Error inserting default contacts:", err);
+        } else {
+          console.log("Default contacts inserted.");
+        }
       }
-    });
+    );
 
-    // Insert default categories
-    db.run(`
-      INSERT OR IGNORE INTO categories (category_id, category_name) VALUES
-      ('1', 'Laptop'),
-      ('2', 'Mobile')
-    `, (err) => {
-      if (err) {
-        console.error("Error inserting default categories:", err);
-      } else {
-        console.log("Default categories inserted.");
-      }
-    });
+   // Insert default categories
+db.run(
+  `
+  INSERT OR IGNORE INTO categories (category_id, category_name) VALUES
+    (1, 'Beverages'),
+    (2, 'Snacks'),
+    (3, 'Dairy'),
+    (4, 'Bakery'),
+    (5, 'Household')
+  `,
+  (err) => {
+    if (err) console.error("Error inserting default categories:", err);
+    else console.log("Default categories inserted.");
+  }
+);
 
-    // Insert default units
-    db.run(`
-      INSERT OR IGNORE INTO units (unit_id, unit_name) VALUES
-      ('1', 'Pcs'),
-      ('2', 'Box')
-    `, (err) => {
-      if (err) {
-        console.error("Error inserting default units:", err);
-      } else {
-        console.log("Default units inserted.");
-      }
-    });
+// Insert default units
+db.run(
+  `
+  INSERT OR IGNORE INTO units (unit_id, unit_name) VALUES
+    (1, 'Pcs'),
+    (2, 'Pack'),
+    (3, 'Bottle'),
+    (4, 'Kg'),
+    (5, 'Ltr'),
+    (6, 'Box'),
+    (7, 'Ctn'),
+    (8, 'Case'),
+    (9, 'Drum')
+  `,
+  (err) => {
+    if (err) {
+      console.error("Error inserting default units:", err);
+    } else {
+      console.log("Default units inserted.");
+    }
+  }
+);
 
-    // Insert default items
-    db.run(`
-      INSERT OR IGNORE INTO items (item_id, item_name, item_description, category_id, small_unit_id, unit_difference_qty, big_unit_id, order_qty, stock_qty, purchase_rate, sales_rate, discount_percent, margin_rate) VALUES
-      ('1', 'Macbook Air 16/256', '', '1', '1', 10, '2', 0, 0, 105, 110, 0, 0),
-      ('2', 'iPhone 14', '', '2', '1', 10, '2', 0, 0, 55, 72, 0, 0),
-      ('3', 'Samsung Galaxy S23', '', '2', '1', 10, '2', 0, 0, 85, 92, 0, 0),
-      ('4', 'Dell XPS 13', '', '1', '1', 10, '2', 0, 0, 82, 92, 0, 0),
-      ('5', 'Google Pixel 7', '', '2', '1', 10, '2', 0, 0, 68, 73, 0, 0),
-      ('6', 'HP Pavilion', '', '1', '1', 10, '2', 0, 0, 85, 94, 0, 0),
-      ('7', 'OnePlus 11', '', '2', '1', 10, '2', 0, 0, 78, 81, 0, 0),
-      ('8', 'Lenovo ThinkPad', '', '1', '1', 10, '2', 0, 0, 120, 135, 0, 0),
-      ('9', 'Sony Xperia', '', '2', '1', 10, '2', 0, 0, 45, 48, 0, 0),
-      ('10', 'Asus ROG', '', '1', '1', 10, '2', 0, 0, 142, 165, 0, 0),
-      ('11', 'IP Phone', '', '1', '1', 10, '2', 0, 0, 15, 23, 0, 0)
-    `, (err) => {
-      if (err) {
-        console.error("Error inserting default items:", err);
-      } else {
-        console.log("Default items inserted.");
-        if (callback) callback();
-      }
-    });
+// Insert updated default items
+db.run(
+  `
+  INSERT OR IGNORE INTO items (
+    item_id, item_code, item_name, item_description,
+    category_id, small_unit_id, unit_difference_qty, big_unit_id,
+    order_qty, stock_qty, purchase_rate, sales_rate,
+    discount_percent, margin_rate
+  ) VALUES
+  (1, 'ITM001', 'Coca Cola 1L', 'Soft drink', 1, 5, 12, 7, 0, 0, 45, 55, 5, 10),
+  (2, 'ITM002', 'Pepsi 500ml', 'Soft drink', 1, 3, 24, 7, 0, 0, 25, 35, 0, 12),
+  (3, 'ITM003', 'Sprite 1L', 'Soft drink', 1, 5, 12, 7, 0, 0, 42, 52, 3, 10),
+  (18, 'ITM018', 'Mineral Water 1.5L', 'Drinking Water', 1, 5, 6, 8, 0, 0, 20, 30, 0, 15),
+  (4, 'ITM004', 'Potato Chips', 'Salted chips', 2, 2, 24, 6, 0, 0, 15, 25, 0, 15),
+  (5, 'ITM005', 'Lays Classic', 'Potato chips', 2, 2, 24, 6, 0, 0, 18, 25, 0, 12),
+  (6, 'ITM006', 'Doritos Cheese', 'Nacho chips', 2, 2, 24, 6, 0, 0, 30, 45, 5, 18),
+  (17, 'ITM017', 'Chocolate Bar', 'Milk chocolate', 2, 1, 48, 6, 0, 0, 25, 40, 0, 18),
+  (7, 'ITM007', 'Milk 1L', 'Packet Milk', 3, 5, 12, 7, 0, 0, 50, 60, 0, 10),
+  (8, 'ITM008', 'Cheddar Cheese 1Kg', 'Dairy Cheese', 3, 4, 10, 6, 0, 0, 80, 100, 0, 20),
+  (9, 'ITM009', 'Butter 1Kg', 'Salted butter', 3, 4, 10, 6, 0, 0, 40, 55, 0, 18),
+  (16, 'ITM016', 'Yogurt Cup 1Kg', 'Dairy yogurt', 3, 4, 10, 6, 0, 0, 20, 30, 0, 15),
+  (19, 'ITM019', 'Ghee 1Kg', 'Pure Ghee', 3, 4, 12, 6, 0, 0, 300, 380, 0, 18),
+  (10, 'ITM010', 'Bread Loaf', 'Fresh bread', 4, 1, 20, 6, 0, 0, 25, 35, 0, 15),
+  (11, 'ITM011', 'Burger Buns', 'Pack of 6', 4, 2, 16, 6, 0, 0, 30, 45, 0, 12),
+  (12, 'ITM012', 'Cake Rusk', 'Baked snack', 4, 2, 12, 6, 0, 0, 50, 70, 10, 20),
+  (13, 'ITM013', 'Detergent Powder 1Kg', 'Laundry powder', 5, 4, 10, 6, 0, 0, 120, 150, 0, 15),
+  (14, 'ITM014', 'Dishwashing Liquid 1L', 'Kitchen cleaner', 5, 5, 12, 7, 0, 0, 60, 85, 5, 18),
+  (15, 'ITM015', 'Toilet Cleaner 1L', 'Bathroom cleaner', 5, 5, 12, 7, 0, 0, 110, 140, 0, 12),
+  (20, 'ITM020', 'Floor Cleaner 5L', 'Household cleaning liquid', 5, 5, 1, 9, 0, 0, 150, 200, 0, 15)
+
+  `,
+  (err) => {
+    if (err) {
+      console.error("Error inserting default items:", err);
+    } else {
+      console.log("Default items inserted.");
+      if (callback) callback();
+    }
+  }
+);
+
+
+
+
   });
 };
 

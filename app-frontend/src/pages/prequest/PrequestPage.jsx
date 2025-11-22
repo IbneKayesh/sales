@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { usePoMaster } from "@/hooks/prequest/usePoMaster";
 import PrequestListComponent from "./PrequestListComponent";
-import PrequestFormComponent from "./PrequestFormComponent";
+import BookingComponent from "./BookingComponent";
+import ReceiveComponent from "./ReceiveComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
@@ -54,7 +55,7 @@ const PrequestPage = () => {
           {isList
             ? "Order List"
             : formDataPoMaster?.po_master_id
-            ? `Edit ${selectedPoType}: ${formDataPoMaster.order_no} for ${formDataPoMaster.ref_no}`
+            ? `Edit ${formDataPoMaster.order_type}: ${formDataPoMaster.order_no} for ${formDataPoMaster.ref_no}`
             : `Add New ${selectedPoType}`}
         </h3>
 
@@ -112,17 +113,34 @@ const PrequestPage = () => {
             onDelete={handleDeletePoMaster}
           />
         ) : (
-          <PrequestFormComponent
-            isBusy={isBusy}
-            errors={errors}
-            formData={formDataPoMaster}
-            onChange={handleChange}
-            poTypeOptions={poTypeOptions}
-            refNoOptions={refNoOptions}
-            orderChildItems={orderChildItems}
-            setOrderChildItems={setOrderChildItems}
-            onSaveAll={handleSaveAll}
-          />
+          <>
+            {formDataPoMaster.order_type === "Purchase Booking" && (
+              <BookingComponent
+                isBusy={isBusy}
+                errors={errors}
+                formData={formDataPoMaster}
+                onChange={handleChange}
+                poTypeOptions={poTypeOptions}
+                refNoOptions={refNoOptions}
+                orderChildItems={orderChildItems}
+                setOrderChildItems={setOrderChildItems}
+                onSaveAll={handleSaveAll}
+              />
+            )}
+            {formDataPoMaster.order_type === "Purchase Receive" && (
+              <ReceiveComponent
+                isBusy={isBusy}
+                errors={errors}
+                formData={formDataPoMaster}
+                onChange={handleChange}
+                poTypeOptions={poTypeOptions}
+                refNoOptions={refNoOptions}
+                orderChildItems={orderChildItems}
+                setOrderChildItems={setOrderChildItems}
+                onSaveAll={handleSaveAll}
+              />
+            )}
+          </>
         )}
       </Card>
     </>

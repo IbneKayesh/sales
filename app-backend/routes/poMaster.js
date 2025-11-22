@@ -123,7 +123,7 @@ router.post("/", (req, res) => {
     is_paid,
     is_posted,
     is_completed,
-    childs,
+    childs_create,
   } = req.body;
 
   if (
@@ -131,8 +131,8 @@ router.post("/", (req, res) => {
     !order_type ||
     !order_date ||
     !contacts_id ||
-    !childs ||
-    !Array.isArray(childs)
+    !childs_create ||
+    !Array.isArray(childs_create)
   ) {
     return res.status(400).json({
       error:
@@ -140,7 +140,7 @@ router.post("/", (req, res) => {
     });
   }
 
-  //console.log("childs " + JSON.stringify(childs))
+  //console.log("childs_create " + JSON.stringify(childs_create))
 
   generate_order_number(order_type, (err, order_no) => {
     if (err) {
@@ -184,8 +184,9 @@ router.post("/", (req, res) => {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
 
-      childs.forEach((child) => {
+      childs_create.forEach((child) => {
         //console.log("child " + JSON.stringify(child));
+        const itemQty = order_type === ""
         const paramsChild = [
           child.id,
           po_master_id,
@@ -213,7 +214,7 @@ router.post("/", (req, res) => {
         message: "Purchase Order created successfully!",
         po_master_id,
         order_no,
-        childs,
+        childs_create,
       });
     });
   });
@@ -224,14 +225,18 @@ router.post("/update", (req, res) => {
   const {
     po_master_id,
     order_type,
-    order_no,
     order_date,
     contacts_id,
     ref_no,
     order_note,
+    order_amount,
+    discount_amount,
     total_amount,
     paid_amount,
+    cost_amount,
     is_paid,
+    is_posted,
+    is_completed,
     childs_create,
     childs_update,
     childs_delete,
@@ -242,14 +247,12 @@ router.post("/update", (req, res) => {
   if (
     !po_master_id ||
     !order_type ||
-    !order_no ||
     !order_date ||
-    !contacts_id ||
-    !ref_no
+    !contacts_id
   ) {
     return res.status(400).json({
       error:
-        "ID, order type, order no, order date, contacts, and ref no are required",
+        "Master ID, order type, order date, contacts and childs are required",
     });
   }
 
@@ -259,25 +262,29 @@ router.post("/update", (req, res) => {
       contacts_id = ?,
       ref_no = ?,
       order_note = ?,
+      order_amount = ?,
+      discount_amount = ?,
       total_amount = ?,
       paid_amount = ?,
+      cost_amount = ?,
+      is_paid = ?,
+      is_posted = ?,
       updated_at = CURRENT_TIMESTAMP
     WHERE po_master_id = ?
   `;
 
-  // order_type = ?,
-  // order_no = ?,
-  //is_paid = ?,
   const masterParams = [
-    // order_type,
-    // order_no,
     order_date,
     contacts_id,
-    ref_no,
+    ref_no || "",
     order_note || "",
+    order_amount || 0,
+    discount_amount || 0,
     total_amount || 0,
     paid_amount || 0,
-    //is_paid || 0,
+    cost_amount || 0,
+    is_paid || 0,
+    is_posted || 0,
     po_master_id,
   ];
 
@@ -291,21 +298,25 @@ router.post("/update", (req, res) => {
     }
     // Create new purchase order child
     if (childs_create && Array.isArray(childs_create)) {
-      childs_create.forEach((item) => {
+      childs_create.forEach((child) => {
         const sqlChildCreate = `
-          INSERT INTO po_child (id, po_master_id, item_id, item_rate, item_qty, discount_amount, item_amount, item_note, received_qty)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO po_child 
+        (id, po_master_id, item_id, item_rate, booking_qty, order_qty, discount_percent, discount_amount, item_amount, cost_rate, item_note, ref_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const paramsChildCreate = [
-          item.id,
+          child.id,
           po_master_id,
-          item.item_id,
-          item.item_rate,
-          item.item_qty,
-          item.discount_amount || 0,
-          item.item_amount,
-          item.item_note || "",
-          item.received_qty,
+          child.item_id,
+          child.item_rate,
+          child.booking_qty || 0,
+          child.order_qty || 0,
+          child.discount_percent || 0,
+          child.discount_amount || 0,
+          child.item_amount || 0,
+          child.cost_rate || 0,
+          child.item_note || "",
+          child.ref_id || "",
         ];
         db.run(sqlChildCreate, paramsChildCreate, function (err) {
           if (err) console.error("Child create error:", err);
@@ -314,26 +325,32 @@ router.post("/update", (req, res) => {
     }
     // Update purchase order child
     if (childs_update && Array.isArray(childs_update)) {
-      childs_update.forEach((item) => {
+      childs_update.forEach((child) => {
         const sqlChildUpdate = `
           UPDATE po_child SET
             item_rate = ?,
-            item_qty = ?,
+            booking_qty = ?,
+            order_qty = ?,
+            discount_percent = ?,
             discount_amount = ?,
             item_amount = ?,
+            cost_rate = ?,
             item_note = ?,
-            received_qty = ?,
+            ref_id = ?,
             updated_at = CURRENT_TIMESTAMP
           WHERE id = ?
         `;
         const paramsChildUpdate = [
-          item.item_rate,
-          item.item_qty,
-          item.discount_amount || 0,
-          item.item_amount,
-          item.item_note || "",
-          item.received_qty,
-          item.id,
+          child.item_rate,
+          child.booking_qty,
+          child.order_qty,
+          child.discount_percent || 0,
+          child.discount_amount || 0,
+          child.item_amount,
+          child.cost_rate,
+          child.item_note || "",
+          child.ref_id || "",
+          child.id,
         ];
         db.run(sqlChildUpdate, paramsChildUpdate, function (err) {
           if (err) console.error("Child update error:", err);
@@ -342,20 +359,19 @@ router.post("/update", (req, res) => {
     }
     // Delete purchase order child
     if (childs_delete && Array.isArray(childs_delete)) {
-      childs_delete.forEach((item) => {
-        db.run("DELETE FROM po_child WHERE id = ?", [item.id], function (err) {
+      childs_delete.forEach((child) => {
+        db.run("DELETE FROM po_child WHERE id = ?", [child.id], function (err) {
           if (err) console.error("Child delete error:", err);
         });
       });
     }
 
     //ensure process
-    processData(po_master_id, order_type, ref_no);
+    //processData(po_master_id, order_type, ref_no);
 
     res.status(201).json({
       message: "Purchase Order updated successfully!",
       po_master_id,
-      order_no,
       childs_create,
       childs_update,
       childs_delete,

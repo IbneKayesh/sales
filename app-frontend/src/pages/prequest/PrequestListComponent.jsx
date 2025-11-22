@@ -204,7 +204,7 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
         <Column
           header="Actions"
           body={actionTemplate}
-          style={{ width: "150px" }}
+          style={{ width: "120px" }}
         />
       </DataTable>
     </div>
