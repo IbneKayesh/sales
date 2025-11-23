@@ -20,8 +20,8 @@
       "required": true,
       "format": "date"
     },
-    "trans_group": {
-      "name": "Group",
+    "trans_head": {
+      "name": "Head Name",
       "type": "string",
       "required": true,
       "minLength": 1,

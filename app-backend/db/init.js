@@ -110,7 +110,7 @@ const initTables = () => {
         bank_trans_id TEXT PRIMARY KEY,
         bank_account_id TEXT NOT NULL,
         trans_date TEXT NOT NULL,
-        trans_group TEXT NOT NULL,
+        trans_head TEXT NOT NULL,
         contact_id TEXT NOT NULL,
         trans_name TEXT NOT NULL,
         ref_no TEXT,
@@ -244,7 +244,7 @@ const initData = (callback) => {
     db.run(
       `
       INSERT OR IGNORE INTO bank_accounts (bank_account_id, bank_name, account_name, account_number, opening_date, debit_balance, credit_balance, current_balance, is_default) VALUES
-      ('1', 'Petty Cash', 'Daily Cash Book', '1234-5678-9012', strftime('%Y-%m-%d', 'now'), 0, 0, 0, 1)
+      ('ba-1', 'Petty Cash', 'Daily Cash Book', '1234-5678-9012', strftime('%Y-%m-%d', 'now'), 0, 0, 0, 1)
     `,
       (err) => {
         if (err) {

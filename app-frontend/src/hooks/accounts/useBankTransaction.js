@@ -4,8 +4,12 @@ import { generateGuid } from "@/utils/guid";
 
 import validate from "@/models/validator";
 import t_bank_trans from "@/models/accounts/t_bank_trans.json";
-import { getListByGroup, getGroupList, defaultList } from "@/utils/vtable.js";
-import { useContacts } from "@/hooks/setup/useContacts";
+import {
+  getListByTransHead,
+  getTransHeadList,
+  defaultList,
+} from "@/utils/vtable.js";
+import { generateDrCr } from "@/utils/bankTransactionDrCr";
 
 export const useBankTransaction = () => {
   const [bankTransactions, setBankTransactions] = useState([]); // Initialize with empty array
@@ -16,22 +20,22 @@ export const useBankTransaction = () => {
   const [errors, setErrors] = useState({});
   const [formDataBankTransaction, setFormDataBankTransaction] = useState({
     bank_account_id: "",
-    transaction_date: new Date().toISOString().split("T")[0],
-    transaction_name: "",
-    reference_no: "",
-    transaction_details: "",
+    trans_date: new Date().toISOString().split("T")[0],
+    trans_head: "",
+    contact_id: "",
+    trans_name: "",
+    ref_no: "",
+    trans_details: "",
     debit_amount: 0,
     credit_amount: 0,
   });
-    const { contactsBank } = useContacts();
+  const [refNoTrans, setRefNoTrans] = useState([]);
+  const [selectedRefNoTrans, setSelectedRefNoTrans] = useState([]);
 
-  const [transGroups, setTransGroups] = useState([]);
+  const [transHeads, setTransHeads] = useState([]);
   useEffect(() => {
-    setTransGroups(getGroupList());
+    setTransHeads(getTransHeadList());
   }, []);
-
-
-
 
   const transOptions1 = [
     // Income
@@ -105,23 +109,62 @@ export const useBankTransaction = () => {
     loadBankTransactions();
   }, []);
 
+  const loadReferenceNo = async (groupName) => {
+    setRefNoTrans([]);
+
+    //console.log("trans_head " + groupName);
+    try {
+      const data = await bankTransactionsAPI.availableRefNos(groupName);
+      //console.log("data " + JSON.stringify(data));
+      setRefNoTrans(data);
+    } catch (error) {
+      console.error("Error loading ref no:", error);
+    }
+  };
+
+  const loadSelectedRefNoTrans = (trnNo) => {
+    setSelectedRefNoTrans(null);
+    const currentItem = refNoTrans.find((f) => f.order_no === trnNo);
+
+    if (!currentItem) {
+      console.error("Transaction not found for order_no:", trnNo);
+      return; // Exit the function if no match is found
+    }
+
+    if (currentItem) {
+      const acDrCr = generateDrCr(currentItem);
+      setSelectedRefNoTrans(acDrCr);
+    }
+
+    console.error("currentItem:", currentItem);
+  };
+
   const handleChange = (field, value) => {
     setFormDataBankTransaction((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate(
       { ...formDataBankTransaction, [field]: value },
       t_bank_trans.t_bank_trans
     );
+    if (field === "trans_head") {
+      loadReferenceNo(value);
+    }
+
+    if (field === "ref_no") {
+      loadSelectedRefNoTrans(value);
+    }
     setErrors(newErrors);
   };
 
   const handleClear = () => {
     setFormDataBankTransaction({
-      bank_transactions_id: "",
+      bank_trans_id: "",
       bank_account_id: "",
-      transaction_date: new Date().toISOString().split("T")[0],
-      transaction_name: "",
-      reference_no: "",
-      transaction_details: "",
+      trans_date: new Date().toISOString().split("T")[0],
+      trans_head: "",
+      contact_id: "",
+      trans_name: "",
+      ref_no: "",
+      trans_details: "",
       debit_amount: 0,
       credit_amount: 0,
     });
@@ -287,7 +330,8 @@ export const useBankTransaction = () => {
     handleDeleteBankTransaction,
     handleRefresh,
     handleSaveBankTransaction,
-    transGroups,
-    contactsBank,
+    transHeads,
+    refNoTrans,
+    selectedRefNoTrans,
   };
 };

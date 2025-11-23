@@ -1,68 +1,68 @@
 // Sample data from the user, grouped based on comments
 const transOptions = [
     // Income
-    { label: "Sales (+)", value: "Sales", group: "Income" },
-    { label: "Other Income (+)", value: "Other Income", group: "Income" },
-    { label: "Commission Received (+)", value: "Commission Received", group: "Income" },
-    { label: "Discount Received (+)", value: "Discount Received", group: "Income" },
+    { label: "Sales (+)", value: "Sales", trans_head: "Income" },
+    { label: "Other Income (+)", value: "Other Income", trans_head: "Income" },
+    { label: "Commission Received (+)", value: "Commission Received", trans_head: "Income" },
+    { label: "Discount Received (+)", value: "Discount Received", trans_head: "Income" },
 
     // Purchases & Stock
-    { label: "Purchase Booking (-)", value: "Purchase Booking", group: "Purchases & Stock" },
-    { label: "Purchase Receive (+)", value: "Purchase Receive", group: "Purchases & Stock" },
-    { label: "Purchase Order (-)", value: "Purchase Order", group: "Purchases & Stock" },
-    { label: "Purchase Return (+)", value: "Purchase Return", group: "Purchases & Stock" },
-    { label: "Stock Adjustment (+/-)", value: "Stock Adjustment", group: "Purchases & Stock" },
+    { label: "Purchase Booking (-)", value: "Purchase Booking", trans_head: "Purchases and Stock" },
+    { label: "Purchase Receive (+)", value: "Purchase Receive", trans_head: "Purchases and Stock" },
+    { label: "Purchase Order (-)", value: "Purchase Order", trans_head: "Purchases and Stock" },
+    { label: "Purchase Return (+)", value: "Purchase Return", trans_head: "Purchases and Stock" },
+    { label: "Stock Adjustment (+/-)", value: "Stock Adjustment", trans_head: "Purchases and Stock" },
 
     // Expenses
-    { label: "Expenses (-)", value: "Expenses", group: "Expenses" },
-    { label: "Salary (-)", value: "Salary", group: "Expenses" },
-    { label: "Rent (-)", value: "Rent", group: "Expenses" },
-    { label: "Electricity Bill (-)", value: "Electricity Bill", group: "Expenses" },
-    { label: "Internet Bill (-)", value: "Internet Bill", group: "Expenses" },
-    { label: "Transport / Delivery (-)", value: "Transport", group: "Expenses" },
-    { label: "Bank Charges (-)", value: "Bank Charges", group: "Expenses" },
-    { label: "GST / Tax Payment (-)", value: "Tax Payment", group: "Expenses" },
-    { label: "Maintenance (-)", value: "Maintenance", group: "Expenses" },
+    { label: "Expenses (-)", value: "Expenses", trans_head: "Expenses" },
+    { label: "Salary (-)", value: "Salary", trans_head: "Expenses" },
+    { label: "Rent (-)", value: "Rent", trans_head: "Expenses" },
+    { label: "Electricity Bill (-)", value: "Electricity Bill", trans_head: "Expenses" },
+    { label: "Internet Bill (-)", value: "Internet Bill", trans_head: "Expenses" },
+    { label: "Transport / Delivery (-)", value: "Transport", trans_head: "Expenses" },
+    { label: "Bank Charges (-)", value: "Bank Charges", trans_head: "Expenses" },
+    { label: "GST / Tax Payment (-)", value: "Tax Payment", trans_head: "Expenses" },
+    { label: "Maintenance (-)", value: "Maintenance", trans_head: "Expenses" },
 
     // Cash & Bank
-    { label: "Cash In (+)", value: "Cash In", group: "Cash & Bank" },
-    { label: "Cash Out (-)", value: "Cash Out", group: "Cash & Bank" },
-    { label: "Deposit to Bank (-)", value: "Bank Deposit", group: "Cash & Bank" },
-    { label: "Withdraw from Bank (+)", value: "Bank Withdraw", group: "Cash & Bank" },
+    { label: "Cash In (+)", value: "Cash In", trans_head: "Cash and Bank" },
+    { label: "Cash Out (-)", value: "Cash Out", trans_head: "Cash and Bank" },
+    { label: "Deposit to Bank (-)", value: "Bank Deposit", trans_head: "Cash and Bank" },
+    { label: "Withdraw from Bank (+)", value: "Bank Withdraw", trans_head: "Cash and Bank" },
 
     // Dues (Receivables/Payables)
-    { label: "Customer Due (+)", value: "Customer Due", group: "Dues" },
-    { label: "Customer Due Received (+)", value: "Due Received", group: "Dues" },
-    { label: "Supplier Due (-)", value: "Supplier Due", group: "Dues" },
-    { label: "Supplier Due Paid (-)", value: "Due Paid", group: "Dues" },
+    { label: "Customer Due (+)", value: "Customer Due", trans_head: "Dues" },
+    { label: "Customer Due Received (+)", value: "Due Received", trans_head: "Dues" },
+    { label: "Supplier Due (-)", value: "Supplier Due", trans_head: "Dues" },
+    { label: "Supplier Due Paid (-)", value: "Due Paid", trans_head: "Dues" },
 
     // Assets & Liabilities
-    { label: "Asset Purchase (-)", value: "Asset Purchase", group: "Assets & Liabilities" },
-    { label: "Asset Sale (+)", value: "Asset Sale", group: "Assets & Liabilities" },
-    { label: "Loan Taken (+)", value: "Loan Taken", group: "Assets & Liabilities" },
-    { label: "Loan Repayment (-)", value: "Loan Repayment", group: "Assets & Liabilities" },
+    { label: "Asset Purchase (-)", value: "Asset Purchase", trans_head: "Assets and Liabilities" },
+    { label: "Asset Sale (+)", value: "Asset Sale", trans_head: "Assets and Liabilities" },
+    { label: "Loan Taken (+)", value: "Loan Taken", trans_head: "Assets and Liabilities" },
+    { label: "Loan Repayment (-)", value: "Loan Repayment", trans_head: "Assets and Liabilities" },
 ];
 
-// Transform transOptions into a list of objects with id, name, and group
+// Transform transOptions into a list of objects with id, name, and trans_head
 const defaultList = transOptions.map((item, index) => ({
   id: index + 1,
   label: item.label,
   value: item.value,
-  group: item.group,
+  trans_head: item.trans_head,
 }));
 
 
-function getListByGroup(groupname) {
-  return defaultList.filter(item => item.group === groupname);
+function getListByTransHead(transhead) {
+  return defaultList.filter(item => item.trans_head === transhead);
 }
 
-function getGroupList() {
-  const groups = defaultList.map(item => item.group);
-  return [...new Set(groups)];
+function getTransHeadList() {
+  const heads = defaultList.map(item => item.trans_head);
+  return [...new Set(heads)];
 }
 
 export {
-  getListByGroup,
-  getGroupList,
+  getListByTransHead,
+  getTransHeadList,
   defaultList,
 };
