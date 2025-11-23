@@ -13,6 +13,8 @@ export const useItems = () => {
 
   const [errors, setErrors] = useState({});
   const [formDataItem, setFormDataItem] = useState({
+    item_id: "",
+    item_code: "",
     item_name: "",
     item_description: "",
     category_id: "",
@@ -85,6 +87,7 @@ export const useItems = () => {
   const handleClear = () => {
     setFormDataItem({
       item_id: "",
+      item_code: "",
       item_name: "",
       item_description: "",
       category_id: "",

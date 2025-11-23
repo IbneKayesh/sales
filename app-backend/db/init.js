@@ -256,6 +256,7 @@ const initData = (callback) => {
     db.run(
       `
       INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_address, contact_type, current_balance) VALUES
+      ('0', 'Adjustment', 'for internal transaction', 'Both', 0),
       ('1', 'ABC Suppliers', '', 'Supplier', 0),
       ('2', 'XYZ Customer', '', 'Customer', 0)
     `,

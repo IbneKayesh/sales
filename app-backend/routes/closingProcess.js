@@ -265,9 +265,32 @@ router.post("/update-item", (req, res) => {
 
 
   //update stock qty
+  const sql_stock_v1 =`UPDATE items
+SET stock_qty = (
+    SELECT SUM(order_qty)
+    FROM (
+        SELECT poc.item_id, SUM(poc.order_qty) AS order_qty
+        FROM po_child poc
+        JOIN po_master pom ON poc.po_master_id = pom.po_master_id
+        WHERE pom.order_type IN ('Purchase Receive','Purchase Order')
+        GROUP BY poc.item_id
+
+        UNION ALL
+
+        SELECT poc.item_id, -SUM(poc.order_qty) AS order_qty
+        FROM po_child poc
+        JOIN po_master pom ON poc.po_master_id = pom.po_master_id
+        WHERE pom.order_type IN ('Purchase Return')
+        GROUP BY poc.item_id
+    ) tmp
+    WHERE tmp.item_id = items.id
+)
+WHERE items.id IN (
+    SELECT item_id FROM po_child
+)`
 
 
-  const sql_c = `UPDATE items
+  const sql_v0 = `UPDATE items
           SET stock_qty = (
               SELECT IFNULL(SUM(poc.order_qty), 0)
               FROM po_child poc
@@ -278,9 +301,21 @@ router.post("/update-item", (req, res) => {
             AND pom.is_posted = 1
           )`;
 
+          const sql_c = `UPDATE items
+        SET stock_qty = (
+            SELECT SUM(
+                CASE
+                    WHEN pom.order_type IN ('Purchase Receive','Purchase Order') THEN poc.order_qty
+                    WHEN pom.order_type = 'Purchase Return' THEN -poc.order_qty
+                END
+            )
+            FROM po_child poc
+            JOIN po_master pom ON poc.po_master_id = pom.po_master_id
+            WHERE poc.item_id = items.item_id
+        )`;
   db.run(sql_c, [], function (err) {
     if (err) {
-      console.error("Database error in sql_b:", err);
+      console.error("Database error in sql_c:", err);
       //return;
     }
   });

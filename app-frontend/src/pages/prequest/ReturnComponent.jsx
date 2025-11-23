@@ -433,7 +433,6 @@ const ReturnComponent = ({
             locale="en-US"
             inputStyle={{ width: "100%" }}
             className={`w-full ${errors.paid_amount ? "p-invalid" : ""}`}
-            disabled
           />
           {errors.paid_amount && (
             <small className="mb-3 text-red-500">{errors.paid_amount}</small>
@@ -559,7 +558,7 @@ const ReturnComponent = ({
             loading={isBusy || editingRows.length > 0}
             disabled={
               (orderChildItems && orderChildItems.length < 1) ||
-              (formData.isedit)
+              (formData.isedit) || (formData.paid_amount !== formData.total_amount)
             }
           />
         </div>

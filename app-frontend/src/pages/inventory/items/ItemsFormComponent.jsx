@@ -134,6 +134,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
             className={`w-full ${
               errors.unit_difference_qty ? "p-invalid" : ""
             }`}
+            inputStyle={{ width: "100%" }}
             placeholder={`Enter ${t_items.t_items.unit_difference_qty.name}`}
           />
           {errors.unit_difference_qty && (
@@ -179,6 +180,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
             value={formData.order_qty}
             onValueChange={(e) => onChange("order_qty", e.value)}
             className={`w-full ${errors.order_qty ? "p-invalid" : ""}`}
+            inputStyle={{ width: "100%" }}
             placeholder={`Enter ${t_items.t_items.order_qty.name}`}
             disabled
           />
@@ -198,6 +200,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
             value={formData.stock_qty}
             onValueChange={(e) => onChange("stock_qty", e.value)}
             className={`w-full ${errors.stock_qty ? "p-invalid" : ""}`}
+            inputStyle={{ width: "100%" }}
             placeholder={`Enter ${t_items.t_items.stock_qty.name}`}
             disabled
           />
@@ -220,6 +223,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
             currency="BDT"
             locale="en-US"
             className={`w-full ${errors.purchase_rate ? "p-invalid" : ""}`}
+            inputStyle={{ width: "100%" }}
             placeholder={`Enter ${t_items.t_items.purchase_rate.name}`}
           />
           {errors.purchase_rate && (
@@ -241,6 +245,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
             currency="BDT"
             locale="en-US"
             className={`w-full ${errors.sales_rate ? "p-invalid" : ""}`}
+            inputStyle={{ width: "100%" }}
             placeholder={`Enter ${t_items.t_items.sales_rate.name}`}
           />
           {errors.sales_rate && (
@@ -262,6 +267,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
             min={0}
             max={100}
             className={`w-full ${errors.discount_percent ? "p-invalid" : ""}`}
+            inputStyle={{ width: "100%" }}
             placeholder={`Enter ${t_items.t_items.discount_percent.name}`}
           />
           {errors.discount_percent && (
@@ -285,6 +291,7 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
             currency="BDT"
             locale="en-US"
             className={`w-full ${errors.margin_rate ? "p-invalid" : ""}`}
+            inputStyle={{ width: "100%" }}
             placeholder={`Enter ${t_items.t_items.margin_rate.name}`}
             disabled
           />

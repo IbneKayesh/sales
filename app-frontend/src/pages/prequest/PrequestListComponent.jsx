@@ -46,13 +46,20 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const trnShortBody = (rowData) => {
+  const trnShortBody_FirstChars = (rowData) => {
     if (!rowData.order_type) return "";
 
     return rowData.order_type
       .split(" ") // split string into words
       .map((word) => word[0].toUpperCase()) // take first char of each word
       .join(""); // join them together
+  };
+
+  const trnShortBody = (rowData) => {
+    if (!rowData.order_type) return "";
+
+    const parts = rowData.order_type.trim().split(" ");
+    return parts[parts.length - 1]; // return last word
   };
 
   const totalAmountTemplate = (rowData) => {

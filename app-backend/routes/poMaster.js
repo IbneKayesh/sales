@@ -64,7 +64,7 @@ router.get("/", (req, res) => {
     case "default":
     default:
       whereClause +=
-        "AND ((pom.is_paid = 0 AND pom.is_posted = 0 AND pom.is_completed = 0) OR (pom.order_date = date('now')))";
+        "AND ((pom.is_paid = 0 OR pom.is_posted = 0 OR pom.is_completed = 0) OR (pom.order_date = date('now')))";
       break;
   }
   const sql = `
