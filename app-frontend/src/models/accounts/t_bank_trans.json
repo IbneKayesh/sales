@@ -1,6 +1,6 @@
 {
   "t_bank_trans": {
-    "bank_transactions_id": {
+    "bank_trans_id": {
       "name": "Id",
       "type": "string",
       "required": false,
@@ -14,42 +14,42 @@
       "minLength": 1,
       "maxLength": 36
     },
-    "transaction_date": {
-      "name": "Transaction Date",
+    "trans_date": {
+      "name": "Date",
       "type": "string",
       "required": true,
       "format": "date"
     },
-    "contacts_id": {
+    "trans_group": {
+      "name": "Group",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "contact_id": {
       "name": "Contact Name",
       "type": "string",
       "required": true,
       "minLength": 1,
       "maxLength": 36
     },
-    "transaction_group": {
-      "name": "Transaction Group",
+    "trans_name": {
+      "name": "Name",
       "type": "string",
       "required": true,
       "minLength": 1,
       "maxLength": 100
     },
-    "transaction_name": {
-      "name": "Transaction Name",
-      "type": "string",
-      "required": true,
-      "minLength": 1,
-      "maxLength": 100
-    },
-    "reference_no": {
+    "ref_no": {
       "name": "Reference No",
       "type": "string",
       "required": false,
       "minLength": 0,
       "maxLength": 50
     },
-    "transaction_details": {
-      "name": "Transaction Details",
+    "trans_details": {
+      "name": "Details",
       "type": "string",
       "required": true,
       "minLength": 1,

@@ -296,24 +296,24 @@ const ReceiveComponent = ({
         </div>
         <div className="col-12 md:col-3">
           <label
-            htmlFor="contacts_id"
+            htmlFor="contact_id"
             className="block text-900 font-medium mb-2"
           >
-            {t_po_master.t_po_master.contacts_id.name}
+            {t_po_master.t_po_master.contact_id.name}
             <span className="text-red-500">*</span>
           </label>
           <Dropdown
-            name="contacts_id"
-            value={formData.contacts_id}
+            name="contact_id"
+            value={formData.contact_id}
             options={contactsSupplier}
-            onChange={(e) => onChange("contacts_id", e.value)}
-            className={`w-full ${errors.contacts_id ? "p-invalid" : ""}`}
-            placeholder={`Select ${t_po_master.t_po_master.contacts_id.name}`}
+            onChange={(e) => onChange("contact_id", e.value)}
+            className={`w-full ${errors.contact_id ? "p-invalid" : ""}`}
+            placeholder={`Select ${t_po_master.t_po_master.contact_id.name}`}
             optionLabel="label"
             optionValue="value"
           />
-          {errors.contacts_id && (
-            <small className="mb-3 text-red-500">{errors.contacts_id}</small>
+          {errors.contact_id && (
+            <small className="mb-3 text-red-500">{errors.contact_id}</small>
           )}
         </div>
         <div className="col-12 md:col-2">

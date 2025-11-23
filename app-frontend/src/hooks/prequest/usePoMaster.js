@@ -36,7 +36,7 @@ export const usePoMaster = () => {
     order_type: selectedPoType,
     order_no: "AUTO[SGD#0001]",
     order_date: new Date().toISOString().split("T")[0],
-    contacts_id: "",
+    contact_id: "",
     ref_no: "No Ref",
     order_note: "",
     order_amount: 0,
@@ -248,21 +248,21 @@ export const usePoMaster = () => {
 
     //load child for receive
     if (
-      field === "contacts_id" &&
+      field === "contact_id" &&
       value &&
       formDataPoMaster.order_type === "Purchase Receive"
     ) {
-      //console.log("contacts_id " + value);
+      //console.log("contact_id " + value);
       await loadPurchaseBookingPoChild(value);
     }
 
     //load child for return
     if (
-      field === "contacts_id" &&
+      field === "contact_id" &&
       value &&
       formDataPoMaster.order_type === "Purchase Return"
     ) {
-      //console.log("contacts_id " + value);
+      //console.log("contact_id " + value);
       await loadPurchaseReturnsPoChild(value);
     }
 
@@ -275,7 +275,7 @@ export const usePoMaster = () => {
       order_type: selectedPoType,
       order_no: "AUTO[SGD#0001]",
       order_date: new Date().toISOString().split("T")[0],
-      contacts_id: "",
+      contact_id: "",
       ref_no: "No Ref",
       order_note: "",
       order_amount: 0,

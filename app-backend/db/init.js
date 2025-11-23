@@ -106,18 +106,21 @@ const initTables = () => {
 
     // Bank Transactions table
     db.run(`
-      CREATE TABLE IF NOT EXISTS bank_transactions (
-        bank_transactions_id TEXT PRIMARY KEY,
+      CREATE TABLE IF NOT EXISTS bank_trans (
+        bank_trans_id TEXT PRIMARY KEY,
         bank_account_id TEXT NOT NULL,
-        transaction_date TEXT NOT NULL,
-        transaction_name TEXT NOT NULL,
-        reference_no TEXT,
-        transaction_details TEXT,
+        trans_date TEXT NOT NULL,
+        trans_group TEXT NOT NULL,
+        contact_id TEXT NOT NULL,
+        trans_name TEXT NOT NULL,
+        ref_no TEXT,
+        trans_details TEXT,
         debit_amount REAL DEFAULT 0,
         credit_amount REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (bank_account_id) REFERENCES bank_accounts (bank_account_id) ON DELETE RESTRICT
+        FOREIGN KEY (contact_id) REFERENCES bank_accounts (contact_id) ON DELETE RESTRICT
       )
     `);
 
@@ -128,7 +131,7 @@ const initTables = () => {
         order_type TEXT NOT NULL,
         order_no TEXT NOT NULL,
         order_date TEXT NOT NULL,
-        contacts_id TEXT NOT NULL,
+        contact_id TEXT NOT NULL,
         ref_no TEXT,
         order_note TEXT,
         order_amount REAL DEFAULT 0,
@@ -141,7 +144,7 @@ const initTables = () => {
         is_completed BOOLEAN DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (contacts_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
+        FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
       )
     `);
 
@@ -172,14 +175,14 @@ const initTables = () => {
       CREATE TABLE IF NOT EXISTS so_master (
         so_master_id TEXT PRIMARY KEY,
         so_date TEXT NOT NULL,
-        contacts_id TEXT NOT NULL,
+        contact_id TEXT NOT NULL,
         so_note TEXT,
         total_amount REAL DEFAULT 0,
         paid_amount REAL DEFAULT 0,
         is_paid BOOLEAN DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (contacts_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
+        FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
       )
     `);
 

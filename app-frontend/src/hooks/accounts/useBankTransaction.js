@@ -4,6 +4,8 @@ import { generateGuid } from "@/utils/guid";
 
 import validate from "@/models/validator";
 import t_bank_trans from "@/models/accounts/t_bank_trans.json";
+import { getListByGroup, getGroupList, defaultList } from "@/utils/vtable.js";
+import { useContacts } from "@/hooks/setup/useContacts";
 
 export const useBankTransaction = () => {
   const [bankTransactions, setBankTransactions] = useState([]); // Initialize with empty array
@@ -21,8 +23,17 @@ export const useBankTransaction = () => {
     debit_amount: 0,
     credit_amount: 0,
   });
+    const { contactsBank } = useContacts();
 
-  const transOptions = [
+  const [transGroups, setTransGroups] = useState([]);
+  useEffect(() => {
+    setTransGroups(getGroupList());
+  }, []);
+
+
+
+
+  const transOptions1 = [
     // Income
     { label: "Sales (+)", value: "Sales" },
     { label: "Other Income (+)", value: "Other Income" },
@@ -276,6 +287,7 @@ export const useBankTransaction = () => {
     handleDeleteBankTransaction,
     handleRefresh,
     handleSaveBankTransaction,
-    transOptions,
+    transGroups,
+    contactsBank,
   };
 };

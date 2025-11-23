@@ -27,7 +27,7 @@
       "required": true,
       "format": "date"
     },
-    "contacts_id": {
+    "contact_id": {
       "name": "Supplier Name",
       "type": "string",
       "required": true,

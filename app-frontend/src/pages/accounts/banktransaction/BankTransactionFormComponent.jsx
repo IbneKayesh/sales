@@ -12,8 +12,10 @@ const BankTransactionFormComponent = ({
   onChange,
   onSave,
   bankAccounts,
-  transOptions,
+  transGroups,
+  contactsBank,
 }) => {
+
   return (
     <div className="p-1">
       <div className="grid">
@@ -46,93 +48,126 @@ const BankTransactionFormComponent = ({
         </div>
         <div className="col-12 md:col-2">
           <label
-            htmlFor="transaction_date"
+            htmlFor="trans_date"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_trans.t_bank_trans.transaction_date.name}{" "}
+            {t_bank_trans.t_bank_trans.trans_date.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <Calendar
-            name="transaction_date"
+            name="trans_date"
             value={
-              formData.transaction_date
-                ? new Date(formData.transaction_date)
+              formData.trans_date
+                ? new Date(formData.trans_date)
                 : null
             }
             onChange={(e) =>
               onChange(
-                "transaction_date",
+                "trans_date",
                 e.value ? e.value.toISOString().split("T")[0] : ""
               )
             }
-            className={`w-full ${errors.transaction_date ? "p-invalid" : ""}`}
+            className={`w-full ${errors.trans_date ? "p-invalid" : ""}`}
             dateFormat="yy-mm-dd"
-            placeholder={`Select ${t_bank_trans.t_bank_trans.transaction_date.name}`}
+            placeholder={`Select ${t_bank_trans.t_bank_trans.trans_date.name}`}
           />
-          {errors.transaction_date && (
+          {errors.trans_date && (
             <small className="mb-3 text-red-500">
-              {errors.transaction_date}
+              {errors.trans_date}
             </small>
           )}
         </div>
-        <div className="col-12 md:col-3">
-          <label htmlFor="transaction_name" className="block text-900 font-medium mb-2">
-            {t_bank_trans.t_bank_trans.transaction_name.name} <span className="text-red-500">*</span>
+        <div className="col-12 md:col-2">
+          <label htmlFor="trans_group" className="block text-900 font-medium mb-2">
+            {t_bank_trans.t_bank_trans.trans_group.name} <span className="text-red-500">*</span>
           </label>
           <Dropdown
-            name="transaction_name"
-            value={formData.transaction_name}
-            options={transOptions}
-            onChange={(e) => onChange("transaction_name", e.value)}
-            className={`w-full ${errors.transaction_name ? "p-invalid" : ""}`}
-            placeholder={`Select ${t_bank_trans.t_bank_trans.transaction_name.name}`}
+            name="trans_group"
+            value={formData.trans_group}
+            options={transGroups}
+            onChange={(e) => onChange("trans_group", e.value)}
+            className={`w-full ${errors.trans_group ? "p-invalid" : ""}`}
+            placeholder={`Select ${t_bank_trans.t_bank_trans.trans_group.name}`}
           />
-          {errors.transaction_name && (
-            <small className="mb-3 text-red-500">{errors.transaction_name}</small>
+          {errors.trans_group && (
+            <small className="mb-3 text-red-500">{errors.trans_group}</small>
           )}
         </div>
-
-        <div className="col-12 md:col-4">
-          <label
-            htmlFor="reference_no"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_bank_trans.t_bank_trans.reference_no.name}
+        <div className="col-12 md:col-5">
+          <label htmlFor="contact_id" className="block text-900 font-medium mb-2">
+            {t_bank_trans.t_bank_trans.contact_id.name} <span className="text-red-500">*</span>
           </label>
-          <InputText
-            name="reference_no"
-            value={formData.reference_no}
-            onChange={(e) => onChange("reference_no", e.target.value)}
-            className={`w-full ${errors.reference_no ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_bank_trans.t_bank_trans.reference_no.name}`}
+          <Dropdown
+            name="contact_id"
+            value={formData.contact_id}
+            options={contactsBank}
+            onChange={(e) => onChange("contact_id", e.value)}
+            className={`w-full ${errors.contact_id ? "p-invalid" : ""}`}
+            placeholder={`Select ${t_bank_trans.t_bank_trans.contact_id.name}`}
           />
-          {errors.reference_no && (
-            <small className="mb-3 text-red-500">{errors.reference_no}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-6">
-          <label
-            htmlFor="transaction_details"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_bank_trans.t_bank_trans.transaction_details.name}
-          </label>
-          <InputText
-            name="transaction_details"
-            value={formData.transaction_details}
-            onChange={(e) => onChange("transaction_details", e.target.value)}
-            className={`w-full ${
-              errors.transaction_details ? "p-invalid" : ""
-            }`}
-            placeholder={`Enter ${t_bank_trans.t_bank_trans.transaction_details.name}`}
-          />
-          {errors.transaction_details && (
-            <small className="mb-3 text-red-500">
-              {errors.transaction_details}
-            </small>
+          {errors.contact_id && (
+            <small className="mb-3 text-red-500">{errors.contact_id}</small>
           )}
         </div>
         <div className="col-12 md:col-3">
+          <label
+            htmlFor="trans_name"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_bank_trans.t_bank_trans.trans_name.name}
+          </label>
+          <InputText
+            name="trans_name"
+            value={formData.trans_name}
+            onChange={(e) => onChange("trans_name", e.target.value)}
+            className={`w-full ${errors.trans_name ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_bank_trans.t_bank_trans.trans_name.name}`}
+          />
+          {errors.trans_name && (
+            <small className="mb-3 text-red-500">{errors.trans_name}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-2">
+          <label
+            htmlFor="ref_no"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_bank_trans.t_bank_trans.ref_no.name}
+          </label>
+          <InputText
+            name="ref_no"
+            value={formData.ref_no}
+            onChange={(e) => onChange("ref_no", e.target.value)}
+            className={`w-full ${errors.ref_no ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_bank_trans.t_bank_trans.ref_no.name}`}
+          />
+          {errors.ref_no && (
+            <small className="mb-3 text-red-500">{errors.ref_no}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-3">
+          <label
+            htmlFor="trans_details"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_bank_trans.t_bank_trans.trans_details.name}
+          </label>
+          <InputText
+            name="trans_details"
+            value={formData.trans_details}
+            onChange={(e) => onChange("trans_details", e.target.value)}
+            className={`w-full ${
+              errors.trans_details ? "p-invalid" : ""
+            }`}
+            placeholder={`Enter ${t_bank_trans.t_bank_trans.trans_details.name}`}
+          />
+          {errors.trans_details && (
+            <small className="mb-3 text-red-500">
+              {errors.trans_details}
+            </small>
+          )}
+        </div>
+        <div className="col-12 md:col-2">
           <label
             htmlFor="debit_amount"
             className="block text-900 font-medium mb-2"
@@ -153,7 +188,7 @@ const BankTransactionFormComponent = ({
             <small className="mb-3 text-red-500">{errors.debit_amount}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="credit_amount"
             className="block text-900 font-medium mb-2"

@@ -40,7 +40,7 @@ i.item_name, i.unit_difference_qty, u1.unit_name as small_unit_name, u2.unit_nam
     LEFT JOIN units u2 ON i.big_unit_id = u2.unit_id
     LEFT JOIN po_child pocb on poc.id = pocb.ref_id
     WHERE pom.order_type = 'Purchase Booking'
-    AND pom.contacts_id = ?
+    AND pom.contact_id = ?
     AND pom.is_posted = 1
     AND pom.is_completed = 0
     GROUP BY poc.id, poc.item_id,poc.item_rate,poc.booking_qty, poc.booking_qty,
@@ -141,7 +141,7 @@ i.item_name, i.unit_difference_qty, u1.unit_name as small_unit_name, u2.unit_nam
     LEFT JOIN units u2 ON i.big_unit_id = u2.unit_id
     LEFT JOIN po_child pocb on poc.id = pocb.ref_id
     WHERE pom.order_type IN ('Purchase Receive','Purchase Order')
-    AND pom.contacts_id = ?
+    AND pom.contact_id = ?
     AND pom.is_posted = 1
     GROUP BY poc.id, poc.item_id,poc.item_rate,poc.booking_qty, poc.booking_qty,
     poc.discount_percent, poc.discount_amount, poc.item_amount, poc.cost_rate, poc.item_note,

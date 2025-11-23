@@ -23,7 +23,8 @@ const BankTransactionPage = () => {
     handleDeleteBankTransaction,
     handleRefresh,
     handleSaveBankTransaction,
-    transOptions,
+    transGroups,
+    contactsBank,
   } = useBankTransaction();
   const { bankAccounts } = useBankAccount();
 
@@ -97,7 +98,8 @@ const BankTransactionPage = () => {
             onChange={handleChange}
             onSave={handleSaveBankTransaction}
             bankAccounts={bankAccounts}
-            transOptions={transOptions}
+            transGroups={transGroups}
+            contactsBank={contactsBank}
           />
         )}
       </Card>

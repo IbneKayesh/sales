@@ -24,6 +24,7 @@ export const useContacts = () => {
     { label: "Both", value: "Both" },
   ];
   const [contactsSupplier, setContactsSupplier] = useState([]); // Initialize with empty array
+  const [contactsBank, setContactsBank] = useState([]); // Initialize with empty array
 
   const loadContacts = async (resetModified = false) => {
     try {
@@ -33,8 +34,9 @@ export const useContacts = () => {
       const supplierList = data
         .filter(
           (contact) =>
-            contact.contact_type === "Both" ||
-            contact.contact_type === "Supplier"
+            (contact.contact_type === "Both" ||
+            contact.contact_type === "Supplier") &&
+            contact.contact_id !== '0'
         )
         .map((contact) => ({
           label: contact.contact_name,
@@ -42,6 +44,13 @@ export const useContacts = () => {
         }));
 
       setContactsSupplier(supplierList);
+
+      const allContact = data.map((contact) => ({
+        label: contact.contact_name,
+        value: contact.contact_id,
+      }));
+
+      setContactsBank(allContact);
 
       if (resetModified) {
         setToastBox({
@@ -206,5 +215,6 @@ export const useContacts = () => {
     handleSaveContact,
     contactTypeOptions,
     contactsSupplier,
+    contactsBank,
   };
 };

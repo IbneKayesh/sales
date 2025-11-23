@@ -70,7 +70,7 @@ router.get("/", (req, res) => {
   const sql = `
     SELECT pom.*, c.contact_name, is_posted AS isedit , 0 AS ismodified
     FROM po_master pom
-    LEFT JOIN contacts c ON pom.contacts_id = c.contact_id
+    LEFT JOIN contacts c ON pom.contact_id = c.contact_id
     ${whereClause}
     ORDER BY pom.is_paid ASC, pom.is_completed ASC
   `;
@@ -91,7 +91,7 @@ router.get("/:id", (req, res) => {
   const sql = `
     SELECT pom.*, c.contact_name
     FROM po_master pom
-    LEFT JOIN contacts c ON pom.contacts_id = c.contact_id
+    LEFT JOIN contacts c ON pom.contact_id = c.contact_id
     WHERE pom.po_master_id = ?
   `;
   db.get(sql, [id], (err, row) => {
@@ -112,7 +112,7 @@ router.post("/", (req, res) => {
     po_master_id,
     order_type,
     order_date,
-    contacts_id,
+    contact_id,
     ref_no,
     order_note,
     order_amount,
@@ -130,7 +130,7 @@ router.post("/", (req, res) => {
     !po_master_id ||
     !order_type ||
     !order_date ||
-    !contacts_id ||
+    !contact_id ||
     !childs_create ||
     !Array.isArray(childs_create)
   ) {
@@ -149,7 +149,7 @@ router.post("/", (req, res) => {
     }
 
     const sqlMaster = `
-      INSERT INTO po_master (po_master_id, order_type, order_no, order_date, contacts_id, ref_no, order_note, order_amount, discount_amount, total_amount, paid_amount, cost_amount, is_paid, is_posted)
+      INSERT INTO po_master (po_master_id, order_type, order_no, order_date, contact_id, ref_no, order_note, order_amount, discount_amount, total_amount, paid_amount, cost_amount, is_paid, is_posted)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const masterParams = [
@@ -157,7 +157,7 @@ router.post("/", (req, res) => {
       order_type,
       order_no,
       order_date,
-      contacts_id,
+      contact_id,
       ref_no || "",
       order_note || "",
       order_amount || 0,
@@ -226,7 +226,7 @@ router.post("/update", (req, res) => {
     po_master_id,
     order_type,
     order_date,
-    contacts_id,
+    contact_id,
     ref_no,
     order_note,
     order_amount,
@@ -244,7 +244,7 @@ router.post("/update", (req, res) => {
 
   //console.log("req.body " + JSON.stringify(req.body))
 
-  if (!po_master_id || !order_type || !order_date || !contacts_id) {
+  if (!po_master_id || !order_type || !order_date || !contact_id) {
     return res.status(400).json({
       error:
         "Master ID, order type, order date, contacts and childs are required",
@@ -254,7 +254,7 @@ router.post("/update", (req, res) => {
   const sqlMaster = `
     UPDATE po_master SET      
       order_date = ?,
-      contacts_id = ?,
+      contact_id = ?,
       ref_no = ?,
       order_note = ?,
       order_amount = ?,
@@ -270,7 +270,7 @@ router.post("/update", (req, res) => {
 
   const masterParams = [
     order_date,
-    contacts_id,
+    contact_id,
     ref_no || "",
     order_note || "",
     order_amount || 0,
