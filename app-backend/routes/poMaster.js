@@ -395,6 +395,38 @@ router.post("/delete", (req, res) => {
 });
 
 
+
+function createAccountingData(contact_id, trans_date, ref_no, amount, order_type) {
+  if (order_type === "Purchase Booking") {
+    const bank_trans_id = generateGuid();
+    const sql = `
+      INSERT INTO t_bank_trans
+      (bank_trans_id, bank_account_id, trans_date, trans_head, contact_id, trans_name, ref_no, trans_details, debit_amount, credit_amount)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    const params = [
+      bank_trans_id,
+      'ba-1',
+      trans_date,
+      'Purchases and Stock',
+      contact_id,
+      'Purchase Booking',
+      ref_no,
+      'Advance Purchase Booking',
+      po_master_id,
+      po_master_id,
+      po_master_id,
+      po_master_id,
+      po_master_id,
+    ];
+    db.run(sql, params, function (err) {
+      if (err) console.error("Accounting create error:", err);
+    });
+  }
+}
+
+
+
 function processInvoiceData_old(po_master_id, order_type, ref_no) {
   //sum childs item amount and update total_amount in po_master
   const sql_total_amount = `
