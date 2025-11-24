@@ -1,12 +1,38 @@
-//const sqlite3 = require("sqlite3").verbose();
-//const db = new sqlite3.Database("./prod.db");
 const { db } = require("../db/init");
 
-/**
- * Safe wrapper for running SQL scripts with params.
- * - Always resolves (never throws)
- * - Returns success/failure + metadata
- */
+// --------------------------------------------------
+// Low-level helpers
+// --------------------------------------------------
+function dbRun(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function (err) {
+      if (err) return reject(err);
+      resolve(this);
+    });
+  });
+}
+
+function dbGet(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) return reject(err);
+      resolve(row);
+    });
+  });
+}
+
+function dbAll(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) return reject(err);
+      resolve(rows);
+    });
+  });
+}
+
+// --------------------------------------------------
+// Enhanced runSql with logging (never rejects)
+// --------------------------------------------------
 function runSql(label, sql, params = []) {
   return new Promise((resolve) => {
     const startTime = Date.now();
@@ -18,7 +44,7 @@ function runSql(label, sql, params = []) {
         error: err ? err.message : null,
         changes: this?.changes ?? 0,
         lastID: this?.lastID ?? null,
-        durationMs: Date.now() - startTime
+        durationMs: Date.now() - startTime,
       };
 
       if (err) {
@@ -27,25 +53,55 @@ function runSql(label, sql, params = []) {
         console.log(`✔️ [${label}] SUCCESS (${result.durationMs} ms)`);
       }
 
-      resolve(result); // never reject → ensures next script runs
+      resolve(result); // always resolves so sequence continues
     });
   });
 }
 
-/**
- * Runs scripts sequentially (one-by-one)
- */
-async function runScriptsSequentially(scripts) {
+// --------------------------------------------------
+// Sequential runner with optional transaction
+// --------------------------------------------------
+async function runScriptsSequentially(scripts, { useTransaction = false } = {}) {
   const results = [];
 
-  for (const script of scripts) {
-    console.log(`\n▶️ Running: ${script.label}`);
-    const result = await runSql(script.label, script.sql, script.params);
-    results.push(result);
+  try {
+    if (useTransaction) {
+      console.log("🚀 BEGIN TRANSACTION");
+      await dbRun("BEGIN");
+    }
+
+    for (const script of scripts) {
+      console.log(`\n▶️ Running: ${script.label}`);
+      const result = await runSql(script.label, script.sql, script.params);
+      results.push(result);
+
+      if (useTransaction && !result.success) {
+        throw new Error(`❌ Transaction failed at script: ${script.label}`);
+      }
+    }
+
+    if (useTransaction) {
+      await dbRun("COMMIT");
+      console.log("✅ COMMIT TRANSACTION");
+    }
+
+  } catch (err) {
+    if (useTransaction) {
+      console.error("⚠ Rolling back transaction:", err.message);
+      await dbRun("ROLLBACK").catch(() => console.error("Rollback failed"));
+    }
+
+    console.error("❌ Error during script execution:", err.message);
   }
 
   console.log("\n🏁 All scripts completed.");
   return results;
 }
 
-module.exports = { runScriptsSequentially };
+// --------------------------------------------------
+module.exports = {
+  runScriptsSequentially,
+  dbRun,
+  dbGet,
+  dbAll
+};

@@ -433,7 +433,6 @@ const ReceiveComponent = ({
             locale="en-US"
             inputStyle={{ width: "100%" }}
             className={`w-full ${errors.paid_amount ? "p-invalid" : ""}`}
-            disabled
           />
           {errors.paid_amount && (
             <small className="mb-3 text-red-500">{errors.paid_amount}</small>

@@ -2,6 +2,7 @@ const express = require("express");
 const { db } = require("../db/init");
 const router = express.Router();
 const { generateGuid } = require("../guid.js");
+const { dbRun, dbGet } = require("../db/asyncScriptsRunner.js");
 
 // Function to generate order number
 function generate_order_number(order_type, callback) {
@@ -211,11 +212,14 @@ router.post("/", (req, res) => {
         });
       });
 
+      //ensure account process
       createAccountingData(
         contact_id,
         order_date,
         order_no,
+        total_amount,
         paid_amount,
+        cost_amount,
         order_type
       );
       res.status(201).json({
@@ -233,6 +237,7 @@ router.post("/update", (req, res) => {
   const {
     po_master_id,
     order_type,
+    order_no,
     order_date,
     contact_id,
     ref_no,
@@ -250,7 +255,7 @@ router.post("/update", (req, res) => {
     childs_delete,
   } = req.body;
 
-  //console.log("req.body " + JSON.stringify(req.body))
+  //console.log("req.body " + JSON.stringify(req.body));
 
   if (!po_master_id || !order_type || !order_date || !contact_id) {
     return res.status(400).json({
@@ -369,8 +374,16 @@ router.post("/update", (req, res) => {
       });
     }
 
-    //ensure process
-    //processData(po_master_id, order_type, ref_no);
+    //ensure account process
+    createAccountingData(
+      contact_id,
+      order_date,
+      order_no,
+      total_amount,
+      paid_amount,
+      cost_amount,
+      order_type
+    );
 
     res.status(201).json({
       message: "Purchase Order updated successfully!",
@@ -402,39 +415,263 @@ router.post("/delete", (req, res) => {
   });
 });
 
-function createAccountingData(
+async function upsertBankTrans({
+  bank_account_id,
+  trans_date,
+  trans_head,
+  contact_id,
+  trans_name,
+  ref_no,
+  trans_details,
+  debit_amount,
+  credit_amount,
+}) {
+  // 1. If both are zero → delete existing entry (if any) and exit
+  if (debit_amount === 0 && credit_amount === 0) {
+    const existing = await dbGet(
+      `
+      SELECT bank_trans_id
+      FROM bank_trans
+      WHERE trans_head = ?
+        AND contact_id = ?
+        AND trans_name = ?
+        AND ref_no = ?
+      LIMIT 1
+      `,
+      [trans_head, contact_id, trans_name, ref_no]
+    );
+
+    if (existing) {
+      await dbRun(`DELETE FROM bank_trans WHERE bank_trans_id = ?`, [
+        existing.bank_trans_id,
+      ]);
+      console.log(
+        `🗑  Deleted bank_trans because debit & credit = 0 : ${existing.bank_trans_id}`
+      );
+    } else {
+      console.log(`⚪ No existing row — nothing to delete.`);
+    }
+
+    return null;
+  }
+
+  // 2. Check if transaction exists
+  const existing = await dbGet(
+    `
+    SELECT bank_trans_id
+    FROM bank_trans
+    WHERE trans_head = ?
+      AND contact_id = ?
+      AND trans_name = ?
+      AND ref_no = ?
+    LIMIT 1
+    `,
+    [trans_head, contact_id, trans_name, ref_no]
+  );
+
+  if (existing) {
+    // 3. UPDATE existing record
+    await dbRun(
+      `
+      UPDATE bank_trans
+      SET trans_date = ?, 
+          trans_details = ?, 
+          debit_amount = ?, 
+          credit_amount = ?,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE bank_trans_id = ?
+      `,
+      [
+        trans_date,
+        trans_details,
+        debit_amount,
+        credit_amount,
+        existing.bank_trans_id,
+      ]
+    );
+
+    console.log(`🔄 Updated existing bank_trans: ${existing.bank_trans_id}`);
+    return existing.bank_trans_id;
+  }
+
+  // 4. INSERT new if not found
+  const bank_trans_id = generateGuid();
+  await dbRun(
+    `
+    INSERT INTO bank_trans
+      (bank_trans_id, bank_account_id, trans_date, trans_head, contact_id,
+       trans_name, ref_no, trans_details, debit_amount, credit_amount)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `,
+    [
+      bank_trans_id,
+      bank_account_id,
+      trans_date,
+      trans_head,
+      contact_id,
+      trans_name,
+      ref_no,
+      trans_details,
+      debit_amount,
+      credit_amount,
+    ]
+  );
+
+  console.log(`➕ Inserted new bank_trans: ${bank_trans_id}`);
+  return bank_trans_id;
+}
+
+async function createAccountingData(
   contact_id,
   trans_date,
   ref_no,
-  amount,
+  total_amount,
+  paid_amount,
+  cost_amount,
   order_type
 ) {
-  if (order_type === "Purchase Booking") {
-    const bank_trans_id = generateGuid();
-    const sql = `
-      INSERT INTO bank_trans
-      (bank_trans_id, bank_account_id, trans_date, trans_head, contact_id, trans_name, ref_no, trans_details, debit_amount, credit_amount)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    const params = [
-      bank_trans_id,
-      "ba-1",
+  try {
+    // Start transaction
+    await dbRun("BEGIN");
+
+    // Get default bank account
+    const row = await dbGet(`
+      SELECT bank_account_id
+      FROM bank_accounts
+      WHERE is_default = 1
+      LIMIT 1
+    `);
+
+    if (!row?.bank_account_id) {
+      throw new Error("No default bank account found");
+    }
+
+    const bank_account_id = row.bank_account_id;
+
+    if (order_type === "Purchase Booking") {
+      //
+      // 1️⃣ Supplier Debit  (Booking Advance) :: paid_amount
+      //
+      await upsertBankTrans({
+        bank_account_id,
+        trans_date,
+        trans_head: "Purchases and Stock",
+        contact_id,
+        trans_name: order_type,
+        ref_no,
+        trans_details: "A/C Supplier - Advance Purchase Booking",
+        debit_amount: paid_amount,
+        credit_amount: 0,
+      });
+
+      //
+      // 2️⃣ My Account Credit (Advance Payment) :: paid_amount
+      //
+      await upsertBankTrans({
+        bank_account_id,
+        trans_date,
+        trans_head: "Purchases and Stock",
+        contact_id: "0",
+        trans_name: order_type,
+        ref_no,
+        trans_details: "A/C Default - Advance Purchase Payment",
+        debit_amount: 0,
+        credit_amount: paid_amount,
+      });
+    } else if (
+      order_type === "Purchase Receive" ||
+      order_type === "Purchase Order"
+    ) {
+      //
+      // 1️⃣ Supplier Credit  (Invoice Amount) :: total_amount
+      // 2️⃣ Supplier Debit (Invoice Payment) :: paid_amount
+      //
+      await upsertBankTrans({
+        bank_account_id,
+        trans_date,
+        trans_head: "Purchases and Stock",
+        contact_id,
+        trans_name: order_type,
+        ref_no,
+        trans_details: "A/C Supplier - Invoice " + order_type,
+        debit_amount: paid_amount,
+        credit_amount: total_amount,
+      });
+
+      //
+      // 3️⃣ My Account Credit (Invoice Payment) :: paid_amount
+      //
+      await upsertBankTrans({
+        bank_account_id,
+        trans_date,
+        trans_head: "Purchases and Stock",
+        contact_id: "0",
+        trans_name: order_type,
+        ref_no,
+        trans_details: "A/C Default - Invoice " + order_type,
+        debit_amount: 0,
+        credit_amount: paid_amount,
+      });
+    } else if (order_type === "Purchase Return") {
+      //
+      // 1️⃣ Supplier Debit  (Invoice Amount) :: total_amount
+      // 2️⃣ Supplier Credit (Invoice Payment) :: paid_amount
+      //
+      await upsertBankTrans({
+        bank_account_id,
+        trans_date,
+        trans_head: "Purchases and Stock",
+        contact_id,
+        trans_name: order_type,
+        ref_no,
+        trans_details: "A/C Supplier - Invoice " + order_type,
+        debit_amount: total_amount,
+        credit_amount: paid_amount,
+      });
+
+      //
+      // 3️⃣ My Account Credit (Invoice Payment) :: paid_amount
+      //
+      await upsertBankTrans({
+        bank_account_id,
+        trans_date,
+        trans_head: "Purchases and Stock",
+        contact_id: "0",
+        trans_name: order_type,
+        ref_no,
+        trans_details: "A/C Default - Invoice " + order_type,
+        debit_amount: paid_amount,
+        credit_amount: 0,
+      });
+    }
+    //
+    // 3️⃣ My Account Credit (cost)
+    //
+    await upsertBankTrans({
+      bank_account_id,
       trans_date,
-      "Purchases and Stock",
-      contact_id,
-      "Purchase Booking",
+      trans_head: "Expenses",
+      contact_id: "0",
+      trans_name: "Purchase Expenses",
       ref_no,
-      "Advance Purchase Booking",
-      amount,
-      0,
-    ];
-    db.run(sql, params, function (err) {
-      if (err) console.error("Accounting create error:", err);
+      trans_details: "Purchase Expenses Payment",
+      debit_amount: 0,
+      credit_amount: cost_amount,
     });
+
+    // Commit transaction
+    await dbRun("COMMIT");
+    console.log("✔ UPSET accounting entries completed");
+  } catch (err) {
+    console.error("❌ Accounting transaction failed:", err);
+
+    await dbRun("ROLLBACK").catch(() =>
+      console.error("⚠ Rollback failed (DB might be locked)")
+    );
   }
 }
 
-function processInvoiceData_old(po_master_id, order_type, ref_no) {
+function processInvoiceData_v1(po_master_id, order_type, ref_no) {
   //sum childs item amount and update total_amount in po_master
   const sql_total_amount = `
     UPDATE po_master

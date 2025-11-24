@@ -244,7 +244,7 @@ const initData = (callback) => {
     db.run(
       `
       INSERT OR IGNORE INTO bank_accounts (bank_account_id, bank_name, account_name, account_number, opening_date, debit_balance, credit_balance, current_balance, is_default) VALUES
-      ('ba-1', 'Petty Cash', 'Daily Cash Book', '1234-5678-9012', strftime('%Y-%m-%d', 'now'), 0, 0, 0, 1)
+      ('1', 'Petty Cash', 'Daily Cash Book', '1234-5678-9012', strftime('%Y-%m-%d', 'now'), 0, 0, 0, 1)
     `,
       (err) => {
         if (err) {

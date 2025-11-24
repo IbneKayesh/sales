@@ -4,12 +4,19 @@ const router = express.Router();
 
 // Get all bank transactions
 router.get("/", (req, res) => {
-  const sql = `
-    SELECT bt.*, ba.account_name, 0 AS ismodified
+  const sql_v1 = `
+    SELECT bt.*, ba.account_name, cn.contact_name, 0 AS ismodified
     FROM bank_trans bt
     LEFT JOIN bank_accounts ba ON bt.bank_account_id = ba.bank_account_id
+	LEFT JOIN contacts cn on bt.contact_id = cn.contact_id
     ORDER BY bt.trans_date DESC, bt.bank_trans_id DESC
   `;
+  const sql = `SELECT bt.ref_no,bt.trans_date, sum(debit_amount)debit_amount, sum(credit_amount) credit_amount, ba.account_name, 0 AS ismodified
+    FROM bank_trans bt
+    LEFT JOIN bank_accounts ba ON bt.bank_account_id = ba.bank_account_id
+	group by bt.ref_no,bt.trans_date, ba.account_name
+    ORDER BY bt.trans_date, bt.ref_no DESC`;
+    
   db.all(sql, [], (err, rows) => {
     if (err) {
       console.error("Database error:", err);
