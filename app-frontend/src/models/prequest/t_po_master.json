@@ -68,6 +68,11 @@
       "type": "number",
       "required": false
     },
+    "due_amount": {
+      "name": "Due Amount",
+      "type": "number",
+      "required": false
+    },
     "cost_amount": {
       "name": "Cost Amount",
       "type": "number",
