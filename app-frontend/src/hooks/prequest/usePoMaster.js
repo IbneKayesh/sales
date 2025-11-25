@@ -156,7 +156,7 @@ export const usePoMaster = () => {
       const data = await poChildAPI.getReturnsBySupplierId(supplierId);
       setOrderChildItems(data);
       setOrderChildItemsStore(data);
-       console.log("Error loading purchase booking items:", data);
+      //console.log("Error loading purchase return items:", data);
     } catch (error) {
       console.error("Error loading purchase booking items:", error);
       setToastBox({
@@ -223,8 +223,8 @@ export const usePoMaster = () => {
       const updatedData = { ...prev, [field]: processedValue };
 
       // Reset ref_no when order_type changes
-      if (field === "order_type") {        
-          //updatedData.ref_no = "-";
+      if (field === "order_type") {
+        //updatedData.ref_no = "-";
       }
 
       return updatedData;
@@ -235,6 +235,7 @@ export const usePoMaster = () => {
       t_po_master.t_po_master
     );
 
+    //console.log("field " + field + JSON.stringify(newErrors));
     //load child for receive
     if (
       field === "contact_id" &&
@@ -252,10 +253,7 @@ export const usePoMaster = () => {
       formDataPoMaster.order_type === "Purchase Return"
     ) {
       await loadPurchaseReturnsPoChild(value);
-      
-      console.log("contact_id " + formDataPoMaster.order_type);
     }
-    
 
     setErrors(newErrors);
   };

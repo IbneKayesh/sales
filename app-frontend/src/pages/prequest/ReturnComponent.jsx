@@ -306,7 +306,7 @@ const ReturnComponent = ({
             name="contact_id"
             value={formData.contact_id}
             options={contactsSupplier}
-            onChange={(e) => onChange("contac_id", e.value)}
+            onChange={(e) => onChange("contact_id", e.value)}
             className={`w-full ${errors.contact_id ? "p-invalid" : ""}`}
             placeholder={`Select ${t_po_master.t_po_master.contact_id.name}`}
             optionLabel="label"

@@ -126,6 +126,33 @@ WHERE pom.po_master_id = ?
   });
 }
 
+async function updateBillsPaidStatus() {
+  // 1. Get all bills in the order they were created
+  const bills = await dbAll(`
+    SELECT id, bill_amount, paid_amount
+    FROM bills
+    ORDER BY id ASC
+  `);
+
+  let cumulativeBills = 0;
+  let cumulativePaid = 0;
+
+  for (const bill of bills) {
+    cumulativeBills += bill.bill_amount;
+    cumulativePaid += bill.paid_amount;
+
+    const isPaid = cumulativePaid >= cumulativeBills ? 1 : 0;
+
+    await dbRun(
+      `UPDATE bills SET is_paid = ? WHERE id = ?`,
+      [isPaid, bill.id]
+    );
+  }
+
+  console.log("✔ Bill payment status updated!");
+}
+
+
 // Get purchase order children by supplier
 router.get("/returns/:supplierId", (req, res) => {
   const { supplierId } = req.params;
@@ -143,6 +170,8 @@ i.item_name, i.unit_difference_qty, u1.unit_name as small_unit_name, u2.unit_nam
     WHERE pom.order_type IN ('Purchase Receive','Purchase Order')
     AND pom.contact_id = ?
     AND pom.is_posted = 1
+    AND pom.is_paid = 1
+    AND pom.is_completed = 1
     GROUP BY poc.id, poc.item_id,poc.item_rate,poc.booking_qty, poc.booking_qty,
     poc.discount_percent, poc.discount_amount, poc.item_amount, poc.cost_rate, poc.item_note,
     poc.created_at, poc.updated_at,i.item_name, i.unit_difference_qty, u1.unit_name, u2.unit_name
