@@ -59,7 +59,7 @@ const PrequestPage = () => {
       <div className="flex align-items-center justify-content-between p-2">
         <span className="font-bold text-xl text-blue-500">
           {isList
-            ? "Order List"
+            ? `${selectedPoType} List`
             : formDataPoMaster?.po_master_id
             ? `Edit ${formDataPoMaster.order_type}: ${formDataPoMaster.order_no}`
             : `New ${selectedPoType}`}
@@ -88,7 +88,7 @@ const PrequestPage = () => {
               size="small"
             />
             <Button
-              label={"New " + selectedPoType}
+              label={selectedPoType}
               icon="pi pi-plus"
               size="small"
               onClick={handleAddNew}
@@ -148,6 +148,7 @@ const PrequestPage = () => {
               <ReceiveComponent
                 isBusy={isBusy}
                 errors={errors}
+                setErrors={setErrors}
                 formData={formDataPoMaster}
                 onChange={handleChange}
                 poTypeOptions={poTypeOptions}
@@ -164,6 +165,7 @@ const PrequestPage = () => {
               <OrderComponent
                 isBusy={isBusy}
                 errors={errors}
+                setErrors={setErrors}
                 formData={formDataPoMaster}
                 onChange={handleChange}
                 poTypeOptions={poTypeOptions}
@@ -171,6 +173,9 @@ const PrequestPage = () => {
                 orderChildItems={orderChildItems}
                 setOrderChildItems={setOrderChildItems}
                 onSaveAll={handleSaveAll}
+                formDataPaymentList={formDataPaymentList}
+                setFormDataPaymentList={setFormDataPaymentList}
+                paymentOptions={paymentOptions}
               />
             )}
             {formDataPoMaster.order_type === "Purchase Return" && (

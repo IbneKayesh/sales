@@ -70,10 +70,19 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
   };
 
   const paidAmountTemplate = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
+    const paidAmount = Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
     }).format(rowData.paid_amount);
+
+    const dueAmount = Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "BDT",
+    }).format(rowData.due_amount);
+
+    return rowData.due_amount > 0
+      ? `${paidAmount} (${dueAmount})`
+      : `${paidAmount}`;
   };
 
   const isPaidTemplate = (rowData) => {
@@ -218,7 +227,6 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
         size="small"
         footer={tableFooterTemplate()}
       >
-        <Column field="order_type" header="Type" sortable body={trnShortBody} />
         <Column field="order_no" header="Order No" sortable />
         <Column field="order_date" header="Date" sortable />
         <Column field="contact_name" header="Contact" sortable />

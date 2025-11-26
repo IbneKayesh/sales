@@ -70,7 +70,7 @@ router.get("/", (req, res) => {
     case "default":
     default:
       whereClause +=
-        "AND ((pom.is_paid != 'Paid' OR pom.is_posted = 0 OR pom.is_completed = 0) OR (pom.order_date = date('now')))";
+        "AND ((pom.is_paid != 'Paid' OR pom.is_posted = 0 OR pom.is_completed = 0) OR (pom.order_date = date('now','+6 hours')))";
       break;
   }
   const sql = `
@@ -80,7 +80,7 @@ router.get("/", (req, res) => {
     ${whereClause}
     ORDER BY pom.is_paid ASC, pom.is_completed ASC
   `;
-  //console.log(sql);
+  console.log(sql);
 
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -151,8 +151,8 @@ router.post("/", async (req, res) => {
       });
     }
 
-    console.log("childs_create " + JSON.stringify(childs_create));
-    console.log("payments_create " + JSON.stringify(payments_create));
+    //console.log("childs_create " + JSON.stringify(childs_create));
+    //console.log("payments_create " + JSON.stringify(payments_create));
 
     // Generate order number
     const generateOrderNumberAsync = (prefix) => {
@@ -251,9 +251,9 @@ router.post("/", async (req, res) => {
           INSERT INTO payments (
             payment_id, bank_account_id, payment_type, payment_mode,
             payment_date, contact_id, ref_no, payment_amount,
-            order_amount, payment_note
+            order_amount, payment_note, ref_id
           )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         params: [
           payment.payment_id,
@@ -266,6 +266,7 @@ router.post("/", async (req, res) => {
           payment.payment_amount,
           payment.order_amount,
           payment.payment_note || "",
+          payment.ref_id || "",
         ],
       });
     }
@@ -278,9 +279,9 @@ router.post("/", async (req, res) => {
           INSERT INTO payments (
             payment_id, bank_account_id, payment_type, payment_mode,
             payment_date, contact_id, ref_no, payment_amount,
-            order_amount, payment_note
+            order_amount, payment_note, ref_id
           )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         params: [
           generateGuid(),
@@ -293,6 +294,7 @@ router.post("/", async (req, res) => {
           other_cost,
           other_cost,
           "Other Cost Expenses",
+          "",
         ],
       });
     }
@@ -485,7 +487,7 @@ router.post("/update", async (req, res) => {
   });
 
   console.log("order_no " + order_no);
-  
+
   //Insert New Payments
   for (const payment of payments_create || []) {
     scripts.push({
@@ -494,8 +496,8 @@ router.post("/update", async (req, res) => {
       INSERT INTO payments 
       (payment_id, bank_account_id, payment_type, payment_mode,
       payment_date, contact_id, ref_no, payment_amount,
-      order_amount, payment_note)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      order_amount, payment_note, ref_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
       params: [
         generateGuid(),
@@ -508,6 +510,7 @@ router.post("/update", async (req, res) => {
         payment.payment_amount,
         payment.order_amount,
         payment.payment_note || "",
+        payment.ref_id || "",
       ],
     });
   }
@@ -520,8 +523,8 @@ router.post("/update", async (req, res) => {
       INSERT INTO payments 
       (payment_id, bank_account_id, payment_type, payment_mode,
       payment_date, contact_id, ref_no, payment_amount,
-      order_amount, payment_note)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      order_amount, payment_note, ref_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
       params: [
         generateGuid(),
@@ -534,6 +537,7 @@ router.post("/update", async (req, res) => {
         other_cost,
         other_cost,
         "Other Cost Expenses",
+        "",
       ],
     });
   }
@@ -561,58 +565,59 @@ router.post("/update", async (req, res) => {
 
 // Delete purchase order master
 router.post("/delete", async (req, res) => {
-    const { id } = req.body;
+  const { id } = req.body;
 
-    if(!id){
-        return res.status(400).json({ error: "ID is required" });
-    }
+  if (!id) {
+    return res.status(400).json({ error: "ID is required" });
+  }
 
-    const sql_master = "SELECT order_no FROM po_master WHERE po_master_id = ?";
-    const masterRow = await dbGet(sql_master, [id]);
-    
-    if(!masterRow){
-        return res.status(404).json({ error: "Master not found" });
-    }
-    
-    const order_no = masterRow.order_no;
-    console.log("order_no " + order_no);
+  const sql_master =
+    "SELECT order_no FROM po_master WHERE is_posted = 1 AND is_completed = 1 AND po_master_id = ?";
+  const masterRow = await dbGet(sql_master, [id]);
 
-    const scripts = [];
-    
-    scripts.push({
-        label: "Delete Childs",
-        sql: "DELETE FROM po_child WHERE po_master_id = ?",
-        params: [id],
-    });
+  if (!masterRow) {
+    return res.status(404).json({ error: "Master not found" });
+  }
 
-    scripts.push({
-        label: "Delete Payments",
-        sql: "DELETE FROM payments WHERE ref_no = ?",
-        params: [order_no],
-    });
+  const order_no = masterRow.order_no;
+  console.log("order_no " + order_no);
 
-    scripts.push({
-        label: "Delete Master",
-        sql: "DELETE FROM po_master WHERE po_master_id = ?",
-        params: [id],
-    });
-    
-    const results = await runScriptsSequentially(scripts, {
-        useTransaction: true,
-    });
+  const scripts = [];
 
-    // check master delete success
-    const masterResult = results[2];
-    if (!masterResult.success || masterResult.changes === 0) {
-        return res
-            .status(400)
-            .json({ error: "Master delete failed or record not found" });
-    }
+  scripts.push({
+    label: "Delete Childs",
+    sql: "DELETE FROM po_child WHERE po_master_id = ?",
+    params: [id],
+  });
 
-    return res.json({
-        message: "Purchase Order deleted successfully!",
-        po_master_id: id,
-    });
-})
+  scripts.push({
+    label: "Delete Payments",
+    sql: "DELETE FROM payments WHERE ref_no = ?",
+    params: [order_no],
+  });
+
+  scripts.push({
+    label: "Delete Master",
+    sql: "DELETE FROM po_master WHERE po_master_id = ?",
+    params: [id],
+  });
+
+  const results = await runScriptsSequentially(scripts, {
+    useTransaction: true,
+  });
+
+  // check master delete success
+  const masterResult = results[2];
+  if (!masterResult.success || masterResult.changes === 0) {
+    return res
+      .status(400)
+      .json({ error: "Master delete failed or record not found" });
+  }
+
+  return res.json({
+    message: "Purchase Order deleted successfully!",
+    po_master_id: id,
+  });
+});
 
 module.exports = router;

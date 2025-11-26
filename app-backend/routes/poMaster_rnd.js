@@ -1,52 +1,3 @@
-// Delete purchase order master
-router.post("/delete", (req, res) => {
-  const { id } = req.body;
-
-  if (!id) {
-    return res.status(400).json({ error: "ID is required" });
-  }
-
-  db.run("DELETE FROM po_master WHERE po_master_id = ?", [id], function (err) {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    if (this.changes === 0) {
-      return res.status(404).json({ error: "Purchase order not found" });
-    }
-    res.json({ message: "Purchase order deleted successfully" });
-  });
-});
-
-
-
-async function createPaymentData(
-  payment_type,
-  contact_id,
-  ref_no,
-  payments_create
-) {
-  try {
-    // Get default bank account
-    const row = db.get(`
-      SELECT bank_account_id
-      FROM bank_accounts
-      WHERE is_default = 1
-      LIMIT 1
-    `);
-
-    if (!row?.bank_account_id) {
-      throw new Error("No default bank account found");
-    }
-
-    const bank_account_id = row.bank_account_id;
-
-    console.log("✔ Payment transaction completed");
-  } catch (err) {
-    console.error("✖ Payment transaction failed:", err);
-  }
-}
-
 async function upsertBankTrans({
   bank_account_id,
   trans_date,
@@ -304,42 +255,8 @@ async function createAccountingData(
 }
 
 function processInvoiceData_v1(po_master_id, order_type, ref_no) {
-  //sum childs item amount and update total_amount in po_master
-  const sql_total_amount = `
-    UPDATE po_master
-    SET total_amount = (
-      SELECT IFNULL(SUM(poc.item_rate * poc.item_qty - poc.discount_amount), 0)
-      FROM po_child poc
-      WHERE poc.po_master_id = po_master.po_master_id
-    )
-    WHERE is_complete = 0
-    AND po_master_id = ?
-  `;
-
-  db.run(sql_total_amount, [po_master_id], function (err) {
-    if (err) {
-      console.error("Database error in sql_total_amount:", err);
-      return;
-    }
-
     if (order_type === "Purchase Receive") {
       //if created from a reference, mark it as paid and complete
-      const sql_paid_amount = `
-        UPDATE po_master
-        SET paid_amount = total_amount, is_paid = 1
-        WHERE is_complete = 0
-        AND po_master_id = ?
-        AND ref_no <> 'No Ref'
-        AND order_type = 'Purchase Receive'
-        AND is_paid = 0
-      `;
-
-      db.run(sql_paid_amount, [po_master_id], function (err) {
-        if (err) {
-          console.error("Database error in sql_paid_amount:", err);
-          //return; Go to next SQL
-        }
-      });
 
       //Update "Purchase Booking.received_qty" from "Purchase Receive.item_qty"
       const sql_update_received_qty = `WITH a AS (

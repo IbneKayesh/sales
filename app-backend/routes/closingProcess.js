@@ -76,7 +76,6 @@ router.post("/update-bank-transaction", (req, res) => {
           contact_name,
         } = po;
 
-
         let balanceChange = 0;
         let debitAmount = 0;
         let creditAmount = 0;
@@ -99,26 +98,26 @@ router.post("/update-bank-transaction", (req, res) => {
             SET current_balance = current_balance + ?
             WHERE contact_id = ?
           `;
-        db.run(
-          updateBalanceSql,
-          [balanceChange, contacts_id],
-          function (err5) {
-            if (err5) {
-              console.error("Error updating supplier balance:", err5);
+        db.run(updateBalanceSql, [balanceChange, contacts_id], function (err5) {
+          if (err5) {
+            console.error("Error updating supplier balance:", err5);
+          }
+
+          // Create bank transaction if not already created by reference_no
+          // if already created transaction, then update transaction debit and credit amount
+          const checkTransSql = `SELECT bank_transactions_id FROM bank_transactions WHERE reference_no = ?`;
+          db.get(checkTransSql, [order_no], (err7, existingTrans) => {
+            if (err7) {
+              console.error("Error checking existing transaction:", err7);
             }
 
-            // Create bank transaction if not already created by reference_no
-            // if already created transaction, then update transaction debit and credit amount
-            const checkTransSql = `SELECT bank_transactions_id FROM bank_transactions WHERE reference_no = ?`;
-            db.get(checkTransSql, [order_no], (err7, existingTrans) => {
-              if (err7) {
-                console.error("Error checking existing transaction:", err7);
-              }
-
-              if (existingTrans) {
-                // Update existing transaction
-                const updateTransSql = `UPDATE bank_transactions SET debit_amount = ?, credit_amount = ? WHERE bank_transactions_id = ?`;
-                db.run(updateTransSql, [debitAmount, creditAmount, existingTrans.bank_transactions_id], function (err8) {
+            if (existingTrans) {
+              // Update existing transaction
+              const updateTransSql = `UPDATE bank_transactions SET debit_amount = ?, credit_amount = ? WHERE bank_transactions_id = ?`;
+              db.run(
+                updateTransSql,
+                [debitAmount, creditAmount, existingTrans.bank_transactions_id],
+                function (err8) {
                   if (err8) {
                     console.error("Error updating bank transaction:", err8);
                   }
@@ -142,46 +141,50 @@ router.post("/update-bank-transaction", (req, res) => {
                     db.run(updateBankAccountsSql, function (err) {
                       if (err) {
                         console.error("Error updating bank_accounts:", err);
-                        return res.status(500).json({ error: "Internal server error" });
+                        return res
+                          .status(500)
+                          .json({ error: "Internal server error" });
                       }
 
                       res.json({
                         success: true,
-                        message: "Bank balances and supplier balances updated successfully",
+                        message:
+                          "Bank balances and supplier balances updated successfully",
                       });
                     });
                   }
-                });
-              } else {
-                // Insert new transaction
-                const transId = require("crypto").randomUUID();
-                const insertTransSql = `
+                }
+              );
+            } else {
+              // Insert new transaction
+              const transId = require("crypto").randomUUID();
+              const insertTransSql = `
                   INSERT INTO bank_transactions (
                     bank_transactions_id, bank_account_id, transaction_date, transaction_name, reference_no,
                     transaction_details, debit_amount, credit_amount
                   )
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 `;
-                const transParams = [
-                  transId,
-                  bankAccountId,
-                  order_date,
-                  transType,
-                  order_no,
-                  transDesc,
-                  debitAmount,
-                  creditAmount,
-                ];
+              const transParams = [
+                transId,
+                bankAccountId,
+                order_date,
+                transType,
+                order_no,
+                transDesc,
+                debitAmount,
+                creditAmount,
+              ];
 
-                db.run(insertTransSql, transParams, function (err6) {
-                  if (err6) {
-                    console.error("Error creating bank transaction:", err6);
-                  }
+              db.run(insertTransSql, transParams, function (err6) {
+                if (err6) {
+                  console.error("Error creating bank transaction:", err6);
+                }
 
-                  processed++;
-                  if (processed === total) {
-                    // in last: update bank_accounts
-                    const updateBankAccountsSql = `
+                processed++;
+                if (processed === total) {
+                  // in last: update bank_accounts
+                  const updateBankAccountsSql = `
                       UPDATE bank_accounts
                       SET debit_balance = COALESCE(
                               (SELECT SUM(debit_amount)
@@ -194,23 +197,25 @@ router.post("/update-bank-transaction", (req, res) => {
                           current_balance = debit_balance - credit_balance;
                     `;
 
-                    db.run(updateBankAccountsSql, function (err) {
-                      if (err) {
-                        console.error("Error updating bank_accounts:", err);
-                        return res.status(500).json({ error: "Internal server error" });
-                      }
+                  db.run(updateBankAccountsSql, function (err) {
+                    if (err) {
+                      console.error("Error updating bank_accounts:", err);
+                      return res
+                        .status(500)
+                        .json({ error: "Internal server error" });
+                    }
 
-                      res.json({
-                        success: true,
-                        message: "Bank balances and supplier balances updated successfully",
-                      });
+                    res.json({
+                      success: true,
+                      message:
+                        "Bank balances and supplier balances updated successfully",
                     });
-                  }
-                });
-              }
-            });
-          }
-        );
+                  });
+                }
+              });
+            }
+          });
+        });
       });
     });
   });
@@ -259,13 +264,12 @@ router.post("/update-item", (req, res) => {
   db.run(sql_b, [], function (err) {
     if (err) {
       console.error("Database error in sql_b:", err);
-      r//eturn;
+      r; //eturn;
     }
   });
 
-
   //update stock qty
-  const sql_stock_v1 =`UPDATE items
+  const sql_stock_v1 = `UPDATE items
 SET stock_qty = (
     SELECT SUM(order_qty)
     FROM (
@@ -287,21 +291,9 @@ SET stock_qty = (
 )
 WHERE items.id IN (
     SELECT item_id FROM po_child
-)`
+)`;
 
-
-  const sql_v0 = `UPDATE items
-          SET stock_qty = (
-              SELECT IFNULL(SUM(poc.order_qty), 0)
-              FROM po_child poc
-              JOIN po_master pom 
-                  ON poc.po_master_id = pom.po_master_id
-              WHERE poc.item_id = items.item_id
-            AND pom.order_type IN ('Purchase Receive','Purchase Order')
-            AND pom.is_posted = 1
-          )`;
-
-          const sql_c = `UPDATE items
+  const sql_c = `UPDATE items
         SET stock_qty = (
             SELECT SUM(
                 CASE

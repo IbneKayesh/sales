@@ -1,55 +1,73 @@
-const express = require('express');
-const { db } = require('../db/init');
+const express = require("express");
+const { db } = require("../db/init");
 const router = express.Router();
 
 // Get all payments
-router.get('/', (req, res) => {
-  db.all('SELECT * FROM payments ORDER BY payment_id', [], (err, rows) => {
+router.get("/", (req, res) => {
+  db.all("SELECT * FROM payments ORDER BY payment_id", [], (err, rows) => {
     if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Internal server error' });
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Internal server error" });
     }
     res.json(rows);
   });
 });
 
 // Get payment by ID
-router.get('/:id', (req, res) => {
+router.get("/:id", (req, res) => {
   const { id } = req.params;
-  db.get('SELECT * FROM payments WHERE payment_id = ?', [id], (err, row) => {
+  db.get("SELECT * FROM payments WHERE payment_id = ?", [id], (err, row) => {
     if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Internal server error' });
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Internal server error" });
     }
     if (!row) {
-      return res.status(404).json({ error: 'Unit not found' });
+      return res.status(404).json({ error: "Unit not found" });
     }
     res.json(row);
   });
 });
 
 // Get payment by ref no
-router.get('/refno/:refNo', (req, res) => {
+router.get("/refno/:refNo", (req, res) => {
   const { refNo } = req.params;
-  db.all('SELECT * FROM payments WHERE ref_no = ?', [refNo], (err, rows) => {
+  db.all("SELECT * FROM payments WHERE ref_no = ?", [refNo], (err, rows) => {
     if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Internal server error' });
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    res.json(rows);
+  });
+});
+
+// Get payment by ref no
+router.get("/supplier/:supplierId", (req, res) => {
+  const { supplierId } = req.params;
+  const sql = `SELECT p.payment_id,p.bank_account_id,'Purchase Receive' payment_type, p.payment_mode, p.payment_date, p.contact_id,
+'' ref_no, p.payment_amount - p.order_amount payment_amount, p.order_amount, p.payment_note, p.payment_id ref_id,p.created_at, p.updated_at
+FROM payments p
+WHERE p.payment_type IN ('Purchase Booking')
+AND (p.payment_amount - p.order_amount) > 0
+AND p.contact_id = ?`;
+  db.all(sql, [supplierId], (err, rows) => {
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Internal server error" });
     }
     res.json(rows);
   });
 });
 
 // Create new payment
-router.post('/', (req, res) => {
+router.post("/", (req, res) => {
   const { payment_id, payment_name } = req.body;
 
   if (!payment_name) {
-    return res.status(400).json({ error: 'Payment name is required' });
+    return res.status(400).json({ error: "Payment name is required" });
   }
 
   if (!payment_id) {
-    return res.status(400).json({ error: 'Payment ID is required' });
+    return res.status(400).json({ error: "Payment ID is required" });
   }
 
   const sql = `
@@ -58,21 +76,21 @@ router.post('/', (req, res) => {
   `;
   const params = [payment_id, payment_name];
 
-  db.run(sql, params, function(err) {
+  db.run(sql, params, function (err) {
     if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Internal server error' });
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Internal server error" });
     }
     res.status(201).json({ unit_id, ...req.body });
   });
 });
 
 // Update payment
-router.post('/update', (req, res) => {
+router.post("/update", (req, res) => {
   const { id, payment_name } = req.body;
 
   if (!id || !payment_name) {
-    return res.status(400).json({ error: 'Payment ID and name are required' });
+    return res.status(400).json({ error: "Payment ID and name are required" });
   }
 
   const sql = `
@@ -83,35 +101,35 @@ router.post('/update', (req, res) => {
   `;
   const params = [payment_name, id];
 
-  db.run(sql, params, function(err) {
+  db.run(sql, params, function (err) {
     if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Internal server error' });
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Internal server error" });
     }
     if (this.changes === 0) {
-      return res.status(404).json({ error: 'Payment not found' });
+      return res.status(404).json({ error: "Payment not found" });
     }
     res.json({ payment_id: id, payment_name });
   });
 });
 
 // Delete payment
-router.post('/delete', (req, res) => {
+router.post("/delete", (req, res) => {
   const { id } = req.body;
 
   if (!id) {
-    return res.status(400).json({ error: 'Payment ID is required' });
+    return res.status(400).json({ error: "Payment ID is required" });
   }
 
-  db.run('DELETE FROM payments WHERE payment_id = ?', [id], function(err) {
+  db.run("DELETE FROM payments WHERE payment_id = ?", [id], function (err) {
     if (err) {
-      console.error('Database error:', err);
-      return res.status(500).json({ error: 'Internal server error' });
+      console.error("Database error:", err);
+      return res.status(500).json({ error: "Internal server error" });
     }
     if (this.changes === 0) {
-      return res.status(404).json({ error: 'Unit not found' });
+      return res.status(404).json({ error: "Unit not found" });
     }
-    res.json({ message: 'Unit deleted successfully' });
+    res.json({ message: "Unit deleted successfully" });
   });
 });
 

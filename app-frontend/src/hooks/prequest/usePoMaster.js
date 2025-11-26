@@ -121,13 +121,13 @@ export const usePoMaster = () => {
         });
       }
     } catch (error) {
-      console.error("Error loading purchase orders:", error);
+      console.error("Error loading Purchase transactions:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
         detail: resetModified
           ? "Failed to refresh data from server"
-          : "Failed to load purchase orders from server",
+          : "Failed to load Purchase transactions from server",
       });
     }
   };
@@ -148,11 +148,11 @@ export const usePoMaster = () => {
       setOrderChildItems(data);
       setOrderChildItemsStore(data);
     } catch (error) {
-      console.error("Error loading purchase order items:", error);
+      console.error("Error loading Purchase transaction items:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to load purchase order items from server",
+        detail: "Failed to load Purchase transaction items from server",
       });
     }
   };
@@ -164,11 +164,11 @@ export const usePoMaster = () => {
       //console.log("data " + JSON.stringify(data));
       setFormDataPaymentList(data);
     } catch (error) {
-      console.error("Error loading purchase order payments:", error);
+      console.error("Error loading Purchase transaction payments:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to load purchase order payments from server",
+        detail: "Failed to load Purchase transaction payments from server",
       });
     }
   };
@@ -186,6 +186,23 @@ export const usePoMaster = () => {
         severity: "error",
         summary: "Error",
         detail: "Failed to load purchase booking items from server",
+      });
+    }
+  };
+
+  const loadPurchaseBookingPayment = async (supplierId) => {
+    setFormDataPaymentList([]);
+    try {
+      const data = await paymentsAPI.getBySupplierId(supplierId);
+      //console.log("ref_no " + ref_no);
+      //console.log("data " + JSON.stringify(data));
+      setFormDataPaymentList(data);
+    } catch (error) {
+      console.error("Error loading Purchase transaction payments:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to load Purchase transaction payments from server",
       });
     }
   };
@@ -302,6 +319,7 @@ export const usePoMaster = () => {
     ) {
       //console.log("contact_id " + value);
       await loadPurchaseBookingPoChild(value);
+      await loadPurchaseBookingPayment(value);
     }
 
     //load child for return
@@ -384,11 +402,11 @@ export const usePoMaster = () => {
         detail: `Deleted successfully.`,
       });
     } catch (error) {
-      console.error("Error deleting purchase order:", error);
+      console.error("Error deleting Purchase transaction:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to delete purchase order",
+        detail: "Failed to delete Purchase transaction",
       });
     }
   };
@@ -407,7 +425,7 @@ export const usePoMaster = () => {
 
   const handleSaveAll = async (e) => {
     e.preventDefault();
-    setIsBusy(true);
+    //setIsBusy(true);
     try {
       //order master data
       const newErrors = validate(formDataPoMaster, t_po_master.t_po_master);
@@ -415,12 +433,41 @@ export const usePoMaster = () => {
       //console.log("handleSavePoMaster: " + JSON.stringify(formDataPoMaster));
       //console.log("formDataPaymentList: " + JSON.stringify(formDataPaymentList));
 
+      //return;
       //console.log("newErrors" + JSON.stringify(newErrors));
 
       if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
         return;
       }
+
+      //----------------------1 :: same for insert------Start
+
+      const payments_create = formDataPaymentList
+        .filter((item) => item.payment_type === formDataPoMaster.order_type)
+        .map((item) => ({
+          ...item,
+          payment_id: generateGuid(),
+          payment_date: formDataPoMaster.order_date,
+          contact_id: formDataPoMaster.contact_id,
+          order_amount:
+            formDataPoMaster.order_type === "Purchase Booking"
+              ? "0"
+              : formDataPoMaster.order_type === "Purchase Receive"
+              ? item.payment_amount
+              : item.order_amount,
+        }));
+
+      //console.log("payments_create: " + JSON.stringify(payments_create));
+      //return;
+      const paidStatus =
+        formDataPoMaster.total_amount === formDataPoMaster.due_amount
+          ? "Unpaid"
+          : formDataPoMaster.due_amount === 0
+          ? "Paid"
+          : "Partial";
+
+      //----------------------1 :: same for insert------END
 
       if (formDataPoMaster.po_master_id) {
         // Edit existing
@@ -444,22 +491,6 @@ export const usePoMaster = () => {
           ...item,
           id: generateGuid(),
         }));
-
-        const payments_create = formDataPaymentList
-          .filter((item) => item.payment_type === formDataPoMaster.order_type)
-          .map((item) => ({
-            ...item,
-            payment_id: generateGuid(),
-            payment_date: formDataPoMaster.order_date,
-            contact_id: formDataPoMaster.contact_id,
-          }));
-
-        const paidStatus =
-          formDataPoMaster.total_amount === formDataPoMaster.due_amount
-            ? "Unpaid"
-            : formDataPoMaster.due_amount === 0
-            ? "Paid"
-            : "Partial";
 
         const newPoMasterData = {
           ...formDataPoMaster,
@@ -494,23 +525,6 @@ export const usePoMaster = () => {
           ...item,
           id: generateGuid(),
         }));
-
-        //remove extra cost expenses, will create new payments
-        const payments_create = formDataPaymentList
-          .filter((item) => item.payment_type === formDataPoMaster.order_type)
-          .map((item) => ({
-            ...item,
-            payment_id: generateGuid(),
-            payment_date: formDataPoMaster.order_date,
-            contact_id: formDataPoMaster.contact_id,
-          }));
-
-        const paidStatus =
-          formDataPoMaster.total_amount === formDataPoMaster.due_amount
-            ? "Unpaid"
-            : formDataPoMaster.due_amount === 0
-            ? "Paid"
-            : "Partial";
 
         const newPoMasterData = {
           ...formDataPoMaster,

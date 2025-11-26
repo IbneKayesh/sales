@@ -5,6 +5,7 @@ export const paymentsAPI = {
   getAll: () => apiRequest('/payments'),
   getById: (id) => apiRequest(`/payments/${id}`),
   getByRefNo: (refNo) => apiRequest(`/payments/refno/${refNo}`),
+  getBySupplierId: (supplierId) => apiRequest(`/payments/supplier/${supplierId}`),
   create: (payment) => apiRequest('/payments', {
     method: 'POST',
     body: JSON.stringify(payment),

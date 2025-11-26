@@ -1,6 +1,12 @@
 const express = require("express");
 const { db } = require("../db/init");
+const { param } = require("./poMaster");
 const router = express.Router();
+const {
+  runScriptsSequentially,
+  dbRun,
+  dbGet,
+} = require("../db/asyncScriptsRunner.js");
 
 // Get purchase order children by master ID
 router.get("/master/:masterId", (req, res) => {
@@ -14,6 +20,7 @@ router.get("/master/:masterId", (req, res) => {
     WHERE poc.po_master_id = ?
     ORDER BY poc.id
   `;
+
   db.all(sql, [masterId], (err, rows) => {
     if (err) {
       console.error("Database error:", err);
@@ -22,13 +29,16 @@ router.get("/master/:masterId", (req, res) => {
 
     //update invoice status
     processInvoiceData(masterId);
+
     res.json(rows);
   });
 });
 
-// Get purchase order children by supplier
+// Get purchase order children by supplier :: Purchase Receive
 router.get("/booking/:supplierId", (req, res) => {
   const { supplierId } = req.params;
+  //update again before loading
+  processInvoiceData();
   const sql = `SELECT poc.id,'sgd' po_master_id, poc.item_id,poc.item_rate,
 poc.booking_qty - SUM(ifnull(pocb.order_qty,0)) booking_qty, poc.booking_qty - SUM(ifnull(pocb.order_qty,0)) order_qty,
 poc.discount_percent, poc.discount_amount, poc.item_rate * (poc.booking_qty - SUM(ifnull(pocb.order_qty,0)))  item_amount, poc.cost_rate, poc.item_note, poc.id ref_id, poc.created_at, poc.updated_at,
@@ -57,15 +67,16 @@ i.item_name, i.unit_difference_qty, u1.unit_name as small_unit_name, u2.unit_nam
   });
 });
 
-function processInvoiceData(po_master_id) {
-  //run after sql;
-  const sql_update_order_qty = `UPDATE po_child AS poc
+async function processInvoiceData() {
+  const scripts = [];
+  scripts.push({
+    label: "Update Booking Order Qty",
+    sql: `UPDATE po_child AS poc
           SET order_qty = (
               SELECT SUM(poc_o.order_qty)
               FROM po_child AS poc_o
               JOIN po_master AS pom ON poc.po_master_id = pom.po_master_id
               WHERE poc_o.ref_id = poc.id
-                AND pom.po_master_id = ?
                 AND pom.order_type = 'Purchase Booking'
                 AND pom.is_posted = 1
                 AND pom.is_completed = 0
@@ -75,14 +86,16 @@ function processInvoiceData(po_master_id) {
               FROM po_child AS poc_o
               JOIN po_master AS pom ON poc.po_master_id = pom.po_master_id
               WHERE poc_o.ref_id = poc.id
-                AND pom.po_master_id = ?
                 AND pom.order_type = 'Purchase Booking'
                 AND pom.is_posted = 1
                 AND pom.is_completed = 0
-          )`;
+          )`,
+    params: [],
+  });
 
-  //run after sql_update_order_qty;
-  const update_is_complete_pb = `UPDATE po_master AS pom
+  scripts.push({
+    label: "Purchase Booking Mark as Completed",
+    sql: `UPDATE po_master AS pom
 SET is_completed = (
     SELECT CASE
              WHEN SUM(poc.booking_qty - poc.order_qty) > 0 THEN 0
@@ -91,38 +104,42 @@ SET is_completed = (
     FROM po_child AS poc
     WHERE poc.po_master_id = pom.po_master_id
 )
-WHERE pom.po_master_id = ?
-  AND pom.order_type IN ('Purchase Booking')
+WHERE pom.order_type IN ('Purchase Booking')
   AND pom.is_posted = 1
   AND pom.is_completed = 0
-`;
+`,
+    params: [],
+  });
 
-  //Purchase Receive, Return
-  const update_is_complete_pr = `UPDATE po_master AS pom
+  scripts.push({
+    label: "Purchase Receive and Return Mark as completed",
+    sql: `UPDATE po_master AS pom
 SET is_completed = 1
-WHERE pom.po_master_id = ?
-  AND pom.order_type IN ('Purchase Receive','Purchase Return')
+WHERE pom.order_type IN ('Purchase Receive','Purchase Order','Purchase Return')
   AND pom.is_posted = 1
-  AND pom.is_paid = 1
+  AND pom.is_paid = 'Paid'
   AND pom.is_completed = 0
-`;
+`,
+    params: [],
+  });
 
-  db.run(sql_update_order_qty, [po_master_id, po_master_id], (err) => {
-    if (err) {
-      console.error("Database error on update order_qty:", err);
-    }
+  scripts.push({
+    label: "Update Purchase Booking Payment",
+    sql: `UPDATE payments AS p
+SET order_amount = (
+    SELECT IFNULL(SUM(pr.payment_amount), 0)
+    FROM payments pr
+    WHERE pr.payment_type = 'Purchase Receive'
+      AND pr.ref_id = p.payment_id
+)
+WHERE p.payment_type = 'Purchase Booking'
+  AND p.payment_amount > p.order_amount`,
+    params: [],
+  });
 
-    db.run(update_is_complete_pb, [po_master_id], (err) => {
-      if (err) {
-        console.error("Database error on update is_completed:", err);
-      }
 
-      db.run(update_is_complete_pr, [po_master_id], (err) => {
-        if (err) {
-          console.error("Database error on update is_completed:", err);
-        }
-      });
-    });
+    const results = await runScriptsSequentially(scripts, {
+    useTransaction: true,
   });
 }
 
@@ -143,15 +160,11 @@ async function updateBillsPaidStatus() {
 
     const isPaid = cumulativePaid >= cumulativeBills ? 1 : 0;
 
-    await dbRun(
-      `UPDATE bills SET is_paid = ? WHERE id = ?`,
-      [isPaid, bill.id]
-    );
+    await dbRun(`UPDATE bills SET is_paid = ? WHERE id = ?`, [isPaid, bill.id]);
   }
 
   console.log("✔ Bill payment status updated!");
 }
-
 
 // Get purchase order children by supplier
 router.get("/returns/:supplierId", (req, res) => {

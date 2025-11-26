@@ -137,6 +137,7 @@ const initTables = () => {
         payment_amount REAL DEFAULT 0,
         order_amount REAL DEFAULT 0,
         payment_note TEXT,
+        ref_id TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT

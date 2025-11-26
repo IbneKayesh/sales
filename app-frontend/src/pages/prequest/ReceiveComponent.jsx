@@ -36,6 +36,7 @@ const BookingComponent = ({
   const [disabledItemAdd, setDisabledItemAdd] = useState(false);
   const [itemQty, setItemQty] = useState(1);
   const [itemNote, setItemNote] = useState("");
+  const [editingRowsPayment, setEditingRowsPayment] = useState([]);
 
   const [formDataPayment, setFormDataPayment] = useState({
     payment_id: "",
@@ -44,6 +45,7 @@ const BookingComponent = ({
     payment_amount: "",
     order_amount: "",
     payment_note: "",
+    ref_id: "",
   });
 
   const handlePaymentChange = (e) => {
@@ -196,7 +198,7 @@ const BookingComponent = ({
 
     const discountAmount = newData.discount_amount;
 
-    const itemAmount = newData.item_rate * newData.booking_qty;
+    const itemAmount = newData.item_rate * newData.order_qty;
     newData.item_amount = itemAmount - discountAmount;
 
     const discountPercent =
@@ -219,6 +221,23 @@ const BookingComponent = ({
 
   const onRowEditInit = (event) => {
     setEditingRows([event.data.id]);
+  };
+
+  const onRowEditSavePayment = (event) => {
+    let { newData, index } = event;
+
+    newData.ismodified = 1;
+
+    let _localItems = [...formDataPaymentList];
+    _localItems[index] = newData;
+    setFormDataPaymentList(_localItems);
+    setEditingRowsPayment([]);
+  };
+  const onRowEditCancelPayment = (event) => {
+    setEditingRowsPayment([]);
+  };
+  const onRowEditInitPayment = (event) => {
+    setEditingRowsPayment([event.data.id]);
   };
 
   const itemRateEditor = (options) => {
@@ -275,8 +294,8 @@ const BookingComponent = ({
     return `${formattedItemRate} (${formattedCostRate})`;
   };
 
-  const bookingQtyTemplate = (rowData) => {
-    return `${rowData.booking_qty} ${rowData.small_unit_name} (${rowData.order_qty})`;
+  const orderQtyTemplate = (rowData) => {
+    return `${rowData.order_qty} ${rowData.small_unit_name} (${rowData.booking_qty})`;
   };
 
   const totalBookingQty = orderChildItems.reduce(
@@ -289,8 +308,8 @@ const BookingComponent = ({
     0
   );
 
-  const totalBookingQtyTemplate = () => {
-    return `${totalBookingQty} (${totalOrderQty})`;
+  const totalOrderQtyTemplate = () => {
+    return `${totalOrderQty} (${totalBookingQty})`;
   };
 
   const discountAmountTemplate = (rowData) => {
@@ -331,8 +350,8 @@ const BookingComponent = ({
   const convertedQtyTemplate = (rowData) => {
     return (
       <>
-        <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} /> (
-        <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} />)
+        <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} /> (
+        <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} />)
       </>
     );
   };
@@ -522,18 +541,21 @@ const BookingComponent = ({
               className="w-full"
               filter
               showClear
+              disabled
             />
             <InputNumber
               name="itemQty"
               value={itemQty}
               onValueChange={(e) => setItemQty(e.value)}
               placeholder="Enter Qty"
+              disabled
             />
             <InputText
               name="itemNote"
               value={itemNote}
               onChange={(e) => setItemNote(e.target.value)}
               placeholder="Note"
+              disabled
             />
             <Button
               label="Add"
@@ -572,12 +594,19 @@ const BookingComponent = ({
               body={itemRateTemplate}
               editor={itemRateEditor}
             />
-            <Column
+            {/* <Column
               field="booking_qty"
               header="Booking Qty"
               body={bookingQtyTemplate}
               editor={numberEditor}
               footer={totalBookingQtyTemplate}
+            /> */}
+            <Column
+              field="order_qty"
+              header="Order Qty"
+              body={orderQtyTemplate}
+              editor={numberEditor}
+              footer={totalOrderQtyTemplate}
             />
             <Column
               field="discount_amount"
@@ -692,6 +721,7 @@ const BookingComponent = ({
                     placeholder={`Select payment mode`}
                     optionLabel="label"
                     optionValue="value"
+                    disabled
                   />
                   <InputNumber
                     name="payment_amount"
@@ -699,6 +729,7 @@ const BookingComponent = ({
                     onValueChange={(e) => handlePaymentChange(e)}
                     className={`${errors.payment_amount ? "p-invalid" : ""}`}
                     placeholder="Payment Amount"
+                    disabled
                   />
                   {errors.payment_amount && (
                     <small className="text-red-500">
@@ -711,6 +742,7 @@ const BookingComponent = ({
                     onChange={(e) => handlePaymentChange(e)}
                     className={`${errors.payment_note ? "p-invalid" : ""}`}
                     placeholder="Payment Note"
+                    disabled
                   />
                   <Button
                     type="button"
@@ -719,19 +751,37 @@ const BookingComponent = ({
                     severity="info"
                     size="small"
                     onClick={handleAddPayment}
+                    disabled
                   />
                 </div>
                 <DataTable
                   value={formDataPaymentList}
                   editMode="row"
                   dataKey="payment_id"
+                  editingRows={editingRowsPayment}
+                  onRowEditSave={onRowEditSavePayment}
+                  onRowEditCancel={onRowEditCancelPayment}
+                  onRowEditInit={onRowEditInitPayment}
                   emptyMessage="No items found."
                   className="bg-dark-300"
                   size="small"
                 >
                   <Column field="payment_mode" header="Mode" />
-                  <Column field="payment_amount" header="Paid" />
-                  <Column field="payment_note" header="Note" />
+                  <Column
+                    field="payment_amount"
+                    header="Paid"
+                    editor={itemRateEditor}
+                  />
+                  <Column
+                    field="payment_note"
+                    header="Note"
+                    editor={textEditor}
+                  />{" "}
+                  <Column
+                    rowEditor
+                    headerStyle={{ width: "5%", minWidth: "8rem" }}
+                    bodyStyle={{ textAlign: "center" }}
+                  />
                   <Column
                     header="Actions"
                     body={actionTemplatePayment}
@@ -762,7 +812,8 @@ const BookingComponent = ({
               disabled={
                 (orderChildItems && orderChildItems.length < 1) ||
                 formData.isedit ||
-                formData.due_amount < 0
+                formData.due_amount < 0 ||
+                formData.due_amount > 0
               }
             />
           </div>

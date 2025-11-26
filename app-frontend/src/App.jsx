@@ -17,6 +17,7 @@ import PrequestPage from "./pages/prequest/PrequestPage.jsx";
 import SrequestPage from "./pages/srequest/SrequestPage.jsx";
 import BankAccountPage from "./pages/accounts/bankaccount/BankAccountPage.jsx";
 import BankTransactionPage from "./pages/accounts/banktransaction/BankTransactionPage.jsx";
+import SupplierPaymentsPage from "./pages/accounts/supplierpayments/SupplierPaymentsPage.jsx";
 import ItemsPage from "./pages/inventory/items/ItemsPage.jsx";
 import UnitsPage from "./pages/inventory/units/UnitsPage.jsx";
 import CategoryPage from "./pages/inventory/category/CategoryPage.jsx";
@@ -60,6 +61,7 @@ function AppRoutes({ toast }) {
         <Route path="srequest" element={<SrequestPage />} />
         <Route path="accounts/bank-account" element={<BankAccountPage />} />
         <Route path="accounts/bank-transaction" element={<BankTransactionPage />} />
+        <Route path="accounts/supplier-payments" element={<SupplierPaymentsPage />} />
         <Route path="inventory/items" element={<ItemsPage />} />
         <Route path="inventory/units" element={<UnitsPage />} />
         <Route path="inventory/category" element={<CategoryPage />} />
