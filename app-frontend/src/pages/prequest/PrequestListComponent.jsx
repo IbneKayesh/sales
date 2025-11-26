@@ -113,18 +113,89 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
   };
 
   // Summary calculations for table footer
-  const totalPaid = dataList.filter((item) => item.is_paid).length;
-  const totalUnpaid = dataList.filter((item) => !item.is_paid).length;
-  const totalPosted = dataList.filter((item) => item.is_posted).length;
-  const totalUnposted = dataList.filter((item) => !item.is_posted).length;
-  const totalCompleted = dataList.filter((item) => item.is_completed).length;
-  const totalIncomplete = dataList.filter((item) => !item.is_completed).length;
-  const totalUnpaidValue = dataList
-    .filter((item) => !item.is_paid)
-    .reduce(
-      (sum, item) => sum + ((item.total_amount ?? 0) - (item.paid_amount ?? 0)),
-      0
+  const tableFooterTemplate = () => {
+    const totalPaid = dataList.filter((item) => item.is_paid === "Paid").length;
+    const totalUnpaid = dataList.filter(
+      (item) => item.is_paid === "Unpaid"
+    ).length;
+    const totalPartial = dataList.filter(
+      (item) => item.is_paid === "Partial"
+    ).length;
+    const totalPosted = dataList.filter((item) => item.is_posted).length;
+    const totalUnposted = dataList.filter((item) => !item.is_posted).length;
+    const totalCompleted = dataList.filter((item) => item.is_completed).length;
+    const totalIncomplete = dataList.filter(
+      (item) => !item.is_completed
+    ).length;
+    const totalUnpaidValue = dataList
+      .filter((item) => !item.is_paid)
+      .reduce(
+        (sum, item) =>
+          sum + ((item.total_amount ?? 0) - (item.paid_amount ?? 0)),
+        0
+      );
+
+    return (
+      <div className="p-2 text-center">
+        {totalPaid > 0 && (
+          <Badge
+            value={`Paid: ${totalPaid}`}
+            severity="success"
+            className="mr-1"
+          />
+        )}
+        {totalUnpaid > 0 && (
+          <Badge
+            value={`Unpaid: ${totalUnpaid}`}
+            severity="danger"
+            className="mr-1"
+          />
+        )}
+        {totalPartial > 0 && (
+          <Badge
+            value={`Partial: ${totalPartial}`}
+            severity="warning"
+            className="mr-1"
+          />
+        )}
+        {totalPosted > 0 && (
+          <Badge
+            value={`Posted: ${totalPosted}`}
+            severity="success"
+            className="mr-1"
+          />
+        )}
+        {totalUnposted > 0 && (
+          <Badge
+            value={`Unposted: ${totalUnposted}`}
+            severity="danger"
+            className="mr-1"
+          />
+        )}
+        {totalCompleted > 0 && (
+          <Badge
+            value={`Completed: ${totalCompleted}`}
+            severity="info"
+            className="mr-1"
+          />
+        )}
+        {totalIncomplete > 0 && (
+          <Badge
+            value={`Incomplete: ${totalIncomplete}`}
+            severity="warning"
+            className="mr-1"
+          />
+        )}
+        {totalUnpaidValue > 0 && (
+          <Badge
+            value={`Unpaid Value: ${formatCurrency(totalUnpaidValue)}`}
+            severity="danger"
+            className="mr-1"
+          />
+        )}
+      </div>
     );
+  };
 
   const formatCurrency = (value) => {
     if (value == null || isNaN(value)) return "N/A";
@@ -143,61 +214,9 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
         rows={10}
         rowsPerPageOptions={[10, 50, 75]}
         emptyMessage="No orders found."
-        responsiveLayout="scroll"
         className="bg-dark-300"
         size="small"
-        footer={
-          <div className="p-2 text-center">
-            {totalPaid > 0 && (
-              <Badge
-                value={`Paid: ${totalPaid}`}
-                severity="success"
-                className="mr-1"
-              />
-            )}
-            {totalUnpaid > 0 && (
-              <Badge
-                value={`Unpaid: ${totalUnpaid}`}
-                severity="danger"
-                className="mr-1"
-              />
-            )}
-            {totalPosted > 0 && (
-              <Badge
-                value={`Posted: ${totalPosted}`}
-                severity="success"
-                className="mr-1"
-              />
-            )}
-            {totalUnposted > 0 && (
-              <Badge
-                value={`Unposted: ${totalUnposted}`}
-                severity="danger"
-                className="mr-1"
-              />
-            )}
-            {totalCompleted > 0 && (
-              <Badge
-                value={`Completed: ${totalCompleted}`}
-                severity="info"
-                className="mr-1"
-              />
-            )}
-            {totalIncomplete > 0 && (
-              <Badge
-                value={`Incomplete: ${totalIncomplete}`}
-                severity="warning"
-                className="mr-1"
-              />
-            )}
-            {totalUnpaidValue > 0 && (
-              <Badge
-                value={`Unpaid Value: ${formatCurrency(totalUnpaidValue)}`}
-                severity="danger"
-              />
-            )}
-          </div>
-        }
+        footer={tableFooterTemplate()}
       >
         <Column field="order_type" header="Type" sortable body={trnShortBody} />
         <Column field="order_no" header="Order No" sortable />

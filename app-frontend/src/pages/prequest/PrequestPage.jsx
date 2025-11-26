@@ -155,6 +155,9 @@ const PrequestPage = () => {
                 orderChildItems={orderChildItems}
                 setOrderChildItems={setOrderChildItems}
                 onSaveAll={handleSaveAll}
+                formDataPaymentList={formDataPaymentList}
+                setFormDataPaymentList={setFormDataPaymentList}
+                paymentOptions={paymentOptions}
               />
             )}
             {formDataPoMaster.order_type === "Purchase Order" && (

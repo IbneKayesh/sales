@@ -248,10 +248,16 @@ export const usePoMaster = () => {
       (sum, item) => sum + (item.booking_qty || 0),
       0
     );
+    const otherCostAmount =
+      formDataPoMaster.other_cost > 0 ? formDataPoMaster.other_cost : 0;
     const costAmount =
       formDataPoMaster.cost_amount > 0 ? formDataPoMaster.cost_amount : 0;
-    return costAmount / (totalBookingQty || 1);
-  }, [orderChildItems, formDataPoMaster.cost_amount]);
+    return (otherCostAmount + costAmount) / (totalBookingQty || 1);
+  }, [
+    orderChildItems,
+    formDataPoMaster.other_cost,
+    formDataPoMaster.cost_amount,
+  ]);
 
   useEffect(() => {
     setOrderChildItems((prevItems) =>
@@ -409,7 +415,7 @@ export const usePoMaster = () => {
       //console.log("handleSavePoMaster: " + JSON.stringify(formDataPoMaster));
       //console.log("formDataPaymentList: " + JSON.stringify(formDataPaymentList));
 
-      console.log("newErrors" + JSON.stringify(newErrors));
+      //console.log("newErrors" + JSON.stringify(newErrors));
 
       if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
@@ -440,13 +446,13 @@ export const usePoMaster = () => {
         }));
 
         const payments_create = formDataPaymentList
-        .filter((item) => item.payment_type === formDataPoMaster.order_type)
-        .map((item) => ({
-          ...item,
-          payment_id: generateGuid(),
-          payment_date: formDataPoMaster.order_date,
-          contact_id: formDataPoMaster.contact_id,
-        }));
+          .filter((item) => item.payment_type === formDataPoMaster.order_type)
+          .map((item) => ({
+            ...item,
+            payment_id: generateGuid(),
+            payment_date: formDataPoMaster.order_date,
+            contact_id: formDataPoMaster.contact_id,
+          }));
 
         const paidStatus =
           formDataPoMaster.total_amount === formDataPoMaster.due_amount
@@ -491,13 +497,13 @@ export const usePoMaster = () => {
 
         //remove extra cost expenses, will create new payments
         const payments_create = formDataPaymentList
-        .filter((item) => item.payment_type === formDataPoMaster.order_type)
-        .map((item) => ({
-          ...item,
-          payment_id: generateGuid(),
-          payment_date: formDataPoMaster.order_date,
-          contact_id: formDataPoMaster.contact_id,
-        }));
+          .filter((item) => item.payment_type === formDataPoMaster.order_type)
+          .map((item) => ({
+            ...item,
+            payment_id: generateGuid(),
+            payment_date: formDataPoMaster.order_date,
+            contact_id: formDataPoMaster.contact_id,
+          }));
 
         const paidStatus =
           formDataPoMaster.total_amount === formDataPoMaster.due_amount

@@ -125,6 +125,14 @@ const BookingComponent = ({
   };
 
   useEffect(() => {
+    if (selectedItem) {
+      setDisabledItemAdd(false);
+    } else {
+      setDisabledItemAdd(true);
+    }
+  }, [selectedItem]);
+
+  useEffect(() => {
     handleFilterChange("allitems");
   }, []);
 
@@ -367,8 +375,15 @@ const BookingComponent = ({
     return (
       <>
         <span className="flex align-items-center gap-2 w-full">
-          Total# {formData.total_amount} BDT, Paid# <span className="text-green-500">{formData.paid_amount}</span> BDT,
-          Due# {formData.due_amount > 0 ? <span className="text-red-500">{formData.due_amount}</span> : <span className="text-green-500">{formData.due_amount}</span>} BDT
+          Total# {formData.total_amount} BDT, Paid#{" "}
+          <span className="text-green-500">{formData.paid_amount}</span> BDT,
+          Due#{" "}
+          {formData.due_amount > 0 ? (
+            <span className="text-red-500">{formData.due_amount}</span>
+          ) : (
+            <span className="text-green-500">{formData.due_amount}</span>
+          )}{" "}
+          BDT
         </span>
       </>
     );
@@ -527,6 +542,7 @@ const BookingComponent = ({
               size="small"
               severity="info"
               className="pr-5"
+              disabled={disabledItemAdd}
             />
           </div>
           <DataTable
@@ -538,7 +554,6 @@ const BookingComponent = ({
             onRowEditCancel={onRowEditCancel}
             onRowEditInit={onRowEditInit}
             emptyMessage="No items found."
-            responsiveLayout="scroll"
             className="bg-dark-300"
             size="small"
           >
@@ -633,12 +648,16 @@ const BookingComponent = ({
 
                 <div className="flex justify-content-between">
                   <span>{t_po_master.t_po_master.paid_amount.name}:</span>
-                  <span className="font-bold text-green-500">{formData.paid_amount}/-</span>
+                  <span className="font-bold text-green-500">
+                    {formData.paid_amount}/-
+                  </span>
                 </div>
 
                 <div className="flex justify-content-between">
                   <span>{t_po_master.t_po_master.due_amount.name}:</span>
-                  <span className="font-bold text-red-500">{formData.due_amount}/-</span>
+                  <span className="font-bold text-red-500">
+                    {formData.due_amount}/-
+                  </span>
                 </div>
 
                 <div className="flex justify-content-between">
