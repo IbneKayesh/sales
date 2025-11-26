@@ -20,6 +20,7 @@ const PrequestPage = () => {
     isBusy,
     currentView,
     errors,
+    setErrors,
     formDataPoMaster,
     selectedFilter,
     filterOptions,
@@ -35,6 +36,9 @@ const PrequestPage = () => {
     poTypeOptions,
     selectedPoType,
     handlePoTypeChange,
+    formDataPaymentList,
+    setFormDataPaymentList,
+    paymentOptions,
   } = usePoMaster();
 
   useEffect(() => {
@@ -52,14 +56,14 @@ const PrequestPage = () => {
     const isList = currentView === "list";
 
     return (
-      <div className="flex align-items-center justify-content-between">
-        <h3 className="m-0">
+      <div className="flex align-items-center justify-content-between p-2">
+        <span className="font-bold text-xl text-blue-500">
           {isList
             ? "Order List"
             : formDataPoMaster?.po_master_id
-            ? `Edit ${formDataPoMaster.order_type}: ${formDataPoMaster.order_no} for ${formDataPoMaster.ref_no}`
-            : `Add New ${selectedPoType}`}
-        </h3>
+            ? `Edit ${formDataPoMaster.order_type}: ${formDataPoMaster.order_no}`
+            : `New ${selectedPoType}`}
+        </span>
 
         {isList ? (
           <div className="flex gap-2">
@@ -92,12 +96,13 @@ const PrequestPage = () => {
           </div>
         ) : (
           <Button
-            label="Back to List"
+            label=""
             icon="pi pi-arrow-left"
             size="small"
             onClick={() => {
               handleCancel();
             }}
+            rounded
           />
         )}
       </div>
@@ -107,7 +112,13 @@ const PrequestPage = () => {
   return (
     <>
       <Toast ref={toast} />
-      <Card header={getHeader()} className="bg-dark-200 border-round p-2">
+      <Card
+        header={getHeader()}
+        className="bg-dark-200 border-round p-0"
+        pt={{
+          body: { style: { padding: "5px" } },
+        }}
+      >
         {currentView === "list" ? (
           <PrequestListComponent
             dataList={poMasters}
@@ -120,6 +131,7 @@ const PrequestPage = () => {
               <BookingComponent
                 isBusy={isBusy}
                 errors={errors}
+                setErrors={setErrors}
                 formData={formDataPoMaster}
                 onChange={handleChange}
                 poTypeOptions={poTypeOptions}
@@ -127,6 +139,9 @@ const PrequestPage = () => {
                 orderChildItems={orderChildItems}
                 setOrderChildItems={setOrderChildItems}
                 onSaveAll={handleSaveAll}
+                formDataPaymentList={formDataPaymentList}
+                setFormDataPaymentList={setFormDataPaymentList}
+                paymentOptions={paymentOptions}
               />
             )}
             {formDataPoMaster.order_type === "Purchase Receive" && (

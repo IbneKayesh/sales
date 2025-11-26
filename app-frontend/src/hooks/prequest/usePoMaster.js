@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { poMasterAPI } from "@/api/poMasterAPI";
 import { poChildAPI } from "@/api/poChildAPI";
+import { paymentsAPI } from "@/api/paymentsAPI";
 import { generateGuid } from "@/utils/guid";
 
 import validate from "@/models/validator";
@@ -48,10 +49,11 @@ export const usePoMaster = () => {
     is_paid: "Unpaid",
     is_posted: 0,
     is_completed: 0,
+    other_cost: 0,
     ismodified: 0,
   });
 
-  const [formDataPayments, setFormDataPayments] = useState({
+  const [formDataPayments_v1, setFormDataPayments_v1] = useState({
     payment_id: "",
     bank_account_id: "",
     payment_type: "",
@@ -59,11 +61,19 @@ export const usePoMaster = () => {
     payment_date: new Date().toISOString().split("T")[0],
     contact_id: "",
     ref_no: "",
-    payment_note: "",
     paid_amount: 0,
     order_amount: 0,
+    payment_note: "",
     ismodified: 0,
   });
+
+  const [formDataPaymentList, setFormDataPaymentList] = useState([]);
+
+  const paymentOptions = [
+    { label: "Cash", value: "Cash" },
+    { label: "Bank", value: "Bank" },
+    { label: "MFS", value: "MFS" },
+  ];
 
   // const [formDataPoChild, setFormDataPoChild] = useState({
   //   po_master_id: "",
@@ -146,6 +156,22 @@ export const usePoMaster = () => {
       });
     }
   };
+  const loadPoPayments = async (ref_no) => {
+    setFormDataPaymentList([]);
+    try {
+      const data = await paymentsAPI.getByRefNo(ref_no);
+      //console.log("ref_no " + ref_no);
+      //console.log("data " + JSON.stringify(data));
+      setFormDataPaymentList(data);
+    } catch (error) {
+      console.error("Error loading purchase order payments:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to load purchase order payments from server",
+      });
+    }
+  };
 
   //for Purchase Receive
   const loadPurchaseBookingPoChild = async (supplierId) => {
@@ -197,13 +223,24 @@ export const usePoMaster = () => {
       0
     );
 
+    const net_amount = (formDataPoMaster.cost_amount || 0) + total_amount;
+    //console.log("net_amount " + net_amount);
+
+    const paid_amount = formDataPaymentList
+      ?.filter((row) => row.payment_type === formDataPoMaster.order_type)
+      ?.reduce((total, row) => total + (row.payment_amount || 0), 0);
+
+    const due_amount = net_amount - paid_amount;
+
     setFormDataPoMaster((prev) => ({
       ...prev,
       order_amount,
       discount_amount,
-      total_amount,
+      total_amount: net_amount,
+      paid_amount,
+      due_amount,
     }));
-  }, [orderChildItems]);
+  }, [orderChildItems, formDataPaymentList]);
 
   //Effect to update orderChildItems cost_rate based on orderChildItems and cost_amount
   const costRate = useMemo(() => {
@@ -287,9 +324,10 @@ export const usePoMaster = () => {
       total_amount: 0,
       paid_amount: 0,
       cost_amount: 0,
-      is_paid: 0,
+      is_paid: "Unpaid",
       is_posted: 0,
       is_completed: 0,
+      other_cost: 0,
       ismodified: 0,
     });
     setErrors({});
@@ -307,6 +345,7 @@ export const usePoMaster = () => {
     // });
 
     setOrderChildItems([]);
+    setFormDataPaymentList([]);
   };
 
   const handleCancel = () => {
@@ -324,6 +363,7 @@ export const usePoMaster = () => {
     setCurrentView("form");
     //fetch child items
     loadPoChildren(poMaster.po_master_id);
+    loadPoPayments(poMaster.order_no);
   };
 
   const handleDeletePoMaster = async (id) => {
@@ -367,6 +407,9 @@ export const usePoMaster = () => {
       const newErrors = validate(formDataPoMaster, t_po_master.t_po_master);
       setErrors(newErrors);
       //console.log("handleSavePoMaster: " + JSON.stringify(formDataPoMaster));
+      //console.log("formDataPaymentList: " + JSON.stringify(formDataPaymentList));
+
+      console.log("newErrors" + JSON.stringify(newErrors));
 
       if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
@@ -396,14 +439,30 @@ export const usePoMaster = () => {
           id: generateGuid(),
         }));
 
+        const payments_create = formDataPaymentList
+        .filter((item) => item.payment_type === formDataPoMaster.order_type)
+        .map((item) => ({
+          ...item,
+          payment_id: generateGuid(),
+          payment_date: formDataPoMaster.order_date,
+          contact_id: formDataPoMaster.contact_id,
+        }));
+
+        const paidStatus =
+          formDataPoMaster.total_amount === formDataPoMaster.due_amount
+            ? "Unpaid"
+            : formDataPoMaster.due_amount === 0
+            ? "Paid"
+            : "Partial";
+
         const newPoMasterData = {
           ...formDataPoMaster,
-          is_paid:
-            formDataPoMaster.total_amount === formDataPoMaster.paid_amount,
+          is_paid: paidStatus,
           ismodified: true,
           childs_create: childs,
           childs_update: toUpdateChildItems,
           childs_delete: toDeleteChildItems,
+          payments_create,
         };
 
         //console.log("newPoMasterData " + JSON.stringify(newPoMasterData));
@@ -430,13 +489,30 @@ export const usePoMaster = () => {
           id: generateGuid(),
         }));
 
+        //remove extra cost expenses, will create new payments
+        const payments_create = formDataPaymentList
+        .filter((item) => item.payment_type === formDataPoMaster.order_type)
+        .map((item) => ({
+          ...item,
+          payment_id: generateGuid(),
+          payment_date: formDataPoMaster.order_date,
+          contact_id: formDataPoMaster.contact_id,
+        }));
+
+        const paidStatus =
+          formDataPoMaster.total_amount === formDataPoMaster.due_amount
+            ? "Unpaid"
+            : formDataPoMaster.due_amount === 0
+            ? "Paid"
+            : "Partial";
+
         const newPoMasterData = {
           ...formDataPoMaster,
           po_master_id,
-          is_paid:
-            formDataPoMaster.total_amount === formDataPoMaster.paid_amount,
+          is_paid: paidStatus,
           ismodified: true,
           childs_create,
+          payments_create,
         };
         //console.log("newPoMasterData " + JSON.stringify(newPoMasterData));
         const newPoMaster = await poMasterAPI.create(newPoMasterData);
@@ -474,6 +550,7 @@ export const usePoMaster = () => {
     isBusy,
     currentView,
     errors,
+    setErrors,
     formDataPoMaster,
     selectedFilter,
     filterOptions,
@@ -489,5 +566,8 @@ export const usePoMaster = () => {
     poTypeOptions,
     selectedPoType,
     handlePoTypeChange,
+    formDataPaymentList,
+    setFormDataPaymentList,
+    paymentOptions,
   };
 };

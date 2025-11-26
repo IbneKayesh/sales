@@ -134,9 +134,9 @@ const initTables = () => {
         payment_date TEXT NOT NULL,
         contact_id TEXT NOT NULL,
         ref_no TEXT,
-        payment_note TEXT,
-        paid_amount REAL DEFAULT 0,
+        payment_amount REAL DEFAULT 0,
         order_amount REAL DEFAULT 0,
+        payment_note TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
@@ -162,6 +162,7 @@ const initTables = () => {
         is_paid TEXT NOT NULL,
         is_posted BOOLEAN DEFAULT 0,
         is_completed BOOLEAN DEFAULT 0,
+        other_cost REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT

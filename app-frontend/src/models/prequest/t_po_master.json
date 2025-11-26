@@ -59,7 +59,7 @@
       "required": false
     },
     "cost_amount": {
-      "name": "Other Cost",
+      "name": "Order Cost",
       "type": "number",
       "required": false
     },
@@ -91,7 +91,12 @@
       "required": false
     },
     "is_completed": {
-      "name": "Is Posted",
+      "name": "Is Completed",
+      "type": "number",
+      "required": false
+    },
+    "other_cost": {
+      "name": "Extra Cost",
       "type": "number",
       "required": false
     }

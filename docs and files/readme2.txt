@@ -137,3 +137,21 @@ UPDATE purchase_invoices
 SET paid_amount = paid_amount + ?,
     due_amount  = total_amount - (paid_amount + ?)
 WHERE invoice_id = ?;
+
+
+
+// Od#01 500 PY#01 500
+// Od#02 300 PY#02 100
+// Od#02 000 PY#03 150
+// Od#02 000 PY#04 050
+// Od#00 000 PY#05 400
+// Od#03 150 PY#05 150
+// Od#04 400 PY#05 250
+// Od#05 150 PY#06 150
+
+
+
+
+
+
+

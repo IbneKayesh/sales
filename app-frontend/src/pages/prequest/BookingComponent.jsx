@@ -19,11 +19,15 @@ import { Accordion, AccordionTab } from "primereact/accordion";
 const BookingComponent = ({
   isBusy,
   errors,
+  setErrors,
   formData,
   onChange,
   orderChildItems,
   setOrderChildItems,
   onSaveAll,
+  formDataPaymentList,
+  setFormDataPaymentList,
+  paymentOptions,
 }) => {
   const { itemsPurchase, handleFilterChange } = useItems();
   const { contactsSupplier } = useContacts();
@@ -32,6 +36,93 @@ const BookingComponent = ({
   const [disabledItemAdd, setDisabledItemAdd] = useState(false);
   const [itemQty, setItemQty] = useState(1);
   const [itemNote, setItemNote] = useState("");
+
+  const [formDataPayment, setFormDataPayment] = useState({
+    payment_id: "",
+    payment_type: formData.order_type,
+    payment_mode: "Cash",
+    payment_amount: "",
+    order_amount: "",
+    payment_note: "",
+  });
+
+  const handlePaymentChange = (e) => {
+    const { name, value } = e.target;
+    setFormDataPayment({ ...formDataPayment, [name]: value });
+  };
+
+  const handleAddPayment = () => {
+    //payment amount validation
+    if (formDataPayment.payment_amount > formData.due_amount) {
+      setErrors({
+        payment_amount: "Payment amount cannot be more than due amount",
+      });
+      return;
+    } else {
+      setErrors({
+        payment_amount: "",
+      });
+    }
+
+    const { payment_mode, payment_note, payment_amount } = formDataPayment;
+    if (!payment_mode || !payment_amount) return;
+
+    setFormDataPaymentList((prevList) => {
+      const index = prevList.findIndex(
+        (row) => row.payment_mode === payment_mode
+      );
+
+      // If found → update existing row
+      if (index !== -1) {
+        const updated = [...prevList];
+        updated[index] = {
+          ...updated[index],
+          payment_note: updated[index].payment_note,
+          payment_amount: updated[index].payment_amount + payment_amount,
+          order_amount: updated[index].payment_amount + payment_amount,
+        };
+        return updated;
+      }
+
+      // If not found → add new row
+      return [
+        ...prevList,
+        {
+          payment_id: generateGuid(),
+          payment_type: formData.order_type,
+          payment_mode,
+          payment_note,
+          payment_amount,
+          order_amount: payment_amount,
+        },
+      ];
+    });
+
+    // Reset form
+    setFormDataPayment({
+      payment_id: "",
+      payment_type: formData.order_type,
+      payment_mode: "Cash",
+      payment_note: "",
+      payment_amount: "",
+      order_amount: "",
+    });
+  };
+
+  const actionTemplatePayment = (rowData) => {
+    return (
+      <span
+        className="pi pi-trash text-red-600 text-bold px-2"
+        onClick={() => handleDeletePayment(rowData)}
+      ></span>
+    );
+  };
+
+  const handleDeletePayment = (rowData) => {
+    setFormDataPaymentList((prev) =>
+      prev.filter((item) => item.payment_id !== rowData.payment_id)
+    );
+  };
 
   useEffect(() => {
     handleFilterChange("allitems");
@@ -256,8 +347,8 @@ const BookingComponent = ({
 
     return (
       <span className="flex align-items-center gap-2 w-full">
-        Invoice# {order_no} on {order_date} for {contactName}{" "}
-        {!is_posted && <span className="text-blue-400">[Not posted]</span>}
+        Invoice# {order_no}, Date# {order_date} for {contactName}
+        {!is_posted && <span className="text-red-300">[Not posted]</span>}
       </span>
     );
   };
@@ -266,7 +357,7 @@ const BookingComponent = ({
     return (
       <>
         <span className="flex align-items-center gap-2 w-full">
-          Products# {orderChildItems.length} Items
+          Products# {orderChildItems.length}, Qty# {totalBookingQty}
         </span>
       </>
     );
@@ -276,7 +367,8 @@ const BookingComponent = ({
     return (
       <>
         <span className="flex align-items-center gap-2 w-full">
-          Payments# {formData.total_amount} BDT
+          Total# {formData.total_amount} BDT, Paid# <span className="text-green-500">{formData.paid_amount}</span> BDT,
+          Due# {formData.due_amount > 0 ? <span className="text-red-500">{formData.due_amount}</span> : <span className="text-green-500">{formData.due_amount}</span>} BDT
         </span>
       </>
     );
@@ -503,7 +595,7 @@ const BookingComponent = ({
         <AccordionTab header={PaymentsHeader}>
           <div className="grid">
             {/* Right side payment summary – 3 columns offset */}
-            <div className="col-4 col-offset-8">
+            <div className="col-3 col-offset-9">
               {/* PAYMENT SUMMARY */}
               <div className="flex flex-column gap-3 mb-4">
                 <div className="flex justify-content-between">
@@ -519,55 +611,111 @@ const BookingComponent = ({
                 </div>
 
                 <div className="flex justify-content-between">
+                  <span>{t_po_master.t_po_master.cost_amount.name}</span>
+                  <InputNumber
+                    name="cost_amount"
+                    value={formData.cost_amount}
+                    onValueChange={(e) => onChange("cost_amount", e.value)}
+                    mode="currency"
+                    currency="BDT"
+                    locale="en-US"
+                    className={`${errors.cost_amount ? "p-invalid" : ""}`}
+                  />
+                  {errors.cost_amount && (
+                    <small className="text-red-500">{errors.cost_amount}</small>
+                  )}
+                </div>
+
+                <div className="flex justify-content-between">
                   <span>{t_po_master.t_po_master.total_amount.name}:</span>
                   <span className="font-bold">{formData.total_amount}/-</span>
                 </div>
 
                 <div className="flex justify-content-between">
                   <span>{t_po_master.t_po_master.paid_amount.name}:</span>
-                  <span className="font-bold">{formData.paid_amount}/-</span>
+                  <span className="font-bold text-green-500">{formData.paid_amount}/-</span>
+                </div>
+
+                <div className="flex justify-content-between">
+                  <span>{t_po_master.t_po_master.due_amount.name}:</span>
+                  <span className="font-bold text-red-500">{formData.due_amount}/-</span>
+                </div>
+
+                <div className="flex justify-content-between">
+                  <span>{t_po_master.t_po_master.other_cost.name}</span>
+                  <InputNumber
+                    name="other_cost"
+                    value={formData.other_cost}
+                    onValueChange={(e) => onChange("other_cost", e.value)}
+                    mode="currency"
+                    currency="BDT"
+                    locale="en-US"
+                    className={`${errors.other_cost ? "p-invalid" : ""}`}
+                  />
+                  {errors.other_cost && (
+                    <small className="text-red-500">{errors.other_cost}</small>
+                  )}
                 </div>
               </div>
 
               {/* COST AMOUNT INPUT */}
-              <div className="field mb-3">
-                <label
-                  htmlFor="cost_amount"
-                  className="block text-900 font-medium mb-2"
-                >
-                  {t_po_master.t_po_master.cost_amount.name}
-                </label>
-
-                <InputNumber
-                  name="cost_amount"
-                  value={formData.cost_amount}
-                  onValueChange={(e) => onChange("cost_amount", e.value)}
-                  mode="currency"
-                  currency="BDT"
-                  locale="en-US"
-                  className={`w-full ${errors.cost_amount ? "p-invalid" : ""}`}
-                />
-
-                {errors.cost_amount && (
-                  <small className="text-red-500">{errors.cost_amount}</small>
-                )}
-              </div>
 
               <div className="field mb-3">
+                <div className="flex flex-column gap-3 mb-4">
+                  <Dropdown
+                    name="payment_mode"
+                    value={formDataPayment.payment_mode}
+                    options={paymentOptions}
+                    onChange={(e) => handlePaymentChange(e)}
+                    className={`w-full ${
+                      errors.payment_mode ? "p-invalid" : ""
+                    }`}
+                    placeholder={`Select payment mode`}
+                    optionLabel="label"
+                    optionValue="value"
+                  />
+                  <InputNumber
+                    name="payment_amount"
+                    value={formDataPayment.payment_amount}
+                    onValueChange={(e) => handlePaymentChange(e)}
+                    className={`${errors.payment_amount ? "p-invalid" : ""}`}
+                    placeholder="Payment Amount"
+                  />
+                  {errors.payment_amount && (
+                    <small className="text-red-500">
+                      {errors.payment_amount}
+                    </small>
+                  )}
+                  <InputText
+                    name="payment_note"
+                    value={formDataPayment.payment_note}
+                    onChange={(e) => handlePaymentChange(e)}
+                    className={`${errors.payment_note ? "p-invalid" : ""}`}
+                    placeholder="Payment Note"
+                  />
+                  <Button
+                    type="button"
+                    label="Add Payment"
+                    icon="pi pi-plus"
+                    severity="info"
+                    size="small"
+                    onClick={handleAddPayment}
+                  />
+                </div>
                 <DataTable
-                  value={orderChildItems}
+                  value={formDataPaymentList}
                   editMode="row"
-                  dataKey="id"
+                  dataKey="payment_id"
                   emptyMessage="No items found."
                   className="bg-dark-300"
                   size="small"
                 >
                   <Column field="payment_mode" header="Mode" />
+                  <Column field="payment_amount" header="Paid" />
                   <Column field="payment_note" header="Note" />
-                  <Column field="paid_amount" header="Paid" />
                   <Column
                     header="Actions"
-                    body={actionTemplate}
+                    body={actionTemplatePayment}
                     style={{ width: "120px" }}
                   />
                 </DataTable>
@@ -594,7 +742,8 @@ const BookingComponent = ({
               loading={isBusy || editingRows.length > 0}
               disabled={
                 (orderChildItems && orderChildItems.length < 1) ||
-                formData.isedit
+                formData.isedit ||
+                formData.due_amount < 0
               }
             />
           </div>

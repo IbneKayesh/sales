@@ -17,6 +17,7 @@ const itemRoutes = require('./routes/items');
 const categoryRoutes = require('./routes/categories');
 const userRoutes = require('./routes/users');
 const closingProcessRoutes = require('./routes/closingProcess');
+const paymentRoutes = require('./routes/payments');
 const backupRoutes = require('./routes/backup');
 
 const app = express();
@@ -56,6 +57,7 @@ app.use('/api/items', itemRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/closing-process', closingProcessRoutes);
+app.use('/api/payments', paymentRoutes);
 app.use('/api/db', backupRoutes);
 
 // Health check endpoint

@@ -67,7 +67,7 @@ async function runScriptsSequentially(scripts, { useTransaction = false } = {}) 
   try {
     if (useTransaction) {
       console.log("🚀 BEGIN TRANSACTION");
-      await dbRun("BEGIN");
+       await dbRun("BEGIN IMMEDIATE");
     }
 
     for (const script of scripts) {

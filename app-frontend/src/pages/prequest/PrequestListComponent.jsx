@@ -28,7 +28,7 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
         command: () => {
           handleDelete(rowData);
         },
-        disabled: rowData.ismodified,
+        disabled: rowData.ismodified || rowData.is_posted,
       },
     ];
     return (
@@ -80,11 +80,24 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
     //console.log("rowData " + JSON.stringify(rowData))
     return (
       <>
-        {rowData.is_paid ? (
-          <Badge value="Paid" severity="success" className="mr-1"></Badge>
-        ) : (
-          <Badge value="Unpaid" severity="danger" className="mr-1"></Badge>
-        )}
+        {(() => {
+          const statusMap = {
+            Paid: { severity: "success" },
+            Unpaid: { severity: "danger" },
+            Partial: { severity: "warning" },
+          };
+
+          const status = statusMap[rowData.is_paid];
+
+          return status ? (
+            <Badge
+              value={rowData.is_paid}
+              severity={status.severity}
+              className="mr-1"
+            />
+          ) : null;
+        })()}
+
         {rowData.is_posted ? (
           <Badge value="Posted" severity="success" className="mr-1"></Badge>
         ) : (
