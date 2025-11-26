@@ -14,6 +14,7 @@ import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 import t_po_master from "@/models/prequest/t_po_master.json";
 import { useContacts } from "@/hooks/setup/useContacts";
 import { useItems } from "@/hooks/inventory/useItems";
+import { Accordion, AccordionTab } from "primereact/accordion";
 
 const BookingComponent = ({
   isBusy,
@@ -29,6 +30,8 @@ const BookingComponent = ({
   const [selectedItem, setSelectedItem] = useState(null);
   const [editingRows, setEditingRows] = useState([]);
   const [disabledItemAdd, setDisabledItemAdd] = useState(false);
+  const [itemQty, setItemQty] = useState(1);
+  const [itemNote, setItemNote] = useState("");
 
   useEffect(() => {
     handleFilterChange("allitems");
@@ -56,13 +59,13 @@ const BookingComponent = ({
       item_id: selectedItem,
       item_name: item.item_name,
       item_rate: item.purchase_rate,
-      booking_qty: 1,
+      booking_qty: itemQty || 1,
       order_qty: 0,
       discount_percent: 0,
       discount_amount: 0,
-      item_amount: item.purchase_rate * 1, // Will be re-calculated on edit save,
+      item_amount: item.purchase_rate * itemQty || 1, // Will be re-calculated on edit save,
       cost_rate: item.purchase_rate,
-      item_note: "",
+      item_note: itemNote,
       unit_difference_qty: item.unit_difference_qty,
       small_unit_name: item.small_unit_name,
       big_unit_name: item.big_unit_name,
@@ -71,6 +74,7 @@ const BookingComponent = ({
 
     setOrderChildItems([...orderChildItems, newRow]);
     setSelectedItem(null);
+    setItemQty(1);
   };
 
   const handleDelete = (rowData) => {
@@ -156,14 +160,10 @@ const BookingComponent = ({
 
   const actionTemplate = (rowData) => {
     return (
-      <Button
-        icon="pi pi-trash"
+      <span
+        className="pi pi-trash text-red-600 text-bold px-2"
         onClick={() => handleDelete(rowData)}
-        tooltip="Delete"
-        tooltipOptions={{ position: "top" }}
-        size="small"
-        severity="danger"
-      />
+      ></span>
     );
   };
 
@@ -247,342 +247,359 @@ const BookingComponent = ({
     return <ConvertedBDTCurrency value={totalItemAmount} asWords={true} />;
   };
 
+  const InvoiceHeader = () => {
+    const contactName = contactsSupplier.find(
+      (c) => c.value === formData.contact_id
+    )?.label || <span className="text-red-500">No supplier selected</span>;
+
+    const { order_no, order_date, is_posted } = formData;
+
+    return (
+      <span className="flex align-items-center gap-2 w-full">
+        Invoice# {order_no} on {order_date} for {contactName}{" "}
+        {!is_posted && <span className="text-blue-400">[Not posted]</span>}
+      </span>
+    );
+  };
+
+  const ProductsHeader = () => {
+    return (
+      <>
+        <span className="flex align-items-center gap-2 w-full">
+          Products# {orderChildItems.length} Items
+        </span>
+      </>
+    );
+  };
+
+  const PaymentsHeader = () => {
+    return (
+      <>
+        <span className="flex align-items-center gap-2 w-full">
+          Payments# {formData.total_amount} BDT
+        </span>
+      </>
+    );
+  };
+
   return (
     <div className="p-1">
       <ConfirmDialog />
       {/* Master Form */}
-      <div className="grid">
-        <div className="col-12 md:col-3">
-          <label htmlFor="order_no" className="block text-900 font-medium mb-2">
-            {t_po_master.t_po_master.order_no.name}
-            <span className="text-red-500">*</span>
-          </label>
-          <InputText
-            name="order_no"
-            value={formData.order_no}
-            onChange={(e) => onChange("order_no", e.target.value)}
-            className={`w-full ${errors.order_no ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_po_master.t_po_master.order_no.name}`}
-            disabled
-          />
-          {errors.order_no && (
-            <small className="mb-3 text-red-500">{errors.order_no}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label
-            htmlFor="order_date"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_po_master.t_po_master.order_date.name}
-            <span className="text-red-500">*</span>
-          </label>
-          <Calendar
-            name="order_date"
-            value={formData.order_date ? new Date(formData.order_date) : null}
-            onChange={(e) =>
-              onChange(
-                "order_date",
-                e.value ? e.value.toISOString().split("T")[0] : ""
-              )
-            }
-            className={`w-full ${errors.order_date ? "p-invalid" : ""}`}
-            dateFormat="yy-mm-dd"
-            placeholder={`Select ${t_po_master.t_po_master.order_date.name}`}
-          />
-          {errors.order_date && (
-            <small className="mb-3 text-red-500">{errors.order_date}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-3">
-          <label
-            htmlFor="contact_id"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_po_master.t_po_master.contact_id.name}
-            <span className="text-red-500">*</span>
-          </label>
-          <Dropdown
-            name="contact_id"
-            value={formData.contact_id}
-            options={contactsSupplier}
-            onChange={(e) => onChange("contact_id", e.value)}
-            className={`w-full ${errors.contact_id ? "p-invalid" : ""}`}
-            placeholder={`Select ${t_po_master.t_po_master.contact_id.name}`}
-            optionLabel="label"
-            optionValue="value"
-          />
-          {errors.contact_id && (
-            <small className="mb-3 text-red-500">{errors.contact_id}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label htmlFor="ref_no" className="block text-900 font-medium mb-2">
-            {t_po_master.t_po_master.ref_no.name}
-          </label>
-          <InputText
-            name="ref_no"
-            value={formData.ref_no}
-            onChange={(e) => onChange("ref_no", e.target.value)}
-            className={`w-full ${errors.ref_no ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_po_master.t_po_master.ref_no.name}`}
-          />
-          {errors.ref_no && (
-            <small className="mb-3 text-red-500">{errors.ref_no}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label
-            htmlFor="order_note"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_po_master.t_po_master.order_note.name}
-          </label>
-          <InputText
-            name="order_note"
-            value={formData.order_note}
-            onChange={(e) => onChange("order_note", e.target.value)}
-            className={`w-full ${errors.order_note ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_po_master.t_po_master.order_note.name}`}
-          />
-          {errors.order_note && (
-            <small className="mb-3 text-red-500">{errors.order_note}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label
-            htmlFor="order_amount"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_po_master.t_po_master.order_amount.name}
-          </label>
-          <InputNumber
-            name="order_amount"
-            value={formData.order_amount}
-            onValueChange={(e) => onChange("order_amount", e.value)}
-            mode="currency"
-            currency="BDT"
-            locale="en-US"
-            inputStyle={{ width: "100%" }}
-            className={`w-full ${errors.order_amount ? "p-invalid" : ""}`}
-            disabled
-          />
-          {errors.order_amount && (
-            <small className="mb-3 text-red-500">{errors.order_amount}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label
-            htmlFor="discount_amount"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_po_master.t_po_master.discount_amount.name}
-          </label>
-          <InputNumber
-            name="discount_amount"
-            value={formData.discount_amount}
-            onValueChange={(e) => onChange("discount_amount", e.value)}
-            mode="currency"
-            currency="BDT"
-            locale="en-US"
-            inputStyle={{ width: "100%" }}
-            className={`w-full ${errors.discount_amount ? "p-invalid" : ""}`}
-            disabled
-          />
-          {errors.discount_amount && (
-            <small className="mb-3 text-red-500">
-              {errors.discount_amount}
-            </small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label
-            htmlFor="total_amount"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_po_master.t_po_master.total_amount.name}
-          </label>
-          <InputNumber
-            name="total_amount"
-            value={formData.total_amount}
-            onValueChange={(e) => onChange("total_amount", e.value)}
-            mode="currency"
-            currency="BDT"
-            locale="en-US"
-            inputStyle={{ width: "100%" }}
-            className={`w-full ${errors.total_amount ? "p-invalid" : ""}`}
-            disabled
-          />
-          {errors.total_amount && (
-            <small className="mb-3 text-red-500">{errors.total_amount}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label
-            htmlFor="paid_amount"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_po_master.t_po_master.paid_amount.name}
-          </label>
-          <InputNumber
-            name="paid_amount"
-            value={formData.paid_amount}
-            onValueChange={(e) => onChange("paid_amount", e.value)}
-            mode="currency"
-            currency="BDT"
-            locale="en-US"
-            inputStyle={{ width: "100%" }}
-            className={`w-full ${errors.paid_amount ? "p-invalid" : ""}`}
-          />
-          {errors.paid_amount && (
-            <small className="mb-3 text-red-500">{errors.paid_amount}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label
-            htmlFor="cost_amount"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_po_master.t_po_master.cost_amount.name}
-          </label>
-          <InputNumber
-            name="cost_amount"
-            value={formData.cost_amount}
-            onValueChange={(e) => onChange("cost_amount", e.value)}
-            mode="currency"
-            currency="BDT"
-            locale="en-US"
-            inputStyle={{ width: "100%" }}
-            className={`w-full ${errors.cost_amount ? "p-invalid" : ""}`}
-          />
-          {errors.cost_amount && (
-            <small className="mb-3 text-red-500">{errors.cost_amount}</small>
-          )}
-        </div>
 
-        <div className="col-12 md:col-2">
-          <label
-            htmlFor="is_posted"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_po_master.t_po_master.is_posted.name}
-          </label>
-          <Checkbox
-            name="is_posted"
-            checked={formData.is_posted === 1}
-            onChange={(e) => onChange("is_posted", e.checked ? 1 : 0)}
-            className={`w-full ${errors.is_posted ? "p-invalid" : ""}`}
-          />
-          {errors.is_posted && (
-            <small className="mb-3 text-red-500">{errors.is_posted}</small>
-          )}
-        </div>
-      </div>
+      <Accordion multiple activeIndex={[0]}>
+        <AccordionTab header={InvoiceHeader}>
+          <div className="grid">
+            <div className="col-12 md:col-2">
+              <label
+                htmlFor="order_date"
+                className="block text-900 font-medium mb-2"
+              >
+                {t_po_master.t_po_master.order_date.name}
+                <span className="text-red-500">*</span>
+              </label>
+              <Calendar
+                name="order_date"
+                value={
+                  formData.order_date ? new Date(formData.order_date) : null
+                }
+                onChange={(e) =>
+                  onChange(
+                    "order_date",
+                    e.value ? e.value.toISOString().split("T")[0] : ""
+                  )
+                }
+                className={`w-full ${errors.order_date ? "p-invalid" : ""}`}
+                dateFormat="yy-mm-dd"
+                placeholder={`Select ${t_po_master.t_po_master.order_date.name}`}
+              />
+              {errors.order_date && (
+                <small className="mb-3 text-red-500">{errors.order_date}</small>
+              )}
+            </div>
+            <div className="col-12 md:col-4">
+              <label
+                htmlFor="contact_id"
+                className="block text-900 font-medium mb-2"
+              >
+                {t_po_master.t_po_master.contact_id.name}
+                <span className="text-red-500">*</span>
+              </label>
+              <Dropdown
+                name="contact_id"
+                value={formData.contact_id}
+                options={contactsSupplier}
+                onChange={(e) => onChange("contact_id", e.value)}
+                className={`w-full ${errors.contact_id ? "p-invalid" : ""}`}
+                placeholder={`Select ${t_po_master.t_po_master.contact_id.name}`}
+                optionLabel="label"
+                optionValue="value"
+                filter
+                showClear
+              />
+              {errors.contact_id && (
+                <small className="mb-3 text-red-500">{errors.contact_id}</small>
+              )}
+            </div>
+            <div className="col-12 md:col-2">
+              <label
+                htmlFor="ref_no"
+                className="block text-900 font-medium mb-2"
+              >
+                {t_po_master.t_po_master.ref_no.name}
+              </label>
+              <InputText
+                name="ref_no"
+                value={formData.ref_no}
+                onChange={(e) => onChange("ref_no", e.target.value)}
+                className={`w-full ${errors.ref_no ? "p-invalid" : ""}`}
+                placeholder={`Enter ${t_po_master.t_po_master.ref_no.name}`}
+              />
+              {errors.ref_no && (
+                <small className="mb-3 text-red-500">{errors.ref_no}</small>
+              )}
+            </div>
+            <div className="col-12 md:col-3">
+              <label
+                htmlFor="order_note"
+                className="block text-900 font-medium mb-2"
+              >
+                {t_po_master.t_po_master.order_note.name}
+              </label>
+              <InputText
+                name="order_note"
+                value={formData.order_note}
+                onChange={(e) => onChange("order_note", e.target.value)}
+                className={`w-full ${errors.order_note ? "p-invalid" : ""}`}
+                placeholder={`Enter ${t_po_master.t_po_master.order_note.name}`}
+              />
+              {errors.order_note && (
+                <small className="mb-3 text-red-500">{errors.order_note}</small>
+              )}
+            </div>
+            <div className="col-12 md:col-1">
+              <label
+                htmlFor="is_posted"
+                className="block text-900 font-medium mb-2"
+              >
+                {t_po_master.t_po_master.is_posted.name}
+              </label>
 
-      {/* Child Editable Table */}
-      <div className="mt-2">
-        <div className="flex align-items-center gap-2 mb-2">
-          <Dropdown
-            value={selectedItem}
-            options={itemsPurchase.map((item) => ({
-              label: item.item_name,
-              value: item.item_id,
-            }))}
-            onChange={(e) => setSelectedItem(e.value)}
-            placeholder="Select Item"
-            optionLabel="label"
-            optionValue="value"
-            className="w-full"
-          />
-          <Button
-            label="Add"
-            icon="pi pi-plus"
-            onClick={handleAddItem}
+              <Checkbox
+                name="is_posted"
+                checked={formData.is_posted === 1}
+                onChange={(e) => onChange("is_posted", e.checked ? 1 : 0)}
+                className={errors.is_posted ? "p-invalid" : ""}
+              />
+
+              {errors.is_posted && (
+                <small className="text-red-500">{errors.is_posted}</small>
+              )}
+            </div>
+          </div>
+        </AccordionTab>
+
+        <AccordionTab header={ProductsHeader}>
+          {/* Child Editable Table */}
+          <div className="flex align-items-center gap-2 mb-2">
+            <Dropdown
+              value={selectedItem}
+              options={itemsPurchase.map((item) => ({
+                label: item.item_name,
+                value: item.item_id,
+              }))}
+              onChange={(e) => setSelectedItem(e.value)}
+              placeholder="Select Item"
+              optionLabel="label"
+              optionValue="value"
+              className="w-full"
+              filter
+              showClear
+            />
+            <InputNumber
+              name="itemQty"
+              value={itemQty}
+              onValueChange={(e) => setItemQty(e.value)}
+              placeholder="Enter Qty"
+            />
+            <InputText
+              name="itemNote"
+              value={itemNote}
+              onChange={(e) => setItemNote(e.target.value)}
+              placeholder="Note"
+            />
+            <Button
+              label="Add"
+              icon="pi pi-plus"
+              onClick={handleAddItem}
+              size="small"
+              severity="info"
+              className="pr-5"
+            />
+          </div>
+          <DataTable
+            value={orderChildItems}
+            editMode="row"
+            dataKey="id"
+            editingRows={editingRows}
+            onRowEditSave={onRowEditSave}
+            onRowEditCancel={onRowEditCancel}
+            onRowEditInit={onRowEditInit}
+            emptyMessage="No items found."
+            responsiveLayout="scroll"
+            className="bg-dark-300"
             size="small"
-          />
-        </div>
-        <DataTable
-          value={orderChildItems}
-          editMode="row"
-          dataKey="id"
-          editingRows={editingRows}
-          onRowEditSave={onRowEditSave}
-          onRowEditCancel={onRowEditCancel}
-          onRowEditInit={onRowEditInit}
-          emptyMessage="No items found."
-          responsiveLayout="scroll"
-          className="bg-dark-300"
-          size="small"
-        >
-          <Column
-            field="item_name"
-            header="Item Name"
-            footer={
-              <>
-                {orderChildItems.length} Items, {editingRows.length} Selected
-              </>
-            }
-          />
-          <Column
-            field="item_rate"
-            header="Rate"
-            body={itemRateTemplate}
-            editor={itemRateEditor}
-          />
-          <Column
-            field="booking_qty"
-            header="Booking Qty"
-            body={bookingQtyTemplate}
-            editor={numberEditor}
-            footer={totalBookingQtyTemplate}
-          />
-          <Column
-            field="discount_amount"
-            header="Discount"
-            body={discountAmountTemplate}
-            editor={itemRateEditor}
-            footer={discountAmountFooterTemplate}
-          />
-          <Column
-            field="item_amount"
-            header="Amount"
-            body={itemAmountTemplate}
-            footer={itemAmountFooterTemplate}
-          />
-          <Column header="Bulk" body={convertedQtyTemplate} />
-          <Column field="item_note" header="Note" editor={textEditor} />
-          <Column
-            rowEditor
-            headerStyle={{ width: "5%", minWidth: "8rem" }}
-            bodyStyle={{ textAlign: "center" }}
-          />
-          <Column
-            header="Actions"
-            body={actionTemplate}
-            style={{ width: "120px" }}
-          />
-        </DataTable>
-      </div>
+          >
+            <Column
+              field="item_name"
+              header="Item Name"
+              footer={
+                <>
+                  {orderChildItems.length} Items, {editingRows.length} Editing
+                </>
+              }
+            />
+            <Column
+              field="item_rate"
+              header="Rate"
+              body={itemRateTemplate}
+              editor={itemRateEditor}
+            />
+            <Column
+              field="booking_qty"
+              header="Booking Qty"
+              body={bookingQtyTemplate}
+              editor={numberEditor}
+              footer={totalBookingQtyTemplate}
+            />
+            <Column
+              field="discount_amount"
+              header="Discount"
+              body={discountAmountTemplate}
+              editor={itemRateEditor}
+              footer={discountAmountFooterTemplate}
+            />
+            <Column
+              field="item_amount"
+              header="Amount"
+              body={itemAmountTemplate}
+              footer={itemAmountFooterTemplate}
+            />
+            <Column header="Bulk" body={convertedQtyTemplate} />
+            <Column field="item_note" header="Note" editor={textEditor} />
+            <Column
+              rowEditor
+              headerStyle={{ width: "5%", minWidth: "8rem" }}
+              bodyStyle={{ textAlign: "center" }}
+            />
+            <Column
+              header="Actions"
+              body={actionTemplate}
+              style={{ width: "120px" }}
+            />
+          </DataTable>
+        </AccordionTab>
 
-      <div className="col-12 mt-2">
-        <div className="flex flex-row-reverse flex-wrap">
-          <Button
-            type="button"
-            onClick={(e) => {
-              onSaveAll(e);
-            }}
-            label={formData.po_master_id ? "Update" : "Save"}
-            icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
-            severity="success"
-            size="small"
-            loading={isBusy || editingRows.length > 0}
-            disabled={
-              (orderChildItems && orderChildItems.length < 1) ||
-              (formData.isedit)
-            }
-          />
-        </div>
-      </div>
+        <AccordionTab header={PaymentsHeader}>
+          <div className="grid">
+            {/* Right side payment summary – 3 columns offset */}
+            <div className="col-4 col-offset-8">
+              {/* PAYMENT SUMMARY */}
+              <div className="flex flex-column gap-3 mb-4">
+                <div className="flex justify-content-between">
+                  <span>{t_po_master.t_po_master.order_amount.name}:</span>
+                  <span className="font-bold">{formData.order_amount}/-</span>
+                </div>
+
+                <div className="flex justify-content-between">
+                  <span>{t_po_master.t_po_master.discount_amount.name}:</span>
+                  <span className="font-bold">
+                    {formData.discount_amount}/-
+                  </span>
+                </div>
+
+                <div className="flex justify-content-between">
+                  <span>{t_po_master.t_po_master.total_amount.name}:</span>
+                  <span className="font-bold">{formData.total_amount}/-</span>
+                </div>
+
+                <div className="flex justify-content-between">
+                  <span>{t_po_master.t_po_master.paid_amount.name}:</span>
+                  <span className="font-bold">{formData.paid_amount}/-</span>
+                </div>
+              </div>
+
+              {/* COST AMOUNT INPUT */}
+              <div className="field mb-3">
+                <label
+                  htmlFor="cost_amount"
+                  className="block text-900 font-medium mb-2"
+                >
+                  {t_po_master.t_po_master.cost_amount.name}
+                </label>
+
+                <InputNumber
+                  name="cost_amount"
+                  value={formData.cost_amount}
+                  onValueChange={(e) => onChange("cost_amount", e.value)}
+                  mode="currency"
+                  currency="BDT"
+                  locale="en-US"
+                  className={`w-full ${errors.cost_amount ? "p-invalid" : ""}`}
+                />
+
+                {errors.cost_amount && (
+                  <small className="text-red-500">{errors.cost_amount}</small>
+                )}
+              </div>
+
+              <div className="field mb-3">
+                <DataTable
+                  value={orderChildItems}
+                  editMode="row"
+                  dataKey="id"
+                  emptyMessage="No items found."
+                  className="bg-dark-300"
+                  size="small"
+                >
+                  <Column field="payment_mode" header="Mode" />
+                  <Column field="payment_note" header="Note" />
+                  <Column field="paid_amount" header="Paid" />
+                  <Column
+                    header="Actions"
+                    body={actionTemplate}
+                    style={{ width: "120px" }}
+                  />
+                </DataTable>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-row-reverse flex-wrap mt-2">
+            <Button
+              type="button"
+              onClick={(e) => {
+                onSaveAll(e);
+              }}
+              label={
+                formData.po_master_id
+                  ? "Update"
+                  : formData.is_posted
+                  ? "Save with Posted"
+                  : "Save as Draft"
+              }
+              icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
+              severity="success"
+              size="small"
+              loading={isBusy || editingRows.length > 0}
+              disabled={
+                (orderChildItems && orderChildItems.length < 1) ||
+                formData.isedit
+              }
+            />
+          </div>
+        </AccordionTab>
+      </Accordion>
     </div>
   );
 };

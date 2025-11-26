@@ -34,19 +34,34 @@ export const usePoMaster = () => {
   const [formDataPoMaster, setFormDataPoMaster] = useState({
     po_master_id: "",
     order_type: selectedPoType,
-    order_no: "AUTO[SGD#0001]",
+    order_no: "[SL-123456]",
     order_date: new Date().toISOString().split("T")[0],
     contact_id: "",
     ref_no: "No Ref",
     order_note: "",
     order_amount: 0,
     discount_amount: 0,
+    cost_amount: 0,
     total_amount: 0,
     paid_amount: 0,
-    cost_amount: 0,
-    is_paid: 0,
+    due_amount: 0,
+    is_paid: "Unpaid",
     is_posted: 0,
     is_completed: 0,
+    ismodified: 0,
+  });
+
+  const [formDataPayments, setFormDataPayments] = useState({
+    payment_id: "",
+    bank_account_id: "",
+    payment_type: "",
+    payment_mode: "",
+    payment_date: new Date().toISOString().split("T")[0],
+    contact_id: "",
+    ref_no: "",
+    payment_note: "",
+    paid_amount: 0,
+    order_amount: 0,
     ismodified: 0,
   });
 
@@ -262,7 +277,7 @@ export const usePoMaster = () => {
     setFormDataPoMaster({
       po_master_id: "",
       order_type: selectedPoType,
-      order_no: "AUTO[SGD#0001]",
+      order_no: "[SL-123456]",
       order_date: new Date().toISOString().split("T")[0],
       contact_id: "",
       ref_no: "No Ref",

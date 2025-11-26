@@ -124,6 +124,25 @@ const initTables = () => {
       )
     `);
 
+    // Purchase Payments table
+    db.run(`
+      CREATE TABLE IF NOT EXISTS payments (
+        payment_id TEXT PRIMARY KEY,
+        bank_account_id TEXT NOT NULL,
+        payment_type TEXT NOT NULL,
+        payment_mode TEXT NOT NULL,
+        payment_date TEXT NOT NULL,
+        contact_id TEXT NOT NULL,
+        ref_no TEXT,
+        payment_note TEXT,
+        paid_amount REAL DEFAULT 0,
+        order_amount REAL DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
+      )
+    `);
+
     // Purchase Order Master table
     db.run(`
       CREATE TABLE IF NOT EXISTS po_master (
@@ -136,10 +155,11 @@ const initTables = () => {
         order_note TEXT,
         order_amount REAL DEFAULT 0,
         discount_amount REAL DEFAULT 0,
+        cost_amount REAL DEFAULT 0,
         total_amount REAL DEFAULT 0,
         paid_amount REAL DEFAULT 0,
-        cost_amount REAL DEFAULT 0,
-        is_paid BOOLEAN DEFAULT 0,
+        due_amount REAL DEFAULT 0,
+        is_paid TEXT NOT NULL,
         is_posted BOOLEAN DEFAULT 0,
         is_completed BOOLEAN DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -259,9 +279,11 @@ const initData = (callback) => {
     db.run(
       `
       INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_address, contact_type, current_balance) VALUES
-      ('0', 'Adjustment', 'for internal transaction', 'Both', 0),
+      ('0', 'Adjustment A/C', 'for internal transaction', 'Both', 0),
       ('1', 'ABC Suppliers', '', 'Supplier', 0),
-      ('2', 'XYZ Customer', '', 'Customer', 0)
+      ('2', 'DEF Suppliers', '', 'Supplier', 0),
+      ('3', 'UVW Customer', '', 'Customer', 0),
+      ('4', 'XYZ Customer', '', 'Customer', 0)
     `,
       (err) => {
         if (err) {

@@ -119,13 +119,15 @@ router.post("/", (req, res) => {
     order_note,
     order_amount,
     discount_amount,
+    cost_amount,
     total_amount,
     paid_amount,
-    cost_amount,
+    due_amount,
     is_paid,
     is_posted,
     is_completed,
     childs_create,
+    payments_create,
   } = req.body;
 
   if (
@@ -137,8 +139,7 @@ router.post("/", (req, res) => {
     !Array.isArray(childs_create)
   ) {
     return res.status(400).json({
-      error:
-        "Master ID, order type, order date, contacts and childs are required",
+      error: "Id, order type, order date, contacts and childs are required",
     });
   }
 
@@ -151,8 +152,8 @@ router.post("/", (req, res) => {
     }
 
     const sqlMaster = `
-      INSERT INTO po_master (po_master_id, order_type, order_no, order_date, contact_id, ref_no, order_note, order_amount, discount_amount, total_amount, paid_amount, cost_amount, is_paid, is_posted)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO po_master (po_master_id, order_type, order_no, order_date, contact_id, ref_no, order_note, order_amount, discount_amount, cost_amount, total_amount, paid_amount, due_amount, is_paid, is_posted, is_completed)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)
     `;
     const masterParams = [
       po_master_id,
@@ -164,11 +165,13 @@ router.post("/", (req, res) => {
       order_note || "",
       order_amount || 0,
       discount_amount || 0,
+      cost_amount || 0,
       total_amount || 0,
       paid_amount || 0,
-      cost_amount || 0,
+      due_amount || 0,
       is_paid || 0,
       is_posted || 0,
+      0,
     ];
 
     //add here // Create new purchase order child
@@ -206,22 +209,12 @@ router.post("/", (req, res) => {
 
         db.run(sqlChild, paramsChild, function (err) {
           if (err) console.error("Child insert error:", err);
-
-          //execute invoice data processing
-          //processInvoiceData(po_master_id, order_type, ref_no);
         });
       });
 
       //ensure account process
-      createAccountingData(
-        contact_id,
-        order_date,
-        order_no,
-        total_amount,
-        paid_amount,
-        cost_amount,
-        order_type
-      );
+      createPaymentData(order_type, contact_id, order_no, payments_create);
+
       res.status(201).json({
         message: "Purchase Order created successfully!",
         po_master_id,
@@ -414,6 +407,29 @@ router.post("/delete", (req, res) => {
     res.json({ message: "Purchase order deleted successfully" });
   });
 });
+
+async function createPaymentData(payment_type, contact_id, ref_no, payments_create) {
+  try {
+    // Get default bank account
+    const row = db.get(`
+      SELECT bank_account_id
+      FROM bank_accounts
+      WHERE is_default = 1
+      LIMIT 1
+    `);
+
+    if (!row?.bank_account_id) {
+      throw new Error("No default bank account found");
+    }
+
+    const bank_account_id = row.bank_account_id;
+
+    
+    console.log("✔ Payment transaction completed");
+  } catch (err) {
+    console.error("✖ Payment transaction failed:", err);
+  }
+}
 
 async function upsertBankTrans({
   bank_account_id,
