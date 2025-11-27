@@ -7,6 +7,7 @@ const {
   dbRun,
   dbGet,
 } = require("../db/asyncScriptsRunner.js");
+const { processInvoiceData } = require("../dbproc/dbproc.js");
 
 // Get purchase order children by master ID
 router.get("/master/:masterId", (req, res) => {
@@ -28,7 +29,7 @@ router.get("/master/:masterId", (req, res) => {
     }
 
     //update invoice status
-    processInvoiceData(masterId);
+    processInvoiceData();
 
     res.json(rows);
   });
@@ -66,82 +67,6 @@ i.item_name, i.unit_difference_qty, u1.unit_name as small_unit_name, u2.unit_nam
     res.json(rows);
   });
 });
-
-async function processInvoiceData() {
-  const scripts = [];
-  scripts.push({
-    label: "Update Booking Order Qty",
-    sql: `UPDATE po_child AS poc
-          SET order_qty = (
-              SELECT SUM(poc_o.order_qty)
-              FROM po_child AS poc_o
-              JOIN po_master AS pom ON poc.po_master_id = pom.po_master_id
-              WHERE poc_o.ref_id = poc.id
-                AND pom.order_type = 'Purchase Booking'
-                AND pom.is_posted = 1
-                AND pom.is_completed = 0
-          )
-          WHERE EXISTS (
-              SELECT 1
-              FROM po_child AS poc_o
-              JOIN po_master AS pom ON poc.po_master_id = pom.po_master_id
-              WHERE poc_o.ref_id = poc.id
-                AND pom.order_type = 'Purchase Booking'
-                AND pom.is_posted = 1
-                AND pom.is_completed = 0
-          )`,
-    params: [],
-  });
-
-  scripts.push({
-    label: "Purchase Booking Mark as Completed",
-    sql: `UPDATE po_master AS pom
-SET is_completed = (
-    SELECT CASE
-             WHEN SUM(poc.booking_qty - poc.order_qty) > 0 THEN 0
-             ELSE 1
-           END
-    FROM po_child AS poc
-    WHERE poc.po_master_id = pom.po_master_id
-)
-WHERE pom.order_type IN ('Purchase Booking')
-  AND pom.is_posted = 1
-  AND pom.is_completed = 0
-`,
-    params: [],
-  });
-
-  scripts.push({
-    label: "Purchase Receive and Return Mark as completed",
-    sql: `UPDATE po_master AS pom
-SET is_completed = 1
-WHERE pom.order_type IN ('Purchase Receive','Purchase Order','Purchase Return')
-  AND pom.is_posted = 1
-  AND pom.is_paid = 'Paid'
-  AND pom.is_completed = 0
-`,
-    params: [],
-  });
-
-  scripts.push({
-    label: "Update Purchase Booking Payment",
-    sql: `UPDATE payments AS p
-SET order_amount = (
-    SELECT IFNULL(SUM(pr.payment_amount), 0)
-    FROM payments pr
-    WHERE pr.payment_type = 'Purchase Receive'
-      AND pr.ref_id = p.payment_id
-)
-WHERE p.payment_type = 'Purchase Booking'
-  AND p.payment_amount > p.order_amount`,
-    params: [],
-  });
-
-
-    const results = await runScriptsSequentially(scripts, {
-    useTransaction: true,
-  });
-}
 
 async function updateBillsPaidStatus() {
   // 1. Get all bills in the order they were created

@@ -530,6 +530,7 @@ const OrderComponent = ({
               value={itemQty}
               onValueChange={(e) => setItemQty(e.value)}
               placeholder="Enter Qty"
+              inputStyle={{ width: "100%" }}
             />
             <InputText
               name="itemNote"
@@ -637,6 +638,7 @@ const OrderComponent = ({
                     currency="BDT"
                     locale="en-US"
                     className={`${errors.cost_amount ? "p-invalid" : ""}`}
+                    inputStyle={{ width: "100%" }}
                   />
                   {errors.cost_amount && (
                     <small className="text-red-500">{errors.cost_amount}</small>
@@ -672,6 +674,7 @@ const OrderComponent = ({
                     currency="BDT"
                     locale="en-US"
                     className={`${errors.other_cost ? "p-invalid" : ""}`}
+                    inputStyle={{ width: "100%" }}
                   />
                   {errors.other_cost && (
                     <small className="text-red-500">{errors.other_cost}</small>
@@ -701,6 +704,7 @@ const OrderComponent = ({
                     onValueChange={(e) => handlePaymentChange(e)}
                     className={`${errors.payment_amount ? "p-invalid" : ""}`}
                     placeholder="Payment Amount"
+                    inputStyle={{ width: "100%" }}
                   />
                   {errors.payment_amount && (
                     <small className="text-red-500">

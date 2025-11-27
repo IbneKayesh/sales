@@ -29,7 +29,7 @@
       "maxLength": 255
     },
     "payment_date": {
-      "name": "Date",
+      "name": "Payment Date",
       "type": "string",
       "required": true,
       "format": "date"

@@ -1,32 +1,29 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useBankTransaction } from "@/hooks/accounts/useBankTransaction";
+import { usePayments } from "@/hooks/accounts/usePayments";
 import { useBankAccount } from "@/hooks/accounts/useBankAccount";
-import BankTransactionListComponent from "./BankTransactionListComponent";
-import BankTransactionFormComponent from "./BankTransactionFormComponent";
+import PaymentsListComponent from "./PaymentsListComponent";
+import PaymentsFormComponent from "./PaymentsFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 
-const SupplierPaymentsPage = () => {
+const PaymentsPage = () => {
   const toast = useRef(null);
   const {
-    bankTransactions,
+    dueList,
     toastBox,
     isBusy,
     currentView,
     errors,
-    formDataBankTransaction,
+    formDataPayment,
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditBankTransaction,
-    handleDeleteBankTransaction,
+    handleEditPayment,
+    handleDeletePayment,
     handleRefresh,
-    handleSaveBankTransaction,
-    transHeads,
-    refNoTrans,
-    selectedRefNoTrans,
-  } = useBankTransaction();
+    handleSavePayment,
+  } = usePayments();
   const { bankAccounts } = useBankAccount();
 
   useEffect(() => {
@@ -47,10 +44,10 @@ const SupplierPaymentsPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Bank Transaction List"
-            : formDataBankTransaction.bank_transactions_id
-            ? "Edit Bank Transaction"
-            : "Add New Bank Transaction"}
+            ? "Payments List"
+            : formDataPayment.payments_id
+            ? "Edit Payments"
+            : "Add New Payments"}
         </h3>
 
         {isList ? (
@@ -63,7 +60,7 @@ const SupplierPaymentsPage = () => {
               onClick={handleRefresh}
             />
             <Button
-              label="New Bank Transaction"
+              label="New Payment"
               icon="pi pi-plus"
               size="small"
               onClick={handleAddNew}
@@ -71,7 +68,7 @@ const SupplierPaymentsPage = () => {
           </div>
         ) : (
           <Button
-            label="Bank Transaction List"
+            label="Payment List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -86,22 +83,19 @@ const SupplierPaymentsPage = () => {
       <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <BankTransactionListComponent
-            dataList={bankTransactions}
-            onEdit={handleEditBankTransaction}
-            onDelete={handleDeleteBankTransaction}
+          <PaymentsListComponent
+            dataList={dueList}
+            onEdit={handleEditPayment}
+            onDelete={handleDeletePayment}
           />
         ) : (
-          <BankTransactionFormComponent
+          <PaymentsFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={formDataBankTransaction}
+            formData={formDataPayment}
             onChange={handleChange}
-            onSave={handleSaveBankTransaction}
+            onSave={handleSavePayment}
             bankAccounts={bankAccounts}
-            transHeads={transHeads}
-            refNoTrans={refNoTrans}
-            selectedRefNoTrans={selectedRefNoTrans}
           />
         )}
       </Card>
@@ -109,4 +103,4 @@ const SupplierPaymentsPage = () => {
   );
 };
 
-export default SupplierPaymentsPage;
+export default PaymentsPage;

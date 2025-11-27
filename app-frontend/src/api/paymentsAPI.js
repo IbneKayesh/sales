@@ -2,7 +2,7 @@ import { apiRequest } from '@/utils/api.js';
 
 // Payments API
 export const paymentsAPI = {
-  getAll: () => apiRequest('/payments'),
+  getAllDues: () => apiRequest('/payments/dues'),
   getById: (id) => apiRequest(`/payments/${id}`),
   getByRefNo: (refNo) => apiRequest(`/payments/refno/${refNo}`),
   getBySupplierId: (supplierId) => apiRequest(`/payments/supplier/${supplierId}`),

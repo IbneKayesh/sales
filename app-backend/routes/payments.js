@@ -1,10 +1,21 @@
 const express = require("express");
 const { db } = require("../db/init");
 const router = express.Router();
+const {
+  runScriptsSequentially,
+  dbRun,
+  dbGet,
+} = require("../db/asyncScriptsRunner.js");
+const { processInvoiceData } = require("../dbproc/dbproc.js");
 
-// Get all payments
-router.get("/", (req, res) => {
-  db.all("SELECT * FROM payments ORDER BY payment_id", [], (err, rows) => {
+// Get all dues
+router.get("/dues", (req, res) => {
+  const sql = `SELECT con.contact_id,con.contact_name,con.contact_type,pom.order_type,pom.order_no,pom.order_date,pom.due_amount
+  FROM po_master pom
+  LEFT JOIN contacts con on pom.contact_id = con.contact_id
+  WHERE pom.order_type IN ('Purchase Booking')
+  AND pom.due_amount > 0`;
+  db.all(sql, [], (err, rows) => {
     if (err) {
       console.error("Database error:", err);
       return res.status(500).json({ error: "Internal server error" });
@@ -59,29 +70,76 @@ AND p.contact_id = ?`;
 });
 
 // Create new payment
-router.post("/", (req, res) => {
-  const { payment_id, payment_name } = req.body;
+router.post("/", async (req, res) => {
+  const {
+    payment_id,
+    bank_account_id,
+    payment_type,
+    payment_mode,
+    payment_date,
+    contact_id,
+    ref_no,
+    payment_amount,
+    payment_note,
+  } = req.body;
 
-  if (!payment_name) {
-    return res.status(400).json({ error: "Payment name is required" });
+  // Validate
+  if (
+    !payment_id ||
+    !bank_account_id ||
+    !payment_type ||
+    !payment_mode ||
+    !payment_date ||
+    !contact_id ||
+    !ref_no ||
+    !payment_amount
+  ) {
+    return res.status(400).json({
+      error:
+        "Id, bank account id, payment type, payment mode, payment date, contact id, ref no, payment amount, payment note are required",
+    });
   }
 
-  if (!payment_id) {
-    return res.status(400).json({ error: "Payment ID is required" });
-  }
+  // Build SQL scripts for transaction
+  const scripts = [];
 
-  const sql = `
-    INSERT INTO payments (payment_id, payment_name)
-    VALUES (?, ?)
-  `;
-  const params = [payment_id, payment_name];
+  scripts.push({
+    label: "Insert Payment",
+    sql: `
+    INSERT INTO payments (payment_id, bank_account_id, payment_type, payment_mode, payment_date, contact_id, ref_no, payment_amount, payment_note)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    params: [
+      payment_id,
+      bank_account_id,
+      payment_type,
+      payment_mode,
+      payment_date,
+      contact_id,
+      ref_no,
+      payment_amount,
+      payment_note,
+    ],
+  });
 
-  db.run(sql, params, function (err) {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    res.status(201).json({ unit_id, ...req.body });
+  // --- Run all scripts inside a transaction ---
+  const results = await runScriptsSequentially(scripts, {
+    useTransaction: true,
+  });
+
+  //update invoice status
+  processInvoiceData();
+
+  res.status(201).json({
+    message: "Payment created successfully!",
+    payment_id,
+    bank_account_id,
+    payment_type,
+    payment_mode,
+    payment_date,
+    contact_id,
+    ref_no,
+    payment_amount,
+    payment_note,
   });
 });
 

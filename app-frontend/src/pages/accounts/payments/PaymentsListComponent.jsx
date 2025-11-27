@@ -4,7 +4,7 @@ import { Button } from "primereact/button";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 
-const BankTransactionListComponent = ({ dataList, onEdit, onDelete }) => {
+const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
 
   const handleDelete = (rowData) => {
     confirmDialog({
@@ -28,7 +28,7 @@ const BankTransactionListComponent = ({ dataList, onEdit, onDelete }) => {
         command: () => {
           handleDelete(rowData);
         },
-        disabled: rowData.ismodified,
+        disabled: 1,
       },
     ];
     return (
@@ -46,18 +46,16 @@ const BankTransactionListComponent = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const debitAmountTemplate = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.debit_amount);
+  const nameTemplate = (rowData) => {
+    return rowData.contact_name + " - " + rowData.contact_type;
   };
 
-  const creditAmountTemplate = (rowData) => {
+
+  const dueAmountTemplate = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
-    }).format(rowData.credit_amount);
+    }).format(rowData.due_amount);
   };
 
   return (
@@ -69,23 +67,17 @@ const BankTransactionListComponent = ({ dataList, onEdit, onDelete }) => {
         rows={10}
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
-        responsiveLayout="scroll"
         className="bg-dark-300"
         size="small"
       >
-        <Column field="account_name" header="Account Name" sortable />
-        <Column field="ref_no" header="Reference" sortable/>
-        <Column field="trans_date" header="Date" sortable />
+        <Column field="contact_name" header="Name" sortable body={nameTemplate} />
+        <Column field="order_type" header="Type" sortable/>
+        <Column field="order_no" header="Order No" sortable />
+        <Column field="order_date" header="Order Date" sortable />
         <Column
-          field="debit_amount"
-          header="Debit Amount"
-          body={debitAmountTemplate}
-          sortable
-        />
-        <Column
-          field="credit_amount"
-          header="Credit Amount"
-          body={creditAmountTemplate}
+          field="due_amount"
+          header="Due Amount"
+          body={dueAmountTemplate}
           sortable
         />
         <Column
@@ -98,4 +90,4 @@ const BankTransactionListComponent = ({ dataList, onEdit, onDelete }) => {
   );
 };
 
-export default BankTransactionListComponent;
+export default PaymentsListComponent;

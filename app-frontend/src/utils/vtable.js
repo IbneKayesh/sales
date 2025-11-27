@@ -133,7 +133,18 @@ function getTransHeadList() {
   return [...new Set(heads)];
 }
 
-export { getListByTransHead, getTransHeadList, defaultList };
+
+
+
+
+const paymentModeOptions = [
+    { label: "Cash", value: "Cash" },
+    { label: "Bank", value: "Bank" },
+    { label: "MFS", value: "MFS" },
+];
+
+
+export { getListByTransHead, getTransHeadList, defaultList, paymentModeOptions };
 
 
 
@@ -155,3 +166,4 @@ cost_amount :: Account Credit
 
 */
 //Purchases and Stock
+

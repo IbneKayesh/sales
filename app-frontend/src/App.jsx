@@ -17,7 +17,7 @@ import PrequestPage from "./pages/prequest/PrequestPage.jsx";
 import SrequestPage from "./pages/srequest/SrequestPage.jsx";
 import BankAccountPage from "./pages/accounts/bankaccount/BankAccountPage.jsx";
 import BankTransactionPage from "./pages/accounts/banktransaction/BankTransactionPage.jsx";
-import SupplierPaymentsPage from "./pages/accounts/supplierpayments/SupplierPaymentsPage.jsx";
+import PaymentsPage from "./pages/accounts/payments/PaymentsPage.jsx";
 import ItemsPage from "./pages/inventory/items/ItemsPage.jsx";
 import UnitsPage from "./pages/inventory/units/UnitsPage.jsx";
 import CategoryPage from "./pages/inventory/category/CategoryPage.jsx";
@@ -60,8 +60,14 @@ function AppRoutes({ toast }) {
         <Route path="prequest" element={<PrequestPage />} />
         <Route path="srequest" element={<SrequestPage />} />
         <Route path="accounts/bank-account" element={<BankAccountPage />} />
-        <Route path="accounts/bank-transaction" element={<BankTransactionPage />} />
-        <Route path="accounts/supplier-payments" element={<SupplierPaymentsPage />} />
+        <Route
+          path="accounts/bank-transaction"
+          element={<BankTransactionPage />}
+        />
+        <Route
+          path="accounts/payments"
+          element={<PaymentsPage />}
+        />
         <Route path="inventory/items" element={<ItemsPage />} />
         <Route path="inventory/units" element={<UnitsPage />} />
         <Route path="inventory/category" element={<CategoryPage />} />
@@ -70,6 +76,7 @@ function AppRoutes({ toast }) {
         <Route path="setup/change-password" element={<ChangePasswordPage />} />
         <Route path="setup/closing-process" element={<ClosingProcessPage />} />
         <Route path="setup/backup" element={<BackupPage />} />
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>
     </Routes>
   );

@@ -635,6 +635,7 @@ const BookingComponent = ({
                     currency="BDT"
                     locale="en-US"
                     className={`${errors.cost_amount ? "p-invalid" : ""}`}
+                    inputStyle={{ width: "100%" }}
                   />
                   {errors.cost_amount && (
                     <small className="text-red-500">{errors.cost_amount}</small>
@@ -669,7 +670,7 @@ const BookingComponent = ({
                     mode="currency"
                     currency="BDT"
                     locale="en-US"
-                    className={`${errors.other_cost ? "p-invalid" : ""}`}
+                    className={`${errors.other_cost ? "p-invalid" : ""}`}           inputStyle={{ width: "100%" }}
                   />
                   {errors.other_cost && (
                     <small className="text-red-500">{errors.other_cost}</small>
@@ -699,6 +700,7 @@ const BookingComponent = ({
                     onValueChange={(e) => handlePaymentChange(e)}
                     className={`${errors.payment_amount ? "p-invalid" : ""}`}
                     placeholder="Payment Amount"
+                    inputStyle={{ width: "100%" }}
                   />
                   {errors.payment_amount && (
                     <small className="text-red-500">
