@@ -4,8 +4,10 @@ import { generateGuid } from "@/utils/guid";
 
 import validate from "@/models/validator";
 import t_payments from "@/models/accounts/t_payments.json";
+import useClosingProcess from "@/hooks/setup/useClosingProcess";
 
 export const usePayments = () => {
+  const { processAll } = useClosingProcess();
   const [dueList, setDueList] = useState([]); // Initialize with empty array
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
@@ -28,7 +30,7 @@ export const usePayments = () => {
   const loadDues = async (resetModified = false) => {
     try {
       const data = await paymentsAPI.getAllDues();
-      console.log("dues data: " + JSON.stringify(data));
+      // console.log("dues data: " + JSON.stringify(data));
       setDueList(data);
       if (resetModified) {
         setToastBox({
@@ -189,6 +191,8 @@ export const usePayments = () => {
           detail: `"${formDataPayment.ref_no}" added successfully.`,
         });
       }
+
+      await processAll("Payment Add");
 
       //reload all dues
       loadDues();

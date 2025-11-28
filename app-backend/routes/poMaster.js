@@ -80,7 +80,7 @@ router.get("/", (req, res) => {
     ${whereClause}
     ORDER BY pom.is_paid ASC, pom.is_completed ASC
   `;
-  console.log(sql);
+  //console.log(sql);
 
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -165,6 +165,7 @@ router.post("/", async (req, res) => {
         });
       });
     };
+
     const order_no = await generateOrderNumberAsync(order_type);
     console.log("Generated Order No:", order_no);
 
@@ -370,6 +371,7 @@ router.post("/update", async (req, res) => {
   const bank_account_id = bankRow.bank_account_id;
 
   const scripts = [];
+
   // -------------------------------
   // UPDATE MASTER
   // -------------------------------

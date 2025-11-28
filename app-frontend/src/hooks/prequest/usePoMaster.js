@@ -7,8 +7,11 @@ import { generateGuid } from "@/utils/guid";
 import validate from "@/models/validator";
 import t_po_master from "@/models/prequest/t_po_master.json";
 import t_po_child from "@/models/prequest/t_po_child.json";
+import useClosingProcess from "@/hooks/setup/useClosingProcess";
 
 export const usePoMaster = () => {
+  const { processAll } = useClosingProcess();
+
   const [poMasters, setPoMasters] = useState([]); // Initialize with empty array
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
@@ -425,7 +428,7 @@ export const usePoMaster = () => {
 
   const handleSaveAll = async (e) => {
     e.preventDefault();
-    //setIsBusy(true);
+    setIsBusy(true);
     try {
       //order master data
       const newErrors = validate(formDataPoMaster, t_po_master.t_po_master);
@@ -512,6 +515,7 @@ export const usePoMaster = () => {
           formDataPoMaster.po_master_id,
           newPoMasterData
         );
+        await processAll("Purchase Edit");
         setToastBox({
           severity: "success",
           summary: "Success",
@@ -536,6 +540,8 @@ export const usePoMaster = () => {
         };
         //console.log("newPoMasterData " + JSON.stringify(newPoMasterData));
         const newPoMaster = await poMasterAPI.create(newPoMasterData);
+
+        await processAll("Purchase Add");
 
         setToastBox({
           severity: "success",

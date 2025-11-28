@@ -610,7 +610,7 @@ const BookingComponent = ({
         <AccordionTab header={PaymentsHeader}>
           <div className="grid">
             {/* Right side payment summary – 3 columns offset */}
-            <div className="col-3 col-offset-9">
+            <div className="col-4 col-offset-8">
               {/* PAYMENT SUMMARY */}
               <div className="flex flex-column gap-3 mb-4">
                 <div className="flex justify-content-between">

@@ -6,7 +6,6 @@ const {
   dbRun,
   dbGet,
 } = require("../db/asyncScriptsRunner.js");
-const { processInvoiceData } = require("../dbproc/dbproc.js");
 
 // Get all dues
 router.get("/dues", (req, res) => {
@@ -125,9 +124,6 @@ router.post("/", async (req, res) => {
   const results = await runScriptsSequentially(scripts, {
     useTransaction: true,
   });
-
-  //update invoice status
-  processInvoiceData();
 
   res.status(201).json({
     message: "Payment created successfully!",

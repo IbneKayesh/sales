@@ -282,10 +282,10 @@ const initData = (callback) => {
       `
       INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_address, contact_type, current_balance) VALUES
       ('0', 'Adjustment A/C', 'for internal transaction', 'Both', 0),
-      ('1', 'ABC Suppliers', '', 'Supplier', 0),
-      ('2', 'DEF Suppliers', '', 'Supplier', 0),
-      ('3', 'UVW Customer', '', 'Customer', 0),
-      ('4', 'XYZ Customer', '', 'Customer', 0)
+      ('1', 'Supplier 1', '', 'Supplier', 0),
+      ('2', 'Supplier 2', '', 'Supplier', 0),
+      ('3', 'Customer 1', '', 'Customer', 0),
+      ('4', 'Customer 2', '', 'Customer', 0)
     `,
       (err) => {
         if (err) {

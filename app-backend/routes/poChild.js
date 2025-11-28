@@ -7,7 +7,6 @@ const {
   dbRun,
   dbGet,
 } = require("../db/asyncScriptsRunner.js");
-const { processInvoiceData } = require("../dbproc/dbproc.js");
 
 // Get purchase order children by master ID
 router.get("/master/:masterId", (req, res) => {
@@ -28,9 +27,6 @@ router.get("/master/:masterId", (req, res) => {
       return res.status(500).json({ error: "Internal server error" });
     }
 
-    //update invoice status
-    processInvoiceData();
-
     res.json(rows);
   });
 });
@@ -38,8 +34,7 @@ router.get("/master/:masterId", (req, res) => {
 // Get purchase order children by supplier :: Purchase Receive
 router.get("/booking/:supplierId", (req, res) => {
   const { supplierId } = req.params;
-  //update again before loading
-  processInvoiceData();
+  
   const sql = `SELECT poc.id,'sgd' po_master_id, poc.item_id,poc.item_rate,
 poc.booking_qty - SUM(ifnull(pocb.order_qty,0)) booking_qty, poc.booking_qty - SUM(ifnull(pocb.order_qty,0)) order_qty,
 poc.discount_percent, poc.discount_amount, poc.item_rate * (poc.booking_qty - SUM(ifnull(pocb.order_qty,0)))  item_amount, poc.cost_rate, poc.item_note, poc.id ref_id, poc.created_at, poc.updated_at,

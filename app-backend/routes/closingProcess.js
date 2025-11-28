@@ -2,224 +2,7 @@ const express = require("express");
 const { db } = require("../db/init");
 const router = express.Router();
 
-// Update bank transactions
-router.post("/update-bank-transaction", (req, res) => {
-  // in First: Handle supplier balance updates and bank transactions for purchase orders
-  const poSql = `
-      SELECT pom.po_master_id, pom.order_type, pom.contacts_id, pom.total_amount, pom.paid_amount, pom.order_no, pom.order_date, c.contact_name
-      FROM po_master pom
-      JOIN contacts c ON pom.contacts_id = c.contact_id
-      WHERE pom.order_type IN ('Purchase Booking', 'Purchase Receive') AND c.contact_type IN ('Supplier', 'Both')
-    `;
-
-  db.all(poSql, [], (err3, poRows) => {
-    if (err3) {
-      console.error("Error fetching purchase orders:", err3);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-
-    // Get a default bank account for transactions
-    const bankAccountSql = `SELECT bank_account_id FROM bank_accounts WHERE is_default = 1 LIMIT 1`;
-    db.get(bankAccountSql, [], (err4, bankAccount) => {
-      if (err4) {
-        console.error("Error fetching bank account:", err4);
-        return res.status(500).json({ error: "Internal server error" });
-      }
-
-      if (!bankAccount) {
-        console.error("No bank account found");
-        return res.status(500).json({ error: "No bank account available" });
-      }
-
-      const bankAccountId = bankAccount.bank_account_id;
-
-      let processed = 0;
-      const total = poRows.length;
-
-      if (total === 0) {
-        // in last: update bank_accounts
-        const updateBankAccountsSql = `
-          UPDATE bank_accounts
-          SET debit_balance = COALESCE(
-                  (SELECT SUM(debit_amount)
-                   FROM bank_transactions
-                   WHERE bank_account_id = bank_accounts.bank_account_id), 0),
-              credit_balance = COALESCE(
-                  (SELECT SUM(credit_amount)
-                   FROM bank_transactions
-                   WHERE bank_account_id = bank_accounts.bank_account_id), 0),
-              current_balance = debit_balance - credit_balance;
-        `;
-
-        db.run(updateBankAccountsSql, function (err) {
-          if (err) {
-            console.error("Error updating bank_accounts:", err);
-            return res.status(500).json({ error: "Internal server error" });
-          }
-
-          return res.json({
-            success: true,
-            message: "Bank balances and supplier balances updated successfully",
-          });
-        });
-        return;
-      }
-
-      poRows.forEach((po) => {
-        const {
-          order_type,
-          contacts_id,
-          total_amount,
-          paid_amount,
-          order_no,
-          order_date,
-          contact_name,
-        } = po;
-
-        let balanceChange = 0;
-        let debitAmount = 0;
-        let creditAmount = 0;
-        let transType = order_type;
-        let transDesc = "";
-
-        if (order_type === "Purchase Booking") {
-          debitAmount = total_amount;
-          transDesc = `PB for ${contact_name} on ${order_date}`;
-        } else if (order_type === "Purchase Receive") {
-          creditAmount = paid_amount;
-          transDesc = `PR for ${contact_name} on ${order_date}`;
-        }
-
-        balanceChange = debitAmount - creditAmount;
-
-        // Update supplier balance
-        const updateBalanceSql = `
-            UPDATE contacts
-            SET current_balance = current_balance + ?
-            WHERE contact_id = ?
-          `;
-        db.run(updateBalanceSql, [balanceChange, contacts_id], function (err5) {
-          if (err5) {
-            console.error("Error updating supplier balance:", err5);
-          }
-
-          // Create bank transaction if not already created by reference_no
-          // if already created transaction, then update transaction debit and credit amount
-          const checkTransSql = `SELECT bank_transactions_id FROM bank_transactions WHERE reference_no = ?`;
-          db.get(checkTransSql, [order_no], (err7, existingTrans) => {
-            if (err7) {
-              console.error("Error checking existing transaction:", err7);
-            }
-
-            if (existingTrans) {
-              // Update existing transaction
-              const updateTransSql = `UPDATE bank_transactions SET debit_amount = ?, credit_amount = ? WHERE bank_transactions_id = ?`;
-              db.run(
-                updateTransSql,
-                [debitAmount, creditAmount, existingTrans.bank_transactions_id],
-                function (err8) {
-                  if (err8) {
-                    console.error("Error updating bank transaction:", err8);
-                  }
-
-                  processed++;
-                  if (processed === total) {
-                    // in last: update bank_accounts
-                    const updateBankAccountsSql = `
-                      UPDATE bank_accounts
-                      SET debit_balance = COALESCE(
-                              (SELECT SUM(debit_amount)
-                               FROM bank_transactions
-                               WHERE bank_account_id = bank_accounts.bank_account_id), 0),
-                          credit_balance = COALESCE(
-                              (SELECT SUM(credit_amount)
-                               FROM bank_transactions
-                               WHERE bank_account_id = bank_accounts.bank_account_id), 0),
-                          current_balance = debit_balance - credit_balance;
-                    `;
-
-                    db.run(updateBankAccountsSql, function (err) {
-                      if (err) {
-                        console.error("Error updating bank_accounts:", err);
-                        return res
-                          .status(500)
-                          .json({ error: "Internal server error" });
-                      }
-
-                      res.json({
-                        success: true,
-                        message:
-                          "Bank balances and supplier balances updated successfully",
-                      });
-                    });
-                  }
-                }
-              );
-            } else {
-              // Insert new transaction
-              const transId = require("crypto").randomUUID();
-              const insertTransSql = `
-                  INSERT INTO bank_transactions (
-                    bank_transactions_id, bank_account_id, transaction_date, transaction_name, reference_no,
-                    transaction_details, debit_amount, credit_amount
-                  )
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                `;
-              const transParams = [
-                transId,
-                bankAccountId,
-                order_date,
-                transType,
-                order_no,
-                transDesc,
-                debitAmount,
-                creditAmount,
-              ];
-
-              db.run(insertTransSql, transParams, function (err6) {
-                if (err6) {
-                  console.error("Error creating bank transaction:", err6);
-                }
-
-                processed++;
-                if (processed === total) {
-                  // in last: update bank_accounts
-                  const updateBankAccountsSql = `
-                      UPDATE bank_accounts
-                      SET debit_balance = COALESCE(
-                              (SELECT SUM(debit_amount)
-                               FROM bank_transactions
-                               WHERE bank_account_id = bank_accounts.bank_account_id), 0),
-                          credit_balance = COALESCE(
-                              (SELECT SUM(credit_amount)
-                               FROM bank_transactions
-                               WHERE bank_account_id = bank_accounts.bank_account_id), 0),
-                          current_balance = debit_balance - credit_balance;
-                    `;
-
-                  db.run(updateBankAccountsSql, function (err) {
-                    if (err) {
-                      console.error("Error updating bank_accounts:", err);
-                      return res
-                        .status(500)
-                        .json({ error: "Internal server error" });
-                    }
-
-                    res.json({
-                      success: true,
-                      message:
-                        "Bank balances and supplier balances updated successfully",
-                    });
-                  });
-                }
-              });
-            }
-          });
-        });
-      });
-    });
-  });
-});
+const { runScriptsSequentially } = require("../db/asyncScriptsRunner.js");
 
 // Update item
 router.post("/update-item", (req, res) => {
@@ -270,47 +53,186 @@ router.post("/update-item", (req, res) => {
 
   //update stock qty
   const sql_stock_v1 = `UPDATE items
-SET stock_qty = (
-    SELECT SUM(order_qty)
-    FROM (
-        SELECT poc.item_id, SUM(poc.order_qty) AS order_qty
-        FROM po_child poc
-        JOIN po_master pom ON poc.po_master_id = pom.po_master_id
-        WHERE pom.order_type IN ('Purchase Receive','Purchase Order')
-        GROUP BY poc.item_id
+              SET stock_qty = (
+                  SELECT SUM(order_qty)
+                  FROM (
+                      SELECT poc.item_id, SUM(poc.order_qty) AS order_qty
+                      FROM po_child poc
+                      JOIN po_master pom ON poc.po_master_id = pom.po_master_id
+                      WHERE pom.order_type IN ('Purchase Receive','Purchase Order')
+                      GROUP BY poc.item_id
 
-        UNION ALL
+                      UNION ALL
 
-        SELECT poc.item_id, -SUM(poc.order_qty) AS order_qty
-        FROM po_child poc
-        JOIN po_master pom ON poc.po_master_id = pom.po_master_id
-        WHERE pom.order_type IN ('Purchase Return')
-        GROUP BY poc.item_id
-    ) tmp
-    WHERE tmp.item_id = items.id
-)
-WHERE items.id IN (
-    SELECT item_id FROM po_child
-)`;
+                      SELECT poc.item_id, -SUM(poc.order_qty) AS order_qty
+                      FROM po_child poc
+                      JOIN po_master pom ON poc.po_master_id = pom.po_master_id
+                      WHERE pom.order_type IN ('Purchase Return')
+                      GROUP BY poc.item_id
+                  ) tmp
+                  WHERE tmp.item_id = items.id
+              )
+              WHERE items.id IN (
+                  SELECT item_id FROM po_child
+              )`;
 
   const sql_c = `UPDATE items
-        SET stock_qty = (
-            SELECT SUM(
-                CASE
-                    WHEN pom.order_type IN ('Purchase Receive','Purchase Order') THEN poc.order_qty
-                    WHEN pom.order_type = 'Purchase Return' THEN -poc.order_qty
-                END
-            )
-            FROM po_child poc
-            JOIN po_master pom ON poc.po_master_id = pom.po_master_id
-            WHERE poc.item_id = items.item_id
-        )`;
+            SET stock_qty = (
+                SELECT SUM(
+                    CASE
+                        WHEN pom.order_type IN ('Purchase Receive','Purchase Order') THEN poc.order_qty
+                        WHEN pom.order_type = 'Purchase Return' THEN -poc.order_qty
+                    END
+                )
+                FROM po_child poc
+                JOIN po_master pom ON poc.po_master_id = pom.po_master_id
+                WHERE poc.item_id = items.item_id
+            )`;
   db.run(sql_c, [], function (err) {
     if (err) {
       console.error("Database error in sql_c:", err);
       //return;
     }
   });
+});
+
+// Update purchase
+router.post("/update-purchase", async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Transaction ID is required" });
+  }
+
+  const scripts = [];
+
+  scripts.push({
+    label: "Update Payment and Due for Pay later",
+    sql: `
+    UPDATE po_master AS pom
+    SET paid_amount = (
+        SELECT COALESCE(SUM(p.payment_amount), 0)
+        FROM payments p
+        WHERE p.ref_no = pom.order_no
+        AND p.contact_id = pom.contact_id
+    ),
+    due_amount = total_amount - (
+        SELECT COALESCE(SUM(p.payment_amount), 0)
+        FROM payments p
+        WHERE p.ref_no = pom.order_no
+        AND p.contact_id = pom.contact_id
+    )
+    WHERE is_paid in ('Unpaid','Partial')`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "Update Payment Status for Pay later",
+    sql: `
+    UPDATE po_master
+    SET is_paid =
+        CASE
+            WHEN due_amount = 0 AND is_paid IN ('Unpaid', 'Partial')
+                THEN 'Paid'
+            WHEN paid_amount != due_amount AND is_paid = 'Unpaid'
+                THEN 'Partial'
+            ELSE is_paid
+        END`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "Update Booking Order Qty from Purchase Receive",
+    sql: `UPDATE po_child AS poc
+          SET order_qty = (
+              SELECT SUM(poc_o.order_qty)
+              FROM po_child AS poc_o
+              JOIN po_master AS pom ON poc.po_master_id = pom.po_master_id
+              WHERE poc_o.ref_id = poc.id
+                AND pom.order_type = 'Purchase Booking'
+                AND pom.is_posted = 1
+                AND pom.is_completed = 0
+          )
+          WHERE EXISTS (
+              SELECT 1
+              FROM po_child AS poc_o
+              JOIN po_master AS pom ON poc.po_master_id = pom.po_master_id
+              WHERE poc_o.ref_id = poc.id
+                AND pom.order_type = 'Purchase Booking'
+                AND pom.is_posted = 1
+                AND pom.is_completed = 0
+          )`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "Purchase Booking Mark as Completed when purchase received",
+    sql: `UPDATE po_master AS pom
+          SET is_completed = (
+              SELECT CASE
+                      WHEN SUM(poc.booking_qty - poc.order_qty) > 0 THEN 0
+                      ELSE 1
+                    END
+              FROM po_child AS poc
+              WHERE poc.po_master_id = pom.po_master_id
+          )
+          WHERE pom.order_type IN ('Purchase Booking')
+            AND pom.is_posted = 1
+            AND pom.is_completed = 0
+          `,
+    params: [],
+  });
+
+  scripts.push({
+    label: "Purchase Receive and Return Mark as completed for Pay later",
+    sql: `UPDATE po_master AS pom
+          SET is_completed = 1
+          WHERE pom.order_type IN ('Purchase Receive','Purchase Order','Purchase Return')
+            AND pom.is_posted = 1
+            AND pom.is_paid = 'Paid'
+            AND pom.is_completed = 0
+          `,
+    params: [],
+  });
+
+  scripts.push({
+    label: "Update Pyaments order amount for Purchase Receive",
+    sql: `UPDATE payments AS p
+          SET order_amount = (
+              SELECT IFNULL(SUM(pr.payment_amount), 0)
+              FROM payments pr
+              WHERE pr.payment_type = 'Purchase Receive'
+                AND pr.ref_id = p.payment_id
+          )
+          WHERE p.payment_type = 'Purchase Booking'
+            AND p.payment_amount > p.order_amount`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "Update Contact Balance",
+    sql: `UPDATE contacts
+        SET current_balance = (
+            SELECT SUM(payment_amount - order_amount)
+            FROM payments
+            WHERE payments.contact_id = contacts.contact_id
+              AND payment_amount != order_amount
+        )`,
+    params: [],
+  });
+
+  try {
+    const results = await runScriptsSequentially(scripts, {
+      useTransaction: false,
+    });
+    res.status(201).json({
+      message: "Purchase data processed successfully!",
+      result: results,
+    });
+  } catch (error) {
+    console.error("Error processing purchase data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 module.exports = router;

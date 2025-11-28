@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { getStorageData } from '../../utils/storage';
-import './Topbar.css';
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getStorageData } from "../../utils/storage";
+import "./Topbar.css";
 
-const Topbar = ({ leftbarCollapsed, onToggleLeftbar, onToggleFullMode, menus }) => {
+const Topbar = ({
+  leftbarCollapsed,
+  onToggleLeftbar,
+  onToggleFullMode,
+  menus,
+}) => {
   const { logout, user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,16 +33,19 @@ const Topbar = ({ leftbarCollapsed, onToggleLeftbar, onToggleFullMode, menus }) 
         }
       }
     }
-    return 'Home';
+    return "Home";
   };
 
   const selectedMenuName = getSelectedMenuName();
-
   return (
     <div className="topbar">
       <div className="topbar-left">
         <button className="topbar-btn collapse-btn" onClick={onToggleLeftbar}>
-          <i className={`pi ${leftbarCollapsed ? 'pi-angle-right' : 'pi-angle-left'}`}></i>
+          <i
+            className={`pi ${
+              leftbarCollapsed ? "pi-angle-right" : "pi-angle-left"
+            }`}
+          ></i>
         </button>
         <button className="topbar-btn full-mode-btn" onClick={onToggleFullMode}>
           <i className="pi pi-expand"></i>
@@ -62,7 +70,10 @@ const Topbar = ({ leftbarCollapsed, onToggleLeftbar, onToggleFullMode, menus }) 
         )}
       </div>
       <div className="topbar-avatar">
-        <img src={`https://ui-avatars.com/api/?name=${user?.username}&background=667eea&color=fff`} alt="Avatar" />
+        <img
+          src={`https://ui-avatars.com/api/?name=${user?.username}&background=667eea&color=fff`}
+          alt="Avatar"
+        />
         <button className="topbar-btn logout-button" onClick={handleLogout}>
           <i className="pi pi-sign-out"></i>
         </button>
