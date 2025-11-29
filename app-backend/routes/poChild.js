@@ -37,7 +37,7 @@ router.get("/booking/:supplierId", (req, res) => {
   
   const sql = `SELECT poc.id,'sgd' po_master_id, poc.item_id,poc.item_rate,
 poc.booking_qty - SUM(ifnull(pocb.order_qty,0)) booking_qty, poc.booking_qty - SUM(ifnull(pocb.order_qty,0)) order_qty,
-poc.discount_percent, poc.discount_amount, poc.item_rate * (poc.booking_qty - SUM(ifnull(pocb.order_qty,0)))  item_amount, poc.cost_rate, poc.item_note, poc.id ref_id, poc.created_at, poc.updated_at,
+poc.discount_percent, poc.discount_amount, poc.item_rate * (poc.booking_qty - SUM(ifnull(pocb.order_qty,0))) item_amount, poc.cost_rate, poc.item_note, poc.id ref_id, poc.created_at, poc.updated_at,
 i.item_name, i.unit_difference_qty, u1.unit_name as small_unit_name, u2.unit_name as big_unit_name, 0 AS ismodified
     FROM po_child poc
     JOIN po_master pom on poc.po_master_id = pom.po_master_id

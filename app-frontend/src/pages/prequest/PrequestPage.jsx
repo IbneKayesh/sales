@@ -22,6 +22,7 @@ const PrequestPage = () => {
     errors,
     setErrors,
     formDataPoMaster,
+    setFormDataPoMaster,
     selectedFilter,
     filterOptions,
     handleChange,
@@ -61,8 +62,8 @@ const PrequestPage = () => {
           {isList
             ? `${selectedPoType} List`
             : formDataPoMaster?.po_master_id
-            ? `Edit ${formDataPoMaster.order_type}: ${formDataPoMaster.order_no}`
-            : `New ${selectedPoType}`}
+              ? `Edit ${formDataPoMaster.order_type}: ${formDataPoMaster.order_no}`
+              : `New ${selectedPoType}`}
         </span>
 
         {isList ? (
@@ -133,9 +134,8 @@ const PrequestPage = () => {
                 errors={errors}
                 setErrors={setErrors}
                 formData={formDataPoMaster}
+                setFormData={setFormDataPoMaster}
                 onChange={handleChange}
-                poTypeOptions={poTypeOptions}
-                refNoOptions={refNoOptions}
                 orderChildItems={orderChildItems}
                 setOrderChildItems={setOrderChildItems}
                 onSaveAll={handleSaveAll}
@@ -150,9 +150,8 @@ const PrequestPage = () => {
                 errors={errors}
                 setErrors={setErrors}
                 formData={formDataPoMaster}
+                setFormData={setFormDataPoMaster}
                 onChange={handleChange}
-                poTypeOptions={poTypeOptions}
-                refNoOptions={refNoOptions}
                 orderChildItems={orderChildItems}
                 setOrderChildItems={setOrderChildItems}
                 onSaveAll={handleSaveAll}

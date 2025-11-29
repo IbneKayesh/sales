@@ -5,7 +5,7 @@ const router = express.Router();
 const { runScriptsSequentially } = require("../db/asyncScriptsRunner.js");
 
 // Update item
-router.post("/update-item", (req, res) => {
+router.post("/update-item11", (req, res) => {
   const { id } = req.body;
 
   if (!id) {
@@ -32,17 +32,7 @@ router.post("/update-item", (req, res) => {
 
   //update order qty
 
-  const sql_b = `UPDATE items
-          SET order_qty = (
-              SELECT IFNULL(SUM(poc.booking_qty - poc.order_qty), 0)
-              FROM po_child poc
-              JOIN po_master pom 
-                  ON poc.po_master_id = pom.po_master_id
-              WHERE poc.item_id = items.item_id
-            AND pom.order_type = 'Purchase Booking'
-            AND pom.is_posted = 1
-            AND pom.is_completed = 0
-          )`;
+  const sql_b ="";
 
   db.run(sql_b, [], function (err) {
     if (err) {
@@ -95,7 +85,46 @@ router.post("/update-item", (req, res) => {
     }
   });
 });
+// Update items
+router.post("/update-item", async (req, res) => {
+  const { id } = req.body;
 
+  if (!id) {
+    return res.status(400).json({ error: "Transaction ID is required" });
+  }
+
+  const scripts = [];
+
+  scripts.push({
+    label: "Update Item order Qty from Purchase Booking",
+    sql:  `UPDATE items
+          SET order_qty = (
+              SELECT IFNULL(SUM(poc.booking_qty - poc.order_qty), 0)
+              FROM po_child poc
+              JOIN po_master pom 
+                  ON poc.po_master_id = pom.po_master_id
+              WHERE poc.item_id = items.item_id
+              AND poc.booking_qty != poc.order_qty
+              AND pom.order_type = 'Purchase Booking'
+              AND pom.is_posted = 1
+              AND pom.is_completed = 0
+          )`,
+    params: [],
+  });
+
+  try {
+    const results = await runScriptsSequentially(scripts, {
+      useTransaction: false,
+    });
+    res.status(201).json({
+      message: "Item data processed successfully!",
+      result: results,
+    });
+  } catch (error) {
+    console.error("Error processing item data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 // Update purchase
 router.post("/update-purchase", async (req, res) => {
   const { id } = req.body;

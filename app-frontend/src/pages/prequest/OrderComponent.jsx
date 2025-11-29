@@ -21,6 +21,7 @@ const OrderComponent = ({
   errors,
   setErrors,
   formData,
+  setFormData,
   onChange,
   orderChildItems,
   setOrderChildItems,
@@ -45,6 +46,69 @@ const OrderComponent = ({
     order_amount: "",
     payment_note: "",
   });
+
+  //find order summary
+  useEffect(() => {
+    const order_amount = orderChildItems?.reduce(
+      (total, row) => total + (row.order_qty || 0) * (row.item_rate || 0),
+      0
+    );
+    const discount_amount = orderChildItems?.reduce(
+      (total, row) => total + (row.discount_amount || 0),
+      0
+    );
+    const total_amount = orderChildItems?.reduce(
+      (total, row) => total + (row.item_amount || 0),
+      0
+    );
+
+    const net_amount = (formData.cost_amount || 0) + total_amount;
+    //console.log("net_amount " + net_amount);
+
+    const paid_amount = formDataPaymentList
+      ?.filter((row) => row.payment_type === formData.order_type)
+      ?.reduce((total, row) => total + (row.payment_amount || 0), 0);
+
+    const due_amount = net_amount - paid_amount;
+
+    setFormData((prev) => ({
+      ...prev,
+      order_amount,
+      discount_amount,
+      total_amount: net_amount,
+      paid_amount,
+      due_amount,
+    }));
+  }, [orderChildItems, formDataPaymentList]);
+
+  //find item wise costing rate
+  const costRate = useMemo(() => {
+    const totalBookingQty = orderChildItems.reduce(
+      (sum, item) => sum + (item.order_qty || 0),
+      0
+    );
+    const discountAmount = orderChildItems.reduce(
+      (sum, item) => sum + (item.discount_amount || 0),
+      0
+    );
+    const otherCostAmount = formData.other_cost > 0 ? formData.other_cost : 0;
+    const extraCostAmount = formData.cost_amount > 0 ? formData.cost_amount : 0;
+    const total_cost = otherCostAmount + extraCostAmount;
+    return (total_cost - discountAmount) / (totalBookingQty || 1);
+  }, [orderChildItems, formData.other_cost, formData.cost_amount]);
+
+  //update item wise costing rate
+  useEffect(() => {
+    //console.log("costRate " + costRate);
+    setOrderChildItems((prevItems) =>
+      prevItems.map((item) => {
+        return {
+          ...item,
+          cost_rate: item.item_rate + costRate,
+        };
+      })
+    );
+  }, [costRate]);
 
   const handlePaymentChange = (e) => {
     const { name, value } = e.target;
@@ -194,11 +258,9 @@ const OrderComponent = ({
     let { newData, index } = event;
     // Calculate item_amount
 
-    newData.order_qty = newData.booking_qty;
-    
     const discountAmount = newData.discount_amount;
 
-    const itemAmount = newData.item_rate * newData.booking_qty;
+    const itemAmount = newData.item_rate * newData.order_qty;
     newData.item_amount = itemAmount - discountAmount;
 
     const discountPercent =
@@ -277,8 +339,8 @@ const OrderComponent = ({
     return `${formattedItemRate} (${formattedCostRate})`;
   };
 
-  const bookingQtyTemplate = (rowData) => {
-    return `${rowData.booking_qty} ${rowData.small_unit_name} (${rowData.order_qty})`;
+  const orderQtyTemplate = (rowData) => {
+    return `${rowData.order_qty} ${rowData.small_unit_name} (${rowData.booking_qty})`;
   };
 
   const totalBookingQty = orderChildItems.reduce(
@@ -291,8 +353,8 @@ const OrderComponent = ({
     0
   );
 
-  const totalBookingQtyTemplate = () => {
-    return `${totalBookingQty} (${totalOrderQty})`;
+  const totalOrderQtyTemplate = () => {
+    return `${totalOrderQty} (${totalBookingQty})`;
   };
 
   const discountAmountTemplate = (rowData) => {
@@ -327,14 +389,14 @@ const OrderComponent = ({
 
     const itemAmountF = rowData.item_rate * rowData.booking_qty;
 
-    return `${itemAmount} (${itemAmountF})`;
+    return `${itemAmountF} (${itemAmount})`;
   };
 
   const convertedQtyTemplate = (rowData) => {
     return (
       <>
-        <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} /> (
-        <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} />)
+        <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} /> (
+        <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} />)
       </>
     );
   };
@@ -576,11 +638,11 @@ const OrderComponent = ({
               editor={itemRateEditor}
             />
             <Column
-              field="booking_qty"
+              field="order_qty"
               header="Booking Qty"
-              body={bookingQtyTemplate}
+              body={orderQtyTemplate}
               editor={numberEditor}
-              footer={totalBookingQtyTemplate}
+              footer={totalOrderQtyTemplate}
             />
             <Column
               field="discount_amount"

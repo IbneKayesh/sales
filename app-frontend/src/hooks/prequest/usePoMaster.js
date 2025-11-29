@@ -228,69 +228,6 @@ export const usePoMaster = () => {
     }
   };
 
-  // Effect to update formDataPoMaster amounts based on orderChildItems
-  useEffect(() => {
-    const order_amount = orderChildItems?.reduce(
-      (total, row) => total + (row.booking_qty || 0) * (row.item_rate || 0),
-      0
-    );
-    const discount_amount = orderChildItems?.reduce(
-      (total, row) => total + (row.discount_amount || 0),
-      0
-    );
-    const total_amount = orderChildItems?.reduce(
-      (total, row) => total + (row.item_amount || 0),
-      0
-    );
-
-    const net_amount = (formDataPoMaster.cost_amount || 0) + total_amount;
-    //console.log("net_amount " + net_amount);
-
-    const paid_amount = formDataPaymentList
-      ?.filter((row) => row.payment_type === formDataPoMaster.order_type)
-      ?.reduce((total, row) => total + (row.payment_amount || 0), 0);
-
-    const due_amount = net_amount - paid_amount;
-
-    setFormDataPoMaster((prev) => ({
-      ...prev,
-      order_amount,
-      discount_amount,
-      total_amount: net_amount,
-      paid_amount,
-      due_amount,
-    }));
-  }, [orderChildItems, formDataPaymentList]);
-
-  //Effect to update orderChildItems cost_rate based on orderChildItems and cost_amount
-  const costRate = useMemo(() => {
-    const totalBookingQty = orderChildItems.reduce(
-      (sum, item) => sum + (item.booking_qty || 0),
-      0
-    );
-    const otherCostAmount =
-      formDataPoMaster.other_cost > 0 ? formDataPoMaster.other_cost : 0;
-    const costAmount =
-      formDataPoMaster.cost_amount > 0 ? formDataPoMaster.cost_amount : 0;
-    return (otherCostAmount + costAmount) / (totalBookingQty || 1);
-  }, [
-    orderChildItems,
-    formDataPoMaster.other_cost,
-    formDataPoMaster.cost_amount,
-  ]);
-
-  useEffect(() => {
-    setOrderChildItems((prevItems) =>
-      prevItems.map((item) => {
-        const costRateItem = item.item_amount / (item.booking_qty || 1);
-        return {
-          ...item,
-          cost_rate: costRateItem + costRate,
-        };
-      })
-    );
-  }, [costRate]);
-
   const handleChange = async (field, value) => {
     let processedValue = value;
     // if (field === "is_paid") {
@@ -578,6 +515,7 @@ export const usePoMaster = () => {
     errors,
     setErrors,
     formDataPoMaster,
+    setFormDataPoMaster,
     selectedFilter,
     filterOptions,
     handleChange,

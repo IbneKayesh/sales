@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
@@ -16,11 +16,12 @@ import { useContacts } from "@/hooks/setup/useContacts";
 import { useItems } from "@/hooks/inventory/useItems";
 import { Accordion, AccordionTab } from "primereact/accordion";
 
-const BookingComponent = ({
+const ReceiveComponent = ({
   isBusy,
   errors,
   setErrors,
   formData,
+  setFormData,
   onChange,
   orderChildItems,
   setOrderChildItems,
@@ -36,7 +37,6 @@ const BookingComponent = ({
   const [disabledItemAdd, setDisabledItemAdd] = useState(false);
   const [itemQty, setItemQty] = useState(1);
   const [itemNote, setItemNote] = useState("");
-  const [editingRowsPayment, setEditingRowsPayment] = useState([]);
 
   const [formDataPayment, setFormDataPayment] = useState({
     payment_id: "",
@@ -45,8 +45,70 @@ const BookingComponent = ({
     payment_amount: "",
     order_amount: "",
     payment_note: "",
-    ref_id: "",
   });
+
+  //find order summary
+  useEffect(() => {
+    const order_amount = orderChildItems?.reduce(
+      (total, row) => total + (row.order_qty || 0) * (row.item_rate || 0),
+      0
+    );
+    const discount_amount = orderChildItems?.reduce(
+      (total, row) => total + (row.discount_amount || 0),
+      0
+    );
+    const total_amount = orderChildItems?.reduce(
+      (total, row) => total + (row.item_amount || 0),
+      0
+    );
+
+    const net_amount = (formData.cost_amount || 0) + total_amount;
+    //console.log("net_amount " + net_amount);
+
+    const paid_amount = formDataPaymentList
+      ?.filter((row) => row.payment_type === formData.order_type)
+      ?.reduce((total, row) => total + (row.payment_amount || 0), 0);
+
+    const due_amount = net_amount - paid_amount;
+
+    setFormData((prev) => ({
+      ...prev,
+      order_amount,
+      discount_amount,
+      total_amount: net_amount,
+      paid_amount,
+      due_amount,
+    }));
+  }, [orderChildItems, formDataPaymentList]);
+
+  //find item wise costing rate
+  const costRate = useMemo(() => {
+    const totalOrderQty = orderChildItems.reduce(
+      (sum, item) => sum + (item.order_qty || 0),
+      0
+    );
+    const discountAmount = orderChildItems.reduce(
+      (sum, item) => sum + (item.discount_amount || 0),
+      0
+    );
+    const otherCostAmount = formData.other_cost > 0 ? formData.other_cost : 0;
+    const extraCostAmount = formData.cost_amount > 0 ? formData.cost_amount : 0;
+    const total_cost = otherCostAmount + extraCostAmount;
+    return (total_cost - discountAmount) / (totalOrderQty || 1);
+  }, [orderChildItems, formData.other_cost, formData.cost_amount]);
+
+  //update item wise costing rate
+  useEffect(() => {
+    //console.log("costRate " + costRate);
+    setOrderChildItems((prevItems) =>
+      prevItems.map((item) => {
+        return {
+          ...item,
+          cost_rate: item.item_rate + costRate,
+        };
+      })
+    );
+  }, [costRate]);
 
   const handlePaymentChange = (e) => {
     const { name, value } = e.target;
@@ -188,7 +250,7 @@ const BookingComponent = ({
           prev.filter((item) => item.id !== rowData.id)
         );
       },
-      reject: () => {},
+      reject: () => { },
     });
   };
 
@@ -207,6 +269,10 @@ const BookingComponent = ({
         : 0;
     newData.discount_percent = discountPercent;
 
+    //cost rate will calculate by Effect
+    // newData.cost_rate =
+    //   (newData.discount_amount / newData.booking_qty || 0) + newData.item_rate;
+
     newData.ismodified = 1;
 
     let _localItems = [...orderChildItems];
@@ -221,23 +287,6 @@ const BookingComponent = ({
 
   const onRowEditInit = (event) => {
     setEditingRows([event.data.id]);
-  };
-
-  const onRowEditSavePayment = (event) => {
-    let { newData, index } = event;
-
-    newData.ismodified = 1;
-
-    let _localItems = [...formDataPaymentList];
-    _localItems[index] = newData;
-    setFormDataPaymentList(_localItems);
-    setEditingRowsPayment([]);
-  };
-  const onRowEditCancelPayment = (event) => {
-    setEditingRowsPayment([]);
-  };
-  const onRowEditInitPayment = (event) => {
-    setEditingRowsPayment([event.data.id]);
   };
 
   const itemRateEditor = (options) => {
@@ -309,7 +358,7 @@ const BookingComponent = ({
   );
 
   const totalOrderQtyTemplate = () => {
-    return `${totalOrderQty} (${totalBookingQty})`;
+    return `${totalOrderQty}`;
   };
 
   const discountAmountTemplate = (rowData) => {
@@ -344,7 +393,7 @@ const BookingComponent = ({
 
     const itemAmountF = rowData.item_rate * rowData.booking_qty;
 
-    return `${itemAmount} (${itemAmountF})`;
+    return `${itemAmountF} (${itemAmount})`;
   };
 
   const convertedQtyTemplate = (rowData) => {
@@ -413,7 +462,7 @@ const BookingComponent = ({
       <ConfirmDialog />
       {/* Master Form */}
 
-      <Accordion multiple activeIndex={[0]}>
+      <Accordion multiple activeIndex={[0, 1, 2]}>
         <AccordionTab header={InvoiceHeader}>
           <div className="grid">
             <div className="col-12 md:col-2">
@@ -549,7 +598,6 @@ const BookingComponent = ({
               onValueChange={(e) => setItemQty(e.value)}
               placeholder="Enter Qty"
               disabled
-              inputStyle={{ width: "100%" }}
             />
             <InputText
               name="itemNote"
@@ -595,13 +643,6 @@ const BookingComponent = ({
               body={itemRateTemplate}
               editor={itemRateEditor}
             />
-            {/* <Column
-              field="booking_qty"
-              header="Booking Qty"
-              body={bookingQtyTemplate}
-              editor={numberEditor}
-              footer={totalBookingQtyTemplate}
-            /> */}
             <Column
               field="order_qty"
               header="Order Qty"
@@ -718,9 +759,8 @@ const BookingComponent = ({
                     value={formDataPayment.payment_mode}
                     options={paymentOptions}
                     onChange={(e) => handlePaymentChange(e)}
-                    className={`w-full ${
-                      errors.payment_mode ? "p-invalid" : ""
-                    }`}
+                    className={`w-full ${errors.payment_mode ? "p-invalid" : ""
+                      }`}
                     placeholder={`Select payment mode`}
                     optionLabel="label"
                     optionValue="value"
@@ -732,8 +772,8 @@ const BookingComponent = ({
                     onValueChange={(e) => handlePaymentChange(e)}
                     className={`${errors.payment_amount ? "p-invalid" : ""}`}
                     placeholder="Payment Amount"
-                    disabled
                     inputStyle={{ width: "100%" }}
+                    disabled
                   />
                   {errors.payment_amount && (
                     <small className="text-red-500">
@@ -762,25 +802,17 @@ const BookingComponent = ({
                   value={formDataPaymentList}
                   editMode="row"
                   dataKey="payment_id"
-                  editingRows={editingRowsPayment}
-                  onRowEditSave={onRowEditSavePayment}
-                  onRowEditCancel={onRowEditCancelPayment}
-                  onRowEditInit={onRowEditInitPayment}
+                  editingRows={editingRows}
+                  onRowEditSave={onRowEditSave}
+                  onRowEditCancel={onRowEditCancel}
+                  onRowEditInit={onRowEditInit}
                   emptyMessage="No items found."
                   className="bg-dark-300"
                   size="small"
                 >
                   <Column field="payment_mode" header="Mode" />
-                  <Column
-                    field="payment_amount"
-                    header="Paid"
-                    editor={itemRateEditor}
-                  />
-                  <Column
-                    field="payment_note"
-                    header="Note"
-                    editor={textEditor}
-                  />{" "}
+                  <Column field="payment_amount" header="Paid" />
+                  <Column field="payment_note" header="Note" />
                   <Column
                     rowEditor
                     headerStyle={{ width: "5%", minWidth: "8rem" }}
@@ -806,8 +838,8 @@ const BookingComponent = ({
                 formData.po_master_id
                   ? "Update"
                   : formData.is_posted
-                  ? "Save with Posted"
-                  : "Save as Draft"
+                    ? "Save with Posted"
+                    : "Save as Draft"
               }
               icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
               severity="success"
@@ -816,8 +848,7 @@ const BookingComponent = ({
               disabled={
                 (orderChildItems && orderChildItems.length < 1) ||
                 formData.isedit ||
-                formData.due_amount < 0 ||
-                formData.due_amount > 0
+                formData.due_amount < 0
               }
             />
           </div>
@@ -827,4 +858,4 @@ const BookingComponent = ({
   );
 };
 
-export default BookingComponent;
+export default ReceiveComponent;

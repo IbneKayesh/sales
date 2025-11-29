@@ -62,27 +62,32 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
     return parts[parts.length - 1]; // return last word
   };
 
-  const totalAmountTemplate = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.total_amount);
+  const itemAmountTemplate = (rowData) => {
+    const { total_amount, paid_amount, due_amount } = rowData;
+
+    return (
+      <span>
+        Total: {total_amount} &nbsp; Paid: {paid_amount} &nbsp;
+        {due_amount > 0 && (
+          <>
+            Due: <span className="text-red-500 font-bold">{due_amount}</span>
+          </>
+        )}
+      </span>
+    );
   };
 
-  const paidAmountTemplate = (rowData) => {
-    const paidAmount = Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.paid_amount);
+  const itemAmountFooterTemplate = () => {
+    const total_due_amount = dataList.reduce(
+      (sum, item) => sum + (item.due_amount || 0),
+      0
+    );
 
-    const dueAmount = Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.due_amount);
-
-    return rowData.due_amount > 0
-      ? `${paidAmount} (${dueAmount})`
-      : `${paidAmount}`;
+    return (
+      <>
+        Due: <span className="text-red-500 font-bold">{total_due_amount}</span>
+      </>
+    );
   };
 
   const isPaidTemplate = (rowData) => {
@@ -231,16 +236,10 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
         <Column field="order_date" header="Date" sortable />
         <Column field="contact_name" header="Contact" sortable />
         <Column
-          field="total_amount"
-          header="Total Amount"
-          body={totalAmountTemplate}
+          header="Amount"
+          body={itemAmountTemplate}
           sortable
-        />
-        <Column
-          field="paid_amount"
-          header="Paid Amount"
-          body={paidAmountTemplate}
-          sortable
+          footer={itemAmountFooterTemplate}
         />
         <Column
           field="is_paid"

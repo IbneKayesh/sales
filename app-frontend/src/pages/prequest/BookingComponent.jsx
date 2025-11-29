@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
@@ -21,6 +21,7 @@ const BookingComponent = ({
   errors,
   setErrors,
   formData,
+  setFormData,
   onChange,
   orderChildItems,
   setOrderChildItems,
@@ -45,6 +46,69 @@ const BookingComponent = ({
     order_amount: "",
     payment_note: "",
   });
+
+  //find order summary
+  useEffect(() => {
+    const order_amount = orderChildItems?.reduce(
+      (total, row) => total + (row.booking_qty || 0) * (row.item_rate || 0),
+      0
+    );
+    const discount_amount = orderChildItems?.reduce(
+      (total, row) => total + (row.discount_amount || 0),
+      0
+    );
+    const total_amount = orderChildItems?.reduce(
+      (total, row) => total + (row.item_amount || 0),
+      0
+    );
+
+    const net_amount = (formData.cost_amount || 0) + total_amount;
+    //console.log("net_amount " + net_amount);
+
+    const paid_amount = formDataPaymentList
+      ?.filter((row) => row.payment_type === formData.order_type)
+      ?.reduce((total, row) => total + (row.payment_amount || 0), 0);
+
+    const due_amount = net_amount - paid_amount;
+
+    setFormData((prev) => ({
+      ...prev,
+      order_amount,
+      discount_amount,
+      total_amount: net_amount,
+      paid_amount,
+      due_amount,
+    }));
+  }, [orderChildItems, formDataPaymentList]);
+
+  //find item wise costing rate
+  const costRate = useMemo(() => {
+    const totalBookingQty = orderChildItems.reduce(
+      (sum, item) => sum + (item.booking_qty || 0),
+      0
+    );
+    const discountAmount = orderChildItems.reduce(
+      (sum, item) => sum + (item.discount_amount || 0),
+      0
+    );
+    const otherCostAmount = formData.other_cost > 0 ? formData.other_cost : 0;
+    const extraCostAmount = formData.cost_amount > 0 ? formData.cost_amount : 0;
+    const total_cost = otherCostAmount + extraCostAmount;
+    return (total_cost - discountAmount) / (totalBookingQty || 1);
+  }, [orderChildItems, formData.other_cost, formData.cost_amount]);
+
+  //update item wise costing rate
+  useEffect(() => {
+    //console.log("costRate " + costRate);
+    setOrderChildItems((prevItems) =>
+      prevItems.map((item) => {
+        return {
+          ...item,
+          cost_rate: item.item_rate + costRate,
+        };
+      })
+    );
+  }, [costRate]);
 
   const handlePaymentChange = (e) => {
     const { name, value } = e.target;
@@ -204,6 +268,10 @@ const BookingComponent = ({
         ? Math.round((discountAmount / itemAmount) * 100 * 100) / 100
         : 0;
     newData.discount_percent = discountPercent;
+
+    //cost rate will calculate by Effect
+    // newData.cost_rate =
+    //   (newData.discount_amount / newData.booking_qty || 0) + newData.item_rate;
 
     newData.ismodified = 1;
 
@@ -670,7 +738,8 @@ const BookingComponent = ({
                     mode="currency"
                     currency="BDT"
                     locale="en-US"
-                    className={`${errors.other_cost ? "p-invalid" : ""}`}           inputStyle={{ width: "100%" }}
+                    className={`${errors.other_cost ? "p-invalid" : ""}`}
+                    inputStyle={{ width: "100%" }}
                   />
                   {errors.other_cost && (
                     <small className="text-red-500">{errors.other_cost}</small>
