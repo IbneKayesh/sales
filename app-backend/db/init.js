@@ -90,7 +90,7 @@ const initTables = () => {
         small_unit_id TEXT,
         unit_difference_qty INTEGER DEFAULT 1,
         big_unit_id TEXT,
-        order_qty REAL DEFAULT 0,
+        booking_qty REAL DEFAULT 0,
         stock_qty REAL DEFAULT 0,
         purchase_rate REAL DEFAULT 0,
         sales_rate REAL DEFAULT 0,
@@ -341,7 +341,7 @@ db.run(
   INSERT OR IGNORE INTO items (
     item_id, item_code, item_name, item_description,
     category_id, small_unit_id, unit_difference_qty, big_unit_id,
-    order_qty, stock_qty, purchase_rate, sales_rate,
+    booking_qty, stock_qty, purchase_rate, sales_rate,
     discount_percent, margin_rate
   ) VALUES
   (1, 'ITM001', 'Coca Cola 1L', 'Soft drink', 1, 5, 12, 7, 0, 0, 45, 55, 5, 10),

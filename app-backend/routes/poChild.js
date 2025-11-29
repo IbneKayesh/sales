@@ -34,26 +34,50 @@ router.get("/master/:masterId", (req, res) => {
 // Get purchase order children by supplier :: Purchase Receive
 router.get("/booking/:supplierId", (req, res) => {
   const { supplierId } = req.params;
-  
-  const sql = `SELECT poc.id,'sgd' po_master_id, poc.item_id,poc.item_rate,
-poc.booking_qty - SUM(ifnull(pocb.order_qty,0)) booking_qty, poc.booking_qty - SUM(ifnull(pocb.order_qty,0)) order_qty,
-poc.discount_percent, poc.discount_amount, poc.item_rate * (poc.booking_qty - SUM(ifnull(pocb.order_qty,0))) item_amount, poc.cost_rate, poc.item_note, poc.id ref_id, poc.created_at, poc.updated_at,
-i.item_name, i.unit_difference_qty, u1.unit_name as small_unit_name, u2.unit_name as big_unit_name, 0 AS ismodified
-    FROM po_child poc
-    JOIN po_master pom on poc.po_master_id = pom.po_master_id
-    LEFT JOIN items i ON poc.item_id = i.item_id
-    LEFT JOIN units u1 ON i.small_unit_id = u1.unit_id
-    LEFT JOIN units u2 ON i.big_unit_id = u2.unit_id
-    LEFT JOIN po_child pocb on poc.id = pocb.ref_id
-    WHERE pom.order_type = 'Purchase Booking'
-    AND pom.contact_id = ?
-    AND pom.is_posted = 1
-    AND pom.is_completed = 0
-    GROUP BY poc.id, poc.item_id,poc.item_rate,poc.booking_qty, poc.booking_qty,
-    poc.discount_percent, poc.discount_amount, poc.item_amount, poc.cost_rate, poc.item_note,
-    poc.created_at, poc.updated_at,i.item_name, i.unit_difference_qty, u1.unit_name, u2.unit_name
-    HAVING poc.booking_qty - SUM(ifnull(pocb.order_qty,0)) > 0
-    ORDER BY poc.id`;
+const sql  = `WITH 
+            filtered_master as (
+              SELECT po_master_id
+              FROM po_master
+              WHERE is_posted = 1
+              AND is_completed = 0
+              AND order_type = 'Purchase Booking'
+              AND contact_id = ?
+            ),
+            filtered_child as (
+            SELECT *
+            FROM po_child poc
+            JOIN filtered_master pom on poc.po_master_id = pom.po_master_id
+            ),
+            order_sum as (
+            SELECT poc.ref_id,
+            sum(ifnull(poc.order_qty,0))order_qty
+            FROM po_child poc
+            JOIN filtered_child p1 on poc.ref_id = p1.id
+            GROUP by poc.ref_id
+            ),
+            remain_poc as (
+            SELECT poc.id,poc.item_id, poc.item_rate,
+            poc.booking_qty - ifnull(os.order_qty,0) as booking_qty,
+            poc.booking_qty - ifnull(os.order_qty,0) as order_qty,
+            poc.discount_percent,
+            ((poc.booking_qty - IFNULL(os.order_qty,0)) * poc.item_rate * poc.discount_percent / 100.0) AS discount_amount,
+            ((poc.booking_qty - IFNULL(os.order_qty,0)) * poc.item_rate) AS item_amount,
+            poc.cost_rate, poc.item_note,
+            poc.id as ref_id, poc.created_at, poc.updated_at
+            FROM filtered_child poc
+            LEFT JOIN order_sum os on poc.id = os.ref_id
+            )
+            SELECT poc.id, 'sgd' as po_master_id, poc.item_id, poc.item_rate, poc.booking_qty, poc.order_qty, ROUND(poc.discount_percent,2) AS discount_percent,
+            ROUND(poc.discount_amount,2) AS discount_amount, ROUND(poc.item_amount - poc.discount_amount,2) AS item_amount, ROUND(poc.cost_rate,2) AS cost_rate,
+            poc.item_note, poc.ref_id, poc.created_at, poc.updated_at,
+            itm.item_name, itm.unit_difference_qty, u1.unit_name AS small_unit_name, u2.unit_name AS big_unit_name,  0 AS ismodified
+            FROM remain_poc poc
+            LEFT JOIN items itm ON poc.item_id = itm.item_id
+            LEFT JOIN units u1 ON itm.small_unit_id = u1.unit_id
+            LEFT JOIN units u2 ON itm.big_unit_id = u2.unit_id
+            WHERE poc.booking_qty > 0`;
+
+
   db.all(sql, [supplierId], (err, rows) => {
     if (err) {
       console.error("Database error:", err);
@@ -86,31 +110,52 @@ async function updateBillsPaidStatus() {
   console.log("✔ Bill payment status updated!");
 }
 
-// Get purchase order children by supplier
-router.get("/returns/:supplierId", (req, res) => {
-  const { supplierId } = req.params;
-  const sql = `SELECT poc.id,'sgd' po_master_id, poc.item_id,poc.item_rate,
-poc.order_qty - SUM(ifnull(pocb.order_qty,0)) booking_qty, poc.order_qty - SUM(ifnull(pocb.order_qty,0)) order_qty,
-poc.discount_percent, poc.discount_amount, poc.item_rate * (poc.order_qty - SUM(ifnull(pocb.order_qty,0))) item_amount,
-poc.cost_rate, poc.item_note, poc.id ref_id, poc.created_at, poc.updated_at,
-i.item_name, i.unit_difference_qty, u1.unit_name as small_unit_name, u2.unit_name as big_unit_name, 0 AS ismodified
-	FROM po_child poc
-    JOIN po_master pom on poc.po_master_id = pom.po_master_id
-    LEFT JOIN items i ON poc.item_id = i.item_id
-    LEFT JOIN units u1 ON i.small_unit_id = u1.unit_id
-    LEFT JOIN units u2 ON i.big_unit_id = u2.unit_id
-    LEFT JOIN po_child pocb on poc.id = pocb.ref_id
-    WHERE pom.order_type IN ('Purchase Receive','Purchase Order')
-    AND pom.contact_id = ?
-    AND pom.is_posted = 1
-    AND pom.is_paid = 1
-    AND pom.is_completed = 1
-    GROUP BY poc.id, poc.item_id,poc.item_rate,poc.booking_qty, poc.booking_qty,
-    poc.discount_percent, poc.discount_amount, poc.item_amount, poc.cost_rate, poc.item_note,
-    poc.created_at, poc.updated_at,i.item_name, i.unit_difference_qty, u1.unit_name, u2.unit_name
-    HAVING poc.order_qty - SUM(ifnull(pocb.order_qty,0)) > 0
-    ORDER BY poc.id`;
-  db.all(sql, [supplierId], (err, rows) => {
+// Get purchase order children by orderNo
+router.get("/returns/:orderNo", (req, res) => {
+  const { orderNo } = req.params;
+  const sql = `WITH 
+            filtered_master as (
+              SELECT po_master_id
+              FROM po_master
+              WHERE is_posted = 1
+              AND is_completed = 1
+              AND order_type in ( 'Purchase Receive', 'Purchase Order')
+              AND order_no = ?
+            ),
+            filtered_child as (
+            SELECT *
+            FROM po_child poc
+            JOIN filtered_master pom on poc.po_master_id = pom.po_master_id
+            ),
+            order_sum as (
+            SELECT poc.ref_id,
+            sum(ifnull(poc.order_qty,0))order_qty
+            FROM po_child poc
+            JOIN filtered_child p1 on poc.ref_id = p1.id
+            GROUP by poc.ref_id
+            ),
+            remain_poc as (
+            SELECT poc.id,poc.item_id, poc.item_rate,
+            poc.booking_qty - ifnull(os.order_qty,0) as booking_qty,
+            poc.booking_qty - ifnull(os.order_qty,0) as order_qty,
+            poc.discount_percent,
+            ((poc.booking_qty - IFNULL(os.order_qty,0)) * poc.item_rate * poc.discount_percent / 100.0) AS discount_amount,
+            ((poc.booking_qty - IFNULL(os.order_qty,0)) * poc.item_rate) AS item_amount,
+            poc.cost_rate, poc.item_note,
+            poc.id as ref_id, poc.created_at, poc.updated_at
+            FROM filtered_child poc
+            LEFT JOIN order_sum os on poc.id = os.ref_id
+            )
+            SELECT poc.id, 'sgd' as po_master_id, poc.item_id, poc.item_rate, poc.booking_qty, poc.order_qty, ROUND(poc.discount_percent,2) AS discount_percent,
+            ROUND(poc.discount_amount,2) AS discount_amount, ROUND(poc.item_amount - poc.discount_amount,2) AS item_amount, ROUND(poc.cost_rate,2) AS cost_rate,
+            poc.item_note, poc.ref_id, poc.created_at, poc.updated_at,
+            itm.item_name, itm.unit_difference_qty, u1.unit_name AS small_unit_name, u2.unit_name AS big_unit_name,  0 AS ismodified
+            FROM remain_poc poc
+            LEFT JOIN items itm ON poc.item_id = itm.item_id
+            LEFT JOIN units u1 ON itm.small_unit_id = u1.unit_id
+            LEFT JOIN units u2 ON itm.big_unit_id = u2.unit_id
+            WHERE poc.booking_qty > 0`;
+  db.all(sql, [orderNo], (err, rows) => {
     if (err) {
       console.error("Database error:", err);
       return res.status(500).json({ error: "Internal server error" });

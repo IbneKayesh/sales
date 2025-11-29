@@ -21,7 +21,7 @@ export const useItems = () => {
     small_unit_id: "",
     unit_difference_qty: 1,
     big_unit_id: "",
-    order_qty: 0,
+    booking_qty: 0,
     stock_qty: 0,
     purchase_rate: 0,
     sales_rate: 0,
@@ -32,7 +32,7 @@ export const useItems = () => {
   const [selectedFilter, setSelectedFilter] = useState("default");
   const filterOptions = [
     { label: "Default", value: "default" },
-    { label: "In Order", value: "orders" },
+    { label: "In Booking", value: "booking" },
     { label: "In Stock", value: "stock" },
     { label: "Nill Stock", value: "nillstock" },
     { label: "No Purchase Rate", value: "nopr" },
@@ -94,7 +94,7 @@ export const useItems = () => {
       small_unit_id: "",
       unit_difference_qty: 1,
       big_unit_id: "",
-      order_qty: 0,
+      booking_qty: 0,
       stock_qty: 0,
       purchase_rate: 0,
       sales_rate: 0,

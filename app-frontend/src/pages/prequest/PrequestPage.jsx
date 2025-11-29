@@ -33,7 +33,6 @@ const PrequestPage = () => {
     handleRefresh,
     handleFilterChange,
     handleSaveAll,
-    refNoOptions,
     poTypeOptions,
     selectedPoType,
     handlePoTypeChange,
@@ -166,9 +165,8 @@ const PrequestPage = () => {
                 errors={errors}
                 setErrors={setErrors}
                 formData={formDataPoMaster}
+                setFormData={setFormDataPoMaster}
                 onChange={handleChange}
-                poTypeOptions={poTypeOptions}
-                refNoOptions={refNoOptions}
                 orderChildItems={orderChildItems}
                 setOrderChildItems={setOrderChildItems}
                 onSaveAll={handleSaveAll}
@@ -177,17 +175,20 @@ const PrequestPage = () => {
                 paymentOptions={paymentOptions}
               />
             )}
-            {formDataPoMaster.order_type === "Purchase Return" && (
+            {formDataPoMaster.order_type === "Return Purchase" && (
               <ReturnComponent
                 isBusy={isBusy}
                 errors={errors}
+                setErrors={setErrors}
                 formData={formDataPoMaster}
+                setFormData={setFormDataPoMaster}
                 onChange={handleChange}
-                poTypeOptions={poTypeOptions}
-                refNoOptions={refNoOptions}
                 orderChildItems={orderChildItems}
                 setOrderChildItems={setOrderChildItems}
                 onSaveAll={handleSaveAll}
+                formDataPaymentList={formDataPaymentList}
+                setFormDataPaymentList={setFormDataPaymentList}
+                paymentOptions={paymentOptions}
               />
             )}
           </>

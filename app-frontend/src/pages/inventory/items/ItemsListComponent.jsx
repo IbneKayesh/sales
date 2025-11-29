@@ -65,8 +65,8 @@ const ItemsListComponent = ({ dataList, onEdit, onDelete }) => {
   const item_nameTemplate = (rowData) => {
     return `${rowData.item_code} - ${rowData.item_name}`;
   }
-  const order_qtyTemplate = (rowData) => {
-    return <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} />;
+  const booking_qtyTemplate = (rowData) => {
+    return <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} />;
   };
 
   const stock_qtyTemplate = (rowData) => {
@@ -102,13 +102,13 @@ const ItemsListComponent = ({ dataList, onEdit, onDelete }) => {
     }).format(value);
   };
 
-  const orderValue = (selectedItemDetail?.purchase_rate ?? 0) * (selectedItemDetail?.order_qty ?? 0);
+  const orderValue = (selectedItemDetail?.purchase_rate ?? 0) * (selectedItemDetail?.booking_qty ?? 0);
   const stockValue = (selectedItemDetail?.purchase_rate ?? 0) * (selectedItemDetail?.stock_qty ?? 0);
   const marginValue = (selectedItemDetail?.margin_rate ?? 0) * (selectedItemDetail?.stock_qty ?? 0);
 
   // Summary calculations for footer
   const totalItems = dataList.length;
-  const totalOrderQty = dataList.reduce((sum, item) => sum + (item.order_qty ?? 0), 0);
+  const totalBookingQty = dataList.reduce((sum, item) => sum + (item.booking_qty ?? 0), 0);
   const totalStockQty = dataList.reduce((sum, item) => sum + (item.stock_qty ?? 0), 0);
   const totalPurchaseValue = dataList.reduce((sum, item) => sum + ((item.purchase_rate ?? 0) * (item.stock_qty ?? 0)), 0);
   const totalSalesValue = dataList.reduce((sum, item) => sum + ((item.sales_rate ?? 0) * (item.stock_qty ?? 0)), 0);
@@ -129,11 +129,11 @@ const ItemsListComponent = ({ dataList, onEdit, onDelete }) => {
       >
         <Column field="item_name" header="Item Name"  body={item_nameTemplate} footer={`Total Items: ${totalItems}`} sortable />
         <Column
-          field="order_qty"
-          header="Order Qty"
+          field="booking_qty"
+          header="Booking Qty"
           sortable
-          body={order_qtyTemplate}
-          footer={totalOrderQty}
+          body={booking_qtyTemplate}
+          footer={totalBookingQty}
         />
         <Column
           field="stock_qty"
@@ -187,7 +187,7 @@ const ItemsListComponent = ({ dataList, onEdit, onDelete }) => {
           <dt>Big Unit:</dt>
           <dd className="mb-3">{selectedItemDetail?.big_unit_name || 'N/A'}</dd>
           <dt>Order Qty:</dt>
-          <dd className="mb-3">{selectedItemDetail?.order_qty || 0} {selectedItemDetail?.small_unit_name || ''}</dd>
+          <dd className="mb-3">{selectedItemDetail?.booking_qty || 0} {selectedItemDetail?.small_unit_name || ''}</dd>
           <dt>Order Value:</dt>
           <dd className="mb-3">{formatCurrency(orderValue)}</dd>
           <dt>Stock Qty:</dt>

@@ -38,6 +38,9 @@ const ReceiveComponent = ({
   const [itemQty, setItemQty] = useState(1);
   const [itemNote, setItemNote] = useState("");
 
+  const [editingRowsPayment, setEditingRowsPayment] = useState([]);
+
+
   const [formDataPayment, setFormDataPayment] = useState({
     payment_id: "",
     payment_type: formData.order_type,
@@ -69,15 +72,15 @@ const ReceiveComponent = ({
       ?.filter((row) => row.payment_type === formData.order_type)
       ?.reduce((total, row) => total + (row.payment_amount || 0), 0);
 
-    const due_amount = net_amount - paid_amount;
+    const due_amount = net_amount.toFixed(2) - paid_amount.toFixed(2);
 
     setFormData((prev) => ({
       ...prev,
-      order_amount,
-      discount_amount,
-      total_amount: net_amount,
-      paid_amount,
-      due_amount,
+      order_amount: order_amount.toFixed(2),
+      discount_amount: discount_amount.toFixed(2),
+      total_amount: net_amount.toFixed(2),
+      paid_amount: paid_amount.toFixed(2),
+      due_amount: due_amount,
     }));
   }, [orderChildItems, formDataPaymentList]);
 
@@ -182,11 +185,35 @@ const ReceiveComponent = ({
     );
   };
 
+
+
+
+
+  const onRowEditSavePayment = (e) => {
+    const { newData, index } = e;
+    const updatedData = [...formDataPaymentList];
+    updatedData[index] = newData;
+    setFormDataPaymentList(updatedData);
+    setEditingRowsPayment((prev) => prev.filter((id) => id !== index));
+  };
+
+  const onRowEditCancelPayment = (e) => {
+    const { index } = e;
+    setEditingRowsPayment((prev) => prev.filter((id) => id !== index));
+  };
+
+  const onRowEditInitPayment = (e) => {
+    const { index } = e;
+    setEditingRowsPayment((prev) => [...prev, index]);
+  };
+
   const handleDeletePayment = (rowData) => {
     setFormDataPaymentList((prev) =>
       prev.filter((item) => item.payment_id !== rowData.payment_id)
     );
   };
+
+
 
   useEffect(() => {
     if (selectedItem) {
@@ -258,16 +285,23 @@ const ReceiveComponent = ({
     let { newData, index } = event;
     // Calculate item_amount
 
-    const discountAmount = newData.discount_amount;
+    // const discountAmount = newData.discount_amount;
+
+    if (newData.order_qty > newData.booking_qty) {
+      setEditingRows([]);
+      return;
+    }
 
     const itemAmount = newData.item_rate * newData.order_qty;
+    const discountAmount = newData.discount_percent * itemAmount / 100;
     newData.item_amount = itemAmount - discountAmount;
 
-    const discountPercent =
-      itemAmount > 0
-        ? Math.round((discountAmount / itemAmount) * 100 * 100) / 100
-        : 0;
-    newData.discount_percent = discountPercent;
+    // const discountPercent =
+    //   itemAmount > 0
+    //     ? Math.round((discountAmount / itemAmount) * 100 * 100) / 100
+    //     : 0;
+    //discountPercent calculated is already in Order Booking transaction
+    newData.discount_amount = discountAmount;
 
     //cost rate will calculate by Effect
     // newData.cost_rate =
@@ -393,7 +427,7 @@ const ReceiveComponent = ({
 
     const itemAmountF = rowData.item_rate * rowData.booking_qty;
 
-    return `${itemAmountF} (${itemAmount})`;
+    return `${itemAmount} (${itemAmountF})`;
   };
 
   const convertedQtyTemplate = (rowData) => {
@@ -456,6 +490,8 @@ const ReceiveComponent = ({
       </>
     );
   };
+
+
 
   return (
     <div className="p-1">
@@ -654,7 +690,7 @@ const ReceiveComponent = ({
               field="discount_amount"
               header="Discount"
               body={discountAmountTemplate}
-              editor={itemRateEditor}
+              //editor={itemRateEditor}
               footer={discountAmountFooterTemplate}
             />
             <Column
@@ -802,17 +838,19 @@ const ReceiveComponent = ({
                   value={formDataPaymentList}
                   editMode="row"
                   dataKey="payment_id"
-                  editingRows={editingRows}
-                  onRowEditSave={onRowEditSave}
-                  onRowEditCancel={onRowEditCancel}
-                  onRowEditInit={onRowEditInit}
+                  editingRows={editingRowsPayment}
+                  onRowEditSave={onRowEditSavePayment}
+                  onRowEditCancel={onRowEditCancelPayment}
+                  onRowEditInit={onRowEditInitPayment}
                   emptyMessage="No items found."
                   className="bg-dark-300"
                   size="small"
                 >
                   <Column field="payment_mode" header="Mode" />
-                  <Column field="payment_amount" header="Paid" />
-                  <Column field="payment_note" header="Note" />
+                  <Column field="payment_amount" header="Paid"
+                    editor={itemRateEditor} />
+                  <Column field="payment_note" header="Note"
+                    editor={textEditor} />
                   <Column
                     rowEditor
                     headerStyle={{ width: "5%", minWidth: "8rem" }}
@@ -827,7 +865,6 @@ const ReceiveComponent = ({
               </div>
             </div>
           </div>
-
           <div className="flex flex-row-reverse flex-wrap mt-2">
             <Button
               type="button"
@@ -847,8 +884,7 @@ const ReceiveComponent = ({
               loading={isBusy || editingRows.length > 0}
               disabled={
                 (orderChildItems && orderChildItems.length < 1) ||
-                formData.isedit ||
-                formData.due_amount < 0
+                formData.due_amount !== 0
               }
             />
           </div>

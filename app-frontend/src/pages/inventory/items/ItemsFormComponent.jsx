@@ -170,22 +170,22 @@ const ItemsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
         </div>
         <div className="col-12 md:col-2">
           <label
-            htmlFor="order_qty"
+            htmlFor="booking_qty"
             className="block text-900 font-medium mb-2"
           >
-            {t_items.t_items.order_qty.name}
+            {t_items.t_items.booking_qty.name}
           </label>
           <InputNumber
-            name="order_qty"
-            value={formData.order_qty}
-            onValueChange={(e) => onChange("order_qty", e.value)}
-            className={`w-full ${errors.order_qty ? "p-invalid" : ""}`}
+            name="booking_qty"
+            value={formData.booking_qty}
+            onValueChange={(e) => onChange("booking_qty", e.value)}
+            className={`w-full ${errors.booking_qty ? "p-invalid" : ""}`}
             inputStyle={{ width: "100%" }}
-            placeholder={`Enter ${t_items.t_items.order_qty.name}`}
+            placeholder={`Enter ${t_items.t_items.booking_qty.name}`}
             disabled
           />
-          {errors.order_qty && (
-            <small className="mb-3 text-red-500">{errors.order_qty}</small>
+          {errors.booking_qty && (
+            <small className="mb-3 text-red-500">{errors.booking_qty}</small>
           )}
         </div>
         <div className="col-12 md:col-2">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
@@ -50,7 +50,7 @@ const OrderComponent = ({
   //find order summary
   useEffect(() => {
     const order_amount = orderChildItems?.reduce(
-      (total, row) => total + (row.order_qty || 0) * (row.item_rate || 0),
+      (total, row) => total + (row.booking_qty || 0) * (row.item_rate || 0),
       0
     );
     const discount_amount = orderChildItems?.reduce(
@@ -84,7 +84,7 @@ const OrderComponent = ({
   //find item wise costing rate
   const costRate = useMemo(() => {
     const totalBookingQty = orderChildItems.reduce(
-      (sum, item) => sum + (item.order_qty || 0),
+      (sum, item) => sum + (item.booking_qty || 0),
       0
     );
     const discountAmount = orderChildItems.reduce(
@@ -223,7 +223,7 @@ const OrderComponent = ({
       item_name: item.item_name,
       item_rate: item.purchase_rate,
       booking_qty: itemQty || 1,
-      order_qty: itemQty || 1,
+      order_qty: 0,
       discount_percent: 0,
       discount_amount: 0,
       item_amount: item.purchase_rate * itemQty || 1, // Will be re-calculated on edit save,
@@ -260,7 +260,7 @@ const OrderComponent = ({
 
     const discountAmount = newData.discount_amount;
 
-    const itemAmount = newData.item_rate * newData.order_qty;
+    const itemAmount = newData.item_rate * newData.booking_qty;
     newData.item_amount = itemAmount - discountAmount;
 
     const discountPercent =
@@ -268,6 +268,10 @@ const OrderComponent = ({
         ? Math.round((discountAmount / itemAmount) * 100 * 100) / 100
         : 0;
     newData.discount_percent = discountPercent;
+
+    //cost rate will calculate by Effect
+    // newData.cost_rate =
+    //   (newData.discount_amount / newData.booking_qty || 0) + newData.item_rate;
 
     newData.ismodified = 1;
 
@@ -339,8 +343,8 @@ const OrderComponent = ({
     return `${formattedItemRate} (${formattedCostRate})`;
   };
 
-  const orderQtyTemplate = (rowData) => {
-    return `${rowData.order_qty} ${rowData.small_unit_name} (${rowData.booking_qty})`;
+  const bookingQtyTemplate = (rowData) => {
+    return `${rowData.booking_qty} ${rowData.small_unit_name} (${rowData.order_qty})`;
   };
 
   const totalBookingQty = orderChildItems.reduce(
@@ -353,8 +357,8 @@ const OrderComponent = ({
     0
   );
 
-  const totalOrderQtyTemplate = () => {
-    return `${totalOrderQty} (${totalBookingQty})`;
+  const totalBookingQtyTemplate = () => {
+    return `${totalBookingQty} (${totalOrderQty})`;
   };
 
   const discountAmountTemplate = (rowData) => {
@@ -389,14 +393,14 @@ const OrderComponent = ({
 
     const itemAmountF = rowData.item_rate * rowData.booking_qty;
 
-    return `${itemAmountF} (${itemAmount})`;
+    return `${itemAmount} (${itemAmountF})`;
   };
 
   const convertedQtyTemplate = (rowData) => {
     return (
       <>
-        <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} /> (
-        <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} />)
+        <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} /> (
+        <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} />)
       </>
     );
   };
@@ -592,7 +596,6 @@ const OrderComponent = ({
               value={itemQty}
               onValueChange={(e) => setItemQty(e.value)}
               placeholder="Enter Qty"
-              inputStyle={{ width: "100%" }}
             />
             <InputText
               name="itemNote"
@@ -638,11 +641,11 @@ const OrderComponent = ({
               editor={itemRateEditor}
             />
             <Column
-              field="order_qty"
+              field="booking_qty"
               header="Booking Qty"
-              body={orderQtyTemplate}
+              body={bookingQtyTemplate}
               editor={numberEditor}
-              footer={totalOrderQtyTemplate}
+              footer={totalBookingQtyTemplate}
             />
             <Column
               field="discount_amount"

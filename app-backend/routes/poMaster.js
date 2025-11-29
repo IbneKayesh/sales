@@ -300,6 +300,35 @@ router.post("/", async (req, res) => {
       });
     }
 
+
+    // --- Insert Other Cost as Payment ---
+    if (order_type === "Return Purchase") {
+      scripts.push({
+        label: "Insert Return Purchase Payment",
+        sql: `
+          INSERT INTO payments (
+            payment_id, bank_account_id, payment_type, payment_mode,
+            payment_date, contact_id, ref_no, payment_amount,
+            order_amount, payment_note, ref_id
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+        params: [
+          generateGuid(),
+          bank_account_id,
+          order_type,
+          "Cash",
+          order_date,
+          contact_id,
+          order_no,
+          total_amount,
+          "0",
+          "Return Purchase",
+          "",
+        ],
+      });
+    }
+
     // --- Run all scripts inside a transaction ---
     const results = await runScriptsSequentially(scripts, {
       useTransaction: true,

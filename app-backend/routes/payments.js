@@ -12,7 +12,7 @@ router.get("/dues", (req, res) => {
   const sql = `SELECT con.contact_id,con.contact_name,con.contact_type,pom.order_type,pom.order_no,pom.order_date,pom.due_amount
   FROM po_master pom
   LEFT JOIN contacts con on pom.contact_id = con.contact_id
-  WHERE pom.order_type IN ('Purchase Booking')
+  WHERE pom.order_type IN ('Purchase Booking', 'Purchase Order')
   AND pom.due_amount > 0`;
   db.all(sql, [], (err, rows) => {
     if (err) {

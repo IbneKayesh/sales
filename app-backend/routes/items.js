@@ -8,8 +8,8 @@ router.get("/", (req, res) => {
   let whereClause = "";
 
   switch (filter) {
-    case "orders":
-      whereClause = "WHERE i.order_qty > 0";
+    case "booking":
+      whereClause = "WHERE i.booking_qty > 0";
       break;
     case "stock":
       whereClause = "WHERE i.stock_qty > 0";
@@ -45,7 +45,7 @@ router.get("/", (req, res) => {
     LEFT JOIN units bu ON i.big_unit_id = bu.unit_id
     LEFT JOIN categories c ON i.category_id = c.category_id
      ${whereClause}
-    ORDER BY i.order_qty DESC, i.stock_qty DESC
+    ORDER BY i.booking_qty DESC, i.stock_qty DESC
   `;
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -82,7 +82,7 @@ router.post("/", (req, res) => {
     small_unit_id,
     unit_difference_qty,
     big_unit_id,
-    order_qty,
+    booking_qty,
     stock_qty,
     purchase_rate,
     sales_rate,
@@ -101,7 +101,7 @@ router.post("/", (req, res) => {
   const sql = `
     INSERT INTO items (
       item_id, item_code, item_name, item_description, category_id, small_unit_id, unit_difference_qty,
-      big_unit_id, order_qty, stock_qty, purchase_rate, sales_rate, discount_percent, margin_rate
+      big_unit_id, booking_qty, stock_qty, purchase_rate, sales_rate, discount_percent, margin_rate
     )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
@@ -114,7 +114,7 @@ router.post("/", (req, res) => {
     small_unit_id || null,
     unit_difference_qty || 1,
     big_unit_id || null,
-    order_qty || 0,
+    booking_qty || 0,
     stock_qty || 0,
     purchase_rate || 0,
     sales_rate || 0,
@@ -142,7 +142,7 @@ router.post("/update", (req, res) => {
     small_unit_id,
     unit_difference_qty,
     big_unit_id,
-    order_qty,
+    booking_qty,
     stock_qty,
     purchase_rate,
     sales_rate,
@@ -171,7 +171,7 @@ router.post("/update", (req, res) => {
     WHERE item_id = ?
   `;
 
-  // order_qty = ?,
+  // booking_qty = ?,
   // stock_qty = ?,
 
   const params = [
@@ -182,7 +182,7 @@ router.post("/update", (req, res) => {
     small_unit_id || null,
     unit_difference_qty || 1,
     big_unit_id || null,
-    // order_qty || 0,
+    // booking_qty || 0,
     // stock_qty || 0,
     purchase_rate || 0,
     sales_rate || 0,
@@ -207,7 +207,7 @@ router.post("/update", (req, res) => {
       small_unit_id,
       unit_difference_qty,
       big_unit_id,
-      order_qty,
+      booking_qty,
       stock_qty,
       purchase_rate,
       sales_rate,

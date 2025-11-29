@@ -24,7 +24,7 @@ export const usePoMaster = () => {
     { label: "Purchase Booking", value: "Purchase Booking" },
     { label: "Purchase Receive", value: "Purchase Receive" },
     { label: "Purchase Order", value: "Purchase Order" },
-    { label: "Purchase Return", value: "Purchase Return" },
+    { label: "Return Purchase", value: "Return Purchase" },
   ];
 
   const filterOptions = [
@@ -211,10 +211,10 @@ export const usePoMaster = () => {
   };
 
   //for Purchase return
-  const loadPurchaseReturnsPoChild = async (supplierId) => {
+  const loadPurchaseReturnsPoChild = async (orderNo) => {
     setOrderChildItems([]);
     try {
-      const data = await poChildAPI.getReturnsBySupplierId(supplierId);
+      const data = await poChildAPI.getReturnsByOrderNo(orderNo);
       setOrderChildItems(data);
       setOrderChildItemsStore(data);
       //console.log("Error loading purchase return items:", data);
@@ -264,9 +264,9 @@ export const usePoMaster = () => {
 
     //load child for return
     if (
-      field === "contact_id" &&
+      field === "ref_no" &&
       value &&
-      formDataPoMaster.order_type === "Purchase Return"
+      formDataPoMaster.order_type === "Return Purchase"
     ) {
       await loadPurchaseReturnsPoChild(value);
     }
@@ -368,13 +368,15 @@ export const usePoMaster = () => {
     setIsBusy(true);
     try {
       //order master data
+      //number fields will allow decimal places
+      //fix the validate function
       const newErrors = validate(formDataPoMaster, t_po_master.t_po_master);
       setErrors(newErrors);
       //console.log("handleSavePoMaster: " + JSON.stringify(formDataPoMaster));
       //console.log("formDataPaymentList: " + JSON.stringify(formDataPaymentList));
 
       //return;
-      //console.log("newErrors" + JSON.stringify(newErrors));
+      console.log("newErrors" + JSON.stringify(newErrors));
 
       if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
