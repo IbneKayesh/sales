@@ -10,16 +10,12 @@ import { Toast } from "primereact/toast";
 import { AuthProvider, useAuth } from "./hooks/useAuth.jsx";
 
 //internal imports
-import AuthPage from "./pages/auth/AuthPage";
-import Layout from "./pages/layout/Layout.jsx";
-import HomePage from "./pages/HomePage.jsx";
 import PrequestPage from "./pages/prequest/PrequestPage.jsx";
 import SrequestPage from "./pages/srequest/SrequestPage.jsx";
 import BankAccountPage from "./pages/accounts/bankaccount/BankAccountPage.jsx";
 import BankTransactionPage from "./pages/accounts/banktransaction/BankTransactionPage.jsx";
 import PaymentsPage from "./pages/accounts/payments/PaymentsPage.jsx";
 import ItemsPage from "./pages/inventory/items/ItemsPage.jsx";
-import UnitsPage from "./pages/inventory/units/UnitsPage.jsx";
 import CategoryPage from "./pages/inventory/category/CategoryPage.jsx";
 import ContactsPage from "./pages/setup/contacts/ContactsPage.jsx";
 import UsersPage from "./pages/setup/users/UsersPage.jsx";
@@ -64,19 +60,14 @@ function AppRoutes({ toast }) {
           path="accounts/bank-transaction"
           element={<BankTransactionPage />}
         />
-        <Route
-          path="accounts/payments"
-          element={<PaymentsPage />}
-        />
+        <Route path="accounts/payments" element={<PaymentsPage />} />
         <Route path="inventory/items" element={<ItemsPage />} />
-        <Route path="inventory/units" element={<UnitsPage />} />
         <Route path="inventory/category" element={<CategoryPage />} />
         <Route path="setup/contacts" element={<ContactsPage />} />
         <Route path="setup/users" element={<UsersPage />} />
         <Route path="setup/change-password" element={<ChangePasswordPage />} />
         <Route path="setup/closing-process" element={<ClosingProcessPage />} />
         <Route path="setup/backup" element={<BackupPage />} />
-        <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>
     </Routes>
   );

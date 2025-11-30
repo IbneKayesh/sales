@@ -1,0 +1,19 @@
+{
+    "Modules": [
+        {
+            "name": "Inventory",
+            "tables": [
+                {
+                    "name": "Categories",
+                    "description": "Categories table",
+                    "status": "Work in Progress"
+                },
+                {
+                    "name": "Units",
+                    "description": "Units table",
+                    "status": "Work in Progress"
+                }
+            ]
+        }
+    ]
+}

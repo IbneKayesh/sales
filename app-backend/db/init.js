@@ -1,33 +1,7 @@
-const sqlite3 = require("sqlite3").verbose();
-const path = require("path");
-
-// Create database path
-const dbPath = path.join(__dirname, "../database.db");
-
-// Create database connection
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error("Error opening database:", err.message);
-  } else {
-    console.log("Connected to SQLite database.");
-  }
-});
-
 // Initialize tables
 const initTables = () => {
   // Users table for authentication
   db.serialize(() => {
-    db.run(`
-      CREATE TABLE IF NOT EXISTS users (
-        user_id TEXT PRIMARY KEY,
-        username TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        email TEXT,
-        role TEXT DEFAULT 'User',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
 
     // Bank Accounts table
     db.run(`
@@ -59,25 +33,6 @@ const initTables = () => {
       )
     `);
 
-    // Categories table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS categories (
-        category_id TEXT PRIMARY KEY,
-        category_name TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // Units table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS units (
-        unit_id TEXT PRIMARY KEY,
-        unit_name TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
 
     // Items table
     db.run(`
@@ -246,21 +201,7 @@ const initTables = () => {
 // Initialize default data
 const initData = (callback) => {
   db.serialize(() => {
-    // Insert default users
-    db.run(
-      `
-      INSERT OR IGNORE INTO users (user_id, username, password, email, role) VALUES
-      ('1', 'admin', 'password', 'admin@example.com', 'Admin'),
-      ('2', 'user', '123456', 'user@example.com', 'User')
-    `,
-      (err) => {
-        if (err) {
-          console.error("Error inserting default users:", err);
-        } else {
-          console.log("Default users inserted.");
-        }
-      }
-    );
+
 
     // Insert default bank account
     db.run(
@@ -296,44 +237,6 @@ const initData = (callback) => {
       }
     );
 
-   // Insert default categories
-db.run(
-  `
-  INSERT OR IGNORE INTO categories (category_id, category_name) VALUES
-    (1, 'Beverages'),
-    (2, 'Snacks'),
-    (3, 'Dairy'),
-    (4, 'Bakery'),
-    (5, 'Household')
-  `,
-  (err) => {
-    if (err) console.error("Error inserting default categories:", err);
-    else console.log("Default categories inserted.");
-  }
-);
-
-// Insert default units
-db.run(
-  `
-  INSERT OR IGNORE INTO units (unit_id, unit_name) VALUES
-    (1, 'Pcs'),
-    (2, 'Pack'),
-    (3, 'Bottle'),
-    (4, 'Kg'),
-    (5, 'Ltr'),
-    (6, 'Box'),
-    (7, 'Ctn'),
-    (8, 'Case'),
-    (9, 'Drum')
-  `,
-  (err) => {
-    if (err) {
-      console.error("Error inserting default units:", err);
-    } else {
-      console.log("Default units inserted.");
-    }
-  }
-);
 
 // Insert updated default items
 db.run(

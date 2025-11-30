@@ -1,0 +1,16 @@
+{
+  "unit_id": {
+    "name": "Id",
+    "type": "string",
+    "required": false,
+    "minLength": 0,
+    "maxLength": 36
+  },
+  "unit_name": {
+    "name": "Unit Name",
+    "type": "string",
+    "required": true,
+    "minLength": 1,
+    "maxLength": 100
+  }
+}
