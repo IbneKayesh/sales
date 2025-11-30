@@ -1,5 +1,4 @@
 {
-  "t_category": {
     "category_id": {
       "name": "Id",
       "type": "string",
@@ -15,4 +14,4 @@
       "maxLength": 100
     }
   }
-}
+  

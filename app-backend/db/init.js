@@ -33,32 +33,6 @@ const initTables = () => {
       )
     `);
 
-
-    // Items table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS items (
-        item_id TEXT PRIMARY KEY,
-        item_code TEXT,
-        item_name TEXT NOT NULL,
-        item_description TEXT,
-        category_id TEXT,
-        small_unit_id TEXT,
-        unit_difference_qty INTEGER DEFAULT 1,
-        big_unit_id TEXT,
-        booking_qty REAL DEFAULT 0,
-        stock_qty REAL DEFAULT 0,
-        purchase_rate REAL DEFAULT 0,
-        sales_rate REAL DEFAULT 0,
-        discount_percent REAL DEFAULT 0,
-        margin_rate REAL DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (category_id) REFERENCES categories (category_id) ON DELETE RESTRICT,
-        FOREIGN KEY (small_unit_id) REFERENCES units (unit_id) ON DELETE RESTRICT,
-        FOREIGN KEY (big_unit_id) REFERENCES units (unit_id) ON DELETE RESTRICT
-      )
-    `);
-
     // Bank Transactions table
     db.run(`
       CREATE TABLE IF NOT EXISTS bank_trans (
@@ -237,47 +211,6 @@ const initData = (callback) => {
       }
     );
 
-
-// Insert updated default items
-db.run(
-  `
-  INSERT OR IGNORE INTO items (
-    item_id, item_code, item_name, item_description,
-    category_id, small_unit_id, unit_difference_qty, big_unit_id,
-    booking_qty, stock_qty, purchase_rate, sales_rate,
-    discount_percent, margin_rate
-  ) VALUES
-  (1, 'ITM001', 'Coca Cola 1L', 'Soft drink', 1, 5, 12, 7, 0, 0, 45, 55, 5, 10),
-  (2, 'ITM002', 'Pepsi 500ml', 'Soft drink', 1, 3, 24, 7, 0, 0, 25, 35, 0, 12),
-  (3, 'ITM003', 'Sprite 1L', 'Soft drink', 1, 5, 12, 7, 0, 0, 42, 52, 3, 10),
-  (18, 'ITM018', 'Mineral Water 1.5L', 'Drinking Water', 1, 5, 6, 8, 0, 0, 20, 30, 0, 15),
-  (4, 'ITM004', 'Potato Chips', 'Salted chips', 2, 2, 24, 6, 0, 0, 15, 25, 0, 15),
-  (5, 'ITM005', 'Lays Classic', 'Potato chips', 2, 2, 24, 6, 0, 0, 18, 25, 0, 12),
-  (6, 'ITM006', 'Doritos Cheese', 'Nacho chips', 2, 2, 24, 6, 0, 0, 30, 45, 5, 18),
-  (17, 'ITM017', 'Chocolate Bar', 'Milk chocolate', 2, 1, 48, 6, 0, 0, 25, 40, 0, 18),
-  (7, 'ITM007', 'Milk 1L', 'Packet Milk', 3, 5, 12, 7, 0, 0, 50, 60, 0, 10),
-  (8, 'ITM008', 'Cheddar Cheese 1Kg', 'Dairy Cheese', 3, 4, 10, 6, 0, 0, 80, 100, 0, 20),
-  (9, 'ITM009', 'Butter 1Kg', 'Salted butter', 3, 4, 10, 6, 0, 0, 40, 55, 0, 18),
-  (16, 'ITM016', 'Yogurt Cup 1Kg', 'Dairy yogurt', 3, 4, 10, 6, 0, 0, 20, 30, 0, 15),
-  (19, 'ITM019', 'Ghee 1Kg', 'Pure Ghee', 3, 4, 12, 6, 0, 0, 300, 380, 0, 18),
-  (10, 'ITM010', 'Bread Loaf', 'Fresh bread', 4, 1, 20, 6, 0, 0, 25, 35, 0, 15),
-  (11, 'ITM011', 'Burger Buns', 'Pack of 6', 4, 2, 16, 6, 0, 0, 30, 45, 0, 12),
-  (12, 'ITM012', 'Cake Rusk', 'Baked snack', 4, 2, 12, 6, 0, 0, 50, 70, 10, 20),
-  (13, 'ITM013', 'Detergent Powder 1Kg', 'Laundry powder', 5, 4, 10, 6, 0, 0, 120, 150, 0, 15),
-  (14, 'ITM014', 'Dishwashing Liquid 1L', 'Kitchen cleaner', 5, 5, 12, 7, 0, 0, 60, 85, 5, 18),
-  (15, 'ITM015', 'Toilet Cleaner 1L', 'Bathroom cleaner', 5, 5, 12, 7, 0, 0, 110, 140, 0, 12),
-  (20, 'ITM020', 'Floor Cleaner 5L', 'Household cleaning liquid', 5, 5, 1, 9, 0, 0, 150, 200, 0, 15)
-
-  `,
-  (err) => {
-    if (err) {
-      console.error("Error inserting default items:", err);
-    } else {
-      console.log("Default items inserted.");
-      if (callback) callback();
-    }
-  }
-);
 
 
 

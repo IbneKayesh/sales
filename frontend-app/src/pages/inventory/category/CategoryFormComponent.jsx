@@ -1,6 +1,6 @@
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import t_category from "@/models/inventory/t_category.json";
+import t_categories from "@/models/inventory/t_categories.json";
 
 const CategoryFormComponent = ({
   isBusy,
@@ -17,7 +17,7 @@ const CategoryFormComponent = ({
             htmlFor="category_name"
             className="block text-900 font-medium mb-2"
           >
-            {t_category.t_category.category_name.name}{" "}
+            {t_categories.category_name.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <InputText
@@ -25,7 +25,7 @@ const CategoryFormComponent = ({
             value={formData.category_name}
             onChange={(e) => onChange("category_name", e.target.value)}
             className={`w-full ${errors.category_name ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_category.t_category.category_name.name}`}
+            placeholder={`Enter ${t_categories.category_name.name}`}
           />
           {errors.category_name && (
             <small className="mb-3 text-red-500">{errors.category_name}</small>

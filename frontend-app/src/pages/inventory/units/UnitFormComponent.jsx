@@ -2,7 +2,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import t_units from "@/models/inventory/t_units.json";
 
-const UnitsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
+const UnitFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
   return (
     <div className="p-1">
       <div className="grid">
@@ -43,4 +43,4 @@ const UnitsFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
   );
 };
 
-export default UnitsFormComponent;
+export default UnitFormComponent;

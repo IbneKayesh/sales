@@ -4,13 +4,18 @@
             "name": "Inventory",
             "tables": [
                 {
-                    "name": "Categories",
-                    "description": "Categories table",
-                    "status": "Work in Progress"
-                },
-                {
                     "name": "Units",
                     "description": "Units table",
+                    "status": "Done"
+                },
+                {
+                    "name": "Categories",
+                    "description": "Categories table",
+                    "status": "Done"
+                },
+                {
+                    "name": "Products",
+                    "description": "Products table",
                     "status": "Work in Progress"
                 }
             ]

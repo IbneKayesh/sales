@@ -13,7 +13,9 @@ import { AuthProvider, useAuth } from "./hooks/useAuth.jsx";
 import AuthPage from "./pages/auth/AuthPage";
 import HomePage from "./pages/HomePage.jsx";
 import Layout from "./pages/layout/Layout.jsx";
-import UnitsPage from "./pages/inventory/units/UnitsPage.jsx";
+import UnitPage from "./pages/inventory/units/UnitPage.jsx";
+import CategoryPage from "./pages/inventory/category/CategoryPage.jsx";
+import ProductPage from "./pages/inventory/products/ProductPage.jsx";
 
 function App() {
   const toast = useRef(null);
@@ -46,7 +48,9 @@ function AppRoutes({ toast }) {
       <Route path="/home" element={user ? <Layout /> : <Navigate to="/" />}>
         <Route index element={<HomePage />} />
         
-        <Route path="inventory/units" element={<UnitsPage />} />
+        <Route path="inventory/unit" element={<UnitPage />} />
+        <Route path="inventory/category" element={<CategoryPage />} />
+        <Route path="inventory/product" element={<ProductPage />} />
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>
     </Routes>

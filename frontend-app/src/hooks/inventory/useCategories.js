@@ -1,25 +1,26 @@
+//as example useCategories.js 
 import { useState, useEffect } from "react";
-import { categoriesAPI } from "@/api/categoriesAPI";
+import { categoriesAPI } from "@/api/inventory/categoriesAPI";
+import validate from "@/models/validator";
+import t_categories from "@/models/inventory/t_categories.json";
 import { generateGuid } from "@/utils/guid";
 
-import validate from "@/models/validator";
-import t_category from "@/models/inventory/t_category.json";
-
-export const useCategory = () => {
-  const [categories, setCategories] = useState([]); // Initialize with empty array
+export const useCategories = () => {
+  const [categoryList, setCategoryList] = useState([]);
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
-
   const [errors, setErrors] = useState({});
   const [formDataCategory, setFormDataCategory] = useState({
+    category_id: generateGuid(),
     category_name: "",
   });
 
   const loadCategories = async (resetModified = false) => {
     try {
       const data = await categoriesAPI.getAll();
-      setCategories(data);
+      //console.log("data: " + JSON.stringify(data));
+      setCategoryList(data);
       if (resetModified) {
         setToastBox({
           severity: "info",
@@ -28,18 +29,17 @@ export const useCategory = () => {
         });
       }
     } catch (error) {
-      console.error("Error loading categories:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
         detail: resetModified
           ? "Failed to refresh data from server"
-          : "Failed to load categories from server",
+          : "Failed to load data from server",
       });
     }
   };
 
-  // Load categories from API on mount
+  //Fetch data from API on mount
   useEffect(() => {
     loadCategories();
   }, []);
@@ -48,7 +48,7 @@ export const useCategory = () => {
     setFormDataCategory((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate(
       { ...formDataCategory, [field]: value },
-      t_category.t_category
+      t_categories
     );
     setErrors(newErrors);
   };
@@ -72,15 +72,20 @@ export const useCategory = () => {
   };
 
   const handleEditCategory = (category) => {
+    //console.log("category: " + JSON.stringify(category));
+
     setFormDataCategory(category);
     setCurrentView("form");
   };
 
-  const handleDeleteCategory = async (id) => {
+  const handleDeleteCategory = async (rowData) => {
     try {
-      await categoriesAPI.delete(id);
-      const updatedCategories = categories.filter((c) => c.category_id !== id);
-      setCategories(updatedCategories);
+      //console.log("rowData " + JSON.stringify(rowData))
+      await categoriesAPI.delete(rowData);
+      const updatedCategories = categoryList.filter(
+        (c) => c.category_id !== rowData.category_id
+      );
+      setCategoryList(updatedCategories);
 
       setToastBox({
         severity: "info",
@@ -96,6 +101,7 @@ export const useCategory = () => {
       });
     }
   };
+
   const handleRefresh = () => {
     loadCategories(true);
   };
@@ -104,9 +110,9 @@ export const useCategory = () => {
     e.preventDefault();
     setIsBusy(true);
 
-    const newErrors = validate(formDataCategory, t_category.t_category);
+    const newErrors = validate(formDataCategory, t_categories);
     setErrors(newErrors);
-    console.log("handleSaveCategory: " + JSON.stringify(newErrors));
+    console.log("handleSaveCategory: " + JSON.stringify(formDataCategory));
 
     if (Object.keys(newErrors).length > 0) {
       setIsBusy(false);
@@ -117,12 +123,9 @@ export const useCategory = () => {
       let updatedCategories;
       if (formDataCategory.category_id) {
         // Edit existing
-        const updatedCategory = await categoriesAPI.update(
-          formDataCategory.category_id,
-          formDataCategory
-        );
+        const updatedCategory = await categoriesAPI.update(formDataCategory);
         updatedCategory.ismodified = true;
-        updatedCategories = categories.map((c) =>
+        updatedCategories = categoryList.map((c) =>
           c.category_id === formDataCategory.category_id ? updatedCategory : c
         );
 
@@ -137,10 +140,11 @@ export const useCategory = () => {
           ...formDataCategory,
           category_id: generateGuid(),
         };
+        //console.log("newCategoryData: " + JSON.stringify(newCategoryData));
 
         const newCategory = await categoriesAPI.create(newCategoryData);
         newCategory.ismodified = true;
-        updatedCategories = [...categories, newCategory];
+        updatedCategories = [...categoryList, newCategory];
 
         setToastBox({
           severity: "success",
@@ -148,7 +152,7 @@ export const useCategory = () => {
           detail: `"${formDataCategory.category_name}" added successfully.`,
         });
       }
-      setCategories(updatedCategories);
+      setCategoryList(updatedCategories);
 
       handleClear();
       setCurrentView("list");
@@ -165,7 +169,7 @@ export const useCategory = () => {
   };
 
   return {
-    categories,
+    categoryList,
     toastBox,
     isBusy,
     currentView,

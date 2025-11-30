@@ -1,28 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useCategory } from "@/hooks/inventory/useCategory";
-import CategoryListComponent from "./CategoryListComponent";
-import CategoryFormComponent from "./CategoryFormComponent";
+import { useUnits } from "@/hooks/inventory/useUnits";
+import UnitListComponent from "./UnitListComponent";
+import UnitFormComponent from "./UnitFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 
-const CategoryPage = () => {
+const UnitPage = () => {
   const toast = useRef(null);
   const {
-    categories,
+    unitList,
     toastBox,
     isBusy,
     currentView,
     errors,
-    formDataCategory,
+    formDataUnit,
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditCategory,
-    handleDeleteCategory,
+    handleEditUnit,
+    handleDeleteUnit,
     handleRefresh,
-    handleSaveCategory,
-  } = useCategory();
+    handleSaveUnit,
+  } = useUnits();
 
   useEffect(() => {
     if (toastBox && toast.current) {
@@ -42,10 +42,10 @@ const CategoryPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Category List"
-            : formDataCategory.category_id
-            ? "Edit Category"
-            : "Add New Category"}
+            ? "Units List"
+            : formDataUnit.unit_id
+            ? "Edit Unit"
+            : "Add New Unit"}
         </h3>
 
         {isList ? (
@@ -58,7 +58,7 @@ const CategoryPage = () => {
               onClick={handleRefresh}
             />
             <Button
-              label="New Category"
+              label="New Unit"
               icon="pi pi-plus"
               size="small"
               onClick={handleAddNew}
@@ -66,7 +66,7 @@ const CategoryPage = () => {
           </div>
         ) : (
           <Button
-            label="Category List"
+            label="Units List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -81,18 +81,18 @@ const CategoryPage = () => {
       <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <CategoryListComponent
-            dataList={categories}
-            onEdit={handleEditCategory}
-            onDelete={handleDeleteCategory}
+          <UnitListComponent
+            dataList={unitList}
+            onEdit={handleEditUnit}
+            onDelete={handleDeleteUnit}
           />
         ) : (
-          <CategoryFormComponent
+          <UnitFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={formDataCategory}
+            formData={formDataUnit}
             onChange={handleChange}
-            onSave={handleSaveCategory}
+            onSave={handleSaveUnit}
           />
         )}
       </Card>
@@ -100,4 +100,4 @@ const CategoryPage = () => {
   );
 };
 
-export default CategoryPage;
+export default UnitPage;

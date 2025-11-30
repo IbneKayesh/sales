@@ -4,7 +4,7 @@ const ConvertedQtyComponent = ({ qty, rowData }) => {
   const diff = rowData.unit_difference_qty || 1;
   const big = Math.floor(qty / diff);
   const small = qty % diff;
-  return `${big} ${rowData.big_unit_name || ""} ${small} ${
+  return `${big} ${rowData.large_unit_name || ""} ${small} ${
     rowData.small_unit_name || ""
   }`;
 };

@@ -3,14 +3,14 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 
-const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
+const UnitListComponent = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.category_name}"?`,
+      message: `Are you sure you want to delete "${rowData.unit_name}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
-        onDelete(rowData.category_id);
+        onDelete(rowData);
       },
       reject: () => {
         // Do nothing on reject
@@ -53,12 +53,10 @@ const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
         rows={10}
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
-        responsiveLayout="scroll"
         className="bg-dark-300"
         size="small"
       >
-        <Column field="category_name" header="Category Name" sortable />
-        <Column field="item_count" header="Total Items" sortable />
+        <Column field="unit_name" header="Unit Name" sortable />
         <Column
           header="Actions"
           body={actionTemplate}
@@ -69,4 +67,4 @@ const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
   );
 };
 
-export default CategoryListComponent;
+export default UnitListComponent;

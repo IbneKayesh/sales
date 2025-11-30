@@ -6,6 +6,8 @@ const { initTables, initData } = require('./db/init');
 // Import routes
 const authRoutes = require('./routes/auth');
 const unitRoutes = require('./routes/inventory/units.js');
+const categoryRoutes = require('./routes/inventory/categories.js');
+const productRoutes = require('./routes/inventory/products.js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -38,6 +40,8 @@ initData();
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/inventory/units', unitRoutes);
+app.use('/api/inventory/categories', categoryRoutes);
+app.use('/api/inventory/products', productRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
