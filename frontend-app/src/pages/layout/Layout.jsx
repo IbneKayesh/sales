@@ -52,7 +52,7 @@ const Layout = () => {
       icon: "pi pi-cog",
       submenus: [
         { id: "st1", name: "Closing", url: "/home/setup/closing-process", icon: "pi pi-sparkles" },
-        { id: "st2", name: "Contacts", url: "/home/setup/contacts", icon: "pi pi-address-book" },
+        { id: "st2", name: "Contact", url: "/home/setup/contact", icon: "pi pi-address-book" },
         { id: "st3", name: "Users", url: "/home/setup/users", icon: "pi pi-users" },
         { id: "st4", name: "Change Password", url: "/home/setup/change-password", icon: "pi pi-unlock" },
         { id: "st5", name: "Backup", url: "/home/setup/backup", icon: "pi pi-save" },

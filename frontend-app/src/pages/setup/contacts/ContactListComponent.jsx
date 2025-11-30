@@ -1,0 +1,86 @@
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { SplitButton } from "primereact/splitbutton";
+
+const ContactListComponent = ({ dataList, onEdit, onDelete }) => {
+  const handleDelete = (rowData) => {
+    confirmDialog({
+      message: `Are you sure you want to delete "${rowData.contact_name}"?`,
+      header: "Delete Confirmation",
+      icon: "pi pi-exclamation-triangle",
+      accept: () => {
+        onDelete(rowData);
+      },
+      reject: () => {
+        // Do nothing on reject
+      },
+    });
+  };
+
+  const currentBalanceTemplate = (rowData) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "BDT",
+    }).format(rowData.current_balance);
+  };
+
+  const actionTemplate = (rowData) => {
+    let menuItems = [
+      {
+        label: "Delete",
+        icon: "pi pi-trash text-red-400",
+        command: () => {
+          handleDelete(rowData);
+        },
+        disabled: rowData.ismodified,
+      },
+    ];
+    return (
+      <div className="flex flex-wrap gap-2">
+        <SplitButton
+          icon="pi pi-pencil"
+          size="small"
+          tooltip="Edit"
+          tooltipOptions={{ position: "top" }}
+          onClick={() => onEdit(rowData)}
+          model={menuItems}
+          disabled={rowData.ismodified}
+        />
+      </div>
+    );
+  };
+
+  return (
+    <div className="p-1">
+      <ConfirmDialog />
+      <DataTable
+        value={dataList}
+        paginator
+        rows={10}
+        rowsPerPageOptions={[5, 10, 25]}
+        emptyMessage="No data found."
+        className="bg-dark-300"
+        size="small"
+      >
+        <Column field="contact_name" header="Name" sortable />
+        <Column field="contact_mobile" header="Mobile" />
+        <Column field="contact_email" header="Email" />
+        <Column field="contact_address" header="Address" />
+        <Column field="contact_type" header="Type" />
+        <Column
+          field="current_balance"
+          header="Balance"
+          body={currentBalanceTemplate}
+        />
+        <Column
+          header="Actions"
+          body={actionTemplate}
+          style={{ width: "120px" }}
+        />
+      </DataTable>
+    </div>
+  );
+};
+
+export default ContactListComponent;

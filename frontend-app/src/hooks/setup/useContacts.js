@@ -1,56 +1,48 @@
+//as example useUnits.js
+
 import { useState, useEffect } from "react";
-import { contactsAPI } from "@/api/contactsAPI";
+import { contactAPI } from "@/api/setup/contactAPI";
+import validate from "@/models/validator";
+import t_contacts from "@/models/setup/t_contacts";
 import { generateGuid } from "@/utils/guid";
 
-import validate from "@/models/validator";
-import t_contacts from "@/models/setup/t_contacts.json";
-
 export const useContacts = () => {
-  const [contacts, setContacts] = useState([]); // Initialize with empty array
+  const [contactList, setContactList] = useState([]);
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
-
   const [errors, setErrors] = useState({});
   const [formDataContact, setFormDataContact] = useState({
+    contact_id: generateGuid(),
     contact_name: "",
+    contact_mobile: "",
+    contact_email: "",
     contact_address: "",
     contact_type: "",
     current_balance: 0,
   });
+
   const contactTypeOptions = [
     { label: "Customer", value: "Customer" },
     { label: "Supplier", value: "Supplier" },
     { label: "Both", value: "Both" },
   ];
-  const [contactsSupplier, setContactsSupplier] = useState([]); // Initialize with empty array
-  const [contactsBank, setContactsBank] = useState([]); // Initialize with empty array
+
+  const [contactSupplierList, setContactSupplierList] = useState([]);
 
   const loadContacts = async (resetModified = false) => {
     try {
-      const data = await contactsAPI.getAll();
-      setContacts(data);
+      const data = await contactAPI.getAll();
+      //console.log("data: " + JSON.stringify(data));
+      setContactList(data);
 
-      const supplierList = data
+      const supplierData = data
         .filter(
-          (contact) =>
-            (contact.contact_type === "Both" ||
-            contact.contact_type === "Supplier") &&
-            contact.contact_id !== '0'
+          (c) => c.contact_type === "Supplier" || c.contact_type === "Both"
         )
-        .map((contact) => ({
-          label: contact.contact_name,
-          value: contact.contact_id,
-        }));
+        .map((c) => ({ label: c.contact_name, value: c.contact_id }));
 
-      setContactsSupplier(supplierList);
-
-      const allContact = data.map((contact) => ({
-        label: contact.contact_name,
-        value: contact.contact_id,
-      }));
-
-      setContactsBank(allContact);
+      setContactSupplierList(supplierData);
 
       if (resetModified) {
         setToastBox({
@@ -60,18 +52,17 @@ export const useContacts = () => {
         });
       }
     } catch (error) {
-      console.error("Error loading contacts:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
         detail: resetModified
           ? "Failed to refresh data from server"
-          : "Failed to load contacts from server",
+          : "Failed to load data from server",
       });
     }
   };
 
-  // Load contacts from API on mount
+  //Fetch data from API on mount
   useEffect(() => {
     loadContacts();
   }, []);
@@ -80,7 +71,7 @@ export const useContacts = () => {
     setFormDataContact((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate(
       { ...formDataContact, [field]: value },
-      t_contacts.t_contacts
+      t_contacts
     );
     setErrors(newErrors);
   };
@@ -89,6 +80,8 @@ export const useContacts = () => {
     setFormDataContact({
       contact_id: "",
       contact_name: "",
+      contact_mobile: "",
+      contact_email: "",
       contact_address: "",
       contact_type: "",
       current_balance: 0,
@@ -107,15 +100,20 @@ export const useContacts = () => {
   };
 
   const handleEditContact = (contact) => {
+    //console.log("contact: " + JSON.stringify(contact));
+
     setFormDataContact(contact);
     setCurrentView("form");
   };
 
-  const handleDeleteContact = async (id) => {
+  const handleDeleteContact = async (rowData) => {
     try {
-      await contactsAPI.delete(id);
-      const updatedContacts = contacts.filter((c) => c.contact_id !== id);
-      setContacts(updatedContacts);
+      //console.log("rowData " + JSON.stringify(rowData))
+      await contactAPI.delete(rowData);
+      const updatedContacts = contactList.filter(
+        (c) => c.contact_id !== rowData.contact_id
+      );
+      setContactList(updatedContacts);
 
       setToastBox({
         severity: "info",
@@ -140,9 +138,10 @@ export const useContacts = () => {
     e.preventDefault();
     setIsBusy(true);
 
-    const newErrors = validate(formDataContact, t_contacts.t_contacts);
+    const newErrors = validate(formDataContact, t_contacts);
     setErrors(newErrors);
-    console.log("handleSaveContact: " + JSON.stringify(newErrors));
+    console.log("handleSaveContact: " + JSON.stringify(formDataContact));
+
     if (Object.keys(newErrors).length > 0) {
       setIsBusy(false);
       return;
@@ -152,12 +151,9 @@ export const useContacts = () => {
       let updatedContacts;
       if (formDataContact.contact_id) {
         // Edit existing
-        const updatedContact = await contactsAPI.update(
-          formDataContact.contact_id,
-          formDataContact
-        );
+        const updatedContact = await contactAPI.update(formDataContact);
         updatedContact.ismodified = true;
-        updatedContacts = contacts.map((c) =>
+        updatedContacts = contactList.map((c) =>
           c.contact_id === formDataContact.contact_id ? updatedContact : c
         );
 
@@ -172,10 +168,11 @@ export const useContacts = () => {
           ...formDataContact,
           contact_id: generateGuid(),
         };
+        //console.log("newContactData: " + JSON.stringify(newContactData));
 
-        const newContact = await contactsAPI.create(newContactData);
+        const newContact = await contactAPI.create(newContactData);
         newContact.ismodified = true;
-        updatedContacts = [...contacts, newContact];
+        updatedContacts = [...contactList, newContact];
 
         setToastBox({
           severity: "success",
@@ -183,7 +180,7 @@ export const useContacts = () => {
           detail: `"${formDataContact.contact_name}" added successfully.`,
         });
       }
-      setContacts(updatedContacts);
+      setContactList(updatedContacts);
 
       handleClear();
       setCurrentView("list");
@@ -200,7 +197,9 @@ export const useContacts = () => {
   };
 
   return {
-    contacts,
+    contactList,
+    contactSupplierList,
+    contactTypeOptions,
     toastBox,
     isBusy,
     currentView,
@@ -213,8 +212,5 @@ export const useContacts = () => {
     handleDeleteContact,
     handleRefresh,
     handleSaveContact,
-    contactTypeOptions,
-    contactsSupplier,
-    contactsBank,
   };
 };
