@@ -23,25 +23,6 @@ const initTables = () => {
       )
     `);
 
-    // Purchase Payments table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS payments (
-        payment_id TEXT PRIMARY KEY,
-        bank_account_id TEXT NOT NULL,
-        payment_type TEXT NOT NULL,
-        payment_mode TEXT NOT NULL,
-        payment_date TEXT NOT NULL,
-        contact_id TEXT NOT NULL,
-        ref_no TEXT,
-        payment_amount REAL DEFAULT 0,
-        order_amount REAL DEFAULT 0,
-        payment_note TEXT,
-        ref_id TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
-      )
-    `);
 
     // Sales Order Master table
     db.run(`

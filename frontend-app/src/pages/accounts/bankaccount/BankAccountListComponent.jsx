@@ -18,6 +18,13 @@ const BankAccountListComponent = ({ dataList, onEdit, onDelete }) => {
     });
   };
 
+  const current_balance_BT = (rowData) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "BDT",
+    }).format(rowData.current_balance);
+  };
+
   const actionTemplate = (rowData) => {
     let menuItems = [
       {
@@ -56,20 +63,15 @@ const BankAccountListComponent = ({ dataList, onEdit, onDelete }) => {
         className="bg-dark-300"
         size="small"
       >
-        <Column field="bank_name" header="Bank Name" />
-        <Column field="branch_name" header="Branch Name" />
+        <Column field="bank_name" header="Bank" />
+        <Column field="bank_branch" header="Branch" />
         <Column field="account_name" header="Account Name" sortable />
         <Column field="account_number" header="Account Number" />
         <Column field="opening_date" header="Opening Date" />
         <Column
           field="current_balance"
           header="Balance"
-          body={(rowData) =>
-            new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "BDT",
-            }).format(rowData.current_balance)
-          }
+          body={current_balance_BT}
           sortable
         />
         <Column

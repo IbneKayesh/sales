@@ -41,27 +41,6 @@ function generate_order_number(order_type, callback) {
 }
 
 
-// Get purchase order master by ID
-router.get("/:id", (req, res) => {
-  const { id } = req.params;
-  const sql = `
-    SELECT pom.*, c.contact_name
-    FROM po_master pom
-    LEFT JOIN contacts c ON pom.contact_id = c.contact_id
-    WHERE pom.po_master_id = ?
-  `;
-  db.get(sql, [id], (err, row) => {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    if (!row) {
-      return res.status(404).json({ error: "Purchase order not found" });
-    }
-    res.json(row);
-  });
-});
-
 // Create new purchase order master, child and payment
 router.post("/", async (req, res) => {
   try {
@@ -133,121 +112,8 @@ router.post("/", async (req, res) => {
     // Build SQL scripts for transaction
     const scripts = [];
 
-    // --- Insert Master ---
-    scripts.push({
-      label: "Insert PO Master",
-      sql: `
-        INSERT INTO po_master (
-          po_master_id, order_type, order_no, order_date, contact_id,
-          ref_no, order_note, order_amount, discount_amount, cost_amount,
-          total_amount, paid_amount, due_amount, is_paid, is_posted,
-          is_completed, other_cost
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `,
-      params: [
-        po_master_id,
-        order_type,
-        order_no,
-        order_date,
-        contact_id,
-        ref_no || "",
-        order_note || "",
-        order_amount || 0,
-        discount_amount || 0,
-        cost_amount || 0,
-        total_amount || 0,
-        paid_amount || 0,
-        due_amount || 0,
-        is_paid,
-        is_posted || 0,
-        0,
-        other_cost || 0,
-      ],
-    });
 
-    // --- Insert Child Rows ---
-    for (const child of childs_create) {
-      scripts.push({
-        label: `Insert Child ${child.id}`,
-        sql: `
-          INSERT INTO po_child (
-            id, po_master_id, item_id, item_rate, booking_qty, order_qty,
-            discount_percent, discount_amount, item_amount,
-            cost_rate, item_note, ref_id
-          )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-        params: [
-          child.id,
-          po_master_id,
-          child.item_id,
-          child.item_rate,
-          child.booking_qty || 0,
-          child.order_qty || 0,
-          child.discount_percent || 0,
-          child.discount_amount || 0,
-          child.item_amount || 0,
-          child.cost_rate || 0,
-          child.item_note || "",
-          child.ref_id || "",
-        ],
-      });
-    }
-
-    // --- Insert Payments ---
-    for (const payment of payments_create || []) {
-      scripts.push({
-        label: `Insert Payment ${payment.payment_id}`,
-        sql: `
-          INSERT INTO payments (
-            payment_id, bank_account_id, payment_type, payment_mode,
-            payment_date, contact_id, ref_no, payment_amount,
-            order_amount, payment_note, ref_id
-          )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-        params: [
-          payment.payment_id,
-          bank_account_id,
-          payment.payment_type,
-          payment.payment_mode,
-          payment.payment_date,
-          contact_id,
-          order_no,
-          payment.payment_amount,
-          payment.order_amount,
-          payment.payment_note || "",
-          payment.ref_id || "",
-        ],
-      });
-    }
-
-    // --- Insert Other Cost as Payment ---
-    if (other_cost > 0) {
-      scripts.push({
-        label: "Insert Other Cost Payment",
-        sql: `
-          INSERT INTO payments (
-            payment_id, bank_account_id, payment_type, payment_mode,
-            payment_date, contact_id, ref_no, payment_amount,
-            order_amount, payment_note, ref_id
-          )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-        params: [
-          generateGuid(),
-          bank_account_id,
-          `${order_type} Expenses`,
-          "Cash",
-          order_date,
-          "0",
-          order_no,
-          other_cost,
-          other_cost,
-          "Other Cost Expenses",
-          "",
-        ],
-      });
+    /
     }
 
 
@@ -279,28 +145,7 @@ router.post("/", async (req, res) => {
       });
     }
 
-    // --- Run all scripts inside a transaction ---
-    const results = await runScriptsSequentially(scripts, {
-      useTransaction: true,
-    });
-
-    // If any failed, transaction has already rolled back
-    if (!results.every((r) => r.success)) {
-      return res.status(500).json({ error: "Failed to create purchase order" });
-    }
-
-    // ❗ Only one response is sent
-    res.status(201).json({
-      message: "Purchase Order created successfully!",
-      po_master_id,
-      order_no,
-      childs_create,
-      payments_create,
-    });
-  } catch (error) {
-    console.error("❌ PO Create Error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
+  
 });
 
 // Update purchase order master, child and payment

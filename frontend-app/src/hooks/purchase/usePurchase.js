@@ -39,11 +39,11 @@ export const usePurchase = () => {
     order_no: "[SL-123456]",
     order_date: new Date().toISOString().split("T")[0],
     contact_id: "",
-    ref_no: "",
+    ref_no: "No Ref",
     order_note: "",
     order_amount: 0,
     discount_amount: 0,
-    tax_amount: 0,
+    vat_amount: 0,
     cost_amount: 0,
     total_amount: 0,
     paid_amount: 0,
@@ -102,11 +102,11 @@ export const usePurchase = () => {
       order_no: "[SL-123456]",
       order_date: new Date().toISOString().split("T")[0],
       contact_id: "",
-      ref_no: "",
+      ref_no: "No Ref",
       order_note: "",
       order_amount: 0,
       discount_amount: 0,
-      tax_amount: 0,
+      vat_amount: 0,
       cost_amount: 0,
       total_amount: 0,
       paid_amount: 0,
@@ -191,11 +191,25 @@ export const usePurchase = () => {
       return;
     }
 
+    const paidStatus =
+      formDataOrder.payable_amount === formDataOrder.due_amount
+        ? "Unpaid"
+        : formDataOrder.due_amount === 0
+        ? "Paid"
+        : "Partial";
+
     try {
       let updatedPurchase;
       if (formDataOrder.po_master_id) {
         // Edit existing
-        const updatedPurchase = await purchaseAPI.update(formDataOrder);
+
+        const fromDataEdit = {
+          ...formDataOrder,
+          is_paid: paidStatus,
+          details_create: formDataOrderItems,
+          payments_create: formDataOrderPayments,
+        };
+        const updatedPurchase = await purchaseAPI.update(fromDataEdit);
         updatedPurchase.ismodified = true;
         updatedPurchase = purchaseList.map((p) =>
           p.po_master_id === formDataOrder.po_master_id ? updatedPurchase : p
@@ -208,20 +222,23 @@ export const usePurchase = () => {
         });
       } else {
         // Add new
-        const newPurchaseData = {
+        const fromDataNew = {
           ...formDataOrder,
           po_master_id: generateGuid(),
+          is_paid: paidStatus,
+          details_create: formDataOrderItems,
+          payments_create: formDataOrderPayments,
         };
         //console.log("newPurchaseData: " + JSON.stringify(newPurchaseData));
 
-        const newPurchase = await purchaseAPI.create(newPurchaseData);
-        newPurchase.ismodified = true;
-        updatedPurchase = [...purchaseList, newPurchase];
+        const newPurchase = await purchaseAPI.create(fromDataNew);
+        fromDataNew.ismodified = true;
+        updatedPurchase = [...purchaseList, fromDataNew];
 
         setToastBox({
           severity: "success",
           summary: "Success",
-          detail: `"${formDataOrder.order_no}" added successfully.`,
+          detail: `"${newPurchase.order_no}" added successfully.`,
         });
       }
       setPurchaseList(updatedPurchase);
@@ -246,6 +263,7 @@ export const usePurchase = () => {
     isBusy,
     currentView,
     errors,
+    setErrors,
     formDataOrder,
     setFormDataOrder,
     formDataOrderItems,

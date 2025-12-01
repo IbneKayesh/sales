@@ -12,6 +12,7 @@ import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
 import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 
 const ProductComponent = ({
+  formData,
   formDataOrderItems,
   setFormDataOrderItems,
   editingRows,
@@ -35,6 +36,47 @@ const ProductComponent = ({
     }
   }, [selectedItem]);
 
+  // Recalculate cost_price when extra costs change
+  useEffect(() => {
+    if (!formData || formDataOrderItems.length === 0) return;
+
+    const extraCost = (formData.cost_amount || 0) + (formData.other_cost || 0);
+
+    // Calculate grand total of all items (before extra cost distribution)
+    const grandTotal = formDataOrderItems.reduce(
+      (sum, item) => sum + (item.total_amount || 0),
+      0
+    );
+
+    if (grandTotal === 0) return;
+
+    // Update each item's cost_price with distributed extra cost
+    const updatedItems = formDataOrderItems.map((item) => {
+      // Calculate base cost price (without extra cost)
+      const baseCostPrice = item.total_amount / item.product_qty;
+
+      // Calculate this item's share of extra cost (proportional to its total_amount)
+      const extraCostShare = (item.total_amount / grandTotal) * extraCost;
+
+      // Calculate final cost price per unit
+      const finalCostPrice = baseCostPrice + (extraCostShare / item.product_qty);
+
+      return {
+        ...item,
+        cost_price: finalCostPrice,
+      };
+    });
+
+    // Only update if there's an actual change to avoid infinite loops
+    const hasChanged = updatedItems.some((item, index) =>
+      item.cost_price !== formDataOrderItems[index].cost_price
+    );
+
+    if (hasChanged) {
+      setFormDataOrderItems(updatedItems);
+    }
+  }, [formData?.cost_amount, formData?.other_cost, formDataOrderItems.length]);
+
   const handleAddItem = () => {
     if (!selectedItem) return;
 
@@ -53,8 +95,8 @@ const ProductComponent = ({
 
     const itemAmount = (itemQty || 1) * item.purchase_price;
     const discountAmount = (item.discount_percent / 100) * itemAmount;
-    const taxAmount = (item.tax_percent / 100) * itemAmount;
-    const totalAmount = itemAmount - discountAmount + taxAmount;
+    const vatAmount = (item.vat_percent / 100) * itemAmount;
+    const totalAmount = itemAmount - discountAmount + vatAmount;
     const costPrice = totalAmount / (itemQty || 1);
 
     const newRow = {
@@ -66,8 +108,8 @@ const ProductComponent = ({
       product_qty: itemQty || 1,
       discount_percent: item.discount_percent,
       discount_amount: discountAmount,
-      tax_percent: item.tax_percent,
-      tax_amount: taxAmount,
+      vat_percent: item.vat_percent,
+      vat_amount: vatAmount,
       cost_price: costPrice,
       total_amount: totalAmount, // Will be re-calculated on edit save,
       product_note: itemNote,
@@ -89,12 +131,12 @@ const ProductComponent = ({
 
     const itemAmount = newData.product_qty * newData.product_price;
     const discountAmount = (newData.discount_percent / 100) * itemAmount;
-    const taxAmount = (newData.tax_percent / 100) * itemAmount;
-    const totalAmount = itemAmount - discountAmount + taxAmount;
+    const vatAmount = (newData.vat_percent / 100) * itemAmount;
+    const totalAmount = itemAmount - discountAmount + vatAmount;
     const costPrice = totalAmount / newData.product_qty;
 
     newData.discount_amount = discountAmount;
-    newData.tax_amount = taxAmount;
+    newData.vat_amount = vatAmount;
     newData.total_amount = totalAmount;
     newData.cost_price = costPrice;
 
@@ -158,11 +200,13 @@ const ProductComponent = ({
   };
 
   const productPrice_BT = (rowData) => {
-    console.log(rowData);
     const formattedPrice = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
     }).format(rowData.product_price);
+
+    // cost_price is now calculated reactively in useEffect
+    // It includes: base price - discount + vat + distributed extra costs
     const formattedCostPrice = Number(rowData.cost_price).toFixed(2);
     return `${formattedPrice} (${formattedCostPrice})`;
   };
@@ -194,18 +238,18 @@ const ProductComponent = ({
     );
   };
 
-  const tax_percent_BT = (rowData) => {
-    const taxAmount = new Intl.NumberFormat("en-US", {
+  const vat_percent_BT = (rowData) => {
+    const vatAmount = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
-    }).format(rowData.tax_amount);
+    }).format(rowData.vat_amount);
 
-    return `${taxAmount} (${rowData.tax_percent}%)`;
+    return `${vatAmount} (${rowData.vat_percent}%)`;
   };
 
-  const tax_percent_FT = () => {
+  const vat_percent_FT = () => {
     return formDataOrderItems.reduce(
-      (sum, item) => sum + (item.tax_amount || 0),
+      (sum, item) => sum + (item.vat_amount || 0),
       0
     );
   };
@@ -243,7 +287,7 @@ const ProductComponent = ({
           prev.filter((item) => item.po_details_id !== rowData.po_details_id)
         );
       },
-      reject: () => {},
+      reject: () => { },
     });
   };
 
@@ -258,7 +302,7 @@ const ProductComponent = ({
 
   return (
     <>
-      {JSON.stringify(productList)}
+      {/* {JSON.stringify(productList)} */}
 
       <ConfirmDialog />
       {/* Child Editable Table */}
@@ -266,7 +310,7 @@ const ProductComponent = ({
         <Dropdown
           value={selectedItem}
           options={productList.map((item) => ({
-            label: `${item.product_code} - ${item.product_name}, Stock: ${item.stock_qty} ${item.small_unit_name}`,
+            label: `${item.product_code} - ${item.product_name}, Price: ${item.purchase_price}, Discount%: ${item.discount_percent}, vat%: ${item.vat_percent}, Stock: ${item.stock_qty} ${item.small_unit_name}`,
             value: item.product_id,
           }))}
           onChange={(e) => setSelectedItem(e.value)}
@@ -338,10 +382,10 @@ const ProductComponent = ({
           footer={discount_percent_FT}
         />
         <Column
-          field="tax_percent"
-          header="Tax%"
-          body={tax_percent_BT}
-          footer={tax_percent_FT}
+          field="vat_percent"
+          header="Vat%"
+          body={vat_percent_BT}
+          footer={vat_percent_FT}
         />
         <Column
           field="total_amount"

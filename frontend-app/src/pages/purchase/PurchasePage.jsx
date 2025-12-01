@@ -15,6 +15,7 @@ const PurchasePage = () => {
     isBusy,
     currentView,
     errors,
+    setErrors,
     formDataOrder,
     setFormDataOrder,
     formDataOrderItems,
@@ -118,13 +119,16 @@ const PurchasePage = () => {
           <PurchaseFormComponent
             isBusy={isBusy}
             errors={errors}
+            setErrors={setErrors}
             formData={formDataOrder}
+            setFormDataOrder={setFormDataOrder}
             formDataOrderItems={formDataOrderItems}
             setFormDataOrderItems={setFormDataOrderItems}
             onChange={handleChange}
             onSave={handleSavePurchase}
             paymentOptions={paymentOptions}
             formDataOrderPayments={formDataOrderPayments}
+            setFormDataOrderPayments={setFormDataOrderPayments}
           />
         )}
       </Card>

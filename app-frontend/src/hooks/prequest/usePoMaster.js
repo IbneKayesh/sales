@@ -271,8 +271,8 @@ export const usePoMaster = () => {
         }));
 
         const newPoMasterData = {
-          ...formDataPoMaster,
-          is_paid: paidStatus,
+            ...formDataPoMaster,
+            is_paid: paidStatus,
           ismodified: true,
           childs_create: childs,
           childs_update: toUpdateChildItems,

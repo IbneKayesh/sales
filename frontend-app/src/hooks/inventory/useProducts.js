@@ -23,7 +23,7 @@ export const useProducts = () => {
     purchase_price: 0,
     sales_price: 0,
     discount_percent: 0,
-    tax_percent: 0,
+    vat_percent: 0,
     margin_price: 0,
     ismodified: "0",
   });
@@ -36,8 +36,8 @@ export const useProducts = () => {
     { label: "No Sale Price", value: "nosp" },
     { label: "With Discount", value: "wd" },
     { label: "Without Discount", value: "wod" },
-    { label: "With Tax", value: "wtax" },
-    { label: "Without Tax", value: "wotax" },
+    { label: "With VAT", value: "wvat" },
+    { label: "Without VAT", value: "wovat" },
     { label: "All Products", value: "allproducts" },
   ]);
   const loadProducts = async (filter = "default", resetModified = false) => {
@@ -91,7 +91,7 @@ export const useProducts = () => {
       purchase_price: 0,
       sales_price: 0,
       discount_percent: 0,
-      tax_percent: 0,
+      vat_percent: 0,
       margin_price: 0,
       ismodified: "0",
     });
@@ -252,6 +252,9 @@ export const useProducts = () => {
 
     // Discount is applied on SALES price
     const discountAmount = sales * (discountPercent / 100);
+
+    //apply VAT on sales price
+    const vatAmount = sales * (vatPercent / 100);
 
     // Final selling price after discount
     const finalSellingPrice = sales - discountAmount;

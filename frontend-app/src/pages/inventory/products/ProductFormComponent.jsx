@@ -257,24 +257,24 @@ const ProductFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =>
         </div>
         <div className="col-12 md:col-2">
           <label
-            htmlFor="tax_percent"
+            htmlFor="vat_percent"
             className="block text-900 font-medium mb-2"
           >
-            {t_products.tax_percent.name}
+            {t_products.vat_percent.name}
           </label>
           <InputNumber
-            name="tax_percent"
-            value={formData.tax_percent}
-            onValueChange={(e) => onChange("tax_percent", e.value)}
-            mode="currency"
-            currency="BDT"
-            locale="en-US"
-            className={`w-full ${errors.tax_percent ? "p-invalid" : ""}`}
+            name="vat_percent"
+            value={formData.vat_percent}
+            onValueChange={(e) => onChange("vat_percent", e.value)}
+            suffix="%"
+            min={0}
+            max={100}
+            className={`w-full ${errors.vat_percent ? "p-invalid" : ""}`}
             inputStyle={{ width: "100%" }}
-            placeholder={`Enter ${t_products.tax_percent.name}`}
+            placeholder={`Enter ${t_products.vat_percent.name}`}
           />
-          {errors.tax_percent && (
-            <small className="mb-3 text-red-500">{errors.tax_percent}</small>
+          {errors.vat_percent && (
+            <small className="mb-3 text-red-500">{errors.vat_percent}</small>
           )}
         </div>
         <div className="col-12 md:col-2">

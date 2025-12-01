@@ -64,7 +64,7 @@ const initTables = () => {
         purchase_price REAL DEFAULT 0,
         sales_price REAL DEFAULT 0,
         discount_percent REAL DEFAULT 0,
-        tax_percent REAL DEFAULT 0,
+        vat_percent REAL DEFAULT 0,
         margin_price REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -105,6 +105,27 @@ const initTables = () => {
       )
     `);
 
+    //Accounts :: Bank Payments table
+    db.run(`
+      CREATE TABLE IF NOT EXISTS bank_payments (
+        payment_id TEXT PRIMARY KEY,
+        account_id TEXT NOT NULL,
+        payment_head TEXT NOT NULL,
+        payment_mode TEXT NOT NULL,
+        payment_date TEXT NOT NULL,
+        contact_id TEXT NOT NULL,
+        payment_amount REAL DEFAULT 0,
+        order_amount REAL DEFAULT 0,
+        payment_note TEXT,
+        ref_no TEXT,
+        ref_id TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (account_id) REFERENCES bank_accounts(account_id) ON DELETE RESTRICT
+        FOREIGN KEY (contact_id) REFERENCES contacts(contact_id) ON DELETE RESTRICT
+      )
+    `);
+
     //Purchase :: Purchase Master table
     db.run(`
       CREATE TABLE IF NOT EXISTS po_master (
@@ -117,9 +138,11 @@ const initTables = () => {
         order_note TEXT,
         order_amount REAL DEFAULT 0,
         discount_amount REAL DEFAULT 0,
-        tax_amount REAL DEFAULT 0,
+        vat_amount REAL DEFAULT 0,
         cost_amount REAL DEFAULT 0,
         total_amount REAL DEFAULT 0,
+        payable_amount REAL DEFAULT 0,
+        payable_note TEXT,
         paid_amount REAL DEFAULT 0,
         due_amount REAL DEFAULT 0,
         other_cost REAL DEFAULT 0,
@@ -142,8 +165,8 @@ const initTables = () => {
         product_qty REAL DEFAULT 0,
         discount_percent REAL DEFAULT 0,
         discount_amount REAL DEFAULT 0,
-        tax_percent REAL DEFAULT 0,
-        tax_amount REAL DEFAULT 0,
+        vat_percent REAL DEFAULT 0,
+        vat_amount REAL DEFAULT 0,
         cost_price REAL DEFAULT 0,
         total_amount REAL DEFAULT 0,
         product_note TEXT,
@@ -212,7 +235,7 @@ const initData = (callback) => {
       `
       INSERT OR IGNORE INTO products (product_id, product_code, product_name, product_desc,
       category_id, small_unit_id, unit_difference_qty, large_unit_id,
-      stock_qty, purchase_price, sales_price, discount_percent, tax_percent, margin_price)
+      stock_qty, purchase_price, sales_price, discount_percent, vat_percent, margin_price)
       VALUES
       ('1', 'P01', 'Rice', 'Description Rice', '1', '1', 25, '2', '5', '80', '85', '5', '10', '5'),
       ('2', 'P02', 'Salt', 'Description Salt', '1', '1', 15, '2', '10', '35', '42', '3', '15', '7'),

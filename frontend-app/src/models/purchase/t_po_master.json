@@ -57,8 +57,8 @@
     "type": "number",
     "required": false
   },
-  "tax_amount": {
-    "name": "Tax Amount",
+  "vat_amount": {
+    "name": "VAT Amount",
     "type": "number",
     "required": false
   },
@@ -70,6 +70,16 @@
   "total_amount": {
     "name": "Total Amount",
     "type": "number",
+    "required": false
+  },
+  "payable_amount": {
+    "name": "Payable Amount",
+    "type": "number",
+    "required": false
+  },
+  "payable_note": {
+    "name": "Payable Note",
+    "type": "string",
     "required": false
   },
   "paid_amount": {

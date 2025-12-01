@@ -73,8 +73,8 @@
     "type": "number",
     "required": false
   },
-  "tax_percent": {
-    "name": "Tax Percent",
+  "vat_percent": {
+    "name": "VAT Percent",
     "type": "number",
     "required": false
   },

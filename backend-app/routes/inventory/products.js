@@ -33,11 +33,11 @@ router.get("/", async (req, res) => {
     case "wod":
       whereClause = "WHERE p.discount_percent = 0";
       break;
-    case "wtax":
-      whereClause = "WHERE p.tax_percent > 0";
+    case "wvat":
+      whereClause = "WHERE p.vat_percent > 0";
       break;
-    case "wotax":
-      whereClause = "WHERE p.tax_percent = 0";
+    case "wovat":
+      whereClause = "WHERE p.vat_percent = 0";
       break;
     case "allproducts":
       whereClause = "WHERE 1 = 1";
@@ -102,7 +102,7 @@ router.post("/", async (req, res) => {
     purchase_price,
     sales_price,
     discount_percent,
-    tax_percent,
+    vat_percent,
     margin_price,
   } = req.body;
 
@@ -117,7 +117,7 @@ router.post("/", async (req, res) => {
 
   try {
     const sql = `INSERT INTO products (product_id, product_code, product_name, product_desc, category_id, small_unit_id, unit_difference_qty, large_unit_id,
-    stock_qty, purchase_price, sales_price, discount_percent, tax_percent, margin_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    stock_qty, purchase_price, sales_price, discount_percent, vat_percent, margin_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const params = [
       product_id,
       product_code,
@@ -131,7 +131,7 @@ router.post("/", async (req, res) => {
       purchase_price,
       sales_price,
       discount_percent,
-      tax_percent,
+      vat_percent,
       margin_price,
     ];
     await dbRun(sql, params, `Created products ${product_name}`);
@@ -156,7 +156,7 @@ router.post("/update", async (req, res) => {
     purchase_price,
     sales_price,
     discount_percent,
-    tax_percent,
+    vat_percent,
     margin_price,
   } = req.body;
 
@@ -177,7 +177,7 @@ router.post("/update", async (req, res) => {
     purchase_price = ?,
     sales_price = ?,
     discount_percent = ?,
-    tax_percent = ?,
+    vat_percent = ?,
     margin_price = ?
     WHERE product_id = ?`;
     const params = [
@@ -191,7 +191,7 @@ router.post("/update", async (req, res) => {
       purchase_price,
       sales_price,
       discount_percent,
-      tax_percent,
+      vat_percent,
       margin_price,
       product_id,
     ];

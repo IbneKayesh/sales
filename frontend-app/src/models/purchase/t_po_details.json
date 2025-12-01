@@ -40,13 +40,13 @@
     "type": "number",
     "required": false
   },
-  "tax_percent": {
-    "name": "Tax Percent",
+  "vat_percent": {
+    "name": "Vat Percent",
     "type": "number",
     "required": true
   },
-  "tax_amount": {
-    "name": "Tax Amount",
+  "vat_amount": {
+    "name": "Vat Amount",
     "type": "number",
     "required": true
   },

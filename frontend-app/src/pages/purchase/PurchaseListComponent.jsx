@@ -241,7 +241,6 @@ const PurchaseListComponent = ({ dataList, onEdit, onDelete }) => {
           body={totalAmountTemplate}
           footer={totalAmountFooterTemplate}
         />
-        <Column field="due_amount" header="Due Amount" sortable />
         <Column
           field="is_paid"
           header="Status"
