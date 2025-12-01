@@ -9,8 +9,8 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { generateGuid } from "@/utils/guid";
-import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
-import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
+
+
 import t_po_master from "@/models/prequest/t_po_master.json"; 
 import { useItems } from "@/hooks/inventory/useItems";
 import { Accordion, AccordionTab } from "primereact/accordion";
@@ -95,142 +95,6 @@ const BookingComponent = ({
     );
   }, [costRate]);
 
-
-
-
-
-  useEffect(() => {
-    if (selectedItem) {
-      setDisabledItemAdd(false);
-    } else {
-      setDisabledItemAdd(true);
-    }
-  }, [selectedItem]);
-
-  useEffect(() => {
-    handleFilterChange("allitems");
-  }, []);
-
-
-
-  const handleDelete = (rowData) => {
-    confirmDialog({
-      message: `Are you sure you want to delete item "${rowData.item_name}"?`,
-      header: "Delete Confirmation",
-      icon: "pi pi-exclamation-triangle",
-      accept: () => {
-        setOrderChildItems((prev) =>
-          prev.filter((item) => item.id !== rowData.id)
-        );
-      },
-      reject: () => {},
-    });
-  };
-
-
-
-  const numberEditor = (options) => {
-    return (
-      <InputNumber
-        value={options.value}
-        onValueChange={(e) => options.editorCallback(e.value)}
-        style={{ width: "110px" }}
-        inputStyle={{ width: "100%" }}
-      />
-    );
-  };
-
-  const textEditor = (options) => {
-    return (
-      <InputText
-        value={options.value}
-        onChange={(e) => options.editorCallback(e.target.value)}
-        style={{ width: "110px" }}
-        inputStyle={{ width: "100%" }}
-      />
-    );
-  };
-
-  const actionTemplate = (rowData) => {
-    return (
-      <span
-        className="pi pi-trash text-red-600 text-bold px-2"
-        onClick={() => handleDelete(rowData)}
-      ></span>
-    );
-  };
-
-
-  const bookingQtyTemplate = (rowData) => {
-    return `${rowData.booking_qty} ${rowData.small_unit_name} (${rowData.order_qty})`;
-  };
-
-  const totalBookingQty = orderChildItems.reduce(
-    (sum, item) => sum + (item.booking_qty || 0),
-    0
-  );
-
-  const totalOrderQty = orderChildItems.reduce(
-    (sum, item) => sum + (item.order_qty || 0),
-    0
-  );
-
-  const totalBookingQtyTemplate = () => {
-    return `${totalBookingQty} (${totalOrderQty})`;
-  };
-
-  const discountAmountTemplate = (rowData) => {
-    const discountAmount = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.discount_amount);
-
-    return `${discountAmount} (${rowData.discount_percent}%)`;
-  };
-
-  const totalDiscountAmount = orderChildItems.reduce(
-    (sum, item) => sum + (item.discount_amount || 0),
-    0
-  );
-
-  const discountAmountFooterTemplate = (rowData) => {
-    const discountAmount = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(totalDiscountAmount);
-
-    return `${discountAmount}`;
-  };
-
-  const itemAmountTemplate = (rowData) => {
-    //console.log("rowData" + JSON.stringify(rowData))
-    const itemAmount = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.item_amount);
-
-    const itemAmountF = rowData.item_rate * rowData.booking_qty;
-
-    return `${itemAmount} (${itemAmountF})`;
-  };
-
-  const convertedQtyTemplate = (rowData) => {
-    return (
-      <>
-        <ConvertedQtyComponent qty={rowData.booking_qty} rowData={rowData} /> (
-        <ConvertedQtyComponent qty={rowData.order_qty} rowData={rowData} />)
-      </>
-    );
-  };
-
-  const totalItemAmount = orderChildItems.reduce(
-    (sum, item) => sum + (item.item_amount || 0),
-    0
-  );
-
-  const itemAmountFooterTemplate = () => {
-    return <ConvertedBDTCurrency value={totalItemAmount} asWords={true} />;
-  };
 
   const InvoiceHeader = () => {
     const contactName = contactsSupplier.find(

@@ -7,7 +7,6 @@ import { Dropdown } from "primereact/dropdown";
 import { Checkbox } from "primereact/checkbox";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
 import t_po_master from "@/models/purchase/t_po_master.json";
@@ -117,7 +116,6 @@ const PurchaseFormComponent = ({
   return (
     <div className="p-1">
       {JSON.stringify(formData)}
-      <ConfirmDialog />
       {/* Master Form */}
       <Accordion multiple activeIndex={[0, 1, 2]}>
         <AccordionTab header={"Purchase Order"}>

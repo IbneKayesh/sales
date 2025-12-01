@@ -3,7 +3,7 @@ import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Checkbox } from "primereact/checkbox";
-import t_bank_account from "@/models/accounts/t_bank_account.json";
+import t_bank_accounts from "@/models/accounts/t_bank_accounts.json";
 
 const BankAccountFormComponent = ({
   isBusy,
@@ -20,7 +20,7 @@ const BankAccountFormComponent = ({
             htmlFor="bank_name"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_account.t_bank_account.bank_name.name}{" "}
+            {t_bank_accounts.bank_name.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <InputText
@@ -28,7 +28,7 @@ const BankAccountFormComponent = ({
             value={formData.bank_name}
             onChange={(e) => onChange("bank_name", e.target.value)}
             className={`w-full ${errors.bank_name ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_bank_account.t_bank_account.bank_name.name}`}
+            placeholder={`Enter ${t_bank_accounts.bank_name.name}`}
           />
           {errors.bank_name && (
             <small className="mb-3 text-red-500">{errors.bank_name}</small>
@@ -36,10 +36,29 @@ const BankAccountFormComponent = ({
         </div>
         <div className="col-12 md:col-3">
           <label
+            htmlFor="bank_branch"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_bank_accounts.bank_branch.name}{" "}
+            <span className="text-red-500">*</span>
+          </label>
+          <InputText
+            name="bank_branch"
+            value={formData.bank_branch}
+            onChange={(e) => onChange("bank_branch", e.target.value)}
+            className={`w-full ${errors.bank_branch ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_bank_accounts.bank_branch.name}`}
+          />
+          {errors.bank_branch && (
+            <small className="mb-3 text-red-500">{errors.bank_branch}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-3">
+          <label
             htmlFor="account_name"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_account.t_bank_account.account_name.name}{" "}
+            {t_bank_accounts.account_name.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <InputText
@@ -47,7 +66,7 @@ const BankAccountFormComponent = ({
             value={formData.account_name}
             onChange={(e) => onChange("account_name", e.target.value)}
             className={`w-full ${errors.account_name ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_bank_account.t_bank_account.account_name.name}`}
+            placeholder={`Enter ${t_bank_accounts.account_name.name}`}
           />
           {errors.account_name && (
             <small className="mb-3 text-red-500">{errors.account_name}</small>
@@ -58,7 +77,7 @@ const BankAccountFormComponent = ({
             htmlFor="account_number"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_account.t_bank_account.account_number.name}{" "}
+            {t_bank_accounts.account_number.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <InputText
@@ -66,7 +85,7 @@ const BankAccountFormComponent = ({
             value={formData.account_number}
             onChange={(e) => onChange("account_number", e.target.value)}
             className={`w-full ${errors.account_number ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_bank_account.t_bank_account.account_number.name}`}
+            placeholder={`Enter ${t_bank_accounts.account_number.name}`}
           />
           {errors.account_number && (
             <small className="mb-3 text-red-500">{errors.account_number}</small>
@@ -77,7 +96,7 @@ const BankAccountFormComponent = ({
             htmlFor="opening_date"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_account.t_bank_account.opening_date.name}{" "}
+            {t_bank_accounts.opening_date.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <Calendar
@@ -93,53 +112,10 @@ const BankAccountFormComponent = ({
             }
             className={`w-full ${errors.opening_date ? "p-invalid" : ""}`}
             dateFormat="yy-mm-dd"
-            placeholder={`Select ${t_bank_account.t_bank_account.opening_date.name}`}
+            placeholder={`Select ${t_bank_accounts.opening_date.name}`}
           />
           {errors.opening_date && (
             <small className="mb-3 text-red-500">{errors.opening_date}</small>
-          )}
-        </div>
-
-        <div className="col-12 md:col-4">
-          <label
-            htmlFor="debit_balance"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_bank_account.t_bank_account.debit_balance.name}
-          </label>
-          <InputNumber
-            name="debit_balance"
-            value={formData.debit_balance}
-            onValueChange={(e) => onChange("debit_balance", e.value)}
-            mode="currency"
-            currency="BDT"
-            locale="en-US"
-            className={`w-full ${errors.debit_balance ? "p-invalid" : ""}`}
-            disabled
-          />
-          {errors.debit_balance && (
-            <small className="mb-3 text-red-500">{errors.debit_balance}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-4">
-          <label
-            htmlFor="credit_balance"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_bank_account.t_bank_account.credit_balance.name}
-          </label>
-          <InputNumber
-            name="credit_balance"
-            value={formData.credit_balance}
-            onValueChange={(e) => onChange("credit_balance", e.value)}
-            mode="currency"
-            currency="BDT"
-            locale="en-US"
-            className={`w-full ${errors.credit_balance ? "p-invalid" : ""}`}
-            disabled
-          />
-          {errors.credit_balance && (
-            <small className="mb-3 text-red-500">{errors.credit_balance}</small>
           )}
         </div>
         <div className="col-12 md:col-4">
@@ -147,7 +123,7 @@ const BankAccountFormComponent = ({
             htmlFor="current_balance"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_account.t_bank_account.current_balance.name}
+            {t_bank_accounts.current_balance.name}
           </label>
           <InputNumber
             name="current_balance"
@@ -170,7 +146,7 @@ const BankAccountFormComponent = ({
             htmlFor="is_default"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_account.t_bank_account.is_default.name}
+            {t_bank_accounts.is_default.name}
           </label>
           <div className="flex align-items-center">
             <Checkbox
@@ -193,7 +169,7 @@ const BankAccountFormComponent = ({
             <Button
               type="button"
               onClick={(e) => onSave(e)}
-              label={formData.bank_account_id ? "Update" : "Save"}
+              label={formData.account_id ? "Update" : "Save"}
               icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
               severity="success"
               size="small"

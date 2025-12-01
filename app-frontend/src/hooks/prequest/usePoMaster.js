@@ -12,12 +12,6 @@ import useClosingProcess from "@/hooks/setup/useClosingProcess";
 export const usePoMaster = () => {
   const { processAll } = useClosingProcess();
 
-  const [poMasters, setPoMasters] = useState([]); // Initialize with empty array
-  const [toastBox, setToastBox] = useState(null);
-  const [isBusy, setIsBusy] = useState(false);
-  const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
-  const [errors, setErrors] = useState({});
-
   const [formDataPayments_v1, setFormDataPayments_v1] = useState({
     payment_id: "",
     bank_account_id: "",
@@ -65,35 +59,8 @@ export const usePoMaster = () => {
     }
   }, [formDataPoMaster.order_type, poMasters]);
 
-  const loadPoMasters = async (filter = "default", resetModified = false) => {
-    try {
-      const data = await poMasterAPI.getAll(selectedPoType, filter);
-      //console.log("poType " + selectedPoType);
-      //console.log("data " + JSON.stringify(data));
-      setPoMasters(data);
-      if (resetModified) {
-        setToastBox({
-          severity: "info",
-          summary: "Refreshed",
-          detail: "Data refreshed from database.",
-        });
-      }
-    } catch (error) {
-      console.error("Error loading Purchase transactions:", error);
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: resetModified
-          ? "Failed to refresh data from server"
-          : "Failed to load Purchase transactions from server",
-      });
-    }
-  };
 
   // Load poMasters from API on mount
-  useEffect(() => {
-    loadPoMasters(selectedFilter);
-  }, [selectedFilter, selectedPoType]);
 
   const [orderChildItems, setOrderChildItems] = useState([]);
   const [orderChildItemsStore, setOrderChildItemsStore] = useState([]);
@@ -231,46 +198,6 @@ export const usePoMaster = () => {
   
 
 
-  const handleEditPoMaster = (poMaster) => {
-    setFormDataPoMaster(poMaster);
-    setCurrentView("form");
-    //fetch child items
-    loadPoChildren(poMaster.po_master_id);
-    loadPoPayments(poMaster.order_no);
-  };
-
-  const handleDeletePoMaster = async (id) => {
-    try {
-      await poMasterAPI.delete(id);
-      const updatedPoMasters = poMasters.filter((p) => p.po_master_id !== id);
-      setPoMasters(updatedPoMasters);
-
-      setToastBox({
-        severity: "info",
-        summary: "Deleted",
-        detail: `Deleted successfully.`,
-      });
-    } catch (error) {
-      console.error("Error deleting Purchase transaction:", error);
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to delete Purchase transaction",
-      });
-    }
-  };
-
-  const handleRefresh = () => {
-    loadPoMasters(selectedFilter, true);
-  };
-
-  const handleFilterChange = (filter) => {
-    setSelectedFilter(filter);
-  };
-
-  const handlePoTypeChange = (filter) => {
-    setSelectedPoType(filter);
-  };
 
   const handleSaveAll = async (e) => {
     e.preventDefault();

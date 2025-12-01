@@ -5,6 +5,7 @@ import PurchaseFormComponent from "./PurchaseFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
+import { Dropdown } from "primereact/dropdown";
 
 const PurchasePage = () => {
   const toast = useRef(null);
@@ -27,9 +28,15 @@ const PurchasePage = () => {
     handleDeletePurchase,
     handleRefresh,
     handleSavePurchase,
+    selectedPoType,
+    setSelectedPoType,
+    selectedFilter,
+    setSelectedFilter,
     poTypeOptions,
     filterOptions,
     paymentOptions,
+    handlePoTypeChange,
+    handleFilterChange,
   } = usePurchase();
 
   useEffect(() => {
@@ -50,20 +57,33 @@ const PurchasePage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Purchase List"
-            : formDataOrder.po_master_id
-            ? "Edit Purchase"
-            : "Add New Purchase"}
+            ? `${selectedPoType} List`
+            : formDataOrder?.po_master_id
+            ? `Edit ${formDataOrder?.order_type}: ${formDataOrder?.order_no}`
+            : `New ${selectedPoType}`}
         </h3>
 
         {isList ? (
           <div className="flex gap-2">
-            <Button
-              label="Refresh"
-              icon="pi pi-refresh"
+            <Dropdown
+              value={selectedPoType}
+              options={poTypeOptions}
+              onChange={(e) => handlePoTypeChange(e.value)}
+              placeholder="Select Filter"
+              optionLabel="label"
+              optionValue="value"
+              className="w-full md:w-auto"
               size="small"
-              severity="secondary"
-              onClick={handleRefresh}
+            />
+            <Dropdown
+              value={selectedFilter}
+              options={filterOptions}
+              onChange={(e) => handleFilterChange(e.value)}
+              placeholder="Select Filter"
+              optionLabel="label"
+              optionValue="value"
+              className="w-full md:w-auto"
+              size="small"
             />
             <Button
               label="New Purchase"

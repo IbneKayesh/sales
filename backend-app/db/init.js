@@ -92,7 +92,7 @@ const initTables = () => {
     //Accounts :: Bank Accounts table
     db.run(`
       CREATE TABLE IF NOT EXISTS bank_accounts (
-        bank_account_id TEXT PRIMARY KEY,
+        account_id TEXT PRIMARY KEY,
         bank_name TEXT NOT NULL,
         bank_branch TEXT,
         account_name TEXT NOT NULL,
@@ -154,7 +154,6 @@ const initTables = () => {
         FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT
       )
     `);
-
   });
 };
 
@@ -181,8 +180,8 @@ const initData = (callback) => {
     db.run(
       `
       INSERT OR IGNORE INTO units (unit_id, unit_name) VALUES
-      ('1', 'KG'),
-      ('2', 'Bulk')
+      ('1', 'Kg'),
+      ('2', 'Pkt')
     `,
       (err) => {
         if (err) {
@@ -211,14 +210,15 @@ const initData = (callback) => {
     //products :: Inventory table :: insert default data
     db.run(
       `
-      INSERT OR IGNORE INTO products (product_id, product_code, product_name, product_desc, category_id, small_unit_id, unit_difference_qty, large_unit_id,
+      INSERT OR IGNORE INTO products (product_id, product_code, product_name, product_desc,
+      category_id, small_unit_id, unit_difference_qty, large_unit_id,
       stock_qty, purchase_price, sales_price, discount_percent, tax_percent, margin_price)
       VALUES
-      ('1', 'P-01', 'Rice', 'Description 1', '1', '1', 1, '1', '0', '80', '85', '0', '0', '5'),
-      ('2', 'P-02', 'Salt', 'Description 2', '1', '1', 1, '1', '0', '35', '42', '0', '0', '7'),
-      ('3', 'P-03', 'Sugar', 'Description 3', '1', '1', 1, '1', '0', '50', '55', '0', '0', '5'),
-      ('4', 'P-04', 'Oil', 'Description 4', '1', '1', 1, '1', '0', '100', '105', '0', '0', '5'),
-      ('5', 'P-05', 'Tea', 'Description 5', '1', '1', 1, '1', '0', '70', '80', '0', '0', '10')
+      ('1', 'P01', 'Rice', 'Description Rice', '1', '1', 25, '2', '5', '80', '85', '5', '10', '5'),
+      ('2', 'P02', 'Salt', 'Description Salt', '1', '1', 15, '2', '10', '35', '42', '3', '15', '7'),
+      ('3', 'P03', 'Sugar', 'Description Sugar', '1', '1', 20, '2', '20', '50', '55', '10', '20', '5'),
+      ('4', 'P04', 'Oil', 'Description Oil', '1', '1', 5, '2', '25', '100', '105', '2', '5', '5'),
+      ('5', 'P05', 'Tea', 'Description Tea', '1', '1', 2, '2', '20', '70', '80', '0', '0', '10')
     `,
       (err) => {
         if (err) {
@@ -248,6 +248,23 @@ const initData = (callback) => {
         }
       }
     );
+
+    //accounts :: Bank Accounts table :: insert default data
+    db.run(
+      `
+      INSERT OR IGNORE INTO bank_accounts (account_id, bank_name, bank_branch, account_name, account_number, opening_date, current_balance, is_default)
+      VALUES
+      ('1', 'Cash', 'Daily Cash', 'Cash', '0', strftime('%Y-%m-%d', 'now'), 0, 1)
+    `,
+      (err) => {
+        if (err) {
+          console.error("Error inserting default bank accounts:", err);
+        } else {
+          console.log("Default bank accounts inserted.");
+        }
+      }
+    );
+
   });
 };
 

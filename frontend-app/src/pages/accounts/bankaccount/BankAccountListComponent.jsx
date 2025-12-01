@@ -10,7 +10,7 @@ const BankAccountListComponent = ({ dataList, onEdit, onDelete }) => {
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
-        onDelete(rowData.bank_account_id);
+        onDelete(rowData);
       },
       reject: () => {
         // Do nothing on reject
@@ -44,20 +44,6 @@ const BankAccountListComponent = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const debitBalanceTemplate = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.debit_balance);
-  };
-
-  const creditBalanceTemplate = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.credit_balance);
-  };
-
   return (
     <div className="p-1">
       <ConfirmDialog />
@@ -67,26 +53,14 @@ const BankAccountListComponent = ({ dataList, onEdit, onDelete }) => {
         rows={10}
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
-        responsiveLayout="scroll"
         className="bg-dark-300"
         size="small"
       >
         <Column field="bank_name" header="Bank Name" />
+        <Column field="branch_name" header="Branch Name" />
         <Column field="account_name" header="Account Name" sortable />
         <Column field="account_number" header="Account Number" />
         <Column field="opening_date" header="Opening Date" />
-        <Column
-          field="debit_balance"
-          header="Debit"
-          body={debitBalanceTemplate}
-          sortable
-        />
-        <Column
-          field="credit_balance"
-          header="Credit"
-          body={creditBalanceTemplate}
-          sortable
-        />
         <Column
           field="current_balance"
           header="Balance"

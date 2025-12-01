@@ -16,6 +16,7 @@ export const usePurchase = () => {
 
   const poTypeOptions = [
     { label: "Purchase Order", value: "Purchase Order" },
+    { label: "Purchase Return", value: "Purchase Return" },
   ];
 
   const filterOptions = [
@@ -59,7 +60,7 @@ export const usePurchase = () => {
 
   const loadPurchase = async (resetModified = false) => {
     try {
-      const data = await purchaseAPI.getAll();
+      const data = await purchaseAPI.getAll(selectedPoType, selectedFilter);
       //console.log("data: " + JSON.stringify(data));
       setPurchaseList(data);
       if (resetModified) {
@@ -83,11 +84,14 @@ export const usePurchase = () => {
   //Fetch data from API on mount
   useEffect(() => {
     loadPurchase();
-  }, []);
+  }, [selectedPoType, selectedFilter]);
 
   const handleChange = (field, value) => {
     setFormDataOrder((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formDataOrder, [field]: value }, t_po_master);
+    const newErrors = validate(
+      { ...formDataOrder, [field]: value },
+      t_po_master
+    );
     setErrors(newErrors);
   };
 
@@ -133,6 +137,9 @@ export const usePurchase = () => {
 
     setFormDataOrder(purchase);
     setCurrentView("form");
+
+    //load saved order items, by po_master_id
+    //load saved order payments, by order_no
   };
 
   const handleDeletePurchase = async (rowData) => {
@@ -150,17 +157,25 @@ export const usePurchase = () => {
         detail: `Deleted successfully.`,
       });
     } catch (error) {
-      console.error("Error deleting unit:", error);
+      console.error("Error deleting data:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to delete unit",
+        detail: "Failed to delete data",
       });
     }
   };
 
   const handleRefresh = () => {
     loadPurchase(true);
+  };
+
+  const handleFilterChange = (filter) => {
+    setSelectedFilter(filter);
+  };
+
+  const handlePoTypeChange = (filter) => {
+    setSelectedPoType(filter);
   };
 
   const handleSavePurchase = async (e) => {
@@ -193,7 +208,10 @@ export const usePurchase = () => {
         });
       } else {
         // Add new
-        const newPurchaseData = { ...formDataOrder, po_master_id: generateGuid() };
+        const newPurchaseData = {
+          ...formDataOrder,
+          po_master_id: generateGuid(),
+        };
         //console.log("newPurchaseData: " + JSON.stringify(newPurchaseData));
 
         const newPurchase = await purchaseAPI.create(newPurchaseData);
@@ -241,8 +259,14 @@ export const usePurchase = () => {
     handleDeletePurchase,
     handleRefresh,
     handleSavePurchase,
+    selectedPoType,
+    setSelectedPoType,
+    selectedFilter,
+    setSelectedFilter,
     poTypeOptions,
     filterOptions,
     paymentOptions,
+    handlePoTypeChange,
+    handleFilterChange,
   };
 };

@@ -40,56 +40,6 @@ function generate_order_number(order_type, callback) {
   });
 }
 
-// Get all purchase order masters
-router.get("/", (req, res) => {
-  const orderType = req.query.orderType || "-";
-  const filter = req.query.filter || "default";
-  let whereClause = "";
-
-  if (orderType) {
-    whereClause = "WHERE pom.order_type = '" + orderType + "' ";
-  }
-
-  switch (filter) {
-    case "7days":
-      whereClause +=
-        "AND pom.is_paid = 'Paid' AND pom.is_posted = 1 AND pom.is_completed = 1 AND pom.order_date >= date('now', '-7 days')";
-      break;
-    case "30days":
-      whereClause +=
-        "AND pom.is_paid = 'Paid' AND pom.is_posted = 1 AND pom.is_completed = 1 AND pom.order_date >= date('now', '-30 days')";
-      break;
-    case "90days":
-      whereClause +=
-        "AND pom.is_paid = 'Paid' AND pom.is_posted = 1 AND pom.is_completed = 1 AND pom.order_date >= date('now', '-90 days')";
-      break;
-    case "alldays":
-      whereClause +=
-        "AND pom.is_paid = 'Paid' AND pom.is_posted = 1 AND pom.is_completed = 1";
-      break;
-    case "default":
-    default:
-      whereClause +=
-        "AND ((pom.is_paid != 'Paid' OR pom.is_posted = 0 OR pom.is_completed = 0) OR (pom.order_date = date('now','+6 hours')))";
-      break;
-  }
-  const sql = `
-    SELECT pom.*, c.contact_name, is_posted AS isedit , 0 AS ismodified
-    FROM po_master pom
-    LEFT JOIN contacts c ON pom.contact_id = c.contact_id
-    ${whereClause}
-    ORDER BY pom.is_paid ASC, pom.is_completed ASC
-  `;
-  //console.log(sql);
-
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    res.json(rows);
-  });
-});
 
 // Get purchase order master by ID
 router.get("/:id", (req, res) => {

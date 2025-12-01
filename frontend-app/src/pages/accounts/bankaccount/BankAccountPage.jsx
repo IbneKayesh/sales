@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useBankAccount } from "@/hooks/accounts/useBankAccount";
+import { useBankAccounts } from "@/hooks/accounts/useBankAccounts";
 import BankAccountListComponent from "./BankAccountListComponent";
 import BankAccountFormComponent from "./BankAccountFormComponent";
 import { Card } from "primereact/card";
@@ -9,7 +9,7 @@ import { Toast } from "primereact/toast";
 const BankAccountPage = () => {
   const toast = useRef(null);
   const {
-    bankAccounts,
+    bankAccountList,
     toastBox,
     isBusy,
     currentView,
@@ -22,7 +22,7 @@ const BankAccountPage = () => {
     handleDeleteBankAccount,
     handleRefresh,
     handleSaveBankAccount,
-  } = useBankAccount();
+  } = useBankAccounts();
 
   useEffect(() => {
     if (toastBox && toast.current) {
@@ -37,13 +37,12 @@ const BankAccountPage = () => {
 
   const getHeader = () => {
     const isList = currentView === "list";
-
     return (
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
             ? "Bank Account List"
-            : formDataBankAccount.bank_account_id
+            : formDataBankAccount.account_id
             ? "Edit Bank Account"
             : "Add New Bank Account"}
         </h3>
@@ -82,7 +81,7 @@ const BankAccountPage = () => {
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
           <BankAccountListComponent
-            dataList={bankAccounts}
+            dataList={bankAccountList}
             onEdit={handleEditBankAccount}
             onDelete={handleDeleteBankAccount}
           />

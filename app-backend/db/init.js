@@ -3,19 +3,6 @@ const initTables = () => {
   // Users table for authentication
   db.serialize(() => {
 
-    // Bank Accounts table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS bank_accounts (
-        debit_balance REAL DEFAULT 0,
-        credit_balance REAL DEFAULT 0,
-        current_balance REAL DEFAULT 0,
-        is_default INTEGER DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-
     // Bank Transactions table
     db.run(`
       CREATE TABLE IF NOT EXISTS bank_trans (
@@ -107,26 +94,5 @@ const initTables = () => {
   });
 };
 
-// Initialize default data
-const initData = (callback) => {
-  db.serialize(() => {
-
-
-    // Insert default bank account
-    db.run(
-      `
-      INSERT OR IGNORE INTO bank_accounts (bank_account_id, bank_name, account_name, account_number, opening_date, debit_balance, credit_balance, current_balance, is_default) VALUES
-      ('1', 'Petty Cash', 'Daily Cash Book', '1234-5678-9012', strftime('%Y-%m-%d', 'now'), 0, 0, 0, 1)
-    `,
-      (err) => {
-        if (err) {
-          console.error("Error inserting default bank account:", err);
-        } else {
-          console.log("Default bank account inserted.");
-        }
-      }
-    );
-  });
-};
 
 module.exports = { db, initTables, initData };

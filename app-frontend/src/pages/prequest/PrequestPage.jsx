@@ -5,7 +5,7 @@ import BookingComponent from "./BookingComponent";
 import ReceiveComponent from "./ReceiveComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { Dropdown } from "primereact/dropdown";
+
 import { Toast } from "primereact/toast";
 import OrderComponent from "./OrderComponent";
 import ReturnComponent from "./ReturnComponent";
@@ -67,26 +67,7 @@ const PrequestPage = () => {
 
         {isList ? (
           <div className="flex gap-2">
-            <Dropdown
-              value={selectedPoType}
-              options={poTypeOptions}
-              onChange={(e) => handlePoTypeChange(e.value)}
-              placeholder="Select Filter"
-              optionLabel="label"
-              optionValue="value"
-              className="w-full md:w-auto"
-              size="small"
-            />
-            <Dropdown
-              value={selectedFilter}
-              options={filterOptions}
-              onChange={(e) => handleFilterChange(e.value)}
-              placeholder="Select Filter"
-              optionLabel="label"
-              optionValue="value"
-              className="w-full md:w-auto"
-              size="small"
-            />
+   
             <Button
               label={selectedPoType}
               icon="pi pi-plus"

@@ -1,4 +1,3 @@
-//as example useUnits.js
 import { useState, useEffect } from "react";
 import { productsAPI } from "@/api/inventory/productsAPI";
 import validate from "@/models/validator";
@@ -271,6 +270,7 @@ export const useProducts = () => {
     errors,
     formDataProduct,
     selectedFilter,
+    setSelectedFilter,
     filterOptions,
     handleChange,
     handleCancel,
