@@ -1,18 +1,17 @@
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Button } from "primereact/button";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
-import { Badge } from "primereact/badge";
 import { SplitButton } from "primereact/splitbutton";
+import { Badge } from "primereact/badge";
 
-const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
+const PurchaseListComponent = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete ${rowData.order_type} "${rowData.order_no}"?`,
+      message: `Are you sure you want to delete "${rowData.order_no}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
-        onDelete(rowData.po_master_id);
+        onDelete(rowData);
       },
       reject: () => {
         // Do nothing on reject
@@ -28,7 +27,7 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
         command: () => {
           handleDelete(rowData);
         },
-        disabled: rowData.ismodified || rowData.is_posted,
+        disabled: rowData.ismodified,
       },
     ];
     return (
@@ -46,8 +45,7 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-
-  const itemAmountTemplate = (rowData) => {
+  const totalAmountTemplate = (rowData) => {
     const { total_amount, paid_amount, due_amount } = rowData;
 
     return (
@@ -62,7 +60,7 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const itemAmountFooterTemplate = () => {
+  const totalAmountFooterTemplate = () => {
     const total_due_amount = dataList.reduce(
       (sum, item) => sum + (item.due_amount || 0),
       0
@@ -195,7 +193,69 @@ const PrequestListComponent = ({ dataList, onEdit, onDelete }) => {
       </div>
     );
   };
-  
+
+  const formatCurrency = (value) => {
+    if (value == null || isNaN(value)) return "N/A";
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "BDT",
+    }).format(value);
+  };
+
+  const trnShortBody_FirstChars = (rowData) => {
+    if (!rowData.order_type) return "";
+
+    return rowData.order_type
+      .split(" ") // split string into words
+      .map((word) => word[0].toUpperCase()) // take first char of each word
+      .join(""); // join them together
+  };
+
+  const trnShortBody = (rowData) => {
+    if (!rowData.order_type) return "";
+
+    const parts = rowData.order_type.trim().split(" ");
+    return parts[parts.length - 1]; // return last word
+  };
+
+  return (
+    <div className="p-1">
+      <ConfirmDialog />
+      <DataTable
+        value={dataList}
+        paginator
+        rows={10}
+        rowsPerPageOptions={[5, 10, 25]}
+        emptyMessage="No data found."
+        className="bg-dark-300"
+        size="small"
+        footer={tableFooterTemplate()}
+      >
+        <Column field="order_no" header="Order No" sortable />
+        <Column field="order_date" header="Date" sortable />
+        <Column field="contact_name" header="Contact" sortable />
+        <Column
+          field="total_amount"
+          header="Total Amount"
+          sortable
+          body={totalAmountTemplate}
+          footer={totalAmountFooterTemplate}
+        />
+        <Column field="due_amount" header="Due Amount" sortable />
+        <Column
+          field="is_paid"
+          header="Status"
+          body={isPaidTemplate}
+          sortable
+        />
+        <Column
+          header="Actions"
+          body={actionTemplate}
+          style={{ width: "120px" }}
+        />
+      </DataTable>
+    </div>
+  );
 };
 
-export default PrequestListComponent;
+export default PurchaseListComponent;

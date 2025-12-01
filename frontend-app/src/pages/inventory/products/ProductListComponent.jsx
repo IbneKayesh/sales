@@ -16,7 +16,7 @@ const ProductListComponent = ({ dataList, onEdit, onDelete }) => {
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
-        onDelete(rowData.item_id);
+        onDelete(rowData);
       },
       reject: () => {
         // Do nothing on reject
@@ -81,7 +81,7 @@ const ProductListComponent = ({ dataList, onEdit, onDelete }) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
-    }).format(rowData.sale_price);
+    }).format(rowData.sales_price);
   };
 
   const marginPriceTemplate = (rowData) => {
@@ -113,7 +113,7 @@ const ProductListComponent = ({ dataList, onEdit, onDelete }) => {
   const totalItems = dataList.length;
   const totalStockQty = dataList.reduce((sum, item) => sum + (item.stock_qty ?? 0), 0);
   const totalPurchaseValue = dataList.reduce((sum, item) => sum + ((item.purchase_price ?? 0) * (item.stock_qty ?? 0)), 0);
-  const totalSalesValue = dataList.reduce((sum, item) => sum + ((item.sale_price ?? 0) * (item.stock_qty ?? 0)), 0);
+  const totalSalesValue = dataList.reduce((sum, item) => sum + ((item.sales_price ?? 0) * (item.stock_qty ?? 0)), 0);
   const totalMarginValue = dataList.reduce((sum, item) => sum + ((item.margin_price ?? 0) * (item.stock_qty ?? 0)), 0);
 
   return (
@@ -144,8 +144,8 @@ const ProductListComponent = ({ dataList, onEdit, onDelete }) => {
           footer={formatCurrency(totalPurchaseValue)}
         />
         <Column
-          field="sale_price"
-          header="Sale Price"
+          field="sales_price"
+          header="Sales Price"
           body={salePriceTemplate}
           sortable
           footer={formatCurrency(totalSalesValue)}

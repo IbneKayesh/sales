@@ -1,32 +1,36 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useProducts } from "@/hooks/inventory/useProducts";
-import ProductListComponent from "./ProductListComponent";
-import ProductFormComponent from "./ProductFormComponent";
+import { usePurchase } from "@/hooks/purchase/usePurchase";
+import PurchaseListComponent from "./PurchaseListComponent";
+import PurchaseFormComponent from "./PurchaseFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
 
-const ProductsPage = () => {
+const PurchasePage = () => {
   const toast = useRef(null);
   const {
-    productList,
+    purchaseList,
     toastBox,
     isBusy,
     currentView,
     errors,
-    formDataProduct,
-    selectedFilter,
-    filterOptions,
+    formDataOrder,
+    setFormDataOrder,
+    formDataOrderItems,
+    setFormDataOrderItems,
+    formDataOrderPayments,
+    setFormDataOrderPayments,
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditProduct,
-    handleDeleteProduct,
+    handleEditPurchase,
+    handleDeletePurchase,
     handleRefresh,
-    handleSaveProduct,
-    handleFilterChange,
-  } = useProducts();
+    handleSavePurchase,
+    poTypeOptions,
+    filterOptions,
+    paymentOptions,
+  } = usePurchase();
 
   useEffect(() => {
     if (toastBox && toast.current) {
@@ -46,25 +50,23 @@ const ProductsPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Products List"
-            : formDataProduct.product_id
-            ? "Edit Product"
-            : "Add New Product"}
+            ? "Purchase List"
+            : formDataOrder.po_master_id
+            ? "Edit Purchase"
+            : "Add New Purchase"}
         </h3>
 
         {isList ? (
           <div className="flex gap-2">
-            <Dropdown
-              value={selectedFilter}
-              options={filterOptions}
-              onChange={(e) => handleFilterChange(e.value)}
-              placeholder="Select Filter"
-              optionLabel="label"
-              optionValue="value"
-              className="w-full md:w-auto"
+            <Button
+              label="Refresh"
+              icon="pi pi-refresh"
+              size="small"
+              severity="secondary"
+              onClick={handleRefresh}
             />
             <Button
-              label="New Product"
+              label="New Purchase"
               icon="pi pi-plus"
               size="small"
               onClick={handleAddNew}
@@ -72,7 +74,7 @@ const ProductsPage = () => {
           </div>
         ) : (
           <Button
-            label="Products List"
+            label="Purchase List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -87,18 +89,22 @@ const ProductsPage = () => {
       <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <ProductListComponent
-            dataList={productList}
-            onEdit={handleEditProduct}
-            onDelete={handleDeleteProduct}
+          <PurchaseListComponent
+            dataList={purchaseList}
+            onEdit={handleEditPurchase}
+            onDelete={handleDeletePurchase}
           />
         ) : (
-          <ProductFormComponent
+          <PurchaseFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={formDataProduct}
+            formData={formDataOrder}
+            formDataOrderItems={formDataOrderItems}
+            setFormDataOrderItems={setFormDataOrderItems}
             onChange={handleChange}
-            onSave={handleSaveProduct}
+            onSave={handleSavePurchase}
+            paymentOptions={paymentOptions}
+            formDataOrderPayments={formDataOrderPayments}
           />
         )}
       </Card>
@@ -106,4 +112,4 @@ const ProductsPage = () => {
   );
 };
 
-export default ProductsPage;
+export default PurchasePage;

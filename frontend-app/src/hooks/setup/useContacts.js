@@ -13,7 +13,7 @@ export const useContacts = () => {
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formDataContact, setFormDataContact] = useState({
-    contact_id: generateGuid(),
+    contact_id: "",
     contact_name: "",
     contact_mobile: "",
     contact_email: "",

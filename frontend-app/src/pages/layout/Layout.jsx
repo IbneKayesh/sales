@@ -26,7 +26,7 @@ const Layout = () => {
       name: "Purchase",
       icon: "pi pi-shopping-cart",
       submenus: [
-        { id: "pr1", name: "Purchase Request", url: "/home/prequest", icon: "pi pi-file" },
+        { id: "pr1", name: "Purchase", url: "/home/purchase", icon: "pi pi-file" },
       ],
     },
     {

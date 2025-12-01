@@ -62,7 +62,7 @@ const initTables = () => {
         large_unit_id TEXT NOT NULL,
         stock_qty INTEGER DEFAULT 0,
         purchase_price REAL DEFAULT 0,
-        sale_price REAL DEFAULT 0,
+        sales_price REAL DEFAULT 0,
         discount_percent REAL DEFAULT 0,
         tax_percent REAL DEFAULT 0,
         margin_price REAL DEFAULT 0,
@@ -117,14 +117,15 @@ const initTables = () => {
         order_note TEXT,
         order_amount REAL DEFAULT 0,
         discount_amount REAL DEFAULT 0,
+        tax_amount REAL DEFAULT 0,
         cost_amount REAL DEFAULT 0,
         total_amount REAL DEFAULT 0,
         paid_amount REAL DEFAULT 0,
         due_amount REAL DEFAULT 0,
+        other_cost REAL DEFAULT 0,
         is_paid TEXT NOT NULL,
         is_posted BOOLEAN DEFAULT 0,
         is_completed BOOLEAN DEFAULT 0,
-        other_cost REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
@@ -211,7 +212,7 @@ const initData = (callback) => {
     db.run(
       `
       INSERT OR IGNORE INTO products (product_id, product_code, product_name, product_desc, category_id, small_unit_id, unit_difference_qty, large_unit_id,
-      stock_qty, purchase_price, sale_price, discount_percent, tax_percent, margin_price)
+      stock_qty, purchase_price, sales_price, discount_percent, tax_percent, margin_price)
       VALUES
       ('1', 'P-01', 'Rice', 'Description 1', '1', '1', 1, '1', '0', '80', '85', '0', '0', '5'),
       ('2', 'P-02', 'Salt', 'Description 2', '1', '1', 1, '1', '0', '35', '42', '0', '0', '7'),
@@ -233,7 +234,7 @@ const initData = (callback) => {
       `
       INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type, current_balance)
       VALUES
-      ('0', 'Adjustment A/C', '0', '0', 'for internal transaction', 'Both', 0),
+      ('0', 'Adjustment A/C', '0', '0', 'for internal transaction', 'internal', 0),
       ('1', 'Supplier 1', '1234567890', 'supplier1@example.com', '123 Main St', 'Supplier', 0),
       ('2', 'Supplier 2', '0987654321', 'supplier2@example.com', '456 Elm St', 'Supplier', 0),
       ('3', 'Customer 1', '1234567890', 'customer1@example.com', '123 Main St', 'Customer', 0),

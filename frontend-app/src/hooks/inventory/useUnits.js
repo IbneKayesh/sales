@@ -11,7 +11,7 @@ export const useUnits = () => {
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formDataUnit, setFormDataUnit] = useState({
-    unit_id: generateGuid(),
+    unit_id: "",
     unit_name: "",
   });
 

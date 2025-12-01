@@ -7,8 +7,8 @@ import { useUnits } from "@/hooks/inventory/useUnits";
 import { useCategories } from "@/hooks/inventory/useCategories";
 
 const ProductFormComponent = ({ isBusy, errors, formData, onChange, onSave }) => {
-  const { units } = useUnits();
-  const { categories } = useCategories();
+  const { unitList } = useUnits();
+  const { categoryList } = useCategories();
 
   return (
     <div className="p-1">
@@ -33,40 +33,40 @@ const ProductFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =>
         </div>
         <div className="col-12 md:col-4">
           <label
-            htmlFor="item_name"
+            htmlFor="product_name"
             className="block text-900 font-medium mb-2"
           >
-            {t_products.item_name.name}{" "}
+            {t_products.product_name.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <InputText
-            name="item_name"
-            value={formData.item_name}
-            onChange={(e) => onChange("item_name", e.target.value)}
-            className={`w-full ${errors.item_name ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_products.item_name.name}`}
+            name="product_name"
+            value={formData.product_name}
+            onChange={(e) => onChange("product_name", e.target.value)}
+            className={`w-full ${errors.product_name ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_products.product_name.name}`}
           />
-          {errors.item_name && (
-            <small className="mb-3 text-red-500">{errors.item_name}</small>
+          {errors.product_name && (
+            <small className="mb-3 text-red-500">{errors.product_name}</small>
           )}
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-6">
           <label
-            htmlFor="item_description"
+            htmlFor="product_desc"
             className="block text-900 font-medium mb-2"
           >
-            {t_products.item_description.name}
+            {t_products.product_desc.name}
           </label>
           <InputText
-            name="item_description"
-            value={formData.item_description}
-            onChange={(e) => onChange("item_description", e.target.value)}
-            className={`w-full ${errors.item_description ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_products.item_description.name}`}
+            name="product_desc"
+            value={formData.product_desc}
+            onChange={(e) => onChange("product_desc", e.target.value)}
+            className={`w-full ${errors.product_desc ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_products.product_desc.name}`}
           />
-          {errors.item_description && (
+          {errors.product_desc && (
             <small className="mb-3 text-red-500">
-              {errors.item_description}
+              {errors.product_desc}
             </small>
           )}
         </div>
@@ -81,7 +81,7 @@ const ProductFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =>
           <Dropdown
             name="category_id"
             value={formData.category_id}
-            options={categories.map((category) => ({
+            options={categoryList.map((category) => ({
               label: category.category_name,
               value: category.category_id,
             }))}
@@ -106,7 +106,7 @@ const ProductFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =>
           <Dropdown
             name="small_unit_id"
             value={formData.small_unit_id}
-            options={units.map((unit) => ({
+            options={unitList.map((unit) => ({
               label: unit.unit_name,
               value: unit.unit_id,
             }))}
@@ -131,9 +131,8 @@ const ProductFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =>
             name="unit_difference_qty"
             value={formData.unit_difference_qty}
             onValueChange={(e) => onChange("unit_difference_qty", e.value)}
-            className={`w-full ${
-              errors.unit_difference_qty ? "p-invalid" : ""
-            }`}
+            className={`w-full ${errors.unit_difference_qty ? "p-invalid" : ""
+              }`}
             inputStyle={{ width: "100%" }}
             placeholder={`Enter ${t_products.unit_difference_qty.name}`}
           />
@@ -145,47 +144,27 @@ const ProductFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =>
         </div>
         <div className="col-12 md:col-2">
           <label
-            htmlFor="big_unit_id"
+            htmlFor="large_unit_id"
             className="block text-900 font-medium mb-2"
           >
-            {t_products.big_unit_id.name}{" "}
+            {t_products.large_unit_id.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <Dropdown
-            name="big_unit_id"
-            value={formData.big_unit_id}
-            options={units.map((unit) => ({
+            name="large_unit_id"
+            value={formData.large_unit_id}
+            options={unitList.map((unit) => ({
               label: unit.unit_name,
               value: unit.unit_id,
             }))}
-            onChange={(e) => onChange("big_unit_id", e.value)}
-            className={`w-full ${errors.big_unit_id ? "p-invalid" : ""}`}
-            placeholder={`Select ${t_products.big_unit_id.name}`}
+            onChange={(e) => onChange("large_unit_id", e.value)}
+            className={`w-full ${errors.large_unit_id ? "p-invalid" : ""}`}
+            placeholder={`Select ${t_products.large_unit_id.name}`}
             optionLabel="label"
             optionValue="value"
           />
-          {errors.big_unit_id && (
-            <small className="mb-3 text-red-500">{errors.big_unit_id}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label
-            htmlFor="booking_qty"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_products.booking_qty.name}
-          </label>
-          <InputNumber
-            name="booking_qty"
-            value={formData.booking_qty}
-            onValueChange={(e) => onChange("booking_qty", e.value)}
-            className={`w-full ${errors.booking_qty ? "p-invalid" : ""}`}
-            inputStyle={{ width: "100%" }}
-            placeholder={`Enter ${t_products.booking_qty.name}`}
-            disabled
-          />
-          {errors.booking_qty && (
-            <small className="mb-3 text-red-500">{errors.booking_qty}</small>
+          {errors.large_unit_id && (
+            <small className="mb-3 text-red-500">{errors.large_unit_id}</small>
           )}
         </div>
         <div className="col-12 md:col-2">
@@ -210,46 +189,46 @@ const ProductFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =>
         </div>
         <div className="col-12 md:col-2">
           <label
-            htmlFor="purchase_rate"
+            htmlFor="purchase_price"
             className="block text-900 font-medium mb-2"
           >
-            {t_products.purchase_rate.name}
+            {t_products.purchase_price.name}
           </label>
           <InputNumber
-            name="purchase_rate"
-            value={formData.purchase_rate}
-            onValueChange={(e) => onChange("purchase_rate", e.value)}
+            name="purchase_price"
+            value={formData.purchase_price}
+            onValueChange={(e) => onChange("purchase_price", e.value)}
             mode="currency"
             currency="BDT"
             locale="en-US"
-            className={`w-full ${errors.purchase_rate ? "p-invalid" : ""}`}
+            className={`w-full ${errors.purchase_price ? "p-invalid" : ""}`}
             inputStyle={{ width: "100%" }}
-            placeholder={`Enter ${t_products.purchase_rate.name}`}
+            placeholder={`Enter ${t_products.purchase_price.name}`}
           />
-          {errors.purchase_rate && (
-            <small className="mb-3 text-red-500">{errors.purchase_rate}</small>
+          {errors.purchase_price && (
+            <small className="mb-3 text-red-500">{errors.purchase_price}</small>
           )}
         </div>
         <div className="col-12 md:col-2">
           <label
-            htmlFor="sales_rate"
+            htmlFor="sales_price"
             className="block text-900 font-medium mb-2"
           >
-            {t_products.sales_rate.name}
+            {t_products.sales_price.name}
           </label>
           <InputNumber
-            name="sales_rate"
-            value={formData.sales_rate}
-            onValueChange={(e) => onChange("sales_rate", e.value)}
+            name="sales_price"
+            value={formData.sales_price}
+            onValueChange={(e) => onChange("sales_price", e.value)}
             mode="currency"
             currency="BDT"
             locale="en-US"
-            className={`w-full ${errors.sales_rate ? "p-invalid" : ""}`}
+            className={`w-full ${errors.sales_price ? "p-invalid" : ""}`}
             inputStyle={{ width: "100%" }}
-            placeholder={`Enter ${t_products.sales_rate.name}`}
+            placeholder={`Enter ${t_products.sales_price.name}`}
           />
-          {errors.sales_rate && (
-            <small className="mb-3 text-red-500">{errors.sales_rate}</small>
+          {errors.sales_price && (
+            <small className="mb-3 text-red-500">{errors.sales_price}</small>
           )}
         </div>
         <div className="col-12 md:col-2">
@@ -278,25 +257,47 @@ const ProductFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =>
         </div>
         <div className="col-12 md:col-2">
           <label
-            htmlFor="margin_rate"
+            htmlFor="tax_percent"
             className="block text-900 font-medium mb-2"
           >
-            {t_products.margin_rate.name}
+            {t_products.tax_percent.name}
           </label>
           <InputNumber
-            name="margin_rate"
-            value={formData.margin_rate}
-            onValueChange={(e) => onChange("margin_rate", e.value)}
+            name="tax_percent"
+            value={formData.tax_percent}
+            onValueChange={(e) => onChange("tax_percent", e.value)}
             mode="currency"
             currency="BDT"
             locale="en-US"
-            className={`w-full ${errors.margin_rate ? "p-invalid" : ""}`}
+            className={`w-full ${errors.tax_percent ? "p-invalid" : ""}`}
             inputStyle={{ width: "100%" }}
-            placeholder={`Enter ${t_products.margin_rate.name}`}
+            placeholder={`Enter ${t_products.tax_percent.name}`}
+          />
+          {errors.tax_percent && (
+            <small className="mb-3 text-red-500">{errors.tax_percent}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-2">
+          <label
+            htmlFor="margin_price"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_products.margin_price.name}
+          </label>
+          <InputNumber
+            name="margin_price"
+            value={formData.margin_price}
+            onValueChange={(e) => onChange("margin_price", e.value)}
+            mode="currency"
+            currency="BDT"
+            locale="en-US"
+            className={`w-full ${errors.margin_price ? "p-invalid" : ""}`}
+            inputStyle={{ width: "100%" }}
+            placeholder={`Enter ${t_products.margin_price.name}`}
             disabled
           />
-          {errors.margin_rate && (
-            <small className="mb-3 text-red-500">{errors.margin_rate}</small>
+          {errors.margin_price && (
+            <small className="mb-3 text-red-500">{errors.margin_price}</small>
           )}
         </div>
         <div className="col-12">

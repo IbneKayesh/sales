@@ -12,7 +12,7 @@ export const useProducts = () => {
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formDataProduct, setFormDataProduct] = useState({
-    product_id: generateGuid(),
+    product_id: "",
     product_code: "",
     product_name: "",
     product_desc: "",
@@ -22,7 +22,7 @@ export const useProducts = () => {
     large_unit_id: "",
     stock_qty: 0,
     purchase_price: 0,
-    sale_price: 0,
+    sales_price: 0,
     discount_percent: 0,
     tax_percent: 0,
     margin_price: 0,
@@ -80,7 +80,7 @@ export const useProducts = () => {
 
   const handleClear = () => {
     setFormDataProduct({
-      product_id: generateGuid(),
+      product_id: "",
       product_code: "",
       product_name: "",
       product_desc: "",
@@ -90,7 +90,7 @@ export const useProducts = () => {
       large_unit_id: "",
       stock_qty: 0,
       purchase_price: 0,
-      sale_price: 0,
+      sales_price: 0,
       discount_percent: 0,
       tax_percent: 0,
       margin_price: 0,
@@ -248,7 +248,7 @@ export const useProducts = () => {
 
   const calculateApproxProfit = (item) => {
     const purchase = Number(item.purchase_price || 0);
-    const sales = Number(item.sale_price || 0);
+    const sales = Number(item.sales_price || 0);
     const discountPercent = Number(item.discount_percent || 0);
 
     // Discount is applied on SALES price

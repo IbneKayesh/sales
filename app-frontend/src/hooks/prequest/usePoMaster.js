@@ -17,44 +17,6 @@ export const usePoMaster = () => {
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [selectedPoType, setSelectedPoType] = useState("Purchase Booking");
-  const [selectedFilter, setSelectedFilter] = useState("default");
-
-  const poTypeOptions = [
-    { label: "Purchase Booking", value: "Purchase Booking" },
-    { label: "Purchase Receive", value: "Purchase Receive" },
-    { label: "Purchase Order", value: "Purchase Order" },
-    { label: "Return Purchase", value: "Return Purchase" },
-  ];
-
-  const filterOptions = [
-    { label: "Default", value: "default" },
-    { label: "Last 7 Days", value: "7days" },
-    { label: "Last 30 Days", value: "30days" },
-    { label: "Last 90 Days", value: "90days" },
-    { label: "All Days", value: "alldays" },
-  ];
-
-  const [formDataPoMaster, setFormDataPoMaster] = useState({
-    po_master_id: "",
-    order_type: selectedPoType,
-    order_no: "[SL-123456]",
-    order_date: new Date().toISOString().split("T")[0],
-    contact_id: "",
-    ref_no: "No Ref",
-    order_note: "",
-    order_amount: 0,
-    discount_amount: 0,
-    cost_amount: 0,
-    total_amount: 0,
-    paid_amount: 0,
-    due_amount: 0,
-    is_paid: "Unpaid",
-    is_posted: 0,
-    is_completed: 0,
-    other_cost: 0,
-    ismodified: 0,
-  });
 
   const [formDataPayments_v1, setFormDataPayments_v1] = useState({
     payment_id: "",
@@ -70,13 +32,6 @@ export const usePoMaster = () => {
     ismodified: 0,
   });
 
-  const [formDataPaymentList, setFormDataPaymentList] = useState([]);
-
-  const paymentOptions = [
-    { label: "Cash", value: "Cash" },
-    { label: "Bank", value: "Bank" },
-    { label: "MFS", value: "MFS" },
-  ];
 
   // const [formDataPoChild, setFormDataPoChild] = useState({
   //   po_master_id: "",
@@ -273,54 +228,8 @@ export const usePoMaster = () => {
 
     setErrors(newErrors);
   };
+  
 
-  const handleClear = () => {
-    setFormDataPoMaster({
-      po_master_id: "",
-      order_type: selectedPoType,
-      order_no: "[SL-123456]",
-      order_date: new Date().toISOString().split("T")[0],
-      contact_id: "",
-      ref_no: "No Ref",
-      order_note: "",
-      order_amount: 0,
-      discount_amount: 0,
-      total_amount: 0,
-      paid_amount: 0,
-      cost_amount: 0,
-      is_paid: "Unpaid",
-      is_posted: 0,
-      is_completed: 0,
-      other_cost: 0,
-      ismodified: 0,
-    });
-    setErrors({});
-
-    // setFormDataPoChild({
-    //   po_master_id: "",
-    //   item_id: "",
-    //   item_rate: 0,
-    //   item_qty: 0,
-    //   discount_amount: 0,
-    //   item_amount: 0,
-    //   item_note: "",
-    //   received_qty: 0,
-    //   ismodified: 0,
-    // });
-
-    setOrderChildItems([]);
-    setFormDataPaymentList([]);
-  };
-
-  const handleCancel = () => {
-    handleClear();
-    setCurrentView("list");
-  };
-
-  const handleAddNew = () => {
-    handleClear();
-    setCurrentView("form");
-  };
 
   const handleEditPoMaster = (poMaster) => {
     setFormDataPoMaster(poMaster);

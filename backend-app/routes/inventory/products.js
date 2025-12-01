@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
       whereClause = "WHERE p.purchase_price = 0";
       break;
     case "nosp":
-      whereClause = "WHERE p.sale_price = 0";
+      whereClause = "WHERE p.sales_price = 0";
       break;
     case "wd":
       whereClause = "WHERE p.discount_percent > 0";
@@ -65,7 +65,7 @@ router.get("/", async (req, res) => {
     const rows = await dbAll(sql, []);
     res.json(rows);
   } catch (error) {
-    console.error("Error fetching units:", error);
+    console.error("Error fetching Products:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -78,7 +78,7 @@ router.get("/:id", async (req, res) => {
       "SELECT p.*, 0 as ismodified FROM products p WHERE product_id = ?";
       const row = await dbGet(sql, [id]);
       if (!row) {
-        return res.status(404).json({ error: "Unit not found" });
+        return res.status(404).json({ error: "Product not found" });
       }
       res.json(row);
     } catch (error) {
@@ -100,7 +100,7 @@ router.post("/", async (req, res) => {
     large_unit_id,
     stock_qty,
     purchase_price,
-    sale_price,
+    sales_price,
     discount_percent,
     tax_percent,
     margin_price,
@@ -117,7 +117,7 @@ router.post("/", async (req, res) => {
 
   try {
     const sql = `INSERT INTO products (product_id, product_code, product_name, product_desc, category_id, small_unit_id, unit_difference_qty, large_unit_id,
-    stock_qty, purchase_price, sale_price, discount_percent, tax_percent, margin_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    stock_qty, purchase_price, sales_price, discount_percent, tax_percent, margin_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const params = [
       product_id,
       product_code,
@@ -129,7 +129,7 @@ router.post("/", async (req, res) => {
       large_unit_id,
       stock_qty,
       purchase_price,
-      sale_price,
+      sales_price,
       discount_percent,
       tax_percent,
       margin_price,
@@ -145,6 +145,8 @@ router.post("/", async (req, res) => {
 // Update product
 router.post("/update", async (req, res) => {
   const {
+    product_id,
+    product_code,
     product_name,
     product_desc,
     category_id,
@@ -152,7 +154,7 @@ router.post("/update", async (req, res) => {
     unit_difference_qty,
     large_unit_id,
     purchase_price,
-    sale_price,
+    sales_price,
     discount_percent,
     tax_percent,
     margin_price,
@@ -164,19 +166,22 @@ router.post("/update", async (req, res) => {
 
   try {
     const sql = `UPDATE products
-    SET product_name = ?,
+    SET 
+    product_code = ?,
+    product_name = ?,
     product_desc = ?,
     category_id = ?,
     small_unit_id = ?,
     unit_difference_qty = ?,
     large_unit_id = ?,
     purchase_price = ?,
-    sale_price = ?,
+    sales_price = ?,
     discount_percent = ?,
     tax_percent = ?,
     margin_price = ?
     WHERE product_id = ?`;
     const params = [
+      product_code,
       product_name,
       product_desc,
       category_id,
@@ -184,11 +189,11 @@ router.post("/update", async (req, res) => {
       unit_difference_qty,
       large_unit_id,
       purchase_price,
-      sale_price,
+      sales_price,
       discount_percent,
       tax_percent,
       margin_price,
-      id,
+      product_id,
     ];
     const result = await dbRun(sql, params, `Updated Product ${product_name}`);
     if (result.changes === 0) {
@@ -214,7 +219,7 @@ router.post("/delete", async (req, res) => {
     const result = await dbRun(
       sql,
       [product_id],
-      `Deleted products ${product_name}`
+      `Deleted Products ${product_name}`
     );
     if (result.changes === 0) {
       return res.status(404).json({ error: "Product not found" });

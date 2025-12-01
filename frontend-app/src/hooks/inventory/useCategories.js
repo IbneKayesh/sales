@@ -12,7 +12,7 @@ export const useCategories = () => {
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formDataCategory, setFormDataCategory] = useState({
-    category_id: generateGuid(),
+    category_id: "",
     category_name: "",
   });
 

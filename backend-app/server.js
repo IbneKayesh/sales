@@ -9,6 +9,7 @@ const unitRoutes = require('./routes/inventory/units.js');
 const categoryRoutes = require('./routes/inventory/categories.js');
 const productRoutes = require('./routes/inventory/products.js');
 const contactRoutes = require('./routes/setup/contacts.js');
+const purchaseRoutes = require('./routes/purchase/purchase.js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -44,6 +45,7 @@ app.use('/api/inventory/units', unitRoutes);
 app.use('/api/inventory/categories', categoryRoutes);
 app.use('/api/inventory/products', productRoutes);
 app.use('/api/setup/contacts', contactRoutes);
+app.use('/api/purchase/orders', purchaseRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
