@@ -15,4 +15,6 @@ export const purchaseAPI = {
     method: 'POST',
     body: JSON.stringify(order),
   }),
+  getDetails: (po_master_id) => apiRequest(`/purchase/orders/details/${po_master_id}`),
+  getPayments: (order_no) => apiRequest(`/purchase/orders/payments/${order_no}`),
 };

@@ -105,12 +105,15 @@ router.post("/", async (req, res) => {
     const yy = String(now.getFullYear()).slice(-2);
     const date_part = dd + mm + yy;
 
-    const max_sequence_no_sql = await dbGet(
-      "SELECT MAX(CAST(SUBSTR(order_no, -5) AS INTEGER)) as max_seq FROM po_master WHERE order_type = ? AND strftime('%Y-%m-%d', order_date) = strftime('%Y-%m-%d', 'now')",
-      [order_type]
-    );
-    const max_sequence_no = String((max_sequence_no_sql.max_seq || 0) + 1).padStart(5, '0');
-    const order_no_new = `${prefix}-${date_part}-${max_sequence_no}`;
+    const sql = `SELECT MAX(CAST(SUBSTR(order_no, -5) AS INTEGER)) as max_seq
+    FROM po_master
+    WHERE order_type = ?
+    AND strftime('%Y-%m-%d', order_date) = strftime('%Y-%m-%d', 'now')`;
+
+    const max_seq = await dbGet(sql, [order_type]);
+    const max_seq_no = String((max_seq.max_seq || 0) + 1).padStart(5, '0');
+    const order_no_new = `${prefix}-${date_part}-${max_seq_no}`;
+    console.log("New Transaction No: " + order_no_new);
 
     //fetch default bank account
     const bank_account = await dbGet(
@@ -159,7 +162,7 @@ router.post("/", async (req, res) => {
     //Insert Details
     for (const detail of details_create) {
       scripts.push({
-        label: "Insert Purchase Detail " + detail.product_id,
+        label: "Insert Purchase Detail " + order_no_new,
         sql: `INSERT INTO po_details (po_details_id, po_master_id, product_id, product_price, product_qty,
         discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount,
         product_note, ref_id)
@@ -184,32 +187,32 @@ router.post("/", async (req, res) => {
     //Insert Payments
     for (const payment of payments_create) {
       scripts.push({
-        label: "Insert Purchase Payment " + payment.payment_id,
+        label: "Insert Purchase Payment " + order_no_new,
         sql: `INSERT INTO bank_payments (payment_id, account_id, payment_head, payment_mode, payment_date,
-        contact_id, payment_amount, order_amount, payment_note, ref_no, ref_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        contact_id, ref_no, payment_amount, payment_note)
+        VALUES (?, ?, ?, ?, ?,
+        ?, ?, ?, ?)`,
         params: [
           payment.payment_id,
           bank_account_id,
-          payment.payment_head,
+          order_type,
           payment.payment_mode,
           order_date,
           contact_id,
-          payment.payment_amount || 0,
-          payment.order_amount || 0,
-          payment.payment_note,
           order_no_new,
-          payment.ref_id,
+          payment.payment_amount || 0,
+          payment.payment_note
         ],
       });
     }
     //Other cost goes to expesnes with default contact account
     if (other_cost > 0) {
       scripts.push({
-        label: "Insert Purchase Other Cost " + po_master_id,
+        label: "Insert Purchase Other Cost " + order_no_new,
         sql: `INSERT INTO bank_payments (payment_id, account_id, payment_head, payment_mode, payment_date,
-    contact_id, payment_amount, order_amount, payment_note, ref_no, ref_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        contact_id, ref_no, payment_amount, payment_note)
+        VALUES (?, ?, ?, ?, ?,
+        ?, ?, ?, ?)`,
         params: [
           generateGuid(),
           bank_account_id,
@@ -217,11 +220,9 @@ router.post("/", async (req, res) => {
           'Cash',
           order_date,
           '0',
-          other_cost,
+          order_no_new,
           other_cost,
           'Other Cost',
-          order_no_new,
-          '',
         ],
       });
     }
@@ -244,5 +245,51 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+
+
+//get purchase details by po_master_id
+router.get("/details/:poMasterId", async (req, res) => {
+  try {
+    const { poMasterId } = req.params;
+    const sql = `SELECT pod.*,
+    p.product_code,
+    p.product_name,
+    p.unit_difference_qty,
+    su.unit_name as small_unit_name,
+    lu.unit_name as large_unit_name,
+    0 as ismodified
+    FROM po_details pod
+    LEFT JOIN products p ON pod.product_id = p.product_id
+    LEFT JOIN units su ON p.small_unit_id = su.unit_id
+    LEFT JOIN units lu ON p.large_unit_id = lu.unit_id
+    WHERE pod.po_master_id = ?
+    ORDER BY pod.po_details_id`;
+    const rows = await dbAll(sql, [poMasterId]);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching purchase details:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//get purchase payments by order_no
+router.get("/payments/:orderNo", async (req, res) => {
+  try {
+    const { orderNo } = req.params;
+    const sql = `SELECT bp.*
+    FROM bank_payments bp
+    JOIN po_master pm ON bp.ref_no = pm.order_no AND bp.payment_head = pm.order_type
+    WHERE bp.ref_no = ?
+    ORDER BY bp.payment_id`;
+    const rows = await dbAll(sql, [orderNo]);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching purchase payments:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 
 module.exports = router;

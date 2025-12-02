@@ -132,6 +132,26 @@ export const usePurchase = () => {
     setCurrentView("form");
   };
 
+  const loadPurchaseDetails = async (po_master_id) => {
+    try {
+      const data = await purchaseAPI.getDetails(po_master_id);
+      console.log("loadPurchaseDetails: " + JSON.stringify(data));
+      setFormDataOrderItems(data);
+    } catch (error) {
+      console.error("Error fetching purchase details:", error);
+    }
+  };
+
+  const loadPurchasePayments = async (order_no) => {
+    try {
+      const data = await purchaseAPI.getPayments(order_no);
+      console.log("loadPurchasePayments: " + JSON.stringify(data));
+      setFormDataOrderPayments(data);
+    } catch (error) {
+      console.error("Error fetching purchase payments:", error);
+    }
+  };
+
   const handleEditPurchase = (purchase) => {
     //console.log("purchase: " + JSON.stringify(purchase));
 
@@ -139,7 +159,9 @@ export const usePurchase = () => {
     setCurrentView("form");
 
     //load saved order items, by po_master_id
+    loadPurchaseDetails(purchase.po_master_id);
     //load saved order payments, by order_no
+    loadPurchasePayments(purchase.order_no);
   };
 
   const handleDeletePurchase = async (rowData) => {

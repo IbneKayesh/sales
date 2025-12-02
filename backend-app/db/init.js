@@ -114,11 +114,9 @@ const initTables = () => {
         payment_mode TEXT NOT NULL,
         payment_date TEXT NOT NULL,
         contact_id TEXT NOT NULL,
+        ref_no TEXT NOT NULL,
         payment_amount REAL DEFAULT 0,
-        order_amount REAL DEFAULT 0,
         payment_note TEXT,
-        ref_no TEXT,
-        ref_id TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (account_id) REFERENCES bank_accounts(account_id) ON DELETE RESTRICT

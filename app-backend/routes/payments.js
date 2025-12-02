@@ -38,17 +38,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-// Get payment by ref no
-router.get("/refno/:refNo", (req, res) => {
-  const { refNo } = req.params;
-  db.all("SELECT * FROM payments WHERE ref_no = ?", [refNo], (err, rows) => {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    res.json(rows);
-  });
-});
+
 
 // Get payment by ref no
 router.get("/supplier/:supplierId", (req, res) => {

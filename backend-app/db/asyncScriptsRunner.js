@@ -71,7 +71,7 @@ async function runScriptsSequentially(
   try {
     if (useTransaction) {
       console.log("🚀 BEGIN TRANSACTION");
-      await dbRun("BEGIN IMMEDIATE");
+      await dbRun("BEGIN IMMEDIATE", [], "Transaction Started");
     }
 
     for (const script of scripts) {
@@ -85,7 +85,7 @@ async function runScriptsSequentially(
     }
 
     if (useTransaction) {
-      await dbRun("COMMIT");
+      await dbRun("COMMIT", [], "Transaction Committed");
       console.log("✅ COMMIT TRANSACTION");
     }
   } catch (err) {
