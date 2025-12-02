@@ -7,21 +7,6 @@ const {
   dbGet,
 } = require("../db/asyncScriptsRunner.js");
 
-// Get all dues
-router.get("/dues", (req, res) => {
-  const sql = `SELECT con.contact_id,con.contact_name,con.contact_type,pom.order_type,pom.order_no,pom.order_date,pom.due_amount
-  FROM po_master pom
-  LEFT JOIN contacts con on pom.contact_id = con.contact_id
-  WHERE pom.order_type IN ('Purchase Booking', 'Purchase Order')
-  AND pom.due_amount > 0`;
-  db.all(sql, [], (err, rows) => {
-    if (err) {
-      console.error("Database error:", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    res.json(rows);
-  });
-});
 
 // Get payment by ID
 router.get("/:id", (req, res) => {

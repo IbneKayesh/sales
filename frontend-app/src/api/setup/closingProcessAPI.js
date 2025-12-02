@@ -2,13 +2,13 @@ import { apiRequest } from "@/utils/api.js";
 
 // Closing Process API
 export const closingProcessAPI = {
-  updateItem: (id) =>
-    apiRequest("/closing-process/update-item", {
+  updatePurchaseDue: (id) =>
+    apiRequest("/setup/closing-process/update-purchase-due", {
       method: "POST",
       body: JSON.stringify({ id }),
     }),
-  updatePurchase: (id) =>
-    apiRequest("/closing-process/update-purchase", {
+  updateBankAccounts: (id) =>
+    apiRequest("/setup/closing-process/update-bank-accounts", {
       method: "POST",
       body: JSON.stringify({ id }),
     }),

@@ -165,8 +165,8 @@ router.post("/", async (req, res) => {
         label: "Insert Purchase Detail " + order_no_new,
         sql: `INSERT INTO po_details (po_details_id, po_master_id, product_id, product_price, product_qty,
         discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount,
-        product_note, ref_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        product_note, ref_id, return_qty, sales_qty, stock_qty)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           detail.po_details_id,
           po_master_id,
@@ -181,6 +181,9 @@ router.post("/", async (req, res) => {
           detail.total_amount || 0,
           detail.product_note,
           detail.ref_id,
+          0,
+          0,
+          detail.product_qty|| 0,
         ],
       });
     }

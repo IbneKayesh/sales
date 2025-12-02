@@ -5,7 +5,8 @@ import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import t_payments from "@/models/accounts/t_payments.json";
+import t_bank_payments from "@/models/accounts/t_bank_payments.json";
+import { useBankAccounts } from "@/hooks/accounts/useBankAccounts";
 
 const PaymentsFormComponent = ({
   isBusy,
@@ -13,56 +14,59 @@ const PaymentsFormComponent = ({
   formData,
   onChange,
   onSave,
-  bankAccounts,
 }) => {
+  const { bankAccountList } = useBankAccounts();
   return (
     <div className="p-1">
       <div className="grid">
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
+          <span className="block text-900 font-medium mb-2">Payment Head</span>
+          {formData.payment_head}
+        </div>
+        <div className="col-12 md:col-4">
+          <span className="block text-900 font-medium mb-2">Contact</span>
+          {formData.contact_name}
+        </div>
+        <div className="col-12 md:col-2">
+          <span className="block text-900 font-medium mb-2">Ref No</span>
+          {formData.ref_no}
+        </div>
+        <div className="col-12 md:col-2">
+          <span className="block text-900 font-medium mb-2">Ref Date</span>
+          {formData.ref_date}
+        </div>
+        <div className="col-12 md:col-2">
+          <span className="block text-900 font-medium mb-2">Due Amount</span>
+          <span className="text-red-500">{formData.due_amount}</span>
+        </div>
+      </div>
+
+      <hr className="my-2" />
+
+      <div className="grid">
+        <div className="col-12 md:col-2">
           <label
-            htmlFor="bank_account_id"
+            htmlFor="account_id"
             className="block text-900 font-medium mb-2"
           >
-            {t_payments.t_payments.bank_account_id.name}{" "}
+            {t_bank_payments.account_id.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <Dropdown
-            name="bank_account_id"
-            value={formData.bank_account_id}
-            options={bankAccounts.map((account) => ({
+            name="account_id"
+            value={formData.account_id}
+            options={bankAccountList.map((account) => ({
               label: `${account.account_name} (${account.bank_name})`,
-              value: account.bank_account_id,
+              value: account.account_id,
             }))}
-            onChange={(e) => onChange("bank_account_id", e.value)}
-            className={`w-full ${errors.bank_account_id ? "p-invalid" : ""}`}
-            placeholder={`Select ${t_payments.t_payments.bank_account_id.name}`}
+            onChange={(e) => onChange("account_id", e.value)}
+            className={`w-full ${errors.account_id ? "p-invalid" : ""}`}
+            placeholder={`Select ${t_bank_payments.account_id.name}`}
             optionLabel="label"
             optionValue="value"
           />
-          {errors.bank_account_id && (
-            <small className="mb-3 text-red-500">
-              {errors.bank_account_id}
-            </small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label
-            htmlFor="payment_type"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_payments.t_payments.payment_type.name}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <InputText
-            name="payment_type"
-            value={formData.payment_type}
-            onChange={(e) => onChange("payment_type", e.target.value)}
-            className={`w-full ${errors.payment_type ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_payments.t_payments.payment_type.name}`}
-            disabled
-          />
-          {errors.payment_type && (
-            <small className="mb-3 text-red-500">{errors.payment_type}</small>
+          {errors.account_id && (
+            <small className="mb-3 text-red-500">{errors.account_id}</small>
           )}
         </div>
         <div className="col-12 md:col-2">
@@ -70,7 +74,7 @@ const PaymentsFormComponent = ({
             htmlFor="payment_mode"
             className="block text-900 font-medium mb-2"
           >
-            {t_payments.t_payments.payment_mode.name}{" "}
+            {t_bank_payments.payment_mode.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <InputText
@@ -78,7 +82,7 @@ const PaymentsFormComponent = ({
             value={formData.payment_mode}
             onChange={(e) => onChange("payment_mode", e.target.value)}
             className={`w-full ${errors.payment_mode ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_payments.t_payments.payment_mode.name}`}
+            placeholder={`Enter ${t_bank_payments.payment_mode.name}`}
           />
           {errors.payment_mode && (
             <small className="mb-3 text-red-500">{errors.payment_mode}</small>
@@ -89,7 +93,7 @@ const PaymentsFormComponent = ({
             htmlFor="payment_date"
             className="block text-900 font-medium mb-2"
           >
-            {t_payments.t_payments.payment_date.name}{" "}
+            {t_bank_payments.payment_date.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <Calendar
@@ -105,27 +109,10 @@ const PaymentsFormComponent = ({
             }
             className={`w-full ${errors.payment_date ? "p-invalid" : ""}`}
             dateFormat="yy-mm-dd"
-            placeholder={`Select ${t_payments.t_payments.payment_date.name}`}
+            placeholder={`Select ${t_bank_payments.payment_date.name}`}
           />
           {errors.payment_date && (
             <small className="mb-3 text-red-500">{errors.payment_date}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-3">
-          <label htmlFor="ref_no" className="block text-900 font-medium mb-2">
-            {t_payments.t_payments.ref_no.name}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <InputText
-            name="ref_no"
-            value={formData.ref_no}
-            onChange={(e) => onChange("ref_no", e.target.value)}
-            className={`w-full ${errors.ref_no ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_payments.t_payments.ref_no.name}`}
-            disabled
-          />
-          {errors.ref_no && (
-            <small className="mb-3 text-red-500">{errors.ref_no}</small>
           )}
         </div>
         <div className="col-12 md:col-2">
@@ -133,7 +120,7 @@ const PaymentsFormComponent = ({
             htmlFor="payment_amount"
             className="block text-900 font-medium mb-2"
           >
-            {t_payments.t_payments.payment_amount.name}{" "}
+            {t_bank_payments.payment_amount.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <InputNumber
@@ -150,19 +137,19 @@ const PaymentsFormComponent = ({
             <small className="mb-3 text-red-500">{errors.payment_amount}</small>
           )}
         </div>
-        <div className="col-12 md:col-10">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="payment_note"
             className="block text-900 font-medium mb-2"
           >
-            {t_payments.t_payments.payment_note.name}
+            {t_bank_payments.payment_note.name}
           </label>
           <InputText
             name="payment_note"
             value={formData.payment_note}
             onChange={(e) => onChange("payment_note", e.target.value)}
             className={`w-full ${errors.payment_note ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_payments.t_payments.payment_note.name}`}
+            placeholder={`Enter ${t_bank_payments.payment_note.name}`}
           />
           {errors.payment_note && (
             <small className="mb-3 text-red-500">{errors.payment_note}</small>

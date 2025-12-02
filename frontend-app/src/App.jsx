@@ -19,6 +19,7 @@ import ProductPage from "./pages/inventory/products/ProductPage.jsx";
 import ContactPage from "./pages/setup/contacts/ContactPage.jsx";
 import PurchasePage from "./pages/purchase/PurchasePage.jsx";
 import BankAccountPage from "./pages/accounts/bankaccount/BankAccountPage";
+import BankPaymentsPage from "./pages/accounts/bankpayments/BankPaymentsPage";
 
 function App() {
   const toast = useRef(null);
@@ -57,6 +58,7 @@ function AppRoutes({ toast }) {
         <Route path="setup/contact" element={<ContactPage />} />
         <Route path="purchase" element={<PurchasePage />} />
         <Route path="accounts/bank-account" element={<BankAccountPage />} />
+        <Route path="accounts/bank-payment" element={<BankPaymentsPage />} />
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>
     </Routes>

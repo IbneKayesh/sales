@@ -8,11 +8,11 @@ const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
 
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.transaction_name}"?`,
+      message: `Are you sure you want to delete "${rowData.ref_no}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
-        onDelete(rowData.bank_transactions_id);
+        onDelete(rowData);
       },
       reject: () => {
         // Do nothing on reject
@@ -34,9 +34,9 @@ const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
     return (
       <div className="flex flex-wrap gap-2">
         <SplitButton
-          icon="pi pi-pencil"
+          icon="pi pi-plus"
           size="small"
-          tooltip="Edit"
+          tooltip="Add New"
           tooltipOptions={{ position: "top" }}
           onClick={() => onEdit(rowData)}
           model={menuItems}
@@ -47,7 +47,7 @@ const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
   };
 
   const nameTemplate = (rowData) => {
-    return rowData.contact_name + " - " + rowData.contact_type;
+    return rowData.payment_head + " - " + rowData.contact_name;
   };
 
 
@@ -70,10 +70,9 @@ const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
         className="bg-dark-300"
         size="small"
       >
-        <Column field="contact_name" header="Name" sortable body={nameTemplate} />
-        <Column field="order_type" header="Type" sortable/>
-        <Column field="order_no" header="Order No" sortable />
-        <Column field="order_date" header="Order Date" sortable />
+        <Column field="payment_head" header="Head" sortable body={nameTemplate} />
+        <Column field="payment_date" header="Date" sortable/>
+        <Column field="ref_no" header="Ref No" sortable />
         <Column
           field="due_amount"
           header="Due Amount"

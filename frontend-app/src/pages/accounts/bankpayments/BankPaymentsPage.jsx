@@ -1,30 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
-import { usePayments } from "@/hooks/accounts/usePayments";
-import { useBankAccount } from "@/hooks/accounts/useBankAccount";
+import { useBankPayments } from "@/hooks/accounts/useBankPayments";
 import PaymentsListComponent from "./PaymentsListComponent";
 import PaymentsFormComponent from "./PaymentsFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 
-const PaymentsPage = () => {
+const BankPaymentsPage = () => {
   const toast = useRef(null);
   const {
-    dueList,
+    bankPaymentsDueList,
     toastBox,
     isBusy,
     currentView,
     errors,
-    formDataPayment,
+    formDataBankPayment,
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditPayment,
-    handleDeletePayment,
+    handleEditBankPayment,
+    handleDeleteBankPayment,
     handleRefresh,
-    handleSavePayment,
-  } = usePayments();
-  const { bankAccounts } = useBankAccount();
+    handleSaveBankPayment,
+  } = useBankPayments();
 
   useEffect(() => {
     if (toastBox && toast.current) {
@@ -44,10 +42,10 @@ const PaymentsPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Payments List"
-            : formDataPayment.payments_id
-            ? "Edit Payments"
-            : "Add New Payments"}
+            ? "Bank Payment Due List"
+            : formDataBankPayment.bank_payments_id
+            ? "Edit Bank Payment Due"
+            : "Add New Bank Payment Due"}
         </h3>
 
         {isList ? (
@@ -60,15 +58,16 @@ const PaymentsPage = () => {
               onClick={handleRefresh}
             />
             <Button
-              label="New Payment"
+              label="New Bank Payment Due"
               icon="pi pi-plus"
               size="small"
               onClick={handleAddNew}
+              disabled
             />
           </div>
         ) : (
           <Button
-            label="Payment List"
+            label="Bank Payment Due List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -84,18 +83,17 @@ const PaymentsPage = () => {
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
           <PaymentsListComponent
-            dataList={dueList}
-            onEdit={handleEditPayment}
-            onDelete={handleDeletePayment}
+            dataList={bankPaymentsDueList}
+            onEdit={handleEditBankPayment}
+            onDelete={handleDeleteBankPayment}
           />
         ) : (
           <PaymentsFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={formDataPayment}
+            formData={formDataBankPayment}
             onChange={handleChange}
-            onSave={handleSavePayment}
-            bankAccounts={bankAccounts}
+            onSave={handleSaveBankPayment}
           />
         )}
       </Card>
@@ -103,4 +101,4 @@ const PaymentsPage = () => {
   );
 };
 
-export default PaymentsPage;
+export default BankPaymentsPage;
