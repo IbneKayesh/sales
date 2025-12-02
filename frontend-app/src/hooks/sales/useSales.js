@@ -1,23 +1,23 @@
 import { useState, useEffect } from "react";
-import { purchaseAPI } from "@/api/purchase/purchaseAPI";
+import { salesAPI } from "@/api/sales/salesAPI";
 import validate from "@/models/validator";
-import t_po_master from "@/models/purchase/t_po_master.json";
+import t_so_master from "@/models/sales/t_so_master.json";
 import { generateGuid } from "@/utils/guid";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
-export const usePurchase = () => {
-  const [purchaseList, setPurchaseList] = useState([]);
+export const useSales = () => {
+  const [salesList, setSalesList] = useState([]);
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
 
-  const [selectedPoType, setSelectedPoType] = useState("Purchase Order");
+  const [selectedSoType, setSelectedSoType] = useState("Sales Order");
   const [selectedFilter, setSelectedFilter] = useState("default");
 
-  const poTypeOptions = [
-    { label: "Purchase Order", value: "Purchase Order" },
-    { label: "Purchase Return", value: "Purchase Return" },
+  const soTypeOptions = [
+    { label: "Sales Order", value: "Sales Order" },
+    { label: "Sales Return", value: "Sales Return" },
   ];
 
   const filterOptions = [
@@ -35,8 +35,8 @@ export const usePurchase = () => {
   ];
 
   const [formDataOrder, setFormDataOrder] = useState({
-    po_master_id: "",
-    order_type: selectedPoType,
+    so_master_id: "",
+    order_type: selectedSoType,
     order_no: "[SL-123456]",
     order_date: new Date().toISOString().split("T")[0],
     contact_id: "",
@@ -59,11 +59,11 @@ export const usePurchase = () => {
   const [formDataOrderItems, setFormDataOrderItems] = useState([]);
   const [formDataOrderPayments, setFormDataOrderPayments] = useState([]);
 
-  const loadPurchase = async (resetModified = false) => {
+  const loadSales = async (resetModified = false) => {
     try {
-      const data = await purchaseAPI.getAll(selectedPoType, selectedFilter);
-      //console.log("data: " + JSON.stringify(data));
-      setPurchaseList(data);
+      const data = await salesAPI.getAll(selectedSoType, selectedFilter);
+      console.log("data: " + JSON.stringify(data));
+      setSalesList(data);
       if (resetModified) {
         setToastBox({
           severity: "info",
@@ -84,22 +84,22 @@ export const usePurchase = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadPurchase();
-  }, [selectedPoType, selectedFilter]);
+    loadSales();
+  }, [selectedSoType, selectedFilter]);
 
   const handleChange = (field, value) => {
     setFormDataOrder((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate(
       { ...formDataOrder, [field]: value },
-      t_po_master
+      t_so_master
     );
     setErrors(newErrors);
   };
 
   const handleClear = () => {
     setFormDataOrder({
-      po_master_id: "",
-      order_type: selectedPoType,
+      so_master_id: "",
+      order_type: selectedSoType,
       order_no: "[SL-123456]",
       order_date: new Date().toISOString().split("T")[0],
       contact_id: "",
@@ -133,46 +133,46 @@ export const usePurchase = () => {
     setCurrentView("form");
   };
 
-  const loadPurchaseDetails = async (po_master_id) => {
+  const loadSalesDetails = async (so_master_id) => {
     try {
-      const data = await purchaseAPI.getDetails(po_master_id);
-      //console.log("loadPurchaseDetails: " + JSON.stringify(data));
+      const data = await salesAPI.getDetails(so_master_id);
+      //console.log("loadSalesDetails: " + JSON.stringify(data));
       setFormDataOrderItems(data);
     } catch (error) {
-      console.error("Error fetching purchase details:", error);
+      console.error("Error fetching sales details:", error);
     }
   };
 
-  const loadPurchasePayments = async (order_no) => {
+  const loadSalesPayments = async (order_no) => {
     try {
-      const data = await purchaseAPI.getPayments(order_no);
-      //console.log("loadPurchasePayments: " + JSON.stringify(data));
+      const data = await salesAPI.getPayments(order_no);
+      //console.log("loadSalesPayments: " + JSON.stringify(data));
       setFormDataOrderPayments(data);
     } catch (error) {
-      console.error("Error fetching purchase payments:", error);
+      console.error("Error fetching sales payments:", error);
     }
   };
 
-  const handleEditPurchase = (purchase) => {
-    //console.log("purchase: " + JSON.stringify(purchase));
+  const handleEditSales = (sales) => {
+    //console.log("sales: " + JSON.stringify(sales));
 
-    setFormDataOrder(purchase);
+    setFormDataOrder(sales);
     setCurrentView("form");
 
     //load saved order items, by po_master_id
-    loadPurchaseDetails(purchase.po_master_id);
+    loadSalesDetails(sales.so_master_id);
     //load saved order payments, by order_no
-    loadPurchasePayments(purchase.order_no);
+    loadSalesPayments(sales.order_no);
   };
 
-  const handleDeletePurchase = async (rowData) => {
+  const handleDeleteSales = async (rowData) => {
     try {
       //console.log("rowData " + JSON.stringify(rowData))
-      await purchaseAPI.delete(rowData);
-      const updatedPurchase = purchaseList.filter(
-        (p) => p.po_master_id !== rowData.po_master_id
+      await salesAPI.delete(rowData);
+      const updatedSales = salesList.filter(
+        (s) => s.so_master_id !== rowData.so_master_id
       );
-      setPurchaseList(updatedPurchase);
+      setSalesList(updatedSales);
 
       setToastBox({
         severity: "info",
@@ -190,24 +190,24 @@ export const usePurchase = () => {
   };
 
   const handleRefresh = () => {
-    loadPurchase(true);
+    loadSales(true);
   };
 
   const handleFilterChange = (filter) => {
     setSelectedFilter(filter);
   };
 
-  const handlePoTypeChange = (filter) => {
-    setSelectedPoType(filter);
+  const handleSoTypeChange = (filter) => {
+    setSelectedSoType(filter);
   };
 
-  const handleSavePurchase = async (e) => {
+  const handleSaveSales = async (e) => {
     e.preventDefault();
     setIsBusy(true);
 
-    const newErrors = validate(formDataOrder, t_po_master);
+    const newErrors = validate(formDataOrder, t_so_master);
     setErrors(newErrors);
-    console.log("handleSavePurchase: " + JSON.stringify(formDataOrder));
+    console.log("handleSaveSales: " + JSON.stringify(formDataOrder));
 
     if (Object.keys(newErrors).length > 0) {
       setIsBusy(false);
@@ -222,7 +222,7 @@ export const usePurchase = () => {
         : "Partial";
 
     try {
-      if (formDataOrder.po_master_id) {
+      if (formDataOrder.so_master_id) {
         // Edit existing
 
         const fromDataEdit = {
@@ -231,8 +231,8 @@ export const usePurchase = () => {
           details_create: formDataOrderItems,
           payments_create: formDataOrderPayments,
         };
-        const updatedPurchase = await purchaseAPI.update(fromDataEdit);
-        updatedPurchase.ismodified = true;
+        const updatedSales = await salesAPI.update(fromDataEdit);
+        updatedSales.ismodified = true;
 
         setToastBox({
           severity: "success",
@@ -243,45 +243,44 @@ export const usePurchase = () => {
         // Add new
         const fromDataNew = {
           ...formDataOrder,
-          po_master_id: generateGuid(),
+          so_master_id: generateGuid(),
           is_paid: paidStatus,
           details_create: formDataOrderItems,
           payments_create: formDataOrderPayments,
         };
         //console.log("newPurchaseData: " + JSON.stringify(newPurchaseData));
 
-        const newPurchase = await purchaseAPI.create(fromDataNew);
+        const newSales = await salesAPI.create(fromDataNew);
         fromDataNew.ismodified = true;
 
         setToastBox({
           severity: "success",
           summary: "Success",
-          detail: `"${newPurchase.order_no}" added successfully.`,
+          detail: `"${newSales.order_no}" added successfully.`,
         });
       }
 
-      loadPurchase();
+      loadSales();
 
       handleClear();
       setCurrentView("list");
 
       //call update process
-      await closingProcessAPI("Purchase", formDataOrder.order_no);
+      await closingProcessAPI("Sales", formDataOrder.order_no);
       
     } catch (error) {
-      console.error("Error saving purchase:", error);
+      console.error("Error saving sales:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to save purchase",
+        detail: "Failed to save sales",
       });
     }
-
     setIsBusy(false);
   };
 
   return {
-    purchaseList,
+    salesList,
     toastBox,
     isBusy,
     currentView,
@@ -296,18 +295,18 @@ export const usePurchase = () => {
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditPurchase,
-    handleDeletePurchase,
+    handleEditSales,
+    handleDeleteSales,
     handleRefresh,
-    handleSavePurchase,
-    selectedPoType,
-    setSelectedPoType,
+    handleSaveSales,
+    selectedSoType,
+    setSelectedSoType,
     selectedFilter,
     setSelectedFilter,
-    poTypeOptions,
+    soTypeOptions,
     filterOptions,
     paymentOptions,
-    handlePoTypeChange,
+    handleSoTypeChange,
     handleFilterChange,
   };
 };

@@ -74,65 +74,7 @@ router.post("/update-item11", (req, res) => {
     }
   });
 });
-// Update items
-router.post("/update-item", async (req, res) => {
-  const { id } = req.body;
 
-  if (!id) {
-    return res.status(400).json({ error: "Transaction ID is required" });
-  }
-
-  const scripts = [];
-
-  scripts.push({
-    label: "Update Item order Qty from Purchase Booking",
-    sql: `UPDATE items
-          SET booking_qty = (
-              SELECT IFNULL(SUM(poc.booking_qty - poc.order_qty), 0)
-              FROM po_child poc
-              JOIN po_master pom 
-                  ON poc.po_master_id = pom.po_master_id
-              WHERE poc.item_id = items.item_id
-              AND poc.booking_qty != poc.order_qty
-              AND pom.order_type = 'Purchase Booking'
-              AND pom.is_posted = 1
-              AND pom.is_completed = 0
-          )`,
-    params: [],
-  });
-
-
-  scripts.push({
-    label: "Update Item Stock Qty",
-    sql: `UPDATE items
-            SET stock_qty = (
-                SELECT SUM(
-                    CASE
-                        WHEN pom.order_type IN ('Purchase Receive','Purchase Order') THEN poc.order_qty
-                        WHEN pom.order_type = 'Return Purchase' THEN -poc.order_qty
-                    END
-                )
-                FROM po_child poc
-                JOIN po_master pom ON poc.po_master_id = pom.po_master_id
-                WHERE poc.item_id = items.item_id
-            )`,
-    params: [],
-  });
-
-
-  try {
-    const results = await runScriptsSequentially(scripts, {
-      useTransaction: false,
-    });
-    res.status(201).json({
-      message: "Item data processed successfully!",
-      result: results,
-    });
-  } catch (error) {
-    console.error("Error processing item data:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
 // Update purchase
 router.post("/update-purchase", async (req, res) => {
   const { id } = req.body;

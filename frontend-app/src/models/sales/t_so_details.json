@@ -1,12 +1,12 @@
 {
-  "po_details_id": {
+  "so_details_id": {
     "name": "Id",
     "type": "string",
     "required": false,
     "minLength": 0,
     "maxLength": 36
   },
-  "po_master_id": {
+  "so_master_id": {
     "name": "Order No",
     "type": "string",
     "required": true,
@@ -79,13 +79,8 @@
     "type": "number",
     "required": false
   },
-  "sales_qty": {
-    "name": "Sales Qty",
-    "type": "number",
-    "required": false
-  },
-  "stock_qty": {
-    "name": "Stock Qty",
+  "order_qty": {
+    "name": "Order Qty",
     "type": "number",
     "required": false
   }

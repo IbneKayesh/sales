@@ -13,6 +13,7 @@ const closingProcessRoutes = require('./routes/setup/closingProcess.js');
 const purchaseRoutes = require('./routes/purchase/purchase.js');
 const bankAccountRoutes = require('./routes/accounts/bankaccounts.js');
 const bankPaymentRoutes = require('./routes/accounts/bankpayments.js');
+const salesRoutes = require('./routes/sales/sales.js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -52,6 +53,7 @@ app.use('/api/setup/closing-process', closingProcessRoutes);
 app.use('/api/purchase/orders', purchaseRoutes);
 app.use('/api/accounts/bankaccounts', bankAccountRoutes);
 app.use('/api/accounts/bankpayments', bankPaymentRoutes);
+app.use('/api/sales/orders', salesRoutes);
 
 
 // Health check endpoint

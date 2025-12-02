@@ -29,6 +29,7 @@ export const useContacts = () => {
   ];
 
   const [contactSupplierList, setContactSupplierList] = useState([]);
+  const [contactCustomerList, setContactCustomerList] = useState([]);
 
   const loadContacts = async (resetModified = false) => {
     try {
@@ -43,6 +44,14 @@ export const useContacts = () => {
         .map((c) => ({ label: c.contact_name, value: c.contact_id }));
 
       setContactSupplierList(supplierData);
+
+      const customerData = data
+        .filter(
+          (c) => c.contact_type === "Customer" || c.contact_type === "Both"
+        )
+        .map((c) => ({ label: c.contact_name, value: c.contact_id }));
+
+      setContactCustomerList(customerData);
 
       if (resetModified) {
         setToastBox({
@@ -199,6 +208,7 @@ export const useContacts = () => {
   return {
     contactList,
     contactSupplierList,
+    contactCustomerList,
     contactTypeOptions,
     toastBox,
     isBusy,

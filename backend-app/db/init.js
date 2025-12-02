@@ -178,6 +178,64 @@ const initTables = () => {
         FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT
       )
     `);
+
+    
+    //Sales :: Sales Master table
+    db.run(`
+      CREATE TABLE IF NOT EXISTS so_master (
+        so_master_id TEXT PRIMARY KEY,
+        order_type TEXT NOT NULL,
+        order_no TEXT NOT NULL,
+        order_date TEXT NOT NULL,
+        contact_id TEXT NOT NULL,
+        ref_no TEXT,
+        order_note TEXT,
+        order_amount REAL DEFAULT 0,
+        discount_amount REAL DEFAULT 0,
+        vat_amount REAL DEFAULT 0,
+        cost_amount REAL DEFAULT 0,
+        additional_amount REAL DEFAULT 0,
+        total_amount REAL DEFAULT 0,
+        payable_amount REAL DEFAULT 0,
+        payable_note TEXT,
+        paid_amount REAL DEFAULT 0,
+        due_amount REAL DEFAULT 0,
+        other_cost REAL DEFAULT 0,
+        is_paid TEXT NOT NULL,
+        is_posted BOOLEAN DEFAULT 0,
+        is_completed BOOLEAN DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
+      )
+    `);
+
+    //Sales :: Sales Details table
+    db.run(`
+      CREATE TABLE IF NOT EXISTS so_details (
+        so_details_id TEXT PRIMARY KEY,
+        so_master_id TEXT NOT NULL,
+        product_id TEXT NOT NULL,
+        product_price REAL DEFAULT 0,
+        product_qty REAL DEFAULT 0,
+        discount_percent REAL DEFAULT 0,
+        discount_amount REAL DEFAULT 0,
+        vat_percent REAL DEFAULT 0,
+        vat_amount REAL DEFAULT 0,
+        cost_price REAL DEFAULT 0,
+        total_amount REAL DEFAULT 0,
+        product_note TEXT,
+        ref_id TEXT,
+        return_qty REAL DEFAULT 0,
+        order_qty REAL DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (so_master_id) REFERENCES so_master(so_master_id) ON DELETE RESTRICT,
+        FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT
+      )
+    `);
+
+
   });
 };
 

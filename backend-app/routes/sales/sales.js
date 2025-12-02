@@ -9,7 +9,7 @@ const {
   dbRun,
   dbGet,
   dbAll,
-} = require("../../db/asyncScriptsRunner");
+} = require("../../db/asyncScriptsRunner.js");
 
 //get all purchase orders
 router.get("/", async (req, res) => {
@@ -43,7 +43,7 @@ router.get("/", async (req, res) => {
         break;
     }
     const sql = `SELECT pom.*, c.contact_name, is_posted as isedit,0 as ismodified
-                    FROM po_master pom
+                    FROM so_master pom
                     LEFT JOIN contacts c ON pom.contact_id = c.contact_id
                     ${whereClause}`;
     const rows = await dbAll(sql, []);

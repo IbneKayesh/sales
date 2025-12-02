@@ -19,6 +19,7 @@ router.get("/purchase-dues", async (req, res) => {
     LEFT JOIN contacts con on pom.contact_id = con.contact_id
     WHERE is_paid in ('Partial','Unpaid')
     AND pom.due_amount > 0
+    AND pom.is_posted = 1
     ORDER by pom.order_date DESC`;
     const rows = await dbAll(sql, []);
     res.json(rows);

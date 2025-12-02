@@ -85,8 +85,6 @@ router.post("/update-purchase-due", async (req, res) => {
   }
 });
 
-
-
 // Update bank accounts
 router.post("/update-bank-accounts", async (req, res) => {
   const { id } = req.body;
@@ -96,11 +94,36 @@ router.post("/update-bank-accounts", async (req, res) => {
   }
 
   const scripts = [];
+  
+
+  scripts.push({
+    label: "Update contact current balanace",
+    sql: `WITH purchase AS(
+            SELECT contact_id, sum(due_amount)due_amount
+            FROM po_master
+            WHERE due_amount > 0
+            GROUP by contact_id
+            )
+            UPDATE contacts
+            SET current_balance = 
+            (
+            SELECT purchase.due_amount
+            FROM purchase
+            WHERE purchase.contact_id = contacts.contact_id
+            )
+            WHERE EXISTS (
+            SELECT 1
+            FROM purchase
+            WHERE purchase.contact_id = contacts.contact_id
+          )`,
+    params: [],
+  });
 
   scripts.push({
     label: "Update bank accounts",
     sql: `WITH payments AS
-    (SELECT bp.account_id,0-SUM(bp.payment_amount)balance
+    (
+    SELECT bp.account_id,0-SUM(bp.payment_amount)balance
     FROM bank_payments bp
     WHERE bp.payment_head in ('Purchase Order', 'Purchase Order Expenses')
     GROUP by bp.account_id
@@ -132,4 +155,71 @@ router.post("/update-bank-accounts", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+// Update product stock
+router.post("/update-product-stock", async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Transaction ID is required" });
+  }
+
+  const scripts = [];
+
+  // scripts.push({
+  //   label: "Update Item Stock Qty",
+  //   sql: `UPDATE items
+  //           SET stock_qty = (
+  //               SELECT SUM(
+  //                   CASE
+  //                       WHEN pom.order_type IN ('Purchase Receive','Purchase Order') THEN poc.order_qty
+  //                       WHEN pom.order_type = 'Return Purchase' THEN -poc.order_qty
+  //                   END
+  //               )
+  //               FROM po_child poc
+  //               JOIN po_master pom ON poc.po_master_id = pom.po_master_id
+  //               WHERE poc.item_id = items.item_id
+  //           )`,
+  //   params: [],
+  // });
+
+  scripts.push({
+    label: "Update Item Stock Qty",
+    sql: `WITH purchase AS (
+              SELECT pod.product_id, sum(pod.stock_qty)stock_qty
+              FROM po_details pod
+              JOIN po_master pom on pod.po_master_id = pom.po_master_id
+              WHERE pod.stock_qty > 0
+              AND pom.is_posted = 1
+              GROUP by pod.product_id
+              )
+              UPDATE products
+              SET
+                stock_qty = (
+                SELECT stock_qty
+                FROM purchase
+                WHERE purchase.product_id = products.product_id
+              )
+              WHERE EXISTS (
+              SELECT 1
+                FROM purchase
+                WHERE purchase.product_id = products.product_id
+                )`,
+    params: [],
+  });
+
+  try {
+    const results = await runScriptsSequentially(scripts, {
+      useTransaction: false,
+    });
+    res.status(201).json({
+      message: "Product stock data processed successfully!",
+      result: results,
+    });
+  } catch (error) {
+    console.error("Error processing product stock data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;

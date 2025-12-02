@@ -181,9 +181,8 @@ export const useBankPayments = () => {
       setCurrentView("list");
       loadPurchaseDues(true);
 
-      //call update purchase due
-      await closingProcessAPI.updatePurchaseDue(formDataBankPayment.ref_no);
-      await closingProcessAPI.updateBankAccounts(formDataBankPayment.ref_no);
+      //call update process
+      await closingProcessAPI("Bank Payments",formDataBankPayment.ref_no);
 
     } catch (error) {
       console.error("Error saving bank payment", error);
