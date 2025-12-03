@@ -9,6 +9,7 @@ const unitRoutes = require('./routes/inventory/units.js');
 const categoryRoutes = require('./routes/inventory/categories.js');
 const productRoutes = require('./routes/inventory/products.js');
 const contactRoutes = require('./routes/setup/contacts.js');
+const usersRoutes = require('./routes/setup/users.js');
 const closingProcessRoutes = require('./routes/setup/closingProcess.js');
 const purchaseRoutes = require('./routes/purchase/purchase.js');
 const bankAccountRoutes = require('./routes/accounts/bankaccounts.js');
@@ -54,6 +55,7 @@ app.use('/api/purchase/orders', purchaseRoutes);
 app.use('/api/accounts/bankaccounts', bankAccountRoutes);
 app.use('/api/accounts/bankpayments', bankPaymentRoutes);
 app.use('/api/sales/orders', salesRoutes);
+app.use('/api/setup/users', usersRoutes);
 
 
 // Health check endpoint

@@ -10,7 +10,7 @@ const UsersListComponent = ({ dataList, onEdit, onDelete }) => {
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
-        onDelete(rowData.user_id);
+        onDelete(rowData);
       },
       reject: () => {
         // Do nothing on reject
@@ -53,13 +53,13 @@ const UsersListComponent = ({ dataList, onEdit, onDelete }) => {
         rows={10}
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
-        responsiveLayout="scroll"
         className="bg-dark-300"
         size="small"
       >
-        <Column field="username" header="Username" sortable />
-        <Column field="email" header="Email" />
-        <Column field="role" header="Role" />
+        <Column field="user_name" header="User Name" sortable />
+        <Column field="user_mobile" header="Mobile" />
+        <Column field="user_email" header="Email" />
+        <Column field="user_role" header="Role" />
         <Column
           header="Actions"
           body={actionTemplate}

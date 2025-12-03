@@ -9,7 +9,7 @@ router.post('/login', (req, res) => {
   if (!username || !password) {
     return res.status(400).json({ success: false, error: 'Username and password are required' });
   }
-  const sql = `SELECT * FROM users WHERE username = ? AND password = ?`;
+  const sql = `SELECT * FROM users WHERE user_name = ? AND user_password = ?`;
 
   db.get(sql, [username, password], (err, row) => {
     if (err) {
@@ -19,7 +19,7 @@ router.post('/login', (req, res) => {
 
     if (row) {
       // In a real app, you'd use JWT or sessions here
-      res.json({ success: true, user: { username: row.username, user_id: row.user_id } });
+      res.json({ success: true, user: { user_name: row.user_name, user_id: row.user_id } });
     } else {
       res.status(401).json({ success: false, error: 'Invalid username or password' });
     }

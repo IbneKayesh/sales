@@ -7,67 +7,96 @@ const {
   dbAll,
 } = require("../../db/asyncScriptsRunner");
 
-// Update purchase due
-router.post("/update-purchase-due", async (req, res) => {
+// Update invoice due
+router.post("/update-invoice-due", async (req, res) => {
   const { id } = req.body;
 
   if (!id) {
-    return res.status(400).json({ error: "Purchase ID is required" });
+    return res.status(400).json({ error: "ID is required" });
   }
+
+  //1.1 Update Purchase Payment and Due Amount
+  //1.2 Update Sales Payment and Due Amount
+  //2.1 Update Purchase Payment status
+  //2.2 Update Sales Payment status
+  //3.1 Update Purchase Complete status
+  //3.2 Update Sales Complete status
 
   const scripts = [];
 
   scripts.push({
-    label: "Update Purchase Payment and Due for Pay later",
-    sql: `WITH payment AS (
-        SELECT pm.order_type, pm.order_no,SUM(bp.payment_amount) AS payment_amount
-        FROM po_master pm
-        JOIN bank_payments bp ON pm.contact_id = bp.contact_id
-           AND pm.order_type = bp.payment_head
-           AND pm.order_no = bp.ref_no
-        WHERE pm.is_paid IN ('Partial', 'Unpaid')
-        GROUP BY pm.order_type, pm.order_no
-    )
-    UPDATE po_master
-    SET 
-        paid_amount = (
-            SELECT payment.payment_amount
-            FROM payment
-            WHERE payment.order_no = po_master.order_no
-              AND payment.order_type = po_master.order_type
-        ),
-        due_amount = payable_amount - (
-            SELECT payment.payment_amount
-            FROM payment
-            WHERE payment.order_no = po_master.order_no
-              AND payment.order_type = po_master.order_type
-        )
-    WHERE EXISTS (
-        SELECT 1
-        FROM payment
-        WHERE payment.order_no = po_master.order_no
-          AND payment.order_type = po_master.order_type
-    )`,
+    label: "1.1 Update Purchase Payment and Due Amount",
+    sql: `WITH pay AS (
+      SELECT pom.order_no, IFNULL(SUM(bp.payment_amount), 0) AS payment_amount
+      FROM po_master pom
+      LEFT JOIN bank_payments bp
+          ON pom.contact_id = bp.contact_id AND pom.order_no = bp.ref_no AND pom.order_type = bp.payment_head
+      WHERE pom.is_paid IN ('Partial', 'Unpaid')
+      GROUP BY pom.order_no
+  )
+  UPDATE po_master
+  SET 
+      paid_amount = (SELECT payment_amount FROM pay WHERE pay.order_no = po_master.order_no),
+      due_amount  = payable_amount - (SELECT payment_amount FROM pay WHERE pay.order_no = po_master.order_no)
+  WHERE order_no IN (SELECT order_no FROM pay)`,
     params: [],
   });
 
   scripts.push({
-    label: "Update Purchase Payment status",
-    sql: `UPDATE po_master
-    SET is_paid = 'Paid'
-    WHERE is_paid IN ('Partial', 'Unpaid')
-    AND due_amount = 0
-    AND payable_amount = paid_amount`,
+    label: "1.2 Update Sales Payment and Due Amount",
+    sql: `WITH pay AS (
+      SELECT som.order_no, IFNULL(SUM(bp.payment_amount), 0) AS payment_amount
+      FROM so_master som
+      LEFT JOIN bank_payments bp
+          ON som.contact_id = bp.contact_id AND som.order_no = bp.ref_no AND som.order_type = bp.payment_head
+      WHERE som.is_paid IN ('Partial', 'Unpaid')
+      GROUP BY som.order_no
+  )
+  UPDATE so_master
+  SET 
+      paid_amount = (SELECT payment_amount FROM pay WHERE pay.order_no = so_master.order_no),
+      due_amount  = payable_amount - (SELECT payment_amount FROM pay WHERE pay.order_no = so_master.order_no)
+  WHERE order_no IN (SELECT order_no FROM pay)`,
     params: [],
   });
 
   scripts.push({
-    label: "Update Purchase complete status",
+    label: "2.1 Update Purchase Payment status",
     sql: `UPDATE po_master
-    SET is_completed = 1
-    WHERE is_paid = 'Paid'
-    AND is_posted = 1
-    AND is_completed = 0`,
+            SET is_paid = 'Paid'
+            WHERE is_paid IN ('Partial', 'Unpaid')
+            AND due_amount = 0
+            AND payable_amount = paid_amount`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "2.2 Update Sales Payment status",
+    sql: `UPDATE so_master
+            SET is_paid = 'Paid'
+            WHERE is_paid IN ('Partial', 'Unpaid')
+            AND due_amount = 0
+            AND payable_amount = paid_amount`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "3.1 Update Purchase Complete status",
+    sql: `UPDATE po_master
+            SET is_completed = 1
+            WHERE is_paid = 'Paid'
+            AND is_posted = 1
+            AND is_completed = 0`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "3.2 Update Sales Complete status",
+    sql: `UPDATE so_master
+            SET is_completed = 1
+            WHERE is_paid = 'Paid'
+            AND is_posted = 1
+            AND is_completed = 0`,
     params: [],
   });
 
@@ -76,72 +105,82 @@ router.post("/update-purchase-due", async (req, res) => {
       useTransaction: false,
     });
     res.status(201).json({
-      message: "Purchase data processed successfully!",
+      message: "Invoice data processed successfully!",
       result: results,
     });
   } catch (error) {
-    console.error("Error processing purchase data:", error);
+    console.error("Error processing invoice data:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-// Update bank accounts
-router.post("/update-bank-accounts", async (req, res) => {
+
+// Update balances
+router.post("/update-balances", async (req, res) => {
   const { id } = req.body;
 
   if (!id) {
-    return res.status(400).json({ error: "Bank account ID is required" });
+    return res.status(400).json({ error: "ID is required" });
   }
+
+//1.1 Set 0 balance for all contacts
+//1.2 Update contact current balance from Purchase and Sales dues
+//2.0 Update bank accounts from payments
+
 
   const scripts = [];
 
-    scripts.push({
-    label: "1. Mark 0 for all contacts current balance",
+  scripts.push({
+    label: "1.1 Set 0 balance for all contacts",
     sql: `UPDATE contacts SET current_balance = 0 WHERE current_balance != 0`,
     params: [],
   });
 
-    scripts.push({
-    label: "2. Update contact current balanace from Purchase and Sales",
-    sql: `WITH cur_balance AS (
-          SELECT contact_id, due_amount
-          FROM po_master
-          WHERE due_amount > 0
-          UNION ALL
-          SELECT contact_id, 0-due_amount
-          FROM so_master
-          WHERE due_amount > 0
+  scripts.push({
+    label: "1.2 Update contact current balance from Purchase and Sales dues",
+    sql: `WITH cr_balance AS (
+            SELECT contact_id, sum(due_amount) credit_amount
+            FROM (
+                SELECT contact_id, due_amount
+                FROM po_master
+                WHERE due_amount > 0
+                UNION ALL
+                SELECT contact_id, 0-due_amount
+                FROM so_master
+                WHERE due_amount > 0
+            )invoice
+            GROUP by contact_id
           )
           UPDATE contacts
           SET current_balance = (
-          SELECT due_amount
-          FROM cur_balance
-          WHERE cur_balance.contact_id = contacts.contact_id
+          SELECT credit_amount
+          FROM cr_balance
+          WHERE cr_balance.contact_id = contacts.contact_id
           )
           WHERE EXISTS (
           SELECT 1
-          FROM cur_balance
-          WHERE cur_balance.contact_id = contacts.contact_id
+          FROM cr_balance
+          WHERE cr_balance.contact_id = contacts.contact_id
           )`,
     params: [],
   });
 
-    scripts.push({
-    label: "3. Update bank accounts from Payments",
+  scripts.push({
+    label: "2.0 Update bank accounts from payments",
     sql: `WITH payments AS
-    (
-        SELECT account_id, sum(payment_amount)payment_amount
-        FROM (
-          SELECT bp.account_id,0-bp.payment_amount as payment_amount
-            FROM bank_payments bp
-            WHERE bp.payment_head in ('Purchase Order', 'Purchase Order Expenses')
-          UNION ALL
-          SELECT bp.account_id,bp.payment_amount
-            FROM bank_payments bp
-            WHERE bp.payment_head in ('Sales Order', 'Sales Order Expenses')
-        )total_payments
-      GROUP by account_id
-    )
+          (
+          SELECT account_id, sum(payment_amount)payment_amount
+          FROM (
+            SELECT bp.account_id,0-bp.payment_amount as payment_amount
+              FROM bank_payments bp
+              WHERE bp.payment_head in ('Purchase Order', 'Purchase Order Expenses')
+            UNION ALL
+            SELECT bp.account_id,bp.payment_amount
+              FROM bank_payments bp
+              WHERE bp.payment_head in ('Sales Order', 'Sales Order Expenses')
+            )total_payments
+          GROUP by account_id
+          )
     UPDATE bank_accounts
     SET
       current_balance = (
@@ -177,6 +216,13 @@ router.post("/update-product-stock", async (req, res) => {
   if (!id) {
     return res.status(400).json({ error: "Transaction ID is required" });
   }
+//1.1 Update Purchase Details > Sales Qty from Sales Details
+//0.0 Update actual order_qty in so_details when return raised
+//1.2 Update Purchase Details > Stock Qty
+//2.1 Reset all product stock
+//2.2 Update all product stock from Purchase Details > Stock Qty
+
+
 
   const scripts = [];
 
@@ -198,54 +244,49 @@ router.post("/update-product-stock", async (req, res) => {
   // });
 
   scripts.push({
-    label: "Update Purchase Details Sales Qty after Sales Transaction",
+    label: "1.1 Update Purchase Details > Sales Qty from Sales Details",
     sql: `WITH sales AS (
-          SELECT sod.ref_id, sum(sod.order_qty)order_qty
-          FROM so_details sod
-          JOIN po_details pod on sod.ref_id = pod.po_details_id
-          WHERE pod.stock_qty > 0
-          GROUP by sod.ref_id
+              SELECT pod.po_details_id,sum(sod.order_qty)sales_qty
+              FROM po_details pod
+              JOIN so_details sod on pod.po_details_id = sod.ref_id
+              WHERE pod.stock_qty > 0
+              GROUP by pod.po_details_id
           )
           UPDATE po_details
           SET sales_qty = (
-          SELECT order_qty
+          SELECT sales_qty
           FROM sales
-          WHERE sales.ref_id = po_details.po_details_id
+          WHERE sales.po_details_id = po_details.po_details_id
           )
           WHERE EXISTS (
           SELECT 1
           FROM sales
-          WHERE sales.ref_id = po_details.po_details_id
+          WHERE sales.po_details_id = po_details.po_details_id
           )`,
     params: [],
   });
 
-  
   scripts.push({
-    label: "Update Purchase Details Stock Qty after Sales Transaction",
+    label: "1.2 Update Purchase Details > Stock Qty",
     sql: `UPDATE po_details
           SET stock_qty = product_qty - (return_qty + sales_qty)
           WHERE stock_qty > 0`,
     params: [],
   });
 
-
-    scripts.push({
-    label: "Delete Item Stock Qty after purchase and sales transactions",
+  scripts.push({
+    label: "2.1 Reset all product stock",
     sql: `UPDATE products SET stock_qty = 0 WHERE stock_qty > 0`,
     params: [],
   });
 
-
   scripts.push({
-    label: "Update Item Stock Qty after purchase and sales transactions",
+    label: "2.2 Update all product stock from Purchase Details > Stock Qty",
     sql: `WITH purchase AS (
-              SELECT pod.product_id, sum(pod.stock_qty)stock_qty
-              FROM po_details pod
-              JOIN po_master pom on pod.po_master_id = pom.po_master_id
-              WHERE pod.stock_qty > 0
-              AND pom.is_posted = 1
-              GROUP by pod.product_id
+                SELECT pod.product_id, sum(pod.stock_qty)stock_qty
+                FROM po_details pod
+                WHERE pod.stock_qty > 0
+                GROUP by pod.product_id
               )
               UPDATE products
               SET

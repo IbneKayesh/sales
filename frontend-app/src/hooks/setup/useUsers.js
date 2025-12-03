@@ -1,23 +1,25 @@
 import { useState, useEffect } from "react";
-import { usersAPI } from "@/api/usersAPI";
+import { usersAPI } from "@/api/setup/usersAPI";
+import validate from "@/models/validator";
+import t_users from "@/models/setup/t_users";
 import { generateGuid } from "@/utils/guid";
 
-import validate from "@/models/validator";
-import t_users from "@/models/setup/t_users.json";
-
 export const useUsers = () => {
-  const [users, setUsers] = useState([]); // Initialize with empty array
+  const [userList, setUserList] = useState([]);
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
-
   const [errors, setErrors] = useState({});
   const [formDataUser, setFormDataUser] = useState({
-    username: "",
-    password: "",
-    email: "",
-    role: "",
+    user_id: "",
+    user_name: "",
+    user_password: "",
+    user_mobile: "",
+    user_email: "",
+    user_role: "",
+    ismodified: 0,
   });
+
   const roleOptions = [
     { label: "Admin", value: "Admin" },
     { label: "User", value: "User" },
@@ -26,7 +28,9 @@ export const useUsers = () => {
   const loadUsers = async (resetModified = false) => {
     try {
       const data = await usersAPI.getAll();
-      setUsers(data);
+      //console.log("data: " + JSON.stringify(data));
+      setUserList(data);
+
       if (resetModified) {
         setToastBox({
           severity: "info",
@@ -35,18 +39,17 @@ export const useUsers = () => {
         });
       }
     } catch (error) {
-      console.error("Error loading users:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
         detail: resetModified
           ? "Failed to refresh data from server"
-          : "Failed to load users from server",
+          : "Failed to load data from server",
       });
     }
   };
 
-  // Load users from API on mount
+  //Fetch data from API on mount
   useEffect(() => {
     loadUsers();
   }, []);
@@ -55,7 +58,7 @@ export const useUsers = () => {
     setFormDataUser((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate(
       { ...formDataUser, [field]: value },
-      t_users.t_users
+      t_users
     );
     setErrors(newErrors);
   };
@@ -63,10 +66,12 @@ export const useUsers = () => {
   const handleClear = () => {
     setFormDataUser({
       user_id: "",
-      username: "",
-      password: "",
-      email: "",
-      role: "",
+      user_name: "",
+      user_password: "",
+      user_mobile: "",
+      user_email: "",
+      user_role: "",
+      ismodified: 0,
     });
     setErrors({});
   };
@@ -82,26 +87,32 @@ export const useUsers = () => {
   };
 
   const handleEditUser = (user) => {
+    //console.log("user: " + JSON.stringify(user));
+
     setFormDataUser(user);
     setCurrentView("form");
   };
 
-  const handleDeleteUser = async (id) => {
+  const handleDeleteUser = async (rowData) => {
     try {
-      await usersAPI.delete(id);
-      const updatedUsers = users.filter((u) => u.user_id !== id);
-      setUsers(updatedUsers);
+      //console.log("rowData " + JSON.stringify(rowData))
+      await usersAPI.delete(rowData);
+      const updatedUsers = userList.filter(
+        (u) => u.user_id !== rowData.user_id
+      );
+      setUserList(updatedUsers);
+
       setToastBox({
         severity: "info",
         summary: "Deleted",
         detail: `Deleted successfully.`,
       });
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error("Error deleting contact:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to delete user",
+        detail: "Failed to delete contact",
       });
     }
   };
@@ -114,7 +125,7 @@ export const useUsers = () => {
     e.preventDefault();
     setIsBusy(true);
 
-    const newErrors = validate(formDataUser, t_users.t_users);
+    const newErrors = validate(formDataUser, t_users);
     setErrors(newErrors);
     console.log("handleSaveUser: " + JSON.stringify(formDataUser));
 
@@ -127,19 +138,16 @@ export const useUsers = () => {
       let updatedUsers;
       if (formDataUser.user_id) {
         // Edit existing
-        const updatedUser = await usersAPI.update(
-          formDataUser.user_id,
-          formDataUser
-        );
+        const updatedUser = await usersAPI.update(formDataUser);
         updatedUser.ismodified = true;
-        updatedUsers = users.map((u) =>
+        updatedUsers = userList.map((u) =>
           u.user_id === formDataUser.user_id ? updatedUser : u
         );
 
         setToastBox({
           severity: "success",
           summary: "Success",
-          detail: `"${formDataUser.username}" updated successfully.`,
+          detail: `"${formDataUser.user_name}" updated successfully.`,
         });
       } else {
         // Add new
@@ -147,18 +155,19 @@ export const useUsers = () => {
           ...formDataUser,
           user_id: generateGuid(),
         };
+        //console.log("newContactData: " + JSON.stringify(newContactData));
 
         const newUser = await usersAPI.create(newUserData);
         newUser.ismodified = true;
-        updatedUsers = [...users, newUser];
+        updatedUsers = [...userList, newUser];
 
         setToastBox({
           severity: "success",
           summary: "Success",
-          detail: `"${formDataUser.username}" added successfully.`,
+          detail: `"${formDataUser.user_name}" added successfully.`,
         });
       }
-      setUsers(updatedUsers);
+      setUserList(updatedUsers);
 
       handleClear();
       setCurrentView("list");
@@ -167,7 +176,7 @@ export const useUsers = () => {
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to save user",
+        detail: "Failed to save contact",
       });
     }
 
@@ -175,7 +184,7 @@ export const useUsers = () => {
   };
 
   return {
-    users,
+    userList,
     toastBox,
     isBusy,
     currentView,

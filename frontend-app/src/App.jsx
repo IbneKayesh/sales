@@ -21,6 +21,7 @@ import PurchasePage from "./pages/purchase/PurchasePage.jsx";
 import BankAccountPage from "./pages/accounts/bankaccount/BankAccountPage";
 import BankPaymentsPage from "./pages/accounts/bankpayments/BankPaymentsPage";
 import SalesPage from "./pages/sales/SalesPage.jsx";
+import UsersPage from "./pages/setup/users/UsersPage";
 
 function App() {
   const toast = useRef(null);
@@ -57,6 +58,7 @@ function AppRoutes({ toast }) {
         <Route path="inventory/category" element={<CategoryPage />} />
         <Route path="inventory/product" element={<ProductPage />} />
         <Route path="setup/contact" element={<ContactPage />} />
+        <Route path="setup/users" element={<UsersPage />} />
         <Route path="sales" element={<SalesPage />} />
         <Route path="purchase" element={<PurchasePage />} />
         <Route path="accounts/bank-account" element={<BankAccountPage />} />

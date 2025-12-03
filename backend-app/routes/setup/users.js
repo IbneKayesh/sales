@@ -42,14 +42,15 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const {
     user_id,
-    username,
-    password,
-    email,
-    role,
+    user_name,
+    user_password,
+    user_mobile,
+    user_email,
+    user_role,
   } = req.body;
 
-  if (!username) {
-    return res.status(400).json({ error: "Username is required" });
+  if (!user_name) {
+    return res.status(400).json({ error: "User name is required" });
   }
 
   if (!user_id) {
@@ -57,16 +58,17 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    const sql = `INSERT INTO users (user_id, username, password, email, role)
-    VALUES (?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO users (user_id, user_name, user_password, user_mobile, user_email, user_role)
+    VALUES (?, ?, ?, ?, ?, ?)`;
     const params = [
       user_id,
-      username,
-      password,
-      email,
-      role,
+      user_name,
+      user_password,
+      user_mobile,
+      user_email,
+      user_role,
     ];
-    await dbRun(sql, params, `Created user ${username}`);
+    await dbRun(sql, params, `Created user ${user_name}`);
     res.status(201).json({ user_id, ...req.body });
   } catch (error) {
     console.error("Database error:", error);
@@ -79,14 +81,15 @@ router.post("/", async (req, res) => {
 router.post("/update", async (req, res) => {
   const {
     user_id,
-    username,
-    password,
-    email,
-    role,
+    user_name,
+    user_password,
+    user_mobile,
+    user_email,
+    user_role,
   } = req.body;
 
-  if (!username) {
-    return res.status(400).json({ error: "Username is required" });
+  if (!user_name) {
+    return res.status(400).json({ error: "User name is required" });
   }
 
   if (!user_id) {
@@ -95,20 +98,22 @@ router.post("/update", async (req, res) => {
 
   try {
     const sql = `UPDATE users SET
-    username = ?,
-    password = ?,
-    email = ?,
-    role = ?,
+    user_name = ?,
+    user_password = ?,
+    user_mobile = ?,
+    user_email = ?,
+    user_role = ?,
     updated_at = CURRENT_TIMESTAMP
     WHERE user_id = ?`;
     const params = [
-      username,
-      password,
-      email,
-      role,
+      user_name,
+      user_password,
+      user_mobile,
+      user_email,
+      user_role,
       user_id,
     ];
-    const result = await dbRun(sql, params, `Updated user ${username}`);
+    const result = await dbRun(sql, params, `Updated user ${user_name}`);
     if (result.changes === 0) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -122,7 +127,7 @@ router.post("/update", async (req, res) => {
 
 //Delete user
 router.post("/delete", async (req, res) => {
-  const { user_id, username } = req.body;
+  const { user_id, user_name } = req.body;
 
   if (!user_id) {
     return res.status(400).json({ error: "User ID is required" });
@@ -130,7 +135,7 @@ router.post("/delete", async (req, res) => {
 
   try {
     const sql = "DELETE FROM users WHERE user_id = ?";
-    const result = await dbRun(sql, [user_id], `Deleted user ${username}`);
+    const result = await dbRun(sql, [user_id], `Deleted user ${user_name}`);
     if (result.changes === 0) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -147,7 +152,7 @@ router.post("/delete", async (req, res) => {
 //change password
 router.post("/change-password", async (req, res) => {
   const {
-    user_id,
+    user_id,  
     current_password,
     new_password,
   } = req.body;
@@ -166,7 +171,7 @@ router.post("/change-password", async (req, res) => {
   try {
     //fetch user with current password
     const user = await dbGet(
-      "SELECT * FROM users WHERE user_id = ? AND password = ?",
+      "SELECT * FROM users WHERE user_id = ? AND user_password = ?",
       [user_id, current_password]
     );
     if (!user) {
@@ -174,7 +179,7 @@ router.post("/change-password", async (req, res) => {
     }
     //update current password
     const sql = `UPDATE users SET
-    password = ?,
+    user_password = ?,
     updated_at = CURRENT_TIMESTAMP
     WHERE user_id = ?`;
     const params = [

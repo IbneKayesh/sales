@@ -20,10 +20,11 @@ const initTables = () => {
     db.run(`
       CREATE TABLE IF NOT EXISTS users (
         user_id TEXT PRIMARY KEY,
-        username TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        email TEXT,
-        role TEXT DEFAULT 'User',
+        user_name TEXT UNIQUE NOT NULL,
+        user_password TEXT NOT NULL,
+        user_mobile TEXT,
+        user_email TEXT,
+        user_role TEXT DEFAULT 'User',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -245,9 +246,9 @@ const initData = (callback) => {
     // users :: Authentication table :: insert default data
     db.run(
       `
-      INSERT OR IGNORE INTO users (user_id, username, password, email, role) VALUES
-      ('1', 'admin', 'password', 'admin@example.com', 'Admin'),
-      ('2', 'user', '123456', 'user@example.com', 'User')
+      INSERT OR IGNORE INTO users (user_id, user_name, user_password, user_mobile, user_email, user_role) VALUES
+      ('1', 'admin', 'password', '1234567890', 'admin@devkayesh.com', 'Admin'),
+      ('2', 'user', 'password', '1234567890', 'user@devkayesh.com', 'User')
     `,
       (err) => {
         if (err) {

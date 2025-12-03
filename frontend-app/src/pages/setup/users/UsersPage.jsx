@@ -9,7 +9,7 @@ import { Toast } from "primereact/toast";
 const UsersPage = () => {
   const toast = useRef(null);
   const {
-    users,
+    userList,
     toastBox,
     isBusy,
     currentView,
@@ -83,7 +83,7 @@ const UsersPage = () => {
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
           <UsersListComponent
-            dataList={users}
+            dataList={userList}
             onEdit={handleEditUser}
             onDelete={handleDeleteUser}
           />

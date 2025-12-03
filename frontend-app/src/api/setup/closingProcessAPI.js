@@ -2,13 +2,13 @@ import { apiRequest } from "@/utils/api.js";
 
 // Closing Process API
 const closingProcess = {
-  updatePurchaseDue: (id) =>
-    apiRequest("/setup/closing-process/update-purchase-due", {
+  updateInvoiceDue: (id) =>
+    apiRequest("/setup/closing-process/update-invoice-due", {
       method: "POST",
       body: JSON.stringify({ id }),
     }),
-  updateBankAccounts: (id) =>
-    apiRequest("/setup/closing-process/update-bank-accounts", {
+  updateBalances: (id) =>
+    apiRequest("/setup/closing-process/update-balances", {
       method: "POST",
       body: JSON.stringify({ id }),
     }),
@@ -20,14 +20,12 @@ const closingProcess = {
 };
 
 export const closingProcessAPI = async (id, value) => {
-  if (id === "Purchase") {
-    await closingProcess.updatePurchaseDue(value);
-    await closingProcess.updateBankAccounts(value);
+  if (["Purchase", "Sales"].includes(id)) {
+    await closingProcess.updateInvoiceDue(value);
+    await closingProcess.updateBalances(value);
     await closingProcess.updateProductStock(value);
   } else if (id === "Bank Payments") {
-    await closingProcess.updatePurchaseDue(value);
-    await closingProcess.updateBankAccounts(value);
-  } else if (id === "Sales") {
-    await closingProcess.updateProductStock(value);
+    await closingProcess.updateInvoiceDue(value);
+    await closingProcess.updateBalances(value);
   }
 };

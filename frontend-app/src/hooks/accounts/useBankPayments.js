@@ -21,9 +21,10 @@ export const useBankPayments = () => {
     ref_no: "",
     payment_amount: 0,
     payment_note: "",
+    ismodified: false,
   });
 
-  const loadPurchaseDues = async () => {
+  const loadPurchaseDues = async (resetModified = false) => {
     try {
       const data = await bankpaymentsAPI.getAllPurchaseDues();
       console.log("data: " + JSON.stringify(data));
@@ -179,10 +180,12 @@ export const useBankPayments = () => {
 
       handleClear();
       setCurrentView("list");
-      loadPurchaseDues(true);
 
       //call update process
       await closingProcessAPI("Bank Payments",formDataBankPayment.ref_no);
+
+      
+      loadPurchaseDues(true);
 
     } catch (error) {
       console.error("Error saving bank payment", error);
