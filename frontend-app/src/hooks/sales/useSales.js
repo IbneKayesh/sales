@@ -46,6 +46,7 @@ export const useSales = () => {
     discount_amount: 0,
     vat_amount: 0,
     cost_amount: 0,
+    additional_amount: 0,
     total_amount: 0,
     paid_amount: 0,
     due_amount: 0,
@@ -109,6 +110,7 @@ export const useSales = () => {
       discount_amount: 0,
       vat_amount: 0,
       cost_amount: 0,
+      additional_amount: 0,
       total_amount: 0,
       paid_amount: 0,
       due_amount: 0,
@@ -267,7 +269,6 @@ export const useSales = () => {
 
       //call update process
       await closingProcessAPI("Sales", formDataOrder.order_no);
-      
     } catch (error) {
       console.error("Error saving sales:", error);
       setToastBox({

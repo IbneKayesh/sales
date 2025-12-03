@@ -94,44 +94,58 @@ router.post("/update-bank-accounts", async (req, res) => {
   }
 
   const scripts = [];
-  
 
-  scripts.push({
-    label: "Update contact current balanace",
-    sql: `WITH purchase AS(
-            SELECT contact_id, sum(due_amount)due_amount
-            FROM po_master
-            WHERE due_amount > 0
-            GROUP by contact_id
-            )
-            UPDATE contacts
-            SET current_balance = 
-            (
-            SELECT purchase.due_amount
-            FROM purchase
-            WHERE purchase.contact_id = contacts.contact_id
-            )
-            WHERE EXISTS (
-            SELECT 1
-            FROM purchase
-            WHERE purchase.contact_id = contacts.contact_id
+    scripts.push({
+    label: "1. Mark 0 for all contacts current balance",
+    sql: `UPDATE contacts SET current_balance = 0 WHERE current_balance != 0`,
+    params: [],
+  });
+
+    scripts.push({
+    label: "2. Update contact current balanace from Purchase and Sales",
+    sql: `WITH cur_balance AS (
+          SELECT contact_id, due_amount
+          FROM po_master
+          WHERE due_amount > 0
+          UNION ALL
+          SELECT contact_id, 0-due_amount
+          FROM so_master
+          WHERE due_amount > 0
+          )
+          UPDATE contacts
+          SET current_balance = (
+          SELECT due_amount
+          FROM cur_balance
+          WHERE cur_balance.contact_id = contacts.contact_id
+          )
+          WHERE EXISTS (
+          SELECT 1
+          FROM cur_balance
+          WHERE cur_balance.contact_id = contacts.contact_id
           )`,
     params: [],
   });
 
-  scripts.push({
-    label: "Update bank accounts",
+    scripts.push({
+    label: "3. Update bank accounts from Payments",
     sql: `WITH payments AS
     (
-    SELECT bp.account_id,0-SUM(bp.payment_amount)balance
-    FROM bank_payments bp
-    WHERE bp.payment_head in ('Purchase Order', 'Purchase Order Expenses')
-    GROUP by bp.account_id
+        SELECT account_id, sum(payment_amount)payment_amount
+        FROM (
+          SELECT bp.account_id,0-bp.payment_amount as payment_amount
+            FROM bank_payments bp
+            WHERE bp.payment_head in ('Purchase Order', 'Purchase Order Expenses')
+          UNION ALL
+          SELECT bp.account_id,bp.payment_amount
+            FROM bank_payments bp
+            WHERE bp.payment_head in ('Sales Order', 'Sales Order Expenses')
+        )total_payments
+      GROUP by account_id
     )
     UPDATE bank_accounts
     SET
       current_balance = (
-      SELECT payments.balance
+      SELECT payments.payment_amount
       FROM payments
       WHERE payments.account_id = bank_accounts.account_id
       )
@@ -184,7 +198,47 @@ router.post("/update-product-stock", async (req, res) => {
   // });
 
   scripts.push({
-    label: "Update Item Stock Qty",
+    label: "Update Purchase Details Sales Qty after Sales Transaction",
+    sql: `WITH sales AS (
+          SELECT sod.ref_id, sum(sod.order_qty)order_qty
+          FROM so_details sod
+          JOIN po_details pod on sod.ref_id = pod.po_details_id
+          WHERE pod.stock_qty > 0
+          GROUP by sod.ref_id
+          )
+          UPDATE po_details
+          SET sales_qty = (
+          SELECT order_qty
+          FROM sales
+          WHERE sales.ref_id = po_details.po_details_id
+          )
+          WHERE EXISTS (
+          SELECT 1
+          FROM sales
+          WHERE sales.ref_id = po_details.po_details_id
+          )`,
+    params: [],
+  });
+
+  
+  scripts.push({
+    label: "Update Purchase Details Stock Qty after Sales Transaction",
+    sql: `UPDATE po_details
+          SET stock_qty = product_qty - (return_qty + sales_qty)
+          WHERE stock_qty > 0`,
+    params: [],
+  });
+
+
+    scripts.push({
+    label: "Delete Item Stock Qty after purchase and sales transactions",
+    sql: `UPDATE products SET stock_qty = 0 WHERE stock_qty > 0`,
+    params: [],
+  });
+
+
+  scripts.push({
+    label: "Update Item Stock Qty after purchase and sales transactions",
     sql: `WITH purchase AS (
               SELECT pod.product_id, sum(pod.stock_qty)stock_qty
               FROM po_details pod

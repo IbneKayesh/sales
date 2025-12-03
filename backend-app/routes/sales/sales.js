@@ -11,41 +11,42 @@ const {
   dbAll,
 } = require("../../db/asyncScriptsRunner.js");
 
-//get all purchase orders
+//get all sales orders
 router.get("/", async (req, res) => {
-  const { poType, filter } = req.query;
+  const { soType, filter } = req.query;
   try {
     let whereClause = "";
-    if (poType) {
-      whereClause = "WHERE pom.order_type = '" + poType + "' ";
+    if (soType) {
+      whereClause = "WHERE som.order_type = '" + soType + "' ";
     }
     switch (filter) {
       case "7days":
         whereClause +=
-          " AND pom.is_paid = 'Paid' AND pom.is_posted = 1 AND pom.is_completed = 1 AND pom.order_date >= date('now', '-7 days')";
+          " AND som.is_paid = 'Paid' AND som.is_posted = 1 AND som.is_completed = 1 AND som.order_date >= date('now', '-7 days')";
         break;
       case "30days":
         whereClause +=
-          " AND pom.is_paid = 'Paid' AND pom.is_posted = 1 AND pom.is_completed = 1 AND pom.order_date >= date('now', '-30 days')";
+          " AND som.is_paid = 'Paid' AND som.is_posted = 1 AND som.is_completed = 1 AND som.order_date >= date('now', '-30 days')";
         break;
       case "90days":
         whereClause +=
-          " AND pom.is_paid = 'Paid' AND pom.is_posted = 1 AND pom.is_completed = 1 AND pom.order_date >= date('now', '-90 days')";
+          " AND som.is_paid = 'Paid' AND som.is_posted = 1 AND som.is_completed = 1 AND som.order_date >= date('now', '-90 days')";
         break;
       case "alldays":
         whereClause +=
-          " AND pom.is_paid = 'Paid' AND pom.is_posted = 1 AND pom.is_completed = 1";
+          " AND som.is_paid = 'Paid' AND som.is_posted = 1 AND som.is_completed = 1";
         break;
       case "default":
       default:
         whereClause +=
-          " AND pom.is_paid != 'Paid' OR pom.is_posted = 0 OR pom.is_completed = 0";
+          " AND som.is_paid != 'Paid' OR som.is_posted = 0 OR som.is_completed = 0";
         break;
     }
-    const sql = `SELECT pom.*, c.contact_name, is_posted as isedit,0 as ismodified
-                    FROM so_master pom
-                    LEFT JOIN contacts c ON pom.contact_id = c.contact_id
+    const sql = `SELECT som.*, c.contact_name, is_posted as isedit,0 as ismodified
+                    FROM so_master som
+                    LEFT JOIN contacts c ON som.contact_id = c.contact_id
                     ${whereClause}`;
+    //console.log(sql);
     const rows = await dbAll(sql, []);
     res.json(rows);
   } catch (error) {
@@ -58,7 +59,7 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const {
-      po_master_id,
+      so_master_id,
       order_type,
       order_no,
       order_date,
@@ -69,6 +70,7 @@ router.post("/", async (req, res) => {
       discount_amount,
       vat_amount,
       cost_amount,
+      additional_amount,
       total_amount,
       payable_amount,
       paid_amount,
@@ -84,7 +86,7 @@ router.post("/", async (req, res) => {
 
     //validate
     if (
-      !po_master_id ||
+      !so_master_id ||
       !order_type ||
       !order_date ||
       !contact_id ||
@@ -108,7 +110,7 @@ router.post("/", async (req, res) => {
     const date_part = dd + mm + yy;
 
     const sql = `SELECT MAX(CAST(SUBSTR(order_no, -5) AS INTEGER)) as max_seq
-    FROM po_master
+    FROM so_master
     WHERE order_type = ?
     AND strftime('%Y-%m-%d', order_date) = strftime('%Y-%m-%d', 'now')`;
 
@@ -132,14 +134,14 @@ router.post("/", async (req, res) => {
 
     //Insert Master
     scripts.push({
-      label: "Insert Purchase Master " + order_no_new,
-      sql: `INSERT INTO po_master (po_master_id, order_type, order_no, order_date, contact_id, ref_no,
-      order_note, order_amount, discount_amount, vat_amount, cost_amount, total_amount,
+      label: "Insert Sales Master " + order_no_new,
+      sql: `INSERT INTO so_master (so_master_id, order_type, order_no, order_date, contact_id, ref_no,
+      order_note, order_amount, discount_amount, vat_amount, cost_amount, additional_amount, total_amount,
       payable_amount, paid_amount, payable_note, due_amount, other_cost,
       is_paid, is_posted, is_completed)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       params: [
-        po_master_id,
+        so_master_id,
         order_type,
         order_no_new,
         order_date,
@@ -150,6 +152,7 @@ router.post("/", async (req, res) => {
         discount_amount || 0,
         vat_amount || 0,
         cost_amount || 0,
+        additional_amount || 0,
         total_amount || 0,
         payable_amount || 0,
         paid_amount || 0,
@@ -164,14 +167,14 @@ router.post("/", async (req, res) => {
     //Insert Details
     for (const detail of details_create) {
       scripts.push({
-        label: "Insert Purchase Detail " + order_no_new,
-        sql: `INSERT INTO po_details (po_details_id, po_master_id, product_id, product_price, product_qty,
+        label: "Insert Sales Detail " + order_no_new,
+        sql: `INSERT INTO so_details (so_details_id, so_master_id, product_id, product_price, product_qty,
         discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount,
-        product_note, ref_id, return_qty, sales_qty, stock_qty)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        product_note, ref_id, return_qty, order_qty)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
-          detail.po_details_id,
-          po_master_id,
+          detail.so_details_id,
+          so_master_id,
           detail.product_id,
           detail.product_price || 0,
           detail.product_qty || 0,
@@ -184,7 +187,6 @@ router.post("/", async (req, res) => {
           detail.product_note,
           detail.ref_id,
           0,
-          0,
           detail.product_qty || 0,
         ],
       });
@@ -192,7 +194,7 @@ router.post("/", async (req, res) => {
     //Insert Payments
     for (const payment of payments_create) {
       scripts.push({
-        label: "Insert Purchase Payment " + order_no_new,
+        label: "Insert Sales Payment " + order_no_new,
         sql: `INSERT INTO bank_payments (payment_id, account_id, payment_head, payment_mode, payment_date,
         contact_id, ref_no, payment_amount, payment_note)
         VALUES (?, ?, ?, ?, ?,
@@ -213,7 +215,7 @@ router.post("/", async (req, res) => {
     //Other cost goes to expesnes with default contact account
     if (other_cost > 0) {
       scripts.push({
-        label: "Insert Purchase Other Cost " + order_no_new,
+        label: "Insert Sales Other Cost " + order_no_new,
         sql: `INSERT INTO bank_payments (payment_id, account_id, payment_head, payment_mode, payment_date,
         contact_id, ref_no, payment_amount, payment_note)
         VALUES (?, ?, ?, ?, ?,
@@ -237,27 +239,27 @@ router.post("/", async (req, res) => {
     });
     // If any failed, transaction has already rolled back
     if (!results.every((r) => r.success)) {
-      return res.status(500).json({ error: "Failed to create purchase order" });
+      return res.status(500).json({ error: "Failed to create sales order" });
     }
     // ❗ Only one response is sent
     res.status(201).json({
-      message: "Purchase Order created successfully!",
-      po_master_id,
+      message: "Sales Order created successfully!",
+      so_master_id,
       order_no: order_no_new,
       details_create,
       payments_create,
     });
   } catch (error) {
-    console.error("Error creating purchase master:", error);
+    console.error("Error creating sales master:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-//create new purchase master, details and payments
+//create new sales master, details and payments
 router.post("/update", async (req, res) => {
   try {
     const {
-      po_master_id,
+      so_master_id,
       order_type,
       order_no,
       order_date,
@@ -268,6 +270,7 @@ router.post("/update", async (req, res) => {
       discount_amount,
       vat_amount,
       cost_amount,
+      additional_amount,
       total_amount,
       payable_amount,
       paid_amount,
@@ -283,7 +286,7 @@ router.post("/update", async (req, res) => {
 
     //validate
     if (
-      !po_master_id ||
+      !so_master_id ||
       !order_type ||
       !order_date ||
       !contact_id ||
@@ -309,22 +312,22 @@ router.post("/update", async (req, res) => {
 
     //delete details
     scripts.push({
-      label: `Delete Details ${po_master_id}`,
-      sql: `DELETE FROM po_details WHERE po_master_id = ?`,
-      params: [po_master_id],
+      label: `Delete Details ${so_master_id}`,
+      sql: `DELETE FROM so_details WHERE so_master_id = ?`,
+      params: [so_master_id],
     });
 
     //delete payments
     scripts.push({
-      label: `Delete Payments ${po_master_id}`,
+      label: `Delete Payments ${so_master_id}`,
       sql: `DELETE FROM bank_payments WHERE ref_no = ?`,
       params: [order_no],
     });
 
     //Update Master
     scripts.push({
-      label: "Update Purchase Master " + order_no,
-      sql: `UPDATE po_master SET
+      label: "Update Sales Master " + order_no,
+      sql: `UPDATE so_master SET
       order_type = ?,
       order_date = ?,
       contact_id = ?,
@@ -334,6 +337,7 @@ router.post("/update", async (req, res) => {
       discount_amount = ?,
       vat_amount = ?,
       cost_amount = ?,
+      additional_amount = ?,
       total_amount = ?,
       payable_amount = ?,
       paid_amount = ?,
@@ -343,7 +347,7 @@ router.post("/update", async (req, res) => {
       is_paid = ?,
       is_posted = ?,
       updated_at = CURRENT_TIMESTAMP
-      WHERE po_master_id = ?`,
+      WHERE so_master_id = ?`,
       params: [
         order_type,
         order_date,
@@ -354,6 +358,7 @@ router.post("/update", async (req, res) => {
         discount_amount || 0,
         vat_amount || 0,
         cost_amount || 0,
+        additional_amount || 0,
         total_amount || 0,
         payable_amount || 0,
         paid_amount || 0,
@@ -362,20 +367,20 @@ router.post("/update", async (req, res) => {
         other_cost || 0,
         is_paid || "Unpaid",
         is_posted || 0,
-        po_master_id,
+        so_master_id,
       ],
     });
     //Insert Details
     for (const detail of details_create) {
       scripts.push({
-        label: "Insert Purchase Detail " + order_no,
-        sql: `INSERT INTO po_details (po_details_id, po_master_id, product_id, product_price, product_qty,
+        label: "Insert Sales Detail " + order_no,
+        sql: `INSERT INTO so_details (so_details_id, so_master_id, product_id, product_price, product_qty,
         discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount,
-        product_note, ref_id, return_qty, sales_qty, stock_qty)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        product_note, ref_id, return_qty, order_qty)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
-          detail.po_details_id,
-          po_master_id,
+          detail.so_details_id,
+          so_master_id,
           detail.product_id,
           detail.product_price || 0,
           detail.product_qty || 0,
@@ -388,7 +393,6 @@ router.post("/update", async (req, res) => {
           detail.product_note,
           detail.ref_id,
           0,
-          0,
           detail.product_qty || 0,
         ],
       });
@@ -396,7 +400,7 @@ router.post("/update", async (req, res) => {
     //Insert Payments
     for (const payment of payments_create) {
       scripts.push({
-        label: "Insert Purchase Payment " + order_no,
+        label: "Insert Sales Payment " + order_no,
         sql: `INSERT INTO bank_payments (payment_id, account_id, payment_head, payment_mode, payment_date,
         contact_id, ref_no, payment_amount, payment_note)
         VALUES (?, ?, ?, ?, ?,
@@ -417,7 +421,7 @@ router.post("/update", async (req, res) => {
     //Other cost goes to expesnes with default contact account
     if (other_cost > 0) {
       scripts.push({
-        label: "Insert Purchase Other Cost " + order_no,
+        label: "Insert Sales Other Cost " + order_no,
         sql: `INSERT INTO bank_payments (payment_id, account_id, payment_head, payment_mode, payment_date,
         contact_id, ref_no, payment_amount, payment_note)
         VALUES (?, ?, ?, ?, ?,
@@ -441,26 +445,26 @@ router.post("/update", async (req, res) => {
     });
     // If any failed, transaction has already rolled back
     if (!results.every((r) => r.success)) {
-      return res.status(500).json({ error: "Failed to update purchase order" });
+      return res.status(500).json({ error: "Failed to update sales order" });
     }
     // ❗ Only one response is sent
     res.status(201).json({
-      message: "Purchase Order updated successfully!",
-      po_master_id,
+      message: "Sales Order updated successfully!",
+      so_master_id,
       order_no,
       details_create,
       payments_create,
     });
   } catch (error) {
-    console.error("Error updating purchase master:", error);
+    console.error("Error updating sales master:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-//get purchase details by po_master_id
-router.get("/details/:poMasterId", async (req, res) => {
+//get sales details by so_master_id
+router.get("/details/:soMasterId", async (req, res) => {
   try {
-    const { poMasterId } = req.params;
+    const { soMasterId } = req.params;
     const sql = `SELECT pod.*,
     p.product_code,
     p.product_name,
@@ -468,33 +472,33 @@ router.get("/details/:poMasterId", async (req, res) => {
     su.unit_name as small_unit_name,
     lu.unit_name as large_unit_name,
     0 as ismodified
-    FROM po_details pod
+    FROM so_details pod
     LEFT JOIN products p ON pod.product_id = p.product_id
     LEFT JOIN units su ON p.small_unit_id = su.unit_id
     LEFT JOIN units lu ON p.large_unit_id = lu.unit_id
-    WHERE pod.po_master_id = ?
-    ORDER BY pod.po_details_id`;
-    const rows = await dbAll(sql, [poMasterId]);
+    WHERE pod.so_master_id = ?
+    ORDER BY pod.so_details_id`;
+    const rows = await dbAll(sql, [soMasterId]);
     res.json(rows);
   } catch (error) {
-    console.error("Error fetching purchase details:", error);
+    console.error("Error fetching sales details:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-//get purchase payments by order_no
+//get sales payments by order_no
 router.get("/payments/:orderNo", async (req, res) => {
   try {
     const { orderNo } = req.params;
     const sql = `SELECT bp.*
     FROM bank_payments bp
-    JOIN po_master pm ON bp.ref_no = pm.order_no AND bp.payment_head = pm.order_type
+    JOIN so_master pm ON bp.ref_no = pm.order_no AND bp.payment_head = pm.order_type
     WHERE bp.ref_no = ?
     ORDER BY bp.payment_id`;
     const rows = await dbAll(sql, [orderNo]);
     res.json(rows);
   } catch (error) {
-    console.error("Error fetching purchase payments:", error);
+    console.error("Error fetching sales payments:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

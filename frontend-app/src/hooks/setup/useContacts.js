@@ -41,7 +41,15 @@ export const useContacts = () => {
         .filter(
           (c) => c.contact_type === "Supplier" || c.contact_type === "Both"
         )
-        .map((c) => ({ label: c.contact_name, value: c.contact_id }));
+        .map((c) => ({
+          label:
+            c.contact_mobile +
+            " - " +
+            c.contact_name +
+            " - " +
+            c.contact_address,
+          value: c.contact_id,
+        }));
 
       setContactSupplierList(supplierData);
 
@@ -49,7 +57,15 @@ export const useContacts = () => {
         .filter(
           (c) => c.contact_type === "Customer" || c.contact_type === "Both"
         )
-        .map((c) => ({ label: c.contact_name, value: c.contact_id }));
+        .map((c) => ({
+          label:
+            c.contact_mobile +
+            " - " +
+            c.contact_name +
+            " - " +
+            c.contact_address,
+          value: c.contact_id,
+        }));
 
       setContactCustomerList(customerData);
 

@@ -42,9 +42,16 @@ export const useProducts = () => {
   ]);
   const loadProducts = async (filter = "default", resetModified = false) => {
     try {
-      const data = await productsAPI.getAll(filter);
-      //console.log("data: " + JSON.stringify(data));
-      setProductList(data);
+      console.log("filter: " + filter);
+      if (filter == "po2so") {
+        const data = await productsAPI.getAllPo2So(filter);
+        console.log("po2so data: " + JSON.stringify(data));
+        setProductList(data);
+      } else {
+        const data = await productsAPI.getAll(filter);
+        console.log("data: " + JSON.stringify(data));
+        setProductList(data);
+      }
       if (resetModified) {
         setToastBox({
           severity: "info",

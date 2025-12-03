@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
     case "nstock":
       whereClause = "WHERE p.stock_qty = 0";
       break;
-    case  "nopp":
+    case "nopp":
       whereClause = "WHERE p.purchase_price = 0";
       break;
     case "nosp":
@@ -70,21 +70,52 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Get all purchase to sales stock
+router.get("/po2so", async (req, res) => {
+  const filter = req.query.filter || "default";
+
+  try {
+    const sql = `SELECT p.product_id, p.product_code, p.product_name, p.product_desc, p.category_id, p.small_unit_id,
+p.unit_difference_qty, p.large_unit_id, pod.stock_qty, pod.cost_price as purchase_price, p.sales_price,
+p.discount_percent, p.vat_percent, p.margin_price, p.created_at, p.updated_at,
+    c.category_name,
+    su.unit_name as small_unit_name,
+    lu.unit_name as large_unit_name,
+	pod.po_details_id as ref_id,
+    0 as ismodified
+    FROM products p
+    LEFT JOIN categories c ON p.category_id = c.category_id
+    LEFT JOIN units su ON p.small_unit_id = su.unit_id
+    LEFT JOIN units lu ON p.large_unit_id = lu.unit_id
+	JOIN po_details pod on p.product_id = pod.product_id
+	JOIN po_master pom on pod.po_master_id = pom.po_master_id
+	WHERE p.stock_qty > 0
+	AND pod.stock_qty > 0
+	AND pom.is_posted = 1
+	ORDER by p.product_id`;
+    const rows = await dbAll(sql, []);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching po2so Products:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // Get product by ID
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const sql =
       "SELECT p.*, 0 as ismodified FROM products p WHERE product_id = ?";
-      const row = await dbGet(sql, [id]);
-      if (!row) {
-        return res.status(404).json({ error: "Product not found" });
-      }
-      res.json(row);
-    } catch (error) {
-      console.error("Database error:", error);
-      res.status(500).json({ error: "Internal server error" });
+    const row = await dbGet(sql, [id]);
+    if (!row) {
+      return res.status(404).json({ error: "Product not found" });
     }
+    res.json(row);
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // Create new product
@@ -106,7 +137,7 @@ router.post("/", async (req, res) => {
     margin_price,
   } = req.body;
 
-  
+
   if (!product_id) {
     return res.status(400).json({ error: "Product ID is required" });
   }
@@ -231,4 +262,37 @@ router.post("/delete", async (req, res) => {
   }
 });
 
+
+
+// Get all purchase to sales stock
+router.get("/po2so", async (req, res) => {
+  const filter = req.query.filter || "default";
+  console.log("test")
+
+  try {
+    const sql = `SELECT p.product_id, p.product_code, p.product_name, p.product_desc, p.category_id, p.small_unit_id,
+p.unit_difference_qty, p.large_unit_id, pod.stock_qty, pod.cost_price as purchase_price, p.sales_price,
+p.discount_percent, p.vat_percent, p.margin_price, p.created_at, p.updated_at,
+    c.category_name,
+    su.unit_name as small_unit_name,
+    lu.unit_name as large_unit_name,
+	pod.po_details_id as ref_id,
+    0 as ismodified
+    FROM products p
+    LEFT JOIN categories c ON p.category_id = c.category_id
+    LEFT JOIN units su ON p.small_unit_id = su.unit_id
+    LEFT JOIN units lu ON p.large_unit_id = lu.unit_id
+	JOIN po_details pod on p.product_id = pod.product_id
+	JOIN po_master pom on pod.po_master_id = pom.po_master_id
+	WHERE p.stock_qty > 0
+	AND pod.stock_qty > 0
+	AND pom.is_posted = 1
+	ORDER by p.product_id`;
+    const rows = await dbAll(sql, []);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching po2so Products:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 module.exports = router;

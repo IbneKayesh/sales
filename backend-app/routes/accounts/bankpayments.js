@@ -20,7 +20,16 @@ router.get("/purchase-dues", async (req, res) => {
     WHERE is_paid in ('Partial','Unpaid')
     AND pom.due_amount > 0
     AND pom.is_posted = 1
-    ORDER by pom.order_date DESC`;
+    UNION ALL
+    SELECT '' as payment_id,'' as account_id,pom.order_type as payment_head, 'Cash' as payment_mode,
+    pom.order_date as ref_date, pom.order_date as payment_date, pom.contact_id,
+    pom.order_no as ref_no, pom.due_amount ,pom.due_amount as payment_amount, '' as payment_note, con.contact_name
+    FROM so_master pom
+    LEFT JOIN contacts con on pom.contact_id = con.contact_id
+    WHERE is_paid in ('Partial','Unpaid')
+    AND pom.due_amount > 0
+    AND pom.is_posted = 1
+    ORDER by order_date DESC`;
     const rows = await dbAll(sql, []);
     res.json(rows);
   } catch (error) {

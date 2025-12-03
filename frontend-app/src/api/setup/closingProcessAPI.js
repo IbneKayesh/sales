@@ -27,7 +27,7 @@ export const closingProcessAPI = async (id, value) => {
   } else if (id === "Bank Payments") {
     await closingProcess.updatePurchaseDue(value);
     await closingProcess.updateBankAccounts(value);
-  } else if (id === "Product Stock") {
+  } else if (id === "Sales") {
     await closingProcess.updateProductStock(value);
   }
 };
