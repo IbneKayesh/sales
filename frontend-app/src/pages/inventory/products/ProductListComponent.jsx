@@ -95,7 +95,7 @@ const ProductListComponent = ({ dataList, onEdit, onDelete }) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
-    }).format(rowData.margin_rate || 0);
+    }).format(rowData.margin_price || 0);
   };
 
   const formatCurrency = (value) => {
@@ -168,7 +168,7 @@ const ProductListComponent = ({ dataList, onEdit, onDelete }) => {
         position="right"
         onHide={() => setVisibleDetail(false)}
       >
-        <h3>{selectedItemDetail?.item_name || 'N/A'}</h3>
+        <h3>{selectedItemDetail?.product_code || 'N/A'} - {selectedItemDetail?.product_name || 'N/A'}</h3>
         <dl>
           <dt>Description:</dt>
           <dd className="mb-3">{selectedItemDetail?.product_desc || 'N/A'}</dd>
@@ -184,6 +184,8 @@ const ProductListComponent = ({ dataList, onEdit, onDelete }) => {
           <dd className="mb-3">{selectedItemDetail?.stock_qty || 0} {selectedItemDetail?.small_unit_name || ''}</dd>
           <dt>Stock Value:</dt>
           <dd className="mb-3">{formatCurrency(stockValue)}</dd>
+          <dt>Cost Price %:</dt>
+          <dd className="mb-3">{selectedItemDetail?.cost_price_percent || 0}</dd>
           <dt>Margin:</dt>
           <dd className="mb-3">{approxMarginTemplate(selectedItemDetail)}</dd>
           <dt>Margin Value:</dt>

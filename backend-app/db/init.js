@@ -66,6 +66,7 @@ const initTables = () => {
         sales_price REAL DEFAULT 0,
         discount_percent REAL DEFAULT 0,
         vat_percent REAL DEFAULT 0,
+        cost_price_percent REAL DEFAULT 0,
         margin_price REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -295,13 +296,13 @@ const initData = (callback) => {
       `
       INSERT OR IGNORE INTO products (product_id, product_code, product_name, product_desc,
       category_id, small_unit_id, unit_difference_qty, large_unit_id,
-      stock_qty, purchase_price, sales_price, discount_percent, vat_percent, margin_price)
+      stock_qty, purchase_price, sales_price, discount_percent, vat_percent, cost_price_percent, margin_price)
       VALUES
-      ('1', 'P01', 'Rice', 'Description Rice', '1', '1', 25, '2', '5', '80', '85', '5', '10', '5'),
-      ('2', 'P02', 'Salt', 'Description Salt', '1', '1', 15, '2', '10', '35', '42', '3', '15', '7'),
-      ('3', 'P03', 'Sugar', 'Description Sugar', '1', '1', 20, '2', '20', '50', '55', '10', '20', '5'),
-      ('4', 'P04', 'Oil', 'Description Oil', '1', '1', 5, '2', '25', '100', '105', '2', '5', '5'),
-      ('5', 'P05', 'Tea', 'Description Tea', '1', '1', 2, '2', '20', '70', '80', '0', '0', '10')
+      ('1', 'P01', 'Rice', 'Description Rice', '1', '1', 25, '2', '0', '80', '90', '2', '10', '5', '3.7'),
+      ('2', 'P02', 'Salt', 'Description Salt', '1', '1', 15, '2', '0', '35', '42', '5', '15', '7', '1.54'),
+      ('3', 'P03', 'Sugar', 'Description Sugar', '1', '1', 20, '2', '0', '50', '60', '10', '20', '5', '1'),
+      ('4', 'P04', 'Oil', 'Description Oil', '1', '1', 5, '2', '0', '100', '115', '2', '5', '5', '6.95'),
+      ('5', 'P05', 'Tea', 'Description Tea', '1', '1', 2, '2', '0', '70', '110', '15', '0', '10', '1.5')
     `,
       (err) => {
         if (err) {

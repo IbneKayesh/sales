@@ -1,0 +1,144 @@
+/*===============================================================
+   UNIFIED BUSINESS PERFORMANCE REPORT
+   Combines: 
+      - Stock Value
+      - Purchase Summary
+      - Sales Summary
+      - Revenue, Payables, Receivables
+      - Gross Profit, Net Profit, Real Profit
+   Returns a SINGLE ROW for business snapshot
+================================================================*/
+SELECT 
+    /* ============================================================
+       CURRENT STOCK SUMMARY
+       ------------------------------------------------------------
+       stock_amount = Total cost value of items currently in stock.
+       Formula:
+           SUM(cost_price * stock_qty)
+       ============================================================ */
+    (SELECT ifnull(SUM(pod.cost_price * pod.stock_qty),0)
+     FROM po_details pod
+     WHERE pod.stock_qty > 0) AS stock_amount,
+
+    /* ============================================================
+       PURCHASE SUMMARY
+       ------------------------------------------------------------
+       purchase_total      = Total cost of items purchased.
+       purchase_paid       = Money already paid to suppliers.
+       purchase_due        = Outstanding supplier payments.
+       purchase_other_cost = Extra costs (shipping, transport, etc.)
+       ============================================================ */
+    (SELECT SUM(pom.payable_amount)
+     FROM po_master pom) AS purchase_total,
+
+    (SELECT SUM(pom.paid_amount)
+     FROM po_master pom) AS purchase_paid,
+
+    (SELECT SUM(pom.due_amount)
+     FROM po_master pom) AS purchase_due,
+
+    (SELECT SUM(pom.other_cost)
+     FROM po_master pom) AS purchase_other_cost,
+
+    /* ============================================================
+       SALES SUMMARY
+       ------------------------------------------------------------
+       sales_total      = Total invoice value (revenue).
+       sales_paid       = Money received from customers.
+       sales_due        = Customer outstanding dues.
+       sales_other_cost = Cost of delivery, packaging, discounts.
+       ============================================================ */    
+    (SELECT SUM(som.payable_amount)
+     FROM so_master som) AS sales_total,
+
+    (SELECT SUM(som.paid_amount)
+     FROM so_master som) AS sales_paid,
+
+    (SELECT SUM(som.due_amount)
+     FROM so_master som) AS sales_due,
+
+    (SELECT SUM(som.other_cost)
+     FROM so_master som) AS sales_other_cost,
+
+    /* ============================================================
+       TOTAL REVENUE
+       ------------------------------------------------------------
+       Simple copy of sales_total for clarity.
+       ============================================================ */
+    (SELECT SUM(som.payable_amount)
+     FROM so_master som) AS total_revenue,
+
+    /* ============================================================
+       TOTAL PAYABLES (SUPPLIER DUES)
+       ------------------------------------------------------------
+       Total amount the business must still pay to suppliers.
+       ============================================================ */
+    (SELECT SUM(pom.due_amount)
+     FROM po_master pom) AS total_payable,
+
+    /* ============================================================
+       TOTAL RECEIVABLES (CUSTOMER DUES)
+       ------------------------------------------------------------
+       Total amount customers still owe to the business.
+       ============================================================ */
+    (SELECT SUM(som.due_amount)
+     FROM so_master som) AS total_receivable,
+
+    /* ============================================================
+       GROSS PROFIT
+       ------------------------------------------------------------
+       Gross Profit = Total Sales – Total Purchase Amount
+       
+       This represents profit before adding other business costs.
+       ============================================================ */
+    (
+      (SELECT SUM(som.payable_amount) FROM so_master som) -- revenue
+      -
+      (SELECT SUM(pom.payable_amount) FROM po_master pom) -- purchase cost
+    ) AS gross_profit,
+
+    /* ============================================================
+       NET PROFIT
+       ------------------------------------------------------------
+       Net Profit = Gross Profit – (purchase costs + sales costs)
+       
+       purchase_other_cost = transport, loading, admin cost
+       sales_other_cost    = delivery, discount, promo, packaging
+       ============================================================ */
+    (
+      (
+        (SELECT SUM(som.payable_amount) FROM so_master som)
+        -
+        (SELECT SUM(pom.payable_amount) FROM po_master pom)
+      )
+      -
+      (
+        (SELECT SUM(pom.other_cost) FROM po_master pom)
+        +
+        (SELECT SUM(som.other_cost) FROM so_master som)
+      )
+    ) AS net_profit,
+
+    /* ============================================================
+       REAL PROFIT (BUSINESS PROFIT)
+       ------------------------------------------------------------
+       Real Profit = Revenue 
+                     – (Purchase Amount + Purchase Cost + Sales Cost)
+       
+       This is the pure financial profit after ALL related expenses.
+       ============================================================ */
+    (
+        (SELECT SUM(som.payable_amount) FROM so_master som)              -- revenue
+        -
+        (
+            (SELECT SUM(pom.payable_amount) FROM po_master pom)          -- purchase amount
+            +
+            (SELECT SUM(pom.other_cost) FROM po_master pom)              -- purchase extra cost
+            +
+            (SELECT SUM(som.other_cost) FROM so_master som)              -- sales extra cost
+        )
+    ) AS real_profit;
+
+/*===============================================================
+   END OF UNIFIED REPORT
+===============================================================*/

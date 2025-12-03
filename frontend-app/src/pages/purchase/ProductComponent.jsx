@@ -303,7 +303,6 @@ const ProductComponent = ({
   return (
     <>
       {/* {JSON.stringify(productList)} */}
-
       <ConfirmDialog />
       {/* Child Editable Table */}
       <div className="flex align-items-center gap-2 mb-2">
@@ -385,6 +384,7 @@ const ProductComponent = ({
           field="vat_percent"
           header="Vat%"
           body={vat_percent_BT}
+          editor={numberEditor}
           footer={vat_percent_FT}
         />
         <Column

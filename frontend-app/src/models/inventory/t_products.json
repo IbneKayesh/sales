@@ -78,6 +78,11 @@
     "type": "number",
     "required": false
   },
+  "cost_price_percent": {
+    "name": "Cost Price Percent",
+    "type": "number",
+    "required": false
+  },
   "margin_price": {
     "name": "Margin Price",
     "type": "number",

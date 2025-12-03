@@ -24,6 +24,7 @@ export const useProducts = () => {
     sales_price: 0,
     discount_percent: 0,
     vat_percent: 0,
+    cost_price_percent: 5,
     margin_price: 0,
     ismodified: "0",
   });
@@ -99,6 +100,7 @@ export const useProducts = () => {
       sales_price: 0,
       discount_percent: 0,
       vat_percent: 0,
+      cost_price_percent: 5,
       margin_price: 0,
       ismodified: "0",
     });
@@ -193,7 +195,7 @@ export const useProducts = () => {
       let updatedProducts;
 
       // ---- Calculate profit before save ----
-      const approxProfit = calculateApproxProfit(formDataProduct);
+      const approxProfit = calculateApproxMargin(formDataProduct);
 
       // Build data object with profit included
       const productData = {
@@ -210,7 +212,7 @@ export const useProducts = () => {
         const updatedProduct = await productsAPI.update(updatedProductData);
         updatedProduct.ismodified = "1";
         updatedProducts = productList.map((p) =>
-          p.product_id === formDataProduct.product_id ? updatedProduct : p
+          p.product_id === formDataProduct.product_id ? updatedProductData : p
         );
 
         setToastBox({
@@ -252,24 +254,26 @@ export const useProducts = () => {
     setIsBusy(false);
   };
 
-  const calculateApproxProfit = (item) => {
-    const purchase = Number(item.purchase_price || 0);
-    const sales = Number(item.sales_price || 0);
-    const discountPercent = Number(item.discount_percent || 0);
+  const calculateApproxMargin = (item) => {
+  const discount_amount = item.sales_price * (item.discount_percent / 100);
+  const net_sales_price = item.sales_price - discount_amount;
 
-    // Discount is applied on SALES price
-    const discountAmount = sales * (discountPercent / 100);
+  const extra_cost_amount = item.sales_price * (item.cost_price_percent / 100);
 
-    //apply VAT on sales price
-    const vatAmount = sales * (vatPercent / 100);
+  const approxMargin = net_sales_price - (item.purchase_price + extra_cost_amount);
 
-    // Final selling price after discount
-    const finalSellingPrice = sales - discountAmount;
+  return approxMargin;
+};
 
-    // Profit = final selling price - purchase price
-    const approxProfit = finalSellingPrice - purchase;
 
-    return approxProfit;
+
+  const calculateApproxMargin_2 = (item) => {
+    const discount_amount = item.sales_price * (item.discount_percent / 100);
+    const vat_amount = item.sales_price * (item.vat_percent / 100);
+    const cost_amount = item.sales_price * (item.cost_price_percent / 100);
+
+    const approxMargin = (item.sales_price + vat_amount) - (item.purchase_price + discount_amount + cost_amount);
+    return approxMargin;
   };
 
   return {

@@ -70,7 +70,7 @@ const ProductFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =>
             </small>
           )}
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="category_id"
             className="block text-900 font-medium mb-2"
@@ -275,6 +275,28 @@ const ProductFormComponent = ({ isBusy, errors, formData, onChange, onSave }) =>
           />
           {errors.vat_percent && (
             <small className="mb-3 text-red-500">{errors.vat_percent}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-2">
+          <label
+            htmlFor="cost_price_percent"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_products.cost_price_percent.name}
+          </label>
+          <InputNumber
+            name="cost_price_percent"
+            value={formData.cost_price_percent}
+            onValueChange={(e) => onChange("cost_price_percent", e.value)}
+            suffix="%"
+            min={0}
+            max={100}
+            className={`w-full ${errors.cost_price_percent ? "p-invalid" : ""}`}
+            inputStyle={{ width: "100%" }}
+            placeholder={`Enter ${t_products.cost_price_percent.name}`}
+          />
+          {errors.cost_price_percent && (
+            <small className="mb-3 text-red-500">{errors.cost_price_percent}</small>
           )}
         </div>
         <div className="col-12 md:col-2">
