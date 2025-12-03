@@ -9,6 +9,7 @@ set /p choice1="Press A to add all changes or N to exit: "
 if /I "%choice1%"=="N" goto END
 if /I "%choice1%"=="A" goto ADD
 
+
 echo Invalid choice. Try again.
 goto START
 
@@ -27,6 +28,7 @@ git commit -m "%msg%"
 git push
 echo Changes pushed!
 goto END
+
 
 :END
 echo Process finished.
