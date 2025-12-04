@@ -1,0 +1,54 @@
+{
+    "payment_id": {
+      "name": "Id",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 36
+    },
+    "contact_id": {
+      "name": "Contact",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "payment_head": {
+      "name": "Payment Head",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "payment_mode": {
+      "name": "Payment Mode",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "payment_date": {
+      "name": "Payment Date",
+      "type": "string",
+      "required": true,
+      "format": "date"
+    },
+    "payment_amount": {
+      "name": "Payment Amount",
+      "type": "number",
+      "required": false
+    },
+    "balance_amount": {
+      "name": "Balance Amount",
+      "type": "number",
+      "required": false
+    },
+    "payment_note": {
+      "name": "Payment Note",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 100
+    }
+  }
+  

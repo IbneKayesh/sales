@@ -76,7 +76,7 @@ const initTables = () => {
       )
     `);
 
-    //setup :: Contacts table
+    // setup :: Contacts table
     db.run(`
       CREATE TABLE IF NOT EXISTS contacts (
         contact_id TEXT PRIMARY KEY,
@@ -91,7 +91,19 @@ const initTables = () => {
       )
     `);
 
-    //Accounts :: Bank Accounts table
+    // accounts :: transaction types table
+    db.run(`
+      CREATE TABLE IF NOT EXISTS accounts_heads (
+        head_id TEXT PRIMARY KEY,
+        head_name TEXT NOT NULL,
+        from_account TEXT DEFAULT 'Customer',
+        to_account TEXT DEFAULT 'Customer',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // accounts :: Bank Accounts table
     db.run(`
       CREATE TABLE IF NOT EXISTS bank_accounts (
         account_id TEXT PRIMARY KEY,
@@ -107,7 +119,7 @@ const initTables = () => {
       )
     `);
 
-    //Accounts :: Bank Payments table
+    // accounts :: Bank Payments table
     db.run(`
       CREATE TABLE IF NOT EXISTS bank_payments (
         payment_id TEXT PRIMARY KEY,
@@ -126,7 +138,34 @@ const initTables = () => {
       )
     `);
 
-    //Purchase :: Purchase Master table
+    // accounts :: Payments table
+    db.run(`
+      CREATE TABLE IF NOT EXISTS payments (
+        payment_id TEXT PRIMARY KEY,
+        contact_id TEXT NOT NULL,
+        payment_head TEXT NOT NULL,
+        payment_mode TEXT NOT NULL,
+        payment_date TEXT NOT NULL,
+        payment_amount REAL DEFAULT 0,
+        balance_amount REAL DEFAULT 0,
+        payment_note TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // accounts :: Invoice Payments Allocation table
+    db.run(`
+      CREATE TABLE IF NOT EXISTS inv_payments (
+        payment_id TEXT PRIMARY KEY,
+        ref_id TEXT NOT NULL,
+        allocation_amount REAL DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // purchase :: Purchase Master table
     db.run(`
       CREATE TABLE IF NOT EXISTS po_master (
         po_master_id TEXT PRIMARY KEY,
@@ -155,7 +194,7 @@ const initTables = () => {
       )
     `);
 
-    //Purchase :: Purchase Details table
+    // purchase :: Purchase Details table
     db.run(`
       CREATE TABLE IF NOT EXISTS po_details (
         po_details_id TEXT PRIMARY KEY,
@@ -181,8 +220,7 @@ const initTables = () => {
       )
     `);
 
-    
-    //Sales :: Sales Master table
+    // sales :: Sales Master table
     db.run(`
       CREATE TABLE IF NOT EXISTS so_master (
         so_master_id TEXT PRIMARY KEY,
@@ -212,7 +250,7 @@ const initTables = () => {
       )
     `);
 
-    //Sales :: Sales Details table
+    // sales :: Sales Details table
     db.run(`
       CREATE TABLE IF NOT EXISTS so_details (
         so_details_id TEXT PRIMARY KEY,
@@ -236,8 +274,6 @@ const initTables = () => {
         FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT
       )
     `);
-
-
   });
 };
 
@@ -318,7 +354,11 @@ const initData = (callback) => {
       `
       INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type, current_balance)
       VALUES
-      ('0', 'Adjustment A/C', '0', '0', 'for internal transaction', 'internal', 0),
+      ('default', 'Default A/C', '0', '0', 'for internal transaction', 'Default', 0),
+      ('inventory', 'Inventory A/C', '0', '0', 'for internal transaction', 'Inventory', 0),
+      ('expense', 'Expense A/C', '0', '0', 'for internal transaction', 'Expense', 0),
+      ('income', 'Income A/C', '0', '0', 'for internal transaction', 'Income', 0),
+      ('both', 'Both A/C', '0', '0', 'default for purchase and sale transaction', 'Both', 0),
       ('1', 'Supplier 1', '1234567890', 'supplier1@example.com', '123 Main St', 'Supplier', 0),
       ('2', 'Supplier 2', '0987654321', 'supplier2@example.com', '456 Elm St', 'Supplier', 0),
       ('3', 'Customer 1', '1234567890', 'customer1@example.com', '123 Main St', 'Customer', 0),
@@ -348,7 +388,6 @@ const initData = (callback) => {
         }
       }
     );
-
   });
 };
 
