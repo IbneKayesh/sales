@@ -1,5 +1,5 @@
 {
-    "payment_id": {
+    "ledger_id": {
       "name": "Id",
       "type": "string",
       "required": false,
@@ -33,13 +33,20 @@
       "required": true,
       "format": "date"
     },
-    "payment_amount": {
-      "name": "Payment Amount",
+    "ref_no": {
+      "name": "Ref No",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "debit_amount": {
+      "name": "Debit Amount",
       "type": "number",
       "required": false
     },
-    "balance_amount": {
-      "name": "Balance Amount",
+    "credit_amount": {
+      "name": "Credit Amount",
       "type": "number",
       "required": false
     },
@@ -49,13 +56,5 @@
       "required": false,
       "minLength": 0,
       "maxLength": 100
-    },
-    "ref_no": {
-      "name": "Ref No",
-      "type": "string",
-      "required": true,
-      "minLength": 1,
-      "maxLength": 50
     }
   }
-  

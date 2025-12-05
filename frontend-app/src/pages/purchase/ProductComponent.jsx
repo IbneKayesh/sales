@@ -40,7 +40,7 @@ const ProductComponent = ({
   useEffect(() => {
     if (!formData || formDataOrderItems.length === 0) return;
 
-    const extraCost = (formData.cost_amount || 0) + (formData.other_cost || 0);
+    const extraCost = (formData.order_cost || 0) + (formData.other_cost || 0);
 
     // Calculate grand total of all items (before extra cost distribution)
     const grandTotal = formDataOrderItems.reduce(
@@ -75,7 +75,7 @@ const ProductComponent = ({
     if (hasChanged) {
       setFormDataOrderItems(updatedItems);
     }
-  }, [formData?.cost_amount, formData?.other_cost, formDataOrderItems.length]);
+  }, [formData?.order_cost, formData?.other_cost, formDataOrderItems.length]);
 
   const handleAddItem = () => {
     if (!selectedItem) return;

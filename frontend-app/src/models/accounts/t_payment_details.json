@@ -6,8 +6,8 @@
       "minLength": 0,
       "maxLength": 36
     },
-    "ref_id": {
-      "name": "Ref Id",
+    "ref_no": {
+      "name": "Ref No",
       "type": "string",
       "required": true,
       "minLength": 1,

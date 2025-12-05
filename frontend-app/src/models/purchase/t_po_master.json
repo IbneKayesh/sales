@@ -62,8 +62,18 @@
     "type": "number",
     "required": false
   },
-  "cost_amount": {
+  "vat_payable": {
+    "name": "VAT Payable",
+    "type": "number",
+    "required": false
+  },
+  "order_cost": {
     "name": "Order Cost",
+    "type": "number",
+    "required": false
+  },
+  "cost_payable": {
+    "name": "Cost Payable",
     "type": "number",
     "required": false
   },
@@ -75,11 +85,6 @@
   "payable_amount": {
     "name": "Payable Amount",
     "type": "number",
-    "required": false
-  },
-  "payable_note": {
-    "name": "Payable Note",
-    "type": "string",
     "required": false
   },
   "paid_amount": {
@@ -111,6 +116,11 @@
   },
   "is_completed": {
     "name": "Is Completed",
+    "type": "number",
+    "required": false
+  },
+  "is_returned": {
+    "name": "Is Returned",
     "type": "number",
     "required": false
   }

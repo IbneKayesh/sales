@@ -15,6 +15,7 @@ const purchaseRoutes = require('./routes/purchase/purchase.js');
 const bankAccountRoutes = require('./routes/accounts/bankaccounts.js');
 const bankPaymentRoutes = require('./routes/accounts/bankpayments.js');
 const salesRoutes = require('./routes/sales/sales.js');
+const paymentsRoutes = require('./routes/accounts/payments.js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -56,6 +57,7 @@ app.use('/api/accounts/bankaccounts', bankAccountRoutes);
 app.use('/api/accounts/bankpayments', bankPaymentRoutes);
 app.use('/api/sales/orders', salesRoutes);
 app.use('/api/setup/users', usersRoutes);
+app.use('/api/accounts/payments', paymentsRoutes);
 
 
 // Health check endpoint

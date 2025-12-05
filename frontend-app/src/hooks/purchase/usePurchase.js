@@ -45,14 +45,18 @@ export const usePurchase = () => {
     order_amount: 0,
     discount_amount: 0,
     vat_amount: 0,
-    cost_amount: 0,
+    vat_payable: 1,
+    order_cost: 0,
+    cost_payable: 1,
     total_amount: 0,
+    payable_amount: 0,
     paid_amount: 0,
     due_amount: 0,
     other_cost: 0,
     is_paid: "Unpaid",
     is_posted: 0,
     is_completed: 0,
+    is_returned: 0,
     ismodified: 0,
   });
 
@@ -108,14 +112,18 @@ export const usePurchase = () => {
       order_amount: 0,
       discount_amount: 0,
       vat_amount: 0,
-      cost_amount: 0,
+      vat_payable: 1,
+      order_cost: 0,
+      cost_payable: 1,
       total_amount: 0,
+      payable_amount: 0,
       paid_amount: 0,
       due_amount: 0,
       other_cost: 0,
       is_paid: "Unpaid",
       is_posted: 0,
       is_completed: 0,
+      is_returned: 0,
       ismodified: 0,
     });
     setErrors({});
@@ -218,8 +226,8 @@ export const usePurchase = () => {
       formDataOrder.payable_amount === formDataOrder.due_amount
         ? "Unpaid"
         : formDataOrder.due_amount === 0
-        ? "Paid"
-        : "Partial";
+          ? "Paid"
+          : "Partial";
 
     try {
       if (formDataOrder.po_master_id) {
@@ -267,7 +275,7 @@ export const usePurchase = () => {
 
       //call update process
       await closingProcessAPI("Purchase", formDataOrder.order_no);
-      
+
     } catch (error) {
       console.error("Error saving purchase:", error);
       setToastBox({

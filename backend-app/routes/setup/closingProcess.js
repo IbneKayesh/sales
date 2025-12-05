@@ -25,12 +25,31 @@ router.post("/update-invoice-due", async (req, res) => {
   const scripts = [];
 
   scripts.push({
-    label: "1.1 Update Purchase Payment and Due Amount",
+    label: "1.1 Update payment balance from allocation",
+    sql: `WITH allocation AS (
+          SELECT pmd.payment_id, sum(pmd.allocation_amount)allocation_amount
+          FROM payment_details pmd
+          JOIN payments pm on pmd.payment_id = pm.payment_id
+          WHERE pm.balance_amount > 0
+          GROUP by pmd.payment_id
+          )
+          UPDATE payments
+          SET
+            balance_amount = (
+            SELECT allocation_amount FROM allocation
+            WHERE allocation.payment_id = payments.payment_id
+            )
+          WHERE payment_id in (SELECT payment_id FROM allocation)`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "1.2 Update Purchase Payment and Due Amount",
     sql: `WITH pay AS (
-      SELECT pom.order_no, IFNULL(SUM(bp.payment_amount), 0) AS payment_amount
+      SELECT pom.order_no, IFNULL(SUM(pmd.allocation_amount), 0) AS payment_amount
       FROM po_master pom
-      LEFT JOIN bank_payments bp
-          ON pom.contact_id = bp.contact_id AND pom.order_no = bp.ref_no AND pom.order_type = bp.payment_head
+	  LEFT JOIN payments pm on pom.contact_id = pm.contact_id
+      LEFT JOIN payment_details pmd on pmd.payment_id = pm.payment_id AND pom.order_no = pmd.ref_no
       WHERE pom.is_paid IN ('Partial', 'Unpaid')
       GROUP BY pom.order_no
   )
@@ -45,17 +64,17 @@ router.post("/update-invoice-due", async (req, res) => {
   scripts.push({
     label: "1.2 Update Sales Payment and Due Amount",
     sql: `WITH pay AS (
-      SELECT som.order_no, IFNULL(SUM(bp.payment_amount), 0) AS payment_amount
-      FROM so_master som
-      LEFT JOIN bank_payments bp
-          ON som.contact_id = bp.contact_id AND som.order_no = bp.ref_no AND som.order_type = bp.payment_head
-      WHERE som.is_paid IN ('Partial', 'Unpaid')
-      GROUP BY som.order_no
+      SELECT pom.order_no, IFNULL(SUM(pmd.allocation_amount), 0) AS payment_amount
+      FROM so_master pom
+	  LEFT JOIN payments pm on pom.contact_id = pm.contact_id
+      LEFT JOIN payment_details pmd on pmd.payment_id = pm.payment_id AND pom.order_no = pmd.ref_no
+      WHERE pom.is_paid IN ('Partial', 'Unpaid')
+      GROUP BY pom.order_no
   )
-  UPDATE so_master
+  UPDATE po_master
   SET 
-      paid_amount = (SELECT payment_amount FROM pay WHERE pay.order_no = so_master.order_no),
-      due_amount  = payable_amount - (SELECT payment_amount FROM pay WHERE pay.order_no = so_master.order_no)
+      paid_amount = (SELECT payment_amount FROM pay WHERE pay.order_no = po_master.order_no),
+      due_amount  = payable_amount - (SELECT payment_amount FROM pay WHERE pay.order_no = po_master.order_no)
   WHERE order_no IN (SELECT order_no FROM pay)`,
     params: [],
   });
@@ -114,7 +133,6 @@ router.post("/update-invoice-due", async (req, res) => {
   }
 });
 
-
 // Update balances
 router.post("/update-balances", async (req, res) => {
   const { id } = req.body;
@@ -123,10 +141,9 @@ router.post("/update-balances", async (req, res) => {
     return res.status(400).json({ error: "ID is required" });
   }
 
-//1.1 Set 0 balance for all contacts
-//1.2 Update contact current balance from Purchase and Sales dues
-//2.0 Update bank accounts from payments
-
+  //1.1 Set 0 balance for all contacts
+  //1.2 Update contact current balance from Purchase and Sales dues
+  //2.0 Update bank accounts from payments
 
   const scripts = [];
 
@@ -216,13 +233,11 @@ router.post("/update-product-stock", async (req, res) => {
   if (!id) {
     return res.status(400).json({ error: "Transaction ID is required" });
   }
-//1.1 Update Purchase Details > Sales Qty from Sales Details
-//0.0 Update actual order_qty in so_details when return raised
-//1.2 Update Purchase Details > Stock Qty
-//2.1 Reset all product stock
-//2.2 Update all product stock from Purchase Details > Stock Qty
-
-
+  //1.1 Update Purchase Details > Sales Qty from Sales Details
+  //0.0 Update actual order_qty in so_details when return raised
+  //1.2 Update Purchase Details > Stock Qty
+  //2.1 Reset all product stock
+  //2.2 Update all product stock from Purchase Details > Stock Qty
 
   const scripts = [];
 

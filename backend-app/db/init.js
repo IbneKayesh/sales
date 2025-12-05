@@ -138,6 +138,25 @@ const initTables = () => {
       )
     `);
 
+
+    // accounts :: Accounts Ledger table
+    db.run(`
+      CREATE TABLE IF NOT EXISTS accounts_ledger (
+        ledger_id TEXT PRIMARY KEY,
+        contact_id TEXT NOT NULL,
+        payment_head TEXT NOT NULL,
+        payment_mode TEXT NOT NULL,
+        payment_date TEXT NOT NULL,
+        ref_no TEXT NOT NULL,
+        debit_amount REAL DEFAULT 0,
+        credit_amount REAL DEFAULT 0,
+        payment_note TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (contact_id) REFERENCES contacts(contact_id) ON DELETE RESTRICT
+      )
+    `);
+
     // accounts :: Payments table
     db.run(`
       CREATE TABLE IF NOT EXISTS payments (
@@ -149,16 +168,17 @@ const initTables = () => {
         payment_amount REAL DEFAULT 0,
         balance_amount REAL DEFAULT 0,
         payment_note TEXT,
+        ref_no TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
-    // accounts :: Invoice Payments Allocation table
+    // accounts :: Invoice Payments Details Allocation table
     db.run(`
-      CREATE TABLE IF NOT EXISTS inv_payments (
+      CREATE TABLE IF NOT EXISTS payment_details (
         payment_id TEXT PRIMARY KEY,
-        ref_id TEXT NOT NULL,
+        ref_no TEXT NOT NULL,
         allocation_amount REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -178,16 +198,18 @@ const initTables = () => {
         order_amount REAL DEFAULT 0,
         discount_amount REAL DEFAULT 0,
         vat_amount REAL DEFAULT 0,
-        cost_amount REAL DEFAULT 0,
+        vat_payable BOOLEAN DEFAULT 0,
+        order_cost REAL DEFAULT 0,
+        cost_payable BOOLEAN DEFAULT 0,
         total_amount REAL DEFAULT 0,
         payable_amount REAL DEFAULT 0,
-        payable_note TEXT,
         paid_amount REAL DEFAULT 0,
         due_amount REAL DEFAULT 0,
         other_cost REAL DEFAULT 0,
         is_paid TEXT NOT NULL,
         is_posted BOOLEAN DEFAULT 0,
         is_completed BOOLEAN DEFAULT 0,
+        is_returned BOOLEAN DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
@@ -354,11 +376,11 @@ const initData = (callback) => {
       `
       INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type, current_balance)
       VALUES
-      ('default', 'Default A/C', '0', '0', 'for internal transaction', 'Default', 0),
-      ('inventory', 'Inventory A/C', '0', '0', 'for internal transaction', 'Inventory', 0),
+      ('cash', 'Cash A/C', '0', '0', 'for internal transaction', 'Cash', 0),
       ('expense', 'Expense A/C', '0', '0', 'for internal transaction', 'Expense', 0),
       ('income', 'Income A/C', '0', '0', 'for internal transaction', 'Income', 0),
-      ('both', 'Both A/C', '0', '0', 'default for purchase and sale transaction', 'Both', 0),
+      ('inventory', 'Inventory A/C', '0', '0', 'for internal transaction', 'Inventory', 0),
+      ('both', 'Unknown Supplier and Purchaser A/C', '0', '0', 'default for purchase and sale transaction', 'Both', 0),
       ('1', 'Supplier 1', '1234567890', 'supplier1@example.com', '123 Main St', 'Supplier', 0),
       ('2', 'Supplier 2', '0987654321', 'supplier2@example.com', '456 Elm St', 'Supplier', 0),
       ('3', 'Customer 1', '1234567890', 'customer1@example.com', '123 Main St', 'Customer', 0),
