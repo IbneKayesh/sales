@@ -15,8 +15,9 @@ router.post("/update-invoice-due", async (req, res) => {
     return res.status(400).json({ error: "ID is required" });
   }
 
-  //1.1 Update Purchase Payment and Due Amount
-  //1.2 Update Sales Payment and Due Amount
+  //1.1 Update payment balance from payment details allocation [due payment]
+  //1.2 Update Purchase Due Amount
+  //1.3 Update Sales Due Amount
   //2.1 Update Purchase Payment status
   //2.2 Update Sales Payment status
   //3.1 Update Purchase Complete status
@@ -25,7 +26,7 @@ router.post("/update-invoice-due", async (req, res) => {
   const scripts = [];
 
   scripts.push({
-    label: "1.1 Update payment balance from allocation",
+    label: "1 of 7 :: Update payment balance from payment details allocation [due payment]",
     sql: `WITH allocation AS (
           SELECT pmd.payment_id, sum(pmd.allocation_amount)allocation_amount
           FROM payment_details pmd
@@ -44,7 +45,7 @@ router.post("/update-invoice-due", async (req, res) => {
   });
 
   scripts.push({
-    label: "1.2 Update Purchase Payment and Due Amount",
+    label: "2 of 7 :: Update Purchase Due Amount",
     sql: `WITH pay AS (
       SELECT pom.order_no, IFNULL(SUM(pmd.allocation_amount), 0) AS payment_amount
       FROM po_master pom
@@ -62,25 +63,25 @@ router.post("/update-invoice-due", async (req, res) => {
   });
 
   scripts.push({
-    label: "1.2 Update Sales Payment and Due Amount",
+    label: "3 of 7 :: Update Sales Due Amount",
     sql: `WITH pay AS (
-      SELECT pom.order_no, IFNULL(SUM(pmd.allocation_amount), 0) AS payment_amount
-      FROM so_master pom
-	  LEFT JOIN payments pm on pom.contact_id = pm.contact_id
-      LEFT JOIN payment_details pmd on pmd.payment_id = pm.payment_id AND pom.order_no = pmd.ref_no
-      WHERE pom.is_paid IN ('Partial', 'Unpaid')
-      GROUP BY pom.order_no
-  )
-  UPDATE po_master
-  SET 
-      paid_amount = (SELECT payment_amount FROM pay WHERE pay.order_no = po_master.order_no),
-      due_amount  = payable_amount - (SELECT payment_amount FROM pay WHERE pay.order_no = po_master.order_no)
-  WHERE order_no IN (SELECT order_no FROM pay)`,
+            SELECT pom.order_no, IFNULL(SUM(pmd.allocation_amount), 0) AS payment_amount
+            FROM so_master pom
+          LEFT JOIN payments pm on pom.contact_id = pm.contact_id
+            LEFT JOIN payment_details pmd on pmd.payment_id = pm.payment_id AND pom.order_no = pmd.ref_no
+            WHERE pom.is_paid IN ('Partial', 'Unpaid')
+            GROUP BY pom.order_no
+        )
+        UPDATE so_master
+        SET 
+            paid_amount = (SELECT payment_amount FROM pay WHERE pay.order_no = so_master.order_no),
+            due_amount  = payable_amount - (SELECT payment_amount FROM pay WHERE pay.order_no = so_master.order_no)
+        WHERE order_no IN (SELECT order_no FROM pay)`,
     params: [],
   });
 
   scripts.push({
-    label: "2.1 Update Purchase Payment status",
+    label: "4 of 7 :: Update Purchase Payment status",
     sql: `UPDATE po_master
             SET is_paid = 'Paid'
             WHERE is_paid IN ('Partial', 'Unpaid')
@@ -90,7 +91,7 @@ router.post("/update-invoice-due", async (req, res) => {
   });
 
   scripts.push({
-    label: "2.2 Update Sales Payment status",
+    label: "5 of 7 :: Update Sales Payment status",
     sql: `UPDATE so_master
             SET is_paid = 'Paid'
             WHERE is_paid IN ('Partial', 'Unpaid')
@@ -100,7 +101,7 @@ router.post("/update-invoice-due", async (req, res) => {
   });
 
   scripts.push({
-    label: "3.1 Update Purchase Complete status",
+    label: "6 of 7 :: Update Purchase Complete status",
     sql: `UPDATE po_master
             SET is_completed = 1
             WHERE is_paid = 'Paid'
@@ -110,7 +111,7 @@ router.post("/update-invoice-due", async (req, res) => {
   });
 
   scripts.push({
-    label: "3.2 Update Sales Complete status",
+    label: "7 of 7 :: Update Sales Complete status",
     sql: `UPDATE so_master
             SET is_completed = 1
             WHERE is_paid = 'Paid'
@@ -148,13 +149,13 @@ router.post("/update-balances", async (req, res) => {
   const scripts = [];
 
   scripts.push({
-    label: "1.1 Set 0 balance for all contacts",
+    label: "1 of 3 :: Set 0 balance for all contacts",
     sql: `UPDATE contacts SET current_balance = 0 WHERE current_balance != 0`,
     params: [],
   });
 
   scripts.push({
-    label: "1.2 Update contact current balance from Purchase and Sales dues",
+    label: "2 of 3 :: Update contact current balance from Purchase and Sales dues",
     sql: `WITH cr_balance AS (
             SELECT contact_id, sum(due_amount) credit_amount
             FROM (
@@ -183,7 +184,7 @@ router.post("/update-balances", async (req, res) => {
   });
 
   scripts.push({
-    label: "2.0 Update bank accounts from payments",
+    label: "3 of 3 :: Update bank accounts from payments",
     sql: `WITH payments AS
           (
           SELECT account_id, sum(payment_amount)payment_amount
@@ -259,7 +260,7 @@ router.post("/update-product-stock", async (req, res) => {
   // });
 
   scripts.push({
-    label: "1.1 Update Purchase Details > Sales Qty from Sales Details",
+    label: "1 of 4 :: Update Purchase Details > Sales Qty from Sales Details",
     sql: `WITH sales AS (
               SELECT pod.po_details_id,sum(sod.order_qty)sales_qty
               FROM po_details pod
@@ -282,7 +283,7 @@ router.post("/update-product-stock", async (req, res) => {
   });
 
   scripts.push({
-    label: "1.2 Update Purchase Details > Stock Qty",
+    label: "2 of 4 :: Update Purchase Details > Stock Qty",
     sql: `UPDATE po_details
           SET stock_qty = product_qty - (return_qty + sales_qty)
           WHERE stock_qty > 0`,
@@ -290,13 +291,13 @@ router.post("/update-product-stock", async (req, res) => {
   });
 
   scripts.push({
-    label: "2.1 Reset all product stock",
+    label: "3 of 4 :: Reset all product stock",
     sql: `UPDATE products SET stock_qty = 0 WHERE stock_qty > 0`,
     params: [],
   });
 
   scripts.push({
-    label: "2.2 Update all product stock from Purchase Details > Stock Qty",
+    label: "4 of 4 :: Update all product stock from Purchase Details > Stock Qty",
     sql: `WITH purchase AS (
                 SELECT pod.product_id, sum(pod.stock_qty)stock_qty
                 FROM po_details pod

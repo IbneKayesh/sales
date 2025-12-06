@@ -70,7 +70,7 @@ async function runScriptsSequentially(
 
   try {
     if (useTransaction) {
-      console.log("🚀 BEGIN TRANSACTION");
+      console.log("🚀 BEGIN TRANSACTION " + new Date().toISOString());
       await dbRun("BEGIN IMMEDIATE", [], "Transaction Started");
     }
 
@@ -86,18 +86,18 @@ async function runScriptsSequentially(
 
     if (useTransaction) {
       await dbRun("COMMIT", [], "Transaction Committed");
-      console.log("✅ COMMIT TRANSACTION");
+      console.log("✅ COMMIT TRANSACTION " + new Date().toISOString());
     }
   } catch (err) {
     if (useTransaction) {
-      console.error("⚠ Rolling back transaction:", err.message);
+      console.error("⚠ Rolling back transaction:", err.message + " " + new Date().toISOString());
       await dbRun("ROLLBACK").catch(() => console.error("Rollback failed"));
     }
 
-    console.error("❌ Error during script execution:", err.message);
+    console.error("❌ Error during script execution:", err.message + " " + new Date().toISOString());
   }
 
-  console.log("\n🏁 All scripts completed.");
+  console.log("\n🏁 All scripts completed. " + new Date().toISOString());
   return results;
 }
 

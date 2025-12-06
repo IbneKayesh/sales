@@ -61,13 +61,15 @@ const initTables = () => {
         small_unit_id TEXT NOT NULL,
         unit_difference_qty INTEGER DEFAULT 1,
         large_unit_id TEXT NOT NULL,
-        stock_qty INTEGER DEFAULT 0,
+        stock_qty REAL DEFAULT 0,
         purchase_price REAL DEFAULT 0,
         sales_price REAL DEFAULT 0,
         discount_percent REAL DEFAULT 0,
         vat_percent REAL DEFAULT 0,
         cost_price_percent REAL DEFAULT 0,
         margin_price REAL DEFAULT 0,
+        purchase_booking_qty REAL DEFAULT 0,
+        sales_booking_qty REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE RESTRICT,
@@ -354,13 +356,14 @@ const initData = (callback) => {
       `
       INSERT OR IGNORE INTO products (product_id, product_code, product_name, product_desc,
       category_id, small_unit_id, unit_difference_qty, large_unit_id,
-      stock_qty, purchase_price, sales_price, discount_percent, vat_percent, cost_price_percent, margin_price)
+      stock_qty, purchase_price, sales_price, discount_percent, vat_percent, cost_price_percent, margin_price,
+      purchase_booking_qty,sales_booking_qty)
       VALUES
-      ('1', 'P01', 'Rice', 'Description Rice', '1', '1', 25, '2', '0', '80', '90', '2', '10', '5', '3.7'),
-      ('2', 'P02', 'Salt', 'Description Salt', '1', '1', 15, '2', '0', '35', '42', '5', '15', '7', '1.54'),
-      ('3', 'P03', 'Sugar', 'Description Sugar', '1', '1', 20, '2', '0', '50', '60', '10', '20', '5', '1'),
-      ('4', 'P04', 'Oil', 'Description Oil', '1', '1', 5, '2', '0', '100', '115', '2', '5', '5', '6.95'),
-      ('5', 'P05', 'Tea', 'Description Tea', '1', '1', 2, '2', '0', '70', '110', '15', '0', '10', '1.5')
+      ('1', 'P01', 'Rice', 'Description Rice', '1', '1', 25, '2', '0', '80', '90', '2', '10', '5', '3.7', '0', '0'),
+      ('2', 'P02', 'Salt', 'Description Salt', '1', '1', 15, '2', '0', '35', '42', '5', '15', '7', '1.54', '0', '0'),
+      ('3', 'P03', 'Sugar', 'Description Sugar', '1', '1', 20, '2', '0', '50', '60', '10', '20', '5', '1', '0', '0'),
+      ('4', 'P04', 'Oil', 'Description Oil', '1', '1', 5, '2', '0', '100', '115', '2', '5', '5', '6.95', '0', '0'),
+      ('5', 'P05', 'Tea', 'Description Tea', '1', '1', 2, '2', '0', '70', '110', '15', '0', '10', '1.5', '0', '0')
     `,
       (err) => {
         if (err) {

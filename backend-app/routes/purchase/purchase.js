@@ -134,7 +134,7 @@ router.post("/", async (req, res) => {
 
     //Insert order Master
     scripts.push({
-      label: "Insert Purchase Master " + order_no_new,
+      label: "1 of 2 :: Insert Purchase Master " + order_no_new,
       sql: `INSERT INTO po_master (po_master_id, order_type, order_no, order_date, contact_id, ref_no,
       order_note, order_amount, discount_amount, vat_amount, vat_payable, order_cost, cost_payable,
       total_amount, payable_amount, paid_amount, due_amount, other_cost,
@@ -169,7 +169,7 @@ router.post("/", async (req, res) => {
     //Insert order Details
     for (const detail of details_create) {
       scripts.push({
-        label: "Insert Purchase Detail " + order_no_new,
+        label: "2 of 2 :: Insert Purchase Detail " + order_no_new,
         sql: `INSERT INTO po_details (po_details_id, po_master_id, product_id, product_price, product_qty,
         discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount,
         product_note, ref_id, return_qty, sales_qty, stock_qty)
@@ -292,35 +292,35 @@ router.post("/update", async (req, res) => {
 
     //delete details
     scripts.push({
-      label: `Delete Details ${order_no}`,
+      label: `1 of 6 :: Delete Details ${order_no}`,
       sql: `DELETE FROM po_details WHERE po_master_id = ?`,
       params: [po_master_id],
     });
 
     //delete payment details
     scripts.push({
-      label: `Delete Payment Details ${order_no}`,
+      label: `2 of 6 :: Delete Payment Details ${order_no}`,
       sql: `DELETE FROM payment_details WHERE ref_no = ?`,
       params: [order_no],
     });
 
     //delete payment master
     scripts.push({
-      label: `Delete Payment Master ${order_no}`,
+      label: `3 of 6 :: Delete Payment Master ${order_no}`,
       sql: `DELETE FROM payments WHERE ref_no = ?`,
       params: [order_no],
     });
 
     //delete accounts ledger
     scripts.push({
-      label: `Delete Accounts Ledger ${order_no}`,
+      label: `4 of 6 :: Delete Accounts Ledger ${order_no}`,
       sql: `DELETE FROM accounts_ledger WHERE ref_no = ?`,
       params: [order_no],
     });
 
     //Update Master
     scripts.push({
-      label: "Update Purchase Master " + order_no,
+      label: "5 of 6 :: Update Purchase Master " + order_no,
       sql: `UPDATE po_master SET
       order_date = ?,
       ref_no = ?,
@@ -364,7 +364,7 @@ router.post("/update", async (req, res) => {
     //Insert Details
     for (const detail of details_create) {
       scripts.push({
-        label: "Insert Purchase Detail " + order_no,
+        label: "6 of 6 :: Insert Purchase Detail " + order_no,
         sql: `INSERT INTO po_details (po_details_id, po_master_id, product_id, product_price, product_qty,
         discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount,
         product_note, ref_id, return_qty, sales_qty, stock_qty)
@@ -446,7 +446,7 @@ function paymentScriptsGen(
   //Insert Purchase Ledger Product :: Supplier Account Credit
   scripts.push({
     label:
-      "Insert Purchase Ledger Product :: Supplier Account Credit " +
+      "1 of 6 :: Insert Purchase Ledger Product :: Supplier Account Credit " +
       order_no_new,
     sql: `INSERT INTO accounts_ledger (ledger_id, contact_id, payment_head, payment_mode, payment_date,
       ref_no, debit_amount, credit_amount, payment_note)
@@ -474,7 +474,7 @@ function paymentScriptsGen(
   if (other_cost_amount > 0) {
     scripts.push({
       label:
-        "Insert Purchase Ledger Product Expense :: Expense Account Credit " +
+        "2 of 6 :: Insert Purchase Ledger Product Expense :: Expense Account Credit " +
         order_no_new,
       sql: `INSERT INTO accounts_ledger (ledger_id, contact_id, payment_head, payment_mode, payment_date,
       ref_no, debit_amount, credit_amount, payment_note)
@@ -500,7 +500,7 @@ function paymentScriptsGen(
 
     // payment master
     scripts.push({
-      label: "Insert Purchase Payment " + order_no_new,
+      label: "3 of 6 :: Insert Purchase Payment " + order_no_new,
       sql: `INSERT INTO payments (payment_id, contact_id, payment_head, payment_mode, payment_date,
         payment_amount, balance_amount, payment_note, ref_no)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -519,7 +519,7 @@ function paymentScriptsGen(
 
     //payment details allocation
     scripts.push({
-      label: "Insert Purchase Payment Details" + order_no_new,
+      label: "4 of 6 :: Insert Purchase Payment Details" + order_no_new,
       sql: `INSERT INTO payment_details (payment_id, ref_no, allocation_amount)
         VALUES (?, ?, ?)`,
       params: [payment_id_new, order_no_new, payment.payment_amount || 0],
@@ -528,7 +528,7 @@ function paymentScriptsGen(
     //supplier account debit
     scripts.push({
       label:
-        "Insert Purchase Ledger Payment :: Supplier Account Debit " +
+        "5 of 6 :: Insert Purchase Ledger Payment :: Supplier Account Debit " +
         order_no_new,
       sql: `INSERT INTO accounts_ledger (ledger_id, contact_id, payment_head, payment_mode, payment_date,
       ref_no, debit_amount, credit_amount, payment_note)
@@ -549,7 +549,7 @@ function paymentScriptsGen(
     //cash account credit
     scripts.push({
       label:
-        "Insert Purchase Ledger Payment :: Cash Account Credit " + order_no_new,
+        "6 of 6 :: Insert Purchase Ledger Payment :: Cash Account Credit " + order_no_new,
       sql: `INSERT INTO accounts_ledger (ledger_id, contact_id, payment_head, payment_mode, payment_date,
       ref_no, debit_amount, credit_amount, payment_note)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -612,5 +612,77 @@ ORDER BY pm.payment_date`;
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+
+// Delete purchase order master
+router.post("/delete", async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "ID is required" });
+  }
+
+  const sql_master =
+    "SELECT order_no FROM po_master WHERE is_posted = 0 AND is_completed = 0 AND is_returned = 0 AND po_master_id = ?";
+  const masterRow = await dbGet(sql_master, [id]);
+
+  if (!masterRow) {
+    return res.status(404).json({ error: "Master not found" });
+  }
+
+  const order_no = masterRow.order_no;
+  console.log("order_no " + order_no);
+
+  const scripts = [];
+
+  scripts.push({
+    label: "1 of 5 :: Delete order details",
+    sql: "DELETE FROM po_details WHERE po_master_id = ?",
+    params: [id],
+  });
+
+  scripts.push({
+    label: "2 of 5 :: Delete account ledger",
+    sql: "DELETE FROM accounts_ledger WHERE ref_no = ?",
+    params: [order_no],
+  });  
+
+  scripts.push({
+    label: "3 of 5 :: Delete payment details allocation",
+    sql: "DELETE FROM payment_details WHERE ref_no = ?",
+    params: [order_no],
+  });
+
+  scripts.push({
+    label: "4 of 5 :: Delete payments",
+    sql: "DELETE FROM payments WHERE ref_no = ?",
+    params: [order_no],
+  });
+
+  scripts.push({
+    label: "5 of 5 :: Delete Master",
+    sql: "DELETE FROM po_master WHERE po_master_id = ?",
+    params: [id],
+  });
+
+  const results = await runScriptsSequentially(scripts, {
+    useTransaction: true,
+  });
+
+  // check master delete success
+  const masterResult = results[2];
+  if (!masterResult.success || masterResult.changes === 0) {
+    return res
+      .status(400)
+      .json({ error: "Master delete failed or record not found" });
+  }
+
+  return res.json({
+    message: "Purchase Order deleted successfully!",
+    po_master_id: id,
+  });
+});
+
 
 module.exports = router;

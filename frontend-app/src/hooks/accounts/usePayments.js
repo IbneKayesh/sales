@@ -139,15 +139,15 @@ export const usePayments = () => {
       if (formDataPayableDue.payment_id) {
         // Edit existing
         const updatedPayableDue = await paymentsAPI.update(formDataPayableDue);
-        updatedPayableDue.ismodified = true;
-        updatedPayableDues = payableDueList.map((p) =>
-          p.payment_id === formDataPayableDue.payment_id ? updatedPayableDue : p
-        );
+        // updatedPayableDue.ismodified = true;
+        // updatedPayableDues = payableDueList.map((p) =>
+        //   p.payment_id === formDataPayableDue.payment_id ? updatedPayableDue : p
+        // );
 
         setToastBox({
           severity: "success",
           summary: "Success",
-          detail: `"${formDataPayableDue.ref_id}" updated successfully.`,
+          detail: `"${formDataPayableDue.ref_no}" updated successfully.`,
         });
       } else {
         // Add new
@@ -155,17 +155,17 @@ export const usePayments = () => {
         console.log("newPayableDueData: " + JSON.stringify(newPayableDueData));
 
         const newPayableDue = await paymentsAPI.accountsPayableDuesSuppliersCreate(newPayableDueData);
-        newPayableDue.ismodified = true;
-        updatedPayableDues = [...payableDueList, newPayableDue];
+        //newPayableDue.ismodified = true;
+        //updatedPayableDues = [...payableDueList, newPayableDue];
 
         setToastBox({
           severity: "success",
           summary: "Success",
-          detail: `"${formDataPayableDue.ref_id}" added successfully.`,
+          detail: `"${formDataPayableDue.ref_no}" added successfully.`,
         });
       }
-      setPayableDueList(updatedPayableDues);
-
+      //setPayableDueList(updatedPayableDues);
+      loadPayableDues();
       handleClear();
       setCurrentView("list");
     } catch (error) {
