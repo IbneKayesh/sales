@@ -5,6 +5,32 @@ import t_po_master from "@/models/purchase/t_po_master.json";
 import { generateGuid } from "@/utils/guid";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
+const fromDataModel = {
+  po_master_id: "",
+  order_type: selectedPoType,
+  order_no: "[SL-123456]",
+  order_date: new Date().toISOString().split("T")[0],
+  contact_id: "both",
+  ref_no: "No Ref",
+  order_note: "",
+  order_amount: 0,
+  discount_amount: 0,
+  vat_amount: 0,
+  vat_payable: 1,
+  order_cost: 0,
+  cost_payable: 1,
+  total_amount: 0,
+  payable_amount: 0,
+  paid_amount: 0,
+  due_amount: 0,
+  other_cost: 0,
+  is_paid: "Unpaid",
+  is_posted: 0,
+  is_completed: 0,
+  is_returned: 0,
+  ismodified: 0,
+};
+
 export const usePurchase = () => {
   const [purchaseList, setPurchaseList] = useState([]);
   const [toastBox, setToastBox] = useState(null);
@@ -34,31 +60,7 @@ export const usePurchase = () => {
     { label: "MFS", value: "MFS" },
   ];
 
-  const [formDataOrder, setFormDataOrder] = useState({
-    po_master_id: "",
-    order_type: selectedPoType,
-    order_no: "[SL-123456]",
-    order_date: new Date().toISOString().split("T")[0],
-    contact_id: "",
-    ref_no: "No Ref",
-    order_note: "",
-    order_amount: 0,
-    discount_amount: 0,
-    vat_amount: 0,
-    vat_payable: 1,
-    order_cost: 0,
-    cost_payable: 1,
-    total_amount: 0,
-    payable_amount: 0,
-    paid_amount: 0,
-    due_amount: 0,
-    other_cost: 0,
-    is_paid: "Unpaid",
-    is_posted: 0,
-    is_completed: 0,
-    is_returned: 0,
-    ismodified: 0,
-  });
+  const [formDataOrder, setFormDataOrder] = useState(fromDataModel);
 
   const [formDataOrderItems, setFormDataOrderItems] = useState([]);
   const [formDataOrderPayments, setFormDataOrderPayments] = useState([]);
@@ -101,31 +103,7 @@ export const usePurchase = () => {
   };
 
   const handleClear = () => {
-    setFormDataOrder({
-      po_master_id: "",
-      order_type: selectedPoType,
-      order_no: "[SL-123456]",
-      order_date: new Date().toISOString().split("T")[0],
-      contact_id: "",
-      ref_no: "No Ref",
-      order_note: "",
-      order_amount: 0,
-      discount_amount: 0,
-      vat_amount: 0,
-      vat_payable: 1,
-      order_cost: 0,
-      cost_payable: 1,
-      total_amount: 0,
-      payable_amount: 0,
-      paid_amount: 0,
-      due_amount: 0,
-      other_cost: 0,
-      is_paid: "Unpaid",
-      is_posted: 0,
-      is_completed: 0,
-      is_returned: 0,
-      ismodified: 0,
-    });
+    setFormDataOrder(fromDataModel);
     setErrors({});
     setFormDataOrderItems([]);
     setFormDataOrderPayments([]);

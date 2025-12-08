@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { backupDB, restoreDB } = require('../db/backup');
-const { exportTableToCSV, exportAllTablesToCSV } = require('../db/export');
+const { backupDB, restoreDB } = require('../../db/backup');
+const { exportTableToCSV, exportAllTablesToCSV } = require('../../db/export');
 const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
+
+
 
 // Backup database
 router.post('/backup', (req, res) => {
@@ -39,9 +41,9 @@ router.post('/restore', (req, res) => {
 // Export single table to CSV
 router.post('/export/:table', (req, res) => {
   const { table } = req.params;
+  
   const validTables = [
-    'users', 'bank_accounts', 'contacts', 'categories', 'units', 'items',
-    'bank_transactions', 'po_master', 'po_child', 'so_master', 'so_child'
+    'users', 'units', 'categories', 'products', 'contacts', 'accounts_heads', 'bank_accounts', 'bank_payments', 'accounts_ledger', 'payments', 'payment_details', 'po_master', 'po_details', 'so_master', 'so_details'
   ];
 
   if (!validTables.includes(table)) {
@@ -68,7 +70,8 @@ router.post('/export-all', (req, res) => {
 
 // List backup files
 router.get('/backups', (req, res) => {
-  const backupDir = path.join(__dirname, '../backups');
+  const backupDir = path.join(__dirname, '../../backups');
+  console.log("backupDir " + backupDir)
   if (!fs.existsSync(backupDir)) {
     return res.json({ backups: [] });
   }
@@ -89,7 +92,7 @@ router.get('/backups', (req, res) => {
 
 // List export files and folders
 router.get('/exports', (req, res) => {
-  const exportDir = path.join(__dirname, '../exports');
+  const exportDir = path.join(__dirname, '../../exports');
   if (!fs.existsSync(exportDir)) {
     return res.json({ exports: [] });
   }
@@ -139,7 +142,7 @@ router.get('/exports', (req, res) => {
 // Delete backup file
 router.delete('/backups/:filename', (req, res) => {
   const { filename } = req.params;
-  const backupDir = path.join(__dirname, '../backups');
+  const backupDir = path.join(__dirname, '../../backups');
   const filePath = path.join(backupDir, filename);
 
   if (!fs.existsSync(filePath)) {
@@ -157,7 +160,7 @@ router.delete('/backups/:filename', (req, res) => {
 // Delete export file or folder
 router.delete('/exports/:filename', (req, res) => {
   const { filename } = req.params;
-  const exportDir = path.join(__dirname, '../exports');
+  const exportDir = path.join(__dirname, '../../exports');
   const itemPath = path.join(exportDir, filename);
 
   if (!fs.existsSync(itemPath)) {
@@ -183,7 +186,7 @@ router.delete('/exports/:filename', (req, res) => {
 // Download backup file
 router.get('/download/backups/:filename', (req, res) => {
   const { filename } = req.params;
-  const backupDir = path.join(__dirname, '../backups');
+  const backupDir = path.join(__dirname, '../../backups');
   const filePath = path.join(backupDir, filename);
 
   if (!fs.existsSync(filePath)) {
@@ -206,7 +209,7 @@ router.get('/download/backups/:filename', (req, res) => {
 // Download export file or folder
 router.get('/download/exports/:filename', (req, res) => {
   const { filename } = req.params;
-  const exportDir = path.join(__dirname, '../exports');
+  const exportDir = path.join(__dirname, '../../exports');
   const itemPath = path.join(exportDir, filename);
 
   if (!fs.existsSync(itemPath)) {

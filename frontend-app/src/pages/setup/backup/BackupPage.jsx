@@ -6,7 +6,7 @@ import { Column } from "primereact/column";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
 import { Toast } from "primereact/toast";
-import { backupAPI } from "@/api/backupAPI";
+import { backupAPI } from "@/api/setup/backupAPI";
 
 const BackupPage = () => {
   const toast = useRef(null);
@@ -22,16 +22,20 @@ const BackupPage = () => {
 
   const tables = [
     { label: "Users", value: "users" },
-    { label: "Bank Accounts", value: "bank_accounts" },
-    { label: "Contacts", value: "contacts" },
-    { label: "Categories", value: "categories" },
     { label: "Units", value: "units" },
-    { label: "Items", value: "items" },
-    { label: "Bank Transactions", value: "bank_transactions" },
+    { label: "Categories", value: "categories" },
+    { label: "Products", value: "products" },
+    { label: "Contacts", value: "contacts" },
+    { label: "Accounts Heads", value: "accounts_heads" },
+    { label: "Bank Accounts", value: "bank_accounts" },
+    { label: "Bank Payments", value: "bank_payments" },
+    { label: "Accounts Ledger", value: "accounts_ledger" },
+    { label: "Accounts Ledger", value: "payments" },
+    { label: "Payment Details", value: "payment_details" },
     { label: "Purchase Orders Master", value: "po_master" },
-    { label: "Purchase Orders Child", value: "po_child" },
+    { label: "Purchase Orders Details", value: "po_details" },
     { label: "Sales Orders Master", value: "so_master" },
-    { label: "Sales Orders Child", value: "so_child" },
+    { label: "Sales Orders Details", value: "so_details" },
   ];
 
   useEffect(() => {

@@ -125,7 +125,7 @@ router.post("/accounts-payable-dues-suppliers-create", async (req, res) => {
             params: [
                 payment_id_new,
                 ref_no,
-                allocation_amount
+                payment_amount
             ],
         });
 
