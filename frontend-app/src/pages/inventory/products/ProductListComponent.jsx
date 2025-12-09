@@ -70,6 +70,10 @@ const ProductListComponent = ({ dataList, onEdit, onDelete }) => {
     return <ConvertedQtyComponent qty={rowData.stock_qty} rowData={rowData} />;
   };
 
+  const purchase_booking_qtyTemplate = (rowData) => {
+    return <ConvertedQtyComponent qty={rowData.purchase_booking_qty} rowData={rowData} />;
+  };
+
   const purchasePriceTemplate = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -112,6 +116,7 @@ const ProductListComponent = ({ dataList, onEdit, onDelete }) => {
   // Summary calculations for footer
   const totalItems = dataList.length;
   const totalStockQty = dataList.reduce((sum, item) => sum + (item.stock_qty ?? 0), 0);
+  const totalPurchaseBookingQty = dataList.reduce((sum, item) => sum + (item.purchase_booking_qty ?? 0), 0);
   const totalPurchaseValue = dataList.reduce((sum, item) => sum + ((item.purchase_price ?? 0) * (item.stock_qty ?? 0)), 0);
   const totalSalesValue = dataList.reduce((sum, item) => sum + ((item.sales_price ?? 0) * (item.stock_qty ?? 0)), 0);
   const totalMarginValue = dataList.reduce((sum, item) => sum + ((item.margin_price ?? 0) * (item.stock_qty ?? 0)), 0);
@@ -135,6 +140,13 @@ const ProductListComponent = ({ dataList, onEdit, onDelete }) => {
           sortable
           body={stock_qtyTemplate}
           footer={totalStockQty}
+        />
+        <Column
+          field="purchase_booking_qty"
+          header="Purchase Booking Qty"
+          sortable
+          body={purchase_booking_qtyTemplate}
+          footer={totalPurchaseBookingQty}
         />
         <Column
           field="purchase_price"

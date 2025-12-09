@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
@@ -25,7 +25,7 @@ const ProductComponent = ({
   const [disabledItemAdd, setDisabledItemAdd] = useState(true);
 
   useEffect(() => {
-    setSelectedFilter("po2so");
+    setSelectedFilter("allproducts");
   }, []);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const ProductComponent = ({
   useEffect(() => {
     if (!formData || formDataOrderItems.length === 0) return;
 
-    const extraCost = (formData.cost_amount || 0) + (formData.other_cost || 0);
+    const extraCost = (formData.order_cost || 0) + (formData.other_cost || 0);
 
     // Calculate grand total of all items (before extra cost distribution)
     const grandTotal = formDataOrderItems.reduce(
@@ -75,47 +75,14 @@ const ProductComponent = ({
     if (hasChanged) {
       setFormDataOrderItems(updatedItems);
     }
-  }, [formData?.cost_amount, formData?.other_cost, formDataOrderItems.length]);
+  }, [formData?.order_cost, formData?.other_cost, formDataOrderItems.length]);
 
-  // Compute available products for dropdown based on current order items
-  // - If item is fully used (stock_qty <= used_qty), exclude from dropdown
-  // - If item is partially used, show remaining stock
-  // - If item is not used, show full stock
-  const availableProducts = useMemo(() => {
-    return productList
-      .map((product) => {
-        // Find if this product is already added to the order
-        const addedItem = formDataOrderItems.find(
-          (orderItem) => orderItem.ref_id === product.ref_id
-        );
-
-        if (!addedItem) {
-          // Product not in order, show full stock
-          return product;
-        }
-
-        // Calculate remaining stock
-        const remainingStock = product.stock_qty - addedItem.product_qty;
-
-        if (remainingStock <= 0) {
-          // No stock remaining, exclude from dropdown
-          return null;
-        }
-
-        // Partial stock remaining, return product with adjusted stock
-        return {
-          ...product,
-          stock_qty: remainingStock,
-        };
-      })
-      .filter((product) => product !== null); // Remove null entries
-  }, [productList, formDataOrderItems]);
   const handleAddItem = () => {
     if (!selectedItem) return;
 
     // Check if item is already added
     const existingItem = formDataOrderItems.find(
-      (i) => i.ref_id === selectedItem
+      (i) => i.product_id === selectedItem
     );
     if (existingItem) {
       // Item already exists, do not add duplicate
@@ -123,31 +90,22 @@ const ProductComponent = ({
       return;
     }
 
-    const item = productList.find((i) => i.ref_id === selectedItem);
+    const item = productList.find((i) => i.product_id === selectedItem);
     if (!item) return;
 
-    // Stock quantity validation: if requested qty exceeds stock, use stock qty
-    let finalQty = itemQty || 1;
-    if (item.stock_qty < finalQty) {
-      console.warn(
-        `Requested quantity (${finalQty}) exceeds available stock (${item.stock_qty}). Adjusting to stock quantity.`
-      );
-      finalQty = item.stock_qty;
-    }
-
-    const itemAmount = finalQty * item.sales_price;
+    const itemAmount = (itemQty || 1) * item.purchase_price;
     const discountAmount = (item.discount_percent / 100) * itemAmount;
     const vatAmount = (item.vat_percent / 100) * itemAmount;
     const totalAmount = itemAmount - discountAmount + vatAmount;
-    const costPrice = totalAmount / finalQty;
+    const costPrice = totalAmount / (itemQty || 1);
 
     const newRow = {
-      so_details_id: generateGuid(), // Temporary ID for new items
-      so_master_id: "sgd",
-      product_id: item.product_id,
+      po_details_id: generateGuid(), // Temporary ID for new items
+      po_master_id: "sgd",
+      product_id: selectedItem,
       product_name: `${item.product_code} - ${item.product_name}`,
-      product_price: item.sales_price,
-      product_qty: finalQty,
+      product_price: item.purchase_price,
+      product_qty: itemQty || 1,
       discount_percent: item.discount_percent,
       discount_amount: discountAmount,
       vat_percent: item.vat_percent,
@@ -155,7 +113,7 @@ const ProductComponent = ({
       cost_price: costPrice,
       total_amount: totalAmount, // Will be re-calculated on edit save,
       product_note: itemNote,
-      ref_id: selectedItem, //from dropdown list
+      ref_id: "", //default empty
       unit_difference_qty: item.unit_difference_qty,
       small_unit_name: item.small_unit_name,
       large_unit_name: item.large_unit_name,
@@ -169,19 +127,8 @@ const ProductComponent = ({
 
   const onRowEditSave = (event) => {
     let { newData, index } = event;
-
-    // Find the product to get stock information
-    const item = productList.find((i) => i.ref_id === newData.ref_id);
-
-    // Stock quantity validation: if edited qty exceeds stock, use stock qty
-    if (item && item.stock_qty < newData.product_qty) {
-      console.warn(
-        `Requested quantity (${newData.product_qty}) exceeds available stock (${item.stock_qty}). Adjusting to stock quantity.`
-      );
-      newData.product_qty = item.stock_qty;
-    }
-
     // Calculate item_amount
+
     const itemAmount = newData.product_qty * newData.product_price;
     const discountAmount = (newData.discount_percent / 100) * itemAmount;
     const vatAmount = (newData.vat_percent / 100) * itemAmount;
@@ -356,15 +303,14 @@ const ProductComponent = ({
   return (
     <>
       {/* {JSON.stringify(productList)} */}
-
       <ConfirmDialog />
       {/* Child Editable Table */}
       <div className="flex align-items-center gap-2 mb-2">
         <Dropdown
           value={selectedItem}
-          options={availableProducts.map((item) => ({
-            label: `${item.product_code} - ${item.product_name}, Price: ${item.sales_price}, Discount%: ${item.discount_percent}, vat%: ${item.vat_percent}, Stock: ${item.stock_qty} ${item.small_unit_name}`,
-            value: item.ref_id,
+          options={productList.map((item) => ({
+            label: `${item.product_code} - ${item.product_name}, Price: ${item.purchase_price}, Discount%: ${item.discount_percent}, vat%: ${item.vat_percent}, Stock: ${item.stock_qty} ${item.small_unit_name}`,
+            value: item.product_id,
           }))}
           onChange={(e) => setSelectedItem(e.value)}
           placeholder="Select Item"
@@ -438,6 +384,7 @@ const ProductComponent = ({
           field="vat_percent"
           header="Vat%"
           body={vat_percent_BT}
+          editor={numberEditor}
           footer={vat_percent_FT}
         />
         <Column

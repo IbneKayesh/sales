@@ -1,9 +1,35 @@
 import { useState, useEffect } from "react";
-import { salesAPI } from "@/api/sales/salesAPI";
+import { purchaseAPI } from "@/api/purchase/purchaseAPI";
 import validate from "@/models/validator";
 import t_so_master from "@/models/sales/t_so_master.json";
 import { generateGuid } from "@/utils/guid";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
+
+const fromDataModel = {
+  so_master_id: "",
+  order_type: "",
+  order_no: "[SL-123456]",
+  order_date: new Date().toISOString().split("T")[0],
+  contact_id: "both",
+  ref_no: "No Ref",
+  order_note: "",
+  order_amount: 0,
+  discount_amount: 0,
+  vat_amount: 0,
+  vat_payable: 1,
+  order_cost: 0,
+  cost_payable: 1,
+  total_amount: 0,
+  payable_amount: 0,
+  paid_amount: 0,
+  due_amount: 0,
+  other_cost: 0,
+  is_paid: "Unpaid",
+  is_posted: 0,
+  is_completed: 0,
+  is_returned: 0,
+  ismodified: 0,
+};
 
 export const useSales = () => {
   const [salesList, setSalesList] = useState([]);
@@ -34,28 +60,7 @@ export const useSales = () => {
     { label: "MFS", value: "MFS" },
   ];
 
-  const [formDataOrder, setFormDataOrder] = useState({
-    so_master_id: "",
-    order_type: selectedSoType,
-    order_no: "[SL-123456]",
-    order_date: new Date().toISOString().split("T")[0],
-    contact_id: "",
-    ref_no: "No Ref",
-    order_note: "",
-    order_amount: 0,
-    discount_amount: 0,
-    vat_amount: 0,
-    cost_amount: 0,
-    additional_amount: 0,
-    total_amount: 0,
-    paid_amount: 0,
-    due_amount: 0,
-    other_cost: 0,
-    is_paid: "Unpaid",
-    is_posted: 0,
-    is_completed: 0,
-    ismodified: 0,
-  });
+  const [formDataOrder, setFormDataOrder] = useState(fromDataModel);
 
   const [formDataOrderItems, setFormDataOrderItems] = useState([]);
   const [formDataOrderPayments, setFormDataOrderPayments] = useState([]);
@@ -63,7 +68,7 @@ export const useSales = () => {
   const loadSales = async (resetModified = false) => {
     try {
       const data = await salesAPI.getAll(selectedSoType, selectedFilter);
-      console.log("data: " + JSON.stringify(data));
+      //console.log("data: " + JSON.stringify(data));
       setSalesList(data);
       if (resetModified) {
         setToastBox({
@@ -98,28 +103,7 @@ export const useSales = () => {
   };
 
   const handleClear = () => {
-    setFormDataOrder({
-      so_master_id: "",
-      order_type: selectedSoType,
-      order_no: "[SL-123456]",
-      order_date: new Date().toISOString().split("T")[0],
-      contact_id: "",
-      ref_no: "No Ref",
-      order_note: "",
-      order_amount: 0,
-      discount_amount: 0,
-      vat_amount: 0,
-      cost_amount: 0,
-      additional_amount: 0,
-      total_amount: 0,
-      paid_amount: 0,
-      due_amount: 0,
-      other_cost: 0,
-      is_paid: "Unpaid",
-      is_posted: 0,
-      is_completed: 0,
-      ismodified: 0,
-    });
+    setFormDataOrder(fromDataModel);
     setErrors({});
     setFormDataOrderItems([]);
     setFormDataOrderPayments([]);
@@ -132,6 +116,7 @@ export const useSales = () => {
 
   const handleAddNew = () => {
     handleClear();
+    setFormDataOrder((prev) => ({ ...prev, order_type: selectedSoType }));
     setCurrentView("form");
   };
 
@@ -209,7 +194,7 @@ export const useSales = () => {
 
     const newErrors = validate(formDataOrder, t_so_master);
     setErrors(newErrors);
-    console.log("handleSaveSales: " + JSON.stringify(formDataOrder));
+    console.log("handleSaveSales: " + JSON.stringify(newErrors));
 
     if (Object.keys(newErrors).length > 0) {
       setIsBusy(false);
@@ -245,7 +230,7 @@ export const useSales = () => {
         // Add new
         const fromDataNew = {
           ...formDataOrder,
-          so_master_id: generateGuid(),
+          po_master_id: generateGuid(),
           is_paid: paidStatus,
           details_create: formDataOrderItems,
           payments_create: formDataOrderPayments,
@@ -277,6 +262,7 @@ export const useSales = () => {
         detail: "Failed to save sales",
       });
     }
+
     setIsBusy(false);
   };
 

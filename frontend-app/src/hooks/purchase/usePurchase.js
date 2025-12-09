@@ -116,6 +116,7 @@ export const usePurchase = () => {
 
   const handleAddNew = () => {
     handleClear();
+    setFormDataOrder((prev) => ({ ...prev, order_type: selectedPoType }));
     setCurrentView("form");
   };
 
@@ -193,7 +194,7 @@ export const usePurchase = () => {
 
     const newErrors = validate(formDataOrder, t_po_master);
     setErrors(newErrors);
-    console.log("handleSavePurchase: " + JSON.stringify(formDataOrder));
+    console.log("handleSavePurchase: " + JSON.stringify(newErrors));
 
     if (Object.keys(newErrors).length > 0) {
       setIsBusy(false);
@@ -204,8 +205,8 @@ export const usePurchase = () => {
       formDataOrder.payable_amount === formDataOrder.due_amount
         ? "Unpaid"
         : formDataOrder.due_amount === 0
-          ? "Paid"
-          : "Partial";
+        ? "Paid"
+        : "Partial";
 
     try {
       if (formDataOrder.po_master_id) {
@@ -253,7 +254,6 @@ export const usePurchase = () => {
 
       //call update process
       await closingProcessAPI("Purchase", formDataOrder.order_no);
-
     } catch (error) {
       console.error("Error saving purchase:", error);
       setToastBox({

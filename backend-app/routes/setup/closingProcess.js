@@ -15,14 +15,6 @@ router.post("/update-invoice-due", async (req, res) => {
     return res.status(400).json({ error: "ID is required" });
   }
 
-  //1.1 Update payment balance from payment details allocation [due payment]
-  //1.2 Update Purchase Due Amount
-  //1.3 Update Sales Due Amount
-  //2.1 Update Purchase Payment status
-  //2.2 Update Sales Payment status
-  //3.1 Update Purchase Complete status
-  //3.2 Update Sales Complete status
-
   const scripts = [];
 
   scripts.push({
@@ -142,10 +134,6 @@ router.post("/update-balances", async (req, res) => {
     return res.status(400).json({ error: "ID is required" });
   }
 
-  //1.1 Set 0 balance for all contacts
-  //1.2 Update contact current balance from Purchase and Sales dues
-  //2.0 Update bank accounts from payments
-
   const scripts = [];
 
   scripts.push({
@@ -234,12 +222,7 @@ router.post("/update-product-stock", async (req, res) => {
   if (!id) {
     return res.status(400).json({ error: "Transaction ID is required" });
   }
-  //1.1 Update Purchase Details > Sales Qty from Sales Details
-  //0.0 Update actual order_qty in so_details when return raised
-  //1.2 Update Purchase Details > Stock Qty
-  //2.1 Reset all product stock
-  //2.2 Update all product stock from Purchase Details > Stock Qty
-
+  
   const scripts = [];
 
   // scripts.push({
@@ -260,7 +243,7 @@ router.post("/update-product-stock", async (req, res) => {
   // });
 
   scripts.push({
-    label: "1 of 4 :: Update Purchase Details > Sales Qty from Sales Details",
+    label: "1 of 5 :: Update Purchase Details > Sales Qty from Sales Details",
     sql: `WITH sales AS (
               SELECT pod.po_details_id,sum(sod.order_qty)sales_qty
               FROM po_details pod
@@ -283,7 +266,7 @@ router.post("/update-product-stock", async (req, res) => {
   });
 
   scripts.push({
-    label: "2 of 4 :: Update Purchase Details > Stock Qty",
+    label: "2 of 5 :: Update Purchase Details > Stock Qty",
     sql: `UPDATE po_details
           SET stock_qty = product_qty - (return_qty + sales_qty)
           WHERE stock_qty > 0`,
@@ -291,23 +274,52 @@ router.post("/update-product-stock", async (req, res) => {
   });
 
   scripts.push({
-    label: "3 of 4 :: Reset all product stock",
-    sql: `UPDATE products SET stock_qty = 0 WHERE stock_qty > 0`,
+    label: "3 of 5 :: Reset all product stock, booking qty",
+    sql: `UPDATE products SET stock_qty = 0, purchase_booking_qty = 0 WHERE stock_qty > 0 OR purchase_booking_qty > 0`,
     params: [],
   });
 
   scripts.push({
-    label: "4 of 4 :: Update all product stock from Purchase Details > Stock Qty",
+    label: "4 of 5 :: Update all product stock from Purchase Details > Stock Qty",
     sql: `WITH purchase AS (
                 SELECT pod.product_id, sum(pod.stock_qty)stock_qty
                 FROM po_details pod
-                WHERE pod.stock_qty > 0
+                JOIN po_master pom on pod.po_master_id = pom.po_master_id
+                WHERE pom.is_posted = 1
+                AND pod.stock_qty > 0
                 GROUP by pod.product_id
               )
               UPDATE products
               SET
                 stock_qty = (
                 SELECT stock_qty
+                FROM purchase
+                WHERE purchase.product_id = products.product_id
+              )
+              WHERE EXISTS (
+              SELECT 1
+                FROM purchase
+                WHERE purchase.product_id = products.product_id
+                )`,
+    params: [],
+  });
+
+  
+
+  scripts.push({
+    label: "5 of 5 :: Update all product purchase_booking_qty from Purchase Details > Product Qty",
+    sql: `WITH purchase AS (
+                SELECT pod.product_id, sum(pod.product_qty)purchase_booking_qty
+                FROM po_details pod
+                JOIN po_master pom on pod.po_master_id = pom.po_master_id
+                WHERE pom.is_posted = 0
+                AND pod.product_qty > 0
+                GROUP by pod.product_id
+              )
+              UPDATE products
+              SET
+                purchase_booking_qty = (
+                SELECT purchase_booking_qty
                 FROM purchase
                 WHERE purchase.product_id = products.product_id
               )

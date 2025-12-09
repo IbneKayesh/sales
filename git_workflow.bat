@@ -1,35 +1,66 @@
 @echo off
 cd /d %~dp0
-
+ 
 :START
+echo  ---- START ----
 echo Checking git status...
 git status
+goto MENU
 
-set /p choice1="Press A to add all changes or N to exit: "
-if /I "%choice1%"=="N" goto END
-if /I "%choice1%"=="A" goto ADD
+:MENU
+echo  ---- MENU ----
+echo Show choice as below-
+echo 1. Check git status
+echo 2. Add all changes
+echo 3. Add all changes, write commit message and push
+echo 4. Auto commit and push
+echo 5. Pull changes
+echo 0. Exit
 
+set /p choice="Enter your choice: "
+
+if %choice%==1 goto STATUS
+if %choice%==2 goto ADD
+if %choice%==3 goto COMMIT
+if %choice%==4 goto AUTO_COMMIT
+if %choice%==5 goto PULL
+if %choice%==0 goto END
 
 echo Invalid choice. Try again.
-goto START
+echo.
+goto MENU
+
+:STATUS
+git status
+echo  ---- STATUS Executed ----
+goto MENU
 
 :ADD
 git add .
-set /p choice2="Press C to commit now or N to exit: "
-if /I "%choice2%"=="N" goto END
-if /I "%choice2%"=="C" goto COMMIT
-
-echo Invalid choice. Try again.
-goto ADD
+echo  ---- ADD Executed ----
+goto MENU
 
 :COMMIT
 set /p msg="Write commit message: "
+if "%msg%"=="" goto COMMIT
+git add .
 git commit -m "%msg%"
 git push
-echo Changes pushed!
-goto END
+echo  ---- COMMIT Executed ----
+goto MENU
 
+
+:AUTO_COMMIT
+git add .
+git commit -m "Auto commit"
+git push
+echo  ---- AUTO COMMIT Executed ----
+goto MENU
+
+:PULL
+git pull
+echo  ---- PULL Executed ----
+goto MENU
 
 :END
 echo Process finished.
-pause

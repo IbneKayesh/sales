@@ -25,44 +25,18 @@ const PurchaseFormComponent = ({
   setFormDataOrderPayments,
 }) => {
   const [editingRows, setEditingRows] = useState([]);
-  const [discountPayable, setDiscountPayable] = useState(true);
-  const [vatPayable, setVatPayable] = useState(true);
-  const [otherCostPayable, setOtherCostPayable] = useState(true);
+  const [payableNote, setPayableNote] = useState("");
 
-  //based on formData.payable_note set discountPayable, vatPayable, otherCostPayable
   useEffect(() => {
-    if (formData.payable_note) {
-      setDiscountPayable(formData.payable_note.includes("Discount"));
-      setVatPayable(formData.payable_note.includes("Vat"));
-      setOtherCostPayable(formData.payable_note.includes("Other Cost"));
+    let note = "With ";
+    if (formData.vat_payable) {
+      note += "Vat";
     }
-  }, []);
-
-  const handlePayableNoteChange = (value) => {
-    let newDiscount = discountPayable;
-    let newVat = vatPayable;
-    let newOther = otherCostPayable;
-
-    // Toggle the selected switch
-    if (value === "Discount") newDiscount = !discountPayable;
-    if (value === "Vat") newVat = !vatPayable;
-    if (value === "Other Cost") newOther = !otherCostPayable;
-
-    // Update states
-    setDiscountPayable(newDiscount);
-    setVatPayable(newVat);
-    setOtherCostPayable(newOther);
-
-    // Build final note string
-    const notes = ["with"];
-    if (newDiscount) notes.push("Discount");
-    if (newVat) notes.push("Vat");
-    if (newOther) notes.push("Other Cost");
-
-    const finalNote = notes.join(", ");
-
-    onChange("payable_note", finalNote);
-  };
+    if (formData.cost_payable) {
+      note += " Cost";
+    }
+    setPayableNote(note);
+  }, [formData.vat_payable, formData.cost_payable]);
 
   const [formDataPayment, setFormDataPayment] = useState({
     payment_id: "",
@@ -87,12 +61,11 @@ const PurchaseFormComponent = ({
       0
     );
     const total_amount =
-      order_amount - discount_amount + vat_amount + (formData.cost_amount || 0);
+      order_amount - discount_amount + vat_amount + (formData.order_cost || 0);
 
-    let payable_amount = order_amount;
-    if (discountPayable) payable_amount -= discount_amount;
-    if (vatPayable) payable_amount += vat_amount;
-    if (otherCostPayable) payable_amount += formData.cost_amount;
+    let payable_amount = order_amount - discount_amount;
+    if (formData.vat_payable) payable_amount += vat_amount;
+    if (formData.cost_payable) payable_amount += formData.order_cost;
 
     const paidAmount = formDataOrderPayments.reduce(
       (sum, item) => sum + (item.payment_amount || 0),
@@ -110,12 +83,11 @@ const PurchaseFormComponent = ({
     onChange("due_amount", due_amount);
   }, [
     formDataOrderItems,
-    formData.cost_amount,
+    formData.order_cost,
     formData.paid_amount,
-    discountPayable,
-    vatPayable,
-    otherCostPayable,
     formDataOrderPayments,
+    formData.vat_payable,
+    formData.cost_payable,
   ]);
 
   const handleAddPayment = () => {
@@ -277,50 +249,47 @@ const PurchaseFormComponent = ({
                 </div>
 
                 <div className="flex justify-content-between">
-                  <span onClick={() => handlePayableNoteChange("Discount")}>
-                    <input type="checkbox" checked={discountPayable} readOnly />
-                    {t_po_master.discount_amount.name}
-                  </span>
+                  {t_po_master.discount_amount.name}
                   <span className="font-bold">
                     {formData.discount_amount}/-
                   </span>
                 </div>
 
                 <div className="flex justify-content-between">
-                  <span onClick={() => handlePayableNoteChange("Vat")}>
-                    <input type="checkbox" checked={vatPayable} readOnly />
+                  <span onClick={() => onChange("vat_payable", !formData.vat_payable)}>
+                    <input type="checkbox" checked={formData.vat_payable} readOnly />
                     {t_po_master.vat_amount.name}
                   </span>
                   <span className="font-bold">{formData.vat_amount}/-</span>
                 </div>
 
                 <div className="flex justify-content-between">
-                  <span onClick={() => handlePayableNoteChange("Other Cost")}>
+                  <span onClick={() => onChange("cost_payable", !formData.cost_payable)}>
                     <input
                       type="checkbox"
-                      checked={otherCostPayable}
+                      checked={formData.cost_payable}
                       readOnly
                     />
-                    {t_po_master.cost_amount.name}
+                    {t_po_master.order_cost.name}
                   </span>
                   <InputNumber
-                    name="cost_amount"
-                    value={formData.cost_amount}
-                    onValueChange={(e) => onChange("cost_amount", e.value)}
+                    name="order_cost"
+                    value={formData.order_cost}
+                    onValueChange={(e) => onChange("order_cost", e.value)}
                     mode="currency"
                     currency="BDT"
                     locale="en-US"
-                    className={`${errors.cost_amount ? "p-invalid" : ""}`}
+                    className={`${errors.order_cost ? "p-invalid" : ""}`}
                     inputStyle={{
                       width: "100%",
                       padding: "3px",
-                      color: formData.cost_amount > 0 ? "red" : "",
+                      color: formData.order_cost > 0 ? "red" : "",
                       backgroundColor:
-                        formData.cost_amount > 0 ? "#f9fae9ff" : "",
+                        formData.order_cost > 0 ? "#f9fae9ff" : "",
                     }}
                   />
-                  {errors.cost_amount && (
-                    <small className="text-red-500">{errors.cost_amount}</small>
+                  {errors.order_cost && (
+                    <small className="text-red-500">{errors.order_cost}</small>
                   )}
                 </div>
 
@@ -331,7 +300,7 @@ const PurchaseFormComponent = ({
 
                 <div className="flex justify-content-between">
                   <span className="text-sm text-blue-500">
-                    {t_po_master.payable_amount.name} {formData.payable_note}
+                    {t_po_master.payable_amount.name} {payableNote}
                   </span>
                   <span className="font-bold">{formData.payable_amount}/-</span>
                 </div>
@@ -385,9 +354,8 @@ const PurchaseFormComponent = ({
                       value={formDataPayment.payment_mode}
                       options={paymentOptions}
                       onChange={(e) => handlePaymentChange(e)}
-                      className={`flex-1 ${
-                        errors.payment_mode ? "p-invalid" : ""
-                      }`}
+                      className={`flex-1 ${errors.payment_mode ? "p-invalid" : ""
+                        }`}
                       placeholder={`Select payment mode`}
                       optionLabel="label"
                       optionValue="value"
@@ -396,9 +364,8 @@ const PurchaseFormComponent = ({
                       name="payment_amount"
                       value={formDataPayment.payment_amount}
                       onValueChange={(e) => handlePaymentChange(e)}
-                      className={`flex-1 ${
-                        errors.payment_amount ? "p-invalid" : ""
-                      }`}
+                      className={`flex-1 ${errors.payment_amount ? "p-invalid" : ""
+                        }`}
                       placeholder="Payment Amount"
                       inputStyle={{ width: "100%" }}
                     />
@@ -413,9 +380,8 @@ const PurchaseFormComponent = ({
                       name="payment_note"
                       value={formDataPayment.payment_note}
                       onChange={(e) => handlePaymentChange(e)}
-                      className={`flex-1 ${
-                        errors.payment_note ? "p-invalid" : ""
-                      }`}
+                      className={`flex-1 ${errors.payment_note ? "p-invalid" : ""
+                        }`}
                       placeholder="Payment Note"
                     />
                     <Button
@@ -438,7 +404,8 @@ const PurchaseFormComponent = ({
                 >
                   <Column field="payment_head" header="Head" />
                   <Column field="payment_mode" header="Mode" />
-                  <Column field="payment_amount" header="Paid" />
+                  <Column field="payment_amount" header="Payment" />
+                  <Column field="order_amount" header="Paid" />
                   <Column field="payment_note" header="Note" />
                   <Column
                     header="Actions"
@@ -460,8 +427,8 @@ const PurchaseFormComponent = ({
                 formData.po_master_id
                   ? "Update"
                   : formData.is_posted
-                  ? "Save with Posted"
-                  : "Save as Draft"
+                    ? "Save with Posted"
+                    : "Save as Draft"
               }
               icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
               severity="success"

@@ -46,7 +46,7 @@ export const useProducts = () => {
       console.log("filter: " + filter);
       if (filter == "po2so") {
         const data = await productsAPI.getAllPo2So(filter);
-        console.log("po2so data: " + JSON.stringify(data));
+        //console.log("po2so data: " + JSON.stringify(data));
         setProductList(data);
       } else {
         const data = await productsAPI.getAll(filter);

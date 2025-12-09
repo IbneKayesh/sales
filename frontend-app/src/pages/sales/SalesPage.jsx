@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useSales } from "@/hooks/sales/useSales";
-import SalesListComponent from "./SalesListComponent";
-import SalesFormComponent from "./SalesFormComponent";
+import { usePurchase } from "@/hooks/purchase/usePurchase";
+import OrderListComponent from "./OrderListComponent";
+import OrderFormComponent from "./OrderFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
@@ -10,7 +10,7 @@ import { Dropdown } from "primereact/dropdown";
 const SalesPage = () => {
   const toast = useRef(null);
   const {
-    salesList,
+    purchaseList,
     toastBox,
     isBusy,
     currentView,
@@ -25,20 +25,20 @@ const SalesPage = () => {
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditSales,
-    handleDeleteSales,
+    handleEditPurchase,
+    handleDeletePurchase,
     handleRefresh,
-    handleSaveSales,
-    selectedSoType,
-    setSelectedSoType,
+    handleSavePurchase,
+    selectedPoType,
+    setSelectedPoType,
     selectedFilter,
     setSelectedFilter,
-    soTypeOptions,
+    poTypeOptions,
     filterOptions,
     paymentOptions,
-    handleSoTypeChange,
+    handlePoTypeChange,
     handleFilterChange,
-  } = useSales();
+  } = usePurchase();
 
   useEffect(() => {
     if (toastBox && toast.current) {
@@ -58,18 +58,18 @@ const SalesPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? `${selectedSoType} List`
-            : formDataOrder?.so_master_id
+            ? `${selectedPoType} List`
+            : formDataOrder?.po_master_id
             ? `Edit ${formDataOrder?.order_type}: ${formDataOrder?.order_no}`
-            : `New ${selectedSoType}`}
+            : `New ${selectedPoType}`}
         </h3>
 
         {isList ? (
           <div className="flex gap-2">
             <Dropdown
-              value={selectedSoType}
-              options={soTypeOptions}
-              onChange={(e) => handleSoTypeChange(e.value)}
+              value={selectedPoType}
+              options={poTypeOptions}
+              onChange={(e) => handlePoTypeChange(e.value)}
               placeholder="Select Filter"
               optionLabel="label"
               optionValue="value"
@@ -110,13 +110,13 @@ const SalesPage = () => {
       <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <SalesListComponent
-            dataList={salesList}
-            onEdit={handleEditSales}
-            onDelete={handleDeleteSales}
+          <OrderListComponent
+            dataList={purchaseList}
+            onEdit={handleEditPurchase}
+            onDelete={handleDeletePurchase}
           />
         ) : (
-          <SalesFormComponent
+          <OrderFormComponent
             isBusy={isBusy}
             errors={errors}
             setErrors={setErrors}
@@ -125,7 +125,7 @@ const SalesPage = () => {
             formDataOrderItems={formDataOrderItems}
             setFormDataOrderItems={setFormDataOrderItems}
             onChange={handleChange}
-            onSave={handleSaveSales}
+            onSave={handleSavePurchase}
             paymentOptions={paymentOptions}
             formDataOrderPayments={formDataOrderPayments}
             setFormDataOrderPayments={setFormDataOrderPayments}

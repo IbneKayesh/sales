@@ -3,25 +3,25 @@ import { InputNumber } from "primereact/inputnumber";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { Checkbox } from "primereact/checkbox";
-import t_so_master from "@/models/sales/t_so_master.json";
+import t_po_master from "@/models/purchase/t_po_master.json";
 import { useContacts } from "@/hooks/setup/useContacts";
 
 export const EntryComponent = ({ errors, formData, onChange }) => {
-  const { contactCustomerList } = useContacts();
+  const { contactSupplierList } = useContacts();
 
   return (
     <>
       <div className="grid">
         <div className="col-12 md:col-2">
           <label htmlFor="order_no" className="block text-900 font-medium mb-2">
-            {t_so_master.order_no.name} <span className="text-red-500">*</span>
+            {t_po_master.order_no.name} <span className="text-red-500">*</span>
           </label>
           <InputText
             name="order_no"
             value={formData.order_no}
             onChange={(e) => onChange("order_no", e.target.value)}
             className={`w-full ${errors.order_no ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_so_master.order_no.name}`}
+            placeholder={`Enter ${t_po_master.order_no.name}`}
             disabled
           />
           {errors.order_no && (
@@ -33,7 +33,7 @@ export const EntryComponent = ({ errors, formData, onChange }) => {
             htmlFor="order_date"
             className="block text-900 font-medium mb-2"
           >
-            {t_so_master.order_date.name}
+            {t_po_master.order_date.name}
             <span className="text-red-500">*</span>
           </label>
           <Calendar
@@ -47,7 +47,7 @@ export const EntryComponent = ({ errors, formData, onChange }) => {
             }
             className={`w-full ${errors.order_date ? "p-invalid" : ""}`}
             dateFormat="yy-mm-dd"
-            placeholder={`Select ${t_so_master.order_date.name}`}
+            placeholder={`Select ${t_po_master.order_date.name}`}
           />
           {errors.order_date && (
             <small className="mb-3 text-red-500">{errors.order_date}</small>
@@ -58,16 +58,16 @@ export const EntryComponent = ({ errors, formData, onChange }) => {
             htmlFor="contact_id"
             className="block text-900 font-medium mb-2"
           >
-            {t_so_master.contact_id.name}
+            {t_po_master.contact_id.name}
             <span className="text-red-500">*</span>
           </label>
           <Dropdown
             name="contact_id"
             value={formData.contact_id}
-            options={contactCustomerList}
+            options={contactSupplierList}
             onChange={(e) => onChange("contact_id", e.value)}
             className={`w-full ${errors.contact_id ? "p-invalid" : ""}`}
-            placeholder={`Select ${t_so_master.contact_id.name}`}
+            placeholder={`Select ${t_po_master.contact_id.name}`}
             optionLabel="label"
             optionValue="value"
             filter
@@ -79,14 +79,14 @@ export const EntryComponent = ({ errors, formData, onChange }) => {
         </div>
         <div className="col-12 md:col-2">
           <label htmlFor="ref_no" className="block text-900 font-medium mb-2">
-            {t_so_master.ref_no.name}
+            {t_po_master.ref_no.name}
           </label>
           <InputText
             name="ref_no"
             value={formData.ref_no}
             onChange={(e) => onChange("ref_no", e.target.value)}
             className={`w-full ${errors.ref_no ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_so_master.ref_no.name}`}
+            placeholder={`Enter ${t_po_master.ref_no.name}`}
           />
           {errors.ref_no && (
             <small className="mb-3 text-red-500">{errors.ref_no}</small>
@@ -97,14 +97,14 @@ export const EntryComponent = ({ errors, formData, onChange }) => {
             htmlFor="order_note"
             className="block text-900 font-medium mb-2"
           >
-            {t_so_master.order_note.name}
+            {t_po_master.order_note.name}
           </label>
           <InputText
             name="order_note"
             value={formData.order_note}
             onChange={(e) => onChange("order_note", e.target.value)}
             className={`w-full ${errors.order_note ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_so_master.order_note.name}`}
+            placeholder={`Enter ${t_po_master.order_note.name}`}
           />
           {errors.order_note && (
             <small className="mb-3 text-red-500">{errors.order_note}</small>
@@ -115,7 +115,7 @@ export const EntryComponent = ({ errors, formData, onChange }) => {
             htmlFor="is_posted"
             className="block text-900 font-medium mb-2"
           >
-            {t_so_master.is_posted.name}
+            {t_po_master.is_posted.name}
           </label>
 
           <Checkbox
