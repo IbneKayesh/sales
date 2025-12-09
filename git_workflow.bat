@@ -2,12 +2,14 @@
 cd /d %~dp0
  
 :START
+color 0b
 echo  ---- START ----
 echo Checking git status...
 git status
 goto MENU
 
 :MENU
+color 0A
 echo  ---- MENU ----
 echo Show choice as below-
 echo 1. Check git status
@@ -31,16 +33,19 @@ echo.
 goto MENU
 
 :STATUS
+color 0b
 git status
 echo  ---- STATUS Executed ----
 goto MENU
 
 :ADD
+color 0E
 git add .
 echo  ---- ADD Executed ----
 goto MENU
 
 :COMMIT
+color 0D
 set /p msg="Write commit message: "
 if "%msg%"=="" goto COMMIT
 git add .
@@ -58,9 +63,11 @@ echo  ---- AUTO COMMIT Executed ----
 goto MENU
 
 :PULL
+color 09
 git pull
 echo  ---- PULL Executed ----
 goto MENU
 
 :END
+color 0C
 echo Process finished.
