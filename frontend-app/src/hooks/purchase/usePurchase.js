@@ -7,7 +7,7 @@ import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
 const fromDataModel = {
   po_master_id: "",
-  order_type: selectedPoType,
+  order_type: "",
   order_no: "[SL-123456]",
   order_date: new Date().toISOString().split("T")[0],
   contact_id: "both",
