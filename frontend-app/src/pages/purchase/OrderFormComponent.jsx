@@ -11,7 +11,7 @@ import { generateGuid } from "@/utils/guid";
 import { EntryComponent } from "./EntryComponent";
 import ProductComponent from "./ProductComponent";
 
-const PurchaseFormComponent = ({
+const OrderFormComponent = ({
   isBusy,
   errors,
   setErrors,
@@ -447,4 +447,4 @@ const PurchaseFormComponent = ({
   );
 };
 
-export default PurchaseFormComponent;
+export default OrderFormComponent;

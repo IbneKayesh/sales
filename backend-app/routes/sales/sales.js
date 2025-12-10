@@ -55,7 +55,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-//create new purchase master, details and payments
+//create new sales master, details and payments
 router.post("/", async (req, res) => {
   try {
     const {
@@ -69,17 +69,18 @@ router.post("/", async (req, res) => {
       order_amount,
       discount_amount,
       vat_amount,
-      cost_amount,
-      additional_amount,
+      vat_payable,
+      order_cost,
+      cost_payable,
       total_amount,
       payable_amount,
       paid_amount,
-      payable_note,
       due_amount,
       other_cost,
       is_paid,
       is_posted,
       is_completed,
+      is_returned,
       details_create,
       payments_create,
     } = req.body;
@@ -119,27 +120,17 @@ router.post("/", async (req, res) => {
     const order_no_new = `${prefix}-${date_part}-${max_seq_no}`;
     console.log("New Transaction No: " + order_no_new);
 
-    //fetch default bank account
-    const bank_account = await dbGet(
-      "SELECT * FROM bank_accounts WHERE is_default = 1",
-      []
-    );
-    if (!bank_account) {
-      return res.status(400).json({ error: "Default bank account not found" });
-    }
-    const bank_account_id = bank_account.account_id;
-
     //build scripts
     const scripts = [];
 
-    //Insert Master
+    //Insert order Master
     scripts.push({
-      label: "Insert Sales Master " + order_no_new,
+      label: "1 of 2 :: Insert Sales Master " + order_no_new,
       sql: `INSERT INTO so_master (so_master_id, order_type, order_no, order_date, contact_id, ref_no,
-      order_note, order_amount, discount_amount, vat_amount, cost_amount, additional_amount, total_amount,
-      payable_amount, paid_amount, payable_note, due_amount, other_cost,
-      is_paid, is_posted, is_completed)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      order_note, order_amount, discount_amount, vat_amount, vat_payable, order_cost, cost_payable,
+      total_amount, payable_amount, paid_amount, due_amount, other_cost,
+      is_paid, is_posted, is_completed, is_returned)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       params: [
         so_master_id,
         order_type,
@@ -151,29 +142,30 @@ router.post("/", async (req, res) => {
         order_amount || 0,
         discount_amount || 0,
         vat_amount || 0,
-        cost_amount || 0,
-        additional_amount || 0,
+        vat_payable || 0,
+        order_cost || 0,
+        cost_payable || 0,
         total_amount || 0,
         payable_amount || 0,
         paid_amount || 0,
-        payable_note,
         due_amount || 0,
         other_cost || 0,
         is_paid || "Unpaid",
         is_posted || 0,
         is_completed || 0,
+        is_returned || 0,
       ],
     });
-    //Insert Details
+    //Insert order Details
     for (const detail of details_create) {
       scripts.push({
-        label: "Insert Sales Detail " + order_no_new,
+        label: "2 of 2 :: Insert Sales Detail " + order_no_new,
         sql: `INSERT INTO so_details (so_details_id, so_master_id, product_id, product_price, product_qty,
         discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount,
-        product_note, ref_id, return_qty, order_qty)
+        product_note, ref_id, return_qty, sales_qty)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
-          detail.so_details_id,
+          detail.po_details_id,
           so_master_id,
           detail.product_id,
           detail.product_price || 0,
@@ -191,48 +183,23 @@ router.post("/", async (req, res) => {
         ],
       });
     }
-    //Insert Payments
-    for (const payment of payments_create) {
-      scripts.push({
-        label: "Insert Sales Payment " + order_no_new,
-        sql: `INSERT INTO bank_payments (payment_id, account_id, payment_head, payment_mode, payment_date,
-        contact_id, ref_no, payment_amount, payment_note)
-        VALUES (?, ?, ?, ?, ?,
-        ?, ?, ?, ?)`,
-        params: [
-          payment.payment_id,
-          bank_account_id,
-          order_type,
-          payment.payment_mode,
-          order_date,
-          contact_id,
-          order_no_new,
-          payment.payment_amount || 0,
-          payment.payment_note,
-        ],
-      });
-    }
-    //Other cost goes to expesnes with default contact account
-    if (other_cost > 0) {
-      scripts.push({
-        label: "Insert Sales Other Cost " + order_no_new,
-        sql: `INSERT INTO bank_payments (payment_id, account_id, payment_head, payment_mode, payment_date,
-        contact_id, ref_no, payment_amount, payment_note)
-        VALUES (?, ?, ?, ?, ?,
-        ?, ?, ?, ?)`,
-        params: [
-          generateGuid(),
-          bank_account_id,
-          `${order_type} Expenses`,
-          "Cash",
-          order_date,
-          "0",
-          order_no_new,
-          other_cost,
-          "Other Cost",
-        ],
-      });
-    }
+
+    //payment scripts
+    const paymentScripts = paymentScriptsGen(
+      payable_amount,
+      other_cost,
+      vat_payable,
+      vat_amount,
+      cost_payable,
+      order_cost,
+      order_no_new,
+      order_date,
+      order_type,
+      contact_id,
+      payments_create
+    );
+
+    scripts.push(...paymentScripts);
 
     const results = await runScriptsSequentially(scripts, {
       useTransaction: true,
@@ -460,6 +427,150 @@ router.post("/update", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+
+function paymentScriptsGen(
+  payable_amount,
+  other_cost,
+  vat_payable,
+  vat_amount,
+  cost_payable,
+  order_cost,
+  order_no_new,
+  order_date,
+  order_type,
+  contact_id,
+  payments_create
+) {
+  const scripts = [];
+
+  //Insert Sales Ledger Product :: Customer Account Debit
+  scripts.push({
+    label:
+      "1 of 6 :: Insert Sales Ledger Product :: Customer Account Debit " +
+      order_no_new,
+    sql: `INSERT INTO accounts_ledger (ledger_id, contact_id, payment_head, payment_mode, payment_date,
+      ref_no, debit_amount, credit_amount, payment_note)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    params: [
+      generateGuid(),
+      contact_id,
+      order_type,
+      "Product",
+      order_date,
+      order_no_new,
+      payable_amount || 0,
+      0,
+      "Sales Product - Debit",
+    ],
+  });
+
+  //Insert Sales Ledger Product Expense :: Expense Account Credit
+  const other_cost_amount = other_cost || 0;
+  const vat_payable_amount = vat_payable ? 0 : vat_amount || 0; //ignore vat amount if vat payable
+  const cost_payable_amount = cost_payable ? 0 : order_cost || 0; //ignore cost payable amount if cost payable
+  const total_other_cost =
+    other_cost_amount + vat_payable_amount + cost_payable_amount;
+
+  if (other_cost_amount > 0) {
+    scripts.push({
+      label:
+        "2 of 6 :: Insert Sales Ledger Product Expense :: Expense Account Credit " +
+        order_no_new,
+      sql: `INSERT INTO accounts_ledger (ledger_id, contact_id, payment_head, payment_mode, payment_date,
+      ref_no, debit_amount, credit_amount, payment_note)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      params: [
+        generateGuid(),
+        "expense",
+        order_type,
+        "Sales Expense",
+        order_date,
+        order_no_new,
+        0,
+        total_other_cost,
+        "Sales Product - Credit",
+      ],
+    });
+  }
+
+  //Insert Payment Master :: Supplier Account Credit
+  //Insert Payment Master :: Cash Account Debit
+  for (const payment of payments_create) {
+    const payment_id_new = generateGuid();
+
+    // payment master
+    scripts.push({
+      label: "3 of 6 :: Insert Sales Payment " + order_no_new,
+      sql: `INSERT INTO payments (payment_id, contact_id, payment_head, payment_mode, payment_date,
+        payment_amount, balance_amount, payment_note, ref_no)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      params: [
+        payment_id_new,
+        contact_id,
+        order_type,
+        payment.payment_mode,
+        order_date,
+        payment.payment_amount || 0,
+        0,
+        payment.payment_note,
+        order_no_new,
+      ],
+    });
+
+    //payment details allocation
+    scripts.push({
+      label: "4 of 6 :: Insert Sales Payment Details" + order_no_new,
+      sql: `INSERT INTO payment_details (payment_id, ref_no, allocation_amount)
+        VALUES (?, ?, ?)`,
+      params: [payment_id_new, order_no_new, payment.payment_amount || 0],
+    });
+
+    //supplier account credit
+    scripts.push({
+      label:
+        "5 of 6 :: Insert Sales Ledger Payment :: Supplier Account Credit " +
+        order_no_new,
+      sql: `INSERT INTO accounts_ledger (ledger_id, contact_id, payment_head, payment_mode, payment_date,
+      ref_no, debit_amount, credit_amount, payment_note)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      params: [
+        generateGuid(),
+        contact_id,
+        order_type,
+        "Product Payment",
+        order_date,
+        order_no_new,
+        0,
+        payment.payment_amount || 0,
+        payment.payment_note,
+      ],
+    });
+
+    //cash account debit
+    scripts.push({
+      label:
+        "6 of 6 :: Insert Sales Ledger Payment :: Cash Account Debit " + order_no_new,
+      sql: `INSERT INTO accounts_ledger (ledger_id, contact_id, payment_head, payment_mode, payment_date,
+      ref_no, debit_amount, credit_amount, payment_note)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      params: [
+        generateGuid(),
+        "cash",
+        order_type,
+        "Product Payment",
+        order_date,
+        order_no_new,
+        payment.payment_amount || 0,
+        0,
+        payment.payment_note,
+      ],
+    });
+  }
+
+  return scripts;
+}
 
 //get sales details by so_master_id
 router.get("/details/:soMasterId", async (req, res) => {

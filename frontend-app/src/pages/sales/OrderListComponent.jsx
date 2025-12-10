@@ -4,7 +4,7 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { Badge } from "primereact/badge";
 
-const PurchaseListComponent = ({ dataList, onEdit, onDelete }) => {
+const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.order_no}"?`,
@@ -257,4 +257,4 @@ const PurchaseListComponent = ({ dataList, onEdit, onDelete }) => {
   );
 };
 
-export default PurchaseListComponent;
+export default OrderListComponent;

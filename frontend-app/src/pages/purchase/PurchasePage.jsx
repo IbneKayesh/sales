@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { usePurchase } from "@/hooks/purchase/usePurchase";
-import PurchaseListComponent from "./PurchaseListComponent";
-import PurchaseFormComponent from "./PurchaseFormComponent";
+import OrderListComponent from "./OrderListComponent";
+import OrderFormComponent from "./OrderFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
@@ -110,13 +110,13 @@ const PurchasePage = () => {
       <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <PurchaseListComponent
+          <OrderListComponent
             dataList={purchaseList}
             onEdit={handleEditPurchase}
             onDelete={handleDeletePurchase}
           />
         ) : (
-          <PurchaseFormComponent
+          <OrderFormComponent
             isBusy={isBusy}
             errors={errors}
             setErrors={setErrors}

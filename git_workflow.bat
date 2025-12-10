@@ -2,13 +2,17 @@
 cd /d %~dp0
  
 :START
-echo  ---- START ----
+color 0b
+echo  -=-=-=- START -=-=-=-
 echo Checking git status...
 git status
 goto MENU
 
 :MENU
-echo  ---- MENU ----
+color 0A
+echo.
+echo.
+echo  -=-=-=- MENU -=-=-=-
 echo Show choice as below-
 echo 1. Check git status
 echo 2. Add all changes
@@ -16,6 +20,7 @@ echo 3. Add all changes, write commit message and push
 echo 4. Auto commit and push
 echo 5. Pull changes
 echo 0. Exit
+echo.
 
 set /p choice="Enter your choice: "
 

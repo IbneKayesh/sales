@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { purchaseAPI } from "@/api/purchase/purchaseAPI";
+import { salesAPI } from "@/api/sales/salesAPI";
 import validate from "@/models/validator";
 import t_so_master from "@/models/sales/t_so_master.json";
 import { generateGuid } from "@/utils/guid";
@@ -146,7 +146,7 @@ export const useSales = () => {
     setFormDataOrder(sales);
     setCurrentView("form");
 
-    //load saved order items, by po_master_id
+    //load saved order items, by so_master_id
     loadSalesDetails(sales.so_master_id);
     //load saved order payments, by order_no
     loadSalesPayments(sales.order_no);
@@ -205,8 +205,8 @@ export const useSales = () => {
       formDataOrder.payable_amount === formDataOrder.due_amount
         ? "Unpaid"
         : formDataOrder.due_amount === 0
-        ? "Paid"
-        : "Partial";
+          ? "Paid"
+          : "Partial";
 
     try {
       if (formDataOrder.so_master_id) {
@@ -230,7 +230,7 @@ export const useSales = () => {
         // Add new
         const fromDataNew = {
           ...formDataOrder,
-          po_master_id: generateGuid(),
+          so_master_id: generateGuid(),
           is_paid: paidStatus,
           details_create: formDataOrderItems,
           payments_create: formDataOrderPayments,
@@ -262,7 +262,6 @@ export const useSales = () => {
         detail: "Failed to save sales",
       });
     }
-
     setIsBusy(false);
   };
 

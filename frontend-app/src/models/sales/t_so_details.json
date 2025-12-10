@@ -79,8 +79,8 @@
     "type": "number",
     "required": false
   },
-  "order_qty": {
-    "name": "Order Qty",
+  "sales_qty": {
+    "name": "Sales Qty",
     "type": "number",
     "required": false
   }
