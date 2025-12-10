@@ -23,6 +23,8 @@ const ContactPage = () => {
     handleDeleteContact,
     handleRefresh,
     handleSaveContact,
+    handleLedger,
+    contactsLedger,
   } = useContacts();
 
   useEffect(() => {
@@ -86,6 +88,8 @@ const ContactPage = () => {
             dataList={contactList}
             onEdit={handleEditContact}
             onDelete={handleDeleteContact}
+            onLedger={handleLedger}
+            contactsLedger={contactsLedger}
           />
         ) : (
           <ContactFormComponent

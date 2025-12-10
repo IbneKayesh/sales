@@ -16,4 +16,5 @@ delete: (contact) => apiRequest('/setup/contacts/delete', {
     method: 'POST',
     body: JSON.stringify(contact),
 }),
+getContactLedger: (contact_id) => apiRequest(`/setup/contacts/ledger/${contact_id}`),
 }

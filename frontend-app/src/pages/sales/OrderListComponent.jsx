@@ -219,7 +219,7 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
   };
 
   return (
-    <div className="p-1">
+    <>
       <ConfirmDialog />
       <DataTable
         value={dataList}
@@ -253,7 +253,7 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
           style={{ width: "120px" }}
         />
       </DataTable>
-    </div>
+    </>
   );
 };
 

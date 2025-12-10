@@ -88,6 +88,7 @@ const initTables = () => {
         contact_address TEXT,
         contact_type TEXT DEFAULT 'Customer',
         current_balance REAL DEFAULT 0,
+        allow_due BOOLEAN DEFAULT 1,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )

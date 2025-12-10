@@ -9,7 +9,6 @@ git status
 goto MENU
 
 :MENU
-color 0A
 echo.
 echo.
 echo  -=-=-=- MENU -=-=-=-

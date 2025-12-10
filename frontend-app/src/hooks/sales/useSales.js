@@ -25,7 +25,7 @@ const fromDataModel = {
   due_amount: 0,
   other_cost: 0,
   is_paid: "Unpaid",
-  is_posted: 0,
+  is_posted: 1,
   is_completed: 0,
   is_returned: 0,
   ismodified: 0,
@@ -132,6 +132,7 @@ export const useSales = () => {
 
   const loadSalesPayments = async (order_no) => {
     try {
+      //console.log("order_no: " + order_no);
       const data = await salesAPI.getPayments(order_no);
       //console.log("loadSalesPayments: " + JSON.stringify(data));
       setFormDataOrderPayments(data);

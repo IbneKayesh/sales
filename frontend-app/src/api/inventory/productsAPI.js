@@ -18,4 +18,5 @@ export const productsAPI = {
     method: 'POST',
     body: JSON.stringify(product),
   }),
+  getProductLedger: (id) => apiRequest(`/inventory/products/ledger/${id}`),
 };

@@ -4,13 +4,7 @@ import validate from "@/models/validator";
 import t_products from "@/models/inventory/t_products.json";
 import { generateGuid } from "@/utils/guid";
 
-export const useProducts = () => {
-  const [productList, setProductList] = useState([]);
-  const [toastBox, setToastBox] = useState(null);
-  const [isBusy, setIsBusy] = useState(false);
-  const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
-  const [errors, setErrors] = useState({});
-  const [formDataProduct, setFormDataProduct] = useState({
+const fromDataModel = {
     product_id: "",
     product_code: "",
     product_name: "",
@@ -26,8 +20,19 @@ export const useProducts = () => {
     vat_percent: 0,
     cost_price_percent: 5,
     margin_price: 0,
+    purchase_booking_qty: 0,
+    sales_booking_qty: 0,
     ismodified: "0",
-  });
+}
+
+
+export const useProducts = () => {
+  const [productList, setProductList] = useState([]);
+  const [toastBox, setToastBox] = useState(null);
+  const [isBusy, setIsBusy] = useState(false);
+  const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
+  const [errors, setErrors] = useState({});
+  const [formDataProduct, setFormDataProduct] = useState(fromDataModel);
   const [selectedFilter, setSelectedFilter] = useState("default");
   const [filterOptions, setFilterOptions] = useState([
     { label: "Default", value: "default" },
@@ -41,16 +46,31 @@ export const useProducts = () => {
     { label: "Without VAT", value: "wovat" },
     { label: "All Products", value: "allproducts" },
   ]);
+  
+    const [selectedItemLedger, setSelectedItemLedger] = useState([]);
+
+    const handleLoadProductLedger = async (rowData) => {
+      setSelectedItemLedger([]);
+      try {
+        const data = await productsAPI.getProductLedger(rowData.product_id);
+        //console.log("data: " + JSON.stringify(data));
+        setSelectedItemLedger(data);
+      } catch (error) {
+        console.error("Error loading product ledger:", error);
+      }
+    };
+
+
   const loadProducts = async (filter = "default", resetModified = false) => {
     try {
-      console.log("filter: " + filter);
+      //console.log("filter: " + filter);
       if (filter == "po2so") {
         const data = await productsAPI.getAllPo2So(filter);
         //console.log("po2so data: " + JSON.stringify(data));
         setProductList(data);
       } else {
         const data = await productsAPI.getAll(filter);
-        console.log("data: " + JSON.stringify(data));
+        //console.log("data: " + JSON.stringify(data));
         setProductList(data);
       }
       if (resetModified) {
@@ -86,24 +106,7 @@ export const useProducts = () => {
   };
 
   const handleClear = () => {
-    setFormDataProduct({
-      product_id: "",
-      product_code: "",
-      product_name: "",
-      product_desc: "",
-      category_id: "",
-      small_unit_id: "",
-      unit_difference_qty: 1,
-      large_unit_id: "",
-      stock_qty: 0,
-      purchase_price: 0,
-      sales_price: 0,
-      discount_percent: 0,
-      vat_percent: 0,
-      cost_price_percent: 5,
-      margin_price: 0,
-      ismodified: "0",
-    });
+    setFormDataProduct(fromDataModel);
     setErrors({});
   };
 
@@ -294,5 +297,7 @@ export const useProducts = () => {
     handleRefresh,
     handleSaveProduct,
     handleFilterChange,
+    handleLoadProductLedger,    
+    selectedItemLedger,
   };
 };

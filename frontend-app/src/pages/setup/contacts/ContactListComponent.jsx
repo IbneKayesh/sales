@@ -1,9 +1,21 @@
+import React, { useState, useRef, useEffect } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
+import { Dialog } from "primereact/dialog";
+import { Badge } from "primereact/badge";
 
-const ContactListComponent = ({ dataList, onEdit, onDelete }) => {
+const ContactListComponent = ({
+  dataList,
+  onEdit,
+  onDelete,
+  onLedger,
+  contactsLedger,
+}) => {
+  const [selectedRowDetail, setSelectedRowDetail] = useState({});
+  const [visibleLedger, setVisibleLedger] = useState(false);
+
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.contact_name}"?`,
@@ -18,15 +30,37 @@ const ContactListComponent = ({ dataList, onEdit, onDelete }) => {
     });
   };
 
-  const currentBalanceTemplate = (rowData) => {
+  const handleVisibleLedger = (rowData) => {
+    setSelectedRowDetail(rowData);
+    setVisibleLedger(true);
+    onLedger(rowData);
+  };
+
+  const current_balance_BT = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
     }).format(rowData.current_balance);
   };
 
+  const allow_due_BT = (rowData) => {
+    return rowData.allow_due ? (
+      <Badge value="Yes" severity="success" className="mr-1"></Badge>
+    ) : (
+      <Badge value="No" severity="danger" className="mr-1"></Badge>
+    );
+  };
+
   const actionTemplate = (rowData) => {
     let menuItems = [
+      {
+        label: "Edit",
+        icon: "pi pi-pencil",
+        command: () => {
+          onEdit(rowData);
+        },
+        disabled: rowData.ismodified,
+      },
       {
         label: "Delete",
         icon: "pi pi-trash text-red-400",
@@ -39,16 +73,45 @@ const ContactListComponent = ({ dataList, onEdit, onDelete }) => {
     return (
       <div className="flex flex-wrap gap-2">
         <SplitButton
-          icon="pi pi-pencil"
+          icon="pi pi-book"
           size="small"
-          tooltip="Edit"
+          tooltip="Ledger"
           tooltipOptions={{ position: "top" }}
-          onClick={() => onEdit(rowData)}
+          onClick={() => handleVisibleLedger(rowData)}
           model={menuItems}
-          disabled={rowData.ismodified}
         />
       </div>
     );
+  };
+
+  const payment_mode_BT = (rowData) => {
+    return rowData.payment_mode + " for " + rowData.ref_no;
+  };
+
+  const payment_date_FT = () => {
+    //total debit - total credit;
+    const total_debit = contactsLedger.reduce(
+      (total, row) => total + row.debit_amount,
+      0
+    );
+    const total_credit = contactsLedger.reduce(
+      (total, row) => total + row.credit_amount,
+      0
+    );
+    const formatBalance = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "BDT",
+    }).format(total_debit - total_credit);
+    //console.log(formatBalance);
+    return "Balance: " + formatBalance;
+  };
+
+  const debit_amount_FT = () => {
+    return contactsLedger.reduce((total, row) => total + row.debit_amount, 0);
+  };
+
+  const credit_amount_FT = () => {
+    return contactsLedger.reduce((total, row) => total + row.credit_amount, 0);
   };
 
   return (
@@ -71,14 +134,64 @@ const ContactListComponent = ({ dataList, onEdit, onDelete }) => {
         <Column
           field="current_balance"
           header="Balance"
-          body={currentBalanceTemplate}
+          body={current_balance_BT}
         />
+        <Column field="allow_due" header="Allow Due" body={allow_due_BT} />
         <Column
           header="Actions"
           body={actionTemplate}
           style={{ width: "120px" }}
         />
       </DataTable>
+
+      <Dialog
+        header={
+          <>
+            <span className="text-red-500">
+              {selectedRowDetail?.contact_name || "N/A"} Contact Ledger{" "}
+            </span>
+          </>
+        }
+        visible={visibleLedger}
+        style={{ width: "50vw" }}
+        onHide={() => {
+          if (!visibleLedger) return;
+          setVisibleLedger(false);
+        }}
+      >
+        <div className="m-0">
+          {/* {JSON.stringify(contactsLedger)} */}
+          <DataTable
+            value={contactsLedger}
+            keyField="ledger_id"
+            emptyMessage="No data found."
+            size="small"
+          >
+            <Column field="payment_head" header="Head" />
+            <Column
+              field="payment_mode"
+              header="Particular"
+              body={payment_mode_BT}
+            />
+            <Column
+              field="payment_date"
+              header="Date"
+              footer={payment_date_FT}
+            />
+            <Column
+              field="debit_amount"
+              header="Debit"
+              footer={debit_amount_FT}
+            />
+            <Column
+              field="credit_amount"
+              header="Credit"
+              footer={credit_amount_FT}
+            />
+            <Column field="payment_note" header="Note" />
+          </DataTable>
+        </div>
+      </Dialog>
     </div>
   );
 };

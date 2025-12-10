@@ -25,7 +25,7 @@ const ProductComponent = ({
   const [disabledItemAdd, setDisabledItemAdd] = useState(true);
 
   useEffect(() => {
-    setSelectedFilter("stock");
+    setSelectedFilter("po2so");
   }, []);
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const ProductComponent = ({
       const extraCostShare = (item.total_amount / grandTotal) * extraCost;
 
       // Calculate final cost price per unit
-      const finalCostPrice = baseCostPrice + (extraCostShare / item.product_qty);
+      const finalCostPrice = baseCostPrice + extraCostShare / item.product_qty;
 
       return {
         ...item,
@@ -68,8 +68,8 @@ const ProductComponent = ({
     });
 
     // Only update if there's an actual change to avoid infinite loops
-    const hasChanged = updatedItems.some((item, index) =>
-      item.cost_price !== formDataOrderItems[index].cost_price
+    const hasChanged = updatedItems.some(
+      (item, index) => item.cost_price !== formDataOrderItems[index].cost_price
     );
 
     if (hasChanged) {
@@ -93,7 +93,7 @@ const ProductComponent = ({
     const item = productList.find((i) => i.product_id === selectedItem);
     if (!item) return;
 
-    const itemAmount = (itemQty || 1) * item.purchase_price;
+    const itemAmount = (itemQty || 1) * item.sales_price;
     const discountAmount = (item.discount_percent / 100) * itemAmount;
     const vatAmount = (item.vat_percent / 100) * itemAmount;
     const totalAmount = itemAmount - discountAmount + vatAmount;
@@ -104,7 +104,7 @@ const ProductComponent = ({
       po_master_id: "sgd",
       product_id: selectedItem,
       product_name: `${item.product_code} - ${item.product_name}`,
-      product_price: item.purchase_price,
+      product_price: item.sales_price,
       product_qty: itemQty || 1,
       discount_percent: item.discount_percent,
       discount_amount: discountAmount,
@@ -113,7 +113,7 @@ const ProductComponent = ({
       cost_price: costPrice,
       total_amount: totalAmount, // Will be re-calculated on edit save,
       product_note: itemNote,
-      ref_id: "", //default empty
+      ref_id: item.ref_id, //purchase details id
       unit_difference_qty: item.unit_difference_qty,
       small_unit_name: item.small_unit_name,
       large_unit_name: item.large_unit_name,
@@ -228,7 +228,11 @@ const ProductComponent = ({
       currency: "BDT",
     }).format(rowData.discount_amount);
 
-    return `${discountAmount} (${rowData.discount_percent}%)`;
+    return `${
+      rowData.discount_amount == 0
+        ? "0"
+        : discountAmount + " (" + rowData.discount_percent + "%)"
+    }`;
   };
 
   const discount_percent_FT = () => {
@@ -244,7 +248,11 @@ const ProductComponent = ({
       currency: "BDT",
     }).format(rowData.vat_amount);
 
-    return `${vatAmount} (${rowData.vat_percent}%)`;
+    return `${
+      rowData.vat_amount == 0
+        ? "0"
+        : vatAmount + " (" + rowData.vat_percent + "%)"
+    }`;
   };
 
   const vat_percent_FT = () => {
@@ -287,7 +295,7 @@ const ProductComponent = ({
           prev.filter((item) => item.po_details_id !== rowData.po_details_id)
         );
       },
-      reject: () => { },
+      reject: () => {},
     });
   };
 
@@ -309,7 +317,7 @@ const ProductComponent = ({
         <Dropdown
           value={selectedItem}
           options={productList.map((item) => ({
-            label: `${item.product_code} - ${item.product_name}, Price: ${item.purchase_price}, Discount%: ${item.discount_percent}, vat%: ${item.vat_percent}, Stock: ${item.stock_qty} ${item.small_unit_name}`,
+            label: `${item.product_code} - ${item.product_name}, Price: ${item.sales_price}, Discount%: ${item.discount_percent}, vat%: ${item.vat_percent}, Stock: ${item.stock_qty} ${item.small_unit_name}`,
             value: item.product_id,
           }))}
           onChange={(e) => setSelectedItem(e.value)}

@@ -74,13 +74,13 @@ const OrderFormComponent = ({
 
     const due_amount = payable_amount - (paidAmount || 0);
 
-    onChange("order_amount", order_amount);
-    onChange("discount_amount", discount_amount);
-    onChange("vat_amount", vat_amount);
-    onChange("total_amount", total_amount);
-    onChange("payable_amount", payable_amount);
-    onChange("paid_amount", paidAmount);
-    onChange("due_amount", due_amount);
+    onChange("order_amount", order_amount.toFixed(2));
+    onChange("discount_amount", discount_amount.toFixed(2));
+    onChange("vat_amount", vat_amount.toFixed(2));
+    onChange("total_amount", total_amount.toFixed(2));
+    onChange("payable_amount", payable_amount.toFixed(2));
+    onChange("paid_amount", paidAmount.toFixed(2));
+    onChange("due_amount", due_amount.toFixed(2));
   }, [
     formDataOrderItems,
     formData.order_cost,
@@ -368,6 +368,8 @@ const OrderFormComponent = ({
                         }`}
                       placeholder="Payment Amount"
                       inputStyle={{ width: "100%" }}
+                      minFractionDigits={2}
+                      maxFractionDigits={2}
                     />
                   </div>
                   {errors.payment_amount && (

@@ -45,5 +45,10 @@
       "name": "Current Balance",
       "type": "number",
       "required": false
+    },
+    "allow_due": {
+      "name": "Allow Due",
+      "type": "number",
+      "required": false
     }
   }

@@ -51,7 +51,7 @@ function runSql(label, sql, params = []) {
       if (err) {
         console.error(`❌ [${label}] FAILED: ${err.message}`);
       } else {
-        console.log(`✔️ [${label}] SUCCESS (${result.durationMs} ms)`);
+        console.log(`✔️ [${label}] SUCCESS (${result.durationMs} ms) at ${new Date().toISOString()}`);
       }
 
       resolve(result); // always resolves so sequence continues

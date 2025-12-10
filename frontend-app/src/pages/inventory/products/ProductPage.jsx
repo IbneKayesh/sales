@@ -26,6 +26,8 @@ const ProductsPage = () => {
     handleRefresh,
     handleSaveProduct,
     handleFilterChange,
+    handleLoadProductLedger,    
+    selectedItemLedger,
   } = useProducts();
 
   useEffect(() => {
@@ -91,6 +93,8 @@ const ProductsPage = () => {
             dataList={productList}
             onEdit={handleEditProduct}
             onDelete={handleDeleteProduct}
+            onLedger={handleLoadProductLedger}
+            itemLedger={selectedItemLedger}
           />
         ) : (
           <ProductFormComponent

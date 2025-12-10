@@ -3,3 +3,8 @@
   background-color: #a0a0a0;
   border-radius: 5px;
 }
+
+/* Utility class for overlay-light background */
+.bg-overlay-light {
+  background: var(--overlay-light);
+}

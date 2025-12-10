@@ -4,10 +4,6 @@
   transition: width 0.3s ease;
 }
 
-
-
-
-
 .collapse-btn {
   color: var(--text-secondary) !important;
   width: 24px !important;
@@ -71,7 +67,7 @@
 }
 
 .group-header::after {
-  content: '';
+  content: "";
   width: 0;
   height: 0;
   border-left: 4px solid transparent;
@@ -447,4 +443,43 @@
   .menu-list {
     margin-left: 8px;
   }
+}
+
+/* Leftbar Footer Styles */
+.leftbar-footer {
+  margin-top: auto;
+  padding: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-clock-section {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.footer-clock-time {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  font-family: monospace;
+  margin-bottom: 5px;
+}
+
+.footer-clock-date {
+  font-size: 11px;
+}
+
+.footer-developer-info {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 10px;
+  line-height: 1.6;
+}
+
+.footer-copyright {
+  margin-top: 8px;
+  font-size: 10px;
+  text-align: center;
+  opacity: 0.6;
 }

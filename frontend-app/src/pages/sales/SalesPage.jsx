@@ -108,7 +108,7 @@ const SalesPage = () => {
   return (
     <>
       <Toast ref={toast} />
-      <Card header={getHeader()} className="bg-dark-200 border-round p-3">
+      <Card header={getHeader()} className="border-round p-3">
         {currentView === "list" ? (
           <OrderListComponent
             dataList={salesList}

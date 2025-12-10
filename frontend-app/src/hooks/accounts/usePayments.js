@@ -3,6 +3,21 @@ import { paymentsAPI } from "@/api/accounts/paymentsAPI";
 import validate from "@/models/validator";
 import t_payments from "@/models/accounts/t_payments";
 import { generateGuid } from "@/utils/guid";
+import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
+
+const fromDataModel = {
+  payment_id: "",
+  contact_id: "",
+  payment_head: "",
+  payment_mode: "",
+  payment_date: new Date().toISOString().split("T")[0],
+  payment_amount: 0,
+  balance_amount: 0,
+  payment_note: "",
+  ref_no: "",
+  allocation_amount: 0,
+  ismodified: false,
+};
 
 export const usePayments = () => {
   const [payableDueList, setPayableDueList] = useState([]);
@@ -10,19 +25,7 @@ export const usePayments = () => {
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [formDataPayableDue, setformDataPayableDue] = useState({
-    payment_id: "",
-    contact_id: "",
-    payment_head: "",
-    payment_mode: "",
-    payment_date: new Date().toISOString().split("T")[0],
-    payment_amount: 0,
-    balance_amount: 0,
-    payment_note: "",
-    ref_id: "",
-    allocation_amount: 0,
-    ismodified: false,
-  });
+  const [formDataPayableDue, setformDataPayableDue] = useState(fromDataModel);
 
   const loadPayableDues = async (resetModified = false) => {
     try {
@@ -54,24 +57,15 @@ export const usePayments = () => {
 
   const handleChange = (field, value) => {
     setformDataPayableDue((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formDataPayableDue, [field]: value }, t_payments);
+    const newErrors = validate(
+      { ...formDataPayableDue, [field]: value },
+      t_payments
+    );
     setErrors(newErrors);
   };
 
   const handleClear = () => {
-    setformDataPayableDue({
-      payment_id: "",
-      contact_id: "",
-      payment_head: "",
-      payment_mode: "",
-      payment_date: new Date().toISOString().split("T")[0],
-      payment_amount: 0,
-      balance_amount: 0,
-      payment_note: "",
-      ref_id: "",
-      allocation_amount: 0,
-      ismodified: false,
-    });
+    setformDataPayableDue(fromDataModel);
     setErrors({});
   };
 
@@ -88,7 +82,10 @@ export const usePayments = () => {
   const handleEditPayableDue = (payableDue) => {
     //console.log("bankaccount: " + JSON.stringify(bankaccount));
 
-    const newPayableDue = { ...payableDue, payment_date: new Date().toISOString().split("T")[0] };
+    const newPayableDue = {
+      ...payableDue,
+      payment_date: new Date().toISOString().split("T")[0],
+    };
     setformDataPayableDue(newPayableDue);
     setCurrentView("form");
   };
@@ -125,6 +122,16 @@ export const usePayments = () => {
     e.preventDefault();
     setIsBusy(true);
 
+    if (formDataPayableDue.payment_amount > formDataPayableDue.balance_amount) {
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Payment amount cannot be greater than Due balance amount.",
+      });
+      setIsBusy(false);
+      return;
+    }
+
     const newErrors = validate(formDataPayableDue, t_payments);
     setErrors(newErrors);
     console.log("handleSavePayableDue: " + JSON.stringify(newErrors));
@@ -151,10 +158,16 @@ export const usePayments = () => {
         });
       } else {
         // Add new
-        const newPayableDueData = { ...formDataPayableDue, payment_id: generateGuid() };
+        const newPayableDueData = {
+          ...formDataPayableDue,
+          payment_id: generateGuid(),
+        };
         console.log("newPayableDueData: " + JSON.stringify(newPayableDueData));
 
-        const newPayableDue = await paymentsAPI.accountsPayableDuesSuppliersCreate(newPayableDueData);
+        const newPayableDue =
+          await paymentsAPI.accountsPayableDuesSuppliersCreate(
+            newPayableDueData
+          );
         //newPayableDue.ismodified = true;
         //updatedPayableDues = [...payableDueList, newPayableDue];
 
@@ -165,6 +178,8 @@ export const usePayments = () => {
         });
       }
       //setPayableDueList(updatedPayableDues);
+      //call update process
+      await closingProcessAPI("Payments", formDataPayableDue.ref_no);
       loadPayableDues();
       handleClear();
       setCurrentView("list");

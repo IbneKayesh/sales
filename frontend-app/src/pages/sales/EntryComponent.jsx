@@ -7,7 +7,7 @@ import t_po_master from "@/models/purchase/t_po_master.json";
 import { useContacts } from "@/hooks/setup/useContacts";
 
 export const EntryComponent = ({ errors, formData, onChange }) => {
-  const { contactSupplierList } = useContacts();
+  const { contactCustomerList } = useContacts();
 
   return (
     <>
@@ -64,7 +64,7 @@ export const EntryComponent = ({ errors, formData, onChange }) => {
           <Dropdown
             name="contact_id"
             value={formData.contact_id}
-            options={contactSupplierList}
+            options={contactCustomerList}
             onChange={(e) => onChange("contact_id", e.value)}
             className={`w-full ${errors.contact_id ? "p-invalid" : ""}`}
             placeholder={`Select ${t_po_master.contact_id.name}`}

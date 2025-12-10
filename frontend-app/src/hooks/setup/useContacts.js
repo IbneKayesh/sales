@@ -6,21 +6,23 @@ import validate from "@/models/validator";
 import t_contacts from "@/models/setup/t_contacts";
 import { generateGuid } from "@/utils/guid";
 
+const fromDataModel = {
+  contact_id: "",
+  contact_name: "",
+  contact_mobile: "",
+  contact_email: "",
+  contact_address: "",
+  contact_type: "",
+  current_balance: 0,
+};
+
 export const useContacts = () => {
   const [contactList, setContactList] = useState([]);
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [formDataContact, setFormDataContact] = useState({
-    contact_id: "",
-    contact_name: "",
-    contact_mobile: "",
-    contact_email: "",
-    contact_address: "",
-    contact_type: "",
-    current_balance: 0,
-  });
+  const [formDataContact, setFormDataContact] = useState(fromDataModel);
 
   const contactTypeOptions = [
     { label: "Customer", value: "Customer" },
@@ -30,6 +32,7 @@ export const useContacts = () => {
 
   const [contactSupplierList, setContactSupplierList] = useState([]);
   const [contactCustomerList, setContactCustomerList] = useState([]);
+  const [contactsLedger, setContactsLedger] = useState([]);
 
   const loadContacts = async (resetModified = false) => {
     try {
@@ -102,15 +105,7 @@ export const useContacts = () => {
   };
 
   const handleClear = () => {
-    setFormDataContact({
-      contact_id: "",
-      contact_name: "",
-      contact_mobile: "",
-      contact_email: "",
-      contact_address: "",
-      contact_type: "",
-      current_balance: 0,
-    });
+    setFormDataContact(fromDataModel);
     setErrors({});
   };
 
@@ -221,6 +216,20 @@ export const useContacts = () => {
     setIsBusy(false);
   };
 
+  const handleLedger = async (contact) => {
+    try {
+      const data = await contactAPI.getContactLedger(contact.contact_id);
+      setContactsLedger(data);
+    } catch (error) {
+      console.error("Error fetching ledger:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to fetch ledger",
+      });
+    }
+  };
+
   return {
     contactList,
     contactSupplierList,
@@ -238,5 +247,7 @@ export const useContacts = () => {
     handleDeleteContact,
     handleRefresh,
     handleSaveContact,
+    handleLedger,
+    contactsLedger,
   };
 };

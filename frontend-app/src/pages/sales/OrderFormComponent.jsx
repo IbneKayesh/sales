@@ -74,13 +74,13 @@ const OrderFormComponent = ({
 
     const due_amount = payable_amount - (paidAmount || 0);
 
-    onChange("order_amount", order_amount);
-    onChange("discount_amount", discount_amount);
-    onChange("vat_amount", vat_amount);
-    onChange("total_amount", total_amount);
-    onChange("payable_amount", payable_amount);
-    onChange("paid_amount", paidAmount);
-    onChange("due_amount", due_amount);
+    onChange("order_amount", (order_amount).toFixed(2));
+    onChange("discount_amount", (discount_amount).toFixed(2));
+    onChange("vat_amount", (vat_amount).toFixed(2));
+    onChange("total_amount", (total_amount).toFixed(2));
+    onChange("payable_amount", (payable_amount).toFixed(2));
+    onChange("paid_amount", (paidAmount).toFixed(2));
+    onChange("due_amount", (due_amount).toFixed(2));
   }, [
     formDataOrderItems,
     formData.order_cost,
@@ -256,15 +256,27 @@ const OrderFormComponent = ({
                 </div>
 
                 <div className="flex justify-content-between">
-                  <span onClick={() => onChange("vat_payable", !formData.vat_payable)}>
-                    <input type="checkbox" checked={formData.vat_payable} readOnly />
+                  <span
+                    onClick={() =>
+                      onChange("vat_payable", !formData.vat_payable)
+                    }
+                  >
+                    <input
+                      type="checkbox"
+                      checked={formData.vat_payable}
+                      readOnly
+                    />
                     {t_po_master.vat_amount.name}
                   </span>
                   <span className="font-bold">{formData.vat_amount}/-</span>
                 </div>
 
                 <div className="flex justify-content-between">
-                  <span onClick={() => onChange("cost_payable", !formData.cost_payable)}>
+                  <span
+                    onClick={() =>
+                      onChange("cost_payable", !formData.cost_payable)
+                    }
+                  >
                     <input
                       type="checkbox"
                       checked={formData.cost_payable}
@@ -354,8 +366,9 @@ const OrderFormComponent = ({
                       value={formDataPayment.payment_mode}
                       options={paymentOptions}
                       onChange={(e) => handlePaymentChange(e)}
-                      className={`flex-1 ${errors.payment_mode ? "p-invalid" : ""
-                        }`}
+                      className={`flex-1 ${
+                        errors.payment_mode ? "p-invalid" : ""
+                      }`}
                       placeholder={`Select payment mode`}
                       optionLabel="label"
                       optionValue="value"
@@ -364,10 +377,13 @@ const OrderFormComponent = ({
                       name="payment_amount"
                       value={formDataPayment.payment_amount}
                       onValueChange={(e) => handlePaymentChange(e)}
-                      className={`flex-1 ${errors.payment_amount ? "p-invalid" : ""
-                        }`}
+                      className={`flex-1 ${
+                        errors.payment_amount ? "p-invalid" : ""
+                      }`}
                       placeholder="Payment Amount"
                       inputStyle={{ width: "100%" }}
+                      minFractionDigits={2}
+                      maxFractionDigits={2}
                     />
                   </div>
                   {errors.payment_amount && (
@@ -380,8 +396,9 @@ const OrderFormComponent = ({
                       name="payment_note"
                       value={formDataPayment.payment_note}
                       onChange={(e) => handlePaymentChange(e)}
-                      className={`flex-1 ${errors.payment_note ? "p-invalid" : ""
-                        }`}
+                      className={`flex-1 ${
+                        errors.payment_note ? "p-invalid" : ""
+                      }`}
                       placeholder="Payment Note"
                     />
                     <Button
@@ -427,8 +444,8 @@ const OrderFormComponent = ({
                 formData.po_master_id
                   ? "Update"
                   : formData.is_posted
-                    ? "Save with Posted"
-                    : "Save as Draft"
+                  ? "Save with Posted"
+                  : "Save as Draft"
               }
               icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
               severity="success"

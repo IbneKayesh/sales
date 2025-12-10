@@ -245,7 +245,7 @@ router.post("/update-product-stock", async (req, res) => {
   scripts.push({
     label: "1 of 5 :: Update Purchase Details > Sales Qty from Sales Details",
     sql: `WITH sales AS (
-              SELECT pod.po_details_id,sum(sod.order_qty)sales_qty
+              SELECT pod.po_details_id,sum(sod.sales_qty)sales_qty
               FROM po_details pod
               JOIN so_details sod on pod.po_details_id = sod.ref_id
               WHERE pod.stock_qty > 0

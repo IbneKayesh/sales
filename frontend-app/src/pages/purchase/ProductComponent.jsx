@@ -23,6 +23,7 @@ const ProductComponent = ({
   const [itemQty, setItemQty] = useState(1);
   const [itemNote, setItemNote] = useState("");
   const [disabledItemAdd, setDisabledItemAdd] = useState(true);
+  const [availableProducts, setAvailableProducts] = useState([]);
 
   useEffect(() => {
     setSelectedFilter("allproducts");
@@ -35,6 +36,22 @@ const ProductComponent = ({
       setDisabledItemAdd(true);
     }
   }, [selectedItem]);
+
+  // Filter available products based on formDataOrderItems
+  useEffect(() => {
+    const filtered = productList
+      .filter(
+        (item) =>
+          !formDataOrderItems.some(
+            (orderItem) => orderItem.product_id === item.product_id
+          )
+      )
+      .map((item) => ({
+        label: `${item.product_code} - ${item.product_name}, Price: ${item.purchase_price}, Discount%: ${item.discount_percent}, vat%: ${item.vat_percent}, Stock: ${item.stock_qty} ${item.small_unit_name}`,
+        value: item.product_id,
+      }));
+    setAvailableProducts(filtered);
+  }, [productList, formDataOrderItems]);
 
   // Recalculate cost_price when extra costs change
   useEffect(() => {
@@ -59,7 +76,7 @@ const ProductComponent = ({
       const extraCostShare = (item.total_amount / grandTotal) * extraCost;
 
       // Calculate final cost price per unit
-      const finalCostPrice = baseCostPrice + (extraCostShare / item.product_qty);
+      const finalCostPrice = baseCostPrice + extraCostShare / item.product_qty;
 
       return {
         ...item,
@@ -68,8 +85,8 @@ const ProductComponent = ({
     });
 
     // Only update if there's an actual change to avoid infinite loops
-    const hasChanged = updatedItems.some((item, index) =>
-      item.cost_price !== formDataOrderItems[index].cost_price
+    const hasChanged = updatedItems.some(
+      (item, index) => item.cost_price !== formDataOrderItems[index].cost_price
     );
 
     if (hasChanged) {
@@ -169,6 +186,7 @@ const ProductComponent = ({
       />
     );
   };
+
   const numberEditor = (options) => {
     return (
       <InputNumber
@@ -287,7 +305,7 @@ const ProductComponent = ({
           prev.filter((item) => item.po_details_id !== rowData.po_details_id)
         );
       },
-      reject: () => { },
+      reject: () => {},
     });
   };
 
@@ -308,10 +326,7 @@ const ProductComponent = ({
       <div className="flex align-items-center gap-2 mb-2">
         <Dropdown
           value={selectedItem}
-          options={productList.map((item) => ({
-            label: `${item.product_code} - ${item.product_name}, Price: ${item.purchase_price}, Discount%: ${item.discount_percent}, vat%: ${item.vat_percent}, Stock: ${item.stock_qty} ${item.small_unit_name}`,
-            value: item.product_id,
-          }))}
+          options={availableProducts}
           onChange={(e) => setSelectedItem(e.value)}
           placeholder="Select Item"
           optionLabel="label"

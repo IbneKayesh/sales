@@ -236,17 +236,18 @@ router.post("/update", async (req, res) => {
       order_amount,
       discount_amount,
       vat_amount,
-      cost_amount,
-      additional_amount,
+      vat_payable,
+      order_cost,
+      cost_payable,
       total_amount,
       payable_amount,
       paid_amount,
-      payable_note,
       due_amount,
       other_cost,
       is_paid,
       is_posted,
       is_completed,
+      is_returned,
       details_create,
       payments_create,
     } = req.body;
@@ -265,50 +266,62 @@ router.post("/update", async (req, res) => {
     }
 
     //fetch default bank account
-    const bank_account = await dbGet(
-      "SELECT * FROM bank_accounts WHERE is_default = 1",
-      []
-    );
-    if (!bank_account) {
-      return res.status(400).json({ error: "Default bank account not found" });
-    }
-    const bank_account_id = bank_account.account_id;
+    // const bank_account = await dbGet(
+    //   "SELECT * FROM bank_accounts WHERE is_default = 1",
+    //   []
+    // );
+    // if (!bank_account) {
+    //   return res.status(400).json({ error: "Default bank account not found" });
+    // }
+    // const bank_account_id = bank_account.account_id;
 
     //build scripts
     const scripts = [];
 
     //delete details
     scripts.push({
-      label: `Delete Details ${so_master_id}`,
+      label: `1 of 6 :: Delete Details ${so_master_id}`,
       sql: `DELETE FROM so_details WHERE so_master_id = ?`,
       params: [so_master_id],
     });
 
-    //delete payments
+    //delete payment details
     scripts.push({
-      label: `Delete Payments ${so_master_id}`,
-      sql: `DELETE FROM bank_payments WHERE ref_no = ?`,
+      label: `2 of 6 :: Delete Payment Details ${order_no}`,
+      sql: `DELETE FROM payment_details WHERE ref_no = ?`,
+      params: [order_no],
+    });
+    
+    //delete payment master
+    scripts.push({
+      label: `3 of 6 :: Delete Payment Master ${order_no}`,
+      sql: `DELETE FROM payments WHERE ref_no = ?`,
+      params: [order_no],
+    });
+
+    //delete accounts ledger
+    scripts.push({
+      label: `4 of 6 :: Delete Accounts Ledger ${order_no}`,
+      sql: `DELETE FROM accounts_ledger WHERE ref_no = ?`,
       params: [order_no],
     });
 
     //Update Master
     scripts.push({
-      label: "Update Sales Master " + order_no,
+      label: "5 of 6 :: Update Sales Master " + order_no,
       sql: `UPDATE so_master SET
-      order_type = ?,
       order_date = ?,
-      contact_id = ?,
       ref_no = ?,
       order_note = ?,
       order_amount = ?,
       discount_amount = ?,
       vat_amount = ?,
-      cost_amount = ?,
-      additional_amount = ?,
+      vat_payable = ?,
+      order_cost = ?,
+      cost_payable = ?,
       total_amount = ?,
       payable_amount = ?,
       paid_amount = ?,
-      payable_note = ?,
       due_amount = ?,
       other_cost = ?,
       is_paid = ?,
@@ -316,20 +329,18 @@ router.post("/update", async (req, res) => {
       updated_at = CURRENT_TIMESTAMP
       WHERE so_master_id = ?`,
       params: [
-        order_type,
         order_date,
-        contact_id,
         ref_no,
         order_note,
         order_amount || 0,
         discount_amount || 0,
         vat_amount || 0,
-        cost_amount || 0,
-        additional_amount || 0,
+        vat_payable || 0,
+        order_cost || 0,
+        cost_payable || 0,
         total_amount || 0,
         payable_amount || 0,
         paid_amount || 0,
-        payable_note,
         due_amount || 0,
         other_cost || 0,
         is_paid || "Unpaid",
@@ -337,16 +348,18 @@ router.post("/update", async (req, res) => {
         so_master_id,
       ],
     });
-    //Insert Details
+   
+
+    //Insert order Details
     for (const detail of details_create) {
       scripts.push({
-        label: "Insert Sales Detail " + order_no,
+        label: "6 of 6 :: Insert Sales Detail " + order_no,
         sql: `INSERT INTO so_details (so_details_id, so_master_id, product_id, product_price, product_qty,
         discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount,
-        product_note, ref_id, return_qty, order_qty)
+        product_note, ref_id, return_qty, sales_qty)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
-          detail.so_details_id,
+          detail.po_details_id,
           so_master_id,
           detail.product_id,
           detail.product_price || 0,
@@ -364,48 +377,23 @@ router.post("/update", async (req, res) => {
         ],
       });
     }
-    //Insert Payments
-    for (const payment of payments_create) {
-      scripts.push({
-        label: "Insert Sales Payment " + order_no,
-        sql: `INSERT INTO bank_payments (payment_id, account_id, payment_head, payment_mode, payment_date,
-        contact_id, ref_no, payment_amount, payment_note)
-        VALUES (?, ?, ?, ?, ?,
-        ?, ?, ?, ?)`,
-        params: [
-          payment.payment_id,
-          bank_account_id,
-          order_type,
-          payment.payment_mode,
-          order_date,
-          contact_id,
-          order_no,
-          payment.payment_amount || 0,
-          payment.payment_note,
-        ],
-      });
-    }
-    //Other cost goes to expesnes with default contact account
-    if (other_cost > 0) {
-      scripts.push({
-        label: "Insert Sales Other Cost " + order_no,
-        sql: `INSERT INTO bank_payments (payment_id, account_id, payment_head, payment_mode, payment_date,
-        contact_id, ref_no, payment_amount, payment_note)
-        VALUES (?, ?, ?, ?, ?,
-        ?, ?, ?, ?)`,
-        params: [
-          generateGuid(),
-          bank_account_id,
-          `${order_type} Expenses`,
-          "Cash",
-          order_date,
-          "0",
-          order_no,
-          other_cost,
-          "Other Cost",
-        ],
-      });
-    }
+
+    //payment scripts
+    const paymentScripts = paymentScriptsGen(
+      payable_amount,
+      other_cost,
+      vat_payable,
+      vat_amount,
+      cost_payable,
+      order_cost,
+      order_no,
+      order_date,
+      order_type,
+      contact_id,
+      payments_create
+    );
+
+    scripts.push(...paymentScripts);
 
     const results = await runScriptsSequentially(scripts, {
       useTransaction: true,
@@ -601,11 +589,12 @@ router.get("/details/:soMasterId", async (req, res) => {
 router.get("/payments/:orderNo", async (req, res) => {
   try {
     const { orderNo } = req.params;
-    const sql = `SELECT bp.*
-    FROM bank_payments bp
-    JOIN so_master pm ON bp.ref_no = pm.order_no AND bp.payment_head = pm.order_type
-    WHERE bp.ref_no = ?
-    ORDER BY bp.payment_id`;
+    const sql = `SELECT pm.payment_id, pm.payment_head, pm.payment_mode, pm.payment_amount,
+    pmd.allocation_amount as order_amount, pm.payment_note
+    FROM payment_details pmd
+    LEFT JOIN payments pm on pmd.payment_id = pm.payment_id
+    WHERE pmd.ref_no = ?
+    ORDER BY pm.payment_date`;
     const rows = await dbAll(sql, [orderNo]);
     res.json(rows);
   } catch (error) {

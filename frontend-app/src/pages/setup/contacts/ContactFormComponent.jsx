@@ -1,6 +1,7 @@
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
+import { Checkbox } from "primereact/checkbox";
 import t_contacts from "@/models/setup/t_contacts.json";
 
 const ContactFormComponent = ({
@@ -12,9 +13,8 @@ const ContactFormComponent = ({
   contactTypeOptions,
 }) => {
   return (
-    <div className="p-1">
-      <div className="grid">
-        <div className="col-12 md:col-3">
+      <div className="grid p-1">
+        <div className="col-12 md:col-8">
           <label
             htmlFor="contact_name"
             className="block text-900 font-medium mb-2"
@@ -73,7 +73,7 @@ const ContactFormComponent = ({
             </small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-8">
           <label
             htmlFor="contact_address"
             className="block text-900 font-medium mb-2"
@@ -113,6 +113,25 @@ const ContactFormComponent = ({
             <small className="mb-3 text-red-500">{errors.contact_type}</small>
           )}
         </div>
+        <div className="col-12 md:col-2">
+          <label
+            htmlFor="allow_due"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_contacts.allow_due.name}
+          </label>
+
+          <Checkbox
+            name="allow_due"
+            checked={formData.allow_due === 1}
+            onChange={(e) => onChange("allow_due", e.checked ? 1 : 0)}
+            className={errors.allow_due ? "p-invalid" : ""}
+          />
+
+          {errors.allow_due && (
+            <small className="text-red-500">{errors.allow_due}</small>
+          )}
+        </div>
         <div className="col-12">
           <div className="flex flex-row-reverse flex-wrap">
             <Button
@@ -127,7 +146,6 @@ const ContactFormComponent = ({
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

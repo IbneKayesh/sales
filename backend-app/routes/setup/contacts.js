@@ -47,6 +47,7 @@ router.post("/", async (req, res) => {
     contact_email,
     contact_address,
     contact_type,
+    allow_due
   } = req.body;
 
   if (!contact_name) {
@@ -58,8 +59,8 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    const sql = `INSERT INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type, current_balance)
-    VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type, current_balance, allow_due)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
     const params = [
       contact_id,
       contact_name,
@@ -68,6 +69,7 @@ router.post("/", async (req, res) => {
       contact_address,
       contact_type,
       0,
+      allow_due
     ];
     await dbRun(sql, params, `Created contact ${contact_name}`);
     res.status(201).json({ contact_id, ...req.body });
@@ -87,6 +89,7 @@ router.post("/update", async (req, res) => {
     contact_email,
     contact_address,
     contact_type,
+    allow_due
   } = req.body;
 
   if (!contact_name) {
@@ -104,6 +107,7 @@ router.post("/update", async (req, res) => {
     contact_email = ?,
     contact_address = ?,
     contact_type = ?,
+    allow_due = ?,
     updated_at = CURRENT_TIMESTAMP
     WHERE contact_id = ?`;
     const params = [
@@ -112,6 +116,7 @@ router.post("/update", async (req, res) => {
       contact_email,
       contact_address,
       contact_type,
+      allow_due,
       contact_id,
     ];
     const result = await dbRun(sql, params, `Updated contact ${contact_name}`);
@@ -141,6 +146,25 @@ router.post("/delete", async (req, res) => {
       return res.status(404).json({ error: "Contact not found" });
     }
     res.json({ message: "Contact deleted successfully" });
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Get contact ledger by ID
+router.get("/ledger/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sql =`SELECT *
+    FROM accounts_ledger ald
+    WHERE ald.contact_id = ?
+    ORDER by ald.created_at`;
+    const row = await dbAll(sql, [id]);
+    if (!row) {
+      return res.status(404).json({ error: "Contact not found" });
+    }
+    res.json(row);
   } catch (error) {
     console.error("Database error:", error);
     res.status(500).json({ error: "Internal server error" });

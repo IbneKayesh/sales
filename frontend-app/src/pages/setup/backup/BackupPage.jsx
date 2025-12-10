@@ -46,7 +46,7 @@ const BackupPage = () => {
   const loadBackups = async () => {
     try {
       const response = await backupAPI.getBackups();
-      console.log("response " + JSON.stringify(response));
+      //console.log("response " + JSON.stringify(response));
       setBackups(response.data);
     } catch (error) {
       toast.current.show({
@@ -60,7 +60,7 @@ const BackupPage = () => {
   const loadExports = async () => {
     try {
       const response = await backupAPI.getExports();
-      console.log("response " + JSON.stringify(response));
+      //console.log("response " + JSON.stringify(response));
       setExports(response.data);
     } catch (error) {
       toast.current.show({
@@ -265,7 +265,7 @@ const BackupPage = () => {
       <div className="p-4">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-gray-100 mb-2">
-            Backup, Restore and Export
+            Database Backup, Restore and Export
           </h1>
           <p className="text-gray-300">Perform backup your full data.</p>
         </div>
