@@ -8,4 +8,3 @@ start cmd /k "cd backend-app && node server.js"
 start cmd /k "cd frontend-app && npm run dev"
 
 echo Both apps are starting...
-pause

@@ -25,7 +25,7 @@ const ProductComponent = ({
   const [disabledItemAdd, setDisabledItemAdd] = useState(true);
 
   useEffect(() => {
-    setSelectedFilter("allproducts");
+    setSelectedFilter("stock");
   }, []);
 
   useEffect(() => {
