@@ -63,17 +63,16 @@ const ProductComponent = ({
       return updatedItem;
     });
 
-    const filtered = filteredProductList
-      .filter(
-        (item) =>
-          !formDataOrderItems.some(
-            (orderItem) => orderItem.product_id === item.product_id
-          )
-      )
-      .map((item) => ({
-        label: `${item.product_code} - ${item.product_name}, Price: ${item.purchase_price}, Discount%: ${item.discount_percent}, vat%: ${item.vat_percent}, Stock: ${item.stock_qty} ${item.small_unit_name}`,
-        value: item.product_id,
-      }));
+    const filtered = filteredProductList.filter(
+      (item) =>
+        !formDataOrderItems.some(
+          (orderItem) => orderItem.product_id === item.product_id
+        )
+    );
+    // .map((item) => ({
+    //   label: `${item.product_code} - ${item.product_name}, Price: ${item.purchase_price}, Discount%: ${item.discount_percent}, vat%: ${item.vat_percent}, Stock: ${item.stock_qty} ${item.small_unit_name}`,
+    //   value: item.product_id,`
+    // }));
     setAvailableProducts(filtered);
   }, [productList, formDataOrderItems, formDataProductConfig]);
 
@@ -329,7 +328,7 @@ const ProductComponent = ({
           prev.filter((item) => item.po_details_id !== rowData.po_details_id)
         );
       },
-      reject: () => { },
+      reject: () => {},
     });
   };
 
@@ -341,6 +340,44 @@ const ProductComponent = ({
       ></span>
     );
   };
+  
+  const item_list_ddl_IT = (option) => {
+    return (
+      <div className="grid">
+        <div className="col-12 font-semibold p-1">
+          {option.product_name} ({option.product_code})
+        </div>
+        <div className="grid col-12 text-gray-700 p-2">
+          <div className="col-4 p-0">
+            💵 Price: {option.purchase_price}
+          </div>  
+          <div className="col-4 p-0">
+            📊 Discount: {option.discount_percent}%
+          </div>  
+          <div className="col-4 p-0">
+            📈 VAT: {option.vat_percent}%
+          </div>
+        </div>
+        <div className="col-12 p-0">
+          📦 Stock: {option.stock_qty} {option.small_unit_name}
+        </div>  
+      </div>
+    );
+  };
+  
+  
+  const item_list_ddl_VT = (option) => {
+    if (!option) {
+      return "Select Product";
+    }
+
+    return (
+      <div className="flex flex-column">
+        <span className="font-semibold">{option.product_name}, 📦{option.stock_qty} {option.small_unit_name}</span>
+      </div>
+    );
+  };
+
 
   return (
     <>
@@ -349,19 +386,25 @@ const ProductComponent = ({
       {/* Child Editable Table */}
       <div className="flex align-items-center gap-2 mb-2">
         <div className="p-inputgroup flex-1">
-          <span className="p-inputgroup-addon" onClick={() => setVisibleProductConfig(true)}>
+          <span
+            className="p-inputgroup-addon"
+            onClick={() => setVisibleProductConfig(true)}
+          >
             <i className="pi pi-cog"></i>
           </span>
           <Dropdown
+            name="item_list_ddl"
             value={selectedItem}
             options={availableProducts}
+            optionLabel="product_name"
+            optionValue="product_id"
             onChange={(e) => setSelectedItem(e.value)}
             placeholder="Select Item"
-            optionLabel="label"
-            optionValue="value"
             className="w-full"
             filter
             showClear
+            itemTemplate={item_list_ddl_IT}
+            valueTemplate={item_list_ddl_VT}
           />
         </div>
         <InputNumber

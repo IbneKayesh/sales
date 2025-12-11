@@ -9,8 +9,7 @@ import { useContacts } from "@/hooks/setup/useContacts";
 export const EntryComponent = ({ errors, formData, onChange }) => {
   const { contactSupplierList } = useContacts();
 
-
-  const contactItemTemplate = (option) => {
+  const contact_id_IT = (option) => {
     return (
       <div className="flex flex-column">
         <div className="font-semibold">{option.contact_name}</div>
@@ -19,35 +18,39 @@ export const EntryComponent = ({ errors, formData, onChange }) => {
         <div className="text-sm">
           Due:{" "}
           {option.allow_due ? (
-            <span className="text-green-500 font-semibold">Yes</span>
+            <>
+              <i className="pi pi-credit-card mr-2 text-green-600 font-bold"></i>
+              Yes
+            </>
           ) : (
-            <span className="text-red-500 font-semibold">No</span>
+            <>
+              <i className="pi pi-credit-card mr-2 text-red-600 font-bold"></i>
+              No
+            </>
           )}
         </div>
       </div>
     );
   };
 
-  const selectedContactTemplate = (option) => {
+  const contact_id_VT = (option) => {
     if (!option) {
       return "Select Contact";
     }
 
     return (
       <div className="flex flex-column">
-        <span className="font-semibold">{option.contact_name}</span>
-        <div className="text-sm">
-          Due:{" "}
+        <span className="font-semibold">
           {option.allow_due ? (
-            <span className="text-green-500 font-semibold">Yes</span>
+            <i className="pi pi-credit-card mr-2 text-green-600"></i>
           ) : (
-            <span className="text-red-500 font-semibold">No</span>
+            <i className="pi pi-credit-card mr-2 text-red-600"></i>
           )}
-        </div>
+          {option.contact_name}
+        </span>
       </div>
     );
   };
-
 
   return (
     <>
@@ -112,8 +115,8 @@ export const EntryComponent = ({ errors, formData, onChange }) => {
             placeholder={`Select ${t_po_master.contact_id.name}`}
             filter
             showClear
-            itemTemplate={contactItemTemplate}
-            valueTemplate={selectedContactTemplate}
+            itemTemplate={contact_id_IT}
+            valueTemplate={contact_id_VT}
           />
           {errors.contact_id && (
             <small className="mb-3 text-red-500">{errors.contact_id}</small>

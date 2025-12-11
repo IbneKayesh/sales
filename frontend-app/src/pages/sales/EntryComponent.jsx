@@ -9,6 +9,46 @@ import { useContacts } from "@/hooks/setup/useContacts";
 export const EntryComponent = ({ errors, formData, onChange }) => {
   const { contactCustomerList } = useContacts();
 
+  
+  const contact_id_IT = (option) => {
+    return (
+      <div className="flex flex-column">
+        <div className="font-semibold">{option.contact_name}</div>
+        <div className="text-sm text-gray-600">{option.contact_mobile}</div>
+        <div className="text-sm text-gray-600">{option.contact_address}</div>
+        <div className="text-sm">
+          Due:{" "}
+          {option.allow_due ? (
+            <span className="text-green-500 font-semibold">Yes</span>
+          ) : (
+            <span className="text-red-500 font-semibold">No</span>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const contact_id_VT = (option) => {
+    if (!option) {
+      return "Select Contact";
+    }
+
+    return (
+      <div className="flex flex-column">
+        <span className="font-semibold">{option.contact_name}</span>
+        <div className="text-sm">
+          Due:{" "}
+          {option.allow_due ? (
+            <span className="text-green-500 font-semibold">Yes</span>
+          ) : (
+            <span className="text-red-500 font-semibold">No</span>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+
   return (
     <>
       <div className="grid">
@@ -72,6 +112,8 @@ export const EntryComponent = ({ errors, formData, onChange }) => {
             optionValue="value"
             filter
             showClear
+            itemTemplate={contact_id_IT}
+            valueTemplate={contact_id_VT}
           />
           {errors.contact_id && (
             <small className="mb-3 text-red-500">{errors.contact_id}</small>
