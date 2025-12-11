@@ -273,8 +273,7 @@ const ProductListComponent = ({
       <Dialog
         header={
           <>
-            <span className="text-red-500">Purchase to Sales Ledger </span>
-            <br />
+            <span className="text-blue-500">Purchase to Sales Ledger of </span>
             {selectedItemDetail?.product_code || "N/A"} -{" "}
             {selectedItemDetail?.product_name || "N/A"}
             <br />
@@ -283,7 +282,7 @@ const ProductListComponent = ({
               qty={selectedItemDetail.stock_qty}
               rowData={selectedItemDetail}
             />
-            <span className="text-red-500"> or </span>
+            <span className="text-blue-500"> or </span>
             {selectedItemDetail.stock_qty} {selectedItemDetail.small_unit_name}
           </>
         }

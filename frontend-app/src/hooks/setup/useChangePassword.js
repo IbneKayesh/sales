@@ -1,17 +1,19 @@
 import { useState } from "react";
-import { usersAPI } from "@/api/usersAPI";
+import { usersAPI } from "@/api/setup/usersAPI";
 import { useAuth } from "@/hooks/useAuth";
+
+const fromDataModel = {
+  currentPassword: "",
+  newPassword: "",
+  confirmPassword: "",
+};
 
 export const useChangePassword = () => {
   const { user } = useAuth();
   const [isBusy, setIsBusy] = useState(false);
   const [toastBox, setToastBox] = useState(null);
   const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
+  const [formData, setFormData] = useState(fromDataModel);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -54,11 +56,16 @@ export const useChangePassword = () => {
     }
 
     try {
-      await usersAPI.changePassword(
-        user.user_id,
-        formData.currentPassword,
-        formData.newPassword
-      );
+
+      const fromDataUser = {
+        user_id: user.user_id,
+        current_password: formData.currentPassword,
+        new_password: formData.newPassword
+      };
+
+      //console.log("fromDataUser: " + JSON.stringify(fromDataUser));
+
+      await usersAPI.changePassword(fromDataUser);
 
       setToastBox({
         severity: "success",
@@ -67,11 +74,7 @@ export const useChangePassword = () => {
       });
 
       // Clear form
-      setFormData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
+      setFormData(fromDataModel);
     } catch (error) {
       console.error("Error changing password:", error);
       setToastBox({
@@ -85,11 +88,7 @@ export const useChangePassword = () => {
   };
 
   const handleClear = () => {
-    setFormData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
+    setFormData(fromDataModel);
     setErrors({});
   };
 

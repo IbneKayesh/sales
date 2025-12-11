@@ -94,6 +94,7 @@ export const usePurchase = () => {
   }, [selectedPoType, selectedFilter]);
 
   const handleChange = (field, value) => {
+    //console.log("handleChange: " + field + " " + JSON.stringify(value));
     setFormDataOrder((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate(
       { ...formDataOrder, [field]: value },

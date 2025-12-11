@@ -1,5 +1,3 @@
-//as example useUnits.js
-
 import { useState, useEffect } from "react";
 import { contactAPI } from "@/api/setup/contactAPI";
 import validate from "@/models/validator";
@@ -40,25 +38,14 @@ export const useContacts = () => {
       //console.log("data: " + JSON.stringify(data));
       setContactList(data);
 
-      const supplierData = data
-        .filter(
-          (c) => c.contact_type === "Supplier" || c.contact_type === "Both"
-        )
-        .map((c) => ({
-          label:
-            c.contact_mobile +
-            " - " +
-            c.contact_name +
-            " - " +
-            c.contact_address,
-          value: c.contact_id,
-        }));
+      const supplierData = data.filter(
+        (c) => c.contact_type === "Supplier" || c.contact_type === "Both"
+      );
 
       setContactSupplierList(supplierData);
 
-      const customerData = data
-        .filter(
-          (c) => c.contact_type === "Customer" || c.contact_type === "Both"
+      const customerData = data.filter(
+        (c) => c.contact_type === "Customer" || c.contact_type === "Both"
         )
         .map((c) => ({
           label:

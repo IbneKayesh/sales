@@ -1,9 +1,3 @@
-const express = require("express");
-const { db } = require("../db/init");
-const router = express.Router();
-
-const { runScriptsSequentially } = require("../db/asyncScriptsRunner.js");
-
 // Update item
 router.post("/update-item11", (req, res) => {
   const { id } = req.body;
@@ -232,5 +226,3 @@ router.post("/update-purchase", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-module.exports = router;

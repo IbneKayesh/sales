@@ -3,9 +3,11 @@ import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { Checkbox } from "primereact/checkbox";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { Dialog } from "primereact/dialog";
 import { useProducts } from "@/hooks/inventory/useProducts";
 import { generateGuid } from "@/utils/guid";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
@@ -25,6 +27,12 @@ const ProductComponent = ({
   const [disabledItemAdd, setDisabledItemAdd] = useState(true);
   const [availableProducts, setAvailableProducts] = useState([]);
 
+  const [visibleProductConfig, setVisibleProductConfig] = useState(false);
+  const [formDataProductConfig, setFormDataProductConfig] = useState({
+    include_discount: false,
+    include_vat: false,
+  });
+
   useEffect(() => {
     setSelectedFilter("allproducts");
   }, []);
@@ -39,7 +47,23 @@ const ProductComponent = ({
 
   // Filter available products based on formDataOrderItems
   useEffect(() => {
-    const filtered = productList
+    //console.log(productList);
+
+    const filteredProductList = productList.map((item) => {
+      const updatedItem = { ...item };
+
+      updatedItem.discount_percent = formDataProductConfig.include_discount
+        ? item.discount_percent
+        : 0;
+
+      updatedItem.vat_percent = formDataProductConfig.include_vat
+        ? item.vat_percent
+        : 0;
+
+      return updatedItem;
+    });
+
+    const filtered = filteredProductList
       .filter(
         (item) =>
           !formDataOrderItems.some(
@@ -51,7 +75,7 @@ const ProductComponent = ({
         value: item.product_id,
       }));
     setAvailableProducts(filtered);
-  }, [productList, formDataOrderItems]);
+  }, [productList, formDataOrderItems, formDataProductConfig]);
 
   // Recalculate cost_price when extra costs change
   useEffect(() => {
@@ -305,7 +329,7 @@ const ProductComponent = ({
           prev.filter((item) => item.po_details_id !== rowData.po_details_id)
         );
       },
-      reject: () => {},
+      reject: () => { },
     });
   };
 
@@ -324,17 +348,22 @@ const ProductComponent = ({
       <ConfirmDialog />
       {/* Child Editable Table */}
       <div className="flex align-items-center gap-2 mb-2">
-        <Dropdown
-          value={selectedItem}
-          options={availableProducts}
-          onChange={(e) => setSelectedItem(e.value)}
-          placeholder="Select Item"
-          optionLabel="label"
-          optionValue="value"
-          className="w-full"
-          filter
-          showClear
-        />
+        <div className="p-inputgroup flex-1">
+          <span className="p-inputgroup-addon" onClick={() => setVisibleProductConfig(true)}>
+            <i className="pi pi-cog"></i>
+          </span>
+          <Dropdown
+            value={selectedItem}
+            options={availableProducts}
+            onChange={(e) => setSelectedItem(e.value)}
+            placeholder="Select Item"
+            optionLabel="label"
+            optionValue="value"
+            className="w-full"
+            filter
+            showClear
+          />
+        </div>
         <InputNumber
           name="itemQty"
           value={itemQty}
@@ -421,6 +450,43 @@ const ProductComponent = ({
           style={{ width: "120px" }}
         />
       </DataTable>
+
+      <Dialog
+        header="Product Configuration"
+        visible={visibleProductConfig}
+        style={{ width: "20vw" }}
+        onHide={() => {
+          if (!visibleProductConfig) return;
+          setVisibleProductConfig(false);
+        }}
+      >
+        <div className="m-0">
+          <div className="flex align-items-center gap-2 mb-3">
+            <Checkbox
+              checked={formDataProductConfig.include_discount}
+              onChange={(e) =>
+                setFormDataProductConfig({
+                  ...formDataProductConfig,
+                  include_discount: e.checked ? true : false,
+                })
+              }
+            />
+            <label>Include Discount</label>
+          </div>
+          <div className="flex align-items-center gap-2 mb-3">
+            <Checkbox
+              checked={formDataProductConfig.include_vat}
+              onChange={(e) =>
+                setFormDataProductConfig({
+                  ...formDataProductConfig,
+                  include_vat: e.checked ? true : false,
+                })
+              }
+            />
+            <label>Include Vat</label>
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 };

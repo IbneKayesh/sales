@@ -380,17 +380,17 @@ const initData = (callback) => {
     //contacts :: Contacts table :: insert default data
     db.run(
       `
-      INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type, current_balance)
+      INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type, current_balance, allow_due)
       VALUES
-      ('cash', 'Cash A/C', '0', '0', 'for internal transaction', 'Cash', 0),
-      ('expense', 'Expense A/C', '0', '0', 'for internal transaction', 'Expense', 0),
-      ('income', 'Income A/C', '0', '0', 'for internal transaction', 'Income', 0),
-      ('inventory', 'Inventory A/C', '0', '0', 'for internal transaction', 'Inventory', 0),
-      ('both', 'Unknown Supplier and Purchaser A/C', '0', '0', 'default for purchase and sale transaction', 'Both', 0),
-      ('1', 'Supplier 1', '1234567890', 'supplier1@example.com', '123 Main St', 'Supplier', 0),
-      ('2', 'Supplier 2', '0987654321', 'supplier2@example.com', '456 Elm St', 'Supplier', 0),
-      ('3', 'Customer 1', '1234567890', 'customer1@example.com', '123 Main St', 'Customer', 0),
-      ('4', 'Customer 2', '0987654321', 'customer2@example.com', '456 Elm St', 'Customer', 0)
+      ('cash', 'Cash A/C', '0', '0', 'for internal transaction', 'Cash', 0, 0),
+      ('expense', 'Expense A/C', '0', '0', 'for internal transaction', 'Expense', 0, 0),
+      ('income', 'Income A/C', '0', '0', 'for internal transaction', 'Income', 0, 0),
+      ('inventory', 'Inventory A/C', '0', '0', 'for internal transaction', 'Inventory', 0, 0),
+      ('both', 'Unknown Supplier and Purchaser A/C', '0', '0', 'default for purchase and sale transaction', 'Both', 0, 0),
+      ('1', 'Supplier 1', '1234567890', 'supplier1@example.com', '123 Main St', 'Supplier', 0, 1),
+      ('2', 'Supplier 2', '0987654321', 'supplier2@example.com', '456 Elm St', 'Supplier', 0, 1),
+      ('3', 'Customer 1', '1234567890', 'customer1@example.com', '123 Main St', 'Customer', 0, 1),
+      ('4', 'Customer 2', '0987654321', 'customer2@example.com', '456 Elm St', 'Customer', 0, 1)
     `,
       (err) => {
         if (err) {

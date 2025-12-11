@@ -18,10 +18,6 @@ export const usersAPI = {
     }),
     changePassword: (user) => apiRequest('/setup/users/change-password', {
         method: 'POST',
-        body: JSON.stringify({
-            user_id: user.user_id,
-            current_password: user.current_password,
-            new_password: user.new_password
-        }),
+        body: JSON.stringify(user),
     }),
 }

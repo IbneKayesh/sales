@@ -88,7 +88,7 @@ const ContactListComponent = ({
     return rowData.payment_mode + " for " + rowData.ref_no;
   };
 
-  const payment_date_FT = () => {
+  const account_balance = () => {
     //total debit - total credit;
     const total_debit = contactsLedger.reduce(
       (total, row) => total + row.debit_amount,
@@ -98,12 +98,17 @@ const ContactListComponent = ({
       (total, row) => total + row.credit_amount,
       0
     );
+    const balance = total_debit - total_credit;
     const formatBalance = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
-    }).format(total_debit - total_credit);
+    }).format(balance);
     //console.log(formatBalance);
-    return "Balance: " + formatBalance;
+    return balance > 0 ? (
+      <span className="text-red-500">{formatBalance}</span>
+    ) : (
+      <span className="text-blue-500">{formatBalance}</span>
+    );
   };
 
   const debit_amount_FT = () => {
@@ -147,9 +152,10 @@ const ContactListComponent = ({
       <Dialog
         header={
           <>
-            <span className="text-red-500">
-              {selectedRowDetail?.contact_name || "N/A"} Contact Ledger{" "}
-            </span>
+            <span className="text-blue-500">Accounts Ledger of </span>
+            {selectedRowDetail?.contact_name || "N/A"}
+            <br />
+            {account_balance()}
           </>
         }
         visible={visibleLedger}
@@ -166,6 +172,9 @@ const ContactListComponent = ({
             keyField="ledger_id"
             emptyMessage="No data found."
             size="small"
+            paginator
+            rows={20}
+            rowsPerPageOptions={[20, 50, 100]}
           >
             <Column field="payment_head" header="Head" />
             <Column
@@ -176,7 +185,6 @@ const ContactListComponent = ({
             <Column
               field="payment_date"
               header="Date"
-              footer={payment_date_FT}
             />
             <Column
               field="debit_amount"
