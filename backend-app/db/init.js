@@ -122,26 +122,6 @@ const initTables = () => {
       )
     `);
 
-    // accounts :: Bank Payments table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS bank_payments (
-        payment_id TEXT PRIMARY KEY,
-        account_id TEXT NOT NULL,
-        payment_head TEXT NOT NULL,
-        payment_mode TEXT NOT NULL,
-        payment_date TEXT NOT NULL,
-        contact_id TEXT NOT NULL,
-        ref_no TEXT NOT NULL,
-        payment_amount REAL DEFAULT 0,
-        payment_note TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (account_id) REFERENCES bank_accounts(account_id) ON DELETE RESTRICT
-        FOREIGN KEY (contact_id) REFERENCES contacts(contact_id) ON DELETE RESTRICT
-      )
-    `);
-
-
     // accounts :: Accounts Ledger table
     db.run(`
       CREATE TABLE IF NOT EXISTS accounts_ledger (
@@ -301,6 +281,21 @@ const initTables = () => {
         FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT
       )
     `);
+
+    // setup :: Transaction Configuration table
+    db.run(`
+      CREATE TABLE IF NOT EXISTS config_transaction (
+        config_id TEXT PRIMARY KEY,
+        config_name TEXT NOT NULL,
+        contact_id TEXT NOT NULL,
+        is_posted BOOLEAN DEFAULT 0,
+        include_discount BOOLEAN DEFAULT 0,
+        include_vat BOOLEAN DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (contact_id) REFERENCES contacts(contact_id) ON DELETE RESTRICT
+      )
+    `);
   });
 };
 
@@ -413,6 +408,23 @@ const initData = (callback) => {
           console.error("Error inserting default bank accounts:", err);
         } else {
           console.log("Default bank accounts inserted.");
+        }
+      }
+    );
+
+    //setup :: Transaction Configuration table :: insert default data
+    db.run(
+      `
+      INSERT OR IGNORE INTO config_transaction (config_id, config_name, contact_id, is_posted, include_discount, include_vat)
+      VALUES
+      ('1', 'Purchase', 'both', 0, 0, 1),
+      ('2', 'Sales', 'both', 1, 1, 1)
+    `,
+      (err) => {
+        if (err) {
+          console.error("Error inserting default transaction configuration:", err);
+        } else {
+          console.log("Default transaction configuration inserted.");
         }
       }
     );

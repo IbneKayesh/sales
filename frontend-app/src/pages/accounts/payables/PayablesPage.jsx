@@ -1,33 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useBankTransaction } from "@/hooks/accounts/useBankTransaction";
-import { useBankAccount } from "@/hooks/accounts/useBankAccount";
-import BankTransactionListComponent from "./BankTransactionListComponent";
-import BankTransactionFormComponent from "./BankTransactionFormComponent";
+import PayableListComponent from "./PayableListComponent";
+import PayableFormComponent from "./PayableFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
+import { usePayables } from "@/hooks/accounts/usePayables";
 
-const BankTransactionPage = () => {
+const PayablesPage = () => {
   const toast = useRef(null);
   const {
-    bankTransactions,
+    payableDueList,
     toastBox,
     isBusy,
     currentView,
     errors,
-    formDataBankTransaction,
+    formDataPayableDue,
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditBankTransaction,
-    handleDeleteBankTransaction,
+    handleEditPayableDue,
+    handleDeletePayableDue,
     handleRefresh,
-    handleSaveBankTransaction,
-    transHeads,
-    refNoTrans,
-    selectedRefNoTrans,
-  } = useBankTransaction();
-  const { bankAccounts } = useBankAccount();
+    handleSavePayableDue,
+  } = usePayables();
 
   useEffect(() => {
     if (toastBox && toast.current) {
@@ -47,10 +42,10 @@ const BankTransactionPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Bank Transaction List"
-            : formDataBankTransaction.bank_transactions_id
-            ? "Edit Bank Transaction"
-            : "Add New Bank Transaction"}
+            ? "Payable Due List"
+            : formDataPayableDue.payable_dues_id
+              ? "Edit Payable Due"
+              : "Add New Payable Due"}
         </h3>
 
         {isList ? (
@@ -63,15 +58,16 @@ const BankTransactionPage = () => {
               onClick={handleRefresh}
             />
             <Button
-              label="New Bank Transaction"
+              label="New Payable Due"
               icon="pi pi-plus"
               size="small"
               onClick={handleAddNew}
+              disabled
             />
           </div>
         ) : (
           <Button
-            label="Bank Transaction List"
+            label="Payable Due List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -86,22 +82,18 @@ const BankTransactionPage = () => {
       <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <BankTransactionListComponent
-            dataList={bankTransactions}
-            onEdit={handleEditBankTransaction}
-            onDelete={handleDeleteBankTransaction}
+          <PayableListComponent
+            dataList={payableDueList}
+            onEdit={handleEditPayableDue}
+            onDelete={handleDeletePayableDue}
           />
         ) : (
-          <BankTransactionFormComponent
+          <PayableFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={formDataBankTransaction}
+            formData={formDataPayableDue}
             onChange={handleChange}
-            onSave={handleSaveBankTransaction}
-            bankAccounts={bankAccounts}
-            transHeads={transHeads}
-            refNoTrans={refNoTrans}
-            selectedRefNoTrans={selectedRefNoTrans}
+            onSave={handleSavePayableDue}
           />
         )}
       </Card>
@@ -109,4 +101,4 @@ const BankTransactionPage = () => {
   );
 };
 
-export default BankTransactionPage;
+export default PayablesPage;

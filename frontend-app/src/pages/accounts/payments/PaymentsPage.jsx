@@ -1,27 +1,27 @@
 import React, { useState, useRef, useEffect } from "react";
-import PaymentsListComponent from "./PaymentsListComponent";
-import PaymentsFormComponent from "./PaymentsFormComponent";
+import { usePayments } from "@/hooks/accounts/usePayments";
+import PaymentListComponent from "./PaymentListComponent";
+import PaymentFormComponent from "./PaymentFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import { usePayments } from "@/hooks/accounts/usePayments";
 
 const PaymentsPage = () => {
   const toast = useRef(null);
   const {
-    payableDueList,
+    paymentList,
     toastBox,
     isBusy,
     currentView,
     errors,
-    formDataPayableDue,
+    formDataPayment,
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditPayableDue,
-    handleDeletePayableDue,
+    handleEditPayment,
+    handleDeletePayment,
     handleRefresh,
-    handleSavePayableDue,
+    handleSavePayment,
   } = usePayments();
 
   useEffect(() => {
@@ -42,10 +42,10 @@ const PaymentsPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Payable Due List"
-            : formDataPayableDue.payable_dues_id
-            ? "Edit Payable Due"
-            : "Add New Payable Due"}
+            ? "Payment List"
+            : formDataPayment.payment_id
+              ? "Edit Payment"
+              : "Add New Payment"}
         </h3>
 
         {isList ? (
@@ -58,16 +58,15 @@ const PaymentsPage = () => {
               onClick={handleRefresh}
             />
             <Button
-              label="New Payable Due"
+              label="New Payment"
               icon="pi pi-plus"
               size="small"
               onClick={handleAddNew}
-              disabled
             />
           </div>
         ) : (
           <Button
-            label="Payable Due List"
+            label="Payment List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -82,18 +81,18 @@ const PaymentsPage = () => {
       <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <PaymentsListComponent
-            dataList={payableDueList}
-            onEdit={handleEditPayableDue}
-            onDelete={handleDeletePayableDue}
+          <PaymentListComponent
+            dataList={paymentList}
+            onEdit={handleEditPayment}
+            onDelete={handleDeletePayment}
           />
         ) : (
-          <PaymentsFormComponent
+          <PaymentFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={formDataPayableDue}
+            formData={formDataPayment}
             onChange={handleChange}
-            onSave={handleSavePayableDue}
+            onSave={handleSavePayment}
           />
         )}
       </Card>

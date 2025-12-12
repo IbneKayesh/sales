@@ -34,8 +34,9 @@ const Layout = () => {
       icon: "pi pi-money-bill",
       submenus: [
         { id: "ac1", name: "Bank Account", url: "/home/accounts/bank-account", icon: "pi pi-user" },
-        { id: "ac2", name: "Bank Payment", url: "/home/accounts/bank-payment", icon: "pi pi-receipt" },
-        { id: "ac3", name: "Payable Due", url: "/home/accounts/payable-due", icon: "pi pi-money-bill" },
+        { id: "ac2", name: "Payments", url: "/home/accounts/payments", icon: "pi pi-receipt" },
+        { id: "ac3", name: "Payables", url: "/home/accounts/payables", icon: "pi pi-money-bill" },
+        { id: "ac4", name: "Receivables", url: "/home/accounts/receivables", icon: "pi pi-money-bill" },
       ],
     },
     {

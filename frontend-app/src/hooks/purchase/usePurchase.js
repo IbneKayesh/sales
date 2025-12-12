@@ -4,13 +4,14 @@ import validate from "@/models/validator";
 import t_po_master from "@/models/purchase/t_po_master.json";
 import { generateGuid } from "@/utils/guid";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
+import { configsAPI } from "@/api/setup/configsAPI";
 
 const fromDataModel = {
   po_master_id: "",
   order_type: "",
   order_no: "[SL-123456]",
   order_date: new Date().toISOString().split("T")[0],
-  contact_id: "both",
+  contact_id: "",
   ref_no: "No Ref",
   order_note: "",
   order_amount: 0,
@@ -32,6 +33,7 @@ const fromDataModel = {
 };
 
 export const usePurchase = () => {
+  const [configLine, setConfigLine] = useState({});
   const [purchaseList, setPurchaseList] = useState([]);
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
@@ -88,7 +90,25 @@ export const usePurchase = () => {
     }
   };
 
+  const fetchConfig = async () => {
+    try {
+      const data = await configsAPI.getTransaction("Purchase");
+      //console.log("data: " + JSON.stringify(data));
+      setConfigLine(data);
+    } catch (error) {
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to load data from server",
+      });
+    }
+  };
+
   //Fetch data from API on mount
+  useEffect(() => {
+    fetchConfig();
+  }, []);
+
   useEffect(() => {
     loadPurchase();
   }, [selectedPoType, selectedFilter]);
@@ -117,7 +137,12 @@ export const usePurchase = () => {
 
   const handleAddNew = () => {
     handleClear();
-    setFormDataOrder((prev) => ({ ...prev, order_type: selectedPoType }));
+    setFormDataOrder((prev) => ({
+      ...prev,
+      order_type: selectedPoType,
+      contact_id: configLine?.contact_id,
+      is_posted: configLine?.is_posted,
+    }));
     setCurrentView("form");
   };
 
@@ -177,9 +202,7 @@ export const usePurchase = () => {
     }
   };
 
-  const handleRefresh = () => {
-    loadPurchase(true);
-  };
+
 
   const handleFilterChange = (filter) => {
     setSelectedFilter(filter);
@@ -206,8 +229,8 @@ export const usePurchase = () => {
       formDataOrder.payable_amount === formDataOrder.due_amount
         ? "Unpaid"
         : formDataOrder.due_amount === 0
-        ? "Paid"
-        : "Partial";
+          ? "Paid"
+          : "Partial";
 
     try {
       if (formDataOrder.po_master_id) {
@@ -248,13 +271,15 @@ export const usePurchase = () => {
         });
       }
 
-      loadPurchase();
-
-      handleClear();
-      setCurrentView("list");
 
       //call update process
       await closingProcessAPI("Purchase", formDataOrder.order_no);
+
+      //reload list data
+
+      handleClear();
+      setCurrentView("list");
+      loadPurchase();
     } catch (error) {
       console.error("Error saving purchase:", error);
       setToastBox({
@@ -268,6 +293,7 @@ export const usePurchase = () => {
   };
 
   return {
+    configLine,
     purchaseList,
     toastBox,
     isBusy,
@@ -285,12 +311,9 @@ export const usePurchase = () => {
     handleAddNew,
     handleEditPurchase,
     handleDeletePurchase,
-    handleRefresh,
     handleSavePurchase,
     selectedPoType,
-    setSelectedPoType,
     selectedFilter,
-    setSelectedFilter,
     poTypeOptions,
     filterOptions,
     paymentOptions,

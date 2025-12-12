@@ -6,66 +6,56 @@ import { generateGuid } from "@/utils/guid";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
 const fromDataModel = {
-  payment_id: "",
-  contact_id: "",
-  payment_head: "",
-  payment_mode: "",
-  payment_date: new Date().toISOString().split("T")[0],
-  payment_amount: 0,
-  balance_amount: 0,
-  payment_note: "",
-  ref_no: "",
-  allocation_amount: 0,
-  ismodified: false,
-};
+    payment_id: "",
+    contact_id: "",
+    payment_head: "",
+    payment_mode: "",
+    payment_date: new Date().toISOString().split("T")[0],
+    payment_amount: 0,
+    balance_amount: 0,
+    payment_note: "",    
+    ref_no: "",
+    ismodified: false,
+}
 
 export const usePayments = () => {
-  const [payableDueList, setPayableDueList] = useState([]);
+  const [paymentList, setPaymentList] = useState([]);
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [formDataPayableDue, setformDataPayableDue] = useState(fromDataModel);
+  const [formDataPayment, setFormDataPayment] = useState(fromDataModel);
 
-  const loadPayableDues = async (resetModified = false) => {
+  const loadPayments = async (resetModified = false) => {
     try {
-      const data = await paymentsAPI.accountsPayableDuesSuppliers();
+      const data = await paymentsAPI.getAll();
       //console.log("data: " + JSON.stringify(data));
-      setPayableDueList(data);
-      if (resetModified) {
-        setToastBox({
-          severity: "info",
-          summary: "Refreshed",
-          detail: "Data refreshed from database.",
-        });
-      }
+      setPaymentList(data);
     } catch (error) {
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: resetModified
-          ? "Failed to refresh data from server"
-          : "Failed to load data from server",
+        detail: "Failed to load data from server",
       });
     }
   };
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadPayableDues();
+    loadPayments();
   }, []);
 
   const handleChange = (field, value) => {
-    setformDataPayableDue((prev) => ({ ...prev, [field]: value }));
+    setFormDataPayment((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate(
-      { ...formDataPayableDue, [field]: value },
+      { ...formDataPayment, [field]: value },
       t_payments
     );
     setErrors(newErrors);
   };
 
   const handleClear = () => {
-    setformDataPayableDue(fromDataModel);
+    setFormDataPayment(fromDataModel);
     setErrors({});
   };
 
@@ -79,25 +69,21 @@ export const usePayments = () => {
     setCurrentView("form");
   };
 
-  const handleEditPayableDue = (payableDue) => {
-    //console.log("bankaccount: " + JSON.stringify(bankaccount));
+  const handleEditPayment = (payment) => {
+    //console.log("payment: " + JSON.stringify(payment));
 
-    const newPayableDue = {
-      ...payableDue,
-      payment_date: new Date().toISOString().split("T")[0],
-    };
-    setformDataPayableDue(newPayableDue);
+    setFormDataPayment(payment);
     setCurrentView("form");
   };
 
-  const handleDeletePayableDue = async (rowData) => {
+  const handleDeletePayment = async (rowData) => {
     try {
       //console.log("rowData " + JSON.stringify(rowData))
       await paymentsAPI.delete(rowData);
-      const updatedPayableDues = payableDueList.filter(
-        (p) => p.payment_id !== rowData.payment_id
+      const updatedPayments = paymentList.filter(
+        (b) => b.payment_id !== rowData.payment_id
       );
-      setPayableDueList(updatedPayableDues);
+      setPaymentList(updatedPayments);
 
       setToastBox({
         severity: "info",
@@ -105,36 +91,40 @@ export const usePayments = () => {
         detail: `Deleted successfully.`,
       });
     } catch (error) {
-      console.error("Error deleting Payable Due", error);
+      console.error("Error deleting Payment", error);
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to delete Payable Due",
+        detail: "Failed to delete Payment",
       });
     }
   };
 
   const handleRefresh = () => {
-    loadPayableDues(true);
+    loadPayments(true);
   };
 
-  const handleSavePayableDue = async (e) => {
+  const handleSavePayment = async (e) => {
     e.preventDefault();
     setIsBusy(true);
 
-    if (formDataPayableDue.payment_amount > formDataPayableDue.balance_amount) {
+    const newErrors = validate(formDataPayment, t_payments);
+    setErrors(newErrors);
+    console.log(
+      "handleSavePayment: " + JSON.stringify(formDataPayment)
+    );
+
+    if (formDataPayment.payment_amount > formDataPayment.due_amount) {
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Payment amount cannot be greater than Due balance amount.",
+        detail:
+          "Payment amount cannot be greater than due amount " +
+          formDataPayment.due_amount,
       });
       setIsBusy(false);
       return;
     }
-
-    const newErrors = validate(formDataPayableDue, t_payments);
-    setErrors(newErrors);
-    console.log("handleSavePayableDue: " + JSON.stringify(newErrors));
 
     if (Object.keys(newErrors).length > 0) {
       setIsBusy(false);
@@ -142,53 +132,59 @@ export const usePayments = () => {
     }
 
     try {
-      let updatedPayableDues;
-      if (formDataPayableDue.payment_id) {
+      let updatedPayments;
+      if (formDataPayment.payment_id) {
         // Edit existing
-        const updatedPayableDue = await paymentsAPI.update(formDataPayableDue);
-        // updatedPayableDue.ismodified = true;
-        // updatedPayableDues = payableDueList.map((p) =>
-        //   p.payment_id === formDataPayableDue.payment_id ? updatedPayableDue : p
-        // );
+        const updatedPayment = await paymentsAPI.update(
+          formDataPayment
+        );
+        updatedPayment.ismodified = true;
+        updatedPayments = paymentList.map((b) =>
+          b.payment_id === formDataPayment.payment_id
+            ? updatedPayment
+            : b
+        );
 
         setToastBox({
           severity: "success",
           summary: "Success",
-          detail: `"${formDataPayableDue.ref_no}" updated successfully.`,
+          detail: `"${formDataPayment.payment_head}" updated successfully.`,
         });
       } else {
         // Add new
-        const newPayableDueData = {
-          ...formDataPayableDue,
+        const newPaymentData = {
+          ...formDataPayment,
           payment_id: generateGuid(),
         };
-        console.log("newPayableDueData: " + JSON.stringify(newPayableDueData));
+        //console.log("newPaymentData: " + JSON.stringify(newPaymentData));
 
-        const newPayableDue =
-          await paymentsAPI.accountsPayableDuesSuppliersCreate(
-            newPayableDueData
-          );
-        //newPayableDue.ismodified = true;
-        //updatedPayableDues = [...payableDueList, newPayableDue];
+        const newPayment = await paymentsAPI.create(newPaymentData);
+        //newPayment.ismodified = true;
+        //updatedPayments = [...paymentList, newPayment];
 
         setToastBox({
           severity: "success",
           summary: "Success",
-          detail: `"${formDataPayableDue.ref_no}" added successfully.`,
+          detail: `"${formDataPayment.payment_head}" added successfully.`,
         });
       }
-      //setPayableDueList(updatedPayableDues);
-      //call update process
-      await closingProcessAPI("Payments", formDataPayableDue.ref_no);
-      loadPayableDues();
+      //setPaymentList(updatedPayments);
+
       handleClear();
       setCurrentView("list");
+
+      //call update process
+      await closingProcessAPI("Payments",formDataPayment.ref_no);
+
+      
+      loadPayments(true);
+
     } catch (error) {
-      console.error("Error saving Payable Due", error);
+      console.error("Error saving payment", error);
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to save Payable Due",
+        detail: "Failed to save payment",
       });
     }
 
@@ -196,18 +192,18 @@ export const usePayments = () => {
   };
 
   return {
-    payableDueList,
+    paymentList,
     toastBox,
     isBusy,
     currentView,
     errors,
-    formDataPayableDue,
+    formDataPayment,
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditPayableDue,
-    handleDeletePayableDue,
+    handleEditPayment,
+    handleDeletePayment,
     handleRefresh,
-    handleSavePayableDue,
+    handleSavePayment,
   };
 };

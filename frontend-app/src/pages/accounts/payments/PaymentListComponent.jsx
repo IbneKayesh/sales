@@ -4,7 +4,7 @@ import { Button } from "primereact/button";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 
-const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
+const PaymentListComponent = ({ dataList, onDetail, onDelete }) => {
 
   const handleDelete = (rowData) => {
     confirmDialog({
@@ -34,11 +34,11 @@ const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
     return (
       <div className="flex flex-wrap gap-2">
         <SplitButton
-          icon="pi pi-plus"
+          icon="pi pi-book"
           size="small"
-          tooltip="Add New"
+          tooltip="View Details"
           tooltipOptions={{ position: "top" }}
-          onClick={() => onEdit(rowData)}
+          onClick={() => onDetail(rowData)}
           model={menuItems}
           disabled={rowData.ismodified}
         />
@@ -46,23 +46,30 @@ const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const nameTemplate = (rowData) => {
+  const payment_head_BT = (rowData) => {
     return rowData.payment_head + " - " + rowData.contact_name;
   };
 
 
-  const payableAmountTemplate = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.payable_amount);
-  };
-
-  const paymentAmountTemplate = (rowData) => {
+  const payment_amount_BT = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
     }).format(rowData.payment_amount);
+  };
+
+  const balance_amount_BT = (rowData) => {
+    if(rowData.balance_amount === 0){
+      return "0";
+    }
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "BDT",
+    }).format(rowData.balance_amount);
+  };
+
+  const ref_no_BT = (rowData) => {
+    return rowData.ref_no + ", " + rowData.payment_note;
   };
 
   return (
@@ -77,21 +84,12 @@ const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
         className="bg-dark-300"
         size="small"
       >
-        <Column field="payment_head" header="Head" sortable body={nameTemplate} />
-        <Column field="order_date" header="Date" sortable/>
-        <Column field="ref_no" header="Ref No" sortable />
-        <Column
-          field="payable_amount"
-          header="Total Amount"
-          body={payableAmountTemplate}
-          sortable
-        />
-        <Column
-          field="payment_amount"
-          header="Due Amount"
-          body={paymentAmountTemplate}
-          sortable
-        />
+        <Column field="payment_head" header="Head" sortable body={payment_head_BT} />
+        <Column field="payment_mode" header="Mode" sortable/>
+        <Column field="payment_date" header="Date" sortable/>
+        <Column field="payment_amount" header="Payment" sortable body={payment_amount_BT}/>
+        <Column field="balance_amount" header="Balance" sortable body={balance_amount_BT}/>
+        <Column field="ref_no" header="Ref No" sortable body={ref_no_BT}/>
         <Column
           header="Actions"
           body={actionTemplate}
@@ -102,4 +100,4 @@ const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
   );
 };
 
-export default PaymentsListComponent;
+export default PaymentListComponent;

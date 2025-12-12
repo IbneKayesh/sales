@@ -1,13 +1,18 @@
 import { InputText } from "primereact/inputtext";
-import { InputNumber } from "primereact/inputnumber";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { Checkbox } from "primereact/checkbox";
 import t_po_master from "@/models/purchase/t_po_master.json";
 import { useContacts } from "@/hooks/setup/useContacts";
 
-export const EntryComponent = ({ errors, formData, onChange }) => {
+const OrderMasterComponent = ({ errors, formData, onChange, setIsAllowDue }) => {
   const { contactSupplierList } = useContacts();
+
+  const handleContactChange = (e) => {
+    onChange("contact_id", e.value);
+    const selectedObj = contactSupplierList.find(c => c.contact_id === e.value);
+    setIsAllowDue(selectedObj?.allow_due || false);
+  };
 
   const contact_id_IT = (option) => {
     return (
@@ -110,7 +115,7 @@ export const EntryComponent = ({ errors, formData, onChange }) => {
             options={contactSupplierList}
             optionLabel="contact_name"
             optionValue="contact_id"
-            onChange={(e) => onChange("contact_id", e.value)}
+            onChange={(e) => handleContactChange(e)}
             className={`w-full ${errors.contact_id ? "p-invalid" : ""}`}
             placeholder={`Select ${t_po_master.contact_id.name}`}
             filter
@@ -178,3 +183,5 @@ export const EntryComponent = ({ errors, formData, onChange }) => {
     </>
   );
 };
+
+export default OrderMasterComponent;

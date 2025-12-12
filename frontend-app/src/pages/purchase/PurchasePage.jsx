@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { usePurchase } from "@/hooks/purchase/usePurchase";
 import OrderListComponent from "./OrderListComponent";
-import OrderFormComponent from "./OrderFormComponent";
+import EntryFormComponent from "./EntryFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
@@ -10,6 +10,7 @@ import { Dropdown } from "primereact/dropdown";
 const PurchasePage = () => {
   const toast = useRef(null);
   const {
+    configLine,
     purchaseList,
     toastBox,
     isBusy,
@@ -27,12 +28,9 @@ const PurchasePage = () => {
     handleAddNew,
     handleEditPurchase,
     handleDeletePurchase,
-    handleRefresh,
     handleSavePurchase,
     selectedPoType,
-    setSelectedPoType,
     selectedFilter,
-    setSelectedFilter,
     poTypeOptions,
     filterOptions,
     paymentOptions,
@@ -60,8 +58,8 @@ const PurchasePage = () => {
           {isList
             ? `${selectedPoType} List`
             : formDataOrder?.po_master_id
-            ? `Edit ${formDataOrder?.order_type}: ${formDataOrder?.order_no}`
-            : `New ${selectedPoType}`}
+              ? `Edit ${formDataOrder?.order_type}: ${formDataOrder?.order_no}`
+              : `New ${selectedPoType}`}
         </h3>
 
         {isList ? (
@@ -116,7 +114,8 @@ const PurchasePage = () => {
             onDelete={handleDeletePurchase}
           />
         ) : (
-          <OrderFormComponent
+          <EntryFormComponent
+            configLine={configLine}
             isBusy={isBusy}
             errors={errors}
             setErrors={setErrors}

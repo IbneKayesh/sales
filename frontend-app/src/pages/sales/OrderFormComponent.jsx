@@ -408,6 +408,7 @@ const OrderFormComponent = ({
                       severity="info"
                       size="small"
                       onClick={handleAddPayment}
+                      disabled={formData.is_posted}
                     />
                   </div>
                 </div>

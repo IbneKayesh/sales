@@ -1,10 +1,9 @@
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Button } from "primereact/button";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 
-const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
+const PayableListComponent = ({ dataList, onEdit, onDelete }) => {
 
   const handleDelete = (rowData) => {
     confirmDialog({
@@ -51,11 +50,18 @@ const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
   };
 
 
-  const dueAmountTemplate = (rowData) => {
+  const payableAmountTemplate = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
-    }).format(rowData.due_amount);
+    }).format(rowData.payable_amount);
+  };
+
+  const paymentAmountTemplate = (rowData) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "BDT",
+    }).format(rowData.payment_amount);
   };
 
   return (
@@ -71,12 +77,18 @@ const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
         size="small"
       >
         <Column field="payment_head" header="Head" sortable body={nameTemplate} />
-        <Column field="payment_date" header="Date" sortable/>
+        <Column field="order_date" header="Date" sortable />
         <Column field="ref_no" header="Ref No" sortable />
         <Column
-          field="due_amount"
+          field="payable_amount"
+          header="Total Amount"
+          body={payableAmountTemplate}
+          sortable
+        />
+        <Column
+          field="payment_amount"
           header="Due Amount"
-          body={dueAmountTemplate}
+          body={paymentAmountTemplate}
           sortable
         />
         <Column
@@ -89,4 +101,4 @@ const PaymentsListComponent = ({ dataList, onEdit, onDelete }) => {
   );
 };
 
-export default PaymentsListComponent;
+export default PayableListComponent;
