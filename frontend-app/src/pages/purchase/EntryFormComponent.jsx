@@ -24,24 +24,17 @@ const EntryFormComponent = ({
 
   useEffect(() => {
     //console.log("formData:", formData);
-  
-    const isAllowDue = Boolean(formData?.allow_due);
     const isEditMode = formData?.isedit;
     const hasNoItems = !formDataOrderItems || formDataOrderItems.length < 1;
     const isNegativeDue = formData?.due_amount < 0;
     const isDueNotAllowed = !isAllowDue && formData?.due_amount > 0;
-  
+
     const isDisable =
       isEditMode || hasNoItems || isNegativeDue || isDueNotAllowed;
-  
+
     setDisableSubmit(isDisable);
   }, [formData, formDataOrderItems]);
 
-  useEffect(() => {
-    if (formData?.allow_due !== undefined) {
-      setIsAllowDue(formData.allow_due);
-    }
-  }, [formData?.allow_due]);
 
   useEffect(() => {
     const order_amount = formDataOrderItems.reduce(
@@ -169,8 +162,8 @@ const EntryFormComponent = ({
                 formData.po_master_id
                   ? "Update"
                   : formData.is_posted
-                  ? "Save with Posted"
-                  : "Save as Draft"
+                    ? "Save with Posted"
+                    : "Save as Draft"
               }
               icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
               severity="success"
