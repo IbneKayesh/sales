@@ -2,7 +2,9 @@ import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
+import { Dropdown } from "primereact/dropdown";
 import t_payments from "@/models/accounts/t_payments.json";
+import { paymentModeOptions } from "@/utils/vtable";
 
 const PayableFormComponent = ({
   isBusy,
@@ -47,12 +49,15 @@ const PayableFormComponent = ({
             {t_payments.payment_mode.name}{" "}
             <span className="text-red-500">*</span>
           </label>
-          <InputText
+          <Dropdown
             name="payment_mode"
             value={formData.payment_mode}
-            onChange={(e) => onChange("payment_mode", e.target.value)}
+            options={paymentModeOptions}
+            onChange={(e) => onChange("payment_mode", e.value)}
             className={`w-full ${errors.payment_mode ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_payments.payment_mode.name}`}
+            placeholder={`Select ${t_payments.payment_mode.name}`}
+            optionLabel="label"
+            optionValue="value"
           />
           {errors.payment_mode && (
             <small className="mb-3 text-red-500">{errors.payment_mode}</small>

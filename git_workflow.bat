@@ -2,7 +2,7 @@
 cd /d %~dp0
  
 :START
-color 0b
+color 0c
 echo  -=-=-=- START -=-=-=-
 echo Checking git status...
 git status

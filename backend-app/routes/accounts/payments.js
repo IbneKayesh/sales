@@ -131,6 +131,7 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 //update bank account
 router.post("/update", async (req, res) => {
   try {
@@ -187,6 +188,7 @@ router.post("/update", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 //delete bank account
 router.post("/delete", async (req, res) => {
   try {
@@ -210,5 +212,8 @@ router.post("/delete", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+
 
 module.exports = router;

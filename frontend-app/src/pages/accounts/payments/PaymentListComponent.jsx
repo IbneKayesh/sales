@@ -69,7 +69,8 @@ const PaymentListComponent = ({ dataList, onDetail, onDelete }) => {
   };
 
   const ref_no_BT = (rowData) => {
-    return rowData.ref_no + ", " + rowData.payment_note;
+    //console.log("rowData " + JSON.stringify(rowData));
+    return rowData.ref_no + (rowData.payment_note? ", " + rowData.payment_note : "");
   };
 
   return (

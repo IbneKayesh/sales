@@ -42,7 +42,7 @@ router.get("/", async (req, res) => {
           " AND pom.is_paid != 'Paid' OR pom.is_posted = 0 OR pom.is_completed = 0";
         break;
     }
-    const sql = `SELECT pom.*, c.contact_name, is_posted as isedit,0 as ismodified
+    const sql = `SELECT pom.*, c.contact_name, c.allow_due, pom.is_posted as isedit, 0 as ismodified
                     FROM po_master pom
                     LEFT JOIN contacts c ON pom.contact_id = c.contact_id
                     ${whereClause}`;

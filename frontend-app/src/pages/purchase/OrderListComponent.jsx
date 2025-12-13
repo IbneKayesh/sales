@@ -20,6 +20,7 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
   };
 
   const actionTemplate = (rowData) => {
+    //console.log("rowData " + JSON.stringify(rowData));
     let menuItems = [
       {
         label: "Delete",
@@ -27,7 +28,7 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
         command: () => {
           handleDelete(rowData);
         },
-        disabled: rowData.ismodified,
+        disabled: rowData.isedit,
       },
     ];
     return (

@@ -28,6 +28,7 @@ export const useContacts = () => {
     { label: "Both", value: "Both" },
   ];
 
+  const [contactPaymentList, setContactPaymentList] = useState([]);
   const [contactSupplierList, setContactSupplierList] = useState([]);
   const [contactCustomerList, setContactCustomerList] = useState([]);
   const [contactsLedger, setContactsLedger] = useState([]);
@@ -37,6 +38,15 @@ export const useContacts = () => {
       const data = await contactAPI.getAll();
       //console.log("data: " + JSON.stringify(data));
       setContactList(data);
+
+
+      const paymentData = data.filter(
+        (c) => c.contact_type !== "Both"
+      );
+
+      setContactPaymentList(paymentData);
+
+
 
       const supplierData = data.filter(
         (c) => c.contact_type === "Supplier" || c.contact_type === "Both"
@@ -219,6 +229,7 @@ export const useContacts = () => {
 
   return {
     contactList,
+    contactPaymentList,
     contactSupplierList,
     contactCustomerList,
     contactTypeOptions,

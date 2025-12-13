@@ -23,31 +23,25 @@ const EntryFormComponent = ({
   const [isAllowDue, setIsAllowDue] = useState(false);
 
   useEffect(() => {
-    let isDisable = false;
-    if (!isAllowDue && formData.due_amount > 0) {
-      isDisable = true;
-    } else {
-      isDisable = false;
-    }
-
-    if (formDataOrderItems && formDataOrderItems.length < 1) {
-      isDisable = true;
-    }
-
-    if (formData.isedit) {
-      isDisable = true;
-    }
-
-    if (formData.due_amount < 0) {
-      isDisable = true;
-    }
-
-    //console.log("isAllowDue: " + isAllowDue);
-    //console.log("formData.due_amount: " + formData.due_amount);
-    //console.log("isDisable: " + isDisable);
-
+    //console.log("formData:", formData);
+  
+    const isAllowDue = Boolean(formData?.allow_due);
+    const isEditMode = formData?.isedit;
+    const hasNoItems = !formDataOrderItems || formDataOrderItems.length < 1;
+    const isNegativeDue = formData?.due_amount < 0;
+    const isDueNotAllowed = !isAllowDue && formData?.due_amount > 0;
+  
+    const isDisable =
+      isEditMode || hasNoItems || isNegativeDue || isDueNotAllowed;
+  
     setDisableSubmit(isDisable);
-  }, [isAllowDue, formDataOrderItems, formData]);
+  }, [formData, formDataOrderItems]);
+
+  useEffect(() => {
+    if (formData?.allow_due !== undefined) {
+      setIsAllowDue(formData.allow_due);
+    }
+  }, [formData?.allow_due]);
 
   useEffect(() => {
     const order_amount = formDataOrderItems.reduce(
