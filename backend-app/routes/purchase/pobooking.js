@@ -133,7 +133,7 @@ router.post("/create", async (req, res) => {
         shop_id,
         contact_id,
         order_type,
-        order_no,
+        order_no_new,
         order_date,
         order_note,
         order_amount || 0,
@@ -153,13 +153,71 @@ router.post("/create", async (req, res) => {
       ],
     });
 
-    //Insert order Details
+    //Insert booking details
     for (const detail of details_create) {
+      scripts.push({
+        label: "2 of 2 :: Insert Purchase Booking",
+        sql: `INSERT INTO po_booking (booking_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, received_qty, pending_qty)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        params: [
+          generateGuid(),
+          master_id,
+          detail.product_id,
+          detail.product_price || 0,
+          detail.product_qty || 0,
+          detail.discount_percent || 0,
+          detail.discount_amount || 0,
+          detail.vat_percent || 0,
+          detail.vat_amount || 0,
+          detail.cost_price || 0,
+          detail.total_amount || 0,
+          detail.product_note || "",
+          0,
+          detail.pending_qty || 0,
+        ],
+      });
     }
 
     //Insert order Payments
     for (const payment of payments_create) {
+      scripts.push({
+        label: "3 of 2 :: Insert Purchase Payments",
+        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        params: [
+          generateGuid(),
+          shop_id,
+          master_id,
+          contact_id,
+          order_type,
+          payment.payment_mode || "Cash",
+          payment.payment_date,
+          payment.payment_amount || 0,
+          payment.payment_note || "",
+          order_no_new,
+        ],
+      });
     }
+
+    //run scripts
+    const results = await runScriptsSequentially(scripts, {
+      useTransaction: true,
+    });
+
+
+
+    // If any failed, transaction has already rolled back
+    if (!results.every((r) => r.success)) {
+      return res.status(500).json({ error: "Failed to create purchase order" });
+    }
+    // ❗ Only one response is sent
+    res.status(201).json({
+      message: "Purchase Order created successfully!",
+      master_id,
+      order_no: order_no_new,
+      details_create,
+      payments_create,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

@@ -97,7 +97,11 @@ const OrderEntryComponent = ({
         </AccordionTab>
       </Accordion>
       <div className="flex justify-content-end">
-        <Button label="Save" className="p-button-primary" />
+        <Button
+          label="Save"
+          className="p-button-primary"
+          onClick={handleSave}
+        />
       </div>
     </div>
   );

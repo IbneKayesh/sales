@@ -6,7 +6,7 @@ import { generateGuid } from "@/utils/guid";
 
 const formDataModel = {
   master_id: "",
-  shop_id: "",
+  shop_id: "1",
   contact_id: "",
   order_type: "Booking",
   order_no: "[Auto SL]",
@@ -163,6 +163,8 @@ const usePobooking = () => {
         detail: `${message} successfully.`,
       });
 
+      return;
+
       setIsBusy(false);
       handleCancel();
       loadBookingList();
@@ -175,8 +177,8 @@ const usePobooking = () => {
       });
       setIsBusy(false);
     }
-    resetForm();
-    setCurrentView("list");
+    //resetForm();
+    //setCurrentView("list");
   };
 
   return {
