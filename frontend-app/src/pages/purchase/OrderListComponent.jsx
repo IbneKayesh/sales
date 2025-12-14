@@ -2,7 +2,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
-import { Badge } from "primereact/badge";
+
 
 const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
@@ -70,42 +70,6 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
     return (
       <>
         Due: <span className="text-red-500 font-bold">{total_due_amount}</span>
-      </>
-    );
-  };
-
-  const isPaidTemplate = (rowData) => {
-    //console.log("rowData " + JSON.stringify(rowData))
-    return (
-      <>
-        {(() => {
-          const statusMap = {
-            Paid: { severity: "success" },
-            Unpaid: { severity: "danger" },
-            Partial: { severity: "warning" },
-          };
-
-          const status = statusMap[rowData.is_paid];
-
-          return status ? (
-            <Badge
-              value={rowData.is_paid}
-              severity={status.severity}
-              className="mr-1"
-            />
-          ) : null;
-        })()}
-
-        {rowData.is_posted ? (
-          <Badge value="Posted" severity="success" className="mr-1"></Badge>
-        ) : (
-          <Badge value="Unposted" severity="danger" className="mr-1"></Badge>
-        )}
-        {rowData.is_completed ? (
-          <Badge value="Completed" severity="info"></Badge>
-        ) : (
-          <Badge value="Incomplete" severity="warning"></Badge>
-        )}
       </>
     );
   };
@@ -223,13 +187,6 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
     <div className="p-1">
       <ConfirmDialog />
       <DataTable
-        value={dataList}
-        paginator
-        rows={10}
-        rowsPerPageOptions={[5, 10, 25]}
-        emptyMessage="No data found."
-        className="bg-dark-300"
-        size="small"
         footer={tableFooterTemplate()}
       >
         <Column field="order_no" header="Order No" sortable />
@@ -241,12 +198,6 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
           sortable
           body={totalAmountTemplate}
           footer={totalAmountFooterTemplate}
-        />
-        <Column
-          field="is_paid"
-          header="Status"
-          body={isPaidTemplate}
-          sortable
         />
         <Column
           header="Actions"

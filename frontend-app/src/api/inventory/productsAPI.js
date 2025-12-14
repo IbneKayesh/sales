@@ -19,4 +19,5 @@ export const productsAPI = {
     body: JSON.stringify(product),
   }),
   getProductLedger: (id) => apiRequest(`/inventory/products/ledger/${id}`),
+  getAllBooking: () => apiRequest(`/inventory/products/booking`),
 };

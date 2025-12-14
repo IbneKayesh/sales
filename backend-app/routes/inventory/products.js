@@ -48,8 +48,6 @@ router.get("/", async (req, res) => {
       break;
   }
 
-
-
   try {
     const sql = `SELECT p.*,
     c.category_name,
@@ -101,6 +99,27 @@ p.discount_percent, p.vat_percent, p.cost_price_percent ,p.margin_price, p.purch
   }
 });
 
+// Get all products for booking
+router.get("/booking", async (req, res) => {
+  try {
+    const sql = `SELECT p.*,
+    c.category_name,
+    su.unit_name as small_unit_name,
+    lu.unit_name as large_unit_name,
+    0 as ismodified
+    FROM products p
+    LEFT JOIN categories c ON p.category_id = c.category_id
+    LEFT JOIN units su ON p.small_unit_id = su.unit_id
+    LEFT JOIN units lu ON p.large_unit_id = lu.unit_id
+    ORDER BY p.product_code`;
+    const rows = await dbAll(sql, []);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching Products:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // Get product by ID
 router.get("/:id", async (req, res) => {
   try {
@@ -136,7 +155,6 @@ router.post("/", async (req, res) => {
     vat_percent,
     margin_price,
   } = req.body;
-
 
   if (!product_id) {
     return res.status(400).json({ error: "Product ID is required" });
@@ -262,12 +280,11 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-
 // Get product by ID
 router.get("/ledger/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const sql =`SELECT pom.order_no as purchase_no, pod.product_id, pod.product_qty as purchase_qty, pod.return_qty as purchase_return_qty, pod.sales_qty as total_sales_qty, pod.stock_qty,
+    const sql = `SELECT pom.order_no as purchase_no, pod.product_id, pod.product_qty as purchase_qty, pod.return_qty as purchase_return_qty, pod.sales_qty as total_sales_qty, pod.stock_qty,
     som.order_no as sales_no,ifnull(sod.product_qty,0) as sales_order_qty,ifnull(sod.return_qty,0) as sales_return_qty,ifnull(sod.sales_qty,0) as sales_qty
     FROM po_details pod
     LEFT JOIN po_master pom on pod.po_master_id = pom.po_master_id

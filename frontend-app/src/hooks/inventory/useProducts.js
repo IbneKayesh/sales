@@ -5,26 +5,25 @@ import t_products from "@/models/inventory/t_products.json";
 import { generateGuid } from "@/utils/guid";
 
 const fromDataModel = {
-    product_id: "",
-    product_code: "",
-    product_name: "",
-    product_desc: "",
-    category_id: "",
-    small_unit_id: "",
-    unit_difference_qty: 1,
-    large_unit_id: "",
-    stock_qty: 0,
-    purchase_price: 0,
-    sales_price: 0,
-    discount_percent: 0,
-    vat_percent: 0,
-    cost_price_percent: 5,
-    margin_price: 0,
-    purchase_booking_qty: 0,
-    sales_booking_qty: 0,
-    ismodified: "0",
-}
-
+  product_id: "",
+  product_code: "",
+  product_name: "",
+  product_desc: "",
+  category_id: "",
+  small_unit_id: "",
+  unit_difference_qty: 1,
+  large_unit_id: "",
+  stock_qty: 0,
+  purchase_price: 0,
+  sales_price: 0,
+  discount_percent: 0,
+  vat_percent: 0,
+  cost_price_percent: 5,
+  margin_price: 0,
+  purchase_booking_qty: 0,
+  sales_booking_qty: 0,
+  ismodified: "0",
+};
 
 export const useProducts = () => {
   const [productList, setProductList] = useState([]);
@@ -46,20 +45,19 @@ export const useProducts = () => {
     { label: "Without VAT", value: "wovat" },
     { label: "All Products", value: "allproducts" },
   ]);
-  
-    const [selectedItemLedger, setSelectedItemLedger] = useState([]);
 
-    const handleLoadProductLedger = async (rowData) => {
-      setSelectedItemLedger([]);
-      try {
-        const data = await productsAPI.getProductLedger(rowData.product_id);
-        //console.log("data: " + JSON.stringify(data));
-        setSelectedItemLedger(data);
-      } catch (error) {
-        console.error("Error loading product ledger:", error);
-      }
-    };
+  const [selectedItemLedger, setSelectedItemLedger] = useState([]);
 
+  const handleLoadProductLedger = async (rowData) => {
+    setSelectedItemLedger([]);
+    try {
+      const data = await productsAPI.getProductLedger(rowData.product_id);
+      //console.log("data: " + JSON.stringify(data));
+      setSelectedItemLedger(data);
+    } catch (error) {
+      console.error("Error loading product ledger:", error);
+    }
+  };
 
   const loadProducts = async (filter = "default", resetModified = false) => {
     try {
@@ -93,8 +91,14 @@ export const useProducts = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadProducts(selectedFilter);
+    //loadProducts(selectedFilter);
   }, [selectedFilter]);
+
+  const fetchBookingProductList = async () => {
+    const data = await productsAPI.getAllBooking();
+    //console.log("data: " + JSON.stringify(data));
+    setProductList(data);
+  };
 
   const handleChange = (field, value) => {
     setFormDataProduct((prev) => ({ ...prev, [field]: value }));
@@ -209,7 +213,7 @@ export const useProducts = () => {
       if (formDataProduct.product_id) {
         // Edit existing
         const updatedProductData = {
-          ...productData
+          ...productData,
         };
 
         const updatedProduct = await productsAPI.update(updatedProductData);
@@ -258,24 +262,27 @@ export const useProducts = () => {
   };
 
   const calculateApproxMargin = (item) => {
-  const discount_amount = item.sales_price * (item.discount_percent / 100);
-  const net_sales_price = item.sales_price - discount_amount;
+    const discount_amount = item.sales_price * (item.discount_percent / 100);
+    const net_sales_price = item.sales_price - discount_amount;
 
-  const extra_cost_amount = item.sales_price * (item.cost_price_percent / 100);
+    const extra_cost_amount =
+      item.sales_price * (item.cost_price_percent / 100);
 
-  const approxMargin = net_sales_price - (item.purchase_price + extra_cost_amount);
+    const approxMargin =
+      net_sales_price - (item.purchase_price + extra_cost_amount);
 
-  return approxMargin;
-};
-
-
+    return approxMargin;
+  };
 
   const calculateApproxMargin_2 = (item) => {
     const discount_amount = item.sales_price * (item.discount_percent / 100);
     const vat_amount = item.sales_price * (item.vat_percent / 100);
     const cost_amount = item.sales_price * (item.cost_price_percent / 100);
 
-    const approxMargin = (item.sales_price + vat_amount) - (item.purchase_price + discount_amount + cost_amount);
+    const approxMargin =
+      item.sales_price +
+      vat_amount -
+      (item.purchase_price + discount_amount + cost_amount);
     return approxMargin;
   };
 
@@ -297,7 +304,8 @@ export const useProducts = () => {
     handleRefresh,
     handleSaveProduct,
     handleFilterChange,
-    handleLoadProductLedger,    
+    handleLoadProductLedger,
     selectedItemLedger,
+    fetchBookingProductList,
   };
 };

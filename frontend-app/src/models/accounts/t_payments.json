@@ -6,6 +6,20 @@
       "minLength": 0,
       "maxLength": 36
     },
+    "shop_id": {
+      "name": "Shop",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "master_id": {
+      "name": "Order",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 50
+    },
     "contact_id": {
       "name": "Contact",
       "type": "string",
@@ -18,7 +32,7 @@
       "type": "string",
       "required": true,
       "minLength": 1,
-      "maxLength": 50
+      "maxLength": 100
     },
     "payment_mode": {
       "name": "Payment Mode",
@@ -35,11 +49,6 @@
     },
     "payment_amount": {
       "name": "Payment Amount",
-      "type": "number",
-      "required": false
-    },
-    "balance_amount": {
-      "name": "Balance Amount",
       "type": "number",
       "required": false
     },

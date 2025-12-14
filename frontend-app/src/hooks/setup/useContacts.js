@@ -29,7 +29,7 @@ export const useContacts = () => {
   ];
 
   const [contactPaymentList, setContactPaymentList] = useState([]);
-  const [contactSupplierList, setContactSupplierList] = useState([]);
+  const [supplierList, setSupplierList] = useState([]);
   const [contactCustomerList, setContactCustomerList] = useState([]);
   const [contactsLedger, setContactsLedger] = useState([]);
 
@@ -39,23 +39,18 @@ export const useContacts = () => {
       //console.log("data: " + JSON.stringify(data));
       setContactList(data);
 
-
-      const paymentData = data.filter(
-        (c) => c.contact_type !== "Both"
-      );
+      const paymentData = data.filter((c) => c.contact_type !== "Both");
 
       setContactPaymentList(paymentData);
-
-
 
       const supplierData = data.filter(
         (c) => c.contact_type === "Supplier" || c.contact_type === "Both"
       );
+      setSupplierList(supplierData);
 
-      setContactSupplierList(supplierData);
-
-      const customerData = data.filter(
-        (c) => c.contact_type === "Customer" || c.contact_type === "Both"
+      const customerData = data
+        .filter(
+          (c) => c.contact_type === "Customer" || c.contact_type === "Both"
         )
         .map((c) => ({
           label:
@@ -89,8 +84,16 @@ export const useContacts = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadContacts();
+    //loadContacts();
   }, []);
+
+  const fetchSupplierList = async () => {
+    const data = await contactAPI.getAll();
+    const supplierData = data.filter(
+      (c) => c.contact_type === "Supplier" || c.contact_type === "Both"
+    );
+    setSupplierList(supplierData);
+  };
 
   const handleChange = (field, value) => {
     setFormDataContact((prev) => ({ ...prev, [field]: value }));
@@ -230,7 +233,8 @@ export const useContacts = () => {
   return {
     contactList,
     contactPaymentList,
-    contactSupplierList,
+    fetchSupplierList,
+    supplierList,
     contactCustomerList,
     contactTypeOptions,
     toastBox,

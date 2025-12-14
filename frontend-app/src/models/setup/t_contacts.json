@@ -41,13 +41,23 @@
       "minLength": 1,
       "maxLength": 255
     },
-    "current_balance": {
-      "name": "Current Balance",
+    "credit_limit": {
+      "name": "Credit Limit",
       "type": "number",
       "required": false
     },
-    "allow_due": {
-      "name": "Allow Due",
+    "payable_balance": {
+      "name": "Payable Balance",
+      "type": "number",
+      "required": false
+    },
+    "advance_balance": {
+      "name": "Advance Balance",
+      "type": "number",
+      "required": false
+    },
+    "current_balance": {
+      "name": "Current Balance",
       "type": "number",
       "required": false
     }

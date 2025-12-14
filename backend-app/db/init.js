@@ -13,10 +13,23 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
+const purchase_tables = require("./purchase_tables");
+const purchaseTables = purchase_tables();
+
 // Initialize tables
 const initTables = () => {
+
+  Object.values(purchaseTables).forEach((sql) => {
+    db.exec(sql, (err) => {
+      if (err) {
+        console.error("Purchase Table creation error:", err.message);
+      }
+    });
+  });
+
   // users :: Authentication table
   db.serialize(() => {
+
     db.run(`
       CREATE TABLE IF NOT EXISTS users (
         user_id TEXT PRIMARY KEY,
@@ -87,8 +100,10 @@ const initTables = () => {
         contact_email TEXT,
         contact_address TEXT,
         contact_type TEXT DEFAULT 'Customer',
+        credit_limit REAL DEFAULT 0,
+        payable_balance REAL DEFAULT 0,
+        advance_balance REAL DEFAULT 0,
         current_balance REAL DEFAULT 0,
-        allow_due BOOLEAN DEFAULT 1,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -144,16 +159,18 @@ const initTables = () => {
     db.run(`
       CREATE TABLE IF NOT EXISTS payments (
         payment_id TEXT PRIMARY KEY,
+        shop_id TEXT NOT NULL,
+        master_id TEXT NOT NULL,
         contact_id TEXT NOT NULL,
         payment_head TEXT NOT NULL,
         payment_mode TEXT NOT NULL,
         payment_date TEXT NOT NULL,
         payment_amount REAL DEFAULT 0,
-        balance_amount REAL DEFAULT 0,
         payment_note TEXT,
         ref_no TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (contact_id) REFERENCES contacts(contact_id) ON DELETE RESTRICT
       )
     `);
 
@@ -168,62 +185,62 @@ const initTables = () => {
       )
     `);
 
-    // purchase :: Purchase Master table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS po_master (
-        po_master_id TEXT PRIMARY KEY,
-        order_type TEXT NOT NULL,
-        order_no TEXT NOT NULL,
-        order_date TEXT NOT NULL,
-        contact_id TEXT NOT NULL,
-        ref_no TEXT,
-        order_note TEXT,
-        order_amount REAL DEFAULT 0,
-        discount_amount REAL DEFAULT 0,
-        vat_amount REAL DEFAULT 0,
-        vat_payable BOOLEAN DEFAULT 0,
-        order_cost REAL DEFAULT 0,
-        cost_payable BOOLEAN DEFAULT 0,
-        total_amount REAL DEFAULT 0,
-        payable_amount REAL DEFAULT 0,
-        paid_amount REAL DEFAULT 0,
-        due_amount REAL DEFAULT 0,
-        other_cost REAL DEFAULT 0,
-        is_paid TEXT NOT NULL,
-        is_posted BOOLEAN DEFAULT 0,
-        is_completed BOOLEAN DEFAULT 0,
-        is_returned BOOLEAN DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
-      )
-    `);
+    // // purchase :: Purchase Master table
+    // db.run(`
+    //   CREATE TABLE IF NOT EXISTS po_master (
+    //     po_master_id TEXT PRIMARY KEY,
+    //     order_type TEXT NOT NULL,
+    //     order_no TEXT NOT NULL,
+    //     order_date TEXT NOT NULL,
+    //     contact_id TEXT NOT NULL,
+    //     ref_no TEXT,
+    //     order_note TEXT,
+    //     order_amount REAL DEFAULT 0,
+    //     discount_amount REAL DEFAULT 0,
+    //     vat_amount REAL DEFAULT 0,
+    //     vat_payable BOOLEAN DEFAULT 0,
+    //     order_cost REAL DEFAULT 0,
+    //     cost_payable BOOLEAN DEFAULT 0,
+    //     total_amount REAL DEFAULT 0,
+    //     payable_amount REAL DEFAULT 0,
+    //     paid_amount REAL DEFAULT 0,
+    //     due_amount REAL DEFAULT 0,
+    //     other_cost REAL DEFAULT 0,
+    //     is_paid TEXT NOT NULL,
+    //     is_posted BOOLEAN DEFAULT 0,
+    //     is_completed BOOLEAN DEFAULT 0,
+    //     is_returned BOOLEAN DEFAULT 0,
+    //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    //     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    //     FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
+    //   )
+    // `);
 
-    // purchase :: Purchase Details table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS po_details (
-        po_details_id TEXT PRIMARY KEY,
-        po_master_id TEXT NOT NULL,
-        product_id TEXT NOT NULL,
-        product_price REAL DEFAULT 0,
-        product_qty REAL DEFAULT 0,
-        discount_percent REAL DEFAULT 0,
-        discount_amount REAL DEFAULT 0,
-        vat_percent REAL DEFAULT 0,
-        vat_amount REAL DEFAULT 0,
-        cost_price REAL DEFAULT 0,
-        total_amount REAL DEFAULT 0,
-        product_note TEXT,
-        ref_id TEXT,
-        return_qty REAL DEFAULT 0,
-        sales_qty REAL DEFAULT 0,
-        stock_qty REAL DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (po_master_id) REFERENCES po_master(po_master_id) ON DELETE RESTRICT,
-        FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT
-      )
-    `);
+    // // purchase :: Purchase Details table
+    // db.run(`
+    //   CREATE TABLE IF NOT EXISTS po_details (
+    //     po_details_id TEXT PRIMARY KEY,
+    //     po_master_id TEXT NOT NULL,
+    //     product_id TEXT NOT NULL,
+    //     product_price REAL DEFAULT 0,
+    //     product_qty REAL DEFAULT 0,
+    //     discount_percent REAL DEFAULT 0,
+    //     discount_amount REAL DEFAULT 0,
+    //     vat_percent REAL DEFAULT 0,
+    //     vat_amount REAL DEFAULT 0,
+    //     cost_price REAL DEFAULT 0,
+    //     total_amount REAL DEFAULT 0,
+    //     product_note TEXT,
+    //     ref_id TEXT,
+    //     return_qty REAL DEFAULT 0,
+    //     sales_qty REAL DEFAULT 0,
+    //     stock_qty REAL DEFAULT 0,
+    //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    //     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    //     FOREIGN KEY (po_master_id) REFERENCES po_master(po_master_id) ON DELETE RESTRICT,
+    //     FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT
+    //   )
+    // `);
 
     // sales :: Sales Master table
     db.run(`
@@ -375,17 +392,18 @@ const initData = (callback) => {
     //contacts :: Contacts table :: insert default data
     db.run(
       `
-      INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type, current_balance, allow_due)
+      INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type,
+      credit_limit, payable_balance, advance_balance, current_balance)
       VALUES
-      ('cash', 'Cash A/C', '0', '0', 'for internal transaction', 'Cash', 0, 0),
-      ('expense', 'Expense A/C', '0', '0', 'for internal transaction', 'Expense', 0, 0),
-      ('income', 'Income A/C', '0', '0', 'for internal transaction', 'Income', 0, 0),
-      ('inventory', 'Inventory A/C', '0', '0', 'for internal transaction', 'Inventory', 0, 0),
-      ('both', 'Unknown Supplier and Purchaser A/C', '0', '0', 'default for purchase and sale transaction', 'Both', 0, 0),
-      ('1', 'Supplier 1', '1234567890', 'supplier1@example.com', '123 Main St', 'Supplier', 0, 1),
-      ('2', 'Supplier 2', '0987654321', 'supplier2@example.com', '456 Elm St', 'Supplier', 0, 1),
-      ('3', 'Customer 1', '1234567890', 'customer1@example.com', '123 Main St', 'Customer', 0, 1),
-      ('4', 'Customer 2', '0987654321', 'customer2@example.com', '456 Elm St', 'Customer', 0, 1)
+      ('cash', 'Cash A/C', '0', '0', 'for internal transaction', 'Cash', 0, 0, 0, 0),
+      ('expense', 'Expense A/C', '0', '0', 'for internal transaction', 'Expense', 0, 0, 0, 0),
+      ('income', 'Income A/C', '0', '0', 'for internal transaction', 'Income', 0, 0, 0, 0),
+      ('inventory', 'Inventory A/C', '0', '0', 'for internal transaction', 'Inventory', 0, 0, 0, 0),
+      ('both', 'Unknown Supplier and Purchaser A/C', '0', '0', 'default for purchase and sale transaction', 'Both', 0, 0, 0, 0),
+      ('1', 'Supplier 1', '1234567890', 'supplier1@example.com', '123 Main St', 'Supplier',  0, 0, 0, 0),
+      ('2', 'Supplier 2', '0987654321', 'supplier2@example.com', '456 Elm St', 'Supplier',  0, 0, 0, 0),
+      ('3', 'Customer 1', '1234567890', 'customer1@example.com', '123 Main St', 'Customer',  0, 0, 0, 0),
+      ('4', 'Customer 2', '0987654321', 'customer2@example.com', '456 Elm St', 'Customer', 0, 0, 0, 0)
     `,
       (err) => {
         if (err) {
@@ -422,7 +440,10 @@ const initData = (callback) => {
     `,
       (err) => {
         if (err) {
-          console.error("Error inserting default transaction configuration:", err);
+          console.error(
+            "Error inserting default transaction configuration:",
+            err
+          );
         } else {
           console.log("Default transaction configuration inserted.");
         }
