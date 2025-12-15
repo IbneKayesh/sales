@@ -60,6 +60,7 @@ const Layout = () => {
         { id: "st3", name: "Users", url: "/home/setup/users", icon: "pi pi-users" },
         { id: "st4", name: "Change Password", url: "/home/setup/change-password", icon: "pi pi-unlock" },
         { id: "st5", name: "Backup", url: "/home/setup/backup", icon: "pi pi-save" },
+        { id: "st6", name: "Settings", url: "/home/setup/settings", icon: "pi pi-cog" },
       ],
     },
   ];

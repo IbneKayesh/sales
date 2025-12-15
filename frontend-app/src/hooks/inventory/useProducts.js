@@ -91,7 +91,7 @@ export const useProducts = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    //loadProducts(selectedFilter);
+    loadProducts(selectedFilter);
   }, [selectedFilter]);
 
   const fetchBookingProductList = async () => {

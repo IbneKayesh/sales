@@ -32,6 +32,10 @@ import PurchaseReceivePage from "./pages/purchase/poreceive/PoReceivePage.jsx";
 import PurchaseOrderPage from "./pages/purchase/poorder/PoOrderPage.jsx";
 import PurchaseReturnPage from "./pages/purchase/poreturn/PoReturnPage.jsx";
 
+
+//Setup Module
+import SettingsPage from "./pages/setup/settings/SettingsPage.jsx";
+
 function App() {
   const toast = useRef(null);
 
@@ -82,6 +86,9 @@ function AppRoutes({ toast }) {
         <Route path="purchase/purchase-receive" element={<PurchaseReceivePage />} />
         <Route path="purchase/purchase-order" element={<PurchaseOrderPage />} />
         <Route path="purchase/purchase-return" element={<PurchaseReturnPage />} />
+
+        //Setup Module
+        <Route path="setup/settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>
     </Routes>

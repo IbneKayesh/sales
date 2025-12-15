@@ -83,7 +83,7 @@ const ProductListComponent = ({
     );
   };
 
-  const product_codeTemplate = (rowData) => {
+  const product_code_BT = (rowData) => {
     return `${rowData.product_code} - ${rowData.product_name}`;
   };
 
@@ -91,10 +91,20 @@ const ProductListComponent = ({
     return <ConvertedQtyComponent qty={rowData.stock_qty} rowData={rowData} />;
   };
 
-  const purchase_booking_qtyTemplate = (rowData) => {
+  const purchase_booking_qty_BT = (rowData) => {
     return (
       <ConvertedQtyComponent
         qty={rowData.purchase_booking_qty}
+        rowData={rowData}
+      />
+    );
+  };
+
+  
+  const sales_booking_qty_BT = (rowData) => {
+    return (
+      <ConvertedQtyComponent
+        qty={rowData.sales_booking_qty}
         rowData={rowData}
       />
     );
@@ -153,6 +163,10 @@ const ProductListComponent = ({
     (sum, item) => sum + (item.purchase_booking_qty ?? 0),
     0
   );
+  const totalSalesBookingQty = dataList.reduce(
+    (sum, item) => sum + (item.sales_booking_qty ?? 0),
+    0
+  );
   const totalPurchaseValue = dataList.reduce(
     (sum, item) => sum + (item.purchase_price ?? 0) * (item.stock_qty ?? 0),
     0
@@ -181,7 +195,7 @@ const ProductListComponent = ({
         <Column
           field="product_code"
           header="Product Code"
-          body={product_codeTemplate}
+          body={product_code_BT}
           footer={`Total Items: ${totalItems}`}
           sortable
         />
@@ -196,8 +210,15 @@ const ProductListComponent = ({
           field="purchase_booking_qty"
           header="Purchase Booking Qty"
           sortable
-          body={purchase_booking_qtyTemplate}
+          body={purchase_booking_qty_BT}
           footer={totalPurchaseBookingQty}
+        />
+        <Column
+          field="sales_booking_qty"
+          header="Sales Booking Qty"
+          sortable
+          body={sales_booking_qty_BT}
+          footer={totalSalesBookingQty}
         />
         <Column
           field="purchase_price"
