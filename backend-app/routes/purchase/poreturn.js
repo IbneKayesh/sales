@@ -8,7 +8,7 @@ const {
   dbRun,
   dbGet,
   dbAll,
-} = require("../../db/asyncScriptsRunner");
+} = require("../../db/asyncScriptsRunner.js");
 
 //get all
 router.get("/", async (req, res) => {
@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
     const sql = `SELECT pom.*, c.contact_name, pom.is_posted as isedit, 0 as ismodified
     FROM po_master pom
     LEFT JOIN contacts c ON pom.contact_id = c.contact_id
-    WHERE order_type = 'Booking'`;
+    WHERE order_type = 'Return'`;
     const rows = await dbAll(sql, []);
     res.json(rows);
   } catch (error) {
@@ -29,19 +29,19 @@ router.get("/", async (req, res) => {
 router.get("/details/:master_id", async (req, res) => {
   try {
     const master_id = req.params.master_id;
-    const sql = `SELECT pob.*,
+    const sql = `SELECT por.*,
     p.product_code,
     p.product_name,
     p.unit_difference_qty,
     su.unit_name as small_unit_name,
     lu.unit_name as large_unit_name,
     0 as ismodified
-    FROM po_booking pob
-    LEFT JOIN products p ON pob.product_id = p.product_id
+    FROM po_return por
+    LEFT JOIN products p ON por.product_id = p.product_id
     LEFT JOIN units su ON p.small_unit_id = su.unit_id
     LEFT JOIN units lu ON p.large_unit_id = lu.unit_id
-    WHERE pob.master_id = ?
-    ORDER BY pob.booking_id`;
+    WHERE por.master_id = ?
+    ORDER BY por.return_id`;
     const rows = await dbAll(sql, [master_id]);
     res.json(rows);
   } catch (error) {
@@ -126,7 +126,7 @@ router.post("/create", async (req, res) => {
 
     const max_seq = await dbGet(sql, [order_type]);
     const max_seq_no = String((max_seq.max_seq || 0) + 1).padStart(5, "0");
-    const order_no_new = `PB-${date_part}-${max_seq_no}`;
+    const order_no_new = `PN-${date_part}-${max_seq_no}`;
     console.log("New Transaction No: " + order_no_new);
 
     //build scripts
@@ -155,24 +155,30 @@ router.post("/create", async (req, res) => {
         payable_amount || 0,
         paid_amount || 0,
         due_amount || 0,
-        is_paid || "Unpaid",
-        is_posted || 0,
-        0,
-        0,
+        "Paid",
+        1,
+        1,
+        1,
       ],
     });
 
-    //Insert booking details
+    //Insert order details
     for (const detail of details_create) {
       scripts.push({
-        label: "2 of 2 :: Insert Purchase Booking",
-        sql: `INSERT INTO po_booking (booking_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, received_qty, pending_qty)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        label: "2 of 2 :: Insert Purchase Return",
+        sql: `INSERT INTO po_return (return_id, master_id,
+        product_id, product_price, product_qty, discount_percent,
+        discount_amount, vat_percent, vat_amount, cost_price,
+        total_amount, product_note, receive_order_id, source_type)
+        VALUES (?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?, ?)`,
         params: [
           generateGuid(),
           master_id,
           detail.product_id,
-          detail.product_price || 0,
+          detail.product_price,
           detail.product_qty || 0,
           detail.discount_percent || 0,
           detail.discount_amount || 0,
@@ -180,9 +186,9 @@ router.post("/create", async (req, res) => {
           detail.vat_amount || 0,
           detail.cost_price || 0,
           detail.total_amount || 0,
-          detail.product_note || "",
-          0,
-          detail.pending_qty || 0,
+          detail.product_note,
+          detail.receive_order_id,
+          detail.source_type,
         ],
       });
     }
@@ -190,7 +196,7 @@ router.post("/create", async (req, res) => {
     //Insert order Payments
     for (const payment of payments_create) {
       scripts.push({
-        label: "3 of 2 :: Insert Purchase Payments",
+        label: "3 of 2 :: Insert Purchase Return Payments",
         sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
@@ -213,15 +219,13 @@ router.post("/create", async (req, res) => {
       useTransaction: true,
     });
 
-
-
     // If any failed, transaction has already rolled back
     if (!results.every((r) => r.success)) {
-      return res.status(500).json({ error: "Failed to create purchase booking" });
+      return res.status(500).json({ error: "Failed to create purchase order" });
     }
     // ❗ Only one response is sent
     res.status(201).json({
-      message: "Purchase Booking created successfully!",
+      message: "Purchase Order created successfully!",
       master_id,
       order_no: order_no_new,
       details_create,
@@ -278,10 +282,10 @@ router.post("/update", async (req, res) => {
     //build scripts
     const scripts = [];
 
-    //delete booking details
+    //delete order details
     scripts.push({
       label: `1 of 5 :: Delete details ${order_no}`,
-      sql: `DELETE FROM po_booking WHERE master_id = ?`,
+      sql: `DELETE FROM po_return WHERE master_id = ?`,
       params: [master_id],
     });
 
@@ -307,9 +311,7 @@ router.post("/update", async (req, res) => {
       total_amount = ?,
       payable_amount = ?,
       paid_amount = ?,
-      due_amount = ?,
-      is_paid = ?,
-      is_posted = ?
+      due_amount = ?
       WHERE master_id = ?`,
       params: [
         order_date,
@@ -324,23 +326,27 @@ router.post("/update", async (req, res) => {
         payable_amount || 0,
         paid_amount || 0,
         due_amount || 0,
-        is_paid || "Unpaid",
-        is_posted || 0,
         master_id,
       ],
     });
 
-    //Insert booking details
+    //Insert order details
     for (const detail of details_create) {
       scripts.push({
-        label: "4 of 5 :: Insert Purchase Booking",
-        sql: `INSERT INTO po_booking (booking_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, received_qty, pending_qty)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        label: "2 of 2 :: Insert Purchase Return",
+        sql: `INSERT INTO po_return (return_id, master_id,
+        product_id, product_price, product_qty, discount_percent,
+        discount_amount, vat_percent, vat_amount, cost_price,
+        total_amount, product_note, receive_order_id, source_type)
+        VALUES (?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?, ?)`,
         params: [
           generateGuid(),
           master_id,
           detail.product_id,
-          detail.product_price || 0,
+          detail.product_price,
           detail.product_qty || 0,
           detail.discount_percent || 0,
           detail.discount_amount || 0,
@@ -348,9 +354,9 @@ router.post("/update", async (req, res) => {
           detail.vat_amount || 0,
           detail.cost_price || 0,
           detail.total_amount || 0,
-          detail.product_note || "",
-          0,
-          detail.pending_qty || 0,
+          detail.product_note,
+          detail.receive_order_id,
+          detail.source_type,
         ],
       });
     }
@@ -381,11 +387,11 @@ router.post("/update", async (req, res) => {
       useTransaction: true,
     });
 
-
-
     // If any failed, transaction has already rolled back
     if (!results.every((r) => r.success)) {
-      return res.status(500).json({ error: "Failed to update purchase booking" });
+      return res
+        .status(500)
+        .json({ error: "Failed to update purchase booking" });
     }
     // ❗ Only one response is sent
     res.status(201).json({
@@ -395,6 +401,53 @@ router.post("/update", async (req, res) => {
       details_create,
       payments_create,
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+//newreturn-master
+router.post("/newreturn-master", async (req, res) => {
+  try {
+    const { master_id, order_type } = req.body;
+    const sql = `SELECT '' as master_id, pom.shop_id, pom.contact_id, 'Return' as order_type, '[Auto SL]' as order_no, DATE('now') as order_date, pom.order_note, 0 as order_amount, 0 as discount_amount, 0 as vat_amount, pom.is_vat_payable,
+    pom.include_cost, 0 as exclude_cost, 0 as total_amount, 0 as payable_amount, 0 as paid_amount, 0 as due_amount, 'Unpaid' as is_paid, 1 as is_posted, 1 is_returned, 1 is_closed,
+    con.contact_name, con.contact_mobile, con.contact_address, con.credit_limit
+    FROM po_master pom
+    LEFT JOIN contacts con ON pom.contact_id = con.contact_id
+    WHERE pom.master_id = ?
+    AND pom.order_type = ?`;
+    const rows = await dbGet(sql, [master_id, order_type]);
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+//newreturn-details
+router.post("/newreturn-details", async (req, res) => {
+  try {
+    const { master_id, order_type } = req.body;
+    let sql = "";
+    if (order_type === "Order") {
+      sql = ` SELECT '' as return_id, '' as master_id, poo.product_id,poo.product_price, poo.product_qty,poo.discount_percent, poo.discount_amount,
+      poo.vat_percent, poo.vat_amount,poo.cost_price,poo.total_amount, poo.product_note, poo.order_id as receive_order_id,'Order' as source_type,
+      p.product_code,
+      p.product_name,
+      p.unit_difference_qty,
+    su.unit_name as small_unit_name,
+    lu.unit_name as large_unit_name,
+    0 as ismodified
+FROM po_order poo
+LEFT JOIN products p ON poo.product_id = p.product_id
+LEFT JOIN units su ON p.small_unit_id = su.unit_id
+LEFT JOIN units lu ON p.large_unit_id = lu.unit_id
+WHERE poo.master_id = ?`;
+    }
+    const rows = await dbAll(sql, [master_id]);
+    res.json(rows);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

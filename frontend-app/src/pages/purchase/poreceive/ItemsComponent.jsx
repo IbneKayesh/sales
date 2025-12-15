@@ -22,7 +22,7 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
   const [editingRows, setEditingRows] = useState([]);
 
   useEffect(() => {
-    fetchBookingProductList();
+    //fetchBookingProductList();
   }, []);
 
   useEffect(() => {

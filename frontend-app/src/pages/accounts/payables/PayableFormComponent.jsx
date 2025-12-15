@@ -29,12 +29,12 @@ const PayableFormComponent = ({
           {formData.ref_no}
         </div>
         <div className="col-12 md:col-2">
-          <span className="block text-900 font-medium mb-2">Ref Date</span>
+          <span className="block text-900 font-medium mb-2">Due Date</span>
           {formData.order_date}
         </div>
         <div className="col-12 md:col-2">
           <span className="block text-900 font-medium mb-2">Due Amount</span>
-          <span className="text-red-500">{formData.balance_amount}</span>
+          <span className="text-red-500">{formData.due_amount}</span>
         </div>
       </div>
 

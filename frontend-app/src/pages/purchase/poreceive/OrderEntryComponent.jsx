@@ -18,19 +18,30 @@ const OrderEntryComponent = ({
   setFormDataPaymentList,
   handleChange,
   handleSave,
+  fetchPendingReceiveDetails,
 }) => {
   const [creditLimit, setCreditLimit] = useState(0);
   const [disableSubmit, setDisableSubmit] = useState(false);
 
   useEffect(() => {
     const hasProducts = formDataList.length > 0;
-    const hasCreditLimit = formData.due_amount > creditLimit;
-    if (!hasProducts || hasCreditLimit) {
+    if (!hasProducts) {
       setDisableSubmit(true);
     } else {
       setDisableSubmit(false);
     }
-  }, [formDataList, formData.due_amount, creditLimit]);
+  }, [formDataList]);
+
+  
+  // useEffect(() => {
+  //   const hasProducts = formDataList.length > 0;
+  //   const hasCreditLimit = formData.due_amount > creditLimit;
+  //   if (!hasProducts || hasCreditLimit) {
+  //     setDisableSubmit(true);
+  //   } else {
+  //     setDisableSubmit(false);
+  //   }
+  // }, [formDataList, formData.due_amount, creditLimit]);
 
   useEffect(() => {
     const order_amount = formDataList.reduce(
@@ -126,7 +137,7 @@ const OrderEntryComponent = ({
             errors={errors}
             formData={formData}
             handleChange={handleChange}
-            setCreditLimit={setCreditLimit}
+            fetchPendingReceiveDetails={fetchPendingReceiveDetails}
           />
         </AccordionTab>
         <AccordionTab header={InvoiceProducts}>

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { pobookingAPI } from "@/api/purchase/pobookingAPI";
+import { useLocation } from "react-router-dom";
+
+import { poreturnAPI } from "@/api/purchase/poreturnAPI";
 import t_po_master from "@/models/purchase/t_po_master.json";
 import validate from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
@@ -9,7 +11,7 @@ const formDataModel = {
   master_id: "",
   shop_id: "1",
   contact_id: "",
-  order_type: "Booking",
+  order_type: "Order",
   order_no: "[Auto SL]",
   order_date: new Date().toISOString().split("T")[0],
   order_note: "",
@@ -29,7 +31,7 @@ const formDataModel = {
   is_closed: 0,
 };
 
-const usePobooking = () => {
+const usePoreturn = () => {
   const [configLine, setConfigLine] = useState({
     contact_id: "both",
     is_posted: 1,
@@ -46,12 +48,53 @@ const usePobooking = () => {
   const [formDataPaymentList, setFormDataPaymentList] = useState([]);
   const [handleDelete, setHandleDelete] = useState(() => {});
 
+  const location = useLocation();
+  const masterIdProp = location.state?.master_id; // read safely
+  const sourceTypeProp = location.state?.source_type; // read safely
+  const [newReturnData, setNewReturnData] = useState();
+
+  const loadNewReturn = async (returnData) => {
+    try {
+      setIsBusy(true);
+      const data = await poreturnAPI.getNewReturnMaster(returnData);
+      console.log("loadNewReturn: " + JSON.stringify(data));
+      setFormData(data);
+
+
+const data_details = await poreturnAPI.getNewReturnDetails(returnData);
+console.log("loadNewReturnDetails: " + JSON.stringify(data_details));
+setFormDataList(data_details);
+
+
+      setCurrentView("form");
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to load from server",
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  useEffect(() => {
+    const data = {
+      master_id: masterIdProp,
+      order_type: sourceTypeProp,
+    };
+    setNewReturnData(data);
+    if (masterIdProp && sourceTypeProp) {
+      loadNewReturn(data);
+    }
+  }, [masterIdProp, sourceTypeProp]);
+
   const loadBookingList = async (reloadDataSet = false) => {
     try {
       setIsBusy(true);
-      const data = await pobookingAPI.getAll();
+      const data = await poreturnAPI.getAll();
       setDataList(data);
-      setIsBusy(false);
 
       if (reloadDataSet) {
         setToastBox({
@@ -67,6 +110,7 @@ const usePobooking = () => {
         summary: "Error",
         detail: "Failed to load data from server",
       });
+    } finally {
       setIsBusy(false);
     }
   };
@@ -74,7 +118,7 @@ const usePobooking = () => {
   const loadConfigLine = async () => {
     // try {
     //   setIsBusy(true);
-    //   const data = await pobookingAPI.getConfigLine();
+    //   const data = await poreturnAPI.getConfigLine();
     //   setConfigLine(data);
     //   setIsBusy(false);
     // } catch (error) {
@@ -149,9 +193,9 @@ const usePobooking = () => {
       };
 
       if (formData.master_id) {
-        const data = await pobookingAPI.update(formDataNew);
+        const data = await poreturnAPI.update(formDataNew);
       } else {
-        const data = await pobookingAPI.create(formDataNew);
+        const data = await poreturnAPI.create(formDataNew);
       }
 
       const message = formData.master_id
@@ -169,7 +213,7 @@ const usePobooking = () => {
       loadBookingList();
 
       //call update process
-      await closingProcessAPI("Purchase Booking", formData.order_no);
+      await closingProcessAPI("Purchase Order", formData.order_no);
     } catch (error) {
       console.error("Error fetching data:", error);
       setToastBox({
@@ -184,7 +228,7 @@ const usePobooking = () => {
 
   const fetchDetails = async (master_id) => {
     try {
-      const data = await pobookingAPI.getDetails(master_id);
+      const data = await poreturnAPI.getDetails(master_id);
       setFormDataList(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -198,7 +242,7 @@ const usePobooking = () => {
 
   const fetchPayments = async (master_id) => {
     try {
-      const data = await pobookingAPI.getPayments(master_id);
+      const data = await poreturnAPI.getPayments(master_id);
       setFormDataPaymentList(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -240,4 +284,4 @@ const usePobooking = () => {
   };
 };
 
-export default usePobooking;
+export default usePoreturn;

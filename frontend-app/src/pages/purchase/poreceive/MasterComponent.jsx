@@ -10,7 +10,7 @@ const MasterComponent = ({
   errors,
   formData,
   handleChange,
-  setCreditLimit,
+  fetchPendingReceiveDetails,
 }) => {
   const { supplierList, fetchSupplierList } = useContacts();
 
@@ -63,8 +63,7 @@ const MasterComponent = ({
 
   const handleChange_contact_id = (e) => {
     handleChange("contact_id", e.value);
-    const selectedObj = supplierList.find((c) => c.contact_id === e.value);
-    setCreditLimit(selectedObj?.credit_limit || 0);
+    fetchPendingReceiveDetails(e.value);
   };
 
   return (

@@ -36,19 +36,38 @@ const ContactListComponent = ({
     onLedger(rowData);
   };
 
+  const credit_limit_BT = (rowData) => {
+    const creditLimit = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "BDT",
+    }).format(rowData.credit_limit);
+
+    return rowData.credit_limit > 0 ? (
+      <Badge value={creditLimit} severity="success" className="mr-1"></Badge>
+    ) : (
+      <Badge value={creditLimit} severity="danger" className="mr-1"></Badge>
+    );
+  };
+
+  const payable_balance_BT = (rowData) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "BDT",
+    }).format(rowData.payable_balance);
+  };
+
+  const advance_balance_BT = (rowData) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "BDT",
+    }).format(rowData.advance_balance);
+  };
+
   const current_balance_BT = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
     }).format(rowData.current_balance);
-  };
-
-  const allow_due_BT = (rowData) => {
-    return rowData.allow_due ? (
-      <Badge value="Yes" severity="success" className="mr-1"></Badge>
-    ) : (
-      <Badge value="No" severity="danger" className="mr-1"></Badge>
-    );
   };
 
   const actionTemplate = (rowData) => {
@@ -137,11 +156,25 @@ const ContactListComponent = ({
         <Column field="contact_address" header="Address" />
         <Column field="contact_type" header="Type" />
         <Column
+          field="credit_limit"
+          header="Credit Limit"
+          body={credit_limit_BT}
+        />
+        <Column
+          field="payable_balance"
+          header="Payable Balance"
+          body={payable_balance_BT}
+        />
+        <Column
+          field="advance_balance"
+          header="Advance Balance"
+          body={advance_balance_BT}
+        />
+        <Column
           field="current_balance"
-          header="Balance"
+          header="Current Balance"
           body={current_balance_BT}
         />
-        <Column field="allow_due" header="Allow Due" body={allow_due_BT} />
         <Column
           header="Actions"
           body={actionTemplate}
@@ -182,10 +215,7 @@ const ContactListComponent = ({
               header="Particular"
               body={payment_mode_BT}
             />
-            <Column
-              field="payment_date"
-              header="Date"
-            />
+            <Column field="payment_date" header="Date" />
             <Column
               field="debit_amount"
               header="Debit"

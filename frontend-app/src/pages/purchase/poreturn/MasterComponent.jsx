@@ -12,11 +12,19 @@ const MasterComponent = ({
   handleChange,
   setCreditLimit,
 }) => {
-  const { supplierList, fetchSupplierList } = useContacts();
+  //const { supplierList, fetchSupplierList } = useContacts();
+  const supplierList = [{
+    contact_name: formData.contact_name,
+    contact_id: formData.contact_id,
+    credit_limit: formData.credit_limit,
+    allow_due: formData.allow_due,
+    contact_mobile: formData.contact_mobile,
+    contact_address: formData.contact_address,
+  }];
 
-  useEffect(() => {
-    fetchSupplierList();
-  }, []);
+  // useEffect(() => {
+  //   fetchSupplierList();
+  // }, []);
 
   const contact_id_IT = (option) => {
     return (

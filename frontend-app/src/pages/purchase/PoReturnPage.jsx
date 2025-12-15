@@ -7,7 +7,7 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { Dropdown } from "primereact/dropdown";
 
-const PurchasePage = () => {
+const PoReturnPage = () => {
   const toast = useRef(null);
   const {
     configLine,
@@ -135,4 +135,4 @@ const PurchasePage = () => {
   );
 };
 
-export default PurchasePage;
+export default PoReturnPage;

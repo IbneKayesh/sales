@@ -7,15 +7,15 @@ import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
 const fromDataModel = {
   payment_id: "",
+  shop_id: "1",
+  master_id: "",
   contact_id: "",
   payment_head: "",
   payment_mode: "",
   payment_date: new Date().toISOString().split("T")[0],
   payment_amount: 0,
-  balance_amount: 0,
   payment_note: "",
   ref_no: "",
-  allocation_amount: 0,
   ismodified: false,
 };
 
@@ -120,69 +120,56 @@ export const usePayables = () => {
 
   const handleSavePayableDue = async (e) => {
     e.preventDefault();
-    setIsBusy(true);
-
-    if (formDataPayableDue.payment_amount > formDataPayableDue.balance_amount) {
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Payment amount cannot be greater than Due balance amount.",
-      });
-      setIsBusy(false);
-      return;
-    }
-
-    const newErrors = validate(formDataPayableDue, t_payments);
-    setErrors(newErrors);
-    console.log("handleSavePayableDue: " + JSON.stringify(newErrors));
-
-    if (Object.keys(newErrors).length > 0) {
-      setIsBusy(false);
-      return;
-    }
-
     try {
-      let updatedPayableDues;
-      if (formDataPayableDue.payment_id) {
-        // Edit existing
-        const updatedPayableDue = await payablesAPI.update(formDataPayableDue);
-        // updatedPayableDue.ismodified = true;
-        // updatedPayableDues = payableDueList.map((p) =>
-        //   p.payment_id === formDataPayableDue.payment_id ? updatedPayableDue : p
-        // );
+      setIsBusy(true);
 
+      if (formDataPayableDue.payment_amount > formDataPayableDue.due_amount) {
         setToastBox({
-          severity: "success",
-          summary: "Success",
-          detail: `"${formDataPayableDue.ref_no}" updated successfully.`,
+          severity: "error",
+          summary: "Error",
+          detail: "Payment amount cannot be greater than Due amount.",
         });
-      } else {
-        // Add new
-        const newPayableDueData = {
-          ...formDataPayableDue,
-          payment_id: generateGuid(),
-        };
-        console.log("newPayableDueData: " + JSON.stringify(newPayableDueData));
-
-        const newPayableDue =
-          await payablesAPI.create(
-            newPayableDueData
-          );
-        //newPayableDue.ismodified = true;
-        //updatedPayableDues = [...payableDueList, newPayableDue];
-
-        setToastBox({
-          severity: "success",
-          summary: "Success",
-          detail: `"${formDataPayableDue.ref_no}" added successfully.`,
-        });
+        setIsBusy(false);
+        return;
       }
-      //setPayableDueList(updatedPayableDues);
-      //call update process
-      await closingProcessAPI("Payments", formDataPayableDue.ref_no);
+
+      const newErrors = validate(formDataPayableDue, t_payments);
+      setErrors(newErrors);
+      console.log("handleSavePayableDue: " + JSON.stringify(newErrors));
+
+      if (Object.keys(newErrors).length > 0) {
+        setIsBusy(false);
+        return;
+      }
+
+      const formDataNew = {
+        ...formDataPayableDue,
+        payment_id: formDataPayableDue.payment_id
+          ? formDataPayableDue.payment_id
+          : generateGuid(),
+      };
+
+      if (formDataPayableDue.payment_id) {
+        //const data = await payablesAPI.update(formDataNew);
+      } else {
+        const data = await payablesAPI.create(formDataNew);
+      }
+
+      const message = formDataPayableDue.payment_id
+        ? `"${formDataPayableDue.ref_no}" Updated`
+        : "Created";
+      setToastBox({
+        severity: "success",
+        summary: "Success",
+        detail: `${message} successfully.`,
+      });
+
       loadPayableDues();
       handleClear();
       setCurrentView("list");
+
+      //call update process
+      await closingProcessAPI("Payable Due", formDataPayableDue.ref_no);
     } catch (error) {
       console.error("Error saving Payable Due", error);
       setToastBox({
@@ -190,9 +177,9 @@ export const usePayables = () => {
         summary: "Error",
         detail: "Failed to save Payable Due",
       });
+    } finally {
+      setIsBusy(false);
     }
-
-    setIsBusy(false);
   };
 
   return {

@@ -17,7 +17,7 @@ import UnitPage from "./pages/inventory/units/UnitPage.jsx";
 import CategoryPage from "./pages/inventory/category/CategoryPage.jsx";
 import ProductPage from "./pages/inventory/products/ProductPage.jsx";
 import ContactPage from "./pages/setup/contacts/ContactPage.jsx";
-import PurchasePage from "./pages/purchase/PurchasePage.jsx";
+import PurchasePage from "./pages/purchase/PoReturnPage.jsx";
 import SalesPage from "./pages/sales/SalesPage.jsx";
 import UsersPage from "./pages/setup/users/UsersPage";
 import BackupPage from "./pages/setup/backup/BackupPage";

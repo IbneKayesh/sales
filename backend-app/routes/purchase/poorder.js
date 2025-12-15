@@ -8,7 +8,7 @@ const {
   dbRun,
   dbGet,
   dbAll,
-} = require("../../db/asyncScriptsRunner");
+} = require("../../db/asyncScriptsRunner.js");
 
 //get all
 router.get("/", async (req, res) => {
@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
     const sql = `SELECT pom.*, c.contact_name, pom.is_posted as isedit, 0 as ismodified
     FROM po_master pom
     LEFT JOIN contacts c ON pom.contact_id = c.contact_id
-    WHERE order_type = 'Booking'`;
+    WHERE order_type = 'Order'`;
     const rows = await dbAll(sql, []);
     res.json(rows);
   } catch (error) {
@@ -36,12 +36,12 @@ router.get("/details/:master_id", async (req, res) => {
     su.unit_name as small_unit_name,
     lu.unit_name as large_unit_name,
     0 as ismodified
-    FROM po_booking pob
+    FROM po_order pob
     LEFT JOIN products p ON pob.product_id = p.product_id
     LEFT JOIN units su ON p.small_unit_id = su.unit_id
     LEFT JOIN units lu ON p.large_unit_id = lu.unit_id
     WHERE pob.master_id = ?
-    ORDER BY pob.booking_id`;
+    ORDER BY pob.order_id`;
     const rows = await dbAll(sql, [master_id]);
     res.json(rows);
   } catch (error) {
@@ -126,7 +126,7 @@ router.post("/create", async (req, res) => {
 
     const max_seq = await dbGet(sql, [order_type]);
     const max_seq_no = String((max_seq.max_seq || 0) + 1).padStart(5, "0");
-    const order_no_new = `PB-${date_part}-${max_seq_no}`;
+    const order_no_new = `PO-${date_part}-${max_seq_no}`;
     console.log("New Transaction No: " + order_no_new);
 
     //build scripts
@@ -162,17 +162,17 @@ router.post("/create", async (req, res) => {
       ],
     });
 
-    //Insert booking details
+    //Insert order details
     for (const detail of details_create) {
       scripts.push({
-        label: "2 of 2 :: Insert Purchase Booking",
-        sql: `INSERT INTO po_booking (booking_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, received_qty, pending_qty)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        label: "2 of 2 :: Insert Purchase Order",
+        sql: `INSERT INTO po_order (order_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, returned_qty, sales_qty, stock_qty)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           generateGuid(),
           master_id,
           detail.product_id,
-          detail.product_price || 0,
+          detail.product_price,
           detail.product_qty || 0,
           detail.discount_percent || 0,
           detail.discount_amount || 0,
@@ -180,9 +180,10 @@ router.post("/create", async (req, res) => {
           detail.vat_amount || 0,
           detail.cost_price || 0,
           detail.total_amount || 0,
-          detail.product_note || "",
-          0,
-          detail.pending_qty || 0,
+          detail.product_note,
+          0, //returned_qty,
+          0, //sales_qty,
+          detail.product_qty || 0, //detail.stock_qty,
         ],
       });
     }
@@ -213,15 +214,15 @@ router.post("/create", async (req, res) => {
       useTransaction: true,
     });
 
-
-
     // If any failed, transaction has already rolled back
     if (!results.every((r) => r.success)) {
-      return res.status(500).json({ error: "Failed to create purchase booking" });
+      return res
+        .status(500)
+        .json({ error: "Failed to create purchase order" });
     }
     // ❗ Only one response is sent
     res.status(201).json({
-      message: "Purchase Booking created successfully!",
+      message: "Purchase Order created successfully!",
       master_id,
       order_no: order_no_new,
       details_create,
@@ -278,10 +279,10 @@ router.post("/update", async (req, res) => {
     //build scripts
     const scripts = [];
 
-    //delete booking details
+    //delete order details
     scripts.push({
       label: `1 of 5 :: Delete details ${order_no}`,
-      sql: `DELETE FROM po_booking WHERE master_id = ?`,
+      sql: `DELETE FROM po_order WHERE master_id = ?`,
       params: [master_id],
     });
 
@@ -330,17 +331,17 @@ router.post("/update", async (req, res) => {
       ],
     });
 
-    //Insert booking details
+    //Insert order details
     for (const detail of details_create) {
       scripts.push({
-        label: "4 of 5 :: Insert Purchase Booking",
-        sql: `INSERT INTO po_booking (booking_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, received_qty, pending_qty)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        label: "4 of 5 :: Insert Purchase Order details",
+        sql: `INSERT INTO po_order (order_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, returned_qty, sales_qty, stock_qty)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           generateGuid(),
           master_id,
           detail.product_id,
-          detail.product_price || 0,
+          detail.product_price,
           detail.product_qty || 0,
           detail.discount_percent || 0,
           detail.discount_amount || 0,
@@ -348,9 +349,10 @@ router.post("/update", async (req, res) => {
           detail.vat_amount || 0,
           detail.cost_price || 0,
           detail.total_amount || 0,
-          detail.product_note || "",
-          0,
-          detail.pending_qty || 0,
+          detail.product_note,
+          0, //returned_qty,
+          0, //sales_qty,
+          detail.product_qty || 0, //detail.stock_qty,
         ],
       });
     }
@@ -381,11 +383,11 @@ router.post("/update", async (req, res) => {
       useTransaction: true,
     });
 
-
-
     // If any failed, transaction has already rolled back
     if (!results.every((r) => r.success)) {
-      return res.status(500).json({ error: "Failed to update purchase booking" });
+      return res
+        .status(500)
+        .json({ error: "Failed to update purchase booking" });
     }
     // ❗ Only one response is sent
     res.status(201).json({

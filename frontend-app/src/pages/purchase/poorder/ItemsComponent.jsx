@@ -121,7 +121,7 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
     const costPrice = totalAmount / (itemQty || 1);
 
     const newItemRow = {
-      booking_id: generateGuid(), // Temporary ID for new items
+      order_id: generateGuid(), // Temporary ID for new items
       master_id: "",
       product_id: selectedItem,
       product_price: item.purchase_price,
@@ -133,8 +133,9 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
       cost_price: costPrice,
       total_amount: totalAmount,
       product_note: itemNote,
-      received_qty: 0,
-      pending_qty: itemQty || 1,
+      returned_qty: 0,
+      sales_qty: 0,
+      stock_qty: itemQty || 1,
 
       product_name: `${item.product_code} - ${item.product_name}`,
       unit_difference_qty: item.unit_difference_qty,
@@ -304,7 +305,7 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
       icon: "pi pi-exclamation-triangle",
       accept: () => {
         setFormDataList((prev) =>
-          prev.filter((item) => item.booking_id !== rowData.booking_id)
+          prev.filter((item) => item.order_id !== rowData.order_id)
         );
       },
       reject: () => { },
@@ -401,7 +402,7 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
       <DataTable
         value={formDataList}
         editMode="row"
-        dataKey="booking_id"
+        dataKey="order_id"
         editingRows={editingRows}
         onRowEditSave={onRowEditSave}
         onRowEditCancel={onRowEditCancel}

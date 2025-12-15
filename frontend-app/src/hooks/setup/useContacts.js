@@ -11,6 +11,9 @@ const fromDataModel = {
   contact_email: "",
   contact_address: "",
   contact_type: "",
+  credit_limit: 0,
+  payable_balance: 0,
+  advance_balance: 0,
   current_balance: 0,
 };
 
@@ -84,7 +87,7 @@ export const useContacts = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    //loadContacts();
+    loadContacts();
   }, []);
 
   const fetchSupplierList = async () => {
@@ -156,54 +159,43 @@ export const useContacts = () => {
 
   const handleSaveContact = async (e) => {
     e.preventDefault();
-    setIsBusy(true);
-
-    const newErrors = validate(formDataContact, t_contacts);
-    setErrors(newErrors);
-    console.log("handleSaveContact: " + JSON.stringify(formDataContact));
-
-    if (Object.keys(newErrors).length > 0) {
-      setIsBusy(false);
-      return;
-    }
 
     try {
-      let updatedContacts;
-      if (formDataContact.contact_id) {
-        // Edit existing
-        const updatedContact = await contactAPI.update(formDataContact);
-        updatedContact.ismodified = true;
-        updatedContacts = contactList.map((c) =>
-          c.contact_id === formDataContact.contact_id ? updatedContact : c
-        );
+      setIsBusy(true);
 
-        setToastBox({
-          severity: "success",
-          summary: "Success",
-          detail: `"${formDataContact.contact_name}" updated successfully.`,
-        });
-      } else {
-        // Add new
-        const newContactData = {
-          ...formDataContact,
-          contact_id: generateGuid(),
-        };
-        //console.log("newContactData: " + JSON.stringify(newContactData));
+      const newErrors = validate(formDataContact, t_contacts);
+      setErrors(newErrors);
+      console.log("handleSaveContact: " + JSON.stringify(formDataContact));
 
-        const newContact = await contactAPI.create(newContactData);
-        newContact.ismodified = true;
-        updatedContacts = [...contactList, newContact];
-
-        setToastBox({
-          severity: "success",
-          summary: "Success",
-          detail: `"${formDataContact.contact_name}" added successfully.`,
-        });
+      if (Object.keys(newErrors).length > 0) {
+        setIsBusy(false);
+        return;
       }
-      setContactList(updatedContacts);
+
+      const formDataNew = {
+        ...formDataContact,
+        contact_id: formDataContact.contact_id
+          ? formDataContact.contact_id
+          : generateGuid(),
+      };
+
+      if (formDataContact.contact_id) {
+        const data = await contactAPI.update(formDataNew);
+      } else {
+        const data = await contactAPI.create(formDataNew);
+      }
+      const message = formDataContact.contact_id
+        ? `"${formDataContact.contact_name}" Updated`
+        : "Created";
+      setToastBox({
+        severity: "success",
+        summary: "Success",
+        detail: `${message} successfully.`,
+      });
 
       handleClear();
       setCurrentView("list");
+      loadContacts();
     } catch (error) {
       console.error("Error saving contact:", error);
       setToastBox({
@@ -211,9 +203,9 @@ export const useContacts = () => {
         summary: "Error",
         detail: "Failed to save contact",
       });
+    } finally {
+      setIsBusy(false);
     }
-
-    setIsBusy(false);
   };
 
   const handleLedger = async (contact) => {

@@ -18,7 +18,8 @@ router.post("/update-invoice-due", async (req, res) => {
   const scripts = [];
 
   scripts.push({
-    label: "1 of 7 :: Update payment balance from payment details allocation [due payment]",
+    label:
+      "1 of 7 :: Update payment balance from payment details allocation [due payment]",
     sql: `WITH allocation AS (
           SELECT pmd.payment_id, sum(pmd.allocation_amount)allocation_amount
           FROM payment_details pmd
@@ -143,7 +144,8 @@ router.post("/update-balances", async (req, res) => {
   });
 
   scripts.push({
-    label: "2 of 3 :: Update contact current balance from Purchase and Sales dues",
+    label:
+      "2 of 3 :: Update contact current balance from Purchase and Sales dues",
     sql: `WITH cr_balance AS (
             SELECT contact_id, sum(due_amount) credit_amount
             FROM (
@@ -222,7 +224,7 @@ router.post("/update-product-stock", async (req, res) => {
   if (!id) {
     return res.status(400).json({ error: "Transaction ID is required" });
   }
-  
+
   const scripts = [];
 
   // scripts.push({
@@ -280,7 +282,8 @@ router.post("/update-product-stock", async (req, res) => {
   });
 
   scripts.push({
-    label: "4 of 5 :: Update all product stock from Purchase Details > Stock Qty",
+    label:
+      "4 of 5 :: Update all product stock from Purchase Details > Stock Qty",
     sql: `WITH purchase AS (
                 SELECT pod.product_id, sum(pod.stock_qty)stock_qty
                 FROM po_details pod
@@ -304,10 +307,9 @@ router.post("/update-product-stock", async (req, res) => {
     params: [],
   });
 
-  
-
   scripts.push({
-    label: "5 of 5 :: Update all product purchase_booking_qty from Purchase Details > Product Qty",
+    label:
+      "5 of 5 :: Update all product purchase_booking_qty from Purchase Details > Product Qty",
     sql: `WITH purchase AS (
                 SELECT pod.product_id, sum(pod.product_qty)purchase_booking_qty
                 FROM po_details pod
@@ -341,6 +343,309 @@ router.post("/update-product-stock", async (req, res) => {
     });
   } catch (error) {
     console.error("Error processing product stock data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//purchase-booking
+router.post("/purchase-booking", async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Transaction ID is required" });
+  }
+
+  const scripts = [];
+
+  scripts.push({
+    label: "1 of 2 :: Reset products purchase booking qty",
+    sql: `UPDATE products
+    SET purchase_booking_qty = 0
+    WHERE purchase_booking_qty > 0 `,
+    params: [],
+  });
+
+  scripts.push({
+    label: "2 of 2 :: Update products purchase booking qty",
+    sql: `WITH booking as (
+      SELECT pob.product_id, sum(pob.pending_qty) as purchase_booking_qty
+      FROM po_booking pob
+      JOIN po_master pobm on pob.master_id = pobm.master_id
+      WHERE pob.pending_qty > 0
+      AND pobm.is_posted = 1
+      GROUP by pob.product_id
+      )
+      UPDATE products
+      SET purchase_booking_qty = (
+        SELECT b.purchase_booking_qty
+        FROM booking b
+        WHERE b.product_id = products.product_id
+      )
+      WHERE products.product_id in (
+        SELECT b.product_id
+        FROM booking b
+      )`,
+    params: [],
+  });
+
+  try {
+    const results = await runScriptsSequentially(scripts, {
+      useTransaction: false,
+    });
+    res.status(201).json({
+      message: "Data processed successfully!",
+      result: results,
+    });
+  } catch (error) {
+    console.error("Error processing data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//purchase-receive
+router.post("/purchase-receive", async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Transaction ID is required" });
+  }
+
+  const scripts = [];
+
+  scripts.push({
+    label: "1 of 5 :: Update purchase booking received_qty and pending_qty",
+    sql: `UPDATE po_booking
+    SET received_qty = (
+            SELECT SUM(por.product_qty)
+            FROM po_receive por
+            WHERE por.booking_id = po_booking.booking_id
+        ),
+        pending_qty = (
+            SELECT  po_booking.product_qty - SUM(por.product_qty)
+            FROM po_receive por
+            WHERE por.booking_id = po_booking.booking_id
+        )
+    WHERE pending_qty > 0`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "2 of 5 :: Reset products purchase booking qty",
+    sql: `UPDATE products
+    SET purchase_booking_qty = 0
+    WHERE purchase_booking_qty > 0 `,
+    params: [],
+  });
+
+  scripts.push({
+    label: "3 of 5 :: Update products purchase booking qty",
+    sql: `WITH booking as (
+      SELECT pob.product_id, sum(pob.pending_qty) as purchase_booking_qty
+      FROM po_booking pob
+      JOIN po_master pobm on pob.master_id = pobm.master_id
+      WHERE pob.pending_qty > 0
+      AND pobm.is_posted = 1
+      GROUP by pob.product_id
+      )
+      UPDATE products
+      SET purchase_booking_qty = (
+        SELECT b.purchase_booking_qty
+        FROM booking b
+        WHERE b.product_id = products.product_id
+      )
+      WHERE products.product_id in (
+        SELECT b.product_id
+        FROM booking b
+      )`,
+    params: [],
+  });
+
+
+  scripts.push({
+    label: "4 of 5 :: Reset products stock qty",
+    sql: `UPDATE products
+    SET stock_qty = 0
+    WHERE stock_qty > 0 `,
+    params: [],
+  });
+
+
+  scripts.push({
+    label: "5 of 5 :: Update products stock qty",
+    sql: `WITH stock as (
+          SELECT product_id, sum(stock_qty)as stock_qty
+          FROM (
+                SELECT poo.product_id,poo.stock_qty
+                FROM po_order poo
+                WHERE poo.stock_qty > 0
+              UNION ALL
+              SELECT por.product_id,por.stock_qty
+                FROM po_receive por
+              WHERE por.stock_qty > 0
+              )
+          GROUP by product_id
+      )
+      UPDATE products
+      SET stock_qty = (
+        SELECT s.stock_qty
+        FROM stock s
+        WHERE products.product_id = s.product_id
+        )
+      WHERE products.product_id in (
+        SELECT s.product_id
+        FROM stock s
+        )`,
+    params: [],
+  });
+
+  try {
+    const results = await runScriptsSequentially(scripts, {
+      useTransaction: false,
+    });
+    res.status(201).json({
+      message: "Data processed successfully!",
+      result: results,
+    });
+  } catch (error) {
+    console.error("Error processing data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
+//purchase-order
+router.post("/purchase-order", async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Transaction ID is required" });
+  }
+
+  const scripts = [];
+
+
+  scripts.push({
+    label: "1 of 2 :: Reset products stock qty",
+    sql: `UPDATE products
+    SET stock_qty = 0
+    WHERE stock_qty > 0 `,
+    params: [],
+  });
+
+
+  scripts.push({
+    label: "2 of 2 :: Update products stock qty",
+    sql: `WITH stock as (
+          SELECT product_id, sum(stock_qty)as stock_qty
+          FROM (
+                SELECT poo.product_id,poo.stock_qty
+                FROM po_order poo
+                WHERE poo.stock_qty > 0
+              UNION ALL
+              SELECT por.product_id,por.stock_qty
+                FROM po_receive por
+              WHERE por.stock_qty > 0
+              )
+          GROUP by product_id
+      )
+      UPDATE products
+      SET stock_qty = (
+        SELECT s.stock_qty
+        FROM stock s
+        WHERE products.product_id = s.product_id
+        )
+      WHERE products.product_id in (
+        SELECT s.product_id
+        FROM stock s
+        )`,
+    params: [],
+  });
+
+  try {
+    const results = await runScriptsSequentially(scripts, {
+      useTransaction: false,
+    });
+    res.status(201).json({
+      message: "Data processed successfully!",
+      result: results,
+    });
+  } catch (error) {
+    console.error("Error processing data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//payable-due
+router.post("/payable-due", async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Transaction ID is required" });
+  }
+
+  const scripts = [];
+
+  scripts.push({
+    label: "1 of 3 :: Update purchase payment and dues",
+    sql: `WITH payment as (
+      SELECT pom.master_id,sum(pym.payment_amount)as payment_amount
+      FROM po_master pom
+      JOIN payments pym on pom.master_id = pym.master_id
+      WHERE pom.due_amount > 0
+      AND pom.order_type in ('Booking', 'Order')
+      AND pom.is_paid in ('Partial','Unpaid')
+      GROUP by pom.master_id
+      )
+      UPDATE po_master
+      SET paid_amount = (
+                SELECT p.payment_amount 
+                FROM payment p
+                WHERE po_master.master_id = p.master_id
+              ),
+        due_amount = payable_amount - (
+                SELECT p.payment_amount 
+                FROM payment p
+                WHERE po_master.master_id = p.master_id
+              )
+      WHERE po_master.master_id in (
+          SELECT p.master_id 
+          FROM payment p
+      )`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "2 of 3 :: Update purchase payment status paid",
+    sql: `UPDATE po_master
+    SET is_paid = 'Paid'
+    WHERE due_amount = 0
+    AND order_type in ('Booking', 'Order')
+    AND is_paid in ('Partial','Unpaid')`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "3 of 3 :: Update purchase payment status partial",
+    sql: `UPDATE po_master
+    SET is_paid = 'Partial'
+    WHERE due_amount > 0
+    AND due_amount < payable_amount
+    AND order_type in ('Booking', 'Order')
+    AND is_paid in ('Partial','Unpaid')`,
+    params: [],
+  });
+
+  try {
+    const results = await runScriptsSequentially(scripts, {
+      useTransaction: false,
+    });
+    res.status(201).json({
+      message: "Data processed successfully!",
+      result: results,
+    });
+  } catch (error) {
+    console.error("Error processing data:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

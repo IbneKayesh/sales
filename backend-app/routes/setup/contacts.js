@@ -47,7 +47,10 @@ router.post("/", async (req, res) => {
     contact_email,
     contact_address,
     contact_type,
-    allow_due
+    credit_limit,
+    payable_balance,
+    advance_balance,
+    current_balance,
   } = req.body;
 
   if (!contact_name) {
@@ -58,9 +61,10 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ error: "Contact ID is required" });
   }
 
+
   try {
-    const sql = `INSERT INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type, current_balance, allow_due)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type, credit_limit, payable_balance, advance_balance, current_balance)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const params = [
       contact_id,
       contact_name,
@@ -68,8 +72,10 @@ router.post("/", async (req, res) => {
       contact_email,
       contact_address,
       contact_type,
+      credit_limit,
       0,
-      allow_due
+      0,
+      0,
     ];
     await dbRun(sql, params, `Created contact ${contact_name}`);
     res.status(201).json({ contact_id, ...req.body });
@@ -78,7 +84,6 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 //update contact
 router.post("/update", async (req, res) => {
@@ -89,7 +94,10 @@ router.post("/update", async (req, res) => {
     contact_email,
     contact_address,
     contact_type,
-    allow_due
+    credit_limit,
+    payable_balance,
+    advance_balance,
+    current_balance,
   } = req.body;
 
   if (!contact_name) {
@@ -107,7 +115,7 @@ router.post("/update", async (req, res) => {
     contact_email = ?,
     contact_address = ?,
     contact_type = ?,
-    allow_due = ?,
+    credit_limit = ?,
     updated_at = CURRENT_TIMESTAMP
     WHERE contact_id = ?`;
     const params = [
@@ -116,7 +124,7 @@ router.post("/update", async (req, res) => {
       contact_email,
       contact_address,
       contact_type,
-      allow_due,
+      credit_limit,
       contact_id,
     ];
     const result = await dbRun(sql, params, `Updated contact ${contact_name}`);
@@ -130,7 +138,6 @@ router.post("/update", async (req, res) => {
   }
 });
 
-
 //Delete contact
 router.post("/delete", async (req, res) => {
   const { contact_id, contact_name } = req.body;
@@ -140,8 +147,13 @@ router.post("/delete", async (req, res) => {
   }
 
   try {
-    const sql = "DELETE FROM contacts WHERE contact_id = ? AND current_balance = 0";
-    const result = await dbRun(sql, [contact_id], `Deleted contact ${contact_name}`);
+    const sql =
+      "DELETE FROM contacts WHERE contact_id = ? AND current_balance = 0";
+    const result = await dbRun(
+      sql,
+      [contact_id],
+      `Deleted contact ${contact_name}`
+    );
     if (result.changes === 0) {
       return res.status(404).json({ error: "Contact not found" });
     }
@@ -156,7 +168,7 @@ router.post("/delete", async (req, res) => {
 router.get("/ledger/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const sql =`SELECT *
+    const sql = `SELECT *
     FROM accounts_ledger ald
     WHERE ald.contact_id = ?
     ORDER by ald.created_at`;

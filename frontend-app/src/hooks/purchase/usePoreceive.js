@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { pobookingAPI } from "@/api/purchase/pobookingAPI";
+import { poreceiveAPI } from "@/api/purchase/poreceiveAPI";
 import t_po_master from "@/models/purchase/t_po_master.json";
 import validate from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
@@ -9,7 +9,7 @@ const formDataModel = {
   master_id: "",
   shop_id: "1",
   contact_id: "",
-  order_type: "Booking",
+  order_type: "Receive",
   order_no: "[Auto SL]",
   order_date: new Date().toISOString().split("T")[0],
   order_note: "",
@@ -29,7 +29,7 @@ const formDataModel = {
   is_closed: 0,
 };
 
-const usePobooking = () => {
+const usePoreceive = () => {
   const [configLine, setConfigLine] = useState({
     contact_id: "both",
     is_posted: 1,
@@ -49,7 +49,7 @@ const usePobooking = () => {
   const loadBookingList = async (reloadDataSet = false) => {
     try {
       setIsBusy(true);
-      const data = await pobookingAPI.getAll();
+      const data = await poreceiveAPI.getAll();
       setDataList(data);
       setIsBusy(false);
 
@@ -133,25 +133,27 @@ const usePobooking = () => {
         return;
       }
 
-      const paidStatus =
-        formData.payable_amount === formData.due_amount
-          ? "Unpaid"
-          : formData.due_amount === 0
-          ? "Paid"
-          : "Partial";
+      // const paidStatus =
+      //   formData.payable_amount === formData.due_amount
+      //     ? "Unpaid"
+      //     : formData.due_amount === 0
+      //     ? "Paid"
+      //     : "Partial";
 
       const formDataNew = {
         ...formData,
         master_id: formData.master_id ? formData.master_id : generateGuid(),
-        is_paid: paidStatus,
+        is_paid: "Paid",
+        paid_amount: formData.payable_amount,
+        due_amount: 0,
         details_create: formDataList,
         payments_create: formDataPaymentList,
       };
 
       if (formData.master_id) {
-        const data = await pobookingAPI.update(formDataNew);
+        const data = await poreceiveAPI.update(formDataNew);
       } else {
-        const data = await pobookingAPI.create(formDataNew);
+        const data = await poreceiveAPI.create(formDataNew);
       }
 
       const message = formData.master_id
@@ -165,11 +167,14 @@ const usePobooking = () => {
 
       //return;
 
+      setIsBusy(false);
       handleCancel();
       loadBookingList();
 
+      
       //call update process
-      await closingProcessAPI("Purchase Booking", formData.order_no);
+      await closingProcessAPI("Purchase Receive", formData.order_no);
+
     } catch (error) {
       console.error("Error fetching data:", error);
       setToastBox({
@@ -177,14 +182,13 @@ const usePobooking = () => {
         summary: "Error",
         detail: "Failed to load data from server",
       });
-    } finally {
       setIsBusy(false);
     }
   };
 
   const fetchDetails = async (master_id) => {
     try {
-      const data = await pobookingAPI.getDetails(master_id);
+      const data = await poreceiveAPI.getDetails(master_id);
       setFormDataList(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -198,7 +202,7 @@ const usePobooking = () => {
 
   const fetchPayments = async (master_id) => {
     try {
-      const data = await pobookingAPI.getPayments(master_id);
+      const data = await poreceiveAPI.getPayments(master_id);
       setFormDataPaymentList(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -215,6 +219,24 @@ const usePobooking = () => {
     await fetchDetails(data.master_id);
     await fetchPayments(data.master_id);
     setCurrentView("form");
+  };
+
+  const fetchPendingReceiveDetails = async (contact_id) => {
+    //console.log("fetchPendingReceiveDetails: " + contact_id);
+    try {
+      setIsBusy(true);
+      const data = await poreceiveAPI.getPendingReceiveDetails(contact_id);
+      setFormDataList(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to load from server",
+      });
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   return {
@@ -237,7 +259,8 @@ const usePobooking = () => {
     handleEdit,
     handleDelete,
     handleSave,
+    fetchPendingReceiveDetails,
   };
 };
 
-export default usePobooking;
+export default usePoreceive;

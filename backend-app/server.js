@@ -21,6 +21,9 @@ const configsRoutes = require('./routes/setup/configs.js');
 
 //purchase modules
 const pobookingRoutes = require('./routes/purchase/pobooking.js');
+const poreceiveRoutes = require('./routes/purchase/poreceive.js');
+const poorderRoutes = require('./routes/purchase/poorder.js');
+const poreturnRoutes = require('./routes/purchase/poreturn.js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -57,7 +60,7 @@ app.use('/api/inventory/categories', categoryRoutes);
 app.use('/api/inventory/products', productRoutes);
 app.use('/api/setup/contacts', contactRoutes);
 app.use('/api/setup/closing-process', closingProcessRoutes);
-app.use('/api/purchase/orders', purchaseRoutes);
+//app.use('/api/purchase/orders', purchaseRoutes);
 app.use('/api/accounts/bankaccounts', bankAccountRoutes);
 app.use('/api/accounts/payments', paymentsRoutes);
 app.use('/api/accounts/payables', payablesRoutes);
@@ -69,6 +72,9 @@ app.use('/api/setup/configs', configsRoutes);
 
 //purchase modules
 app.use('/api/purchase/booking', pobookingRoutes);
+app.use('/api/purchase/receive', poreceiveRoutes);
+app.use('/api/purchase/order', poorderRoutes);
+app.use('/api/purchase/return', poreturnRoutes);
 
 
 // Health check endpoint

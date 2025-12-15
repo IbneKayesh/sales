@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { pobookingAPI } from "@/api/purchase/pobookingAPI";
+import { poorderAPI } from "@/api/purchase/poorderAPI";
 import t_po_master from "@/models/purchase/t_po_master.json";
 import validate from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
@@ -9,7 +9,7 @@ const formDataModel = {
   master_id: "",
   shop_id: "1",
   contact_id: "",
-  order_type: "Booking",
+  order_type: "Order",
   order_no: "[Auto SL]",
   order_date: new Date().toISOString().split("T")[0],
   order_note: "",
@@ -29,7 +29,7 @@ const formDataModel = {
   is_closed: 0,
 };
 
-const usePobooking = () => {
+const usePoorder = () => {
   const [configLine, setConfigLine] = useState({
     contact_id: "both",
     is_posted: 1,
@@ -49,7 +49,7 @@ const usePobooking = () => {
   const loadBookingList = async (reloadDataSet = false) => {
     try {
       setIsBusy(true);
-      const data = await pobookingAPI.getAll();
+      const data = await poorderAPI.getAll();
       setDataList(data);
       setIsBusy(false);
 
@@ -74,7 +74,7 @@ const usePobooking = () => {
   const loadConfigLine = async () => {
     // try {
     //   setIsBusy(true);
-    //   const data = await pobookingAPI.getConfigLine();
+    //   const data = await poorderAPI.getConfigLine();
     //   setConfigLine(data);
     //   setIsBusy(false);
     // } catch (error) {
@@ -149,9 +149,9 @@ const usePobooking = () => {
       };
 
       if (formData.master_id) {
-        const data = await pobookingAPI.update(formDataNew);
+        const data = await poorderAPI.update(formDataNew);
       } else {
-        const data = await pobookingAPI.create(formDataNew);
+        const data = await poorderAPI.create(formDataNew);
       }
 
       const message = formData.master_id
@@ -169,7 +169,7 @@ const usePobooking = () => {
       loadBookingList();
 
       //call update process
-      await closingProcessAPI("Purchase Booking", formData.order_no);
+      await closingProcessAPI("Purchase Order", formData.order_no);
     } catch (error) {
       console.error("Error fetching data:", error);
       setToastBox({
@@ -184,7 +184,7 @@ const usePobooking = () => {
 
   const fetchDetails = async (master_id) => {
     try {
-      const data = await pobookingAPI.getDetails(master_id);
+      const data = await poorderAPI.getDetails(master_id);
       setFormDataList(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -198,7 +198,7 @@ const usePobooking = () => {
 
   const fetchPayments = async (master_id) => {
     try {
-      const data = await pobookingAPI.getPayments(master_id);
+      const data = await poorderAPI.getPayments(master_id);
       setFormDataPaymentList(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -240,4 +240,4 @@ const usePobooking = () => {
   };
 };
 
-export default usePobooking;
+export default usePoorder;
