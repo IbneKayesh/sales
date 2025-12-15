@@ -26,7 +26,7 @@ const PaymentComponent = ({
     payment_head: formData.order_type,
     payment_mode: "Cash",
     payment_date: new Date().toISOString().split("T")[0],
-    payment_amount: formData.due_amount,
+    payment_amount: "",
     payment_note: "",
     ref_no: formData.order_no,
   });

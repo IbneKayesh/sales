@@ -20,6 +20,17 @@ const OrderEntryComponent = ({
   handleSave,
 }) => {
   const [creditLimit, setCreditLimit] = useState(0);
+  const [disableSubmit, setDisableSubmit] = useState(false);
+
+  useEffect(() => {
+    const hasProducts = formDataList.length > 0;
+    const hasCreditLimit = formData.due_amount > creditLimit;
+    if (!hasProducts || hasCreditLimit) {
+      setDisableSubmit(true);
+    } else {
+      setDisableSubmit(false);
+    }
+  }, [formDataList, formData.due_amount, creditLimit]);
 
   useEffect(() => {
     const order_amount = formDataList.reduce(
@@ -66,11 +77,51 @@ const OrderEntryComponent = ({
     formDataPaymentList,
     formData.is_vat_payable,
   ]);
+
+  const InvoiceHeader = () => {
+    return (
+      <div className="flex align-items-center gap-2 w-full">
+        Invoice# {formData.order_no}, Date# {formData.order_date}{" "}
+        {!formData.is_posted && (
+          <span className="text-red-500">[Not posted]</span>
+        )}
+      </div>
+    );
+  };
+
+  const InvoiceProducts = () => {
+    return (
+      <div className="flex align-items-center gap-2 w-full">
+        Products# {formDataList.length}, Qty#{" "}
+        {formDataList.reduce(
+          (total, item) => total + item.product_qty,
+          0
+        )}
+      </div>
+    );
+  };
+
+  const InvoicePayments = () => {
+    return (
+      <>
+        <span className="flex align-items-center gap-2 w-full">
+          Payable# {formData.payable_amount}/-, Paid#{" "}
+          <span className="text-green-500">{formData.paid_amount}/-,</span> Due#{" "}
+          {formData.due_amount > 0 ? (
+            <span className="text-red-500">{formData.due_amount}/-</span>
+          ) : (
+            <span className="text-green-500">{formData.due_amount}/-</span>
+          )}
+        </span>
+      </>
+    );
+  };
+
   return (
     <div className="p-1">
       Credit Limit {creditLimit}
       <Accordion multiple activeIndex={[0, 1, 2]}>
-        <AccordionTab header="Master">
+        <AccordionTab header={InvoiceHeader}>
           <MasterComponent
             errors={errors}
             formData={formData}
@@ -78,14 +129,15 @@ const OrderEntryComponent = ({
             setCreditLimit={setCreditLimit}
           />
         </AccordionTab>
-        <AccordionTab header="Items">
+        <AccordionTab header={InvoiceProducts}>
           <ItemsComponent
             configLine={configLine}
+            formData={formData}
             formDataList={formDataList}
             setFormDataList={setFormDataList}
           />
         </AccordionTab>
-        <AccordionTab header="Payment">
+        <AccordionTab header={InvoicePayments}>
           <PaymentComponent
             errors={errors}
             setErrors={setErrors}
@@ -98,9 +150,20 @@ const OrderEntryComponent = ({
       </Accordion>
       <div className="flex justify-content-end">
         <Button
-          label="Save"
-          className="p-button-primary"
+          type="button"
+          label={
+            formData.po_master_id
+              ? "Update"
+              : formData.is_posted
+                ? "Save with Posted"
+                : "Save as Draft"
+          }
+          icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
+          severity="success"
+          size="small"
+          loading={isBusy}
           onClick={handleSave}
+          disabled={disableSubmit}
         />
       </div>
     </div>

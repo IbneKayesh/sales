@@ -400,10 +400,10 @@ const initData = (callback) => {
       ('income', 'Income A/C', '0', '0', 'for internal transaction', 'Income', 0, 0, 0, 0),
       ('inventory', 'Inventory A/C', '0', '0', 'for internal transaction', 'Inventory', 0, 0, 0, 0),
       ('both', 'Unknown Supplier and Purchaser A/C', '0', '0', 'default for purchase and sale transaction', 'Both', 0, 0, 0, 0),
-      ('1', 'Supplier 1', '1234567890', 'supplier1@example.com', '123 Main St', 'Supplier',  0, 0, 0, 0),
-      ('2', 'Supplier 2', '0987654321', 'supplier2@example.com', '456 Elm St', 'Supplier',  0, 0, 0, 0),
-      ('3', 'Customer 1', '1234567890', 'customer1@example.com', '123 Main St', 'Customer',  0, 0, 0, 0),
-      ('4', 'Customer 2', '0987654321', 'customer2@example.com', '456 Elm St', 'Customer', 0, 0, 0, 0)
+      ('1', 'Supplier 1', '1234567890', 'supplier1@example.com', '123 Main St', 'Supplier',  5000000, 0, 0, 0),
+      ('2', 'Supplier 2', '0987654321', 'supplier2@example.com', '456 Elm St', 'Supplier',  5000000, 0, 0, 0),
+      ('3', 'Customer 1', '1234567890', 'customer1@example.com', '123 Main St', 'Customer',  5000000, 0, 0, 0),
+      ('4', 'Customer 2', '0987654321', 'customer2@example.com', '456 Elm St', 'Customer', 5000000, 0, 0, 0)
     `,
       (err) => {
         if (err) {
