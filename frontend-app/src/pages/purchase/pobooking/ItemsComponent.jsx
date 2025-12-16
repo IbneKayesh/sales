@@ -196,6 +196,9 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
     newData.total_amount = totalAmount;
     newData.cost_price = costPrice;
 
+    newData.invoice_qty = 0;
+    newData.pending_qty = newData.product_qty;
+
     let _localItems = [...formDataList];
     _localItems[index] = newData;
     setFormDataList(_localItems);

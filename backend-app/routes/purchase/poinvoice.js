@@ -13,7 +13,7 @@ const {
 //get all
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT pom.*, c.contact_name, pom.is_posted as isedit, 0 as ismodified
+    const sql = `SELECT pom.*, c.contact_name, pom.is_posted as edit_stop
     FROM po_master pom
     LEFT JOIN contacts c ON pom.contact_id = c.contact_id
     WHERE order_type = 'Invoice'`;
@@ -35,7 +35,8 @@ router.get("/details/:master_id", async (req, res) => {
     p.unit_difference_qty,
     su.unit_name as small_unit_name,
     lu.unit_name as large_unit_name,
-    0 as ismodified
+    poi.product_qty as booking_qty,
+    0 as edit_stop
     FROM po_invoice poi
     LEFT JOIN products p ON poi.product_id = p.product_id
     LEFT JOIN units su ON p.small_unit_id = su.unit_id
@@ -54,7 +55,7 @@ router.get("/details/:master_id", async (req, res) => {
 router.get("/payments/:master_id", async (req, res) => {
   try {
     const master_id = req.params.master_id;
-    const sql = `SELECT *
+    const sql = `SELECT pym.*, 0 as edit_stop
     FROM payments pym
     WHERE pym.master_id = ?
     ORDER by pym.created_at`;
@@ -77,13 +78,14 @@ router.get("/pending/:contact_id", async (req, res) => {
     pob.vat_percent, pob.vat_amount,
     pob.cost_price, pob.total_amount,
     pob.product_note, 0 as returned_qty,
-    0 as sales_qty,0 as stock_qty, pob.booking_id,
+    0 as sales_qty, pob.pending_qty as stock_qty, pob.booking_id,
 p.product_code,
 p.product_name,
 p.unit_difference_qty,
 su.unit_name as small_unit_name,
 lu.unit_name as large_unit_name,
-0 as ismodified
+pob.pending_qty as booking_qty,
+0 as edit_stop
 FROM po_booking pob
 JOIN po_master pobm on pob.master_id = pobm.master_id
 LEFT JOIN products p ON pob.product_id = p.product_id

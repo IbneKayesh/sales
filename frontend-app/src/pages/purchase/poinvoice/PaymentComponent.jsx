@@ -274,7 +274,7 @@ const PaymentComponent = ({
                 severity="info"
                 size="small"
                 onClick={handleAddPayment}
-                disabled={true}
+                disabled={formData.edit_stop}
               />
             </div>
           </div>

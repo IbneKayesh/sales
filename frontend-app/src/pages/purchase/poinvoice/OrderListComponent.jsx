@@ -71,19 +71,18 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
         command: () => {
           handleDelete(rowData);
         },
-        disabled: rowData.isedit,
+        disabled: rowData.edit_stop,
       },
     ];
     return (
       <div className="flex flex-wrap gap-2">
         <SplitButton
-          icon="pi pi-pencil"
+          icon={`${rowData.edit_stop ? "pi pi-eye" : "pi pi-pencil"}`}
           size="small"
-          tooltip="Edit"
+          tooltip={rowData.edit_stop ? "View" : "Edit"}
           tooltipOptions={{ position: "top" }}
           onClick={() => onEdit(rowData)}
           model={menuItems}
-          disabled={rowData.ismodified}
         />
       </div>
     );

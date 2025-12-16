@@ -67,7 +67,8 @@ const MasterComponent = ({
   const handleChange_contact_id = (e) => {
     handleChange("contact_id", e.value);
     const selectedObj = supplierList.find((c) => c.contact_id === e.value);
-    handleChange(selectedObj?.credit_limit || 0);
+    //console.log("selectedObj", selectedObj.credit_limit);
+    handleChange("credit_limit", selectedObj?.credit_limit || 0);
   };
 
   return (

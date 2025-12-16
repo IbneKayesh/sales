@@ -288,6 +288,16 @@ const ProductListComponent = ({
           <dd className="mb-3">{approxMarginTemplate(selectedItemDetail)}</dd>
           <dt>Margin Value:</dt>
           <dd className="mb-3">{formatCurrency(marginValue)}</dd>
+          <dt>Purchase Booking Qty:</dt>
+          <dd className="mb-3">
+            {selectedItemDetail?.purchase_booking_qty || 0}{" "}
+            {selectedItemDetail?.small_unit_name || ""}
+          </dd>
+          <dt>Sales Booking Qty:</dt>
+          <dd className="mb-3">
+            {selectedItemDetail?.sales_booking_qty || 0}{" "}
+            {selectedItemDetail?.small_unit_name || ""}
+          </dd>
         </dl>
       </Sidebar>
 

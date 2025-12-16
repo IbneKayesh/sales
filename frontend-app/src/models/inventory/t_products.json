@@ -87,5 +87,15 @@
     "name": "Margin Price",
     "type": "number",
     "required": false
+  },
+  "purchase_booking_qty": {
+    "name": "Purchase Booking Qty",
+    "type": "number",
+    "required": false
+  },
+  "sales_booking_qty": {
+    "name": "Sales Booking Qty",
+    "type": "number",
+    "required": false
   }
 }

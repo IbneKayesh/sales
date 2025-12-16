@@ -114,13 +114,12 @@ const usePobooking = () => {
     loadSettings();
   }, []);
 
-  const resetForm = () => {
-    //console.log("pageConfig in resetForm:", pageConfig);
-    setFormData((prev) => ({
-      ...prev,
+   const resetForm = () => {
+    setFormData({
+      ...formDataModel,
       is_posted: Number(pageConfig.is_posted),
       is_vat_payable: Number(pageConfig.is_vat_payable),
-    }));
+    });
 
     setFormDataList([]);
     setFormDataPaymentList([]);

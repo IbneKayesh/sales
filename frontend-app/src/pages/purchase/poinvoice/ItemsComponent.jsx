@@ -11,49 +11,12 @@ import { generateGuid } from "@/utils/guid";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
 import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 
-const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList }) => {
-  //console.log(formDataList);
-  const { productList, fetchBookingProductList } = useProducts();
-  const [availableProductList, setAvailableProductList] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [itemQty, setItemQty] = useState(1);
-  const [itemNote, setItemNote] = useState("");
-  const [disabledItemAdd, setDisabledItemAdd] = useState(true);
+const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList }) => {
   const [editingRows, setEditingRows] = useState([]);
 
-  useEffect(() => {
-    //fetchBookingProductList();
-  }, []);
 
-  useEffect(() => {
-    if (selectedItem) {
-      setDisabledItemAdd(false);
-    } else {
-      setDisabledItemAdd(true);
-    }
-  }, [selectedItem]);
 
-  useEffect(() => {
-    const filteredProductList = productList.map((item) => {
-      const updatedItem = { ...item };
 
-      updatedItem.discount_percent = configLine.include_discount
-        ? item.discount_percent
-        : 0;
-
-      updatedItem.vat_percent = configLine.include_vat ? item.vat_percent : 0;
-
-      return updatedItem;
-    });
-
-    const filtered = filteredProductList.filter(
-      (item) =>
-        !formDataList.some(
-          (orderItem) => orderItem.product_id === item.product_id
-        )
-    );
-    setAvailableProductList(filtered);
-  }, [productList, formDataList]);
 
   // Recalculate cost_price when extra costs change
   useEffect(() => {
@@ -96,94 +59,13 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
     }
   }, [formData?.include_cost, formData?.exclude_cost, formDataList.length]);
 
-  const handleAddItem = () => {
-    if (!selectedItem) return;
-
-    if (!itemQty) return;
-
-    // Check if item is already added
-    const existingItem = formDataList.find(
-      (i) => i.product_id === selectedItem
-    );
-    if (existingItem) {
-      // Item already exists, do not add duplicate
-      setSelectedItem(null);
-      return;
-    }
-
-    const item = productList.find((i) => i.product_id === selectedItem);
-    if (!item) return;
-
-    const itemAmount = (itemQty || 1) * item.purchase_price;
-    const discountAmount = (item.discount_percent / 100) * itemAmount;
-    const vatAmount = (item.vat_percent / 100) * itemAmount;
-    const totalAmount = itemAmount - discountAmount + vatAmount;
-    const costPrice = totalAmount / (itemQty || 1);
-
-    const newItemRow = {
-      booking_id: generateGuid(), // Temporary ID for new items
-      master_id: "",
-      product_id: selectedItem,
-      product_price: item.purchase_price,
-      product_qty: itemQty || 1,
-      discount_percent: item.discount_percent,
-      discount_amount: discountAmount,
-      vat_percent: item.vat_percent,
-      vat_amount: vatAmount,
-      cost_price: costPrice,
-      total_amount: totalAmount,
-      product_note: itemNote,
-      invoice_qty: 0,
-      pending_qty: itemQty || 1,
-
-      product_name: `${item.product_code} - ${item.product_name}`,
-      unit_difference_qty: item.unit_difference_qty,
-      small_unit_name: item.small_unit_name,
-      large_unit_name: item.large_unit_name,
-    };
-    setFormDataList([...formDataList, newItemRow]);
-
-    setSelectedItem(null);
-    setItemQty(1);
-  };
-
-  const itemList_IT = (option) => {
-    return (
-      <div className="grid">
-        <div className="col-12 font-semibold p-1">
-          {option.product_name} ({option.product_code})
-        </div>
-        <div className="grid col-12 text-gray-700 p-2">
-          <div className="col-4 p-0">💵 Price: {option.purchase_price}</div>
-          <div className="col-4 p-0">
-            📊 Discount: {option.discount_percent}%
-          </div>
-          <div className="col-4 p-0">📈 VAT: {option.vat_percent}%</div>
-        </div>
-        <div className="col-12 p-0">
-          📦 Stock: {option.stock_qty} {option.small_unit_name}
-        </div>
-      </div>
-    );
-  };
-
-  const itemList_VT = (option) => {
-    if (!option) {
-      return "Select Product";
-    }
-
-    return (
-      <div className="flex flex-column">
-        <span className="font-semibold">
-          {option.product_name}, 📦{option.stock_qty} {option.small_unit_name}
-        </span>
-      </div>
-    );
-  };
-
   const onRowEditSave = (event) => {
     let { newData, index } = event;
     // Calculate item_amount
+    if (newData.product_qty > newData.booking_qty) {
+      setEditingRows([]);
+      return;
+    }
 
     const itemAmount = newData.product_qty * newData.product_price;
     const discountAmount = (newData.discount_percent / 100) * itemAmount;
@@ -195,6 +77,10 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
     newData.vat_amount = vatAmount;
     newData.total_amount = totalAmount;
     newData.cost_price = costPrice;
+
+    newData.returned_qty = 0;
+    newData.sales_qty = 0;
+    newData.stock_qty = newData.product_qty;
 
     let _localItems = [...formDataList];
     _localItems[index] = newData;
@@ -230,8 +116,14 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
   };
 
   const product_qty_BT = (rowData) => {
-    return `${rowData.product_qty} ${rowData.small_unit_name}`;
+    if (rowData.product_qty === rowData.booking_qty) {
+      return `${rowData.product_qty} ${rowData.small_unit_name}`;
+    } else {
+      return `${rowData.product_qty} ${rowData.small_unit_name} (${rowData.booking_qty - rowData.product_qty} ${rowData.small_unit_name})`;
+    }
   };
+
+
 
   const product_qty_FT = () => {
     return formDataList.reduce(
@@ -240,7 +132,7 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
     );
   };
 
-  
+
   const discount_percent_BT = (rowData) => {
     const discountAmount = new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -296,7 +188,7 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
     );
   };
 
-  
+
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete item "${rowData.product_name}"?`,
@@ -360,43 +252,6 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
       <ConfirmDialog />
       {/* {JSON.stringify(productList?.[0])} */}
 
-      <div className="flex align-items-center gap-2 mb-2">
-        <Dropdown
-          name="itemList"
-          value={selectedItem}
-          options={availableProductList}
-          optionLabel="product_name"
-          optionValue="product_id"
-          onChange={(e) => setSelectedItem(e.value)}
-          placeholder="Select Product"
-          className="w-full"
-          filter
-          showClear
-          itemTemplate={itemList_IT}
-          valueTemplate={itemList_VT}
-        />
-        <InputNumber
-          name="itemQty"
-          value={itemQty}
-          onValueChange={(e) => setItemQty(e.value)}
-          placeholder="Enter Qty"
-        />
-        <InputText
-          name="itemNote"
-          value={itemNote}
-          onChange={(e) => setItemNote(e.target.value)}
-          placeholder="Note"
-        />
-        <Button
-          label="Add"
-          icon="pi pi-plus"
-          onClick={handleAddItem}
-          size="small"
-          severity="info"
-          className="pr-5"
-          disabled={disabledItemAdd}
-        />
-      </div>
 
       <DataTable
         value={formDataList}

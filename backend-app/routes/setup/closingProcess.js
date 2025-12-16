@@ -413,24 +413,35 @@ router.post("/purchase-invoice", async (req, res) => {
   const scripts = [];
 
   scripts.push({
-    label: "1 of 5 :: Update purchase booking invoice_qty and pending_qty",
-    sql: `UPDATE po_booking
-    SET invoice_qty = (
-            SELECT SUM(por.product_qty)
-            FROM po_invoice por
-            WHERE por.booking_id = po_booking.booking_id
-        ),
-        pending_qty = (
-            SELECT  po_booking.product_qty - SUM(por.product_qty)
-            FROM po_invoice por
-            WHERE por.booking_id = po_booking.booking_id
-        )
-    WHERE pending_qty > 0`,
+    label: "1 of 6 :: Update purchase booking invoice_qty and pending_qty",
+    sql: `WITH invoice as (
+              SELECT poi.booking_id, sum(poi.product_qty) as product_qty
+              FROM po_booking pob
+              JOIN po_invoice poi on pob.booking_id = poi.booking_id
+              WHERE pob.pending_qty > 0
+              GROUP by poi.booking_id
+              )
+              UPDATE po_booking
+              SET
+              invoice_qty = (SELECT inv.product_qty
+                FROM invoice inv
+                WHERE po_booking.booking_id = inv.booking_id
+                ),
+              pending_qty = po_booking.product_qty - 
+                (SELECT inv.product_qty
+                FROM invoice inv
+                WHERE po_booking.booking_id = inv.booking_id
+                )
+              WHERE po_booking.pending_qty > 0
+              AND po_booking.booking_id in (
+              SELECT booking_id
+              FROM invoice
+              )`,
     params: [],
   });
 
   scripts.push({
-    label: "2 of 5 :: Reset products purchase booking qty",
+    label: "2 of 6 :: Reset products purchase booking qty",
     sql: `UPDATE products
     SET purchase_booking_qty = 0
     WHERE purchase_booking_qty > 0 `,
@@ -438,7 +449,7 @@ router.post("/purchase-invoice", async (req, res) => {
   });
 
   scripts.push({
-    label: "3 of 5 :: Update products purchase booking qty",
+    label: "3 of 6 :: Update products purchase booking qty",
     sql: `WITH booking as (
       SELECT pob.product_id, sum(pob.pending_qty) as purchase_booking_qty
       FROM po_booking pob
@@ -461,7 +472,7 @@ router.post("/purchase-invoice", async (req, res) => {
   });
 
   scripts.push({
-    label: "4 of 5 :: Reset products stock qty",
+    label: "4 of 6 :: Reset products stock qty",
     sql: `UPDATE products
     SET stock_qty = 0
     WHERE stock_qty > 0 `,
@@ -469,7 +480,7 @@ router.post("/purchase-invoice", async (req, res) => {
   });
 
   scripts.push({
-    label: "5 of 5 :: Update products stock qty",
+    label: "5 of 6 :: Update products stock qty",
     sql: `WITH stock as (
           SELECT product_id, sum(stock_qty)as stock_qty
           FROM (
@@ -493,6 +504,30 @@ router.post("/purchase-invoice", async (req, res) => {
         SELECT s.product_id
         FROM stock s
         )`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "6 of 6 :: Update booking close status",
+    sql: `WITH booking_closed as (
+                SELECT pob.master_id, sum(pob.pending_qty) as pending_qty
+                FROM po_master pom
+                JOIN po_booking pob on pom.master_id = pob.master_id
+                WHERE pom.order_type = 'Booking'
+                AND pom.is_paid = 'Paid'
+                AND pom.is_posted = 1
+                AND pom.is_closed = 0
+                GROUP by pob.master_id
+                HAVING sum(pob.pending_qty) = 0
+                )
+                UPDATE po_master
+                SET is_closed = 1
+                WHERE is_closed = 0
+                AND order_type = 'Booking'
+                AND is_paid = 'Paid'
+                AND is_posted = 1
+                AND master_id in 
+                (SELECT master_id from booking_closed)`,
     params: [],
   });
 

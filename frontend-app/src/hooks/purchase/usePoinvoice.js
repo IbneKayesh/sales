@@ -4,6 +4,7 @@ import t_po_master from "@/models/purchase/t_po_master.json";
 import validate from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
+import { settingsAPI } from "@/api/setup/settingsAPI";
 
 const formDataModel = {
   master_id: "",
@@ -30,12 +31,13 @@ const formDataModel = {
 };
 
 const usePoinvoice = () => {
-  const [configLine, setConfigLine] = useState({
-    contact_id: "both",
-    is_posted: 1,
-    include_discount: 1,
-    include_vat: 1,
+  const [pageConfig, setPageConfig] = useState({
+    is_posted: 0,
+    is_vat_payable: 0,
+    include_discount: 0,
+    include_vat: 0,
   });
+
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list");
@@ -44,7 +46,7 @@ const usePoinvoice = () => {
   const [formData, setFormData] = useState(formDataModel);
   const [formDataList, setFormDataList] = useState([]);
   const [formDataPaymentList, setFormDataPaymentList] = useState([]);
-  const [handleDelete, setHandleDelete] = useState(() => {});
+  const [handleDelete, setHandleDelete] = useState(() => { });
 
   const loadBookingList = async (reloadDataSet = false) => {
     try {
@@ -71,37 +73,57 @@ const usePoinvoice = () => {
     }
   };
 
-  const loadConfigLine = async () => {
-    // try {
-    //   setIsBusy(true);
-    //   const data = await pobookingAPI.getConfigLine();
-    //   setConfigLine(data);
-    //   setIsBusy(false);
-    // } catch (error) {
-    //   console.error("Error fetching config line:", error);
-    //   setToastBox({
-    //     severity: "error",
-    //     summary: "Error",
-    //     detail: "Failed to load config line from server",
-    //   });
-    //   setIsBusy(false);
-    // }
+  const loadSettings = async () => {
+    try {
+      setIsBusy(true);
+      const data = await settingsAPI.getByPageId("Purchase Invoice");
+      //console.log("Settings data:", data);
+
+      const settingsObj = Object.fromEntries(
+        data.map(({ setting_key, setting_value }) => [
+          setting_key,
+          setting_value,
+        ])
+      );
+
+      setPageConfig((prevConfig) => ({
+        ...prevConfig,
+        is_posted: settingsObj["is_posted"] ?? prevConfig.is_posted,
+        is_vat_payable:
+          settingsObj["is_vat_payable"] ?? prevConfig.is_vat_payable,
+        include_discount:
+          settingsObj["include_discount"] ?? prevConfig.include_discount,
+        include_vat: settingsObj["include_vat"] ?? prevConfig.include_vat,
+      }));
+    } catch (error) {
+      console.error("Error fetching config line:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to load config line from server",
+      });
+    } finally {
+      setIsBusy(false);
+    }
   };
+
 
   useEffect(() => {
     loadBookingList();
-    loadConfigLine();
+    loadSettings();
   }, []);
 
   const resetForm = () => {
-    setFormData((prev) => ({
-      ...prev,
-      contact_id: configLine?.contact_id,
-      is_posted: configLine?.is_posted,
-    }));
+    setFormData({
+      ...formDataModel,
+      is_posted: Number(pageConfig.is_posted),
+      is_vat_payable: Number(pageConfig.is_vat_payable),
+    });
+
     setFormDataList([]);
     setFormDataPaymentList([]);
   };
+
 
   const handleAddNew = () => {
     resetForm();
@@ -165,7 +187,7 @@ const usePoinvoice = () => {
       handleCancel();
       loadBookingList();
 
-      
+
       //call update process
       await closingProcessAPI("Purchase Invoice", formData.order_no);
 
@@ -234,7 +256,7 @@ const usePoinvoice = () => {
   };
 
   return {
-    configLine,
+    pageConfig,
     toastBox,
     isBusy,
     currentView,

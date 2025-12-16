@@ -94,11 +94,12 @@ const usePoorder = () => {
   }, []);
 
   const resetForm = () => {
-    setFormData((prev) => ({
-      ...prev,
-      contact_id: configLine?.contact_id,
-      is_posted: configLine?.is_posted,
-    }));
+    setFormData({
+      ...formDataModel,
+      is_posted: Number(pageConfig.is_posted),
+      is_vat_payable: Number(pageConfig.is_vat_payable),
+    });
+
     setFormDataList([]);
     setFormDataPaymentList([]);
   };

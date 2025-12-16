@@ -48,6 +48,7 @@ const purchase_tables = () => ({
         cost_price REAL DEFAULT 0,
         total_amount REAL DEFAULT 0,
         product_note TEXT,  
+        cancelled_qty REAL DEFAULT 0,
         invoice_qty REAL DEFAULT 0,
         pending_qty REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

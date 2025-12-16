@@ -418,7 +418,9 @@ const initData = (callback) => {
       ('1', 'Purchase Booking', 'Posted', 'is_posted', '1'),
       ('2', 'Purchase Booking', 'VAT Payable', 'is_vat_payable', '1'),
       ('3', 'Purchase Booking', 'Include Discount', 'include_discount', '0'),
-      ('4', 'Purchase Booking', 'Include VAT', 'include_vat', '0')
+      ('4', 'Purchase Booking', 'Include VAT', 'include_vat', '0'),
+      ('5', 'Purchase Invoice', 'Posted', 'is_posted', '1'),
+      ('6', 'Purchase Invoice', 'VAT Payable', 'is_vat_payable', '1')
     `,
       (err) => {
         if (err) {

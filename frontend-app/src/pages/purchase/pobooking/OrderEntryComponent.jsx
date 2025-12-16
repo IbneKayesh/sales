@@ -118,7 +118,7 @@ const OrderEntryComponent = ({
 
   return (
     <div className="p-1">
-      {/* Credit Limit {creditLimit} */}
+      {/* Credit Limit {formData.credit_limit} */}
       <Accordion multiple activeIndex={[0, 1, 2]}>
         <AccordionTab header={InvoiceHeader}>
           <MasterComponent

@@ -8,8 +8,8 @@ import  usePoinvoice  from "@/hooks/purchase/usePoinvoice";
 
 const PoInvoicePage = () => {
   const toast = useRef(null);
-  const {
-    configLine,
+  const {    
+    pageConfig,
     toastBox,
     isBusy,
     currentView,
@@ -77,7 +77,7 @@ const PoInvoicePage = () => {
           />
         ) : (
           <OrderEntryComponent
-            configLine={configLine}
+            pageConfig={pageConfig}
             isBusy={isBusy}
             errors={errors}
             setErrors={setErrors}
