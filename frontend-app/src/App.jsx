@@ -28,7 +28,7 @@ import PayablesPage from "./pages/accounts/payables/PayablesPage";
 
 //Purchase Module
 import PurchaseBookingPage from "./pages/purchase/pobooking/PoBookingPage.jsx";
-import PurchaseReceivePage from "./pages/purchase/poreceive/PoReceivePage.jsx";
+import PurchaseInvoicePage from "./pages/purchase/poinvoice/PoInvoicePage.jsx";
 import PurchaseOrderPage from "./pages/purchase/poorder/PoOrderPage.jsx";
 import PurchaseReturnPage from "./pages/purchase/poreturn/PoReturnPage.jsx";
 
@@ -83,7 +83,7 @@ function AppRoutes({ toast }) {
 
         //Purchase Module
         <Route path="purchase/purchase-booking" element={<PurchaseBookingPage />} />
-        <Route path="purchase/purchase-receive" element={<PurchaseReceivePage />} />
+        <Route path="purchase/purchase-invoice" element={<PurchaseInvoicePage />} />
         <Route path="purchase/purchase-order" element={<PurchaseOrderPage />} />
         <Route path="purchase/purchase-return" element={<PurchaseReturnPage />} />
 

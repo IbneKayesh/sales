@@ -32,8 +32,9 @@ const initTables = () => {
     db.run(`
       CREATE TABLE IF NOT EXISTS settings (
         setting_id TEXT PRIMARY KEY,
-        setting_group TEXT NOT NULL,
+        setting_page TEXT NOT NULL,
         setting_name TEXT NOT NULL,
+        setting_key TEXT NOT NULL,
         setting_value TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -409,18 +410,15 @@ const initData = (callback) => {
       }
     );
 
-    //Purchase Booking [PB]
-    //Purchase Order [PO]
-    //Purchase Invoice [PI]
-    //Purchase Return [PR]
-
     //settings default insert
     db.run(
       `
-      INSERT OR IGNORE INTO settings (setting_id, setting_group, setting_name, setting_value)
+      INSERT OR IGNORE INTO settings (setting_id, setting_page, setting_name, setting_key, setting_value)
       VALUES
-      ('1', 'Purchase Booking', 'contact_id', "1"),
-      ('2', 'Purchase Order', 'contact_id', "2"),
+      ('1', 'Purchase Booking', 'Posted', 'is_posted', '1'),
+      ('2', 'Purchase Booking', 'VAT Payable', 'is_vat_payable', '1'),
+      ('3', 'Purchase Booking', 'Include Discount', 'include_discount', '0'),
+      ('4', 'Purchase Booking', 'Include VAT', 'include_vat', '0')
     `,
       (err) => {
         if (err) {

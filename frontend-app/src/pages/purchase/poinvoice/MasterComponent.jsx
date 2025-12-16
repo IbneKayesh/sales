@@ -10,7 +10,7 @@ const MasterComponent = ({
   errors,
   formData,
   handleChange,
-  fetchPendingReceiveDetails,
+  fetchPendingInvoiceDetails,
 }) => {
   const { supplierList, fetchSupplierList } = useContacts();
 
@@ -63,7 +63,7 @@ const MasterComponent = ({
 
   const handleChange_contact_id = (e) => {
     handleChange("contact_id", e.value);
-    fetchPendingReceiveDetails(e.value);
+    fetchPendingInvoiceDetails(e.value);
   };
 
   return (

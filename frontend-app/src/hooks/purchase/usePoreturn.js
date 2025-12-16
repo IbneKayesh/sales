@@ -60,11 +60,9 @@ const usePoreturn = () => {
       console.log("loadNewReturn: " + JSON.stringify(data));
       setFormData(data);
 
-
-const data_details = await poreturnAPI.getNewReturnDetails(returnData);
-console.log("loadNewReturnDetails: " + JSON.stringify(data_details));
-setFormDataList(data_details);
-
+      const data_details = await poreturnAPI.getNewReturnDetails(returnData);
+      console.log("loadNewReturnDetails: " + JSON.stringify(data_details));
+      setFormDataList(data_details);
 
       setCurrentView("form");
     } catch (error) {
@@ -178,9 +176,9 @@ setFormDataList(data_details);
       }
 
       const paidStatus =
-        formData.payable_amount === formData.due_amount
+        Number(formData.payable_amount) === Number(formData.due_amount)
           ? "Unpaid"
-          : formData.due_amount === 0
+          : Number(formData.due_amount) === 0
           ? "Paid"
           : "Partial";
 
@@ -213,7 +211,7 @@ setFormDataList(data_details);
       loadBookingList();
 
       //call update process
-      await closingProcessAPI("Purchase Order", formData.order_no);
+      await closingProcessAPI("Purchase Return", formData.order_no);
     } catch (error) {
       console.error("Error fetching data:", error);
       setToastBox({

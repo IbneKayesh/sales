@@ -13,7 +13,7 @@ const {
 //get all
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT pom.*, c.contact_name, pom.is_posted as isedit, 0 as ismodified
+    const sql = `SELECT pom.*, c.contact_name, pom.is_posted as edit_stop
     FROM po_master pom
     LEFT JOIN contacts c ON pom.contact_id = c.contact_id
     WHERE order_type = 'Booking'`;
@@ -35,7 +35,7 @@ router.get("/details/:master_id", async (req, res) => {
     p.unit_difference_qty,
     su.unit_name as small_unit_name,
     lu.unit_name as large_unit_name,
-    0 as ismodified
+    0 as edit_stop
     FROM po_booking pob
     LEFT JOIN products p ON pob.product_id = p.product_id
     LEFT JOIN units su ON p.small_unit_id = su.unit_id
@@ -54,7 +54,7 @@ router.get("/details/:master_id", async (req, res) => {
 router.get("/payments/:master_id", async (req, res) => {
   try {
     const master_id = req.params.master_id;
-    const sql = `SELECT *
+    const sql = `SELECT pym.*, 0 as edit_stop
     FROM payments pym
     WHERE pym.master_id = ?
     ORDER by pym.created_at`;
@@ -166,7 +166,7 @@ router.post("/create", async (req, res) => {
     for (const detail of details_create) {
       scripts.push({
         label: "2 of 2 :: Insert Purchase Booking",
-        sql: `INSERT INTO po_booking (booking_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, received_qty, pending_qty)
+        sql: `INSERT INTO po_booking (booking_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, invoice_qty, pending_qty)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           generateGuid(),
@@ -334,7 +334,7 @@ router.post("/update", async (req, res) => {
     for (const detail of details_create) {
       scripts.push({
         label: "4 of 5 :: Insert Purchase Booking",
-        sql: `INSERT INTO po_booking (booking_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, received_qty, pending_qty)
+        sql: `INSERT INTO po_booking (booking_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, invoice_qty, pending_qty)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           generateGuid(),

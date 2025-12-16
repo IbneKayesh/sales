@@ -191,7 +191,7 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
         emptyMessage="No data found."
         footer={dataTable_FT}
       >
-        <Column field="order_no" header="Receive" sortable></Column>
+        <Column field="order_no" header="Invoice" sortable></Column>
         <Column field="order_date" header="Date" sortable></Column>
         <Column field="contact_name" header="Contact" sortable></Column>
         <Column

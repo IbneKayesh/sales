@@ -133,7 +133,7 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
       cost_price: costPrice,
       total_amount: totalAmount,
       product_note: itemNote,
-      received_qty: 0,
+      invoice_qty: 0,
       pending_qty: itemQty || 1,
 
       product_name: `${item.product_code} - ${item.product_name}`,

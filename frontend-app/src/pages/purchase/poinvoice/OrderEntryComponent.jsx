@@ -18,7 +18,7 @@ const OrderEntryComponent = ({
   setFormDataPaymentList,
   handleChange,
   handleSave,
-  fetchPendingReceiveDetails,
+  fetchPendingInvoiceDetails,
 }) => {
   const [creditLimit, setCreditLimit] = useState(0);
   const [disableSubmit, setDisableSubmit] = useState(false);
@@ -137,7 +137,7 @@ const OrderEntryComponent = ({
             errors={errors}
             formData={formData}
             handleChange={handleChange}
-            fetchPendingReceiveDetails={fetchPendingReceiveDetails}
+            fetchPendingInvoiceDetails={fetchPendingInvoiceDetails}
           />
         </AccordionTab>
         <AccordionTab header={InvoiceProducts}>

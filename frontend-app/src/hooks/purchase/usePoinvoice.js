@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { poreceiveAPI } from "@/api/purchase/poreceiveAPI";
+import { poinvoiceAPI } from "@/api/purchase/poinvoiceAPI";
 import t_po_master from "@/models/purchase/t_po_master.json";
 import validate from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
@@ -9,7 +9,7 @@ const formDataModel = {
   master_id: "",
   shop_id: "1",
   contact_id: "",
-  order_type: "Receive",
+  order_type: "Invoice",
   order_no: "[Auto SL]",
   order_date: new Date().toISOString().split("T")[0],
   order_note: "",
@@ -29,7 +29,7 @@ const formDataModel = {
   is_closed: 0,
 };
 
-const usePoreceive = () => {
+const usePoinvoice = () => {
   const [configLine, setConfigLine] = useState({
     contact_id: "both",
     is_posted: 1,
@@ -49,7 +49,7 @@ const usePoreceive = () => {
   const loadBookingList = async (reloadDataSet = false) => {
     try {
       setIsBusy(true);
-      const data = await poreceiveAPI.getAll();
+      const data = await poinvoiceAPI.getAll();
       setDataList(data);
       setIsBusy(false);
 
@@ -133,12 +133,6 @@ const usePoreceive = () => {
         return;
       }
 
-      // const paidStatus =
-      //   formData.payable_amount === formData.due_amount
-      //     ? "Unpaid"
-      //     : formData.due_amount === 0
-      //     ? "Paid"
-      //     : "Partial";
 
       const formDataNew = {
         ...formData,
@@ -151,9 +145,9 @@ const usePoreceive = () => {
       };
 
       if (formData.master_id) {
-        const data = await poreceiveAPI.update(formDataNew);
+        const data = await poinvoiceAPI.update(formDataNew);
       } else {
-        const data = await poreceiveAPI.create(formDataNew);
+        const data = await poinvoiceAPI.create(formDataNew);
       }
 
       const message = formData.master_id
@@ -173,7 +167,7 @@ const usePoreceive = () => {
 
       
       //call update process
-      await closingProcessAPI("Purchase Receive", formData.order_no);
+      await closingProcessAPI("Purchase Invoice", formData.order_no);
 
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -188,7 +182,7 @@ const usePoreceive = () => {
 
   const fetchDetails = async (master_id) => {
     try {
-      const data = await poreceiveAPI.getDetails(master_id);
+      const data = await poinvoiceAPI.getDetails(master_id);
       setFormDataList(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -202,7 +196,7 @@ const usePoreceive = () => {
 
   const fetchPayments = async (master_id) => {
     try {
-      const data = await poreceiveAPI.getPayments(master_id);
+      const data = await poinvoiceAPI.getPayments(master_id);
       setFormDataPaymentList(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -221,11 +215,11 @@ const usePoreceive = () => {
     setCurrentView("form");
   };
 
-  const fetchPendingReceiveDetails = async (contact_id) => {
-    //console.log("fetchPendingReceiveDetails: " + contact_id);
+  const fetchPendingInvoiceDetails = async (contact_id) => {
+    //console.log("fetchPendingInvoiceDetails: " + contact_id);
     try {
       setIsBusy(true);
-      const data = await poreceiveAPI.getPendingReceiveDetails(contact_id);
+      const data = await poinvoiceAPI.getPendingInvoiceDetails(contact_id);
       setFormDataList(data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -259,8 +253,8 @@ const usePoreceive = () => {
     handleEdit,
     handleDelete,
     handleSave,
-    fetchPendingReceiveDetails,
+    fetchPendingInvoiceDetails,
   };
 };
 
-export default usePoreceive;
+export default usePoinvoice;

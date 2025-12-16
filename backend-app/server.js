@@ -21,9 +21,12 @@ const configsRoutes = require('./routes/setup/configs.js');
 
 //purchase modules
 const pobookingRoutes = require('./routes/purchase/pobooking.js');
-const poreceiveRoutes = require('./routes/purchase/poreceive.js');
+const poinvoiceRoutes = require('./routes/purchase/poinvoice.js');
 const poorderRoutes = require('./routes/purchase/poorder.js');
 const poreturnRoutes = require('./routes/purchase/poreturn.js');
+
+//setup
+const settingsRoutes = require('./routes/setup/settings.js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -72,9 +75,13 @@ app.use('/api/setup/configs', configsRoutes);
 
 //purchase modules
 app.use('/api/purchase/booking', pobookingRoutes);
-app.use('/api/purchase/receive', poreceiveRoutes);
+app.use('/api/purchase/invoice', poinvoiceRoutes);
 app.use('/api/purchase/order', poorderRoutes);
 app.use('/api/purchase/return', poreturnRoutes);
+
+
+//setup
+app.use('/api/setup/settings', settingsRoutes);
 
 
 // Health check endpoint

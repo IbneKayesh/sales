@@ -87,8 +87,10 @@ export const useContacts = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadContacts();
-  }, []);
+    if (supplierList.length === 0) {
+      loadContacts(); // Load contacts only if the list is empty
+    }
+  }, [supplierList]);
 
   const fetchSupplierList = async () => {
     const data = await contactAPI.getAll();

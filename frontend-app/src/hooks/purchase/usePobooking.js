@@ -4,6 +4,7 @@ import t_po_master from "@/models/purchase/t_po_master.json";
 import validate from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
+import { settingsAPI } from "@/api/setup/settingsAPI";
 
 const formDataModel = {
   master_id: "",
@@ -27,15 +28,18 @@ const formDataModel = {
   is_posted: 0,
   is_returned: 0,
   is_closed: 0,
+  edit_stop: 0,
+  credit_limit: 0,
 };
 
 const usePobooking = () => {
-  const [configLine, setConfigLine] = useState({
-    contact_id: "both",
-    is_posted: 1,
-    include_discount: 1,
-    include_vat: 1,
+  const [pageConfig, setPageConfig] = useState({
+    is_posted: 0,
+    is_vat_payable: 0,
+    include_discount: 0,
+    include_vat: 0,
   });
+
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list");
@@ -51,7 +55,6 @@ const usePobooking = () => {
       setIsBusy(true);
       const data = await pobookingAPI.getAll();
       setDataList(data);
-      setIsBusy(false);
 
       if (reloadDataSet) {
         setToastBox({
@@ -67,38 +70,58 @@ const usePobooking = () => {
         summary: "Error",
         detail: "Failed to load data from server",
       });
+    } finally {
       setIsBusy(false);
     }
   };
 
-  const loadConfigLine = async () => {
-    // try {
-    //   setIsBusy(true);
-    //   const data = await pobookingAPI.getConfigLine();
-    //   setConfigLine(data);
-    //   setIsBusy(false);
-    // } catch (error) {
-    //   console.error("Error fetching config line:", error);
-    //   setToastBox({
-    //     severity: "error",
-    //     summary: "Error",
-    //     detail: "Failed to load config line from server",
-    //   });
-    //   setIsBusy(false);
-    // }
+  const loadSettings = async () => {
+    try {
+      setIsBusy(true);
+      const data = await settingsAPI.getByPageId("Purchase Booking");
+      //console.log("Settings data:", data);
+
+      const settingsObj = Object.fromEntries(
+        data.map(({ setting_key, setting_value }) => [
+          setting_key,
+          setting_value,
+        ])
+      );
+
+      setPageConfig((prevConfig) => ({
+        ...prevConfig,
+        is_posted: settingsObj["is_posted"] ?? prevConfig.is_posted,
+        is_vat_payable:
+          settingsObj["is_vat_payable"] ?? prevConfig.is_vat_payable,
+        include_discount:
+          settingsObj["include_discount"] ?? prevConfig.include_discount,
+        include_vat: settingsObj["include_vat"] ?? prevConfig.include_vat,
+      }));
+    } catch (error) {
+      console.error("Error fetching config line:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to load config line from server",
+      });
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   useEffect(() => {
     loadBookingList();
-    loadConfigLine();
+    loadSettings();
   }, []);
 
   const resetForm = () => {
+    //console.log("pageConfig in resetForm:", pageConfig);
     setFormData((prev) => ({
       ...prev,
-      contact_id: configLine?.contact_id,
-      is_posted: configLine?.is_posted,
+      is_posted: Number(pageConfig.is_posted),
+      is_vat_payable: Number(pageConfig.is_vat_payable),
     }));
+
     setFormDataList([]);
     setFormDataPaymentList([]);
   };
@@ -134,9 +157,9 @@ const usePobooking = () => {
       }
 
       const paidStatus =
-        formData.payable_amount === formData.due_amount
+        Number(formData.payable_amount) === Number(formData.due_amount)
           ? "Unpaid"
-          : formData.due_amount === 0
+          : Number(formData.due_amount) === 0
           ? "Paid"
           : "Partial";
 
@@ -163,13 +186,12 @@ const usePobooking = () => {
         detail: `${message} successfully.`,
       });
 
-      //return;
+      //call update process
+      await closingProcessAPI("Purchase Booking", formData.order_no);
+
 
       handleCancel();
       loadBookingList();
-
-      //call update process
-      await closingProcessAPI("Purchase Booking", formData.order_no);
     } catch (error) {
       console.error("Error fetching data:", error);
       setToastBox({
@@ -218,7 +240,7 @@ const usePobooking = () => {
   };
 
   return {
-    configLine,
+    pageConfig,
     toastBox,
     isBusy,
     currentView,

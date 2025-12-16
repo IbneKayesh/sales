@@ -27,7 +27,7 @@ const Layout = () => {
       icon: "pi pi-shopping-cart",
       submenus: [
         { id: "pr1", name: "Booking", url: "/home/purchase/purchase-booking", icon: "pi pi-file" },
-        { id: "pr2", name: "Receive", url: "/home/purchase/purchase-receive", icon: "pi pi-file" },
+        { id: "pr2", name: "Invoice", url: "/home/purchase/purchase-invoice", icon: "pi pi-file" },
         { id: "pr3", name: "Order", url: "/home/purchase/purchase-order", icon: "pi pi-file" },
         { id: "pr4", name: "Return", url: "/home/purchase/purchase-return", icon: "pi pi-file" },
       ],

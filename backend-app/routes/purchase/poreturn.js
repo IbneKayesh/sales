@@ -169,7 +169,7 @@ router.post("/create", async (req, res) => {
         sql: `INSERT INTO po_return (return_id, master_id,
         product_id, product_price, product_qty, discount_percent,
         discount_amount, vat_percent, vat_amount, cost_price,
-        total_amount, product_note, receive_order_id, source_type)
+        total_amount, product_note, invoice_order_id, source_type)
         VALUES (?, ?,
         ?, ?, ?, ?,
         ?, ?, ?, ?,
@@ -187,7 +187,7 @@ router.post("/create", async (req, res) => {
           detail.cost_price || 0,
           detail.total_amount || 0,
           detail.product_note,
-          detail.receive_order_id,
+          detail.invoice_order_id,
           detail.source_type,
         ],
       });
@@ -337,7 +337,7 @@ router.post("/update", async (req, res) => {
         sql: `INSERT INTO po_return (return_id, master_id,
         product_id, product_price, product_qty, discount_percent,
         discount_amount, vat_percent, vat_amount, cost_price,
-        total_amount, product_note, receive_order_id, source_type)
+        total_amount, product_note, invoice_order_id, source_type)
         VALUES (?, ?,
         ?, ?, ?, ?,
         ?, ?, ?, ?,
@@ -355,7 +355,7 @@ router.post("/update", async (req, res) => {
           detail.cost_price || 0,
           detail.total_amount || 0,
           detail.product_note,
-          detail.receive_order_id,
+          detail.invoice_order_id,
           detail.source_type,
         ],
       });
@@ -432,8 +432,8 @@ router.post("/newreturn-details", async (req, res) => {
     const { master_id, order_type } = req.body;
     let sql = "";
     if (order_type === "Order") {
-      sql = ` SELECT '' as return_id, '' as master_id, poo.product_id,poo.product_price, poo.product_qty,poo.discount_percent, poo.discount_amount,
-      poo.vat_percent, poo.vat_amount,poo.cost_price,poo.total_amount, poo.product_note, poo.order_id as receive_order_id,'Order' as source_type,
+      sql = `SELECT '' as return_id, '' as master_id, poo.product_id,poo.product_price, poo.product_qty,poo.discount_percent, poo.discount_amount,
+      poo.vat_percent, poo.vat_amount,poo.cost_price,poo.total_amount, poo.product_note, poo.order_id as invoice_order_id,'Order' as source_type,
       p.product_code,
       p.product_name,
       p.unit_difference_qty,

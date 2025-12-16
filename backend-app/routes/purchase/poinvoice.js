@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
     const sql = `SELECT pom.*, c.contact_name, pom.is_posted as isedit, 0 as ismodified
     FROM po_master pom
     LEFT JOIN contacts c ON pom.contact_id = c.contact_id
-    WHERE order_type = 'Receive'`;
+    WHERE order_type = 'Invoice'`;
     const rows = await dbAll(sql, []);
     res.json(rows);
   } catch (error) {
@@ -29,19 +29,19 @@ router.get("/", async (req, res) => {
 router.get("/details/:master_id", async (req, res) => {
   try {
     const master_id = req.params.master_id;
-    const sql = `SELECT por.*,
+    const sql = `SELECT poi.*,
     p.product_code,
     p.product_name,
     p.unit_difference_qty,
     su.unit_name as small_unit_name,
     lu.unit_name as large_unit_name,
     0 as ismodified
-    FROM po_receive por
-    LEFT JOIN products p ON por.product_id = p.product_id
+    FROM po_invoice poi
+    LEFT JOIN products p ON poi.product_id = p.product_id
     LEFT JOIN units su ON p.small_unit_id = su.unit_id
     LEFT JOIN units lu ON p.large_unit_id = lu.unit_id
-    WHERE por.master_id = ?
-    ORDER BY por.receive_id`;
+    WHERE poi.master_id = ?
+    ORDER BY poi.invoice_id`;
     const rows = await dbAll(sql, [master_id]);
     res.json(rows);
   } catch (error) {
@@ -67,11 +67,11 @@ router.get("/payments/:master_id", async (req, res) => {
 });
 
 
-//get pending receive details
+//get pending invoice details
 router.get("/pending/:contact_id", async (req, res) => {
   try {
     const contact_id = req.params.contact_id;
-    const sql = `SELECT  '' as receive_id, '' as master_id, pob.product_id,
+    const sql = `SELECT  '' as invoice_id, '' as master_id, pob.product_id,
     pob.product_price, pob.pending_qty as product_qty,
     pob.discount_percent, pob.discount_amount,
     pob.vat_percent, pob.vat_amount,
@@ -163,7 +163,7 @@ router.post("/create", async (req, res) => {
 
     const max_seq = await dbGet(sql, [order_type]);
     const max_seq_no = String((max_seq.max_seq || 0) + 1).padStart(5, "0");
-    const order_no_new = `PR-${date_part}-${max_seq_no}`;
+    const order_no_new = `PI-${date_part}-${max_seq_no}`;
     console.log("New Transaction No: " + order_no_new);
 
     //build scripts
@@ -199,11 +199,11 @@ router.post("/create", async (req, res) => {
       ],
     });
 
-    //Insert receive details
+    //Insert invoice details
     for (const detail of details_create) {
       scripts.push({
-        label: "4 of 5 :: Insert Purchase Receive",
-        sql: `INSERT INTO po_receive (receive_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, returned_qty, sales_qty, stock_qty, booking_id)
+        label: "4 of 5 :: Insert Purchase Invoice",
+        sql: `INSERT INTO po_invoice (invoice_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, returned_qty, sales_qty, stock_qty, booking_id)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           generateGuid(),
@@ -256,11 +256,11 @@ router.post("/create", async (req, res) => {
 
     // If any failed, transaction has already rolled back
     if (!results.every((r) => r.success)) {
-      return res.status(500).json({ error: "Failed to create purchase receive" });
+      return res.status(500).json({ error: "Failed to create purchase invoice" });
     }
     // ❗ Only one response is sent
     res.status(201).json({
-      message: "Purchase Receive created successfully!",
+      message: "Purchase Invoice created successfully!",
       master_id,
       order_no: order_no_new,
       details_create,
@@ -317,10 +317,10 @@ router.post("/update", async (req, res) => {
     //build scripts
     const scripts = [];
 
-    //delete receive details
+    //delete invoice details
     scripts.push({
-      label: `1 of 5 :: Delete receive details ${order_no}`,
-      sql: `DELETE FROM po_receive WHERE master_id = ?`,
+      label: `1 of 5 :: Delete invoice details ${order_no}`,
+      sql: `DELETE FROM po_invoice WHERE master_id = ?`,
       params: [master_id],
     });
 
@@ -369,11 +369,11 @@ router.post("/update", async (req, res) => {
       ],
     });
 
-    //Insert receive details
+    //Insert invoice details
     for (const detail of details_create) {
       scripts.push({
-        label: "4 of 5 :: Insert Purchase Receive",
-        sql: `INSERT INTO po_receive (receive_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, returned_qty, sales_qty, stock_qty, booking_id)
+        label: "4 of 5 :: Insert Purchase invoice",
+        sql: `INSERT INTO po_invoice (invoice_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, returned_qty, sales_qty, stock_qty, booking_id)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           generateGuid(),
@@ -426,11 +426,11 @@ router.post("/update", async (req, res) => {
 
     // If any failed, transaction has already rolled back
     if (!results.every((r) => r.success)) {
-      return res.status(500).json({ error: "Failed to update purchase receive" });
+      return res.status(500).json({ error: "Failed to update purchase invoice" });
     }
     // ❗ Only one response is sent
     res.status(201).json({
-      message: "Purchase Receive updated successfully!",
+      message: "Purchase Invoice updated successfully!",
       master_id,
       order_no,
       details_create,

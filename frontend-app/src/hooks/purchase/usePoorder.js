@@ -133,10 +133,11 @@ const usePoorder = () => {
         return;
       }
 
+   
       const paidStatus =
-        formData.payable_amount === formData.due_amount
+        Number(formData.payable_amount) === Number(formData.due_amount)
           ? "Unpaid"
-          : formData.due_amount === 0
+          : Number(formData.due_amount) === 0
           ? "Paid"
           : "Partial";
 

@@ -71,19 +71,18 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
         command: () => {
           handleDelete(rowData);
         },
-        disabled: rowData.isedit,
+        disabled: rowData.edit_stop,
       },
     ];
     return (
       <div className="flex flex-wrap gap-2">
         <SplitButton
-          icon="pi pi-pencil"
+          icon={`${rowData.edit_stop ? "pi pi-eye" : "pi pi-pencil"}`}
           size="small"
-          tooltip="Edit"
+          tooltip={rowData.edit_stop ? "View" : "Edit"}
           tooltipOptions={{ position: "top" }}
           onClick={() => onEdit(rowData)}
           model={menuItems}
-          disabled={rowData.ismodified}
         />
       </div>
     );
@@ -103,19 +102,11 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
       0
     );
 
-    const postedCount = dataList.filter(
-      (item) => item.is_posted
-    ).length;
-    const unpostedCount = dataList.filter(
-      (item) => !item.is_posted
-    ).length;
+    const postedCount = dataList.filter((item) => item.is_posted).length;
+    const unpostedCount = dataList.filter((item) => !item.is_posted).length;
 
-    const closedCount = dataList.filter(
-      (item) => item.is_closed
-    ).length;
-    const openCount = dataList.filter(
-      (item) => !item.is_closed
-    ).length;
+    const closedCount = dataList.filter((item) => item.is_closed).length;
+    const openCount = dataList.filter((item) => !item.is_closed).length;
 
     return (
       <div className="p-2 text-center">

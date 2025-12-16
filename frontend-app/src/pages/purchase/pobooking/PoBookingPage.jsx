@@ -9,7 +9,7 @@ import  usePobooking  from "@/hooks/purchase/usePobooking";
 const PoBookingPage = () => {
   const toast = useRef(null);
   const {
-    configLine,
+    pageConfig,
     toastBox,
     isBusy,
     currentView,
@@ -76,7 +76,7 @@ const PoBookingPage = () => {
           />
         ) : (
           <OrderEntryComponent
-            configLine={configLine}
+            pageConfig={pageConfig}
             isBusy={isBusy}
             errors={errors}
             setErrors={setErrors}

@@ -133,6 +133,7 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
       cost_price: costPrice,
       total_amount: totalAmount,
       product_note: itemNote,
+      invoice_order_id: item.invoice_order_id,
       returned_qty: 0,
       sales_qty: 0,
       stock_qty: itemQty || 1,

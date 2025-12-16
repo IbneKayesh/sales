@@ -402,8 +402,8 @@ router.post("/purchase-booking", async (req, res) => {
   }
 });
 
-//purchase-receive
-router.post("/purchase-receive", async (req, res) => {
+//purchase-invoice
+router.post("/purchase-invoice", async (req, res) => {
   const { id } = req.body;
 
   if (!id) {
@@ -413,16 +413,16 @@ router.post("/purchase-receive", async (req, res) => {
   const scripts = [];
 
   scripts.push({
-    label: "1 of 5 :: Update purchase booking received_qty and pending_qty",
+    label: "1 of 5 :: Update purchase booking invoice_qty and pending_qty",
     sql: `UPDATE po_booking
-    SET received_qty = (
+    SET invoice_qty = (
             SELECT SUM(por.product_qty)
-            FROM po_receive por
+            FROM po_invoice por
             WHERE por.booking_id = po_booking.booking_id
         ),
         pending_qty = (
             SELECT  po_booking.product_qty - SUM(por.product_qty)
-            FROM po_receive por
+            FROM po_invoice por
             WHERE por.booking_id = po_booking.booking_id
         )
     WHERE pending_qty > 0`,
@@ -460,7 +460,6 @@ router.post("/purchase-receive", async (req, res) => {
     params: [],
   });
 
-
   scripts.push({
     label: "4 of 5 :: Reset products stock qty",
     sql: `UPDATE products
@@ -468,7 +467,6 @@ router.post("/purchase-receive", async (req, res) => {
     WHERE stock_qty > 0 `,
     params: [],
   });
-
 
   scripts.push({
     label: "5 of 5 :: Update products stock qty",
@@ -480,7 +478,7 @@ router.post("/purchase-receive", async (req, res) => {
                 WHERE poo.stock_qty > 0
               UNION ALL
               SELECT por.product_id,por.stock_qty
-                FROM po_receive por
+                FROM po_invoice por
               WHERE por.stock_qty > 0
               )
           GROUP by product_id
@@ -512,8 +510,6 @@ router.post("/purchase-receive", async (req, res) => {
   }
 });
 
-
-
 //purchase-order
 router.post("/purchase-order", async (req, res) => {
   const { id } = req.body;
@@ -524,7 +520,6 @@ router.post("/purchase-order", async (req, res) => {
 
   const scripts = [];
 
-
   scripts.push({
     label: "1 of 2 :: Reset products stock qty",
     sql: `UPDATE products
@@ -532,7 +527,6 @@ router.post("/purchase-order", async (req, res) => {
     WHERE stock_qty > 0 `,
     params: [],
   });
-
 
   scripts.push({
     label: "2 of 2 :: Update products stock qty",
@@ -544,7 +538,93 @@ router.post("/purchase-order", async (req, res) => {
                 WHERE poo.stock_qty > 0
               UNION ALL
               SELECT por.product_id,por.stock_qty
-                FROM po_receive por
+                FROM po_invoice por
+              WHERE por.stock_qty > 0
+              )
+          GROUP by product_id
+      )
+      UPDATE products
+      SET stock_qty = (
+        SELECT s.stock_qty
+        FROM stock s
+        WHERE products.product_id = s.product_id
+        )
+      WHERE products.product_id in (
+        SELECT s.product_id
+        FROM stock s
+        )`,
+    params: [],
+  });
+
+  try {
+    const results = await runScriptsSequentially(scripts, {
+      useTransaction: false,
+    });
+    res.status(201).json({
+      message: "Data processed successfully!",
+      result: results,
+    });
+  } catch (error) {
+    console.error("Error processing data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+//purchase-return
+router.post("/purchase-return", async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Transaction ID is required" });
+  }
+
+  const scripts = [];
+
+  scripts.push({
+    label: "1 of 3 :: Update purchase details return_qty from return purchase",
+    sql: `WWITH returnQty as (
+            SELECT  por.invoice_order_id,  sum(por.product_qty) as product_qty
+            FROM po_return por
+            WHERE por.source_type = 'Order'
+            GROUP by por.invoice_order_id
+          )
+          UPDATE  po_order
+          SET returned_qty = (
+              SELECT rq.product_qty
+              FROM returnQty rq
+              WHERE po_order.order_id = rq.invoice_order_id
+          ),
+          stock_qty = po_order.product_qty - (
+              SELECT rq.product_qty
+              FROM returnQty rq
+              WHERE po_order.order_id = rq.invoice_order_id
+          ) + po_order.sales_qty
+          WHERE po_order.order_id in (
+          SELECT invoice_order_id
+          FROM returnQty
+          )`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "2 of 3 :: Reset products stock qty",
+    sql: `UPDATE products
+    SET stock_qty = 0
+    WHERE stock_qty > 0 `,
+    params: [],
+  });
+
+  scripts.push({
+    label: "3 of 3 :: Update products stock qty",
+    sql: `WITH stock as (
+          SELECT product_id, sum(stock_qty)as stock_qty
+          FROM (
+                SELECT poo.product_id,poo.stock_qty
+                FROM po_order poo
+                WHERE poo.stock_qty > 0
+              UNION ALL
+              SELECT por.product_id,por.stock_qty
+                FROM po_invoice por
               WHERE por.stock_qty > 0
               )
           GROUP by product_id

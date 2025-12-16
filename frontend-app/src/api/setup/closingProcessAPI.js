@@ -7,13 +7,18 @@ const closingProcess = {
       method: "POST",
       body: JSON.stringify({ id }),
     }),
-  purchaseReceive: (id) =>
-    apiRequest("/setup/closing-process/purchase-receive", {
+  purchaseInvoice: (id) =>
+    apiRequest("/setup/closing-process/purchase-invoice", {
       method: "POST",
       body: JSON.stringify({ id }),
     }),
   purchaseOrder: (id) =>
     apiRequest("/setup/closing-process/purchase-order", {
+      method: "POST",
+      body: JSON.stringify({ id }),
+    }),
+  purchaseReturn: (id) =>
+    apiRequest("/setup/closing-process/purchase-return", {
       method: "POST",
       body: JSON.stringify({ id }),
     }),
@@ -50,10 +55,12 @@ export const closingProcessAPI = async (id, value) => {
     await closingProcess.updateBalances(value);
   } else if (id === "Purchase Booking") {
     await closingProcess.purchaseBooking(value);
-  } else if (id === "Purchase Receive") {
-    await closingProcess.purchaseReceive(value);
+  } else if (id === "Purchase Invoice") {
+    await closingProcess.purchaseInvoice(value);
   } else if (id === "Purchase Order") {
     await closingProcess.purchaseOrder(value);
+  } else if (id === "Purchase Return") {
+    await closingProcess.purchaseReturn(value);
   } else if (id === "Payable Due") {
     await closingProcess.payableDue(value);
   }

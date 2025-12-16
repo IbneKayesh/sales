@@ -4,9 +4,9 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import OrderListComponent from "./OrderListComponent";
 import OrderEntryComponent from "./OrderEntryComponent";
-import  usePoreceive  from "@/hooks/purchase/usePoreceive";
+import  usePoinvoice  from "@/hooks/purchase/usePoinvoice";
 
-const PoReceivePage = () => {
+const PoInvoicePage = () => {
   const toast = useRef(null);
   const {
     configLine,
@@ -28,8 +28,8 @@ const PoReceivePage = () => {
     handleEdit,
     handleDelete,
     handleSave,
-    fetchPendingReceiveDetails
-  } = usePoreceive();
+    fetchPendingInvoiceDetails
+  } = usePoinvoice();
 
   useEffect(() => {
     if (toastBox && toast.current) {
@@ -45,17 +45,17 @@ const PoReceivePage = () => {
   const getHeader = () => {
     return (
       <div className="flex align-items-center justify-content-between">
-        <h3 className="m-0">Receive</h3>
+        <h3 className="m-0">Invoice</h3>
         {currentView === "list" ? (
           <Button
-            label="New Receive"
+            label="New Invoice"
             icon="pi pi-plus"
             size="small"
             onClick={handleAddNew}
           />
         ) : (
           <Button
-            label="Receive List"
+            label="Invoice List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -89,7 +89,7 @@ const PoReceivePage = () => {
             setFormDataPaymentList={setFormDataPaymentList}
             handleChange={handleChange}
             handleSave={handleSave}
-            fetchPendingReceiveDetails={fetchPendingReceiveDetails}
+            fetchPendingInvoiceDetails={fetchPendingInvoiceDetails}
           />
         )}
       </Card>
@@ -97,4 +97,4 @@ const PoReceivePage = () => {
   );
 };
 
-export default PoReceivePage;
+export default PoInvoicePage;

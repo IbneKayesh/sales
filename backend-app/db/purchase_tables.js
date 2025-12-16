@@ -1,5 +1,7 @@
 // is_paid : [Paid, Unpaid, Partial]
 // is_posted : [0,1]
+// is_returned : [0,1]
+// is_closed : [0,1]
 
 
 const purchase_tables = () => ({
@@ -46,7 +48,7 @@ const purchase_tables = () => ({
         cost_price REAL DEFAULT 0,
         total_amount REAL DEFAULT 0,
         product_note TEXT,  
-        received_qty REAL DEFAULT 0,
+        invoice_qty REAL DEFAULT 0,
         pending_qty REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -56,8 +58,8 @@ const purchase_tables = () => ({
     `,
 
   po_receive: `
-    CREATE TABLE IF NOT EXISTS po_receive (
-        receive_id TEXT PRIMARY KEY,
+    CREATE TABLE IF NOT EXISTS po_invoice (
+        invoice_id TEXT PRIMARY KEY,
         master_id TEXT NOT NULL,
         product_id TEXT NOT NULL,
         product_price REAL DEFAULT 0,
@@ -118,7 +120,7 @@ const purchase_tables = () => ({
         cost_price REAL DEFAULT 0,
         total_amount REAL DEFAULT 0,
         product_note TEXT,
-        receive_order_id TEXT NOT NULL,
+        invoice_order_id TEXT NOT NULL,
         source_type TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,

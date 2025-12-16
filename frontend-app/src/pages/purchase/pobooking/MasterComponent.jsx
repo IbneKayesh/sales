@@ -10,12 +10,15 @@ const MasterComponent = ({
   errors,
   formData,
   handleChange,
-  setCreditLimit,
 }) => {
   const { supplierList, fetchSupplierList } = useContacts();
 
   useEffect(() => {
-    fetchSupplierList();
+    if (!formData.edit_stop) {
+      fetchSupplierList();
+      //console.log("Supplier list loaded");
+    }
+    //console.log("formData.edit_stop ", formData);
   }, []);
 
   const contact_id_IT = (option) => {
@@ -64,7 +67,7 @@ const MasterComponent = ({
   const handleChange_contact_id = (e) => {
     handleChange("contact_id", e.value);
     const selectedObj = supplierList.find((c) => c.contact_id === e.value);
-    setCreditLimit(selectedObj?.credit_limit || 0);
+    handleChange(selectedObj?.credit_limit || 0);
   };
 
   return (
