@@ -61,7 +61,7 @@ export const useProducts = () => {
 
   const loadProducts = async (filter = "default", resetModified = false) => {
     try {
-      //console.log("filter: " + filter);
+      console.log("filter: " + filter);
       if (filter == "po2so") {
         const data = await productsAPI.getAllPo2So(filter);
         //console.log("po2so data: " + JSON.stringify(data));

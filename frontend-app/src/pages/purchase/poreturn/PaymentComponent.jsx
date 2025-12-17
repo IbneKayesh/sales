@@ -271,7 +271,7 @@ const PaymentComponent = ({
               />
               <Button
                 type="button"
-                label="Add Payment"
+                label="Add"
                 icon="pi pi-plus"
                 severity="info"
                 size="small"

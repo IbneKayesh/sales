@@ -343,6 +343,7 @@ const ProductListComponent = ({
             sortOrder={1}
           >
             <Column field="booking_no" header="Booking" />
+            <Column field="booking_qty" header="Booking Qty" />
             <Column field="cancelled_qty" header="Cancelled Qty" />
             <Column field="invoice_qty" header="Invoice Qty" />
             <Column field="pending_qty" header="Pending Qty" />

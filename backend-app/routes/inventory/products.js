@@ -290,7 +290,7 @@ router.post("/delete", async (req, res) => {
 router.get("/ledger/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const sql = `SELECT pobm.order_no as booking_no,pob.cancelled_qty,pob.invoice_qty,pob.pending_qty,
+    const sql = `SELECT pobm.order_no as booking_no,pob.product_qty as booking_qty,pob.cancelled_qty,pob.invoice_qty,pob.pending_qty,
     pom.order_no, poi.product_qty, poi.returned_qty, poi.sales_qty, poi.stock_qty
     FROM po_invoice poi
     JOIN po_master pom on poi.master_id = pom.master_id
@@ -299,7 +299,7 @@ router.get("/ledger/:id", async (req, res) => {
     WHERE poi.stock_qty > 0
     AND poi.product_id = ?
     UNION ALL
-    SELECT '-' as booking_no,0 as cancelled_qty,0 as invoice_qty,0 as pending_qty,
+    SELECT '-' as booking_no,0 as booking_qty,0 as cancelled_qty,0 as invoice_qty,0 as pending_qty,
     pom.order_no, poo.product_qty, poo.returned_qty, poo.sales_qty, poo.stock_qty
     FROM po_order poo
     JOIN po_master pom on poo.master_id = pom.master_id
