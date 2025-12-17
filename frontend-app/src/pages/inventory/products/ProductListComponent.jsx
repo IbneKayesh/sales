@@ -43,7 +43,7 @@ const ProductListComponent = ({
     onLedger(rowData);
   };
 
-  const actionTemplate = (rowData) => {
+  const action_BT = (rowData) => {
     let menuItems = [
       {
         label: "Ledger",
@@ -100,7 +100,6 @@ const ProductListComponent = ({
     );
   };
 
-  
   const sales_booking_qty_BT = (rowData) => {
     return (
       <ConvertedQtyComponent
@@ -110,26 +109,29 @@ const ProductListComponent = ({
     );
   };
 
-  const purchasePriceTemplate = (rowData) => {
+  const purchase_price_BT = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
     }).format(rowData.purchase_price);
   };
 
-  const salePriceTemplate = (rowData) => {
+  const sales_price_BT = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
     }).format(rowData.sales_price);
   };
 
-  const marginPriceTemplate = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
+  const cost_price_percent_BT = (rowData) => {
+    const marginPrice = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
     }).format(rowData.margin_price);
+
+    return `${marginPrice} (${rowData.cost_price_percent}%)`;
   };
+  const margin_price_BT = (rowData) => {};
 
   const approxMarginTemplate = (rowData) => {
     return new Intl.NumberFormat("en-US", {
@@ -223,28 +225,31 @@ const ProductListComponent = ({
         <Column
           field="purchase_price"
           header="Purchase Price"
-          body={purchasePriceTemplate}
+          body={purchase_price_BT}
           sortable
           footer={formatCurrency(totalPurchaseValue)}
         />
         <Column
           field="sales_price"
           header="Sales Price"
-          body={salePriceTemplate}
+          body={sales_price_BT}
           sortable
           footer={formatCurrency(totalSalesValue)}
         />
+        <Column field="discount_percent" header="Discount %" />
+        <Column field="vat_percent" header="VAT %" />
         <Column
+          field="cost_price_percent"
+          header="Cost %"
+          body={cost_price_percent_BT}
+        />
+        <Column
+          field="margin_price"
           header="Margin Price"
-          body={marginPriceTemplate}
+          body={margin_price_BT}
           footer={formatCurrency(totalMarginValue)}
         />
-        <Column field="discount_percent" header="Discount %" />
-        <Column
-          header="Actions"
-          body={actionTemplate}
-          style={{ width: "120px" }}
-        />
+        <Column header="#" body={action_BT} style={{ width: "120px" }} />
       </DataTable>
 
       <Sidebar
@@ -280,14 +285,6 @@ const ProductListComponent = ({
           </dd>
           <dt>Stock Value:</dt>
           <dd className="mb-3">{formatCurrency(stockValue)}</dd>
-          <dt>Cost Price %:</dt>
-          <dd className="mb-3">
-            {selectedItemDetail?.cost_price_percent || 0}
-          </dd>
-          <dt>Margin:</dt>
-          <dd className="mb-3">{approxMarginTemplate(selectedItemDetail)}</dd>
-          <dt>Margin Value:</dt>
-          <dd className="mb-3">{formatCurrency(marginValue)}</dd>
           <dt>Purchase Booking Qty:</dt>
           <dd className="mb-3">
             {selectedItemDetail?.purchase_booking_qty || 0}{" "}
@@ -298,6 +295,14 @@ const ProductListComponent = ({
             {selectedItemDetail?.sales_booking_qty || 0}{" "}
             {selectedItemDetail?.small_unit_name || ""}
           </dd>
+          <dt>Cost %:</dt>
+          <dd className="mb-3">
+            {selectedItemDetail?.cost_price_percent || 0}
+          </dd>
+          <dt>Margin:</dt>
+          <dd className="mb-3">{approxMarginTemplate(selectedItemDetail)}</dd>
+          <dt>Margin Value:</dt>
+          <dd className="mb-3">{formatCurrency(marginValue)}</dd>
         </dl>
       </Sidebar>
 
@@ -331,16 +336,20 @@ const ProductListComponent = ({
             keyField="product_id"
             emptyMessage="No data found."
             size="small"
+            showGridlines
+            rowGroupMode="rowspan"
+            groupRowsBy="booking_no"
+            sortField="booking_no"
+            sortOrder={1}
           >
-            <Column field="purchase_no" header="Purchase No" />
-            <Column field="purchase_qty" header="Purchase Qty" />
-            <Column field="purchase_return_qty" header="Purchase Return Qty" />
-            <Column field="total_sales_qty" header="Total Sales Qty" />
+            <Column field="booking_no" header="Booking" />
+            <Column field="cancelled_qty" header="Cancelled Qty" />
+            <Column field="invoice_qty" header="Invoice Qty" />
+            <Column field="pending_qty" header="Pending Qty" />
+            <Column field="order_no" header="Invoice/Order" />
+            <Column field="product_qty" header="Invoice/Order Qty" />
+            <Column field="returned_qty" header="Returned Qty" />
             <Column field="stock_qty" header="Stock Qty" />
-            <Column field="sales_no" header="Sales No" />
-            <Column field="sales_order_qty" header="Sales Order Qty" />
-            <Column field="sales_return_qty" header="Sales Return Qty" />
-            <Column field="sales_qty" header="Sales Qty" />
           </DataTable>
         </div>
       </Dialog>

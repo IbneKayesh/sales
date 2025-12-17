@@ -153,7 +153,8 @@ router.post("/", async (req, res) => {
     sales_price,
     discount_percent,
     vat_percent,
-    margin_price,
+    cost_price_percent,
+    margin_price
   } = req.body;
 
   if (!product_id) {
@@ -166,7 +167,8 @@ router.post("/", async (req, res) => {
 
   try {
     const sql = `INSERT INTO products (product_id, product_code, product_name, product_desc, category_id, small_unit_id, unit_difference_qty, large_unit_id,
-    stock_qty, purchase_price, sales_price, discount_percent, vat_percent, margin_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    stock_qty, purchase_price, sales_price, discount_percent, vat_percent, cost_price_percent, margin_price)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const params = [
       product_id,
       product_code,
@@ -181,6 +183,7 @@ router.post("/", async (req, res) => {
       sales_price,
       discount_percent,
       vat_percent,
+      cost_price_percent,
       margin_price,
     ];
     await dbRun(sql, params, `Created products ${product_name}`);
@@ -206,7 +209,8 @@ router.post("/update", async (req, res) => {
     sales_price,
     discount_percent,
     vat_percent,
-    margin_price,
+    cost_price_percent,
+    margin_price
   } = req.body;
 
   if (!product_name) {
@@ -227,6 +231,7 @@ router.post("/update", async (req, res) => {
     sales_price = ?,
     discount_percent = ?,
     vat_percent = ?,
+    cost_price_percent = ?,
     margin_price = ?
     WHERE product_id = ?`;
     const params = [
@@ -241,6 +246,7 @@ router.post("/update", async (req, res) => {
       sales_price,
       discount_percent,
       vat_percent,
+      cost_price_percent,
       margin_price,
       product_id,
     ];
@@ -284,16 +290,22 @@ router.post("/delete", async (req, res) => {
 router.get("/ledger/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const sql = `SELECT pom.order_no as purchase_no, pod.product_id, pod.product_qty as purchase_qty, pod.return_qty as purchase_return_qty, pod.sales_qty as total_sales_qty, pod.stock_qty,
-    som.order_no as sales_no,ifnull(sod.product_qty,0) as sales_order_qty,ifnull(sod.return_qty,0) as sales_return_qty,ifnull(sod.sales_qty,0) as sales_qty
-    FROM po_details pod
-    LEFT JOIN po_master pom on pod.po_master_id = pom.po_master_id
-    LEFT JOIN so_details sod on pod.po_details_id = sod.ref_id
-    LEFT JOIN so_master som on sod.so_master_id = som.so_master_id
-    WHERE pod.stock_qty > 0
-    AND pod.product_id = ?    
-    ORDER BY pom.order_no, som.order_no`;
-    const row = await dbAll(sql, [id]);
+    const sql = `SELECT pobm.order_no as booking_no,pob.cancelled_qty,pob.invoice_qty,pob.pending_qty,
+    pom.order_no, poi.product_qty, poi.returned_qty, poi.sales_qty, poi.stock_qty
+    FROM po_invoice poi
+    JOIN po_master pom on poi.master_id = pom.master_id
+    JOIN po_booking pob on poi.booking_id = pob.booking_id
+    JOIN po_master pobm on pob.master_id = pobm.master_id
+    WHERE poi.stock_qty > 0
+    AND poi.product_id = ?
+    UNION ALL
+    SELECT '-' as booking_no,0 as cancelled_qty,0 as invoice_qty,0 as pending_qty,
+    pom.order_no, poo.product_qty, poo.returned_qty, poo.sales_qty, poo.stock_qty
+    FROM po_order poo
+    JOIN po_master pom on poo.master_id = pom.master_id
+    WHERE poo.stock_qty > 0
+    AND poo.product_id = ?`;
+    const row = await dbAll(sql, [id, id]);
     if (!row) {
       return res.status(404).json({ error: "Product not found" });
     }

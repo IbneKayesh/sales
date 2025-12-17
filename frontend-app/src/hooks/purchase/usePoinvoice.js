@@ -28,6 +28,8 @@ const formDataModel = {
   is_posted: 0,
   is_returned: 0,
   is_closed: 0,
+  edit_stop: 0,
+  credit_limit: 0,
 };
 
 const usePoinvoice = () => {

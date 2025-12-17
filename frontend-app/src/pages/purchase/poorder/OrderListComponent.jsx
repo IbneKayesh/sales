@@ -1,5 +1,5 @@
-import { DataTable } from "primereact/datatable";
 import { useNavigate } from "react-router-dom";
+import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
@@ -43,10 +43,13 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
           <Badge value="Unposted" severity="danger" className="mr-1"></Badge>
         )}
         {rowData.is_closed ? (
-          <Badge value="Closed" severity="info"></Badge>
+          <Badge value="Closed" severity="info" className="mr-1"></Badge>
         ) : (
-          <Badge value="Open" severity="warning"></Badge>
+          <Badge value="Open" severity="warning" className="mr-1"></Badge>
         )}
+        {rowData.is_returned ? (
+          <Badge value="Returned" severity="help"></Badge>
+        ) : <></>}
       </>
     );
   };
@@ -80,7 +83,7 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
         command: () => {
           handleReturn(rowData);
         },
-        disabled: !rowData.is_posted,
+        disabled: (!rowData.edit_stop || rowData.is_returned) ,
       },
       {
         label: "Delete",
@@ -88,19 +91,18 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
         command: () => {
           handleDelete(rowData);
         },
-        disabled: rowData.isedit,
+        disabled: rowData.edit_stop,
       },
     ];
     return (
       <div className="flex flex-wrap gap-2">
         <SplitButton
-          icon="pi pi-pencil"
+          icon={`${rowData.edit_stop ? "pi pi-eye" : "pi pi-pencil"}`}
           size="small"
-          tooltip="Edit"
+          tooltip={rowData.edit_stop ? "View" : "Edit"}
           tooltipOptions={{ position: "top" }}
           onClick={() => onEdit(rowData)}
           model={menuItems}
-          disabled={rowData.ismodified}
         />
       </div>
     );

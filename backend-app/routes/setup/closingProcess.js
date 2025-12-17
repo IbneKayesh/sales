@@ -616,14 +616,14 @@ router.post("/purchase-return", async (req, res) => {
   const scripts = [];
 
   scripts.push({
-    label: "1 of 3 :: Update purchase details return_qty from return purchase",
-    sql: `WWITH returnQty as (
-            SELECT  por.invoice_order_id,  sum(por.product_qty) as product_qty
+    label: "1 of 4 :: Update purchase details return_qty from return purchase",
+    sql: `WITH returnQty as (
+            SELECT por.invoice_order_id, sum(por.product_qty) as product_qty
             FROM po_return por
             WHERE por.source_type = 'Order'
             GROUP by por.invoice_order_id
           )
-          UPDATE  po_order
+          UPDATE po_order
           SET returned_qty = (
               SELECT rq.product_qty
               FROM returnQty rq
@@ -633,7 +633,7 @@ router.post("/purchase-return", async (req, res) => {
               SELECT rq.product_qty
               FROM returnQty rq
               WHERE po_order.order_id = rq.invoice_order_id
-          ) + po_order.sales_qty
+          ) - po_order.sales_qty
           WHERE po_order.order_id in (
           SELECT invoice_order_id
           FROM returnQty
@@ -642,7 +642,33 @@ router.post("/purchase-return", async (req, res) => {
   });
 
   scripts.push({
-    label: "2 of 3 :: Reset products stock qty",
+    label: "2 of 4 :: Update purchase details return_qty from return purchase",
+    sql: `WITH returnQty as (
+            SELECT por.invoice_order_id, sum(por.product_qty) as product_qty
+            FROM po_return por
+            WHERE por.source_type = 'Invoice'
+            GROUP by por.invoice_order_id
+          )
+          UPDATE po_invoice
+          SET returned_qty = (
+              SELECT rq.product_qty
+              FROM returnQty rq
+              WHERE po_invoice.invoice_id = rq.invoice_order_id
+          ),
+          stock_qty = po_invoice.product_qty - (
+              SELECT rq.product_qty
+              FROM returnQty rq
+              WHERE po_invoice.invoice_id = rq.invoice_order_id
+          ) - po_invoice.sales_qty
+          WHERE po_invoice.invoice_id in (
+          SELECT invoice_order_id
+          FROM returnQty
+          )`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "3 of 4 :: Reset products stock qty",
     sql: `UPDATE products
     SET stock_qty = 0
     WHERE stock_qty > 0 `,
@@ -650,7 +676,7 @@ router.post("/purchase-return", async (req, res) => {
   });
 
   scripts.push({
-    label: "3 of 3 :: Update products stock qty",
+    label: "4 of 3 :: Update products stock qty",
     sql: `WITH stock as (
           SELECT product_id, sum(stock_qty)as stock_qty
           FROM (

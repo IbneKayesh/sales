@@ -13,7 +13,7 @@ const {
 //get all
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT pom.*, c.contact_name, pom.is_posted as isedit, 0 as ismodified
+    const sql = `SELECT pom.*, c.contact_name, pom.is_posted as edit_stop
     FROM po_master pom
     LEFT JOIN contacts c ON pom.contact_id = c.contact_id
     WHERE order_type = 'Return'`;
@@ -35,7 +35,7 @@ router.get("/details/:master_id", async (req, res) => {
     p.unit_difference_qty,
     su.unit_name as small_unit_name,
     lu.unit_name as large_unit_name,
-    0 as ismodified
+    0 as edit_stop
     FROM po_return por
     LEFT JOIN products p ON por.product_id = p.product_id
     LEFT JOIN units su ON p.small_unit_id = su.unit_id
@@ -54,7 +54,7 @@ router.get("/details/:master_id", async (req, res) => {
 router.get("/payments/:master_id", async (req, res) => {
   try {
     const master_id = req.params.master_id;
-    const sql = `SELECT *
+    const sql = `SELECT pym.*, 0 as edit_stop
     FROM payments pym
     WHERE pym.master_id = ?
     ORDER by pym.created_at`;
@@ -126,7 +126,7 @@ router.post("/create", async (req, res) => {
 
     const max_seq = await dbGet(sql, [order_type]);
     const max_seq_no = String((max_seq.max_seq || 0) + 1).padStart(5, "0");
-    const order_no_new = `PN-${date_part}-${max_seq_no}`;
+    const order_no_new = `PR-${date_part}-${max_seq_no}`;
     console.log("New Transaction No: " + order_no_new);
 
     //build scripts
@@ -134,7 +134,7 @@ router.post("/create", async (req, res) => {
 
     //Insert order Master
     scripts.push({
-      label: "1 of 2 :: Insert Purchase Master " + order_no_new,
+      label: "1 of 4 :: Insert Purchase Return Master" + order_no_new,
       sql: `INSERT INTO po_master (master_id,shop_id,contact_id,order_type,order_no,order_date,order_note,order_amount,discount_amount,vat_amount,is_vat_payable,include_cost,exclude_cost,total_amount,payable_amount,paid_amount,due_amount,is_paid,is_posted,is_returned,is_closed)
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       params: [
@@ -165,7 +165,7 @@ router.post("/create", async (req, res) => {
     //Insert order details
     for (const detail of details_create) {
       scripts.push({
-        label: "2 of 2 :: Insert Purchase Return",
+        label: "2 of 4 :: Insert Purchase Return Details",
         sql: `INSERT INTO po_return (return_id, master_id,
         product_id, product_price, product_qty, discount_percent,
         discount_amount, vat_percent, vat_amount, cost_price,
@@ -191,19 +191,44 @@ router.post("/create", async (req, res) => {
           detail.source_type,
         ],
       });
+
+      //set po master return flag
+      scripts.push({
+        label: "3 of 4 :: Update Purchase Source Return flag",
+        sql: `
+        WITH returnedPO as (
+        SELECT poo.master_id
+        FROM po_order poo
+        WHERE poo.order_id = ?
+        GROUP by poo.master_id
+        UNION ALL
+        SELECT poi.master_id
+        FROM po_invoice poi
+        WHERE poi.invoice_id = ?
+        GROUP by poi.master_id
+        )
+        UPDATE po_master
+        SET is_returned = 1
+        WHERE master_id in (
+        SELECT master_id FROM returnedPO
+        )`,
+        params: [detail.invoice_order_id, detail.invoice_order_id],
+      });
     }
 
     //Insert order Payments
     for (const payment of payments_create) {
       scripts.push({
-        label: "3 of 2 :: Insert Purchase Return Payments",
-        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        label: "4 of 4 :: Insert Purchase Return Payments",
+        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, source_name, payment_type, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           generateGuid(),
           shop_id,
           master_id,
           contact_id,
+          "Purchase",
+          "Cash In",
           order_type,
           payment.payment_mode || "Cash",
           payment.payment_date,
@@ -333,7 +358,7 @@ router.post("/update", async (req, res) => {
     //Insert order details
     for (const detail of details_create) {
       scripts.push({
-        label: "2 of 2 :: Insert Purchase Return",
+        label: "4 of 5 :: Insert Purchase Return",
         sql: `INSERT INTO po_return (return_id, master_id,
         product_id, product_price, product_qty, discount_percent,
         discount_amount, vat_percent, vat_amount, cost_price,
@@ -365,13 +390,15 @@ router.post("/update", async (req, res) => {
     for (const payment of payments_create) {
       scripts.push({
         label: "5 of 5 :: Insert Purchase Payments",
-        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, source_name, payment_type, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           generateGuid(),
           shop_id,
           master_id,
           contact_id,
+          "Purchase",
+          "Cash Out",
           order_type,
           payment.payment_mode || "Cash",
           payment.payment_date,
@@ -432,20 +459,39 @@ router.post("/newreturn-details", async (req, res) => {
     const { master_id, order_type } = req.body;
     let sql = "";
     if (order_type === "Order") {
-      sql = `SELECT '' as return_id, '' as master_id, poo.product_id,poo.product_price, poo.product_qty,poo.discount_percent, poo.discount_amount,
+      sql = `SELECT '' as return_id, '' as master_id, poo.product_id,poo.product_price, poo.stock_qty as product_qty, poo.discount_percent, poo.discount_amount,
       poo.vat_percent, poo.vat_amount,poo.cost_price,poo.total_amount, poo.product_note, poo.order_id as invoice_order_id,'Order' as source_type,
       p.product_code,
       p.product_name,
       p.unit_difference_qty,
     su.unit_name as small_unit_name,
     lu.unit_name as large_unit_name,
-    0 as ismodified
+    poo.stock_qty,
+    0 as edit_stop
 FROM po_order poo
 LEFT JOIN products p ON poo.product_id = p.product_id
 LEFT JOIN units su ON p.small_unit_id = su.unit_id
 LEFT JOIN units lu ON p.large_unit_id = lu.unit_id
 WHERE poo.master_id = ?`;
     }
+
+    if (order_type === "Invoice") {
+      sql = `SELECT '' as return_id, '' as master_id, poi.product_id,poi.product_price, poi.stock_qty as product_qty, poi.discount_percent, poi.discount_amount,
+            poi.vat_percent, poi.vat_amount,poi.cost_price,poi.total_amount, poi.product_note, poi.invoice_id as invoice_order_id,'Invoice' as source_type,
+            p.product_code,
+            p.product_name,
+            p.unit_difference_qty,
+          su.unit_name as small_unit_name,
+          lu.unit_name as large_unit_name,
+          poi.stock_qty,
+          0 as edit_stop
+        FROM po_invoice poi
+        LEFT JOIN products p ON poi.product_id = p.product_id
+        LEFT JOIN units su ON p.small_unit_id = su.unit_id
+        LEFT JOIN units lu ON p.large_unit_id = lu.unit_id
+        WHERE poi.master_id = ?`;
+    }
+
     const rows = await dbAll(sql, [master_id]);
     res.json(rows);
   } catch (error) {

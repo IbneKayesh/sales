@@ -9,7 +9,7 @@ import usePoreturn from "@/hooks/purchase/usePoreturn";
 const PoReturnPage = () => {
   const toast = useRef(null);
   const {
-    configLine,
+    pageConfig,
     toastBox,
     isBusy,
     currentView,
@@ -77,7 +77,7 @@ const PoReturnPage = () => {
           />
         ) : (
           <OrderEntryComponent
-            configLine={configLine}
+            pageConfig={pageConfig}
             isBusy={isBusy}
             errors={errors}
             setErrors={setErrors}

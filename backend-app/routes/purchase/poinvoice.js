@@ -173,7 +173,7 @@ router.post("/create", async (req, res) => {
 
     //Insert order Master
     scripts.push({
-      label: "1 of 2 :: Insert Purchase Master " + order_no_new,
+      label: "1 of 3 :: Insert Purchase Master " + order_no_new,
       sql: `INSERT INTO po_master (master_id,shop_id,contact_id,order_type,order_no,order_date,order_note,order_amount,discount_amount,vat_amount,is_vat_payable,include_cost,exclude_cost,total_amount,payable_amount,paid_amount,due_amount,is_paid,is_posted,is_returned,is_closed)
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       params: [
@@ -204,7 +204,7 @@ router.post("/create", async (req, res) => {
     //Insert invoice details
     for (const detail of details_create) {
       scripts.push({
-        label: "4 of 5 :: Insert Purchase Invoice",
+        label: "2 of 3 :: Insert Purchase Invoice Details",
         sql: `INSERT INTO po_invoice (invoice_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, returned_qty, sales_qty, stock_qty, booking_id)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
@@ -229,25 +229,27 @@ router.post("/create", async (req, res) => {
     }
 
     //Insert order Payments
-    // for (const payment of payments_create) {
-    //   scripts.push({
-    //     label: "3 of 2 :: Insert Purchase Payments",
-    //     sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
-    //     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    //     params: [
-    //       generateGuid(),
-    //       shop_id,
-    //       master_id,
-    //       contact_id,
-    //       order_type,
-    //       payment.payment_mode || "Cash",
-    //       payment.payment_date,
-    //       payment.payment_amount || 0,
-    //       payment.payment_note || "",
-    //       order_no_new,
-    //     ],
-    //   });
-    // }
+    for (const payment of payments_create) {
+      scripts.push({
+        label: "3 of 3 :: Insert Purchase Invoice Payments",
+        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, source_name, payment_type, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        params: [
+          generateGuid(),
+          shop_id,
+          master_id,
+          contact_id,
+          'Purchase',
+          'Cash Out',
+          order_type,
+          payment.payment_mode || "Cash",
+          payment.payment_date,
+          payment.payment_amount || 0,
+          payment.payment_note || "",
+          order_no_new,
+        ],
+      });
+    }
 
     //run scripts
     const results = await runScriptsSequentially(scripts, {
@@ -321,7 +323,7 @@ router.post("/update", async (req, res) => {
 
     //delete invoice details
     scripts.push({
-      label: `1 of 5 :: Delete invoice details ${order_no}`,
+      label: `1 of 4 :: Delete invoice details ${order_no}`,
       sql: `DELETE FROM po_invoice WHERE master_id = ?`,
       params: [master_id],
     });
@@ -335,7 +337,7 @@ router.post("/update", async (req, res) => {
 
     //Update order Master
     scripts.push({
-      label: "3 of 5 :: Update Purchase Master " + order_no,
+      label: "2 of 4 :: Update Purchase Master " + order_no,
       sql: `UPDATE po_master 
       SET order_date = ?,
       order_note = ?,
@@ -374,7 +376,7 @@ router.post("/update", async (req, res) => {
     //Insert invoice details
     for (const detail of details_create) {
       scripts.push({
-        label: "4 of 5 :: Insert Purchase invoice",
+        label: "3 of 4 :: Insert Purchase invoice",
         sql: `INSERT INTO po_invoice (invoice_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, returned_qty, sales_qty, stock_qty, booking_id)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
@@ -399,25 +401,27 @@ router.post("/update", async (req, res) => {
     }
 
     //Insert order Payments
-    // for (const payment of payments_create) {
-    //   scripts.push({
-    //     label: "5 of 5 :: Insert Purchase Payments",
-    //     sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
-    //     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    //     params: [
-    //       generateGuid(),
-    //       shop_id,
-    //       master_id,
-    //       contact_id,
-    //       order_type,
-    //       payment.payment_mode || "Cash",
-    //       payment.payment_date,
-    //       payment.payment_amount || 0,
-    //       payment.payment_note || "",
-    //       order_no,
-    //     ],
-    //   });
-    // }
+    for (const payment of payments_create) {
+      scripts.push({
+        label: "3 of 4 :: Insert Purchase Invoice Payments",
+        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, source_name, payment_type, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        params: [
+          generateGuid(),
+          shop_id,
+          master_id,
+          contact_id,
+          'Purchase',
+          'Cash Out',
+          order_type,
+          payment.payment_mode || "Cash",
+          payment.payment_date,
+          payment.payment_amount || 0,
+          payment.payment_note || "",
+          order_no_new,
+        ],
+      });
+    }
 
     //run scripts
     const results = await runScriptsSequentially(scripts, {

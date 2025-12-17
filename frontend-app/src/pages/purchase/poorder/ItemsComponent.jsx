@@ -11,7 +11,7 @@ import { generateGuid } from "@/utils/guid";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
 import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 
-const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList }) => {
+const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList }) => {
   //console.log(formDataList);
   const { productList, fetchBookingProductList } = useProducts();
   const [availableProductList, setAvailableProductList] = useState([]);
@@ -37,11 +37,11 @@ const ItemsComponent = ({ configLine, formData, formDataList, setFormDataList })
     const filteredProductList = productList.map((item) => {
       const updatedItem = { ...item };
 
-      updatedItem.discount_percent = configLine.include_discount
+      updatedItem.discount_percent = pageConfig.include_discount
         ? item.discount_percent
         : 0;
 
-      updatedItem.vat_percent = configLine.include_vat ? item.vat_percent : 0;
+      updatedItem.vat_percent = pageConfig.include_vat ? item.vat_percent : 0;
 
       return updatedItem;
     });

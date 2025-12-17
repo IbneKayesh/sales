@@ -11,7 +11,7 @@ const {
 // Get all purchase dues
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT pym.*, con.contact_name, 0 as ismodified
+    const sql = `SELECT pym.*, con.contact_name, pom.is_posted as edit_stop
 FROM payments pym
 LEFT JOIN contacts con on pym.contact_id = con.contact_id
 ORDER by pym.payment_date DESC`;
@@ -27,7 +27,7 @@ ORDER by pym.payment_date DESC`;
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const sql = `SELECT pym.*, 0 as ismodified
+    const sql = `SELECT pym.*, 1 as edit_stop
         FROM payments pym
         WHERE pym.payment_id = ?`;
     const row = await dbGet(sql, [id]);
@@ -47,6 +47,8 @@ router.post("/", async (req, res) => {
     const {
       payment_id,
       contact_id,
+      source_name,
+      payment_type,
       payment_head,
       payment_mode,
       payment_date,
@@ -62,6 +64,14 @@ router.post("/", async (req, res) => {
 
     if (!contact_id) {
       return res.status(400).json({ error: "Contact ID is required" });
+    }    
+
+    if (!source_name) {
+      return res.status(400).json({ error: "Source name is required" });
+    }
+
+    if (!payment_type) {
+      return res.status(400).json({ error: "Payment type is required" });
     }
 
     if (!payment_head) {
@@ -92,12 +102,15 @@ router.post("/", async (req, res) => {
     // payment master
     scripts.push({
       label: "Insert Purchase Payment " + ref_no,
-      sql: `INSERT INTO payments (payment_id, contact_id, payment_head, payment_mode, payment_date,
+      sql: `INSERT INTO payments (payment_id, contact_id, source_name, payment_type, payment_head, payment_mode, payment_date,
             payment_amount, balance_amount, payment_note, ref_no)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            VALUES (?, ?, ?, ?, ?, ?, ?,
+            ?, ?, ?, ?)`,
       params: [
         payment_id_new,
         contact_id,
+        source_name,
+        payment_type,
         payment_head,
         payment_mode,
         payment_date,

@@ -13,7 +13,7 @@ const {
 //get all
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT pom.*, c.contact_name, pom.is_posted as isedit, 0 as ismodified
+    const sql = `SELECT pom.*, c.contact_name, pom.is_posted as edit_stop
     FROM po_master pom
     LEFT JOIN contacts c ON pom.contact_id = c.contact_id
     WHERE order_type = 'Order'`;
@@ -35,7 +35,7 @@ router.get("/details/:master_id", async (req, res) => {
     p.unit_difference_qty,
     su.unit_name as small_unit_name,
     lu.unit_name as large_unit_name,
-    0 as ismodified
+    0 as edit_stop
     FROM po_order pob
     LEFT JOIN products p ON pob.product_id = p.product_id
     LEFT JOIN units su ON p.small_unit_id = su.unit_id
@@ -54,7 +54,7 @@ router.get("/details/:master_id", async (req, res) => {
 router.get("/payments/:master_id", async (req, res) => {
   try {
     const master_id = req.params.master_id;
-    const sql = `SELECT *
+    const sql = `SELECT pym.*, 0 as edit_stop
     FROM payments pym
     WHERE pym.master_id = ?
     ORDER by pym.created_at`;
@@ -134,7 +134,7 @@ router.post("/create", async (req, res) => {
 
     //Insert order Master
     scripts.push({
-      label: "1 of 2 :: Insert Purchase Master " + order_no_new,
+      label: "1 of 3 :: Insert Purchase Master " + order_no_new,
       sql: `INSERT INTO po_master (master_id,shop_id,contact_id,order_type,order_no,order_date,order_note,order_amount,discount_amount,vat_amount,is_vat_payable,include_cost,exclude_cost,total_amount,payable_amount,paid_amount,due_amount,is_paid,is_posted,is_returned,is_closed)
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       params: [
@@ -165,7 +165,7 @@ router.post("/create", async (req, res) => {
     //Insert order details
     for (const detail of details_create) {
       scripts.push({
-        label: "2 of 2 :: Insert Purchase Order",
+        label: "2 of 3 :: Insert Purchase Order",
         sql: `INSERT INTO po_order (order_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, returned_qty, sales_qty, stock_qty)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
@@ -191,14 +191,16 @@ router.post("/create", async (req, res) => {
     //Insert order Payments
     for (const payment of payments_create) {
       scripts.push({
-        label: "3 of 2 :: Insert Purchase Payments",
-        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        label: "3 of 3 :: Insert Purchase Payments",
+        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, source_name, payment_type, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           generateGuid(),
           shop_id,
           master_id,
           contact_id,
+          "Purchase",
+          "Cash Out",
           order_type,
           payment.payment_mode || "Cash",
           payment.payment_date,
@@ -216,9 +218,7 @@ router.post("/create", async (req, res) => {
 
     // If any failed, transaction has already rolled back
     if (!results.every((r) => r.success)) {
-      return res
-        .status(500)
-        .json({ error: "Failed to create purchase order" });
+      return res.status(500).json({ error: "Failed to create purchase order" });
     }
     // ❗ Only one response is sent
     res.status(201).json({
@@ -361,13 +361,15 @@ router.post("/update", async (req, res) => {
     for (const payment of payments_create) {
       scripts.push({
         label: "5 of 5 :: Insert Purchase Payments",
-        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, source_name, payment_type, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           generateGuid(),
           shop_id,
           master_id,
           contact_id,
+          'Purchase',
+          'Cash Out',
           order_type,
           payment.payment_mode || "Cash",
           payment.payment_date,

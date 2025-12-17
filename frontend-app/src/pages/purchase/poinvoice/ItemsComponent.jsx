@@ -15,9 +15,6 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
   const [editingRows, setEditingRows] = useState([]);
 
 
-
-
-
   // Recalculate cost_price when extra costs change
   useEffect(() => {
     if (!formDataList || formDataList.length === 0) return;
@@ -274,7 +271,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
           field="product_price"
           header="Price"
           body={product_price_BT}
-          editor={priceEditor}
+          //editor={priceEditor}
         />
         <Column
           field="product_qty"
@@ -287,14 +284,14 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
           field="discount_percent"
           header="Discount%"
           body={discount_percent_BT}
-          editor={numberEditor}
+          //editor={numberEditor}
           footer={discount_percent_FT}
         />
         <Column
           field="vat_percent"
           header="Vat%"
           body={vat_percent_BT}
-          editor={numberEditor}
+          //editor={numberEditor}
           footer={vat_percent_FT}
         />
         <Column

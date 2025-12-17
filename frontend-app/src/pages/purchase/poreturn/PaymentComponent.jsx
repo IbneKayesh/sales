@@ -149,11 +149,13 @@ const PaymentComponent = ({
               onClick={() =>
                 handleChange("is_vat_payable", !formData.is_vat_payable)
               }
+              disabled
             >
               <input
                 type="checkbox"
                 checked={formData.is_vat_payable}
                 readOnly
+                disabled
               />
               {t_po_master.vat_amount.name} (3)
             </span>

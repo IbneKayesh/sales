@@ -66,32 +66,23 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
     //console.log("rowData " + JSON.stringify(rowData));
     let menuItems = [
       {
-        label: "Return",
-        icon: "pi pi-undo text-blue-400",
-        command: () => {
-          handleReturn(rowData);
-        },
-        disabled: !rowData.is_posted,
-      },
-      {
         label: "Delete",
         icon: "pi pi-trash text-red-400",
         command: () => {
           handleDelete(rowData);
         },
-        disabled: rowData.isedit,
+        disabled: rowData.edit_stop,
       },
     ];
     return (
       <div className="flex flex-wrap gap-2">
         <SplitButton
-          icon="pi pi-pencil"
+          icon={`${rowData.edit_stop ? "pi pi-eye" : "pi pi-pencil"}`}
           size="small"
-          tooltip="Edit"
+          tooltip={rowData.edit_stop ? "View" : "Edit"}
           tooltipOptions={{ position: "top" }}
           onClick={() => onEdit(rowData)}
           model={menuItems}
-          disabled={rowData.ismodified}
         />
       </div>
     );

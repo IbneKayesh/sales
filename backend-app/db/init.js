@@ -174,6 +174,8 @@ const initTables = () => {
         shop_id TEXT NOT NULL,
         master_id TEXT NOT NULL,
         contact_id TEXT NOT NULL,
+        source_name TEXT NOT NULL,
+        payment_type TEXT NOT NULL,
         payment_head TEXT NOT NULL,
         payment_mode TEXT NOT NULL,
         payment_date TEXT NOT NULL,
@@ -415,12 +417,15 @@ const initData = (callback) => {
       `
       INSERT OR IGNORE INTO settings (setting_id, setting_page, setting_name, setting_key, setting_value)
       VALUES
-      ('1', 'Purchase Booking', 'Posted', 'is_posted', '1'),
-      ('2', 'Purchase Booking', 'VAT Payable', 'is_vat_payable', '1'),
-      ('3', 'Purchase Booking', 'Include Discount', 'include_discount', '0'),
-      ('4', 'Purchase Booking', 'Include VAT', 'include_vat', '0'),
-      ('5', 'Purchase Invoice', 'Posted', 'is_posted', '1'),
-      ('6', 'Purchase Invoice', 'VAT Payable', 'is_vat_payable', '1')
+      ('1', 'Purchase Booking', '1. Posted', 'is_posted', '1'),
+      ('2', 'Purchase Booking', '2. VAT Payable', 'is_vat_payable', '1'),
+      ('3', 'Purchase Booking', '3. Include Discount', 'include_discount', '0'),
+      ('4', 'Purchase Booking', '4. Include VAT', 'include_vat', '0'),
+      ('5', 'Purchase Invoice', '1. Posted', 'is_posted', '1'),
+      ('6', 'Purchase Order', '1. Posted', 'is_posted', '1'),
+      ('7', 'Purchase Order', '2. VAT Payable', 'is_vat_payable', '1'),
+      ('8', 'Purchase Order', '3. Include Discount', 'include_discount', '0'),
+      ('9', 'Purchase Order', '4. Include VAT', 'include_vat', '0')
     `,
       (err) => {
         if (err) {

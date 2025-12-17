@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
@@ -5,6 +6,7 @@ import { SplitButton } from "primereact/splitbutton";
 import { Badge } from "primereact/badge";
 
 const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
+  const navigate = useNavigate();
   const payable_amount_BT = (rowData) => {
     return (
       <span>
@@ -14,7 +16,7 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
   };
 
   const is_paid_BT = (rowData) => {
-    //console.log("rowData " + JSON.stringify(rowData))
+    console.log("rowData " + JSON.stringify(rowData))
     return (
       <>
         {(() => {
@@ -41,10 +43,13 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
           <Badge value="Unposted" severity="danger" className="mr-1"></Badge>
         )}
         {rowData.is_closed ? (
-          <Badge value="Closed" severity="info"></Badge>
+          <Badge value="Closed" severity="info" className="mr-1"></Badge>
         ) : (
-          <Badge value="Open" severity="warning"></Badge>
+          <Badge value="Open" severity="warning" className="mr-1"></Badge>
         )}
+        {rowData.is_returned ? (
+          <Badge value="Returned" severity="help"></Badge>
+        ) : <></>}
       </>
     );
   };
@@ -62,9 +67,24 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
       },
     });
   };
+  
+  const handleReturn = (rowData) => {
+    navigate("/home/purchase/purchase-return", {
+      state: { master_id: rowData.master_id, source_type: "Invoice" },
+    });
+  };
+
   const action_BT = (rowData) => {
     //console.log("rowData " + JSON.stringify(rowData));
     let menuItems = [
+      {
+        label: "Return",
+        icon: "pi pi-undo text-blue-400",
+        command: () => {
+          handleReturn(rowData);
+        },
+        disabled: (!rowData.edit_stop || rowData.is_returned) ,
+      },
       {
         label: "Delete",
         icon: "pi pi-trash text-red-400",

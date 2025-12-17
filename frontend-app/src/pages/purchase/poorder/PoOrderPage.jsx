@@ -4,12 +4,12 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import OrderListComponent from "./OrderListComponent";
 import OrderEntryComponent from "./OrderEntryComponent";
-import  usePoorder  from "@/hooks/purchase/usePoorder";
+import usePoorder from "@/hooks/purchase/usePoorder";
 
 const PoReturnPage = () => {
   const toast = useRef(null);
   const {
-    configLine,
+    pageConfig,
     toastBox,
     isBusy,
     currentView,
@@ -76,7 +76,7 @@ const PoReturnPage = () => {
           />
         ) : (
           <OrderEntryComponent
-            configLine={configLine}
+            pageConfig={pageConfig}
             isBusy={isBusy}
             errors={errors}
             setErrors={setErrors}

@@ -162,6 +162,7 @@ const MasterComponent = ({
           checked={formData.is_posted === 1}
           onChange={(e) => handleChange("is_posted", e.checked ? 1 : 0)}
           className={errors.is_posted ? "p-invalid" : ""}
+          disabled
         />
         {errors.is_posted && (
           <small className="text-red-500">{errors.is_posted}</small>

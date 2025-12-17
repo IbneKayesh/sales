@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-
 import { poreturnAPI } from "@/api/purchase/poreturnAPI";
 import t_po_master from "@/models/purchase/t_po_master.json";
 import validate from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
+import { settingsAPI } from "@/api/setup/settingsAPI";
 
 const formDataModel = {
   master_id: "",
@@ -29,14 +29,16 @@ const formDataModel = {
   is_posted: 0,
   is_returned: 0,
   is_closed: 0,
+  edit_stop: 0,
+  credit_limit: 0,
 };
 
 const usePoreturn = () => {
-  const [configLine, setConfigLine] = useState({
-    contact_id: "both",
-    is_posted: 1,
-    include_discount: 1,
-    include_vat: 1,
+  const [pageConfig, setPageConfig] = useState({
+    is_posted: 0,
+    is_vat_payable: 0,
+    include_discount: 0,
+    include_vat: 0,
   });
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
@@ -57,11 +59,11 @@ const usePoreturn = () => {
     try {
       setIsBusy(true);
       const data = await poreturnAPI.getNewReturnMaster(returnData);
-      console.log("loadNewReturn: " + JSON.stringify(data));
+      //console.log("loadNewReturn: " + JSON.stringify(data));
       setFormData(data);
 
       const data_details = await poreturnAPI.getNewReturnDetails(returnData);
-      console.log("loadNewReturnDetails: " + JSON.stringify(data_details));
+      //console.log("loadNewReturnDetails: " + JSON.stringify(data_details));
       setFormDataList(data_details);
 
       setCurrentView("form");
@@ -71,6 +73,40 @@ const usePoreturn = () => {
         severity: "error",
         summary: "Error",
         detail: "Failed to load from server",
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const loadSettings = async () => {
+    try {
+      setIsBusy(true);
+      const data = await settingsAPI.getByPageId("Purchase Return");
+      //console.log("Settings data:", data);
+
+      const settingsObj = Object.fromEntries(
+        data.map(({ setting_key, setting_value }) => [
+          setting_key,
+          setting_value,
+        ])
+      );
+
+      setPageConfig((prevConfig) => ({
+        ...prevConfig,
+        is_posted: settingsObj["is_posted"] ?? prevConfig.is_posted,
+        is_vat_payable:
+          settingsObj["is_vat_payable"] ?? prevConfig.is_vat_payable,
+        include_discount:
+          settingsObj["include_discount"] ?? prevConfig.include_discount,
+        include_vat: settingsObj["include_vat"] ?? prevConfig.include_vat,
+      }));
+    } catch (error) {
+      console.error("Error fetching config line:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to load config line from server",
       });
     } finally {
       setIsBusy(false);
@@ -113,26 +149,9 @@ const usePoreturn = () => {
     }
   };
 
-  const loadConfigLine = async () => {
-    // try {
-    //   setIsBusy(true);
-    //   const data = await poreturnAPI.getConfigLine();
-    //   setConfigLine(data);
-    //   setIsBusy(false);
-    // } catch (error) {
-    //   console.error("Error fetching config line:", error);
-    //   setToastBox({
-    //     severity: "error",
-    //     summary: "Error",
-    //     detail: "Failed to load config line from server",
-    //   });
-    //   setIsBusy(false);
-    // }
-  };
-
   useEffect(() => {
     loadBookingList();
-    loadConfigLine();
+    loadSettings();
   }, []);
 
   const resetForm = () => {
@@ -261,7 +280,7 @@ const usePoreturn = () => {
   };
 
   return {
-    configLine,
+    pageConfig,
     toastBox,
     isBusy,
     currentView,

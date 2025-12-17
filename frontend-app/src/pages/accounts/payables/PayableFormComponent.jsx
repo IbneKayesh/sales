@@ -112,7 +112,7 @@ const PayableFormComponent = ({
             <small className="mb-3 text-red-500">{errors.payment_amount}</small>
           )}
         </div>
-        <div className="col-12 md:col-4">
+        <div className="col-12 md:col-6">
           <label
             htmlFor="payment_note"
             className="block text-900 font-medium mb-2"

@@ -2,9 +2,9 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
+import { Badge } from "primereact/badge";
 
 const PayableListComponent = ({ dataList, onEdit, onDelete }) => {
-
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.ref_no}"?`,
@@ -19,7 +19,7 @@ const PayableListComponent = ({ dataList, onEdit, onDelete }) => {
     });
   };
 
-  const actionTemplate = (rowData) => {
+  const action_BT = (rowData) => {
     let menuItems = [
       {
         label: "Delete",
@@ -45,11 +45,21 @@ const PayableListComponent = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const nameTemplate = (rowData) => {
-    return rowData.payment_head + " - " + rowData.contact_name;
+  const payment_head_BT = (rowData) => {
+    return (
+      rowData.payment_type +
+      ", " +
+      rowData.source_name +
+      ", " +
+      rowData.payment_head +
+      ", " +
+      rowData.contact_name
+    );
   };
 
-
+  const due_amount_BT = (rowData) => {
+    return <Badge value={rowData.due_amount} severity="danger" />;
+  };
 
   return (
     <div className="p-1">
@@ -63,24 +73,17 @@ const PayableListComponent = ({ dataList, onEdit, onDelete }) => {
         className="bg-dark-300"
         size="small"
       >
-        <Column field="payment_head" header="Head" sortable body={nameTemplate} />
+        <Column
+          field="payment_head"
+          header="Particulars"
+          sortable
+          body={payment_head_BT}
+        />
         <Column field="order_date" header="Due Date" sortable />
         <Column field="ref_no" header="Ref No" sortable />
-        <Column
-          field="payable_amount"
-          header="Total"
-          sortable
-        />
-        <Column
-          field="due_amount"
-          header="Due"
-          sortable
-        />
-        <Column
-          header="Actions"
-          body={actionTemplate}
-          style={{ width: "120px" }}
-        />
+        <Column field="payable_amount" header="Total" sortable />
+        <Column field="due_amount" header="Due" sortable body={due_amount_BT} />
+        <Column header="Actions" body={action_BT} style={{ width: "120px" }} />
       </DataTable>
     </div>
   );

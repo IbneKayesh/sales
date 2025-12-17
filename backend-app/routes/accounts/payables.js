@@ -13,14 +13,16 @@ const {
 // Get all accounts payable dues suppliers
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT '' as payment_id, pom.shop_id, pom.master_id, pom.contact_id, pom.order_type as payment_head, 'Cash' as payment_mode,
-        pom.order_date,pom.due_amount as payment_amount, '' as payment_note, pom.order_no as ref_no,pom.due_amount,con.contact_name,pom.payable_amount
-        FROM po_master pom
-        LEFT JOIN contacts con on pom.contact_id = con.contact_id
-        WHERE pom.order_type in ( 'Booking', 'Order')
-        AND pom.due_amount > 0
-        AND pom.is_posted = 1
-        ORDER by pom.order_date DESC`;
+    const sql = `SELECT '' as payment_id, pom.shop_id, pom.master_id, pom.contact_id, 'Purchase' as source_name,
+    CASE WHEN order_type IN ('Booking', 'Invoice', 'Order') THEN 'Cash Out' ELSE 'Cash In' END AS payment_type,
+    pom.order_type as payment_head, 'Cash' as payment_mode,
+            pom.order_date,pom.due_amount as payment_amount, '' as payment_note, pom.order_no as ref_no,pom.due_amount,con.contact_name,pom.payable_amount
+            FROM po_master pom
+            LEFT JOIN contacts con on pom.contact_id = con.contact_id
+            WHERE pom.order_type in ( 'Booking', 'Order')
+            AND pom.due_amount > 0
+            AND pom.is_posted = 1
+            ORDER by pom.order_date DESC`;
     const rows = await dbAll(sql, []);
     res.json(rows);
   } catch (error) {
@@ -54,6 +56,8 @@ router.post("/create", async (req, res) => {
       shop_id,
       master_id,
       contact_id,
+      source_name,
+      payment_type,
       payment_head,
       payment_mode,
       payment_date,
@@ -73,6 +77,12 @@ router.post("/create", async (req, res) => {
     }
     if (!contact_id) {
       return res.status(400).json({ error: "Contact ID is required" });
+    }
+    if (!source_name) {
+      return res.status(400).json({ error: "Source name is required" });
+    }
+    if (!payment_type) {
+      return res.status(400).json({ error: "Payment type is required" });
     }
     if (!payment_head) {
       return res.status(400).json({ error: "Payment head is required" });
@@ -98,13 +108,15 @@ router.post("/create", async (req, res) => {
     // payment master
     scripts.push({
       label: "Insert Purchase Payment " + ref_no,
-      sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, source_name, payment_type, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       params: [
         payment_id_new,
         shop_id,
         master_id,
         contact_id,
+        source_name,
+        payment_type,
         payment_head,
         payment_mode,
         payment_date,

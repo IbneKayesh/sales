@@ -134,7 +134,7 @@ router.post("/create", async (req, res) => {
 
     //Insert order Master
     scripts.push({
-      label: "1 of 2 :: Insert Purchase Master " + order_no_new,
+      label: "1 of 3 :: Insert Purchase Master " + order_no_new,
       sql: `INSERT INTO po_master (master_id,shop_id,contact_id,order_type,order_no,order_date,order_note,order_amount,discount_amount,vat_amount,is_vat_payable,include_cost,exclude_cost,total_amount,payable_amount,paid_amount,due_amount,is_paid,is_posted,is_returned,is_closed)
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
       params: [
@@ -165,7 +165,7 @@ router.post("/create", async (req, res) => {
     //Insert booking details
     for (const detail of details_create) {
       scripts.push({
-        label: "2 of 2 :: Insert Purchase Booking",
+        label: "2 of 3 :: Insert Purchase Booking",
         sql: `INSERT INTO po_booking (booking_id, master_id, product_id, product_price, product_qty, discount_percent, discount_amount, vat_percent, vat_amount, cost_price, total_amount, product_note, invoice_qty, pending_qty)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
@@ -190,14 +190,16 @@ router.post("/create", async (req, res) => {
     //Insert order Payments
     for (const payment of payments_create) {
       scripts.push({
-        label: "3 of 2 :: Insert Purchase Payments",
-        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        label: "3 of 3 :: Insert Purchase Payments",
+        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, source_name, payment_type, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           generateGuid(),
           shop_id,
           master_id,
           contact_id,
+          'Purchase',
+          'Cash Out',
           order_type,
           payment.payment_mode || "Cash",
           payment.payment_date,
@@ -359,13 +361,15 @@ router.post("/update", async (req, res) => {
     for (const payment of payments_create) {
       scripts.push({
         label: "5 of 5 :: Insert Purchase Payments",
-        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        sql: `INSERT INTO payments (payment_id, shop_id, master_id, contact_id, source_name, payment_type, payment_head, payment_mode, payment_date, payment_amount, payment_note, ref_no)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           generateGuid(),
           shop_id,
           master_id,
           contact_id,
+          'Purchase',
+          'Cash Out',
           order_type,
           payment.payment_mode || "Cash",
           payment.payment_date,

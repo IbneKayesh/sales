@@ -146,14 +146,15 @@ const PaymentComponent = ({
 
           <div className="flex justify-content-between">
             <span
-              onClick={() =>
-                handleChange("is_vat_payable", !formData.is_vat_payable)
-              }
+              // onClick={() =>
+              //   handleChange("is_vat_payable", !formData.is_vat_payable)
+              // }
             >
               <input
                 type="checkbox"
                 checked={formData.is_vat_payable}
                 readOnly
+                disabled
               />
               {t_po_master.vat_amount.name} (3)
             </span>
@@ -274,7 +275,7 @@ const PaymentComponent = ({
                 severity="info"
                 size="small"
                 onClick={handleAddPayment}
-                disabled={formData.edit_stop}
+                disabled={formData.edit_stop || Number(formData.due_amount) === 0}
               />
             </div>
           </div>

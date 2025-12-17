@@ -22,7 +22,7 @@ const fromDataModel = {
   margin_price: 0,
   purchase_booking_qty: 0,
   sales_booking_qty: 0,
-  ismodified: "0",
+  edit_stop: 0,
 };
 
 export const useProducts = () => {

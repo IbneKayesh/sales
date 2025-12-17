@@ -6,7 +6,7 @@ import ItemsComponent from "./ItemsComponent";
 import PaymentComponent from "./PaymentComponent";
 
 const OrderEntryComponent = ({
-  configLine,
+  pageConfig,
   isBusy,
   errors,
   setErrors,
@@ -25,12 +25,12 @@ const OrderEntryComponent = ({
   useEffect(() => {
     const hasProducts = formDataList.length > 0;
     const hasCreditLimit = formData.due_amount > creditLimit;
-    if (!hasProducts || hasCreditLimit) {
+    if (!hasProducts || formData.edit_stop || hasCreditLimit) {
       setDisableSubmit(true);
     } else {
       setDisableSubmit(false);
     }
-  }, [formDataList, formData.due_amount, creditLimit]);
+  }, [formDataList, formData.edit_stop]);
 
   useEffect(() => {
     const order_amount = formDataList.reduce(
@@ -131,7 +131,7 @@ const OrderEntryComponent = ({
         </AccordionTab>
         <AccordionTab header={InvoiceProducts}>
           <ItemsComponent
-            configLine={configLine}
+            pageConfig={pageConfig}
             formData={formData}
             formDataList={formDataList}
             setFormDataList={setFormDataList}
