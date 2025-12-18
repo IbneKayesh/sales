@@ -283,7 +283,6 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
           field="vat_percent"
           header="Vat%"
           body={vat_percent_BT}
-          editor={numberEditor}
           footer={vat_percent_FT}
         />
         <Column
