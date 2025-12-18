@@ -11,7 +11,12 @@ import { generateGuid } from "@/utils/guid";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
 import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 
-const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList }) => {
+const ItemsComponent = ({
+  pageConfig,
+  formData,
+  formDataList,
+  setFormDataList,
+}) => {
   //console.log(formDataList);
   const { productList, fetchBookingProductList } = useProducts();
   const [availableProductList, setAvailableProductList] = useState([]);
@@ -59,7 +64,8 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
   useEffect(() => {
     if (!formDataList || formDataList.length === 0) return;
 
-    const extraCost = (formData.include_cost || 0) + (formData.exclude_cost || 0);
+    const extraCost =
+      (formData.include_cost || 0) + (formData.exclude_cost || 0);
 
     // Calculate grand total of all items (before extra cost distribution)
     const grandTotal = formDataList.reduce(
@@ -99,7 +105,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
   const handleAddItem = () => {
     if (!selectedItem) return;
 
-    if (!itemQty) return;
+    if (!itemQty || Number(itemQty) < 1) return;
 
     // Check if item is already added
     const existingItem = formDataList.find(
@@ -237,13 +243,9 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
   };
 
   const product_qty_FT = () => {
-    return formDataList.reduce(
-      (sum, item) => sum + (item.product_qty || 0),
-      0
-    );
+    return formDataList.reduce((sum, item) => sum + (item.product_qty || 0), 0);
   };
 
-  
   const discount_percent_BT = (rowData) => {
     const discountAmount = new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -270,10 +272,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
   };
 
   const vat_percent_FT = () => {
-    return formDataList.reduce(
-      (sum, item) => sum + (item.vat_amount || 0),
-      0
-    );
+    return formDataList.reduce((sum, item) => sum + (item.vat_amount || 0), 0);
   };
 
   const total_amount_BT = (rowData) => {
@@ -299,7 +298,6 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
     );
   };
 
-  
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete item "${rowData.product_name}"?`,
@@ -310,11 +308,11 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
           prev.filter((item) => item.booking_id !== rowData.booking_id)
         );
       },
-      reject: () => { },
+      reject: () => {},
     });
   };
 
-  const actionTemplate = (rowData) => {
+  const action_BT = (rowData) => {
     return (
       <span
         className="pi pi-trash text-red-600 text-bold px-2"
@@ -322,7 +320,6 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
       ></span>
     );
   };
-
 
   const priceEditor = (options) => {
     return (
@@ -334,6 +331,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
         locale="en-US"
         style={{ width: "120px" }}
         inputStyle={{ width: "100%" }}
+        min={1}
       />
     );
   };
@@ -344,6 +342,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
         onValueChange={(e) => options.editorCallback(e.value)}
         style={{ width: "110px" }}
         inputStyle={{ width: "100%" }}
+        min={1}
       />
     );
   };
@@ -363,7 +362,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
       <ConfirmDialog />
       {/* {JSON.stringify(productList?.[0])} */}
 
-      <div className="flex align-items-center gap-2 mb-2">
+      <div className="flex align-items-center gap-2 mb-2 bg-gray-300 p-1 border-round">
         <Dropdown
           name="itemList"
           value={selectedItem}
@@ -458,7 +457,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
           headerStyle={{ width: "1%", minWidth: "8rem" }}
           bodyStyle={{ textAlign: "center" }}
         />
-        <Column header="#" body={actionTemplate} style={{ width: "100px" }} />
+        <Column header="#" body={action_BT} style={{ width: "100px" }} />
       </DataTable>
     </div>
   );

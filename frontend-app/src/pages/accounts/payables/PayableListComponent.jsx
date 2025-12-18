@@ -57,7 +57,19 @@ const PayableListComponent = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
+  const payable_amount_BT = (rowData) => {
+    const paidAmount =
+      Number(rowData.payable_amount) - Number(rowData.payment_amount);
+    return (
+      <>
+        {rowData.payable_amount}
+        <span className="text-green-700"> (Paid: {paidAmount.toFixed(2)})</span>
+      </>
+    );
+  };
+
   const due_amount_BT = (rowData) => {
+    //console.log("Due Amount:", rowData);
     return <Badge value={rowData.due_amount} severity="danger" />;
   };
 
@@ -81,9 +93,14 @@ const PayableListComponent = ({ dataList, onEdit, onDelete }) => {
         />
         <Column field="order_date" header="Due Date" sortable />
         <Column field="ref_no" header="Ref No" sortable />
-        <Column field="payable_amount" header="Total" sortable />
+        <Column
+          field="payable_amount"
+          header="Total"
+          sortable
+          body={payable_amount_BT}
+        />
         <Column field="due_amount" header="Due" sortable body={due_amount_BT} />
-        <Column header="Actions" body={action_BT} style={{ width: "120px" }} />
+        <Column header="#" body={action_BT} style={{ width: "120px" }} />
       </DataTable>
     </div>
   );

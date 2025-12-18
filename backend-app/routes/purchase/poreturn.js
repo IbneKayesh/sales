@@ -459,7 +459,7 @@ router.post("/newreturn-details", async (req, res) => {
     const { master_id, order_type } = req.body;
     let sql = "";
     if (order_type === "Order") {
-      sql = `SELECT '' as return_id, '' as master_id, poo.product_id,poo.product_price, poo.stock_qty as product_qty, poo.discount_percent, poo.discount_amount,
+      sql = `SELECT poo.order_id as return_id, '' as master_id, poo.product_id,poo.product_price, poo.stock_qty as product_qty, poo.discount_percent, poo.discount_amount,
       poo.vat_percent, poo.vat_amount,poo.cost_price,poo.total_amount, poo.product_note, poo.order_id as invoice_order_id,'Order' as source_type,
       p.product_code,
       p.product_name,
@@ -476,7 +476,7 @@ WHERE poo.master_id = ?`;
     }
 
     if (order_type === "Invoice") {
-      sql = `SELECT '' as return_id, '' as master_id, poi.product_id,poi.product_price, poi.stock_qty as product_qty, poi.discount_percent, poi.discount_amount,
+      sql = `SELECT poi.invoice_id as return_id, '' as master_id, poi.product_id,poi.product_price, poi.stock_qty as product_qty, poi.discount_percent, poi.discount_amount,
             poi.vat_percent, poi.vat_amount,poi.cost_price,poi.total_amount, poi.product_note, poi.invoice_id as invoice_order_id,'Invoice' as source_type,
             p.product_code,
             p.product_name,

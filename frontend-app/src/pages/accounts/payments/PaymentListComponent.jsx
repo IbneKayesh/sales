@@ -20,7 +20,7 @@ const PaymentListComponent = ({ dataList, onDetail, onDelete }) => {
     });
   };
 
-  const actionTemplate = (rowData) => {
+  const action_BT = (rowData) => {
     let menuItems = [
       {
         label: "Delete",
@@ -92,8 +92,8 @@ const PaymentListComponent = ({ dataList, onDetail, onDelete }) => {
         <Column field="balance_amount" header="Balance" sortable body={balance_amount_BT}/>
         <Column field="ref_no" header="Ref No" sortable body={ref_no_BT}/>
         <Column
-          header="Actions"
-          body={actionTemplate}
+          header="#"
+          body={action_BT}
           style={{ width: "120px" }}
         />
       </DataTable>

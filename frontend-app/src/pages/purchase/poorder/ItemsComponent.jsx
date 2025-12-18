@@ -99,7 +99,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
   const handleAddItem = () => {
     if (!selectedItem) return;
 
-    if (!itemQty) return;
+    if (!itemQty || Number(itemQty) < 1) return;
 
     // Check if item is already added
     const existingItem = formDataList.find(
@@ -332,6 +332,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
         locale="en-US"
         style={{ width: "120px" }}
         inputStyle={{ width: "100%" }}
+        min={1}
       />
     );
   };
@@ -342,6 +343,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
         onValueChange={(e) => options.editorCallback(e.value)}
         style={{ width: "110px" }}
         inputStyle={{ width: "100%" }}
+        min={1}
       />
     );
   };
@@ -361,7 +363,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
       <ConfirmDialog />
       {/* {JSON.stringify(productList?.[0])} */}
 
-      <div className="flex align-items-center gap-2 mb-2">
+    <div className="flex align-items-center gap-2 mb-2 bg-gray-300 p-1 border-round">
         <Dropdown
           name="itemList"
           value={selectedItem}

@@ -8,3 +8,10 @@
 .bg-overlay-light {
   background: var(--overlay-light);
 }
+
+
+/* Global CSS for the all DataTable header */
+.p-datatable.p-datatable-sm .p-datatable-thead > tr > th {
+  background-color: #95a8b5;
+  color: white;
+}

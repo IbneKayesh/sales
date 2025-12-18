@@ -184,14 +184,14 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
       icon: "pi pi-exclamation-triangle",
       accept: () => {
         setFormDataList((prev) =>
-          prev.filter((item) => item.order_id !== rowData.order_id)
+          prev.filter((item) => item.return_id !== rowData.return_id)
         );
       },
       reject: () => { },
     });
   };
 
-  const actionTemplate = (rowData) => {
+  const action_BT = (rowData) => {
     return (
       <span
         className="pi pi-trash text-red-600 text-bold px-2"
@@ -211,6 +211,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
         locale="en-US"
         style={{ width: "120px" }}
         inputStyle={{ width: "100%" }}
+        min={1}
       />
     );
   };
@@ -221,6 +222,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
         onValueChange={(e) => options.editorCallback(e.value)}
         style={{ width: "110px" }}
         inputStyle={{ width: "100%" }}
+        min={1}
       />
     );
   };
@@ -243,7 +245,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
       <DataTable
         value={formDataList}
         editMode="row"
-        dataKey="order_id"
+        dataKey="return_id"
         editingRows={editingRows}
         onRowEditSave={onRowEditSave}
         onRowEditCancel={onRowEditCancel}
@@ -297,7 +299,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
           headerStyle={{ width: "1%", minWidth: "8rem" }}
           bodyStyle={{ textAlign: "center" }}
         />
-        <Column header="#" body={actionTemplate} style={{ width: "100px" }} />
+        <Column header="#" body={action_BT} style={{ width: "100px" }} />
       </DataTable>
     </div>
   );
