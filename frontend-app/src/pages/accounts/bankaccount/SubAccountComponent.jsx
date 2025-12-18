@@ -3,10 +3,10 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 
-const BankAccountListComponent = ({ dataList, onEdit, onDelete, onSubAccountList }) => {
+const SubAccountComponent = ({ subAccountList, subAccount }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.account_name}"?`,
+      message: `Are you sure you want to delete "${rowData.sub_account_name}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -17,23 +17,17 @@ const BankAccountListComponent = ({ dataList, onEdit, onDelete, onSubAccountList
       },
     });
   };
-
   const current_balance_BT = (rowData) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "BDT",
     }).format(rowData.current_balance);
   };
-
+  const default_BT = (rowData) => {
+    return rowData.is_default ? "Yes" : "No";
+  };
   const action_BT = (rowData) => {
-    let menuItems = [      
-      {
-        label: "Sub Accounts",
-        icon: "pi pi-user text-blue-400",
-        command: () => {
-          onSubAccountList(rowData);
-        },
-      },
+    let menuItems = [
       {
         label: "Delete",
         icon: "pi pi-trash text-red-400",
@@ -57,23 +51,24 @@ const BankAccountListComponent = ({ dataList, onEdit, onDelete, onSubAccountList
       </div>
     );
   };
-
   return (
     <div className="p-1">
       <ConfirmDialog />
+
+      <div className="grid">
+        <h5>Sub Accounts</h5>
+      </div>
+
       <DataTable
-        value={dataList}
+        value={subAccountList}
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
-        className="bg-dark-300"
         size="small"
       >
-        <Column field="bank_name" header="Bank" />
-        <Column field="branch_name" header="Branch" />
-        <Column field="account_no" header="Account No" />
-        <Column field="account_name" header="Account Name" sortable />
+        <Column field="sub_account_name" header="Sub Account Name" />
+        <Column field="sub_account_desc" header="Description" />
         <Column field="opening_date" header="Opening Date" />
         <Column
           field="current_balance"
@@ -81,14 +76,11 @@ const BankAccountListComponent = ({ dataList, onEdit, onDelete, onSubAccountList
           body={current_balance_BT}
           sortable
         />
-        <Column
-          header="#"
-          body={action_BT}
-          style={{ width: "120px" }}
-        />
+        <Column field="is_default" header="Default" body={default_BT} />
+        <Column header="#" body={action_BT} style={{ width: "120px" }} />
       </DataTable>
     </div>
   );
 };
 
-export default BankAccountListComponent;
+export default SubAccountComponent;

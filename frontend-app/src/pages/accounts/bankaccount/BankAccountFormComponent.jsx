@@ -13,9 +13,8 @@ const BankAccountFormComponent = ({
   onSave,
 }) => {
   return (
-    <div className="p-1">
       <div className="grid">
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-6">
           <label
             htmlFor="bank_name"
             className="block text-900 font-medium mb-2"
@@ -34,23 +33,41 @@ const BankAccountFormComponent = ({
             <small className="mb-3 text-red-500">{errors.bank_name}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-6">
           <label
-            htmlFor="bank_branch"
+            htmlFor="branch_name"
             className="block text-900 font-medium mb-2"
           >
-            {t_bank_accounts.bank_branch.name}{" "}
+            {t_bank_accounts.branch_name.name}
+          </label>
+          <InputText
+            name="branch_name"
+            value={formData.branch_name}
+            onChange={(e) => onChange("branch_name", e.target.value)}
+            className={`w-full ${errors.branch_name ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_bank_accounts.branch_name.name}`}
+          />
+          {errors.branch_name && (
+            <small className="mb-3 text-red-500">{errors.branch_name}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-3">
+          <label
+            htmlFor="account_no"
+            className="block text-900 font-medium mb-2"
+          >
+            {t_bank_accounts.account_no.name}{" "}
             <span className="text-red-500">*</span>
           </label>
           <InputText
-            name="bank_branch"
-            value={formData.bank_branch}
-            onChange={(e) => onChange("bank_branch", e.target.value)}
-            className={`w-full ${errors.bank_branch ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_bank_accounts.bank_branch.name}`}
+            name="account_no"
+            value={formData.account_no}
+            onChange={(e) => onChange("account_no", e.target.value)}
+            className={`w-full ${errors.account_no ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_bank_accounts.account_no.name}`}
           />
-          {errors.bank_branch && (
-            <small className="mb-3 text-red-500">{errors.bank_branch}</small>
+          {errors.account_no && (
+            <small className="mb-3 text-red-500">{errors.account_no}</small>
           )}
         </div>
         <div className="col-12 md:col-3">
@@ -70,25 +87,6 @@ const BankAccountFormComponent = ({
           />
           {errors.account_name && (
             <small className="mb-3 text-red-500">{errors.account_name}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-3">
-          <label
-            htmlFor="account_number"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_bank_accounts.account_number.name}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <InputText
-            name="account_number"
-            value={formData.account_number}
-            onChange={(e) => onChange("account_number", e.target.value)}
-            className={`w-full ${errors.account_number ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_bank_accounts.account_number.name}`}
-          />
-          {errors.account_number && (
-            <small className="mb-3 text-red-500">{errors.account_number}</small>
           )}
         </div>
         <div className="col-12 md:col-3">
@@ -118,7 +116,7 @@ const BankAccountFormComponent = ({
             <small className="mb-3 text-red-500">{errors.opening_date}</small>
           )}
         </div>
-        <div className="col-12 md:col-4">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="current_balance"
             className="block text-900 font-medium mb-2"
@@ -141,29 +139,6 @@ const BankAccountFormComponent = ({
             </small>
           )}
         </div>
-        <div className="col-12 md:col-4">
-          <label
-            htmlFor="is_default"
-            className="block text-900 font-medium mb-2"
-          >
-            {t_bank_accounts.is_default.name}
-          </label>
-          <div className="flex align-items-center">
-            <Checkbox
-              inputId="is_default"
-              name="is_default"
-              checked={formData.is_default === 1}
-              onChange={(e) => onChange("is_default", e.checked ? 1 : 0)}
-              className={`${errors.is_default ? "p-invalid" : ""}`}
-            />
-            <label htmlFor="is_default" className="ml-2">
-              Yes
-            </label>
-          </div>
-          {errors.is_default && (
-            <small className="mb-3 text-red-500">{errors.is_default}</small>
-          )}
-        </div>
         <div className="col-12">
           <div className="flex flex-row-reverse flex-wrap">
             <Button
@@ -178,7 +153,6 @@ const BankAccountFormComponent = ({
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

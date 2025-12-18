@@ -28,6 +28,7 @@ const purchase_tables = () => ({
         is_posted BOOLEAN DEFAULT 0,
         is_returned BOOLEAN DEFAULT 0,
         is_closed BOOLEAN DEFAULT 0,
+        vat_collected BOOLEAN DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT

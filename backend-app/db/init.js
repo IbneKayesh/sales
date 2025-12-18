@@ -16,6 +16,12 @@ const db = new sqlite3.Database(dbPath, (err) => {
 const purchase_tables = require("./purchase_tables");
 const purchaseTables = purchase_tables();
 
+const vat_tables = require("./vat_tables");
+const vatTables = vat_tables();
+
+const account_tables = require("./account_tables");
+const accountTables = account_tables();
+
 // Initialize tables
 const initTables = () => {
 
@@ -23,6 +29,22 @@ const initTables = () => {
     db.exec(sql, (err) => {
       if (err) {
         console.error("Purchase Table creation error:", err.message);
+      }
+    });
+  });
+
+  Object.values(vatTables).forEach((sql) => {
+    db.exec(sql, (err) => {
+      if (err) {
+        console.error("Vat Table creation error:", err.message);
+      }
+    });
+  });
+
+  Object.values(accountTables).forEach((sql) => {
+    db.exec(sql, (err) => {
+      if (err) {
+        console.error("Account Table creation error:", err.message);
       }
     });
   });
@@ -134,20 +156,20 @@ const initTables = () => {
     `);
 
     // accounts :: Bank Accounts table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS bank_accounts (
-        account_id TEXT PRIMARY KEY,
-        bank_name TEXT NOT NULL,
-        bank_branch TEXT,
-        account_name TEXT NOT NULL,
-        account_number TEXT NOT NULL,
-        opening_date TEXT,
-        current_balance REAL DEFAULT 0,
-        is_default INTEGER DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
+    // db.run(`
+    //   CREATE TABLE IF NOT EXISTS bank_accounts (
+    //     account_id TEXT PRIMARY KEY,
+    //     bank_name TEXT NOT NULL,
+    //     bank_branch TEXT,
+    //     account_name TEXT NOT NULL,
+    //     account_number TEXT NOT NULL,
+    //     opening_date TEXT,
+    //     current_balance REAL DEFAULT 0,
+    //     is_default INTEGER DEFAULT 0,
+    //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    //     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    //   )
+    // `);
 
     // accounts :: Accounts Ledger table
     db.run(`
@@ -379,15 +401,32 @@ const initData = (callback) => {
     //accounts :: Bank Accounts table :: insert default data
     db.run(
       `
-      INSERT OR IGNORE INTO bank_accounts (account_id, bank_name, bank_branch, account_name, account_number, opening_date, current_balance, is_default)
+      INSERT OR IGNORE INTO bank_accounts (account_id, bank_name, branch_name, account_no, account_name, opening_date, current_balance)
       VALUES
-      ('1', 'Cash', 'Daily Cash', 'Cash', '0', strftime('%Y-%m-%d', 'now'), 0, 1)
+      ('1', 'Cash', 'Cash', 'Cash', 'Cash', strftime('%Y-%m-%d', 'now'), 0)
     `,
       (err) => {
         if (err) {
           console.error("Error inserting default bank accounts:", err);
         } else {
           console.log("Default bank accounts inserted.");
+        }
+      }
+    );
+
+    
+    //accounts :: Bank Sub Accounts table :: insert default data
+    db.run(
+      `
+      INSERT OR IGNORE INTO bank_sub_accounts (bank_sub_account_id, account_id, sub_account_name, sub_account_desc, opening_date, current_balance, is_default)
+      VALUES
+      ('1', '1', 'Cash', 'Cash', strftime('%Y-%m-%d', 'now'), 0, 1)
+    `,
+      (err) => {
+        if (err) {
+          console.error("Error inserting default bank sub accounts:", err);
+        } else {
+          console.log("Default bank sub accounts inserted.");
         }
       }
     );
@@ -435,6 +474,25 @@ const initData = (callback) => {
           );
         } else {
           console.log("Default settings inserted.");
+        }
+      }
+    );
+
+    //vat :: insert default data
+    db.run(
+      `
+      INSERT OR IGNORE INTO vat_master (master_id, shop_id, source_name)
+      VALUES
+      ('any', '1', 'any')
+    `,
+      (err) => {
+        if (err) {
+          console.error(
+            "Error inserting default vat master:",
+            err
+          );
+        } else {
+          console.log("Default vat master inserted.");
         }
       }
     );
