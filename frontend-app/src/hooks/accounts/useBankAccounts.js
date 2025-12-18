@@ -4,22 +4,23 @@ import validate from "@/models/validator";
 import t_bank_accounts from "@/models/accounts/t_bank_accounts";
 import { generateGuid } from "@/utils/guid";
 
+const fromDataModel = {
+  account_id: "",
+  bank_name: "",
+  branch_name: "",
+  account_no: "",
+  account_name: "",
+  opening_date: new Date().toISOString().split("T")[0],
+  current_balance: 0,
+};
+
 export const useBankAccounts = () => {
   const [bankAccountList, setBankAccountList] = useState([]);
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [formDataBankAccount, setformDataBankAccount] = useState({
-    account_id: "",
-    bank_name: "",
-    bank_branch: "",
-    account_name: "",
-    account_number: "",
-    opening_date: new Date().toISOString().split("T")[0],
-    current_balance: 0,
-    is_default: false,
-  });
+  const [formDataBankAccount, setformDataBankAccount] = useState(fromDataModel);
 
   const loadBankAccounts = async (resetModified = false) => {
     try {
@@ -51,21 +52,15 @@ export const useBankAccounts = () => {
 
   const handleChange = (field, value) => {
     setformDataBankAccount((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formDataBankAccount, [field]: value }, t_bank_accounts);
+    const newErrors = validate(
+      { ...formDataBankAccount, [field]: value },
+      t_bank_accounts
+    );
     setErrors(newErrors);
   };
 
   const handleClear = () => {
-    setformDataBankAccount({
-      account_id: "",
-      bank_name: "",
-      bank_branch: "",
-      account_name: "",
-      account_number: "",
-      opening_date: new Date().toISOString().split("T")[0],
-      current_balance: 0,
-      is_default: false,
-    });
+    setformDataBankAccount(fromDataModel);
     setErrors({});
   };
 
@@ -120,7 +115,9 @@ export const useBankAccounts = () => {
 
     const newErrors = validate(formDataBankAccount, t_bank_accounts);
     setErrors(newErrors);
-    console.log("handleSaveBankaccount: " + JSON.stringify(formDataBankAccount));
+    console.log(
+      "handleSaveBankaccount: " + JSON.stringify(formDataBankAccount)
+    );
 
     if (Object.keys(newErrors).length > 0) {
       setIsBusy(false);
@@ -131,10 +128,14 @@ export const useBankAccounts = () => {
       let updatedBankaccounts;
       if (formDataBankAccount.account_id) {
         // Edit existing
-        const updatedBankaccount = await bankaccountsAPI.update(formDataBankAccount);
+        const updatedBankaccount = await bankaccountsAPI.update(
+          formDataBankAccount
+        );
         updatedBankaccount.ismodified = true;
         updatedBankaccounts = bankAccountList.map((b) =>
-          b.account_id === formDataBankAccount.account_id ? updatedBankaccount : b
+          b.account_id === formDataBankAccount.account_id
+            ? updatedBankaccount
+            : b
         );
 
         setToastBox({
@@ -144,7 +145,10 @@ export const useBankAccounts = () => {
         });
       } else {
         // Add new
-        const newBankaccountData = { ...formDataBankAccount, account_id: generateGuid() };
+        const newBankaccountData = {
+          ...formDataBankAccount,
+          account_id: generateGuid(),
+        };
         //console.log("newBankaccountData: " + JSON.stringify(newBankaccountData));
 
         const newBankaccount = await bankaccountsAPI.create(newBankaccountData);
@@ -173,6 +177,28 @@ export const useBankAccounts = () => {
     setIsBusy(false);
   };
 
+  //sub accounts
+
+  const [subAccountList, setSubAccountList] = useState([]);
+  const [subAccount, setSubAccount] = useState({});
+
+  const fetchSubAccountList = async (account_id) => {
+    try {
+      const data = await bankaccountsAPI.getSubAccounts(account_id);
+      console.log("data: " + JSON.stringify(data));
+      setSubAccountList(data);
+    } catch (error) {
+      console.error("Error fetching subaccounts", error);
+    }
+  };
+
+  const handleSubAccountList = (bankaccount) => {
+    console.log("bankaccount: " + JSON.stringify(bankaccount));
+    setCurrentView("subaccount");
+    setformDataBankAccount(bankaccount);
+    fetchSubAccountList(bankaccount.account_id);
+  };
+
   return {
     bankAccountList,
     toastBox,
@@ -187,5 +213,8 @@ export const useBankAccounts = () => {
     handleDeleteBankAccount,
     handleRefresh,
     handleSaveBankAccount,
+    handleSubAccountList,
+    subAccountList,
+    subAccount,
   };
 };

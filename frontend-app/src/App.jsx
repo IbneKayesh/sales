@@ -91,6 +91,7 @@ function AppRoutes({ toast }) {
         <Route path="setup/settings" element={<SettingsPage />} />
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>
+      <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
   );
 }

@@ -12,8 +12,8 @@ const {
 //get all bank accounts
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT ba.*, 0 as ismodified
-        FROM bank_accounts ba ORDER BY ba.account_id`;
+    const sql = `SELECT ba.*, 0 as edit_stop
+        FROM bank_accounts ba ORDER BY ba.opening_date DESC`;
     const rows = await dbAll(sql, []);
     res.json(rows);
   } catch (error) {
@@ -26,7 +26,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const sql = `SELECT ba.*, 0 as ismodified
+    const sql = `SELECT ba.*, 0 as edit_stop
         FROM bank_accounts ba WHERE ba.account_id = ?`;
     const row = await dbGet(sql, [id]);
     if (!row) {
@@ -44,12 +44,11 @@ router.post("/", async (req, res) => {
     const {
       account_id,
       bank_name,
-      bank_branch,
+      branch_name,
+      account_no,
       account_name,
-      account_number,
       opening_date,
-      current_balance,
-      is_default,
+      current_balance
     } = req.body;
     
   if (!account_id) {
@@ -64,17 +63,15 @@ router.post("/", async (req, res) => {
     return res.status(400).json({ error: "Account name is required" });
   }
 
-    const sql = `INSERT INTO bank_accounts (account_id, bank_name, bank_branch, account_name, account_number, opening_date, current_balance, is_default)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO bank_accounts (account_id, bank_name, branch_name, account_no, account_name, opening_date)
+      VALUES (?, ?, ?, ?, ?, ?)`;
     const params = [
       account_id,
       bank_name,
-      bank_branch,
+      branch_name,
+      account_no,
       account_name,
-      account_number,
-      opening_date,
-      current_balance,
-      is_default,
+      opening_date
     ];
     await dbRun(sql, params, `Created bank account ${account_name}`);
     res.status(201).json({ account_id, ...req.body });
@@ -89,12 +86,10 @@ router.post("/update", async (req, res) => {
     const {
       account_id,
       bank_name,
-      bank_branch,
+      branch_name,
+      account_no,
       account_name,
-      account_number,
-      opening_date,
-      current_balance,
-      is_default,
+      opening_date
     } = req.body;
     
   if (!account_id) {
@@ -110,19 +105,17 @@ router.post("/update", async (req, res) => {
   }
 
     const sql = `UPDATE bank_accounts
-    SET bank_name = ?, bank_branch = ?,
-    account_name = ?, account_number = ?,
-    opening_date = ?, current_balance = ?,
-    is_default = ?, updated_at = CURRENT_TIMESTAMP
+    SET bank_name = ?, branch_name = ?,
+    account_no = ?, account_name = ?,
+    opening_date = ?, 
+    updated_at = CURRENT_TIMESTAMP
     WHERE account_id = ?`;
     const params = [
       bank_name,
-      bank_branch,
+      branch_name,
+      account_no,
       account_name,
-      account_number,
       opening_date,
-      current_balance,
-      is_default,
       account_id,
     ];
     const result = await dbRun(sql, params, `Updated bank account ${account_name}`);
@@ -154,5 +147,23 @@ router.post("/delete", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 })
+
+
+//get by id
+router.get("/subaccounts/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const sql = `SELECT bsa.*, 0 as edit_stop
+        FROM bank_sub_accounts bsa WHERE bsa.account_id = ?`;
+    const row = await dbAll(sql, [id]);
+    if (!row) {
+      return res.status(404).json({ error: "Bank sub account not found" });
+    }
+    res.json(row);
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 module.exports = router;

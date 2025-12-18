@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useBankAccounts } from "@/hooks/accounts/useBankAccounts";
-import BankAccountListComponent from "./BankAccountListComponent";
-import BankAccountFormComponent from "./BankAccountFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
+import { useBankAccounts } from "@/hooks/accounts/useBankAccounts";
+import BankAccountListComponent from "./BankAccountListComponent";
+import BankAccountFormComponent from "./BankAccountFormComponent";
+import SubAccountComponent from "./SubAccountComponent";
 
 const BankAccountPage = () => {
   const toast = useRef(null);
@@ -22,6 +23,9 @@ const BankAccountPage = () => {
     handleDeleteBankAccount,
     handleRefresh,
     handleSaveBankAccount,
+    handleSubAccountList,
+    subAccountList,
+    subAccount,
   } = useBankAccounts();
 
   useEffect(() => {
@@ -40,8 +44,10 @@ const BankAccountPage = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
-          {isList
+          {currentView === "list"
             ? "Bank Account List"
+            : currentView === "subaccount"
+            ? "Sub Account List"
             : formDataBankAccount.account_id
             ? "Edit Bank Account"
             : "Add New Bank Account"}
@@ -84,7 +90,10 @@ const BankAccountPage = () => {
             dataList={bankAccountList}
             onEdit={handleEditBankAccount}
             onDelete={handleDeleteBankAccount}
+            onSubAccountList={handleSubAccountList}
           />
+        ) : currentView === "subaccount" ? (
+          <SubAccountComponent subAccountList={subAccountList} subAccount={subAccount}/>
         ) : (
           <BankAccountFormComponent
             isBusy={isBusy}
