@@ -16,7 +16,7 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
   };
 
   const is_paid_BT = (rowData) => {
-    console.log("rowData " + JSON.stringify(rowData))
+    //console.log("rowData " + JSON.stringify(rowData))
     return (
       <>
         {(() => {

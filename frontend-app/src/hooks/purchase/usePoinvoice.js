@@ -34,10 +34,10 @@ const formDataModel = {
 
 const usePoinvoice = () => {
   const [pageConfig, setPageConfig] = useState({
-    is_posted: 0,
-    is_vat_payable: 0,
-    include_discount: 0,
-    include_vat: 0,
+    is_posted: 1,
+    is_vat_payable: 1,
+    include_discount: 1,
+    include_vat: 1,
   });
 
   const [toastBox, setToastBox] = useState(null);

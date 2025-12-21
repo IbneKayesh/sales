@@ -4,7 +4,7 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { Badge } from "primereact/badge";
 
-const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
+const OrderListComponent = ({ dataList, onEdit, onDelete, onCancelBooking }) => {
   const payable_amount_BT = (rowData) => {
     return (
       <span>
@@ -45,8 +45,28 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
         ) : (
           <Badge value="Open" severity="warning"></Badge>
         )}
+        {rowData.vat_collected ? (
+          <Badge value="VAT Collected" severity="info"></Badge>
+        ) : ''}
+        {rowData.has_cancelled ? (
+          <Badge value="Cancelled" severity="info"></Badge>
+        ) : ''}
       </>
     );
+  };
+
+  const handleCancelBooking = (rowData) => {
+    confirmDialog({
+      message: `Are you sure you want to cancel Pending Invoice Qty "${rowData.order_no}"?`,
+      header: "Cancel Confirmation",
+      icon: "pi pi-exclamation-triangle",
+      accept: () => {
+        onCancelBooking(rowData);
+      },
+      reject: () => {
+        // Do nothing on reject
+      },
+    });
   };
 
   const handleDelete = (rowData) => {
@@ -65,6 +85,14 @@ const OrderListComponent = ({ dataList, onEdit, onDelete }) => {
   const action_BT = (rowData) => {
     //console.log("rowData " + JSON.stringify(rowData));
     let menuItems = [
+      {
+        label: "Cancel",
+        icon: "pi pi-times text-red-400",
+        command: () => {
+          handleCancelBooking(rowData);
+        },
+        disabled: !rowData.edit_stop,
+      },
       {
         label: "Delete",
         icon: "pi pi-trash text-red-400",

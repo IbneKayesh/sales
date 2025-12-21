@@ -9,6 +9,11 @@ export const pobookingAPI = {
   getPayments: (master_id) =>
     apiRequest(`/purchase/booking/payments/${master_id}`),
 
+  cancelBooking: (master_id) =>
+    apiRequest(`/purchase/booking/cancel-booking/${master_id}`, {
+      method: "POST",
+    }),
+
   create: (order) =>
     apiRequest("/purchase/booking/create", {
       method: "POST",

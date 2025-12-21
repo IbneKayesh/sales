@@ -48,7 +48,7 @@ const usePobooking = () => {
   const [formData, setFormData] = useState(formDataModel);
   const [formDataList, setFormDataList] = useState([]);
   const [formDataPaymentList, setFormDataPaymentList] = useState([]);
-  const [handleDelete, setHandleDelete] = useState(() => {});
+  const [handleDelete, setHandleDelete] = useState(() => { });
 
   const loadBookingList = async (reloadDataSet = false) => {
     try {
@@ -114,7 +114,7 @@ const usePobooking = () => {
     loadSettings();
   }, []);
 
-   const resetForm = () => {
+  const resetForm = () => {
     setFormData({
       ...formDataModel,
       is_posted: Number(pageConfig.is_posted),
@@ -159,8 +159,8 @@ const usePobooking = () => {
         Number(formData.payable_amount) === Number(formData.due_amount)
           ? "Unpaid"
           : Number(formData.due_amount) === 0
-          ? "Paid"
-          : "Partial";
+            ? "Paid"
+            : "Partial";
 
       const formDataNew = {
         ...formData,
@@ -217,6 +217,7 @@ const usePobooking = () => {
     }
   };
 
+
   const fetchPayments = async (master_id) => {
     try {
       const data = await pobookingAPI.getPayments(master_id);
@@ -236,6 +237,31 @@ const usePobooking = () => {
     await fetchDetails(data.master_id);
     await fetchPayments(data.master_id);
     setCurrentView("form");
+  };
+
+  const handleCancelBooking = async (data) => {
+    try {
+      setIsBusy(true);
+      const responseData = await pobookingAPI.cancelBooking(data.master_id);
+      setToastBox({
+        severity: "success",
+        summary: "Success",
+        detail: `${data.order_no} successfully.`,
+      });
+
+      //call update process
+      await closingProcessAPI("Purchase Booking Cancel", data.order_no);
+      loadBookingList();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to load data from server",
+      });
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   return {
@@ -258,6 +284,7 @@ const usePobooking = () => {
     handleEdit,
     handleDelete,
     handleSave,
+    handleCancelBooking
   };
 };
 

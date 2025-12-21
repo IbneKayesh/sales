@@ -28,6 +28,7 @@ const PoBookingPage = () => {
     handleEdit,
     handleDelete,
     handleSave,
+    handleCancelBooking,
   } = usePobooking();
 
   useEffect(() => {
@@ -73,6 +74,7 @@ const PoBookingPage = () => {
             dataList={dataList}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onCancelBooking={handleCancelBooking}
           />
         ) : (
           <OrderEntryComponent

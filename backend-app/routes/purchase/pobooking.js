@@ -66,6 +66,59 @@ router.get("/payments/:master_id", async (req, res) => {
   }
 });
 
+
+//get cancel booking
+router.post("/cancel-booking/:master_id", async (req, res) => {
+  try {
+    const master_id = req.params.master_id;
+
+    const scripts = [];
+
+    scripts.push({
+      label: "1 of 2 :: Update purchase booking cancelled flag",
+      sql: `UPDATE po_booking
+		SET product_qty = invoice_qty,
+		discount_amount = (discount_percent / 100) * ( invoice_qty * product_price ),
+		vat_amount = (vat_percent / 100) * ( invoice_qty * product_price ),
+		total_amount = ( invoice_qty * product_price ) - (vat_percent / 100) * ( invoice_qty * product_price ) + (discount_percent / 100) * ( invoice_qty * product_price ),
+		cost_price = (( invoice_qty * product_price ) - (vat_percent / 100) * ( invoice_qty * product_price ) + (discount_percent / 100) * ( invoice_qty * product_price )) / invoice_qty,
+		cancelled_qty = pending_qty,
+		pending_qty = 0
+		WHERE master_id = ?
+		AND pending_qty > 0`,
+      params: [master_id],
+    });
+
+
+
+
+    scripts.push({
+      label: "2 of 2 :: Update purchase booking cancelled amount",
+      sql: `UPDATE po_master
+			SET order_amount = src.order_amount,
+			  discount_amount = src.discount_amount,
+			  vat_amount = src.vat_amount,
+			  total_amount = src.order_amount - ( src.discount_amount + src.vat_amount + include_cost + exclude_cost),
+			  payable_amount = (src.order_amount + include_cost - src.discount_amount + ( CASE WHEN is_vat_payable = 1 THEN src.vat_amount ELSE 0 END)),
+			  due_amount = (src.order_amount + include_cost - src.discount_amount + ( CASE WHEN is_vat_payable = 1 THEN src.vat_amount ELSE 0 END)) - paid_amount
+			FROM (
+			SELECT pob.master_id,sum(pob.product_price * pob.product_qty) as order_amount, sum (pob.discount_amount) as discount_amount, sum (pob.vat_amount) as vat_amount
+			FROM po_booking pob
+			WHERE pob.master_id = ?
+			GROUP by pob.master_id
+			) AS src
+			WHERE po_master.master_id = src.master_id`,
+      params: [master_id],
+    });
+
+    await runScriptsSequentially(scripts);
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 //create
 router.post("/create", async (req, res) => {
   try {

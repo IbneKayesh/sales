@@ -402,6 +402,88 @@ router.post("/purchase-booking", async (req, res) => {
   }
 });
 
+//purchase-booking-cancel
+router.post("/purchase-booking-cancel", async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Transaction ID is required" });
+  }
+
+  const scripts = [];
+
+  scripts.push({
+    label: "1 of 4 :: Update purchase booking cancelled flag",
+    sql: `WITH cancelledPO as (
+		SELECT pom.master_id
+		FROM po_booking pob
+		JOIN po_master pom on pob.master_id = pom.master_id
+		WHERE pob.cancelled_qty > 0
+		AND pom.has_cancelled = 0
+		)
+		UPDATE po_master
+		SET has_cancelled = 1
+		WHERE has_cancelled = 0
+		AND master_id in (
+		SELECT master_id FROM cancelledPO
+		)`,
+    params: [],
+  });
+
+  // scripts.push({
+  //   label: "2 of 4 :: update purchase cost price",
+  //   sql: ``,
+  //   params: [],
+  // });
+
+
+  scripts.push({
+    label: "3 of 4 :: Reset products purchase booking qty",
+    sql: `UPDATE products
+    SET purchase_booking_qty = 0
+    WHERE purchase_booking_qty > 0 `,
+    params: [],
+  });
+
+  scripts.push({
+    label: "4 of 4 :: Update products purchase booking qty",
+    sql: `WITH booking as (
+      SELECT pob.product_id, sum(pob.pending_qty) as purchase_booking_qty
+      FROM po_booking pob
+      JOIN po_master pobm on pob.master_id = pobm.master_id
+      WHERE pob.pending_qty > 0
+      AND pobm.is_posted = 1
+      GROUP by pob.product_id
+      )
+      UPDATE products
+      SET purchase_booking_qty = (
+        SELECT b.purchase_booking_qty
+        FROM booking b
+        WHERE b.product_id = products.product_id
+      )
+      WHERE products.product_id in (
+        SELECT b.product_id
+        FROM booking b
+      )`,
+    params: [],
+  });
+
+
+  try {
+    const results = await runScriptsSequentially(scripts, {
+      useTransaction: false,
+    });
+    res.status(201).json({
+      message: "Data processed successfully!",
+      result: results,
+    });
+  } catch (error) {
+    console.error("Error processing data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 //purchase-invoice
 router.post("/purchase-invoice", async (req, res) => {
   const { id } = req.body;
@@ -736,6 +818,14 @@ router.post("/payable-due", async (req, res) => {
       WHERE pom.due_amount > 0
       AND pom.order_type in ('Booking', 'Order')
       AND pom.is_paid in ('Partial','Unpaid')
+      GROUP by pom.master_id
+      UNION ALL
+      SELECT pom.master_id,sum(pym.payment_amount)as payment_amount
+      FROM po_master pom
+      JOIN payments pym on pom.master_id = pym.master_id
+      WHERE pom.due_amount < 0
+      AND pom.order_type in ('Booking')
+      AND pom.has_cancelled = 1
       GROUP by pom.master_id
       )
       UPDATE po_master

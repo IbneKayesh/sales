@@ -19,8 +19,8 @@ const purchaseTables = purchase_tables();
 const vat_tables = require("./vat_tables");
 const vatTables = vat_tables();
 
-const account_tables = require("./account_tables");
-const accountTables = account_tables();
+const banks_tables = require("./banks_tables");
+const banksTables = banks_tables();
 
 // Initialize tables
 const initTables = () => {
@@ -41,10 +41,10 @@ const initTables = () => {
     });
   });
 
-  Object.values(accountTables).forEach((sql) => {
+  Object.values(banksTables).forEach((sql) => {
     db.exec(sql, (err) => {
       if (err) {
-        console.error("Account Table creation error:", err.message);
+        console.error("Banks Table creation error:", err.message);
       }
     });
   });
@@ -155,39 +155,6 @@ const initTables = () => {
       )
     `);
 
-    // accounts :: Bank Accounts table
-    // db.run(`
-    //   CREATE TABLE IF NOT EXISTS bank_accounts (
-    //     account_id TEXT PRIMARY KEY,
-    //     bank_name TEXT NOT NULL,
-    //     bank_branch TEXT,
-    //     account_name TEXT NOT NULL,
-    //     account_number TEXT NOT NULL,
-    //     opening_date TEXT,
-    //     current_balance REAL DEFAULT 0,
-    //     is_default INTEGER DEFAULT 0,
-    //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    //     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    //   )
-    // `);
-
-    // accounts :: Accounts Ledger table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS accounts_ledger (
-        ledger_id TEXT PRIMARY KEY,
-        contact_id TEXT NOT NULL,
-        payment_head TEXT NOT NULL,
-        payment_mode TEXT NOT NULL,
-        payment_date TEXT NOT NULL,
-        ref_no TEXT NOT NULL,
-        debit_amount REAL DEFAULT 0,
-        credit_amount REAL DEFAULT 0,
-        payment_note TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (contact_id) REFERENCES contacts(contact_id) ON DELETE RESTRICT
-      )
-    `);
 
     // accounts :: Payments table
     db.run(`
@@ -398,35 +365,35 @@ const initData = (callback) => {
       }
     );
 
-    //accounts :: Bank Accounts table :: insert default data
+    //accounts :: Bank table :: insert default data
     db.run(
       `
-      INSERT OR IGNORE INTO bank_accounts (account_id, bank_name, branch_name, account_no, account_name, opening_date, current_balance)
+      INSERT OR IGNORE INTO banks (bank_id, bank_name, branch_name, swift_code, current_balance)
       VALUES
-      ('1', 'Cash', 'Cash', 'Cash', 'Cash', strftime('%Y-%m-%d', 'now'), 0)
+      ('1', 'Cash', 'Cash', 'CASH', 0)
     `,
       (err) => {
         if (err) {
-          console.error("Error inserting default bank accounts:", err);
+          console.error("Error inserting default bank:", err);
         } else {
-          console.log("Default bank accounts inserted.");
+          console.log("Default bank inserted.");
         }
       }
     );
 
     
-    //accounts :: Bank Sub Accounts table :: insert default data
+    //accounts :: Accounts table :: insert default data
     db.run(
       `
-      INSERT OR IGNORE INTO bank_sub_accounts (bank_sub_account_id, account_id, sub_account_name, sub_account_desc, opening_date, current_balance, is_default)
+      INSERT OR IGNORE INTO accounts (account_id, bank_id, account_name, account_no, account_note, opening_date, current_balance, is_default)
       VALUES
-      ('1', '1', 'Cash', 'Cash', strftime('%Y-%m-%d', 'now'), 0, 1)
+      ('1', '1', 'Cash', 'Cash', 'Cash', strftime('%Y-%m-%d', 'now'), 0, 1) 
     `,
       (err) => {
         if (err) {
-          console.error("Error inserting default bank sub accounts:", err);
+          console.error("Error inserting default accounts:", err);
         } else {
-          console.log("Default bank sub accounts inserted.");
+          console.log("Default accounts inserted.");
         }
       }
     );
@@ -458,13 +425,20 @@ const initData = (callback) => {
       VALUES
       ('1', 'Purchase Booking', '1. Posted', 'is_posted', '1'),
       ('2', 'Purchase Booking', '2. VAT Payable', 'is_vat_payable', '1'),
-      ('3', 'Purchase Booking', '3. Include Discount', 'include_discount', '0'),
-      ('4', 'Purchase Booking', '4. Include VAT', 'include_vat', '0'),
+      ('3', 'Purchase Booking', '3. Include Discount', 'include_discount', '1'),
+      ('4', 'Purchase Booking', '4. Include VAT', 'include_vat', '1'),
+
       ('5', 'Purchase Invoice', '1. Posted', 'is_posted', '1'),
-      ('6', 'Purchase Order', '1. Posted', 'is_posted', '1'),
-      ('7', 'Purchase Order', '2. VAT Payable', 'is_vat_payable', '1'),
-      ('8', 'Purchase Order', '3. Include Discount', 'include_discount', '0'),
-      ('9', 'Purchase Order', '4. Include VAT', 'include_vat', '0')
+      ('6', 'Purchase Invoice', '2. VAT Payable', 'is_vat_payable', '1'),
+      ('7', 'Purchase Invoice', '3. Include Discount', 'include_discount', '1'),
+      ('8', 'Purchase Invoice', '4. Include VAT', 'include_vat', '1'),
+
+      ('9', 'Purchase Order', '1. Posted', 'is_posted', '1'),
+      ('10', 'Purchase Order', '2. VAT Payable', 'is_vat_payable', '1'),
+      ('11', 'Purchase Order', '3. Include Discount', 'include_discount', '1'),
+      ('12', 'Purchase Order', '4. Include VAT', 'include_vat', '1'),
+      
+      ('13', 'Products', '1. Cost %', 'cost_price_percent', '10')
     `,
       (err) => {
         if (err) {

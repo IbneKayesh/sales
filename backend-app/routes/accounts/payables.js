@@ -22,6 +22,17 @@ router.get("/", async (req, res) => {
             WHERE pom.order_type in ( 'Booking', 'Order')
             AND pom.due_amount > 0
             AND pom.is_posted = 1
+			UNION ALL
+SELECT '' as payment_id, pom.shop_id, pom.master_id, pom.contact_id, 'Purchase' as source_name,
+    CASE WHEN order_type IN ('Booking') THEN 'Cash In' ELSE 'Cash Out' END AS payment_type,
+    pom.order_type || ' Cancelled' as payment_head, 'Cash' as payment_mode,
+            pom.order_date, pom.due_amount as payment_amount, '' as payment_note, pom.order_no as ref_no, pom.due_amount as due_amount,con.contact_name,pom.payable_amount
+            FROM po_master pom
+            LEFT JOIN contacts con on pom.contact_id = con.contact_id
+            WHERE pom.order_type in ( 'Booking')
+            AND pom.due_amount < 0
+            AND pom.is_posted = 1
+			AND pom.has_cancelled = 1
             ORDER by pom.order_date DESC`;
     const rows = await dbAll(sql, []);
     res.json(rows);

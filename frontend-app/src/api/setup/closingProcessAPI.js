@@ -7,6 +7,11 @@ const closingProcess = {
       method: "POST",
       body: JSON.stringify({ id }),
     }),
+  purchaseBookingCancel: (id) =>
+    apiRequest("/setup/closing-process/purchase-booking-cancel", {
+      method: "POST",
+      body: JSON.stringify({ id }),
+    }),
   purchaseInvoice: (id) =>
     apiRequest("/setup/closing-process/purchase-invoice", {
       method: "POST",
@@ -55,6 +60,8 @@ export const closingProcessAPI = async (id, value) => {
     await closingProcess.updateBalances(value);
   } else if (id === "Purchase Booking") {
     await closingProcess.purchaseBooking(value);
+  } else if (id === "Purchase Booking Cancel") {
+    await closingProcess.purchaseBookingCancel(value);
   } else if (id === "Purchase Invoice") {
     await closingProcess.purchaseInvoice(value);
   } else if (id === "Purchase Order") {

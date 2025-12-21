@@ -30,7 +30,7 @@ export const useContacts = () => {
     { label: "Supplier", value: "Supplier" },
     { label: "Both", value: "Both" },
   ];
-
+  const [internalContactList, setInternalContactList] = useState([]);
   const [contactPaymentList, setContactPaymentList] = useState([]);
   const [supplierList, setSupplierList] = useState([]);
   const [contactCustomerList, setContactCustomerList] = useState([]);
@@ -42,29 +42,22 @@ export const useContacts = () => {
       //console.log("data: " + JSON.stringify(data));
       setContactList(data);
 
-      const paymentData = data.filter((c) => c.contact_type !== "Both");
+      const internalData = data.filter(
+        (c) => !["Supplier", "Customer", "Both"].includes(c.contact_type)
+      );
+      setInternalContactList(internalData);
 
+      const paymentData = data.filter((c) => c.contact_type !== "Both");
       setContactPaymentList(paymentData);
 
-      const supplierData = data.filter(
-        (c) => c.contact_type === "Supplier" || c.contact_type === "Both"
+      const supplierData = data.filter((c) =>
+        ["Supplier", "Both"].includes(c.contact_type)
       );
       setSupplierList(supplierData);
 
-      const customerData = data
-        .filter(
-          (c) => c.contact_type === "Customer" || c.contact_type === "Both"
-        )
-        .map((c) => ({
-          label:
-            c.contact_mobile +
-            " - " +
-            c.contact_name +
-            " - " +
-            c.contact_address,
-          value: c.contact_id,
-        }));
-
+      const customerData = data.filter((c) =>
+        ["Customer", "Both"].includes(c.contact_type)
+      );
       setContactCustomerList(customerData);
 
       if (resetModified) {
@@ -245,5 +238,6 @@ export const useContacts = () => {
     handleSaveContact,
     handleLedger,
     contactsLedger,
+    internalContactList,
   };
 };

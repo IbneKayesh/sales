@@ -1,28 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
-import { usePayments } from "@/hooks/accounts/usePayments";
-import PaymentListComponent from "./PaymentListComponent";
-import PaymentFormComponent from "./PaymentFormComponent";
+import { useLedger } from "@/hooks/accounts/useLedger";
+import LedgerListComponent from "./LedgerListComponent";
+import LedgerFormComponent from "./LedgerFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 
-const PaymentsPage = () => {
+const LedgerPage = () => {
   const toast = useRef(null);
   const {
-    paymentList,
+    ledgerList,
     toastBox,
     isBusy,
     currentView,
     errors,
-    formDataPayment,
+    formData,
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditPayment,
-    handleDeletePayment,
+    handleEditLedger,
+    handleDeleteLedger,
     handleRefresh,
-    handleSavePayment,
-  } = usePayments();
+    handleSaveLedger,
+  } = useLedger();
 
   useEffect(() => {
     if (toastBox && toast.current) {
@@ -42,10 +42,10 @@ const PaymentsPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Payment List"
-            : formDataPayment.payment_id
-              ? "Edit Payment"
-              : "Add New Payment"}
+            ? "Ledger List"
+            : formData.ledger_id
+              ? "Edit Ledger"
+              : "Add New Ledger"}
         </h3>
 
         {isList ? (
@@ -58,7 +58,7 @@ const PaymentsPage = () => {
               onClick={handleRefresh}
             />
             <Button
-              label="New Payment"
+              label="New Ledger"
               icon="pi pi-plus"
               size="small"
               onClick={handleAddNew}
@@ -66,7 +66,7 @@ const PaymentsPage = () => {
           </div>
         ) : (
           <Button
-            label="Payment List"
+            label="Ledger List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -81,18 +81,18 @@ const PaymentsPage = () => {
       <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <PaymentListComponent
-            dataList={paymentList}
-            onEdit={handleEditPayment}
-            onDelete={handleDeletePayment}
+          <LedgerListComponent
+            dataList={ledgerList}
+            onEdit={handleEditLedger}
+            onDelete={handleDeleteLedger}
           />
         ) : (
-          <PaymentFormComponent
+          <LedgerFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={formDataPayment}
+            formData={formData}
             onChange={handleChange}
-            onSave={handleSavePayment}
+            onSave={handleSaveLedger}
           />
         )}
       </Card>
@@ -100,4 +100,4 @@ const PaymentsPage = () => {
   );
 };
 
-export default PaymentsPage;
+export default LedgerPage;

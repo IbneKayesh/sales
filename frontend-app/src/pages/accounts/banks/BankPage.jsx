@@ -2,31 +2,34 @@ import React, { useState, useRef, useEffect } from "react";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import { useBankAccounts } from "@/hooks/accounts/useBankAccounts";
-import BankAccountListComponent from "./BankAccountListComponent";
-import BankAccountFormComponent from "./BankAccountFormComponent";
-import SubAccountComponent from "./SubAccountComponent";
+import { useBanks } from "@/hooks/accounts/useBanks";
+import BankListComponent from "./BankListComponent";
+import BankFormComponent from "./BankFormComponent";
+import AccountComponent from "./AccountComponent";
 
-const BankAccountPage = () => {
+const BankPage = () => {
   const toast = useRef(null);
   const {
-    bankAccountList,
+    bankList,
     toastBox,
     isBusy,
     currentView,
     errors,
-    formDataBankAccount,
+    formDataBank,
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditBankAccount,
-    handleDeleteBankAccount,
+    handleEditBank,
+    handleDeleteBank,
     handleRefresh,
-    handleSaveBankAccount,
-    handleSubAccountList,
-    subAccountList,
-    subAccount,
-  } = useBankAccounts();
+    handleSaveBank,
+    handleAccountList,
+    accountList,
+    fromDataAccount,
+    handleChangeAccount,
+    handleSaveAccount,
+    handleEditAccount,
+  } = useBanks();
 
   useEffect(() => {
     if (toastBox && toast.current) {
@@ -45,12 +48,12 @@ const BankAccountPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {currentView === "list"
-            ? "Bank Account List"
-            : currentView === "subaccount"
-            ? "Sub Account List"
-            : formDataBankAccount.account_id
-            ? "Edit Bank Account"
-            : "Add New Bank Account"}
+            ? " Bank List"
+            : currentView === "account"
+            ? "Account List"
+            : formDataBank.bank_id
+            ? "Edit  Bank"
+            : "Add New  Bank"}
         </h3>
 
         {isList ? (
@@ -63,7 +66,7 @@ const BankAccountPage = () => {
               onClick={handleRefresh}
             />
             <Button
-              label="New Bank Account"
+              label="New Bank"
               icon="pi pi-plus"
               size="small"
               onClick={handleAddNew}
@@ -71,7 +74,7 @@ const BankAccountPage = () => {
           </div>
         ) : (
           <Button
-            label="Bank Account List"
+            label="Bank List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -86,21 +89,29 @@ const BankAccountPage = () => {
       <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <BankAccountListComponent
-            dataList={bankAccountList}
-            onEdit={handleEditBankAccount}
-            onDelete={handleDeleteBankAccount}
-            onSubAccountList={handleSubAccountList}
+          <BankListComponent
+            dataList={bankList}
+            onEdit={handleEditBank}
+            onDelete={handleDeleteBank}
+            onAccountList={handleAccountList}
           />
-        ) : currentView === "subaccount" ? (
-          <SubAccountComponent subAccountList={subAccountList} subAccount={subAccount}/>
-        ) : (
-          <BankAccountFormComponent
+        ) : currentView === "account" ? (
+          <AccountComponent
+            accountList={accountList}
             isBusy={isBusy}
             errors={errors}
-            formData={formDataBankAccount}
+            formData={fromDataAccount}
+            onChange={handleChangeAccount}
+            onSave={handleSaveAccount}
+            onEdit={handleEditAccount}
+          />
+        ) : (
+          <BankFormComponent
+            isBusy={isBusy}
+            errors={errors}
+            formData={formDataBank}
             onChange={handleChange}
-            onSave={handleSaveBankAccount}
+            onSave={handleSaveBank}
           />
         )}
       </Card>
@@ -108,4 +119,4 @@ const BankAccountPage = () => {
   );
 };
 
-export default BankAccountPage;
+export default BankPage;

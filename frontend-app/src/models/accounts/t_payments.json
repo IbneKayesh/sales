@@ -1,27 +1,41 @@
 {
     "payment_id": {
-      "name": "Id",
+      "name": "Payment Id",
       "type": "string",
       "required": false,
       "minLength": 0,
       "maxLength": 36
     },
     "shop_id": {
-      "name": "Shop",
-      "type": "string",
-      "required": true,
-      "minLength": 1,
-      "maxLength": 255
-    },
-    "master_id": {
-      "name": "Order",
+      "name": "Ref No",
       "type": "string",
       "required": true,
       "minLength": 1,
       "maxLength": 50
     },
+    "master_id": {
+      "name": "Master Id",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 50
+    },
     "contact_id": {
-      "name": "Contact",
+      "name": "Contact Id",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "source_name": {
+      "name": "Source Name",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "payment_type": {
+      "name": "Payment Type",
       "type": "string",
       "required": true,
       "minLength": 1,
@@ -32,20 +46,21 @@
       "type": "string",
       "required": true,
       "minLength": 1,
-      "maxLength": 100
+      "maxLength": 50
     },
     "payment_mode": {
       "name": "Payment Mode",
       "type": "string",
       "required": true,
       "minLength": 1,
-      "maxLength": 100
+      "maxLength": 50
     },
     "payment_date": {
       "name": "Payment Date",
       "type": "string",
       "required": true,
-      "format": "date"
+      "minLength": 1,
+      "maxLength": 50
     },
     "payment_amount": {
       "name": "Payment Amount",
@@ -53,11 +68,11 @@
       "required": false
     },
     "payment_note": {
-      "name": "Payment Note",
+      "name": "Note",
       "type": "string",
       "required": false,
       "minLength": 0,
-      "maxLength": 100
+      "maxLength": 50
     },
     "ref_no": {
       "name": "Ref No",

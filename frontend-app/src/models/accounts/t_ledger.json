@@ -6,38 +6,45 @@
       "minLength": 0,
       "maxLength": 36
     },
+    "account_id": {
+      "name": "Account",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 36
+    },
     "contact_id": {
       "name": "Contact",
       "type": "string",
       "required": true,
       "minLength": 1,
-      "maxLength": 50
+      "maxLength": 36
     },
-    "payment_head": {
-      "name": "Payment Head",
-      "type": "string",
-      "required": true,
-      "minLength": 1,
-      "maxLength": 50
-    },
-    "payment_mode": {
-      "name": "Payment Mode",
+    "head_name": {
+      "name": "Head Name",
       "type": "string",
       "required": true,
       "minLength": 1,
       "maxLength": 100
     },
-    "payment_date": {
-      "name": "Payment Date",
+    "ledger_date": {
+      "name": "Date",
       "type": "string",
       "required": true,
       "format": "date"
     },
-    "ref_no": {
-      "name": "Ref No",
+    "ledger_ref": {
+      "name": "Ref",
       "type": "string",
-      "required": true,
-      "minLength": 1,
+      "required": false,
+      "minLength": 0,
+      "maxLength": 100
+    },
+    "ledger_note": {
+      "name": "Note",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
       "maxLength": 100
     },
     "debit_amount": {
@@ -49,12 +56,6 @@
       "name": "Credit Amount",
       "type": "number",
       "required": false
-    },
-    "payment_note": {
-      "name": "Payment Note",
-      "type": "string",
-      "required": false,
-      "minLength": 0,
-      "maxLength": 100
     }
   }
+  

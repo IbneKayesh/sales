@@ -211,7 +211,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
         locale="en-US"
         style={{ width: "120px" }}
         inputStyle={{ width: "100%" }}
-        min={1}
+        min={0}
       />
     );
   };
@@ -222,7 +222,7 @@ const ItemsComponent = ({ pageConfig, formData, formDataList, setFormDataList })
         onValueChange={(e) => options.editorCallback(e.value)}
         style={{ width: "110px" }}
         inputStyle={{ width: "100%" }}
-        min={1}
+        min={0}
       />
     );
   };

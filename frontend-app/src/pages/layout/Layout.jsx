@@ -36,8 +36,8 @@ const Layout = () => {
       name: "Accounts",
       icon: "pi pi-money-bill",
       submenus: [
-        { id: "ac1", name: "Bank Account", url: "/home/accounts/bank-account", icon: "pi pi-building-columns" },
-        { id: "ac2", name: "Account Transactions", url: "/home/accounts/bank-account-transaction", icon: "pi pi-arrow-right-arrow-left" },
+        { id: "ac1", name: "Banks", url: "/home/accounts/banks", icon: "pi pi-building-columns" },
+        { id: "ac2", name: "Ledger", url: "/home/accounts/ledger", icon: "pi pi-arrow-right-arrow-left" },
         { id: "ac3", name: "Payments", url: "/home/accounts/payments", icon: "pi pi-receipt" },
         { id: "ac4", name: "Payables", url: "/home/accounts/payables", icon: "pi pi-money-bill" },
         { id: "ac5", name: "Receivables", url: "/home/accounts/receivables", icon: "pi pi-money-bill" },

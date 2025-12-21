@@ -17,13 +17,12 @@ import UnitPage from "./pages/inventory/units/UnitPage.jsx";
 import CategoryPage from "./pages/inventory/category/CategoryPage.jsx";
 import ProductPage from "./pages/inventory/products/ProductPage.jsx";
 import ContactPage from "./pages/setup/contacts/ContactPage.jsx";
-import PurchasePage from "./pages/purchase/PoReturnPage.jsx";
 import SalesPage from "./pages/sales/SalesPage.jsx";
 import UsersPage from "./pages/setup/users/UsersPage";
 import BackupPage from "./pages/setup/backup/BackupPage";
 import ChangePasswordPage from "./pages/setup/changepassword/ChangePasswordPage";
-import BankAccountPage from "./pages/accounts/bankaccount/BankAccountPage";
-import PaymentsPage from "./pages/accounts/payments/PaymentsPage.jsx";
+import BankPage from "./pages/accounts/banks/BankPage.jsx";
+import LedgerPage from "./pages/accounts/ledger/LedgerPage.jsx";
 import PayablesPage from "./pages/accounts/payables/PayablesPage";
 
 //Purchase Module
@@ -71,9 +70,8 @@ function AppRoutes({ toast }) {
         <Route path="inventory/category" element={<CategoryPage />} />
         <Route path="inventory/product" element={<ProductPage />} />
         <Route path="sales" element={<SalesPage />} />
-        <Route path="purchase" element={<PurchasePage />} />
-        <Route path="accounts/bank-account" element={<BankAccountPage />} />
-        <Route path="accounts/payments" element={<PaymentsPage />} />
+        <Route path="accounts/ledger" element={<LedgerPage />} />
+        <Route path="accounts/banks" element={<BankPage />} />
         <Route path="accounts/payables" element={<PayablesPage />} />
         <Route path="accounts/receivables" element={<Navigate to="/" />} />
         <Route path="setup/contact" element={<ContactPage />} />
