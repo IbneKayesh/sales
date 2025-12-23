@@ -881,4 +881,67 @@ router.post("/payable-due", async (req, res) => {
   }
 });
 
+
+
+
+//accounts-ledger
+router.post("/accounts-ledger", async (req, res) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Transaction ID is required" });
+  }
+
+  const scripts = [];
+
+  scripts.push({
+    label: "1 of 2 :: Update accounts current balance",
+    sql: `WITH cb as (
+            SELECT al.account_id ,sum(al.debit_amount - al.credit_amount) as current_balance
+            FROM accounts_ledger al
+            GROUP by al.account_id
+            )
+            UPDATE accounts
+            SET current_balance = (
+            SELECT current_balance
+            FROM cb
+            WHERE cb.account_id = accounts.account_id
+            )
+            WHERE accounts.account_id in (
+            SELECT account_id FROM cb
+            )`,
+    params: [],
+  });
+
+  scripts.push({
+    label: "2 of 2 :: Update bank current balance",
+    sql: `WITH cb as (
+          SELECT bank_id, sum(current_balance) as current_balance
+          FROM accounts
+          GROUP by bank_id
+          )
+          UPDATE banks
+          SET current_balance = (
+          SELECT current_balance from cb WHERE cb.bank_id = banks.bank_id
+          )
+          WHERE bank_id in (
+          SELECT bank_id FROM cb
+          )`,
+    params: [],
+  });
+
+  try {
+    const results = await runScriptsSequentially(scripts, {
+      useTransaction: false,
+    });
+    res.status(201).json({
+      message: "Data processed successfully!",
+      result: results,
+    });
+  } catch (error) {
+    console.error("Error processing data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;

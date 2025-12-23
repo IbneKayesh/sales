@@ -48,7 +48,8 @@ const usePobooking = () => {
   const [formData, setFormData] = useState(formDataModel);
   const [formDataList, setFormDataList] = useState([]);
   const [formDataPaymentList, setFormDataPaymentList] = useState([]);
-  const [handleDelete, setHandleDelete] = useState(() => { });
+  const [handleDelete, setHandleDelete] = useState(() => {});
+  const [showSearchBox, setShowSearchBox] = useState(false);
 
   const loadBookingList = async (reloadDataSet = false) => {
     try {
@@ -159,8 +160,8 @@ const usePobooking = () => {
         Number(formData.payable_amount) === Number(formData.due_amount)
           ? "Unpaid"
           : Number(formData.due_amount) === 0
-            ? "Paid"
-            : "Partial";
+          ? "Paid"
+          : "Partial";
 
       const formDataNew = {
         ...formData,
@@ -187,7 +188,6 @@ const usePobooking = () => {
 
       //call update process
       await closingProcessAPI("Purchase Booking", formData.order_no);
-
 
       handleCancel();
       loadBookingList();
@@ -216,7 +216,6 @@ const usePobooking = () => {
       });
     }
   };
-
 
   const fetchPayments = async (master_id) => {
     try {
@@ -284,7 +283,9 @@ const usePobooking = () => {
     handleEdit,
     handleDelete,
     handleSave,
-    handleCancelBooking
+    handleCancelBooking,
+    showSearchBox,
+    setShowSearchBox,
   };
 };
 

@@ -114,26 +114,17 @@ export const useLedger = () => {
       // At least one of debit_amount or credit_amount must be greater than 0
       let customErrors = {};
 
-      if (
-        formData.debit_amount > 0 &&
-        formData.credit_amount !== 0
-      ) {
+      if (formData.debit_amount > 0 && formData.credit_amount !== 0) {
         customErrors.debit_amount = "Credit must be 0 when debit is entered.";
         customErrors.credit_amount = "Credit must be 0 when debit is entered.";
       }
 
-      if (
-        formData.credit_amount > 0 &&
-        formData.debit_amount !== 0
-      ) {
+      if (formData.credit_amount > 0 && formData.debit_amount !== 0) {
         customErrors.debit_amount = "Debit must be 0 when credit is entered.";
         customErrors.credit_amount = "Debit must be 0 when credit is entered.";
       }
 
-      if (
-        formData.debit_amount <= 0 &&
-        formData.credit_amount <= 0
-      ) {
+      if (formData.debit_amount <= 0 && formData.credit_amount <= 0) {
         customErrors.debit_amount = "Enter either a debit or credit amount.";
         customErrors.credit_amount = "Enter either a debit or credit amount.";
       }
@@ -148,9 +139,7 @@ export const useLedger = () => {
 
       const formDataNew = {
         ...formData,
-        ledger_id: formData.ledger_id
-          ? formData.ledger_id
-          : generateGuid(),
+        ledger_id: formData.ledger_id ? formData.ledger_id : generateGuid(),
       };
 
       if (formData.ledger_id) {
@@ -171,6 +160,10 @@ export const useLedger = () => {
       loadLedgers();
       handleClear();
       setCurrentView("list");
+
+      //call update process
+      await closingProcessAPI("Account Ledger", "Ledger No");
+      
     } catch (error) {
       console.error("Error saving data:", error);
       setToastBox({

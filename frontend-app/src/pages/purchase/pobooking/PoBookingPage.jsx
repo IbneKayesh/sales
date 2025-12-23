@@ -4,7 +4,8 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import OrderListComponent from "./OrderListComponent";
 import OrderEntryComponent from "./OrderEntryComponent";
-import  usePobooking  from "@/hooks/purchase/usePobooking";
+import usePobooking from "@/hooks/purchase/usePobooking";
+import SearchBoxComponent from "./SearchBoxComponent";
 
 const PoBookingPage = () => {
   const toast = useRef(null);
@@ -29,6 +30,8 @@ const PoBookingPage = () => {
     handleDelete,
     handleSave,
     handleCancelBooking,
+    showSearchBox,
+    setShowSearchBox,
   } = usePobooking();
 
   useEffect(() => {
@@ -47,12 +50,20 @@ const PoBookingPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">Booking</h3>
         {currentView === "list" ? (
-          <Button
-            label="New Booking"
-            icon="pi pi-plus"
-            size="small"
-            onClick={handleAddNew}
-          />
+          <div className="flex align-items-center gap-2">
+            <Button
+              label=""
+              icon="pi pi-search"
+              size="small"
+              onClick={() => setShowSearchBox(true)}
+            />
+            <Button
+              label="New Booking"
+              icon="pi pi-plus"
+              size="small"
+              onClick={handleAddNew}
+            />
+          </div>
         ) : (
           <Button
             label="Booking List"
@@ -68,6 +79,10 @@ const PoBookingPage = () => {
   return (
     <>
       <Toast ref={toast} />
+      <SearchBoxComponent
+        showSearchBox={showSearchBox}
+        setShowSearchBox={setShowSearchBox}
+      />
       <Card header={getHeader()} className="border-round p-3">
         {currentView === "list" ? (
           <OrderListComponent

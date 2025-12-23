@@ -12,11 +12,12 @@ const {
 //get all ledger
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT al.*, act.account_name, con.contact_name, 0 as edit_stop
+    const sql = `SELECT al.*, act.account_name, ach.head_name ,con.contact_name, 0 as edit_stop
         FROM accounts_ledger al
         LEFT JOIN accounts act ON al.account_id = act.account_id
+        LEFT JOIN accounts_heads ach on al.head_id = ach.head_id
         LEFT JOIN contacts con ON al.contact_id = con.contact_id
-        ORDER BY al.ledger_date DESC`;
+        ORDER BY al.created_at DESC`;
     const rows = await dbAll(sql, []);
     res.json(rows);
   } catch (error) {
@@ -31,11 +32,12 @@ router.post("/", async (req, res) => {
     const {
       ledger_id,
       account_id,
+      head_id,
       contact_id,
-      head_name,
       ledger_date,
       ledger_ref,
       ledger_note,
+      payment_mode,
       debit_amount,
       credit_amount,
     } = req.body;
@@ -52,28 +54,33 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Contact ID is required" });
     }
 
-    if (!head_name) {
-      return res.status(400).json({ error: "Head name is required" });
+    if (!head_id) {
+      return res.status(400).json({ error: "Head ID is required" });
     }
 
     if (!ledger_date) {
       return res.status(400).json({ error: "Ledger date is required" });
     }
 
-    const sql = `INSERT INTO accounts_ledger (ledger_id, account_id, contact_id, head_name, ledger_date, ledger_ref, ledger_note, debit_amount, credit_amount)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    if (!payment_mode) {
+      return res.status(400).json({ error: "Payment mode is required" });
+    }
+
+    const sql = `INSERT INTO accounts_ledger (ledger_id,account_id,head_id,contact_id,ledger_date,ledger_ref,ledger_note,payment_mode,debit_amount,credit_amount)
+      VALUES (?,?,?,?,?,?,?,?,?,?)`;
     const params = [
       ledger_id,
       account_id,
+      head_id,
       contact_id,
-      head_name,
       ledger_date,
       ledger_ref,
       ledger_note,
+      payment_mode,
       debit_amount,
       credit_amount,
     ];
-    await dbRun(sql, params, `Created  ledger ${ledger_id}`);
+    await dbRun(sql, params, `Created ledger ${ledger_id}`);
     res.status(201).json({ ledger_id, ...req.body });
   } catch (error) {
     console.error("Database error:", error);
@@ -84,15 +91,16 @@ router.post("/", async (req, res) => {
 router.post("/update", async (req, res) => {
   try {
     const {
-      ledger_id,
       account_id,
+      head_id,
       contact_id,
-      head_name,
       ledger_date,
       ledger_ref,
       ledger_note,
+      payment_mode,
       debit_amount,
       credit_amount,
+      ledger_id,
     } = req.body;
 
     if (!ledger_id) {
@@ -107,33 +115,39 @@ router.post("/update", async (req, res) => {
       return res.status(400).json({ error: "Contact ID is required" });
     }
 
-    if (!head_name) {
-      return res.status(400).json({ error: "Head name is required" });
+    if (!head_id) {
+      return res.status(400).json({ error: "Head ID is required" });
     }
 
     if (!ledger_date) {
       return res.status(400).json({ error: "Ledger date is required" });
     }
 
+    if (!payment_mode) {
+      return res.status(400).json({ error: "Payment mode is required" });
+    }
+
     const sql = `UPDATE accounts_ledger
-    SET head_name = ?,
+    SET head_id = ?,
     ledger_date = ?,
     ledger_ref = ?,
     ledger_note = ?,
+    payment_mode = ?,
     debit_amount = ?,
     credit_amount = ?,
     updated_at = CURRENT_TIMESTAMP
     WHERE ledger_id = ?`;
     const params = [
-      head_name,
+      head_id,
       ledger_date,
       ledger_ref,
       ledger_note,
+      payment_mode,
       debit_amount,
       credit_amount,
       ledger_id,
     ];
-    const result = await dbRun(sql, params, `Updated  ledger ${ledger_id}`);
+    const result = await dbRun(sql, params, `Updated ledger ${ledger_id}`);
     if (result.changes === 0) {
       return res.status(404).json({ error: "Ledger not found" });
     }

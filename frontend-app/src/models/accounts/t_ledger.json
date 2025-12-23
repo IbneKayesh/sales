@@ -20,7 +20,7 @@
       "minLength": 1,
       "maxLength": 36
     },
-    "head_name": {
+    "head_id": {
       "name": "Head Name",
       "type": "string",
       "required": true,

@@ -1,74 +1,5 @@
 // Sample data from the user, grouped based on comments
 const transOptions = [
-  // Income
-  { label: "Sales (+)", value: "Sales", trans_head: "Income" },
-  { label: "Other Income (+)", value: "Other Income", trans_head: "Income" },
-  {
-    label: "Commission Received (+)",
-    value: "Commission Received",
-    trans_head: "Income",
-  },
-  {
-    label: "Discount Received (+)",
-    value: "Discount Received",
-    trans_head: "Income",
-  },
-
-  // Purchases & Stock
-  {
-    label: "Purchase Booking (-)",
-    value: "Purchase Booking",
-    trans_head: "Purchases and Stock",
-  },
-  {
-    label: "Purchase Receive (+)",
-    value: "Purchase Receive",
-    trans_head: "Purchases and Stock",
-  },
-  {
-    label: "Purchase Order (-)",
-    value: "Purchase Order",
-    trans_head: "Purchases and Stock",
-  },
-  {
-    label: "Purchase Return (+)",
-    value: "Purchase Return",
-    trans_head: "Purchases and Stock",
-  },
-  {
-    label: "Stock Adjustment (+/-)",
-    value: "Stock Adjustment",
-    trans_head: "Purchases and Stock",
-  },
-
-  // Expenses
-  { label: "Expenses (-)", value: "Expenses", trans_head: "Expenses" },
-  { label: "Purchase Expenses (-)", value: "Purchase Expenses", trans_head: "Expenses" },
-  { label: "Salary (-)", value: "Salary", trans_head: "Expenses" },
-  { label: "Rent (-)", value: "Rent", trans_head: "Expenses" },
-  {
-    label: "Electricity Bill (-)",
-    value: "Electricity Bill",
-    trans_head: "Expenses",
-  },
-  {
-    label: "Internet Bill (-)",
-    value: "Internet Bill",
-    trans_head: "Expenses",
-  },
-  {
-    label: "Transport / Delivery (-)",
-    value: "Transport",
-    trans_head: "Expenses",
-  },
-  { label: "Bank Charges (-)", value: "Bank Charges", trans_head: "Expenses" },
-  {
-    label: "GST / Tax Payment (-)",
-    value: "Tax Payment",
-    trans_head: "Expenses",
-  },
-  { label: "Maintenance (-)", value: "Maintenance", trans_head: "Expenses" },
-
   // Cash & Bank
   { label: "Cash In (+)", value: "Cash In", trans_head: "Cash and Bank" },
   { label: "Cash Out (-)", value: "Cash Out", trans_head: "Cash and Bank" },
@@ -93,27 +24,7 @@ const transOptions = [
   { label: "Supplier Due (-)", value: "Supplier Due", trans_head: "Dues" },
   { label: "Supplier Due Paid (-)", value: "Due Paid", trans_head: "Dues" },
 
-  // Assets & Liabilities
-  {
-    label: "Asset Purchase (-)",
-    value: "Asset Purchase",
-    trans_head: "Assets and Liabilities",
-  },
-  {
-    label: "Asset Sale (+)",
-    value: "Asset Sale",
-    trans_head: "Assets and Liabilities",
-  },
-  {
-    label: "Loan Taken (+)",
-    value: "Loan Taken",
-    trans_head: "Assets and Liabilities",
-  },
-  {
-    label: "Loan Repayment (-)",
-    value: "Loan Repayment",
-    trans_head: "Assets and Liabilities",
-  },
+
 ];
 
 // Transform transOptions into a list of objects with id, name, and trans_head
@@ -133,20 +44,19 @@ function getTransHeadList() {
   return [...new Set(heads)];
 }
 
-
-
-
-
 const paymentModeOptions = [
-    { label: "Cash", value: "Cash" },
-    { label: "Bank", value: "Bank" },
-    { label: "MFS", value: "MFS" },
+  { label: "Cash", value: "Cash" },
+  { label: "Bank", value: "Bank" },
+  { label: "MFS", value: "MFS" },
+  { label: "Refund", value: "Refund" },
 ];
 
-
-export { getListByTransHead, getTransHeadList, defaultList, paymentModeOptions };
-
-
+export {
+  getListByTransHead,
+  getTransHeadList,
+  defaultList,
+  paymentModeOptions,
+};
 
 /*
 Module :: Purchase
@@ -166,4 +76,3 @@ cost_amount :: Account Credit
 
 */
 //Purchases and Stock
-

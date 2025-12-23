@@ -4,7 +4,12 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { Badge } from "primereact/badge";
 
-const OrderListComponent = ({ dataList, onEdit, onDelete, onCancelBooking }) => {
+const OrderListComponent = ({
+  dataList,
+  onEdit,
+  onDelete,
+  onCancelBooking,
+}) => {
   const payable_amount_BT = (rowData) => {
     return (
       <span>
@@ -47,10 +52,14 @@ const OrderListComponent = ({ dataList, onEdit, onDelete, onCancelBooking }) => 
         )}
         {rowData.vat_collected ? (
           <Badge value="VAT Collected" severity="info"></Badge>
-        ) : ''}
+        ) : (
+          ""
+        )}
         {rowData.has_cancelled ? (
           <Badge value="Cancelled" severity="info"></Badge>
-        ) : ''}
+        ) : (
+          ""
+        )}
       </>
     );
   };

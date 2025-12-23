@@ -24,7 +24,6 @@ const banksTables = banks_tables();
 
 // Initialize tables
 const initTables = () => {
-
   Object.values(purchaseTables).forEach((sql) => {
     db.exec(sql, (err) => {
       if (err) {
@@ -50,7 +49,6 @@ const initTables = () => {
   });
 
   db.serialize(() => {
-
     db.run(`
       CREATE TABLE IF NOT EXISTS settings (
         setting_id TEXT PRIMARY KEY,
@@ -62,8 +60,8 @@ const initTables = () => {
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
-    
-  // users :: Authentication table
+
+    // users :: Authentication table
     db.run(`
       CREATE TABLE IF NOT EXISTS users (
         user_id TEXT PRIMARY KEY,
@@ -142,19 +140,6 @@ const initTables = () => {
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
-
-    // accounts :: transaction types table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS accounts_heads (
-        head_id TEXT PRIMARY KEY,
-        head_name TEXT NOT NULL,
-        from_account TEXT DEFAULT 'Customer',
-        to_account TEXT DEFAULT 'Customer',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
 
     // accounts :: Payments table
     db.run(`
@@ -346,10 +331,7 @@ const initData = (callback) => {
       INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type,
       credit_limit, payable_balance, advance_balance, current_balance)
       VALUES
-      ('cash', 'Cash A/C', '0', '0', 'for internal transaction', 'Cash', 0, 0, 0, 0),
-      ('expense', 'Expense A/C', '0', '0', 'for internal transaction', 'Expense', 0, 0, 0, 0),
-      ('income', 'Income A/C', '0', '0', 'for internal transaction', 'Income', 0, 0, 0, 0),
-      ('inventory', 'Inventory A/C', '0', '0', 'for internal transaction', 'Inventory', 0, 0, 0, 0),
+      ('internal', 'Internal A/C', '0', '0', 'for internal transaction', 'Internal', 0, 0, 0, 0),
       ('both', 'Unknown Supplier and Purchaser A/C', '0', '0', 'default for purchase and sale transaction', 'Both', 0, 0, 0, 0),
       ('1', 'Supplier 1', '1234567890', 'supplier1@example.com', '123 Main St', 'Supplier',  5000000, 0, 0, 0),
       ('2', 'Supplier 2', '0987654321', 'supplier2@example.com', '456 Elm St', 'Supplier',  5000000, 0, 0, 0),
@@ -381,7 +363,6 @@ const initData = (callback) => {
       }
     );
 
-    
     //accounts :: Accounts table :: insert default data
     db.run(
       `
@@ -442,10 +423,7 @@ const initData = (callback) => {
     `,
       (err) => {
         if (err) {
-          console.error(
-            "Error inserting default settings:",
-            err
-          );
+          console.error("Error inserting default settings:", err);
         } else {
           console.log("Default settings inserted.");
         }
@@ -461,16 +439,79 @@ const initData = (callback) => {
     `,
       (err) => {
         if (err) {
-          console.error(
-            "Error inserting default vat master:",
-            err
-          );
+          console.error("Error inserting default vat master:", err);
         } else {
           console.log("Default vat master inserted.");
         }
       }
     );
 
+    //accounts :: insert default data
+    db.run(
+      `
+      INSERT OR IGNORE INTO accounts_heads (head_id, head_name, group_name, group_type ,contact_type)
+      VALUES
+      ('Z101', 'Sales Booking (+)', 'Sales', 'In', 'Customer'),
+      ('Z102', 'Sales Invoice (-)', 'Sales', 'Out', 'Customer'),
+      ('Z103', 'Sales Order (+)', 'Sales', 'In', 'Customer'),
+      ('Z104', 'Sales Return (-)', 'Sales', 'Out', 'Customer'),
+      ('Z105', 'Sales Customer Expense (+)', 'Sales', 'In', 'Customer'),
+      ('Z106', 'Sales Expense (-)', 'Sales', 'Out', 'Internal'),
+      ('Z107', 'Sales Discount (-)', 'Sales', 'Out', 'Internal'),
+      ('Z108', 'Sales VAT (+)', 'Sales', 'Out', 'Internal'),
+
+
+      ('Z201', 'Purchase Booking (-)', 'Purchases', 'Out', 'Supplier'),
+      ('Z202', 'Purchase Invoice (+)', 'Purchases', 'In', 'Supplier'),
+      ('Z203', 'Purchase Order (-)', 'Purchases', 'Out', 'Supplier'),
+      ('Z204', 'Purchase Return (+)', 'Purchases', 'In', 'Supplier'),
+      ('Z205', 'Purchase Purchase Expense (-)', 'Purchases', 'Out', 'Supplier'),
+      ('Z206', 'Purchase Expense (-)', 'Purchases', 'Out', 'Internal'),
+      ('Z207', 'Purchase Discount (+)', 'Purchases', 'In', 'Internal'),
+      ('Z208', 'Purchase VAT (+)', 'Purchases', 'Out', 'Internal'),
+
+
+      ('Z301', 'Stock Out (-)', 'Inventory', 'Out', 'Internal'),
+      ('Z302', 'Stock In (+)', 'Inventory', 'In', 'Internal'),
+
+
+      ('Z401', 'Gain (+)', 'Income', 'In', 'Internal'),
+      ('Z402', 'Salary Deduction (+)', 'Income', 'In', 'Internal'),
+      ('Z403', 'Rent Advance Received (+)', 'Income', 'In', 'Internal'),
+      ('Z404', 'Rent Adjustment (+)', 'Income', 'In', 'Internal'),
+      ('Z405', 'Bank Profit (+)', 'Income', 'In', 'Internal'),
+      ('Z406', 'Loan Taken (+)', 'Income', 'In', 'Internal'),
+      ('Z407', 'Asset Sale (+)', 'Assets', 'In', 'Internal'),
+      ('Z408', 'Other Income (+)', 'Income', 'In', 'Customer'),
+
+
+      ('Z501', 'Loss (-)', 'Expense', 'Out', 'Internal'),
+      ('Z502', 'Salary Payment (-)', 'Expense', 'Out', 'Internal'),
+      ('Z503', 'Rent Advance Payment (-)', 'Expense', 'Out', 'Internal'),
+      ('Z504', 'Rent Payment (-)', 'Expense', 'Out', 'Internal'),
+      ('Z505', 'Electricity Bill (-)', 'Expense', 'Out', 'Internal'),
+      ('Z506', 'Internet Bill (-)', 'Expense', 'Out', 'Internal'),
+      ('Z507', 'Transport Payment (-)', 'Expense', 'Out', 'Internal'),
+      ('Z508', 'Bank Charges (-)', 'Expense', 'Out', 'Internal'),
+      ('Z509', 'Tax Payment (-)', 'Expense', 'Out', 'Internal'),
+      ('Z510', 'Maintenance Payment (-)', 'Expense', 'Out', 'Internal'),
+      ('Z511', 'Loan Payment (-)', 'Expense', 'Out', 'Internal'),
+      ('Z512', 'Asset Purchase (-)', 'Assets', 'Out', 'Internal'),
+      ('Z513', 'Other Expense (-)', 'Expense', 'Out', 'Internal'),
+
+      
+      ('Z601', 'Transfer Out (-)', 'Transfer', 'Out', 'Internal'),
+      ('Z602', 'Transfer In (+)', 'Transfer', 'In', 'Internal')
+      
+    `,
+      (err) => {
+        if (err) {
+          console.error("Error inserting default accounts heads:", err);
+        } else {
+          console.log("Default accounts heads inserted.");
+        }
+      }
+    );
   });
 };
 

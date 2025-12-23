@@ -11,7 +11,7 @@ const banks_tables = () => ({
     )
     `,
 
-    accounts: `
+  accounts: `
     CREATE TABLE IF NOT EXISTS accounts (
         account_id TEXT PRIMARY KEY,
         bank_id TEXT NOT NULL,
@@ -26,16 +26,28 @@ const banks_tables = () => ({
         FOREIGN KEY (bank_id) REFERENCES banks (bank_id) ON DELETE RESTRICT
     )
     `,
+  accounts_heads: `
+    CREATE TABLE IF NOT EXISTS accounts_heads (
+        head_id TEXT PRIMARY KEY,
+        head_name TEXT NOT NULL,
+        group_name TEXT NOT NULL,
+        group_type TEXT NOT NULL,
+        contact_type TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    `,
 
-    accounts_ledger: `
+  accounts_ledger: `
     CREATE TABLE IF NOT EXISTS accounts_ledger (
         ledger_id TEXT PRIMARY KEY,
         account_id TEXT NOT NULL,
+        head_id TEXT NOT NULL,
         contact_id TEXT NOT NULL,
-        head_name TEXT NOT NULL,
         ledger_date TEXT NOT NULL,
         ledger_ref TEXT,
         ledger_note TEXT,
+        payment_mode TEXT NOT NULL,
         debit_amount REAL DEFAULT 0,
         credit_amount REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -43,7 +55,7 @@ const banks_tables = () => ({
         FOREIGN KEY (account_id) REFERENCES accounts (account_id) ON DELETE RESTRICT,
         FOREIGN KEY (contact_id) REFERENCES contacts (contact_id) ON DELETE RESTRICT
     )
-    `
+    `,
 });
 
 module.exports = banks_tables;

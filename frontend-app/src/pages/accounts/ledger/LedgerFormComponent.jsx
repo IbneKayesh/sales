@@ -9,6 +9,7 @@ import { Column } from "primereact/column";
 import { useBanks } from "@/hooks/accounts/useBanks";
 import { paymentModeOptions } from "@/utils/vtable";
 import { useContacts } from "@/hooks/setup/useContacts";
+import { useAccountsHeads } from "@/hooks/accounts/useAccountsHeads";
 
 const LedgerFormComponent = ({
   isBusy,
@@ -17,6 +18,7 @@ const LedgerFormComponent = ({
   onChange,
   onSave,
 }) => {
+  const { accountsHeadsList } = useAccountsHeads();
   const { accountList, fetchAllAccountList } = useBanks();
   const { internalContactList } = useContacts();
 
@@ -34,7 +36,7 @@ const LedgerFormComponent = ({
   return (
     <>
       <div className="grid">
-        <div className="col-12 md:col-4">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="account_id"
             className="block text-900 font-medium mb-2"
@@ -59,6 +61,30 @@ const LedgerFormComponent = ({
           />
           {errors.account_id && (
             <small className="mb-3 text-red-500">{errors.account_id}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-3">
+          <label htmlFor="head_id" className="block text-900 font-medium mb-2">
+            Head Name
+            <span className="text-red-500">*</span>
+          </label>
+          <Dropdown
+            name="head_id"
+            value={formData.head_id}
+            options={accountsHeadsList.map((head) => ({
+              label: head.head_name + " - " + head.group_name + " - " + head.group_type,
+              value: head.head_id,
+            }))}
+            optionLabel="label"
+            optionValue="value"
+            onChange={(e) => onChange("head_id", e.value)}
+            className={`w-full ${errors.head_id ? "p-invalid" : ""}`}
+            placeholder={`Select Head Name`}
+            filter
+            showClear
+          />
+          {errors.head_id && (
+            <small className="mb-3 text-red-500">{errors.head_id}</small>
           )}
         </div>
         <div className="col-12 md:col-4">
@@ -90,30 +116,6 @@ const LedgerFormComponent = ({
         </div>
         <div className="col-12 md:col-2">
           <label
-            htmlFor="head_name"
-            className="block text-900 font-medium mb-2"
-          >
-            Head Name
-            <span className="text-red-500">*</span>
-          </label>
-          <Dropdown
-            name="head_name"
-            value={formData.head_name}
-            options={headNameOptions}
-            optionLabel="label"
-            optionValue="value"
-            onChange={(e) => onChange("head_name", e.value)}
-            className={`w-full ${errors.head_name ? "p-invalid" : ""}`}
-            placeholder={`Select Head Name`}
-            filter
-            showClear
-          />
-          {errors.head_name && (
-            <small className="mb-3 text-red-500">{errors.head_name}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label
             htmlFor="ledger_date"
             className="block text-900 font-medium mb-2"
           >
@@ -136,6 +138,7 @@ const LedgerFormComponent = ({
             <small className="mb-3 text-red-500">{errors.ledger_date}</small>
           )}
         </div>
+
         <div className="col-12 md:col-3">
           <label
             htmlFor="ledger_ref"
@@ -170,6 +173,30 @@ const LedgerFormComponent = ({
           />
           {errors.ledger_note && (
             <small className="mb-3 text-red-500">{errors.ledger_note}</small>
+          )}
+        </div>
+        <div className="col-12 md:col-2">
+          <label
+            htmlFor="payment_mode"
+            className="block text-900 font-medium mb-2"
+          >
+            Payment Mode
+            <span className="text-red-500">*</span>
+          </label>
+          <Dropdown
+            name="payment_mode"
+            value={formData.payment_mode}
+            options={paymentModeOptions}
+            optionLabel="label"
+            optionValue="value"
+            onChange={(e) => onChange("payment_mode", e.value)}
+            className={`w-full ${errors.payment_mode ? "p-invalid" : ""}`}
+            placeholder={`Select Payment Mode`}
+            filter
+            showClear
+          />
+          {errors.payment_mode && (
+            <small className="mb-3 text-red-500">{errors.payment_mode}</small>
           )}
         </div>
         <div className="col-12 md:col-2">

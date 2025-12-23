@@ -8,15 +8,20 @@ const authRoutes = require('./routes/auth');
 const unitRoutes = require('./routes/inventory/units.js');
 const categoryRoutes = require('./routes/inventory/categories.js');
 const productRoutes = require('./routes/inventory/products.js');
-const banksRoutes = require('./routes/accounts/banks.js');
-const ledgerRoutes = require('./routes/accounts/ledger.js');
-const payablesRoutes = require('./routes/accounts/payables.js');
 const salesRoutes = require('./routes/sales/sales.js');
 const backupRoutes = require('./routes/setup/backup.js');
 const contactRoutes = require('./routes/setup/contacts.js');
 const usersRoutes = require('./routes/setup/users.js');
 const closingProcessRoutes = require('./routes/setup/closingProcess.js');
 const configsRoutes = require('./routes/setup/configs.js');
+
+//account modules
+const banksRoutes = require('./routes/accounts/banks.js');
+const ledgerRoutes = require('./routes/accounts/ledger.js');
+const payablesRoutes = require('./routes/accounts/payables.js');
+const accountsHeadsRoutes = require('./routes/accounts/accountsHeads.js');
+
+
 
 //purchase modules
 const pobookingRoutes = require('./routes/purchase/pobooking.js');
@@ -63,13 +68,19 @@ app.use('/api/inventory/products', productRoutes);
 app.use('/api/setup/contacts', contactRoutes);
 app.use('/api/setup/closing-process', closingProcessRoutes);
 //app.use('/api/purchase/orders', purchaseRoutes);
-app.use('/api/accounts/banks', banksRoutes);
-app.use('/api/accounts/ledger', ledgerRoutes);
-app.use('/api/accounts/payables', payablesRoutes);
+
+
 app.use('/api/sales/orders', salesRoutes);
 app.use('/api/setup/users', usersRoutes);
 app.use('/api/setup', backupRoutes);
 app.use('/api/setup/configs', configsRoutes);
+
+
+//accounts modules
+app.use('/api/accounts/banks', banksRoutes);
+app.use('/api/accounts/ledger', ledgerRoutes);
+app.use('/api/accounts/payables', payablesRoutes);
+app.use('/api/accounts/accounts-heads', accountsHeadsRoutes);
 
 
 //purchase modules

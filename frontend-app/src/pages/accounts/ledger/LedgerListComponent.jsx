@@ -7,7 +7,7 @@ import { SplitButton } from "primereact/splitbutton";
 const LedgerListComponent = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.ledger_ref}"?`,
+      message: `Are you sure you want to delete "${rowData.contact_name}, ${rowData.ledger_ref}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -67,11 +67,12 @@ const LedgerListComponent = ({ dataList, onEdit, onDelete }) => {
         size="small"
       >
         <Column field="account_name" header="Account" sortable />
-        <Column field="contact_name" header="Contact" sortable />
         <Column field="head_name" header="Head" sortable />
+        <Column field="contact_name" header="Contact" sortable />
         <Column field="ledger_date" header="Date" sortable />
         <Column field="ledger_ref" header="Ref" sortable />
         <Column field="ledger_note" header="Note" sortable />
+        <Column field="payment_mode" header="Mode" sortable />
         <Column field="debit_amount" header="Debit" sortable />
         <Column field="credit_amount" header="Credit" sortable />
         <Column header="#" body={action_BT} style={{ width: "120px" }} />
