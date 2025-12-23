@@ -350,9 +350,9 @@ const initData = (callback) => {
     //accounts :: Bank table :: insert default data
     db.run(
       `
-      INSERT OR IGNORE INTO banks (bank_id, bank_name, branch_name, swift_code, current_balance)
+      INSERT OR IGNORE INTO banks (bank_id, bank_name, branch_name, routing_no, current_balance)
       VALUES
-      ('1', 'Cash', 'Cash', 'CASH', 0)
+      ('1', 'Cash', 'Cash', 'R1234', 0)
     `,
       (err) => {
         if (err) {

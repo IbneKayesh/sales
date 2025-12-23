@@ -14,7 +14,7 @@ const SearchBoxComponent = ({ showSearchBox, setShowSearchBox }) => {
     const { name, value } = e.target;
     setSearchBoxData({ ...searchBoxData, [name]: value });
   };
-  const handleClickSearch = () => {
+  const handleClickFind = () => {
     console.log(searchBoxData);
   };
 
@@ -75,16 +75,16 @@ const SearchBoxComponent = ({ showSearchBox, setShowSearchBox }) => {
       </div>
       <div className="flex justify-content-end gap-2 mt-2">
         <Button
-          label="Cancel"
+          label="Close"
           icon="pi pi-times"
           severity="danger"
           onClick={() => setShowSearchBox(false)}
         />
         <Button
-          label="Search"
+          label="Find"
           icon="pi pi-search"
           severity="success"
-          onClick={() => handleClickSearch()}
+          onClick={() => handleClickFind()}
         />
       </div>
     </Dialog>

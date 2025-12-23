@@ -4,6 +4,7 @@ import { apiRequest } from "@/utils/api.js";
 export const contactAPI = {
 getAll: () => apiRequest('/setup/contacts'),
 getById: (id) => apiRequest(`/setup/contacts/${id}`),
+getByType: (type) => apiRequest(`/setup/contacts/by-type/${type}`),
 create: (contact) => apiRequest('/setup/contacts', {
     method: 'POST',
     body: JSON.stringify(contact),

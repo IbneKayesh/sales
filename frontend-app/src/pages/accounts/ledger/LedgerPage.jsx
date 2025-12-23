@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useLedger } from "@/hooks/accounts/useLedger";
 import LedgerListComponent from "./LedgerListComponent";
 import LedgerFormComponent from "./LedgerFormComponent";
+import TransferFormComponent from "./TransferFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
@@ -22,7 +23,11 @@ const LedgerPage = () => {
     handleDeleteLedger,
     handleRefresh,
     handleSaveLedger,
+    selectedHead,
     setSelectedHead,
+    //transfer
+    handleAddNewTransfer,
+    handleSaveTransfer,
   } = useLedger();
 
   useEffect(() => {
@@ -64,6 +69,12 @@ const LedgerPage = () => {
               size="small"
               onClick={handleAddNew}
             />
+            <Button
+              label="New Transfer"
+              icon="pi pi-send"
+              size="small"
+              onClick={handleAddNewTransfer}
+            />
           </div>
         ) : (
           <Button
@@ -87,6 +98,14 @@ const LedgerPage = () => {
             onEdit={handleEditLedger}
             onDelete={handleDeleteLedger}
           />
+        ) : currentView === "transfer" ? (
+          <TransferFormComponent
+            isBusy={isBusy}
+            errors={errors}
+            formData={formData}
+            onChange={handleChange}
+            onSave={handleSaveTransfer}
+          />
         ) : (
           <LedgerFormComponent
             isBusy={isBusy}
@@ -94,6 +113,7 @@ const LedgerPage = () => {
             formData={formData}
             onChange={handleChange}
             onSave={handleSaveLedger}
+            selectedHead={selectedHead}
             setSelectedHead={setSelectedHead}
           />
         )}

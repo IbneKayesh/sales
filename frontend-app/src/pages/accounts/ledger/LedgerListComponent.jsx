@@ -73,9 +73,9 @@ const LedgerListComponent = ({ dataList, onEdit, onDelete }) => {
         <Column field="ledger_ref" header="Ref" sortable />
         <Column field="ledger_note" header="Note" sortable />
         <Column field="payment_mode" header="Mode" sortable />
-        <Column field="debit_amount" header="Debit" sortable />
-        <Column field="credit_amount" header="Credit" sortable />
-        <Column header="#" body={action_BT} style={{ width: "120px" }} />
+        <Column field="debit_amount" header="Debit (+)" sortable />
+        <Column field="credit_amount" header="Credit (-)" sortable />
+        <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );

@@ -63,7 +63,7 @@ const PayableListComponent = ({ dataList, onEdit, onDelete }) => {
     return (
       <>
         {rowData.payable_amount}
-        <span className="text-green-700"> (Paid: {paidAmount.toFixed(2)})</span>
+        <span className="text-green-700 font-bold"> ({paidAmount.toFixed(2)})</span>
       </>
     );
   };
@@ -95,7 +95,7 @@ const PayableListComponent = ({ dataList, onEdit, onDelete }) => {
         <Column field="ref_no" header="Ref No" sortable />
         <Column
           field="payable_amount"
-          header="Total"
+          header="Payable (Paid)"
           sortable
           body={payable_amount_BT}
         />

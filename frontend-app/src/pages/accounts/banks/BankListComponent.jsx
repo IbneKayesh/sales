@@ -26,13 +26,14 @@ const BankListComponent = ({ dataList, onEdit, onDelete, onAccountList }) => {
   };
 
   const action_BT = (rowData) => {
-    let menuItems = [      
+    let menuItems = [
       {
-        label: "Accounts",
-        icon: "pi pi-user text-blue-400",
+        label: "Edit",
+        icon: "pi pi-pencil text-blue-400",
         command: () => {
-          onAccountList(rowData);
+          onEdit(rowData);
         },
+        disabled: rowData.edit_stop,
       },
       {
         label: "Delete",
@@ -46,13 +47,12 @@ const BankListComponent = ({ dataList, onEdit, onDelete, onAccountList }) => {
     return (
       <div className="flex flex-wrap gap-2">
         <SplitButton
-          icon="pi pi-pencil"
+          icon="pi pi-users"
           size="small"
-          tooltip="Edit"
+          tooltip="Accounts"
           tooltipOptions={{ position: "top" }}
-          onClick={() => onEdit(rowData)}
+          onClick={() => onAccountList(rowData)}
           model={menuItems}
-          disabled={rowData.edit_stop}
         />
       </div>
     );
@@ -72,18 +72,14 @@ const BankListComponent = ({ dataList, onEdit, onDelete, onAccountList }) => {
       >
         <Column field="bank_name" header="Bank" />
         <Column field="branch_name" header="Branch" />
-        <Column field="swift_code" header="Swift Code" />
+        <Column field="routing_no" header="Routing No" />
         <Column
           field="current_balance"
           header="Balance"
           body={current_balance_BT}
           sortable
         />
-        <Column
-          header="#"
-          body={action_BT}
-          style={{ width: "120px" }}
-        />
+        <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );

@@ -70,7 +70,7 @@ const ContactListComponent = ({
     }).format(rowData.current_balance);
   };
 
-  const actionTemplate = (rowData) => {
+  const action_BT = (rowData) => {
     let menuItems = [
       {
         label: "Edit",
@@ -175,11 +175,7 @@ const ContactListComponent = ({
           header="Current Balance"
           body={current_balance_BT}
         />
-        <Column
-          header="Actions"
-          body={actionTemplate}
-          style={{ width: "120px" }}
-        />
+        <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
 
       <Dialog

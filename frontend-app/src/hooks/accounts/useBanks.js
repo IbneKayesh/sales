@@ -9,7 +9,7 @@ const fromDataModel = {
   bank_id: "",
   bank_name: "",
   branch_name: "",
-  swift_code: "",
+  routing_no: "",
   current_balance: 0,
 };
 const fromDataModelAccount = {

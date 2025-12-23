@@ -30,7 +30,7 @@ export const useContacts = () => {
     { label: "Supplier", value: "Supplier" },
     { label: "Both", value: "Both" },
   ];
-  const [internalContactList, setInternalContactList] = useState([]);
+  const [ledgerContactList, setLedgerContactList] = useState([]);
   const [contactPaymentList, setContactPaymentList] = useState([]);
   const [supplierList, setSupplierList] = useState([]);
   const [contactCustomerList, setContactCustomerList] = useState([]);
@@ -41,11 +41,6 @@ export const useContacts = () => {
       const data = await contactAPI.getAll();
       //console.log("data: " + JSON.stringify(data));
       setContactList(data);
-
-      const internalData = data.filter(
-        (c) => !["Supplier", "Customer", "Both"].includes(c.contact_type)
-      );
-      setInternalContactList(internalData);
 
       const paymentData = data.filter((c) => c.contact_type !== "Both");
       setContactPaymentList(paymentData);
@@ -217,6 +212,11 @@ export const useContacts = () => {
     }
   };
 
+  const fetchLedgerContactList = async (id) => {
+    const data = await contactAPI.getByType(id);
+    setLedgerContactList(data);
+  };
+
   return {
     contactList,
     contactPaymentList,
@@ -238,6 +238,7 @@ export const useContacts = () => {
     handleSaveContact,
     handleLedger,
     contactsLedger,
-    internalContactList,
+    ledgerContactList,
+    fetchLedgerContactList,
   };
 };

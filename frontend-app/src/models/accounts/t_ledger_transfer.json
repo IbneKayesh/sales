@@ -1,0 +1,56 @@
+{
+    "ledger_id": {
+      "name": "Id",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 36
+    },
+    "account_id": {
+      "name": "From Account",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 36
+    },
+    "to_account_id": {
+      "name": "To Account",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 36
+    },
+    "ledger_date": {
+      "name": "Date",
+      "type": "string",
+      "required": true,
+      "format": "date"
+    },
+    "ledger_ref": {
+      "name": "Ref",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 100
+    },
+    "ledger_note": {
+      "name": "Note",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 100
+    },
+    "payment_mode": {
+      "name": "Payment Mode",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "transfer_amount": {
+      "name": "Transfer Amount",
+      "type": "number",
+      "required": false
+    }
+  }
+  

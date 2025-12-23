@@ -4,7 +4,7 @@ const banks_tables = () => ({
         bank_id TEXT PRIMARY KEY,
         bank_name TEXT NOT NULL,
         branch_name TEXT,        
-        swift_code TEXT,
+        routing_no TEXT,
         current_balance REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP

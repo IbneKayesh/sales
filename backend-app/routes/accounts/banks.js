@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
 //create new  bank
 router.post("/", async (req, res) => {
   try {
-    const { bank_id, bank_name, branch_name, swift_code, current_balance } =
+    const { bank_id, bank_name, branch_name, routing_no, current_balance } =
       req.body;
 
     if (!bank_id) {
@@ -39,17 +39,17 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ error: "Branch name is required" });
     }
 
-    const sql = `INSERT INTO banks (bank_id, bank_name, branch_name, swift_code, current_balance)
+    const sql = `INSERT INTO banks (bank_id, bank_name, branch_name, routing_no, current_balance)
       VALUES (?, ?, ?, ?, ?)`;
     const params = [
       bank_id,
       bank_name,
       branch_name,
-      swift_code,
+      routing_no,
       current_balance,
     ];
-    await dbRun(sql, params, `Created  bank ${bank_name}`);
-    res.status(201).json({ account_id, ...req.body });
+    await dbRun(sql, params, `Created bank ${bank_name}`);
+    res.status(201).json({ bank_id, ...req.body });
   } catch (error) {
     console.error("Database error:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -58,15 +58,15 @@ router.post("/", async (req, res) => {
 //update bank
 router.post("/update", async (req, res) => {
   try {
-    const { bank_id, bank_name, branch_name, swift_code, current_balance } =
+    const { bank_id, bank_name, branch_name, routing_no, current_balance } =
       req.body;
 
     if (!bank_id) {
-      return res.status(400).json({ error: "Account ID is required" });
+      return res.status(400).json({ error: "Bank ID is required" });
     }
 
     if (!bank_name) {
-      return res.status(400).json({ error: " name is required" });
+      return res.status(400).json({ error: "Bank name is required" });
     }
 
     if (!branch_name) {
@@ -76,11 +76,11 @@ router.post("/update", async (req, res) => {
     const sql = `UPDATE banks
     SET bank_name = ?,
     branch_name = ?,
-    swift_code = ?,
+    routing_no = ?,
     updated_at = CURRENT_TIMESTAMP
     WHERE bank_id = ?`;
-    const params = [bank_name, branch_name, swift_code, bank_id];
-    const result = await dbRun(sql, params, `Updated  bank ${bank_name}`);
+    const params = [bank_name, branch_name, routing_no, bank_id];
+    const result = await dbRun(sql, params, `Updated bank ${bank_name}`);
     if (result.changes === 0) {
       return res.status(404).json({ error: "Bank not found" });
     }
@@ -99,7 +99,7 @@ router.post("/delete", async (req, res) => {
     }
     const sql = `DELETE FROM banks WHERE bank_id = ?`;
     const params = [bank_id];
-    const result = await dbRun(sql, params, `Deleted  bank ${bank_name}`);
+    const result = await dbRun(sql, params, `Deleted bank ${bank_name}`);
     if (result.changes === 0) {
       return res.status(404).json({ error: "Bank not found" });
     }

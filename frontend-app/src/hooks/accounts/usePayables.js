@@ -80,11 +80,12 @@ export const usePayables = () => {
   };
 
   const handleEditPayableDue = (payableDue) => {
-    //console.log("bankaccount: " + JSON.stringify(bankaccount));
+    //console.log("payableDue: " + JSON.stringify(payableDue));
 
     const newPayableDue = {
       ...payableDue,
       payment_date: new Date().toISOString().split("T")[0],
+      payment_mode: payableDue.payment_amount < 0 ? "Refund" : "Cash"
     };
     setformDataPayableDue(newPayableDue);
     setCurrentView("form");

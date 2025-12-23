@@ -212,11 +212,7 @@ const AccountComponent = ({
           sortable
         />
         <Column field="is_default" header="Default" body={default_BT} />
-        <Column
-          header={accountList.length + " Rows"}
-          body={action_BT}
-          style={{ width: "120px" }}
-        />
+        <Column header={accountList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );

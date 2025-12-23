@@ -12,7 +12,7 @@ const {
 router.get("/", async (req, res) => {
   try {
     const sql = `SELECT ba.*, 0 as edit_stop
-        FROM accounts_heads ba ORDER BY ba.head_name ASC`;
+        FROM accounts_heads ba ORDER BY ba.group_name, ba.group_type ASC`;
     const rows = await dbAll(sql, []);
     res.json(rows);
   } catch (error) {

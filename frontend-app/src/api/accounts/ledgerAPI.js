@@ -17,4 +17,8 @@ export const ledgerAPI = {
     method: 'POST',
     body: JSON.stringify(ledger),
   }),
+  createTransfer: (ledger) => apiRequest('/accounts/ledger/create-transfer', {
+    method: 'POST',
+    body: JSON.stringify(ledger),
+  }),
 };

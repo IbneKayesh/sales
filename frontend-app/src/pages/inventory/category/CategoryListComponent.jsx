@@ -18,7 +18,7 @@ const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
     });
   };
 
-  const actionTemplate = (rowData) => {
+  const action_BT = (rowData) => {
     let menuItems = [
       {
         label: "Delete",
@@ -56,12 +56,8 @@ const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
         className="bg-dark-300"
         size="small"
       >
-        <Column field="category_name" header="Category Name" sortable />
-        <Column
-          header="Actions"
-          body={actionTemplate}
-          style={{ width: "120px" }}
-        />
+        <Column field="category_name" header="Category Name" sortable />        
+        <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );

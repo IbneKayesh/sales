@@ -249,7 +249,7 @@ const ProductListComponent = ({
           body={margin_price_BT}
           footer={formatCurrency(totalMarginValue)}
         />
-        <Column header="#" body={action_BT} style={{ width: "120px" }} />
+        <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
 
       <Sidebar

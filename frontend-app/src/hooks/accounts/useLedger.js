@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ledgerAPI } from "@/api/accounts/ledgerAPI";
 import validate from "@/models/validator";
 import t_ledger from "@/models/accounts/t_ledger";
+import t_ledger_transfer from "@/models/accounts/t_ledger_transfer";
 import { generateGuid } from "@/utils/guid";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
@@ -9,12 +10,24 @@ const fromDataModel = {
   ledger_id: "",
   account_id: "",
   contact_id: "",
-  head_name: "",
+  head_id: "",
   ledger_date: new Date().toISOString().split("T")[0],
   ledger_ref: "",
   ledger_note: "",
   debit_amount: 0,
   credit_amount: 0,
+  edit_stop: 0,
+};
+
+const fromDataModelTransfer = {
+  ledger_id: "",
+  account_id: "",
+  to_account_id: "",
+  ledger_date: new Date().toISOString().split("T")[0],
+  ledger_ref: "",
+  ledger_note: "",
+  payment_mode: "",
+  transfer_amount: 0,
   edit_stop: 0,
 };
 
@@ -213,6 +226,90 @@ export const useLedger = () => {
     }
   };
 
+  //transfer
+  const handleAddNewTransfer = () => {
+    handleClear();
+    setCurrentView("transfer");
+    setFormData(fromDataModelTransfer);
+  };
+
+  const handleSaveTransfer = async (e) => {
+    e.preventDefault();
+    try {
+      console.log("handleSaveTransfer called", formData);
+
+      const amount = Number(formData.transfer_amount) || 0;
+      if (amount <= 0) {
+        setToastBox({
+          severity: "error",
+          summary: "Validation Error",
+          detail: "Transfer amount must be greater than 0.",
+        });
+        return;
+      }
+
+      if(formData.account_id === formData.to_account_id) {
+        setToastBox({
+          severity: "error",
+          summary: "Validation Error",
+          detail: "Account and To Account cannot be the same.",
+        });
+        return;
+      }
+
+      setIsBusy(true);
+      const newErrors = validate(formData, t_ledger_transfer);
+      setErrors(newErrors);
+      console.log("handleSave: " + JSON.stringify(newErrors));
+
+      if (Object.keys(newErrors).length > 0) {
+        setIsBusy(false);
+        return;
+      }
+
+      const formDataNew = {
+        ...formData,
+        ledger_id: formData.ledger_id ? formData.ledger_id : generateGuid(),
+      };
+
+      if (!formData.ledger_id) {
+        const data = await ledgerAPI.createTransfer(formDataNew);
+      } else {
+        setToastBox({
+          severity: "error",
+          summary: "Validation Error",
+          detail: "Transfer amount must be greater than 0.",
+        });
+        return;
+      }
+
+      const message = formData.ledger_id
+        ? `"${formData.head_name}" Updated`
+        : "Created";
+      setToastBox({
+        severity: "success",
+        summary: "Success",
+        detail: `${message} successfully.`,
+      });
+
+      loadLedgers();
+      handleClear();
+      setCurrentView("list");
+
+      //call update process
+      await closingProcessAPI("Account Ledger", "Ledger No");
+    } catch (error) {
+      console.error("Error saving data:", error);
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to save data",
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     ledgerList,
     toastBox,
@@ -227,6 +324,10 @@ export const useLedger = () => {
     handleDeleteLedger,
     handleRefresh,
     handleSaveLedger,
+    selectedHead,
     setSelectedHead,
+    //transfer
+    handleAddNewTransfer,
+    handleSaveTransfer,
   };
 };

@@ -90,8 +90,6 @@ router.post("/cancel-booking/:master_id", async (req, res) => {
     });
 
 
-
-
     scripts.push({
       label: "2 of 2 :: Update purchase booking cancelled amount",
       sql: `UPDATE po_master

@@ -234,7 +234,7 @@ const OrderListComponent = ({
           body={is_paid_BT}
           sortable
         ></Column>
-        <Column header="#" body={action_BT}></Column>
+        <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );

@@ -38,6 +38,24 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+//get by type
+router.get("/by-type/:id", async (req, res) => {
+
+  const { id } = req.params;
+  if (!id) {
+    return res.status(400).json({ error: "Contact type is required" });
+  }
+  try {
+    const sql =
+      "SELECT c.*, 0 as edit_stop FROM contacts c WHERE contact_type = ?";
+    const rows = await dbAll(sql, [id]);
+    res.json(rows);
+  } catch (error) {
+    console.error("Database error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 //create new contact
 router.post("/", async (req, res) => {
   const {

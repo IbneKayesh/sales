@@ -18,7 +18,7 @@ const UsersListComponent = ({ dataList, onEdit, onDelete }) => {
     });
   };
 
-  const actionTemplate = (rowData) => {
+  const action_BT = (rowData) => {
     let menuItems = [
       {
         label: "Delete",
@@ -60,11 +60,7 @@ const UsersListComponent = ({ dataList, onEdit, onDelete }) => {
         <Column field="user_mobile" header="Mobile" />
         <Column field="user_email" header="Email" />
         <Column field="user_role" header="Role" />
-        <Column
-          header="Actions"
-          body={actionTemplate}
-          style={{ width: "120px" }}
-        />
+        <Column header={dataList?.length + " rows"} body={action_BT} /> 
       </DataTable>
     </div>
   );

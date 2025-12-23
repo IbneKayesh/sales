@@ -51,20 +51,20 @@ const BankFormComponent = ({
         </div>
         <div className="col-12 md:col-2">
           <label
-            htmlFor="swift_code"
+            htmlFor="routing_no"
             className="block text-900 font-medium mb-2"
           >
-            {t_banks.swift_code.name}
+            {t_banks.routing_no.name}
           </label>
           <InputText
-            name="swift_code"
-            value={formData.swift_code}
-            onChange={(e) => onChange("swift_code", e.target.value)}
-            className={`w-full ${errors.swift_code ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_banks.swift_code.name}`}
+            name="routing_no"
+            value={formData.routing_no}
+            onChange={(e) => onChange("routing_no", e.target.value)}
+            className={`w-full ${errors.routing_no ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_banks.routing_no.name}`}
           />
-          {errors.swift_code && (
-            <small className="mb-3 text-red-500">{errors.swift_code}</small>
+          {errors.routing_no && (
+            <small className="mb-3 text-red-500">{errors.routing_no}</small>
           )}
         </div>
         <div className="col-12">
