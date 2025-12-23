@@ -17,6 +17,7 @@ const LedgerFormComponent = ({
   formData,
   onChange,
   onSave,
+  setSelectedHead,
 }) => {
   const { accountsHeadsList } = useAccountsHeads();
   const { accountList, fetchAllAccountList } = useBanks();
@@ -24,14 +25,19 @@ const LedgerFormComponent = ({
 
   useEffect(() => {
     fetchAllAccountList();
-  }, []);
+  }, [fetchAllAccountList]);
 
-  const headNameOptions = [
-    { label: "Expense", value: "Expense" },
-    { label: "Income", value: "Income" },
-    { label: "Cash Deposit", value: "Cash Deposit" },
-    { label: "Cash Withdraw", value: "Cash Withdraw" },
-  ];
+   const handleChange = (e) => {
+    const value = e?.value ?? e?.target?.value;
+
+    onChange("head_id", value);
+
+    const selectedHead = accountsHeadsList?.find(
+      (f) => f.head_id === value
+    );
+
+    setSelectedHead(selectedHead || null);
+  };
 
   return (
     <>
@@ -72,12 +78,17 @@ const LedgerFormComponent = ({
             name="head_id"
             value={formData.head_id}
             options={accountsHeadsList.map((head) => ({
-              label: head.head_name + " - " + head.group_name + " - " + head.group_type,
+              label:
+                head.head_name +
+                " - " +
+                head.group_name +
+                " - " +
+                head.group_type,
               value: head.head_id,
             }))}
             optionLabel="label"
             optionValue="value"
-            onChange={(e) => onChange("head_id", e.value)}
+            onChange={(e) => handleChange(e)}
             className={`w-full ${errors.head_id ? "p-invalid" : ""}`}
             placeholder={`Select Head Name`}
             filter
@@ -139,7 +150,7 @@ const LedgerFormComponent = ({
           )}
         </div>
 
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="ledger_ref"
             className="block text-900 font-medium mb-2"
@@ -175,7 +186,7 @@ const LedgerFormComponent = ({
             <small className="mb-3 text-red-500">{errors.ledger_note}</small>
           )}
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="payment_mode"
             className="block text-900 font-medium mb-2"
@@ -201,32 +212,10 @@ const LedgerFormComponent = ({
         </div>
         <div className="col-12 md:col-2">
           <label
-            htmlFor="debit_amount"
-            className="block text-900 font-medium mb-2"
-          >
-            Debit Amount <span className="text-red-500">*</span>
-          </label>
-          <InputNumber
-            name="debit_amount"
-            value={formData.debit_amount}
-            onValueChange={(e) => onChange("debit_amount", e.value)}
-            mode="currency"
-            currency="BDT"
-            locale="en-US"
-            className={`${errors.debit_amount ? "p-invalid" : ""}`}
-            style={{ width: "100%" }}
-            inputStyle={{ width: "100%" }}
-          />
-          {errors.debit_amount && (
-            <small className="mb-3 text-red-500">{errors.debit_amount}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label
             htmlFor="credit_amount"
             className="block text-900 font-medium mb-2"
           >
-            Credit Amount <span className="text-red-500">*</span>
+            Amount <span className="text-red-500">*</span>
           </label>
           <InputNumber
             name="credit_amount"

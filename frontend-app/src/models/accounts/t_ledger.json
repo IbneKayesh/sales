@@ -47,6 +47,13 @@
       "minLength": 0,
       "maxLength": 100
     },
+    "payment_mode": {
+      "name": "Payment Mode",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 50
+    },
     "debit_amount": {
       "name": "Debit Amount",
       "type": "number",

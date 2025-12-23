@@ -22,6 +22,7 @@ const LedgerPage = () => {
     handleDeleteLedger,
     handleRefresh,
     handleSaveLedger,
+    setSelectedHead,
   } = useLedger();
 
   useEffect(() => {
@@ -44,8 +45,8 @@ const LedgerPage = () => {
           {isList
             ? "Ledger List"
             : formData.ledger_id
-              ? "Edit Ledger"
-              : "Add New Ledger"}
+            ? "Edit Ledger"
+            : "Add New Ledger"}
         </h3>
 
         {isList ? (
@@ -93,6 +94,7 @@ const LedgerPage = () => {
             formData={formData}
             onChange={handleChange}
             onSave={handleSaveLedger}
+            setSelectedHead={setSelectedHead}
           />
         )}
       </Card>

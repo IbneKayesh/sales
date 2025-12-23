@@ -25,6 +25,7 @@ export const useLedger = () => {
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(fromDataModel);
+  const [selectedHead, setSelectedHead] = useState(null);
 
   const loadLedgers = async (resetModified = false) => {
     try {
@@ -104,6 +105,43 @@ export const useLedger = () => {
   const handleSaveLedger = async (e) => {
     e.preventDefault();
     try {
+      console.log("handleSaveLedger called", selectedHead);
+
+      if (!selectedHead) {
+        setToastBox({
+          severity: "error",
+          summary: "Validation Error",
+          detail: "Please select a Head Name.",
+        });
+        return;
+      }
+
+      const amount = Number(formData.credit_amount) || 0;
+      let updatedFormData = {
+        ...formData,
+      };
+
+      if (selectedHead.group_type === "In") {
+        updatedFormData = {
+          ...updatedFormData,
+          debit_amount: amount,
+          credit_amount: 0,
+        };
+      } else if (selectedHead.group_type === "Out") {
+        updatedFormData = {
+          ...updatedFormData,
+          debit_amount: 0,
+          credit_amount: amount,
+        };
+      } else {
+        setToastBox({
+          severity: "error",
+          summary: "Validation Error",
+          detail: "Invalid Head Group Type.",
+        });
+        return;
+      }
+
       setIsBusy(true);
       const newErrors = validate(formData, t_ledger);
       setErrors(newErrors);
@@ -138,7 +176,7 @@ export const useLedger = () => {
       }
 
       const formDataNew = {
-        ...formData,
+        ...updatedFormData,
         ledger_id: formData.ledger_id ? formData.ledger_id : generateGuid(),
       };
 
@@ -163,7 +201,6 @@ export const useLedger = () => {
 
       //call update process
       await closingProcessAPI("Account Ledger", "Ledger No");
-      
     } catch (error) {
       console.error("Error saving data:", error);
       setToastBox({
@@ -190,5 +227,6 @@ export const useLedger = () => {
     handleDeleteLedger,
     handleRefresh,
     handleSaveLedger,
+    setSelectedHead,
   };
 };
