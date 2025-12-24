@@ -4,6 +4,7 @@ import { Button } from "primereact/button";
 import MasterComponent from "./MasterComponent";
 import ItemsComponent from "./ItemsComponent";
 import PaymentComponent from "./PaymentComponent";
+import PrintViewComponent from "./PrintViewComponent";
 
 const OrderEntryComponent = ({
   pageConfig,
@@ -20,6 +21,8 @@ const OrderEntryComponent = ({
   handleSave,
 }) => {
   const [disableSubmit, setDisableSubmit] = useState(false);
+  const [showPrintDialog, setShowPrintDialog] = useState(false);
+  const [supplierInfo, setSupplierInfo] = useState(null);
 
   useEffect(() => {
     const hasProducts = formDataList.length > 0;
@@ -92,10 +95,7 @@ const OrderEntryComponent = ({
     return (
       <div className="flex align-items-center gap-2 w-full">
         Products# {formDataList.length}, Qty#{" "}
-        {formDataList.reduce(
-          (total, item) => total + item.product_qty,
-          0
-        )}
+        {formDataList.reduce((total, item) => total + item.product_qty, 0)}
       </div>
     );
   };
@@ -114,6 +114,10 @@ const OrderEntryComponent = ({
         </span>
       </>
     );
+  };
+
+  const handlePrint = () => {
+    setShowPrintDialog(true);
   };
 
   return (
@@ -153,8 +157,8 @@ const OrderEntryComponent = ({
             formData.po_master_id
               ? "Update"
               : formData.is_posted
-                ? "Save with Posted"
-                : "Save as Draft"
+              ? "Save with Posted"
+              : "Save as Draft"
           }
           icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
           severity="success"
@@ -163,7 +167,24 @@ const OrderEntryComponent = ({
           onClick={handleSave}
           disabled={disableSubmit}
         />
+        <Button
+          type="button"
+          label="Print"
+          icon="pi pi-print"
+          severity="info"
+          size="small"
+          className="ml-2"
+          onClick={handlePrint}
+        />
       </div>
+
+      <PrintViewComponent
+        visible={showPrintDialog}
+        onHide={() => setShowPrintDialog(false)}
+        formData={formData}
+        formDataList={formDataList}
+        formDataPaymentList={formDataPaymentList}
+      />
     </div>
   );
 };

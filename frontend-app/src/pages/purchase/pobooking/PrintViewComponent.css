@@ -1,0 +1,333 @@
+/* PrintViewComponent.css */
+
+.print-container {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding: 15px;
+  background: white;
+  color: #333;
+}
+
+/* Company Header */
+.print-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.company-info {
+  flex: 1;
+}
+
+.company-name {
+  font-size: 20px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 0 0 5px 0;
+}
+
+.company-details {
+  font-size: 11px;
+  color: #555;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.invoice-badge {
+  text-align: right;
+}
+
+.invoice-badge h2 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 0 0 5px 0;
+}
+
+.badge-posted,
+.badge-draft {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.badge-posted {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.badge-draft {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #dee2e6;
+  margin: 10px 0;
+}
+
+/* Invoice Details */
+.invoice-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.detail-section h3 {
+  font-size: 13px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 0 0 5px 0;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #3498db;
+}
+
+.detail-section p {
+  margin: 3px 0;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Items Table */
+.items-section {
+  margin-bottom: 12px;
+}
+
+.items-section h3 {
+  font-size: 13px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.items-table thead {
+  background-color: #3498db;
+  color: white;
+}
+
+.items-table th {
+  padding: 5px 4px;
+  text-align: left;
+  font-weight: 600;
+  border: 1px solid #2980b9;
+}
+
+.items-table tbody tr {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.items-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.items-table td {
+  padding: 5px 4px;
+  border: 1px solid #dee2e6;
+}
+
+.items-table tfoot {
+  background-color: #ecf0f1;
+  font-weight: bold;
+}
+
+.items-table tfoot td {
+  padding: 5px 4px;
+  border: 1px solid #dee2e6;
+}
+
+.items-table small {
+  color: #6c757d;
+  font-size: 9px;
+}
+
+/* Payment Summary */
+.payment-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.summary-left h3,
+.summary-right h3 {
+  font-size: 13px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+}
+
+.payment-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.payment-table thead {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.payment-table th {
+  padding: 5px 4px;
+  text-align: left;
+  font-weight: 600;
+  border: 1px solid #7f8c8d;
+}
+
+.payment-table td {
+  padding: 5px 4px;
+  border: 1px solid #dee2e6;
+}
+
+.payment-table tbody tr {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.summary-right {
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 11px;
+}
+
+.summary-row.total {
+  font-size: 13px;
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.summary-row.due {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.summary-divider {
+  border: none;
+  border-top: 1px dashed #adb5bd;
+  margin: 5px 0;
+}
+
+.text-success {
+  color: #28a745 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+.text-primary {
+  color: #3498db !important;
+}
+
+/* Print Footer */
+.print-footer {
+  margin-top: 20px;
+  page-break-inside: avoid;
+}
+
+.signature-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.signature-box {
+  text-align: center;
+}
+
+.signature-line {
+  border: none;
+  border-top: 1px solid #333;
+  margin: 30px 0 5px 0;
+}
+
+.signature-box p {
+  margin: 0;
+  font-size: 10px;
+  color: #555;
+}
+
+.footer-note {
+  text-align: center;
+  font-size: 9px;
+  color: #6c757d;
+  font-style: italic;
+  margin: 10px 0 0 0;
+}
+
+/* Print Styles */
+@media print {
+  .print-container {
+    padding: 0;
+  }
+
+  .p-dialog-header,
+  .p-dialog-footer {
+    display: none !important;
+  }
+
+  .print-header {
+    page-break-after: avoid;
+  }
+
+  .items-section {
+    page-break-inside: avoid;
+  }
+
+  .payment-summary {
+    page-break-inside: avoid;
+  }
+
+  .print-footer {
+    page-break-before: avoid;
+  }
+
+  .items-table thead {
+    display: table-header-group;
+  }
+
+  .items-table tbody tr {
+    page-break-inside: avoid;
+  }
+
+  /* Ensure colors print correctly */
+  .badge-posted,
+  .badge-draft,
+  .items-table thead,
+  .payment-table thead {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .invoice-details,
+  .payment-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .signature-section {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
