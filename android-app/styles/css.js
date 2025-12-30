@@ -1,0 +1,90 @@
+import { StyleSheet } from "react-native";
+
+export const getGlobalStyles = (colors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingTop: 60,
+      alignItems: "center",
+      paddingHorizontal: 16,
+      backgroundColor: colors.background,
+    },
+    centerContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.background,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: "bold",
+      marginBottom: 4,
+      color: colors.text,
+    },
+    text: {
+      fontSize: 16,
+      color: colors.text,
+    },
+    subtext: {
+      fontSize: 14,
+      color: colors.subtext,
+      marginBottom: 20,
+    },
+    card: {
+      padding: 16,
+      backgroundColor: colors.card,
+      borderRadius: 16,
+      marginBottom: 12,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      elevation: 3,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    modalBackdrop: {
+      flex: 1,
+      backgroundColor: colors.modalOverlay,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    modalCard: {
+      width: "90%",
+      backgroundColor: colors.card,
+      borderRadius: 24,
+      overflow: "hidden",
+      elevation: 10,
+    },
+    modalHeader: {
+      paddingVertical: 24,
+      paddingHorizontal: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+      alignItems: "center",
+    },
+    modalHeaderTitle: {
+      fontSize: 22,
+      fontWeight: "bold",
+      color: colors.text,
+    },
+    modalBody: {
+      padding: 24,
+    },
+    modalFooter: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      paddingHorizontal: 20,
+      paddingBottom: 24,
+      paddingTop: 12,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    spaceBetween: {
+      justifyContent: "space-between",
+      width: "100%",
+    },
+  });
