@@ -9,7 +9,7 @@ export async function openDatabase() {
   try {
     if (!db) {
       console.log("Opening database...");
-      db = await SQLite.openDatabaseAsync("items.db");
+      db = await SQLite.openDatabaseAsync("myhouse.db");
       console.log("Database opened successfully");
     }
     return db;
@@ -38,6 +38,110 @@ export async function initDatabase() {
       description TEXT,
       priority INTEGER DEFAULT 0,
       completed INTEGER DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  //house table
+  await database.execAsync(`
+    CREATE TABLE IF NOT EXISTS house (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      address TEXT,
+      contact TEXT,
+      image TEXT,
+      map_link TEXT,
+      general_rules TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  //flat table
+  await database.execAsync(`
+    CREATE TABLE IF NOT EXISTS flat (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      house_id INTEGER,
+      name TEXT NOT NULL,
+      contact TEXT,
+      image TEXT,
+      price TEXT,
+      general_rules TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  //features table
+  await database.execAsync(`
+    CREATE TABLE IF NOT EXISTS features (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      flat_id INTEGER,
+      name TEXT NOT NULL,
+      feature_type TEXT,
+      include_price INTEGER DEFAULT 0,
+      price TEXT,
+      quantity TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  //tenant table
+  await database.execAsync(`
+    CREATE TABLE IF NOT EXISTS tenant (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      flat_id INTEGER,
+      name TEXT NOT NULL,
+      contact TEXT,
+      image TEXT,
+      contract_start_date TEXT,
+      contract_end_date TEXT,
+      rent TEXT,
+      deposit TEXT,
+      security TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  //payment table
+  await database.execAsync(`
+    CREATE TABLE IF NOT EXISTS payment (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tenant_id INTEGER,
+      amount TEXT,
+      date TEXT,
+      payment_type TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  //house notice board table
+  await database.execAsync(`
+    CREATE TABLE IF NOT EXISTS house_notice_board (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      house_id INTEGER,
+      title TEXT NOT NULL,
+      description TEXT,
+      image TEXT,
+      date TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  //flat notice board table
+  await database.execAsync(`
+    CREATE TABLE IF NOT EXISTS flat_notice_board (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      flat_id INTEGER,
+      title TEXT NOT NULL,
+      description TEXT,
+      image TEXT,
+      date TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );

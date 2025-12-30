@@ -156,8 +156,8 @@ export default function TodoScreen() {
                   {
                     fontSize: 18,
                     textDecorationLine: item.completed
-                      ? "line-through"
-                      : "none",
+                      ? "none"
+                      : "line-through",
                     color: item.completed ? colors.subtext : colors.text,
                   },
                 ]}
@@ -192,7 +192,7 @@ export default function TodoScreen() {
                 type={item.completed ? "secondary" : "success"}
                 style={styles.actionButton}
               />
-              {item.completed && (
+              {!item.completed && (
                 <>
                   <Button
                     iconName="pencil"
@@ -284,7 +284,6 @@ export default function TodoScreen() {
 
             <View style={globalStyles.modalFooter}>
               <Button
-                title="Cancel"
                 iconName="close"
                 onPress={handleCloseModal}
                 type="danger"
