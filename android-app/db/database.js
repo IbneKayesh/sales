@@ -79,10 +79,10 @@ export async function initDatabase() {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       flat_id INTEGER,
       name TEXT NOT NULL,
-      feature_type TEXT,
-      include_price INTEGER DEFAULT 0,
-      price TEXT,
-      quantity TEXT,
+      feature_type TEXT NOT NULL,
+      include_price TEXT,
+      price REAL DEFAULT 0,
+      quantity INTEGER DEFAULT 1,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
@@ -101,6 +101,7 @@ export async function initDatabase() {
       rent TEXT,
       deposit TEXT,
       security TEXT,
+      contract_closed INTEGER DEFAULT 0,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );

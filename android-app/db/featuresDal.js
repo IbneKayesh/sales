@@ -1,47 +1,59 @@
-//getAll
-//getById
-//add
-//update
-//delete
-
 import * as SQLite from "expo-sqlite";
-const db = await SQLite.openDatabaseAsync("myhouse.db");
+let db;
+
+async function getDb() {
+  if (!db) {
+    db = await SQLite.openDatabaseAsync("myhouse.db");
+  }
+  return db;
+}
 
 export async function getAll() {
-  return await db.getAllAsync("SELECT * FROM features ORDER BY priority DESC");
+  const db = await getDb();
+  return await db.getAllAsync("SELECT * FROM features ORDER BY name ASC");
 }
 
 export async function getById(id) {
+  const db = await getDb();
   return await db.getAllAsync("SELECT * FROM features WHERE id = ?", [id]);
 }
 
+export async function getByFlatId(id) {
+  const db = await getDb();
+  return await db.getAllAsync(
+    "SELECT * FROM features WHERE flat_id = ? ORDER BY name ASC",
+    [id]
+  );
+}
+
 export async function add(item) {
+  const db = await getDb();
   return await db.runAsync(
-    "INSERT INTO features (name, priority, address, contact, image, price, general_rules) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO features (flat_id, name, feature_type, include_price, price, quantity) VALUES (?, ?, ?, ?, ?, ?)",
+    item.flat_id,
     item.name,
-    item.priority,
-    item.address,
-    item.contact,
-    item.image,
+    item.feature_type,
+    item.include_price,
     item.price,
-    item.general_rules
+    item.quantity
   );
 }
 
 export async function update(item) {
+  const db = await getDb();
   return await db.runAsync(
-    "UPDATE features SET name = ?, priority = ?, address = ?, contact = ?, image = ?, price = ?, general_rules = ? WHERE id = ?",
+    "UPDATE features SET flat_id = ?, name = ?, feature_type = ?, include_price = ?, price = ?, quantity = ? WHERE id = ?",
+    item.flat_id,
     item.name,
-    item.priority,
-    item.address,
-    item.contact,
-    item.image,
+    item.feature_type,
+    item.include_price,
     item.price,
-    item.general_rules,
+    item.quantity,
     item.id
   );
 }
 
-export async function deleteItem(id) {
+export async function deleteById(id) {
+  const db = await getDb();
   return await db.runAsync("DELETE FROM features WHERE id = ?", [id]);
 }

@@ -1,0 +1,335 @@
+import {
+  View,
+  Text,
+  FlatList,
+  Modal,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
+import { useState, useEffect, useLayoutEffect } from "react";
+
+//internal states
+import {
+  getAll,
+  getById,
+  getByFlatId,
+  add,
+  update,
+  deleteById,
+} from "../db/featuresDal";
+import { useToast } from "../contexts/ToastContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { getGlobalStyles } from "../styles/css";
+import Button from "../components/Button";
+import InputText from "../components/InputText";
+import Dropdown from "../components/Dropdown";
+import Fab from "../components/Fab";
+
+export default function FeatureScreen({ route, navigation }) {
+  const { showToast } = useToast();
+  const { colors } = useTheme();
+  const globalStyles = getGlobalStyles(colors);
+  const [formData, setFormData] = useState({
+    flat_id: "",
+    name: "",
+    feature_type: "",
+    include_price: "",
+    price: "0",
+    quantity: "1",
+  });
+  const [featureList, setFeatureList] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editId, setEditId] = useState(null);
+
+  const { title, flatId } = route.params;
+
+  const featureTypeOptions = [
+    { value: "master_bedroom", name: "Master Bedroom" },
+    { value: "single_bedroom", name: "Single Bedroom" },
+    { value: "attached_bathroom", name: "Attached Bathroom" },
+    { value: "common_bathroom", name: "Common Bathroom" },
+    { value: "kitchen", name: "Kitchen" },
+    { value: "living_room", name: "Living Room" },
+    { value: "balcony", name: "Balcony" },
+    { value: "terrace", name: "Terrace" },
+    { value: "garden", name: "Garden" },
+    { value: "parking", name: "Parking" },
+    { value: "security", name: "Security" },
+    { value: "swimming_pool", name: "Swimming Pool" },
+    { value: "gym", name: "Gym" },
+    { value: "club", name: "Club" },
+    { value: "lift", name: "Lift" },
+    { value: "elevator", name: "Elevator" },
+    { value: "air_conditioning", name: "Air Conditioning" },
+    { value: "heating", name: "Heating" },
+    { value: "wifi", name: "WiFi" },
+    { value: "dish_cable", name: "Dish Cable" },
+  ];
+
+  const includePriceOptions = [
+    { value: "include_price", name: "Include Price" },
+    { value: "exclude_price", name: "Exclude Price" },
+  ];
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: `${title} Features`,
+    });
+  }, [navigation, title]);
+
+  const fetchFeaturesByFlatId = async () => {
+    try {
+      const features = await getByFlatId(flatId);
+      setFeatureList(features);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeaturesByFlatId();
+  }, []);
+
+  const handleCloseModalPress = () => {
+    setShowAddModal(false);
+    setFormData({
+      flat_id: flatId,
+      name: "",
+      feature_type: "",
+      include_price: "",
+      price: "0",
+      quantity: "1",
+    });
+    setEditId(null);
+  };
+
+  const handleSavePress = async () => {
+    try {
+      // if (!formData.flat_id) {
+      //   showToast("Flat is required", "error");
+      //   return;
+      // }
+      // if (!formData.name.trim()) {
+      //   showToast("Name is required", "error");
+      //   return;
+      // }
+      if (!formData.feature_type.trim()) {
+        showToast("Feature Type is required", "error");
+        return;
+      }
+      if (!formData.include_price.trim()) {
+        showToast("Include Price is required", "error");
+        return;
+      }
+      if (!formData.price) {
+        showToast("Price is required", "error");
+        return;
+      }
+      if (!formData.quantity) {
+        showToast("Quantity is required", "error");
+        return;
+      }
+
+      const payload = {
+        ...formData,
+        flat_id: flatId,
+      };
+
+      if (editId) {
+        await update(payload);
+        showToast("Feature updated successfully", "success");
+      } else {
+        await add(payload);
+        showToast("Feature added successfully", "success");
+      }
+      handleCloseModalPress();
+
+      fetchFeaturesByFlatId();
+    } catch (error) {
+      console.error("Error saving data:", error);
+      showToast("Error saving data", "error");
+    } finally {
+    }
+  };
+
+  const handleEditPress = (item) => {
+    setEditId(item.id);
+    setFormData(item);
+    setShowAddModal(true);
+  };
+
+  const handleDeletePressAlert = async (id) => {
+    Alert.alert(
+      "Delete Feature",
+      "Are you sure you want to delete this feature?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          onPress: () => handleDeleteById(id),
+        },
+      ]
+    );
+  };
+
+  const handleDeleteById = async (id) => {
+    try {
+      await deleteById(id);
+      showToast("Feature deleted successfully", "success");
+      fetchFeaturesByFlatId();
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      showToast("Error deleting data", "error");
+    }
+  };
+
+  // const handleAddFeaturePress = (item) => {
+  //   //navigate to (child) feature screen
+  //   navigation.navigate("FeatureScreen", {
+  //     title: item.name,
+  //     houseId: item.id,
+  //   });
+  // };
+
+  return (
+    <View style={globalStyles.container}>
+      <FlatList
+        data={featureList}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={globalStyles.card}
+            onPress={() => handleEditPress(item)}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={globalStyles.title}>{item.name}</Text>
+              <Text style={globalStyles.subtext}>{item.feature_type}</Text>
+              <Text style={globalStyles.subtext}>{item.include_price}</Text>
+              <Text style={globalStyles.subtext}>Price: {item.price}</Text>
+              <Text style={globalStyles.subtext}>
+                Quantity: {item.quantity}
+              </Text>
+            </View>
+            <View style={styles.actions}>
+              {/* <Button
+                iconName="add-circle"
+                onPress={() => handleAddFeaturePress(item)}
+                type="primary"
+                style={styles.actionButton}
+              /> */}
+              <Button
+                iconName="pencil"
+                onPress={() => handleEditPress(item)}
+                type="primary"
+                style={styles.actionButton}
+              />
+              <Button
+                iconName="trash"
+                onPress={() => handleDeletePressAlert(item.id)}
+                type="danger"
+                style={styles.actionButton}
+              />
+            </View>
+          </TouchableOpacity>
+        )}
+        style={{ width: "100%" }}
+      />
+
+      <Modal
+        visible={showAddModal}
+        animationType="slide"
+        transparent
+        onRequestClose={handleCloseModalPress}
+      >
+        <View style={globalStyles.modalBackdrop}>
+          <View style={globalStyles.modalCard}>
+            <View style={globalStyles.modalHeader}>
+              <Text style={globalStyles.modalHeaderTitle}>
+                {editId ? "Edit Feature" : "Add Feature"} - {title}
+              </Text>
+            </View>
+
+            <View style={globalStyles.modalBody}>
+              <InputText
+                label="Name"
+                placeholder="Enter feautre name"
+                value={formData.name}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, name: text })
+                }
+              />
+              <Dropdown
+                label="Feature Type"
+                placeholder="Select feature type"
+                value={formData.feature_type}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, feature_type: text })
+                }
+                data={featureTypeOptions}
+              />
+              <Dropdown
+                label="Include Price"
+                placeholder="Select include price"
+                value={formData.include_price}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, include_price: text })
+                }
+                data={includePriceOptions}
+              />
+              <InputText
+                label="Price"
+                placeholder="Enter price"
+                value={formData.price}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, price: text })
+                }
+              />
+              <InputText
+                label="Quantity"
+                placeholder="Enter quantity"
+                value={formData.quantity}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, quantity: text })
+                }
+              />
+            </View>
+
+            <View style={globalStyles.modalFooter}>
+              <Button
+                iconName="close"
+                onPress={handleCloseModalPress}
+                type="danger"
+                style={globalStyles.footerButton}
+              />
+              <Button
+                title={editId ? "Update" : "Save"}
+                iconName={editId ? "save" : "add"}
+                onPress={handleSavePress}
+                type="success"
+                style={globalStyles.footerButton}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Fab onPress={() => setShowAddModal(true)} style={{ bottom: 80 }} />
+    </View>
+  );
+}
+
+const styles = {
+  actions: {
+    flexDirection: "row",
+    gap: 6,
+    marginLeft: 8,
+  },
+  actionButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 25,
+  },
+};

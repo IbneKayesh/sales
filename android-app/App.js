@@ -8,11 +8,15 @@ import { Ionicons } from "@expo/vector-icons";
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Dummy screens
+// tab screens
 import HomeScreen from "./screens/HomeScreen";
 import SettingsScreen from "./screens/SettingsScreen";
-import ProfileScreen from "./screens/ProfileScreen";
+import TenantScreen from "./screens/TenantScreen";
 import TodoScreen from "./screens/TodoScreen";
+
+// hidden screens
+import FlatScreen from "./screens/FlatScreen";
+import FeatureScreen from "./screens/FeatureScreen";
 
 // Header right user icon with dropdown (simple example using Alert)
 import HeaderRight from "./components/HeaderRight";
@@ -28,19 +32,19 @@ function Tabs() {
         tabBarIcon: ({ color, size }) => {
           let iconName;
           if (route.name === "Home") iconName = "home-outline";
+          else if (route.name === "Tenant") iconName = "person-outline";
           else if (route.name === "Settings") iconName = "settings-outline";
-          else if (route.name === "Profile") iconName = "person-outline";
           else if (route.name === "Todo") iconName = "list-outline";
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "tomato",
-        tabBarInactiveTintColor: "gray",
+        tabBarInactiveTintColor: "gray", 
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Tenant" component={TenantScreen} />
       <Tab.Screen name="Todo" component={TodoScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
   );
 }
@@ -53,7 +57,30 @@ export default function App() {
     <ThemeProvider>
       <ToastProvider>
         <NavigationContainer>
-          <Tabs />
+          <Stack.Navigator>
+            {/* Bottom Tabs */}
+            <Stack.Screen
+              name="Tabs"
+              component={Tabs}
+              options={{ headerShown: false }}
+            />
+
+            {/* Hidden screens */}
+            <Stack.Screen
+              name="FlatScreen"
+              component={FlatScreen}
+              options={({ route }) => ({
+                title: route.params?.title ?? "Flats",
+              })}
+            />
+            <Stack.Screen
+              name="FeatureScreen"
+              component={FeatureScreen}
+              options={({ route }) => ({
+                title: route.params?.title ?? "Features",
+              })}
+            />
+          </Stack.Navigator>
         </NavigationContainer>
       </ToastProvider>
     </ThemeProvider>

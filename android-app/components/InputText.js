@@ -10,6 +10,7 @@ const InputText = ({
   secureTextEntry,
   keyboardType,
   style,
+  disabled = false,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const { colors } = useTheme();
@@ -17,24 +18,37 @@ const InputText = ({
   return (
     <View style={[styles.container, style]}>
       {label && (
-        <Text style={[styles.label, { color: colors.text }]}>{label}</Text>
+        <Text
+          style={[
+            styles.label,
+            { color: disabled ? colors.subtext : colors.text },
+          ]}
+        >
+          {label}
+        </Text>
       )}
       <TextInput
         style={[
           styles.input,
           {
-            backgroundColor: colors.card,
-            color: colors.text,
-            borderColor: isFocused ? colors.primary : colors.border,
+            backgroundColor: disabled ? colors.border : colors.card,
+            color: disabled ? colors.subtext : colors.text,
+            borderColor: disabled
+              ? colors.border
+              : isFocused
+              ? colors.primary
+              : colors.border,
           },
-          isFocused && styles.inputFocused,
+          isFocused && !disabled && styles.inputFocused,
         ]}
         value={value}
-        onChangeText={onChangeText}
+        onChangeText={disabled ? undefined : onChangeText}
         placeholder={placeholder}
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
-        onFocus={() => setIsFocused(true)}
+        editable={!disabled}
+        selectTextOnFocus={!disabled}
+        onFocus={() => !disabled && setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholderTextColor={colors.subtext}
       />

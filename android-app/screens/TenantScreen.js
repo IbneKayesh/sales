@@ -6,12 +6,21 @@ import {
   Alert,
   RefreshControl,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 //internal states
-import { getAll, getById, add, update, deleteById } from "../db/houseDal";
+import {
+  getAll,
+  getById,
+  getUnClosed,
+  add,
+  update,
+  deleteById,
+} from "../db/tenantDal";
+import { getToLet } from "../db/flatDal";
 import { useToast } from "../contexts/ToastContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { getGlobalStyles } from "../styles/css";
@@ -19,8 +28,9 @@ import Button from "../components/Button";
 import Fab from "../components/Fab";
 import InputText from "../components/InputText";
 import { generalRulesOptions } from "../db/vtable";
+import Dropdown from "../components/Dropdown";
 
-export default function HomeScreen() {
+export default function TenantScreen() {
   const navigation = useNavigation();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -28,29 +38,32 @@ export default function HomeScreen() {
   const { colors } = useTheme();
   const globalStyles = getGlobalStyles(colors);
   const [formData, setFormData] = useState({
+    flat_id: "",
     name: "",
-    address: "",
     contact: "",
     image: "",
-    map_link: "",
-    general_rules: "",
+    contract_start_date: "",
+    contract_end_date: "",
+    rent: "0",
+    deposit: "0",
+    security: "0",
+    contract_closed: "0",
   });
   const [houseList, setHouseList] = useState([]);
+  const [tenantList, setTenantList] = useState([]);
+  const [flatList, setFlatList] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editId, setEditId] = useState(null);
 
   const [selectedGeneralRules, setSelectedGeneralRules] = useState([]);
-  const generalRulesMap = Object.fromEntries(
-    generalRulesOptions.map((r) => [r.value, r.name])
-  );
 
-  const fetchHouses = async () => {
+  const fetchTenants = async () => {
     // start refresh
     setRefreshing(true);
 
     try {
-      const houses = await getAll();
-      setHouseList(houses);
+      const tenants = await getUnClosed();
+      setTenantList(tenants);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -59,22 +72,36 @@ export default function HomeScreen() {
     }
   };
 
+  const fetchFlats = async () => {
+    try {
+      const flats = await getToLet();
+      setFlatList(flats);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+    }
+  };
+
   useEffect(() => {
-    fetchHouses();
+    fetchTenants();
+    fetchFlats();
   }, []);
 
   const handleCloseModalPress = () => {
     setShowAddModal(false);
     setFormData({
+      flat_id: "",
       name: "",
-      address: "",
       contact: "",
       image: "",
-      map_link: "",
-      general_rules: "",
+      contract_start_date: "",
+      contract_end_date: "",
+      rent: "0",
+      deposit: "0",
+      security: "0",
+      contract_closed: "0",
     });
     setEditId(null);
-    setSelectedGeneralRules([]);
   };
 
   const handleSavePress = async () => {
@@ -83,38 +110,25 @@ export default function HomeScreen() {
         showToast("Name is required", "error");
         return;
       }
-      if (!formData.address.trim()) {
-        showToast("Address is required", "error");
-        return;
-      }
       if (!formData.contact.trim()) {
         showToast("Contact is required", "error");
         return;
       }
-      // if (!formData.image.trim()) {
-      //   showToast("Image is required", "error");
-      //   return;
-      // }
-      // if (!formData.map_link.trim()) {
-      //   showToast("Map Link is required", "error");
-      //   return;
-      // }
-
-      const payload = {
-        ...formData,
-        general_rules: selectedGeneralRules.join(","), // "no_smoking,no_pets"
-      };
+      if (!formData.contract_start_date.trim()) {
+        showToast("Contract Start Date is required", "error");
+        return;
+      }
 
       if (editId) {
-        await update(payload);
-        showToast("House updated successfully", "success");
+        await update(formData);
+        showToast("Tenant updated successfully", "success");
       } else {
-        await add(payload);
-        showToast("House added successfully", "success");
+        await add(formData);
+        showToast("Tenant added successfully", "success");
       }
       handleCloseModalPress();
 
-      fetchHouses();
+      fetchTenants();
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("Error saving data", "error");
@@ -147,7 +161,7 @@ export default function HomeScreen() {
     try {
       await deleteById(id);
       showToast("House deleted successfully", "success");
-      fetchHouses();
+      fetchTenants();
     } catch (error) {
       console.error("Error deleting data:", error);
       showToast("Error deleting data", "error");
@@ -162,24 +176,27 @@ export default function HomeScreen() {
     });
   };
 
-  const toggleRule = (value) => {
-    setSelectedGeneralRules((prev) =>
-      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+  const handleChangeValueFlat = (value) => {
+    console.log(value);
+    const selectedFlat = flatList.find(
+      (flat) => String(flat.id) === String(value)
     );
 
-    // keep formData in sync (optional)
-    // setFormData((prev) => ({
-    //   ...prev,
-    //   general_rules: prev.general_rules?.includes(value)
-    //     ? prev.general_rules?.filter((v) => v !== value)
-    //     : [...(prev.general_rules || []), value],
-    // }));
+    //console.log("Selected flat:", selectedFlat);
+
+    if (!selectedFlat) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      flat_id: value,
+      rent: String(selectedFlat.price || "0"),
+    }));
   };
 
   return (
     <View style={globalStyles.container}>
       <FlatList
-        data={houseList}
+        data={tenantList}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -188,19 +205,16 @@ export default function HomeScreen() {
           >
             <View style={{ flex: 1 }}>
               <Text style={globalStyles.title}>{item.name}</Text>
-              <Text style={globalStyles.subtext}>{item.address}</Text>
               <Text style={globalStyles.subtext}>{item.contact}</Text>
               <Text style={globalStyles.subtext}>{item.image}</Text>
-              <Text style={globalStyles.subtext}>{item.map_link}</Text>
               <Text style={globalStyles.subtext}>
-                Rules:{" "}
-                {item.general_rules
-                  ?.split(",")
-                  .map((rule) => generalRulesMap[rule])
-                  .filter(Boolean)
-                  .join(", ")}
+                {item.contract_start_date}
               </Text>
-              <Text style={globalStyles.subtext}>Flats: {item.flat_count}</Text>
+              <Text style={globalStyles.subtext}>{item.contract_end_date}</Text>
+              <Text style={globalStyles.subtext}>{item.rent}</Text>
+              <Text style={globalStyles.subtext}>{item.deposit}</Text>
+              <Text style={globalStyles.subtext}>{item.security}</Text>
+              <Text style={globalStyles.subtext}>{item.contract_closed}</Text>
             </View>
             <View style={styles.actions}>
               <Button
@@ -220,7 +234,7 @@ export default function HomeScreen() {
         )}
         style={{ width: "100%" }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={fetchHouses} />
+          <RefreshControl refreshing={refreshing} onRefresh={fetchTenants} />
         }
       />
 
@@ -231,74 +245,101 @@ export default function HomeScreen() {
         onRequestClose={handleCloseModalPress}
       >
         <View style={globalStyles.modalBackdrop}>
-          <View style={globalStyles.modalCard}>
+          <ScrollView style={globalStyles.modalCard}>
             <View style={globalStyles.modalHeader}>
               <Text style={globalStyles.modalHeaderTitle}>
-                {editId ? "Edit House" : "Add House"}
+                {editId ? "Edit Tenant" : "Add Tenant"}
               </Text>
             </View>
 
-            <View style={globalStyles.modalBody}>
+            <View
+              style={globalStyles.modalBody}
+              contentContainerStyle={{ paddingBottom: 20 }}
+              showsVerticalScrollIndicator={false}
+            >
+              {/* <Dropdown
+                label="Flat"
+                placeholder="Select flat"
+                value={formData.flat_id}
+                onChangeValue={handleChangeValueFlat}
+                data={flatList}
+              /> */}
+
+              <Dropdown
+                label="Flat"
+                placeholder="Select flat"
+                data={flatList}
+                value={
+                  flatList.find((f) => f.id === formData.flat_id)?.name || ""
+                }
+                onChangeValue={handleChangeValueFlat}
+              />
+
               <InputText
                 label="Name"
-                placeholder="Enter house name"
+                placeholder="Enter tenant name"
                 value={formData.name}
                 onChangeText={(text) =>
                   setFormData({ ...formData, name: text })
                 }
               />
               <InputText
-                label="Address"
-                placeholder="Enter house address"
-                value={formData.address}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, address: text })
-                }
-              />
-              <InputText
                 label="Contact"
-                placeholder="Enter house contact"
+                placeholder="Enter tenant contact"
                 value={formData.contact}
                 onChangeText={(text) =>
                   setFormData({ ...formData, contact: text })
                 }
               />
-              {/* <InputText
-                label="Image"
-                placeholder="Enter house image"
-                value={formData.image}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, image: text })
-                }
-              /> */}
               <InputText
-                label="Map Link"
-                placeholder="Enter house map link"
-                value={formData.map_link}
+                label="Contract Start Date"
+                placeholder="Enter tenant contract start date"
+                value={formData.contract_start_date}
                 onChangeText={(text) =>
-                  setFormData({ ...formData, map_link: text })
+                  setFormData({ ...formData, contract_start_date: text })
                 }
               />
-              {/* //multiple select */}
-              <View style={styles.tagRow}>
-                {generalRulesOptions.map((p) => {
-                  const isSelected = selectedGeneralRules.includes(p.value);
-
-                  return (
-                    <Button
-                      key={p.value}
-                      title={p.name}
-                      onPress={() => toggleRule(p.value)}
-                      type={isSelected ? "primary" : "secondary"}
-                      style={[
-                        styles.tagButton,
-                        isSelected && { backgroundColor: colors.primary },
-                      ]}
-                      textStyle={{ fontSize: 12 }}
-                    />
-                  );
-                })}
-              </View>
+              <InputText
+                label="Contract End Date"
+                placeholder="Enter tenant contract end date"
+                value={formData.contract_end_date}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, contract_end_date: text })
+                }
+              />
+              <InputText
+                label="Rent"
+                placeholder="Enter tenant rent"
+                value={formData.rent}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, rent: text })
+                }
+                disabled={true}
+              />
+              <InputText
+                label="Deposit"
+                placeholder="Enter tenant deposit"
+                value={formData.deposit}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, deposit: text })
+                }
+              />
+              <InputText
+                label="Security"
+                placeholder="Enter tenant security"
+                value={formData.security}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, security: text })
+                }
+              />
+              <InputText
+                label="Contract Closed"
+                placeholder="Enter tenant contract closed"
+                value={formData.contract_closed}
+                onChangeText={(text) =>
+                  setFormData({ ...formData, contract_closed: text })
+                }
+              />
             </View>
 
             <View style={globalStyles.modalFooter}>
@@ -316,7 +357,7 @@ export default function HomeScreen() {
                 style={globalStyles.footerButton}
               />
             </View>
-          </View>
+          </ScrollView>
         </View>
       </Modal>
       <Fab onPress={() => setShowAddModal(true)} />

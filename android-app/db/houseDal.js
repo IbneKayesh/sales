@@ -1,25 +1,34 @@
-//getAll
-//getById
-//add
-//update
-//delete
-
 import * as SQLite from "expo-sqlite";
-const db = await SQLite.openDatabaseAsync("myhouse.db");
+
+let db;
+
+async function getDb() {
+  if (!db) {
+    db = await SQLite.openDatabaseAsync("myhouse.db");
+  }
+  return db;
+}
 
 export async function getAll() {
-  return await db.getAllAsync("SELECT * FROM house ORDER BY priority DESC");
+  const db = await getDb();
+  const sql = `SELECT h.*, COUNT(f.id) AS flat_count
+  FROM house h
+  LEFT JOIN flat f ON h.id = f.house_id
+  GROUP BY h.id
+  ORDER BY h.name ASC`;
+  return db.getAllAsync(sql);
 }
 
 export async function getById(id) {
-  return await db.getAllAsync("SELECT * FROM house WHERE id = ?", [id]);
+  const db = await getDb();
+  return db.getAllAsync("SELECT * FROM house WHERE id = ?", [id]);
 }
 
 export async function add(item) {
-  return await db.runAsync(
-    "INSERT INTO house (name, priority, address, contact, image, map_link, general_rules) VALUES (?, ?, ?, ?, ?, ?, ?)",
+  const db = await getDb();
+  return db.runAsync(
+    "INSERT INTO house (name, address, contact, image, map_link, general_rules) VALUES (?, ?, ?, ?, ?, ?)",
     item.name,
-    item.priority,
     item.address,
     item.contact,
     item.image,
@@ -29,10 +38,10 @@ export async function add(item) {
 }
 
 export async function update(item) {
-  return await db.runAsync(
-    "UPDATE house SET name = ?, priority = ?, address = ?, contact = ?, image = ?, map_link = ?, general_rules = ? WHERE id = ?",
+  const db = await getDb();
+  return db.runAsync(
+    "UPDATE house SET name = ?, address = ?, contact = ?, image = ?, map_link = ?, general_rules = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
     item.name,
-    item.priority,
     item.address,
     item.contact,
     item.image,
@@ -42,6 +51,7 @@ export async function update(item) {
   );
 }
 
-export async function deleteItem(id) {
-  return await db.runAsync("DELETE FROM house WHERE id = ?", [id]);
+export async function deleteById(id) {
+  const db = await getDb();
+  return db.runAsync("DELETE FROM house WHERE id = ?", [id]);
 }

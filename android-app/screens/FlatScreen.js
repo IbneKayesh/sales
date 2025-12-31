@@ -7,70 +7,133 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from "react-native";
-import { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useState, useEffect, useLayoutEffect } from "react";
 
 //internal states
-import { getAll, getById, add, update, deleteById } from "../db/houseDal";
+import {
+  getAll,
+  getById,
+  getByHouseId,
+  add,
+  update,
+  deleteById,
+  updatePrice
+} from "../db/flatDal";
 import { useToast } from "../contexts/ToastContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { getGlobalStyles } from "../styles/css";
 import Button from "../components/Button";
-import Fab from "../components/Fab";
 import InputText from "../components/InputText";
 import { generalRulesOptions } from "../db/vtable";
+import Fab from "../components/Fab";
 
-export default function HomeScreen() {
-  const navigation = useNavigation();
-
+export default function FlatScreen({ route, navigation }) {
   const [refreshing, setRefreshing] = useState(false);
   const { showToast } = useToast();
   const { colors } = useTheme();
   const globalStyles = getGlobalStyles(colors);
   const [formData, setFormData] = useState({
+    house_id: "",
     name: "",
-    address: "",
     contact: "",
     image: "",
-    map_link: "",
+    price: "",
     general_rules: "",
+    features: [
+      {
+        feature_name: "",
+        feature_type: "",
+        quantity: 0,
+      },
+    ],
   });
-  const [houseList, setHouseList] = useState([]);
+  const [flatList, setFlatList] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editId, setEditId] = useState(null);
+
+  const { title, houseId } = route.params;
 
   const [selectedGeneralRules, setSelectedGeneralRules] = useState([]);
   const generalRulesMap = Object.fromEntries(
     generalRulesOptions.map((r) => [r.value, r.name])
   );
 
-  const fetchHouses = async () => {
-    // start refresh
-    setRefreshing(true);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: `${title} Flats`,
+    });
+  }, [navigation, title]);
 
+  const fetchFlatsByHouseId = async () => {
     try {
-      const houses = await getAll();
-      setHouseList(houses);
+      const flatsWithFeatures = await getByHouseId(houseId);
+      //console.log(houseId);
+      // Make sure it's an array
+      if (!Array.isArray(flatsWithFeatures)) {
+        console.error("Expected an array but got:", flatsWithFeatures);
+        return;
+      }
+
+      //return;
+
+      // flatsWithFeatures is an array of rows from SQL, each row might repeat flat info
+
+      // We'll transform it into a map first to group by flat id
+      const flatMap = {};
+
+      flatsWithFeatures.forEach((row) => {
+        const flatId = row.id;
+
+        if (!flatMap[flatId]) {
+          // Initialize the flat in the map
+          flatMap[flatId] = {
+            id: row.id,
+            house_id: row.house_id,
+            name: row.name,
+            contact: row.contact,
+            image: row.image,
+            price: row.price,
+            general_rules: row.general_rules,
+            features: [],
+          };
+        }
+
+        // If the row has a feature, push it into the features array
+        if (row.feature_type) {
+          flatMap[flatId].features.push({
+            feature_name: row.feature_name,
+            feature_type: row.feature_type,
+            quantity: row.quantity,
+          });
+        }
+      });
+
+      // Convert the map to an array
+      const flatListArray = Object.values(flatMap);
+
+      //console.log(flatsWithFeatures);
+
+      setFlatList(flatListArray);
+
+      //update price
+      await updatePrice();
     } catch (error) {
       console.error("Error fetching data:", error);
-    } finally {
-      // stop refresh
-      setRefreshing(false);
     }
   };
 
   useEffect(() => {
-    fetchHouses();
+    fetchFlatsByHouseId();
   }, []);
 
   const handleCloseModalPress = () => {
     setShowAddModal(false);
     setFormData({
+      house_id: houseId,
       name: "",
-      address: "",
       contact: "",
       image: "",
-      map_link: "",
+      price: "",
       general_rules: "",
     });
     setEditId(null);
@@ -83,38 +146,23 @@ export default function HomeScreen() {
         showToast("Name is required", "error");
         return;
       }
-      if (!formData.address.trim()) {
-        showToast("Address is required", "error");
-        return;
-      }
-      if (!formData.contact.trim()) {
-        showToast("Contact is required", "error");
-        return;
-      }
-      // if (!formData.image.trim()) {
-      //   showToast("Image is required", "error");
-      //   return;
-      // }
-      // if (!formData.map_link.trim()) {
-      //   showToast("Map Link is required", "error");
-      //   return;
-      // }
 
       const payload = {
         ...formData,
+        house_id: houseId,
         general_rules: selectedGeneralRules.join(","), // "no_smoking,no_pets"
       };
-
+      //console.log(payload);
       if (editId) {
         await update(payload);
-        showToast("House updated successfully", "success");
+        showToast("Flat updated successfully", "success");
       } else {
         await add(payload);
-        showToast("House added successfully", "success");
+        showToast("Flat added successfully", "success");
       }
       handleCloseModalPress();
 
-      fetchHouses();
+      fetchFlatsByHouseId();
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("Error saving data", "error");
@@ -130,7 +178,7 @@ export default function HomeScreen() {
   };
 
   const handleDeletePressAlert = async (id) => {
-    Alert.alert("Delete House", "Are you sure you want to delete this house?", [
+    Alert.alert("Delete Flat", "Are you sure you want to delete this flat?", [
       {
         text: "Cancel",
         onPress: () => console.log("Cancel Pressed"),
@@ -146,19 +194,19 @@ export default function HomeScreen() {
   const handleDeleteById = async (id) => {
     try {
       await deleteById(id);
-      showToast("House deleted successfully", "success");
-      fetchHouses();
+      showToast("Flat deleted successfully", "success");
+      fetchFlatsByHouseId();
     } catch (error) {
       console.error("Error deleting data:", error);
       showToast("Error deleting data", "error");
     }
   };
 
-  const handleAddFlatPress = (item) => {
-    //navigate to (child) flat screen
-    navigation.navigate("FlatScreen", {
+  const handleAddFeaturePress = (item) => {
+    //navigate to (child) feature screen
+    navigation.navigate("FeatureScreen", {
       title: item.name,
-      houseId: item.id,
+      flatId: item.id,
     });
   };
 
@@ -166,32 +214,23 @@ export default function HomeScreen() {
     setSelectedGeneralRules((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
     );
-
-    // keep formData in sync (optional)
-    // setFormData((prev) => ({
-    //   ...prev,
-    //   general_rules: prev.general_rules?.includes(value)
-    //     ? prev.general_rules?.filter((v) => v !== value)
-    //     : [...(prev.general_rules || []), value],
-    // }));
   };
 
   return (
     <View style={globalStyles.container}>
       <FlatList
-        data={houseList}
+        data={flatList}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={globalStyles.card}
-            onPress={() => handleAddFlatPress(item)}
+            onPress={() => handleAddFeaturePress(item)}
           >
             <View style={{ flex: 1 }}>
               <Text style={globalStyles.title}>{item.name}</Text>
-              <Text style={globalStyles.subtext}>{item.address}</Text>
               <Text style={globalStyles.subtext}>{item.contact}</Text>
               <Text style={globalStyles.subtext}>{item.image}</Text>
-              <Text style={globalStyles.subtext}>{item.map_link}</Text>
+              <Text style={globalStyles.subtext}>{item.price}</Text>
               <Text style={globalStyles.subtext}>
                 Rules:{" "}
                 {item.general_rules
@@ -200,7 +239,21 @@ export default function HomeScreen() {
                   .filter(Boolean)
                   .join(", ")}
               </Text>
-              <Text style={globalStyles.subtext}>Flats: {item.flat_count}</Text>
+              {item.features.length > 0 && (
+                <Text style={globalStyles.subtext}>
+                  {item.features.map((feature) => (
+                    <Text
+                      key={feature.feature_type}
+                      style={globalStyles.subtext}
+                    >
+                      {feature.feature_name.length > 5
+                        ? feature.feature_name
+                        : feature.feature_type}{" "}
+                      ({feature.quantity}),{" "}
+                    </Text>
+                  ))}
+                </Text>
+              )}
             </View>
             <View style={styles.actions}>
               <Button
@@ -220,7 +273,10 @@ export default function HomeScreen() {
         )}
         style={{ width: "100%" }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={fetchHouses} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={fetchFlatsByHouseId}
+          />
         }
       />
 
@@ -234,25 +290,17 @@ export default function HomeScreen() {
           <View style={globalStyles.modalCard}>
             <View style={globalStyles.modalHeader}>
               <Text style={globalStyles.modalHeaderTitle}>
-                {editId ? "Edit House" : "Add House"}
+                {editId ? "Edit Flat" : "Add Flat"} - {title}
               </Text>
             </View>
 
             <View style={globalStyles.modalBody}>
               <InputText
                 label="Name"
-                placeholder="Enter house name"
+                placeholder="Enter flat name"
                 value={formData.name}
                 onChangeText={(text) =>
                   setFormData({ ...formData, name: text })
-                }
-              />
-              <InputText
-                label="Address"
-                placeholder="Enter house address"
-                value={formData.address}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, address: text })
                 }
               />
               <InputText
@@ -271,14 +319,6 @@ export default function HomeScreen() {
                   setFormData({ ...formData, image: text })
                 }
               /> */}
-              <InputText
-                label="Map Link"
-                placeholder="Enter house map link"
-                value={formData.map_link}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, map_link: text })
-                }
-              />
               {/* //multiple select */}
               <View style={styles.tagRow}>
                 {generalRulesOptions.map((p) => {
@@ -319,7 +359,7 @@ export default function HomeScreen() {
           </View>
         </View>
       </Modal>
-      <Fab onPress={() => setShowAddModal(true)} />
+      <Fab onPress={() => setShowAddModal(true)} style={{ bottom: 80 }} />
     </View>
   );
 }
