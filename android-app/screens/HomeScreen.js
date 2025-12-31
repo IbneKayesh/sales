@@ -200,7 +200,7 @@ export default function HomeScreen() {
                   .filter(Boolean)
                   .join(", ")}
               </Text>
-              <Text style={globalStyles.subtext}>Flats: {item.flat_count}</Text>
+              <Text style={globalStyles.subtext}>Flats: {item.flat_count}, Rent: {item.rent_count}, To-Let: {item.flat_count - item.rent_count}</Text>
             </View>
             <View style={styles.actions}>
               <Button

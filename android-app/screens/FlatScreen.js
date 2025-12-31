@@ -17,7 +17,7 @@ import {
   add,
   update,
   deleteById,
-  updatePrice
+  updatePrice,
 } from "../db/flatDal";
 import { useToast } from "../contexts/ToastContext";
 import { useTheme } from "../contexts/ThemeContext";
@@ -39,6 +39,7 @@ export default function FlatScreen({ route, navigation }) {
     image: "",
     price: "",
     general_rules: "",
+    tenant_name: "",
     features: [
       {
         feature_name: "",
@@ -94,24 +95,42 @@ export default function FlatScreen({ route, navigation }) {
             image: row.image,
             price: row.price,
             general_rules: row.general_rules,
+            tenant_name: row.tenant_name,
             features: [],
           };
         }
 
         // If the row has a feature, push it into the features array
+        // if (row.feature_type) {
+        //   flatMap[flatId].features.push({
+        //     feature_name: row.feature_name,
+        //     feature_type: row.feature_type,
+        //     quantity: row.quantity,
+        //   });
+        // }
+
+        // Push feature only if it doesn't already exist
         if (row.feature_type) {
-          flatMap[flatId].features.push({
-            feature_name: row.feature_name,
-            feature_type: row.feature_type,
-            quantity: row.quantity,
-          });
+          const featureExists = flatMap[flatId].features.some(
+            (feature) =>
+              feature.feature_name === row.feature_name &&
+              feature.feature_type === row.feature_type
+          );
+
+          if (!featureExists) {
+            flatMap[flatId].features.push({
+              feature_name: row.feature_name,
+              feature_type: row.feature_type,
+              quantity: row.quantity,
+            });
+          }
         }
       });
 
       // Convert the map to an array
       const flatListArray = Object.values(flatMap);
 
-      //console.log(flatsWithFeatures);
+      //console.log(flatListArray);
 
       setFlatList(flatListArray);
 
@@ -230,7 +249,9 @@ export default function FlatScreen({ route, navigation }) {
               <Text style={globalStyles.title}>{item.name}</Text>
               <Text style={globalStyles.subtext}>{item.contact}</Text>
               <Text style={globalStyles.subtext}>{item.image}</Text>
-              <Text style={globalStyles.subtext}>{item.price}</Text>
+              {item.price && item.price > 0 && (
+                <Text style={globalStyles.tagSecondary}>{item.price}</Text>
+              )}
               <Text style={globalStyles.subtext}>
                 Rules:{" "}
                 {item.general_rules
@@ -239,6 +260,11 @@ export default function FlatScreen({ route, navigation }) {
                   .filter(Boolean)
                   .join(", ")}
               </Text>
+              {item.tenant_name ? (
+                <Text style={globalStyles.tagSuccess}>{item.tenant_name}</Text>
+              ) : (
+                <Text style={globalStyles.tagDanger}>To-Let</Text>
+              )}
               {item.features.length > 0 && (
                 <Text style={globalStyles.subtext}>
                   {item.features.map((feature) => (
@@ -305,7 +331,7 @@ export default function FlatScreen({ route, navigation }) {
               />
               <InputText
                 label="Contact"
-                placeholder="Enter house contact"
+                placeholder="Enter flat contact"
                 value={formData.contact}
                 onChangeText={(text) =>
                   setFormData({ ...formData, contact: text })

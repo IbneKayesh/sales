@@ -27,8 +27,9 @@ import { getGlobalStyles } from "../styles/css";
 import Button from "../components/Button";
 import Fab from "../components/Fab";
 import InputText from "../components/InputText";
-import { generalRulesOptions } from "../db/vtable";
 import Dropdown from "../components/Dropdown";
+import CheckBox from "../components/CheckBox";
+import InputCalendar from "../components/InputCalendar";
 
 export default function TenantScreen() {
   const navigation = useNavigation();
@@ -49,13 +50,11 @@ export default function TenantScreen() {
     security: "0",
     contract_closed: "0",
   });
-  const [houseList, setHouseList] = useState([]);
+
   const [tenantList, setTenantList] = useState([]);
   const [flatList, setFlatList] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editId, setEditId] = useState(null);
-
-  const [selectedGeneralRules, setSelectedGeneralRules] = useState([]);
 
   const fetchTenants = async () => {
     // start refresh
@@ -83,9 +82,13 @@ export default function TenantScreen() {
   };
 
   useEffect(() => {
+    refreshData();
+  }, []);
+
+  const refreshData = () => {
     fetchTenants();
     fetchFlats();
-  }, []);
+  };
 
   const handleCloseModalPress = () => {
     setShowAddModal(false);
@@ -94,7 +97,7 @@ export default function TenantScreen() {
       name: "",
       contact: "",
       image: "",
-      contract_start_date: "",
+      contract_start_date: new Date().toISOString().split("T")[0],
       contract_end_date: "",
       rent: "0",
       deposit: "0",
@@ -119,11 +122,20 @@ export default function TenantScreen() {
         return;
       }
 
+      const payload = {
+        ...formData,
+        contract_end_date: formData.contract_end_date
+          ? formData.contract_end_date
+          : formData.contract_closed === "1"
+          ? new Date().toISOString().split("T")[0]
+          : "",
+      };
+
       if (editId) {
-        await update(formData);
+        await update(payload);
         showToast("Tenant updated successfully", "success");
       } else {
-        await add(formData);
+        await add(payload);
         showToast("Tenant added successfully", "success");
       }
       handleCloseModalPress();
@@ -139,7 +151,6 @@ export default function TenantScreen() {
   const handleEditPress = (item) => {
     setEditId(item.id);
     setFormData(item);
-    setSelectedGeneralRules(item.general_rules.split(","));
     setShowAddModal(true);
   };
 
@@ -177,7 +188,7 @@ export default function TenantScreen() {
   };
 
   const handleChangeValueFlat = (value) => {
-    console.log(value);
+    //console.log(value);
     const selectedFlat = flatList.find(
       (flat) => String(flat.id) === String(value)
     );
@@ -190,6 +201,8 @@ export default function TenantScreen() {
       ...prev,
       flat_id: value,
       rent: String(selectedFlat.price || "0"),
+      deposit: String(selectedFlat.price || "0"),
+      security: String(selectedFlat.price || "0"),
     }));
   };
 
@@ -206,15 +219,19 @@ export default function TenantScreen() {
             <View style={{ flex: 1 }}>
               <Text style={globalStyles.title}>{item.name}</Text>
               <Text style={globalStyles.subtext}>{item.contact}</Text>
-              <Text style={globalStyles.subtext}>{item.image}</Text>
-              <Text style={globalStyles.subtext}>
-                {item.contract_start_date}
+              <Text style={globalStyles.tagSecondary}>
+                {item.flat_name}, from {item.contract_start_date} to{" "}
+                {item.contract_end_date ? item.contract_end_date : "Present"}
               </Text>
-              <Text style={globalStyles.subtext}>{item.contract_end_date}</Text>
-              <Text style={globalStyles.subtext}>{item.rent}</Text>
-              <Text style={globalStyles.subtext}>{item.deposit}</Text>
-              <Text style={globalStyles.subtext}>{item.security}</Text>
-              <Text style={globalStyles.subtext}>{item.contract_closed}</Text>
+              <Text style={globalStyles.tagSuccess}>Rent: {item.rent}</Text>
+              <Text style={globalStyles.tagDisabled}>
+                Deposit: {item.deposit}, Security: {item.security}
+              </Text>
+              {item.contract_closed === 1 || item.contract_closed === "1" ? (
+                <Text style={globalStyles.tagDanger}>Closed</Text>
+              ) : (
+                <Text style={globalStyles.tagSuccess}>Rent</Text>
+              )}
             </View>
             <View style={styles.actions}>
               <Button
@@ -234,7 +251,7 @@ export default function TenantScreen() {
         )}
         style={{ width: "100%" }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={fetchTenants} />
+          <RefreshControl refreshing={refreshing} onRefresh={refreshData} />
         }
       />
 
@@ -257,14 +274,6 @@ export default function TenantScreen() {
               contentContainerStyle={{ paddingBottom: 20 }}
               showsVerticalScrollIndicator={false}
             >
-              {/* <Dropdown
-                label="Flat"
-                placeholder="Select flat"
-                value={formData.flat_id}
-                onChangeValue={handleChangeValueFlat}
-                data={flatList}
-              /> */}
-
               <Dropdown
                 label="Flat"
                 placeholder="Select flat"
@@ -274,7 +283,6 @@ export default function TenantScreen() {
                 }
                 onChangeValue={handleChangeValueFlat}
               />
-
               <InputText
                 label="Name"
                 placeholder="Enter tenant name"
@@ -291,20 +299,20 @@ export default function TenantScreen() {
                   setFormData({ ...formData, contact: text })
                 }
               />
-              <InputText
+              <InputCalendar
                 label="Contract Start Date"
-                placeholder="Enter tenant contract start date"
+                placeholder="Select start date"
                 value={formData.contract_start_date}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, contract_start_date: text })
+                onDateChange={(date) =>
+                  setFormData({ ...formData, contract_start_date: date })
                 }
               />
-              <InputText
+              <InputCalendar
                 label="Contract End Date"
-                placeholder="Enter tenant contract end date"
+                placeholder="Select end date (optional)"
                 value={formData.contract_end_date}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, contract_end_date: text })
+                onDateChange={(date) =>
+                  setFormData({ ...formData, contract_end_date: date })
                 }
               />
               <InputText
@@ -332,12 +340,11 @@ export default function TenantScreen() {
                   setFormData({ ...formData, security: text })
                 }
               />
-              <InputText
+              <CheckBox
                 label="Contract Closed"
-                placeholder="Enter tenant contract closed"
                 value={formData.contract_closed}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, contract_closed: text })
+                onValueChange={(val) =>
+                  setFormData({ ...formData, contract_closed: val })
                 }
               />
             </View>

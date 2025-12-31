@@ -11,9 +11,10 @@ async function getDb() {
 
 export async function getAll() {
   const db = await getDb();
-  const sql = `SELECT h.*, COUNT(f.id) AS flat_count
+  const sql = `SELECT h.*, COUNT(f.id) AS flat_count, COUNT(t.id) AS rent_count
   FROM house h
   LEFT JOIN flat f ON h.id = f.house_id
+  LEFT JOIN tenant t ON f.id = t.flat_id AND t.contract_closed = 0
   GROUP BY h.id
   ORDER BY h.name ASC`;
   return db.getAllAsync(sql);

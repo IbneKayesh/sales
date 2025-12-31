@@ -21,23 +21,33 @@ export async function getById(id) {
 
 export async function getByHouseId(id) {
   const db = await getDb();
-  const sql = `SELECT f.*, fr.name as feature_name, fr.feature_type, fr.quantity
-  FROM flat f
-  LEFT JOIN features fr on f.id = fr.flat_id
-  WHERE f.house_id = ?
-  ORDER BY f.name ASC`;
+  const sql = `SELECT 
+    f.*, 
+    fr.name AS feature_name, 
+    fr.feature_type, 
+    fr.quantity, 
+    t.name AS tenant_name
+FROM flat f
+LEFT JOIN features fr 
+    ON f.id = fr.flat_id
+LEFT JOIN tenant t 
+    ON f.id = t.flat_id 
+   AND t.contract_closed = 0
+WHERE f.house_id = ?
+ORDER BY f.name ASC`;
   return await db.getAllAsync(sql, [id]);
 }
 
-
 export async function getToLet() {
   const db = await getDb();
-  const sql = `SELECT f.*
+  const sql = `SELECT f.id, f.name || ' - ' || h.name AS name, f.price
   FROM flat f
+  JOIN house h ON f.house_id = h.id
+  LEFT JOIN tenant t ON t.flat_id = f.id AND t.contract_closed = 0
+  WHERE t.flat_id IS NULL
   ORDER BY f.name ASC`;
   return await db.getAllAsync(sql);
 }
-
 
 export async function add(item) {
   const db = await getDb();

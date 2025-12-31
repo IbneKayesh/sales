@@ -17,6 +17,7 @@ import {
   update,
   deleteById,
 } from "../db/featuresDal";
+import { getTenantByFlatId } from "../db/tenantDal";
 import { useToast } from "../contexts/ToastContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { getGlobalStyles } from "../styles/css";
@@ -33,7 +34,7 @@ export default function FeatureScreen({ route, navigation }) {
     flat_id: "",
     name: "",
     feature_type: "",
-    include_price: "",
+    include_price: "include_price",
     price: "0",
     quantity: "1",
   });
@@ -51,25 +52,32 @@ export default function FeatureScreen({ route, navigation }) {
     { value: "kitchen", name: "Kitchen" },
     { value: "living_room", name: "Living Room" },
     { value: "balcony", name: "Balcony" },
-    { value: "terrace", name: "Terrace" },
-    { value: "garden", name: "Garden" },
     { value: "parking", name: "Parking" },
     { value: "security", name: "Security" },
+    { value: "lift", name: "Lift" },
+    { value: "gas", name: "Gas" },
+    { value: "electricity", name: "Electricity" },
+    { value: "garbage_collection", name: "Garbage Collection" },
+    { value: "wifi", name: "WiFi" },
+    { value: "dish_cable", name: "Dish Cable" },
+    { value: "elevator", name: "Elevator" },
+    { value: "air_conditioning", name: "Air Conditioning" },
+    { value: "terrace", name: "Terrace" },
+    { value: "garden", name: "Garden" },
     { value: "swimming_pool", name: "Swimming Pool" },
     { value: "gym", name: "Gym" },
     { value: "club", name: "Club" },
-    { value: "lift", name: "Lift" },
-    { value: "elevator", name: "Elevator" },
-    { value: "air_conditioning", name: "Air Conditioning" },
-    { value: "heating", name: "Heating" },
-    { value: "wifi", name: "WiFi" },
-    { value: "dish_cable", name: "Dish Cable" },
+    { value: "room_heating", name: "Room Heating" },
+    { value: "service_charge", name: "Service Charge" },
+    { value: "maintanance_charge", name: "Maintanance Charge" },
   ];
 
   const includePriceOptions = [
     { value: "include_price", name: "Include Price" },
     { value: "exclude_price", name: "Exclude Price" },
   ];
+
+  const [tenantList, setTenantList] = useState([]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -86,8 +94,18 @@ export default function FeatureScreen({ route, navigation }) {
     }
   };
 
+  const fetchTenantsByFlatId = async () => {
+    try {
+      const tenants = await getTenantByFlatId(flatId);
+      setTenantList(tenants);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   useEffect(() => {
     fetchFeaturesByFlatId();
+    fetchTenantsByFlatId();
   }, []);
 
   const handleCloseModalPress = () => {
@@ -96,7 +114,7 @@ export default function FeatureScreen({ route, navigation }) {
       flat_id: flatId,
       name: "",
       feature_type: "",
-      include_price: "",
+      include_price: "include_price",
       price: "0",
       quantity: "1",
     });
@@ -153,6 +171,7 @@ export default function FeatureScreen({ route, navigation }) {
   };
 
   const handleEditPress = (item) => {
+    console.log(item);
     setEditId(item.id);
     setFormData(item);
     setShowAddModal(true);
@@ -207,12 +226,19 @@ export default function FeatureScreen({ route, navigation }) {
           >
             <View style={{ flex: 1 }}>
               <Text style={globalStyles.title}>{item.name}</Text>
-              <Text style={globalStyles.subtext}>{item.feature_type}</Text>
-              <Text style={globalStyles.subtext}>{item.include_price}</Text>
-              <Text style={globalStyles.subtext}>Price: {item.price}</Text>
               <Text style={globalStyles.subtext}>
-                Quantity: {item.quantity}
+                {item.feature_type} ({item.quantity})
               </Text>
+              {item.include_price === "Include Price" ? (
+                <Text style={{ color: "green" }}>Include Price</Text>
+              ) : (
+                <Text style={{ color: "red" }}>Exclude Price</Text>
+              )}
+              {item.price && item.price > 0 ? (
+                <Text style={globalStyles.tagSuccess}>{item.price}</Text>
+              ) : (
+                <Text style={globalStyles.tagDisabled}>No extra charge</Text>
+              )}
             </View>
             <View style={styles.actions}>
               {/* <Button
@@ -235,6 +261,26 @@ export default function FeatureScreen({ route, navigation }) {
               />
             </View>
           </TouchableOpacity>
+        )}
+        style={{ width: "100%" }}
+      />
+
+      <FlatList
+        data={tenantList}
+        renderItem={({ item }) => (
+          <View style={{ flex: 1 }}>
+            <Text style={globalStyles.title}>{item.name}</Text>
+            <Text style={globalStyles.subtext}>
+              {item.contract_start_date} to{" "}
+              {item.contract_end_date ? item.contract_end_date : "Present"}
+            </Text>
+            <Text style={globalStyles.subtext}>Price: {item.rent}</Text>
+            {item.contract_closed === 1 || item.contract_closed === "1" ? (
+              <Text style={globalStyles.tagDanger}>Closed</Text>
+            ) : (
+              <Text style={globalStyles.tagSuccess}>Rent</Text>
+            )}
+          </View>
         )}
         style={{ width: "100%" }}
       />
@@ -283,17 +329,17 @@ export default function FeatureScreen({ route, navigation }) {
               <InputText
                 label="Price"
                 placeholder="Enter price"
-                value={formData.price}
+                value={formData.price?.toString()}
                 onChangeText={(text) =>
-                  setFormData({ ...formData, price: text })
+                  setFormData({ ...formData, price: String(text) })
                 }
               />
               <InputText
                 label="Quantity"
                 placeholder="Enter quantity"
-                value={formData.quantity}
+                value={formData.quantity?.toString()}
                 onChangeText={(text) =>
-                  setFormData({ ...formData, quantity: text })
+                  setFormData({ ...formData, quantity: String(text) })
                 }
               />
             </View>

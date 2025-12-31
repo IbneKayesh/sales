@@ -21,11 +21,21 @@ export async function getById(id) {
 
 export async function getUnClosed() {
   const db = await getDb();
-  const sql = `SELECT t.*, f.name as flat_name
+  const sql = `SELECT t.*, f.name || ' - ' || h.name as flat_name
   FROM tenant t
   JOIN flat f ON t.flat_id = f.id
+  JOIN house h ON f.house_id = h.id
   WHERE t.contract_closed = 0`;
   return await db.getAllAsync(sql);
+}
+
+
+export async function getTenantByFlatId(id) {
+  const db = await getDb();
+  const sql = `SELECT *
+  FROM tenant WHERE flat_id = ?
+  ORDER BY contract_closed ASC`;
+  return await db.getAllAsync(sql, [id]);
 }
 
 export async function add(item) {
