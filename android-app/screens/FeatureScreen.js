@@ -25,6 +25,7 @@ import Button from "../components/Button";
 import InputText from "../components/InputText";
 import Dropdown from "../components/Dropdown";
 import Fab from "../components/Fab";
+import CheckBox from "../components/CheckBox";
 
 export default function FeatureScreen({ route, navigation }) {
   const { showToast } = useToast();
@@ -34,7 +35,7 @@ export default function FeatureScreen({ route, navigation }) {
     flat_id: "",
     name: "",
     feature_type: "",
-    include_price: "include_price",
+    include_price: 1,
     price: "0",
     quantity: "1",
   });
@@ -57,6 +58,7 @@ export default function FeatureScreen({ route, navigation }) {
     { value: "lift", name: "Lift" },
     { value: "gas", name: "Gas" },
     { value: "electricity", name: "Electricity" },
+    { value: "water", name: "Water" },
     { value: "garbage_collection", name: "Garbage Collection" },
     { value: "wifi", name: "WiFi" },
     { value: "dish_cable", name: "Dish Cable" },
@@ -68,13 +70,10 @@ export default function FeatureScreen({ route, navigation }) {
     { value: "gym", name: "Gym" },
     { value: "club", name: "Club" },
     { value: "room_heating", name: "Room Heating" },
+    { value: "monthly_charge", name: "Monthly Charge" },
     { value: "service_charge", name: "Service Charge" },
     { value: "maintanance_charge", name: "Maintanance Charge" },
-  ];
-
-  const includePriceOptions = [
-    { value: "include_price", name: "Include Price" },
-    { value: "exclude_price", name: "Exclude Price" },
+    { value: "yearly_charge", name: "Yearly Charge" },
   ];
 
   const [tenantList, setTenantList] = useState([]);
@@ -114,7 +113,7 @@ export default function FeatureScreen({ route, navigation }) {
       flat_id: flatId,
       name: "",
       feature_type: "",
-      include_price: "include_price",
+      include_price: 1,
       price: "0",
       quantity: "1",
     });
@@ -133,10 +132,6 @@ export default function FeatureScreen({ route, navigation }) {
       // }
       if (!formData.feature_type.trim()) {
         showToast("Feature Type is required", "error");
-        return;
-      }
-      if (!formData.include_price.trim()) {
-        showToast("Include Price is required", "error");
         return;
       }
       if (!formData.price) {
@@ -171,7 +166,7 @@ export default function FeatureScreen({ route, navigation }) {
   };
 
   const handleEditPress = (item) => {
-    console.log(item);
+    //console.log(item);
     setEditId(item.id);
     setFormData(item);
     setShowAddModal(true);
@@ -229,7 +224,7 @@ export default function FeatureScreen({ route, navigation }) {
               <Text style={globalStyles.subtext}>
                 {item.feature_type} ({item.quantity})
               </Text>
-              {item.include_price === "Include Price" ? (
+              {item.include_price === 1 ? (
                 <Text style={{ color: "green" }}>Include Price</Text>
               ) : (
                 <Text style={{ color: "red" }}>Exclude Price</Text>
@@ -278,7 +273,7 @@ export default function FeatureScreen({ route, navigation }) {
             {item.contract_closed === 1 || item.contract_closed === "1" ? (
               <Text style={globalStyles.tagDanger}>Closed</Text>
             ) : (
-              <Text style={globalStyles.tagSuccess}>Rent</Text>
+              <Text style={globalStyles.tagSuccess}>Booked</Text>
             )}
           </View>
         )}
@@ -309,7 +304,7 @@ export default function FeatureScreen({ route, navigation }) {
                 }
               />
               <Dropdown
-                label="Feature Type"
+                label={<Text>Type <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Select feature type"
                 value={formData.feature_type}
                 onChangeText={(text) =>
@@ -317,17 +312,15 @@ export default function FeatureScreen({ route, navigation }) {
                 }
                 data={featureTypeOptions}
               />
-              <Dropdown
+              <CheckBox
                 label="Include Price"
-                placeholder="Select include price"
                 value={formData.include_price}
-                onChangeText={(text) =>
-                  setFormData({ ...formData, include_price: text })
+                onValueChange={(val) =>
+                  setFormData({ ...formData, include_price: val })
                 }
-                data={includePriceOptions}
               />
               <InputText
-                label="Price"
+                label={<Text>Price <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Enter price"
                 value={formData.price?.toString()}
                 onChangeText={(text) =>
@@ -335,7 +328,7 @@ export default function FeatureScreen({ route, navigation }) {
                 }
               />
               <InputText
-                label="Quantity"
+                label={<Text>Quantity <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Enter quantity"
                 value={formData.quantity?.toString()}
                 onChangeText={(text) =>

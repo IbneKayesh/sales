@@ -21,9 +21,20 @@ export async function getById(id) {
 export async function getByFlatId(id) {
   const db = await getDb();
   return await db.getAllAsync(
-    "SELECT * FROM features WHERE flat_id = ? ORDER BY name ASC",
+    "SELECT * FROM features WHERE flat_id = ? ORDER BY price DESC, include_price ASC",
     [id]
   );
+}
+
+export async function getPayableByFlatId(id) {
+  const db = await getDb();
+  const sql = `SELECT * 
+  FROM features
+  WHERE include_price = 1
+  AND price > 0
+  AND flat_id = ?
+  ORDER BY name ASC`;
+  return await db.getAllAsync(sql, [id]);
 }
 
 export async function add(item) {

@@ -80,7 +80,7 @@ export async function initDatabase() {
       flat_id INTEGER,
       name TEXT NOT NULL,
       feature_type TEXT NOT NULL,
-      include_price TEXT,
+      include_price INTEGER DEFAULT 1,
       price REAL DEFAULT 0,
       quantity INTEGER DEFAULT 1,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -112,9 +112,11 @@ export async function initDatabase() {
     CREATE TABLE IF NOT EXISTS payment (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       tenant_id INTEGER,
+      flat_id INTEGER,
+      payment_type TEXT,
       amount TEXT,
       date TEXT,
-      payment_type TEXT,
+      note TEXT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );

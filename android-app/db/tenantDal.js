@@ -73,7 +73,7 @@ export async function update(item) {
   );
 }
 
-export async function deleteItem(id) {
+export async function deleteById(id) {
   const db = await getDb();
   return await db.runAsync("DELETE FROM tenant WHERE id = ?", [id]);
 }

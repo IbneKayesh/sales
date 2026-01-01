@@ -26,6 +26,8 @@ export async function getByHouseId(id) {
     fr.name AS feature_name, 
     fr.feature_type, 
     fr.quantity, 
+    fr.include_price,
+    fr.price as feature_price,
     t.name AS tenant_name
 FROM flat f
 LEFT JOIN features fr 
@@ -84,17 +86,19 @@ export async function deleteById(id) {
 export async function updatePrice() {
   const db = await getDb();
   const sql = `with fr as (
-select flat_id, sum (price) as price
-from features
-group by flat_id
-)
-update flat
-set price = (
-select price from fr
-where fr.flat_id = flat.id
-)
-where id in (
-select flat_id from fr
-)`;
+                    select flat_id, sum (price) as price
+                    from features
+                    where include_price = 1
+                    and price > 0
+                    group by flat_id
+            )
+            update flat
+            set price = (
+                select price from fr
+                where fr.flat_id = flat.id
+            )
+            where id in (
+              select flat_id from fr
+            )`;
   return await db.runAsync(sql);
 }

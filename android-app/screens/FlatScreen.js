@@ -122,6 +122,8 @@ export default function FlatScreen({ route, navigation }) {
               feature_name: row.feature_name,
               feature_type: row.feature_type,
               quantity: row.quantity,
+              include_price: row.include_price,
+              feature_price: row.feature_price,
             });
           }
         }
@@ -274,8 +276,11 @@ export default function FlatScreen({ route, navigation }) {
                     >
                       {feature.feature_name.length > 5
                         ? feature.feature_name
-                        : feature.feature_type}{" "}
-                      ({feature.quantity}),{" "}
+                        : feature.feature_type}
+                      {" "}
+                      ({feature.quantity})
+                      {feature.include_price === 1 && feature.feature_price > 0 ? ` ${feature.feature_price}/-` : ""}
+                      {", "}
                     </Text>
                   ))}
                 </Text>
@@ -322,7 +327,7 @@ export default function FlatScreen({ route, navigation }) {
 
             <View style={globalStyles.modalBody}>
               <InputText
-                label="Name"
+                label={<Text>Name <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Enter flat name"
                 value={formData.name}
                 onChangeText={(text) =>

@@ -17,6 +17,7 @@ import TodoScreen from "./screens/TodoScreen";
 // hidden screens
 import FlatScreen from "./screens/FlatScreen";
 import FeatureScreen from "./screens/FeatureScreen";
+import PaymentScreen from "./screens/PaymentScreen";
 
 // Header right user icon with dropdown (simple example using Alert)
 import HeaderRight from "./components/HeaderRight";
@@ -78,6 +79,13 @@ export default function App() {
               component={FeatureScreen}
               options={({ route }) => ({
                 title: route.params?.title ?? "Features",
+              })}
+            />
+            <Stack.Screen
+              name="PaymentScreen"
+              component={PaymentScreen}
+              options={({ route }) => ({
+                title: route.params?.title ?? "Payment",
               })}
             />
           </Stack.Navigator>

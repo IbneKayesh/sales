@@ -12,3 +12,24 @@ payment_type [cash, card, upi]
 house_notice_board (id, house_id, title, description, image, date)
 flat_notice_board (id, flat_id, title, description, image, date)
 
+npm install -g expo-cli eas-cli
+expo login
+
+cd your-expo-project
+eas build:configure
+eas build -p android --profile preview
+
+This builds an APK (not AAB)
+Expo will upload the build to the cloud
+You’ll get a download link when it finishes
+
+📱 Install on your phone
+Download the APK from the link
+Enable “Install unknown apps”
+Install and run
+
+⚠️ Notes
+APK → good for testing & sharing
+AAB → required for Google Play
+Cloud builds are free with limits
+No Android Studio needed

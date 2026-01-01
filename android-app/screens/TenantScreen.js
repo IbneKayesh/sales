@@ -43,7 +43,7 @@ export default function TenantScreen() {
     name: "",
     contact: "",
     image: "",
-    contract_start_date: "",
+    contract_start_date: new Date().toISOString().split("T")[0],
     contract_end_date: "",
     rent: "0",
     deposit: "0",
@@ -109,6 +109,10 @@ export default function TenantScreen() {
 
   const handleSavePress = async () => {
     try {
+      if (!formData.flat_id) {
+        showToast("Flat is required", "error");
+        return;
+      }
       if (!formData.name.trim()) {
         showToast("Name is required", "error");
         return;
@@ -119,6 +123,10 @@ export default function TenantScreen() {
       }
       if (!formData.contract_start_date.trim()) {
         showToast("Contract Start Date is required", "error");
+        return;
+      }
+      if (!formData.rent || formData.rent === "0") {
+        showToast("Rent is required", "error");
         return;
       }
 
@@ -171,7 +179,7 @@ export default function TenantScreen() {
   const handleDeleteById = async (id) => {
     try {
       await deleteById(id);
-      showToast("House deleted successfully", "success");
+      showToast("Tenant deleted successfully", "success");
       fetchTenants();
     } catch (error) {
       console.error("Error deleting data:", error);
@@ -179,11 +187,11 @@ export default function TenantScreen() {
     }
   };
 
-  const handleAddFlatPress = (item) => {
+  const handleAddPaymentPress = (item) => {
     //navigate to (child) flat screen
-    navigation.navigate("FlatScreen", {
+    navigation.navigate("PaymentScreen", {
       title: item.name,
-      houseId: item.id,
+      itemObj: item
     });
   };
 
@@ -214,7 +222,7 @@ export default function TenantScreen() {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={globalStyles.card}
-            onPress={() => handleAddFlatPress(item)}
+            onPress={() => handleAddPaymentPress(item)}
           >
             <View style={{ flex: 1 }}>
               <Text style={globalStyles.title}>{item.name}</Text>
@@ -275,7 +283,7 @@ export default function TenantScreen() {
               showsVerticalScrollIndicator={false}
             >
               <Dropdown
-                label="Flat"
+                label={<Text>Flat <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Select flat"
                 data={flatList}
                 value={
@@ -284,7 +292,7 @@ export default function TenantScreen() {
                 onChangeValue={handleChangeValueFlat}
               />
               <InputText
-                label="Name"
+                label={<Text>Name <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Enter tenant name"
                 value={formData.name}
                 onChangeText={(text) =>
@@ -292,7 +300,7 @@ export default function TenantScreen() {
                 }
               />
               <InputText
-                label="Contact"
+                label={<Text>Contact <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Enter tenant contact"
                 value={formData.contact}
                 onChangeText={(text) =>
@@ -300,7 +308,7 @@ export default function TenantScreen() {
                 }
               />
               <InputCalendar
-                label="Contract Start Date"
+                label={<Text>Contract Start Date <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Select start date"
                 value={formData.contract_start_date}
                 onDateChange={(date) =>
@@ -316,7 +324,7 @@ export default function TenantScreen() {
                 }
               />
               <InputText
-                label="Rent"
+                label={<Text>Rent <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Enter tenant rent"
                 value={formData.rent}
                 onChangeText={(text) =>
@@ -325,7 +333,7 @@ export default function TenantScreen() {
                 disabled={true}
               />
               <InputText
-                label="Deposit"
+                label={<Text>Deposit <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Enter tenant deposit"
                 value={formData.deposit}
                 onChangeText={(text) =>
@@ -333,7 +341,7 @@ export default function TenantScreen() {
                 }
               />
               <InputText
-                label="Security"
+                label={<Text>Security <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Enter tenant security"
                 value={formData.security}
                 onChangeText={(text) =>

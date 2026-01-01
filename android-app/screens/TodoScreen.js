@@ -134,8 +134,8 @@ export default function TodoScreen() {
 
   return (
     <View style={globalStyles.container}>
-      <Text style={globalStyles.title}>Todo Screen</Text>
-      <Text style={globalStyles.subtext}>Total Todos: {todos.length}</Text>
+      <Text style={globalStyles.title}>Daily Note</Text>
+      <Text style={globalStyles.subtext}>Total Notes: {todos.length}</Text>
 
       <Button
         title="New Task"
@@ -156,8 +156,8 @@ export default function TodoScreen() {
                   {
                     fontSize: 18,
                     textDecorationLine: item.completed
-                      ? "none"
-                      : "line-through",
+                      ? "line-through"
+                      : "none",
                     color: item.completed ? colors.subtext : colors.text,
                   },
                 ]}
@@ -230,7 +230,7 @@ export default function TodoScreen() {
 
             <View style={globalStyles.modalBody}>
               <InputText
-                label="Name"
+                label={<Text>Name <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Enter task name"
                 value={formData.name}
                 onChangeText={(name) => setFormData({ ...formData, name })}

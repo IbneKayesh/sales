@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useCallback } from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
+import { View, Text, StyleSheet, Animated, Modal } from "react-native";
 
 const ToastContext = createContext();
 
@@ -38,31 +38,39 @@ export const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {toast.visible && (
-        <Animated.View
-          style={[
-            styles.toastContainer,
-            { opacity: fadeAnim },
-            toast.type === "error" ? styles.errorToast : styles.successToast,
-          ]}
-        >
-          <Text style={styles.toastText}>{toast.message}</Text>
-        </Animated.View>
-      )}
+      <Modal
+        visible={toast.visible}
+        transparent={true}
+        animationType="fade"
+        pointerEvents="none"
+      >
+        <View style={styles.modalOverlay} pointerEvents="none">
+          <Animated.View
+            style={[
+              styles.toastContainer,
+              { opacity: fadeAnim },
+              toast.type === "error" ? styles.errorToast : styles.successToast,
+            ]}
+          >
+            <Text style={styles.toastText}>{toast.message}</Text>
+          </Animated.View>
+        </View>
+      </Modal>
     </ToastContext.Provider>
   );
 };
 
 const styles = StyleSheet.create({
-  toastContainer: {
-    position: "absolute",
-    top: 100,
-    left: 20,
-    right: 20,
-    padding: 16,
-    borderRadius: 12,
+  modalOverlay: {
+    flex: 1,
+    paddingTop: 100,
     alignItems: "center",
-    justifyContent: "center",
+  },
+  toastContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+    maxWidth: "90%",
     elevation: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },

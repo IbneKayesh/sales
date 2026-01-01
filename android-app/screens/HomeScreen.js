@@ -240,7 +240,7 @@ export default function HomeScreen() {
 
             <View style={globalStyles.modalBody}>
               <InputText
-                label="Name"
+                label={<Text>Name <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Enter house name"
                 value={formData.name}
                 onChangeText={(text) =>
@@ -248,7 +248,7 @@ export default function HomeScreen() {
                 }
               />
               <InputText
-                label="Address"
+                label={<Text>Address <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Enter house address"
                 value={formData.address}
                 onChangeText={(text) =>
@@ -256,7 +256,7 @@ export default function HomeScreen() {
                 }
               />
               <InputText
-                label="Contact"
+                label={<Text>Contact <Text style={{ color: "red" }}>*</Text></Text>}
                 placeholder="Enter house contact"
                 value={formData.contact}
                 onChangeText={(text) =>
