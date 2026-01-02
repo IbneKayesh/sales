@@ -16,6 +16,9 @@ const db = new sqlite3.Database(dbPath, (err) => {
 const purchase_tables = require("./purchase_tables");
 const purchaseTables = purchase_tables();
 
+const inventory_tables = require("./inventory_tables");
+const inventoryTables = inventory_tables();
+
 const vat_tables = require("./vat_tables");
 const vatTables = vat_tables();
 
@@ -28,6 +31,14 @@ const initTables = () => {
     db.exec(sql, (err) => {
       if (err) {
         console.error("Purchase Table creation error:", err.message);
+      }
+    });
+  });
+
+  Object.values(inventoryTables).forEach((sql) => {
+    db.exec(sql, (err) => {
+      if (err) {
+        console.error("Inventory Table creation error:", err.message);
       }
     });
   });
@@ -72,54 +83,6 @@ const initTables = () => {
         user_role TEXT DEFAULT 'User',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // units :: Inventory table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS units (
-        unit_id TEXT PRIMARY KEY,
-        unit_name TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // categories :: Inventory table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS categories (
-        category_id TEXT PRIMARY KEY,
-        category_name TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // products :: Inventory table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS products (
-        product_id TEXT PRIMARY KEY,
-        product_code TEXT,
-        product_name TEXT NOT NULL,
-        product_desc TEXT,
-        category_id TEXT NOT NULL,
-        small_unit_id TEXT NOT NULL,
-        unit_difference_qty INTEGER DEFAULT 1,
-        large_unit_id TEXT NOT NULL,
-        stock_qty REAL DEFAULT 0,
-        purchase_price REAL DEFAULT 0,
-        sales_price REAL DEFAULT 0,
-        discount_percent REAL DEFAULT 0,
-        vat_percent REAL DEFAULT 0,
-        cost_price_percent REAL DEFAULT 0,
-        margin_price REAL DEFAULT 0,
-        purchase_booking_qty REAL DEFAULT 0,
-        sales_booking_qty REAL DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE RESTRICT,
-        FOREIGN KEY (small_unit_id) REFERENCES units(unit_id) ON DELETE RESTRICT,
-        FOREIGN KEY (large_unit_id) REFERENCES units(unit_id) ON DELETE RESTRICT
       )
     `);
 
