@@ -328,3 +328,22 @@
     background-size: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%;
   }
 }
+.text-secondary {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.ik-button-secondary {
+  color: var(--accent-blue) !important;
+  font-weight: 500 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0.5rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.ik-button-secondary:hover {
+  color: var(--accent-purple) !important;
+  text-decoration: underline !important;
+  transform: translateY(-1px);
+}

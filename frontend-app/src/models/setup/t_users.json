@@ -6,12 +6,12 @@
         "minLength": 0,
         "maxLength": 36
     },
-    "user_name": {
-        "name": "User Name",
-        "type": "string",
+    "user_email": {
+        "name": "Email",
+        "type": "email",
         "required": true,
         "minLength": 1,
-        "maxLength": 50
+        "maxLength": 100
     },
     "user_password": {
         "name": "Password",
@@ -27,12 +27,12 @@
         "minLength": 1,
         "maxLength": 50
     },
-    "user_email": {
-        "name": "Email",
+    "user_name": {
+        "name": "User Name",
         "type": "string",
         "required": true,
         "minLength": 1,
-        "maxLength": 100
+        "maxLength": 50
     },
     "user_role": {
         "name": "Role",

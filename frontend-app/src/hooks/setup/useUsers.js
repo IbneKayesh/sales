@@ -3,21 +3,23 @@ import { usersAPI } from "@/api/setup/usersAPI";
 import validate from "@/models/validator";
 import t_users from "@/models/setup/t_users";
 import { generateGuid } from "@/utils/guid";
+import { useAuth } from "@/hooks/useAuth";
 
 export const useUsers = () => {
+  const { user } = useAuth();
   const [userList, setUserList] = useState([]);
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [formDataUser, setFormDataUser] = useState({
+  const [fromData, setFormData] = useState({
     user_id: "",
-    user_name: "",
+    user_email: "",
     user_password: "",
     user_mobile: "",
-    user_email: "",
+    user_name: "",
     user_role: "",
-    ismodified: 0,
+    edit_stop: 0,
   });
 
   const roleOptions = [
@@ -55,23 +57,20 @@ export const useUsers = () => {
   }, []);
 
   const handleChange = (field, value) => {
-    setFormDataUser((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate(
-      { ...formDataUser, [field]: value },
-      t_users
-    );
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate({ ...fromData, [field]: value }, t_users);
     setErrors(newErrors);
   };
 
   const handleClear = () => {
-    setFormDataUser({
+    setFormData({
       user_id: "",
-      user_name: "",
+      user_email: "",
       user_password: "",
       user_mobile: "",
-      user_email: "",
+      user_name: "",
       user_role: "",
-      ismodified: 0,
+      edit_stop: 0,
     });
     setErrors({});
   };
@@ -89,7 +88,15 @@ export const useUsers = () => {
   const handleEditUser = (user) => {
     //console.log("user: " + JSON.stringify(user));
 
-    setFormDataUser(user);
+    setFormData({
+      user_id: user.user_id,
+      user_email: user.user_email,
+      user_password:"",
+      user_mobile: user.user_mobile,
+      user_name: user.user_name,
+      user_role: user.user_role,
+      edit_stop: user.edit_stop,
+    });
     setCurrentView("form");
   };
 
@@ -123,64 +130,54 @@ export const useUsers = () => {
 
   const handleSaveUser = async (e) => {
     e.preventDefault();
-    setIsBusy(true);
-
-    const newErrors = validate(formDataUser, t_users);
-    setErrors(newErrors);
-    console.log("handleSaveUser: " + JSON.stringify(formDataUser));
-
-    if (Object.keys(newErrors).length > 0) {
-      setIsBusy(false);
-      return;
-    }
-
     try {
-      let updatedUsers;
-      if (formDataUser.user_id) {
-        // Edit existing
-        const updatedUser = await usersAPI.update(formDataUser);
-        updatedUser.ismodified = true;
-        updatedUsers = userList.map((u) =>
-          u.user_id === formDataUser.user_id ? updatedUser : u
-        );
+      setIsBusy(true);
+      const newErrors = validate(fromData, t_users);
+      setErrors(newErrors);
+      console.log("handleSaveUser: " + JSON.stringify(fromData));
 
-        setToastBox({
-          severity: "success",
-          summary: "Success",
-          detail: `"${formDataUser.user_name}" updated successfully.`,
-        });
-      } else {
-        // Add new
-        const newUserData = {
-          ...formDataUser,
-          user_id: generateGuid(),
-        };
-        //console.log("newContactData: " + JSON.stringify(newContactData));
-
-        const newUser = await usersAPI.create(newUserData);
-        newUser.ismodified = true;
-        updatedUsers = [...userList, newUser];
-
-        setToastBox({
-          severity: "success",
-          summary: "Success",
-          detail: `"${formDataUser.user_name}" added successfully.`,
-        });
+      if (Object.keys(newErrors).length > 0) {
+        setIsBusy(false);
+        return;
       }
-      setUserList(updatedUsers);
+
+      const formDataNew = {
+        ...fromData,
+        user_id: fromData.user_id || generateGuid(),
+        shop_id: user?.shop_id,
+      };
+
+      // console.log("formDataNew: " + JSON.stringify(formDataNew));
+      // return;
+
+      if (fromData.user_id) {
+        await usersAPI.update(formDataNew);
+      } else {
+        await usersAPI.create(formDataNew);
+      }
+
+      const message = fromData.user_id
+        ? `"${fromData.user_name}" Updated`
+        : "Created";
+      setToastBox({
+        severity: "success",
+        summary: "Success",
+        detail: `${message} successfully.`,
+      });
 
       handleClear();
       setCurrentView("list");
+      loadUsers();
     } catch (error) {
-      console.error("Error saving user:", error);
+      console.error("Error fetching data:", error);
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to save contact",
+        detail: "Failed to load data from server",
       });
+    } finally {
+      setIsBusy(false);
     }
-
-    setIsBusy(false);
   };
 
   return {
@@ -189,7 +186,7 @@ export const useUsers = () => {
     isBusy,
     currentView,
     errors,
-    formDataUser,
+    fromData,
     handleChange,
     handleCancel,
     handleAddNew,

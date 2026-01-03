@@ -11,7 +11,7 @@ const {
 //Get all users
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT u.*, 0 as ismodified
+    const sql = `SELECT u.*, 0 as edit_stop
     FROM users u ORDER BY user_id`;
     const rows = await dbAll(sql, []);
     res.json(rows);
@@ -25,8 +25,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const sql =
-      "SELECT u.*, 0 as ismodified FROM users u WHERE user_id = ?";
+    const sql = "SELECT u.*, 0 as edit_stop FROM users u WHERE user_id = ?";
     const row = await dbGet(sql, [id]);
     if (!row) {
       return res.status(404).json({ error: "User not found" });
@@ -42,31 +41,47 @@ router.get("/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const {
     user_id,
-    user_name,
+    user_email,
     user_password,
     user_mobile,
-    user_email,
+    user_name,
     user_role,
+    shop_id,
   } = req.body;
-
-  if (!user_name) {
-    return res.status(400).json({ error: "User name is required" });
-  }
 
   if (!user_id) {
     return res.status(400).json({ error: "User ID is required" });
   }
+  if (!user_email) {
+    return res.status(400).json({ error: "User email is required" });
+  }
+
+  if (!user_password) {
+    return res.status(400).json({ error: "User password is required" });
+  }
+
+  if (!user_role) {
+    return res.status(400).json({ error: "User role is required" });
+  }
+
+  if (!shop_id) {
+    return res.status(400).json({ error: "Shop ID is required" });
+  }
+
+  const recovery_code = user_email.split("@")[0];
 
   try {
-    const sql = `INSERT INTO users (user_id, user_name, user_password, user_mobile, user_email, user_role)
-    VALUES (?, ?, ?, ?, ?, ?)`;
+    const sql = `INSERT INTO users (user_id, user_email, user_password, user_mobile, user_name, recovery_code, user_role, shop_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
     const params = [
       user_id,
-      user_name,
+      user_email,
       user_password,
       user_mobile,
-      user_email,
+      user_name,
+      recovery_code,
       user_role,
+      shop_id,
     ];
     await dbRun(sql, params, `Created user ${user_name}`);
     res.status(201).json({ user_id, ...req.body });
@@ -76,40 +91,47 @@ router.post("/", async (req, res) => {
   }
 });
 
-
 //update user
 router.post("/update", async (req, res) => {
   const {
     user_id,
-    user_name,
+    user_email,
     user_password,
     user_mobile,
-    user_email,
+    user_name,
     user_role,
   } = req.body;
 
-  if (!user_name) {
-    return res.status(400).json({ error: "User name is required" });
-  }
-
+  
   if (!user_id) {
     return res.status(400).json({ error: "User ID is required" });
+  }
+  if (!user_email) {
+    return res.status(400).json({ error: "User email is required" });
+  }
+
+  if (!user_password) {
+    return res.status(400).json({ error: "User password is required" });
+  }
+
+  if (!user_role) {
+    return res.status(400).json({ error: "User role is required" });
   }
 
   try {
     const sql = `UPDATE users SET
-    user_name = ?,
+    user_email = ?,
     user_password = ?,
     user_mobile = ?,
-    user_email = ?,
+    user_name = ?,
     user_role = ?,
     updated_at = CURRENT_TIMESTAMP
     WHERE user_id = ?`;
     const params = [
-      user_name,
+      user_email,
       user_password,
       user_mobile,
-      user_email,
+      user_name,
       user_role,
       user_id,
     ];
@@ -123,7 +145,6 @@ router.post("/update", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 //Delete user
 router.post("/delete", async (req, res) => {
@@ -146,16 +167,9 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-
-
-
 //change password
 router.post("/change-password", async (req, res) => {
-  const {
-    user_id,  
-    current_password,
-    new_password,
-  } = req.body;
+  const { user_id, current_password, new_password } = req.body;
 
   if (!user_id) {
     return res.status(400).json({ error: "User ID is required" });
@@ -182,10 +196,8 @@ router.post("/change-password", async (req, res) => {
     user_password = ?,
     updated_at = CURRENT_TIMESTAMP
     WHERE user_id = ?`;
-    const params = [
-      new_password,
-      user_id,
-    ];
+    const params = [new_password, user_id];
+
     const result = await dbRun(sql, params, `Updated user password ${user_id}`);
     if (result.changes === 0) {
       return res.status(404).json({ error: "User not found" });

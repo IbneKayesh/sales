@@ -13,24 +13,27 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-const purchase_tables = require("./purchase_tables");
-const purchaseTables = purchase_tables();
+const banks_tables = require("./banks_tables");
+const banksTables = banks_tables();
 
 const inventory_tables = require("./inventory_tables");
 const inventoryTables = inventory_tables();
 
+const purchase_tables = require("./purchase_tables");
+const purchaseTables = purchase_tables();
+
+const user_tables = require("./user_tables");
+const userTables = user_tables();
+
 const vat_tables = require("./vat_tables");
 const vatTables = vat_tables();
 
-const banks_tables = require("./banks_tables");
-const banksTables = banks_tables();
-
 // Initialize tables
 const initTables = () => {
-  Object.values(purchaseTables).forEach((sql) => {
+  Object.values(banksTables).forEach((sql) => {
     db.exec(sql, (err) => {
       if (err) {
-        console.error("Purchase Table creation error:", err.message);
+        console.error("Banks Table creation error:", err.message);
       }
     });
   });
@@ -43,18 +46,26 @@ const initTables = () => {
     });
   });
 
-  Object.values(vatTables).forEach((sql) => {
+  Object.values(purchaseTables).forEach((sql) => {
     db.exec(sql, (err) => {
       if (err) {
-        console.error("Vat Table creation error:", err.message);
+        console.error("Purchase Table creation error:", err.message);
       }
     });
   });
 
-  Object.values(banksTables).forEach((sql) => {
+  Object.values(userTables).forEach((sql) => {
     db.exec(sql, (err) => {
       if (err) {
-        console.error("Banks Table creation error:", err.message);
+        console.error("User Table creation error:", err.message);
+      }
+    });
+  });
+
+  Object.values(vatTables).forEach((sql) => {
+    db.exec(sql, (err) => {
+      if (err) {
+        console.error("Vat Table creation error:", err.message);
       }
     });
   });
@@ -67,20 +78,6 @@ const initTables = () => {
         setting_name TEXT NOT NULL,
         setting_key TEXT NOT NULL,
         setting_value TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // users :: Authentication table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS users (
-        user_id TEXT PRIMARY KEY,
-        user_name TEXT UNIQUE NOT NULL,
-        user_password TEXT NOT NULL,
-        user_mobile TEXT,
-        user_email TEXT,
-        user_role TEXT DEFAULT 'User',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -218,12 +215,27 @@ const initTables = () => {
 // Initialize default data
 const initData = (callback) => {
   db.serialize(() => {
+    // shops :: Authentication table :: insert default data
+    db.run(
+      `
+      INSERT OR IGNORE INTO shops (shop_id, shop_name, shop_address) VALUES
+      ('1', 'Shop 1', 'Address 1')
+    `,
+      (err) => {
+        if (err) {
+          console.error("Error inserting default shops:", err);
+        } else {
+          console.log("Default shops inserted.");
+        }
+      }
+    );
+
     // users :: Authentication table :: insert default data
     db.run(
       `
-      INSERT OR IGNORE INTO users (user_id, user_name, user_password, user_mobile, user_email, user_role) VALUES
-      ('1', 'admin', 'password', '1234567890', 'admin@devkayesh.com', 'Admin'),
-      ('2', 'user', 'password', '1234567890', 'user@devkayesh.com', 'User')
+      INSERT OR IGNORE INTO users (user_id, user_email, user_password, user_mobile, user_name, recovery_code, user_role, shop_id) VALUES
+      ('1', 'admin@sgd.com', 'password', '1234567890', 'admin', 'admin-rc', 'Admin', '1'),
+      ('2', 'user@sgd.com', 'password', '1234567890', 'user', 'user-rc', 'User', '1')
     `,
       (err) => {
         if (err) {

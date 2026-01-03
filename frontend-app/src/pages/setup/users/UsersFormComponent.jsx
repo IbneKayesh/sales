@@ -12,22 +12,20 @@ const UsersFormComponent = ({
   roleOptions,
 }) => {
   return (
-    <div className="p-1">
-      <div className="grid">
+      <div className="grid">        
         <div className="col-12 md:col-3">
-          <label htmlFor="user_name" className="block text-900 font-medium mb-2">
-            {t_users.user_name.name}{" "}
-            <span className="text-red-500">*</span>
+          <label htmlFor="user_email" className="block text-900 font-medium mb-2">
+            {t_users.user_email.name} <span className="text-red-500">*</span>
           </label>
           <InputText
-            name="user_name"
-            value={formData.user_name}
-            onChange={(e) => onChange("user_name", e.target.value)}
-            className={`w-full ${errors.user_name ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_users.user_name.name}`}
+            name="user_email"
+            value={formData.user_email}
+            onChange={(e) => onChange("user_email", e.target.value)}
+            className={`w-full ${errors.user_email ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_users.user_email.name}`}
           />
-          {errors.user_name && (
-            <small className="mb-3 text-red-500">{errors.user_name}</small>
+          {errors.user_email && (
+            <small className="mb-3 text-red-500">{errors.user_email}</small>
           )}
         </div>
         <div className="col-12 md:col-2">
@@ -46,7 +44,7 @@ const UsersFormComponent = ({
             <small className="mb-3 text-red-500">{errors.user_password}</small>
           )}
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-3">
           <label htmlFor="user_mobile" className="block text-900 font-medium mb-2">
             {t_users.user_mobile.name} <span className="text-red-500">*</span>
           </label>
@@ -62,21 +60,22 @@ const UsersFormComponent = ({
           )}
         </div>
         <div className="col-12 md:col-2">
-          <label htmlFor="user_email" className="block text-900 font-medium mb-2">
-            {t_users.user_email.name} <span className="text-red-500">*</span>
+          <label htmlFor="user_name" className="block text-900 font-medium mb-2">
+            {t_users.user_name.name}{" "}
+            <span className="text-red-500">*</span>
           </label>
           <InputText
-            name="user_email"
-            value={formData.user_email}
-            onChange={(e) => onChange("user_email", e.target.value)}
-            className={`w-full ${errors.user_email ? "p-invalid" : ""}`}
-            placeholder={`Enter ${t_users.user_email.name}`}
+            name="user_name"
+            value={formData.user_name}
+            onChange={(e) => onChange("user_name", e.target.value)}
+            className={`w-full ${errors.user_name ? "p-invalid" : ""}`}
+            placeholder={`Enter ${t_users.user_name.name}`}
           />
-          {errors.user_email && (
-            <small className="mb-3 text-red-500">{errors.user_email}</small>
+          {errors.user_name && (
+            <small className="mb-3 text-red-500">{errors.user_name}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label htmlFor="user_role" className="block text-900 font-medium mb-2">
             {t_users.user_role.name} <span className="text-red-500">*</span>
           </label>
@@ -106,7 +105,6 @@ const UsersFormComponent = ({
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

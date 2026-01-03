@@ -22,7 +22,6 @@ const OrderEntryComponent = ({
 }) => {
   const [disableSubmit, setDisableSubmit] = useState(false);
   const [showPrintDialog, setShowPrintDialog] = useState(false);
-  const [supplierInfo, setSupplierInfo] = useState(null);
 
   useEffect(() => {
     const hasProducts = formDataList.length > 0;

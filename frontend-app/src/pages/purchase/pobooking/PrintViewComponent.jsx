@@ -1,6 +1,7 @@
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import "./PrintViewComponent.css";
+import { useAuth } from "@/hooks/useAuth";
 
 const PrintViewComponent = ({
   visible,
@@ -9,6 +10,8 @@ const PrintViewComponent = ({
   formDataList,
   formDataPaymentList,
 }) => {
+  const { user } = useAuth();
+
   const handlePrint = () => {
     window.print();
   };
@@ -55,20 +58,18 @@ const PrintViewComponent = ({
       visible={visible}
       onHide={onHide}
       footer={dialogFooter}
-      style={{ width: "90vw", maxWidth: "1200px" }}
+      style={{ width: "99vw", maxWidth: "1200px" }}
       maximizable
     >
       <div className="print-container">
         {/* Company Header */}
         <div className="print-header">
           <div className="company-info">
-            <h1 className="company-name">Your Company Name</h1>
+            <h1 className="company-name">{user?.shop_name}</h1>
             <p className="company-details">
-              123 Business Street, City, Country
+              {user?.shop_address}
               <br />
-              Phone: +880 1234-567890 | Email: info@company.com
-              <br />
-              Website: www.company.com
+              Phone: {user?.user_mobile} | Email: {user?.user_email} | User: {user?.user_name}
             </p>
           </div>
           <div className="invoice-badge">
@@ -113,7 +114,6 @@ const PrintViewComponent = ({
 
         {/* Items Table */}
         <div className="items-section">
-          <h3>Booking Items</h3>
           <table className="items-table">
             <thead>
               <tr>
@@ -166,7 +166,7 @@ const PrintViewComponent = ({
             <tfoot>
               <tr>
                 <td colSpan="3" style={{ textAlign: "right" }}>
-                  <strong>Total Items: {formDataList?.length || 0}</strong>
+                  <strong>No of items: {formDataList?.length || 0}</strong>
                 </td>
                 <td style={{ textAlign: "right" }}>
                   <strong>
@@ -220,7 +220,7 @@ const PrintViewComponent = ({
                 <table className="payment-table">
                   <thead>
                     <tr>
-                        <th colSpan={4} style={{ textAlign: "center", fontSize: "16px", fontWeight: "bold", color: "#2c3e50" }}>Payment Details</th>
+                        <th colSpan={4} style={{ textAlign: "center" }}>Payment</th>
                     </tr>
                     <tr>
                       <th>Mode</th>
@@ -304,20 +304,9 @@ const PrintViewComponent = ({
         <div className="print-footer">
           <div className="signature-section">
             <div className="signature-box">
+              <p>{user?.user_name}</p>
               <hr className="signature-line" />
               <p>Prepared By</p>
-            </div>
-            <div className="signature-box">
-              <hr className="signature-line" />
-              <p>Checked By</p>
-            </div>
-            <div className="signature-box">
-              <hr className="signature-line" />
-              <p>Approved By</p>
-            </div>
-            <div className="signature-box">
-              <hr className="signature-line" />
-              <p>Supplier Signature</p>
             </div>
           </div>
           <p className="footer-note">

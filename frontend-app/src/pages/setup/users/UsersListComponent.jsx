@@ -56,9 +56,9 @@ const UsersListComponent = ({ dataList, onEdit, onDelete }) => {
         className="bg-dark-300"
         size="small"
       >
-        <Column field="user_name" header="User Name" sortable />
-        <Column field="user_mobile" header="Mobile" />
         <Column field="user_email" header="Email" />
+        <Column field="user_mobile" header="Mobile" />
+        <Column field="user_name" header="User Name" sortable />
         <Column field="user_role" header="Role" />
         <Column header={dataList?.length + " rows"} body={action_BT} /> 
       </DataTable>

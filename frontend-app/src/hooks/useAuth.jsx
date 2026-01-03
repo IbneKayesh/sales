@@ -24,10 +24,14 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = async (username, password) => {
+  const login = async (userEmail, userPassword) => {
     try {
-      //console.log(username, password)
-      const response = await authAPI.login({ username, password });
+      //console.log(userEmail, userPassword)
+      const reqBody = {
+        user_email: userEmail,
+        user_password: userPassword
+      }
+      const response = await authAPI.login(reqBody);
       if (response.success) {
         console.log("response " + JSON.stringify(response))
         setUser(response.user);
@@ -52,10 +56,35 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+  const register = async (register) => {
+    try {
+      //console.log(username, password)
+      const { shopName, userEmail, userPassword } = register;
+      const reqBody = {
+        shop_name: shopName,
+        user_email: userEmail,
+        user_password: userPassword
+      }
+      const response = await authAPI.register(reqBody);
+      if (response.success) {
+        console.log("response " + JSON.stringify(response))
+        setUser(response.user);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        return { success: true };
+      } else {
+        return { success: false, error: response.error };
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      return { success: false, error: 'Login failed' };
+    }
+  };
+
   const value = {
     user,
     login,
     logout,
+    register,
     loading
   };
 

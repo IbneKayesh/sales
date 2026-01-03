@@ -9,4 +9,8 @@ export const authAPI = {
   logout: () => apiRequest('/auth/logout', {
     method: 'POST',
   }),
+  register: (register) => apiRequest('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify(register),
+  }),
 };

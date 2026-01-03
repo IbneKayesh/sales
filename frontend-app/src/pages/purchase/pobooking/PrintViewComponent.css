@@ -3,7 +3,7 @@
 .print-container {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   padding: 15px;
-  background: white;
+  background: #fff;
   color: #333;
 }
 
@@ -113,7 +113,7 @@
 }
 
 .items-table thead {
-  background-color: #3498db;
+  background-color: #71a0c0;
   color: white;
 }
 
@@ -121,11 +121,11 @@
   padding: 5px 4px;
   text-align: left;
   font-weight: 600;
-  border: 1px solid #2980b9;
+  border: 1px solid #3788be;
 }
 
 .items-table tbody tr {
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #3788be;
 }
 
 .items-table tbody tr:hover {
@@ -138,7 +138,7 @@
 }
 
 .items-table tfoot {
-  background-color: #ecf0f1;
+  background-color: #c5cace;
   font-weight: bold;
 }
 
@@ -148,7 +148,6 @@
 }
 
 .items-table small {
-  color: #6c757d;
   font-size: 9px;
 }
 
@@ -175,7 +174,7 @@
 }
 
 .payment-table thead {
-  background-color: #95a5a6;
+  background-color: #71a0c0;
   color: white;
 }
 
@@ -246,8 +245,8 @@
 
 .signature-section {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 115px;
   margin-bottom: 10px;
 }
 
@@ -258,7 +257,7 @@
 .signature-line {
   border: none;
   border-top: 1px solid #333;
-  margin: 30px 0 5px 0;
+  margin: 15px 0 5px 0;
 }
 
 .signature-box p {
@@ -277,24 +276,90 @@
 
 /* Print Styles */
 @media print {
-  .print-container {
-    padding: 0;
+  /* Restore basic layout */
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
   }
 
-  .p-dialog-header,
-  .p-dialog-footer {
+  /* Hide all elements that are not part of the print view */
+  body > *:not(.p-dialog-mask) {
     display: none !important;
   }
 
+  .p-dialog-header,
+  .p-dialog-footer,
+  .p-dialog-header-icons {
+    display: none !important;
+  }
+
+  /* Reset modal styles to let the content flow naturally */
+  .p-dialog-mask {
+    display: block !important;
+    position: static !important;
+    background: none !important;
+    padding: 0 !important;
+  }
+
+  .p-dialog {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    transform: none !important;
+    margin: 0 !important;
+  }
+
+  .p-dialog-content {
+    display: block !important;
+    padding: 0 !important;
+    background: none !important;
+    overflow: visible !important;
+  }
+
+  .print-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    background: white !important;
+  }
+
+  /* Internal layouts must be preserved */
   .print-header {
+    display: flex !important;
+    justify-content: space-between !important;
     page-break-after: avoid;
   }
 
-  .items-section {
-    page-break-inside: avoid;
+  .invoice-details {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 15px !important;
   }
 
   .payment-summary {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 15px !important;
+  }
+
+  .signature-section {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 115px !important;
+  }
+
+  /* Table rules */
+  .items-table thead {
+    display: table-header-group !important;
+  }
+
+  .items-table tbody tr {
     page-break-inside: avoid;
   }
 
@@ -302,21 +367,11 @@
     page-break-before: avoid;
   }
 
-  .items-table thead {
-    display: table-header-group;
-  }
-
-  .items-table tbody tr {
-    page-break-inside: avoid;
-  }
-
-  /* Ensure colors print correctly */
-  .badge-posted,
-  .badge-draft,
-  .items-table thead,
-  .payment-table thead {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+  /* Fixed colors */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    forced-color-adjust: none !important;
   }
 }
 

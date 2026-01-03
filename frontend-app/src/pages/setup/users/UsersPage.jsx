@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { useUsers } from "@/hooks/setup/useUsers";
 import UsersListComponent from "./UsersListComponent";
 import UsersFormComponent from "./UsersFormComponent";
@@ -14,7 +14,7 @@ const UsersPage = () => {
     isBusy,
     currentView,
     errors,
-    formDataUser,
+    fromData,
     handleChange,
     handleCancel,
     handleAddNew,
@@ -44,7 +44,7 @@ const UsersPage = () => {
         <h3 className="m-0">
           {isList
             ? "Users List"
-            : formDataUser.user_id
+            : fromData.user_id
             ? "Edit User"
             : "Add New User"}
         </h3>
@@ -91,7 +91,7 @@ const UsersPage = () => {
           <UsersFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={formDataUser}
+            formData={fromData}
             onChange={handleChange}
             onSave={handleSaveUser}
             roleOptions={roleOptions}

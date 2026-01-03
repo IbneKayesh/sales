@@ -1,11 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { useAuth } from "../../hooks/useAuth.jsx";
-
-import { Card } from "primereact/card";
 
 const FingerprintIcon = () => (
   <svg
@@ -54,8 +52,8 @@ const greetings = [
 ];
 
 const LoginComponent = ({ toast }) => {
-  const [username, setUsername] = useState("admin");
-  const [password, setPassword] = useState("password");
+  const [userEmail, setUserEmail] = useState("admin@sgd.com");
+  const [userPassword, setUserPassword] = useState("password");
   const [loading, setLoading] = useState(false);
   const [showInputs, setShowInputs] = useState(false);
   const [currentGreeting, setCurrentGreeting] = useState("Welcome");
@@ -64,6 +62,7 @@ const LoginComponent = ({ toast }) => {
   const [fallingLetters, setFallingLetters] = useState([]);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const cardRef = useRef(null);
 
   useEffect(() => {
@@ -99,7 +98,6 @@ const LoginComponent = ({ toast }) => {
     card.style.transform = `translateY(-5px) skew(${skewX}deg, ${skewY}deg) scale(1.15)`;
   };
 
-
   const handleMouseLeave = () => {
     setIsHovered(false);
     // Only hide inputs if not loading
@@ -118,7 +116,7 @@ const LoginComponent = ({ toast }) => {
     setLoading(true);
     setShowInputs(false); // Hide inputs smoothly during authentication
 
-    const result = await login(username, password);
+    const result = await login(userEmail, userPassword);
 
     if (result.success) {
       toast.current.show({
@@ -127,7 +125,7 @@ const LoginComponent = ({ toast }) => {
         detail: "Login successful!",
         life: 3000,
       });
-        navigate("/home");
+      navigate("/home");
     } else {
       toast.current.show({
         severity: "error",
@@ -136,19 +134,19 @@ const LoginComponent = ({ toast }) => {
         life: 3000,
       });
       // Trigger falling letters animation for password only if it has values
-      if (password.trim()) {
-        const letters = password.split('').map((char, index) => ({
+      if (userPassword.trim()) {
+        const letters = userPassword.split("").map((char, index) => ({
           id: `password-${index}`,
-          char: '*', // Obscure password characters for security
-          type: 'password',
+          char: "*", // Obscure password characters for security
+          type: "password",
           delay: Math.random() * 0.5,
-          leftOffset: (index - (password.length - 1) / 2) * 30, // Spread horizontally centered around 50%, 30px apart
+          leftOffset: (index - (userPassword.length - 1) / 2) * 30, // Spread horizontally centered around 50%, 30px apart
         }));
         setFallingLetters(letters);
         // Clear letters after animation duration
         setTimeout(() => setFallingLetters([]), 5000);
         // Clear password input
-        setPassword('');
+        setUserPassword("");
       }
       // Show inputs again after failed login
       setTimeout(() => setShowInputs(true), 500);
@@ -178,11 +176,11 @@ const LoginComponent = ({ toast }) => {
 
         <div className={`ik-field mb-4 ${showInputs ? "visible" : "hidden"}`}>
           <InputText
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            id="userEmail"
+            value={userEmail}
+            onChange={(e) => setUserEmail(e.target.value)}
             className="ik-inputtext wobble"
-            placeholder="Enter your username"
+            placeholder="Enter your userEmail"
             required
             disabled={loading}
           />
@@ -190,15 +188,24 @@ const LoginComponent = ({ toast }) => {
 
         <div className={`ik-field mb-4 ${showInputs ? "visible" : "hidden"}`}>
           <Password
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            id="userPassword"
+            value={userPassword}
+            onChange={(e) => setUserPassword(e.target.value)}
             className="ik-password w-full wobble"
             placeholder="Enter your password"
             feedback={false}
             required
             disabled={loading}
           />
+          <div className="text-right mt-1">
+            <Button
+              type="button"
+              label="Forgot Password?"
+              className="p-button-text ik-button-secondary p-0"
+              onClick={() => setSearchParams({ view: "forgot-password" })}
+              style={{ fontSize: "0.85rem" }}
+            />
+          </div>
         </div>
 
         <Button
@@ -211,6 +218,15 @@ const LoginComponent = ({ toast }) => {
           loading={loading}
           disabled={loading}
         />
+        <div className={`text-center ${showInputs ? "visible" : "hidden"}`}>
+          <p className="text-secondary mb-2">Don't have an account?</p>
+          <Button
+            type="button"
+            label="Register"
+            className="p-button-text ik-button-secondary w-full"
+            onClick={() => setSearchParams({ view: "register" })}
+          />
+        </div>
         <div className={`text-center ${!showInputs ? "visible" : "hidden"}`}>
           <FingerprintIcon />
         </div>
@@ -222,7 +238,7 @@ const LoginComponent = ({ toast }) => {
           style={{
             animationDelay: `${letter.delay}s`,
             left: `calc(50% + ${letter.leftOffset}px)`,
-            transform: 'translateX(-50%)',
+            transform: "translateX(-50%)",
           }}
         >
           {letter.char}

@@ -5,10 +5,11 @@ import validate from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 import { settingsAPI } from "@/api/setup/settingsAPI";
+import { useAuth } from "@/hooks/useAuth";
 
 const formDataModel = {
   master_id: "",
-  shop_id: "1",
+  shop_id: "",
   contact_id: "",
   order_type: "Booking",
   order_no: "[Auto SL]",
@@ -50,6 +51,7 @@ const usePobooking = () => {
   const [formDataPaymentList, setFormDataPaymentList] = useState([]);
   const [handleDelete, setHandleDelete] = useState(() => {});
   const [showSearchBox, setShowSearchBox] = useState(false);
+  const { user } = useAuth();
 
   const loadBookingList = async (reloadDataSet = false) => {
     try {
@@ -118,6 +120,7 @@ const usePobooking = () => {
   const resetForm = () => {
     setFormData({
       ...formDataModel,
+      shop_id: user.shop_id,
       is_posted: Number(pageConfig.is_posted),
       is_vat_payable: Number(pageConfig.is_vat_payable),
     });
