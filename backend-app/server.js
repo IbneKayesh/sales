@@ -11,7 +11,6 @@ const productRoutes = require('./routes/inventory/products.js');
 const salesRoutes = require('./routes/sales/sales.js');
 const backupRoutes = require('./routes/setup/backup.js');
 const contactRoutes = require('./routes/setup/contacts.js');
-const usersRoutes = require('./routes/setup/users.js');
 const closingProcessRoutes = require('./routes/setup/closingProcess.js');
 const configsRoutes = require('./routes/setup/configs.js');
 
@@ -31,6 +30,8 @@ const poreturnRoutes = require('./routes/purchase/poreturn.js');
 
 //setup
 const settingsRoutes = require('./routes/setup/settings.js');
+const shopsRoutes = require('./routes/setup/shops.js');
+const usersRoutes = require('./routes/setup/users.js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -71,7 +72,6 @@ app.use('/api/setup/closing-process', closingProcessRoutes);
 
 
 app.use('/api/sales/orders', salesRoutes);
-app.use('/api/setup/users', usersRoutes);
 app.use('/api/setup', backupRoutes);
 app.use('/api/setup/configs', configsRoutes);
 
@@ -92,6 +92,8 @@ app.use('/api/purchase/return', poreturnRoutes);
 
 //setup
 app.use('/api/setup/settings', settingsRoutes);
+app.use('/api/setup/shops', shopsRoutes);
+app.use('/api/setup/users', usersRoutes);
 
 
 // Health check endpoint

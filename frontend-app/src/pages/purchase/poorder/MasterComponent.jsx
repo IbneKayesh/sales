@@ -62,9 +62,12 @@ const MasterComponent = ({
   };
 
   const handleChange_contact_id = (e) => {
-    handleChange("contact_id", e.value);
+    handleChange("contact_id", e.value);    
+    //select contact details
     const selectedObj = supplierList.find((c) => c.contact_id === e.value);
-    setCreditLimit(selectedObj?.credit_limit || 0);
+    handleChange("credit_limit", selectedObj?.credit_limit || 0);
+    handleChange("contact_mobile", selectedObj?.contact_mobile || "");
+    handleChange("contact_address", selectedObj?.contact_address || "");
   };
 
   return (

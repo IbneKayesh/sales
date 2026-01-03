@@ -34,6 +34,7 @@ import PurchaseReturnPage from "./pages/purchase/poreturn/PoReturnPage.jsx";
 
 //Setup Module
 import SettingsPage from "./pages/setup/settings/SettingsPage.jsx";
+import ShopsPage from "./pages/setup/shops/ShopsPage.jsx";
 
 function App() {
   const toast = useRef(null);
@@ -87,6 +88,7 @@ function AppRoutes({ toast }) {
 
         //Setup Module
         <Route path="setup/settings" element={<SettingsPage />} />
+        <Route path="setup/shops" element={<ShopsPage />} />
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>
       <Route path="*" element={<Navigate to="/home" replace />} />

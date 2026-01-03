@@ -13,7 +13,7 @@ const {
 //get all
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT pom.*, c.contact_name, pom.is_posted as edit_stop
+    const sql = `SELECT pom.*, c.contact_name, c.contact_mobile, c.contact_address, pom.is_posted as edit_stop
     FROM po_master pom
     LEFT JOIN contacts c ON pom.contact_id = c.contact_id
     WHERE order_type = 'Return'`;

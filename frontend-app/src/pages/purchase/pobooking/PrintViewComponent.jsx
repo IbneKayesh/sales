@@ -69,7 +69,8 @@ const PrintViewComponent = ({
             <p className="company-details">
               {user?.shop_address}
               <br />
-              Phone: {user?.user_mobile} | Email: {user?.user_email} | User: {user?.user_name}
+              Phone: {user?.user_mobile} | Email: {user?.user_email} | User:{" "}
+              {user?.user_name}
             </p>
           </div>
           <div className="invoice-badge">
@@ -87,7 +88,7 @@ const PrintViewComponent = ({
         {/* Invoice Details */}
         <div className="invoice-details">
           <div className="detail-section">
-            <h3>Supplier Information</h3>
+            <h3>Supplier</h3>
             <p>
               <strong>Supplier:</strong> {formData?.contact_name || "N/A"}
             </p>
@@ -99,12 +100,12 @@ const PrintViewComponent = ({
             </p>
           </div>
           <div className="detail-section">
-            <h3>Booking Details</h3>
+            <h3>Booking</h3>
             <p>
-              <strong>Booking No:</strong> {formData?.order_no || "N/A"}
+              <strong>No:</strong> {formData?.order_no || "N/A"}
             </p>
             <p>
-              <strong>Booking Date:</strong> {formatDate(formData?.order_date)}
+              <strong>Date:</strong> {formatDate(formData?.order_date)}
             </p>
             <p>
               <strong>Note:</strong> {formData?.order_note || "N/A"}
@@ -134,23 +135,23 @@ const PrintViewComponent = ({
                     <td>{index + 1}</td>
                     <td>{item.product_name}</td>
                     <td style={{ textAlign: "right" }}>
-                      {formatCurrency(item.product_price)}
+                      {item.product_price}
                     </td>
                     <td style={{ textAlign: "right" }}>
                       {item.product_qty} {item.small_unit_name}
                     </td>
                     <td style={{ textAlign: "right" }}>
-                      {formatCurrency(item.discount_amount)}
+                      {item.discount_amount}
                       <br />
                       <small>({item.discount_percent}%)</small>
                     </td>
                     <td style={{ textAlign: "right" }}>
-                      {formatCurrency(item.vat_amount)}
+                      {item.vat_amount}
                       <br />
                       <small>({item.vat_percent}%)</small>
                     </td>
                     <td style={{ textAlign: "right" }}>
-                      {formatCurrency(item.total_amount)}
+                      {item.total_amount}
                     </td>
                     <td>{item.product_note || "-"}</td>
                   </tr>
@@ -178,21 +179,17 @@ const PrintViewComponent = ({
                 </td>
                 <td style={{ textAlign: "right" }}>
                   <strong>
-                    {formatCurrency(
-                      formDataList?.reduce(
-                        (sum, item) => sum + (item.discount_amount || 0),
-                        0
-                      )
+                    {formDataList?.reduce(
+                      (sum, item) => sum + (item.discount_amount || 0),
+                      0
                     )}
                   </strong>
                 </td>
                 <td style={{ textAlign: "right" }}>
                   <strong>
-                    {formatCurrency(
-                      formDataList?.reduce(
-                        (sum, item) => sum + (item.vat_amount || 0),
-                        0
-                      )
+                    {formDataList?.reduce(
+                      (sum, item) => sum + (item.vat_amount || 0),
+                      0
                     )}
                   </strong>
                 </td>
@@ -216,58 +213,65 @@ const PrintViewComponent = ({
         <div className="payment-summary">
           <div className="summary-left">
             {formDataPaymentList && formDataPaymentList.length > 0 && (
-              <>
-                <table className="payment-table">
-                  <thead>
-                    <tr>
-                        <th colSpan={4} style={{ textAlign: "center" }}>Payment</th>
-                    </tr>
-                    <tr>
-                      <th>Mode</th>
-                      <th>Date</th>
-                      <th style={{ textAlign: "right" }}>Amount</th>
-                      <th>Note</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {formDataPaymentList.map((payment, index) => (
-                      <tr key={payment.payment_id || index}>
-                        <td>{payment.payment_mode}</td>
-                        <td>{formatDate(payment.payment_date)}</td>
-                        <td style={{ textAlign: "right" }}>
+              <div className="payment-history">
+                <h3 className="payment-title">Payment History</h3>
+                <div className="payment-list">
+                  {formDataPaymentList.map((payment, index) => (
+                    <div
+                      key={payment.payment_id || index}
+                      className="payment-card"
+                    >
+                      <div className="payment-card-header">
+                        <div className="payment-mode-group">
+                          <span className="payment-mode-badge">
+                            {payment.payment_mode}
+                          </span>
+                          <span className="payment-date">
+                            {formatDate(payment.payment_date)}
+                          </span>
+                        </div>
+                        <div className="payment-amount-text">
                           {formatCurrency(payment.payment_amount)}
-                        </td>
-                        <td>{payment.payment_note || "-"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </>
+                        </div>
+                      </div>
+                      {payment.payment_note && (
+                        <div className="payment-card-footer">
+                          <i
+                            className="pi pi-info-circle"
+                            style={{ fontSize: "0.8rem", marginRight: "4px" }}
+                          ></i>
+                          {payment.payment_note}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
           <div className="summary-right">
             <h3>Amount Summary</h3>
             <div className="summary-row">
               <span>Order Amount:</span>
-              <span>{formatCurrency(formData?.order_amount)}</span>
+              <span>{formData?.order_amount}</span>
             </div>
             <div className="summary-row">
               <span>Discount Amount:</span>
               <span className="text-success">
-                - {formatCurrency(formData?.discount_amount)}
+                (-) {formData?.discount_amount}
               </span>
             </div>
             <div className="summary-row">
               <span>VAT Amount:</span>
-              <span>{formatCurrency(formData?.vat_amount)}</span>
+              <span>{formData?.vat_amount}</span>
             </div>
             <div className="summary-row">
               <span>Include Cost:</span>
-              <span>{formatCurrency(formData?.include_cost)}</span>
+              <span>{formData?.include_cost}</span>
             </div>
             <div className="summary-row">
               <span>Exclude Cost:</span>
-              <span>{formatCurrency(formData?.exclude_cost)}</span>
+              <span>{formData?.exclude_cost}</span>
             </div>
             <hr className="summary-divider" />
             <div className="summary-row total">
@@ -277,13 +281,13 @@ const PrintViewComponent = ({
             <div className="summary-row">
               <span>Payable Amount:</span>
               <span className="text-primary">
-                {formatCurrency(formData?.payable_amount)}
+                {formData?.payable_amount}
               </span>
             </div>
             <div className="summary-row">
               <span>Paid Amount:</span>
               <span className="text-success">
-                {formatCurrency(formData?.paid_amount)}
+                {formData?.paid_amount}
               </span>
             </div>
             <hr className="summary-divider" />
@@ -310,7 +314,7 @@ const PrintViewComponent = ({
             </div>
           </div>
           <p className="footer-note">
-            This is a computer-generated document. No signature is required.
+            This is a software-generated document. No signature is required.
           </p>
         </div>
       </div>

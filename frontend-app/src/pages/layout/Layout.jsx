@@ -60,9 +60,10 @@ const Layout = () => {
         { id: "st1", name: "Closing", url: "/home/setup/closing-process", icon: "pi pi-sparkles" },
         { id: "st2", name: "Contact", url: "/home/setup/contact", icon: "pi pi-address-book" },
         { id: "st3", name: "Users", url: "/home/setup/users", icon: "pi pi-users" },
-        { id: "st4", name: "Change Password", url: "/home/setup/change-password", icon: "pi pi-unlock" },
-        { id: "st5", name: "Backup", url: "/home/setup/backup", icon: "pi pi-save" },
-        { id: "st6", name: "Settings", url: "/home/setup/settings", icon: "pi pi-cog" },
+        { id: "st4", name: "Shops", url: "/home/setup/shops", icon: "pi pi-shop" },
+        { id: "st5", name: "Change Password", url: "/home/setup/change-password", icon: "pi pi-unlock" },
+        { id: "st6", name: "Backup", url: "/home/setup/backup", icon: "pi pi-save" },
+        { id: "st7", name: "Settings", url: "/home/setup/settings", icon: "pi pi-cog" },
       ],
     },
   ];

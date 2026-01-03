@@ -219,7 +219,7 @@ const initData = (callback) => {
     db.run(
       `
       INSERT OR IGNORE INTO shops (shop_id, shop_name, shop_address) VALUES
-      ('1', 'Shop 1', 'Address 1')
+      ('1', 'Sand Grain Digital', 'Badda, Dhaka, Bangladesh')
     `,
       (err) => {
         if (err) {
