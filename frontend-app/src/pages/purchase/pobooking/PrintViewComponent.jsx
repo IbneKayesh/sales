@@ -69,8 +69,7 @@ const PrintViewComponent = ({
             <p className="company-details">
               {user?.shop_address}
               <br />
-              Phone: {user?.user_mobile} | Email: {user?.user_email} | User:{" "}
-              {user?.user_name}
+              Phone: {user?.user_mobile} | Email: {user?.user_email}
             </p>
           </div>
           <div className="invoice-badge">
@@ -314,7 +313,7 @@ const PrintViewComponent = ({
             </div>
           </div>
           <p className="footer-note">
-            This is a software-generated document. No signature is required.
+            This is a software-generated document. No signature is required. | This invoice is digital only. Do not print.
           </p>
         </div>
       </div>
