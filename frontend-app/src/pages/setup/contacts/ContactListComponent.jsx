@@ -147,7 +147,6 @@ const ContactListComponent = ({
         rows={10}
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
-        className="bg-dark-300"
         size="small"
       >
         <Column field="contact_name" header="Name" sortable />
@@ -175,6 +174,7 @@ const ContactListComponent = ({
           header="Current Balance"
           body={current_balance_BT}
         />
+        <Column field="shop_name" header="Shop" />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
 

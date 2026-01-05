@@ -1,137 +1,161 @@
 const express = require("express");
 const router = express.Router();
+const { dbGet, dbGetAll, dbRun } = require("../../db/database");
 
-const {
-  runScriptsSequentially,
-  dbRun,
-  dbGet,
-  dbAll,
-} = require("../../db/asyncScriptsRunner");
-
-//Get all shops
+// ---------------- GET ALL SHOPS ----------------
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT u.*, 0 as edit_stop
-    FROM shops u ORDER BY shop_id`;
-    const rows = await dbAll(sql, []);
-    res.json(rows);
+    const sql = `SELECT u.*, 0 as edit_stop FROM shops u ORDER BY shop_id`;
+    const rows = await dbGetAll(sql, [], "Get all shops");
+
+    res.json({
+      message: "Fetched all shops",
+      data: rows,
+    });
   } catch (error) {
     console.error("Error fetching data:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({
+      message: "Internal server error",
+      data: [],
+    });
   }
 });
 
-//get by id
+// ---------------- GET SHOP BY ID ----------------
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const sql = "SELECT u.*, 0 as edit_stop FROM shops u WHERE shop_id = ?";
-    const row = await dbGet(sql, [id]);
+    const sql = "SELECT u.*, 0 as edit_stop FROM shops u WHERE shop_id = $1";
+    const row = await dbGet(sql, [id], "Get shop by id");
+
     if (!row) {
-      return res.status(404).json({ error: "Shop not found" });
+      return res.status(404).json({
+        message: "Shop not found",
+        data: {},
+      });
     }
-    res.json(row);
+
+    res.json({
+      message: "Fetched shop",
+      data: row,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching data:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
-//create new shop
+// ---------------- CREATE SHOP ----------------
 router.post("/", async (req, res) => {
-  const {
-    shop_id,
-    shop_name,
-    shop_address,
-  } = req.body;
+  const { shop_id, shop_name, shop_address, bin_no, open_date } = req.body;
 
-  if (!shop_id) {
-    return res.status(400).json({ error: "Shop ID is required" });
-  }
-  if (!shop_name) {
-    return res.status(400).json({ error: "Shop name is required" });
-  }
-
-  if (!shop_address) {
-    return res.status(400).json({ error: "Shop address is required" });
+  if (!shop_id || !shop_name || !shop_address) {
+    return res.status(400).json({
+      message: "shop_id, shop_name, and shop_address are required",
+      data: req.body,
+    });
   }
 
   try {
-    const sql = `INSERT INTO shops (shop_id, shop_name, shop_address)
-    VALUES (?, ?, ?)`;
-    const params = [
-      shop_id,
-      shop_name,
-      shop_address,
-    ];
+    const sql = `
+      INSERT INTO shops (shop_id, shop_name, shop_address, bin_no, open_date)
+      VALUES ($1, $2, $3, $4, $5)
+    `;
+    const params = [shop_id, shop_name, shop_address, bin_no, open_date];
     await dbRun(sql, params, `Created shop ${shop_name}`);
-    res.status(201).json({ shop_id, ...req.body });
+
+    res.status(201).json({
+      message: "Shop created successfully",
+      data: req.body,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error creating shop:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
-//update shop
+// ---------------- UPDATE SHOP ----------------
 router.post("/update", async (req, res) => {
-  const {
-    shop_id,
-    shop_name,
-    shop_address,
-  } = req.body;
+  const { shop_id, shop_name, shop_address, bin_no, open_date } = req.body;
 
-  
-  if (!shop_id) {
-    return res.status(400).json({ error: "Shop ID is required" });
-  }
-  if (!shop_name) {
-    return res.status(400).json({ error: "Shop name is required" });
-  }
-
-  if (!shop_address) {
-    return res.status(400).json({ error: "Shop address is required" });
+  if (!shop_id || !shop_name || !shop_address) {
+    return res.status(400).json({
+      message: "shop_id, shop_name, and shop_address are required",
+      data: req.body,
+    });
   }
 
   try {
-    const sql = `UPDATE shops SET
-    shop_name = ?,
-    shop_address = ?,
-    updated_at = CURRENT_TIMESTAMP
-    WHERE shop_id = ?`;
-    const params = [
-      shop_name,
-      shop_address,
-      shop_id,
-    ];
-    const result = await dbRun(sql, params, `Updated shop ${shop_name}`);
-    if (result.changes === 0) {
-      return res.status(404).json({ error: "Shop not found" });
+    const sql = `
+      UPDATE shops
+      SET shop_name = $1,
+          shop_address = $2,
+          bin_no = $3,
+          open_date = $4,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE shop_id = $5
+    `;
+    const params = [shop_name, shop_address, bin_no, open_date, shop_id];
+    const resultCount = await dbRun(sql, params, `Updated shop ${shop_name}`);
+
+    if (resultCount === 0) {
+      return res.status(404).json({
+        message: "Shop not found",
+        data: req.body,
+      });
     }
-    res.json({ shop_id, ...req.body });
+
+    res.json({
+      message: "Shop updated successfully",
+      data: req.body,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error updating shop:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
-//Delete shop
+// ---------------- DELETE SHOP ----------------
 router.post("/delete", async (req, res) => {
   const { shop_id } = req.body;
 
   if (!shop_id) {
-    return res.status(400).json({ error: "Shop ID is required" });
+    return res.status(400).json({
+      message: "shop_id is required",
+      data: req.body,
+    });
   }
 
   try {
-    const sql = "DELETE FROM shops WHERE shop_id = ?";
-    const result = await dbRun(sql, [shop_id], `Deleted shop ${shop_id}`);
-    if (result.changes === 0) {
-      return res.status(404).json({ error: "Shop not found" });
+    const sql = "DELETE FROM shops WHERE shop_id = $1";
+    const resultCount = await dbRun(sql, [shop_id], `Deleted shop ${shop_id}`);
+
+    if (resultCount === 0) {
+      return res.status(404).json({
+        message: "Shop not found",
+        data: req.body,
+      });
     }
-    res.json({ message: "Shop deleted successfully" });
+
+    res.json({
+      message: "Shop deleted successfully",
+      data: req.body,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error deleting shop:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 

@@ -10,12 +10,17 @@ const ContactPage = () => {
   const toast = useRef(null);
   const {
     contactList,
+    contactPaymentList,
+    fetchSupplierList,
+    supplierList,
+    contactCustomerList,
     contactTypeOptions,
+    shopOptions,
     toastBox,
     isBusy,
     currentView,
     errors,
-    formDataContact,
+    formData,
     handleChange,
     handleCancel,
     handleAddNew,
@@ -25,6 +30,8 @@ const ContactPage = () => {
     handleSaveContact,
     handleLedger,
     contactsLedger,
+    ledgerContactList,
+    fetchLedgerContactList,
   } = useContacts();
 
   useEffect(() => {
@@ -45,8 +52,8 @@ const ContactPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Contacts"
-            : formDataContact.contact_id
+            ? "Contact"
+            : formData.contact_id
             ? "Edit Contact"
             : "Add New Contact"}
         </h3>
@@ -54,7 +61,6 @@ const ContactPage = () => {
         {isList ? (
           <div className="flex gap-2">
             <Button
-              label="Refresh"
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
@@ -69,7 +75,7 @@ const ContactPage = () => {
           </div>
         ) : (
           <Button
-            label="Contacts List"
+            label="Contact List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -95,10 +101,11 @@ const ContactPage = () => {
           <ContactFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={formDataContact}
+            formData={formData}
             onChange={handleChange}
             onSave={handleSaveContact}
             contactTypeOptions={contactTypeOptions}
+            shopOptions={shopOptions}
           />
         )}
       </Card>

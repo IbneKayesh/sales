@@ -16,8 +16,8 @@
     "contact_mobile": {
       "name": "Mobile",
       "type": "string",
-      "required": false,
-      "minLength": 0,
+      "required": true,
+      "minLength": 6,
       "maxLength": 50
     },
     "contact_email": {
@@ -60,5 +60,12 @@
       "name": "Current Balance",
       "type": "number",
       "required": false
+    },
+    "shop_id": {
+      "name": "Shop",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 50
     }
   }

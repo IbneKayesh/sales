@@ -23,6 +23,7 @@ const UsersPage = () => {
     handleRefresh,
     handleSaveUser,
     roleOptions,
+    shopOptions,
   } = useUsers();
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const UsersPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Users List"
+            ? "User List"
             : fromData.user_id
             ? "Edit User"
             : "Add New User"}
@@ -52,7 +53,6 @@ const UsersPage = () => {
         {isList ? (
           <div className="flex gap-2">
             <Button
-              label="Refresh"
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
@@ -67,7 +67,7 @@ const UsersPage = () => {
           </div>
         ) : (
           <Button
-            label="Users List"
+            label="User List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -95,6 +95,7 @@ const UsersPage = () => {
             onChange={handleChange}
             onSave={handleSaveUser}
             roleOptions={roleOptions}
+            shopOptions={shopOptions}
           />
         )}
       </Card>

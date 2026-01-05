@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { contactAPI } from "@/api/setup/contactAPI";
+import { shopsAPI } from "@/api/setup/shopsAPI";
 import validate from "@/models/validator";
 import t_contacts from "@/models/setup/t_contacts";
 import { generateGuid } from "@/utils/guid";
 
-const fromDataModel = {
+const dataModel = {
   contact_id: "",
   contact_name: "",
   contact_mobile: "",
@@ -15,6 +16,7 @@ const fromDataModel = {
   payable_balance: 0,
   advance_balance: 0,
   current_balance: 0,
+  shop_id: "",
 };
 
 export const useContacts = () => {
@@ -23,82 +25,104 @@ export const useContacts = () => {
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [formDataContact, setFormDataContact] = useState(fromDataModel);
+  const [formData, setFormData] = useState(dataModel);
 
   const contactTypeOptions = [
     { label: "Customer", value: "Customer" },
     { label: "Supplier", value: "Supplier" },
     { label: "Both", value: "Both" },
   ];
+  const [shopOptions, setShopOptions] = useState([]);
+
   const [ledgerContactList, setLedgerContactList] = useState([]);
   const [contactPaymentList, setContactPaymentList] = useState([]);
   const [supplierList, setSupplierList] = useState([]);
   const [contactCustomerList, setContactCustomerList] = useState([]);
   const [contactsLedger, setContactsLedger] = useState([]);
 
-  const loadContacts = async (resetModified = false) => {
+  const loadContacts = async () => {
     try {
-      const data = await contactAPI.getAll();
-      //console.log("data: " + JSON.stringify(data));
-      setContactList(data);
+      const response = await contactAPI.getAll();
+      // response = { message, data }
+      setContactList(response.data);
 
-      const paymentData = data.filter((c) => c.contact_type !== "Both");
+      const paymentData = response.data.filter(
+        (c) => c.contact_type !== "Both"
+      );
       setContactPaymentList(paymentData);
 
-      const supplierData = data.filter((c) =>
+      const supplierData = response.data.filter((c) =>
         ["Supplier", "Both"].includes(c.contact_type)
       );
       setSupplierList(supplierData);
 
-      const customerData = data.filter((c) =>
+      const customerData = response.data.filter((c) =>
         ["Customer", "Both"].includes(c.contact_type)
       );
       setContactCustomerList(customerData);
 
-      if (resetModified) {
-        setToastBox({
-          severity: "info",
-          summary: "Refreshed",
-          detail: "Data refreshed from database.",
-        });
-      }
+      setToastBox({
+        severity: "success",
+        summary: "Success",
+        detail: response.message,
+      });
     } catch (error) {
+      console.error("Error loading data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: resetModified
-          ? "Failed to refresh data from server"
-          : "Failed to load data from server",
+        detail: error?.message || "Failed to load data",
+      });
+    }
+  };
+
+  const loadShops = async () => {
+    if (shopOptions.length > 0) {
+      return;
+    }
+    try {
+      const response = await shopsAPI.getAll();
+      // response = { message, data }
+
+      setShopOptions(
+        response.data.map((shop) => ({
+          value: shop.shop_id,
+          label: shop.shop_name,
+        }))
+      );
+    } catch (error) {
+      console.error("Error loading data:", error);
+
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: error?.message || "Failed to load data",
       });
     }
   };
 
   //Fetch data from API on mount
   useEffect(() => {
-    if (supplierList.length === 0) {
-      loadContacts(); // Load contacts only if the list is empty
-    }
-  }, [supplierList]);
+    loadContacts();
+  }, []);
 
   const fetchSupplierList = async () => {
-    const data = await contactAPI.getAll();
-    const supplierData = data.filter(
+    const response = await contactAPI.getAll();
+    const supplierData = response.data.filter(
       (c) => c.contact_type === "Supplier" || c.contact_type === "Both"
     );
     setSupplierList(supplierData);
   };
 
   const handleChange = (field, value) => {
-    setFormDataContact((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate(
-      { ...formDataContact, [field]: value },
-      t_contacts
-    );
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate({ ...formData, [field]: value }, t_contacts);
     setErrors(newErrors);
   };
 
   const handleClear = () => {
-    setFormDataContact(fromDataModel);
+    setFormData(dataModel);
     setErrors({});
   };
 
@@ -110,41 +134,47 @@ export const useContacts = () => {
   const handleAddNew = () => {
     handleClear();
     setCurrentView("form");
+    loadShops();
   };
 
   const handleEditContact = (contact) => {
     //console.log("contact: " + JSON.stringify(contact));
 
-    setFormDataContact(contact);
+    setFormData(contact);
     setCurrentView("form");
+    loadShops();
   };
 
   const handleDeleteContact = async (rowData) => {
     try {
-      //console.log("rowData " + JSON.stringify(rowData))
-      await contactAPI.delete(rowData);
-      const updatedContacts = contactList.filter(
+      // Call API, unwrap { message, data }
+      const response = await contactAPI.delete({
+        contact_id: rowData.contact_id,
+      });
+
+      const updatedList = contactList.filter(
         (c) => c.contact_id !== rowData.contact_id
       );
-      setContactList(updatedContacts);
+      setContactList(updatedList);
 
       setToastBox({
         severity: "info",
         summary: "Deleted",
-        detail: `Deleted successfully.`,
+        detail: response.message || "Deleted successfully",
       });
     } catch (error) {
-      console.error("Error deleting contact:", error);
+      console.error("Error deleting data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to delete contact",
+        detail: error?.message || "Failed to delete data",
       });
     }
   };
 
   const handleRefresh = () => {
-    loadContacts(true);
+    loadContacts();
   };
 
   const handleSaveContact = async (e) => {
@@ -153,45 +183,47 @@ export const useContacts = () => {
     try {
       setIsBusy(true);
 
-      const newErrors = validate(formDataContact, t_contacts);
+      // Validate form
+      const newErrors = validate(formData, t_contacts);
       setErrors(newErrors);
-      console.log("handleSaveContact: " + JSON.stringify(formDataContact));
+      console.log("handleSaveContact: " + JSON.stringify(formData));
 
       if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
         return;
       }
 
+      // Ensure contact_id exists (for create)
       const formDataNew = {
-        ...formDataContact,
-        contact_id: formDataContact.contact_id
-          ? formDataContact.contact_id
-          : generateGuid(),
+        ...formData,
+        contact_id: formData.contact_id || generateGuid(),
       };
 
-      if (formDataContact.contact_id) {
-        const data = await contactAPI.update(formDataNew);
+      // Call API and get { message, data }
+      let response;
+      if (formData.contact_id) {
+        response = await contactAPI.update(formDataNew);
       } else {
-        const data = await contactAPI.create(formDataNew);
+        response = await contactAPI.create(formDataNew);
       }
-      const message = formDataContact.contact_id
-        ? `"${formDataContact.contact_name}" Updated`
-        : "Created";
+
+      // Update toast using API message
       setToastBox({
         severity: "success",
         summary: "Success",
-        detail: `${message} successfully.`,
+        detail: response.message || "Operation successful",
       });
 
       handleClear();
       setCurrentView("list");
       loadContacts();
     } catch (error) {
-      console.error("Error saving contact:", error);
+      console.error("Error saving data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to save contact",
+        detail: error?.message || "Failed to save data",
       });
     } finally {
       setIsBusy(false);
@@ -200,21 +232,24 @@ export const useContacts = () => {
 
   const handleLedger = async (contact) => {
     try {
-      const data = await contactAPI.getContactLedger(contact.contact_id);
-      setContactsLedger(data);
+      const response = await contactAPI.getContactLedger(contact.contact_id);
+      // response = { message, data }
+      setContactsLedger(response.data);
     } catch (error) {
-      console.error("Error fetching ledger:", error);
+      console.error("Error loading data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to fetch ledger",
+        detail: error?.message || "Failed to load data",
       });
     }
   };
 
   const fetchLedgerContactList = async (id) => {
-    const data = await contactAPI.getByType(id);
-    setLedgerContactList(data);
+    const response = await contactAPI.getByType(id);
+    // response = { message, data }
+    setLedgerContactList(response.data);
   };
 
   return {
@@ -224,11 +259,12 @@ export const useContacts = () => {
     supplierList,
     contactCustomerList,
     contactTypeOptions,
+    shopOptions,
     toastBox,
     isBusy,
     currentView,
     errors,
-    formDataContact,
+    formData,
     handleChange,
     handleCancel,
     handleAddNew,

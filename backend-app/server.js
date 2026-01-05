@@ -30,8 +30,11 @@ const poreturnRoutes = require('./routes/purchase/poreturn.js');
 
 //setup
 const settingsRoutes = require('./routes/setup/settings.js');
-const shopsRoutes = require('./routes/setup/shops.js');
 const usersRoutes = require('./routes/setup/users.js');
+
+
+//setup :: PGS
+const shopsRoutes = require('./routes/setup/shops.js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -92,8 +95,10 @@ app.use('/api/purchase/return', poreturnRoutes);
 
 //setup
 app.use('/api/setup/settings', settingsRoutes);
-app.use('/api/setup/shops', shopsRoutes);
 app.use('/api/setup/users', usersRoutes);
+
+
+app.use('/api/setup/shops', shopsRoutes);
 
 
 // Health check endpoint

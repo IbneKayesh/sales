@@ -22,8 +22,6 @@ const inventoryTables = inventory_tables();
 const purchase_tables = require("./purchase_tables");
 const purchaseTables = purchase_tables();
 
-const user_tables = require("./user_tables");
-const userTables = user_tables();
 
 const vat_tables = require("./vat_tables");
 const vatTables = vat_tables();
@@ -54,13 +52,13 @@ const initTables = () => {
     });
   });
 
-  Object.values(userTables).forEach((sql) => {
-    db.exec(sql, (err) => {
-      if (err) {
-        console.error("User Table creation error:", err.message);
-      }
-    });
-  });
+  // Object.values(userTables).forEach((sql) => {
+  //   db.exec(sql, (err) => {
+  //     if (err) {
+  //       console.error("User Table creation error:", err.message);
+  //     }
+  //   });
+  // });
 
   Object.values(vatTables).forEach((sql) => {
     db.exec(sql, (err) => {
@@ -78,24 +76,6 @@ const initTables = () => {
         setting_name TEXT NOT NULL,
         setting_key TEXT NOT NULL,
         setting_value TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // setup :: Contacts table
-    db.run(`
-      CREATE TABLE IF NOT EXISTS contacts (
-        contact_id TEXT PRIMARY KEY,
-        contact_name TEXT NOT NULL,
-        contact_mobile TEXT,
-        contact_email TEXT,
-        contact_address TEXT,
-        contact_type TEXT DEFAULT 'Customer',
-        credit_limit REAL DEFAULT 0,
-        payable_balance REAL DEFAULT 0,
-        advance_balance REAL DEFAULT 0,
-        current_balance REAL DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
@@ -301,26 +281,7 @@ const initData = (callback) => {
     );
 
     //contacts :: Contacts table :: insert default data
-    db.run(
-      `
-      INSERT OR IGNORE INTO contacts (contact_id, contact_name, contact_mobile, contact_email, contact_address, contact_type,
-      credit_limit, payable_balance, advance_balance, current_balance)
-      VALUES
-      ('internal', 'Internal A/C', '0', '0', 'for internal transaction', 'Internal', 0, 0, 0, 0),
-      ('both', 'Unknown Supplier and Purchaser A/C', '0', '0', 'default for purchase and sale transaction', 'Both', 0, 0, 0, 0),
-      ('1', 'Supplier 1', '1234567890', 'supplier1@example.com', '123 Main St', 'Supplier',  5000000, 0, 0, 0),
-      ('2', 'Supplier 2', '0987654321', 'supplier2@example.com', '456 Elm St', 'Supplier',  5000000, 0, 0, 0),
-      ('3', 'Customer 1', '1234567890', 'customer1@example.com', '123 Main St', 'Customer',  5000000, 0, 0, 0),
-      ('4', 'Customer 2', '0987654321', 'customer2@example.com', '456 Elm St', 'Customer', 5000000, 0, 0, 0)
-    `,
-      (err) => {
-        if (err) {
-          console.error("Error inserting default contacts:", err);
-        } else {
-          console.log("Default contacts inserted.");
-        }
-      }
-    );
+
 
     //accounts :: Bank table :: insert default data
     db.run(
@@ -456,8 +417,9 @@ const initData = (callback) => {
       ('Z404', 'Rent Adjustment (+)', 'Income', 'In', 'Internal'),
       ('Z405', 'Bank Profit (+)', 'Income', 'In', 'Internal'),
       ('Z406', 'Loan Taken (+)', 'Income', 'In', 'Internal'),
-      ('Z407', 'Asset Sale (+)', 'Assets', 'In', 'Internal'),
-      ('Z408', 'Other Income (+)', 'Income', 'In', 'Customer'),
+      ('Z407', 'Deposit (+)', 'Income', 'In', 'Internal'),
+      ('Z408', 'Asset Sale (+)', 'Assets', 'In', 'Internal'),      
+      ('Z409', 'Other Income (+)', 'Income', 'In', 'Internal'),
 
 
       ('Z501', 'Loss (-)', 'Expense', 'Out', 'Internal'),
@@ -473,6 +435,7 @@ const initData = (callback) => {
       ('Z511', 'Loan Payment (-)', 'Expense', 'Out', 'Internal'),
       ('Z512', 'Asset Purchase (-)', 'Assets', 'Out', 'Internal'),
       ('Z513', 'Other Expense (-)', 'Expense', 'Out', 'Internal'),
+      ('Z514', 'Withdraw (-)', 'Income', 'Out', 'Internal'),
 
       
       ('Z601', 'Transfer Out (-)', 'Transfer', 'Out', 'Internal'),

@@ -19,5 +19,17 @@
         "required": true,
         "minLength": 1,
         "maxLength": 255
+    },
+    "bin_no": {
+        "name": "BIN No",
+        "type": "string",
+        "required": false,
+        "minLength": 0,
+        "maxLength": 255
+    },
+    "open_date": {
+        "name": "Open Date",
+        "type": "date",
+        "required": false
     }
 }

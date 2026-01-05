@@ -2,6 +2,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
+import { formatDate } from "@/utils/datetime";
 
 const ShopsListComponent = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
@@ -44,6 +45,10 @@ const ShopsListComponent = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
+  const open_date_BT = (rowData) => {
+    return <span>{formatDate(rowData.open_date)}</span>;
+  };
+
   return (
     <div className="p-1">
       <ConfirmDialog />
@@ -53,12 +58,13 @@ const ShopsListComponent = ({ dataList, onEdit, onDelete }) => {
         rows={10}
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
-        className="bg-dark-300"
         size="small"
       >
         <Column field="shop_name" header="Shop Name" />
         <Column field="shop_address" header="Shop Address" />
-        <Column header={dataList?.length + " rows"} body={action_BT} /> 
+        <Column field="bin_no" header="BIN" />
+        <Column field="open_date" header="Open Date" body={open_date_BT} />
+        <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );

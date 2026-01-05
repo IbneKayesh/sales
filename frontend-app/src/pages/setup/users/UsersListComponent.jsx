@@ -6,7 +6,7 @@ import { SplitButton } from "primereact/splitbutton";
 const UsersListComponent = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.username}"?`,
+      message: `Are you sure you want to delete "${rowData.user_name}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -53,13 +53,14 @@ const UsersListComponent = ({ dataList, onEdit, onDelete }) => {
         rows={10}
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
-        className="bg-dark-300"
         size="small"
       >
         <Column field="user_email" header="Email" />
         <Column field="user_mobile" header="Mobile" />
         <Column field="user_name" header="User Name" sortable />
+        <Column field="recovery_code" header="Recovery Code" sortable />
         <Column field="user_role" header="Role" />
+        <Column field="shop_name" header="Shop" />
         <Column header={dataList?.length + " rows"} body={action_BT} /> 
       </DataTable>
     </div>

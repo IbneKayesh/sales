@@ -4,6 +4,16 @@ import validate from "@/models/validator";
 import t_shops from "@/models/setup/t_shops";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
+import { currentDate, formatDateForAPI } from "@/utils/datetime";
+
+const dataModel = {
+  shop_id: "",
+  shop_name: "",
+  shop_address: "",
+  bin_no: "",
+  open_date: currentDate(),
+  edit_stop: 0,
+};
 
 export const useShops = () => {
   const { user } = useAuth();
@@ -12,34 +22,27 @@ export const useShops = () => {
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [fromData, setFormData] = useState({
-    shop_id: "",
-    shop_name: "",
-    shop_address: "",
-    edit_stop: 0,
-  });
+  const [fromData, setFormData] = useState(dataModel);
 
-
-  const loadShops = async (resetModified = false) => {
+  const loadShops = async () => {
     try {
-      const data = await shopsAPI.getAll();
-      //console.log("data: " + JSON.stringify(data));
-      setShopList(data);
+      const response = await shopsAPI.getAll();
+      // response = { message, data }
 
-      if (resetModified) {
-        setToastBox({
-          severity: "info",
-          summary: "Refreshed",
-          detail: "Data refreshed from database.",
-        });
-      }
+      setShopList(response.data);
+
+      setToastBox({
+        severity: "success",
+        summary: "Success",
+        detail: response.message,
+      });
     } catch (error) {
+      console.error("Error loading data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: resetModified
-          ? "Failed to refresh data from server"
-          : "Failed to load data from server",
+        detail: error?.message || "Failed to load data",
       });
     }
   };
@@ -56,12 +59,7 @@ export const useShops = () => {
   };
 
   const handleClear = () => {
-    setFormData({
-      shop_id: "",
-      shop_name: "",
-      shop_address: "",
-      edit_stop: 0,
-    });
+    setFormData(dataModel);
     setErrors({});
   };
 
@@ -82,6 +80,8 @@ export const useShops = () => {
       shop_id: shop.shop_id,
       shop_name: shop.shop_name,
       shop_address: shop.shop_address,
+      bin_no: shop.bin_no,
+      open_date: shop.open_date,
       edit_stop: shop.edit_stop,
     });
     setCurrentView("form");
@@ -89,77 +89,81 @@ export const useShops = () => {
 
   const handleDeleteShop = async (rowData) => {
     try {
-      //console.log("rowData " + JSON.stringify(rowData))
-      await shopsAPI.delete(rowData);
-      const updatedShops = shopList.filter(
-        (s) => s.shop_id !== rowData.shop_id
-      );
-      setShopList(updatedShops);
+      // Call API, unwrap { message, data }
+      const response = await shopsAPI.delete({ shop_id: rowData.shop_id });
+
+      // Remove deleted shop from local state
+      const updatedList = shopList.filter((s) => s.shop_id !== rowData.shop_id);
+      setShopList(updatedList);
 
       setToastBox({
         severity: "info",
         summary: "Deleted",
-        detail: `Deleted successfully.`,
+        detail: response.message || "Deleted successfully",
       });
     } catch (error) {
-      console.error("Error deleting shop:", error);
+      console.error("Error deleting data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to delete shop",
+        detail: error?.message || "Failed to delete data",
       });
     }
   };
 
   const handleRefresh = () => {
-    loadShops(true);
+    loadShops();
   };
 
   const handleSaveShop = async (e) => {
     e.preventDefault();
     try {
       setIsBusy(true);
+
+      // Validate form
       const newErrors = validate(fromData, t_shops);
       setErrors(newErrors);
-      console.log("handleSaveShop: " + JSON.stringify(fromData));
+      console.log("handleSaveShop:", JSON.stringify(fromData));
 
       if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
         return;
       }
 
+      // Ensure shop_id exists (for create)
       const formDataNew = {
         ...fromData,
         shop_id: fromData.shop_id || generateGuid(),
+        open_date: formatDateForAPI(fromData.open_date),
       };
 
-      // console.log("formDataNew: " + JSON.stringify(formDataNew));
-      // return;
-
+      // Call API and get { message, data }
+      let response;
       if (fromData.shop_id) {
-        await shopsAPI.update(formDataNew);
+        response = await shopsAPI.update(formDataNew);
       } else {
-        await shopsAPI.create(formDataNew);
+        response = await shopsAPI.create(formDataNew);
       }
 
-      const message = fromData.shop_id
-        ? `"${fromData.shop_name}" Updated`
-        : "Created";
+      // Update toast using API message
       setToastBox({
         severity: "success",
         summary: "Success",
-        detail: `${message} successfully.`,
+        detail: response.message || "Operation successful",
       });
 
+      // Clear form & reload
       handleClear();
       setCurrentView("list");
-      loadShops();
+      await loadShops(); // make sure we wait for updated data
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error saving data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to load data from server",
+        detail: error?.message || "Failed to save data",
       });
     } finally {
       setIsBusy(false);

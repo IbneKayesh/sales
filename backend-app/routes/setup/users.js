@@ -1,43 +1,73 @@
 const express = require("express");
 const router = express.Router();
+const { dbGet, dbGetAll, dbRun } = require("../../db/database");
 
-const {
-  runScriptsSequentially,
-  dbRun,
-  dbGet,
-  dbAll,
-} = require("../../db/asyncScriptsRunner");
+const user = `
+CREATE TABLE IF NOT EXISTS users (
+  user_id TEXT PRIMARY KEY,
+  user_email TEXT UNIQUE NOT NULL,
+  user_password TEXT NOT NULL,
+  user_mobile TEXT,
+  user_name TEXT,
+  recovery_code TEXT,
+  user_role TEXT DEFAULT 'User',
+  shop_id TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP NOT NULL DEFAULT now(),
+  CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES shops(shop_id) ON DELETE SET NULL
+);
+`;
 
-//Get all users
+// ---------------- GET ALL USERS ----------------
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT u.*, 0 as edit_stop
-    FROM users u ORDER BY user_id`;
-    const rows = await dbAll(sql, []);
-    res.json(rows);
+    const sql = `SELECT u.*, s.shop_name, 0 as edit_stop
+    FROM users u
+    LEFT JOIN shops s ON u.shop_id = s.shop_id
+    ORDER BY user_id`;
+    const rows = await dbGetAll(sql, [], "Get all users");
+
+    res.json({
+      message: "Fetched all users",
+      data: rows,
+    });
   } catch (error) {
-    console.error("Error fetching users:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching data:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: [],
+    });
   }
 });
 
-//get by id
+// ---------------- GET USER BY ID ----------------
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const sql = "SELECT u.*, 0 as edit_stop FROM users u WHERE user_id = ?";
-    const row = await dbGet(sql, [id]);
+    const sql = "SELECT u.*, 0 as edit_stop FROM users u WHERE user_id = $1";
+    const row = await dbGet(sql, [id], "Get user by id");
+
     if (!row) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({
+        message: "User not found",
+        data: {},
+      });
     }
-    res.json(row);
+
+    res.json({
+      message: "Fetched user",
+      data: row,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching data:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
-//create new user
+// ---------------- CREATE USER ----------------
 router.post("/", async (req, res) => {
   const {
     user_id,
@@ -45,34 +75,25 @@ router.post("/", async (req, res) => {
     user_password,
     user_mobile,
     user_name,
+    recovery_code,
     user_role,
     shop_id,
   } = req.body;
 
-  if (!user_id) {
-    return res.status(400).json({ error: "User ID is required" });
-  }
-  if (!user_email) {
-    return res.status(400).json({ error: "User email is required" });
-  }
+  //console.log("user_id: " + JSON.stringify(req.body));
 
-  if (!user_password) {
-    return res.status(400).json({ error: "User password is required" });
+  if (!user_id || !user_email || !user_password || !user_mobile || !user_name || !recovery_code || !shop_id) {
+    return res.status(400).json({
+      message: "user_id, user_email, user_password, user_mobile, user_name, recovery_code, and shop_id are required",
+      data: req.body,
+    });
   }
-
-  if (!user_role) {
-    return res.status(400).json({ error: "User role is required" });
-  }
-
-  if (!shop_id) {
-    return res.status(400).json({ error: "Shop ID is required" });
-  }
-
-  const recovery_code = user_email.split("@")[0];
 
   try {
-    const sql = `INSERT INTO users (user_id, user_email, user_password, user_mobile, user_name, recovery_code, user_role, shop_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const sql = `
+      INSERT INTO users (user_id, user_email, user_password, user_mobile, user_name, recovery_code, user_role, shop_id)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `;
     const params = [
       user_id,
       user_email,
@@ -84,104 +105,122 @@ router.post("/", async (req, res) => {
       shop_id,
     ];
     await dbRun(sql, params, `Created user ${user_name}`);
-    res.status(201).json({ user_id, ...req.body });
+
+    res.status(201).json({
+      message: "User created successfully",
+      data: req.body,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error creating user:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
-//update user
+// ---------------- UPDATE USER ----------------
 router.post("/update", async (req, res) => {
-  const {
-    user_id,
-    user_email,
-    user_password,
-    user_mobile,
-    user_name,
-    user_role,
-  } = req.body;
+  const { user_id, user_email, user_mobile, user_name, recovery_code, user_role, shop_id } =
+    req.body;
 
-  
-  if (!user_id) {
-    return res.status(400).json({ error: "User ID is required" });
-  }
-  if (!user_email) {
-    return res.status(400).json({ error: "User email is required" });
-  }
-
-  if (!user_password) {
-    return res.status(400).json({ error: "User password is required" });
-  }
-
-  if (!user_role) {
-    return res.status(400).json({ error: "User role is required" });
+  if (!user_id || !user_email || !recovery_code || !user_role || !shop_id) {
+    return res.status(400).json({
+      message: "user_id, user_email, recovery_code, user_role, shop_id are required",
+      data: req.body,
+    });
   }
 
   try {
-    const sql = `UPDATE users SET
-    user_email = ?,
-    user_password = ?,
-    user_mobile = ?,
-    user_name = ?,
-    user_role = ?,
-    updated_at = CURRENT_TIMESTAMP
-    WHERE user_id = ?`;
+    const sql = `
+      UPDATE users
+      SET user_email = $1,
+          user_mobile = $2,
+          user_name = $3,
+          user_role = $4,
+          recovery_code = $5,
+          shop_id = $6,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE user_id = $7
+    `;
     const params = [
       user_email,
-      user_password,
       user_mobile,
       user_name,
       user_role,
+      recovery_code,
+      shop_id,
       user_id,
     ];
-    const result = await dbRun(sql, params, `Updated user ${user_name}`);
-    if (result.changes === 0) {
-      return res.status(404).json({ error: "User not found" });
+
+    const resultCount = await dbRun(sql, params, `Updated user ${user_name}`);
+
+    if (resultCount === 0) {
+      return res.status(404).json({
+        message: "User not found",
+        data: req.body,
+      });
     }
-    res.json({ user_id, ...req.body });
+
+    res.json({
+      message: "User updated successfully",
+      data: req.body,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error updating user:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
-//Delete user
+// ---------------- DELETE USER ----------------
 router.post("/delete", async (req, res) => {
-  const { user_id, user_name } = req.body;
+  const { user_id } = req.body;
 
   if (!user_id) {
-    return res.status(400).json({ error: "User ID is required" });
+    return res.status(400).json({
+      message: "user_id is required",
+      data: req.body,
+    });
   }
 
   try {
-    const sql = "DELETE FROM users WHERE user_id = ?";
-    const result = await dbRun(sql, [user_id], `Deleted user ${user_name}`);
-    if (result.changes === 0) {
-      return res.status(404).json({ error: "User not found" });
+    const sql = "DELETE FROM users WHERE user_id = $1";
+    const resultCount = await dbRun(sql, [user_id], `Deleted user ${user_id}`);
+
+    if (resultCount === 0) {
+      return res.status(404).json({
+        message: "User not found",
+        data: req.body,
+      });
     }
-    res.json({ message: "User deleted successfully" });
+
+    res.json({
+      message: "User deleted successfully",
+      data: req.body,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error deleting user:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
-//change password
+// ---------------- CHANGE PASSWORD ----------------
 router.post("/change-password", async (req, res) => {
   const { user_id, current_password, new_password } = req.body;
 
-  if (!user_id) {
-    return res.status(400).json({ error: "User ID is required" });
+  if (!user_id || !current_password || !new_password) {
+    return res.status(400).json({
+      message: "user_id, current_password, and new_password are required",
+      data: req.body,
+    });
   }
 
-  if (!current_password) {
-    return res.status(400).json({ error: "Current password is required" });
-  }
-
-  if (!new_password) {
-    return res.status(400).json({ error: "New password is required" });
-  }
   try {
     //fetch user with current password
     const user = await dbGet(
@@ -189,7 +228,10 @@ router.post("/change-password", async (req, res) => {
       [user_id, current_password]
     );
     if (!user) {
-      return res.status(400).json({ error: "Invalid current password" });
+      return res.status(400).json({
+        message: "Invalid current password",
+        data: req.body,
+      });
     }
     //update current password
     const sql = `UPDATE users SET
@@ -198,14 +240,29 @@ router.post("/change-password", async (req, res) => {
     WHERE user_id = ?`;
     const params = [new_password, user_id];
 
-    const result = await dbRun(sql, params, `Updated user password ${user_id}`);
-    if (result.changes === 0) {
-      return res.status(404).json({ error: "User not found" });
+    const resultCount = await dbRun(
+      sql,
+      params,
+      `Updated user password ${user_id}`
+    );
+
+    if (resultCount === 0) {
+      return res.status(404).json({
+        message: "User not found",
+        data: req.body,
+      });
     }
-    res.json({ message: "Password changed successfully" });
+
+    res.json({
+      message: "Password updated successfully",
+      data: req.body,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error updating user:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 

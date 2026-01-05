@@ -11,9 +11,10 @@ const ContactFormComponent = ({
   onChange,
   onSave,
   contactTypeOptions,
+  shopOptions,
 }) => {
   return (
-    <div className="grid p-1">
+    <div className="grid">
       <div className="col-12 md:col-8">
         <label
           htmlFor="contact_name"
@@ -37,7 +38,7 @@ const ContactFormComponent = ({
           htmlFor="contact_mobile"
           className="block text-900 font-medium mb-2"
         >
-          {t_contacts.contact_mobile.name}
+          {t_contacts.contact_mobile.name} <span className="text-red-500">*</span>
         </label>
         <InputText
           name="contact_mobile"
@@ -68,7 +69,7 @@ const ContactFormComponent = ({
           <small className="mb-3 text-red-500">{errors.contact_email}</small>
         )}
       </div>
-      <div className="col-12 md:col-8">
+      <div className="col-12 md:col-5">
         <label
           htmlFor="contact_address"
           className="block text-900 font-medium mb-2"
@@ -124,6 +125,22 @@ const ContactFormComponent = ({
           minFractionDigits={2}
           maxFractionDigits={2}
         />
+      </div>
+      <div className="col-12 md:col-3">
+        <label htmlFor="shop_id" className="block text-900 font-medium mb-2">
+          {t_contacts.shop_id.name} <span className="text-red-500">*</span>
+        </label>
+        <Dropdown
+          name="shop_id"
+          value={formData.shop_id}
+          options={shopOptions}
+          onChange={(e) => onChange("shop_id", e.value)}
+          className={`w-full ${errors.shop_id ? "p-invalid" : ""}`}
+          placeholder={`Select ${t_contacts.shop_id.name}`}
+        />
+        {errors.shop_id && (
+          <small className="mb-3 text-red-500">{errors.shop_id}</small>
+        )}
       </div>
       <div className="col-12">
         <div className="flex flex-row-reverse flex-wrap">

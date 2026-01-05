@@ -42,7 +42,7 @@ const ShopsPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Shops List"
+            ? "Shop List"
             : fromData.shop_id
             ? "Edit Shop"
             : "Add New Shop"}
@@ -51,7 +51,6 @@ const ShopsPage = () => {
         {isList ? (
           <div className="flex gap-2">
             <Button
-              label="Refresh"
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
@@ -61,13 +60,12 @@ const ShopsPage = () => {
               label="New Shop"
               icon="pi pi-plus"
               size="small"
-              className="hidden"
               onClick={handleAddNew}
             />
           </div>
         ) : (
           <Button
-            label="Shops List"
+            label="Shop List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}

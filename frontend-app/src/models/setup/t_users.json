@@ -34,11 +34,25 @@
         "minLength": 1,
         "maxLength": 50
     },
+    "recovery_code": {
+        "name": "Recovery Code",
+        "type": "string",
+        "required": true,
+        "minLength": 1,
+        "maxLength": 50
+    },
     "user_role": {
         "name": "Role",
         "type": "string",
         "required": true,
         "minLength": 1,
         "maxLength": 50
+    },
+    "shop_id": {
+        "name": "Shop",
+        "type": "string",
+        "required": true,
+        "minLength": 0,
+        "maxLength": 36
     }
 }
