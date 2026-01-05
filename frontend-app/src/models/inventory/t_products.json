@@ -35,19 +35,19 @@
     "maxLength": 36
   },
   "small_unit_id": {
-    "name": "Small Unit Name",
+    "name": "Small Unit",
     "type": "string",
     "required": true,
     "minLength": 1,
     "maxLength": 36
   },
   "unit_difference_qty": {
-    "name": "Unit Difference Qty",
+    "name": "Difference Qty",
     "type": "number",
     "required": true
   },
   "large_unit_id": {
-    "name": "Large Unit Name",
+    "name": "Large Unit",
     "type": "string",
     "required": true,
     "minLength": 1,
@@ -97,5 +97,12 @@
     "name": "Sales Booking Qty",
     "type": "number",
     "required": false
+  },
+  "shop_id": {
+    "name": "Shop",
+    "type": "string",
+    "required": true,
+    "minLength": 1,
+    "maxLength": 50
   }
 }

@@ -14,7 +14,7 @@ const CategoryPage = () => {
     isBusy,
     currentView,
     errors,
-    formDataCategory,
+    formData,
     handleChange,
     handleCancel,
     handleAddNew,
@@ -43,7 +43,7 @@ const CategoryPage = () => {
         <h3 className="m-0">
           {isList
             ? "Category List"
-            : formDataCategory.category_id
+            : formData.category_id
             ? "Edit Category"
             : "Add New Category"}
         </h3>
@@ -51,7 +51,6 @@ const CategoryPage = () => {
         {isList ? (
           <div className="flex gap-2">
             <Button
-              label="Refresh"
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
@@ -90,7 +89,7 @@ const CategoryPage = () => {
           <CategoryFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={formDataCategory}
+            formData={formData}
             onChange={handleChange}
             onSave={handleSaveCategory}
           />

@@ -1,112 +1,158 @@
-//as example units.js
 const express = require("express");
 const router = express.Router();
+const { dbGet, dbGetAll, dbRun } = require("../../db/database");
 
-const {
-  runScriptsSequentially,
-  dbRun,
-  dbGet,
-  dbAll,
-} = require("../../db/asyncScriptsRunner");
-
-// Get all categories
+// ---------------- GET ALL CATEGORIES ----------------
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT c.*, 0 as ismodified
-    FROM categories c ORDER BY category_id`;
-    const rows = await dbAll(sql, []);
-    res.json(rows);
+    const sql = `SELECT u.*, 0 as edit_stop FROM categories u ORDER BY category_name`;
+    const rows = await dbGetAll(sql, [], "Get all categories");
+
+    res.json({
+      message: "Fetched all categories",
+      data: rows,
+    });
   } catch (error) {
-    console.error("Error fetching categories:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching data:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: [],
+    });
   }
 });
 
-// Get category by ID
+// ---------------- GET CATEGORY BY ID ----------------
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const sql = "SELECT c.*, 0 as ismodified FROM categories c WHERE category_id = ?";
-    const row = await dbGet(sql, [id]);
+    const sql = "SELECT u.*, 0 as edit_stop FROM categories u WHERE category_id = $1";
+    const row = await dbGet(sql, [id], "Get category by id");
+
     if (!row) {
-      return res.status(404).json({ error: "Category not found" });
+      return res.status(404).json({
+        message: "Category not found",
+        data: {},
+      });
     }
-    res.json(row);
+
+    res.json({
+      message: "Fetched category",
+      data: row,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching data:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
-// Create new category
+// ---------------- CREATE CATEGORY ----------------
 router.post("/", async (req, res) => {
   const { category_id, category_name } = req.body;
 
-  if (!category_name) {
-    return res.status(400).json({ error: "Category name is required" });
-  }
-
-  if (!category_id) {
-    return res.status(400).json({ error: "Category ID is required" });
-  }
-
-  try {
-    const sql = `INSERT INTO categories (category_id, category_name) VALUES (?, ?)`;
-    const params = [category_id, category_name];
-    await dbRun(sql, params, `Created categories ${category_name}`);
-    res.status(201).json({ category_id, ...req.body });
-  } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// Update category
-router.post("/update", async (req, res) => {
-  const { category_id, category_name } = req.body;
-
   if (!category_id || !category_name) {
-    return res.status(400).json({ error: "Category ID and name are required" });
+    return res.status(400).json({
+      message: "category_id, and category_name are required",
+      data: req.body,
+    });
   }
 
   try {
     const sql = `
-      UPDATE categories SET
-        category_name = ?,
-        updated_at = CURRENT_TIMESTAMP
-      WHERE category_id = ?
+      INSERT INTO categories (category_id, category_name)
+      VALUES ($1, $2)
     `;
-    const params = [category_name, category_id];
-    const result = await dbRun(sql, params, `Updated categories ${category_name}`);
-    if (result.changes === 0) {
-      return res.status(404).json({ error: "Category not found" });
-    }
-    res.json({ category_id, category_name });
+    const params = [category_id, category_name];
+    await dbRun(sql, params, `Created category ${category_name}`);
+
+    res.status(201).json({
+      message: "Category created successfully",
+      data: req.body,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error creating category:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
-// Delete category
-router.post("/delete", async (req, res) => {
+// ---------------- UPDATE CATEGORY ----------------
+router.post("/update", async (req, res) => {
   const { category_id, category_name } = req.body;
-  
-  if (!category_id) {
-    return res.status(400).json({ error: "Category ID is required" });
+
+  if (!category_id || !category_name) {
+    return res.status(400).json({
+      message: "category_id, and category_name are required",
+      data: req.body,
+    });
   }
-    
 
   try {
-    const sql = "DELETE FROM categories WHERE category_id = ?";
-    const result = await dbRun(sql, [category_id], `Deleted categories ${category_name}`);
-    if (result.changes === 0) { 
-      return res.status(404).json({ error: "Category not found" });
+    const sql = `
+      UPDATE categories
+      SET category_name = $1,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE category_id = $2
+    `;
+    const params = [category_name, category_id];
+    const resultCount = await dbRun(sql, params, `Updated category ${category_name}`);
+
+    if (resultCount === 0) {
+      return res.status(404).json({
+        message: "Category not found",
+        data: req.body,
+      });
     }
-    res.json({ message: "Category deleted successfully" });
+
+    res.json({
+      message: "Category updated successfully",
+      data: req.body,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error updating category:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
+  }
+});
+
+// ---------------- DELETE CATEGORY ----------------
+router.post("/delete", async (req, res) => {
+  const { category_id, category_name } = req.body;
+
+  if (!category_id) {
+    return res.status(400).json({
+      message: "category_id is required",
+      data: req.body,
+    });
+  }
+
+  try {
+    const sql = "DELETE FROM categories WHERE category_id = $1";
+    const resultCount = await dbRun(sql, [category_id], `Deleted category ${category_name}`);
+
+    if (resultCount === 0) {
+      return res.status(404).json({
+        message: "Category not found",
+        data: req.body,
+      });
+    }
+
+    res.json({
+      message: "Category deleted successfully",
+      data: req.body,
+    });
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 

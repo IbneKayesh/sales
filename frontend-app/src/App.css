@@ -15,3 +15,9 @@
   background-color:#616161;
   color: white;
 }
+
+/* Global CSS for the all DataTable header */
+.p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}

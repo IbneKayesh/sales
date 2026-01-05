@@ -4,7 +4,7 @@ import validate from "@/models/validator";
 import t_products from "@/models/inventory/t_products.json";
 import { generateGuid } from "@/utils/guid";
 
-const fromDataModel = {
+const dataModel = {
   product_id: "",
   product_code: "",
   product_name: "",
@@ -22,6 +22,7 @@ const fromDataModel = {
   margin_price: 0,
   purchase_booking_qty: 0,
   sales_booking_qty: 0,
+  shop_id: "",
   edit_stop: 0,
 };
 
@@ -31,8 +32,8 @@ export const useProducts = () => {
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [formDataProduct, setFormDataProduct] = useState(fromDataModel);
-  const [selectedFilter, setSelectedFilter] = useState("default");
+  const [formData, setFormData] = useState(dataModel);
+  const [selectedFilter, setSelectedFilter] = useState("allproducts");
   const [filterOptions, setFilterOptions] = useState([
     { label: "Default", value: "default" },
     { label: "In Stock", value: "stock" },
@@ -59,32 +60,31 @@ export const useProducts = () => {
     }
   };
 
-  const loadProducts = async (filter = "default", resetModified = false) => {
+  const loadProducts = async (filter = "default") => {
     try {
       console.log("filter: " + filter);
+      let response;
       if (filter == "po2so") {
-        const data = await productsAPI.getAllPo2So(filter);
-        //console.log("po2so data: " + JSON.stringify(data));
-        setProductList(data);
+        response = await productsAPI.getAllPo2So(filter);
+        // response = { message, data }
+        setProductList(response.data);
       } else {
-        const data = await productsAPI.getAll(filter);
-        //console.log("data: " + JSON.stringify(data));
-        setProductList(data);
+        response = await productsAPI.getAll(filter);
+        // response = { message, data }
+        setProductList(response.data);
       }
-      if (resetModified) {
-        setToastBox({
-          severity: "info",
-          summary: "Refreshed",
-          detail: "Data refreshed from database.",
-        });
-      }
+      setToastBox({
+        severity: "success",
+        summary: "Success",
+        detail: response.message,
+      });
     } catch (error) {
+      console.error("Error loading data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: resetModified
-          ? "Failed to refresh data from server"
-          : "Failed to load data from server",
+        detail: error?.message || "Failed to load data",
       });
     }
   };
@@ -101,16 +101,13 @@ export const useProducts = () => {
   };
 
   const handleChange = (field, value) => {
-    setFormDataProduct((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate(
-      { ...formDataProduct, [field]: value },
-      t_products
-    );
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate({ ...formData, [field]: value }, t_products);
     setErrors(newErrors);
   };
 
   const handleClear = () => {
-    setFormDataProduct(fromDataModel);
+    setFormData(dataModel);
     setErrors({});
   };
 
@@ -126,30 +123,30 @@ export const useProducts = () => {
 
   const handleEditProduct = (product) => {
     //console.log("product: " + JSON.stringify(product));
-    setFormDataProduct(product);
+    setFormData(product);
     setCurrentView("form");
   };
 
   const handleDeleteProduct = async (rowData) => {
-    try {
-      //console.log("rowData " + JSON.stringify(rowData))
-      await productsAPI.delete(rowData);
-      const updatedProducts = productList.filter(
-        (p) => p.product_id !== rowData.product_id
-      );
-      setProductList(updatedProducts);
+      try {
+      // Call API, unwrap { message, data }
+      const response = await productsAPI.delete(rowData);
+
+      const updatedList = productList.filter((p) => p.product_id !== rowData.product_id);
+      setProductList(updatedList);
 
       setToastBox({
         severity: "info",
         summary: "Deleted",
-        detail: `Deleted successfully.`,
+        detail: response.message || "Deleted successfully",
       });
     } catch (error) {
-      console.error("Error deleting product:", error);
+      console.error("Error deleting data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to delete product",
+        detail: error?.message || "Failed to delete data",
       });
     }
   };
@@ -164,101 +161,83 @@ export const useProducts = () => {
 
   const handleSaveProduct = async (e) => {
     e.preventDefault();
-    setIsBusy(true);
-
-    const newErrors = validate(formDataProduct, t_products);
-    setErrors(newErrors);
-    console.log("handleSaveProduct: " + JSON.stringify(formDataProduct));
-
-    const { small_unit_id, large_unit_id, unit_difference_qty } =
-      formDataProduct;
-
-    if (small_unit_id === large_unit_id && unit_difference_qty > 1) {
-      setToastBox({
-        severity: "warn",
-        summary: "Warning",
-        detail:
-          "If Small Unit and Large Unit are the same, Unit Difference Qty must be 1.",
-      });
-      setIsBusy(false);
-      return;
-    } else if (small_unit_id !== large_unit_id && unit_difference_qty < 2) {
-      setToastBox({
-        severity: "warn",
-        summary: "Warning",
-        detail:
-          "If Small Unit and Large Unit are different, Unit Difference Qty must be greater than 1.",
-      });
-      setIsBusy(false);
-      return;
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setIsBusy(false);
-      return;
-    }
-
     try {
-      let updatedProducts;
+      setIsBusy(true);
+      // Validate form
+      const newErrors = validate(formData, t_products);
+      setErrors(newErrors);
+      console.log("handleSaveProduct: " + JSON.stringify(formData));
+
+      const { small_unit_id, large_unit_id, unit_difference_qty } = formData;
+
+      if (small_unit_id === large_unit_id && unit_difference_qty > 1) {
+        setToastBox({
+          severity: "warn",
+          summary: "Warning",
+          detail:
+            "If Small Unit and Large Unit are the same, Unit Difference Qty must be 1.",
+        });
+        setIsBusy(false);
+        return;
+      } else if (small_unit_id !== large_unit_id && unit_difference_qty < 2) {
+        setToastBox({
+          severity: "warn",
+          summary: "Warning",
+          detail:
+            "If Small Unit and Large Unit are different, Unit Difference Qty must be greater than 1.",
+        });
+        setIsBusy(false);
+        return;
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        setIsBusy(false);
+        return;
+      }
 
       // ---- Calculate profit before save ----
-      const approxProfit = calculateApproxMargin(formDataProduct);
+      const approxProfit = calculateApproxMargin(formData);
 
-      // Build data object with profit included
-      const productData = {
-        ...formDataProduct,
+      // Ensure product_id exists (for create)
+      const formDataNew = {
+        ...formData,
+        product_id: formData.product_id || generateGuid(),
         margin_price: approxProfit,
       };
 
-      if (formDataProduct.product_id) {
-        // Edit existing
-        const updatedProductData = {
-          ...productData,
-        };
+      // console.log("formDataNew: " + JSON.stringify(formDataNew));
+      // return;
 
-        const updatedProduct = await productsAPI.update(updatedProductData);
-        updatedProduct.ismodified = "1";
-        updatedProducts = productList.map((p) =>
-          p.product_id === formDataProduct.product_id ? updatedProductData : p
-        );
-
-        setToastBox({
-          severity: "success",
-          summary: "Success",
-          detail: `"${formDataProduct.product_name}" updated successfully.`,
-        });
+      // Call API and get { message, data }
+      let response;
+      if (formData.product_id) {
+        response = await productsAPI.update(formDataNew);
       } else {
-        // Add new
-        const newProductData = {
-          ...productData,
-          product_id: generateGuid(),
-        };
-        //console.log("newProductData: " + JSON.stringify(newProductData));
-
-        const newProduct = await productsAPI.create(newProductData);
-        newProduct.ismodified = "1";
-        updatedProducts = [...productList, newProduct];
-
-        setToastBox({
-          severity: "success",
-          summary: "Success",
-          detail: `"${formDataProduct.product_name}" added successfully.`,
-        });
+        response = await productsAPI.create(formDataNew);
       }
-      setProductList(updatedProducts);
+      //console.log("response: " + JSON.stringify(response));
+
+      // Update toast using API message
+      setToastBox({
+        severity: "success",
+        summary: "Success",
+        detail: response.message || "Operation successful",
+      });
 
       handleClear();
       setCurrentView("list");
+      loadProducts();
     } catch (error) {
-      console.error("Error saving product:", error);
+      console.error("Error saving data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to save product",
+        detail: error?.message || "Failed to save data",
       });
+    } finally {
+      setIsBusy(false);
     }
-
-    setIsBusy(false);
   };
 
   const calculateApproxMargin = (item) => {
@@ -292,7 +271,7 @@ export const useProducts = () => {
     isBusy,
     currentView,
     errors,
-    formDataProduct,
+    formData,
     selectedFilter,
     setSelectedFilter,
     filterOptions,

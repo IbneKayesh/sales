@@ -20,4 +20,4 @@ REM Run pg_dump (adjust path if needed)
 "C:\Program Files\PostgreSQL\18\bin\pg_dump.exe" -U %DB_USER% -d %DB_NAME% -F p -f "%BACKUP_FILE%"
 
 echo Backup complete: %BACKUP_FILE%
-pause
+REM pause

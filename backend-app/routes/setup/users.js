@@ -2,29 +2,13 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun } = require("../../db/database");
 
-const user = `
-CREATE TABLE IF NOT EXISTS users (
-  user_id TEXT PRIMARY KEY,
-  user_email TEXT UNIQUE NOT NULL,
-  user_password TEXT NOT NULL,
-  user_mobile TEXT,
-  user_name TEXT,
-  recovery_code TEXT,
-  user_role TEXT DEFAULT 'User',
-  shop_id TEXT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT now(),
-  updated_at TIMESTAMP NOT NULL DEFAULT now(),
-  CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES shops(shop_id) ON DELETE SET NULL
-);
-`;
-
 // ---------------- GET ALL USERS ----------------
 router.get("/", async (req, res) => {
   try {
     const sql = `SELECT u.*, s.shop_name, 0 as edit_stop
     FROM users u
     LEFT JOIN shops s ON u.shop_id = s.shop_id
-    ORDER BY user_id`;
+    ORDER BY user_name`;
     const rows = await dbGetAll(sql, [], "Get all users");
 
     res.json({
@@ -177,7 +161,7 @@ router.post("/update", async (req, res) => {
 
 // ---------------- DELETE USER ----------------
 router.post("/delete", async (req, res) => {
-  const { user_id } = req.body;
+  const { user_id, user_name } = req.body;
 
   if (!user_id) {
     return res.status(400).json({
@@ -188,7 +172,7 @@ router.post("/delete", async (req, res) => {
 
   try {
     const sql = "DELETE FROM users WHERE user_id = $1";
-    const resultCount = await dbRun(sql, [user_id], `Deleted user ${user_id}`);
+    const resultCount = await dbRun(sql, [user_id], `Deleted user ${user_name}`);
 
     if (resultCount === 0) {
       return res.status(404).json({

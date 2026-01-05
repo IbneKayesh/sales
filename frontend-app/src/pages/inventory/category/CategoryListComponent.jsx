@@ -53,8 +53,9 @@ const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
         rows={10}
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
-        className="bg-dark-300"
         size="small"
+        rowHover
+        showGridlines
       >
         <Column field="category_name" header="Category Name" sortable />        
         <Column header={dataList?.length + " rows"} body={action_BT} />

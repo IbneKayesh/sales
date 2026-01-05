@@ -26,7 +26,7 @@ const UsersListComponent = ({ dataList, onEdit, onDelete }) => {
         command: () => {
           handleDelete(rowData);
         },
-        disabled: rowData.ismodified,
+        disabled: rowData.edit_stop,
       },
     ];
     return (
@@ -38,7 +38,7 @@ const UsersListComponent = ({ dataList, onEdit, onDelete }) => {
           tooltipOptions={{ position: "top" }}
           onClick={() => onEdit(rowData)}
           model={menuItems}
-          disabled={rowData.ismodified}
+          disabled={rowData.edit_stop}
         />
       </div>
     );
@@ -54,6 +54,8 @@ const UsersListComponent = ({ dataList, onEdit, onDelete }) => {
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
         size="small"
+        rowHover
+        showGridlines
       >
         <Column field="user_email" header="Email" />
         <Column field="user_mobile" header="Mobile" />

@@ -5,6 +5,8 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { Dialog } from "primereact/dialog";
 import { Badge } from "primereact/badge";
+import { Tag } from "primereact/tag";
+import { Button } from "primereact/button";
 
 const ContactListComponent = ({
   dataList,
@@ -78,7 +80,7 @@ const ContactListComponent = ({
         command: () => {
           onEdit(rowData);
         },
-        disabled: rowData.ismodified,
+        disabled: rowData.edit_stop,
       },
       {
         label: "Delete",
@@ -86,7 +88,7 @@ const ContactListComponent = ({
         command: () => {
           handleDelete(rowData);
         },
-        disabled: rowData.ismodified,
+        disabled: rowData.edit_stop,
       },
     ];
     return (
@@ -148,6 +150,8 @@ const ContactListComponent = ({
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
         size="small"
+        rowHover
+        showGridlines
       >
         <Column field="contact_name" header="Name" sortable />
         <Column field="contact_mobile" header="Mobile" />

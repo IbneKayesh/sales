@@ -4,36 +4,38 @@ import validate from "@/models/validator";
 import t_units from "@/models/inventory/t_units";
 import { generateGuid } from "@/utils/guid";
 
+const dataModel = {
+  unit_id: "",
+  unit_name: "",
+  edit_stop: 0,
+};
+
 export const useUnits = () => {
   const [unitList, setUnitList] = useState([]);
   const [toastBox, setToastBox] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [formDataUnit, setFormDataUnit] = useState({
-    unit_id: "",
-    unit_name: "",
-  });
+  const [formData, setFormData] = useState(dataModel);
 
-  const loadUnits = async (resetModified = false) => {
+  const loadUnits = async () => {
     try {
-      const data = await unitsAPI.getAll();
-      //console.log("data: " + JSON.stringify(data));
-      setUnitList(data);
-      if (resetModified) {
-        setToastBox({
-          severity: "info",
-          summary: "Refreshed",
-          detail: "Data refreshed from database.",
-        });
-      }
+      const response = await unitsAPI.getAll();
+      // response = { message, data }
+      setUnitList(response.data);
+
+      setToastBox({
+        severity: "success",
+        summary: "Success",
+        detail: response.message,
+      });
     } catch (error) {
+      console.error("Error loading data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: resetModified
-          ? "Failed to refresh data from server"
-          : "Failed to load data from server",
+        detail: error?.message || "Failed to load data",
       });
     }
   };
@@ -44,16 +46,13 @@ export const useUnits = () => {
   }, []);
 
   const handleChange = (field, value) => {
-    setFormDataUnit((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formDataUnit, [field]: value }, t_units);
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate({ ...formData, [field]: value }, t_units);
     setErrors(newErrors);
   };
 
   const handleClear = () => {
-    setFormDataUnit({
-      unit_id: "",
-      unit_name: "",
-    });
+    setFormData(dataModel);
     setErrors({});
   };
 
@@ -70,95 +69,92 @@ export const useUnits = () => {
   const handleEditUnit = (unit) => {
     //console.log("unit: " + JSON.stringify(unit));
 
-    setFormDataUnit(unit);
+    setFormData(unit);
     setCurrentView("form");
   };
 
   const handleDeleteUnit = async (rowData) => {
     try {
-      //console.log("rowData " + JSON.stringify(rowData))
-      await unitsAPI.delete(rowData);
-      const updatedUnits = unitList.filter(
+      // Call API, unwrap { message, data }
+      const response = await unitsAPI.delete(rowData);
+
+      // Remove deleted unit from local state
+      const updatedList = unitList.filter(
         (u) => u.unit_id !== rowData.unit_id
       );
-      setUnitList(updatedUnits);
+      setUnitList(updatedList);
 
       setToastBox({
         severity: "info",
         summary: "Deleted",
-        detail: `Deleted successfully.`,
+        detail: response.message || "Deleted successfully",
       });
     } catch (error) {
-      console.error("Error deleting unit:", error);
+      console.error("Error deleting data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to delete unit",
+        detail: error?.message || "Failed to delete data",
       });
     }
   };
 
   const handleRefresh = () => {
-    loadUnits(true);
+    loadUnits();
   };
 
   const handleSaveUnit = async (e) => {
     e.preventDefault();
-    setIsBusy(true);
-
-    const newErrors = validate(formDataUnit, t_units);
-    setErrors(newErrors);
-    console.log("handleSaveUnit: " + JSON.stringify(formDataUnit));
-
-    if (Object.keys(newErrors).length > 0) {
-      setIsBusy(false);
-      return;
-    }
-
     try {
-      let updatedUnits;
-      if (formDataUnit.unit_id) {
-        // Edit existing
-        const updatedUnit = await unitsAPI.update(formDataUnit);
-        updatedUnit.ismodified = true;
-        updatedUnits = unitList.map((u) =>
-          u.unit_id === formDataUnit.unit_id ? updatedUnit : u
-        );
+      setIsBusy(true);
 
-        setToastBox({
-          severity: "success",
-          summary: "Success",
-          detail: `"${formDataUnit.unit_name}" updated successfully.`,
-        });
-      } else {
-        // Add new
-        const newUnitData = { ...formDataUnit, unit_id: generateGuid() };
-        //console.log("newUnitData: " + JSON.stringify(newUnitData));
+      // Validate form
+      const newErrors = validate(formData, t_units);
+      setErrors(newErrors);
+      console.log("handleSaveUnit:", JSON.stringify(formData));
 
-        const newUnit = await unitsAPI.create(newUnitData);
-        newUnit.ismodified = true;
-        updatedUnits = [...unitList, newUnit];
-
-        setToastBox({
-          severity: "success",
-          summary: "Success",
-          detail: `"${formDataUnit.unit_name}" added successfully.`,
-        });
+      if (Object.keys(newErrors).length > 0) {
+        setIsBusy(false);
+        return;
       }
-      setUnitList(updatedUnits);
 
+      // Ensure unit_id exists (for create)
+      const formDataNew = {
+        ...formData,
+        unit_id: formData.unit_id || generateGuid(),
+      };
+
+      // Call API and get { message, data }
+      let response;
+      if (formData.unit_id) {
+        response = await unitsAPI.update(formDataNew);
+      } else {
+        response = await unitsAPI.create(formDataNew);
+      }
+
+      // Update toast using API message
+      setToastBox({
+        severity: "success",
+        summary: "Success",
+        detail: response.message || "Operation successful",
+      });
+
+      // Clear form & reload
       handleClear();
       setCurrentView("list");
+      await loadUnits(); // make sure we wait for updated data
     } catch (error) {
-      console.error("Error saving unit:", error);
+      console.error("Error saving data:", error);
+
       setToastBox({
         severity: "error",
         summary: "Error",
-        detail: "Failed to save unit",
+        detail: error?.message || "Failed to save data",
       });
+    } finally {
+      setIsBusy(false);
     }
-
-    setIsBusy(false);
   };
 
   return {
@@ -167,7 +163,7 @@ export const useUnits = () => {
     isBusy,
     currentView,
     errors,
-    formDataUnit,
+    formData,
     handleChange,
     handleCancel,
     handleAddNew,

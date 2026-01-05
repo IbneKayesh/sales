@@ -25,7 +25,7 @@ export const useUsers = () => {
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [fromData, setFormData] = useState(dataModel);
+  const [formData, setFormData] = useState(dataModel);
 
   const [shopOptions, setShopOptions] = useState([]);
   const roleOptions = [
@@ -88,7 +88,7 @@ export const useUsers = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...fromData, [field]: value }, t_users);
+    const newErrors = validate({ ...formData, [field]: value }, t_users);
     setErrors(newErrors);
   };
 
@@ -122,7 +122,7 @@ export const useUsers = () => {
   const handleDeleteUser = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await usersAPI.delete({ user_id: rowData.user_id });
+      const response = await usersAPI.delete(rowData);
 
       const updatedList = userList.filter((u) => u.user_id !== rowData.user_id);
       setUserList(updatedList);
@@ -153,9 +153,9 @@ export const useUsers = () => {
       setIsBusy(true);
 
       // Validate form
-      const newErrors = validate(fromData, t_users);
+      const newErrors = validate(formData, t_users);
       setErrors(newErrors);
-      console.log("handleSaveUser: " + JSON.stringify(fromData));
+      console.log("handleSaveUser: " + JSON.stringify(formData));
 
       if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
@@ -164,8 +164,8 @@ export const useUsers = () => {
 
       // Ensure user_id exists (for create)
       const formDataNew = {
-        ...fromData,
-        user_id: fromData.user_id || generateGuid(),
+        ...formData,
+        user_id: formData.user_id || generateGuid(),
       };
 
       // console.log("formDataNew: " + JSON.stringify(formDataNew));
@@ -173,7 +173,7 @@ export const useUsers = () => {
 
       // Call API and get { message, data }
       let response;
-      if (fromData.user_id) {
+      if (formData.user_id) {
         response = await usersAPI.update(formDataNew);
       } else {
         response = await usersAPI.create(formDataNew);
@@ -209,7 +209,7 @@ export const useUsers = () => {
     isBusy,
     currentView,
     errors,
-    fromData,
+    formData,
     handleChange,
     handleCancel,
     handleAddNew,

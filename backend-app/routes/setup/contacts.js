@@ -8,7 +8,7 @@ router.get("/", async (req, res) => {
     const sql = `SELECT u.*, s.shop_name, 0 as edit_stop 
     FROM contacts u 
     LEFT JOIN shops s ON u.shop_id = s.shop_id 
-    ORDER BY contact_id`;
+    ORDER BY contact_name`;
     const rows = await dbGetAll(sql, [], "Get all contacts");
 
     res.json({
@@ -242,7 +242,7 @@ router.post("/update", async (req, res) => {
 
 // ---------------- DELETE CONTACT ----------------
 router.post("/delete", async (req, res) => {
-  const { contact_id } = req.body;
+  const { contact_id, contact_name } = req.body;
 
   if (!contact_id) {
     return res.status(400).json({
@@ -254,7 +254,7 @@ router.post("/delete", async (req, res) => {
   try {
     const sql =
       "DELETE FROM contacts WHERE contact_id = $1 AND current_balance = 0";
-    const resultCount = await dbRun(sql, [user_id], `Deleted user ${user_id}`);
+    const resultCount = await dbRun(sql, [contact_id], `Deleted contact ${contact_name}`);
 
     if (resultCount === 0) {
       return res.status(404).json({

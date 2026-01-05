@@ -5,7 +5,7 @@ const { dbGet, dbGetAll, dbRun } = require("../../db/database");
 // ---------------- GET ALL SHOPS ----------------
 router.get("/", async (req, res) => {
   try {
-    const sql = `SELECT u.*, 0 as edit_stop FROM shops u ORDER BY shop_id`;
+    const sql = `SELECT u.*, 0 as edit_stop FROM shops u ORDER BY shop_name`;
     const rows = await dbGetAll(sql, [], "Get all shops");
 
     res.json({
@@ -126,7 +126,7 @@ router.post("/update", async (req, res) => {
 
 // ---------------- DELETE SHOP ----------------
 router.post("/delete", async (req, res) => {
-  const { shop_id } = req.body;
+  const { shop_id, shop_name } = req.body;
 
   if (!shop_id) {
     return res.status(400).json({
@@ -137,7 +137,7 @@ router.post("/delete", async (req, res) => {
 
   try {
     const sql = "DELETE FROM shops WHERE shop_id = $1";
-    const resultCount = await dbRun(sql, [shop_id], `Deleted shop ${shop_id}`);
+    const resultCount = await dbRun(sql, [shop_id], `Deleted shop ${shop_name}`);
 
     if (resultCount === 0) {
       return res.status(404).json({

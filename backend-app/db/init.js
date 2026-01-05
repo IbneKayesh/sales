@@ -16,8 +16,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
 const banks_tables = require("./banks_tables");
 const banksTables = banks_tables();
 
-const inventory_tables = require("./inventory_tables");
-const inventoryTables = inventory_tables();
 
 const purchase_tables = require("./purchase_tables");
 const purchaseTables = purchase_tables();
@@ -36,13 +34,13 @@ const initTables = () => {
     });
   });
 
-  Object.values(inventoryTables).forEach((sql) => {
-    db.exec(sql, (err) => {
-      if (err) {
-        console.error("Inventory Table creation error:", err.message);
-      }
-    });
-  });
+  // Object.values(inventoryTables).forEach((sql) => {
+  //   db.exec(sql, (err) => {
+  //     if (err) {
+  //       console.error("Inventory Table creation error:", err.message);
+  //     }
+  //   });
+  // });
 
   Object.values(purchaseTables).forEach((sql) => {
     db.exec(sql, (err) => {
@@ -196,89 +194,89 @@ const initTables = () => {
 const initData = (callback) => {
   db.serialize(() => {
     // shops :: Authentication table :: insert default data
-    db.run(
-      `
-      INSERT OR IGNORE INTO shops (shop_id, shop_name, shop_address) VALUES
-      ('1', 'Sand Grain Digital', 'Badda, Dhaka, Bangladesh')
-    `,
-      (err) => {
-        if (err) {
-          console.error("Error inserting default shops:", err);
-        } else {
-          console.log("Default shops inserted.");
-        }
-      }
-    );
+    // db.run(
+    //   `
+    //   INSERT OR IGNORE INTO shops (shop_id, shop_name, shop_address) VALUES
+    //   ('1', 'Sand Grain Digital', 'Badda, Dhaka, Bangladesh')
+    // `,
+    //   (err) => {
+    //     if (err) {
+    //       console.error("Error inserting default shops:", err);
+    //     } else {
+    //       console.log("Default shops inserted.");
+    //     }
+    //   }
+    // );
 
     // users :: Authentication table :: insert default data
-    db.run(
-      `
-      INSERT OR IGNORE INTO users (user_id, user_email, user_password, user_mobile, user_name, recovery_code, user_role, shop_id) VALUES
-      ('1', 'admin@sgd.com', 'password', '1234567890', 'admin', 'admin-rc', 'Admin', '1'),
-      ('2', 'user@sgd.com', 'password', '1234567890', 'user', 'user-rc', 'User', '1')
-    `,
-      (err) => {
-        if (err) {
-          console.error("Error inserting default users:", err);
-        } else {
-          console.log("Default users inserted.");
-        }
-      }
-    );
+    // db.run(
+    //   `
+    //   INSERT OR IGNORE INTO users (user_id, user_email, user_password, user_mobile, user_name, recovery_code, user_role, shop_id) VALUES
+    //   ('1', 'admin@sgd.com', 'password', '1234567890', 'admin', 'admin-rc', 'Admin', '1'),
+    //   ('2', 'user@sgd.com', 'password', '1234567890', 'user', 'user-rc', 'User', '1')
+    // `,
+    //   (err) => {
+    //     if (err) {
+    //       console.error("Error inserting default users:", err);
+    //     } else {
+    //       console.log("Default users inserted.");
+    //     }
+    //   }
+    // );
 
     // units :: Inventory table :: insert default data
-    db.run(
-      `
-      INSERT OR IGNORE INTO units (unit_id, unit_name) VALUES
-      ('1', 'Kg'),
-      ('2', 'Pkt')
-    `,
-      (err) => {
-        if (err) {
-          console.error("Error inserting default units:", err);
-        } else {
-          console.log("Default units inserted.");
-        }
-      }
-    );
+    // db.run(
+    //   `
+    //   INSERT OR IGNORE INTO units (unit_id, unit_name) VALUES
+    //   ('1', 'Kg'),
+    //   ('2', 'Pkt')
+    // `,
+    //   (err) => {
+    //     if (err) {
+    //       console.error("Error inserting default units:", err);
+    //     } else {
+    //       console.log("Default units inserted.");
+    //     }
+    //   }
+    // );
 
     // categories :: Inventory table :: insert default data
-    db.run(
-      `
-      INSERT OR IGNORE INTO categories (category_id, category_name) VALUES
-      ('1', 'Grocery')
-    `,
-      (err) => {
-        if (err) {
-          console.error("Error inserting default categories:", err);
-        } else {
-          console.log("Default categories inserted.");
-        }
-      }
-    );
+    // db.run(
+    //   `
+    //   INSERT OR IGNORE INTO categories (category_id, category_name) VALUES
+    //   ('1', 'Grocery')
+    // `,
+    //   (err) => {
+    //     if (err) {
+    //       console.error("Error inserting default categories:", err);
+    //     } else {
+    //       console.log("Default categories inserted.");
+    //     }
+    //   }
+    // );
 
     //products :: Inventory table :: insert default data
-    db.run(
-      `
-      INSERT OR IGNORE INTO products (product_id, product_code, product_name, product_desc,
-      category_id, small_unit_id, unit_difference_qty, large_unit_id,
-      stock_qty, purchase_price, sales_price, discount_percent, vat_percent, cost_price_percent, margin_price,
-      purchase_booking_qty,sales_booking_qty)
-      VALUES
-      ('1', 'P01', 'Rice', 'Description Rice', '1', '1', 25, '2', '0', '80', '90', '2', '10', '5', '3.7', '0', '0'),
-      ('2', 'P02', 'Salt', 'Description Salt', '1', '1', 15, '2', '0', '35', '42', '5', '15', '7', '1.54', '0', '0'),
-      ('3', 'P03', 'Sugar', 'Description Sugar', '1', '1', 20, '2', '0', '50', '60', '10', '20', '5', '1', '0', '0'),
-      ('4', 'P04', 'Oil', 'Description Oil', '1', '1', 5, '2', '0', '100', '115', '2', '5', '5', '6.95', '0', '0'),
-      ('5', 'P05', 'Tea', 'Description Tea', '1', '1', 2, '2', '0', '70', '110', '15', '0', '10', '1.5', '0', '0')
-    `,
-      (err) => {
-        if (err) {
-          console.error("Error inserting default products:", err);
-        } else {
-          console.log("Default products inserted.");
-        }
-      }
-    );
+    // db.run(
+    //   `
+    //   INSERT OR IGNORE INTO products (product_id, product_code, product_name, product_desc,
+    //   category_id, small_unit_id, unit_difference_qty, large_unit_id,
+    //   stock_qty, purchase_price, sales_price, discount_percent, vat_percent, cost_price_percent, margin_price,
+    //   purchase_booking_qty,sales_booking_qty)
+    //   VALUES
+    //   ('1', 'P01', 'Rice', 'Description Rice', '1', '1', 25, '2', '0', '80', '90', '2', '10', '5', '3.7', '0', '0'),
+    //   ('2', 'P02', 'Salt', 'Description Salt', '1', '1', 15, '2', '0', '35', '42', '5', '15', '7', '1.54', '0', '0'),
+    //   ('3', 'P03', 'Sugar', 'Description Sugar', '1', '1', 20, '2', '0', '50', '60', '10', '20', '5', '1', '0', '0'),
+    //   ('4', 'P04', 'Oil', 'Description Oil', '1', '1', 5, '2', '0', '100', '115', '2', '5', '5', '6.95', '0', '0'),
+    //   ('5', 'P05', 'Tea', 'Description Tea', '1', '1', 2, '2', '0', '70', '110', '15', '0', '10', '1.5', '0', '0')
+    // `,
+    //   (err) => {
+    //     if (err) {
+    //       console.error("Error inserting default products:", err);
+    //     } else {
+    //       console.log("Default products inserted.");
+    //     }
+    //   }
+    // );
 
     //contacts :: Contacts table :: insert default data
 

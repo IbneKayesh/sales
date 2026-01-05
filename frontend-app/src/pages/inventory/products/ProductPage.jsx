@@ -15,8 +15,9 @@ const ProductsPage = () => {
     isBusy,
     currentView,
     errors,
-    formDataProduct,
+    formData,
     selectedFilter,
+    setSelectedFilter,
     filterOptions,
     handleChange,
     handleCancel,
@@ -26,8 +27,9 @@ const ProductsPage = () => {
     handleRefresh,
     handleSaveProduct,
     handleFilterChange,
-    handleLoadProductLedger,    
+    handleLoadProductLedger,
     selectedItemLedger,
+    fetchBookingProductList,
   } = useProducts();
 
   useEffect(() => {
@@ -48,8 +50,8 @@ const ProductsPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Products List"
-            : formDataProduct.product_id
+            ? "Product List"
+            : formData.product_id
             ? "Edit Product"
             : "Add New Product"}
         </h3>
@@ -74,7 +76,7 @@ const ProductsPage = () => {
           </div>
         ) : (
           <Button
-            label="Products List"
+            label="Product List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -100,7 +102,7 @@ const ProductsPage = () => {
           <ProductFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={formDataProduct}
+            formData={formData}
             onChange={handleChange}
             onSave={handleSaveProduct}
           />

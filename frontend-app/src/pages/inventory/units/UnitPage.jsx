@@ -14,7 +14,7 @@ const UnitPage = () => {
     isBusy,
     currentView,
     errors,
-    formDataUnit,
+    formData,
     handleChange,
     handleCancel,
     handleAddNew,
@@ -42,8 +42,8 @@ const UnitPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Units List"
-            : formDataUnit.unit_id
+            ? "Unit List"
+            : formData.unit_id
             ? "Edit Unit"
             : "Add New Unit"}
         </h3>
@@ -51,7 +51,6 @@ const UnitPage = () => {
         {isList ? (
           <div className="flex gap-2">
             <Button
-              label="Refresh"
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
@@ -66,7 +65,7 @@ const UnitPage = () => {
           </div>
         ) : (
           <Button
-            label="Units List"
+            label="Unit List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -90,7 +89,7 @@ const UnitPage = () => {
           <UnitFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={formDataUnit}
+            formData={formData}
             onChange={handleChange}
             onSave={handleSaveUnit}
           />

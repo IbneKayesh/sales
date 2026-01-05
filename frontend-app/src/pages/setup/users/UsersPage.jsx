@@ -14,7 +14,7 @@ const UsersPage = () => {
     isBusy,
     currentView,
     errors,
-    fromData,
+    formData,
     handleChange,
     handleCancel,
     handleAddNew,
@@ -45,7 +45,7 @@ const UsersPage = () => {
         <h3 className="m-0">
           {isList
             ? "User List"
-            : fromData.user_id
+            : formData.user_id
             ? "Edit User"
             : "Add New User"}
         </h3>
@@ -91,7 +91,7 @@ const UsersPage = () => {
           <UsersFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={fromData}
+            formData={formData}
             onChange={handleChange}
             onSave={handleSaveUser}
             roleOptions={roleOptions}

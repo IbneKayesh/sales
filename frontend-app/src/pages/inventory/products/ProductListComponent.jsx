@@ -20,7 +20,7 @@ const ProductListComponent = ({
 
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.item_name}"?`,
+      message: `Are you sure you want to delete "${rowData.product_name}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -58,7 +58,7 @@ const ProductListComponent = ({
         command: () => {
           onEdit(rowData);
         },
-        disabled: rowData.ismodified,
+        disabled: rowData.edit_stop,
       },
       {
         label: "Delete",
@@ -66,7 +66,7 @@ const ProductListComponent = ({
         command: () => {
           handleDelete(rowData);
         },
-        disabled: rowData.ismodified,
+        disabled: rowData.edit_stop,
       },
     ];
     return (
@@ -92,6 +92,7 @@ const ProductListComponent = ({
   };
 
   const purchase_booking_qty_BT = (rowData) => {
+    return rowData.purchase_booking_qty;
     return (
       <ConvertedQtyComponent
         qty={rowData.purchase_booking_qty}
@@ -109,29 +110,17 @@ const ProductListComponent = ({
     );
   };
 
-  const purchase_price_BT = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.purchase_price);
+  const discount_percent_BT = (rowData) => {
+    return `${Number(rowData.discount_percent).toFixed(2)}%`;
   };
 
-  const sales_price_BT = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.sales_price);
+  const vat_percent_BT = (rowData) => {
+    return `${Number(rowData.vat_percent).toFixed(2)}%`;
   };
 
   const cost_price_percent_BT = (rowData) => {
-    const marginPrice = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.margin_price);
-
-    return `${marginPrice} (${rowData.cost_price_percent}%)`;
+    return `${Number(rowData.cost_price_percent).toFixed(2)}%`;
   };
-  const margin_price_BT = (rowData) => {};
 
   const approxMarginTemplate = (rowData) => {
     return new Intl.NumberFormat("en-US", {
@@ -157,18 +146,19 @@ const ProductListComponent = ({
 
   // Summary calculations for footer
   const totalItems = dataList.length;
-  const totalStockQty = dataList.reduce(
-    (sum, item) => sum + (item.stock_qty ?? 0),
-    0
-  );
-  const totalPurchaseBookingQty = dataList.reduce(
-    (sum, item) => sum + (item.purchase_booking_qty ?? 0),
-    0
-  );
-  const totalSalesBookingQty = dataList.reduce(
-    (sum, item) => sum + (item.sales_booking_qty ?? 0),
-    0
-  );
+
+  const totalStockQty = dataList
+    .reduce((sum, item) => sum + parseFloat(item.stock_qty ?? 0), 0)
+    .toFixed(2);
+
+  const totalPurchaseBookingQty = dataList
+    .reduce((sum, item) => sum + parseFloat(item.purchase_booking_qty ?? 0), 0)
+    .toFixed(2);
+
+  const totalSalesBookingQty = dataList
+    .reduce((sum, item) => sum + parseFloat(item.sales_booking_qty ?? 0), 0)
+    .toFixed(2);
+
   const totalPurchaseValue = dataList.reduce(
     (sum, item) => sum + (item.purchase_price ?? 0) * (item.stock_qty ?? 0),
     0
@@ -191,53 +181,61 @@ const ProductListComponent = ({
         rows={10}
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
-        className="bg-dark-300"
         size="small"
+        rowHover
+        showGridlines
       >
         <Column
           field="product_code"
-          header="Product Code"
+          header="Product"
           body={product_code_BT}
           footer={`Total Items: ${totalItems}`}
           sortable
         />
         <Column
           field="stock_qty"
-          header="Stock Qty"
+          header="Stock"
           sortable
           body={stock_qtyTemplate}
           footer={totalStockQty}
         />
         <Column
           field="purchase_booking_qty"
-          header="Purchase Booking Qty"
+          header="Purchase Booking"
           sortable
           body={purchase_booking_qty_BT}
           footer={totalPurchaseBookingQty}
         />
         <Column
           field="sales_booking_qty"
-          header="Sales Booking Qty"
+          header="Sales Booking"
           sortable
           body={sales_booking_qty_BT}
           footer={totalSalesBookingQty}
         />
         <Column
           field="purchase_price"
-          header="Purchase Price"
-          body={purchase_price_BT}
+          header="DPP"
           sortable
           footer={formatCurrency(totalPurchaseValue)}
         />
         <Column
           field="sales_price"
-          header="Sales Price"
-          body={sales_price_BT}
+          header="DSP"
           sortable
           footer={formatCurrency(totalSalesValue)}
         />
-        <Column field="discount_percent" header="Discount %" />
-        <Column field="vat_percent" header="VAT %" />
+        <Column
+          field="sales_price"
+          header="MRP"
+          sortable
+        />
+        <Column
+          field="discount_percent"
+          header="Discount %"
+          body={discount_percent_BT}
+        />
+        <Column field="vat_percent" header="VAT %" body={vat_percent_BT} />
         <Column
           field="cost_price_percent"
           header="Cost %"
@@ -245,10 +243,10 @@ const ProductListComponent = ({
         />
         <Column
           field="margin_price"
-          header="Margin Price"
-          body={margin_price_BT}
+          header="Margin"
           footer={formatCurrency(totalMarginValue)}
         />
+        <Column field="shop_name" header="Shop" />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
 
@@ -303,6 +301,8 @@ const ProductListComponent = ({
           <dd className="mb-3">{approxMarginTemplate(selectedItemDetail)}</dd>
           <dt>Margin Value:</dt>
           <dd className="mb-3">{formatCurrency(marginValue)}</dd>
+          <dt>Shop:</dt>
+          <dd className="mb-3">{selectedItemDetail?.shop_name || "N/A"}</dd>
         </dl>
       </Sidebar>
 

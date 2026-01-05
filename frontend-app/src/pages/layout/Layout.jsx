@@ -48,9 +48,9 @@ const Layout = () => {
       name: "Inventory",
       icon: "pi pi-box",
       submenus: [
-        { id: "in1", name: "Unit", url: "/home/inventory/unit", icon: "pi pi-tags" },
-        { id: "in2", name: "Category", url: "/home/inventory/category", icon: "pi pi-list-check" },
-        { id: "in3", name: "Product", url: "/home/inventory/product", icon: "pi pi-box" },
+        { id: "in1", name: "Product", url: "/home/inventory/product", icon: "pi pi-box" },
+        { id: "in2", name: "Unit", url: "/home/inventory/unit", icon: "pi pi-tags" },
+        { id: "in3", name: "Category", url: "/home/inventory/category", icon: "pi pi-list-check" },
       ],
     },
     {

@@ -22,7 +22,7 @@ export const useShops = () => {
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [fromData, setFormData] = useState(dataModel);
+  const [formData, setFormData] = useState(dataModel);
 
   const loadShops = async () => {
     try {
@@ -54,7 +54,7 @@ export const useShops = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...fromData, [field]: value }, t_shops);
+    const newErrors = validate({ ...formData, [field]: value }, t_shops);
     setErrors(newErrors);
   };
 
@@ -90,7 +90,7 @@ export const useShops = () => {
   const handleDeleteShop = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await shopsAPI.delete({ shop_id: rowData.shop_id });
+      const response = await shopsAPI.delete(rowData);
 
       // Remove deleted shop from local state
       const updatedList = shopList.filter((s) => s.shop_id !== rowData.shop_id);
@@ -122,9 +122,9 @@ export const useShops = () => {
       setIsBusy(true);
 
       // Validate form
-      const newErrors = validate(fromData, t_shops);
+      const newErrors = validate(formData, t_shops);
       setErrors(newErrors);
-      console.log("handleSaveShop:", JSON.stringify(fromData));
+      console.log("handleSaveShop:", JSON.stringify(formData));
 
       if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
@@ -133,14 +133,14 @@ export const useShops = () => {
 
       // Ensure shop_id exists (for create)
       const formDataNew = {
-        ...fromData,
-        shop_id: fromData.shop_id || generateGuid(),
-        open_date: formatDateForAPI(fromData.open_date),
+        ...formData,
+        shop_id: formData.shop_id || generateGuid(),
+        open_date: formatDateForAPI(formData.open_date),
       };
 
       // Call API and get { message, data }
       let response;
-      if (fromData.shop_id) {
+      if (formData.shop_id) {
         response = await shopsAPI.update(formDataNew);
       } else {
         response = await shopsAPI.create(formDataNew);
@@ -176,7 +176,7 @@ export const useShops = () => {
     isBusy,
     currentView,
     errors,
-    fromData,
+    formData,
     handleChange,
     handleCancel,
     handleAddNew,

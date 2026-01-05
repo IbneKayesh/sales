@@ -59,6 +59,8 @@ const ShopsListComponent = ({ dataList, onEdit, onDelete }) => {
         rowsPerPageOptions={[5, 10, 25]}
         emptyMessage="No data found."
         size="small"
+        rowHover
+        showGridlines
       >
         <Column field="shop_name" header="Shop Name" />
         <Column field="shop_address" header="Shop Address" />

@@ -14,7 +14,7 @@ const ShopsPage = () => {
     isBusy,
     currentView,
     errors,
-    fromData,
+    formData,
     handleChange,
     handleCancel,
     handleAddNew,
@@ -43,7 +43,7 @@ const ShopsPage = () => {
         <h3 className="m-0">
           {isList
             ? "Shop List"
-            : fromData.shop_id
+            : formData.shop_id
             ? "Edit Shop"
             : "Add New Shop"}
         </h3>
@@ -89,7 +89,7 @@ const ShopsPage = () => {
           <ShopsFormComponent
             isBusy={isBusy}
             errors={errors}
-            formData={fromData}
+            formData={formData}
             onChange={handleChange}
             onSave={handleSaveShop}
           />

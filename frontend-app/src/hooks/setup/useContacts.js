@@ -148,9 +148,7 @@ export const useContacts = () => {
   const handleDeleteContact = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await contactAPI.delete({
-        contact_id: rowData.contact_id,
-      });
+      const response = await contactAPI.delete(rowData);
 
       const updatedList = contactList.filter(
         (c) => c.contact_id !== rowData.contact_id

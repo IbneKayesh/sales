@@ -1,15 +1,8 @@
-//as example units.js
 const express = require("express");
 const router = express.Router();
+const { dbGet, dbGetAll, dbRun } = require("../../db/database");
 
-const {
-  runScriptsSequentially,
-  dbRun,
-  dbGet,
-  dbAll,
-} = require("../../db/asyncScriptsRunner");
-
-// Get all products
+// ---------------- GET ALL PRODUCTS ----------------
 router.get("/", async (req, res) => {
   const filter = req.query.filter || "default";
   let whereClause = "";
@@ -53,18 +46,28 @@ router.get("/", async (req, res) => {
     c.category_name,
     su.unit_name as small_unit_name,
     lu.unit_name as large_unit_name,
-    0 as ismodified
+    sp.shop_name,
+    0 as edit_stop
     FROM products p
     LEFT JOIN categories c ON p.category_id = c.category_id
     LEFT JOIN units su ON p.small_unit_id = su.unit_id
     LEFT JOIN units lu ON p.large_unit_id = lu.unit_id
+    LEFT JOIN shops sp ON p.shop_id = sp.shop_id
     ${whereClause}
-    ORDER BY p.product_code`;
-    const rows = await dbAll(sql, []);
-    res.json(rows);
+    ORDER BY p.product_name, p.product_code`;
+
+    const rows = await dbGetAll(sql, [], "Get all products");
+
+    res.json({
+      message: "Fetched all products",
+      data: rows,
+    });
   } catch (error) {
-    console.error("Error fetching Products:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching data:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: [],
+    });
   }
 });
 
@@ -80,7 +83,7 @@ p.discount_percent, p.vat_percent, p.cost_price_percent ,p.margin_price, p.purch
     su.unit_name as small_unit_name,
     lu.unit_name as large_unit_name,
 	pod.po_details_id as ref_id,
-    0 as ismodified
+    0 as edit_stop
     FROM products p
     LEFT JOIN categories c ON p.category_id = c.category_id
     LEFT JOIN units su ON p.small_unit_id = su.unit_id
@@ -106,7 +109,7 @@ router.get("/booking", async (req, res) => {
     c.category_name,
     su.unit_name as small_unit_name,
     lu.unit_name as large_unit_name,
-    0 as ismodified
+    0 as edit_stop
     FROM products p
     LEFT JOIN categories c ON p.category_id = c.category_id
     LEFT JOIN units su ON p.small_unit_id = su.unit_id
@@ -120,24 +123,35 @@ router.get("/booking", async (req, res) => {
   }
 });
 
-// Get product by ID
+// ---------------- GET PRODUCT BY ID ----------------
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const sql =
-      "SELECT p.*, 0 as ismodified FROM products p WHERE product_id = ?";
-    const row = await dbGet(sql, [id]);
+      "SELECT p.*, 0 as edit_stop FROM products p WHERE product_id = ?";
+    const row = await dbGet(sql, [id], "Get product by id");
+
     if (!row) {
-      return res.status(404).json({ error: "Product not found" });
+      return res.status(404).json({
+        message: "Product not found",
+        data: {},
+      });
     }
-    res.json(row);
+
+    res.json({
+      message: "Fetched product",
+      data: row,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching data:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
-// Create new product
+// ---------------- CREATE NEW PRODUCT ----------------
 router.post("/", async (req, res) => {
   const {
     product_id,
@@ -154,21 +168,21 @@ router.post("/", async (req, res) => {
     discount_percent,
     vat_percent,
     cost_price_percent,
-    margin_price
+    margin_price,
+    shop_id,
   } = req.body;
 
-  if (!product_id) {
-    return res.status(400).json({ error: "Product ID is required" });
-  }
-
-  if (!product_name) {
-    return res.status(400).json({ error: "Product name is required" });
+  if (!product_id || !product_name || !shop_id) {
+    return res.status(400).json({
+      message: "product_id, product_name and shop_id are required",
+      data: req.body,
+    });
   }
 
   try {
     const sql = `INSERT INTO products (product_id, product_code, product_name, product_desc, category_id, small_unit_id, unit_difference_qty, large_unit_id,
-    stock_qty, purchase_price, sales_price, discount_percent, vat_percent, cost_price_percent, margin_price)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    stock_qty, purchase_price, sales_price, discount_percent, vat_percent, cost_price_percent, margin_price, shop_id)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`;
     const params = [
       product_id,
       product_code,
@@ -185,16 +199,24 @@ router.post("/", async (req, res) => {
       vat_percent,
       cost_price_percent,
       margin_price,
+      shop_id,
     ];
-    await dbRun(sql, params, `Created products ${product_name}`);
-    res.status(201).json({ product_id, ...req.body });
+    await dbRun(sql, params, `Created product ${product_name}`);
+
+    res.status(201).json({
+      message: "Product created successfully",
+      data: req.body,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error creating product:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
-// Update product
+// ---------------- UPDATE PRODUCT ----------------
 router.post("/update", async (req, res) => {
   const {
     product_id,
@@ -210,30 +232,35 @@ router.post("/update", async (req, res) => {
     discount_percent,
     vat_percent,
     cost_price_percent,
-    margin_price
+    margin_price,
+    shop_id,
   } = req.body;
 
-  if (!product_name) {
-    return res.status(400).json({ error: "Product name is required" });
+  if (!product_id || !product_name || !shop_id) {
+    return res.status(400).json({
+      message: "product_id, product_name and shop_id are required",
+      data: req.body,
+    });
   }
 
   try {
     const sql = `UPDATE products
     SET 
-    product_code = ?,
-    product_name = ?,
-    product_desc = ?,
-    category_id = ?,
-    small_unit_id = ?,
-    unit_difference_qty = ?,
-    large_unit_id = ?,
-    purchase_price = ?,
-    sales_price = ?,
-    discount_percent = ?,
-    vat_percent = ?,
-    cost_price_percent = ?,
-    margin_price = ?
-    WHERE product_id = ?`;
+    product_code = $1,
+    product_name = $2,
+    product_desc = $3,
+    category_id = $4,
+    small_unit_id = $5,
+    unit_difference_qty = $6,
+    large_unit_id = $7,
+    purchase_price = $8,
+    sales_price = $9,
+    discount_percent = $10,
+    vat_percent = $11,
+    cost_price_percent = $12,
+    margin_price = $13,
+    shop_id = $14
+    WHERE product_id = $15`;
     const params = [
       product_code,
       product_name,
@@ -248,41 +275,73 @@ router.post("/update", async (req, res) => {
       vat_percent,
       cost_price_percent,
       margin_price,
+      shop_id,
       product_id,
     ];
-    const result = await dbRun(sql, params, `Updated Product ${product_name}`);
-    if (result.changes === 0) {
-      return res.status(404).json({ error: "Product not found" });
+    const resultCount = await dbRun(
+      sql,
+      params,
+      `Updated product ${product_name}`
+    );
+
+    if (resultCount === 0) {
+      return res.status(404).json({
+        message: "Product not found",
+        data: req.body,
+      });
     }
-    res.json({ product_id, product_name });
+
+    res.json({
+      message: "Product updated successfully",
+      data: req.body,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error updating product:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
-// Delete product
+// ---------------- DELETE PRODUCT ----------------
 router.post("/delete", async (req, res) => {
   const { product_id, product_name } = req.body;
 
   if (!product_id) {
-    return res.status(400).json({ error: "Product ID is required" });
+    return res.status(400).json({
+      message: "product_id is required",
+      data: req.body,
+    });
   }
 
   try {
-    const sql = "DELETE FROM products WHERE product_id = ?";
-    const result = await dbRun(
+    const sql = `DELETE FROM products WHERE product_id = $1`;
+    const params = [product_id];
+
+    const resultCount = await dbRun(
       sql,
-      [product_id],
-      `Deleted Products ${product_name}`
+      params,
+      `Deleted product ${product_name}`
     );
-    if (result.changes === 0) {
-      return res.status(404).json({ error: "Product not found" });
+
+    if (resultCount === 0) {
+      return res.status(404).json({
+        message: "Product not found",
+        data: req.body,
+      });
     }
-    res.json({ message: "Product deleted successfully" });
+
+    res.json({
+      message: "Product deleted successfully",
+      data: req.body,
+    });
   } catch (error) {
-    console.error("Database error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error deleting product:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      data: {},
+    });
   }
 });
 
