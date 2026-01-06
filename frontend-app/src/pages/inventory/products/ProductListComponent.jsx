@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
@@ -264,7 +264,7 @@ const ProductListComponent = ({
           <dd className="mb-3">{selectedItemDetail?.product_desc || "N/A"}</dd>
           <dt>Category:</dt>
           <dd className="mb-3">{selectedItemDetail?.category_name || "N/A"}</dd>
-          <dt>Small Unit:</dt>
+          <dt>Small Unit Name:</dt>
           <dd className="mb-3">
             {selectedItemDetail?.small_unit_name || "N/A"}
           </dd>
@@ -272,7 +272,7 @@ const ProductListComponent = ({
           <dd className="mb-3">
             {selectedItemDetail?.unit_difference_qty || "N/A"}
           </dd>
-          <dt>Big Unit:</dt>
+          <dt>Big Unit Name:</dt>
           <dd className="mb-3">
             {selectedItemDetail?.large_unit_name || "N/A"}
           </dd>

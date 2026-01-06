@@ -13,9 +13,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-const banks_tables = require("./banks_tables");
-const banksTables = banks_tables();
-
 
 const purchase_tables = require("./purchase_tables");
 const purchaseTables = purchase_tables();
@@ -26,13 +23,13 @@ const vatTables = vat_tables();
 
 // Initialize tables
 const initTables = () => {
-  Object.values(banksTables).forEach((sql) => {
-    db.exec(sql, (err) => {
-      if (err) {
-        console.error("Banks Table creation error:", err.message);
-      }
-    });
-  });
+  // Object.values(banksTables).forEach((sql) => {
+  //   db.exec(sql, (err) => {
+  //     if (err) {
+  //       console.error("Banks Table creation error:", err.message);
+  //     }
+  //   });
+  // });
 
   // Object.values(inventoryTables).forEach((sql) => {
   //   db.exec(sql, (err) => {
@@ -282,56 +279,56 @@ const initData = (callback) => {
 
 
     //accounts :: Bank table :: insert default data
-    db.run(
-      `
-      INSERT OR IGNORE INTO banks (bank_id, bank_name, branch_name, routing_no, current_balance)
-      VALUES
-      ('1', 'Cash', 'Cash', 'R1234', 0)
-    `,
-      (err) => {
-        if (err) {
-          console.error("Error inserting default bank:", err);
-        } else {
-          console.log("Default bank inserted.");
-        }
-      }
-    );
+    // db.run(
+    //   `
+    //   INSERT OR IGNORE INTO banks (bank_id, bank_name, branch_name, routing_no, current_balance)
+    //   VALUES
+    //   ('1', 'Cash', 'Cash', 'R1234', 0)
+    // `,
+    //   (err) => {
+    //     if (err) {
+    //       console.error("Error inserting default bank:", err);
+    //     } else {
+    //       console.log("Default bank inserted.");
+    //     }
+    //   }
+    // );
 
     //accounts :: Accounts table :: insert default data
-    db.run(
-      `
-      INSERT OR IGNORE INTO accounts (account_id, bank_id, account_name, account_no, account_note, opening_date, current_balance, is_default)
-      VALUES
-      ('1', '1', 'Cash', 'Cash', 'Cash', strftime('%Y-%m-%d', 'now'), 0, 1) 
-    `,
-      (err) => {
-        if (err) {
-          console.error("Error inserting default accounts:", err);
-        } else {
-          console.log("Default accounts inserted.");
-        }
-      }
-    );
+    // db.run(
+    //   `
+    //   INSERT OR IGNORE INTO accounts (account_id, bank_id, account_name, account_no, account_note, opening_date, current_balance, is_default)
+    //   VALUES
+    //   ('1', '1', 'Cash', 'Cash', 'Cash', strftime('%Y-%m-%d', 'now'), 0, 1) 
+    // `,
+    //   (err) => {
+    //     if (err) {
+    //       console.error("Error inserting default accounts:", err);
+    //     } else {
+    //       console.log("Default accounts inserted.");
+    //     }
+    //   }
+    // );
 
     //setup :: Transaction Configuration table :: insert default data
-    db.run(
-      `
-      INSERT OR IGNORE INTO config_transaction (config_id, config_name, contact_id, is_posted, include_discount, include_vat)
-      VALUES
-      ('1', 'Purchase', 'both', 0, 0, 1),
-      ('2', 'Sales', 'both', 1, 1, 1)
-    `,
-      (err) => {
-        if (err) {
-          console.error(
-            "Error inserting default transaction configuration:",
-            err
-          );
-        } else {
-          console.log("Default transaction configuration inserted.");
-        }
-      }
-    );
+    // db.run(
+    //   `
+    //   INSERT OR IGNORE INTO config_transaction (config_id, config_name, contact_id, is_posted, include_discount, include_vat)
+    //   VALUES
+    //   ('1', 'Purchase', 'both', 0, 0, 1),
+    //   ('2', 'Sales', 'both', 1, 1, 1)
+    // `,
+    //   (err) => {
+    //     if (err) {
+    //       console.error(
+    //         "Error inserting default transaction configuration:",
+    //         err
+    //       );
+    //     } else {
+    //       console.log("Default transaction configuration inserted.");
+    //     }
+    //   }
+    // );
 
     //settings default insert
     db.run(
@@ -376,75 +373,6 @@ const initData = (callback) => {
           console.error("Error inserting default vat master:", err);
         } else {
           console.log("Default vat master inserted.");
-        }
-      }
-    );
-
-    //accounts :: insert default data
-    db.run(
-      `
-      INSERT OR IGNORE INTO accounts_heads (head_id, head_name, group_name, group_type ,contact_type)
-      VALUES
-      ('Z101', 'Sales Booking (+)', 'Sales', 'In', 'Customer'),
-      ('Z102', 'Sales Invoice (-)', 'Sales', 'Out', 'Customer'),
-      ('Z103', 'Sales Order (+)', 'Sales', 'In', 'Customer'),
-      ('Z104', 'Sales Return (-)', 'Sales', 'Out', 'Customer'),
-      ('Z105', 'Sales Customer Expense (+)', 'Sales', 'In', 'Customer'),
-      ('Z106', 'Sales Expense (-)', 'Sales', 'Out', 'Internal'),
-      ('Z107', 'Sales Discount (-)', 'Sales', 'Out', 'Internal'),
-      ('Z108', 'Sales VAT (+)', 'Sales', 'Out', 'Internal'),
-
-
-      ('Z201', 'Purchase Booking (-)', 'Purchases', 'Out', 'Supplier'),
-      ('Z202', 'Purchase Invoice (+)', 'Purchases', 'In', 'Supplier'),
-      ('Z203', 'Purchase Order (-)', 'Purchases', 'Out', 'Supplier'),
-      ('Z204', 'Purchase Return (+)', 'Purchases', 'In', 'Supplier'),
-      ('Z205', 'Purchase Purchase Expense (-)', 'Purchases', 'Out', 'Supplier'),
-      ('Z206', 'Purchase Expense (-)', 'Purchases', 'Out', 'Internal'),
-      ('Z207', 'Purchase Discount (+)', 'Purchases', 'In', 'Internal'),
-      ('Z208', 'Purchase VAT (+)', 'Purchases', 'Out', 'Internal'),
-
-
-      ('Z301', 'Stock Out (-)', 'Inventory', 'Out', 'Internal'),
-      ('Z302', 'Stock In (+)', 'Inventory', 'In', 'Internal'),
-
-
-      ('Z401', 'Gain (+)', 'Income', 'In', 'Internal'),
-      ('Z402', 'Salary Deduction (+)', 'Income', 'In', 'Internal'),
-      ('Z403', 'Rent Advance Received (+)', 'Income', 'In', 'Internal'),
-      ('Z404', 'Rent Adjustment (+)', 'Income', 'In', 'Internal'),
-      ('Z405', 'Bank Profit (+)', 'Income', 'In', 'Internal'),
-      ('Z406', 'Loan Taken (+)', 'Income', 'In', 'Internal'),
-      ('Z407', 'Deposit (+)', 'Income', 'In', 'Internal'),
-      ('Z408', 'Asset Sale (+)', 'Assets', 'In', 'Internal'),      
-      ('Z409', 'Other Income (+)', 'Income', 'In', 'Internal'),
-
-
-      ('Z501', 'Loss (-)', 'Expense', 'Out', 'Internal'),
-      ('Z502', 'Salary Payment (-)', 'Expense', 'Out', 'Internal'),
-      ('Z503', 'Rent Advance Payment (-)', 'Expense', 'Out', 'Internal'),
-      ('Z504', 'Rent Payment (-)', 'Expense', 'Out', 'Internal'),
-      ('Z505', 'Electricity Bill (-)', 'Expense', 'Out', 'Internal'),
-      ('Z506', 'Internet Bill (-)', 'Expense', 'Out', 'Internal'),
-      ('Z507', 'Transport Payment (-)', 'Expense', 'Out', 'Internal'),
-      ('Z508', 'Bank Charges (-)', 'Expense', 'Out', 'Internal'),
-      ('Z509', 'Tax Payment (-)', 'Expense', 'Out', 'Internal'),
-      ('Z510', 'Maintenance Payment (-)', 'Expense', 'Out', 'Internal'),
-      ('Z511', 'Loan Payment (-)', 'Expense', 'Out', 'Internal'),
-      ('Z512', 'Asset Purchase (-)', 'Assets', 'Out', 'Internal'),
-      ('Z513', 'Other Expense (-)', 'Expense', 'Out', 'Internal'),
-      ('Z514', 'Withdraw (-)', 'Income', 'Out', 'Internal'),
-
-      
-      ('Z601', 'Transfer Out (-)', 'Transfer', 'Out', 'Internal'),
-      ('Z602', 'Transfer In (+)', 'Transfer', 'In', 'Internal')
-      
-    `,
-      (err) => {
-        if (err) {
-          console.error("Error inserting default accounts heads:", err);
-        } else {
-          console.log("Default accounts heads inserted.");
         }
       }
     );
