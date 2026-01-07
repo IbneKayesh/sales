@@ -60,14 +60,22 @@ const formatDateTime = (date) => {
 
 const formatDateForAPI = (date) => {
   if (!date) return null;
-  // If it's a Date object, convert to YYYY-MM-DD using local time
-  if (date instanceof Date) {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
+
+  let d = date;
+  // If it's a string and looks like an ISO date, parse it
+  if (typeof date === "string" && date.includes("T")) {
+    d = new Date(date);
+  }
+
+  // If it's a Date object (or became one), convert to YYYY-MM-DD using local time
+  if (d instanceof Date && !isNaN(d.getTime())) {
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
     return `${year}-${month}-${day}`;
   }
-  // If it's already a string, assume it's correct or return as is
+
+  // If it's already a string (and didn't contain T), assume it's correct or return as is
   return date;
 };
 

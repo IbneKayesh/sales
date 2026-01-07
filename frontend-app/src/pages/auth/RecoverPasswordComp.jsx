@@ -2,31 +2,26 @@ import React, { useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { useToast } from "@/hooks/useToast.jsx";
+import { useAuth } from "@/hooks/useAuth.jsx";
 
-const ForgotPasswordComponent = ({ toast }) => {
-  const [userEmail, setUserEmail] = useState("");
-  const [recoveryCode, setRecoveryCode] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [showInputs, setShowInputs] = useState(false);
+const RecoverPasswordComp = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const cardRef = useRef(null);
+  const [user, setUser] = useState({
+    usersEmail: "admin@sgd.com",
+    usersRecky: "recover",
+  });
+  const [isBusy, setIsBusy] = useState(false);
+  const [showInputs, setShowInputs] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { recoverPassword } = useAuth();
+  const { showToast } = useToast();
+  const cardRef = useRef(null);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    if (!loading) {
+    if (!isBusy) {
       setTimeout(() => setShowInputs(true), 150);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    if (!loading) {
-      setTimeout(() => setShowInputs(false), 200);
-    }
-    if (cardRef.current) {
-      cardRef.current.style.transform =
-        "translateY(0px) skew(0deg, 0deg) scale(1)";
     }
   };
 
@@ -43,26 +38,55 @@ const ForgotPasswordComponent = ({ toast }) => {
     }deg) scale(1.15)`;
   };
 
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (!isBusy) {
+      setTimeout(() => setShowInputs(false), 30000);
+    }
+    if (cardRef.current) {
+      cardRef.current.style.transform =
+        "translateY(0px) skew(0deg, 0deg) scale(1)";
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    // Simulate reset logic
-    setTimeout(() => {
-      toast.current.show({
-        severity: "info",
-        summary: "Sent",
-        detail: "Default Password is 123456",
-        life: 3000,
-      });
-      setLoading(false);
-      setSearchParams({ view: "login" });
-    }, 1500);
+    try {
+      if (!user.usersEmail || !user.usersRecky) {
+        showToast("error", "Error", "Please fill all fields");
+        return;
+      }
+      setIsBusy(true);
+      //setShowInputs(false);
+      const response = await recoverPassword(user);
+      //console.log(response);
+      showToast(
+        response.success ? "success" : "error",
+        response.success ? "Success" : "Error",
+        response.message
+      );
+
+      if (response.success) {
+        setSearchParams({ view: "set-password", recoverykey: response.data.id })
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   return (
     <div
       className={`login-card bubble-anim ${isHovered ? "hovered" : ""} ${
-        loading ? "loading" : ""
+        isBusy ? "loading" : ""
       }`}
       ref={cardRef}
       onMouseEnter={handleMouseEnter}
@@ -79,59 +103,50 @@ const ForgotPasswordComponent = ({ toast }) => {
         </h2>
 
         <div className={`ik-field mb-4 ${showInputs ? "visible" : "hidden"}`}>
-          <p
-            className="text-secondary mb-3 text-center"
-            style={{ fontSize: "0.9rem" }}
-          >
-            Enter your email.
-          </p>
           <InputText
-            id="userEmail"
-            value={userEmail}
-            onChange={(e) => setUserEmail(e.target.value)}
+            name="usersEmail"
+            value={user.usersEmail}
+            onChange={handleInputChange}
             className="ik-inputtext wobble"
-            placeholder="Email"
+            placeholder="Enter your email"
             required
-            disabled={loading}
+            disabled={isBusy}
           />
         </div>
 
         <div className={`ik-field mb-4 ${showInputs ? "visible" : "hidden"}`}>
-          <p
-            className="text-secondary mb-3 text-center"
-            style={{ fontSize: "0.9rem" }}
-          >
-            Enter your recovery code.
-          </p>
           <InputText
-            id="recoveryCode"
-            value={recoveryCode}
-            onChange={(e) => setRecoveryCode(e.target.value)}
+            name="usersRecky"
+            value={user.usersRecky}
+            onChange={handleInputChange}
             className="ik-inputtext wobble"
-            placeholder="Recovery Code"
+            placeholder="Enter your recovery key"
             required
-            disabled={loading}
+            disabled={isBusy}
           />
         </div>
 
         <Button
           type="submit"
-          label={loading ? "Sending..." : "Reset Password"}
-          icon={loading ? "pi pi-spin pi-spinner" : "pi pi-send"}
+          label={isBusy ? "Please wait..." : "Recover Password"}
+          icon={isBusy ? "pi pi-spin pi-spinner" : ""}
           className={`ik-button w-full wobble mb-4 ${
-            showInputs || loading ? "visible" : "hidden"
+            showInputs || isBusy ? "visible" : "hidden"
           }`}
-          loading={loading}
-          disabled={loading}
+          loading={isBusy}
+          disabled={isBusy}
         />
 
         <div className={`text-center ${showInputs ? "visible" : "hidden"}`}>
-          <Button
-            type="button"
-            label="Back to Login"
-            className="p-button-text ik-button-secondary w-full"
-            onClick={() => setSearchParams({ view: "login" })}
-          />
+          <p>
+            Back to
+            <span
+              className="p-button-text ik-button-secondary w-full"
+              onClick={() => setSearchParams({ view: "login" })}
+            >
+              Login
+            </span>
+          </p>
         </div>
 
         <div className={`text-center ${!showInputs ? "visible" : "hidden"}`}>
@@ -150,4 +165,4 @@ const ForgotPasswordComponent = ({ toast }) => {
   );
 };
 
-export default ForgotPasswordComponent;
+export default RecoverPasswordComp;

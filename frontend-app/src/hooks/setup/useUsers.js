@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { usersAPI } from "@/api/setup/usersAPI";
-import { shopsAPI } from "@/api/setup/shopsAPI";
+// import { shopsAPI } from "@/api/setup/shopsAPI";
 import validate from "@/models/validator";
 import t_users from "@/models/setup/t_users";
 import { generateGuid } from "@/utils/guid";

@@ -2,24 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun } = require("../../db/database");
 
-// ---------------- GET ALL SHOPS ----------------
-router.get("/", async (req, res) => {
-  try {
-    const sql = `SELECT u.*, 0 as edit_stop FROM shops u ORDER BY shop_name`;
-    const rows = await dbGetAll(sql, [], "Get all shops");
 
-    res.json({
-      message: "Fetched all shops",
-      data: rows,
-    });
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    res.status(500).json({
-      message: "Internal server error",
-      data: [],
-    });
-  }
-});
 
 // ---------------- GET SHOP BY ID ----------------
 router.get("/:id", async (req, res) => {

@@ -5,7 +5,7 @@ import { Dropdown } from "primereact/dropdown";
 import t_products from "@/models/inventory/t_products.json";
 import { useUnits } from "@/hooks/inventory/useUnits";
 import { useCategories } from "@/hooks/inventory/useCategories";
-import { useShops } from "@/hooks/setup/useShops";
+// import { useShops } from "@/hooks/setup/useShops";
 
 const ProductFormComponent = ({
   isBusy,

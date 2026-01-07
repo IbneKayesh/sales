@@ -4,47 +4,81 @@ const validate = (data, schema) => {
   for (const field in schema) {
     const rules = schema[field];
     const value = data[field];
+    const label = rules.label || field;
 
-    // -------- REQUIRED CHECK ----------
-    if (
-      rules.required &&
-      (value === undefined || value === null || value === "")
-    ) {
-      errors[field] = `${rules.name || field} is required.`;
+    /* ---------------- REQUIRED ---------------- */
+    if (rules.required && (value === undefined || value === null || value === "")) {
+      errors[field] = `${label} is required.`;
       continue;
     }
 
-    // Skip further validation if field is optional & empty
-    if (
-      !rules.required &&
-      (value === undefined || value === null || value === "")
-    ) {
+    // Optional & empty → skip
+    if (!rules.required && (value === undefined || value === null || value === "")) {
       continue;
     }
 
-    // -------- TYPE CHECKS ----------
-    if (rules.type === "number") {
-      // Allow string numbers like "10.25"
-      if (isNaN(Number(value))) {
-        errors[field] = `${rules.name || field} must be a valid number.`;
-        continue;
+    /* ---------------- TYPE VALIDATION ---------------- */
+    let numericValue = null;
+
+    switch (rules.type) {
+      case "string":
+      case "password":
+        if (typeof value !== "string") {
+          errors[field] = `${label} must be a string.`;
+          continue;
+        }
+        break;
+
+      case "email": {
+        if (typeof value !== "string") {
+          errors[field] = `${label} must be a valid email.`;
+          continue;
+        }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+          errors[field] = `${label} must be a valid email address.`;
+          continue;
+        }
+        break;
       }
-    } else if (rules.type === "string") {
-      if (typeof value !== "string") {
-        errors[field] = `${rules.name || field} must be a string.`;
-        continue;
+
+      case "number":
+        numericValue = Number(value);
+        if (!Number.isInteger(numericValue)) {
+          errors[field] = `${label} must be a valid integer.`;
+          continue;
+        }
+        break;
+
+      case "decimal":
+        numericValue = Number(value);
+        if (isNaN(numericValue)) {
+          errors[field] = `${label} must be a valid decimal number.`;
+          continue;
+        }
+        break;
+
+      case "date": {
+        const date = new Date(value);
+        if (isNaN(date.getTime())) {
+          errors[field] = `${label} must be a valid date.`;
+          continue;
+        }
+        break;
       }
+
+      default:
+        break;
     }
 
-    // -------- LENGTH CHECKS ----------
+    /* ---------------- STRING LENGTH ---------------- */
     if (
       rules.minLength &&
       typeof value === "string" &&
       value.length < rules.minLength
     ) {
-      errors[field] = `${rules.name || field} must be at least ${
-        rules.minLength
-      } characters long.`;
+      errors[field] = `${label} must be at least ${rules.minLength} characters long.`;
+      continue;
     }
 
     if (
@@ -52,22 +86,39 @@ const validate = (data, schema) => {
       typeof value === "string" &&
       value.length > rules.maxLength
     ) {
-      errors[field] = `${rules.name || field} must be no more than ${
-        rules.maxLength
-      } characters long.`;
+      errors[field] = `${label} must be no more than ${rules.maxLength} characters long.`;
+      continue;
     }
 
-    // -------- DATE VALIDATION ----------
-    if (rules.format === "date") {
-      const date = new Date(value);
-      if (isNaN(date.getTime())) {
-        errors[field] = `${rules.name || field} must be a valid date.`;
+    /* ---------------- NUMBER / DECIMAL RANGE ---------------- */
+    if (
+      (rules.type === "number" || rules.type === "decimal") &&
+      numericValue !== null
+    ) {
+      if (rules.minLength !== undefined && numericValue < rules.minLength) {
+        errors[field] = `${label} must be at least ${rules.minLength}.`;
+        continue;
+      }
+
+      if (rules.maxLength !== undefined && numericValue > rules.maxLength) {
+        errors[field] = `${label} must be no more than ${rules.maxLength}.`;
+        continue;
       }
     }
 
-    // -------- CUSTOM VALIDATION ----------
+    /* ---------------- PASSWORD STRENGTH ---------------- */
+    if (rules.type === "password" && rules.strong) {
+      const strongPwdRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+      if (!strongPwdRegex.test(value)) {
+        errors[field] = `${label} must include uppercase, lowercase, number, and special character.`;
+        continue;
+      }
+    }
+
+    /* ---------------- CUSTOM VALIDATION ---------------- */
     if (rules.custom && typeof rules.custom === "function") {
-      const customError = rules.custom(value);
+      const customError = rules.custom(value, data);
       if (customError) {
         errors[field] = customError;
       }

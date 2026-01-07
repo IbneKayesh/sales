@@ -1,40 +1,41 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { initTables, initData } = require('./db/init');
+//const { initTables, initData } = require('./db/init.js');
 
 // Import routes
-const authRoutes = require('./routes/auth');
-const unitRoutes = require('./routes/inventory/units.js');
-const categoryRoutes = require('./routes/inventory/categories.js');
-const productRoutes = require('./routes/inventory/products.js');
-const salesRoutes = require('./routes/sales/sales.js');
-const backupRoutes = require('./routes/setup/backup.js');
-const contactRoutes = require('./routes/setup/contacts.js');
-const closingProcessRoutes = require('./routes/setup/closingProcess.js');
-const configsRoutes = require('./routes/setup/configs.js');
+const authRoutes = require('./routes/auth/auth.routes.js');
+const businessRoutes = require('./routes/auth/business.routes.js');
+// const unitRoutes = require('./routes/inventory/units.js');
+// const categoryRoutes = require('./routes/inventory/categories.js');
+// const productRoutes = require('./routes/inventory/products.js');
+// const salesRoutes = require('./routes/sales/sales.js');
+// const backupRoutes = require('./routes/setup/backup.js');
+// const contactRoutes = require('./routes/setup/contacts.js');
+// const closingProcessRoutes = require('./routes/setup/closingProcess.js');
+// const configsRoutes = require('./routes/setup/configs.js');
 
-//account modules
-const banksRoutes = require('./routes/accounts/banks.js');
-const ledgerRoutes = require('./routes/accounts/ledger.js');
-const payablesRoutes = require('./routes/accounts/payables.js');
-const accountsHeadsRoutes = require('./routes/accounts/accountsHeads.js');
-
-
-
-//purchase modules
-const pobookingRoutes = require('./routes/purchase/pobooking.js');
-const poinvoiceRoutes = require('./routes/purchase/poinvoice.js');
-const poorderRoutes = require('./routes/purchase/poorder.js');
-const poreturnRoutes = require('./routes/purchase/poreturn.js');
-
-//setup
-const settingsRoutes = require('./routes/setup/settings.js');
-const usersRoutes = require('./routes/setup/users.js');
+// //account modules
+// const banksRoutes = require('./routes/accounts/banks.js');
+// const ledgerRoutes = require('./routes/accounts/ledger.js');
+// const payablesRoutes = require('./routes/accounts/payables.js');
+// const accountsHeadsRoutes = require('./routes/accounts/accountsHeads.js');
 
 
-//setup :: PGS
-const shopsRoutes = require('./routes/setup/shops.js');
+
+// //purchase modules
+// const pobookingRoutes = require('./routes/purchase/pobooking.js');
+// const poinvoiceRoutes = require('./routes/purchase/poinvoice.js');
+// const poorderRoutes = require('./routes/purchase/poorder.js');
+// const poreturnRoutes = require('./routes/purchase/poreturn.js');
+
+// //setup
+// const settingsRoutes = require('./routes/setup/settings.js');
+// const usersRoutes = require('./routes/setup/users.js');
+
+
+// //setup :: PGS
+// const shopsRoutes = require('./routes/setup/shops.js');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -59,46 +60,47 @@ app.use('/api', (req, res, next) => {
 
 
 // Initialize database
-initTables();
-initData();
+// initTables();
+// initData();
 
 
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/inventory/units', unitRoutes);
-app.use('/api/inventory/categories', categoryRoutes);
-app.use('/api/inventory/products', productRoutes);
-app.use('/api/setup/contacts', contactRoutes);
-app.use('/api/setup/closing-process', closingProcessRoutes);
-//app.use('/api/purchase/orders', purchaseRoutes);
+app.use('/api/auth/business', businessRoutes);
+// app.use('/api/inventory/units', unitRoutes);
+// app.use('/api/inventory/categories', categoryRoutes);
+// app.use('/api/inventory/products', productRoutes);
+// app.use('/api/setup/contacts', contactRoutes);
+// app.use('/api/setup/closing-process', closingProcessRoutes);
+// //app.use('/api/purchase/orders', purchaseRoutes);
 
 
-app.use('/api/sales/orders', salesRoutes);
-app.use('/api/setup', backupRoutes);
-app.use('/api/setup/configs', configsRoutes);
+// app.use('/api/sales/orders', salesRoutes);
+// app.use('/api/setup', backupRoutes);
+// app.use('/api/setup/configs', configsRoutes);
 
 
-//accounts modules
-app.use('/api/accounts/banks', banksRoutes);
-app.use('/api/accounts/ledger', ledgerRoutes);
-app.use('/api/accounts/payables', payablesRoutes);
-app.use('/api/accounts/accounts-heads', accountsHeadsRoutes);
+// //accounts modules
+// app.use('/api/accounts/banks', banksRoutes);
+// app.use('/api/accounts/ledger', ledgerRoutes);
+// app.use('/api/accounts/payables', payablesRoutes);
+// app.use('/api/accounts/accounts-heads', accountsHeadsRoutes);
 
 
-//purchase modules
-app.use('/api/purchase/booking', pobookingRoutes);
-app.use('/api/purchase/invoice', poinvoiceRoutes);
-app.use('/api/purchase/order', poorderRoutes);
-app.use('/api/purchase/return', poreturnRoutes);
+// //purchase modules
+// app.use('/api/purchase/booking', pobookingRoutes);
+// app.use('/api/purchase/invoice', poinvoiceRoutes);
+// app.use('/api/purchase/order', poorderRoutes);
+// app.use('/api/purchase/return', poreturnRoutes);
 
 
-//setup
-app.use('/api/setup/settings', settingsRoutes);
-app.use('/api/setup/users', usersRoutes);
+// //setup
+// app.use('/api/setup/settings', settingsRoutes);
+// app.use('/api/setup/users', usersRoutes);
 
 
-app.use('/api/setup/shops', shopsRoutes);
+// app.use('/api/setup/shops', shopsRoutes);
 
 
 // Health check endpoint

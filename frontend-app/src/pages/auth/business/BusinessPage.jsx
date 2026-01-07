@@ -1,16 +1,15 @@
 import { useRef, useEffect } from "react";
-import { useShops } from "@/hooks/setup/useShops";
-import ShopsListComponent from "./ShopsListComponent";
-import ShopsFormComponent from "./ShopsFormComponent";
+import { useBusiness } from "@/hooks/auth/useBusiness";
+import BusinessListComp from "./BusinessListComp";
+import BusinessFormComp from "./BusinessFormComp";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 
-const ShopsPage = () => {
+const BusinessPage = () => {
   const toast = useRef(null);
   const {
-    shopList,
-    toastBox,
+    dataList,
     isBusy,
     currentView,
     errors,
@@ -18,22 +17,11 @@ const ShopsPage = () => {
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditShop,
-    handleDeleteShop,
+    handleEdit,
+    handleDelete,
     handleRefresh,
-    handleSaveShop,
-  } = useShops();
-
-  useEffect(() => {
-    if (toastBox && toast.current) {
-      toast.current.show({
-        severity: toastBox.severity,
-        summary: toastBox.summary,
-        detail: toastBox.detail,
-        life: 3000,
-      });
-    }
-  }, [toastBox]);
+    handleSave,
+  } = useBusiness();
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -42,10 +30,10 @@ const ShopsPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Shop List"
-            : formData.shop_id
-            ? "Edit Shop"
-            : "Add New Shop"}
+            ? "Business List"
+            : formData.id
+            ? "Edit Business"
+            : "Add New Business"}
         </h3>
 
         {isList ? (
@@ -57,7 +45,7 @@ const ShopsPage = () => {
               onClick={handleRefresh}
             />
             <Button
-              label="New Shop"
+              label="New Business"
               icon="pi pi-plus"
               size="small"
               onClick={handleAddNew}
@@ -65,7 +53,7 @@ const ShopsPage = () => {
           </div>
         ) : (
           <Button
-            label="Shop List"
+            label="Business List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -80,18 +68,18 @@ const ShopsPage = () => {
       <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <ShopsListComponent
-            dataList={shopList}
-            onEdit={handleEditShop}
-            onDelete={handleDeleteShop}
+          <BusinessListComp
+            dataList={dataList}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         ) : (
-          <ShopsFormComponent
+          <BusinessFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
             onChange={handleChange}
-            onSave={handleSaveShop}
+            onSave={handleSave}
           />
         )}
       </Card>
@@ -99,4 +87,4 @@ const ShopsPage = () => {
   );
 };
 
-export default ShopsPage;
+export default BusinessPage;

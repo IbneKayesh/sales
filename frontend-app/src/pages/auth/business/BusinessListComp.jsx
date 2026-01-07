@@ -4,10 +4,10 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { formatDate } from "@/utils/datetime";
 
-const ShopsListComponent = ({ dataList, onEdit, onDelete }) => {
+const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.shop_name}"?`,
+      message: `Are you sure you want to delete "${rowData.bsins_bname}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -45,10 +45,32 @@ const ShopsListComponent = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const open_date_BT = (rowData) => {
-    return <span>{formatDate(rowData.open_date)}</span>;
+  const bsins_bname_BT = (rowData) => (
+    <>
+      {rowData.bsins_bname}
+      {", "}
+      {rowData.bsins_addrs}
+      {", "}
+      {rowData.bsins_cntry}{" "}
+      {rowData.bsins_actve === 1 ? (
+        <i className="pi pi-check-circle text-green-500" />
+      ) : (
+        <i className="pi pi-times-circle text-red-500" />
+      )}
+    </>
+  );
+
+  const bsins_email_BT = (rowData) => {
+    return (
+      <span>
+        {rowData.bsins_email}, {rowData.bsins_cntct}
+      </span>
+    );
   };
 
+  const bsins_stdat_BT = (rowData) => {
+    return <>{formatDate(rowData.bsins_stdat)}</>;
+  };
   return (
     <div className="p-1">
       <ConfirmDialog />
@@ -62,14 +84,15 @@ const ShopsListComponent = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
       >
-        <Column field="shop_name" header="Shop Name" />
-        <Column field="shop_address" header="Shop Address" />
-        <Column field="bin_no" header="BIN" />
-        <Column field="open_date" header="Open Date" body={open_date_BT} />
+        <Column field="bsins_bname" header="Business" body={bsins_bname_BT} />
+        <Column field="bsins_email" header="Contact" body={bsins_email_BT} />
+        <Column field="bsins_binno" header="BIN" />
+        <Column field="bsins_btags" header="Tags" />
+        <Column field="bsins_stdat" header="Date" body={bsins_stdat_BT} />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );
 };
 
-export default ShopsListComponent;
+export default BusinessListComp;

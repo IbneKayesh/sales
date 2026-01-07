@@ -57,7 +57,7 @@ const Layout = () => {
       name: "Setup",
       icon: "pi pi-cog",
       submenus: [        
-        { id: "st1", name: "Shops", url: "/home/setup/shops", icon: "pi pi-shop" },
+        { id: "st1", name: "Business", url: "/home/auth/business", icon: "pi pi-shop" },
         { id: "st2", name: "Users", url: "/home/setup/users", icon: "pi pi-users" },
         { id: "st3", name: "Contact", url: "/home/setup/contact", icon: "pi pi-address-book" },
         { id: "st4", name: "Closing", url: "/home/setup/closing-process", icon: "pi pi-sparkles" },

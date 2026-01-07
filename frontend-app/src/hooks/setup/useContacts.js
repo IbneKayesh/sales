@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { contactAPI } from "@/api/setup/contactAPI";
-import { shopsAPI } from "@/api/setup/shopsAPI";
+import { businessAPI } from "@/api/auth/businessAPI";
 import validate from "@/models/validator";
 import t_contacts from "@/models/setup/t_contacts";
 import { generateGuid } from "@/utils/guid";

@@ -12,10 +12,14 @@ import "primeflex/themes/primeone-light.css";
 //internal imports
 import { PrimeReactProvider } from "primereact/api";
 
+const value = {
+  locale: "en",
+  ripple: true,
+};
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <PrimeReactProvider>
+    <PrimeReactProvider value={value}>
       <App />
     </PrimeReactProvider>
   </StrictMode>,

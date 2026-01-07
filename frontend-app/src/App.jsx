@@ -6,11 +6,18 @@ import {
   Navigate,
 } from "react-router-dom";
 import "./App.css";
-import { Toast } from "primereact/toast";
 import { AuthProvider, useAuth } from "./hooks/useAuth.jsx";
+import { ToastProvider } from "./hooks/useToast.jsx"; // [NEW]
 
 //internal imports
 import AuthPage from "./pages/auth/AuthPage";
+import BusinessPage from "./pages/auth/business/BusinessPage";
+
+
+
+
+
+
 import HomePage from "./pages/HomePage.jsx";
 import Layout from "./pages/layout/Layout.jsx";
 import UnitPage from "./pages/inventory/units/UnitPage.jsx";
@@ -31,41 +38,34 @@ import PurchaseInvoicePage from "./pages/purchase/poinvoice/PoInvoicePage.jsx";
 import PurchaseOrderPage from "./pages/purchase/poorder/PoOrderPage.jsx";
 import PurchaseReturnPage from "./pages/purchase/poreturn/PoReturnPage.jsx";
 
-
 //Setup Module
 import SettingsPage from "./pages/setup/settings/SettingsPage.jsx";
-import ShopsPage from "./pages/setup/shops/ShopsPage.jsx";
 
 function App() {
-  const toast = useRef(null);
-
   return (
-    <AuthProvider>
-      <Toast ref={toast} />
-      <Router>
-        <AppRoutes toast={toast} />
-      </Router>
-    </AuthProvider>
+    <ToastProvider>
+      <AuthProvider>
+        <Router>
+          <AppRoutes />
+        </Router>
+      </AuthProvider>
+    </ToastProvider>
   );
 }
 
-function AppRoutes({ toast }) {
+function AppRoutes() {
   const { user } = useAuth();
 
   return (
     <Routes>
       <Route
         path="/"
-        element={
-          user ? (
-            <Navigate to="/home" />
-          ) : (
-            <AuthPage toast={toast} defComp="login" />
-          )
-        }
+        element={user ? <Navigate to="/home" /> : <AuthPage defComp="login" />}
       />
       <Route path="/home" element={user ? <Layout /> : <Navigate to="/" />}>
         <Route index element={<HomePage />} />
+        <Route path="auth/business" element={<BusinessPage />} />
+
 
         <Route path="inventory/unit" element={<UnitPage />} />
         <Route path="inventory/category" element={<CategoryPage />} />
@@ -79,16 +79,22 @@ function AppRoutes({ toast }) {
         <Route path="setup/users" element={<UsersPage />} />
         <Route path="setup/backup" element={<BackupPage />} />
         <Route path="setup/change-password" element={<ChangePasswordPage />} />
-
         //Purchase Module
-        <Route path="purchase/purchase-booking" element={<PurchaseBookingPage />} />
-        <Route path="purchase/purchase-invoice" element={<PurchaseInvoicePage />} />
+        <Route
+          path="purchase/purchase-booking"
+          element={<PurchaseBookingPage />}
+        />
+        <Route
+          path="purchase/purchase-invoice"
+          element={<PurchaseInvoicePage />}
+        />
         <Route path="purchase/purchase-order" element={<PurchaseOrderPage />} />
-        <Route path="purchase/purchase-return" element={<PurchaseReturnPage />} />
-
+        <Route
+          path="purchase/purchase-return"
+          element={<PurchaseReturnPage />}
+        />
         //Setup Module
         <Route path="setup/settings" element={<SettingsPage />} />
-        <Route path="setup/shops" element={<ShopsPage />} />
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>
       <Route path="*" element={<Navigate to="/home" replace />} />
