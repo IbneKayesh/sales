@@ -1,3 +1,5 @@
+import { currentDate } from "@/utils/datetime";
+
 const validate = (data, schema) => {
   const errors = {};
 
@@ -7,13 +9,19 @@ const validate = (data, schema) => {
     const label = rules.label || field;
 
     /* ---------------- REQUIRED ---------------- */
-    if (rules.required && (value === undefined || value === null || value === "")) {
+    if (
+      rules.required &&
+      (value === undefined || value === null || value === "")
+    ) {
       errors[field] = `${label} is required.`;
       continue;
     }
 
     // Optional & empty → skip
-    if (!rules.required && (value === undefined || value === null || value === "")) {
+    if (
+      !rules.required &&
+      (value === undefined || value === null || value === "")
+    ) {
       continue;
     }
 
@@ -77,7 +85,9 @@ const validate = (data, schema) => {
       typeof value === "string" &&
       value.length < rules.minLength
     ) {
-      errors[field] = `${label} must be at least ${rules.minLength} characters long.`;
+      errors[
+        field
+      ] = `${label} must be at least ${rules.minLength} characters long.`;
       continue;
     }
 
@@ -86,7 +96,9 @@ const validate = (data, schema) => {
       typeof value === "string" &&
       value.length > rules.maxLength
     ) {
-      errors[field] = `${label} must be no more than ${rules.maxLength} characters long.`;
+      errors[
+        field
+      ] = `${label} must be no more than ${rules.maxLength} characters long.`;
       continue;
     }
 
@@ -108,10 +120,11 @@ const validate = (data, schema) => {
 
     /* ---------------- PASSWORD STRENGTH ---------------- */
     if (rules.type === "password" && rules.strong) {
-      const strongPwdRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
+      const strongPwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
       if (!strongPwdRegex.test(value)) {
-        errors[field] = `${label} must include uppercase, lowercase, number, and special character.`;
+        errors[
+          field
+        ] = `${label} must include uppercase, lowercase, number, and special character.`;
         continue;
       }
     }
@@ -126,6 +139,17 @@ const validate = (data, schema) => {
   }
 
   return errors;
+};
+
+export const generateDataModel = (schema, extraData = {}) => {
+  return Object.keys(schema).reduce((acc, key) => {
+    if (schema[key].default === "new Date() with local format") {
+      acc[key] = currentDate();
+    } else {
+      acc[key] = schema[key].default || "";
+    }
+    return acc;
+  }, extraData);
 };
 
 export default validate;

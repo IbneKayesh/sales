@@ -1,23 +1,13 @@
 import { useState, useEffect } from "react";
 import { businessAPI } from "@/api/auth/businessAPI";
-import validate from "@/models/validator";
+import validate, { generateDataModel } from "@/models/validator";
 import tmab_bsins from "@/models/auth/tmab_bsins.json";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast.jsx";
-import { currentDate, formatDateForAPI } from "@/utils/datetime";
+import { formatDateForAPI } from "@/utils/datetime";
 
-const dataModel = Object.keys(tmab_bsins).reduce(
-  (acc, key) => {
-    if (tmab_bsins[key].default === "new Date() with local format") {
-      acc[key] = currentDate();
-    } else {
-      acc[key] = tmab_bsins[key].default;
-    }
-    return acc;
-  },
-  { edit_stop: 0 }
-);
+const dataModel = generateDataModel(tmab_bsins, { edit_stop: 0 });
 
 export const useBusiness = () => {
   const { user } = useAuth();
@@ -125,7 +115,11 @@ export const useBusiness = () => {
       }
 
       // Update toast using API message
-      showToast("success", "Success", response.message || "Operation successful");
+      showToast(
+        "success",
+        "Success",
+        response.message || "Operation successful"
+      );
 
       // Clear form & reload
       handleClear();
