@@ -1,7 +1,7 @@
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
-import t_users from "@/models/setup/t_users.json";
+import tmab_users from "@/models/auth/tmab_users.json";
 
 const UsersFormComp = ({
   isBusy,
@@ -10,123 +10,173 @@ const UsersFormComp = ({
   onChange,
   onSave,
   roleOptions,
-  shopOptions,
+  businessOptions,
 }) => {
   return (
     <div className="grid">
-      <div className="col-12 md:col-2">
-        <label htmlFor="user_email" className="block text-900 font-medium mb-2">
-          {t_users.user_email.name} <span className="text-red-500">*</span>
+      <div className="col-12 md:col-3">
+        <label htmlFor="users_email" className="block text-900 font-medium mb-2">
+          {tmab_users.users_email.label} <span className="text-red-500">*</span>
         </label>
         <InputText
-          name="user_email"
-          value={formData.user_email}
-          onChange={(e) => onChange("user_email", e.target.value)}
-          className={`w-full ${errors.user_email ? "p-invalid" : ""}`}
-          placeholder={`Enter ${t_users.user_email.name}`}
+          name="users_email"
+          value={formData.users_email}
+          onChange={(e) => onChange("users_email", e.target.value)}
+          className={`w-full ${errors.users_email ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmab_users.users_email.label}`}
         />
-        {errors.user_email && (
-          <small className="mb-3 text-red-500">{errors.user_email}</small>
+        {errors.users_email && (
+          <small className="mb-3 text-red-500">{errors.users_email}</small>
         )}
       </div>
       <div className="col-12 md:col-2">
         <label
-          htmlFor="user_password"
+          htmlFor="users_pswrd"
           className="block text-900 font-medium mb-2"
         >
-          {t_users.user_password.name} <span className="text-red-500">*</span>
+          {tmab_users.users_pswrd.label} <span className="text-red-500">*</span>
         </label>
         <InputText
-          name="user_password"
-          value={formData.user_password}
-          onChange={(e) => onChange("user_password", e.target.value)}
-          className={`w-full ${errors.user_password ? "p-invalid" : ""}`}
-          placeholder={`Enter ${t_users.user_password.name}`}
+          name="users_pswrd"
+          type="password"
+          value={formData.users_pswrd}
+          onChange={(e) => onChange("users_pswrd", e.target.value)}
+          className={`w-full ${errors.users_pswrd ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmab_users.users_pswrd.label}`}
         />
-        {errors.user_password && (
-          <small className="mb-3 text-red-500">{errors.user_password}</small>
+        {errors.users_pswrd && (
+          <small className="mb-3 text-red-500">{errors.users_pswrd}</small>
         )}
       </div>
-      <div className="col-12 md:col-1">
+      <div className="col-12 md:col-2">
         <label
-          htmlFor="user_mobile"
+          htmlFor="users_recky"
           className="block text-900 font-medium mb-2"
         >
-          {t_users.user_mobile.name} <span className="text-red-500">*</span>
+          {tmab_users.users_recky.label} <span className="text-red-500">*</span>
         </label>
         <InputText
-          name="user_mobile"
-          value={formData.user_mobile}
-          onChange={(e) => onChange("user_mobile", e.target.value)}
-          className={`w-full ${errors.user_mobile ? "p-invalid" : ""}`}
-          placeholder={`Enter ${t_users.user_mobile.name}`}
+          name="users_recky"
+          value={formData.users_recky}
+          onChange={(e) => onChange("users_recky", e.target.value)}
+          className={`w-full ${errors.users_recky ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmab_users.users_recky.label}`}
         />
-        {errors.user_mobile && (
-          <small className="mb-3 text-red-500">{errors.user_mobile}</small>
+        {errors.users_recky && (
+          <small className="mb-3 text-red-500">{errors.users_recky}</small>
         )}
       </div>
       <div className="col-12 md:col-3">
-        <label htmlFor="user_name" className="block text-900 font-medium mb-2">
-          {t_users.user_name.name} <span className="text-red-500">*</span>
+        <label
+          htmlFor="users_oname"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmab_users.users_oname.label} <span className="text-red-500">*</span>
         </label>
         <InputText
-          name="user_name"
-          value={formData.user_name}
-          onChange={(e) => onChange("user_name", e.target.value)}
-          className={`w-full ${errors.user_name ? "p-invalid" : ""}`}
-          placeholder={`Enter ${t_users.user_name.name}`}
+          name="users_oname"
+          value={formData.users_oname}
+          onChange={(e) => onChange("users_oname", e.target.value)}
+          className={`w-full ${errors.users_oname ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmab_users.users_oname.label}`}
         />
-        {errors.user_name && (
-          <small className="mb-3 text-red-500">{errors.user_name}</small>
-        )}
-      </div>
-      <div className="col-12 md:col-1">
-        <label htmlFor="recovery_code" className="block text-900 font-medium mb-2">
-          {t_users.recovery_code.name} <span className="text-red-500">*</span>
-        </label>
-        <InputText
-          name="recovery_code"
-          value={formData.recovery_code}
-          onChange={(e) => onChange("recovery_code", e.target.value)}
-          className={`w-full ${errors.recovery_code ? "p-invalid" : ""}`}
-          placeholder={`Enter ${t_users.recovery_code.name}`}
-        />
-        {errors.recovery_code && (
-          <small className="mb-3 text-red-500">{errors.recovery_code}</small>
-        )}
-      </div>
-      <div className="col-12 md:col-1">
-        <label htmlFor="user_role" className="block text-900 font-medium mb-2">
-          {t_users.user_role.name} <span className="text-red-500">*</span>
-        </label>
-        <Dropdown
-          name="user_role"
-          value={formData.user_role}
-          options={roleOptions}
-          onChange={(e) => onChange("user_role", e.value)}
-          className={`w-full ${errors.user_role ? "p-invalid" : ""}`}
-          placeholder={`Select ${t_users.user_role.name}`}
-        />
-        {errors.user_role && (
-          <small className="mb-3 text-red-500">{errors.user_role}</small>
+        {errors.users_oname && (
+          <small className="mb-3 text-red-500">{errors.users_oname}</small>
         )}
       </div>
       <div className="col-12 md:col-2">
-        <label htmlFor="shop_id" className="block text-900 font-medium mb-2">
-          {t_users.shop_id.name} <span className="text-red-500">*</span>
+        <label
+          htmlFor="users_cntct"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmab_users.users_cntct.label} <span className="text-red-500">*</span>
         </label>
-        <Dropdown
-          name="shop_id"
-          value={formData.shop_id}
-          options={shopOptions}
-          onChange={(e) => onChange("shop_id", e.value)}
-          className={`w-full ${errors.shop_id ? "p-invalid" : ""}`}
-          placeholder={`Select ${t_users.shop_id.name}`}
+        <InputText
+          name="users_cntct"
+          value={formData.users_cntct}
+          onChange={(e) => onChange("users_cntct", e.target.value)}
+          className={`w-full ${errors.users_cntct ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmab_users.users_cntct.label}`}
         />
-        {errors.shop_id && (
-          <small className="mb-3 text-red-500">{errors.shop_id}</small>
+        {errors.users_cntct && (
+          <small className="mb-3 text-red-500">{errors.users_cntct}</small>
         )}
       </div>
+      <div className="col-12 md:col-3">
+        <label
+          htmlFor="users_bsins"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmab_users.users_bsins.label} <span className="text-red-500">*</span>
+        </label>
+        <Dropdown
+          name="users_bsins"
+          value={formData.users_bsins}
+          options={businessOptions}
+          onChange={(e) => onChange("users_bsins", e.value)}
+          className={`w-full ${errors.users_bsins ? "p-invalid" : ""}`}
+          placeholder={`Select ${tmab_users.users_bsins.label}`}
+        />
+        {errors.users_bsins && (
+          <small className="mb-3 text-red-500">{errors.users_bsins}</small>
+        )}
+      </div>
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="users_drole"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmab_users.users_drole.label} <span className="text-red-500">*</span>
+        </label>
+        <Dropdown
+          name="users_drole"
+          value={formData.users_drole}
+          options={roleOptions}
+          onChange={(e) => onChange("users_drole", e.value)}
+          className={`w-full ${errors.users_drole ? "p-invalid" : ""}`}
+          placeholder={`Select ${tmab_users.users_drole.label}`}
+        />
+        {errors.users_drole && (
+          <small className="mb-3 text-red-500">{errors.users_drole}</small>
+        )}
+      </div>
+      <div className="col-12 md:col-3">
+        <label
+          htmlFor="users_wctxt"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmab_users.users_wctxt.label}
+        </label>
+        <InputText
+          name="users_wctxt"
+          value={formData.users_wctxt}
+          onChange={(e) => onChange("users_wctxt", e.target.value)}
+          className={`w-full ${errors.users_wctxt ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmab_users.users_wctxt.label}`}
+        />
+        {errors.users_wctxt && (
+          <small className="mb-3 text-red-500">{errors.users_wctxt}</small>
+        )}
+      </div>
+      <div className="col-12 md:col-4">
+        <label
+          htmlFor="users_notes"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmab_users.users_notes.label}
+        </label>
+        <InputText
+          name="users_notes"
+          value={formData.users_notes}
+          onChange={(e) => onChange("users_notes", e.target.value)}
+          className={`w-full ${errors.users_notes ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmab_users.users_notes.label}`}
+        />
+        {errors.users_notes && (
+          <small className="mb-3 text-red-500">{errors.users_notes}</small>
+        )}
+      </div>
+
       <div className="col-12">
         <div className="flex flex-row-reverse flex-wrap">
           <Button

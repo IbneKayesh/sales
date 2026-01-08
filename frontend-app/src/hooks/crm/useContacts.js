@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
-import { usersAPI } from "@/api/auth/usersAPI";
-import tmab_users from "@/models/auth/tmab_users.json";
+import { contactAPI } from "@/api/crm/contactAPI";
+import tmcb_cntcs from "@/models/crm/tmcb_cntcs.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
-import { businessAPI } from "@/api/auth/businessAPI";
 
-const dataModel = generateDataModel(tmab_users, { edit_stop: 0 });
+const dataModel = generateDataModel(tmcb_cntcs, { edit_stop: 0 });
 
-export const useUsers = () => {
+export const useContacts = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
@@ -18,44 +17,44 @@ export const useUsers = () => {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
-  const [businessOptions, setBusinessOptions] = useState([]);
-  const roleOptions = [
-    { label: "Admin", value: "Admin" },
-    { label: "User", value: "User" },
+  const cntct_ctypeOptions = [
+    { label: "Customer", value: "Customer" },
+    { label: "Supplier", value: "Supplier" },
+    { label: "Both", value: "Both" },
   ];
+  const cntct_sorceOptions = [{ label: "Local", value: "Local" }];
+  const cntct_cntryOptions = [{ label: "Bangladesh", value: "Bangladesh" }];
 
-  const loadUsers = async () => {
+  // const [ledgerContactList, setLedgerContactList] = useState([]);
+  // const [contactPaymentList, setContactPaymentList] = useState([]);
+  // const [supplierList, setSupplierList] = useState([]);
+  // const [contactCustomerList, setContactCustomerList] = useState([]);
+  // const [contactsLedger, setContactsLedger] = useState([]);
+
+  const loadContacts = async () => {
     try {
-      const response = await usersAPI.getAll({ users_users: user.users_users });
-      // response = { message, data }
-
-      setDataList(response.data);
-      showToast("success", "Success", response.message);
-    } catch (error) {
-      console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
-    }
-  };
-
-  const loadBusiness = async () => {
-    console.log("loadBusiness: ", businessOptions);
-    if (businessOptions.length > 0) {
-      return;
-    }
-    try {
-      const response = await businessAPI.getAll({
-        bsins_users: user.users_users,
+      const response = await contactAPI.getAll({
+        cntct_users: user.users_users,
       });
-      console.log("response: " + JSON.stringify(response));
-
       // response = { message, data }
+      setDataList(response.data);
 
-      setBusinessOptions(
-        response.data.map((d) => ({
-          value: d.id,
-          label: d.bsins_bname,
-        }))
-      );
+      // const paymentData = response.data.filter(
+      //   (c) => c.contact_type !== "Both"
+      // );
+      // setContactPaymentList(paymentData);
+
+      // const supplierData = response.data.filter((c) =>
+      //   ["Supplier", "Both"].includes(c.contact_type)
+      // );
+      // setSupplierList(supplierData);
+
+      // const customerData = response.data.filter((c) =>
+      //   ["Customer", "Both"].includes(c.contact_type)
+      // );
+      // setContactCustomerList(customerData);
+
+      showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
       showToast("error", "Error", error?.message || "Failed to load data");
@@ -64,12 +63,13 @@ export const useUsers = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadUsers();
+    //console.log("useEffect", dataModel);
+    loadContacts();
   }, []);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmab_users);
+    const newErrors = validate({ ...formData, [field]: value }, tmcb_cntcs);
     setErrors(newErrors);
   };
 
@@ -86,29 +86,20 @@ export const useUsers = () => {
   const handleAddNew = () => {
     handleClear();
     setCurrentView("form");
-    loadBusiness();
   };
 
   const handleEdit = (data) => {
     //console.log("edit: " + JSON.stringify(data));
-    setFormData({
-      ...data,
-      users_pswrd: "",
-    });
+    setFormData(data);
     setCurrentView("form");
-    loadBusiness();
   };
 
   const handleDelete = async (rowData) => {
     try {
-      if (rowData.id === rowData.users_users) {
-        showToast("error", "Error", "Cannot delete primary user");
-        return;
-      }
       // Call API, unwrap { message, data }
-      const response = await usersAPI.delete(rowData);
+      const response = await contactAPI.delete(rowData);
 
-      const updatedList = dataList.filter((u) => u.id !== rowData.id);
+      const updatedList = dataList.filter((c) => c.id !== rowData.id);
       setDataList(updatedList);
 
       showToast(
@@ -119,27 +110,22 @@ export const useUsers = () => {
       );
     } catch (error) {
       console.error("Error deleting data:", error);
-
       showToast("error", "Error", error?.message || "Failed to delete data");
     }
   };
 
   const handleRefresh = () => {
-    loadUsers();
+    loadContacts();
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
+
     try {
       setIsBusy(true);
 
-      if (formData.users_pswrd === formData.users_recky) {
-        showToast("error", "Error", "Password and recovery key are same");
-        return;
-      }
-
       // Validate form
-      const newErrors = validate(formData, tmab_users);
+      const newErrors = validate(formData, tmcb_cntcs);
       setErrors(newErrors);
       console.log("handleSave: " + JSON.stringify(newErrors));
 
@@ -152,21 +138,19 @@ export const useUsers = () => {
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        users_users: user.users_users,
+        cntct_users: user.users_users,
+        cntct_bsins: user.users_bsins,
+        cntct_cntad: "0",
         user_id: user.id,
       };
-
-      // console.log("formDataNew: " + JSON.stringify(formDataNew));
-      // return;
 
       // Call API and get { message, data }
       let response;
       if (formData.id) {
-        response = await usersAPI.update(formDataNew);
+        response = await contactAPI.update(formDataNew);
       } else {
-        response = await usersAPI.create(formDataNew);
+        response = await contactAPI.create(formDataNew);
       }
-      //console.log("response: " + JSON.stringify(response));
 
       // Update toast using API message
       showToast(
@@ -178,7 +162,7 @@ export const useUsers = () => {
 
       handleClear();
       setCurrentView("list");
-      loadUsers();
+      loadContacts();
     } catch (error) {
       console.error("Error saving data:", error);
 
@@ -186,6 +170,36 @@ export const useUsers = () => {
     } finally {
       setIsBusy(false);
     }
+  };
+
+  const fetchSupplierList = async () => {
+    const response = await contactAPI.getAll();
+    const supplierData = response.data.filter(
+      (c) => c.contact_type === "Supplier" || c.contact_type === "Both"
+    );
+    setSupplierList(supplierData);
+  };
+
+  const handleLedger = async (contact) => {
+    try {
+      const response = await contactAPI.getContactLedger(contact.contact_id);
+      // response = { message, data }
+      setContactsLedger(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+
+      setToastBox({
+        severity: "error",
+        summary: "Error",
+        detail: error?.message || "Failed to load data",
+      });
+    }
+  };
+
+  const fetchLedgerContactList = async (id) => {
+    const response = await contactAPI.getByType(id);
+    // response = { message, data }
+    setLedgerContactList(response.data);
   };
 
   return {
@@ -201,7 +215,8 @@ export const useUsers = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-    roleOptions,
-    businessOptions,
+    cntct_ctypeOptions,
+    cntct_sorceOptions,
+    cntct_cntryOptions,
   };
 };

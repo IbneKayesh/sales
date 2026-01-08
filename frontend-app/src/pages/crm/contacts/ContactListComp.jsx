@@ -5,22 +5,15 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { Dialog } from "primereact/dialog";
 import { Badge } from "primereact/badge";
-import { Tag } from "primereact/tag";
-import { Button } from "primereact/button";
 
-const ContactListComponent = ({
-  dataList,
-  onEdit,
-  onDelete,
-  onLedger,
-  contactsLedger,
-}) => {
+const ContactListComp = ({ dataList, onEdit, onDelete }) => {
   const [selectedRowDetail, setSelectedRowDetail] = useState({});
   const [visibleLedger, setVisibleLedger] = useState(false);
+  const [contactsLedger, setcontactsLedger] = useState([]);
 
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.contact_name}"?`,
+      message: `Are you sure you want to delete "${rowData.cntct_cntnm}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -30,46 +23,6 @@ const ContactListComponent = ({
         // Do nothing on reject
       },
     });
-  };
-
-  const handleVisibleLedger = (rowData) => {
-    setSelectedRowDetail(rowData);
-    setVisibleLedger(true);
-    onLedger(rowData);
-  };
-
-  const credit_limit_BT = (rowData) => {
-    const creditLimit = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.credit_limit);
-
-    return rowData.credit_limit > 0 ? (
-      <Badge value={creditLimit} severity="success" className="mr-1"></Badge>
-    ) : (
-      <Badge value={creditLimit} severity="danger" className="mr-1"></Badge>
-    );
-  };
-
-  const payable_balance_BT = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.payable_balance);
-  };
-
-  const advance_balance_BT = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.advance_balance);
-  };
-
-  const current_balance_BT = (rowData) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(rowData.current_balance);
   };
 
   const action_BT = (rowData) => {
@@ -98,11 +51,119 @@ const ContactListComponent = ({
           size="small"
           tooltip="Ledger"
           tooltipOptions={{ position: "top" }}
-          onClick={() => handleVisibleLedger(rowData)}
+          //onClick={() => handleVisibleLedger(rowData)}
           model={menuItems}
         />
       </div>
     );
+  };
+
+  const cntct_ctype_BT = (rowData) => {
+    return (
+      <>
+      {rowData.cntct_ctype} {" - "}
+      {rowData.cntct_sorce}
+      </>
+    )
+  };
+
+  const cntct_cntnm_BT = (rowData) => {
+    return (
+      <>
+        {rowData.cntct_cntnm}
+        {", "}
+        {rowData.cntct_cntps}
+        {", "}
+        {rowData.cntct_cntno}
+        {", "}
+        {rowData.cntct_email}{" "}
+        {rowData.cntct_actve === 1 ? (
+          <i className="pi pi-check-circle text-green-500" />
+        ) : (
+          <i className="pi pi-times-circle text-red-500" />
+        )}
+      </>
+    );
+  };
+
+  const cntct_ofadr_BT = (rowData) => {
+    return (
+      rowData.cntct_ofadr +
+      ", " +
+      rowData.cntct_fcadr +
+      ", " +
+      rowData.cntct_cntry
+    );
+  };
+
+  const cntct_crlmt_BT = (rowData) => {
+    return rowData.cntct_crlmt > 0 ? (
+      <Badge
+        value={rowData.cntct_crlmt}
+        severity="success"
+        className="mr-1"
+      ></Badge>
+    ) : (
+      <Badge
+        value={rowData.cntct_crlmt}
+        severity="danger"
+        className="mr-1"
+      ></Badge>
+    );
+  };
+
+  const cntct_pybln_BT = (rowData) => {
+    return rowData.cntct_pybln > 0 ? (
+      <Badge
+        value={rowData.cntct_pybln}
+        severity="danger"
+        className="mr-1"
+      ></Badge>
+    ) : (
+      <Badge
+        value={rowData.cntct_pybln}
+        severity="success"
+        className="mr-1"
+      ></Badge>
+    );
+  };
+
+  const cntct_adbln_BT = (rowData) => {
+    return rowData.cntct_adbln > 0 ? (
+      <Badge
+        value={rowData.cntct_adbln}
+        severity="danger"
+        className="mr-1"
+      ></Badge>
+    ) : (
+      <Badge
+        value={rowData.cntct_adbln}
+        severity="success"
+        className="mr-1"
+      ></Badge>
+    );
+  };
+
+  const cntct_crbln_BT = (rowData) => {
+    return rowData.cntct_crbln > 0 ? (
+      <Badge
+        value={rowData.cntct_crbln}
+        severity="danger"
+        className="mr-1"
+      ></Badge>
+    ) : (
+      <Badge
+        value={rowData.cntct_crbln}
+        severity="success"
+        className="mr-1"
+      ></Badge>
+    );
+  };
+
+  const handleVisibleLedger = (rowData) => {
+    setSelectedRowDetail(rowData);
+    setVisibleLedger(true);
+    onLedger(rowData);
   };
 
   const payment_mode_BT = (rowData) => {
@@ -153,32 +214,17 @@ const ContactListComponent = ({
         rowHover
         showGridlines
       >
-        <Column field="contact_name" header="Name" sortable />
-        <Column field="contact_mobile" header="Mobile" />
-        <Column field="contact_email" header="Email" />
-        <Column field="contact_address" header="Address" />
-        <Column field="contact_type" header="Type" />
+        <Column field="cntct_ctype" header="Type" body={cntct_ctype_BT} />
+        <Column field="cntct_cntnm" header="Name" body={cntct_cntnm_BT} />
+        <Column field="cntct_ofadr" header="Address" body={cntct_ofadr_BT} />
         <Column
-          field="credit_limit"
+          field="cntct_crlmt"
           header="Credit Limit"
-          body={credit_limit_BT}
+          body={cntct_crlmt_BT}
         />
-        <Column
-          field="payable_balance"
-          header="Payable Balance"
-          body={payable_balance_BT}
-        />
-        <Column
-          field="advance_balance"
-          header="Advance Balance"
-          body={advance_balance_BT}
-        />
-        <Column
-          field="current_balance"
-          header="Current Balance"
-          body={current_balance_BT}
-        />
-        <Column field="shop_name" header="Shop" />
+        <Column field="cntct_pybln" header="Payable" body={cntct_pybln_BT} />
+        <Column field="cntct_adbln" header="Advance" body={cntct_adbln_BT} />
+        <Column field="cntct_crbln" header="Balance" body={cntct_crbln_BT} />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
 
@@ -234,4 +280,4 @@ const ContactListComponent = ({
   );
 };
 
-export default ContactListComponent;
+export default ContactListComp;

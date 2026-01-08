@@ -1,8 +1,8 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { useUsers } from "@/hooks/auth/useUsers";
 import UsersListComp from "./UsersListComp";
 import UsersFormComp from "./UsersFormComp";
+import { useUsers } from "@/hooks/auth/useUsers";
 
 const UsersPage = () => {
   const {
@@ -14,10 +14,10 @@ const UsersPage = () => {
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditUser,
-    handleDeleteUser,
+    handleEdit,
+    handleDelete,
     handleRefresh,
-    handleSaveUser,
+    handleSave,
     roleOptions,
     businessOptions,
   } = useUsers();
@@ -68,8 +68,8 @@ const UsersPage = () => {
         {currentView === "list" ? (
           <UsersListComp
             dataList={dataList}
-            onEdit={handleEditUser}
-            onDelete={handleDeleteUser}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         ) : (
           <UsersFormComp
@@ -77,7 +77,7 @@ const UsersPage = () => {
             errors={errors}
             formData={formData}
             onChange={handleChange}
-            onSave={handleSaveUser}
+            onSave={handleSave}
             roleOptions={roleOptions}
             businessOptions={businessOptions}
           />

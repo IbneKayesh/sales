@@ -1,35 +1,5 @@
 // backend-app/db/accountsPgs.js
 const accountsPgs = () => {
-  const bank = `
-    CREATE TABLE IF NOT EXISTS banks (
-      bank_id TEXT PRIMARY KEY,
-      bank_name TEXT UNIQUE NOT NULL,
-      branch_name TEXT,
-      routing_no TEXT,
-      current_balance NUMERIC(18,4) DEFAULT 0,
-      shop_id TEXT,
-      created_at TIMESTAMP NOT NULL DEFAULT now(),
-      updated_at TIMESTAMP NOT NULL DEFAULT now(),
-      CONSTRAINT fk_shop FOREIGN KEY (shop_id) REFERENCES shops(shop_id) ON DELETE SET NULL
-    );
-  `;
-
-  const account = `
-    CREATE TABLE IF NOT EXISTS accounts (
-      account_id TEXT PRIMARY KEY,
-      account_type TEXT NOT NULL,
-      account_name TEXT UNIQUE NOT NULL,
-      account_number TEXT,
-      account_note TEXT,
-      opening_date TIMESTAMP NOT NULL DEFAULT now(),
-      current_balance NUMERIC(18,4) DEFAULT 0,
-      is_default BOOLEAN DEFAULT FALSE,
-      bank_id TEXT,
-      created_at TIMESTAMP NOT NULL DEFAULT now(),
-      updated_at TIMESTAMP NOT NULL DEFAULT now(),
-      CONSTRAINT fk_bank FOREIGN KEY (bank_id) REFERENCES banks(bank_id) ON DELETE SET NULL
-    );
-  `;
 
   const account_heads = `
     CREATE TABLE IF NOT EXISTS accounts_heads (

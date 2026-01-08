@@ -15,12 +15,13 @@ CREATE TABLE `tmab_bsins` (
   `bsins_binno` varchar(255) DEFAULT NULL,
   `bsins_btags` varchar(255) DEFAULT NULL,
   `bsins_cntry` varchar(50) DEFAULT NULL,
+  -- default
   `bsins_stdat` datetime NOT NULL DEFAULT current_timestamp(),
   `bsins_actve` tinyint(1) NOT NULL DEFAULT 1,
   `bsins_crusr` varchar(50) NOT NULL,
   `bsins_crdat` datetime NOT NULL DEFAULT current_timestamp(),
   `bsins_upusr` varchar(50) NOT NULL,
-  `bsins_updat` datetime NOT NULL DEFAULT current_timestamp(),
+  `bsins_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `bsins_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

@@ -54,6 +54,7 @@ router.post("/create", async (req, res) => {
       bsins_btags,
       bsins_cntry,
       bsins_stdat,
+      user_id,
     } = req.body;
 
     // Validate input
@@ -91,8 +92,8 @@ router.post("/create", async (req, res) => {
       bsins_btags,
       bsins_cntry,
       bsins_stdat,
-      bsins_users,
-      bsins_users,
+      user_id,
+      user_id,
     ];
 
     await dbRun(sql, params, `Create business for ${bsins_bname}`);
@@ -111,7 +112,6 @@ router.post("/create", async (req, res) => {
   }
 });
 
-
 // update
 router.post("/update", async (req, res) => {
   try {
@@ -126,6 +126,7 @@ router.post("/update", async (req, res) => {
       bsins_btags,
       bsins_cntry,
       bsins_stdat,
+      user_id,
     } = req.body;
 
     // Validate input
@@ -158,7 +159,6 @@ router.post("/update", async (req, res) => {
     bsins_cntry = ?,
     bsins_stdat = ?,
     bsins_upusr = ?,
-    bsins_updat = current_timestamp(),
     bsins_rvnmr = bsins_rvnmr + 1
     WHERE id = ?`;
     const params = [
@@ -170,7 +170,7 @@ router.post("/update", async (req, res) => {
       bsins_btags,
       bsins_cntry,
       bsins_stdat,
-      bsins_users,
+      user_id,
       id,
     ];
 

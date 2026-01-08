@@ -45,28 +45,30 @@ router.post("/create", async (req, res) => {
   try {
     const {
       id,
-      bsins_users,
-      bsins_bname,
-      bsins_addrs,
-      bsins_email,
-      bsins_cntct,
-      bsins_binno,
-      bsins_btags,
-      bsins_cntry,
-      bsins_stdat,
+      users_email,
+      users_pswrd,
+      users_recky,
+      users_oname,
+      users_cntct,
+      users_bsins,
+      users_drole,
+      users_users,
+      users_wctxt,
+      users_notes,
+      user_id,
     } = req.body;
 
     // Validate input
     if (
       !id ||
-      !bsins_users ||
-      !bsins_bname ||
-      !bsins_addrs ||
-      !bsins_email ||
-      !bsins_cntct ||
-      !bsins_btags ||
-      !bsins_cntry ||
-      !bsins_stdat
+      !users_email ||
+      !users_pswrd ||
+      !users_recky ||
+      !users_oname ||
+      !users_cntct ||
+      !users_bsins ||
+      !users_drole ||
+      !users_users
     ) {
       return res.json({
         success: false,
@@ -76,29 +78,33 @@ router.post("/create", async (req, res) => {
     }
 
     //database action
-    const sql = `INSERT INTO tmab_bsins
-    (id,bsins_users,bsins_bname,bsins_addrs,bsins_email,bsins_cntct,
-    bsins_binno,bsins_btags,bsins_cntry,bsins_stdat,bsins_crusr,bsins_upusr)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`;
+    const sql = `INSERT INTO tmab_users
+    (id,users_email,users_pswrd,users_recky,users_oname,users_cntct,
+    users_bsins,users_drole,users_users,users_stats,users_regno,
+    users_wctxt,users_notes,users_nofcr,users_isrgs,users_crusr,users_upusr)
+    VALUES (?,?,?,?,?,?,
+    ?,?,?,0,'Standard',
+    ?,?,0,0,?,?)`;
     const params = [
       id,
-      bsins_users,
-      bsins_bname,
-      bsins_addrs,
-      bsins_email,
-      bsins_cntct,
-      bsins_binno,
-      bsins_btags,
-      bsins_cntry,
-      bsins_stdat,
-      bsins_users,
-      bsins_users,
+      users_email,
+      users_pswrd,
+      users_recky,
+      users_oname,
+      users_cntct,
+      users_bsins,
+      users_drole,
+      users_users,
+      users_wctxt,
+      users_notes,
+      user_id,
+      user_id,
     ];
 
-    await dbRun(sql, params, `Create business for ${bsins_bname}`);
+    await dbRun(sql, params, `Create user for ${users_oname}`);
     res.json({
       success: true,
-      message: "Business created successfully",
+      message: "User created successfully",
       data: null,
     });
   } catch (error) {
@@ -111,34 +117,35 @@ router.post("/create", async (req, res) => {
   }
 });
 
-
 // update
 router.post("/update", async (req, res) => {
   try {
     const {
       id,
-      bsins_users,
-      bsins_bname,
-      bsins_addrs,
-      bsins_email,
-      bsins_cntct,
-      bsins_binno,
-      bsins_btags,
-      bsins_cntry,
-      bsins_stdat,
+      users_email,
+      users_pswrd,
+      users_recky,
+      users_oname,
+      users_cntct,
+      users_bsins,
+      users_drole,
+      users_users,
+      users_wctxt,
+      users_notes,
+      user_id
     } = req.body;
 
     // Validate input
     if (
       !id ||
-      !bsins_users ||
-      !bsins_bname ||
-      !bsins_addrs ||
-      !bsins_email ||
-      !bsins_cntct ||
-      !bsins_btags ||
-      !bsins_cntry ||
-      !bsins_stdat
+      !users_email ||
+      !users_pswrd ||
+      !users_recky ||
+      !users_oname ||
+      !users_cntct ||
+      !users_bsins ||
+      !users_drole ||
+      !users_users
     ) {
       return res.json({
         success: false,
@@ -148,36 +155,38 @@ router.post("/update", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmab_bsins
-    SET bsins_bname = ?,
-    bsins_addrs = ?,
-    bsins_email = ?,
-    bsins_cntct = ?,
-    bsins_binno = ?,
-    bsins_btags = ?,
-    bsins_cntry = ?,
-    bsins_stdat = ?,
-    bsins_upusr = ?,
-    bsins_updat = current_timestamp(),
-    bsins_rvnmr = bsins_rvnmr + 1
+    const sql = `UPDATE tmab_users
+    SET users_email = ?,
+    users_pswrd = ?,
+    users_recky = ?,
+    users_oname = ?,
+    users_cntct = ?,
+    users_bsins = ?,
+    users_drole = ?,
+    users_wctxt = ?,
+    users_notes = ?,
+    users_upusr = ?,
+    users_updat = current_timestamp(),
+    users_rvnmr = users_rvnmr + 1
     WHERE id = ?`;
     const params = [
-      bsins_bname,
-      bsins_addrs,
-      bsins_email,
-      bsins_cntct,
-      bsins_binno,
-      bsins_btags,
-      bsins_cntry,
-      bsins_stdat,
-      bsins_users,
+      users_email,
+      users_pswrd,
+      users_recky,
+      users_oname,
+      users_cntct,
+      users_bsins,
+      users_drole,
+      users_wctxt,
+      users_notes,
+      user_id,
       id,
     ];
 
-    await dbRun(sql, params, `Update business for ${bsins_bname}`);
+    await dbRun(sql, params, `Update user for ${users_oname}`);
     res.json({
       success: true,
-      message: "Business updated successfully",
+      message: "User updated successfully",
       data: null,
     });
   } catch (error) {
@@ -193,7 +202,7 @@ router.post("/update", async (req, res) => {
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, bsins_bname } = req.body;
+    const { id, users_oname} = req.body;
 
     // Validate input
     if (!id) {
@@ -205,15 +214,15 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmab_bsins
-    SET bsins_actve = 1 - bsins_actve
+    const sql = `UPDATE tmab_users
+    SET users_actve = 1 - users_actve
     WHERE id = ?`;
     const params = [id];
 
-    await dbRun(sql, params, `Delete business for ${bsins_bname}`);
+    await dbRun(sql, params, `Delete user for ${users_oname}`);
     res.json({
       success: true,
-      message: "Business deleted successfully",
+      message: "User deleted successfully",
       data: null,
     });
   } catch (error) {

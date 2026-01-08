@@ -7,9 +7,8 @@ export const usersAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  getById: (id) => apiRequest(`/auth/users/${id}`),
   create: (user) =>
-    apiRequest("/auth/users", {
+    apiRequest("/auth/users/create", {
       method: "POST",
       body: JSON.stringify(user),
     }),
@@ -20,11 +19,6 @@ export const usersAPI = {
     }),
   delete: (user) =>
     apiRequest("/auth/users/delete", {
-      method: "POST",
-      body: JSON.stringify(user),
-    }),
-  changePassword: (user) =>
-    apiRequest("/auth/users/change-password", {
       method: "POST",
       body: JSON.stringify(user),
     }),

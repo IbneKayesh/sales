@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { businessAPI } from "@/api/auth/businessAPI";
-import validate, { generateDataModel } from "@/models/validator";
 import tmab_bsins from "@/models/auth/tmab_bsins.json";
+import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast.jsx";
+import { useToast } from "@/hooks/useToast";
 import { formatDateForAPI } from "@/utils/datetime";
 
 const dataModel = generateDataModel(tmab_bsins, { edit_stop: 0 });
@@ -20,7 +20,9 @@ export const useBusiness = () => {
 
   const loadBusiness = async () => {
     try {
-      const response = await businessAPI.getAll({ bsins_users: user.id });
+      const response = await businessAPI.getAll({
+        bsins_users: user.users_users,
+      });
       //response = { success, message, data }
 
       setDataList(response.data);
@@ -72,7 +74,12 @@ export const useBusiness = () => {
       const updatedList = dataList.filter((s) => s.id !== rowData.id);
       setDataList(updatedList);
 
-      showToast("info", "Deleted", response.message || "Deleted successfully");
+      showToast(
+        response.success ? "info" : "error",
+        response.success ? "Deleted" : "Error",
+        response.message ||
+          "Operation " + (response.success ? "successful" : "failed")
+      );
     } catch (error) {
       console.error("Error deleting data:", error);
       showToast("error", "Error", error?.message || "Failed to delete data");
@@ -102,8 +109,9 @@ export const useBusiness = () => {
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        bsins_users: user.id, // Ensure user id is set
+        bsins_users: user.users_users,
         bsins_stdat: formatDateForAPI(formData.bsins_stdat),
+        user_id: user.id,
       };
 
       // Call API and get { message, data }
@@ -116,9 +124,10 @@ export const useBusiness = () => {
 
       // Update toast using API message
       showToast(
-        "success",
-        "Success",
-        response.message || "Operation successful"
+        response.success ? "success" : "error",
+        response.success ? "Success" : "Error",
+        response.message ||
+          "Operation " + (response.success ? "successful" : "failed")
       );
 
       // Clear form & reload

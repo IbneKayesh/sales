@@ -1,22 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useContacts } from "@/hooks/setup/useContacts";
-import ContactListComponent from "./ContactListComponent";
-import ContactFormComponent from "./ContactFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
+import ContactListComp from "./ContactListComp";
+import ContactFormComp from "./ContactFormComp";
+import { useContacts } from "@/hooks/crm/useContacts";
 
 const ContactPage = () => {
-  const toast = useRef(null);
   const {
-    contactList,
-    contactPaymentList,
-    fetchSupplierList,
-    supplierList,
-    contactCustomerList,
-    contactTypeOptions,
-    shopOptions,
-    toastBox,
+    dataList,
     isBusy,
     currentView,
     errors,
@@ -24,26 +14,14 @@ const ContactPage = () => {
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditContact,
-    handleDeleteContact,
+    handleEdit,
+    handleDelete,
     handleRefresh,
-    handleSaveContact,
-    handleLedger,
-    contactsLedger,
-    ledgerContactList,
-    fetchLedgerContactList,
+    handleSave,
+    cntct_ctypeOptions,
+    cntct_sorceOptions,
+    cntct_cntryOptions,
   } = useContacts();
-
-  useEffect(() => {
-    if (toastBox && toast.current) {
-      toast.current.show({
-        severity: toastBox.severity,
-        summary: toastBox.summary,
-        detail: toastBox.detail,
-        life: 3000,
-      });
-    }
-  }, [toastBox]);
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -53,7 +31,7 @@ const ContactPage = () => {
         <h3 className="m-0">
           {isList
             ? "Contact"
-            : formData.contact_id
+            : formData.id
             ? "Edit Contact"
             : "Add New Contact"}
         </h3>
@@ -87,25 +65,23 @@ const ContactPage = () => {
 
   return (
     <>
-      <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <ContactListComponent
-            dataList={contactList}
-            onEdit={handleEditContact}
-            onDelete={handleDeleteContact}
-            onLedger={handleLedger}
-            contactsLedger={contactsLedger}
+          <ContactListComp
+            dataList={dataList}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         ) : (
-          <ContactFormComponent
+          <ContactFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
             onChange={handleChange}
-            onSave={handleSaveContact}
-            contactTypeOptions={contactTypeOptions}
-            shopOptions={shopOptions}
+            onSave={handleSave}
+            cntct_ctypeOptions={cntct_ctypeOptions}
+            cntct_sorceOptions={cntct_sorceOptions}
+            cntct_cntryOptions={cntct_cntryOptions}
           />
         )}
       </Card>

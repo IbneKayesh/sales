@@ -3,7 +3,7 @@ const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
 const { v4: uuidv4 } = require("uuid");
 
-// registration
+// registration, with auto login
 router.post("/register", async (req, res) => {
   try {
     const {
@@ -84,8 +84,9 @@ router.post("/register", async (req, res) => {
     // });
 
     //login when register
-    const sql = `SELECT usr.id,usr.users_email,usr.users_oname,usr.users_cntct,usr.users_bsins,usr.users_drole,usr.users_stats,usr.users_regno,usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,
-    bsn.bsins_users,bsn.bsins_bname
+    const sql = `SELECT usr.id,usr.users_email,usr.users_oname,usr.users_cntct,usr.users_bsins,
+    usr.users_drole,usr.users_users,usr.users_stats,usr.users_regno,
+    usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,bsn.bsins_bname
     FROM tmab_users usr
     LEFT JOIN tmab_bsins bsn ON usr.users_bsins = bsn.id
         WHERE usr.users_email = ?
@@ -129,8 +130,9 @@ router.post("/login", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT usr.id,usr.users_email,usr.users_oname,usr.users_cntct,usr.users_bsins,usr.users_drole,usr.users_stats,usr.users_regno,usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,
-bsn.bsins_users,bsn.bsins_bname
+    const sql = `SELECT usr.id,usr.users_email,usr.users_oname,usr.users_cntct,usr.users_bsins,
+    usr.users_drole,usr.users_users,usr.users_stats,usr.users_regno,
+    usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,bsn.bsins_bname
 FROM tmab_users usr
 LEFT JOIN tmab_bsins bsn ON usr.users_bsins = bsn.id
     WHERE usr.users_email = ?
@@ -242,7 +244,6 @@ router.post("/set-password", async (req, res) => {
     users_pswrd = ?,
     users_lstpd = current_timestamp(),
     users_upusr = ?,
-    users_updat = current_timestamp(),
     users_rvnmr = users_rvnmr + 1
     WHERE id = ?
     AND users_email = ?`;

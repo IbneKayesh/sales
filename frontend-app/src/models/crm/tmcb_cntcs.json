@@ -1,0 +1,118 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "cntct_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "cntct_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter your business id",
+    "required": false
+  },
+  "cntct_ctype": {
+    "type": "string",
+    "label": "Contact Type",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter contact type",
+    "required": true,
+    "default": "Customer"
+  },
+  "cntct_sorce": {
+    "type": "string",
+    "label": "Source",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter your source",
+    "required": true,
+    "default": "Local"
+  },
+  "cntct_cntnm": {
+    "type": "string",
+    "label": "Contact Name",
+    "maxLength": 200,
+    "minLength": 3,
+    "placeholder": "Enter your contact name",
+    "required": true
+  },
+  "cntct_cntps": {
+    "type": "string",
+    "label": "Contact Person",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter your contact person",
+    "required": false
+  },
+  "cntct_cntno": {
+    "type": "string",
+    "label": "Contact Number",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter your contact number",
+    "required": false
+  },
+  "cntct_email": {
+    "type": "string",
+    "label": "Email",
+    "maxLength": 100,
+    "minLength": 3,
+    "placeholder": "Enter your email",
+    "required": false
+  },
+  "cntct_ofadr": {
+    "type": "string",
+    "label": "Office Address",
+    "maxLength": 200,
+    "minLength": 0,
+    "placeholder": "Enter office address",
+    "required": false
+  },
+  "cntct_fcadr": {
+    "type": "string",
+    "label": "Factory Address",
+    "maxLength": 200,
+    "minLength": 0,
+    "placeholder": "Enter factory address",
+    "required": false
+  },
+  "cntct_cntry": {
+    "type": "string",
+    "label": "Country",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter your Country",
+    "required": false,
+    "default": "Bangladesh"
+  },
+  "cntct_cntad": {
+    "type": "string",
+    "label": "Contact Address",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter contact address",
+    "required": false
+  },
+  "cntct_crlmt": {
+    "type": "number",
+    "label": "Credit Limit",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter credit limit",
+    "required": false,
+    "default": "0"
+  }
+}

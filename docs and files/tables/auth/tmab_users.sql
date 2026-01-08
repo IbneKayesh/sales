@@ -28,7 +28,7 @@ CREATE TABLE `tmab_users` (
   `users_crusr` varchar(50) NOT NULL,
   `users_crdat` datetime NOT NULL DEFAULT current_timestamp(),
   `users_upusr` varchar(50) NOT NULL,
-  `users_updat` datetime NOT NULL DEFAULT current_timestamp(),
+  `users_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `users_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
