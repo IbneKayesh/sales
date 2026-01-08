@@ -1,13 +1,10 @@
-import { useRef, useEffect } from "react";
+import { Card } from "primereact/card";
+import { Button } from "primereact/button";
 import { useBusiness } from "@/hooks/auth/useBusiness";
 import BusinessListComp from "./BusinessListComp";
 import BusinessFormComp from "./BusinessFormComp";
-import { Card } from "primereact/card";
-import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
 
 const BusinessPage = () => {
-  const toast = useRef(null);
   const {
     dataList,
     isBusy,
@@ -65,7 +62,6 @@ const BusinessPage = () => {
 
   return (
     <>
-      <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
           <BusinessListComp

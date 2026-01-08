@@ -3,7 +3,7 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import t_users from "@/models/setup/t_users.json";
 
-const UsersFormComponent = ({
+const UsersFormComp = ({
   isBusy,
   errors,
   formData,
@@ -144,4 +144,4 @@ const UsersFormComponent = ({
   );
 };
 
-export default UsersFormComponent;
+export default UsersFormComp;

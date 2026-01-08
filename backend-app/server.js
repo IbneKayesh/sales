@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 // Import routes
 const authRoutes = require('./routes/auth/auth.routes.js');
 const businessRoutes = require('./routes/auth/business.routes.js');
+const usersRoutes = require('./routes/auth/users.routes.js');
+
 // const unitRoutes = require('./routes/inventory/units.js');
 // const categoryRoutes = require('./routes/inventory/categories.js');
 // const productRoutes = require('./routes/inventory/products.js');
@@ -68,6 +70,8 @@ app.use('/api', (req, res, next) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/auth/business', businessRoutes);
+app.use('/api/auth/users', usersRoutes);
+
 // app.use('/api/inventory/units', unitRoutes);
 // app.use('/api/inventory/categories', categoryRoutes);
 // app.use('/api/inventory/products', productRoutes);

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
 const { v4: uuidv4 } = require("uuid");
+
 // registration
 router.post("/register", async (req, res) => {
   try {
@@ -51,8 +52,9 @@ router.post("/register", async (req, res) => {
 
     scripts.push({
       sql: `INSERT INTO tmab_users (id, users_email, users_pswrd, users_recky, users_oname, users_bsins,
-      users_drole, users_stats, users_regno, users_nofcr, users_crusr, users_upusr) 
-    VALUES (?, ?, ?, ?, ?, ?, 'Admin', 0, 'Standard', 10, ?, ?)`,
+      users_drole, users_users, users_stats, users_regno, users_nofcr, users_crusr, users_upusr) 
+    VALUES (?, ?, ?, ?, ?, ?,
+    'Admin', ?, 0, 'Standard', 10, ?, ?)`,
       params: [
         id,
         users_email,
@@ -60,6 +62,7 @@ router.post("/register", async (req, res) => {
         users_recky,
         users_oname,
         users_bsins_id,
+        id,
         id,
         id,
       ],

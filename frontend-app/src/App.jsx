@@ -12,6 +12,7 @@ import { ToastProvider } from "./hooks/useToast.jsx"; // [NEW]
 //internal imports
 import AuthPage from "./pages/auth/AuthPage";
 import BusinessPage from "./pages/auth/business/BusinessPage";
+import UsersPage from "./pages/auth/users/UsersPage";
 
 
 
@@ -25,7 +26,7 @@ import CategoryPage from "./pages/inventory/category/CategoryPage.jsx";
 import ProductPage from "./pages/inventory/products/ProductPage.jsx";
 import ContactPage from "./pages/setup/contacts/ContactPage.jsx";
 import SalesPage from "./pages/sales/SalesPage.jsx";
-import UsersPage from "./pages/setup/users/UsersPage";
+import UsersPage from "./pages/auth/users/UsersPage.jsx";
 import BackupPage from "./pages/setup/backup/BackupPage";
 import ChangePasswordPage from "./pages/setup/changepassword/ChangePasswordPage";
 import BankPage from "./pages/accounts/banks/BankPage.jsx";
@@ -65,6 +66,7 @@ function AppRoutes() {
       <Route path="/home" element={user ? <Layout /> : <Navigate to="/" />}>
         <Route index element={<HomePage />} />
         <Route path="auth/business" element={<BusinessPage />} />
+        <Route path="auth/users" element={<UsersPage />} />
 
 
         <Route path="inventory/unit" element={<UnitPage />} />

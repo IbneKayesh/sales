@@ -1,16 +1,12 @@
-import { useRef, useEffect } from "react";
-import { useUsers } from "@/hooks/setup/useUsers";
-import UsersListComponent from "./UsersListComponent";
-import UsersFormComponent from "./UsersFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
+import { useUsers } from "@/hooks/auth/useUsers";
+import UsersListComp from "./UsersListComp";
+import UsersFormComp from "./UsersFormComp";
 
 const UsersPage = () => {
-  const toast = useRef(null);
   const {
-    userList,
-    toastBox,
+    dataList,
     isBusy,
     currentView,
     errors,
@@ -23,19 +19,8 @@ const UsersPage = () => {
     handleRefresh,
     handleSaveUser,
     roleOptions,
-    shopOptions,
+    businessOptions,
   } = useUsers();
-
-  useEffect(() => {
-    if (toastBox && toast.current) {
-      toast.current.show({
-        severity: toastBox.severity,
-        summary: toastBox.summary,
-        detail: toastBox.detail,
-        life: 3000,
-      });
-    }
-  }, [toastBox]);
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -45,7 +30,7 @@ const UsersPage = () => {
         <h3 className="m-0">
           {isList
             ? "User List"
-            : formData.user_id
+            : formData.id
             ? "Edit User"
             : "Add New User"}
         </h3>
@@ -79,23 +64,22 @@ const UsersPage = () => {
 
   return (
     <>
-      <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <UsersListComponent
-            dataList={userList}
+          <UsersListComp
+            dataList={dataList}
             onEdit={handleEditUser}
             onDelete={handleDeleteUser}
           />
         ) : (
-          <UsersFormComponent
+          <UsersFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
             onChange={handleChange}
             onSave={handleSaveUser}
             roleOptions={roleOptions}
-            shopOptions={shopOptions}
+            businessOptions={businessOptions}
           />
         )}
       </Card>

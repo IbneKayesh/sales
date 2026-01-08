@@ -12,6 +12,7 @@ CREATE TABLE `tmab_users` (
   `users_cntct` varchar(50) DEFAULT NULL,  
   `users_bsins` varchar(50) DEFAULT NULL,
   `users_drole` VARCHAR(50) DEFAULT NULL,
+  `users_users` VARCHAR(50) DEFAULT NULL,
   `users_stats` int(11) NOT NULL DEFAULT 0,
   `users_regno` varchar(50) DEFAULT NULL,
   `users_regdt` datetime NOT NULL DEFAULT current_timestamp(),
@@ -38,3 +39,6 @@ CREATE TABLE `tmab_users` (
 ALTER TABLE `tmab_users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `ix_users_email` (`users_email`);
+
+
+  --ALTER TABLE `tmab_users` ADD `users_users` VARCHAR(50) NULL DEFAULT NULL AFTER `users_drole`;

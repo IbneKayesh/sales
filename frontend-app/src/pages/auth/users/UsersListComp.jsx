@@ -3,7 +3,7 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 
-const UsersListComponent = ({ dataList, onEdit, onDelete }) => {
+const UsersListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.user_name}"?`,
@@ -69,4 +69,4 @@ const UsersListComponent = ({ dataList, onEdit, onDelete }) => {
   );
 };
 
-export default UsersListComponent;
+export default UsersListComp;
