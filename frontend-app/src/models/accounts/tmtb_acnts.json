@@ -1,0 +1,73 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "bacts_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "bacts_bankn": {
+    "type": "string",
+    "label": "Bank Name",
+    "maxLength": 100,
+    "minLength": 6,
+    "placeholder": "Enter bank name",
+    "required": true
+  },
+  "bacts_brnch": {
+    "type": "string",
+    "label": "Branch",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter branch",
+    "required": false
+  },
+  "bacts_acnam": {
+    "type": "string",
+    "label": "Account Name",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter account name",
+    "required": false
+  },
+  "bacts_acnum": {
+    "type": "string",
+    "label": "Account Number",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter account number",
+    "required": false
+  },
+  "bacts_routn": {
+    "type": "string",
+    "label": "Routing Number",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter routing number",
+    "required": false
+  },
+  "bacts_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "bacts_opdat": {
+    "type": "date",
+    "label": "Date",
+    "placeholder": "Enter start date",
+    "required": true,
+    "default": "new Date() with local format"
+  }
+}

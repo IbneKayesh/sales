@@ -4,11 +4,14 @@ const bodyParser = require('body-parser');
 //const { initTables, initData } = require('./db/init.js');
 
 // Import routes
+//auth
 const authRoutes = require('./routes/auth/auth.routes.js');
 const businessRoutes = require('./routes/auth/business.routes.js');
 const usersRoutes = require('./routes/auth/users.routes.js');
-
+//crm
 const contactsRoutes = require('./routes/crm/contacts.routes.js');
+//accounts
+const accountsRoutes = require('./routes/accounts/accounts.routes.js');
 
 // const unitRoutes = require('./routes/inventory/units.js');
 // const categoryRoutes = require('./routes/inventory/categories.js');
@@ -65,11 +68,14 @@ app.use('/api', (req, res, next) => {
 
 
 // Routes
+//auth
 app.use('/api/auth', authRoutes);
 app.use('/api/auth/business', businessRoutes);
 app.use('/api/auth/users', usersRoutes);
-
+//crm
 app.use('/api/crm/contacts', contactsRoutes);
+//accounts
+app.use('/api/accounts/accounts', accountsRoutes);
 
 // app.use('/api/inventory/units', unitRoutes);
 // app.use('/api/inventory/categories', categoryRoutes);
