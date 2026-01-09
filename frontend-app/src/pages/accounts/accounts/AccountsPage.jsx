@@ -18,6 +18,7 @@ const AccountsPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
+    handleSetDefault,
   } = useAccounts();
 
   const getHeader = () => {
@@ -68,6 +69,7 @@ const AccountsPage = () => {
             dataList={dataList}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onSetDefault={handleSetDefault}
           />
         ) : (
           <AccountsFormComp

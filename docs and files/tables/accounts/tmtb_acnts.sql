@@ -1,21 +1,21 @@
 --
--- Table structure for table `tmtb_acnts`
+-- Table structure for table `tmtb_bacts`
 --
 
-CREATE TABLE `tmtb_acnts` (
+CREATE TABLE `tmtb_bacts` (
   `id` varchar(50) NOT NULL,
   `bacts_users` varchar(50) NOT NULL,
   `bacts_bankn` varchar(100) NOT NULL,
   -- optional
   `bacts_brnch` varchar(100) DEFAULT NULL,
+  `bacts_routn` varchar(50) DEFAULT NULL,
   `bacts_acnam` varchar(100) DEFAULT NULL,
   `bacts_acnum` varchar(100) DEFAULT NULL,
-  `bacts_routn` varchar(50) DEFAULT NULL,
   `bacts_notes` varchar(300) DEFAULT NULL,
   -- default
   `bacts_opdat` datetime NOT NULL DEFAULT current_timestamp(),
   `bacts_crbln` decimal(18,6) NOT NULL DEFAULT 0,
-  `bacts_isdef` tinyint(1) NOT NULL DEFAULT 1,
+  `bacts_isdef` tinyint(1) NOT NULL DEFAULT 0,
   `bacts_actve` tinyint(1) NOT NULL DEFAULT 1,
   `bacts_crusr` varchar(50) NOT NULL,
   `bacts_crdat` datetime NOT NULL DEFAULT current_timestamp(),
@@ -25,7 +25,7 @@ CREATE TABLE `tmtb_acnts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Indexes for table `tmtb_acnts`
+-- Indexes for table `tmtb_bacts`
 --
-ALTER TABLE `tmtb_acnts`
+ALTER TABLE `tmtb_bacts`
   ADD PRIMARY KEY (`id`);

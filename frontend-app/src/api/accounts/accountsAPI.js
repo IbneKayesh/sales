@@ -22,4 +22,9 @@ export const accountsAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  setDefault: (data) =>
+    apiRequest("/accounts/accounts/set-default", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

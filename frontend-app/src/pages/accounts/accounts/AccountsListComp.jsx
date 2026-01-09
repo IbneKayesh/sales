@@ -4,10 +4,10 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { formatDate } from "@/utils/datetime";
 
-const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
+const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.bsins_bname}"?`,
+      message: `Are you sure you want to delete "${rowData.bacts_bankn}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -21,6 +21,14 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
 
   const action_BT = (rowData) => {
     let menuItems = [
+      {
+        label: "Set Default",
+        icon: "pi pi-check-circle text-green-500",
+        command: () => {
+          onSetDefault(rowData);
+        },
+        disabled: rowData.edit_stop,
+      },
       {
         label: "Delete",
         icon: "pi pi-trash text-red-400",
@@ -45,14 +53,14 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const bsins_bname_BT = (rowData) => (
+  const bacts_bankn_BT = (rowData) => (
     <>
-      {rowData.bsins_bname}
+      {rowData.bacts_bankn}
       {", "}
-      {rowData.bsins_addrs}
+      {rowData.bacts_brnch}
       {", "}
-      {rowData.bsins_cntry}{" "}
-      {rowData.bsins_actve === 1 ? (
+      {rowData.bacts_routn}{" "}
+      {rowData.bacts_actve === 1 ? (
         <i className="pi pi-check-circle text-green-500" />
       ) : (
         <i className="pi pi-times-circle text-red-500" />
@@ -60,16 +68,28 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
     </>
   );
 
-  const bsins_email_BT = (rowData) => {
+  const bacts_acnam_BT = (rowData) => {
     return (
       <span>
-        {rowData.bsins_email}, {rowData.bsins_cntct}
+        {rowData.bacts_acnam}, {rowData.bacts_acnum}, {rowData.bacts_notes}
       </span>
     );
   };
 
-  const bsins_stdat_BT = (rowData) => {
-    return <>{formatDate(rowData.bsins_stdat)}</>;
+  const bacts_opdat_BT = (rowData) => {
+    return <>{formatDate(rowData.bacts_opdat)}</>;
+  };
+
+  const bacts_isdef_BT = (rowData) => {
+    return (
+      <>
+        {rowData.bacts_isdef === 1 ? (
+          <i className="pi pi-check-circle text-green-500" />
+        ) : (
+          <i className="pi pi-times-circle text-red-500" />
+        )}
+      </>
+    );
   };
   return (
     <div className="p-1">
@@ -84,15 +104,15 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
       >
-        <Column field="bsins_bname" header="Business" body={bsins_bname_BT} />
-        <Column field="bsins_email" header="Contact" body={bsins_email_BT} />
-        <Column field="bsins_binno" header="BIN" />
-        <Column field="bsins_btags" header="Tags" />
-        <Column field="bsins_stdat" header="Date" body={bsins_stdat_BT} />
+        <Column field="bacts_bankn" header="Bank Name" body={bacts_bankn_BT} />
+        <Column field="bacts_acnam" header="Account" body={bacts_acnam_BT} />
+        <Column field="bacts_opdat" header="Open Date" body={bacts_opdat_BT} />
+        <Column field="bacts_crbln" header="Balance" />
+        <Column field="bacts_isdef" header="Default" body={bacts_isdef_BT} />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );
 };
 
-export default BusinessListComp;
+export default AccountsListComp;

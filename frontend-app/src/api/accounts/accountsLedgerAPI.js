@@ -1,32 +1,30 @@
 import { apiRequest } from "@/utils/api.js";
 
-//Contacts API
-export const contactAPI = {
+//Accounts Ledger API
+export const accountsLedgerAPI = {
   getAll: (data) =>
-    apiRequest("/crm/contacts", {
+    apiRequest("/accounts/accounts-ledgers", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   create: (data) =>
-    apiRequest("/crm/contacts/create", {
+    apiRequest("/accounts/accounts-ledgers/create", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   update: (data) =>
-    apiRequest("/crm/contacts/update", {
+    apiRequest("/accounts/accounts-ledgers/update", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   delete: (data) =>
-    apiRequest("/crm/contacts/delete", {
+    apiRequest("/accounts/accounts-ledgers/delete", {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  getByType: (data) =>
-    apiRequest("/crm/contacts/get-by-type", {
+  setDefault: (data) =>
+    apiRequest("/accounts/accounts-ledgers/set-default", {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  getContactLedger: (contact_id) =>
-    apiRequest(`/setup/contacts/ledger/${contact_id}`),
 };

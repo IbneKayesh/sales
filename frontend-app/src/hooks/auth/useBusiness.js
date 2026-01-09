@@ -26,7 +26,7 @@ export const useBusiness = () => {
       //response = { success, message, data }
 
       setDataList(response.data);
-      showToast("success", "Success", response.message);
+      //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
       showToast("error", "Error", error?.message || "Failed to load data");
@@ -142,6 +142,35 @@ export const useBusiness = () => {
     }
   };
 
+  //other functions
+  const [businessListDdl, setBusinessListDdl] = useState([]);
+  const fetchBusinessListDdl = async () => {
+    if (businessListDdl.length > 0) return;
+
+    try {
+      if (dataList.length > 0) {
+        const ddlData = dataList.map((item) => ({
+          value: item.id,
+          label: item.bsins_bname,
+        }));
+        setBusinessListDdl(ddlData);
+      } else {
+        const response = await businessAPI.getAll({
+          bsins_users: user.users_users,
+        });
+        //response = { success, message, data }
+        const ddlData = response.data.map((item) => ({
+          value: item.id,
+          label: item.bsins_bname,
+        }));
+        setBusinessListDdl(ddlData);
+      }
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
+
   return {
     dataList,
     isBusy,
@@ -155,5 +184,7 @@ export const useBusiness = () => {
     handleDelete,
     handleRefresh,
     handleSave,
+    businessListDdl,
+    fetchBusinessListDdl,
   };
 };

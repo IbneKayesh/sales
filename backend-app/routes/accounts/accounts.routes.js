@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
 
     //database action
     const sql = `SELECT acts.*, 0 as edit_stop
-      FROM tmtb_acnts acts
+      FROM tmtb_bacts acts
       WHERE acts.bacts_users = ?
       ORDER BY acts.bacts_bankn`;
     const params = [bacts_users];
@@ -66,7 +66,7 @@ router.post("/create", async (req, res) => {
     }
 
     //database action
-    const sql = `INSERT INTO tmtb_acnts
+    const sql = `INSERT INTO tmtb_bacts
     (id,bacts_users,bacts_bankn,bacts_brnch,bacts_acnam,bacts_acnum,bacts_routn,
     bacts_notes,bacts_opdat,bacts_crusr,bacts_upusr)
     VALUES (?,?,?,?,?,?,?,
@@ -127,7 +127,7 @@ router.post("/update", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmtb_acnts
+    const sql = `UPDATE tmtb_bacts
     SET bacts_bankn = ?,
     bacts_brnch = ?,
     bacts_acnam = ?,
@@ -181,7 +181,7 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmtb_acnts
+    const sql = `UPDATE tmtb_bacts
     SET bacts_actve = 1 - bacts_actve
     WHERE id = ?`;
     const params = [id];
@@ -190,6 +190,43 @@ router.post("/delete", async (req, res) => {
     res.json({
       success: true,
       message: "Account deleted successfully",
+      data: null,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+
+// set default
+router.post("/set-default", async (req, res) => {
+  try {
+    const { id, bacts_bankn } = req.body;
+
+    // Validate input
+    if (!id) {
+      return res.json({
+        success: false,
+        message: "Account ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `UPDATE tmtb_bacts
+    SET bacts_isdef = 1 - bacts_isdef
+    WHERE id = ?`;
+    const params = [id];
+
+    await dbRun(sql, params, `Set default account for ${bacts_bankn}`);
+    res.json({
+      success: true,
+      message: "Account set default successfully",
       data: null,
     });
   } catch (error) {

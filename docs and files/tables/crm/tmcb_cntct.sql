@@ -1,8 +1,8 @@
 --
--- Table structure for table `tmcb_cntcs`
+-- Table structure for table `tmcb_cntct`
 --
 
-CREATE TABLE `tmcb_cntcs` (
+CREATE TABLE `tmcb_cntct` (
   `id` varchar(50) NOT NULL,
   `cntct_users` varchar(50) NOT NULL,
   `cntct_bsins` varchar(50) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE `tmcb_cntcs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Indexes for table `tmcb_cntcs`
+-- Indexes for table `tmcb_cntct`
 --
-ALTER TABLE `tmcb_cntcs`
+ALTER TABLE `tmcb_cntct`
   ADD PRIMARY KEY (`id`);

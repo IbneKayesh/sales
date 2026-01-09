@@ -1,56 +1,40 @@
 import { useState, useEffect } from "react";
-import { ledgerAPI } from "@/api/accounts/ledgerAPI";
-import validate from "@/models/validator";
-import t_ledger from "@/models/accounts/t_ledger";
-import t_ledger_transfer from "@/models/accounts/t_ledger_transfer";
+import { accountsLedgerAPI } from "@/api/accounts/accountsLedgerAPI";
+import tmtb_ledgr from "@/models/accounts/tmtb_ledgr.json";
+import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/useToast";
+import { formatDateForAPI } from "@/utils/datetime";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
-const fromDataModel = {
-  ledger_id: "",
-  account_id: "",
-  contact_id: "",
-  head_id: "",
-  ledger_date: new Date().toISOString().split("T")[0],
-  ledger_ref: "",
-  ledger_note: "",
-  debit_amount: 0,
-  credit_amount: 0,
-  edit_stop: 0,
-};
-
-const fromDataModelTransfer = {
-  ledger_id: "",
-  account_id: "",
-  to_account_id: "",
-  ledger_date: new Date().toISOString().split("T")[0],
-  ledger_ref: "",
-  ledger_note: "",
-  payment_mode: "",
-  transfer_amount: 0,
-  edit_stop: 0,
-};
+const dataModel = generateDataModel(tmtb_ledgr, { edit_stop: 0 });
 
 export const useLedger = () => {
-  const [ledgerList, setLedgerList] = useState([]);
-  const [toastBox, setToastBox] = useState(null);
+  const { user } = useAuth();
+  const { showToast } = useToast();
+  const [dataList, setDataList] = useState([]);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState(fromDataModel);
+  const [formData, setFormData] = useState(dataModel);
+
+  const [ledgerList, setLedgerList] = useState([]);
   const [selectedHead, setSelectedHead] = useState(null);
 
-  const loadLedgers = async (resetModified = false) => {
+  const loadLedgers = async () => {
     try {
-      const data = await ledgerAPI.getAll();
-      //console.log("data: " + JSON.stringify(data));
-      setLedgerList(data);
-    } catch (error) {
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to load data from server",
+      const response = await accountsLedgerAPI.getAll({
+        ledgr_users: user.users_users,
       });
+      //response = { success, message, data }
+      //console.log("response", response);
+
+      setDataList(response.data);
+      //showToast("success", "Success", response.message);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
     }
   };
 
@@ -61,12 +45,12 @@ export const useLedger = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, t_ledger);
+    const newErrors = validate({ ...formData, [field]: value }, tmtb_ledgr);
     setErrors(newErrors);
   };
 
   const handleClear = () => {
-    setFormData(fromDataModel);
+    setFormData(dataModel);
     setErrors({});
   };
 
@@ -80,34 +64,42 @@ export const useLedger = () => {
     setCurrentView("form");
   };
 
-  const handleEditLedger = (ledger) => {
+  const handleEdit = (ledger) => {
     //console.log("ledger: " + JSON.stringify(ledger));
 
-    setFormData(ledger);
+    const amount =
+      Number(ledger.ledgr_dbamt) !== 0
+        ? ledger.ledgr_dbamt
+        : ledger.ledgr_cramt;
+
+    setFormData({
+      ...ledger,
+      ledgr_dbamt: amount,
+    });
     setCurrentView("form");
   };
 
-  const handleDeleteLedger = async (rowData) => {
+  const handleDelete = async (rowData) => {
     try {
-      //console.log("rowData " + JSON.stringify(rowData))
-      await ledgerAPI.delete(rowData);
-      const updatedLedgers = ledgerList.filter(
-        (b) => b.ledger_id !== rowData.ledger_id
-      );
-      setLedgerList(updatedLedgers);
+      // Call API, unwrap { message, data }
+      const response = await accountsLedgerAPI.delete(rowData);
 
-      setToastBox({
-        severity: "info",
-        summary: "Deleted",
-        detail: `Deleted successfully.`,
-      });
+      // Remove deleted business from local state
+      const updatedList = dataList.filter((s) => s.id !== rowData.id);
+      setDataList(updatedList);
+
+      showToast(
+        response.success ? "info" : "error",
+        response.success ? "Deleted" : "Error",
+        response.message ||
+          "Operation " + (response.success ? "successful" : "failed")
+      );
+
+      //call update process
+      await closingProcessAPI("Account Ledger", user.users_users);
     } catch (error) {
-      console.error("Error deleting Payment", error);
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to delete Payment",
-      });
+      console.error("Error deleting data:", error);
+      showToast("error", "Error", error?.message || "Failed to delete data");
     }
   };
 
@@ -115,112 +107,88 @@ export const useLedger = () => {
     loadLedgers(true);
   };
 
-  const handleSaveLedger = async (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     try {
-      console.log("handleSaveLedger called", selectedHead);
+      //console.log("handleSaveLedger called", selectedHead);
 
       if (!selectedHead) {
-        setToastBox({
-          severity: "error",
-          summary: "Validation Error",
-          detail: "Please select a Head Name.",
-        });
+        showToast("error", "Validation Error", "Please select a Head Name.");
         return;
       }
 
-      const amount = Number(formData.credit_amount) || 0;
+      const amount = Number(formData.ledgr_dbamt) || 0;
+      if (amount === 0) {
+        showToast("error", "Validation Error", "Please enter a valid amount.");
+        return;
+      }
       let updatedFormData = {
         ...formData,
       };
 
-      if (selectedHead.group_type === "In") {
+      if (selectedHead.trhed_grtyp === "In") {
         updatedFormData = {
           ...updatedFormData,
-          debit_amount: amount,
-          credit_amount: 0,
+          ledgr_dbamt: amount,
+          ledgr_cramt: 0,
         };
-      } else if (selectedHead.group_type === "Out") {
+      } else if (selectedHead.trhed_grtyp === "Out") {
         updatedFormData = {
           ...updatedFormData,
-          debit_amount: 0,
-          credit_amount: amount,
+          ledgr_dbamt: 0,
+          ledgr_cramt: amount,
         };
       } else {
-        setToastBox({
-          severity: "error",
-          summary: "Validation Error",
-          detail: "Invalid Head Group Type.",
-        });
+        showToast("error", "Validation Error", "Invalid Head Group Type.");
         return;
       }
 
       setIsBusy(true);
-      const newErrors = validate(formData, t_ledger);
+      const newErrors = validate(formData, tmtb_ledgr);
       setErrors(newErrors);
-      console.log("handleSave: " + JSON.stringify(newErrors));
+      //console.log("handleSave: " + JSON.stringify(formData));
 
-      // Custom validation: if debit_amount > 0 then credit_amount must be 0
-      // if credit_amount > 0 then debit_amount must be 0
-      // At least one of debit_amount or credit_amount must be greater than 0
-      let customErrors = {};
-
-      if (formData.debit_amount > 0 && formData.credit_amount !== 0) {
-        customErrors.debit_amount = "Credit must be 0 when debit is entered.";
-        customErrors.credit_amount = "Credit must be 0 when debit is entered.";
-      }
-
-      if (formData.credit_amount > 0 && formData.debit_amount !== 0) {
-        customErrors.debit_amount = "Debit must be 0 when credit is entered.";
-        customErrors.credit_amount = "Debit must be 0 when credit is entered.";
-      }
-
-      if (formData.debit_amount <= 0 && formData.credit_amount <= 0) {
-        customErrors.debit_amount = "Enter either a debit or credit amount.";
-        customErrors.credit_amount = "Enter either a debit or credit amount.";
-      }
-
-      const allErrors = { ...newErrors, ...customErrors };
-      setErrors(allErrors);
-
-      if (Object.keys(allErrors).length > 0) {
+      if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
         return;
       }
 
+      // Ensure id exists (for create)
       const formDataNew = {
         ...updatedFormData,
-        ledger_id: formData.ledger_id ? formData.ledger_id : generateGuid(),
+        id: formData.id || generateGuid(),
+        ledgr_users: user.users_users,
+        ledgr_trdat: formatDateForAPI(formData.ledgr_trdat),
+        user_id: user.id,
       };
 
-      if (formData.ledger_id) {
-        const data = await ledgerAPI.update(formDataNew);
+      //console.log("formDataNew: " + JSON.stringify(formDataNew));
+
+      // Call API and get { message, data }
+      let response;
+      if (formData.id) {
+        response = await accountsLedgerAPI.update(formDataNew);
       } else {
-        const data = await ledgerAPI.create(formDataNew);
+        response = await accountsLedgerAPI.create(formDataNew);
       }
 
-      const message = formData.ledger_id
-        ? `"${formData.head_name}" Updated`
-        : "Created";
-      setToastBox({
-        severity: "success",
-        summary: "Success",
-        detail: `${message} successfully.`,
-      });
+      // Update toast using API message
+      showToast(
+        response.success ? "success" : "error",
+        response.success ? "Success" : "Error",
+        response.message ||
+          "Operation " + (response.success ? "successful" : "failed")
+      );
 
       loadLedgers();
       handleClear();
       setCurrentView("list");
 
       //call update process
-      await closingProcessAPI("Account Ledger", "Ledger No");
+      await closingProcessAPI("Account Ledger", user.users_users);
     } catch (error) {
       console.error("Error saving data:", error);
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to save data",
-      });
+      showToast("error", "Error", error?.message || "Failed to save data");
     } finally {
       setIsBusy(false);
     }
@@ -230,7 +198,11 @@ export const useLedger = () => {
   const handleAddNewTransfer = () => {
     handleClear();
     setCurrentView("transfer");
-    setFormData(fromDataModelTransfer);
+    setFormData({
+      ...dataModel,
+      ledgr_bacts_from: "",
+      ledgr_bacts_to: "",
+    });
   };
 
   const handleSaveTransfer = async (e) => {
@@ -238,27 +210,27 @@ export const useLedger = () => {
     try {
       console.log("handleSaveTransfer called", formData);
 
-      const amount = Number(formData.transfer_amount) || 0;
+      const amount = Number(formData.ledgr_dbamt) || 0;
       if (amount <= 0) {
-        setToastBox({
-          severity: "error",
-          summary: "Validation Error",
-          detail: "Transfer amount must be greater than 0.",
-        });
+        showToast(
+          "error",
+          "Validation Error",
+          "Transfer amount must be greater than 0"
+        );
         return;
       }
 
-      if(formData.account_id === formData.to_account_id) {
-        setToastBox({
-          severity: "error",
-          summary: "Validation Error",
-          detail: "Account and To Account cannot be the same.",
-        });
+      if (formData.ledgr_bacts_from === formData.ledgr_bacts_to) {
+        showToast(
+          "error",
+          "Validation Error",
+          "Account and To Account cannot be the same."
+        );
         return;
       }
 
       setIsBusy(true);
-      const newErrors = validate(formData, t_ledger_transfer);
+      const newErrors = validate(formData, tmtb_ledgr);
       setErrors(newErrors);
       console.log("handleSave: " + JSON.stringify(newErrors));
 
@@ -269,50 +241,44 @@ export const useLedger = () => {
 
       const formDataNew = {
         ...formData,
-        ledger_id: formData.ledger_id ? formData.ledger_id : generateGuid(),
+        id: formData.id || generateGuid(),
+        ledgr_users: user.users_users,
+        ledgr_trdat: formatDateForAPI(formData.ledgr_trdat),
+        user_id: user.id,
       };
 
-      if (!formData.ledger_id) {
-        const data = await ledgerAPI.createTransfer(formDataNew);
+      // Call API and get { message, data }
+      let response;
+      if (!formData.id) {
+        response = await accountsLedgerAPI.createTransfer(formDataNew);
       } else {
-        setToastBox({
-          severity: "error",
-          summary: "Validation Error",
-          detail: "Transfer amount must be greater than 0.",
-        });
-        return;
+        //response = await accountsLedgerAPI.updateTransfer(formDataNew);
       }
 
-      const message = formData.ledger_id
-        ? `"${formData.head_name}" Updated`
-        : "Created";
-      setToastBox({
-        severity: "success",
-        summary: "Success",
-        detail: `${message} successfully.`,
-      });
+      // Update toast using API message
+      showToast(
+        response.success ? "success" : "error",
+        response.success ? "Success" : "Error",
+        response.message ||
+          "Operation " + (response.success ? "successful" : "failed")
+      );
 
       loadLedgers();
       handleClear();
       setCurrentView("list");
 
       //call update process
-      await closingProcessAPI("Account Ledger", "Ledger No");
+      await closingProcessAPI("Account Ledger", user.users_users);
     } catch (error) {
       console.error("Error saving data:", error);
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to save data",
-      });
+      showToast("error", "Error", error?.message || "Failed to save data");
     } finally {
       setIsBusy(false);
     }
   };
 
   return {
-    ledgerList,
-    toastBox,
+    dataList,
     isBusy,
     currentView,
     errors,
@@ -320,10 +286,11 @@ export const useLedger = () => {
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditLedger,
-    handleDeleteLedger,
+    handleEdit,
+    handleDelete,
     handleRefresh,
-    handleSaveLedger,
+    handleSave,
+    //options
     selectedHead,
     setSelectedHead,
     //transfer

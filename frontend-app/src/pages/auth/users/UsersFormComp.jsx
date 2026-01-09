@@ -182,7 +182,7 @@ const UsersFormComp = ({
           <Button
             type="button"
             onClick={(e) => onSave(e)}
-            label={formData.user_id ? "Update" : "Save"}
+            label={formData.id ? "Update" : "Save"}
             icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
             severity="success"
             size="small"

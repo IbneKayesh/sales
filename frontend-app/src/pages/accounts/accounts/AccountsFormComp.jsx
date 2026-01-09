@@ -1,161 +1,143 @@
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
-import tmab_bsins from "@/models/auth/tmab_bsins.json";
+import tmtb_acnts from "@/models/accounts/tmtb_acnts.json";
 
-const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
+const AccountsFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   return (
     <div className="grid">
-      <div className="col-12 md:col-3">
+      <div className="col-12 md:col-4">
         <label
-          htmlFor="bsins_bname"
+          htmlFor="bacts_bankn"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_bname.label} <span className="text-red-500">*</span>
+          {tmtb_acnts.bacts_bankn.label} <span className="text-red-500">*</span>
         </label>
         <InputText
-          name="bsins_bname"
-          value={formData.bsins_bname}
-          onChange={(e) => onChange("bsins_bname", e.target.value)}
-          className={`w-full ${errors.bsins_bname ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_bname.label}`}
+          name="bacts_bankn"
+          value={formData.bacts_bankn}
+          onChange={(e) => onChange("bacts_bankn", e.target.value)}
+          className={`w-full ${errors.bacts_bankn ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmtb_acnts.bacts_bankn.label}`}
         />
-        {errors.bsins_bname && (
-          <small className="mb-3 text-red-500">{errors.bsins_bname}</small>
+        {errors.bacts_bankn && (
+          <small className="mb-3 text-red-500">{errors.bacts_bankn}</small>
         )}
       </div>
       <div className="col-12 md:col-6">
         <label
-          htmlFor="bsins_addrs"
+          htmlFor="bacts_brnch"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_addrs.label} <span className="text-red-500">*</span>
+          {tmtb_acnts.bacts_brnch.label}
         </label>
         <InputText
-          name="bsins_addrs"
-          value={formData.bsins_addrs}
-          onChange={(e) => onChange("bsins_addrs", e.target.value)}
-          className={`w-full ${errors.bsins_addrs ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_addrs.label}`}
+          name="bacts_brnch"
+          value={formData.bacts_brnch}
+          onChange={(e) => onChange("bacts_brnch", e.target.value)}
+          className={`w-full ${errors.bacts_brnch ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmtb_acnts.bacts_brnch.label}`}
         />
-        {errors.bsins_addrs && (
-          <small className="mb-3 text-red-500">{errors.bsins_addrs}</small>
-        )}
-      </div>
-      <div className="col-12 md:col-3">
-        <label
-          htmlFor="bsins_email"
-          className="block text-900 font-medium mb-2"
-        >
-          {tmab_bsins.bsins_email.label} <span className="text-red-500">*</span>
-        </label>
-        <InputText
-          name="bsins_email"
-          value={formData.bsins_email}
-          onChange={(e) => onChange("bsins_email", e.target.value)}
-          className={`w-full ${errors.bsins_email ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_email.label}`}
-        />
-        {errors.bsins_email && (
-          <small className="mb-3 text-red-500">{errors.bsins_email}</small>
-        )}
-      </div>
-      <div className="col-12 md:col-3">
-        <label
-          htmlFor="bsins_cntct"
-          className="block text-900 font-medium mb-2"
-        >
-          {tmab_bsins.bsins_cntct.label} <span className="text-red-500">*</span>
-        </label>
-        <InputText
-          name="bsins_cntct"
-          value={formData.bsins_cntct}
-          onChange={(e) => onChange("bsins_cntct", e.target.value)}
-          className={`w-full ${errors.bsins_cntct ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_cntct.label}`}
-        />
-        {errors.bsins_cntct && (
-          <small className="mb-3 text-red-500">{errors.bsins_cntct}</small>
+        {errors.bacts_brnch && (
+          <small className="mb-3 text-red-500">{errors.bacts_brnch}</small>
         )}
       </div>
       <div className="col-12 md:col-2">
         <label
-          htmlFor="bsins_binno"
+          htmlFor="bacts_routn"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_binno.label}
+          {tmtb_acnts.bacts_routn.label}
         </label>
         <InputText
-          name="bsins_binno"
-          value={formData.bsins_binno}
-          onChange={(e) => onChange("bsins_binno", e.target.value)}
-          className={`w-full ${errors.bsins_binno ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_binno.label}`}
+          name="bacts_routn"
+          value={formData.bacts_routn}
+          onChange={(e) => onChange("bacts_routn", e.target.value)}
+          className={`w-full ${errors.bacts_routn ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmtb_acnts.bacts_routn.label}`}
         />
-        {errors.bsins_binno && (
-          <small className="mb-3 text-red-500">{errors.bsins_binno}</small>
+        {errors.bacts_routn && (
+          <small className="mb-3 text-red-500">{errors.bacts_routn}</small>
+        )}
+      </div>
+      <div className="col-12 md:col-4">
+        <label
+          htmlFor="bacts_acnam"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmtb_acnts.bacts_acnam.label}
+        </label>
+        <InputText
+          name="bacts_acnam"
+          value={formData.bacts_acnam}
+          onChange={(e) => onChange("bacts_acnam", e.target.value)}
+          className={`w-full ${errors.bacts_acnam ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmtb_acnts.bacts_acnam.label}`}
+        />
+        {errors.bacts_acnam && (
+          <small className="mb-3 text-red-500">{errors.bacts_acnam}</small>
         )}
       </div>
       <div className="col-12 md:col-3">
         <label
-          htmlFor="bsins_btags"
+          htmlFor="bacts_acnum"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_btags.label} <span className="text-red-500">*</span>
+          {tmtb_acnts.bacts_acnum.label}
         </label>
         <InputText
-          name="bsins_btags"
-          value={formData.bsins_btags}
-          onChange={(e) => onChange("bsins_btags", e.target.value)}
-          className={`w-full ${errors.bsins_btags ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_btags.label}`}
+          name="bacts_acnum"
+          value={formData.bacts_acnum}
+          onChange={(e) => onChange("bacts_acnum", e.target.value)}
+          className={`w-full ${errors.bacts_acnum ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmtb_acnts.bacts_acnum.label}`}
         />
-        {errors.bsins_btags && (
-          <small className="mb-3 text-red-500">{errors.bsins_btags}</small>
+        {errors.bacts_acnum && (
+          <small className="mb-3 text-red-500">{errors.bacts_acnum}</small>
+        )}
+      </div>
+      <div className="col-12 md:col-3">
+        <label
+          htmlFor="bacts_notes"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmtb_acnts.bacts_notes.label}
+        </label>
+        <InputText
+          name="bacts_notes"
+          value={formData.bacts_notes}
+          onChange={(e) => onChange("bacts_notes", e.target.value)}
+          className={`w-full ${errors.bacts_notes ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmtb_acnts.bacts_notes.label}`}
+        />
+        {errors.bacts_notes && (
+          <small className="mb-3 text-red-500">{errors.bacts_notes}</small>
         )}
       </div>
       <div className="col-12 md:col-2">
         <label
-          htmlFor="bsins_cntry"
+          htmlFor="bacts_opdat"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_cntry.label} <span className="text-red-500">*</span>
-        </label>
-        <InputText
-          name="bsins_cntry"
-          value={formData.bsins_cntry}
-          onChange={(e) => onChange("bsins_cntry", e.target.value)}
-          className={`w-full ${errors.bsins_cntry ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_cntry.label}`}
-        />
-        {errors.bsins_cntry && (
-          <small className="mb-3 text-red-500">{errors.bsins_cntry}</small>
-        )}
-      </div>
-      <div className="col-12 md:col-2">
-        <label
-          htmlFor="bsins_stdat"
-          className="block text-900 font-medium mb-2"
-        >
-          {tmab_bsins.bsins_stdat.label} <span className="text-red-500">*</span>
+          {tmtb_acnts.bacts_opdat.label}
         </label>
         <Calendar
-          name="bsins_stdat"
+          name="bacts_opdat"
           value={
-            formData.bsins_stdat
-              ? typeof formData.bsins_stdat === "string" &&
-                !formData.bsins_stdat.includes("T")
-                ? new Date(formData.bsins_stdat + "T00:00:00")
-                : new Date(formData.bsins_stdat)
+            formData.bacts_opdat
+              ? typeof formData.bacts_opdat === "string" &&
+                !formData.bacts_opdat.includes("T")
+                ? new Date(formData.bacts_opdat + "T00:00:00")
+                : new Date(formData.bacts_opdat)
               : null
           }
-          onChange={(e) => onChange("bsins_stdat", e.target.value)}
-          className={`w-full ${errors.bsins_stdat ? "p-invalid" : ""}`}
+          onChange={(e) => onChange("bacts_opdat", e.target.value)}
+          className={`w-full ${errors.bacts_opdat ? "p-invalid" : ""}`}
           dateFormat="yy-mm-dd"
-          placeholder={`Select ${tmab_bsins.bsins_stdat.label}`}
+          placeholder={`Select ${tmtb_acnts.bacts_opdat.label}`}
         />
-        {errors.bsins_stdat && (
-          <small className="mb-3 text-red-500">{errors.bsins_stdat}</small>
+        {errors.bacts_opdat && (
+          <small className="mb-3 text-red-500">{errors.bacts_opdat}</small>
         )}
       </div>
       <div className="col-12">
@@ -163,7 +145,7 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           <Button
             type="button"
             onClick={(e) => onSave(e)}
-            label={formData.shop_id ? "Update" : "Save"}
+            label={formData.id ? "Update" : "Save"}
             icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
             severity="success"
             size="small"
@@ -175,4 +157,4 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   );
 };
 
-export default BusinessFormComp;
+export default AccountsFormComp;

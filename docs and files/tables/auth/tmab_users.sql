@@ -41,4 +41,4 @@ ALTER TABLE `tmab_users`
   ADD UNIQUE KEY `ix_users_email` (`users_email`);
 
 
-  --ALTER TABLE `tmab_users` ADD `users_users` VARCHAR(50) NULL DEFAULT NULL AFTER `users_drole`;
+-- ALTER TABLE `tmab_users` ADD `users_users` VARCHAR(50) NULL DEFAULT NULL AFTER `users_drole`;

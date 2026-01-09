@@ -26,7 +26,7 @@ export const useAccounts = () => {
       //response = { success, message, data }
 
       setDataList(response.data);
-      showToast("success", "Success", response.message);
+      //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
       showToast("error", "Error", error?.message || "Failed to load data");
@@ -142,6 +142,66 @@ export const useAccounts = () => {
     }
   };
 
+  const handleSetDefault = async (rowData) => {
+    try {
+      const response = await accountsAPI.setDefault(rowData);
+
+      const updatedList = dataList.map((s) => {
+        if (s.id === rowData.id) {
+          return {
+            ...s,
+            bacts_isdef: s.bacts_isdef === 1 ? 0 : 1,
+          };
+        }
+        return s;
+      });
+
+      setDataList(updatedList);
+
+      showToast(
+        response.success ? "success" : "error",
+        response.success ? "Updated" : "Error",
+        response.message ||
+          `Operation ${response.success ? "successful" : "failed"}`
+      );
+    } catch (error) {
+      console.error("Error setting default:", error);
+      showToast("error", "Error", error?.message || "Failed to update");
+    }
+  };
+
+  //other functions
+  const [accountsListDdl, setAccountsListDdl] = useState([]);
+  const fetchAccountsListDdl = async () => {
+    if (accountsListDdl.length > 0) return;
+
+    try {
+      if (dataList.length > 0) {
+        const ddlData = dataList.map((item) => ({
+          value: item.id,
+          label: item.bacts_bankn,
+          bacts_crbln: item.bacts_crbln
+        }));
+        setAccountsListDdl(ddlData);
+      } else {
+        const response = await accountsAPI.getAll({
+          bacts_users: user.users_users,
+        });
+        //console.log("headListDdl: ", response.data);
+        //response = { success, message, data }
+        const ddlData = response.data.map((item) => ({
+          value: item.id,
+          label: item.bacts_bankn,
+          bacts_crbln: item.bacts_crbln
+        }));
+        setAccountsListDdl(ddlData);
+      }
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
+
   return {
     dataList,
     isBusy,
@@ -155,5 +215,9 @@ export const useAccounts = () => {
     handleDelete,
     handleRefresh,
     handleSave,
+    handleSetDefault,
+    //other functions
+    accountsListDdl,
+    fetchAccountsListDdl
   };
 };

@@ -1,17 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
 import { useLedger } from "@/hooks/accounts/useLedger";
-import LedgerListComponent from "./LedgerListComponent";
-import LedgerFormComponent from "./LedgerFormComponent";
-import TransferFormComponent from "./TransferFormComponent";
+import LedgerListComp from "./LedgerListComp";
+import LedgerFormComp from "./LedgerFormComp";
+import TransferFormComp from "./TransferFormComp";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
 
 const LedgerPage = () => {
-  const toast = useRef(null);
   const {
-    ledgerList,
-    toastBox,
+    dataList,
     isBusy,
     currentView,
     errors,
@@ -19,27 +15,17 @@ const LedgerPage = () => {
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditLedger,
-    handleDeleteLedger,
+    handleEdit,
+    handleDelete,
     handleRefresh,
-    handleSaveLedger,
+    handleSave,
+    //options
     selectedHead,
     setSelectedHead,
     //transfer
     handleAddNewTransfer,
-    handleSaveTransfer,
+    handleSaveTransfer
   } = useLedger();
-
-  useEffect(() => {
-    if (toastBox && toast.current) {
-      toast.current.show({
-        severity: toastBox.severity,
-        summary: toastBox.summary,
-        detail: toastBox.detail,
-        life: 3000,
-      });
-    }
-  }, [toastBox]);
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -49,7 +35,7 @@ const LedgerPage = () => {
         <h3 className="m-0">
           {isList
             ? "Ledger List"
-            : formData.ledger_id
+            : formData.id
             ? "Edit Ledger"
             : "Add New Ledger"}
         </h3>
@@ -90,16 +76,15 @@ const LedgerPage = () => {
 
   return (
     <>
-      <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <LedgerListComponent
-            dataList={ledgerList}
-            onEdit={handleEditLedger}
-            onDelete={handleDeleteLedger}
+          <LedgerListComp
+            dataList={dataList}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         ) : currentView === "transfer" ? (
-          <TransferFormComponent
+          <TransferFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
@@ -107,12 +92,13 @@ const LedgerPage = () => {
             onSave={handleSaveTransfer}
           />
         ) : (
-          <LedgerFormComponent
+          <LedgerFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
             onChange={handleChange}
-            onSave={handleSaveLedger}
+            onSave={handleSave}
+            //options
             selectedHead={selectedHead}
             setSelectedHead={setSelectedHead}
           />

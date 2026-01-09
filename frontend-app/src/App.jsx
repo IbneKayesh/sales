@@ -19,6 +19,7 @@ import UsersPage from "./pages/auth/users/UsersPage";
 import ContactPage from "./pages/crm/contacts/ContactPage.jsx";
 //accounts
 import AccountsPage from "./pages/accounts/accounts/AccountsPage";
+import LedgerPage from "./pages/accounts/ledger/LedgerPage";
 
 // import UnitPage from "./pages/inventory/units/UnitPage.jsx";
 // import CategoryPage from "./pages/inventory/category/CategoryPage.jsx";
@@ -69,6 +70,8 @@ function AppRoutes() {
         <Route path="crm/contact" element={<ContactPage />} />
         //accounts
         <Route path="accounts/accounts" element={<AccountsPage />} />
+        <Route path="accounts/ledger" element={<LedgerPage />} />
+
         {/* <Route path="inventory/unit" element={<UnitPage />} />
         <Route path="inventory/category" element={<CategoryPage />} />
         <Route path="inventory/product" element={<ProductPage />} />

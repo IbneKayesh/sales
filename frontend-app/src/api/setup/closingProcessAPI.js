@@ -32,10 +32,10 @@ const closingProcess = {
       method: "POST",
       body: JSON.stringify({ id }),
     }),
-  accountsLedger: (id) =>
-    apiRequest("/setup/closing-process/accounts-ledger", {
+  accountsLedger: (data) =>
+    apiRequest("/setup/closing/accounts-ledger", {
       method: "POST",
-      body: JSON.stringify({ id }),
+      body: JSON.stringify(data),
     }),
 
   updateInvoiceDue: (id) =>
@@ -56,6 +56,9 @@ const closingProcess = {
 };
 
 export const closingProcessAPI = async (id, value) => {
+  const fromData = {
+    user_id: value,
+  };
   if (["Purchase", "Sales"].includes(id)) {
     await closingProcess.updateInvoiceDue(value);
     // await closingProcess.updateBalances(value);
@@ -76,6 +79,6 @@ export const closingProcessAPI = async (id, value) => {
   } else if (id === "Payable Due") {
     await closingProcess.payableDue(value);
   } else if (id === "Account Ledger") {
-    await closingProcess.accountsLedger(value);
+    await closingProcess.accountsLedger(fromData);
   }
 };
