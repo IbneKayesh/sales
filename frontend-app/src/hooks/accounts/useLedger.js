@@ -228,9 +228,16 @@ export const useLedger = () => {
         );
         return;
       }
+      const updatedFormData = {
+        ...formData,
+        ledgr_trhed: "sandgrain",
+        ledgr_cntct: "sandgrain",
+        ledgr_bacts: "sandgrain"
+
+      };
 
       setIsBusy(true);
-      const newErrors = validate(formData, tmtb_ledgr);
+      const newErrors = validate(updatedFormData, tmtb_ledgr);
       setErrors(newErrors);
       console.log("handleSave: " + JSON.stringify(newErrors));
 
@@ -240,8 +247,9 @@ export const useLedger = () => {
       }
 
       const formDataNew = {
-        ...formData,
+        ...updatedFormData,
         id: formData.id || generateGuid(),
+        ledgr_bsins: user.users_bsins,
         ledgr_users: user.users_users,
         ledgr_trdat: formatDateForAPI(formData.ledgr_trdat),
         user_id: user.id,

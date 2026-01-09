@@ -26,5 +26,10 @@ export const accountsLedgerAPI = {
     apiRequest("/accounts/accounts-ledgers/set-default", {
       method: "POST",
       body: JSON.stringify(data),
+    }),    
+  createTransfer: (data) =>
+    apiRequest("/accounts/accounts-ledgers/create-transfer", {
+      method: "POST",
+      body: JSON.stringify(data),
     }),
 };

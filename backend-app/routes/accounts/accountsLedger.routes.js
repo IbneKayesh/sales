@@ -65,8 +65,6 @@ router.post("/create", async (req, res) => {
       user_id,
     } = req.body;
 
-    
-
     // Validate input
     if (
       !id ||
@@ -240,6 +238,118 @@ router.post("/delete", async (req, res) => {
     res.json({
       success: true,
       message: "Ledger deleted successfully",
+      data: null,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+// create-transfer
+router.post("/create-transfer", async (req, res) => {
+  try {
+    const {
+      id,
+      ledgr_users,
+      ledgr_bsins,
+      ledgr_trhed,
+      ledgr_cntct,
+      ledgr_bacts_from,
+      ledgr_bacts_to,
+      ledgr_pymod,
+      ledgr_trdat,
+      ledgr_refno,
+      ledgr_notes,
+      ledgr_dbamt,
+      ledgr_cramt,
+      user_id,
+    } = req.body;
+
+    //console.log("create transfer", req.body);
+
+    // Validate input
+    if (
+      !id ||
+      !ledgr_users ||
+      !ledgr_bsins ||
+      !ledgr_trhed ||
+      !ledgr_cntct ||
+      !ledgr_bacts_from ||
+      !ledgr_bacts_to ||
+      !ledgr_pymod ||
+      !ledgr_trdat ||
+      !ledgr_refno ||
+      !user_id
+    ) {
+      return res.json({
+        success: false,
+        message: "All fields are required",
+        data: null,
+      });
+    }
+
+    const dbId = uuidv4();
+    const crId = uuidv4();
+    //database action
+    const scripts = [];
+
+    scripts.push({
+      sql: `INSERT INTO tmtb_ledgr
+    (id, ledgr_users, ledgr_bsins, ledgr_trhed, ledgr_cntct, ledgr_bacts,
+     ledgr_pymod, ledgr_trdat, ledgr_refno, ledgr_notes, ledgr_dbamt,
+     ledgr_cramt, ledgr_crusr, ledgr_upusr)
+    VALUES (?, ?, ?, 'Z601', 'internal', ?,
+     ?, ?, ?, ?, ?,
+     0, ?, ?)`,
+      params: [
+        dbId,
+        ledgr_users,
+        ledgr_bsins,
+        ledgr_bacts_from,
+        ledgr_pymod,
+        ledgr_trdat,
+        ledgr_refno,
+        ledgr_notes,
+        ledgr_dbamt,
+        user_id,
+        user_id,
+      ],
+      label: `Created debit ${ledgr_refno}`,
+    });
+
+    scripts.push({
+      sql: `INSERT INTO tmtb_ledgr
+    (id, ledgr_users, ledgr_bsins, ledgr_trhed, ledgr_cntct, ledgr_bacts,
+     ledgr_pymod, ledgr_trdat, ledgr_refno, ledgr_notes, ledgr_dbamt,
+     ledgr_cramt, ledgr_crusr, ledgr_upusr)
+    VALUES (?, ?, ?, 'Z602', 'internal', ?,
+     ?, ?, ?, ?, 0,
+     ?, ?, ?)`,
+      params: [
+        crId,
+        ledgr_users,
+        ledgr_bsins,
+        ledgr_bacts_to,
+        ledgr_pymod,
+        ledgr_trdat,
+        ledgr_refno,
+        ledgr_notes,
+        ledgr_dbamt,
+        user_id,
+        user_id,
+      ],
+      label: `Created credit ${ledgr_refno}`,
+    });
+
+    await dbRunAll(scripts);
+    res.json({
+      success: true,
+      message: "Ledger transfer created successfully",
       data: null,
     });
   } catch (error) {
