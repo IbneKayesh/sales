@@ -1,5 +1,6 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
+import { ButtonGroup } from "primereact/buttongroup";
 import { useAccountsHeads } from "@/hooks/accounts/useAccountsHeads";
 import HeadsListComp from "./HeadsListComp";
 import HeadsFormComp from "./HeadsFormComp";
@@ -24,38 +25,37 @@ const HeadsPage = () => {
     const isList = currentView === "list";
     return (
       <div className="flex align-items-center justify-content-between">
-      <h3 className="m-0">
-          {isList
-            ? "Heads List"
-            : formData.id
-            ? "Edit Head"
-            : "Add New Head"}
+        <h3 className="m-0">
+          {isList ? "Heads List" : formData.id ? "Edit Head" : "Add New Head"}
         </h3>
 
-        {isList ? (
-          <div className="flex gap-2">
+        <div className="flex gap-2">
+          <ButtonGroup>
             <Button
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
               onClick={handleRefresh}
+              disabled={!isList}
             />
             <Button
-              label="New Head"
+              label="New"
               icon="pi pi-plus"
               size="small"
+              severity="info"
               onClick={handleAddNew}
-              disabled={true}
+              disabled={isList}
             />
-          </div>
-        ) : (
-          <Button
-            label="Head List"
-            icon="pi pi-arrow-left"
-            size="small"
-            onClick={handleCancel}
-          />
-        )}
+            <Button
+              label="Back"
+              icon="pi pi-arrow-left"
+              size="small"
+              severity="help"
+              onClick={handleCancel}
+              disabled={isList}
+            />
+          </ButtonGroup>
+        </div>
       </div>
     );
   };

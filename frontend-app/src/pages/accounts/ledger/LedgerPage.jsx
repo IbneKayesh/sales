@@ -4,6 +4,7 @@ import LedgerFormComp from "./LedgerFormComp";
 import TransferFormComp from "./TransferFormComp";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
+import { ButtonGroup } from "primereact/buttongroup";
 
 const LedgerPage = () => {
   const {
@@ -24,7 +25,7 @@ const LedgerPage = () => {
     setSelectedHead,
     //transfer
     handleAddNewTransfer,
-    handleSaveTransfer
+    handleSaveTransfer,
   } = useLedger();
 
   const getHeader = () => {
@@ -40,35 +41,41 @@ const LedgerPage = () => {
             : "Add New Ledger"}
         </h3>
 
-        {isList ? (
-          <div className="flex gap-2">
+        <div className="flex gap-2">
+          <ButtonGroup>
             <Button
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
               onClick={handleRefresh}
+              disabled={!isList}
             />
             <Button
-              label="New Ledger"
+              label="New"
               icon="pi pi-plus"
               size="small"
+              severity="info"
               onClick={handleAddNew}
+              disabled={!isList}
             />
             <Button
-              label="New Transfer"
+              label="Transfer"
               icon="pi pi-send"
               size="small"
+              severity="success"
               onClick={handleAddNewTransfer}
+              disabled={!isList}
             />
-          </div>
-        ) : (
-          <Button
-            label="Ledger List"
-            icon="pi pi-arrow-left"
-            size="small"
-            onClick={handleCancel}
-          />
-        )}
+            <Button
+              label="Back"
+              icon="pi pi-arrow-left"
+              size="small"
+              severity="help"
+              onClick={handleCancel}
+              disabled={isList}
+            />
+          </ButtonGroup>
+        </div>
       </div>
     );
   };

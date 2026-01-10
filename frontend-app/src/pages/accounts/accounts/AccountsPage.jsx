@@ -1,5 +1,6 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
+import { ButtonGroup } from "primereact/buttongroup";
 import { useAccounts } from "@/hooks/accounts/useAccounts";
 import AccountsListComp from "./AccountsListComp";
 import AccountsFormComp from "./AccountsFormComp";
@@ -34,29 +35,13 @@ const AccountsPage = () => {
             : "Add New Accounts"}
         </h3>
 
-        {isList ? (
-          <div className="flex gap-2">
-            <Button
-              icon="pi pi-refresh"
-              size="small"
-              severity="secondary"
-              onClick={handleRefresh}
-            />
-            <Button
-              label="New Accounts"
-              icon="pi pi-plus"
-              size="small"
-              onClick={handleAddNew}
-            />
-          </div>
-        ) : (
-          <Button
-            label="Accounts List"
-            icon="pi pi-arrow-left"
-            size="small"
-            onClick={handleCancel}
-          />
-        )}
+        <div className="flex gap-2">
+          <ButtonGroup>
+            <Button icon="pi pi-refresh" size="small" severity="secondary" onClick={handleRefresh} disabled={!isList}/>
+            <Button label="New" icon="pi pi-plus" size="small" severity="info" onClick={handleAddNew} disabled={!isList}/>
+            <Button label="Back" icon="pi pi-arrow-left" size="small" severity="help" onClick={handleCancel} disabled={isList}/>
+          </ButtonGroup>
+        </div>
       </div>
     );
   };

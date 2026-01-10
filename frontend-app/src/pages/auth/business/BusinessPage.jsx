@@ -1,5 +1,6 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
+import { ButtonGroup } from "primereact/buttongroup";
 import { useBusiness } from "@/hooks/auth/useBusiness";
 import BusinessListComp from "./BusinessListComp";
 import BusinessFormComp from "./BusinessFormComp";
@@ -33,29 +34,13 @@ const BusinessPage = () => {
             : "Add New Business"}
         </h3>
 
-        {isList ? (
-          <div className="flex gap-2">
-            <Button
-              icon="pi pi-refresh"
-              size="small"
-              severity="secondary"
-              onClick={handleRefresh}
-            />
-            <Button
-              label="New Business"
-              icon="pi pi-plus"
-              size="small"
-              onClick={handleAddNew}
-            />
-          </div>
-        ) : (
-          <Button
-            label="Business List"
-            icon="pi pi-arrow-left"
-            size="small"
-            onClick={handleCancel}
-          />
-        )}
+        <div className="flex gap-2">
+          <ButtonGroup>
+            <Button icon="pi pi-refresh" size="small" severity="secondary" onClick={handleRefresh} disabled={!isList}/>
+            <Button label="New" icon="pi pi-plus" size="small" severity="info" onClick={handleAddNew} disabled={!isList}/>
+            <Button label="Back" icon="pi pi-arrow-left" size="small" severity="help" onClick={handleCancel} disabled={isList}/>
+          </ButtonGroup>
+        </div>
       </div>
     );
   };

@@ -277,4 +277,70 @@ router.post("/set-password", async (req, res) => {
   }
 });
 
+// change-password
+router.post("/change-password", async (req, res) => {
+  try {
+    const { id, users_email, pswrd_current, pswrd_new } = req.body;
+
+    // Validate input
+    if (!id || !users_email || !pswrd_current || !pswrd_new) {
+      return res.json({
+        success: false,
+        message: "Id, Email, Password Current, Password New are required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT usr.*
+    FROM tmab_users usr
+    WHERE usr.users_email = ?
+    AND usr.users_pswrd = ?
+    AND usr.id = ?
+    AND usr.users_actve = 1`;
+    const params = [users_email, pswrd_current, id];
+
+    const row = await dbGet(
+      sql,
+      params,
+      `Get user login credential for ${users_email}`
+    );
+    if (!row) {
+      return res.json({
+        success: false,
+        message: "Email or Password is not valid",
+        data: null,
+      });
+    }
+
+    const sql_Updt = `UPDATE tmab_users 
+    SET users_pswrd = ?,
+    users_lstpd = current_timestamp(),
+    users_upusr = ?,
+    users_rvnmr = users_rvnmr + 1
+    WHERE id = ?
+    AND users_email = ?`;
+    const params_Updt = [pswrd_new, id, id, users_email];
+
+    await dbRun(
+      sql_Updt,
+      params_Updt,
+      `Change user password for ${users_email}`
+    );
+
+    res.json({
+      success: true,
+      message: "User password is changed successfully",
+      data: req.body,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;

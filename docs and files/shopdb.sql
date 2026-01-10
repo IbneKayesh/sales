@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.2
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Jan 09, 2026 at 06:19 PM
--- Server version: 11.8.2-MariaDB-ubu2404
--- PHP Version: 8.2.27
+-- Generation Time: Jan 10, 2026 at 12:54 PM
+-- Server version: 12.1.2-MariaDB-ubu2404
+-- PHP Version: 8.3.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -140,6 +140,105 @@ INSERT INTO `tmcb_cntct` (`id`, `cntct_users`, `cntct_bsins`, `cntct_ctype`, `cn
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tmib_bitem`
+--
+
+CREATE TABLE `tmib_bitem` (
+  `id` varchar(50) NOT NULL,
+  `bitem_users` varchar(50) NOT NULL,
+  `bitem_items` varchar(50) NOT NULL,
+  `bitem_bsins` varchar(50) NOT NULL,
+  `bitem_lprat` decimal(20,6) DEFAULT 0.000000,
+  `bitem_dprat` decimal(20,6) DEFAULT 0.000000,
+  `bitem_mcmrp` decimal(20,6) DEFAULT 0.000000,
+  `bitem_sddsp` decimal(20,6) DEFAULT 0.000000,
+  `bitem_snote` varchar(100) DEFAULT NULL,
+  `bitem_gstkq` decimal(20,6) DEFAULT 0.000000,
+  `bitem_bstkq` decimal(20,6) DEFAULT 0.000000,
+  `bitem_mnqty` decimal(20,6) DEFAULT 1.000000,
+  `bitem_mxqty` decimal(20,6) DEFAULT 1.000000,
+  `bitem_pbqty` decimal(20,6) DEFAULT 0.000000,
+  `bitem_sbqty` decimal(20,6) DEFAULT 0.000000,
+  `bitem_mpric` decimal(20,6) DEFAULT 0.000000,
+  `bitem_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `bitem_crusr` varchar(50) NOT NULL,
+  `bitem_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `bitem_upusr` varchar(50) NOT NULL,
+  `bitem_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `bitem_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmib_ctgry`
+--
+
+CREATE TABLE `tmib_ctgry` (
+  `id` varchar(50) NOT NULL,
+  `ctgry_users` varchar(50) NOT NULL,
+  `ctgry_ctgnm` varchar(50) NOT NULL,
+  `ctgry_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `ctgry_crusr` varchar(50) NOT NULL,
+  `ctgry_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `ctgry_upusr` varchar(50) NOT NULL,
+  `ctgry_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `ctgry_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmib_items`
+--
+
+CREATE TABLE `tmib_items` (
+  `id` varchar(50) NOT NULL,
+  `items_users` varchar(50) NOT NULL,
+  `items_icode` varchar(50) DEFAULT NULL,
+  `items_bcode` varchar(50) DEFAULT NULL,
+  `items_hscod` varchar(50) DEFAULT NULL,
+  `items_iname` varchar(100) NOT NULL,
+  `items_idesc` varchar(100) DEFAULT NULL,
+  `items_puofm` varchar(50) NOT NULL,
+  `items_dfqty` int(11) NOT NULL DEFAULT 1,
+  `items_suofm` varchar(50) NOT NULL,
+  `items_ctgry` varchar(50) NOT NULL,
+  `items_itype` varchar(50) NOT NULL,
+  `items_hwrnt` int(11) NOT NULL DEFAULT 0,
+  `items_hxpry` int(11) NOT NULL DEFAULT 0,
+  `items_sdvat` decimal(4,2) DEFAULT 0.00,
+  `items_costp` decimal(4,2) DEFAULT 0.00,
+  `items_image` varchar(50) DEFAULT NULL,
+  `items_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `items_crusr` varchar(50) NOT NULL,
+  `items_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `items_upusr` varchar(50) NOT NULL,
+  `items_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `items_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmib_iuofm`
+--
+
+CREATE TABLE `tmib_iuofm` (
+  `id` varchar(50) NOT NULL,
+  `iuofm_users` varchar(50) NOT NULL,
+  `iuofm_untnm` varchar(50) NOT NULL,
+  `iuofm_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `iuofm_crusr` varchar(50) NOT NULL,
+  `iuofm_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `iuofm_upusr` varchar(50) NOT NULL,
+  `iuofm_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `iuofm_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tmsb_crgrn`
 --
 
@@ -200,8 +299,8 @@ CREATE TABLE `tmtb_bacts` (
 --
 
 INSERT INTO `tmtb_bacts` (`id`, `bacts_users`, `bacts_bankn`, `bacts_brnch`, `bacts_routn`, `bacts_acnam`, `bacts_acnum`, `bacts_notes`, `bacts_opdat`, `bacts_crbln`, `bacts_isdef`, `bacts_actve`, `bacts_crusr`, `bacts_crdat`, `bacts_upusr`, `bacts_updat`, `bacts_rvnmr`) VALUES
-('14bc4749-859b-46aa-aa67-29b926f88083', 'admin-id', 'Brac Bank PLC', '', '', '', '', '', '2026-01-09 00:00:00', 5000.000000, 0, 1, 'admin-id', '2026-01-09 17:37:49', 'admin-id', '2026-01-09 18:17:10', 1),
-('c306af10-f4c2-4ee8-8593-85de14c35b76', 'admin-id', 'Cash Account', 'Cash Account', '0', 'Cash Account', '123456', 'Cash Account', '2026-01-09 00:00:00', 9500.000000, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:06:49', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 18:17:10', 1);
+('14bc4749-859b-46aa-aa67-29b926f88083', 'admin-id', 'Brac Bank PLC', 'Gulshan 2', '123456', 'Sand Grain Digital', '15000003454545', 'Deposit account', '2026-01-09 00:00:00', 5000.000000, 0, 1, 'admin-id', '2026-01-09 17:37:49', 'admin-id', '2026-01-10 08:16:47', 3),
+('c306af10-f4c2-4ee8-8593-85de14c35b76', 'admin-id', 'Cash Account', 'Cash Account', '0', 'Cash Account', '123456', 'Cash Account', '2026-01-09 00:00:00', 14000.000000, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:06:49', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-10 08:22:36', 1);
 
 -- --------------------------------------------------------
 
@@ -234,10 +333,14 @@ CREATE TABLE `tmtb_ledgr` (
 --
 
 INSERT INTO `tmtb_ledgr` (`id`, `ledgr_users`, `ledgr_bsins`, `ledgr_trhed`, `ledgr_cntct`, `ledgr_bacts`, `ledgr_pymod`, `ledgr_trdat`, `ledgr_refno`, `ledgr_notes`, `ledgr_dbamt`, `ledgr_cramt`, `ledgr_crusr`, `ledgr_crdat`, `ledgr_upusr`, `ledgr_updat`, `ledgr_rvnmr`) VALUES
-('18c37470-5f3e-47c2-b6d8-50df28d0de20', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z103', 'd5eefaf0-9979-4edf-8fbd-68f3157c4105', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-09 00:00:00', 'ref-123', '', 500.000000, 0.000000, 'admin-id', '2026-01-09 16:55:20', 'admin-id', '2026-01-09 17:08:31', 4),
-('74546221-8a4f-41c7-bfcc-a87547822755', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z101', 'd5eefaf0-9979-4edf-8fbd-68f3157c4105', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-09 00:00:00', 'ref-123', '', 0.000000, 15000.000000, 'admin-id', '2026-01-09 16:55:54', 'admin-id', '2026-01-09 17:05:11', 2),
-('b642fbd0-a081-4a91-99ff-f167d069bbea', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z602', 'internal', '14bc4749-859b-46aa-aa67-29b926f88083', 'Cash', '2026-01-10 00:00:00', '5000', '', 0.000000, 5000.000000, 'admin-id', '2026-01-09 18:17:10', 'admin-id', '2026-01-09 18:17:10', 1),
-('ea4dbc4b-da84-49f1-988a-3cd294077399', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z601', 'internal', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-10 00:00:00', '5000', '', 5000.000000, 0.000000, 'admin-id', '2026-01-09 18:17:10', 'admin-id', '2026-01-09 18:17:10', 1);
+('322544db-ccf2-4326-94ea-c92325654f99', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z901', 'internal', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-10 00:00:00', 'rent-5656', '', 1500.000000, 0.000000, 'admin-id', '2026-01-10 08:17:42', 'admin-id', '2026-01-10 08:17:42', 1),
+('4fdfe935-bc63-492a-9a88-8d632caaad47', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z103', 'd5eefaf0-9979-4edf-8fbd-68f3157c4105', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-10 00:00:00', 'SO#12346', '', 0.000000, 4500.000000, 'admin-id', '2026-01-10 08:22:36', 'admin-id', '2026-01-10 08:22:36', 1),
+('57635f84-7cae-4a10-8927-cd34447800de', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z904', 'internal', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-10 00:00:00', 'nov', '', 500.000000, 0.000000, 'admin-id', '2026-01-10 08:19:11', 'admin-id', '2026-01-10 08:19:11', 1),
+('5bb72d2a-7ef7-42c3-a12d-17ea7e874344', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z702', 'internal', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-10 00:00:00', 'cash investment', '', 0.000000, 25000.000000, 'admin-id', '2026-01-10 08:16:12', 'admin-id', '2026-01-10 08:16:12', 1),
+('665b8fac-564b-470a-a922-4c484bfe1474', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z602', 'internal', '14bc4749-859b-46aa-aa67-29b926f88083', 'Bank', '2026-01-10 00:00:00', 'transfer', '', 0.000000, 5000.000000, 'admin-id', '2026-01-10 08:16:47', 'admin-id', '2026-01-10 08:16:47', 1),
+('6bf954fd-fea2-4898-9821-48874ac98e4d', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z903', 'internal', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'MFS', '2026-01-10 00:00:00', 'nov', '', 500.000000, 0.000000, 'admin-id', '2026-01-10 08:18:22', 'admin-id', '2026-01-10 08:18:22', 1),
+('90529872-84ce-47ff-b0e4-3414e06a2ac9', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z203', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-10 00:00:00', 'INV-123456', '', 8000.000000, 0.000000, 'admin-id', '2026-01-10 08:21:02', 'admin-id', '2026-01-10 08:21:02', 1),
+('efaade64-7c50-4fe7-b1d3-f033622e800d', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z601', 'internal', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Bank', '2026-01-10 00:00:00', 'transfer', '', 5000.000000, 0.000000, 'admin-id', '2026-01-10 08:16:47', 'admin-id', '2026-01-10 08:16:47', 1);
 
 -- --------------------------------------------------------
 
@@ -265,49 +368,45 @@ CREATE TABLE `tmtb_trhed` (
 --
 
 INSERT INTO `tmtb_trhed` (`id`, `trhed_users`, `trhed_hednm`, `trhed_grpnm`, `trhed_grtyp`, `trhed_cntyp`, `trhed_actve`, `trhed_crusr`, `trhed_crdat`, `trhed_upusr`, `trhed_updat`, `trhed_rvnmr`) VALUES
-('Z101', 'admin-id', 'Sales Booking (+)', 'Sales', 'In', 'Customer', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z102', 'admin-id', 'Sales Invoice (-)', 'Sales', 'Out', 'Customer', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z103', 'admin-id', 'Sales Order (+)', 'Sales', 'In', 'Customer', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z104', 'admin-id', 'Sales Return (-)', 'Sales', 'Out', 'Customer', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z105', 'admin-id', 'Sales Customer Expense (+)', 'Sales', 'In', 'Customer', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z106', 'admin-id', 'Sales Expense (-)', 'Sales', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z107', 'admin-id', 'Sales Discount (-)', 'Sales', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z108', 'admin-id', 'Sales VAT (+)', 'Sales', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z201', 'admin-id', 'Purchase Booking (-)', 'Purchases', 'Out', 'Supplier', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z202', 'admin-id', 'Purchase Invoice (+)', 'Purchases', 'In', 'Supplier', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z203', 'admin-id', 'Purchase Order (-)', 'Purchases', 'Out', 'Supplier', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z204', 'admin-id', 'Purchase Return (+)', 'Purchases', 'In', 'Supplier', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z205', 'admin-id', 'Purchase Purchase Expense (-)', 'Purchases', 'Out', 'Supplier', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z206', 'admin-id', 'Purchase Expense (-)', 'Purchases', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z207', 'admin-id', 'Purchase Discount (+)', 'Purchases', 'In', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z208', 'admin-id', 'Purchase VAT (+)', 'Purchases', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z301', 'admin-id', 'Stock Out (-)', 'Inventory', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z302', 'admin-id', 'Stock In (+)', 'Inventory', 'In', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z401', 'admin-id', 'Gain (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z402', 'admin-id', 'Salary Deduction (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z403', 'admin-id', 'Rent Advance Received (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z404', 'admin-id', 'Rent Adjustment (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z405', 'admin-id', 'Bank Profit (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z406', 'admin-id', 'Loan Taken (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z407', 'admin-id', 'Deposit (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z408', 'admin-id', 'Asset Sale (+)', 'Assets', 'In', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z409', 'admin-id', 'Other Income (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z501', 'admin-id', 'Loss (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z502', 'admin-id', 'Salary Payment (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z503', 'admin-id', 'Rent Advance Payment (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z504', 'admin-id', 'Rent Payment (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z505', 'admin-id', 'Electricity Bill (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z506', 'admin-id', 'Internet Bill (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z507', 'admin-id', 'Transport Payment (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z508', 'admin-id', 'Bank Charges (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z509', 'admin-id', 'Tax Payment (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z510', 'admin-id', 'Maintenance Payment (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z511', 'admin-id', 'Loan Payment (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z512', 'admin-id', 'Asset Purchase (-)', 'Assets', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z513', 'admin-id', 'Other Expense (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z514', 'admin-id', 'Withdraw (-)', 'Income', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z601', 'admin-id', 'Transfer Out (-)', 'Transfer', 'Out', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1),
-('Z602', 'admin-id', 'Transfer In (+)', 'Transfer', 'In', 'Internal', 1, 'admin-id', '2026-01-09 14:43:19', 'admin-id', '2026-01-09 14:43:19', 1);
+('Z1001', 'admin-id', 'Asset Purchase (-)', 'Asset', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:31', 'admin-id', '2026-01-10 08:06:31', 1),
+('Z1002', 'admin-id', 'Asset Sale (+)', 'Asset', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:31', 'admin-id', '2026-01-10 08:06:31', 1),
+('Z101', 'admin-id', 'Sales Booking (+)', 'Sales', 'In', 'Customer', 1, 'admin-id', '2026-01-10 08:07:18', 'admin-id', '2026-01-10 08:07:18', 1),
+('Z102', 'admin-id', 'Sales Invoice (+)', 'Sales', 'In', 'Customer', 1, 'admin-id', '2026-01-10 08:07:18', 'admin-id', '2026-01-10 08:07:18', 1),
+('Z103', 'admin-id', 'Sales Order (+)', 'Sales', 'In', 'Customer', 1, 'admin-id', '2026-01-10 08:07:18', 'admin-id', '2026-01-10 08:07:18', 1),
+('Z104', 'admin-id', 'Sales Return (-)', 'Sales', 'Out', 'Customer', 1, 'admin-id', '2026-01-10 08:07:18', 'admin-id', '2026-01-10 08:07:18', 1),
+('Z105', 'admin-id', 'Sales Expense (-)', 'Sales', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:07:18', 'admin-id', '2026-01-10 08:07:18', 1),
+('Z1101', 'admin-id', 'VAT Payment (-)', 'VAT', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:25', 'admin-id', '2026-01-10 08:06:25', 1),
+('Z1102', 'admin-id', 'VAT Collection (+)', 'VAT', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:25', 'admin-id', '2026-01-10 08:06:25', 1),
+('Z1201', 'admin-id', 'Tax Payment (-)', 'Tax', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:18', 'admin-id', '2026-01-10 08:06:18', 1),
+('Z1202', 'admin-id', 'Tax Receipt (+)', 'Tax', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:18', 'admin-id', '2026-01-10 08:06:18', 1),
+('Z1301', 'admin-id', 'Salary Payment (-)', 'HR', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:09', 'admin-id', '2026-01-10 08:06:09', 1),
+('Z1302', 'admin-id', 'Salary Advance Payment (-)', 'HR', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:09', 'admin-id', '2026-01-10 08:06:09', 1),
+('Z1303', 'admin-id', 'Salary Deduction (+)', 'HR', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:09', 'admin-id', '2026-01-10 08:06:09', 1),
+('Z1304', 'admin-id', 'Salary Advance Deduction (+)', 'HR', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:09', 'admin-id', '2026-01-10 08:06:09', 1),
+('Z201', 'admin-id', 'Purchase Booking (-)', 'Purchase', 'Out', 'Supplier', 1, 'admin-id', '2026-01-10 08:07:11', 'admin-id', '2026-01-10 08:07:11', 1),
+('Z202', 'admin-id', 'Purchase Invoice (-)', 'Purchase', 'Out', 'Supplier', 1, 'admin-id', '2026-01-10 08:07:11', 'admin-id', '2026-01-10 08:07:11', 1),
+('Z203', 'admin-id', 'Purchase Order (-)', 'Purchase', 'Out', 'Supplier', 1, 'admin-id', '2026-01-10 08:07:11', 'admin-id', '2026-01-10 08:07:11', 1),
+('Z204', 'admin-id', 'Purchase Return (+)', 'Purchase', 'In', 'Supplier', 1, 'admin-id', '2026-01-10 08:07:11', 'admin-id', '2026-01-10 08:07:11', 1),
+('Z205', 'admin-id', 'Purchase Expense (-)', 'Purchase', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:07:11', 'admin-id', '2026-01-10 08:07:11', 1),
+('Z501', 'admin-id', 'Stock Out (-)', 'Inventory', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:07:05', 'admin-id', '2026-01-10 08:07:05', 1),
+('Z502', 'admin-id', 'Stock In (+)', 'Inventory', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:07:05', 'admin-id', '2026-01-10 08:07:05', 1),
+('Z601', 'admin-id', 'Transfer Out (-)', 'Transfer', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:58', 'admin-id', '2026-01-10 08:06:58', 1),
+('Z602', 'admin-id', 'Transfer In (+)', 'Transfer', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:58', 'admin-id', '2026-01-10 08:06:58', 1),
+('Z701', 'admin-id', 'Gain (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:52', 'admin-id', '2026-01-10 08:06:52', 1),
+('Z702', 'admin-id', 'Investment (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:52', 'admin-id', '2026-01-10 08:06:52', 1),
+('Z703', 'admin-id', 'Bank Profit (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:52', 'admin-id', '2026-01-10 08:06:52', 1),
+('Z704', 'admin-id', 'Bank Loan Received (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:52', 'admin-id', '2026-01-10 08:06:52', 1),
+('Z705', 'admin-id', 'Other Income (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:52', 'admin-id', '2026-01-10 08:06:52', 1),
+('Z801', 'admin-id', 'Loss (-)', 'Expenditure', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:45', 'admin-id', '2026-01-10 08:06:45', 1),
+('Z802', 'admin-id', 'Withdrawal (-)', 'Expenditure', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:45', 'admin-id', '2026-01-10 08:06:45', 1),
+('Z803', 'admin-id', 'Bank Charges (-)', 'Expenditure', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:45', 'admin-id', '2026-01-10 08:06:45', 1),
+('Z804', 'admin-id', 'Bank Loan Payment (-)', 'Expenditure', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:45', 'admin-id', '2026-01-10 08:06:45', 1),
+('Z805', 'admin-id', 'Other Cost (-)', 'Expenditure', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:45', 'admin-id', '2026-01-10 08:06:45', 1),
+('Z901', 'admin-id', 'Rent (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-10 08:06:39', 1),
+('Z902', 'admin-id', 'Rent Advance (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-10 08:06:39', 1),
+('Z903', 'admin-id', 'Electricity Bill (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-10 08:06:39', 1),
+('Z904', 'admin-id', 'Internet Bill (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-10 08:06:39', 1),
+('Z905', 'admin-id', 'Transport Bill (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-10 08:06:39', 1);
 
 --
 -- Indexes for dumped tables
@@ -331,6 +430,30 @@ ALTER TABLE `tmab_users`
 -- Indexes for table `tmcb_cntct`
 --
 ALTER TABLE `tmcb_cntct`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmib_bitem`
+--
+ALTER TABLE `tmib_bitem`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmib_ctgry`
+--
+ALTER TABLE `tmib_ctgry`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmib_items`
+--
+ALTER TABLE `tmib_items`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmib_iuofm`
+--
+ALTER TABLE `tmib_iuofm`
   ADD PRIMARY KEY (`id`);
 
 --

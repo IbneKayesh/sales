@@ -1,5 +1,6 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
+import { ButtonGroup } from "primereact/buttongroup";
 import UsersListComp from "./UsersListComp";
 import UsersFormComp from "./UsersFormComp";
 import { useUsers } from "@/hooks/auth/useUsers";
@@ -28,36 +29,36 @@ const UsersPage = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
-          {isList
-            ? "User List"
-            : formData.id
-            ? "Edit User"
-            : "Add New User"}
+          {isList ? "User List" : formData.id ? "Edit User" : "Add New User"}
         </h3>
 
-        {isList ? (
-          <div className="flex gap-2">
+        <div className="flex gap-2">
+          <ButtonGroup>
             <Button
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
               onClick={handleRefresh}
+              disabled={!isList}
             />
             <Button
-              label="New User"
+              label="New"
               icon="pi pi-plus"
               size="small"
+              severity="info"
               onClick={handleAddNew}
+              disabled={!isList}
             />
-          </div>
-        ) : (
-          <Button
-            label="User List"
-            icon="pi pi-arrow-left"
-            size="small"
-            onClick={handleCancel}
-          />
-        )}
+            <Button
+              label="Back"
+              icon="pi pi-arrow-left"
+              size="small"
+              severity="help"
+              onClick={handleCancel}
+              disabled={isList}
+            />
+          </ButtonGroup>
+        </div>
       </div>
     );
   };
