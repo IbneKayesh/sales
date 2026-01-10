@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
 const { v4: uuidv4 } = require("uuid");
+const jwt = require("jsonwebtoken");
 
 // registration, with auto login
 router.post("/register", async (req, res) => {
@@ -152,10 +153,19 @@ LEFT JOIN tmab_bsins bsn ON usr.users_bsins = bsn.id
         data: null,
       });
     }
+
+    // Generate JWT
+    const token = jwt.sign(
+      { id: row.id, email: row.users_email, role: row.users_drole },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
     res.json({
       success: true,
       message: "User logged in successfully",
       data: row,
+      token: token,
     });
   } catch (error) {
     console.error("database action error:", error);
@@ -163,6 +173,7 @@ LEFT JOIN tmab_bsins bsn ON usr.users_bsins = bsn.id
       success: false,
       message: error.message || "An error occurred during db action",
       data: null,
+      token: null,
     });
   }
 });

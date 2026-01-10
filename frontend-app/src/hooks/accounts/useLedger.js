@@ -129,14 +129,14 @@ export const useLedger = () => {
       if (selectedHead.trhed_grtyp === "In") {
         updatedFormData = {
           ...updatedFormData,
-          ledgr_dbamt: amount,
-          ledgr_cramt: 0,
+          ledgr_dbamt: 0,
+          ledgr_cramt: amount,
         };
       } else if (selectedHead.trhed_grtyp === "Out") {
         updatedFormData = {
           ...updatedFormData,
-          ledgr_dbamt: 0,
-          ledgr_cramt: amount,
+          ledgr_dbamt: amount,
+          ledgr_cramt: 0,
         };
       } else {
         showToast("error", "Validation Error", "Invalid Head Group Type.");

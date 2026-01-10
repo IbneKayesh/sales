@@ -172,30 +172,6 @@ export const useContacts = () => {
     }
   };
 
-  const fetchSupplierList = async () => {
-    const response = await contactAPI.getAll();
-    const supplierData = response.data.filter(
-      (c) => c.contact_type === "Supplier" || c.contact_type === "Both"
-    );
-    setSupplierList(supplierData);
-  };
-
-  const handleLedger = async (contact) => {
-    try {
-      const response = await contactAPI.getContactLedger(contact.contact_id);
-      // response = { message, data }
-      setContactsLedger(response.data);
-    } catch (error) {
-      console.error("Error loading data:", error);
-
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: error?.message || "Failed to load data",
-      });
-    }
-  };
-
   //other functions
   const [contactListDdl, setContactListDdl] = useState([]);
   const fetchContactListDdl = async (trhed_cntyp) => {
@@ -211,6 +187,22 @@ export const useContacts = () => {
       //   label: item.cntct_cntnm,
       // }));
       setContactListDdl(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
+
+  //ledger
+  const [ledgerDataList, setLedgerDataList] = useState([]);
+  const handleShowContactLedger = async (contact) => {
+    try {
+      const response = await contactAPI.getContactLedger({
+        id: contact.id,
+        ledgr_users: user.users_users,
+      });
+      // response = { message, data }
+      setLedgerDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
       showToast("error", "Error", error?.message || "Failed to load data");
@@ -235,5 +227,8 @@ export const useContacts = () => {
     cntct_cntryOptions,
     contactListDdl,
     fetchContactListDdl,
+    //ledger
+    handleShowContactLedger,
+    ledgerDataList,
   };
 };

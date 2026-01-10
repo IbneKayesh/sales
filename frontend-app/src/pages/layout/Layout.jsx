@@ -37,8 +37,8 @@ const Layout = () => {
       icon: "pi pi-money-bill",
       submenus: [
         { id: "ac1", name: "Accounts", url: "/home/accounts/accounts", icon: "pi pi-building-columns" },
-        { id: "ac2", name: "Ledger", url: "/home/accounts/ledger", icon: "pi pi-arrow-right-arrow-left" },
-        { id: "ac3", name: "Expenses", url: "/home/accounts/expenses", icon: "pi pi-receipt" },
+        { id: "ac2", name: "Heads", url: "/home/accounts/heads", icon: "pi pi-objects-column" },
+        { id: "ac3", name: "Ledger", url: "/home/accounts/ledger", icon: "pi pi-arrow-right-arrow-left" },
         { id: "ac4", name: "Payables", url: "/home/accounts/payables", icon: "pi pi-money-bill" },
         { id: "ac5", name: "Receivables", url: "/home/accounts/receivables", icon: "pi pi-money-bill" },
         { id: "ac6", name: "VAT", url: "/home/accounts/vat", icon: "pi pi-percentage" },

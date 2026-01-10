@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
     const sql = `SELECT acts.*, 0 as edit_stop
       FROM tmtb_trhed acts
       WHERE acts.trhed_users = ?
-      ORDER BY acts.id`;
+      ORDER BY acts.trhed_grpnm, acts.trhed_grtyp`;
     const params = [trhed_users];
 
     const rows = await dbGetAll(sql, params, `Get account heads for ${trhed_users}`);

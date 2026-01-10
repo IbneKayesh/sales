@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
       LEFT JOIN tmcb_cntct cntc ON dgr.ledgr_cntct = cntc.id
       LEFT JOIN tmtb_bacts acts ON dgr.ledgr_bacts = acts.id
       WHERE dgr.ledgr_users = ?
-      ORDER BY dgr.ledgr_trdat DESC`;
+      ORDER BY dgr.ledgr_crdat DESC`;
     const params = [ledgr_users];
 
     const rows = await dbGetAll(sql, params, `Get ledgers for ${ledgr_users}`);

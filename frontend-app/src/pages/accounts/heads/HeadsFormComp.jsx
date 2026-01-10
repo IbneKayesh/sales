@@ -2,7 +2,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import t_banks from "@/models/accounts/t_banks.json";
 
-const BankFormComponent = ({
+const HeadsFormComp = ({
   isBusy,
   errors,
   formData,
@@ -84,4 +84,4 @@ const BankFormComponent = ({
   );
 };
 
-export default BankFormComponent;
+export default HeadsFormComp;

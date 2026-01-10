@@ -5,11 +5,17 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { Dialog } from "primereact/dialog";
 import { Badge } from "primereact/badge";
+import { formatDate } from "@/utils/datetime";
 
-const ContactListComp = ({ dataList, onEdit, onDelete }) => {
+const ContactListComp = ({
+  dataList,
+  onEdit,
+  onDelete,
+  onShowContactLedger,
+  ledgerDataList,
+}) => {
   const [selectedRowDetail, setSelectedRowDetail] = useState({});
-  const [visibleLedger, setVisibleLedger] = useState(false);
-  const [contactsLedger, setcontactsLedger] = useState([]);
+  const [dlgLedger, setDlgLedger] = useState(false);
 
   const handleDelete = (rowData) => {
     confirmDialog({
@@ -51,7 +57,7 @@ const ContactListComp = ({ dataList, onEdit, onDelete }) => {
           size="small"
           tooltip="Ledger"
           tooltipOptions={{ position: "top" }}
-          //onClick={() => handleVisibleLedger(rowData)}
+          onClick={() => handleDlgLedger(rowData)}
           model={menuItems}
         />
       </div>
@@ -61,10 +67,10 @@ const ContactListComp = ({ dataList, onEdit, onDelete }) => {
   const cntct_ctype_BT = (rowData) => {
     return (
       <>
-      {rowData.cntct_ctype} {" - "}
-      {rowData.cntct_sorce}
+        {rowData.cntct_ctype} {" - "}
+        {rowData.cntct_sorce}
       </>
-    )
+    );
   };
 
   const cntct_cntnm_BT = (rowData) => {
@@ -160,45 +166,67 @@ const ContactListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const handleVisibleLedger = (rowData) => {
+  const handleDlgLedger = (rowData) => {
     setSelectedRowDetail(rowData);
-    setVisibleLedger(true);
-    onLedger(rowData);
-  };
-
-  const payment_mode_BT = (rowData) => {
-    return rowData.payment_mode + " for " + rowData.ref_no;
+    setDlgLedger(true);
+    onShowContactLedger(rowData);
   };
 
   const account_balance = () => {
     //total debit - total credit;
-    const total_debit = contactsLedger.reduce(
-      (total, row) => total + row.debit_amount,
+    const total_debit = ledgerDataList.reduce(
+      (total, row) => total + Number(row.ledgr_dbamt),
       0
     );
-    const total_credit = contactsLedger.reduce(
-      (total, row) => total + row.credit_amount,
+    const total_credit = ledgerDataList.reduce(
+      (total, row) => total + Number(row.ledgr_cramt),
       0
     );
-    const balance = total_debit - total_credit;
-    const formatBalance = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "BDT",
-    }).format(balance);
-    //console.log(formatBalance);
+    const balance = total_credit - total_debit;
     return balance > 0 ? (
-      <span className="text-red-500">{formatBalance}</span>
+      <span className="text-green-500">{balance}</span>
     ) : (
-      <span className="text-blue-500">{formatBalance}</span>
+      <span className="text-red-500">{balance}</span>
     );
   };
 
-  const debit_amount_FT = () => {
-    return contactsLedger.reduce((total, row) => total + row.debit_amount, 0);
+  const ledgr_trdat_BT = (rowData) => {
+    return <>{formatDate(rowData.ledgr_trdat)}</>;
   };
 
-  const credit_amount_FT = () => {
-    return contactsLedger.reduce((total, row) => total + row.credit_amount, 0);
+  const ledgr_refno_BT = (rowData) => {
+    return (
+      <>
+        {rowData.ledgr_refno}
+        {rowData.ledgr_notes ? "," + rowData.ledgr_notes : ""}
+      </>
+    );
+  };
+
+  const ledgr_dbamt_BT = (rowData) => {
+    return Number(rowData.ledgr_dbamt) === 0
+      ? 0
+      : Number(rowData.ledgr_dbamt).toFixed(4);
+  };
+
+  const ledgr_cramt_BT = (rowData) => {
+    return Number(rowData.ledgr_cramt) === 0
+      ? 0
+      : Number(rowData.ledgr_cramt).toFixed(4);
+  };
+
+  const ledgr_dbamt_FT = () => {
+    return ledgerDataList.reduce(
+      (total, row) => total + Number(row.ledgr_dbamt),
+      0
+    );
+  };
+
+  const ledgr_cramt_FT = () => {
+    return ledgerDataList.reduce(
+      (total, row) => total + Number(row.ledgr_cramt),
+      0
+    );
   };
 
   return (
@@ -231,48 +259,47 @@ const ContactListComp = ({ dataList, onEdit, onDelete }) => {
       <Dialog
         header={
           <>
-            <span className="text-blue-500">Accounts Ledger of </span>
-            {selectedRowDetail?.contact_name || "N/A"}
-            <br />
+            Accounts Ledger of{" "}
+            <span className="text-blue-500">
+              {selectedRowDetail?.cntct_cntnm || "N/A"}{" "}
+            </span>
             {account_balance()}
           </>
         }
-        visible={visibleLedger}
+        visible={dlgLedger}
         style={{ width: "50vw" }}
         onHide={() => {
-          if (!visibleLedger) return;
-          setVisibleLedger(false);
+          if (!dlgLedger) return;
+          setDlgLedger(false);
         }}
       >
         <div className="m-0">
-          {/* {JSON.stringify(contactsLedger)} */}
+          {/* {JSON.stringify(ledgerDataList)} */}
           <DataTable
-            value={contactsLedger}
-            keyField="ledger_id"
+            value={ledgerDataList}
+            paginator
+            rows={10}
+            rowsPerPageOptions={[5, 10, 25]}
             emptyMessage="No data found."
             size="small"
-            paginator
-            rows={20}
-            rowsPerPageOptions={[20, 50, 100]}
+            rowHover
+            showGridlines
           >
-            <Column field="payment_head" header="Head" />
+            <Column field="ledgr_pymod" header="Mode" />
+            <Column field="ledgr_trdat" header="Date" body={ledgr_trdat_BT} />
+            <Column field="ledgr_refno" header="Ref" body={ledgr_refno_BT}/>
             <Column
-              field="payment_mode"
-              header="Particular"
-              body={payment_mode_BT}
-            />
-            <Column field="payment_date" header="Date" />
-            <Column
-              field="debit_amount"
-              header="Debit"
-              footer={debit_amount_FT}
+              field="ledgr_dbamt"
+              header="Debit (-)"
+              body={ledgr_dbamt_BT}
+              footer={ledgr_dbamt_FT}
             />
             <Column
-              field="credit_amount"
-              header="Credit"
-              footer={credit_amount_FT}
+              field="ledgr_cramt"
+              header="Credit (+)"
+              body={ledgr_cramt_BT}
+              footer={ledgr_cramt_FT}
             />
-            <Column field="payment_note" header="Note" />
           </DataTable>
         </div>
       </Dialog>

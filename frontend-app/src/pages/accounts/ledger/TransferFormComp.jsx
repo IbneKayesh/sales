@@ -17,7 +17,7 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   return (
     <>
       <div className="grid">
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="ledgr_bacts_from"
             className="block text-900 font-medium mb-2"
@@ -48,7 +48,7 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
             </small>
           )}
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="ledgr_bacts_to"
             className="block text-900 font-medium mb-2"
@@ -120,7 +120,7 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
             <small className="mb-3 text-red-500">{errors.ledgr_trdat}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-5">
           <label
             htmlFor="ledgr_refno"
             className="block text-900 font-medium mb-2"
@@ -138,7 +138,7 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
             <small className="mb-3 text-red-500">{errors.ledgr_refno}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-5">
           <label
             htmlFor="ledgr_notes"
             className="block text-900 font-medium mb-2"

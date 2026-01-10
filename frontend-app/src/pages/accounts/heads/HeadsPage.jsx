@@ -1,10 +1,10 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import ContactListComp from "./ContactListComp";
-import ContactFormComp from "./ContactFormComp";
-import { useContacts } from "@/hooks/crm/useContacts";
+import { useAccountsHeads } from "@/hooks/accounts/useAccountsHeads";
+import HeadsListComp from "./HeadsListComp";
+import HeadsFormComp from "./HeadsFormComp";
 
-const ContactPage = () => {
+const HeadsPage = () => {
   const {
     dataList,
     isBusy,
@@ -18,25 +18,18 @@ const ContactPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-    cntct_ctypeOptions,
-    cntct_sorceOptions,
-    cntct_cntryOptions,
-    //ledger
-    handleShowContactLedger,
-    ledgerDataList,
-  } = useContacts();
+  } = useAccountsHeads();
 
   const getHeader = () => {
     const isList = currentView === "list";
-
     return (
       <div className="flex align-items-center justify-content-between">
-        <h3 className="m-0">
+      <h3 className="m-0">
           {isList
-            ? "Contact"
+            ? "Heads List"
             : formData.id
-            ? "Edit Contact"
-            : "Add New Contact"}
+            ? "Edit Head"
+            : "Add New Head"}
         </h3>
 
         {isList ? (
@@ -48,15 +41,16 @@ const ContactPage = () => {
               onClick={handleRefresh}
             />
             <Button
-              label="New Contact"
+              label="New Head"
               icon="pi pi-plus"
               size="small"
               onClick={handleAddNew}
+              disabled={true}
             />
           </div>
         ) : (
           <Button
-            label="Contact List"
+            label="Head List"
             icon="pi pi-arrow-left"
             size="small"
             onClick={handleCancel}
@@ -70,23 +64,18 @@ const ContactPage = () => {
     <>
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <ContactListComp
+          <HeadsListComp
             dataList={dataList}
             onEdit={handleEdit}
             onDelete={handleDelete}
-            onShowContactLedger={handleShowContactLedger}
-            ledgerDataList={ledgerDataList}
           />
         ) : (
-          <ContactFormComp
+          <HeadsFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
             onChange={handleChange}
             onSave={handleSave}
-            cntct_ctypeOptions={cntct_ctypeOptions}
-            cntct_sorceOptions={cntct_sorceOptions}
-            cntct_cntryOptions={cntct_cntryOptions}
           />
         )}
       </Card>
@@ -94,4 +83,4 @@ const ContactPage = () => {
   );
 };
 
-export default ContactPage;
+export default HeadsPage;

@@ -86,7 +86,12 @@ const LedgerFormComp = ({
             value={formData.ledgr_trhed}
             options={headListDdl.map((item) => ({
               value: item.id,
-              label: item.trhed_hednm + ", " + item.trhed_cntyp,
+              label:
+                item.trhed_hednm +
+                ", " +
+                item.trhed_grpnm +
+                "-" +
+                item.trhed_cntyp,
             }))}
             optionLabel="label"
             optionValue="value"
@@ -100,7 +105,7 @@ const LedgerFormComp = ({
             <small className="mb-3 text-red-500">{errors.ledgr_trhed}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label
             htmlFor="ledgr_cntct"
             className="block text-900 font-medium mb-2"
@@ -199,7 +204,7 @@ const LedgerFormComp = ({
             <small className="mb-3 text-red-500">{errors.ledgr_trdat}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-5">
           <label
             htmlFor="ledgr_refno"
             className="block text-900 font-medium mb-2"
@@ -217,7 +222,7 @@ const LedgerFormComp = ({
             <small className="mb-3 text-red-500">{errors.ledgr_refno}</small>
           )}
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-5">
           <label
             htmlFor="ledgr_notes"
             className="block text-900 font-medium mb-2"

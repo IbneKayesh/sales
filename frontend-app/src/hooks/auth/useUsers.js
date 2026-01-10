@@ -30,7 +30,7 @@ export const useUsers = () => {
       // response = { message, data }
 
       setDataList(response.data);
-      showToast("success", "Success", response.message);
+      //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
       showToast("error", "Error", error?.message || "Failed to load data");
@@ -38,7 +38,7 @@ export const useUsers = () => {
   };
 
   const loadBusiness = async () => {
-    console.log("loadBusiness: ", businessOptions);
+    //console.log("loadBusiness: ", businessOptions);
     if (businessOptions.length > 0) {
       return;
     }
@@ -46,7 +46,7 @@ export const useUsers = () => {
       const response = await businessAPI.getAll({
         bsins_users: user.users_users,
       });
-      console.log("response: " + JSON.stringify(response));
+      //console.log("response: " + JSON.stringify(response));
 
       // response = { message, data }
 

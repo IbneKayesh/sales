@@ -70,6 +70,14 @@ const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
+  const ledgr_dbamt_BT = (rowData) => {
+    return Number(rowData.ledgr_dbamt) > 0 ? rowData.ledgr_dbamt: "0";
+  };
+
+  const ledgr_cramt_BT = (rowData) => {
+    return Number(rowData.ledgr_cramt) > 0 ? rowData.ledgr_cramt: "0";
+  };
+
   return (
     <div className="p-1">
       <ConfirmDialog />
@@ -98,8 +106,8 @@ const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
           body={ledgr_trdat_BT}
         />
         <Column field="ledgr_refno" header="Ref No" body={ledgr_refno_BT} />
-        <Column field="ledgr_dbamt" header="Debit (+)" sortable />
-        <Column field="ledgr_cramt" header="Credit (-)" sortable />
+        <Column field="ledgr_dbamt" header="Debit (-)" sortable body={ledgr_dbamt_BT} />
+        <Column field="ledgr_cramt" header="Credit (+)" sortable body={ledgr_cramt_BT} />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>

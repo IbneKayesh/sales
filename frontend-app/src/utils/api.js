@@ -1,12 +1,17 @@
 // Centralized API utility for backend communication
-const API_BASE_URL = '/api';
+const API_BASE_URL = "/api";
 
 const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
+
+  // Get token from storage
+  const token = localStorage.getItem("authToken");
+
   const config = {
     headers: {
-      'Content-Type': 'application/json',
-      'app-api-key': 'sand-grain-digital-2025',
+      "Content-Type": "application/json",
+      "app-api-key": import.meta.env.VITE_APP_API_KEY,
+      ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
     ...options,
@@ -17,6 +22,10 @@ const apiRequest = async (endpoint, options = {}) => {
     const data = await response.json();
 
     if (!response.ok) {
+      // Optional: Handle 401 specifically to clear token if needed
+      if (response.status === 401) {
+        // console.warn('Unauthorized access, consider redirecting to login');
+      }
       throw new Error(data.error || `HTTP error! status: ${response.status}`);
     }
 

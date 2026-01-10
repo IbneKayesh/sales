@@ -58,7 +58,7 @@ router.post("/create", async (req, res) => {
       cntct_cntry,
       cntct_cntad,
       cntct_crlmt,
-      user_id
+      user_id,
     } = req.body;
 
     // Validate input
@@ -94,9 +94,22 @@ router.post("/create", async (req, res) => {
     ?,?,?,?,?,?,?,
     ?,?,?)`;
     const params = [
-      id,cntct_users,cntct_bsins,cntct_ctype,cntct_sorce,cntct_cntnm,
-    cntct_cntps,cntct_cntno,cntct_email,cntct_ofadr,cntct_fcadr,cntct_cntry,cntct_cntad,
-    cntct_crlmt,user_id,user_id
+      id,
+      cntct_users,
+      cntct_bsins,
+      cntct_ctype,
+      cntct_sorce,
+      cntct_cntnm,
+      cntct_cntps,
+      cntct_cntno,
+      cntct_email,
+      cntct_ofadr,
+      cntct_fcadr,
+      cntct_cntry,
+      cntct_cntad,
+      cntct_crlmt,
+      user_id,
+      user_id,
     ];
 
     await dbRun(sql, params, `Create contact for ${cntct_cntnm}`);
@@ -133,7 +146,7 @@ router.post("/update", async (req, res) => {
       cntct_cntry,
       cntct_cntad,
       cntct_crlmt,
-      user_id
+      user_id,
     } = req.body;
 
     // Validate input
@@ -189,7 +202,7 @@ router.post("/update", async (req, res) => {
       cntct_cntad,
       cntct_crlmt,
       user_id,
-      id
+      id,
     ];
 
     await dbRun(sql, params, `Update contact for ${cntct_cntnm}`);
@@ -244,11 +257,10 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-
 //get-by-type
 router.post("/get-by-type", async (req, res) => {
   try {
-    const { cntct_users, cntct_ctype  } = req.body;
+    const { cntct_users, cntct_ctype } = req.body;
 
     // Validate input
     if (!cntct_users || !cntct_ctype) {
@@ -282,4 +294,50 @@ router.post("/get-by-type", async (req, res) => {
     });
   }
 });
+
+// get all
+router.post("/ledger", async (req, res) => {
+  try {
+    const { id, ledgr_users } = req.body;
+    console.log("req.body ", req.body);
+
+    // Validate input
+    if (!id || !ledgr_users) {
+      return res.json({
+        success: false,
+        message: "Contact ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT dgr.*,bsns.bsins_bname, thed.trhed_hednm,
+    cntc.cntct_cntnm, acts.bacts_bankn,
+     0 as edit_stop
+      FROM tmtb_ledgr dgr
+      LEFT JOIN tmab_bsins bsns ON dgr.ledgr_bsins = bsns.id
+      LEFT JOIN tmtb_trhed thed ON dgr.ledgr_trhed = thed.id
+      LEFT JOIN tmcb_cntct cntc ON dgr.ledgr_cntct = cntc.id
+      LEFT JOIN tmtb_bacts acts ON dgr.ledgr_bacts = acts.id
+      WHERE dgr.ledgr_cntct = ?
+      AND dgr.ledgr_users = ?
+      ORDER BY dgr.ledgr_crdat DESC`;
+    const params = [id, ledgr_users];
+
+    const rows = await dbGetAll(sql, params, `Get ledgers for ${id}`);
+    res.json({
+      success: true,
+      message: "Ledgers fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;

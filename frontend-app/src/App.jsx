@@ -19,6 +19,7 @@ import UsersPage from "./pages/auth/users/UsersPage";
 import ContactPage from "./pages/crm/contacts/ContactPage.jsx";
 //accounts
 import AccountsPage from "./pages/accounts/accounts/AccountsPage";
+import HeadsPage from "./pages/accounts/heads/HeadsPage";
 import LedgerPage from "./pages/accounts/ledger/LedgerPage";
 
 // import UnitPage from "./pages/inventory/units/UnitPage.jsx";
@@ -70,6 +71,7 @@ function AppRoutes() {
         <Route path="crm/contact" element={<ContactPage />} />
         //accounts
         <Route path="accounts/accounts" element={<AccountsPage />} />
+        <Route path="accounts/heads" element={<HeadsPage />} />
         <Route path="accounts/ledger" element={<LedgerPage />} />
 
         {/* <Route path="inventory/unit" element={<UnitPage />} />

@@ -27,6 +27,9 @@ export const contactAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  getContactLedger: (contact_id) =>
-    apiRequest(`/setup/contacts/ledger/${contact_id}`),
+  getContactLedger: (data) =>
+    apiRequest(`/crm/contacts/ledger`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

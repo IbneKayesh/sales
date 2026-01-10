@@ -1,10 +1,22 @@
-const dummyData = require('./dummyData');
+const dummyData = require("./dummyData");
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("./sqlManager");
 const { v4: uuidv4 } = require("uuid");
 
 const initData = async () => {
   try {
-    const { account_heads_data } = dummyData();
+    const {
+      sales_data,
+      purchase_data,
+      inventory_data,
+      transfer_data,
+      income_data,
+      expenditure_data,
+      expense_data,
+      asset_data,
+      vat_data,
+      tax_data,
+      hr_data,
+    } = dummyData();
 
     const sql = `
       INSERT INTO tmtb_trhed
@@ -12,21 +24,21 @@ const initData = async () => {
       VALUES (?, 'admin-id',?, ?, ?, ?, 'admin-id', 'admin-id')
     `;
 
-    for (const head of account_heads_data) {
+    for (const line of sales_data) {
       const params = [
-        head.id,
-        head.trhed_hednm,
-        head.trhed_grpnm,
-        head.trhed_grtyp,
-        head.trhed_cntyp,
+        line.id,
+        line.trhed_hednm,
+        line.trhed_grpnm,
+        line.trhed_grtyp,
+        line.trhed_cntyp,
       ];
 
-      await dbRun(sql, params, `Insert account head ${head.id}`);
+      await dbRun(sql, params, `Insert account head ${line.id}`);
     }
 
-    console.log('✅ Dummy account head data inserted successfully');
+    console.log("✅ Dummy account head data inserted successfully");
   } catch (error) {
-    console.error('❌ initData error:', error);
+    console.error("❌ initData error:", error);
   }
 };
 
