@@ -119,7 +119,6 @@ export const useUsers = () => {
       );
     } catch (error) {
       console.error("Error deleting data:", error);
-
       showToast("error", "Error", error?.message || "Failed to delete data");
     }
   };

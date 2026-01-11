@@ -1,0 +1,11 @@
+drop table	tmab_bsins;
+drop table	tmab_users;
+drop table	tmcb_cntct;
+drop table	tmib_bitem;
+drop table	tmib_ctgry;
+drop table	tmib_items;
+drop table	tmib_iuofm;
+drop table	tmsb_crgrn;
+drop table	tmtb_bacts;
+drop table	tmtb_ledgr;
+drop table	tmtb_trhed;

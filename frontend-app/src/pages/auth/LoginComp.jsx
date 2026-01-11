@@ -21,14 +21,13 @@ const greetings = [
 ];
 
 const LoginComp = () => {
-  
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [usersEmail, setUsersEmail] = useState("admin@sgd.com");
   const [usersPswrd, setUsersPswrd] = useState("password");
   const [isBusy, setIsBusy] = useState(false);
   const [showInputs, setShowInputs] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);  
+  const [isHovered, setIsHovered] = useState(false);
   const [fallingLetters, setFallingLetters] = useState([]);
   const { login } = useAuth();
   const { showToast } = useToast();
@@ -139,6 +138,13 @@ const LoginComp = () => {
       onMouseLeave={handleMouseLeave}
     >
       <form onSubmit={handleSubmit}>
+        <h2
+          className={`text-center text-lg text-purple-500 mb-4 ${
+            showInputs ? "visible" : "hidden"
+          }`}
+        >
+          Version: 1.0.0
+        </h2>
         <h2
           className={`text-center mb-4 pulse ${
             showInputs ? "visible" : "hidden"

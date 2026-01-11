@@ -1,0 +1,16 @@
+.modern-changelog .p-timeline-event-opposite {
+  display: none;
+}
+
+.modern-changelog .p-timeline-event-content {
+  padding-left: 0.75rem;
+}
+
+.modern-changelog .p-timeline-event-separator {
+  min-width: 1.25rem;
+}
+
+.modern-changelog .p-timeline-event-connector {
+  width: 1px;
+  background-color: var(--surface-border);
+}

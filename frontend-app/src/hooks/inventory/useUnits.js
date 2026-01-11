@@ -1,18 +1,17 @@
 import { useState, useEffect } from "react";
 import { unitsAPI } from "@/api/inventory/unitsAPI";
-import validate from "@/models/validator";
-import t_units from "@/models/inventory/t_units";
+import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
+import tmib_iuofm from "@/models/inventory/tmib_iuofm.json";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/useToast";
 
-const dataModel = {
-  unit_id: "",
-  unit_name: "",
-  edit_stop: 0,
-};
+const dataModel = generateDataModel(tmib_iuofm, { edit_stop: 0 });
 
 export const useUnits = () => {
-  const [unitList, setUnitList] = useState([]);
-  const [toastBox, setToastBox] = useState(null);
+  const { user } = useAuth();
+  const { showToast } = useToast();
+  const [dataList, setDataList] = useState([]);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
@@ -22,21 +21,12 @@ export const useUnits = () => {
     try {
       const response = await unitsAPI.getAll();
       // response = { message, data }
-      setUnitList(response.data);
+      setDataList(response.data);
 
-      setToastBox({
-        severity: "success",
-        summary: "Success",
-        detail: response.message,
-      });
+      //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: error?.message || "Failed to load data",
-      });
+      showToast("error", "Error", error?.message || "Failed to load data");
     }
   };
 
@@ -47,7 +37,7 @@ export const useUnits = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, t_units);
+    const newErrors = validate({ ...formData, [field]: value }, tmib_iuofm);
     setErrors(newErrors);
   };
 
@@ -66,37 +56,31 @@ export const useUnits = () => {
     setCurrentView("form");
   };
 
-  const handleEditUnit = (unit) => {
+  const handleEdit = (unit) => {
     //console.log("unit: " + JSON.stringify(unit));
 
     setFormData(unit);
     setCurrentView("form");
   };
 
-  const handleDeleteUnit = async (rowData) => {
+  const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
       const response = await unitsAPI.delete(rowData);
 
       // Remove deleted unit from local state
-      const updatedList = unitList.filter(
-        (u) => u.unit_id !== rowData.unit_id
-      );
-      setUnitList(updatedList);
+      const updatedList = dataList.filter((u) => u.id !== rowData.id);
+      setDataList(updatedList);
 
-      setToastBox({
-        severity: "info",
-        summary: "Deleted",
-        detail: response.message || "Deleted successfully",
-      });
+      showToast(
+        response.success ? "info" : "error",
+        response.success ? "Deleted" : "Error",
+        response.message ||
+          "Operation " + (response.success ? "successful" : "failed")
+      );
     } catch (error) {
       console.error("Error deleting data:", error);
-
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: error?.message || "Failed to delete data",
-      });
+      showToast("error", "Error", error?.message || "Failed to delete data");
     }
   };
 
@@ -104,62 +88,63 @@ export const useUnits = () => {
     loadUnits();
   };
 
-  const handleSaveUnit = async (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     try {
       setIsBusy(true);
 
       // Validate form
-      const newErrors = validate(formData, t_units);
+      const newErrors = validate(formData, tmib_iuofm);
       setErrors(newErrors);
-      console.log("handleSaveUnit:", JSON.stringify(formData));
+      console.log("handleSave: " + JSON.stringify(newErrors));
 
       if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
         return;
       }
 
-      // Ensure unit_id exists (for create)
+      // Ensure id exists (for create)
       const formDataNew = {
         ...formData,
-        unit_id: formData.unit_id || generateGuid(),
+        id: formData.id || generateGuid(),
+        iuofm_users: user.users_users,
+        user_id: user.id,
       };
+
+      // console.log("formDataNew: " + JSON.stringify(formDataNew));
+      // return;
 
       // Call API and get { message, data }
       let response;
-      if (formData.unit_id) {
+      if (formData.id) {
         response = await unitsAPI.update(formDataNew);
       } else {
         response = await unitsAPI.create(formDataNew);
       }
+      //console.log("response: " + JSON.stringify(response));
 
       // Update toast using API message
-      setToastBox({
-        severity: "success",
-        summary: "Success",
-        detail: response.message || "Operation successful",
-      });
+      showToast(
+        response.success ? "success" : "error",
+        response.success ? "Success" : "Error",
+        response.message ||
+          "Operation " + (response.success ? "successful" : "failed")
+      );
 
-      // Clear form & reload
       handleClear();
       setCurrentView("list");
-      await loadUnits(); // make sure we wait for updated data
+      loadUnits();
     } catch (error) {
       console.error("Error saving data:", error);
 
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: error?.message || "Failed to save data",
-      });
+      showToast("error", "Error", error?.message || "Failed to save data");
     } finally {
       setIsBusy(false);
     }
   };
 
   return {
-    unitList,
-    toastBox,
+    dataList,
     isBusy,
     currentView,
     errors,
@@ -167,9 +152,9 @@ export const useUnits = () => {
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditUnit,
-    handleDeleteUnit,
+    handleEdit,
+    handleDelete,
     handleRefresh,
-    handleSaveUnit,
+    handleSave,
   };
 };

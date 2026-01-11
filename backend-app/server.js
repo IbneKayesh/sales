@@ -18,6 +18,8 @@ const accountsLedgerRoutes = require("./routes/accounts/accountsLedger.routes.js
 //setup
 const grainRoutes = require("./routes/setup/grain.routes.js");
 const closingRoutes = require("./routes/setup/closing.routes.js");
+//inventory
+const unitsRoutes = require("./routes/inventory/units.routes.js");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -36,6 +38,8 @@ const authMiddleware = require("./middlewares/authMiddleware");
 app.use("/api", (req, res, next) => {
   const apiKey = req.headers["app-api-key"];
   const validKey = process.env.APP_API_KEY;
+
+  //console.log("apiKey", apiKey);
 
   if (!apiKey || apiKey !== validKey) {
     return res.status(401).json({ error: "Invalid or missing API key" });
@@ -64,6 +68,8 @@ app.use("/api/accounts/accounts-ledgers", accountsLedgerRoutes);
 //setup
 app.use("/api/setup/grain", grainRoutes);
 app.use("/api/setup/closing", closingRoutes);
+//inventory
+app.use("/api/inventory/units", unitsRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

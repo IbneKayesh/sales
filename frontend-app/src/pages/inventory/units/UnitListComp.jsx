@@ -3,10 +3,10 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 
-const UnitListComponent = ({ dataList, onEdit, onDelete }) => {
+const UnitListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.unit_name}"?`,
+      message: `Are you sure you want to delete "${rowData.iuofm_untnm}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -57,11 +57,11 @@ const UnitListComponent = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
       >
-        <Column field="unit_name" header="Unit Name" sortable />
+        <Column field="iuofm_untnm" header="Unit Name" sortable />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );
 };
 
-export default UnitListComponent;
+export default UnitListComp;

@@ -1,16 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
 import { useUnits } from "@/hooks/inventory/useUnits";
-import UnitListComponent from "./UnitListComponent";
-import UnitFormComponent from "./UnitFormComponent";
+import UnitListComp from "./UnitListComp";
+import UnitFormComp from "./UnitFormComp";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
+import { ButtonGroup } from "primereact/buttongroup";
 
 const UnitPage = () => {
-  const toast = useRef(null);
   const {
-    unitList,
-    toastBox,
+    dataList,
     isBusy,
     currentView,
     errors,
@@ -18,22 +15,11 @@ const UnitPage = () => {
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditUnit,
-    handleDeleteUnit,
+    handleEdit,
+    handleDelete,
     handleRefresh,
-    handleSaveUnit,
+    handleSave,
   } = useUnits();
-
-  useEffect(() => {
-    if (toastBox && toast.current) {
-      toast.current.show({
-        severity: toastBox.severity,
-        summary: toastBox.summary,
-        detail: toastBox.detail,
-        life: 3000,
-      });
-    }
-  }, [toastBox]);
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -41,57 +27,56 @@ const UnitPage = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
-          {isList
-            ? "Unit List"
-            : formData.unit_id
-            ? "Edit Unit"
-            : "Add New Unit"}
+          {isList ? "Unit List" : formData.id ? "Edit Unit" : "Add New Unit"}
         </h3>
 
-        {isList ? (
-          <div className="flex gap-2">
+        <div className="flex gap-2">
+          <ButtonGroup>
             <Button
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
               onClick={handleRefresh}
+              disabled={!isList}
             />
             <Button
-              label="New Unit"
+              label="New"
               icon="pi pi-plus"
               size="small"
+              severity="info"
               onClick={handleAddNew}
+              disabled={!isList}
             />
-          </div>
-        ) : (
-          <Button
-            label="Unit List"
-            icon="pi pi-arrow-left"
-            size="small"
-            onClick={handleCancel}
-          />
-        )}
+            <Button
+              label="Back"
+              icon="pi pi-arrow-left"
+              size="small"
+              severity="help"
+              onClick={handleCancel}
+              disabled={isList}
+            />
+          </ButtonGroup>
+        </div>
       </div>
     );
   };
 
   return (
     <>
-      <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <UnitListComponent
-            dataList={unitList}
-            onEdit={handleEditUnit}
-            onDelete={handleDeleteUnit}
+          <UnitListComp
+            dataList={dataList}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         ) : (
-          <UnitFormComponent
+          <UnitFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
             onChange={handleChange}
-            onSave={handleSaveUnit}
+            onSave={handleSave}
           />
         )}
       </Card>

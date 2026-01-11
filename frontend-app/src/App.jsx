@@ -9,6 +9,8 @@ import { AuthProvider, useAuth } from "./hooks/useAuth.jsx";
 import { ToastProvider } from "./hooks/useToast.jsx"; // [NEW]
 
 //internal imports
+import LatestPage from "./pages/LatestPage";
+import LandingPage from "./pages/LandingPage"; // [NEW]
 import Layout from "./pages/layout/Layout.jsx";
 import HomePage from "./pages/HomePage.jsx";
 //auth
@@ -22,7 +24,8 @@ import ContactPage from "./pages/crm/contacts/ContactPage.jsx";
 import AccountsPage from "./pages/accounts/accounts/AccountsPage";
 import HeadsPage from "./pages/accounts/heads/HeadsPage";
 import LedgerPage from "./pages/accounts/ledger/LedgerPage";
-
+//inventory
+import UnitPage from "./pages/inventory/units/UnitPage";
 
 function App() {
   return (
@@ -41,11 +44,16 @@ function AppRoutes() {
 
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/latest" element={<LatestPage />} />
       <Route
-        path="/"
+        path="/login"
         element={user ? <Navigate to="/home" /> : <AuthPage defComp="login" />}
       />
-      <Route path="/home" element={user ? <Layout /> : <Navigate to="/" />}>
+      <Route
+        path="/home"
+        element={user ? <Layout /> : <Navigate to="/login" />}
+      >
         <Route index element={<HomePage />} />
         //auth
         <Route path="auth/business" element={<BusinessPage />} />
@@ -57,12 +65,13 @@ function AppRoutes() {
         <Route path="accounts/accounts" element={<AccountsPage />} />
         <Route path="accounts/heads" element={<HeadsPage />} />
         <Route path="accounts/ledger" element={<LedgerPage />} />
-
+        //inventory
+        <Route path="inventory/unit" element={<UnitPage />} />
         //Setup Module
         {/* <Route path="setup/settings" element={<SettingsPage />} /> */}
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>
-      <Route path="*" element={<Navigate to="/home" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
