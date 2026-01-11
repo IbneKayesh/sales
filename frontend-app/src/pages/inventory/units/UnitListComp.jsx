@@ -44,6 +44,18 @@ const UnitListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
+  const iuofm_untnm_BT = (rowData) => {
+    return (
+      <>
+        {rowData.iuofm_untnm}{" "}
+        {rowData.iuofm_actve === 1 ? (
+          <i className="pi pi-check-circle text-green-500" />
+        ) : (
+          <i className="pi pi-times-circle text-red-500" />
+        )}
+      </>
+    );
+  };
   return (
     <div className="p-1">
       <ConfirmDialog />
@@ -57,7 +69,12 @@ const UnitListComp = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
       >
-        <Column field="iuofm_untnm" header="Unit Name" sortable />
+        <Column
+          field="iuofm_untnm"
+          header="Unit Name"
+          body={iuofm_untnm_BT}
+          sortable
+        />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>

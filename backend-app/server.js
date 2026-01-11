@@ -20,6 +20,7 @@ const grainRoutes = require("./routes/setup/grain.routes.js");
 const closingRoutes = require("./routes/setup/closing.routes.js");
 //inventory
 const unitsRoutes = require("./routes/inventory/units.routes.js");
+const categoriesRoutes = require("./routes/inventory/categories.routes.js");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -70,6 +71,7 @@ app.use("/api/setup/grain", grainRoutes);
 app.use("/api/setup/closing", closingRoutes);
 //inventory
 app.use("/api/inventory/units", unitsRoutes);
+app.use("/api/inventory/categories", categoriesRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

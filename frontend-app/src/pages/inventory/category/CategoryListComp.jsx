@@ -3,10 +3,10 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 
-const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
+const CategoryListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.category_name}"?`,
+      message: `Are you sure you want to delete "${rowData.ctgry_ctgnm}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -26,7 +26,7 @@ const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
         command: () => {
           handleDelete(rowData);
         },
-        disabled: rowData.ismodified,
+        disabled: rowData.edit_stop,
       },
     ];
     return (
@@ -38,12 +38,24 @@ const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
           tooltipOptions={{ position: "top" }}
           onClick={() => onEdit(rowData)}
           model={menuItems}
-          disabled={rowData.ismodified}
+          disabled={rowData.edit_stop}
         />
       </div>
     );
   };
 
+  const ctgry_ctgnm_BT = (rowData) => {
+    return (
+      <>
+        {rowData.ctgry_ctgnm}{" "}
+        {rowData.ctgry_actve === 1 ? (
+          <i className="pi pi-check-circle text-green-500" />
+        ) : (
+          <i className="pi pi-times-circle text-red-500" />
+        )}
+      </>
+    );
+  };
   return (
     <div className="p-1">
       <ConfirmDialog />
@@ -57,11 +69,16 @@ const CategoryListComponent = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
       >
-        <Column field="category_name" header="Category Name" sortable />        
+        <Column
+          field="ctgry_ctgnm"
+          header="Category Name"
+          body={ctgry_ctgnm_BT}
+          sortable
+        />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );
 };
 
-export default CategoryListComponent;
+export default CategoryListComp;

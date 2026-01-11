@@ -1,16 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useCategories } from "@/hooks/inventory/useCategories";
-import CategoryListComponent from "./CategoryListComponent";
-import CategoryFormComponent from "./CategoryFormComponent";
+import { useCategory } from "@/hooks/inventory/useCategory";
+import CategoryListComp from "./CategoryListComp";
+import CategoryFormComp from "./CategoryFormComp";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
+import { ButtonGroup } from "primereact/buttongroup";
 
 const CategoryPage = () => {
-  const toast = useRef(null);
   const {
-    categoryList,
-    toastBox,
+    dataList,
     isBusy,
     currentView,
     errors,
@@ -18,22 +15,11 @@ const CategoryPage = () => {
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditCategory,
-    handleDeleteCategory,
+    handleEdit,
+    handleDelete,
     handleRefresh,
-    handleSaveCategory,
-  } = useCategories();
-
-  useEffect(() => {
-    if (toastBox && toast.current) {
-      toast.current.show({
-        severity: toastBox.severity,
-        summary: toastBox.summary,
-        detail: toastBox.detail,
-        life: 3000,
-      });
-    }
-  }, [toastBox]);
+    handleSave,
+  } = useCategory();
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -41,57 +27,56 @@ const CategoryPage = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
-          {isList
-            ? "Category List"
-            : formData.category_id
-            ? "Edit Category"
-            : "Add New Category"}
+          {isList ? "Category List" : formData.id ? "Edit Category" : "Add New Category"}
         </h3>
 
-        {isList ? (
-          <div className="flex gap-2">
+        <div className="flex gap-2">
+          <ButtonGroup>
             <Button
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
               onClick={handleRefresh}
+              disabled={!isList}
             />
             <Button
-              label="New Category"
+              label="New"
               icon="pi pi-plus"
               size="small"
+              severity="info"
               onClick={handleAddNew}
+              disabled={!isList}
             />
-          </div>
-        ) : (
-          <Button
-            label="Category List"
-            icon="pi pi-arrow-left"
-            size="small"
-            onClick={handleCancel}
-          />
-        )}
+            <Button
+              label="Back"
+              icon="pi pi-arrow-left"
+              size="small"
+              severity="help"
+              onClick={handleCancel}
+              disabled={isList}
+            />
+          </ButtonGroup>
+        </div>
       </div>
     );
   };
 
   return (
     <>
-      <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <CategoryListComponent
-            dataList={categoryList}
-            onEdit={handleEditCategory}
-            onDelete={handleDeleteCategory}
+          <CategoryListComp
+            dataList={dataList}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         ) : (
-          <CategoryFormComponent
+          <CategoryFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
             onChange={handleChange}
-            onSave={handleSaveCategory}
+            onSave={handleSave}
           />
         )}
       </Card>

@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import { unitsAPI } from "@/api/inventory/unitsAPI";
+import { categoriesAPI } from "@/api/inventory/categoriesAPI";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
-import tmib_iuofm from "@/models/inventory/tmib_iuofm.json";
+import tmib_ctgry from "@/models/inventory/tmib_ctgry.json";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 
-const dataModel = generateDataModel(tmib_iuofm, { edit_stop: 0 });
+const dataModel = generateDataModel(tmib_ctgry, { edit_stop: 0 });
 
-export const useUnits = () => {
+export const useCategory = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
@@ -17,9 +17,9 @@ export const useUnits = () => {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
-  const loadUnits = async () => {
+  const loadCategories = async () => {
     try {
-      const response = await unitsAPI.getAll({ iuofm_users: user.users_users });
+      const response = await categoriesAPI.getAll({ ctgry_users: user.users_users });
       //response = { message, data }
       //console.log("response: " + JSON.stringify(response));
       setDataList(response.data);
@@ -33,12 +33,12 @@ export const useUnits = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadUnits();
+    loadCategories();
   }, []);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmib_iuofm);
+    const newErrors = validate({ ...formData, [field]: value }, tmib_ctgry);
     setErrors(newErrors);
   };
 
@@ -67,7 +67,7 @@ export const useUnits = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await unitsAPI.delete(rowData);
+      const response = await categoriesAPI.delete(rowData);
 
       // Remove deleted unit from local state
       const updatedList = dataList.filter((u) => u.id !== rowData.id);
@@ -86,7 +86,7 @@ export const useUnits = () => {
   };
 
   const handleRefresh = () => {
-    loadUnits();
+    loadCategories();
   };
 
   const handleSave = async (e) => {
@@ -95,7 +95,7 @@ export const useUnits = () => {
       setIsBusy(true);
 
       // Validate form
-      const newErrors = validate(formData, tmib_iuofm);
+      const newErrors = validate(formData, tmib_ctgry);
       setErrors(newErrors);
       console.log("handleSave: " + JSON.stringify(newErrors));
 
@@ -108,7 +108,7 @@ export const useUnits = () => {
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        iuofm_users: user.users_users,
+        ctgry_users: user.users_users,
         user_id: user.id,
       };
 
@@ -118,9 +118,9 @@ export const useUnits = () => {
       // Call API and get { message, data }
       let response;
       if (formData.id) {
-        response = await unitsAPI.update(formDataNew);
+        response = await categoriesAPI.update(formDataNew);
       } else {
-        response = await unitsAPI.create(formDataNew);
+        response = await categoriesAPI.create(formDataNew);
       }
       //console.log("response: " + JSON.stringify(response));
 
@@ -134,7 +134,7 @@ export const useUnits = () => {
 
       handleClear();
       setCurrentView("list");
-      loadUnits();
+      loadCategories();
     } catch (error) {
       console.error("Error saving data:", error);
 

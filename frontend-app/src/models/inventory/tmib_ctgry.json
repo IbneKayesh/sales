@@ -7,7 +7,7 @@
     "placeholder": "Enter ID",
     "required": false
   },
-  "iuofm_users": {
+  "ctgry_users": {
     "type": "string",
     "label": "User Id",
     "maxLength": 50,
@@ -15,12 +15,12 @@
     "placeholder": "Enter user id",
     "required": false
   },
-  "iuofm_untnm": {
+  "ctgry_ctgnm": {
     "type": "string",
-    "label": "Unit Name",
+    "label": "Category Name",
     "maxLength": 100,
     "minLength": 2,
-    "placeholder": "Enter unit name",
+    "placeholder": "Enter category name",
     "required": true
   }
 }
