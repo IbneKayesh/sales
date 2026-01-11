@@ -7,4 +7,9 @@ export const accountsHeadsAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  delete: (data) =>
+    apiRequest("/accounts/accounts-heads/delete", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

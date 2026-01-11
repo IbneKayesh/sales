@@ -23,8 +23,8 @@ const greetings = [
 const LoginComp = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [usersEmail, setUsersEmail] = useState("admin@sgd.com");
-  const [usersPswrd, setUsersPswrd] = useState("password");
+  const [usersEmail, setUsersEmail] = useState("");
+  const [usersPswrd, setUsersPswrd] = useState("");
   const [isBusy, setIsBusy] = useState(false);
   const [showInputs, setShowInputs] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -127,6 +127,11 @@ const LoginComp = () => {
     }
   };
 
+  const handleCopyDemoUserCredentials = () => {
+    setUsersEmail("admin@sgd.com");
+    setUsersPswrd("password");
+  };
+
   return (
     <div
       className={`login-card bubble-anim ${isHovered ? "hovered" : ""} ${
@@ -206,6 +211,12 @@ const LoginComp = () => {
             >
               Register
             </span>
+          </p>
+          <p
+            className="text-secondary text-purple-500 mb-2 hover:text-white cursor-pointer"
+            onClick={() => handleCopyDemoUserCredentials()}
+          >
+            Copy Demo User Credentials
           </p>
         </div>
         <div className={`text-center ${!showInputs ? "visible" : "hidden"}`}>

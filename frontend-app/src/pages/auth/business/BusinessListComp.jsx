@@ -3,6 +3,7 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { formatDate } from "@/utils/datetime";
+import ActiveRowCell from "@/components/ActiveRowCell";
 
 const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
@@ -45,20 +46,15 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const bsins_bname_BT = (rowData) => (
-    <>
-      {rowData.bsins_bname}
-      {", "}
-      {rowData.bsins_addrs}
-      {", "}
-      {rowData.bsins_cntry}{" "}
-      {rowData.bsins_actve === 1 ? (
-        <i className="pi pi-check-circle text-green-500" />
-      ) : (
-        <i className="pi pi-times-circle text-red-500" />
-      )}
-    </>
-  );
+  const bsins_bname_BT = (rowData) => {
+    const text =
+      rowData.bsins_bname +
+      ", " +
+      rowData.bsins_addrs +
+      ", " +
+      rowData.bsins_cntry;
+    return <ActiveRowCell text={text} status={rowData.bsins_actve} />;
+  };
 
   const bsins_email_BT = (rowData) => {
     return (

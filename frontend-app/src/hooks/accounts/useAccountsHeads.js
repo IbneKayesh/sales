@@ -69,14 +69,14 @@ export const useAccountsHeads = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await businessAPI.delete(rowData);
+      const response = await accountsHeadsAPI.delete(rowData);
 
       // Remove deleted business from local state
       const updatedList = dataList.filter((s) => s.id !== rowData.id);
       setDataList(updatedList);
 
       showToast(
-        response.success ? "info" : "error",
+        response.success ? "success" : "error",
         response.success ? "Deleted" : "Error",
         response.message ||
           "Operation " + (response.success ? "successful" : "failed")
@@ -88,7 +88,7 @@ export const useAccountsHeads = () => {
   };
 
   const handleRefresh = () => {
-    loadBusiness();
+    loadAccountsHeads();
   };
 
   const handleSave = async (e) => {

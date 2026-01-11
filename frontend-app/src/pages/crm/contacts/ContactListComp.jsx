@@ -6,6 +6,7 @@ import { SplitButton } from "primereact/splitbutton";
 import { Dialog } from "primereact/dialog";
 import { Badge } from "primereact/badge";
 import { formatDate } from "@/utils/datetime";
+import ActiveRowCell from "@/components/ActiveRowCell";
 
 const ContactListComp = ({
   dataList,
@@ -74,22 +75,15 @@ const ContactListComp = ({
   };
 
   const cntct_cntnm_BT = (rowData) => {
-    return (
-      <>
-        {rowData.cntct_cntnm}
-        {", "}
-        {rowData.cntct_cntps}
-        {", "}
-        {rowData.cntct_cntno}
-        {", "}
-        {rowData.cntct_email}{" "}
-        {rowData.cntct_actve === 1 ? (
-          <i className="pi pi-check-circle text-green-500" />
-        ) : (
-          <i className="pi pi-times-circle text-red-500" />
-        )}
-      </>
-    );
+    const text =
+      rowData.cntct_cntnm +
+      ", " +
+      rowData.cntct_cntps +
+      ", " +
+      rowData.cntct_cntno +
+      ", " +
+      rowData.cntct_email;
+    return <ActiveRowCell text={text} status={rowData.cntct_actve} />;
   };
 
   const cntct_ofadr_BT = (rowData) => {
@@ -287,7 +281,7 @@ const ContactListComp = ({
           >
             <Column field="ledgr_pymod" header="Mode" />
             <Column field="ledgr_trdat" header="Date" body={ledgr_trdat_BT} />
-            <Column field="ledgr_refno" header="Ref" body={ledgr_refno_BT}/>
+            <Column field="ledgr_refno" header="Ref" body={ledgr_refno_BT} />
             <Column
               field="ledgr_dbamt"
               header="Debit (-)"

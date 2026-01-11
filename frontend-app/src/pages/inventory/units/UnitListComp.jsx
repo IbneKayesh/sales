@@ -2,6 +2,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
+import ActiveRowCell from "@/components/ActiveRowCell";
 
 const UnitListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
@@ -46,16 +47,10 @@ const UnitListComp = ({ dataList, onEdit, onDelete }) => {
 
   const iuofm_untnm_BT = (rowData) => {
     return (
-      <>
-        {rowData.iuofm_untnm}{" "}
-        {rowData.iuofm_actve === 1 ? (
-          <i className="pi pi-check-circle text-green-500" />
-        ) : (
-          <i className="pi pi-times-circle text-red-500" />
-        )}
-      </>
+      <ActiveRowCell text={rowData.iuofm_untnm} status={rowData.iuofm_actve} />
     );
   };
+
   return (
     <div className="p-1">
       <ConfirmDialog />

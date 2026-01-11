@@ -3,6 +3,7 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { Button } from "primereact/button";
+import ActiveRowCell from "@/components/ActiveRowCell";
 
 const HeadsListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
@@ -23,11 +24,12 @@ const HeadsListComp = ({ dataList, onEdit, onDelete }) => {
     return (
       <>
         <Button
-          icon="pi pi-pencil"
+          icon="pi pi-trash"
           size="small"
-          tooltip="Edit"
+          tooltip="Delete"
           tooltipOptions={{ position: "top" }}
-          disabled
+          onClick={() => handleDelete(rowData)}
+          disabled={rowData.edit_stop}
         />
       </>
     );
@@ -58,14 +60,7 @@ const HeadsListComp = ({ dataList, onEdit, onDelete }) => {
 
   const trhed_hednm_BT = (rowData) => {
     return (
-      <>
-        {rowData.trhed_hednm}{" "}
-        {rowData.trhed_actve === 1 ? (
-          <i className="pi pi-check-circle text-green-500" />
-        ) : (
-          <i className="pi pi-times-circle text-red-500" />
-        )}
-      </>
+      <ActiveRowCell text={rowData.trhed_hednm} status={rowData.trhed_actve} />
     );
   };
   return (
@@ -81,7 +76,12 @@ const HeadsListComp = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
       >
-        <Column field="trhed_hednm" header="Head" body={trhed_hednm_BT} sortable />
+        <Column
+          field="trhed_hednm"
+          header="Head"
+          body={trhed_hednm_BT}
+          sortable
+        />
         <Column field="trhed_grpnm" header="Group" sortable />
         <Column field="trhed_grtyp" header="Type" sortable />
         <Column field="trhed_cntyp" header="Contact" sortable />

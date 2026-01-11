@@ -3,6 +3,7 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { formatDate, formatDateTime } from "@/utils/datetime";
+import ActiveRowCell from "@/components/ActiveRowCell";
 
 const UsersListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
@@ -45,7 +46,7 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const users_email_BT = (rowData) => {
+  const users_email_BTx = (rowData) => {
     return (
       <>
         {rowData.users_isrgs === 1 ? (
@@ -53,7 +54,7 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
         ) : (
           <i className="pi pi-users text-blue-500 mr-2" />
         )}
-        {rowData.users_email} {" "}
+        {rowData.users_email}{" "}
         {rowData.users_actve === 1 ? (
           <i className="pi pi-check-circle text-green-500 mr-2" />
         ) : (
@@ -63,8 +64,39 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const users_regdt_BT = (rowData) => {
-    return formatDate(rowData.users_regdt);
+  const users_email_BT = (rowData) => {
+    return (
+      <>
+        {rowData.users_isrgs === 1 ? (
+          <i className="pi pi-user text-green-500 mr-2" />
+        ) : (
+          <i className="pi pi-users text-blue-500 mr-2" />
+        )}
+        <ActiveRowCell
+          text={rowData.users_email}
+          status={rowData.users_actve}
+        />
+      </>
+    );
+  };
+
+  const users_oname_BT = (rowData) => {
+    return (
+      <>
+        {rowData.users_oname}
+        {rowData.users_cntct ? ", " + rowData.users_cntct : ""}
+      </>
+    );
+  };
+
+  const users_regno_BT = (rowData) => {
+    return (
+      <>
+        {rowData.users_regno}
+        {", "}
+        {formatDate(rowData.users_regdt)}
+      </>
+    );
   };
 
   const users_lstgn_BT = (rowData) => {
@@ -73,6 +105,20 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
 
   const users_lstpd_BT = (rowData) => {
     return formatDateTime(rowData.users_lstpd);
+  };
+
+  const users_wctxt_BT = (rowData) => {
+    return (
+      <>
+        {rowData.users_wctxt}
+        {", "}
+        {rowData.users_notes}
+      </>
+    );
+  };
+
+  const bsins_bname_BT = (rowData) => {
+    return <span className="text-bold text-blue-500">{rowData.bsins_bname}</span>;
   };
 
   return (
@@ -90,19 +136,17 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
       >
         <Column field="users_email" header="Email" body={users_email_BT} />
         <Column field="users_recky" header="Key" />
-        <Column field="users_oname" header="Name" />
-        <Column field="users_cntct" header="Contact" />
-        <Column field="users_regno" header="Reg No" />
-        <Column field="users_regdt" header="Registered" body={users_regdt_BT} />
+        <Column field="users_oname" header="Name" body={users_oname_BT} />
+        <Column field="users_regno" header="Registered" body={users_regno_BT} />
         <Column field="users_lstgn" header="Last Login" body={users_lstgn_BT} />
         <Column
           field="users_lstpd"
           header="Last pwd Change"
           body={users_lstpd_BT}
         />
-        <Column field="users_wctxt" header="Welcome" />
-        <Column field="users_notes" header="Notes" />
+        <Column field="users_wctxt" header="Welcome" body={users_wctxt_BT} />
         <Column field="users_nofcr" header="Credits" />
+        <Column field="bsins_bname" header="Business" body={bsins_bname_BT} />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>

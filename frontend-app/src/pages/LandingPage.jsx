@@ -59,7 +59,7 @@ const LandingPage = () => {
 
       {/* Navigation */}
       <nav className="landing-nav">
-        <div className="brand">SalesForce Pro</div>
+        <div className="brand">Lbusiness Pro</div>
         <div className="nav-links">
           <a href="#features" className="nav-link">
             Features
@@ -87,13 +87,13 @@ const LandingPage = () => {
             <span className="highlight">Like a Pro</span>
           </h1>
           <p>
-            The ultimate all-in-one platform for CRM, Sales, Inventory, and
+            The ultimate all-in-one platform for Purchase, Sales, Inventory, and
             Accounting. Streamline your operations and boost productivity with
             our intuitive suite.
           </p>
           <div className="hero-buttons">
-            <Link to="/login" className="cta-button">
-              Start Free Trial{" "}
+            <Link to="/login?view=register" className="cta-button">
+              Start Like Pro{" "}
               <i
                 className="pi pi-arrow-right"
                 style={{ marginLeft: "0.5rem" }}
@@ -116,14 +116,14 @@ const LandingPage = () => {
                 className="pi pi-check-circle"
                 style={{ color: "var(--accent-cyan)" }}
               ></i>{" "}
-              No credit card required
+              No demo required
             </div>
             <div className="company-logo">
               <i
                 className="pi pi-check-circle"
                 style={{ color: "var(--accent-cyan)" }}
               ></i>{" "}
-              4.9/5 Average Rating
+              4.7/5 Average Rating
             </div>
           </div>
         </div>
@@ -365,18 +365,15 @@ const LandingPage = () => {
           </div>
           <div className="step-card">
             <div className="step-number">2</div>
-            <h3>Import Data</h3>
-            <p>
-              Easily import your existing contacts and inventory via CSV or
-              Excel.
-            </p>
+            <h3>Initialize Data</h3>
+            <p>Initilize your business data with a quick startup settings.</p>
           </div>
           <div className="step-card">
             <div className="step-number">3</div>
             <h3>Grow Business</h3>
             <p>
-              Start managing sales, tracking expenses, and viewing insights
-              immediately.
+              Start managing business operations, tracking expenses, and viewing
+              insights immediately.
             </p>
           </div>
         </div>
@@ -442,9 +439,9 @@ const LandingPage = () => {
         </div>
         <div className="pricing-grid">
           <div className="pricing-card">
-            <h3>Starter</h3>
+            <h3>Standard</h3>
             <div className="price">
-              $0<span>/mo</span>
+              ৳1<span>/500 SGD</span>
             </div>
             <ul className="plan-features">
               <li>
@@ -452,25 +449,32 @@ const LandingPage = () => {
                   className="pi pi-check"
                   style={{ color: "var(--accent-cyan)" }}
                 ></i>{" "}
-                1 User
+                5 Business
               </li>
               <li>
                 <i
                   className="pi pi-check"
                   style={{ color: "var(--accent-cyan)" }}
                 ></i>{" "}
-                Basic CRM
+                100 User
               </li>
               <li>
                 <i
                   className="pi pi-check"
                   style={{ color: "var(--accent-cyan)" }}
                 ></i>{" "}
-                50 Inventory Items
+                Full Features
+              </li>
+              <li>
+                <i
+                  className="pi pi-check"
+                  style={{ color: "var(--accent-cyan)" }}
+                ></i>{" "}
+                5000 Inventory Items
               </li>
             </ul>
             <Link
-              to="/login"
+              to="/login?view=register"
               className="secondary-button"
               style={{ textAlign: "center" }}
             >
@@ -481,15 +485,22 @@ const LandingPage = () => {
             <div className="popular-badge">MOST POPULAR</div>
             <h3>Pro</h3>
             <div className="price">
-              $29<span>/mo</span>
+              ৳1<span>/250 SGD</span>
             </div>
             <ul className="plan-features">
+            <li>
+                <i
+                  className="pi pi-check"
+                  style={{ color: "var(--accent-purple)" }}
+                ></i>{" "}
+                10 Business
+              </li>
               <li>
                 <i
                   className="pi pi-check"
                   style={{ color: "var(--accent-purple)" }}
                 ></i>{" "}
-                5 Users
+                500 Users
               </li>
               <li>
                 <i
@@ -503,18 +514,18 @@ const LandingPage = () => {
                   className="pi pi-check"
                   style={{ color: "var(--accent-purple)" }}
                 ></i>{" "}
-                Unlimited Inventory
+                Unlimited Inventory Items
               </li>
               <li>
                 <i
                   className="pi pi-check"
                   style={{ color: "var(--accent-purple)" }}
                 ></i>{" "}
-                Accounting Module
+                Limited Support
               </li>
             </ul>
-            <Link to="/login" className="cta-button">
-              Start Free Trial
+            <Link to="/login?view=register" className="cta-button">
+              Start Like Pro
             </Link>
           </div>
           <div className="pricing-card">
@@ -544,7 +555,7 @@ const LandingPage = () => {
               </li>
             </ul>
             <Link
-              to="/contact"
+              to="/login?view=register"
               className="secondary-button"
               style={{ textAlign: "center" }}
             >
@@ -579,11 +590,11 @@ const LandingPage = () => {
         <h2>Ready to transform your business?</h2>
         <p>Join thousands of companies using SalesForce Pro today.</p>
         <Link
-          to="/login"
+          to="/login?view=register"
           className="cta-button"
           style={{ fontSize: "1.2rem", padding: "1rem 3rem" }}
         >
-          Start Your Free Trial
+          Start Like Pro
         </Link>
       </section>
 
@@ -599,7 +610,7 @@ const LandingPage = () => {
                 display: "block",
               }}
             >
-              SalesForce Pro
+              Lbusiness Pro
             </div>
             <p style={{ color: "var(--text-muted)" }}>
               Make your business automated, and easy with the best all-in-one

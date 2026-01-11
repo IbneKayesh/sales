@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { getStorageData, setStorageData } from "../../utils/storage";
+import { getStorageData, setStorageData } from "@/utils/storage";
 import "./Leftbar.css";
 
 const Leftbar = ({ menus }) => {
@@ -8,10 +8,12 @@ const Leftbar = ({ menus }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const location = useLocation();
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const data = getStorageData();
     setExpandedMenu(data.expandedMenu);
+    setUser(data.user);
   }, []);
 
   useEffect(() => {
@@ -106,18 +108,18 @@ const Leftbar = ({ menus }) => {
         {/* Developer Info */}
         <div className="footer-developer-info">
           <div>
-            <strong>Edition:</strong> Standard
+            <strong>Business:</strong> <span className="font-bold text-yellow-500">{user?.bsins_bname}</span>
           </div>
           <div>
-            <strong>Version:</strong> 1.0.0
+            <strong>Logged:</strong> {user?.users_oname}
           </div>
           <div>
-            <strong>Release:</strong> 01-JAN-2026
+            <strong>Reg No:</strong> {user?.users_regno}
           </div>
           <div>
             <strong>Developed by:</strong> SGD
           </div>
-          <div className="footer-copyright">© 2025 All Rights Reserved</div>
+          <div className="footer-copyright">© 2025-2026 All Rights Reserved</div>
         </div>
       </div>
     </div>

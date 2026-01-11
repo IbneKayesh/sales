@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { authAPI } from "@/api/auth/authAPI";
 import { generateGuid } from "@/utils/guid";
+import { setStorageData } from "@/utils/storage";
 
 const AuthContext = createContext();
 
@@ -37,6 +38,7 @@ export const AuthProvider = ({ children }) => {
         //console.log("response " + JSON.stringify(response))
         setUser(response.data);
         localStorage.setItem("user", JSON.stringify(response.data));
+        setStorageData({ user: response.data });
       }
       return response;
     } catch (error) {
@@ -83,6 +85,7 @@ export const AuthProvider = ({ children }) => {
         console.log("response " + JSON.stringify(response));
         setUser(response.data);
         localStorage.setItem("user", JSON.stringify(response.data));
+        setStorageData({ user: response.data });
       }
       return response;
     } catch (error) {

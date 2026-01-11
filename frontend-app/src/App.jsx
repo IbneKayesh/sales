@@ -27,6 +27,7 @@ import LedgerPage from "./pages/accounts/ledger/LedgerPage";
 //inventory
 import UnitPage from "./pages/inventory/units/UnitPage";
 import CategoryPage from "./pages/inventory/category/CategoryPage";
+import ProductsPage from "./pages/inventory/products/ProductsPage";
 
 function App() {
   return (
@@ -69,6 +70,7 @@ function AppRoutes() {
         //inventory
         <Route path="inventory/unit" element={<UnitPage />} />
         <Route path="inventory/category" element={<CategoryPage />} />
+        <Route path="inventory/products" element={<ProductsPage />} />
         //Setup Module
         {/* <Route path="setup/settings" element={<SettingsPage />} /> */}
         <Route path="*" element={<Navigate to="/home" replace />} />

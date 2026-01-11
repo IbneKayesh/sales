@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Jan 10, 2026 at 12:54 PM
+-- Generation Time: Jan 11, 2026 at 12:23 PM
 -- Server version: 12.1.2-MariaDB-ubu2404
 -- PHP Version: 8.3.26
 
@@ -52,7 +52,10 @@ CREATE TABLE `tmab_bsins` (
 --
 
 INSERT INTO `tmab_bsins` (`id`, `bsins_users`, `bsins_bname`, `bsins_addrs`, `bsins_email`, `bsins_cntct`, `bsins_image`, `bsins_binno`, `bsins_btags`, `bsins_cntry`, `bsins_stdat`, `bsins_actve`, `bsins_crusr`, `bsins_crdat`, `bsins_upusr`, `bsins_updat`, `bsins_rvnmr`) VALUES
-('0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'admin-id', 'My Shop BD', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'BIN-123456', 'Clothing Store, Grocery', 'Bangladesh', '2026-01-09 00:00:00', 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 08:39:57', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 14:22:45', 2);
+('0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'admin-id', 'Grocery Store', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'BIN-123456', 'Clothing Store, Grocery', 'Bangladesh', '2026-01-09 00:00:00', 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 08:39:57', 'admin-id', '2026-01-11 08:32:39', 4),
+('3881b053-9509-49db-835a-3f8dd8976cda', 'admin-id', 'Fashion House', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, '', 'Clothing Store', 'Bangladesh', '2026-01-11 00:00:00', 1, 'admin-id', '2026-01-11 08:28:46', 'admin-id', '2026-01-11 08:32:31', 3),
+('3df6fda2-9cb2-4e71-bbf3-459b635c040e', 'admin-id', 'Hardware Store', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'BIN-123456', 'Grocery Store', 'Bangladesh', '2026-01-11 00:00:00', 1, 'admin-id', '2026-01-11 08:32:18', 'admin-id', '2026-01-11 08:32:18', 1),
+('6dd0f9d0-840a-43ce-8f82-a60310521756', 'admin-id', 'Food Court', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, '', 'Grocery Store', 'Bangladesh', '2026-01-11 00:00:00', 1, 'admin-id', '2026-01-11 08:31:43', 'admin-id', '2026-01-11 08:32:35', 2);
 
 -- --------------------------------------------------------
 
@@ -93,8 +96,8 @@ CREATE TABLE `tmab_users` (
 --
 
 INSERT INTO `tmab_users` (`id`, `users_email`, `users_pswrd`, `users_recky`, `users_oname`, `users_cntct`, `users_bsins`, `users_drole`, `users_users`, `users_stats`, `users_regno`, `users_regdt`, `users_ltokn`, `users_lstgn`, `users_lstpd`, `users_wctxt`, `users_notes`, `users_nofcr`, `users_isrgs`, `users_actve`, `users_crusr`, `users_crdat`, `users_upusr`, `users_updat`, `users_rvnmr`) VALUES
-('0758720d-ea22-4aee-9b69-c898d2ffe29f', 'user@sgd.com', 'password', 'recover', 'General User', '123456', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'User', 'admin-id', 0, 'Standard', '2026-01-09 12:08:38', NULL, '2026-01-09 12:08:38', '2026-01-09 12:08:38', 'Welcome Note', 'Any Notes', 0.00, 0, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:08:38', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 14:26:35', 1),
-('admin-id', 'admin@sgd.com', 'password', 'recover', 'Admin User', '01722688266', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Admin', 'admin-id', 0, 'Standard', '2026-01-09 08:39:57', NULL, '2026-01-09 08:39:57', '2026-01-09 08:39:57', 'Welcome Note', 'User Note', 10.00, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 08:39:57', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 18:13:39', 2);
+('0758720d-ea22-4aee-9b69-c898d2ffe29f', 'user@sgd.com', 'password', 'recover', 'General User', '123456', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'User', 'admin-id', 0, 'Standard', '2026-01-09 12:08:38', NULL, '2026-01-09 12:08:38', '2026-01-09 12:08:38', 'Welcome Note', 'Any Notes', 0.00, 0, 0, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:08:38', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-11 05:24:02', 1),
+('admin-id', 'admin@sgd.com', 'password', 'recover', 'Admin User', '01722688266', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Admin', 'admin-id', 0, 'Standard', '2026-01-09 08:39:57', NULL, '2026-01-09 08:39:57', '2026-01-11 12:19:32', 'Welcome Note', 'User Note', 10.00, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 08:39:57', 'admin-id', '2026-01-11 12:19:32', 7);
 
 -- --------------------------------------------------------
 
@@ -133,7 +136,7 @@ CREATE TABLE `tmcb_cntct` (
 --
 
 INSERT INTO `tmcb_cntct` (`id`, `cntct_users`, `cntct_bsins`, `cntct_ctype`, `cntct_sorce`, `cntct_cntnm`, `cntct_cntps`, `cntct_cntno`, `cntct_email`, `cntct_ofadr`, `cntct_fcadr`, `cntct_cntry`, `cntct_cntad`, `cntct_crlmt`, `cntct_pybln`, `cntct_adbln`, `cntct_crbln`, `cntct_actve`, `cntct_crusr`, `cntct_crdat`, `cntct_upusr`, `cntct_updat`, `cntct_rvnmr`) VALUES
-('267bb3aa-9177-43d2-8d8b-e0137578cf98', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Bulk Store', 'Mr Person', '0123456', 'email@email.com', 'Badda, Dhaka', 'Badda, Dhaka', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:10', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 14:22:38', 1),
+('267bb3aa-9177-43d2-8d8b-e0137578cf98', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Bulk Store', 'Mr Person', '0123456', 'email@email.com', 'Badda, Dhaka', 'Badda, Dhaka', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:10', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-11 05:25:41', 1),
 ('d5eefaf0-9979-4edf-8fbd-68f3157c4105', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Daily Needs Grocery Store', 'Mr Person', '0123456', 'email@email.com', 'Badda, Dhaka', 'Badda, Dhaka', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:29', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 14:22:35', 1),
 ('internal', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Internal', 'Local', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 13:04:25', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 14:22:31', 2);
 
@@ -168,6 +171,18 @@ CREATE TABLE `tmib_bitem` (
   `bitem_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `tmib_bitem`
+--
+
+INSERT INTO `tmib_bitem` (`id`, `bitem_users`, `bitem_items`, `bitem_bsins`, `bitem_lprat`, `bitem_dprat`, `bitem_mcmrp`, `bitem_sddsp`, `bitem_snote`, `bitem_gstkq`, `bitem_bstkq`, `bitem_mnqty`, `bitem_mxqty`, `bitem_pbqty`, `bitem_sbqty`, `bitem_mpric`, `bitem_actve`, `bitem_crusr`, `bitem_crdat`, `bitem_upusr`, `bitem_updat`, `bitem_rvnmr`) VALUES
+('14206101-4933-4f9a-aa73-1ae20555f6b9', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ecf', '3881b053-9509-49db-835a-3f8dd8976cda', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-11 10:18:30', 'admin-id', '2026-01-11 10:18:30', 1),
+('3309091f-59c6-4000-acaf-56c3d4739d22', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '3df6fda2-9cb2-4e71-bbf3-459b635c040e', 10.000000, 25.000000, 75.000000, 10.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 52.750000, 1, 'admin-id', '2026-01-11 09:24:25', 'admin-id', '2026-01-11 09:58:31', 1),
+('56856e9a-94fc-4d88-a2be-b3f234236658', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '3881b053-9509-49db-835a-3f8dd8976cda', 100.000000, 110.000000, 120.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 4.000000, 1, 'admin-id', '2026-01-11 09:17:45', 'admin-id', '2026-01-11 10:19:09', 1),
+('661472b6-3344-48e6-9382-133b362809e7', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '6dd0f9d0-840a-43ce-8f82-a60310521756', 150.000000, 160.000000, 180.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 15.000000, 1, 'admin-id', '2026-01-11 09:21:15', 'admin-id', '2026-01-11 09:51:36', 1),
+('8684a43d-1cdc-4cec-9ae4-a9b00b030a5a', 'admin-id', 'e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', '3881b053-9509-49db-835a-3f8dd8976cda', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-11 10:01:04', 'admin-id', '2026-01-11 10:01:04', 1),
+('f748eff0-a975-41f0-a1d5-108ac5b9997b', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 25.000000, 30.000000, 45.000000, 10.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 10.750000, 1, 'admin-id', '2026-01-11 09:22:07', 'admin-id', '2026-01-11 09:57:46', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -185,6 +200,18 @@ CREATE TABLE `tmib_ctgry` (
   `ctgry_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `ctgry_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tmib_ctgry`
+--
+
+INSERT INTO `tmib_ctgry` (`id`, `ctgry_users`, `ctgry_ctgnm`, `ctgry_actve`, `ctgry_crusr`, `ctgry_crdat`, `ctgry_upusr`, `ctgry_updat`, `ctgry_rvnmr`) VALUES
+('204e4887-0af6-4908-add0-240ea380a53b', 'admin-id', 'Toys and Gear', 1, 'admin-id', '2026-01-11 05:06:00', 'admin-id', '2026-01-11 05:06:00', 1),
+('36886293-b080-44dc-9c8e-fed94ad161d3', 'admin-id', 'Confectionary and Chips', 0, 'admin-id', '2026-01-11 05:04:19', 'admin-id', '2026-01-11 05:11:31', 1),
+('3ed137d4-3863-407a-8f4a-dd1000479780', 'admin-id', 'Rice and Dal', 1, 'admin-id', '2026-01-11 05:04:25', 'admin-id', '2026-01-11 05:04:25', 1),
+('b1df68d6-2888-42c7-a3a8-cdaedadf5408', 'admin-id', 'Juice and Drinks', 0, 'admin-id', '2026-01-11 05:04:47', 'admin-id', '2026-01-11 05:11:38', 1),
+('e69fe3b2-784f-44d5-9d88-4c228704242f', 'admin-id', 'Bakary and Biscuit', 1, 'admin-id', '2026-01-11 05:04:10', 'admin-id', '2026-01-11 05:19:03', 1),
+('feacdbbe-2519-4975-96fe-ad18c7899b53', 'admin-id', 'Grocery and Perishables', 1, 'admin-id', '2026-01-11 05:03:50', 'admin-id', '2026-01-11 05:04:57', 1);
 
 -- --------------------------------------------------------
 
@@ -218,6 +245,15 @@ CREATE TABLE `tmib_items` (
   `items_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `tmib_items`
+--
+
+INSERT INTO `tmib_items` (`id`, `items_users`, `items_icode`, `items_bcode`, `items_hscod`, `items_iname`, `items_idesc`, `items_puofm`, `items_dfqty`, `items_suofm`, `items_ctgry`, `items_itype`, `items_hwrnt`, `items_hxpry`, `items_sdvat`, `items_costp`, `items_image`, `items_actve`, `items_crusr`, `items_crdat`, `items_upusr`, `items_updat`, `items_rvnmr`) VALUES
+('940f8010-5d38-4de4-b66f-d12958ff9ec2', 'admin-id', 'I-1236', 'B-1236', 'HS-1236', 'Katari 54', 'Imported', '78a63632-6a35-49ab-8cac-4b5c0d4fb418', 12, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 0, 5.00, 10.00, NULL, 0, '940f8010-5d38-4de4-b66f-d12958ff9ecf', '2026-01-11 06:06:23', 'admin-id', '2026-01-11 09:58:46', 1),
+('940f8010-5d38-4de4-b66f-d12958ff9ecf', 'admin-id', 'I-1234', 'B-1234', 'HS-1234', 'Rice BR 28', 'Raw Deshi', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 10, '78a63632-6a35-49ab-8cac-4b5c0d4fb418', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 0, 0.00, 10.00, NULL, 1, '940f8010-5d38-4de4-b66f-d12958ff9ecf', '2026-01-11 06:06:23', 'admin-id', '2026-01-11 07:56:43', 1),
+('e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', 'admin-id', 'I-1235', 'B-1235', 'HS-1235', 'Mung Dal', 'Raw Deshi', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 10, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Raw Material', 1, 1, 0.00, 10.00, NULL, 1, 'admin-id', '2026-01-11 06:38:46', 'admin-id', '2026-01-11 07:58:17', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -235,6 +271,20 @@ CREATE TABLE `tmib_iuofm` (
   `iuofm_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `iuofm_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tmib_iuofm`
+--
+
+INSERT INTO `tmib_iuofm` (`id`, `iuofm_users`, `iuofm_untnm`, `iuofm_actve`, `iuofm_crusr`, `iuofm_crdat`, `iuofm_upusr`, `iuofm_updat`, `iuofm_rvnmr`) VALUES
+('1f240f2c-50ab-407f-b77d-0ce95922fd6c', 'admin-id', 'Ltr', 0, 'admin-id', '2026-01-11 04:40:38', 'admin-id', '2026-01-11 05:20:20', 1),
+('22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 'admin-id', 'Kg', 1, 'admin-id', '2026-01-11 04:43:41', 'admin-id', '2026-01-11 04:43:41', 1),
+('344eb4c8-48c4-475b-b74c-307a0e492622', 'admin-id', 'Pcs', 1, 'admin-id', '2026-01-11 04:40:18', 'admin-id', '2026-01-11 04:40:18', 1),
+('50d3582c-909a-4818-afd7-54a8db8c1a44', 'admin-id', 'Pack', 1, 'admin-id', '2026-01-11 04:40:31', 'admin-id', '2026-01-11 04:40:31', 1),
+('61accd0f-ebd7-4c2c-9e33-ba5f92e091d1', 'admin-id', 'Dzn', 0, 'admin-id', '2026-01-11 04:40:57', 'admin-id', '2026-01-11 05:20:08', 1),
+('674e6bee-5066-415a-9f35-b6e72f978a08', 'admin-id', 'Yard', 1, 'admin-id', '2026-01-11 04:43:59', 'admin-id', '2026-01-11 04:43:59', 1),
+('78a63632-6a35-49ab-8cac-4b5c0d4fb418', 'admin-id', 'Box', 1, 'admin-id', '2026-01-11 04:40:52', 'admin-id', '2026-01-11 04:46:59', 1),
+('cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'admin-id', 'Ctn', 1, 'admin-id', '2026-01-11 04:40:23', 'admin-id', '2026-01-11 04:40:23', 1);
 
 -- --------------------------------------------------------
 
@@ -299,8 +349,8 @@ CREATE TABLE `tmtb_bacts` (
 --
 
 INSERT INTO `tmtb_bacts` (`id`, `bacts_users`, `bacts_bankn`, `bacts_brnch`, `bacts_routn`, `bacts_acnam`, `bacts_acnum`, `bacts_notes`, `bacts_opdat`, `bacts_crbln`, `bacts_isdef`, `bacts_actve`, `bacts_crusr`, `bacts_crdat`, `bacts_upusr`, `bacts_updat`, `bacts_rvnmr`) VALUES
-('14bc4749-859b-46aa-aa67-29b926f88083', 'admin-id', 'Brac Bank PLC', 'Gulshan 2', '123456', 'Sand Grain Digital', '15000003454545', 'Deposit account', '2026-01-09 00:00:00', 5000.000000, 0, 1, 'admin-id', '2026-01-09 17:37:49', 'admin-id', '2026-01-10 08:16:47', 3),
-('c306af10-f4c2-4ee8-8593-85de14c35b76', 'admin-id', 'Cash Account', 'Cash Account', '0', 'Cash Account', '123456', 'Cash Account', '2026-01-09 00:00:00', 14000.000000, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:06:49', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-10 08:22:36', 1);
+('14bc4749-859b-46aa-aa67-29b926f88083', 'admin-id', 'Brac Bank PLC', 'Gulshan 2', '123456', 'Sand Grain Digital', '15000003454545', 'Deposit account', '2026-01-09 00:00:00', 5000.000000, 1, 0, 'admin-id', '2026-01-09 17:37:49', 'admin-id', '2026-01-11 11:13:44', 3),
+('c306af10-f4c2-4ee8-8593-85de14c35b76', 'admin-id', 'Cash Account', 'Cash Account', '0', 'Cash Account', '123456', 'Cash Account', '2026-01-09 00:00:00', 17500.000000, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:06:49', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-11 11:14:00', 1);
 
 -- --------------------------------------------------------
 
@@ -334,12 +384,10 @@ CREATE TABLE `tmtb_ledgr` (
 
 INSERT INTO `tmtb_ledgr` (`id`, `ledgr_users`, `ledgr_bsins`, `ledgr_trhed`, `ledgr_cntct`, `ledgr_bacts`, `ledgr_pymod`, `ledgr_trdat`, `ledgr_refno`, `ledgr_notes`, `ledgr_dbamt`, `ledgr_cramt`, `ledgr_crusr`, `ledgr_crdat`, `ledgr_upusr`, `ledgr_updat`, `ledgr_rvnmr`) VALUES
 ('322544db-ccf2-4326-94ea-c92325654f99', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z901', 'internal', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-10 00:00:00', 'rent-5656', '', 1500.000000, 0.000000, 'admin-id', '2026-01-10 08:17:42', 'admin-id', '2026-01-10 08:17:42', 1),
-('4fdfe935-bc63-492a-9a88-8d632caaad47', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z103', 'd5eefaf0-9979-4edf-8fbd-68f3157c4105', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-10 00:00:00', 'SO#12346', '', 0.000000, 4500.000000, 'admin-id', '2026-01-10 08:22:36', 'admin-id', '2026-01-10 08:22:36', 1),
 ('57635f84-7cae-4a10-8927-cd34447800de', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z904', 'internal', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-10 00:00:00', 'nov', '', 500.000000, 0.000000, 'admin-id', '2026-01-10 08:19:11', 'admin-id', '2026-01-10 08:19:11', 1),
 ('5bb72d2a-7ef7-42c3-a12d-17ea7e874344', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z702', 'internal', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-10 00:00:00', 'cash investment', '', 0.000000, 25000.000000, 'admin-id', '2026-01-10 08:16:12', 'admin-id', '2026-01-10 08:16:12', 1),
 ('665b8fac-564b-470a-a922-4c484bfe1474', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z602', 'internal', '14bc4749-859b-46aa-aa67-29b926f88083', 'Bank', '2026-01-10 00:00:00', 'transfer', '', 0.000000, 5000.000000, 'admin-id', '2026-01-10 08:16:47', 'admin-id', '2026-01-10 08:16:47', 1),
 ('6bf954fd-fea2-4898-9821-48874ac98e4d', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z903', 'internal', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'MFS', '2026-01-10 00:00:00', 'nov', '', 500.000000, 0.000000, 'admin-id', '2026-01-10 08:18:22', 'admin-id', '2026-01-10 08:18:22', 1),
-('90529872-84ce-47ff-b0e4-3414e06a2ac9', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z203', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Cash', '2026-01-10 00:00:00', 'INV-123456', '', 8000.000000, 0.000000, 'admin-id', '2026-01-10 08:21:02', 'admin-id', '2026-01-10 08:21:02', 1),
 ('efaade64-7c50-4fe7-b1d3-f033622e800d', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Z601', 'internal', 'c306af10-f4c2-4ee8-8593-85de14c35b76', 'Bank', '2026-01-10 00:00:00', 'transfer', '', 5000.000000, 0.000000, 'admin-id', '2026-01-10 08:16:47', 'admin-id', '2026-01-10 08:16:47', 1);
 
 -- --------------------------------------------------------

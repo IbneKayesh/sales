@@ -51,11 +51,20 @@ const paymentModeOptions = [
   { label: "Refund", value: "Refund" },
 ];
 
+const productTypeOptions = [
+  { label: "Finished Goods", value: "Finished Goods" },
+  { label: "Raw Material", value: "Raw Material" },
+  { label: "Services", value: "Services" },
+  { label: "Consumable", value: "Consumable" },
+  { label: "Assets", value: "Assets" },
+];
+
 export {
   getListByTransHead,
   getTransHeadList,
   defaultList,
   paymentModeOptions,
+  productTypeOptions,
 };
 
 /*

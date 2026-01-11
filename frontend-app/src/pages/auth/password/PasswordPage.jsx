@@ -1,4 +1,4 @@
-import { useChangePassword } from "@/hooks/setup/useChangePassword";
+import { usePassword } from "@/hooks/auth/usePassword";
 import PasswordFormComp from "./PasswordFormComp";
 import { Card } from "primereact/card";
 
@@ -10,7 +10,7 @@ const PasswordPage = () => {
     handleChange,
     handleSave,
     handleClear,
-  } = useChangePassword();
+  } = usePassword();
 
   const getHeader = () => {
     return (

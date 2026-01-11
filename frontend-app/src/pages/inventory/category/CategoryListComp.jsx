@@ -2,6 +2,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
+import ActiveRowCell from "@/components/ActiveRowCell";
 
 const CategoryListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
@@ -46,14 +47,7 @@ const CategoryListComp = ({ dataList, onEdit, onDelete }) => {
 
   const ctgry_ctgnm_BT = (rowData) => {
     return (
-      <>
-        {rowData.ctgry_ctgnm}{" "}
-        {rowData.ctgry_actve === 1 ? (
-          <i className="pi pi-check-circle text-green-500" />
-        ) : (
-          <i className="pi pi-times-circle text-red-500" />
-        )}
-      </>
+      <ActiveRowCell text={rowData.ctgry_ctgnm} status={rowData.ctgry_actve} />
     );
   };
   return (

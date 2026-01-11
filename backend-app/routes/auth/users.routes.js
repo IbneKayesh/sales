@@ -18,8 +18,9 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT usr.*, 0 as edit_stop
+    const sql = `SELECT usr.*, 0 as edit_stop, bs.bsins_bname
       FROM tmab_users usr
+      LEFT JOIN tmab_bsins bs ON usr.users_bsins = bs.id
       WHERE usr.users_users = ?
       ORDER BY usr.users_oname`;
     const params = [users_users];

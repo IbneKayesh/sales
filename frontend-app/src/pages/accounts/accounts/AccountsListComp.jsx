@@ -3,6 +3,7 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { formatDate } from "@/utils/datetime";
+import ActiveRowCell from "@/components/ActiveRowCell";
 
 const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
   const handleDelete = (rowData) => {
@@ -22,8 +23,8 @@ const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
   const action_BT = (rowData) => {
     let menuItems = [
       {
-        label: "Set Default",
-        icon: "pi pi-check-circle text-green-500",
+        label: rowData.bacts_isdef === 1 ? "Unset Default" : "Set Default",
+        icon: rowData.bacts_isdef === 1 ? "pi pi-times-circle text-red-500" : "pi pi-check-circle text-green-500",
         command: () => {
           onSetDefault(rowData);
         },
@@ -53,20 +54,12 @@ const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
     );
   };
 
-  const bacts_bankn_BT = (rowData) => (
-    <>
-      {rowData.bacts_bankn}
-      {", "}
-      {rowData.bacts_brnch}
-      {", "}
-      {rowData.bacts_routn}{" "}
-      {rowData.bacts_actve === 1 ? (
-        <i className="pi pi-check-circle text-green-500" />
-      ) : (
-        <i className="pi pi-times-circle text-red-500" />
-      )}
-    </>
-  );
+  const bacts_bankn_BT = (rowData) => {
+    const text = rowData.bacts_bankn + ", " + rowData.bacts_brnch + ", " + rowData.bacts_routn;
+    return <ActiveRowCell text={text} status={rowData.bacts_actve} />;
+  };
+
+
 
   const bacts_acnam_BT = (rowData) => {
     return (
