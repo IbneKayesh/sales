@@ -117,7 +117,7 @@ const Leftbar = ({ menus }) => {
             <strong>Reg No:</strong> {user?.users_regno}
           </div>
           <div>
-            <strong>Developed by:</strong> SGD
+            <strong>Grains:</strong> {user?.users_nofcr}
           </div>
           <div className="footer-copyright">© 2025-2026 All Rights Reserved</div>
         </div>

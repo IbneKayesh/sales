@@ -54,6 +54,13 @@ const Layout = () => {
       ],
     },
     {
+      name: "CRM",
+      icon: "pi pi-address-book",
+      submenus: [
+        { id: "crm1", name: "Contact", url: "/home/crm/contact", icon: "pi pi-id-card" },
+      ],
+    },
+    {
       name: "Setup",
       icon: "pi pi-cog",
       submenus: [        
@@ -66,10 +73,10 @@ const Layout = () => {
       ],
     },
     {
-      name: "CRM",
-      icon: "pi pi-user",
-      submenus: [
-        { id: "crm1", name: "Contact", url: "/home/crm/contact", icon: "pi pi-address-book" },
+      name: "Support",
+      icon: "pi pi-info-circle",
+      submenus: [        
+        { id: "sp1", name: "Grains", url: "/home/support/grains", icon: "pi pi-credit-card" },
       ],
     }
   ];

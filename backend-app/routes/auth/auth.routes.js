@@ -50,12 +50,13 @@ router.post("/register", async (req, res) => {
 
     //database action
     const scripts = [];
+    const noOfGrains = process.env.TRUST_GRAINS || 100;
 
     scripts.push({
       sql: `INSERT INTO tmab_users (id, users_email, users_pswrd, users_recky, users_oname, users_bsins,
       users_drole, users_users, users_stats, users_regno, users_nofcr, users_crusr, users_upusr) 
     VALUES (?, ?, ?, ?, ?, ?,
-    'Admin', ?, 0, 'Standard', 10, ?, ?)`,
+    'Admin', ?, 0, 'Standard', ?, ?, ?)`,
       params: [
         id,
         users_email,
@@ -64,6 +65,7 @@ router.post("/register", async (req, res) => {
         users_oname,
         users_bsins_id,
         id,
+        noOfGrains,
         id,
         id,
       ],
@@ -75,6 +77,15 @@ router.post("/register", async (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?)`,
       params: [users_bsins_id, id, bsins_bname, users_email, id, id],
       label: `Created business ${bsins_bname}`,
+    });
+
+    scripts.push({
+      sql: `INSERT INTO tmsb_crgrn (id, crgrn_users, crgrn_bsins, crgrn_tblnm, crgrn_tbltx, crgrn_refno, crgrn_dbgrn, crgrn_crgrn,
+       crgrn_crusr, crgrn_upusr) 
+    VALUES (?, ?, ?, 'Registration', 'Registration', ?, 0, ?,
+      ?, ?)`,
+      params: [id, id, users_bsins_id, bsins_bname, noOfGrains, id, id],
+      label: `Credited grain for ${users_oname}`,
     });
 
     await dbRunAll(scripts);

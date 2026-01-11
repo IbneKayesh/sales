@@ -16,12 +16,13 @@ const accountsRoutes = require("./routes/accounts/accounts.routes.js");
 const accountsHeadsRoutes = require("./routes/accounts/accountsHeads.routes.js");
 const accountsLedgerRoutes = require("./routes/accounts/accountsLedger.routes.js");
 //setup
-const grainRoutes = require("./routes/setup/grain.routes.js");
 const closingRoutes = require("./routes/setup/closing.routes.js");
 //inventory
 const unitsRoutes = require("./routes/inventory/units.routes.js");
 const categoriesRoutes = require("./routes/inventory/categories.routes.js");
 const productsRoutes = require("./routes/inventory/products.routes.js");
+//support
+const grainsRoutes = require("./routes/support/grains.routes.js");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -68,12 +69,13 @@ app.use("/api/accounts/accounts", accountsRoutes);
 app.use("/api/accounts/accounts-heads", accountsHeadsRoutes);
 app.use("/api/accounts/accounts-ledgers", accountsLedgerRoutes);
 //setup
-app.use("/api/setup/grain", grainRoutes);
 app.use("/api/setup/closing", closingRoutes);
 //inventory
 app.use("/api/inventory/units", unitsRoutes);
 app.use("/api/inventory/categories", categoriesRoutes);
 app.use("/api/inventory/products", productsRoutes);
+//support
+app.use("/api/support/grains", grainsRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

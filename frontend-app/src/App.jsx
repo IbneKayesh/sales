@@ -28,6 +28,8 @@ import LedgerPage from "./pages/accounts/ledger/LedgerPage";
 import UnitPage from "./pages/inventory/units/UnitPage";
 import CategoryPage from "./pages/inventory/category/CategoryPage";
 import ProductsPage from "./pages/inventory/products/ProductsPage";
+//support
+import GrainsPage from "./pages/support/GrainsPage";
 
 function App() {
   return (
@@ -71,7 +73,8 @@ function AppRoutes() {
         <Route path="inventory/unit" element={<UnitPage />} />
         <Route path="inventory/category" element={<CategoryPage />} />
         <Route path="inventory/products" element={<ProductsPage />} />
-        //Setup Module
+        //support
+        <Route path="support/grains" element={<GrainsPage />} />
         {/* <Route path="setup/settings" element={<SettingsPage />} /> */}
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>
