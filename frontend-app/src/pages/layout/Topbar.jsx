@@ -86,7 +86,7 @@ const Topbar = ({
         </div>
         <div className="topbar-avatar">
           <div className="flex items-center gap-2">
-            <button className="topbar-btn">
+            <button className="topbar-btn hidden">
               <i className="pi pi-bell"></i>
             </button>
             <span

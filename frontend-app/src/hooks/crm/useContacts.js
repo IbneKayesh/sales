@@ -209,6 +209,24 @@ export const useContacts = () => {
     }
   };
 
+  //supplier list
+  const [supplierList, setSupplierList] = useState([]);
+
+  const fetchSupplierList = async () => {
+    let supplierData = [];
+    if (dataList.length > 0) {
+      supplierData = dataList.filter((c) =>
+        ["Supplier", "Both"].includes(c.cntct_ctype)
+      );
+    } else {
+      const response = await contactAPI.getAll({
+        cntct_users: user.users_users,
+      });
+      supplierData = response.data;
+    }
+    //console.log("supplierData: ", supplierData);
+    setSupplierList(supplierData);
+  };
   return {
     dataList,
     isBusy,
@@ -230,5 +248,8 @@ export const useContacts = () => {
     //ledger
     handleShowContactLedger,
     ledgerDataList,
+    //supplier list
+    supplierList,
+    fetchSupplierList,
   };
 };

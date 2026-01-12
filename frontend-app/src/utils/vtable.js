@@ -59,12 +59,20 @@ const productTypeOptions = [
   { label: "Assets", value: "Assets" },
 ];
 
+const purchaseTypeOptions = [
+  { label: "Booking", value: "Booking" },
+  { label: "Receipt", value: "Receipt" },
+  { label: "Invoice", value: "Invoice" },
+  { label: "Return", value: "Return" },
+];
+
 export {
   getListByTransHead,
   getTransHeadList,
   defaultList,
   paymentModeOptions,
   productTypeOptions,
+  purchaseTypeOptions,
 };
 
 /*
