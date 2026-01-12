@@ -53,9 +53,21 @@ router.post("/generate", async (req, res) => {
         data: null,
       });
     }
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    const yyyy = today.getFullYear();
+    const todayDate = yyyy + '-' + mm + '-' + dd;
 
-    const fromDate = '2026-01-12 00:00:00';
-    const toDate = '2026-01-13 00:00:00';
+    const tommorrow = new Date();
+    tommorrow.setDate(today.getDate() + 1);
+    const dd_tomorrow = String(tommorrow.getDate()).padStart(2, '0');
+    const mm_tomorrow = String(tommorrow.getMonth() + 1).padStart(2, '0'); //January is 0!
+    const yyyy_tomorrow = tommorrow.getFullYear();
+    const tommorrowDate = yyyy_tomorrow + '-' + mm_tomorrow + '-' + dd_tomorrow;
+
+    const fromDate = `${todayDate} 00:00:00`;
+    const toDate = `${tommorrowDate} 00:00:00`;
 
     //database action
     const sql_find_grains = `SELECT bsins_users, count(id) as crgrn_dbgrn, 'tmab_bsins' as crgrn_tblnm, 'Business' as crgrn_tbltx
@@ -111,7 +123,7 @@ router.post("/generate", async (req, res) => {
                    ?, ?, ?, 'sys', 'sys')`;
         const params = [
           row.bsins_users,
-          "-",
+          todayDate,
           row.crgrn_tblnm,
           row.crgrn_tbltx,
           row.crgrn_dbgrn,

@@ -35,6 +35,7 @@ import BookingPage from "./pages/purchase/pbooking/BookingPage";
 import ReceiptPage from "./pages/purchase/preceipt/ReceiptPage";
 import InvoicePage from "./pages/purchase/pinvoice/InvoicePage";
 import ReturnPage from "./pages/purchase/preturn/ReturnPage.jsx";
+import NotesPage from "./pages/support/NotesPage";
 
 function App() {
   return (
@@ -85,6 +86,7 @@ function AppRoutes() {
         <Route path="purchase/preceipt" element={<ReceiptPage />} />
         <Route path="purchase/pinvoice" element={<InvoicePage />} />
         <Route path="purchase/preturn" element={<ReturnPage />} />
+        <Route path="support/notes" element={<NotesPage />} />
         {/* <Route path="setup/settings" element={<SettingsPage />} /> */}
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>

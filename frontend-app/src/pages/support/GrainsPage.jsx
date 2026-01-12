@@ -28,7 +28,7 @@ const GrainsPage = () => {
   const getHeader = () => {
     return (
       <div className="flex align-items-center justify-content-between">
-        <h3 className="m-0">Grains: {balance}</h3>
+        <h3 className="m-0 text-xl text-green-500">Grains: {balance}</h3>
 
         <div className="flex gap-2">
           <ButtonGroup>
@@ -61,6 +61,20 @@ const GrainsPage = () => {
     return <>{Number(rowData.crgrn_crgrn) > 0 ? Number(rowData.crgrn_crgrn) : "0"}</>;
   };
 
+  const crgrn_dbgrn_FT = () => {
+    return dataList.reduce(
+      (sum, item) => sum + (Number(item.crgrn_dbgrn) || 0),
+      0
+    );
+  };
+
+  const crgrn_crgrn_FT = () => {
+    return dataList.reduce(
+      (sum, item) => sum + (Number(item.crgrn_crgrn) || 0),
+      0
+    );
+  };
+
   return (
     <>
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
@@ -74,11 +88,12 @@ const GrainsPage = () => {
           rowHover
           showGridlines
         >
+          <Column field="crgrn_bsins" header="Table" />
           <Column field="crgrn_tbltx" header={crgrn_tbltx_HT} />
           <Column field="crgrn_refno" header="Ref No" />
           <Column field="crgrn_isdat" header="Date" body={crgrn_isdat_BT} />
-          <Column field="crgrn_dbgrn" header="Debit (-)" body={crgrn_dbgrn_BT} />
-          <Column field="crgrn_crgrn" header="Credit (+)" body={crgrn_crgrn_BT} />
+          <Column field="crgrn_dbgrn" header="Debit (-)" body={crgrn_dbgrn_BT} footer={crgrn_dbgrn_FT} />
+          <Column field="crgrn_crgrn" header="Credit (+)" body={crgrn_crgrn_BT} footer={crgrn_crgrn_FT} />
         </DataTable>
       </Card>
     </>

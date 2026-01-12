@@ -23,6 +23,7 @@ const categoriesRoutes = require("./routes/inventory/categories.routes.js");
 const productsRoutes = require("./routes/inventory/products.routes.js");
 //support
 const grainsRoutes = require("./routes/support/grains.routes.js");
+const notesRoutes = require("./routes/support/notes.routes.js");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -76,6 +77,7 @@ app.use("/api/inventory/categories", categoriesRoutes);
 app.use("/api/inventory/products", productsRoutes);
 //support
 app.use("/api/support/grains", grainsRoutes);
+app.use("/api/support/notes", notesRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
