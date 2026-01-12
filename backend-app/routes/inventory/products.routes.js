@@ -377,6 +377,8 @@ router.post("/create-bitem", async (req, res) => {
       message: "Product Business created successfully",
       data: null,
     });
+    //update business taggin count
+    updateTagg(bitem_items);
   } catch (error) {
     console.error("database action error:", error);
     return res.json({
@@ -460,6 +462,9 @@ router.post("/update-bitem", async (req, res) => {
       message: "Product Business updated successfully",
       data: null,
     });
+
+    //update business taggin count
+    updateTagg(bitem_items);
   } catch (error) {
     console.error("database action error:", error);
     return res.json({
@@ -469,4 +474,63 @@ router.post("/update-bitem", async (req, res) => {
     });
   }
 });
+
+//update count of business items
+const updateTagg = async (id) => {
+  const sql = `UPDATE tmib_items itm
+  JOIN (
+      SELECT itm.bitem_items, count(id) as items_nofbi
+      FROM tmib_bitem itm
+      WHERE itm.bitem_items = ?
+      GROUP BY itm.bitem_items      
+  ) bitm
+      ON itm.id = bitm.bitem_items
+  SET itm.items_nofbi = bitm.items_nofbi`;
+  const params = [id];
+
+  await dbRun(sql, params, `Update product tag for ${id}`);
+};
+
+// get business items
+router.post("/get-business-items", async (req, res) => {
+  try {
+    const { bitem_bsins } = req.body;
+
+    // Validate input
+    if (!bitem_bsins) {
+      return res.json({
+        success: false,
+        message: "Business ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT bitm.id, bitm.bitem_users, bitm.bitem_items, bitm.bitem_bsins, bitm.bitem_lprat,
+    bitm.bitem_dprat, bitm.bitem_mcmrp, bitm.bitem_sddsp, bitm.bitem_snote,
+    bitm.bitem_gstkq, bitm.bitem_bstkq, bitm.bitem_mnqty, bitm.bitem_mxqty, bitm.bitem_pbqty, 
+    bitm.bitem_sbqty, bitm.bitem_mpric, bitm.bitem_actve,
+    itm.items_iname, itm.items_idesc
+    FROM tmib_bitem bitm
+    LEFT JOIN tmib_items itm on bitm.bitem_items = itm.id
+    WHERE bitm.bitem_bsins = ?`;
+    const params = [bitem_bsins];
+
+    const rows = await dbGetAll(sql, params, `Get BItem for ${bitem_bsins}`);
+
+    res.json({
+      success: true,
+      message: "BItem fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;

@@ -7,4 +7,9 @@ export const grainsAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  generateGrain: (data) =>
+    apiRequest("/support/grains/generate", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

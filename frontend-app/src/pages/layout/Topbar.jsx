@@ -72,7 +72,7 @@ const Topbar = ({
               {navigationIcons.map((icon) => (
                 <button
                   key={icon.id}
-                  className="topbar-btn nav-icon-btn"
+                  className="topbar-btn nav-icon-btn mr-1"
                   onClick={() => navigate(icon.url)}
                   title={icon.name}
                 >
@@ -81,11 +81,14 @@ const Topbar = ({
               ))}
             </div>
           ) : (
-            `${selectedMenuName} - Sales App`
+            `${selectedMenuName} - SGD`
           )}
         </div>
         <div className="topbar-avatar">
           <div className="flex items-center gap-2">
+            <button className="topbar-btn">
+              <i className="pi pi-bell"></i>
+            </button>
             <span
               className="topbar-btn bg-blue-500"
               onClick={() => setVisible(true)}

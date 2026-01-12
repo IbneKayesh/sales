@@ -4,6 +4,7 @@ import ProductsFormComp from "./ProductsFormComp";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
+import BItemsComp from "./BItemsComp";
 
 const ProductsPage = () => {
   const {
@@ -19,12 +20,16 @@ const ProductsPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-    
+
     // BItem
     formDataBItem,
     handleChangeBItem,
     handleSaveBItem,
-    handleFetchBItem
+    handleFetchBItem,
+    // Business Items
+    handleItemPriceView,
+    handleFetchBusinessItems,
+    businessItems
   } = useProducts();
 
   const getHeader = () => {
@@ -54,6 +59,14 @@ const ProductsPage = () => {
               disabled={!isList}
             />
             <Button
+              label="Price"
+              icon="pi pi-credit-card"
+              size="small"
+              severity="secondary"
+              onClick={handleItemPriceView}
+              disabled={!isList}
+            />
+            <Button
               label="Back"
               icon="pi pi-arrow-left"
               size="small"
@@ -76,20 +89,21 @@ const ProductsPage = () => {
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
-        ) : (
+        ) : currentView === "form" ? (
           <ProductsFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
             onChange={handleChange}
             onSave={handleSave}
-            
             // BItem
             formDataBItem={formDataBItem}
             onChangeBItem={handleChangeBItem}
             onSaveBItem={handleSaveBItem}
             onFetchBItem={handleFetchBItem}
           />
+        ) : (
+          <BItemsComp onFetchBusinessItems={handleFetchBusinessItems} dataList={businessItems}/>
         )}
       </Card>
     </>

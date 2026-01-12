@@ -20,6 +20,7 @@ CREATE TABLE `tmib_items` (
   `items_sdvat` decimal(4,2) DEFAULT 0.00,
   `items_costp` decimal(4,2) DEFAULT 0.00,
   `items_image` VARCHAR(50) DEFAULT NULL,
+  `items_nofbi` INT NOT NULL DEFAULT 0,
   `items_actve` TINYINT(1) NOT NULL DEFAULT 1,
   `items_crusr` VARCHAR(50) NOT NULL,
   `items_crdat` DATETIME NOT NULL DEFAULT current_timestamp(),

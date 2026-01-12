@@ -30,6 +30,11 @@ import CategoryPage from "./pages/inventory/category/CategoryPage";
 import ProductsPage from "./pages/inventory/products/ProductsPage";
 //support
 import GrainsPage from "./pages/support/GrainsPage";
+//purchase
+import BookingPage from "./pages/purchase/pbooking/BookingPage";
+import ReceiptPage from "./pages/purchase/preceipt/ReceiptPage";
+import InvoicePage from "./pages/purchase/pinvoice/InvoicePage";
+import ReturnPage from "./pages/purchase/preturn/ReturnPage.jsx";
 
 function App() {
   return (
@@ -75,6 +80,11 @@ function AppRoutes() {
         <Route path="inventory/products" element={<ProductsPage />} />
         //support
         <Route path="support/grains" element={<GrainsPage />} />
+        //purchase
+        <Route path="purchase/pbooking" element={<BookingPage />} />
+        <Route path="purchase/preceipt" element={<ReceiptPage />} />
+        <Route path="purchase/pinvoice" element={<InvoicePage />} />
+        <Route path="purchase/preturn" element={<ReturnPage />} />
         {/* <Route path="setup/settings" element={<SettingsPage />} /> */}
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>

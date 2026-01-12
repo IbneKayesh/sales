@@ -24,7 +24,10 @@ const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
     let menuItems = [
       {
         label: rowData.bacts_isdef === 1 ? "Unset Default" : "Set Default",
-        icon: rowData.bacts_isdef === 1 ? "pi pi-times-circle text-red-500" : "pi pi-check-circle text-green-500",
+        icon:
+          rowData.bacts_isdef === 1
+            ? "pi pi-times-circle text-red-500"
+            : "pi pi-check-circle text-green-500",
         command: () => {
           onSetDefault(rowData);
         },
@@ -55,11 +58,14 @@ const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
   };
 
   const bacts_bankn_BT = (rowData) => {
-    const text = rowData.bacts_bankn + ", " + rowData.bacts_brnch + ", " + rowData.bacts_routn;
+    const text =
+      rowData.bacts_bankn +
+      ", " +
+      rowData.bacts_brnch +
+      ", " +
+      rowData.bacts_routn;
     return <ActiveRowCell text={text} status={rowData.bacts_actve} />;
   };
-
-
 
   const bacts_acnam_BT = (rowData) => {
     return (
@@ -90,8 +96,8 @@ const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
       <DataTable
         value={dataList}
         paginator
-        rows={10}
-        rowsPerPageOptions={[5, 10, 25]}
+        rows={15}
+        rowsPerPageOptions={[15, 50, 100]}
         emptyMessage="No data found."
         size="small"
         rowHover

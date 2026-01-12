@@ -28,12 +28,30 @@ export const useGrains = () => {
     loadGrains();
   }, []);
 
+  const generateGrain = async () => {
+    try {
+      const response = await grainsAPI.generateGrain({
+        id: user.users_users,
+      });
+      showToast("info", "Grain Collection", response.message);
+      loadGrains();
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
+
   const handleRefresh = () => {
     loadGrains();
+  };
+
+  const handleGenerate = () => {
+    generateGrain();
   };
 
   return {
     dataList,
     handleRefresh,
+    handleGenerate
   };
 };

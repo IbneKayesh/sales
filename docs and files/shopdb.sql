@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Jan 11, 2026 at 12:23 PM
+-- Generation Time: Jan 12, 2026 at 09:53 AM
 -- Server version: 12.1.2-MariaDB-ubu2404
 -- PHP Version: 8.3.26
 
@@ -52,7 +52,7 @@ CREATE TABLE `tmab_bsins` (
 --
 
 INSERT INTO `tmab_bsins` (`id`, `bsins_users`, `bsins_bname`, `bsins_addrs`, `bsins_email`, `bsins_cntct`, `bsins_image`, `bsins_binno`, `bsins_btags`, `bsins_cntry`, `bsins_stdat`, `bsins_actve`, `bsins_crusr`, `bsins_crdat`, `bsins_upusr`, `bsins_updat`, `bsins_rvnmr`) VALUES
-('0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'admin-id', 'Grocery Store', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'BIN-123456', 'Clothing Store, Grocery', 'Bangladesh', '2026-01-09 00:00:00', 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 08:39:57', 'admin-id', '2026-01-11 08:32:39', 4),
+('0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'admin-id', 'Grocery Store', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'BIN-123456', 'Clothing Store, Grocery', 'Bangladesh', '2026-01-09 00:00:00', 1, 'admin-id', '2026-01-09 08:39:57', 'admin-id', '2026-01-12 04:49:33', 4),
 ('3881b053-9509-49db-835a-3f8dd8976cda', 'admin-id', 'Fashion House', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, '', 'Clothing Store', 'Bangladesh', '2026-01-11 00:00:00', 1, 'admin-id', '2026-01-11 08:28:46', 'admin-id', '2026-01-11 08:32:31', 3),
 ('3df6fda2-9cb2-4e71-bbf3-459b635c040e', 'admin-id', 'Hardware Store', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'BIN-123456', 'Grocery Store', 'Bangladesh', '2026-01-11 00:00:00', 1, 'admin-id', '2026-01-11 08:32:18', 'admin-id', '2026-01-11 08:32:18', 1),
 ('6dd0f9d0-840a-43ce-8f82-a60310521756', 'admin-id', 'Food Court', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, '', 'Grocery Store', 'Bangladesh', '2026-01-11 00:00:00', 1, 'admin-id', '2026-01-11 08:31:43', 'admin-id', '2026-01-11 08:32:35', 2);
@@ -96,8 +96,8 @@ CREATE TABLE `tmab_users` (
 --
 
 INSERT INTO `tmab_users` (`id`, `users_email`, `users_pswrd`, `users_recky`, `users_oname`, `users_cntct`, `users_bsins`, `users_drole`, `users_users`, `users_stats`, `users_regno`, `users_regdt`, `users_ltokn`, `users_lstgn`, `users_lstpd`, `users_wctxt`, `users_notes`, `users_nofcr`, `users_isrgs`, `users_actve`, `users_crusr`, `users_crdat`, `users_upusr`, `users_updat`, `users_rvnmr`) VALUES
-('0758720d-ea22-4aee-9b69-c898d2ffe29f', 'user@sgd.com', 'password', 'recover', 'General User', '123456', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'User', 'admin-id', 0, 'Standard', '2026-01-09 12:08:38', NULL, '2026-01-09 12:08:38', '2026-01-09 12:08:38', 'Welcome Note', 'Any Notes', 0.00, 0, 0, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:08:38', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-11 05:24:02', 1),
-('admin-id', 'admin@sgd.com', 'password', 'recover', 'Admin User', '01722688266', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Admin', 'admin-id', 0, 'Standard', '2026-01-09 08:39:57', NULL, '2026-01-09 08:39:57', '2026-01-11 12:19:32', 'Welcome Note', 'User Note', 10.00, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 08:39:57', 'admin-id', '2026-01-11 12:19:32', 7);
+('0758720d-ea22-4aee-9b69-c898d2ffe29f', 'user@sgd.com', 'password', 'recover', 'General User', '123456', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'User', 'admin-id', 0, 'Standard', '2026-01-09 12:08:38', NULL, '2026-01-09 12:08:38', '2026-01-09 12:08:38', 'Welcome Note', 'Any Notes', 0.00, 0, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:08:38', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-12 05:46:00', 1),
+('admin-id', 'admin@sgd.com', 'password', 'recover', 'Admin User', '01722688266', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Admin', 'admin-id', 0, 'Standard', '2026-01-09 08:39:57', NULL, '2026-01-09 08:39:57', '2026-01-11 12:19:32', 'Welcome Note', 'User Note', 901.00, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 08:39:57', 'admin-id', '2026-01-12 06:50:34', 7);
 
 -- --------------------------------------------------------
 
@@ -177,11 +177,17 @@ CREATE TABLE `tmib_bitem` (
 
 INSERT INTO `tmib_bitem` (`id`, `bitem_users`, `bitem_items`, `bitem_bsins`, `bitem_lprat`, `bitem_dprat`, `bitem_mcmrp`, `bitem_sddsp`, `bitem_snote`, `bitem_gstkq`, `bitem_bstkq`, `bitem_mnqty`, `bitem_mxqty`, `bitem_pbqty`, `bitem_sbqty`, `bitem_mpric`, `bitem_actve`, `bitem_crusr`, `bitem_crdat`, `bitem_upusr`, `bitem_updat`, `bitem_rvnmr`) VALUES
 ('14206101-4933-4f9a-aa73-1ae20555f6b9', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ecf', '3881b053-9509-49db-835a-3f8dd8976cda', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-11 10:18:30', 'admin-id', '2026-01-11 10:18:30', 1),
+('2cee0acf-236d-44cc-80a7-583218cbc20a', 'admin-id', '4dab149a-e220-4cd8-a061-7660ab0168bb', '3881b053-9509-49db-835a-3f8dd8976cda', 35.000000, 38.000000, 40.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 3.950000, 1, 'admin-id', '2026-01-12 06:21:18', 'admin-id', '2026-01-12 06:21:18', 1),
 ('3309091f-59c6-4000-acaf-56c3d4739d22', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '3df6fda2-9cb2-4e71-bbf3-459b635c040e', 10.000000, 25.000000, 75.000000, 10.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 52.750000, 1, 'admin-id', '2026-01-11 09:24:25', 'admin-id', '2026-01-11 09:58:31', 1),
-('56856e9a-94fc-4d88-a2be-b3f234236658', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '3881b053-9509-49db-835a-3f8dd8976cda', 100.000000, 110.000000, 120.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 4.000000, 1, 'admin-id', '2026-01-11 09:17:45', 'admin-id', '2026-01-11 10:19:09', 1),
+('56856e9a-94fc-4d88-a2be-b3f234236658', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '3881b053-9509-49db-835a-3f8dd8976cda', 100.000000, 110.000000, 120.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 4.000000, 1, 'admin-id', '2026-01-11 09:17:45', 'admin-id', '2026-01-12 04:25:24', 1),
+('5cf2a11e-4c10-4ca1-9bdc-eb3c443796a1', 'admin-id', 'ae0a4ae3-77f6-4357-8ca9-c05cc1796a7e', '6dd0f9d0-840a-43ce-8f82-a60310521756', 80.000000, 85.000000, 90.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 8.400000, 1, 'admin-id', '2026-01-12 06:37:10', 'admin-id', '2026-01-12 06:37:10', 1),
+('64e2b4c7-6a36-4025-9deb-2fc20951e9b8', 'admin-id', 'ae0a4ae3-77f6-4357-8ca9-c05cc1796a7e', '3881b053-9509-49db-835a-3f8dd8976cda', 80.000000, 85.000000, 90.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 8.400000, 0, 'admin-id', '2026-01-12 06:17:55', 'admin-id', '2026-01-12 09:33:07', 1),
 ('661472b6-3344-48e6-9382-133b362809e7', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '6dd0f9d0-840a-43ce-8f82-a60310521756', 150.000000, 160.000000, 180.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 15.000000, 1, 'admin-id', '2026-01-11 09:21:15', 'admin-id', '2026-01-11 09:51:36', 1),
 ('8684a43d-1cdc-4cec-9ae4-a9b00b030a5a', 'admin-id', 'e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', '3881b053-9509-49db-835a-3f8dd8976cda', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-11 10:01:04', 'admin-id', '2026-01-11 10:01:04', 1),
-('f748eff0-a975-41f0-a1d5-108ac5b9997b', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 25.000000, 30.000000, 45.000000, 10.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 10.750000, 1, 'admin-id', '2026-01-11 09:22:07', 'admin-id', '2026-01-11 09:57:46', 1);
+('b3393102-46d3-4891-b529-92d9d4faa061', 'admin-id', 'e483bc2d-6ccd-4b72-8603-775dcd275249', '3881b053-9509-49db-835a-3f8dd8976cda', 950.000000, 970.000000, 990.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 11.500000, 1, 'admin-id', '2026-01-12 06:14:14', 'admin-id', '2026-01-12 06:14:45', 1),
+('f748eff0-a975-41f0-a1d5-108ac5b9997b', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 25.000000, 30.000000, 45.000000, 10.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 10.750000, 1, 'admin-id', '2026-01-11 09:22:07', 'admin-id', '2026-01-11 09:57:46', 1),
+('f952f0d2-9327-4c4e-9d15-c8d24242055b', 'admin-id', 'dfe206f2-b3a3-4d6c-8b3c-7402582348eb', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 780.000000, 850.000000, 900.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 104.400000, 1, 'admin-id', '2026-01-12 06:43:02', 'admin-id', '2026-01-12 06:43:02', 1),
+('ff3ea5ac-fb2b-49a8-9139-581d32d096fb', 'admin-id', '24614ec4-8ab0-4b50-b3c7-9f154a124770', '3881b053-9509-49db-835a-3f8dd8976cda', 75.000000, 80.000000, 90.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 12.750000, 1, 'admin-id', '2026-01-12 06:16:29', 'admin-id', '2026-01-12 06:16:29', 1);
 
 -- --------------------------------------------------------
 
@@ -237,6 +243,7 @@ CREATE TABLE `tmib_items` (
   `items_sdvat` decimal(4,2) DEFAULT 0.00,
   `items_costp` decimal(4,2) DEFAULT 0.00,
   `items_image` varchar(50) DEFAULT NULL,
+  `items_nofbi` int(11) NOT NULL DEFAULT 0,
   `items_actve` tinyint(1) NOT NULL DEFAULT 1,
   `items_crusr` varchar(50) NOT NULL,
   `items_crdat` datetime NOT NULL DEFAULT current_timestamp(),
@@ -249,10 +256,15 @@ CREATE TABLE `tmib_items` (
 -- Dumping data for table `tmib_items`
 --
 
-INSERT INTO `tmib_items` (`id`, `items_users`, `items_icode`, `items_bcode`, `items_hscod`, `items_iname`, `items_idesc`, `items_puofm`, `items_dfqty`, `items_suofm`, `items_ctgry`, `items_itype`, `items_hwrnt`, `items_hxpry`, `items_sdvat`, `items_costp`, `items_image`, `items_actve`, `items_crusr`, `items_crdat`, `items_upusr`, `items_updat`, `items_rvnmr`) VALUES
-('940f8010-5d38-4de4-b66f-d12958ff9ec2', 'admin-id', 'I-1236', 'B-1236', 'HS-1236', 'Katari 54', 'Imported', '78a63632-6a35-49ab-8cac-4b5c0d4fb418', 12, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 0, 5.00, 10.00, NULL, 0, '940f8010-5d38-4de4-b66f-d12958ff9ecf', '2026-01-11 06:06:23', 'admin-id', '2026-01-11 09:58:46', 1),
-('940f8010-5d38-4de4-b66f-d12958ff9ecf', 'admin-id', 'I-1234', 'B-1234', 'HS-1234', 'Rice BR 28', 'Raw Deshi', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 10, '78a63632-6a35-49ab-8cac-4b5c0d4fb418', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 0, 0.00, 10.00, NULL, 1, '940f8010-5d38-4de4-b66f-d12958ff9ecf', '2026-01-11 06:06:23', 'admin-id', '2026-01-11 07:56:43', 1),
-('e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', 'admin-id', 'I-1235', 'B-1235', 'HS-1235', 'Mung Dal', 'Raw Deshi', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 10, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Raw Material', 1, 1, 0.00, 10.00, NULL, 1, 'admin-id', '2026-01-11 06:38:46', 'admin-id', '2026-01-11 07:58:17', 1);
+INSERT INTO `tmib_items` (`id`, `items_users`, `items_icode`, `items_bcode`, `items_hscod`, `items_iname`, `items_idesc`, `items_puofm`, `items_dfqty`, `items_suofm`, `items_ctgry`, `items_itype`, `items_hwrnt`, `items_hxpry`, `items_sdvat`, `items_costp`, `items_image`, `items_nofbi`, `items_actve`, `items_crusr`, `items_crdat`, `items_upusr`, `items_updat`, `items_rvnmr`) VALUES
+('24614ec4-8ab0-4b50-b3c7-9f154a124770', 'admin-id', 'I-1238', 'B-1238', 'HS-1238', 'Sugar', '1kg Pack', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 12, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 0, 0.00, 3.00, NULL, 1, 1, 'admin-id', '2026-01-12 06:16:06', 'admin-id', '2026-01-12 06:33:28', 1),
+('4dab149a-e220-4cd8-a061-7660ab0168bb', 'admin-id', 'I-1240', 'B-1240', 'HS-1240', 'Salt 1kg', 'Iodized', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 12, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 0, 0.00, 3.00, NULL, 1, 1, 'admin-id', '2026-01-12 06:20:57', 'admin-id', '2026-01-12 06:33:28', 1),
+('940f8010-5d38-4de4-b66f-d12958ff9ec2', 'admin-id', 'I-1236', 'B-1236', 'HS-1236', 'Katari 54', 'Imported', '78a63632-6a35-49ab-8cac-4b5c0d4fb418', 12, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 0, 5.00, 10.00, NULL, 4, 1, '940f8010-5d38-4de4-b66f-d12958ff9ecf', '2026-01-11 06:06:23', 'admin-id', '2026-01-12 06:33:28', 1),
+('940f8010-5d38-4de4-b66f-d12958ff9ecf', 'admin-id', 'I-1234', 'B-1234', 'HS-1234', 'Rice BR 28', 'Raw Deshi', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 10, '78a63632-6a35-49ab-8cac-4b5c0d4fb418', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 0, 0.00, 10.00, NULL, 1, 1, '940f8010-5d38-4de4-b66f-d12958ff9ecf', '2026-01-11 06:06:23', 'admin-id', '2026-01-12 06:33:28', 1),
+('ae0a4ae3-77f6-4357-8ca9-c05cc1796a7e', 'admin-id', 'I-1239', 'B-1239', 'HS-1239', 'Atta 2kg', '2kg Pack', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 6, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 0, 0.00, 2.00, NULL, 2, 1, 'admin-id', '2026-01-12 06:17:33', 'admin-id', '2026-01-12 06:37:10', 1),
+('dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 'admin-id', 'B-1241', 'B-1241', 'HS-1241', 'Jira', 'Imported', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 20, '2276a903-fc68-4c43-8448-8ceab9aee99d', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 0, 0.00, 2.00, NULL, 1, 1, 'admin-id', '2026-01-12 06:38:50', 'admin-id', '2026-01-12 06:43:02', 1),
+('e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', 'admin-id', 'I-1235', 'B-1235', 'HS-1235', 'Mung Dal', 'Raw Deshi', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 10, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Raw Material', 1, 1, 0.00, 10.00, NULL, 1, 1, 'admin-id', '2026-01-11 06:38:46', 'admin-id', '2026-01-12 06:33:28', 1),
+('e483bc2d-6ccd-4b72-8603-775dcd275249', 'admin-id', 'I-1237', 'B-1237', 'HS-1237', 'Soyabean Oil 5Ltr', 'Imported', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', 6, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'b1df68d6-2888-42c7-a3a8-cdaedadf5408', 'Finished Goods', 0, 0, 0.00, 3.00, NULL, 1, 1, 'admin-id', '2026-01-12 06:12:16', 'admin-id', '2026-01-12 06:33:28', 1);
 
 -- --------------------------------------------------------
 
@@ -278,6 +290,7 @@ CREATE TABLE `tmib_iuofm` (
 
 INSERT INTO `tmib_iuofm` (`id`, `iuofm_users`, `iuofm_untnm`, `iuofm_actve`, `iuofm_crusr`, `iuofm_crdat`, `iuofm_upusr`, `iuofm_updat`, `iuofm_rvnmr`) VALUES
 ('1f240f2c-50ab-407f-b77d-0ce95922fd6c', 'admin-id', 'Ltr', 0, 'admin-id', '2026-01-11 04:40:38', 'admin-id', '2026-01-11 05:20:20', 1),
+('2276a903-fc68-4c43-8448-8ceab9aee99d', 'admin-id', 'Bulk', 1, 'admin-id', '2026-01-12 06:39:04', 'admin-id', '2026-01-12 06:39:04', 1),
 ('22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 'admin-id', 'Kg', 1, 'admin-id', '2026-01-11 04:43:41', 'admin-id', '2026-01-11 04:43:41', 1),
 ('344eb4c8-48c4-475b-b74c-307a0e492622', 'admin-id', 'Pcs', 1, 'admin-id', '2026-01-11 04:40:18', 'admin-id', '2026-01-11 04:40:18', 1),
 ('50d3582c-909a-4818-afd7-54a8db8c1a44', 'admin-id', 'Pack', 1, 'admin-id', '2026-01-11 04:40:31', 'admin-id', '2026-01-11 04:40:31', 1),
@@ -285,6 +298,49 @@ INSERT INTO `tmib_iuofm` (`id`, `iuofm_users`, `iuofm_untnm`, `iuofm_actve`, `iu
 ('674e6bee-5066-415a-9f35-b6e72f978a08', 'admin-id', 'Yard', 1, 'admin-id', '2026-01-11 04:43:59', 'admin-id', '2026-01-11 04:43:59', 1),
 ('78a63632-6a35-49ab-8cac-4b5c0d4fb418', 'admin-id', 'Box', 1, 'admin-id', '2026-01-11 04:40:52', 'admin-id', '2026-01-11 04:46:59', 1),
 ('cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'admin-id', 'Ctn', 1, 'admin-id', '2026-01-11 04:40:23', 'admin-id', '2026-01-11 04:40:23', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmpb_pmstr`
+--
+
+CREATE TABLE `tmpb_pmstr` (
+  `id` varchar(50) NOT NULL,
+  `pmstr_users` varchar(50) NOT NULL,
+  `pmstr_bsins` varchar(50) NOT NULL,
+  `pmstr_cntct` varchar(50) NOT NULL,
+  `pmstr_odtyp` varchar(50) NOT NULL,
+  `pmstr_trnno` varchar(50) NOT NULL,
+  `pmstr_trdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `pmstr_trnte` varchar(100) DEFAULT NULL,
+  `pmstr_refno` varchar(50) DEFAULT NULL,
+  `pmstr_odamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `pmstr_dsamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `pmstr_vtamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `pmstr_vatpy` tinyint(1) NOT NULL DEFAULT 0,
+  `pmstr_incst` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `pmstr_excst` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `pmstr_rnamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `pmstr_ttamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `pmstr_pyamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `pmstr_pdamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `pmstr_duamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `pmstr_rtamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `pmstr_cnamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `pmstr_ispad` tinyint(1) NOT NULL DEFAULT 0,
+  `pmstr_ispst` tinyint(1) NOT NULL DEFAULT 0,
+  `pmstr_isret` tinyint(1) NOT NULL DEFAULT 0,
+  `pmstr_iscls` tinyint(1) NOT NULL DEFAULT 0,
+  `pmstr_vatcl` tinyint(1) NOT NULL DEFAULT 0,
+  `pmstr_hscnl` tinyint(1) NOT NULL DEFAULT 0,
+  `pmstr_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `pmstr_crusr` varchar(50) NOT NULL,
+  `pmstr_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `pmstr_upusr` varchar(50) NOT NULL,
+  `pmstr_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `pmstr_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -316,7 +372,20 @@ CREATE TABLE `tmsb_crgrn` (
 --
 
 INSERT INTO `tmsb_crgrn` (`id`, `crgrn_users`, `crgrn_bsins`, `crgrn_tblnm`, `crgrn_tbltx`, `crgrn_refno`, `crgrn_dbgrn`, `crgrn_crgrn`, `crgrn_isdat`, `crgrn_xpdat`, `crgrn_actve`, `crgrn_crusr`, `crgrn_crdat`, `crgrn_upusr`, `crgrn_updat`, `crgrn_rvnmr`) VALUES
-('cd7ec6ff-ed5b-11f0-961d-0242ac120002', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'tmab_bsins', 'Business', NULL, 1.000000, 0.000000, '2026-01-09 17:11:06', '2026-01-09 17:11:06', 1, 'sys', '2026-01-09 17:11:06', 'sys', '2026-01-09 17:11:06', 1);
+('016b07d3-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmtb_ledgr', 'Accounts Ledger', NULL, 6.000000, 0.000000, '2026-01-10 00:00:00', '2026-01-10 00:00:00', 1, 'sys', '2026-01-12 05:24:46', 'sys', '2026-01-12 05:24:46', 1),
+('0172f0ea-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmtb_trhed', 'Accounts Heads', NULL, 35.000000, 0.000000, '2026-01-10 00:00:00', '2026-01-10 00:00:00', 1, 'sys', '2026-01-12 05:24:46', 'sys', '2026-01-12 05:24:46', 1),
+('0ee26817-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmab_bsins', 'Business', NULL, 3.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
+('0eeab55f-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmcb_cntct', 'Contact', NULL, 1.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
+('0eeab563-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmib_bitem', 'Business Item', NULL, 5.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
+('0eeab6a9-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmib_items', 'Item List', NULL, 3.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:30:09', 1),
+('0eeab79d-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmib_ctgry', 'Item Category', NULL, 6.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:30:17', 1),
+('0eeab881-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmib_iuofm', 'Item Unit', NULL, 8.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
+('0eeab934-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmtb_bacts', 'Business Accounts', NULL, 2.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
+('0eeab995-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmab_users', 'User', NULL, 2.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
+('0eeaba78-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmtb_trhed', 'Accounts Heads', NULL, 4.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
+('45e5c6c7-0331-4e97-b304-15b03ee3d0c7', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'tmsb_crgrn', 'Registration', 'Grocery Shop', 0.000000, 1000.000000, '2026-01-09 04:48:25', '2026-01-09 04:48:25', 1, '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-12 04:48:25', '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-12 06:47:24', 1),
+('5cf2a11e-4c10-4ca1-9bdc-eb3c443796a1', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'tmsb_crgrn', 'Business approval', 'Grocery Shop', 0.000000, 10.000000, '2026-01-11 04:48:25', '2026-01-11 04:48:25', 1, '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-11 04:48:25', '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-11 06:48:27', 1),
+('f2463a7c-ef76-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmcb_cntct', 'Contact', NULL, 2.000000, 0.000000, '2026-01-09 00:00:00', '2026-01-09 00:00:00', 1, 'sys', '2026-01-12 05:24:20', 'sys', '2026-01-12 05:24:20', 1);
 
 -- --------------------------------------------------------
 
@@ -416,8 +485,8 @@ CREATE TABLE `tmtb_trhed` (
 --
 
 INSERT INTO `tmtb_trhed` (`id`, `trhed_users`, `trhed_hednm`, `trhed_grpnm`, `trhed_grtyp`, `trhed_cntyp`, `trhed_actve`, `trhed_crusr`, `trhed_crdat`, `trhed_upusr`, `trhed_updat`, `trhed_rvnmr`) VALUES
-('Z1001', 'admin-id', 'Asset Purchase (-)', 'Asset', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:31', 'admin-id', '2026-01-10 08:06:31', 1),
-('Z1002', 'admin-id', 'Asset Sale (+)', 'Asset', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:31', 'admin-id', '2026-01-10 08:06:31', 1),
+('Z1001', 'admin-id', 'Asset Purchase (-)', 'Asset', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:31', 'admin-id', '2026-01-11 12:30:08', 1),
+('Z1002', 'admin-id', 'Asset Sale (+)', 'Asset', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:31', 'admin-id', '2026-01-11 12:32:04', 1),
 ('Z101', 'admin-id', 'Sales Booking (+)', 'Sales', 'In', 'Customer', 1, 'admin-id', '2026-01-10 08:07:18', 'admin-id', '2026-01-10 08:07:18', 1),
 ('Z102', 'admin-id', 'Sales Invoice (+)', 'Sales', 'In', 'Customer', 1, 'admin-id', '2026-01-10 08:07:18', 'admin-id', '2026-01-10 08:07:18', 1),
 ('Z103', 'admin-id', 'Sales Order (+)', 'Sales', 'In', 'Customer', 1, 'admin-id', '2026-01-10 08:07:18', 'admin-id', '2026-01-10 08:07:18', 1),
@@ -445,7 +514,7 @@ INSERT INTO `tmtb_trhed` (`id`, `trhed_users`, `trhed_hednm`, `trhed_grpnm`, `tr
 ('Z703', 'admin-id', 'Bank Profit (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:52', 'admin-id', '2026-01-10 08:06:52', 1),
 ('Z704', 'admin-id', 'Bank Loan Received (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:52', 'admin-id', '2026-01-10 08:06:52', 1),
 ('Z705', 'admin-id', 'Other Income (+)', 'Income', 'In', 'Internal', 1, 'admin-id', '2026-01-10 08:06:52', 'admin-id', '2026-01-10 08:06:52', 1),
-('Z801', 'admin-id', 'Loss (-)', 'Expenditure', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:45', 'admin-id', '2026-01-10 08:06:45', 1),
+('Z801', 'admin-id', 'Loss (-)', 'Expenditure', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:45', 'admin-id', '2026-01-11 12:34:15', 1),
 ('Z802', 'admin-id', 'Withdrawal (-)', 'Expenditure', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:45', 'admin-id', '2026-01-10 08:06:45', 1),
 ('Z803', 'admin-id', 'Bank Charges (-)', 'Expenditure', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:45', 'admin-id', '2026-01-10 08:06:45', 1),
 ('Z804', 'admin-id', 'Bank Loan Payment (-)', 'Expenditure', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:45', 'admin-id', '2026-01-10 08:06:45', 1),
@@ -453,7 +522,7 @@ INSERT INTO `tmtb_trhed` (`id`, `trhed_users`, `trhed_hednm`, `trhed_grpnm`, `tr
 ('Z901', 'admin-id', 'Rent (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-10 08:06:39', 1),
 ('Z902', 'admin-id', 'Rent Advance (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-10 08:06:39', 1),
 ('Z903', 'admin-id', 'Electricity Bill (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-10 08:06:39', 1),
-('Z904', 'admin-id', 'Internet Bill (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-10 08:06:39', 1),
+('Z904', 'admin-id', 'Internet Bill (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-11 12:32:07', 1),
 ('Z905', 'admin-id', 'Transport Bill (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-10 08:06:39', 1);
 
 --
@@ -502,6 +571,12 @@ ALTER TABLE `tmib_items`
 -- Indexes for table `tmib_iuofm`
 --
 ALTER TABLE `tmib_iuofm`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmpb_pmstr`
+--
+ALTER TABLE `tmpb_pmstr`
   ADD PRIMARY KEY (`id`);
 
 --

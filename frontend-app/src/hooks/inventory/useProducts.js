@@ -51,6 +51,8 @@ export const useProducts = () => {
     setErrors({});
     //BItem
     setFormDataBItem(dataModelBItem);
+
+    setBusinessItems([]);
   };
 
   const handleCancel = () => {
@@ -289,7 +291,8 @@ export const useProducts = () => {
     const vat_amount = sales_dp_mrp * (formData.items_sdvat / 100);
 
     //cost amount = on purchase price
-    const cost_amount = formDataBItem.bitem_lprat * (formData.items_costp / 100);
+    const cost_amount =
+      formDataBItem.bitem_lprat * (formData.items_costp / 100);
 
     //margin = sales price - (purchase price + discount amount + vat amount + cost amount)
     const margin =
@@ -299,6 +302,29 @@ export const useProducts = () => {
         Number(vat_amount) +
         Number(cost_amount));
     return margin;
+  };
+
+  // Business Items
+  const [businessItems, setBusinessItems] = useState([]);
+
+  const handleItemPriceView = () => {
+    setCurrentView("price");
+  };
+
+  const handleFetchBusinessItems = async (businessId) => {
+    try {
+      setBusinessItems([]);
+      const response = await productsAPI.getBusinessItems({
+        bitem_bsins: businessId,
+      });
+      //response = { message, data }
+      //console.log("response: " + JSON.stringify(response));
+      setBusinessItems(response.data);
+      //showToast("success", "Success", response.message);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
   };
 
   return {
@@ -319,5 +345,9 @@ export const useProducts = () => {
     handleChangeBItem,
     handleSaveBItem,
     handleFetchBItem,
+    // Business Items
+    handleItemPriceView,
+    handleFetchBusinessItems,
+    businessItems,
   };
 };

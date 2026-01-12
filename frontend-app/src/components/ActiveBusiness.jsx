@@ -3,8 +3,10 @@ import { Dialog } from "primereact/dialog";
 import { useBusiness } from "@/hooks/auth/useBusiness";
 import { Chip } from "primereact/chip";
 import { getStorageData, setStorageData } from "@/utils/storage";
+import { useToast } from "@/hooks/useToast";
 
 export default function ActiveBusiness({ visible, setVisible }) {
+  const { showToast } = useToast();
   const { dataList } = useBusiness();
   const [user, setUser] = useState(null);
 
@@ -14,11 +16,16 @@ export default function ActiveBusiness({ visible, setVisible }) {
   }, []);
 
   const handleSelectBusiness = (id, name) => {
-    const new_user = { ...user, users_bsins: id, bsins_bname: name };
-    setStorageData({ user: new_user });
-    setVisible(false);
-    //reload current page
-    window.location.reload();
+    if (user.users_isrgs === 0) {
+      showToast("error", "Error", "You are not authorized to switch business");
+    } else {
+      const new_user = { ...user, users_bsins: id, bsins_bname: name };
+      setStorageData({ user: new_user });
+      setVisible(false);
+
+      //reload current page
+      window.location.reload();
+    }
   };
 
   return (

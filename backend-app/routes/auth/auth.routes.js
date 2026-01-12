@@ -82,7 +82,7 @@ router.post("/register", async (req, res) => {
     scripts.push({
       sql: `INSERT INTO tmsb_crgrn (id, crgrn_users, crgrn_bsins, crgrn_tblnm, crgrn_tbltx, crgrn_refno, crgrn_dbgrn, crgrn_crgrn,
        crgrn_crusr, crgrn_upusr) 
-    VALUES (?, ?, ?, 'Registration', 'Registration', ?, 0, ?,
+    VALUES (?, ?, ?, 'tmsb_crgrn', 'Registration', ?, 0, ?,
       ?, ?)`,
       params: [id, id, users_bsins_id, bsins_bname, noOfGrains, id, id],
       label: `Credited grain for ${users_oname}`,

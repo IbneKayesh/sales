@@ -1,5 +1,3 @@
-import React from "react";
-
 const ConvertedQtyComponent = ({ qty, rowData }) => {
   const diff = rowData.unit_difference_qty || 1;
   const big = Math.floor(qty / diff);

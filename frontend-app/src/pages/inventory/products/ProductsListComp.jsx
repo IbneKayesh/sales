@@ -69,6 +69,13 @@ const ProductsListComp = ({ dataList, onEdit, onDelete }) => {
         <span className="text-sm text-gray-600 ml-1">
           {rowData.items_idesc}
         </span>
+        <span
+          className={`text-sm ${
+            rowData.items_nofbi > 0 ? "text-blue-500" : "text-red-500"
+          } ml-1`}
+        >
+          ({rowData.items_nofbi})
+        </span>
       </>
     );
   };
@@ -116,8 +123,8 @@ const ProductsListComp = ({ dataList, onEdit, onDelete }) => {
       <DataTable
         value={dataList}
         paginator
-        rows={10}
-        rowsPerPageOptions={[5, 10, 25]}
+        rows={15}
+        rowsPerPageOptions={[15, 50, 100]}
         emptyMessage="No data found."
         size="small"
         rowHover

@@ -54,9 +54,12 @@ const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
       </>
     );
   };
-
-  const ledgr_trdat_BT = (rowData) => {
-    return formatDate(rowData.ledgr_trdat);
+  const ledgr_pymod_BT = (rowData) => {
+    return (
+      <>
+        {rowData.ledgr_pymod}, {formatDate(rowData.ledgr_trdat)}
+      </>
+    );
   };
 
   const ledgr_refno_BT = (rowData) => {
@@ -70,11 +73,11 @@ const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
   };
 
   const ledgr_dbamt_BT = (rowData) => {
-    return Number(rowData.ledgr_dbamt) > 0 ? rowData.ledgr_dbamt: "0";
+    return Number(rowData.ledgr_dbamt) > 0 ? rowData.ledgr_dbamt : "0";
   };
 
   const ledgr_cramt_BT = (rowData) => {
-    return Number(rowData.ledgr_cramt) > 0 ? rowData.ledgr_cramt: "0";
+    return Number(rowData.ledgr_cramt) > 0 ? rowData.ledgr_cramt : "0";
   };
 
   return (
@@ -83,8 +86,8 @@ const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
       <DataTable
         value={dataList}
         paginator
-        rows={10}
-        rowsPerPageOptions={[5, 10, 25]}
+        rows={15}
+        rowsPerPageOptions={[15, 50, 100]}
         emptyMessage="No data found."
         className="bg-dark-300"
         size="small"
@@ -97,16 +100,25 @@ const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
         />
         <Column field="trhed_hednm" header="Head" sortable />
         <Column field="cntct_cntnm" header="Contact" sortable />
-        <Column field="ledgr_pymod" header="Mode" sortable />
         <Column
-          field="ledgr_trdat"
+          field="ledgr_pymod"
           header="Date"
+          body={ledgr_pymod_BT}
           sortable
-          body={ledgr_trdat_BT}
         />
         <Column field="ledgr_refno" header="Ref No" body={ledgr_refno_BT} />
-        <Column field="ledgr_dbamt" header="Debit (-)" sortable body={ledgr_dbamt_BT} />
-        <Column field="ledgr_cramt" header="Credit (+)" sortable body={ledgr_cramt_BT} />
+        <Column
+          field="ledgr_dbamt"
+          header="Debit (-)"
+          sortable
+          body={ledgr_dbamt_BT}
+        />
+        <Column
+          field="ledgr_cramt"
+          header="Credit (+)"
+          sortable
+          body={ledgr_cramt_BT}
+        />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>

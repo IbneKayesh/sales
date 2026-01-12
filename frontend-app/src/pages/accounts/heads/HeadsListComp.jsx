@@ -63,14 +63,23 @@ const HeadsListComp = ({ dataList, onEdit, onDelete }) => {
       <ActiveRowCell text={rowData.trhed_hednm} status={rowData.trhed_actve} />
     );
   };
+
+  const trhed_grpnm_BT = (rowData) => {
+    const activeClassStyle = rowData.trhed_grtyp === "In" ? "text-green-500" : "text-blue-500";
+    return (
+      <>
+        <span className={activeClassStyle}>{rowData.trhed_grpnm}, {rowData.trhed_grtyp}</span>
+      </>
+    );
+  };
   return (
     <div className="p-1">
       <ConfirmDialog />
       <DataTable
         value={dataList}
         paginator
-        rows={10}
-        rowsPerPageOptions={[5, 10, 25]}
+        rows={15}
+        rowsPerPageOptions={[15, 50, 100]}
         emptyMessage="No data found."
         size="small"
         rowHover
@@ -82,8 +91,7 @@ const HeadsListComp = ({ dataList, onEdit, onDelete }) => {
           body={trhed_hednm_BT}
           sortable
         />
-        <Column field="trhed_grpnm" header="Group" sortable />
-        <Column field="trhed_grtyp" header="Type" sortable />
+        <Column field="trhed_grpnm" header="Group" body={trhed_grpnm_BT} sortable />
         <Column field="trhed_cntyp" header="Contact" sortable />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>

@@ -355,6 +355,10 @@ const ProductsFormComp = ({
             />
           ))}
 
+          {errors.bitem_bsins && (
+            <small className="mb-3 text-red-500">{errors.bitem_bsins}</small>
+          )}
+
           <BFormComp
             isBusy={isBusy}
             errors={errors}

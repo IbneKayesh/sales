@@ -144,7 +144,7 @@ const LoginComp = () => {
     >
       <form onSubmit={handleSubmit}>
         <h2
-          className={`text-center text-lg text-purple-500 mb-4 ${
+          className={`text-center text-lg text-gray-300 mb-4 ${
             showInputs ? "visible" : "hidden"
           }`}
         >
@@ -213,7 +213,7 @@ const LoginComp = () => {
             </span>
           </p>
           <p
-            className="text-secondary text-purple-500 mb-2 hover:text-white cursor-pointer"
+            className="text-secondary text-gray-500 mb-2 hover:text-white cursor-pointer"
             onClick={() => handleCopyDemoUserCredentials()}
           >
             Copy Demo User Credentials

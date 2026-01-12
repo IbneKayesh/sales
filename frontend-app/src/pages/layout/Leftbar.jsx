@@ -108,18 +108,36 @@ const Leftbar = ({ menus }) => {
         {/* Developer Info */}
         <div className="footer-developer-info">
           <div>
-            <strong>Business:</strong> <span className="font-bold text-yellow-500">{user?.bsins_bname}</span>
+            <strong>Business:</strong>{" "}
+            <span className="font-bold text-yellow-500">
+              {user?.bsins_bname}
+            </span>
           </div>
           <div>
-            <strong>Logged:</strong> {user?.users_oname}
+            <strong>Logged:</strong>
+            <span
+              className={`mx-1 text-blue-500 font-bold pi pi-${
+                user?.users_isrgs === 1 ? "crown " : "lightbulb"
+              }`}
+            ></span>
+            {user?.users_oname}
           </div>
           <div>
             <strong>Reg No:</strong> {user?.users_regno}
           </div>
           <div>
-            <strong>Grains:</strong> {user?.users_nofcr}
+            <strong>Grains:</strong>{" "}
+            <span
+              className={`font-bold ${
+                Number(user?.users_nofcr || 0) > 0 ? "text-green-500" : "text-red-500"
+              }`}
+            >
+              {Number(user?.users_nofcr || 0)}
+            </span>
           </div>
-          <div className="footer-copyright">© 2025-2026 All Rights Reserved</div>
+          <div className="footer-copyright">
+            © 2025-2026 All Rights Reserved
+          </div>
         </div>
       </div>
     </div>

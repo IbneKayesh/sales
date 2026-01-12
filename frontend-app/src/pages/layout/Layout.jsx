@@ -26,10 +26,10 @@ const Layout = () => {
       name: "Purchase",
       icon: "pi pi-shopping-cart",
       submenus: [
-        { id: "pr1", name: "Booking", url: "/home/purchase/purchase-booking", icon: "pi pi-file" },
-        { id: "pr2", name: "Invoice", url: "/home/purchase/purchase-invoice", icon: "pi pi-file" },
-        { id: "pr3", name: "Order", url: "/home/purchase/purchase-order", icon: "pi pi-file" },
-        { id: "pr4", name: "Return", url: "/home/purchase/purchase-return", icon: "pi pi-file" },
+        { id: "pr1", name: "Booking", url: "/home/purchase/pbooking", icon: "pi pi-check-square" },
+        { id: "pr2", name: "Receipt", url: "/home/purchase/preceipt", icon: "pi pi-receipt" },
+        { id: "pr3", name: "Invoice", url: "/home/purchase/pinvoice", icon: "pi pi-file-edit" },
+        { id: "pr4", name: "Return", url: "/home/purchase/preturn", icon: "pi pi-replay" },
       ],
     },
     {
@@ -69,7 +69,7 @@ const Layout = () => {
         { id: "st3", name: "Change Password", url: "/home/auth/password", icon: "pi pi-unlock" },
         { id: "st4", name: "Closing", url: "/home/setup/closing-process", icon: "pi pi-sparkles" },
         { id: "st5", name: "Backup", url: "/home/setup/backup", icon: "pi pi-save" },
-        { id: "st6", name: "Settings", url: "/home/setup/settings", icon: "pi pi-cog" },
+        { id: "st6", name: "Settings", url: "/home/setup/settings", icon: "pi pi-sliders-v" },
       ],
     },
     {

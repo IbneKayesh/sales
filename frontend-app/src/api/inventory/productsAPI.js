@@ -1,13 +1,12 @@
-import { apiRequest } from '@/utils/api.js';
+import { apiRequest } from "@/utils/api.js";
 
 //Products API
 export const productsAPI1 = {
-  getAllPo2So: (filter = "po2so") => apiRequest(`/inventory/products/po2so?filter=${filter}`),
+  getAllPo2So: (filter = "po2so") =>
+    apiRequest(`/inventory/products/po2so?filter=${filter}`),
   getProductLedger: (id) => apiRequest(`/inventory/products/ledger/${id}`),
   getAllBooking: () => apiRequest(`/inventory/products/booking`),
 };
-
-
 
 // products API
 export const productsAPI = {
@@ -43,6 +42,11 @@ export const productsAPI = {
     }),
   updateBItem: (data) =>
     apiRequest("/inventory/products/update-bitem", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getBusinessItems: (data) =>
+    apiRequest("/inventory/products/get-business-items", {
       method: "POST",
       body: JSON.stringify(data),
     }),
