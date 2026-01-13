@@ -4,36 +4,37 @@ import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { Checkbox } from "primereact/checkbox";
 import tmpb_pmstr from "@/models/purchase/tmpb_pmstr.json";
-import { useContacts } from "@/hooks/crm/useContacts";
+import { useContactsSgd } from "@/hooks/crm/useContactsSgd";
 
-const HeaderComp = ({
-  errors,
-  formData,
-  handleChange,
-}) => {
-  const { supplierList, fetchSupplierList } = useContacts();
+const HeaderComp = ({ errors, formData, handleChange }) => {
+  const { dataList: supplierList, handleLoadSuppliers } = useContactsSgd();
 
   useEffect(() => {
-    fetchSupplierList();
+    if (!formData.edit_stop) {
+      handleLoadSuppliers();
+      //console.log("Supplier list loaded");
+    }
   }, []);
 
   const cntct_cntnm_IT = (option) => {
     return (
       <div className="flex flex-column">
         <div className="font-semibold">{option.cntct_cntnm}</div>
-        <div className="text-sm text-gray-600">{option.cntct_cntnm}</div>
-        <div className="text-sm text-gray-600">{option.cntct_cntnm}</div>
+        <div className="text-sm text-gray-600">
+          {option.cntct_cntps}, {option.cntct_cntno}
+        </div>
+        <div className="text-sm text-gray-600">{option.cntct_ofadr}</div>
         <div className="text-sm">
           Credit Limit:{" "}
-          {option.credit_limit > 0 ? (
+          {option.cntct_crlmt > 0 ? (
             <>
               <i className="pi pi-credit-card mr-2 text-green-600 font-bold"></i>
-              {option.credit_limit}
+              {Number(option.cntct_crlmt).toFixed(2)}
             </>
           ) : (
             <>
               <i className="pi pi-credit-card mr-2 text-red-600 font-bold"></i>
-              {option.credit_limit}
+              {Number(option.cntct_crlmt).toFixed(2)}
             </>
           )}
         </div>
@@ -49,31 +50,34 @@ const HeaderComp = ({
     return (
       <div className="flex flex-column">
         <span className="font-semibold">
-          {option.credit_limit > 0 ? (
+          {option.cntct_crlmt > 0 ? (
             <i className="pi pi-credit-card mr-2 text-green-600"></i>
           ) : (
             <i className="pi pi-credit-card mr-2 text-red-600"></i>
           )}
-          {option.contact_name}
+          {option.cntct_cntnm}
         </span>
       </div>
     );
   };
 
   const handleChange_cntct_cntnm = (e) => {
-    handleChange("cntct_cntnm", e.value);
-    const selectedObj = contactList.find((c) => c.id === e.value);
+    handleChange("pmstr_cntct", e.value);
+    const selectedObj = supplierList.find((c) => c.id === e.value);
     //console.log("selectedObj", selectedObj.credit_limit);
-    handleChange("credit_limit", selectedObj?.credit_limit || 0);
-    handleChange("contact_name", selectedObj?.contact_name || "");
-    handleChange("contact_mobile", selectedObj?.contact_mobile || "");
-    handleChange("contact_address", selectedObj?.contact_address || "");
+    handleChange("cntct_crlmt", selectedObj?.cntct_crlmt || 0);
+    handleChange("cntct_cntnm", selectedObj?.cntct_cntnm || "");
+    handleChange("cntct_cntno", selectedObj?.cntct_cntno || "");
+    handleChange("cntct_cntad", selectedObj?.cntct_cntad || "");
   };
 
   return (
     <div className="grid">
       <div className="col-12 md:col-2">
-        <label htmlFor="pmstr_trnno" className="block text-900 font-medium mb-2">
+        <label
+          htmlFor="pmstr_trnno"
+          className="block text-900 font-medium mb-2"
+        >
           {tmpb_pmstr.pmstr_trnno.label} <span className="text-red-500">*</span>
         </label>
         <InputText
@@ -89,7 +93,10 @@ const HeaderComp = ({
         )}
       </div>
       <div className="col-12 md:col-2">
-        <label htmlFor="pmstr_trdat" className="block text-900 font-medium mb-2">
+        <label
+          htmlFor="pmstr_trdat"
+          className="block text-900 font-medium mb-2"
+        >
           {tmpb_pmstr.pmstr_trdat.label}
           <span className="text-red-500">*</span>
         </label>
@@ -111,7 +118,10 @@ const HeaderComp = ({
         )}
       </div>
       <div className="col-12 md:col-3">
-        <label htmlFor="pmstr_cntct" className="block text-900 font-medium mb-2">
+        <label
+          htmlFor="pmstr_cntct"
+          className="block text-900 font-medium mb-2"
+        >
           {tmpb_pmstr.pmstr_cntct.label}
           <span className="text-red-500">*</span>
         </label>
@@ -134,7 +144,10 @@ const HeaderComp = ({
         )}
       </div>
       <div className="col-12 md:col-4">
-        <label htmlFor="pmstr_trnte" className="block text-900 font-medium mb-2">
+        <label
+          htmlFor="pmstr_trnte"
+          className="block text-900 font-medium mb-2"
+        >
           {tmpb_pmstr.pmstr_trnte.label}
         </label>
         <InputText
@@ -149,7 +162,10 @@ const HeaderComp = ({
         )}
       </div>
       <div className="col-12 md:col-1">
-        <label htmlFor="pmstr_ispst" className="block text-900 font-medium mb-2">
+        <label
+          htmlFor="pmstr_ispst"
+          className="block text-900 font-medium mb-2"
+        >
           {tmpb_pmstr.pmstr_ispst.label}
         </label>
         <Checkbox

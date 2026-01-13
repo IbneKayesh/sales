@@ -79,23 +79,5 @@ export const useProducts1 = () => {
   return {
     productList,
     toastBox,
-    isBusy,
-    currentView,
-    errors,
-    formData,
-    selectedFilter,
-    setSelectedFilter,
-    filterOptions,
-    handleChange,
-    handleCancel,
-    handleAddNew,
-    handleEditProduct,
-    handleDeleteProduct,
-    handleRefresh,
-    handleSaveProduct,
-    handleFilterChange,
-    handleLoadProductLedger,
-    selectedItemLedger,
-    fetchBookingProductList,
   };
 };

@@ -5,7 +5,6 @@ export const productsAPI1 = {
   getAllPo2So: (filter = "po2so") =>
     apiRequest(`/inventory/products/po2so?filter=${filter}`),
   getProductLedger: (id) => apiRequest(`/inventory/products/ledger/${id}`),
-  getAllBooking: () => apiRequest(`/inventory/products/booking`),
 };
 
 // products API
@@ -47,6 +46,11 @@ export const productsAPI = {
     }),
   getBusinessItems: (data) =>
     apiRequest("/inventory/products/get-business-items", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getBookingItems: (data) =>
+    apiRequest("/inventory/products/get-booking-items", {
       method: "POST",
       body: JSON.stringify(data),
     }),

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Jan 12, 2026 at 09:53 AM
+-- Generation Time: Jan 13, 2026 at 12:17 PM
 -- Server version: 12.1.2-MariaDB-ubu2404
 -- PHP Version: 8.3.26
 
@@ -97,7 +97,7 @@ CREATE TABLE `tmab_users` (
 
 INSERT INTO `tmab_users` (`id`, `users_email`, `users_pswrd`, `users_recky`, `users_oname`, `users_cntct`, `users_bsins`, `users_drole`, `users_users`, `users_stats`, `users_regno`, `users_regdt`, `users_ltokn`, `users_lstgn`, `users_lstpd`, `users_wctxt`, `users_notes`, `users_nofcr`, `users_isrgs`, `users_actve`, `users_crusr`, `users_crdat`, `users_upusr`, `users_updat`, `users_rvnmr`) VALUES
 ('0758720d-ea22-4aee-9b69-c898d2ffe29f', 'user@sgd.com', 'password', 'recover', 'General User', '123456', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'User', 'admin-id', 0, 'Standard', '2026-01-09 12:08:38', NULL, '2026-01-09 12:08:38', '2026-01-09 12:08:38', 'Welcome Note', 'Any Notes', 0.00, 0, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:08:38', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-12 05:46:00', 1),
-('admin-id', 'admin@sgd.com', 'password', 'recover', 'Admin User', '01722688266', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Admin', 'admin-id', 0, 'Standard', '2026-01-09 08:39:57', NULL, '2026-01-09 08:39:57', '2026-01-11 12:19:32', 'Welcome Note', 'User Note', 901.00, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 08:39:57', 'admin-id', '2026-01-12 06:50:34', 7);
+('admin-id', 'admin@sgd.com', 'password', 'recover', 'Admin User', '01722688266', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Admin', 'admin-id', 0, 'Standard', '2026-01-09 08:39:57', NULL, '2026-01-09 08:39:57', '2026-01-11 12:19:32', 'Welcome Note', 'User Note', 910.00, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 08:39:57', 'admin-id', '2026-01-13 05:15:12', 7);
 
 -- --------------------------------------------------------
 
@@ -136,8 +136,9 @@ CREATE TABLE `tmcb_cntct` (
 --
 
 INSERT INTO `tmcb_cntct` (`id`, `cntct_users`, `cntct_bsins`, `cntct_ctype`, `cntct_sorce`, `cntct_cntnm`, `cntct_cntps`, `cntct_cntno`, `cntct_email`, `cntct_ofadr`, `cntct_fcadr`, `cntct_cntry`, `cntct_cntad`, `cntct_crlmt`, `cntct_pybln`, `cntct_adbln`, `cntct_crbln`, `cntct_actve`, `cntct_crusr`, `cntct_crdat`, `cntct_upusr`, `cntct_updat`, `cntct_rvnmr`) VALUES
-('267bb3aa-9177-43d2-8d8b-e0137578cf98', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Bulk Store', 'Mr Person', '0123456', 'email@email.com', 'Badda, Dhaka', 'Badda, Dhaka', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:10', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-11 05:25:41', 1),
-('d5eefaf0-9979-4edf-8fbd-68f3157c4105', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Daily Needs Grocery Store', 'Mr Person', '0123456', 'email@email.com', 'Badda, Dhaka', 'Badda, Dhaka', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:29', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 14:22:35', 1),
+('267bb3aa-9177-43d2-8d8b-e0137578cf98', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Bulk Store', 'Mr Person', '0123456', 'email@email.com', 'Badda, Dhaka', 'Badda, Dhaka', 'Bangladesh', '0', 50000.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:10', 'admin-id', '2026-01-12 12:24:23', 2),
+('both', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Both', 'Local', 'Both A/C', 'Both A/C', 'Both A/C', 'Both A/C', 'Both A/C', 'Both A/C', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 13:04:25', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 14:22:31', 2),
+('d5eefaf0-9979-4edf-8fbd-68f3157c4105', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Daily Needs Grocery Store', 'Mr Person', '0123456', 'email@email.com', 'Badda, Dhaka', 'Badda, Dhaka', 'Bangladesh', '0', 50000.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:29', 'admin-id', '2026-01-12 12:24:33', 2),
 ('internal', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Internal', 'Local', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 13:04:25', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 14:22:31', 2);
 
 -- --------------------------------------------------------
@@ -302,6 +303,37 @@ INSERT INTO `tmib_iuofm` (`id`, `iuofm_users`, `iuofm_untnm`, `iuofm_actve`, `iu
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tmpb_bking`
+--
+
+CREATE TABLE `tmpb_bking` (
+  `id` varchar(50) NOT NULL,
+  `bking_pmstr` varchar(50) NOT NULL,
+  `bking_bitem` varchar(50) NOT NULL,
+  `bking_bkrat` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `bking_bkqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `bking_itamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `bking_dspct` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `bking_dsamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `bking_vtpct` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `bking_vtamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `bking_csrat` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `bking_ntamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `bking_notes` varchar(50) DEFAULT NULL,
+  `bking_cnqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `bking_ivqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `bking_pnqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `bking_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `bking_crusr` varchar(50) NOT NULL,
+  `bking_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `bking_upusr` varchar(50) NOT NULL,
+  `bking_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `bking_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tmpb_pmstr`
 --
 
@@ -342,6 +374,13 @@ CREATE TABLE `tmpb_pmstr` (
   `pmstr_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `tmpb_pmstr`
+--
+
+INSERT INTO `tmpb_pmstr` (`id`, `pmstr_users`, `pmstr_bsins`, `pmstr_cntct`, `pmstr_odtyp`, `pmstr_trnno`, `pmstr_trdat`, `pmstr_trnte`, `pmstr_refno`, `pmstr_odamt`, `pmstr_dsamt`, `pmstr_vtamt`, `pmstr_vatpy`, `pmstr_incst`, `pmstr_excst`, `pmstr_rnamt`, `pmstr_ttamt`, `pmstr_pyamt`, `pmstr_pdamt`, `pmstr_duamt`, `pmstr_rtamt`, `pmstr_cnamt`, `pmstr_ispad`, `pmstr_ispst`, `pmstr_isret`, `pmstr_iscls`, `pmstr_vatcl`, `pmstr_hscnl`, `pmstr_actve`, `pmstr_crusr`, `pmstr_crdat`, `pmstr_upusr`, `pmstr_updat`, `pmstr_rvnmr`) VALUES
+('1f240f2c-50ab-407f-b77d-0ce95922fd6c', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '2026-01-13 05:56:26', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', 0.000000, 0.000000, 0.000000, 0, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0, 0, 0, 0, 0, 0, 1, '', '2026-01-13 05:56:26', '', '2026-01-13 05:56:47', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -372,20 +411,22 @@ CREATE TABLE `tmsb_crgrn` (
 --
 
 INSERT INTO `tmsb_crgrn` (`id`, `crgrn_users`, `crgrn_bsins`, `crgrn_tblnm`, `crgrn_tbltx`, `crgrn_refno`, `crgrn_dbgrn`, `crgrn_crgrn`, `crgrn_isdat`, `crgrn_xpdat`, `crgrn_actve`, `crgrn_crusr`, `crgrn_crdat`, `crgrn_upusr`, `crgrn_updat`, `crgrn_rvnmr`) VALUES
-('016b07d3-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmtb_ledgr', 'Accounts Ledger', NULL, 6.000000, 0.000000, '2026-01-10 00:00:00', '2026-01-10 00:00:00', 1, 'sys', '2026-01-12 05:24:46', 'sys', '2026-01-12 05:24:46', 1),
-('0172f0ea-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmtb_trhed', 'Accounts Heads', NULL, 35.000000, 0.000000, '2026-01-10 00:00:00', '2026-01-10 00:00:00', 1, 'sys', '2026-01-12 05:24:46', 'sys', '2026-01-12 05:24:46', 1),
-('0ee26817-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmab_bsins', 'Business', NULL, 3.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
-('0eeab55f-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmcb_cntct', 'Contact', NULL, 1.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
-('0eeab563-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmib_bitem', 'Business Item', NULL, 5.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
-('0eeab6a9-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmib_items', 'Item List', NULL, 3.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:30:09', 1),
-('0eeab79d-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmib_ctgry', 'Item Category', NULL, 6.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:30:17', 1),
-('0eeab881-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmib_iuofm', 'Item Unit', NULL, 8.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
-('0eeab934-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmtb_bacts', 'Business Accounts', NULL, 2.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
-('0eeab995-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmab_users', 'User', NULL, 2.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
-('0eeaba78-ef77-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmtb_trhed', 'Accounts Heads', NULL, 4.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-12 05:25:08', 'sys', '2026-01-12 05:25:08', 1),
-('45e5c6c7-0331-4e97-b304-15b03ee3d0c7', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'tmsb_crgrn', 'Registration', 'Grocery Shop', 0.000000, 1000.000000, '2026-01-09 04:48:25', '2026-01-09 04:48:25', 1, '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-12 04:48:25', '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-12 06:47:24', 1),
-('5cf2a11e-4c10-4ca1-9bdc-eb3c443796a1', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'tmsb_crgrn', 'Business approval', 'Grocery Shop', 0.000000, 10.000000, '2026-01-11 04:48:25', '2026-01-11 04:48:25', 1, '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-11 04:48:25', '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-11 06:48:27', 1),
-('f2463a7c-ef76-11f0-97f9-0ad4a79b5a97', 'admin-id', '-', 'tmcb_cntct', 'Contact', NULL, 2.000000, 0.000000, '2026-01-09 00:00:00', '2026-01-09 00:00:00', 1, 'sys', '2026-01-12 05:24:20', 'sys', '2026-01-12 05:24:20', 1);
+('45e5c6c7-0331-4e97-b304-15b03ee3d0c7', 'admin-id', '2026-01-09', 'tmsb_crgrn', 'Registration', 'Grocery Shop', 0.000000, 1000.000000, '2026-01-09 00:00:00', '2026-01-09 04:48:25', 1, '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-12 04:48:25', '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-13 05:13:33', 1),
+('ca2657e7-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-09', 'tmcb_cntct', 'Contact', NULL, 1.000000, 0.000000, '2026-01-09 00:00:00', '2026-01-09 00:00:00', 1, 'sys', '2026-01-13 05:14:17', 'sys', '2026-01-13 05:14:17', 1),
+('d4fa1225-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-10', 'tmtb_ledgr', 'Accounts Ledger', NULL, 6.000000, 0.000000, '2026-01-10 00:00:00', '2026-01-10 00:00:00', 1, 'sys', '2026-01-13 05:14:35', 'sys', '2026-01-13 05:14:35', 1),
+('d502d99e-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-10', 'tmtb_trhed', 'Accounts Heads', NULL, 35.000000, 0.000000, '2026-01-10 00:00:00', '2026-01-10 00:00:00', 1, 'sys', '2026-01-13 05:14:35', 'sys', '2026-01-13 05:14:35', 1),
+('e1c04769-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmab_bsins', 'Business', NULL, 3.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
+('e1c6eaa5-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmib_ctgry', 'Item Category', NULL, 6.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
+('e1c6eaa9-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmtb_trhed', 'Accounts Heads', NULL, 4.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
+('e1c6eaab-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmib_iuofm', 'Item Unit', NULL, 8.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
+('e1c6eab7-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmib_bitem', 'Business Item', NULL, 5.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
+('e1c6eca2-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmtb_bacts', 'Business Accounts', NULL, 2.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
+('eb46a8ac-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmab_bsins', 'Business', NULL, 1.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
+('eb49281f-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmab_users', 'User', NULL, 1.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
+('eb494a4e-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmcb_cntct', 'Contact', NULL, 2.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
+('eb495188-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmib_bitem', 'Business Item', NULL, 7.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
+('eb496ca1-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmib_items', 'Item List', NULL, 8.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
+('eb497272-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmib_iuofm', 'Item Unit', NULL, 1.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1);
 
 -- --------------------------------------------------------
 
@@ -525,6 +566,26 @@ INSERT INTO `tmtb_trhed` (`id`, `trhed_users`, `trhed_hednm`, `trhed_grpnm`, `tr
 ('Z904', 'admin-id', 'Internet Bill (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-11 12:32:07', 1),
 ('Z905', 'admin-id', 'Transport Bill (-)', 'Expense', 'Out', 'Internal', 1, 'admin-id', '2026-01-10 08:06:39', 'admin-id', '2026-01-10 08:06:39', 1);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmub_notes`
+--
+
+CREATE TABLE `tmub_notes` (
+  `id` varchar(50) NOT NULL,
+  `notes_users` varchar(50) NOT NULL,
+  `notes_title` varchar(100) NOT NULL,
+  `notes_descr` varchar(500) DEFAULT NULL,
+  `notes_dudat` datetime NOT NULL DEFAULT current_timestamp(),
+  `notes_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `notes_crusr` varchar(50) NOT NULL,
+  `notes_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `notes_upusr` varchar(50) NOT NULL,
+  `notes_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `notes_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -574,6 +635,12 @@ ALTER TABLE `tmib_iuofm`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `tmpb_bking`
+--
+ALTER TABLE `tmpb_bking`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `tmpb_pmstr`
 --
 ALTER TABLE `tmpb_pmstr`
@@ -601,6 +668,12 @@ ALTER TABLE `tmtb_ledgr`
 -- Indexes for table `tmtb_trhed`
 --
 ALTER TABLE `tmtb_trhed`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmub_notes`
+--
+ALTER TABLE `tmub_notes`
   ADD PRIMARY KEY (`id`);
 COMMIT;
 

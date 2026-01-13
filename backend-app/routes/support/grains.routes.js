@@ -53,18 +53,9 @@ router.post("/generate", async (req, res) => {
         data: null,
       });
     }
-    const today = new Date();
-    const dd = String(today.getDate()).padStart(2, '0');
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    const yyyy = today.getFullYear();
-    const todayDate = yyyy + '-' + mm + '-' + dd;
 
-    const tommorrow = new Date();
-    tommorrow.setDate(today.getDate() + 1);
-    const dd_tomorrow = String(tommorrow.getDate()).padStart(2, '0');
-    const mm_tomorrow = String(tommorrow.getMonth() + 1).padStart(2, '0'); //January is 0!
-    const yyyy_tomorrow = tommorrow.getFullYear();
-    const tommorrowDate = yyyy_tomorrow + '-' + mm_tomorrow + '-' + dd_tomorrow;
+    const todayDate ='2026-01-12';
+    const tommorrowDate ='2026-01-13';
 
     const fromDate = `${todayDate} 00:00:00`;
     const toDate = `${tommorrowDate} 00:00:00`;

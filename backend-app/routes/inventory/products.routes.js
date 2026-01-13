@@ -533,4 +533,52 @@ router.post("/get-business-items", async (req, res) => {
   }
 });
 
+
+//get-booking-items
+router.post("/get-booking-items", async (req, res) => {
+  try {
+    const { bitem_bsins } = req.body;
+
+    // Validate input
+    if (!bitem_bsins) {
+      return res.json({
+        success: false,
+        message: "Business ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT bitm.id, bitm.bitem_users, bitm.bitem_items, bitm.bitem_bsins, bitm.bitem_lprat,
+    bitm.bitem_dprat, bitm.bitem_mcmrp, bitm.bitem_sddsp, bitm.bitem_snote,
+    bitm.bitem_gstkq, bitm.bitem_bstkq, bitm.bitem_mnqty, bitm.bitem_mxqty, bitm.bitem_pbqty, 
+    bitm.bitem_sbqty, bitm.bitem_mpric, bitm.bitem_actve,
+    itm.items_icode, itm.items_iname, itm.items_idesc, itm.items_sdvat,
+    puofm.iuofm_untnm as puofm_untnm,
+    itm.items_dfqty,
+    suofm.iuofm_untnm as suofm_untnm
+    FROM tmib_bitem bitm
+    LEFT JOIN tmib_items itm on bitm.bitem_items = itm.id
+    LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
+    LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
+    WHERE bitm.bitem_bsins = ?
+    AND bitm.bitem_actve = 1`;
+    const params = [bitem_bsins];
+
+    const rows = await dbGetAll(sql, params, `Get BItem for ${bitem_bsins}`);
+
+    res.json({
+      success: true,
+      message: "BItem fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
 module.exports = router;

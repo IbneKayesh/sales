@@ -1,38 +1,3 @@
-import { useState, useEffect } from "react";
-import { pobookingAPI } from "@/api/purchase/pobookingAPI";
-import t_po_master from "@/models/purchase/t_po_master.json";
-import validate from "@/models/validator";
-import { generateGuid } from "@/utils/guid";
-import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
-import { settingsAPI } from "@/api/setup/settingsAPI";
-import { useAuth } from "@/hooks/useAuth";
-
-const formDataModel = {
-  master_id: "",
-  shop_id: "",
-  contact_id: "",
-  order_type: "Booking",
-  order_no: "[Auto SL]",
-  order_date: new Date().toISOString().split("T")[0],
-  order_note: "",
-  order_amount: 0,
-  discount_amount: 0,
-  vat_amount: 0,
-  is_vat_payable: 1,
-  include_cost: 0,
-  exclude_cost: 0,
-  total_amount: 0,
-  payable_amount: 0,
-  paid_amount: 0,
-  due_amount: 0,
-  is_paid: "Unpaid",
-  is_posted: 0,
-  is_returned: 0,
-  is_closed: 0,
-  edit_stop: 0,
-  credit_limit: 0,
-};
-
 const usePobooking = () => {
   const [pageConfig, setPageConfig] = useState({
     is_posted: 0,
@@ -40,43 +5,6 @@ const usePobooking = () => {
     include_discount: 0,
     include_vat: 0,
   });
-
-  const [toastBox, setToastBox] = useState(null);
-  const [isBusy, setIsBusy] = useState(false);
-  const [currentView, setCurrentView] = useState("list");
-  const [errors, setErrors] = useState({});
-  const [dataList, setDataList] = useState([]);
-  const [formData, setFormData] = useState(formDataModel);
-  const [formDataList, setFormDataList] = useState([]);
-  const [formDataPaymentList, setFormDataPaymentList] = useState([]);
-  const [handleDelete, setHandleDelete] = useState(() => {});
-  const [showSearchBox, setShowSearchBox] = useState(false);
-  const { user } = useAuth();
-
-  const loadBookingList = async (reloadDataSet = false) => {
-    try {
-      setIsBusy(true);
-      const data = await pobookingAPI.getAll();
-      setDataList(data);
-
-      if (reloadDataSet) {
-        setToastBox({
-          severity: "info",
-          summary: "Refreshed",
-          detail: "Data refreshed from database.",
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to load data from server",
-      });
-    } finally {
-      setIsBusy(false);
-    }
-  };
 
   const loadSettings = async () => {
     try {
@@ -112,11 +40,7 @@ const usePobooking = () => {
     }
   };
 
-  useEffect(() => {
-    loadBookingList();
-    loadSettings();
-  }, []);
-
+  
   const resetForm = () => {
     setFormData({
       ...formDataModel,
@@ -129,35 +53,12 @@ const usePobooking = () => {
     setFormDataPaymentList([]);
   };
 
-  const handleAddNew = () => {
-    resetForm();
-    setCurrentView("form");
-  };
 
-  const handleCancel = () => {
-    resetForm();
-    setCurrentView("list");
-  };
-
-  const handleChange = (field, value) => {
-    //console.log("handleChange: " + field + " " + JSON.stringify(value));
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, t_po_master);
-    setErrors(newErrors);
-  };
 
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      setIsBusy(true);
-      const newErrors = validate(formData, t_po_master);
-      setErrors(newErrors);
-      console.log("handleSave: " + JSON.stringify(newErrors));
-
-      if (Object.keys(newErrors).length > 0) {
-        setIsBusy(false);
-        return;
-      }
+      
 
       const paidStatus =
         Number(formData.payable_amount) === Number(formData.due_amount)
@@ -174,36 +75,14 @@ const usePobooking = () => {
         payments_create: formDataPaymentList,
       };
 
-      if (formData.master_id) {
-        const data = await pobookingAPI.update(formDataNew);
-      } else {
-        const data = await pobookingAPI.create(formDataNew);
-      }
-
-      const message = formData.master_id
-        ? `"${formData.order_no}" Updated`
-        : "Created";
-      setToastBox({
-        severity: "success",
-        summary: "Success",
-        detail: `${message} successfully.`,
-      });
-
-      //call update process
+          //call update process
       await closingProcessAPI("Purchase Booking", formData.order_no);
 
       handleCancel();
       loadBookingList();
     } catch (error) {
-      console.error("Error fetching data:", error);
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to load data from server",
-      });
-    } finally {
-      setIsBusy(false);
-    }
+
+    } 
   };
 
   const fetchDetails = async (master_id) => {
@@ -266,30 +145,4 @@ const usePobooking = () => {
     }
   };
 
-  return {
-    pageConfig,
-    toastBox,
-    isBusy,
-    currentView,
-    errors,
-    setErrors,
-    dataList,
-    formData,
-    setFormData,
-    formDataList,
-    setFormDataList,
-    formDataPaymentList,
-    setFormDataPaymentList,
-    handleChange,
-    handleCancel,
-    handleAddNew,
-    handleEdit,
-    handleDelete,
-    handleSave,
-    handleCancelBooking,
-    showSearchBox,
-    setShowSearchBox,
-  };
 };
-
-export default usePobooking;

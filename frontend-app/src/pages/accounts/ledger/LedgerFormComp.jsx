@@ -41,7 +41,7 @@ const LedgerFormComp = ({
   const handleChange = (name, value) => {
     onChange(name, value);
     const selectedHead = headListDdl?.find((f) => f.id === value);
-    console.log("selectedHead: ", selectedHead);
+    //console.log("selectedHead: ", selectedHead);
     setSelectedHead(selectedHead || null);
   };
 

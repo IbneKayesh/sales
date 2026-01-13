@@ -5,30 +5,6 @@
 
 
 const purchase_tables = () => ({
-  po_booking: `
-    CREATE TABLE IF NOT EXISTS po_booking (
-        booking_id TEXT PRIMARY KEY,
-        master_id TEXT NOT NULL,
-        product_id TEXT NOT NULL,
-        product_price REAL DEFAULT 0,
-        product_qty REAL DEFAULT 0,
-        discount_percent REAL DEFAULT 0,
-        discount_amount REAL DEFAULT 0,
-        vat_percent REAL DEFAULT 0,
-        vat_amount REAL DEFAULT 0,
-        cost_price REAL DEFAULT 0,
-        total_amount REAL DEFAULT 0,
-        product_note TEXT,  
-        cancelled_qty REAL DEFAULT 0,
-        invoice_qty REAL DEFAULT 0,
-        pending_qty REAL DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (master_id) REFERENCES po_master (master_id) ON DELETE RESTRICT,
-        FOREIGN KEY (product_id) REFERENCES products (product_id) ON DELETE RESTRICT
-    )
-    `,
-
   po_receive: `
     CREATE TABLE IF NOT EXISTS po_invoice (
         invoice_id TEXT PRIMARY KEY,

@@ -5,13 +5,13 @@ import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { paymentModeOptions } from "@/utils/vtable";
-import { useAccounts } from "@/hooks/accounts/useAccounts";
+import { useAccountsSgd } from "@/hooks/accounts/useAccountsSgd";
 
 const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
-  const { accountsListDdl, fetchAccountsListDdl } = useAccounts();
+  const { dataList, handleLoadAccounts } = useAccountsSgd();
 
   useEffect(() => {
-    fetchAccountsListDdl();
+    handleLoadAccounts();    
   }, []);
 
   return (
@@ -28,11 +28,11 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           <Dropdown
             name="ledgr_bacts_from"
             value={formData.ledgr_bacts_from}
-            options={accountsListDdl
+            options={dataList
               .filter((item) => Number(item.bacts_crbln) > 0)
               .map((item) => ({
-                label: item.label,
-                value: item.value,
+                label: item.bacts_bankn,
+                value: item.id,
               }))}
             optionLabel="label"
             optionValue="value"
@@ -59,7 +59,10 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           <Dropdown
             name="ledgr_bacts_to"
             value={formData.ledgr_bacts_to}
-            options={accountsListDdl}
+            options={dataList.map((item) => ({
+              label: item.bacts_bankn,
+              value: item.id,
+            }))}
             optionLabel="label"
             optionValue="value"
             onChange={(e) => onChange("ledgr_bacts_to", e.value)}

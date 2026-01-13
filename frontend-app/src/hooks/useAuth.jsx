@@ -1,7 +1,11 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { authAPI } from "@/api/auth/authAPI";
 import { generateGuid } from "@/utils/guid";
-import { setStorageData } from "@/utils/storage";
+import {
+  getStorageData,
+  setStorageData,
+  clearStorageData,
+} from "@/utils/storage";
 
 const AuthContext = createContext();
 
@@ -19,9 +23,12 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check if user is logged in (from localStorage for now, can be improved with tokens later)
-    const storedUser = localStorage.getItem("user");
+    //const storedUser = localStorage.getItem("user");
+    const storedUser = getStorageData()?.user;
+    //console.log(storedUser)
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      //setUser(JSON.parse(storedUser));
+      setUser(storedUser);
     }
     setLoading(false);
   }, []);
@@ -37,7 +44,7 @@ export const AuthProvider = ({ children }) => {
       if (response.success) {
         //console.log("response " + JSON.stringify(response))
         setUser(response.data);
-        localStorage.setItem("user", JSON.stringify(response.data));
+        //localStorage.setItem("user", JSON.stringify(response.data));
         setStorageData({ user: response.data });
       }
       return response;
@@ -54,7 +61,9 @@ export const AuthProvider = ({ children }) => {
       console.error("Logout error:", error);
     }
     setUser(null);
-    localStorage.removeItem("user");
+    //localStorage.removeItem("user");
+    clearStorageData();
+    localStorage.removeItem("authToken")
   };
 
   const register = async (register) => {
@@ -84,7 +93,7 @@ export const AuthProvider = ({ children }) => {
       if (response.success) {
         console.log("response " + JSON.stringify(response));
         setUser(response.data);
-        localStorage.setItem("user", JSON.stringify(response.data));
+        //localStorage.setItem("user", JSON.stringify(response.data));
         setStorageData({ user: response.data });
       }
       return response;
