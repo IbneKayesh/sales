@@ -25,13 +25,13 @@ const PaymentComp = ({
     rcvpy_pymod: "Cash",
     rcvpy_trdat: new Date().toISOString().split("T")[0],
     rcvpy_refno: "",
-    rcvpy_srcnm: "",
+    rcvpy_srcnm: formData.pmstr_odtyp,
     rcvpy_notes: "",
     rcvpy_pyamt: "",
   });
   useEffect(() => {
     let note = "";
-    if (formData.pmstr_vatpy) {
+    if (formData.pmstr_vatpy === "1") {
       note += " with Vat";
     }
     setPayableNote(note);
@@ -141,10 +141,10 @@ const PaymentComp = ({
             <span className="font-bold">{formData.pmstr_dsamt}/-</span>
           </div>
           <div className="flex justify-content-between">
-            <span
-              onClick={() => handleChange("pmstr_vatpy", !formData.pmstr_vatpy)}
+            <span 
+              onClick={() => handleChange("pmstr_vatpy", formData.pmstr_vatpy === "1" ? "0" : "1")}
             >
-              <input type="checkbox" checked={formData.pmstr_vatpy} readOnly />
+              <input type="checkbox" checked={formData.pmstr_vatpy === "1"} readOnly />
               VAT (3)
             </span>
             <span className="font-bold">{formData.pmstr_vtamt}/-</span>

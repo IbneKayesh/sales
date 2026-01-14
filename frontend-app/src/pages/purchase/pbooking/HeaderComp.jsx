@@ -68,7 +68,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
     handleChange("cntct_crlmt", selectedObj?.cntct_crlmt || 0);
     handleChange("cntct_cntnm", selectedObj?.cntct_cntnm || "");
     handleChange("cntct_cntno", selectedObj?.cntct_cntno || "");
-    handleChange("cntct_cntad", selectedObj?.cntct_cntad || "");
+    handleChange("cntct_ofadr", selectedObj?.cntct_ofadr || "");
   };
 
   return (

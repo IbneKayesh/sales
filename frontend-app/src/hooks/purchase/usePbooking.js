@@ -4,6 +4,8 @@ import validate, { generateDataModel } from "@/models/validator";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { pbookingAPI } from "@/api/purchase/pbookingAPI";
+import { generateGuid } from "@/utils/guid";
+import { formatDateForAPI } from "@/utils/datetime";
 
 const dataModel = generateDataModel(tmpb_pmstr, { edit_stop: 0 });
 
@@ -25,10 +27,15 @@ export const usePbooking = () => {
       const response = await pbookingAPI.getAll({
         pmstr_users: user.users_users,
         pmstr_bsins: user.users_bsins,
+        ...searchBoxData,
       });
       //response = { success, message, data }
+      //console.log("loadBookings:", JSON.stringify(response));
 
       setDataList(response.data);
+      if (response.data.length > 0) {
+        setSearchBoxShow(false);
+      }
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
@@ -38,7 +45,7 @@ export const usePbooking = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadBookings();
+    //loadBookings();
   }, []);
 
   const handleChange = (field, value) => {
@@ -52,6 +59,7 @@ export const usePbooking = () => {
       ...dataModel,
       pmstr_users: user.users_users,
       pmstr_bsins: user.users_bsins,
+      pmstr_odtyp: "Purchase Booking",
       pmstr_vatpy: "1",
       pmstr_ispst: "1",
     });
@@ -107,18 +115,17 @@ export const usePbooking = () => {
     e.preventDefault();
     try {
       //console.log("formData:", JSON.stringify(formData));
-      console.log("formDataItemList :", JSON.stringify(formDataItemList));
+      //console.log("formDataItemList :", JSON.stringify(formDataItemList));
+      //console.log("formDataPaymentList :", JSON.stringify(formDataPaymentList));
 
-
-      return;
-
+      //return;
 
       setIsBusy(true);
 
       // Validate form
       const newErrors = validate(formData, tmpb_pmstr);
       setErrors(newErrors);
-      console.log("handleSave:", JSON.stringify(formData));
+      console.log("handleSave:", JSON.stringify(newErrors));
 
       if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
@@ -138,7 +145,7 @@ export const usePbooking = () => {
         ...formData,
         id: formData.id || generateGuid(),
         pmstr_users: user.users_users,
-        pmstr_bsins: user.pmstr_bsins,
+        pmstr_bsins: user.users_bsins,
         pmstr_trdat: formatDateForAPI(formData.pmstr_trdat),
         pmstr_ispad: paidStatus,
         user_id: user.id,
@@ -154,6 +161,8 @@ export const usePbooking = () => {
         response = await pbookingAPI.create(formDataNew);
       }
 
+      console.log("handleSave:", JSON.stringify(response));
+
       // Update toast using API message
       showToast(
         response.success ? "success" : "error",
@@ -166,15 +175,34 @@ export const usePbooking = () => {
       //await closingProcessAPI("Purchase Booking", formData.order_no);
 
       // Clear form & reload
-      handleClear();
-      setCurrentView("list");
-      await loadBookings(); // make sure we wait for updated data
+      //handleClear();
+      //setCurrentView("list");
+      //await loadBookings(); // make sure we wait for updated data
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");
     } finally {
       setIsBusy(false);
     }
+  };
+
+  //search
+
+  const [searchBoxShow, setSearchBoxShow] = useState(false);
+  const [searchBoxData, setSearchBoxData] = useState({
+    pmstr_cntct: "",
+    pmstr_trnno: "",
+    pmstr_trdat: null,
+  });
+
+  const handleChangeSearchInput = (e) => {
+    const { name, value } = e.target;
+    setSearchBoxData({ ...searchBoxData, [name]: value });
+  };
+
+  const handleSearch = () => {
+    //console.log("handleSearch", searchBoxData);
+    loadBookings();
   };
 
   return {
@@ -196,5 +224,12 @@ export const usePbooking = () => {
     formDataPaymentList,
     setFormDataItemList,
     setFormDataPaymentList,
+
+    //search
+    searchBoxShow,
+    setSearchBoxShow,
+    searchBoxData,
+    handleChangeSearchInput,
+    handleSearch,
   };
 };

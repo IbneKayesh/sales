@@ -3,6 +3,8 @@ import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import EntryComp from "./EntryComp";
 import { usePbooking } from "@/hooks/purchase/usePbooking";
+import ListComp from "./ListComp";
+import SearchComp from "./SearchComp";
 
 const BookingPage = () => {
   const {
@@ -24,8 +26,18 @@ const BookingPage = () => {
     formDataPaymentList,
     setFormDataItemList,
     setFormDataPaymentList,
+
+    //search
+    searchBoxShow,setSearchBoxShow,
+    searchBoxData,
+    handleChangeSearchInput,
+    handleSearch,
   } = usePbooking();
 
+
+  const handleSearchBox = () => {
+    setSearchBoxShow(true);
+  };
   const getHeader = () => {
     const isList = currentView === "list";
 
@@ -33,19 +45,19 @@ const BookingPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Booking List"
+            ? "Purchase Booking List"
             : formData.id
-            ? "Edit Booking"
-            : "Add New Booking"}
+            ? "Edit Purchase Booking"
+            : "Add New Purchase Booking"}
         </h3>
 
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
-              icon="pi pi-refresh"
+              icon="pi pi-search"
               size="small"
               severity="secondary"
-              onClick={handleRefresh}
+              onClick={handleSearchBox}
               disabled={!isList}
             />
             <Button
@@ -73,18 +85,31 @@ const BookingPage = () => {
   return (
     <Card header={getHeader()} className="bg-dark-200 border-round p-3">
       {/* {JSON.stringify(dataList)} */}
-      <EntryComp
-        isBusy={isBusy}
-        errors={errors}
-        setErrors={setErrors}
-        formData={formData}
-        handleChange={handleChange}
-        formDataItemList={formDataItemList}
-        setFormDataItemList={setFormDataItemList}
-        formDataPaymentList={formDataPaymentList}
-        setFormDataPaymentList={setFormDataPaymentList}
-        handleSubmit={handleSave}
-      />
+
+      {searchBoxShow && (
+        <SearchComp
+          searchBoxData={searchBoxData}
+          handleChangeSearchInput={handleChangeSearchInput}
+          setSearchBoxShow={setSearchBoxShow}
+          handleSearch={handleSearch}
+        />
+      )}
+      {currentView === "list" ? (
+        <ListComp dataList={dataList} />
+      ) : (
+        <EntryComp
+          isBusy={isBusy}
+          errors={errors}
+          setErrors={setErrors}
+          formData={formData}
+          handleChange={handleChange}
+          formDataItemList={formDataItemList}
+          setFormDataItemList={setFormDataItemList}
+          formDataPaymentList={formDataPaymentList}
+          setFormDataPaymentList={setFormDataPaymentList}
+          handleSubmit={handleSave}
+        />
+      )}
     </Card>
   );
 };

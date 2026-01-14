@@ -50,11 +50,12 @@ const EntryComp = ({
     const total_amount =
       order_amount -
       (discount_amount +
-      vat_amount +
-      Number(formData.pmstr_incst || 0) +
-      Number(formData.pmstr_excst || 0));
+        vat_amount +
+        Number(formData.pmstr_incst || 0) +
+        Number(formData.pmstr_excst || 0));
 
-    let payable_amount = order_amount + Number(formData.pmstr_incst || 0) - discount_amount;
+    let payable_amount =
+      order_amount + Number(formData.pmstr_incst || 0) - discount_amount;
     if (formData.pmstr_vatpy === "1") payable_amount += vat_amount;
 
     const paidAmount = formDataPaymentList.reduce(
@@ -88,6 +89,7 @@ const EntryComp = ({
         handleChange={handleChange}
       />
       <ItemsComp
+        formData={formData}
         formDataItemList={formDataItemList}
         setFormDataItemList={setFormDataItemList}
       />

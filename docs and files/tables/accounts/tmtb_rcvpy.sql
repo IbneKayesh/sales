@@ -8,9 +8,10 @@ CREATE TABLE `tmtb_rcvpy` (
   `rcvpy_bsins` varchar(50) NOT NULL,
   `rcvpy_cntct` varchar(50) NOT NULL,
   `rcvpy_pymod` varchar(50) NOT NULL,
-  `rcvpy_trdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `rcvpy_refid` varchar(50) NOT NULL,
   `rcvpy_refno` varchar(50) NOT NULL,
   `rcvpy_srcnm` varchar(50) NOT NULL,
+  `rcvpy_trdat` datetime NOT NULL DEFAULT current_timestamp(),
   -- optional
   `rcvpy_notes` varchar(100) DEFAULT NULL,
   -- default  

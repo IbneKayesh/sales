@@ -13,7 +13,7 @@ import ActiveRowCell from "@/components/ActiveRowCell";
 import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 import ZeroRowCell from "@/components/ZeroRowCell";
 
-const ItemsComp = ({ formDataItemList, setFormDataItemList }) => {
+const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
   const { dataList: productList, handleLoadBookingItems } = useProductsSgd();
   useEffect(() => {
@@ -57,6 +57,49 @@ const ItemsComp = ({ formDataItemList, setFormDataItemList }) => {
     //const filtered = filteredList;
     setAvailableItemList(filtered);
   }, [productList, formDataItemList]);
+
+
+  // Recalculate cost_price when extra costs change
+  useEffect(() => {
+    if (!formDataItemList || formDataItemList.length === 0) return;
+
+    const extraCost =
+      (formData.pmstr_incst || 0) + (formData.pmstr_excst || 0);
+
+    // Calculate grand total of all items (before extra cost distribution)
+    const grandTotal = formDataItemList.reduce(
+      (sum, item) => sum + Number(item.pmstr_pyamt || 0),
+      0
+    );
+
+    if (grandTotal === 0) return;
+
+    // Update each item's cost_price with distributed extra cost
+    const updatedItems = formDataItemList.map((item) => {
+      // Calculate base cost price (without extra cost)
+      const baseCostPrice = item.bking_itamt / item.bking_bkqty;
+
+      // Calculate this item's share of extra cost (proportional to its total_amount)
+      const extraCostShare = (item.bking_itamt / grandTotal) * extraCost;
+
+      // Calculate final cost price per unit
+      const finalCostPrice = baseCostPrice + extraCostShare / item.bking_bkqty;
+
+      return {
+        ...item,
+        bking_csrat: finalCostPrice,
+      };
+    });
+
+    // Only update if there's an actual change to avoid infinite loops
+    const hasChanged = updatedItems.some(
+      (item, index) => item.bking_csrat !== formDataItemList[index].bking_csrat
+    );
+
+    if (hasChanged) {
+      setFormDataItemList(updatedItems);
+    }
+  }, [formData?.pmstr_incst, formData?.pmstr_excst, formDataItemList.length]);
 
   const itemList_IT = (option) => {
     return (
