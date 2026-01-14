@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import ActiveRowCell from "@/components/ActiveRowCell";
+import ZeroRowCell from "@/components/ZeroRowCell";
 
 const BItemsComp = ({ onFetchBusinessItems, dataList }) => {
   const { dataList: businessOptions } = useBusiness();
@@ -39,6 +40,51 @@ const BItemsComp = ({ onFetchBusinessItems, dataList }) => {
       </>
     );
   };
+
+  const bitem_lprat_BT = (rowData) => {
+    return <ZeroRowCell value={rowData.bitem_lprat} text={rowData.bitem_lprat} />;
+  };
+
+  const bitem_dprat_BT = (rowData) => {
+    return <ZeroRowCell value={rowData.bitem_dprat} text={rowData.bitem_dprat} />;
+  };
+
+  const bitem_mcmrp_BT = (rowData) => {
+    return <ZeroRowCell value={rowData.bitem_mcmrp} text={rowData.bitem_mcmrp} />;
+  };
+
+  const bitem_sddsp_BT = (rowData) => {
+    return <ZeroRowCell value={rowData.bitem_sddsp} text={rowData.bitem_sddsp} />;
+  };
+
+  const bitem_gstkq_BT = (rowData) => {
+    return <ZeroRowCell value={rowData.bitem_gstkq} text={rowData.bitem_gstkq} />;
+  };
+
+  const bitem_bstkq_BT = (rowData) => {
+    return <ZeroRowCell value={rowData.bitem_bstkq} text={rowData.bitem_bstkq} />;
+  };
+
+  const bitem_mnqty_BT = (rowData) => {
+    return <ZeroRowCell value={rowData.bitem_mnqty} text={rowData.bitem_mnqty} />;
+  };
+
+  const bitem_mxqty_BT = (rowData) => {
+    return <ZeroRowCell value={rowData.bitem_mxqty} text={rowData.bitem_mxqty} />;
+  };
+
+  const bitem_pbqty_BT = (rowData) => {
+    return <ZeroRowCell value={rowData.bitem_pbqty} text={rowData.bitem_pbqty} />;
+  };
+
+  const bitem_sbqty_BT = (rowData) => {
+    return <ZeroRowCell value={rowData.bitem_sbqty} text={rowData.bitem_sbqty} />;
+  };
+
+  const bitem_mpric_BT = (rowData) => {
+    return <ZeroRowCell value={rowData.bitem_mpric} text={rowData.bitem_mpric} />;
+  };
+  
 
   return (
     <>
@@ -76,18 +122,18 @@ const BItemsComp = ({ onFetchBusinessItems, dataList }) => {
             body={items_iname_BT}
             sortable
           />
-          <Column field="bitem_lprat" header="Purchase Rate" sortable />
-          <Column field="bitem_dprat" header="Distributor Rate" sortable />
-          <Column field="bitem_mcmrp" header="MRP" sortable />
-          <Column field="bitem_sddsp" header="Discount %" sortable />
-          <Column field="bitem_snote" header="Note" sortable />
-          <Column field="bitem_gstkq" header="Good Stock" sortable />
-          <Column field="bitem_bstkq" header="Bad Stock" sortable />
-          <Column field="bitem_mnqty" header="Minimum Stock" sortable />
-          <Column field="bitem_mxqty" header="Maximum Stock" sortable />
-          <Column field="bitem_pbqty" header="Purchase Booking" sortable />
-          <Column field="bitem_sbqty" header="Sales Booking" sortable />
-          <Column field="bitem_mpric" header="Margin Price" sortable />
+          <Column field="bitem_lprat" header="Purchase Rate" sortable body={bitem_lprat_BT} />
+          <Column field="bitem_dprat" header="Distributor Rate" sortable body={bitem_dprat_BT}/>
+          <Column field="bitem_mcmrp" header="MRP" sortable body={bitem_mcmrp_BT}/>
+          <Column field="bitem_sddsp" header="Discount %" sortable body={bitem_sddsp_BT}/>
+          <Column field="bitem_snote" header="Note" sortable/>
+          <Column field="bitem_gstkq" header="Good Stock" sortable body={bitem_gstkq_BT} />
+          <Column field="bitem_bstkq" header="Bad Stock" sortable body={bitem_bstkq_BT} />
+          <Column field="bitem_mnqty" header="Minimum Stock" sortable body={bitem_mnqty_BT} />
+          <Column field="bitem_mxqty" header="Maximum Stock" sortable body={bitem_mxqty_BT} />
+          <Column field="bitem_pbqty" header="Purchase Booking" sortable body={bitem_pbqty_BT} />
+          <Column field="bitem_sbqty" header="Sales Booking" sortable body={bitem_sbqty_BT} />
+          <Column field="bitem_mpric" header="Margin Price" sortable body={bitem_mpric_BT} />
           <Column header={dataList?.length + " rows"} body={action_BT} />
         </DataTable>
       </div>

@@ -40,50 +40,8 @@ const usePobooking = () => {
     }
   };
 
-  
-  const resetForm = () => {
-    setFormData({
-      ...formDataModel,
-      shop_id: user.shop_id,
-      is_posted: Number(pageConfig.is_posted),
-      is_vat_payable: Number(pageConfig.is_vat_payable),
-    });
+ 
 
-    setFormDataList([]);
-    setFormDataPaymentList([]);
-  };
-
-
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    try {
-      
-
-      const paidStatus =
-        Number(formData.payable_amount) === Number(formData.due_amount)
-          ? "Unpaid"
-          : Number(formData.due_amount) === 0
-          ? "Paid"
-          : "Partial";
-
-      const formDataNew = {
-        ...formData,
-        master_id: formData.master_id ? formData.master_id : generateGuid(),
-        is_paid: paidStatus,
-        details_create: formDataList,
-        payments_create: formDataPaymentList,
-      };
-
-          //call update process
-      await closingProcessAPI("Purchase Booking", formData.order_no);
-
-      handleCancel();
-      loadBookingList();
-    } catch (error) {
-
-    } 
-  };
 
   const fetchDetails = async (master_id) => {
     try {

@@ -66,6 +66,15 @@ const purchaseTypeOptions = [
   { label: "Return", value: "Return" },
 ];
 
+const unitGroupOptions = [
+  { label: "Countable", value: "Countable" },
+  { label: "Mass", value: "Mass" },
+  { label: "Volume", value: "Volume" },
+  { label: "Length", value: "Length" },
+  { label: "Weight", value: "Weight" },
+  { label: "Time", value: "Time" },
+];
+
 export {
   getListByTransHead,
   getTransHeadList,
@@ -73,6 +82,7 @@ export {
   paymentModeOptions,
   productTypeOptions,
   purchaseTypeOptions,
+  unitGroupOptions,
 };
 
 /*

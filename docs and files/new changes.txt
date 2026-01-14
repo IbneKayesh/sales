@@ -1,0 +1,2 @@
+ALTER TABLE `tmib_iuofm` ADD `iuofm_untgr` VARCHAR(50) NULL AFTER `iuofm_untnm`;
+Separate Hook for DDL

@@ -47,6 +47,7 @@ router.post("/create", async (req, res) => {
       id,
       iuofm_users,
       iuofm_untnm,
+      iuofm_untgr,
       user_id,
     } = req.body;
 
@@ -65,12 +66,13 @@ router.post("/create", async (req, res) => {
 
     //database action
     const sql = `INSERT INTO tmib_iuofm
-    (id,iuofm_users,iuofm_untnm,iuofm_crusr,iuofm_upusr)
-    VALUES (?,?,?,?,?)`;
+    (id,iuofm_users,iuofm_untnm,iuofm_untgr,iuofm_crusr,iuofm_upusr)
+    VALUES (?,?,?,?,?,?)`;
     const params = [
       id,
       iuofm_users,
       iuofm_untnm,
+      iuofm_untgr,
       user_id,
       user_id,
     ];
@@ -98,6 +100,7 @@ router.post("/update", async (req, res) => {
       id,
       iuofm_users,
       iuofm_untnm,
+      iuofm_untgr,
       user_id,
     } = req.body;
 
@@ -118,11 +121,13 @@ router.post("/update", async (req, res) => {
     const sql = `UPDATE tmib_iuofm
     SET iuofm_users = ?,
     iuofm_untnm = ?,
+    iuofm_untgr = ?,
     iuofm_upusr = ?
     WHERE id = ?`;
     const params = [
       iuofm_users,
       iuofm_untnm,
+      iuofm_untgr,
       user_id,
       id,
     ];

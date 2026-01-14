@@ -10,6 +10,7 @@ CREATE TABLE `tmub_notes` (
   -- optional
   -- default
   `notes_dudat` datetime NOT NULL DEFAULT current_timestamp(),
+  `notes_stat` varchar(50) DEFAULT 'In Progress',
   `notes_actve` tinyint(1) NOT NULL DEFAULT 1,
   `notes_crusr` varchar(50) NOT NULL,
   `notes_crdat` datetime NOT NULL DEFAULT current_timestamp(),

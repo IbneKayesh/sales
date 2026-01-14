@@ -22,5 +22,13 @@
     "minLength": 2,
     "placeholder": "Enter unit name",
     "required": true
+  },
+  "iuofm_untgr": {
+    "type": "string",
+    "label": "Unit Group",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter unit group",
+    "required": true
   }
 }

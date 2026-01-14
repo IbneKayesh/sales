@@ -5,10 +5,10 @@ import { Badge } from "primereact/badge";
 import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
-import NotesListComp from "./notes/NotesListComp";
-import NotesFormComp from "./notes/NotesFormComp";
+import NotesListComp from "./NotesListComp";
+import NotesFormComp from "./NotesFormComp";
 import { useNotes } from "@/hooks/support/useNotes";
-import "./notes/NotesUI.css";
+import "./NotesUI.css";
 
 const NotesPage = () => {
   const {

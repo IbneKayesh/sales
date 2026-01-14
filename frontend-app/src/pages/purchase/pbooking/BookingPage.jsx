@@ -10,6 +10,7 @@ const BookingPage = () => {
     isBusy,
     currentView,
     errors,
+    setErrors,
     formData,
     handleChange,
     handleCancel,
@@ -18,55 +19,71 @@ const BookingPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
+    //options
+    formDataItemList,
+    formDataPaymentList,
+    setFormDataItemList,
+    setFormDataPaymentList,
   } = usePbooking();
 
-    const getHeader = () => {
-      const isList = currentView === "list";
-  
-      return (
-        <div className="flex align-items-center justify-content-between">
-          <h3 className="m-0">
-            {isList ? "Booking List" : formData.id ? "Edit Booking" : "Add New Booking"}
-          </h3>
-  
-          <div className="flex gap-2">
-            <ButtonGroup>
-              <Button
-                icon="pi pi-refresh"
-                size="small"
-                severity="secondary"
-                onClick={handleRefresh}
-                disabled={!isList}
-              />
-              <Button
-                label="New"
-                icon="pi pi-plus"
-                size="small"
-                severity="info"
-                onClick={handleAddNew}
-                disabled={!isList}
-              />
-              <Button
-                label="Back"
-                icon="pi pi-arrow-left"
-                size="small"
-                severity="help"
-                onClick={handleCancel}
-                disabled={isList}
-              />
-            </ButtonGroup>
-          </div>
+  const getHeader = () => {
+    const isList = currentView === "list";
+
+    return (
+      <div className="flex align-items-center justify-content-between">
+        <h3 className="m-0">
+          {isList
+            ? "Booking List"
+            : formData.id
+            ? "Edit Booking"
+            : "Add New Booking"}
+        </h3>
+
+        <div className="flex gap-2">
+          <ButtonGroup>
+            <Button
+              icon="pi pi-refresh"
+              size="small"
+              severity="secondary"
+              onClick={handleRefresh}
+              disabled={!isList}
+            />
+            <Button
+              label="New"
+              icon="pi pi-plus"
+              size="small"
+              severity="info"
+              onClick={handleAddNew}
+              disabled={!isList}
+            />
+            <Button
+              label="Back"
+              icon="pi pi-arrow-left"
+              size="small"
+              severity="help"
+              onClick={handleCancel}
+              disabled={isList}
+            />
+          </ButtonGroup>
         </div>
-      );
-    };
+      </div>
+    );
+  };
 
   return (
     <Card header={getHeader()} className="bg-dark-200 border-round p-3">
       {/* {JSON.stringify(dataList)} */}
       <EntryComp
+        isBusy={isBusy}
         errors={errors}
+        setErrors={setErrors}
         formData={formData}
         handleChange={handleChange}
+        formDataItemList={formDataItemList}
+        setFormDataItemList={setFormDataItemList}
+        formDataPaymentList={formDataPaymentList}
+        setFormDataPaymentList={setFormDataPaymentList}
+        handleSubmit={handleSave}
       />
     </Card>
   );

@@ -264,11 +264,12 @@ export const useProducts = () => {
       );
 
       //must clear business to prevent inserting same item in same business
-      setFormDataBItem((prev) => ({
-        ...prev,
-        id: "",
-        bitem_bsins: "",
-      }));
+      // setFormDataBItem((prev) => ({
+      //   ...prev,
+      //   id: "",
+      //   bitem_bsins: "",
+      // }));
+      setFormDataBItem(dataModelBItem);
     } catch (error) {
       console.error("Error saving data:", error);
 
@@ -288,7 +289,7 @@ export const useProducts = () => {
     const discount_amount = sales_dp_mrp * (formDataBItem.bitem_sddsp / 100);
 
     //vat amount = on sales price
-    const vat_amount = sales_dp_mrp * (formData.items_sdvat / 100);
+    const vat_amount = 0;// sales_dp_mrp * (formData.items_sdvat / 100);
 
     //cost amount = on purchase price
     const cost_amount =

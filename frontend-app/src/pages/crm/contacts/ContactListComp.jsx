@@ -7,6 +7,7 @@ import { Dialog } from "primereact/dialog";
 import { Badge } from "primereact/badge";
 import { formatDate } from "@/utils/datetime";
 import ActiveRowCell from "@/components/ActiveRowCell";
+import ZeroRowCell from "@/components/ZeroRowCell";
 
 const ContactListComp = ({
   dataList,
@@ -198,15 +199,11 @@ const ContactListComp = ({
   };
 
   const ledgr_dbamt_BT = (rowData) => {
-    return Number(rowData.ledgr_dbamt) === 0
-      ? 0
-      : Number(rowData.ledgr_dbamt).toFixed(4);
+    return <ZeroRowCell value={rowData.ledgr_dbamt} text={rowData.ledgr_dbamt} />;
   };
 
   const ledgr_cramt_BT = (rowData) => {
-    return Number(rowData.ledgr_cramt) === 0
-      ? 0
-      : Number(rowData.ledgr_cramt).toFixed(4);
+    return <ZeroRowCell value={rowData.ledgr_cramt} text={rowData.ledgr_cramt} />;
   };
 
   const ledgr_dbamt_FT = () => {
@@ -236,9 +233,9 @@ const ContactListComp = ({
         rowHover
         showGridlines
       >
-        <Column field="cntct_ctype" header="Type" body={cntct_ctype_BT} />
-        <Column field="cntct_cntnm" header="Name" body={cntct_cntnm_BT} />
-        <Column field="cntct_ofadr" header="Address" body={cntct_ofadr_BT} />
+        <Column field="cntct_ctype" header="Type" body={cntct_ctype_BT} sortable />
+        <Column field="cntct_cntnm" header="Name" body={cntct_cntnm_BT} sortable />
+        <Column field="cntct_ofadr" header="Address" body={cntct_ofadr_BT} sortable />
         <Column
           field="cntct_crlmt"
           header="Credit Limit"

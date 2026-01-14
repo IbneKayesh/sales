@@ -7,6 +7,7 @@ CREATE TABLE `tmib_iuofm` (
   `iuofm_users` varchar(50) NOT NULL,
   `iuofm_untnm` varchar(50) NOT NULL,
   -- optional
+  `iuofm_untgr` varchar(50) DEFAULT NULL,
   -- default
   `iuofm_actve` tinyint(1) NOT NULL DEFAULT 1,
   `iuofm_crusr` varchar(50) NOT NULL,

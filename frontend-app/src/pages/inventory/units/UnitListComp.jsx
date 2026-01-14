@@ -4,6 +4,8 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import ActiveRowCell from "@/components/ActiveRowCell";
 
+
+
 const UnitListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
@@ -68,6 +70,11 @@ const UnitListComp = ({ dataList, onEdit, onDelete }) => {
           field="iuofm_untnm"
           header="Unit Name"
           body={iuofm_untnm_BT}
+          sortable
+        />
+        <Column
+          field="iuofm_untgr"
+          header="Group"
           sortable
         />
         <Column header={dataList?.length + " rows"} body={action_BT} />

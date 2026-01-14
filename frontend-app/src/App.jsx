@@ -6,11 +6,11 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import { AuthProvider, useAuth } from "./hooks/useAuth.jsx";
-import { ToastProvider } from "./hooks/useToast.jsx"; // [NEW]
+import { ToastProvider } from "./hooks/useToast.jsx";
 
 //internal imports
 import LatestPage from "./pages/LatestPage";
-import LandingPage from "./pages/LandingPage"; // [NEW]
+import LandingPage from "./pages/LandingPage";
 import Layout from "./pages/layout/Layout.jsx";
 import HomePage from "./pages/HomePage.jsx";
 //auth
@@ -35,7 +35,7 @@ import BookingPage from "./pages/purchase/pbooking/BookingPage";
 import ReceiptPage from "./pages/purchase/preceipt/ReceiptPage";
 import InvoicePage from "./pages/purchase/pinvoice/InvoicePage";
 import ReturnPage from "./pages/purchase/preturn/ReturnPage.jsx";
-import NotesPage from "./pages/support/NotesPage";
+import NotesPage from "./pages/support/notes/NotesPage";
 
 function App() {
   return (

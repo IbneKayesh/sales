@@ -102,7 +102,7 @@ const NotesListComp = ({ dataList, onEdit, onDelete }) => {
               <div className="note-card-footer">
                 <div className="note-date-tag">
                   <i className="pi pi-calendar"></i>
-                  <span>{formatDateTime(note.notes_dudat)}</span>
+                  <span className="text-xs">{formatDateTime(note.notes_dudat)}</span>
                 </div>
                 <span className={`note-status-badge ${status.class}`}>
                   {status.label}

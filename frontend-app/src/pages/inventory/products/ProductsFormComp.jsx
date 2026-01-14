@@ -9,7 +9,6 @@ import { useUnits } from "@/hooks/inventory/useUnits";
 import { useBusiness } from "@/hooks/auth/useBusiness";
 import BFormComp from "./BFormComp";
 import { Chip } from "primereact/chip";
-import { Tag } from "primereact/tag";
 
 const ProductsFormComp = ({
   isBusy,

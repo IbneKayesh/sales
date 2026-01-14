@@ -299,7 +299,7 @@ router.post("/get-by-type", async (req, res) => {
 router.post("/ledger", async (req, res) => {
   try {
     const { id, ledgr_users } = req.body;
-    console.log("req.body ", req.body);
+    //console.log("req.body ", req.body);
 
     // Validate input
     if (!id || !ledgr_users) {

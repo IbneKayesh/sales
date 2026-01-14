@@ -11,10 +11,9 @@ import { generateGuid } from "@/utils/guid";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
+import ZeroRowCell from "@/components/ZeroRowCell";
 
-
-const ItemsComp = () => {
-  const [formDataList, setFormDataList] = useState([]);
+const ItemsComp = ({ formDataItemList, setFormDataItemList }) => {
 
   const { dataList: productList, handleLoadBookingItems } = useProductsSgd();
   useEffect(() => {
@@ -27,6 +26,7 @@ const ItemsComp = () => {
   const [selectedNote, setSelectedNote] = useState("");
   const [selectedItemAddBtn, setSelectedItemAddBtn] = useState(true);
   const [editingRows, setEditingRows] = useState([]);
+  const [showExtraColumns, setShowExtraColumns] = useState(false);
 
   useEffect(() => {
     if (selectedItem) {
@@ -51,12 +51,12 @@ const ItemsComp = () => {
 
     const filtered = filteredList.filter(
       (item) =>
-        !formDataList.some((orderItem) => orderItem.bking_bitem === item.id)
+        !formDataItemList.some((orderItem) => orderItem.bking_bitem === item.id)
     );
 
     //const filtered = filteredList;
     setAvailableItemList(filtered);
-  }, [productList, formDataList]);
+  }, [productList, formDataItemList]);
 
   const itemList_IT = (option) => {
     return (
@@ -103,7 +103,7 @@ const ItemsComp = () => {
     if (!selectedQty || Number(selectedQty) < 1) return;
 
     // Check if item is already added
-    const existingItem = formDataList.find(
+    const existingItem = formDataItemList.find(
       (i) => i.bking_bitem === selectedItem
     );
     if (existingItem) {
@@ -143,8 +143,9 @@ const ItemsComp = () => {
       items_dfqty: item.items_dfqty,
       puofm_untnm: item.puofm_untnm,
       suofm_untnm: item.suofm_untnm,
+      bitem_gstkq: item.bitem_gstkq,
     };
-    setFormDataList([...formDataList, newItemRow]);
+    setFormDataItemList([...formDataItemList, newItemRow]);
 
     setSelectedItem(null);
     setSelectedQty(1);
@@ -155,7 +156,14 @@ const ItemsComp = () => {
   };
 
   const items_iname_FT = () => {
-    return `${formDataList.length} Items, ${editingRows.length} Editing`;
+    return (
+      <>
+        <span>{formDataItemList.length} Items </span>
+        {editingRows.length > 0 && (
+          <span className="text-red-400">{editingRows.length} Editing</span>
+        )}
+      </>
+    );
   };
 
   const bking_bkrat_BT = (rowData) => {
@@ -165,11 +173,16 @@ const ItemsComp = () => {
   };
 
   const bking_bkqty_BT = (rowData) => {
-    return `${rowData.bking_bkqty} ${rowData.puofm_untnm}`;
+    return (
+      <ZeroRowCell
+        value={rowData.bking_bkqty}
+        text={`${rowData.bking_bkqty} ${rowData.puofm_untnm}`}
+      />
+    );
   };
 
   const bking_bkqty_FT = () => {
-    return formDataList.reduce(
+    return formDataItemList.reduce(
       (sum, item) => sum + Number(item.bking_bkqty || 0),
       0
     );
@@ -178,11 +191,16 @@ const ItemsComp = () => {
   const bking_dspct_BT = (rowData) => {
     const formattedDiscount = Number(rowData.bking_dsamt).toFixed(2);
     const formattedDiscountPercent = Number(rowData.bking_dspct).toFixed(2);
-    return `${formattedDiscount} (${formattedDiscountPercent}%)`;
+    return (
+      <ZeroRowCell
+        value={rowData.bking_dsamt}
+        text={`${formattedDiscount} (${formattedDiscountPercent}%)`}
+      />
+    );
   };
 
   const bking_dspct_FT = () => {
-    return formDataList.reduce(
+    return formDataItemList.reduce(
       (sum, item) => sum + Number(item.bking_dsamt || 0),
       0
     );
@@ -191,11 +209,16 @@ const ItemsComp = () => {
   const bking_vtpct_BT = (rowData) => {
     const formattedVat = Number(rowData.bking_vtamt).toFixed(2);
     const formattedVatPercent = Number(rowData.bking_vtpct).toFixed(2);
-    return `${formattedVat} (${formattedVatPercent}%)`;
+    return (
+      <ZeroRowCell
+        value={rowData.bking_vtamt}
+        text={`${formattedVat} (${formattedVatPercent}%)`}
+      />
+    );
   };
 
   const bking_vtpct_FT = () => {
-    return formDataList.reduce(
+    return formDataItemList.reduce(
       (sum, item) => sum + Number(item.bking_vtamt || 0),
       0
     );
@@ -213,12 +236,12 @@ const ItemsComp = () => {
     );
   };
 
-  const netAmount = formDataList.reduce(
+  const netAmount = formDataItemList.reduce(
     (sum, item) => sum + Number(item.bking_ntamt || 0),
     0
   );
   const bking_ntamt_FT = () => {
-    const amount = formDataList.reduce(
+    const amount = formDataItemList.reduce(
       (sum, item) => sum + Number(item.bking_itamt || 0),
       0
     );
@@ -236,13 +259,27 @@ const ItemsComp = () => {
     );
   };
 
+  const bitem_gstkq_BT = (rowData) => {
+    return (
+      <ZeroRowCell value={rowData.bitem_gstkq} text={rowData.bitem_gstkq} />
+    );
+  };
+
   const bking_cnqty_BT = (rowData) => {
     return (
-      <div className="flex gap-2">
-        <span className="text-sm">Cancelled: {rowData.bking_cnqty}</span>
-        <span className="text-sm">Invocie: {rowData.bking_ivqty}</span>
-        <span className="text-sm">Pending: {rowData.bking_pnqty}</span>
-      </div>
+      <ZeroRowCell value={rowData.bking_cnqty} text={rowData.bking_cnqty} />
+    );
+  };
+
+  const bking_ivqty_BT = (rowData) => {
+    return (
+      <ZeroRowCell value={rowData.bking_ivqty} text={rowData.bking_ivqty} />
+    );
+  };
+
+  const bking_pnqty_BT = (rowData) => {
+    return (
+      <ZeroRowCell value={rowData.bking_pnqty} text={rowData.bking_pnqty} />
     );
   };
 
@@ -252,13 +289,22 @@ const ItemsComp = () => {
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
-        setFormDataList((prev) =>
+        setFormDataItemList((prev) =>
           prev.filter((item) => item.id !== rowData.id)
         );
       },
       reject: () => {},
     });
   };
+
+  const rowEditor_HT = () => (
+    <span
+      className={`pi ${
+        showExtraColumns ? "pi-eye-slash text-red-300" : "pi-eye text-gray-300"
+      }  px-2 hover:text-gray-500 cursor-pointer`}
+      onClick={() => setShowExtraColumns((prev) => !prev)}
+    />
+  );
 
   const action_BT = (rowData) => {
     return (
@@ -305,14 +351,15 @@ const ItemsComp = () => {
     newData.bking_vtamt = vatAmount;
     newData.bking_itamt = totalAmount;
     newData.bking_csrat = costPrice;
+    newData.bking_ntamt = totalAmount;
 
     newData.bking_cnqty = 0;
     newData.bking_ivqty = 0;
     newData.bking_pnqty = newData.bking_bkqty;
 
-    let _localItems = [...formDataList];
+    let _localItems = [...formDataItemList];
     _localItems[index] = newData;
-    setFormDataList(_localItems);
+    setFormDataItemList(_localItems);
     setEditingRows([]);
   };
 
@@ -324,7 +371,7 @@ const ItemsComp = () => {
   };
 
   const dataTable_FT = () => {
-    return <ConvertedBDTCurrency value={netAmount} asWords={true} />
+    return <ConvertedBDTCurrency value={netAmount} asWords={true} />;
   };
 
   return (
@@ -367,7 +414,7 @@ const ItemsComp = () => {
         />
       </div>
       <DataTable
-        value={formDataList}
+        value={formDataItemList}
         editMode="row"
         dataKey="id"
         editingRows={editingRows}
@@ -405,24 +452,54 @@ const ItemsComp = () => {
           body={bking_vtpct_BT}
           footer={bking_vtpct_FT}
         />
+        <Column field="bking_notes" header="Note" editor={textEditor} />
+        <Column header="Bulk" body={bulk_BT} />
+        <Column
+          field="bitem_gstkq"
+          header="Stock Qty"
+          headerStyle={{ backgroundColor: "#60758dff" }}
+          bodyStyle={{ textAlign: "center" }}
+          body={bitem_gstkq_BT}
+          hidden={!showExtraColumns}
+        />
+        <Column
+          field="bking_cnqty"
+          header="Booking Qty"
+          headerStyle={{ backgroundColor: "#60758dff" }}
+          bodyStyle={{ textAlign: "center" }}
+          body={bking_cnqty_BT}
+          hidden={!showExtraColumns}
+        />
+        <Column
+          field="bking_ivqty"
+          header="Invoice Qty"
+          headerStyle={{ backgroundColor: "#60758dff" }}
+          bodyStyle={{ textAlign: "center" }}
+          body={bking_ivqty_BT}
+          hidden={!showExtraColumns}
+        />
+        <Column
+          field="bking_pnqty"
+          header="Available Qty"
+          headerStyle={{ backgroundColor: "#60758dff" }}
+          bodyStyle={{ textAlign: "center" }}
+          body={bking_pnqty_BT}
+          hidden={!showExtraColumns}
+        />
         <Column
           field="bking_ntamt"
           header="Amount"
           body={bking_ntamt_BT}
           footer={bking_ntamt_FT}
         />
-        <Column field="bking_notes" header="Note" editor={textEditor} />
-        <Column header="Bulk" body={bulk_BT} />
-        <Column field="bking_cnqty" header="Other Qty" body={bking_cnqty_BT} />
         <Column
+          header={rowEditor_HT()}
           rowEditor
           headerStyle={{ width: "1%", minWidth: "8rem" }}
           bodyStyle={{ textAlign: "center" }}
         />
-        <Column header={formDataList?.length + " rows"} body={action_BT} />
+        <Column header={formDataItemList?.length + " rows"} body={action_BT} />
       </DataTable>
-
-      
     </div>
   );
 };

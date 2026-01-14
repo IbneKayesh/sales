@@ -16,6 +16,10 @@ export const usePbooking = () => {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
+  //options
+  const [formDataItemList, setFormDataItemList] = useState([]);
+  const [formDataPaymentList, setFormDataPaymentList] = useState([]);
+
   const loadBookings = async () => {
     try {
       const response = await pbookingAPI.getAll({
@@ -44,8 +48,18 @@ export const usePbooking = () => {
   };
 
   const handleClear = () => {
-    setFormData(dataModel);
+    setFormData({
+      ...dataModel,
+      pmstr_users: user.users_users,
+      pmstr_bsins: user.users_bsins,
+      pmstr_vatpy: "1",
+      pmstr_ispst: "1",
+    });
     setErrors({});
+
+    //options
+    setFormDataItemList([]);
+    setFormDataPaymentList([]);
   };
 
   const handleCancel = () => {
@@ -92,6 +106,13 @@ export const usePbooking = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
+      //console.log("formData:", JSON.stringify(formData));
+      console.log("formDataItemList :", JSON.stringify(formDataItemList));
+
+
+      return;
+
+
       setIsBusy(true);
 
       // Validate form
@@ -104,14 +125,25 @@ export const usePbooking = () => {
         return;
       }
 
+      //0 :: Unpaid, 1 :: Paid, 2 :: Partial
+      const paidStatus =
+        Number(formData.pmstr_pyamt) === Number(formData.pmstr_duamt)
+          ? "0"
+          : Number(formData.pmstr_duamt) === 0
+          ? "1"
+          : "2";
+
       // Ensure id exists (for create)
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
         pmstr_users: user.users_users,
-        pmstr_bsins : user.pmstr_bsins,
-        pmstr_trdat: formatDateForAPI(formData.bsins_stdat),
+        pmstr_bsins: user.pmstr_bsins,
+        pmstr_trdat: formatDateForAPI(formData.pmstr_trdat),
+        pmstr_ispad: paidStatus,
         user_id: user.id,
+        tmpb_bking: formDataItemList,
+        tmtb_rcvpy: formDataPaymentList,
       };
 
       // Call API and get { message, data }
@@ -130,6 +162,9 @@ export const usePbooking = () => {
           "Operation " + (response.success ? "successful" : "failed")
       );
 
+      //call update process
+      //await closingProcessAPI("Purchase Booking", formData.order_no);
+
       // Clear form & reload
       handleClear();
       setCurrentView("list");
@@ -147,6 +182,7 @@ export const usePbooking = () => {
     isBusy,
     currentView,
     errors,
+    setErrors,
     formData,
     handleChange,
     handleCancel,
@@ -155,5 +191,10 @@ export const usePbooking = () => {
     handleDelete,
     handleRefresh,
     handleSave,
+    //options
+    formDataItemList,
+    formDataPaymentList,
+    setFormDataItemList,
+    setFormDataPaymentList,
   };
 };

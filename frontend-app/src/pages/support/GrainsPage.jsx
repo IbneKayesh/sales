@@ -5,6 +5,7 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import { formatDate, formatDateTime } from "@/utils/datetime";
+import ZeroRowCell from "@/components/ZeroRowCell";
 
 const GrainsPage = () => {
   const { dataList, handleRefresh, handleGenerate } = useGrains();
@@ -37,7 +38,7 @@ const GrainsPage = () => {
               size="small"
               severity="secondary"
               onClick={handleRefresh}
-            />            
+            />
             <Button
               icon="pi pi-plus"
               size="small"
@@ -54,11 +55,11 @@ const GrainsPage = () => {
   };
 
   const crgrn_dbgrn_BT = (rowData) => {
-    return <>{Number(rowData.crgrn_dbgrn) > 0 ? Number(rowData.crgrn_dbgrn) : "0"}</>;
+    return <ZeroRowCell value={rowData.crgrn_dbgrn} text={rowData.crgrn_dbgrn} />;
   };
 
   const crgrn_crgrn_BT = (rowData) => {
-    return <>{Number(rowData.crgrn_crgrn) > 0 ? Number(rowData.crgrn_crgrn) : "0"}</>;
+    return <ZeroRowCell value={rowData.crgrn_crgrn} text={rowData.crgrn_crgrn} />;
   };
 
   const crgrn_dbgrn_FT = () => {
@@ -92,8 +93,18 @@ const GrainsPage = () => {
           <Column field="crgrn_tbltx" header={crgrn_tbltx_HT} />
           <Column field="crgrn_refno" header="Ref No" />
           <Column field="crgrn_isdat" header="Date" body={crgrn_isdat_BT} />
-          <Column field="crgrn_dbgrn" header="Debit (-)" body={crgrn_dbgrn_BT} footer={crgrn_dbgrn_FT} />
-          <Column field="crgrn_crgrn" header="Credit (+)" body={crgrn_crgrn_BT} footer={crgrn_crgrn_FT} />
+          <Column
+            field="crgrn_dbgrn"
+            header="Debit (-)"
+            body={crgrn_dbgrn_BT}
+            footer={crgrn_dbgrn_FT}
+          />
+          <Column
+            field="crgrn_crgrn"
+            header="Credit (+)"
+            body={crgrn_crgrn_BT}
+            footer={crgrn_crgrn_FT}
+          />
         </DataTable>
       </Card>
     </>

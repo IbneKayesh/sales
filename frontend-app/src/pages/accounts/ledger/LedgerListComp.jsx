@@ -3,6 +3,7 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { formatDate } from "@/utils/datetime";
+import ZeroRowCell from "@/components/ZeroRowCell";
 
 const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
@@ -73,11 +74,11 @@ const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
   };
 
   const ledgr_dbamt_BT = (rowData) => {
-    return Number(rowData.ledgr_dbamt) > 0 ? rowData.ledgr_dbamt : "0";
+    return <ZeroRowCell value={rowData.ledgr_dbamt} text={rowData.ledgr_dbamt} />;
   };
 
   const ledgr_cramt_BT = (rowData) => {
-    return Number(rowData.ledgr_cramt) > 0 ? rowData.ledgr_cramt : "0";
+    return <ZeroRowCell value={rowData.ledgr_cramt} text={rowData.ledgr_cramt} />;
   };
 
   return (
