@@ -65,6 +65,54 @@ router.post("/", async (req, res) => {
   }
 });
 
+
+// get all
+router.post("/booking-details", async (req, res) => {
+  try {
+    const { bking_pmstr } = req.body;
+
+    // Validate input
+    if (!bking_pmstr) {
+      return res.json({
+        success: false,
+        message: "Booking ID is required",
+        data: null,
+      });
+    }
+    //console.log("get:", JSON.stringify(req.body));
+
+    //database action
+    let sql = `SELECT bking.*, 0 as edit_stop,
+    itm.items_icode, itm.items_iname, itm.items_dfqty, bitm.bitem_gstkq,
+    puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
+    FROM tmpb_bking bking
+    LEFT JOIN tmib_items itm ON bking.bking_items = itm.id
+    LEFT JOIN tmib_bitem bitm ON bking.bking_bitem = bitm.id
+    LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
+    LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
+    WHERE bking.bking_pmstr = ?`;
+    let params = [bking_pmstr];
+
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get purchase booking for ${bking_pmstr}`
+    );
+    res.json({
+      success: true,
+      message: "Purchase booking fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 // create
 router.post("/create", async (req, res) => {
   try {
@@ -190,11 +238,11 @@ router.post("/create", async (req, res) => {
     //Insert booking details
     for (const det of tmpb_bking) {
       scripts.push({
-        sql: `INSERT INTO tmpb_bking(id, bking_pmstr, bking_bitem, bking_bkrat, bking_bkqty, bking_itamt,
+        sql: `INSERT INTO tmpb_bking(id, bking_pmstr, bking_bitem, bking_items, bking_bkrat, bking_bkqty, bking_itamt,
         bking_dspct, bking_dsamt, bking_vtpct, bking_vtamt, bking_csrat, bking_ntamt,
         bking_notes, bking_cnqty, bking_ivqty, bking_pnqty, bking_crusr, bking_upusr)
         VALUES (
-        ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?
         )`,
@@ -202,6 +250,7 @@ router.post("/create", async (req, res) => {
           uuidv4(),
           id,
           det.bking_bitem,
+          det.bking_items,
           det.bking_bkrat || 0,
           det.bking_bkqty || 0,
           det.bking_itamt || 0,

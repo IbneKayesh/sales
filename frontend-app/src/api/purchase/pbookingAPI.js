@@ -7,19 +7,24 @@ export const pbookingAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  create: (user) =>
+  create: (data) =>
     apiRequest("/purchase/pbooking/create", {
       method: "POST",
-      body: JSON.stringify(user),
+      body: JSON.stringify(data),
     }),
-  update: (user) =>
+  update: (data) =>
     apiRequest("/purchase/pbooking/update", {
       method: "POST",
-      body: JSON.stringify(user),
+      body: JSON.stringify(data),
     }),
-  delete: (user) =>
+  delete: (data) =>
     apiRequest("/purchase/pbooking/delete", {
       method: "POST",
-      body: JSON.stringify(user),
+      body: JSON.stringify(data),
+    }),
+  getDetails: (data) =>
+    apiRequest("/purchase/pbooking/booking-details", {
+      method: "POST",
+      body: JSON.stringify(data),
     }),
 };

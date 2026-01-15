@@ -17,6 +17,14 @@
   },
   "bking_bitem": {
     "type": "string",
+    "label": "Business item id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter business item id",
+    "required": false
+  },
+  "bking_items": {
+    "type": "string",
     "label": "Item id",
     "maxLength": 50,
     "minLength": 0,

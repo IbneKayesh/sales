@@ -6,6 +6,7 @@ CREATE TABLE `tmpb_bking` (
   `id` VARCHAR(50) NOT NULL,
   `bking_pmstr` VARCHAR(50) NOT NULL,
   `bking_bitem` VARCHAR(50) NOT NULL,
+  `bking_items` VARCHAR(50) NOT NULL,
   `bking_bkrat` decimal(20,6) NOT NULL DEFAULT 0,
   `bking_bkqty` decimal(20,6) NOT NULL DEFAULT 0,
   `bking_itamt` decimal(20,6) NOT NULL DEFAULT 0,

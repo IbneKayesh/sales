@@ -65,13 +65,13 @@ const EntryComp = ({
 
     const due_amount = payable_amount - (paidAmount || 0);
 
-    handleChange("pmstr_odamt", order_amount.toFixed(2));
-    handleChange("pmstr_dsamt", discount_amount.toFixed(2));
-    handleChange("pmstr_vtamt", vat_amount.toFixed(2));
-    handleChange("pmstr_ttamt", total_amount.toFixed(2));
-    handleChange("pmstr_pyamt", payable_amount.toFixed(2));
-    handleChange("pmstr_pdamt", paidAmount.toFixed(2));
-    handleChange("pmstr_duamt", due_amount.toFixed(2));
+    handleChange("pmstr_odamt", order_amount);
+    handleChange("pmstr_dsamt", discount_amount);
+    handleChange("pmstr_vtamt", vat_amount);
+    handleChange("pmstr_ttamt", total_amount);
+    handleChange("pmstr_pyamt", payable_amount);
+    handleChange("pmstr_pdamt", paidAmount);
+    handleChange("pmstr_duamt", due_amount);
   }, [
     formDataItemList,
     formData.pmstr_incst,

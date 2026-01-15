@@ -95,7 +95,7 @@ const BookingPage = () => {
         />
       )}
       {currentView === "list" ? (
-        <ListComp dataList={dataList} />
+        <ListComp dataList={dataList} onEdit={handleEdit} />
       ) : (
         <EntryComp
           isBusy={isBusy}

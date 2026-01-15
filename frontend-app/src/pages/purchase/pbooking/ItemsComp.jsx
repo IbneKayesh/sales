@@ -14,7 +14,6 @@ import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 import ZeroRowCell from "@/components/ZeroRowCell";
 
 const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
-
   const { dataList: productList, handleLoadBookingItems } = useProductsSgd();
   useEffect(() => {
     handleLoadBookingItems();
@@ -58,13 +57,11 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     setAvailableItemList(filtered);
   }, [productList, formDataItemList]);
 
-
   // Recalculate cost_price when extra costs change
   useEffect(() => {
     if (!formDataItemList || formDataItemList.length === 0) return;
 
-    const extraCost =
-      (formData.pmstr_incst || 0) + (formData.pmstr_excst || 0);
+    const extraCost = (formData.pmstr_incst || 0) + (formData.pmstr_excst || 0);
 
     // Calculate grand total of all items (before extra cost distribution)
     const grandTotal = formDataItemList.reduce(
@@ -168,6 +165,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       id: generateGuid(), // Temporary ID for new items
       bking_pmstr: "",
       bking_bitem: selectedItem,
+      bking_items: item.bitem_items,
       bking_bkrat: item.bitem_lprat,
       bking_bkqty: selectedQty || 1,
       bking_itamt: itemAmount,
@@ -182,7 +180,8 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       bking_ivqty: 0,
       bking_pnqty: selectedQty || 1,
 
-      items_iname: `${item.items_icode} - ${item.items_iname}`,
+      items_icode: item.items_icode,
+      items_iname: item.items_iname,
       items_dfqty: item.items_dfqty,
       puofm_untnm: item.puofm_untnm,
       suofm_untnm: item.suofm_untnm,
@@ -195,7 +194,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   };
 
   const items_iname_BT = (rowData) => {
-    return `${rowData.items_iname}`;
+    return `${rowData.items_icode} - ${rowData.items_iname}`;
   };
 
   const items_iname_FT = () => {
@@ -212,23 +211,27 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const bking_bkrat_BT = (rowData) => {
     const formattedPrice = Number(rowData.bking_bkrat).toFixed(2);
     const formattedCostPrice = Number(rowData.bking_csrat).toFixed(2);
-    return `${formattedPrice} (${formattedCostPrice})`;
+    return (
+      <>
+        {formattedPrice}{" "}
+        <span className="text-sm text-gray-500">({formattedCostPrice})</span>
+      </>
+    );
   };
 
   const bking_bkqty_BT = (rowData) => {
     return (
-      <ZeroRowCell
-        value={rowData.bking_bkqty}
-        text={`${rowData.bking_bkqty} ${rowData.puofm_untnm}`}
-      />
+      <>
+        {rowData.bking_bkqty}{" "}
+        <span className="text-gray-600">{rowData.puofm_untnm}</span>
+      </>
     );
   };
 
   const bking_bkqty_FT = () => {
-    return formDataItemList.reduce(
-      (sum, item) => sum + Number(item.bking_bkqty || 0),
-      0
-    );
+    return formDataItemList
+      .reduce((sum, item) => sum + Number(item.bking_bkqty || 0), 0)
+      .toFixed(2);
   };
 
   const bking_dspct_BT = (rowData) => {
@@ -243,10 +246,9 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   };
 
   const bking_dspct_FT = () => {
-    return formDataItemList.reduce(
-      (sum, item) => sum + Number(item.bking_dsamt || 0),
-      0
-    );
+    return formDataItemList
+      .reduce((sum, item) => sum + Number(item.bking_dsamt || 0), 0)
+      .toFixed(2);
   };
 
   const bking_vtpct_BT = (rowData) => {
@@ -261,34 +263,31 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   };
 
   const bking_vtpct_FT = () => {
-    return formDataItemList.reduce(
-      (sum, item) => sum + Number(item.bking_vtamt || 0),
-      0
-    );
+    return formDataItemList
+      .reduce((sum, item) => sum + Number(item.bking_vtamt || 0), 0)
+      .toFixed(2);
   };
 
   const bking_ntamt_BT = (rowData) => {
-    const formattedAmount = Number(rowData.bking_itamt).toFixed(2);
-    const formattedNetAmount = Number(rowData.bking_ntamt).toFixed(2);
-
-    return (
-      <>
-        {formattedNetAmount}
-        (<ActiveRowCell text={formattedAmount} status={0} />)
-      </>
-    );
+    return Number(rowData.bking_ntamt).toFixed(2);
   };
 
-  const netAmount = formDataItemList.reduce(
-    (sum, item) => sum + Number(item.bking_ntamt || 0),
-    0
-  );
+  const amount = formDataItemList
+    .reduce((sum, item) => sum + Number(item.bking_itamt || 0), 0)
+    .toFixed(2);
+
+  const netAmount = formDataItemList
+    .reduce((sum, item) => sum + Number(item.bking_ntamt || 0), 0)
+    .toFixed(2);
   const bking_ntamt_FT = () => {
-    const amount = formDataItemList.reduce(
-      (sum, item) => sum + Number(item.bking_itamt || 0),
-      0
+    return (
+      <>
+        {netAmount}
+        {showExtraColumns ? (
+          <span className="text-gray-500"> ({amount})</span>
+        ) : null}
+      </>
     );
-    return `${netAmount} (${amount})`;
   };
 
   const bulk_BT = (rowData) => {
@@ -390,9 +389,9 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     const totalAmount = itemAmount - discountAmount + vatAmount;
     const costPrice = totalAmount / newData.bking_bkqty;
 
+    newData.bking_itamt = itemAmount;
     newData.bking_dsamt = discountAmount;
     newData.bking_vtamt = vatAmount;
-    newData.bking_itamt = totalAmount;
     newData.bking_csrat = costPrice;
     newData.bking_ntamt = totalAmount;
 
@@ -484,6 +483,13 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           editor={numberEditor}
         />
         <Column
+          field="bking_itamt"
+          header="Amount"
+          headerStyle={{ backgroundColor: "#6689b1ff" }}
+          bodyStyle={{ textAlign: "center" }}
+          hidden={!showExtraColumns}
+        />
+        <Column
           field="bking_dspct"
           header="Discount"
           body={bking_dspct_BT}
@@ -500,7 +506,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
         <Column
           field="bitem_gstkq"
           header="Stock Qty"
-          headerStyle={{ backgroundColor: "#60758dff" }}
+          headerStyle={{ backgroundColor: "#6689b1ff" }}
           bodyStyle={{ textAlign: "center" }}
           body={bitem_gstkq_BT}
           hidden={!showExtraColumns}
@@ -508,7 +514,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
         <Column
           field="bking_cnqty"
           header="Booking Qty"
-          headerStyle={{ backgroundColor: "#60758dff" }}
+          headerStyle={{ backgroundColor: "#6689b1ff" }}
           bodyStyle={{ textAlign: "center" }}
           body={bking_cnqty_BT}
           hidden={!showExtraColumns}
@@ -516,7 +522,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
         <Column
           field="bking_ivqty"
           header="Invoice Qty"
-          headerStyle={{ backgroundColor: "#60758dff" }}
+          headerStyle={{ backgroundColor: "#6689b1ff" }}
           bodyStyle={{ textAlign: "center" }}
           body={bking_ivqty_BT}
           hidden={!showExtraColumns}
@@ -524,14 +530,14 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
         <Column
           field="bking_pnqty"
           header="Available Qty"
-          headerStyle={{ backgroundColor: "#60758dff" }}
+          headerStyle={{ backgroundColor: "#6689b1ff" }}
           bodyStyle={{ textAlign: "center" }}
           body={bking_pnqty_BT}
           hidden={!showExtraColumns}
         />
         <Column
           field="bking_ntamt"
-          header="Amount"
+          header="Sub Total"
           body={bking_ntamt_BT}
           footer={bking_ntamt_FT}
         />

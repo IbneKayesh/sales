@@ -6,7 +6,7 @@ import ZeroRowCell from "@/components/ZeroRowCell";
 import { Badge } from "primereact/badge";
 import { SplitButton } from "primereact/splitbutton";
 
-const ListComp = ({ dataList }) => {
+const ListComp = ({ dataList, onEdit }) => {
   const pmstr_trdat_BT = (rowData) => {
     const { pmstr_trdat, pmstr_trnte, pmstr_refno } = rowData;
     const parts = [

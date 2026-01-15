@@ -48,6 +48,24 @@ export const usePbooking = () => {
     //loadBookings();
   }, []);
 
+
+
+const loadBookingDetails = async (id) => {
+  try {
+    console.log("loadBookingDetails:", id);
+    const response = await pbookingAPI.getDetails({
+      bking_pmstr: id,
+    });
+    console.log("loadBookingDetails:", JSON.stringify(response));
+    setFormDataItemList(response.data);
+    //showToast("success", "Success", response.message);
+  } catch (error) {
+    console.error("Error loading data:", error);
+    showToast("error", "Error", error?.message || "Failed to load data");
+  }
+};
+
+
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate({ ...formData, [field]: value }, tmpb_pmstr);
@@ -81,8 +99,13 @@ export const usePbooking = () => {
   };
 
   const handleEdit = (data) => {
+    loadBookingDetails(data.id);
     //console.log("edit: " + JSON.stringify(data));
-    setFormData(data);
+    setFormData({
+      ...data,
+      pmstr_vatpy: String(data.pmstr_vatpy),
+      pmstr_ispst: String(data.pmstr_ispst),
+    });
     setCurrentView("form");
   };
 
