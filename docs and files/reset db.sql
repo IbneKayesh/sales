@@ -9,3 +9,7 @@ drop table	tmsb_crgrn;
 drop table	tmtb_bacts;
 drop table	tmtb_ledgr;
 drop table	tmtb_trhed;
+drop table	tmpb_bking;
+drop table	tmpb_pmstr;
+drop table	tmtb_rcvpy;
+drop table	tmub_notes;

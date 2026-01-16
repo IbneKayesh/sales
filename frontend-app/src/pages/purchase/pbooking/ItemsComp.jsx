@@ -222,7 +222,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const bking_bkqty_BT = (rowData) => {
     return (
       <>
-        {rowData.bking_bkqty}{" "}
+        {Number(rowData.bking_bkqty).toFixed(2)}{" "}
         <span className="text-gray-600">{rowData.puofm_untnm}</span>
       </>
     );
@@ -362,8 +362,8 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       <InputNumber
         value={options.value}
         onValueChange={(e) => options.editorCallback(e.value)}
-        style={{ width: "110px" }}
-        inputStyle={{ width: "100%" }}
+        style={{ minWidth: "40px", padding: "3px" }}
+        inputStyle={{ width: "80%", padding: "3px" }}
         min={1}
       />
     );
@@ -373,8 +373,8 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       <InputText
         value={options.value}
         onChange={(e) => options.editorCallback(e.target.value)}
-        style={{ width: "110px" }}
-        inputStyle={{ width: "100%" }}
+        style={{ minWidth: "40px", padding: "3px" }}
+        inputStyle={{ width: "80%", padding: "3px" }}
       />
     );
   };
@@ -417,64 +417,95 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   };
 
   return (
-    <div>
+    <div className="mt-4">
       <ConfirmDialog />
-      {/* {JSON.stringify(productList)} */}
-      <div className="flex align-items-center gap-2 mb-2 bg-gray-300 p-1 border-round">
-        <Dropdown
-          value={selectedItem}
-          options={availableItemList}
-          optionLabel="items_iname"
-          optionValue="id"
-          onChange={(e) => setSelectedItem(e.value)}
-          placeholder="Select Item"
-          className="w-full"
-          filter
-          showClear
-          itemTemplate={itemList_IT}
-          valueTemplate={itemList_VT}
-        />
-        <InputNumber
-          value={selectedQty}
-          onValueChange={(e) => setSelectedQty(e.value)}
-          placeholder="Enter Qty"
-          min={1}
-        />
-        <InputText
-          value={selectedNote}
-          onChange={(e) => setSelectedNote(e.target.value)}
-          placeholder="Note"
-        />
-        <Button
-          label="Add"
-          icon="pi pi-plus"
-          onClick={handleAddToList}
-          size="small"
-          severity="info"
-          className="pr-5"
-          disabled={selectedItemAddBtn}
-        />
-      </div>
+
+      {!formData.edit_stop && (
+        <div className="grid border-round-md shadow-1 p-2 mb-3 bg-gray-100">
+          <div className="col-12 md:col-5">
+            <label htmlFor="items_iname" className="block font-bold mb-2">
+              Items
+            </label>
+            <Dropdown
+              name="items_iname"
+              value={selectedItem}
+              options={availableItemList}
+              optionLabel="items_iname"
+              optionValue="id"
+              onChange={(e) => setSelectedItem(e.value)}
+              placeholder="Select item"
+              className="w-full"
+              filter
+              showClear
+              itemTemplate={itemList_IT}
+              valueTemplate={itemList_VT}
+            />
+          </div>
+          <div className="col-12 md:col-2">
+            <label htmlFor="bking_bkqty" className="block font-bold mb-2">
+              Quantity
+            </label>
+            <InputNumber
+              name="bking_bkqty"
+              value={selectedQty}
+              onValueChange={(e) => setSelectedQty(e.value)}
+              placeholder="Qty"
+              min={1}
+              className="w-full"
+              inputClassName="w-10rem"
+            />
+          </div>
+          <div className="col-12 md:col-5">
+            <label htmlFor="bking_note" className="block font-bold mb-2">
+              Note (Optional)
+            </label>
+            <div className="p-inputgroup flex-1">
+              <InputText
+                name="bking_note"
+                value={selectedNote}
+                onChange={(e) => setSelectedNote(e.target.value)}
+                placeholder="Enter item note"
+              />
+              <Button
+                label="Add Item"
+                icon="pi pi-plus"
+                tooltip="Add Item"
+                tooltipOptions={{ position: "top" }}
+                onClick={handleAddToList}
+                disabled={selectedItemAddBtn}
+                className="p-inputgroup-addon"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       <DataTable
         value={formDataItemList}
-        editMode="row"
+        editMode={formData.edit_stop ? null : "row"}
         dataKey="id"
         editingRows={editingRows}
         onRowEditSave={onRowEditSave}
         onRowEditCancel={onRowEditCancel}
         onRowEditInit={onRowEditInit}
-        emptyMessage="No items found."
+        emptyMessage="No items added yet."
         size="small"
+        className="shadow-1"
         showGridlines
         footer={dataTable_FT}
       >
         <Column
           field="items_iname"
-          header="Product"
+          header="Item"
           body={items_iname_BT}
           footer={items_iname_FT}
         />
-        <Column field="bking_bkrat" header="Price" body={bking_bkrat_BT} />
+        <Column
+          field="bking_bkrat"
+          header="Price"
+          body={bking_bkrat_BT}
+          editor={numberEditor}
+        />
         <Column
           field="bking_bkqty"
           header="Qty"
@@ -485,8 +516,8 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
         <Column
           field="bking_itamt"
           header="Amount"
-          headerStyle={{ backgroundColor: "#6689b1ff" }}
-          bodyStyle={{ textAlign: "center" }}
+          headerStyle={{ backgroundColor: "#49769bff" }}
+          footer={amount}
           hidden={!showExtraColumns}
         />
         <Column
@@ -501,53 +532,52 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           body={bking_vtpct_BT}
           footer={bking_vtpct_FT}
         />
-        <Column field="bking_notes" header="Note" editor={textEditor} />
-        <Column header="Bulk" body={bulk_BT} />
-        <Column
-          field="bitem_gstkq"
-          header="Stock Qty"
-          headerStyle={{ backgroundColor: "#6689b1ff" }}
-          bodyStyle={{ textAlign: "center" }}
-          body={bitem_gstkq_BT}
-          hidden={!showExtraColumns}
-        />
-        <Column
-          field="bking_cnqty"
-          header="Booking Qty"
-          headerStyle={{ backgroundColor: "#6689b1ff" }}
-          bodyStyle={{ textAlign: "center" }}
-          body={bking_cnqty_BT}
-          hidden={!showExtraColumns}
-        />
-        <Column
-          field="bking_ivqty"
-          header="Invoice Qty"
-          headerStyle={{ backgroundColor: "#6689b1ff" }}
-          bodyStyle={{ textAlign: "center" }}
-          body={bking_ivqty_BT}
-          hidden={!showExtraColumns}
-        />
-        <Column
-          field="bking_pnqty"
-          header="Available Qty"
-          headerStyle={{ backgroundColor: "#6689b1ff" }}
-          bodyStyle={{ textAlign: "center" }}
-          body={bking_pnqty_BT}
-          hidden={!showExtraColumns}
-        />
         <Column
           field="bking_ntamt"
           header="Sub Total"
           body={bking_ntamt_BT}
           footer={bking_ntamt_FT}
         />
+        <Column field="bking_notes" header="Remarks" editor={textEditor} />
+        <Column header="Bulk" body={bulk_BT} />
         <Column
-          header={rowEditor_HT()}
-          rowEditor
-          headerStyle={{ width: "1%", minWidth: "8rem" }}
-          bodyStyle={{ textAlign: "center" }}
+          field="bitem_gstkq"
+          header="Stock"
+          headerStyle={{ backgroundColor: "#49769bff" }}
+          body={bitem_gstkq_BT}
+          hidden={!showExtraColumns}
         />
-        <Column header={formDataItemList?.length + " rows"} body={action_BT} />
+        <Column
+          field="bking_cnqty"
+          header="Cancelled"
+          headerStyle={{ backgroundColor: "#49769bff" }}
+          body={bking_cnqty_BT}
+          hidden={!showExtraColumns}
+        />
+        <Column
+          field="bking_ivqty"
+          header="Invoice"
+          headerStyle={{ backgroundColor: "#49769bff" }}
+          body={bking_ivqty_BT}
+          hidden={!showExtraColumns}
+        />
+        <Column
+          field="bking_pnqty"
+          header="Available"
+          headerStyle={{ backgroundColor: "#49769bff" }}
+          body={bking_pnqty_BT}
+          hidden={!showExtraColumns}
+        />
+        {!formData.edit_stop && (
+          <Column
+            header={rowEditor_HT()}
+            rowEditor
+            headerStyle={{ minWidth: "20px" }}
+          />
+        )}
+        {!formData.edit_stop && (
+          <Column header="#" body={action_BT} style={{ width: "20px" }} />
+        )}
       </DataTable>
     </div>
   );

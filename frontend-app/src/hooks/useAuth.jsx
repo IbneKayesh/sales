@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     //localStorage.removeItem("user");
     clearStorageData();
-    localStorage.removeItem("authToken")
+    localStorage.removeItem("authToken");
   };
 
   const register = async (register) => {
@@ -100,6 +100,16 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error("Login error:", error);
       return error;
+    }
+  };
+
+  const setSessionStorage = (data) => {
+    try {
+      const currentData = getStorageData();
+      const updatedData = { ...currentData, ...data };
+      localStorage.setItem("business", JSON.stringify(updatedData));
+    } catch (error) {
+      console.error('Error writing to localStorage:', error);
     }
   };
 

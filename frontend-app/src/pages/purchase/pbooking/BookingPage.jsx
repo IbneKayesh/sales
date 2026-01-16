@@ -28,12 +28,12 @@ const BookingPage = () => {
     setFormDataPaymentList,
 
     //search
-    searchBoxShow,setSearchBoxShow,
+    searchBoxShow,
+    setSearchBoxShow,
     searchBoxData,
     handleChangeSearchInput,
     handleSearch,
   } = usePbooking();
-
 
   const handleSearchBox = () => {
     setSearchBoxShow(true);
@@ -83,7 +83,7 @@ const BookingPage = () => {
   };
 
   return (
-    <Card header={getHeader()} className="bg-dark-200 border-round p-3">
+    <Card header={getHeader()} className="p-3">
       {/* {JSON.stringify(dataList)} */}
 
       {searchBoxShow && (

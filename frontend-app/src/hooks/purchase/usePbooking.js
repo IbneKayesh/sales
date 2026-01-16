@@ -27,7 +27,7 @@ export const usePbooking = () => {
       const response = await pbookingAPI.getAll({
         pmstr_users: user.users_users,
         pmstr_bsins: user.users_bsins,
-        ...searchBoxData,
+        ...searchBoxData
       });
       //response = { success, message, data }
       //console.log("loadBookings:", JSON.stringify(response));
@@ -48,23 +48,35 @@ export const usePbooking = () => {
     //loadBookings();
   }, []);
 
+  const loadBookingDetails = async (id) => {
+    try {
+      //console.log("loadBookingDetails:", id);
+      const response = await pbookingAPI.getDetails({
+        bking_pmstr: id,
+      });
+      //console.log("loadBookingDetails:", JSON.stringify(response));
+      setFormDataItemList(response.data);
+      //showToast("success", "Success", response.message);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
 
-
-const loadBookingDetails = async (id) => {
-  try {
-    console.log("loadBookingDetails:", id);
-    const response = await pbookingAPI.getDetails({
-      bking_pmstr: id,
-    });
-    console.log("loadBookingDetails:", JSON.stringify(response));
-    setFormDataItemList(response.data);
-    //showToast("success", "Success", response.message);
-  } catch (error) {
-    console.error("Error loading data:", error);
-    showToast("error", "Error", error?.message || "Failed to load data");
-  }
-};
-
+  const loadBookingPayment = async (id) => {
+    try {
+      //console.log("loadBookingPayment:", id);
+      const response = await pbookingAPI.getPayment({
+        rcvpy_refid: id,
+      });
+      //console.log("loadBookingPayment:", JSON.stringify(response));
+      setFormDataPaymentList(response.data);
+      //showToast("success", "Success", response.message);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -100,11 +112,17 @@ const loadBookingDetails = async (id) => {
 
   const handleEdit = (data) => {
     loadBookingDetails(data.id);
+    loadBookingPayment(data.id);
     //console.log("edit: " + JSON.stringify(data));
     setFormData({
       ...data,
+      pmstr_ispad: String(data.pmstr_ispad),
       pmstr_vatpy: String(data.pmstr_vatpy),
       pmstr_ispst: String(data.pmstr_ispst),
+      pmstr_isret: String(data.pmstr_isret),
+      pmstr_iscls: String(data.pmstr_iscls),
+      pmstr_vatcl: String(data.pmstr_vatcl),
+      pmstr_hscnl: String(data.pmstr_hscnl),
     });
     setCurrentView("form");
   };
@@ -220,7 +238,14 @@ const loadBookingDetails = async (id) => {
 
   const handleChangeSearchInput = (e) => {
     const { name, value } = e.target;
-    setSearchBoxData({ ...searchBoxData, [name]: value });
+    if (name === "pmstr_trdat") {
+      const dateValue = e.value
+        ? new Date(e.value).toLocaleString().split("T")[0]
+        : null;
+      setSearchBoxData({ ...searchBoxData, [name]: dateValue });
+    } else {
+      setSearchBoxData({ ...searchBoxData, [name]: value });
+    }
   };
 
   const handleSearch = () => {

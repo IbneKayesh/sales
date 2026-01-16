@@ -5,6 +5,8 @@ import { getStorageData } from "@/utils/storage";
 import "./Topbar.css";
 import ActiveBusiness from "@/components/ActiveBusiness";
 
+import UserProfile from "@/components/UserProfile";
+
 const Topbar = ({
   leftbarCollapsed,
   onToggleLeftbar,
@@ -39,15 +41,7 @@ const Topbar = ({
 
   const selectedMenuName = getSelectedMenuName();
 
-  const getInitials = (name = "") =>
-    name
-      .split(" ")
-      .map((n) => n[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
-
-  const [visible, setVisible] = useState(false);
+  const [showActiveBusiness, setShowActiveBusiness] = useState(false);
   return (
     <>
       <div className="topbar">
@@ -89,19 +83,19 @@ const Topbar = ({
             <button className="topbar-btn hidden">
               <i className="pi pi-bell"></i>
             </button>
-            <span
-              className="topbar-btn bg-blue-500"
-              onClick={() => setVisible(true)}
-            >
-              {getInitials(user?.users_oname)}
-            </span>
+            <UserProfile
+              onSwitchBusiness={() => setShowActiveBusiness(true)}
+              onLogout={handleLogout}
+            />
           </div>
-          <button className="topbar-btn logout-button" onClick={handleLogout}>
-            <i className="pi pi-sign-out"></i>
-          </button>
         </div>
       </div>
-      {visible && <ActiveBusiness visible={visible} setVisible={setVisible} />}
+      {showActiveBusiness && (
+        <ActiveBusiness
+          visible={showActiveBusiness}
+          setVisible={setShowActiveBusiness}
+        />
+      )}
     </>
   );
 };

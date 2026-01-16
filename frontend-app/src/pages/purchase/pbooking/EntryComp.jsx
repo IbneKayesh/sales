@@ -4,6 +4,7 @@ import ItemsComp from "./ItemsComp";
 import PaymentComp from "./PaymentComp";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
+import PrintComp from "./PrintComp";
 
 const EntryComp = ({
   isBusy,
@@ -36,17 +37,19 @@ const EntryComp = ({
 
   useEffect(() => {
     const order_amount = formDataItemList.reduce(
-      (sum, item) => sum + (item.bking_bkqty || 0) * (item.bking_bkrat || 0),
+      (sum, item) =>
+        sum + (Number(item.bking_bkqty) || 0) * (Number(item.bking_bkrat) || 0),
       0
     );
     const discount_amount = formDataItemList.reduce(
-      (sum, item) => sum + (item.bking_dsamt || 0),
+      (sum, item) => sum + (Number(item.bking_dsamt) || 0),
       0
     );
     const vat_amount = formDataItemList.reduce(
-      (sum, item) => sum + (item.bking_vtamt || 0),
+      (sum, item) => sum + (Number(item.bking_vtamt) || 0),
       0
     );
+
     const total_amount =
       order_amount -
       (discount_amount +
@@ -55,23 +58,26 @@ const EntryComp = ({
         Number(formData.pmstr_excst || 0));
 
     let payable_amount =
-      order_amount + Number(formData.pmstr_incst || 0) - discount_amount;
+      order_amount +
+      Number(formData.pmstr_incst || 0) -
+      (discount_amount + Number(formData.pmstr_rnamt || 0));
     if (formData.pmstr_vatpy === "1") payable_amount += vat_amount;
 
     const paidAmount = formDataPaymentList.reduce(
-      (sum, item) => sum + (item.rcvpy_pyamt || 0),
+      (sum, item) => sum + (Number(item.rcvpy_pyamt) || 0),
       0
     );
 
+    //console.log(payable_amount, paidAmount);
     const due_amount = payable_amount - (paidAmount || 0);
 
-    handleChange("pmstr_odamt", order_amount);
-    handleChange("pmstr_dsamt", discount_amount);
-    handleChange("pmstr_vtamt", vat_amount);
-    handleChange("pmstr_ttamt", total_amount);
-    handleChange("pmstr_pyamt", payable_amount);
-    handleChange("pmstr_pdamt", paidAmount);
-    handleChange("pmstr_duamt", due_amount);
+    handleChange("pmstr_odamt", Number(order_amount).toFixed(2));
+    handleChange("pmstr_dsamt", Number(discount_amount).toFixed(2));
+    handleChange("pmstr_vtamt", Number(vat_amount).toFixed(2));
+    handleChange("pmstr_ttamt", Number(total_amount).toFixed(2));
+    handleChange("pmstr_pyamt", Number(payable_amount).toFixed(2));
+    handleChange("pmstr_pdamt", Number(paidAmount).toFixed(2));
+    handleChange("pmstr_duamt", Number(Math.round(due_amount)).toFixed(2));
   }, [
     formDataItemList,
     formData.pmstr_incst,
@@ -79,6 +85,7 @@ const EntryComp = ({
     formData.pmstr_pdamt,
     formDataPaymentList,
     formData.pmstr_vatpy,
+    formData.pmstr_rnamt,
   ]);
 
   return (
@@ -130,6 +137,14 @@ const EntryComp = ({
           />
         </ButtonGroup>
       </div>
+
+       <PrintComp
+        visible={showPrintDialog}
+        onHide={() => setShowPrintDialog(false)}
+        formData={formData}
+        formDataList={formDataItemList}
+        formDataPaymentList={formDataPaymentList}
+      />
     </div>
   );
 };

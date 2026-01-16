@@ -37,6 +37,8 @@ import InvoicePage from "./pages/purchase/pinvoice/InvoicePage";
 import ReturnPage from "./pages/purchase/preturn/ReturnPage.jsx";
 import NotesPage from "./pages/support/notes/NotesPage";
 
+import ProfileSettings from "./pages/auth/ProfileSettings";
+
 function App() {
   return (
     <ToastProvider>
@@ -69,6 +71,7 @@ function AppRoutes() {
         <Route path="auth/business" element={<BusinessPage />} />
         <Route path="auth/users" element={<UsersPage />} />
         <Route path="auth/password" element={<PasswordPage />} />
+        <Route path="auth/profile" element={<ProfileSettings />} />
         //crm
         <Route path="crm/contact" element={<ContactPage />} />
         //accounts

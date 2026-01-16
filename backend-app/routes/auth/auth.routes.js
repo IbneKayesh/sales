@@ -98,7 +98,8 @@ router.post("/register", async (req, res) => {
     //login when register
     const sql = `SELECT usr.id,usr.users_email,usr.users_oname,usr.users_cntct,usr.users_bsins,
     usr.users_drole,usr.users_users,usr.users_stats,usr.users_regno,
-    usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,bsn.bsins_bname
+    usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,
+    bsn.bsins_bname, bsn.bsins_addrs, bsn.bsins_email, bsn.bsins_cntct, bsn.bsins_binno, bsn.bsins_cntry
     FROM tmab_users usr
     LEFT JOIN tmab_bsins bsn ON usr.users_bsins = bsn.id
         WHERE usr.users_email = ?
@@ -144,7 +145,8 @@ router.post("/login", async (req, res) => {
     //database action
     const sql = `SELECT usr.id,usr.users_email,usr.users_oname,usr.users_cntct,usr.users_bsins,
     usr.users_drole,usr.users_users,usr.users_stats,usr.users_regno,
-    usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,bsn.bsins_bname
+    usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,
+    bsn.bsins_bname, bsn.bsins_addrs, bsn.bsins_email, bsn.bsins_cntct, bsn.bsins_binno, bsn.bsins_cntry
 FROM tmab_users usr
 LEFT JOIN tmab_bsins bsn ON usr.users_bsins = bsn.id
     WHERE usr.users_email = ?

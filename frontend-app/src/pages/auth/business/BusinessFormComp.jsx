@@ -1,11 +1,67 @@
+import React, { useRef } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
+import { Avatar } from "primereact/avatar";
 import tmab_bsins from "@/models/auth/tmab_bsins.json";
+import { useAuth } from "@/hooks/useAuth";
+import { setStorageData, getStorageData } from "@/utils/storage";
 
 const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
+  const { user } = useAuth();
+  const fileInputRef = useRef(null);
+
+  const handleLogoSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 1024 * 1024) {
+        alert("Logo size should be less than 1MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        const currentData = getStorageData();
+        const newUser = { ...currentData.user, bsins_image: base64String };
+        setStorageData({ ...currentData, user: newUser });
+        alert("Logo updated locally. Please refresh to see changes.");
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   return (
     <div className="grid">
+      <div className="col-12 flex align-items-center gap-3 mb-4">
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleLogoSelect}
+          accept="image/*"
+          style={{ display: "none" }}
+        />
+        <Avatar
+          image={user?.bsins_image}
+          icon="pi pi-building"
+          shape="circle"
+          size="xlarge"
+          className="shadow-2 border-2 border-primary"
+          style={{ width: "80px", height: "80px" }}
+        />
+        <div className="flex flex-column gap-2">
+          <label className="font-bold">Business Logo (Local Storage)</label>
+          <Button
+            type="button"
+            icon="pi pi-image"
+            label="Choose Logo"
+            size="small"
+            severity="info"
+            onClick={() => fileInputRef.current.click()}
+          />
+          <small className="text-gray-500">
+            This will be saved locally on your device for printing.
+          </small>
+        </div>
+      </div>
       <div className="col-12 md:col-3">
         <label
           htmlFor="bsins_bname"

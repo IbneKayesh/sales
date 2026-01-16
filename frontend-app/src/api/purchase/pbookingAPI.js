@@ -27,4 +27,9 @@ export const pbookingAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getPayment: (data) =>
+    apiRequest("/purchase/pbooking/booking-payment", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

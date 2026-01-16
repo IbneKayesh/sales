@@ -7,6 +7,7 @@ const defaultData = {
   leftbarCollapsed: false,
   expandedMenu: null,
   navigationIcons: [],
+  business: null,
   // Add other data as needed
 };
 

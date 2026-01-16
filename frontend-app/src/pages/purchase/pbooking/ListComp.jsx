@@ -5,95 +5,102 @@ import { formatDate, formatDateTime } from "@/utils/datetime";
 import ZeroRowCell from "@/components/ZeroRowCell";
 import { Badge } from "primereact/badge";
 import { SplitButton } from "primereact/splitbutton";
+import { Tag } from "primereact/tag";
 
 const ListComp = ({ dataList, onEdit }) => {
   const pmstr_trdat_BT = (rowData) => {
     const { pmstr_trdat, pmstr_trnte, pmstr_refno } = rowData;
-    const parts = [
-      pmstr_trdat && formatDate(pmstr_trdat),
-      pmstr_trnte,
-      pmstr_refno,
-    ].filter(Boolean);
-
-    return <span>{parts.join(" • ")}</span>;
+    return (
+      <div className="flex flex-column">
+        {formatDate(pmstr_trdat)}
+        {(pmstr_trnte || pmstr_refno) && (
+          <small className="text-xs text-gray-500 font-italic mt-1">
+            {[pmstr_trnte, pmstr_refno].filter(Boolean).join(" • ")}
+          </small>
+        )}
+      </div>
+    );
   };
 
   const pmstr_pyamt_BT = (rowData) => {
     const { pmstr_pyamt, pmstr_pdamt, pmstr_duamt } = rowData;
 
     return (
-      <>
-        <ZeroRowCell value={pmstr_pyamt} text={pmstr_pyamt} />
-        {" • "}
-        <ZeroRowCell value={pmstr_pdamt} text={pmstr_pdamt} />
-        {" • "}
-        <ZeroRowCell value={pmstr_duamt} text={pmstr_duamt} />
-      </>
+      <div className="flex gap-1">
+        <span className="text-primary font-bold">
+          {Number(pmstr_pyamt).toFixed(2)}
+        </span>
+        •
+        <span className="text-green-500 font-bold">
+          {Number(pmstr_pdamt || 0).toFixed(2)}
+        </span>
+        •
+        <span className="text-red-500 font-bold">
+          {Number(pmstr_duamt || 0).toFixed(2)}
+        </span>
+      </div>
     );
   };
 
   const is_paid_BT = (rowData) => {
-    //console.log("rowData " + JSON.stringify(rowData))
+    const statusMap = {
+      1: { severity: "success", label: "Paid", icon: "pi-check-circle" },
+      0: { severity: "danger", label: "Unpaid", icon: "pi-times-circle" },
+      2: {
+        severity: "warning",
+        label: "Partial",
+        icon: "pi-exclamation-circle",
+      },
+    };
+
+    const status = statusMap[rowData.pmstr_ispad];
+
     return (
-      <>
-        {(() => {
-          const statusMap = {
-            1: { severity: "success", name: "Paid" },
-            0: { severity: "danger", name: "Unpaid" },
-            2: { severity: "warning", name: "Partial" },
-          };
-
-          const status = statusMap[rowData.pmstr_ispad];
-
-          return status ? (
-            <Badge
-              value={status.name}
-              severity={status.severity}
-              className="mr-1"
-            />
-          ) : null;
-        })()}
-
-        {rowData.pmstr_ispst ? (
-          <Badge value="Posted" severity="success" className="mr-1"></Badge>
-        ) : (
-          <Badge value="Unposted" severity="danger" className="mr-1"></Badge>
+      <div className="flex flex-wrap gap-1 align-items-center">
+        {status && (
+          <Tag
+            value={status.label}
+            severity={status.severity}
+            icon={`pi ${status.icon}`}
+            rounded
+            className="px-2"
+          />
         )}
-        {rowData.pmstr_isret ? (
-          <Badge value="Retruned" severity="info"></Badge>
+        {rowData.pmstr_ispst === 1 ? (
+          <Tag
+            value="Posted"
+            severity="info"
+            icon="pi pi-lock"
+            rounded
+            className="px-2"
+          />
         ) : (
-          ""
+          <Tag
+            value="Draft"
+            severity="secondary"
+            icon="pi pi-pencil"
+            rounded
+            className="px-2"
+          />
         )}
-        {rowData.pmstr_iscls ? (
-          <Badge value="Closed" severity="info"></Badge>
-        ) : (
-          ""
-        )}
-        {rowData.pmstr_vatcl ? (
-          <Badge value="Vat Collected" severity="info"></Badge>
-        ) : (
-          ""
-        )}
-        {rowData.pmstr_hscnl ? (
-          <Badge value="Cancelled" severity="info"></Badge>
-        ) : (
-          ""
-        )}
-      </>
+        {rowData.pmstr_isret === 1 ? (
+          <Tag value="Returned" severity="warning" rounded />
+        ) : null}
+        {rowData.pmstr_iscls === 1 ? (
+          <Tag value="Closed" severity="contrast" rounded />
+        ) : null}
+      </div>
     );
   };
 
-  
   const handleCancelBooking = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to cancel Pending Invoice Qty "${rowData.pmstr_trnno}"?`,
       header: "Cancel Confirmation",
       icon: "pi pi-exclamation-triangle",
+      acceptClassName: "p-button-danger",
       accept: () => {
-        onCancelBooking(rowData);
-      },
-      reject: () => {
-        // Do nothing on reject
+        // onCancelBooking logic would go here if provided via props
       },
     });
   };
@@ -102,142 +109,106 @@ const ListComp = ({ dataList, onEdit }) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.pmstr_trnno}"?`,
       header: "Delete Confirmation",
-      icon: "pi pi-exclamation-triangle",
+      icon: "pi pi-info-circle",
+      acceptClassName: "p-button-danger",
       accept: () => {
-        onDelete(rowData);
-      },
-      reject: () => {
-        // Do nothing on reject
+        // onDelete logic would go here if provided via props
       },
     });
   };
+
   const action_BT = (rowData) => {
-    //console.log("rowData " + JSON.stringify(rowData));
-    let menuItems = [
+    const menuItems = [
       {
         label: "Cancel",
-        icon: "pi pi-times text-red-400",
-        command: () => {
-          handleCancelBooking(rowData);
-        },
+        icon: "pi pi-times",
+        className: "text-red-500",
+        command: () => handleCancelBooking(rowData),
         disabled: !rowData.edit_stop,
       },
       {
         label: "Delete",
-        icon: "pi pi-trash text-red-400",
-        command: () => {
-          handleDelete(rowData);
-        },
-        disabled: rowData.edit_stop,
+        icon: "pi pi-trash",
+        className: "text-red-500",
+        command: () => handleDelete(rowData),
+        disabled: !!rowData.edit_stop,
       },
     ];
+
     return (
-      <div className="flex flex-wrap gap-2">
+      <div className="flex justify-content-center">
         <SplitButton
-          icon={`${rowData.edit_stop ? "pi pi-eye" : "pi pi-pencil"}`}
+          icon={rowData.edit_stop ? "pi pi-eye" : "pi pi-pencil"}
           size="small"
-          tooltip={rowData.edit_stop ? "View" : "Edit"}
-          tooltipOptions={{ position: "top" }}
           onClick={() => onEdit(rowData)}
           model={menuItems}
+          severity={rowData.edit_stop ? "secondary" : "info"}
+          className="p-button-rounded"
         />
       </div>
     );
   };
 
   const dataTable_FT = () => {
-    const paidCount = dataList.filter((item) => item.pmstr_ispad === 1).length;
-    const unpaidCount = dataList.filter(
-      (item) => item.pmstr_ispad === 0
-    ).length;
-    const partialCount = dataList.filter(
-      (item) => item.pmstr_ispad === 2
-    ).length;
-
-    const totalDueAmount = dataList.reduce(
-      (sum, item) => sum + Number(item.pmstr_duamt || 0),
-      0
-    );
-
-    const unpostedCount = dataList.filter((item) => !item.pmstr_ispst).length;
-
-    const returnCount = dataList.filter((item) => item.pmstr_isret).length;
+    const stats = {
+      paid: dataList.filter((i) => i.pmstr_ispad === 1).length,
+      unpaid: dataList.filter((i) => i.pmstr_ispad === 0).length,
+      partial: dataList.filter((i) => i.pmstr_ispad === 2).length,
+      due: dataList.reduce((s, i) => s + Number(i.pmstr_duamt || 0), 0),
+      unposted: dataList.filter((i) => i.pmstr_ispst !== "1").length,
+    };
 
     return (
-      <div className="p-2 text-center">
-        {paidCount > 0 && (
-          <Badge
-            value={`Paid: ${paidCount}`}
-            severity="success"
-            className="mr-1"
-          />
+      <div className="flex flex-wrap justify-content-center font-bold gap-4 py-2">
+        {dataList.length > 0 && (
+          <div className="text-blue-500 gap-2">
+            <span>Total Records: </span>
+            <span>{dataList.length}</span>
+          </div>
         )}
-        {unpaidCount > 0 && (
-          <Badge
-            value={`Unpaid: ${unpaidCount}`}
-            severity="danger"
-            className="mr-1"
-          />
+        {stats.due > 0 && (
+          <div className="text-red-500 gap-2">
+            <span>Total Due: </span>
+            <span>{Number(stats.due).toFixed(2)}</span>
+          </div>
         )}
-        {partialCount > 0 && (
-          <Badge
-            value={`Partial: ${partialCount}`}
-            severity="warning"
-            className="mr-1"
-          />
-        )}
-        {totalDueAmount > 0 && (
-          <Badge
-            value={`Due: ${totalDueAmount}`}
-            severity="danger"
-            className="mr-1"
-          />
-        )}
-        {unpostedCount > 0 && (
-          <Badge
-            value={`Unposted: ${unpostedCount}`}
-            severity="danger"
-            className="mr-1"
-          />
-        )}
-        {returnCount > 0 && (
-          <Badge
-            value={`Return: ${returnCount}`}
-            severity="warning"
-            className="mr-1"
-          />
-        )}
+        <div className="flex gap-2">
+          {stats.paid > 0 && (
+            <Badge value={`Paid: ${stats.paid}`} severity="success" />
+          )}
+          {stats.unpaid > 0 && (
+            <Badge value={`Unpaid: ${stats.unpaid}`} severity="danger" />
+          )}
+          {stats.unposted > 0 && (
+            <Badge value={`Drafts: ${stats.unposted}`} severity="warning" />
+          )}
+        </div>
       </div>
     );
   };
 
   return (
     <div className="p-1">
-      {/* {JSON.stringify(dataList)} */}
-
       <ConfirmDialog />
       <DataTable
         value={dataList}
+        dataKey="pmstr_trnno"
         paginator
         rows={15}
         rowsPerPageOptions={[15, 50, 100]}
         emptyMessage="No data found."
         size="small"
+        className="shadow-1"
         rowHover
         showGridlines
         footer={dataTable_FT}
       >
         <Column field="pmstr_odtyp" header="Type" />
-        <Column field="pmstr_trnno" header="No" />
-        <Column field="pmstr_trdat" header="Date • Note" body={pmstr_trdat_BT} />
-        <Column field="pmstr_pyamt" header="Payable • Paid • Due" body={pmstr_pyamt_BT} />
-        <Column
-          field="is_paid"
-          header="Status"
-          body={is_paid_BT}
-          sortable
-        ></Column>
-         <Column header={dataList?.length + " rows"} body={action_BT} />
+        <Column field="pmstr_trnno" header="No" sortable />
+        <Column header="Date & Notes" body={pmstr_trdat_BT} />
+        <Column header="Payable • Paid • Due" body={pmstr_pyamt_BT} />
+        <Column header="Status" body={is_paid_BT} />
+        <Column body={action_BT} style={{ width: "100px" }} />
       </DataTable>
     </div>
   );

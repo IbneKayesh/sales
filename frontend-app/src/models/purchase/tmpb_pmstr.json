@@ -41,7 +41,7 @@
   },
   "pmstr_trnno": {
     "type": "string",
-    "label": "Transaction No",
+    "label": "No",
     "maxLength": 50,
     "minLength": 0,
     "placeholder": "Enter transaction no",
@@ -69,11 +69,12 @@
     "maxLength": 50,
     "minLength": 0,
     "placeholder": "Enter note",
-    "required": false
+    "required": false,
+    "default": ""
   },
   "pmstr_odamt": {
     "type": "decimal",
-    "label": "Order Amount",
+    "label": "Amount (1)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter order amount",
@@ -82,7 +83,7 @@
   },
   "pmstr_dsamt": {
     "type": "decimal",
-    "label": "Discount Amount",
+    "label": "Discount (2)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter discount amount",
@@ -91,7 +92,7 @@
   },
   "pmstr_vtamt": {
     "type": "decimal",
-    "label": "VAT Amount",
+    "label": "VAT (3)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter VAT amount",
@@ -109,7 +110,7 @@
   },
   "pmstr_incst": {
     "type": "decimal",
-    "label": "Include cost",
+    "label": "Include cost (4)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter Include cost",
@@ -118,7 +119,7 @@
   },
   "pmstr_excst": {
     "type": "decimal",
-    "label": "Exclude cost",
+    "label": "Exclude cost (5)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter Exclude cost",
@@ -127,7 +128,7 @@
   },
   "pmstr_rnamt": {
     "type": "decimal",
-    "label": "Rounded Amount",
+    "label": "Round Off (6)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter rounded amount",
@@ -136,7 +137,7 @@
   },
   "pmstr_ttamt": {
     "type": "decimal",
-    "label": "Total Amount",
+    "label": "Total (7)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter total amount",
@@ -145,16 +146,16 @@
   },
   "pmstr_pyamt": {
     "type": "decimal",
-    "label": "Payment Amount",
+    "label": "Payable (8)",
     "maxLength": 999999999,
     "minLength": 0,
-    "placeholder": "Enter payment amount",
+    "placeholder": "Enter payable amount",
     "required": true,
     "default": "0"
   },
   "pmstr_pdamt": {
     "type": "decimal",
-    "label": "Paid Amount",
+    "label": "Paid (9)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter paid amount",
@@ -163,7 +164,7 @@
   },
   "pmstr_duamt": {
     "type": "decimal",
-    "label": "Due Amount",
+    "label": "Due (10)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter due amount",
@@ -172,7 +173,7 @@
   },
   "pmstr_rtamt": {
     "type": "decimal",
-    "label": "Return Amount",
+    "label": "Return (11)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter return amount",
@@ -181,7 +182,7 @@
   },
   "pmstr_cnamt": {
     "type": "decimal",
-    "label": "Cancelled Amount",
+    "label": "Cancelled (12)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter cancelled amount",
@@ -226,10 +227,10 @@
   },
   "pmstr_vatcl": {
     "type": "string",
-    "label": "Is VAT Closed",
+    "label": "VAT Collected",
     "maxLength": 1,
     "minLength": 1,
-    "placeholder": "Is VAT closed",
+    "placeholder": "VAT Collected",
     "required": true,
     "default": "0"
   },
