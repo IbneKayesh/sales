@@ -27,6 +27,7 @@ const grainsRoutes = require("./routes/support/grains.routes.js");
 const notesRoutes = require("./routes/support/notes.routes.js");
 //purchase
 const pbookingRoutes = require("./routes/purchase/pbooking.routes.js");
+const preceiptRoutes = require("./routes/purchase/preceipt.routes.js");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -84,6 +85,7 @@ app.use("/api/support/grains", grainsRoutes);
 app.use("/api/support/notes", notesRoutes);
 //purchase
 app.use("/api/purchase/pbooking", pbookingRoutes);
+app.use("/api/purchase/preceipt", preceiptRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

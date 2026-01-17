@@ -89,8 +89,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// booking details
-router.post("/booking-details", async (req, res) => {
+// receipt details
+router.post("/receipt-details", async (req, res) => {
   try {
     const { bking_pmstr } = req.body;
 
@@ -136,8 +136,8 @@ router.post("/booking-details", async (req, res) => {
   }
 });
 
-// booking payment
-router.post("/booking-payment", async (req, res) => {
+// receipt payment
+router.post("/receipt-payment", async (req, res) => {
   try {
     const { rcvpy_refid } = req.body;
 
@@ -604,6 +604,67 @@ router.post("/delete", async (req, res) => {
       success: true,
       message: "User deleted successfully",
       data: null,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+
+//available receipt
+router.post("/available-receipt", async (req, res) => {
+  try {
+    const {
+      pmstr_users,
+      pmstr_bsins,
+      pmstr_cntct,
+    } = req.body;
+
+    // Validate input
+    if (!pmstr_users || !pmstr_bsins || !pmstr_cntct) {
+      return res.json({
+        success: false,
+        message: "User ID and Business ID and Contact ID are required",
+        data: null,
+      });
+    }
+    //console.log("get:", JSON.stringify(req.body));
+
+    //database action
+    let sql = `SELECT bking.id AS id, '' AS recpt_pmstr, bking.bking_bitem AS recpt_bitem, bking.bking_items AS recpt_items,
+    bking.bking_bkrat AS recpt_bkrat, bking.bking_bkqty AS recpt_bkqty, bking.bking_itamt AS recpt_itamt,
+    bking.bking_dspct AS recpt_dspct, bking.bking_dsamt AS recpt_dsamt, bking.bking_vtpct AS recpt_vtpct,
+    bking.bking_vtamt AS recpt_vtamt, bking.bking_csrat AS recpt_csrat, bking.bking_ntamt AS recpt_ntamt,
+    bking.bking_notes AS recpt_notes, 0 AS recpt_rtqty, 0 AS recpt_slqty, bking.bking_bkqty AS recpt_ohqty,
+    bking.id AS recpt_bking, 0 as edit_stop,
+    itm.items_icode, itm.items_iname, itm.items_dfqty, bitm.bitem_gstkq,
+    puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
+    FROM tmpb_bking bking
+    JOIN tmpb_pmstr str ON bking.bking_pmstr = str.id
+    LEFT JOIN tmib_items itm ON bking.bking_items = itm.id
+    LEFT JOIN tmib_bitem bitm ON bking.bking_bitem = bitm.id
+    LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
+    LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
+    WHERE str.pmstr_odtyp = 'Purchase Booking'
+    AND str.pmstr_users = ?
+    AND str.pmstr_bsins = ?
+    AND str.pmstr_cntct = ?
+    ORDER BY str.pmstr_trdat DESC`;
+    let params = [pmstr_users, pmstr_bsins, pmstr_cntct];
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get available purchase bookings for ${pmstr_users}`,
+    );
+    res.json({
+      success: true,
+      message: "Available purchase bookings fetched successfully",
+      data: rows,
     });
   } catch (error) {
     console.error("database action error:", error);

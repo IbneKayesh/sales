@@ -177,7 +177,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       bking_ntamt: totalAmount,
       bking_notes: selectedNote,
       bking_cnqty: 0,
-      bking_ivqty: 0,
+      bking_rcqty: 0,
       bking_pnqty: selectedQty || 1,
 
       items_icode: item.items_icode,
@@ -313,9 +313,9 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     );
   };
 
-  const bking_ivqty_BT = (rowData) => {
+  const bking_rcqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bking_ivqty} text={rowData.bking_ivqty} />
+      <ZeroRowCell value={rowData.bking_rcqty} text={rowData.bking_rcqty} />
     );
   };
 
@@ -396,7 +396,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     newData.bking_ntamt = totalAmount;
 
     newData.bking_cnqty = 0;
-    newData.bking_ivqty = 0;
+    newData.bking_rcqty = 0;
     newData.bking_pnqty = newData.bking_bkqty;
 
     let _localItems = [...formDataItemList];
@@ -555,10 +555,10 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           hidden={!showExtraColumns}
         />
         <Column
-          field="bking_ivqty"
+          field="bking_rcqty"
           header="Invoice"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={bking_ivqty_BT}
+          body={bking_rcqty_BT}
           hidden={!showExtraColumns}
         />
         <Column

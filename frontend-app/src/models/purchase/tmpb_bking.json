@@ -129,12 +129,12 @@
     "required": true,
     "default": "0"
   },
-  "bking_ivqty": {
+  "bking_rcqty": {
     "type": "decimal",
-    "label": "Invoice Quantity",
+    "label": "Receipt Quantity",
     "maxLength": 999999999,
     "minLength": 0,
-    "placeholder": "Enter invoice quantity",
+    "placeholder": "Enter receipt quantity",
     "required": true,
     "default": "0"
   },

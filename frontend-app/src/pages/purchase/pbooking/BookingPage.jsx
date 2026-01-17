@@ -48,7 +48,7 @@ const BookingPage = () => {
             ? "Purchase Booking List"
             : formData.id
             ? "Edit Purchase Booking"
-            : "Add New Purchase Booking"}
+            : "New Purchase Booking"}
         </h3>
 
         <div className="flex gap-2">

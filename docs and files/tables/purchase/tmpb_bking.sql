@@ -18,7 +18,7 @@ CREATE TABLE `tmpb_bking` (
   `bking_ntamt` decimal(20,6) NOT NULL DEFAULT 0,
   `bking_notes` VARCHAR(50) DEFAULT NULL,
   `bking_cnqty` decimal(20,6) NOT NULL DEFAULT 0,
-  `bking_ivqty` decimal(20,6) NOT NULL DEFAULT 0,
+  `bking_rcqty` decimal(20,6) NOT NULL DEFAULT 0,
   `bking_pnqty` decimal(20,6) NOT NULL DEFAULT 0,
   `bking_actve` TINYINT(1) NOT NULL DEFAULT 1,
   `bking_crusr` VARCHAR(50) NOT NULL,
