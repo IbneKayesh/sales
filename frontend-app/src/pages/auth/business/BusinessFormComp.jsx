@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { setStorageData, getStorageData } from "@/utils/storage";
 
 const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
-  const { user } = useAuth();
+  const { business } = useAuth();
   const fileInputRef = useRef(null);
 
   const handleLogoSelect = (e) => {
@@ -22,8 +22,9 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
       reader.onloadend = () => {
         const base64String = reader.result;
         const currentData = getStorageData();
-        const newUser = { ...currentData.user, bsins_image: base64String };
-        setStorageData({ ...currentData, user: newUser });
+        const newBusiness = { ...currentData.business, bsins_image: base64String };
+        setStorageData({ ...currentData, business: newBusiness });
+        setStorageData({ id: currentData.business.users_bsins, bsins_image: base64String });
         alert("Logo updated locally. Please refresh to see changes.");
       };
       reader.readAsDataURL(file);
@@ -40,7 +41,7 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           style={{ display: "none" }}
         />
         <Avatar
-          image={user?.bsins_image}
+          image={business?.bsins_image}
           icon="pi pi-building"
           shape="circle"
           size="xlarge"

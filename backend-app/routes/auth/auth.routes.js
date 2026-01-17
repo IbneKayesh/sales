@@ -4,7 +4,7 @@ const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
 const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 
-// registration, with auto login
+// registration
 router.post("/register", async (req, res) => {
   try {
     const {
@@ -50,7 +50,7 @@ router.post("/register", async (req, res) => {
 
     //database action
     const scripts = [];
-    const noOfGrains = process.env.TRUST_GRAINS || 100;
+    const noOfGrains = process.env.TRUST_GRAINS || 0;
 
     scripts.push({
       sql: `INSERT INTO tmab_users (id, users_email, users_pswrd, users_recky, users_oname, users_bsins,
@@ -89,34 +89,10 @@ router.post("/register", async (req, res) => {
     });
 
     await dbRunAll(scripts);
-    // res.json({
-    //   success: true,
-    //   message: "User registered successfully",
-    //   data: req.body,
-    // });
-
-    //login when register
-    const sql = `SELECT usr.id,usr.users_email,usr.users_oname,usr.users_cntct,usr.users_bsins,
-    usr.users_drole,usr.users_users,usr.users_stats,usr.users_regno,
-    usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,
-    bsn.bsins_bname, bsn.bsins_addrs, bsn.bsins_email, bsn.bsins_cntct, bsn.bsins_binno, bsn.bsins_cntry
-    FROM tmab_users usr
-    LEFT JOIN tmab_bsins bsn ON usr.users_bsins = bsn.id
-        WHERE usr.users_email = ?
-        AND usr.users_pswrd = ?
-        AND usr.users_actve = 1`;
-    const params = [users_email, users_pswrd];
-
-    const row = await dbGet(
-      sql,
-      params,
-      `Get user login credential for ${users_email}`
-    );
-
     res.json({
       success: true,
       message: "User registered successfully",
-      data: row || req.body,
+      data: req.body,
     });
   } catch (error) {
     console.error("database action error:", error);

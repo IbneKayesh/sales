@@ -11,16 +11,20 @@ import { usersAPI } from "@/api/auth/usersAPI";
 import "./ProfileSettings.css";
 
 const ProfileSettings = () => {
-  const { user, setStorageData } = useAuth();
+  const { user, business, setStorageData } = useAuth();
   const { showToast } = useToast();
   const [formData, setFormData] = useState(null);
   const [isBusy, setIsBusy] = useState(false);
+  const [businessData, setBusinessData] = useState(null);
 
   useEffect(() => {
     if (user) {
       setFormData({ ...user });
     }
-  }, [user]);
+    if (business) {
+      setBusinessData({ ...business });
+    }
+  }, [user, business]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -176,7 +180,7 @@ const ProfileSettings = () => {
                   </label>
                   <InputText
                     id="bsins_bname"
-                    value={formData.bsins_bname}
+                    value={businessData.bsins_bname}
                     disabled
                     className="surface-100"
                   />
@@ -187,7 +191,7 @@ const ProfileSettings = () => {
                   </label>
                   <InputText
                     id="bsins_binno"
-                    value={formData.bsins_binno}
+                    value={businessData.bsins_binno}
                     disabled
                     className="surface-100"
                   />
@@ -198,7 +202,7 @@ const ProfileSettings = () => {
                   </label>
                   <InputText
                     id="bsins_addrs"
-                    value={formData.bsins_addrs}
+                    value={businessData.bsins_addrs}
                     disabled
                     className="surface-100"
                   />

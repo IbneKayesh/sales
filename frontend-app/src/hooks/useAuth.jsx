@@ -19,6 +19,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,6 +30,11 @@ export const AuthProvider = ({ children }) => {
     if (storedUser) {
       //setUser(JSON.parse(storedUser));
       setUser(storedUser);
+    }
+    const storedBusiness = getStorageData()?.business;
+    if (storedBusiness) {
+      //setBusiness(JSON.parse(storedBusiness));
+      setBusiness(storedBusiness);
     }
     setLoading(false);
   }, []);
@@ -43,9 +49,38 @@ export const AuthProvider = ({ children }) => {
       const response = await authAPI.login(reqBody);
       if (response.success) {
         //console.log("response " + JSON.stringify(response))
-        setUser(response.data);
+        const userData = {
+          id: response.data.id,
+          users_email: response.data.users_email,
+          users_oname: response.data.users_oname,
+          users_cntct: response.data.users_cntct,
+          users_bsins: response.data.users_bsins,
+          users_drole: response.data.users_drole,
+          users_users: response.data.users_users,
+          users_stats: response.data.users_stats,
+          users_regno: response.data.users_regno,
+          users_wctxt: response.data.users_wctxt,
+          users_notes: response.data.users_notes,
+          users_nofcr: response.data.users_nofcr,
+          users_isrgs: response.data.users_isrgs,
+        };
+        setUser(userData);
         //localStorage.setItem("user", JSON.stringify(response.data));
-        setStorageData({ user: response.data });
+        setStorageData({ user: userData });
+
+        const businessData = {
+          users_bsins: response.data.users_bsins,
+          bsins_bname: response.data.bsins_bname,
+          bsins_addrs: response.data.bsins_addrs,
+          bsins_email: response.data.bsins_email,
+          bsins_cntct: response.data.bsins_cntct,
+          bsins_image: null,
+          bsins_binno: response.data.bsins_binno,
+          bsins_cntry: response.data.bsins_cntry,
+        };
+        setBusiness(businessData);
+        //localStorage.setItem("business", JSON.stringify(response.data));
+        setStorageData({ business: businessData });
       }
       return response;
     } catch (error) {
@@ -91,25 +126,12 @@ export const AuthProvider = ({ children }) => {
       const response = await authAPI.register(reqBody);
       console.log("response", response);
       if (response.success) {
-        console.log("response " + JSON.stringify(response));
-        setUser(response.data);
-        //localStorage.setItem("user", JSON.stringify(response.data));
-        setStorageData({ user: response.data });
+        //console.log("response " + JSON.stringify(response));
       }
       return response;
     } catch (error) {
       console.error("Login error:", error);
       return error;
-    }
-  };
-
-  const setSessionStorage = (data) => {
-    try {
-      const currentData = getStorageData();
-      const updatedData = { ...currentData, ...data };
-      localStorage.setItem("business", JSON.stringify(updatedData));
-    } catch (error) {
-      console.error('Error writing to localStorage:', error);
     }
   };
 
@@ -159,6 +181,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    business,
     login,
     logout,
     register,

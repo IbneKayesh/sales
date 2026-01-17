@@ -9,11 +9,13 @@ const Leftbar = ({ menus }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [business, setBusiness] = useState(null);
 
   useEffect(() => {
     const data = getStorageData();
     setExpandedMenu(data.expandedMenu);
     setUser(data.user);
+    setBusiness(data.business);
   }, []);
 
   useEffect(() => {
@@ -110,7 +112,7 @@ const Leftbar = ({ menus }) => {
           <div>
             <strong>Business:</strong>{" "}
             <span className="font-bold text-yellow-500">
-              {user?.bsins_bname}
+              {business?.bsins_bname}
             </span>
           </div>
           <div>

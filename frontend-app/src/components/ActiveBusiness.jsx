@@ -9,18 +9,23 @@ export default function ActiveBusiness({ visible, setVisible }) {
   const { showToast } = useToast();
   const { dataList } = useBusiness();
   const [user, setUser] = useState(null);
+  const [business, setBusiness] = useState(null);
 
   useEffect(() => {
     const data = getStorageData();
     setUser(data.user);
+    setBusiness(data.business);
   }, []);
 
-  const handleSelectBusiness = (id, name) => {
+  const handleSelectBusiness = (id) => {
     if (user.users_isrgs === 0) {
       showToast("error", "Error", "You are not authorized to switch business");
     } else {
-      const new_user = { ...user, users_bsins: id, bsins_bname: name };
+      const new_user = { ...user, users_bsins: id};
       setStorageData({ user: new_user });
+
+      const selectedBusiness = dataList.find((business) => business.id === id);
+      setStorageData({ business: selectedBusiness });
       setVisible(false);
 
       //reload current page
@@ -52,9 +57,7 @@ export default function ActiveBusiness({ visible, setVisible }) {
               }
               value={business.bsins_bname}
               style={{ cursor: "pointer" }}
-              onClick={() =>
-                handleSelectBusiness(business.id, business.bsins_bname)
-              }
+              onClick={() => handleSelectBusiness(business.id)}
             />
           ))}
         </div>
