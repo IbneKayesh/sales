@@ -17,6 +17,11 @@ const closingProcess = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  purchaseReceipt: (data) =>
+    apiRequest("/setup/closing/purchase-receipt", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };
 
 export const closingProcessAPI = async (id, value) => {
@@ -31,5 +36,8 @@ export const closingProcessAPI = async (id, value) => {
   }
   if (id === "payable-due") {
     await closingProcess.payableDue(fromData);
+  }
+  if (id === "purchase-receipt") {
+    await closingProcess.purchaseReceipt(fromData);
   }
 };

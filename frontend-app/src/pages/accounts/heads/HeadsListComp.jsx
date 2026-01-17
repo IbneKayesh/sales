@@ -65,11 +65,12 @@ const HeadsListComp = ({ dataList, onEdit, onDelete }) => {
   };
 
   const trhed_grpnm_BT = (rowData) => {
-    const activeClassStyle = rowData.trhed_grtyp === "In" ? "text-green-500" : "text-blue-500";
+    const activeClassStyle = rowData.trhed_grtyp === "In" ? "text-blue-500" : "text-red-500";
     return (
-      <>
-        <span className={activeClassStyle}>{rowData.trhed_grpnm}, {rowData.trhed_grtyp}</span>
-      </>
+      <div className="flex flex-column">
+        <span>{rowData.trhed_grpnm}</span>
+        <span className={activeClassStyle}>{rowData.trhed_grtyp}</span>
+      </div>
     );
   };
   return (

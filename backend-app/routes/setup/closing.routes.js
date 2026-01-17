@@ -89,6 +89,18 @@ router.post("/purchase-booking", async (req, res) => {
       label: `Update Purchase Booking Quantity`,
     });
 
+    scripts.push({
+      sql: `UPDATE tmpb_pmstr
+      SET pmstr_ispad = 1
+      WHERE pmstr_ispad IN (0,2)
+      AND pmstr_duamt = 0
+      AND pmstr_bsins = ?`,
+      params: [id],
+      label: `Update Purchase Booking payment status`,
+    });
+
+
+
     await dbRunAll(scripts);
     res.json({
       success: true,
@@ -152,5 +164,95 @@ router.post("/payable-due", async (req, res) => {
   }
 });
 
+//purchase receipt
+router.post("/purchase-receipt", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    // Validate input
+    if (!id) {
+      return res.json({
+        success: false,
+        message: "Business Id is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const scripts = [];
+
+    scripts.push({
+      sql: `UPDATE tmpb_bking tgt
+        JOIN (
+        SELECT bking.id, SUM(recpt.recpt_bkqty) AS recpt_bkqty
+        FROM tmpb_bking bking
+        JOIN tmpb_recpt recpt ON bking.id = recpt.recpt_bking
+        JOIN tmpb_pmstr str ON bking.bking_pmstr = str.id
+        WHERE bking.bking_pnqty > 0
+        AND str.pmstr_bsins = ?
+        GROUP BY bking.id
+        )src
+        ON tgt.id = src.id
+        SET tgt.bking_rcqty = src.recpt_bkqty,
+        tgt.bking_pnqty = tgt.bking_bkqty - ( tgt.bking_cnqty + src.recpt_bkqty )`,
+      params: [id],
+      label: `Update Purchase Receipt Quantity`,
+    });
+
+    scripts.push({
+      sql: `UPDATE tmib_bitem
+      SET bitem_pbqty = 0
+      WHERE bitem_bsins = ?
+      AND  bitem_pbqty > 0`,
+      params: [id],
+      label: `Reset Purchase Booking Quantity`,
+    });
+
+    scripts.push({
+      sql: `UPDATE tmib_bitem AS tgt
+      JOIN (
+          SELECT bking_bitem, SUM(bking_pnqty)as bking_pnqty
+        FROM tmpb_bking bk
+        JOIN tmpb_pmstr str ON bk.bking_pmstr = str.id
+        WHERE str.pmstr_bsins = ?
+        GROUP BY bking_bitem
+        )AS src
+      ON tgt.id = src.bking_bitem
+      SET tgt.bitem_pbqty = src.bking_pnqty`,
+      params: [id],
+      label: `Update Purchase Booking Quantity`,
+    });
+
+    scripts.push({
+      sql: `UPDATE tmib_bitem tgt
+              JOIN (
+              SELECT recpt.recpt_bitem,SUM(recpt.recpt_ohqty) AS recpt_ohqty
+              FROM tmpb_recpt recpt
+              JOIN tmpb_pmstr str ON recpt.recpt_pmstr = str.id
+              WHERE recpt.recpt_ohqty > 0
+              AND str.pmstr_bsins = ?
+              GROUP BY recpt.recpt_bitem
+              )src
+              ON tgt.id = src.recpt_bitem
+              SET tgt.bitem_gstkq = src.recpt_ohqty`,
+      params: [id],
+      label: `Update Business Item Good Stock Quantity`,
+    });
+
+    await dbRunAll(scripts);
+    res.json({
+      success: true,
+      message: "Purchase Booking and Receipt Generated successfully",
+      data: req.body,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
 
 module.exports = router;

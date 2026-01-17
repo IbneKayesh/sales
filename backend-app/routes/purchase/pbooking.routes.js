@@ -31,7 +31,8 @@ router.post("/", async (req, res) => {
       FROM tmpb_pmstr mstr
       LEFT JOIN tmcb_cntct cont on mstr.pmstr_cntct = cont.id
       WHERE mstr.pmstr_users = ?
-      AND mstr.pmstr_bsins = ?`;
+      AND mstr.pmstr_bsins = ?
+      AND mstr.pmstr_odtyp = 'Purchase Booking'`;
     let params = [pmstr_users, pmstr_bsins];
 
     // Optional filters

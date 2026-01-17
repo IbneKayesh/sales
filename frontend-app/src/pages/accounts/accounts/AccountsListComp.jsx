@@ -69,9 +69,11 @@ const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
 
   const bacts_acnam_BT = (rowData) => {
     return (
-      <span>
-        {rowData.bacts_acnam}, {rowData.bacts_acnum}, {rowData.bacts_notes}
-      </span>
+      <div className="flex flex-column">
+        <span className="text-md">{rowData.bacts_acnam}</span>
+        <span className="text-sm text-gray-600">{rowData.bacts_acnum}</span>
+        <span className="text-sm text-blue-500">{rowData.bacts_notes}</span>
+      </div>
     );
   };
 

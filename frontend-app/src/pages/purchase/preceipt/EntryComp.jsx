@@ -42,15 +42,15 @@ const EntryComp = ({
   useEffect(() => {
     const order_amount = formDataItemList.reduce(
       (sum, item) =>
-        sum + (Number(item.bking_bkqty) || 0) * (Number(item.bking_bkrat) || 0),
+        sum + (Number(item.recpt_bkqty) || 0) * (Number(item.recpt_bkrat) || 0),
       0
     );
     const discount_amount = formDataItemList.reduce(
-      (sum, item) => sum + (Number(item.bking_dsamt) || 0),
+      (sum, item) => sum + (Number(item.recpt_dsamt) || 0),
       0
     );
     const vat_amount = formDataItemList.reduce(
-      (sum, item) => sum + (Number(item.bking_vtamt) || 0),
+      (sum, item) => sum + (Number(item.recpt_vtamt) || 0),
       0
     );
 
@@ -67,10 +67,11 @@ const EntryComp = ({
       (discount_amount + Number(formData.pmstr_rnamt || 0));
     if (formData.pmstr_vatpy === 1 ) payable_amount += vat_amount;
 
-    const paidAmount = formDataPaymentList.reduce(
-      (sum, item) => sum + (Number(item.rcvpy_pyamt) || 0),
-      0
-    );
+    // const paidAmount = formDataPaymentList.reduce(
+    //   (sum, item) => sum + (Number(item.rcvpy_pyamt) || 0),
+    //   0
+    // );
+    const paidAmount = payable_amount;
 
     //console.log(payable_amount, paidAmount);
     const due_amount = payable_amount - (paidAmount || 0);

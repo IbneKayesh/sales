@@ -237,7 +237,8 @@ export const usePbooking = () => {
   const [searchBoxData, setSearchBoxData] = useState({
     pmstr_cntct: "",
     pmstr_trnno: "",
-    pmstr_trdat: null,
+    pmstr_trdat: new Date().toLocaleString().split("T")[0],
+    pmstr_refno: "",
   });
 
   const handleChangeSearchInput = (e) => {

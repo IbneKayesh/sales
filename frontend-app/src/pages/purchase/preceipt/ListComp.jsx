@@ -8,6 +8,18 @@ import { SplitButton } from "primereact/splitbutton";
 import { Tag } from "primereact/tag";
 
 const ListComp = ({ dataList, onEdit }) => {
+
+    const pmstr_trnno_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        {rowData.pmstr_trnno}
+        <span className="text-xs text-blue-500 font-italic mt-1">
+          {rowData.pmstr_odtyp}
+        </span>
+      </div>
+    );
+  };
+
   const pmstr_trdat_BT = (rowData) => {
     const { pmstr_trdat, pmstr_trnte, pmstr_refno } = rowData;
     return (
@@ -120,8 +132,8 @@ const ListComp = ({ dataList, onEdit }) => {
   const action_BT = (rowData) => {
     const menuItems = [
       {
-        label: "Cancel",
-        icon: "pi pi-times",
+        label: "Return",
+        icon: "pi pi-arrow-left",
         className: "text-red-500",
         command: () => handleCancelBooking(rowData),
         disabled: !rowData.edit_stop,
@@ -162,13 +174,13 @@ const ListComp = ({ dataList, onEdit }) => {
       <div className="flex flex-wrap justify-content-center font-bold gap-4 py-2">
         {dataList.length > 0 && (
           <div className="text-blue-500 gap-2">
-            <span>Total Records: </span>
+            <span>Records: </span>
             <span>{dataList.length}</span>
           </div>
         )}
         {stats.due > 0 && (
           <div className="text-red-500 gap-2">
-            <span>Total Due: </span>
+            <span>Dues: </span>
             <span>{Number(stats.due).toFixed(2)}</span>
           </div>
         )}
@@ -203,8 +215,7 @@ const ListComp = ({ dataList, onEdit }) => {
         showGridlines
         footer={dataTable_FT}
       >
-        <Column field="pmstr_odtyp" header="Type" />
-        <Column field="pmstr_trnno" header="No" sortable />
+        <Column field="pmstr_trnno" header="No" body={pmstr_trnno_BT} sortable />
         <Column header="Date & Notes" body={pmstr_trdat_BT} />
         <Column header="Payable • Paid • Due" body={pmstr_pyamt_BT} />
         <Column header="Status" body={is_paid_BT} />

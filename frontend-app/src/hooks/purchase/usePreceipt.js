@@ -49,13 +49,13 @@ export const usePreceipt = () => {
     //loadBookings();
   }, []);
 
-  const loadBookingDetails = async (id) => {
+  const loadReceiptDetails = async (id) => {
     try {
-      //console.log("loadBookingDetails:", id);
-      const response = await pbookingAPI.getDetails({
-        bking_pmstr: id,
+      //console.log("loadReceiptDetails:", id);
+      const response = await preceiptAPI.getDetails({
+        recpt_pmstr: id,
       });
-      //console.log("loadBookingDetails:", JSON.stringify(response));
+      //console.log("loadReceiptDetails:", JSON.stringify(response));
       setFormDataItemList(response.data);
       //showToast("success", "Success", response.message);
     } catch (error) {
@@ -64,13 +64,13 @@ export const usePreceipt = () => {
     }
   };
 
-  const loadBookingPayment = async (id) => {
+  const loadReceiptPayment = async (id) => {
     try {
-      //console.log("loadBookingPayment:", id);
-      const response = await pbookingAPI.getPayment({
+      //console.log("loadReceiptPayment:", id);
+      const response = await preceiptAPI.getPayment({
         rcvpy_refid: id,
       });
-      //console.log("loadBookingPayment:", JSON.stringify(response));
+      //console.log("loadReceiptPayment:", JSON.stringify(response));
       setFormDataPaymentList(response.data);
       //showToast("success", "Success", response.message);
     } catch (error) {
@@ -90,14 +90,16 @@ export const usePreceipt = () => {
       ...dataModel,
       pmstr_users: user.users_users,
       pmstr_bsins: user.users_bsins,
-      pmstr_odtyp: "Purchase Booking",
+      pmstr_odtyp: "Purchase Receipt",
+      pmstr_vatpy: 1,
+      pmstr_ispst: 1,
     });
     //console.log("handleClear:", JSON.stringify(dataModel));
     setErrors({});
 
     //options
     setFormDataItemList([]);
-    setFormDataPaymentList([]);
+    //setFormDataPaymentList([]);
 
     //hide search box
     setSearchBoxShow(false);
@@ -114,19 +116,9 @@ export const usePreceipt = () => {
   };
 
   const handleEdit = (data) => {
-    loadBookingDetails(data.id);
-    loadBookingPayment(data.id);
+    loadReceiptDetails(data.id);
+    //loadReceiptPayment(data.id);
     //console.log("edit: " + JSON.stringify(data));
-    // setFormData({
-    //   ...data,
-    //   pmstr_ispad: String(data.pmstr_ispad),
-    //   pmstr_vatpy: String(data.pmstr_vatpy),
-    //   pmstr_ispst: String(data.pmstr_ispst),
-    //   pmstr_isret: String(data.pmstr_isret),
-    //   pmstr_iscls: String(data.pmstr_iscls),
-    //   pmstr_vatcl: String(data.pmstr_vatcl),
-    //   pmstr_hscnl: String(data.pmstr_hscnl),
-    // });
     setFormData(data);
     setCurrentView("form");
   };
@@ -134,7 +126,7 @@ export const usePreceipt = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await pbookingAPI.delete(rowData);
+      const response = await preceiptAPI.delete(rowData);
 
       // Remove deleted business from local state
       const updatedList = dataList.filter((s) => s.id !== rowData.id);
@@ -192,18 +184,18 @@ export const usePreceipt = () => {
         pmstr_users: user.users_users,
         pmstr_bsins: user.users_bsins,
         pmstr_trdat: formatDateForAPI(formData.pmstr_trdat),
-        pmstr_ispad: paidStatus,
+        pmstr_ispad: 1, //full paid by default
         user_id: user.id,
-        tmpb_bking: formDataItemList,
-        tmtb_rcvpy: formDataPaymentList,
+        tmpb_recpt: formDataItemList,
+        //tmtb_rcvpy: formDataPaymentList,
       };
 
       // Call API and get { message, data }
       let response;
       if (formData.id) {
-        response = await pbookingAPI.update(formDataNew);
+        response = await preceiptAPI.update(formDataNew);
       } else {
-        response = await pbookingAPI.create(formDataNew);
+        response = await preceiptAPI.create(formDataNew);
       }
 
       console.log("handleSave:", JSON.stringify(response));
@@ -217,7 +209,7 @@ export const usePreceipt = () => {
       );
 
       //call update process
-      await closingProcessAPI("purchase-booking", user.users_bsins);
+      await closingProcessAPI("purchase-receipt", user.users_bsins);
 
       // Clear form & reload
       //handleClear();
@@ -237,7 +229,8 @@ export const usePreceipt = () => {
   const [searchBoxData, setSearchBoxData] = useState({
     pmstr_cntct: "",
     pmstr_trnno: "",
-    pmstr_trdat: null,
+    pmstr_trdat: new Date().toLocaleString().split("T")[0],
+    pmstr_refno: ""
   });
 
   const handleChangeSearchInput = (e) => {
@@ -254,7 +247,7 @@ export const usePreceipt = () => {
 
   const handleSearch = () => {
     //console.log("handleSearch", searchBoxData);
-    loadBookings();
+    loadReceipts();
   };
 
   const fetchAvailableReceiptItems = async (id) => {

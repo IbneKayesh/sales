@@ -31,7 +31,8 @@ router.post("/", async (req, res) => {
       FROM tmpb_pmstr mstr
       LEFT JOIN tmcb_cntct cont on mstr.pmstr_cntct = cont.id
       WHERE mstr.pmstr_users = ?
-      AND mstr.pmstr_bsins = ?`;
+      AND mstr.pmstr_bsins = ?
+      AND mstr.pmstr_odtyp = 'Purchase Receipt'`;
     let params = [pmstr_users, pmstr_bsins];
 
     // Optional filters
@@ -92,10 +93,10 @@ router.post("/", async (req, res) => {
 // receipt details
 router.post("/receipt-details", async (req, res) => {
   try {
-    const { bking_pmstr } = req.body;
+    const { recpt_pmstr } = req.body;
 
     // Validate input
-    if (!bking_pmstr) {
+    if (!recpt_pmstr) {
       return res.json({
         success: false,
         message: "Booking ID is required",
@@ -105,25 +106,25 @@ router.post("/receipt-details", async (req, res) => {
     //console.log("get:", JSON.stringify(req.body));
 
     //database action
-    let sql = `SELECT bking.*, 0 as edit_stop,
+    let sql = `SELECT recpt.*, 0 as edit_stop,
     itm.items_icode, itm.items_iname, itm.items_dfqty, bitm.bitem_gstkq,
     puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
-    FROM tmpb_bking bking
-    LEFT JOIN tmib_items itm ON bking.bking_items = itm.id
-    LEFT JOIN tmib_bitem bitm ON bking.bking_bitem = bitm.id
+    FROM tmpb_recpt recpt
+    LEFT JOIN tmib_items itm ON recpt.recpt_items = itm.id
+    LEFT JOIN tmib_bitem bitm ON recpt.recpt_bitem = bitm.id
     LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
     LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
-    WHERE bking.bking_pmstr = ?`;
-    let params = [bking_pmstr];
+    WHERE recpt.recpt_pmstr = ?`;
+    let params = [recpt_pmstr];
 
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase booking for ${bking_pmstr}`,
+      `Get purchase receipt for ${recpt_pmstr}`,
     );
     res.json({
       success: true,
-      message: "Purchase booking fetched successfully",
+      message: "Purchase receipt fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -211,7 +212,7 @@ router.post("/create", async (req, res) => {
       pmstr_vatcl,
       pmstr_hscnl,
       user_id,
-      tmpb_bking,
+      tmpb_recpt,
       tmtb_rcvpy,
     } = req.body;
 
@@ -225,8 +226,8 @@ router.post("/create", async (req, res) => {
       !pmstr_cntct ||
       !pmstr_odtyp ||
       !pmstr_trdat ||
-      !tmpb_bking ||
-      !Array.isArray(tmpb_bking)
+      !tmpb_recpt ||
+      !Array.isArray(tmpb_recpt)
     ) {
       return res.json({
         success: false,
@@ -247,8 +248,10 @@ router.post("/create", async (req, res) => {
       AND DATE(pmstr_trdat) = CURDATE()`;
     const max_seq = await dbGet(sql, [pmstr_odtyp]);
     const max_seq_no = String((max_seq.max_seq || 0) + 1).padStart(5, "0");
-    const pmstr_trnno_new = `PB-${date_part}-${max_seq_no}`;
+    const pmstr_trnno_new = `PR-${date_part}-${max_seq_no}`;
     console.log("New Transaction No: " + pmstr_trnno_new);
+
+    //return;
 
     //build scripts
     const scripts = [];
@@ -301,34 +304,35 @@ router.post("/create", async (req, res) => {
     });
 
     //Insert booking details
-    for (const det of tmpb_bking) {
+    for (const det of tmpb_recpt) {
       scripts.push({
-        sql: `INSERT INTO tmpb_bking(id, bking_pmstr, bking_bitem, bking_items, bking_bkrat, bking_bkqty, bking_itamt,
-        bking_dspct, bking_dsamt, bking_vtpct, bking_vtamt, bking_csrat, bking_ntamt,
-        bking_notes, bking_cnqty, bking_rcqty, bking_pnqty, bking_crusr, bking_upusr)
+        sql: `INSERT INTO tmpb_recpt(id, recpt_pmstr, recpt_bitem, recpt_items, recpt_bkrat, recpt_bkqty, recpt_itamt,
+        recpt_dspct, recpt_dsamt, recpt_vtpct, recpt_vtamt, recpt_csrat, recpt_ntamt,
+        recpt_notes, recpt_rtqty, recpt_slqty, recpt_ohqty, recpt_bking, recpt_crusr, recpt_upusr)
         VALUES (
         ?, ?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?
+        ?, ?, ?, ?, ?, ?, ?
         )`,
         params: [
           uuidv4(),
           id,
-          det.bking_bitem,
-          det.bking_items,
-          det.bking_bkrat || 0,
-          det.bking_bkqty || 0,
-          det.bking_itamt || 0,
-          det.bking_dspct || 0,
-          det.bking_dsamt || 0,
-          det.bking_vtpct || 0,
-          det.bking_vtamt || 0,
-          det.bking_csrat || 0,
-          det.bking_ntamt || 0,
-          det.bking_notes || "",
+          det.recpt_bitem,
+          det.recpt_items,
+          det.recpt_bkrat || 0,
+          det.recpt_bkqty || 0,
+          det.recpt_itamt || 0,
+          det.recpt_dspct || 0,
+          det.recpt_dsamt || 0,
+          det.recpt_vtpct || 0,
+          det.recpt_vtamt || 0,
+          det.recpt_csrat || 0,
+          det.recpt_ntamt || 0,
+          det.recpt_notes || "",
           0,
           0,
-          det.bking_bkqty || 0, //det.bking_pnqty,
+          det.recpt_bkqty || 0, //det.recpt_ohqty,
+          det.recpt_bking,
           user_id,
           user_id,
         ],
@@ -337,36 +341,36 @@ router.post("/create", async (req, res) => {
     }
 
     //Insert payment details
-    for (const pay of tmtb_rcvpy) {
-      scripts.push({
-        sql: `INSERT INTO tmtb_rcvpy(id, rcvpy_users, rcvpy_bsins, rcvpy_cntct, rcvpy_pymod, rcvpy_refid,
-        rcvpy_refno, rcvpy_srcnm, rcvpy_trdat, rcvpy_notes, rcvpy_pyamt, rcvpy_crusr, rcvpy_upusr)
-        VALUES (?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?, ?)`,
-        params: [
-          uuidv4(),
-          pmstr_users,
-          pmstr_bsins,
-          pmstr_cntct,
-          pay.rcvpy_pymod,
-          id,
-          pmstr_trnno_new,
-          pmstr_odtyp,
-          pmstr_trdat,
-          pay.rcvpy_notes,
-          pay.rcvpy_pyamt,
-          user_id,
-          user_id,
-        ],
-        label: `Created payment ${pmstr_trnno_new}`,
-      });
-    }
+    // for (const pay of tmtb_rcvpy) {
+    //   scripts.push({
+    //     sql: `INSERT INTO tmtb_rcvpy(id, rcvpy_users, rcvpy_bsins, rcvpy_cntct, rcvpy_pymod, rcvpy_refid,
+    //     rcvpy_refno, rcvpy_srcnm, rcvpy_trdat, rcvpy_notes, rcvpy_pyamt, rcvpy_crusr, rcvpy_upusr)
+    //     VALUES (?, ?, ?, ?, ?, ?,
+    //     ?, ?, ?, ?, ?, ?, ?)`,
+    //     params: [
+    //       uuidv4(),
+    //       pmstr_users,
+    //       pmstr_bsins,
+    //       pmstr_cntct,
+    //       pay.rcvpy_pymod,
+    //       id,
+    //       pmstr_trnno_new,
+    //       pmstr_odtyp,
+    //       pmstr_trdat,
+    //       pay.rcvpy_notes,
+    //       pay.rcvpy_pyamt,
+    //       user_id,
+    //       user_id,
+    //     ],
+    //     label: `Created payment ${pmstr_trnno_new}`,
+    //   });
+    // }
 
     await dbRunAll(scripts);
 
     res.json({
       success: true,
-      message: "Purchase booking created successfully",
+      message: "Purchase receipt created successfully",
       data: {
         ...req.body,
         pmstr_trnno: pmstr_trnno_new,
@@ -637,7 +641,7 @@ router.post("/available-receipt", async (req, res) => {
 
     //database action
     let sql = `SELECT bking.id AS id, '' AS recpt_pmstr, bking.bking_bitem AS recpt_bitem, bking.bking_items AS recpt_items,
-    bking.bking_bkrat AS recpt_bkrat, bking.bking_bkqty AS recpt_bkqty, bking.bking_itamt AS recpt_itamt,
+    bking.bking_bkrat AS recpt_bkrat, bking.bking_pnqty AS recpt_bkqty, bking.bking_itamt AS recpt_itamt,
     bking.bking_dspct AS recpt_dspct, bking.bking_dsamt AS recpt_dsamt, bking.bking_vtpct AS recpt_vtpct,
     bking.bking_vtamt AS recpt_vtamt, bking.bking_csrat AS recpt_csrat, bking.bking_ntamt AS recpt_ntamt,
     bking.bking_notes AS recpt_notes, 0 AS recpt_rtqty, 0 AS recpt_slqty, bking.bking_bkqty AS recpt_ohqty,
@@ -651,6 +655,9 @@ router.post("/available-receipt", async (req, res) => {
     LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
     LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
     WHERE str.pmstr_odtyp = 'Purchase Booking'
+    AND bking.bking_pnqty > 0
+    AND str.pmstr_actve = 1
+    AND str.pmstr_ispst = 1
     AND str.pmstr_users = ?
     AND str.pmstr_bsins = ?
     AND str.pmstr_cntct = ?

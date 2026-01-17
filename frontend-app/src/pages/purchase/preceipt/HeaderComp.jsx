@@ -174,7 +174,7 @@ const HeaderComp = ({ errors, formData, handleChange, fetchAvailableReceiptItems
         )}
       </div>
       <div className="col-12 md:col-1">
-        {isReadOnly ? (
+        {true ? (
           <>
             <label className="block font-bold mb-2">Posted</label>
             <Tag

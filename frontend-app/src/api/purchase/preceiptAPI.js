@@ -23,12 +23,12 @@ export const preceiptAPI = {
       body: JSON.stringify(data),
     }),
   getDetails: (data) =>
-    apiRequest("/purchase/preceipt/booking-details", {
+    apiRequest("/purchase/preceipt/receipt-details", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   getPayment: (data) =>
-    apiRequest("/purchase/preceipt/booking-payment", {
+    apiRequest("/purchase/preceipt/receipt-payment", {
       method: "POST",
       body: JSON.stringify(data),
     }),

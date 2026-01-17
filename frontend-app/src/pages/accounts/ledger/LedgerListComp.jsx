@@ -48,28 +48,37 @@ const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
 
   const bsins_bname_BT = (rowData) => {
     return (
-      <>
-        {rowData.bsins_bname}
-        {", "}
-        <span className="text-blue-400">{rowData.bacts_bankn}</span>
-      </>
+      <div className="flex flex-column">
+        <span className="text-md">{rowData.bsins_bname}</span>
+        <span className="text-sm text-blue-500">{rowData.bacts_bankn}</span>
+      </div>
     );
   };
+
+const cntct_cntnm_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-md">{rowData.cntct_cntnm}</span>
+        <span className="text-sm text-blue-500">{rowData.trhed_hednm}</span>
+      </div>
+    );
+  };
+
   const ledgr_pymod_BT = (rowData) => {
     return (
-      <>
-        {rowData.ledgr_pymod}, {formatDate(rowData.ledgr_trdat)}
-      </>
+      <div className="flex flex-column">
+        <span className="text-md">{rowData.ledgr_pymod}</span>
+        <span className="text-sm text-gray-600">{formatDate(rowData.ledgr_trdat)}</span>
+      </div>
     );
   };
 
   const ledgr_refno_BT = (rowData) => {
     return (
-      <>
-        {rowData.ledgr_refno}
-        {", "}
-        <span className="text-gray-600">{rowData.ledgr_notes}</span>
-      </>
+      <div className="flex flex-column">
+        <span className="text-md">{rowData.ledgr_refno}</span>
+        <span className="text-sm text-gray-600">{rowData.ledgr_notes}</span>
+      </div>
     );
   };
 
@@ -99,8 +108,7 @@ const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
           body={bsins_bname_BT}
           sortable
         />
-        <Column field="trhed_hednm" header="Head" sortable />
-        <Column field="cntct_cntnm" header="Contact" sortable />
+        <Column field="cntct_cntnm" header="Contact" body={cntct_cntnm_BT} sortable />
         <Column
           field="ledgr_pymod"
           header="Date"

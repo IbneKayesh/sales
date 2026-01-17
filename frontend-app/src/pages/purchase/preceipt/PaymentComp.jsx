@@ -20,18 +20,6 @@ const PaymentComp = ({
   setFormDataPaymentList,
 }) => {
   const [payableNote, setPayableNote] = useState("");
-  const [formDataPayment, setFormDataPayment] = useState({
-    id: "",
-    rcvpy_users: "",
-    rcvpy_bsins: "",
-    rcvpy_cntct: "",
-    rcvpy_pymod: "Cash",
-    rcvpy_trdat: new Date().toISOString().split("T")[0],
-    rcvpy_refno: "",
-    rcvpy_srcnm: formData.pmstr_odtyp,
-    rcvpy_notes: "",
-    rcvpy_pyamt: "",
-  });
   useEffect(() => {
     let note = "";
     if (formData.pmstr_vatpy === 1) {
@@ -51,103 +39,9 @@ const PaymentComp = ({
     handleChange("pmstr_rnamt", decimalPart);
   };
 
-  const handleChangePayment = (e) => {
-    const { name, value } = e.target;
-    setFormDataPayment({ ...formDataPayment, [name]: value });
-  };
 
-  const handleAddPayment = () => {
-    const { rcvpy_pymod, rcvpy_notes, rcvpy_pyamt } = formDataPayment;
-    //set error if payment mode or payment amount is empty
-    if (!rcvpy_pymod || !rcvpy_pyamt) {
-      setErrors({
-        rcvpy_pymod: "Payment mode is required",
-        rcvpy_pyamt: "Payment amount is required",
-      });
-      return;
-    }
 
-    //payment amount validation
-    if (formDataPayment.rcvpy_pyamt > formData.pmstr_duamt) {
-      setErrors({
-        rcvpy_pyamt: "The payment amount cannot exceed the due amount.",
-      });
-      return;
-    } else {
-      setErrors({
-        rcvpy_pyamt: "",
-      });
-    }
 
-    setFormDataPaymentList((prevList) => {
-      const index = prevList.findIndex(
-        (row) => row.rcvpy_pymod === rcvpy_pymod
-      );
-
-      // If found → update existing row
-      if (index !== -1) {
-        const updated = [...prevList];
-        updated[index] = {
-          ...updated[index],
-          rcvpy_notes: updated[index].rcvpy_notes,
-          rcvpy_pyamt: updated[index].rcvpy_pyamt + rcvpy_pyamt,
-        };
-        return updated;
-      }
-
-      // If not found → add new row
-      return [
-        ...prevList,
-        {
-          id: generateGuid(),
-          rcvpy_users: formData.pmstr_users,
-          rcvpy_bsins: formData.pmstr_bsins,
-          rcvpy_cntct: formData.pmstr_cntct,
-          rcvpy_pymod: rcvpy_pymod,
-          rcvpy_trdat: new Date().toISOString().split("T")[0],
-          rcvpy_refno: formData.pmstr_trnno,
-          rcvpy_srcnm: formData.pmstr_odtyp,
-          rcvpy_notes: rcvpy_notes,
-          rcvpy_pyamt: rcvpy_pyamt,
-        },
-      ];
-    });
-
-    // Reset form
-    setFormDataPayment({
-      id: "",
-      rcvpy_users: formData.pmstr_users,
-      rcvpy_bsins: formData.pmstr_bsins,
-      rcvpy_cntct: formData.pmstr_cntct,
-      rcvpy_pymod: "Cash",
-      rcvpy_trdat: new Date().toISOString().split("T")[0],
-      rcvpy_refno: formData.pmstr_trnno,
-      rcvpy_srcnm: formData.pmstr_odtyp,
-      rcvpy_notes: "",
-      rcvpy_pyamt: "",
-    });
-  };
-
-  const handleDelete = (rowData) => {
-    setFormDataPaymentList((prev) =>
-      prev.filter((item) => item.id !== rowData.id)
-    );
-  };
-
-  const action_BT = (rowData) => {
-    return (
-      <span
-        className="pi pi-trash text-red-600 text-bold px-2"
-        onClick={() => handleDelete(rowData)}
-      ></span>
-    );
-  };
-  const rcvpy_trdat_BT = (rowData) => {
-    return formatDate(rowData.rcvpy_trdat);
-  };
-  const rcvpy_pyamt_BT = (rowData) => {
-    return Number(rowData.rcvpy_pyamt).toFixed(2);
-  };
   return (
     <div className="grid mt-4">
       <div className="col-12 md:col-4">
