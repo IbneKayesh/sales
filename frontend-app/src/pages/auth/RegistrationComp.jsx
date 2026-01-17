@@ -77,7 +77,7 @@ const RegistrationComp = () => {
       );
 
       if (response.success) {
-        navigate("/home");
+        navigate("/login");
       } else {
         // Trigger falling letters animation for password only if it has values
         if (user.userPassword.trim()) {

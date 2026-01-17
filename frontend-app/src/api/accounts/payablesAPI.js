@@ -2,20 +2,24 @@ import { apiRequest } from '@/utils/api.js';
 
 //payables API
 export const payablesAPI = {
-  getAll: () => apiRequest('/accounts/payables'),
-
-  create: (payment) => apiRequest('/accounts/payables/create', {
-    method: 'POST',
-    body: JSON.stringify(payment),
-  }),
-
-  update: (payment) => apiRequest('/accounts/payables/update', {
-    method: 'PUT',
-    body: JSON.stringify(payment),
-  }),
-
-  delete: (payment) => apiRequest('/accounts/payables/delete', {
-    method: 'DELETE',
-    body: JSON.stringify(payment),
-  }),
+  getAll: (data) =>
+    apiRequest("/accounts/payables", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  create: (data) =>
+    apiRequest("/accounts/payables/create", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  update: (data) =>
+    apiRequest("/accounts/payables/update", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  delete: (data) =>
+    apiRequest("/accounts/payables/delete", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

@@ -100,13 +100,13 @@
     "default": "0"
   },
   "pmstr_vatpy": {
-    "type": "string",
+    "type": "number",
     "label": "Is VAT Payment",
     "maxLength": 1,
-    "minLength": 1,
+    "minLength": 0,
     "placeholder": "Is VAT payment",
     "required": true,
-    "default": "0"
+    "default": 0
   },
   "pmstr_incst": {
     "type": "decimal",
@@ -190,57 +190,57 @@
     "default": "0"
   },
   "pmstr_ispad": {
-    "type": "string",
+    "type": "number",
     "label": "Is Paid",
-    "maxLength": 1,
-    "minLength": 1,
+    "maxLength": 2,
+    "minLength": 0,
     "placeholder": "Is paid",
     "required": true,
-    "default": "0"
+    "default": 0
   },
   "pmstr_ispst": {
-    "type": "string",
+    "type": "number",
     "label": "Is Posted",
     "maxLength": 1,
-    "minLength": 1,
+    "minLength": 0,
     "placeholder": "Is posted",
     "required": true,
-    "default": "1"
+    "default": 1
   },
   "pmstr_isret": {
-    "type": "string",
+    "type": "number",
     "label": "Is Returned",
     "maxLength": 1,
-    "minLength": 1,
+    "minLength": 0,
     "placeholder": "Is returned",
     "required": true,
-    "default": "0"
+    "default": 0
   },
   "pmstr_iscls": {
-    "type": "string",
+    "type": "number",
     "label": "Is Closed",
     "maxLength": 1,
-    "minLength": 1,
+    "minLength": 0,
     "placeholder": "Is closed",
     "required": true,
-    "default": "0"
+    "default": 0
   },
   "pmstr_vatcl": {
-    "type": "string",
+    "type": "number",
     "label": "VAT Collected",
     "maxLength": 1,
-    "minLength": 1,
+    "minLength": 0,
     "placeholder": "VAT Collected",
     "required": true,
-    "default": "0"
+    "default": 0
   },
   "pmstr_hscnl": {
-    "type": "string",
+    "type": "number",
     "label": "Is Cancelled",
     "maxLength": 1,
-    "minLength": 1,
+    "minLength": 0,
     "placeholder": "Is cancelled",
     "required": true,
-    "default": "0"
+    "default": 0
   }
 }

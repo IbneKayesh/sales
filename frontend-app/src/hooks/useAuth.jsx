@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     //localStorage.removeItem("user");
     clearStorageData();
-    localStorage.removeItem("authToken");
+    localStorage.removeItem("sgd25");
   };
 
   const register = async (register) => {

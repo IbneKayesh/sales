@@ -1,14 +1,24 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Avatar } from "primereact/avatar";
 import tmab_bsins from "@/models/auth/tmab_bsins.json";
 import { useAuth } from "@/hooks/useAuth";
-import { setStorageData, getStorageData } from "@/utils/storage";
 
 const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   const { business } = useAuth();
+  const [bImg, setBImg] = useState(null);
+  useEffect(() => {
+    const lImg = localStorage.getItem(formData.id);
+    if (lImg) {
+      const imgData = JSON.parse(lImg);
+      setBImg(imgData.bsins_image);
+    } else {
+      setBImg(business?.bsins_image);
+    }
+  }, []);
+
   const fileInputRef = useRef(null);
 
   const handleLogoSelect = (e) => {
@@ -21,10 +31,12 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result;
-        const currentData = getStorageData();
-        const newBusiness = { ...currentData.business, bsins_image: base64String };
-        setStorageData({ ...currentData, business: newBusiness });
-        setStorageData({ id: currentData.business.users_bsins, bsins_image: base64String });
+        //console.log("formData",formData)
+        const sgdImg = {
+          id: formData.id,
+          bsins_image: base64String,
+        };
+        localStorage.setItem(formData.id, JSON.stringify(sgdImg));
         alert("Logo updated locally. Please refresh to see changes.");
       };
       reader.readAsDataURL(file);
@@ -41,7 +53,7 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           style={{ display: "none" }}
         />
         <Avatar
-          image={business?.bsins_image}
+          image={bImg}
           icon="pi pi-building"
           shape="circle"
           size="xlarge"

@@ -22,6 +22,7 @@ export const useUsers = () => {
   const roleOptions = [
     { label: "Admin", value: "Admin" },
     { label: "User", value: "User" },
+    { label: "Field Staff", value: "Field Staff" },
   ];
 
   const loadUsers = async () => {

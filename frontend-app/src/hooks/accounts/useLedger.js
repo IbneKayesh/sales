@@ -96,7 +96,7 @@ export const useLedger = () => {
       );
 
       //call update process
-      await closingProcessAPI("Account Ledger", user.users_users);
+      await closingProcessAPI("accounts-ledger", user.users_users);
     } catch (error) {
       console.error("Error deleting data:", error);
       showToast("error", "Error", error?.message || "Failed to delete data");
@@ -185,7 +185,7 @@ export const useLedger = () => {
       setCurrentView("list");
 
       //call update process
-      await closingProcessAPI("Account Ledger", user.users_users);
+      await closingProcessAPI("accounts-ledger", user.users_users);
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");

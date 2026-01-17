@@ -347,60 +347,6 @@ router.post("/update-product-stock", async (req, res) => {
   }
 });
 
-//purchase-booking
-router.post("/purchase-booking", async (req, res) => {
-  const { id } = req.body;
-
-  if (!id) {
-    return res.status(400).json({ error: "Transaction ID is required" });
-  }
-
-  const scripts = [];
-
-  scripts.push({
-    label: "1 of 2 :: Reset products purchase booking qty",
-    sql: `UPDATE products
-    SET purchase_booking_qty = 0
-    WHERE purchase_booking_qty > 0 `,
-    params: [],
-  });
-
-  scripts.push({
-    label: "2 of 2 :: Update products purchase booking qty",
-    sql: `WITH booking as (
-      SELECT pob.product_id, sum(pob.pending_qty) as purchase_booking_qty
-      FROM po_booking pob
-      JOIN po_master pobm on pob.master_id = pobm.master_id
-      WHERE pob.pending_qty > 0
-      AND pobm.is_posted = 1
-      GROUP by pob.product_id
-      )
-      UPDATE products
-      SET purchase_booking_qty = (
-        SELECT b.purchase_booking_qty
-        FROM booking b
-        WHERE b.product_id = products.product_id
-      )
-      WHERE products.product_id in (
-        SELECT b.product_id
-        FROM booking b
-      )`,
-    params: [],
-  });
-
-  try {
-    const results = await runScriptsSequentially(scripts, {
-      useTransaction: false,
-    });
-    res.status(201).json({
-      message: "Data processed successfully!",
-      result: results,
-    });
-  } catch (error) {
-    console.error("Error processing data:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
 
 //purchase-booking-cancel
 router.post("/purchase-booking-cancel", async (req, res) => {

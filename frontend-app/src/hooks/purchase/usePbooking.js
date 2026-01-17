@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/useToast";
 import { pbookingAPI } from "@/api/purchase/pbookingAPI";
 import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
+import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
 const dataModel = generateDataModel(tmpb_pmstr, { edit_stop: 0 });
 
@@ -90,14 +91,16 @@ export const usePbooking = () => {
       pmstr_users: user.users_users,
       pmstr_bsins: user.users_bsins,
       pmstr_odtyp: "Purchase Booking",
-      pmstr_vatpy: "1",
-      pmstr_ispst: "1",
     });
+    //console.log("handleClear:", JSON.stringify(dataModel));
     setErrors({});
 
     //options
     setFormDataItemList([]);
     setFormDataPaymentList([]);
+
+    //hide search box
+    setSearchBoxShow(false);
   };
 
   const handleCancel = () => {
@@ -114,16 +117,17 @@ export const usePbooking = () => {
     loadBookingDetails(data.id);
     loadBookingPayment(data.id);
     //console.log("edit: " + JSON.stringify(data));
-    setFormData({
-      ...data,
-      pmstr_ispad: String(data.pmstr_ispad),
-      pmstr_vatpy: String(data.pmstr_vatpy),
-      pmstr_ispst: String(data.pmstr_ispst),
-      pmstr_isret: String(data.pmstr_isret),
-      pmstr_iscls: String(data.pmstr_iscls),
-      pmstr_vatcl: String(data.pmstr_vatcl),
-      pmstr_hscnl: String(data.pmstr_hscnl),
-    });
+    // setFormData({
+    //   ...data,
+    //   pmstr_ispad: String(data.pmstr_ispad),
+    //   pmstr_vatpy: String(data.pmstr_vatpy),
+    //   pmstr_ispst: String(data.pmstr_ispst),
+    //   pmstr_isret: String(data.pmstr_isret),
+    //   pmstr_iscls: String(data.pmstr_iscls),
+    //   pmstr_vatcl: String(data.pmstr_vatcl),
+    //   pmstr_hscnl: String(data.pmstr_hscnl),
+    // });
+    setFormData(data);
     setCurrentView("form");
   };
 
@@ -213,7 +217,7 @@ export const usePbooking = () => {
       );
 
       //call update process
-      //await closingProcessAPI("Purchase Booking", formData.order_no);
+      await closingProcessAPI("purchase-booking", user.users_bsins);
 
       // Clear form & reload
       //handleClear();

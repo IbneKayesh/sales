@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import "./PrintComp.css";
@@ -10,7 +11,19 @@ const PrintComp = ({
   formDataList,
   formDataPaymentList,
 }) => {
-  const { user } = useAuth();
+  const { user, business } = useAuth();
+  const [bImg, setBImg] = useState(null);
+
+  useEffect(() => {
+    const lImg = localStorage.getItem(business?.users_bsins);
+    //console.log("business", business);
+    if (lImg) {
+      const imgData = JSON.parse(lImg);
+      setBImg(imgData.bsins_image);
+    } else {
+      setBImg(user?.bsins_image);
+    }
+  }, []);
 
   const handlePrint = () => {
     window.print();
@@ -65,9 +78,9 @@ const PrintComp = ({
         {/* Header: Company & Invoice Info */}
         <header className="print-header">
           <div className="company-logo-section">
-            {user?.bsins_image ? (
+            {bImg ? (
               <img
-                src={user.bsins_image}
+                src={bImg}
                 alt="Logo"
                 style={{
                   maxHeight: "65px",
@@ -77,18 +90,17 @@ const PrintComp = ({
                 }}
               />
             ) : (
-              <h1>{user?.bsins_bname || "YOUR BUSINESS NAME"}</h1>
+              <h1>{business?.bsins_bname || "YOUR BUSINESS NAME"}</h1>
             )}
             <div className="company-details">
               <span className="text-xl font-bold mb-2">
-                {user?.bsins_bname || "YOUR BUSINESS NAME"}
+                {business?.bsins_bname || "YOUR BUSINESS NAME"}
               </span>
-              <br />
-              {user?.bsins_addrs || "BUSINESS ADRESS"},{" "}
-              {user?.bsins_cntry || "COUNTRY"}
-              <br />
-              Email: {user?.bsins_email || "[EMAIL_ADDRESS]"} | Phone:{" "}
-              {user?.bsins_cntct || "1234567890"}
+              <br />{business?.bsins_addrs || "BUSINESS ADRESS"},{" "}
+              {business?.bsins_addrs || "BUSINESS ADRESS"},{" "}
+              {business?.bsins_cntry || "COUNTRY"} <br />
+              BIN: {business?.bsins_binno || ""} | Email: {business?.bsins_email || "[EMAIL_ADDRESS]"} | Phone:{" "}
+              {business?.bsins_cntct || "[PHONE_NUMBER]"}
             </div>
           </div>
           <div className="invoice-meta-top">

@@ -56,7 +56,7 @@ section {
   font-size: var(--font-md);
   color: var(--text-muted);
   margin-top: 2px;
-  max-width: 300px;
+  max-width: 400px;
 }
 
 .invoice-meta-top {

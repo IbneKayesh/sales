@@ -1,71 +1,53 @@
 import { useState, useEffect } from "react";
 import { payablesAPI } from "@/api/accounts/payablesAPI";
-import validate from "@/models/validator";
-import t_payments from "@/models/accounts/t_payments";
+import tmtb_rcvpy from "@/models/accounts/tmtb_rcvpy.json";
+import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/useToast";
+import { formatDateForAPI } from "@/utils/datetime";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
-const fromDataModel = {
-  payment_id: "",
-  shop_id: "1",
-  master_id: "",
-  contact_id: "",
-  payment_head: "",
-  payment_mode: "",
-  payment_date: new Date().toISOString().split("T")[0],
-  payment_amount: 0,
-  payment_note: "",
-  ref_no: "",
-  ismodified: false,
-};
+const dataModel = generateDataModel(tmtb_rcvpy, { edit_stop: 0 });
 
 export const usePayables = () => {
-  const [payableDueList, setPayableDueList] = useState([]);
-  const [toastBox, setToastBox] = useState(null);
+  const { user } = useAuth();
+  const { showToast } = useToast();
+  const [dataList, setDataList] = useState([]);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
-  const [formDataPayableDue, setformDataPayableDue] = useState(fromDataModel);
+  const [formData, setFormData] = useState(dataModel);
 
-  const loadPayableDues = async (resetModified = false) => {
+  const loadPayables = async () => {
     try {
-      const data = await payablesAPI.getAll();
-      //console.log("data: " + JSON.stringify(data));
-      setPayableDueList(data);
-      if (resetModified) {
-        setToastBox({
-          severity: "info",
-          summary: "Refreshed",
-          detail: "Data refreshed from database.",
-        });
-      }
-    } catch (error) {
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: resetModified
-          ? "Failed to refresh data from server"
-          : "Failed to load data from server",
+      const response = await payablesAPI.getAll({
+        pmstr_users: user.users_users,
+        pmstr_bsins: user.users_bsins,
       });
+      //response = { success, message, data }
+
+      setDataList(response.data);
+      //showToast("success", "Success", response.message);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
     }
   };
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadPayableDues();
+    loadPayables();
   }, []);
 
   const handleChange = (field, value) => {
-    setformDataPayableDue((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate(
-      { ...formDataPayableDue, [field]: value },
-      t_payments
-    );
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate({ ...formData, [field]: value }, tmtb_rcvpy);
     setErrors(newErrors);
   };
 
   const handleClear = () => {
-    setformDataPayableDue(fromDataModel);
+    setFormData(dataModel);
     setErrors({});
   };
 
@@ -79,123 +61,110 @@ export const usePayables = () => {
     setCurrentView("form");
   };
 
-  const handleEditPayableDue = (payableDue) => {
-    //console.log("payableDue: " + JSON.stringify(payableDue));
-
-    const newPayableDue = {
-      ...payableDue,
-      payment_date: new Date().toISOString().split("T")[0],
-      payment_mode: payableDue.payment_amount < 0 ? "Refund" : "Cash"
-    };
-    setformDataPayableDue(newPayableDue);
+  const handleEdit = (data) => {
+    //console.log("edit: " + JSON.stringify(data));
+    setFormData({ ...dataModel, ...data });
     setCurrentView("form");
   };
 
-  const handleDeletePayableDue = async (rowData) => {
+  const handleDelete = async (rowData) => {
     try {
-      //console.log("rowData " + JSON.stringify(rowData))
-      await payablesAPI.delete(rowData);
-      const updatedPayableDues = payableDueList.filter(
-        (p) => p.payment_id !== rowData.payment_id
-      );
-      setPayableDueList(updatedPayableDues);
+      // Call API, unwrap { message, data }
+      const response = await payablesAPI.delete(rowData);
 
-      setToastBox({
-        severity: "info",
-        summary: "Deleted",
-        detail: `Deleted successfully.`,
-      });
+      // Remove deleted account from local state
+      const updatedList = dataList.filter((s) => s.id !== rowData.id);
+      setDataList(updatedList);
+
+      showToast(
+        response.success ? "info" : "error",
+        response.success ? "Deleted" : "Error",
+        response.message ||
+          "Operation " + (response.success ? "successful" : "failed"),
+      );
     } catch (error) {
-      console.error("Error deleting Payable Due", error);
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to delete Payable Due",
-      });
+      console.error("Error deleting data:", error);
+      showToast("error", "Error", error?.message || "Failed to delete data");
     }
   };
 
   const handleRefresh = () => {
-    loadPayableDues(true);
+    loadPayables();
   };
 
-  const handleSavePayableDue = async (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     try {
       setIsBusy(true);
 
-      if (formDataPayableDue.payment_amount > formDataPayableDue.due_amount) {
-        setToastBox({
-          severity: "error",
-          summary: "Error",
-          detail: "Payment amount cannot be greater than Due amount.",
-        });
-        setIsBusy(false);
-        return;
-      }
-
-      const newErrors = validate(formDataPayableDue, t_payments);
+      // Validate form
+      const newErrors = validate(formData, tmtb_rcvpy);
       setErrors(newErrors);
-      console.log("handleSavePayableDue: " + JSON.stringify(newErrors));
+      console.log("handleSave:", JSON.stringify(formData));
 
       if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
         return;
       }
 
-      const formDataNew = {
-        ...formDataPayableDue,
-        payment_id: formDataPayableDue.payment_id
-          ? formDataPayableDue.payment_id
-          : generateGuid(),
-      };
-
-      if (formDataPayableDue.payment_id) {
-        //const data = await payablesAPI.update(formDataNew);
-      } else {
-        const data = await payablesAPI.create(formDataNew);
+      if(formData.rcvpy_pyamt > formData.pmstr_duamt){
+        showToast("error", "Error", "Payment amount cannot be greater than payable amount");
+        setIsBusy(false);
+        return;
       }
 
-      const message = formDataPayableDue.payment_id
-        ? `"${formDataPayableDue.ref_no}" Updated`
-        : "Created";
-      setToastBox({
-        severity: "success",
-        summary: "Success",
-        detail: `${message} successfully.`,
-      });
+      // Ensure id exists (for create)
+      const formDataNew = {
+        ...formData,
+        id: formData.id || generateGuid(),
+        rcvpy_trdat: formatDateForAPI(formData.rcvpy_trdat),
+        user_id: user.id,
+      };
 
-      loadPayableDues();
-      handleClear();
-      setCurrentView("list");
+      // Call API and get { message, data }
+      let response;
+      if (formData.id) {
+        response = await payablesAPI.update(formDataNew);
+      } else {
+        response = await payablesAPI.create(formDataNew);
+      }
+
+      // Update toast using API message
+      showToast(
+        response.success ? "success" : "error",
+        response.success ? "Success" : "Error",
+        response.message ||
+          "Operation " + (response.success ? "successful" : "failed"),
+      );
 
       //call update process
-      await closingProcessAPI("Payable Due", formDataPayableDue.ref_no);
+      await closingProcessAPI("payable-due", formDataNew.rcvpy_refid);
+
+      // Clear form & reload
+      handleClear();
+      setCurrentView("list");
+      await loadPayables(); // make sure we wait for updated data
     } catch (error) {
-      console.error("Error saving Payable Due", error);
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to save Payable Due",
-      });
+      console.error("Error saving data:", error);
+      showToast("error", "Error", error?.message || "Failed to save data");
     } finally {
       setIsBusy(false);
     }
   };
 
   return {
-    payableDueList,
-    toastBox,
+    dataList,
     isBusy,
     currentView,
     errors,
-    formDataPayableDue,
+    formData,
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditPayableDue,
-    handleDeletePayableDue,
+    handleEdit,
+    handleDelete,
     handleRefresh,
-    handleSavePayableDue,
+    handleSave,
+    //other functions
   };
 };

@@ -1,39 +1,27 @@
-import React, { useState, useRef, useEffect } from "react";
-import PayableListComponent from "./PayableListComponent";
-import PayableFormComponent from "./PayableFormComponent";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
+import { ButtonGroup } from "primereact/buttongroup";
 import { usePayables } from "@/hooks/accounts/usePayables";
+import PayablesListComp from "./PayablesListComp";
+import PayablesFormComp from "./PayablesFormComp";
 
 const PayablesPage = () => {
-  const toast = useRef(null);
   const {
-    payableDueList,
-    toastBox,
+    dataList,
     isBusy,
     currentView,
     errors,
-    formDataPayableDue,
+    formData,
     handleChange,
     handleCancel,
     handleAddNew,
-    handleEditPayableDue,
-    handleDeletePayableDue,
+    handleEdit,
+    handleDelete,
     handleRefresh,
-    handleSavePayableDue,
+    handleSave,
+    //other functions
+    
   } = usePayables();
-
-  useEffect(() => {
-    if (toastBox && toast.current) {
-      toast.current.show({
-        severity: toastBox.severity,
-        summary: toastBox.summary,
-        detail: toastBox.detail,
-        life: 3000,
-      });
-    }
-  }, [toastBox]);
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -42,58 +30,39 @@ const PayablesPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Payable Due List"
-            : formDataPayableDue.payable_dues_id
-              ? "Edit Payable Due"
-              : "Add New Payable Due"}
+            ? "Payables List"
+            : formData.id
+            ? "Edit Payable"
+            : "Add New Payable"}
         </h3>
 
-        {isList ? (
-          <div className="flex gap-2">
-            <Button
-              label="Refresh"
-              icon="pi pi-refresh"
-              size="small"
-              severity="secondary"
-              onClick={handleRefresh}
-            />
-            <Button
-              label="New Payable Due"
-              icon="pi pi-plus"
-              size="small"
-              onClick={handleAddNew}
-              disabled
-            />
-          </div>
-        ) : (
-          <Button
-            label="Payable Due List"
-            icon="pi pi-arrow-left"
-            size="small"
-            onClick={handleCancel}
-          />
-        )}
+        <div className="flex gap-2">
+          <ButtonGroup>
+            <Button icon="pi pi-refresh" size="small" severity="secondary" onClick={handleRefresh} disabled={!isList}/>
+            <Button label="New" icon="pi pi-plus" size="small" severity="info" onClick={handleAddNew} disabled={true}/>
+            <Button label="Back" icon="pi pi-arrow-left" size="small" severity="help" onClick={handleCancel} disabled={isList}/>
+          </ButtonGroup>
+        </div>
       </div>
     );
   };
 
   return (
     <>
-      <Toast ref={toast} />
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <PayableListComponent
-            dataList={payableDueList}
-            onEdit={handleEditPayableDue}
-            onDelete={handleDeletePayableDue}
+          <PayablesListComp
+            dataList={dataList}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         ) : (
-          <PayableFormComponent
+          <PayablesFormComp
             isBusy={isBusy}
             errors={errors}
-            formData={formDataPayableDue}
+            formData={formData}
             onChange={handleChange}
-            onSave={handleSavePayableDue}
+            onSave={handleSave}
           />
         )}
       </Card>

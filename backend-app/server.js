@@ -15,6 +15,7 @@ const contactsRoutes = require("./routes/crm/contacts.routes.js");
 const accountsRoutes = require("./routes/accounts/accounts.routes.js");
 const accountsHeadsRoutes = require("./routes/accounts/accountsHeads.routes.js");
 const accountsLedgerRoutes = require("./routes/accounts/accountsLedger.routes.js");
+const payablesRoutes = require("./routes/accounts/payables.routes.js");
 //setup
 const closingRoutes = require("./routes/setup/closing.routes.js");
 //inventory
@@ -71,6 +72,7 @@ app.use("/api/crm/contacts", contactsRoutes);
 app.use("/api/accounts/accounts", accountsRoutes);
 app.use("/api/accounts/accounts-heads", accountsHeadsRoutes);
 app.use("/api/accounts/accounts-ledgers", accountsLedgerRoutes);
+app.use("/api/accounts/payables", payablesRoutes);
 //setup
 app.use("/api/setup/closing", closingRoutes);
 //inventory

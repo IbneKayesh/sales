@@ -34,7 +34,7 @@ const PaymentComp = ({
   });
   useEffect(() => {
     let note = "";
-    if (formData.pmstr_vatpy === "1") {
+    if (formData.pmstr_vatpy === 1) {
       note += " with Vat";
     }
     setPayableNote(note);
@@ -177,7 +177,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.pmstr_ispad === "1" && (
+        {formData.pmstr_ispad === 1 && (
           <Tag
             severity="success"
             value="Paid"
@@ -185,7 +185,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.pmstr_ispad === "2" && (
+        {formData.pmstr_ispad === 2 && (
           <Tag
             severity="warning"
             value="Partially Paid"
@@ -193,7 +193,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.pmstr_ispst === "0" && (
+        {formData.pmstr_ispst === 0 && (
           <Tag
             severity="danger"
             value="Not Posted"
@@ -201,7 +201,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.pmstr_isret === "1" && (
+        {formData.pmstr_isret === 1 && (
           <Tag
             severity="danger"
             value="Returned"
@@ -209,7 +209,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.pmstr_iscls === "1" && (
+        {formData.pmstr_iscls === 1 && (
           <Tag
             severity="danger"
             value="Closed"
@@ -217,7 +217,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.pmstr_vatcl === "1" && (
+        {formData.pmstr_vatcl === 1 && (
           <Tag
             severity="success"
             value="VAT Collected"
@@ -225,7 +225,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.pmstr_hscnl === "1" && (
+        {formData.pmstr_hscnl === 1 && (
           <Tag
             severity="danger"
             value="Cancelled"
@@ -267,14 +267,14 @@ const PaymentComp = ({
                 !formData.edit_stop &&
                 handleChange(
                   "pmstr_vatpy",
-                  formData.pmstr_vatpy === "1" ? "0" : "1"
+                  formData.pmstr_vatpy === 1 ? 0 : 1
                 )
               }
             >
               <div className={`flex align-items-center gap-2 ${!formData.edit_stop ? "bg-green-200 p-1 border-round-md" : ""}`}>
                 <i
                   className={
-                    formData.pmstr_vatpy === "1"
+                    formData.pmstr_vatpy === 1
                       ? "pi pi-check-circle text-bold text-green-500"
                       : "pi pi-circle text-bold text-red-500"
                   }
@@ -468,7 +468,7 @@ const PaymentComp = ({
                     value={formDataPayment.rcvpy_notes}
                     onChange={handleChangePayment}
                     className="w-full"
-                    placeholder="Notes..."
+                    placeholder="Enter payment note (optional)"
                   />
                 </div>
                 <div className="col-12 md:col-3">

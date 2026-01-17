@@ -6,8 +6,14 @@ const { v4: uuidv4 } = require("uuid");
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { pmstr_users, pmstr_bsins, pmstr_cntct, pmstr_trnno, pmstr_trdat } =
-      req.body;
+    const {
+      pmstr_users,
+      pmstr_bsins,
+      pmstr_cntct,
+      pmstr_trnno,
+      pmstr_trdat,
+      pmstr_refno,
+    } = req.body;
 
     // Validate input
     if (!pmstr_users || !pmstr_bsins) {
@@ -20,7 +26,7 @@ router.post("/", async (req, res) => {
     //console.log("get:", JSON.stringify(req.body));
 
     //database action
-    let sql = `SELECT mstr.*, mstr.pmstr_actve as edit_stop,
+    let sql = `SELECT mstr.*, mstr.pmstr_ispst as edit_stop,
     cont.cntct_cntnm, cont.cntct_cntps, cont.cntct_cntno, cont.cntct_ofadr, cont.cntct_crlmt
       FROM tmpb_pmstr mstr
       LEFT JOIN tmcb_cntct cont on mstr.pmstr_cntct = cont.id
@@ -39,7 +45,7 @@ router.post("/", async (req, res) => {
       params.push(`%${pmstr_trnno}%`);
     }
 
-    console.log("params", pmstr_trdat);
+    //console.log("params", pmstr_trdat);
 
     if (pmstr_trdat) {
       const dateObj = new Date(pmstr_trdat);
@@ -56,12 +62,17 @@ router.post("/", async (req, res) => {
       params.push(formattedDate);
     }
 
-    sql += ` ORDER BY mstr.pmstr_trdat`;
+    if (pmstr_refno) {
+      sql += ` AND mstr.pmstr_refno LIKE ?`;
+      params.push(`%${pmstr_refno}%`);
+    }
+
+    sql += ` ORDER BY mstr.pmstr_trdat DESC`;
 
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase bookings for ${pmstr_users}`
+      `Get purchase bookings for ${pmstr_users}`,
     );
     res.json({
       success: true,
@@ -108,7 +119,7 @@ router.post("/booking-details", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase booking for ${bking_pmstr}`
+      `Get purchase booking for ${bking_pmstr}`,
     );
     res.json({
       success: true,
@@ -150,7 +161,7 @@ router.post("/booking-payment", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase booking payment for ${rcvpy_refid}`
+      `Get purchase booking payment for ${rcvpy_refid}`,
     );
     res.json({
       success: true,
@@ -461,6 +472,7 @@ router.post("/update", async (req, res) => {
     pmstr_pdamt = ?,
     pmstr_duamt = ?,
     pmstr_ispad = ?,
+    pmstr_ispst = ?,
     pmstr_upusr = ?,
     pmstr_updat = current_timestamp(),
     pmstr_rvnmr = pmstr_rvnmr + 1
@@ -482,6 +494,7 @@ router.post("/update", async (req, res) => {
         pmstr_pdamt,
         pmstr_duamt,
         pmstr_ispad,
+        pmstr_ispst,
         user_id,
         id,
       ],

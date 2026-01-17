@@ -26,13 +26,15 @@ const EntryComp = ({
   };
 
   useEffect(() => {
-    const hasProducts = formDataItemList.length > 0;
-    const hasCreditLimit = formData.pmstr_duamt > formData.cntct_crlmt;
-    if (!hasProducts || hasCreditLimit || formData.edit_stop) {
+    const hasProducts = formDataItemList.length < 1;
+    const hasCreditLimit = Number(formData.pmstr_duamt) > Number(formData.cntct_crlmt);
+    if (hasProducts || hasCreditLimit || formData.edit_stop) {
+      //console.log("disable");
       setDisableSubmit(true);
     } else {
       setDisableSubmit(false);
     }
+    //console.log(hasCreditLimit);
   }, [formDataItemList, formData.pmstr_duamt, formData.cntct_crlmt]);
 
   useEffect(() => {
@@ -61,7 +63,7 @@ const EntryComp = ({
       order_amount +
       Number(formData.pmstr_incst || 0) -
       (discount_amount + Number(formData.pmstr_rnamt || 0));
-    if (formData.pmstr_vatpy === "1") payable_amount += vat_amount;
+    if (formData.pmstr_vatpy === 1 ) payable_amount += vat_amount;
 
     const paidAmount = formDataPaymentList.reduce(
       (sum, item) => sum + (Number(item.rcvpy_pyamt) || 0),

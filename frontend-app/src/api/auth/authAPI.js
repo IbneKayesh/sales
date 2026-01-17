@@ -7,7 +7,7 @@ export const authAPI = {
       body: JSON.stringify(data),
     }).then((response) => {
       if (response.token) {
-        localStorage.setItem("authToken", response.token);
+        localStorage.setItem("sgd25", response.token);
       }
       return response;
     }),

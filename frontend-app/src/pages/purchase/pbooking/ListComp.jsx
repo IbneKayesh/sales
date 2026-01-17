@@ -155,7 +155,7 @@ const ListComp = ({ dataList, onEdit }) => {
       unpaid: dataList.filter((i) => i.pmstr_ispad === 0).length,
       partial: dataList.filter((i) => i.pmstr_ispad === 2).length,
       due: dataList.reduce((s, i) => s + Number(i.pmstr_duamt || 0), 0),
-      unposted: dataList.filter((i) => i.pmstr_ispst !== "1").length,
+      unposted: dataList.filter((i) => i.pmstr_ispst !== 1).length,
     };
 
     return (

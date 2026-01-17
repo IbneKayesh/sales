@@ -42,7 +42,7 @@ const UserProfile = ({ onSwitchBusiness, onLogout }) => {
             className="bg-blue-500 text-white mb-2"
           />
           <span className="font-bold text-xl mb-1">{user?.users_oname}</span>
-          <span className="text-600 text-sm mb-3">@{user?.users_users}</span>
+          <span className="text-600 text-sm mb-3">{user?.users_email}</span>
 
           <div className="w-full border-top-1 border-gray-200 pt-3 flex flex-column gap-2">
             <Button

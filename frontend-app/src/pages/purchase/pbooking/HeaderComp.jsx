@@ -189,9 +189,9 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
             <Checkbox
               id="pmstr_ispst"
               name="pmstr_ispst"
-              checked={formData.pmstr_ispst === "1"}
+              checked={formData.pmstr_ispst === 1}
               onChange={(e) =>
-                handleChange("pmstr_ispst", e.checked ? "1" : "0")
+                handleChange("pmstr_ispst", e.checked ? 1 : 0)
               }
               className={errors.pmstr_ispst ? "p-invalid" : ""}
             />

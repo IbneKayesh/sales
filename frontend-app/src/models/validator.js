@@ -141,13 +141,30 @@ const validate = (data, schema) => {
   return errors;
 };
 
-export const generateDataModel = (schema, extraData = {}) => {
+export const generateDataModel_v1 = (schema, extraData = {}) => {
   return Object.keys(schema).reduce((acc, key) => {
     if (schema[key].default === "new Date() with local format") {
       acc[key] = currentDate();
     } else {
       acc[key] = schema[key].default || "";
     }
+    return acc;
+  }, extraData);
+};
+
+export const generateDataModel = (schema, extraData = {}) => {
+  return Object.keys(schema).reduce((acc, key) => {
+    const def = schema[key].default;
+
+    if (def === "new Date() with local format") {
+      acc[key] = currentDate();
+    } else if (def !== undefined) {
+      // accept 0, false, "", numbers, strings
+      acc[key] = def;
+    } else {
+      acc[key] = "";
+    }
+
     return acc;
   }, extraData);
 };
