@@ -82,38 +82,53 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
 
   const users_oname_BT = (rowData) => {
     return (
-      <>
-        {rowData.users_oname}
-        {rowData.users_cntct ? ", " + rowData.users_cntct : ""}
-      </>
+      <div className="flex flex-column">
+        <span className="text-md">
+          <ActiveRowCell text={rowData.users_oname} status={rowData.users_actve} />
+        </span>
+        <span className="text-sm text-gray-500">
+          {rowData.users_cntct}
+        </span>
+      </div>
     );
   };
 
   const users_regno_BT = (rowData) => {
     return (
-      <>
-        {rowData.users_regno}
-        {", "}
-        {formatDate(rowData.users_regdt)}
-      </>
+      <div className="flex flex-column">
+        <span className="text-md">
+          <ActiveRowCell text={rowData.users_regno} status={rowData.users_actve} />
+        </span>
+        <span className="text-sm text-gray-500">
+          {formatDate(rowData.users_regdt)}
+        </span>
+      </div>
     );
   };
 
-  const users_lstgn_BT = (rowData) => {
-    return formatDateTime(rowData.users_lstgn);
-  };
-
   const users_lstpd_BT = (rowData) => {
-    return formatDateTime(rowData.users_lstpd);
+    return (
+      <div className="flex flex-column">
+        <span className="text-md">
+          <ActiveRowCell text={formatDateTime(rowData.users_lstpd)} status={rowData.users_actve} />
+        </span>
+        <span className="text-sm text-gray-500">
+          Last Login: {formatDateTime(rowData.users_lstgn)}
+        </span>
+      </div>
+    );
   };
 
   const users_wctxt_BT = (rowData) => {
     return (
-      <>
-        {rowData.users_wctxt}
-        {", "}
-        {rowData.users_notes}
-      </>
+      <div className="flex flex-column">
+        <span className="text-md">
+          <ActiveRowCell text={rowData.users_wctxt} status={rowData.users_actve} />
+        </span>
+        <span className="text-sm text-gray-500">
+          {rowData.users_notes}
+        </span>
+      </div>
     );
   };
 
@@ -138,10 +153,9 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
         <Column field="users_recky" header="Key" />
         <Column field="users_oname" header="Name" body={users_oname_BT} />
         <Column field="users_regno" header="Registered" body={users_regno_BT} />
-        <Column field="users_lstgn" header="Last Login" body={users_lstgn_BT} />
         <Column
           field="users_lstpd"
-          header="Last pwd Change"
+          header="Available"
           body={users_lstpd_BT}
         />
         <Column field="users_wctxt" header="Welcome" body={users_wctxt_BT} />

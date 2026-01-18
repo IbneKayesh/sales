@@ -68,96 +68,65 @@ const ContactListComp = ({
 
   const cntct_ctype_BT = (rowData) => {
     return (
-      <>
-        {rowData.cntct_ctype} {" - "}
-        {rowData.cntct_sorce}
-      </>
+      <div className="flex flex-column">
+        <span className="text-md">{rowData.cntct_ctype}</span>
+        <span className="text-sm text-blue-500">{rowData.cntct_sorce}</span>
+      </div>
     );
   };
 
   const cntct_cntnm_BT = (rowData) => {
-    const text =
-      rowData.cntct_cntnm +
-      ", " +
-      rowData.cntct_cntps +
-      ", " +
-      rowData.cntct_cntno +
-      ", " +
-      rowData.cntct_email;
-    return <ActiveRowCell text={text} status={rowData.cntct_actve} />;
+    return (
+      <div className="flex flex-column">
+        <span className="text-md">
+          <ActiveRowCell
+            text={rowData.cntct_cntnm}
+            status={rowData.cntct_actve}
+          />
+        </span>
+        <span className="text-sm text-blue-500">{rowData.cntct_cntps}</span>
+        <span className="text-sm text-gray-500">{rowData.cntct_cntno}</span>
+        <span className="text-sm text-gray-500">{rowData.cntct_email}</span>
+      </div>
+    );
   };
 
   const cntct_ofadr_BT = (rowData) => {
     return (
-      rowData.cntct_ofadr +
-      ", " +
-      rowData.cntct_fcadr +
-      ", " +
-      rowData.cntct_cntry
+      <div className="flex flex-column">
+        <span className="text-md">
+          <ActiveRowCell
+            text={rowData.cntct_ofadr}
+            status={rowData.cntct_actve}
+          />
+        </span>
+        <span className="text-sm text-blue-500">{rowData.cntct_fcadr}</span>
+        <span className="text-sm text-gray-500">{rowData.cntct_cntry}</span>
+      </div>
     );
   };
 
   const cntct_crlmt_BT = (rowData) => {
-    return rowData.cntct_crlmt > 0 ? (
-      <Badge
-        value={rowData.cntct_crlmt}
-        severity="success"
-        className="mr-1"
-      ></Badge>
-    ) : (
-      <Badge
-        value={rowData.cntct_crlmt}
-        severity="danger"
-        className="mr-1"
-      ></Badge>
-    );
-  };
+    const { cntct_crlmt, cntct_pybln, cntct_adbln, cntct_crbln } = rowData;
 
-  const cntct_pybln_BT = (rowData) => {
-    return rowData.cntct_pybln > 0 ? (
-      <Badge
-        value={rowData.cntct_pybln}
-        severity="danger"
-        className="mr-1"
-      ></Badge>
-    ) : (
-      <Badge
-        value={rowData.cntct_pybln}
-        severity="success"
-        className="mr-1"
-      ></Badge>
-    );
-  };
-
-  const cntct_adbln_BT = (rowData) => {
-    return rowData.cntct_adbln > 0 ? (
-      <Badge
-        value={rowData.cntct_adbln}
-        severity="danger"
-        className="mr-1"
-      ></Badge>
-    ) : (
-      <Badge
-        value={rowData.cntct_adbln}
-        severity="success"
-        className="mr-1"
-      ></Badge>
-    );
-  };
-
-  const cntct_crbln_BT = (rowData) => {
-    return rowData.cntct_crbln > 0 ? (
-      <Badge
-        value={rowData.cntct_crbln}
-        severity="danger"
-        className="mr-1"
-      ></Badge>
-    ) : (
-      <Badge
-        value={rowData.cntct_crbln}
-        severity="success"
-        className="mr-1"
-      ></Badge>
+    return (
+      <div className="flex gap-1">
+        <span className="text-green-500 font-bold">
+          {Number(cntct_crlmt).toFixed(2)}
+        </span>
+        •
+        <span className="text-red-500 font-bold">
+          {Number(cntct_pybln).toFixed(2)}
+        </span>
+        •
+        <span className="text-blue-500 font-bold">
+          {Number(cntct_adbln || 0).toFixed(2)}
+        </span>
+        •
+        <span className="text-purple-500 font-bold">
+          {Number(cntct_crbln || 0).toFixed(2)}
+        </span>
+      </div>
     );
   };
 
@@ -171,11 +140,11 @@ const ContactListComp = ({
     //total debit - total credit;
     const total_debit = ledgerDataList.reduce(
       (total, row) => total + Number(row.ledgr_dbamt),
-      0
+      0,
     );
     const total_credit = ledgerDataList.reduce(
       (total, row) => total + Number(row.ledgr_cramt),
-      0
+      0,
     );
     const balance = total_credit - total_debit;
     return balance > 0 ? (
@@ -199,24 +168,28 @@ const ContactListComp = ({
   };
 
   const ledgr_dbamt_BT = (rowData) => {
-    return <ZeroRowCell value={rowData.ledgr_dbamt} text={rowData.ledgr_dbamt} />;
+    return (
+      <ZeroRowCell value={rowData.ledgr_dbamt} text={rowData.ledgr_dbamt} />
+    );
   };
 
   const ledgr_cramt_BT = (rowData) => {
-    return <ZeroRowCell value={rowData.ledgr_cramt} text={rowData.ledgr_cramt} />;
+    return (
+      <ZeroRowCell value={rowData.ledgr_cramt} text={rowData.ledgr_cramt} />
+    );
   };
 
   const ledgr_dbamt_FT = () => {
     return ledgerDataList.reduce(
       (total, row) => total + Number(row.ledgr_dbamt),
-      0
+      0,
     );
   };
 
   const ledgr_cramt_FT = () => {
     return ledgerDataList.reduce(
       (total, row) => total + Number(row.ledgr_cramt),
-      0
+      0,
     );
   };
 
@@ -233,17 +206,29 @@ const ContactListComp = ({
         rowHover
         showGridlines
       >
-        <Column field="cntct_ctype" header="Type" body={cntct_ctype_BT} sortable />
-        <Column field="cntct_cntnm" header="Name" body={cntct_cntnm_BT} sortable />
-        <Column field="cntct_ofadr" header="Address" body={cntct_ofadr_BT} sortable />
+        <Column
+          field="cntct_ctype"
+          header="Type"
+          body={cntct_ctype_BT}
+          sortable
+        />
+        <Column
+          field="cntct_cntnm"
+          header="Name"
+          body={cntct_cntnm_BT}
+          sortable
+        />
+        <Column
+          field="cntct_ofadr"
+          header="Address"
+          body={cntct_ofadr_BT}
+          sortable
+        />
         <Column
           field="cntct_crlmt"
-          header="Credit Limit"
+          header="Credit • Payable • Advance • Balance"
           body={cntct_crlmt_BT}
         />
-        <Column field="cntct_pybln" header="Payable" body={cntct_pybln_BT} />
-        <Column field="cntct_adbln" header="Advance" body={cntct_adbln_BT} />
-        <Column field="cntct_crbln" header="Balance" body={cntct_crbln_BT} />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
 

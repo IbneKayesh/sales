@@ -33,9 +33,10 @@ export const usePreceipt = () => {
       //response = { success, message, data }
       //console.log("loadBookings:", JSON.stringify(response));
 
-      setDataList(response.data);
-      if (response.data.length > 0) {
+      setDataList([]);
+      if (response.data && response.data.length > 0) {
         setSearchBoxShow(false);
+        setDataList(response.data);
       }
       //showToast("success", "Success", response.message);
     } catch (error) {

@@ -28,14 +28,15 @@ export const usePbooking = () => {
       const response = await pbookingAPI.getAll({
         pmstr_users: user.users_users,
         pmstr_bsins: user.users_bsins,
-        ...searchBoxData
+        ...searchBoxData,
       });
       //response = { success, message, data }
-      //console.log("loadBookings:", JSON.stringify(response));
+      console.log("loadBookings:", JSON.stringify(response));
 
-      setDataList(response.data);
-      if (response.data.length > 0) {
+      setDataList([]);
+      if (response.data && response.data.length > 0) {
         setSearchBoxShow(false);
+        setDataList(response.data);
       }
       //showToast("success", "Success", response.message);
     } catch (error) {
@@ -144,7 +145,7 @@ export const usePbooking = () => {
         response.success ? "info" : "error",
         response.success ? "Deleted" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
     } catch (error) {
       console.error("Error deleting data:", error);
@@ -182,8 +183,8 @@ export const usePbooking = () => {
         Number(formData.pmstr_pyamt) === Number(formData.pmstr_duamt)
           ? "0"
           : Number(formData.pmstr_duamt) === 0
-          ? "1"
-          : "2";
+            ? "1"
+            : "2";
 
       // Ensure id exists (for create)
       const formDataNew = {
@@ -213,7 +214,7 @@ export const usePbooking = () => {
         response.success ? "success" : "error",
         response.success ? "Success" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
 
       //call update process
@@ -239,6 +240,7 @@ export const usePbooking = () => {
     pmstr_trnno: "",
     pmstr_trdat: new Date().toLocaleString().split("T")[0],
     pmstr_refno: "",
+    search_option: "",
   });
 
   const handleChangeSearchInput = (e) => {
@@ -257,6 +259,15 @@ export const usePbooking = () => {
     //console.log("handleSearch", searchBoxData);
     loadBookings();
   };
+
+  const searchOptions = [
+    { name: "pmstr_ispad", label: "Unpaid" },
+    { name: "pmstr_ispst", label: "Unposted" },
+    { name: "pmstr_isret", label: "Returned" },
+    { name: "pmstr_iscls", label: "Closed" },
+    { name: "pmstr_vatcl", label: "VAT Collected" },
+    { name: "pmstr_hscnl", label: "Cancelled" },
+  ];
 
   return {
     dataList,
@@ -284,5 +295,6 @@ export const usePbooking = () => {
     searchBoxData,
     handleChangeSearchInput,
     handleSearch,
+    searchOptions,
   };
 };

@@ -13,6 +13,7 @@ router.post("/", async (req, res) => {
       pmstr_trnno,
       pmstr_trdat,
       pmstr_refno,
+      search_option,
     } = req.body;
 
     // Validate input
@@ -66,6 +67,33 @@ router.post("/", async (req, res) => {
     if (pmstr_refno) {
       sql += ` AND mstr.pmstr_refno LIKE ?`;
       params.push(`%${pmstr_refno}%`);
+    }
+
+    if (search_option) {
+      switch (search_option) {
+        case "pmstr_ispad":
+          sql += ` AND mstr.pmstr_duamt > 0`;
+          break;
+        case "pmstr_ispst":
+          sql += ` AND mstr.pmstr_ispst = 0`;
+          break;
+        case "pmstr_isret":
+          sql += ` AND mstr.pmstr_isret = 1`;
+          break;
+        case "pmstr_iscls":
+          sql += ` AND mstr.pmstr_iscls = 1`;
+          break;
+        case "pmstr_vatcl":
+          sql += ` AND mstr.pmstr_vatcl = 1`;
+          break;
+        case "pmstr_hscnl":
+          sql += ` AND mstr.pmstr_hscnl = 1`;
+          break;
+        default:
+          sql += ` AND mstr.pmstr_${search_option} LIKE ?`;
+          break;
+      }
+      //params.push(`%${search_option}%`);
     }
 
     sql += ` ORDER BY mstr.pmstr_trdat DESC`;

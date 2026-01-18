@@ -33,6 +33,7 @@ const BookingPage = () => {
     searchBoxData,
     handleChangeSearchInput,
     handleSearch,
+    searchOptions,
   } = usePbooking();
 
   const handleSearchBox = () => {
@@ -92,6 +93,7 @@ const BookingPage = () => {
           handleChangeSearchInput={handleChangeSearchInput}
           setSearchBoxShow={setSearchBoxShow}
           handleSearch={handleSearch}
+          searchOptions={searchOptions}
         />
       )}
       {currentView === "list" ? (

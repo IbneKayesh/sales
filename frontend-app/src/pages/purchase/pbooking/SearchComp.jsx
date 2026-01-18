@@ -2,12 +2,14 @@ import React from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
+import { Dropdown } from "primereact/dropdown";
 
 const SearchComp = ({
   searchBoxData,
   handleChangeSearchInput,
   setSearchBoxShow,
   handleSearch,
+  searchOptions,
 }) => (
   <div className="grid shadow-2 border-round-lg surface-card p-3 mb-3">
     <div className="col-12 md:col-2">
@@ -23,7 +25,7 @@ const SearchComp = ({
         />
       </div>
     </div>
-    <div className="col-12 md:col-3">
+    <div className="col-12 md:col-2">
       <div className="p-inputgroup flex-1">
         <span className="p-inputgroup-addon">
           <i className="pi pi-user"></i>
@@ -52,10 +54,11 @@ const SearchComp = ({
           className={`w-full`}
           dateFormat="yy-mm-dd"
           placeholder={`Select date`}
+          showClear
         />
       </div>
-    </div>    
-    <div className="col-12 md:col-3">
+    </div>
+    <div className="col-12 md:col-2">
       <div className="p-inputgroup flex-1">
         <span className="p-inputgroup-addon">
           <i className="pi pi-file"></i>
@@ -65,6 +68,25 @@ const SearchComp = ({
           value={searchBoxData.pmstr_refno}
           onChange={handleChangeSearchInput}
           placeholder="Reference No"
+        />
+      </div>
+    </div>
+    <div className="col-12 md:col-2">
+      <div className="p-inputgroup flex-1">
+        <span className="p-inputgroup-addon">
+          <i className="pi pi-filter"></i>
+        </span>
+        <Dropdown
+          name="search_option"
+          value={searchBoxData.search_option}
+          options={searchOptions}
+          optionLabel="label"
+          optionValue="name"
+          onChange={(e) => handleChangeSearchInput(e)}
+          className={`w-full`}
+          placeholder={`Select an option`}
+          filter
+          showClear
         />
       </div>
     </div>

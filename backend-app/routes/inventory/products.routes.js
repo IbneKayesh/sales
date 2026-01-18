@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
       LEFT JOIN tmib_iuofm suofm ON tbl.items_suofm = suofm.id
       LEFT JOIN tmib_ctgry ctgry ON tbl.items_ctgry = ctgry.id
       WHERE tbl.items_users = ?
-      ORDER BY tbl.items_iname`;
+      ORDER BY tbl.items_icode`;
     const params = [items_users];
 
     const rows = await dbGetAll(sql, params, `Get products for ${items_users}`);

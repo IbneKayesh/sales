@@ -47,20 +47,24 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
   };
 
   const bsins_bname_BT = (rowData) => {
-    const text =
-      rowData.bsins_bname +
-      ", " +
-      rowData.bsins_addrs +
-      ", " +
-      rowData.bsins_cntry;
-    return <ActiveRowCell text={text} status={rowData.bsins_actve} />;
+    return (
+      <div className="flex flex-column">
+        <span className="text-md">
+          <ActiveRowCell text={rowData.bsins_bname} status={rowData.bsins_actve} />
+        </span>
+        <span className="text-sm text-gray-500">
+          {rowData.bsins_addrs}, {rowData.bsins_cntry}
+        </span>
+      </div>
+    );
   };
 
   const bsins_email_BT = (rowData) => {
     return (
-      <span>
-        {rowData.bsins_email}, {rowData.bsins_cntct}
-      </span>
+      <div className="flex flex-column">
+        <span className="text-md">{rowData.bsins_cntct}</span>
+        <span className="text-sm">{rowData.bsins_email}</span>
+      </div>
     );
   };
 
