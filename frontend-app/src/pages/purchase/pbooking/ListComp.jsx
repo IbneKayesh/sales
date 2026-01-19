@@ -6,14 +6,204 @@ import ZeroRowCell from "@/components/ZeroRowCell";
 import { Badge } from "primereact/badge";
 import { SplitButton } from "primereact/splitbutton";
 import { Tag } from "primereact/tag";
+import { useState, useMemo } from "react";
+import { Toast } from "primereact/toast";
+import { InputText } from "primereact/inputtext";
+import { Dropdown } from "primereact/dropdown";
+import { Button } from "primereact/button";
 
 const ListComp = ({ dataList, onEdit }) => {
+  const [globalFilter, setGlobalFilter] = useState(null);
+  const [filterType, setFilterType] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  const filterOptions = useMemo(() => {
+    const options = [
+      { label: "All Contacts", value: "all", icon: "pi pi-users" },
+    ];
+    const uniqueContacts = new Map();
+
+    dataList?.forEach((item) => {
+      if (item.pmstr_cntct && !uniqueContacts.has(item.pmstr_cntct)) {
+        uniqueContacts.set(item.pmstr_cntct, item.cntct_cntnm);
+      }
+    });
+
+    const contactOpts = Array.from(uniqueContacts.entries()).map(
+      ([value, label]) => ({
+        label,
+        value,
+        icon: "pi pi-user",
+      }),
+    );
+
+    contactOpts.sort((a, b) => a.label.localeCompare(b.label));
+    return [...options, ...contactOpts];
+  }, [dataList]);
+
+  const statusFilterOptions = [
+    { label: "All Status", value: "all", icon: "pi pi-filter" },
+    { label: "Unpaid", value: "unpaid", icon: "pi pi-times-circle" },
+    { label: "Paid", value: "paid", icon: "pi pi-check-circle" },
+    { label: "Partial", value: "partial", icon: "pi pi-exclamation-circle" },
+    { label: "Posted", value: "posted", icon: "pi pi-lock" },
+    { label: "Draft (Unposted)", value: "draft", icon: "pi pi-pencil" },
+    { label: "Returned", value: "returned", icon: "pi pi-replay" },
+    { label: "Closed", value: "closed", icon: "pi pi-check" },
+    {
+      label: "VAT Collected",
+      value: "vat-collected",
+      icon: "pi pi-percentage",
+    },
+    {
+      label: "VAT Not Collected",
+      value: "vat-not-collected",
+      icon: "pi pi-percentage",
+    },
+    {
+      label: "Cancelled",
+      value: "cancelled",
+      icon: "pi pi-ban",
+    },
+  ];
+
+  const filteredData = useMemo(() => {
+    let data = dataList || [];
+
+    if (filterType && filterType !== "all") {
+      data = data.filter((item) => item.pmstr_cntct === filterType);
+    }
+
+    if (statusFilter && statusFilter !== "all") {
+      switch (statusFilter) {
+        case "unpaid":
+          data = data.filter((i) => i.pmstr_ispad === 0);
+          break;
+        case "paid":
+          data = data.filter((i) => i.pmstr_ispad === 1);
+          break;
+        case "partial":
+          data = data.filter((i) => i.pmstr_ispad === 2);
+          break;
+        case "posted":
+          data = data.filter((i) => i.pmstr_ispst === 1);
+          break;
+        case "draft":
+          data = data.filter((i) => i.pmstr_ispst === 0);
+          break;
+        case "returned":
+          data = data.filter((i) => i.pmstr_isret === 1);
+          break;
+        case "closed":
+          data = data.filter((i) => i.pmstr_iscls === 1);
+          break;
+        case "vat-collected":
+          data = data.filter((i) => i.pmstr_vatcl === 1);
+          break;
+        case "vat-not-collected":
+          data = data.filter((i) => i.pmstr_vatcl === 0);
+          break;
+        case "cancelled":
+          data = data.filter((i) => i.pmstr_hscnl === 1);
+          break;
+      }
+    }
+
+    return data;
+  }, [dataList, filterType, statusFilter]);
+
+  const handleFilterChange = (e) => {
+    setFilterType(e.value);
+  };
+
+  const handleStatusFilterChange = (e) => {
+    setStatusFilter(e.value);
+  };
+
+  const header = () => {
+    return (
+      <div className="flex flex-column md:flex-row align-items-center justify-content-between gap-3">
+        <div className="p-inputgroup w-full md:w-25rem">
+          <span className="p-inputgroup-addon bg-gray-100">
+            <i className="pi pi-search"></i>
+          </span>
+          <InputText
+            type="search"
+            onInput={(e) => setGlobalFilter(e.target.value)}
+            placeholder="Search..."
+            className="p-inputtext-sm"
+          />
+        </div>
+
+        <div className="flex flex-column md:flex-row align-items-center gap-2 w-full md:w-auto">
+          <Dropdown
+            value={filterType}
+            options={filterOptions}
+            onChange={handleFilterChange}
+            placeholder="Select Filter"
+            className="p-inputtext-sm w-full md:w-18rem"
+            itemTemplate={(option) => (
+              <div className="flex align-items-center gap-2">
+                <i className={option.icon}></i>
+                <span>{option.label}</span>
+              </div>
+            )}
+            valueTemplate={(option, props) => {
+              if (option) {
+                return (
+                  <div className="flex align-items-center gap-2">
+                    <i className={option.icon}></i>
+                    <span>{option.label}</span>
+                  </div>
+                );
+              }
+              return <span>{props.placeholder}</span>;
+            }}
+            checkmark={true}
+          />
+
+          <Dropdown
+            value={statusFilter}
+            options={statusFilterOptions}
+            onChange={handleStatusFilterChange}
+            placeholder="Status Filter"
+            className="p-inputtext-sm w-full md:w-15rem"
+            itemTemplate={(option) => (
+              <div className="flex align-items-center gap-2">
+                <i className={option.icon}></i>
+                <span>{option.label}</span>
+              </div>
+            )}
+            valueTemplate={(option, props) => {
+              if (option) {
+                return (
+                  <div className="flex align-items-center gap-2">
+                    <i className={option.icon}></i>
+                    <span>{option.label}</span>
+                  </div>
+                );
+              }
+              return <span>{props.placeholder}</span>;
+            }}
+            checkmark={true}
+          />
+        </div>
+      </div>
+    );
+  };
+
   const pmstr_trnno_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        {rowData.pmstr_trnno}
-        <span className="text-xs text-blue-500 font-italic mt-1">
-          {rowData.pmstr_odtyp}
+        <span className="text-blue-600">
+          {rowData.pmstr_trnno},{" "}
+          <span className="text-md text-blue-400 mt-1">
+            {rowData.pmstr_odtyp}
+          </span>
+        </span>
+        <span className="text-sm font-italic text-green-600 mt-1">
+          {rowData.cntct_cntnm},{" "}
+          <span className="text-xs text-gray-600">{rowData.cntct_cntps}</span>
         </span>
       </div>
     );
@@ -162,19 +352,19 @@ const ListComp = ({ dataList, onEdit }) => {
 
   const dataTable_FT = () => {
     const stats = {
-      paid: dataList.filter((i) => i.pmstr_ispad === 1).length,
-      unpaid: dataList.filter((i) => i.pmstr_ispad === 0).length,
-      partial: dataList.filter((i) => i.pmstr_ispad === 2).length,
-      due: dataList.reduce((s, i) => s + Number(i.pmstr_duamt || 0), 0),
-      unposted: dataList.filter((i) => i.pmstr_ispst !== 1).length,
+      paid: filteredData.filter((i) => i.pmstr_ispad === 1).length,
+      unpaid: filteredData.filter((i) => i.pmstr_ispad === 0).length,
+      partial: filteredData.filter((i) => i.pmstr_ispad === 2).length,
+      due: filteredData.reduce((s, i) => s + Number(i.pmstr_duamt || 0), 0),
+      unposted: filteredData.filter((i) => i.pmstr_ispst !== 1).length,
     };
 
     return (
       <div className="flex flex-wrap justify-content-center font-bold gap-4 py-2">
-        {dataList.length > 0 && (
+        {filteredData.length > 0 && (
           <div className="text-blue-500 gap-2">
             <span>Records: </span>
-            <span>{dataList.length}</span>
+            <span>{filteredData.length}</span>
           </div>
         )}
         {stats.due > 0 && (
@@ -202,7 +392,7 @@ const ListComp = ({ dataList, onEdit }) => {
     <div className="p-1">
       <ConfirmDialog />
       <DataTable
-        value={dataList}
+        value={filteredData}
         dataKey="pmstr_trnno"
         paginator
         rows={15}
@@ -212,6 +402,16 @@ const ListComp = ({ dataList, onEdit }) => {
         className="shadow-1"
         rowHover
         showGridlines
+        globalFilter={globalFilter}
+        globalFilterFields={[
+          "pmstr_trnno",
+          "pmstr_odtyp",
+          "cntct_cntnm",
+          "cntct_cntps",
+          "pmstr_trnte",
+          "pmstr_refno",
+        ]}
+        header={header()}
         footer={dataTable_FT}
       >
         <Column

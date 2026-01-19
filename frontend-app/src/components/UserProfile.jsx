@@ -21,7 +21,7 @@ const UserProfile = ({ onSwitchBusiness, onLogout }) => {
   return (
     <>
       <span
-        className="topbar-btn bg-blue-500 hover:bg-blue-600 transition-colors duration-200 cursor-pointer flex align-items-center justify-content-center border-circle"
+        className="topbar-btn bg-blue-400 hover:bg-blue-600 transition-colors duration-200 cursor-pointer flex align-items-center justify-content-center border-circle"
         style={{
           width: "35px",
           height: "35px",
@@ -39,7 +39,7 @@ const UserProfile = ({ onSwitchBusiness, onLogout }) => {
             label={getInitials(user?.users_oname)}
             size="xlarge"
             shape="circle"
-            className="bg-blue-500 text-white mb-2"
+            className="bg-blue-500 hover:bg-blue-600 transition-colors duration-200 text-white mb-2"
           />
           <span className="font-bold text-xl mb-1">{user?.users_oname}</span>
           <span className="text-600 text-sm mb-3">{user?.users_email}</span>
@@ -48,7 +48,7 @@ const UserProfile = ({ onSwitchBusiness, onLogout }) => {
             <Button
               label="Switch Business"
               icon="pi pi-briefcase"
-              className="p-button-text p-button-sm justify-content-start text-gray-700"
+              className="p-button-text p-button-sm justify-content-start text-gray-700 bg-gray-50 hover:bg-blue-100 transition-colors duration-200"
               onClick={() => {
                 op.current.hide();
                 onSwitchBusiness();
@@ -57,7 +57,7 @@ const UserProfile = ({ onSwitchBusiness, onLogout }) => {
             <Button
               label="Profile Settings"
               icon="pi pi-user-edit"
-              className="p-button-text p-button-sm justify-content-start text-gray-700"
+              className="p-button-text p-button-sm justify-content-start text-gray-700 bg-gray-50 hover:bg-blue-100 transition-colors duration-200"
               onClick={() => {
                 op.current.hide();
                 navigate("/home/auth/profile");
@@ -66,7 +66,7 @@ const UserProfile = ({ onSwitchBusiness, onLogout }) => {
             <Button
               label="Logout"
               icon="pi pi-sign-out"
-              className="p-button-text p-button-sm p-button-danger justify-content-start"
+              className="p-button-text p-button-sm p-button-danger justify-content-start bg-gray-50 hover:bg-red-100 transition-colors duration-200"
               onClick={onLogout}
             />
           </div>

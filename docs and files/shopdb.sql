@@ -38,6 +38,8 @@ CREATE TABLE `tmab_bsins` (
   `bsins_binno` varchar(255) DEFAULT NULL,
   `bsins_btags` varchar(255) DEFAULT NULL,
   `bsins_cntry` varchar(50) DEFAULT NULL,
+  `bsins_prtrn` tinyint(1) NOT NULL DEFAULT 1,
+  `bsins_sltrn` tinyint(1) NOT NULL DEFAULT 1,
   `bsins_stdat` datetime NOT NULL DEFAULT current_timestamp(),
   `bsins_actve` tinyint(1) NOT NULL DEFAULT 1,
   `bsins_crusr` varchar(50) NOT NULL,

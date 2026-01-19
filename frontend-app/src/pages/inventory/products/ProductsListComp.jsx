@@ -121,6 +121,7 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
       </div>
     );
   };
+  
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.items_iname}"?`,

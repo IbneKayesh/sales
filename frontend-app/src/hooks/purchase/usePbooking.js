@@ -31,7 +31,7 @@ export const usePbooking = () => {
         ...searchBoxData,
       });
       //response = { success, message, data }
-      console.log("loadBookings:", JSON.stringify(response));
+      //console.log("loadBookings:", JSON.stringify(response));
 
       setDataList([]);
       if (response.data && response.data.length > 0) {
@@ -110,7 +110,7 @@ export const usePbooking = () => {
   };
 
   const handleAddNew = () => {
-    //console.log("business:", JSON.stringify(business));
+    //console.log("business:", business.bsins_prtrn);
     //check if business is active
     if (!business.bsins_prtrn) {
       showToast("error", "Error", "Purchase is not active");
@@ -227,9 +227,9 @@ export const usePbooking = () => {
       await closingProcessAPI("purchase-booking", user.users_bsins);
 
       // Clear form & reload
-      //handleClear();
-      //setCurrentView("list");
-      //await loadBookings(); // make sure we wait for updated data
+      handleClear();
+      setCurrentView("list");
+      await loadBookings(); // make sure we wait for updated data
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");

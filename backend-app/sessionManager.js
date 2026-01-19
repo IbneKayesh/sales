@@ -8,7 +8,11 @@ function createSession(user) {
     sessionId,
     userId: user.id,
     email: user.users_email,
+    name: user.users_oname,
+    contact: user.users_cntct,
     role: user.users_drole,
+    business: user.bsins_bname,
+    users: user.users_users,
     createdAt: now,
     lastActivity: now,
     expiresAt: now + 24 * 60 * 60 * 1000, // 24h
@@ -28,10 +32,10 @@ function getSession(sessionId) {
   return session;
 }
 
-function getAllSessions() {
+function getAllSessions(users) {
   // return only active sessions
   const now = Date.now();
-  return Object.values(sessions).filter(s => s.expiresAt > now);
+  return Object.values(sessions).filter(s => s.expiresAt > now && users.includes(s.users));
 }
 
 function killSession(sessionId) {

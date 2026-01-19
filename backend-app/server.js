@@ -5,8 +5,6 @@ const bodyParser = require("body-parser");
 const rateLimiter = require("./middlewares/rateLimiter.js");
 const { initData } = require("./db/initData.js");
 
-//admin
-const adminRoutes = require("./routes/admin/admin.routes");
 //auth
 const authRoutes = require("./routes/auth/auth.routes.js");
 const businessRoutes = require("./routes/auth/business.routes.js");
@@ -27,6 +25,8 @@ const productsRoutes = require("./routes/inventory/products.routes.js");
 //support
 const grainsRoutes = require("./routes/support/grains.routes.js");
 const notesRoutes = require("./routes/support/notes.routes.js");
+const sessionsRoutes = require("./routes/support/sessions.routes.js");
+const ticketsRoutes = require("./routes/support/tickets.routes.js");
 //purchase
 const pbookingRoutes = require("./routes/purchase/pbooking.routes.js");
 const preceiptRoutes = require("./routes/purchase/preceipt.routes.js");
@@ -66,8 +66,6 @@ app.use("/api", authMiddleware);
 
 // Routes
 
-//admin
-app.use("/api/admin", adminRoutes);
 //auth
 app.use("/api/auth", authRoutes);
 app.use("/api/auth/business", businessRoutes);
@@ -88,6 +86,8 @@ app.use("/api/inventory/products", productsRoutes);
 //support
 app.use("/api/support/grains", grainsRoutes);
 app.use("/api/support/notes", notesRoutes);
+app.use("/api/support/sessions", sessionsRoutes);
+app.use("/api/support/tickets", ticketsRoutes);
 //purchase
 app.use("/api/purchase/pbooking", pbookingRoutes);
 app.use("/api/purchase/preceipt", preceiptRoutes);

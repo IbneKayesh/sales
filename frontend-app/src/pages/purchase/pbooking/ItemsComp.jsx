@@ -382,12 +382,21 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const onRowEditSave = (event) => {
     let { newData, index } = event;
     // Calculate item_amount
+    let dsp = Number(newData.bking_dspct || 0);
+    if(dsp < 0) dsp = 0;
+    if(dsp > 100) dsp = 100;
+    let vtp = Number(newData.bking_vtpct || 0);
+    if(vtp < 0) vtp = 0;
+    if(vtp > 1000) vtp = 100;
 
     const itemAmount = newData.bking_bkqty * newData.bking_bkrat;
-    const discountAmount = (newData.bking_dspct / 100) * itemAmount;
-    const vatAmount = (newData.bking_vtpct / 100) * itemAmount;
+    const discountAmount = (dsp / 100) * itemAmount;
+    const vatAmount = (vtp / 100) * itemAmount;
     const totalAmount = itemAmount - discountAmount + vatAmount;
     const costPrice = totalAmount / newData.bking_bkqty;
+
+    newData.bking_dspct = dsp;
+    newData.bking_vtpct = vtp;
 
     newData.bking_itamt = itemAmount;
     newData.bking_dsamt = discountAmount;
@@ -525,12 +534,14 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           header="Discount"
           body={bking_dspct_BT}
           footer={bking_dspct_FT}
+          editor={numberEditor}
         />
         <Column
           field="bking_vtpct"
           header="VAT"
           body={bking_vtpct_BT}
           footer={bking_vtpct_FT}
+          editor={numberEditor}
         />
         <Column
           field="bking_ntamt"

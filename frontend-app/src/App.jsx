@@ -38,6 +38,8 @@ import InvoicePage from "./pages/purchase/pinvoice/InvoicePage";
 import ReturnPage from "./pages/purchase/preturn/ReturnPage.jsx";
 import ReportPage from "./pages/purchase/reports/ReportPage";
 import NotesPage from "./pages/support/notes/NotesPage";
+import TicketsPage from "./pages/support/tickets/TicketsPage";
+import SessionsPage from "./pages/support/SessionsPage.jsx";
 
 import ProfileSettings from "./pages/auth/ProfileSettings";
 
@@ -94,6 +96,8 @@ function AppRoutes() {
         <Route path="purchase/preturn" element={<ReturnPage />} />
         <Route path="purchase/preports" element={<ReportPage />} />
         <Route path="support/notes" element={<NotesPage />} />
+        <Route path="support/tickets" element={<TicketsPage />} />
+        <Route path="support/sessions" element={<SessionsPage />} />
         {/* <Route path="setup/settings" element={<SettingsPage />} /> */}
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>

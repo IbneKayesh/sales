@@ -195,6 +195,18 @@ const Layout = () => {
           url: "/home/support/notes",
           icon: "pi pi-pencil",
         },
+        {
+          id: "sp3",
+          name: "Tickets",
+          url: "/home/support/tickets",
+          icon: "pi pi-ticket",
+        },
+        {
+          id: "sp4",
+          name: "Sessions",
+          url: "/home/support/sessions",
+          icon: "pi pi-users",
+        },
       ],
     },
   ];

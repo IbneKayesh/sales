@@ -213,9 +213,9 @@ export const usePreceipt = () => {
       await closingProcessAPI("purchase-receipt", user.users_bsins);
 
       // Clear form & reload
-      //handleClear();
-      //setCurrentView("list");
-      //await loadBookings(); // make sure we wait for updated data
+      handleClear();
+      setCurrentView("list");
+      await loadReceipts(); // make sure we wait for updated data
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");

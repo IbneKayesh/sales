@@ -9,12 +9,18 @@ import { Tag } from "primereact/tag";
 
 const ListComp = ({ dataList, onEdit }) => {
 
-    const pmstr_trnno_BT = (rowData) => {
+  const pmstr_trnno_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        {rowData.pmstr_trnno}
-        <span className="text-xs text-blue-500 font-italic mt-1">
-          {rowData.pmstr_odtyp}
+        <span className="text-blue-600">
+          {rowData.pmstr_trnno},{" "}
+          <span className="text-md text-blue-400 mt-1">
+            {rowData.pmstr_odtyp}
+          </span>
+        </span>
+        <span className="text-sm font-italic text-green-600 mt-1">
+          {rowData.cntct_cntnm},{" "}
+          <span className="text-xs text-gray-600">{rowData.cntct_cntps}</span>
         </span>
       </div>
     );

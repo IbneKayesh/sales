@@ -25,6 +25,7 @@ const apiRequest = async (endpoint, options = {}) => {
       // Optional: Handle 401 specifically to clear token if needed
       if (response.status === 401) {
         // console.warn('Unauthorized access, consider redirecting to login');
+        throw new Error("Unauthorized access, login again to start session");
       }
       throw new Error(data.error || `HTTP error! status: ${response.status}`);
     }
