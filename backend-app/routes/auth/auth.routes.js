@@ -3,6 +3,7 @@ const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
 const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
+const { createSession } = require("../../sessionManager");
 
 // registration
 router.post("/register", async (req, res) => {
@@ -36,7 +37,7 @@ router.post("/register", async (req, res) => {
     const row_valid_email = await dbGet(
       sql_valid_email,
       params_valid_email,
-      `Get user email for ${users_email}`
+      `Get user email for ${users_email}`,
     );
     if (row_valid_email) {
       return res.json({
@@ -122,7 +123,8 @@ router.post("/login", async (req, res) => {
     const sql = `SELECT usr.id,usr.users_email,usr.users_oname,usr.users_cntct,usr.users_bsins,
     usr.users_drole,usr.users_users,usr.users_stats,usr.users_regno,
     usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,
-    bsn.bsins_bname, bsn.bsins_addrs, bsn.bsins_email, bsn.bsins_cntct, bsn.bsins_binno, bsn.bsins_cntry
+    bsn.bsins_bname, bsn.bsins_addrs, bsn.bsins_email, bsn.bsins_cntct, bsn.bsins_binno, bsn.bsins_cntry, 
+    bsn.bsins_prtrn, bsn.bsins_sltrn
 FROM tmab_users usr
 LEFT JOIN tmab_bsins bsn ON usr.users_bsins = bsn.id
     WHERE usr.users_email = ?
@@ -133,7 +135,7 @@ LEFT JOIN tmab_bsins bsn ON usr.users_bsins = bsn.id
     const row = await dbGet(
       sql,
       params,
-      `Get user login credential for ${users_email}`
+      `Get user login credential for ${users_email}`,
     );
     if (!row) {
       return res.json({
@@ -143,11 +145,19 @@ LEFT JOIN tmab_bsins bsn ON usr.users_bsins = bsn.id
       });
     }
 
+    // inside login route, after validating user
+    const session = createSession(row);
+
     // Generate JWT
     const token = jwt.sign(
-      { id: row.id, email: row.users_email, role: row.users_drole },
+      {
+        id: row.id,
+        email: row.users_email,
+        role: row.users_drole,
+        sessionId: session.sessionId,
+      },
       process.env.JWT_SECRET,
-      { expiresIn: "24h" }
+      { expiresIn: "24h" },
     );
 
     res.json({
@@ -200,7 +210,7 @@ router.post("/recover-password", async (req, res) => {
     const row = await dbGet(
       sql,
       params,
-      `Get user password recovery for ${users_email}`
+      `Get user password recovery for ${users_email}`,
     );
     if (!row) {
       return res.json({
@@ -292,7 +302,7 @@ router.post("/change-password", async (req, res) => {
     const row = await dbGet(
       sql,
       params,
-      `Get user login credential for ${users_email}`
+      `Get user login credential for ${users_email}`,
     );
     if (!row) {
       return res.json({
@@ -314,7 +324,7 @@ router.post("/change-password", async (req, res) => {
     await dbRun(
       sql_Updt,
       params_Updt,
-      `Change user password for ${users_email}`
+      `Change user password for ${users_email}`,
     );
 
     res.json({

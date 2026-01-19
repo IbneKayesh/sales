@@ -5,6 +5,7 @@ import { Calendar } from "primereact/calendar";
 import { Avatar } from "primereact/avatar";
 import tmab_bsins from "@/models/auth/tmab_bsins.json";
 import { useAuth } from "@/hooks/useAuth";
+import { InputSwitch } from "primereact/inputswitch";
 
 const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   const { business } = useAuth();
@@ -147,7 +148,7 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           <small className="mb-3 text-red-500">{errors.bsins_cntct}</small>
         )}
       </div>
-      <div className="col-12 md:col-2">
+      <div className="col-12 md:col-3">
         <label
           htmlFor="bsins_binno"
           className="block text-900 font-medium mb-2"
@@ -165,7 +166,7 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           <small className="mb-3 text-red-500">{errors.bsins_binno}</small>
         )}
       </div>
-      <div className="col-12 md:col-3">
+      <div className="col-12 md:col-6">
         <label
           htmlFor="bsins_btags"
           className="block text-900 font-medium mb-2"
@@ -181,6 +182,40 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
         />
         {errors.bsins_btags && (
           <small className="mb-3 text-red-500">{errors.bsins_btags}</small>
+        )}
+      </div>
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="bsins_prtrn"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmab_bsins.bsins_prtrn.label} <span className="text-red-500">*</span>
+        </label>
+        <InputSwitch
+          name="bsins_prtrn"
+          checked={formData.bsins_prtrn === 1}
+          onChange={(e) => onChange("bsins_prtrn", e.value ? 1 : 0)}
+          className={`${errors.bsins_prtrn ? "p-invalid" : ""}`}
+        />
+        {errors.bsins_prtrn && (
+          <small className="mb-3 text-red-500">{errors.bsins_prtrn}</small>
+        )}
+      </div>
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="bsins_sltrn"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmab_bsins.bsins_sltrn.label} <span className="text-red-500">*</span>
+        </label>
+        <InputSwitch
+          name="bsins_sltrn"
+          checked={formData.bsins_sltrn === 1}
+          onChange={(e) => onChange("bsins_sltrn", e.value ? 1 : 0)}
+          className={`${errors.bsins_sltrn ? "p-invalid" : ""}`}
+        />
+        {errors.bsins_sltrn && (
+          <small className="mb-3 text-red-500">{errors.bsins_sltrn}</small>
         )}
       </div>
       <div className="col-12 md:col-2">

@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const rateLimiter = require("./middlewares/rateLimiter.js");
 const { initData } = require("./db/initData.js");
 
+//admin
+const adminRoutes = require("./routes/admin/admin.routes");
 //auth
 const authRoutes = require("./routes/auth/auth.routes.js");
 const businessRoutes = require("./routes/auth/business.routes.js");
@@ -39,7 +41,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // API Key validation middleware
-// API Key validation middleware
 require("dotenv").config();
 const authMiddleware = require("./middlewares/authMiddleware");
 
@@ -62,7 +63,11 @@ app.use("/api", authMiddleware);
 // Initialize database
 //initData();
 
+
 // Routes
+
+//admin
+app.use("/api/admin", adminRoutes);
 //auth
 app.use("/api/auth", authRoutes);
 app.use("/api/auth/business", businessRoutes);

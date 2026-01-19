@@ -53,6 +53,8 @@ router.post("/create", async (req, res) => {
       bsins_binno,
       bsins_btags,
       bsins_cntry,
+      bsins_prtrn,
+      bsins_sltrn,
       bsins_stdat,
       user_id,
     } = req.body;
@@ -79,8 +81,9 @@ router.post("/create", async (req, res) => {
     //database action
     const sql = `INSERT INTO tmab_bsins
     (id,bsins_users,bsins_bname,bsins_addrs,bsins_email,bsins_cntct,
-    bsins_binno,bsins_btags,bsins_cntry,bsins_stdat,bsins_crusr,bsins_upusr)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`;
+    bsins_binno,bsins_btags,bsins_cntry, bsins_prtrn, bsins_sltrn,
+    bsins_stdat,bsins_crusr,bsins_upusr)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?, ?, ?)`;
     const params = [
       id,
       bsins_users,
@@ -90,7 +93,9 @@ router.post("/create", async (req, res) => {
       bsins_cntct,
       bsins_binno,
       bsins_btags,
-      bsins_cntry,
+      bsins_cntry,      
+      bsins_prtrn,
+      bsins_sltrn,
       bsins_stdat,
       user_id,
       user_id,
@@ -125,6 +130,8 @@ router.post("/update", async (req, res) => {
       bsins_binno,
       bsins_btags,
       bsins_cntry,
+      bsins_prtrn,
+      bsins_sltrn,
       bsins_stdat,
       user_id,
     } = req.body;
@@ -157,6 +164,8 @@ router.post("/update", async (req, res) => {
     bsins_binno = ?,
     bsins_btags = ?,
     bsins_cntry = ?,
+    bsins_prtrn = ?,
+    bsins_sltrn = ?,
     bsins_stdat = ?,
     bsins_upusr = ?,
     bsins_rvnmr = bsins_rvnmr + 1
@@ -169,6 +178,8 @@ router.post("/update", async (req, res) => {
       bsins_binno,
       bsins_btags,
       bsins_cntry,
+      bsins_prtrn,
+      bsins_sltrn,
       bsins_stdat,
       user_id,
       id,

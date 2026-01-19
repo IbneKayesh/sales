@@ -55,6 +55,24 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
         <span className="text-sm text-gray-500">
           {rowData.bsins_addrs}, {rowData.bsins_cntry}
         </span>
+        <span className="text-sm text-gray-500 flex gap-2">
+          Purchase: 
+          {
+            rowData.bsins_prtrn === 1 ? (
+              <i className="pi pi-check-circle text-green-500"></i>
+            ) : (
+              <i className="pi pi-times-circle text-red-500"></i>
+            )
+          }
+          Sales: 
+          {
+            rowData.bsins_sltrn === 1 ? (
+              <i className="pi pi-check-circle text-green-500"></i>
+            ) : (
+              <i className="pi pi-times-circle text-red-500"></i>
+            )
+          }
+        </span>
       </div>
     );
   };

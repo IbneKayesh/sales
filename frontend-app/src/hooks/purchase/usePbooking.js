@@ -11,7 +11,7 @@ import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 const dataModel = generateDataModel(tmpb_pmstr, { edit_stop: 0 });
 
 export const usePbooking = () => {
-  const { user } = useAuth();
+  const { user, business } = useAuth();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
   const [isBusy, setIsBusy] = useState(false);
@@ -110,6 +110,12 @@ export const usePbooking = () => {
   };
 
   const handleAddNew = () => {
+    //console.log("business:", JSON.stringify(business));
+    //check if business is active
+    if (!business.bsins_prtrn) {
+      showToast("error", "Error", "Purchase is not active");
+      return;
+    }
     handleClear();
     setCurrentView("form");
   };

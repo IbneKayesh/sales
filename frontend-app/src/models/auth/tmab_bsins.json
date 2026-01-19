@@ -73,6 +73,24 @@
     "required": true,
     "default": "Bangladesh"
   },
+  "bsins_prtrn": {
+    "type": "number",
+    "label": "Purchase Transaction",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Purchase Transaction",
+    "required": true,
+    "default": 0
+  },
+  "bsins_sltrn": {
+    "type": "number",
+    "label": "Sales Transaction",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Sales Transaction",
+    "required": true,
+    "default": 0
+  },
   "bsins_stdat": {
     "type": "date",
     "label": "Date",

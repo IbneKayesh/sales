@@ -77,6 +77,8 @@ export const AuthProvider = ({ children }) => {
           bsins_image: null,
           bsins_binno: response.data.bsins_binno,
           bsins_cntry: response.data.bsins_cntry,
+          bsins_prtrn: response.data.bsins_prtrn,
+          bsins_sltrn: response.data.bsins_sltrn,
         };
         setBusiness(businessData);
         //localStorage.setItem("business", JSON.stringify(response.data));

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { getSession } = require("../sessionManager"); // import your session manager
 
 const authMiddleware = (req, res, next) => {
   // Public paths whitelist
@@ -41,7 +42,18 @@ const authMiddleware = (req, res, next) => {
         .json({ success: false, message: "Internal Server Error" });
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Attach user info to request
+
+    // Check if session exists and is active
+    const session = getSession(decoded.sessionId);
+    if (!session) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Session expired or invalid." });
+    }
+
+    // Attach user info and session to request
+    req.user = decoded;
+    req.session = session;
     next();
   } catch (error) {
     return res.status(401).json({ success: false, message: "Invalid token." });
