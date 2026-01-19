@@ -11,9 +11,9 @@ const SearchComp = ({
   handleSearch,
   searchOptions,
 }) => (
-  <div className="grid shadow-2 border-round-lg surface-card p-3 mb-3">
-    <div className="col-12 md:col-2">
-      <div className="p-inputgroup flex-1">
+  <div className="flex flex-wrap shadow-2 border-round-lg surface-card p-3 mb-3 gap-2 align-items-center">
+    <div className="flex-1">
+      <div className="p-inputgroup">
         <span className="p-inputgroup-addon">
           <i className="pi pi-hashtag"></i>
         </span>
@@ -21,12 +21,13 @@ const SearchComp = ({
           name="pmstr_trnno"
           value={searchBoxData.pmstr_trnno}
           onChange={handleChangeSearchInput}
-          placeholder="Transaction No"
+          placeholder="Trn No"
+          className="w-full p-inputtext-sm"
         />
       </div>
     </div>
-    <div className="col-12 md:col-2">
-      <div className="p-inputgroup flex-1">
+    <div className="flex-1">
+      <div className="p-inputgroup">
         <span className="p-inputgroup-addon">
           <i className="pi pi-user"></i>
         </span>
@@ -34,12 +35,13 @@ const SearchComp = ({
           name="pmstr_cntct"
           value={searchBoxData.pmstr_cntct}
           onChange={handleChangeSearchInput}
-          placeholder="Supplier Name"
+          placeholder="Supplier"
+          className="w-full p-inputtext-sm"
         />
       </div>
     </div>
-    <div className="col-12 md:col-2">
-      <div className="p-inputgroup flex-1">
+    <div className="flex-1">
+      <div className="p-inputgroup">
         <span className="p-inputgroup-addon">
           <i className="pi pi-calendar"></i>
         </span>
@@ -51,15 +53,16 @@ const SearchComp = ({
               : null
           }
           onChange={handleChangeSearchInput}
-          className={`w-full`}
+          className="w-full"
+          inputClassName="p-inputtext-sm"
           dateFormat="yy-mm-dd"
-          placeholder={`Select date`}
+          placeholder="Date"
           showClear
         />
       </div>
     </div>
-    <div className="col-12 md:col-2">
-      <div className="p-inputgroup flex-1">
+    <div className="flex-1">
+      <div className="p-inputgroup">
         <span className="p-inputgroup-addon">
           <i className="pi pi-file"></i>
         </span>
@@ -67,12 +70,13 @@ const SearchComp = ({
           name="pmstr_refno"
           value={searchBoxData.pmstr_refno}
           onChange={handleChangeSearchInput}
-          placeholder="Reference No"
+          placeholder="Ref No"
+          className="w-full p-inputtext-sm"
         />
       </div>
     </div>
-    <div className="col-12 md:col-2">
-      <div className="p-inputgroup flex-1">
+    <div className="flex-1">
+      <div className="p-inputgroup">
         <span className="p-inputgroup-addon">
           <i className="pi pi-filter"></i>
         </span>
@@ -83,28 +87,28 @@ const SearchComp = ({
           optionLabel="label"
           optionValue="name"
           onChange={(e) => handleChangeSearchInput(e)}
-          className={`w-full`}
-          placeholder={`Select an option`}
+          className="w-full p-inputtext-sm"
+          placeholder="Option"
           filter
           showClear
         />
       </div>
     </div>
-    <div className="col-12 md:col-2">
-      <div className="flex justify-content-end gap-2">
-        <Button
-          label="Clear"
-          icon="pi pi-filter-slash"
-          severity="secondary"
-          onClick={() => setSearchBoxShow(false)}
-        />
-        <Button
-          label="Find"
-          icon="pi pi-search"
-          severity="info"
-          onClick={() => handleSearch()}
-        />
-      </div>
+    <div className="flex gap-2 ml-auto">
+      <Button
+        label="Clear"
+        icon="pi pi-filter-slash"
+        severity="secondary"
+        size="small"
+        onClick={() => setSearchBoxShow(false)}
+      />
+      <Button
+        label="Find"
+        icon="pi pi-search"
+        severity="info"
+        size="small"
+        onClick={() => handleSearch()}
+      />
     </div>
   </div>
 );

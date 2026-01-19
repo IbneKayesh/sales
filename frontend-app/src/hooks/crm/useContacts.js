@@ -12,6 +12,7 @@ export const useContacts = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
+  const [allData, setAllData] = useState([]);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
@@ -38,21 +39,7 @@ export const useContacts = () => {
       });
       // response = { message, data }
       setDataList(response.data);
-
-      // const paymentData = response.data.filter(
-      //   (c) => c.contact_type !== "Both"
-      // );
-      // setContactPaymentList(paymentData);
-
-      // const supplierData = response.data.filter((c) =>
-      //   ["Supplier", "Both"].includes(c.contact_type)
-      // );
-      // setSupplierList(supplierData);
-
-      // const customerData = response.data.filter((c) =>
-      //   ["Customer", "Both"].includes(c.contact_type)
-      // );
-      // setContactCustomerList(customerData);
+      setAllData(response.data);
 
       //showToast("success", "Success", response.message);
     } catch (error) {
@@ -99,14 +86,15 @@ export const useContacts = () => {
       // Call API, unwrap { message, data }
       const response = await contactAPI.delete(rowData);
 
-      const updatedList = dataList.filter((c) => c.id !== rowData.id);
+      const updatedList = allData.filter((c) => c.id !== rowData.id);
+      setAllData(updatedList);
       setDataList(updatedList);
 
       showToast(
         response.success ? "info" : "error",
         response.success ? "Deleted" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
     } catch (error) {
       console.error("Error deleting data:", error);
@@ -157,7 +145,7 @@ export const useContacts = () => {
         response.success ? "success" : "error",
         response.success ? "Success" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
 
       handleClear();
@@ -216,7 +204,7 @@ export const useContacts = () => {
     let supplierData = [];
     if (dataList.length > 0) {
       supplierData = dataList.filter((c) =>
-        ["Supplier", "Both"].includes(c.cntct_ctype)
+        ["Supplier", "Both"].includes(c.cntct_ctype),
       );
     } else {
       const response = await contactAPI.getAll({
@@ -227,6 +215,18 @@ export const useContacts = () => {
     //console.log("supplierData: ", supplierData);
     setSupplierList(supplierData);
   };
+
+  const handleFilterDataList = (filterType) => {
+    if (filterType.toLowerCase() === "both") {
+      setDataList(allData);
+    } else {
+      const filteredData = allData.filter(
+        (c) => c.cntct_ctype.toLowerCase() === filterType.toLowerCase(),
+      );
+      setDataList(filteredData);
+    }
+  };
+
   return {
     dataList,
     isBusy,
@@ -251,5 +251,6 @@ export const useContacts = () => {
     //supplier list
     supplierList,
     fetchSupplierList,
+    handleFilterDataList,
   };
 };

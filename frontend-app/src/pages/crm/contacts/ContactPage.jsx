@@ -25,6 +25,7 @@ const ContactPage = () => {
     //ledger
     handleShowContactLedger,
     ledgerDataList,
+    handleFilterDataList
   } = useContacts();
 
   const getHeader = () => {
@@ -61,6 +62,7 @@ const ContactPage = () => {
             onDelete={handleDelete}
             onShowContactLedger={handleShowContactLedger}
             ledgerDataList={ledgerDataList}
+            onFilterDataList={handleFilterDataList}
           />
         ) : (
           <ContactFormComp

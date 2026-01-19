@@ -14,6 +14,7 @@ export const useProducts = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
+  const [allData, setAllData] = useState([]);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
@@ -27,6 +28,7 @@ export const useProducts = () => {
       //response = { message, data }
       //console.log("response: " + JSON.stringify(response));
       setDataList(response.data);
+      setAllData(response.data);
 
       //showToast("success", "Success", response.message);
     } catch (error) {
@@ -77,15 +79,16 @@ export const useProducts = () => {
       // Call API, unwrap { message, data }
       const response = await productsAPI.delete(rowData);
 
-      // Remove deleted unit from local state
-      const updatedList = dataList.filter((u) => u.id !== rowData.id);
+      // Remove deleted item from local state
+      const updatedList = allData.filter((u) => u.id !== rowData.id);
+      setAllData(updatedList);
       setDataList(updatedList);
 
       showToast(
         response.success ? "info" : "error",
         response.success ? "Deleted" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
     } catch (error) {
       console.error("Error deleting data:", error);
@@ -108,7 +111,7 @@ export const useProducts = () => {
         showToast(
           "warn",
           "Warning",
-          "If Primary Unit and Secondary Unit are the same, Difference Qty must be 1."
+          "If Primary Unit and Secondary Unit are the same, Difference Qty must be 1.",
         );
         setIsBusy(false);
         return;
@@ -116,7 +119,7 @@ export const useProducts = () => {
         showToast(
           "warn",
           "Warning",
-          "If Primary Unit and Secondary Unit are different, Difference Qty must be greater than 1."
+          "If Primary Unit and Secondary Unit are different, Difference Qty must be greater than 1.",
         );
         setIsBusy(false);
         return;
@@ -157,7 +160,7 @@ export const useProducts = () => {
         response.success ? "success" : "error",
         response.success ? "Success" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
 
       handleClear();
@@ -180,7 +183,7 @@ export const useProducts = () => {
     setFormDataBItem((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate(
       { ...formDataBItem, [field]: value },
-      tmib_bitem
+      tmib_bitem,
     );
     setErrors(newErrors);
   };
@@ -260,7 +263,7 @@ export const useProducts = () => {
         response.success ? "success" : "error",
         response.success ? "Success" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
 
       //must clear business to prevent inserting same item in same business
@@ -289,7 +292,7 @@ export const useProducts = () => {
     const discount_amount = sales_dp_mrp * (formDataBItem.bitem_sddsp / 100);
 
     //vat amount = on sales price
-    const vat_amount = 0;// sales_dp_mrp * (formData.items_sdvat / 100);
+    const vat_amount = 0; // sales_dp_mrp * (formData.items_sdvat / 100);
 
     //cost amount = on purchase price
     const cost_amount =
@@ -307,6 +310,7 @@ export const useProducts = () => {
 
   // Business Items
   const [businessItems, setBusinessItems] = useState([]);
+  const [allBusinessData, setAllBusinessData] = useState([]);
 
   const handleItemPriceView = () => {
     setCurrentView("price");
@@ -321,10 +325,94 @@ export const useProducts = () => {
       //response = { message, data }
       //console.log("response: " + JSON.stringify(response));
       setBusinessItems(response.data);
+      setAllBusinessData(response.data);
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
       showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
+
+  const handleFilterBusinessItems = (filterType) => {
+    switch (filterType) {
+      case "all":
+        setBusinessItems(allBusinessData);
+        break;
+      case "low_stock":
+        setBusinessItems(
+          allBusinessData.filter(
+            (i) => Number(i.bitem_gstkq) < Number(i.bitem_mnqty),
+          ),
+        );
+        break;
+      case "out_of_stock":
+        setBusinessItems(
+          allBusinessData.filter((i) => Number(i.bitem_gstkq) === 0),
+        );
+        break;
+      case "bad_stock":
+        setBusinessItems(
+          allBusinessData.filter((i) => Number(i.bitem_bstkq) > 0),
+        );
+        break;
+      case "without_margin":
+        setBusinessItems(
+          allBusinessData.filter((i) => Number(i.bitem_mpric) === 0),
+        );
+        break;
+      case "purchase_bookings":
+        setBusinessItems(
+          allBusinessData.filter((i) => Number(i.bitem_pbqty) > 0),
+        );
+        break;
+      case "sales_bookings":
+        setBusinessItems(
+          allBusinessData.filter((i) => Number(i.bitem_sbqty) > 0),
+        );
+        break;
+      case "with_discount":
+        setBusinessItems(
+          allBusinessData.filter((i) => Number(i.bitem_sddsp) > 0),
+        );
+        break;
+      case "inactives":
+        setBusinessItems(allBusinessData.filter((i) => i.bitem_actve === 0));
+        break;
+      default:
+        setBusinessItems(allBusinessData);
+        break;
+    }
+  };
+
+  const handleFilterDataList = (filterType) => {
+    switch (filterType) {
+      case "all":
+        setDataList(allData);
+        break;
+      case "warranty":
+        setDataList(allData.filter((i) => i.items_hwrnt === 1));
+        break;
+      case "expiry":
+        setDataList(allData.filter((i) => i.items_hxpry === 1));
+        break;
+      case "vat":
+        setDataList(allData.filter((i) => Number(i.items_sdvat) > 0));
+        break;
+      case "without_cost":
+        setDataList(allData.filter((i) => Number(i.items_costp) === 0));
+        break;
+      case "without_barcode":
+        setDataList(allData.filter((i) => !i.items_bcode));
+        break;
+      case "without_hsn":
+        setDataList(allData.filter((i) => !i.items_hscod));
+        break;
+      case "inactives":
+        setDataList(allData.filter((i) => i.items_actve === 0));
+        break;
+      default:
+        setDataList(allData);
+        break;
     }
   };
 
@@ -350,5 +438,7 @@ export const useProducts = () => {
     handleItemPriceView,
     handleFetchBusinessItems,
     businessItems,
+    handleFilterDataList,
+    handleFilterBusinessItems,
   };
 };

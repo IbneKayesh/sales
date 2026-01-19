@@ -29,7 +29,9 @@ const ProductsPage = () => {
     // Business Items
     handleItemPriceView,
     handleFetchBusinessItems,
-    businessItems
+    businessItems,
+    handleFilterDataList,
+    handleFilterBusinessItems,
   } = useProducts();
 
   const getHeader = () => {
@@ -38,7 +40,11 @@ const ProductsPage = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
-          {isList ? "Unit List" : formData.id ? "Edit Unit" : "Add New Unit"}
+          {isList
+            ? "Products List"
+            : formData.id
+              ? "Edit Product"
+              : "Add New Product"}
         </h3>
 
         <div className="flex gap-2">
@@ -88,6 +94,7 @@ const ProductsPage = () => {
             dataList={dataList}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onFilterDataList={handleFilterDataList}
           />
         ) : currentView === "form" ? (
           <ProductsFormComp
@@ -103,7 +110,11 @@ const ProductsPage = () => {
             onFetchBItem={handleFetchBItem}
           />
         ) : (
-          <BItemsComp onFetchBusinessItems={handleFetchBusinessItems} dataList={businessItems}/>
+          <BItemsComp
+            onFetchBusinessItems={handleFetchBusinessItems}
+            dataList={businessItems}
+            onFilterBusinessItems={handleFilterBusinessItems}
+          />
         )}
       </Card>
     </>

@@ -4,10 +4,13 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { Dialog } from "primereact/dialog";
-import { Badge } from "primereact/badge";
+import { InputText } from "primereact/inputtext";
 import { formatDate } from "@/utils/datetime";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import ZeroRowCell from "@/components/ZeroRowCell";
+import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
+import { SelectButton } from "primereact/selectbutton";
 
 const ContactListComp = ({
   dataList,
@@ -15,9 +18,98 @@ const ContactListComp = ({
   onDelete,
   onShowContactLedger,
   ledgerDataList,
+  onFilterDataList,
 }) => {
   const [selectedRowDetail, setSelectedRowDetail] = useState({});
   const [dlgLedger, setDlgLedger] = useState(false);
+  const [globalFilter, setGlobalFilter] = useState(null);
+  const [filterType, setFilterType] = useState("both");
+  const toast = useRef(null);
+
+  const filterOptions = [
+    { label: "Both", value: "both", icon: "pi pi-users" },
+    { label: "Customers", value: "customer", icon: "pi pi-shopping-cart" },
+    { label: "Suppliers", value: "supplier", icon: "pi pi-truck" },
+  ];
+
+  const handleFilterChange = (e) => {
+    if (e.value) {
+      setFilterType(e.value);
+      onFilterDataList(e.value);
+    }
+  };
+
+  const onExportCsv = () => {
+    toast.current.show({
+      severity: "warn",
+      summary: "Permission Denied",
+      detail: "You are not allowed to export CSV",
+      life: 3000,
+    });
+  };
+
+  const onImportCsv = () => {
+    toast.current.show({
+      severity: "warn",
+      summary: "Permission Denied",
+      detail: "You are not allowed to import CSV",
+      life: 3000,
+    });
+  };
+
+  const header = () => {
+    return (
+      <div className="flex flex-wrap align-items-center justify-content-between gap-2">
+        <div className="flex flex-wrap align-items-center gap-2">
+          <div className="p-inputgroup w-full md:w-25rem">
+            <span className="p-inputgroup-addon bg-gray-100">
+              <i className="pi pi-search"></i>
+            </span>
+            <InputText
+              type="search"
+              onInput={(e) => setGlobalFilter(e.target.value)}
+              placeholder="Search..."
+              className="p-inputtext-sm"
+            />
+          </div>
+
+          <SelectButton
+            value={filterType}
+            options={filterOptions}
+            onChange={handleFilterChange}
+            className="p-buttonset-sm"
+            itemTemplate={(option) => (
+              <div className="flex align-items-center gap-1">
+                <i className={option.icon}></i>
+                <span className="hidden sm:inline">{option.label}</span>
+              </div>
+            )}
+          />
+        </div>
+
+        <div className="flex align-items-center gap-2">
+          <Button
+            type="button"
+            icon="pi pi-file-excel"
+            severity="success"
+            size="small"
+            tooltip="Export CSV"
+            tooltipOptions={{ position: "bottom" }}
+            onClick={onExportCsv}
+          />
+          <Button
+            type="button"
+            icon="pi pi-file-import"
+            severity="info"
+            size="small"
+            tooltip="Import CSV"
+            tooltipOptions={{ position: "bottom" }}
+            onClick={onImportCsv}
+          />
+        </div>
+      </div>
+    );
+  };
 
   const handleDelete = (rowData) => {
     confirmDialog({
@@ -195,6 +287,7 @@ const ContactListComp = ({
 
   return (
     <div className="p-1">
+      <Toast ref={toast} />
       <ConfirmDialog />
       <DataTable
         value={dataList}
@@ -205,6 +298,8 @@ const ContactListComp = ({
         size="small"
         rowHover
         showGridlines
+        globalFilter={globalFilter}
+        header={header()}
       >
         <Column
           field="cntct_ctype"
