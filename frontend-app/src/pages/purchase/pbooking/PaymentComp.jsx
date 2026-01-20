@@ -422,7 +422,9 @@ const PaymentComp = ({
             {formData.edit_stop === 1 && formData.pmstr_hscnl === 1 && (
               <div className="flex justify-content-between">
                 <span>Cancelled (12)</span>
-                <span className="font-bold">{formData.pmstr_cnamt}/-</span>
+                <span className="font-bold text-red-500">
+                  {formData.pmstr_cnamt}/-
+                </span>
               </div>
             )}
           </div>

@@ -97,5 +97,14 @@
     "placeholder": "Enter start date",
     "required": true,
     "default": "new Date() with local format"
-  }
+  },
+  "bsins_pbviw": {
+    "type": "number",
+    "label": "Analytics",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Analytics",
+    "required": true,
+    "default": 1
+  }  
 }

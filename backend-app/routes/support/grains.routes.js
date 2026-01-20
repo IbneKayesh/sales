@@ -54,8 +54,8 @@ router.post("/generate", async (req, res) => {
       });
     }
 
-    const todayDate ='2026-01-18';
-    const tommorrowDate ='2026-01-19';
+    const todayDate ='2026-01-19';
+    const tommorrowDate ='2026-01-20';
 
     const fromDate = `${todayDate} 00:00:00`;
     const toDate = `${tommorrowDate} 00:00:00`;

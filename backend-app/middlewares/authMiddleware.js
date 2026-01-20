@@ -44,16 +44,16 @@ const authMiddleware = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Check if session exists and is active
-    const session = getSession(decoded.sessionId);
-    if (!session) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Session expired or invalid." });
-    }
+    // const session = getSession(decoded.sessionId);
+    // if (!session) {
+    //   return res
+    //     .status(401)
+    //     .json({ success: false, message: "Session expired or invalid." });
+    // }
 
     // Attach user info and session to request
     req.user = decoded;
-    req.session = session;
+    //req.session = session;
     next();
   } catch (error) {
     return res.status(401).json({ success: false, message: "Invalid token." });

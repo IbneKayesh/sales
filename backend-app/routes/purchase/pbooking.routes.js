@@ -644,4 +644,90 @@ router.post("/delete", async (req, res) => {
   }
 });
 
+//cancel-booking-items
+router.post("/cancel-booking-items", async (req, res) => {
+  try {
+    const { id, pmstr_users, pmstr_bsins,pmstr_cntct, pmstr_trnno, pmstr_cnamt, user_id, tmtb_rcvpy } = req.body;
+
+    // Validate input
+    if (!id || !pmstr_users || !pmstr_bsins || !user_id) {
+      return res.json({
+        success: false,
+        message: "All fields are required",
+        data: null,
+      });
+    }
+
+    console.log(tmtb_rcvpy);
+//return;
+    //database action
+    const scripts = [];
+
+    scripts.push({
+      sql: `UPDATE tmpb_pmstr
+    SET pmstr_cnamt = ?,
+      pmstr_ispad = 1,
+      pmstr_hscnl = 1,
+      pmstr_upusr = ?,
+      pmstr_updat = current_timestamp(),
+      pmstr_rvnmr = pmstr_rvnmr + 1
+    WHERE id = ?
+    AND pmstr_users = ?
+    AND pmstr_bsins = ?
+    AND pmstr_ispst = 1
+    AND pmstr_hscnl = 0`,
+      params: [pmstr_cnamt, user_id, id, pmstr_users, pmstr_bsins],
+      label: `Cancel booking for ${pmstr_users}`,
+    });
+
+    scripts.push({
+      sql: `UPDATE tmpb_bking
+    SET bking_cnqty = bking_pnqty,
+        bking_pnqty = 0,
+        bking_updat = current_timestamp(),
+        bking_upusr = ?,
+        bking_rvnmr = bking_rvnmr + 1
+    WHERE bking_pmstr = ?
+    AND bking_pnqty > 0`,
+      params: [user_id, id],
+      label: `Cancel booking details for ${pmstr_users}`,
+    });
+
+    scripts.push({
+      sql: `INSERT INTO tmtb_rcvpy(id, rcvpy_users, rcvpy_bsins, rcvpy_cntct, rcvpy_pymod, rcvpy_refid,
+      rcvpy_refno, rcvpy_srcnm, rcvpy_notes, rcvpy_pyamt, rcvpy_crusr, rcvpy_upusr)
+      VALUES (?, ?, ?, ?, ?, ?,
+      ?, ?, ?, ?, ?, ?)`,
+      params: [
+        uuidv4(),
+        pmstr_users,
+        pmstr_bsins,
+        pmstr_cntct,
+        "Refund",
+        id,
+        pmstr_trnno,
+        "Purchase Retrun",
+        'Booking Cancel Refund',
+        pmstr_cnamt,
+        user_id,
+        user_id,
+      ],
+      label: `Created payment ${pmstr_trnno}`,
+    });
+
+    await dbRunAll(scripts);
+    res.json({
+      success: true,
+      message: "Booking cancelled successfully",
+      data: null,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
 module.exports = router;

@@ -9,7 +9,6 @@ import { AuthProvider, useAuth } from "./hooks/useAuth.jsx";
 import { ToastProvider } from "./hooks/useToast.jsx";
 
 //internal imports
-import LatestPage from "./pages/LatestPage";
 import LandingPage from "./pages/LandingPage";
 import Layout from "./pages/layout/Layout.jsx";
 import HomePage from "./pages/HomePage.jsx";
@@ -61,7 +60,6 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/latest" element={<LatestPage />} />
       <Route
         path="/login"
         element={user ? <Navigate to="/home" /> : <AuthPage defComp="login" />}

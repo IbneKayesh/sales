@@ -50,7 +50,9 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
     const filtered = filteredList.filter(
       (item) =>
-        !formDataItemList.some((orderItem) => orderItem.bking_bitem === item.id)
+        !formDataItemList.some(
+          (orderItem) => orderItem.bking_bitem === item.id,
+        ),
     );
 
     //const filtered = filteredList;
@@ -66,7 +68,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     // Calculate grand total of all items (before extra cost distribution)
     const grandTotal = formDataItemList.reduce(
       (sum, item) => sum + Number(item.pmstr_pyamt || 0),
-      0
+      0,
     );
 
     if (grandTotal === 0) return;
@@ -90,7 +92,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
     // Only update if there's an actual change to avoid infinite loops
     const hasChanged = updatedItems.some(
-      (item, index) => item.bking_csrat !== formDataItemList[index].bking_csrat
+      (item, index) => item.bking_csrat !== formDataItemList[index].bking_csrat,
     );
 
     if (hasChanged) {
@@ -144,7 +146,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
     // Check if item is already added
     const existingItem = formDataItemList.find(
-      (i) => i.bking_bitem === selectedItem
+      (i) => i.bking_bitem === selectedItem,
     );
     if (existingItem) {
       // Item already exists, do not add duplicate
@@ -332,7 +334,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       icon: "pi pi-exclamation-triangle",
       accept: () => {
         setFormDataItemList((prev) =>
-          prev.filter((item) => item.id !== rowData.id)
+          prev.filter((item) => item.id !== rowData.id),
         );
       },
       reject: () => {},
@@ -383,11 +385,11 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     let { newData, index } = event;
     // Calculate item_amount
     let dsp = Number(newData.bking_dspct || 0);
-    if(dsp < 0) dsp = 0;
-    if(dsp > 100) dsp = 100;
+    if (dsp < 0) dsp = 0;
+    if (dsp > 100) dsp = 100;
     let vtp = Number(newData.bking_vtpct || 0);
-    if(vtp < 0) vtp = 0;
-    if(vtp > 1000) vtp = 100;
+    if (vtp < 0) vtp = 0;
+    if (vtp > 1000) vtp = 100;
 
     const itemAmount = newData.bking_bkqty * newData.bking_bkrat;
     const discountAmount = (dsp / 100) * itemAmount;
@@ -579,13 +581,11 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           body={bking_pnqty_BT}
           hidden={!showExtraColumns}
         />
-        {!formData.edit_stop && (
-          <Column
-            header={rowEditor_HT()}
-            rowEditor
-            headerStyle={{ minWidth: "20px" }}
-          />
-        )}
+        <Column
+          header={rowEditor_HT()}
+          rowEditor
+          headerStyle={{ minWidth: "20px" }}
+        />
         {!formData.edit_stop && (
           <Column header="#" body={action_BT} style={{ width: "20px" }} />
         )}

@@ -11,7 +11,6 @@ import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
-import CancelItemsComp from "./CancelItemsComp";
 
 const ListComp = ({ dataList, onEdit }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
@@ -295,18 +294,6 @@ const ListComp = ({ dataList, onEdit }) => {
     );
   };
 
-  const handleCancelBooking = (rowData) => {
-    confirmDialog({
-      message: `Are you sure you want to cancel Pending Invoice Qty "${rowData.pmstr_trnno}"?`,
-      header: "Cancel Confirmation",
-      icon: "pi pi-exclamation-triangle",
-      acceptClassName: "p-button-danger",
-      accept: () => {
-        // onCancelBooking logic would go here if provided via props
-      },
-    });
-  };
-
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.pmstr_trnno}"?`,
@@ -321,13 +308,6 @@ const ListComp = ({ dataList, onEdit }) => {
 
   const action_BT = (rowData) => {
     const menuItems = [
-      {
-        label: "Cancel",
-        icon: "pi pi-times",
-        className: "text-red-500",
-        command: () => handleCancelBooking(rowData),
-        disabled: !rowData.edit_stop,
-      },
       {
         label: "Delete",
         icon: "pi pi-trash",
@@ -389,20 +369,6 @@ const ListComp = ({ dataList, onEdit }) => {
     );
   };
 
-  const [formDataItemList, setFormDataItemList] = useState([]);
-  //cancel booking
-  const handleCancelBooking = (rowData) => {
-    confirmDialog({
-      message: `Are you sure you want to cancel Pending Invoice Qty "${rowData.pmstr_trnno}"?`,
-      header: "Cancel Confirmation",
-      icon: "pi pi-exclamation-triangle",
-      acceptClassName: "p-button-danger",
-      accept: () => {
-        // onCancelBooking logic would go here if provided via props
-      },
-    });
-  };
-
   return (
     <div className="p-1">
       <ConfirmDialog />
@@ -440,12 +406,6 @@ const ListComp = ({ dataList, onEdit }) => {
         <Column header="Status" body={is_paid_BT} />
         <Column body={action_BT} style={{ width: "100px" }} />
       </DataTable>
-
-      <CancelItemsComp
-        formData={formData}
-        formDataItemList={formDataItemList}
-        setFormDataItemList={setFormDataItemList}
-      />
     </div>
   );
 };

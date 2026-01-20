@@ -19,6 +19,7 @@ CREATE TABLE `tmab_bsins` (
   `bsins_sltrn` tinyint(1) NOT NULL DEFAULT 1,
   -- default
   `bsins_stdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `bsins_pbviw` tinyint(1) NOT NULL DEFAULT 0,
   `bsins_actve` tinyint(1) NOT NULL DEFAULT 1,
   `bsins_crusr` varchar(50) NOT NULL,
   `bsins_crdat` datetime NOT NULL DEFAULT current_timestamp(),

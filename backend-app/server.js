@@ -27,6 +27,7 @@ const grainsRoutes = require("./routes/support/grains.routes.js");
 const notesRoutes = require("./routes/support/notes.routes.js");
 const sessionsRoutes = require("./routes/support/sessions.routes.js");
 const ticketsRoutes = require("./routes/support/tickets.routes.js");
+const socialsRoutes = require("./routes/support/socials.routes.js");
 //purchase
 const pbookingRoutes = require("./routes/purchase/pbooking.routes.js");
 const preceiptRoutes = require("./routes/purchase/preceipt.routes.js");
@@ -88,6 +89,7 @@ app.use("/api/support/grains", grainsRoutes);
 app.use("/api/support/notes", notesRoutes);
 app.use("/api/support/sessions", sessionsRoutes);
 app.use("/api/support/tickets", ticketsRoutes);
+app.use("/api/support/socials", socialsRoutes);
 //purchase
 app.use("/api/purchase/pbooking", pbookingRoutes);
 app.use("/api/purchase/preceipt", preceiptRoutes);

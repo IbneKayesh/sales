@@ -1,11 +1,4 @@
 const usePobooking = () => {
-  const [pageConfig, setPageConfig] = useState({
-    is_posted: 0,
-    is_vat_payable: 0,
-    include_discount: 0,
-    include_vat: 0,
-  });
-
   const loadSettings = async () => {
     try {
       setIsBusy(true);
@@ -41,43 +34,6 @@ const usePobooking = () => {
   };
 
  
-
-
-  const fetchDetails = async (master_id) => {
-    try {
-      const data = await pobookingAPI.getDetails(master_id);
-      setFormDataList(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to load from server",
-      });
-    }
-  };
-
-  const fetchPayments = async (master_id) => {
-    try {
-      const data = await pobookingAPI.getPayments(master_id);
-      setFormDataPaymentList(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to load from server",
-      });
-    }
-  };
-
-  const handleEdit = async (data) => {
-    setFormData(data);
-    await fetchDetails(data.master_id);
-    await fetchPayments(data.master_id);
-    setCurrentView("form");
-  };
-
   const handleCancelBooking = async (data) => {
     try {
       setIsBusy(true);

@@ -5,6 +5,7 @@ import PaymentComp from "./PaymentComp";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import PrintComp from "./PrintComp";
+import CancelItemsComp from "./CancelItemsComp";
 
 const EntryComp = ({
   isBusy,
@@ -17,6 +18,11 @@ const EntryComp = ({
   formDataPaymentList,
   setFormDataPaymentList,
   handleSubmit,
+  //cancel booking items
+  cancelledRows,
+  setCancelledRows,
+  onCancelBookingItems,
+  setCancelledPayment,
 }) => {
   const [disableSubmit, setDisableSubmit] = useState(false);
   const [showPrintDialog, setShowPrintDialog] = useState(false);
@@ -70,8 +76,10 @@ const EntryComp = ({
       0
     );
 
+    const cancelledAmount = formData.pmstr_cnamt || 0;
+
     //console.log(payable_amount, paidAmount);
-    const due_amount = payable_amount - (paidAmount || 0);
+    const due_amount = (payable_amount - cancelledAmount) - (paidAmount || 0);
 
     handleChange("pmstr_odamt", Number(order_amount).toFixed(2));
     handleChange("pmstr_dsamt", Number(discount_amount).toFixed(2));
@@ -89,6 +97,20 @@ const EntryComp = ({
     formData.pmstr_vatpy,
     formData.pmstr_rnamt,
   ]);
+
+
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const handleShowCancelDlg = ()=>{
+    const hasCancelableItems = formDataItemList.some(
+      (item) => item.bking_pnqty > 0
+    );
+    if (hasCancelableItems) {
+      setShowCancelDialog(true);
+    }
+  }
+  const handleHideCancelDlg = ()=>{
+    setShowCancelDialog(false);
+  }
 
   return (
     <div>
@@ -112,6 +134,15 @@ const EntryComp = ({
       />
       <div className="flex justify-content-end">
         <ButtonGroup>
+          <Button
+            type="button"
+            label="Cancel"
+            icon="pi pi-times"
+            severity="danger"
+            size="small"
+            onClick={handleShowCancelDlg}
+            disabled={!formData.id}
+          />
           <Button
             type="button"
             label="Print"
@@ -146,6 +177,17 @@ const EntryComp = ({
         formData={formData}
         formDataList={formDataItemList}
         formDataPaymentList={formDataPaymentList}
+      />
+
+      <CancelItemsComp
+        visible={showCancelDialog}
+        onHide={handleHideCancelDlg}
+        formData={formData}
+        formDataItemList={formDataItemList}
+        cancelledRows={cancelledRows}
+        setCancelledRows={setCancelledRows}
+        onCancelBookingItems={onCancelBookingItems}
+        setCancelledPayment={setCancelledPayment}
       />
     </div>
   );

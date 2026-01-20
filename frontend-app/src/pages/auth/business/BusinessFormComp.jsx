@@ -262,6 +262,24 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           <small className="mb-3 text-red-500">{errors.bsins_stdat}</small>
         )}
       </div>
+
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="bsins_pbviw"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmab_bsins.bsins_pbviw.label} <span className="text-red-500">*</span>
+        </label>
+        <InputSwitch
+          name="bsins_pbviw"
+          checked={formData.bsins_pbviw === 1}
+          onChange={(e) => onChange("bsins_pbviw", e.value ? 1 : 0)}
+          className={`${errors.bsins_pbviw ? "p-invalid" : ""}`}
+        />
+        {errors.bsins_pbviw && (
+          <small className="mb-3 text-red-500">{errors.bsins_pbviw}</small>
+        )}
+      </div>
       <div className="col-12">
         <div className="flex flex-row-reverse flex-wrap">
           <Button

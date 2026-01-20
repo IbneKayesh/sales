@@ -34,6 +34,11 @@ const BookingPage = () => {
     handleChangeSearchInput,
     handleSearch,
     searchOptions,
+    //cancel booking items
+    cancelledRows,
+    setCancelledRows,
+    handleCancelBookingItems,
+    setCancelledPayment
   } = usePbooking();
 
   const handleSearchBox = () => {
@@ -110,6 +115,12 @@ const BookingPage = () => {
           formDataPaymentList={formDataPaymentList}
           setFormDataPaymentList={setFormDataPaymentList}
           handleSubmit={handleSave}
+          
+          //cancel booking items
+          cancelledRows={cancelledRows}
+          setCancelledRows={setCancelledRows}
+          onCancelBookingItems={handleCancelBookingItems}
+          setCancelledPayment={setCancelledPayment}
         />
       )}
     </Card>

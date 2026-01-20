@@ -283,6 +283,44 @@ export const usePbooking = () => {
     { name: "pmstr_hscnl", label: "Cancelled" },
   ];
 
+  //cancel booking items
+  const [cancelledRows, setCancelledRows] = useState([]);
+  const [cancelledPayment, setCancelledPayment] = useState({});
+
+  const handleCancelBookingItems = async (rowData) => {
+    try {
+      // Call API, unwrap { message, data }
+      
+
+      const formDataNew = {
+        ...formData,
+        pmstr_users: user.users_users,
+        pmstr_bsins: user.users_bsins,
+        pmstr_cnamt: rowData.rcvpy_pyamt,
+        user_id: user.id,
+        tmtb_rcvpy: rowData,
+      };
+      const response = await pbookingAPI.cancelBookingItems(formDataNew);
+
+      showToast(
+        response.success ? "info" : "error",
+        response.success ? "Cancelled" : "Error",
+        response.message ||
+          "Operation " + (response.success ? "successful" : "failed"),
+      );
+      //reset cancelled rows
+      setCancelledRows([]);
+      setCancelledPayment({});
+      // Clear form & reload
+      handleClear();
+      setCurrentView("list");
+      await loadBookings(); // make sure we wait for updated data
+    } catch (error) {
+      console.error("Error canceling data:", error);
+      showToast("error", "Error", error?.message || "Failed to cancel data");
+    }
+  };
+
   return {
     dataList,
     isBusy,
@@ -310,5 +348,11 @@ export const usePbooking = () => {
     handleChangeSearchInput,
     handleSearch,
     searchOptions,
+
+    //cancel booking items
+    cancelledRows,
+    setCancelledRows,
+    handleCancelBookingItems,
+    setCancelledPayment,
   };
 };

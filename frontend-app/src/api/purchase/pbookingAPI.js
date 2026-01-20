@@ -32,4 +32,9 @@ export const pbookingAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  cancelBookingItems: (data) =>
+    apiRequest("/purchase/pbooking/cancel-booking-items", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

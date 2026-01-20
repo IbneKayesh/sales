@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Jan 18, 2026 at 12:38 PM
+-- Generation Time: Jan 20, 2026 at 12:20 PM
 -- Server version: 12.1.2-MariaDB-ubu2404
 -- PHP Version: 8.3.26
 
@@ -41,6 +41,7 @@ CREATE TABLE `tmab_bsins` (
   `bsins_prtrn` tinyint(1) NOT NULL DEFAULT 1,
   `bsins_sltrn` tinyint(1) NOT NULL DEFAULT 1,
   `bsins_stdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `bsins_pbviw` tinyint(1) NOT NULL DEFAULT 0,
   `bsins_actve` tinyint(1) NOT NULL DEFAULT 1,
   `bsins_crusr` varchar(50) NOT NULL,
   `bsins_crdat` datetime NOT NULL DEFAULT current_timestamp(),
@@ -53,11 +54,11 @@ CREATE TABLE `tmab_bsins` (
 -- Dumping data for table `tmab_bsins`
 --
 
-INSERT INTO `tmab_bsins` (`id`, `bsins_users`, `bsins_bname`, `bsins_addrs`, `bsins_email`, `bsins_cntct`, `bsins_image`, `bsins_binno`, `bsins_btags`, `bsins_cntry`, `bsins_stdat`, `bsins_actve`, `bsins_crusr`, `bsins_crdat`, `bsins_upusr`, `bsins_updat`, `bsins_rvnmr`) VALUES
-('0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'admin-id', 'Grain Mart – Dhanmondi', 'Road 27, Dhanmondi, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'CT2025-0978-22364', 'Grocery', 'Bangladesh', '2026-01-09 00:00:00', 1, 'admin-id', '2026-01-09 08:39:57', 'admin-id', '2026-01-18 11:26:29', 6),
-('3881b053-9509-49db-835a-3f8dd8976cda', 'admin-id', 'Green Mart – Uttara', 'Sector 10, Uttara, Dhaka', 'admin@sgd.com', '01722688266', NULL, '', 'Grocery', 'Bangladesh', '2026-01-11 00:00:00', 1, 'admin-id', '2026-01-11 08:28:46', 'admin-id', '2026-01-18 11:26:58', 4),
-('3df6fda2-9cb2-4e71-bbf3-459b635c040e', 'admin-id', 'Household Vally', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'CT2021-0325-23170', 'Grocery Store', 'Bangladesh', '2026-01-11 00:00:00', 1, 'admin-id', '2026-01-11 08:32:18', 'admin-id', '2026-01-18 11:27:38', 3),
-('6dd0f9d0-840a-43ce-8f82-a60310521756', 'admin-id', 'Central Distribution Warehouse', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, '', 'Grocery Store', 'Bangladesh', '2026-01-11 00:00:00', 1, 'admin-id', '2026-01-11 08:31:43', 'admin-id', '2026-01-18 11:25:51', 3);
+INSERT INTO `tmab_bsins` (`id`, `bsins_users`, `bsins_bname`, `bsins_addrs`, `bsins_email`, `bsins_cntct`, `bsins_image`, `bsins_binno`, `bsins_btags`, `bsins_cntry`, `bsins_prtrn`, `bsins_sltrn`, `bsins_stdat`, `bsins_pbviw`, `bsins_actve`, `bsins_crusr`, `bsins_crdat`, `bsins_upusr`, `bsins_updat`, `bsins_rvnmr`) VALUES
+('0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'admin-id', 'Grain Mart – Dhanmondi', 'Road 27, Dhanmondi, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'CT2025-0978-22364', 'Grocery', 'Bangladesh', 1, 1, '2026-01-09 00:00:00', 1, 1, 'admin-id', '2026-01-09 08:39:57', 'admin-id', '2026-01-20 09:36:19', 8),
+('3881b053-9509-49db-835a-3f8dd8976cda', 'admin-id', 'Green Mart – Uttara', 'Sector 10, Uttara, Dhaka', 'admin@sgd.com', '01722688266', NULL, '', 'Grocery', 'Bangladesh', 1, 1, '2026-01-11 00:00:00', 0, 1, 'admin-id', '2026-01-11 08:28:46', 'admin-id', '2026-01-20 04:48:21', 9),
+('3df6fda2-9cb2-4e71-bbf3-459b635c040e', 'admin-id', 'Household Vally', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'CT2021-0325-23170', 'Grocery Store', 'Bangladesh', 1, 1, '2026-01-11 00:00:00', 0, 1, 'admin-id', '2026-01-11 08:32:18', 'admin-id', '2026-01-19 12:12:41', 5),
+('6dd0f9d0-840a-43ce-8f82-a60310521756', 'admin-id', 'Central Distribution Warehouse', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, '', 'Grocery Store', 'Bangladesh', 1, 1, '2026-01-11 00:00:00', 0, 1, 'admin-id', '2026-01-11 08:31:43', 'admin-id', '2026-01-20 09:36:13', 5);
 
 -- --------------------------------------------------------
 
@@ -99,7 +100,7 @@ CREATE TABLE `tmab_users` (
 
 INSERT INTO `tmab_users` (`id`, `users_email`, `users_pswrd`, `users_recky`, `users_oname`, `users_cntct`, `users_bsins`, `users_drole`, `users_users`, `users_stats`, `users_regno`, `users_regdt`, `users_ltokn`, `users_lstgn`, `users_lstpd`, `users_wctxt`, `users_notes`, `users_nofcr`, `users_isrgs`, `users_actve`, `users_crusr`, `users_crdat`, `users_upusr`, `users_updat`, `users_rvnmr`) VALUES
 ('0758720d-ea22-4aee-9b69-c898d2ffe29f', 'user@sgd.com', 'password', 'recover', 'General User', '123456', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'User', 'admin-id', 0, 'Standard', '2026-01-09 12:08:38', NULL, '2026-01-09 12:08:38', '2026-01-09 12:08:38', 'Welcome Note', 'Any Notes', 0.00, 0, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:08:38', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-12 05:46:00', 1),
-('admin-id', 'admin@sgd.com', 'password', 'recover', 'Admin User', '01722688266', '3881b053-9509-49db-835a-3f8dd8976cda', 'Admin', 'admin-id', 0, 'Standard', '2026-01-09 08:39:57', NULL, '2026-01-09 08:39:57', '2026-01-11 12:19:32', 'Welcome Note', 'User Note', 833.00, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 08:39:57', 'admin-id', '2026-01-18 12:25:58', 8);
+('admin-id', 'admin@sgd.com', 'password', 'recover', 'Admin User', '01722688266', '3881b053-9509-49db-835a-3f8dd8976cda', 'Admin', 'admin-id', 0, 'Standard', '2026-01-09 08:39:57', NULL, '2026-01-09 08:39:57', '2026-01-11 12:19:32', 'Welcome Note', 'User Note', 741.00, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 08:39:57', 'admin-id', '2026-01-20 04:21:59', 8);
 
 -- --------------------------------------------------------
 
@@ -187,9 +188,9 @@ CREATE TABLE `tmib_bitem` (
 --
 
 INSERT INTO `tmib_bitem` (`id`, `bitem_users`, `bitem_items`, `bitem_bsins`, `bitem_lprat`, `bitem_dprat`, `bitem_mcmrp`, `bitem_sddsp`, `bitem_snote`, `bitem_gstkq`, `bitem_bstkq`, `bitem_mnqty`, `bitem_mxqty`, `bitem_pbqty`, `bitem_sbqty`, `bitem_mpric`, `bitem_actve`, `bitem_crusr`, `bitem_crdat`, `bitem_upusr`, `bitem_updat`, `bitem_rvnmr`) VALUES
-('0a73b49d-71b3-4671-9c09-6d985f3514fc', 'admin-id', '485d61c3-e84e-418b-b91b-2171c17f0391', '3881b053-9509-49db-835a-3f8dd8976cda', 260.000000, 0.000000, 377.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 70.200000, 1, 'admin-id', '2026-01-18 11:54:40', 'admin-id', '2026-01-18 11:54:40', 1),
+('0a73b49d-71b3-4671-9c09-6d985f3514fc', 'admin-id', '485d61c3-e84e-418b-b91b-2171c17f0391', '3881b053-9509-49db-835a-3f8dd8976cda', 260.000000, 0.000000, 377.000000, 0.000000, '', 90.000000, 0.000000, 0.000000, 0.000000, 10.000000, 0.000000, 70.200000, 1, 'admin-id', '2026-01-18 11:54:40', 'admin-id', '2026-01-20 11:35:08', 1),
 ('0b9c71ef-77de-4116-8298-ac0898e2d217', 'admin-id', 'ae0a4ae3-77f6-4357-8ca9-c05cc1796a7e', '3881b053-9509-49db-835a-3f8dd8976cda', 10.000000, 0.000000, 15.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 3.000000, 1, 'admin-id', '2026-01-18 11:33:26', 'admin-id', '2026-01-18 11:38:47', 1),
-('22064b47-6898-4661-9dc8-5329a542ae4a', 'admin-id', '24614ec4-8ab0-4b50-b3c7-9f154a124770', '3881b053-9509-49db-835a-3f8dd8976cda', 110.000000, 0.000000, 154.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 100.000000, 0.000000, 26.400000, 1, 'admin-id', '2026-01-18 11:48:18', 'admin-id', '2026-01-18 12:37:19', 1),
+('22064b47-6898-4661-9dc8-5329a542ae4a', 'admin-id', '24614ec4-8ab0-4b50-b3c7-9f154a124770', '3881b053-9509-49db-835a-3f8dd8976cda', 110.000000, 0.000000, 154.000000, 0.000000, '', 20.000000, 0.000000, 0.000000, 0.000000, 380.000000, 0.000000, 26.400000, 1, 'admin-id', '2026-01-18 11:48:18', 'admin-id', '2026-01-20 11:35:08', 1),
 ('22bbdf6e-759b-4b46-a0a6-b5d2a8d7d383', 'admin-id', 'dfe206f2-b3a3-4d6c-8b3c-7402582348eb', '3881b053-9509-49db-835a-3f8dd8976cda', 15.000000, 0.000000, 22.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 4.300000, 1, 'admin-id', '2026-01-18 11:40:04', 'admin-id', '2026-01-18 11:40:04', 1),
 ('49637732-1033-454e-8690-e4162e763fdd', 'admin-id', '8873e069-eea6-4f9e-acf0-dd1cb658f9c8', '3881b053-9509-49db-835a-3f8dd8976cda', 18.000000, 0.000000, 25.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 4.300000, 1, 'admin-id', '2026-01-18 12:20:40', 'admin-id', '2026-01-18 12:20:40', 1),
 ('69b3b567-0009-48b6-abf3-5701e00ab0e1', 'admin-id', 'ad014a04-77d0-4f46-acc9-dee2b02c64f2', '3881b053-9509-49db-835a-3f8dd8976cda', 22.000000, 0.000000, 32.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 6.040000, 1, 'admin-id', '2026-01-18 12:22:53', 'admin-id', '2026-01-18 12:22:53', 1),
@@ -199,18 +200,18 @@ INSERT INTO `tmib_bitem` (`id`, `bitem_users`, `bitem_items`, `bitem_bsins`, `bi
 ('854996eb-cabc-487b-a5bc-692bfffe2689', 'admin-id', '75b05c78-9b6b-42ba-aafa-e76e22f67722', '3881b053-9509-49db-835a-3f8dd8976cda', 28.000000, 0.000000, 42.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 8.400000, 1, 'admin-id', '2026-01-18 12:05:52', 'admin-id', '2026-01-18 12:05:52', 1),
 ('921ea45d-ceac-4f42-ac69-3b17c74a590b', 'admin-id', '4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', '3881b053-9509-49db-835a-3f8dd8976cda', 12.000000, 0.000000, 16.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 2.320000, 1, 'admin-id', '2026-01-18 12:21:38', 'admin-id', '2026-01-18 12:21:38', 1),
 ('9a08c3f7-2154-4cb5-ad90-8346f705f6f5', 'admin-id', '2bee4dba-5f29-4e65-b772-718c677e326c', '3881b053-9509-49db-835a-3f8dd8976cda', 20.000000, 0.000000, 30.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 6.000000, 1, 'admin-id', '2026-01-18 12:24:01', 'admin-id', '2026-01-18 12:24:01', 1),
-('a06cf515-c579-4628-96c4-c1f88f0d9308', 'admin-id', '42ccd66a-70db-4c7f-93c4-36261a8f064f', '3881b053-9509-49db-835a-3f8dd8976cda', 90.000000, 0.000000, 126.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 18.000000, 1, 'admin-id', '2026-01-18 11:53:22', 'admin-id', '2026-01-18 11:53:22', 1),
+('a06cf515-c579-4628-96c4-c1f88f0d9308', 'admin-id', '42ccd66a-70db-4c7f-93c4-36261a8f064f', '3881b053-9509-49db-835a-3f8dd8976cda', 90.000000, 0.000000, 126.000000, 0.000000, '', 15.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 18.000000, 1, 'admin-id', '2026-01-18 11:53:22', 'admin-id', '2026-01-20 10:49:29', 1),
 ('a5da4ada-2216-49a6-bfde-aa71f0de6bb8', 'admin-id', '38b496e9-6652-4324-8331-ba0ecb0cfeae', '3881b053-9509-49db-835a-3f8dd8976cda', 60.000000, 0.000000, 78.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 9.000000, 1, 'admin-id', '2026-01-18 11:51:19', 'admin-id', '2026-01-18 11:51:19', 1),
 ('bfa793e3-23b6-4472-96e7-2b13bb70f476', 'admin-id', 'b3da1017-bea4-44fd-ad13-110e92a48965', '3881b053-9509-49db-835a-3f8dd8976cda', 40.000000, 0.000000, 51.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 6.200000, 1, 'admin-id', '2026-01-18 11:49:13', 'admin-id', '2026-01-18 11:49:13', 1),
-('c9dcd99f-c04f-44f0-8778-d33c7cfc068c', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '3881b053-9509-49db-835a-3f8dd8976cda', 52.000000, 0.000000, 70.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 300.000000, 0.000000, 10.200000, 1, 'admin-id', '2026-01-18 11:46:22', 'admin-id', '2026-01-18 12:37:19', 1),
+('c9dcd99f-c04f-44f0-8778-d33c7cfc068c', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '3881b053-9509-49db-835a-3f8dd8976cda', 52.000000, 0.000000, 70.000000, 0.000000, '', 20.000000, 0.000000, 0.000000, 0.000000, 280.000000, 0.000000, 10.200000, 1, 'admin-id', '2026-01-18 11:46:22', 'admin-id', '2026-01-20 11:35:08', 1),
 ('cc4ea99b-527d-477d-8153-1a831b35d4de', 'admin-id', '0e5de4e6-86dd-453a-8b94-963ee305e860', '3881b053-9509-49db-835a-3f8dd8976cda', 95.000000, 0.000000, 133.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 22.800000, 1, 'admin-id', '2026-01-18 12:08:53', 'admin-id', '2026-01-18 12:08:53', 1),
 ('d0249c21-993f-40a7-9819-d05b046d8591', 'admin-id', 'e2e70dc1-9814-400c-8774-2b6b186b79e5', '3881b053-9509-49db-835a-3f8dd8976cda', 180.000000, 0.000000, 252.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 39.600000, 1, 'admin-id', '2026-01-18 11:55:39', 'admin-id', '2026-01-18 11:55:39', 1),
 ('d9dfcad2-2bdd-4770-86e3-448c75efabe7', 'admin-id', '2c047e91-44f6-48bc-a591-9ab00deb7b72', '3881b053-9509-49db-835a-3f8dd8976cda', 95.000000, 0.000000, 128.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 18.750000, 1, 'admin-id', '2026-01-18 11:49:59', 'admin-id', '2026-01-18 11:49:59', 1),
 ('e27daa49-9065-4e51-9dd5-246c1451d264', 'admin-id', 'f949a24a-3ff8-4349-9ca0-f853de9226c7', '3881b053-9509-49db-835a-3f8dd8976cda', 110.000000, 0.000000, 160.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 30.200000, 1, 'admin-id', '2026-01-18 12:07:47', 'admin-id', '2026-01-18 12:07:47', 1),
-('f79040d1-8a63-4b4a-a515-16796fd56797', 'admin-id', '4dab149a-e220-4cd8-a061-7660ab0168bb', '3881b053-9509-49db-835a-3f8dd8976cda', 58.000000, 0.000000, 75.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 500.000000, 0.000000, 8.880000, 1, 'admin-id', '2026-01-18 11:47:21', 'admin-id', '2026-01-18 12:37:19', 1),
+('f79040d1-8a63-4b4a-a515-16796fd56797', 'admin-id', '4dab149a-e220-4cd8-a061-7660ab0168bb', '3881b053-9509-49db-835a-3f8dd8976cda', 58.000000, 0.000000, 75.000000, 0.000000, '', 20.000000, 0.000000, 0.000000, 0.000000, 480.000000, 0.000000, 8.880000, 1, 'admin-id', '2026-01-18 11:47:21', 'admin-id', '2026-01-20 11:35:08', 1),
 ('f7c7bdba-dbb1-47e2-95f7-8710f9267b6a', 'admin-id', 'f7126510-80c0-416b-a34e-3a514e54d030', '3881b053-9509-49db-835a-3f8dd8976cda', 25.000000, 0.000000, 35.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 6.250000, 1, 'admin-id', '2026-01-18 12:24:55', 'admin-id', '2026-01-18 12:24:55', 1),
 ('f9d0b5e0-8d00-4309-b885-45e41b1297d0', 'admin-id', 'e483bc2d-6ccd-4b72-8603-775dcd275249', '3881b053-9509-49db-835a-3f8dd8976cda', 420.000000, 0.000000, 546.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 84.000000, 1, 'admin-id', '2026-01-18 11:44:14', 'admin-id', '2026-01-18 11:44:14', 1),
-('fc0f7f6f-048a-4512-b614-79b13efa72bd', 'admin-id', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', '3881b053-9509-49db-835a-3f8dd8976cda', 580.000000, 0.000000, 783.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 98.600000, 1, 'admin-id', '2026-01-18 11:52:30', 'admin-id', '2026-01-18 11:52:30', 1),
+('fc0f7f6f-048a-4512-b614-79b13efa72bd', 'admin-id', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', '3881b053-9509-49db-835a-3f8dd8976cda', 580.000000, 0.000000, 783.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 98.600000, 1, 'admin-id', '2026-01-18 11:52:30', 'admin-id', '2026-01-20 10:49:29', 1),
 ('fdfa97ae-9622-4548-bc27-4cf8a163cfa3', 'admin-id', 'e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', '3881b053-9509-49db-835a-3f8dd8976cda', 160.000000, 0.000000, 219.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 39.800000, 1, 'admin-id', '2026-01-18 11:43:14', 'admin-id', '2026-01-18 11:43:14', 1);
 
 -- --------------------------------------------------------
@@ -385,15 +386,6 @@ CREATE TABLE `tmpb_bking` (
   `bking_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `tmpb_bking`
---
-
-INSERT INTO `tmpb_bking` (`id`, `bking_pmstr`, `bking_bitem`, `bking_items`, `bking_bkrat`, `bking_bkqty`, `bking_itamt`, `bking_dspct`, `bking_dsamt`, `bking_vtpct`, `bking_vtamt`, `bking_csrat`, `bking_ntamt`, `bking_notes`, `bking_cnqty`, `bking_rcqty`, `bking_pnqty`, `bking_actve`, `bking_crusr`, `bking_crdat`, `bking_upusr`, `bking_updat`, `bking_rvnmr`) VALUES
-('3c52e055-91a2-43e3-9b10-ace92684fdfd', '5e215145-f5f5-4576-9c6a-93c6f8db276e', 'f79040d1-8a63-4b4a-a515-16796fd56797', '4dab149a-e220-4cd8-a061-7660ab0168bb', 58.000000, 500.000000, 29000.000000, 0.000000, 0.000000, 5.000000, 1450.000000, 60.900000, 30450.000000, 'DO#180126-001', 0.000000, 0.000000, 500.000000, 1, 'admin-id', '2026-01-18 12:37:19', 'admin-id', '2026-01-18 12:37:19', 1),
-('4f534c9d-c12e-44e1-af9e-afb5f413f08e', '5e215145-f5f5-4576-9c6a-93c6f8db276e', '22064b47-6898-4661-9dc8-5329a542ae4a', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 110.000000, 100.000000, 11000.000000, 0.000000, 0.000000, 5.000000, 550.000000, 115.500000, 11550.000000, 'DO#180126-001', 0.000000, 0.000000, 100.000000, 1, 'admin-id', '2026-01-18 12:37:19', 'admin-id', '2026-01-18 12:37:19', 1),
-('51555e86-80b7-4ccb-b2df-ac58eb6f03b9', '5e215145-f5f5-4576-9c6a-93c6f8db276e', 'c9dcd99f-c04f-44f0-8778-d33c7cfc068c', '940f8010-5d38-4de4-b66f-d12958ff9ec2', 52.000000, 300.000000, 15600.000000, 0.000000, 0.000000, 5.000000, 780.000000, 54.600000, 16380.000000, 'DO#180126-001', 0.000000, 0.000000, 300.000000, 1, 'admin-id', '2026-01-18 12:37:19', 'admin-id', '2026-01-18 12:37:19', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -436,13 +428,6 @@ CREATE TABLE `tmpb_pmstr` (
   `pmstr_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `pmstr_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tmpb_pmstr`
---
-
-INSERT INTO `tmpb_pmstr` (`id`, `pmstr_users`, `pmstr_bsins`, `pmstr_cntct`, `pmstr_odtyp`, `pmstr_trnno`, `pmstr_trdat`, `pmstr_trnte`, `pmstr_refno`, `pmstr_odamt`, `pmstr_dsamt`, `pmstr_vtamt`, `pmstr_vatpy`, `pmstr_incst`, `pmstr_excst`, `pmstr_rnamt`, `pmstr_ttamt`, `pmstr_pyamt`, `pmstr_pdamt`, `pmstr_duamt`, `pmstr_rtamt`, `pmstr_cnamt`, `pmstr_ispad`, `pmstr_ispst`, `pmstr_isret`, `pmstr_iscls`, `pmstr_vatcl`, `pmstr_hscnl`, `pmstr_actve`, `pmstr_crusr`, `pmstr_crdat`, `pmstr_upusr`, `pmstr_updat`, `pmstr_rvnmr`) VALUES
-('5e215145-f5f5-4576-9c6a-93c6f8db276e', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'be93309a-ec2b-40d0-9c62-8abe7796b547', 'Purchase Booking', 'PB-180126-00001', '2026-01-18 00:00:00', '', 'DO#180126-001', 55600.000000, 0.000000, 2780.000000, 1, 0.000000, 0.000000, 0.000000, 52820.000000, 58380.000000, 58380.000000, 0.000000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 0, 1, 'admin-id', '2026-01-18 12:37:19', 'admin-id', '2026-01-18 12:37:19', 1);
 
 -- --------------------------------------------------------
 
@@ -512,6 +497,9 @@ INSERT INTO `tmsb_crgrn` (`id`, `crgrn_users`, `crgrn_bsins`, `crgrn_tblnm`, `cr
 ('45e5c6c7-0331-4e97-b304-15b03ee3d0c7', 'admin-id', '2026-01-09', 'tmsb_crgrn', 'Registration', 'Grocery Shop', 0.000000, 1000.000000, '2026-01-09 00:00:00', '2026-01-09 04:48:25', 1, '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-12 04:48:25', '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-13 05:13:33', 1),
 ('5b8a0446-f11e-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-13', 'tmab_users', 'User', NULL, 1.000000, 0.000000, '2026-01-13 00:00:00', '2026-01-13 00:00:00', 1, 'sys', '2026-01-14 07:55:13', 'sys', '2026-01-14 07:55:13', 1),
 ('5b8ac4be-f11e-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-13', 'tmsb_crgrn', 'Grains', NULL, 16.000000, 0.000000, '2026-01-13 00:00:00', '2026-01-13 00:00:00', 1, 'sys', '2026-01-14 07:55:13', 'sys', '2026-01-14 07:55:13', 1),
+('c65563b6-f5b7-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-19', 'tmab_bsins', 'Business', NULL, 3.000000, 0.000000, '2026-01-19 00:00:00', '2026-01-19 00:00:00', 1, 'sys', '2026-01-20 04:21:59', 'sys', '2026-01-20 04:21:59', 1),
+('c65708f8-f5b7-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-19', 'tmab_users', 'User', NULL, 1.000000, 0.000000, '2026-01-19 00:00:00', '2026-01-19 00:00:00', 1, 'sys', '2026-01-20 04:21:59', 'sys', '2026-01-20 04:21:59', 1),
+('c65724e8-f5b7-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-19', 'tmsb_crgrn', 'Grains', NULL, 8.000000, 0.000000, '2026-01-19 00:00:00', '2026-01-19 00:00:00', 1, 'sys', '2026-01-20 04:21:59', 'sys', '2026-01-20 04:21:59', 1),
 ('ca2657e7-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-09', 'tmcb_cntct', 'Contact', NULL, 1.000000, 0.000000, '2026-01-09 00:00:00', '2026-01-09 00:00:00', 1, 'sys', '2026-01-13 05:14:17', 'sys', '2026-01-13 05:14:17', 1),
 ('d4fa1225-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-10', 'tmtb_ledgr', 'Accounts Ledger', NULL, 6.000000, 0.000000, '2026-01-10 00:00:00', '2026-01-10 00:00:00', 1, 'sys', '2026-01-13 05:14:35', 'sys', '2026-01-13 05:14:35', 1),
 ('d502d99e-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-10', 'tmtb_trhed', 'Accounts Heads', NULL, 35.000000, 0.000000, '2026-01-10 00:00:00', '2026-01-10 00:00:00', 1, 'sys', '2026-01-13 05:14:35', 'sys', '2026-01-13 05:14:35', 1),
@@ -533,6 +521,14 @@ INSERT INTO `tmsb_crgrn` (`id`, `crgrn_users`, `crgrn_bsins`, `crgrn_tblnm`, `cr
 ('e1c6eaab-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmib_iuofm', 'Item Unit', NULL, 8.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
 ('e1c6eab7-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmib_bitem', 'Business Item', NULL, 5.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
 ('e1c6eca2-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmtb_bacts', 'Business Accounts', NULL, 2.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
+('e79f0d65-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmab_users', 'User', NULL, 1.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
+('e79f0dca-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmab_bsins', 'Business', NULL, 4.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
+('e7a8227e-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmib_bitem', 'Business Item', NULL, 25.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
+('e7a822e3-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmcb_cntct', 'Contact', NULL, 10.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
+('e7a8242f-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmib_ctgry', 'Item Category', NULL, 6.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
+('e7a8457a-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmib_items', 'Item List', NULL, 25.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
+('e7a8ab83-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmsb_crgrn', 'Grains', NULL, 6.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
+('e7a8aba0-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmib_iuofm', 'Item Unit', NULL, 3.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
 ('eb46a8ac-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmab_bsins', 'Business', NULL, 1.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
 ('eb49281f-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmab_users', 'User', NULL, 1.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
 ('eb494a4e-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmcb_cntct', 'Contact', NULL, 2.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
@@ -639,13 +635,6 @@ CREATE TABLE `tmtb_rcvpy` (
   `rcvpy_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `tmtb_rcvpy`
---
-
-INSERT INTO `tmtb_rcvpy` (`id`, `rcvpy_users`, `rcvpy_bsins`, `rcvpy_cntct`, `rcvpy_pymod`, `rcvpy_refid`, `rcvpy_refno`, `rcvpy_srcnm`, `rcvpy_trdat`, `rcvpy_notes`, `rcvpy_pyamt`, `rcvpy_crusr`, `rcvpy_crdat`, `rcvpy_upusr`, `rcvpy_updat`, `rcvpy_rvnmr`) VALUES
-('4c591639-59e5-4952-bbf1-e7227bfdddfa', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'be93309a-ec2b-40d0-9c62-8abe7796b547', 'Bank', '5e215145-f5f5-4576-9c6a-93c6f8db276e', 'PB-180126-00001', 'Purchase Booking', '2026-01-18 00:00:00', 'BT#180126-001', 58380.000000, 'admin-id', '2026-01-18 12:37:19', 'admin-id', '2026-01-18 12:37:19', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -739,6 +728,30 @@ CREATE TABLE `tmub_notes` (
 
 INSERT INTO `tmub_notes` (`id`, `notes_users`, `notes_title`, `notes_descr`, `notes_dudat`, `notes_stat`, `notes_actve`, `notes_crusr`, `notes_crdat`, `notes_upusr`, `notes_updat`, `notes_rvnmr`) VALUES
 ('6e9a94bf-a9ec-4d3f-9ed1-e0da18c1c0f9', 'admin-id', 'Development in Progress', 'Development in Progress', '2026-01-15 19:56:00', 'In Progress', 1, 'admin-id', '2026-01-14 07:58:44', 'admin-id', '2026-01-14 08:00:14', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmub_tickt`
+--
+
+CREATE TABLE `tmub_tickt` (
+  `id` varchar(50) NOT NULL,
+  `tickt_users` varchar(50) NOT NULL,
+  `tickt_types` varchar(50) NOT NULL,
+  `tickt_cmnte` varchar(300) NOT NULL,
+  `tickt_cmdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `tickt_rsnte` varchar(300) DEFAULT NULL,
+  `tickt_rspnt` int(11) NOT NULL DEFAULT 0,
+  `tickt_cmsts` varchar(50) DEFAULT 'Opened',
+  `tickt_rsdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `tickt_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `tickt_crusr` varchar(50) NOT NULL,
+  `tickt_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `tickt_upusr` varchar(50) NOT NULL,
+  `tickt_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `tickt_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -840,6 +853,12 @@ ALTER TABLE `tmtb_trhed`
 -- Indexes for table `tmub_notes`
 --
 ALTER TABLE `tmub_notes`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmub_tickt`
+--
+ALTER TABLE `tmub_tickt`
   ADD PRIMARY KEY (`id`);
 COMMIT;
 
