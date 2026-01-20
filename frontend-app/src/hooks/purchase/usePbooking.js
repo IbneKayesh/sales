@@ -262,7 +262,15 @@ export const usePbooking = () => {
   };
 
   const handleSearch = () => {
-    //console.log("handleSearch", searchBoxData);
+    const hasValue = Object.values(searchBoxData).some(
+      (value) => value !== "" && value !== null && value !== undefined,
+    );
+
+    if (!hasValue) {
+      showToast("error", "Error", "Please enter at least one search criteria");
+      return;
+    }
+
     loadBookings();
   };
 

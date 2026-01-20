@@ -299,6 +299,20 @@ const ContactListComp = ({
         rowHover
         showGridlines
         globalFilter={globalFilter}
+        globalFilterFields={[
+          "cntct_sorce",
+          "cntct_cntnm",
+          "cntct_cntps",
+          "cntct_cntno",
+          "cntct_email",
+          "cntct_ofadr",
+          "cntct_fcadr",
+          "cntct_cntry",
+          "cntct_crlmt",
+          "cntct_pybln",
+          "cntct_adbln",
+          "cntct_crbln",
+        ]}
         header={header()}
       >
         <Column

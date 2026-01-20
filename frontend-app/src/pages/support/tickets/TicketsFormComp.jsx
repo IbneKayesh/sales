@@ -7,7 +7,6 @@ import { Dropdown } from "primereact/dropdown";
 const TicketsFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   const statusOptions = [
     { label: "Opened", value: "Opened" },
-    { label: "Pending", value: "Pending" },
     { label: "Resolved", value: "Resolved" },
     { label: "Closed", value: "Closed" },
   ];

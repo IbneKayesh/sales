@@ -121,7 +121,7 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
       </div>
     );
   };
-  
+
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.items_iname}"?`,
@@ -247,6 +247,17 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
         rowHover
         showGridlines
         globalFilter={globalFilter}
+        globalFilterFields={[
+          "items_icode",
+          "items_bcode",
+          "items_hscod",
+          "items_iname",
+          "items_idesc",
+          "puofm_untnm",
+          "suofm_untnm",
+          "ctgry_ctgnm",
+          "items_itype"
+        ]}
         header={header()}
       >
         <Column
