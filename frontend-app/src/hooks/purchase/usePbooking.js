@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import tmpb_pmstr from "@/models/purchase/tmpb_pmstr.json";
+import tmpb_mbkng from "@/models/purchase/tmpb_mbkng.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
@@ -8,7 +8,7 @@ import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
-const dataModel = generateDataModel(tmpb_pmstr, { edit_stop: 0 });
+const dataModel = generateDataModel(tmpb_mbkng, { edit_stop: 0 });
 
 export const usePbooking = () => {
   const { user, business } = useAuth();
@@ -21,13 +21,14 @@ export const usePbooking = () => {
 
   //options
   const [formDataItemList, setFormDataItemList] = useState([]);
+  const [formDataExpensesList, setFormDataExpensesList] = useState([]);
   const [formDataPaymentList, setFormDataPaymentList] = useState([]);
 
   const loadBookings = async () => {
     try {
       const response = await pbookingAPI.getAll({
-        pmstr_users: user.users_users,
-        pmstr_bsins: user.users_bsins,
+        mbkng_users: user.users_users,
+        mbkng_bsins: user.users_bsins,
         ...searchBoxData,
       });
       //response = { success, message, data }
@@ -54,10 +55,25 @@ export const usePbooking = () => {
     try {
       //console.log("loadBookingDetails:", id);
       const response = await pbookingAPI.getDetails({
-        bking_pmstr: id,
+        cbkng_mbkng: id,
       });
       //console.log("loadBookingDetails:", JSON.stringify(response));
       setFormDataItemList(response.data);
+      //showToast("success", "Success", response.message);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
+
+  const loadBookingExpenses = async (id) => {
+    try {
+      //console.log("loadBookingExpenses:", id);
+      const response = await pbookingAPI.getExpenses({
+        expns_refid: id,
+      });
+      //console.log("loadBookingExpenses:", JSON.stringify(response));
+      setFormDataExpensesList(response.data);
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
@@ -69,7 +85,7 @@ export const usePbooking = () => {
     try {
       //console.log("loadBookingPayment:", id);
       const response = await pbookingAPI.getPayment({
-        rcvpy_refid: id,
+        paybl_refid: id,
       });
       //console.log("loadBookingPayment:", JSON.stringify(response));
       setFormDataPaymentList(response.data);
@@ -82,22 +98,22 @@ export const usePbooking = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmpb_pmstr);
+    const newErrors = validate({ ...formData, [field]: value }, tmpb_mbkng);
     setErrors(newErrors);
   };
 
   const handleClear = () => {
     setFormData({
       ...dataModel,
-      pmstr_users: user.users_users,
-      pmstr_bsins: user.users_bsins,
-      pmstr_odtyp: "Purchase Booking",
+      mbkng_users: user.users_users,
+      mbkng_bsins: user.users_bsins,
     });
     //console.log("handleClear:", JSON.stringify(dataModel));
     setErrors({});
 
     //options
     setFormDataItemList([]);
+    setFormDataExpensesList([]);
     setFormDataPaymentList([]);
 
     //hide search box
@@ -121,19 +137,10 @@ export const usePbooking = () => {
   };
 
   const handleEdit = (data) => {
-    loadBookingDetails(data.id);
-    loadBookingPayment(data.id);
     //console.log("edit: " + JSON.stringify(data));
-    // setFormData({
-    //   ...data,
-    //   pmstr_ispad: String(data.pmstr_ispad),
-    //   pmstr_vatpy: String(data.pmstr_vatpy),
-    //   pmstr_ispst: String(data.pmstr_ispst),
-    //   pmstr_isret: String(data.pmstr_isret),
-    //   pmstr_iscls: String(data.pmstr_iscls),
-    //   pmstr_vatcl: String(data.pmstr_vatcl),
-    //   pmstr_hscnl: String(data.pmstr_hscnl),
-    // });
+    loadBookingDetails(data.id);
+    loadBookingExpenses(data.id);
+    loadBookingPayment(data.id);
     setFormData(data);
     setCurrentView("form");
   };
@@ -186,7 +193,7 @@ export const usePbooking = () => {
 
       //0 :: Unpaid, 1 :: Paid, 2 :: Partial
       const paidStatus =
-        Number(formData.pmstr_pyamt) === Number(formData.pmstr_duamt)
+        Number(formData.mbkng_pdamt) === Number(formData.pmstr_duamt)
           ? "0"
           : Number(formData.pmstr_duamt) === 0
             ? "1"
@@ -196,13 +203,14 @@ export const usePbooking = () => {
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        pmstr_users: user.users_users,
-        pmstr_bsins: user.users_bsins,
-        pmstr_trdat: formatDateForAPI(formData.pmstr_trdat),
-        pmstr_ispad: paidStatus,
+        mbkng_users: user.users_users,
+        mbkng_bsins: user.users_bsins,
+        mbkng_trdat: formatDateForAPI(formData.mbkng_trdat),
+        mbkng_ispad: paidStatus,
         user_id: user.id,
-        tmpb_bking: formDataItemList,
-        tmtb_rcvpy: formDataPaymentList,
+        tmpb_cbkng: formDataItemList,
+        tmpb_expns: formDataExpensesList,
+        tmtb_paybl: formDataPaymentList,
       };
 
       // Call API and get { message, data }
@@ -224,7 +232,7 @@ export const usePbooking = () => {
       );
 
       //call update process
-      await closingProcessAPI("purchase-booking", user.users_bsins);
+      //await closingProcessAPI("purchase-booking", user.users_bsins);
 
       // Clear form & reload
       handleClear();
@@ -242,16 +250,16 @@ export const usePbooking = () => {
 
   const [searchBoxShow, setSearchBoxShow] = useState(false);
   const [searchBoxData, setSearchBoxData] = useState({
-    pmstr_cntct: "",
-    pmstr_trnno: "",
-    pmstr_trdat: new Date().toLocaleString().split("T")[0],
-    pmstr_refno: "",
+    mbkng_cntct: "",
+    mbkng_trnno: "",
+    mbkng_trdat: new Date().toLocaleString().split("T")[0],
+    mbkng_refno: "",
     search_option: "",
   });
 
   const handleChangeSearchInput = (e) => {
     const { name, value } = e.target;
-    if (name === "pmstr_trdat") {
+    if (name === "mbkng_trdat") {
       const dateValue = e.value
         ? new Date(e.value).toLocaleString().split("T")[0]
         : null;
@@ -275,12 +283,11 @@ export const usePbooking = () => {
   };
 
   const searchOptions = [
-    { name: "pmstr_ispad", label: "Unpaid" },
-    { name: "pmstr_ispst", label: "Unposted" },
-    { name: "pmstr_isret", label: "Returned" },
-    { name: "pmstr_iscls", label: "Closed" },
-    { name: "pmstr_vatcl", label: "VAT Collected" },
-    { name: "pmstr_hscnl", label: "Cancelled" },
+    { name: "mbkng_ispad", label: "Unpaid" },
+    { name: "mbkng_ispst", label: "Unposted" },
+    { name: "mbkng_iscls", label: "Closed" },
+    { name: "mbkng_vatcl", label: "VAT Collected" },
+    { name: "mbkng_hscnl", label: "Cancelled" },
   ];
 
   //cancel booking items
@@ -290,7 +297,6 @@ export const usePbooking = () => {
   const handleCancelBookingItems = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      
 
       const formDataNew = {
         ...formData,
@@ -337,8 +343,10 @@ export const usePbooking = () => {
     handleSave,
     //options
     formDataItemList,
+    formDataExpensesList,
     formDataPaymentList,
     setFormDataItemList,
+    setFormDataExpensesList,
     setFormDataPaymentList,
 
     //search

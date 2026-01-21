@@ -14,3 +14,4 @@ drop table	tmpb_pmstr;
 drop table	tmtb_rcvpy;
 drop table	tmub_notes;
 drop table	tmpb_recpt;
+drop table	tmub_tickt;

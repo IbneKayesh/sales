@@ -23,8 +23,10 @@ const BookingPage = () => {
     handleSave,
     //options
     formDataItemList,
+    formDataExpensesList,
     formDataPaymentList,
     setFormDataItemList,
+    setFormDataExpensesList,
     setFormDataPaymentList,
 
     //search
@@ -112,6 +114,8 @@ const BookingPage = () => {
           handleChange={handleChange}
           formDataItemList={formDataItemList}
           setFormDataItemList={setFormDataItemList}
+          formDataExpensesList={formDataExpensesList}
+          setFormDataExpensesList={setFormDataExpensesList}
           formDataPaymentList={formDataPaymentList}
           setFormDataPaymentList={setFormDataPaymentList}
           handleSubmit={handleSave}
