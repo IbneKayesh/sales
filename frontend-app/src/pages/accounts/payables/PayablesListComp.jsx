@@ -18,33 +18,34 @@ const AccountsListComp = ({ dataList, onEdit }) => {
     );
   };
 
-  const rcvpy_refno_BT = (rowData) => {
+  const paybl_refno_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-md">
-          {rowData.rcvpy_refno} on {formatDate(rowData.pmstr_trdat)}
+          {rowData.paybl_refno} on {formatDate(rowData.mbkng_trdat)}
         </span>
-        <span className="text-sm text-green-500">{rowData.rcvpy_srcnm}</span>
-        <span className="text-sm text-gray-500">{rowData.rcvpy_notes}</span>
+        <span className="text-sm text-green-500">{rowData.paybl_srcnm}</span>
+        <span className="text-sm text-gray-500">{rowData.paybl_descr}</span>
+        <span className="text-sm text-gray-500">{rowData.paybl_notes}</span>
       </div>
     );
   };
 
-  const rcvpy_pyamt_BT = (rowData) => {
-    const { rcvpy_pyamt, pmstr_pdamt, pmstr_duamt } = rowData;
+  const paybl_dbamt_BT = (rowData) => {
+    const { paybl_cramt, mbkng_pdamt, paybl_dbamt } = rowData;
 
     return (
       <div className="flex gap-1">
         <span className="text-primary font-bold">
-          {Number(rcvpy_pyamt).toFixed(2)}
+          {Number(paybl_cramt).toFixed(2)}
         </span>
         •
-        <span className="text-green-500 font-bold">
-          {Number(pmstr_pdamt || 0).toFixed(2)}
+        <span className="text-green font-bold">
+          {Number(mbkng_pdamt).toFixed(2)}
         </span>
         •
         <span className="text-red-500 font-bold">
-          {Number(pmstr_duamt || 0).toFixed(2)}
+          {Number(paybl_cramt || 0).toFixed(2)}
         </span>
       </div>
     );
@@ -64,7 +65,7 @@ const AccountsListComp = ({ dataList, onEdit }) => {
 
   const dataTable_FT = () => {
     const stats = {
-      due: dataList.reduce((s, i) => s + Number(i.pmstr_duamt || 0), 0),
+      due: dataList.reduce((s, i) => s + Number(i.paybl_dbamt || 0), 0),
     };
 
     return (
@@ -98,11 +99,11 @@ const AccountsListComp = ({ dataList, onEdit }) => {
         showGridlines
         footer={dataTable_FT}
       >
-        <Column field="rcvpy_refno" header="Ref No" body={rcvpy_refno_BT} />
+        <Column field="paybl_refno" header="Ref No" body={paybl_refno_BT} />
         <Column
-          field="rcvpy_pyamt"
+          field="paybl_dbamt"
           header="Payable • Paid • Due"
-          body={rcvpy_pyamt_BT}
+          body={paybl_dbamt_BT}
         />
         <Column
           field="cntct_cntnm"

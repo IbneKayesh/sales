@@ -9,6 +9,22 @@ Separate Hook for DDL
 in api auth middle ware, must enable user session when live
 
 
-purchase master columns re-order
-payments reorder
-expenses reorder
+1. purchase Booking
+- update
+- closing process
+- print view
+- redirect after saved
+
+
+
+
+2. accounts payable
+- closing process
+- redirect after saved
+
+
+3. purchase receipt
+- update
+- closing process
+- print view
+- redirect after saved

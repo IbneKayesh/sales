@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { payablesAPI } from "@/api/accounts/payablesAPI";
-import tmtb_rcvpy from "@/models/accounts/tmtb_rcvpy.json";
+import tmtb_paybl from "@/models/accounts/tmtb_paybl.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/useToast";
 import { formatDateForAPI } from "@/utils/datetime";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
-const dataModel = generateDataModel(tmtb_rcvpy, { edit_stop: 0 });
+const dataModel = generateDataModel(tmtb_paybl, { edit_stop: 0 });
 
 export const usePayables = () => {
   const { user } = useAuth();
@@ -22,8 +22,8 @@ export const usePayables = () => {
   const loadPayables = async () => {
     try {
       const response = await payablesAPI.getAll({
-        pmstr_users: user.users_users,
-        pmstr_bsins: user.users_bsins,
+        paybl_users: user.users_users,
+        paybl_bsins: user.users_bsins,
       });
       //response = { success, message, data }
 
@@ -42,7 +42,7 @@ export const usePayables = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmtb_rcvpy);
+    const newErrors = validate({ ...formData, [field]: value }, tmtb_paybl);
     setErrors(newErrors);
   };
 
@@ -98,7 +98,7 @@ export const usePayables = () => {
       setIsBusy(true);
 
       // Validate form
-      const newErrors = validate(formData, tmtb_rcvpy);
+      const newErrors = validate(formData, tmtb_paybl);
       setErrors(newErrors);
       console.log("handleSave:", JSON.stringify(formData));
 
@@ -117,7 +117,7 @@ export const usePayables = () => {
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        rcvpy_trdat: formatDateForAPI(formData.rcvpy_trdat),
+        paybl_trdat: formatDateForAPI(formData.paybl_trdat),
         user_id: user.id,
       };
 
@@ -138,7 +138,7 @@ export const usePayables = () => {
       );
 
       //call update process
-      await closingProcessAPI("payable-due", formDataNew.rcvpy_refid);
+      //await closingProcessAPI("payable-due", formDataNew.rcvpy_refid);
 
       // Clear form & reload
       handleClear();

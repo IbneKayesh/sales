@@ -1,7 +1,7 @@
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
-import tmtb_rcvpy from "@/models/accounts/tmtb_rcvpy.json";
+import tmtb_paybl from "@/models/accounts/tmtb_paybl.json";
 import { InputNumber } from "primereact/inputnumber";
 import { paymentModeOptions } from "@/utils/vtable";
 import { Dropdown } from "primereact/dropdown";
@@ -11,84 +11,84 @@ const PayablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
     <div className="grid">
       <div className="col-12 md:col-2">
         <label
-          htmlFor="rcvpy_pymod"
+          htmlFor="paybl_pymod"
           className="block text-900 font-medium mb-2"
         >
           Mode
           <span className="text-red-500">*</span>
         </label>
         <Dropdown
-          name="rcvpy_pymod"
-          value={formData.rcvpy_pymod}
+          name="paybl_pymod"
+          value={formData.paybl_pymod}
           options={paymentModeOptions}
           optionLabel="label"
           optionValue="value"
-          onChange={(e) => onChange("rcvpy_pymod", e.value)}
-          className={`w-full ${errors.rcvpy_pymod ? "p-invalid" : ""}`}
+          onChange={(e) => onChange("paybl_pymod", e.value)}
+          className={`w-full ${errors.paybl_pymod ? "p-invalid" : ""}`}
           placeholder={`Select Mode`}
           filter
           showClear
         />
-        {errors.rcvpy_pymod && (
-          <small className="mb-3 text-red-500">{errors.rcvpy_pymod}</small>
+        {errors.paybl_pymod && (
+          <small className="mb-3 text-red-500">{errors.paybl_pymod}</small>
+        )}
+      </div>
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="paybl_trdat"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmtb_paybl.paybl_trdat.label} <span className="text-red-500">*</span>
+        </label>
+        <Calendar
+          name="paybl_trdat"
+          value={
+            formData.paybl_trdat
+              ? typeof formData.paybl_trdat === "string" &&
+                !formData.paybl_trdat.includes("T")
+                ? new Date(formData.paybl_trdat + "T00:00:00")
+                : new Date(formData.paybl_trdat)
+              : null
+          }
+          onChange={(e) => onChange("paybl_trdat", e.target.value)}
+          className={`w-full ${errors.paybl_trdat ? "p-invalid" : ""}`}
+          dateFormat="yy-mm-dd"
+          placeholder={`Select ${tmtb_paybl.paybl_trdat.label}`}
+        />
+        {errors.paybl_trdat && (
+          <small className="mb-3 text-red-500">{errors.paybl_trdat}</small>
         )}
       </div>
       <div className="col-12 md:col-6">
         <label
-          htmlFor="rcvpy_notes"
+          htmlFor="paybl_descr"
           className="block text-900 font-medium mb-2"
         >
-          {tmtb_rcvpy.rcvpy_notes.label}
+          {tmtb_paybl.paybl_descr.label}
         </label>
         <InputText
-          name="rcvpy_notes"
-          value={formData.rcvpy_notes}
-          onChange={(e) => onChange("rcvpy_notes", e.target.value)}
-          className={`w-full ${errors.rcvpy_notes ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmtb_rcvpy.rcvpy_notes.label}`}
+          name="paybl_descr"
+          value={formData.paybl_descr}
+          onChange={(e) => onChange("paybl_descr", e.target.value)}
+          className={`w-full ${errors.paybl_descr ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmtb_paybl.paybl_descr.label}`}
         />
-        {errors.rcvpy_notes && (
-          <small className="mb-3 text-red-500">{errors.rcvpy_notes}</small>
+        {errors.paybl_descr && (
+          <small className="mb-3 text-red-500">{errors.paybl_descr}</small>
         )}
       </div>
       <div className="col-12 md:col-2">
         <label
-          htmlFor="rcvpy_trdat"
-          className="block text-900 font-medium mb-2"
-        >
-          {tmtb_rcvpy.rcvpy_trdat.label}
-        </label>
-        <Calendar
-          name="rcvpy_trdat"
-          value={
-            formData.rcvpy_trdat
-              ? typeof formData.rcvpy_trdat === "string" &&
-                !formData.rcvpy_trdat.includes("T")
-                ? new Date(formData.rcvpy_trdat + "T00:00:00")
-                : new Date(formData.rcvpy_trdat)
-              : null
-          }
-          onChange={(e) => onChange("rcvpy_trdat", e.target.value)}
-          className={`w-full ${errors.rcvpy_trdat ? "p-invalid" : ""}`}
-          dateFormat="yy-mm-dd"
-          placeholder={`Select ${tmtb_rcvpy.rcvpy_trdat.label}`}
-        />
-        {errors.rcvpy_trdat && (
-          <small className="mb-3 text-red-500">{errors.rcvpy_trdat}</small>
-        )}
-      </div>
-      <div className="col-12 md:col-2">
-        <label
-          htmlFor="rcvpy_pyamt"
+          htmlFor="paybl_dbamt"
           className="block text-900 font-medium mb-2"
         >
           Amount <span className="text-red-500">*</span>
         </label>
         <InputNumber
-          name="rcvpy_pyamt"
-          value={formData.rcvpy_pyamt}
-          onValueChange={(e) => onChange("rcvpy_pyamt", e.value)}
-          className={`${errors.rcvpy_pyamt ? "p-invalid" : ""}`}
+          name="paybl_dbamt"
+          value={formData.paybl_dbamt}
+          onValueChange={(e) => onChange("paybl_dbamt", e.value)}
+          className={`${errors.paybl_dbamt ? "p-invalid" : ""}`}
           style={{ width: "100%" }}
           inputStyle={{ width: "100%", textAlign: "right" }}
           variant="filled"
@@ -97,8 +97,8 @@ const PayablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           maxFractionDigits={2}
           locale="en"
         />
-        {errors.rcvpy_pyamt && (
-          <small className="mb-3 text-red-500">{errors.rcvpy_pyamt}</small>
+        {errors.paybl_dbamt && (
+          <small className="mb-3 text-red-500">{errors.paybl_dbamt}</small>
         )}
       </div>
       <div className="col-12">

@@ -620,17 +620,17 @@ router.post("/delete", async (req, res) => {
 });
 
 
-//available receipt
-router.post("/available-receipt", async (req, res) => {
+//available-receipt-items
+router.post("/available-receipt-items", async (req, res) => {
   try {
     const {
-      pmstr_users,
-      pmstr_bsins,
-      pmstr_cntct,
+      mbkng_users,
+      mbkng_bsins,
+      mbkng_cntct,
     } = req.body;
 
     // Validate input
-    if (!pmstr_users || !pmstr_bsins || !pmstr_cntct) {
+    if (!mbkng_users || !mbkng_bsins || !mbkng_cntct) {
       return res.json({
         success: false,
         message: "User ID and Business ID and Contact ID are required",
@@ -640,33 +640,29 @@ router.post("/available-receipt", async (req, res) => {
     //console.log("get:", JSON.stringify(req.body));
 
     //database action
-    let sql = `SELECT bking.id AS id, '' AS recpt_pmstr, bking.bking_bitem AS recpt_bitem, bking.bking_items AS recpt_items,
-    bking.bking_bkrat AS recpt_bkrat, bking.bking_pnqty AS recpt_bkqty, bking.bking_itamt AS recpt_itamt,
-    bking.bking_dspct AS recpt_dspct, bking.bking_dsamt AS recpt_dsamt, bking.bking_vtpct AS recpt_vtpct,
-    bking.bking_vtamt AS recpt_vtamt, bking.bking_csrat AS recpt_csrat, bking.bking_ntamt AS recpt_ntamt,
-    bking.bking_notes AS recpt_notes, 0 AS recpt_rtqty, 0 AS recpt_slqty, bking.bking_bkqty AS recpt_ohqty,
-    bking.id AS recpt_bking, 0 as edit_stop,
+    let sql = `SELECT cbkg.id AS id, '' AS crcpt_mrcpt, cbkg.cbkng_bitem AS crcpt_bitem, cbkg.cbkng_items AS crcpt_items,
+    cbkg.cbkng_itrat AS crcpt_itrat, cbkg.cbkng_itqty AS crcpt_itqty, cbkg.cbkng_itamt AS crcpt_itamt, cbkg.cbkng_dspct AS crcpt_dspct,
+    cbkg.cbkng_dsamt AS crcpt_dsamt, cbkg.cbkng_vtpct AS crcpt_vtpct, cbkg.cbkng_vtamt AS crcpt_vtamt, cbkg.cbkng_csrat AS crcpt_csrat,
+    cbkg.cbkng_ntamt AS crcpt_ntamt, cbkg.cbkng_notes AS crcpt_notes,
+    0 AS crcpt_rtqty, 0 AS crcpt_slqty, cbkg.cbkng_itqty AS crcpt_ohqty, cbkg.id AS crcpt_cbkng, 0 as edit_stop,
     itm.items_icode, itm.items_iname, itm.items_dfqty, bitm.bitem_gstkq,
     puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
-    FROM tmpb_bking bking
-    JOIN tmpb_pmstr str ON bking.bking_pmstr = str.id
-    LEFT JOIN tmib_items itm ON bking.bking_items = itm.id
-    LEFT JOIN tmib_bitem bitm ON bking.bking_bitem = bitm.id
+    FROM tmpb_cbkng cbkg
+    JOIN tmpb_mbkng bkg ON cbkg.cbkng_mbkng = bkg.id
+    LEFT JOIN tmib_items itm ON cbkg.cbkng_items = itm.id
+    LEFT JOIN tmib_bitem bitm ON cbkg.cbkng_bitem = bitm.id
     LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
     LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
-    WHERE str.pmstr_odtyp = 'Purchase Booking'
-    AND bking.bking_pnqty > 0
-    AND str.pmstr_actve = 1
-    AND str.pmstr_ispst = 1
-    AND str.pmstr_users = ?
-    AND str.pmstr_bsins = ?
-    AND str.pmstr_cntct = ?
-    ORDER BY str.pmstr_trdat DESC`;
-    let params = [pmstr_users, pmstr_bsins, pmstr_cntct];
+    WHERE cbkg.cbkng_pnqty > 0
+    AND bkg.mbkng_users = ?
+    AND bkg.mbkng_bsins = ?
+    AND bkg.mbkng_cntct = ?
+    ORDER BY bkg.mbkng_trdat DESC`;
+    let params = [mbkng_users, mbkng_bsins, mbkng_cntct];
     const rows = await dbGetAll(
       sql,
       params,
-      `Get available purchase bookings for ${pmstr_users}`,
+      `Get available purchase bookings for ${mbkng_users}`,
     );
     res.json({
       success: true,

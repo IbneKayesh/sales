@@ -23,8 +23,10 @@ const ReceiptPage = () => {
     handleSave,
     //options
     formDataItemList,
+    formDataExpensesList,
     formDataPaymentList,
     setFormDataItemList,
+    setFormDataExpensesList,
     setFormDataPaymentList,
 
     //search
@@ -33,8 +35,13 @@ const ReceiptPage = () => {
     searchBoxData,
     handleChangeSearchInput,
     handleSearch,
-
-    //options
+    searchOptions,
+    //cancel booking items
+    cancelledRows,
+    setCancelledRows,
+    handleCancelBookingItems,
+    setCancelledPayment,
+    //fetch receipt items
     fetchAvailableReceiptItems,
   } = usePreceipt();
 
@@ -95,6 +102,7 @@ const ReceiptPage = () => {
           handleChangeSearchInput={handleChangeSearchInput}
           setSearchBoxShow={setSearchBoxShow}
           handleSearch={handleSearch}
+          searchOptions={searchOptions}
         />
       )}
       {currentView === "list" ? (
@@ -108,10 +116,18 @@ const ReceiptPage = () => {
           handleChange={handleChange}
           formDataItemList={formDataItemList}
           setFormDataItemList={setFormDataItemList}
+          formDataExpensesList={formDataExpensesList}
+          setFormDataExpensesList={setFormDataExpensesList}
           formDataPaymentList={formDataPaymentList}
           setFormDataPaymentList={setFormDataPaymentList}
           handleSubmit={handleSave}
-          //options
+          
+          //cancel booking items
+          cancelledRows={cancelledRows}
+          setCancelledRows={setCancelledRows}
+          onCancelBookingItems={handleCancelBookingItems}
+          setCancelledPayment={setCancelledPayment}
+          //fetch receipt items
           fetchAvailableReceiptItems={fetchAvailableReceiptItems}
         />
       )}

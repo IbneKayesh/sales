@@ -28,3 +28,6 @@ CREATE TABLE `tmpb_expns` (
 --
 ALTER TABLE `tmpb_expns`
   ADD PRIMARY KEY (`id`);
+
+
+-- expns_inexc [1=Including, 2=Excluding]

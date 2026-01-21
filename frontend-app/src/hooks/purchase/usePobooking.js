@@ -32,31 +32,4 @@ const usePobooking = () => {
       setIsBusy(false);
     }
   };
-
- 
-  const handleCancelBooking = async (data) => {
-    try {
-      setIsBusy(true);
-      const responseData = await pobookingAPI.cancelBooking(data.master_id);
-      setToastBox({
-        severity: "success",
-        summary: "Success",
-        detail: `${data.order_no} successfully.`,
-      });
-
-      //call update process
-      await closingProcessAPI("Purchase Booking Cancel", data.order_no);
-      loadBookingList();
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      setToastBox({
-        severity: "error",
-        summary: "Error",
-        detail: "Failed to load data from server",
-      });
-    } finally {
-      setIsBusy(false);
-    }
-  };
-
 };

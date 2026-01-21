@@ -7,7 +7,7 @@
     "placeholder": "Enter ID",
     "required": false
   },
-  "mbkng_users": {
+  "mrcpt_users": {
     "type": "string",
     "label": "User Id",
     "maxLength": 50,
@@ -15,7 +15,7 @@
     "placeholder": "Enter user id",
     "required": false
   },
-  "mbkng_bsins": {
+  "mrcpt_bsins": {
     "type": "string",
     "label": "Business id",
     "maxLength": 50,
@@ -23,7 +23,7 @@
     "placeholder": "Enter business id",
     "required": false
   },
-  "mbkng_cntct": {
+  "mrcpt_cntct": {
     "type": "string",
     "label": "Supplier",
     "maxLength": 50,
@@ -31,7 +31,7 @@
     "placeholder": "Enter supplier",
     "required": true
   },
-  "mbkng_trnno": {
+  "mrcpt_trnno": {
     "type": "string",
     "label": "No",
     "maxLength": 50,
@@ -40,14 +40,14 @@
     "required": false,
     "default": "[Auto SL]"
   },
-  "mbkng_trdat": {
+  "mrcpt_trdat": {
     "type": "date",
     "label": "Date",
     "placeholder": "Enter start date",
     "required": true,
     "default": "new Date() with local format"
   },
-  "mbkng_refno": {
+  "mrcpt_refno": {
     "type": "string",
     "label": "Reference No",
     "maxLength": 50,
@@ -55,7 +55,7 @@
     "placeholder": "Enter reference no",
     "required": false
   },
-  "mbkng_trnte": {
+  "mrcpt_trnte": {
     "type": "string",
     "label": "Note",
     "maxLength": 50,
@@ -64,7 +64,7 @@
     "required": false,
     "default": ""
   },
-  "mbkng_odamt": {
+  "mrcpt_odamt": {
     "type": "decimal",
     "label": "Amount (1)",
     "maxLength": 999999999,
@@ -73,7 +73,7 @@
     "required": true,
     "default": "0"
   },
-  "mbkng_dsamt": {
+  "mrcpt_dsamt": {
     "type": "decimal",
     "label": "Discount (2)",
     "maxLength": 999999999,
@@ -82,7 +82,7 @@
     "required": true,
     "default": "0"
   },
-  "mbkng_vtamt": {
+  "mrcpt_vtamt": {
     "type": "decimal",
     "label": "VAT (3)",
     "maxLength": 999999999,
@@ -91,7 +91,7 @@
     "required": true,
     "default": "0"
   },
-  "mbkng_vatpy": {
+  "mrcpt_vatpy": {
     "type": "number",
     "label": "Is VAT Payment",
     "maxLength": 1,
@@ -100,7 +100,7 @@
     "required": true,
     "default": 0
   },
-  "mbkng_incst": {
+  "mrcpt_incst": {
     "type": "decimal",
     "label": "Include cost (4)",
     "maxLength": 999999999,
@@ -109,7 +109,7 @@
     "required": true,
     "default": "0"
   },
-  "mbkng_excst": {
+  "mrcpt_excst": {
     "type": "decimal",
     "label": "Exclude cost (10)",
     "maxLength": 999999999,
@@ -118,7 +118,7 @@
     "required": true,
     "default": "0"
   },
-  "mbkng_rnamt": {
+  "mrcpt_rnamt": {
     "type": "decimal",
     "label": "Round Off (5)",
     "maxLength": 999999999,
@@ -127,7 +127,7 @@
     "required": true,
     "default": "0"
   },
-  "mbkng_ttamt": {
+  "mrcpt_ttamt": {
     "type": "decimal",
     "label": "Total (6)",
     "maxLength": 999999999,
@@ -136,7 +136,7 @@
     "required": true,
     "default": "0"
   },
-  "mbkng_pyamt": {
+  "mrcpt_pyamt": {
     "type": "decimal",
     "label": "Payable (7)",
     "maxLength": 999999999,
@@ -145,7 +145,7 @@
     "required": true,
     "default": "0"
   },
-  "mbkng_pdamt": {
+  "mrcpt_pdamt": {
     "type": "decimal",
     "label": "Paid (8)",
     "maxLength": 999999999,
@@ -154,7 +154,7 @@
     "required": true,
     "default": "0"
   },
-  "mbkng_duamt": {
+  "mrcpt_duamt": {
     "type": "decimal",
     "label": "Due (9)",
     "maxLength": 999999999,
@@ -163,16 +163,16 @@
     "required": true,
     "default": "0"
   },
-  "mbkng_cnamt": {
+  "mrcpt_rtamt": {
     "type": "decimal",
-    "label": "Cancelled (11)",
+    "label": "Returned (11)",
     "maxLength": 999999999,
     "minLength": 0,
-    "placeholder": "Enter cancelled amount",
+    "placeholder": "Enter returned amount",
     "required": true,
     "default": "0"
   },
-  "mbkng_ispad": {
+  "mrcpt_ispad": {
     "type": "number",
     "label": "Is Paid",
     "maxLength": 2,
@@ -181,7 +181,7 @@
     "required": true,
     "default": 0
   },
-  "mbkng_ispst": {
+  "mrcpt_ispst": {
     "type": "number",
     "label": "Is Posted",
     "maxLength": 1,
@@ -190,7 +190,7 @@
     "required": true,
     "default": 1
   },
-  "mbkng_iscls": {
+  "mrcpt_iscls": {
     "type": "number",
     "label": "Is Closed",
     "maxLength": 1,
@@ -199,7 +199,7 @@
     "required": true,
     "default": 0
   },
-  "mbkng_vatcl": {
+  "mrcpt_vatcl": {
     "type": "number",
     "label": "VAT Collected",
     "maxLength": 1,
@@ -208,7 +208,7 @@
     "required": true,
     "default": 0
   },
-  "mbkng_hscnl": {
+  "mrcpt_hscnl": {
     "type": "number",
     "label": "Is Cancelled",
     "maxLength": 1,

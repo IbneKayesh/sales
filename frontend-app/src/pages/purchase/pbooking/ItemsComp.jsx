@@ -51,7 +51,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     const filtered = filteredList.filter(
       (item) =>
         !formDataItemList.some(
-          (orderItem) => orderItem.bking_bitem === item.id,
+          (orderItem) => orderItem.cbkng_bitem === item.id,
         ),
     );
 
@@ -63,42 +63,48 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   useEffect(() => {
     if (!formDataItemList || formDataItemList.length === 0) return;
 
-    const extraCost = (formData.pmstr_incst || 0) + (formData.pmstr_excst || 0);
+    const extraCost =
+      Number(formData.mbkng_incst || 0) + Number(formData.mbkng_excst || 0);
 
-    // Calculate grand total of all items (before extra cost distribution)
-    const grandTotal = formDataItemList.reduce(
-      (sum, item) => sum + Number(item.pmstr_pyamt || 0),
+    // Calculate grand total qty of all items (before extra cost distribution)
+    const grandTotalQty = formDataItemList.reduce(
+      (sum, item) => sum + Number(item.cbkng_itqty || 0),
       0,
     );
 
-    if (grandTotal === 0) return;
+    if (grandTotalQty === 0) return;
+
+    // Calculate average extra cost per qty
+    const avgExtraCostPerQty = extraCost / grandTotalQty;
 
     // Update each item's cost_price with distributed extra cost
     const updatedItems = formDataItemList.map((item) => {
       // Calculate base cost price (without extra cost)
-      const baseCostPrice = item.bking_itamt / item.bking_bkqty;
+      const baseCostPrice = Number(item.cbkng_itrat || 0);
 
-      // Calculate this item's share of extra cost (proportional to its total_amount)
-      const extraCostShare = (item.bking_itamt / grandTotal) * extraCost;
+      // Calculate extra cost per unit based on qty-weighted average
+      const extraCostPerUnit = avgExtraCostPerQty;
 
       // Calculate final cost price per unit
-      const finalCostPrice = baseCostPrice + extraCostShare / item.bking_bkqty;
+      const finalCostPrice = baseCostPrice + extraCostPerUnit;
 
       return {
         ...item,
-        bking_csrat: finalCostPrice,
+        cbkng_csrat: finalCostPrice,
       };
     });
 
     // Only update if there's an actual change to avoid infinite loops
     const hasChanged = updatedItems.some(
-      (item, index) => item.bking_csrat !== formDataItemList[index].bking_csrat,
+      (item, index) =>
+        Number(item.cbkng_csrat) !==
+        Number(formDataItemList[index].cbkng_csrat),
     );
 
     if (hasChanged) {
       setFormDataItemList(updatedItems);
     }
-  }, [formData?.pmstr_incst, formData?.pmstr_excst, formDataItemList.length]);
+  }, [formData?.mbkng_incst, formData?.mbkng_excst, formDataItemList.length]);
 
   const itemList_IT = (option) => {
     return (
@@ -146,7 +152,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
     // Check if item is already added
     const existingItem = formDataItemList.find(
-      (i) => i.bking_bitem === selectedItem,
+      (i) => i.cbkng_bitem === selectedItem,
     );
     if (existingItem) {
       // Item already exists, do not add duplicate
@@ -165,22 +171,22 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
     const newItemRow = {
       id: generateGuid(), // Temporary ID for new items
-      bking_pmstr: "",
-      bking_bitem: selectedItem,
-      bking_items: item.bitem_items,
-      bking_bkrat: item.bitem_lprat,
-      bking_bkqty: selectedQty || 1,
-      bking_itamt: itemAmount,
-      bking_dspct: item.bitem_sddsp,
-      bking_dsamt: discountAmount,
-      bking_vtpct: item.items_sdvat,
-      bking_vtamt: vatAmount,
-      bking_csrat: costPrice,
-      bking_ntamt: totalAmount,
-      bking_notes: selectedNote,
-      bking_cnqty: 0,
-      bking_rcqty: 0,
-      bking_pnqty: selectedQty || 1,
+      cbkng_mbkng: "",
+      cbkng_bitem: selectedItem,
+      cbkng_items: item.bitem_items,
+      cbkng_itrat: item.bitem_lprat,
+      cbkng_itqty: selectedQty || 1,
+      cbkng_itamt: itemAmount,
+      cbkng_dspct: item.bitem_sddsp,
+      cbkng_dsamt: discountAmount,
+      cbkng_vtpct: item.items_sdvat,
+      cbkng_vtamt: vatAmount,
+      cbkng_csrat: costPrice,
+      cbkng_ntamt: totalAmount,
+      cbkng_notes: selectedNote,
+      cbkng_cnqty: 0,
+      cbkng_rcqty: 0,
+      cbkng_pnqty: selectedQty || 1,
 
       items_icode: item.items_icode,
       items_iname: item.items_iname,
@@ -210,9 +216,9 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     );
   };
 
-  const bking_bkrat_BT = (rowData) => {
-    const formattedPrice = Number(rowData.bking_bkrat).toFixed(2);
-    const formattedCostPrice = Number(rowData.bking_csrat).toFixed(2);
+  const cbkng_itrat_BT = (rowData) => {
+    const formattedPrice = Number(rowData.cbkng_itrat).toFixed(2);
+    const formattedCostPrice = Number(rowData.cbkng_csrat).toFixed(2);
     return (
       <>
         {formattedPrice}{" "}
@@ -221,67 +227,68 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     );
   };
 
-  const bking_bkqty_BT = (rowData) => {
+  const cbkng_itqty_BT = (rowData) => {
     return (
       <>
-        {Number(rowData.bking_bkqty).toFixed(2)}{" "}
+        {Number(rowData.cbkng_itqty).toFixed(2)}{" "}
         <span className="text-gray-600">{rowData.puofm_untnm}</span>
       </>
     );
   };
 
-  const bking_bkqty_FT = () => {
+  const cbkng_itqty_FT = () => {
     return formDataItemList
-      .reduce((sum, item) => sum + Number(item.bking_bkqty || 0), 0)
+      .reduce((sum, item) => sum + Number(item.cbkng_itqty || 0), 0)
       .toFixed(2);
   };
 
-  const bking_dspct_BT = (rowData) => {
-    const formattedDiscount = Number(rowData.bking_dsamt).toFixed(2);
-    const formattedDiscountPercent = Number(rowData.bking_dspct).toFixed(2);
+  const cbkng_dspct_BT = (rowData) => {
+    const formattedDiscount = Number(rowData.cbkng_dsamt).toFixed(2);
+    const formattedDiscountPercent = Number(rowData.cbkng_dspct).toFixed(2);
     return (
       <ZeroRowCell
-        value={rowData.bking_dsamt}
+        value={rowData.cbkng_dsamt}
         text={`${formattedDiscount} (${formattedDiscountPercent}%)`}
       />
     );
   };
 
-  const bking_dspct_FT = () => {
+  const cbkng_dspct_FT = () => {
     return formDataItemList
-      .reduce((sum, item) => sum + Number(item.bking_dsamt || 0), 0)
+      .reduce((sum, item) => sum + Number(item.cbkng_dsamt || 0), 0)
       .toFixed(2);
   };
 
-  const bking_vtpct_BT = (rowData) => {
-    const formattedVat = Number(rowData.bking_vtamt).toFixed(2);
-    const formattedVatPercent = Number(rowData.bking_vtpct).toFixed(2);
+  const cbkng_vtpct_BT = (rowData) => {
+    const formattedVat = Number(rowData.cbkng_vtamt).toFixed(2);
+    const formattedVatPercent = Number(rowData.cbkng_vtpct).toFixed(2);
     return (
       <ZeroRowCell
-        value={rowData.bking_vtamt}
+        value={rowData.cbkng_vtamt}
         text={`${formattedVat} (${formattedVatPercent}%)`}
       />
     );
   };
 
-  const bking_vtpct_FT = () => {
+  const cbkng_vtpct_FT = () => {
     return formDataItemList
-      .reduce((sum, item) => sum + Number(item.bking_vtamt || 0), 0)
+      .reduce((sum, item) => sum + Number(item.cbkng_vtamt || 0), 0)
       .toFixed(2);
   };
 
-  const bking_ntamt_BT = (rowData) => {
-    return Number(rowData.bking_ntamt).toFixed(2);
+  const cbkng_ntamt_BT = (rowData) => {
+    return Number(rowData.cbkng_ntamt).toFixed(2);
   };
 
   const amount = formDataItemList
-    .reduce((sum, item) => sum + Number(item.bking_itamt || 0), 0)
+    .reduce((sum, item) => sum + Number(item.cbkng_itamt || 0), 0)
     .toFixed(2);
 
   const netAmount = formDataItemList
-    .reduce((sum, item) => sum + Number(item.bking_ntamt || 0), 0)
+    .reduce((sum, item) => sum + Number(item.cbkng_ntamt || 0), 0)
     .toFixed(2);
-  const bking_ntamt_FT = () => {
+
+  const cbkng_ntamt_FT = () => {
     return (
       <>
         {netAmount}
@@ -295,7 +302,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const bulk_BT = (rowData) => {
     return (
       <ConvertedQtyComponent
-        qty={rowData.bking_bkqty}
+        qty={rowData.cbkng_itqty}
         dfQty={rowData.items_dfqty}
         pname={rowData.puofm_untnm}
         sname={rowData.suofm_untnm}
@@ -309,21 +316,21 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     );
   };
 
-  const bking_cnqty_BT = (rowData) => {
+  const cbkng_cnqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bking_cnqty} text={rowData.bking_cnqty} />
+      <ZeroRowCell value={rowData.cbkng_cnqty} text={rowData.cbkng_cnqty} />
     );
   };
 
-  const bking_rcqty_BT = (rowData) => {
+  const cbkng_rcqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bking_rcqty} text={rowData.bking_rcqty} />
+      <ZeroRowCell value={rowData.cbkng_rcqty} text={rowData.cbkng_rcqty} />
     );
   };
 
-  const bking_pnqty_BT = (rowData) => {
+  const cbkng_pnqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bking_pnqty} text={rowData.bking_pnqty} />
+      <ZeroRowCell value={rowData.cbkng_pnqty} text={rowData.cbkng_pnqty} />
     );
   };
 
@@ -366,7 +373,8 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
         onValueChange={(e) => options.editorCallback(e.value)}
         style={{ minWidth: "40px", padding: "3px" }}
         inputStyle={{ width: "80%", padding: "3px" }}
-        min={1}
+        min={0}
+        minFractionDigits={2}
       />
     );
   };
@@ -384,31 +392,31 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const onRowEditSave = (event) => {
     let { newData, index } = event;
     // Calculate item_amount
-    let dsp = Number(newData.bking_dspct || 0);
+    let dsp = Number(newData.cbkng_dspct || 0);
     if (dsp < 0) dsp = 0;
     if (dsp > 100) dsp = 100;
-    let vtp = Number(newData.bking_vtpct || 0);
+    let vtp = Number(newData.cbkng_vtpct || 0);
     if (vtp < 0) vtp = 0;
     if (vtp > 1000) vtp = 100;
 
-    const itemAmount = newData.bking_bkqty * newData.bking_bkrat;
+    const itemAmount = newData.cbkng_itqty * newData.cbkng_itrat;
     const discountAmount = (dsp / 100) * itemAmount;
     const vatAmount = (vtp / 100) * itemAmount;
     const totalAmount = itemAmount - discountAmount + vatAmount;
-    const costPrice = totalAmount / newData.bking_bkqty;
+    const costPrice = totalAmount / newData.cbkng_itqty;
 
-    newData.bking_dspct = dsp;
-    newData.bking_vtpct = vtp;
+    newData.cbkng_dspct = dsp;
+    newData.cbkng_vtpct = vtp;
 
-    newData.bking_itamt = itemAmount;
-    newData.bking_dsamt = discountAmount;
-    newData.bking_vtamt = vatAmount;
-    newData.bking_csrat = costPrice;
-    newData.bking_ntamt = totalAmount;
+    newData.cbkng_itamt = itemAmount;
+    newData.cbkng_dsamt = discountAmount;
+    newData.cbkng_vtamt = vatAmount;
+    newData.cbkng_csrat = costPrice;
+    newData.cbkng_ntamt = totalAmount;
 
-    newData.bking_cnqty = 0;
-    newData.bking_rcqty = 0;
-    newData.bking_pnqty = newData.bking_bkqty;
+    newData.cbkng_cnqty = 0;
+    newData.cbkng_rcqty = 0;
+    newData.cbkng_pnqty = newData.cbkng_itqty;
 
     let _localItems = [...formDataItemList];
     _localItems[index] = newData;
@@ -453,11 +461,11 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
             />
           </div>
           <div className="col-12 md:col-2">
-            <label htmlFor="bking_bkqty" className="block font-bold mb-2">
+            <label htmlFor="qty" className="block font-bold mb-2">
               Quantity
             </label>
             <InputNumber
-              name="bking_bkqty"
+              name="qty"
               value={selectedQty}
               onValueChange={(e) => setSelectedQty(e.value)}
               placeholder="Qty"
@@ -467,12 +475,12 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
             />
           </div>
           <div className="col-12 md:col-5">
-            <label htmlFor="bking_note" className="block font-bold mb-2">
+            <label htmlFor="notes" className="block font-bold mb-2">
               Note (Optional)
             </label>
             <div className="p-inputgroup flex-1">
               <InputText
-                name="bking_note"
+                name="notes"
                 value={selectedNote}
                 onChange={(e) => setSelectedNote(e.target.value)}
                 placeholder="Enter item note"
@@ -512,46 +520,46 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           footer={items_iname_FT}
         />
         <Column
-          field="bking_bkrat"
+          field="cbkng_itrat"
           header="Price"
-          body={bking_bkrat_BT}
+          body={cbkng_itrat_BT}
           editor={numberEditor}
         />
         <Column
-          field="bking_bkqty"
+          field="cbkng_itqty"
           header="Qty"
-          body={bking_bkqty_BT}
-          footer={bking_bkqty_FT}
+          body={cbkng_itqty_BT}
+          footer={cbkng_itqty_FT}
           editor={numberEditor}
         />
         <Column
-          field="bking_itamt"
+          field="cbkng_itamt"
           header="Amount"
           headerStyle={{ backgroundColor: "#49769bff" }}
           footer={amount}
           hidden={!showExtraColumns}
         />
         <Column
-          field="bking_dspct"
+          field="cbkng_dspct"
           header="Discount"
-          body={bking_dspct_BT}
-          footer={bking_dspct_FT}
+          body={cbkng_dspct_BT}
+          footer={cbkng_dspct_FT}
           editor={numberEditor}
         />
         <Column
-          field="bking_vtpct"
+          field="cbkng_vtpct"
           header="VAT"
-          body={bking_vtpct_BT}
-          footer={bking_vtpct_FT}
+          body={cbkng_vtpct_BT}
+          footer={cbkng_vtpct_FT}
           editor={numberEditor}
         />
         <Column
-          field="bking_ntamt"
+          field="cbkng_ntamt"
           header="Sub Total"
-          body={bking_ntamt_BT}
-          footer={bking_ntamt_FT}
+          body={cbkng_ntamt_BT}
+          footer={cbkng_ntamt_FT}
         />
-        <Column field="bking_notes" header="Remarks" editor={textEditor} />
+        <Column field="cbkng_notes" header="Remarks" editor={textEditor} />
         <Column header="Bulk" body={bulk_BT} />
         <Column
           field="bitem_gstkq"
@@ -561,24 +569,24 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           hidden={!showExtraColumns}
         />
         <Column
-          field="bking_cnqty"
+          field="cbkng_cnqty"
           header="Cancelled"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={bking_cnqty_BT}
+          body={cbkng_cnqty_BT}
           hidden={!showExtraColumns}
         />
         <Column
-          field="bking_rcqty"
+          field="cbkng_rcqty"
           header="Invoice"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={bking_rcqty_BT}
+          body={cbkng_rcqty_BT}
           hidden={!showExtraColumns}
         />
         <Column
-          field="bking_pnqty"
+          field="cbkng_pnqty"
           header="Available"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={bking_pnqty_BT}
+          body={cbkng_pnqty_BT}
           hidden={!showExtraColumns}
         />
         <Column

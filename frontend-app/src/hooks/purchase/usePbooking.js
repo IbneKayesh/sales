@@ -173,16 +173,17 @@ export const usePbooking = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      //console.log("formData:", JSON.stringify(formData));
-      //console.log("formDataItemList :", JSON.stringify(formDataItemList));
-      //console.log("formDataPaymentList :", JSON.stringify(formDataPaymentList));
+      // console.log("formData:", JSON.stringify(formData));
+      // console.log("formDataItemList :", JSON.stringify(formDataItemList));
+      // console.log("formDataExpensesList :", JSON.stringify(formDataExpensesList));
+      // console.log("formDataPaymentList :", JSON.stringify(formDataPaymentList));
 
-      //return;
+      // return;
 
       setIsBusy(true);
 
       // Validate form
-      const newErrors = validate(formData, tmpb_pmstr);
+      const newErrors = validate(formData, tmpb_mbkng);
       setErrors(newErrors);
       console.log("handleSave:", JSON.stringify(newErrors));
 
@@ -193,9 +194,9 @@ export const usePbooking = () => {
 
       //0 :: Unpaid, 1 :: Paid, 2 :: Partial
       const paidStatus =
-        Number(formData.mbkng_pdamt) === Number(formData.pmstr_duamt)
+        Number(formData.mbkng_pdamt) === Number(formData.mbkng_duamt)
           ? "0"
-          : Number(formData.pmstr_duamt) === 0
+          : Number(formData.mbkng_duamt) === 0
             ? "1"
             : "2";
 
@@ -235,9 +236,9 @@ export const usePbooking = () => {
       //await closingProcessAPI("purchase-booking", user.users_bsins);
 
       // Clear form & reload
-      handleClear();
-      setCurrentView("list");
-      await loadBookings(); // make sure we wait for updated data
+      //handleClear();
+      //setCurrentView("list");
+      //await loadBookings(); // make sure we wait for updated data
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");

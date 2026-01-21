@@ -7,6 +7,8 @@ import { ButtonGroup } from "primereact/buttongroup";
 import PrintComp from "./PrintComp";
 import CancelItemsComp from "./CancelItemsComp";
 import { Dialog } from "primereact/dialog";
+import ExpensesDlg from "./ExpensesDlg";
+import PaymentDlg from "./PaymentDlg";
 
 const EntryComp = ({
   isBusy,
@@ -64,44 +66,47 @@ const EntryComp = ({
       0,
     );
 
-    const total_amount =
-      order_amount -
-      (discount_amount +
-        vat_amount +
-        Number(formData.mbkng_incst || 0) +
-        Number(formData.mbkng_excst || 0));
-
-    let payable_amount =
-      order_amount +
-      Number(formData.mbkng_incst || 0) -
-      (discount_amount + Number(formData.mbkng_rnamt || 0));
-    if (formData.mbkng_vatpy === 1) payable_amount += vat_amount;
-
-    const paidAmount = formDataPaymentList.reduce(
-      (sum, item) => sum + (Number(item.rcvpy_pyamt) || 0),
+    const include_cost = formDataExpensesList.reduce(
+      (sum, item) =>
+        item.expns_inexc === 1 ? sum + (Number(item.expns_xpamt) || 0) : sum,
       0,
     );
 
-    const cancelledAmount = formData.mbkng_cnamt || 0;
+    const exclude_cost = formDataExpensesList.reduce(
+      (sum, item) =>
+        item.expns_inexc === 2 ? sum + (Number(item.expns_xpamt) || 0) : sum,
+      0,
+    );
 
-    //console.log(payable_amount, paidAmount);
-    const due_amount = payable_amount - cancelledAmount - (paidAmount || 0);
+    const sum_1_3_4 = order_amount + vat_amount + include_cost;
+    const sum_2_5 = discount_amount + Number(formData.mbkng_rnamt || 0);
+
+    const total_amount = sum_1_3_4 - sum_2_5;
+
+    const payable_amount = formData.mbkng_vatpy === 1 ? total_amount : (total_amount - vat_amount);
+
+    const paid_amount = formDataPaymentList.reduce(
+      (sum, item) => sum + (Number(item.paybl_dbamt) || 0),
+      0,
+    );
+
+    const due_amount = payable_amount -  (paid_amount || 0);
 
     handleChange("mbkng_odamt", Number(order_amount).toFixed(2));
     handleChange("mbkng_dsamt", Number(discount_amount).toFixed(2));
     handleChange("mbkng_vtamt", Number(vat_amount).toFixed(2));
+    handleChange("mbkng_incst", Number(include_cost).toFixed(2));
+    handleChange("mbkng_excst", Number(exclude_cost).toFixed(2));
     handleChange("mbkng_ttamt", Number(total_amount).toFixed(2));
     handleChange("mbkng_pyamt", Number(payable_amount).toFixed(2));
-    handleChange("mbkng_pdamt", Number(paidAmount).toFixed(2));
+    handleChange("mbkng_pdamt", Number(paid_amount).toFixed(2));
     handleChange("mbkng_duamt", Number(Math.round(due_amount)).toFixed(2));
   }, [
+    formData.mbkng_vatpy,
+    formData.mbkng_rnamt,
     formDataItemList,
-    formData.mbkng_incst,
-    formData.mbkng_excst,
-    formData.mbkng_pdamt,
     formDataPaymentList,
-    formData.pmstr_vatpy,
-    formData.pmstr_rnamt,
+    formDataExpensesList,
   ]);
 
   const [showCancelDialog, setShowCancelDialog] = useState(false);
@@ -115,6 +120,21 @@ const EntryComp = ({
   };
   const handleHideCancelDlg = () => {
     setShowCancelDialog(false);
+  };
+  const handleShowIncludeCost = () => {
+    setShowDialog(true);
+    setDialogName("Including Expenses");
+    //"Print"
+  };
+  const handleShowExcludeCost = () => {
+    setShowDialog(true);
+    setDialogName("Excluding Expenses");
+    //"Print"
+  };
+  const handleShowPayment = () => {
+    setShowDialog(true);
+    setDialogName("Payment");
+    //"Print"
   };
 
   return (
@@ -134,6 +154,9 @@ const EntryComp = ({
         setErrors={setErrors}
         formData={formData}
         handleChange={handleChange}
+        onShowIncludeCost={handleShowIncludeCost}
+        onShowExcludeCost={handleShowExcludeCost}
+        onShowPayment={handleShowPayment}
         formDataPaymentList={formDataPaymentList}
         setFormDataPaymentList={setFormDataPaymentList}
       />
@@ -162,7 +185,7 @@ const EntryComp = ({
             label={
               formData.id
                 ? "Update"
-                : formData.pmstr_ispst
+                : formData.mbkng_ispst
                   ? "Save with Posted"
                   : "Save as Draft"
             }
@@ -177,7 +200,7 @@ const EntryComp = ({
       </div>
 
       <Dialog
-        header="Print/Payment/Including Expenses/Excluding Expenses"
+        header={dialogName}
         visible={showDialog}
         onHide={() => setShowDialog(false)}
         closable={true}
@@ -185,14 +208,28 @@ const EntryComp = ({
         footer="Footer"
       >
         <>
-          {dialogName === "payment" ? (
-            <PaymentComp />
-          ) : dialogName === "including expenses" ? (
-            <PaymentComp />
-          ) : dialogName === "excluding expenses" ? (
-            <PaymentComp />
-          ) : (
-            <PrintComp />
+          {dialogName === "Including Expenses" && (
+            <ExpensesDlg
+              formData={formData}
+              formDataExpensesList={formDataExpensesList}
+              setFormDataExpensesList={setFormDataExpensesList}
+              dialogName={dialogName}
+            />
+          )}
+          {dialogName === "Excluding Expenses" && (
+            <ExpensesDlg
+              formData={formData}
+              formDataExpensesList={formDataExpensesList}
+              setFormDataExpensesList={setFormDataExpensesList}
+              dialogName={dialogName}
+            />
+          )}
+          {dialogName === "Payment" && (
+            <PaymentDlg
+              formData={formData}
+              formDataPaymentList={formDataPaymentList}
+              setFormDataPaymentList={setFormDataPaymentList}
+            />
           )}
         </>
       </Dialog>

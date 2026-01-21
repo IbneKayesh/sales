@@ -152,7 +152,7 @@ const PrintComp = ({
             </div>
           </div>
           <div className="info-box">
-            <h3>Receipt Details</h3>
+            <h3>Booking Details</h3>
             <div className="info-content">
               <div className="info-row">
                 <span className="label">Date:</span>
@@ -186,31 +186,31 @@ const PrintComp = ({
                   <td>
                     <span style={{ fontWeight: 600 }}>{item.items_iname}</span>
                     <span className="subtext">{item.items_icode}</span>
-                    {item.recpt_notes && (
+                    {item.bking_notes && (
                       <span className="subtext italic">
-                        Note: {item.recpt_notes}
+                        Note: {item.bking_notes}
                       </span>
                     )}
                   </td>
                   <td className="text-right">
-                    {formatCurrency(item.recpt_bkrat)}
+                    {formatCurrency(item.bking_bkrat)}
                   </td>
                   <td className="text-right">
-                    {Number(item.recpt_bkqty).toFixed(2)}
+                    {Number(item.bking_bkqty).toFixed(2)}
                     <span className="subtext">{item.puofm_untnm}</span>
                   </td>
                   <td className="text-right">
                     <span className="subtext">
-                      VAT: {formatCurrency(item.recpt_vtamt)} (
-                      {Number(item.recpt_vtpct).toFixed(2)}%)
+                      VAT: {formatCurrency(item.bking_vtamt)} (
+                      {Number(item.bking_vtpct).toFixed(2)}%)
                     </span>
                     <span className="subtext">
-                      Disc: {formatCurrency(item.recpt_dsamt)} (
-                      {Number(item.recpt_dspct).toFixed(2)}%)
+                      Disc: {formatCurrency(item.bking_dsamt)} (
+                      {Number(item.bking_dspct).toFixed(2)}%)
                     </span>
                   </td>
                   <td className="text-right" style={{ fontWeight: 600 }}>
-                    {formatCurrency(item.recpt_ntamt)}
+                    {formatCurrency(item.bking_ntamt)}
                   </td>
                 </tr>
               ))}
@@ -267,7 +267,7 @@ const PrintComp = ({
                   fontStyle: "italic",
                 }}
               >
-                No payments recorded. / Booking Payment
+                No payments recorded.
               </div>
             )}
 

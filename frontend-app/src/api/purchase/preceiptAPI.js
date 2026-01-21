@@ -32,8 +32,8 @@ export const preceiptAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  getAvailableReceipt: (data) =>
-    apiRequest("/purchase/preceipt/available-receipt", {
+  getAvailableReceiptItems: (data) =>
+    apiRequest("/purchase/preceipt/available-receipt-items", {
       method: "POST",
       body: JSON.stringify(data),
     }),

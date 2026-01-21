@@ -13,49 +13,54 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const [editingRows, setEditingRows] = useState([]);
   const [showExtraColumns, setShowExtraColumns] = useState(false);
 
+ 
   // Recalculate cost_price when extra costs change
   useEffect(() => {
     if (!formDataItemList || formDataItemList.length === 0) return;
 
-    const extraCost = (formData.pmstr_incst || 0) + (formData.pmstr_excst || 0);
+    const extraCost =
+      Number(formData.mrcpt_incst || 0) + Number(formData.mrcpt_excst || 0);
 
-    // Calculate grand total of all items (before extra cost distribution)
-    const grandTotal = formDataItemList.reduce(
-      (sum, item) => sum + Number(item.pmstr_pyamt || 0),
-      0
+    // Calculate grand total qty of all items (before extra cost distribution)
+    const grandTotalQty = formDataItemList.reduce(
+      (sum, item) => sum + Number(item.crcpt_itqty || 0),
+      0,
     );
 
-    if (grandTotal === 0) return;
+    if (grandTotalQty === 0) return;
+
+    // Calculate average extra cost per qty
+    const avgExtraCostPerQty = extraCost / grandTotalQty;
 
     // Update each item's cost_price with distributed extra cost
     const updatedItems = formDataItemList.map((item) => {
       // Calculate base cost price (without extra cost)
-      const baseCostPrice = item.recpt_itamt / item.recpt_bkqty;
+      const baseCostPrice = Number(item.crcpt_itrat || 0);
 
-      // Calculate this item's share of extra cost (proportional to its total_amount)
-      const extraCostShare = (item.recpt_itamt / grandTotal) * extraCost;
+      // Calculate extra cost per unit based on qty-weighted average
+      const extraCostPerUnit = avgExtraCostPerQty;
 
       // Calculate final cost price per unit
-      const finalCostPrice = baseCostPrice + extraCostShare / item.recpt_bkqty;
+      const finalCostPrice = baseCostPrice + extraCostPerUnit;
 
       return {
         ...item,
-        bking_csrat: finalCostPrice,
+        crcpt_csrat: finalCostPrice,
       };
     });
 
     // Only update if there's an actual change to avoid infinite loops
     const hasChanged = updatedItems.some(
-      (item, index) => item.bking_csrat !== formDataItemList[index].bking_csrat
+      (item, index) =>
+        Number(item.crcpt_csrat) !==
+        Number(formDataItemList[index].crcpt_csrat),
     );
 
     if (hasChanged) {
       setFormDataItemList(updatedItems);
     }
-  }, [formData?.pmstr_incst, formData?.pmstr_excst, formDataItemList.length]);
+  }, [formData?.mrcpt_incst, formData?.mrcpt_excst, formDataItemList.length]);
 
-
-  
 
   const items_iname_BT = (rowData) => {
     return `${rowData.items_icode} - ${rowData.items_iname}`;
@@ -72,9 +77,9 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     );
   };
 
-  const recpt_bkrat_BT = (rowData) => {
-    const formattedPrice = Number(rowData.recpt_bkrat).toFixed(2);
-    const formattedCostPrice = Number(rowData.recpt_csrat).toFixed(2);
+  const crcpt_itrat_BT = (rowData) => {
+    const formattedPrice = Number(rowData.crcpt_itrat).toFixed(2);
+    const formattedCostPrice = Number(rowData.crcpt_csrat).toFixed(2);
     return (
       <>
         {formattedPrice}{" "}
@@ -83,67 +88,68 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     );
   };
 
-  const recpt_bkqty_BT = (rowData) => {
+  const crcpt_itqty_BT = (rowData) => {
     return (
       <>
-        {Number(rowData.recpt_bkqty).toFixed(2)}{" "}
+        {Number(rowData.crcpt_itqty).toFixed(2)}{" "}
         <span className="text-gray-600">{rowData.puofm_untnm}</span>
       </>
     );
   };
 
-  const recpt_bkqty_FT = () => {
+  const crcpt_itqty_FT = () => {
     return formDataItemList
-      .reduce((sum, item) => sum + Number(item.recpt_bkqty || 0), 0)
+      .reduce((sum, item) => sum + Number(item.crcpt_itqty || 0), 0)
       .toFixed(2);
   };
 
-  const recpt_dspct_BT = (rowData) => {
-    const formattedDiscount = Number(rowData.recpt_dsamt).toFixed(2);
-    const formattedDiscountPercent = Number(rowData.recpt_dspct).toFixed(2);
+  const crcpt_dspct_BT = (rowData) => {
+    const formattedDiscount = Number(rowData.crcpt_dsamt).toFixed(2);
+    const formattedDiscountPercent = Number(rowData.crcpt_dspct).toFixed(2);
     return (
       <ZeroRowCell
-        value={rowData.recpt_dsamt}
+        value={rowData.crcpt_dsamt}
         text={`${formattedDiscount} (${formattedDiscountPercent}%)`}
       />
     );
   };
 
-  const recpt_dspct_FT = () => {
+  const crcpt_dspct_FT = () => {
     return formDataItemList
-      .reduce((sum, item) => sum + Number(item.recpt_dsamt || 0), 0)
+      .reduce((sum, item) => sum + Number(item.crcpt_dsamt || 0), 0)
       .toFixed(2);
   };
 
-  const recpt_vtpct_BT = (rowData) => {
-    const formattedVat = Number(rowData.recpt_vtamt).toFixed(2);
-    const formattedVatPercent = Number(rowData.recpt_vtpct).toFixed(2);
+  const crcpt_vtpct_BT = (rowData) => {
+    const formattedVat = Number(rowData.crcpt_vtamt).toFixed(2);
+    const formattedVatPercent = Number(rowData.crcpt_vtpct).toFixed(2);
     return (
       <ZeroRowCell
-        value={rowData.bking_vtamt}
+        value={rowData.crcpt_vtamt}
         text={`${formattedVat} (${formattedVatPercent}%)`}
       />
     );
   };
 
-  const recpt_vtpct_FT = () => {
+  const crcpt_vtpct_FT = () => {
     return formDataItemList
-      .reduce((sum, item) => sum + Number(item.recpt_vtamt || 0), 0)
+      .reduce((sum, item) => sum + Number(item.crcpt_vtamt || 0), 0)
       .toFixed(2);
   };
 
-  const recpt_ntamt_BT = (rowData) => {
-    return Number(rowData.recpt_ntamt).toFixed(2);
+  const crcpt_ntamt_BT = (rowData) => {
+    return Number(rowData.crcpt_ntamt).toFixed(2);
   };
 
   const amount = formDataItemList
-    .reduce((sum, item) => sum + Number(item.recpt_itamt || 0), 0)
+    .reduce((sum, item) => sum + Number(item.crcpt_itamt || 0), 0)
     .toFixed(2);
 
   const netAmount = formDataItemList
-    .reduce((sum, item) => sum + Number(item.recpt_ntamt || 0), 0)
+    .reduce((sum, item) => sum + Number(item.crcpt_ntamt || 0), 0)
     .toFixed(2);
-  const recpt_ntamt_FT = () => {
+
+  const crcpt_ntamt_FT = () => {
     return (
       <>
         {netAmount}
@@ -157,7 +163,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const bulk_BT = (rowData) => {
     return (
       <ConvertedQtyComponent
-        qty={rowData.recpt_bkqty}
+        qty={rowData.crcpt_itqty}
         dfQty={rowData.items_dfqty}
         pname={rowData.puofm_untnm}
         sname={rowData.suofm_untnm}
@@ -165,21 +171,22 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     );
   };
 
-  const recpt_rtqty_BT = (rowData) => {
+
+  const crcpt_rtqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.recpt_rtqty} text={rowData.recpt_rtqty} />
+      <ZeroRowCell value={rowData.crcpt_rtqty} text={rowData.crcpt_rtqty} />
     );
   };
 
-  const recpt_slqty_BT = (rowData) => {
+  const crcpt_slqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.recpt_slqty} text={rowData.recpt_slqty} />
+      <ZeroRowCell value={rowData.crcpt_slqty} text={rowData.crcpt_slqty} />
     );
   };
 
-  const recpt_ohqty_BT = (rowData) => {
+  const crcpt_ohqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.recpt_ohqty} text={rowData.recpt_ohqty} />
+      <ZeroRowCell value={rowData.crcpt_ohqty} text={rowData.crcpt_ohqty} />
     );
   };
 
@@ -190,7 +197,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       icon: "pi pi-exclamation-triangle",
       accept: () => {
         setFormDataItemList((prev) =>
-          prev.filter((item) => item.id !== rowData.id)
+          prev.filter((item) => item.id !== rowData.id),
         );
       },
       reject: () => {},
@@ -222,7 +229,8 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
         onValueChange={(e) => options.editorCallback(e.value)}
         style={{ minWidth: "40px", padding: "3px" }}
         inputStyle={{ width: "80%", padding: "3px" }}
-        min={1}
+        min={0}
+        minFractionDigits={2}
       />
     );
   };
@@ -240,28 +248,31 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const onRowEditSave = (event) => {
     let { newData, index } = event;
     // Calculate item_amount
-    //console.log("onRowEditSave", newData);
-    if(Number(newData.recpt_bkqty) > Number(newData.recpt_ohqty)){
-      alert("Receipt quantity cannot be greater than Booking quantity");
-      setEditingRows([]);
-      return;
-    }
+    let dsp = Number(newData.crcpt_dspct || 0);
+    if (dsp < 0) dsp = 0;
+    if (dsp > 100) dsp = 100;
+    let vtp = Number(newData.crcpt_vtpct || 0);
+    if (vtp < 0) vtp = 0;
+    if (vtp > 1000) vtp = 100;
 
-    const itemAmount = newData.recpt_bkqty * newData.recpt_bkrat;
-    const discountAmount = (newData.recpt_dspct / 100) * itemAmount;
-    const vatAmount = (newData.recpt_vtpct / 100) * itemAmount;
+    const itemAmount = newData.crcpt_itqty * newData.crcpt_itrat;
+    const discountAmount = (dsp / 100) * itemAmount;
+    const vatAmount = (vtp / 100) * itemAmount;
     const totalAmount = itemAmount - discountAmount + vatAmount;
-    const costPrice = totalAmount / newData.recpt_bkqty;
+    const costPrice = totalAmount / newData.crcpt_itqty;
 
-    newData.recpt_itamt = itemAmount;
-    newData.recpt_dsamt = discountAmount;
-    newData.recpt_vtamt = vatAmount;
-    newData.recpt_csrat = costPrice;
-    newData.recpt_ntamt = totalAmount;
+    newData.crcpt_dspct = dsp;
+    newData.crcpt_vtpct = vtp;
 
-    newData.recpt_rtqty = 0;
-    newData.recpt_slqty = 0;
-    newData.recpt_ohqty = newData.recpt_bkqty;
+    newData.crcpt_itamt = itemAmount;
+    newData.crcpt_dsamt = discountAmount;
+    newData.crcpt_vtamt = vatAmount;
+    newData.crcpt_csrat = costPrice;
+    newData.crcpt_ntamt = totalAmount;
+
+    newData.crcpt_rtqty = 0;
+    newData.crcpt_slqty = 0;
+    newData.crcpt_ohqty = newData.crcpt_itqty;
 
     let _localItems = [...formDataItemList];
     _localItems[index] = newData;
@@ -282,7 +293,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
   return (
     <div className="mt-4">
-      <ConfirmDialog />  
+      <ConfirmDialog />
 
       <DataTable
         value={formDataItemList}
@@ -305,73 +316,73 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           footer={items_iname_FT}
         />
         <Column
-          field="recpt_bkrat"
+          field="crcpt_itrat"
           header="Price"
-          body={recpt_bkrat_BT}
-          //editor={numberEditor}
-        />
-        <Column
-          field="recpt_bkqty"
-          header="Qty"
-          body={recpt_bkqty_BT}
-          footer={recpt_bkqty_FT}
+          body={crcpt_itrat_BT}
           editor={numberEditor}
         />
         <Column
-          field="recpt_itamt"
+          field="crcpt_itqty"
+          header="Qty"
+          body={crcpt_itqty_BT}
+          footer={crcpt_itqty_FT}
+          editor={numberEditor}
+        />
+        <Column
+          field="crcpt_itamt"
           header="Amount"
           headerStyle={{ backgroundColor: "#49769bff" }}
           footer={amount}
           hidden={!showExtraColumns}
         />
         <Column
-          field="recpt_dspct"
+          field="crcpt_dspct"
           header="Discount"
-          body={recpt_dspct_BT}
-          footer={recpt_dspct_FT}
+          body={crcpt_dspct_BT}
+          footer={crcpt_dspct_FT}
+          editor={numberEditor}
         />
         <Column
-          field="recpt_vtpct"
+          field="crcpt_vtpct"
           header="VAT"
-          body={recpt_vtpct_BT}
-          footer={recpt_vtpct_FT}
+          body={crcpt_vtpct_BT}
+          footer={crcpt_vtpct_FT}
+          editor={numberEditor}
         />
         <Column
-          field="recpt_ntamt"
+          field="crcpt_ntamt"
           header="Sub Total"
-          body={recpt_ntamt_BT}
-          footer={recpt_ntamt_FT}
+          body={crcpt_ntamt_BT}
+          footer={crcpt_ntamt_FT}
         />
-        <Column field="recpt_notes" header="Remarks" editor={textEditor} />
+        <Column field="crcpt_notes" header="Remarks" editor={textEditor} />
         <Column header="Bulk" body={bulk_BT} />
         <Column
-          field="recpt_rtqty"
+          field="crcpt_rtqty"
           header="Returned"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={recpt_rtqty_BT}
+          body={crcpt_rtqty_BT}
           hidden={!showExtraColumns}
         />
         <Column
-          field="recpt_slqty"
+          field="crcpt_slqty"
           header="Sales"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={recpt_slqty_BT}
+          body={crcpt_slqty_BT}
           hidden={!showExtraColumns}
         />
         <Column
-          field="recpt_ohqty"
-          header="Line Stock"
+          field="crcpt_ohqty"
+          header="Stock"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={recpt_ohqty_BT}
+          body={crcpt_ohqty_BT}
           hidden={!showExtraColumns}
         />
-        {!formData.edit_stop && (
-          <Column
-            header={rowEditor_HT()}
-            rowEditor
-            headerStyle={{ minWidth: "20px" }}
-          />
-        )}
+        <Column
+          header={rowEditor_HT()}
+          rowEditor
+          headerStyle={{ minWidth: "20px" }}
+        />
         {!formData.edit_stop && (
           <Column header="#" body={action_BT} style={{ width: "20px" }} />
         )}

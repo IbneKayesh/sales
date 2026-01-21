@@ -5,6 +5,9 @@ import PaymentComp from "./PaymentComp";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import PrintComp from "./PrintComp";
+import { Dialog } from "primereact/dialog";
+import ExpensesDlg from "./ExpensesDlg";
+import PaymentDlg from "./PaymentDlg";
 
 const EntryComp = ({
   isBusy,
@@ -14,13 +17,17 @@ const EntryComp = ({
   handleChange,
   formDataItemList,
   setFormDataItemList,
+  formDataExpensesList,
+  setFormDataExpensesList,
   formDataPaymentList,
   setFormDataPaymentList,
   handleSubmit,
-  //options
+  //fetch receipt items
   fetchAvailableReceiptItems,
 }) => {
   const [disableSubmit, setDisableSubmit] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogName, setDialogName] = useState("payment");
   const [showPrintDialog, setShowPrintDialog] = useState(false);
 
   const handlePrint = () => {
@@ -29,7 +36,8 @@ const EntryComp = ({
 
   useEffect(() => {
     const hasProducts = formDataItemList.length < 1;
-    const hasCreditLimit = Number(formData.pmstr_duamt) > Number(formData.cntct_crlmt);
+    const hasCreditLimit =
+      Number(formData.mrcpt_duamt) > Number(formData.cntct_crlmt);
     if (hasProducts || hasCreditLimit || formData.edit_stop) {
       //console.log("disable");
       setDisableSubmit(true);
@@ -37,61 +45,82 @@ const EntryComp = ({
       setDisableSubmit(false);
     }
     //console.log(hasCreditLimit);
-  }, [formDataItemList, formData.pmstr_duamt, formData.cntct_crlmt]);
+  }, [formDataItemList, formData.mrcpt_duamt, formData.cntct_crlmt]);
 
   useEffect(() => {
     const order_amount = formDataItemList.reduce(
       (sum, item) =>
-        sum + (Number(item.recpt_bkqty) || 0) * (Number(item.recpt_bkrat) || 0),
-      0
+        sum + (Number(item.crcpt_itqty) || 0) * (Number(item.crcpt_itrat) || 0),
+      0,
     );
     const discount_amount = formDataItemList.reduce(
-      (sum, item) => sum + (Number(item.recpt_dsamt) || 0),
-      0
+      (sum, item) => sum + (Number(item.crcpt_dsamt) || 0),
+      0,
     );
     const vat_amount = formDataItemList.reduce(
-      (sum, item) => sum + (Number(item.recpt_vtamt) || 0),
-      0
+      (sum, item) => sum + (Number(item.crcpt_vtamt) || 0),
+      0,
     );
 
-    const total_amount =
-      order_amount -
-      (discount_amount +
-        vat_amount +
-        Number(formData.pmstr_incst || 0) +
-        Number(formData.pmstr_excst || 0));
+    const include_cost = formDataExpensesList.reduce(
+      (sum, item) =>
+        item.expns_inexc === 1 ? sum + (Number(item.expns_xpamt) || 0) : sum,
+      0,
+    );
 
-    let payable_amount =
-      order_amount +
-      Number(formData.pmstr_incst || 0) -
-      (discount_amount + Number(formData.pmstr_rnamt || 0));
-    if (formData.pmstr_vatpy === 1 ) payable_amount += vat_amount;
+    const exclude_cost = formDataExpensesList.reduce(
+      (sum, item) =>
+        item.expns_inexc === 2 ? sum + (Number(item.expns_xpamt) || 0) : sum,
+      0,
+    );
 
-    // const paidAmount = formDataPaymentList.reduce(
-    //   (sum, item) => sum + (Number(item.rcvpy_pyamt) || 0),
-    //   0
-    // );
-    const paidAmount = payable_amount;
+    const sum_1_3_4 = order_amount + vat_amount + include_cost;
+    const sum_2_5 = discount_amount + Number(formData.mrcpt_rnamt || 0);
 
-    //console.log(payable_amount, paidAmount);
-    const due_amount = payable_amount - (paidAmount || 0);
+    const total_amount = sum_1_3_4 - sum_2_5;
 
-    handleChange("pmstr_odamt", Number(order_amount).toFixed(2));
-    handleChange("pmstr_dsamt", Number(discount_amount).toFixed(2));
-    handleChange("pmstr_vtamt", Number(vat_amount).toFixed(2));
-    handleChange("pmstr_ttamt", Number(total_amount).toFixed(2));
-    handleChange("pmstr_pyamt", Number(payable_amount).toFixed(2));
-    handleChange("pmstr_pdamt", Number(paidAmount).toFixed(2));
-    handleChange("pmstr_duamt", Number(Math.round(due_amount)).toFixed(2));
+    const payable_amount = formData.mrcpt_vatpy === 1 ? total_amount : (total_amount - vat_amount);
+
+    const paid_amount = formDataPaymentList.reduce(
+      (sum, item) => sum + (Number(item.paybl_dbamt) || 0),
+      0,
+    );
+
+    const due_amount = payable_amount -  (paid_amount || 0);
+
+    handleChange("mrcpt_odamt", Number(order_amount).toFixed(2));
+    handleChange("mrcpt_dsamt", Number(discount_amount).toFixed(2));
+    handleChange("mrcpt_vtamt", Number(vat_amount).toFixed(2));
+    handleChange("mrcpt_incst", Number(include_cost).toFixed(2));
+    handleChange("mrcpt_excst", Number(exclude_cost).toFixed(2));
+    handleChange("mrcpt_ttamt", Number(total_amount).toFixed(2));
+    handleChange("mrcpt_pyamt", Number(payable_amount).toFixed(2));
+    handleChange("mrcpt_pdamt", Number(paid_amount).toFixed(2));
+    handleChange("mrcpt_duamt", Number(Math.round(due_amount)).toFixed(2));
   }, [
+    formData.mrcpt_vatpy,
+    formData.mrcpt_rnamt,
     formDataItemList,
-    formData.pmstr_incst,
-    formData.pmstr_excst,
-    formData.pmstr_pdamt,
     formDataPaymentList,
-    formData.pmstr_vatpy,
-    formData.pmstr_rnamt,
+    formDataExpensesList,
   ]);
+
+
+  const handleShowIncludeCost = () => {
+    setShowDialog(true);
+    setDialogName("Including Expenses");
+    //"Print"
+  };
+  const handleShowExcludeCost = () => {
+    setShowDialog(true);
+    setDialogName("Excluding Expenses");
+    //"Print"
+  };
+  const handleShowPayment = () => {
+    setShowDialog(true);
+    setDialogName("Payment");
+    //"Print"
+  };
 
   return (
     <div>
@@ -111,6 +140,9 @@ const EntryComp = ({
         setErrors={setErrors}
         formData={formData}
         handleChange={handleChange}
+        onShowIncludeCost={handleShowIncludeCost}
+        onShowExcludeCost={handleShowExcludeCost}
+        onShowPayment={handleShowPayment}
         formDataPaymentList={formDataPaymentList}
         setFormDataPaymentList={setFormDataPaymentList}
       />
@@ -130,9 +162,9 @@ const EntryComp = ({
             label={
               formData.id
                 ? "Update"
-                : formData.pmstr_ispst
-                ? "Save with Posted"
-                : "Save as Draft"
+                : formData.mrcpt_ispst
+                  ? "Save with Posted"
+                  : "Save as Draft"
             }
             icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
             severity="success"
@@ -144,7 +176,42 @@ const EntryComp = ({
         </ButtonGroup>
       </div>
 
-       <PrintComp
+      <Dialog
+        header={dialogName}
+        visible={showDialog}
+        onHide={() => setShowDialog(false)}
+        closable={true}
+        style={{ width: "50vw" }}
+        footer="Footer"
+      >
+        <>
+          {dialogName === "Including Expenses" && (
+            <ExpensesDlg
+              formData={formData}
+              formDataExpensesList={formDataExpensesList}
+              setFormDataExpensesList={setFormDataExpensesList}
+              dialogName={dialogName}
+            />
+          )}
+          {dialogName === "Excluding Expenses" && (
+            <ExpensesDlg
+              formData={formData}
+              formDataExpensesList={formDataExpensesList}
+              setFormDataExpensesList={setFormDataExpensesList}
+              dialogName={dialogName}
+            />
+          )}
+          {dialogName === "Payment" && (
+            <PaymentDlg
+              formData={formData}
+              formDataPaymentList={formDataPaymentList}
+              setFormDataPaymentList={setFormDataPaymentList}
+            />
+          )}
+        </>
+      </Dialog>
+
+      <PrintComp
         visible={showPrintDialog}
         onHide={() => setShowPrintDialog(false)}
         formData={formData}
