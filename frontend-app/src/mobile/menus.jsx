@@ -1,106 +1,181 @@
-import React from "react";
 import { Card } from "primereact/card";
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Menus = () => {
-  const menuItems = [
+  const { logout, user } = useAuth();
+  const navigate = useNavigate();
+
+  const menuCategories = [
     {
-      id: 1,
-      title: "Dashboard",
-      icon: "pi pi-chart-bar",
-      color: "#6366f1",
-      description: "View your performance metrics",
+      title: "Main Features",
+      items: [
+        {
+          id: "sales",
+          title: "Sales",
+          icon: "pi pi-shopping-bag",
+          color: "#6366f1",
+          path: "/home/sales",
+        },
+        {
+          id: "purchase",
+          title: "Purchase",
+          icon: "pi pi-shopping-cart",
+          color: "#10b981",
+          path: "/home/purchase/pinvoice",
+        },
+        {
+          id: "accounts",
+          title: "Accounts",
+          icon: "pi pi-wallet",
+          color: "#f59e0b",
+          path: "/home/accounts/accounts",
+        },
+        {
+          id: "crm",
+          title: "CRM",
+          icon: "pi pi-users",
+          color: "#ec4899",
+          path: "/home/crm/contact",
+        },
+      ],
     },
     {
-      id: 2,
-      title: "Settings",
-      icon: "pi pi-cog",
-      color: "#10b981",
-      description: "Configure application preferences",
-    },
-    {
-      id: 3,
-      title: "Messages",
-      icon: "pi pi-envelope",
-      color: "#f59e0b",
-      description: "Check your latest notifications",
-    },
-    {
-      id: 4,
-      title: "Profile",
-      icon: "pi pi-user",
-      color: "#ef4444",
-      description: "Manage your account details",
-    },
-    {
-      id: 5,
-      title: "History",
-      icon: "pi pi-history",
-      color: "#8b5cf6",
-      description: "Review previous activities",
-    },
-    {
-      id: 6,
-      title: "Help",
-      icon: "pi pi-question-circle",
-      color: "#64748b",
-      description: "Get support and documentation",
+      title: "Settings & Profile",
+      items: [
+        {
+          id: "profile",
+          title: "My Profile",
+          icon: "pi pi-user-edit",
+          color: "#64748b",
+          path: "/home/auth/profile",
+        },
+        {
+          id: "password",
+          title: "Security",
+          icon: "pi pi-shield",
+          color: "#64748b",
+          path: "/home/auth/password",
+        },
+      ],
     },
   ];
 
   return (
     <div className="menus-container">
-      <h2 style={{ fontSize: "1.25rem", marginBottom: "1rem", color: "#333" }}>
-        Features Menu
+      <h2
+        style={{
+          fontSize: "1.75rem",
+          fontWeight: "800",
+          color: "var(--mobile-text-main)",
+          marginBottom: "1.5rem",
+          letterSpacing: "-0.025em",
+        }}
+      >
+        Explore Feature
       </h2>
 
-      <div
-        style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.75rem" }}
-      >
-        {menuItems.map((item) => (
-          <Card
-            key={item.id}
+      {menuCategories.map((category) => (
+        <div key={category.title} style={{ marginBottom: "2rem" }}>
+          <h3
             style={{
-              borderRadius: "12px",
-              border: "none",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.04)",
-              cursor: "pointer",
+              fontSize: "0.85rem",
+              fontWeight: "700",
+              color: "var(--mobile-text-muted)",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              marginBottom: "1rem",
             }}
-            className="p-card-hover"
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            {category.title}
+          </h3>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr",
+              gap: "0.75rem",
+            }}
+          >
+            {category.items.map((item) => (
               <div
+                key={item.id}
+                className="mobile-card"
                 style={{
-                  backgroundColor: `${item.color}20`,
-                  padding: "0.75rem",
-                  borderRadius: "10px",
+                  padding: "1rem",
+                  margin: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
                 }}
+                onClick={() => navigate(item.path)}
               >
-                <i
-                  className={item.icon}
-                  style={{ color: item.color, fontSize: "1.2rem" }}
-                ></i>
-              </div>
-              <div style={{ flex: 1 }}>
-                <h3 style={{ margin: 0, fontSize: "1rem", color: "#333" }}>
-                  {item.title}
-                </h3>
-                <p
+                <div
                   style={{
-                    margin: "0.2rem 0 0 0",
-                    fontSize: "0.8rem",
-                    color: "#888",
+                    backgroundColor: `${item.color}15`,
+                    width: "42px",
+                    height: "42px",
+                    borderRadius: "12px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: item.color,
                   }}
                 >
-                  {item.description}
-                </p>
+                  <i className={item.icon} style={{ fontSize: "1.1rem" }}></i>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <span
+                    style={{
+                      fontWeight: "600",
+                      fontSize: "0.95rem",
+                      color: "var(--mobile-text-main)",
+                    }}
+                  >
+                    {item.title}
+                  </span>
+                </div>
+                <i
+                  className="pi pi-chevron-right"
+                  style={{ fontSize: "0.8rem", color: "#cbd5e1" }}
+                ></i>
               </div>
-              <i
-                className="pi pi-chevron-right"
-                style={{ color: "#ccc", fontSize: "0.8rem" }}
-              ></i>
-            </div>
-          </Card>
-        ))}
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <div style={{ marginTop: "3rem", paddingBottom: "1rem" }}>
+        <button
+          onClick={logout}
+          style={{
+            width: "100%",
+            padding: "1rem",
+            borderRadius: "12px",
+            border: "1px solid #fee2e2",
+            backgroundColor: "#fef2f2",
+            color: "#ef4444",
+            fontWeight: "700",
+            fontSize: "0.95rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem",
+            cursor: "pointer",
+          }}
+        >
+          <i className="pi pi-power-off"></i>
+          Sign Out
+        </button>
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: "1.5rem",
+            fontSize: "0.75rem",
+            color: "#cbd5e1",
+          }}
+        >
+          App Version 1.0.0
+        </p>
       </div>
     </div>
   );

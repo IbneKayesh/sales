@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-import tmpb_mrcpt from "@/models/purchase/tmpb_mrcpt.json";
+import tmpb_mbkng from "@/models/purchase/tmpb_mbkng.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
-import { preceiptAPI } from "@/api/purchase/preceiptAPI";
+import { pbookingAPI } from "@/api/purchase/pbookingAPI";
 import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
-const dataModel = generateDataModel(tmpb_mrcpt, { edit_stop: 0 });
+const dataModel = generateDataModel(tmpb_mbkng, { edit_stop: 0 });
 
-export const usePreceipt = () => {
+export const usePinvoice = () => {
   const { user, business } = useAuth();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
@@ -26,12 +26,12 @@ export const usePreceipt = () => {
 
   const loadBookings = async () => {
     try {
-      const response = await preceiptAPI.getAll({
+      //console.log("loadBookings:");
+      const response = await pbookingAPI.getAll({
         mbkng_users: user.users_users,
         mbkng_bsins: user.users_bsins,
         ...searchBoxData,
       });
-      //response = { success, message, data }
       //console.log("loadBookings:", JSON.stringify(response));
 
       setDataList([]);
@@ -54,7 +54,7 @@ export const usePreceipt = () => {
   const loadBookingDetails = async (id) => {
     try {
       //console.log("loadBookingDetails:", id);
-      const response = await preceiptAPI.getDetails({
+      const response = await pbookingAPI.getDetails({
         cbkng_mbkng: id,
       });
       //console.log("loadBookingDetails:", JSON.stringify(response));
@@ -69,7 +69,7 @@ export const usePreceipt = () => {
   const loadBookingExpenses = async (id) => {
     try {
       //console.log("loadBookingExpenses:", id);
-      const response = await preceiptAPI.getExpenses({
+      const response = await pbookingAPI.getExpenses({
         expns_refid: id,
       });
       //console.log("loadBookingExpenses:", JSON.stringify(response));
@@ -84,7 +84,7 @@ export const usePreceipt = () => {
   const loadBookingPayment = async (id) => {
     try {
       //console.log("loadBookingPayment:", id);
-      const response = await preceiptAPI.getPayment({
+      const response = await pbookingAPI.getPayment({
         paybl_refid: id,
       });
       //console.log("loadBookingPayment:", JSON.stringify(response));
@@ -98,7 +98,7 @@ export const usePreceipt = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmpb_mrcpt);
+    const newErrors = validate({ ...formData, [field]: value }, tmpb_mbkng);
     setErrors(newErrors);
   };
 
@@ -148,7 +148,7 @@ export const usePreceipt = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await preceiptAPI.delete(rowData);
+      const response = await pbookingAPI.delete(rowData);
 
       // Remove deleted business from local state
       const updatedList = dataList.filter((s) => s.id !== rowData.id);
@@ -183,7 +183,7 @@ export const usePreceipt = () => {
       setIsBusy(true);
 
       // Validate form
-      const newErrors = validate(formData, tmpb_mrcpt);
+      const newErrors = validate(formData, tmpb_mbkng);
       setErrors(newErrors);
       console.log("handleSave:", JSON.stringify(newErrors));
 
@@ -204,22 +204,22 @@ export const usePreceipt = () => {
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        mrcpt_users: user.users_users,
-        mrcpt_bsins: user.users_bsins,
-        mrcpt_trdat: formatDateForAPI(formData.mrcpt_trdat),
-        mrcpt_ispad: 1,
+        mbkng_users: user.users_users,
+        mbkng_bsins: user.users_bsins,
+        mbkng_trdat: formatDateForAPI(formData.mbkng_trdat),
+        mbkng_ispad: paidStatus,
         user_id: user.id,
-        tmpb_crcpt: formDataItemList,
+        tmpb_cbkng: formDataItemList,
         tmpb_expns: formDataExpensesList,
-        //tmtb_paybl: formDataPaymentList,
+        tmtb_paybl: formDataPaymentList,
       };
 
       // Call API and get { message, data }
       let response;
       if (formData.id) {
-        response = await preceiptAPI.update(formDataNew);
+        response = await pbookingAPI.update(formDataNew);
       } else {
-        response = await preceiptAPI.create(formDataNew);
+        response = await pbookingAPI.create(formDataNew);
       }
 
       console.log("handleSave:", JSON.stringify(response));
@@ -233,12 +233,12 @@ export const usePreceipt = () => {
       );
 
       //call update process
-      await closingProcessAPI("purchase-receipt", user.users_bsins);
+      await closingProcessAPI("purchase-booking", user.users_bsins);
 
       // Clear form & reload
       handleClear();
       setCurrentView("list");
-      //await loadBookings(); // make sure we wait for updated data
+      await loadBookings(); // make sure we wait for updated data
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");
@@ -253,9 +253,9 @@ export const usePreceipt = () => {
   const [searchBoxData, setSearchBoxData] = useState({
     mbkng_cntct: "",
     mbkng_trnno: "",
-    mbkng_trdat: new Date().toLocaleString().split("T")[0],
+    mbkng_trdat: "", //new Date().toLocaleString().split("T")[0],
     mbkng_refno: "",
-    search_option: "",
+    search_option: "mbkng_ispad",
   });
 
   const handleChangeSearchInput = (e) => {
@@ -289,6 +289,7 @@ export const usePreceipt = () => {
     { name: "mbkng_iscls", label: "Closed" },
     { name: "mbkng_vatcl", label: "VAT Collected" },
     { name: "mbkng_hscnl", label: "Cancelled" },
+    { name: "last_7_days", label: "Last 7 Days" },
   ];
 
   //cancel booking items
@@ -307,7 +308,7 @@ export const usePreceipt = () => {
         user_id: user.id,
         tmtb_rcvpy: rowData,
       };
-      const response = await preceiptAPI.cancelBookingItems(formDataNew);
+      const response = await pbookingAPI.cancelBookingItems(formDataNew);
 
       showToast(
         response.success ? "info" : "error",
@@ -325,22 +326,6 @@ export const usePreceipt = () => {
     } catch (error) {
       console.error("Error canceling data:", error);
       showToast("error", "Error", error?.message || "Failed to cancel data");
-    }
-  };
-
-  //fetch receipt items
-  const fetchAvailableReceiptItems = async (id) => {
-    try {
-      const response = await preceiptAPI.getAvailableReceiptItems({
-        mbkng_users: user.users_users,
-        mbkng_bsins: user.users_bsins,
-        mbkng_cntct: id,
-      });
-      //console.log("fetchAvailableReceiptItems:", JSON.stringify(response));
-      setFormDataItemList(response.data);
-    } catch (error) {
-      console.error("Error fetching receipt items:", error);
-      showToast("error", "Error", error?.message || "Failed to fetch receipt items");
     }
   };
 
@@ -379,8 +364,5 @@ export const usePreceipt = () => {
     setCancelledRows,
     handleCancelBookingItems,
     setCancelledPayment,
-
-    //fetch receipt items
-    fetchAvailableReceiptItems,
   };
 };

@@ -3,19 +3,4 @@ POS :: dropdown item select to add to list
 Separate Hook for DDL
 
 
-
-
-
 in api auth middle ware, must enable user session when live
-
-
-1. purchase Booking
-
-2. accounts payable
-
-
-3. purchase receipt
-- update
-- closing process
-- print view
-- redirect after saved

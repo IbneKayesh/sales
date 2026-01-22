@@ -1,0 +1,6 @@
+Purchase >> Booking >> Entry Test, Closig Process Test, Item Booking Qty Plus
+Purchase >> Receipt >> Entry Test, Closig Process Test, Item Booking Qty Minus, Good Stock Qty Plus, Print
+Purchase >> Invoice >> Entry Test, Closig Process Test, Good Stock Qty Plus, Print
+
+Purchase >> Receipt, Invoice >> Return
+Purchase >> Booking >> Cancel

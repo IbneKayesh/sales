@@ -27,6 +27,11 @@ export const preceiptAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getExpenses: (data) =>
+    apiRequest("/purchase/preceipt/receipt-expense", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
   getPayment: (data) =>
     apiRequest("/purchase/preceipt/receipt-payment", {
       method: "POST",

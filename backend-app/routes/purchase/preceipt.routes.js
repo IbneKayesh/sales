@@ -184,36 +184,33 @@ router.post("/create", async (req, res) => {
   try {
     const {
       id,
-      pmstr_users,
-      pmstr_bsins,
-      pmstr_cntct,
-      pmstr_odtyp,
-      pmstr_trnno,
-      pmstr_trdat,
-      pmstr_trnte,
-      pmstr_refno,
-      pmstr_odamt,
-      pmstr_dsamt,
-      pmstr_vtamt,
-      pmstr_vatpy,
-      pmstr_incst,
-      pmstr_excst,
-      pmstr_rnamt,
-      pmstr_ttamt,
-      pmstr_pyamt,
-      pmstr_pdamt,
-      pmstr_duamt,
-      pmstr_rtamt,
-      pmstr_cnamt,
-      pmstr_ispad,
-      pmstr_ispst,
-      pmstr_isret,
-      pmstr_iscls,
-      pmstr_vatcl,
-      pmstr_hscnl,
+      mrcpt_users,
+      mrcpt_bsins,
+      mrcpt_cntct,
+      mrcpt_trnno,
+      mrcpt_trdat,
+      mrcpt_refno,
+      mrcpt_trnte,
+      mrcpt_odamt,
+      mrcpt_dsamt,
+      mrcpt_vtamt,
+      mrcpt_vatpy,
+      mrcpt_incst,
+      mrcpt_excst,
+      mrcpt_rnamt,
+      mrcpt_ttamt,
+      mrcpt_pyamt,
+      mrcpt_pdamt,
+      mrcpt_duamt,
+      mrcpt_rtamt,
+      mrcpt_ispad,
+      mrcpt_ispst,
+      mrcpt_iscls,
+      mrcpt_vatcl,
+      mrcpt_hscnl,
       user_id,
-      tmpb_recpt,
-      tmtb_rcvpy,
+      tmpb_crcpt,
+      tmpb_expns,
     } = req.body;
 
     //console.log("create:", JSON.stringify(req.body));
@@ -221,13 +218,12 @@ router.post("/create", async (req, res) => {
     // Validate input
     if (
       !id ||
-      !pmstr_users ||
-      !pmstr_bsins ||
-      !pmstr_cntct ||
-      !pmstr_odtyp ||
-      !pmstr_trdat ||
-      !tmpb_recpt ||
-      !Array.isArray(tmpb_recpt)
+      !mrcpt_users ||
+      !mrcpt_bsins ||
+      !mrcpt_cntct ||
+      !mrcpt_trdat ||
+      !tmpb_crcpt ||
+      !Array.isArray(tmpb_crcpt)
     ) {
       return res.json({
         success: false,
@@ -242,129 +238,126 @@ router.post("/create", async (req, res) => {
     const mm = String(now.getMonth() + 1).padStart(2, "0");
     const yy = String(now.getFullYear()).slice(-2);
     const date_part = dd + mm + yy;
-    const sql = `SELECT MAX(CAST(RIGHT(pmstr_trnno, 5) AS UNSIGNED)) AS max_seq
-      FROM tmpb_pmstr
-      WHERE pmstr_odtyp = ?
-      AND DATE(pmstr_trdat) = CURDATE()`;
-    const max_seq = await dbGet(sql, [pmstr_odtyp]);
+    const sql = `SELECT MAX(CAST(RIGHT(mrcpt_trnno, 5) AS UNSIGNED)) AS max_seq
+      FROM tmpb_mrcpt
+      WHERE DATE(mrcpt_trdat) = CURDATE()`;
+    const max_seq = await dbGet(sql, []);
     const max_seq_no = String((max_seq.max_seq || 0) + 1).padStart(5, "0");
-    const pmstr_trnno_new = `PR-${date_part}-${max_seq_no}`;
-    console.log("New Transaction No: " + pmstr_trnno_new);
+    const mrcpt_trnno_new = `PR-${date_part}-${max_seq_no}`;
+    console.log("New Transaction No: " + mrcpt_trnno_new);
+
 
     //return;
 
     //build scripts
     const scripts = [];
     scripts.push({
-      sql: `INSERT INTO tmpb_pmstr(id, pmstr_users, pmstr_bsins, pmstr_cntct, pmstr_odtyp, pmstr_trnno,
-      pmstr_trdat, pmstr_trnte, pmstr_refno, pmstr_odamt, pmstr_dsamt, pmstr_vtamt,
-      pmstr_vatpy, pmstr_incst, pmstr_excst, pmstr_rnamt, pmstr_ttamt, pmstr_pyamt,
-      pmstr_pdamt, pmstr_duamt, pmstr_rtamt, pmstr_cnamt, pmstr_ispad, pmstr_ispst,
-      pmstr_isret, pmstr_iscls, pmstr_vatcl, pmstr_hscnl, pmstr_crusr, pmstr_upusr)
-      VALUES (
+      sql: `INSERT INTO tmpb_mrcpt(id, mrcpt_users, mrcpt_bsins, mrcpt_cntct, mrcpt_trnno, mrcpt_trdat,
+      mrcpt_refno, mrcpt_trnte, mrcpt_odamt, mrcpt_dsamt, mrcpt_vtamt, mrcpt_vatpy,
+      mrcpt_incst, mrcpt_excst, mrcpt_rnamt, mrcpt_ttamt, mrcpt_pyamt, mrcpt_pdamt,
+      mrcpt_duamt, mrcpt_rtamt, mrcpt_ispad, mrcpt_ispst, mrcpt_iscls, mrcpt_vatcl,
+      mrcpt_hscnl, mrcpt_crusr, mrcpt_upusr)
+      VALUES (?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, ?, ?
-      )`,
+      ?, ?, ?)`,
       params: [
         id,
-        pmstr_users,
-        pmstr_bsins,
-        pmstr_cntct,
-        pmstr_odtyp,
-        pmstr_trnno_new,
-        pmstr_trdat,
-        pmstr_trnte,
-        pmstr_refno,
-        pmstr_odamt || 0,
-        pmstr_dsamt || 0,
-        pmstr_vtamt || 0,
-        pmstr_vatpy,
-        pmstr_incst || 0,
-        pmstr_excst || 0,
-        pmstr_rnamt || 0,
-        pmstr_ttamt || 0,
-        pmstr_pyamt || 0,
-        pmstr_pdamt || 0,
-        pmstr_duamt || 0,
-        0,
-        0,
-        pmstr_ispad,
-        pmstr_ispst,
-        0,
+        mrcpt_users,
+        mrcpt_bsins,
+        mrcpt_cntct,
+        mrcpt_trnno_new,
+        mrcpt_trdat,
+        mrcpt_refno,
+        mrcpt_trnte,
+        mrcpt_odamt,
+        mrcpt_dsamt,
+        mrcpt_vtamt,
+        mrcpt_vatpy,
+        mrcpt_incst,
+        mrcpt_excst,
+        mrcpt_rnamt,
+        mrcpt_ttamt,
+        mrcpt_pyamt,
+        mrcpt_pdamt,
+        mrcpt_duamt,
+        mrcpt_rtamt,
+        mrcpt_ispad,
+        mrcpt_ispst,
         0,
         0,
         0,
         user_id,
         user_id,
       ],
-      label: `Created master ${pmstr_trnno_new}`,
+      label: `Created master ${mrcpt_trnno_new}`,
     });
 
-    //Insert booking details
-    for (const det of tmpb_recpt) {
+
+    //Insert receipt details
+    for (const det of tmpb_crcpt) {
       scripts.push({
-        sql: `INSERT INTO tmpb_recpt(id, recpt_pmstr, recpt_bitem, recpt_items, recpt_bkrat, recpt_bkqty, recpt_itamt,
-        recpt_dspct, recpt_dsamt, recpt_vtpct, recpt_vtamt, recpt_csrat, recpt_ntamt,
-        recpt_notes, recpt_rtqty, recpt_slqty, recpt_ohqty, recpt_bking, recpt_crusr, recpt_upusr)
-        VALUES (
-        ?, ?, ?, ?, ?, ?, ?,
+        sql: `INSERT INTO tmpb_crcpt(id, crcpt_mrcpt, crcpt_bitem, crcpt_items, crcpt_itrat, crcpt_itqty,
+        crcpt_itamt, crcpt_dspct, crcpt_dsamt, crcpt_vtpct, crcpt_vtamt, crcpt_csrat,
+        crcpt_ntamt, crcpt_notes, crcpt_rtqty, crcpt_slqty, crcpt_ohqty, crcpt_cbkng,
+        crcpt_crusr, crcpt_upusr)
+        VALUES (?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?, ?
-        )`,
+        ?, ?, ?, ?, ?, ?,
+        ?, ?)`,
         params: [
           uuidv4(),
           id,
-          det.recpt_bitem,
-          det.recpt_items,
-          det.recpt_bkrat || 0,
-          det.recpt_bkqty || 0,
-          det.recpt_itamt || 0,
-          det.recpt_dspct || 0,
-          det.recpt_dsamt || 0,
-          det.recpt_vtpct || 0,
-          det.recpt_vtamt || 0,
-          det.recpt_csrat || 0,
-          det.recpt_ntamt || 0,
-          det.recpt_notes || "",
+          det.crcpt_bitem,
+          det.crcpt_items,
+          det.crcpt_itrat || 0,
+          det.crcpt_itqty || 1,
+          det.crcpt_itamt || 0,
+          det.crcpt_dspct || 0,
+          det.crcpt_dsamt || 0,
+          det.crcpt_vtpct || 0,
+          det.crcpt_vtamt || 0,
+          det.crcpt_csrat || 0,
+          det.crcpt_ntamt || 0,
+          det.crcpt_notes || "",
           0,
           0,
-          det.recpt_bkqty || 0, //det.recpt_ohqty,
-          det.recpt_bking,
+          det.crcpt_ohqty || 1, //det.cbkng_pnqty,
+          det.crcpt_cbkng,
           user_id,
           user_id,
         ],
-        label: `Created detail ${pmstr_trnno_new}`,
+        label: `Created detail ${mrcpt_trnno_new}`,
       });
     }
 
-    //Insert payment details
-    // for (const pay of tmtb_rcvpy) {
-    //   scripts.push({
-    //     sql: `INSERT INTO tmtb_rcvpy(id, rcvpy_users, rcvpy_bsins, rcvpy_cntct, rcvpy_pymod, rcvpy_refid,
-    //     rcvpy_refno, rcvpy_srcnm, rcvpy_trdat, rcvpy_notes, rcvpy_pyamt, rcvpy_crusr, rcvpy_upusr)
-    //     VALUES (?, ?, ?, ?, ?, ?,
-    //     ?, ?, ?, ?, ?, ?, ?)`,
-    //     params: [
-    //       uuidv4(),
-    //       pmstr_users,
-    //       pmstr_bsins,
-    //       pmstr_cntct,
-    //       pay.rcvpy_pymod,
-    //       id,
-    //       pmstr_trnno_new,
-    //       pmstr_odtyp,
-    //       pmstr_trdat,
-    //       pay.rcvpy_notes,
-    //       pay.rcvpy_pyamt,
-    //       user_id,
-    //       user_id,
-    //     ],
-    //     label: `Created payment ${pmstr_trnno_new}`,
-    //   });
-    // }
+    //Insert expense details
+    for (const pay of tmpb_expns) {
+      scripts.push({
+        sql: `INSERT INTO tmpb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
+        expns_srcnm, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
+        expns_upusr)
+        VALUES (?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?,
+        ?)`,
+        params: [
+          uuidv4(),
+          mrcpt_users,
+          mrcpt_bsins,
+          mrcpt_cntct,
+          id,
+          mrcpt_trnno_new,
+          "Purchase Receipt",
+          pay.expns_inexc,
+          pay.expns_notes,
+          pay.expns_xpamt,
+          user_id,
+          user_id,
+        ],
+        label: `Created expense ${mrcpt_trnno_new}`,
+      });
+    }
 
     await dbRunAll(scripts);
 
@@ -373,7 +366,7 @@ router.post("/create", async (req, res) => {
       message: "Purchase receipt created successfully",
       data: {
         ...req.body,
-        pmstr_trnno: pmstr_trnno_new,
+        mrcpt_trnno: mrcpt_trnno_new,
       },
     });
   } catch (error) {

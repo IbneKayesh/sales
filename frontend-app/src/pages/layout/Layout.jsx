@@ -51,12 +51,6 @@ const Layout = () => {
           url: "/home/purchase/preturn",
           icon: "pi pi-replay",
         },
-        {
-          id: "pr5",
-          name: "Reports",
-          url: "/home/purchase/preports",
-          icon: "pi pi-file",
-        },
       ],
     },
     {
@@ -134,6 +128,12 @@ const Layout = () => {
           name: "Contact",
           url: "/home/crm/contact",
           icon: "pi pi-id-card",
+        },
+        {
+          id: "crm2",
+          name: "Routes",
+          url: "/home/crm/field-route",
+          icon: "pi pi-directions",
         },
       ],
     },

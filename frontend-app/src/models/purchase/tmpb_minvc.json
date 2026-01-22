@@ -7,7 +7,7 @@
     "placeholder": "Enter ID",
     "required": false
   },
-  "pmstr_users": {
+  "minvc_users": {
     "type": "string",
     "label": "User Id",
     "maxLength": 50,
@@ -15,7 +15,7 @@
     "placeholder": "Enter user id",
     "required": false
   },
-  "pmstr_bsins": {
+  "minvc_bsins": {
     "type": "string",
     "label": "Business id",
     "maxLength": 50,
@@ -23,7 +23,7 @@
     "placeholder": "Enter business id",
     "required": false
   },
-  "pmstr_cntct": {
+  "minvc_cntct": {
     "type": "string",
     "label": "Supplier",
     "maxLength": 50,
@@ -31,15 +31,7 @@
     "placeholder": "Enter supplier",
     "required": true
   },
-  "pmstr_odtyp": {
-    "type": "string",
-    "label": "Order Type",
-    "maxLength": 50,
-    "minLength": 3,
-    "placeholder": "Enter order type",
-    "required": true
-  },
-  "pmstr_trnno": {
+  "minvc_trnno": {
     "type": "string",
     "label": "No",
     "maxLength": 50,
@@ -48,14 +40,14 @@
     "required": false,
     "default": "[Auto SL]"
   },
-  "pmstr_trdat": {
+  "minvc_trdat": {
     "type": "date",
     "label": "Date",
     "placeholder": "Enter start date",
     "required": true,
     "default": "new Date() with local format"
   },
-  "pmstr_refno": {
+  "minvc_refno": {
     "type": "string",
     "label": "Reference No",
     "maxLength": 50,
@@ -63,7 +55,7 @@
     "placeholder": "Enter reference no",
     "required": false
   },
-  "pmstr_trnte": {
+  "minvc_trnte": {
     "type": "string",
     "label": "Note",
     "maxLength": 50,
@@ -72,7 +64,7 @@
     "required": false,
     "default": ""
   },
-  "pmstr_odamt": {
+  "minvc_odamt": {
     "type": "decimal",
     "label": "Amount (1)",
     "maxLength": 999999999,
@@ -81,7 +73,7 @@
     "required": true,
     "default": "0"
   },
-  "pmstr_dsamt": {
+  "minvc_dsamt": {
     "type": "decimal",
     "label": "Discount (2)",
     "maxLength": 999999999,
@@ -90,7 +82,7 @@
     "required": true,
     "default": "0"
   },
-  "pmstr_vtamt": {
+  "minvc_vtamt": {
     "type": "decimal",
     "label": "VAT (3)",
     "maxLength": 999999999,
@@ -99,7 +91,7 @@
     "required": true,
     "default": "0"
   },
-  "pmstr_vatpy": {
+  "minvc_vatpy": {
     "type": "number",
     "label": "Is VAT Payment",
     "maxLength": 1,
@@ -108,7 +100,7 @@
     "required": true,
     "default": 0
   },
-  "pmstr_incst": {
+  "minvc_incst": {
     "type": "decimal",
     "label": "Include cost (4)",
     "maxLength": 999999999,
@@ -117,79 +109,70 @@
     "required": true,
     "default": "0"
   },
-  "pmstr_excst": {
+  "minvc_excst": {
     "type": "decimal",
-    "label": "Exclude cost (5)",
+    "label": "Exclude cost (10)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter Exclude cost",
     "required": true,
     "default": "0"
   },
-  "pmstr_rnamt": {
+  "minvc_rnamt": {
     "type": "decimal",
-    "label": "Round Off (6)",
+    "label": "Round Off (5)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter rounded amount",
     "required": true,
     "default": "0"
   },
-  "pmstr_ttamt": {
+  "minvc_ttamt": {
     "type": "decimal",
-    "label": "Total (7)",
+    "label": "Total (6)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter total amount",
     "required": true,
     "default": "0"
   },
-  "pmstr_pyamt": {
+  "minvc_pyamt": {
     "type": "decimal",
-    "label": "Payable (8)",
+    "label": "Payable (7)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter payable amount",
     "required": true,
     "default": "0"
   },
-  "pmstr_pdamt": {
+  "minvc_pdamt": {
     "type": "decimal",
-    "label": "Paid (9)",
+    "label": "Paid (8)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter paid amount",
     "required": true,
     "default": "0"
   },
-  "pmstr_duamt": {
+  "minvc_duamt": {
     "type": "decimal",
-    "label": "Due (10)",
+    "label": "Due (9)",
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter due amount",
     "required": true,
     "default": "0"
   },
-  "pmstr_rtamt": {
+  "minvc_rtamt": {
     "type": "decimal",
-    "label": "Return (11)",
+    "label": "Returned (11)",
     "maxLength": 999999999,
     "minLength": 0,
-    "placeholder": "Enter return amount",
+    "placeholder": "Enter returned amount",
     "required": true,
     "default": "0"
   },
-  "pmstr_cnamt": {
-    "type": "decimal",
-    "label": "Cancelled (12)",
-    "maxLength": 999999999,
-    "minLength": 0,
-    "placeholder": "Enter cancelled amount",
-    "required": true,
-    "default": "0"
-  },
-  "pmstr_ispad": {
+  "minvc_ispad": {
     "type": "number",
     "label": "Is Paid",
     "maxLength": 2,
@@ -198,7 +181,7 @@
     "required": true,
     "default": 0
   },
-  "pmstr_ispst": {
+  "minvc_ispst": {
     "type": "number",
     "label": "Is Posted",
     "maxLength": 1,
@@ -207,16 +190,7 @@
     "required": true,
     "default": 1
   },
-  "pmstr_isret": {
-    "type": "number",
-    "label": "Is Returned",
-    "maxLength": 1,
-    "minLength": 0,
-    "placeholder": "Is returned",
-    "required": true,
-    "default": 0
-  },
-  "pmstr_iscls": {
+  "minvc_iscls": {
     "type": "number",
     "label": "Is Closed",
     "maxLength": 1,
@@ -225,7 +199,7 @@
     "required": true,
     "default": 0
   },
-  "pmstr_vatcl": {
+  "minvc_vatcl": {
     "type": "number",
     "label": "VAT Collected",
     "maxLength": 1,
@@ -234,7 +208,7 @@
     "required": true,
     "default": 0
   },
-  "pmstr_hscnl": {
+  "minvc_hscnl": {
     "type": "number",
     "label": "Is Cancelled",
     "maxLength": 1,

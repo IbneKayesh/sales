@@ -1,98 +1,154 @@
-import React from "react";
-import { TabMenu } from "primereact/tabmenu";
+import { useView } from "../hooks/useView";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { Menu } from "primereact/menu";
+import React, { useRef } from "react";
+import "./mobile.css";
 
 const Layout = ({ children }) => {
-  const items = [
+  const { toggleView } = useView();
+  const { user, business, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const menuRef = useRef(null);
+
+  const navItems = [
+    { label: "Home", icon: "pi pi-home", path: "/home" },
+    { label: "Menus", icon: "pi pi-th-large", path: "/menus" },
+    { label: "Activity", icon: "pi pi-bolt", path: "/sample" },
+  ];
+
+  const userMenuItems = [
     {
-      label: "Home",
-      icon: "pi pi-fw pi-home",
-      command: () => {
-        window.location.hash = "/";
-      },
+      label: "Profile",
+      icon: "pi pi-user",
+      command: () => navigate("/home/auth/profile"),
     },
     {
-      label: "Menus",
-      icon: "pi pi-fw pi-list",
-      command: () => {
-        window.location.hash = "/menus";
-      },
+      label: "Security",
+      icon: "pi pi-shield",
+      command: () => navigate("/home/auth/password"),
     },
+    { separator: true },
     {
-      label: "About",
-      icon: "pi pi-fw pi-info-circle",
-      command: () => {
-        window.location.hash = "/about";
+      label: "Logout",
+      icon: "pi pi-power-off",
+      template: (item, options) => {
+        return (
+          <button
+            onClick={logout}
+            className={options.className}
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              padding: "0.75rem 1rem",
+              color: "#ef4444",
+              border: "none",
+              background: "none",
+            }}
+          >
+            <i className={item.icon}></i>
+            <span style={{ fontWeight: "600" }}>{item.label}</span>
+          </button>
+        );
       },
     },
   ];
 
+  const currentPath = location.pathname;
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        backgroundColor: "#f4f4f9",
-        minHeight: "100vh",
-        fontFamily: "var(--font-family, sans-serif)",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "375px",
-          height: "100vh",
-          backgroundColor: "#ffffff",
-          display: "flex",
-          flexDirection: "column",
-          boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
+    <div className="mobile-layout">
+      <div className="mobile-container">
         {/* Header */}
-        <header
-          style={{
-            padding: "1rem",
-            textAlign: "center",
-            backgroundColor: "var(--primary-color, #6366f1)",
-            color: "white",
-            fontWeight: "bold",
-            fontSize: "1.2rem",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            zIndex: 10,
-          }}
-        >
-          App Title
+        <header className="mobile-header">
+          <div className="business-info">
+            <span className="business-name">
+              {business?.bsins_bname || "Sales App"}
+            </span>
+            <span className="user-welcome">
+              Hello, {user?.users_oname?.split(" ")[0] || "User"}
+            </span>
+          </div>
+
+          <div
+            style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}
+          >
+            <button
+              onClick={toggleView}
+              className="glass-btn"
+              title="Switch to Web View"
+            >
+              <i className="pi pi-desktop" style={{ fontSize: "1rem" }}></i>
+            </button>
+            <div
+              className="user-avatar"
+              onClick={(e) => menuRef.current.toggle(e)}
+              style={{
+                width: "36px",
+                height: "36px",
+                borderRadius: "50%",
+                backgroundColor: "var(--mobile-primary)",
+                color: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: "600",
+                fontSize: "0.9rem",
+                boxShadow: "0 2px 4px rgba(99, 102, 241, 0.3)",
+                cursor: "pointer",
+              }}
+            >
+              {user?.users_oname?.[0] || "U"}
+            </div>
+            <Menu
+              model={userMenuItems}
+              popup
+              ref={menuRef}
+              id="user_menu"
+              style={{
+                marginTop: "0.5rem",
+                borderRadius: "12px",
+                boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1)",
+                border: "1px solid #f1f5f9",
+              }}
+            />
+          </div>
         </header>
 
         {/* Main Content */}
-        <main
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            padding: "1rem",
-            paddingBottom: "80px", // Space for bottom nav
-          }}
-        >
-          {children}
-        </main>
+        <main className="mobile-content">{children}</main>
 
-        {/* Bottom Navigation */}
-        <nav
-          style={{
-            position: "absolute",
-            bottom: 0,
-            width: "100%",
-            backgroundColor: "white",
-            borderTop: "1px solid #eee",
-            zIndex: 10,
-          }}
-        >
-          <TabMenu
-            model={items}
-            style={{ border: "none" }}
-            className="mobile-bottom-nav"
-          />
+        {/* Custom Bottom Navigation */}
+        <nav className="mobile-nav-bar">
+          {navItems.map((item) => {
+            const isActive =
+              currentPath === item.path ||
+              (item.path === "/home" && currentPath === "/");
+            return (
+              <div
+                key={item.path}
+                className={`nav-item ${isActive ? "active" : ""}`}
+                onClick={() => navigate(item.path)}
+              >
+                <i className={item.icon}></i>
+                <span>{item.label}</span>
+                {isActive && (
+                  <div
+                    style={{
+                      width: "4px",
+                      height: "4px",
+                      borderRadius: "50%",
+                      backgroundColor: "var(--mobile-primary)",
+                      marginTop: "2px",
+                    }}
+                  ></div>
+                )}
+              </div>
+            );
+          })}
         </nav>
       </div>
     </div>

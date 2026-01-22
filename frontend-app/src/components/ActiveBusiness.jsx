@@ -38,7 +38,7 @@ export default function ActiveBusiness({ visible, setVisible }) {
       <Dialog
         header="Switch Business"
         visible={visible}
-        style={{ width: "25vw" }}
+        style={{ minWidth: "25vw" }}
         onHide={() => {
           if (!visible) return;
           setVisible(false);

@@ -1,0 +1,96 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "rutes_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "rutes_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter your business id",
+    "required": false
+  },
+  "rutes_rname": {
+    "type": "string",
+    "label": "Route name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter route name",
+    "required": true,
+    "default": ""
+  },
+  "rutes_dname": {
+    "type": "string",
+    "label": "Day name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter day name",
+    "required": true,
+    "default": ""
+  },
+  "rutes_lvdat": {
+    "type": "date",
+    "label": "Date",
+    "placeholder": "Enter last visit date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "rutes_ttcnt": {
+    "type": "number",
+    "label": "Total Contacts",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter total contact",
+    "required": false,
+    "default": "0"
+  },
+  "rutes_odval": {
+    "type": "number",
+    "label": "Total Order",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter total order",
+    "required": false,
+    "default": "0"
+  },
+  "rutes_dlval": {
+    "type": "number",
+    "label": "Total Delivery",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter total delivery",
+    "required": false,
+    "default": "0"
+  },
+  "rutes_clval": {
+    "type": "number",
+    "label": "Total Collections",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter total collections",
+    "required": false,
+    "default": "0"
+  },
+  "rutes_duval": {
+    "type": "number",
+    "label": "Total Due",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter total due",
+    "required": false,
+    "default": "0"
+  }
+}

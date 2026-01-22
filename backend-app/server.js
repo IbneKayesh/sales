@@ -11,6 +11,7 @@ const businessRoutes = require("./routes/auth/business.routes.js");
 const usersRoutes = require("./routes/auth/users.routes.js");
 //crm
 const contactsRoutes = require("./routes/crm/contacts.routes.js");
+const fieldRoutes = require("./routes/crm/fieldroute.routes.js");
 //accounts
 const accountsRoutes = require("./routes/accounts/accounts.routes.js");
 const accountsHeadsRoutes = require("./routes/accounts/accountsHeads.routes.js");
@@ -31,6 +32,7 @@ const socialsRoutes = require("./routes/support/socials.routes.js");
 //purchase
 const pbookingRoutes = require("./routes/purchase/pbooking.routes.js");
 const preceiptRoutes = require("./routes/purchase/preceipt.routes.js");
+const pinvoiceRoutes = require("./routes/purchase/pinvoice.routes.js");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -72,6 +74,7 @@ app.use("/api/auth/business", businessRoutes);
 app.use("/api/auth/users", usersRoutes);
 //crm
 app.use("/api/crm/contacts", contactsRoutes);
+app.use("/api/crm/fieldroute", fieldRoutes);
 //accounts
 app.use("/api/accounts/accounts", accountsRoutes);
 app.use("/api/accounts/accounts-heads", accountsHeadsRoutes);
@@ -92,6 +95,7 @@ app.use("/api/support/socials", socialsRoutes);
 //purchase
 app.use("/api/purchase/pbooking", pbookingRoutes);
 app.use("/api/purchase/preceipt", preceiptRoutes);
+app.use("/api/purchase/pinvoice", pinvoiceRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
