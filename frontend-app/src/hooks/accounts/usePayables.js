@@ -107,7 +107,7 @@ export const usePayables = () => {
         return;
       }
 
-      if(formData.rcvpy_pyamt > formData.pmstr_duamt){
+      if(formData.paybl_dbamt > formData.mbkng_duamt){
         showToast("error", "Error", "Payment amount cannot be greater than payable amount");
         setIsBusy(false);
         return;
@@ -138,7 +138,7 @@ export const usePayables = () => {
       );
 
       //call update process
-      //await closingProcessAPI("payable-due", formDataNew.rcvpy_refid);
+      await closingProcessAPI("payable-due", formDataNew.paybl_refid);
 
       // Clear form & reload
       handleClear();

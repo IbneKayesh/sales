@@ -85,6 +85,9 @@ router.post("/", async (req, res) => {
         case "mbkng_hscnl":
           sql += ` AND bkng.mbkng_hscnl = 1`;
           break;
+        case "last_7_days":
+          sql += ` AND bkng.mbkng_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)`;
+          break;
         default:
           sql += ``;
           break;
@@ -424,35 +427,37 @@ router.post("/create", async (req, res) => {
 
     //Insert payment details :: debit
     for (const pay of tmtb_paybl) {
-      scripts.push({
-        sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
+      if (pay.paybl_dbamt > 0) {
+        scripts.push({
+          sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
         paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
         paybl_cramt, paybl_crusr, paybl_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
         ?, ?, ?)`,
-        params: [
-          uuidv4(),
-          mbkng_users,
-          mbkng_bsins,
-          mbkng_cntct,
-          pay.paybl_pymod,
-          id,
-          mbkng_trnno_new,
-          "Purchase Booking",
-          mbkng_trdat,
-          pay.paybl_descr,
-          pay.paybl_notes,
-          pay.paybl_dbamt,
-          0,
-          user_id,
-          user_id,
-        ],
-        label: `Created payment ${mbkng_trnno_new}`,
-      });
+          params: [
+            uuidv4(),
+            mbkng_users,
+            mbkng_bsins,
+            mbkng_cntct,
+            pay.paybl_pymod,
+            id,
+            mbkng_trnno_new,
+            "Purchase Booking",
+            mbkng_trdat,
+            pay.paybl_descr,
+            pay.paybl_notes,
+            pay.paybl_dbamt,
+            0,
+            user_id,
+            user_id,
+          ],
+          label: `Created payment debit ${mbkng_trnno_new}`,
+        });
+      }
     }
-    //Insert payment details :: credit
 
+    //Insert payment details :: credit
     scripts.push({
       sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
       paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
@@ -465,19 +470,19 @@ router.post("/create", async (req, res) => {
         mbkng_users,
         mbkng_bsins,
         mbkng_cntct,
-        'Inventory',
+        "Inventory",
         id,
         mbkng_trnno_new,
         "Purchase Booking",
         mbkng_trdat,
-        'Supplier Goods',
-        'Products',
+        "Supplier Goods",
+        "Products",
         0,
         mbkng_pyamt,
         user_id,
         user_id,
       ],
-      label: `Created payment ${mbkng_trnno_new}`,
+      label: `Created payment credit ${mbkng_trnno_new}`,
     });
 
     await dbRunAll(scripts);
@@ -505,48 +510,45 @@ router.post("/update", async (req, res) => {
   try {
     const {
       id,
-      pmstr_users,
-      pmstr_bsins,
-      pmstr_cntct,
-      pmstr_odtyp,
-      pmstr_trnno,
-      pmstr_trdat,
-      pmstr_trnte,
-      pmstr_refno,
-      pmstr_odamt,
-      pmstr_dsamt,
-      pmstr_vtamt,
-      pmstr_vatpy,
-      pmstr_incst,
-      pmstr_excst,
-      pmstr_rnamt,
-      pmstr_ttamt,
-      pmstr_pyamt,
-      pmstr_pdamt,
-      pmstr_duamt,
-      pmstr_rtamt,
-      pmstr_cnamt,
-      pmstr_ispad,
-      pmstr_ispst,
-      pmstr_isret,
-      pmstr_iscls,
-      pmstr_vatcl,
-      pmstr_hscnl,
+      mbkng_users,
+      mbkng_bsins,
+      mbkng_cntct,
+      mbkng_trnno,
+      mbkng_trdat,
+      mbkng_refno,
+      mbkng_trnte,
+      mbkng_odamt,
+      mbkng_dsamt,
+      mbkng_vtamt,
+      mbkng_vatpy,
+      mbkng_incst,
+      mbkng_excst,
+      mbkng_rnamt,
+      mbkng_ttamt,
+      mbkng_pyamt,
+      mbkng_pdamt,
+      mbkng_duamt,
+      mbkng_cnamt,
+      mbkng_ispad,
+      mbkng_ispst,
+      mbkng_iscls,
+      mbkng_vatcl,
+      mbkng_hscnl,
       user_id,
-      tmpb_bking,
-      tmtb_rcvpy,
+      tmpb_cbkng,
+      tmpb_expns,
+      tmtb_paybl,
     } = req.body;
 
     // Validate input
     if (
       !id ||
-      !pmstr_users ||
-      !pmstr_bsins ||
-      !pmstr_cntct ||
-      !pmstr_odtyp ||
-      !pmstr_trdat ||
-      !tmpb_bking ||
-      !Array.isArray(tmpb_bking)
+      !mbkng_users ||
+      !mbkng_bsins ||
+      !mbkng_cntct ||
+      !mbkng_trdat ||
+      !tmpb_cbkng ||
+      !Array.isArray(tmpb_cbkng)
     ) {
       return res.json({
         success: false,
@@ -559,132 +561,198 @@ router.post("/update", async (req, res) => {
     //remove details
     const scripts = [];
     scripts.push({
-      sql: `DELETE FROM tmpb_bking WHERE bking_pmstr = ?`,
+      sql: `DELETE FROM tmpb_cbkng WHERE cbkng_mbkng = ?`,
       params: [id],
-      label: `Delete booking details for ${pmstr_trnno}`,
+      label: `Delete booking details for ${mbkng_trnno}`,
     });
     scripts.push({
-      sql: `DELETE FROM tmtb_rcvpy WHERE rcvpy_refid = ?`,
+      sql: `DELETE FROM tmpb_expns WHERE expns_refid = ?`,
       params: [id],
-      label: `Delete payment details for ${pmstr_trnno}`,
+      label: `Delete expenses details for ${mbkng_trnno}`,
+    });
+    scripts.push({
+      sql: `DELETE FROM tmtb_paybl WHERE paybl_refid = ?`,
+      params: [id],
+      label: `Delete payments details for ${mbkng_trnno}`,
     });
     await dbRunAll(scripts);
 
     //update master
     const scripts_updt = [];
     scripts_updt.push({
-      sql: `UPDATE tmpb_pmstr
-    SET pmstr_cntct = ?,
-    pmstr_trdat = ?,
-    pmstr_trnte = ?,
-    pmstr_refno = ?,
-    pmstr_odamt = ?,
-    pmstr_dsamt = ?,
-    pmstr_vtamt = ?,
-    pmstr_vatpy = ?,
-    pmstr_incst = ?,
-    pmstr_excst = ?,
-    pmstr_rnamt = ?,
-    pmstr_ttamt = ?,
-    pmstr_pyamt = ?,
-    pmstr_pdamt = ?,
-    pmstr_duamt = ?,
-    pmstr_ispad = ?,
-    pmstr_ispst = ?,
-    pmstr_upusr = ?,
-    pmstr_updat = current_timestamp(),
-    pmstr_rvnmr = pmstr_rvnmr + 1
+      sql: `UPDATE tmpb_mbkng
+    SET mbkng_cntct = ?,
+    mbkng_trdat = ?,
+    mbkng_refno = ?,
+    mbkng_trnte = ?,
+    mbkng_odamt = ?,
+    mbkng_dsamt = ?,
+    mbkng_vtamt = ?,
+    mbkng_vatpy = ?,
+    mbkng_incst = ?,
+    mbkng_excst = ?,
+    mbkng_rnamt = ?,
+    mbkng_ttamt = ?,
+    mbkng_pyamt = ?,
+    mbkng_pdamt = ?,
+    mbkng_duamt = ?,
+    mbkng_ispad = ?,
+    mbkng_ispst = ?,
+    mbkng_upusr = ?,
+    mbkng_updat = current_timestamp(),
+    mbkng_rvnmr = mbkng_rvnmr + 1
     WHERE id = ?`,
       params: [
-        pmstr_cntct,
-        pmstr_trdat,
-        pmstr_trnte,
-        pmstr_refno,
-        pmstr_odamt,
-        pmstr_dsamt,
-        pmstr_vtamt,
-        pmstr_vatpy,
-        pmstr_incst,
-        pmstr_excst,
-        pmstr_rnamt,
-        pmstr_ttamt,
-        pmstr_pyamt,
-        pmstr_pdamt,
-        pmstr_duamt,
-        pmstr_ispad,
-        pmstr_ispst,
+        mbkng_cntct,
+        mbkng_trdat,
+        mbkng_refno,
+        mbkng_trnte,
+        mbkng_odamt,
+        mbkng_dsamt,
+        mbkng_vtamt,
+        mbkng_vatpy,
+        mbkng_incst,
+        mbkng_excst,
+        mbkng_rnamt,
+        mbkng_ttamt,
+        mbkng_pyamt,
+        mbkng_pdamt,
+        mbkng_duamt,
+        mbkng_ispad,
+        mbkng_ispst,
         user_id,
         id,
       ],
-      label: `Update master ${pmstr_trnno}`,
+      label: `Update master ${mbkng_trnno}`,
     });
 
     //Insert booking details
-    for (const det of tmpb_bking) {
+    for (const det of tmpb_cbkng) {
       scripts_updt.push({
-        sql: `INSERT INTO tmpb_bking(id, bking_pmstr, bking_bitem, bking_items, bking_bkrat, bking_bkqty, bking_itamt,
-        bking_dspct, bking_dsamt, bking_vtpct, bking_vtamt, bking_csrat, bking_ntamt,
-        bking_notes, bking_cnqty, bking_rcqty, bking_pnqty, bking_crusr, bking_upusr)
-        VALUES (
-        ?, ?, ?, ?, ?, ?, ?,
+        sql: `INSERT INTO tmpb_cbkng(id, cbkng_mbkng, cbkng_bitem, cbkng_items, cbkng_itrat, cbkng_itqty,
+        cbkng_itamt, cbkng_dspct, cbkng_dsamt, cbkng_vtpct, cbkng_vtamt, cbkng_csrat,
+        cbkng_ntamt, cbkng_notes, cbkng_cnqty, cbkng_rcqty, cbkng_pnqty,
+        cbkng_crusr, cbkng_upusr)
+        VALUES (?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?
-        )`,
+        ?, ?, ?, ?, ?,
+        ?, ?)`,
         params: [
           uuidv4(),
           id,
-          det.bking_bitem,
-          det.bking_items,
-          det.bking_bkrat || 0,
-          det.bking_bkqty || 0,
-          det.bking_itamt || 0,
-          det.bking_dspct || 0,
-          det.bking_dsamt || 0,
-          det.bking_vtpct || 0,
-          det.bking_vtamt || 0,
-          det.bking_csrat || 0,
-          det.bking_ntamt || 0,
-          det.bking_notes || "",
+          det.cbkng_bitem,
+          det.cbkng_items,
+          det.cbkng_itrat || 0,
+          det.cbkng_itqty || 1,
+          det.cbkng_itamt || 0,
+          det.cbkng_dspct || 0,
+          det.cbkng_dsamt || 0,
+          det.cbkng_vtpct || 0,
+          det.cbkng_vtamt || 0,
+          det.cbkng_csrat || 0,
+          det.cbkng_ntamt || 0,
+          det.cbkng_notes || "",
           0,
           0,
-          det.bking_bkqty || 0, //det.bking_pnqty,
+          det.cbkng_itqty || 1, //det.cbkng_pnqty,
           user_id,
           user_id,
         ],
-        label: `Created detail ${pmstr_trnno}`,
+        label: `Created detail ${mbkng_trnno}`,
       });
     }
 
-    //Insert payment details
-    for (const pay of tmtb_rcvpy) {
+    //Insert expense details
+    for (const pay of tmpb_expns) {
       scripts_updt.push({
-        sql: `INSERT INTO tmtb_rcvpy(id, rcvpy_users, rcvpy_bsins, rcvpy_cntct, rcvpy_pymod, rcvpy_refid,
-        rcvpy_refno, rcvpy_srcnm, rcvpy_trdat, rcvpy_notes, rcvpy_pyamt, rcvpy_crusr, rcvpy_upusr)
+        sql: `INSERT INTO tmpb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
+        expns_srcnm, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
+        expns_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?, ?)`,
+        ?, ?, ?, ?, ?,
+        ?)`,
         params: [
           uuidv4(),
-          pmstr_users,
-          pmstr_bsins,
-          pmstr_cntct,
-          pay.rcvpy_pymod,
+          mbkng_users,
+          mbkng_bsins,
+          mbkng_cntct,
           id,
-          pmstr_trnno,
-          pmstr_odtyp,
-          pmstr_trdat,
-          pay.rcvpy_notes,
-          pay.rcvpy_pyamt,
+          mbkng_trnno,
+          "Purchase Booking",
+          pay.expns_inexc,
+          pay.expns_notes,
+          pay.expns_xpamt,
           user_id,
           user_id,
         ],
-        label: `Created payment ${pmstr_trnno}`,
+        label: `Created expense ${mbkng_trnno}`,
       });
     }
+
+    //Insert payment details :: debit
+    for (const pay of tmtb_paybl) {
+      if (pay.paybl_dbamt > 0) {
+        scripts_updt.push({
+          sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
+        paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
+        paybl_cramt, paybl_crusr, paybl_upusr)
+        VALUES (?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?,
+        ?, ?, ?)`,
+          params: [
+            uuidv4(),
+            mbkng_users,
+            mbkng_bsins,
+            mbkng_cntct,
+            pay.paybl_pymod,
+            id,
+            mbkng_trnno,
+            "Purchase Booking",
+            mbkng_trdat,
+            pay.paybl_descr,
+            pay.paybl_notes,
+            pay.paybl_dbamt,
+            0,
+            user_id,
+            user_id,
+          ],
+          label: `Created payment debit ${mbkng_trnno}`,
+        });
+      }
+    }
+
+    // //Insert payment details :: credit
+    scripts_updt.push({
+      sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
+      paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
+      paybl_cramt, paybl_crusr, paybl_upusr)
+      VALUES (?, ?, ?, ?, ?, ?,
+      ?, ?, ?, ?, ?, ?,
+      ?, ?, ?)`,
+      params: [
+        uuidv4(),
+        mbkng_users,
+        mbkng_bsins,
+        mbkng_cntct,
+        "Inventory",
+        id,
+        mbkng_trnno,
+        "Purchase Booking",
+        mbkng_trdat,
+        "Supplier Goods",
+        "Products",
+        0,
+        mbkng_pyamt,
+        user_id,
+        user_id,
+      ],
+      label: `Created payment credit ${mbkng_trnno}`,
+    });
 
     await dbRunAll(scripts_updt);
     res.json({
       success: true,
-      message: "User updated successfully",
+      message: "Booking updated successfully",
       data: null,
     });
   } catch (error) {

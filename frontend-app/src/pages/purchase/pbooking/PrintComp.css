@@ -80,13 +80,13 @@ section {
   text-transform: uppercase;
 }
 
-.status-badge.posted {
+.status-badge.paid {
   background: #e6fffa;
   color: #2c7a7b;
   border: 1px solid #b2f5ea;
 }
 
-.status-badge.draft {
+.status-badge.unpaid-partial {
   background: #fffaf0;
   color: #9c4221;
   border: 1px solid #feebc8;

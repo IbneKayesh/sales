@@ -28,15 +28,14 @@ const EntryComp = ({
   setCancelledRows,
   onCancelBookingItems,
   setCancelledPayment,
+
+  //cancel
+  handleCancel,
 }) => {
   const [disableSubmit, setDisableSubmit] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [dialogName, setDialogName] = useState("payment");
   const [showPrintDialog, setShowPrintDialog] = useState(false);
-
-  const handlePrint = () => {
-    setShowPrintDialog(true);
-  };
 
   useEffect(() => {
     const hasProducts = formDataItemList.length < 1;
@@ -83,14 +82,15 @@ const EntryComp = ({
 
     const total_amount = sum_1_3_4 - sum_2_5;
 
-    const payable_amount = formData.mbkng_vatpy === 1 ? total_amount : (total_amount - vat_amount);
+    const payable_amount =
+      formData.mbkng_vatpy === 1 ? total_amount : total_amount - vat_amount;
 
     const paid_amount = formDataPaymentList.reduce(
       (sum, item) => sum + (Number(item.paybl_dbamt) || 0),
       0,
     );
 
-    const due_amount = payable_amount -  (paid_amount || 0);
+    const due_amount = payable_amount - (paid_amount || 0);
 
     handleChange("mbkng_odamt", Number(order_amount).toFixed(2));
     handleChange("mbkng_dsamt", Number(discount_amount).toFixed(2));
@@ -124,18 +124,44 @@ const EntryComp = ({
   const handleShowIncludeCost = () => {
     setShowDialog(true);
     setDialogName("Including Expenses");
-    //"Print"
   };
   const handleShowExcludeCost = () => {
     setShowDialog(true);
     setDialogName("Excluding Expenses");
-    //"Print"
   };
   const handleShowPayment = () => {
     setShowDialog(true);
     setDialogName("Payment");
-    //"Print"
   };
+
+  const handleShowPrint = () => {
+    setShowDialog(true);
+    setDialogName("Print");
+  };
+
+  const handlePrintPdf = () => {
+    window.print();
+  };
+
+  const dialogFooter = (
+    <div className="flex justify-content-end gap-2 no-print">
+      <Button
+        label="Cancel"
+        icon="pi pi-times"
+        onClick={() => setShowDialog(false)}
+        severity="secondary"
+      />
+      {dialogName === "Print" && (
+        <Button
+          label="Print"
+          icon="pi pi-print"
+          onClick={() => handlePrintPdf()}
+          severity="primary"
+          raised
+        />
+      )}
+    </div>
+  );
 
   return (
     <div>
@@ -164,6 +190,15 @@ const EntryComp = ({
         <ButtonGroup>
           <Button
             type="button"
+            label="Back"
+            icon="pi pi-arrow-left"
+            size="small"
+            severity="help"
+            onClick={handleCancel}
+            disabled={!formData.id}
+          />
+          <Button
+            type="button"
             label="Cancel"
             icon="pi pi-times"
             severity="danger"
@@ -177,7 +212,7 @@ const EntryComp = ({
             icon="pi pi-print"
             severity="info"
             size="small"
-            onClick={handlePrint}
+            onClick={handleShowPrint}
             disabled={!formData.id}
           />
           <Button
@@ -205,7 +240,7 @@ const EntryComp = ({
         onHide={() => setShowDialog(false)}
         closable={true}
         style={{ width: "50vw" }}
-        footer="Footer"
+        footer={dialogFooter}
       >
         <>
           {dialogName === "Including Expenses" && (
@@ -231,16 +266,16 @@ const EntryComp = ({
               setFormDataPaymentList={setFormDataPaymentList}
             />
           )}
+
+          {dialogName === "Print" && (
+            <PrintComp
+              formData={formData}
+              formDataItemList={formDataItemList}
+              formDataPaymentList={formDataPaymentList}
+            />
+          )}
         </>
       </Dialog>
-
-      <PrintComp
-        visible={showPrintDialog}
-        onHide={() => setShowPrintDialog(false)}
-        formData={formData}
-        formDataList={formDataItemList}
-        formDataPaymentList={formDataPaymentList}
-      />
 
       <CancelItemsComp
         visible={showCancelDialog}

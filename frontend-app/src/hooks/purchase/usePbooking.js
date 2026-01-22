@@ -26,12 +26,12 @@ export const usePbooking = () => {
 
   const loadBookings = async () => {
     try {
+      //console.log("loadBookings:");
       const response = await pbookingAPI.getAll({
         mbkng_users: user.users_users,
         mbkng_bsins: user.users_bsins,
         ...searchBoxData,
       });
-      //response = { success, message, data }
       //console.log("loadBookings:", JSON.stringify(response));
 
       setDataList([]);
@@ -233,12 +233,12 @@ export const usePbooking = () => {
       );
 
       //call update process
-      //await closingProcessAPI("purchase-booking", user.users_bsins);
+      await closingProcessAPI("purchase-booking", user.users_bsins);
 
       // Clear form & reload
-      //handleClear();
-      //setCurrentView("list");
-      //await loadBookings(); // make sure we wait for updated data
+      handleClear();
+      setCurrentView("list");
+      await loadBookings(); // make sure we wait for updated data
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");
@@ -253,9 +253,9 @@ export const usePbooking = () => {
   const [searchBoxData, setSearchBoxData] = useState({
     mbkng_cntct: "",
     mbkng_trnno: "",
-    mbkng_trdat: new Date().toLocaleString().split("T")[0],
+    mbkng_trdat: "", //new Date().toLocaleString().split("T")[0],
     mbkng_refno: "",
-    search_option: "",
+    search_option: "mbkng_ispad",
   });
 
   const handleChangeSearchInput = (e) => {
@@ -289,6 +289,7 @@ export const usePbooking = () => {
     { name: "mbkng_iscls", label: "Closed" },
     { name: "mbkng_vatcl", label: "VAT Collected" },
     { name: "mbkng_hscnl", label: "Cancelled" },
+    { name: "last_7_days", label: "Last 7 Days" },
   ];
 
   //cancel booking items

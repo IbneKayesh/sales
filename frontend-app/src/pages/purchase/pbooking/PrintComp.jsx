@@ -4,13 +4,7 @@ import { Button } from "primereact/button";
 import "./PrintComp.css";
 import { useAuth } from "@/hooks/useAuth";
 
-const PrintComp = ({
-  visible,
-  onHide,
-  formData,
-  formDataList,
-  formDataPaymentList,
-}) => {
+const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
   const { user, business } = useAuth();
   const [bImg, setBImg] = useState(null);
 
@@ -45,35 +39,8 @@ const PrintComp = ({
       year: "numeric",
     });
   };
-
-  const dialogFooter = (
-    <div className="flex justify-content-end gap-2 no-print">
-      <Button
-        label="Cancel"
-        icon="pi pi-times"
-        onClick={onHide}
-        severity="secondary"
-      />
-      <Button
-        label="Print"
-        icon="pi pi-print"
-        onClick={handlePrint}
-        severity="primary"
-        raised
-      />
-    </div>
-  );
-
   return (
-    <Dialog
-      header={false}
-      visible={visible}
-      onHide={onHide}
-      footer={dialogFooter}
-      style={{ width: "95vw", maxWidth: "900px" }}
-      contentStyle={{ padding: "2rem" }}
-      closable={false}
-    >
+    <>
       <div className="print-container">
         {/* Header: Company & Invoice Info */}
         <header className="print-header">
@@ -96,15 +63,17 @@ const PrintComp = ({
               <span className="text-xl font-bold mb-2">
                 {business?.bsins_bname || "YOUR BUSINESS NAME"}
               </span>
-              <br />{business?.bsins_addrs || "BUSINESS ADRESS"},{" "}
+              <br />
+              {business?.bsins_addrs || "BUSINESS ADRESS"},{" "}
               {business?.bsins_addrs || "BUSINESS ADRESS"},{" "}
               {business?.bsins_cntry || "COUNTRY"} <br />
-              BIN: {business?.bsins_binno || ""} | Email: {business?.bsins_email || "[EMAIL_ADDRESS]"} | Phone:{" "}
+              BIN: {business?.bsins_binno || ""} | Email:{" "}
+              {business?.bsins_email || "[EMAIL_ADDRESS]"} | Phone:{" "}
               {business?.bsins_cntct || "[PHONE_NUMBER]"}
             </div>
           </div>
           <div className="invoice-meta-top">
-            <h2>{formData?.pmstr_odtyp}</h2>
+            <h2>{"Purchase Booking"}</h2>
             <div
               className="info-row"
               style={{ justifyContent: "flex-end", marginTop: "10px" }}
@@ -113,14 +82,18 @@ const PrintComp = ({
                 className="label"
                 style={{ width: "auto", marginRight: "8px" }}
               ></span>
-              <span style={{ fontWeight: 700 }}>{formData?.pmstr_trnno}</span>
+              <span style={{ fontWeight: 700 }}>{formData?.mbkng_trnno}</span>
             </div>
             <div
               className={`status-badge ${
-                formData?.pmstr_ispst === 1 ? "posted" : "draft"
+                formData?.mbkng_ispad === 1 ? "paid" : "unpaid-partial"
               }`}
             >
-              {formData?.pmstr_ispst === 1 ? "POSTED" : "DRAFT"}
+              {formData?.mbkng_ispad === 1
+                ? "PAID"
+                : formData?.mbkng_ispad === 2
+                  ? "PARTIAL"
+                  : "UNPAID"}
             </div>
           </div>
         </header>
@@ -156,11 +129,11 @@ const PrintComp = ({
             <div className="info-content">
               <div className="info-row">
                 <span className="label">Date:</span>
-                <span>{formatDate(formData?.pmstr_trdat)}</span>
+                <span>{formatDate(formData?.mbkng_trdat)}</span>
               </div>
               <div className="info-row">
                 <span className="label">Ref No:</span>
-                <span>{formData?.pmstr_refno || "-"}</span>
+                <span>{formData?.mbkng_refno || "-"}</span>
               </div>
             </div>
           </div>
@@ -180,37 +153,37 @@ const PrintComp = ({
               </tr>
             </thead>
             <tbody>
-              {formDataList?.map((item, index) => (
+              {formDataItemList?.map((item, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>
                     <span style={{ fontWeight: 600 }}>{item.items_iname}</span>
                     <span className="subtext">{item.items_icode}</span>
-                    {item.bking_notes && (
+                    {item.cbkng_notes && (
                       <span className="subtext italic">
-                        Note: {item.bking_notes}
+                        Note: {item.cbkng_notes}
                       </span>
                     )}
                   </td>
                   <td className="text-right">
-                    {formatCurrency(item.bking_bkrat)}
+                    {formatCurrency(item.cbkng_itrat)}
                   </td>
                   <td className="text-right">
-                    {Number(item.bking_bkqty).toFixed(2)}
+                    {Number(item.cbkng_itqty).toFixed(2)}
                     <span className="subtext">{item.puofm_untnm}</span>
                   </td>
                   <td className="text-right">
                     <span className="subtext">
-                      VAT: {formatCurrency(item.bking_vtamt)} (
-                      {Number(item.bking_vtpct).toFixed(2)}%)
+                      VAT: {formatCurrency(item.cbkng_vtamt)} (
+                      {Number(item.cbkng_vtpct).toFixed(2)}%)
                     </span>
                     <span className="subtext">
-                      Disc: {formatCurrency(item.bking_dsamt)} (
-                      {Number(item.bking_dspct).toFixed(2)}%)
+                      Disc: {formatCurrency(item.cbkng_dsamt)} (
+                      {Number(item.cbkng_dspct).toFixed(2)}%)
                     </span>
                   </td>
                   <td className="text-right" style={{ fontWeight: 600 }}>
-                    {formatCurrency(item.bking_ntamt)}
+                    {formatCurrency(item.cbkng_ntamt)}
                   </td>
                 </tr>
               ))}
@@ -236,7 +209,7 @@ const PrintComp = ({
               formDataPaymentList.map((p, i) => (
                 <div key={i} className="payment-item">
                   <div>
-                    <span className="mode">{p.rcvpy_pymod}</span>
+                    <span className="mode">{p.paybl_pymod}</span>
                     <div
                       style={{
                         fontSize: "10px",
@@ -244,16 +217,23 @@ const PrintComp = ({
                         marginTop: "2px",
                       }}
                     >
-                      {formatDate(p.rcvpy_trdat)}
+                      {formatDate(p.paybl_trdat)}
                     </div>
                   </div>
                   <div className="text-right">
                     <div style={{ fontWeight: 700 }}>
-                      {formatCurrency(p.rcvpy_pyamt)}
+                      {p.paybl_dbamt > 0
+                        ? formatCurrency(p.paybl_dbamt)
+                        : formatCurrency(p.paybl_cramt)}
                     </div>
-                    {p.rcvpy_notes && (
+                    {p.paybl_descr && (
                       <div style={{ fontSize: "9px", fontStyle: "italic" }}>
-                        {p.rcvpy_notes}
+                        {p.paybl_descr}
+                      </div>
+                    )}
+                    {p.paybl_notes && (
+                      <div style={{ fontSize: "9px", fontStyle: "italic" }}>
+                        {p.paybl_notes}
                       </div>
                     )}
                   </div>
@@ -271,7 +251,7 @@ const PrintComp = ({
               </div>
             )}
 
-            {formData?.pmstr_trnte && (
+            {formData?.mbkng_trnte && (
               <div
                 style={{
                   marginTop: "1.5rem",
@@ -294,7 +274,7 @@ const PrintComp = ({
                   Notes:
                 </span>
                 <span style={{ fontSize: "12px" }}>
-                  {formData?.pmstr_trnte}
+                  {formData?.mbkng_trnte}
                 </span>
               </div>
             )}
@@ -303,41 +283,39 @@ const PrintComp = ({
           <aside className="summary-card">
             <div className="summary-line">
               <span>Gross Amount:</span>
-              <span>{formatCurrency(formData?.pmstr_odamt)}</span>
+              <span>{formatCurrency(formData?.mbkng_odamt)}</span>
             </div>
             <div className="summary-line">
               <span>Discount:</span>
               <span style={{ color: "#e53e3e" }}>
-                - {formatCurrency(formData?.pmstr_dsamt)}
+                - {formatCurrency(formData?.mbkng_dsamt)}
               </span>
             </div>
             <div className="summary-line">
               <span>VAT:</span>
-              <span>{formatCurrency(formData?.pmstr_vtamt)}</span>
+              <span>
+                {formData?.mbkng_vatpy === 1
+                  ? formatCurrency(formData?.mbkng_vtamt)
+                  : 0}
+              </span>
             </div>
-            {(Number(formData?.pmstr_incst) > 0 ||
-              Number(formData?.pmstr_excst) > 0) && (
+            {Number(formData?.mbkng_incst) > 0 && (
               <>
                 <div className="summary-line">
                   <span>Additional Costs:</span>
-                  <span>
-                    {formatCurrency(
-                      Number(formData?.pmstr_incst) +
-                        Number(formData?.pmstr_excst)
-                    )}
-                  </span>
+                  <span>{formatCurrency(formData?.mbkng_incst)}</span>
                 </div>
               </>
             )}
-            {Number(formData?.pmstr_rnamt) !== 0 && (
+            {Number(formData?.mbkng_rnamt) !== 0 && (
               <div className="summary-line">
                 <span>Round Off:</span>
-                <span>{formatCurrency(formData?.pmstr_rnamt)}</span>
+                <span>{formatCurrency(formData?.mbkng_rnamt)}</span>
               </div>
             )}
             <div className="summary-line grand-total">
-              <span>Net Payable:</span>
-              <span>{formatCurrency(formData?.pmstr_pyamt)}</span>
+              <span>Payable:</span>
+              <span>{formatCurrency(formData?.mbkng_pyamt)}</span>
             </div>
             <div
               className="summary-line"
@@ -345,7 +323,7 @@ const PrintComp = ({
             >
               <span>Total Paid:</span>
               <span style={{ color: "#38a169", fontWeight: 700 }}>
-                {formatCurrency(formData?.pmstr_pdamt)}
+                {formatCurrency(formData?.mbkng_pdamt)}
               </span>
             </div>
             <div
@@ -353,7 +331,7 @@ const PrintComp = ({
               style={{ fontSize: "15px", marginTop: "5px" }}
             >
               <span>Due:</span>
-              <span>{formatCurrency(formData?.pmstr_duamt)}</span>
+              <span>{formatCurrency(formData?.mbkng_duamt)}</span>
             </div>
           </aside>
         </section>
@@ -388,7 +366,7 @@ const PrintComp = ({
           </div>
         </footer>
       </div>
-    </Dialog>
+    </>
   );
 };
 

@@ -77,29 +77,28 @@ router.post("/purchase-booking", async (req, res) => {
     scripts.push({
       sql: `UPDATE tmib_bitem AS tgt
       JOIN (
-          SELECT bking_bitem, SUM(bking_pnqty)as bking_pnqty
-        FROM tmpb_bking bk
-        JOIN tmpb_pmstr str ON bk.bking_pmstr = str.id
-        WHERE str.pmstr_bsins = ?
-        GROUP BY bking_bitem
+        SELECT cbkg.cbkng_bitem, SUM(cbkg.cbkng_pnqty) AS cbkng_pnqty
+        FROM tmpb_cbkng cbkg
+        JOIN tmpb_mbkng bkg ON cbkg.cbkng_mbkng = bkg.id
+        WHERE cbkg.cbkng_pnqty > 0
+        AND bkg.mbkng_bsins = ?
+        GROUP BY cbkg.cbkng_bitem
         )AS src
-      ON tgt.id = src.bking_bitem
-      SET tgt.bitem_pbqty = src.bking_pnqty`,
+      ON tgt.id = src.cbkng_bitem
+      SET tgt.bitem_pbqty = src.cbkng_pnqty`,
       params: [id],
       label: `Update Purchase Booking Quantity`,
     });
 
     scripts.push({
-      sql: `UPDATE tmpb_pmstr
-      SET pmstr_ispad = 1
-      WHERE pmstr_ispad IN (0,2)
-      AND pmstr_duamt = 0
-      AND pmstr_bsins = ?`,
+      sql: `UPDATE tmpb_mbkng
+      SET mbkng_ispad = 1
+      WHERE mbkng_ispad IN (0,2)
+      AND mbkng_duamt = 0
+      AND mbkng_bsins = ?`,
       params: [id],
       label: `Update Purchase Booking payment status`,
     });
-
-
 
     await dbRunAll(scripts);
     res.json({
@@ -126,7 +125,7 @@ router.post("/payable-due", async (req, res) => {
     if (!id) {
       return res.json({
         success: false,
-        message: "Contact Id is required",
+        message: "Ref Id is required",
         data: null,
       });
     }
@@ -134,16 +133,25 @@ router.post("/payable-due", async (req, res) => {
     //database action
     const scripts = [];
     scripts.push({
-      sql: `UPDATE tmpb_pmstr str
+      sql: `UPDATE tmpb_mbkng tgt
       JOIN (
-      SELECT vpy.rcvpy_refid, SUM(vpy.rcvpy_pyamt) AS rcvpy_pyamt
-      FROM tmtb_rcvpy vpy
-      WHERE vpy.rcvpy_refid = ?
-      GROUP BY vpy.rcvpy_refid
-      )pym
-      ON str.id = pym.rcvpy_refid
-      SET str.pmstr_pdamt = pym.rcvpy_pyamt,
-      str.pmstr_duamt = str.pmstr_pyamt - pym.rcvpy_pyamt`,
+        SELECT paybl_refid, SUM(paybl_dbamt) AS paybl_pyamt
+        FROM tmtb_paybl
+        WHERE paybl_refid = ?
+        GROUP BY paybl_refid
+      )src
+      ON tgt.id = src.paybl_refid
+      SET tgt.mbkng_pdamt = src.paybl_pyamt,
+      tgt.mbkng_duamt = tgt.mbkng_pyamt - src.paybl_pyamt`,
+      params: [id],
+      label: `Update Payable Due`,
+    });
+
+    scripts.push({
+      sql: `UPDATE tmpb_mbkng
+      SET mbkng_ispad = 1
+      WHERE mbkng_duamt = 0
+      AND id = ?`,
       params: [id],
       label: `Update Payable Due`,
     });

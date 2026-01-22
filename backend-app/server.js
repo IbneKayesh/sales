@@ -36,7 +36,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: "*", methods: ["GET", "POST"] }));
 app.use(rateLimiter);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -63,7 +63,6 @@ app.use("/api", authMiddleware);
 
 // Initialize database
 //initData();
-
 
 // Routes
 

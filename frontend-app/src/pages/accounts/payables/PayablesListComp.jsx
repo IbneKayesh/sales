@@ -45,7 +45,7 @@ const AccountsListComp = ({ dataList, onEdit }) => {
         </span>
         •
         <span className="text-red-500 font-bold">
-          {Number(paybl_cramt || 0).toFixed(2)}
+          {Number(paybl_dbamt || 0).toFixed(2)}
         </span>
       </div>
     );

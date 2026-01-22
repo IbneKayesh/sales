@@ -53,16 +53,16 @@ const PaymentDlg = ({
     }
 
     //payment amount validation
-    // if (formDataPayment.paybl_dbamt > formData.mbkng_duamt) {
-    //   setErrors({
-    //     paybl_dbamt: "The payment amount cannot exceed the due amount.",
-    //   });
-    //   return;
-    // } else {
-    //   setErrors({
-    //     paybl_dbamt: "",
-    //   });
-    // }
+    if (formDataPayment.paybl_dbamt > formData.mbkng_duamt) {
+      setErrors({
+        paybl_dbamt: "The payment amount cannot exceed the due amount.",
+      });
+      return;
+    } else {
+      setErrors({
+        paybl_dbamt: "",
+      });
+    }
 
     //setFormDataPaymentList((prev) => [...prev, formDataPayment]);
     setFormDataPaymentList((prevList) => {

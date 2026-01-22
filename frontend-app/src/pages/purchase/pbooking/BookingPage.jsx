@@ -125,6 +125,9 @@ const BookingPage = () => {
           setCancelledRows={setCancelledRows}
           onCancelBookingItems={handleCancelBookingItems}
           setCancelledPayment={setCancelledPayment}
+
+          //cancel
+          handleCancel={handleCancel}
         />
       )}
     </Card>

@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
     const sql = `SELECT '' AS id, bkng.mbkng_users AS paybl_users, bkng.mbkng_bsins AS paybl_bsins, bkng.mbkng_cntct AS paybl_cntct,
     'Cash' AS paybl_pymod, bkng.id AS paybl_refid, bkng.mbkng_trnno AS paybl_refno, 'Purchase Booking' AS paybl_srcnm,
     current_timestamp() AS paybl_trdat, '' AS paybl_descr, 'Payment' AS paybl_notes, bkng.mbkng_duamt AS paybl_dbamt, bkng.mbkng_pyamt AS paybl_cramt,
-    bkng.mbkng_trdat,bkng.mbkng_pdamt, tct.cntct_cntnm, tct.cntct_cntps, tct.cntct_cntno, tct.cntct_email, tct.cntct_ofadr
+    bkng.mbkng_trdat, bkng.mbkng_pdamt, bkng.mbkng_duamt, tct.cntct_cntnm, tct.cntct_cntps, tct.cntct_cntno, tct.cntct_email, tct.cntct_ofadr
     FROM tmpb_mbkng bkng
     LEFT JOIN tmcb_cntct tct ON bkng.mbkng_cntct = tct.id
     WHERE bkng.mbkng_duamt > 0
