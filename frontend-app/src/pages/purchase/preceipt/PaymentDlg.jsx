@@ -176,6 +176,9 @@ const PaymentDlg = ({
 
   return (
     <div>
+      <span className="text-xs text-blue-500">
+        Payment is not allowed for purchase receipt, Paid from Booking
+      </span>
       <div className="flex flex-column gap-4">
         {!formData.edit_stop && (
           <div className="surface-card shadow-1 border-round-md border-1 border-200">
@@ -226,6 +229,8 @@ const PaymentDlg = ({
                   className="w-full"
                   size="small"
                   //disabled={formData.mbkng_duamt <= 0}
+                  disabled={true}
+                  //payment is not allowed for purchase receipt, already paid from Booking
                 />
               </div>
             </div>
@@ -248,7 +253,9 @@ const PaymentDlg = ({
             showGridlines
             footer={
               <div className="flex justify-content-end">
-                <span className="text-xl text-bold text-red-500">Diff: {diff_amount()}</span>
+                <span className="text-xl text-bold text-red-500">
+                  Diff: {diff_amount()}
+                </span>
               </div>
             }
           >
@@ -258,8 +265,18 @@ const PaymentDlg = ({
             <Column field="paybl_trdat" header="Date" body={paybl_trdat_BT} />
             <Column field="paybl_descr" header="Description" />
             <Column field="paybl_notes" header="Note" />
-            <Column field="paybl_dbamt" header="Debit" body={paybl_dbamt_BT} footer={total_dbamt()} />
-            <Column field="paybl_cramt" header="Credit" body={paybl_cramt_BT} footer={total_cramt()} />
+            <Column
+              field="paybl_dbamt"
+              header="Debit"
+              body={paybl_dbamt_BT}
+              footer={total_dbamt()}
+            />
+            <Column
+              field="paybl_cramt"
+              header="Credit"
+              body={paybl_cramt_BT}
+              footer={total_cramt()}
+            />
             {!formData.edit_stop && (
               <Column header="#" body={action_BT} style={{ width: "3rem" }} />
             )}

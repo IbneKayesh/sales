@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getStorageData } from "@/utils/storage";
-import { useView } from "@/hooks/useView";
 import "./Topbar.css";
 import ActiveBusiness from "@/components/ActiveBusiness";
 
@@ -14,7 +13,6 @@ const Topbar = ({
   onToggleFullMode,
   menus,
 }) => {
-  const { toggleView } = useView();
   const { logout, user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -60,13 +58,6 @@ const Topbar = ({
             onClick={onToggleFullMode}
           >
             <i className="pi pi-expand"></i>
-          </button>
-          <button
-            className="topbar-btn mobile-view-btn"
-            onClick={toggleView}
-            title="Switch to Mobile View"
-          >
-            <i className="pi pi-mobile"></i>
           </button>
         </div>
         <div className="topbar-center">

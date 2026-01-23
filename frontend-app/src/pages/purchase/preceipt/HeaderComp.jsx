@@ -172,7 +172,8 @@ const HeaderComp = ({ errors, formData, handleChange, fetchAvailableReceiptItems
         )}
       </div>
       <div className="col-12 md:col-1">
-        {isReadOnly ? (
+        {/* default posted for purchase receipt */}
+        {true ? (
           <>
             <label className="block font-bold mb-2">Posted</label>
             <Tag
@@ -182,7 +183,7 @@ const HeaderComp = ({ errors, formData, handleChange, fetchAvailableReceiptItems
               className="w-full py-2"
             />
           </>
-        ) : (
+        ) : ( 
           <>
             <label htmlFor="mrcpt_ispst" className="block font-bold mb-2">
               {tmpb_mrcpt.mrcpt_ispst.label}

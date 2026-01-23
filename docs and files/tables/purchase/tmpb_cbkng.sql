@@ -33,3 +33,4 @@ CREATE TABLE `tmpb_cbkng` (
 --
 ALTER TABLE tmpb_cbkng
   ADD PRIMARY KEY (id);
+

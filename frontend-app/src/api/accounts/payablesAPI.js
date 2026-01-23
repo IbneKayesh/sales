@@ -22,4 +22,9 @@ export const payablesAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getPaymentDetails: (data) =>
+    apiRequest("/accounts/payables/payment-details", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

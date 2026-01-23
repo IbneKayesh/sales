@@ -125,4 +125,98 @@ router.post("/create", async (req, res) => {
     });
   }
 });
+
+// payment details
+router.post("/payment-details", async (req, res) => {
+  try {
+    const {
+      paybl_users,
+      paybl_bsins,
+      paybl_refno,
+      paybl_cntct,
+      paybl_trdat,
+      paybl_descr,
+      search_option,
+    } = req.body;
+
+    // Validate input
+    if (!paybl_users || !paybl_bsins) {
+      return res.json({
+        success: false,
+        message: "Business ID is required",
+        data: null,
+      });
+    }
+    //console.log("get:", JSON.stringify(req.body));
+
+    //database action
+    let sql = `SELECT paybl_cntct, paybl_pymod, paybl_refid, paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt, paybl_cramt
+              FROM tmtb_paybl
+              WHERE paybl_bsins = ?
+              `;
+    let params = [paybl_bsins];
+
+    // Optional filters
+    if (paybl_refno) {
+      sql += ` AND paybl_refno LIKE ?`;
+      params.push(`%${paybl_refno}%`);
+    }
+    if (paybl_cntct) {
+      sql += ` AND paybl_cntct LIKE ?`;
+      params.push(`%${paybl_cntct}%`);
+    }
+
+    if (paybl_descr) {
+      sql += ` AND paybl_descr LIKE ?`;
+      params.push(`%${paybl_descr}%`);
+    }
+
+    if (paybl_trdat) {
+      const dateObj = new Date(paybl_trdat);
+      const formattedDate =
+        dateObj.getFullYear() +
+        "-" +
+        String(dateObj.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(dateObj.getDate()).padStart(2, "0");
+
+      // console.log("formattedDate", formattedDate);
+
+      sql += ` AND DATE(paybl_trdat) = ?`;
+      params.push(formattedDate);
+    }
+
+    if (search_option) {
+      switch (search_option) {
+        case "last_3_days":
+          sql += ` AND paybl_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY)`;
+          break;
+        case "last_7_days":
+          sql += ` AND paybl_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)`;
+          break;
+        default:
+          sql += ``;
+          break;
+      }
+      //params.push(`%${search_option}%`);
+    }
+
+    sql += ` ORDER BY paybl_refno`;
+
+    const rows = await dbGetAll(sql, params, `Get payments for ${paybl_bsins}`);
+    res.json({
+      success: true,
+      message: "Payments fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;

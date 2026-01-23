@@ -162,12 +162,14 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
   const bulk_BT = (rowData) => {
     return (
+      <>
       <ConvertedQtyComponent
         qty={rowData.crcpt_itqty}
         dfQty={rowData.items_dfqty}
         pname={rowData.puofm_untnm}
         sname={rowData.suofm_untnm}
       />
+      </>
     );
   };
 

@@ -4,7 +4,7 @@ const ConvertedQtyComponent = ({ qty, dfQty, pname, sname }) => {
   const small = qty % diff;
   return (
     <span className={`${qty === 0 ? "text-red-400" : ""}`}>
-      {`${big} ${pname || "N/A"} ${small} ${sname || "N/A"}`}
+      {`${big} ${sname || "N/A"} ${small} ${pname || "N/A"}`}
     </span>
   );
 };

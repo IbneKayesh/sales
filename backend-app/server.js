@@ -12,6 +12,8 @@ const usersRoutes = require("./routes/auth/users.routes.js");
 //crm
 const contactsRoutes = require("./routes/crm/contacts.routes.js");
 const fieldRoutes = require("./routes/crm/fieldroute.routes.js");
+//hrms
+const employeesRoutes = require("./routes/hrms/employees.routes.js");
 //accounts
 const accountsRoutes = require("./routes/accounts/accounts.routes.js");
 const accountsHeadsRoutes = require("./routes/accounts/accountsHeads.routes.js");
@@ -75,6 +77,8 @@ app.use("/api/auth/users", usersRoutes);
 //crm
 app.use("/api/crm/contacts", contactsRoutes);
 app.use("/api/crm/fieldroute", fieldRoutes);
+//hrms
+app.use("/api/hrms/employees", employeesRoutes);
 //accounts
 app.use("/api/accounts/accounts", accountsRoutes);
 app.use("/api/accounts/accounts-heads", accountsHeadsRoutes);

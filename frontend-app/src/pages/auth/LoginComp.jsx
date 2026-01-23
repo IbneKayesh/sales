@@ -21,20 +21,22 @@ const greetings = [
 ];
 
 const LoginComp = () => {
+  // --- Hooks & State ---
   const [searchParams, setSearchParams] = useSearchParams();
-
   const [usersEmail, setUsersEmail] = useState("");
   const [usersPswrd, setUsersPswrd] = useState("");
   const [isBusy, setIsBusy] = useState(false);
   const [showInputs, setShowInputs] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [fallingLetters, setFallingLetters] = useState([]);
+  const [currentGreeting, setCurrentGreeting] = useState("Welcome");
+
   const { login } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const cardRef = useRef(null);
-  const [currentGreeting, setCurrentGreeting] = useState("Welcome");
 
+  // --- Effects ---
   useEffect(() => {
     const randomGreeting =
       greetings[Math.floor(Math.random() * greetings.length)];
@@ -97,7 +99,7 @@ const LoginComp = () => {
       showToast(
         response.success ? "success" : "error",
         response.success ? "Success" : "Error",
-        response.message
+        response.message,
       );
 
       if (response.success) {
@@ -164,7 +166,7 @@ const LoginComp = () => {
             value={usersEmail}
             onChange={(e) => setUsersEmail(e.target.value)}
             className="ik-inputtext wobble"
-            placeholder="Enter your usersEmail"
+            placeholder="Enter your email"
             required
             disabled={isBusy}
           />

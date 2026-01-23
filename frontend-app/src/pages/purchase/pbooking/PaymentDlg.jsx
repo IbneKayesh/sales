@@ -27,7 +27,7 @@ const PaymentDlg = ({
     paybl_trdat: new Date().toISOString().split("T")[0],
     paybl_descr: "",
     paybl_notes: "Payment",
-    paybl_dbamt: formData.mbkng_pyamt,
+    paybl_dbamt: "",
     paybl_cramt: "",
   });
 

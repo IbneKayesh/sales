@@ -8,7 +8,6 @@ const defaultData = {
   expandedMenu: null,
   navigationIcons: [],
   business: null,
-  isMobileView: false,
   // Add other data as needed
 };
 

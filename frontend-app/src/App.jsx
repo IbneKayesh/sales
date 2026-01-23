@@ -8,7 +8,6 @@ import {
 import "./App.css";
 import { AuthProvider, useAuth } from "./hooks/useAuth.jsx";
 import { ToastProvider } from "./hooks/useToast.jsx";
-import { ViewProvider, useView } from "./hooks/useView.jsx";
 
 //internal imports
 import LandingPage from "./pages/LandingPage";
@@ -22,8 +21,8 @@ import PasswordPage from "./pages/auth/password/PasswordPage";
 //crm
 import ContactPage from "./pages/crm/contacts/ContactPage.jsx";
 import FieldroutePage from "./pages/crm/fieldroute/FieldroutePage.jsx";
-
-
+//hrms
+import EmployeesPage from "./pages/hrms/EmployeesPage.jsx";
 
 //accounts
 import AccountsPage from "./pages/accounts/accounts/AccountsPage";
@@ -58,17 +57,14 @@ function App() {
   return (
     <ToastProvider>
       <AuthProvider>
-        <ViewProvider>
-          <AppRoutes />
-        </ViewProvider>
+        <AppRoutes />
       </AuthProvider>
     </ToastProvider>
   );
 }
 
 function AppRoutes() {
-  const { user } = useAuth();
-  const { isMobileView } = useView();
+  const { user, isMobileView } = useAuth();
 
   if (isMobileView) {
     return (
@@ -111,7 +107,8 @@ function AppRoutes() {
             //crm
             <Route path="crm/contact" element={<ContactPage />} />
             <Route path="crm/field-route" element={<FieldroutePage />} />
-            
+            //hrms
+            <Route path="hrms/employees" element={<EmployeesPage />} />
             //accounts
             <Route path="accounts/accounts" element={<AccountsPage />} />
             <Route path="accounts/heads" element={<HeadsPage />} />

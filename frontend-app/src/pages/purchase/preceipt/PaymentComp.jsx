@@ -53,7 +53,7 @@ const PaymentComp = ({
             <small className="mb-3 text-red-500">{errors.mrcpt_trnte}</small>
           )}
         </div>
-        {formData.edit_stop === 1 && formData.mrcpt_ispad === "0" && (
+        {formData.edit_stop === 1 && formData.mrcpt_ispad === 0 && (
           <Tag
             severity="danger"
             value="Unpaid"

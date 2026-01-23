@@ -20,68 +20,75 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [business, setBusiness] = useState(null);
+  const [isMobileView, setIsMobileView] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in (from localStorage for now, can be improved with tokens later)
-    //const storedUser = localStorage.getItem("user");
+    // Check if user is logged in
     const storedUser = getStorageData()?.user;
-    //console.log(storedUser)
     if (storedUser) {
-      //setUser(JSON.parse(storedUser));
       setUser(storedUser);
     }
     const storedBusiness = getStorageData()?.business;
     if (storedBusiness) {
-      //setBusiness(JSON.parse(storedBusiness));
       setBusiness(storedBusiness);
     }
+
+    // Restore view preference from sessionStorage (not localStorage)
+    const sessionView = sessionStorage.getItem("users_sview");
+    if (sessionView) {
+      setIsMobileView(sessionView === "mobile");
+    }
+
     setLoading(false);
   }, []);
 
   const login = async (formDataBody) => {
     try {
-      //console.log("formDataBody", formDataBody);
       const reqBody = {
         users_email: formDataBody.users_email,
         users_pswrd: formDataBody.users_pswrd,
       };
       const response = await authAPI.login(reqBody);
       if (response.success) {
-        //console.log("response " + JSON.stringify(response))
+        const { users_sview, ...restData } = response.data;
+
         const userData = {
-          id: response.data.id,
-          users_email: response.data.users_email,
-          users_oname: response.data.users_oname,
-          users_cntct: response.data.users_cntct,
-          users_bsins: response.data.users_bsins,
-          users_drole: response.data.users_drole,
-          users_users: response.data.users_users,
-          users_stats: response.data.users_stats,
-          users_regno: response.data.users_regno,
-          users_wctxt: response.data.users_wctxt,
-          users_notes: response.data.users_notes,
-          users_nofcr: response.data.users_nofcr,
-          users_isrgs: response.data.users_isrgs,
+          id: restData.id,
+          users_email: restData.users_email,
+          users_oname: restData.users_oname,
+          users_cntct: restData.users_cntct,
+          users_bsins: restData.users_bsins,
+          users_drole: restData.users_drole,
+          users_users: restData.users_users,
+          users_stats: restData.users_stats,
+          users_regno: restData.users_regno,
+          users_wctxt: restData.users_wctxt,
+          users_notes: restData.users_notes,
+          users_nofcr: restData.users_nofcr,
+          users_isrgs: restData.users_isrgs,
         };
         setUser(userData);
-        //localStorage.setItem("user", JSON.stringify(response.data));
         setStorageData({ user: userData });
 
+        // Handle view preference - store only in memory and sessionStorage
+        const viewMode = users_sview || "web";
+        setIsMobileView(viewMode === "mobile");
+        sessionStorage.setItem("users_sview", viewMode);
+
         const businessData = {
-          users_bsins: response.data.users_bsins,
-          bsins_bname: response.data.bsins_bname,
-          bsins_addrs: response.data.bsins_addrs,
-          bsins_email: response.data.bsins_email,
-          bsins_cntct: response.data.bsins_cntct,
+          users_bsins: restData.users_bsins,
+          bsins_bname: restData.bsins_bname,
+          bsins_addrs: restData.bsins_addrs,
+          bsins_email: restData.bsins_email,
+          bsins_cntct: restData.bsins_cntct,
           bsins_image: null,
-          bsins_binno: response.data.bsins_binno,
-          bsins_cntry: response.data.bsins_cntry,
-          bsins_prtrn: response.data.bsins_prtrn,
-          bsins_sltrn: response.data.bsins_sltrn,
+          bsins_binno: restData.bsins_binno,
+          bsins_cntry: restData.bsins_cntry,
+          bsins_prtrn: restData.bsins_prtrn,
+          bsins_sltrn: restData.bsins_sltrn,
         };
         setBusiness(businessData);
-        //localStorage.setItem("business", JSON.stringify(response.data));
         setStorageData({ business: businessData });
       }
       return response;
@@ -98,8 +105,10 @@ export const AuthProvider = ({ children }) => {
       console.error("Logout error:", error);
     }
     setUser(null);
-    //localStorage.removeItem("user");
+    setBusiness(null);
+    setIsMobileView(false);
     clearStorageData();
+    sessionStorage.removeItem("users_sview");
     localStorage.removeItem("sgd25");
   };
 
@@ -184,6 +193,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     user,
     business,
+    isMobileView,
     login,
     logout,
     register,

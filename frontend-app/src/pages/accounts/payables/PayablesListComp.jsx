@@ -3,7 +3,7 @@ import { Column } from "primereact/column";
 import { formatDate } from "@/utils/datetime";
 import { Button } from "primereact/button";
 
-const AccountsListComp = ({ dataList, onEdit }) => {
+const PayablesListComp = ({ dataList, onEdit }) => {
   const action_BT = (rowData) => {
     return (
       <div className="flex flex-wrap gap-2">
@@ -116,4 +116,4 @@ const AccountsListComp = ({ dataList, onEdit }) => {
   );
 };
 
-export default AccountsListComp;
+export default PayablesListComp;

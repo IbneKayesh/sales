@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
-import { payablesAPI } from "@/api/accounts/payablesAPI";
-import tmtb_paybl from "@/models/accounts/tmtb_paybl.json";
+import { employeesAPI } from "@/api/hrms/employeesAPI";
+import tmrb_emply from "@/models/hrms/tmrb_emply.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { formatDateForAPI } from "@/utils/datetime";
-import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
-const dataModel = generateDataModel(tmtb_paybl, { edit_stop: 0 });
+const dataModel = generateDataModel(tmrb_emply, { edit_stop: 0 });
 
-export const usePayables = () => {
+export const useEmployees = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
@@ -19,11 +18,10 @@ export const usePayables = () => {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
-  const loadPayables = async () => {
+  const loadEmployees = async () => {
     try {
-      const response = await payablesAPI.getAll({
-        paybl_users: user.users_users,
-        paybl_bsins: user.users_bsins,
+      const response = await employeesAPI.getAll({
+        emply_users: user.users_users,
       });
       //response = { success, message, data }
 
@@ -37,12 +35,12 @@ export const usePayables = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadPayables();
+    loadEmployees();
   }, []);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmtb_paybl);
+    const newErrors = validate({ ...formData, [field]: value }, tmrb_emply);
     setErrors(newErrors);
   };
 
@@ -63,16 +61,16 @@ export const usePayables = () => {
 
   const handleEdit = (data) => {
     //console.log("edit: " + JSON.stringify(data));
-    setFormData({ ...dataModel, ...data });
+    setFormData(data);
     setCurrentView("form");
   };
 
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await payablesAPI.delete(rowData);
+      const response = await employeesAPI.delete(rowData);
 
-      // Remove deleted account from local state
+      // Remove deleted Employees from local state
       const updatedList = dataList.filter((s) => s.id !== rowData.id);
       setDataList(updatedList);
 
@@ -89,7 +87,7 @@ export const usePayables = () => {
   };
 
   const handleRefresh = () => {
-    loadPayables();
+    loadEmployees();
   };
 
   const handleSave = async (e) => {
@@ -98,7 +96,7 @@ export const usePayables = () => {
       setIsBusy(true);
 
       // Validate form
-      const newErrors = validate(formData, tmtb_paybl);
+      const newErrors = validate(formData, tmrb_emply);
       setErrors(newErrors);
       console.log("handleSave:", JSON.stringify(formData));
 
@@ -107,30 +105,22 @@ export const usePayables = () => {
         return;
       }
 
-      if (formData.paybl_dbamt > formData.mbkng_duamt) {
-        showToast(
-          "error",
-          "Error",
-          "Payment amount cannot be greater than payable amount",
-        );
-        setIsBusy(false);
-        return;
-      }
-
       // Ensure id exists (for create)
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        paybl_trdat: formatDateForAPI(formData.paybl_trdat),
+        emply_users: user.users_users,
+        emply_jndat: formatDateForAPI(formData.emply_jndat),
+        emply_rgdat: formatDateForAPI(formData.emply_rgdat),
         user_id: user.id,
       };
 
       // Call API and get { message, data }
       let response;
       if (formData.id) {
-        response = await payablesAPI.update(formDataNew);
+        response = await employeesAPI.update(formDataNew);
       } else {
-        response = await payablesAPI.create(formDataNew);
+        response = await employeesAPI.create(formDataNew);
       }
 
       // Update toast using API message
@@ -141,13 +131,10 @@ export const usePayables = () => {
           "Operation " + (response.success ? "successful" : "failed"),
       );
 
-      //call update process
-      await closingProcessAPI("payable-due", formDataNew.paybl_refid);
-
       // Clear form & reload
       handleClear();
       setCurrentView("list");
-      await loadPayables(); // make sure we wait for updated data
+      await loadEmployees(); // make sure we wait for updated data
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");
@@ -155,71 +142,6 @@ export const usePayables = () => {
       setIsBusy(false);
     }
   };
-
-  //search
-
-  const [paymentDetailList, setPaymentDetailList] = useState([]);
-
-  const loadPaymentDetails = async () => {
-    try {
-      //console.log("loadBookings:");
-      const response = await payablesAPI.getPaymentDetails({
-        paybl_users: user.users_users,
-        paybl_bsins: user.users_bsins,
-        ...searchBoxData,
-      });
-      //console.log("loadPaymentDetails:", JSON.stringify(response));
-
-      setPaymentDetailList([]);
-      if (response.data && response.data.length > 0) {
-        setSearchBoxShow(false);
-        setPaymentDetailList(response.data);
-      }
-      //showToast("success", "Success", response.message);
-    } catch (error) {
-      console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
-    }
-  };
-
-  const [searchBoxShow, setSearchBoxShow] = useState(false);
-  const [searchBoxData, setSearchBoxData] = useState({
-    paybl_refno: "",
-    paybl_cntct: "",
-    paybl_trdat: "", //new Date().toLocaleString().split("T")[0],
-    paybl_descr: "",
-    search_option: "last_3_days",
-  });
-
-  const handleChangeSearchInput = (e) => {
-    const { name, value } = e.target;
-    if (name === "paybl_trdat") {
-      const dateValue = e.value
-        ? new Date(e.value).toLocaleString().split("T")[0]
-        : null;
-      setSearchBoxData({ ...searchBoxData, [name]: dateValue });
-    } else {
-      setSearchBoxData({ ...searchBoxData, [name]: value });
-    }
-  };
-
-  const handleSearch = () => {
-    const hasValue = Object.values(searchBoxData).some(
-      (value) => value !== "" && value !== null && value !== undefined,
-    );
-
-    if (!hasValue) {
-      showToast("error", "Error", "Please enter at least one search criteria");
-      return;
-    }
-
-    loadPaymentDetails();
-  };
-
-  const searchOptions = [
-    { name: "last_3_days", label: "Last 3 Days" },
-    { name: "last_7_days", label: "Last 7 Days" },
-  ];
 
   return {
     dataList,
@@ -234,14 +156,5 @@ export const usePayables = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-    //other functions
-    //search
-    searchBoxShow,
-    setSearchBoxShow,
-    searchBoxData,
-    handleChangeSearchInput,
-    handleSearch,
-    searchOptions,
-    paymentDetailList
   };
 };

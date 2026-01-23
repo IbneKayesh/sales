@@ -1,4 +1,3 @@
-import { useView } from "../hooks/useView";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { Menu } from "primereact/menu";
@@ -6,7 +5,6 @@ import React, { useRef } from "react";
 import "./mobile.css";
 
 const Layout = ({ children }) => {
-  const { toggleView } = useView();
   const { user, business, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -76,13 +74,6 @@ const Layout = ({ children }) => {
           <div
             style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}
           >
-            <button
-              onClick={toggleView}
-              className="glass-btn"
-              title="Switch to Web View"
-            >
-              <i className="pi pi-desktop" style={{ fontSize: "1rem" }}></i>
-            </button>
             <div
               className="user-avatar"
               onClick={(e) => menuRef.current.toggle(e)}

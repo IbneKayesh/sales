@@ -136,6 +136,17 @@ const Layout = () => {
           icon: "pi pi-directions",
         },
       ],
+    },    {
+      name: "HRMS",
+      icon: "pi pi-users",
+      submenus: [
+        {
+          id: "hrm1",
+          name: "Employee",
+          url: "/home/hrms/employees",
+          icon: "pi pi-user",
+        }
+      ],
     },
     {
       name: "Setup",

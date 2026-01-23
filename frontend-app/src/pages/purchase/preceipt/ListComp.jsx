@@ -21,8 +21,8 @@ const ListComp = ({ dataList, onEdit }) => {
     const uniqueContacts = new Map();
 
     dataList?.forEach((item) => {
-      if (item.mbkng_cntct && !uniqueContacts.has(item.mbkng_cntct)) {
-        uniqueContacts.set(item.mbkng_cntct, item.cntct_cntnm);
+      if (item.mrcpt_cntct && !uniqueContacts.has(item.mrcpt_cntct)) {
+        uniqueContacts.set(item.mrcpt_cntct, item.cntct_cntnm);
       }
     });
 
@@ -67,37 +67,37 @@ const ListComp = ({ dataList, onEdit }) => {
     let data = dataList || [];
 
     if (filterType && filterType !== "all") {
-      data = data.filter((item) => item.mbkng_cntct === filterType);
+      data = data.filter((item) => item.mrcpt_cntct === filterType);
     }
 
     if (statusFilter && statusFilter !== "all") {
       switch (statusFilter) {
         case "unpaid":
-          data = data.filter((i) => i.mbkng_ispad === 0);
+          data = data.filter((i) => i.mrcpt_ispad === 0);
           break;
         case "paid":
-          data = data.filter((i) => i.mbkng_ispad === 1);
+          data = data.filter((i) => i.mrcpt_ispad === 1);
           break;
         case "partial":
-          data = data.filter((i) => i.mbkng_ispad === 2);
+          data = data.filter((i) => i.mrcpt_ispad === 2);
           break;
         case "posted":
-          data = data.filter((i) => i.mbkng_ispst === 1);
+          data = data.filter((i) => i.mrcpt_ispst === 1);
           break;
         case "draft":
-          data = data.filter((i) => i.mbkng_ispst === 0);
+          data = data.filter((i) => i.mrcpt_ispst === 0);
           break;
         case "closed":
-          data = data.filter((i) => i.mbkng_iscls === 1);
+          data = data.filter((i) => i.mrcpt_iscls === 1);
           break;
         case "vat-collected":
-          data = data.filter((i) => i.mbkng_vatcl === 1);
+          data = data.filter((i) => i.mrcpt_vatcl === 1);
           break;
         case "vat-not-collected":
-          data = data.filter((i) => i.mbkng_vatcl === 0);
+          data = data.filter((i) => i.mrcpt_vatcl === 0);
           break;
         case "cancelled":
-          data = data.filter((i) => i.mbkng_hscnl === 1);
+          data = data.filter((i) => i.mrcpt_hscnl === 1);
           break;
       }
     }
@@ -185,11 +185,11 @@ const ListComp = ({ dataList, onEdit }) => {
     );
   };
 
-  const mbkng_trnno_BT = (rowData) => {
+  const mrcpt_trnno_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-blue-600">
-          {rowData.mbkng_trnno},{" "}
+          {rowData.mrcpt_trnno},{" "}
           <span className="text-md text-blue-400 mt-1">
             Booking
           </span>
@@ -202,35 +202,35 @@ const ListComp = ({ dataList, onEdit }) => {
     );
   };
 
-  const mbkng_trdat_BT = (rowData) => {
-    const { mbkng_trdat, mbkng_refno, mbkng_trnte } = rowData;
+  const mrcpt_trdat_BT = (rowData) => {
+    const { mrcpt_trdat, mrcpt_refno, mrcpt_trnte } = rowData;
     return (
       <div className="flex flex-column">
-        {formatDate(mbkng_trdat)}
-        {(mbkng_refno || mbkng_trnte) && (
+        {formatDate(mrcpt_trdat)}
+        {(mrcpt_refno || mrcpt_trnte) && (
           <small className="text-xs text-gray-500 font-italic mt-1">
-            {[mbkng_refno, mbkng_trnte].filter(Boolean).join(" • ")}
+            {[mrcpt_refno, mrcpt_trnte].filter(Boolean).join(" • ")}
           </small>
         )}
       </div>
     );
   };
 
-  const mbkng_pyamt_BT = (rowData) => {
-    const { mbkng_pyamt, mbkng_pdamt, mbkng_duamt } = rowData;
+  const mrcpt_pyamt_BT = (rowData) => {
+    const { mrcpt_pyamt, mrcpt_pdamt, mrcpt_duamt } = rowData;
 
     return (
       <div className="flex gap-1">
         <span className="text-primary font-bold">
-          {Number(mbkng_pyamt).toFixed(2)}
+          {Number(mrcpt_pyamt).toFixed(2)}
         </span>
         •
         <span className="text-green-500 font-bold">
-          {Number(mbkng_pdamt || 0).toFixed(2)}
+          {Number(mrcpt_pdamt || 0).toFixed(2)}
         </span>
         •
         <span className="text-red-500 font-bold">
-          {Number(mbkng_duamt || 0).toFixed(2)}
+          {Number(mrcpt_duamt || 0).toFixed(2)}
         </span>
       </div>
     );
@@ -247,7 +247,7 @@ const ListComp = ({ dataList, onEdit }) => {
       },
     };
 
-    const status = statusMap[rowData.mbkng_ispad];
+    const status = statusMap[rowData.mrcpt_ispad];
 
     return (
       <div className="flex flex-wrap gap-1 align-items-center">
@@ -260,7 +260,7 @@ const ListComp = ({ dataList, onEdit }) => {
             className="px-2"
           />
         )}
-        {rowData.mbkng_ispst === 1 ? (
+        {rowData.mrcpt_ispst === 1 ? (
           <Tag
             value="Posted"
             severity="info"
@@ -277,7 +277,7 @@ const ListComp = ({ dataList, onEdit }) => {
             className="px-2"
           />
         )}
-        {rowData.mbkng_iscls === 1 ? (
+        {rowData.mrcpt_iscls === 1 ? (
           <Tag value="Closed" severity="contrast" rounded />
         ) : null}
       </div>
@@ -286,7 +286,7 @@ const ListComp = ({ dataList, onEdit }) => {
 
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.mbkng_trnno}"?`,
+      message: `Are you sure you want to delete "${rowData.mrcpt_trnno}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-info-circle",
       acceptClassName: "p-button-danger",
@@ -323,11 +323,11 @@ const ListComp = ({ dataList, onEdit }) => {
 
   const dataTable_FT = () => {
     const stats = {
-      paid: filteredData.filter((i) => i.mbkng_ispad === 1).length,
-      unpaid: filteredData.filter((i) => i.mbkng_ispad === 0).length,
-      partial: filteredData.filter((i) => i.mbkng_ispad === 2).length,
-      due: filteredData.reduce((s, i) => s + Number(i.mbkng_duamt || 0), 0),
-      unposted: filteredData.filter((i) => i.mbkng_ispst !== 1).length,
+      paid: filteredData.filter((i) => i.mrcpt_ispad === 1).length,
+      unpaid: filteredData.filter((i) => i.mrcpt_ispad === 0).length,
+      partial: filteredData.filter((i) => i.mrcpt_ispad === 2).length,
+      due: filteredData.reduce((s, i) => s + Number(i.mrcpt_duamt || 0), 0),
+      unposted: filteredData.filter((i) => i.mrcpt_ispst !== 1).length,
     };
 
     return (
@@ -375,23 +375,23 @@ const ListComp = ({ dataList, onEdit }) => {
         showGridlines
         globalFilter={globalFilter}
         globalFilterFields={[
-          "mbkng_trnno",
+          "mrcpt_trnno",
           "cntct_cntnm",
           "cntct_cntps",
-          "mbkng_refno",
-          "mbkng_trnte",
+          "mrcpt_refno",
+          "mrcpt_trnte",
         ]}
         header={header()}
         footer={dataTable_FT}
       >
         <Column
-          field="mbkng_trnno"
+          field="mrcpt_trnno"
           header="No"
-          body={mbkng_trnno_BT}
+          body={mrcpt_trnno_BT}
           sortable
         />
-        <Column header="Date & Notes" body={mbkng_trdat_BT} />
-        <Column header="Payable • Paid • Due" body={mbkng_pyamt_BT} />
+        <Column header="Date & Notes" body={mrcpt_trdat_BT} />
+        <Column header="Payable • Paid • Due" body={mrcpt_pyamt_BT} />
         <Column header="Status" body={is_paid_BT} />
         <Column body={action_BT} style={{ width: "100px" }} />
       </DataTable>

@@ -192,13 +192,20 @@ export const usePbooking = () => {
         return;
       }
 
-      //0 :: Unpaid, 1 :: Paid, 2 :: Partial
+      //0 :: Unpaid, 1 :: Paid, 2 :: Partial  
       const paidStatus =
-        Number(formData.mbkng_pdamt) === Number(formData.mbkng_duamt)
+        Number(formData.mbkng_pdamt) === 0
           ? "0"
           : Number(formData.mbkng_duamt) === 0
             ? "1"
             : "2";
+
+      // console.log(
+      //   "paidStatus:",
+      //   paidStatus
+      // );
+
+      // return;
 
       // Ensure id exists (for create)
       const formDataNew = {
@@ -289,6 +296,7 @@ export const usePbooking = () => {
     { name: "mbkng_iscls", label: "Closed" },
     { name: "mbkng_vatcl", label: "VAT Collected" },
     { name: "mbkng_hscnl", label: "Cancelled" },
+    { name: "last_3_days", label: "Last 3 Days" },
     { name: "last_7_days", label: "Last 7 Days" },
   ];
 

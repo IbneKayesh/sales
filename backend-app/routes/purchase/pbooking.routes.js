@@ -85,6 +85,9 @@ router.post("/", async (req, res) => {
         case "mbkng_hscnl":
           sql += ` AND bkng.mbkng_hscnl = 1`;
           break;
+        case "last_3_days":
+          sql += ` AND bkng.mbkng_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY)`;
+          break;
         case "last_7_days":
           sql += ` AND bkng.mbkng_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)`;
           break;
@@ -350,7 +353,7 @@ router.post("/create", async (req, res) => {
         mbkng_pyamt,
         mbkng_pdamt,
         mbkng_duamt,
-        mbkng_cnamt,
+        0,
         mbkng_ispad,
         mbkng_ispst,
         0,
@@ -359,7 +362,7 @@ router.post("/create", async (req, res) => {
         user_id,
         user_id,
       ],
-      label: `Created master ${mbkng_trnno_new}`,
+      label: `Created PB master ${mbkng_trnno_new}`,
     });
 
     //Insert booking details
@@ -394,7 +397,7 @@ router.post("/create", async (req, res) => {
           user_id,
           user_id,
         ],
-        label: `Created detail ${mbkng_trnno_new}`,
+        label: `Created PB detail ${mbkng_trnno_new}`,
       });
     }
 
@@ -421,7 +424,7 @@ router.post("/create", async (req, res) => {
           user_id,
           user_id,
         ],
-        label: `Created expense ${mbkng_trnno_new}`,
+        label: `Created PB expense ${mbkng_trnno_new}`,
       });
     }
 

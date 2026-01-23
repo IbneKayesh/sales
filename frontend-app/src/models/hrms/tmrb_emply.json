@@ -1,0 +1,117 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "emply_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "emply_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 6,
+    "placeholder": "Enter business id",
+    "required": false
+  },
+  "emply_ecode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "minLength": 6,
+    "placeholder": "Enter employee code",
+    "required": true
+  },
+  "emply_pswrd": {
+    "type": "string",
+    "label": "Password",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter password",
+    "required": true
+  },
+  "emply_ename": {
+    "type": "string",
+    "label": "Employee Name",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter employee name",
+    "required": true
+  },
+  "emply_econt": {
+    "type": "string",
+    "label": "Contact",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter contact",
+    "required": true
+  },
+  "emply_addrs": {
+    "type": "string",
+    "label": "Address",
+    "maxLength": 100,
+    "minLength": 6,
+    "placeholder": "Enter address",
+    "required": true,
+    "default": ""
+  },
+  "emply_desig": {
+    "type": "string",
+    "label": "Designation",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter designation",
+    "required": true,
+    "default": ""
+  },
+  "emply_jndat": {
+    "type": "date",
+    "label": "Join Date",
+    "placeholder": "Enter join date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "emply_rgdat": {
+    "type": "date",
+    "label": "Date",
+    "placeholder": "Enter resign date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "emply_crsal": {
+    "type": "number",
+    "label": "Salary",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter salary",
+    "required": false,
+    "default": "0"
+  },
+  "emply_supid": {
+    "type": "string",
+    "label": "Supervisor Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter supervisor id",
+    "required": false,
+    "default": ""
+  },
+  "emply_login": {
+    "type": "number",
+    "label": "Allow Login",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Allow Login",
+    "required": true,
+    "default": 0
+  }  
+}
