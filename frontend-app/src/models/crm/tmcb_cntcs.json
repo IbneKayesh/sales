@@ -73,6 +73,22 @@
     "placeholder": "Enter your email",
     "required": false
   },
+  "cntct_tinno": {
+    "type": "string",
+    "label": "TIN",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter your TIN",
+    "required": false
+  },
+  "cntct_trade": {
+    "type": "string",
+    "label": "Trade",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter your trade",
+    "required": false
+  },
   "cntct_ofadr": {
     "type": "string",
     "label": "Office Address",
@@ -88,6 +104,24 @@
     "minLength": 0,
     "placeholder": "Enter factory address",
     "required": false
+  },
+  "cntct_tarea": {
+    "type": "string",
+    "label": "Area",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter your Area",
+    "required": false,
+    "default": ""
+  },
+  "cntct_dzone": {
+    "type": "string",
+    "label": "Zone",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter your Zone",
+    "required": false,
+    "default": ""
   },
   "cntct_cntry": {
     "type": "string",
@@ -105,6 +139,15 @@
     "minLength": 0,
     "placeholder": "Enter contact address",
     "required": false
+  },
+  "cntct_dspct": {
+    "type": "number",
+    "label": "Discount %",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter discount %",
+    "required": false,
+    "default": "0"
   },
   "cntct_crlmt": {
     "type": "number",
