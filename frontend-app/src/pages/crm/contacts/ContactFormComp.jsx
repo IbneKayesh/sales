@@ -3,6 +3,8 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import tmcb_cntcs from "@/models/crm/tmcb_cntcs.json";
+import { useZoneSgd } from "@/hooks/crm/useZoneSgd";
+import { useEffect } from "react";
 
 const ContactFormComp = ({
   isBusy,
@@ -14,6 +16,13 @@ const ContactFormComp = ({
   cntct_sorceOptions,
   cntct_cntryOptions,
 }) => {
+  const { dataList: dzoneOptions, handleLoadZones } = useZoneSgd();
+
+  useEffect(() => {
+    if(formData.cntct_cntry){
+      handleLoadZones(formData.cntct_cntry);
+    }
+  }, [formData.cntct_cntry]);
   return (
     <div className="grid">
       <div className="col-12 md:col-2">
@@ -59,8 +68,7 @@ const ContactFormComp = ({
           htmlFor="cntct_cntnm"
           className="block text-900 font-medium mb-2"
         >
-          {tmcb_cntcs.cntct_cntnm.label}{" "}
-          <span className="text-red-500">*</span>
+          {tmcb_cntcs.cntct_cntnm.label} <span className="text-red-500">*</span>
         </label>
         <InputText
           name="cntct_cntnm"
@@ -73,7 +81,6 @@ const ContactFormComp = ({
           <small className="mb-3 text-red-500">{errors.cntct_cntnm}</small>
         )}
       </div>
-
 
       <div className="col-12 md:col-3">
         <label
@@ -93,7 +100,7 @@ const ContactFormComp = ({
           <small className="mb-3 text-red-500">{errors.cntct_cntps}</small>
         )}
       </div>
-      <div className="col-12 md:col-2">
+      <div className="col-12 md:col-3">
         <label
           htmlFor="cntct_cntno"
           className="block text-900 font-medium mb-2"
@@ -129,7 +136,45 @@ const ContactFormComp = ({
           <small className="mb-3 text-red-500">{errors.cntct_email}</small>
         )}
       </div>
-      <div className="col-12 md:col-5">
+
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="cntct_tinno"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmcb_cntcs.cntct_tinno.label}
+        </label>
+        <InputText
+          name="cntct_tinno"
+          value={formData.cntct_tinno}
+          onChange={(e) => onChange("cntct_tinno", e.target.value)}
+          className={`w-full ${errors.cntct_tinno ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmcb_cntcs.cntct_tinno.label}`}
+        />
+        {errors.cntct_tinno && (
+          <small className="mb-3 text-red-500">{errors.cntct_tinno}</small>
+        )}
+      </div>
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="cntct_trade"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmcb_cntcs.cntct_trade.label}
+        </label>
+        <InputText
+          name="cntct_trade"
+          value={formData.cntct_trade}
+          onChange={(e) => onChange("cntct_trade", e.target.value)}
+          className={`w-full ${errors.cntct_trade ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmcb_cntcs.cntct_trade.label}`}
+        />
+        {errors.cntct_trade && (
+          <small className="mb-3 text-red-500">{errors.cntct_trade}</small>
+        )}
+      </div>
+
+      <div className="col-12 md:col-6">
         <label
           htmlFor="cntct_ofadr"
           className="block text-900 font-medium mb-2"
@@ -146,8 +191,8 @@ const ContactFormComp = ({
         {errors.cntct_ofadr && (
           <small className="mb-3 text-red-500">{errors.cntct_ofadr}</small>
         )}
-      </div>      
-      <div className="col-12 md:col-8">
+      </div>
+      <div className="col-12 md:col-6">
         <label
           htmlFor="cntct_fcadr"
           className="block text-900 font-medium mb-2"
@@ -165,6 +210,7 @@ const ContactFormComp = ({
           <small className="mb-3 text-red-500">{errors.cntct_fcadr}</small>
         )}
       </div>
+
       <div className="col-12 md:col-2">
         <label
           htmlFor="cntct_cntry"
@@ -185,14 +231,71 @@ const ContactFormComp = ({
         )}
       </div>
 
+      <div className="col-12 md:col-3">
+        <label
+          htmlFor="cntct_dzone"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmcb_cntcs.cntct_dzone.label} <span className="text-red-500">*</span>
+        </label>
+        <Dropdown
+          name="cntct_dzone"
+          value={formData.cntct_dzone}
+          options={dzoneOptions}
+          onChange={(e) => onChange("cntct_dzone", e.value)}
+          className={`w-full ${errors.cntct_dzone ? "p-invalid" : ""}`}
+          placeholder={`Select ${tmcb_cntcs.cntct_dzone.label}`}
+        />
+        {errors.cntct_dzone && (
+          <small className="mb-3 text-red-500">{errors.cntct_dzone}</small>
+        )}
+      </div>
+      <div className="col-12 md:col-3">
+        <label
+          htmlFor="cntct_tarea"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmcb_cntcs.cntct_tarea.label} <span className="text-red-500">*</span>
+        </label>
+        <Dropdown
+          name="cntct_tarea"
+          value={formData.cntct_tarea}
+          options={cntct_cntryOptions}
+          onChange={(e) => onChange("cntct_tarea", e.value)}
+          className={`w-full ${errors.cntct_tarea ? "p-invalid" : ""}`}
+          placeholder={`Select ${tmcb_cntcs.cntct_tarea.label}`}
+        />
+        {errors.cntct_tarea && (
+          <small className="mb-3 text-red-500">{errors.cntct_tarea}</small>
+        )}
+      </div>
 
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="cntct_dspct"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmcb_cntcs.cntct_dspct.label} <span className="text-red-500">*</span>
+        </label>
+
+        <InputNumber
+          name="cntct_dspct"
+          value={formData.cntct_dspct}
+          onChange={(e) => onChange("cntct_dspct", e.value)}
+          className={`flex-1 ${errors.cntct_dspct ? "p-invalid" : ""}`}
+          placeholder="Discount %"
+          style={{ width: "100%" }}
+          inputStyle={{ width: "100%" }}
+          minFractionDigits={2}
+          maxFractionDigits={2}
+        />
+      </div>
       <div className="col-12 md:col-2">
         <label
           htmlFor="cntct_crlmt"
           className="block text-900 font-medium mb-2"
         >
-          {tmcb_cntcs.cntct_crlmt.label}{" "}
-          <span className="text-red-500">*</span>
+          {tmcb_cntcs.cntct_crlmt.label} <span className="text-red-500">*</span>
         </label>
 
         <InputNumber

@@ -183,6 +183,15 @@ const ContactListComp = ({
     );
   };
 
+  const cntct_tinno_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-md">{rowData.cntct_tinno}</span>
+        <span className="text-sm text-blue-500">{rowData.cntct_trade}</span>
+      </div>
+    );
+  };
+
   const cntct_ofadr_BT = (rowData) => {
     return (
       <div className="flex flex-column">
@@ -193,16 +202,23 @@ const ContactListComp = ({
           />
         </span>
         <span className="text-sm text-blue-500">{rowData.cntct_fcadr}</span>
+        <span className="text-sm text-gray-500">{rowData.tarea_tname}</span>
+        <span className="text-sm text-gray-500">{rowData.dzone_dname}</span>
         <span className="text-sm text-gray-500">{rowData.cntct_cntry}</span>
       </div>
     );
   };
 
   const cntct_crlmt_BT = (rowData) => {
-    const { cntct_crlmt, cntct_pybln, cntct_adbln, cntct_crbln } = rowData;
+    const { cntct_dspct, cntct_crlmt, cntct_pybln, cntct_adbln, cntct_crbln } =
+      rowData;
 
     return (
       <div className="flex gap-1">
+        <span className="text-green-500 font-bold">
+          {Number(cntct_dspct).toFixed(2)}
+        </span>
+        •
         <span className="text-green-500 font-bold">
           {Number(cntct_crlmt).toFixed(2)}
         </span>
@@ -328,6 +344,12 @@ const ContactListComp = ({
           sortable
         />
         <Column
+          field="cntct_tinno"
+          header="License"
+          body={cntct_tinno_BT}
+          sortable
+        />
+        <Column
           field="cntct_ofadr"
           header="Address"
           body={cntct_ofadr_BT}
@@ -335,7 +357,7 @@ const ContactListComp = ({
         />
         <Column
           field="cntct_crlmt"
-          header="Credit • Payable • Advance • Balance"
+          header="Discount • Credit • Payable • Advance • Balance"
           body={cntct_crlmt_BT}
         />
         <Column header={dataList?.length + " rows"} body={action_BT} />

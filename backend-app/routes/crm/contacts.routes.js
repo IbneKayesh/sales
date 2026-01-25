@@ -18,8 +18,11 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT cnt.*, 0 as edit_stop
+    const sql = `SELECT cnt.*, 0 as edit_stop,
+    ta.tarea_tname, dz.dzone_dname
     FROM tmcb_cntct cnt
+    LEFT JOIN tmcb_tarea ta ON ta.id = cnt.cntct_tarea
+    LEFT JOIN tmcb_dzone dz ON dz.id = cnt.cntct_dzone
     WHERE cnt.cntct_users = ?
     ORDER BY cnt.cntct_cntnm`;
     const params = [cntct_users];
