@@ -370,11 +370,11 @@ router.post("/create", async (req, res) => {
       scripts.push({
         sql: `INSERT INTO tmpb_cbkng(id, cbkng_mbkng, cbkng_bitem, cbkng_items, cbkng_itrat, cbkng_itqty,
         cbkng_itamt, cbkng_dspct, cbkng_dsamt, cbkng_vtpct, cbkng_vtamt, cbkng_csrat,
-        cbkng_ntamt, cbkng_notes, cbkng_cnqty, cbkng_rcqty, cbkng_pnqty,
+        cbkng_ntamt, cbkng_notes, cbkng_attrb, cbkng_cnqty, cbkng_rcqty, cbkng_pnqty,
         cbkng_crusr, cbkng_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?,
         ?, ?)`,
         params: [
           uuidv4(),
@@ -391,6 +391,7 @@ router.post("/create", async (req, res) => {
           det.cbkng_csrat || 0,
           det.cbkng_ntamt || 0,
           det.cbkng_notes || "",
+          det.cbkng_attrb || "",
           0,
           0,
           det.cbkng_itqty || 1, //det.cbkng_pnqty,
@@ -628,17 +629,19 @@ router.post("/update", async (req, res) => {
       ],
       label: `Update master ${mbkng_trnno}`,
     });
-
+  
+    console.log(JSON.stringify(tmpb_cbkng));
+    
     //Insert booking details
     for (const det of tmpb_cbkng) {
       scripts_updt.push({
         sql: `INSERT INTO tmpb_cbkng(id, cbkng_mbkng, cbkng_bitem, cbkng_items, cbkng_itrat, cbkng_itqty,
         cbkng_itamt, cbkng_dspct, cbkng_dsamt, cbkng_vtpct, cbkng_vtamt, cbkng_csrat,
-        cbkng_ntamt, cbkng_notes, cbkng_cnqty, cbkng_rcqty, cbkng_pnqty,
+        cbkng_ntamt, cbkng_notes, cbkng_attrb, cbkng_cnqty, cbkng_rcqty, cbkng_pnqty,
         cbkng_crusr, cbkng_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?,
         ?, ?)`,
         params: [
           uuidv4(),
@@ -655,13 +658,14 @@ router.post("/update", async (req, res) => {
           det.cbkng_csrat || 0,
           det.cbkng_ntamt || 0,
           det.cbkng_notes || "",
+          det.cbkng_attrb || "",
           0,
           0,
           det.cbkng_itqty || 1, //det.cbkng_pnqty,
           user_id,
           user_id,
         ],
-        label: `Created detail ${mbkng_trnno}`,
+        label: `Created PB detail ${mbkng_trnno}`,
       });
     }
 

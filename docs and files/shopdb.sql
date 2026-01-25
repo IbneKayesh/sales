@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Jan 22, 2026 at 12:19 PM
+-- Generation Time: Jan 25, 2026 at 12:31 PM
 -- Server version: 12.1.2-MariaDB-ubu2404
 -- PHP Version: 8.3.26
 
@@ -118,10 +118,15 @@ CREATE TABLE `tmcb_cntct` (
   `cntct_cntps` varchar(50) DEFAULT NULL,
   `cntct_cntno` varchar(50) DEFAULT NULL,
   `cntct_email` varchar(50) DEFAULT NULL,
+  `cntct_tinno` varchar(50) NOT NULL,
+  `cntct_trade` varchar(50) NOT NULL,
   `cntct_ofadr` varchar(300) DEFAULT NULL,
   `cntct_fcadr` varchar(300) DEFAULT NULL,
+  `cntct_tarea` varchar(50) NOT NULL,
+  `cntct_dzone` varchar(50) NOT NULL,
   `cntct_cntry` varchar(50) DEFAULT NULL,
   `cntct_cntad` varchar(50) DEFAULT NULL,
+  `cntct_dspct` decimal(18,6) NOT NULL DEFAULT 0.000000,
   `cntct_crlmt` decimal(18,6) NOT NULL DEFAULT 0.000000,
   `cntct_pybln` decimal(18,6) NOT NULL DEFAULT 0.000000,
   `cntct_adbln` decimal(18,6) NOT NULL DEFAULT 0.000000,
@@ -138,19 +143,48 @@ CREATE TABLE `tmcb_cntct` (
 -- Dumping data for table `tmcb_cntct`
 --
 
-INSERT INTO `tmcb_cntct` (`id`, `cntct_users`, `cntct_bsins`, `cntct_ctype`, `cntct_sorce`, `cntct_cntnm`, `cntct_cntps`, `cntct_cntno`, `cntct_email`, `cntct_ofadr`, `cntct_fcadr`, `cntct_cntry`, `cntct_cntad`, `cntct_crlmt`, `cntct_pybln`, `cntct_adbln`, `cntct_crbln`, `cntct_actve`, `cntct_crusr`, `cntct_crdat`, `cntct_upusr`, `cntct_updat`, `cntct_rvnmr`) VALUES
-('08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Bengal Fresh Foods', 'Nusrat Jahan', '01822-000002', 'email@sgd.com', 'Chittagong Wholesale Market', 'Chittagong Wholesale Market', 'Bangladesh', '0', 20000.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-14 09:17:52', 'admin-id', '2026-01-18 11:08:34', 5),
-('11f1664d-5d03-4724-a4dd-57ad3e01ad1a', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Al Noor Store', 'Javed Hasan', '01623-100104', '', 'Sylhet Zindabazar', 'Sylhet Zindabazar', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:24:23', 'admin-id', '2026-01-18 11:24:23', 1),
-('267bb3aa-9177-43d2-8d8b-e0137578cf98', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Dhaka Agro Traders', 'Md. Kamal Hossain', '01711-000001', 'email@email.com', 'Kawran Bazar, Dhaka', 'Kawran Bazar, Dhaka', 'Bangladesh', '0', 20000.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:10', 'admin-id', '2026-01-18 11:07:22', 3),
-('41981c62-d7fc-4238-a8f1-8c70bd2c1e0e', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Bismillah Traders', 'Hafiz Uddin', '01921-100103', '', 'Cumilla Sadar', 'Cumilla Sadar', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:24:02', 'admin-id', '2026-01-18 11:24:02', 1),
-('521e18fc-b57a-48c4-a0a7-d7772edb4b76', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'M/S Amin Enterprise', 'Aminul Islam', '01534-100105', '', 'Khulna Boyra', 'Khulna Boyra', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:24:45', 'admin-id', '2026-01-18 11:24:45', 1),
-('639611f4-97e5-4589-904e-190ef11f7f4e', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Jisan Dairy Source', 'Akhi Khatun', '01555-000005', '', 'Mirpur-10, Dhaka', 'Mirpur-10, Dhaka', 'Bangladesh', '0', 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:10:29', 'admin-id', '2026-01-18 11:10:29', 1),
-('6a0619ca-84e9-4df5-b225-7dd7acb91b86', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Green Farm Ltd.', 'Abdul Karim', '01933-000003', '', 'Bogura Sadar, Bogura', 'Bogura Sadar, Bogura', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:09:12', 'admin-id', '2026-01-18 11:09:12', 1),
-('be93309a-ec2b-40d0-9c62-8abe7796b547', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Golden Grain Supply', 'Rashed Mahmud', '01644-000004', '', 'Jashore Industrial Area', 'Jashore Industrial Area', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:09:47', 'admin-id', '2026-01-18 11:09:47', 1),
-('both', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Both', 'Local', 'Both A/C', 'Both A/C', 'Both A/C', 'Both A/C', 'Both A/C', 'Both A/C', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 13:04:25', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 14:22:31', 2),
-('c370a9f5-7ccf-4e2d-9d7a-7d5873293ddc', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Shapno Mini Mart', 'Farzana Islam', '01819-100102', 'email@sgd.com', 'Uttara Sector 7, Dhaka', 'Uttara Sector 7, Dhaka', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-14 09:23:59', 'admin-id', '2026-01-18 11:23:11', 2),
-('d5eefaf0-9979-4edf-8fbd-68f3157c4105', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Rahman General Store', 'Anisur Rahman', '01712-100101', 'email@email.com', 'Mohammadpur, Dhaka', 'Mohammadpur, Dhaka', 'Bangladesh', '0', 50000.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:29', 'admin-id', '2026-01-18 11:21:47', 3),
-('internal', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Internal', 'Local', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 13:04:25', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 14:22:31', 2);
+INSERT INTO `tmcb_cntct` (`id`, `cntct_users`, `cntct_bsins`, `cntct_ctype`, `cntct_sorce`, `cntct_cntnm`, `cntct_cntps`, `cntct_cntno`, `cntct_email`, `cntct_tinno`, `cntct_trade`, `cntct_ofadr`, `cntct_fcadr`, `cntct_tarea`, `cntct_dzone`, `cntct_cntry`, `cntct_cntad`, `cntct_dspct`, `cntct_crlmt`, `cntct_pybln`, `cntct_adbln`, `cntct_crbln`, `cntct_actve`, `cntct_crusr`, `cntct_crdat`, `cntct_upusr`, `cntct_updat`, `cntct_rvnmr`) VALUES
+('08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Bengal Fresh Foods', 'Nusrat Jahan', '01822-000002', 'email@sgd.com', 'TIN-123456', 'TRADE-123456', 'Chittagong Wholesale Market', 'Chittagong Wholesale Market', 'sirajganj-sadar', 'sirajganj', 'Bangladesh', '0', 10.000000, 20000.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-14 09:17:52', 'admin-id', '2026-01-25 05:14:59', 6),
+('11f1664d-5d03-4724-a4dd-57ad3e01ad1a', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Al Noor Store', 'Javed Hasan', '01623-100104', 'email@sgd.com', 'TIN-123456', 'TRADE-123456', 'Sylhet Zindabazar', 'Sylhet Zindabazar', 'bogra-sadar', 'bogra', 'Bangladesh', '0', 10.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:24:23', 'admin-id', '2026-01-25 05:13:00', 3),
+('267bb3aa-9177-43d2-8d8b-e0137578cf98', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Dhaka Agro Traders', 'Md. Kamal Hossain', '01711-000001', 'email@email.com', '', '', 'Kawran Bazar, Dhaka', 'Kawran Bazar, Dhaka', 'araihazar', 'narayanganj', 'Bangladesh', '0', 0.000000, 20000.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:10', 'admin-id', '2026-01-25 05:36:49', 4),
+('41981c62-d7fc-4238-a8f1-8c70bd2c1e0e', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Bismillah Traders', 'Hafiz Uddin', '01921-100103', '', '', '', 'Cumilla Sadar', 'Cumilla Sadar', 'araihazar', 'narayanganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:24:02', 'admin-id', '2026-01-25 05:35:58', 2),
+('521e18fc-b57a-48c4-a0a7-d7772edb4b76', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'M/S Amin Enterprise', 'Aminul Islam', '01534-100105', '', '', '', 'Khulna Boyra', 'Khulna Boyra', 'kachpur', 'narayanganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:24:45', 'admin-id', '2026-01-25 05:37:18', 2),
+('639611f4-97e5-4589-904e-190ef11f7f4e', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Jisan Dairy Source', 'Akhi Khatun', '01555-000005', '', '', '', 'Mirpur-10, Dhaka', 'Mirpur-10, Dhaka', 'enayetpur', 'sirajganj', 'Bangladesh', '0', 0.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:10:29', 'admin-id', '2026-01-25 05:37:05', 2),
+('6a0619ca-84e9-4df5-b225-7dd7acb91b86', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Green Farm Ltd.', 'Abdul Karim', '01933-000003', '', '', '', 'Bogura Sadar, Bogura', 'Bogura Sadar, Bogura', 'bogra-sadar', 'bogra', 'Bangladesh', '0', 10.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:09:12', 'admin-id', '2026-01-25 05:35:12', 2),
+('be93309a-ec2b-40d0-9c62-8abe7796b547', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Golden Grain Supply', 'Rashed Mahmud', '01644-000004', '', '', '', 'Jashore Industrial Area', 'Jashore Industrial Area', 'kamarkhanda', 'sirajganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:09:47', 'admin-id', '2026-01-25 05:36:57', 2),
+('both', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Both', 'Local', 'Both A/C', 'Both A/C', 'Both A/C', 'Both A/C', '', '', 'Both A/C', 'Both A/C', 'sherpur', 'bogra', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 13:04:25', 'admin-id', '2026-01-25 05:36:12', 3),
+('c370a9f5-7ccf-4e2d-9d7a-7d5873293ddc', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Shapno Mini Mart', 'Farzana Islam', '01819-100102', 'email@sgd.com', '', '', 'Uttara Sector 7, Dhaka', 'Uttara Sector 7, Dhaka', 'belkuchi', 'sirajganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-14 09:23:59', 'admin-id', '2026-01-25 05:36:25', 3),
+('d5eefaf0-9979-4edf-8fbd-68f3157c4105', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Rahman General Store', 'Anisur Rahman', '01712-100101', 'email@email.com', '', '', 'Mohammadpur, Dhaka', 'Mohammadpur, Dhaka', 'adamdighi', 'bogra', 'Bangladesh', '0', 0.000000, 50000.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:29', 'admin-id', '2026-01-25 05:36:40', 4),
+('internal', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Internal', 'Local', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', '', '', 'Internal A/C', 'Internal A/C', 'sherpur', 'bogra', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 13:04:25', 'admin-id', '2026-01-25 05:37:31', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmcb_dzone`
+--
+
+CREATE TABLE `tmcb_dzone` (
+  `id` varchar(50) NOT NULL,
+  `dzone_users` varchar(50) NOT NULL,
+  `dzone_bsins` varchar(50) NOT NULL,
+  `dzone_cntry` varchar(50) NOT NULL,
+  `dzone_dname` varchar(50) NOT NULL,
+  `dzone_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `dzone_crusr` varchar(50) NOT NULL,
+  `dzone_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `dzone_upusr` varchar(50) NOT NULL,
+  `dzone_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `dzone_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tmcb_dzone`
+--
+
+INSERT INTO `tmcb_dzone` (`id`, `dzone_users`, `dzone_bsins`, `dzone_cntry`, `dzone_dname`, `dzone_actve`, `dzone_crusr`, `dzone_crdat`, `dzone_upusr`, `dzone_updat`, `dzone_rvnmr`) VALUES
+('bogra', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'Bangladesh', 'Bogra', 1, 'admin-id', '2026-01-25 04:45:54', 'admin-id', '2026-01-25 04:46:18', 1),
+('narayanganj', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'Bangladesh', 'Narayanganj', 1, 'admin-id', '2026-01-25 04:45:54', 'admin-id', '2026-01-25 04:46:18', 1),
+('sirajganj', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'Bangladesh', 'Sirajganj', 1, 'admin-id', '2026-01-25 04:45:54', 'admin-id', '2026-01-25 04:46:20', 1);
 
 -- --------------------------------------------------------
 
@@ -178,6 +212,96 @@ CREATE TABLE `tmcb_rutes` (
   `rutes_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `rutes_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmcb_tarea`
+--
+
+CREATE TABLE `tmcb_tarea` (
+  `id` varchar(50) NOT NULL,
+  `tarea_users` varchar(50) NOT NULL,
+  `tarea_bsins` varchar(50) NOT NULL,
+  `tarea_dzone` varchar(50) NOT NULL,
+  `tarea_tname` varchar(50) NOT NULL,
+  `tarea_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `tarea_crusr` varchar(50) NOT NULL,
+  `tarea_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `tarea_upusr` varchar(50) NOT NULL,
+  `tarea_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `tarea_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tmcb_tarea`
+--
+
+INSERT INTO `tmcb_tarea` (`id`, `tarea_users`, `tarea_bsins`, `tarea_dzone`, `tarea_tname`, `tarea_actve`, `tarea_crusr`, `tarea_crdat`, `tarea_upusr`, `tarea_updat`, `tarea_rvnmr`) VALUES
+('adamdighi', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Adamdighi', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
+('araihazar', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Araihazar', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
+('bandar', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Bandar', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
+('belkuchi', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Belkuchi', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:29:10', 1),
+('bhairob', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Bhairob', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
+('bogra-sadar', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Bogra Sadar', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
+('chauhali', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Chauhali', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:26', 1),
+('dhunat', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Dhunat', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
+('dhupchanchia', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Dhupchanchia', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
+('enayetpur', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Enayetpur', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:26', 1),
+('gabtali', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Gabtali', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
+('jamuna-river', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Jamuna River', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:29:10', 1),
+('kachpur', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Kachpur', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
+('kahaloo', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Kahaloo', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
+('kamarkhanda', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Kamarkhanda', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:26:55', 1),
+('kazipur', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Kazipur', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:26', 1),
+('nandigram', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Nandigram', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
+('narayanganj-city-corporation', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Narayanganj City Corporation', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
+('narayanganj-sadar', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Narayanganj Sadar', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
+('raiganj', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Raiganj', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:29:10', 1),
+('rupganj', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Rupganj', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
+('sariakandi', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Sariakandi', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
+('shahjadpur', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Shahjadpur', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:26', 1),
+('shajahanpur', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Shajahanpur', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
+('sherpur', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Sherpur', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
+('shibganj', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Shibganj', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
+('sirajganj-sadar', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Sirajganj Sadar', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:26', 1),
+('sonargaon', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Sonargaon', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
+('sonatala', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Sonatala', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
+('tarash', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Tarash', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmib_attrb`
+--
+
+CREATE TABLE `tmib_attrb` (
+  `id` varchar(50) NOT NULL,
+  `attrb_users` varchar(50) NOT NULL,
+  `attrb_aname` varchar(50) NOT NULL,
+  `attrb_dtype` varchar(50) NOT NULL,
+  `attrb_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `attrb_crusr` varchar(50) NOT NULL,
+  `attrb_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `attrb_upusr` varchar(50) NOT NULL,
+  `attrb_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `attrb_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tmib_attrb`
+--
+
+INSERT INTO `tmib_attrb` (`id`, `attrb_users`, `attrb_aname`, `attrb_dtype`, `attrb_actve`, `attrb_crusr`, `attrb_crdat`, `attrb_upusr`, `attrb_updat`, `attrb_rvnmr`) VALUES
+('color', 'admin-id', 'Color', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:38:19', 1),
+('expiry', 'admin-id', 'Expiry', 'date', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:42:46', 1),
+('fabric', 'admin-id', 'Fabric', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:38:19', 1),
+('height', 'admin-id', 'Height', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:38:19', 1),
+('imei', 'admin-id', 'IMEI', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:40:47', 1),
+('serialno', 'admin-id', 'Serial No', 'number', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:38:19', 1),
+('size', 'admin-id', 'Size', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 08:24:21', 1),
+('weight', 'admin-id', 'Weight', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 08:24:21', 1),
+('width', 'admin-id', 'Width', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:38:19', 1);
 
 -- --------------------------------------------------------
 
@@ -434,6 +558,7 @@ CREATE TABLE `tmpb_cbkng` (
   `cbkng_csrat` decimal(20,6) NOT NULL DEFAULT 0.000000,
   `cbkng_ntamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
   `cbkng_notes` varchar(50) DEFAULT NULL,
+  `cbkng_attrb` varchar(300) DEFAULT NULL,
   `cbkng_cnqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
   `cbkng_rcqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
   `cbkng_pnqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
@@ -449,12 +574,11 @@ CREATE TABLE `tmpb_cbkng` (
 -- Dumping data for table `tmpb_cbkng`
 --
 
-INSERT INTO `tmpb_cbkng` (`id`, `cbkng_mbkng`, `cbkng_bitem`, `cbkng_items`, `cbkng_itrat`, `cbkng_itqty`, `cbkng_itamt`, `cbkng_dspct`, `cbkng_dsamt`, `cbkng_vtpct`, `cbkng_vtamt`, `cbkng_csrat`, `cbkng_ntamt`, `cbkng_notes`, `cbkng_cnqty`, `cbkng_rcqty`, `cbkng_pnqty`, `cbkng_actve`, `cbkng_crusr`, `cbkng_crdat`, `cbkng_upusr`, `cbkng_updat`, `cbkng_rvnmr`) VALUES
-('49886be7-1116-4608-8d4b-febd9f06ddf2', '38b834b8-420e-481c-9bca-7c6c3cab8c1a', '22bbdf6e-759b-4b46-a0a6-b5d2a8d7d383', 'dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 15.000000, 250.000000, 3750.000000, 1.000000, 37.500000, 5.000000, 187.500000, 15.727273, 3900.000000, 'DO#D-56', 0.000000, 0.000000, 250.000000, 1, 'admin-id', '2026-01-21 08:46:21', 'admin-id', '2026-01-21 08:46:21', 1),
-('851e5c70-5e1c-4b10-893a-e8ea2115c3b8', 'f8fe3d6f-62e3-4fe4-b6fa-f65f81f570b6', '0a73b49d-71b3-4671-9c09-6d985f3514fc', '485d61c3-e84e-418b-b91b-2171c17f0391', 260.000000, 1.000000, 260.000000, 0.000000, 0.000000, 5.000000, 13.000000, 260.000000, 273.000000, '', 0.000000, 0.000000, 1.000000, 1, 'admin-id', '2026-01-22 05:44:54', 'admin-id', '2026-01-22 05:44:54', 1),
-('d18b495e-e776-444d-85cb-967b9ba0caa9', 'b499f573-347a-46dd-8562-f0fd76c585de', '0a73b49d-71b3-4671-9c09-6d985f3514fc', '485d61c3-e84e-418b-b91b-2171c17f0391', 260.000000, 100.000000, 26000.000000, 1.500000, 390.000000, 5.000000, 1300.000000, 265.000000, 26910.000000, 'DO#123456', 0.000000, 0.000000, 100.000000, 1, 'admin-id', '2026-01-21 08:37:32', 'admin-id', '2026-01-21 08:37:32', 1),
-('dd3aa5a4-7598-41dd-abcd-0f1d0c5cb9b1', '38b834b8-420e-481c-9bca-7c6c3cab8c1a', '0b9c71ef-77de-4116-8298-ac0898e2d217', 'ae0a4ae3-77f6-4357-8ca9-c05cc1796a7e', 10.000000, 300.000000, 3000.000000, 0.000000, 0.000000, 5.000000, 150.000000, 10.727273, 3150.000000, 'DO#D-56', 0.000000, 0.000000, 300.000000, 1, 'admin-id', '2026-01-21 08:46:21', 'admin-id', '2026-01-21 08:46:21', 1),
-('f96e0a18-3b93-44af-8ba4-99929206e717', 'a3d795a4-aaa5-4404-b394-03f08fc9ea9e', 'a06cf515-c579-4628-96c4-c1f88f0d9308', '42ccd66a-70db-4c7f-93c4-36261a8f064f', 90.000000, 20.000000, 1800.000000, 0.000000, 0.000000, 5.000000, 90.000000, 102.500000, 1890.000000, 'DO#65-14256', 0.000000, 0.000000, 20.000000, 1, 'admin-id', '2026-01-21 12:07:19', 'admin-id', '2026-01-21 12:07:19', 1);
+INSERT INTO `tmpb_cbkng` (`id`, `cbkng_mbkng`, `cbkng_bitem`, `cbkng_items`, `cbkng_itrat`, `cbkng_itqty`, `cbkng_itamt`, `cbkng_dspct`, `cbkng_dsamt`, `cbkng_vtpct`, `cbkng_vtamt`, `cbkng_csrat`, `cbkng_ntamt`, `cbkng_notes`, `cbkng_attrb`, `cbkng_cnqty`, `cbkng_rcqty`, `cbkng_pnqty`, `cbkng_actve`, `cbkng_crusr`, `cbkng_crdat`, `cbkng_upusr`, `cbkng_updat`, `cbkng_rvnmr`) VALUES
+('12738537-69f3-4959-a2a4-c703db2d5e8a', '8e8b248f-8675-4829-b04b-ce3332da77dc', '22bbdf6e-759b-4b46-a0a6-b5d2a8d7d383', 'dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 15.000000, 22.000000, 330.000000, 0.000000, 0.000000, 5.000000, 16.500000, 15.000000, 346.500000, 'test 4', '{\"Color\":\"White\"}', 0.000000, 0.000000, 22.000000, 1, 'admin-id', '2026-01-25 11:56:57', 'admin-id', '2026-01-25 11:56:57', 1),
+('5fee7518-f11b-41fd-9f57-07a873112ac0', '8e8b248f-8675-4829-b04b-ce3332da77dc', '22064b47-6898-4661-9dc8-5329a542ae4a', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 110.000000, 30.000000, 3300.000000, 0.000000, 0.000000, 5.000000, 165.000000, 110.000000, 3465.000000, 'test 2', '{\"Weight\":\"50 KG\",\"Expiry\":\"2026-01-29\"}', 0.000000, 0.000000, 30.000000, 1, 'admin-id', '2026-01-25 11:56:57', 'admin-id', '2026-01-25 11:56:57', 1),
+('d04b83a6-8529-44da-8a46-13d10aa8b869', '8e8b248f-8675-4829-b04b-ce3332da77dc', '0a73b49d-71b3-4671-9c09-6d985f3514fc', '485d61c3-e84e-418b-b91b-2171c17f0391', 260.000000, 20.000000, 5200.000000, 0.000000, 0.000000, 5.000000, 260.000000, 260.000000, 5460.000000, 'test 1', '{\"Color\":\"White\",\"Size\":\"Large\",\"Weight\":\"1kg +/- 10gm\"}', 0.000000, 0.000000, 20.000000, 1, 'admin-id', '2026-01-25 11:56:57', 'admin-id', '2026-01-25 11:56:57', 1),
+('f9b3a318-9e45-4ad3-95b0-377917f40d1c', '565905e9-8274-4dc5-b1c6-61f11e856100', '0a73b49d-71b3-4671-9c09-6d985f3514fc', '485d61c3-e84e-418b-b91b-2171c17f0391', 260.000000, 1.000000, 260.000000, 0.000000, 0.000000, 5.000000, 13.000000, 260.000000, 273.000000, '', '{\"Expiry\":\"2026-01-26\"}', 0.000000, 0.000000, 1.000000, 1, 'admin-id', '2026-01-25 12:08:59', 'admin-id', '2026-01-25 12:08:59', 1);
 
 -- --------------------------------------------------------
 
@@ -526,9 +650,9 @@ CREATE TABLE `tmpb_crcpt` (
 --
 
 INSERT INTO `tmpb_crcpt` (`id`, `crcpt_mrcpt`, `crcpt_bitem`, `crcpt_items`, `crcpt_itrat`, `crcpt_itqty`, `crcpt_itamt`, `crcpt_dspct`, `crcpt_dsamt`, `crcpt_vtpct`, `crcpt_vtamt`, `crcpt_csrat`, `crcpt_ntamt`, `crcpt_notes`, `crcpt_rtqty`, `crcpt_slqty`, `crcpt_ohqty`, `crcpt_cbkng`, `crcpt_actve`, `crcpt_crusr`, `crcpt_crdat`, `crcpt_upusr`, `crcpt_updat`, `crcpt_rvnmr`) VALUES
-('19f8d918-fe84-4b96-abea-50f452ec38f6', '20716ec4-cc8c-4d85-9f60-5138d8686907', '0a73b49d-71b3-4671-9c09-6d985f3514fc', '485d61c3-e84e-418b-b91b-2171c17f0391', 260.000000, 100.000000, 26000.000000, 1.500000, 390.000000, 5.000000, 1300.000000, 260.000000, 26910.000000, 'DO#123456', 0.000000, 0.000000, 100.000000, 'd18b495e-e776-444d-85cb-967b9ba0caa9', 1, 'admin-id', '2026-01-22 06:13:16', 'admin-id', '2026-01-22 06:13:16', 1),
-('7f6305cf-31c8-4b62-bf3c-bc5d69eb51b1', '20716ec4-cc8c-4d85-9f60-5138d8686907', '0a73b49d-71b3-4671-9c09-6d985f3514fc', '485d61c3-e84e-418b-b91b-2171c17f0391', 260.000000, 1.000000, 260.000000, 0.000000, 0.000000, 5.000000, 13.000000, 260.000000, 273.000000, '', 0.000000, 0.000000, 1.000000, '851e5c70-5e1c-4b10-893a-e8ea2115c3b8', 1, 'admin-id', '2026-01-22 06:13:16', 'admin-id', '2026-01-22 06:13:16', 1),
-('98cd5d65-b644-48e0-b137-9db28909e071', '20716ec4-cc8c-4d85-9f60-5138d8686907', 'a06cf515-c579-4628-96c4-c1f88f0d9308', '42ccd66a-70db-4c7f-93c4-36261a8f064f', 90.000000, 20.000000, 1800.000000, 0.000000, 0.000000, 5.000000, 90.000000, 90.000000, 1890.000000, 'DO#65-14256', 0.000000, 0.000000, 20.000000, 'f96e0a18-3b93-44af-8ba4-99929206e717', 1, 'admin-id', '2026-01-22 06:13:16', 'admin-id', '2026-01-22 06:13:16', 1);
+('5634c2a8-502b-4d46-a4ae-55d1d572303e', '045a4c5a-76e5-4750-9797-70251f960390', '22064b47-6898-4661-9dc8-5329a542ae4a', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 110.000000, 30.000000, 3300.000000, 0.000000, 0.000000, 5.000000, 165.000000, 110.000000, 3465.000000, 'test 2', 0.000000, 0.000000, 30.000000, 'd567f15e-1bc5-48fa-aa22-e83075790cf7', 1, 'admin-id', '2026-01-25 11:46:14', 'admin-id', '2026-01-25 11:46:14', 1),
+('80d92989-4e75-4809-ba58-0202218968bf', '045a4c5a-76e5-4750-9797-70251f960390', '22bbdf6e-759b-4b46-a0a6-b5d2a8d7d383', 'dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 15.000000, 25.000000, 375.000000, 0.000000, 0.000000, 5.000000, 18.750000, 15.750000, 393.750000, 'test 4', 0.000000, 0.000000, 25.000000, 'c9810218-4de7-4765-9d73-a978a0382fdd', 1, 'admin-id', '2026-01-25 11:46:14', 'admin-id', '2026-01-25 11:46:14', 1),
+('af3d811c-d4e8-4200-9196-0fb8bdc0dfc4', '045a4c5a-76e5-4750-9797-70251f960390', '0a73b49d-71b3-4671-9c09-6d985f3514fc', '485d61c3-e84e-418b-b91b-2171c17f0391', 260.000000, 20.000000, 5200.000000, 0.000000, 0.000000, 5.000000, 260.000000, 260.000000, 5460.000000, 'test 1', 0.000000, 0.000000, 20.000000, '3d7dae4b-45a5-488c-99d3-5822f35a3e0e', 1, 'admin-id', '2026-01-25 11:46:14', 'admin-id', '2026-01-25 11:46:14', 1);
 
 -- --------------------------------------------------------
 
@@ -554,17 +678,6 @@ CREATE TABLE `tmpb_expns` (
   `expns_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `expns_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tmpb_expns`
---
-
-INSERT INTO `tmpb_expns` (`id`, `expns_users`, `expns_bsins`, `expns_cntct`, `expns_refid`, `expns_refno`, `expns_srcnm`, `expns_inexc`, `expns_notes`, `expns_xpamt`, `expns_actve`, `expns_crusr`, `expns_crdat`, `expns_upusr`, `expns_updat`, `expns_rvnmr`) VALUES
-('16b43d64-c8b1-48ff-9003-21bc3bd5d32c', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '267bb3aa-9177-43d2-8d8b-e0137578cf98', '38b834b8-420e-481c-9bca-7c6c3cab8c1a', 'PB-210126-00002', 'Purchase Booking', 2, 'delivery charge', 150.000000, 1, 'admin-id', '2026-01-21 08:46:21', 'admin-id', '2026-01-21 08:46:21', 1),
-('310df82d-4fbc-41ee-b57a-3f7978fc5af3', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '267bb3aa-9177-43d2-8d8b-e0137578cf98', '38b834b8-420e-481c-9bca-7c6c3cab8c1a', 'PB-210126-00002', 'Purchase Booking', 1, 'courier charge', 250.000000, 1, 'admin-id', '2026-01-21 08:46:21', 'admin-id', '2026-01-21 08:46:21', 1),
-('b0cec32d-fd68-4bc2-a656-0b95a476e599', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'a3d795a4-aaa5-4404-b394-03f08fc9ea9e', 'PB-210126-00003', 'Purchase Booking', 1, '', 250.000000, 1, 'admin-id', '2026-01-21 12:07:19', 'admin-id', '2026-01-21 12:07:19', 1),
-('cb7aeae6-c863-439b-9a55-1ba0e28e7ae6', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'b499f573-347a-46dd-8562-f0fd76c585de', 'PB-210126-00001', 'Purchase Booking', 1, 'courier charge', 250.000000, 1, 'admin-id', '2026-01-21 08:37:32', 'admin-id', '2026-01-21 08:37:32', 1),
-('ec9b7e3b-d925-4e6f-87e4-98615e880fb0', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'b499f573-347a-46dd-8562-f0fd76c585de', 'PB-210126-00001', 'Purchase Booking', 2, 'delivery charge', 250.000000, 1, 'admin-id', '2026-01-21 08:37:32', 'admin-id', '2026-01-21 08:37:32', 1);
 
 -- --------------------------------------------------------
 
@@ -611,10 +724,8 @@ CREATE TABLE `tmpb_mbkng` (
 --
 
 INSERT INTO `tmpb_mbkng` (`id`, `mbkng_users`, `mbkng_bsins`, `mbkng_cntct`, `mbkng_trnno`, `mbkng_trdat`, `mbkng_refno`, `mbkng_trnte`, `mbkng_odamt`, `mbkng_dsamt`, `mbkng_vtamt`, `mbkng_vatpy`, `mbkng_incst`, `mbkng_excst`, `mbkng_rnamt`, `mbkng_ttamt`, `mbkng_pyamt`, `mbkng_pdamt`, `mbkng_duamt`, `mbkng_cnamt`, `mbkng_ispad`, `mbkng_ispst`, `mbkng_iscls`, `mbkng_vatcl`, `mbkng_hscnl`, `mbkng_actve`, `mbkng_crusr`, `mbkng_crdat`, `mbkng_upusr`, `mbkng_updat`, `mbkng_rvnmr`) VALUES
-('38b834b8-420e-481c-9bca-7c6c3cab8c1a', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'PB-210126-00002', '2026-01-21 00:00:00', 'DO#D-56', '', 6750.000000, 37.500000, 337.500000, 1, 250.000000, 150.000000, 0.000000, 7300.000000, 7300.000000, 7300.000000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'admin-id', '2026-01-21 08:46:21', 'admin-id', '2026-01-21 08:46:21', 1),
-('a3d795a4-aaa5-4404-b394-03f08fc9ea9e', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PB-210126-00003', '2026-01-21 00:00:00', 'DO#65-14256', '', 1800.000000, 0.000000, 90.000000, 1, 250.000000, 0.000000, 0.000000, 2140.000000, 2140.000000, 2140.000000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'admin-id', '2026-01-21 12:07:19', 'admin-id', '2026-01-21 12:07:19', 1),
-('b499f573-347a-46dd-8562-f0fd76c585de', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PB-210126-00001', '2026-01-21 00:00:00', 'DO#123456', '', 26000.000000, 390.000000, 1300.000000, 1, 250.000000, 250.000000, 0.000000, 27160.000000, 27160.000000, 15000.000000, 12160.000000, 0.000000, 2, 1, 0, 0, 0, 1, 'admin-id', '2026-01-21 08:37:32', 'admin-id', '2026-01-21 08:37:32', 1),
-('f8fe3d6f-62e3-4fe4-b6fa-f65f81f570b6', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PB-220126-00001', '2026-01-22 00:00:00', '', '', 260.000000, 0.000000, 13.000000, 0, 0.000000, 0.000000, 0.000000, 273.000000, 260.000000, 0.000000, 260.000000, 0.000000, 2, 1, 0, 0, 0, 1, 'admin-id', '2026-01-22 05:44:54', 'admin-id', '2026-01-22 05:44:54', 1);
+('565905e9-8274-4dc5-b1c6-61f11e856100', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PB-250126-00002', '2026-01-25 00:00:00', '', '', 260.000000, 0.000000, 13.000000, 0, 0.000000, 0.000000, 0.000000, 273.000000, 260.000000, 0.000000, 260.000000, 0.000000, 0, 1, 0, 0, 0, 1, 'admin-id', '2026-01-25 12:08:59', 'admin-id', '2026-01-25 12:08:59', 1),
+('8e8b248f-8675-4829-b04b-ce3332da77dc', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PB-250126-00001', '2026-01-25 00:00:00', '', 'the product is not having group', 8830.000000, 0.000000, 441.500000, 1, 0.000000, 0.000000, 0.000000, 9271.500000, 9271.500000, 1500.000000, 7772.000000, 0.000000, 2, 1, 0, 0, 0, 1, 'admin-id', '2026-01-25 10:04:00', 'admin-id', '2026-01-25 12:02:20', 89);
 
 -- --------------------------------------------------------
 
@@ -701,7 +812,7 @@ CREATE TABLE `tmpb_mrcpt` (
 --
 
 INSERT INTO `tmpb_mrcpt` (`id`, `mrcpt_users`, `mrcpt_bsins`, `mrcpt_cntct`, `mrcpt_trnno`, `mrcpt_trdat`, `mrcpt_refno`, `mrcpt_trnte`, `mrcpt_odamt`, `mrcpt_dsamt`, `mrcpt_vtamt`, `mrcpt_vatpy`, `mrcpt_incst`, `mrcpt_excst`, `mrcpt_rnamt`, `mrcpt_ttamt`, `mrcpt_pyamt`, `mrcpt_pdamt`, `mrcpt_duamt`, `mrcpt_rtamt`, `mrcpt_ispad`, `mrcpt_ispst`, `mrcpt_iscls`, `mrcpt_vatcl`, `mrcpt_hscnl`, `mrcpt_actve`, `mrcpt_crusr`, `mrcpt_crdat`, `mrcpt_upusr`, `mrcpt_updat`, `mrcpt_rvnmr`) VALUES
-('20716ec4-cc8c-4d85-9f60-5138d8686907', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PR-220126-00001', '2026-01-22 00:00:00', '', '', 28060.000000, 390.000000, 1403.000000, 1, 0.000000, 0.000000, 0.000000, 29073.000000, 29073.000000, 0.000000, 29073.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'admin-id', '2026-01-22 06:13:16', 'admin-id', '2026-01-22 06:13:16', 1);
+('045a4c5a-76e5-4750-9797-70251f960390', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PR-250126-00001', '2026-01-25 00:00:00', 'OC#987-755', '', 8875.000000, 0.000000, 443.750000, 0, 0.000000, 0.000000, 0.000000, 9318.750000, 8875.000000, 0.000000, 8875.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'admin-id', '2026-01-25 11:46:14', 'admin-id', '2026-01-25 11:46:14', 1);
 
 -- --------------------------------------------------------
 
@@ -883,14 +994,11 @@ CREATE TABLE `tmtb_paybl` (
 --
 
 INSERT INTO `tmtb_paybl` (`id`, `paybl_users`, `paybl_bsins`, `paybl_cntct`, `paybl_pymod`, `paybl_refid`, `paybl_refno`, `paybl_srcnm`, `paybl_trdat`, `paybl_descr`, `paybl_notes`, `paybl_dbamt`, `paybl_cramt`, `paybl_crusr`, `paybl_crdat`, `paybl_upusr`, `paybl_updat`, `paybl_rvnmr`) VALUES
-('031f75c7-7e70-4697-9238-e66a41af9273', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'Bank', '38b834b8-420e-481c-9bca-7c6c3cab8c1a', 'PB-210126-00002', 'Purchase Booking', '2026-01-21 00:00:00', 'BT#9747-2245', 'Payment', 7300.000000, 0.000000, 'admin-id', '2026-01-21 08:46:21', 'admin-id', '2026-01-21 08:46:21', 1),
-('0e62cb9a-6125-4643-a094-fc65a6be1c99', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', 'a3d795a4-aaa5-4404-b394-03f08fc9ea9e', 'PB-210126-00003', 'Purchase Booking', '2026-01-21 00:00:00', 'Supplier Goods', 'Products', 0.000000, 2140.000000, 'admin-id', '2026-01-21 12:07:19', 'admin-id', '2026-01-21 12:07:19', 1),
-('67840d6c-9dd3-41f6-8da5-8fc4204da444', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Bank', 'b499f573-347a-46dd-8562-f0fd76c585de', 'PB-210126-00001', 'Purchase Booking', '2026-01-21 00:00:00', 'BT#123456', 'Payment', 15000.000000, 0.000000, 'admin-id', '2026-01-21 08:37:32', 'admin-id', '2026-01-21 08:37:32', 1),
-('72c7efa0-e2db-4cb3-bd74-b465eee1a8d9', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Bank', 'a3d795a4-aaa5-4404-b394-03f08fc9ea9e', 'PB-210126-00003', 'Purchase Booking', '2026-01-21 00:00:00', 'BT#A43GF6-136', 'Payment', 2140.000000, 0.000000, 'admin-id', '2026-01-21 12:07:19', 'admin-id', '2026-01-21 12:07:19', 1),
-('873a2892-c310-4173-b4b3-87742e424e49', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Bank', 'b499f573-347a-46dd-8562-f0fd76c585de', 'PB-210126-00001', 'Purchase Booking', '2026-01-21 00:00:00', 'BT#56456-136', 'Payment', 5000.000000, 0.000000, 'admin-id', '2026-01-21 10:56:23', 'admin-id', '2026-01-21 10:56:23', 1),
-('88888a12-0782-4046-a98e-b9fdb312b37a', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'Inventory', '38b834b8-420e-481c-9bca-7c6c3cab8c1a', 'PB-210126-00002', 'Purchase Booking', '2026-01-21 00:00:00', 'Supplier Goods', 'Products', 0.000000, 7300.000000, 'admin-id', '2026-01-21 08:46:21', 'admin-id', '2026-01-21 09:49:12', 1),
-('bd657509-ee86-412a-b9ef-e3d346f4bbe5', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', 'f8fe3d6f-62e3-4fe4-b6fa-f65f81f570b6', 'PB-220126-00001', 'Purchase Booking', '2026-01-22 00:00:00', 'Supplier Goods', 'Products', 0.000000, 260.000000, 'admin-id', '2026-01-22 05:44:54', 'admin-id', '2026-01-22 05:44:54', 1),
-('de967618-a6a7-4edc-b774-eeab027ceb98', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', 'b499f573-347a-46dd-8562-f0fd76c585de', 'PB-210126-00001', 'Purchase Booking', '2026-01-21 00:00:00', 'Supplier Goods', 'Products', 0.000000, 27160.000000, 'admin-id', '2026-01-21 08:37:32', 'admin-id', '2026-01-21 08:43:27', 1);
+('231dc955-bbf7-4eb0-b728-b6edae667926', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', '8e8b248f-8675-4829-b04b-ce3332da77dc', 'PB-250126-00001', 'Purchase Booking', '2026-01-25 00:00:00', 'Supplier Goods', 'Products', 0.000000, 9271.500000, 'admin-id', '2026-01-25 11:56:57', 'admin-id', '2026-01-25 11:56:57', 1),
+('3c66151a-92d6-49bf-8fe4-527bc78cffc6', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Cash', '8e8b248f-8675-4829-b04b-ce3332da77dc', 'PB-250126-00001', 'Purchase Booking', '2026-01-25 00:00:00', '', 'Payment', 1500.000000, 0.000000, 'admin-id', '2026-01-25 11:56:57', 'admin-id', '2026-01-25 11:56:57', 1),
+('42e0bc9e-a89d-4cf1-89bf-bcd8316f1646', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', '565905e9-8274-4dc5-b1c6-61f11e856100', 'PB-250126-00002', 'Purchase Booking', '2026-01-25 00:00:00', 'Supplier Goods', 'Products', 0.000000, 260.000000, 'admin-id', '2026-01-25 12:08:59', 'admin-id', '2026-01-25 12:08:59', 1),
+('bb27178e-ec15-4c03-a1f0-f0385c2c08c8', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Payment', '045a4c5a-76e5-4750-9797-70251f960390', 'PR-250126-00001', 'Purchase Receipt', '2026-01-25 00:00:00', 'Supplier Payment', 'Payment', 8875.000000, 0.000000, 'admin-id', '2026-01-25 11:46:14', 'admin-id', '2026-01-25 11:46:14', 1),
+('d8c470fc-e22e-4769-99e9-ded79378e79c', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', '045a4c5a-76e5-4750-9797-70251f960390', 'PR-250126-00001', 'Purchase Receipt', '2026-01-25 00:00:00', 'Supplier Goods', 'Products', 0.000000, 8875.000000, 'admin-id', '2026-01-25 11:46:14', 'admin-id', '2026-01-25 11:46:14', 1);
 
 -- --------------------------------------------------------
 
@@ -1060,9 +1168,27 @@ ALTER TABLE `tmcb_cntct`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `tmcb_dzone`
+--
+ALTER TABLE `tmcb_dzone`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `tmcb_rutes`
 --
 ALTER TABLE `tmcb_rutes`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmcb_tarea`
+--
+ALTER TABLE `tmcb_tarea`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmib_attrb`
+--
+ALTER TABLE `tmib_attrb`
   ADD PRIMARY KEY (`id`);
 
 --

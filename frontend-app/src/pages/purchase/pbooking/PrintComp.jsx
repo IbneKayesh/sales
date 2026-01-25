@@ -3,6 +3,7 @@ import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import "./PrintComp.css";
 import { useAuth } from "@/hooks/useAuth";
+import { parseAttributes } from "@/utils/jsonParser";
 
 const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
   const { user, business } = useAuth();
@@ -39,6 +40,7 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
       year: "numeric",
     });
   };
+
   return (
     <>
       <div className="print-container">
@@ -157,11 +159,17 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>
-                    <span style={{ fontWeight: 600 }}>{item.items_iname}</span>
-                    <span className="subtext">{item.items_icode}</span>
+                    <span style={{ fontWeight: 600 }}>{item.items_icode} {item.items_iname}</span>                    
+                    {item.cbkng_attrb && (
+                      <span className="subtext">
+                        {Object.entries(parseAttributes(item.cbkng_attrb))
+                          .map(([key, value]) => `${key}: ${value}`)
+                          .join(", ")}
+                      </span>
+                    )}
                     {item.cbkng_notes && (
                       <span className="subtext italic">
-                        Note: {item.cbkng_notes}
+                        {item.cbkng_notes}
                       </span>
                     )}
                   </td>

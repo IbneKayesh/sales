@@ -1,19 +1,18 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { tareaAPI } from "@/api/crm/tareaAPI";
+import { attributesAPI } from "@/api/inventory/attributesAPI";
 
 
-export const useAreasSgd = () => {
+export const useAttributesSgd = () => {
   const { user } = useAuth();
   const [dataList, setDataList] = useState([]);
 
-  const handleLoadAreas = async (tarea_dzone) => {
+  const handleLoadAttributes = async () => {
     try {
-      const response = await tareaAPI.getByZone({
-        tarea_users: user.users_users,
-        tarea_dzone: tarea_dzone,
+      const response = await attributesAPI.getAll({
+        attrb_users: user.users_users,
       });
-      //console.log("data",response.data);
+      //console.log("data",user.users_bsins);
       setDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
@@ -22,6 +21,6 @@ export const useAreasSgd = () => {
 
   return {
     dataList,
-    handleLoadAreas,
+    handleLoadAttributes,
   }
 };

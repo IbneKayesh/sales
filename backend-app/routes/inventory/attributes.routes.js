@@ -3,13 +3,13 @@ const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
 const { v4: uuidv4 } = require("uuid");
 
-// get by dzone
-router.post("/get-by-dzone", async (req, res) => {
+// get all
+router.post("/", async (req, res) => {
   try {
-    const { tarea_users, tarea_dzone } = req.body;
+    const { attrb_users } = req.body;
 
     // Validate input
-    if (!tarea_users) {
+    if (!attrb_users) {
       return res.json({
         success: false,
         message: "User ID is required",
@@ -18,16 +18,20 @@ router.post("/get-by-dzone", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT ara.*, 0 as edit_stop
-    FROM tmcb_tarea ara
-    WHERE ara.tarea_dzone = ?
-    ORDER BY ara.tarea_tname`;
-    const params = [tarea_dzone];
+    const sql = `SELECT atb.*, 0 as edit_stop
+      FROM tmib_attrb atb
+      WHERE atb.attrb_users = ?
+      ORDER BY atb.attrb_aname`;
+    const params = [attrb_users];
 
-    const rows = await dbGetAll(sql, params, `Get areas for ${tarea_dzone}`);
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get attributes for ${attrb_users}`,
+    );
     res.json({
       success: true,
-      message: "Areas fetched successfully",
+      message: "Attributes fetched successfully",
       data: rows,
     });
   } catch (error) {

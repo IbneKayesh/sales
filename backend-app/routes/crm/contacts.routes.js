@@ -56,10 +56,15 @@ router.post("/create", async (req, res) => {
       cntct_cntps,
       cntct_cntno,
       cntct_email,
+      cntct_tinno,
+      cntct_trade,
       cntct_ofadr,
       cntct_fcadr,
+      cntct_tarea,
+      cntct_dzone,
       cntct_cntry,
       cntct_cntad,
+      cntct_dspct,
       cntct_crlmt,
       user_id,
     } = req.body;
@@ -89,13 +94,14 @@ router.post("/create", async (req, res) => {
     }
 
     //database action
-    const sql = `INSERT INTO tmcb_cntct
-    (id,cntct_users,cntct_bsins,cntct_ctype,cntct_sorce,cntct_cntnm,
-    cntct_cntps,cntct_cntno,cntct_email,cntct_ofadr,cntct_fcadr,cntct_cntry,cntct_cntad,
-    cntct_crlmt,cntct_crusr,cntct_upusr)
-    VALUES (?,?,?,?,?,?,
-    ?,?,?,?,?,?,?,
-    ?,?,?)`;
+    const sql = `INSERT INTO tmcb_cntct(id, cntct_users, cntct_bsins, cntct_ctype, cntct_sorce, cntct_cntnm, cntct_cntps,
+    cntct_cntno, cntct_email, cntct_tinno, cntct_trade, cntct_ofadr, cntct_fcadr,
+    cntct_tarea, cntct_dzone, cntct_cntry,
+    cntct_cntad, cntct_dspct, cntct_crlmt, cntct_crusr, cntct_upusr)
+    VALUES (?, ?, ?, ?, ?, ?, ?,
+    ?, ?, ?, ?, ?, ?,
+    ?, ?, ?,
+    ?, ?, ?, ?, ?)`;
     const params = [
       id,
       cntct_users,
@@ -106,10 +112,15 @@ router.post("/create", async (req, res) => {
       cntct_cntps,
       cntct_cntno,
       cntct_email,
+      cntct_tinno,
+      cntct_trade,
       cntct_ofadr,
       cntct_fcadr,
+      cntct_tarea,
+      cntct_dzone,
       cntct_cntry,
       cntct_cntad,
+      cntct_dspct,
       cntct_crlmt,
       user_id,
       user_id,
@@ -144,10 +155,15 @@ router.post("/update", async (req, res) => {
       cntct_cntps,
       cntct_cntno,
       cntct_email,
+      cntct_tinno,
+      cntct_trade,
       cntct_ofadr,
       cntct_fcadr,
+      cntct_tarea,
+      cntct_dzone,
       cntct_cntry,
       cntct_cntad,
+      cntct_dspct,
       cntct_crlmt,
       user_id,
     } = req.body;
@@ -184,10 +200,15 @@ router.post("/update", async (req, res) => {
     cntct_cntps = ?,
     cntct_cntno = ?,
     cntct_email = ?,
+    cntct_tinno = ?,
+    cntct_trade = ?,
     cntct_ofadr = ?,
     cntct_fcadr = ?,
+    cntct_tarea = ?,
+    cntct_dzone = ?,
     cntct_cntry = ?,
     cntct_cntad = ?,
+    cntct_dspct = ?,
     cntct_crlmt = ?,
     cntct_upusr = ?,
     cntct_rvnmr = cntct_rvnmr + 1
@@ -199,10 +220,15 @@ router.post("/update", async (req, res) => {
       cntct_cntps,
       cntct_cntno,
       cntct_email,
+      cntct_tinno,
+      cntct_trade,
       cntct_ofadr,
       cntct_fcadr,
+      cntct_tarea,
+      cntct_dzone,
       cntct_cntry,
       cntct_cntad,
+      cntct_dspct,
       cntct_crlmt,
       user_id,
       id,
@@ -343,7 +369,6 @@ router.post("/ledger", async (req, res) => {
   }
 });
 
-
 //suppliers
 router.post("/suppliers", async (req, res) => {
   try {
@@ -366,7 +391,11 @@ router.post("/suppliers", async (req, res) => {
     ORDER BY cnt.cntct_cntnm`;
     const params = [cntct_users];
 
-    const rows = await dbGetAll(sql, params, `Get suppliers for ${cntct_users}`);
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get suppliers for ${cntct_users}`,
+    );
     res.json({
       success: true,
       message: "Suppliers fetched successfully",

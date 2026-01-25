@@ -12,12 +12,27 @@ import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 import ZeroRowCell from "@/components/ZeroRowCell";
+import AttributesComp from "./AttributesComp";
 
 const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const { dataList: productList, handleLoadBookingItems } = useProductsSgd();
+  const [showAttributes, setShowAttributes] = useState(false);
+  const [selectedItemAttributes, setSelectedItemAttributes] = useState(null);
+
   useEffect(() => {
     handleLoadBookingItems();
   }, []);
+
+  useEffect(() => {
+    setFormDataItemList((prev) =>
+      prev.map((item) => {
+        if (item.id === selectedItemAttributes.id) {
+          return { ...item, cbkng_attrb: selectedItemAttributes.cbkng_attrb };
+        }
+        return item;
+      }),
+    );
+  }, [selectedItemAttributes]);
 
   const [availableItemList, setAvailableItemList] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -184,6 +199,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       cbkng_csrat: costPrice,
       cbkng_ntamt: totalAmount,
       cbkng_notes: selectedNote,
+      cbkng_attrb: {},
       cbkng_cnqty: 0,
       cbkng_rcqty: 0,
       cbkng_pnqty: selectedQty || 1,
@@ -201,8 +217,30 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     setSelectedQty(1);
   };
 
+  const parseCbkngAttrb = (attrbString) => {
+    try {
+      return attrbString ? JSON.parse(attrbString) : {};
+    } catch (e) {
+      console.warn("Failed to parse cbkng_attrb:", e);
+      return {};
+    }
+  };
+
   const items_iname_BT = (rowData) => {
-    return `${rowData.items_icode} - ${rowData.items_iname}`;
+    const parsedAttr = parseCbkngAttrb(rowData.cbkng_attrb);
+
+    return (
+      <div className="flex flex-column">
+        <span className="text-md">{`${rowData.items_icode} - ${rowData.items_iname}`}</span>
+        {Object.keys(parsedAttr).length > 0 && (
+          <span className="text-gray-500 text-sm">
+            {Object.entries(parsedAttr)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join(", ")}
+          </span>
+        )}
+      </div>
+    );
   };
 
   const items_iname_FT = () => {
@@ -357,12 +395,24 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     />
   );
 
+  const handleAddAttributes = (rowData) => {
+    setShowAttributes(true);
+    setSelectedItemAttributes(rowData);
+    //console.log(rowData);
+  };
+
   const action_BT = (rowData) => {
     return (
-      <span
-        className="pi pi-trash text-red-600 text-bold px-2 hover:text-red-500 cursor-pointer"
-        onClick={() => handleDelete(rowData)}
-      ></span>
+      <span className="flex">
+        <span
+          className="pi pi-plus-circle text-green-600 text-bold px-2 hover:text-green-500 cursor-pointer"
+          onClick={() => handleAddAttributes(rowData)}
+        ></span>
+        <span
+          className="pi pi-trash text-red-600 text-bold px-2 hover:text-red-500 cursor-pointer"
+          onClick={() => handleDelete(rowData)}
+        ></span>
+      </span>
     );
   };
 
@@ -438,7 +488,6 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   return (
     <div className="mt-4">
       <ConfirmDialog />
-
       {!formData.edit_stop && (
         <div className="grid border-round-md shadow-1 p-2 mb-3 bg-gray-100">
           <div className="col-12 md:col-5">
@@ -498,7 +547,6 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           </div>
         </div>
       )}
-
       <DataTable
         value={formDataItemList}
         editMode={formData.edit_stop ? null : "row"}
@@ -598,6 +646,15 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           <Column header="#" body={action_BT} style={{ width: "20px" }} />
         )}
       </DataTable>
+
+      {showAttributes && (
+        <AttributesComp
+          visible={showAttributes}
+          setVisible={setShowAttributes}
+          formData={selectedItemAttributes}
+          setFormData={setSelectedItemAttributes}
+        />
+      )}
     </div>
   );
 };

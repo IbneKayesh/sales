@@ -17,6 +17,7 @@ CREATE TABLE `tmpb_cbkng` (
   `cbkng_csrat` decimal(20,6) NOT NULL DEFAULT 0,
   `cbkng_ntamt` decimal(20,6) NOT NULL DEFAULT 0,
   `cbkng_notes` VARCHAR(50) DEFAULT NULL,
+  `cbkng_attrb` VARCHAR(300) DEFAULT NULL,
   `cbkng_cnqty` decimal(20,6) NOT NULL DEFAULT 0,
   `cbkng_rcqty` decimal(20,6) NOT NULL DEFAULT 0,
   `cbkng_pnqty` decimal(20,6) NOT NULL DEFAULT 0,

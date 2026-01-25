@@ -27,6 +27,7 @@ const closingRoutes = require("./routes/setup/closing.routes.js");
 const unitsRoutes = require("./routes/inventory/units.routes.js");
 const categoriesRoutes = require("./routes/inventory/categories.routes.js");
 const productsRoutes = require("./routes/inventory/products.routes.js");
+const attributesRoutes = require("./routes/inventory/attributes.routes.js");
 //support
 const grainsRoutes = require("./routes/support/grains.routes.js");
 const notesRoutes = require("./routes/support/notes.routes.js");
@@ -94,6 +95,7 @@ app.use("/api/setup/closing", closingRoutes);
 app.use("/api/inventory/units", unitsRoutes);
 app.use("/api/inventory/categories", categoriesRoutes);
 app.use("/api/inventory/products", productsRoutes);
+app.use("/api/inventory/attributes", attributesRoutes);
 //support
 app.use("/api/support/grains", grainsRoutes);
 app.use("/api/support/notes", notesRoutes);

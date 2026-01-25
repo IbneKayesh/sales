@@ -192,7 +192,7 @@ export const usePbooking = () => {
         return;
       }
 
-      //0 :: Unpaid, 1 :: Paid, 2 :: Partial  
+      //0 :: Unpaid, 1 :: Paid, 2 :: Partial
       const paidStatus =
         Number(formData.mbkng_pdamt) === 0
           ? "0"
@@ -200,12 +200,30 @@ export const usePbooking = () => {
             ? "1"
             : "2";
 
+            
       // console.log(
       //   "paidStatus:",
       //   paidStatus
       // );
-
       // return;
+
+      const formDataItemListNew = formDataItemList.map((item) => {
+        let attrb = item.cbkng_attrb || {}; // if empty, default to empty object
+        // If it's an object, filter out empty values and stringify it.
+        if (typeof attrb === "object") {
+          const filteredAttrb = Object.fromEntries(
+            Object.entries(attrb).filter(
+              ([_, value]) =>
+                value !== "" && value !== null && value !== undefined,
+            ),
+          );
+          attrb = JSON.stringify(filteredAttrb);
+        }
+        return {
+          ...item,
+          cbkng_attrb: attrb,
+        };
+      });
 
       // Ensure id exists (for create)
       const formDataNew = {
@@ -216,7 +234,7 @@ export const usePbooking = () => {
         mbkng_trdat: formatDateForAPI(formData.mbkng_trdat),
         mbkng_ispad: paidStatus,
         user_id: user.id,
-        tmpb_cbkng: formDataItemList,
+        tmpb_cbkng: formDataItemListNew,
         tmpb_expns: formDataExpensesList,
         tmtb_paybl: formDataPaymentList,
       };

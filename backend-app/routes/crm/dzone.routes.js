@@ -6,13 +6,13 @@ const { v4: uuidv4 } = require("uuid");
 // get by country
 router.post("/get-by-country", async (req, res) => {
   try {
-    const { cntct_users, dzone_cntry } = req.body;
+    const { dzone_users, dzone_cntry } = req.body;
 
     // Validate input
-    if (!cntct_users) {
+    if (!dzone_users || !dzone_cntry) {
       return res.json({
         success: false,
-        message: "User ID is required",
+        message: "User ID and Country ID are required",
         data: null,
       });
     }

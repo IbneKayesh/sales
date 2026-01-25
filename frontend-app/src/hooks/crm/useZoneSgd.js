@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { tareaAPI } from "@/api/crm/tareaAPI";
+import { dzoneAPI } from "@/api/crm/dzoneAPI";
 
 
 export const useZoneSgd = () => {
@@ -9,8 +9,8 @@ export const useZoneSgd = () => {
 
   const handleLoadZones = async (dzone_cntry) => {
     try {
-      const response = await tareaAPI.getByZone({
-        cntct_users: user.users_users,
+      const response = await dzoneAPI.getByCountry({
+        dzone_users: user.users_users,
         dzone_cntry: dzone_cntry,
       });
       //console.log("data",response.data);

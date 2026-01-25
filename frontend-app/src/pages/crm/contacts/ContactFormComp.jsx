@@ -4,6 +4,7 @@ import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import tmcb_cntcs from "@/models/crm/tmcb_cntcs.json";
 import { useZoneSgd } from "@/hooks/crm/useZoneSgd";
+import { useAreasSgd } from "@/hooks/crm/useAreasSgd";
 import { useEffect } from "react";
 
 const ContactFormComp = ({
@@ -17,12 +18,17 @@ const ContactFormComp = ({
   cntct_cntryOptions,
 }) => {
   const { dataList: dzoneOptions, handleLoadZones } = useZoneSgd();
+  const { dataList: tareaOptions, handleLoadAreas } = useAreasSgd();
 
   useEffect(() => {
-    if(formData.cntct_cntry){
+    if (formData.cntct_cntry) {
       handleLoadZones(formData.cntct_cntry);
     }
-  }, [formData.cntct_cntry]);
+
+    if (formData.cntct_dzone) {
+      handleLoadAreas(formData.cntct_dzone);
+    }
+  }, [formData.cntct_cntry, formData.cntct_dzone]);
   return (
     <div className="grid">
       <div className="col-12 md:col-2">
@@ -245,6 +251,8 @@ const ContactFormComp = ({
           onChange={(e) => onChange("cntct_dzone", e.value)}
           className={`w-full ${errors.cntct_dzone ? "p-invalid" : ""}`}
           placeholder={`Select ${tmcb_cntcs.cntct_dzone.label}`}
+          optionLabel="dzone_dname"
+          optionValue="id"
         />
         {errors.cntct_dzone && (
           <small className="mb-3 text-red-500">{errors.cntct_dzone}</small>
@@ -260,10 +268,12 @@ const ContactFormComp = ({
         <Dropdown
           name="cntct_tarea"
           value={formData.cntct_tarea}
-          options={cntct_cntryOptions}
+          options={tareaOptions}
           onChange={(e) => onChange("cntct_tarea", e.value)}
           className={`w-full ${errors.cntct_tarea ? "p-invalid" : ""}`}
           placeholder={`Select ${tmcb_cntcs.cntct_tarea.label}`}
+          optionLabel="tarea_tname"
+          optionValue="id"
         />
         {errors.cntct_tarea && (
           <small className="mb-3 text-red-500">{errors.cntct_tarea}</small>

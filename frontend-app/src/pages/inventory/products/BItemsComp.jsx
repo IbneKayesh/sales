@@ -184,67 +184,67 @@ const BItemsComp = ({
 
   const bitem_lprat_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_lprat} text={rowData.bitem_lprat} />
+      <ZeroRowCell value={rowData.bitem_lprat} text={Number(rowData.bitem_lprat).toFixed(2)} />
     );
   };
 
   const bitem_dprat_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_dprat} text={rowData.bitem_dprat} />
+      <ZeroRowCell value={rowData.bitem_dprat} text={Number(rowData.bitem_dprat).toFixed(2)} />
     );
   };
 
   const bitem_mcmrp_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_mcmrp} text={rowData.bitem_mcmrp} />
+      <ZeroRowCell value={rowData.bitem_mcmrp} text={Number(rowData.bitem_mcmrp).toFixed(2)} />
     );
   };
 
   const bitem_sddsp_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_sddsp} text={rowData.bitem_sddsp} />
+      <ZeroRowCell value={rowData.bitem_sddsp} text={Number(rowData.bitem_sddsp).toFixed(2)} />
     );
   };
 
   const bitem_gstkq_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_gstkq} text={rowData.bitem_gstkq} />
+      <ZeroRowCell value={rowData.bitem_gstkq} text={Number(rowData.bitem_gstkq).toFixed(2)} />
     );
   };
 
   const bitem_bstkq_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_bstkq} text={rowData.bitem_bstkq} />
+      <ZeroRowCell value={rowData.bitem_bstkq} text={Number(rowData.bitem_bstkq).toFixed(2)} />
     );
   };
 
   const bitem_mnqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_mnqty} text={rowData.bitem_mnqty} />
+      <ZeroRowCell value={rowData.bitem_mnqty} text={Number(rowData.bitem_mnqty).toFixed(2)} />
     );
   };
 
   const bitem_mxqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_mxqty} text={rowData.bitem_mxqty} />
+      <ZeroRowCell value={rowData.bitem_mxqty} text={Number(rowData.bitem_mxqty).toFixed(2)} />
     );
   };
 
   const bitem_pbqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_pbqty} text={rowData.bitem_pbqty} />
+      <ZeroRowCell value={rowData.bitem_pbqty} text={Number(rowData.bitem_pbqty).toFixed(2)} />
     );
   };
 
   const bitem_sbqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_sbqty} text={rowData.bitem_sbqty} />
+      <ZeroRowCell value={rowData.bitem_sbqty} text={Number(rowData.bitem_sbqty).toFixed(2)} />
     );
   };
 
   const bitem_mpric_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_mpric} text={rowData.bitem_mpric} />
+      <ZeroRowCell value={rowData.bitem_mpric} text={Number(rowData.bitem_mpric).toFixed(2)} />
     );
   };
 

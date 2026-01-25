@@ -202,9 +202,9 @@ const ContactListComp = ({
           />
         </span>
         <span className="text-sm text-blue-500">{rowData.cntct_fcadr}</span>
-        <span className="text-sm text-gray-500">{rowData.tarea_tname}</span>
-        <span className="text-sm text-gray-500">{rowData.dzone_dname}</span>
-        <span className="text-sm text-gray-500">{rowData.cntct_cntry}</span>
+        <span className="text-sm text-gray-500">
+          {rowData.tarea_tname}, {rowData.dzone_dname}, {rowData.cntct_cntry}
+        </span>
       </div>
     );
   };
@@ -219,7 +219,7 @@ const ContactListComp = ({
           {Number(cntct_dspct).toFixed(2)}
         </span>
         •
-        <span className="text-green-500 font-bold">
+        <span className="text-purple-500 font-bold">
           {Number(cntct_crlmt).toFixed(2)}
         </span>
         •
@@ -231,7 +231,7 @@ const ContactListComp = ({
           {Number(cntct_adbln || 0).toFixed(2)}
         </span>
         •
-        <span className="text-purple-500 font-bold">
+        <span className="text-gray-500 font-bold">
           {Number(cntct_crbln || 0).toFixed(2)}
         </span>
       </div>
