@@ -44,6 +44,9 @@ import NotesPage from "./pages/support/notes/NotesPage";
 import TicketsPage from "./pages/support/tickets/TicketsPage";
 import SessionsPage from "./pages/support/SessionsPage.jsx";
 
+//setup
+import DatabasePage from "./pages/setup/database/DatabasePage";
+
 // mobile imports
 import MobileLayout from "./mobile/layout";
 import MobileHome from "./mobile/home";
@@ -128,6 +131,8 @@ function AppRoutes() {
             <Route path="support/notes" element={<NotesPage />} />
             <Route path="support/tickets" element={<TicketsPage />} />
             <Route path="support/sessions" element={<SessionsPage />} />
+            //setup
+            <Route path="setup/database" element={<DatabasePage />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

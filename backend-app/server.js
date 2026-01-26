@@ -23,6 +23,7 @@ const accountsLedgerRoutes = require("./routes/accounts/accountsLedger.routes.js
 const payablesRoutes = require("./routes/accounts/payables.routes.js");
 //setup
 const closingRoutes = require("./routes/setup/closing.routes.js");
+const databaseRoutes = require("./routes/setup/database.routes.js");
 //inventory
 const unitsRoutes = require("./routes/inventory/units.routes.js");
 const categoriesRoutes = require("./routes/inventory/categories.routes.js");
@@ -91,6 +92,7 @@ app.use("/api/accounts/accounts-ledgers", accountsLedgerRoutes);
 app.use("/api/accounts/payables", payablesRoutes);
 //setup
 app.use("/api/setup/closing", closingRoutes);
+app.use("/api/setup/database", databaseRoutes);
 //inventory
 app.use("/api/inventory/units", unitsRoutes);
 app.use("/api/inventory/categories", categoriesRoutes);

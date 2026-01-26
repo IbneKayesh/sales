@@ -178,9 +178,9 @@ const Layout = () => {
         },
         {
           id: "st5",
-          name: "Backup",
-          url: "/home/setup/backup",
-          icon: "pi pi-save",
+          name: "Database",
+          url: "/home/setup/database",
+          icon: "pi pi-database",
         },
         {
           id: "st6",
