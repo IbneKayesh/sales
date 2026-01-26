@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { Menu } from "primereact/menu";
 import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
@@ -13,6 +14,7 @@ import ActiveRowCell from "@/components/ActiveRowCell";
 import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 import ZeroRowCell from "@/components/ZeroRowCell";
 import AttributesComp from "./AttributesComp";
+import { parseAttributes } from "@/utils/jsonParser";
 
 const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const { dataList: productList, handleLoadBookingItems } = useProductsSgd();
@@ -41,6 +43,26 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const [selectedItemAddBtn, setSelectedItemAddBtn] = useState(true);
   const [editingRows, setEditingRows] = useState([]);
   const [showExtraColumns, setShowExtraColumns] = useState(false);
+  const [activeRow, setActiveRow] = useState(null);
+  const menu = useRef(null);
+
+  const actionMenuItems = [
+    {
+      label: "Add Attributes",
+      icon: "pi pi-plus-circle text-green-600",
+      command: () => activeRow && handleAddAttributes(activeRow),
+    },
+    {
+      label: "Copy Row",
+      icon: "pi pi-copy text-blue-600",
+      command: () => activeRow && handleCopyRowConfirm(activeRow),
+    },
+    {
+      label: "Delete Item",
+      icon: "pi pi-trash text-red-600",
+      command: () => activeRow && handleDelete(activeRow),
+    },
+  ];
 
   useEffect(() => {
     if (selectedItem) {
@@ -227,10 +249,11 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   };
 
   const items_iname_BT = (rowData) => {
-    const parsedAttr = parseCbkngAttrb(rowData.cbkng_attrb);
+    const parsedAttr = parseAttributes(rowData.cbkng_attrb);
 
     return (
       <div className="flex flex-column">
+        {/* {JSON.stringify(rowData.cbkng_attrb)} */}
         <span className="text-md">{`${rowData.items_icode} - ${rowData.items_iname}`}</span>
         {Object.keys(parsedAttr).length > 0 && (
           <span className="text-gray-500 text-sm">
@@ -401,18 +424,30 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     //console.log(rowData);
   };
 
+  const handleCopyRowConfirm = (rowData) => {
+    confirmDialog({
+      message: `Are you sure you want to copy item "${rowData.items_iname}"?`,
+      header: "Copy",
+      icon: "pi pi-exclamation-triangle",
+      accept: () => {
+        const newRowData = { ...rowData, id: generateGuid() };
+        setFormDataItemList((prev) => [...prev, newRowData]);
+      },
+      reject: () => {},
+    });
+  };
+
   const action_BT = (rowData) => {
     return (
-      <span className="flex">
+      <div className="flex justify-content-center">
         <span
-          className="pi pi-plus-circle text-green-600 text-bold px-2 hover:text-green-500 cursor-pointer"
-          onClick={() => handleAddAttributes(rowData)}
+          className="pi pi-ellipsis-v text-gray-600 hover:text-gray-900 cursor-pointer p-2"
+          onClick={(e) => {
+            setActiveRow(rowData);
+            menu.current.toggle(e);
+          }}
         ></span>
-        <span
-          className="pi pi-trash text-red-600 text-bold px-2 hover:text-red-500 cursor-pointer"
-          onClick={() => handleDelete(rowData)}
-        ></span>
-      </span>
+      </div>
     );
   };
 
@@ -488,6 +523,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   return (
     <div className="mt-4">
       <ConfirmDialog />
+      <Menu model={actionMenuItems} popup ref={menu} id="popup_menu" />
       {!formData.edit_stop && (
         <div className="grid border-round-md shadow-1 p-2 mb-3 bg-gray-100">
           <div className="col-12 md:col-5">

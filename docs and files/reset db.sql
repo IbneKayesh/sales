@@ -22,6 +22,9 @@ drop table tmpb_mrcpt;
 drop table tmtb_paybl;
 drop table tmpb_mbkng;
 
+drop table tmcb_dzone;
+drop table tmcb_rutes;
+drop table tmcb_tarea;
 
 
 -- purchase

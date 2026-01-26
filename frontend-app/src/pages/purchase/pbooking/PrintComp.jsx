@@ -108,7 +108,7 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
               <div
                 style={{
                   fontSize: "15px",
-                  fontWeight: 700,
+                  fontWeight: 600,
                   marginBottom: "5px",
                 }}
               >
@@ -116,7 +116,7 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
               </div>
               <div className="info-row">
                 <span className="label">Contact:</span>
-                <span>{formData?.cntct_cntno}</span>
+                <span>{formData?.cntct_cntno}, {formData?.cntct_cntps}</span>
               </div>
               <div className="info-row">
                 <span className="label">Address:</span>
@@ -205,7 +205,7 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
             <h3
               style={{
                 fontSize: "12px",
-                fontWeight: 700,
+                fontWeight: 600,
                 textTransform: "uppercase",
                 color: "#4a5568",
                 marginBottom: "1rem",
@@ -229,7 +229,7 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div style={{ fontWeight: 700 }}>
+                    <div style={{ fontWeight: 600 }}>
                       {p.paybl_dbamt > 0
                         ? formatCurrency(p.paybl_dbamt)
                         : formatCurrency(p.paybl_cramt)}
@@ -269,7 +269,7 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
                   style={{
                     display: "block",
                     fontSize: "10px",
-                    fontWeight: 700,
+                    fontWeight: 600,
                     color: "#4a5568",
                     textTransform: "uppercase",
                     marginBottom: "4px",
@@ -326,7 +326,7 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
               style={{ marginTop: "10px", fontSize: "13px" }}
             >
               <span>Total Paid:</span>
-              <span style={{ color: "#38a169", fontWeight: 700 }}>
+              <span style={{ color: "#38a169", fontWeight: 600 }}>
                 {formatCurrency(formData?.mbkng_pdamt)}
               </span>
             </div>
