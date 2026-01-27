@@ -327,33 +327,28 @@ router.post("/get-by-type", async (req, res) => {
 // get all
 router.post("/ledger", async (req, res) => {
   try {
-    const { id, ledgr_users } = req.body;
+    const { paybl_users, paybl_bsins, paybl_cntct } = req.body;
     //console.log("req.body ", req.body);
 
     // Validate input
-    if (!id || !ledgr_users) {
+    if (!paybl_users || !paybl_bsins || !paybl_cntct) {
       return res.json({
         success: false,
-        message: "Contact ID is required",
+        message: "User, Business, Contact are required",
         data: null,
       });
     }
 
     //database action
-    const sql = `SELECT dgr.*,bsns.bsins_bname, thed.trhed_hednm,
-    cntc.cntct_cntnm, acts.bacts_bankn,
-     0 as edit_stop
-      FROM tmtb_ledgr dgr
-      LEFT JOIN tmab_bsins bsns ON dgr.ledgr_bsins = bsns.id
-      LEFT JOIN tmtb_trhed thed ON dgr.ledgr_trhed = thed.id
-      LEFT JOIN tmcb_cntct cntc ON dgr.ledgr_cntct = cntc.id
-      LEFT JOIN tmtb_bacts acts ON dgr.ledgr_bacts = acts.id
-      WHERE dgr.ledgr_cntct = ?
-      AND dgr.ledgr_users = ?
-      ORDER BY dgr.ledgr_crdat DESC`;
-    const params = [id, ledgr_users];
+    const sql = `SELECT paybl_pymod, paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt, paybl_cramt
+          FROM tmtb_paybl
+          WHERE paybl_users = ?
+          AND paybl_bsins = ?
+          AND paybl_cntct = ?
+          ORDER BY paybl_refno DESC, paybl_trdat DESC`;
+    const params = [paybl_users, paybl_bsins, paybl_cntct];
 
-    const rows = await dbGetAll(sql, params, `Get ledgers for ${id}`);
+    const rows = await dbGetAll(sql, params, `Get ledgers for ${paybl_cntct}`);
     res.json({
       success: true,
       message: "Ledgers fetched successfully",

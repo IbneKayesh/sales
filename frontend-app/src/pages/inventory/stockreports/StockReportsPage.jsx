@@ -1,21 +1,26 @@
-import { useStockReports } from "@/hooks/inventory/useStockReports";
-import PBookingListComp from "./PBookingListComp";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
+import { ToggleButton } from "primereact/togglebutton";
+
+import { useStockReports } from "@/hooks/inventory/useStockReports";
+import PBookingListComp from "./PBookingListComp";
+import PReceiptListComp from "./PReceiptListComp";
 
 const StockReportsPage = () => {
-  const { dataList, isBusy, handleLoadPurchaseBooking } = useStockReports();
+  const { dataList, isBusy, handleLoadReports } = useStockReports();
 
   const [reportFilter, setReportFilter] = useState("");
+  const [isSummary, setIsSummary] = useState(false);
   useEffect(() => {
-    if (reportFilter === "pbooking") {
-      handleLoadPurchaseBooking();
-    }
+    handleLoadReports(reportFilter);
   }, [reportFilter]);
+
   const reportFilterOptions = [
     { label: "Purchase Booking", value: "pbooking" },
+    { label: "Purchase Receipt", value: "preceipt" },
+    { label: "Purchase Invoice", value: "pinvoice" },
   ];
 
   const handleReportFilterChange = (e) => {
@@ -25,7 +30,12 @@ const StockReportsPage = () => {
   const getHeader = () => {
     return (
       <div className="flex align-items-center justify-content-between">
-        <h3 className="m-0">Inventory Reports</h3>
+        <h3 className="m-0">
+          {reportFilter
+            ? reportFilterOptions.find((opt) => opt.value === reportFilter)
+                ?.label
+            : "Inventory Reports"}
+        </h3>
         <div className="flex gap-2">
           <Dropdown
             value={reportFilter}
@@ -35,12 +45,19 @@ const StockReportsPage = () => {
             className="p-inputtext-sm w-full md:w-18rem"
             checkmark={true}
           />
-
+          <ToggleButton
+            onLabel="Summary"
+            offLabel="Details"
+            onIcon="pi pi-folder"
+            offIcon="pi pi-folder-open"
+            checked={isSummary}
+            onChange={(e) => setIsSummary(e.value)}
+          />
           <Button
             icon="pi pi-refresh"
             size="small"
             severity="secondary"
-            onClick={handleLoadPurchaseBooking}
+            onClick={() => handleLoadReports(reportFilter)}
             tooltip="Refresh Data"
             disabled={isBusy}
           />
@@ -51,7 +68,25 @@ const StockReportsPage = () => {
 
   return (
     <Card header={getHeader()} className="border-round p-3">
-      <PBookingListComp dataList={dataList} isBusy={isBusy} />
+      {reportFilter === "pbooking" && (
+        <PBookingListComp
+          dataList={dataList}
+          isBusy={isBusy}
+          isSummary={isSummary}
+        />
+      )}
+      {reportFilter === "preceipt" && (
+        <PReceiptListComp
+          dataList={dataList}
+          isBusy={isBusy}
+          isSummary={isSummary}
+        />
+      )}
+      {reportFilter === "" && (
+        <div className="flex align-items-center justify-content-center bg-gray-200 border-round p-5">
+          <p className="text-gray-600">Select a filter to view data</p>
+        </div>
+      )}
     </Card>
   );
 };

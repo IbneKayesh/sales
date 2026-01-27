@@ -652,7 +652,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
         />
         <Column
           field="cbkng_rcqty"
-          header="Invoice"
+          header="Receipt"
           headerStyle={{ backgroundColor: "#49769bff" }}
           body={cbkng_rcqty_BT}
           hidden={!showExtraColumns}

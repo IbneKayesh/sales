@@ -10,7 +10,7 @@ const AttributesComp = ({ visible, setVisible, formData, setFormData }) => {
   const [attributes, setAttributes] = useState({});
   const { dataList: attributesList, handleLoadAttributes } = useAttributesSgd();
   useEffect(() => {
-    let initialAttributes = formData.cbkng_attrb || {};
+    let initialAttributes = formData.cinvc_attrb || {};
     if (typeof initialAttributes === "string") {
       try {
         initialAttributes = JSON.parse(initialAttributes);
@@ -24,7 +24,7 @@ const AttributesComp = ({ visible, setVisible, formData, setFormData }) => {
   }, []);
 
   useEffect(() => {
-    setFormData({ ...formData, cbkng_attrb: attributes });
+    setFormData({ ...formData, cinvc_attrb: attributes });
   }, [attributes]);
 
   return (

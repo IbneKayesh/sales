@@ -245,12 +245,12 @@ export const usePinvoice = () => {
       );
 
       //call update process
-      //await closingProcessAPI("purchase-Invoice", user.users_bsins);
+      await closingProcessAPI("purchase-invoice", user.users_bsins);
 
       // Clear form & reload
-      //handleClear();
-      //setCurrentView("list");
-      //await loadInvoice(); // make sure we wait for updated data
+      handleClear();
+      setCurrentView("list");
+      await loadInvoice(); // make sure we wait for updated data
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");

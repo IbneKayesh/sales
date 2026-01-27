@@ -7,4 +7,9 @@ export const stockreportsAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  purchaseReceipt: (data) =>
+    apiRequest("/inventory/stockreports/purchase-receipt", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

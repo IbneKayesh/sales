@@ -21,12 +21,36 @@ export const useStockReports = () => {
     }
   };
 
+  const handleLoadPurchaseReceipt = async () => {
+    try {
+      setIsBusy(true);
+      const response = await stockreportsAPI.purchaseReceipt({
+        mrcpt_bsins: user.users_bsins,
+      });
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   useEffect(() => {
   }, []);
+
+  const handleLoadReports = (reportFilter) => {
+    setDataList([]);
+    if (reportFilter === "pbooking") {
+      handleLoadPurchaseBooking();
+    }
+    if (reportFilter === "preceipt") {
+      handleLoadPurchaseReceipt();
+    }
+  };
 
   return {
     dataList,
     isBusy,
-    handleLoadPurchaseBooking,
+    handleLoadReports,
   };
 };

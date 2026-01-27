@@ -5,12 +5,11 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import { formatDate } from "@/utils/datetime";
 import ActiveRowCell from "@/components/ActiveRowCell";
-import ZeroRowCell from "@/components/ZeroRowCell";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { SelectButton } from "primereact/selectbutton";
+import LedgerListComp from "./LedgerListComp";
 
 const ContactListComp = ({
   dataList,
@@ -244,63 +243,6 @@ const ContactListComp = ({
     onShowContactLedger(rowData);
   };
 
-  const account_balance = () => {
-    //total debit - total credit;
-    const total_debit = ledgerDataList.reduce(
-      (total, row) => total + Number(row.ledgr_dbamt),
-      0,
-    );
-    const total_credit = ledgerDataList.reduce(
-      (total, row) => total + Number(row.ledgr_cramt),
-      0,
-    );
-    const balance = total_credit - total_debit;
-    return balance > 0 ? (
-      <span className="text-green-500">{balance}</span>
-    ) : (
-      <span className="text-red-500">{balance}</span>
-    );
-  };
-
-  const ledgr_trdat_BT = (rowData) => {
-    return <>{formatDate(rowData.ledgr_trdat)}</>;
-  };
-
-  const ledgr_refno_BT = (rowData) => {
-    return (
-      <>
-        {rowData.ledgr_refno}
-        {rowData.ledgr_notes ? "," + rowData.ledgr_notes : ""}
-      </>
-    );
-  };
-
-  const ledgr_dbamt_BT = (rowData) => {
-    return (
-      <ZeroRowCell value={rowData.ledgr_dbamt} text={rowData.ledgr_dbamt} />
-    );
-  };
-
-  const ledgr_cramt_BT = (rowData) => {
-    return (
-      <ZeroRowCell value={rowData.ledgr_cramt} text={rowData.ledgr_cramt} />
-    );
-  };
-
-  const ledgr_dbamt_FT = () => {
-    return ledgerDataList.reduce(
-      (total, row) => total + Number(row.ledgr_dbamt),
-      0,
-    );
-  };
-
-  const ledgr_cramt_FT = () => {
-    return ledgerDataList.reduce(
-      (total, row) => total + Number(row.ledgr_cramt),
-      0,
-    );
-  };
-
   return (
     <div className="p-1">
       <Toast ref={toast} />
@@ -366,49 +308,20 @@ const ContactListComp = ({
       <Dialog
         header={
           <>
-            Accounts Ledger of{" "}
+            Payment Ledger of{" "}
             <span className="text-blue-500">
-              {selectedRowDetail?.cntct_cntnm || "N/A"}{" "}
+              {selectedRowDetail?.cntct_cntnm || "N/A"}
             </span>
-            {account_balance()}
           </>
         }
         visible={dlgLedger}
-        style={{ width: "50vw" }}
+        style={{ minWidth: "50vw" }}
         onHide={() => {
           if (!dlgLedger) return;
           setDlgLedger(false);
         }}
       >
-        <div className="m-0">
-          {/* {JSON.stringify(ledgerDataList)} */}
-          <DataTable
-            value={ledgerDataList}
-            paginator
-            rows={10}
-            rowsPerPageOptions={[5, 10, 25]}
-            emptyMessage="No data found."
-            size="small"
-            rowHover
-            showGridlines
-          >
-            <Column field="ledgr_pymod" header="Mode" />
-            <Column field="ledgr_trdat" header="Date" body={ledgr_trdat_BT} />
-            <Column field="ledgr_refno" header="Ref" body={ledgr_refno_BT} />
-            <Column
-              field="ledgr_dbamt"
-              header="Debit (-)"
-              body={ledgr_dbamt_BT}
-              footer={ledgr_dbamt_FT}
-            />
-            <Column
-              field="ledgr_cramt"
-              header="Credit (+)"
-              body={ledgr_cramt_BT}
-              footer={ledgr_cramt_FT}
-            />
-          </DataTable>
-        </div>
+        <LedgerListComp dataList={ledgerDataList} />
       </Dialog>
     </div>
   );

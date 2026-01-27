@@ -186,8 +186,9 @@ export const useContacts = () => {
   const handleShowContactLedger = async (contact) => {
     try {
       const response = await contactAPI.getContactLedger({
-        id: contact.id,
-        ledgr_users: user.users_users,
+        paybl_users: user.users_users,
+        paybl_bsins: user.users_bsins,
+        paybl_cntct: contact.id,
       });
       // response = { message, data }
       setLedgerDataList(response.data);
