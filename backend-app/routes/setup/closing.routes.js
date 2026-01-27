@@ -108,6 +108,10 @@ router.post("/payable-due", async (req, res) => {
     scripts.push(
       closingSql.purchase.tmpb_mbkng.update_payment_status_by_refId(id),
     );
+    scripts.push(
+      closingSql.purchase.tmpb_minvc.update_payment_status_by_refId(id),
+    );
+    scripts.push(closingSql.purchase.tmpb_minvc.update_payble_dues(id));
 
     await dbRunAll(scripts);
     res.json({

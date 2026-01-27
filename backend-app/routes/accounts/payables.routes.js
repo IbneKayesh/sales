@@ -28,8 +28,21 @@ router.post("/", async (req, res) => {
     AND bkng.mbkng_ispad IN (0,2)
     AND bkng.mbkng_users = ?
     AND bkng.mbkng_bsins = ?
-    ORDER BY bkng.mbkng_cntct, bkng.mbkng_trnno`;
-    const params = [paybl_users, paybl_bsins];
+    UNION ALL
+    SELECT '' AS id, minvc.minvc_users AS paybl_users, minvc.minvc_bsins AS paybl_bsins, minvc.minvc_cntct AS paybl_cntct,
+    'Cash' AS paybl_pymod, minvc.id AS paybl_refid, minvc.minvc_trnno AS paybl_refno, 'Purchase Invoice' AS paybl_srcnm,
+    current_timestamp() AS paybl_trdat, '' AS paybl_descr, 'Payment' AS paybl_notes, minvc.minvc_duamt AS paybl_dbamt, minvc.minvc_pyamt AS paybl_cramt,
+    minvc.minvc_trdat, minvc.minvc_pdamt, minvc.minvc_duamt, tct.cntct_cntnm, tct.cntct_cntps, tct.cntct_cntno, tct.cntct_email, tct.cntct_ofadr
+    FROM tmpb_minvc minvc
+    LEFT JOIN tmcb_cntct tct ON minvc.minvc_cntct = tct.id
+    WHERE minvc.minvc_duamt > 0
+    AND minvc.minvc_ispad IN (0,2)
+    AND minvc.minvc_users = ?
+    AND minvc.minvc_bsins = ?
+    `;
+
+    //ORDER BY bkng.mbkng_cntct, bkng.mbkng_trnno
+    const params = [paybl_users, paybl_bsins, paybl_users, paybl_bsins];
 
     const rows = await dbGetAll(sql, params, `Get payables for ${paybl_users}`);
     res.json({

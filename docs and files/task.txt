@@ -8,3 +8,13 @@ Purchase >> Booking >> Cancel
 
 
 1. Booking, Receipt >> on Edit 0 Qty
+
+
+SELECT cbkg.cbkng_itqty, cbkg.cbkng_cnqty, cbkg.cbkng_rcqty, cbkg.cbkng_pnqty,rcpt.id
+FROM tmpb_cbkng cbkg
+LEFT JOIN tmpb_crcpt rcpt ON cbkg.id = rcpt.crcpt_cbkng
+WHERE cbkg.cbkng_pnqty > 0
+
+SELECT crpt.crcpt_cbkng, crpt.crcpt_itqty, cbkg.id
+FROM tmpb_crcpt crpt
+LEFT JOIN tmpb_cbkng cbkg ON crpt.crcpt_cbkng = cbkg.id

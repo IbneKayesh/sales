@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { Menu } from "primereact/menu";
 import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
@@ -9,15 +10,30 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { useProductsSgd } from "@/hooks/inventory/useProductsSgd";
 import { generateGuid } from "@/utils/guid";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
-import ActiveRowCell from "@/components/ActiveRowCell";
 import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 import ZeroRowCell from "@/components/ZeroRowCell";
+import AttributesComp from "./AttributesComp";
+import { parseAttributes } from "@/utils/jsonParser";
 
 const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const { dataList: productList, handleLoadBookingItems } = useProductsSgd();
+  const [showAttributes, setShowAttributes] = useState(false);
+  const [selectedItemAttributes, setSelectedItemAttributes] = useState(null);
+
   useEffect(() => {
     handleLoadBookingItems();
   }, []);
+
+  useEffect(() => {
+    setFormDataItemList((prev) =>
+      prev.map((item) => {
+        if (item.id === selectedItemAttributes.id) {
+          return { ...item, cinvc_attrb: selectedItemAttributes.cinvc_attrb };
+        }
+        return item;
+      }),
+    );
+  }, [selectedItemAttributes]);
 
   const [availableItemList, setAvailableItemList] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -26,6 +42,26 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const [selectedItemAddBtn, setSelectedItemAddBtn] = useState(true);
   const [editingRows, setEditingRows] = useState([]);
   const [showExtraColumns, setShowExtraColumns] = useState(false);
+  const [activeRow, setActiveRow] = useState(null);
+  const menu = useRef(null);
+
+  const actionMenuItems = [
+    {
+      label: "Add Attributes",
+      icon: "pi pi-plus-circle text-green-600",
+      command: () => activeRow && handleAddAttributes(activeRow),
+    },
+    {
+      label: "Copy Row",
+      icon: "pi pi-copy text-blue-600",
+      command: () => activeRow && handleCopyRowConfirm(activeRow),
+    },
+    {
+      label: "Delete Item",
+      icon: "pi pi-trash text-red-600",
+      command: () => activeRow && handleDelete(activeRow),
+    },
+  ];
 
   useEffect(() => {
     if (selectedItem) {
@@ -51,7 +87,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     const filtered = filteredList.filter(
       (item) =>
         !formDataItemList.some(
-          (orderItem) => orderItem.cbkng_bitem === item.id,
+          (orderItem) => orderItem.cinvc_bitem === item.id,
         ),
     );
 
@@ -64,11 +100,11 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     if (!formDataItemList || formDataItemList.length === 0) return;
 
     const extraCost =
-      Number(formData.mbkng_incst || 0) + Number(formData.mbkng_excst || 0);
+      Number(formData.minvc_incst || 0) + Number(formData.minvc_excst || 0);
 
     // Calculate grand total qty of all items (before extra cost distribution)
     const grandTotalQty = formDataItemList.reduce(
-      (sum, item) => sum + Number(item.cbkng_itqty || 0),
+      (sum, item) => sum + Number(item.cinvc_itqty || 0),
       0,
     );
 
@@ -80,7 +116,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     // Update each item's cost_price with distributed extra cost
     const updatedItems = formDataItemList.map((item) => {
       // Calculate base cost price (without extra cost)
-      const baseCostPrice = Number(item.cbkng_itrat || 0);
+      const baseCostPrice = Number(item.cinvc_itrat || 0);
 
       // Calculate extra cost per unit based on qty-weighted average
       const extraCostPerUnit = avgExtraCostPerQty;
@@ -90,21 +126,21 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
       return {
         ...item,
-        cbkng_csrat: finalCostPrice,
+        cinvc_csrat: finalCostPrice,
       };
     });
 
     // Only update if there's an actual change to avoid infinite loops
     const hasChanged = updatedItems.some(
       (item, index) =>
-        Number(item.cbkng_csrat) !==
-        Number(formDataItemList[index].cbkng_csrat),
+        Number(item.cinvc_csrat) !==
+        Number(formDataItemList[index].cinvc_csrat),
     );
 
     if (hasChanged) {
       setFormDataItemList(updatedItems);
     }
-  }, [formData?.mbkng_incst, formData?.mbkng_excst, formDataItemList.length]);
+  }, [formData?.minvc_incst, formData?.minvc_excst, formDataItemList.length]);
 
   const itemList_IT = (option) => {
     return (
@@ -152,7 +188,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
     // Check if item is already added
     const existingItem = formDataItemList.find(
-      (i) => i.cbkng_bitem === selectedItem,
+      (i) => i.cinvc_bitem === selectedItem,
     );
     if (existingItem) {
       // Item already exists, do not add duplicate
@@ -171,22 +207,23 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
     const newItemRow = {
       id: generateGuid(), // Temporary ID for new items
-      cbkng_mbkng: "",
-      cbkng_bitem: selectedItem,
-      cbkng_items: item.bitem_items,
-      cbkng_itrat: item.bitem_lprat,
-      cbkng_itqty: selectedQty || 1,
-      cbkng_itamt: itemAmount,
-      cbkng_dspct: item.bitem_sddsp,
-      cbkng_dsamt: discountAmount,
-      cbkng_vtpct: item.items_sdvat,
-      cbkng_vtamt: vatAmount,
-      cbkng_csrat: costPrice,
-      cbkng_ntamt: totalAmount,
-      cbkng_notes: selectedNote,
-      cbkng_cnqty: 0,
-      cbkng_rcqty: 0,
-      cbkng_pnqty: selectedQty || 1,
+      cinvc_mbkng: "",
+      cinvc_bitem: selectedItem,
+      cinvc_items: item.bitem_items,
+      cinvc_itrat: item.bitem_lprat,
+      cinvc_itqty: selectedQty || 1,
+      cinvc_itamt: itemAmount,
+      cinvc_dspct: item.bitem_sddsp,
+      cinvc_dsamt: discountAmount,
+      cinvc_vtpct: item.items_sdvat,
+      cinvc_vtamt: vatAmount,
+      cinvc_csrat: costPrice,
+      cinvc_ntamt: totalAmount,
+      cinvc_notes: selectedNote,
+      cinvc_attrb: {},
+      cinvc_cnqty: 0,
+      cinvc_rcqty: 0,
+      cinvc_pnqty: selectedQty || 1,
 
       items_icode: item.items_icode,
       items_iname: item.items_iname,
@@ -201,8 +238,23 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     setSelectedQty(1);
   };
 
+
   const items_iname_BT = (rowData) => {
-    return `${rowData.items_icode} - ${rowData.items_iname}`;
+    const parsedAttr = parseAttributes(rowData.cinvc_attrb);
+
+    return (
+      <div className="flex flex-column">
+        {/* {JSON.stringify(rowData.cinvc_attrb)} */}
+        <span className="text-md">{`${rowData.items_icode} - ${rowData.items_iname}`}</span>
+        {Object.keys(parsedAttr).length > 0 && (
+          <span className="text-gray-500 text-sm">
+            {Object.entries(parsedAttr)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join(", ")}
+          </span>
+        )}
+      </div>
+    );
   };
 
   const items_iname_FT = () => {
@@ -216,9 +268,9 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     );
   };
 
-  const cbkng_itrat_BT = (rowData) => {
-    const formattedPrice = Number(rowData.cbkng_itrat).toFixed(2);
-    const formattedCostPrice = Number(rowData.cbkng_csrat).toFixed(2);
+  const cinvc_itrat_BT = (rowData) => {
+    const formattedPrice = Number(rowData.cinvc_itrat).toFixed(2);
+    const formattedCostPrice = Number(rowData.cinvc_csrat).toFixed(2);
     return (
       <>
         {formattedPrice}{" "}
@@ -227,68 +279,68 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     );
   };
 
-  const cbkng_itqty_BT = (rowData) => {
+  const cinvc_itqty_BT = (rowData) => {
     return (
       <>
-        {Number(rowData.cbkng_itqty).toFixed(2)}{" "}
+        {Number(rowData.cinvc_itqty).toFixed(2)}{" "}
         <span className="text-gray-600">{rowData.puofm_untnm}</span>
       </>
     );
   };
 
-  const cbkng_itqty_FT = () => {
+  const cinvc_itqty_FT = () => {
     return formDataItemList
-      .reduce((sum, item) => sum + Number(item.cbkng_itqty || 0), 0)
+      .reduce((sum, item) => sum + Number(item.cinvc_itqty || 0), 0)
       .toFixed(2);
   };
 
-  const cbkng_dspct_BT = (rowData) => {
-    const formattedDiscount = Number(rowData.cbkng_dsamt).toFixed(2);
-    const formattedDiscountPercent = Number(rowData.cbkng_dspct).toFixed(2);
+  const cinvc_dspct_BT = (rowData) => {
+    const formattedDiscount = Number(rowData.cinvc_dsamt).toFixed(2);
+    const formattedDiscountPercent = Number(rowData.cinvc_dspct).toFixed(2);
     return (
       <ZeroRowCell
-        value={rowData.cbkng_dsamt}
+        value={rowData.cinvc_dsamt}
         text={`${formattedDiscount} (${formattedDiscountPercent}%)`}
       />
     );
   };
 
-  const cbkng_dspct_FT = () => {
+  const cinvc_dspct_FT = () => {
     return formDataItemList
-      .reduce((sum, item) => sum + Number(item.cbkng_dsamt || 0), 0)
+      .reduce((sum, item) => sum + Number(item.cinvc_dsamt || 0), 0)
       .toFixed(2);
   };
 
-  const cbkng_vtpct_BT = (rowData) => {
-    const formattedVat = Number(rowData.cbkng_vtamt).toFixed(2);
-    const formattedVatPercent = Number(rowData.cbkng_vtpct).toFixed(2);
+  const cinvc_vtpct_BT = (rowData) => {
+    const formattedVat = Number(rowData.cinvc_vtamt).toFixed(2);
+    const formattedVatPercent = Number(rowData.cinvc_vtpct).toFixed(2);
     return (
       <ZeroRowCell
-        value={rowData.cbkng_vtamt}
+        value={rowData.cinvc_vtamt}
         text={`${formattedVat} (${formattedVatPercent}%)`}
       />
     );
   };
 
-  const cbkng_vtpct_FT = () => {
+  const cinvc_vtpct_FT = () => {
     return formDataItemList
-      .reduce((sum, item) => sum + Number(item.cbkng_vtamt || 0), 0)
+      .reduce((sum, item) => sum + Number(item.cinvc_vtamt || 0), 0)
       .toFixed(2);
   };
 
-  const cbkng_ntamt_BT = (rowData) => {
-    return Number(rowData.cbkng_ntamt).toFixed(2);
+  const cinvc_ntamt_BT = (rowData) => {
+    return Number(rowData.cinvc_ntamt).toFixed(2);
   };
 
   const amount = formDataItemList
-    .reduce((sum, item) => sum + Number(item.cbkng_itamt || 0), 0)
+    .reduce((sum, item) => sum + Number(item.cinvc_itamt || 0), 0)
     .toFixed(2);
 
   const netAmount = formDataItemList
-    .reduce((sum, item) => sum + Number(item.cbkng_ntamt || 0), 0)
+    .reduce((sum, item) => sum + Number(item.cinvc_ntamt || 0), 0)
     .toFixed(2);
 
-  const cbkng_ntamt_FT = () => {
+  const cinvc_ntamt_FT = () => {
     return (
       <>
         {netAmount}
@@ -302,7 +354,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const bulk_BT = (rowData) => {
     return (
       <ConvertedQtyComponent
-        qty={rowData.cbkng_itqty}
+        qty={rowData.cinvc_itqty}
         dfQty={rowData.items_dfqty}
         pname={rowData.puofm_untnm}
         sname={rowData.suofm_untnm}
@@ -316,21 +368,21 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     );
   };
 
-  const cbkng_cnqty_BT = (rowData) => {
+  const cinvc_cnqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.cbkng_cnqty} text={rowData.cbkng_cnqty} />
+      <ZeroRowCell value={rowData.cinvc_cnqty} text={rowData.cinvc_cnqty} />
     );
   };
 
-  const cbkng_rcqty_BT = (rowData) => {
+  const cinvc_rcqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.cbkng_rcqty} text={rowData.cbkng_rcqty} />
+      <ZeroRowCell value={rowData.cinvc_rcqty} text={rowData.cinvc_rcqty} />
     );
   };
 
-  const cbkng_pnqty_BT = (rowData) => {
+  const cinvc_pnqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.cbkng_pnqty} text={rowData.cbkng_pnqty} />
+      <ZeroRowCell value={rowData.cinvc_pnqty} text={rowData.cinvc_pnqty} />
     );
   };
 
@@ -357,12 +409,36 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     />
   );
 
+  const handleAddAttributes = (rowData) => {
+    setShowAttributes(true);
+    setSelectedItemAttributes(rowData);
+    //console.log(rowData);
+  };
+
+  const handleCopyRowConfirm = (rowData) => {
+    confirmDialog({
+      message: `Are you sure you want to copy item "${rowData.items_iname}"?`,
+      header: "Copy",
+      icon: "pi pi-exclamation-triangle",
+      accept: () => {
+        const newRowData = { ...rowData, id: generateGuid() };
+        setFormDataItemList((prev) => [...prev, newRowData]);
+      },
+      reject: () => {},
+    });
+  };
+
   const action_BT = (rowData) => {
     return (
-      <span
-        className="pi pi-trash text-red-600 text-bold px-2 hover:text-red-500 cursor-pointer"
-        onClick={() => handleDelete(rowData)}
-      ></span>
+      <div className="flex justify-content-center">
+        <span
+          className="pi pi-ellipsis-v text-gray-600 hover:text-gray-900 cursor-pointer p-2"
+          onClick={(e) => {
+            setActiveRow(rowData);
+            menu.current.toggle(e);
+          }}
+        ></span>
+      </div>
     );
   };
 
@@ -392,31 +468,31 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const onRowEditSave = (event) => {
     let { newData, index } = event;
     // Calculate item_amount
-    let dsp = Number(newData.cbkng_dspct || 0);
+    let dsp = Number(newData.cinvc_dspct || 0);
     if (dsp < 0) dsp = 0;
     if (dsp > 100) dsp = 100;
-    let vtp = Number(newData.cbkng_vtpct || 0);
+    let vtp = Number(newData.cinvc_vtpct || 0);
     if (vtp < 0) vtp = 0;
     if (vtp > 1000) vtp = 100;
 
-    const itemAmount = newData.cbkng_itqty * newData.cbkng_itrat;
+    const itemAmount = newData.cinvc_itqty * newData.cinvc_itrat;
     const discountAmount = (dsp / 100) * itemAmount;
     const vatAmount = (vtp / 100) * itemAmount;
     const totalAmount = itemAmount - discountAmount + vatAmount;
-    const costPrice = totalAmount / newData.cbkng_itqty;
+    const costPrice = totalAmount / newData.cinvc_itqty;
 
-    newData.cbkng_dspct = dsp;
-    newData.cbkng_vtpct = vtp;
+    newData.cinvc_dspct = dsp;
+    newData.cinvc_vtpct = vtp;
 
-    newData.cbkng_itamt = itemAmount;
-    newData.cbkng_dsamt = discountAmount;
-    newData.cbkng_vtamt = vatAmount;
-    newData.cbkng_csrat = costPrice;
-    newData.cbkng_ntamt = totalAmount;
+    newData.cinvc_itamt = itemAmount;
+    newData.cinvc_dsamt = discountAmount;
+    newData.cinvc_vtamt = vatAmount;
+    newData.cinvc_csrat = costPrice;
+    newData.cinvc_ntamt = totalAmount;
 
-    newData.cbkng_cnqty = 0;
-    newData.cbkng_rcqty = 0;
-    newData.cbkng_pnqty = newData.cbkng_itqty;
+    newData.cinvc_cnqty = 0;
+    newData.cinvc_rcqty = 0;
+    newData.cinvc_pnqty = newData.cinvc_itqty;
 
     let _localItems = [...formDataItemList];
     _localItems[index] = newData;
@@ -438,7 +514,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   return (
     <div className="mt-4">
       <ConfirmDialog />
-
+      <Menu model={actionMenuItems} popup ref={menu} id="popup_menu" />
       {!formData.edit_stop && (
         <div className="grid border-round-md shadow-1 p-2 mb-3 bg-gray-100">
           <div className="col-12 md:col-5">
@@ -498,7 +574,6 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           </div>
         </div>
       )}
-
       <DataTable
         value={formDataItemList}
         editMode={formData.edit_stop ? null : "row"}
@@ -520,46 +595,46 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           footer={items_iname_FT}
         />
         <Column
-          field="cbkng_itrat"
+          field="cinvc_itrat"
           header="Price"
-          body={cbkng_itrat_BT}
+          body={cinvc_itrat_BT}
           editor={numberEditor}
         />
         <Column
-          field="cbkng_itqty"
+          field="cinvc_itqty"
           header="Qty"
-          body={cbkng_itqty_BT}
-          footer={cbkng_itqty_FT}
+          body={cinvc_itqty_BT}
+          footer={cinvc_itqty_FT}
           editor={numberEditor}
         />
         <Column
-          field="cbkng_itamt"
+          field="cinvc_itamt"
           header="Amount"
           headerStyle={{ backgroundColor: "#49769bff" }}
           footer={amount}
           hidden={!showExtraColumns}
         />
         <Column
-          field="cbkng_dspct"
+          field="cinvc_dspct"
           header="Discount"
-          body={cbkng_dspct_BT}
-          footer={cbkng_dspct_FT}
+          body={cinvc_dspct_BT}
+          footer={cinvc_dspct_FT}
           editor={numberEditor}
         />
         <Column
-          field="cbkng_vtpct"
+          field="cinvc_vtpct"
           header="VAT"
-          body={cbkng_vtpct_BT}
-          footer={cbkng_vtpct_FT}
+          body={cinvc_vtpct_BT}
+          footer={cinvc_vtpct_FT}
           editor={numberEditor}
         />
         <Column
-          field="cbkng_ntamt"
+          field="cinvc_ntamt"
           header="Sub Total"
-          body={cbkng_ntamt_BT}
-          footer={cbkng_ntamt_FT}
+          body={cinvc_ntamt_BT}
+          footer={cinvc_ntamt_FT}
         />
-        <Column field="cbkng_notes" header="Remarks" editor={textEditor} />
+        <Column field="cinvc_notes" header="Remarks" editor={textEditor} />
         <Column header="Bulk" body={bulk_BT} />
         <Column
           field="bitem_gstkq"
@@ -569,24 +644,24 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           hidden={!showExtraColumns}
         />
         <Column
-          field="cbkng_cnqty"
+          field="cinvc_cnqty"
           header="Cancelled"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={cbkng_cnqty_BT}
+          body={cinvc_cnqty_BT}
           hidden={!showExtraColumns}
         />
         <Column
-          field="cbkng_rcqty"
+          field="cinvc_rcqty"
           header="Invoice"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={cbkng_rcqty_BT}
+          body={cinvc_rcqty_BT}
           hidden={!showExtraColumns}
         />
         <Column
-          field="cbkng_pnqty"
+          field="cinvc_pnqty"
           header="Available"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={cbkng_pnqty_BT}
+          body={cinvc_pnqty_BT}
           hidden={!showExtraColumns}
         />
         <Column
@@ -598,6 +673,15 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           <Column header="#" body={action_BT} style={{ width: "20px" }} />
         )}
       </DataTable>
+
+      {showAttributes && (
+        <AttributesComp
+          visible={showAttributes}
+          setVisible={setShowAttributes}
+          formData={selectedItemAttributes}
+          setFormData={setSelectedItemAttributes}
+        />
+      )}
     </div>
   );
 };

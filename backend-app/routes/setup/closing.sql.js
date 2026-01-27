@@ -134,6 +134,32 @@ const closingSql = {
         label: `Update Purchase Booking Received and Pending Quantity`,
       }),
     },
+
+    tmpb_minvc: {
+      update_payment_status_by_refId: (refId) => ({
+        sql: `UPDATE tmpb_minvc
+        SET minvc_ispad = 1
+        WHERE minvc_ispad IN (0,2)
+        AND minvc_duamt = 0
+        AND id = ?`,
+        params: [refId],
+        label: `Update Purchase Invoice payment status`,
+      }),
+      update_payble_dues: (refId) => ({
+        sql: `UPDATE tmpb_minvc tgt
+        JOIN (
+          SELECT paybl_refid, SUM(paybl_dbamt) AS paybl_pyamt
+          FROM tmtb_paybl
+          WHERE paybl_refid = ?
+          GROUP BY paybl_refid
+        )src
+        ON tgt.id = src.paybl_refid
+        SET tgt.minvc_pdamt = src.paybl_pyamt,
+        tgt.minvc_duamt = tgt.minvc_pyamt - src.paybl_pyamt`,
+        params: [refId],
+        label: `Update Payable Due`,
+      }),
+    },
   },
 };
 

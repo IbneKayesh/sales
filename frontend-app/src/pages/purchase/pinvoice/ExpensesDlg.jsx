@@ -16,7 +16,7 @@ const ExpensesDlg = ({
   const [formDataExpenses, setFormDataExpenses] = useState({
     id: generateGuid(),
     expns_refno: "[Auto]",
-    expns_srcnm: "[Booking]",
+    expns_srcnm: "[Invoice]",
     expns_inexc: 1,
     expns_notes: "",
     expns_xpamt: "",
@@ -45,7 +45,7 @@ const ExpensesDlg = ({
     setFormDataExpenses({
       id: generateGuid(),
       expns_refno: "[Auto]",
-      expns_srcnm: "[Booking]",
+      expns_srcnm: "[Invoice]",
       expns_inexc: dialogName === "Including Expenses" ? 1 : 2,
       expns_notes: "",
       expns_xpamt: "",

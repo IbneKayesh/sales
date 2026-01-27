@@ -2,14 +2,10 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import EntryComp from "./EntryComp";
-import { usePbooking } from "@/hooks/purchase/usePbooking";
+import { usePinvoice } from "@/hooks/purchase/usePinvoice";
 import ListComp from "./ListComp";
 import SearchComp from "./SearchComp";
-// const handleReturn = (rowData) => {
-//   navigate("/home/purchase/purchase-return", {
-//     state: { master_id: rowData.master_id, source_type: "Invoice" },
-//   });
-// };
+
 const InvoicePage = () => {
   const {
     dataList,
@@ -45,7 +41,7 @@ const InvoicePage = () => {
     setCancelledRows,
     handleCancelBookingItems,
     setCancelledPayment
-  } = usePbooking();
+  } = usePinvoice();
 
   const handleSearchBox = () => {
     setSearchBoxShow(true);
@@ -138,4 +134,4 @@ const InvoicePage = () => {
   );
 };
 
-export default InvoicePage
+export default InvoicePage;

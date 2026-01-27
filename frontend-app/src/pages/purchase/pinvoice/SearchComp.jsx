@@ -18,8 +18,8 @@ const SearchComp = ({
           <i className="pi pi-hashtag"></i>
         </span>
         <InputText
-          name="mbkng_trnno"
-          value={searchBoxData.mbkng_trnno}
+          name="minvc_trnno"
+          value={searchBoxData.minvc_trnno}
           onChange={handleChangeSearchInput}
           placeholder="Trn No"
           className="w-full p-inputtext-sm"
@@ -32,8 +32,8 @@ const SearchComp = ({
           <i className="pi pi-user"></i>
         </span>
         <InputText
-          name="mbkng_cntct"
-          value={searchBoxData.mbkng_cntct}
+          name="minvc_cntct"
+          value={searchBoxData.minvc_cntct}
           onChange={handleChangeSearchInput}
           placeholder="Supplier"
           className="w-full p-inputtext-sm"
@@ -46,10 +46,10 @@ const SearchComp = ({
           <i className="pi pi-calendar"></i>
         </span>
         <Calendar
-          name="mbkng_trdat"
+          name="minvc_trdat"
           value={
-            searchBoxData.mbkng_trdat
-              ? new Date(searchBoxData.mbkng_trdat)
+            searchBoxData.minvc_trdat
+              ? new Date(searchBoxData.minvc_trdat)
               : null
           }
           onChange={handleChangeSearchInput}
@@ -67,8 +67,8 @@ const SearchComp = ({
           <i className="pi pi-file"></i>
         </span>
         <InputText
-          name="mbkng_refno"
-          value={searchBoxData.mbkng_refno}
+          name="minvc_refno"
+          value={searchBoxData.minvc_refno}
           onChange={handleChangeSearchInput}
           placeholder="Ref No"
           className="w-full p-inputtext-sm"

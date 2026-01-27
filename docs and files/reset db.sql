@@ -29,10 +29,11 @@ drop table tmpb_minvc;
 
 
 -- purchase
-DELETE FROM tmpb_mbkng;
-DELETE FROM tmpb_cbkng;
 DELETE FROM tmpb_expns;
 DELETE FROM tmtb_paybl;
+
+DELETE FROM tmpb_mbkng;
+DELETE FROM tmpb_cbkng;
 
 DELETE FROM tmpb_mrcpt;
 DELETE FROM tmpb_crcpt;

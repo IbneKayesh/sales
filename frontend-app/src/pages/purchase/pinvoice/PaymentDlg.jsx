@@ -23,11 +23,11 @@ const PaymentDlg = ({
     paybl_pymod: "Cash",
     paybl_refid: "",
     paybl_refno: "[Auto]",
-    paybl_srcnm: "Booking",
+    paybl_srcnm: "Invoice",
     paybl_trdat: new Date().toISOString().split("T")[0],
     paybl_descr: "",
     paybl_notes: "Payment",
-    paybl_dbamt: formData.mbkng_pyamt,
+    paybl_dbamt: "",
     paybl_cramt: "",
   });
 
@@ -53,7 +53,7 @@ const PaymentDlg = ({
     }
 
     //payment amount validation
-    if (formDataPayment.paybl_dbamt > formData.mbkng_duamt) {
+    if (formDataPayment.paybl_dbamt > formData.minvc_duamt) {
       setErrors({
         paybl_dbamt: "The payment amount cannot exceed the due amount.",
       });
@@ -86,13 +86,13 @@ const PaymentDlg = ({
         ...prevList,
         {
           id: generateGuid(),
-          paybl_users: formData.mbkng_users,
-          paybl_bsins: formData.mbkng_bsins,
-          paybl_cntct: formData.mbkng_cntct,
+          paybl_users: formData.minvc_users,
+          paybl_bsins: formData.minvc_bsins,
+          paybl_cntct: formData.minvc_cntct,
           paybl_pymod: paybl_pymod,
           paybl_refid: formData.id,
           paybl_refno: "[Auto]",
-          paybl_srcnm: "Booking",
+          paybl_srcnm: "Invoice",
           paybl_trdat: new Date().toISOString().split("T")[0],
           paybl_descr: paybl_descr,
           paybl_notes: "Payment",
@@ -110,7 +110,7 @@ const PaymentDlg = ({
       paybl_pymod: "Cash",
       paybl_refid: "",
       paybl_refno: "[Auto]",
-      paybl_srcnm: "Booking",
+      paybl_srcnm: "Invoice",
       paybl_trdat: new Date().toISOString().split("T")[0],
       paybl_descr: "",
       paybl_notes: "Payment",
@@ -225,7 +225,7 @@ const PaymentDlg = ({
                   onClick={handleAddToList}
                   className="w-full"
                   size="small"
-                  //disabled={formData.mbkng_duamt <= 0}
+                  //disabled={formData.minvc_duamt <= 0}
                 />
               </div>
             </div>

@@ -4,7 +4,7 @@ import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { Checkbox } from "primereact/checkbox";
 import { Tag } from "primereact/tag";
-import tmpb_mbkng from "@/models/purchase/tmpb_mbkng.json";
+import tmpb_minvc from "@/models/purchase/tmpb_minvc.json";
 import { useContactsSgd } from "@/hooks/crm/useContactsSgd";
 
 const HeaderComp = ({ errors, formData, handleChange }) => {
@@ -63,7 +63,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
   };
 
   const handleChange_cntct_cntnm = (e) => {
-    handleChange("mbkng_cntct", e.value);
+    handleChange("minvc_cntct", e.value);
     const selectedObj = supplierList.find((c) => c.id === e.value);
     //console.log("selectedObj", selectedObj.credit_limit);
     handleChange("cntct_crlmt", selectedObj?.cntct_crlmt || 0);
@@ -77,51 +77,51 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
   return (
     <div className="grid">
       <div className="col-12 md:col-2">
-        <label htmlFor="mbkng_trnno" className="block font-bold mb-2">
-          {tmpb_mbkng.mbkng_trnno.label}
+        <label htmlFor="minvc_trnno" className="block font-bold mb-2">
+          {tmpb_minvc.minvc_trnno.label}
         </label>
         <InputText
-          id="mbkng_trnno"
-          name="mbkng_trnno"
-          value={formData.mbkng_trnno}
-          onChange={(e) => handleChange("mbkng_trnno", e.target.value)}
-          className={`w-full ${errors.mbkng_trnno ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmpb_mbkng.mbkng_trnno.label}`}
+          id="minvc_trnno"
+          name="minvc_trnno"
+          value={formData.minvc_trnno}
+          onChange={(e) => handleChange("minvc_trnno", e.target.value)}
+          className={`w-full ${errors.minvc_trnno ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmpb_minvc.minvc_trnno.label}`}
           disabled
           variant="filled"
         />
-        {errors.mbkng_trnno && (
-          <small className="mb-3 text-red-500">{errors.mbkng_trnno}</small>
+        {errors.minvc_trnno && (
+          <small className="mb-3 text-red-500">{errors.minvc_trnno}</small>
         )}
       </div>
       <div className="col-12 md:col-2">
-        <label htmlFor="mbkng_trdat" className="block font-bold mb-2">
-          {tmpb_mbkng.mbkng_trdat.label}
+        <label htmlFor="minvc_trdat" className="block font-bold mb-2">
+          {tmpb_minvc.minvc_trdat.label}
           {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         <Calendar
-          id="mbkng_trdat"
-          name="mbkng_trdat"
-          value={formData.mbkng_trdat ? new Date(formData.mbkng_trdat) : null}
+          id="minvc_trdat"
+          name="minvc_trdat"
+          value={formData.minvc_trdat ? new Date(formData.minvc_trdat) : null}
           onChange={(e) =>
             handleChange(
-              "mbkng_trdat",
+              "minvc_trdat",
               e.value ? e.value.toLocaleString().split("T")[0] : ""
             )
           }
-          className={`w-full ${errors.mbkng_trdat ? "p-invalid" : ""}`}
+          className={`w-full ${errors.minvc_trdat ? "p-invalid" : ""}`}
           dateFormat="yy-mm-dd"
-          placeholder={`Select ${tmpb_mbkng.mbkng_trdat.label}`}
+          placeholder={`Select ${tmpb_minvc.minvc_trdat.label}`}
           disabled={isReadOnly}
           variant={isReadOnly ? "filled" : "outlined"}
         />
-        {errors.mbkng_trdat && (
-          <small className="mb-3 text-red-500">{errors.mbkng_trdat}</small>
+        {errors.minvc_trdat && (
+          <small className="mb-3 text-red-500">{errors.minvc_trdat}</small>
         )}
       </div>
       <div className="col-12 md:col-5">
-        <label htmlFor="mbkng_cntct" className="block font-bold mb-2">
-          {tmpb_mbkng.mbkng_cntct.label}
+        <label htmlFor="minvc_cntct" className="block font-bold mb-2">
+          {tmpb_minvc.minvc_cntct.label}
           {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         {isReadOnly ? (
@@ -133,41 +133,41 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           />
         ) : (
           <Dropdown
-            id="mbkng_cntct"
-            name="mbkng_cntct"
-            value={formData.mbkng_cntct}
+            id="minvc_cntct"
+            name="minvc_cntct"
+            value={formData.minvc_cntct}
             options={supplierList}
             optionLabel="cntct_cntnm"
             optionValue="id"
             onChange={(e) => handleChange_cntct_cntnm(e)}
-            className={`w-full ${errors.mbkng_cntct ? "p-invalid" : ""}`}
-            placeholder={`Select ${tmpb_mbkng.mbkng_cntct.label}`}
+            className={`w-full ${errors.minvc_cntct ? "p-invalid" : ""}`}
+            placeholder={`Select ${tmpb_minvc.minvc_cntct.label}`}
             filter
             showClear
             itemTemplate={cntct_cntnm_IT}
             valueTemplate={cntct_cntnm_VT}
           />
         )}
-        {errors.mbkng_cntct && (
-          <small className="mb-3 text-red-500">{errors.mbkng_cntct}</small>
+        {errors.minvc_cntct && (
+          <small className="mb-3 text-red-500">{errors.minvc_cntct}</small>
         )}
       </div>
       <div className="col-12 md:col-2">
-        <label htmlFor="mbkng_refno" className="block font-bold mb-2">
-          {tmpb_mbkng.mbkng_refno.label}
+        <label htmlFor="minvc_refno" className="block font-bold mb-2">
+          {tmpb_minvc.minvc_refno.label}
         </label>
         <InputText
-          id="mbkng_refno"
-          name="mbkng_refno"
-          value={formData.mbkng_refno}
-          onChange={(e) => handleChange("mbkng_refno", e.target.value)}
-          className={`w-full ${errors.mbkng_refno ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmpb_mbkng.mbkng_refno.label}`}
+          id="minvc_refno"
+          name="minvc_refno"
+          value={formData.minvc_refno}
+          onChange={(e) => handleChange("minvc_refno", e.target.value)}
+          className={`w-full ${errors.minvc_refno ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmpb_minvc.minvc_refno.label}`}
           disabled={isReadOnly}
           variant={isReadOnly ? "filled" : "outlined"}
         />
-        {errors.mbkng_refno && (
-          <small className="mb-3 text-red-500">{errors.mbkng_refno}</small>
+        {errors.minvc_refno && (
+          <small className="mb-3 text-red-500">{errors.minvc_refno}</small>
         )}
       </div>
       <div className="col-12 md:col-1">
@@ -183,20 +183,20 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           </>
         ) : (
           <>
-            <label htmlFor="mbkng_ispst" className="block font-bold mb-2">
-              {tmpb_mbkng.mbkng_ispst.label}
+            <label htmlFor="minvc_ispst" className="block font-bold mb-2">
+              {tmpb_minvc.minvc_ispst.label}
             </label>
             <Checkbox
-              id="mbkng_ispst"
-              name="mbkng_ispst"
-              checked={formData.mbkng_ispst === 1}
+              id="minvc_ispst"
+              name="minvc_ispst"
+              checked={formData.minvc_ispst === 1}
               onChange={(e) =>
-                handleChange("mbkng_ispst", e.checked ? 1 : 0)
+                handleChange("minvc_ispst", e.checked ? 1 : 0)
               }
-              className={errors.mbkng_ispst ? "p-invalid" : ""}
+              className={errors.minvc_ispst ? "p-invalid" : ""}
             />
-            {errors.mbkng_ispst && (
-              <small className="mb-3 text-red-500">{errors.mbkng_ispst}</small>
+            {errors.minvc_ispst && (
+              <small className="mb-3 text-red-500">{errors.minvc_ispst}</small>
             )}
           </>
         )}

@@ -1,10 +1,10 @@
 --
 -- Table structure for table tmpb_cinvc
--- purchase booking list
+-- purchase invoice list
 
 CREATE TABLE `tmpb_cinvc` (
   `id` VARCHAR(50) NOT NULL,
-  `cinvc_mbkng` VARCHAR(50) NOT NULL,
+  `cinvc_minvc` VARCHAR(50) NOT NULL,
   `cinvc_bitem` VARCHAR(50) NOT NULL,
   `cinvc_items` VARCHAR(50) NOT NULL,
   `cinvc_itrat` decimal(20,6) NOT NULL DEFAULT 0,
@@ -17,6 +17,7 @@ CREATE TABLE `tmpb_cinvc` (
   `cinvc_csrat` decimal(20,6) NOT NULL DEFAULT 0,
   `cinvc_ntamt` decimal(20,6) NOT NULL DEFAULT 0,
   `cinvc_notes` VARCHAR(50) DEFAULT NULL,
+  `cinvc_attrb` VARCHAR(300) DEFAULT NULL,
   `cinvc_rtqty` decimal(20,6) NOT NULL DEFAULT 0,
   `cinvc_slqty` decimal(20,6) NOT NULL DEFAULT 0,
   `cinvc_ohqty` decimal(20,6) NOT NULL DEFAULT 0,

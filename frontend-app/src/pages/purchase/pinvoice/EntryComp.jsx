@@ -35,12 +35,11 @@ const EntryComp = ({
   const [disableSubmit, setDisableSubmit] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [dialogName, setDialogName] = useState("payment");
-  const [showPrintDialog, setShowPrintDialog] = useState(false);
 
   useEffect(() => {
     const hasProducts = formDataItemList.length < 1;
     const hasCreditLimit =
-      Number(formData.mbkng_duamt) > Number(formData.cntct_crlmt);
+      Number(formData.minvc_duamt) > Number(formData.cntct_crlmt);
     if (hasProducts || hasCreditLimit || formData.edit_stop) {
       //console.log("disable");
       setDisableSubmit(true);
@@ -48,20 +47,20 @@ const EntryComp = ({
       setDisableSubmit(false);
     }
     //console.log(hasCreditLimit);
-  }, [formDataItemList, formData.mbkng_duamt, formData.cntct_crlmt]);
+  }, [formDataItemList, formData.minvc_duamt, formData.cntct_crlmt]);
 
   useEffect(() => {
     const order_amount = formDataItemList.reduce(
       (sum, item) =>
-        sum + (Number(item.cbkng_itqty) || 0) * (Number(item.cbkng_itrat) || 0),
+        sum + (Number(item.cinvc_itqty) || 0) * (Number(item.cinvc_itrat) || 0),
       0,
     );
     const discount_amount = formDataItemList.reduce(
-      (sum, item) => sum + (Number(item.cbkng_dsamt) || 0),
+      (sum, item) => sum + (Number(item.cinvc_dsamt) || 0),
       0,
     );
     const vat_amount = formDataItemList.reduce(
-      (sum, item) => sum + (Number(item.cbkng_vtamt) || 0),
+      (sum, item) => sum + (Number(item.cinvc_vtamt) || 0),
       0,
     );
 
@@ -78,12 +77,12 @@ const EntryComp = ({
     );
 
     const sum_1_3_4 = order_amount + vat_amount + include_cost;
-    const sum_2_5 = discount_amount + Number(formData.mbkng_rnamt || 0);
+    const sum_2_5 = discount_amount + Number(formData.minvc_rnamt || 0);
 
     const total_amount = sum_1_3_4 - sum_2_5;
 
     const payable_amount =
-      formData.mbkng_vatpy === 1 ? total_amount : total_amount - vat_amount;
+      formData.minvc_vatpy === 1 ? total_amount : total_amount - vat_amount;
 
     const paid_amount = formDataPaymentList.reduce(
       (sum, item) => sum + (Number(item.paybl_dbamt) || 0),
@@ -92,18 +91,18 @@ const EntryComp = ({
 
     const due_amount = payable_amount - (paid_amount || 0);
 
-    handleChange("mbkng_odamt", Number(order_amount).toFixed(2));
-    handleChange("mbkng_dsamt", Number(discount_amount).toFixed(2));
-    handleChange("mbkng_vtamt", Number(vat_amount).toFixed(2));
-    handleChange("mbkng_incst", Number(include_cost).toFixed(2));
-    handleChange("mbkng_excst", Number(exclude_cost).toFixed(2));
-    handleChange("mbkng_ttamt", Number(total_amount).toFixed(2));
-    handleChange("mbkng_pyamt", Number(payable_amount).toFixed(2));
-    handleChange("mbkng_pdamt", Number(paid_amount).toFixed(2));
-    handleChange("mbkng_duamt", Number(Math.round(due_amount)).toFixed(2));
+    handleChange("minvc_odamt", Number(order_amount).toFixed(2));
+    handleChange("minvc_dsamt", Number(discount_amount).toFixed(2));
+    handleChange("minvc_vtamt", Number(vat_amount).toFixed(2));
+    handleChange("minvc_incst", Number(include_cost).toFixed(2));
+    handleChange("minvc_excst", Number(exclude_cost).toFixed(2));
+    handleChange("minvc_ttamt", Number(total_amount).toFixed(2));
+    handleChange("minvc_pyamt", Number(payable_amount).toFixed(2));
+    handleChange("minvc_pdamt", Number(paid_amount).toFixed(2));
+    handleChange("minvc_duamt", Number(Math.round(due_amount)).toFixed(2));
   }, [
-    formData.mbkng_vatpy,
-    formData.mbkng_rnamt,
+    formData.minvc_vatpy,
+    formData.minvc_rnamt,
     formDataItemList,
     formDataPaymentList,
     formDataExpensesList,
@@ -112,7 +111,7 @@ const EntryComp = ({
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const handleShowCancelDlg = () => {
     const hasCancelableItems = formDataItemList.some(
-      (item) => item.cbkng_pnqty > 0,
+      (item) => item.cinvc_pnqty > 0,
     );
     if (hasCancelableItems) {
       setShowCancelDialog(true);
@@ -220,7 +219,7 @@ const EntryComp = ({
             label={
               formData.id
                 ? "Update"
-                : formData.mbkng_ispst
+                : formData.minvc_ispst
                   ? "Save with Posted"
                   : "Save as Draft"
             }

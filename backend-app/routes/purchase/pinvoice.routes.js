@@ -7,17 +7,17 @@ const { v4: uuidv4 } = require("uuid");
 router.post("/", async (req, res) => {
   try {
     const {
-      mbkng_users,
-      mbkng_bsins,
-      mbkng_cntct,
-      mbkng_trnno,
-      mbkng_trdat,
-      mbkng_refno,
+      minvc_users,
+      minvc_bsins,
+      minvc_cntct,
+      minvc_trnno,
+      minvc_trdat,
+      minvc_refno,
       search_option,
     } = req.body;
 
     // Validate input
-    if (!mbkng_users || !mbkng_bsins) {
+    if (!minvc_users || !minvc_bsins) {
       return res.json({
         success: false,
         message: "User ID and Business ID are required",
@@ -27,29 +27,29 @@ router.post("/", async (req, res) => {
     //console.log("get:", JSON.stringify(req.body));
 
     //database action
-    let sql = `SELECT bkng.*, bkng.mbkng_ispst as edit_stop,
+    let sql = `SELECT minvc.*, minvc.minvc_ispst as edit_stop,
     cont.cntct_cntnm, cont.cntct_cntps, cont.cntct_cntno, cont.cntct_ofadr, cont.cntct_crlmt
-      FROM tmpb_mbkng bkng
-      LEFT JOIN tmcb_cntct cont on bkng.mbkng_cntct = cont.id
-      WHERE bkng.mbkng_users = ?
-      AND bkng.mbkng_bsins = ?`;
-    let params = [mbkng_users, mbkng_bsins];
+      FROM tmpb_minvc minvc
+      LEFT JOIN tmcb_cntct cont on minvc.minvc_cntct = cont.id
+      WHERE minvc.minvc_users = ?
+      AND minvc.minvc_bsins = ?`;
+    let params = [minvc_users, minvc_bsins];
 
     // Optional filters
-    if (mbkng_cntct) {
+    if (minvc_cntct) {
       sql += ` AND cont.cntct_cntnm LIKE ?`;
-      params.push(`%${mbkng_cntct}%`);
+      params.push(`%${minvc_cntct}%`);
     }
 
-    if (mbkng_trnno) {
-      sql += ` AND bkng.mbkng_trnno LIKE ?`;
-      params.push(`%${mbkng_trnno}%`);
+    if (minvc_trnno) {
+      sql += ` AND minvc.minvc_trnno LIKE ?`;
+      params.push(`%${minvc_trnno}%`);
     }
 
-    //console.log("params", mbkng_trdat);
+    //console.log("params", minvc_trdat);
 
-    if (mbkng_trdat) {
-      const dateObj = new Date(mbkng_trdat);
+    if (minvc_trdat) {
+      const dateObj = new Date(minvc_trdat);
       const formattedDate =
         dateObj.getFullYear() +
         "-" +
@@ -59,34 +59,37 @@ router.post("/", async (req, res) => {
 
       // console.log("formattedDate", formattedDate);
 
-      sql += ` AND DATE(bkng.mbkng_trdat) = ?`;
+      sql += ` AND DATE(minvc.minvc_trdat) = ?`;
       params.push(formattedDate);
     }
 
-    if (mbkng_refno) {
-      sql += ` AND bkng.mbkng_refno LIKE ?`;
-      params.push(`%${mbkng_refno}%`);
+    if (minvc_refno) {
+      sql += ` AND minvc.minvc_refno LIKE ?`;
+      params.push(`%${minvc_refno}%`);
     }
 
     if (search_option) {
       switch (search_option) {
-        case "mbkng_ispad":
-          sql += ` AND bkng.mbkng_duamt > 0`;
+        case "minvc_ispad":
+          sql += ` AND minvc.minvc_duamt > 0`;
           break;
-        case "mbkng_ispst":
-          sql += ` AND bkng.mbkng_ispst = 0`;
+        case "minvc_ispst":
+          sql += ` AND minvc.minvc_ispst = 0`;
           break;
-        case "mbkng_iscls":
-          sql += ` AND bkng.mbkng_iscls = 1`;
+        case "minvc_iscls":
+          sql += ` AND minvc.minvc_iscls = 1`;
           break;
-        case "mbkng_vatcl":
-          sql += ` AND bkng.mbkng_vatcl = 1`;
+        case "minvc_vatcl":
+          sql += ` AND minvc.minvc_vatcl = 1`;
           break;
-        case "mbkng_hscnl":
-          sql += ` AND bkng.mbkng_hscnl = 1`;
+        case "minvc_hscnl":
+          sql += ` AND minvc.minvc_hscnl = 1`;
+          break;
+        case "last_3_days":
+          sql += ` AND minvc.minvc_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY)`;
           break;
         case "last_7_days":
-          sql += ` AND bkng.mbkng_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)`;
+          sql += ` AND minvc.minvc_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)`;
           break;
         default:
           sql += ``;
@@ -95,16 +98,16 @@ router.post("/", async (req, res) => {
       //params.push(`%${search_option}%`);
     }
 
-    sql += ` ORDER BY bkng.mbkng_trdat DESC`;
+    sql += ` ORDER BY minvc.minvc_trdat DESC`;
 
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase bookings for ${mbkng_users}`,
+      `Get purchase invoices for ${minvc_users}`,
     );
     res.json({
       success: true,
-      message: "Purchase bookings fetched successfully",
+      message: "Purchase invoices fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -117,38 +120,38 @@ router.post("/", async (req, res) => {
   }
 });
 
-// booking details
-router.post("/booking-details", async (req, res) => {
+// invoice details
+router.post("/invoice-details", async (req, res) => {
   try {
-    const { cbkng_mbkng } = req.body;
+    const { cinvc_minvc } = req.body;
 
     // Validate input
-    if (!cbkng_mbkng) {
+    if (!cinvc_minvc) {
       return res.json({
         success: false,
-        message: "Booking ID is required",
+        message: "Invoice ID is required",
         data: null,
       });
     }
     //console.log("get:", JSON.stringify(req.body));
 
     //database action
-    let sql = `SELECT cbkng.*, 0 as edit_stop,
+    let sql = `SELECT invc.*, 0 as edit_stop,
     itm.items_icode, itm.items_iname, itm.items_dfqty, bitm.bitem_gstkq,
     puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
-    FROM tmpb_cbkng cbkng
-    LEFT JOIN tmib_items itm ON cbkng.cbkng_items = itm.id
-    LEFT JOIN tmib_bitem bitm ON cbkng.cbkng_bitem = bitm.id
+    FROM tmpb_cinvc invc
+    LEFT JOIN tmib_items itm ON invc.cinvc_items = itm.id
+    LEFT JOIN tmib_bitem bitm ON invc.cinvc_bitem = bitm.id
     LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
     LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
-    WHERE cbkng.cbkng_mbkng = ?
+    WHERE invc.cinvc_minvc = ?
     ORDER BY itm.items_icode, itm.items_iname`;
-    let params = [cbkng_mbkng];
+    let params = [cinvc_minvc];
 
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase booking for ${cbkng_mbkng}`,
+      `Get purchase booking for ${cinvc_minvc}`,
     );
     res.json({
       success: true,
@@ -165,8 +168,8 @@ router.post("/booking-details", async (req, res) => {
   }
 });
 
-// booking expenses
-router.post("/booking-expense", async (req, res) => {
+// invoice expenses
+router.post("/invoice-expense", async (req, res) => {
   try {
     const { expns_refid } = req.body;
 
@@ -190,7 +193,7 @@ router.post("/booking-expense", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase booking expenses for ${expns_refid}`,
+      `Get purchase invoice expenses for ${expns_refid}`,
     );
     res.json({
       success: true,
@@ -207,8 +210,8 @@ router.post("/booking-expense", async (req, res) => {
   }
 });
 
-// booking payment
-router.post("/booking-payment", async (req, res) => {
+// invoice payment
+router.post("/invoice-payment", async (req, res) => {
   try {
     const { paybl_refid } = req.body;
 
@@ -232,7 +235,7 @@ router.post("/booking-payment", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase booking payment for ${paybl_refid}`,
+      `Get purchase invoice payment for ${paybl_refid}`,
     );
     res.json({
       success: true,
@@ -254,47 +257,47 @@ router.post("/create", async (req, res) => {
   try {
     const {
       id,
-      mbkng_users,
-      mbkng_bsins,
-      mbkng_cntct,
-      mbkng_trnno,
-      mbkng_trdat,
-      mbkng_refno,
-      mbkng_trnte,
-      mbkng_odamt,
-      mbkng_dsamt,
-      mbkng_vtamt,
-      mbkng_vatpy,
-      mbkng_incst,
-      mbkng_excst,
-      mbkng_rnamt,
-      mbkng_ttamt,
-      mbkng_pyamt,
-      mbkng_pdamt,
-      mbkng_duamt,
-      mbkng_cnamt,
-      mbkng_ispad,
-      mbkng_ispst,
-      mbkng_iscls,
-      mbkng_vatcl,
-      mbkng_hscnl,
+      minvc_users,
+      minvc_bsins,
+      minvc_cntct,
+      minvc_trnno,
+      minvc_trdat,
+      minvc_refno,
+      minvc_trnte,
+      minvc_odamt,
+      minvc_dsamt,
+      minvc_vtamt,
+      minvc_vatpy,
+      minvc_incst,
+      minvc_excst,
+      minvc_rnamt,
+      minvc_ttamt,
+      minvc_pyamt,
+      minvc_pdamt,
+      minvc_duamt,
+      minvc_rtamt,
+      minvc_ispad,
+      minvc_ispst,
+      minvc_iscls,
+      minvc_vatcl,
+      minvc_hscnl,
       user_id,
-      tmpb_cbkng,
+      tmpb_cinvc,
       tmpb_expns,
       tmtb_paybl,
     } = req.body;
 
-    //console.log("create:", JSON.stringify(req.body));
+    console.log("create:", JSON.stringify(req.body));
 
     // Validate input
     if (
       !id ||
-      !mbkng_users ||
-      !mbkng_bsins ||
-      !mbkng_cntct ||
-      !mbkng_trdat ||
-      !tmpb_cbkng ||
-      !Array.isArray(tmpb_cbkng)
+      !minvc_users ||
+      !minvc_bsins ||
+      !minvc_cntct ||
+      !minvc_trdat ||
+      !tmpb_cinvc ||
+      !Array.isArray(tmpb_cinvc)
     ) {
       return res.json({
         success: false,
@@ -309,22 +312,22 @@ router.post("/create", async (req, res) => {
     const mm = String(now.getMonth() + 1).padStart(2, "0");
     const yy = String(now.getFullYear()).slice(-2);
     const date_part = dd + mm + yy;
-    const sql = `SELECT MAX(CAST(RIGHT(mbkng_trnno, 5) AS UNSIGNED)) AS max_seq
-      FROM tmpb_mbkng
-      WHERE DATE(mbkng_trdat) = CURDATE()`;
+    const sql = `SELECT MAX(CAST(RIGHT(minvc_trnno, 5) AS UNSIGNED)) AS max_seq
+      FROM tmpb_minvc
+      WHERE DATE(minvc_trdat) = CURDATE()`;
     const max_seq = await dbGet(sql, []);
     const max_seq_no = String((max_seq.max_seq || 0) + 1).padStart(5, "0");
-    const mbkng_trnno_new = `PB-${date_part}-${max_seq_no}`;
-    console.log("New Transaction No: " + mbkng_trnno_new);
+    const minvc_trnno_new = `PI-${date_part}-${max_seq_no}`;
+    console.log("New Transaction No: " + minvc_trnno_new);
 
     //build scripts
     const scripts = [];
     scripts.push({
-      sql: `INSERT INTO tmpb_mbkng(id, mbkng_users, mbkng_bsins, mbkng_cntct, mbkng_trnno, mbkng_trdat,
-      mbkng_refno, mbkng_trnte, mbkng_odamt, mbkng_dsamt, mbkng_vtamt, mbkng_vatpy,
-      mbkng_incst, mbkng_excst, mbkng_rnamt, mbkng_ttamt, mbkng_pyamt, mbkng_pdamt,
-      mbkng_duamt, mbkng_cnamt, mbkng_ispad, mbkng_ispst, mbkng_iscls, mbkng_vatcl,
-      mbkng_hscnl, mbkng_crusr, mbkng_upusr)
+      sql: `INSERT INTO tmpb_minvc(id, minvc_users, minvc_bsins, minvc_cntct, minvc_trnno, minvc_trdat,
+      minvc_refno, minvc_trnte, minvc_odamt, minvc_dsamt, minvc_vtamt, minvc_vatpy,
+      minvc_incst, minvc_excst, minvc_rnamt, minvc_ttamt, minvc_pyamt, minvc_pdamt,
+      minvc_duamt, minvc_rtamt, minvc_ispad, minvc_ispst, minvc_iscls, minvc_vatcl,
+      minvc_hscnl, minvc_crusr, minvc_upusr)
       VALUES (?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?, ?,
@@ -332,69 +335,70 @@ router.post("/create", async (req, res) => {
       ?, ?, ?)`,
       params: [
         id,
-        mbkng_users,
-        mbkng_bsins,
-        mbkng_cntct,
-        mbkng_trnno_new,
-        mbkng_trdat,
-        mbkng_refno,
-        mbkng_trnte,
-        mbkng_odamt,
-        mbkng_dsamt,
-        mbkng_vtamt,
-        mbkng_vatpy,
-        mbkng_incst,
-        mbkng_excst,
-        mbkng_rnamt,
-        mbkng_ttamt,
-        mbkng_pyamt,
-        mbkng_pdamt,
-        mbkng_duamt,
-        mbkng_cnamt,
-        mbkng_ispad,
-        mbkng_ispst,
+        minvc_users,
+        minvc_bsins,
+        minvc_cntct,
+        minvc_trnno_new,
+        minvc_trdat,
+        minvc_refno,
+        minvc_trnte,
+        minvc_odamt,
+        minvc_dsamt,
+        minvc_vtamt,
+        minvc_vatpy,
+        minvc_incst,
+        minvc_excst,
+        minvc_rnamt,
+        minvc_ttamt,
+        minvc_pyamt,
+        minvc_pdamt,
+        minvc_duamt,
+        0,
+        minvc_ispad,
+        minvc_ispst,
         0,
         0,
         0,
         user_id,
         user_id,
       ],
-      label: `Created master ${mbkng_trnno_new}`,
+      label: `Created PI master ${minvc_trnno_new}`,
     });
 
-    //Insert booking details
-    for (const det of tmpb_cbkng) {
+    //Insert invoice details
+    for (const det of tmpb_cinvc) {
       scripts.push({
-        sql: `INSERT INTO tmpb_cbkng(id, cbkng_mbkng, cbkng_bitem, cbkng_items, cbkng_itrat, cbkng_itqty,
-        cbkng_itamt, cbkng_dspct, cbkng_dsamt, cbkng_vtpct, cbkng_vtamt, cbkng_csrat,
-        cbkng_ntamt, cbkng_notes, cbkng_cnqty, cbkng_rcqty, cbkng_pnqty,
-        cbkng_crusr, cbkng_upusr)
+        sql: `INSERT INTO tmpb_cinvc(id, cinvc_minvc, cinvc_bitem, cinvc_items, cinvc_itrat, cinvc_itqty,
+        cinvc_itamt, cinvc_dspct, cinvc_dsamt, cinvc_vtpct, cinvc_vtamt, cinvc_csrat,
+        cinvc_ntamt, cinvc_notes, cinvc_attrb, cinvc_rtqty, cinvc_slqty, cinvc_ohqty,
+        cinvc_crusr, cinvc_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?,
         ?, ?)`,
         params: [
           uuidv4(),
           id,
-          det.cbkng_bitem,
-          det.cbkng_items,
-          det.cbkng_itrat || 0,
-          det.cbkng_itqty || 1,
-          det.cbkng_itamt || 0,
-          det.cbkng_dspct || 0,
-          det.cbkng_dsamt || 0,
-          det.cbkng_vtpct || 0,
-          det.cbkng_vtamt || 0,
-          det.cbkng_csrat || 0,
-          det.cbkng_ntamt || 0,
-          det.cbkng_notes || "",
+          det.cinvc_bitem,
+          det.cinvc_items,
+          det.cinvc_itrat || 0,
+          det.cinvc_itqty || 1,
+          det.cinvc_itamt || 0,
+          det.cinvc_dspct || 0,
+          det.cinvc_dsamt || 0,
+          det.cinvc_vtpct || 0,
+          det.cinvc_vtamt || 0,
+          det.cinvc_csrat || 0,
+          det.cinvc_ntamt || 0,
+          det.cinvc_notes || "",
+          det.cinvc_attrb || "",
           0,
           0,
-          det.cbkng_itqty || 1, //det.cbkng_pnqty,
+          det.cinvc_itqty || 1, //det.cinvc_ohqty,
           user_id,
           user_id,
         ],
-        label: `Created detail ${mbkng_trnno_new}`,
+        label: `Created PI detail ${minvc_trnno_new}`,
       });
     }
 
@@ -409,11 +413,11 @@ router.post("/create", async (req, res) => {
         ?)`,
         params: [
           uuidv4(),
-          mbkng_users,
-          mbkng_bsins,
-          mbkng_cntct,
+          minvc_users,
+          minvc_bsins,
+          minvc_cntct,
           id,
-          mbkng_trnno_new,
+          minvc_trnno_new,
           "Purchase Booking",
           pay.expns_inexc,
           pay.expns_notes,
@@ -421,7 +425,7 @@ router.post("/create", async (req, res) => {
           user_id,
           user_id,
         ],
-        label: `Created expense ${mbkng_trnno_new}`,
+        label: `Created PI expense ${minvc_trnno_new}`,
       });
     }
 
@@ -437,14 +441,14 @@ router.post("/create", async (req, res) => {
         ?, ?, ?)`,
           params: [
             uuidv4(),
-            mbkng_users,
-            mbkng_bsins,
-            mbkng_cntct,
+            minvc_users,
+            minvc_bsins,
+            minvc_cntct,
             pay.paybl_pymod,
             id,
-            mbkng_trnno_new,
+            minvc_trnno_new,
             "Purchase Booking",
-            mbkng_trdat,
+            minvc_trdat,
             pay.paybl_descr,
             pay.paybl_notes,
             pay.paybl_dbamt,
@@ -452,7 +456,7 @@ router.post("/create", async (req, res) => {
             user_id,
             user_id,
           ],
-          label: `Created payment debit ${mbkng_trnno_new}`,
+          label: `Created payment debit ${minvc_trnno_new}`,
         });
       }
     }
@@ -467,22 +471,22 @@ router.post("/create", async (req, res) => {
       ?, ?, ?)`,
       params: [
         uuidv4(),
-        mbkng_users,
-        mbkng_bsins,
-        mbkng_cntct,
+        minvc_users,
+        minvc_bsins,
+        minvc_cntct,
         "Inventory",
         id,
-        mbkng_trnno_new,
+        minvc_trnno_new,
         "Purchase Booking",
-        mbkng_trdat,
+        minvc_trdat,
         "Supplier Goods",
         "Products",
         0,
-        mbkng_pyamt,
+        minvc_pyamt,
         user_id,
         user_id,
       ],
-      label: `Created payment credit ${mbkng_trnno_new}`,
+      label: `Created payment credit ${minvc_trnno_new}`,
     });
 
     await dbRunAll(scripts);
@@ -492,7 +496,7 @@ router.post("/create", async (req, res) => {
       message: "Purchase booking created successfully",
       data: {
         ...req.body,
-        mbkng_trnno: mbkng_trnno_new,
+        minvc_trnno: minvc_trnno_new,
       },
     });
   } catch (error) {
@@ -510,32 +514,32 @@ router.post("/update", async (req, res) => {
   try {
     const {
       id,
-      mbkng_users,
-      mbkng_bsins,
-      mbkng_cntct,
-      mbkng_trnno,
-      mbkng_trdat,
-      mbkng_refno,
-      mbkng_trnte,
-      mbkng_odamt,
-      mbkng_dsamt,
-      mbkng_vtamt,
-      mbkng_vatpy,
-      mbkng_incst,
-      mbkng_excst,
-      mbkng_rnamt,
-      mbkng_ttamt,
-      mbkng_pyamt,
-      mbkng_pdamt,
-      mbkng_duamt,
-      mbkng_cnamt,
-      mbkng_ispad,
-      mbkng_ispst,
-      mbkng_iscls,
-      mbkng_vatcl,
-      mbkng_hscnl,
+      minvc_users,
+      minvc_bsins,
+      minvc_cntct,
+      minvc_trnno,
+      minvc_trdat,
+      minvc_refno,
+      minvc_trnte,
+      minvc_odamt,
+      minvc_dsamt,
+      minvc_vtamt,
+      minvc_vatpy,
+      minvc_incst,
+      minvc_excst,
+      minvc_rnamt,
+      minvc_ttamt,
+      minvc_pyamt,
+      minvc_pdamt,
+      minvc_duamt,
+      minvc_rtamt,
+      minvc_ispad,
+      minvc_ispst,
+      minvc_iscls,
+      minvc_vatcl,
+      minvc_hscnl,
       user_id,
-      tmpb_cbkng,
+      tmpb_cinvc,
       tmpb_expns,
       tmtb_paybl,
     } = req.body;
@@ -543,12 +547,12 @@ router.post("/update", async (req, res) => {
     // Validate input
     if (
       !id ||
-      !mbkng_users ||
-      !mbkng_bsins ||
-      !mbkng_cntct ||
-      !mbkng_trdat ||
-      !tmpb_cbkng ||
-      !Array.isArray(tmpb_cbkng)
+      !minvc_users ||
+      !minvc_bsins ||
+      !minvc_cntct ||
+      !minvc_trdat ||
+      !tmpb_cinvc ||
+      !Array.isArray(tmpb_cinvc)
     ) {
       return res.json({
         success: false,
@@ -561,104 +565,107 @@ router.post("/update", async (req, res) => {
     //remove details
     const scripts = [];
     scripts.push({
-      sql: `DELETE FROM tmpb_cbkng WHERE cbkng_mbkng = ?`,
+      sql: `DELETE FROM tmpb_cinvc WHERE cinvc_minvc = ?`,
       params: [id],
-      label: `Delete booking details for ${mbkng_trnno}`,
+      label: `Delete booking details for ${minvc_trnno}`,
     });
     scripts.push({
       sql: `DELETE FROM tmpb_expns WHERE expns_refid = ?`,
       params: [id],
-      label: `Delete expenses details for ${mbkng_trnno}`,
+      label: `Delete expenses details for ${minvc_trnno}`,
     });
     scripts.push({
       sql: `DELETE FROM tmtb_paybl WHERE paybl_refid = ?`,
       params: [id],
-      label: `Delete payments details for ${mbkng_trnno}`,
+      label: `Delete payments details for ${minvc_trnno}`,
     });
     await dbRunAll(scripts);
 
     //update master
     const scripts_updt = [];
     scripts_updt.push({
-      sql: `UPDATE tmpb_mbkng
-    SET mbkng_cntct = ?,
-    mbkng_trdat = ?,
-    mbkng_refno = ?,
-    mbkng_trnte = ?,
-    mbkng_odamt = ?,
-    mbkng_dsamt = ?,
-    mbkng_vtamt = ?,
-    mbkng_vatpy = ?,
-    mbkng_incst = ?,
-    mbkng_excst = ?,
-    mbkng_rnamt = ?,
-    mbkng_ttamt = ?,
-    mbkng_pyamt = ?,
-    mbkng_pdamt = ?,
-    mbkng_duamt = ?,
-    mbkng_ispad = ?,
-    mbkng_ispst = ?,
-    mbkng_upusr = ?,
-    mbkng_updat = current_timestamp(),
-    mbkng_rvnmr = mbkng_rvnmr + 1
+      sql: `UPDATE tmpb_minvc
+    SET minvc_cntct = ?,
+    minvc_trdat = ?,
+    minvc_refno = ?,
+    minvc_trnte = ?,
+    minvc_odamt = ?,
+    minvc_dsamt = ?,
+    minvc_vtamt = ?,
+    minvc_vatpy = ?,
+    minvc_incst = ?,
+    minvc_excst = ?,
+    minvc_rnamt = ?,
+    minvc_ttamt = ?,
+    minvc_pyamt = ?,
+    minvc_pdamt = ?,
+    minvc_duamt = ?,
+    minvc_ispad = ?,
+    minvc_ispst = ?,
+    minvc_upusr = ?,
+    minvc_updat = current_timestamp(),
+    minvc_rvnmr = minvc_rvnmr + 1
     WHERE id = ?`,
       params: [
-        mbkng_cntct,
-        mbkng_trdat,
-        mbkng_refno,
-        mbkng_trnte,
-        mbkng_odamt,
-        mbkng_dsamt,
-        mbkng_vtamt,
-        mbkng_vatpy,
-        mbkng_incst,
-        mbkng_excst,
-        mbkng_rnamt,
-        mbkng_ttamt,
-        mbkng_pyamt,
-        mbkng_pdamt,
-        mbkng_duamt,
-        mbkng_ispad,
-        mbkng_ispst,
+        minvc_cntct,
+        minvc_trdat,
+        minvc_refno,
+        minvc_trnte,
+        minvc_odamt,
+        minvc_dsamt,
+        minvc_vtamt,
+        minvc_vatpy,
+        minvc_incst,
+        minvc_excst,
+        minvc_rnamt,
+        minvc_ttamt,
+        minvc_pyamt,
+        minvc_pdamt,
+        minvc_duamt,
+        minvc_ispad,
+        minvc_ispst,
         user_id,
         id,
       ],
-      label: `Update master ${mbkng_trnno}`,
+      label: `Update master ${minvc_trnno}`,
     });
-
+  
+    console.log(JSON.stringify(tmpb_cinvc));
+    
     //Insert booking details
-    for (const det of tmpb_cbkng) {
+    for (const det of tmpb_cinvc) {
       scripts_updt.push({
-        sql: `INSERT INTO tmpb_cbkng(id, cbkng_mbkng, cbkng_bitem, cbkng_items, cbkng_itrat, cbkng_itqty,
-        cbkng_itamt, cbkng_dspct, cbkng_dsamt, cbkng_vtpct, cbkng_vtamt, cbkng_csrat,
-        cbkng_ntamt, cbkng_notes, cbkng_cnqty, cbkng_rcqty, cbkng_pnqty,
-        cbkng_crusr, cbkng_upusr)
+        sql: `INSERT INTO tmpb_cinvc(id, cinvc_minvc, cinvc_bitem, cinvc_items, cinvc_itrat, cinvc_itqty,
+        cinvc_itamt, cinvc_dspct, cinvc_dsamt, cinvc_vtpct, cinvc_vtamt, cinvc_csrat,
+        cinvc_ntamt, cinvc_notes, cinvc_attrb, cinvc_rtqty, cinvc_slqty, cinvc_ohqty,
+        cinvc_crusr, cinvc_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?,
         ?, ?)`,
         params: [
           uuidv4(),
           id,
-          det.cbkng_bitem,
-          det.cbkng_items,
-          det.cbkng_itrat || 0,
-          det.cbkng_itqty || 1,
-          det.cbkng_itamt || 0,
-          det.cbkng_dspct || 0,
-          det.cbkng_dsamt || 0,
-          det.cbkng_vtpct || 0,
-          det.cbkng_vtamt || 0,
-          det.cbkng_csrat || 0,
-          det.cbkng_ntamt || 0,
-          det.cbkng_notes || "",
+          det.cinvc_bitem,
+          det.cinvc_items,
+          det.cinvc_itrat || 0,
+          det.cinvc_itqty || 1,
+          det.cinvc_itamt || 0,
+          det.cinvc_dspct || 0,
+          det.cinvc_dsamt || 0,
+          det.cinvc_vtpct || 0,
+          det.cinvc_vtamt || 0,
+          det.cinvc_csrat || 0,
+          det.cinvc_ntamt || 0,
+          det.cinvc_notes || "",
+          det.cinvc_attrb || "",
           0,
           0,
-          det.cbkng_itqty || 1, //det.cbkng_pnqty,
+          det.cinvc_itqty || 1, //det.cinvc_ohqty,
           user_id,
           user_id,
         ],
-        label: `Created detail ${mbkng_trnno}`,
+        label: `Created PB detail ${minvc_trnno}`,
       });
     }
 
@@ -673,11 +680,11 @@ router.post("/update", async (req, res) => {
         ?)`,
         params: [
           uuidv4(),
-          mbkng_users,
-          mbkng_bsins,
-          mbkng_cntct,
+          minvc_users,
+          minvc_bsins,
+          minvc_cntct,
           id,
-          mbkng_trnno,
+          minvc_trnno,
           "Purchase Booking",
           pay.expns_inexc,
           pay.expns_notes,
@@ -685,7 +692,7 @@ router.post("/update", async (req, res) => {
           user_id,
           user_id,
         ],
-        label: `Created expense ${mbkng_trnno}`,
+        label: `Created expense ${minvc_trnno}`,
       });
     }
 
@@ -701,14 +708,14 @@ router.post("/update", async (req, res) => {
         ?, ?, ?)`,
           params: [
             uuidv4(),
-            mbkng_users,
-            mbkng_bsins,
-            mbkng_cntct,
+            minvc_users,
+            minvc_bsins,
+            minvc_cntct,
             pay.paybl_pymod,
             id,
-            mbkng_trnno,
+            minvc_trnno,
             "Purchase Booking",
-            mbkng_trdat,
+            minvc_trdat,
             pay.paybl_descr,
             pay.paybl_notes,
             pay.paybl_dbamt,
@@ -716,7 +723,7 @@ router.post("/update", async (req, res) => {
             user_id,
             user_id,
           ],
-          label: `Created payment debit ${mbkng_trnno}`,
+          label: `Created payment debit ${minvc_trnno}`,
         });
       }
     }
@@ -731,22 +738,22 @@ router.post("/update", async (req, res) => {
       ?, ?, ?)`,
       params: [
         uuidv4(),
-        mbkng_users,
-        mbkng_bsins,
-        mbkng_cntct,
+        minvc_users,
+        minvc_bsins,
+        minvc_cntct,
         "Inventory",
         id,
-        mbkng_trnno,
+        minvc_trnno,
         "Purchase Booking",
-        mbkng_trdat,
+        minvc_trdat,
         "Supplier Goods",
         "Products",
         0,
-        mbkng_pyamt,
+        minvc_pyamt,
         user_id,
         user_id,
       ],
-      label: `Created payment credit ${mbkng_trnno}`,
+      label: `Created payment credit ${minvc_trnno}`,
     });
 
     await dbRunAll(scripts_updt);
@@ -801,99 +808,4 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-//cancel-booking-items
-router.post("/cancel-booking-items", async (req, res) => {
-  try {
-    const {
-      id,
-      pmstr_users,
-      pmstr_bsins,
-      pmstr_cntct,
-      pmstr_trnno,
-      pmstr_cnamt,
-      user_id,
-      tmtb_rcvpy,
-    } = req.body;
-
-    // Validate input
-    if (!id || !pmstr_users || !pmstr_bsins || !user_id) {
-      return res.json({
-        success: false,
-        message: "All fields are required",
-        data: null,
-      });
-    }
-
-    console.log(tmtb_rcvpy);
-    //return;
-    //database action
-    const scripts = [];
-
-    scripts.push({
-      sql: `UPDATE tmpb_pmstr
-    SET pmstr_cnamt = ?,
-      pmstr_ispad = 1,
-      pmstr_hscnl = 1,
-      pmstr_upusr = ?,
-      pmstr_updat = current_timestamp(),
-      pmstr_rvnmr = pmstr_rvnmr + 1
-    WHERE id = ?
-    AND pmstr_users = ?
-    AND pmstr_bsins = ?
-    AND pmstr_ispst = 1
-    AND pmstr_hscnl = 0`,
-      params: [pmstr_cnamt, user_id, id, pmstr_users, pmstr_bsins],
-      label: `Cancel booking for ${pmstr_users}`,
-    });
-
-    scripts.push({
-      sql: `UPDATE tmpb_bking
-    SET bking_cnqty = bking_pnqty,
-        bking_pnqty = 0,
-        bking_updat = current_timestamp(),
-        bking_upusr = ?,
-        bking_rvnmr = bking_rvnmr + 1
-    WHERE bking_pmstr = ?
-    AND bking_pnqty > 0`,
-      params: [user_id, id],
-      label: `Cancel booking details for ${pmstr_users}`,
-    });
-
-    scripts.push({
-      sql: `INSERT INTO tmtb_rcvpy(id, rcvpy_users, rcvpy_bsins, rcvpy_cntct, rcvpy_pymod, rcvpy_refid,
-      rcvpy_refno, rcvpy_srcnm, rcvpy_notes, rcvpy_pyamt, rcvpy_crusr, rcvpy_upusr)
-      VALUES (?, ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, ?, ?)`,
-      params: [
-        uuidv4(),
-        pmstr_users,
-        pmstr_bsins,
-        pmstr_cntct,
-        "Refund",
-        id,
-        pmstr_trnno,
-        "Purchase Retrun",
-        "Booking Cancel Refund",
-        pmstr_cnamt,
-        user_id,
-        user_id,
-      ],
-      label: `Created payment ${pmstr_trnno}`,
-    });
-
-    await dbRunAll(scripts);
-    res.json({
-      success: true,
-      message: "Booking cancelled successfully",
-      data: null,
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: null,
-    });
-  }
-});
 module.exports = router;

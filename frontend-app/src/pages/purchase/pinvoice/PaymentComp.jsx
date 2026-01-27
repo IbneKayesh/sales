@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
 import { Tag } from "primereact/tag";
-import tmpb_mbkng from "@/models/purchase/tmpb_mbkng.json";
+import tmpb_minvc from "@/models/purchase/tmpb_minvc.json";
 
 const PaymentComp = ({
   errors,
@@ -15,11 +15,11 @@ const PaymentComp = ({
   const [payableNote, setPayableNote] = useState("");
   useEffect(() => {
     let note = "";
-    if (formData.mbkng_vatpy === 1) {
+    if (formData.minvc_vatpy === 1) {
       note += " with Vat";
     }
     setPayableNote(note);
-  }, [formData.mbkng_vatpy]);
+  }, [formData.minvc_vatpy]);
 
   function getDecimalPart(value) {
     if (value == null || isNaN(value)) return 0;
@@ -27,33 +27,33 @@ const PaymentComp = ({
   }
 
   const handleSetRoundOffAmount = () => {
-    const decimalPart = getDecimalPart(formData.mbkng_pyamt);
+    const decimalPart = getDecimalPart(formData.minvc_pyamt);
     //console.log(decimalPart);
-    handleChange("mbkng_rnamt", decimalPart);
+    handleChange("minvc_rnamt", decimalPart);
   };
 
   return (
     <div className="grid mt-3">
       <div className="col-12 md:col-4">
         <div className="col-12 mb-3">
-          <label htmlFor="mbkng_trnte" className="block font-bold mb-2">
-            {tmpb_mbkng.mbkng_trnte.label}
+          <label htmlFor="minvc_trnte" className="block font-bold mb-2">
+            {tmpb_minvc.minvc_trnte.label}
           </label>
           <InputText
-            id="mbkng_trnte"
-            name="mbkng_trnte"
-            value={formData.mbkng_trnte}
-            onChange={(e) => handleChange("mbkng_trnte", e.target.value)}
-            className={`w-full ${errors.mbkng_trnte ? "p-invalid" : ""}`}
-            placeholder={`Enter ${tmpb_mbkng.mbkng_trnte.label}`}
+            id="minvc_trnte"
+            name="minvc_trnte"
+            value={formData.minvc_trnte}
+            onChange={(e) => handleChange("minvc_trnte", e.target.value)}
+            className={`w-full ${errors.minvc_trnte ? "p-invalid" : ""}`}
+            placeholder={`Enter ${tmpb_minvc.minvc_trnte.label}`}
             disabled={formData.edit_stop}
             variant={formData.edit_stop ? "filled" : "outlined"}
           />
-          {errors.mbkng_trnte && (
-            <small className="mb-3 text-red-500">{errors.mbkng_trnte}</small>
+          {errors.minvc_trnte && (
+            <small className="mb-3 text-red-500">{errors.minvc_trnte}</small>
           )}
         </div>
-        {formData.edit_stop === 1 && formData.mbkng_ispad === "0" && (
+        {formData.edit_stop === 1 && formData.minvc_ispad === 0 && (
           <Tag
             severity="danger"
             value="Unpaid"
@@ -61,7 +61,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.mbkng_ispad === 1 && (
+        {formData.minvc_ispad === 1 && (
           <Tag
             severity="success"
             value="Paid"
@@ -69,7 +69,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.mbkng_ispad === 2 && (
+        {formData.minvc_ispad === 2 && (
           <Tag
             severity="warning"
             value="Partially Paid"
@@ -77,7 +77,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.mbkng_ispst === 0 && (
+        {formData.minvc_ispst === 0 && (
           <Tag
             severity="danger"
             value="Not Posted"
@@ -85,7 +85,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.mbkng_iscls === 1 && (
+        {formData.minvc_iscls === 1 && (
           <Tag
             severity="danger"
             value="Closed"
@@ -93,7 +93,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.mbkng_vatcl === 1 && (
+        {formData.minvc_vatcl === 1 && (
           <Tag
             severity="success"
             value="VAT Collected"
@@ -101,7 +101,7 @@ const PaymentComp = ({
             className="p-2 mr-2"
           />
         )}
-        {formData.mbkng_hscnl === 1 && (
+        {formData.minvc_hscnl === 1 && (
           <Tag
             severity="danger"
             value="Cancelled"
@@ -125,14 +125,14 @@ const PaymentComp = ({
             <div className="flex justify-content-between">
               <span>Gross Amount (1)</span>
               <span className="font-bold text-900">
-                {Number(formData.mbkng_odamt).toFixed(2)}
+                {Number(formData.minvc_odamt).toFixed(2)}
               </span>
             </div>
 
             <div className="flex justify-content-between">
               <span>Discount (2)</span>
               <span className="font-bold text-red-500">
-                -{Number(formData.mbkng_dsamt).toFixed(2)}
+                -{Number(formData.minvc_dsamt).toFixed(2)}
               </span>
             </div>
 
@@ -140,7 +140,7 @@ const PaymentComp = ({
               className={`flex justify-content-between`}
               onClick={() =>
                 !formData.edit_stop &&
-                handleChange("mbkng_vatpy", formData.mbkng_vatpy === 1 ? 0 : 1)
+                handleChange("minvc_vatpy", formData.minvc_vatpy === 1 ? 0 : 1)
               }
             >
               <div
@@ -148,7 +148,7 @@ const PaymentComp = ({
               >
                 <i
                   className={
-                    formData.mbkng_vatpy === 1
+                    formData.minvc_vatpy === 1
                       ? "pi pi-check-circle text-bold text-white"
                       : "pi pi-circle text-bold text-red-500"
                   }
@@ -156,7 +156,7 @@ const PaymentComp = ({
                 <span>VAT (3)</span>
               </div>
               <span className="font-bold text-900">
-                {Number(formData.mbkng_vtamt).toFixed(2)}
+                {Number(formData.minvc_vtamt).toFixed(2)}
               </span>
             </div>
 
@@ -169,7 +169,7 @@ const PaymentComp = ({
                 <span>Include Cost (4)</span>
               </div>
               <span className="font-bold">
-                {Number(formData.mbkng_incst || 0).toFixed(2)}
+                {Number(formData.minvc_incst || 0).toFixed(2)}
               </span>
             </div>
 
@@ -192,19 +192,19 @@ const PaymentComp = ({
               <div>
                 {formData.edit_stop === 1 ? (
                   <span className="font-bold">
-                    {Number(formData.mbkng_rnamt || 0).toFixed(2)}
+                    {Number(formData.minvc_rnamt || 0).toFixed(2)}
                   </span>
                 ) : (
                   <InputNumber
-                    value={formData.mbkng_rnamt}
-                    onValueChange={(e) => handleChange("mbkng_rnamt", e.value)}
-                    className={`${errors.mbkng_rnamt ? "p-invalid" : ""}`}
+                    value={formData.minvc_rnamt}
+                    onValueChange={(e) => handleChange("minvc_rnamt", e.value)}
+                    className={`${errors.minvc_rnamt ? "p-invalid" : ""}`}
                     inputStyle={{
                       width: "100%",
                       padding: "3px",
-                      color: formData.mbkng_rnamt > 0 ? "red" : "",
+                      color: formData.minvc_rnamt > 0 ? "red" : "",
                       backgroundColor:
-                        formData.mbkng_rnamt > 0 ? "#f9fae9ff" : "",
+                        formData.minvc_rnamt > 0 ? "#f9fae9ff" : "",
                       textAlign: "right",
                     }}
                     max={10}
@@ -218,7 +218,7 @@ const PaymentComp = ({
             <div className="flex justify-content-between">
               <span>Total (6) [1+3+4-2+5]</span>
               <span className="font-bold text-900">
-                {Number(formData.mbkng_ttamt).toFixed(2)}
+                {Number(formData.minvc_ttamt).toFixed(2)}
               </span>
             </div>
 
@@ -227,7 +227,7 @@ const PaymentComp = ({
             <div className="flex justify-content-between">
               <span className="font-bold">Payable (7)</span>
               <div className="flex flex-column align-items-end">
-                <span className="font-bold">{formData.mbkng_pyamt}</span>
+                <span className="font-bold">{formData.minvc_pyamt}</span>
                 <span className="text-xs text-red-500 font-normal">
                   {payableNote}
                 </span>
@@ -243,14 +243,14 @@ const PaymentComp = ({
                 <span>Paid (8)</span>
               </div>
               <span className="text-green-700 font-bold">
-                {formData.mbkng_pdamt}
+                {formData.minvc_pdamt}
               </span>
             </div>
 
             <div className="flex justify-content-between">
               <span>Due (9)</span>
               <span className="text-red-700 font-bold">
-                {formData.mbkng_duamt}
+                {formData.minvc_duamt}
               </span>
             </div>
 
@@ -263,7 +263,7 @@ const PaymentComp = ({
                 <span>Exclude Cost (10)</span>
               </div>
               <span className="font-bold">
-                {Number(formData.mbkng_excst || 0).toFixed(2)}
+                {Number(formData.minvc_excst || 0).toFixed(2)}
               </span>
             </div>
           </div>
