@@ -117,6 +117,12 @@ const Layout = () => {
           url: "/home/inventory/category",
           icon: "pi pi-list-check",
         },
+        {
+          id: "in4",
+          name: "Inventory Report",
+          url: "/home/inventory/stockreports",
+          icon: "pi pi-file",
+        },
       ],
     },
     {

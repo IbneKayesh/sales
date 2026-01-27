@@ -7,6 +7,7 @@ import { preceiptAPI } from "@/api/purchase/preceiptAPI";
 import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
+import { stringifyAttributes } from "@/utils/jsonParser";
 
 const dataModel = generateDataModel(tmpb_mrcpt, { edit_stop: 0 });
 
@@ -200,6 +201,11 @@ export const usePreceipt = () => {
             ? "1"
             : "2";
 
+      const formDataItemListNew = formDataItemList.map((item) => ({
+        ...item,
+        crcpt_attrb: stringifyAttributes(item.crcpt_attrb),
+      }));
+
       // Ensure id exists (for create)
       const formDataNew = {
         ...formData,
@@ -209,7 +215,7 @@ export const usePreceipt = () => {
         mrcpt_trdat: formatDateForAPI(formData.mrcpt_trdat),
         mrcpt_ispad: 1,
         user_id: user.id,
-        tmpb_crcpt: formDataItemList,
+        tmpb_crcpt: formDataItemListNew,
         tmpb_expns: formDataExpensesList,
         //tmtb_paybl: formDataPaymentList,
       };
@@ -255,7 +261,7 @@ export const usePreceipt = () => {
     mrcpt_trnno: "",
     mrcpt_trdat: "", //new Date().toLocaleString().split("T")[0],
     mrcpt_refno: "",
-    search_option: "",
+    search_option: "last_3_days",
   });
 
   const handleChangeSearchInput = (e) => {

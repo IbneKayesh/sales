@@ -14,47 +14,47 @@ const closingSql = {
         params: [businessId],
         label: `Reset BItems Purchase Booking Quantity`,
       }),
+      reset_purchase_booking_and_good_stock_qty: (businessId) => ({
+        sql: `UPDATE tmib_bitem
+                SET bitem_pbqty = 0,
+                bitem_gstkq = 0
+                WHERE bitem_bsins = ?
+                AND (bitem_pbqty > 0 OR bitem_gstkq > 0)`,
+        params: [businessId],
+        label: `Reset BItems Purchase Booking and Good Stock Quantity`,
+      }),
+      update_purchase_booking_qty: (businessId) => ({
+        sql: `UPDATE tmib_bitem AS tgt
+          JOIN (
+            SELECT cbkg.cbkng_bitem, SUM(cbkg.cbkng_pnqty) AS cbkng_pnqty
+            FROM tmpb_cbkng cbkg
+            JOIN tmpb_mbkng bkg ON cbkg.cbkng_mbkng = bkg.id
+            WHERE cbkg.cbkng_pnqty > 0
+            AND bkg.mbkng_ispst = 1
+            AND bkg.mbkng_bsins = ?
+            GROUP BY cbkg.cbkng_bitem
+            )AS src
+          ON tgt.id = src.cbkng_bitem
+          SET tgt.bitem_pbqty = src.cbkng_pnqty`,
+        params: [businessId],
+        label: `Update BItems Purchase Booking Quantity`,
+      }),
+      update_good_stock_qty: (businessId) => ({
+        sql: `UPDATE tmib_bitem AS tgt
+              JOIN (
+                SELECT crcpt.crcpt_bitem, crcpt.crcpt_items, SUM(crcpt.crcpt_ohqty) AS bitem_gstkq
+                FROM tmpb_crcpt crcpt
+                JOIN tmpb_mrcpt mrcpt ON crcpt.crcpt_mrcpt = mrcpt.id
+                WHERE crcpt.crcpt_ohqty > 0
+                AND mrcpt.mrcpt_bsins = ?
+                GROUP BY crcpt.crcpt_bitem, crcpt.crcpt_items
+            ) AS src
+            ON tgt.id = src.crcpt_bitem
+            SET tgt.bitem_gstkq = src.bitem_gstkq`,
+        params: [businessId],
+        label: `Update BItems Good Stock Quantity`,
+      }),
     },
-    reset_purchase_booking_and_good_stock_qty: (businessId) => ({
-      sql: `UPDATE tmib_bitem
-              SET bitem_pbqty = 0,
-              bitem_gstkq = 0
-              WHERE bitem_bsins = ?
-              AND (bitem_pbqty > 0 OR bitem_gstkq > 0)`,
-      params: [businessId],
-      label: `Reset BItems Purchase Booking and Good Stock Quantity`,
-    }),
-    update_purchase_booking_qty: (businessId) => ({
-      sql: `UPDATE tmib_bitem AS tgt
-        JOIN (
-          SELECT cbkg.cbkng_bitem, SUM(cbkg.cbkng_pnqty) AS cbkng_pnqty
-          FROM tmpb_cbkng cbkg
-          JOIN tmpb_mbkng bkg ON cbkg.cbkng_mbkng = bkg.id
-          WHERE cbkg.cbkng_pnqty > 0
-          AND bkg.mbkng_ispst = 1
-          AND bkg.mbkng_bsins = ?
-          GROUP BY cbkg.cbkng_bitem
-          )AS src
-        ON tgt.id = src.cbkng_bitem
-        SET tgt.bitem_pbqty = src.cbkng_pnqty`,
-      params: [businessId],
-      label: `Update BItems Purchase Booking Quantity`,
-    }),
-    update_good_stock_qty: (businessId) => ({
-      sql: `UPDATE tmib_bitem AS tgt
-            JOIN (
-              SELECT crcpt.crcpt_bitem, crcpt.crcpt_items, SUM(crcpt.crcpt_ohqty) AS bitem_gstkq
-              FROM tmpb_crcpt crcpt
-              JOIN tmpb_mrcpt mrcpt ON crcpt.crcpt_mrcpt = mrcpt.id
-              WHERE crcpt.crcpt_ohqty > 0
-              AND mrcpt.mrcpt_bsins = ?
-              GROUP BY crcpt.crcpt_bitem, crcpt.crcpt_items
-          ) AS src
-          ON tgt.id = src.crcpt_bitem
-          SET tgt.bitem_gstkq = src.bitem_gstkq`,
-      params: [businessId],
-      label: `Update BItems Good Stock Quantity`,
-    }),
   },
 
   accounts: {
@@ -96,7 +96,7 @@ const closingSql = {
         WHERE mbkng_ispad IN (0,2)
         AND mbkng_duamt = 0
         AND id = ?`,
-        params: [irefIdd],
+        params: [refId],
         label: `Update Purchase Booking payment status`,
       }),
       update_payble_dues: (refId) => ({

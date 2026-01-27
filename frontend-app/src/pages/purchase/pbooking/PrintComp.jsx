@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Dialog } from "primereact/dialog";
-import { Button } from "primereact/button";
 import "./PrintComp.css";
 import { useAuth } from "@/hooks/useAuth";
 import { parseAttributes } from "@/utils/jsonParser";
@@ -146,7 +144,7 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
           <table className="invoice-table">
             <thead>
               <tr>
-                <th style={{ width: "40px" }}>ID</th>
+                <th style={{ width: "40px" }}>Sl</th>
                 <th>Item Description</th>
                 <th className="text-right">Price</th>
                 <th className="text-right">Qty</th>

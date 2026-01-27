@@ -17,6 +17,7 @@ CREATE TABLE `tmpb_crcpt` (
   `crcpt_csrat` decimal(20,6) NOT NULL DEFAULT 0,
   `crcpt_ntamt` decimal(20,6) NOT NULL DEFAULT 0,
   `crcpt_notes` VARCHAR(50) DEFAULT NULL,
+  `crcpt_attrb` VARCHAR(300) DEFAULT NULL,
   `crcpt_rtqty` decimal(20,6) NOT NULL DEFAULT 0,
   `crcpt_slqty` decimal(20,6) NOT NULL DEFAULT 0,
   `crcpt_ohqty` decimal(20,6) NOT NULL DEFAULT 0,

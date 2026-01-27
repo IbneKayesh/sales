@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./PrintComp.css";
 import { useAuth } from "@/hooks/useAuth";
+import { parseAttributes } from "@/utils/jsonParser";
 
 const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
   const { user, business } = useAuth();
@@ -104,7 +105,7 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
               <div
                 style={{
                   fontSize: "15px",
-                  fontWeight: 700,
+                  fontWeight: 600,
                   marginBottom: "5px",
                 }}
               >
@@ -112,7 +113,9 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
               </div>
               <div className="info-row">
                 <span className="label">Contact:</span>
-                <span>{formData?.cntct_cntno}</span>
+                <span>
+                  {formData?.cntct_cntno}, {formData?.cntct_cntps}
+                </span>
               </div>
               <div className="info-row">
                 <span className="label">Address:</span>
@@ -142,7 +145,7 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
           <table className="invoice-table">
             <thead>
               <tr>
-                <th style={{ width: "40px" }}>ID</th>
+                <th style={{ width: "40px" }}>Sl</th>
                 <th>Item Description</th>
                 <th className="text-right">Price</th>
                 <th className="text-right">Qty</th>
@@ -155,8 +158,16 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>
-                    <span style={{ fontWeight: 600 }}>{item.items_iname}</span>
-                    <span className="subtext">{item.items_icode}</span>
+                    <span style={{ fontWeight: 600 }}>
+                      {item.items_icode} {item.items_iname}
+                    </span>
+                    {item.crcpt_attrb && (
+                      <span className="subtext">
+                        {Object.entries(parseAttributes(item.crcpt_attrb))
+                          .map(([key, value]) => `${key}: ${value}`)
+                          .join(", ")}
+                      </span>
+                    )}
                     {item.crcpt_notes && (
                       <span className="subtext italic">
                         Note: {item.crcpt_notes}

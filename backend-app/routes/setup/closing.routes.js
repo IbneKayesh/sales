@@ -60,10 +60,17 @@ router.post("/purchase-receipt", async (req, res) => {
 
     //database action
     const scripts = [];
-    scripts.push(closingSql.inventory.tmib_bitem.reset_purchase_booking_and_good_stock_qty(id));
-    scripts.push(closingSql.inventory.tmib_bitem.update_good_stock_qty(id));
-    scripts.push(closingSql.purchase.tmpb_cbkng.update_received_and_pending_qty(id));
-    scripts.push(closingSql.inventory.tmib_bitem.update_purchase_booking_qty(id));
+    scripts.push(
+      closingSql.inventory.tmib_bitem.reset_purchase_booking_and_good_stock_qty(
+        id,
+      ),
+    );
+    scripts.push(
+      closingSql.purchase.tmpb_cbkng.update_received_and_pending_qty(id),
+    );
+    scripts.push(
+      closingSql.inventory.tmib_bitem.update_purchase_booking_qty(id),
+    );
 
     await dbRunAll(scripts);
     res.json({
@@ -98,7 +105,9 @@ router.post("/payable-due", async (req, res) => {
     //database action
     const scripts = [];
     scripts.push(closingSql.purchase.tmpb_mbkng.update_payble_dues(id));
-    scripts.push(closingSql.purchase.tmpb_mbkng.update_payment_status_by_refId(id));
+    scripts.push(
+      closingSql.purchase.tmpb_mbkng.update_payment_status_by_refId(id),
+    );
 
     await dbRunAll(scripts);
     res.json({
@@ -115,8 +124,6 @@ router.post("/payable-due", async (req, res) => {
     });
   }
 });
-
-
 
 // generate
 router.post("/accounts-ledger", async (req, res) => {
@@ -169,7 +176,7 @@ router.post("/purchase-invoice", async (req, res) => {
     //database action
     const scripts = [];
     // Example: Purchase invoice also updates good stock quantity
-    scripts.push(sqlLib.purchase.bitems.updateGsQty(id));
+    scripts.push(closingSql.inventory.tmib_bitem.update_good_stock_qty(id));
 
     // Add other relevant scripts here...
 

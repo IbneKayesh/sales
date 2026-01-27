@@ -1,4 +1,12 @@
 const ConvertedQtyComponent = ({ qty, dfQty, pname, sname }) => {
+  if (pname === sname) {
+    return (
+      <span className={`${qty === 0 ? "text-red-400" : ""}`}>
+        {`${Number(qty).toFixed(2)} ${pname}`}
+      </span>
+    );
+  }
+
   const diff = dfQty || 1;
   const big = Math.floor(qty / diff);
   const small = qty % diff;

@@ -7,6 +7,7 @@ import { pbookingAPI } from "@/api/purchase/pbookingAPI";
 import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
+import { stringifyAttributes } from "@/utils/jsonParser";
 
 const dataModel = generateDataModel(tmpb_mbkng, { edit_stop: 0 });
 
@@ -200,30 +201,16 @@ export const usePbooking = () => {
             ? "1"
             : "2";
 
-            
       // console.log(
       //   "paidStatus:",
       //   paidStatus
       // );
       // return;
 
-      const formDataItemListNew = formDataItemList.map((item) => {
-        let attrb = item.cbkng_attrb || {}; // if empty, default to empty object
-        // If it's an object, filter out empty values and stringify it.
-        if (typeof attrb === "object") {
-          const filteredAttrb = Object.fromEntries(
-            Object.entries(attrb).filter(
-              ([_, value]) =>
-                value !== "" && value !== null && value !== undefined,
-            ),
-          );
-          attrb = JSON.stringify(filteredAttrb);
-        }
-        return {
-          ...item,
-          cbkng_attrb: attrb,
-        };
-      });
+      const formDataItemListNew = formDataItemList.map((item) => ({
+        ...item,
+        cbkng_attrb: stringifyAttributes(item.cbkng_attrb),
+      }));
 
       // Ensure id exists (for create)
       const formDataNew = {

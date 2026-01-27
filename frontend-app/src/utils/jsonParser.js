@@ -8,4 +8,17 @@ const parseAttributes = (attrb) => {
   }
 };
 
-export { parseAttributes };
+const stringifyAttributes = (attrb) => {
+  if (!attrb) return "{}";
+  if (typeof attrb === "object") {
+    const filteredAttrb = Object.fromEntries(
+      Object.entries(attrb).filter(
+        ([_, value]) => value !== "" && value !== null && value !== undefined,
+      ),
+    );
+    return JSON.stringify(filteredAttrb);
+  }
+  return attrb;
+};
+
+export { parseAttributes, stringifyAttributes };

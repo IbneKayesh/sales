@@ -33,6 +33,7 @@ import PayablesPage from "./pages/accounts/payables/PayablesPage";
 import UnitPage from "./pages/inventory/units/UnitPage";
 import CategoryPage from "./pages/inventory/category/CategoryPage";
 import ProductsPage from "./pages/inventory/products/ProductsPage";
+import StockReportsPage from "./pages/inventory/stockreports/StockReportsPage.jsx";
 //support
 import GrainsPage from "./pages/support/GrainsPage";
 //purchase
@@ -121,6 +122,10 @@ function AppRoutes() {
             <Route path="inventory/unit" element={<UnitPage />} />
             <Route path="inventory/category" element={<CategoryPage />} />
             <Route path="inventory/products" element={<ProductsPage />} />
+            <Route
+              path="inventory/stockreports"
+              element={<StockReportsPage />}
+            />
             //support
             <Route path="support/grains" element={<GrainsPage />} />
             //purchase

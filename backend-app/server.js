@@ -29,6 +29,7 @@ const unitsRoutes = require("./routes/inventory/units.routes.js");
 const categoriesRoutes = require("./routes/inventory/categories.routes.js");
 const productsRoutes = require("./routes/inventory/products.routes.js");
 const attributesRoutes = require("./routes/inventory/attributes.routes.js");
+const stockreportsRoutes = require("./routes/inventory/stockreports.routes.js");
 //support
 const grainsRoutes = require("./routes/support/grains.routes.js");
 const notesRoutes = require("./routes/support/notes.routes.js");
@@ -98,6 +99,7 @@ app.use("/api/inventory/units", unitsRoutes);
 app.use("/api/inventory/categories", categoriesRoutes);
 app.use("/api/inventory/products", productsRoutes);
 app.use("/api/inventory/attributes", attributesRoutes);
+app.use("/api/inventory/stockreports", stockreportsRoutes);
 //support
 app.use("/api/support/grains", grainsRoutes);
 app.use("/api/support/notes", notesRoutes);

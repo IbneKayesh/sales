@@ -7,6 +7,7 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
 import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 import ZeroRowCell from "@/components/ZeroRowCell";
+import { parseAttributes } from "@/utils/jsonParser";
 
 const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
@@ -63,7 +64,21 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
 
   const items_iname_BT = (rowData) => {
-    return `${rowData.items_icode} - ${rowData.items_iname}`;
+    const parsedAttr = parseAttributes(rowData.crcpt_attrb);
+
+    return (
+      <div className="flex flex-column">
+        {/* {JSON.stringify(rowData)} */}
+        <span className="text-md">{`${rowData.items_icode} - ${rowData.items_iname}`}</span>
+        {Object.keys(parsedAttr).length > 0 && (
+          <span className="text-gray-500 text-sm">
+            {Object.entries(parsedAttr)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join(", ")}
+          </span>
+        )}
+      </div>
+    );
   };
 
   const items_iname_FT = () => {

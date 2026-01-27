@@ -372,11 +372,11 @@ router.post("/create", async (req, res) => {
       scripts.push({
         sql: `INSERT INTO tmpb_crcpt(id, crcpt_mrcpt, crcpt_bitem, crcpt_items, crcpt_itrat, crcpt_itqty,
         crcpt_itamt, crcpt_dspct, crcpt_dsamt, crcpt_vtpct, crcpt_vtamt, crcpt_csrat,
-        crcpt_ntamt, crcpt_notes, crcpt_rtqty, crcpt_slqty, crcpt_ohqty, crcpt_cbkng,
+        crcpt_ntamt, crcpt_notes, crcpt_attrb, crcpt_rtqty, crcpt_slqty, crcpt_ohqty, crcpt_cbkng,
         crcpt_crusr, crcpt_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?, ?,
         ?, ?)`,
         params: [
           uuidv4(),
@@ -393,6 +393,7 @@ router.post("/create", async (req, res) => {
           det.crcpt_csrat || 0,
           det.crcpt_ntamt || 0,
           det.crcpt_notes || "",
+          det.crcpt_attrb || "",
           0,
           0,
           det.crcpt_ohqty || 1, //det.cbkng_pnqty,
@@ -633,11 +634,11 @@ router.post("/update", async (req, res) => {
       scripts_updt.push({
         sql: `INSERT INTO tmpb_crcpt(id, crcpt_mrcpt, crcpt_bitem, crcpt_items, crcpt_itrat, crcpt_itqty,
         crcpt_itamt, crcpt_dspct, crcpt_dsamt, crcpt_vtpct, crcpt_vtamt, crcpt_csrat,
-        crcpt_ntamt, crcpt_notes, crcpt_rtqty, crcpt_slqty, crcpt_ohqty, crcpt_cbkng,
+        crcpt_ntamt, crcpt_notes, crcpt_attrb, crcpt_rtqty, crcpt_slqty, crcpt_ohqty, crcpt_cbkng,
         crcpt_crusr, crcpt_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?, ?,
         ?, ?)`,
         params: [
           uuidv4(),
@@ -654,6 +655,7 @@ router.post("/update", async (req, res) => {
           det.crcpt_csrat || 0,
           det.crcpt_ntamt || 0,
           det.crcpt_notes || "",
+          det.crcpt_attrb || "",
           0,
           0,
           det.crcpt_ohqty || 1, //det.cbkng_pnqty,
@@ -819,7 +821,7 @@ router.post("/available-receipt-items", async (req, res) => {
     let sql = `SELECT cbkg.id AS id, '' AS crcpt_mrcpt, cbkg.cbkng_bitem AS crcpt_bitem, cbkg.cbkng_items AS crcpt_items,
     cbkg.cbkng_itrat AS crcpt_itrat, cbkg.cbkng_pnqty AS crcpt_itqty, cbkg.cbkng_itamt AS crcpt_itamt, cbkg.cbkng_dspct AS crcpt_dspct,
     cbkg.cbkng_dsamt AS crcpt_dsamt, cbkg.cbkng_vtpct AS crcpt_vtpct, cbkg.cbkng_vtamt AS crcpt_vtamt, cbkg.cbkng_csrat AS crcpt_csrat,
-    cbkg.cbkng_ntamt AS crcpt_ntamt, cbkg.cbkng_notes AS crcpt_notes,
+    cbkg.cbkng_ntamt AS crcpt_ntamt, cbkg.cbkng_notes AS crcpt_notes, cbkg.cbkng_attrb AS crcpt_attrb,
     0 AS crcpt_rtqty, 0 AS crcpt_slqty, cbkg.cbkng_pnqty AS crcpt_ohqty, cbkg.id AS crcpt_cbkng, 0 as edit_stop,
     itm.items_icode, itm.items_iname, itm.items_dfqty, bitm.bitem_gstkq,
     puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
@@ -833,7 +835,7 @@ router.post("/available-receipt-items", async (req, res) => {
     AND bkg.mbkng_users = ?
     AND bkg.mbkng_bsins = ?
     AND bkg.mbkng_cntct = ?
-    ORDER BY bkg.mbkng_trdat DESC`;
+    ORDER BY bkg.mbkng_trdat, itm.items_iname`;
     let params = [mrcpt_users, mrcpt_bsins, mrcpt_cntct];
     const rows = await dbGetAll(
       sql,

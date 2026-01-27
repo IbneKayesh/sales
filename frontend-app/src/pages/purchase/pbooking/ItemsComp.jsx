@@ -10,7 +10,6 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { useProductsSgd } from "@/hooks/inventory/useProductsSgd";
 import { generateGuid } from "@/utils/guid";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
-import ActiveRowCell from "@/components/ActiveRowCell";
 import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 import ZeroRowCell from "@/components/ZeroRowCell";
 import AttributesComp from "./AttributesComp";
@@ -239,14 +238,6 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     setSelectedQty(1);
   };
 
-  const parseCbkngAttrb = (attrbString) => {
-    try {
-      return attrbString ? JSON.parse(attrbString) : {};
-    } catch (e) {
-      console.warn("Failed to parse cbkng_attrb:", e);
-      return {};
-    }
-  };
 
   const items_iname_BT = (rowData) => {
     const parsedAttr = parseAttributes(rowData.cbkng_attrb);

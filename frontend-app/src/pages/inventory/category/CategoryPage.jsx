@@ -27,7 +27,7 @@ const CategoryPage = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
-          {isList ? "Category List" : formData.id ? "Edit Category" : "Add New Category"}
+          {isList ? "Category List" : formData.id ? "Edit Category" : "New Category"}
         </h3>
 
         <div className="flex gap-2">
@@ -63,7 +63,7 @@ const CategoryPage = () => {
 
   return (
     <>
-      <Card header={getHeader()} className="bg-dark-200 border-round p-3">
+      <Card header={getHeader()} className="border-round p-3">
         {currentView === "list" ? (
           <CategoryListComp
             dataList={dataList}
