@@ -406,10 +406,10 @@ router.post("/create", async (req, res) => {
     for (const pay of tmpb_expns) {
       scripts.push({
         sql: `INSERT INTO tmpb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
-        expns_srcnm, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
+        expns_srcnm, expns_trdat, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
         expns_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?,
         ?)`,
         params: [
           uuidv4(),
@@ -418,7 +418,8 @@ router.post("/create", async (req, res) => {
           minvc_cntct,
           id,
           minvc_trnno_new,
-          "Purchase Booking",
+          "Purchase Invoice",
+          minvc_trdat,
           pay.expns_inexc,
           pay.expns_notes,
           pay.expns_xpamt,
@@ -673,10 +674,10 @@ router.post("/update", async (req, res) => {
     for (const pay of tmpb_expns) {
       scripts_updt.push({
         sql: `INSERT INTO tmpb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
-        expns_srcnm, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
+        expns_srcnm, expns_trdat, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
         expns_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?,
         ?)`,
         params: [
           uuidv4(),
@@ -685,7 +686,8 @@ router.post("/update", async (req, res) => {
           minvc_cntct,
           id,
           minvc_trnno,
-          "Purchase Booking",
+          "Purchase Invoice",
+          minvc_trdat,
           pay.expns_inexc,
           pay.expns_notes,
           pay.expns_xpamt,

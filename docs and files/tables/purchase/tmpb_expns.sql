@@ -9,7 +9,8 @@ CREATE TABLE `tmpb_expns` (
   `expns_cntct` varchar(50) NOT NULL,
   `expns_refid` varchar(50) NOT NULL,
   `expns_refno` varchar(50) NOT NULL,
-  `expns_srcnm` varchar(50) NOT NULL,  
+  `expns_srcnm` varchar(50) NOT NULL,
+  `expns_trdat` DATETIME NOT NULL DEFAULT current_timestamp(),
   `expns_inexc` TINYINT(1) NOT NULL DEFAULT 1,
   -- optional
   `expns_notes` varchar(100) DEFAULT NULL,

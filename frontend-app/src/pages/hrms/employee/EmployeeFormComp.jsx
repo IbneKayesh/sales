@@ -44,7 +44,7 @@ const EmployeeFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           <small className="mb-3 text-red-500">{errors.emply_pswrd}</small>
         )}
       </div>
-      <div className="col-12 md:col-3">
+      <div className="col-12 md:col-6">
         <label
           htmlFor="emply_ename"
           className="block text-900 font-medium mb-2"
@@ -80,7 +80,7 @@ const EmployeeFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           <small className="mb-3 text-red-500">{errors.emply_econt}</small>
         )}
       </div>
-      <div className="col-12 md:col-3">
+      <div className="col-12 md:col-6">
         <label
           htmlFor="emply_addrs"
           className="block text-900 font-medium mb-2"

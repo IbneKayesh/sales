@@ -22,18 +22,20 @@ import PasswordPage from "./pages/auth/password/PasswordPage";
 import ContactPage from "./pages/crm/contacts/ContactPage.jsx";
 import FieldroutePage from "./pages/crm/fieldroute/FieldroutePage.jsx";
 //hrms
-import EmployeesPage from "./pages/hrms/EmployeesPage.jsx";
+import EmployeesPage from "./pages/hrms/employee/EmployeesPage.jsx";
 
 //accounts
 import AccountsPage from "./pages/accounts/accounts/AccountsPage";
 import HeadsPage from "./pages/accounts/heads/HeadsPage";
 import LedgerPage from "./pages/accounts/ledger/LedgerPage";
 import PayablesPage from "./pages/accounts/payables/PayablesPage";
+import ExpensesPage from "./pages/accounts/expneses/ExpensesPage";
 //inventory
 import UnitPage from "./pages/inventory/units/UnitPage";
 import CategoryPage from "./pages/inventory/category/CategoryPage";
 import ProductsPage from "./pages/inventory/products/ProductsPage";
 import StockReportsPage from "./pages/inventory/stockreports/StockReportsPage.jsx";
+import TransferPage from "./pages/inventory/itransfer/TransferPage";
 //support
 import GrainsPage from "./pages/support/GrainsPage";
 //purchase
@@ -118,6 +120,7 @@ function AppRoutes() {
             <Route path="accounts/heads" element={<HeadsPage />} />
             <Route path="accounts/ledger" element={<LedgerPage />} />
             <Route path="accounts/payables" element={<PayablesPage />} />
+            <Route path="accounts/expenses" element={<ExpensesPage />} />
             //inventory
             <Route path="inventory/unit" element={<UnitPage />} />
             <Route path="inventory/category" element={<CategoryPage />} />
@@ -126,6 +129,7 @@ function AppRoutes() {
               path="inventory/stockreports"
               element={<StockReportsPage />}
             />
+            <Route path="inventory/itransfer" element={<TransferPage />} />
             //support
             <Route path="support/grains" element={<GrainsPage />} />
             //purchase

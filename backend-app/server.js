@@ -21,6 +21,7 @@ const accountsRoutes = require("./routes/accounts/accounts.routes.js");
 const accountsHeadsRoutes = require("./routes/accounts/accountsHeads.routes.js");
 const accountsLedgerRoutes = require("./routes/accounts/accountsLedger.routes.js");
 const payablesRoutes = require("./routes/accounts/payables.routes.js");
+const expensesRoutes = require("./routes/accounts/expenses.routes.js");
 //setup
 const closingRoutes = require("./routes/setup/closing.routes.js");
 const databaseRoutes = require("./routes/setup/database.routes.js");
@@ -30,6 +31,7 @@ const categoriesRoutes = require("./routes/inventory/categories.routes.js");
 const productsRoutes = require("./routes/inventory/products.routes.js");
 const attributesRoutes = require("./routes/inventory/attributes.routes.js");
 const stockreportsRoutes = require("./routes/inventory/stockreports.routes.js");
+const itransferRoutes = require("./routes/inventory/itransfer.routes.js");
 //support
 const grainsRoutes = require("./routes/support/grains.routes.js");
 const notesRoutes = require("./routes/support/notes.routes.js");
@@ -91,6 +93,7 @@ app.use("/api/accounts/accounts", accountsRoutes);
 app.use("/api/accounts/accounts-heads", accountsHeadsRoutes);
 app.use("/api/accounts/accounts-ledgers", accountsLedgerRoutes);
 app.use("/api/accounts/payables", payablesRoutes);
+app.use("/api/accounts/expenses", expensesRoutes);
 //setup
 app.use("/api/setup/closing", closingRoutes);
 app.use("/api/setup/database", databaseRoutes);
@@ -100,6 +103,7 @@ app.use("/api/inventory/categories", categoriesRoutes);
 app.use("/api/inventory/products", productsRoutes);
 app.use("/api/inventory/attributes", attributesRoutes);
 app.use("/api/inventory/stockreports", stockreportsRoutes);
+app.use("/api/inventory/itransfer", itransferRoutes);
 //support
 app.use("/api/support/grains", grainsRoutes);
 app.use("/api/support/notes", notesRoutes);
