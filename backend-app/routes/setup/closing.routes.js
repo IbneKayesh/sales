@@ -200,4 +200,43 @@ router.post("/purchase-invoice", async (req, res) => {
   }
 });
 
+
+//inventory-transfer
+router.post("/inventory-transfer", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    // Validate input
+    if (!id) {
+      return res.json({
+        success: false,
+        message: "Business Id is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const scripts = [];
+    // Example: Purchase invoice also updates good stock quantity
+    scripts.push(closingSql.purchase.tmpb_crcpt.update_sold_ohqty(id));
+    scripts.push(closingSql.purchase.tmpb_cinvc.update_sold_ohqty(id));
+
+    // Add other relevant scripts here...
+
+    await dbRunAll(scripts);
+    res.json({
+      success: true,
+      message: "Purchase Invoice generated successfully",
+      data: req.body,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;

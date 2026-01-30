@@ -12,4 +12,14 @@ export const stockreportsAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  purchaseInvoice: (data) =>
+    apiRequest("/inventory/stockreports/purchase-invoice", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  inventoryTransfer: (data) =>
+    apiRequest("/inventory/stockreports/inventory-transfer", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

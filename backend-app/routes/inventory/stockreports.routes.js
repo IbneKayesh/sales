@@ -102,4 +102,105 @@ ORDER BY itm.items_iname`;
   }
 });
 
+
+
+//purchase-invoice
+router.post("/purchase-invoice", async (req, res) => {
+  try {
+    const { mrcpt_bsins } = req.body;
+
+    // Validate input
+    if (!mrcpt_bsins) {
+      return res.json({
+        success: false,
+        message: "Business ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT cnt.cntct_cntnm, minv.minvc_trnno, itm.items_icode, itm.items_iname, itm.items_dfqty,
+cinv.cinvc_attrb,cinv.cinvc_itqty,cinv.cinvc_itamt,cinv.cinvc_rtqty,cinv.cinvc_slqty,cinv.cinvc_ohqty,
+puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
+FROM tmpb_minvc minv
+JOIN tmpb_cinvc cinv ON minv.id = cinv.cinvc_minvc
+JOIN tmib_items itm ON cinv.cinvc_items = itm.id
+JOIN tmcb_cntct cnt ON minv.minvc_cntct = cnt.id
+LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
+LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
+WHERE minv.minvc_bsins = ?
+AND cinv.cinvc_ohqty > 0
+ORDER BY itm.items_iname`;
+    const params = [mrcpt_bsins];
+
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get stock report for ${mrcpt_bsins}`,
+    );
+    res.json({
+      success: true,
+      message: "Stock report fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+
+//inventory-transfer
+router.post("/inventory-transfer", async (req, res) => {
+  try {
+    const { mtrsf_bsins } = req.body;
+
+    // Validate input
+    if (!mtrsf_bsins) {
+      return res.json({
+        success: false,
+        message: "Business ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT bsn.bsins_bname, mts.mtrsf_trnno, itm.items_icode, itm.items_iname, itm.items_dfqty,
+cts.ctrsf_attrb,cts.ctrsf_itqty,cts.ctrsf_itamt,cts.ctrsf_rtqty,cts.ctrsf_slqty,cts.ctrsf_ohqty,
+puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
+FROM tmib_mtrsf mts
+JOIN tmib_ctrsf cts ON mts.id = cts.ctrsf_mtrsf
+JOIN tmib_items itm ON cts.ctrsf_items = itm.id
+JOIN tmab_bsins bsn ON mts.mtrsf_bsins_to = bsn.id
+LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
+LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
+WHERE mts.mtrsf_bsins_to = ?
+AND cts.ctrsf_ohqty > 0
+ORDER BY itm.items_iname`;
+    const params = [mtrsf_bsins];
+
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get stock report for ${mtrsf_bsins}`,
+    );
+    res.json({
+      success: true,
+      message: "Stock report fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;

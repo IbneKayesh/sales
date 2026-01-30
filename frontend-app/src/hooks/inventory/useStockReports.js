@@ -35,6 +35,34 @@ export const useStockReports = () => {
     }
   };
 
+  const handleLoadPurchaseInvoice = async () => {
+    try {
+      setIsBusy(true);
+      const response = await stockreportsAPI.purchaseInvoice({
+        mrcpt_bsins: user.users_bsins,
+      });
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleLoadInventoryTransfer = async () => {
+    try {
+      setIsBusy(true);
+      const response = await stockreportsAPI.inventoryTransfer({
+        mtrsf_bsins: user.users_bsins,
+      });
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   useEffect(() => {
   }, []);
 
@@ -45,6 +73,12 @@ export const useStockReports = () => {
     }
     if (reportFilter === "preceipt") {
       handleLoadPurchaseReceipt();
+    }
+    if (reportFilter === "pinvoice") {
+      handleLoadPurchaseInvoice();
+    }
+    if (reportFilter === "itransfer") {
+      handleLoadInventoryTransfer();
     }
   };
 

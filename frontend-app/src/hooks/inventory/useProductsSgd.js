@@ -19,8 +19,23 @@ export const useProductsSgd = () => {
     }
   };
 
+const handleLoadTransferItems = async () => {
+  try {
+    const response = await productsAPI.getTransferItems({
+      bitem_users: user.users_users,
+      bitem_bsins: user.users_bsins,
+    });
+    //console.log("data",user.users_bsins);
+    setDataList(response.data);
+  } catch (error) {
+    console.error("Error loading data:", error);
+  }
+};
+
+
   return {
     dataList,
     handleLoadBookingItems,
+    handleLoadTransferItems
   }
 };

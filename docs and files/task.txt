@@ -18,3 +18,19 @@ WHERE cbkg.cbkng_pnqty > 0
 SELECT crpt.crcpt_cbkng, crpt.crcpt_itqty, cbkg.id
 FROM tmpb_crcpt crpt
 LEFT JOIN tmpb_cbkng cbkg ON crpt.crcpt_cbkng = cbkg.id
+
+
+
+
+SELECT cbkng_pnqty
+FROM tmpb_cbkng
+
+SELECT sum(cinvc_itqty)
+FROM tmpb_cinvc
+union all
+SELECT sum(crcpt_itqty)
+FROM tmpb_crcpt
+
+
+SELECT sum(ctrsf_ohqty)
+FROM tmib_ctrsf

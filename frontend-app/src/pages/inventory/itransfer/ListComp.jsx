@@ -16,13 +16,13 @@ const ListComp = ({ dataList, onEdit }) => {
 
   const filterOptions = useMemo(() => {
     const options = [
-      { label: "All Contacts", value: "all", icon: "pi pi-users" },
+      { label: "All Warehouses", value: "all", icon: "pi pi-users" },
     ];
     const uniqueContacts = new Map();
 
     dataList?.forEach((item) => {
-      if (item.mbkng_cntct && !uniqueContacts.has(item.mbkng_cntct)) {
-        uniqueContacts.set(item.mbkng_cntct, item.cntct_cntnm);
+      if (item.mtrsf_bsins_to && !uniqueContacts.has(item.mtrsf_bsins_to)) {
+        uniqueContacts.set(item.mtrsf_bsins_to, item.bsins_bname);
       }
     });
 
@@ -40,34 +40,16 @@ const ListComp = ({ dataList, onEdit }) => {
 
   const statusFilterOptions = [
     { label: "All Status", value: "all", icon: "pi pi-filter" },
-    { label: "Unpaid", value: "unpaid", icon: "pi pi-times-circle" },
-    { label: "Paid", value: "paid", icon: "pi pi-check-circle" },
-    { label: "Partial", value: "partial", icon: "pi pi-exclamation-circle" },
     { label: "Posted", value: "posted", icon: "pi pi-lock" },
     { label: "Draft (Unposted)", value: "draft", icon: "pi pi-pencil" },
     { label: "Closed", value: "closed", icon: "pi pi-check" },
-    {
-      label: "VAT Collected",
-      value: "vat-collected",
-      icon: "pi pi-percentage",
-    },
-    {
-      label: "VAT Not Collected",
-      value: "vat-not-collected",
-      icon: "pi pi-percentage",
-    },
-    {
-      label: "Cancelled",
-      value: "cancelled",
-      icon: "pi pi-ban",
-    },
   ];
 
   const filteredData = useMemo(() => {
     let data = dataList || [];
 
     if (filterType && filterType !== "all") {
-      data = data.filter((item) => item.mbkng_cntct === filterType);
+      data = data.filter((item) => item.mtrsf_bsins_to === filterType);
     }
 
     if (statusFilter && statusFilter !== "all") {
@@ -185,69 +167,63 @@ const ListComp = ({ dataList, onEdit }) => {
     );
   };
 
-  const mbkng_trnno_BT = (rowData) => {
+  const mtrsf_trnno_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-blue-600">
-          {rowData.mbkng_trnno},{" "}
+          {rowData.mtrsf_trnno},{" "}
           <span className="text-md text-blue-400 mt-1">
-            Booking
+            Transfer
           </span>
         </span>
         <span className="text-sm font-italic text-green-600 mt-1">
-          {rowData.cntct_cntnm},{" "}
-          <span className="text-xs text-gray-600">{rowData.cntct_cntps}</span>
+          {rowData.bsins_bname}
         </span>
       </div>
     );
   };
 
-  const mbkng_trdat_BT = (rowData) => {
-    const { mbkng_trdat, mbkng_refno, mbkng_trnte } = rowData;
+  const mtrsf_trdat_BT = (rowData) => {
+    const { mtrsf_trdat, mtrsf_refno, mtrsf_trnte } = rowData;
     return (
       <div className="flex flex-column">
-        {formatDate(mbkng_trdat)}
-        {(mbkng_refno || mbkng_trnte) && (
+        {formatDate(mtrsf_trdat)}
+        {(mtrsf_refno || mtrsf_trnte) && (
           <small className="text-xs text-gray-500 font-italic mt-1">
-            {[mbkng_refno, mbkng_trnte].filter(Boolean).join(" • ")}
+            {[mtrsf_refno, mtrsf_trnte].filter(Boolean).join(" • ")}
           </small>
         )}
       </div>
     );
   };
 
-  const mbkng_pyamt_BT = (rowData) => {
-    const { mbkng_pyamt, mbkng_pdamt, mbkng_duamt } = rowData;
+  const mtrsf_odamt_BT = (rowData) => {
+    const { mtrsf_odamt, mtrsf_excst, mtrsf_ttamt } = rowData;
 
     return (
       <div className="flex gap-1">
         <span className="text-primary font-bold">
-          {Number(mbkng_pyamt).toFixed(2)}
+          {Number(mtrsf_odamt).toFixed(2)}
         </span>
         •
         <span className="text-green-500 font-bold">
-          {Number(mbkng_pdamt || 0).toFixed(2)}
+          {Number(mtrsf_excst || 0).toFixed(2)}
         </span>
         •
         <span className="text-red-500 font-bold">
-          {Number(mbkng_duamt || 0).toFixed(2)}
+          {Number(mtrsf_ttamt || 0).toFixed(2)}
         </span>
       </div>
     );
   };
 
-  const is_paid_BT = (rowData) => {
+  const mtrsf_isrcv_BT = (rowData) => {
     const statusMap = {
-      1: { severity: "success", label: "Paid", icon: "pi-check-circle" },
-      0: { severity: "danger", label: "Unpaid", icon: "pi-times-circle" },
-      2: {
-        severity: "warning",
-        label: "Partial",
-        icon: "pi-exclamation-circle",
-      },
+      1: { severity: "success", label: "Received", icon: "pi-check-circle" },
+      0: { severity: "danger", label: "Unreceived", icon: "pi-times-circle" },
     };
 
-    const status = statusMap[rowData.mbkng_ispad];
+    const status = statusMap[rowData.mtrsf_isrcv];
 
     return (
       <div className="flex flex-wrap gap-1 align-items-center">
@@ -260,7 +236,7 @@ const ListComp = ({ dataList, onEdit }) => {
             className="px-2"
           />
         )}
-        {rowData.mbkng_ispst === 1 ? (
+        {rowData.mtrsf_ispst === 1 ? (
           <Tag
             value="Posted"
             severity="info"
@@ -277,9 +253,6 @@ const ListComp = ({ dataList, onEdit }) => {
             className="px-2"
           />
         )}
-        {rowData.mbkng_iscls === 1 ? (
-          <Tag value="Closed" severity="contrast" rounded />
-        ) : null}
       </div>
     );
   };
@@ -364,7 +337,7 @@ const ListComp = ({ dataList, onEdit }) => {
       <ConfirmDialog />
       <DataTable
         value={filteredData}
-        dataKey="pmstr_trnno"
+        dataKey="mtrsf_trnno"
         paginator
         rows={15}
         rowsPerPageOptions={[15, 50, 100]}
@@ -375,24 +348,23 @@ const ListComp = ({ dataList, onEdit }) => {
         showGridlines
         globalFilter={globalFilter}
         globalFilterFields={[
-          "mbkng_trnno",
-          "cntct_cntnm",
-          "cntct_cntps",
-          "mbkng_refno",
-          "mbkng_trnte",
+          "mtrsf_trnno",
+          "bsins_bname",
+          "mtrsf_refno",
+          "mtrsf_trnte",
         ]}
         header={header()}
         footer={dataTable_FT}
       >
         <Column
-          field="mbkng_trnno"
+          field="mtrsf_trnno"
           header="No"
-          body={mbkng_trnno_BT}
+          body={mtrsf_trnno_BT}
           sortable
         />
-        <Column header="Date & Notes" body={mbkng_trdat_BT} />
-        <Column header="Payable • Paid • Due" body={mbkng_pyamt_BT} />
-        <Column header="Status" body={is_paid_BT} />
+        <Column header="Date & Notes" body={mtrsf_trdat_BT} />
+        <Column header="Order • Cost • Total" body={mtrsf_odamt_BT} />
+        <Column header="Status" body={mtrsf_isrcv_BT} />
         <Column body={action_BT} style={{ width: "100px" }} />
       </DataTable>
     </div>

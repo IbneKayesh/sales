@@ -79,10 +79,6 @@ const PReceiptListComp = ({ dataList, isBusy, isSummary }) => {
             sname={rowData.suofm_untnm}
           />
         </span>
-
-        <span className="text-gray-500 text-sm">
-          {Number(rowData.crcpt_itamt).toFixed(2)}/-
-        </span>
       </div>
     );
   };

@@ -11,7 +11,7 @@ CREATE TABLE `tmib_mtrsf` (
   `mtrsf_refno` VARCHAR(50) DEFAULT NULL,
   `mtrsf_trnte` VARCHAR(100) DEFAULT NULL,
   `mtrsf_odamt` decimal(20,6) NOT NULL DEFAULT 0,
-  `mtrsf_incst` decimal(20,6) NOT NULL DEFAULT 0,
+  `mtrsf_excst` decimal(20,6) NOT NULL DEFAULT 0,
   `mtrsf_ttamt` decimal(20,6) NOT NULL DEFAULT 0,
   `mtrsf_ispst` TINYINT(1) NOT NULL DEFAULT 0,
   `mtrsf_isrcv` TINYINT(1) NOT NULL DEFAULT 0,

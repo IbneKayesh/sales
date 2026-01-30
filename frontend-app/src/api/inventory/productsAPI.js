@@ -54,4 +54,9 @@ export const productsAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getTransferItems: (data) =>
+    apiRequest("/inventory/products/get-transfer-items", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

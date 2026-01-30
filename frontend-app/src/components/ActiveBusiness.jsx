@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Dialog } from "primereact/dialog";
-import { useBusiness } from "@/hooks/auth/useBusiness";
+import { useBusinessSgd } from "@/hooks/setup/useBusinessSgd";
 import { Chip } from "primereact/chip";
 import { getStorageData, setStorageData } from "@/utils/storage";
 import { useToast } from "@/hooks/useToast";
 
 export default function ActiveBusiness({ visible, setVisible }) {
   const { showToast } = useToast();
-  const { dataList } = useBusiness();
+  const { dataList, handleLoadBusiness } = useBusinessSgd();
   const [user, setUser] = useState(null);
   const [business, setBusiness] = useState(null);
 
@@ -15,13 +15,15 @@ export default function ActiveBusiness({ visible, setVisible }) {
     const data = getStorageData();
     setUser(data.user);
     setBusiness(data.business);
+
+    handleLoadBusiness();
   }, []);
 
   const handleSelectBusiness = (id) => {
     if (user.users_isrgs === 0) {
       showToast("error", "Error", "You are not authorized to switch business");
     } else {
-      const new_user = { ...user, users_bsins: id};
+      const new_user = { ...user, users_bsins: id };
       setStorageData({ user: new_user });
 
       const selectedBusiness = dataList.find((business) => business.id === id);

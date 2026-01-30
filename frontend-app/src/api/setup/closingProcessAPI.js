@@ -22,6 +22,11 @@ const closingProcess = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  inventoryTransfer: (data) =>
+    apiRequest("/setup/closing/inventory-transfer", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };
 
 export const closingProcessAPI = async (id, value) => {
@@ -39,5 +44,8 @@ export const closingProcessAPI = async (id, value) => {
   }
   if (id === "purchase-receipt") {
     await closingProcess.purchaseReceipt(fromData);
+  }
+  if (id === "inventory-transfer") {
+    await closingProcess.inventoryTransfer(fromData);
   }
 };

@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import tmpb_mbkng from "@/models/purchase/tmpb_mbkng.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
-import { pbookingAPI } from "@/api/purchase/pbookingAPI";
 import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 import { stringifyAttributes } from "@/utils/jsonParser";
+import tmib_mtrsf from "@/models/inventory/tmib_mtrsf.json";
+import { itransferAPI } from "@/api/inventory/itransferAPI";
 
-const dataModel = generateDataModel(tmpb_mbkng, { edit_stop: 0 });
+const dataModel = generateDataModel(tmib_mtrsf, { edit_stop: 0 });
 
 export const useItransfer = () => {
   const { user, business } = useAuth();
@@ -23,17 +23,16 @@ export const useItransfer = () => {
   //options
   const [formDataItemList, setFormDataItemList] = useState([]);
   const [formDataExpensesList, setFormDataExpensesList] = useState([]);
-  const [formDataPaymentList, setFormDataPaymentList] = useState([]);
 
-  const loadBookings = async () => {
+  const loadTransfer = async () => {
     try {
-      //console.log("loadBookings:");
-      const response = await pbookingAPI.getAll({
-        mbkng_users: user.users_users,
-        mbkng_bsins: user.users_bsins,
+      //console.log("loadTransfer:");
+      const response = await itransferAPI.getAll({
+        mtrsf_users: user.users_users,
+        mtrsf_bsins: user.users_bsins,
         ...searchBoxData,
       });
-      //console.log("loadBookings:", JSON.stringify(response));
+      //console.log("loadTransfer:", JSON.stringify(response));
 
       setDataList([]);
       if (response.data && response.data.length > 0) {
@@ -49,16 +48,16 @@ export const useItransfer = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    //loadBookings();
+    //loadTransfer();
   }, []);
 
-  const loadBookingDetails = async (id) => {
+  const loadTransferDetails = async (id) => {
     try {
-      //console.log("loadBookingDetails:", id);
-      const response = await pbookingAPI.getDetails({
-        cbkng_mbkng: id,
+      //console.log("loadTransferDetails:", id);
+      const response = await itransferAPI.getDetails({
+        ctrsf_mtrsf: id,
       });
-      //console.log("loadBookingDetails:", JSON.stringify(response));
+      //console.log("loadTransferDetails:", JSON.stringify(response));
       setFormDataItemList(response.data);
       //showToast("success", "Success", response.message);
     } catch (error) {
@@ -67,29 +66,14 @@ export const useItransfer = () => {
     }
   };
 
-  const loadBookingExpenses = async (id) => {
+  const loadTransferExpenses = async (id) => {
     try {
-      //console.log("loadBookingExpenses:", id);
-      const response = await pbookingAPI.getExpenses({
+      //console.log("loadTransferExpenses:", id);
+      const response = await itransferAPI.getExpenses({
         expns_refid: id,
       });
-      //console.log("loadBookingExpenses:", JSON.stringify(response));
+      //console.log("loadTransferExpenses:", JSON.stringify(response));
       setFormDataExpensesList(response.data);
-      //showToast("success", "Success", response.message);
-    } catch (error) {
-      console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
-    }
-  };
-
-  const loadBookingPayment = async (id) => {
-    try {
-      //console.log("loadBookingPayment:", id);
-      const response = await pbookingAPI.getPayment({
-        paybl_refid: id,
-      });
-      //console.log("loadBookingPayment:", JSON.stringify(response));
-      setFormDataPaymentList(response.data);
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
@@ -99,15 +83,15 @@ export const useItransfer = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmpb_mbkng);
+    const newErrors = validate({ ...formData, [field]: value }, tmib_mtrsf);
     setErrors(newErrors);
   };
 
   const handleClear = () => {
     setFormData({
       ...dataModel,
-      mbkng_users: user.users_users,
-      mbkng_bsins: user.users_bsins,
+      mtrsf_users: user.users_users,
+      mtrsf_bsins: user.users_bsins,
     });
     //console.log("handleClear:", JSON.stringify(dataModel));
     setErrors({});
@@ -115,7 +99,6 @@ export const useItransfer = () => {
     //options
     setFormDataItemList([]);
     setFormDataExpensesList([]);
-    setFormDataPaymentList([]);
 
     //hide search box
     setSearchBoxShow(false);
@@ -129,9 +112,9 @@ export const useItransfer = () => {
   const handleAddNew = () => {
     //console.log("business:", business.bsins_prtrn);
     //check if business is active
-    if (!business.bsins_prtrn) {
-      showToast("error", "Error", "Purchase is not active");
-      return;
+    if (!business.bsins_trtrn) {
+      showToast("error", "Error", "Transfer is not active");
+      //return;
     }
     handleClear();
     setCurrentView("form");
@@ -139,9 +122,8 @@ export const useItransfer = () => {
 
   const handleEdit = (data) => {
     //console.log("edit: " + JSON.stringify(data));
-    loadBookingDetails(data.id);
-    loadBookingExpenses(data.id);
-    loadBookingPayment(data.id);
+    loadTransferDetails(data.id);
+    loadTransferExpenses(data.id);
     setFormData(data);
     setCurrentView("form");
   };
@@ -149,7 +131,7 @@ export const useItransfer = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await pbookingAPI.delete(rowData);
+      const response = await itransferAPI.delete(rowData);
 
       // Remove deleted business from local state
       const updatedList = dataList.filter((s) => s.id !== rowData.id);
@@ -168,7 +150,7 @@ export const useItransfer = () => {
   };
 
   const handleRefresh = () => {
-    loadBookings();
+    loadTransfer();
   };
 
   const handleSave = async (e) => {
@@ -184,7 +166,7 @@ export const useItransfer = () => {
       setIsBusy(true);
 
       // Validate form
-      const newErrors = validate(formData, tmpb_mbkng);
+      const newErrors = validate(formData, tmib_mtrsf);
       setErrors(newErrors);
       console.log("handleSave:", JSON.stringify(newErrors));
 
@@ -194,44 +176,32 @@ export const useItransfer = () => {
       }
 
       //0 :: Unpaid, 1 :: Paid, 2 :: Partial
-      const paidStatus =
-        Number(formData.mbkng_pdamt) === 0
-          ? "0"
-          : Number(formData.mbkng_duamt) === 0
-            ? "1"
-            : "2";
-
-      // console.log(
-      //   "paidStatus:",
-      //   paidStatus
-      // );
-      // return;
+     
 
       const formDataItemListNew = formDataItemList.map((item) => ({
         ...item,
-        cbkng_attrb: stringifyAttributes(item.cbkng_attrb),
+        ctrsf_attrb: stringifyAttributes(item.ctrsf_attrb),
       }));
 
       // Ensure id exists (for create)
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        mbkng_users: user.users_users,
-        mbkng_bsins: user.users_bsins,
-        mbkng_trdat: formatDateForAPI(formData.mbkng_trdat),
-        mbkng_ispad: paidStatus,
+        mtrsf_users: user.users_users,
+        mtrsf_bsins: user.users_bsins,
+        mtrsf_trdat: formatDateForAPI(formData.mtrsf_trdat),
+        mtrsf_ispst: 1,
         user_id: user.id,
-        tmpb_cbkng: formDataItemListNew,
+        tmib_ctrsf: formDataItemListNew,
         tmpb_expns: formDataExpensesList,
-        tmtb_paybl: formDataPaymentList,
       };
 
       // Call API and get { message, data }
       let response;
       if (formData.id) {
-        response = await pbookingAPI.update(formDataNew);
+        response = await itransferAPI.update(formDataNew);
       } else {
-        response = await pbookingAPI.create(formDataNew);
+        response = await itransferAPI.create(formDataNew);
       }
 
       //console.log("handleSave:", JSON.stringify(response));
@@ -245,12 +215,12 @@ export const useItransfer = () => {
       );
 
       //call update process
-      await closingProcessAPI("purchase-booking", user.users_bsins);
+      await closingProcessAPI("inventory-transfer", user.users_bsins);
 
       // Clear form & reload
-      handleClear();
-      setCurrentView("list");
-      await loadBookings(); // make sure we wait for updated data
+      //handleClear();
+      //setCurrentView("list");
+      //await loadTransfer(); // make sure we wait for updated data
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");
@@ -263,16 +233,16 @@ export const useItransfer = () => {
 
   const [searchBoxShow, setSearchBoxShow] = useState(false);
   const [searchBoxData, setSearchBoxData] = useState({
-    mbkng_cntct: "",
-    mbkng_trnno: "",
-    mbkng_trdat: "", //new Date().toLocaleString().split("T")[0],
-    mbkng_refno: "",
-    search_option: "mbkng_ispad",
+    mtrsf_bsins_to: "",
+    mtrsf_trnno: "",
+    mtrsf_trdat: "", //new Date().toLocaleString().split("T")[0],
+    mtrsf_refno: "",
+    search_option: "last_3_days",
   });
 
   const handleChangeSearchInput = (e) => {
     const { name, value } = e.target;
-    if (name === "mbkng_trdat") {
+    if (name === "mtrsf_trdat") {
       const dateValue = e.value
         ? new Date(e.value).toLocaleString().split("T")[0]
         : null;
@@ -292,55 +262,15 @@ export const useItransfer = () => {
       return;
     }
 
-    loadBookings();
+    loadTransfer();
   };
 
   const searchOptions = [
-    { name: "mbkng_ispad", label: "Unpaid" },
-    { name: "mbkng_ispst", label: "Unposted" },
-    { name: "mbkng_iscls", label: "Closed" },
-    { name: "mbkng_vatcl", label: "VAT Collected" },
-    { name: "mbkng_hscnl", label: "Cancelled" },
+    { name: "mtrsf_ispst", label: "Unposted" },
     { name: "last_3_days", label: "Last 3 Days" },
     { name: "last_7_days", label: "Last 7 Days" },
   ];
 
-  //cancel booking items
-  const [cancelledRows, setCancelledRows] = useState([]);
-  const [cancelledPayment, setCancelledPayment] = useState({});
-
-  const handleCancelBookingItems = async (rowData) => {
-    try {
-      // Call API, unwrap { message, data }
-
-      const formDataNew = {
-        ...formData,
-        pmstr_users: user.users_users,
-        pmstr_bsins: user.users_bsins,
-        pmstr_cnamt: rowData.rcvpy_pyamt,
-        user_id: user.id,
-        tmtb_rcvpy: rowData,
-      };
-      const response = await pbookingAPI.cancelBookingItems(formDataNew);
-
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Cancelled" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
-      //reset cancelled rows
-      setCancelledRows([]);
-      setCancelledPayment({});
-      // Clear form & reload
-      handleClear();
-      setCurrentView("list");
-      await loadBookings(); // make sure we wait for updated data
-    } catch (error) {
-      console.error("Error canceling data:", error);
-      showToast("error", "Error", error?.message || "Failed to cancel data");
-    }
-  };
 
   return {
     dataList,
@@ -359,10 +289,8 @@ export const useItransfer = () => {
     //options
     formDataItemList,
     formDataExpensesList,
-    formDataPaymentList,
     setFormDataItemList,
     setFormDataExpensesList,
-    setFormDataPaymentList,
 
     //search
     searchBoxShow,
@@ -372,10 +300,5 @@ export const useItransfer = () => {
     handleSearch,
     searchOptions,
 
-    //cancel booking items
-    cancelledRows,
-    setCancelledRows,
-    handleCancelBookingItems,
-    setCancelledPayment,
   };
 };

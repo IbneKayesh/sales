@@ -7,6 +7,8 @@ import { ToggleButton } from "primereact/togglebutton";
 import { useStockReports } from "@/hooks/inventory/useStockReports";
 import PBookingListComp from "./PBookingListComp";
 import PReceiptListComp from "./PReceiptListComp";
+import ITransferListComp from "./ITransferListComp";
+import PInvoiceListComp from "./PInvoiceListComp";
 
 const StockReportsPage = () => {
   const { dataList, isBusy, handleLoadReports } = useStockReports();
@@ -21,6 +23,7 @@ const StockReportsPage = () => {
     { label: "Purchase Booking", value: "pbooking" },
     { label: "Purchase Receipt", value: "preceipt" },
     { label: "Purchase Invoice", value: "pinvoice" },
+    { label: "Inventory Transfer", value: "itransfer" },
   ];
 
   const handleReportFilterChange = (e) => {
@@ -77,6 +80,20 @@ const StockReportsPage = () => {
       )}
       {reportFilter === "preceipt" && (
         <PReceiptListComp
+          dataList={dataList}
+          isBusy={isBusy}
+          isSummary={isSummary}
+        />
+      )}
+      {reportFilter === "pinvoice" && (
+        <PInvoiceListComp
+          dataList={dataList}
+          isBusy={isBusy}
+          isSummary={isSummary}
+        />
+      )}
+      {reportFilter === "itransfer" && (
+        <ITransferListComp
           dataList={dataList}
           isBusy={isBusy}
           isSummary={isSummary}

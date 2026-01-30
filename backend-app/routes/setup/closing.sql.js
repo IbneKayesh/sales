@@ -160,6 +160,42 @@ const closingSql = {
         label: `Update Payable Due`,
       }),
     },
+
+    tmpb_crcpt: {
+      update_sold_ohqty: (businessId) => ({
+        sql: `UPDATE tmpb_crcpt tgt
+            JOIN (
+            SELECT cts.ctrsf_srcnm, cts.ctrsf_refid, SUM(cts.ctrsf_itqty) AS ctrsf_itqty
+            FROM tmib_ctrsf cts
+            JOIN tmib_mtrsf mts ON cts.ctrsf_mtrsf = mts.id
+            WHERE cts.ctrsf_srcnm = 'Purchase Receipt'
+            GROUP BY cts.ctrsf_srcnm, cts.ctrsf_refid
+            )src
+            ON tgt.id = src.ctrsf_refid
+            SET tgt.crcpt_slqty = src.ctrsf_itqty,
+            tgt.crcpt_ohqty = tgt.crcpt_itqty - (tgt.crcpt_rtqty + src.ctrsf_itqty)`,
+        params: [],
+        label: `Update Purchase Receipt`,
+      }),
+    },
+
+    tmpb_cinvc: {
+      update_sold_ohqty: (businessId) => ({
+        sql: `UPDATE tmpb_cinvc tgt
+            JOIN (
+            SELECT cts.ctrsf_srcnm, cts.ctrsf_refid, SUM(cts.ctrsf_itqty) AS ctrsf_itqty
+            FROM tmib_ctrsf cts
+            JOIN tmib_mtrsf mts ON cts.ctrsf_mtrsf = mts.id
+            WHERE cts.ctrsf_srcnm = 'Purchase Invoice'
+            GROUP BY cts.ctrsf_srcnm, cts.ctrsf_refid
+            )src
+            ON tgt.id = src.ctrsf_refid
+            SET tgt.cinvc_slqty = src.ctrsf_itqty,
+            tgt.cinvc_ohqty = tgt.cinvc_itqty - (tgt.cinvc_rtqty + src.ctrsf_itqty)`,
+        params: [],
+        label: `Update Purchase Receipt`,
+      }),
+    },
   },
 };
 

@@ -20,7 +20,12 @@ const Layout = () => {
       name: "Sales",
       icon: "pi pi-shopping-bag",
       submenus: [
-        { id: "sl1", name: "Sales", url: "/home/sales", icon: "pi pi-file" },
+        {
+          id: "sl1",
+          name: "Invoice",
+          url: "/home/sales/sinvoice",
+          icon: "pi pi-file-edit",
+        },
       ],
     },
     {
@@ -148,7 +153,8 @@ const Layout = () => {
           icon: "pi pi-directions",
         },
       ],
-    },    {
+    },
+    {
       name: "HRMS",
       icon: "pi pi-users",
       submenus: [
@@ -157,7 +163,7 @@ const Layout = () => {
           name: "Employee",
           url: "/home/hrms/employees",
           icon: "pi pi-user",
-        }
+        },
       ],
     },
     {

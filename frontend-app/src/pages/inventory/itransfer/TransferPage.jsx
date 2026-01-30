@@ -2,7 +2,7 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import EntryComp from "./EntryComp";
-import { usePbooking } from "@/hooks/purchase/usePbooking";
+import { useItransfer } from "@/hooks/inventory/useItransfer";
 import ListComp from "./ListComp";
 import SearchComp from "./SearchComp";
 
@@ -41,7 +41,7 @@ const TransferPage = () => {
     setCancelledRows,
     handleCancelBookingItems,
     setCancelledPayment
-  } = usePbooking();
+  } = useItransfer();
 
   const handleSearchBox = () => {
     setSearchBoxShow(true);

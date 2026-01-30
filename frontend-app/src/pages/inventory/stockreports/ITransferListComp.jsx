@@ -5,26 +5,26 @@ import { parseAttributes } from "@/utils/jsonParser";
 import { formatDate } from "@/utils/datetime";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
 
-const PBookingListComp = ({ dataList, isBusy, isSummary }) => {
+const ITransferListComp = ({ dataList, isBusy, isSummary }) => {
   const displayData = useMemo(() => {
     if (!isSummary) return dataList;
 
     const summaryMap = new Map();
 
     dataList.forEach((item) => {
-      const key = `${item.items_icode}_${item.cbkng_attrb}`;
+      const key = `${item.items_icode}_${item.ctrsf_attrb}`;
       if (!summaryMap.has(key)) {
-        summaryMap.set(key, { ...item, cbkng_pnqty: 0, cbkng_itamt: 0 });
+        summaryMap.set(key, { ...item, ctrsf_ohqty: 0, ctrsf_itamt: 0 });
       }
       const existing = summaryMap.get(key);
-      existing.cbkng_pnqty += Number(item.cbkng_pnqty || 0);
-      existing.cbkng_itamt += Number(item.cbkng_itamt || 0);
+      existing.ctrsf_ohqty += Number(item.ctrsf_ohqty || 0);
+      existing.ctrsf_itamt += Number(item.ctrsf_itamt || 0);
     });
 
     return Array.from(summaryMap.values());
   }, [dataList, isSummary]);
   const items_iname_BT = (rowData) => {
-    const parsedAttr = parseAttributes(rowData.cbkng_attrb);
+    const parsedAttr = parseAttributes(rowData.ctrsf_attrb);
     return (
       <div className="flex flex-column">
         <span className="text-md">{`${rowData.items_icode} - ${rowData.items_iname}`}</span>
@@ -40,40 +40,40 @@ const PBookingListComp = ({ dataList, isBusy, isSummary }) => {
     );
   };
 
-  const mbkng_trnno_BT = (rowData) => {
+  const mtrsf_trnno_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-md">{rowData.mbkng_trnno}</span>
-        <span className="text-gray-500 text-sm">{rowData.cntct_cntnm}</span>
+        <span className="text-md">{rowData.mtrsf_trnno}</span>
+        <span className="text-gray-500 text-sm">{rowData.bsins_bname}</span>
       </div>
     );
   };
 
-  const cbkng_itqty_BT = (rowData) => {
+  const ctrsf_itqty_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-gray-500 text-sm">
-          Qty: {Number(rowData.cbkng_itqty).toFixed(2)}
+          Qty: {Number(rowData.ctrsf_itqty).toFixed(2)}
         </span>
         <span className="text-gray-500 text-sm">
-          Received: {Number(rowData.cbkng_rcqty).toFixed(2)}
+          Returned: {Number(rowData.ctrsf_rtqty).toFixed(2)}
         </span>
         <span className="text-gray-500 text-sm">
-          Cancelled: {Number(rowData.cbkng_cnqty).toFixed(2)}
+          Sold: {Number(rowData.ctrsf_slqty).toFixed(2)}
         </span>
       </div>
     );
   };
 
-  const cbkng_pnqty_BT = (rowData) => {
+  const ctrsf_ohqty_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-md">
-          {Number(rowData.cbkng_pnqty).toFixed(2)} {rowData.puofm_untnm}
+          {Number(rowData.ctrsf_ohqty).toFixed(2)} {rowData.puofm_untnm}
         </span>
         <span className="text-blue-600 text-sm">
           <ConvertedQtyComponent
-            qty={rowData.cbkng_pnqty}
+            qty={rowData.ctrsf_ohqty}
             dfQty={rowData.items_dfqty}
             pname={rowData.puofm_untnm}
             sname={rowData.suofm_untnm}
@@ -105,27 +105,27 @@ const PBookingListComp = ({ dataList, isBusy, isSummary }) => {
           body={items_iname_BT}
         />
         {!isSummary && (
-          <Column field="mbkng_trnno" header="Booking" body={mbkng_trnno_BT} />
+          <Column field="mtrsf_trnno" header="Transfer" body={mtrsf_trnno_BT} />
         )}
         {!isSummary && (
           <Column
-            field="cbkng_itqty"
+            field="ctrsf_itqty"
             header="Qty"
             sortable
             bodyStyle={{ textAlign: "right" }}
-            body={cbkng_itqty_BT}
+            body={ctrsf_itqty_BT}
           />
         )}
         <Column
-          field="cbkng_pnqty"
-          header="Booking"
+          field="ctrsf_ohqty"
+          header="Stock"
           sortable
           bodyStyle={{ textAlign: "right" }}
-          body={cbkng_pnqty_BT}
+          body={ctrsf_ohqty_BT}
         />
       </DataTable>
     </div>
   );
 };
 
-export default PBookingListComp;
+export default ITransferListComp;
