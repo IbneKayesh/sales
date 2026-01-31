@@ -3,11 +3,22 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Avatar } from "primereact/avatar";
-import tmab_bsins from "@/models/auth/tmab_bsins.json";
+import tmsb_bsins from "@/models/setup/tmsb_bsins.json";
 import { useAuth } from "@/hooks/useAuth";
 import { InputSwitch } from "primereact/inputswitch";
+import { Dropdown } from "primereact/dropdown";
+import { Chips } from "primereact/chips";
 
-const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
+const BusinessFormComp = ({
+  isBusy,
+  errors,
+  formData,
+  onChange,
+  onSave,
+  tagsOptions,
+  countryOptions,
+  businessTypeOptions,
+}) => {
   const { business } = useAuth();
   const [bImg, setBImg] = useState(null);
   useEffect(() => {
@@ -43,6 +54,7 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
       reader.readAsDataURL(file);
     }
   };
+
   return (
     <div className="grid">
       <div className="col-12 flex align-items-center gap-3 mb-4">
@@ -81,14 +93,14 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           htmlFor="bsins_bname"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_bname.label} <span className="text-red-500">*</span>
+          {tmsb_bsins.bsins_bname.label} <span className="text-red-500">*</span>
         </label>
         <InputText
           name="bsins_bname"
           value={formData.bsins_bname}
           onChange={(e) => onChange("bsins_bname", e.target.value)}
           className={`w-full ${errors.bsins_bname ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_bname.label}`}
+          placeholder={`Enter ${tmsb_bsins.bsins_bname.label}`}
         />
         {errors.bsins_bname && (
           <small className="mb-3 text-red-500">{errors.bsins_bname}</small>
@@ -99,14 +111,14 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           htmlFor="bsins_addrs"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_addrs.label} <span className="text-red-500">*</span>
+          {tmsb_bsins.bsins_addrs.label} <span className="text-red-500">*</span>
         </label>
         <InputText
           name="bsins_addrs"
           value={formData.bsins_addrs}
           onChange={(e) => onChange("bsins_addrs", e.target.value)}
           className={`w-full ${errors.bsins_addrs ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_addrs.label}`}
+          placeholder={`Enter ${tmsb_bsins.bsins_addrs.label}`}
         />
         {errors.bsins_addrs && (
           <small className="mb-3 text-red-500">{errors.bsins_addrs}</small>
@@ -117,14 +129,14 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           htmlFor="bsins_email"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_email.label} <span className="text-red-500">*</span>
+          {tmsb_bsins.bsins_email.label} <span className="text-red-500">*</span>
         </label>
         <InputText
           name="bsins_email"
           value={formData.bsins_email}
           onChange={(e) => onChange("bsins_email", e.target.value)}
           className={`w-full ${errors.bsins_email ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_email.label}`}
+          placeholder={`Enter ${tmsb_bsins.bsins_email.label}`}
         />
         {errors.bsins_email && (
           <small className="mb-3 text-red-500">{errors.bsins_email}</small>
@@ -135,14 +147,14 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           htmlFor="bsins_cntct"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_cntct.label} <span className="text-red-500">*</span>
+          {tmsb_bsins.bsins_cntct.label} <span className="text-red-500">*</span>
         </label>
         <InputText
           name="bsins_cntct"
           value={formData.bsins_cntct}
           onChange={(e) => onChange("bsins_cntct", e.target.value)}
           className={`w-full ${errors.bsins_cntct ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_cntct.label}`}
+          placeholder={`Enter ${tmsb_bsins.bsins_cntct.label}`}
         />
         {errors.bsins_cntct && (
           <small className="mb-3 text-red-500">{errors.bsins_cntct}</small>
@@ -153,35 +165,94 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           htmlFor="bsins_binno"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_binno.label}
+          {tmsb_bsins.bsins_binno.label}
         </label>
         <InputText
           name="bsins_binno"
           value={formData.bsins_binno}
           onChange={(e) => onChange("bsins_binno", e.target.value)}
           className={`w-full ${errors.bsins_binno ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_binno.label}`}
+          placeholder={`Enter ${tmsb_bsins.bsins_binno.label}`}
         />
         {errors.bsins_binno && (
           <small className="mb-3 text-red-500">{errors.bsins_binno}</small>
         )}
       </div>
-      <div className="col-12 md:col-6">
+      <div className="col-12 md:col-3">
         <label
           htmlFor="bsins_btags"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_btags.label} <span className="text-red-500">*</span>
+          {tmsb_bsins.bsins_btags.label} <span className="text-red-500">*</span>
         </label>
-        <InputText
+        <Dropdown
           name="bsins_btags"
           value={formData.bsins_btags}
-          onChange={(e) => onChange("bsins_btags", e.target.value)}
+          options={tagsOptions}
+          onChange={(e) => onChange("bsins_btags", e.value)}
           className={`w-full ${errors.bsins_btags ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_btags.label}`}
+          placeholder={`Select ${tmsb_bsins.bsins_btags.label}`}
         />
         {errors.bsins_btags && (
           <small className="mb-3 text-red-500">{errors.bsins_btags}</small>
+        )}
+      </div>
+
+      <div className="col-12 md:col-3">
+        <label
+          htmlFor="bsins_cntry"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmsb_bsins.bsins_cntry.label} <span className="text-red-500">*</span>
+        </label>
+        <Dropdown
+          name="bsins_cntry"
+          value={formData.bsins_cntry}
+          options={countryOptions}
+          onChange={(e) => onChange("bsins_cntry", e.value)}
+          className={`w-full ${errors.bsins_cntry ? "p-invalid" : ""}`}
+          placeholder={`Select ${tmsb_bsins.bsins_cntry.label}`}
+        />
+        {errors.bsins_cntry && (
+          <small className="mb-3 text-red-500">{errors.bsins_cntry}</small>
+        )}
+      </div>
+
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="bsins_bstyp"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmsb_bsins.bsins_bstyp.label} <span className="text-red-500">*</span>
+        </label>
+        <Dropdown
+          name="bsins_bstyp"
+          value={formData.bsins_bstyp}
+          options={businessTypeOptions}
+          onChange={(e) => onChange("bsins_bstyp", e.value)}
+          className={`w-full ${errors.bsins_bstyp ? "p-invalid" : ""}`}
+          placeholder={`Select ${tmsb_bsins.bsins_bstyp.label}`}
+        />
+        {errors.bsins_bstyp && (
+          <small className="mb-3 text-red-500">{errors.bsins_bstyp}</small>
+        )}
+      </div>
+
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="bsins_tstrn"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmsb_bsins.bsins_tstrn.label} <span className="text-red-500">*</span>
+        </label>
+        <InputSwitch
+          name="bsins_tstrn"
+          checked={formData.bsins_tstrn === 1}
+          onChange={(e) => onChange("bsins_tstrn", e.value ? 1 : 0)}
+          className={`${errors.bsins_tstrn ? "p-invalid" : ""}`}
+        />
+        {errors.bsins_tstrn && (
+          <small className="mb-3 text-red-500">{errors.bsins_tstrn}</small>
         )}
       </div>
       <div className="col-12 md:col-2">
@@ -189,7 +260,7 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           htmlFor="bsins_prtrn"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_prtrn.label} <span className="text-red-500">*</span>
+          {tmsb_bsins.bsins_prtrn.label} <span className="text-red-500">*</span>
         </label>
         <InputSwitch
           name="bsins_prtrn"
@@ -206,7 +277,7 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           htmlFor="bsins_sltrn"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_sltrn.label} <span className="text-red-500">*</span>
+          {tmsb_bsins.bsins_sltrn.label} <span className="text-red-500">*</span>
         </label>
         <InputSwitch
           name="bsins_sltrn"
@@ -220,28 +291,10 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
       </div>
       <div className="col-12 md:col-2">
         <label
-          htmlFor="bsins_cntry"
-          className="block text-900 font-medium mb-2"
-        >
-          {tmab_bsins.bsins_cntry.label} <span className="text-red-500">*</span>
-        </label>
-        <InputText
-          name="bsins_cntry"
-          value={formData.bsins_cntry}
-          onChange={(e) => onChange("bsins_cntry", e.target.value)}
-          className={`w-full ${errors.bsins_cntry ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmab_bsins.bsins_cntry.label}`}
-        />
-        {errors.bsins_cntry && (
-          <small className="mb-3 text-red-500">{errors.bsins_cntry}</small>
-        )}
-      </div>
-      <div className="col-12 md:col-2">
-        <label
           htmlFor="bsins_stdat"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_stdat.label} <span className="text-red-500">*</span>
+          {tmsb_bsins.bsins_stdat.label} <span className="text-red-500">*</span>
         </label>
         <Calendar
           name="bsins_stdat"
@@ -256,7 +309,7 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           onChange={(e) => onChange("bsins_stdat", e.target.value)}
           className={`w-full ${errors.bsins_stdat ? "p-invalid" : ""}`}
           dateFormat="yy-mm-dd"
-          placeholder={`Select ${tmab_bsins.bsins_stdat.label}`}
+          placeholder={`Select ${tmsb_bsins.bsins_stdat.label}`}
         />
         {errors.bsins_stdat && (
           <small className="mb-3 text-red-500">{errors.bsins_stdat}</small>
@@ -268,7 +321,7 @@ const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           htmlFor="bsins_pbviw"
           className="block text-900 font-medium mb-2"
         >
-          {tmab_bsins.bsins_pbviw.label} <span className="text-red-500">*</span>
+          {tmsb_bsins.bsins_pbviw.label} <span className="text-red-500">*</span>
         </label>
         <InputSwitch
           name="bsins_pbviw"

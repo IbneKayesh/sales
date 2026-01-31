@@ -3,7 +3,7 @@ import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import UsersListComp from "./UsersListComp";
 import UsersFormComp from "./UsersFormComp";
-import { useUsers } from "@/hooks/auth/useUsers";
+import { useUsers } from "@/hooks/setup/useUsers";
 
 const UsersPage = () => {
   const {
@@ -20,7 +20,6 @@ const UsersPage = () => {
     handleRefresh,
     handleSave,
     roleOptions,
-    businessOptions,
   } = useUsers();
 
   const getHeader = () => {
@@ -80,7 +79,6 @@ const UsersPage = () => {
             onChange={handleChange}
             onSave={handleSave}
             roleOptions={roleOptions}
-            businessOptions={businessOptions}
           />
         )}
       </Card>

@@ -25,6 +25,8 @@ drop table tmcb_tarea;
 drop table tmib_attrb;
 drop table tmpb_cinvc;
 drop table tmpb_minvc;
+drop table tmib_ctrsf;
+drop table tmib_mtrsf;
 
 
 

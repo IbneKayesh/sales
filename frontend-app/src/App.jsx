@@ -15,12 +15,9 @@ import Layout from "./pages/layout/Layout.jsx";
 import HomePage from "./pages/HomePage.jsx";
 //auth
 import AuthPage from "./pages/auth/AuthPage";
-import BusinessPage from "./pages/auth/business/BusinessPage";
-import UsersPage from "./pages/auth/users/UsersPage";
-import PasswordPage from "./pages/auth/password/PasswordPage";
 //crm
 import ContactPage from "./pages/crm/contacts/ContactPage.jsx";
-import FieldroutePage from "./pages/crm/fieldroute/FieldroutePage.jsx";
+import FieldroutePage from "./pages/crm/fieldroute/FieldroutePage";
 //hrms
 import EmployeesPage from "./pages/hrms/employee/EmployeesPage.jsx";
 
@@ -34,7 +31,7 @@ import ExpensesPage from "./pages/accounts/expneses/ExpensesPage";
 import UnitPage from "./pages/inventory/units/UnitPage";
 import CategoryPage from "./pages/inventory/category/CategoryPage";
 import ProductsPage from "./pages/inventory/products/ProductsPage";
-import StockReportsPage from "./pages/inventory/stockreports/StockReportsPage.jsx";
+import StockReportsPage from "./pages/inventory/stockreports/StockReportsPage";
 import TransferPage from "./pages/inventory/itransfer/TransferPage";
 //support
 import GrainsPage from "./pages/support/GrainsPage";
@@ -48,7 +45,11 @@ import TicketsPage from "./pages/support/tickets/TicketsPage";
 import SessionsPage from "./pages/support/SessionsPage.jsx";
 
 //setup
-import DatabasePage from "./pages/setup/database/DatabasePage";
+import DatabasePage from "./pages/setup/database/DatabasePage.jsx";
+import BusinessPage from "./pages/setup/business/BusinessPage.jsx";
+import UsersPage from "./pages/setup/users/UsersPage.jsx";
+import ProfileSettings from "./pages/setup/users/ProfileSettings.jsx";
+import PasswordPage from "./pages/setup/users/PasswordPage.jsx";
 
 // mobile imports
 import MobileLayout from "./mobile/layout";
@@ -56,8 +57,6 @@ import MobileHome from "./mobile/home";
 import MobileAbout from "./mobile/about";
 import MobileMenus from "./mobile/menus";
 import MobileSample from "./mobile/sample";
-
-import ProfileSettings from "./pages/auth/ProfileSettings";
 
 function App() {
   return (
@@ -106,10 +105,6 @@ function AppRoutes() {
           >
             <Route index element={<HomePage />} />
             //auth
-            <Route path="auth/business" element={<BusinessPage />} />
-            <Route path="auth/users" element={<UsersPage />} />
-            <Route path="auth/password" element={<PasswordPage />} />
-            <Route path="auth/profile" element={<ProfileSettings />} />
             //crm
             <Route path="crm/contact" element={<ContactPage />} />
             <Route path="crm/field-route" element={<FieldroutePage />} />
@@ -142,6 +137,10 @@ function AppRoutes() {
             <Route path="support/sessions" element={<SessionsPage />} />
             //setup
             <Route path="setup/database" element={<DatabasePage />} />
+            <Route path="setup/business" element={<BusinessPage />} />
+            <Route path="setup/users" element={<UsersPage />} />
+            <Route path="setup/users/profile" element={<ProfileSettings />} />
+            <Route path="setup/users/password" element={<PasswordPage />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

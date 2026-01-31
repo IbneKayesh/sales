@@ -19,8 +19,8 @@ router.post("/", async (req, res) => {
 
     //database action
     const sql = `SELECT usr.*, 0 as edit_stop, bs.bsins_bname
-      FROM tmab_users usr
-      LEFT JOIN tmab_bsins bs ON usr.users_bsins = bs.id
+      FROM tmsb_users usr
+      LEFT JOIN tmsb_bsins bs ON usr.users_bsins = bs.id
       WHERE usr.users_users = ?
       ORDER BY usr.users_oname`;
     const params = [users_users];
@@ -79,7 +79,7 @@ router.post("/create", async (req, res) => {
     }
 
     //database action
-    const sql = `INSERT INTO tmab_users
+    const sql = `INSERT INTO tmsb_users
     (id,users_email,users_pswrd,users_recky,users_oname,users_cntct,
     users_bsins,users_drole,users_users,users_stats,users_regno,
     users_wctxt,users_notes,users_nofcr,users_isrgs,users_crusr,users_upusr)
@@ -156,7 +156,7 @@ router.post("/update", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmab_users
+    const sql = `UPDATE tmsb_users
     SET users_email = ?,
     users_pswrd = ?,
     users_recky = ?,
@@ -215,7 +215,7 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmab_users
+    const sql = `UPDATE tmsb_users
     SET users_actve = 1 - users_actve
     WHERE id = ?`;
     const params = [id];
@@ -225,6 +225,72 @@ router.post("/delete", async (req, res) => {
       success: true,
       message: "User deleted successfully",
       data: null,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+// change-password
+router.post("/change-password", async (req, res) => {
+  try {
+    const { id, users_email, pswrd_current, pswrd_new } = req.body;
+
+    // Validate input
+    if (!id || !users_email || !pswrd_current || !pswrd_new) {
+      return res.json({
+        success: false,
+        message: "Id, Email, Password Current, Password New are required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT usr.*
+    FROM tmsb_users usr
+    WHERE usr.users_email = ?
+    AND usr.users_pswrd = ?
+    AND usr.id = ?
+    AND usr.users_actve = 1`;
+    const params = [users_email, pswrd_current, id];
+
+    const row = await dbGet(
+      sql,
+      params,
+      `Get user login credential for ${users_email}`,
+    );
+    if (!row) {
+      return res.json({
+        success: false,
+        message: "Email or Password is not valid",
+        data: null,
+      });
+    }
+
+    const sql_Updt = `UPDATE tmsb_users 
+    SET users_pswrd = ?,
+    users_lstpd = current_timestamp(),
+    users_upusr = ?,
+    users_rvnmr = users_rvnmr + 1
+    WHERE id = ?
+    AND users_email = ?`;
+    const params_Updt = [pswrd_new, id, id, users_email];
+
+    await dbRun(
+      sql_Updt,
+      params_Updt,
+      `Change user password for ${users_email}`,
+    );
+
+    res.json({
+      success: true,
+      message: "User password is changed successfully",
+      data: req.body,
     });
   } catch (error) {
     console.error("database action error:", error);

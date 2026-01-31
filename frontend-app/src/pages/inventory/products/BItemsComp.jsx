@@ -1,5 +1,5 @@
 import { Chip } from "primereact/chip";
-import { useBusiness } from "@/hooks/auth/useBusiness";
+import { useBusiness } from "@/hooks/setup/useBusiness";
 import { useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";

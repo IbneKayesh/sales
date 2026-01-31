@@ -1,25 +1,30 @@
 import { apiRequest } from "@/utils/api.js";
 
-//Users API
+//usersAPI
 export const usersAPI = {
   getAll: (data) =>
-    apiRequest("/auth/users", {
+    apiRequest("/setup/users", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   create: (user) =>
-    apiRequest("/auth/users/create", {
+    apiRequest("/setup/users/create", {
       method: "POST",
       body: JSON.stringify(user),
     }),
   update: (user) =>
-    apiRequest("/auth/users/update", {
+    apiRequest("/setup/users/update", {
       method: "POST",
       body: JSON.stringify(user),
     }),
   delete: (user) =>
-    apiRequest("/auth/users/delete", {
+    apiRequest("/setup/users/delete", {
       method: "POST",
       body: JSON.stringify(user),
+    }),
+  changePassword: (data) =>
+    apiRequest("/setup/users/change-password", {
+      method: "POST",
+      body: JSON.stringify(data),
     }),
 };

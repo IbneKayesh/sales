@@ -173,19 +173,19 @@ const Layout = () => {
         {
           id: "st1",
           name: "Business",
-          url: "/home/auth/business",
+          url: "/home/setup/business",
           icon: "pi pi-shop",
         },
         {
           id: "st2",
           name: "Users",
-          url: "/home/auth/users",
+          url: "/home/setup/users",
           icon: "pi pi-users",
         },
         {
           id: "st3",
           name: "Change Password",
-          url: "/home/auth/password",
+          url: "/home/setup/users/password",
           icon: "pi pi-unlock",
         },
         {

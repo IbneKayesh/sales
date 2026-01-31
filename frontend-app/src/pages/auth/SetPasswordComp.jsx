@@ -16,7 +16,7 @@ const SetPasswordComp = () => {
   const [isBusy, setIsBusy] = useState(false);
   const [showInputs, setShowInputs] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const { setPassword } = useAuth();
+  const { resetPassword } = useAuth();
   const { showToast } = useToast();
   const cardRef = useRef(null);
 
@@ -74,7 +74,7 @@ const SetPasswordComp = () => {
         ...user,
         id: searchParams.get("recoverykey"),
       };
-      const response = await setPassword(formDataBody);
+      const response = await resetPassword(formDataBody);
       //console.log(response);
       showToast(
         response.success ? "success" : "error",

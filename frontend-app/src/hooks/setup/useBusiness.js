@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { businessAPI } from "@/api/auth/businessAPI";
-import tmab_bsins from "@/models/auth/tmab_bsins.json";
+import { businessAPI } from "@/api/setup/businessAPI";
+import tmab_bsins from "@/models/setup/tmsb_bsins.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,6 +17,35 @@ export const useBusiness = () => {
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
+
+  const tagsOptions = [
+    { label: "Retail", value: "Retail" },
+    { label: "Wholesale", value: "Wholesale" },
+    { label: "Services", value: "Services" },
+    { label: "Manufacturing", value: "Manufacturing" },
+    { label: "Grocery", value: "Grocery" },
+    { label: "Import", value: "Import" },
+    { label: "Export", value: "Export" },
+    { label: "Restaurant", value: "Restaurant" },
+    { label: "Clothing", value: "Clothing" },
+    { label: "Electronics", value: "Electronics" },
+    { label: "Furniture", value: "Furniture" },
+    { label: "Pharmacy", value: "Pharmacy" },
+    { label: "Stationery", value: "Stationery" },
+    { label: "Other", value: "Other" },
+  ];
+
+  const countryOptions = [
+    { label: "Bangladesh", value: "Bangladesh" },
+    { label: "World", value: "World" },
+  ];
+  const businessTypeOptions = [
+    { label: "Store", value: "Store" },
+    { label: "Showroom", value: "Showroom" },
+    { label: "Factory", value: "Factory" },
+    { label: "Warehouse", value: "Warehouse" },
+    { label: "Office", value: "Office" },
+  ];
 
   const loadBusiness = async () => {
     try {
@@ -78,7 +107,7 @@ export const useBusiness = () => {
         response.success ? "info" : "error",
         response.success ? "Deleted" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
     } catch (error) {
       console.error("Error deleting data:", error);
@@ -127,7 +156,7 @@ export const useBusiness = () => {
         response.success ? "success" : "error",
         response.success ? "Success" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
 
       // Clear form & reload
@@ -186,5 +215,8 @@ export const useBusiness = () => {
     handleSave,
     businessListDdl,
     fetchBusinessListDdl,
+    tagsOptions,
+    countryOptions,
+    businessTypeOptions,
   };
 };

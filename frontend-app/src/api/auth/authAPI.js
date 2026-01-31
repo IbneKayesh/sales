@@ -25,13 +25,8 @@ export const authAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  setPassword: (data) =>
-    apiRequest("/auth/set-password", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
-  changePassword: (data) =>
-    apiRequest("/auth/change-password", {
+  resetPassword: (data) =>
+    apiRequest("/auth/reset-password", {
       method: "POST",
       body: JSON.stringify(data),
     }),

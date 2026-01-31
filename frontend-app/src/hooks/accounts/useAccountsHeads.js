@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { businessAPI } from "@/api/auth/businessAPI";
-import tmab_bsins from "@/models/auth/tmab_bsins.json";
+import { businessAPI } from "@/api/setup/businessAPI";
+import tmab_bsins from "@/models/setup/tmsb_bsins.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";

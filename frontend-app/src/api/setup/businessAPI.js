@@ -1,24 +1,24 @@
 import { apiRequest } from "@/utils/api.js";
 
-//Shops API
+//businessAPI
 export const businessAPI = {
   getAll: (data) =>
-    apiRequest("/auth/business", {
+    apiRequest("/setup/business", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   create: (data) =>
-    apiRequest("/auth/business/create", {
+    apiRequest("/setup/business/create", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   update: (data) =>
-    apiRequest("/auth/business/update", {
+    apiRequest("/setup/business/update", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   delete: (data) =>
-    apiRequest("/auth/business/delete", {
+    apiRequest("/setup/business/delete", {
       method: "POST",
       body: JSON.stringify(data),
     }),

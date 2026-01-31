@@ -6,7 +6,7 @@ import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { paymentModeOptions } from "@/utils/vtable";
 import { useContacts } from "@/hooks/crm/useContacts";
-import { useBusiness } from "@/hooks/auth/useBusiness";
+import { useBusiness } from "@/hooks/setup/useBusiness";
 import { useAccountsHeads } from "@/hooks/accounts/useAccountsHeads";
 import { useAccounts } from "@/hooks/accounts/useAccounts";
 

@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-import { usersAPI } from "@/api/auth/usersAPI";
-import tmab_users from "@/models/auth/tmab_users.json";
+import { usersAPI } from "@/api/setup/usersAPI";
+import tmsb_users from "@/models/setup/tmsb_users.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
-import { businessAPI } from "@/api/auth/businessAPI";
 
-const dataModel = generateDataModel(tmab_users, { edit_stop: 0 });
+const dataModel = generateDataModel(tmsb_users, { edit_stop: 0 });
 
 export const useUsers = () => {
   const { user } = useAuth();
@@ -18,7 +17,6 @@ export const useUsers = () => {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
-  const [businessOptions, setBusinessOptions] = useState([]);
   const roleOptions = [
     { label: "Admin", value: "Admin" },
     { label: "User", value: "User" },
@@ -37,32 +35,6 @@ export const useUsers = () => {
       showToast("error", "Error", error?.message || "Failed to load data");
     }
   };
-
-  const loadBusiness = async () => {
-    //console.log("loadBusiness: ", businessOptions);
-    if (businessOptions.length > 0) {
-      return;
-    }
-    try {
-      const response = await businessAPI.getAll({
-        bsins_users: user.users_users,
-      });
-      //console.log("response: " + JSON.stringify(response));
-
-      // response = { message, data }
-
-      setBusinessOptions(
-        response.data.map((d) => ({
-          value: d.id,
-          label: d.bsins_bname,
-        }))
-      );
-    } catch (error) {
-      console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
-    }
-  };
-
   //Fetch data from API on mount
   useEffect(() => {
     loadUsers();
@@ -70,7 +42,7 @@ export const useUsers = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmab_users);
+    const newErrors = validate({ ...formData, [field]: value }, tmsb_users);
     setErrors(newErrors);
   };
 
@@ -87,7 +59,6 @@ export const useUsers = () => {
   const handleAddNew = () => {
     handleClear();
     setCurrentView("form");
-    loadBusiness();
   };
 
   const handleEdit = (data) => {
@@ -97,7 +68,6 @@ export const useUsers = () => {
       users_pswrd: "",
     });
     setCurrentView("form");
-    loadBusiness();
   };
 
   const handleDelete = async (rowData) => {
@@ -139,7 +109,7 @@ export const useUsers = () => {
       }
 
       // Validate form
-      const newErrors = validate(formData, tmab_users);
+      const newErrors = validate(formData, tmsb_users);
       setErrors(newErrors);
       console.log("handleSave: " + JSON.stringify(newErrors));
 
@@ -202,6 +172,5 @@ export const useUsers = () => {
     handleRefresh,
     handleSave,
     roleOptions,
-    businessOptions,
   };
 };

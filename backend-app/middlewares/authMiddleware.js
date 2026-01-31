@@ -5,7 +5,10 @@ const authMiddleware = (req, res, next) => {
   // Public paths whitelist
   const publicPaths = [
     "/api/auth/login",
+    "/api/auth/logout",
     "/api/auth/register",
+    "/api/auth/recover-password",
+    "/api/auth/reset-password",
     "/api/health",
     "/api/ping",
   ];

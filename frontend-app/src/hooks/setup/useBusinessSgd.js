@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { businessAPI } from "@/api/auth/businessAPI";
+import { businessAPI } from "@/api/setup/businessAPI";
 
 export const useBusinessSgd = () => {
   const { user } = useAuth();

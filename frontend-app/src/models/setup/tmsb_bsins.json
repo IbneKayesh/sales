@@ -73,6 +73,24 @@
     "required": true,
     "default": "Bangladesh"
   },
+  "bsins_bstyp": {
+    "type": "string",
+    "label": "Business Type",
+    "maxLength": 100,
+    "minLength": 3,
+    "placeholder": "Enter your Business Type",
+    "required": true,
+    "default": "Store"
+  },
+  "bsins_tstrn": {
+    "type": "number",
+    "label": "Transfer Transaction",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Transfer Transaction",
+    "required": true,
+    "default": 0
+  },
   "bsins_prtrn": {
     "type": "number",
     "label": "Purchase Transaction",

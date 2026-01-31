@@ -59,6 +59,12 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
           {rowData.bsins_addrs}, {rowData.bsins_cntry}
         </span>
         <span className="text-sm text-gray-500 flex gap-2">
+          Transfer:
+          {rowData.bsins_tstrn === 1 ? (
+            <i className="pi pi-check-circle text-green-500"></i>
+          ) : (
+            <i className="pi pi-times-circle text-red-500"></i>
+          )}
           Purchase:
           {rowData.bsins_prtrn === 1 ? (
             <i className="pi pi-check-circle text-green-500"></i>
@@ -86,7 +92,15 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
     return (
       <div className="flex flex-column">
         <span className="text-md">{rowData.bsins_cntct}</span>
-        <span className="text-sm">{rowData.bsins_email}</span>
+        <span className="text-sm text-blue-600">{rowData.bsins_email}</span>
+      </div>
+    );
+  };
+  const bsins_btags_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-md">{rowData.bsins_btags}</span>
+        <span className="text-sm text-blue-600">{rowData.bsins_bstyp}</span>
       </div>
     );
   };
@@ -110,7 +124,7 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
         <Column field="bsins_bname" header="Business" body={bsins_bname_BT} />
         <Column field="bsins_email" header="Contact" body={bsins_email_BT} />
         <Column field="bsins_binno" header="BIN" />
-        <Column field="bsins_btags" header="Tags" />
+        <Column field="bsins_btags" header="Tags" body={bsins_btags_BT} />
         <Column field="bsins_stdat" header="Date" body={bsins_stdat_BT} />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>

@@ -7,7 +7,7 @@ import { Avatar } from "primereact/avatar";
 import { Tag } from "primereact/tag";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
-import { usersAPI } from "@/api/auth/usersAPI";
+import { usersAPI } from "@/api/setup/usersAPI";
 import "./ProfileSettings.css";
 
 const ProfileSettings = () => {

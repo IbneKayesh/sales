@@ -1,7 +1,7 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import { useBusiness } from "@/hooks/auth/useBusiness";
+import { useBusiness } from "@/hooks/setup/useBusiness";
 import BusinessListComp from "./BusinessListComp";
 import BusinessFormComp from "./BusinessFormComp";
 
@@ -19,6 +19,9 @@ const BusinessPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
+    tagsOptions,
+    countryOptions,
+    businessTypeOptions,
   } = useBusiness();
 
   const getHeader = () => {
@@ -30,15 +33,35 @@ const BusinessPage = () => {
           {isList
             ? "Business List"
             : formData.id
-            ? "Edit Business"
-            : "Add New Business"}
+              ? "Edit Business"
+              : "Add New Business"}
         </h3>
 
         <div className="flex gap-2">
           <ButtonGroup>
-            <Button icon="pi pi-refresh" size="small" severity="secondary" onClick={handleRefresh} disabled={!isList}/>
-            <Button label="New" icon="pi pi-plus" size="small" severity="info" onClick={handleAddNew} disabled={!isList}/>
-            <Button label="Back" icon="pi pi-arrow-left" size="small" severity="help" onClick={handleCancel} disabled={isList}/>
+            <Button
+              icon="pi pi-refresh"
+              size="small"
+              severity="secondary"
+              onClick={handleRefresh}
+              disabled={!isList}
+            />
+            <Button
+              label="New"
+              icon="pi pi-plus"
+              size="small"
+              severity="info"
+              onClick={handleAddNew}
+              disabled={!isList}
+            />
+            <Button
+              label="Back"
+              icon="pi pi-arrow-left"
+              size="small"
+              severity="help"
+              onClick={handleCancel}
+              disabled={isList}
+            />
           </ButtonGroup>
         </div>
       </div>
@@ -61,6 +84,9 @@ const BusinessPage = () => {
             formData={formData}
             onChange={handleChange}
             onSave={handleSave}
+            tagsOptions={tagsOptions}
+            countryOptions={countryOptions}
+            businessTypeOptions={businessTypeOptions}
           />
         )}
       </Card>

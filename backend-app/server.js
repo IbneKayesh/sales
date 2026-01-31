@@ -7,8 +7,6 @@ const { initData } = require("./db/initData.js");
 
 //auth
 const authRoutes = require("./routes/auth/auth.routes.js");
-const businessRoutes = require("./routes/auth/business.routes.js");
-const usersRoutes = require("./routes/auth/users.routes.js");
 //crm
 const contactsRoutes = require("./routes/crm/contacts.routes.js");
 const fieldRoutes = require("./routes/crm/fieldroute.routes.js");
@@ -23,8 +21,10 @@ const accountsLedgerRoutes = require("./routes/accounts/accountsLedger.routes.js
 const payablesRoutes = require("./routes/accounts/payables.routes.js");
 const expensesRoutes = require("./routes/accounts/expenses.routes.js");
 //setup
-const closingRoutes = require("./routes/setup/closing.routes.js");
+const businessRoutes = require("./routes/setup/business.routes.js");
+const usersRoutes = require("./routes/setup/users.routes.js");
 const databaseRoutes = require("./routes/setup/database.routes.js");
+const closingRoutes = require("./routes/setup/closing.routes.js");
 //inventory
 const unitsRoutes = require("./routes/inventory/units.routes.js");
 const categoriesRoutes = require("./routes/inventory/categories.routes.js");
@@ -79,8 +79,6 @@ app.use("/api", authMiddleware);
 
 //auth
 app.use("/api/auth", authRoutes);
-app.use("/api/auth/business", businessRoutes);
-app.use("/api/auth/users", usersRoutes);
 //crm
 app.use("/api/crm/contacts", contactsRoutes);
 app.use("/api/crm/fieldroute", fieldRoutes);
@@ -95,8 +93,10 @@ app.use("/api/accounts/accounts-ledgers", accountsLedgerRoutes);
 app.use("/api/accounts/payables", payablesRoutes);
 app.use("/api/accounts/expenses", expensesRoutes);
 //setup
-app.use("/api/setup/closing", closingRoutes);
+app.use("/api/setup/business", businessRoutes);
+app.use("/api/setup/users", usersRoutes);
 app.use("/api/setup/database", databaseRoutes);
+app.use("/api/setup/closing", closingRoutes);
 //inventory
 app.use("/api/inventory/units", unitsRoutes);
 app.use("/api/inventory/categories", categoriesRoutes);

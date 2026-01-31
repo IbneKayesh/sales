@@ -5,6 +5,8 @@ const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const { createSession } = require("../../sessionManager");
 
+
+
 // registration
 router.post("/register", async (req, res) => {
   try {
@@ -32,7 +34,7 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    const sql_valid_email = `SELECT * FROM tmab_users WHERE users_email = ?`;
+    const sql_valid_email = `SELECT * FROM tmsb_users WHERE users_email = ?`;
     const params_valid_email = [users_email];
     const row_valid_email = await dbGet(
       sql_valid_email,
@@ -54,7 +56,7 @@ router.post("/register", async (req, res) => {
     const noOfGrains = process.env.TRUST_GRAINS || 0;
 
     scripts.push({
-      sql: `INSERT INTO tmab_users (id, users_email, users_pswrd, users_recky, users_oname, users_bsins,
+      sql: `INSERT INTO tmsb_users (id, users_email, users_pswrd, users_recky, users_oname, users_bsins,
       users_drole, users_users, users_stats, users_regno, users_nofcr, users_crusr, users_upusr) 
     VALUES (?, ?, ?, ?, ?, ?,
     'Admin', ?, 0, 'Standard', ?, ?, ?)`,
@@ -74,7 +76,7 @@ router.post("/register", async (req, res) => {
     });
 
     scripts.push({
-      sql: `INSERT INTO tmab_bsins (id, bsins_users, bsins_bname, bsins_email, bsins_crusr, bsins_upusr) 
+      sql: `INSERT INTO tmsb_bsins (id, bsins_users, bsins_bname, bsins_email, bsins_crusr, bsins_upusr) 
     VALUES (?, ?, ?, ?, ?, ?)`,
       params: [users_bsins_id, id, bsins_bname, users_email, id, id],
       label: `Created business ${bsins_bname}`,
@@ -105,6 +107,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
+
 // login
 router.post("/login", async (req, res) => {
   try {
@@ -123,10 +126,10 @@ router.post("/login", async (req, res) => {
     const sql = `SELECT usr.id,usr.users_email,usr.users_oname,usr.users_cntct,usr.users_bsins,
     usr.users_drole,usr.users_users,usr.users_stats,usr.users_regno,
     usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,
-    bsn.bsins_bname, bsn.bsins_addrs, bsn.bsins_email, bsn.bsins_cntct, bsn.bsins_binno, bsn.bsins_cntry, 
-    bsn.bsins_prtrn, bsn.bsins_sltrn, 'web' as users_sview
-FROM tmab_users usr
-LEFT JOIN tmab_bsins bsn ON usr.users_bsins = bsn.id
+    bsn.bsins_bname, bsn.bsins_addrs, bsn.bsins_email, bsn.bsins_cntct, bsn.bsins_image, bsn.bsins_binno, bsn.bsins_btags, bsn.bsins_cntry, 
+    bsn.bsins_bstyp, bsn.bsins_tstrn, bsn.bsins_prtrn, bsn.bsins_sltrn, bsn.bsins_stdat, bsn.bsins_pbviw, 'web' as users_sview
+    FROM tmsb_users usr
+    LEFT JOIN tmsb_bsins bsn ON usr.users_bsins = bsn.id
     WHERE usr.users_email = ?
     AND usr.users_pswrd = ?
     AND usr.users_actve = 1`;
@@ -201,7 +204,7 @@ router.post("/recover-password", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT * FROM tmab_users
+    const sql = `SELECT * FROM tmsb_users
     WHERE users_email = ?
     AND users_recky = ?
     AND  users_actve = 1`;
@@ -234,8 +237,8 @@ router.post("/recover-password", async (req, res) => {
   }
 });
 
-// set-password
-router.post("/set-password", async (req, res) => {
+// reset-password
+router.post("/reset-password", async (req, res) => {
   try {
     const { id, users_email, users_pswrd, users_recky } = req.body;
 
@@ -249,7 +252,7 @@ router.post("/set-password", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmab_users 
+    const sql = `UPDATE tmsb_users 
     SET users_recky = ?,
     users_pswrd = ?,
     users_lstpd = current_timestamp(),
@@ -264,72 +267,6 @@ router.post("/set-password", async (req, res) => {
     res.json({
       success: true,
       message: "User password is updated successfully",
-      data: req.body,
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: null,
-    });
-  }
-});
-
-// change-password
-router.post("/change-password", async (req, res) => {
-  try {
-    const { id, users_email, pswrd_current, pswrd_new } = req.body;
-
-    // Validate input
-    if (!id || !users_email || !pswrd_current || !pswrd_new) {
-      return res.json({
-        success: false,
-        message: "Id, Email, Password Current, Password New are required",
-        data: null,
-      });
-    }
-
-    //database action
-    const sql = `SELECT usr.*
-    FROM tmab_users usr
-    WHERE usr.users_email = ?
-    AND usr.users_pswrd = ?
-    AND usr.id = ?
-    AND usr.users_actve = 1`;
-    const params = [users_email, pswrd_current, id];
-
-    const row = await dbGet(
-      sql,
-      params,
-      `Get user login credential for ${users_email}`,
-    );
-    if (!row) {
-      return res.json({
-        success: false,
-        message: "Email or Password is not valid",
-        data: null,
-      });
-    }
-
-    const sql_Updt = `UPDATE tmab_users 
-    SET users_pswrd = ?,
-    users_lstpd = current_timestamp(),
-    users_upusr = ?,
-    users_rvnmr = users_rvnmr + 1
-    WHERE id = ?
-    AND users_email = ?`;
-    const params_Updt = [pswrd_new, id, id, users_email];
-
-    await dbRun(
-      sql_Updt,
-      params_Updt,
-      `Change user password for ${users_email}`,
-    );
-
-    res.json({
-      success: true,
-      message: "User password is changed successfully",
       data: req.body,
     });
   } catch (error) {

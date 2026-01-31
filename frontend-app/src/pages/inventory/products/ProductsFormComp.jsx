@@ -6,7 +6,7 @@ import tmib_items from "@/models/inventory/tmib_items.json";
 import { productTypeOptions } from "@/utils/vtable";
 import { useCategory } from "@/hooks/inventory/useCategory";
 import { useUnits } from "@/hooks/inventory/useUnits";
-import { useBusiness } from "@/hooks/auth/useBusiness";
+import { useBusiness } from "@/hooks/setup/useBusiness";
 import BFormComp from "./BFormComp";
 import { Chip } from "primereact/chip";
 

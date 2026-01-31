@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { authAPI } from "@/api/auth/authAPI";
+import { usersAPI } from "@/api/setup/usersAPI";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 
@@ -70,7 +70,7 @@ export const usePassword = () => {
 
       //console.log("fromDataUser: " + JSON.stringify(fromDataUser));
 
-      const response = await authAPI.changePassword(fromDataUser);
+      const response = await usersAPI.changePassword(fromDataUser);
       //console.log("response: " + JSON.stringify(response));
 
       showToast(

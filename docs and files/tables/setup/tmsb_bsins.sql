@@ -1,9 +1,9 @@
 
 --
--- Table structure for table `tmab_bsins`
--- business shop
+-- Table structure for table `tmsb_bsins`
+-- business shop/warehouse/
 
-CREATE TABLE `tmab_bsins` (
+CREATE TABLE `tmsb_bsins` (
   `id` varchar(50) NOT NULL,
   `bsins_users` varchar(255) NOT NULL,
   `bsins_bname` varchar(255) NOT NULL,
@@ -15,6 +15,8 @@ CREATE TABLE `tmab_bsins` (
   `bsins_binno` varchar(255) DEFAULT NULL,
   `bsins_btags` varchar(255) DEFAULT NULL,
   `bsins_cntry` varchar(50) DEFAULT NULL,
+  `bsins_bstyp` varchar(50) DEFAULT NULL,
+  `bsins_tstrn` tinyint(1) NOT NULL DEFAULT 1,
   `bsins_prtrn` tinyint(1) NOT NULL DEFAULT 1,
   `bsins_sltrn` tinyint(1) NOT NULL DEFAULT 1,
   -- default
@@ -30,8 +32,8 @@ CREATE TABLE `tmab_bsins` (
 
 
 --
--- Indexes for table `tmab_bsins`
+-- Indexes for table `tmsb_bsins`
 --
-ALTER TABLE `tmab_bsins`
+ALTER TABLE `tmsb_bsins`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `ix_bsins_users_bsins_bname` (`bsins_users`,`bsins_bname`);

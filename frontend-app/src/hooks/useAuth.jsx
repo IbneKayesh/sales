@@ -84,9 +84,14 @@ export const AuthProvider = ({ children }) => {
           bsins_cntct: restData.bsins_cntct,
           bsins_image: null,
           bsins_binno: restData.bsins_binno,
+          bsins_btags : restData.bsins_btags,
           bsins_cntry: restData.bsins_cntry,
+          bsins_bstyp: restData.bsins_bstyp,
+          bsins_tstrn: restData.bsins_tstrn,
           bsins_prtrn: restData.bsins_prtrn,
           bsins_sltrn: restData.bsins_sltrn,
+          bsins_stdat: restData.bsins_stdat,
+          bsins_pbviw: restData.bsins_pbviw,
         };
         setBusiness(businessData);
         setStorageData({ business: businessData });
@@ -162,7 +167,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const setPassword = async (user) => {
+  const resetPassword = async (user) => {
     try {
       //console.log("user", user);
       const { id, usersEmail, usersPswrd, usersRecky } = user;
@@ -181,7 +186,7 @@ export const AuthProvider = ({ children }) => {
         users_pswrd: usersPswrd,
         users_recky: usersRecky,
       };
-      const response = await authAPI.setPassword(reqBody);
+      const response = await authAPI.resetPassword(reqBody);
       //console.log("response", response);
       return response;
     } catch (error) {
@@ -198,7 +203,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     register,
     recoverPassword,
-    setPassword,
+    resetPassword,
     loading,
   };
 

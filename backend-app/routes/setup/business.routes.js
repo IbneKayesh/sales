@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
 
     //database action
     const sql = `SELECT bsn.*, 0 as edit_stop
-      FROM tmab_bsins bsn
+      FROM tmsb_bsins bsn
       WHERE bsn.bsins_users = ?
       ORDER BY bsn.bsins_bname`;
     const params = [bsins_users];
@@ -53,6 +53,8 @@ router.post("/create", async (req, res) => {
       bsins_binno,
       bsins_btags,
       bsins_cntry,
+      bsins_bstyp,
+      bsins_tstrn,
       bsins_prtrn,
       bsins_sltrn,
       bsins_stdat,
@@ -80,9 +82,9 @@ router.post("/create", async (req, res) => {
     }
 
     //database action
-    const sql = `INSERT INTO tmab_bsins
+    const sql = `INSERT INTO tmsb_bsins
     (id,bsins_users,bsins_bname,bsins_addrs,bsins_email,bsins_cntct,
-    bsins_binno,bsins_btags,bsins_cntry, bsins_prtrn, bsins_sltrn,
+    bsins_binno,bsins_btags,bsins_cntry, bsins_bstyp, bsins_tstrn,bsins_prtrn, bsins_sltrn,
     bsins_stdat,bsins_pbviw,bsins_crusr,bsins_upusr)
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?, ?, ?, ?)`;
     const params = [
@@ -94,7 +96,9 @@ router.post("/create", async (req, res) => {
       bsins_cntct,
       bsins_binno,
       bsins_btags,
-      bsins_cntry,      
+      bsins_cntry,
+      bsins_bstyp,
+      bsins_tstrn,
       bsins_prtrn,
       bsins_sltrn,
       bsins_stdat,
@@ -132,6 +136,8 @@ router.post("/update", async (req, res) => {
       bsins_binno,
       bsins_btags,
       bsins_cntry,
+      bsins_bstyp,
+      bsins_tstrn,
       bsins_prtrn,
       bsins_sltrn,
       bsins_stdat,
@@ -159,7 +165,7 @@ router.post("/update", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmab_bsins
+    const sql = `UPDATE tmsb_bsins
     SET bsins_bname = ?,
     bsins_addrs = ?,
     bsins_email = ?,
@@ -167,6 +173,8 @@ router.post("/update", async (req, res) => {
     bsins_binno = ?,
     bsins_btags = ?,
     bsins_cntry = ?,
+    bsins_bstyp = ?,
+    bsins_tstrn = ?,
     bsins_prtrn = ?,
     bsins_sltrn = ?,
     bsins_stdat = ?,
@@ -182,6 +190,8 @@ router.post("/update", async (req, res) => {
       bsins_binno,
       bsins_btags,
       bsins_cntry,
+      bsins_bstyp,
+      bsins_tstrn,
       bsins_prtrn,
       bsins_sltrn,
       bsins_stdat,
@@ -221,7 +231,7 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmab_bsins
+    const sql = `UPDATE tmsb_bsins
     SET bsins_actve = 1 - bsins_actve
     WHERE id = ?`;
     const params = [id];

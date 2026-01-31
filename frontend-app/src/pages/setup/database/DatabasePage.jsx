@@ -172,7 +172,7 @@ const DatabasePage = () => {
             • Backups are compressed using gzip.
           </li>
           <li className="mb-1">
-            • Backups are stored in the "backups" directory of the application.
+            • Backup options are available to create, download, or delete.
           </li>
         </ul>
       </div>

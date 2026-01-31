@@ -1,8 +1,8 @@
 --
--- Table structure for table `tmab_users`
+-- Table structure for table `tmsb_users`
 -- master users and workstation users
 
-CREATE TABLE `tmab_users` (
+CREATE TABLE `tmsb_users` (
   `id` varchar(50) NOT NULL,
   `users_email` varchar(50) NOT NULL,
   `users_pswrd` varchar(50) NOT NULL,
@@ -34,11 +34,8 @@ CREATE TABLE `tmab_users` (
 
 
 --
--- Indexes for table `tmsb_bsins`
+-- Indexes for table `tmsb_users`
 --
-ALTER TABLE `tmab_users`
+ALTER TABLE `tmsb_users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `ix_users_email` (`users_email`);
-
-
--- ALTER TABLE `tmab_users` ADD `users_users` VARCHAR(50) NULL DEFAULT NULL AFTER `users_drole`;
