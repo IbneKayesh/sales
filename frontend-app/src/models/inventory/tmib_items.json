@@ -96,21 +96,12 @@
     "placeholder": "Enter item type",
     "required": true
   },
-  "items_hwrnt": {
+  "items_trcks": {
     "type": "number",
-    "label": "Item Warranty",
+    "label": "Stock Tracking",
     "maxLength": 1,
     "minLength": 0,
-    "placeholder": "Enter item warranty",
-    "required": true,
-    "default": "0"
-  },
-  "items_hxpry": {
-    "type": "number",
-    "label": "Item Expiry",
-    "maxLength": 1,
-    "minLength": 0,
-    "placeholder": "Enter item expiry",
+    "placeholder": "Enter stock tracking",
     "required": true,
     "default": "0"
   },

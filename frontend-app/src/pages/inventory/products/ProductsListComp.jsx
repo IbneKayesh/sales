@@ -17,8 +17,7 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
   const [filterType, setFilterType] = useState("all");
   const filterOptions = [
     { label: "All", value: "all", icon: "pi pi-list" },
-    { label: "With Warranty", value: "warranty", icon: "pi pi-calendar" },
-    { label: "With Expiry", value: "expiry", icon: "pi pi-calendar" },
+    { label: "With Tracking", value: "tracking", icon: "pi pi-calendar" },
     { label: "With VAT", value: "vat", icon: "pi pi-money-bill" },
     { label: "Without Cost", value: "without_cost", icon: "pi pi-money-bill" },
     {
@@ -214,11 +213,10 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
     );
   };
 
-  const items_hwrnt_BT = (rowData) => {
+  const items_trcks_BT = (rowData) => {
     return (
       <>
-        <ActiveRowCell text={"Warranty"} status={rowData.items_hwrnt} />{" "}
-        <ActiveRowCell text={"Expiry"} status={rowData.items_hxpry} />
+        <ActiveRowCell text={"Tracking"} status={rowData.items_trcks} />
       </>
     );
   };
@@ -285,9 +283,9 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
           sortable
         />
         <Column
-          field="items_hwrnt"
-          header="Support"
-          body={items_hwrnt_BT}
+          field="items_trcks"
+          header="Tracking"
+          body={items_trcks_BT}
           sortable
         />
         <Column

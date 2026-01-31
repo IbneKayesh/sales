@@ -47,7 +47,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
   const actionMenuItems = [
     {
-      label: "Add Attributes",
+      label: "Attributes",
       icon: "pi pi-plus-circle text-green-600",
       command: () => activeRow && handleAddAttributes(activeRow),
     },
@@ -57,7 +57,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       command: () => activeRow && handleCopyRowConfirm(activeRow),
     },
     {
-      label: "Delete Item",
+      label: "Delete",
       icon: "pi pi-trash text-red-600",
       command: () => activeRow && handleDelete(activeRow),
     },

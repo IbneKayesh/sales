@@ -389,11 +389,8 @@ export const useProducts = () => {
       case "all":
         setDataList(allData);
         break;
-      case "warranty":
-        setDataList(allData.filter((i) => i.items_hwrnt === 1));
-        break;
-      case "expiry":
-        setDataList(allData.filter((i) => i.items_hxpry === 1));
+      case "tracking":
+        setDataList(allData.filter((i) => i.items_trcks === 1));
         break;
       case "vat":
         setDataList(allData.filter((i) => Number(i.items_sdvat) > 0));

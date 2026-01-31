@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.2
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Jan 31, 2026 at 01:02 AM
--- Server version: 11.8.2-MariaDB-ubu2404
--- PHP Version: 8.2.27
+-- Generation Time: Jan 31, 2026 at 12:38 PM
+-- Server version: 12.1.2-MariaDB-ubu2404
+-- PHP Version: 8.3.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,87 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `shopdb`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tmab_bsins`
---
-
-CREATE TABLE `tmab_bsins` (
-  `id` varchar(50) NOT NULL,
-  `bsins_users` varchar(255) NOT NULL,
-  `bsins_bname` varchar(255) NOT NULL,
-  `bsins_addrs` varchar(255) DEFAULT NULL,
-  `bsins_email` varchar(255) DEFAULT NULL,
-  `bsins_cntct` varchar(255) DEFAULT NULL,
-  `bsins_image` varchar(255) DEFAULT NULL,
-  `bsins_binno` varchar(255) DEFAULT NULL,
-  `bsins_btags` varchar(255) DEFAULT NULL,
-  `bsins_cntry` varchar(50) DEFAULT NULL,
-  `bsins_prtrn` tinyint(1) NOT NULL DEFAULT 1,
-  `bsins_sltrn` tinyint(1) NOT NULL DEFAULT 1,
-  `bsins_stdat` datetime NOT NULL DEFAULT current_timestamp(),
-  `bsins_pbviw` tinyint(1) NOT NULL DEFAULT 0,
-  `bsins_actve` tinyint(1) NOT NULL DEFAULT 1,
-  `bsins_crusr` varchar(50) NOT NULL,
-  `bsins_crdat` datetime NOT NULL DEFAULT current_timestamp(),
-  `bsins_upusr` varchar(50) NOT NULL,
-  `bsins_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `bsins_rvnmr` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tmab_bsins`
---
-
-INSERT INTO `tmab_bsins` (`id`, `bsins_users`, `bsins_bname`, `bsins_addrs`, `bsins_email`, `bsins_cntct`, `bsins_image`, `bsins_binno`, `bsins_btags`, `bsins_cntry`, `bsins_prtrn`, `bsins_sltrn`, `bsins_stdat`, `bsins_pbviw`, `bsins_actve`, `bsins_crusr`, `bsins_crdat`, `bsins_upusr`, `bsins_updat`, `bsins_rvnmr`) VALUES
-('0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'admin-id', 'Grain Mart – Dhanmondi', 'Road 27, Dhanmondi, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'CT2025-0978-22364', 'Grocery', 'Bangladesh', 1, 1, '2026-01-09 00:00:00', 1, 1, 'admin-id', '2026-01-09 08:39:57', 'admin-id', '2026-01-20 09:36:19', 8),
-('3881b053-9509-49db-835a-3f8dd8976cda', 'admin-id', 'Green Mart – Uttara', 'Sector 10, Uttara, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'GT-9872-6871-5555', 'Grocery', 'Bangladesh', 1, 1, '2026-01-11 00:00:00', 0, 1, 'admin-id', '2026-01-11 08:28:46', 'admin-id', '2026-01-27 02:47:54', 10),
-('3df6fda2-9cb2-4e71-bbf3-459b635c040e', 'admin-id', 'Household Vally', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'CT2021-0325-23170', 'Grocery Store', 'Bangladesh', 1, 1, '2026-01-11 00:00:00', 0, 1, 'admin-id', '2026-01-11 08:32:18', 'admin-id', '2026-01-19 12:12:41', 5),
-('6dd0f9d0-840a-43ce-8f82-a60310521756', 'admin-id', 'Central Distribution Warehouse', 'Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, '', 'Grocery Store', 'Bangladesh', 1, 1, '2026-01-11 00:00:00', 0, 1, 'admin-id', '2026-01-11 08:31:43', 'admin-id', '2026-01-20 09:36:13', 5);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tmab_users`
---
-
-CREATE TABLE `tmab_users` (
-  `id` varchar(50) NOT NULL,
-  `users_email` varchar(50) NOT NULL,
-  `users_pswrd` varchar(50) NOT NULL,
-  `users_recky` varchar(50) NOT NULL,
-  `users_oname` varchar(255) NOT NULL,
-  `users_cntct` varchar(50) DEFAULT NULL,
-  `users_bsins` varchar(50) DEFAULT NULL,
-  `users_drole` varchar(50) DEFAULT NULL,
-  `users_users` varchar(50) DEFAULT NULL,
-  `users_stats` int(11) NOT NULL DEFAULT 0,
-  `users_regno` varchar(50) DEFAULT NULL,
-  `users_regdt` datetime NOT NULL DEFAULT current_timestamp(),
-  `users_ltokn` varchar(50) DEFAULT NULL,
-  `users_lstgn` datetime NOT NULL DEFAULT current_timestamp(),
-  `users_lstpd` datetime NOT NULL DEFAULT current_timestamp(),
-  `users_wctxt` varchar(100) DEFAULT NULL,
-  `users_notes` varchar(100) DEFAULT NULL,
-  `users_nofcr` decimal(16,2) NOT NULL DEFAULT 0.00,
-  `users_isrgs` tinyint(1) NOT NULL DEFAULT 1,
-  `users_actve` tinyint(1) NOT NULL DEFAULT 1,
-  `users_crusr` varchar(50) NOT NULL,
-  `users_crdat` datetime NOT NULL DEFAULT current_timestamp(),
-  `users_upusr` varchar(50) NOT NULL,
-  `users_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `users_rvnmr` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tmab_users`
---
-
-INSERT INTO `tmab_users` (`id`, `users_email`, `users_pswrd`, `users_recky`, `users_oname`, `users_cntct`, `users_bsins`, `users_drole`, `users_users`, `users_stats`, `users_regno`, `users_regdt`, `users_ltokn`, `users_lstgn`, `users_lstpd`, `users_wctxt`, `users_notes`, `users_nofcr`, `users_isrgs`, `users_actve`, `users_crusr`, `users_crdat`, `users_upusr`, `users_updat`, `users_rvnmr`) VALUES
-('0758720d-ea22-4aee-9b69-c898d2ffe29f', 'user@sgd.com', 'password', 'recover', 'General User', '123456', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'User', 'admin-id', 0, 'Standard', '2026-01-09 12:08:38', NULL, '2026-01-09 12:08:38', '2026-01-09 12:08:38', 'Welcome Note', 'Any Notes', 0.00, 0, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:08:38', '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-12 05:46:00', 1),
-('admin-id', 'admin@sgd.com', 'password', 'recover', 'Admin User', '01722688266', '3881b053-9509-49db-835a-3f8dd8976cda', 'Admin', 'admin-id', 0, 'Standard', '2026-01-09 08:39:57', NULL, '2026-01-09 08:39:57', '2026-01-11 12:19:32', 'Welcome Note', 'User Note', 741.00, 1, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 08:39:57', 'admin-id', '2026-01-20 04:21:59', 8);
 
 -- --------------------------------------------------------
 
@@ -144,18 +63,19 @@ CREATE TABLE `tmcb_cntct` (
 --
 
 INSERT INTO `tmcb_cntct` (`id`, `cntct_users`, `cntct_bsins`, `cntct_ctype`, `cntct_sorce`, `cntct_cntnm`, `cntct_cntps`, `cntct_cntno`, `cntct_email`, `cntct_tinno`, `cntct_trade`, `cntct_ofadr`, `cntct_fcadr`, `cntct_tarea`, `cntct_dzone`, `cntct_cntry`, `cntct_cntad`, `cntct_dspct`, `cntct_crlmt`, `cntct_pybln`, `cntct_adbln`, `cntct_crbln`, `cntct_actve`, `cntct_crusr`, `cntct_crdat`, `cntct_upusr`, `cntct_updat`, `cntct_rvnmr`) VALUES
-('08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Bengal Fresh Foods', 'Nusrat Jahan', '01822-000002', 'email@sgd.com', 'TIN-123456', 'TRADE-123456', 'Chittagong Wholesale Market', 'Chittagong Wholesale Market', 'sirajganj-sadar', 'sirajganj', 'Bangladesh', '0', 10.000000, 20000.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-14 09:17:52', 'admin-id', '2026-01-25 05:14:59', 6),
-('11f1664d-5d03-4724-a4dd-57ad3e01ad1a', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Al Noor Store', 'Javed Hasan', '01623-100104', 'email@sgd.com', 'TIN-123456', 'TRADE-123456', 'Sylhet Zindabazar', 'Sylhet Zindabazar', 'bogra-sadar', 'bogra', 'Bangladesh', '0', 10.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:24:23', 'admin-id', '2026-01-25 05:13:00', 3),
-('267bb3aa-9177-43d2-8d8b-e0137578cf98', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Dhaka Agro Traders', 'Md. Kamal Hossain', '01711-000001', 'email@email.com', '', '', 'Kawran Bazar, Dhaka', 'Kawran Bazar, Dhaka', 'araihazar', 'narayanganj', 'Bangladesh', '0', 0.000000, 20000.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:10', 'admin-id', '2026-01-25 05:36:49', 4),
-('41981c62-d7fc-4238-a8f1-8c70bd2c1e0e', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Bismillah Traders', 'Hafiz Uddin', '01921-100103', '', '', '', 'Cumilla Sadar', 'Cumilla Sadar', 'araihazar', 'narayanganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:24:02', 'admin-id', '2026-01-25 05:35:58', 2),
-('521e18fc-b57a-48c4-a0a7-d7772edb4b76', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'M/S Amin Enterprise', 'Aminul Islam', '01534-100105', '', '', '', 'Khulna Boyra', 'Khulna Boyra', 'kachpur', 'narayanganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:24:45', 'admin-id', '2026-01-25 05:37:18', 2),
-('639611f4-97e5-4589-904e-190ef11f7f4e', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Jisan Dairy Source', 'Akhi Khatun', '01555-000005', '', '', '', 'Mirpur-10, Dhaka', 'Mirpur-10, Dhaka', 'enayetpur', 'sirajganj', 'Bangladesh', '0', 0.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:10:29', 'admin-id', '2026-01-25 05:37:05', 2),
-('6a0619ca-84e9-4df5-b225-7dd7acb91b86', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Green Farm Ltd.', 'Abdul Karim', '01933-000003', '', '', '', 'Bogura Sadar, Bogura', 'Bogura Sadar, Bogura', 'bogra-sadar', 'bogra', 'Bangladesh', '0', 10.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:09:12', 'admin-id', '2026-01-25 05:35:12', 2),
-('be93309a-ec2b-40d0-9c62-8abe7796b547', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Supplier', 'Local', 'Golden Grain Supply', 'Rashed Mahmud', '01644-000004', '', '', '', 'Jashore Industrial Area', 'Jashore Industrial Area', 'kamarkhanda', 'sirajganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-18 11:09:47', 'admin-id', '2026-01-25 05:36:57', 2),
-('both', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Both', 'Local', 'Both A/C', 'Both A/C', 'Both A/C', 'Both A/C', '', '', 'Both A/C', 'Both A/C', 'sherpur', 'bogra', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 13:04:25', 'admin-id', '2026-01-25 05:36:12', 3),
-('c370a9f5-7ccf-4e2d-9d7a-7d5873293ddc', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Shapno Mini Mart', 'Farzana Islam', '01819-100102', 'email@sgd.com', '', '', 'Uttara Sector 7, Dhaka', 'Uttara Sector 7, Dhaka', 'belkuchi', 'sirajganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'admin-id', '2026-01-14 09:23:59', 'admin-id', '2026-01-25 05:36:25', 3),
-('d5eefaf0-9979-4edf-8fbd-68f3157c4105', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Customer', 'Local', 'Rahman General Store', 'Anisur Rahman', '01712-100101', 'email@email.com', '', '', 'Mohammadpur, Dhaka', 'Mohammadpur, Dhaka', 'adamdighi', 'bogra', 'Bangladesh', '0', 0.000000, 50000.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 12:02:29', 'admin-id', '2026-01-25 05:36:40', 4),
-('internal', 'admin-id', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'Internal', 'Local', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', '', '', 'Internal A/C', 'Internal A/C', 'sherpur', 'bogra', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, '4a0149be-7eb1-4e01-b3d2-b372ad335609', '2026-01-09 13:04:25', 'admin-id', '2026-01-25 05:37:31', 3);
+('08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'user1', 'business1', 'Supplier', 'Local', 'Bengal Fresh Foods', 'Nusrat Jahan', '01822-000002', 'email@sgd.com', 'TIN-123456', 'TRADE-123456', 'Chittagong Wholesale Market', 'Chittagong Wholesale Market', 'sirajganj-sadar', 'sirajganj', 'Bangladesh', '0', 10.000000, 20000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-14 09:17:52', 'user1', '2026-01-31 10:14:56', 6),
+('11f1664d-5d03-4724-a4dd-57ad3e01ad1a', 'user1', 'business1', 'Customer', 'Local', 'Al Noor Store', 'Javed Hasan', '01623-100104', 'email@sgd.com', 'TIN-123456', 'TRADE-123456', 'Sylhet Zindabazar', 'Sylhet Zindabazar', 'bogra-sadar', 'bogra', 'Bangladesh', '0', 10.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:24:23', 'user1', '2026-01-31 10:14:56', 4),
+('267bb3aa-9177-43d2-8d8b-e0137578cf98', 'user1', 'business1', 'Supplier', 'Local', 'Dhaka Agro Traders', 'Md. Kamal Hossain', '01711-000001', 'email@email.com', '', '', 'Kawran Bazar, Dhaka', 'Kawran Bazar, Dhaka', 'araihazar', 'narayanganj', 'Bangladesh', '0', 0.000000, 20000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 12:02:10', 'user1', '2026-01-31 10:14:56', 4),
+('41981c62-d7fc-4238-a8f1-8c70bd2c1e0e', 'user1', 'business1', 'Customer', 'Local', 'Bismillah Traders', 'Hafiz Uddin', '01921-100103', '', 'TIN-123-123', 'TRADE-123-123', 'Cumilla Sadar', 'Cumilla Sadar', 'araihazar', 'narayanganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:24:02', 'user1', '2026-01-31 10:14:56', 3),
+('521e18fc-b57a-48c4-a0a7-d7772edb4b76', 'user1', 'business1', 'Customer', 'Local', 'M/S Amin Enterprise', 'Aminul Islam', '01534-100105', '', '', '', 'Khulna Boyra', 'Khulna Boyra', 'kachpur', 'narayanganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:24:45', 'user1', '2026-01-31 10:14:56', 2),
+('545dab5b-b756-4f0b-894c-8bd894d03f68', 'user1', 'business1', 'Customer', 'Local', 'test 1', 'test 1', 'test 1', 'test 1', 'test 1', 'test 1', 'test 1', 'test 1', 'belkuchi', 'sirajganj', 'Bangladesh', '0', 5.000000, 1000.000000, 0.000000, 0.000000, 0.000000, 0, 'user1', '2026-01-31 10:03:00', 'user1', '2026-01-31 10:03:08', 1),
+('639611f4-97e5-4589-904e-190ef11f7f4e', 'user1', 'business1', 'Supplier', 'Local', 'Jisan Dairy Source', 'Akhi Khatun', '01555-000005', '', '', '', 'Mirpur-10, Dhaka', 'Mirpur-10, Dhaka', 'enayetpur', 'sirajganj', 'Bangladesh', '0', 0.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:10:29', 'user1', '2026-01-31 10:14:56', 2),
+('6a0619ca-84e9-4df5-b225-7dd7acb91b86', 'user1', 'business1', 'Supplier', 'Local', 'Green Farm Ltd.', 'Abdul Karim', '01933-000003', '', '', '', 'Bogura Sadar, Bogura', 'Bogura Sadar, Bogura', 'bogra-sadar', 'bogra', 'Bangladesh', '0', 10.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:09:12', 'user1', '2026-01-31 10:14:56', 2),
+('be93309a-ec2b-40d0-9c62-8abe7796b547', 'user1', 'business1', 'Supplier', 'Local', 'Golden Grain Supply', 'Rashed Mahmud', '01644-000004', '', '', '', 'Jashore Industrial Area', 'Jashore Industrial Area', 'kamarkhanda', 'sirajganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:09:47', 'user1', '2026-01-31 10:14:56', 2),
+('both', 'user1', 'business1', 'Both', 'Local', 'Both A/C', 'Both A/C', 'Both A/C', 'Both A/C', '', '', 'Both A/C', 'Both A/C', 'sherpur', 'bogra', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 13:04:25', 'user1', '2026-01-31 10:14:56', 3),
+('c370a9f5-7ccf-4e2d-9d7a-7d5873293ddc', 'user1', 'business1', 'Customer', 'Local', 'Shapno Mini Mart', 'Farzana Islam', '01819-100102', 'email@sgd.com', '', '', 'Uttara Sector 7, Dhaka', 'Uttara Sector 7, Dhaka', 'belkuchi', 'sirajganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-14 09:23:59', 'user1', '2026-01-31 10:14:56', 3),
+('d5eefaf0-9979-4edf-8fbd-68f3157c4105', 'user1', 'business1', 'Customer', 'Local', 'Rahman General Store', 'Anisur Rahman', '01712-100101', 'email@email.com', '', '', 'Mohammadpur, Dhaka', 'Mohammadpur, Dhaka', 'adamdighi', 'bogra', 'Bangladesh', '0', 0.000000, 50000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 12:02:29', 'user1', '2026-01-31 10:14:56', 4),
+('internal', 'user1', 'business1', 'Internal', 'Local', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', '', '', 'Internal A/C', 'Internal A/C', 'sherpur', 'bogra', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 13:04:25', 'user1', '2026-01-31 10:14:56', 3);
 
 -- --------------------------------------------------------
 
@@ -182,9 +102,9 @@ CREATE TABLE `tmcb_dzone` (
 --
 
 INSERT INTO `tmcb_dzone` (`id`, `dzone_users`, `dzone_bsins`, `dzone_cntry`, `dzone_dname`, `dzone_actve`, `dzone_crusr`, `dzone_crdat`, `dzone_upusr`, `dzone_updat`, `dzone_rvnmr`) VALUES
-('bogra', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'Bangladesh', 'Bogra', 1, 'admin-id', '2026-01-25 04:45:54', 'admin-id', '2026-01-25 04:46:18', 1),
-('narayanganj', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'Bangladesh', 'Narayanganj', 1, 'admin-id', '2026-01-25 04:45:54', 'admin-id', '2026-01-25 04:46:18', 1),
-('sirajganj', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'Bangladesh', 'Sirajganj', 1, 'admin-id', '2026-01-25 04:45:54', 'admin-id', '2026-01-25 04:46:20', 1);
+('bogra', 'user1', 'business1', 'Bangladesh', 'Bogra', 1, 'user1', '2026-01-25 04:45:54', 'user1', '2026-01-31 10:15:30', 1),
+('narayanganj', 'user1', 'business1', 'Bangladesh', 'Narayanganj', 1, 'user1', '2026-01-25 04:45:54', 'user1', '2026-01-31 10:15:30', 1),
+('sirajganj', 'user1', 'business1', 'Bangladesh', 'Sirajganj', 1, 'user1', '2026-01-25 04:45:54', 'user1', '2026-01-31 10:15:30', 1);
 
 -- --------------------------------------------------------
 
@@ -238,36 +158,36 @@ CREATE TABLE `tmcb_tarea` (
 --
 
 INSERT INTO `tmcb_tarea` (`id`, `tarea_users`, `tarea_bsins`, `tarea_dzone`, `tarea_tname`, `tarea_actve`, `tarea_crusr`, `tarea_crdat`, `tarea_upusr`, `tarea_updat`, `tarea_rvnmr`) VALUES
-('adamdighi', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Adamdighi', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
-('araihazar', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Araihazar', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
-('bandar', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Bandar', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
-('belkuchi', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Belkuchi', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:29:10', 1),
-('bhairob', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Bhairob', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
-('bogra-sadar', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Bogra Sadar', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
-('chauhali', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Chauhali', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:26', 1),
-('dhunat', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Dhunat', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
-('dhupchanchia', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Dhupchanchia', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
-('enayetpur', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Enayetpur', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:26', 1),
-('gabtali', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Gabtali', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
-('jamuna-river', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Jamuna River', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:29:10', 1),
-('kachpur', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Kachpur', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
-('kahaloo', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Kahaloo', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
-('kamarkhanda', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Kamarkhanda', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:26:55', 1),
-('kazipur', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Kazipur', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:26', 1),
-('nandigram', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Nandigram', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
-('narayanganj-city-corporation', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Narayanganj City Corporation', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
-('narayanganj-sadar', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Narayanganj Sadar', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
-('raiganj', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Raiganj', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:29:10', 1),
-('rupganj', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Rupganj', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
-('sariakandi', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Sariakandi', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
-('shahjadpur', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Shahjadpur', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:26', 1),
-('shajahanpur', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Shajahanpur', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
-('sherpur', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Sherpur', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
-('shibganj', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Shibganj', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
-('sirajganj-sadar', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Sirajganj Sadar', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:26', 1),
-('sonargaon', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'narayanganj', 'Sonargaon', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1),
-('sonatala', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'bogra', 'Sonatala', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 04:58:23', 1),
-('tarash', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', 'sirajganj', 'Tarash', 1, 'admin-id', '2026-01-25 04:57:51', 'admin-id', '2026-01-25 05:19:19', 1);
+('adamdighi', 'user1', 'business1', 'bogra', 'Adamdighi', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('araihazar', 'user1', 'business1', 'narayanganj', 'Araihazar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('bandar', 'user1', 'business1', 'narayanganj', 'Bandar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('belkuchi', 'user1', 'business1', 'sirajganj', 'Belkuchi', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('bhairob', 'user1', 'business1', 'narayanganj', 'Bhairob', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('bogra-sadar', 'user1', 'business1', 'bogra', 'Bogra Sadar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('chauhali', 'user1', 'business1', 'sirajganj', 'Chauhali', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('dhunat', 'user1', 'business1', 'bogra', 'Dhunat', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('dhupchanchia', 'user1', 'business1', 'bogra', 'Dhupchanchia', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('enayetpur', 'user1', 'business1', 'sirajganj', 'Enayetpur', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('gabtali', 'user1', 'business1', 'bogra', 'Gabtali', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('jamuna-river', 'user1', 'business1', 'sirajganj', 'Jamuna River', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('kachpur', 'user1', 'business1', 'narayanganj', 'Kachpur', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('kahaloo', 'user1', 'business1', 'bogra', 'Kahaloo', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('kamarkhanda', 'user1', 'business1', 'sirajganj', 'Kamarkhanda', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('kazipur', 'user1', 'business1', 'sirajganj', 'Kazipur', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('nandigram', 'user1', 'business1', 'bogra', 'Nandigram', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('narayanganj-city-corporation', 'user1', 'business1', 'narayanganj', 'Narayanganj City Corporation', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('narayanganj-sadar', 'user1', 'business1', 'narayanganj', 'Narayanganj Sadar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('raiganj', 'user1', 'business1', 'sirajganj', 'Raiganj', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('rupganj', 'user1', 'business1', 'narayanganj', 'Rupganj', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('sariakandi', 'user1', 'business1', 'bogra', 'Sariakandi', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('shahjadpur', 'user1', 'business1', 'sirajganj', 'Shahjadpur', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('shajahanpur', 'user1', 'business1', 'bogra', 'Shajahanpur', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('sherpur', 'user1', 'business1', 'bogra', 'Sherpur', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('shibganj', 'user1', 'business1', 'bogra', 'Shibganj', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('sirajganj-sadar', 'user1', 'business1', 'sirajganj', 'Sirajganj Sadar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('sonargaon', 'user1', 'business1', 'narayanganj', 'Sonargaon', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('sonatala', 'user1', 'business1', 'bogra', 'Sonatala', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('tarash', 'user1', 'business1', 'sirajganj', 'Tarash', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1);
 
 -- --------------------------------------------------------
 
@@ -293,16 +213,16 @@ CREATE TABLE `tmib_attrb` (
 --
 
 INSERT INTO `tmib_attrb` (`id`, `attrb_users`, `attrb_aname`, `attrb_dtype`, `attrb_actve`, `attrb_crusr`, `attrb_crdat`, `attrb_upusr`, `attrb_updat`, `attrb_rvnmr`) VALUES
-('color', 'admin-id', 'Color', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:38:19', 1),
-('expiry', 'admin-id', 'Expiry', 'date', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:42:46', 1),
-('fabric', 'admin-id', 'Fabric', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:38:19', 1),
-('height', 'admin-id', 'Height', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:38:19', 1),
-('imei', 'admin-id', 'IMEI', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:40:47', 1),
-('model', 'admin-id', 'Model', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:38:19', 1),
-('serialno', 'admin-id', 'Serial No', 'number', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:38:19', 1),
-('size', 'admin-id', 'Size', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 08:24:21', 1),
-('weight', 'admin-id', 'Weight', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 08:24:21', 1),
-('width', 'admin-id', 'Width', 'text', 1, 'admin-id', '2026-01-25 07:38:19', 'admin-id', '2026-01-25 07:38:19', 1);
+('color', 'user1', 'Color', 'text', 1, 'user1', '2026-01-25 07:38:19', 'user1', '2026-01-31 10:17:08', 1),
+('expiry', 'user1', 'Expiry', 'date', 1, 'user1', '2026-01-25 07:38:19', 'user1', '2026-01-31 10:17:08', 1),
+('fabric', 'user1', 'Fabric', 'text', 1, 'user1', '2026-01-25 07:38:19', 'user1', '2026-01-31 10:17:08', 1),
+('height', 'user1', 'Height', 'text', 1, 'user1', '2026-01-25 07:38:19', 'user1', '2026-01-31 10:17:08', 1),
+('imei', 'user1', 'IMEI', 'text', 1, 'user1', '2026-01-25 07:38:19', 'user1', '2026-01-31 10:17:08', 1),
+('model', 'user1', 'Model', 'text', 1, 'user1', '2026-01-25 07:38:19', 'user1', '2026-01-31 10:17:08', 1),
+('serialno', 'user1', 'Serial No', 'number', 1, 'user1', '2026-01-25 07:38:19', 'user1', '2026-01-31 10:17:08', 1),
+('size', 'user1', 'Size', 'text', 1, 'user1', '2026-01-25 07:38:19', 'user1', '2026-01-31 10:17:08', 1),
+('weight', 'user1', 'Weight', 'text', 1, 'user1', '2026-01-25 07:38:19', 'user1', '2026-01-31 10:17:08', 1),
+('width', 'user1', 'Width', 'text', 1, 'user1', '2026-01-25 07:38:19', 'user1', '2026-01-31 10:17:08', 1);
 
 -- --------------------------------------------------------
 
@@ -340,31 +260,31 @@ CREATE TABLE `tmib_bitem` (
 --
 
 INSERT INTO `tmib_bitem` (`id`, `bitem_users`, `bitem_items`, `bitem_bsins`, `bitem_lprat`, `bitem_dprat`, `bitem_mcmrp`, `bitem_sddsp`, `bitem_snote`, `bitem_gstkq`, `bitem_bstkq`, `bitem_mnqty`, `bitem_mxqty`, `bitem_pbqty`, `bitem_sbqty`, `bitem_mpric`, `bitem_actve`, `bitem_crusr`, `bitem_crdat`, `bitem_upusr`, `bitem_updat`, `bitem_rvnmr`) VALUES
-('0a73b49d-71b3-4671-9c09-6d985f3514fc', 'admin-id', '485d61c3-e84e-418b-b91b-2171c17f0391', '3881b053-9509-49db-835a-3f8dd8976cda', 260.000000, 0.000000, 377.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 70.200000, 1, 'admin-id', '2026-01-18 11:54:40', 'admin-id', '2026-01-27 12:18:39', 1),
-('0b9c71ef-77de-4116-8298-ac0898e2d217', 'admin-id', 'ae0a4ae3-77f6-4357-8ca9-c05cc1796a7e', '3881b053-9509-49db-835a-3f8dd8976cda', 10.000000, 0.000000, 15.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 3.000000, 1, 'admin-id', '2026-01-18 11:33:26', 'admin-id', '2026-01-27 12:18:39', 1),
-('22064b47-6898-4661-9dc8-5329a542ae4a', 'admin-id', '24614ec4-8ab0-4b50-b3c7-9f154a124770', '3881b053-9509-49db-835a-3f8dd8976cda', 110.000000, 0.000000, 154.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 285.000000, 0.000000, 26.400000, 1, 'admin-id', '2026-01-18 11:48:18', 'admin-id', '2026-01-30 11:48:07', 1),
-('22bbdf6e-759b-4b46-a0a6-b5d2a8d7d383', 'admin-id', 'dfe206f2-b3a3-4d6c-8b3c-7402582348eb', '3881b053-9509-49db-835a-3f8dd8976cda', 15.000000, 0.000000, 22.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 4.300000, 1, 'admin-id', '2026-01-18 11:40:04', 'admin-id', '2026-01-27 12:18:39', 1),
-('49637732-1033-454e-8690-e4162e763fdd', 'admin-id', '8873e069-eea6-4f9e-acf0-dd1cb658f9c8', '3881b053-9509-49db-835a-3f8dd8976cda', 18.000000, 0.000000, 25.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 4.300000, 1, 'admin-id', '2026-01-18 12:20:40', 'admin-id', '2026-01-18 12:20:40', 1),
-('69b3b567-0009-48b6-abf3-5701e00ab0e1', 'admin-id', 'ad014a04-77d0-4f46-acc9-dee2b02c64f2', '3881b053-9509-49db-835a-3f8dd8976cda', 22.000000, 0.000000, 32.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 6.040000, 1, 'admin-id', '2026-01-18 12:22:53', 'admin-id', '2026-01-27 12:18:39', 1),
-('73a91ad4-50f1-4b8b-8a93-ad00e7829c8f', 'admin-id', '4b100c2e-68a6-467b-94b7-617a6c7b43dc', '3881b053-9509-49db-835a-3f8dd8976cda', 85.000000, 0.000000, 128.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 26.000000, 1, 'admin-id', '2026-01-18 12:10:02', 'admin-id', '2026-01-18 12:10:02', 1),
-('7df55d16-a7c1-4e85-94a2-67f826401fe6', 'admin-id', '471d3f7f-e3e5-4585-bdbf-5f0a35b05a93', '3881b053-9509-49db-835a-3f8dd8976cda', 140.000000, 0.000000, 203.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 37.800000, 1, 'admin-id', '2026-01-18 12:11:01', 'admin-id', '2026-01-27 12:18:39', 1),
-('803770fe-3449-41e5-b2e1-50d2a02b6872', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ecf', '3881b053-9509-49db-835a-3f8dd8976cda', 120.000000, 0.000000, 180.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 42.000000, 1, 'admin-id', '2026-01-18 11:41:51', 'admin-id', '2026-01-27 14:41:16', 1),
-('854996eb-cabc-487b-a5bc-692bfffe2689', 'admin-id', '75b05c78-9b6b-42ba-aafa-e76e22f67722', '3881b053-9509-49db-835a-3f8dd8976cda', 28.000000, 0.000000, 42.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 8.400000, 1, 'admin-id', '2026-01-18 12:05:52', 'admin-id', '2026-01-18 12:05:52', 1),
-('921ea45d-ceac-4f42-ac69-3b17c74a590b', 'admin-id', '4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', '3881b053-9509-49db-835a-3f8dd8976cda', 12.000000, 0.000000, 16.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 2.320000, 1, 'admin-id', '2026-01-18 12:21:38', 'admin-id', '2026-01-18 12:21:38', 1),
-('9a08c3f7-2154-4cb5-ad90-8346f705f6f5', 'admin-id', '2bee4dba-5f29-4e65-b772-718c677e326c', '3881b053-9509-49db-835a-3f8dd8976cda', 20.000000, 0.000000, 30.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 6.000000, 1, 'admin-id', '2026-01-18 12:24:01', 'admin-id', '2026-01-18 12:24:01', 1),
-('a06cf515-c579-4628-96c4-c1f88f0d9308', 'admin-id', '42ccd66a-70db-4c7f-93c4-36261a8f064f', '3881b053-9509-49db-835a-3f8dd8976cda', 90.000000, 0.000000, 126.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 18.000000, 1, 'admin-id', '2026-01-18 11:53:22', 'admin-id', '2026-01-27 01:20:49', 1),
-('a5da4ada-2216-49a6-bfde-aa71f0de6bb8', 'admin-id', '38b496e9-6652-4324-8331-ba0ecb0cfeae', '3881b053-9509-49db-835a-3f8dd8976cda', 60.000000, 0.000000, 78.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 20.000000, 0.000000, 9.000000, 1, 'admin-id', '2026-01-18 11:51:19', 'admin-id', '2026-01-30 11:48:07', 1),
-('bfa793e3-23b6-4472-96e7-2b13bb70f476', 'admin-id', 'b3da1017-bea4-44fd-ad13-110e92a48965', '3881b053-9509-49db-835a-3f8dd8976cda', 40.000000, 0.000000, 51.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 6.200000, 1, 'admin-id', '2026-01-18 11:49:13', 'admin-id', '2026-01-18 11:49:13', 1),
-('c9dcd99f-c04f-44f0-8778-d33c7cfc068c', 'admin-id', '940f8010-5d38-4de4-b66f-d12958ff9ec2', '3881b053-9509-49db-835a-3f8dd8976cda', 52.000000, 0.000000, 70.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 10.200000, 1, 'admin-id', '2026-01-18 11:46:22', 'admin-id', '2026-01-21 07:20:11', 1),
-('cc4ea99b-527d-477d-8153-1a831b35d4de', 'admin-id', '0e5de4e6-86dd-453a-8b94-963ee305e860', '3881b053-9509-49db-835a-3f8dd8976cda', 95.000000, 0.000000, 133.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 22.800000, 1, 'admin-id', '2026-01-18 12:08:53', 'admin-id', '2026-01-18 12:08:53', 1),
-('d0249c21-993f-40a7-9819-d05b046d8591', 'admin-id', 'e2e70dc1-9814-400c-8774-2b6b186b79e5', '3881b053-9509-49db-835a-3f8dd8976cda', 180.000000, 0.000000, 252.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 39.600000, 1, 'admin-id', '2026-01-18 11:55:39', 'admin-id', '2026-01-27 14:41:16', 1),
-('d9dfcad2-2bdd-4770-86e3-448c75efabe7', 'admin-id', '2c047e91-44f6-48bc-a591-9ab00deb7b72', '3881b053-9509-49db-835a-3f8dd8976cda', 95.000000, 0.000000, 128.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 18.750000, 1, 'admin-id', '2026-01-18 11:49:59', 'admin-id', '2026-01-18 11:49:59', 1),
-('e27daa49-9065-4e51-9dd5-246c1451d264', 'admin-id', 'f949a24a-3ff8-4349-9ca0-f853de9226c7', '3881b053-9509-49db-835a-3f8dd8976cda', 110.000000, 0.000000, 160.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 30.200000, 1, 'admin-id', '2026-01-18 12:07:47', 'admin-id', '2026-01-18 12:07:47', 1),
-('f79040d1-8a63-4b4a-a515-16796fd56797', 'admin-id', '4dab149a-e220-4cd8-a061-7660ab0168bb', '3881b053-9509-49db-835a-3f8dd8976cda', 58.000000, 0.000000, 75.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 8.880000, 1, 'admin-id', '2026-01-18 11:47:21', 'admin-id', '2026-01-21 07:20:11', 1),
-('f7c7bdba-dbb1-47e2-95f7-8710f9267b6a', 'admin-id', 'f7126510-80c0-416b-a34e-3a514e54d030', '3881b053-9509-49db-835a-3f8dd8976cda', 25.000000, 0.000000, 35.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 6.250000, 1, 'admin-id', '2026-01-18 12:24:55', 'admin-id', '2026-01-18 12:24:55', 1),
-('f9d0b5e0-8d00-4309-b885-45e41b1297d0', 'admin-id', 'e483bc2d-6ccd-4b72-8603-775dcd275249', '3881b053-9509-49db-835a-3f8dd8976cda', 420.000000, 0.000000, 546.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 84.000000, 1, 'admin-id', '2026-01-18 11:44:14', 'admin-id', '2026-01-27 14:41:16', 1),
-('fc0f7f6f-048a-4512-b614-79b13efa72bd', 'admin-id', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', '3881b053-9509-49db-835a-3f8dd8976cda', 580.000000, 0.000000, 783.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 98.600000, 1, 'admin-id', '2026-01-18 11:52:30', 'admin-id', '2026-01-20 10:49:29', 1),
-('fdfa97ae-9622-4548-bc27-4cf8a163cfa3', 'admin-id', 'e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', '3881b053-9509-49db-835a-3f8dd8976cda', 160.000000, 0.000000, 219.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 39.800000, 1, 'admin-id', '2026-01-18 11:43:14', 'admin-id', '2026-01-18 11:43:14', 1);
+('1248204a-e407-4245-8952-924a1f832354', 'user1', '4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:56:36', 'user1', '2026-01-31 10:56:36', 1),
+('19debe39-1eaa-4cb1-ba16-3f361ff455ca', 'user1', 'e2e70dc1-9814-400c-8774-2b6b186b79e5', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:15', 'user1', '2026-01-31 10:58:15', 1),
+('1b0483c5-ed8f-43ce-b128-9dbf717e8e67', 'user1', '8873e069-eea6-4f9e-acf0-dd1cb658f9c8', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:55:41', 'user1', '2026-01-31 10:55:41', 1),
+('2188dcd0-244b-4750-ad51-f86397b196f1', 'user1', 'dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:04', 'user1', '2026-01-31 10:59:04', 1),
+('228076b3-b3df-4270-a1b3-a2520267818c', 'user1', '485d61c3-e84e-418b-b91b-2171c17f0391', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:06', 'user1', '2026-01-31 10:58:06', 1),
+('282533ed-53cf-496a-8611-c452785371fd', 'user1', '42ccd66a-70db-4c7f-93c4-36261a8f064f', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:57:58', 'user1', '2026-01-31 10:57:58', 1),
+('28738f75-f676-4f53-bb43-b74638699553', 'user1', 'e483bc2d-6ccd-4b72-8603-775dcd275249', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:49', 'user1', '2026-01-31 10:58:49', 1),
+('586345fd-6f26-4577-90ab-dfb8bc49e187', 'user1', '471d3f7f-e3e5-4585-bdbf-5f0a35b05a93', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 11:00:06', 'user1', '2026-01-31 11:00:06', 1),
+('59dd7e4d-3748-4ee0-9531-8eb73cf03fed', 'user1', '940f8010-5d38-4de4-b66f-d12958ff9ecf', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:57:22', 'user1', '2026-01-31 10:57:22', 1),
+('75860dc3-c9f8-43b9-a20f-f78104602fdf', 'user1', '4b100c2e-68a6-467b-94b7-617a6c7b43dc', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:55', 'user1', '2026-01-31 10:59:55', 1),
+('85f84fc9-2d92-4327-81b6-31a4c6c6cc8a', 'user1', 'e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:57', 'user1', '2026-01-31 10:58:57', 1),
+('8ce55060-f46d-445f-bcc1-7fb9d5f5f38e', 'user1', 'b3da1017-bea4-44fd-ad13-110e92a48965', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:41', 'user1', '2026-01-31 10:59:41', 1),
+('9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'user1', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 40.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:57:44', 'user1', '2026-01-31 12:33:07', 1),
+('9a765ccf-f3c5-480a-863d-492c7d9fa196', 'user1', '4dab149a-e220-4cd8-a061-7660ab0168bb', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 11:00:36', 'user1', '2026-01-31 11:00:36', 1),
+('b9b0e3b5-a1df-43ea-a736-04a54f5df89b', 'user1', '75b05c78-9b6b-42ba-aafa-e76e22f67722', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:31', 'user1', '2026-01-31 10:58:31', 1),
+('bde13886-7498-42b9-bc4d-19bcb62ed918', 'user1', 'f7126510-80c0-416b-a34e-3a514e54d030', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:57:00', 'user1', '2026-01-31 10:57:00', 1),
+('bf05a1d1-2b12-46e8-bf24-5e7edde46136', 'user1', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 90.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:47', 'user1', '2026-01-31 12:33:07', 1),
+('c6fe2a29-7725-4db6-9bed-840c04301d0e', 'user1', 'ad014a04-77d0-4f46-acc9-dee2b02c64f2', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:56:46', 'user1', '2026-01-31 10:56:46', 1),
+('d2b89636-0c00-4c61-aa9b-08ff5f37cac7', 'user1', 'f949a24a-3ff8-4349-9ca0-f853de9226c7', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:13', 'user1', '2026-01-31 10:59:13', 1),
+('df364d84-6063-44c7-8b26-bb9d81fc0bc1', 'user1', '0e5de4e6-86dd-453a-8b94-963ee305e860', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:21', 'user1', '2026-01-31 10:59:21', 1),
+('dfa047a4-4799-460d-ae14-74697a8f0466', 'user1', 'ae0a4ae3-77f6-4357-8ca9-c05cc1796a7e', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:42', 'user1', '2026-01-31 10:58:42', 1),
+('e1e36ac3-d2b5-4f7b-a258-2c3ffcacd131', 'user1', '2bee4dba-5f29-4e65-b772-718c677e326c', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:56:51', 'user1', '2026-01-31 10:56:51', 1),
+('eff83204-5f40-4920-9d42-67a27ec6a1a5', 'user1', '2c047e91-44f6-48bc-a591-9ab00deb7b72', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:30', 'user1', '2026-01-31 10:59:30', 1),
+('f241e3b7-3f83-42f4-ac10-af8def91799a', 'user1', '38b496e9-6652-4324-8331-ba0ecb0cfeae', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:57:36', 'user1', '2026-01-31 10:57:36', 1),
+('f4445732-0c3d-4388-b30a-b77cd0151b14', 'user1', '940f8010-5d38-4de4-b66f-d12958ff9ec2', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 11:00:20', 'user1', '2026-01-31 11:00:20', 1);
 
 -- --------------------------------------------------------
 
@@ -389,12 +309,12 @@ CREATE TABLE `tmib_ctgry` (
 --
 
 INSERT INTO `tmib_ctgry` (`id`, `ctgry_users`, `ctgry_ctgnm`, `ctgry_actve`, `ctgry_crusr`, `ctgry_crdat`, `ctgry_upusr`, `ctgry_updat`, `ctgry_rvnmr`) VALUES
-('204e4887-0af6-4908-add0-240ea380a53b', 'admin-id', 'Household Essentials', 1, 'admin-id', '2026-01-11 05:06:00', 'admin-id', '2026-01-18 11:29:46', 1),
-('36886293-b080-44dc-9c8e-fed94ad161d3', 'admin-id', 'Rice & Grain', 1, 'admin-id', '2026-01-11 05:04:19', 'admin-id', '2026-01-18 11:29:19', 1),
-('3ed137d4-3863-407a-8f4a-dd1000479780', 'admin-id', 'Dairy Products', 1, 'admin-id', '2026-01-11 05:04:25', 'admin-id', '2026-01-18 11:29:36', 1),
-('b1df68d6-2888-42c7-a3a8-cdaedadf5408', 'admin-id', 'Toys and Gears', 1, 'admin-id', '2026-01-11 05:04:47', 'admin-id', '2026-01-18 11:30:21', 1),
-('e69fe3b2-784f-44d5-9d88-4c228704242f', 'admin-id', 'Eggs & Poultry', 1, 'admin-id', '2026-01-11 05:04:10', 'admin-id', '2026-01-18 11:29:01', 1),
-('feacdbbe-2519-4975-96fe-ad18c7899b53', 'admin-id', 'Beverages & Snacks', 1, 'admin-id', '2026-01-11 05:03:50', 'admin-id', '2026-01-22 10:52:51', 1);
+('204e4887-0af6-4908-add0-240ea380a53b', 'user1', 'Household Essentials', 1, 'user1', '2026-01-11 05:06:00', 'user1', '2026-01-31 10:27:26', 1),
+('36886293-b080-44dc-9c8e-fed94ad161d3', 'user1', 'Rice & Grain', 1, 'user1', '2026-01-11 05:04:19', 'user1', '2026-01-31 10:27:26', 1),
+('3ed137d4-3863-407a-8f4a-dd1000479780', 'user1', 'Dairy Products', 1, 'user1', '2026-01-11 05:04:25', 'user1', '2026-01-31 10:27:26', 1),
+('b1df68d6-2888-42c7-a3a8-cdaedadf5408', 'user1', 'Toys and Gears', 1, 'user1', '2026-01-11 05:04:47', 'user1', '2026-01-31 10:27:26', 1),
+('e69fe3b2-784f-44d5-9d88-4c228704242f', 'user1', 'Eggs & Poultry', 1, 'user1', '2026-01-11 05:04:10', 'user1', '2026-01-31 10:27:26', 1),
+('feacdbbe-2519-4975-96fe-ad18c7899b53', 'user1', 'Beverages & Snacks', 1, 'user1', '2026-01-11 05:03:50', 'user1', '2026-01-31 10:27:26', 1);
 
 -- --------------------------------------------------------
 
@@ -459,8 +379,7 @@ CREATE TABLE `tmib_items` (
   `items_suofm` varchar(50) NOT NULL,
   `items_ctgry` varchar(50) NOT NULL,
   `items_itype` varchar(50) NOT NULL,
-  `items_hwrnt` int(11) NOT NULL DEFAULT 0,
-  `items_hxpry` int(11) NOT NULL DEFAULT 0,
+  `items_trcks` tinyint(1) NOT NULL DEFAULT 0,
   `items_sdvat` decimal(4,2) DEFAULT 0.00,
   `items_costp` decimal(4,2) DEFAULT 0.00,
   `items_image` varchar(50) DEFAULT NULL,
@@ -477,32 +396,32 @@ CREATE TABLE `tmib_items` (
 -- Dumping data for table `tmib_items`
 --
 
-INSERT INTO `tmib_items` (`id`, `items_users`, `items_icode`, `items_bcode`, `items_hscod`, `items_iname`, `items_idesc`, `items_puofm`, `items_dfqty`, `items_suofm`, `items_ctgry`, `items_itype`, `items_hwrnt`, `items_hxpry`, `items_sdvat`, `items_costp`, `items_image`, `items_nofbi`, `items_actve`, `items_crusr`, `items_crdat`, `items_upusr`, `items_updat`, `items_rvnmr`) VALUES
-('0e5de4e6-86dd-453a-8b94-963ee305e860', 'admin-id', 'HE-003', 'HE-003', 'HE-003', 'Floor Cleaner', 'Floor Cleaner', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', 1, '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 0, 7.50, 16.00, NULL, 1, 1, 'admin-id', '2026-01-18 12:08:34', 'admin-id', '2026-01-18 12:08:53', 1),
-('24614ec4-8ab0-4b50-b3c7-9f154a124770', 'admin-id', 'RG-003', 'RG-003', 'RG-003', 'Basmati Rice', 'Basmati Rice', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 0, 5.00, 16.00, NULL, 1, 1, 'admin-id', '2026-01-12 06:16:06', 'admin-id', '2026-01-18 11:48:18', 1),
-('2bee4dba-5f29-4e65-b772-718c677e326c', 'admin-id', 'BS-004', 'BS-004', 'BS-004', 'Potato Chips', 'Potato Chips', '344eb4c8-48c4-475b-b74c-307a0e492622', 20, 'f5ccd3c1-fd1e-4f0e-93be-59dd878c881a', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 0, 10.00, 20.00, NULL, 1, 1, 'admin-id', '2026-01-18 12:23:51', 'admin-id', '2026-01-18 12:24:01', 1),
-('2c047e91-44f6-48bc-a591-9ab00deb7b72', 'admin-id', 'RG-005', 'RG-005', 'RG-005', 'Masur Dal', 'Masur Dal', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 0, 5.00, 15.00, NULL, 1, 1, 'admin-id', '2026-01-18 11:49:45', 'admin-id', '2026-01-18 11:49:59', 1),
-('38b496e9-6652-4324-8331-ba0ecb0cfeae', 'admin-id', 'DP-001', 'DP-001', 'DP-001', 'Fresh Milk', 'Fresh Milk', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', 1, '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 0, 5.00, 15.00, NULL, 1, 1, 'admin-id', '2026-01-18 11:51:08', 'admin-id', '2026-01-18 11:51:19', 1),
-('42ccd66a-70db-4c7f-93c4-36261a8f064f', 'admin-id', 'DP-003', 'DP-003', 'DP-003', 'Yogurt', 'Yogurt', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 0, 5.00, 20.00, NULL, 1, 1, 'admin-id', '2026-01-18 11:53:02', 'admin-id', '2026-01-18 11:53:22', 1),
-('471d3f7f-e3e5-4585-bdbf-5f0a35b05a93', 'admin-id', 'HE-005', 'HE-005', 'HE-005', 'Tissue Roll', 'Tissue Roll', '344eb4c8-48c4-475b-b74c-307a0e492622', 6, '78a63632-6a35-49ab-8cac-4b5c0d4fb418', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 0, 7.50, 18.00, NULL, 1, 1, 'admin-id', '2026-01-18 12:10:46', 'admin-id', '2026-01-18 12:11:01', 1),
-('485d61c3-e84e-418b-b91b-2171c17f0391', 'admin-id', 'DP-004', 'DP-004', 'DP-004', 'Butter', 'Butter', '344eb4c8-48c4-475b-b74c-307a0e492622', 1, '344eb4c8-48c4-475b-b74c-307a0e492622', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 0, 5.00, 18.00, NULL, 1, 1, 'admin-id', '2026-01-18 11:54:16', 'admin-id', '2026-01-18 11:54:40', 1),
-('4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 'admin-id', 'BS-002', 'BS-002', 'BS-002', 'Mineral Water 1L', 'Mineral Water 1L', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, 'c1ab2f8e-5030-40a4-85a3-569ad7cc6dd7', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 0, 10.00, 14.00, NULL, 1, 1, 'admin-id', '2026-01-18 12:21:19', 'admin-id', '2026-01-18 12:21:38', 1),
-('4b100c2e-68a6-467b-94b7-617a6c7b43dc', 'admin-id', 'HE-004', 'HE-004', 'HE-004', 'Toilet Cleaner', 'Toilet Cleaner', '344eb4c8-48c4-475b-b74c-307a0e492622', 6, '78a63632-6a35-49ab-8cac-4b5c0d4fb418', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 0, 7.50, 20.00, NULL, 1, 1, 'admin-id', '2026-01-18 12:09:36', 'admin-id', '2026-01-18 12:10:02', 1),
-('4dab149a-e220-4cd8-a061-7660ab0168bb', 'admin-id', 'RG-002', 'RG-002', 'RG-002', 'Nazirshail Rice', 'Nazirshail Rice', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 0, 5.00, 14.00, NULL, 1, 1, 'admin-id', '2026-01-12 06:20:57', 'admin-id', '2026-01-18 11:47:21', 1),
-('75b05c78-9b6b-42ba-aafa-e76e22f67722', 'admin-id', 'HE-001', 'HE-001', 'HE-001', 'Laundry Soap', 'Laundry Soap', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '78a63632-6a35-49ab-8cac-4b5c0d4fb418', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 0, 7.50, 20.00, NULL, 1, 1, 'admin-id', '2026-01-18 12:05:41', 'admin-id', '2026-01-18 12:05:52', 1),
-('8873e069-eea6-4f9e-acf0-dd1cb658f9c8', 'admin-id', 'BS-001', 'BS-001', 'BS-001', 'Soft Drink 250ml', 'Soft Drink 250ml', '344eb4c8-48c4-475b-b74c-307a0e492622', 24, 'f5d78785-c08b-46b7-a77f-dcf1a8700dd0', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 0, 10.00, 15.00, NULL, 1, 1, 'admin-id', '2026-01-18 12:20:20', 'admin-id', '2026-01-18 12:20:40', 1),
-('940f8010-5d38-4de4-b66f-d12958ff9ec2', 'admin-id', 'RG-001', 'RG-001', 'RG-001', 'Miniket Rice', 'Miniket Rice', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 0, 5.00, 15.00, NULL, 1, 1, '940f8010-5d38-4de4-b66f-d12958ff9ecf', '2026-01-11 06:06:23', 'admin-id', '2026-01-18 11:46:22', 1),
-('940f8010-5d38-4de4-b66f-d12958ff9ecf', 'admin-id', 'EP-003', 'EP-003', 'EP-003', 'Layer Egg (Dozen)', 'Layer Egg (Dozen)', '61accd0f-ebd7-4c2c-9e33-ba5f92e091d1', 30, 'f5d78785-c08b-46b7-a77f-dcf1a8700dd0', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 0, 5.00, 15.00, NULL, 1, 1, '940f8010-5d38-4de4-b66f-d12958ff9ecf', '2026-01-11 06:06:23', 'admin-id', '2026-01-18 11:41:51', 1),
-('ad014a04-77d0-4f46-acc9-dee2b02c64f2', 'admin-id', 'BS-003', 'BS-003', 'BS-003', 'Juice Pack', 'Juice Pack', '344eb4c8-48c4-475b-b74c-307a0e492622', 10, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 0, 10.00, 18.00, NULL, 1, 1, 'admin-id', '2026-01-18 12:22:34', 'admin-id', '2026-01-18 12:22:53', 1),
-('ae0a4ae3-77f6-4357-8ca9-c05cc1796a7e', 'admin-id', 'EP-001', 'EP-001', 'EP-001', 'Layer Egg', 'Layer Egg', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '61accd0f-ebd7-4c2c-9e33-ba5f92e091d1', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 0, 5.00, 20.00, NULL, 1, 1, 'admin-id', '2026-01-12 06:17:33', 'admin-id', '2026-01-18 11:38:30', 1),
-('b3da1017-bea4-44fd-ad13-110e92a48965', 'admin-id', 'RG-004', 'RG-004', 'RG-004', 'Wheat', 'Wheat', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 0, 5.00, 12.00, NULL, 1, 1, 'admin-id', '2026-01-18 11:49:00', 'admin-id', '2026-01-18 11:49:13', 1),
-('dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 'admin-id', 'EP-002', 'EP-002', 'EP-002', 'Duck Egg', 'Duck Egg', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '61accd0f-ebd7-4c2c-9e33-ba5f92e091d1', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 0, 5.00, 18.00, NULL, 1, 1, 'admin-id', '2026-01-12 06:38:50', 'admin-id', '2026-01-18 11:39:37', 1),
-('e2e70dc1-9814-400c-8774-2b6b186b79e5', 'admin-id', 'DP-005', 'DP-005', 'DP-005', 'Cheese Slice', 'Cheese Slice', '344eb4c8-48c4-475b-b74c-307a0e492622', 10, '50d3582c-909a-4818-afd7-54a8db8c1a44', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 0, 5.00, 18.00, NULL, 1, 1, 'admin-id', '2026-01-18 11:55:20', 'admin-id', '2026-01-18 11:55:39', 1),
-('e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', 'admin-id', 'EP-004', 'EP-004', 'EP-004', 'Broiler Chicken', 'Broiler Chicken', 'f13c1fb3-3493-4640-9b13-02bd824b4977', 1000, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 0, 5.00, 12.00, NULL, 1, 1, 'admin-id', '2026-01-11 06:38:46', 'admin-id', '2026-01-18 11:55:58', 1),
-('e483bc2d-6ccd-4b72-8603-775dcd275249', 'admin-id', 'EP-005', 'EP-005', 'EP-005', 'Deshi Chicken', 'Deshi Chicken', 'f13c1fb3-3493-4640-9b13-02bd824b4977', 1000, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 0, 5.00, 10.00, NULL, 1, 1, 'admin-id', '2026-01-12 06:12:16', 'admin-id', '2026-01-18 11:44:14', 1),
-('f7126510-80c0-416b-a34e-3a514e54d030', 'admin-id', 'BS-005', 'BS-005', 'BS-005', 'Biscuit', 'Biscuit', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '50d3582c-909a-4818-afd7-54a8db8c1a44', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 0, 10.00, 15.00, NULL, 1, 1, 'admin-id', '2026-01-18 12:24:41', 'admin-id', '2026-01-18 12:24:55', 1),
-('f949a24a-3ff8-4349-9ca0-f853de9226c7', 'admin-id', 'HE-002', 'HE-002', 'HE-002', 'Dishwashing Liquid', 'Dishwashing Liquid', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', 1, '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 0, 7.50, 18.00, NULL, 1, 1, 'admin-id', '2026-01-18 12:06:48', 'admin-id', '2026-01-18 12:07:47', 1),
-('fa1b188a-c075-4b90-bbea-37e3733f50bb', 'admin-id', 'DP-002', 'DP-002', 'DP-002', 'Powder Milk', 'Powder Milk', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 0, 5.00, 18.00, NULL, 1, 1, 'admin-id', '2026-01-18 11:52:20', 'admin-id', '2026-01-18 11:52:30', 1);
+INSERT INTO `tmib_items` (`id`, `items_users`, `items_icode`, `items_bcode`, `items_hscod`, `items_iname`, `items_idesc`, `items_puofm`, `items_dfqty`, `items_suofm`, `items_ctgry`, `items_itype`, `items_trcks`, `items_sdvat`, `items_costp`, `items_image`, `items_nofbi`, `items_actve`, `items_crusr`, `items_crdat`, `items_upusr`, `items_updat`, `items_rvnmr`) VALUES
+('0e5de4e6-86dd-453a-8b94-963ee305e860', 'user1', 'HE-003', 'HE-003', 'HE-003', 'Floor Cleaner', 'Floor Cleaner', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', 1, '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 7.50, 16.00, NULL, 1, 1, 'user1', '2026-01-18 12:08:34', 'user1', '2026-01-31 10:59:21', 1),
+('24614ec4-8ab0-4b50-b3c7-9f154a124770', 'user1', 'RG-003', 'RG-003', 'RG-003', 'Basmati Rice', 'Basmati Rice', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 5.00, 16.00, NULL, 1, 1, 'user1', '2026-01-12 06:16:06', 'user1', '2026-01-31 10:59:47', 1),
+('2bee4dba-5f29-4e65-b772-718c677e326c', 'user1', 'BS-004', 'BS-004', 'BS-004', 'Potato Chips', 'Potato Chips', '344eb4c8-48c4-475b-b74c-307a0e492622', 20, 'f5ccd3c1-fd1e-4f0e-93be-59dd878c881a', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 20.00, NULL, 1, 1, 'user1', '2026-01-18 12:23:51', 'user1', '2026-01-31 10:56:51', 1),
+('2c047e91-44f6-48bc-a591-9ab00deb7b72', 'user1', 'RG-005', 'RG-005', 'RG-005', 'Masur Dal', 'Masur Dal', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 5.00, 15.00, NULL, 1, 1, 'user1', '2026-01-18 11:49:45', 'user1', '2026-01-31 10:59:30', 1),
+('38b496e9-6652-4324-8331-ba0ecb0cfeae', 'user1', 'DP-001', 'DP-001', 'DP-001', 'Fresh Milk', 'Fresh Milk', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', 1, '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 5.00, 15.00, NULL, 1, 1, 'user1', '2026-01-18 11:51:08', 'user1', '2026-01-31 10:57:36', 1),
+('42ccd66a-70db-4c7f-93c4-36261a8f064f', 'user1', 'DP-003', 'DP-003', 'DP-003', 'Yogurt', 'Yogurt', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 5.00, 20.00, NULL, 1, 1, 'user1', '2026-01-18 11:53:02', 'user1', '2026-01-31 10:57:58', 1),
+('471d3f7f-e3e5-4585-bdbf-5f0a35b05a93', 'user1', 'HE-005', 'HE-005', 'HE-005', 'Tissue Roll', 'Tissue Roll', '344eb4c8-48c4-475b-b74c-307a0e492622', 6, '78a63632-6a35-49ab-8cac-4b5c0d4fb418', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 7.50, 18.00, NULL, 1, 1, 'user1', '2026-01-18 12:10:46', 'user1', '2026-01-31 11:00:06', 1),
+('485d61c3-e84e-418b-b91b-2171c17f0391', 'user1', 'DP-004', 'DP-004', 'DP-004', 'Butter', 'Butter', '344eb4c8-48c4-475b-b74c-307a0e492622', 1, '344eb4c8-48c4-475b-b74c-307a0e492622', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 5.00, 18.00, NULL, 1, 1, 'user1', '2026-01-18 11:54:16', 'user1', '2026-01-31 10:58:06', 1),
+('4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 'user1', 'BS-002', 'BS-002', 'BS-002', 'Mineral Water 1L', 'Mineral Water 1L', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, 'c1ab2f8e-5030-40a4-85a3-569ad7cc6dd7', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 14.00, NULL, 1, 1, 'user1', '2026-01-18 12:21:19', 'user1', '2026-01-31 10:56:36', 1),
+('4b100c2e-68a6-467b-94b7-617a6c7b43dc', 'user1', 'HE-004', 'HE-004', 'HE-004', 'Toilet Cleaner', 'Toilet Cleaner', '344eb4c8-48c4-475b-b74c-307a0e492622', 6, '78a63632-6a35-49ab-8cac-4b5c0d4fb418', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 7.50, 20.00, NULL, 1, 1, 'user1', '2026-01-18 12:09:36', 'user1', '2026-01-31 10:59:55', 1),
+('4dab149a-e220-4cd8-a061-7660ab0168bb', 'user1', 'RG-002', 'RG-002', 'RG-002', 'Nazirshail Rice', 'Nazirshail Rice', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 5.00, 14.00, NULL, 1, 1, 'user1', '2026-01-12 06:20:57', 'user1', '2026-01-31 11:00:36', 1),
+('75b05c78-9b6b-42ba-aafa-e76e22f67722', 'user1', 'HE-001', 'HE-001', 'HE-001', 'Laundry Soap', 'Laundry Soap', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '78a63632-6a35-49ab-8cac-4b5c0d4fb418', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 7.50, 20.00, NULL, 1, 1, 'user1', '2026-01-18 12:05:41', 'user1', '2026-01-31 10:58:31', 1),
+('8873e069-eea6-4f9e-acf0-dd1cb658f9c8', 'user1', 'BS-001', 'BS-001', 'BS-001', 'Soft Drink 250ml', 'Soft Drink 250ml', '344eb4c8-48c4-475b-b74c-307a0e492622', 24, 'f5d78785-c08b-46b7-a77f-dcf1a8700dd0', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 15.00, NULL, 1, 1, 'user1', '2026-01-18 12:20:20', 'user1', '2026-01-31 11:11:12', 1),
+('940f8010-5d38-4de4-b66f-d12958ff9ec2', 'user1', 'RG-001', 'RG-001', 'RG-001', 'Miniket Rice', 'Miniket Rice', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 5.00, 15.00, NULL, 1, 1, 'user1', '2026-01-11 06:06:23', 'user1', '2026-01-31 11:00:20', 1),
+('940f8010-5d38-4de4-b66f-d12958ff9ecf', 'user1', 'EP-003', 'EP-003', 'EP-003', 'Layer Egg (Dozen)', 'Layer Egg (Dozen)', '61accd0f-ebd7-4c2c-9e33-ba5f92e091d1', 30, 'f5d78785-c08b-46b7-a77f-dcf1a8700dd0', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 5.00, 15.00, NULL, 1, 1, 'user1', '2026-01-11 06:06:23', 'user1', '2026-01-31 10:57:22', 1),
+('ad014a04-77d0-4f46-acc9-dee2b02c64f2', 'user1', 'BS-003', 'BS-003', 'BS-003', 'Juice Pack', 'Juice Pack', '344eb4c8-48c4-475b-b74c-307a0e492622', 10, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 18.00, NULL, 1, 1, 'user1', '2026-01-18 12:22:34', 'user1', '2026-01-31 10:56:46', 1),
+('ae0a4ae3-77f6-4357-8ca9-c05cc1796a7e', 'user1', 'EP-001', 'EP-001', 'EP-001', 'Layer Egg', 'Layer Egg', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '61accd0f-ebd7-4c2c-9e33-ba5f92e091d1', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 5.00, 20.00, NULL, 1, 1, 'user1', '2026-01-12 06:17:33', 'user1', '2026-01-31 10:58:42', 1),
+('b3da1017-bea4-44fd-ad13-110e92a48965', 'user1', 'RG-004', 'RG-004', 'RG-004', 'Wheat', 'Wheat', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 5.00, 12.00, NULL, 1, 1, 'user1', '2026-01-18 11:49:00', 'user1', '2026-01-31 10:59:41', 1),
+('dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 'user1', 'EP-002', 'EP-002', 'EP-002', 'Duck Egg', 'Duck Egg', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '61accd0f-ebd7-4c2c-9e33-ba5f92e091d1', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 5.00, 18.00, NULL, 1, 1, 'user1', '2026-01-12 06:38:50', 'user1', '2026-01-31 10:59:04', 1),
+('e2e70dc1-9814-400c-8774-2b6b186b79e5', 'user1', 'DP-005', 'DP-005', 'DP-005', 'Cheese Slice', 'Cheese Slice', '344eb4c8-48c4-475b-b74c-307a0e492622', 10, '50d3582c-909a-4818-afd7-54a8db8c1a44', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 5.00, 18.00, NULL, 1, 1, 'user1', '2026-01-18 11:55:20', 'user1', '2026-01-31 10:58:15', 1),
+('e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', 'user1', 'EP-004', 'EP-004', 'EP-004', 'Broiler Chicken', 'Broiler Chicken', 'f13c1fb3-3493-4640-9b13-02bd824b4977', 1000, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 5.00, 12.00, NULL, 1, 1, 'user1', '2026-01-11 06:38:46', 'user1', '2026-01-31 10:58:57', 1),
+('e483bc2d-6ccd-4b72-8603-775dcd275249', 'user1', 'EP-005', 'EP-005', 'EP-005', 'Deshi Chicken', 'Deshi Chicken', 'f13c1fb3-3493-4640-9b13-02bd824b4977', 1000, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 5.00, 10.00, NULL, 1, 1, 'user1', '2026-01-12 06:12:16', 'user1', '2026-01-31 10:58:49', 1),
+('f7126510-80c0-416b-a34e-3a514e54d030', 'user1', 'BS-005', 'BS-005', 'BS-005', 'Biscuit', 'Biscuit', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '50d3582c-909a-4818-afd7-54a8db8c1a44', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 15.00, NULL, 1, 1, 'user1', '2026-01-18 12:24:41', 'user1', '2026-01-31 10:57:00', 1),
+('f949a24a-3ff8-4349-9ca0-f853de9226c7', 'user1', 'HE-002', 'HE-002', 'HE-002', 'Dishwashing Liquid', 'Dishwashing Liquid', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', 1, '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 7.50, 18.00, NULL, 1, 1, 'user1', '2026-01-18 12:06:48', 'user1', '2026-01-31 10:59:13', 1),
+('fa1b188a-c075-4b90-bbea-37e3733f50bb', 'user1', 'DP-002', 'DP-002', 'DP-002', 'Powder Milk', 'Powder Milk', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 5.00, 18.00, NULL, 1, 1, 'user1', '2026-01-18 11:52:20', 'user1', '2026-01-31 10:57:44', 1);
 
 -- --------------------------------------------------------
 
@@ -528,27 +447,27 @@ CREATE TABLE `tmib_iuofm` (
 --
 
 INSERT INTO `tmib_iuofm` (`id`, `iuofm_users`, `iuofm_untnm`, `iuofm_untgr`, `iuofm_actve`, `iuofm_crusr`, `iuofm_crdat`, `iuofm_upusr`, `iuofm_updat`, `iuofm_rvnmr`) VALUES
-('024a6dbf-85cb-48d6-91e0-41f4b977bcd4', 'admin-id', 'Ml', 'Volume', 1, 'admin-id', '2026-01-18 12:07:30', 'admin-id', '2026-01-18 12:07:30', 1),
-('1f240f2c-50ab-407f-b77d-0ce95922fd6c', 'admin-id', 'Ltr', 'Volume', 1, 'admin-id', '2026-01-11 04:40:38', 'admin-id', '2026-01-18 12:06:59', 1),
-('2276a903-fc68-4c43-8448-8ceab9aee99d', 'admin-id', 'Bulk', 'Mass', 1, 'admin-id', '2026-01-12 06:39:04', 'admin-id', '2026-01-14 08:32:20', 1),
-('22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 'admin-id', 'Kg', 'Weight', 1, 'admin-id', '2026-01-11 04:43:41', 'admin-id', '2026-01-14 08:32:24', 1),
-('2993fee8-3e34-4e2e-8cb9-63461934a6ef', 'admin-id', 'Inch', 'Length', 1, 'admin-id', '2026-01-14 08:34:51', 'admin-id', '2026-01-14 08:35:02', 1),
-('324249dc-432a-44b8-8191-cb1bfe2ad530', 'admin-id', 'Ton', 'Weight', 1, 'admin-id', '2026-01-14 08:33:44', 'admin-id', '2026-01-14 08:35:06', 1),
-('344eb4c8-48c4-475b-b74c-307a0e492622', 'admin-id', 'Pcs', 'Countable', 1, 'admin-id', '2026-01-11 04:40:18', 'admin-id', '2026-01-14 08:32:31', 1),
-('50d3582c-909a-4818-afd7-54a8db8c1a44', 'admin-id', 'Pack', 'Countable', 1, 'admin-id', '2026-01-11 04:40:31', 'admin-id', '2026-01-14 08:32:33', 1),
-('53640e3f-20b8-44a6-8872-5844630bfed0', 'admin-id', 'Gal', 'Volume', 1, 'admin-id', '2026-01-14 08:34:28', 'admin-id', '2026-01-14 08:35:16', 1),
-('61accd0f-ebd7-4c2c-9e33-ba5f92e091d1', 'admin-id', 'Dzn', 'Countable', 1, 'admin-id', '2026-01-11 04:40:57', 'admin-id', '2026-01-18 12:06:56', 1),
-('674e6bee-5066-415a-9f35-b6e72f978a08', 'admin-id', 'Yard', 'Length', 1, 'admin-id', '2026-01-11 04:43:59', 'admin-id', '2026-01-14 08:32:44', 1),
-('78a63632-6a35-49ab-8cac-4b5c0d4fb418', 'admin-id', 'Box', 'Countable', 1, 'admin-id', '2026-01-11 04:40:52', 'admin-id', '2026-01-14 08:32:46', 1),
-('9233b04b-3367-4205-9b3c-bb569e1bebb6', 'admin-id', 'Inch', 'Length', 1, 'admin-id', '2026-01-14 08:34:34', 'admin-id', '2026-01-14 08:35:21', 1),
-('a08ee30c-cb3d-467c-aff6-d347c74c9e8b', 'admin-id', 'Cm', 'Length', 1, 'admin-id', '2026-01-14 08:34:39', 'admin-id', '2026-01-14 08:35:25', 1),
-('abc985a3-68b1-4b98-825b-ebe79903d033', 'admin-id', 'Bottle', 'Countable', 1, 'admin-id', '2026-01-14 08:33:58', 'admin-id', '2026-01-14 08:35:29', 1),
-('c1ab2f8e-5030-40a4-85a3-569ad7cc6dd7', 'admin-id', 'Cage', 'Countable', 1, 'admin-id', '2026-01-14 08:34:18', 'admin-id', '2026-01-14 08:35:35', 1),
-('cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'admin-id', 'Ctn', 'Countable', 1, 'admin-id', '2026-01-11 04:40:23', 'admin-id', '2026-01-14 08:32:47', 1),
-('f13c1fb3-3493-4640-9b13-02bd824b4977', 'admin-id', 'Gm', 'Weight', 1, 'admin-id', '2026-01-14 08:33:32', 'admin-id', '2026-01-14 08:35:38', 1),
-('f2fa8d7c-69d4-439d-9dea-66fba7aac17b', 'admin-id', 'Bag', 'Mass', 1, 'admin-id', '2026-01-14 08:34:10', 'admin-id', '2026-01-14 08:35:50', 1),
-('f5ccd3c1-fd1e-4f0e-93be-59dd878c881a', 'admin-id', 'Poly', 'Countable', 1, 'admin-id', '2026-01-14 08:25:05', 'admin-id', '2026-01-14 08:32:49', 1),
-('f5d78785-c08b-46b7-a77f-dcf1a8700dd0', 'admin-id', 'Crate', 'Mass', 1, 'admin-id', '2026-01-14 08:33:25', 'admin-id', '2026-01-14 08:35:46', 1);
+('024a6dbf-85cb-48d6-91e0-41f4b977bcd4', 'user1', 'Ml', 'Volume', 1, 'user1', '2026-01-18 12:07:30', 'user1', '2026-01-31 10:11:36', 1),
+('1f240f2c-50ab-407f-b77d-0ce95922fd6c', 'user1', 'Ltr', 'Volume', 1, 'user1', '2026-01-11 04:40:38', 'user1', '2026-01-31 10:11:36', 1),
+('2276a903-fc68-4c43-8448-8ceab9aee99d', 'user1', 'Bulk', 'Mass', 1, 'user1', '2026-01-12 06:39:04', 'user1', '2026-01-31 10:11:36', 1),
+('22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 'user1', 'Kg', 'Weight', 1, 'user1', '2026-01-11 04:43:41', 'user1', '2026-01-31 10:11:36', 1),
+('2993fee8-3e34-4e2e-8cb9-63461934a6ef', 'user1', 'Inch', 'Length', 1, 'user1', '2026-01-14 08:34:51', 'user1', '2026-01-31 10:11:36', 1),
+('324249dc-432a-44b8-8191-cb1bfe2ad530', 'user1', 'Ton', 'Weight', 1, 'user1', '2026-01-14 08:33:44', 'user1', '2026-01-31 10:11:36', 1),
+('344eb4c8-48c4-475b-b74c-307a0e492622', 'user1', 'Pcs', 'Countable', 1, 'user1', '2026-01-11 04:40:18', 'user1', '2026-01-31 10:11:36', 1),
+('50d3582c-909a-4818-afd7-54a8db8c1a44', 'user1', 'Pack', 'Countable', 1, 'user1', '2026-01-11 04:40:31', 'user1', '2026-01-31 10:11:36', 1),
+('53640e3f-20b8-44a6-8872-5844630bfed0', 'user1', 'Gal', 'Volume', 1, 'user1', '2026-01-14 08:34:28', 'user1', '2026-01-31 10:11:36', 1),
+('61accd0f-ebd7-4c2c-9e33-ba5f92e091d1', 'user1', 'Dzn', 'Countable', 1, 'user1', '2026-01-11 04:40:57', 'user1', '2026-01-31 10:11:36', 1),
+('674e6bee-5066-415a-9f35-b6e72f978a08', 'user1', 'Yard', 'Length', 1, 'user1', '2026-01-11 04:43:59', 'user1', '2026-01-31 10:11:36', 1),
+('78a63632-6a35-49ab-8cac-4b5c0d4fb418', 'user1', 'Box', 'Countable', 1, 'user1', '2026-01-11 04:40:52', 'user1', '2026-01-31 10:11:36', 1),
+('9233b04b-3367-4205-9b3c-bb569e1bebb6', 'user1', 'Inch', 'Length', 1, 'user1', '2026-01-14 08:34:34', 'user1', '2026-01-31 10:11:36', 1),
+('a08ee30c-cb3d-467c-aff6-d347c74c9e8b', 'user1', 'Cm', 'Length', 1, 'user1', '2026-01-14 08:34:39', 'user1', '2026-01-31 10:11:36', 1),
+('abc985a3-68b1-4b98-825b-ebe79903d033', 'user1', 'Bottle', 'Countable', 1, 'user1', '2026-01-14 08:33:58', 'user1', '2026-01-31 10:11:36', 1),
+('c1ab2f8e-5030-40a4-85a3-569ad7cc6dd7', 'user1', 'Cage', 'Countable', 1, 'user1', '2026-01-14 08:34:18', 'user1', '2026-01-31 10:11:36', 1),
+('cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'user1', 'Ctn', 'Countable', 1, 'user1', '2026-01-11 04:40:23', 'user1', '2026-01-31 10:11:36', 1),
+('f13c1fb3-3493-4640-9b13-02bd824b4977', 'user1', 'Gm', 'Weight', 1, 'user1', '2026-01-14 08:33:32', 'user1', '2026-01-31 10:11:36', 1),
+('f2fa8d7c-69d4-439d-9dea-66fba7aac17b', 'user1', 'Bag', 'Mass', 1, 'user1', '2026-01-14 08:34:10', 'user1', '2026-01-31 10:11:36', 1),
+('f5ccd3c1-fd1e-4f0e-93be-59dd878c881a', 'user1', 'Poly', 'Countable', 1, 'user1', '2026-01-14 08:25:05', 'user1', '2026-01-31 10:11:36', 1),
+('f5d78785-c08b-46b7-a77f-dcf1a8700dd0', 'user1', 'Crate', 'Mass', 1, 'user1', '2026-01-14 08:33:25', 'user1', '2026-01-31 10:11:36', 1);
 
 -- --------------------------------------------------------
 
@@ -662,8 +581,8 @@ CREATE TABLE `tmpb_cbkng` (
 --
 
 INSERT INTO `tmpb_cbkng` (`id`, `cbkng_mbkng`, `cbkng_bitem`, `cbkng_items`, `cbkng_itrat`, `cbkng_itqty`, `cbkng_itamt`, `cbkng_dspct`, `cbkng_dsamt`, `cbkng_vtpct`, `cbkng_vtamt`, `cbkng_csrat`, `cbkng_ntamt`, `cbkng_notes`, `cbkng_attrb`, `cbkng_cnqty`, `cbkng_rcqty`, `cbkng_pnqty`, `cbkng_actve`, `cbkng_crusr`, `cbkng_crdat`, `cbkng_upusr`, `cbkng_updat`, `cbkng_rvnmr`) VALUES
-('8bcc18b5-13bf-4eba-af4d-82f31b540951', '3cc4bede-25d6-49df-9654-09d776618e0c', '22064b47-6898-4661-9dc8-5329a542ae4a', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 110.000000, 500.000000, 55000.000000, 0.000000, 0.000000, 5.000000, 2750.000000, 110.100000, 57750.000000, 'DO#123-123', '{}', 0.000000, 215.000000, 285.000000, 1, 'admin-id', '2026-01-27 14:41:16', 'admin-id', '2026-01-30 11:48:07', 1),
-('add96d29-899c-46da-9ac0-e6576d8b694f', '2f7c3961-8ec8-44f8-acf2-36e38f848543', 'a5da4ada-2216-49a6-bfde-aa71f0de6bb8', '38b496e9-6652-4324-8331-ba0ecb0cfeae', 60.000000, 20.000000, 1200.000000, 0.000000, 0.000000, 5.000000, 60.000000, 63.500000, 1260.000000, '', '{}', 0.000000, 0.000000, 20.000000, 1, 'admin-id', '2026-01-28 10:17:52', 'admin-id', '2026-01-28 10:17:52', 1);
+('5a72c302-92c7-4695-a099-962a26320851', 'd004b22d-64ed-45e2-9df4-07fb2cf02e12', '9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 700.000000, 50.000000, 35000.000000, 0.000000, 0.000000, 5.000000, 1750.000000, 700.333333, 36750.000000, 'PB#3101-001', '{\"Weight\":\"1 KG Powder\"}', 0.000000, 10.000000, 40.000000, 1, 'user1', '2026-01-31 11:32:27', 'user1', '2026-01-31 12:33:07', 1),
+('71a03cbd-5084-41ac-94db-3dd02338acca', 'd004b22d-64ed-45e2-9df4-07fb2cf02e12', 'bf05a1d1-2b12-46e8-bf24-5e7edde46136', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 120.000000, 100.000000, 12000.000000, 0.000000, 0.000000, 5.000000, 600.000000, 120.333333, 12600.000000, 'PB#3101-001', '{\"Weight\":\"40 KG\"}', 0.000000, 10.000000, 90.000000, 1, 'user1', '2026-01-31 11:32:27', 'user1', '2026-01-31 12:33:07', 1);
 
 -- --------------------------------------------------------
 
@@ -752,10 +671,8 @@ CREATE TABLE `tmpb_crcpt` (
 --
 
 INSERT INTO `tmpb_crcpt` (`id`, `crcpt_mrcpt`, `crcpt_bitem`, `crcpt_items`, `crcpt_itrat`, `crcpt_itqty`, `crcpt_itamt`, `crcpt_dspct`, `crcpt_dsamt`, `crcpt_vtpct`, `crcpt_vtamt`, `crcpt_csrat`, `crcpt_ntamt`, `crcpt_notes`, `crcpt_attrb`, `crcpt_rtqty`, `crcpt_slqty`, `crcpt_ohqty`, `crcpt_cbkng`, `crcpt_actve`, `crcpt_crusr`, `crcpt_crdat`, `crcpt_upusr`, `crcpt_updat`, `crcpt_rvnmr`) VALUES
-('0f1de64b-740f-4b3f-8b0e-ead54e46d4a6', '99091e42-9b11-48fc-b9e4-48bee519d3a2', '22064b47-6898-4661-9dc8-5329a542ae4a', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 110.000000, 50.000000, 5500.000000, 0.000000, 0.000000, 5.000000, 275.000000, 115.500000, 5775.000000, 'OC#-1', '{}', 0.000000, 50.000000, 0.000000, '8bcc18b5-13bf-4eba-af4d-82f31b540951', 1, 'admin-id', '2026-01-27 14:42:12', 'admin-id', '2026-01-30 04:26:26', 1),
-('20e07a84-156d-44b3-a107-9020f719bff8', 'ccce72a9-000e-42de-aa1f-63b12ba6e3d9', '22064b47-6898-4661-9dc8-5329a542ae4a', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 110.000000, 50.000000, 5500.000000, 0.000000, 0.000000, 5.000000, 275.000000, 111.000000, 5775.000000, 'OC#123-001', '{}', 0.000000, 50.000000, 0.000000, '8bcc18b5-13bf-4eba-af4d-82f31b540951', 1, 'admin-id', '2026-01-27 15:11:19', 'admin-id', '2026-01-30 04:15:03', 1),
-('c49e8d48-db93-486b-b2c1-9ddc28dbaec7', 'e9174829-2d14-4f5a-bd47-43f3b0309851', '22064b47-6898-4661-9dc8-5329a542ae4a', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 110.000000, 15.000000, 1650.000000, 0.000000, 0.000000, 5.000000, 82.500000, 115.500000, 1732.500000, 'DO#123-123', '{}', 0.000000, 0.000000, 15.000000, '8bcc18b5-13bf-4eba-af4d-82f31b540951', 1, 'admin-id', '2026-01-30 11:48:07', 'admin-id', '2026-01-30 11:48:07', 1),
-('cbdcede5-1100-4cbb-9eff-99de1526e263', '84190535-abf7-4a36-af0f-e898197f680a', '22064b47-6898-4661-9dc8-5329a542ae4a', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 110.000000, 100.000000, 11000.000000, 0.000000, 0.000000, 5.000000, 550.000000, 110.350000, 11550.000000, 'OC#123-002', '{}', 0.000000, 100.000000, 0.000000, '8bcc18b5-13bf-4eba-af4d-82f31b540951', 1, 'admin-id', '2026-01-27 15:44:48', 'admin-id', '2026-01-30 04:26:26', 1);
+('5040a8dd-0834-42ff-95cd-a21c7495a0b2', 'a47ba530-35f9-4ac6-b87a-97d2e825a2df', '9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 700.000000, 10.000000, 7000.000000, 0.000000, 0.000000, 5.000000, 350.000000, 735.000000, 7350.000000, 'PB#3101-001', '{\"Weight\":\"1 KG Powder\"}', 0.000000, 0.000000, 10.000000, '5a72c302-92c7-4695-a099-962a26320851', 1, 'user1', '2026-01-31 12:33:07', 'user1', '2026-01-31 12:33:07', 1),
+('ab430c2c-749f-4495-8bdd-214aec657b50', 'a47ba530-35f9-4ac6-b87a-97d2e825a2df', 'bf05a1d1-2b12-46e8-bf24-5e7edde46136', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 120.000000, 10.000000, 1200.000000, 0.000000, 0.000000, 5.000000, 60.000000, 126.000000, 1260.000000, 'PB#3101-001', '{\"Weight\":\"40 KG\"}', 0.000000, 0.000000, 10.000000, '71a03cbd-5084-41ac-94db-3dd02338acca', 1, 'user1', '2026-01-31 12:33:07', 'user1', '2026-01-31 12:33:07', 1);
 
 -- --------------------------------------------------------
 
@@ -788,12 +705,8 @@ CREATE TABLE `tmpb_expns` (
 --
 
 INSERT INTO `tmpb_expns` (`id`, `expns_users`, `expns_bsins`, `expns_cntct`, `expns_refid`, `expns_refno`, `expns_srcnm`, `expns_trdat`, `expns_inexc`, `expns_notes`, `expns_xpamt`, `expns_actve`, `expns_crusr`, `expns_crdat`, `expns_upusr`, `expns_updat`, `expns_rvnmr`) VALUES
-('0e368a86-a81e-41a8-9ea7-9e69e1f8bfd1', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'ccce72a9-000e-42de-aa1f-63b12ba6e3d9', 'PR-270126-00002', 'Purchase Receipt', '2026-01-28', 1, '', 50.000000, 1, 'admin-id', '2026-01-27 15:11:19', 'admin-id', '2026-01-27 15:11:19', 1),
-('7954b4f5-2ef9-479b-b5f8-8c885678665f', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '639611f4-97e5-4589-904e-190ef11f7f4e', '2f7c3961-8ec8-44f8-acf2-36e38f848543', 'PB-280126-00001', 'Purchase Booking', '2026-01-28', 1, '', 50.000000, 1, 'admin-id', '2026-01-28 10:17:52', 'admin-id', '2026-01-28 10:17:52', 1),
-('b57e7425-8a53-4b97-bf65-65087ded5d27', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', '3cc4bede-25d6-49df-9654-09d776618e0c', 'PB-270126-00001', 'Purchase Booking', '2026-01-28', 1, 'BT#123-123', 50.000000, 1, 'admin-id', '2026-01-27 14:41:16', 'admin-id', '2026-01-27 14:41:16', 1),
-('b6f4f607-cec4-4f88-8a8a-bae63c92834f', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '6dd0f9d0-840a-43ce-8f82-a60310521756', 'bdaf74fc-e710-4095-8d1b-e09f4d761535', 'IT-300126-00001', 'Internal Transfer', '2026-01-30', 2, '', 100.000000, 1, 'admin-id', '2026-01-30 01:38:18', 'admin-id', '2026-01-30 01:38:18', 1),
-('e09c7229-01d7-43f6-827f-fd0d02e7e665', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', '84190535-abf7-4a36-af0f-e898197f680a', 'PR-270126-00003', 'Purchase Receipt', '2026-01-28', 1, '', 35.000000, 1, 'admin-id', '2026-01-27 15:44:48', 'admin-id', '2026-01-27 15:44:48', 1),
-('e1107600-762d-4a16-813d-0cb1b0b1b081', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '639611f4-97e5-4589-904e-190ef11f7f4e', '2f7c3961-8ec8-44f8-acf2-36e38f848543', 'PB-280126-00001', 'Purchase Booking', '2026-01-28', 2, '', 20.000000, 1, 'admin-id', '2026-01-28 10:17:52', 'admin-id', '2026-01-28 10:17:52', 1);
+('4f3187c3-f4fb-45fc-90bc-3cd5db3eef07', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'd004b22d-64ed-45e2-9df4-07fb2cf02e12', 'PB-310126-00001', 'Purchase Booking', '2026-01-31', 1, 'Transport Bill', 30.000000, 1, 'user1', '2026-01-31 11:32:27', 'user1', '2026-01-31 11:32:27', 1),
+('c5087364-8b92-46e9-b815-9d992dea03cb', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'd004b22d-64ed-45e2-9df4-07fb2cf02e12', 'PB-310126-00001', 'Purchase Booking', '2026-01-31', 2, 'BT#123-001', 20.000000, 1, 'user1', '2026-01-31 11:32:27', 'user1', '2026-01-31 11:32:27', 1);
 
 -- --------------------------------------------------------
 
@@ -840,8 +753,7 @@ CREATE TABLE `tmpb_mbkng` (
 --
 
 INSERT INTO `tmpb_mbkng` (`id`, `mbkng_users`, `mbkng_bsins`, `mbkng_cntct`, `mbkng_trnno`, `mbkng_trdat`, `mbkng_refno`, `mbkng_trnte`, `mbkng_odamt`, `mbkng_dsamt`, `mbkng_vtamt`, `mbkng_vatpy`, `mbkng_incst`, `mbkng_excst`, `mbkng_rnamt`, `mbkng_ttamt`, `mbkng_pyamt`, `mbkng_pdamt`, `mbkng_duamt`, `mbkng_cnamt`, `mbkng_ispad`, `mbkng_ispst`, `mbkng_iscls`, `mbkng_vatcl`, `mbkng_hscnl`, `mbkng_actve`, `mbkng_crusr`, `mbkng_crdat`, `mbkng_upusr`, `mbkng_updat`, `mbkng_rvnmr`) VALUES
-('2f7c3961-8ec8-44f8-acf2-36e38f848543', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '639611f4-97e5-4589-904e-190ef11f7f4e', 'PB-280126-00001', '2026-01-28 00:00:00', '', '', 1200.000000, 0.000000, 60.000000, 1, 50.000000, 20.000000, 0.000000, 1310.000000, 1310.000000, 1310.000000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'admin-id', '2026-01-28 10:17:52', 'admin-id', '2026-01-28 10:25:34', 1),
-('3cc4bede-25d6-49df-9654-09d776618e0c', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PB-270126-00001', '2026-01-27 00:00:00', 'DO#123-123', '', 55000.000000, 0.000000, 2750.000000, 1, 50.000000, 0.000000, 0.000000, 57800.000000, 57800.000000, 57800.000000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'admin-id', '2026-01-27 14:41:16', 'admin-id', '2026-01-28 10:25:37', 1);
+('d004b22d-64ed-45e2-9df4-07fb2cf02e12', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PB-310126-00001', '2026-01-31 00:00:00', 'PB#3101-001', '', 47000.000000, 0.000000, 2350.000000, 1, 30.000000, 20.000000, 0.000000, 49380.000000, 49380.000000, 40000.000000, 9380.000000, 0.000000, 2, 1, 0, 0, 0, 1, 'user1', '2026-01-31 11:17:35', 'user1', '2026-01-31 11:32:27', 3);
 
 -- --------------------------------------------------------
 
@@ -940,10 +852,48 @@ CREATE TABLE `tmpb_mrcpt` (
 --
 
 INSERT INTO `tmpb_mrcpt` (`id`, `mrcpt_users`, `mrcpt_bsins`, `mrcpt_cntct`, `mrcpt_trnno`, `mrcpt_trdat`, `mrcpt_refno`, `mrcpt_trnte`, `mrcpt_odamt`, `mrcpt_dsamt`, `mrcpt_vtamt`, `mrcpt_vatpy`, `mrcpt_incst`, `mrcpt_excst`, `mrcpt_rnamt`, `mrcpt_ttamt`, `mrcpt_pyamt`, `mrcpt_pdamt`, `mrcpt_duamt`, `mrcpt_rtamt`, `mrcpt_ispad`, `mrcpt_ispst`, `mrcpt_iscls`, `mrcpt_vatcl`, `mrcpt_hscnl`, `mrcpt_actve`, `mrcpt_crusr`, `mrcpt_crdat`, `mrcpt_upusr`, `mrcpt_updat`, `mrcpt_rvnmr`) VALUES
-('84190535-abf7-4a36-af0f-e898197f680a', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PR-270126-00003', '2026-01-27 00:00:00', 'OC#123-002', '', 11000.000000, 0.000000, 550.000000, 1, 35.000000, 0.000000, 0.000000, 11585.000000, 11585.000000, 11585.000000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'admin-id', '2026-01-27 15:44:48', 'admin-id', '2026-01-27 15:44:48', 1),
-('99091e42-9b11-48fc-b9e4-48bee519d3a2', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PR-270126-00001', '2026-01-27 00:00:00', 'OC#-1', '', 5500.000000, 0.000000, 275.000000, 1, 0.000000, 0.000000, 0.000000, 5775.000000, 5775.000000, 5775.000000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'admin-id', '2026-01-27 14:42:12', 'admin-id', '2026-01-27 14:42:12', 1),
-('ccce72a9-000e-42de-aa1f-63b12ba6e3d9', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PR-270126-00002', '2026-01-27 00:00:00', 'OC#123-001', '', 5500.000000, 0.000000, 275.000000, 1, 50.000000, 0.000000, 0.000000, 5825.000000, 5825.000000, 5825.000000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'admin-id', '2026-01-27 15:11:19', 'admin-id', '2026-01-27 15:11:19', 1),
-('e9174829-2d14-4f5a-bd47-43f3b0309851', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PR-300126-00001', '2026-01-30 00:00:00', '', '', 1650.000000, 0.000000, 82.500000, 1, 0.000000, 0.000000, 0.000000, 1732.500000, 1732.500000, 1732.500000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'admin-id', '2026-01-30 11:48:07', 'admin-id', '2026-01-30 11:48:07', 1);
+('a47ba530-35f9-4ac6-b87a-97d2e825a2df', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PR-310126-00001', '2026-01-31 00:00:00', '', '', 8200.000000, 0.000000, 410.000000, 1, 0.000000, 0.000000, 0.000000, 8610.000000, 8610.000000, 8610.000000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'user1', '2026-01-31 12:33:07', 'user1', '2026-01-31 12:33:07', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmsb_bsins`
+--
+
+CREATE TABLE `tmsb_bsins` (
+  `id` varchar(50) NOT NULL,
+  `bsins_users` varchar(255) NOT NULL,
+  `bsins_bname` varchar(255) NOT NULL,
+  `bsins_addrs` varchar(255) DEFAULT NULL,
+  `bsins_email` varchar(255) DEFAULT NULL,
+  `bsins_cntct` varchar(255) DEFAULT NULL,
+  `bsins_image` varchar(255) DEFAULT NULL,
+  `bsins_binno` varchar(255) DEFAULT NULL,
+  `bsins_btags` varchar(255) DEFAULT NULL,
+  `bsins_cntry` varchar(50) DEFAULT NULL,
+  `bsins_bstyp` varchar(50) DEFAULT NULL,
+  `bsins_tstrn` tinyint(1) NOT NULL DEFAULT 1,
+  `bsins_prtrn` tinyint(1) NOT NULL DEFAULT 1,
+  `bsins_sltrn` tinyint(1) NOT NULL DEFAULT 1,
+  `bsins_stdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `bsins_pbviw` tinyint(1) NOT NULL DEFAULT 0,
+  `bsins_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `bsins_crusr` varchar(50) NOT NULL,
+  `bsins_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `bsins_upusr` varchar(50) NOT NULL,
+  `bsins_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `bsins_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tmsb_bsins`
+--
+
+INSERT INTO `tmsb_bsins` (`id`, `bsins_users`, `bsins_bname`, `bsins_addrs`, `bsins_email`, `bsins_cntct`, `bsins_image`, `bsins_binno`, `bsins_btags`, `bsins_cntry`, `bsins_bstyp`, `bsins_tstrn`, `bsins_prtrn`, `bsins_sltrn`, `bsins_stdat`, `bsins_pbviw`, `bsins_actve`, `bsins_crusr`, `bsins_crdat`, `bsins_upusr`, `bsins_updat`, `bsins_rvnmr`) VALUES
+('business1', 'user1', 'Green Mart – Uttara', 'Sector 10, Uttara, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'GT-9872-6871-5555', 'Retail', 'Bangladesh', 'Store', 1, 1, 1, '2026-01-31 00:00:00', 0, 1, 'user1', '2026-01-31 08:03:14', 'user1', '2026-01-31 09:28:38', 6),
+('business2', 'user1', 'White Mart – Dhanmondi', 'Road 27, Dhanmondi, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'CT2025-0978-22364', 'Retail', 'Bangladesh', 'Store', 1, 1, 1, '2026-01-31 00:00:00', 0, 1, 'user1', '2026-01-31 08:03:14', 'user1', '2026-01-31 09:28:40', 3),
+('business3', 'user1', 'Red Mart - Badda', 'Uttar Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'CT2025-0978-22364', 'Retail', 'Bangladesh', 'Store', 1, 1, 1, '2026-01-31 00:00:00', 0, 1, 'user1', '2026-01-31 08:03:14', 'user1', '2026-01-31 09:28:42', 3),
+('business4', 'user1', 'Central Distribution Warehouse', 'Uttar Badda, Dhaka', 'admin@sgd.com', '01722688266', NULL, 'CT2025-0978-22364', 'Retail', 'Bangladesh', 'Warehouse', 1, 1, 1, '2026-01-31 00:00:00', 0, 1, 'user1', '2026-01-31 08:03:14', 'user1', '2026-01-31 09:28:43', 7);
 
 -- --------------------------------------------------------
 
@@ -975,49 +925,49 @@ CREATE TABLE `tmsb_crgrn` (
 --
 
 INSERT INTO `tmsb_crgrn` (`id`, `crgrn_users`, `crgrn_bsins`, `crgrn_tblnm`, `crgrn_tbltx`, `crgrn_refno`, `crgrn_dbgrn`, `crgrn_crgrn`, `crgrn_isdat`, `crgrn_xpdat`, `crgrn_actve`, `crgrn_crusr`, `crgrn_crdat`, `crgrn_upusr`, `crgrn_updat`, `crgrn_rvnmr`) VALUES
-('27da0768-f364-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-15', 'tmsb_crgrn', 'Grains', NULL, 6.000000, 0.000000, '2026-01-15 00:00:00', '2026-01-15 00:00:00', 1, 'sys', '2026-01-17 05:19:06', 'sys', '2026-01-17 05:19:06', 1),
-('27da0793-f364-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-15', 'tmab_users', 'User', NULL, 1.000000, 0.000000, '2026-01-15 00:00:00', '2026-01-15 00:00:00', 1, 'sys', '2026-01-17 05:19:06', 'sys', '2026-01-17 05:19:06', 1),
-('45e5c6c7-0331-4e97-b304-15b03ee3d0c7', 'admin-id', '2026-01-09', 'tmsb_crgrn', 'Registration', 'Grocery Shop', 0.000000, 1000.000000, '2026-01-09 00:00:00', '2026-01-09 04:48:25', 1, '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-12 04:48:25', '45e5c6c7-0331-4e97-b304-15b03ee3d0c7', '2026-01-13 05:13:33', 1),
-('5b8a0446-f11e-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-13', 'tmab_users', 'User', NULL, 1.000000, 0.000000, '2026-01-13 00:00:00', '2026-01-13 00:00:00', 1, 'sys', '2026-01-14 07:55:13', 'sys', '2026-01-14 07:55:13', 1),
-('5b8ac4be-f11e-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-13', 'tmsb_crgrn', 'Grains', NULL, 16.000000, 0.000000, '2026-01-13 00:00:00', '2026-01-13 00:00:00', 1, 'sys', '2026-01-14 07:55:13', 'sys', '2026-01-14 07:55:13', 1),
-('c65563b6-f5b7-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-19', 'tmab_bsins', 'Business', NULL, 3.000000, 0.000000, '2026-01-19 00:00:00', '2026-01-19 00:00:00', 1, 'sys', '2026-01-20 04:21:59', 'sys', '2026-01-20 04:21:59', 1),
-('c65708f8-f5b7-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-19', 'tmab_users', 'User', NULL, 1.000000, 0.000000, '2026-01-19 00:00:00', '2026-01-19 00:00:00', 1, 'sys', '2026-01-20 04:21:59', 'sys', '2026-01-20 04:21:59', 1),
-('c65724e8-f5b7-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-19', 'tmsb_crgrn', 'Grains', NULL, 8.000000, 0.000000, '2026-01-19 00:00:00', '2026-01-19 00:00:00', 1, 'sys', '2026-01-20 04:21:59', 'sys', '2026-01-20 04:21:59', 1),
-('ca2657e7-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-09', 'tmcb_cntct', 'Contact', NULL, 1.000000, 0.000000, '2026-01-09 00:00:00', '2026-01-09 00:00:00', 1, 'sys', '2026-01-13 05:14:17', 'sys', '2026-01-13 05:14:17', 1),
-('d4fa1225-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-10', 'tmtb_ledgr', 'Accounts Ledger', NULL, 6.000000, 0.000000, '2026-01-10 00:00:00', '2026-01-10 00:00:00', 1, 'sys', '2026-01-13 05:14:35', 'sys', '2026-01-13 05:14:35', 1),
-('d502d99e-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-10', 'tmtb_trhed', 'Accounts Heads', NULL, 35.000000, 0.000000, '2026-01-10 00:00:00', '2026-01-10 00:00:00', 1, 'sys', '2026-01-13 05:14:35', 'sys', '2026-01-13 05:14:35', 1),
-('d887fdff-f429-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-17', 'tmab_bsins', 'Business', NULL, 2.000000, 0.000000, '2026-01-17 00:00:00', '2026-01-17 00:00:00', 1, 'sys', '2026-01-18 04:53:57', 'sys', '2026-01-18 04:53:57', 1),
-('d888f57d-f429-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-17', 'tmab_users', 'User', NULL, 1.000000, 0.000000, '2026-01-17 00:00:00', '2026-01-17 00:00:00', 1, 'sys', '2026-01-18 04:53:57', 'sys', '2026-01-18 04:53:57', 1),
-('d88919bd-f429-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-17', 'tmib_bitem', 'Business Item', NULL, 7.000000, 0.000000, '2026-01-17 00:00:00', '2026-01-17 00:00:00', 1, 'sys', '2026-01-18 04:53:57', 'sys', '2026-01-18 04:53:57', 1),
-('d8898306-f429-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-17', 'tmsb_crgrn', 'Grains', NULL, 2.000000, 0.000000, '2026-01-17 00:00:00', '2026-01-17 00:00:00', 1, 'sys', '2026-01-18 04:53:57', 'sys', '2026-01-18 04:53:57', 1),
-('d8926771-f429-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-17', 'tmtb_bacts', 'Business Accounts', NULL, 2.000000, 0.000000, '2026-01-17 00:00:00', '2026-01-17 00:00:00', 1, 'sys', '2026-01-18 04:53:57', 'sys', '2026-01-18 04:53:57', 1),
-('d8926bf3-f429-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-17', 'tmtb_ledgr', 'Accounts Ledger', NULL, 2.000000, 0.000000, '2026-01-17 00:00:00', '2026-01-17 00:00:00', 1, 'sys', '2026-01-18 04:53:57', 'sys', '2026-01-18 04:53:57', 1),
-('df202833-f1ca-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-14', 'tmab_users', 'User', NULL, 1.000000, 0.000000, '2026-01-14 00:00:00', '2026-01-14 00:00:00', 1, 'sys', '2026-01-15 04:29:56', 'sys', '2026-01-15 04:29:56', 1),
-('df202866-f1ca-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-14', 'tmcb_cntct', 'Contact', NULL, 2.000000, 0.000000, '2026-01-14 00:00:00', '2026-01-14 00:00:00', 1, 'sys', '2026-01-15 04:29:56', 'sys', '2026-01-15 04:29:56', 1),
-('df215ca9-f1ca-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-14', 'tmib_bitem', 'Business Item', NULL, 6.000000, 0.000000, '2026-01-14 00:00:00', '2026-01-14 00:00:00', 1, 'sys', '2026-01-15 04:29:56', 'sys', '2026-01-15 04:29:56', 1),
-('df2aa5ff-f1ca-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-14', 'tmsb_crgrn', 'Grains', NULL, 2.000000, 0.000000, '2026-01-14 00:00:00', '2026-01-14 00:00:00', 1, 'sys', '2026-01-15 04:29:56', 'sys', '2026-01-15 04:29:56', 1),
-('df2b2c7b-f1ca-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-14', 'tmib_items', 'Item List', NULL, 6.000000, 0.000000, '2026-01-14 00:00:00', '2026-01-14 00:00:00', 1, 'sys', '2026-01-15 04:29:56', 'sys', '2026-01-15 04:29:56', 1),
-('df2b303d-f1ca-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-14', 'tmib_iuofm', 'Item Unit', NULL, 20.000000, 0.000000, '2026-01-14 00:00:00', '2026-01-14 00:00:00', 1, 'sys', '2026-01-15 04:29:56', 'sys', '2026-01-15 04:29:56', 1),
-('e1c04769-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmab_bsins', 'Business', NULL, 3.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
-('e1c6eaa5-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmib_ctgry', 'Item Category', NULL, 6.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
-('e1c6eaa9-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmtb_trhed', 'Accounts Heads', NULL, 4.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
-('e1c6eaab-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmib_iuofm', 'Item Unit', NULL, 8.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
-('e1c6eab7-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmib_bitem', 'Business Item', NULL, 5.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
-('e1c6eca2-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-11', 'tmtb_bacts', 'Business Accounts', NULL, 2.000000, 0.000000, '2026-01-11 00:00:00', '2026-01-11 00:00:00', 1, 'sys', '2026-01-13 05:14:56', 'sys', '2026-01-13 05:14:56', 1),
-('e79f0d65-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmab_users', 'User', NULL, 1.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
-('e79f0dca-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmab_bsins', 'Business', NULL, 4.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
-('e7a8227e-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmib_bitem', 'Business Item', NULL, 25.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
-('e7a822e3-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmcb_cntct', 'Contact', NULL, 10.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
-('e7a8242f-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmib_ctgry', 'Item Category', NULL, 6.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
-('e7a8457a-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmib_items', 'Item List', NULL, 25.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
-('e7a8ab83-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmsb_crgrn', 'Grains', NULL, 6.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
-('e7a8aba0-f4ec-11f0-9a2b-d286b84ab6e7', 'admin-id', '2026-01-18', 'tmib_iuofm', 'Item Unit', NULL, 3.000000, 0.000000, '2026-01-18 00:00:00', '2026-01-18 00:00:00', 1, 'sys', '2026-01-19 04:10:00', 'sys', '2026-01-19 04:10:00', 1),
-('eb46a8ac-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmab_bsins', 'Business', NULL, 1.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
-('eb49281f-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmab_users', 'User', NULL, 1.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
-('eb494a4e-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmcb_cntct', 'Contact', NULL, 2.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
-('eb495188-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmib_bitem', 'Business Item', NULL, 7.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
-('eb496ca1-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmib_items', 'Item List', NULL, 8.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1),
-('eb497272-f03e-11f0-97f9-0ad4a79b5a97', 'admin-id', '2026-01-12', 'tmib_iuofm', 'Item Unit', NULL, 1.000000, 0.000000, '2026-01-12 00:00:00', '2026-01-12 00:00:00', 1, 'sys', '2026-01-13 05:15:12', 'sys', '2026-01-13 05:15:12', 1);
+('e0bdba06-a4d9-4010-90dc-ab4d433cb413', 'u1', 'b1', 'tmsb_crgrn', 'Registration', 'My Shop BD', 0.000000, 1000.000000, '2026-01-31 08:03:14', '2026-01-31 08:03:14', 1, 'u1', '2026-01-31 08:03:14', 'u1', '2026-01-31 08:04:27', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmsb_users`
+--
+
+CREATE TABLE `tmsb_users` (
+  `id` varchar(50) NOT NULL,
+  `users_email` varchar(50) NOT NULL,
+  `users_pswrd` varchar(50) NOT NULL,
+  `users_recky` varchar(50) NOT NULL,
+  `users_oname` varchar(255) NOT NULL,
+  `users_cntct` varchar(50) DEFAULT NULL,
+  `users_bsins` varchar(50) DEFAULT NULL,
+  `users_drole` varchar(50) DEFAULT NULL,
+  `users_users` varchar(50) DEFAULT NULL,
+  `users_stats` int(11) NOT NULL DEFAULT 0,
+  `users_regno` varchar(50) DEFAULT NULL,
+  `users_regdt` datetime NOT NULL DEFAULT current_timestamp(),
+  `users_ltokn` varchar(50) DEFAULT NULL,
+  `users_lstgn` datetime NOT NULL DEFAULT current_timestamp(),
+  `users_lstpd` datetime NOT NULL DEFAULT current_timestamp(),
+  `users_wctxt` varchar(100) DEFAULT NULL,
+  `users_notes` varchar(100) DEFAULT NULL,
+  `users_nofcr` decimal(16,2) NOT NULL DEFAULT 0.00,
+  `users_isrgs` tinyint(1) NOT NULL DEFAULT 1,
+  `users_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `users_crusr` varchar(50) NOT NULL,
+  `users_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `users_upusr` varchar(50) NOT NULL,
+  `users_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `users_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tmsb_users`
+--
+
+INSERT INTO `tmsb_users` (`id`, `users_email`, `users_pswrd`, `users_recky`, `users_oname`, `users_cntct`, `users_bsins`, `users_drole`, `users_users`, `users_stats`, `users_regno`, `users_regdt`, `users_ltokn`, `users_lstgn`, `users_lstpd`, `users_wctxt`, `users_notes`, `users_nofcr`, `users_isrgs`, `users_actve`, `users_crusr`, `users_crdat`, `users_upusr`, `users_updat`, `users_rvnmr`) VALUES
+('user1', 'admin@sgd.com', 'password', 'recover', 'Admin', '01722688266', 'business1', 'Admin', 'user1', 0, 'Standard', '2026-01-31 08:03:14', NULL, '2026-01-31 08:03:14', '2026-01-31 09:43:39', 'Welcome Note', 'User Note', 1000.00, 1, 1, 'u1', '2026-01-31 08:03:14', 'user1', '2026-01-31 09:43:48', 5),
+('user2', 'user@sgd.com', 'password', 'recover', 'Common User', '01722688266', 'business1', 'Admin', 'user1', 0, 'Standard', '2026-01-31 09:29:44', NULL, '2026-01-31 09:29:44', '2026-01-31 09:29:44', 'Welcome Note', 'User Note', 0.00, 0, 1, 'user1', '2026-01-31 09:29:44', 'user1', '2026-01-31 09:35:42', 1);
 
 -- --------------------------------------------------------
 
@@ -1125,34 +1075,10 @@ CREATE TABLE `tmtb_paybl` (
 --
 
 INSERT INTO `tmtb_paybl` (`id`, `paybl_users`, `paybl_bsins`, `paybl_cntct`, `paybl_pymod`, `paybl_refid`, `paybl_refno`, `paybl_srcnm`, `paybl_trdat`, `paybl_descr`, `paybl_notes`, `paybl_dbamt`, `paybl_cramt`, `paybl_crusr`, `paybl_crdat`, `paybl_upusr`, `paybl_updat`, `paybl_rvnmr`) VALUES
-('0324407c-640b-4288-ac99-14e92d836a81', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Payment', '99091e42-9b11-48fc-b9e4-48bee519d3a2', 'PR-270126-00001', 'Purchase Receipt', '2026-01-27 00:00:00', 'Supplier Payment', 'Payment', 5775.000000, 0.000000, 'admin-id', '2026-01-27 14:42:12', 'admin-id', '2026-01-27 14:42:12', 1),
-('063066b2-b8a7-445f-835c-ca08ad62d98e', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '639611f4-97e5-4589-904e-190ef11f7f4e', 'Cash', 'fbaae972-c416-4742-9d62-0b136be59ca5', 'PI-270126-00002', 'Purchase Booking', '2026-01-27 00:00:00', '', 'Payment', 3000.000000, 0.000000, 'admin-id', '2026-01-27 16:36:13', 'admin-id', '2026-01-27 16:36:13', 1),
-('166e3410-e58e-4cba-9f8e-f73a50349113', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Cash', '3cc4bede-25d6-49df-9654-09d776618e0c', 'PB-270126-00001', 'Purchase Booking', '2026-01-28 00:00:00', '', 'Payment', 2800.000000, 0.000000, 'admin-id', '2026-01-28 10:25:37', 'admin-id', '2026-01-28 10:25:37', 1),
-('2a0a0038-e7d0-4120-91db-0e1172792cf0', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'Cash', '0cc26927-006e-4fc3-b9a0-24a4037bd529', 'PI-270126-00001', 'Purchase Booking', '2026-01-28 00:00:00', '', 'Payment', 450.000000, 0.000000, 'admin-id', '2026-01-28 10:25:36', 'admin-id', '2026-01-28 10:25:36', 1),
-('2abf96a5-4fbf-4c3f-b4bc-2869c1dc9abc', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '639611f4-97e5-4589-904e-190ef11f7f4e', 'Cash', '2f7c3961-8ec8-44f8-acf2-36e38f848543', 'PB-280126-00001', 'Purchase Booking', '2026-01-28 00:00:00', '', 'Payment', 310.000000, 0.000000, 'admin-id', '2026-01-28 10:25:34', 'admin-id', '2026-01-28 10:25:34', 1),
-('364c2c97-654f-45c0-a9cb-a8ecbdbe2007', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', '3cc4bede-25d6-49df-9654-09d776618e0c', 'PB-270126-00001', 'Purchase Booking', '2026-01-27 00:00:00', 'Supplier Goods', 'Products', 0.000000, 57800.000000, 'admin-id', '2026-01-27 14:41:16', 'admin-id', '2026-01-27 14:41:16', 1),
-('414c97c4-2e86-4f94-a2e9-c76d166f333e', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', '84190535-abf7-4a36-af0f-e898197f680a', 'PR-270126-00003', 'Purchase Receipt', '2026-01-27 00:00:00', 'Supplier Goods', 'Products', 0.000000, 11585.000000, 'admin-id', '2026-01-27 15:44:48', 'admin-id', '2026-01-27 15:44:48', 1),
-('53474606-ca12-472b-b9ab-b9e135e15ad7', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', 'd5327b0e-4eb4-4d7e-afd5-62ef75ac6109', 'PI-300126-00003', 'Purchase Booking', '2026-01-30 00:00:00', 'Supplier Goods', 'Products', 0.000000, 3691.000000, 'admin-id', '2026-01-30 12:16:33', 'admin-id', '2026-01-30 12:16:33', 1),
-('57c7b4fd-f16a-4064-ae05-d2def8929aa6', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'Cash', 'f34b931f-65b6-40b1-99ab-1d75d8375ebd', 'PI-300126-00002', 'Purchase Booking', '2026-01-30 00:00:00', '', 'Payment', 13000.000000, 0.000000, 'admin-id', '2026-01-30 11:51:04', 'admin-id', '2026-01-30 11:51:04', 1),
-('60ac93d7-d64c-4852-8c95-e90dcff00c7c', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Payment', '84190535-abf7-4a36-af0f-e898197f680a', 'PR-270126-00003', 'Purchase Receipt', '2026-01-27 00:00:00', 'Supplier Payment', 'Payment', 11585.000000, 0.000000, 'admin-id', '2026-01-27 15:44:48', 'admin-id', '2026-01-27 15:44:48', 1),
-('6128741b-83b3-4eec-aa9f-2ddc40d26bb4', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', 'e9174829-2d14-4f5a-bd47-43f3b0309851', 'PR-300126-00001', 'Purchase Receipt', '2026-01-30 00:00:00', 'Supplier Goods', 'Products', 0.000000, 1732.500000, 'admin-id', '2026-01-30 11:48:07', 'admin-id', '2026-01-30 11:48:07', 1),
-('657080ec-3c28-42a3-a3bd-8b9879f09ff4', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', 'ccce72a9-000e-42de-aa1f-63b12ba6e3d9', 'PR-270126-00002', 'Purchase Receipt', '2026-01-27 00:00:00', 'Supplier Goods', 'Products', 0.000000, 5825.000000, 'admin-id', '2026-01-27 15:11:19', 'admin-id', '2026-01-27 15:11:19', 1),
-('668edded-1b9d-495a-ad91-0ec8d97df97d', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'Cash', '11346302-585a-4496-86a6-edf32e373ffa', 'PI-290126-00001', 'Purchase Booking', '2026-01-29 00:00:00', '', 'Payment', 3500.000000, 0.000000, 'admin-id', '2026-01-29 14:25:47', 'admin-id', '2026-01-29 14:25:47', 1),
-('6a6b0689-97ce-4b0e-8818-56ce4ccb89ac', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', '99091e42-9b11-48fc-b9e4-48bee519d3a2', 'PR-270126-00001', 'Purchase Receipt', '2026-01-27 00:00:00', 'Supplier Goods', 'Products', 0.000000, 5775.000000, 'admin-id', '2026-01-27 14:42:12', 'admin-id', '2026-01-27 14:42:12', 1),
-('81794a58-f378-48b1-a351-fa171968d415', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', '21d9dc24-15b2-4baf-baba-2635e149065f', 'PI-300126-00001', 'Purchase Booking', '2026-01-30 00:00:00', 'Supplier Goods', 'Products', 0.000000, 913.750000, 'admin-id', '2026-01-30 04:26:09', 'admin-id', '2026-01-30 04:26:09', 1),
-('89f6af3a-1f65-4435-8a09-5965268c53ce', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Bank', '3cc4bede-25d6-49df-9654-09d776618e0c', 'PB-270126-00001', 'Purchase Booking', '2026-01-28 00:00:00', 'BT#456-123', 'Payment', 5000.000000, 0.000000, 'admin-id', '2026-01-28 08:07:13', 'admin-id', '2026-01-28 08:07:13', 1),
-('8bdd3bed-5c1c-43d2-a05c-1d62381515bd', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'Inventory', 'f34b931f-65b6-40b1-99ab-1d75d8375ebd', 'PI-300126-00002', 'Purchase Booking', '2026-01-30 00:00:00', 'Supplier Goods', 'Products', 0.000000, 13786.000000, 'admin-id', '2026-01-30 11:51:04', 'admin-id', '2026-01-30 11:51:04', 1),
-('8fe7c9e0-b0ff-4113-94b7-895dcc655fbe', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '639611f4-97e5-4589-904e-190ef11f7f4e', 'Inventory', 'fbaae972-c416-4742-9d62-0b136be59ca5', 'PI-270126-00002', 'Purchase Booking', '2026-01-27 00:00:00', 'Supplier Goods', 'Products', 0.000000, 3150.000000, 'admin-id', '2026-01-27 16:36:13', 'admin-id', '2026-01-27 16:36:13', 1),
-('9d4d635a-bfdb-4b5d-b2c6-8bef1b7b6db3', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'Cash', '0cc26927-006e-4fc3-b9a0-24a4037bd529', 'PI-270126-00001', 'Purchase Booking', '2026-01-27 00:00:00', '', 'Payment', 9000.000000, 0.000000, 'admin-id', '2026-01-27 16:34:05', 'admin-id', '2026-01-27 16:34:05', 1),
-('a0b8ee3f-09d0-4f4c-8655-ab27da2331ee', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Bank', '3cc4bede-25d6-49df-9654-09d776618e0c', 'PB-270126-00001', 'Purchase Booking', '2026-01-27 00:00:00', 'BT#1234-1234', 'Payment', 50000.000000, 0.000000, 'admin-id', '2026-01-27 14:41:16', 'admin-id', '2026-01-27 14:41:16', 1),
-('a1c0ea99-add1-4748-81dc-1cd2e7e20b66', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'Inventory', '0cc26927-006e-4fc3-b9a0-24a4037bd529', 'PI-270126-00001', 'Purchase Booking', '2026-01-27 00:00:00', 'Supplier Goods', 'Products', 0.000000, 9450.000000, 'admin-id', '2026-01-27 16:34:05', 'admin-id', '2026-01-27 16:34:05', 1),
-('b14e6956-dbb0-4951-9e53-a57ccd957eae', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '639611f4-97e5-4589-904e-190ef11f7f4e', 'Cash', '2f7c3961-8ec8-44f8-acf2-36e38f848543', 'PB-280126-00001', 'Purchase Booking', '2026-01-28 00:00:00', '', 'Payment', 1000.000000, 0.000000, 'admin-id', '2026-01-28 10:17:52', 'admin-id', '2026-01-28 10:17:52', 1),
-('b92a45d0-5434-401f-b238-52144aa36732', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '639611f4-97e5-4589-904e-190ef11f7f4e', 'Cash', 'fbaae972-c416-4742-9d62-0b136be59ca5', 'PI-270126-00002', 'Purchase Booking', '2026-01-28 00:00:00', '', 'Payment', 150.000000, 0.000000, 'admin-id', '2026-01-28 10:25:39', 'admin-id', '2026-01-28 10:25:39', 1),
-('c570dd48-3179-4745-9aa0-d5978def26cb', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Payment', 'ccce72a9-000e-42de-aa1f-63b12ba6e3d9', 'PR-270126-00002', 'Purchase Receipt', '2026-01-27 00:00:00', 'Supplier Payment', 'Payment', 5825.000000, 0.000000, 'admin-id', '2026-01-27 15:11:19', 'admin-id', '2026-01-27 15:11:19', 1),
-('ce403c8c-569c-4068-aaa1-243ac6e84948', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Cash', 'd5327b0e-4eb4-4d7e-afd5-62ef75ac6109', 'PI-300126-00003', 'Purchase Booking', '2026-01-30 00:00:00', '', 'Payment', 3600.000000, 0.000000, 'admin-id', '2026-01-30 12:16:33', 'admin-id', '2026-01-30 12:16:33', 1),
-('e419be64-ac9f-4e3f-a48c-5a4361d2ab3e', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '639611f4-97e5-4589-904e-190ef11f7f4e', 'Inventory', '2f7c3961-8ec8-44f8-acf2-36e38f848543', 'PB-280126-00001', 'Purchase Booking', '2026-01-28 00:00:00', 'Supplier Goods', 'Products', 0.000000, 1310.000000, 'admin-id', '2026-01-28 10:17:52', 'admin-id', '2026-01-28 10:17:52', 1),
-('f30deb98-a581-4768-b384-74ece7f211ca', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Payment', 'e9174829-2d14-4f5a-bd47-43f3b0309851', 'PR-300126-00001', 'Purchase Receipt', '2026-01-30 00:00:00', 'Supplier Payment', 'Payment', 1732.500000, 0.000000, 'admin-id', '2026-01-30 11:48:07', 'admin-id', '2026-01-30 11:48:07', 1),
-('f9f3cbd1-9f63-43bd-8f9c-5de029522c8c', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'Inventory', '11346302-585a-4496-86a6-edf32e373ffa', 'PI-290126-00001', 'Purchase Booking', '2026-01-29 00:00:00', 'Supplier Goods', 'Products', 0.000000, 3937.500000, 'admin-id', '2026-01-29 14:25:47', 'admin-id', '2026-01-29 14:25:47', 1);
+('1407f613-e62e-4a3a-b902-803bb1802064', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', 'd004b22d-64ed-45e2-9df4-07fb2cf02e12', 'PB-310126-00001', 'Purchase Booking', '2026-01-31 00:00:00', 'Supplier Goods', 'Products', 0.000000, 49380.000000, 'user1', '2026-01-31 11:32:27', 'user1', '2026-01-31 11:32:27', 1),
+('6ca76c7f-cf7d-4e40-a2da-f3fae13938f1', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Cash', 'd004b22d-64ed-45e2-9df4-07fb2cf02e12', 'PB-310126-00001', 'Purchase Booking', '2026-01-31 00:00:00', 'CT#123-001', 'Payment', 40000.000000, 0.000000, 'user1', '2026-01-31 11:32:27', 'user1', '2026-01-31 11:32:27', 1),
+('bbc53dd4-8b98-4d45-a119-b5b857f1038a', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Payment', 'a47ba530-35f9-4ac6-b87a-97d2e825a2df', 'PR-310126-00001', 'Purchase Receipt', '2026-01-31 00:00:00', 'Supplier Payment', 'Payment', 8610.000000, 0.000000, 'user1', '2026-01-31 12:33:07', 'user1', '2026-01-31 12:33:07', 1),
+('d4661783-a5aa-40a6-94c1-ffa1a140bd80', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', 'a47ba530-35f9-4ac6-b87a-97d2e825a2df', 'PR-310126-00001', 'Purchase Receipt', '2026-01-31 00:00:00', 'Supplier Goods', 'Products', 0.000000, 8610.000000, 'user1', '2026-01-31 12:33:07', 'user1', '2026-01-31 12:33:07', 1);
 
 -- --------------------------------------------------------
 
@@ -1302,20 +1228,6 @@ CREATE TABLE `tmub_tickt` (
 --
 
 --
--- Indexes for table `tmab_bsins`
---
-ALTER TABLE `tmab_bsins`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `ix_bsins_users_bsins_bname` (`bsins_users`,`bsins_bname`);
-
---
--- Indexes for table `tmab_users`
---
-ALTER TABLE `tmab_users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `ix_users_email` (`users_email`);
-
---
 -- Indexes for table `tmcb_cntct`
 --
 ALTER TABLE `tmcb_cntct`
@@ -1430,10 +1342,24 @@ ALTER TABLE `tmpb_mrcpt`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `tmsb_bsins`
+--
+ALTER TABLE `tmsb_bsins`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `ix_bsins_users_bsins_bname` (`bsins_users`,`bsins_bname`);
+
+--
 -- Indexes for table `tmsb_crgrn`
 --
 ALTER TABLE `tmsb_crgrn`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmsb_users`
+--
+ALTER TABLE `tmsb_users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `ix_users_email` (`users_email`);
 
 --
 -- Indexes for table `tmtb_bacts`

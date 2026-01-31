@@ -242,44 +242,23 @@ const ProductsFormComp = ({
         </div>
         <div className="col-12 md:col-2">
           <label
-            htmlFor="items_hwrnt"
+            htmlFor="items_trcks"
             className="block text-900 font-medium mb-2"
           >
-            {tmib_items.items_hwrnt.label}{" "}
+            {tmib_items.items_trcks.label}{" "}
             <span className="text-red-500">*</span>
           </label>
           <ToggleButton
-            onLabel="Warranty"
-            offLabel="No Warranty"
+            onLabel="Tracking"
+            offLabel="No Tracking"
             onIcon="pi pi-check"
             offIcon="pi pi-times"
-            checked={formData.items_hwrnt}
-            onChange={(e) => onChange("items_hwrnt", e.value)}
+            checked={formData.items_trcks}
+            onChange={(e) => onChange("items_trcks", e.value)}
             size="small"
           />
-          {errors.items_hwrnt && (
-            <small className="mb-3 text-red-500">{errors.items_hwrnt}</small>
-          )}
-        </div>
-        <div className="col-12 md:col-2">
-          <label
-            htmlFor="items_hxpry"
-            className="block text-900 font-medium mb-2"
-          >
-            {tmib_items.items_hxpry.label}{" "}
-            <span className="text-red-500">*</span>
-          </label>
-          <ToggleButton
-            onLabel="Expiry"
-            offLabel="Not Expiry"
-            onIcon="pi pi-check"
-            offIcon="pi pi-times"
-            checked={formData.items_hxpry}
-            onChange={(e) => onChange("items_hxpry", e.value)}
-            size="small"
-          />
-          {errors.items_hxpry && (
-            <small className="mb-3 text-red-500">{errors.items_hxpry}</small>
+          {errors.items_trcks && (
+            <small className="mb-3 text-red-500">{errors.items_trcks}</small>
           )}
         </div>
         <div className="col-12 md:col-2">

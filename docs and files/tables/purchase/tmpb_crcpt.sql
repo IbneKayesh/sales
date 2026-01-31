@@ -1,6 +1,6 @@
 --
 -- Table structure for table tmpb_crcpt
--- purchase booking list
+-- purchase booking receipt
 
 CREATE TABLE `tmpb_crcpt` (
   `id` VARCHAR(50) NOT NULL,

@@ -28,11 +28,6 @@ const EntryComp = ({
   const [disableSubmit, setDisableSubmit] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
   const [dialogName, setDialogName] = useState("payment");
-  const [showPrintDialog, setShowPrintDialog] = useState(false);
-
-  const handlePrint = () => {
-    setShowPrintDialog(true);
-  };
 
   useEffect(() => {
     const hasProducts = formDataItemList.length < 1;

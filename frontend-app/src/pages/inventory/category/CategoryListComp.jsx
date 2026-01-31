@@ -3,8 +3,12 @@ import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import ActiveRowCell from "@/components/ActiveRowCell";
+import { useState } from "react";
+import { InputText } from "primereact/inputtext";
 
 const CategoryListComp = ({ dataList, onEdit, onDelete }) => {
+  const [globalFilter, setGlobalFilter] = useState(null);
+
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.ctgry_ctgnm}"?`,
@@ -50,6 +54,27 @@ const CategoryListComp = ({ dataList, onEdit, onDelete }) => {
       <ActiveRowCell text={rowData.ctgry_ctgnm} status={rowData.ctgry_actve} />
     );
   };
+
+  const header = () => {
+    return (
+      <div className="flex flex-column md:flex-row align-items-center justify-content-between gap-3">
+        <div className="p-inputgroup w-full md:w-25rem">
+          <span className="p-inputgroup-addon bg-gray-100">
+            <i className="pi pi-search"></i>
+          </span>
+          <InputText
+            type="search"
+            onInput={(e) => setGlobalFilter(e.target.value)}
+            placeholder="Search..."
+            className="p-inputtext-sm"
+          />
+        </div>
+
+        <div className="flex flex-column md:flex-row align-items-center gap-2 w-full md:w-auto"></div>
+      </div>
+    );
+  };
+
   return (
     <div className="p-1">
       <ConfirmDialog />
@@ -62,6 +87,9 @@ const CategoryListComp = ({ dataList, onEdit, onDelete }) => {
         size="small"
         rowHover
         showGridlines
+        globalFilter={globalFilter}
+        globalFilterFields={["ctgry_ctgnm"]}
+        header={header()}
       >
         <Column
           field="ctgry_ctgnm"

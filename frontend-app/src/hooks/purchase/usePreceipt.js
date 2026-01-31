@@ -244,7 +244,7 @@ export const usePreceipt = () => {
       // Clear form & reload
       handleClear();
       setCurrentView("list");
-      //await loadReceipts(); // make sure we wait for updated data
+      await loadReceipts(); // make sure we wait for updated data
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");
