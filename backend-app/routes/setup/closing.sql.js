@@ -54,6 +54,32 @@ const closingSql = {
         params: [businessId],
         label: `Update BItems Good Stock Quantity`,
       }),
+      //non trackings items will be good stock as summary
+      //tracking items will be item stock as batchwise
+      update_good_stock_qty_v1 : (businessId) => ({
+        sql: `UPDATE tmib_bitem tgt
+                JOIN (
+                  SELECT crpt.crcpt_bitem, 
+                  CASE WHEN itm.items_trcks = 0 THEN
+                  SUM(crpt.crcpt_itqty - crpt.crcpt_slqty)
+                  ELSE 0
+                  END AS bitem_gstkq,
+                  CASE WHEN itm.items_trcks = 1 THEN
+                  SUM(crpt.crcpt_itqty - crpt.crcpt_slqty)
+                  ELSE 0
+                  END AS bitem_istkq
+                  FROM tmpb_crcpt crpt
+                  JOIN tmpb_mrcpt mrpt ON crpt.crcpt_mrcpt = mrpt.id
+                  JOIN tmib_items itm ON crpt.crcpt_items = itm.id
+                  WHERE mrpt.mrcpt_bsins = ?  
+                  GROUP BY crpt.crcpt_bitem
+                )src
+                ON tgt.id = src.crcpt_bitem
+                SET tgt.bitem_gstkq = src.bitem_gstkq,
+                tgt.bitem_istkq = src.bitem_istkq`,
+        params: [businessId],
+        label: `Update BItems Good Stock Quantity, [Receipt, Invoice]`,
+      }),
     },
   },
 

@@ -14,6 +14,7 @@ CREATE TABLE tmib_bitem (
   `bitem_snote` VARCHAR(100),
   `bitem_gstkq` decimal(20,6) DEFAULT 0.00,
   `bitem_bstkq` decimal(20,6) DEFAULT 0.00,
+  `bitem_istkq` decimal(20,6) DEFAULT 0.00,
   `bitem_mnqty` decimal(20,6) DEFAULT 1,
   `bitem_mxqty` decimal(20,6) DEFAULT 1,
   `bitem_pbqty` decimal(20,6) DEFAULT 0.00,

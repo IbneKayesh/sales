@@ -1,6 +1,6 @@
 --
 -- Table structure for table tmpb_mrcpt
--- purchase master list
+-- purchase receipt master list
 
 CREATE TABLE `tmpb_mrcpt` (
   `id` VARCHAR(50) NOT NULL,

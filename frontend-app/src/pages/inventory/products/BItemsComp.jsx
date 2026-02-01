@@ -66,7 +66,6 @@ const BItemsComp = ({
     }
   };
 
-  
   const onExportCsv = () => {
     toast.current.show({
       severity: "warn",
@@ -170,81 +169,101 @@ const BItemsComp = ({
 
   const items_iname_BT = (rowData) => {
     return (
-      <>
-        <ActiveRowCell
+      <div className="flex flex-column">
+        <span className="text-md text-gray-700">
+          <ActiveRowCell
           text={rowData.items_iname}
           status={rowData.bitem_actve}
         />
-        <span className="text-sm text-gray-600 ml-1">
+        </span>
+        <span className="text-sm text-gray-400">
           {rowData.items_idesc}
         </span>
-      </>
+      </div>
     );
   };
 
   const bitem_lprat_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_lprat} text={Number(rowData.bitem_lprat).toFixed(2)} />
+      <div className="flex flex-column">
+        <span className="text-md text-gray-500">
+          Purchase : {Number(rowData.bitem_lprat).toFixed(2)}
+        </span>
+        <span className="text-md text-gray-500">
+          DP : {Number(rowData.bitem_dprat).toFixed(2)}
+        </span>
+        <span className="text-md text-gray-500">
+          MRP : {Number(rowData.bitem_mcmrp).toFixed(2)}
+        </span>
+      </div>
     );
   };
 
-  const bitem_dprat_BT = (rowData) => {
-    return (
-      <ZeroRowCell value={rowData.bitem_dprat} text={Number(rowData.bitem_dprat).toFixed(2)} />
-    );
-  };
-
-  const bitem_mcmrp_BT = (rowData) => {
-    return (
-      <ZeroRowCell value={rowData.bitem_mcmrp} text={Number(rowData.bitem_mcmrp).toFixed(2)} />
-    );
-  };
+ 
 
   const bitem_sddsp_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_sddsp} text={Number(rowData.bitem_sddsp).toFixed(2)} />
+      <ZeroRowCell
+        value={rowData.bitem_sddsp}
+        text={Number(rowData.bitem_sddsp).toFixed(2)}
+      />
     );
   };
 
   const bitem_gstkq_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_gstkq} text={Number(rowData.bitem_gstkq).toFixed(2)} />
-    );
-  };
-
-  const bitem_bstkq_BT = (rowData) => {
-    return (
-      <ZeroRowCell value={rowData.bitem_bstkq} text={Number(rowData.bitem_bstkq).toFixed(2)} />
+      <div className="flex flex-column">
+        <span className="text-md text-gray-500">
+          Good: {Number(rowData.bitem_gstkq).toFixed(2)}
+        </span>
+        <span className="text-md text-gray-500">
+          Bad: {Number(rowData.bitem_bstkq).toFixed(2)}
+        </span>
+        <span className="text-md text-gray-500">
+          Tracking: {Number(rowData.bitem_istkq).toFixed(2)}
+        </span>
+        <span className="text-md font-semibold">
+          Total:{" "}
+          {Number(rowData.bitem_gstkq) +
+            Number(rowData.bitem_bstkq) +
+            Number(rowData.bitem_istkq)}
+        </span>
+      </div>
     );
   };
 
   const bitem_mnqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_mnqty} text={Number(rowData.bitem_mnqty).toFixed(2)} />
-    );
-  };
-
-  const bitem_mxqty_BT = (rowData) => {
-    return (
-      <ZeroRowCell value={rowData.bitem_mxqty} text={Number(rowData.bitem_mxqty).toFixed(2)} />
+      <div className="flex flex-column">
+        <span className="text-md text-gray-500">
+          Min: {Number(rowData.bitem_mnqty).toFixed(2)}
+        </span>
+        <span className="text-md text-gray-500">
+          Max: {Number(rowData.bitem_mxqty).toFixed(2)}
+        </span>
+      </div>
     );
   };
 
   const bitem_pbqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_pbqty} text={Number(rowData.bitem_pbqty).toFixed(2)} />
-    );
-  };
-
-  const bitem_sbqty_BT = (rowData) => {
-    return (
-      <ZeroRowCell value={rowData.bitem_sbqty} text={Number(rowData.bitem_sbqty).toFixed(2)} />
+      <div className="flex flex-column">
+        <span className="text-md text-gray-500">
+          Purchase : {Number(rowData.bitem_pbqty).toFixed(2)}
+        </span>
+        <span className="text-md text-gray-500">
+          Sales : {Number(rowData.bitem_sbqty).toFixed(2)}
+        </span>
+      </div>
     );
   };
 
   const bitem_mpric_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_mpric} text={Number(rowData.bitem_mpric).toFixed(2)} />
+      <ZeroRowCell
+        value={rowData.bitem_mpric}
+        text={Number(rowData.bitem_mpric).toFixed(2)}
+      />
     );
   };
 
@@ -288,21 +307,9 @@ const BItemsComp = ({
           />
           <Column
             field="bitem_lprat"
-            header="Purchase Rate"
+            header="Rate"
             sortable
             body={bitem_lprat_BT}
-          />
-          <Column
-            field="bitem_dprat"
-            header="Distributor Rate"
-            sortable
-            body={bitem_dprat_BT}
-          />
-          <Column
-            field="bitem_mcmrp"
-            header="MRP"
-            sortable
-            body={bitem_mcmrp_BT}
           />
           <Column
             field="bitem_sddsp"
@@ -313,39 +320,21 @@ const BItemsComp = ({
           <Column field="bitem_snote" header="Note" sortable />
           <Column
             field="bitem_gstkq"
-            header="Good Stock"
+            header="Stock"
             sortable
             body={bitem_gstkq_BT}
           />
           <Column
-            field="bitem_bstkq"
-            header="Bad Stock"
-            sortable
-            body={bitem_bstkq_BT}
-          />
-          <Column
             field="bitem_mnqty"
-            header="Minimum Stock"
+            header="Overflow"
             sortable
             body={bitem_mnqty_BT}
           />
           <Column
-            field="bitem_mxqty"
-            header="Maximum Stock"
-            sortable
-            body={bitem_mxqty_BT}
-          />
-          <Column
             field="bitem_pbqty"
-            header="Purchase Booking"
+            header="Booking"
             sortable
             body={bitem_pbqty_BT}
-          />
-          <Column
-            field="bitem_sbqty"
-            header="Sales Booking"
-            sortable
-            body={bitem_sbqty_BT}
           />
           <Column
             field="bitem_mpric"

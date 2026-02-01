@@ -503,7 +503,7 @@ router.post("/get-business-items", async (req, res) => {
     //database action
     const sql = `SELECT bitm.id, bitm.bitem_users, bitm.bitem_items, bitm.bitem_bsins, bitm.bitem_lprat,
     bitm.bitem_dprat, bitm.bitem_mcmrp, bitm.bitem_sddsp, bitm.bitem_snote,
-    bitm.bitem_gstkq, bitm.bitem_bstkq, bitm.bitem_mnqty, bitm.bitem_mxqty, bitm.bitem_pbqty, 
+    bitm.bitem_gstkq, bitm.bitem_bstkq, bitm.bitem_istkq, bitm.bitem_mnqty, bitm.bitem_mxqty, bitm.bitem_pbqty, 
     bitm.bitem_sbqty, bitm.bitem_mpric, bitm.bitem_actve,
     itm.items_iname, itm.items_idesc
     FROM tmib_bitem bitm

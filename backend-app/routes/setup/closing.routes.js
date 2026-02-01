@@ -71,6 +71,9 @@ router.post("/purchase-receipt", async (req, res) => {
     scripts.push(
       closingSql.inventory.tmib_bitem.update_purchase_booking_qty(id),
     );
+    scripts.push(
+      closingSql.inventory.tmib_bitem.update_good_stock_qty_v1(id),
+    );
 
     await dbRunAll(scripts);
     res.json({

@@ -191,7 +191,7 @@ const ListComp = ({ dataList, onEdit }) => {
         <span className="text-blue-600">
           {rowData.mrcpt_trnno},{" "}
           <span className="text-md text-blue-400 mt-1">
-            Booking
+            Receipt
           </span>
         </span>
         <span className="text-sm font-italic text-green-600 mt-1">

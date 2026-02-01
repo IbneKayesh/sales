@@ -824,7 +824,9 @@ router.post("/available-receipt-items", async (req, res) => {
     cbkg.cbkng_itrat AS crcpt_itrat, cbkg.cbkng_pnqty AS crcpt_itqty, cbkg.cbkng_itamt AS crcpt_itamt, cbkg.cbkng_dspct AS crcpt_dspct,
     cbkg.cbkng_dsamt AS crcpt_dsamt, cbkg.cbkng_vtpct AS crcpt_vtpct, cbkg.cbkng_vtamt AS crcpt_vtamt, cbkg.cbkng_csrat AS crcpt_csrat,
     cbkg.cbkng_ntamt AS crcpt_ntamt, cbkg.cbkng_notes AS crcpt_notes, cbkg.cbkng_attrb AS crcpt_attrb,
-    0 AS crcpt_rtqty, 0 AS crcpt_slqty, cbkg.cbkng_pnqty AS crcpt_ohqty, cbkg.id AS crcpt_cbkng, 0 as edit_stop,
+    0 AS crcpt_rtqty, 0 AS crcpt_slqty,
+    cbkg.cbkng_pnqty AS crcpt_ohqty,
+    cbkg.id AS crcpt_cbkng, 0 as edit_stop,
     itm.items_icode, itm.items_iname, itm.items_dfqty, bitm.bitem_gstkq,
     puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
     FROM tmpb_cbkng cbkg
