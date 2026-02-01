@@ -546,8 +546,8 @@ router.post("/get-booking-items", async (req, res) => {
     //database action
     const sql = `SELECT bitm.id, bitm.bitem_users, bitm.bitem_items, bitm.bitem_bsins, bitm.bitem_lprat,
     bitm.bitem_dprat, bitm.bitem_mcmrp, bitm.bitem_sddsp, bitm.bitem_snote,
-    bitm.bitem_gstkq, bitm.bitem_bstkq, bitm.bitem_mnqty, bitm.bitem_mxqty, bitm.bitem_pbqty, 
-    bitm.bitem_sbqty, bitm.bitem_mpric, bitm.bitem_actve,
+    bitm.bitem_gstkq, bitm.bitem_bstkq, bitm.bitem_istkq, bitm.bitem_mnqty, bitm.bitem_mxqty, 
+    bitm.bitem_pbqty, bitm.bitem_sbqty, bitm.bitem_mpric, bitm.bitem_actve,
     itm.items_icode, itm.items_iname, itm.items_idesc, itm.items_sdvat,
     puofm.iuofm_untnm as puofm_untnm,
     itm.items_dfqty,
@@ -605,6 +605,7 @@ SELECT minv.minvc_trnno, cinv.cinvc_bitem, cinv.cinvc_items, cinv.cinvc_itrat, c
 'Purchase Invoice' AS ctrsf_srcnm, cinv.id
 FROM tmpb_cinvc cinv
 JOIN tmpb_minvc minv ON cinv.cinvc_minvc = minv.id
+JOIN tmib_items itm ON cinv.cinvc_items = itm.id AND itm.items_trcks = 1
 WHERE minv.minvc_users = ?
 AND minv.minvc_bsins = ?
 AND cinv.cinvc_ohqty > 0
@@ -613,9 +614,18 @@ SELECT mrpt.mrcpt_trnno, crpt.crcpt_bitem, crpt.crcpt_items, crpt.crcpt_itrat, c
 'Purchase Receipt' AS ctrsf_srcnm, crpt.id
 FROM tmpb_crcpt crpt
 JOIN tmpb_mrcpt mrpt ON crpt.crcpt_mrcpt = mrpt.id
+JOIN tmib_items itm ON crpt.crcpt_items = itm.id AND itm.items_trcks = 1
 WHERE mrpt.mrcpt_users = ?
 AND mrpt.mrcpt_bsins = ?
 AND crpt.crcpt_ohqty > 0
+UNION ALL
+SELECT 'Inventory Stock' AS bitem_trnno, bitm.id as bitem_bitem, bitm.bitem_items, bitm.bitem_lprat,
+'{}' AS bitem_attrb, bitm.bitem_gstkq,'Inventory Stock' AS bitem_srcnm, bitm.id
+FROM tmib_bitem bitm
+JOIN tmib_items itm ON bitm.bitem_items = itm.id AND itm.items_trcks = 0
+WHERE bitm.bitem_users = ?
+AND bitm.bitem_bsins = ?
+AND bitm.bitem_gstkq > 0
 )stk ON itm.id = stk.cinvc_items
 JOIN tmib_bitem bitm ON stk.cinvc_bitem = bitm.id
 AND stk.cinvc_items = bitm.bitem_items AND itm.id = bitm.bitem_items
@@ -623,7 +633,7 @@ LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
 LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
 WHERE itm.items_users = ?
 AND bitm.bitem_bsins = ?`;
-    const params = [bitem_users, bitem_bsins, bitem_users, bitem_bsins, bitem_users, bitem_bsins];
+    const params = [bitem_users, bitem_bsins, bitem_users, bitem_bsins, bitem_users, bitem_bsins, bitem_users, bitem_bsins];
 
     const rows = await dbGetAll(sql, params, `Get transfer items for ${bitem_bsins}`);
 

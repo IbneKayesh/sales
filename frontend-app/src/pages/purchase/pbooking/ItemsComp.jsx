@@ -160,7 +160,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           </div>
         </div>
         <div className="col-12 p-0">
-          📦 Stock: {Number(option.bitem_gstkq).toFixed(2)} {option.puofm_untnm}
+          📦 Stock: {(Number(option.bitem_gstkq) + Number(option.bitem_istkq)).toFixed(2)} {option.puofm_untnm}
         </div>
       </div>
     );

@@ -111,10 +111,9 @@ export const useItransfer = () => {
 
   const handleAddNew = () => {
     //console.log("business:", business.bsins_prtrn);
-    //check if business is active
-    if (!business.bsins_trtrn) {
+    if (!business.bsins_tstrn) {
       showToast("error", "Error", "Transfer is not active");
-      //return;
+      return;
     }
     handleClear();
     setCurrentView("form");

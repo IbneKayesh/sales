@@ -18,9 +18,9 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   const { dataList: productList, handleLoadTransferItems } = useProductsSgd();
 
   useEffect(() => {
-    handleLoadTransferItems();
+    handleLoadTransferItems(formData.mtrsf_bsins_to);
     //console.log("productList", productList);
-  }, []);
+  }, [formData.mtrsf_bsins_to]);
 
   const [availableItemList, setAvailableItemList] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);

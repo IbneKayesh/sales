@@ -172,13 +172,11 @@ const BItemsComp = ({
       <div className="flex flex-column">
         <span className="text-md text-gray-700">
           <ActiveRowCell
-          text={rowData.items_iname}
-          status={rowData.bitem_actve}
-        />
+            text={rowData.items_iname}
+            status={rowData.bitem_actve}
+          />
         </span>
-        <span className="text-sm text-gray-400">
-          {rowData.items_idesc}
-        </span>
+        <span className="text-sm text-gray-400">{rowData.items_idesc}</span>
       </div>
     );
   };
@@ -186,20 +184,21 @@ const BItemsComp = ({
   const bitem_lprat_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-md text-gray-500">
-          Purchase : {Number(rowData.bitem_lprat).toFixed(2)}
-        </span>
-        <span className="text-md text-gray-500">
-          DP : {Number(rowData.bitem_dprat).toFixed(2)}
-        </span>
-        <span className="text-md text-gray-500">
-          MRP : {Number(rowData.bitem_mcmrp).toFixed(2)}
-        </span>
+        <ZeroRowCell
+          value={rowData.bitem_lprat}
+          text={"Purchase: " + Number(rowData.bitem_lprat).toFixed(2)}
+        />
+        <ZeroRowCell
+          value={rowData.bitem_dprat}
+          text={"DP: " + Number(rowData.bitem_dprat).toFixed(2)}
+        />
+        <ZeroRowCell
+          value={rowData.bitem_mcmrp}
+          text={"MRP: " + Number(rowData.bitem_mcmrp).toFixed(2)}
+        />
       </div>
     );
   };
-
- 
 
   const bitem_sddsp_BT = (rowData) => {
     return (
@@ -211,22 +210,29 @@ const BItemsComp = ({
   };
 
   const bitem_gstkq_BT = (rowData) => {
+    const totalStock =
+      Number(rowData.bitem_gstkq) +
+      Number(rowData.bitem_bstkq) +
+      Number(rowData.bitem_istkq);
     return (
       <div className="flex flex-column">
-        <span className="text-md text-gray-500">
-          Good: {Number(rowData.bitem_gstkq).toFixed(2)}
-        </span>
-        <span className="text-md text-gray-500">
-          Bad: {Number(rowData.bitem_bstkq).toFixed(2)}
-        </span>
-        <span className="text-md text-gray-500">
-          Tracking: {Number(rowData.bitem_istkq).toFixed(2)}
-        </span>
-        <span className="text-md font-semibold">
-          Total:{" "}
-          {Number(rowData.bitem_gstkq) +
-            Number(rowData.bitem_bstkq) +
-            Number(rowData.bitem_istkq)}
+        <ZeroRowCell
+          value={rowData.bitem_gstkq}
+          text={"Good: " + Number(rowData.bitem_gstkq).toFixed(2)}
+        />
+        <ZeroRowCell
+          value={rowData.bitem_bstkq}
+          text={"Bad: " + Number(rowData.bitem_bstkq).toFixed(2)}
+        />
+        <ZeroRowCell
+          value={rowData.bitem_istkq}
+          text={"Tracking: " + Number(rowData.bitem_istkq).toFixed(2)}
+        />
+        <span className="font-bold">
+          <ZeroRowCell
+            value={totalStock}
+            text={"Total: " + Number(totalStock).toFixed(2)}
+          />
         </span>
       </div>
     );
@@ -235,12 +241,14 @@ const BItemsComp = ({
   const bitem_mnqty_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-md text-gray-500">
-          Min: {Number(rowData.bitem_mnqty).toFixed(2)}
-        </span>
-        <span className="text-md text-gray-500">
-          Max: {Number(rowData.bitem_mxqty).toFixed(2)}
-        </span>
+        <ZeroRowCell
+          value={rowData.bitem_mnqty}
+          text={"Min: " + Number(rowData.bitem_mnqty).toFixed(2)}
+        />
+        <ZeroRowCell
+          value={rowData.bitem_mxqty}
+          text={"Max: " + Number(rowData.bitem_mxqty).toFixed(2)}
+        />
       </div>
     );
   };
@@ -248,12 +256,14 @@ const BItemsComp = ({
   const bitem_pbqty_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-md text-gray-500">
-          Purchase : {Number(rowData.bitem_pbqty).toFixed(2)}
-        </span>
-        <span className="text-md text-gray-500">
-          Sales : {Number(rowData.bitem_sbqty).toFixed(2)}
-        </span>
+        <ZeroRowCell
+          value={rowData.bitem_pbqty}
+          text={"Purchase: " + Number(rowData.bitem_pbqty).toFixed(2)}
+        />
+        <ZeroRowCell
+          value={rowData.bitem_sbqty}
+          text={"Sales: " + Number(rowData.bitem_sbqty).toFixed(2)}
+        />
       </div>
     );
   };

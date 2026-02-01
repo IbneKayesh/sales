@@ -19,11 +19,14 @@ export const useProductsSgd = () => {
     }
   };
 
-const handleLoadTransferItems = async () => {
+const handleLoadTransferItems = async (toBusinessId) => {
+  //console.log("mtrsf_bsins_to ", toBusinessId);
+  //return;
   try {
     const response = await productsAPI.getTransferItems({
       bitem_users: user.users_users,
       bitem_bsins: user.users_bsins,
+      mtrsf_bsins_to: toBusinessId,
     });
     //console.log("data",user.users_bsins);
     setDataList(response.data);

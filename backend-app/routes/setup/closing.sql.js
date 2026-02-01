@@ -1,7 +1,7 @@
 /**
  * SQL Scripts Library for centralized SQL management
  * This helps reduce redundancy and maintain SQL scripts in one place.
- */
+ **/
 
 const closingSql = {
   inventory: {
@@ -17,9 +17,10 @@ const closingSql = {
       reset_purchase_booking_and_good_stock_qty: (businessId) => ({
         sql: `UPDATE tmib_bitem
                 SET bitem_pbqty = 0,
-                bitem_gstkq = 0
+                bitem_gstkq = 0,
+                bitem_istkq = 0
                 WHERE bitem_bsins = ?
-                AND (bitem_pbqty > 0 OR bitem_gstkq > 0)`,
+                AND (bitem_pbqty > 0 OR bitem_gstkq > 0 OR bitem_istkq > 0)`,
         params: [businessId],
         label: `Reset BItems Purchase Booking and Good Stock Quantity`,
       }),
@@ -39,46 +40,63 @@ const closingSql = {
         params: [businessId],
         label: `Update BItems Purchase Booking Quantity`,
       }),
-      update_good_stock_qty: (businessId) => ({
-        sql: `UPDATE tmib_bitem AS tgt
-              JOIN (
-                SELECT crcpt.crcpt_bitem, crcpt.crcpt_items, SUM(crcpt.crcpt_ohqty) AS bitem_gstkq
-                FROM tmpb_crcpt crcpt
-                JOIN tmpb_mrcpt mrcpt ON crcpt.crcpt_mrcpt = mrcpt.id
-                WHERE crcpt.crcpt_ohqty > 0
-                AND mrcpt.mrcpt_bsins = ?
-                GROUP BY crcpt.crcpt_bitem, crcpt.crcpt_items
-            ) AS src
-            ON tgt.id = src.crcpt_bitem
-            SET tgt.bitem_gstkq = src.bitem_gstkq`,
-        params: [businessId],
-        label: `Update BItems Good Stock Quantity`,
-      }),
-      //non trackings items will be good stock as summary
-      //tracking items will be item stock as batchwise
-      update_good_stock_qty_v1 : (businessId) => ({
+      update_good_stock_qty_v1: (businessId) => ({
+        //invoice, receipt, transfer
         sql: `UPDATE tmib_bitem tgt
                 JOIN (
-                  SELECT crpt.crcpt_bitem, 
-                  CASE WHEN itm.items_trcks = 0 THEN
-                  SUM(crpt.crcpt_itqty - crpt.crcpt_slqty)
-                  ELSE 0
-                  END AS bitem_gstkq,
-                  CASE WHEN itm.items_trcks = 1 THEN
-                  SUM(crpt.crcpt_itqty - crpt.crcpt_slqty)
-                  ELSE 0
-                  END AS bitem_istkq
-                  FROM tmpb_crcpt crpt
-                  JOIN tmpb_mrcpt mrpt ON crpt.crcpt_mrcpt = mrpt.id
-                  JOIN tmib_items itm ON crpt.crcpt_items = itm.id
-                  WHERE mrpt.mrcpt_bsins = ?  
-                  GROUP BY crpt.crcpt_bitem
+                  SELECT bitem_id, SUM(bitem_gstkq) AS bitem_gstkq, SUM(bitem_istkq) AS bitem_istkq
+                  FROM (
+                      SELECT cinv.cinvc_bitem AS bitem_id, 
+                      CASE WHEN itm.items_trcks = 0 THEN
+                      SUM(cinv.cinvc_itqty - cinv.cinvc_slqty)
+                      ELSE 0
+                      END AS bitem_gstkq,
+                      CASE WHEN itm.items_trcks = 1 THEN
+                      SUM(cinv.cinvc_itqty - cinv.cinvc_slqty)
+                      ELSE 0
+                      END AS bitem_istkq
+                      FROM tmpb_cinvc cinv
+                      JOIN tmpb_minvc minv ON cinv.cinvc_minvc = minv.id
+                      JOIN tmib_items itm ON cinv.cinvc_items = itm.id
+                      WHERE minv.minvc_bsins = ?
+                      GROUP BY cinv.cinvc_bitem
+                  UNION ALL
+                      SELECT crpt.crcpt_bitem, 
+                      CASE WHEN itm.items_trcks = 0 THEN
+                      SUM(crpt.crcpt_itqty - crpt.crcpt_slqty)
+                      ELSE 0
+                      END AS bitem_gstkq,
+                      CASE WHEN itm.items_trcks = 1 THEN
+                      SUM(crpt.crcpt_itqty - crpt.crcpt_slqty)
+                      ELSE 0
+                      END AS bitem_istkq
+                      FROM tmpb_crcpt crpt
+                      JOIN tmpb_mrcpt mrpt ON crpt.crcpt_mrcpt = mrpt.id
+                      JOIN tmib_items itm ON crpt.crcpt_items = itm.id
+                      WHERE mrpt.mrcpt_bsins = ? 
+                      GROUP BY crpt.crcpt_bitem
+                  UNION ALL
+                      SELECT cts.ctrsf_bitem,
+                      CASE WHEN cts.ctrsf_srcnm = 'Inventory Stock' THEN
+                      0 - SUM(cts.ctrsf_itqty)
+                      ELSE 0
+                      END AS bitem_gstkq,
+                      CASE WHEN cts.ctrsf_srcnm != 'Inventory Stock' THEN
+                      0 - SUM(cts.ctrsf_itqty)
+                      ELSE 0
+                      END AS bitem_istkq
+                      FROM tmib_ctrsf cts
+                      JOIN tmib_mtrsf mts ON cts.ctrsf_mtrsf = mts.id
+                      WHERE mts.mtrsf_bsins = ?
+                      GROUP BY cts.ctrsf_bitem
+                  )src
+                  GROUP BY bitem_id
                 )src
-                ON tgt.id = src.crcpt_bitem
+                ON tgt.id = src.bitem_id
                 SET tgt.bitem_gstkq = src.bitem_gstkq,
                 tgt.bitem_istkq = src.bitem_istkq`,
-        params: [businessId],
-        label: `Update BItems Good Stock Quantity, [Receipt, Invoice]`,
+        params: [businessId, businessId, businessId],
+        label: `Update BItems Good Stock Quantity, [Receipt, Invoice, Transfer]`,
       }),
     },
   },
@@ -191,11 +209,11 @@ const closingSql = {
       update_sold_ohqty: (businessId) => ({
         sql: `UPDATE tmpb_crcpt tgt
             JOIN (
-            SELECT cts.ctrsf_srcnm, cts.ctrsf_refid, SUM(cts.ctrsf_itqty) AS ctrsf_itqty
-            FROM tmib_ctrsf cts
-            JOIN tmib_mtrsf mts ON cts.ctrsf_mtrsf = mts.id
-            WHERE cts.ctrsf_srcnm = 'Purchase Receipt'
-            GROUP BY cts.ctrsf_srcnm, cts.ctrsf_refid
+              SELECT cts.ctrsf_srcnm, cts.ctrsf_refid, SUM(cts.ctrsf_itqty) AS ctrsf_itqty
+              FROM tmib_ctrsf cts
+              JOIN tmib_mtrsf mts ON cts.ctrsf_mtrsf = mts.id
+              WHERE cts.ctrsf_srcnm = 'Purchase Receipt'
+              GROUP BY cts.ctrsf_srcnm, cts.ctrsf_refid
             )src
             ON tgt.id = src.ctrsf_refid
             SET tgt.crcpt_slqty = src.ctrsf_itqty,
@@ -209,11 +227,11 @@ const closingSql = {
       update_sold_ohqty: (businessId) => ({
         sql: `UPDATE tmpb_cinvc tgt
             JOIN (
-            SELECT cts.ctrsf_srcnm, cts.ctrsf_refid, SUM(cts.ctrsf_itqty) AS ctrsf_itqty
-            FROM tmib_ctrsf cts
-            JOIN tmib_mtrsf mts ON cts.ctrsf_mtrsf = mts.id
-            WHERE cts.ctrsf_srcnm = 'Purchase Invoice'
-            GROUP BY cts.ctrsf_srcnm, cts.ctrsf_refid
+              SELECT cts.ctrsf_srcnm, cts.ctrsf_refid, SUM(cts.ctrsf_itqty) AS ctrsf_itqty
+              FROM tmib_ctrsf cts
+              JOIN tmib_mtrsf mts ON cts.ctrsf_mtrsf = mts.id
+              WHERE cts.ctrsf_srcnm = 'Purchase Invoice'
+              GROUP BY cts.ctrsf_srcnm, cts.ctrsf_refid
             )src
             ON tgt.id = src.ctrsf_refid
             SET tgt.cinvc_slqty = src.ctrsf_itqty,

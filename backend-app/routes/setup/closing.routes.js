@@ -183,9 +183,8 @@ router.post("/purchase-invoice", async (req, res) => {
     //database action
     const scripts = [];
     // Example: Purchase invoice also updates good stock quantity
-    scripts.push(closingSql.inventory.tmib_bitem.update_good_stock_qty(id));
-
-    // Add other relevant scripts here...
+    scripts.push(closingSql.inventory.tmib_bitem.reset_purchase_booking_and_good_stock_qty(id));
+    scripts.push(closingSql.inventory.tmib_bitem.update_good_stock_qty_v1(id));
 
     await dbRunAll(scripts);
     res.json({
@@ -223,13 +222,12 @@ router.post("/inventory-transfer", async (req, res) => {
     // Example: Purchase invoice also updates good stock quantity
     scripts.push(closingSql.purchase.tmpb_crcpt.update_sold_ohqty(id));
     scripts.push(closingSql.purchase.tmpb_cinvc.update_sold_ohqty(id));
-
-    // Add other relevant scripts here...
+    scripts.push(closingSql.inventory.tmib_bitem.update_good_stock_qty_v1(id));
 
     await dbRunAll(scripts);
     res.json({
       success: true,
-      message: "Purchase Invoice generated successfully",
+      message: "Inventory Transfer generated successfully",
       data: req.body,
     });
   } catch (error) {

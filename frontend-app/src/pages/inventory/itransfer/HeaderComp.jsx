@@ -13,7 +13,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
   useEffect(() => {
     if (!formData.edit_stop) {
       handleLoadBusiness();
-      console.log("formData", formData);
+      //console.log("formData", formData);
     }
   }, []);
 
