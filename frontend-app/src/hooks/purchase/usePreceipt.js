@@ -239,7 +239,7 @@ export const usePreceipt = () => {
       );
 
       //call update process
-      await closingProcessAPI("purchase-receipt", user.users_bsins);
+      //await closingProcessAPI("purchase-receipt", user.users_bsins);
 
       // Clear form & reload
       handleClear();

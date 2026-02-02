@@ -214,12 +214,12 @@ export const useItransfer = () => {
       );
 
       //call update process
-      await closingProcessAPI("inventory-transfer", user.users_bsins);
+      //await closingProcessAPI("inventory-transfer", user.users_bsins);
 
       // Clear form & reload
-      //handleClear();
-      //setCurrentView("list");
-      //await loadTransfer(); // make sure we wait for updated data
+      handleClear();
+      setCurrentView("list");
+      await loadTransfer(); // make sure we wait for updated data
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");

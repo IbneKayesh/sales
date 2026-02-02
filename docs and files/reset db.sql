@@ -43,4 +43,4 @@ DELETE FROM tmpb_crcpt;
 DELETE FROM tmpb_minvc;
 DELETE FROM tmpb_cinvc;
 
-UPDATE tmib_bitem SET bitem_pbqty = 0, bitem_sbqty = 0
+UPDATE tmib_bitem SET bitem_gstkq = 0, bitem_bstkq = 0, bitem_istkq = 0, bitem_pbqty = 0, bitem_sbqty = 0;

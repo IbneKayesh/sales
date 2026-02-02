@@ -245,7 +245,7 @@ export const usePinvoice = () => {
       );
 
       //call update process
-      await closingProcessAPI("purchase-invoice", user.users_bsins);
+      //await closingProcessAPI("purchase-invoice", user.users_bsins);
 
       // Clear form & reload
       handleClear();

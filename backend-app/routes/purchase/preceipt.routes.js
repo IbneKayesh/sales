@@ -489,6 +489,35 @@ router.post("/create", async (req, res) => {
       label: `Created payment credit ${mrcpt_trnno_new}`,
     });
 
+    //when posted
+    if (mrcpt_ispst === 1) {
+      for (const det of tmpb_crcpt) {
+        scripts.push({
+          sql: `UPDATE tmpb_cbkng
+          SET cbkng_rcqty = cbkng_rcqty + ?,
+          cbkng_pnqty = cbkng_pnqty - ?
+          WHERE id = ?`,
+          params: [det.crcpt_itqty, det.crcpt_itqty, det.crcpt_cbkng],
+          label: `Updated booking received`,
+        });
+
+        scripts.push({
+          sql: `UPDATE tmib_bitem
+        SET bitem_gstkq = bitem_gstkq + ?,
+        bitem_istkq = bitem_istkq + ?,
+        bitem_pbqty = bitem_pbqty - ?
+        WHERE id = ?`,
+          params: [
+            det.crcpt_itqty,
+            det.crcpt_itqty,
+            det.crcpt_itqty,
+            det.crcpt_bitem,
+          ],
+          label: `Updated b item stock`,
+        });
+      }
+    }
+
     await dbRunAll(scripts);
 
     res.json({
@@ -751,6 +780,35 @@ router.post("/update", async (req, res) => {
       ],
       label: `Created payment credit ${mrcpt_trnno}`,
     });
+
+    //when posted
+    if (mrcpt_ispst === 1) {
+      for (const det of tmpb_crcpt) {
+        scripts_updt.push({
+          sql: `UPDATE tmpb_cbkng
+          SET cbkng_rcqty = cbkng_rcqty + ?,
+          cbkng_pnqty = cbkng_pnqty - ?
+          WHERE id = ?`,
+          params: [det.crcpt_itqty, det.crcpt_itqty, det.crcpt_cbkng],
+          label: `Updated booking received`,
+        });
+
+        scripts_updt.push({
+          sql: `UPDATE tmib_bitem
+        SET bitem_gstkq = bitem_gstkq + ?,
+        bitem_istkq = bitem_istkq + ?,
+        bitem_pbqty = bitem_pbqty - ?
+        WHERE id = ?`,
+          params: [
+            det.crcpt_itqty,
+            det.crcpt_itqty,
+            det.crcpt_itqty,
+            det.crcpt_bitem,
+          ],
+          label: `Updated b item stock`,
+        });
+      }
+    }
 
     await dbRunAll(scripts_updt);
     res.json({

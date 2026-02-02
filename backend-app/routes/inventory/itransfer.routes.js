@@ -444,6 +444,49 @@ router.post("/create", async (req, res) => {
     //   label: `Created payment credit ${mtrsf_trnno_new}`,
     // });
 
+    //when posted
+    if (mtrsf_ispst === 1) {
+      for (const det of tmib_ctrsf) {
+        if (det.ctrsf_srcnm === "Purchase Invoice") {
+          scripts.push({
+            sql: `UPDATE tmpb_cinvc
+          SET cinvc_slqty = cinvc_slqty + ?,
+          cinvc_ohqty = cinvc_ohqty - ?
+          WHERE id = ?`,
+            params: [det.ctrsf_itqty, det.ctrsf_itqty, det.ctrsf_refid],
+            label: `Updated purchase invoice sold, on-hand qty`,
+          });
+        }
+        if (det.ctrsf_srcnm === "Purchase Receipt") {
+          scripts.push({
+            sql: `UPDATE tmpb_crcpt
+          SET crcpt_slqty = crcpt_slqty + ?,
+          crcpt_ohqty = crcpt_ohqty - ?
+          WHERE id = ?`,
+            params: [det.ctrsf_itqty, det.ctrsf_itqty, det.ctrsf_refid],
+            label: `Updated purchase received sold, on-hand qty`,
+          });
+        }
+        if (det.ctrsf_srcnm === "Inventory Stock") {
+          scripts.push({
+            sql: `UPDATE tmib_bitem
+        SET bitem_gstkq = bitem_gstkq - ?
+        WHERE id = ?`,
+            params: [det.ctrsf_itqty, det.ctrsf_bitem],
+            label: `Updated b item good stock`,
+          });
+        } else {
+          scripts.push({
+            sql: `UPDATE tmib_bitem
+        SET bitem_istkq = bitem_istkq - ?
+        WHERE id = ?`,
+            params: [det.ctrsf_itqty, det.ctrsf_bitem],
+            label: `Updated b item item stock`,
+          });
+        }
+      }
+    }
+
     await dbRunAll(scripts);
 
     res.json({

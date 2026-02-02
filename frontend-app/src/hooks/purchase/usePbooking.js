@@ -245,9 +245,8 @@ export const usePbooking = () => {
       );
 
       //call update process
-      await closingProcessAPI("purchase-booking", user.users_bsins);
-
-      // Clear form & reload
+      //await closingProcessAPI("purchase-booking", user.users_bsins);
+      //Clear form & reload
       handleClear();
       setCurrentView("list");
       await loadBookings(); // make sure we wait for updated data

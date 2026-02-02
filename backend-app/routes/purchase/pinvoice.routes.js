@@ -287,7 +287,7 @@ router.post("/create", async (req, res) => {
       tmtb_paybl,
     } = req.body;
 
-    console.log("create:", JSON.stringify(req.body));
+    //console.log("create:", JSON.stringify(req.body));
 
     // Validate input
     if (
@@ -490,6 +490,20 @@ router.post("/create", async (req, res) => {
       label: `Created payment credit ${minvc_trnno_new}`,
     });
 
+    //when posted
+    if (minvc_ispst === 1) {
+      for (const det of tmpb_cinvc) {
+        scripts.push({
+          sql: `UPDATE tmib_bitem
+        SET bitem_gstkq = bitem_gstkq + ?,
+        bitem_istkq = bitem_istkq + ?
+        WHERE id = ?`,
+          params: [det.cinvc_itqty, det.cinvc_itqty, det.cinvc_bitem],
+          label: `Updated b item stock`,
+        });
+      }
+    }
+
     await dbRunAll(scripts);
 
     res.json({
@@ -630,9 +644,9 @@ router.post("/update", async (req, res) => {
       ],
       label: `Update master ${minvc_trnno}`,
     });
-  
+
     console.log(JSON.stringify(tmpb_cinvc));
-    
+
     //Insert booking details
     for (const det of tmpb_cinvc) {
       scripts_updt.push({
@@ -730,7 +744,7 @@ router.post("/update", async (req, res) => {
       }
     }
 
-    // //Insert payment details :: credit
+    //Insert payment details :: credit
     scripts_updt.push({
       sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
       paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
@@ -757,6 +771,20 @@ router.post("/update", async (req, res) => {
       ],
       label: `Created payment credit ${minvc_trnno}`,
     });
+
+    //when posted
+    if (minvc_ispst === 1) {
+      for (const det of tmpb_cinvc) {
+        scripts_updt.push({
+          sql: `UPDATE tmib_bitem
+        SET bitem_gstkq = bitem_gstkq + ?,
+        bitem_istkq = bitem_istkq + ?
+        WHERE id = ?`,
+          params: [det.cinvc_itqty, det.cinvc_itqty, det.cinvc_bitem],
+          label: `Updated b item stock`,
+        });
+      }
+    }
 
     await dbRunAll(scripts_updt);
     res.json({
