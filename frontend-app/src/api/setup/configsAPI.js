@@ -1,6 +1,10 @@
 import { apiRequest } from "@/utils/api.js";
 
-//configs API
+//businessAPI
 export const configsAPI = {
-    getTransaction: (name) => apiRequest(`/setup/configs/transaction/${name}`),
-}
+  getAll: (data) =>
+    apiRequest("/setup/configs", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+};

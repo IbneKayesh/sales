@@ -32,6 +32,21 @@ const BItemsComp = ({
       icon: "pi pi-times-circle",
     },
     {
+      label: "Good or Tracking Stock",
+      value: "good_or_tracking_stock",
+      icon: "pi pi-exclamation-circle",
+    },
+    {
+      label: "Good Stock",
+      value: "good_stock",
+      icon: "pi pi-check-circle",
+    },
+    {
+      label: "Tracking Stock",
+      value: "tracking_stock",
+      icon: "pi pi-check-circle",
+    },
+    {
       label: "Bad Stock",
       value: "bad_stock",
       icon: "pi pi-exclamation-triangle",

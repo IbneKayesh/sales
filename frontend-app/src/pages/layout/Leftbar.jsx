@@ -138,7 +138,7 @@ const Leftbar = ({ menus }) => {
             </span>
           </div>
           <div className="footer-copyright">
-            © 2025-2026 All Rights Reserved
+            © 2025-2026 All Rights Reserved. BA Pro
           </div>
         </div>
       </div>

@@ -37,4 +37,9 @@ export const contactAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getAllCustomers: (data) =>
+    apiRequest(`/crm/contacts/customers`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

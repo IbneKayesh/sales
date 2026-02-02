@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
     let sql = `SELECT mts.*, mts.mtrsf_ispst as edit_stop,
     bsn.bsins_bname, bsn.bsins_addrs, bsn.bsins_cntct
       FROM tmib_mtrsf mts
-      LEFT JOIN tmab_bsins bsn on mts.mtrsf_bsins_to = bsn.id
+      LEFT JOIN tmsb_bsins bsn on mts.mtrsf_bsins_to = bsn.id
       WHERE mts.mtrsf_users = ?
       AND mts.mtrsf_bsins = ?`;
     let params = [mtrsf_users, mtrsf_bsins];
@@ -172,7 +172,7 @@ router.post("/transfer-expense", async (req, res) => {
 
     //database action
     let sql = `SELECT expn.*
-    FROM tmpb_expns expn
+    FROM tmib_expns expn
     WHERE expn.expns_refid = ?
     ORDER BY expn.expns_inexc, expn.expns_xpamt`;
     let params = [expns_refid];
@@ -260,7 +260,7 @@ router.post("/create", async (req, res) => {
       mtrsf_rcdat,
       user_id,
       tmib_ctrsf,
-      tmpb_expns,
+      tmib_expns,
     } = req.body;
 
     //console.log("create:", JSON.stringify(req.body));
@@ -361,9 +361,9 @@ router.post("/create", async (req, res) => {
     }
 
     //Insert expense details
-    for (const pay of tmpb_expns) {
+    for (const pay of tmib_expns) {
       scripts.push({
-        sql: `INSERT INTO tmpb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
+        sql: `INSERT INTO tmib_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
         expns_srcnm, expns_trdat, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
         expns_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
@@ -454,26 +454,27 @@ router.post("/create", async (req, res) => {
           cinvc_ohqty = cinvc_ohqty - ?
           WHERE id = ?`,
             params: [det.ctrsf_itqty, det.ctrsf_itqty, det.ctrsf_refid],
-            label: `Updated purchase invoice sold, on-hand qty`,
+            label: `Purchase invoice sold, on-hand qty updated`,
           });
         }
-        if (det.ctrsf_srcnm === "Purchase Receipt") {
+        else if (det.ctrsf_srcnm === "Purchase Receipt") {
           scripts.push({
             sql: `UPDATE tmpb_crcpt
           SET crcpt_slqty = crcpt_slqty + ?,
           crcpt_ohqty = crcpt_ohqty - ?
           WHERE id = ?`,
             params: [det.ctrsf_itqty, det.ctrsf_itqty, det.ctrsf_refid],
-            label: `Updated purchase received sold, on-hand qty`,
+            label: `Purchase received sold, on-hand qty updated`,
           });
         }
+
         if (det.ctrsf_srcnm === "Inventory Stock") {
           scripts.push({
             sql: `UPDATE tmib_bitem
         SET bitem_gstkq = bitem_gstkq - ?
         WHERE id = ?`,
             params: [det.ctrsf_itqty, det.ctrsf_bitem],
-            label: `Updated b item good stock`,
+            label: `B item good stock updated`,
           });
         } else {
           scripts.push({
@@ -481,7 +482,7 @@ router.post("/create", async (req, res) => {
         SET bitem_istkq = bitem_istkq - ?
         WHERE id = ?`,
             params: [det.ctrsf_itqty, det.ctrsf_bitem],
-            label: `Updated b item item stock`,
+            label: `B item item stock updated`,
           });
         }
       }

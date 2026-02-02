@@ -39,6 +39,8 @@ import GrainsPage from "./pages/support/GrainsPage";
 import BookingPage from "./pages/purchase/pbooking/BookingPage";
 import ReceiptPage from "./pages/purchase/preceipt/ReceiptPage";
 import InvoicePage from "./pages/purchase/pinvoice/InvoicePage";
+//sales
+import SInvoicePage from "./pages/sales/sinvoice/SInvoicePage";
 //support
 import NotesPage from "./pages/support/notes/NotesPage";
 import TicketsPage from "./pages/support/tickets/TicketsPage";
@@ -131,6 +133,8 @@ function AppRoutes() {
             <Route path="purchase/pbooking" element={<BookingPage />} />
             <Route path="purchase/preceipt" element={<ReceiptPage />} />
             <Route path="purchase/pinvoice" element={<InvoicePage />} />
+            //sales
+            <Route path="sales/sinvoice" element={<SInvoicePage />} />
             //support
             <Route path="support/notes" element={<NotesPage />} />
             <Route path="support/tickets" element={<TicketsPage />} />

@@ -406,4 +406,46 @@ router.post("/suppliers", async (req, res) => {
   }
 });
 
+//customers
+router.post("/customers", async (req, res) => {
+  try {
+    const { cntct_users } = req.body;
+
+    // Validate input
+    if (!cntct_users) {
+      return res.json({
+        success: false,
+        message: "User ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT cnt.*, 0 as edit_stop
+    FROM tmcb_cntct cnt
+    WHERE cnt.cntct_users = ?
+    AND cnt.cntct_ctype IN ('Customer','Both')
+    ORDER BY cnt.cntct_cntnm`;
+    const params = [cntct_users];
+
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get customers for ${cntct_users}`,
+    );
+    res.json({
+      success: true,
+      message: "Customers fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;

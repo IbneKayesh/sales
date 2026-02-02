@@ -124,13 +124,13 @@ const Layout = () => {
         },
         {
           id: "in4",
-          name: "Inventory Report",
+          name: "Tracking Stock",
           url: "/home/inventory/stockreports",
           icon: "pi pi-file",
         },
         {
           id: "in5",
-          name: "Inventory Transfer",
+          name: "Stock Transfer",
           url: "/home/inventory/itransfer",
           icon: "pi pi-arrow-right-arrow-left",
         },

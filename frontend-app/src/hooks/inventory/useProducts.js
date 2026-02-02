@@ -347,7 +347,26 @@ export const useProducts = () => {
         break;
       case "out_of_stock":
         setBusinessItems(
-          allBusinessData.filter((i) => Number(i.bitem_gstkq) === 0),
+          allBusinessData.filter(
+            (i) => Number(i.bitem_gstkq) === 0 && Number(i.bitem_istkq) === 0,
+          ),
+        );
+        break;
+      case "good_or_tracking_stock":
+        setBusinessItems(
+          allBusinessData.filter(
+            (i) => Number(i.bitem_gstkq) > 0 || Number(i.bitem_istkq) > 0,
+          ),
+        );
+        break;
+      case "good_stock":
+        setBusinessItems(
+          allBusinessData.filter((i) => Number(i.bitem_gstkq) > 0),
+        );
+        break;
+      case "tracking_stock":
+        setBusinessItems(
+          allBusinessData.filter((i) => Number(i.bitem_istkq) > 0),
         );
         break;
       case "bad_stock":

@@ -174,7 +174,7 @@
   },
   "minvc_ispad": {
     "type": "number",
-    "label": "Is Paid",
+    "label": "Paid",
     "maxLength": 2,
     "minLength": 0,
     "placeholder": "Is paid",
@@ -183,7 +183,7 @@
   },
   "minvc_ispst": {
     "type": "number",
-    "label": "Is Posted",
+    "label": "Posted",
     "maxLength": 1,
     "minLength": 0,
     "placeholder": "Is posted",
@@ -192,7 +192,7 @@
   },
   "minvc_iscls": {
     "type": "number",
-    "label": "Is Closed",
+    "label": "Closed",
     "maxLength": 1,
     "minLength": 0,
     "placeholder": "Is closed",
@@ -210,7 +210,7 @@
   },
   "minvc_hscnl": {
     "type": "number",
-    "label": "Is Cancelled",
+    "label": "Cancelled",
     "maxLength": 1,
     "minLength": 0,
     "placeholder": "Is cancelled",

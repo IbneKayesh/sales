@@ -2,11 +2,11 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import EntryComp from "./EntryComp";
-import { usePbooking } from "@/hooks/purchase/usePbooking";
+import { usePinvoice } from "@/hooks/purchase/usePinvoice";
 import ListComp from "./ListComp";
 import SearchComp from "./SearchComp";
 
-const BookingPage = () => {
+const SInvoicePage = () => {
   const {
     dataList,
     isBusy,
@@ -40,8 +40,8 @@ const BookingPage = () => {
     cancelledRows,
     setCancelledRows,
     handleCancelBookingItems,
-    setCancelledPayment,
-  } = usePbooking();
+    setCancelledPayment
+  } = usePinvoice();
 
   const handleSearchBox = () => {
     setSearchBoxShow(true);
@@ -53,10 +53,10 @@ const BookingPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Purchase Booking List"
+            ? "Sales Invoice List"
             : formData.id
-              ? "Edit Purchase Booking"
-              : "New Purchase Booking"}
+            ? "Edit Sales Invoice"
+            : "New Sales Invoice"}
         </h3>
 
         <div className="flex gap-2">
@@ -119,11 +119,13 @@ const BookingPage = () => {
           formDataPaymentList={formDataPaymentList}
           setFormDataPaymentList={setFormDataPaymentList}
           handleSubmit={handleSave}
+          
           //cancel booking items
           cancelledRows={cancelledRows}
           setCancelledRows={setCancelledRows}
           onCancelBookingItems={handleCancelBookingItems}
           setCancelledPayment={setCancelledPayment}
+
           //cancel
           handleCancel={handleCancel}
         />
@@ -132,4 +134,4 @@ const BookingPage = () => {
   );
 };
 
-export default BookingPage;
+export default SInvoicePage;

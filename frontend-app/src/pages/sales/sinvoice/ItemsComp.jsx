@@ -16,12 +16,12 @@ import AttributesComp from "./AttributesComp";
 import { parseAttributes } from "@/utils/jsonParser";
 
 const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
-  const { dataList: productList, handleLoadBookingItems } = useProductsSgd();
+  const { dataList: productList, handleLoadSalesItems } = useProductsSgd();
   const [showAttributes, setShowAttributes] = useState(false);
   const [selectedItemAttributes, setSelectedItemAttributes] = useState(null);
 
   useEffect(() => {
-    handleLoadBookingItems();
+    handleLoadSalesItems();
   }, []);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
   const actionMenuItems = [
     {
-      label: "Attributes",
+      label: "Add Attributes",
       icon: "pi pi-plus-circle text-green-600",
       command: () => activeRow && handleAddAttributes(activeRow),
     },
@@ -57,7 +57,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       command: () => activeRow && handleCopyRowConfirm(activeRow),
     },
     {
-      label: "Delete",
+      label: "Delete Item",
       icon: "pi pi-trash text-red-600",
       command: () => activeRow && handleDelete(activeRow),
     },

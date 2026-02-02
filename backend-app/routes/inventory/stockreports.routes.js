@@ -73,7 +73,7 @@ rcpt.crcpt_attrb,rcpt.crcpt_itqty,rcpt.crcpt_itamt,rcpt.crcpt_rtqty,rcpt.crcpt_s
 puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
 FROM tmpb_mrcpt mrcpt
 JOIN tmpb_crcpt rcpt ON mrcpt.id = rcpt.crcpt_mrcpt
-JOIN tmib_items itm ON rcpt.crcpt_items = itm.id
+JOIN tmib_items itm ON rcpt.crcpt_items = itm.id AND itm.items_trcks = 1
 JOIN tmcb_cntct cnt ON mrcpt.mrcpt_cntct = cnt.id
 LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
 LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
@@ -124,7 +124,7 @@ cinv.cinvc_attrb,cinv.cinvc_itqty,cinv.cinvc_itamt,cinv.cinvc_rtqty,cinv.cinvc_s
 puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
 FROM tmpb_minvc minv
 JOIN tmpb_cinvc cinv ON minv.id = cinv.cinvc_minvc
-JOIN tmib_items itm ON cinv.cinvc_items = itm.id
+JOIN tmib_items itm ON cinv.cinvc_items = itm.id AND itm.items_trcks = 1
 JOIN tmcb_cntct cnt ON minv.minvc_cntct = cnt.id
 LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
 LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
@@ -174,8 +174,8 @@ cts.ctrsf_attrb,cts.ctrsf_itqty,cts.ctrsf_itamt,cts.ctrsf_rtqty,cts.ctrsf_slqty,
 puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
 FROM tmib_mtrsf mts
 JOIN tmib_ctrsf cts ON mts.id = cts.ctrsf_mtrsf
-JOIN tmib_items itm ON cts.ctrsf_items = itm.id
-JOIN tmab_bsins bsn ON mts.mtrsf_bsins_to = bsn.id
+JOIN tmib_items itm ON cts.ctrsf_items = itm.id AND itm.items_trcks = 1
+JOIN tmsb_bsins bsn ON mts.mtrsf_bsins_to = bsn.id
 LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
 LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
 WHERE mts.mtrsf_bsins_to = ?

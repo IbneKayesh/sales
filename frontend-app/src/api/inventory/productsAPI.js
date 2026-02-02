@@ -1,12 +1,4 @@
 import { apiRequest } from "@/utils/api.js";
-
-//Products API
-export const productsAPI1 = {
-  getAllPo2So: (filter = "po2so") =>
-    apiRequest(`/inventory/products/po2so?filter=${filter}`),
-  getProductLedger: (id) => apiRequest(`/inventory/products/ledger/${id}`),
-};
-
 // products API
 export const productsAPI = {
   getAll: (data) =>
@@ -56,6 +48,11 @@ export const productsAPI = {
     }),
   getTransferItems: (data) =>
     apiRequest("/inventory/products/get-transfer-items", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getSalesItems: (data) =>
+    apiRequest("/inventory/products/get-sales-items", {
       method: "POST",
       body: JSON.stringify(data),
     }),

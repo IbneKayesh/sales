@@ -8,6 +8,7 @@ import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 import { stringifyAttributes } from "@/utils/jsonParser";
+import { configsAPI } from "@/api/setup/configsAPI";
 
 const dataModel = generateDataModel(tmpb_mbkng, { edit_stop: 0 });
 
@@ -24,6 +25,33 @@ export const usePbooking = () => {
   const [formDataItemList, setFormDataItemList] = useState([]);
   const [formDataExpensesList, setFormDataExpensesList] = useState([]);
   const [formDataPaymentList, setFormDataPaymentList] = useState([]);
+
+  //configs
+  const [configs, setConfigs] = useState({});
+
+  const loadConfigs = async () => {
+    try {
+      const response = await configsAPI.getAll({
+        ucnfg_users: user.users_users,
+        ucnfg_cname: "Purchase",
+      });
+      const configsObj = Object.fromEntries(
+        response.data.map(({ ucnfg_label, ucnfg_value }) => [
+          ucnfg_label,
+          ucnfg_value,
+        ]),
+      );
+      //console.log("configsObj:", configsObj);
+      setConfigs((prev) => ({
+        ...prev,
+        mbkng_vatpy: Number(configsObj["mbkng_vatpy"]) ?? prev.mbkng_vatpy,
+        mbkng_ispst: Number(configsObj["mbkng_ispst"]) ?? prev.mbkng_ispst,
+      }));
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
 
   const loadBookings = async () => {
     try {
@@ -49,7 +77,7 @@ export const usePbooking = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    //loadBookings();
+    loadConfigs();
   }, []);
 
   const loadBookingDetails = async (id) => {
@@ -108,6 +136,8 @@ export const usePbooking = () => {
       ...dataModel,
       mbkng_users: user.users_users,
       mbkng_bsins: user.users_bsins,
+      mbkng_vatpy: configs.mbkng_vatpy || 0,
+      mbkng_ispst: configs.mbkng_ispst || 0,
     });
     //console.log("handleClear:", JSON.stringify(dataModel));
     setErrors({});
@@ -266,7 +296,7 @@ export const usePbooking = () => {
     mbkng_trnno: "",
     mbkng_trdat: "", //new Date().toLocaleString().split("T")[0],
     mbkng_refno: "",
-    search_option: "mbkng_ispad",
+    search_option: "last_3_days",
   });
 
   const handleChangeSearchInput = (e) => {
@@ -342,6 +372,7 @@ export const usePbooking = () => {
   };
 
   return {
+    configs,
     dataList,
     isBusy,
     currentView,

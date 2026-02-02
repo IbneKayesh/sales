@@ -498,22 +498,24 @@ router.post("/create", async (req, res) => {
           cbkng_pnqty = cbkng_pnqty - ?
           WHERE id = ?`,
           params: [det.crcpt_itqty, det.crcpt_itqty, det.crcpt_cbkng],
-          label: `Updated booking received`,
+          label: `Purchase booking received, pending updated`,
         });
 
         scripts.push({
-          sql: `UPDATE tmib_bitem
-        SET bitem_gstkq = bitem_gstkq + ?,
-        bitem_istkq = bitem_istkq + ?,
-        bitem_pbqty = bitem_pbqty - ?
-        WHERE id = ?`,
+          sql: `UPDATE tmib_bitem b
+          JOIN tmib_items itm ON b.bitem_items = itm.id
+        SET
+          bitem_gstkq = bitem_gstkq + CASE WHEN itm.items_trcks = 0 THEN ? ELSE 0 END,
+          bitem_istkq = bitem_istkq + CASE WHEN itm.items_trcks = 1 THEN ? ELSE 0 END,
+          bitem_pbqty = bitem_pbqty - ?
+        WHERE b.id = ?`,
           params: [
-            det.crcpt_itqty,
-            det.crcpt_itqty,
-            det.crcpt_itqty,
-            det.crcpt_bitem,
+            det.crcpt_itqty, // for gstkq (items_track = 0)
+            det.crcpt_itqty, // for istkq (items_track = 1)
+            det.crcpt_itqty, // pbqty
+            det.crcpt_bitem  // bitem id
           ],
-          label: `Updated b item stock`,
+          label: `BItem good, item stock, purchase booking updated`,
         });
       }
     }
@@ -592,27 +594,27 @@ router.post("/update", async (req, res) => {
 
     //database action
     //remove details
-    const scripts = [];
-    scripts.push({
+    const scripts_del = [];
+    scripts_del.push({
       sql: `DELETE FROM tmpb_crcpt WHERE crcpt_mrcpt = ?`,
       params: [id],
       label: `Delete receipt details for ${mrcpt_trnno}`,
     });
-    scripts.push({
+    scripts_del.push({
       sql: `DELETE FROM tmpb_expns WHERE expns_refid = ?`,
       params: [id],
       label: `Delete receipt expense details for ${mrcpt_trnno}`,
     });
-    scripts.push({
+    scripts_del.push({
       sql: `DELETE FROM tmtb_paybl WHERE paybl_refid = ?`,
       params: [id],
       label: `Delete receipt payment details for ${mrcpt_trnno}`,
     });
-    await dbRunAll(scripts);
+    await dbRunAll(scripts_del);
 
     //update master
-    const scripts_updt = [];
-    scripts_updt.push({
+    const scripts = [];
+    scripts.push({
       sql: `UPDATE tmpb_mrcpt
     SET mrcpt_cntct = ?,
     mrcpt_trdat = ?,
@@ -661,7 +663,7 @@ router.post("/update", async (req, res) => {
 
     //Insert receipt details
     for (const det of tmpb_crcpt) {
-      scripts_updt.push({
+      scripts.push({
         sql: `INSERT INTO tmpb_crcpt(id, crcpt_mrcpt, crcpt_bitem, crcpt_items, crcpt_itrat, crcpt_itqty,
         crcpt_itamt, crcpt_dspct, crcpt_dsamt, crcpt_vtpct, crcpt_vtamt, crcpt_csrat,
         crcpt_ntamt, crcpt_notes, crcpt_attrb, crcpt_rtqty, crcpt_slqty, crcpt_ohqty, crcpt_cbkng,
@@ -726,7 +728,7 @@ router.post("/update", async (req, res) => {
     }
 
     //Insert payment details :: debit
-    scripts_updt.push({
+    scripts.push({
       sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
       paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
       paybl_cramt, paybl_crusr, paybl_upusr)
@@ -754,7 +756,7 @@ router.post("/update", async (req, res) => {
     });
 
     //Insert payment details :: credit
-    scripts_updt.push({
+    scripts.push({
       sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
       paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
       paybl_cramt, paybl_crusr, paybl_upusr)
@@ -784,33 +786,35 @@ router.post("/update", async (req, res) => {
     //when posted
     if (mrcpt_ispst === 1) {
       for (const det of tmpb_crcpt) {
-        scripts_updt.push({
+        scripts.push({
           sql: `UPDATE tmpb_cbkng
           SET cbkng_rcqty = cbkng_rcqty + ?,
           cbkng_pnqty = cbkng_pnqty - ?
           WHERE id = ?`,
           params: [det.crcpt_itqty, det.crcpt_itqty, det.crcpt_cbkng],
-          label: `Updated booking received`,
+          label: `Purchase booking received, pending updated`,
         });
 
-        scripts_updt.push({
-          sql: `UPDATE tmib_bitem
-        SET bitem_gstkq = bitem_gstkq + ?,
-        bitem_istkq = bitem_istkq + ?,
-        bitem_pbqty = bitem_pbqty - ?
-        WHERE id = ?`,
+        scripts.push({
+          sql: `UPDATE tmib_bitem b
+          JOIN tmib_items itm ON b.bitem_items = itm.id
+        SET
+          bitem_gstkq = bitem_gstkq + CASE WHEN itm.items_trcks = 0 THEN ? ELSE 0 END,
+          bitem_istkq = bitem_istkq + CASE WHEN itm.items_trcks = 1 THEN ? ELSE 0 END,
+          bitem_pbqty = bitem_pbqty - ?
+        WHERE b.id = ?`,
           params: [
-            det.crcpt_itqty,
-            det.crcpt_itqty,
-            det.crcpt_itqty,
-            det.crcpt_bitem,
+            det.crcpt_itqty, // for gstkq (items_track = 0)
+            det.crcpt_itqty, // for istkq (items_track = 1)
+            det.crcpt_itqty, // pbqty
+            det.crcpt_bitem  // bitem id
           ],
-          label: `Updated b item stock`,
+          label: `BItem good, item stock, purchase booking updated`,
         });
       }
     }
 
-    await dbRunAll(scripts_updt);
+    await dbRunAll(scripts);
     res.json({
       success: true,
       message: "User updated successfully",

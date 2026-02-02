@@ -652,4 +652,81 @@ AND bitm.bitem_bsins = ?`;
   }
 });
 
+
+//get-sales-items
+router.post("/get-sales-items", async (req, res) => {
+  try {
+    const { bitem_users, bitem_bsins } = req.body;
+
+    // Validate input
+    if (!bitem_users || !bitem_bsins) {
+      return res.json({
+        success: false,
+        message: "User, Business ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT itm.items_icode, itm.items_iname,
+    stk.cinvc_bitem AS ctrsf_bitem, stk.cinvc_items AS ctrsf_items,
+stk.minvc_trnno AS ctrsf_trnno, stk.cinvc_itrat AS ctrsf_itrat, stk.cinvc_attrb AS ctrsf_attrb, stk.cinvc_ohqty AS ctrsf_ohqty,
+stk.ctrsf_srcnm, stk.id AS ctrsf_refid,
+puofm.iuofm_untnm as puofm_untnm,
+itm.items_dfqty,
+suofm.iuofm_untnm as suofm_untnm
+FROM tmib_items itm
+JOIN (
+SELECT minv.minvc_trnno, cinv.cinvc_bitem, cinv.cinvc_items, cinv.cinvc_itrat, cinv.cinvc_attrb, cinv.cinvc_ohqty,
+'Purchase Invoice' AS ctrsf_srcnm, cinv.id
+FROM tmpb_cinvc cinv
+JOIN tmpb_minvc minv ON cinv.cinvc_minvc = minv.id
+JOIN tmib_items itm ON cinv.cinvc_items = itm.id AND itm.items_trcks = 1
+WHERE minv.minvc_users = ?
+AND minv.minvc_bsins = ?
+AND cinv.cinvc_ohqty > 0
+UNION ALL
+SELECT mrpt.mrcpt_trnno, crpt.crcpt_bitem, crpt.crcpt_items, crpt.crcpt_itrat, crpt.crcpt_attrb, crpt.crcpt_ohqty,
+'Purchase Receipt' AS ctrsf_srcnm, crpt.id
+FROM tmpb_crcpt crpt
+JOIN tmpb_mrcpt mrpt ON crpt.crcpt_mrcpt = mrpt.id
+JOIN tmib_items itm ON crpt.crcpt_items = itm.id AND itm.items_trcks = 1
+WHERE mrpt.mrcpt_users = ?
+AND mrpt.mrcpt_bsins = ?
+AND crpt.crcpt_ohqty > 0
+UNION ALL
+SELECT 'Inventory Stock' AS bitem_trnno, bitm.id as bitem_bitem, bitm.bitem_items, bitm.bitem_lprat,
+'{}' AS bitem_attrb, bitm.bitem_gstkq,'Inventory Stock' AS bitem_srcnm, bitm.id
+FROM tmib_bitem bitm
+JOIN tmib_items itm ON bitm.bitem_items = itm.id AND itm.items_trcks = 0
+WHERE bitm.bitem_users = ?
+AND bitm.bitem_bsins = ?
+AND bitm.bitem_gstkq > 0
+)stk ON itm.id = stk.cinvc_items
+JOIN tmib_bitem bitm ON stk.cinvc_bitem = bitm.id
+AND stk.cinvc_items = bitm.bitem_items AND itm.id = bitm.bitem_items
+LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
+LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
+WHERE itm.items_users = ?
+AND bitm.bitem_bsins = ?`;
+    const params = [bitem_users, bitem_bsins, bitem_users, bitem_bsins, bitem_users, bitem_bsins, bitem_users, bitem_bsins];
+
+    const rows = await dbGetAll(sql, params, `Get transfer items for ${bitem_bsins}`);
+
+    res.json({
+      success: true,
+      message: "Transfer items fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+
 module.exports = router;

@@ -35,10 +35,23 @@ const handleLoadTransferItems = async (toBusinessId) => {
   }
 };
 
+const handleLoadSalesItems = async () => {
+  try {
+    const response = await productsAPI.getSalesItems({ 
+      bitem_users: user.users_users,
+      bitem_bsins: user.users_bsins,
+    });
+    //console.log("data",user.users_bsins);
+    setDataList(response.data);
+  } catch (error) {
+    console.error("Error loading data:", error);
+  }
+};
 
   return {
     dataList,
     handleLoadBookingItems,
-    handleLoadTransferItems
+    handleLoadTransferItems,
+    handleLoadSalesItems
   }
 };

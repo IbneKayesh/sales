@@ -25,6 +25,7 @@ const businessRoutes = require("./routes/setup/business.routes.js");
 const usersRoutes = require("./routes/setup/users.routes.js");
 const databaseRoutes = require("./routes/setup/database.routes.js");
 const closingRoutes = require("./routes/setup/closing.routes.js");
+const configsRoutes = require("./routes/setup/configs.routes.js");
 //inventory
 const unitsRoutes = require("./routes/inventory/units.routes.js");
 const categoriesRoutes = require("./routes/inventory/categories.routes.js");
@@ -42,6 +43,8 @@ const socialsRoutes = require("./routes/support/socials.routes.js");
 const pbookingRoutes = require("./routes/purchase/pbooking.routes.js");
 const preceiptRoutes = require("./routes/purchase/preceipt.routes.js");
 const pinvoiceRoutes = require("./routes/purchase/pinvoice.routes.js");
+//sales
+const sinvoiceRoutes = require("./routes/sales/sinvoice.routes.js");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -97,6 +100,7 @@ app.use("/api/setup/business", businessRoutes);
 app.use("/api/setup/users", usersRoutes);
 app.use("/api/setup/database", databaseRoutes);
 app.use("/api/setup/closing", closingRoutes);
+app.use("/api/setup/configs", configsRoutes);
 //inventory
 app.use("/api/inventory/units", unitsRoutes);
 app.use("/api/inventory/categories", categoriesRoutes);
@@ -114,6 +118,8 @@ app.use("/api/support/socials", socialsRoutes);
 app.use("/api/purchase/pbooking", pbookingRoutes);
 app.use("/api/purchase/preceipt", preceiptRoutes);
 app.use("/api/purchase/pinvoice", pinvoiceRoutes);
+//sales
+app.use("/api/sales/sinvoice", sinvoiceRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

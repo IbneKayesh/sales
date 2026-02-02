@@ -587,50 +587,28 @@ router.post("/update", async (req, res) => {
 
     //database action
     //remove details
-    const scripts = [];
-    scripts.push({
+    const scripts_del = [];
+    scripts_del.push({
       sql: `DELETE FROM tmpb_cbkng WHERE cbkng_mbkng = ?`,
       params: [id],
       label: `Delete booking details for ${mbkng_trnno}`,
     });
-    scripts.push({
+    scripts_del.push({
       sql: `DELETE FROM tmpb_expns WHERE expns_refid = ?`,
       params: [id],
       label: `Delete expenses details for ${mbkng_trnno}`,
     });
-    scripts.push({
+    scripts_del.push({
       sql: `DELETE FROM tmtb_paybl WHERE paybl_refid = ?`,
       params: [id],
       label: `Delete payments details for ${mbkng_trnno}`,
     });
 
-    //when posted
-    if (mbkng_ispst === 1) {
-      for (const det of tmpb_cbkng) {
-        scripts.push({
-          sql: `UPDATE tmib_bitem
-          SET bitem_pbqty = bitem_pbqty + ?
-          WHERE id = ?
-          AND bitem_bsins = ?`,
-          params: [det.cbkng_itqty, det.cbkng_bitem, mbkng_bsins],
-          label: `Updated purchase booking quantity`,
-        });
-      }
-      scripts.push({
-        sql: `UPDATE tmpb_mbkng
-        SET mbkng_ispad = 1
-        WHERE mbkng_ispad IN (0,2)
-        AND mbkng_duamt = 0
-        AND id = ?`,
-        params: [id],
-        label: `Updated purchase booking status`,
-      });
-    }
-    await dbRunAll(scripts);
+    await dbRunAll(scripts_del);
 
     //update master
-    const scripts_updt = [];
-    scripts_updt.push({
+    const scripts = [];
+    scripts.push({
       sql: `UPDATE tmpb_mbkng
     SET mbkng_cntct = ?,
     mbkng_trdat = ?,
@@ -677,11 +655,11 @@ router.post("/update", async (req, res) => {
       label: `Update master ${mbkng_trnno}`,
     });
 
-    console.log(JSON.stringify(tmpb_cbkng));
+    //console.log(JSON.stringify(tmpb_cbkng));
 
     //Insert booking details
     for (const det of tmpb_cbkng) {
-      scripts_updt.push({
+      scripts.push({
         sql: `INSERT INTO tmpb_cbkng(id, cbkng_mbkng, cbkng_bitem, cbkng_items, cbkng_itrat, cbkng_itqty,
         cbkng_itamt, cbkng_dspct, cbkng_dsamt, cbkng_vtpct, cbkng_vtamt, cbkng_csrat,
         cbkng_ntamt, cbkng_notes, cbkng_attrb, cbkng_cnqty, cbkng_rcqty, cbkng_pnqty,
@@ -718,7 +696,7 @@ router.post("/update", async (req, res) => {
 
     //Insert expense details
     for (const pay of tmpb_expns) {
-      scripts_updt.push({
+      scripts.push({
         sql: `INSERT INTO tmpb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
         expns_srcnm, expns_trdat, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
         expns_upusr)
@@ -747,7 +725,7 @@ router.post("/update", async (req, res) => {
     //Insert payment details :: debit
     for (const pay of tmtb_paybl) {
       if (pay.paybl_dbamt > 0) {
-        scripts_updt.push({
+        scripts.push({
           sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
         paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
         paybl_cramt, paybl_crusr, paybl_upusr)
@@ -777,7 +755,7 @@ router.post("/update", async (req, res) => {
     }
 
     // //Insert payment details :: credit
-    scripts_updt.push({
+    scripts.push({
       sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
       paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
       paybl_cramt, paybl_crusr, paybl_upusr)
@@ -804,7 +782,30 @@ router.post("/update", async (req, res) => {
       label: `Created payment credit ${mbkng_trnno}`,
     });
 
-    await dbRunAll(scripts_updt);
+    //when posted
+    if (mbkng_ispst === 1) {
+      for (const det of tmpb_cbkng) {
+        scripts.push({
+          sql: `UPDATE tmib_bitem
+          SET bitem_pbqty = bitem_pbqty + ?
+          WHERE id = ?
+          AND bitem_bsins = ?`,
+          params: [det.cbkng_itqty, det.cbkng_bitem, mbkng_bsins],
+          label: `Updated purchase booking quantity`,
+        });
+      }
+      scripts.push({
+        sql: `UPDATE tmpb_mbkng
+        SET mbkng_ispad = 1
+        WHERE mbkng_ispad IN (0,2)
+        AND mbkng_duamt = 0
+        AND id = ?`,
+        params: [id],
+        label: `Updated purchase booking status`,
+      });
+    }
+
+    await dbRunAll(scripts);
     res.json({
       success: true,
       message: "Booking updated successfully",

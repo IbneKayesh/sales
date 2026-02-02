@@ -59,7 +59,7 @@ const LandingPage = () => {
 
       {/* Navigation */}
       <nav className="landing-nav">
-        <div className="brand">Lbusiness Pro</div>
+        <div className="brand">Business Assistant Pro</div>
         <div className="nav-links">
           <a href="#features" className="nav-link">
             Features
@@ -610,7 +610,7 @@ const LandingPage = () => {
                 display: "block",
               }}
             >
-              Lbusiness Pro
+              Business Assistant Pro
             </div>
             <p style={{ color: "var(--text-muted)" }}>
               Make your business automated, and easy with the best all-in-one

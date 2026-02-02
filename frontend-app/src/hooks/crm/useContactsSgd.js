@@ -19,8 +19,21 @@ export const useContactsSgd = () => {
     }
   };
 
+  const handleLoadCustomers = async () => {
+    try {
+      const response = await contactAPI.getAllCustomers({
+        cntct_users: user.users_users,
+      });
+      //console.log("data",response.data);
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
+  };
+
   return {
     dataList,
     handleLoadSuppliers,
+    handleLoadCustomers
   }
 };

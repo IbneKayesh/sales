@@ -192,7 +192,7 @@ export const useItransfer = () => {
         mtrsf_ispst: 1,
         user_id: user.id,
         tmib_ctrsf: formDataItemListNew,
-        tmpb_expns: formDataExpensesList,
+        tmib_expns: formDataExpensesList,
       };
 
       // Call API and get { message, data }
