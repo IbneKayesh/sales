@@ -124,7 +124,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           <div className="col-4 p-0">
             📦 Stock: {Number(option.ctrsf_ohqty).toFixed(2)}
           </div>
-          <div className="col-4 p-0">📈 No: {option.ctrsf_trnno}</div>
+          <div className="col-4 p-0">🧾 No: {option.ctrsf_trnno}</div>
         </div>
         <div className="col-12 p-0 text-gray-500 text-sm">
           {Object.keys(parsedAttr).length > 0 &&

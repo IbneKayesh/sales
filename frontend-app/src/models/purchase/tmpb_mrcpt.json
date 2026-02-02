@@ -93,10 +93,10 @@
   },
   "mrcpt_vatpy": {
     "type": "number",
-    "label": "Is VAT Payment",
+    "label": "VAT Payable",
     "maxLength": 1,
     "minLength": 0,
-    "placeholder": "Is VAT payment",
+    "placeholder": "Is VAT payable",
     "required": true,
     "default": 0
   },

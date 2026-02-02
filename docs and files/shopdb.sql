@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Feb 02, 2026 at 11:24 AM
+-- Generation Time: Feb 02, 2026 at 12:49 PM
 -- Server version: 12.1.2-MariaDB-ubu2404
 -- PHP Version: 8.3.26
 
@@ -360,7 +360,7 @@ CREATE TABLE `tmib_bitem` (
 --
 
 INSERT INTO `tmib_bitem` (`id`, `bitem_users`, `bitem_items`, `bitem_bsins`, `bitem_lprat`, `bitem_dprat`, `bitem_mcmrp`, `bitem_sddsp`, `bitem_snote`, `bitem_gstkq`, `bitem_bstkq`, `bitem_istkq`, `bitem_mnqty`, `bitem_mxqty`, `bitem_pbqty`, `bitem_sbqty`, `bitem_mpric`, `bitem_actve`, `bitem_crusr`, `bitem_crdat`, `bitem_upusr`, `bitem_updat`, `bitem_rvnmr`) VALUES
-('1248204a-e407-4245-8952-924a1f832354', 'user1', '4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 90.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:56:36', 'user1', '2026-02-02 08:04:24', 1),
+('1248204a-e407-4245-8952-924a1f832354', 'user1', '4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:56:36', 'user1', '2026-02-02 11:50:24', 1),
 ('19debe39-1eaa-4cb1-ba16-3f361ff455ca', 'user1', 'e2e70dc1-9814-400c-8774-2b6b186b79e5', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:15', 'user1', '2026-02-02 05:57:45', 1),
 ('1b0483c5-ed8f-43ce-b128-9dbf717e8e67', 'user1', '8873e069-eea6-4f9e-acf0-dd1cb658f9c8', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:55:41', 'user1', '2026-01-31 10:55:41', 1),
 ('2188dcd0-244b-4750-ad51-f86397b196f1', 'user1', 'dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:04', 'user1', '2026-01-31 10:59:04', 1),
@@ -372,7 +372,7 @@ INSERT INTO `tmib_bitem` (`id`, `bitem_users`, `bitem_items`, `bitem_bsins`, `bi
 ('75860dc3-c9f8-43b9-a20f-f78104602fdf', 'user1', '4b100c2e-68a6-467b-94b7-617a6c7b43dc', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:55', 'user1', '2026-01-31 10:59:55', 1),
 ('85f84fc9-2d92-4327-81b6-31a4c6c6cc8a', 'user1', 'e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:57', 'user1', '2026-01-31 10:58:57', 1),
 ('8ce55060-f46d-445f-bcc1-7fb9d5f5f38e', 'user1', 'b3da1017-bea4-44fd-ad13-110e92a48965', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:41', 'user1', '2026-01-31 10:59:41', 1),
-('9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'user1', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 25.000000, 0.000000, 0.000000, 55.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:57:44', 'user1', '2026-02-02 08:35:29', 1),
+('9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'user1', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 100.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:57:44', 'user1', '2026-02-02 12:31:39', 1),
 ('9a765ccf-f3c5-480a-863d-492c7d9fa196', 'user1', '4dab149a-e220-4cd8-a061-7660ab0168bb', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 11:00:36', 'user1', '2026-01-31 11:00:36', 1),
 ('b9b0e3b5-a1df-43ea-a736-04a54f5df89b', 'user1', '75b05c78-9b6b-42ba-aafa-e76e22f67722', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:31', 'user1', '2026-01-31 10:58:31', 1),
 ('bde13886-7498-42b9-bc4d-19bcb62ed918', 'user1', 'f7126510-80c0-416b-a34e-3a514e54d030', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:57:00', 'user1', '2026-01-31 10:57:00', 1),
@@ -383,7 +383,7 @@ INSERT INTO `tmib_bitem` (`id`, `bitem_users`, `bitem_items`, `bitem_bsins`, `bi
 ('dfa047a4-4799-460d-ae14-74697a8f0466', 'user1', 'ae0a4ae3-77f6-4357-8ca9-c05cc1796a7e', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:42', 'user1', '2026-01-31 10:58:42', 1),
 ('e1e36ac3-d2b5-4f7b-a258-2c3ffcacd131', 'user1', '2bee4dba-5f29-4e65-b772-718c677e326c', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:56:51', 'user1', '2026-01-31 10:56:51', 1),
 ('eff83204-5f40-4920-9d42-67a27ec6a1a5', 'user1', '2c047e91-44f6-48bc-a591-9ab00deb7b72', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:30', 'user1', '2026-01-31 10:59:30', 1),
-('f241e3b7-3f83-42f4-ac10-af8def91799a', 'user1', '38b496e9-6652-4324-8331-ba0ecb0cfeae', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 35.000000, 0.000000, 0.000000, 0.000000, 0.000000, 55.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:57:36', 'user1', '2026-02-02 08:04:24', 1),
+('f241e3b7-3f83-42f4-ac10-af8def91799a', 'user1', '38b496e9-6652-4324-8331-ba0ecb0cfeae', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 100.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:57:36', 'user1', '2026-02-02 12:31:39', 1),
 ('f4445732-0c3d-4388-b30a-b77cd0151b14', 'user1', '940f8010-5d38-4de4-b66f-d12958ff9ec2', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 11:00:20', 'user1', '2026-01-31 11:00:20', 1);
 
 -- --------------------------------------------------------
@@ -447,22 +447,31 @@ CREATE TABLE `tmib_ctrsf` (
   `ctrsf_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `tmib_ctrsf`
+-- Table structure for table `tmib_expns`
 --
 
-INSERT INTO `tmib_ctrsf` (`id`, `ctrsf_mtrsf`, `ctrsf_bitem`, `ctrsf_items`, `ctrsf_itrat`, `ctrsf_itqty`, `ctrsf_itamt`, `ctrsf_csrat`, `ctrsf_ntamt`, `ctrsf_notes`, `ctrsf_attrb`, `ctrsf_rtqty`, `ctrsf_slqty`, `ctrsf_ohqty`, `ctrsf_srcnm`, `ctrsf_refid`, `ctrsf_actve`, `ctrsf_crusr`, `ctrsf_crdat`, `ctrsf_upusr`, `ctrsf_updat`, `ctrsf_rvnmr`) VALUES
-('107792d2-0dca-4eb8-9364-50b7559ad221', 'edad1143-07e5-4cdb-a2c4-d2e4a679ba17', '22064b47-6898-4661-9dc8-5329a542ae4a', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 110.000000, 100.000000, 11000.000000, 110.000000, 11000.000000, '0', '{}', 0.000000, 0.000000, 100.000000, 'Purchase Receipt', 'cbdcede5-1100-4cbb-9eff-99de1526e263', 1, 'admin-id', '2026-01-30 04:24:22', 'admin-id', '2026-01-30 04:24:22', 1),
-('114a066d-75cb-49ac-8a66-62b9bf596647', '0d9af1be-dfbd-4e1e-b92c-eb5d9637e189', 'a5da4ada-2216-49a6-bfde-aa71f0de6bb8', '38b496e9-6652-4324-8331-ba0ecb0cfeae', 60.000000, 50.000000, 3000.000000, 60.000000, 3000.000000, '0', '{\"Size\":\"5 Ltr\"}', 0.000000, 0.000000, 50.000000, 'Purchase Invoice', '568fb2f5-424b-4827-a642-83cb5c641b6a', 1, 'admin-id', '2026-01-30 03:32:35', 'admin-id', '2026-01-30 03:32:35', 1),
-('2444d858-254a-42f3-aaef-ee99938aa87f', '361ab4ab-ee07-49a0-ae61-b50e31a2242f', '9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 650.000000, 10.000000, 6500.000000, 650.000000, 6500.000000, '0', '{\"Fabric\":\"raw\"}', 0.000000, 0.000000, 10.000000, 'Purchase Receipt', '6ae3b4e1-5a6f-49b9-b9e5-5d0b79961914', 1, 'user1', '2026-02-02 08:04:24', 'user1', '2026-02-02 08:04:24', 1),
-('49c8a108-e88a-4a56-93e7-eff102cba401', 'f5a4e363-8ee1-4e73-a942-8768a95018b5', 'd0249c21-993f-40a7-9819-d05b046d8591', 'e2e70dc1-9814-400c-8774-2b6b186b79e5', 180.000000, 50.000000, 9000.000000, 180.000000, 9000.000000, '0', '{}', 0.000000, 0.000000, 50.000000, 'Purchase Invoice', '76217258-3c3c-4b22-b7fe-5966d5f00d3e', 1, 'admin-id', '2026-01-30 04:24:09', 'admin-id', '2026-01-30 04:24:09', 1),
-('726044d1-f54e-4c43-ab5f-5b05231c7c71', '9ddf27e1-87ce-4eda-96a7-5bca832984bc', '73a91ad4-50f1-4b8b-8a93-ad00e7829c8f', '4b100c2e-68a6-467b-94b7-617a6c7b43dc', 85.000000, 10.000000, 850.000000, 85.000000, 850.000000, '0', '{}', 0.000000, 0.000000, 10.000000, 'Purchase Invoice', 'ff5a866c-c546-48c5-906a-3a0835492a82', 1, 'admin-id', '2026-01-30 04:26:26', 'admin-id', '2026-01-30 04:26:26', 1),
-('8f0b27cd-8ca7-44b5-9dbf-a90e11387cac', '0d9af1be-dfbd-4e1e-b92c-eb5d9637e189', '22064b47-6898-4661-9dc8-5329a542ae4a', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 110.000000, 50.000000, 5500.000000, 110.000000, 5500.000000, '0', '{}', 0.000000, 0.000000, 50.000000, 'Purchase Receipt', '20e07a84-156d-44b3-a107-9020f719bff8', 1, 'admin-id', '2026-01-30 03:32:35', 'admin-id', '2026-01-30 03:32:35', 1),
-('c646fb61-4791-4e0f-8313-5e9dbb0048b9', '7314df72-b245-43e9-9304-417071242d1d', '9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 650.000000, 10.000000, 6500.000000, 650.000000, 6500.000000, '0', '{\"Fabric\":\"raw\"}', 0.000000, 0.000000, 10.000000, 'Purchase Receipt', '49c5508c-ad67-49ce-aee9-09903c780a67', 1, 'user1', '2026-02-02 08:35:29', 'user1', '2026-02-02 08:35:29', 1),
-('ce2648f2-702e-45d7-a065-5ac539c9e6a1', '361ab4ab-ee07-49a0-ae61-b50e31a2242f', 'f241e3b7-3f83-42f4-ac10-af8def91799a', '38b496e9-6652-4324-8331-ba0ecb0cfeae', 0.000000, 10.000000, 0.000000, 0.000000, 0.000000, '0', '{}', 0.000000, 0.000000, 10.000000, 'Inventory Stock', 'f241e3b7-3f83-42f4-ac10-af8def91799a', 1, 'user1', '2026-02-02 08:04:24', 'user1', '2026-02-02 08:04:24', 1),
-('d8123a7f-fab9-4cc7-a3fc-95a9ea6f6810', '42dccf1f-1c32-4d8f-856d-36caf8a414b9', '22bbdf6e-759b-4b46-a0a6-b5d2a8d7d383', 'dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 15.000000, 250.000000, 3750.000000, 15.000000, 3750.000000, '0', '{}', 0.000000, 0.000000, 250.000000, 'Purchase Invoice', 'ae18984e-bf0b-496e-b691-923b26d7bb2a', 1, 'admin-id', '2026-01-30 04:16:15', 'admin-id', '2026-01-30 04:16:15', 1),
-('db7ec8de-5672-456a-bc93-8c36057e2f03', '361ab4ab-ee07-49a0-ae61-b50e31a2242f', '1248204a-e407-4245-8952-924a1f832354', '4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 0.000000, 10.000000, 0.000000, 0.000000, 0.000000, '0', '{}', 0.000000, 0.000000, 10.000000, 'Inventory Stock', '1248204a-e407-4245-8952-924a1f832354', 1, 'user1', '2026-02-02 08:04:24', 'user1', '2026-02-02 08:04:24', 1),
-('ec68fb29-da4f-4650-917b-655f18500f4f', '2cd28473-8e12-4222-9d22-a7b981d235dc', '22064b47-6898-4661-9dc8-5329a542ae4a', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 110.000000, 50.000000, 5500.000000, 110.000000, 5500.000000, '0', '{}', 0.000000, 0.000000, 50.000000, 'Purchase Receipt', '0f1de64b-740f-4b3f-8b0e-ead54e46d4a6', 1, 'admin-id', '2026-01-30 04:25:09', 'admin-id', '2026-01-30 04:25:09', 1);
+CREATE TABLE `tmib_expns` (
+  `id` varchar(50) NOT NULL,
+  `expns_users` varchar(50) NOT NULL,
+  `expns_bsins` varchar(50) NOT NULL,
+  `expns_cntct` varchar(50) NOT NULL,
+  `expns_refid` varchar(50) NOT NULL,
+  `expns_refno` varchar(50) NOT NULL,
+  `expns_srcnm` varchar(50) NOT NULL,
+  `expns_trdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `expns_inexc` tinyint(1) NOT NULL DEFAULT 1,
+  `expns_notes` varchar(100) DEFAULT NULL,
+  `expns_xpamt` decimal(18,6) NOT NULL DEFAULT 0.000000,
+  `expns_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `expns_crusr` varchar(50) NOT NULL,
+  `expns_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `expns_upusr` varchar(50) NOT NULL,
+  `expns_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `expns_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -603,20 +612,6 @@ CREATE TABLE `tmib_mtrsf` (
   `mtrsf_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `tmib_mtrsf`
---
-
-INSERT INTO `tmib_mtrsf` (`id`, `mtrsf_users`, `mtrsf_bsins`, `mtrsf_bsins_to`, `mtrsf_trnno`, `mtrsf_trdat`, `mtrsf_refno`, `mtrsf_trnte`, `mtrsf_odamt`, `mtrsf_excst`, `mtrsf_ttamt`, `mtrsf_ispst`, `mtrsf_isrcv`, `mtrsf_rcusr`, `mtrsf_rcdat`, `mtrsf_actve`, `mtrsf_crusr`, `mtrsf_crdat`, `mtrsf_upusr`, `mtrsf_updat`, `mtrsf_rvnmr`) VALUES
-('0d9af1be-dfbd-4e1e-b92c-eb5d9637e189', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '6dd0f9d0-840a-43ce-8f82-a60310521756', 'IT-300126-00001', '2026-01-30 00:00:00', '', '', 8500.000000, 0.000000, 8500.000000, 1, 0, '', '2026-01-30 00:00:00', 1, 'admin-id', '2026-01-30 03:32:35', 'admin-id', '2026-01-30 03:32:35', 1),
-('2cd28473-8e12-4222-9d22-a7b981d235dc', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '6dd0f9d0-840a-43ce-8f82-a60310521756', 'IT-300126-00005', '2026-01-30 00:00:00', '', '', 5500.000000, 0.000000, 5500.000000, 1, 0, '', '2026-01-30 00:00:00', 1, 'admin-id', '2026-01-30 04:25:09', 'admin-id', '2026-01-30 04:25:09', 1),
-('361ab4ab-ee07-49a0-ae61-b50e31a2242f', 'user1', 'business1', 'business4', 'IT-020226-00001', '2026-02-02 00:00:00', '', '', 6500.000000, 0.000000, 6500.000000, 1, 0, '', '2026-02-02 00:00:00', 1, 'user1', '2026-02-02 08:04:24', 'user1', '2026-02-02 08:04:24', 1),
-('42dccf1f-1c32-4d8f-856d-36caf8a414b9', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '6dd0f9d0-840a-43ce-8f82-a60310521756', 'IT-300126-00002', '2026-01-30 00:00:00', '', '', 3750.000000, 0.000000, 3750.000000, 1, 0, '', '2026-01-30 00:00:00', 1, 'admin-id', '2026-01-30 04:16:15', 'admin-id', '2026-01-30 04:16:15', 1),
-('7314df72-b245-43e9-9304-417071242d1d', 'user1', 'business1', 'business4', 'IT-020226-00002', '2026-02-02 00:00:00', '', '', 6500.000000, 0.000000, 6500.000000, 1, 0, '', '2026-02-02 00:00:00', 1, 'user1', '2026-02-02 08:35:29', 'user1', '2026-02-02 08:35:29', 1),
-('9ddf27e1-87ce-4eda-96a7-5bca832984bc', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '6dd0f9d0-840a-43ce-8f82-a60310521756', 'IT-300126-00006', '2026-01-30 00:00:00', '', '', 850.000000, 0.000000, 850.000000, 1, 0, '', '2026-01-30 00:00:00', 1, 'admin-id', '2026-01-30 04:26:26', 'admin-id', '2026-01-30 04:26:26', 1),
-('edad1143-07e5-4cdb-a2c4-d2e4a679ba17', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '6dd0f9d0-840a-43ce-8f82-a60310521756', 'IT-300126-00004', '2026-01-30 00:00:00', '', '', 11000.000000, 0.000000, 11000.000000, 1, 0, '', '2026-01-30 00:00:00', 1, 'admin-id', '2026-01-30 04:24:22', 'admin-id', '2026-01-30 04:24:22', 1),
-('f5a4e363-8ee1-4e73-a942-8768a95018b5', 'admin-id', '3881b053-9509-49db-835a-3f8dd8976cda', '0410da9c-2a16-43b3-b0b6-4015eeb245a8', 'IT-300126-00003', '2026-01-30 00:00:00', '', '', 9000.000000, 0.000000, 9000.000000, 1, 0, '', '2026-01-30 00:00:00', 1, 'admin-id', '2026-01-30 04:24:09', 'admin-id', '2026-01-30 04:24:09', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -649,14 +644,6 @@ CREATE TABLE `tmpb_cbkng` (
   `cbkng_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `cbkng_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tmpb_cbkng`
---
-
-INSERT INTO `tmpb_cbkng` (`id`, `cbkng_mbkng`, `cbkng_bitem`, `cbkng_items`, `cbkng_itrat`, `cbkng_itqty`, `cbkng_itamt`, `cbkng_dspct`, `cbkng_dsamt`, `cbkng_vtpct`, `cbkng_vtamt`, `cbkng_csrat`, `cbkng_ntamt`, `cbkng_notes`, `cbkng_attrb`, `cbkng_cnqty`, `cbkng_rcqty`, `cbkng_pnqty`, `cbkng_actve`, `cbkng_crusr`, `cbkng_crdat`, `cbkng_upusr`, `cbkng_updat`, `cbkng_rvnmr`) VALUES
-('2872a59f-83b4-4776-8d18-aaf1b7762ebf', '85db7d4e-df6a-4ea2-86e8-af5c759f01ea', '9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 650.000000, 100.000000, 65000.000000, 0.000000, 0.000000, 5.000000, 3250.000000, 650.000000, 68250.000000, '', '{\"Fabric\":\"raw\"}', 0.000000, 45.000000, 55.000000, 1, 'user1', '2026-02-02 07:07:44', 'user1', '2026-02-02 07:21:05', 1),
-('3fccde86-1c19-4e2d-97ca-46620514f96f', '85db7d4e-df6a-4ea2-86e8-af5c759f01ea', 'f241e3b7-3f83-42f4-ac10-af8def91799a', '38b496e9-6652-4324-8331-ba0ecb0cfeae', 55.000000, 100.000000, 5500.000000, 0.000000, 0.000000, 5.000000, 275.000000, 57.750000, 5775.000000, '', '{\"Flavor\":\"raw\"}', 0.000000, 45.000000, 55.000000, 1, 'user1', '2026-02-02 07:07:44', 'user1', '2026-02-02 07:21:05', 1);
 
 -- --------------------------------------------------------
 
@@ -696,7 +683,8 @@ CREATE TABLE `tmpb_cinvc` (
 --
 
 INSERT INTO `tmpb_cinvc` (`id`, `cinvc_minvc`, `cinvc_bitem`, `cinvc_items`, `cinvc_itrat`, `cinvc_itqty`, `cinvc_itamt`, `cinvc_dspct`, `cinvc_dsamt`, `cinvc_vtpct`, `cinvc_vtamt`, `cinvc_csrat`, `cinvc_ntamt`, `cinvc_notes`, `cinvc_attrb`, `cinvc_rtqty`, `cinvc_slqty`, `cinvc_ohqty`, `cinvc_actve`, `cinvc_crusr`, `cinvc_crdat`, `cinvc_upusr`, `cinvc_updat`, `cinvc_rvnmr`) VALUES
-('2edce2cb-b0e1-4bc6-a9cf-c3be3e98b78e', '80ec0682-d19a-44a5-8dd1-45f3a816553a', '1248204a-e407-4245-8952-924a1f832354', '4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 45.000000, 100.000000, 4500.000000, 0.000000, 0.000000, 10.000000, 450.000000, 49.500000, 4950.000000, '', '{}', 0.000000, 0.000000, 100.000000, 1, 'user1', '2026-02-02 07:14:02', 'user1', '2026-02-02 07:14:02', 1);
+('82c0605f-c238-4efd-92f5-393189778d30', '714f2d07-cffe-4921-8748-64a29b775513', '9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 850.000000, 100.000000, 85000.000000, 0.000000, 0.000000, 5.000000, 4250.000000, 850.300000, 89250.000000, '', '{\"Flavor\":\"Raw\",\"Size\":\"1 KG\"}', 0.000000, 0.000000, 100.000000, 1, 'user1', '2026-02-02 12:31:39', 'user1', '2026-02-02 12:31:39', 1),
+('f8e25740-84b6-4065-a121-31328aae066c', '714f2d07-cffe-4921-8748-64a29b775513', 'f241e3b7-3f83-42f4-ac10-af8def91799a', '38b496e9-6652-4324-8331-ba0ecb0cfeae', 85.000000, 100.000000, 8500.000000, 0.000000, 0.000000, 5.000000, 425.000000, 85.300000, 8925.000000, '', '{\"Weight\":\"10 Ltr\",\"Size\":\"Container Bottle\",\"Flavor\":\"Raw\"}', 0.000000, 0.000000, 100.000000, 1, 'user1', '2026-02-02 12:31:39', 'user1', '2026-02-02 12:31:39', 1);
 
 -- --------------------------------------------------------
 
@@ -732,16 +720,6 @@ CREATE TABLE `tmpb_crcpt` (
   `crcpt_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `tmpb_crcpt`
---
-
-INSERT INTO `tmpb_crcpt` (`id`, `crcpt_mrcpt`, `crcpt_bitem`, `crcpt_items`, `crcpt_itrat`, `crcpt_itqty`, `crcpt_itamt`, `crcpt_dspct`, `crcpt_dsamt`, `crcpt_vtpct`, `crcpt_vtamt`, `crcpt_csrat`, `crcpt_ntamt`, `crcpt_notes`, `crcpt_attrb`, `crcpt_rtqty`, `crcpt_slqty`, `crcpt_ohqty`, `crcpt_cbkng`, `crcpt_actve`, `crcpt_crusr`, `crcpt_crdat`, `crcpt_upusr`, `crcpt_updat`, `crcpt_rvnmr`) VALUES
-('49c5508c-ad67-49ce-aee9-09903c780a67', '0f93786a-750e-4c93-b9d2-504fc7a91b05', '9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 650.000000, 10.000000, 6500.000000, 0.000000, 0.000000, 5.000000, 325.000000, 682.500000, 6825.000000, '', '{\"Fabric\":\"raw\"}', 0.000000, 10.000000, 0.000000, '2872a59f-83b4-4776-8d18-aaf1b7762ebf', 1, 'user1', '2026-02-02 07:11:44', 'user1', '2026-02-02 08:35:29', 1),
-('5e85ce30-491a-4ec1-a35d-35b7831ae0d4', '0f93786a-750e-4c93-b9d2-504fc7a91b05', 'f241e3b7-3f83-42f4-ac10-af8def91799a', '38b496e9-6652-4324-8331-ba0ecb0cfeae', 55.000000, 10.000000, 550.000000, 0.000000, 0.000000, 5.000000, 27.500000, 57.750000, 577.500000, '', '{\"Flavor\":\"raw\"}', 0.000000, 0.000000, 10.000000, '3fccde86-1c19-4e2d-97ca-46620514f96f', 1, 'user1', '2026-02-02 07:11:44', 'user1', '2026-02-02 07:11:44', 1),
-('6ae3b4e1-5a6f-49b9-b9e5-5d0b79961914', '9e6f1b77-da06-429c-8b53-8db9b30ab694', '9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 650.000000, 35.000000, 22750.000000, 0.000000, 0.000000, 5.000000, 1137.500000, 682.500000, 23887.500000, '', '{\"Fabric\":\"raw\"}', 0.000000, 10.000000, 25.000000, '2872a59f-83b4-4776-8d18-aaf1b7762ebf', 1, 'user1', '2026-02-02 07:21:05', 'user1', '2026-02-02 08:04:24', 1),
-('d7744c4f-97c8-4218-b84b-d8c9b00d25f1', '9e6f1b77-da06-429c-8b53-8db9b30ab694', 'f241e3b7-3f83-42f4-ac10-af8def91799a', '38b496e9-6652-4324-8331-ba0ecb0cfeae', 55.000000, 35.000000, 1925.000000, 0.000000, 0.000000, 5.000000, 96.250000, 57.750000, 2021.250000, '', '{\"Flavor\":\"raw\"}', 0.000000, 0.000000, 35.000000, '3fccde86-1c19-4e2d-97ca-46620514f96f', 1, 'user1', '2026-02-02 07:21:05', 'user1', '2026-02-02 07:21:05', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -767,6 +745,14 @@ CREATE TABLE `tmpb_expns` (
   `expns_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `expns_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tmpb_expns`
+--
+
+INSERT INTO `tmpb_expns` (`id`, `expns_users`, `expns_bsins`, `expns_cntct`, `expns_refid`, `expns_refno`, `expns_srcnm`, `expns_trdat`, `expns_inexc`, `expns_notes`, `expns_xpamt`, `expns_actve`, `expns_crusr`, `expns_crdat`, `expns_upusr`, `expns_updat`, `expns_rvnmr`) VALUES
+('e337e69e-bfba-4684-b83c-860b0e727340', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', '714f2d07-cffe-4921-8748-64a29b775513', 'PI-020226-00001', 'Purchase Invoice', '2026-02-02', 1, '', 40.000000, 1, 'user1', '2026-02-02 12:31:39', 'user1', '2026-02-02 12:31:39', 1),
+('ee94b228-b84e-4f67-b73f-a8830516ae12', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', '714f2d07-cffe-4921-8748-64a29b775513', 'PI-020226-00001', 'Purchase Invoice', '2026-02-02', 2, '', 20.000000, 1, 'user1', '2026-02-02 12:31:39', 'user1', '2026-02-02 12:31:39', 1);
 
 -- --------------------------------------------------------
 
@@ -807,13 +793,6 @@ CREATE TABLE `tmpb_mbkng` (
   `mbkng_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `mbkng_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tmpb_mbkng`
---
-
-INSERT INTO `tmpb_mbkng` (`id`, `mbkng_users`, `mbkng_bsins`, `mbkng_cntct`, `mbkng_trnno`, `mbkng_trdat`, `mbkng_refno`, `mbkng_trnte`, `mbkng_odamt`, `mbkng_dsamt`, `mbkng_vtamt`, `mbkng_vatpy`, `mbkng_incst`, `mbkng_excst`, `mbkng_rnamt`, `mbkng_ttamt`, `mbkng_pyamt`, `mbkng_pdamt`, `mbkng_duamt`, `mbkng_cnamt`, `mbkng_ispad`, `mbkng_ispst`, `mbkng_iscls`, `mbkng_vatcl`, `mbkng_hscnl`, `mbkng_actve`, `mbkng_crusr`, `mbkng_crdat`, `mbkng_upusr`, `mbkng_updat`, `mbkng_rvnmr`) VALUES
-('85db7d4e-df6a-4ea2-86e8-af5c759f01ea', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PB-020226-00001', '2026-02-02 00:00:00', '', '', 70500.000000, 0.000000, 3525.000000, 1, 0.000000, 0.000000, 0.000000, 74025.000000, 74025.000000, 68000.000000, 6025.000000, 0.000000, 2, 1, 0, 0, 0, 1, 'user1', '2026-02-02 06:42:54', 'user1', '2026-02-02 07:07:44', 2);
 
 -- --------------------------------------------------------
 
@@ -860,7 +839,7 @@ CREATE TABLE `tmpb_minvc` (
 --
 
 INSERT INTO `tmpb_minvc` (`id`, `minvc_users`, `minvc_bsins`, `minvc_cntct`, `minvc_trnno`, `minvc_trdat`, `minvc_refno`, `minvc_trnte`, `minvc_odamt`, `minvc_dsamt`, `minvc_vtamt`, `minvc_vatpy`, `minvc_incst`, `minvc_excst`, `minvc_rnamt`, `minvc_ttamt`, `minvc_pyamt`, `minvc_pdamt`, `minvc_duamt`, `minvc_rtamt`, `minvc_ispad`, `minvc_ispst`, `minvc_iscls`, `minvc_vatcl`, `minvc_hscnl`, `minvc_actve`, `minvc_crusr`, `minvc_crdat`, `minvc_upusr`, `minvc_updat`, `minvc_rvnmr`) VALUES
-('80ec0682-d19a-44a5-8dd1-45f3a816553a', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PI-020226-00001', '2026-02-02 00:00:00', '', '', 4500.000000, 0.000000, 450.000000, 1, 0.000000, 0.000000, 0.000000, 4950.000000, 4950.000000, 4800.000000, 150.000000, 0.000000, 2, 1, 0, 0, 0, 1, 'user1', '2026-02-02 07:14:02', 'user1', '2026-02-02 07:14:02', 1);
+('714f2d07-cffe-4921-8748-64a29b775513', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PI-020226-00001', '2026-02-02 00:00:00', '', '', 93500.000000, 0.000000, 4675.000000, 1, 40.000000, 20.000000, 0.000000, 98215.000000, 98215.000000, 90000.000000, 8215.000000, 0.000000, 2, 1, 0, 0, 0, 1, 'user1', '2026-02-02 12:31:39', 'user1', '2026-02-02 12:31:39', 1);
 
 -- --------------------------------------------------------
 
@@ -901,14 +880,6 @@ CREATE TABLE `tmpb_mrcpt` (
   `mrcpt_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `mrcpt_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tmpb_mrcpt`
---
-
-INSERT INTO `tmpb_mrcpt` (`id`, `mrcpt_users`, `mrcpt_bsins`, `mrcpt_cntct`, `mrcpt_trnno`, `mrcpt_trdat`, `mrcpt_refno`, `mrcpt_trnte`, `mrcpt_odamt`, `mrcpt_dsamt`, `mrcpt_vtamt`, `mrcpt_vatpy`, `mrcpt_incst`, `mrcpt_excst`, `mrcpt_rnamt`, `mrcpt_ttamt`, `mrcpt_pyamt`, `mrcpt_pdamt`, `mrcpt_duamt`, `mrcpt_rtamt`, `mrcpt_ispad`, `mrcpt_ispst`, `mrcpt_iscls`, `mrcpt_vatcl`, `mrcpt_hscnl`, `mrcpt_actve`, `mrcpt_crusr`, `mrcpt_crdat`, `mrcpt_upusr`, `mrcpt_updat`, `mrcpt_rvnmr`) VALUES
-('0f93786a-750e-4c93-b9d2-504fc7a91b05', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PR-020226-00001', '2026-02-02 00:00:00', '', '', 7050.000000, 0.000000, 352.500000, 1, 0.000000, 0.000000, 0.000000, 7402.500000, 7402.500000, 7402.500000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'user1', '2026-02-02 07:11:44', 'user1', '2026-02-02 07:11:44', 1),
-('9e6f1b77-da06-429c-8b53-8db9b30ab694', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PR-020226-00002', '2026-02-02 00:00:00', '', '', 24675.000000, 0.000000, 1233.750000, 1, 0.000000, 0.000000, 0.000000, 25908.750000, 25908.750000, 25908.750000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'user1', '2026-02-02 07:21:05', 'user1', '2026-02-02 07:21:05', 1);
 
 -- --------------------------------------------------------
 
@@ -1073,7 +1044,9 @@ CREATE TABLE `tmsb_ucnfg` (
 INSERT INTO `tmsb_ucnfg` (`id`, `ucnfg_users`, `ucnfg_bsins`, `ucnfg_cname`, `ucnfg_gname`, `ucnfg_label`, `ucnfg_value`, `ucnfg_notes`, `ucnfg_actve`, `ucnfg_crusr`, `ucnfg_crdat`, `ucnfg_upusr`, `ucnfg_updat`, `ucnfg_rvnmr`) VALUES
 ('c1', 'user1', 'business1', 'Purchase', 'Booking', 'mbkng_vatpy', '1', 'Including VAT', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-02 11:09:34', 1),
 ('c2', 'user1', 'business1', 'Purchase', 'Booking', 'mbkng_ispst', '1', 'Default Posted Checked', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-02 11:07:49', 1),
-('c3', 'user1', 'business1', 'Purchase', 'Receipt', 'mrcpt_vatpy', '1', 'Including VAT', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-02 11:09:37', 1);
+('c3', 'user1', 'business1', 'Purchase', 'Receipt', 'mrcpt_vatpy', '1', 'Including VAT', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-02 11:09:37', 1),
+('c4', 'user1', 'business1', 'Sales', 'Invoice', 'minvc_vatpy', '1', 'Including VAT', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-02 11:09:37', 1),
+('c5', 'user1', 'business1', 'Sales', 'Invoice', 'minvc_ispst', '1', 'Default Posted Checked', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-02 11:07:49', 1);
 
 -- --------------------------------------------------------
 
@@ -1223,14 +1196,8 @@ CREATE TABLE `tmtb_paybl` (
 --
 
 INSERT INTO `tmtb_paybl` (`id`, `paybl_users`, `paybl_bsins`, `paybl_cntct`, `paybl_pymod`, `paybl_refid`, `paybl_refno`, `paybl_srcnm`, `paybl_trdat`, `paybl_descr`, `paybl_notes`, `paybl_dbamt`, `paybl_cramt`, `paybl_crusr`, `paybl_crdat`, `paybl_upusr`, `paybl_updat`, `paybl_rvnmr`) VALUES
-('1fb35a2f-cc24-4223-b0c0-d377cda494e0', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', '0f93786a-750e-4c93-b9d2-504fc7a91b05', 'PR-020226-00001', 'Purchase Receipt', '2026-02-02 00:00:00', 'Supplier Goods', 'Products', 0.000000, 7402.500000, 'user1', '2026-02-02 07:11:44', 'user1', '2026-02-02 07:11:44', 1),
-('24054976-44ca-4f06-8163-3ab290648b9c', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', '80ec0682-d19a-44a5-8dd1-45f3a816553a', 'PI-020226-00001', 'Purchase Booking', '2026-02-02 00:00:00', 'Supplier Goods', 'Products', 0.000000, 4950.000000, 'user1', '2026-02-02 07:14:02', 'user1', '2026-02-02 07:14:02', 1),
-('7c0d83a9-9072-45b4-9470-5a1dd3804d2d', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Payment', '9e6f1b77-da06-429c-8b53-8db9b30ab694', 'PR-020226-00002', 'Purchase Receipt', '2026-02-02 00:00:00', 'Supplier Payment', 'Payment', 25908.750000, 0.000000, 'user1', '2026-02-02 07:21:05', 'user1', '2026-02-02 07:21:05', 1),
-('a19792a3-ad33-4051-94fe-09826113d9b4', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Payment', '0f93786a-750e-4c93-b9d2-504fc7a91b05', 'PR-020226-00001', 'Purchase Receipt', '2026-02-02 00:00:00', 'Supplier Payment', 'Payment', 7402.500000, 0.000000, 'user1', '2026-02-02 07:11:44', 'user1', '2026-02-02 07:11:44', 1),
-('a7472d80-3bba-4a4d-95c7-19e400df0be1', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Cash', '80ec0682-d19a-44a5-8dd1-45f3a816553a', 'PI-020226-00001', 'Purchase Booking', '2026-02-02 00:00:00', '', 'Payment', 4800.000000, 0.000000, 'user1', '2026-02-02 07:14:02', 'user1', '2026-02-02 07:14:02', 1),
-('d18763b5-3fea-4903-a4a3-8e4b39cca05c', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', '85db7d4e-df6a-4ea2-86e8-af5c759f01ea', 'PB-020226-00001', 'Purchase Booking', '2026-02-02 00:00:00', 'Supplier Goods', 'Products', 0.000000, 74025.000000, 'user1', '2026-02-02 07:07:44', 'user1', '2026-02-02 07:07:44', 1),
-('e137ccc2-570c-4892-bf8e-a53f6713298b', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', '9e6f1b77-da06-429c-8b53-8db9b30ab694', 'PR-020226-00002', 'Purchase Receipt', '2026-02-02 00:00:00', 'Supplier Goods', 'Products', 0.000000, 25908.750000, 'user1', '2026-02-02 07:21:05', 'user1', '2026-02-02 07:21:05', 1),
-('e6ff7c8e-4123-4ef3-ba42-ddc921bac90e', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Cash', '85db7d4e-df6a-4ea2-86e8-af5c759f01ea', 'PB-020226-00001', 'Purchase Booking', '2026-02-02 00:00:00', '', 'Payment', 68000.000000, 0.000000, 'user1', '2026-02-02 07:07:44', 'user1', '2026-02-02 07:07:44', 1);
+('865c46fc-2661-43a5-b2cf-39b8e878d65d', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', '714f2d07-cffe-4921-8748-64a29b775513', 'PI-020226-00001', 'Purchase Booking', '2026-02-02 00:00:00', 'Supplier Goods', 'Products', 0.000000, 98215.000000, 'user1', '2026-02-02 12:31:39', 'user1', '2026-02-02 12:31:39', 1),
+('9d16d00e-72ca-4239-b05d-f025f2feccef', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Cash', '714f2d07-cffe-4921-8748-64a29b775513', 'PI-020226-00001', 'Purchase Booking', '2026-02-02 00:00:00', '', 'Payment', 90000.000000, 0.000000, 'user1', '2026-02-02 12:31:39', 'user1', '2026-02-02 12:31:39', 1);
 
 -- --------------------------------------------------------
 
@@ -1470,6 +1437,12 @@ ALTER TABLE `tmib_ctgry`
 -- Indexes for table `tmib_ctrsf`
 --
 ALTER TABLE `tmib_ctrsf`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmib_expns`
+--
+ALTER TABLE `tmib_expns`
   ADD PRIMARY KEY (`id`);
 
 --

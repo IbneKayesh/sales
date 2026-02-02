@@ -4,7 +4,7 @@ import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { Checkbox } from "primereact/checkbox";
 import { Tag } from "primereact/tag";
-import tmpb_minvc from "@/models/purchase/tmpb_minvc.json";
+import tmeb_minvc from "@/models/sales/tmeb_minvc.json";
 import { useContactsSgd } from "@/hooks/crm/useContactsSgd";
 
 const HeaderComp = ({ errors, formData, handleChange }) => {
@@ -78,7 +78,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
     <div className="grid">
       <div className="col-12 md:col-2">
         <label htmlFor="minvc_trnno" className="block font-bold mb-2">
-          {tmpb_minvc.minvc_trnno.label}
+          {tmeb_minvc.minvc_trnno.label}
         </label>
         <InputText
           id="minvc_trnno"
@@ -86,7 +86,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           value={formData.minvc_trnno}
           onChange={(e) => handleChange("minvc_trnno", e.target.value)}
           className={`w-full ${errors.minvc_trnno ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmpb_minvc.minvc_trnno.label}`}
+          placeholder={`Enter ${tmeb_minvc.minvc_trnno.label}`}
           disabled
           variant="filled"
         />
@@ -96,7 +96,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
       </div>
       <div className="col-12 md:col-2">
         <label htmlFor="minvc_trdat" className="block font-bold mb-2">
-          {tmpb_minvc.minvc_trdat.label}
+          {tmeb_minvc.minvc_trdat.label}
           {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         <Calendar
@@ -111,7 +111,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           }
           className={`w-full ${errors.minvc_trdat ? "p-invalid" : ""}`}
           dateFormat="yy-mm-dd"
-          placeholder={`Select ${tmpb_minvc.minvc_trdat.label}`}
+          placeholder={`Select ${tmeb_minvc.minvc_trdat.label}`}
           disabled={isReadOnly}
           variant={isReadOnly ? "filled" : "outlined"}
         />
@@ -121,7 +121,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
       </div>
       <div className="col-12 md:col-5">
         <label htmlFor="minvc_cntct" className="block font-bold mb-2">
-          {tmpb_minvc.minvc_cntct.label}
+          {tmeb_minvc.minvc_cntct.label}
           {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         {isReadOnly ? (
@@ -141,7 +141,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
             optionValue="id"
             onChange={(e) => handleChange_cntct_cntnm(e)}
             className={`w-full ${errors.minvc_cntct ? "p-invalid" : ""}`}
-            placeholder={`Select ${tmpb_minvc.minvc_cntct.label}`}
+            placeholder={`Select ${tmeb_minvc.minvc_cntct.label}`}
             filter
             showClear
             itemTemplate={cntct_cntnm_IT}
@@ -154,7 +154,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
       </div>
       <div className="col-12 md:col-2">
         <label htmlFor="minvc_refno" className="block font-bold mb-2">
-          {tmpb_minvc.minvc_refno.label}
+          {tmeb_minvc.minvc_refno.label}
         </label>
         <InputText
           id="minvc_refno"
@@ -162,7 +162,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           value={formData.minvc_refno}
           onChange={(e) => handleChange("minvc_refno", e.target.value)}
           className={`w-full ${errors.minvc_refno ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmpb_minvc.minvc_refno.label}`}
+          placeholder={`Enter ${tmeb_minvc.minvc_refno.label}`}
           disabled={isReadOnly}
           variant={isReadOnly ? "filled" : "outlined"}
         />
@@ -184,7 +184,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
         ) : (
           <>
             <label htmlFor="minvc_ispst" className="block font-bold mb-2">
-              {tmpb_minvc.minvc_ispst.label}
+              {tmeb_minvc.minvc_ispst.label}
             </label>
             <Checkbox
               id="minvc_ispst"

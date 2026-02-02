@@ -47,7 +47,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
   const actionMenuItems = [
     {
-      label: "Add Attributes",
+      label: "Attributes",
       icon: "pi pi-plus-circle text-green-600",
       command: () => activeRow && handleAddAttributes(activeRow),
     },
@@ -57,7 +57,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       command: () => activeRow && handleCopyRowConfirm(activeRow),
     },
     {
-      label: "Delete Item",
+      label: "Delete",
       icon: "pi pi-trash text-red-600",
       command: () => activeRow && handleDelete(activeRow),
     },
@@ -153,14 +153,16 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
             💵 Price: {Number(option.bitem_lprat).toFixed(2)}
           </div>
           <div className="col-4 p-0">
-            📊 Discount: {Number(option.bitem_sddsp).toFixed(2)}%
+            📊 Discount: {Number(option.cinvc_dspct).toFixed(2)}%
           </div>
           <div className="col-4 p-0">
-            📈 VAT: {Number(option.items_sdvat).toFixed(2)}%
+            📈 VAT: {Number(option.cinvc_vtpct).toFixed(2)}%
           </div>
         </div>
         <div className="col-12 p-0">
-          📦 Stock: {Number(option.bitem_gstkq).toFixed(2)} {option.puofm_untnm}
+          📦 Stock: {Number(option.cinvc_ohqty).toFixed(2)} {option.puofm_untnm}
+
+          🧾 
         </div>
       </div>
     );

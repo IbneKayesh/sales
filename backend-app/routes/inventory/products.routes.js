@@ -668,16 +668,16 @@ router.post("/get-sales-items", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT itm.items_icode, itm.items_iname,
-    stk.cinvc_bitem AS ctrsf_bitem, stk.cinvc_items AS ctrsf_items,
-stk.minvc_trnno AS ctrsf_trnno, stk.cinvc_itrat AS ctrsf_itrat, stk.cinvc_attrb AS ctrsf_attrb, stk.cinvc_ohqty AS ctrsf_ohqty,
-stk.ctrsf_srcnm, stk.id AS ctrsf_refid,
+    const sql = `SELECT stk.cinvc_bitem AS cinvc_bitem, stk.cinvc_items AS cinvc_items, bitm.bitem_mcmrp AS cinvc_itrat,
+    1 AS cinvc_itqty, bitm.bitem_mcmrp AS cinvc_itamt, bitm.bitem_sddsp AS cinvc_dspct, itm.items_sdvat AS cinvc_vtpct, 0 AS cinvc_csrat, 0 AS cinvc_ntamt,
+    stk.cinvc_csrat AS cinvc_lprat, 0 AS cinvc_notes, stk.cinvc_attrb AS cinvc_attrb, stk.ctrsf_srcnm AS cinvc_srcnm, stk.id AS cinvc_refid,
+    itm.items_icode, itm.items_iname, stk.minvc_trnno AS cinvc_refno, stk.cinvc_ohqty AS cinvc_ohqty,
 puofm.iuofm_untnm as puofm_untnm,
 itm.items_dfqty,
 suofm.iuofm_untnm as suofm_untnm
 FROM tmib_items itm
 JOIN (
-SELECT minv.minvc_trnno, cinv.cinvc_bitem, cinv.cinvc_items, cinv.cinvc_itrat, cinv.cinvc_attrb, cinv.cinvc_ohqty,
+SELECT minv.minvc_trnno, cinv.cinvc_bitem, cinv.cinvc_items, cinv.cinvc_csrat, cinv.cinvc_attrb, cinv.cinvc_ohqty,
 'Purchase Invoice' AS ctrsf_srcnm, cinv.id
 FROM tmpb_cinvc cinv
 JOIN tmpb_minvc minv ON cinv.cinvc_minvc = minv.id
@@ -686,7 +686,7 @@ WHERE minv.minvc_users = ?
 AND minv.minvc_bsins = ?
 AND cinv.cinvc_ohqty > 0
 UNION ALL
-SELECT mrpt.mrcpt_trnno, crpt.crcpt_bitem, crpt.crcpt_items, crpt.crcpt_itrat, crpt.crcpt_attrb, crpt.crcpt_ohqty,
+SELECT mrpt.mrcpt_trnno, crpt.crcpt_bitem, crpt.crcpt_items, crpt.crcpt_csrat, crpt.crcpt_attrb, crpt.crcpt_ohqty,
 'Purchase Receipt' AS ctrsf_srcnm, crpt.id
 FROM tmpb_crcpt crpt
 JOIN tmpb_mrcpt mrpt ON crpt.crcpt_mrcpt = mrpt.id
@@ -711,11 +711,11 @@ WHERE itm.items_users = ?
 AND bitm.bitem_bsins = ?`;
     const params = [bitem_users, bitem_bsins, bitem_users, bitem_bsins, bitem_users, bitem_bsins, bitem_users, bitem_bsins];
 
-    const rows = await dbGetAll(sql, params, `Get transfer items for ${bitem_bsins}`);
+    const rows = await dbGetAll(sql, params, `Get sales items for ${bitem_bsins}`);
 
     res.json({
       success: true,
-      message: "Transfer items fetched successfully",
+      message: "Sales items fetched successfully",
       data: rows,
     });
   } catch (error) {

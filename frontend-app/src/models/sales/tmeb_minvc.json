@@ -25,10 +25,10 @@
   },
   "minvc_cntct": {
     "type": "string",
-    "label": "Supplier",
+    "label": "Customer",
     "maxLength": 50,
     "minLength": 3,
-    "placeholder": "Enter supplier",
+    "placeholder": "Enter customer",
     "required": true
   },
   "minvc_trnno": {
