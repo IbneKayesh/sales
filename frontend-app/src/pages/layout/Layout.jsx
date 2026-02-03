@@ -26,6 +26,12 @@ const Layout = () => {
           url: "/home/sales/sinvoice",
           icon: "pi pi-file-edit",
         },
+        {
+          id: "sl2",
+          name: "Module",
+          url: "/home/module",
+          icon: "pi pi-file-edit",
+        },
       ],
     },
     {

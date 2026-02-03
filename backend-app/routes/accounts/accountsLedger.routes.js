@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
     cntc.cntct_cntnm, acts.bacts_bankn,
      0 as edit_stop
       FROM tmtb_ledgr dgr
-      LEFT JOIN tmab_bsins bsns ON dgr.ledgr_bsins = bsns.id
+      LEFT JOIN tmsb_bsins bsns ON dgr.ledgr_bsins = bsns.id
       LEFT JOIN tmtb_trhed thed ON dgr.ledgr_trhed = thed.id
       LEFT JOIN tmcb_cntct cntc ON dgr.ledgr_cntct = cntc.id
       LEFT JOIN tmtb_bacts acts ON dgr.ledgr_bacts = acts.id

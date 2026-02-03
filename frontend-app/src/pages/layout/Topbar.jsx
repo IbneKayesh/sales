@@ -4,8 +4,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getStorageData } from "@/utils/storage";
 import "./Topbar.css";
 import ActiveBusiness from "@/components/ActiveBusiness";
-
 import UserProfile from "@/components/UserProfile";
+
 
 const Topbar = ({
   leftbarCollapsed,
@@ -42,6 +42,11 @@ const Topbar = ({
   const selectedMenuName = getSelectedMenuName();
 
   const [showActiveBusiness, setShowActiveBusiness] = useState(false);
+
+  const handleModuleClick = (moduleName) => {
+    navigate(`/home/module`);
+  };
+
   return (
     <>
       <div className="topbar">
@@ -58,6 +63,12 @@ const Topbar = ({
             onClick={onToggleFullMode}
           >
             <i className="pi pi-expand"></i>
+          </button>
+          <button
+            className="topbar-btn full-mode-btn"
+            onClick={handleModuleClick}
+          >
+            <i className="pi pi-box"></i>
           </button>
         </div>
         <div className="topbar-center">

@@ -26,7 +26,7 @@ const HeadsPage = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
-          {isList ? "Heads List" : formData.id ? "Edit Head" : "Add New Head"}
+          {isList ? "Heads List" : formData.id ? "Edit Head" : "New Head"}
         </h3>
 
         <div className="flex gap-2">

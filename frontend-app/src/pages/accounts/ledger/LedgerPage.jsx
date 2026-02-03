@@ -38,7 +38,7 @@ const LedgerPage = () => {
             ? "Ledger List"
             : formData.id
             ? "Edit Ledger"
-            : "Add New Ledger"}
+            : "New Ledger"}
         </h3>
 
         <div className="flex gap-2">

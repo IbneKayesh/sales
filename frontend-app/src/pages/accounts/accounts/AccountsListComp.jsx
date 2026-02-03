@@ -4,8 +4,12 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { formatDate } from "@/utils/datetime";
 import ActiveRowCell from "@/components/ActiveRowCell";
+import { useState } from "react";
+import { InputText } from "primereact/inputtext";
 
 const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
+  const [globalFilter, setGlobalFilter] = useState(null);
+
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.bacts_bankn}"?`,
@@ -92,6 +96,27 @@ const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
       </>
     );
   };
+
+  const header = () => {
+    return (
+      <div className="flex flex-column md:flex-row align-items-center justify-content-between gap-3">
+        <div className="p-inputgroup w-full md:w-25rem">
+          <span className="p-inputgroup-addon bg-gray-100">
+            <i className="pi pi-search"></i>
+          </span>
+          <InputText
+            type="search"
+            onInput={(e) => setGlobalFilter(e.target.value)}
+            placeholder="Search..."
+            className="p-inputtext-sm"
+          />
+        </div>
+
+        <div className="flex flex-column md:flex-row align-items-center gap-2 w-full md:w-auto"></div>
+      </div>
+    );
+  };
+
   return (
     <div className="p-1">
       <ConfirmDialog />
@@ -104,6 +129,18 @@ const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
         size="small"
         rowHover
         showGridlines
+        globalFilter={globalFilter}
+        globalFilterFields={[
+          "bacts_bankn",
+          "bacts_brnch",
+          "bacts_routn",
+          "bacts_acnam",
+          "bacts_acnum",
+          "bacts_notes",
+          "bacts_opdat",
+          "bacts_crbln",
+        ]}
+        header={header()}
       >
         <Column field="bacts_bankn" header="Bank Name" body={bacts_bankn_BT} />
         <Column field="bacts_acnam" header="Account" body={bacts_acnam_BT} />

@@ -29,10 +29,10 @@ const AccountsPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Accounts List"
+            ? "Account List"
             : formData.id
-            ? "Edit Accounts"
-            : "Add New Accounts"}
+            ? "Edit Account"
+            : "New Account"}
         </h3>
 
         <div className="flex gap-2">

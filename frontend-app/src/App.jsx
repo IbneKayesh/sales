@@ -13,6 +13,7 @@ import { ToastProvider } from "./hooks/useToast.jsx";
 import LandingPage from "./pages/LandingPage";
 import Layout from "./pages/layout/Layout.jsx";
 import HomePage from "./pages/HomePage.jsx";
+import ModulePage from "./pages/ModulePage.jsx";
 //auth
 import AuthPage from "./pages/auth/AuthPage";
 //crm
@@ -106,6 +107,7 @@ function AppRoutes() {
             element={user ? <Layout /> : <Navigate to="/login" />}
           >
             <Route index element={<HomePage />} />
+            <Route path="module" element={<ModulePage />} />
             //auth
             //crm
             <Route path="crm/contact" element={<ContactPage />} />

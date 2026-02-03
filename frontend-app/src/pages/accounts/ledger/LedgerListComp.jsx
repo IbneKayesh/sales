@@ -4,8 +4,11 @@ import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
 import { formatDate } from "@/utils/datetime";
 import ZeroRowCell from "@/components/ZeroRowCell";
+import { useState } from "react";
+import { InputText } from "primereact/inputtext";
 
 const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
+  const [globalFilter, setGlobalFilter] = useState(null);
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.ledgr_trdat}, ${rowData.ledgr_refno}"?`,
@@ -55,7 +58,7 @@ const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-const cntct_cntnm_BT = (rowData) => {
+  const cntct_cntnm_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-md">{rowData.cntct_cntnm}</span>
@@ -68,7 +71,9 @@ const cntct_cntnm_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-md">{rowData.ledgr_pymod}</span>
-        <span className="text-sm text-gray-600">{formatDate(rowData.ledgr_trdat)}</span>
+        <span className="text-sm text-gray-600">
+          {formatDate(rowData.ledgr_trdat)}
+        </span>
       </div>
     );
   };
@@ -83,11 +88,35 @@ const cntct_cntnm_BT = (rowData) => {
   };
 
   const ledgr_dbamt_BT = (rowData) => {
-    return <ZeroRowCell value={rowData.ledgr_dbamt} text={rowData.ledgr_dbamt} />;
+    return (
+      <ZeroRowCell value={rowData.ledgr_dbamt} text={rowData.ledgr_dbamt} />
+    );
   };
 
   const ledgr_cramt_BT = (rowData) => {
-    return <ZeroRowCell value={rowData.ledgr_cramt} text={rowData.ledgr_cramt} />;
+    return (
+      <ZeroRowCell value={rowData.ledgr_cramt} text={rowData.ledgr_cramt} />
+    );
+  };
+
+  const header = () => {
+    return (
+      <div className="flex flex-column md:flex-row align-items-center justify-content-between gap-3">
+        <div className="p-inputgroup w-full md:w-25rem">
+          <span className="p-inputgroup-addon bg-gray-100">
+            <i className="pi pi-search"></i>
+          </span>
+          <InputText
+            type="search"
+            onInput={(e) => setGlobalFilter(e.target.value)}
+            placeholder="Search..."
+            className="p-inputtext-sm"
+          />
+        </div>
+
+        <div className="flex flex-column md:flex-row align-items-center gap-2 w-full md:w-auto"></div>
+      </div>
+    );
   };
 
   return (
@@ -101,6 +130,20 @@ const cntct_cntnm_BT = (rowData) => {
         emptyMessage="No data found."
         className="bg-dark-300"
         size="small"
+        globalFilter={globalFilter}
+        globalFilterFields={[
+          "bsins_bname",
+          "bacts_bankn",
+          "cntct_cntnm",
+          "trhed_hednm",
+          "ledgr_pymod",
+          "ledgr_trdat",
+          "ledgr_refno",
+          "ledgr_notes",
+          "ledgr_dbamt",
+          "ledgr_cramt",
+        ]}
+        header={header()}
       >
         <Column
           field="bsins_bname"
@@ -108,7 +151,12 @@ const cntct_cntnm_BT = (rowData) => {
           body={bsins_bname_BT}
           sortable
         />
-        <Column field="cntct_cntnm" header="Contact" body={cntct_cntnm_BT} sortable />
+        <Column
+          field="cntct_cntnm"
+          header="Contact"
+          body={cntct_cntnm_BT}
+          sortable
+        />
         <Column
           field="ledgr_pymod"
           header="Date"
