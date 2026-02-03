@@ -27,7 +27,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   useEffect(() => {
     setFormDataItemList((prev) =>
       prev.map((item) => {
-        if (item.id === selectedItemAttributes.id) {
+        if (item.bitem_refid === selectedItemAttributes.bitem_refid) {
           return { ...item, cinvc_attrb: selectedItemAttributes.cinvc_attrb };
         }
         return item;
@@ -143,26 +143,38 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   }, [formData?.minvc_incst, formData?.minvc_excst, formDataItemList.length]);
 
   const itemList_IT = (option) => {
+    const parsedAttr = parseAttributes(option.bitem_attrb);
     return (
       <div className="grid">
         <div className="col-12 font-semibold p-1">
           {option.items_iname} ({option.items_icode})
         </div>
+        <div className="col-12 p-0 text-blue-600 text-sm">
+          {Object.keys(parsedAttr).length > 0 &&
+            Object.entries(parsedAttr)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join(", ")}
+        </div>
         <div className="grid col-12 text-gray-700 p-2">
-          <div className="col-4 p-0">
-            💵 Price: {Number(option.bitem_lprat).toFixed(2)}
+          <div className="col-3 p-0">
+            💰 DP: {Number(option.bitem_dprat).toFixed(2)}
           </div>
-          <div className="col-4 p-0">
-            📊 Discount: {Number(option.cinvc_dspct).toFixed(2)}%
+          <div className="col-3 p-0">
+            💵 MRP: {Number(option.bitem_mcmrp).toFixed(2)}
           </div>
-          <div className="col-4 p-0">
-            📈 VAT: {Number(option.cinvc_vtpct).toFixed(2)}%
+          <div className="col-3 p-0">
+            📊 Discount: {Number(option.bitem_sddsp).toFixed(2)}%
+          </div>
+          <div className="col-3 p-0">
+            📈 VAT: {Number(option.items_sdvat).toFixed(2)}%
           </div>
         </div>
-        <div className="col-12 p-0">
-          📦 Stock: {Number(option.cinvc_ohqty).toFixed(2)} {option.puofm_untnm}
-
-          🧾 
+        <div className="grid col-12 text-gray-700 p-2">
+          <div className="col-4 p-0">
+            📦 Stock: {Number(option.bitem_ohqty).toFixed(2)}{" "}
+            {option.puofm_untnm}
+          </div>
+          <div className="col-4 p-0">🧾 No: {option.bitem_refno}</div>
         </div>
       </div>
     );
@@ -190,7 +202,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
     // Check if item is already added
     const existingItem = formDataItemList.find(
-      (i) => i.cinvc_bitem === selectedItem,
+      (i) => i.bitem_refid === selectedItem,
     );
     if (existingItem) {
       // Item already exists, do not add duplicate
@@ -201,7 +213,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     const item = productList.find((i) => i.id === selectedItem);
     if (!item) return;
 
-    const itemAmount = (selectedQty || 1) * item.bitem_lprat;
+    const itemAmount = (selectedQty || 1) * item.bitem_mcmrp;
     const discountAmount = (item.bitem_sddsp / 100) * itemAmount;
     const vatAmount = (item.items_sdvat / 100) * itemAmount;
     const totalAmount = itemAmount - discountAmount + vatAmount;
@@ -209,10 +221,10 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
 
     const newItemRow = {
       id: generateGuid(), // Temporary ID for new items
-      cinvc_mbkng: "",
+      cinvc_minvc: "",
       cinvc_bitem: selectedItem,
       cinvc_items: item.bitem_items,
-      cinvc_itrat: item.bitem_lprat,
+      cinvc_itrat: item.bitem_mcmrp,
       cinvc_itqty: selectedQty || 1,
       cinvc_itamt: itemAmount,
       cinvc_dspct: item.bitem_sddsp,
@@ -221,25 +233,24 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       cinvc_vtamt: vatAmount,
       cinvc_csrat: costPrice,
       cinvc_ntamt: totalAmount,
+      cinvc_lprat: item.bitem_csrat,
       cinvc_notes: selectedNote,
-      cinvc_attrb: {},
-      cinvc_cnqty: 0,
-      cinvc_rcqty: 0,
-      cinvc_pnqty: selectedQty || 1,
+      cinvc_attrb: item.bitem_attrb,
+      cinvc_srcnm: item.bitem_srcnm,
+      cinvc_refid: item.bitem_refid,
 
       items_icode: item.items_icode,
       items_iname: item.items_iname,
       items_dfqty: item.items_dfqty,
       puofm_untnm: item.puofm_untnm,
       suofm_untnm: item.suofm_untnm,
-      bitem_gstkq: item.bitem_gstkq,
+      bitem_ohqty: item.bitem_ohqty,
     };
     setFormDataItemList([...formDataItemList, newItemRow]);
 
     setSelectedItem(null);
     setSelectedQty(1);
   };
-
 
   const items_iname_BT = (rowData) => {
     const parsedAttr = parseAttributes(rowData.cinvc_attrb);
@@ -364,27 +375,9 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     );
   };
 
-  const bitem_gstkq_BT = (rowData) => {
+  const bitem_ohqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_gstkq} text={rowData.bitem_gstkq} />
-    );
-  };
-
-  const cinvc_cnqty_BT = (rowData) => {
-    return (
-      <ZeroRowCell value={rowData.cinvc_cnqty} text={rowData.cinvc_cnqty} />
-    );
-  };
-
-  const cinvc_rcqty_BT = (rowData) => {
-    return (
-      <ZeroRowCell value={rowData.cinvc_rcqty} text={rowData.cinvc_rcqty} />
-    );
-  };
-
-  const cinvc_pnqty_BT = (rowData) => {
-    return (
-      <ZeroRowCell value={rowData.cinvc_pnqty} text={rowData.cinvc_pnqty} />
+      <ZeroRowCell value={rowData.bitem_ohqty} text={rowData.bitem_ohqty} />
     );
   };
 
@@ -639,31 +632,10 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
         <Column field="cinvc_notes" header="Remarks" editor={textEditor} />
         <Column header="Bulk" body={bulk_BT} />
         <Column
-          field="bitem_gstkq"
+          field="bitem_ohqty"
           header="Stock"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={bitem_gstkq_BT}
-          hidden={!showExtraColumns}
-        />
-        <Column
-          field="cinvc_cnqty"
-          header="Cancelled"
-          headerStyle={{ backgroundColor: "#49769bff" }}
-          body={cinvc_cnqty_BT}
-          hidden={!showExtraColumns}
-        />
-        <Column
-          field="cinvc_rcqty"
-          header="Invoice"
-          headerStyle={{ backgroundColor: "#49769bff" }}
-          body={cinvc_rcqty_BT}
-          hidden={!showExtraColumns}
-        />
-        <Column
-          field="cinvc_pnqty"
-          header="Available"
-          headerStyle={{ backgroundColor: "#49769bff" }}
-          body={cinvc_pnqty_BT}
+          body={bitem_ohqty_BT}
           hidden={!showExtraColumns}
         />
         <Column

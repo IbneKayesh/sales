@@ -30,4 +30,14 @@ export const authAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  permissionsModules: (data) =>
+    apiRequest("/auth/permissions/modules", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  permissionsMenus: (data) =>
+    apiRequest("/auth/permissions/menus", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

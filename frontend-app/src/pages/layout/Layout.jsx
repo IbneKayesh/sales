@@ -9,12 +9,52 @@ import "./Layout.css";
 const Layout = () => {
   const [leftbarCollapsed, setLeftbarCollapsed] = useState(false);
   const [isFullMode, setIsFullMode] = useState(false);
+  const [userMenus, setUserMenus] = useState([]);
 
   useEffect(() => {
+    const refreshMenus = () => {
+      const data = getStorageData();
+      const output = buildMenus(data.menus || []);
+      setUserMenus(output);
+    };
+
     const data = getStorageData();
     setLeftbarCollapsed(data.leftbarCollapsed);
     setIsFullMode(data.fullMode);
+    refreshMenus();
+
+    window.addEventListener("menusUpdated", refreshMenus);
+    return () => window.removeEventListener("menusUpdated", refreshMenus);
   }, []);
+
+  function buildMenus(menus) {
+    const grouped = {};
+
+    menus.forEach((item) => {
+      const groupKey = item.menus_gname;
+
+      // Create group if it doesn't exist
+      if (!grouped[groupKey]) {
+        grouped[groupKey] = {
+          menus_gname: item.menus_gname,
+          menus_gicon: item.menus_gicon,
+          submenus: [],
+        };
+      }
+
+      // Push submenu
+      grouped[groupKey].submenus.push({
+        id: item.id,
+        menus_mname: item.menus_mname,
+        menus_mlink: item.menus_mlink,
+        menus_micon: item.menus_micon,
+      });
+    });
+
+    // Convert object to array
+    return Object.values(grouped);
+  }
+
   const menus = [
     {
       name: "Sales",
@@ -277,7 +317,7 @@ const Layout = () => {
         />
       )}
       <div className="app-content">
-        {!leftbarCollapsed && <Leftbar menus={menus} />}
+        {!leftbarCollapsed && <Leftbar menus={userMenus} />}
         <div className="main-content">
           <Outlet />
         </div>

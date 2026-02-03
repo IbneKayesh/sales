@@ -9,7 +9,8 @@ CREATE TABLE `tmsb_mdule` (
   `mdule_pname` varchar(50) NOT NULL,
   -- optional
   `mdule_micon` varchar(50) DEFAULT NULL,
-  `mdule_notes` varchar(255) DEFAULT NULL,
+  `mdule_color` varchar(50) DEFAULT NULL,
+  `mdule_notes` varchar(50) DEFAULT NULL,
   -- default
   `mdule_odrby` int(11) NOT NULL DEFAULT 0,
   `mdule_actve` tinyint(1) NOT NULL DEFAULT 1,

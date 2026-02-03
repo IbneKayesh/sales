@@ -279,4 +279,85 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
+
+// permissions/modules
+router.post("/permissions/modules", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    // Validate input
+    if (!id) {
+      return res.json({
+        success: false,
+        message: "Id is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT *
+    FROM tmsb_mdule
+    WHERE mdule_actve = 1
+    AND mdule_pname = 'basic'
+    ORDER BY mdule_odrby`;
+    const params = [];
+
+    const rows = await dbGetAll(sql, params, `Get modules for ${id}`);
+
+    res.json({
+      success: true,
+      message: "Modules is fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+
+// permissions/menus
+router.post("/permissions/menus", async (req, res) => {
+  try {
+    const { id, menus_mdule } = req.body;
+
+    // Validate input
+    if (!id || !menus_mdule) {
+      return res.json({
+        success: false,
+        message: "Id is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT *
+    FROM tmsb_menus
+    WHERE menus_actve = 1
+    AND menus_mdule = ?
+    ORDER BY menus_odrby`;
+    const params = [menus_mdule];
+
+    const rows = await dbGetAll(sql, params, `Get menus for ${menus_mdule}`);
+
+    res.json({
+      success: true,
+      message: "Menus is fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+
 module.exports = router;

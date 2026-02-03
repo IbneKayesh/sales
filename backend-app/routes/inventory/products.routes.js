@@ -668,17 +668,19 @@ router.post("/get-sales-items", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT stk.cinvc_bitem AS cinvc_bitem, stk.cinvc_items AS cinvc_items, bitm.bitem_mcmrp AS cinvc_itrat,
-    1 AS cinvc_itqty, bitm.bitem_mcmrp AS cinvc_itamt, bitm.bitem_sddsp AS cinvc_dspct, itm.items_sdvat AS cinvc_vtpct, 0 AS cinvc_csrat, 0 AS cinvc_ntamt,
-    stk.cinvc_csrat AS cinvc_lprat, 0 AS cinvc_notes, stk.cinvc_attrb AS cinvc_attrb, stk.ctrsf_srcnm AS cinvc_srcnm, stk.id AS cinvc_refid,
-    itm.items_icode, itm.items_iname, stk.minvc_trnno AS cinvc_refno, stk.cinvc_ohqty AS cinvc_ohqty,
+    const sql = `SELECT itm.items_icode, itm.items_bcode, itm.items_iname, itm.items_sdvat,
+    bitm.id, bitm.bitem_items, bitm.bitem_lprat, bitm.bitem_dprat, bitm.bitem_mcmrp,
+    bitm.bitem_sddsp, bitm.bitem_gstkq, bitm.bitem_istkq,
+    stk.cinvc_csrat AS bitem_csrat, stk.cinvc_attrb AS bitem_attrb, stk.cinvc_srcnm AS bitem_srcnm,
+    stk.id AS bitem_refid, stk.minvc_trnno AS bitem_refno, 
+    stk.cinvc_ohqty AS bitem_ohqty,
 puofm.iuofm_untnm as puofm_untnm,
 itm.items_dfqty,
 suofm.iuofm_untnm as suofm_untnm
 FROM tmib_items itm
 JOIN (
 SELECT minv.minvc_trnno, cinv.cinvc_bitem, cinv.cinvc_items, cinv.cinvc_csrat, cinv.cinvc_attrb, cinv.cinvc_ohqty,
-'Purchase Invoice' AS ctrsf_srcnm, cinv.id
+'Purchase Invoice' AS cinvc_srcnm, cinv.id
 FROM tmpb_cinvc cinv
 JOIN tmpb_minvc minv ON cinv.cinvc_minvc = minv.id
 JOIN tmib_items itm ON cinv.cinvc_items = itm.id AND itm.items_trcks = 1
@@ -695,8 +697,8 @@ WHERE mrpt.mrcpt_users = ?
 AND mrpt.mrcpt_bsins = ?
 AND crpt.crcpt_ohqty > 0
 UNION ALL
-SELECT 'Inventory Stock' AS bitem_trnno, bitm.id as bitem_bitem, bitm.bitem_items, bitm.bitem_lprat,
-'{}' AS bitem_attrb, bitm.bitem_gstkq,'Inventory Stock' AS bitem_srcnm, bitm.id
+SELECT 'Inventory Stock' AS bitem_trnno, bitm.id as bitem_bitem, bitm.bitem_items, bitm.bitem_lprat, '{}' AS bitem_attrb, bitm.bitem_gstkq,
+'Inventory Stock' AS bitem_srcnm, bitm.id
 FROM tmib_bitem bitm
 JOIN tmib_items itm ON bitm.bitem_items = itm.id AND itm.items_trcks = 0
 WHERE bitm.bitem_users = ?

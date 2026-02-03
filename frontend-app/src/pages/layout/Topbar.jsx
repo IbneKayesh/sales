@@ -43,10 +43,6 @@ const Topbar = ({
 
   const [showActiveBusiness, setShowActiveBusiness] = useState(false);
 
-  const handleModuleClick = (moduleName) => {
-    navigate(`/home/module`);
-  };
-
   return (
     <>
       <div className="topbar">
@@ -63,12 +59,6 @@ const Topbar = ({
             onClick={onToggleFullMode}
           >
             <i className="pi pi-expand"></i>
-          </button>
-          <button
-            className="topbar-btn full-mode-btn"
-            onClick={handleModuleClick}
-          >
-            <i className="pi pi-box"></i>
           </button>
         </div>
         <div className="topbar-center">

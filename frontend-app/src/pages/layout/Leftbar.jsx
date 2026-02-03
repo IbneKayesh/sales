@@ -26,8 +26,8 @@ const Leftbar = ({ menus }) => {
     return () => clearInterval(timer);
   }, []);
 
-  const toggleMenu = (menuName) => {
-    const newExpandedMenu = expandedMenu === menuName ? null : menuName;
+  const toggleMenu = (menus_gname) => {
+    const newExpandedMenu = expandedMenu === menus_gname ? null : menus_gname;
     setExpandedMenu(newExpandedMenu);
     setStorageData({ expandedMenu: newExpandedMenu });
   };
@@ -35,22 +35,25 @@ const Leftbar = ({ menus }) => {
   const handleMenuClick = (submenu) => {
     // Find the parent group and show all submenus of that group as navigation icons
     const currentMenu = menus.find((menu) =>
-      menu.submenus.some((sub) => sub.id === submenu.id)
+      menu.submenus.some((sub) => sub.id === submenu.id),
     );
     if (currentMenu) {
       const data = getStorageData();
       const currentGroup = data.currentGroup;
-      if (currentGroup !== currentMenu.name) {
+      if (currentGroup !== currentMenu.menus_gname) {
         const navigationIcons = currentMenu.submenus.map((sub) => ({
           id: sub.id,
-          name: sub.name,
-          icon: sub.icon,
-          url: sub.url,
+          name: sub.menus_mname,
+          icon: sub.menus_micon,
+          url: sub.menus_mlink,
         }));
-        setStorageData({ navigationIcons, currentGroup: currentMenu.name });
+        setStorageData({
+          navigationIcons,
+          currentGroup: currentMenu.menus_gname,
+        });
       }
     }
-    navigate(submenu.url);
+    navigate(submenu.menus_mlink);
   };
 
   return (
@@ -58,31 +61,43 @@ const Leftbar = ({ menus }) => {
       <div className="groups-container">
         {menus.map((menu) => (
           <div
-            key={menu.name}
-            className={`group ${expandedMenu === menu.name ? "expanded" : ""}`}
+            key={menu.menus_gname}
+            className={`group ${expandedMenu === menu.menus_gname ? "expanded" : ""}`}
           >
-            <div className="group-header" onClick={() => toggleMenu(menu.name)}>
-              <i className={menu.icon}></i>
-              {menu.name}
+            <div
+              className="group-header"
+              onClick={() => toggleMenu(menu.menus_gname)}
+            >
+              <i className={menu.menus_gicon}></i>
+              {menu.menus_gname}
             </div>
-            {expandedMenu === menu.name && (
+            {expandedMenu === menu.menus_gname && (
               <div className="menu-list">
                 {menu.submenus.map((submenu) => (
                   <div
                     key={submenu.id}
                     onClick={() => handleMenuClick(submenu)}
                     className={`menu-item ${
-                      location.pathname === submenu.url ? "selected" : ""
+                      location.pathname === submenu.menus_mlink
+                        ? "selected"
+                        : ""
                     }`}
                   >
-                    <i className={submenu.icon}></i>
-                    <div className="menu-name">{submenu.name}</div>
+                    <i className={submenu.menus_micon}></i>
+                    <div className="menu-name">{submenu.menus_mname}</div>
                   </div>
                 ))}
               </div>
             )}
           </div>
         ))}
+
+        <div className="menu-list">
+          <div className="menu-item bg-gray-900" onClick={() => navigate("/home/module")}>
+            <i className="pi pi-arrow-right"></i>
+            <div className="menu-name text-gray-300">Goto Modules</div>
+          </div>
+        </div>
       </div>
 
       {/* Footer Section */}
@@ -131,7 +146,9 @@ const Leftbar = ({ menus }) => {
             <strong>Grains:</strong>{" "}
             <span
               className={`font-bold ${
-                Number(user?.users_nofcr || 0) > 0 ? "text-green-500" : "text-red-500"
+                Number(user?.users_nofcr || 0) > 0
+                  ? "text-green-500"
+                  : "text-red-500"
               }`}
             >
               {Number(user?.users_nofcr || 0)}

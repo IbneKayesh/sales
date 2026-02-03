@@ -117,6 +117,13 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
         <div className="col-12 font-semibold p-1">
           {option.items_iname} ({option.items_icode})
         </div>
+        <div className="col-12 p-0 text-blue-600 text-sm">
+          {Object.keys(parsedAttr).length > 0 &&
+            Object.entries(parsedAttr)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join(", ")}
+        </div>
+
         <div className="grid col-12 text-gray-700 p-2">
           <div className="col-4 p-0">
             💵 Price: {Number(option.ctrsf_itrat).toFixed(2)}
@@ -125,12 +132,6 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
             📦 Stock: {Number(option.ctrsf_ohqty).toFixed(2)}
           </div>
           <div className="col-4 p-0">🧾 No: {option.ctrsf_trnno}</div>
-        </div>
-        <div className="col-12 p-0 text-gray-500 text-sm">
-          {Object.keys(parsedAttr).length > 0 &&
-            Object.entries(parsedAttr)
-              .map(([key, value]) => `${key}: ${value}`)
-              .join(", ")}
         </div>
       </div>
     );

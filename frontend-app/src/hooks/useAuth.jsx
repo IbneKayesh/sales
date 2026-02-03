@@ -140,7 +140,7 @@ export const AuthProvider = ({ children }) => {
         users_oname: usersOname,
       };
       const response = await authAPI.register(reqBody);
-      console.log("response", response);
+      //console.log("response", response);
       if (response.success) {
         //console.log("response " + JSON.stringify(response));
       }

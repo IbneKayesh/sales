@@ -2,7 +2,7 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import EntryComp from "./EntryComp";
-import { usePinvoice } from "@/hooks/purchase/usePinvoice";
+import { useSinvoice } from "@/hooks/sales/useSinvoice";
 import ListComp from "./ListComp";
 import SearchComp from "./SearchComp";
 
@@ -41,7 +41,7 @@ const SInvoicePage = () => {
     setCancelledRows,
     handleCancelBookingItems,
     setCancelledPayment
-  } = usePinvoice();
+  } = useSinvoice();
 
   const handleSearchBox = () => {
     setSearchBoxShow(true);

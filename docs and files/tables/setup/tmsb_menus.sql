@@ -7,6 +7,7 @@ CREATE TABLE `tmsb_menus` (
   `id` varchar(50) NOT NULL,
   `menus_mdule` varchar(50) NOT NULL,
   `menus_gname` varchar(50) NOT NULL,
+  `menus_gicon` varchar(50) NOT NULL,
   `menus_mname` varchar(50) NOT NULL,
   -- optional
   `menus_pname` varchar(50) DEFAULT NULL,
