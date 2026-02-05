@@ -485,10 +485,6 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     newData.cinvc_csrat = costPrice;
     newData.cinvc_ntamt = totalAmount;
 
-    newData.cinvc_cnqty = 0;
-    newData.cinvc_rcqty = 0;
-    newData.cinvc_pnqty = newData.cinvc_itqty;
-
     let _localItems = [...formDataItemList];
     _localItems[index] = newData;
     setFormDataItemList(_localItems);

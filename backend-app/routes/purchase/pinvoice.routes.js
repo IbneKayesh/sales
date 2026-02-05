@@ -151,11 +151,11 @@ router.post("/invoice-details", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase booking for ${cinvc_minvc}`,
+      `Get purchase invoice for ${cinvc_minvc}`,
     );
     res.json({
       success: true,
-      message: "Purchase booking fetched successfully",
+      message: "Purchase invoice fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -197,7 +197,7 @@ router.post("/invoice-expense", async (req, res) => {
     );
     res.json({
       success: true,
-      message: "Purchase booking expenses fetched successfully",
+      message: "Purchase invoice expenses fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -239,7 +239,7 @@ router.post("/invoice-payment", async (req, res) => {
     );
     res.json({
       success: true,
-      message: "Purchase booking payment fetched successfully",
+      message: "Purchase invoice payment fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -448,7 +448,7 @@ router.post("/create", async (req, res) => {
             pay.paybl_pymod,
             id,
             minvc_trnno_new,
-            "Purchase Booking",
+            "Purchase Invoice",
             minvc_trdat,
             pay.paybl_descr,
             pay.paybl_notes,
@@ -478,7 +478,7 @@ router.post("/create", async (req, res) => {
         "Inventory",
         id,
         minvc_trnno_new,
-        "Purchase Booking",
+        "Purchase Invoice",
         minvc_trdat,
         "Supplier Goods",
         "Products",
@@ -514,7 +514,7 @@ router.post("/create", async (req, res) => {
 
     res.json({
       success: true,
-      message: "Purchase booking created successfully",
+      message: "Purchase invoice created successfully",
       data: {
         ...req.body,
         minvc_trnno: minvc_trnno_new,
@@ -588,7 +588,7 @@ router.post("/update", async (req, res) => {
     scripts_del.push({
       sql: `DELETE FROM tmpb_cinvc WHERE cinvc_minvc = ?`,
       params: [id],
-      label: `Delete booking details for ${minvc_trnno}`,
+      label: `Delete invoice details for ${minvc_trnno}`,
     });
     scripts_del.push({
       sql: `DELETE FROM tmpb_expns WHERE expns_refid = ?`,
@@ -653,7 +653,7 @@ router.post("/update", async (req, res) => {
 
     //console.log(JSON.stringify(tmpb_cinvc));
 
-    //Insert booking details
+    //Insert invoice details
     for (const det of tmpb_cinvc) {
       scripts.push({
         sql: `INSERT INTO tmpb_cinvc(id, cinvc_minvc, cinvc_bitem, cinvc_items, cinvc_itrat, cinvc_itqty,
@@ -736,7 +736,7 @@ router.post("/update", async (req, res) => {
             pay.paybl_pymod,
             id,
             minvc_trnno,
-            "Purchase Booking",
+            "Purchase Invoice",
             minvc_trdat,
             pay.paybl_descr,
             pay.paybl_notes,
@@ -766,7 +766,7 @@ router.post("/update", async (req, res) => {
         "Inventory",
         id,
         minvc_trnno,
-        "Purchase Booking",
+        "Purchase Invoice",
         minvc_trdat,
         "Supplier Goods",
         "Products",
@@ -801,7 +801,7 @@ router.post("/update", async (req, res) => {
     await dbRunAll(scripts);
     res.json({
       success: true,
-      message: "Booking updated successfully",
+      message: "Invoice updated successfully",
       data: null,
     });
   } catch (error) {

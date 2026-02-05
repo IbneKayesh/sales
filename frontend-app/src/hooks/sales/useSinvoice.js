@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
-import tmpb_minvc from "@/models/purchase/tmpb_minvc.json";
+import tmeb_minvc from "@/models/sales/tmeb_minvc.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
-import { pinvoiceAPI } from "@/api/purchase/pinvoiceAPI";
+import { sinvoiceAPI } from "@/api/sales/sinvoiceAPI";
 import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
-import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 import { stringifyAttributes } from "@/utils/jsonParser";
 
-const dataModel = generateDataModel(tmpb_minvc, { edit_stop: 0 });
+const dataModel = generateDataModel(tmeb_minvc, { edit_stop: 0 });
 
 export const useSinvoice = () => {
   const { user, business } = useAuth();
@@ -28,7 +27,7 @@ export const useSinvoice = () => {
   const loadInvoice = async () => {
     try {
       //console.log("loadInvoice:");
-      const response = await pinvoiceAPI.getAll({
+      const response = await sinvoiceAPI.getAll({
         minvc_users: user.users_users,
         minvc_bsins: user.users_bsins,
         ...searchBoxData,
@@ -55,7 +54,7 @@ export const useSinvoice = () => {
   const loadInvoiceDetails = async (id) => {
     try {
       //console.log("loadInvoiceDetails:", id);
-      const response = await pinvoiceAPI.getDetails({
+      const response = await sinvoiceAPI.getDetails({
         cinvc_minvc: id,
       });
       //console.log("loadInvoiceDetails:", JSON.stringify(response));
@@ -70,7 +69,7 @@ export const useSinvoice = () => {
   const loadInvoiceExpenses = async (id) => {
     try {
       //console.log("loadInvoiceExpenses:", id);
-      const response = await pinvoiceAPI.getExpenses({
+      const response = await sinvoiceAPI.getExpenses({
         expns_refid: id,
       });
       //console.log("loadInvoiceExpenses:", JSON.stringify(response));
@@ -85,7 +84,7 @@ export const useSinvoice = () => {
   const loadInvoicePayment = async (id) => {
     try {
       //console.log("loadInvoicePayment:", id);
-      const response = await pinvoiceAPI.getPayment({
+      const response = await sinvoiceAPI.getPayment({
         paybl_refid: id,
       });
       //console.log("loadInvoicePayment:", JSON.stringify(response));
@@ -99,7 +98,7 @@ export const useSinvoice = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmpb_minvc);
+    const newErrors = validate({ ...formData, [field]: value }, tmeb_minvc);
     setErrors(newErrors);
   };
 
@@ -149,7 +148,7 @@ export const useSinvoice = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await pinvoiceAPI.delete(rowData);
+      const response = await sinvoiceAPI.delete(rowData);
 
       // Remove deleted business from local state
       const updatedList = dataList.filter((s) => s.id !== rowData.id);
@@ -184,7 +183,7 @@ export const useSinvoice = () => {
       setIsBusy(true);
 
       // Validate form
-      const newErrors = validate(formData, tmpb_minvc);
+      const newErrors = validate(formData, tmeb_minvc);
       setErrors(newErrors);
       console.log("handleSave:", JSON.stringify(newErrors));
 
@@ -221,17 +220,17 @@ export const useSinvoice = () => {
         minvc_trdat: formatDateForAPI(formData.minvc_trdat),
         minvc_ispad: paidStatus,
         user_id: user.id,
-        tmpb_cinvc: formDataItemListNew,
-        tmpb_expns: formDataExpensesList,
-        tmtb_paybl: formDataPaymentList,
+        tmeb_cinvc: formDataItemListNew,
+        tmeb_expns: formDataExpensesList,
+        tmtb_rcvbl: formDataPaymentList,
       };
 
       // Call API and get { message, data }
       let response;
       if (formData.id) {
-        response = await pinvoiceAPI.update(formDataNew);
+        response = await sinvoiceAPI.update(formDataNew);
       } else {
-        response = await pinvoiceAPI.create(formDataNew);
+        response = await sinvoiceAPI.create(formDataNew);
       }
 
       //console.log("handleSave:", JSON.stringify(response));
@@ -248,9 +247,9 @@ export const useSinvoice = () => {
       //await closingProcessAPI("purchase-invoice", user.users_bsins);
 
       // Clear form & reload
-      handleClear();
-      setCurrentView("list");
-      await loadInvoice(); // make sure we wait for updated data
+      //handleClear();
+      //setCurrentView("list");
+      //await loadInvoice(); // make sure we wait for updated data
     } catch (error) {
       console.error("Error saving data:", error);
       showToast("error", "Error", error?.message || "Failed to save data");
@@ -321,7 +320,7 @@ export const useSinvoice = () => {
         user_id: user.id,
         tmtb_rcvpy: rowData,
       };
-      const response = await pinvoiceAPI.cancelInvoiceItems(formDataNew);
+      const response = await sinvoiceAPI.cancelInvoiceItems(formDataNew);
 
       showToast(
         response.success ? "info" : "error",
