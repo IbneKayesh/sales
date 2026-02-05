@@ -133,7 +133,7 @@ router.post("/invoice-details", async (req, res) => {
         data: null,
       });
     }
-    //console.log("get:", JSON.stringify(req.body));
+    console.log("get:", JSON.stringify(req.body));
 
     //database action
     let sql = `SELECT invc.*, 0 as edit_stop,
@@ -448,7 +448,7 @@ router.post("/create", async (req, res) => {
             pay.rcvbl_pymod,
             id,
             minvc_trnno_new,
-            "Sales Booking",
+            "Sales Invoice",
             minvc_trdat,
             pay.rcvbl_descr,
             pay.rcvbl_notes,
@@ -478,9 +478,9 @@ router.post("/create", async (req, res) => {
         "Inventory",
         id,
         minvc_trnno_new,
-        "Sales Booking",
+        "Sales Invoice",
         minvc_trdat,
-        "Supplier Goods",
+        "Customer Goods",
         "Products",
         0,
         minvc_pyamt,
@@ -497,8 +497,8 @@ router.post("/create", async (req, res) => {
           sql: `UPDATE tmib_bitem b
           JOIN tmib_items itm ON b.bitem_items = itm.id
         SET
-          bitem_gstkq = bitem_gstkq + CASE WHEN itm.items_trcks = 0 THEN ? ELSE 0 END,
-          bitem_istkq = bitem_istkq + CASE WHEN itm.items_trcks = 1 THEN ? ELSE 0 END
+          bitem_gstkq = bitem_gstkq - CASE WHEN itm.items_trcks = 0 THEN ? ELSE 0 END,
+          bitem_istkq = bitem_istkq - CASE WHEN itm.items_trcks = 1 THEN ? ELSE 0 END
         WHERE b.id = ?`,
           params: [
             det.cinvc_itqty, // for gstkq (items_track = 0)
@@ -507,6 +507,39 @@ router.post("/create", async (req, res) => {
           ],
           label: `BItem good, item stock updated`,
         });
+
+        if(det.cinvc_srcnm === "Purchase Invoice"){
+          scripts.push({
+            sql: `UPDATE tmpb_cinvc
+            SET
+            cinvc_ohqty = cinvc_ohqty - ?,
+            cinvc_slqty = cinvc_slqty + ?
+            WHERE id = ?`,
+            params: [
+              det.cinvc_itqty, // cinvc_ohqty
+              det.cinvc_itqty, // cinvc_slqty
+              det.cinvc_refid,
+            ],
+            label: `Purchase Invoice detail updated`,
+          });
+        }
+        else if(det.cinvc_srcnm === "Purchase Receipt"){
+          scripts.push({
+            sql: `UPDATE tmpb_crcpt
+            SET
+            crcpt_ohqty = crcpt_ohqty - ?,
+            crcpt_slqty = crcpt_slqty + ?
+            WHERE id = ?`,
+            params: [
+              det.cinvc_itqty, // crcpt_ohqty
+              det.cinvc_itqty, // crcpt_slqty
+              det.cinvc_refid,
+            ],
+            label: `Purchase Receipt detail updated`,
+          });
+        }else if(det.cinvc_srcnm === "Transfer Stock"){
+          //
+        }
       }
     }
 
@@ -532,6 +565,14 @@ router.post("/create", async (req, res) => {
 
 // update
 router.post("/update", async (req, res) => {
+
+ return res.json({
+    success: true,
+    message: "Sales Invoice update is not implemented yet",
+    data: null,
+  });
+
+
   try {
     const {
       id,

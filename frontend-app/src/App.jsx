@@ -28,6 +28,7 @@ import HeadsPage from "./pages/accounts/heads/HeadsPage";
 import LedgerPage from "./pages/accounts/ledger/LedgerPage";
 import PayablesPage from "./pages/accounts/payables/PayablesPage";
 import ExpensesPage from "./pages/accounts/expneses/ExpensesPage";
+import ReceivablesPage from "./pages/accounts/receivables/ReceivablesPage";
 //inventory
 import UnitPage from "./pages/inventory/units/UnitPage";
 import CategoryPage from "./pages/inventory/category/CategoryPage";
@@ -120,6 +121,7 @@ function AppRoutes() {
             <Route path="accounts/ledger" element={<LedgerPage />} />
             <Route path="accounts/payables" element={<PayablesPage />} />
             <Route path="accounts/expenses" element={<ExpensesPage />} />
+            <Route path="accounts/receivables" element={<ReceivablesPage />} />
             //inventory
             <Route path="inventory/unit" element={<UnitPage />} />
             <Route path="inventory/category" element={<CategoryPage />} />

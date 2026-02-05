@@ -120,7 +120,7 @@ const BItemsComp = ({
             options={filterOptions}
             onChange={handleFilterChange}
             placeholder="Select Status"
-            className="p-inputtext-sm w-full md:w-15rem"
+            className="p-inputtext-sm w-full md:w-20rem"
             checkmark={true}
             itemTemplate={(option) => (
               <div className="flex align-items-center gap-2">

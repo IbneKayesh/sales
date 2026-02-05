@@ -19,7 +19,8 @@ const apiRequest = async (endpoint, options = {}) => {
 
   try {
     const response = await fetch(url, config);
-    const data = await response.json();
+    const text = await response.text();
+    const data = text ? JSON.parse(text) : {};
 
     if (!response.ok) {
       // Optional: Handle 401 specifically to clear token if needed

@@ -85,7 +85,7 @@ const EntryComp = ({
       formData.minvc_vatpy === 1 ? total_amount : total_amount - vat_amount;
 
     const paid_amount = formDataPaymentList.reduce(
-      (sum, item) => sum + (Number(item.paybl_dbamt) || 0),
+      (sum, item) => sum + (Number(item.rcvbl_dbamt) || 0),
       0,
     );
 

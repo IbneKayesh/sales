@@ -188,7 +188,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     return (
       <div className="flex flex-column">
         <span className="font-semibold">
-          {option.items_iname}, 📦{Number(option.bitem_gstkq).toFixed(2)}{" "}
+          {option.items_iname}, 📦{Number(option.bitem_ohqty).toFixed(2)}{" "}
           {option.puofm_untnm}
         </span>
       </div>

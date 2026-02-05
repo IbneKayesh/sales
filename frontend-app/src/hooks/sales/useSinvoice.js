@@ -85,11 +85,10 @@ export const useSinvoice = () => {
     try {
       //console.log("loadInvoicePayment:", id);
       const response = await sinvoiceAPI.getPayment({
-        paybl_refid: id,
+        rcvbl_refid: id,
       });
       //console.log("loadInvoicePayment:", JSON.stringify(response));
-      setFormDataPaymentList(response.data);
-      //showToast("success", "Success", response.message);
+      setFormDataPaymentList(response.data);      
     } catch (error) {
       console.error("Error loading data:", error);
       showToast("error", "Error", error?.message || "Failed to load data");
@@ -266,7 +265,7 @@ export const useSinvoice = () => {
     minvc_trnno: "",
     minvc_trdat: "", //new Date().toLocaleString().split("T")[0],
     minvc_refno: "",
-    search_option: "minvc_ispad",
+    search_option: "last_3_days",
   });
 
   const handleChangeSearchInput = (e) => {

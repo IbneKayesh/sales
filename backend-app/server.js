@@ -19,6 +19,7 @@ const accountsRoutes = require("./routes/accounts/accounts.routes.js");
 const accountsHeadsRoutes = require("./routes/accounts/accountsHeads.routes.js");
 const accountsLedgerRoutes = require("./routes/accounts/accountsLedger.routes.js");
 const payablesRoutes = require("./routes/accounts/payables.routes.js");
+const receivablesRoutes = require("./routes/accounts/receivables.routes.js");
 const expensesRoutes = require("./routes/accounts/expenses.routes.js");
 //setup
 const businessRoutes = require("./routes/setup/business.routes.js");
@@ -94,6 +95,7 @@ app.use("/api/accounts/accounts", accountsRoutes);
 app.use("/api/accounts/accounts-heads", accountsHeadsRoutes);
 app.use("/api/accounts/accounts-ledgers", accountsLedgerRoutes);
 app.use("/api/accounts/payables", payablesRoutes);
+app.use("/api/accounts/receivables", receivablesRoutes);
 app.use("/api/accounts/expenses", expensesRoutes);
 //setup
 app.use("/api/setup/business", businessRoutes);
