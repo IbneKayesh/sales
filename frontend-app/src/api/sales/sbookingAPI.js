@@ -1,44 +1,44 @@
 import { apiRequest } from "@/utils/api.js";
 
-//preceiptAPI
-export const preceiptAPI = {
+//sbookingAPI
+export const sbookingAPI = {
   getAll: (data) =>
-    apiRequest("/purchase/preceipt", {
+    apiRequest("/sales/sbooking", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   create: (data) =>
-    apiRequest("/purchase/preceipt/create", {
+    apiRequest("/sales/sbooking/create", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   update: (data) =>
-    apiRequest("/purchase/preceipt/update", {
+    apiRequest("/sales/sbooking/update", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   delete: (data) =>
-    apiRequest("/purchase/preceipt/delete", {
+    apiRequest("/sales/sbooking/delete", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   getDetails: (data) =>
-    apiRequest("/purchase/preceipt/receipt-details", {
+    apiRequest("/sales/sbooking/booking-details", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   getExpenses: (data) =>
-    apiRequest("/purchase/preceipt/receipt-expense", {
+    apiRequest("/sales/sbooking/booking-expense", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   getPayment: (data) =>
-    apiRequest("/purchase/preceipt/receipt-payment", {
+    apiRequest("/sales/sbooking/booking-payment", {
       method: "POST",
       body: JSON.stringify(data),
     }),
-  getAvailableReceiptItems: (data) =>
-    apiRequest("/purchase/preceipt/available-receipt-items", {
+  cancelBookingItems: (data) =>
+    apiRequest("/sales/sbooking/cancel-booking-items", {
       method: "POST",
       body: JSON.stringify(data),
     }),

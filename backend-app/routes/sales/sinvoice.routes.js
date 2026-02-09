@@ -362,7 +362,7 @@ router.post("/create", async (req, res) => {
         user_id,
         user_id,
       ],
-      label: `Created PI master ${minvc_trnno_new}`,
+      label: `Created SI master ${minvc_trnno_new}`,
     });
 
     //Insert invoice details
@@ -398,7 +398,7 @@ router.post("/create", async (req, res) => {
           user_id,
           user_id,
         ],
-        label: `Created PI detail ${minvc_trnno_new}`,
+        label: `Created SI detail ${minvc_trnno_new}`,
       });
     }
 
@@ -426,7 +426,7 @@ router.post("/create", async (req, res) => {
           user_id,
           user_id,
         ],
-        label: `Created PI expense ${minvc_trnno_new}`,
+        label: `Created SI expense ${minvc_trnno_new}`,
       });
     }
 
@@ -538,7 +538,7 @@ router.post("/create", async (req, res) => {
             label: `Purchase Receipt detail updated`,
           });
         }else if(det.cinvc_srcnm === "Transfer Stock"){
-          //
+          //sql script is need
         }
       }
     }

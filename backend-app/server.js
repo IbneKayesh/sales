@@ -45,6 +45,8 @@ const pbookingRoutes = require("./routes/purchase/pbooking.routes.js");
 const preceiptRoutes = require("./routes/purchase/preceipt.routes.js");
 const pinvoiceRoutes = require("./routes/purchase/pinvoice.routes.js");
 //sales
+const sbookingRoutes = require("./routes/sales/sbooking.routes.js");
+const sreceiptRoutes = require("./routes/sales/sreceipt.routes.js");
 const sinvoiceRoutes = require("./routes/sales/sinvoice.routes.js");
 
 const app = express();
@@ -121,6 +123,8 @@ app.use("/api/purchase/pbooking", pbookingRoutes);
 app.use("/api/purchase/preceipt", preceiptRoutes);
 app.use("/api/purchase/pinvoice", pinvoiceRoutes);
 //sales
+app.use("/api/sales/sbooking", sbookingRoutes);
+app.use("/api/sales/sreceipt", sreceiptRoutes);
 app.use("/api/sales/sinvoice", sinvoiceRoutes);
 
 // Health check endpoint

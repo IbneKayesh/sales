@@ -1,7 +1,7 @@
 import { apiRequest } from "@/utils/api.js";
 
-//preceiptAPI
-export const preceiptAPI = {
+//sreceiptAPI
+export const sreceiptAPI = {
   getAll: (data) =>
     apiRequest("/purchase/preceipt", {
       method: "POST",
