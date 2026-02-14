@@ -8,6 +8,7 @@ import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 import { stringifyAttributes } from "@/utils/jsonParser";
+import { configsAPI } from "@/api/setup/configsAPI";
 
 const dataModel = generateDataModel(tmpb_minvc, { edit_stop: 0 });
 
@@ -24,6 +25,34 @@ export const usePinvoice = () => {
   const [formDataItemList, setFormDataItemList] = useState([]);
   const [formDataExpensesList, setFormDataExpensesList] = useState([]);
   const [formDataPaymentList, setFormDataPaymentList] = useState([]);
+
+   //configs
+  const [configs, setConfigs] = useState({});
+
+  const loadConfigs = async () => {
+    try {
+      const response = await configsAPI.getAll({
+        ucnfg_users: user.users_users,
+        ucnfg_cname: "Purchase",
+        ucnfg_gname: "Invoice",
+      });
+      const configsObj = Object.fromEntries(
+        response.data.map(({ ucnfg_label, ucnfg_value }) => [
+          ucnfg_label,
+          ucnfg_value,
+        ]),
+      );
+      //console.log("configsObj:", configsObj);
+      setConfigs((prev) => ({
+        ...prev,
+        minvc_vatpy: Number(configsObj["minvc_vatpy"]) ?? prev.minvc_vatpy,
+        minvc_ispst: Number(configsObj["minvc_ispst"]) ?? prev.minvc_ispst,
+      }));
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
 
   const loadInvoice = async () => {
     try {
@@ -49,7 +78,7 @@ export const usePinvoice = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    //loadInvoice();
+        loadConfigs();
   }, []);
 
   const loadInvoiceDetails = async (id) => {
@@ -108,6 +137,8 @@ export const usePinvoice = () => {
       ...dataModel,
       minvc_users: user.users_users,
       minvc_bsins: user.users_bsins,
+      minvc_vatpy: configs.minvc_vatpy || 0,
+      minvc_ispst: configs.minvc_ispst || 0,
     });
     //console.log("handleClear:", JSON.stringify(dataModel));
     setErrors({});

@@ -40,6 +40,7 @@ const notesRoutes = require("./routes/support/notes.routes.js");
 const sessionsRoutes = require("./routes/support/sessions.routes.js");
 const ticketsRoutes = require("./routes/support/tickets.routes.js");
 const socialsRoutes = require("./routes/support/socials.routes.js");
+const defaultDataRoutes = require("./routes/setup/defaultData.routes.js");
 //purchase
 const pbookingRoutes = require("./routes/purchase/pbooking.routes.js");
 const preceiptRoutes = require("./routes/purchase/preceipt.routes.js");
@@ -105,6 +106,7 @@ app.use("/api/setup/users", usersRoutes);
 app.use("/api/setup/database", databaseRoutes);
 app.use("/api/setup/closing", closingRoutes);
 app.use("/api/setup/configs", configsRoutes);
+app.use("/api/setup/default-data", defaultDataRoutes);
 //inventory
 app.use("/api/inventory/units", unitsRoutes);
 app.use("/api/inventory/categories", categoriesRoutes);

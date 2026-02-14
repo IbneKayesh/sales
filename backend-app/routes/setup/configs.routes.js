@@ -6,10 +6,10 @@ const { v4: uuidv4 } = require("uuid");
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { ucnfg_users, ucnfg_cname } = req.body;
+    const { ucnfg_users, ucnfg_cname, ucnfg_gname } = req.body;
 
     // Validate input
-    if (!ucnfg_users || !ucnfg_cname) {
+    if (!ucnfg_users || !ucnfg_cname || !ucnfg_gname) {
       return res.json({
         success: false,
         message: "User ID and Configure name are required",
@@ -22,10 +22,10 @@ router.post("/", async (req, res) => {
       FROM tmsb_ucnfg cnf
       WHERE cnf.ucnfg_users = ?
       AND cnf.ucnfg_cname = ?
-      ORDER BY cnf.ucnfg_gname`;
-    const params = [ucnfg_users, ucnfg_cname];
+      AND cnf.ucnfg_gname = ?`;
+    const params = [ucnfg_users, ucnfg_cname, ucnfg_gname];
 
-    const rows = await dbGetAll(sql, params, `Get configs for ${ucnfg_users} - ${ucnfg_cname}`);
+    const rows = await dbGetAll(sql, params, `Get configs for ${ucnfg_users} - ${ucnfg_cname} - ${ucnfg_gname}`);
     res.json({
       success: true,
       message: "Configs fetched successfully",

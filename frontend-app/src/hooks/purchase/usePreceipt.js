@@ -6,8 +6,8 @@ import { useToast } from "@/hooks/useToast";
 import { preceiptAPI } from "@/api/purchase/preceiptAPI";
 import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
-import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 import { stringifyAttributes } from "@/utils/jsonParser";
+import { configsAPI } from "@/api/setup/configsAPI";
 
 const dataModel = generateDataModel(tmpb_mrcpt, { edit_stop: 0 });
 
@@ -24,6 +24,33 @@ export const usePreceipt = () => {
   const [formDataItemList, setFormDataItemList] = useState([]);
   const [formDataExpensesList, setFormDataExpensesList] = useState([]);
   const [formDataPaymentList, setFormDataPaymentList] = useState([]);
+
+  //configs
+  const [configs, setConfigs] = useState({});
+
+  const loadConfigs = async () => {
+    try {
+      const response = await configsAPI.getAll({
+        ucnfg_users: user.users_users,
+        ucnfg_cname: "Purchase",
+        ucnfg_gname: "Receipt",
+      });
+      const configsObj = Object.fromEntries(
+        response.data.map(({ ucnfg_label, ucnfg_value }) => [
+          ucnfg_label,
+          ucnfg_value,
+        ]),
+      );
+      //console.log("configsObj:", configsObj);
+      setConfigs((prev) => ({
+        ...prev,
+        mrcpt_vatpy: Number(configsObj["mrcpt_vatpy"]) ?? prev.mrcpt_vatpy,
+      }));
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
 
   const loadReceipts = async () => {
     try {
@@ -49,7 +76,7 @@ export const usePreceipt = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    //loadReceipts();
+    loadConfigs();
   }, []);
 
   const loadReceiptDetails = async (id) => {
@@ -108,6 +135,7 @@ export const usePreceipt = () => {
       ...dataModel,
       mrcpt_users: user.users_users,
       mrcpt_bsins: user.users_bsins,
+      mrcpt_vatpy: configs.mrcpt_vatpy || 0,
     });
     //console.log("handleClear:", JSON.stringify(dataModel));
     setErrors({});
@@ -357,6 +385,7 @@ export const usePreceipt = () => {
   };
 
   return {
+    configs,
     dataList,
     isBusy,
     currentView,

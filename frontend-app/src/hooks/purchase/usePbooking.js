@@ -6,7 +6,6 @@ import { useToast } from "@/hooks/useToast";
 import { pbookingAPI } from "@/api/purchase/pbookingAPI";
 import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
-import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 import { stringifyAttributes } from "@/utils/jsonParser";
 import { configsAPI } from "@/api/setup/configsAPI";
 
@@ -34,6 +33,7 @@ export const usePbooking = () => {
       const response = await configsAPI.getAll({
         ucnfg_users: user.users_users,
         ucnfg_cname: "Purchase",
+        ucnfg_gname: "Booking",
       });
       const configsObj = Object.fromEntries(
         response.data.map(({ ucnfg_label, ucnfg_value }) => [

@@ -54,6 +54,7 @@ import BusinessPage from "./pages/setup/business/BusinessPage.jsx";
 import UsersPage from "./pages/setup/users/UsersPage.jsx";
 import ProfileSettings from "./pages/setup/users/ProfileSettings.jsx";
 import PasswordPage from "./pages/setup/users/PasswordPage.jsx";
+import DefaultDataPage from "./pages/setup/settings/DefaultDataPage.jsx";
 
 // mobile imports
 import MobileLayout from "./mobile/layout";
@@ -149,6 +150,7 @@ function AppRoutes() {
             <Route path="setup/users" element={<UsersPage />} />
             <Route path="setup/users/profile" element={<ProfileSettings />} />
             <Route path="setup/users/password" element={<PasswordPage />} />
+            <Route path="setup/default-data" element={<DefaultDataPage />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
