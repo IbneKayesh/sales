@@ -31,7 +31,7 @@ const PaymentComp = ({ errors, formData, handleChange, onShowExcludeCost }) => {
             severity="danger"
             value="Not Posted"
             icon="pi pi-times"
-            className="p-2 mr-2"
+            className="mr-1"
           />
         )}
       </div>

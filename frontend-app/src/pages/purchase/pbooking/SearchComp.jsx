@@ -7,11 +7,10 @@ import { Dropdown } from "primereact/dropdown";
 const SearchComp = ({
   searchBoxData,
   handleChangeSearchInput,
-  setSearchBoxShow,
   handleSearch,
   searchOptions,
 }) => (
-  <div className="flex flex-wrap shadow-2 border-round-lg surface-card p-3 mb-3 gap-2 align-items-center">
+  <div className="flex flex-wrap shadow-2 border-round-lg surface-card p-2 mb-2 gap-2 align-items-center">
     <div className="flex-1">
       <div className="p-inputgroup">
         <span className="p-inputgroup-addon">
@@ -91,17 +90,11 @@ const SearchComp = ({
           placeholder="Option"
           filter
           showClear
+          checkmark={true}
         />
       </div>
     </div>
     <div className="flex gap-2 ml-auto">
-      <Button
-        label="Clear"
-        icon="pi pi-filter-slash"
-        severity="secondary"
-        size="small"
-        onClick={() => setSearchBoxShow(false)}
-      />
       <Button
         label="Find"
         icon="pi pi-search"

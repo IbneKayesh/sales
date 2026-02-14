@@ -45,8 +45,8 @@ const ReceiptPage = () => {
     fetchAvailableReceiptItems,
   } = usePreceipt();
 
-  const handleSearchBox = () => {
-    setSearchBoxShow(true);
+ const handleSearchBox = () => {
+    setSearchBoxShow(!searchBoxShow);
   };
   const getHeader = () => {
     const isList = currentView === "list";
@@ -64,7 +64,8 @@ const ReceiptPage = () => {
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
-              icon="pi pi-search"
+              label={searchBoxShow ? "Hide" : "Search"}
+              icon={searchBoxShow ? "pi pi-filter-slash" : "pi pi-search"}
               size="small"
               severity="secondary"
               onClick={handleSearchBox}

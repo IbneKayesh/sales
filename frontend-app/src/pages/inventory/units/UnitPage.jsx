@@ -27,7 +27,7 @@ const UnitPage = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
-          {isList ? "Unit List" : formData.id ? "Edit Unit" : "Add New Unit"}
+          {isList ? "Unit List" : formData.id ? "Edit Unit" : "New Unit"}
         </h3>
 
         <div className="flex gap-2">
@@ -63,7 +63,7 @@ const UnitPage = () => {
 
   return (
     <>
-      <Card header={getHeader()} className="bg-dark-200 border-round p-3">
+      <Card header={getHeader()} className="border-round p-3">
         {currentView === "list" ? (
           <UnitListComp
             dataList={dataList}

@@ -10,14 +10,114 @@
 }
 
 
-/* Global CSS for the all DataTable header */
-.p-datatable.p-datatable-sm .p-datatable-thead > tr > th {
-  background-color:#616161;
-  color: white;
+/* Global CSS for all DataTable cells */
+.p-datatable .p-datatable-thead > tr > th {
+  padding: 0.6rem 0.8rem !important;
 }
 
-/* Global CSS for the all DataTable header */
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 0.5rem 0.8rem !important;
+}
+
+/* Compact versions for tables with size="small" */
+.p-datatable.p-datatable-sm .p-datatable-thead > tr > th {
+  background-color: #616161;
+  color: white;
+  padding: 0.4rem 0.6rem !important;
+}
+
 .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
-  padding-top: 1px;
-  padding-bottom: 1px;
+  padding: 0.2rem 0.6rem !important;
+}
+
+/* Global PrimeReact Button Padding Reduction */
+.p-button {
+  padding: 0.5rem 0.85rem !important;
+  gap: 0.4rem;
+}
+
+.p-button.p-button-sm {
+  padding: 0.48rem 0.7rem !important;
+}
+
+.p-button .p-button-label {
+  font-size: 0.875rem !important;
+  font-weight: 500;
+}
+
+.p-button .p-button-icon {
+  font-size: 0.875rem !important;
+}
+
+/* Ensure icon-only buttons are also smaller */
+.p-button.p-button-icon-only {
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  padding: 0 !important;
+}
+
+.p-button-sm.p-button-icon-only {
+  width: 2.2rem !important;
+  height: 2.12rem !important;
+}
+
+/* Global PrimeReact Input & Dropdown Padding Reduction */
+.p-inputtext, 
+.p-dropdown,
+.p-calendar .p-inputtext {
+  padding: 0.5rem 0.6rem !important;
+  font-size: 0.875rem !important;
+}
+
+.p-dropdown .p-dropdown-label {
+  padding: 0 !important;
+}
+
+.p-dropdown .p-dropdown-trigger {
+  width: 2rem !important;
+}
+
+/* Reduce label spacing in forms */
+label {
+  margin-bottom: 0.25rem !important;
+  font-size: 0.85rem !important;
+}
+
+/* Compact Grid Spacing */
+.grid {
+  margin-top: -0.5rem !important;
+}
+
+.col-12, .md\:col-2, .md\:col-5, .md\:col-1 {
+  padding: 0.5rem !important;
+}
+
+/* Ensure consistent height for all form components */
+.p-inputtext, 
+.p-dropdown,
+.p-calendar,
+.p-calendar .p-inputtext {
+  height: 2.3rem !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.p-inputgroup {
+  height: 2.3rem !important;
+}
+
+.p-dropdown .p-dropdown-label {
+  line-height: 1 !important;
+}
+
+/* Checkbox alignment container */
+.checkbox-container {
+  height: 2.3rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Align grid items to the bottom of the label area */
+.form-grid-align {
+  align-items: flex-end !important;
 }

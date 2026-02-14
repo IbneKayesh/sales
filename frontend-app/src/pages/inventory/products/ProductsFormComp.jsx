@@ -91,10 +91,9 @@ const ProductsFormComp = ({
         <div className="col-12 md:col-4">
           <label
             htmlFor="items_iname"
-            className="block text-900 font-medium mb-2"
+            className="block text-900 font-medium mb-2 text-red-800"
           >
-            {tmib_items.items_iname.label}{" "}
-            <span className="text-red-500">*</span>
+            {tmib_items.items_iname.label}
           </label>
           <InputText
             name="items_iname"
@@ -128,10 +127,9 @@ const ProductsFormComp = ({
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_puofm"
-            className="block text-900 font-medium mb-2"
+            className="block text-900 font-medium mb-2 text-red-800"
           >
-            {tmib_items.items_puofm.label}{" "}
-            <span className="text-red-500">*</span>
+            {tmib_items.items_puofm.label}
           </label>
 
           <Dropdown
@@ -154,10 +152,9 @@ const ProductsFormComp = ({
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_dfqty"
-            className="block text-900 font-medium mb-2"
+            className="block text-900 font-medium mb-2 text-red-800"
           >
-            {tmib_items.items_dfqty.label}{" "}
-            <span className="text-red-500">*</span>
+            {tmib_items.items_dfqty.label}
           </label>
           <InputText
             name="items_dfqty"
@@ -173,10 +170,9 @@ const ProductsFormComp = ({
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_suofm"
-            className="block text-900 font-medium mb-2"
+            className="block text-900 font-medium mb-2 text-red-800"
           >
-            {tmib_items.items_suofm.label}{" "}
-            <span className="text-red-500">*</span>
+            {tmib_items.items_suofm.label}
           </label>
           <Dropdown
             name="items_suofm"
@@ -197,10 +193,9 @@ const ProductsFormComp = ({
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_ctgry"
-            className="block text-900 font-medium mb-2"
+            className="block text-900 font-medium mb-2 text-red-800"
           >
-            {tmib_items.items_ctgry.label}{" "}
-            <span className="text-red-500">*</span>
+            {tmib_items.items_ctgry.label}
           </label>
           <Dropdown
             name="items_ctgry"
@@ -221,10 +216,9 @@ const ProductsFormComp = ({
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_itype"
-            className="block text-900 font-medium mb-2"
+            className="block text-900 font-medium mb-2 text-red-800"
           >
-            {tmib_items.items_itype.label}{" "}
-            <span className="text-red-500">*</span>
+            {tmib_items.items_itype.label}
           </label>
           <Dropdown
             name="items_itype"
@@ -243,10 +237,9 @@ const ProductsFormComp = ({
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_trcks"
-            className="block text-900 font-medium mb-2"
+            className="block text-900 font-medium mb-2 text-red-800"
           >
-            {tmib_items.items_trcks.label}{" "}
-            <span className="text-red-500">*</span>
+            {tmib_items.items_trcks.label}
           </label>
           <ToggleButton
             onLabel="Tracking"
@@ -264,10 +257,9 @@ const ProductsFormComp = ({
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_sdvat"
-            className="block text-900 font-medium mb-2"
+            className="block text-900 font-medium mb-2 text-red-800"
           >
-            {tmib_items.items_sdvat.label}{" "}
-            <span className="text-red-500">*</span>
+            {tmib_items.items_sdvat.label}
           </label>
           <InputText
             name="items_sdvat"
@@ -283,10 +275,9 @@ const ProductsFormComp = ({
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_costp"
-            className="block text-900 font-medium mb-2"
+            className="block text-900 font-medium mb-2 text-red-800"
           >
-            {tmib_items.items_costp.label}{" "}
-            <span className="text-red-500">*</span>
+            {tmib_items.items_costp.label}
           </label>
           <InputText
             name="items_costp"

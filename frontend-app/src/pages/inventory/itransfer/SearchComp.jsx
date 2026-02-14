@@ -91,17 +91,11 @@ const SearchComp = ({
           placeholder="Option"
           filter
           showClear
+          checkmark={true}
         />
       </div>
     </div>
     <div className="flex gap-2 ml-auto">
-      <Button
-        label="Clear"
-        icon="pi pi-filter-slash"
-        severity="secondary"
-        size="small"
-        onClick={() => setSearchBoxShow(false)}
-      />
       <Button
         label="Find"
         icon="pi pi-search"

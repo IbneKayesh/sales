@@ -44,7 +44,7 @@ const SInvoicePage = () => {
   } = useSinvoice();
 
   const handleSearchBox = () => {
-    setSearchBoxShow(true);
+    setSearchBoxShow(!searchBoxShow);
   };
   const getHeader = () => {
     const isList = currentView === "list";
@@ -62,7 +62,8 @@ const SInvoicePage = () => {
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
-              icon="pi pi-search"
+              label={searchBoxShow ? "Hide" : "Search"}
+              icon={searchBoxShow ? "pi pi-filter-slash" : "pi pi-search"}
               size="small"
               severity="secondary"
               onClick={handleSearchBox}

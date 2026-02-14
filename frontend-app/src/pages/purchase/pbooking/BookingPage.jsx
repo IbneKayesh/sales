@@ -44,7 +44,7 @@ const BookingPage = () => {
   } = usePbooking();
 
   const handleSearchBox = () => {
-    setSearchBoxShow(true);
+    setSearchBoxShow(!searchBoxShow);
   };
   const getHeader = () => {
     const isList = currentView === "list";
@@ -58,11 +58,11 @@ const BookingPage = () => {
               ? "Edit Purchase Booking"
               : "New Purchase Booking"}
         </h3>
-
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
-              icon="pi pi-search"
+              label={searchBoxShow ? "Hide" : "Search"}
+              icon={searchBoxShow ? "pi pi-filter-slash" : "pi pi-search"}
               size="small"
               severity="secondary"
               onClick={handleSearchBox}

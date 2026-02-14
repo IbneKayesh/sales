@@ -58,7 +58,7 @@ const PaymentComp = ({
             severity="danger"
             value="Unpaid"
             icon="pi pi-ban"
-            className="p-2 mr-2"
+            className="mr-1"
           />
         )}
         {formData.mbkng_ispad === 1 && (
@@ -66,7 +66,7 @@ const PaymentComp = ({
             severity="success"
             value="Paid"
             icon="pi pi-check-circle"
-            className="p-2 mr-2"
+            className="mr-1"
           />
         )}
         {formData.mbkng_ispad === 2 && (
@@ -74,7 +74,7 @@ const PaymentComp = ({
             severity="warning"
             value="Partially Paid"
             icon="pi pi-check"
-            className="p-2 mr-2"
+            className="mr-1"
           />
         )}
         {formData.mbkng_ispst === 0 && (
@@ -82,7 +82,7 @@ const PaymentComp = ({
             severity="danger"
             value="Not Posted"
             icon="pi pi-times"
-            className="p-2 mr-2"
+            className="mr-1"
           />
         )}
         {formData.mbkng_iscls === 1 && (
@@ -90,7 +90,7 @@ const PaymentComp = ({
             severity="danger"
             value="Closed"
             icon="pi pi-lock"
-            className="p-2 mr-2"
+            className="mr-1"
           />
         )}
         {formData.mbkng_vatcl === 1 && (
@@ -98,7 +98,7 @@ const PaymentComp = ({
             severity="success"
             value="VAT Collected"
             icon="pi pi-check-circle"
-            className="p-2 mr-2"
+            className="mr-1"
           />
         )}
         {formData.mbkng_hscnl === 1 && (
@@ -106,7 +106,7 @@ const PaymentComp = ({
             severity="danger"
             value="Cancelled"
             icon="pi pi-ban"
-            className="p-2 mr-2"
+            className="mr-1"
           />
         )}
       </div>

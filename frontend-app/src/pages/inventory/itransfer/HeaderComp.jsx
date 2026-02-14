@@ -6,6 +6,7 @@ import { Checkbox } from "primereact/checkbox";
 import { Tag } from "primereact/tag";
 import tmib_mtrsf from "@/models/inventory/tmib_mtrsf.json";
 import { useBusinessSgd } from "@/hooks/setup/useBusinessSgd";
+import RequiredText from "@/components/RequiredText";
 
 const HeaderComp = ({ errors, formData, handleChange }) => {
   const { dataList: businessList, handleLoadBusiness } = useBusinessSgd();
@@ -70,14 +71,11 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           disabled
           variant="filled"
         />
-        {errors.mtrsf_trnno && (
-          <small className="mb-3 text-red-500">{errors.mtrsf_trnno}</small>
-        )}
+        <RequiredText text={errors.mtrsf_trnno} />
       </div>
       <div className="col-12 md:col-2">
-        <label htmlFor="mtrsf_trdat" className="block font-bold mb-2">
+        <label htmlFor="mtrsf_trdat" className="block font-bold mb-2 text-red-800">
           {tmib_mtrsf.mtrsf_trdat.label}
-          {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         <Calendar
           id="mtrsf_trdat"
@@ -95,14 +93,11 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           disabled={isReadOnly}
           variant={isReadOnly ? "filled" : "outlined"}
         />
-        {errors.mtrsf_trdat && (
-          <small className="mb-3 text-red-500">{errors.mtrsf_trdat}</small>
-        )}
+        <RequiredText text={errors.mtrsf_trdat} />
       </div>
       <div className="col-12 md:col-5">
-        <label htmlFor="mtrsf_bsins_to" className="block font-bold mb-2">
+        <label htmlFor="mtrsf_bsins_to" className="block font-bold mb-2 text-red-800">
           {tmib_mtrsf.mtrsf_bsins_to.label}
-          {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         {isReadOnly ? (
           <InputText
@@ -134,9 +129,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
             valueTemplate={bsins_bname_VT}
           />
         )}
-        {errors.mtrsf_bsins_to && (
-          <small className="mb-3 text-red-500">{errors.mtrsf_bsins_to}</small>
-        )}
+        <RequiredText text={errors.mtrsf_bsins_to} />
       </div>
       <div className="col-12 md:col-2">
         <label htmlFor="mtrsf_refno" className="block font-bold mb-2">
@@ -152,9 +145,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           disabled={isReadOnly}
           variant={isReadOnly ? "filled" : "outlined"}
         />
-        {errors.mtrsf_refno && (
-          <small className="mb-3 text-red-500">{errors.mtrsf_refno}</small>
-        )}
+        <RequiredText text={errors.mtrsf_refno} />
       </div>
       <div className="col-12 md:col-1">
         <label className="block font-bold mb-2">Posted</label>
@@ -162,7 +153,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           severity="success"
           value="Posted"
           icon="pi pi-lock"
-          className="w-full py-2"
+          className="w-full py-1"
         />
       </div>
     </div>

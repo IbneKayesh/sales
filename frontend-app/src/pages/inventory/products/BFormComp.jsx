@@ -9,7 +9,7 @@ const BFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
       <div className="col-12 md:col-2">
         <label
           htmlFor="bitem_lprat"
-          className="block text-900 font-medium mb-2"
+          className="block text-900 font-medium mb-2 text-red-800"
         >
           {tmib_bitem.bitem_lprat.label}
         </label>
@@ -27,7 +27,7 @@ const BFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
       <div className="col-12 md:col-2">
         <label
           htmlFor="bitem_dprat"
-          className="block text-900 font-medium mb-2"
+          className="block text-900 font-medium mb-2 text-red-800"
         >
           {tmib_bitem.bitem_dprat.label}
         </label>
@@ -45,7 +45,7 @@ const BFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
       <div className="col-12 md:col-2">
         <label
           htmlFor="bitem_mcmrp"
-          className="block text-900 font-medium mb-2"
+          className="block text-900 font-medium mb-2 text-red-800"
         >
           {tmib_bitem.bitem_mcmrp.label}
         </label>
@@ -64,7 +64,7 @@ const BFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
       <div className="col-12 md:col-2">
         <label
           htmlFor="bitem_sddsp"
-          className="block text-900 font-medium mb-2"
+          className="block text-900 font-medium mb-2 text-red-800"
         >
           {tmib_bitem.bitem_sddsp.label}
         </label>
@@ -140,7 +140,7 @@ const BFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
       <div className="col-12 md:col-2">
         <label
           htmlFor="bitem_mnqty"
-          className="block text-900 font-medium mb-2"
+          className="block text-900 font-medium mb-2  text-red-800"
         >
           {tmib_bitem.bitem_mnqty.label}
         </label>
@@ -158,7 +158,7 @@ const BFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
       <div className="col-12 md:col-2">
         <label
           htmlFor="bitem_mxqty"
-          className="block text-900 font-medium mb-2"
+          className="block text-900 font-medium mb-2 text-red-800"
         >
           {tmib_bitem.bitem_mxqty.label}
         </label>
@@ -238,9 +238,9 @@ const BFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
       <div className="col-12 md:col-2">
         <label
           htmlFor="bitem_actve"
-          className="block text-900 font-medium mb-2"
+          className="block text-900 font-medium mb-2 text-red-800"
         >
-          {tmib_bitem.bitem_actve.label} <span className="text-red-500">*</span>
+          {tmib_bitem.bitem_actve.label}
         </label>
         <ToggleButton
           onLabel="Active"
@@ -250,11 +250,6 @@ const BFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           checked={formData.bitem_actve}
           onChange={(e) => onChange("bitem_actve", e.value)}
           size="small"
-          className={
-            formData.bitem_actve
-              ? "bg-green-500 border-green-500 text-white"
-              : "bg-red-500 border-red-500 text-white"
-          }
         />
         {errors.bitem_actve && (
           <small className="mb-3 text-red-500">{errors.bitem_actve}</small>

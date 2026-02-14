@@ -1,13 +1,14 @@
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import tmib_ctgry from "@/models/inventory/tmib_ctgry.json";
+import RequiredText from "@/components/RequiredText";
 
 const CategoryFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   return (
     <div className="grid">
       <div className="col-12">
-        <label htmlFor="ctgry_ctgnm" className="block text-900 font-medium mb-2">
-          {tmib_ctgry.ctgry_ctgnm.label} <span className="text-red-500">*</span>
+        <label htmlFor="ctgry_ctgnm" className="block font-bold mb-2 text-red-800">
+          {tmib_ctgry.ctgry_ctgnm.label}
         </label>
         <InputText
           name="ctgry_ctgnm"
@@ -16,9 +17,7 @@ const CategoryFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           className={`w-full ${errors.ctgry_ctgnm ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmib_ctgry.ctgry_ctgnm.label}`}
         />
-        {errors.ctgry_ctgnm && (
-          <small className="mb-3 text-red-500">{errors.ctgry_ctgnm}</small>
-        )}
+        <RequiredText text={errors.ctgry_ctgnm} />
       </div>
       <div className="col-12">
         <div className="flex flex-row-reverse flex-wrap">

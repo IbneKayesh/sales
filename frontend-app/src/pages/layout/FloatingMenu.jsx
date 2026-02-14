@@ -6,7 +6,12 @@ import { Button } from "primereact/button";
 import { getStorageData } from "../../utils/storage";
 import "./FloatingMenu.css";
 
-const FloatingMenu = ({ onShowTopBar, onShowLeftBar, menus, leftbarCollapsed }) => {
+const FloatingMenu = ({
+  onShowTopBar,
+  onShowLeftBar,
+  menus,
+  leftbarCollapsed,
+}) => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
   const menuRef = useRef(null);
@@ -45,13 +50,34 @@ const FloatingMenu = ({ onShowTopBar, onShowLeftBar, menus, leftbarCollapsed }) 
       label: "Profile",
       icon: "pi pi-user",
       template: () => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px' }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            padding: "10px 14px",
+          }}
+        >
           <img
             src={`https://ui-avatars.com/api/?name=${user?.username}&background=667eea&color=fff`}
             alt="Avatar"
-            style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid rgba(255, 255, 255, 0.3)' }}
+            style={{
+              width: "32px",
+              height: "32px",
+              borderRadius: "50%",
+              border: "2px solid rgba(255, 255, 255, 0.5)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+            }}
           />
-          <span className="text-white">{user?.username}</span>
+          <span
+            style={{
+              color: "#fff",
+              fontWeight: "700",
+              textShadow: "0 1px 2px rgba(0,0,0,0.5)",
+            }}
+          >
+            {user?.username}
+          </span>
         </div>
       ),
     },
@@ -75,15 +101,9 @@ const FloatingMenu = ({ onShowTopBar, onShowLeftBar, menus, leftbarCollapsed }) 
         icon="pi pi-bars"
         className="floating-menu-btn"
         onClick={toggleMenu}
-        tooltip="Menu"
-        tooltipOptions={{ position: 'right' }}
+        tooltipOptions={{ position: "right" }}
       />
-      <Menu
-        model={menuItems}
-        popup
-        ref={menuRef}
-        className="floating-menu"
-      />
+      <Menu model={menuItems} popup ref={menuRef} className="floating-menu" />
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { Checkbox } from "primereact/checkbox";
 import { Tag } from "primereact/tag";
 import tmpb_mbkng from "@/models/purchase/tmpb_mbkng.json";
 import { useContactsSgd } from "@/hooks/crm/useContactsSgd";
+import RequiredText from "@/components/RequiredText";
 
 const HeaderComp = ({ errors, formData, handleChange }) => {
   const { dataList: supplierList, handleLoadSuppliers } = useContactsSgd();
@@ -90,14 +91,14 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           disabled
           variant="filled"
         />
-        {errors.mbkng_trnno && (
-          <small className="mb-3 text-red-500">{errors.mbkng_trnno}</small>
-        )}
+        <RequiredText text={errors.mbkng_trnno} />
       </div>
       <div className="col-12 md:col-2">
-        <label htmlFor="mbkng_trdat" className="block font-bold mb-2">
+        <label
+          htmlFor="mbkng_trdat"
+          className="block font-bold mb-2 text-red-800"
+        >
           {tmpb_mbkng.mbkng_trdat.label}
-          {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         <Calendar
           id="mbkng_trdat"
@@ -106,7 +107,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           onChange={(e) =>
             handleChange(
               "mbkng_trdat",
-              e.value ? e.value.toLocaleString().split("T")[0] : ""
+              e.value ? e.value.toLocaleString().split("T")[0] : "",
             )
           }
           className={`w-full ${errors.mbkng_trdat ? "p-invalid" : ""}`}
@@ -115,18 +116,26 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           disabled={isReadOnly}
           variant={isReadOnly ? "filled" : "outlined"}
         />
-        {errors.mbkng_trdat && (
-          <small className="mb-3 text-red-500">{errors.mbkng_trdat}</small>
-        )}
+        <RequiredText text={errors.mbkng_trdat} />
       </div>
       <div className="col-12 md:col-5">
-        <label htmlFor="mbkng_cntct" className="block font-bold mb-2">
+        <label
+          htmlFor="mbkng_cntct"
+          className="block font-bold mb-2 text-red-800"
+        >
           {tmpb_mbkng.mbkng_cntct.label}
-          {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         {isReadOnly ? (
           <InputText
-            value={formData.cntct_cntnm + ", " + formData.cntct_cntno + ", " + formData.cntct_cntno + ", " + formData.cntct_ofadr}
+            value={
+              formData.cntct_cntnm +
+              ", " +
+              formData.cntct_cntno +
+              ", " +
+              formData.cntct_cntno +
+              ", " +
+              formData.cntct_ofadr
+            }
             className="w-full"
             disabled
             variant="filled"
@@ -148,9 +157,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
             valueTemplate={cntct_cntnm_VT}
           />
         )}
-        {errors.mbkng_cntct && (
-          <small className="mb-3 text-red-500">{errors.mbkng_cntct}</small>
-        )}
+        <RequiredText text={errors.mbkng_cntct} />
       </div>
       <div className="col-12 md:col-2">
         <label htmlFor="mbkng_refno" className="block font-bold mb-2">
@@ -166,38 +173,36 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           disabled={isReadOnly}
           variant={isReadOnly ? "filled" : "outlined"}
         />
-        {errors.mbkng_refno && (
-          <small className="mb-3 text-red-500">{errors.mbkng_refno}</small>
-        )}
+        <RequiredText text={errors.mbkng_refno} />
       </div>
       <div className="col-12 md:col-1">
         {isReadOnly ? (
           <>
             <label className="block font-bold mb-2">Posted</label>
-            <Tag
-              severity="success"
-              value="Posted"
-              icon="pi pi-lock"
-              className="w-full py-2"
-            />
+            <div className="checkbox-container">
+              <Tag
+                severity="success"
+                value="Posted"
+                icon="pi pi-lock"
+                className="w-full"
+              />
+            </div>
           </>
         ) : (
           <>
             <label htmlFor="mbkng_ispst" className="block font-bold mb-2">
               {tmpb_mbkng.mbkng_ispst.label}
             </label>
-            <Checkbox
-              id="mbkng_ispst"
-              name="mbkng_ispst"
-              checked={formData.mbkng_ispst === 1}
-              onChange={(e) =>
-                handleChange("mbkng_ispst", e.checked ? 1 : 0)
-              }
-              className={errors.mbkng_ispst ? "p-invalid" : ""}
-            />
-            {errors.mbkng_ispst && (
-              <small className="mb-3 text-red-500">{errors.mbkng_ispst}</small>
-            )}
+            <div className="checkbox-container">
+              <Checkbox
+                id="mbkng_ispst"
+                name="mbkng_ispst"
+                checked={formData.mbkng_ispst === 1}
+                onChange={(e) => handleChange("mbkng_ispst", e.checked ? 1 : 0)}
+                className={errors.mbkng_ispst ? "p-invalid" : ""}
+              />
+            </div>
+            <RequiredText text={errors.mbkng_ispst} />
           </>
         )}
       </div>

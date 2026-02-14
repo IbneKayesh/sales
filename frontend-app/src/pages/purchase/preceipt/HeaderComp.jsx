@@ -6,6 +6,7 @@ import { Checkbox } from "primereact/checkbox";
 import { Tag } from "primereact/tag";
 import tmpb_mrcpt from "@/models/purchase/tmpb_mrcpt.json";
 import { useContactsSgd } from "@/hooks/crm/useContactsSgd";
+import RequiredText from "@/components/RequiredText";
 
 const HeaderComp = ({ errors, formData, handleChange, fetchAvailableReceiptItems }) => {
   const { dataList: supplierList, handleLoadSuppliers } = useContactsSgd();
@@ -91,14 +92,14 @@ const HeaderComp = ({ errors, formData, handleChange, fetchAvailableReceiptItems
           disabled
           variant="filled"
         />
-        {errors.mrcpt_trnno && (
-          <small className="mb-3 text-red-500">{errors.mrcpt_trnno}</small>
-        )}
+        <RequiredText text={errors.mrcpt_trnno} />
       </div>
       <div className="col-12 md:col-2">
-        <label htmlFor="mrcpt_trdat" className="block font-bold mb-2">
+        <label
+          htmlFor="mrcpt_trdat"
+          className="block font-bold mb-2 text-red-800"
+        >
           {tmpb_mrcpt.mrcpt_trdat.label}
-          {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         <Calendar
           id="mrcpt_trdat"
@@ -116,14 +117,14 @@ const HeaderComp = ({ errors, formData, handleChange, fetchAvailableReceiptItems
           disabled={isReadOnly}
           variant={isReadOnly ? "filled" : "outlined"}
         />
-        {errors.mrcpt_trdat && (
-          <small className="mb-3 text-red-500">{errors.mrcpt_trdat}</small>
-        )}
+        <RequiredText text={errors.mrcpt_trdat} />
       </div>
       <div className="col-12 md:col-5">
-        <label htmlFor="mrcpt_cntct" className="block font-bold mb-2">
+        <label
+          htmlFor="mrcpt_cntct"
+          className="block font-bold mb-2 text-red-800"
+        >
           {tmpb_mrcpt.mrcpt_cntct.label}
-          {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         {isReadOnly ? (
           <InputText
@@ -149,9 +150,7 @@ const HeaderComp = ({ errors, formData, handleChange, fetchAvailableReceiptItems
             valueTemplate={cntct_cntnm_VT}
           />
         )}
-        {errors.mrcpt_cntct && (
-          <small className="mb-3 text-red-500">{errors.mrcpt_cntct}</small>
-        )}
+        <RequiredText text={errors.mrcpt_cntct} />
       </div>
       <div className="col-12 md:col-2">
         <label htmlFor="mrcpt_refno" className="block font-bold mb-2">
@@ -167,9 +166,7 @@ const HeaderComp = ({ errors, formData, handleChange, fetchAvailableReceiptItems
           disabled={isReadOnly}
           variant={isReadOnly ? "filled" : "outlined"}
         />
-        {errors.mrcpt_refno && (
-          <small className="mb-3 text-red-500">{errors.mrcpt_refno}</small>
-        )}
+        <RequiredText text={errors.mrcpt_refno} />
       </div>
       <div className="col-12 md:col-1">
         {/* default posted for purchase receipt */}
@@ -180,7 +177,7 @@ const HeaderComp = ({ errors, formData, handleChange, fetchAvailableReceiptItems
               severity="success"
               value="Posted"
               icon="pi pi-lock"
-              className="w-full py-2"
+              className="w-full py-1"
             />
           </>
         ) : ( 
@@ -197,9 +194,7 @@ const HeaderComp = ({ errors, formData, handleChange, fetchAvailableReceiptItems
               }
               className={errors.mrcpt_ispst ? "p-invalid" : ""}
             />
-            {errors.mrcpt_ispst && (
-              <small className="mb-3 text-red-500">{errors.mrcpt_ispst}</small>
-            )}
+            <RequiredText text={errors.mrcpt_ispst} />
           </>
         )}
       </div>
