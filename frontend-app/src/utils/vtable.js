@@ -75,6 +75,67 @@ const unitGroupOptions = [
   { label: "Time", value: "Time" },
 ];
 
+const genderOptions = [
+  { label: "Male", value: "Male" },
+  { label: "Female", value: "Female" },
+  { label: "Other", value: "Other" },
+];
+const maritalOptions = [
+  { label: "Single", value: "Single" },
+  { label: "Married", value: "Married" },
+  { label: "Other", value: "Other" },
+];
+const bloodGroupOptions = [
+  { label: "A+", value: "A+" },
+  { label: "A-", value: "A-" },
+  { label: "B+", value: "B+" },
+  { label: "B-", value: "B-" },
+  { label: "AB+", value: "AB+" },
+  { label: "AB-", value: "AB-" },
+  { label: "O+", value: "O+" },
+  { label: "O-", value: "O-" },
+];
+const religionOptions = [
+  { label: "Islam", value: "Islam" },
+  { label: "Hindu", value: "Hindu" },
+  { label: "Christian", value: "Christian" },
+  { label: "Other", value: "Other" },
+];
+const educationGradeOptions = [
+  { label: "Primary", value: "Primary" },
+  { label: "Secondary", value: "Secondary" },
+  { label: "Higher Secondary", value: "Higher Secondary" },
+  { label: "Bachelor", value: "Bachelor" },
+  { label: "Master", value: "Master" },
+  { label: "PhD", value: "PhD" },
+];
+const designationOptions = [
+  { label: "Trainee Executive", value: "Trainee Executive" },
+  { label: "Junior Executive", value: "Junior Executive" },
+  { label: "Senior Executive", value: "Senior Executive" },
+  { label: "Assistant Manager", value: "Assistant Manager" },
+  { label: "Manager", value: "Manager" },
+  { label: "Senior Manager", value: "Senior Manager" },
+  { label: "Assistant General Manager", value: "Assistant General Manager" },
+  { label: "General Manager", value: "General Manager" },
+  { label: "Senior General Manager", value: "Senior General Manager" },
+  { label: "Assistant Director", value: "Assistant Director" },
+  { label: "Director", value: "Director" },
+  { label: "Senior Director", value: "Senior Director" },
+  { label: "CEO", value: "CEO" },
+];
+const employeeTypeOptions = [
+  { label: "Outsourcing", value: "Outsourcing" },
+  { label: "Contract", value: "Contract" },
+  { label: "Regular", value: "Regular" },
+];
+const employeeStatusOptions = [
+  { label: "Active", value: "Active" },
+  { label: "Inactive", value: "Inactive" },
+  { label: "Terminated", value: "Terminated" },
+  { label: "Resigned", value: "Resigned" },  
+];
+
 export {
   getListByTransHead,
   getTransHeadList,
@@ -83,6 +144,14 @@ export {
   productTypeOptions,
   purchaseTypeOptions,
   unitGroupOptions,
+  genderOptions,
+  maritalOptions,
+  bloodGroupOptions,
+  religionOptions,
+  educationGradeOptions,
+  designationOptions,
+  employeeTypeOptions,
+  employeeStatusOptions,
 };
 
 /*

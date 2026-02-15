@@ -5,6 +5,7 @@ import tmtb_paybl from "@/models/accounts/tmtb_paybl.json";
 import { InputNumber } from "primereact/inputnumber";
 import { paymentModeOptions } from "@/utils/vtable";
 import { Dropdown } from "primereact/dropdown";
+import RequiredText from "@/components/RequiredText";
 
 const PayablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   return (
@@ -12,10 +13,9 @@ const PayablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
       <div className="col-12 md:col-2">
         <label
           htmlFor="paybl_pymod"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
           Mode
-          <span className="text-red-500">*</span>
         </label>
         <Dropdown
           name="paybl_pymod"
@@ -29,16 +29,14 @@ const PayablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           filter
           showClear
         />
-        {errors.paybl_pymod && (
-          <small className="mb-3 text-red-500">{errors.paybl_pymod}</small>
-        )}
+        <RequiredText text={errors.paybl_pymod} />
       </div>
       <div className="col-12 md:col-2">
         <label
           htmlFor="paybl_trdat"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
-          {tmtb_paybl.paybl_trdat.label} <span className="text-red-500">*</span>
+          {tmtb_paybl.paybl_trdat.label}
         </label>
         <Calendar
           name="paybl_trdat"
@@ -55,14 +53,12 @@ const PayablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           dateFormat="yy-mm-dd"
           placeholder={`Select ${tmtb_paybl.paybl_trdat.label}`}
         />
-        {errors.paybl_trdat && (
-          <small className="mb-3 text-red-500">{errors.paybl_trdat}</small>
-        )}
+        <RequiredText text={errors.paybl_trdat} />
       </div>
       <div className="col-12 md:col-6">
         <label
           htmlFor="paybl_descr"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2"
         >
           {tmtb_paybl.paybl_descr.label}
         </label>
@@ -73,16 +69,14 @@ const PayablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           className={`w-full ${errors.paybl_descr ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmtb_paybl.paybl_descr.label}`}
         />
-        {errors.paybl_descr && (
-          <small className="mb-3 text-red-500">{errors.paybl_descr}</small>
-        )}
+        <RequiredText text={errors.paybl_descr} />
       </div>
       <div className="col-12 md:col-2">
         <label
           htmlFor="paybl_dbamt"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
-          Amount <span className="text-red-500">*</span>
+          Amount
         </label>
         <InputNumber
           name="paybl_dbamt"
@@ -97,9 +91,7 @@ const PayablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           maxFractionDigits={2}
           locale="en"
         />
-        {errors.paybl_dbamt && (
-          <small className="mb-3 text-red-500">{errors.paybl_dbamt}</small>
-        )}
+        <RequiredText text={errors.paybl_dbamt} />
       </div>
       <div className="col-12">
         <div className="flex flex-row-reverse flex-wrap">

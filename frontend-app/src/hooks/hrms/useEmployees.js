@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { employeesAPI } from "@/api/hrms/employeesAPI";
-import tmrb_emply from "@/models/hrms/tmrb_emply.json";
+import tmhb_emply from "@/models/hrms/tmhb_emply.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { formatDateForAPI } from "@/utils/datetime";
 
-const dataModel = generateDataModel(tmrb_emply, { edit_stop: 0 });
+const dataModel = generateDataModel(tmhb_emply, { edit_stop: 0 });
 
 export const useEmployees = () => {
   const { user } = useAuth();
@@ -40,7 +40,7 @@ export const useEmployees = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmrb_emply);
+    const newErrors = validate({ ...formData, [field]: value }, tmhb_emply);
     setErrors(newErrors);
   };
 
@@ -96,7 +96,7 @@ export const useEmployees = () => {
       setIsBusy(true);
 
       // Validate form
-      const newErrors = validate(formData, tmrb_emply);
+      const newErrors = validate(formData, tmhb_emply);
       setErrors(newErrors);
       console.log("handleSave:", JSON.stringify(formData));
 
@@ -110,7 +110,10 @@ export const useEmployees = () => {
         ...formData,
         id: formData.id || generateGuid(),
         emply_users: user.users_users,
+        emply_bsins: user.users_bsins,
+        emply_bdate: formatDateForAPI(formData.emply_bdate),
         emply_jndat: formatDateForAPI(formData.emply_jndat),
+        emply_cndat: formatDateForAPI(formData.emply_cndat),
         emply_rgdat: formatDateForAPI(formData.emply_rgdat),
         user_id: user.id,
       };

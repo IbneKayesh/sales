@@ -3,7 +3,7 @@ import { Column } from "primereact/column";
 import { formatDate } from "@/utils/datetime";
 import { Button } from "primereact/button";
 
-const PaymentDetailListComp = ({ dataList }) => {
+const PaymentSummaryListComp = ({ dataList }) => {
   const action_BT = (rowData) => {
     return (
       <div className="flex flex-wrap gap-2">
@@ -14,6 +14,7 @@ const PaymentDetailListComp = ({ dataList }) => {
           tooltipOptions={{ position: "top" }}
           //onClick={() => onEdit(rowData)}
         />*/}
+        {rowData.paybl_dbamt - rowData.paybl_cramt}
       </div>
     );
   };
@@ -26,25 +27,6 @@ const PaymentDetailListComp = ({ dataList }) => {
       </div>
     );
   };
-
-  const paybl_trdat_BT = (rowData) => {
-    return (
-      <div className="flex flex-column">
-        <span className="text-md">{formatDate(rowData.paybl_trdat)}</span>
-        <span className="text-sm text-green-500">{rowData.paybl_pymod}</span>
-      </div>
-    );
-  };
-
-  const paybl_descr_BT = (rowData) => {
-    return (
-      <div className="flex flex-column">
-        <span className="text-md">{rowData.paybl_descr}</span>
-        <span className="text-sm text-green-500">{rowData.paybl_notes}</span>
-      </div>
-    );
-  };
-
   const paybl_dbamt_BT = (rowData) => {
     const { paybl_dbamt } = rowData;
 
@@ -82,20 +64,14 @@ const PaymentDetailListComp = ({ dataList }) => {
         rowHover
         showGridlines
       >
+        <Column field="cntct_cntnm" header="Supplier" />
         <Column field="paybl_refno" header="Ref No" body={paybl_refno_BT} />
-        <Column field="paybl_trdat" header="Date" body={paybl_trdat_BT} />
-        <Column
-          field="paybl_descr"
-          header="Description"
-          body={paybl_descr_BT}
-        />
         <Column field="paybl_dbamt" header="Debit" body={paybl_dbamt_BT} />
         <Column field="paybl_cramt" header="Credit" body={paybl_cramt_BT} />
-
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );
 };
 
-export default PaymentDetailListComp;
+export default PaymentSummaryListComp;

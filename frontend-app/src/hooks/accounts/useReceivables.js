@@ -6,7 +6,6 @@ import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { formatDateForAPI } from "@/utils/datetime";
-import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
 const dataModel = generateDataModel(tmtb_rcvbl, { edit_stop: 0 });
 
@@ -26,7 +25,7 @@ export const useReceivables = () => {
         rcvbl_bsins: user.users_bsins,
       });
       //response = { success, message, data }
-      console.log("response ", response)
+      //console.log("response ", response)
 
       setDataList(response.data);
       //showToast("success", "Success", response.message);
@@ -143,8 +142,6 @@ export const useReceivables = () => {
       );
 
       //call update process
-      await closingProcessAPI("payable-due", formDataNew.rcvbl_refid);
-
       // Clear form & reload
       handleClear();
       setCurrentView("list");
@@ -159,30 +156,7 @@ export const useReceivables = () => {
 
   //search
 
-  const [paymentDetailList, setPaymentDetailList] = useState([]);
-
-  const loadPaymentDetails = async () => {
-    try {
-      //console.log("loadBookings:");
-      const response = await receivablesAPI.getPaymentDetails({
-        rcvbl_users: user.users_users,
-        rcvbl_bsins: user.users_bsins,
-        ...searchBoxData,
-      });
-      //console.log("loadPaymentDetails:", JSON.stringify(response));
-
-      setPaymentDetailList([]);
-      if (response.data && response.data.length > 0) {
-        setSearchBoxShow(false);
-        setPaymentDetailList(response.data);
-      }
-      //showToast("success", "Success", response.message);
-    } catch (error) {
-      console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
-    }
-  };
-
+  const [receivableSummaryList, setReceivableSummaryList] = useState([]);
   const [searchBoxShow, setSearchBoxShow] = useState(false);
   const [searchBoxData, setSearchBoxData] = useState({
     rcvbl_refno: "",
@@ -191,6 +165,7 @@ export const useReceivables = () => {
     rcvbl_descr: "",
     search_option: "last_3_days",
   });
+
 
   const handleChangeSearchInput = (e) => {
     const { name, value } = e.target;
@@ -204,6 +179,30 @@ export const useReceivables = () => {
     }
   };
 
+  const loadReceivableSummary = async () => {
+    try {
+      //console.log("loadBookings:");
+      const response = await receivablesAPI.getReceivableSummary({
+        rcvbl_users: user.users_users,
+        rcvbl_bsins: user.users_bsins,
+        ...searchBoxData,
+      });
+      //console.log("loadPaymentDetails:", JSON.stringify(response));
+
+      setReceivableSummaryList([]);
+      if (response.data && response.data.length > 0) {
+        setSearchBoxShow(false);
+        setReceivableSummaryList(response.data);
+      }
+      //showToast("success", "Success", response.message);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
+
+
+
   const handleSearch = () => {
     const hasValue = Object.values(searchBoxData).some(
       (value) => value !== "" && value !== null && value !== undefined,
@@ -214,7 +213,7 @@ export const useReceivables = () => {
       return;
     }
 
-    loadPaymentDetails();
+    loadReceivableSummary();
   };
 
   const searchOptions = [
@@ -243,6 +242,6 @@ export const useReceivables = () => {
     handleChangeSearchInput,
     handleSearch,
     searchOptions,
-    paymentDetailList
+    receivableSummaryList
   };
 };

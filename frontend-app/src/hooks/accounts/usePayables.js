@@ -6,7 +6,6 @@ import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 import { formatDateForAPI } from "@/utils/datetime";
-import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 
 const dataModel = generateDataModel(tmtb_paybl, { edit_stop: 0 });
 
@@ -140,10 +139,6 @@ export const usePayables = () => {
         response.message ||
           "Operation " + (response.success ? "successful" : "failed"),
       );
-
-      //call update process
-      await closingProcessAPI("payable-due", formDataNew.paybl_refid);
-
       // Clear form & reload
       handleClear();
       setCurrentView("list");
@@ -158,30 +153,7 @@ export const usePayables = () => {
 
   //search
 
-  const [paymentDetailList, setPaymentDetailList] = useState([]);
-
-  const loadPaymentDetails = async () => {
-    try {
-      //console.log("loadBookings:");
-      const response = await payablesAPI.getPaymentDetails({
-        paybl_users: user.users_users,
-        paybl_bsins: user.users_bsins,
-        ...searchBoxData,
-      });
-      //console.log("loadPaymentDetails:", JSON.stringify(response));
-
-      setPaymentDetailList([]);
-      if (response.data && response.data.length > 0) {
-        setSearchBoxShow(false);
-        setPaymentDetailList(response.data);
-      }
-      //showToast("success", "Success", response.message);
-    } catch (error) {
-      console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
-    }
-  };
-
+  const [paymentSummaryList, setPaymentSummaryList] = useState([]);
   const [searchBoxShow, setSearchBoxShow] = useState(false);
   const [searchBoxData, setSearchBoxData] = useState({
     paybl_refno: "",
@@ -203,6 +175,29 @@ export const usePayables = () => {
     }
   };
 
+
+  const loadPaymentSummary = async () => {
+    try {
+      //console.log("loadBookings:");
+      const response = await payablesAPI.getPaymentSummary({
+        paybl_users: user.users_users,
+        paybl_bsins: user.users_bsins,
+        ...searchBoxData,
+      });
+      //console.log("loadPaymentSummary:", JSON.stringify(response));
+      //return;
+      setPaymentSummaryList([]);
+      if (response.data && response.data.length > 0) {
+        setSearchBoxShow(false);
+        setPaymentSummaryList(response.data);
+      }
+      //showToast("success", "Success", response.message);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    }
+  };
+
   const handleSearch = () => {
     const hasValue = Object.values(searchBoxData).some(
       (value) => value !== "" && value !== null && value !== undefined,
@@ -213,7 +208,7 @@ export const usePayables = () => {
       return;
     }
 
-    loadPaymentDetails();
+    loadPaymentSummary();
   };
 
   const searchOptions = [
@@ -242,6 +237,6 @@ export const usePayables = () => {
     handleChangeSearchInput,
     handleSearch,
     searchOptions,
-    paymentDetailList
+    paymentSummaryList
   };
 };

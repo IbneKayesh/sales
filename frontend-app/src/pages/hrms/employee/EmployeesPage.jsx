@@ -31,7 +31,7 @@ const EmployeesPage = () => {
             ? "Employee List"
             : formData.id
             ? "Edit Employee"
-            : "Add New Employee"}
+            : "New Employee"}
         </h3>
 
         <div className="flex gap-2">

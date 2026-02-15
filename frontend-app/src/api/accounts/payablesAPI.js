@@ -27,4 +27,9 @@ export const payablesAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getPaymentSummary: (data) =>
+    apiRequest("/accounts/payables/payment-summary", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

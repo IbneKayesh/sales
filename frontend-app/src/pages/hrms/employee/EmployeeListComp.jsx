@@ -8,7 +8,7 @@ import ActiveRowCell from "@/components/ActiveRowCell";
 const EmployeeListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.bsins_bname}"?`,
+      message: `Are you sure you want to delete "${rowData.emply_ename}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -55,8 +55,21 @@ const EmployeeListComp = ({ dataList, onEdit, onDelete }) => {
             status={rowData.emply_actve}
           />
         </span>
-        <span className="text-sm text-gray-500">{rowData.emply_ecode}</span>
-        <span className="text-sm text-gray-500">{rowData.emply_desig}</span>
+        <span className="text-sm text-gray-500">
+          Code: {rowData.emply_ecode}
+        </span>
+        <span className="text-sm text-gray-500">
+          Card No: {rowData.emply_crdno}
+        </span>
+        <span className="text-sm text-gray-500">
+          Designation: {rowData.emply_desig}
+        </span>
+        <span className="text-sm text-gray-500">
+          Type: {rowData.emply_etype}
+        </span>
+        <span className="text-sm text-gray-500">
+          Status: {rowData.emply_stats}
+        </span>
       </div>
     );
   };
@@ -64,33 +77,71 @@ const EmployeeListComp = ({ dataList, onEdit, onDelete }) => {
   const emply_econt_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-md">{rowData.emply_econt}</span>
-        <span className="text-sm">{rowData.emply_addrs}</span>
+        <span className="text-sm">Contact: {rowData.emply_econt}</span>
+        <span className="text-sm">Email: {rowData.emply_email}</span>
+        <span className="text-sm">National ID: {rowData.emply_natid}</span>
+      </div>
+    );
+  };
+  const emply_prnam_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-sm">Parents: {rowData.emply_prnam}</span>
+        <span className="text-sm">Gender: {rowData.emply_gendr}</span>
+        <span className="text-sm">Marital Status: {rowData.emply_mstas}</span>
+        <span className="text-sm">Blood Group: {rowData.emply_bgrup}</span>
+        <span className="text-sm">Religion: {rowData.emply_rlgon}</span>
+        <span className="text-sm">Education: {rowData.emply_edgrd}</span>
+      </div>
+    );
+  };
+  const emply_psadr_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-sm">Present: {rowData.emply_pradr}</span>
+        <span className="text-sm">Permanent: {rowData.emply_psadr}</span>
       </div>
     );
   };
 
   const emply_jndat_BT = (rowData) => {
     return (
-      <>
-        Join: {formatDate(rowData.emply_jndat)}
-        <br />
-        Resign: {formatDate(rowData.emply_rgdat)}
-      </>
+      <div className="flex flex-column">
+        <span className="text-sm">
+          Birth Date: {formatDate(rowData.emply_bdate)}
+        </span>
+        <span className="text-sm">Join: {formatDate(rowData.emply_jndat)}</span>
+        <span className="text-sm">
+          Confirm: {formatDate(rowData.emply_cndat)}
+        </span>
+        <span className="text-sm">
+          Resign: {formatDate(rowData.emply_rgdat)}
+        </span>
+      </div>
     );
   };
 
-  const emply_crsal_BT = (rowData) => {
-    return <>{rowData.emply_crsal}</>;
+  const emply_gssal_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-sm">Gross: {rowData.emply_gssal}</span>
+        <span className="text-sm">OT Rate: {rowData.emply_otrat}</span>
+        <span className="text-sm">Payment Account: {rowData.emply_pyacc}</span>
+        <span className="text-sm">Salary Cycle: {rowData.emply_slcyl}</span>
+      </div>
+    );
+  };
+  const emply_wksft_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-sm">Shift: {rowData.emply_wksft}</span>
+        <span className="text-sm">Supervisor: {rowData.emply_supid}</span>
+        <span className="text-sm">Notes: {rowData.emply_notes}</span>
+        <span className="text-sm">Login: {rowData.emply_login ? "Yes" : "No"}</span>
+      </div>
+    );
   };
 
-  const emply_supid_BT = (rowData) => {
-    return <>{rowData.emply_supid}</>;
-  };
-
-  const emply_login_BT = (rowData) => {
-    return <>{rowData.emply_login ? "Yes" : "No"}</>;
-  };
   return (
     <div className="p-1">
       <ConfirmDialog />
@@ -104,12 +155,13 @@ const EmployeeListComp = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
       >
-        <Column field="emply_ecode" header="Name" body={emply_ecode_BT} />
+        <Column field="emply_ecode" header="Employee" body={emply_ecode_BT} />
         <Column field="emply_econt" header="Contact" body={emply_econt_BT} />
+        <Column field="emply_prnam" header="Details" body={emply_prnam_BT} />
+        <Column field="emply_psadr" header="Address" body={emply_psadr_BT} />
         <Column field="emply_jndat" header="Date" body={emply_jndat_BT} />
-        <Column field="emply_crsal" header="Salary" body={emply_crsal_BT} />
-        <Column field="emply_supid" header="Supervisor" body={emply_supid_BT} />
-        <Column field="emply_login" header="Login" body={emply_login_BT} />
+        <Column field="emply_gssal" header="Salary" body={emply_gssal_BT} />
+        <Column field="emply_wksft" header="Work" body={emply_wksft_BT} />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>

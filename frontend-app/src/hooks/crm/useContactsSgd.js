@@ -31,9 +31,23 @@ export const useContactsSgd = () => {
     }
   };
 
+  const handleLoadReceiptSuppliers = async () => {
+    try {
+      const response = await contactAPI.getAllReceiptSuppliers({
+        cntct_users: user.users_users,
+        cntct_bsins: user.users_bsins,
+      });
+      //console.log("data",response.data);
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
+  };
+
   return {
     dataList,
     handleLoadSuppliers,
-    handleLoadCustomers
+    handleLoadCustomers,
+    handleLoadReceiptSuppliers
   }
 };

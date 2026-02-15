@@ -448,4 +448,50 @@ router.post("/customers", async (req, res) => {
   }
 });
 
+
+//receipt-suppliers
+router.post("/receipt-suppliers", async (req, res) => {
+  try {
+    const { cntct_users, cntct_bsins } = req.body;
+
+    // Validate input
+    if (!cntct_users || !cntct_bsins) {
+      return res.json({
+        success: false,
+        message: "User ID and Business ID are required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT cnt.*, 0 as edit_stop
+    FROM tmcb_cntct cnt
+    JOIN tmpb_mbkng mbkg ON cnt.id = mbkg.mbkng_cntct
+    JOIN tmpb_cbkng cbkg ON mbkg.id = cbkg.cbkng_mbkng AND cbkg.cbkng_pnqty > 0
+    WHERE cnt.cntct_ctype IN ('Supplier','Both')
+    AND mbkg.mbkng_users = ?
+    AND mbkg.mbkng_bsins = ?
+    ORDER BY cnt.cntct_cntnm`;
+    const params = [cntct_users, cntct_bsins];
+
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get customers for ${cntct_users}`,
+    );
+    res.json({
+      success: true,
+      message: "Customers fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;

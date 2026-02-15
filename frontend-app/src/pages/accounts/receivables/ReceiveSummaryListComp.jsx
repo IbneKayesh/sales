@@ -3,7 +3,7 @@ import { Column } from "primereact/column";
 import { formatDate } from "@/utils/datetime";
 import { Button } from "primereact/button";
 
-const PaymentDetailListComp = ({ dataList }) => {
+const ReceiveSummaryListComp = ({ dataList }) => {
   const action_BT = (rowData) => {
     return (
       <div className="flex flex-wrap gap-2">
@@ -14,6 +14,7 @@ const PaymentDetailListComp = ({ dataList }) => {
           tooltipOptions={{ position: "top" }}
           //onClick={() => onEdit(rowData)}
         />*/}
+        {rowData.rcvbl_dbamt - rowData.rcvbl_cramt}
       </div>
     );
   };
@@ -27,23 +28,6 @@ const PaymentDetailListComp = ({ dataList }) => {
     );
   };
 
-  const rcvbl_trdat_BT = (rowData) => {
-    return (
-      <div className="flex flex-column">
-        <span className="text-md">{formatDate(rowData.rcvbl_trdat)}</span>
-        <span className="text-sm text-green-500">{rowData.rcvbl_pymod}</span>
-      </div>
-    );
-  };
-
-  const rcvbl_descr_BT = (rowData) => {
-    return (
-      <div className="flex flex-column">
-        <span className="text-md">{rowData.rcvbl_descr}</span>
-        <span className="text-sm text-green-500">{rowData.rcvbl_notes}</span>
-      </div>
-    );
-  };
 
   const rcvbl_dbamt_BT = (rowData) => {
     const { rcvbl_dbamt } = rowData;
@@ -69,7 +53,6 @@ const PaymentDetailListComp = ({ dataList }) => {
     );
   };
 
-
   return (
     <div className="p-1">
       <DataTable
@@ -82,20 +65,14 @@ const PaymentDetailListComp = ({ dataList }) => {
         rowHover
         showGridlines
       >
+        <Column field="cntct_cntnm" header="Customer" />
         <Column field="rcvbl_refno" header="Ref No" body={rcvbl_refno_BT} />
-        <Column field="rcvbl_trdat" header="Date" body={rcvbl_trdat_BT} />
-        <Column
-          field="rcvbl_descr"
-          header="Description"
-          body={rcvbl_descr_BT}
-        />
         <Column field="rcvbl_dbamt" header="Debit" body={rcvbl_dbamt_BT} />
         <Column field="rcvbl_cramt" header="Credit" body={rcvbl_cramt_BT} />
-
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );
 };
 
-export default PaymentDetailListComp;
+export default ReceiveSummaryListComp;

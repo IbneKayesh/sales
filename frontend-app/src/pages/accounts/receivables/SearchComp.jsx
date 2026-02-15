@@ -7,7 +7,6 @@ import { Dropdown } from "primereact/dropdown";
 const SearchComp = ({
   searchBoxData,
   handleChangeSearchInput,
-  setSearchBoxShow,
   handleSearch,
   searchOptions,
 }) => (
@@ -95,13 +94,6 @@ const SearchComp = ({
       </div>
     </div>
     <div className="flex gap-2 ml-auto">
-      <Button
-        label="Clear"
-        icon="pi pi-filter-slash"
-        severity="secondary"
-        size="small"
-        onClick={() => setSearchBoxShow(false)}
-      />
       <Button
         label="Find"
         icon="pi pi-search"

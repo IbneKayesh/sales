@@ -99,35 +99,80 @@ router.post("/create", async (req, res) => {
     }
 
     //database action
-    const sql = `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
-    paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
-    paybl_cramt, paybl_crusr, paybl_upusr)
-    VALUES (?, ?, ?, ?, ?, ?,
-    ?, ?, ?, ?, ?, ?,
-    ?, ?, ?)`;
-    const params = [
-      uuidv4(),
-      paybl_users,
-      paybl_bsins,
-      paybl_cntct,
-      paybl_pymod,
-      paybl_refid,
-      paybl_refno,
-      "Purchase Booking",
-      paybl_trdat,
-      paybl_descr,
-      paybl_notes,
-      paybl_dbamt,
-      0,
-      user_id,
-      user_id,
-    ];
+    const scripts = [];
+    scripts.push({
+      sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
+      paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
+      paybl_cramt, paybl_crusr, paybl_upusr)
+      VALUES (?, ?, ?, ?, ?, ?,
+      ?, ?, ?, ?, ?, ?,
+      ?, ?, ?)`,
+      params: [
+        uuidv4(),
+        paybl_users,
+        paybl_bsins,
+        paybl_cntct,
+        paybl_pymod,
+        paybl_refid,
+        paybl_refno,
+        paybl_srcnm,
+        paybl_trdat,
+        paybl_descr,
+        paybl_notes,
+        paybl_dbamt,
+        0,
+        user_id,
+        user_id,
+      ],
+      label: `Create payable for ${paybl_refno}`,
+    });
 
-    await dbRun(sql, params, `Account payable for ${paybl_refno}`);
+    if (paybl_srcnm === "Purchase Booking") {
+      scripts.push({
+        sql: `UPDATE tmpb_mbkng SET mbkng_pdamt = mbkng_pdamt + ?, mbkng_duamt = mbkng_duamt - ? WHERE id = ?`,
+        params: [paybl_dbamt, paybl_dbamt, paybl_refid],
+        label: `Update Purchase Booking ${paybl_refno}`,
+      });
+
+      scripts.push({
+        sql: `UPDATE tmpb_mbkng
+        SET mbkng_ispad = 
+        CASE
+          WHEN mbkng_duamt <= 0 THEN 1
+          WHEN mbkng_duamt > 0 AND mbkng_duamt < mbkng_pyamt THEN 2
+          ELSE 0
+        END WHERE id = ?`,
+        params: [paybl_refid],
+        label: `Update Purchase Booking Status ${paybl_refno}`,
+      });
+    }
+    if (paybl_srcnm === "Purchase Invoice") {
+      scripts.push({
+        sql: `UPDATE tmpb_minvc SET minvc_pdamt = minvc_pdamt + ?, minvc_duamt = minvc_duamt - ? WHERE id = ?`,
+        params: [paybl_dbamt, paybl_dbamt, paybl_refid],
+        label: `Update Purchase Invoice ${paybl_refno}`,
+      });
+
+      scripts.push({
+        sql: `UPDATE tmpb_minvc
+        SET minvc_ispad = 
+        CASE
+          WHEN minvc_duamt <= 0 THEN 1
+          WHEN minvc_duamt > 0 AND minvc_duamt < minvc_pyamt THEN 2
+          ELSE 0
+        END WHERE id = ?`,
+        params: [paybl_refid],
+        label: `Update Purchase Invoice Status ${paybl_refno}`,
+      });
+    }
+    await dbRunAll(scripts);
+
     res.json({
       success: true,
       message: "Account payable created successfully",
-      data: null,
+      data: {
+        ...req.body,
+      },
     });
   } catch (error) {
     console.error("database action error:", error);
@@ -232,4 +277,98 @@ router.post("/payment-details", async (req, res) => {
   }
 });
 
+//payment-summary
+router.post("/payment-summary", async (req, res) => {
+  try {
+    const {
+      paybl_users,
+      paybl_bsins,
+      paybl_refno,
+      paybl_cntct,
+      paybl_trdat,
+      paybl_descr,
+      search_option,
+    } = req.body;
+
+    // Validate input
+    if (!paybl_users || !paybl_bsins) {
+      return res.json({
+        success: false,
+        message: "Business ID is required",
+        data: null,
+      });
+    }
+    //console.log("get:", JSON.stringify(req.body));
+
+    //database action
+    let sql = `SELECT cnt.cntct_cntnm, pbl.paybl_refno, pbl.paybl_srcnm, SUM(pbl.paybl_dbamt) AS paybl_dbamt, SUM(pbl.paybl_cramt) AS paybl_cramt
+    FROM tmtb_paybl pbl
+    LEFT JOIN tmcb_cntct cnt ON pbl.paybl_cntct = cnt.id
+    WHERE pbl.paybl_bsins = ?
+    `;
+    let params = [paybl_bsins];
+
+    // Optional filters
+    if (paybl_refno) {
+      sql += ` AND pbl.paybl_refno LIKE ?`;
+      params.push(`%${paybl_refno}%`);
+    }
+    if (paybl_cntct) {
+      sql += ` AND cnt.cntct_cntnm LIKE ?`;
+      params.push(`%${paybl_cntct}%`);
+    }
+
+    if (paybl_descr) {
+      sql += ` AND pbl.paybl_descr LIKE ?`;
+      params.push(`%${paybl_descr}%`);
+    }
+
+    if (paybl_trdat) {
+      const dateObj = new Date(paybl_trdat);
+      const formattedDate =
+        dateObj.getFullYear() +
+        "-" +
+        String(dateObj.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(dateObj.getDate()).padStart(2, "0");
+
+      // console.log("formattedDate", formattedDate);
+
+      sql += ` AND DATE(pbl.paybl_trdat) = ?`;
+      params.push(formattedDate);
+    }
+
+    if (search_option) {
+      switch (search_option) {
+        case "last_3_days":
+          sql += ` AND pbl.paybl_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY)`;
+          break;
+        case "last_7_days":
+          sql += ` AND pbl.paybl_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)`;
+          break;
+        default:
+          sql += ``;
+          break;
+      }
+      //params.push(`%${search_option}%`);
+    }
+
+    sql += ` GROUP BY cnt.cntct_cntnm, pbl.paybl_refno, pbl.paybl_srcnm`;
+    sql += ` ORDER BY pbl.paybl_refno`;
+
+    const rows = await dbGetAll(sql, params, `Get payments for ${paybl_bsins}`);
+    res.json({
+      success: true,
+      message: "Payments fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
 module.exports = router;

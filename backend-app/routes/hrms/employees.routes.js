@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
 
     //database action
     const sql = `SELECT emply.*, 0 as edit_stop
-      FROM tmrb_emply emply
+      FROM tmhb_emply emply
       WHERE emply.emply_users = ?
       ORDER BY emply.emply_ecode`;
     const params = [emply_users];
@@ -48,31 +48,52 @@ router.post("/create", async (req, res) => {
       emply_users,
       emply_bsins,
       emply_ecode,
-      emply_pswrd,
+      emply_crdno,
       emply_ename,
       emply_econt,
-      emply_addrs,
+      emply_email,
+      emply_natid,
+      emply_bdate,
+      emply_prnam,
+      emply_gendr,
+      emply_mstas,
+      emply_bgrup,
+      emply_rlgon,
+      emply_edgrd,
+      emply_psadr,
+      emply_pradr,
       emply_desig,
       emply_jndat,
+      emply_cndat,
       emply_rgdat,
-      emply_crsal,
+      emply_gssal,
+      emply_otrat,
+      emply_etype,
+      emply_pyacc,
+      emply_slcyl,
+      emply_wksft,
       emply_supid,
+      emply_notes,
       emply_login,
+      emply_pswrd,
+      emply_pictr,
+      emply_stats,
       user_id,
     } = req.body;
+
+    //console.log("req.body", req.body);
 
     // Validate input
     if (
       !id ||
       !emply_users ||
       !emply_bsins ||
-      !emply_ecode ||
-      !emply_pswrd ||
       !emply_ename ||
       !emply_econt ||
-      !emply_addrs ||
+      !emply_psadr ||
       !emply_desig ||
-      !emply_jndat
+      !emply_jndat ||
+      !emply_stats
     ) {
       return res.json({
         success: false,
@@ -82,27 +103,53 @@ router.post("/create", async (req, res) => {
     }
 
     //database action
-    const sql = `INSERT INTO tmrb_emply(id, emply_users, emply_bsins, emply_ecode, emply_pswrd, emply_ename,
-    emply_econt, emply_addrs, emply_desig, emply_jndat, emply_rgdat, emply_crsal,
-    emply_supid, emply_login, emply_crusr, emply_upusr)
-    VALUES (?, ?, ?, ?, ?, ?,
+    const sql = `INSERT INTO tmhb_emply(id, emply_users, emply_bsins, emply_ecode, emply_crdno,
+    emply_ename, emply_econt, emply_email, emply_natid, emply_bdate, emply_prnam,
+    emply_gendr, emply_mstas, emply_bgrup, emply_rlgon, emply_edgrd, emply_psadr,
+    emply_pradr, emply_desig, emply_jndat, emply_cndat, emply_rgdat, emply_gssal,
+    emply_otrat, emply_etype, emply_pyacc, emply_slcyl, emply_wksft, emply_supid,
+    emply_notes, emply_login, emply_pswrd, emply_pictr, emply_stats, emply_crusr, emply_upusr)
+    VALUES (?, ?, ?, ?, ?,
     ?, ?, ?, ?, ?, ?,
-    ?, ?, ?, ?)`;
+    ?, ?, ?, ?, ?, ?,
+    ?, ?, ?, ?, ?, ?,
+    ?, ?, ?, ?, ?, ?,
+    ?, ?, ?, ?, ?, ?, ?)`;
     const params = [
       id,
       emply_users,
       emply_bsins,
       emply_ecode,
-      emply_pswrd,
+      emply_crdno,
       emply_ename,
       emply_econt,
-      emply_addrs,
+      emply_email,
+      emply_natid,
+      emply_bdate,
+      emply_prnam,
+      emply_gendr,
+      emply_mstas,
+      emply_bgrup,
+      emply_rlgon,
+      emply_edgrd,
+      emply_psadr,
+      emply_pradr,
       emply_desig,
       emply_jndat,
+      emply_cndat,
       emply_rgdat,
-      emply_crsal,
+      emply_gssal,
+      emply_otrat,
+      emply_etype,
+      emply_pyacc,
+      emply_slcyl,
+      emply_wksft,
       emply_supid,
+      emply_notes,
       emply_login,
+      emply_pswrd,
+      emply_pictr,
+      emply_stats,
       user_id,
       user_id,
     ];
@@ -131,16 +178,36 @@ router.post("/update", async (req, res) => {
       emply_users,
       emply_bsins,
       emply_ecode,
-      emply_pswrd,
+      emply_crdno,
       emply_ename,
       emply_econt,
-      emply_addrs,
+      emply_email,
+      emply_natid,
+      emply_bdate,
+      emply_prnam,
+      emply_gendr,
+      emply_mstas,
+      emply_bgrup,
+      emply_rlgon,
+      emply_edgrd,
+      emply_psadr,
+      emply_pradr,
       emply_desig,
       emply_jndat,
+      emply_cndat,
       emply_rgdat,
-      emply_crsal,
+      emply_gssal,
+      emply_otrat,
+      emply_etype,
+      emply_pyacc,
+      emply_slcyl,
+      emply_wksft,
       emply_supid,
+      emply_notes,
       emply_login,
+      emply_pswrd,
+      emply_pictr,
+      emply_stats,
       user_id,
     } = req.body;
 
@@ -149,13 +216,12 @@ router.post("/update", async (req, res) => {
       !id ||
       !emply_users ||
       !emply_bsins ||
-      !emply_ecode ||
-      !emply_pswrd ||
       !emply_ename ||
       !emply_econt ||
-      !emply_addrs ||
+      !emply_psadr ||
       !emply_desig ||
-      !emply_jndat
+      !emply_jndat ||
+      !emply_stats
     ) {
       return res.json({
         success: false,
@@ -165,33 +231,73 @@ router.post("/update", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmab_bsins
-    SET emply_ecode = ?,
-    emply_pswrd = ?,
-    emply_ename = ?,
-    emply_econt = ?,
-    emply_addrs = ?,
-    emply_desig = ?,
-    emply_jndat = ?,
-    emply_rgdat = ?,
-    emply_crsal = ?,
-    emply_supid = ?,
-    emply_login = ?,
-    emply_upusr = ?,
-    emply_rvnmr = emply_rvnmr + 1
-    WHERE id = ?`;
+    const sql = `UPDATE tmhb_emply
+    SET emply_ecode=?,
+    emply_crdno=?,
+    emply_ename=?,
+    emply_econt=?,
+    emply_email=?,
+    emply_natid=?,
+    emply_bdate=?,
+    emply_prnam=?,
+    emply_gendr=?,
+    emply_mstas=?,
+    emply_bgrup=?,
+    emply_rlgon=?,
+    emply_edgrd=?,
+    emply_psadr=?,
+    emply_pradr=?,
+    emply_desig=?,
+    emply_jndat=?,
+    emply_cndat=?,
+    emply_rgdat=?,
+    emply_gssal=?,
+    emply_otrat=?,
+    emply_etype=?,
+    emply_pyacc=?,
+    emply_slcyl=?,
+    emply_wksft=?,
+    emply_supid=?,
+    emply_notes=?,
+    emply_login=?,
+    emply_pswrd=?,
+    emply_pictr=?,
+    emply_stats=?,
+    emply_upusr=?,
+    emply_rvnmr= emply_rvnmr + 1
+    WHERE id=?`;
     const params = [
       emply_ecode,
-      emply_pswrd,
+      emply_crdno,
       emply_ename,
       emply_econt,
-      emply_addrs,
+      emply_email,
+      emply_natid,
+      emply_bdate,
+      emply_prnam,
+      emply_gendr,
+      emply_mstas,
+      emply_bgrup,
+      emply_rlgon,
+      emply_edgrd,
+      emply_psadr,
+      emply_pradr,
       emply_desig,
       emply_jndat,
+      emply_cndat,
       emply_rgdat,
-      emply_crsal,
+      emply_gssal,
+      emply_otrat,
+      emply_etype,
+      emply_pyacc,
+      emply_slcyl,
+      emply_wksft,
       emply_supid,
+      emply_notes,
       emply_login,
+      emply_pswrd,
+      emply_pictr,
+      emply_stats,
       user_id,
       id,
     ];
@@ -227,7 +333,7 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmrb_emply
+    const sql = `UPDATE tmhb_emply
     SET emply_actve = 1 - emply_actve
     WHERE id = ?`;
     const params = [id];

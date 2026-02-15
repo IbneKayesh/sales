@@ -5,7 +5,7 @@ import { usePayables } from "@/hooks/accounts/usePayables";
 import PayablesListComp from "./PayablesListComp";
 import PayablesFormComp from "./PayablesFormComp";
 import SearchComp from "./SearchComp";
-import PaymentDetailListComp from "./PaymentDetailListComp";
+import PaymentSummaryListComp from "./PaymentSummaryListComp";
 
 const PayablesPage = () => {
   const {
@@ -29,11 +29,11 @@ const PayablesPage = () => {
     handleChangeSearchInput,
     handleSearch,
     searchOptions,
-    paymentDetailList,
+    paymentSummaryList,
   } = usePayables();
 
   const handleSearchBox = () => {
-    setSearchBoxShow(true);
+    setSearchBoxShow(!searchBoxShow);
   };
 
   const getHeader = () => {
@@ -46,13 +46,14 @@ const PayablesPage = () => {
             ? "Payables List"
             : formData.id
               ? "Edit Payable"
-              : "Add New Payable"}
+              : "New Payable"}
         </h3>
 
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
-              icon="pi pi-search"
+              label={searchBoxShow ? "Hide" : "Search"}
+              icon={searchBoxShow ? "pi pi-filter-slash" : "pi pi-search"}
               size="small"
               severity="secondary"
               onClick={handleSearchBox}
@@ -92,10 +93,8 @@ const PayablesPage = () => {
             searchOptions={searchOptions}
           />
         )}
-        {paymentDetailList.length > 0 && (
-          <PaymentDetailListComp
-            dataList={paymentDetailList}
-          />
+        {paymentSummaryList.length > 0 && (
+          <PaymentSummaryListComp dataList={paymentSummaryList} />
         )}
 
         {currentView === "list" ? (

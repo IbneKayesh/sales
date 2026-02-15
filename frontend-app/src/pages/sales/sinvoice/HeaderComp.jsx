@@ -6,6 +6,7 @@ import { Checkbox } from "primereact/checkbox";
 import { Tag } from "primereact/tag";
 import tmeb_minvc from "@/models/sales/tmeb_minvc.json";
 import { useContactsSgd } from "@/hooks/crm/useContactsSgd";
+import RequiredText from "@/components/RequiredText";
 
 const HeaderComp = ({ errors, formData, handleChange }) => {
   const { dataList: customerList, handleLoadCustomers } = useContactsSgd();
@@ -90,14 +91,11 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           disabled
           variant="filled"
         />
-        {errors.minvc_trnno && (
-          <small className="mb-3 text-red-500">{errors.minvc_trnno}</small>
-        )}
+        <RequiredText text={errors.minvc_trnno} />
       </div>
       <div className="col-12 md:col-2">
-        <label htmlFor="minvc_trdat" className="block font-bold mb-2">
+        <label htmlFor="minvc_trdat" className="block font-bold mb-2 text-red-800">
           {tmeb_minvc.minvc_trdat.label}
-          {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         <Calendar
           id="minvc_trdat"
@@ -115,14 +113,11 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           disabled={isReadOnly}
           variant={isReadOnly ? "filled" : "outlined"}
         />
-        {errors.minvc_trdat && (
-          <small className="mb-3 text-red-500">{errors.minvc_trdat}</small>
-        )}
+        <RequiredText text={errors.minvc_trdat} />
       </div>
       <div className="col-12 md:col-5">
-        <label htmlFor="minvc_cntct" className="block font-bold mb-2">
+        <label htmlFor="minvc_cntct" className="block font-bold mb-2 text-red-800">
           {tmeb_minvc.minvc_cntct.label}
-          {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         {isReadOnly ? (
           <InputText
@@ -148,9 +143,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
             valueTemplate={cntct_cntnm_VT}
           />
         )}
-        {errors.minvc_cntct && (
-          <small className="mb-3 text-red-500">{errors.minvc_cntct}</small>
-        )}
+        <RequiredText text={errors.minvc_cntct} />
       </div>
       <div className="col-12 md:col-2">
         <label htmlFor="minvc_refno" className="block font-bold mb-2">
@@ -166,9 +159,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           disabled={isReadOnly}
           variant={isReadOnly ? "filled" : "outlined"}
         />
-        {errors.minvc_refno && (
-          <small className="mb-3 text-red-500">{errors.minvc_refno}</small>
-        )}
+        <RequiredText text={errors.minvc_refno} />
       </div>
       <div className="col-12 md:col-1">
         {isReadOnly ? (
@@ -178,7 +169,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
               severity="success"
               value="Posted"
               icon="pi pi-lock"
-              className="w-full py-2"
+              className="w-full py-1"
             />
           </>
         ) : (
@@ -195,9 +186,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
               }
               className={errors.minvc_ispst ? "p-invalid" : ""}
             />
-            {errors.minvc_ispst && (
-              <small className="mb-3 text-red-500">{errors.minvc_ispst}</small>
-            )}
+            <RequiredText text={errors.minvc_ispst} />
           </>
         )}
       </div>

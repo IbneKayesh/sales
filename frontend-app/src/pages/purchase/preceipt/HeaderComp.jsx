@@ -9,11 +9,11 @@ import { useContactsSgd } from "@/hooks/crm/useContactsSgd";
 import RequiredText from "@/components/RequiredText";
 
 const HeaderComp = ({ errors, formData, handleChange, fetchAvailableReceiptItems }) => {
-  const { dataList: supplierList, handleLoadSuppliers } = useContactsSgd();
+  const { dataList: supplierList, handleLoadReceiptSuppliers } = useContactsSgd();
 
   useEffect(() => {
     if (!formData.edit_stop) {
-      handleLoadSuppliers();
+      handleLoadReceiptSuppliers();
       //console.log("Supplier list loaded");
     }
   }, []);

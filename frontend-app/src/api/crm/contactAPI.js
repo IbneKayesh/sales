@@ -42,4 +42,9 @@ export const contactAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getAllReceiptSuppliers: (data) =>
+    apiRequest(`/crm/contacts/receipt-suppliers`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

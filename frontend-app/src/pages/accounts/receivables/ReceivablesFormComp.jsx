@@ -1,10 +1,11 @@
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
-import tmtb_paybl from "@/models/accounts/tmtb_paybl.json";
+import tmtb_rcvbl from "@/models/accounts/tmtb_rcvbl.json";
 import { InputNumber } from "primereact/inputnumber";
 import { paymentModeOptions } from "@/utils/vtable";
 import { Dropdown } from "primereact/dropdown";
+import RequiredText from "@/components/RequiredText";
 
 const ReceivablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   return (
@@ -12,10 +13,9 @@ const ReceivablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => 
       <div className="col-12 md:col-2">
         <label
           htmlFor="rcvbl_pymod"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
           Mode
-          <span className="text-red-500">*</span>
         </label>
         <Dropdown
           name="rcvbl_pymod"
@@ -29,16 +29,14 @@ const ReceivablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => 
           filter
           showClear
         />
-        {errors.rcvbl_pymod && (
-          <small className="mb-3 text-red-500">{errors.rcvbl_pymod}</small>
-        )}
+         <RequiredText text={errors.rcvbl_pymod} />
       </div>
       <div className="col-12 md:col-2">
         <label
           htmlFor="rcvbl_trdat"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
-          {tmtb_paybl.rcvbl_trdat.label} <span className="text-red-500">*</span>
+          {tmtb_rcvbl.rcvbl_trdat.label}
         </label>
         <Calendar
           name="rcvbl_trdat"
@@ -53,36 +51,32 @@ const ReceivablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => 
           onChange={(e) => onChange("rcvbl_trdat", e.target.value)}
           className={`w-full ${errors.rcvbl_trdat ? "p-invalid" : ""}`}
           dateFormat="yy-mm-dd"
-          placeholder={`Select ${tmtb_paybl.rcvbl_trdat.label}`}
+          placeholder={`Select ${tmtb_rcvbl.rcvbl_trdat.label}`}
         />
-        {errors.rcvbl_trdat && (
-          <small className="mb-3 text-red-500">{errors.rcvbl_trdat}</small>
-        )}
+        <RequiredText text={errors.rcvbl_trdat} />
       </div>
       <div className="col-12 md:col-6">
         <label
           htmlFor="rcvbl_descr"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2"
         >
-          {tmtb_paybl.rcvbl_descr.label}
+          {tmtb_rcvbl.rcvbl_descr.label}
         </label>
         <InputText
           name="rcvbl_descr"
           value={formData.rcvbl_descr}
           onChange={(e) => onChange("rcvbl_descr", e.target.value)}
           className={`w-full ${errors.rcvbl_descr ? "p-invalid" : ""}`}
-          placeholder={`Enter ${tmtb_paybl.rcvbl_descr.label}`}
+          placeholder={`Enter ${tmtb_rcvbl.rcvbl_descr.label}`}
         />
-        {errors.rcvbl_descr && (
-          <small className="mb-3 text-red-500">{errors.rcvbl_descr}</small>
-        )}
+        <RequiredText text={errors.rcvbl_descr} />
       </div>
       <div className="col-12 md:col-2">
         <label
           htmlFor="rcvbl_dbamt"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
-          Amount <span className="text-red-500">*</span>
+          Amount
         </label>
         <InputNumber
           name="rcvbl_dbamt"
@@ -97,9 +91,7 @@ const ReceivablesFormComp = ({ isBusy, errors, formData, onChange, onSave }) => 
           maxFractionDigits={2}
           locale="en"
         />
-        {errors.rcvbl_dbamt && (
-          <small className="mb-3 text-red-500">{errors.rcvbl_dbamt}</small>
-        )}
+        <RequiredText text={errors.rcvbl_dbamt} />
       </div>
       <div className="col-12">
         <div className="flex flex-row-reverse flex-wrap">

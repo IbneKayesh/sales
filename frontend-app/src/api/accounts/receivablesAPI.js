@@ -23,7 +23,12 @@ export const receivablesAPI = {
       body: JSON.stringify(data),
     }),
   getPaymentDetails: (data) =>
-    apiRequest("/accounts/receivables/payment-details", {
+    apiRequest("/accounts/receivables/receivable-details", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getReceivableSummary: (data) =>
+    apiRequest("/accounts/receivables/receivable-summary", {
       method: "POST",
       body: JSON.stringify(data),
     }),

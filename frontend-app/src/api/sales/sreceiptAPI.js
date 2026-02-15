@@ -3,42 +3,42 @@ import { apiRequest } from "@/utils/api.js";
 //sreceiptAPI
 export const sreceiptAPI = {
   getAll: (data) =>
-    apiRequest("/purchase/preceipt", {
+    apiRequest("/sales/sreceipt", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   create: (data) =>
-    apiRequest("/purchase/preceipt/create", {
+    apiRequest("/sales/sreceipt/create", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   update: (data) =>
-    apiRequest("/purchase/preceipt/update", {
+    apiRequest("/sales/sreceipt/update", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   delete: (data) =>
-    apiRequest("/purchase/preceipt/delete", {
+    apiRequest("/sales/sreceipt/delete", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   getDetails: (data) =>
-    apiRequest("/purchase/preceipt/receipt-details", {
+    apiRequest("/sales/sreceipt/receipt-details", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   getExpenses: (data) =>
-    apiRequest("/purchase/preceipt/receipt-expense", {
+    apiRequest("/sales/sreceipt/receipt-expense", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   getPayment: (data) =>
-    apiRequest("/purchase/preceipt/receipt-payment", {
+    apiRequest("/sales/sreceipt/receipt-payment", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   getAvailableReceiptItems: (data) =>
-    apiRequest("/purchase/preceipt/available-receipt-items", {
+    apiRequest("/sales/sreceipt/available-receipt-items", {
       method: "POST",
       body: JSON.stringify(data),
     }),

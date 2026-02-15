@@ -5,7 +5,7 @@ import { useReceivables } from "@/hooks/accounts/useReceivables";
 import ReceivablesListComp from "./ReceivablesListComp";
 import ReceivablesFormComp from "./ReceivablesFormComp";
 import SearchComp from "./SearchComp";
-import PaymentDetailListComp from "./PaymentDetailListComp";
+import ReceiveSummaryListComp from "./ReceiveSummaryListComp";
 
 const ReceivablesPage = () => {
   const {
@@ -29,11 +29,11 @@ const ReceivablesPage = () => {
     handleChangeSearchInput,
     handleSearch,
     searchOptions,
-    paymentDetailList,
+    receivableSummaryList,
   } = useReceivables();
 
   const handleSearchBox = () => {
-    setSearchBoxShow(true);
+    setSearchBoxShow(!searchBoxShow);
   };
 
   const getHeader = () => {
@@ -46,13 +46,14 @@ const ReceivablesPage = () => {
             ? "Receivable List"
             : formData.id
               ? "Edit Receivable"
-              : "Add New Receivable"}
+              : "New Receivable"}
         </h3>
 
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
-              icon="pi pi-search"
+              label={searchBoxShow ? "Hide" : "Search"}
+              icon={searchBoxShow ? "pi pi-filter-slash" : "pi pi-search"}
               size="small"
               severity="secondary"
               onClick={handleSearchBox}
@@ -92,10 +93,9 @@ const ReceivablesPage = () => {
             searchOptions={searchOptions}
           />
         )}
-        {paymentDetailList.length > 0 && (
-          <PaymentDetailListComp
-            dataList={paymentDetailList}
-          />
+
+        {receivableSummaryList.length > 0 && (
+          <ReceiveSummaryListComp dataList={receivableSummaryList} />
         )}
 
         {currentView === "list" ? (
