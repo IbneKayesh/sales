@@ -49,6 +49,8 @@ const pinvoiceRoutes = require("./routes/purchase/pinvoice.routes.js");
 const sbookingRoutes = require("./routes/sales/sbooking.routes.js");
 const sreceiptRoutes = require("./routes/sales/sreceipt.routes.js");
 const sinvoiceRoutes = require("./routes/sales/sinvoice.routes.js");
+//reports
+const shopRoutes = require("./routes/reports/shop.routes.js");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -128,6 +130,8 @@ app.use("/api/purchase/pinvoice", pinvoiceRoutes);
 app.use("/api/sales/sbooking", sbookingRoutes);
 app.use("/api/sales/sreceipt", sreceiptRoutes);
 app.use("/api/sales/sinvoice", sinvoiceRoutes);
+//reports
+app.use("/api/reports/shop", shopRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

@@ -103,11 +103,11 @@ router.post("/", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase bookings for ${mbkng_users}`,
+      `Get Sales bookings for ${mbkng_users}`,
     );
     res.json({
       success: true,
-      message: "Purchase bookings fetched successfully",
+      message: "Sales bookings fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -151,11 +151,11 @@ router.post("/booking-details", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase booking for ${cbkng_mbkng}`,
+      `Get Sales booking for ${cbkng_mbkng}`,
     );
     res.json({
       success: true,
-      message: "Purchase booking fetched successfully",
+      message: "Sales booking fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -185,7 +185,7 @@ router.post("/booking-expense", async (req, res) => {
 
     //database action
     let sql = `SELECT expn.*
-    FROM tmpb_expns expn
+    FROM tmeb_expns expn
     WHERE expn.expns_refid = ?
     ORDER BY expn.expns_inexc, expn.expns_xpamt`;
     let params = [expns_refid];
@@ -193,11 +193,11 @@ router.post("/booking-expense", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase booking expenses for ${expns_refid}`,
+      `Get Sales booking expenses for ${expns_refid}`,
     );
     res.json({
       success: true,
-      message: "Purchase booking expenses fetched successfully",
+      message: "Sales booking expenses fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -213,10 +213,10 @@ router.post("/booking-expense", async (req, res) => {
 // booking payment
 router.post("/booking-payment", async (req, res) => {
   try {
-    const { paybl_refid } = req.body;
+    const { rcvbl_refid } = req.body;
 
     // Validate input
-    if (!paybl_refid) {
+    if (!rcvbl_refid) {
       return res.json({
         success: false,
         message: "Payment ID is required",
@@ -227,19 +227,19 @@ router.post("/booking-payment", async (req, res) => {
 
     //database action
     let sql = `SELECT pybl.*
-    FROM tmtb_paybl pybl
-    WHERE pybl.paybl_refid = ?
-    ORDER BY pybl.paybl_cramt,pybl.paybl_trdat`;
-    let params = [paybl_refid];
+    FROM tmtb_rcvbl pybl
+    WHERE pybl.rcvbl_refid = ?
+    ORDER BY pybl.rcvbl_cramt,pybl.rcvbl_trdat`;
+    let params = [rcvbl_refid];
 
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase booking payment for ${paybl_refid}`,
+      `Get Sales booking payment for ${rcvbl_refid}`,
     );
     res.json({
       success: true,
-      message: "Purchase booking payment fetched successfully",
+      message: "Sales booking payment fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -283,8 +283,8 @@ router.post("/create", async (req, res) => {
       mbkng_hscnl,
       user_id,
       tmeb_cbkng,
-      tmpb_expns,
-      tmtb_paybl,
+      tmeb_expns,
+      tmtb_rcvbl,
     } = req.body;
 
     //console.log("create:", JSON.stringify(req.body));
@@ -403,9 +403,9 @@ router.post("/create", async (req, res) => {
     }
 
     //Insert expense details
-    for (const pay of tmpb_expns) {
+    for (const pay of tmeb_expns) {
       scripts.push({
-        sql: `INSERT INTO tmpb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
+        sql: `INSERT INTO tmeb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
         expns_srcnm, expns_trdat, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
         expns_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
@@ -418,7 +418,7 @@ router.post("/create", async (req, res) => {
           mbkng_cntct,
           id,
           mbkng_trnno_new,
-          "Purchase Booking",
+          "Sales Booking",
           mbkng_trdat,
           pay.expns_inexc,
           pay.expns_notes,
@@ -431,12 +431,12 @@ router.post("/create", async (req, res) => {
     }
 
     //Insert payment details :: debit
-    for (const pay of tmtb_paybl) {
-      if (pay.paybl_dbamt > 0) {
+    for (const pay of tmtb_rcvbl) {
+      if (pay.rcvbl_dbamt > 0) {
         scripts.push({
-          sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
-        paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
-        paybl_cramt, paybl_crusr, paybl_upusr)
+          sql: `INSERT INTO tmtb_rcvbl(id, rcvbl_users, rcvbl_bsins, rcvbl_cntct, rcvbl_pymod, rcvbl_refid,
+        rcvbl_refno, rcvbl_srcnm, rcvbl_trdat, rcvbl_descr, rcvbl_notes, rcvbl_dbamt,
+        rcvbl_cramt, rcvbl_crusr, rcvbl_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
         ?, ?, ?)`,
@@ -445,14 +445,14 @@ router.post("/create", async (req, res) => {
             mbkng_users,
             mbkng_bsins,
             mbkng_cntct,
-            pay.paybl_pymod,
+            pay.rcvbl_pymod,
             id,
             mbkng_trnno_new,
-            "Purchase Booking",
+            "Sales Booking",
             mbkng_trdat,
-            pay.paybl_descr,
-            pay.paybl_notes,
-            pay.paybl_dbamt,
+            pay.rcvbl_descr,
+            pay.rcvbl_notes,
+            pay.rcvbl_dbamt,
             0,
             user_id,
             user_id,
@@ -464,9 +464,9 @@ router.post("/create", async (req, res) => {
 
     //Insert payment details :: credit
     scripts.push({
-      sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
-      paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
-      paybl_cramt, paybl_crusr, paybl_upusr)
+      sql: `INSERT INTO tmtb_rcvbl(id, rcvbl_users, rcvbl_bsins, rcvbl_cntct, rcvbl_pymod, rcvbl_refid,
+      rcvbl_refno, rcvbl_srcnm, rcvbl_trdat, rcvbl_descr, rcvbl_notes, rcvbl_dbamt,
+      rcvbl_cramt, rcvbl_crusr, rcvbl_upusr)
       VALUES (?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?, ?,
       ?, ?, ?)`,
@@ -478,7 +478,7 @@ router.post("/create", async (req, res) => {
         "Inventory",
         id,
         mbkng_trnno_new,
-        "Purchase Booking",
+        "Sales Booking",
         mbkng_trdat,
         "Supplier Goods",
         "Products",
@@ -499,7 +499,7 @@ router.post("/create", async (req, res) => {
           WHERE id = ?
           AND bitem_bsins = ?`,
           params: [det.cbkng_itqty, det.cbkng_bitem, mbkng_bsins],
-          label: `Updated purchase booking quantity`,
+          label: `Updated Sales booking quantity`,
         });
       }
       scripts.push({
@@ -509,7 +509,7 @@ router.post("/create", async (req, res) => {
         AND mbkng_duamt = 0
         AND id = ?`,
         params: [id],
-        label: `Updated purchase booking status`,
+        label: `Updated Sales booking status`,
       });
     }
 
@@ -517,7 +517,7 @@ router.post("/create", async (req, res) => {
 
     res.json({
       success: true,
-      message: "Purchase booking created successfully",
+      message: "Sales booking created successfully",
       data: {
         ...req.body,
         mbkng_trnno: mbkng_trnno_new,
@@ -564,8 +564,8 @@ router.post("/update", async (req, res) => {
       mbkng_hscnl,
       user_id,
       tmeb_cbkng,
-      tmpb_expns,
-      tmtb_paybl,
+      tmeb_expns,
+      tmtb_rcvbl,
     } = req.body;
 
     // Validate input
@@ -594,12 +594,12 @@ router.post("/update", async (req, res) => {
       label: `Delete booking details for ${mbkng_trnno}`,
     });
     scripts_del.push({
-      sql: `DELETE FROM tmpb_expns WHERE expns_refid = ?`,
+      sql: `DELETE FROM tmeb_expns WHERE expns_refid = ?`,
       params: [id],
       label: `Delete expenses details for ${mbkng_trnno}`,
     });
     scripts_del.push({
-      sql: `DELETE FROM tmtb_paybl WHERE paybl_refid = ?`,
+      sql: `DELETE FROM tmtb_rcvbl WHERE rcvbl_refid = ?`,
       params: [id],
       label: `Delete payments details for ${mbkng_trnno}`,
     });
@@ -695,9 +695,9 @@ router.post("/update", async (req, res) => {
     }
 
     //Insert expense details
-    for (const pay of tmpb_expns) {
+    for (const pay of tmeb_expns) {
       scripts.push({
-        sql: `INSERT INTO tmpb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
+        sql: `INSERT INTO tmeb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
         expns_srcnm, expns_trdat, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
         expns_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
@@ -710,7 +710,7 @@ router.post("/update", async (req, res) => {
           mbkng_cntct,
           id,
           mbkng_trnno,
-          "Purchase Booking",
+          "Sales Booking",
           mbkng_trdat,
           pay.expns_inexc,
           pay.expns_notes,
@@ -723,12 +723,12 @@ router.post("/update", async (req, res) => {
     }
 
     //Insert payment details :: debit
-    for (const pay of tmtb_paybl) {
-      if (pay.paybl_dbamt > 0) {
+    for (const pay of tmtb_rcvbl) {
+      if (pay.rcvbl_dbamt > 0) {
         scripts.push({
-          sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
-        paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
-        paybl_cramt, paybl_crusr, paybl_upusr)
+          sql: `INSERT INTO tmtb_rcvbl(id, rcvbl_users, rcvbl_bsins, rcvbl_cntct, rcvbl_pymod, rcvbl_refid,
+        rcvbl_refno, rcvbl_srcnm, rcvbl_trdat, rcvbl_descr, rcvbl_notes, rcvbl_dbamt,
+        rcvbl_cramt, rcvbl_crusr, rcvbl_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
         ?, ?, ?)`,
@@ -737,14 +737,14 @@ router.post("/update", async (req, res) => {
             mbkng_users,
             mbkng_bsins,
             mbkng_cntct,
-            pay.paybl_pymod,
+            pay.rcvbl_pymod,
             id,
             mbkng_trnno,
-            "Purchase Booking",
+            "Sales Booking",
             mbkng_trdat,
-            pay.paybl_descr,
-            pay.paybl_notes,
-            pay.paybl_dbamt,
+            pay.rcvbl_descr,
+            pay.rcvbl_notes,
+            pay.rcvbl_dbamt,
             0,
             user_id,
             user_id,
@@ -756,9 +756,9 @@ router.post("/update", async (req, res) => {
 
     // //Insert payment details :: credit
     scripts.push({
-      sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
-      paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
-      paybl_cramt, paybl_crusr, paybl_upusr)
+      sql: `INSERT INTO tmtb_rcvbl(id, rcvbl_users, rcvbl_bsins, rcvbl_cntct, rcvbl_pymod, rcvbl_refid,
+      rcvbl_refno, rcvbl_srcnm, rcvbl_trdat, rcvbl_descr, rcvbl_notes, rcvbl_dbamt,
+      rcvbl_cramt, rcvbl_crusr, rcvbl_upusr)
       VALUES (?, ?, ?, ?, ?, ?,
       ?, ?, ?, ?, ?, ?,
       ?, ?, ?)`,
@@ -770,7 +770,7 @@ router.post("/update", async (req, res) => {
         "Inventory",
         id,
         mbkng_trnno,
-        "Purchase Booking",
+        "Sales Booking",
         mbkng_trdat,
         "Supplier Goods",
         "Products",
@@ -791,7 +791,7 @@ router.post("/update", async (req, res) => {
           WHERE id = ?
           AND bitem_bsins = ?`,
           params: [det.cbkng_itqty, det.cbkng_bitem, mbkng_bsins],
-          label: `Updated purchase booking quantity`,
+          label: `Updated Sales booking quantity`,
         });
       }
       scripts.push({
@@ -801,7 +801,7 @@ router.post("/update", async (req, res) => {
         AND mbkng_duamt = 0
         AND id = ?`,
         params: [id],
-        label: `Updated purchase booking status`,
+        label: `Updated Sales booking status`,
       });
     }
 
@@ -886,7 +886,7 @@ router.post("/cancel-booking-items", async (req, res) => {
     const scripts = [];
 
     scripts.push({
-      sql: `UPDATE tmpb_pmstr
+      sql: `UPDATE tmeb_pmstr
     SET pmstr_cnamt = ?,
       pmstr_ispad = 1,
       pmstr_hscnl = 1,
@@ -903,7 +903,7 @@ router.post("/cancel-booking-items", async (req, res) => {
     });
 
     scripts.push({
-      sql: `UPDATE tmpb_bking
+      sql: `UPDATE tmeb_bking
     SET bking_cnqty = bking_pnqty,
         bking_pnqty = 0,
         bking_updat = current_timestamp(),
@@ -928,7 +928,7 @@ router.post("/cancel-booking-items", async (req, res) => {
         "Refund",
         id,
         pmstr_trnno,
-        "Purchase Retrun",
+        "Sales Retrun",
         "Booking Cancel Refund",
         pmstr_cnamt,
         user_id,

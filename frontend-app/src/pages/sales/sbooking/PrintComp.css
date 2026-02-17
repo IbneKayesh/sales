@@ -1,0 +1,325 @@
+/* PrintComp.css */
+
+:root {
+  /* Colors */
+  --primary-color: #2c3e50;
+  --secondary-color: #34495e;
+  --border-color: #e2e8f0;
+  --text-main: #1a202c;
+  --text-muted: #4a5568;
+  --bg-light: #f8fafc;
+
+  /* Font Sizes */
+  --font-xs: 9px;
+  --font-sm: 10px;
+  --font-md: 11px;
+  --font-base: 12px;
+  --font-lg: 13px;
+  --font-xl: 14px;
+  --font-2xl: 16px;
+  --font-3xl: 20px;
+}
+
+section {
+  padding: 1rem 0;
+}
+
+.print-container {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: var(--font-base);
+  color: var(--text-main);
+  background: white;
+  max-width: 900px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* Header Section */
+.print-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.company-logo-section h1 {
+  font-size: var(--font-3xl);
+  font-weight: 800;
+  margin: 0;
+  color: var(--primary-color);
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+}
+
+.company-details {
+  font-size: var(--font-md);
+  color: var(--text-muted);
+  margin-top: 2px;
+  max-width: 400px;
+}
+
+.invoice-meta-top {
+  text-align: right;
+}
+
+.invoice-meta-top h2 {
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  margin: 0;
+  color: var(--secondary-color);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: var(--font-xs);
+  font-weight: 700;
+  border-radius: 4px;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.status-badge.paid {
+  background: #e6fffa;
+  color: #2c7a7b;
+  border: 1px solid #b2f5ea;
+}
+
+.status-badge.unpaid-partial {
+  background: #fffaf0;
+  color: #9c4221;
+  border: 1px solid #feebc8;
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+}
+
+.info-box h3 {
+  font-size: var(--font-md);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 2px;
+}
+
+.info-content {
+  font-size: var(--font-lg);
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 2px;
+}
+
+.info-row .label {
+  font-weight: 600;
+  width: 90px;
+  color: var(--text-muted);
+}
+
+/* Items Table */
+.items-section {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-base);
+}
+
+.invoice-table th {
+  background: var(--bg-light);
+  color: var(--primary-color);
+  text-align: left;
+  padding: 8px 6px;
+  font-weight: 700;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.invoice-table td {
+  padding: 6px 6px;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: top;
+}
+
+.invoice-table .text-right {
+  text-align: right;
+}
+
+.invoice-table .subtext {
+  font-size: var(--font-xs);
+  color: var(--text-muted);
+  display: block;
+  margin-top: 1px;
+}
+
+/* Financial Summary */
+.financial-flex {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.payment-history {
+  flex: 1;
+}
+
+.summary-card {
+  width: 280px;
+  background: var(--bg-light);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-base);
+  margin-bottom: 6px;
+}
+
+.summary-line.grand-total {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1.5px dashed var(--border-color);
+  font-size: var(--font-xl);
+  font-weight: 800;
+  color: var(--primary-color);
+}
+
+.summary-line.due {
+  color: #c53030;
+  font-weight: 700;
+}
+
+/* Payments */
+.payment-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px;
+  border-left: 3px solid var(--border-color);
+  background: white;
+  margin-bottom: 4px;
+  font-size: var(--font-base);
+  border-radius: 0 4px 4px 0;
+}
+
+.payment-item .mode {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: var(--font-xs);
+  background: #edf2f7;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+/* Footer & Signatures */
+.invoice-footer {
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+}
+
+.signature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.signature-box {
+  text-align: center;
+}
+
+.sig-line {
+  border-top: 1px solid var(--text-main);
+  margin-bottom: 4px;
+}
+
+.sig-label {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.legal-notice {
+  text-align: center;
+  font-size: var(--font-sm);
+  color: var(--text-muted);
+  margin-top: 1.5rem;
+  padding: 0.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Print Overrides */
+@media print {
+  @page {
+    margin: 0;
+    size: auto;
+  }
+  
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    height: auto !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+  
+  .p-dialog-mask {
+    display: block !important;
+    position: static !important;
+    visibility: visible !important;
+  }
+
+  .p-dialog {
+    display: block !important;
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+
+  .p-dialog-content {
+    padding: 0 !important;
+    overflow: visible !important;
+    border: none !important;
+    visibility: visible !important;
+  }
+
+  .print-container, .print-container * {
+    visibility: visible;
+  }
+  
+  .print-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 10mm 15mm !important; /* Managed margins here */
+    padding-top: 5mm !important; /* Explicitly reduced top margin */
+  }
+
+  .p-dialog-header, .p-dialog-footer, .no-print {
+    display: none !important;
+  }
+}

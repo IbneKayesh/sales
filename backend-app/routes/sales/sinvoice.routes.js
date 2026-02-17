@@ -508,9 +508,9 @@ router.post("/create", async (req, res) => {
           label: `BItem good, item stock updated`,
         });
 
-        if(det.cinvc_srcnm === "Purchase Invoice"){
+        if(det.cinvc_srcnm === "Sales Invoice"){
           scripts.push({
-            sql: `UPDATE tmpb_cinvc
+            sql: `UPDATE tmeb_cinvc
             SET
             cinvc_ohqty = cinvc_ohqty - ?,
             cinvc_slqty = cinvc_slqty + ?
@@ -520,12 +520,12 @@ router.post("/create", async (req, res) => {
               det.cinvc_itqty, // cinvc_slqty
               det.cinvc_refid,
             ],
-            label: `Purchase Invoice detail updated`,
+            label: `Sales Invoice detail updated`,
           });
         }
-        else if(det.cinvc_srcnm === "Purchase Receipt"){
+        else if(det.cinvc_srcnm === "Sales Receipt"){
           scripts.push({
-            sql: `UPDATE tmpb_crcpt
+            sql: `UPDATE tmeb_crcpt
             SET
             crcpt_ohqty = crcpt_ohqty - ?,
             crcpt_slqty = crcpt_slqty + ?
@@ -535,7 +535,7 @@ router.post("/create", async (req, res) => {
               det.cinvc_itqty, // crcpt_slqty
               det.cinvc_refid,
             ],
-            label: `Purchase Receipt detail updated`,
+            label: `Sales Receipt detail updated`,
           });
         }else if(det.cinvc_srcnm === "Transfer Stock"){
           //sql script is need

@@ -8,6 +8,7 @@ import SearchComp from "./SearchComp";
 
 const BookingPage = () => {
   const {
+    configs,
     dataList,
     isBusy,
     currentView,
@@ -107,6 +108,7 @@ const BookingPage = () => {
         <ListComp dataList={dataList} onEdit={handleEdit} />
       ) : (
         <EntryComp
+          configs={configs}
           isBusy={isBusy}
           errors={errors}
           setErrors={setErrors}

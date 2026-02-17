@@ -43,6 +43,8 @@ import ReceiptPage from "./pages/purchase/preceipt/ReceiptPage";
 import InvoicePage from "./pages/purchase/pinvoice/InvoicePage";
 //sales
 import SInvoicePage from "./pages/sales/sinvoice/SInvoicePage";
+import SBookingPage from "./pages/sales/sbooking/SBookingPage";
+import SReceiptPage from "./pages/sales/sreceipt/SReceiptPage";
 //support
 import NotesPage from "./pages/support/notes/NotesPage";
 import TicketsPage from "./pages/support/tickets/TicketsPage";
@@ -55,6 +57,8 @@ import UsersPage from "./pages/setup/users/UsersPage.jsx";
 import ProfileSettings from "./pages/setup/users/ProfileSettings.jsx";
 import PasswordPage from "./pages/setup/users/PasswordPage.jsx";
 import DefaultDataPage from "./pages/setup/settings/DefaultDataPage.jsx";
+//reports
+import ShopPage from "./pages/reports/ShopPage.jsx";
 
 // mobile imports
 import MobileLayout from "./mobile/layout";
@@ -140,6 +144,8 @@ function AppRoutes() {
             <Route path="purchase/pinvoice" element={<InvoicePage />} />
             //sales
             <Route path="sales/sinvoice" element={<SInvoicePage />} />
+            <Route path="sales/sbooking" element={<SBookingPage />} />
+            <Route path="sales/sreceipt" element={<SReceiptPage />} />
             //support
             <Route path="support/notes" element={<NotesPage />} />
             <Route path="support/tickets" element={<TicketsPage />} />
@@ -151,6 +157,8 @@ function AppRoutes() {
             <Route path="setup/users/profile" element={<ProfileSettings />} />
             <Route path="setup/users/password" element={<PasswordPage />} />
             <Route path="setup/default-data" element={<DefaultDataPage />} />
+            //reports
+            <Route path="reports/shop" element={<ShopPage />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

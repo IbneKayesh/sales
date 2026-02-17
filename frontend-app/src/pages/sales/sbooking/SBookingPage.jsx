@@ -1,12 +1,15 @@
+import { useState, useRef } from "react";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
+import { Dialog } from "primereact/dialog";
 import EntryComp from "./EntryComp";
-import { usePreceipt } from "@/hooks/purchase/usePreceipt";
+import { useSbooking } from "@/hooks/sales/useSbooking";
 import ListComp from "./ListComp";
 import SearchComp from "./SearchComp";
+import { OverlayPanel } from "primereact/overlaypanel";
 
-const ReceiptPage = () => {
+const SBookingPage = () => {
   const {
     configs,
     dataList,
@@ -42,26 +45,29 @@ const ReceiptPage = () => {
     setCancelledRows,
     handleCancelBookingItems,
     setCancelledPayment,
-    //fetch receipt items
-    fetchAvailableReceiptItems,
-  } = usePreceipt();
+  } = useSbooking();
 
   const handleSearchBox = () => {
     setSearchBoxShow(!searchBoxShow);
   };
+
+  const opInfo = useRef(null);
   const getHeader = () => {
     const isList = currentView === "list";
 
     return (
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
+          <span
+            className="pi pi-info-circle mr-2 text-blue-500 cursor-pointer"
+            onClick={(e) => opInfo.current.toggle(e)}
+          ></span>
           {isList
-            ? "Purchase Receipt List"
+            ? "Sales Booking List"
             : formData.id
-              ? "Edit Purchase Receipt"
-              : "New Purchase Receipt"}
+              ? "Edit Sales Booking"
+              : "New Sales Booking"}
         </h3>
-
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
@@ -96,7 +102,27 @@ const ReceiptPage = () => {
 
   return (
     <Card header={getHeader()} className="p-3">
-      {/* {JSON.stringify(dataList)} */}
+      <OverlayPanel ref={opInfo} showCloseIcon closeOnEscape dismissable={true}>
+        <div className="flex flex-column gap-3">
+          <div className="flex align-items-start gap-3">
+            <i className="pi pi-info-circle text-blue-500 text-2xl"></i>
+            <div>
+              <p className="m-0 font-bold text-lg">FN</p>
+              <p className="m-0 text-gray-600">G#SB-1002</p>
+            </div>
+          </div>
+
+          <div className="surface-border border-top-1 py-3">
+            <p className="m-0 font-semibold mb-2">Quick</p>
+            <p className="m-0 text-gray-600">
+              Manage your sales bookings efficiently. Use the list view to track
+              existing entries or create new ones using the form.
+            </p>
+          </div>
+
+          <div className="flex justify-content-end mt-2"></div>
+        </div>
+      </OverlayPanel>
 
       {searchBoxShow && (
         <SearchComp
@@ -129,12 +155,12 @@ const ReceiptPage = () => {
           setCancelledRows={setCancelledRows}
           onCancelBookingItems={handleCancelBookingItems}
           setCancelledPayment={setCancelledPayment}
-          //fetch receipt items
-          fetchAvailableReceiptItems={fetchAvailableReceiptItems}
+          //cancel
+          handleCancel={handleCancel}
         />
       )}
     </Card>
   );
 };
 
-export default ReceiptPage;
+export default SBookingPage;

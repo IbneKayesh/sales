@@ -12,12 +12,12 @@ const ModulePage = () => {
     { id: 6, name: "Settings", icon: "pi-cog", color: "bg-gray-500" },
   ];
   return (
-    <div className="p-6 min-h-screen bg-bluegray-50 font-sans flex align-items-center justify-content-center">
-      <div className="grid justify-content-center w-full max-w-7xl">
+    <div className="p-3 min-h-screen bg-bluegray-50 font-sans flex align-items-center justify-content-center">
+      <div className="grid justify-content-center w-full max-w-5xl">
         {dataList.map((module, index) => (
           <div
             key={module.id}
-            className="col-6 sm:col-4 md:col-3 lg:col-2 p-3 fadein animation-duration-500"
+            className="col-6 md:col-2 p-3 fadein animation-duration-500"
             style={{ animationDelay: `${index * 50}ms` }}
           >
             <div

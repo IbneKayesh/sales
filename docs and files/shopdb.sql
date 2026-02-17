@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Feb 15, 2026 at 11:45 AM
--- Server version: 12.1.2-MariaDB-ubu2404
--- PHP Version: 8.3.26
+-- Generation Time: Feb 17, 2026 at 02:33 AM
+-- Server version: 11.8.2-MariaDB-ubu2404
+-- PHP Version: 8.2.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -583,7 +583,7 @@ CREATE TABLE `tmib_bitem` (
 --
 
 INSERT INTO `tmib_bitem` (`id`, `bitem_users`, `bitem_items`, `bitem_bsins`, `bitem_lprat`, `bitem_dprat`, `bitem_mcmrp`, `bitem_sddsp`, `bitem_snote`, `bitem_gstkq`, `bitem_bstkq`, `bitem_istkq`, `bitem_mnqty`, `bitem_mxqty`, `bitem_pbqty`, `bitem_sbqty`, `bitem_mpric`, `bitem_actve`, `bitem_crusr`, `bitem_crdat`, `bitem_upusr`, `bitem_updat`, `bitem_rvnmr`) VALUES
-('1248204a-e407-4245-8952-924a1f832354', 'user1', '4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:56:36', 'user1', '2026-02-02 11:50:24', 1),
+('1248204a-e407-4245-8952-924a1f832354', 'user1', '4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 100.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:56:36', 'user1', '2026-02-16 04:49:28', 1),
 ('19debe39-1eaa-4cb1-ba16-3f361ff455ca', 'user1', 'e2e70dc1-9814-400c-8774-2b6b186b79e5', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:15', 'user1', '2026-02-02 05:57:45', 1),
 ('1b0483c5-ed8f-43ce-b128-9dbf717e8e67', 'user1', '8873e069-eea6-4f9e-acf0-dd1cb658f9c8', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:55:41', 'user1', '2026-01-31 10:55:41', 1),
 ('2188dcd0-244b-4750-ad51-f86397b196f1', 'user1', 'dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 100.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:04', 'user1', '2026-02-15 11:08:35', 1),
@@ -595,7 +595,7 @@ INSERT INTO `tmib_bitem` (`id`, `bitem_users`, `bitem_items`, `bitem_bsins`, `bi
 ('75860dc3-c9f8-43b9-a20f-f78104602fdf', 'user1', '4b100c2e-68a6-467b-94b7-617a6c7b43dc', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:55', 'user1', '2026-01-31 10:59:55', 1),
 ('85f84fc9-2d92-4327-81b6-31a4c6c6cc8a', 'user1', 'e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:57', 'user1', '2026-01-31 10:58:57', 1),
 ('8ce55060-f46d-445f-bcc1-7fb9d5f5f38e', 'user1', 'b3da1017-bea4-44fd-ad13-110e92a48965', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:41', 'user1', '2026-01-31 10:59:41', 1),
-('9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'user1', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 'business1', 750.000000, 0.000000, 950.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 65.000000, 1, 'user1', '2026-01-31 10:57:44', 'user1', '2026-02-15 07:45:02', 1),
+('9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'user1', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 'business1', 750.000000, 0.000000, 950.000000, 5.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 17.500000, 1, 'user1', '2026-01-31 10:57:44', 'user1', '2026-02-17 01:50:01', 1),
 ('9a765ccf-f3c5-480a-863d-492c7d9fa196', 'user1', '4dab149a-e220-4cd8-a061-7660ab0168bb', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 11:00:36', 'user1', '2026-01-31 11:00:36', 1),
 ('b9b0e3b5-a1df-43ea-a736-04a54f5df89b', 'user1', '75b05c78-9b6b-42ba-aafa-e76e22f67722', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:31', 'user1', '2026-01-31 10:58:31', 1),
 ('bde13886-7498-42b9-bc4d-19bcb62ed918', 'user1', 'f7126510-80c0-416b-a34e-3a514e54d030', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:57:00', 'user1', '2026-01-31 10:57:00', 1),
@@ -873,6 +873,7 @@ CREATE TABLE `tmpb_cbkng` (
 --
 
 INSERT INTO `tmpb_cbkng` (`id`, `cbkng_mbkng`, `cbkng_bitem`, `cbkng_items`, `cbkng_itrat`, `cbkng_itqty`, `cbkng_itamt`, `cbkng_dspct`, `cbkng_dsamt`, `cbkng_vtpct`, `cbkng_vtamt`, `cbkng_csrat`, `cbkng_ntamt`, `cbkng_notes`, `cbkng_attrb`, `cbkng_cnqty`, `cbkng_rcqty`, `cbkng_pnqty`, `cbkng_actve`, `cbkng_crusr`, `cbkng_crdat`, `cbkng_upusr`, `cbkng_updat`, `cbkng_rvnmr`) VALUES
+('1ec155a7-40b9-428a-af89-c645a39ba92a', 'e88946ca-dc18-4691-b746-1daad2ee3cc5', '1248204a-e407-4245-8952-924a1f832354', '4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 45.000000, 100.000000, 4500.000000, 0.000000, 0.000000, 10.000000, 450.000000, 49.500000, 4950.000000, '', '{}', 0.000000, 0.000000, 100.000000, 1, 'user1', '2026-02-16 04:49:28', 'user1', '2026-02-16 04:49:28', 1),
 ('7768a67d-225c-4f18-a98f-ee47689f8627', '5534e810-94d1-4fd9-a4ed-1b3c80ccbc56', 'f241e3b7-3f83-42f4-ac10-af8def91799a', '38b496e9-6652-4324-8331-ba0ecb0cfeae', 55.000000, 100.000000, 5500.000000, 0.000000, 0.000000, 5.000000, 275.000000, 55.000000, 5775.000000, '', '{}', 0.000000, 100.000000, 0.000000, 1, 'user1', '2026-02-14 09:00:10', 'user1', '2026-02-15 11:08:22', 1),
 ('8ff51565-1efa-4065-b78e-c5e6a8f29b6e', 'ccc8f811-1974-4140-8ba6-d26e5a6bba34', '2188dcd0-244b-4750-ad51-f86397b196f1', 'dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 25.000000, 100.000000, 2500.000000, 0.000000, 0.000000, 0.000000, 0.000000, 25.000000, 2500.000000, '', '{}', 0.000000, 100.000000, 0.000000, 1, 'user1', '2026-02-15 08:26:28', 'user1', '2026-02-15 11:08:35', 1);
 
@@ -1031,7 +1032,8 @@ CREATE TABLE `tmpb_mbkng` (
 
 INSERT INTO `tmpb_mbkng` (`id`, `mbkng_users`, `mbkng_bsins`, `mbkng_cntct`, `mbkng_trnno`, `mbkng_trdat`, `mbkng_refno`, `mbkng_trnte`, `mbkng_odamt`, `mbkng_dsamt`, `mbkng_vtamt`, `mbkng_vatpy`, `mbkng_incst`, `mbkng_excst`, `mbkng_rnamt`, `mbkng_ttamt`, `mbkng_pyamt`, `mbkng_pdamt`, `mbkng_duamt`, `mbkng_cnamt`, `mbkng_ispad`, `mbkng_ispst`, `mbkng_iscls`, `mbkng_vatcl`, `mbkng_hscnl`, `mbkng_actve`, `mbkng_crusr`, `mbkng_crdat`, `mbkng_upusr`, `mbkng_updat`, `mbkng_rvnmr`) VALUES
 ('5534e810-94d1-4fd9-a4ed-1b3c80ccbc56', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PB-140226-00001', '2026-02-14 00:00:00', '', '', 5500.000000, 0.000000, 275.000000, 1, 0.000000, 0.000000, 0.000000, 5775.000000, 5775.000000, 5775.000000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'user1', '2026-02-14 09:00:10', 'user1', '2026-02-15 09:45:47', 1),
-('ccc8f811-1974-4140-8ba6-d26e5a6bba34', 'user1', 'business1', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'PB-150226-00001', '2026-02-15 00:00:00', '', '', 2500.000000, 0.000000, 0.000000, 1, 0.000000, 0.000000, 0.000000, 2500.000000, 2500.000000, 2500.000000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'user1', '2026-02-15 08:26:28', 'user1', '2026-02-15 09:45:47', 1);
+('ccc8f811-1974-4140-8ba6-d26e5a6bba34', 'user1', 'business1', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'PB-150226-00001', '2026-02-15 00:00:00', '', '', 2500.000000, 0.000000, 0.000000, 1, 0.000000, 0.000000, 0.000000, 2500.000000, 2500.000000, 2500.000000, 0.000000, 0.000000, 1, 1, 0, 0, 0, 1, 'user1', '2026-02-15 08:26:28', 'user1', '2026-02-15 09:45:47', 1),
+('e88946ca-dc18-4691-b746-1daad2ee3cc5', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'PB-160226-00001', '2026-02-16 00:00:00', '', '', 4500.000000, 0.000000, 450.000000, 1, 0.000000, 0.000000, 0.000000, 4950.000000, 4950.000000, 0.000000, 4950.000000, 0.000000, 0, 1, 0, 0, 0, 1, 'user1', '2026-02-16 04:49:28', 'user1', '2026-02-16 04:49:28', 1);
 
 -- --------------------------------------------------------
 
@@ -1232,6 +1234,7 @@ INSERT INTO `tmsb_mdule` (`id`, `mdule_mname`, `mdule_pname`, `mdule_micon`, `md
 ('accounts', 'Accounts', 'basic', 'pi-wallet', 'bg-teal-500', NULL, 1, 1, 'user1', '2026-02-02 09:53:24', 'user1', '2026-02-03 06:16:02', 1),
 ('crm', 'CRM', 'basic', 'pi-phone', 'bg-purple-500', NULL, 2, 1, 'user1', '2026-02-02 09:53:24', 'user1', '2026-02-03 06:16:05', 1),
 ('hrms', 'HRMS', 'basic', 'pi-address-book', 'bg-green-500', NULL, 3, 1, 'user1', '2026-02-02 09:53:24', 'user1', '2026-02-03 08:23:33', 1),
+('reports', 'Reports', 'basic', 'pi-file', 'bg-cyan-500', NULL, 6, 1, 'user1', '2026-02-02 09:53:24', 'user1', '2026-02-16 05:41:49', 1),
 ('setup', 'Setup', 'basic', 'pi-cog', 'bg-gray-500', NULL, 5, 1, 'user1', '2026-02-02 09:53:24', 'user1', '2026-02-03 08:23:48', 1),
 ('shop', 'Shop', 'basic', 'pi-home', 'bg-orange-500', NULL, 4, 1, 'user1', '2026-02-02 09:53:24', 'user1', '2026-02-03 06:16:17', 1),
 ('support', 'Support', 'basic', 'pi-question-circle', 'bg-blue-500', NULL, 6, 1, 'user1', '2026-02-02 09:53:24', 'user1', '2026-02-03 06:18:44', 1);
@@ -1283,6 +1286,7 @@ INSERT INTO `tmsb_menus` (`id`, `menus_mdule`, `menus_gname`, `menus_gicon`, `me
 ('purchase-booking', 'shop', 'Purchase', 'pi pi-shopping-cart', 'Booking', 'basic', 'pi pi-check-square', '/home/purchase/pbooking', NULL, 200, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-03 08:29:03', 1),
 ('purchase-invoice', 'shop', 'Purchase', 'pi pi-shopping-cart', 'Invoice', 'basic', 'pi pi-file-edit', '/home/purchase/pinvoice', NULL, 202, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-03 08:29:21', 1),
 ('purchase-receipt', 'shop', 'Purchase', 'pi pi-shopping-cart', 'Receipt', 'basic', 'pi pi-receipt', '/home/purchase/preceipt', NULL, 201, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-03 08:29:16', 1),
+('reports-dashboard', 'reports', 'Shop', 'pi pi-box', 'Summary', 'basic', 'pi pi-tags', '/home/reports/shop', NULL, 320, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-03 08:30:12', 1),
 ('sales-booking', 'shop', 'Sales', 'pi pi-shopping-cart', 'Booking', 'basic', 'pi pi-check-square', '/home/sales/sbooking', NULL, 100, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-15 07:51:07', 1),
 ('sales-invoice', 'shop', 'Sales', 'pi pi-shopping-bag', 'Invoice', 'basic', 'pi pi-file-edit', '/home/sales/sinvoice', NULL, 102, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-15 07:51:03', 1),
 ('sales-receipt', 'shop', 'Sales', 'pi pi-shopping-cart', 'Receipt', 'basic', 'pi pi-receipt', '/home/sales/sreceipt', NULL, 101, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-03 08:29:16', 1),
@@ -1320,18 +1324,20 @@ CREATE TABLE `tmsb_ucnfg` (
 
 INSERT INTO `tmsb_ucnfg` (`id`, `ucnfg_users`, `ucnfg_bsins`, `ucnfg_cname`, `ucnfg_gname`, `ucnfg_label`, `ucnfg_value`, `ucnfg_notes`, `ucnfg_actve`, `ucnfg_crusr`, `ucnfg_crdat`, `ucnfg_upusr`, `ucnfg_updat`, `ucnfg_rvnmr`) VALUES
 ('c1', 'user1', 'business1', 'Purchase', 'Booking', 'mbkng_vatpy', '1', 'Including VAT', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 11:32:36', 13),
-('c10', 'user1', 'business1', 'Purchase', 'Invoice', 'cinvc_vtpct', '1', 'Product VAT %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 12:44:33', 13),
+('c10', 'user1', 'business1', 'Purchase', 'Invoice', 'cinvc_vtpct', '1', 'Product VAT %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-16 12:44:39', 17),
 ('c11', 'user1', 'business1', 'Purchase', 'Invoice', 'cinvc_dspct', '1', 'Product Discount %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 12:44:46', 13),
-('c12', 'user1', 'business1', 'Purchase', 'Receipt', 'crcpt_vtpct', '1', 'Product VAT %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 12:44:33', 13),
-('c13', 'user1', 'business1', 'Purchase', 'Receipt', 'crcpt_dspct', '1', 'Product Discount %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 12:44:46', 13),
-('c2', 'user1', 'business1', 'Purchase', 'Booking', 'mbkng_ispst', '1', 'Posted Checked', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 12:35:50', 13),
+('c12', 'user1', 'business1', 'Sales', 'Booking', 'cbkng_dspct', '1', 'Product Discount %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-17 01:55:55', 21),
+('c13', 'user1', 'business1', 'Sales', 'Booking', 'cbkng_vtpct', '1', 'Product VAT %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-16 12:01:25', 21),
+('c14', 'user1', 'business1', 'Sales', 'Booking', 'mbkng_ispst', '1', 'Posted Checked', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-17 01:56:06', 21),
+('c15', 'user1', 'business1', 'Sales', 'Booking', 'mbkng_vatpy', '1', 'Including VAT', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-17 01:56:07', 13),
+('c2', 'user1', 'business1', 'Purchase', 'Booking', 'mbkng_ispst', '1', 'Posted Checked', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-16 12:00:07', 17),
 ('c3', 'user1', 'business1', 'Purchase', 'Receipt', 'mrcpt_vatpy', '1', 'Including VAT', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 11:32:22', 9),
 ('c4', 'user1', 'business1', 'Sales', 'Invoice', 'minvc_vatpy', '1', 'Including VAT', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 12:34:26', 29),
 ('c5', 'user1', 'business1', 'Sales', 'Invoice', 'minvc_ispst', '1', 'Posted Checked', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 12:35:53', 23),
 ('c6', 'user1', 'business1', 'Purchase', 'Invoice', 'minvc_vatpy', '1', 'Including VAT', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 11:37:43', 11),
 ('c7', 'user1', 'business1', 'Purchase', 'Invoice', 'minvc_ispst', '1', 'Posted Checked', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 12:35:55', 17),
-('c8', 'user1', 'business1', 'Purchase', 'Booking', 'cbkng_dspct', '1', 'Product Discount %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 12:44:52', 13),
-('c9', 'user1', 'business1', 'Purchase', 'Booking', 'cbkng_vtpct', '1', 'Product VAT %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 12:44:55', 13);
+('c8', 'user1', 'business1', 'Purchase', 'Booking', 'cbkng_dspct', '1', 'Product Discount %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-16 12:00:49', 17),
+('c9', 'user1', 'business1', 'Purchase', 'Booking', 'cbkng_vtpct', '1', 'Product VAT %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-16 12:01:25', 21);
 
 -- --------------------------------------------------------
 
@@ -1495,6 +1501,7 @@ INSERT INTO `tmtb_paybl` (`id`, `paybl_users`, `paybl_bsins`, `paybl_cntct`, `pa
 ('a515a4f8-d1be-43c2-a7f0-c9aa3784cea7', 'user1', 'business1', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'Cash', 'ccc8f811-1974-4140-8ba6-d26e5a6bba34', 'PB-150226-00001', 'Purchase Booking', '2026-02-15 00:00:00', '', 'Payment', 1500.000000, 0.000000, 'user1', '2026-02-15 08:27:43', 'user1', '2026-02-15 08:27:43', 1),
 ('a91a9e75-5cf7-4702-80e5-ebe1807895a4', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Cash', '5534e810-94d1-4fd9-a4ed-1b3c80ccbc56', 'PB-140226-00001', 'Purchase Booking', '2026-02-14 00:00:00', '', 'Payment', 5775.000000, 0.000000, 'user1', '2026-02-14 09:00:10', 'user1', '2026-02-14 09:00:10', 1),
 ('cdd28769-e71f-4ada-81e9-27c9d1ec6263', 'user1', 'business1', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'Cash', 'ccc8f811-1974-4140-8ba6-d26e5a6bba34', 'PB-150226-00001', 'Purchase Booking', '2026-02-15 00:00:00', '', 'Payment', 500.000000, 0.000000, 'user1', '2026-02-15 08:44:48', 'user1', '2026-02-15 08:44:48', 1),
+('d451346a-4720-44d4-b1e6-9535716b27fb', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', 'e88946ca-dc18-4691-b746-1daad2ee3cc5', 'PB-160226-00001', 'Purchase Booking', '2026-02-16 00:00:00', 'Supplier Goods', 'Products', 0.000000, 4950.000000, 'user1', '2026-02-16 04:49:28', 'user1', '2026-02-16 04:49:28', 1),
 ('d4ec1084-dd56-414c-9d38-a8803bd9a28d', 'user1', 'business1', '267bb3aa-9177-43d2-8d8b-e0137578cf98', 'Inventory', 'ccc8f811-1974-4140-8ba6-d26e5a6bba34', 'PB-150226-00001', 'Purchase Booking', '2026-02-15 00:00:00', 'Supplier Goods', 'Products', 0.000000, 2500.000000, 'user1', '2026-02-15 08:26:28', 'user1', '2026-02-15 08:26:28', 1),
 ('eae9cd39-e697-4589-9fbb-5647525339de', 'user1', 'business1', '08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'Inventory', 'b75b9ebe-7f90-4711-9751-09101930b204', 'PI-140226-00001', 'Purchase Invoice', '2026-02-14 00:00:00', 'Supplier Goods', 'Products', 0.000000, 787.500000, 'user1', '2026-02-14 09:02:25', 'user1', '2026-02-14 09:02:25', 1);
 

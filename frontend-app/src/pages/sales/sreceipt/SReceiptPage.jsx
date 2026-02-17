@@ -2,11 +2,11 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import EntryComp from "./EntryComp";
-import { usePreceipt } from "@/hooks/purchase/usePreceipt";
+import { useSreceipt } from "@/hooks/sales/useSreceipt";
 import ListComp from "./ListComp";
 import SearchComp from "./SearchComp";
 
-const ReceiptPage = () => {
+const SReceiptPage = () => {
   const {
     configs,
     dataList,
@@ -44,7 +44,7 @@ const ReceiptPage = () => {
     setCancelledPayment,
     //fetch receipt items
     fetchAvailableReceiptItems,
-  } = usePreceipt();
+  } = useSreceipt();
 
   const handleSearchBox = () => {
     setSearchBoxShow(!searchBoxShow);
@@ -56,10 +56,10 @@ const ReceiptPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Purchase Receipt List"
+            ? "Sales Receipt List"
             : formData.id
-              ? "Edit Purchase Receipt"
-              : "New Purchase Receipt"}
+              ? "Edit Sales Receipt"
+              : "New Sales Receipt"}
         </h3>
 
         <div className="flex gap-2">
@@ -137,4 +137,4 @@ const ReceiptPage = () => {
   );
 };
 
-export default ReceiptPage;
+export default SReceiptPage;

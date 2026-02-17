@@ -103,11 +103,11 @@ router.post("/", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase receipt for ${mrcpt_users}`,
+      `Get Sales receipt for ${mrcpt_users}`,
     );
     res.json({
       success: true,
-      message: "Purchase receipt fetched successfully",
+      message: "Sales receipt fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -151,11 +151,11 @@ router.post("/receipt-details", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase receipt for ${crcpt_mrcpt}`,
+      `Get Sales receipt for ${crcpt_mrcpt}`,
     );
     res.json({
       success: true,
-      message: "Purchase receipt fetched successfully",
+      message: "Sales receipt fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -185,7 +185,7 @@ router.post("/receipt-expense", async (req, res) => {
 
     //database action
     let sql = `SELECT expn.*
-    FROM tmpb_expns expn
+    FROM tmeb_expns expn
     WHERE expn.expns_refid = ?
     ORDER BY expn.expns_inexc, expn.expns_xpamt`;
     let params = [expns_refid];
@@ -193,11 +193,11 @@ router.post("/receipt-expense", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase receipt expenses for ${expns_refid}`,
+      `Get Sales receipt expenses for ${expns_refid}`,
     );
     res.json({
       success: true,
-      message: "Purchase receipt expenses fetched successfully",
+      message: "Sales receipt expenses fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -235,11 +235,11 @@ router.post("/receipt-payment", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get purchase booking payment for ${paybl_refid}`,
+      `Get Sales booking payment for ${paybl_refid}`,
     );
     res.json({
       success: true,
-      message: "Purchase booking payment fetched successfully",
+      message: "Sales booking payment fetched successfully",
       data: rows,
     });
   } catch (error) {
@@ -283,7 +283,7 @@ router.post("/create", async (req, res) => {
       mrcpt_hscnl,
       user_id,
       tmeb_crcpt,
-      tmpb_expns,
+      tmeb_expns,
       //tmtb_paybl
     } = req.body;
 
@@ -406,9 +406,9 @@ router.post("/create", async (req, res) => {
     }
 
     //Insert expense details
-    for (const pay of tmpb_expns) {
+    for (const pay of tmeb_expns) {
       scripts.push({
-        sql: `INSERT INTO tmpb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
+        sql: `INSERT INTO tmeb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
         expns_srcnm, expns_trdat, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
         expns_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
@@ -421,7 +421,7 @@ router.post("/create", async (req, res) => {
           mrcpt_cntct,
           id,
           mrcpt_trnno_new,
-          "Purchase Receipt",
+          "Sales Receipt",
           mrcpt_trdat,
           pay.expns_inexc,
           pay.expns_notes,
@@ -449,7 +449,7 @@ router.post("/create", async (req, res) => {
         "Payment",
         id,
         mrcpt_trnno_new,
-        "Purchase Receipt",
+        "Sales Receipt",
         mrcpt_trdat,
         "Supplier Payment",
         "Payment",
@@ -477,7 +477,7 @@ router.post("/create", async (req, res) => {
         "Inventory",
         id,
         mrcpt_trnno_new,
-        "Purchase Receipt",
+        "Sales Receipt",
         mrcpt_trdat,
         "Supplier Goods",
         "Products",
@@ -493,12 +493,12 @@ router.post("/create", async (req, res) => {
     if (mrcpt_ispst === 1) {
       for (const det of tmeb_crcpt) {
         scripts.push({
-          sql: `UPDATE tmpb_cbkng
+          sql: `UPDATE tmeb_cbkng
           SET cbkng_rcqty = cbkng_rcqty + ?,
           cbkng_pnqty = cbkng_pnqty - ?
           WHERE id = ?`,
           params: [det.crcpt_itqty, det.crcpt_itqty, det.crcpt_cbkng],
-          label: `Purchase booking received, pending updated`,
+          label: `Sales booking received, pending updated`,
         });
 
         scripts.push({
@@ -515,7 +515,7 @@ router.post("/create", async (req, res) => {
             det.crcpt_itqty, // pbqty
             det.crcpt_bitem  // bitem id
           ],
-          label: `BItem good, item stock, purchase booking updated`,
+          label: `BItem good, item stock, Sales booking updated`,
         });
       }
     }
@@ -524,7 +524,7 @@ router.post("/create", async (req, res) => {
 
     res.json({
       success: true,
-      message: "Purchase receipt created successfully",
+      message: "Sales receipt created successfully",
       data: {
         ...req.body,
         mrcpt_trnno: mrcpt_trnno_new,
@@ -571,7 +571,7 @@ router.post("/update", async (req, res) => {
       mrcpt_hscnl,
       user_id,
       tmeb_crcpt,
-      tmpb_expns,
+      tmeb_expns,
       //tmtb_paybl
     } = req.body;
 
@@ -601,7 +601,7 @@ router.post("/update", async (req, res) => {
       label: `Delete receipt details for ${mrcpt_trnno}`,
     });
     scripts_del.push({
-      sql: `DELETE FROM tmpb_expns WHERE expns_refid = ?`,
+      sql: `DELETE FROM tmeb_expns WHERE expns_refid = ?`,
       params: [id],
       label: `Delete receipt expense details for ${mrcpt_trnno}`,
     });
@@ -700,9 +700,9 @@ router.post("/update", async (req, res) => {
     }
 
     //Insert expense details
-    for (const pay of tmpb_expns) {
+    for (const pay of tmeb_expns) {
       scripts.push({
-        sql: `INSERT INTO tmpb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
+        sql: `INSERT INTO tmeb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
         expns_srcnm, expns_trdat, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
         expns_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
@@ -715,7 +715,7 @@ router.post("/update", async (req, res) => {
           mrcpt_cntct,
           id,
           mrcpt_trnno_new,
-          "Purchase Receipt",
+          "Sales Receipt",
           mrcpt_trdat,
           pay.expns_inexc,
           pay.expns_notes,
@@ -743,7 +743,7 @@ router.post("/update", async (req, res) => {
         "Payment",
         id,
         mrcpt_trnno,
-        "Purchase Receipt",
+        "Sales Receipt",
         mrcpt_trdat,
         "Supplier Payment",
         "Payment",
@@ -771,7 +771,7 @@ router.post("/update", async (req, res) => {
         "Inventory",
         id,
         mrcpt_trnno,
-        "Purchase Receipt",
+        "Sales Receipt",
         mrcpt_trdat,
         "Supplier Goods",
         "Products",
@@ -787,12 +787,12 @@ router.post("/update", async (req, res) => {
     if (mrcpt_ispst === 1) {
       for (const det of tmeb_crcpt) {
         scripts.push({
-          sql: `UPDATE tmpb_cbkng
+          sql: `UPDATE tmeb_cbkng
           SET cbkng_rcqty = cbkng_rcqty + ?,
           cbkng_pnqty = cbkng_pnqty - ?
           WHERE id = ?`,
           params: [det.crcpt_itqty, det.crcpt_itqty, det.crcpt_cbkng],
-          label: `Purchase booking received, pending updated`,
+          label: `Sales booking received, pending updated`,
         });
 
         scripts.push({
@@ -809,7 +809,7 @@ router.post("/update", async (req, res) => {
             det.crcpt_itqty, // pbqty
             det.crcpt_bitem  // bitem id
           ],
-          label: `BItem good, item stock, purchase booking updated`,
+          label: `BItem good, item stock, Sales booking updated`,
         });
       }
     }
@@ -891,8 +891,8 @@ router.post("/available-receipt-items", async (req, res) => {
     cbkg.id AS crcpt_cbkng, 0 as edit_stop,
     itm.items_icode, itm.items_iname, itm.items_dfqty, bitm.bitem_gstkq,
     puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
-    FROM tmpb_cbkng cbkg
-    JOIN tmpb_mbkng bkg ON cbkg.cbkng_mbkng = bkg.id
+    FROM tmeb_cbkng cbkg
+    JOIN tmeb_mbkng bkg ON cbkg.cbkng_mbkng = bkg.id
     LEFT JOIN tmib_items itm ON cbkg.cbkng_items = itm.id
     LEFT JOIN tmib_bitem bitm ON cbkg.cbkng_bitem = bitm.id
     LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
@@ -906,11 +906,11 @@ router.post("/available-receipt-items", async (req, res) => {
     const rows = await dbGetAll(
       sql,
       params,
-      `Get available purchase bookings for ${mrcpt_users}`,
+      `Get available Sales bookings for ${mrcpt_users}`,
     );
     res.json({
       success: true,
-      message: "Available purchase bookings fetched successfully",
+      message: "Available Sales bookings fetched successfully",
       data: rows,
     });
   } catch (error) {

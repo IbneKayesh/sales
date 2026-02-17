@@ -11,6 +11,7 @@ import ExpensesDlg from "./ExpensesDlg";
 import PaymentDlg from "./PaymentDlg";
 
 const EntryComp = ({
+  configs,
   isBusy,
   errors,
   setErrors,
@@ -170,6 +171,7 @@ const EntryComp = ({
         handleChange={handleChange}
       />
       <ItemsComp
+        configs={configs}
         formData={formData}
         formDataItemList={formDataItemList}
         setFormDataItemList={setFormDataItemList}

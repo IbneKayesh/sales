@@ -50,6 +50,7 @@ const ProductsPage = () => {
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
+              label="Refresh"
               icon="pi pi-refresh"
               size="small"
               severity="secondary"

@@ -8,6 +8,7 @@ import SearchComp from "./SearchComp";
 
 const InvoicePage = () => {
   const {
+    configs,
     dataList,
     isBusy,
     currentView,
@@ -40,7 +41,7 @@ const InvoicePage = () => {
     cancelledRows,
     setCancelledRows,
     handleCancelBookingItems,
-    setCancelledPayment
+    setCancelledPayment,
   } = usePinvoice();
 
   const handleSearchBox = () => {
@@ -55,8 +56,8 @@ const InvoicePage = () => {
           {isList
             ? "Purchase Invoice List"
             : formData.id
-            ? "Edit Purchase Invoice"
-            : "New Purchase Invoice"}
+              ? "Edit Purchase Invoice"
+              : "New Purchase Invoice"}
         </h3>
 
         <div className="flex gap-2">
@@ -108,6 +109,7 @@ const InvoicePage = () => {
         <ListComp dataList={dataList} onEdit={handleEdit} />
       ) : (
         <EntryComp
+          configs={configs}
           isBusy={isBusy}
           errors={errors}
           setErrors={setErrors}
@@ -120,13 +122,11 @@ const InvoicePage = () => {
           formDataPaymentList={formDataPaymentList}
           setFormDataPaymentList={setFormDataPaymentList}
           handleSubmit={handleSave}
-          
           //cancel booking items
           cancelledRows={cancelledRows}
           setCancelledRows={setCancelledRows}
           onCancelBookingItems={handleCancelBookingItems}
           setCancelledPayment={setCancelledPayment}
-
           //cancel
           handleCancel={handleCancel}
         />

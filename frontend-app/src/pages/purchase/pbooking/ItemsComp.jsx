@@ -15,7 +15,12 @@ import ZeroRowCell from "@/components/ZeroRowCell";
 import AttributesComp from "./AttributesComp";
 import { parseAttributes } from "@/utils/jsonParser";
 
-const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
+const ItemsComp = ({
+  configs,
+  formData,
+  formDataItemList,
+  setFormDataItemList,
+}) => {
   const { dataList: productList, handleLoadBookingItems } = useProductsSgd();
   const [showAttributes, setShowAttributes] = useState(false);
   const [selectedItemAttributes, setSelectedItemAttributes] = useState(null);
@@ -72,17 +77,11 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   }, [selectedItem]);
 
   useEffect(() => {
-    const filteredList = productList.map((item) => {
-      const updatedItem = { ...item };
-
-      //   updatedItem.discount_percent = pageConfig.include_discount
-      //   ? item.discount_percent
-      //   : 0;
-
-      // updatedItem.vat_percent = pageConfig.include_vat ? item.vat_percent : 0;
-
-      return updatedItem;
-    });
+    const filteredList = productList.map((item) => ({
+      ...item,
+      bitem_sddsp: configs.cbkng_dspct ? item.bitem_sddsp : 0,
+      items_sdvat: configs.cbkng_vtpct ? item.items_sdvat : 0,
+    }));
 
     const filtered = filteredList.filter(
       (item) =>
@@ -160,7 +159,9 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           </div>
         </div>
         <div className="col-12 p-0">
-          📦 Stock: {(Number(option.bitem_gstkq) + Number(option.bitem_istkq)).toFixed(2)} {option.puofm_untnm}
+          📦 Stock:{" "}
+          {(Number(option.bitem_gstkq) + Number(option.bitem_istkq)).toFixed(2)}{" "}
+          {option.puofm_untnm}
         </div>
       </div>
     );
@@ -237,7 +238,6 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     setSelectedItem(null);
     setSelectedQty(1);
   };
-
 
   const items_iname_BT = (rowData) => {
     const parsedAttr = parseAttributes(rowData.cbkng_attrb);
