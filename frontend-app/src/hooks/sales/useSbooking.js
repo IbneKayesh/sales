@@ -42,13 +42,15 @@ export const useSbooking = () => {
         ]),
       );
       //console.log("configsObj:", configsObj);
-      setConfigs((prev) => ({
-        ...prev,
-        mbkng_vatpy: Number(configsObj["mbkng_vatpy"]) ?? prev.mbkng_vatpy,
-        mbkng_ispst: Number(configsObj["mbkng_ispst"]) ?? prev.mbkng_ispst,
-        cbkng_dspct: Number(configsObj["cbkng_dspct"]) ?? prev.cbkng_dspct,
-        cbkng_vtpct: Number(configsObj["cbkng_vtpct"]) ?? prev.cbkng_vtpct,
-      }));
+      setConfigs((prev) => {
+        const updated = { ...prev };
+        Object.entries(configsObj).forEach(([key, value]) => {
+          const num = Number(value);
+          updated[key] = !Number.isNaN(num) && value !== "" ? num : value;
+        });
+        return updated;
+      });
+
     } catch (error) {
       console.error("Error loading data:", error);
       showToast("error", "Error", error?.message || "Failed to load data");

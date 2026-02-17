@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.2
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Feb 17, 2026 at 02:33 AM
--- Server version: 11.8.2-MariaDB-ubu2404
--- PHP Version: 8.2.27
+-- Generation Time: Feb 17, 2026 at 12:43 PM
+-- Server version: 12.1.2-MariaDB-ubu2404
+-- PHP Version: 8.3.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -1328,8 +1328,10 @@ INSERT INTO `tmsb_ucnfg` (`id`, `ucnfg_users`, `ucnfg_bsins`, `ucnfg_cname`, `uc
 ('c11', 'user1', 'business1', 'Purchase', 'Invoice', 'cinvc_dspct', '1', 'Product Discount %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 12:44:46', 13),
 ('c12', 'user1', 'business1', 'Sales', 'Booking', 'cbkng_dspct', '1', 'Product Discount %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-17 01:55:55', 21),
 ('c13', 'user1', 'business1', 'Sales', 'Booking', 'cbkng_vtpct', '1', 'Product VAT %', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-16 12:01:25', 21),
-('c14', 'user1', 'business1', 'Sales', 'Booking', 'mbkng_ispst', '1', 'Posted Checked', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-17 01:56:06', 21),
+('c14', 'user1', 'business1', 'Sales', 'Booking', 'mbkng_ispst', '1', 'Posted Checked', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-17 11:06:55', 25),
 ('c15', 'user1', 'business1', 'Sales', 'Booking', 'mbkng_vatpy', '1', 'Including VAT', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-17 01:56:07', 13),
+('c16', 'user1', 'business1', 'Sales', 'Booking', 'nostock_0_stock_1', '1', 'All Items (Unchecked) Only Stock (Checked)', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-17 12:22:51', 47),
+('c17', 'user1', 'business1', 'Sales', 'Booking', 'dprat_0_mcmrp_1', '1', 'DP (Unchecked) MRP (Checked)', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-17 11:07:55', 47),
 ('c2', 'user1', 'business1', 'Purchase', 'Booking', 'mbkng_ispst', '1', 'Posted Checked', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-16 12:00:07', 17),
 ('c3', 'user1', 'business1', 'Purchase', 'Receipt', 'mrcpt_vatpy', '1', 'Including VAT', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 11:32:22', 9),
 ('c4', 'user1', 'business1', 'Sales', 'Invoice', 'minvc_vatpy', '1', 'Including VAT', 1, 'user1', '2026-02-02 10:45:00', 'user1', '2026-02-14 12:34:26', 29),

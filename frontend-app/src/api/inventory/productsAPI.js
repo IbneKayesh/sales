@@ -56,4 +56,9 @@ export const productsAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getSalesBookingItems: (data) =>
+    apiRequest("/inventory/products/get-sales-booking-items", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

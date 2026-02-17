@@ -102,6 +102,7 @@ const SBookingPage = () => {
 
   return (
     <Card header={getHeader()} className="p-3">
+      {JSON.stringify(configs)}
       <OverlayPanel ref={opInfo} showCloseIcon closeOnEscape dismissable={true}>
         <div className="flex flex-column gap-3">
           <div className="flex align-items-start gap-3">

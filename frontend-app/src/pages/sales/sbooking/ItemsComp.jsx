@@ -21,12 +21,20 @@ const ItemsComp = ({
   formDataItemList,
   setFormDataItemList,
 }) => {
-  const { dataList: productList, handleLoadBookingItems } = useProductsSgd();
+  const {
+    dataList: productList,
+    handleLoadSalesItems,
+    handleLoadSalesBookingItems,
+  } = useProductsSgd();
   const [showAttributes, setShowAttributes] = useState(false);
   const [selectedItemAttributes, setSelectedItemAttributes] = useState(null);
 
   useEffect(() => {
-    handleLoadBookingItems();
+    if (configs?.nostock_0_stock_1 === 0) {
+      handleLoadSalesBookingItems();
+    } else {
+      handleLoadSalesItems();
+    }
   }, []);
 
   useEffect(() => {
@@ -142,26 +150,41 @@ const ItemsComp = ({
   }, [formData?.mbkng_incst, formData?.mbkng_excst, formDataItemList.length]);
 
   const itemList_IT = (option) => {
+    const parsedAttr = parseAttributes(option.bitem_attrb);
     return (
       <div className="grid">
         <div className="col-12 font-semibold p-1">
           {option.items_iname} ({option.items_icode})
         </div>
+        <div className="col-12 p-0 text-blue-600 text-sm">
+          {Object.keys(parsedAttr).length > 0 &&
+            Object.entries(parsedAttr)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join(", ")}
+        </div>
         <div className="grid col-12 text-gray-700 p-2">
-          <div className="col-4 p-0">
-            💵 Price: {Number(option.bitem_lprat).toFixed(2)}
+          <div className="col-3 p-0">
+            💰 DP: {Number(option.bitem_dprat).toFixed(2)}
           </div>
-          <div className="col-4 p-0">
+          <div className="col-3 p-0">
+            💵 MRP: {Number(option.bitem_mcmrp).toFixed(2)}
+          </div>
+          <div className="col-3 p-0">
             📊 Discount: {Number(option.bitem_sddsp).toFixed(2)}%
           </div>
-          <div className="col-4 p-0">
+          <div className="col-3 p-0">
             📈 VAT: {Number(option.items_sdvat).toFixed(2)}%
           </div>
         </div>
-        <div className="col-12 p-0">
-          📦 Stock:{" "}
-          {(Number(option.bitem_gstkq) + Number(option.bitem_istkq)).toFixed(2)}{" "}
-          {option.puofm_untnm}
+        <div className="grid col-12 text-gray-700 p-2">
+          <div className="col-4 p-0">
+            📦 Stock:{" "}
+            {(Number(option.bitem_gstkq) + Number(option.bitem_istkq)).toFixed(
+              2,
+            )}{" "}
+            {option.puofm_untnm}
+          </div>
+          <div className="col-4 p-0">🧾 No: {option.bitem_refno}</div>
         </div>
       </div>
     );
@@ -225,6 +248,8 @@ const ItemsComp = ({
       cbkng_cnqty: 0,
       cbkng_rcqty: 0,
       cbkng_pnqty: selectedQty || 1,
+      cbkng_srcnm: item.bitem_srcnm,
+      cbkng_refid: item.bitem_refid,
 
       items_icode: item.items_icode,
       items_iname: item.items_iname,
@@ -513,7 +538,6 @@ const ItemsComp = ({
 
   return (
     <div className="mt-4">
-      {JSON.stringify(configs)}
       <ConfirmDialog />
       <Menu model={actionMenuItems} popup ref={menu} id="popup_menu" />
       {!formData.edit_stop && (
