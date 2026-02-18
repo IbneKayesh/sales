@@ -18,7 +18,8 @@ import ModulePage from "./pages/ModulePage.jsx";
 import AuthPage from "./pages/auth/AuthPage";
 //crm
 import ContactPage from "./pages/crm/contacts/ContactPage.jsx";
-import FieldroutePage from "./pages/crm/fieldroute/FieldroutePage";
+import OrderRoutePage from "./pages/crm/orderroute/OrderRoutePage.jsx";
+import DeliveryVanPage from "./pages/crm/deliveryvan/DeliveryVanPage.jsx";
 //hrms
 import EmployeesPage from "./pages/hrms/employee/EmployeesPage.jsx";
 
@@ -117,7 +118,8 @@ function AppRoutes() {
             //auth
             //crm
             <Route path="crm/contact" element={<ContactPage />} />
-            <Route path="crm/field-route" element={<FieldroutePage />} />
+            <Route path="crm/order-route" element={<OrderRoutePage />} />
+            <Route path="crm/delivery-van" element={<DeliveryVanPage />} />
             //hrms
             <Route path="hrms/employees" element={<EmployeesPage />} />
             //accounts

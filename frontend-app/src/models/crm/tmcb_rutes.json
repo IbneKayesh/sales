@@ -41,56 +41,20 @@
     "required": true,
     "default": ""
   },
+  "rutes_trtry": {
+    "type": "string",
+    "label": "Territory name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter territory name",
+    "required": true,
+    "default": ""
+  },
   "rutes_lvdat": {
     "type": "date",
     "label": "Date",
     "placeholder": "Enter last visit date",
-    "required": true,
+    "required": false,
     "default": "new Date() with local format"
-  },
-  "rutes_ttcnt": {
-    "type": "number",
-    "label": "Total Contacts",
-    "maxLength": 999999999,
-    "minLength": 0,
-    "placeholder": "Enter total contact",
-    "required": false,
-    "default": "0"
-  },
-  "rutes_odval": {
-    "type": "number",
-    "label": "Total Order",
-    "maxLength": 999999999,
-    "minLength": 0,
-    "placeholder": "Enter total order",
-    "required": false,
-    "default": "0"
-  },
-  "rutes_dlval": {
-    "type": "number",
-    "label": "Total Delivery",
-    "maxLength": 999999999,
-    "minLength": 0,
-    "placeholder": "Enter total delivery",
-    "required": false,
-    "default": "0"
-  },
-  "rutes_clval": {
-    "type": "number",
-    "label": "Total Collections",
-    "maxLength": 999999999,
-    "minLength": 0,
-    "placeholder": "Enter total collections",
-    "required": false,
-    "default": "0"
-  },
-  "rutes_duval": {
-    "type": "number",
-    "label": "Total Due",
-    "maxLength": 999999999,
-    "minLength": 0,
-    "placeholder": "Enter total due",
-    "required": false,
-    "default": "0"
   }
 }

@@ -29,6 +29,7 @@ const ContactListComp = ({
     { label: "Both", value: "both", icon: "pi pi-users" },
     { label: "Customers", value: "customer", icon: "pi pi-shopping-cart" },
     { label: "Suppliers", value: "supplier", icon: "pi pi-truck" },
+    { label: "Outlets", value: "outlet", icon: "pi pi-shop" },
   ];
 
   const handleFilterChange = (e) => {

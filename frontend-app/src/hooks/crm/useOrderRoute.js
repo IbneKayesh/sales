@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fieldrouteAPI } from "@/api/crm/fieldrouteAPI";
+import { orderRouteAPI } from "@/api/crm/orderRouteAPI";
 import tmcb_rutes from "@/models/crm/tmcb_rutes.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/useToast";
 
 const dataModel = generateDataModel(tmcb_rutes, { edit_stop: 0 });
 
-export const useFieldroute = () => {
+export const useOrderRoute = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
@@ -17,12 +17,13 @@ export const useFieldroute = () => {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
-  const loadFieldroutes = async () => {
+  const loadOrderRoutes = async () => {
     try {
-      const response = await fieldrouteAPI.getAll({
+      const response = await orderRouteAPI.getAll({
         rutes_users: user.users_users,
+        rutes_bsins: user.users_bsins,
       });
-      //console.log("loadFieldroutes: ", response.data);
+      //console.log("loadOrderRoutes: ", response.data);
       setDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
@@ -32,7 +33,7 @@ export const useFieldroute = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadFieldroutes();
+    loadOrderRoutes();
   }, []);
 
   const handleChange = (field, value) => {
@@ -65,7 +66,7 @@ export const useFieldroute = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await fieldrouteAPI.delete(rowData);
+      const response = await orderRouteAPI.delete(rowData);
 
       const updatedList = dataList.filter((c) => c.id !== rowData.id);
       setDataList(updatedList);
@@ -83,7 +84,7 @@ export const useFieldroute = () => {
   };
 
   const handleRefresh = () => {
-    loadFieldroutes();
+    loadOrderRoutes();
   };
 
   const handleSave = async (e) => {
@@ -115,9 +116,9 @@ export const useFieldroute = () => {
       // Call API and get { message, data }
       let response;
       if (formData.id) {
-        response = await fieldrouteAPI.update(formDataNew);
+        response = await orderRouteAPI.update(formDataNew);
       } else {
-        response = await fieldrouteAPI.create(formDataNew);
+        response = await orderRouteAPI.create(formDataNew);
       }
 
       // Update toast using API message
@@ -130,7 +131,7 @@ export const useFieldroute = () => {
 
       handleClear();
       setCurrentView("list");
-      loadFieldroutes();
+      loadOrderRoutes();
     } catch (error) {
       console.error("Error saving data:", error);
 

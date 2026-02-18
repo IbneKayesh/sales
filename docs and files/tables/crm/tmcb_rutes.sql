@@ -8,15 +8,10 @@ CREATE TABLE `tmcb_rutes` (
   `rutes_bsins` varchar(50) NOT NULL,
   `rutes_rname` varchar(50) NOT NULL,
   `rutes_dname` varchar(50) NOT NULL,
-  `rutes_sraid` varchar(50) NOT NULL,  
+  `rutes_trtry` varchar(50) NOT NULL,  
   -- optional
   -- default
   `rutes_lvdat` datetime NOT NULL DEFAULT current_timestamp(),
-  `rutes_ttcnt` decimal(18,6) NOT NULL DEFAULT 0,
-  `rutes_odval` decimal(18,6) NOT NULL DEFAULT 0,
-  `rutes_dlval` decimal(18,6) NOT NULL DEFAULT 0,
-  `rutes_clval` decimal(18,6) NOT NULL DEFAULT 0,
-  `rutes_duval` decimal(18,6) NOT NULL DEFAULT 0,
   `rutes_actve` tinyint(1) NOT NULL DEFAULT 1,
   `rutes_crusr` varchar(50) NOT NULL,
   `rutes_crdat` datetime NOT NULL DEFAULT current_timestamp(),

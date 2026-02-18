@@ -1,0 +1,35 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "dlvan_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "dlvan_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter your business id",
+    "required": false
+  },
+  "dlvan_vname": {
+    "type": "string",
+    "label": "Van name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter van name",
+    "required": true,
+    "default": ""
+  }
+}

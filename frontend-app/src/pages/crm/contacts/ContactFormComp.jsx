@@ -6,6 +6,8 @@ import tmcb_cntcs from "@/models/crm/tmcb_cntcs.json";
 import { useZoneSgd } from "@/hooks/crm/useZoneSgd";
 import { useAreasSgd } from "@/hooks/crm/useAreasSgd";
 import { useEffect } from "react";
+import { contactTypeOptions } from "@/utils/vtable";
+import RequiredText from "@/components/RequiredText";
 
 const ContactFormComp = ({
   isBusy,
@@ -13,7 +15,6 @@ const ContactFormComp = ({
   formData,
   onChange,
   onSave,
-  cntct_ctypeOptions,
   cntct_sorceOptions,
   cntct_cntryOptions,
 }) => {
@@ -34,28 +35,26 @@ const ContactFormComp = ({
       <div className="col-12 md:col-2">
         <label
           htmlFor="cntct_ctype"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
-          {tmcb_cntcs.cntct_ctype.label} <span className="text-red-500">*</span>
+          {tmcb_cntcs.cntct_ctype.label}
         </label>
         <Dropdown
           name="cntct_ctype"
           value={formData.cntct_ctype}
-          options={cntct_ctypeOptions}
+          options={contactTypeOptions}
           onChange={(e) => onChange("cntct_ctype", e.value)}
           className={`w-full ${errors.cntct_ctype ? "p-invalid" : ""}`}
           placeholder={`Select ${tmcb_cntcs.cntct_ctype.label}`}
         />
-        {errors.cntct_ctype && (
-          <small className="mb-3 text-red-500">{errors.cntct_ctype}</small>
-        )}
+        <RequiredText text={errors.cntct_ctype} />
       </div>
       <div className="col-12 md:col-2">
         <label
           htmlFor="cntct_sorce"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
-          {tmcb_cntcs.cntct_sorce.label} <span className="text-red-500">*</span>
+          {tmcb_cntcs.cntct_sorce.label}
         </label>
         <Dropdown
           name="cntctcntct_sorce_ctype"
@@ -65,16 +64,14 @@ const ContactFormComp = ({
           className={`w-full ${errors.cntct_sorce ? "p-invalid" : ""}`}
           placeholder={`Select ${tmcb_cntcs.cntct_sorce.label}`}
         />
-        {errors.cntct_sorce && (
-          <small className="mb-3 text-red-500">{errors.cntct_sorce}</small>
-        )}
+        <RequiredText text={errors.cntct_sorce} />
       </div>
       <div className="col-12 md:col-8">
         <label
           htmlFor="cntct_cntnm"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
-          {tmcb_cntcs.cntct_cntnm.label} <span className="text-red-500">*</span>
+          {tmcb_cntcs.cntct_cntnm.label}
         </label>
         <InputText
           name="cntct_cntnm"
@@ -83,15 +80,13 @@ const ContactFormComp = ({
           className={`w-full ${errors.cntct_cntnm ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmcb_cntcs.cntct_cntnm.label}`}
         />
-        {errors.cntct_cntnm && (
-          <small className="mb-3 text-red-500">{errors.cntct_cntnm}</small>
-        )}
+        <RequiredText text={errors.cntct_cntnm} />
       </div>
 
       <div className="col-12 md:col-3">
         <label
           htmlFor="cntct_cntps"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2"
         >
           {tmcb_cntcs.cntct_cntps.label}
         </label>
@@ -102,14 +97,12 @@ const ContactFormComp = ({
           className={`w-full ${errors.cntct_cntps ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmcb_cntcs.cntct_cntps.label}`}
         />
-        {errors.cntct_cntps && (
-          <small className="mb-3 text-red-500">{errors.cntct_cntps}</small>
-        )}
+        <RequiredText text={errors.cntct_cntps} />
       </div>
       <div className="col-12 md:col-3">
         <label
           htmlFor="cntct_cntno"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2"
         >
           {tmcb_cntcs.cntct_cntno.label}
         </label>
@@ -120,14 +113,12 @@ const ContactFormComp = ({
           className={`w-full ${errors.cntct_cntno ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmcb_cntcs.cntct_cntno.label}`}
         />
-        {errors.cntct_cntno && (
-          <small className="mb-3 text-red-500">{errors.cntct_cntno}</small>
-        )}
+        <RequiredText text={errors.cntct_cntno} />
       </div>
       <div className="col-12 md:col-2">
         <label
           htmlFor="cntct_email"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2"
         >
           {tmcb_cntcs.cntct_email.label}
         </label>
@@ -138,15 +129,13 @@ const ContactFormComp = ({
           className={`w-full ${errors.cntct_email ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmcb_cntcs.cntct_email.label}`}
         />
-        {errors.cntct_email && (
-          <small className="mb-3 text-red-500">{errors.cntct_email}</small>
-        )}
+        <RequiredText text={errors.cntct_email} />
       </div>
 
       <div className="col-12 md:col-2">
         <label
           htmlFor="cntct_tinno"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2"
         >
           {tmcb_cntcs.cntct_tinno.label}
         </label>
@@ -157,14 +146,12 @@ const ContactFormComp = ({
           className={`w-full ${errors.cntct_tinno ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmcb_cntcs.cntct_tinno.label}`}
         />
-        {errors.cntct_tinno && (
-          <small className="mb-3 text-red-500">{errors.cntct_tinno}</small>
-        )}
+        <RequiredText text={errors.cntct_tinno} />
       </div>
       <div className="col-12 md:col-2">
         <label
           htmlFor="cntct_trade"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2"
         >
           {tmcb_cntcs.cntct_trade.label}
         </label>
@@ -175,15 +162,13 @@ const ContactFormComp = ({
           className={`w-full ${errors.cntct_trade ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmcb_cntcs.cntct_trade.label}`}
         />
-        {errors.cntct_trade && (
-          <small className="mb-3 text-red-500">{errors.cntct_trade}</small>
-        )}
+        <RequiredText text={errors.cntct_trade} />
       </div>
 
       <div className="col-12 md:col-6">
         <label
           htmlFor="cntct_ofadr"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2"
         >
           {tmcb_cntcs.cntct_ofadr.label}
         </label>
@@ -194,14 +179,12 @@ const ContactFormComp = ({
           className={`w-full ${errors.cntct_ofadr ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmcb_cntcs.cntct_ofadr.label}`}
         />
-        {errors.cntct_ofadr && (
-          <small className="mb-3 text-red-500">{errors.cntct_ofadr}</small>
-        )}
+        <RequiredText text={errors.cntct_ofadr} />
       </div>
       <div className="col-12 md:col-6">
         <label
           htmlFor="cntct_fcadr"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2"
         >
           {tmcb_cntcs.cntct_fcadr.label}
         </label>
@@ -212,17 +195,15 @@ const ContactFormComp = ({
           className={`w-full ${errors.cntct_fcadr ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmcb_cntcs.cntct_fcadr.label}`}
         />
-        {errors.cntct_fcadr && (
-          <small className="mb-3 text-red-500">{errors.cntct_fcadr}</small>
-        )}
+        <RequiredText text={errors.cntct_fcadr} />
       </div>
 
       <div className="col-12 md:col-2">
         <label
           htmlFor="cntct_cntry"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
-          {tmcb_cntcs.cntct_cntry.label} <span className="text-red-500">*</span>
+          {tmcb_cntcs.cntct_cntry.label}
         </label>
         <Dropdown
           name="cntct_cntry"
@@ -232,17 +213,15 @@ const ContactFormComp = ({
           className={`w-full ${errors.cntct_cntry ? "p-invalid" : ""}`}
           placeholder={`Select ${tmcb_cntcs.cntct_cntry.label}`}
         />
-        {errors.cntct_cntry && (
-          <small className="mb-3 text-red-500">{errors.cntct_cntry}</small>
-        )}
+        <RequiredText text={errors.cntct_cntry} />
       </div>
 
       <div className="col-12 md:col-3">
         <label
           htmlFor="cntct_dzone"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
-          {tmcb_cntcs.cntct_dzone.label} <span className="text-red-500">*</span>
+          {tmcb_cntcs.cntct_dzone.label}
         </label>
         <Dropdown
           name="cntct_dzone"
@@ -254,16 +233,14 @@ const ContactFormComp = ({
           optionLabel="dzone_dname"
           optionValue="id"
         />
-        {errors.cntct_dzone && (
-          <small className="mb-3 text-red-500">{errors.cntct_dzone}</small>
-        )}
+        <RequiredText text={errors.cntct_dzone} />
       </div>
       <div className="col-12 md:col-3">
         <label
           htmlFor="cntct_tarea"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
-          {tmcb_cntcs.cntct_tarea.label} <span className="text-red-500">*</span>
+          {tmcb_cntcs.cntct_tarea.label}
         </label>
         <Dropdown
           name="cntct_tarea"
@@ -275,19 +252,16 @@ const ContactFormComp = ({
           optionLabel="tarea_tname"
           optionValue="id"
         />
-        {errors.cntct_tarea && (
-          <small className="mb-3 text-red-500">{errors.cntct_tarea}</small>
-        )}
+        <RequiredText text={errors.cntct_tarea} />
       </div>
 
       <div className="col-12 md:col-2">
         <label
           htmlFor="cntct_dspct"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
-          {tmcb_cntcs.cntct_dspct.label} <span className="text-red-500">*</span>
+          {tmcb_cntcs.cntct_dspct.label}
         </label>
-
         <InputNumber
           name="cntct_dspct"
           value={formData.cntct_dspct}
@@ -299,15 +273,15 @@ const ContactFormComp = ({
           minFractionDigits={2}
           maxFractionDigits={2}
         />
+        <RequiredText text={errors.cntct_dspct} />
       </div>
       <div className="col-12 md:col-2">
         <label
           htmlFor="cntct_crlmt"
-          className="block text-900 font-medium mb-2"
+          className="block font-bold mb-2 text-red-800"
         >
-          {tmcb_cntcs.cntct_crlmt.label} <span className="text-red-500">*</span>
+          {tmcb_cntcs.cntct_crlmt.label}
         </label>
-
         <InputNumber
           name="cntct_crlmt"
           value={formData.cntct_crlmt}
@@ -319,6 +293,7 @@ const ContactFormComp = ({
           minFractionDigits={2}
           maxFractionDigits={2}
         />
+        <RequiredText text={errors.cntct_crlmt} />
       </div>
 
       <div className="col-12">

@@ -1,11 +1,11 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import ContactListComp from "./ContactListComp";
-import ContactFormComp from "./ContactFormComp";
-import { useContacts } from "@/hooks/crm/useContacts";
+import DeliveryVanListComp from "./DeliveryVanListComp";
+import DeliveryVanFormComp from "./DeliveryVanFormComp";
+import { useDeliveryVan } from "@/hooks/crm/useDeliveryVan";
 
-const ContactPage = () => {
+const DeliveryVanPage = () => {
   const {
     dataList,
     isBusy,
@@ -19,13 +19,7 @@ const ContactPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-    cntct_sorceOptions,
-    cntct_cntryOptions,
-    //ledger
-    handleShowContactLedger,
-    ledgerDataList,
-    handleFilterDataList
-  } = useContacts();
+  } = useDeliveryVan();
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -34,10 +28,10 @@ const ContactPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Contact"
+            ? "Delivery Van"
             : formData.id
-            ? "Edit Contact"
-            : "Add New Contact"}
+            ? "Edit Delivery Van"
+            : "New Delivery Van"}
         </h3>
 
         <div className="flex gap-2">
@@ -53,25 +47,20 @@ const ContactPage = () => {
 
   return (
     <>
-      <Card header={getHeader()} className="bg-dark-200 border-round p-3">
+      <Card header={getHeader()} className="border-round p-3">
         {currentView === "list" ? (
-          <ContactListComp
+          <DeliveryVanListComp
             dataList={dataList}
             onEdit={handleEdit}
             onDelete={handleDelete}
-            onShowContactLedger={handleShowContactLedger}
-            ledgerDataList={ledgerDataList}
-            onFilterDataList={handleFilterDataList}
           />
         ) : (
-          <ContactFormComp
+          <DeliveryVanFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
             onChange={handleChange}
             onSave={handleSave}
-            cntct_sorceOptions={cntct_sorceOptions}
-            cntct_cntryOptions={cntct_cntryOptions}
           />
         )}
       </Card>
@@ -79,4 +68,4 @@ const ContactPage = () => {
   );
 };
 
-export default ContactPage;
+export default DeliveryVanPage;

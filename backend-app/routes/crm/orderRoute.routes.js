@@ -6,23 +6,33 @@ const { v4: uuidv4 } = require("uuid");
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { rutes_users } = req.body;
+    const { rutes_users, rutes_bsins } = req.body;
 
     // Validate input
-    if (!rutes_users) {
+    if (!rutes_users || !rutes_bsins) {
       return res.json({
         success: false,
-        message: "User ID is required",
+        message: "User ID and Business ID are required",
         data: null,
       });
     }
 
     //database action
-    const sql = `SELECT rts.*
-    FROM tmcb_rutes rts
-    WHERE rts.rutes_users = ?
-    ORDER BY rts.rutes_rname`;
-    const params = [rutes_users];
+    const sql = `SELECT rts.*, trt.trtry_wname, ara.tarea_tname, dzn.dzone_dname,
+    (
+        SELECT COUNT(*)
+        FROM tmcb_cntrt c
+        WHERE c.cnrut_rutes = rts.id
+        AND c.cnrut_actve = 1
+    ) AS total_outlets
+FROM tmcb_rutes rts
+LEFT JOIN tmcb_trtry trt ON rts.rutes_trtry = trt.id
+LEFT JOIN tmcb_tarea ara ON trt.trtry_tarea = ara.id
+LEFT JOIN tmcb_dzone dzn ON ara.tarea_dzone = dzn.id
+WHERE rts.rutes_users = ?
+AND rts.rutes_bsins = ?
+ORDER BY rts.rutes_rname`;
+    const params = [rutes_users, rutes_bsins];
 
     const rows = await dbGetAll(sql, params, `Get routes for ${rutes_users}`);
     res.json({
@@ -49,12 +59,7 @@ router.post("/create", async (req, res) => {
       rutes_bsins,
       rutes_rname,
       rutes_dname,
-      rutes_lvdat,
-      rutes_ttcnt,
-      rutes_odval,
-      rutes_dlval,
-      rutes_clval,
-      rutes_duval,
+      rutes_trtry,
       user_id,
     } = req.body;
 
@@ -68,11 +73,9 @@ router.post("/create", async (req, res) => {
     }
 
     //database action
-    const sql = `INSERT INTO tmcb_rutes(id, rutes_users, rutes_bsins, rutes_rname, rutes_dname, rutes_lvdat,
-    rutes_ttcnt, rutes_odval, rutes_dlval, rutes_clval, rutes_duval,
+    const sql = `INSERT INTO tmcb_rutes(id, rutes_users, rutes_bsins, rutes_rname, rutes_dname, rutes_trtry,
     rutes_crusr, rutes_upusr)
     VALUES (?, ?, ?, ?, ?, ?,
-    ?, ?, ?, ?, ?,
     ?, ?)`;
     const params = [
       id,
@@ -80,12 +83,7 @@ router.post("/create", async (req, res) => {
       rutes_bsins,
       rutes_rname,
       rutes_dname,
-      rutes_lvdat,
-      rutes_ttcnt,
-      rutes_odval,
-      rutes_dlval,
-      rutes_clval,
-      rutes_duval,
+      rutes_trtry,
       user_id,
       user_id,
     ];
@@ -115,12 +113,7 @@ router.post("/update", async (req, res) => {
       rutes_bsins,
       rutes_rname,
       rutes_dname,
-      rutes_lvdat,
-      rutes_ttcnt,
-      rutes_odval,
-      rutes_dlval,
-      rutes_clval,
-      rutes_duval,
+      rutes_trtry,
       user_id,
     } = req.body;
 
@@ -137,12 +130,14 @@ router.post("/update", async (req, res) => {
     const sql = `UPDATE tmcb_rutes
     SET rutes_rname = ?,
     rutes_dname = ?,
+    rutes_trtry = ?,
     rutes_upusr = ?,
     rutes_rvnmr = rutes_rvnmr + 1
     WHERE id = ?`;
     const params = [
       rutes_rname,
       rutes_dname,
+      rutes_trtry,
       user_id,
       id,
     ];
@@ -188,48 +183,6 @@ router.post("/delete", async (req, res) => {
       success: true,
       message: "Route deleted successfully",
       data: null,
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: null,
-    });
-  }
-});
-
-//suppliers
-router.post("/suppliers", async (req, res) => {
-  try {
-    const { cntct_users } = req.body;
-
-    // Validate input
-    if (!cntct_users) {
-      return res.json({
-        success: false,
-        message: "User ID is required",
-        data: null,
-      });
-    }
-
-    //database action
-    const sql = `SELECT cnt.*, 0 as edit_stop
-    FROM tmcb_cntct cnt
-    WHERE cnt.cntct_users = ?
-    AND cnt.cntct_ctype IN ('Supplier','Both')
-    ORDER BY cnt.cntct_cntnm`;
-    const params = [cntct_users];
-
-    const rows = await dbGetAll(
-      sql,
-      params,
-      `Get suppliers for ${cntct_users}`,
-    );
-    res.json({
-      success: true,
-      message: "Suppliers fetched successfully",
-      data: rows,
     });
   } catch (error) {
     console.error("database action error:", error);

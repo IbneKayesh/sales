@@ -23,8 +23,6 @@ const transOptions = [
   },
   { label: "Supplier Due (-)", value: "Supplier Due", trans_head: "Dues" },
   { label: "Supplier Due Paid (-)", value: "Due Paid", trans_head: "Dues" },
-
-
 ];
 
 // Transform transOptions into a list of objects with id, name, and trans_head
@@ -133,7 +131,24 @@ const employeeStatusOptions = [
   { label: "Active", value: "Active" },
   { label: "Inactive", value: "Inactive" },
   { label: "Terminated", value: "Terminated" },
-  { label: "Resigned", value: "Resigned" },  
+  { label: "Resigned", value: "Resigned" },
+];
+
+const contactTypeOptions = [
+  { label: "Customer", value: "Customer" },
+  { label: "Supplier", value: "Supplier" },
+  { label: "Both", value: "Both" },
+  { label: "Outlet", value: "Outlet" },
+];
+
+const dayNameOptions = [
+  { label: "Saturday", value: "Saturday" },
+  { label: "Sunday", value: "Sunday" },
+  { label: "Monday", value: "Monday" },
+  { label: "Tuesday", value: "Tuesday" },
+  { label: "Wednesday", value: "Wednesday" },
+  { label: "Thursday", value: "Thursday" },
+  { label: "Friday", value: "Friday" },
 ];
 
 export {
@@ -152,6 +167,8 @@ export {
   designationOptions,
   employeeTypeOptions,
   employeeStatusOptions,
+  contactTypeOptions,
+  dayNameOptions,
 };
 
 /*

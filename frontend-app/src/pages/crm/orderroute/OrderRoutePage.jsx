@@ -3,9 +3,9 @@ import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import RouteListComp from "./RouteListComp";
 import RouteFormComp from "./RouteFormComp";
-import { useFieldroute } from "@/hooks/crm/useFieldroute";
+import { useOrderRoute } from "@/hooks/crm/useOrderRoute";
 
-const FieldroutePage = () => {
+const OrderRoutePage = () => {
   const {
     dataList,
     isBusy,
@@ -19,7 +19,7 @@ const FieldroutePage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-  } = useFieldroute();
+  } = useOrderRoute();
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -28,10 +28,10 @@ const FieldroutePage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Field Route"
+            ? "Order Route"
             : formData.id
-            ? "Edit Field Route"
-            : "Add New Field Route"}
+            ? "Edit Order Route"
+            : "New Order Route"}
         </h3>
 
         <div className="flex gap-2">
@@ -47,7 +47,7 @@ const FieldroutePage = () => {
 
   return (
     <>
-      <Card header={getHeader()} className="bg-dark-200 border-round p-3">
+      <Card header={getHeader()} className="border-round p-3">
         {currentView === "list" ? (
           <RouteListComp
             dataList={dataList}
@@ -68,4 +68,4 @@ const FieldroutePage = () => {
   );
 };
 
-export default FieldroutePage;
+export default OrderRoutePage;

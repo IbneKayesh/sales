@@ -9,9 +9,11 @@ const { initData } = require("./db/initData.js");
 const authRoutes = require("./routes/auth/auth.routes.js");
 //crm
 const contactsRoutes = require("./routes/crm/contacts.routes.js");
-const fieldRoutes = require("./routes/crm/fieldroute.routes.js");
+const orderRoutes = require("./routes/crm/orderRoute.routes.js");
 const dzoneRoutes = require("./routes/crm/dzone.routes.js");
 const tareaRoutes = require("./routes/crm/tarea.routes.js");
+const territoryRoutes = require("./routes/crm/territory.routes.js");
+const deliveryVanRoutes = require("./routes/crm/deliveryVan.routes.js");
 //hrms
 const employeesRoutes = require("./routes/hrms/employees.routes.js");
 //accounts
@@ -90,9 +92,11 @@ app.use("/api", authMiddleware);
 app.use("/api/auth", authRoutes);
 //crm
 app.use("/api/crm/contacts", contactsRoutes);
-app.use("/api/crm/fieldroute", fieldRoutes);
+app.use("/api/crm/order-route", orderRoutes);
 app.use("/api/crm/dzone", dzoneRoutes);
 app.use("/api/crm/tarea", tareaRoutes);
+app.use("/api/crm/territory", territoryRoutes);
+app.use("/api/crm/delivery-van", deliveryVanRoutes);
 //hrms
 app.use("/api/hrms/employees", employeesRoutes);
 //accounts

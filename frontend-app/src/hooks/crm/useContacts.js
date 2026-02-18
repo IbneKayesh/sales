@@ -18,11 +18,6 @@ export const useContacts = () => {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
-  const cntct_ctypeOptions = [
-    { label: "Customer", value: "Customer" },
-    { label: "Supplier", value: "Supplier" },
-    { label: "Both", value: "Both" },
-  ];
   const cntct_sorceOptions = [{ label: "Local", value: "Local" }];
   const cntct_cntryOptions = [{ label: "Bangladesh", value: "Bangladesh" }];
 
@@ -241,7 +236,6 @@ export const useContacts = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-    cntct_ctypeOptions,
     cntct_sorceOptions,
     cntct_cntryOptions,
     contactListDdl,
