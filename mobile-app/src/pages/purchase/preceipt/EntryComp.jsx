@@ -1,0 +1,248 @@
+import { useState, useEffect } from "react";
+import HeaderComp from "./HeaderComp";
+import ItemsComp from "./ItemsComp";
+import PaymentComp from "./PaymentComp";
+import { Button } from "primereact/button";
+import { ButtonGroup } from "primereact/buttongroup";
+import PrintComp from "./PrintComp";
+import { Dialog } from "primereact/dialog";
+import ExpensesDlg from "./ExpensesDlg";
+import PaymentDlg from "./PaymentDlg";
+
+const EntryComp = ({
+  configs,
+  isBusy,
+  errors,
+  setErrors,
+  formData,
+  handleChange,
+  formDataItemList,
+  setFormDataItemList,
+  formDataExpensesList,
+  setFormDataExpensesList,
+  formDataPaymentList,
+  setFormDataPaymentList,
+  handleSubmit,
+  //fetch receipt items
+  fetchAvailableReceiptItems,
+}) => {
+  const [disableSubmit, setDisableSubmit] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [dialogName, setDialogName] = useState("payment");
+
+  useEffect(() => {
+    const hasProducts = formDataItemList.length < 1;
+    const hasCreditLimit = false;
+    //Number(formData.mrcpt_duamt) > Number(formData.cntct_crlmt);
+    if (hasProducts || hasCreditLimit || formData.edit_stop) {
+      //console.log("disable");
+      setDisableSubmit(true);
+    } else {
+      setDisableSubmit(false);
+    }
+    //console.log(hasCreditLimit);
+  }, [formDataItemList, formData.mrcpt_duamt, formData.cntct_crlmt]);
+
+  useEffect(() => {
+    const order_amount = formDataItemList.reduce(
+      (sum, item) =>
+        sum + (Number(item.crcpt_itqty) || 0) * (Number(item.crcpt_itrat) || 0),
+      0,
+    );
+    const discount_amount = formDataItemList.reduce(
+      (sum, item) => sum + (Number(item.crcpt_dsamt) || 0),
+      0,
+    );
+    const vat_amount = formDataItemList.reduce(
+      (sum, item) => sum + (Number(item.crcpt_vtamt) || 0),
+      0,
+    );
+
+    const include_cost = formDataExpensesList.reduce(
+      (sum, item) =>
+        item.expns_inexc === 1 ? sum + (Number(item.expns_xpamt) || 0) : sum,
+      0,
+    );
+
+    const exclude_cost = formDataExpensesList.reduce(
+      (sum, item) =>
+        item.expns_inexc === 2 ? sum + (Number(item.expns_xpamt) || 0) : sum,
+      0,
+    );
+
+    const sum_1_3_4 = order_amount + vat_amount + include_cost;
+    const sum_2_5 = discount_amount + Number(formData.mrcpt_rnamt || 0);
+
+    const total_amount = sum_1_3_4 - sum_2_5;
+
+    const payable_amount =
+      formData.mrcpt_vatpy === 1 ? total_amount : total_amount - vat_amount;
+
+    const paid_amount = formDataPaymentList.reduce(
+      (sum, item) => sum + (Number(item.paybl_dbamt) || 0),
+      0,
+    );
+
+    const due_amount = payable_amount - (paid_amount || 0);
+
+    handleChange("mrcpt_odamt", Number(order_amount).toFixed(2));
+    handleChange("mrcpt_dsamt", Number(discount_amount).toFixed(2));
+    handleChange("mrcpt_vtamt", Number(vat_amount).toFixed(2));
+    handleChange("mrcpt_incst", Number(include_cost).toFixed(2));
+    handleChange("mrcpt_excst", Number(exclude_cost).toFixed(2));
+    handleChange("mrcpt_ttamt", Number(total_amount).toFixed(2));
+    handleChange("mrcpt_pyamt", Number(payable_amount).toFixed(2));
+    handleChange("mrcpt_pdamt", Number(paid_amount).toFixed(2));
+    handleChange("mrcpt_duamt", Number(Math.round(due_amount)).toFixed(2));
+  }, [
+    formData.mrcpt_vatpy,
+    formData.mrcpt_rnamt,
+    formDataItemList,
+    formDataPaymentList,
+    formDataExpensesList,
+  ]);
+
+  const handleShowIncludeCost = () => {
+    setShowDialog(true);
+    setDialogName("Including Expenses");
+  };
+  const handleShowExcludeCost = () => {
+    setShowDialog(true);
+    setDialogName("Excluding Expenses");
+  };
+
+  const handleShowPayment = () => {
+    setShowDialog(true);
+    setDialogName("Payment");
+  };
+
+  const handleShowPrint = () => {
+    setShowDialog(true);
+    setDialogName("Print");
+  };
+
+  const handlePrintPdf = () => {
+    window.print();
+  };
+
+  const dialogFooter = (
+    <div className="flex justify-content-end gap-2 no-print">
+      <Button
+        label="Cancel"
+        icon="pi pi-times"
+        onClick={() => setShowDialog(false)}
+        severity="secondary"
+      />
+      {dialogName === "Print" && (
+        <Button
+          label="Print"
+          icon="pi pi-print"
+          onClick={() => handlePrintPdf()}
+          severity="primary"
+          raised
+        />
+      )}
+    </div>
+  );
+
+  return (
+    <div>
+      <HeaderComp
+        errors={errors}
+        formData={formData}
+        handleChange={handleChange}
+        fetchAvailableReceiptItems={fetchAvailableReceiptItems}
+      />
+      <ItemsComp
+        formData={formData}
+        formDataItemList={formDataItemList}
+        setFormDataItemList={setFormDataItemList}
+      />
+      <PaymentComp
+        errors={errors}
+        setErrors={setErrors}
+        formData={formData}
+        handleChange={handleChange}
+        onShowIncludeCost={handleShowIncludeCost}
+        onShowExcludeCost={handleShowExcludeCost}
+        onShowPayment={handleShowPayment}
+        formDataPaymentList={formDataPaymentList}
+        setFormDataPaymentList={setFormDataPaymentList}
+      />
+      <div className="flex justify-content-end">
+        <ButtonGroup>
+          <Button
+            type="button"
+            label="Print"
+            icon="pi pi-print"
+            severity="info"
+            size="small"
+            onClick={handleShowPrint}
+            disabled={!formData.id}
+          />
+          <Button
+            type="button"
+            label={
+              formData.id
+                ? "Update"
+                : formData.mrcpt_ispst
+                  ? "Save with Posted"
+                  : "Save as Draft"
+            }
+            icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
+            severity="success"
+            size="small"
+            loading={isBusy}
+            onClick={handleSubmit}
+            disabled={disableSubmit}
+          />
+        </ButtonGroup>
+      </div>
+
+      <Dialog
+        header={dialogName}
+        visible={showDialog}
+        onHide={() => setShowDialog(false)}
+        closable={true}
+        style={{ width: "50vw" }}
+        footer={dialogFooter}
+      >
+        <>
+          {dialogName === "Including Expenses" && (
+            <ExpensesDlg
+              formData={formData}
+              formDataExpensesList={formDataExpensesList}
+              setFormDataExpensesList={setFormDataExpensesList}
+              dialogName={dialogName}
+            />
+          )}
+          {dialogName === "Excluding Expenses" && (
+            <ExpensesDlg
+              formData={formData}
+              formDataExpensesList={formDataExpensesList}
+              setFormDataExpensesList={setFormDataExpensesList}
+              dialogName={dialogName}
+            />
+          )}
+          {dialogName === "Payment" && (
+            <PaymentDlg
+              formData={formData}
+              formDataPaymentList={formDataPaymentList}
+              setFormDataPaymentList={setFormDataPaymentList}
+            />
+          )}
+
+          {dialogName === "Print" && (
+            <PrintComp
+              formData={formData}
+              formDataItemList={formDataItemList}
+              formDataPaymentList={formDataPaymentList}
+            />
+          )}
+        </>
+      </Dialog>
+    </div>
+  );
+};
+
+export default EntryComp;

@@ -1,0 +1,114 @@
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: var(--overlay-light);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-primary);
+  height: 50px;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Common class for all topbar buttons - using previous collapse-btn styles */
+.topbar-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-white);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.topbar-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.topbar-center {
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.topbar-left .collapse-btn,
+.topbar-left .full-mode-btn {
+  /* Use the common topbar-btn class */
+}
+
+.topbar-avatar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-avatar img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border-medium);
+}
+
+.logout-button {
+  /* Use the common topbar-btn class, but override background */
+  background: var(--gradient-main);
+}
+
+.logout-button:hover {
+  background: var(--gradient-secondary);
+  box-shadow: 0 4px 12px var(--accent-purple);
+}
+
+/* Navigation icons */
+.navigation-icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-medium) transparent;
+  max-width: 100%;
+}
+
+.navigation-icons::-webkit-scrollbar {
+  height: 4px;
+}
+
+.navigation-icons::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.navigation-icons::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 2px;
+}
+
+.navigation-icons::-webkit-scrollbar-thumb:hover {
+  background: var(--overlay-heavy);
+}
+
+.nav-icon-btn {
+  /* Use the common topbar-btn class */
+}
+
+/* Ensure all topbar buttons use the common class */
+.topbar .topbar-left .collapse-btn,
+.topbar .topbar-left .full-mode-btn,
+.logout-button,
+.nav-icon-btn {
+  @extend .topbar-btn;
+}

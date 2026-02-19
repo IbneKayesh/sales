@@ -1,0 +1,18 @@
+{
+    "users_email": {
+        "type": "email",
+        "label": "Email",
+        "maxLength": 100,
+        "minLength": 3,
+        "placeholder": "Enter your email",
+        "required": true
+    },
+    "users_recky": {
+        "type": "text",
+        "label": "Key",
+        "maxLength": 100,
+        "minLength": 3,
+        "placeholder": "Enter your key",
+        "required": true
+    }
+}

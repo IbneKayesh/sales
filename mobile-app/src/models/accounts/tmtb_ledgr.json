@@ -1,0 +1,95 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "ledgr_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "ledgr_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter business id",
+    "required": false
+  },
+  "ledgr_trhed": {
+    "type": "string",
+    "label": "Transaction Head",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter transaction head",
+    "required": true
+  },
+  "ledgr_cntct": {
+    "type": "string",
+    "label": "Contact id",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter contact id",
+    "required": true
+  },
+  "ledgr_bacts": {
+    "type": "string",
+    "label": "Account id",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter account id",
+    "required": true
+  },
+  "ledgr_pymod": {
+    "type": "string",
+    "label": "Payment mode",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter payment mode",
+    "required": true
+  },
+  "ledgr_trdat": {
+    "type": "date",
+    "label": "Transaction Date",
+    "placeholder": "Enter transaction date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "ledgr_refno": {
+    "type": "string",
+    "label": "Reference Number",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter reference number",
+    "required": true
+  },
+  "ledgr_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "ledgr_dbamt": {
+    "type": "decimal",
+    "label": "Debit Amount",
+    "placeholder": "Enter debit amount",
+    "required": true,
+    "default": "0"
+  },
+  "ledgr_cramt": {
+    "type": "decimal",
+    "label": "Credit Amount",
+    "placeholder": "Enter credit amount",
+    "required": true,
+    "default": "0"
+  }
+}

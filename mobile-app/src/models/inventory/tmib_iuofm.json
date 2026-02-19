@@ -1,0 +1,34 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "iuofm_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "iuofm_untnm": {
+    "type": "string",
+    "label": "Unit Name",
+    "maxLength": 100,
+    "minLength": 2,
+    "placeholder": "Enter unit name",
+    "required": true
+  },
+  "iuofm_untgr": {
+    "type": "string",
+    "label": "Unit Group",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter unit group",
+    "required": true
+  }
+}

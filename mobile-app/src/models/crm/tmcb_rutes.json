@@ -1,0 +1,60 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "rutes_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "rutes_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter your business id",
+    "required": false
+  },
+  "rutes_rname": {
+    "type": "string",
+    "label": "Route name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter route name",
+    "required": true,
+    "default": ""
+  },
+  "rutes_dname": {
+    "type": "string",
+    "label": "Day name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter day name",
+    "required": true,
+    "default": ""
+  },
+  "rutes_trtry": {
+    "type": "string",
+    "label": "Territory name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter territory name",
+    "required": true,
+    "default": ""
+  },
+  "rutes_lvdat": {
+    "type": "date",
+    "label": "Date",
+    "placeholder": "Enter last visit date",
+    "required": false,
+    "default": "new Date() with local format"
+  }
+}

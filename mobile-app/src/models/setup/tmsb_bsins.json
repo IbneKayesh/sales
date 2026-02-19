@@ -1,0 +1,128 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "bsins_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "bsins_bname": {
+    "type": "string",
+    "label": "Business Name",
+    "maxLength": 100,
+    "minLength": 6,
+    "placeholder": "Enter your business name",
+    "required": true
+  },
+  "bsins_addrs": {
+    "type": "string",
+    "label": "Address",
+    "maxLength": 100,
+    "minLength": 6,
+    "placeholder": "Enter your address",
+    "required": true
+  },
+  "bsins_email": {
+    "type": "email",
+    "label": "Email",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter your email",
+    "required": true
+  },
+  "bsins_cntct": {
+    "type": "string",
+    "label": "Contact",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter your contact",
+    "required": true
+  },
+  "bsins_binno": {
+    "type": "string",
+    "label": "BIN",
+    "maxLength": 100,
+    "minLength": 3,
+    "placeholder": "Enter your BIN",
+    "required": false
+  },
+  "bsins_btags": {
+    "type": "string",
+    "label": "Tags",
+    "maxLength": 100,
+    "minLength": 6,
+    "placeholder": "Enter business tags",
+    "required": true,
+    "default": "Grocery Store"
+  },
+  "bsins_cntry": {
+    "type": "string",
+    "label": "Country",
+    "maxLength": 100,
+    "minLength": 3,
+    "placeholder": "Enter your Country",
+    "required": true,
+    "default": "Bangladesh"
+  },
+  "bsins_bstyp": {
+    "type": "string",
+    "label": "Business Type",
+    "maxLength": 100,
+    "minLength": 3,
+    "placeholder": "Enter your Business Type",
+    "required": true,
+    "default": "Store"
+  },
+  "bsins_tstrn": {
+    "type": "number",
+    "label": "Transfer Transaction",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Transfer Transaction",
+    "required": true,
+    "default": 0
+  },
+  "bsins_prtrn": {
+    "type": "number",
+    "label": "Purchase Transaction",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Purchase Transaction",
+    "required": true,
+    "default": 0
+  },
+  "bsins_sltrn": {
+    "type": "number",
+    "label": "Sales Transaction",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Sales Transaction",
+    "required": true,
+    "default": 0
+  },
+  "bsins_stdat": {
+    "type": "date",
+    "label": "Date",
+    "placeholder": "Enter start date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "bsins_pbviw": {
+    "type": "number",
+    "label": "Analytics",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Analytics",
+    "required": true,
+    "default": 1
+  }  
+}

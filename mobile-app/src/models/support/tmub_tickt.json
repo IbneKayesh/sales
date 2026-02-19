@@ -1,0 +1,71 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "tickt_users": {
+    "type": "string",
+    "label": "User ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter User ID",
+    "required": false
+  },
+  "tickt_types": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter ticket type",
+    "required": true
+  },
+  "tickt_cmnte": {
+    "type": "string",
+    "label": "Comment",
+    "maxLength": 300,
+    "minLength": 1,
+    "placeholder": "Enter ticket comment",
+    "required": true
+  },
+  "tickt_cmdat": {
+    "type": "string",
+    "label": "Comment Date",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Select comment date",
+    "required": true
+  },
+  "tickt_rsnte": {
+    "type": "string",
+    "label": "Resolution Note",
+    "maxLength": 300,
+    "minLength": 0,
+    "placeholder": "Enter resolution note",
+    "required": false
+  },
+  "tickt_rspnt": {
+    "type": "number",
+    "label": "Response Point",
+    "required": false
+  },
+  "tickt_cmsts": {
+    "type": "string",
+    "label": "Status",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Select status",
+    "required": true
+  },
+  "tickt_rsdat": {
+    "type": "string",
+    "label": "Resolution Date",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Select resolution date",
+    "required": false
+  }
+}

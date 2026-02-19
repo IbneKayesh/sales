@@ -1,0 +1,150 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "bitem_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "bitem_items": {
+    "type": "string",
+    "label": "Item Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter item id",
+    "required": false
+  },
+  "bitem_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter business",
+    "required": true
+  },
+  "bitem_lprat": {
+    "type": "decimal",
+    "label": "Purchase Rate",
+    "maxLength": 99999999,
+    "minLength": 0,
+    "placeholder": "Enter purchase rate",
+    "required": true,
+    "default": "0"
+  },
+  "bitem_dprat": {
+    "type": "decimal",
+    "label": "Distributor Rate",
+    "maxLength": 99999999,
+    "minLength": 0,
+    "placeholder": "Enter distributor rate",
+    "required": true,
+    "default": "0"
+  },
+  "bitem_mcmrp": {
+    "type": "decimal",
+    "label": "MRP",
+    "maxLength": 99999999,
+    "minLength": 0,
+    "placeholder": "Enter MRP",
+    "required": true,
+    "default": "0"
+  },
+  "bitem_sddsp": {
+    "type": "decimal",
+    "label": "Discount %",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter discount %",
+    "required": true,
+    "default": "0"
+  },
+  "bitem_snote": {
+    "type": "string",
+    "label": "Note",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter note",
+    "required": false
+  },
+  "bitem_gstkq": {
+    "type": "decimal",
+    "label": "Good Stock",
+    "maxLength": 99999999,
+    "minLength": 0,
+    "placeholder": "Enter good stock",
+    "required": true,
+    "default": "0"
+  },
+  "bitem_bstkq": {
+    "type": "decimal",
+    "label": "Bad Stock",
+    "maxLength": 99999999,
+    "minLength": 0,
+    "placeholder": "Enter bad stock",
+    "required": true,
+    "default": "0"
+  },
+  "bitem_mnqty": {
+    "type": "decimal",
+    "label": "Minimum Stock",
+    "maxLength": 99999999,
+    "minLength": 0,
+    "placeholder": "Enter minimum stock",
+    "required": true,
+    "default": "0"
+  },
+  "bitem_mxqty": {
+    "type": "decimal",
+    "label": "Maximum Stock",
+    "maxLength": 99999999,
+    "minLength": 0,
+    "placeholder": "Enter maximum stock",
+    "required": true,
+    "default": "0"
+  },
+  "bitem_pbqty": {
+    "type": "decimal",
+    "label": "Purchase Booking",
+    "maxLength": 99999999,
+    "minLength": 0,
+    "placeholder": "Enter purchase booking",
+    "required": true,
+    "default": "0"
+  },
+  "bitem_sbqty": {
+    "type": "decimal",
+    "label": "Sales Booking",
+    "maxLength": 99999999,
+    "minLength": 0,
+    "placeholder": "Enter sales booking",
+    "required": true,
+    "default": "0"
+  },
+  "bitem_mpric": {
+    "type": "decimal",
+    "label": "Margin Price",
+    "maxLength": 99999999,
+    "minLength": -99999999,
+    "placeholder": "Enter margin price",
+    "required": true,
+    "default": "0"
+  },
+  "bitem_actve": {
+    "type": "number",
+    "label": "Active",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Enter active",
+    "required": true,
+    "default": "1"
+  }
+}

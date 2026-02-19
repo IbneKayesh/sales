@@ -1,0 +1,71 @@
+{
+    "contact_id": {
+      "name": "Id",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 36
+    },
+    "contact_name": {
+      "name": "Name",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 150
+    },
+    "contact_mobile": {
+      "name": "Mobile",
+      "type": "string",
+      "required": true,
+      "minLength": 6,
+      "maxLength": 50
+    },
+    "contact_email": {
+      "name": "Email",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 255
+    },
+    "contact_address": {
+      "name": "Address",
+      "type": "string",
+      "required": false,
+      "minLength": 0,
+      "maxLength": 255
+    },
+    "contact_type": {
+      "name": "Type",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "credit_limit": {
+      "name": "Credit Limit",
+      "type": "number",
+      "required": false
+    },
+    "payable_balance": {
+      "name": "Payable Balance",
+      "type": "number",
+      "required": false
+    },
+    "advance_balance": {
+      "name": "Advance Balance",
+      "type": "number",
+      "required": false
+    },
+    "current_balance": {
+      "name": "Current Balance",
+      "type": "number",
+      "required": false
+    },
+    "shop_id": {
+      "name": "Shop",
+      "type": "string",
+      "required": true,
+      "minLength": 1,
+      "maxLength": 50
+    }
+  }

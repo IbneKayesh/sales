@@ -1,0 +1,112 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "mtrsf_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "mtrsf_bsins": {
+    "type": "string",
+    "label": "Business id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter business id",
+    "required": false
+  },
+  "mtrsf_bsins_to": {
+    "type": "string",
+    "label": "Business To",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter business to",
+    "required": true
+  },
+  "mtrsf_trnno": {
+    "type": "string",
+    "label": "No",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter transaction no",
+    "required": false,
+    "default": "[Auto SL]"
+  },
+  "mtrsf_trdat": {
+    "type": "date",
+    "label": "Date",
+    "placeholder": "Enter start date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "mtrsf_refno": {
+    "type": "string",
+    "label": "Reference No",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter reference no",
+    "required": false
+  },
+  "mtrsf_trnte": {
+    "type": "string",
+    "label": "Note",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter note",
+    "required": false,
+    "default": ""
+  },
+  "mtrsf_odamt": {
+    "type": "decimal",
+    "label": "Amount (1)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter order amount",
+    "required": true,
+    "default": "0"
+  },
+  "mtrsf_excst": {
+    "type": "decimal",
+    "label": "Exclude cost (4)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter Exclude cost",
+    "required": true,
+    "default": "0"
+  },
+  "mtrsf_ttamt": {
+    "type": "decimal",
+    "label": "Total (6)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter total amount",
+    "required": true,
+    "default": "0"
+  },
+  "mtrsf_ispst": {
+    "type": "number",
+    "label": "Is Posted",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Is posted",
+    "required": true,
+    "default": 1
+  },
+  "mtrsf_isrcv": {
+    "type": "number",
+    "label": "Is Received",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Is received",
+    "required": true,
+    "default": 0
+  }
+}

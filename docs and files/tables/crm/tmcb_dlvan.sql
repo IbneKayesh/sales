@@ -7,6 +7,7 @@ CREATE TABLE `tmcb_dlvan` (
   `dlvan_users` varchar(50) NOT NULL,
   `dlvan_bsins` varchar(50) NOT NULL,
   `dlvan_vname` varchar(50) NOT NULL,
+  `dlvan_dname` varchar(50) DEFAULT NULL,
   `dlvan_actve` tinyint(1) NOT NULL DEFAULT 1,
   `dlvan_crusr` varchar(50) NOT NULL,
   `dlvan_crdat` datetime NOT NULL DEFAULT current_timestamp(),

@@ -49,6 +49,7 @@ router.post("/create", async (req, res) => {
       dlvan_users,
       dlvan_bsins,
       dlvan_vname,
+      dlvan_dname,
       user_id,
     } = req.body;
 
@@ -67,13 +68,14 @@ router.post("/create", async (req, res) => {
 
     //database action
     const sql = `INSERT INTO tmcb_dlvan
-    (id,dlvan_users,dlvan_bsins,dlvan_vname,dlvan_crusr,dlvan_upusr)
-    VALUES (?,?,?,?,?,?)`;
+    (id,dlvan_users,dlvan_bsins,dlvan_vname,dlvan_dname,dlvan_crusr,dlvan_upusr)
+    VALUES (?,?,?,?,?,?,?)`;
     const params = [
       id,
       dlvan_users,
       dlvan_bsins,
       dlvan_vname,
+      dlvan_dname,
       user_id,
       user_id,
     ];
@@ -102,6 +104,7 @@ router.post("/update", async (req, res) => {
       dlvan_users,
       dlvan_bsins,
       dlvan_vname,
+      dlvan_dname,
       user_id,
     } = req.body;
 
@@ -123,6 +126,7 @@ router.post("/update", async (req, res) => {
     SET dlvan_users = ?,
     dlvan_bsins = ?,
     dlvan_vname = ?,
+    dlvan_dname = ?,
     dlvan_upusr = ?,
     dlvan_rvnmr = dlvan_rvnmr + 1
     WHERE id = ?`;
@@ -130,6 +134,7 @@ router.post("/update", async (req, res) => {
       dlvan_users,
       dlvan_bsins,
       dlvan_vname,
+      dlvan_dname,
       user_id,
       id,
     ];
