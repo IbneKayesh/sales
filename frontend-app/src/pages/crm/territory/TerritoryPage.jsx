@@ -1,11 +1,11 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import ContactListComp from "./ContactListComp";
-import ContactFormComp from "./ContactFormComp";
-import { useContacts } from "@/hooks/crm/useContacts";
+import TerritoryListComp from "./TerritoryListComp";
+import TerritoryFormComp from "./TerritoryFormComp";
+import { useTerritory } from "@/hooks/crm/useTerritory";
 
-const ContactPage = () => {
+const TerritoryPage = () => {
   const {
     dataList,
     isBusy,
@@ -19,12 +19,7 @@ const ContactPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-    cntct_sorceOptions,
-    //ledger
-    handleShowContactLedger,
-    ledgerDataList,
-    handleFilterDataList
-  } = useContacts();
+  } = useTerritory();
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -33,10 +28,10 @@ const ContactPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Contact"
+            ? "Territory"
             : formData.id
-            ? "Edit Contact"
-            : "Add New Contact"}
+            ? "Edit Territory"
+            : "New Territory"}
         </h3>
 
         <div className="flex gap-2">
@@ -52,24 +47,20 @@ const ContactPage = () => {
 
   return (
     <>
-      <Card header={getHeader()} className="bg-dark-200 border-round p-3">
+      <Card header={getHeader()} className="border-round p-3">
         {currentView === "list" ? (
-          <ContactListComp
+          <TerritoryListComp
             dataList={dataList}
             onEdit={handleEdit}
             onDelete={handleDelete}
-            onShowContactLedger={handleShowContactLedger}
-            ledgerDataList={ledgerDataList}
-            onFilterDataList={handleFilterDataList}
           />
         ) : (
-          <ContactFormComp
+          <TerritoryFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
             onChange={handleChange}
             onSave={handleSave}
-            cntct_sorceOptions={cntct_sorceOptions}
           />
         )}
       </Card>
@@ -77,4 +68,4 @@ const ContactPage = () => {
   );
 };
 
-export default ContactPage;
+export default TerritoryPage;

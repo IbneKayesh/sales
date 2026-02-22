@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Feb 18, 2026 at 11:54 AM
+-- Generation Time: Feb 22, 2026 at 10:19 AM
 -- Server version: 12.1.2-MariaDB-ubu2404
 -- PHP Version: 8.3.26
 
@@ -122,6 +122,7 @@ CREATE TABLE `tmcb_dlvan` (
   `dlvan_users` varchar(50) NOT NULL,
   `dlvan_bsins` varchar(50) NOT NULL,
   `dlvan_vname` varchar(50) NOT NULL,
+  `dlvan_dname` varchar(50) DEFAULT NULL,
   `dlvan_actve` tinyint(1) NOT NULL DEFAULT 1,
   `dlvan_crusr` varchar(50) NOT NULL,
   `dlvan_crdat` datetime NOT NULL DEFAULT current_timestamp(),
@@ -134,10 +135,9 @@ CREATE TABLE `tmcb_dlvan` (
 -- Dumping data for table `tmcb_dlvan`
 --
 
-INSERT INTO `tmcb_dlvan` (`id`, `dlvan_users`, `dlvan_bsins`, `dlvan_vname`, `dlvan_actve`, `dlvan_crusr`, `dlvan_crdat`, `dlvan_upusr`, `dlvan_updat`, `dlvan_rvnmr`) VALUES
-('94a91e9a-7099-453b-95d2-9caefc026592', 'user1', 'business1', 'VANT 2', 1, 'user1', '2026-02-18 11:54:11', 'user1', '2026-02-18 11:54:11', 1),
-('van1', 'user1', 'business1', 'Delivery Van 1', 1, 'user1', '2026-02-18 10:27:25', 'user1', '2026-02-18 11:53:50', 2),
-('van2', 'user1', 'business1', 'Delivery Van 2', 1, 'user1', '2026-02-18 10:27:25', 'user1', '2026-02-18 11:54:02', 1);
+INSERT INTO `tmcb_dlvan` (`id`, `dlvan_users`, `dlvan_bsins`, `dlvan_vname`, `dlvan_dname`, `dlvan_actve`, `dlvan_crusr`, `dlvan_crdat`, `dlvan_upusr`, `dlvan_updat`, `dlvan_rvnmr`) VALUES
+('54aeb07f-f041-423d-914f-c5de7915f14f', 'user1', 'business1', 'Delivery Van 1', '', 1, 'user1', '2026-02-19 08:07:28', 'user1', '2026-02-19 08:07:28', 1),
+('b9f74607-1419-4559-8188-6f1b5bdc5165', 'user1', 'business1', 'Pickup No 1', '', 1, 'user1', '2026-02-19 08:07:47', 'user1', '2026-02-19 08:07:47', 1);
 
 -- --------------------------------------------------------
 
@@ -164,7 +164,8 @@ CREATE TABLE `tmcb_dzone` (
 --
 
 INSERT INTO `tmcb_dzone` (`id`, `dzone_users`, `dzone_bsins`, `dzone_cntry`, `dzone_dname`, `dzone_actve`, `dzone_crusr`, `dzone_crdat`, `dzone_upusr`, `dzone_updat`, `dzone_rvnmr`) VALUES
-('bogra', 'user1', 'business1', 'Bangladesh', 'Bogra', 1, 'user1', '2026-01-25 04:45:54', 'user1', '2026-01-31 10:15:30', 1),
+('bogra', 'user1', 'business1', 'Bangladesh', 'Bogra', 1, 'user1', '2026-01-25 04:45:54', 'user1', '2026-02-22 07:21:33', 4),
+('d40b3bdc-9f1c-49b7-a75c-c6bd244b7414', 'user1', 'business1', 'Bangladesh', 'Narshindi', 1, 'user1', '2026-02-22 07:21:44', 'user1', '2026-02-22 07:22:13', 3),
 ('dhaka', 'user1', 'business1', 'Bangladesh', 'Dhaka', 1, 'user1', '2026-01-25 04:45:54', 'user1', '2026-01-31 10:15:30', 1),
 ('narayanganj', 'user1', 'business1', 'Bangladesh', 'Narayanganj', 1, 'user1', '2026-01-25 04:45:54', 'user1', '2026-01-31 10:15:30', 1),
 ('sirajganj', 'user1', 'business1', 'Bangladesh', 'Sirajganj', 1, 'user1', '2026-01-25 04:45:54', 'user1', '2026-01-31 10:15:30', 1);
@@ -197,6 +198,8 @@ CREATE TABLE `tmcb_rutes` (
 
 INSERT INTO `tmcb_rutes` (`id`, `rutes_users`, `rutes_bsins`, `rutes_rname`, `rutes_dname`, `rutes_trtry`, `rutes_lvdat`, `rutes_actve`, `rutes_crusr`, `rutes_crdat`, `rutes_upusr`, `rutes_updat`, `rutes_rvnmr`) VALUES
 ('0dccfa7d-79fb-4bea-9bcd-093349952827', 'user1', 'business1', 'Adarshanagar', 'Saturday', 'middle-badda', '2026-02-18 09:12:06', 1, 'user1', '2026-02-18 09:12:06', 'user1', '2026-02-18 09:13:55', 3),
+('40aff81b-a6e6-4620-90e3-af00c2fc4d09', 'user1', 'business1', 'Gulshan 1', 'Saturday', 'f38bb6ac-acd3-4e0c-95f8-c74b3e27b9b4', '2026-02-22 09:39:40', 1, 'user1', '2026-02-22 09:39:40', 'user1', '2026-02-22 09:39:40', 1),
+('ba229ad6-ca9b-442e-9ccc-4f1bf00ca1b6', 'user1', 'business1', 'Bogra Bazar', 'Saturday', '3231dde2-0d26-4af6-8042-4836cce8e7a1', '2026-02-22 09:35:11', 1, 'user1', '2026-02-22 09:35:11', 'user1', '2026-02-22 09:35:11', 1),
 ('fbef9767-dcf7-4577-af2b-6c4357cb90cb', 'user1', 'business1', 'Uttar Badda Bazar', 'Monday', 'uttar-badda', '2026-02-18 09:14:23', 1, 'user1', '2026-02-18 09:14:23', 'user1', '2026-02-18 09:14:32', 2),
 ('route1', 'user1', 'business1', 'Hossain Market', 'Sunday', 'uttar-badda', '2026-02-18 05:45:22', 1, '', '2026-02-18 05:45:22', 'user1', '2026-02-18 09:14:09', 3);
 
@@ -225,13 +228,14 @@ CREATE TABLE `tmcb_tarea` (
 --
 
 INSERT INTO `tmcb_tarea` (`id`, `tarea_users`, `tarea_bsins`, `tarea_dzone`, `tarea_tname`, `tarea_actve`, `tarea_crusr`, `tarea_crdat`, `tarea_upusr`, `tarea_updat`, `tarea_rvnmr`) VALUES
-('adamdighi', 'user1', 'business1', 'bogra', 'Adamdighi', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('adamdighi', 'user1', 'business1', 'bogra', 'Adamdighi', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-02-22 07:44:54', 4),
 ('araihazar', 'user1', 'business1', 'narayanganj', 'Araihazar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('b4dfa361-9d64-43a9-9330-bdcfe91d82c4', 'user1', 'business1', 'dhaka', 'Gulshan', 1, 'user1', '2026-02-22 09:13:29', 'user1', '2026-02-22 09:13:29', 1),
 ('badda', 'user1', 'business1', 'dhaka', 'Badda', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
 ('bandar', 'user1', 'business1', 'narayanganj', 'Bandar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
 ('belkuchi', 'user1', 'business1', 'sirajganj', 'Belkuchi', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
 ('bhairob', 'user1', 'business1', 'narayanganj', 'Bhairob', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('bogra-sadar', 'user1', 'business1', 'bogra', 'Bogra Sadar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
+('bogra-sadar', 'user1', 'business1', 'bogra', 'Bogra Sadar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-02-22 07:44:38', 2),
 ('chauhali', 'user1', 'business1', 'sirajganj', 'Chauhali', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
 ('dhunat', 'user1', 'business1', 'bogra', 'Dhunat', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
 ('dhupchanchia', 'user1', 'business1', 'bogra', 'Dhupchanchia', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
@@ -282,6 +286,9 @@ CREATE TABLE `tmcb_trtry` (
 --
 
 INSERT INTO `tmcb_trtry` (`id`, `trtry_users`, `trtry_bsins`, `trtry_tarea`, `trtry_wname`, `trtry_actve`, `trtry_crusr`, `trtry_crdat`, `trtry_upusr`, `trtry_updat`, `trtry_rvnmr`) VALUES
+('3231dde2-0d26-4af6-8042-4836cce8e7a1', 'user1', 'business1', 'sherpur', 'Chandaikona', 1, 'user1', '2026-02-22 09:06:08', 'user1', '2026-02-22 09:06:08', 1),
+('953aaae2-de9b-4b9d-96bb-d21292738ca0', 'user1', 'business1', 'badda', 'South Badda', 1, 'user1', '2026-02-22 09:00:01', 'user1', '2026-02-22 09:00:12', 3),
+('f38bb6ac-acd3-4e0c-95f8-c74b3e27b9b4', 'user1', 'business1', 'b4dfa361-9d64-43a9-9330-bdcfe91d82c4', 'Gulshan 1 Circle', 1, 'user1', '2026-02-22 09:16:27', 'user1', '2026-02-22 09:16:27', 1),
 ('middle-badda', 'user1', 'business1', 'badda', 'Middle Badda', 1, 'user1', '2026-02-18 05:36:57', 'user1', '2026-02-18 05:44:00', 1),
 ('uttar-badda', 'user1', 'business1', 'badda', 'Uttar Badda', 1, 'user1', '2026-02-18 05:36:57', 'user1', '2026-02-18 05:43:55', 1);
 
@@ -421,6 +428,79 @@ CREATE TABLE `tmeb_expns` (
   `expns_upusr` varchar(50) NOT NULL,
   `expns_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `expns_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmeb_fodrc`
+--
+
+CREATE TABLE `tmeb_fodrc` (
+  `id` varchar(50) NOT NULL,
+  `fodrc_fodrm` varchar(50) NOT NULL,
+  `fodrc_bitem` varchar(50) NOT NULL,
+  `fodrc_items` varchar(50) NOT NULL,
+  `fodrc_itrat` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_itqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_itamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_dspct` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_dsamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_vtpct` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_vtamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_csrat` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_ntamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_notes` varchar(50) DEFAULT NULL,
+  `fodrc_attrb` varchar(300) DEFAULT NULL,
+  `fodrc_dlqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_dgqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_srcnm` varchar(50) NOT NULL,
+  `fodrc_refid` varchar(50) NOT NULL,
+  `fodrc_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `fodrc_crusr` varchar(50) NOT NULL,
+  `fodrc_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `fodrc_upusr` varchar(50) NOT NULL,
+  `fodrc_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `fodrc_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmeb_fodrm`
+--
+
+CREATE TABLE `tmeb_fodrm` (
+  `id` varchar(50) NOT NULL,
+  `fodrm_users` varchar(50) NOT NULL,
+  `fodrm_bsins` varchar(50) NOT NULL,
+  `fodrm_cntct` varchar(50) NOT NULL,
+  `fodrm_ocuid` varchar(50) NOT NULL,
+  `fodrm_rutes` varchar(50) NOT NULL,
+  `fodrm_trnno` varchar(50) NOT NULL,
+  `fodrm_trdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `fodrm_trnte` varchar(100) DEFAULT NULL,
+  `fodrm_odamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_dlamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_dsamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_vtamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_rnamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_ttamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_pyamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_pdamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_duamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_ispad` tinyint(1) NOT NULL DEFAULT 0,
+  `fodrm_ispst` tinyint(1) NOT NULL DEFAULT 0,
+  `fodrm_iscls` tinyint(1) NOT NULL DEFAULT 0,
+  `fodrm_vatcl` tinyint(1) NOT NULL DEFAULT 0,
+  `fodrm_dlvan` varchar(50) NOT NULL,
+  `fodrm_dldat` datetime NOT NULL DEFAULT current_timestamp(),
+  `fodrm_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `fodrm_crusr` varchar(50) NOT NULL,
+  `fodrm_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `fodrm_upusr` varchar(50) NOT NULL,
+  `fodrm_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `fodrm_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -1373,10 +1453,10 @@ INSERT INTO `tmsb_menus` (`id`, `menus_mdule`, `menus_gname`, `menus_gicon`, `me
 ('accounts-payables', 'accounts', 'Transactions', 'pi pi-folder-plus', 'Payables', 'basic', 'pi pi-money-bill', '/home/accounts/payables', NULL, 701, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-03 08:32:13', 1),
 ('accounts-receivables', 'accounts', 'Transactions', 'pi pi-folder-plus', 'Receivables', 'basic', 'pi pi-money-bill', '/home/accounts/receivables', NULL, 702, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-03 08:32:18', 1),
 ('crm-contacts', 'crm', 'CRM', 'pi pi-address-book', 'Contacts', 'basic', 'pi pi-id-card', '/home/crm/contact', NULL, 1, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-03 08:11:05', 1),
-('crm-delivery-van', 'crm', 'CRM', 'pi pi-address-book', 'Delivery Van', 'basic', 'pi pi-id-card', '/home/crm/delivery-van', NULL, 1, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-03 08:11:05', 1),
-('crm-dzone', 'crm', 'Territory', 'pi pi-address-book', 'Zone', 'basic', 'pi pi-id-card', '/home/crm/zone', NULL, 4, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-18 08:23:36', 1),
+('crm-delivery-van', 'crm', 'CRM', 'pi pi-address-book', 'Delivery Van', 'basic', 'pi pi-truck', '/home/crm/delivery-van', NULL, 1, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-19 08:33:32', 1),
+('crm-dzone', 'crm', 'Territory', 'pi pi-address-book', 'Zone', 'basic', 'pi pi-id-card', '/home/crm/dzone', NULL, 4, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-22 07:11:01', 1),
 ('crm-order-route', 'crm', 'Territory', 'pi pi-address-book', 'Routes', 'basic', 'pi pi-directions', '/home/crm/order-route', NULL, 1, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-18 08:40:19', 1),
-('crm-tarea', 'crm', 'Territory', 'pi pi-address-book', 'Area', 'basic', 'pi pi-id-card', '/home/crm/areas', NULL, 3, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-18 08:23:33', 1),
+('crm-tarea', 'crm', 'Territory', 'pi pi-address-book', 'Area', 'basic', 'pi pi-id-card', '/home/crm/tarea', NULL, 3, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-22 07:33:20', 1),
 ('crm-territory', 'crm', 'Territory', 'pi pi-address-book', 'Territory', 'basic', 'pi pi-id-card', '/home/crm/territory', NULL, 2, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-18 08:23:31', 1),
 ('hrms-employees', 'hrms', 'Employee', 'pi pi-users', 'Employee', 'basic', 'pi pi-user', '/home/hrms/employees', NULL, 1, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-03 08:24:23', 1),
 ('inventory-category', 'shop', 'Inventory', 'pi pi-box', 'Category', 'basic', 'pi pi-list-check', '/home/inventory/category', NULL, 321, 1, 'user1', '2026-02-02 09:58:00', 'user1', '2026-02-03 08:30:30', 1),
@@ -1856,6 +1936,18 @@ ALTER TABLE `tmeb_crcpt`
 -- Indexes for table `tmeb_expns`
 --
 ALTER TABLE `tmeb_expns`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmeb_fodrc`
+--
+ALTER TABLE `tmeb_fodrc`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmeb_fodrm`
+--
+ALTER TABLE `tmeb_fodrm`
   ADD PRIMARY KEY (`id`);
 
 --

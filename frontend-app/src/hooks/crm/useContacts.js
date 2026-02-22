@@ -19,7 +19,6 @@ export const useContacts = () => {
   const [formData, setFormData] = useState(dataModel);
 
   const cntct_sorceOptions = [{ label: "Local", value: "Local" }];
-  const cntct_cntryOptions = [{ label: "Bangladesh", value: "Bangladesh" }];
 
   // const [ledgerContactList, setLedgerContactList] = useState([]);
   // const [contactPaymentList, setContactPaymentList] = useState([]);
@@ -237,7 +236,6 @@ export const useContacts = () => {
     handleRefresh,
     handleSave,
     cntct_sorceOptions,
-    cntct_cntryOptions,
     contactListDdl,
     fetchContactListDdl,
     //ledger

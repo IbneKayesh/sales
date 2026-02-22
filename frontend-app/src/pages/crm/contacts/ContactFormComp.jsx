@@ -8,6 +8,7 @@ import { useAreasSgd } from "@/hooks/crm/useAreasSgd";
 import { useEffect } from "react";
 import { contactTypeOptions } from "@/utils/vtable";
 import RequiredText from "@/components/RequiredText";
+import { countryOptions } from "@/utils/vtable";
 
 const ContactFormComp = ({
   isBusy,
@@ -16,7 +17,6 @@ const ContactFormComp = ({
   onChange,
   onSave,
   cntct_sorceOptions,
-  cntct_cntryOptions,
 }) => {
   const { dataList: dzoneOptions, handleLoadZones } = useZoneSgd();
   const { dataList: tareaOptions, handleLoadAreas } = useAreasSgd();
@@ -208,7 +208,7 @@ const ContactFormComp = ({
         <Dropdown
           name="cntct_cntry"
           value={formData.cntct_cntry}
-          options={cntct_cntryOptions}
+          options={countryOptions}
           onChange={(e) => onChange("cntct_cntry", e.value)}
           className={`w-full ${errors.cntct_cntry ? "p-invalid" : ""}`}
           placeholder={`Select ${tmcb_cntcs.cntct_cntry.label}`}

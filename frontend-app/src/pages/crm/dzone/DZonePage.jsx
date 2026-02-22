@@ -1,11 +1,11 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import ContactListComp from "./ContactListComp";
-import ContactFormComp from "./ContactFormComp";
-import { useContacts } from "@/hooks/crm/useContacts";
+import DZoneListComp from "./DZoneListComp";
+import DZoneFormComp from "./DZoneFormComp";
+import { useDZone } from "@/hooks/crm/useDZone";
 
-const ContactPage = () => {
+const DZonePage = () => {
   const {
     dataList,
     isBusy,
@@ -19,12 +19,7 @@ const ContactPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-    cntct_sorceOptions,
-    //ledger
-    handleShowContactLedger,
-    ledgerDataList,
-    handleFilterDataList
-  } = useContacts();
+  } = useDZone();
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -33,10 +28,10 @@ const ContactPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Contact"
+            ? "District/Zone"
             : formData.id
-            ? "Edit Contact"
-            : "Add New Contact"}
+            ? "Edit District/Zone"
+            : "New District/Zone"}
         </h3>
 
         <div className="flex gap-2">
@@ -52,24 +47,20 @@ const ContactPage = () => {
 
   return (
     <>
-      <Card header={getHeader()} className="bg-dark-200 border-round p-3">
+      <Card header={getHeader()} className="border-round p-3">
         {currentView === "list" ? (
-          <ContactListComp
+          <DZoneListComp
             dataList={dataList}
             onEdit={handleEdit}
             onDelete={handleDelete}
-            onShowContactLedger={handleShowContactLedger}
-            ledgerDataList={ledgerDataList}
-            onFilterDataList={handleFilterDataList}
           />
         ) : (
-          <ContactFormComp
+          <DZoneFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
             onChange={handleChange}
             onSave={handleSave}
-            cntct_sorceOptions={cntct_sorceOptions}
           />
         )}
       </Card>
@@ -77,4 +68,4 @@ const ContactPage = () => {
   );
 };
 
-export default ContactPage;
+export default DZonePage;

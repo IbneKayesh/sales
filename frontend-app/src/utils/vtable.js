@@ -151,6 +151,11 @@ const dayNameOptions = [
   { label: "Friday", value: "Friday" },
 ];
 
+const countryOptions = [
+  { label: "Bangladesh", value: "Bangladesh" },
+  { label: "Other", value: "Other" },
+];
+
 export {
   getListByTransHead,
   getTransHeadList,
@@ -169,6 +174,7 @@ export {
   employeeStatusOptions,
   contactTypeOptions,
   dayNameOptions,
+  countryOptions,
 };
 
 /*

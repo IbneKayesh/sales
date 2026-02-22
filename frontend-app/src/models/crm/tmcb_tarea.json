@@ -1,0 +1,53 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "tarea_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "tarea_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter your business id",
+    "required": false
+  },
+  "tarea_dzone": {
+    "type": "string",
+    "label": "Zone name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter zone name",
+    "required": true,
+    "default": ""
+  },
+  "tarea_tname": {
+    "type": "string",
+    "label": "Area name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter area name",
+    "required": true,
+    "default": ""
+  },
+  "dzone_cntry": {
+    "type": "string",
+    "label": "Country name",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter country name",
+    "required": false,
+    "default": ""
+  }
+}

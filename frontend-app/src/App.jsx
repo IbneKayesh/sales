@@ -20,6 +20,9 @@ import AuthPage from "./pages/auth/AuthPage";
 import ContactPage from "./pages/crm/contacts/ContactPage.jsx";
 import OrderRoutePage from "./pages/crm/orderroute/OrderRoutePage.jsx";
 import DeliveryVanPage from "./pages/crm/deliveryvan/DeliveryVanPage.jsx";
+import DZonePage from "./pages/crm/dzone/DZonePage.jsx";
+import TAreaPage from "./pages/crm/tarea/TAreaPage.jsx";
+import TerritoryPage from "./pages/crm/territory/TerritoryPage.jsx";
 //hrms
 import EmployeesPage from "./pages/hrms/employee/EmployeesPage.jsx";
 
@@ -120,6 +123,9 @@ function AppRoutes() {
             <Route path="crm/contact" element={<ContactPage />} />
             <Route path="crm/order-route" element={<OrderRoutePage />} />
             <Route path="crm/delivery-van" element={<DeliveryVanPage />} />
+            <Route path="crm/dzone" element={<DZonePage />} />
+            <Route path="crm/tarea" element={<TAreaPage />} />
+            <Route path="crm/territory" element={<TerritoryPage />} />
             //hrms
             <Route path="hrms/employees" element={<EmployeesPage />} />
             //accounts

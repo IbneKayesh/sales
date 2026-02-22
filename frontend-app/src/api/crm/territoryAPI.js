@@ -7,4 +7,24 @@ export const territoryAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  create: (data) =>
+    apiRequest("/crm/territory/create", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  update: (data) =>
+    apiRequest("/crm/territory/update", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  delete: (data) =>
+    apiRequest("/crm/territory/delete", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getByArea: (data) =>
+    apiRequest("/crm/territory/get-by-tarea", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };
