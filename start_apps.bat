@@ -9,6 +9,8 @@ echo Show choice as below-
 echo 1. Web + API
 echo 2. Mobile + API
 echo 3. Web + Mobile + API
+echo 4. Web
+echo 5. Mobile
 echo 0. Exit
 echo.
 
@@ -17,6 +19,8 @@ set /p choice="Enter your choice: "
 if %choice%==1 goto WA
 if %choice%==2 goto MA
 if %choice%==3 goto WMA
+if %choice%==4 goto W
+if %choice%==5 goto M
 if %choice%==0 goto END
 
 echo Invalid choice. Try again.
@@ -40,6 +44,16 @@ start cmd /k "cd backend-app && node server.js"
 start cmd /k "cd frontend-app && npm run dev"
 start cmd /k "cd mobile-app && npm run dev"
 echo  ---- Web + Mobile + API Running ----
+goto MENU
+
+:W
+start cmd /k "cd frontend-app && npm run dev"
+echo  ---- Web Running ----
+goto MENU
+
+:M
+start cmd /k "cd mobile-app && npm run dev"
+echo  ---- Mobile Running ----
 goto MENU
 
 :END

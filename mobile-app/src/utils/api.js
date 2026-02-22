@@ -5,7 +5,7 @@ const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
 
   // Get token from storage
-  const token = localStorage.getItem("sgd25");
+  const token = localStorage.getItem("sgdMobile25");
 
   const config = {
     headers: {

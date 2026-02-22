@@ -113,8 +113,8 @@ export const AuthProvider = ({ children }) => {
     setBusiness(null);
     setIsMobileView(false);
     clearStorageData();
-    sessionStorage.removeItem("users_sview");
-    localStorage.removeItem("sgd25");
+    sessionStorage.removeItem("users_sview");    
+    localStorage.removeItem("sgdWeb25");
   };
 
   const register = async (register) => {

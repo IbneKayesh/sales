@@ -1,12 +1,8 @@
 // Centralized localStorage utility for managing app data
-const STORAGE_KEY = "appData";
+const STORAGE_KEY = "sgdMobile";
 
 const defaultData = {
   user: null,
-  fullMode: false,
-  leftbarCollapsed: false,
-  expandedMenu: null,
-  navigationIcons: [],
   business: null,
   // Add other data as needed
 };

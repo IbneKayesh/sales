@@ -1,31 +1,150 @@
-import { usePermissions } from "@/hooks/usePermissions";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useModule, MODULES } from "../context/ModuleContext";
+import { ArrowRight } from "lucide-react";
 
 const ModulePage = () => {
-  const { dataList, isBusy, handleFetchMenus } = usePermissions();
+  const { selectModule } = useModule();
+  const navigate = useNavigate();
+
+  const handleModuleClick = (mod) => {
+    selectModule(mod.id);
+    navigate("/");
+  };
+
   return (
-    <div className="p-3 min-h-screen bg-bluegray-50 font-sans flex align-items-center justify-content-center">
-      <div className="grid justify-content-center w-full max-w-5xl">
-        {dataList.map((module, index) => (
-          <div
-            key={module.id}
-            className="col-12 md:col-1 p-2 fadein animation-duration-500"
-            style={{ animationDelay: `${index * 50}ms` }}
-          >
-            <div
-              className="bg-white p-3 shadow-1 hover:shadow-4 border-round-xl cursor-pointer transition-all transition-duration-300 flex flex-column align-items-center justify-content-center text-center transform hover:-translate-y-1"
-              onClick={() => handleFetchMenus(module.id)}
+    <div className="app-content">
+      <div style={{ padding: "16px 12px 8px" }}>
+        <h2
+          style={{
+            margin: "0 0 4px",
+            fontSize: "20px",
+            color: "var(--on-background)",
+          }}
+        >
+          Modules
+        </h2>
+        <p
+          style={{
+            margin: 0,
+            fontSize: "13px",
+            color: "var(--text-secondary)",
+          }}
+        >
+          Select a module to get started
+        </p>
+      </div>
+
+      <div
+        style={{
+          padding: "8px 12px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}
+      >
+        {MODULES.map((mod) => {
+          const Icon = mod.icon;
+          return (
+            <button
+              key={mod.id}
+              onClick={() => handleModuleClick(mod)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "14px",
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: "14px",
+                padding: "14px",
+                cursor: "pointer",
+                width: "100%",
+                textAlign: "left",
+                boxShadow: "var(--shadow)",
+                transition: "transform 0.15s, box-shadow 0.15s",
+              }}
+              onMouseDown={(e) =>
+                (e.currentTarget.style.transform = "scale(0.98)")
+              }
+              onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")}
             >
+              {/* Icon Chip */}
               <div
-                className={`${module.mdule_color} text-white border-round-xl w-full h-6rem flex align-items-center justify-content-center mb-2 shadow-2`}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 14,
+                  background: mod.bg,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
               >
-                <i className={`pi ${module.mdule_micon} text-5xl`}></i>
+                <Icon size={24} color={mod.color} />
               </div>
-              <span className="text-900 font-bold text-base pb-1">
-                {module.mdule_mname}
-              </span>
-            </div>
-          </div>
-        ))}
+
+              {/* Text */}
+              <div style={{ flex: 1 }}>
+                <div
+                  style={{
+                    fontWeight: 700,
+                    fontSize: "15px",
+                    color: "var(--on-surface)",
+                  }}
+                >
+                  {mod.label}
+                </div>
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "var(--text-secondary)",
+                    marginTop: "2px",
+                  }}
+                >
+                  {mod.description}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "6px",
+                    marginTop: "8px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {mod.menus.slice(0, 3).map((menu) => (
+                    <span
+                      key={menu.label}
+                      style={{
+                        fontSize: "10px",
+                        background: mod.bg,
+                        color: mod.color,
+                        borderRadius: "6px",
+                        padding: "2px 8px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {menu.label}
+                    </span>
+                  ))}
+                  {mod.menus.length > 3 && (
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        color: "var(--text-secondary)",
+                        padding: "2px 0",
+                      }}
+                    >
+                      +{mod.menus.length - 3} more
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <ArrowRight size={18} color="var(--text-secondary)" />
+            </button>
+          );
+        })}
       </div>
     </div>
   );

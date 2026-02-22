@@ -5,8 +5,6 @@ const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const { createSession } = require("../../sessionManager");
 
-
-
 // registration
 router.post("/register", async (req, res) => {
   try {
@@ -107,7 +105,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-
 // login
 router.post("/login", async (req, res) => {
   try {
@@ -127,7 +124,7 @@ router.post("/login", async (req, res) => {
     usr.users_drole,usr.users_users,usr.users_stats,usr.users_regno,
     usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,
     bsn.bsins_bname, bsn.bsins_addrs, bsn.bsins_email, bsn.bsins_cntct, bsn.bsins_image, bsn.bsins_binno, bsn.bsins_btags, bsn.bsins_cntry, 
-    bsn.bsins_bstyp, bsn.bsins_tstrn, bsn.bsins_prtrn, bsn.bsins_sltrn, bsn.bsins_stdat, bsn.bsins_pbviw, 'mobile' as users_sview
+    bsn.bsins_bstyp, bsn.bsins_tstrn, bsn.bsins_prtrn, bsn.bsins_sltrn, bsn.bsins_stdat, bsn.bsins_pbviw, 'web' as users_sview
     FROM tmsb_users usr
     LEFT JOIN tmsb_bsins bsn ON usr.users_bsins = bsn.id
     WHERE usr.users_email = ?
@@ -279,7 +276,6 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
-
 // permissions/modules
 router.post("/permissions/modules", async (req, res) => {
   try {
@@ -318,7 +314,6 @@ router.post("/permissions/modules", async (req, res) => {
     });
   }
 });
-
 
 // permissions/menus
 router.post("/permissions/menus", async (req, res) => {
@@ -359,73 +354,4 @@ router.post("/permissions/menus", async (req, res) => {
   }
 });
 
-
-// mobile-login
-router.post("/mobile-login", async (req, res) => {
-  try {
-    const { emply_ecode, users_pswrd } = req.body;
-
-    // Validate input
-    if (!emply_ecode || !users_pswrd) {
-      return res.json({
-        success: false,
-        message: "Email and password are required",
-        data: null,
-      });
-    }
-
-    //database action
-    const sql = `SELECT emp.id, emp.emply_users, emp.emply_bsins, emp.emply_ecode, emp.emply_crdno, emp.emply_ename, emp.emply_econt, emp.emply_email, 'mobile' AS users_sview
-    FROM tmhb_emply emp
-    WHERE emp.emply_actve = 1
-    AND emp.emply_stats = 'Active'
-    AND emp.emply_ecode = ?
-    AND emp.emply_pswrd = ?
-    AND emp.emply_login = 1`;
-    const params = [emply_ecode, users_pswrd];
-
-    const row = await dbGet(
-      sql,
-      params,
-      `Get user login credential for ${emply_ecode}`,
-    );
-    if (!row) {
-      return res.json({
-        success: false,
-        message: "Id or Password is not valid",
-        data: null,
-      });
-    }
-
-    // inside login route, after validating user
-    const session = createSession(row);
-
-    // Generate JWT
-    const token = jwt.sign(
-      {
-        id: row.id,
-        email: row.emply_crdno,
-        role: 'FF', //Field Force
-        sessionId: session.sessionId,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" },
-    );
-
-    res.json({
-      success: true,
-      message: "User logged in successfully",
-      data: row,
-      token: token,
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: null,
-      token: null,
-    });
-  }
-});
 module.exports = router;

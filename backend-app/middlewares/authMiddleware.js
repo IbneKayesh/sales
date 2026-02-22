@@ -11,6 +11,7 @@ const authMiddleware = (req, res, next) => {
     "/api/auth/reset-password",
     "/api/health",
     "/api/ping",
+    "/api/mobile/auth/login"
   ];
 
   // Normalize path to ignore query parameters and trailing slashes

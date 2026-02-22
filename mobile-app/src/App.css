@@ -1,123 +1,415 @@
-.p-accordion-tab .p-accordion-header{
-  padding: 1px;
-  background-color: #a0a0a0;
-  border-radius: 5px;
+/* ── Containers ────────────────────────────────────────── */
+.app-container {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-top: 56px; /* Room for TopNav */
+  padding-bottom: 80px; /* Room for BottomNav */
+  animation: fadeIn 0.3s ease-in;
 }
 
-/* Utility class for overlay-light background */
-.bg-overlay-light {
-  background: var(--overlay-light);
+.page-container {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-top: 50px; /* Room for Topbar */
+  padding-bottom: 60px; /* Room for Bottombar */
+  animation: fadeIn 0.3s ease-in;
 }
 
-
-/* Global CSS for all DataTable cells */
-.p-datatable .p-datatable-thead > tr > th {
-  padding: 0.6rem 0.8rem !important;
-}
-
-.p-datatable .p-datatable-tbody > tr > td {
-  padding: 0.5rem 0.8rem !important;
-}
-
-/* Compact versions for tables with size="small" */
-.p-datatable.p-datatable-sm .p-datatable-thead > tr > th {
-  background-color: #616161;
-  color: white;
-  padding: 0.4rem 0.6rem !important;
-}
-
-.p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
-  padding: 0.2rem 0.6rem !important;
-}
-
-/* Global PrimeReact Button Padding Reduction */
-.p-button {
-  padding: 0.5rem 0.85rem !important;
-  gap: 0.4rem;
-}
-
-.p-button.p-button-sm {
-  padding: 0.48rem 0.7rem !important;
-}
-
-.p-button .p-button-label {
-  font-size: 0.875rem !important;
-  font-weight: 500;
-}
-
-.p-button .p-button-icon {
-  font-size: 0.875rem !important;
-}
-
-/* Ensure icon-only buttons are also smaller */
-.p-button.p-button-icon-only {
-  width: 2.25rem !important;
-  height: 2.25rem !important;
-  padding: 0 !important;
-}
-
-.p-button-sm.p-button-icon-only {
-  width: 2.2rem !important;
-  height: 2.22rem !important;
-}
-
-/* Global PrimeReact Input & Dropdown Padding Reduction */
-.p-inputtext, 
-.p-dropdown,
-.p-calendar .p-inputtext {
-  padding: 0.5rem 0.6rem !important;
-  font-size: 0.875rem !important;
-}
-
-.p-dropdown .p-dropdown-label {
-  padding: 0 !important;
-}
-
-.p-dropdown .p-dropdown-trigger {
-  width: 2rem !important;
-}
-
-/* Reduce label spacing in forms */
-label {
-  margin-bottom: 0.25rem !important;
-  font-size: 0.85rem !important;
-}
-
-/* Compact Grid Spacing */
-.grid {
-  margin-top: -0.5rem !important;
-}
-
-.col-12, .md\:col-2, .md\:col-5, .md\:col-1 {
-  padding: 0.5rem !important;
-}
-
-/* Ensure consistent height for all form components */
-.p-inputtext, 
-.p-dropdown,
-.p-calendar,
-.p-calendar .p-inputtext {
-  height: 2.3rem !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-.p-inputgroup {
-  height: 2.3rem !important;
-}
-
-.p-dropdown .p-dropdown-label {
-  line-height: 1 !important;
-}
-
-/* Checkbox alignment container */
-.checkbox-container {
-  height: 2.3rem;
+.divider-container {
   display: flex;
   align-items: center;
+  gap: 10px;
+  margin: 10px 0;
 }
 
-/* Align grid items to the bottom of the label area */
-.form-grid-align {
-  align-items: flex-end !important;
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.divider-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ── Material Elevations & Cards ────────────────────────── */
+.lite-card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 5px;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.lite-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.lite-card-divider {
+  margin: 16px 0;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+
+/* ── Search Bar Layout ────────────────────────── */
+.search-bar {
+  margin-bottom: 0.75rem;
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-field {
+  flex: 1;
+}
+
+.search-field .p-inputtext {
+  width: 100%;
+}
+
+.search-filter-btn {
+  height: 2rem;
+  width: 1.5rem;
+}
+
+/* ── List Container ────────────────────────── */
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Lite Card Item ────────────────────────── */
+.lite-card-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.lite-card-item:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+/* ── Left Section ────────────────────────── */
+.lite-card-item-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.lite-card-item-left-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-color);
+}
+
+.lite-card-item-left-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-color-secondary);
+  margin-top: 2px;
+}
+
+/* ── Right Section ────────────────────────── */
+.lite-card-item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.lite-card-item-right-value {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.lite-card-item-right-tag {
+  font-size: 0.75rem;
+  color: var(--primary-color);
+  margin-top: 2px;
+}
+
+/* ── Footer ────────────────────────── */
+.lite-card-item-footer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--text-color-secondary);
+}
+
+
+
+/* ── Page Headers & Navigation ─────────────────────────── */
+.top-bar {
+  height: 50px;
+  background: var(--surface);
+  color: var(--on-surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1100;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+}
+
+.top-bar-left,
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lite-icon-btn {
+  background: none;
+  border: none;
+  color: var(--on-surface);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.lite-icon-btn:active {
+  background: var(--background);
+  transform: scale(0.92);
+}
+
+.lite-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+}
+
+.lite-page-title {
+  color: var(--on-surface);
+}
+
+.lite-popup-menu {
+  position: absolute;
+  top: 64px;
+  right: 16px;
+  width: 260px;
+  background: var(--surface);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08);
+  z-index: 1100;
+  animation: fadeIn 0.15s ease-out;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+}
+
+/* ===== User Header ===== */
+.lite-user-circle {
+  padding: 18px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.02), transparent);
+}
+
+.lite-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+.lite-user-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--on-surface);
+}
+
+.lite-user-role {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* ===== Attendance Card ===== */
+.lite-menu-item-row-bg {
+  padding: 10px 14px;
+  background: var(--background);
+  border-radius: 14px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.lite-menu-item-row-bg .text-xs {
+  font-weight: 600;
+  color: #22c55e; /* green status */
+}
+
+/* ===== Menu Items ===== */
+.lite-menu-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  color: var(--on-surface);
+}
+
+.lite-menu-item-row:hover {
+  background: var(--background);
+  transform: translateX(4px);
+}
+
+.lite-menu-item-row:active {
+  transform: scale(0.98);
+}
+
+.lite-menu-item-row:last-child {
+  color: #ef4444;
+}
+
+.lite-menu-item-row:last-child:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+
+/* ── Bottom Bar & Navigation ─────────────────────────── */
+.bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: var(--surface);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.nav-item.active {
+  color: var(--primary);
+}
+
+/* ── Navigation Components (Sidebar/Popups) ──────────── */
+.lite-sidebar {
+  position: absolute;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background: var(--surface);
+  z-index: 1200;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.lite-sidebar.open {
+  transform: translateX(280px);
+}
+
+.lite-sidebar-header {
+  padding: 32px 24px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-variant) 100%);
+  color: #fff;
+}
+
+.lite-sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.lite-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  color: var(--on-surface);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lite-sidebar-item:active {
+  background: var(--background);
+  color: var(--primary);
+}
+
+
+.lite-header-btn-primary {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
 }
