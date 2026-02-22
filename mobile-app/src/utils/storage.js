@@ -1,5 +1,5 @@
 // Centralized localStorage utility for managing app data
-const STORAGE_KEY = "sgdMobile";
+const STORAGE_KEY = "sgdma25";
 
 const defaultData = {
   user: null,

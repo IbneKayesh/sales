@@ -33,13 +33,6 @@ export const AuthProvider = ({ children }) => {
     if (storedBusiness) {
       setBusiness(storedBusiness);
     }
-
-    // Restore view preference from sessionStorage (not localStorage)
-    const sessionView = sessionStorage.getItem("users_sview");
-    if (sessionView) {
-      setIsMobileView(sessionView === "mobile");
-    }
-
     setLoading(false);
   }, []);
 
@@ -72,9 +65,9 @@ export const AuthProvider = ({ children }) => {
         setStorageData({ user: userData });
 
         // Handle view preference - store only in memory and sessionStorage
-        const viewMode = users_sview || "web";
-        setIsMobileView(viewMode === "mobile");
-        sessionStorage.setItem("users_sview", viewMode);
+        // const viewMode = users_sview || "web";
+        // setIsMobileView(viewMode === "mobile");
+        // sessionStorage.setItem("users_sview", viewMode);
 
         const businessData = {
           users_bsins: restData.users_bsins,

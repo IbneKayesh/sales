@@ -40,13 +40,17 @@
 /* ── Material Elevations & Cards ────────────────────────── */
 .lite-card {
   background: var(--surface);
-  border-radius: 12px;
-  padding: 1rem;
-  margin: 5px;
-  margin-bottom: 1rem;
   border: 1px solid var(--border);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 13px;
+  margin: 5px;
   transition: all 0.2s ease;
+  margin-bottom: 1rem;
+  gap:3px
 }
 
 .lite-card:active {
@@ -55,21 +59,41 @@
 }
 
 .lite-card-divider {
-  margin: 16px 0;
-  border: none;
-  border-top: 1px solid var(--border);
+  height: 1px;
+  background: var(--border);
+  width: 100%;
+  
 }
 
+.lite-card-empty {
+  padding: 16px 12px 8px;
+}
+
+.lite-card-title {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--on-background);
+}
+
+.lite-card-subtitle {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
 
 /* ── Search Bar Layout ────────────────────────── */
 .search-bar {
-  margin-bottom: 0.75rem;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .search-input-wrapper {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 6px;
 }
 
 .search-field {
@@ -81,84 +105,170 @@
 }
 
 .search-filter-btn {
-  height: 2rem;
-  width: 1.5rem;
+  height: 36px;
+  width: 36px;
 }
 
 /* ── List Container ────────────────────────── */
 .list-container {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
 }
 
 /* ── Lite Card Item ────────────────────────── */
 .lite-card-item {
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+  transition: all 0.15s ease;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 5px;
   padding: 0.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  transition: all 0.2s ease;
+}
+
+.lite-card-item:last-child {
+  border-bottom: none;
 }
 
 .lite-card-item:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
-  transform: translateY(-2px);
+  background: var(--surface-hover);
 }
 
-/* ── Left Section ────────────────────────── */
+/* ── Lite Card Left Section ────────────────────────── */
 .lite-card-item-left {
-  flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .lite-card-item-left-title {
+  font-size: 13px;
   font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--text-color);
+  color: var(--on-surface);
 }
 
 .lite-card-item-left-subtitle {
-  font-size: 0.8rem;
-  color: var(--text-color-secondary);
-  margin-top: 2px;
+ font-size: 11px;
+  color: var(--text-secondary);
 }
 
-/* ── Right Section ────────────────────────── */
+/* ── Lite Card Right Section ────────────────────────── */
 .lite-card-item-right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  gap:4px
 }
 
 .lite-card-item-right-value {
+  font-size: 13px;
   font-weight: 600;
-  font-size: 0.9rem;
+  color: var(--on-surface);
 }
 
 .lite-card-item-right-tag {
-  font-size: 0.75rem;
-  color: var(--primary-color);
+ font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ── Lite Card Footer ────────────────────────── */
+.lite-card-item-footer {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ── Lite Card Item Module ────────────────────────── */
+
+.lite-card-module-container {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lite-card-module-button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.lite-card-module-button:active {
+  transform: scale(0.98);
+}
+
+.lite-card-module-icon-chip {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lite-card-module-content {
+  flex: 1;
+}
+
+.lite-card-module-title {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--on-surface);
+}
+
+.lite-card-module-description {
+  font-size: 12px;
+  color: var(--text-secondary);
   margin-top: 2px;
 }
 
-/* ── Footer ────────────────────────── */
-.lite-card-item-footer {
-  width: 100%;
+.lite-card-module-tags {
   display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--border);
-  font-size: 0.8rem;
-  color: var(--text-color-secondary);
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
 }
 
+.lite-card-module-tag {
+  font-size: 10px;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-weight: 600;
+}
 
+.lite-card-module-more {
+  font-size: 10px;
+  color: var(--text-secondary);
+  padding: 2px 0;
+}
+
+.lite-card-module-arrow {
+  display: flex;
+  align-items: center;
+}
 
 /* ── Page Headers & Navigation ─────────────────────────── */
 .top-bar {
@@ -240,7 +350,7 @@
   gap: 14px;
   align-items: center;
   border-bottom: 1px solid var(--border);
-  background: linear-gradient(to bottom, rgba(0,0,0,0.02), transparent);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.02), transparent);
 }
 
 .lite-avatar {
@@ -254,7 +364,7 @@
   color: #fff;
   font-weight: 700;
   font-size: 16px;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
 }
 
 .lite-user-name {
@@ -318,7 +428,6 @@
   background: rgba(239, 68, 68, 0.08);
 }
 
-
 /* ── Bottom Bar & Navigation ─────────────────────────── */
 .bottom-bar {
   position: absolute;
@@ -372,7 +481,11 @@
 
 .lite-sidebar-header {
   padding: 32px 24px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-variant) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-variant) 100%
+  );
   color: #fff;
 }
 
@@ -399,7 +512,6 @@
   background: var(--background);
   color: var(--primary);
 }
-
 
 .lite-header-btn-primary {
   background: none;

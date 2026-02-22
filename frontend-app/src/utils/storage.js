@@ -1,5 +1,5 @@
 // Centralized localStorage utility for managing app data
-const STORAGE_KEY = "sgd25Web";
+const STORAGE_KEY = "sgdwa25";
 
 const defaultData = {
   user: null,

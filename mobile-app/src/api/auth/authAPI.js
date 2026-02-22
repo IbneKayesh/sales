@@ -7,7 +7,7 @@ export const authAPI = {
       body: JSON.stringify(data),
     }).then((response) => {
       if (response.token) {
-        localStorage.setItem("sgdMobile25", response.token);
+        localStorage.setItem("sgdmt25", response.token);
       }
       return response;
     }),
