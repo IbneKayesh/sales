@@ -1,5 +1,6 @@
 import useOrders from "@/hooks/sales/useOrders";
 import OrderList from "./OrderList";
+import OrderEntry from "./OrderEntry";
 
 const OrderPage = () => {
   const {
@@ -11,7 +12,9 @@ const OrderPage = () => {
     searchData,
     setSearchData,
     orderStatusOptions,
-    filteredOrders
+    filteredOrders,
+    handleCreateOrder,
+    handleBack
   } = useOrders();
   return (
     <div className="page-container">
@@ -23,6 +26,11 @@ const OrderPage = () => {
           setSearchData={setSearchData}
           orderStatusOptions={orderStatusOptions}
           filteredOrders={filteredOrders}
+          onCreateOrder={handleCreateOrder}
+        />
+      )}
+      {currentView === "entry" && (
+        <OrderEntry formData={formData} onBack={handleBack}
         />
       )}
     </div>

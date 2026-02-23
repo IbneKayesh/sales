@@ -6,6 +6,8 @@ import { useRef, useState } from "react";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
+import { useNavigate } from "react-router-dom";
+import { formatDate } from "@/utils/datetime";
 
 const OrderList = ({
   dataList,
@@ -14,9 +16,43 @@ const OrderList = ({
   setSearchData,
   orderStatusOptions,
   filteredOrders,
+  onCreateOrder,
 }) => {
+  const navigate = useNavigate();
   const op = useRef(null);
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Paid":
+        return "#2e7d32";
+      case "Pending":
+        return "#ed6c02";
+      case "Overdue":
+        return "#d32f2f";
+      default:
+        return "#666";
+    }
+  };
+
+  const getStatusBg = (status) => {
+    switch (status) {
+      case "Paid":
+        return "#f0fdf4";
+      case "Pending":
+        return "#fffbeb";
+      case "Overdue":
+        return "#fef2f2";
+      default:
+        return "var(--background)";
+    }
+  };
+  const viewOrder = (id) => {
+    navigate(`/invoice/view/${id}`);
+  };
+
+  const printOrder = (id) => {
+    navigate(`/invoice/print/${id}`);
+  };
   return (
     <div className="lite-card">
       <div className="search-bar">
@@ -78,33 +114,79 @@ const OrderList = ({
       </div>
       <div className="lite-card-divider"></div>
       <div className="list-container">
-        <div className="lite-card-item">
-          <div className="lite-card-item-left">
-            <div className="lite-card-item-left-title">Title</div>
-            <div className="lite-card-item-left-subtitle">Subtitle</div>
+        {dataList.length === 0 && (
+          <div className="lite-card-item">
+            <div className="lite-card-item-left">
+              <div className="lite-card-item-left-title">No orders found</div>
+            </div>
           </div>
-          <div className="lite-card-item-right">
-            <div className="lite-card-item-right-value">Value</div>
-            <div className="lite-card-item-right-tag">tag</div>
-          </div>
-          <div className="lite-card-item-footer">
-            button 1, button 2, button 3, align right
-          </div>
-        </div>
+        )}
+        {filteredOrders.map((item) => (
+          <div
+            key={item.id}
+            className="lite-card-item"
+            style={{
+              background: item.fodrm_odamt === 0 ? "#fffbeb" : "#ffffff",
+            }}
+          >
+            <div className="lite-card-item-left">
+              <div className="lite-card-item-left-title">
+                {item.cnrut_srlno}. {item.cntct_cntnm}
+              </div>
+              <div className="lite-card-item-left-subtitle">
+                {formatDate(item.cnrut_lvdat)}, {item.rutes_dname},{" "}
+                {item.rutes_rname}
+              </div>
+            </div>
+            <div className="lite-card-item-right">
+              <div className="lite-card-item-right-value">
+                {item.fodrm_odamt}
+              </div>
+              <div className="lite-card-item-right-tag">
+                <span
+                  className="badge-pill"
+                  style={{
+                    background: getStatusBg(item.fodrm_stats),
+                    color: getStatusColor(item.fodrm_stats),
+                  }}
+                >
+                  {item.fodrm_stats}
+                </span>
+              </div>
+            </div>
+            <div className="lite-card-item-footer">
+              {item.fodrm_stats === "Pending" ? (
+                <>
+                  <button
+                    className="lite-button lite-button-primary lite-button-sm"
+                    onClick={() => onCreateOrder(item)}
+                  >
+                    <span className="pi pi-pencil mr-1 text-xs"></span>
+                    Create
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className="lite-button lite-button-info lite-button-sm"
+                    onClick={() => viewOrder(item.id)}
+                  >
+                    <span className="pi pi-eye mr-1 text-xs"></span>
+                    View
+                  </button>
 
-        <div className="lite-card-item">
-          <div className="lite-card-item-left">
-            <div className="lite-card-item-left-title">Title</div>
-            <div className="lite-card-item-left-subtitle">Subtitle</div>
+                  <button
+                    className="lite-button lite-button-info lite-button-sm"
+                    onClick={() => printOrder(item.id)}
+                  >
+                    <span className="pi pi-print mr-1 text-xs"></span>
+                    Print
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-          <div className="lite-card-item-right">
-            <div className="lite-card-item-right-value">Value</div>
-            <div className="lite-card-item-right-tag">tag</div>
-          </div>
-          <div className="lite-card-item-footer">
-            button 1, button 2, button 3, align right
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );

@@ -28,7 +28,7 @@ JOIN tmcb_rutes rts ON trt.cnrut_rutes = rts.id
 WHERE trt.cnrut_actve = 1
 AND rts.rutes_users = ?
 AND rts.rutes_bsins = ?
-AND trt.cnrut_sraid = ?
+AND trt.cnrut_empid = ?
 AND rts.rutes_dname = ?
 ORDER BY trt.cnrut_srlno`;
     let params = [emply_users, emply_bsins, user_id, dayName];

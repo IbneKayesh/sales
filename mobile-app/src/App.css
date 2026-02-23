@@ -50,7 +50,8 @@
   margin: 5px;
   transition: all 0.2s ease;
   margin-bottom: 1rem;
-  gap:3px
+  gap:3px;  
+  overflow-y: auto;
 }
 
 .lite-card:active {
@@ -101,7 +102,8 @@
 }
 
 .search-field .p-inputtext {
-  width: 100%;
+  height: 28px;
+  font-size: 13px;
 }
 
 .search-filter-btn {
@@ -524,4 +526,146 @@
   gap: 6px;
   font-size: 14px;
   font-weight: 700;
+}
+
+
+/* ── Lite Button Base ───────────────────────── */
+
+.lite-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 42px;
+  height: 28px;
+  padding: 0 10px;
+
+  border-radius: 14px;
+  border: 1px solid var(--border);
+
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow);
+}
+
+/* Hover */
+.lite-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+/* Active */
+.lite-button:active {
+  transform: translateY(0);
+  opacity: 0.9;
+}
+
+/* Disabled */
+.lite-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+/* ── Lite Button Variants Primary ───────────────────────── */
+.lite-button-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+  border: 1px solid var(--primary);
+}
+
+.lite-button-primary:hover {
+  background: var(--primary-variant);
+}
+
+/* ── Lite Button Variants Secondary ───────────────────────── */
+
+.lite-button-secondary {
+  background: var(--secondary);
+  color: var(--on-secondary);
+  border: 1px solid var(--secondary);
+}
+
+/* ── Lite Button Variants Danger ───────────────────────── */
+
+.lite-button-danger {
+  background: var(--error);
+  color: var(--on-error);
+  border: 1px solid var(--error);
+}
+
+/* ── Lite Button Variants Outline ───────────────────────── */
+.lite-button-outline {
+  background: var(--background);
+  color: var(--on-background);
+  border: 1px solid var(--border);
+}
+
+.lite-button-outline:hover {
+  background: var(--surface);
+}
+
+.lite-button-info-outline {
+  background: rgba(14, 165, 233, 0.1);
+  color: var(--info);
+  border: 1px solid var(--info);
+}
+
+.lite-button-info-outline:hover {
+  background: rgba(14, 165, 233, 0.18);
+}
+
+/* ── Lite Button Variants SM ───────────────────────── */
+
+.lite-button-sm {
+  height: 22px;
+  padding: 0 8px;
+  font-size: 11px;
+  border-radius: 11px;
+}
+
+/* ── Lite Button Variants Info ───────────────────────── */
+
+.lite-button-info {
+  background: var(--info);
+  color: var(--on-info);
+  border: 1px solid var(--info);
+}
+
+.lite-button-info:hover {
+  filter: brightness(0.95);
+}
+
+/* ── Customize Primereact ───────────────────────── */
+.p-inputtext {
+  height: 28px;
+  font-size: 13px;
+}
+.p-dropdown {
+  height: 28px;
+  font-size: 13px !important;
+}
+.p-dropdown .p-dropdown-label.p-placeholder{  
+  padding: 4px !important;
+}
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item{
+  padding: 8px !important;
+  font-size: 13px !important;
+}
+.p-dropdown-label {  
+  padding: 4px;
+}
+
+.p-datatable{
+  font-size: 13px !important;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  padding: 4px !important;
+}
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 4px !important;
 }

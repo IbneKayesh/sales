@@ -37,6 +37,7 @@ const useOrders = () => {
 
       const response = await ordersAPI.getAll(formDataNew);
       setDataList(response?.data || []);
+      console.log("loadOrders: ", response.data);
     } catch (error) {
       console.error("Error loading data:", error);
       showToast("error", "Error", error?.message || "Failed to load data");
@@ -57,7 +58,8 @@ const useOrders = () => {
       inv.fodrm_odamt.toString().includes(searchData.search.toLowerCase());
     // const matchesStatus =
     //   !searchData.status || inv.fodrm_stats === searchData.status;
-    return matchesSearch && matchesStatus;
+    //return matchesSearch && matchesStatus;
+    return matchesSearch;
   });
 
   //     const filteredOrders = dataList.filter(
@@ -67,6 +69,17 @@ const useOrders = () => {
   //       inv.fodrm_odamt.toString().includes(searchTerm.toLowerCase()),
   //     //&& (!searchData.status || inv.fodrm_stats === searchData.status),
   //   );
+
+
+  const handleCreateOrder = (item) => {
+    setCurrentView("entry");
+    setFormData(item);
+  };
+
+  const handleBack = () => {
+    setCurrentView("list");
+    setFormData({});
+  };
 
   return {
     dataList,
@@ -78,6 +91,8 @@ const useOrders = () => {
     setSearchData,
     orderStatusOptions,
     filteredOrders,
+    handleCreateOrder,
+    handleBack,
   };
 };
 export default useOrders;

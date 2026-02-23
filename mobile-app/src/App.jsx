@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import "primereact/resources/themes/lara-light-teal/theme.css"; // Choose your theme
+import "primereact/resources/themes/lara-light-blue/theme.css"; // Choose your theme
 import "primereact/resources/primereact.min.css"; // Core CSS
 import "primeicons/primeicons.css"; // Icons
 import "primeflex/primeflex.css";
