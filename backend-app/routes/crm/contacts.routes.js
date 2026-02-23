@@ -494,4 +494,50 @@ router.post("/receipt-suppliers", async (req, res) => {
   }
 });
 
+
+//route-outlets-available
+router.post("/route-outlets-available", async (req, res) => {
+  try {
+    const { cntct_users, cntct_bsins, cnrut_rutes } = req.body;
+
+    // Validate input
+    if (!cntct_users || !cntct_bsins || !cnrut_rutes) {
+      return res.json({
+        success: false,
+        message: "User ID and Business ID and Route ID are required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT cnt.id, cnt.cntct_cntnm, cnt.cntct_cntps, cnt.cntct_cntno, cnt.cntct_ofadr
+    FROM tmcb_cntct cnt
+    LEFT JOIN tmcb_cntrt trt ON cnt.id = trt.cnrut_cntct AND trt.cnrut_rutes = ?
+    WHERE cnt.cntct_ctype = 'Outlet'
+    AND trt.cnrut_srlno IS NULL
+    AND cnt.cntct_users = ?
+    AND cnt.cntct_bsins = ?
+    ORDER BY cnt.cntct_cntnm`;
+    const params = [cnrut_rutes, cntct_users, cntct_bsins];
+
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get route outlets for ${cntct_users}`,
+    );
+    res.json({
+      success: true,
+      message: "Route outlets fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;

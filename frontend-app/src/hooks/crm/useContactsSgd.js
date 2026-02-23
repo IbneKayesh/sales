@@ -44,10 +44,25 @@ export const useContactsSgd = () => {
     }
   };
 
+  const handleLoadRouteOutlets = async (routeId) => {
+    try {
+      const response = await contactAPI.getRouteOutletsAvailable({
+        cntct_users: user.users_users,
+        cntct_bsins: user.users_bsins,
+        cnrut_rutes: routeId
+      });
+      //console.log("data",response.data);
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
+  };
+
   return {
     dataList,
     handleLoadSuppliers,
     handleLoadCustomers,
-    handleLoadReceiptSuppliers
+    handleLoadReceiptSuppliers,
+    handleLoadRouteOutlets
   }
 };

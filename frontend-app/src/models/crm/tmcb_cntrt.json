@@ -1,0 +1,62 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "cnrut_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "cnrut_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter your business id",
+    "required": false
+  },
+  "cnrut_cntct": {
+    "type": "string",
+    "label": "Outlet",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter outlet",
+    "required": true,
+    "default": ""
+  },
+  "cnrut_rutes": {
+    "type": "string",
+    "label": "Route",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter route",
+    "required": true,
+    "default": ""
+  },
+  "cnrut_empid": {
+    "type": "string",
+    "label": "Enmployee",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter employee",
+    "required": true,
+    "default": ""
+  },  
+  "cnrut_srlno": {
+    "type": "number",
+    "label": "Sl No",
+    "maxLength": 99999999,
+    "minLength": 1,
+    "placeholder": "Enter Sl No",
+    "required": true,
+    "default": "0"
+  }
+}

@@ -9,7 +9,7 @@ import { useTerritorySgd } from "@/hooks/crm/useTerritorySgd";
 import { useEffect } from "react";
 import { dayNameOptions, countryOptions } from "@/utils/vtable";
 
-const RouteFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
+const OrderRouteFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   const { dataList: dzoneOptions, handleLoadZones } = useZoneSgd();
   const { dataList: tareaOptions, handleLoadAreas } = useAreasSgd();
   const { dataList: territoryOptions, handleLoadTerritories } =
@@ -163,4 +163,4 @@ const RouteFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   );
 };
 
-export default RouteFormComp;
+export default OrderRouteFormComp;

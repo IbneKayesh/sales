@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Feb 22, 2026 at 10:19 AM
+-- Generation Time: Feb 23, 2026 at 06:20 AM
 -- Server version: 12.1.2-MariaDB-ubu2404
 -- PHP Version: 8.3.26
 
@@ -91,7 +91,7 @@ CREATE TABLE `tmcb_cntrt` (
   `cnrut_bsins` varchar(50) NOT NULL,
   `cnrut_cntct` varchar(50) NOT NULL,
   `cnrut_rutes` varchar(50) NOT NULL,
-  `cnrut_sraid` varchar(50) NOT NULL,
+  `cnrut_empid` varchar(50) NOT NULL,
   `cnrut_srlno` int(11) NOT NULL DEFAULT 0,
   `cnrut_lvdat` datetime NOT NULL DEFAULT current_timestamp(),
   `cnrut_actve` tinyint(1) NOT NULL DEFAULT 1,
@@ -106,10 +106,12 @@ CREATE TABLE `tmcb_cntrt` (
 -- Dumping data for table `tmcb_cntrt`
 --
 
-INSERT INTO `tmcb_cntrt` (`id`, `cnrut_users`, `cnrut_bsins`, `cnrut_cntct`, `cnrut_rutes`, `cnrut_sraid`, `cnrut_srlno`, `cnrut_lvdat`, `cnrut_actve`, `cnrut_crusr`, `cnrut_crdat`, `cnrut_upusr`, `cnrut_updat`, `cnrut_rvnmr`) VALUES
-('c1', 'user1', 'business1', 'outlet1', 'route1', 'staff1', 1, '2026-02-18 06:05:02', 1, '', '2026-02-18 06:05:02', '', '2026-02-18 06:24:47', 1),
-('c2', 'user1', 'business1', 'outlet2', 'route1', 'staff1', 2, '2026-02-18 06:05:02', 1, '', '2026-02-18 06:05:02', '', '2026-02-18 06:24:47', 1),
-('c3', 'user1', 'business1', 'outlet3', 'route1', 'staff1', 3, '2026-02-18 06:05:02', 1, '', '2026-02-18 06:05:02', '', '2026-02-18 06:24:47', 1);
+INSERT INTO `tmcb_cntrt` (`id`, `cnrut_users`, `cnrut_bsins`, `cnrut_cntct`, `cnrut_rutes`, `cnrut_empid`, `cnrut_srlno`, `cnrut_lvdat`, `cnrut_actve`, `cnrut_crusr`, `cnrut_crdat`, `cnrut_upusr`, `cnrut_updat`, `cnrut_rvnmr`) VALUES
+('1fb6f947-26d4-44fb-8154-60c7bb80445c', 'user1', 'business1', 'outlet2', 'route4', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-23 06:19:48', 1, 'user1', '2026-02-23 06:19:48', 'user1', '2026-02-23 06:19:48', 1),
+('7dd5b92e-dfdf-4582-a23a-88ba20c0c99f', 'user1', 'business1', 'outlet3', 'route2', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 2, '2026-02-23 06:19:21', 1, 'user1', '2026-02-23 06:19:21', 'user1', '2026-02-23 06:19:21', 1),
+('8a65db7a-ef7e-442f-9d9c-4dc7d77f9eab', 'user1', 'business1', 'outlet3', 'route1', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-23 06:19:55', 1, 'user1', '2026-02-23 06:19:55', 'user1', '2026-02-23 06:19:55', 1),
+('9210d87d-e640-4c3e-bbcc-75601d7eaf80', 'user1', 'business1', 'outlet1', 'route2', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 3, '2026-02-23 06:19:28', 1, 'user1', '2026-02-23 06:19:28', 'user1', '2026-02-23 06:19:28', 1),
+('cec79be1-3497-40a6-9cb3-51b863cc930e', 'user1', 'business1', 'outlet2', 'route2', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-23 06:01:30', 1, 'user1', '2026-02-23 06:01:30', 'user1', '2026-02-23 06:01:30', 1);
 
 -- --------------------------------------------------------
 
@@ -197,11 +199,11 @@ CREATE TABLE `tmcb_rutes` (
 --
 
 INSERT INTO `tmcb_rutes` (`id`, `rutes_users`, `rutes_bsins`, `rutes_rname`, `rutes_dname`, `rutes_trtry`, `rutes_lvdat`, `rutes_actve`, `rutes_crusr`, `rutes_crdat`, `rutes_upusr`, `rutes_updat`, `rutes_rvnmr`) VALUES
-('0dccfa7d-79fb-4bea-9bcd-093349952827', 'user1', 'business1', 'Adarshanagar', 'Saturday', 'middle-badda', '2026-02-18 09:12:06', 1, 'user1', '2026-02-18 09:12:06', 'user1', '2026-02-18 09:13:55', 3),
-('40aff81b-a6e6-4620-90e3-af00c2fc4d09', 'user1', 'business1', 'Gulshan 1', 'Saturday', 'f38bb6ac-acd3-4e0c-95f8-c74b3e27b9b4', '2026-02-22 09:39:40', 1, 'user1', '2026-02-22 09:39:40', 'user1', '2026-02-22 09:39:40', 1),
-('ba229ad6-ca9b-442e-9ccc-4f1bf00ca1b6', 'user1', 'business1', 'Bogra Bazar', 'Saturday', '3231dde2-0d26-4af6-8042-4836cce8e7a1', '2026-02-22 09:35:11', 1, 'user1', '2026-02-22 09:35:11', 'user1', '2026-02-22 09:35:11', 1),
-('fbef9767-dcf7-4577-af2b-6c4357cb90cb', 'user1', 'business1', 'Uttar Badda Bazar', 'Monday', 'uttar-badda', '2026-02-18 09:14:23', 1, 'user1', '2026-02-18 09:14:23', 'user1', '2026-02-18 09:14:32', 2),
-('route1', 'user1', 'business1', 'Hossain Market', 'Sunday', 'uttar-badda', '2026-02-18 05:45:22', 1, '', '2026-02-18 05:45:22', 'user1', '2026-02-18 09:14:09', 3);
+('route1', 'user1', 'business1', 'Hossain Market', 'Sunday', 'uttar-badda', '2026-02-18 05:45:22', 1, '', '2026-02-18 05:45:22', 'user1', '2026-02-23 03:53:57', 4),
+('route2', 'user1', 'business1', 'Adarshanagar', 'Monday', 'uttar-badda', '2026-02-18 09:14:23', 1, 'user1', '2026-02-18 09:14:23', 'user1', '2026-02-23 04:57:05', 3),
+('route3', 'user1', 'business1', 'Satarkul', 'Thursday', 'uttar-badda', '2026-02-22 09:35:11', 1, 'user1', '2026-02-22 09:35:11', 'user1', '2026-02-23 04:57:10', 2),
+('route4', 'user1', 'business1', 'Baganbari', 'Tuesday', 'uttar-badda', '2026-02-22 09:39:40', 1, 'user1', '2026-02-22 09:39:40', 'user1', '2026-02-23 04:57:15', 2),
+('route5', 'user1', 'business1', 'North Badda', 'Saturday', 'uttar-badda', '2026-02-18 09:12:06', 1, 'user1', '2026-02-18 09:12:06', 'user1', '2026-02-23 04:57:18', 4);
 
 -- --------------------------------------------------------
 
@@ -684,7 +686,9 @@ CREATE TABLE `tmhb_emply` (
 --
 
 INSERT INTO `tmhb_emply` (`id`, `emply_users`, `emply_bsins`, `emply_ecode`, `emply_crdno`, `emply_ename`, `emply_econt`, `emply_email`, `emply_natid`, `emply_bdate`, `emply_prnam`, `emply_gendr`, `emply_mstas`, `emply_bgrup`, `emply_rlgon`, `emply_edgrd`, `emply_psadr`, `emply_pradr`, `emply_desig`, `emply_jndat`, `emply_cndat`, `emply_rgdat`, `emply_gssal`, `emply_otrat`, `emply_etype`, `emply_pyacc`, `emply_slcyl`, `emply_wksft`, `emply_supid`, `emply_notes`, `emply_login`, `emply_pswrd`, `emply_pictr`, `emply_stats`, `emply_actve`, `emply_crusr`, `emply_crdat`, `emply_upusr`, `emply_updat`, `emply_rvnmr`) VALUES
-('staff1', 'user1', 'business1', 'code', 'card', 'Jisan', '01722688266', 'admin@sgd.com', '19915001', '2026-02-15 00:00:00', 'Father Mother', 'Male', 'Single', 'A+', 'Islam', 'Higher Secondary', 'Badda, Dhaka', 'Badda, Dhaka', 'Senior Manager', '2026-02-15 00:00:00', '2026-02-15 00:00:00', '2026-02-15 00:00:00', 0.00, 0.00, 'Regular', 'Cash', 'Full', 'Regular', 'Supervisor', 'notes', 0, '', '', 'Active', 1, 'user1', '2026-02-15 06:16:41', 'user1', '2026-02-18 05:48:23', 16),
+('765581bf-b1ae-45de-a6af-2988d97a48ab', 'user1', 'business1', 'staff2', '', 'Staff 2', 'staff2', 'staff2@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff2', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123', '', 'Active', 1, 'user1', '2026-02-23 05:35:32', 'user1', '2026-02-23 05:35:32', 1),
+('850d5993-1d5f-411e-ad8a-b2ceba393e0d', 'user1', 'business1', 'staff1', '', 'Staff 1', 'staff1', 'staff1@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff1', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123', '', 'Active', 1, 'user1', '2026-02-23 05:31:56', 'user1', '2026-02-23 05:34:46', 2),
+('staff1', 'user1', 'business1', 'code', 'card', 'Jisan', '01722688266', 'jisan@sgd.com', '19915001', '2026-02-15 00:00:00', 'Father Mother', 'Male', 'Single', 'A+', 'Islam', 'Higher Secondary', 'Badda, Dhaka', 'Badda, Dhaka', 'Senior Manager', '2026-02-15 00:00:00', '2026-02-15 00:00:00', '2026-02-15 00:00:00', 0.00, 0.00, 'Regular', 'Cash', 'Full', 'Regular', 'Supervisor', 'notes', 0, '123456', '', 'Active', 1, 'user1', '2026-02-15 06:16:41', 'user1', '2026-02-23 05:31:29', 18),
 ('staff2', 'user1', 'business1', '', '', 'Jakia', '01713003745', 'admin@sgd.com', '', '2026-02-15 00:00:00', '', 'Female', 'Single', 'O+', '', '', 'Badda, Dhaka', '', 'Senior Manager', '2026-02-15 00:00:00', '2026-02-15 00:00:00', '2026-02-15 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 0, '', '', 'Active', 1, 'user1', '2026-02-15 07:42:20', 'user1', '2026-02-18 05:48:27', 1);
 
 -- --------------------------------------------------------

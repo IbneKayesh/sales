@@ -47,4 +47,9 @@ export const contactAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getRouteOutletsAvailable: (data) =>
+    apiRequest(`/crm/contacts/route-outlets-available`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

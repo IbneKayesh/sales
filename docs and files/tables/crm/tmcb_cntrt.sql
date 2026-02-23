@@ -8,7 +8,7 @@ CREATE TABLE `tmcb_cntrt` (
   `cnrut_bsins` varchar(50) NOT NULL,
   `cnrut_cntct` varchar(50) NOT NULL,
   `cnrut_rutes` varchar(50) NOT NULL,
-  `cnrut_sraid` varchar(50) NOT NULL,
+  `cnrut_empid` varchar(50) NOT NULL,
   -- optional
   -- default
   `cnrut_srlno` int(11) NOT NULL DEFAULT 0,

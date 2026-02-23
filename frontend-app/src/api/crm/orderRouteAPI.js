@@ -22,4 +22,19 @@ export const orderRouteAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  outlets: (data) =>
+    apiRequest("/crm/order-route/outlets", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  deleteOutlet: (data) =>
+    apiRequest("/crm/order-route/delete-outlets", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  createOutlet: (data) =>
+    apiRequest("/crm/order-route/create-outlets", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

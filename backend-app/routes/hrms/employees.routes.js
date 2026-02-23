@@ -354,4 +354,55 @@ router.post("/delete", async (req, res) => {
   }
 });
 
+//available-route-employees
+router.post("/available-route-employees", async (req, res) => {
+  try {
+    const { emply_users, emply_bsins } = req.body;
+
+    // Validate input
+    if (!emply_users || !emply_bsins) {
+      return res.json({
+        success: false,
+        message: "User ID and Business ID are required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT id, emply_users, emply_bsins, emply_ecode, emply_crdno, emply_ename, emply_econt, emply_email, emply_natid, emply_bdate, emply_prnam, emply_gendr, emply_mstas, emply_bgrup, emply_rlgon, emply_edgrd, emply_psadr, emply_pradr, emply_desig, 
+    emply_pictr
+    FROM tmhb_emply emp
+    WHERE emp.emply_users = ?
+    AND emp.emply_bsins = ?
+    AND emp.emply_email IS NOT NULL
+    AND emp.emply_email <> ''
+    AND emp.emply_pswrd IS NOT NULL
+    AND emp.emply_pswrd <> ''
+    AND emp.emply_login = 1
+    AND emp.emply_stats = 'Active'
+    AND emp.emply_actve = 1
+    ORDER BY emp.emply_ename
+    `;
+    const params = [emply_users, emply_bsins];
+
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get available employees for ${emply_users}`,
+    );
+    res.json({
+      success: true,
+      message: "Available Employees fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;

@@ -22,4 +22,9 @@ export const employeesAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  availableRouteEmployees: (data) =>
+    apiRequest("/hrms/employees/available-route-employees", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

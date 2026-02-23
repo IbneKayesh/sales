@@ -7,7 +7,7 @@ import { InputText } from "primereact/inputtext";
 import { formatDate } from "@/utils/datetime";
 import ActiveRowCell from "@/components/ActiveRowCell";
 
-const RouteListComp = ({ dataList, onEdit, onDelete }) => {
+const OrderRouteListComp = ({ dataList, onEdit, onDelete, onOutlets }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
 
   const header = () => {
@@ -49,6 +49,14 @@ const RouteListComp = ({ dataList, onEdit, onDelete }) => {
   const action_BT = (rowData) => {
     let menuItems = [
       {
+        label: "Outlets",
+        icon: "pi pi-shop",
+        command: () => {
+          onOutlets(rowData);
+        },
+        disabled: rowData.edit_stop,
+      },
+      {
         label: "Delete",
         icon: "pi pi-trash text-red-400",
         command: () => {
@@ -88,9 +96,7 @@ const RouteListComp = ({ dataList, onEdit, onDelete }) => {
   const trtry_wname_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-md">
-          {rowData.trtry_wname}
-        </span>
+        <span className="text-md">{rowData.trtry_wname}</span>
         <span className="text-sm text-blue-500">{rowData.tarea_tname}</span>
         <span className="text-sm text-blue-500">{rowData.dzone_dname}</span>
       </div>
@@ -100,8 +106,6 @@ const RouteListComp = ({ dataList, onEdit, onDelete }) => {
   const rutes_lvdat_BT = (rowData) => {
     return <>{formatDate(rowData.rutes_lvdat)}</>;
   };
-
-
 
   return (
     <div className="p-1">
@@ -125,7 +129,7 @@ const RouteListComp = ({ dataList, onEdit, onDelete }) => {
           sortable
           body={rutes_rname_BT}
         />
-        <Column field="trtry_wname" header="Territory" body={trtry_wname_BT}  />
+        <Column field="trtry_wname" header="Territory" body={trtry_wname_BT} />
         <Column field="rutes_lvdat" header="Last Visit" body={rutes_lvdat_BT} />
         <Column field="total_outlets" header="Outlets" />
         <Column header={dataList?.length + " rows"} body={action_BT} />
@@ -134,4 +138,4 @@ const RouteListComp = ({ dataList, onEdit, onDelete }) => {
   );
 };
 
-export default RouteListComp;
+export default OrderRouteListComp;
