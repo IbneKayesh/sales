@@ -1,8 +1,8 @@
 --
--- Table structure for table tmeb_fodrm
+-- Table structure for table toeb_fodrm
 -- sales order master list
 
-CREATE TABLE `tmeb_fodrm` (
+CREATE TABLE `toeb_fodrm` (
   `id` VARCHAR(50) NOT NULL,
   `fodrm_users` VARCHAR(50) NOT NULL,
   `fodrm_bsins` VARCHAR(50) NOT NULL,
@@ -25,8 +25,8 @@ CREATE TABLE `tmeb_fodrm` (
   `fodrm_ispst` TINYINT(1) NOT NULL DEFAULT 0,
   `fodrm_iscls` TINYINT(1) NOT NULL DEFAULT 0,
   `fodrm_vatcl` TINYINT(1) NOT NULL DEFAULT 0,
-  `fodrm_dlvan` VARCHAR(50) NOT NULL,
-  `fodrm_dldat` DATETIME NOT NULL DEFAULT current_timestamp(),
+  `fodrm_isdlv` TINYINT(1) NOT NULL DEFAULT 0,
+  `fodrm_oshpm` VARCHAR(50) NULL,
   `fodrm_actve` TINYINT(1) NOT NULL DEFAULT 1,
   `fodrm_crusr` VARCHAR(50) NOT NULL,
   `fodrm_crdat` DATETIME NOT NULL DEFAULT current_timestamp(),
@@ -36,7 +36,7 @@ CREATE TABLE `tmeb_fodrm` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Indexes for table tmeb_fodrm
+-- Indexes for table toeb_fodrm
 --
-ALTER TABLE tmeb_fodrm
+ALTER TABLE toeb_fodrm
   ADD PRIMARY KEY (id);

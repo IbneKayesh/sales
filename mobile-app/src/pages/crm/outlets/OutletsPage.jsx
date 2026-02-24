@@ -18,7 +18,7 @@ const OutletsPage = () => {
   } = useOutlets();
 
   return (
-    <>
+    <div className="page-container">
       {viewComp === "list" && (
         <OutletListComp
           outlets={outlets}
@@ -42,7 +42,7 @@ const OutletsPage = () => {
           handleCancel={handleCancel}
         />
       )}
-    </>
+    </div>
   );
 };
 

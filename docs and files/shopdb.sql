@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Feb 23, 2026 at 06:20 AM
+-- Generation Time: Feb 24, 2026 at 10:18 AM
 -- Server version: 12.1.2-MariaDB-ubu2404
 -- PHP Version: 8.3.26
 
@@ -435,79 +435,6 @@ CREATE TABLE `tmeb_expns` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tmeb_fodrc`
---
-
-CREATE TABLE `tmeb_fodrc` (
-  `id` varchar(50) NOT NULL,
-  `fodrc_fodrm` varchar(50) NOT NULL,
-  `fodrc_bitem` varchar(50) NOT NULL,
-  `fodrc_items` varchar(50) NOT NULL,
-  `fodrc_itrat` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrc_itqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrc_itamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrc_dspct` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrc_dsamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrc_vtpct` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrc_vtamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrc_csrat` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrc_ntamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrc_notes` varchar(50) DEFAULT NULL,
-  `fodrc_attrb` varchar(300) DEFAULT NULL,
-  `fodrc_dlqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrc_dgqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrc_srcnm` varchar(50) NOT NULL,
-  `fodrc_refid` varchar(50) NOT NULL,
-  `fodrc_actve` tinyint(1) NOT NULL DEFAULT 1,
-  `fodrc_crusr` varchar(50) NOT NULL,
-  `fodrc_crdat` datetime NOT NULL DEFAULT current_timestamp(),
-  `fodrc_upusr` varchar(50) NOT NULL,
-  `fodrc_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `fodrc_rvnmr` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tmeb_fodrm`
---
-
-CREATE TABLE `tmeb_fodrm` (
-  `id` varchar(50) NOT NULL,
-  `fodrm_users` varchar(50) NOT NULL,
-  `fodrm_bsins` varchar(50) NOT NULL,
-  `fodrm_cntct` varchar(50) NOT NULL,
-  `fodrm_ocuid` varchar(50) NOT NULL,
-  `fodrm_rutes` varchar(50) NOT NULL,
-  `fodrm_trnno` varchar(50) NOT NULL,
-  `fodrm_trdat` datetime NOT NULL DEFAULT current_timestamp(),
-  `fodrm_trnte` varchar(100) DEFAULT NULL,
-  `fodrm_odamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrm_dlamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrm_dsamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrm_vtamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrm_rnamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrm_ttamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrm_pyamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrm_pdamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrm_duamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
-  `fodrm_ispad` tinyint(1) NOT NULL DEFAULT 0,
-  `fodrm_ispst` tinyint(1) NOT NULL DEFAULT 0,
-  `fodrm_iscls` tinyint(1) NOT NULL DEFAULT 0,
-  `fodrm_vatcl` tinyint(1) NOT NULL DEFAULT 0,
-  `fodrm_dlvan` varchar(50) NOT NULL,
-  `fodrm_dldat` datetime NOT NULL DEFAULT current_timestamp(),
-  `fodrm_actve` tinyint(1) NOT NULL DEFAULT 1,
-  `fodrm_crusr` varchar(50) NOT NULL,
-  `fodrm_crdat` datetime NOT NULL DEFAULT current_timestamp(),
-  `fodrm_upusr` varchar(50) NOT NULL,
-  `fodrm_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `fodrm_rvnmr` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `tmeb_mbkng`
 --
 
@@ -687,7 +614,7 @@ CREATE TABLE `tmhb_emply` (
 
 INSERT INTO `tmhb_emply` (`id`, `emply_users`, `emply_bsins`, `emply_ecode`, `emply_crdno`, `emply_ename`, `emply_econt`, `emply_email`, `emply_natid`, `emply_bdate`, `emply_prnam`, `emply_gendr`, `emply_mstas`, `emply_bgrup`, `emply_rlgon`, `emply_edgrd`, `emply_psadr`, `emply_pradr`, `emply_desig`, `emply_jndat`, `emply_cndat`, `emply_rgdat`, `emply_gssal`, `emply_otrat`, `emply_etype`, `emply_pyacc`, `emply_slcyl`, `emply_wksft`, `emply_supid`, `emply_notes`, `emply_login`, `emply_pswrd`, `emply_pictr`, `emply_stats`, `emply_actve`, `emply_crusr`, `emply_crdat`, `emply_upusr`, `emply_updat`, `emply_rvnmr`) VALUES
 ('765581bf-b1ae-45de-a6af-2988d97a48ab', 'user1', 'business1', 'staff2', '', 'Staff 2', 'staff2', 'staff2@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff2', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123', '', 'Active', 1, 'user1', '2026-02-23 05:35:32', 'user1', '2026-02-23 05:35:32', 1),
-('850d5993-1d5f-411e-ad8a-b2ceba393e0d', 'user1', 'business1', 'staff1', '', 'Staff 1', 'staff1', 'staff1@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff1', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123', '', 'Active', 1, 'user1', '2026-02-23 05:31:56', 'user1', '2026-02-23 05:34:46', 2),
+('850d5993-1d5f-411e-ad8a-b2ceba393e0d', 'user1', 'business1', 'staff1', '', 'Staff 1', 'staff1', 'staff1@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff1', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123456', '', 'Active', 1, 'user1', '2026-02-23 05:31:56', 'user1', '2026-02-23 06:54:25', 3),
 ('staff1', 'user1', 'business1', 'code', 'card', 'Jisan', '01722688266', 'jisan@sgd.com', '19915001', '2026-02-15 00:00:00', 'Father Mother', 'Male', 'Single', 'A+', 'Islam', 'Higher Secondary', 'Badda, Dhaka', 'Badda, Dhaka', 'Senior Manager', '2026-02-15 00:00:00', '2026-02-15 00:00:00', '2026-02-15 00:00:00', 0.00, 0.00, 'Regular', 'Cash', 'Full', 'Regular', 'Supervisor', 'notes', 0, '123456', '', 'Active', 1, 'user1', '2026-02-15 06:16:41', 'user1', '2026-02-23 05:31:29', 18),
 ('staff2', 'user1', 'business1', '', '', 'Jakia', '01713003745', 'admin@sgd.com', '', '2026-02-15 00:00:00', '', 'Female', 'Single', 'O+', '', '', 'Badda, Dhaka', '', 'Senior Manager', '2026-02-15 00:00:00', '2026-02-15 00:00:00', '2026-02-15 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 0, '', '', 'Active', 1, 'user1', '2026-02-15 07:42:20', 'user1', '2026-02-18 05:48:27', 1);
 
@@ -1872,6 +1799,148 @@ CREATE TABLE `tmub_tickt` (
   `tickt_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `toeb_fodrc`
+--
+
+CREATE TABLE `toeb_fodrc` (
+  `id` varchar(50) NOT NULL,
+  `fodrc_fodrm` varchar(50) NOT NULL,
+  `fodrc_bitem` varchar(50) NOT NULL,
+  `fodrc_items` varchar(50) NOT NULL,
+  `fodrc_itrat` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_itqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_itamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_dspct` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_dsamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_vtpct` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_vtamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_csrat` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_ntamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_notes` varchar(50) DEFAULT NULL,
+  `fodrc_attrb` varchar(300) DEFAULT NULL,
+  `fodrc_dlqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_dgqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrc_srcnm` varchar(50) NOT NULL,
+  `fodrc_refid` varchar(50) NOT NULL,
+  `fodrc_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `fodrc_crusr` varchar(50) NOT NULL,
+  `fodrc_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `fodrc_upusr` varchar(50) NOT NULL,
+  `fodrc_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `fodrc_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `toeb_fodrm`
+--
+
+CREATE TABLE `toeb_fodrm` (
+  `id` varchar(50) NOT NULL,
+  `fodrm_users` varchar(50) NOT NULL,
+  `fodrm_bsins` varchar(50) NOT NULL,
+  `fodrm_cntct` varchar(50) NOT NULL,
+  `fodrm_ocuid` varchar(50) NOT NULL,
+  `fodrm_rutes` varchar(50) NOT NULL,
+  `fodrm_trnno` varchar(50) NOT NULL,
+  `fodrm_trdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `fodrm_trnte` varchar(100) DEFAULT NULL,
+  `fodrm_odamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_dlamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_dsamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_vtamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_rnamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_ttamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_pyamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_pdamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_duamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `fodrm_ispad` tinyint(1) NOT NULL DEFAULT 0,
+  `fodrm_ispst` tinyint(1) NOT NULL DEFAULT 0,
+  `fodrm_iscls` tinyint(1) NOT NULL DEFAULT 0,
+  `fodrm_vatcl` tinyint(1) NOT NULL DEFAULT 0,
+  `fodrm_isdlv` tinyint(1) NOT NULL DEFAULT 0,
+  `fodrm_oshpm` varchar(50) DEFAULT NULL,
+  `fodrm_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `fodrm_crusr` varchar(50) NOT NULL,
+  `fodrm_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `fodrm_upusr` varchar(50) NOT NULL,
+  `fodrm_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `fodrm_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `toeb_oshpc`
+--
+
+CREATE TABLE `toeb_oshpc` (
+  `id` varchar(50) NOT NULL,
+  `oshpc_oshpm` varchar(50) NOT NULL,
+  `oshpc_bitem` varchar(50) NOT NULL,
+  `oshpc_items` varchar(50) NOT NULL,
+  `oshpc_itrat` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpc_itqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpc_itamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpc_dspct` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpc_dsamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpc_vtpct` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpc_vtamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpc_csrat` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpc_ntamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpc_notes` varchar(50) DEFAULT NULL,
+  `oshpc_attrb` varchar(300) DEFAULT NULL,
+  `oshpc_dlqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpc_dgqty` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpc_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `oshpc_crusr` varchar(50) NOT NULL,
+  `oshpc_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `oshpc_upusr` varchar(50) NOT NULL,
+  `oshpc_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `oshpc_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `toeb_oshpm`
+--
+
+CREATE TABLE `toeb_oshpm` (
+  `id` varchar(50) NOT NULL,
+  `oshpm_users` varchar(50) NOT NULL,
+  `oshpm_bsins` varchar(50) NOT NULL,
+  `oshpm_cntct` varchar(50) NOT NULL,
+  `oshpm_dlvan` varchar(50) NOT NULL,
+  `oshpm_trnno` varchar(50) NOT NULL,
+  `oshpm_trdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `oshpm_trnte` varchar(100) DEFAULT NULL,
+  `oshpm_odamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpm_dlamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpm_dsamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpm_vtamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpm_rnamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpm_ttamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpm_pyamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpm_pdamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpm_duamt` decimal(20,6) NOT NULL DEFAULT 0.000000,
+  `oshpm_ispad` tinyint(1) NOT NULL DEFAULT 0,
+  `oshpm_ispst` tinyint(1) NOT NULL DEFAULT 0,
+  `oshpm_iscls` tinyint(1) NOT NULL DEFAULT 0,
+  `oshpm_vatcl` tinyint(1) NOT NULL DEFAULT 0,
+  `oshpm_isodr` tinyint(1) NOT NULL DEFAULT 0,
+  `oshpm_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `oshpm_crusr` varchar(50) NOT NULL,
+  `oshpm_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `oshpm_upusr` varchar(50) NOT NULL,
+  `oshpm_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `oshpm_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -1940,18 +2009,6 @@ ALTER TABLE `tmeb_crcpt`
 -- Indexes for table `tmeb_expns`
 --
 ALTER TABLE `tmeb_expns`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `tmeb_fodrc`
---
-ALTER TABLE `tmeb_fodrc`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `tmeb_fodrm`
---
-ALTER TABLE `tmeb_fodrm`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -2153,6 +2210,30 @@ ALTER TABLE `tmub_notes`
 -- Indexes for table `tmub_tickt`
 --
 ALTER TABLE `tmub_tickt`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `toeb_fodrc`
+--
+ALTER TABLE `toeb_fodrc`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `toeb_fodrm`
+--
+ALTER TABLE `toeb_fodrm`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `toeb_oshpc`
+--
+ALTER TABLE `toeb_oshpc`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `toeb_oshpm`
+--
+ALTER TABLE `toeb_oshpm`
   ADD PRIMARY KEY (`id`);
 COMMIT;
 

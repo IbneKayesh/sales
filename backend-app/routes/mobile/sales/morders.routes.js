@@ -19,19 +19,35 @@ router.post("/", async (req, res) => {
     //console.log("get:", JSON.stringify(req.body));
 
     const dayName = new Date(fodrm_trdat).toLocaleDateString('en-US', { weekday: 'long' });
+    const dateObj = new Date(fodrm_trdat);
+    const formattedDate =
+    dateObj.getFullYear() +
+    "-" +
+    String(dateObj.getMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(dateObj.getDate()).padStart(2, "0");
 
     //database action
-    let sql = `SELECT cnt.id, cnt.cntct_cntnm, rts.rutes_rname, trt.cnrut_lvdat, trt.cnrut_srlno, rts.rutes_dname, 0 AS fodrm_odamt, 'Pending' AS fodrm_stats
+    let sql = `SELECT cnt.id, cnt.cntct_cntnm, rts.rutes_rname, trt.cnrut_lvdat, trt.cnrut_srlno, rts.rutes_dname,
+    SUM(IFNULL(ord.fodrm_dlamt, 0)) AS fodrm_odamt,
+    CASE
+    WHEN ord.fodrm_isdlv IS NULL THEN 'Pending'
+    WHEN ord.fodrm_isdlv = 0 THEN 'Ordered'
+    WHEN ord.fodrm_isdlv = 1 THEN 'Delivered'
+    ELSE 'Cancelled'
+    END AS fodrm_stats
 FROM tmcb_cntrt trt
 JOIN tmcb_cntct cnt ON trt.cnrut_cntct = cnt.id
 JOIN tmcb_rutes rts ON trt.cnrut_rutes = rts.id
+LEFT JOIN toeb_fodrm ord ON trt.cnrut_cntct = ord.fodrm_cntct AND DATE(ord.fodrm_trdat) = ?
 WHERE trt.cnrut_actve = 1
 AND rts.rutes_users = ?
 AND rts.rutes_bsins = ?
 AND trt.cnrut_empid = ?
 AND rts.rutes_dname = ?
+GROUP BY cnt.id, cnt.cntct_cntnm, rts.rutes_rname, trt.cnrut_lvdat, trt.cnrut_srlno, rts.rutes_dname
 ORDER BY trt.cnrut_srlno`;
-    let params = [emply_users, emply_bsins, user_id, dayName];
+    let params = [formattedDate, emply_users, emply_bsins, user_id, dayName];
     //console.log("params: ", params);
 
     const rows = await dbGetAll(

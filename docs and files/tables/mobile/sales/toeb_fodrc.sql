@@ -1,8 +1,8 @@
 --
--- Table structure for table tmeb_fodrc
+-- Table structure for table toeb_fodrc
 -- sales booking list
 
-CREATE TABLE `tmeb_fodrc` (
+CREATE TABLE `toeb_fodrc` (
   `id` VARCHAR(50) NOT NULL,
   `fodrc_fodrm` VARCHAR(50) NOT NULL,
   `fodrc_bitem` VARCHAR(50) NOT NULL,
@@ -31,8 +31,8 @@ CREATE TABLE `tmeb_fodrc` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Indexes for table tmeb_fodrc
+-- Indexes for table toeb_fodrc
 --
-ALTER TABLE tmeb_fodrc
+ALTER TABLE toeb_fodrc
   ADD PRIMARY KEY (id);
 

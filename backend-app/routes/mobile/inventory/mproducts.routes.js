@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../../db/sqlManager");
 const { v4: uuidv4 } = require("uuid");
 
 //get-sales-order-items
