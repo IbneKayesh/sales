@@ -244,7 +244,7 @@ const HomePage = () => {
         : "Good evening";
 
   return (
-    <div className="app-content">
+    <div className="app-container p-2">
       {/* ── GREETING ─────────────────────── */}
       <div className="dashboard-greeting">
         <div>

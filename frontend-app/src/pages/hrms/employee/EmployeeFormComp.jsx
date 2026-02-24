@@ -472,6 +472,7 @@ const EmployeeFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           onChange={(e) => onChange("emply_pswrd", e.target.value)}
           className={`w-full ${errors.emply_pswrd ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmhb_emply.emply_pswrd.label}`}
+          type="password"
         />
         <RequiredText text={errors.emply_pswrd} />
       </div>
