@@ -13,6 +13,23 @@ const pool = mysql.createPool({
 
 /* ------------------ BASIC HELPERS ------------------ */
 
+function getDurationMs(start) {
+  const diff = process.hrtime.bigint() - start;
+  // convert nanoseconds to milliseconds
+  return Number(diff) / 1_000_000;
+}
+
+const SLOW_QUERY_MS = 100; // change to whatever you consider slow
+function logIfSlow(start, label, sql) {
+  const duration = getDurationMs(start);
+
+  if (duration > SLOW_QUERY_MS) {
+    console.warn(
+      `🐌 SLOW QUERY (${duration.toFixed(2)} ms) - ${label}\nSQL: ${sql}\n`
+    );
+  }
+}
+
 // test connection
 async function connectDB() {
   await pool.query("SELECT 1");
@@ -20,25 +37,39 @@ async function connectDB() {
 }
 
 async function dbGet(sql, params = [], label = "") {
-  console.log(label + " - " + new Date().toLocaleString());
+  const start = process.hrtime.bigint();
 
   const [rows] = await pool.execute(sql, params);
-  //console.log(rows);
+
+  const duration = getDurationMs(start).toFixed(2);
+  console.log(`${label} - ${new Date().toLocaleString()} - ${duration} ms`);
+  logIfSlow(start, label, sql);
+
   return rows[0] || null;
 }
 
 async function dbGetAll(sql, params = [], label = "") {
-  console.log(label + " - " + new Date().toLocaleString());
+  const start = process.hrtime.bigint();
 
   const [rows] = await pool.execute(sql, params);
+
+  const duration = getDurationMs(start).toFixed(2);
+  console.log(`${label} - ${new Date().toLocaleString()} - ${duration} ms`);
+  logIfSlow(start, label, sql);
+
   return rows;
 }
 
 async function dbRun(sql, params = [], label = "") {
-  console.log(label + " - " + new Date().toLocaleString());
+  const start = process.hrtime.bigint();
 
-  const result = await pool.query(sql, params);
-  return result.rowCount;
+  const [result] = await pool.query(sql, params);
+
+  const duration = getDurationMs(start).toFixed(2);
+  console.log(`${label} - ${new Date().toLocaleString()} - ${duration} ms`);
+  logIfSlow(start, label, sql);
+
+  return result.affectedRows;
 }
 
 /* ---------------- TRANSACTION (MULTI) ---------------- */
@@ -52,8 +83,13 @@ async function dbRunAll(scripts = []) {
     for (const script of scripts) {
       const { sql, params = [], label = "" } = script;
 
-      console.log(label + " - " + new Date().toLocaleString());
+      const start = process.hrtime.bigint();
+
       await connection.query(sql, params);
+
+      const duration = getDurationMs(start).toFixed(2);
+      console.log(`${label} - ${new Date().toLocaleString()} - ${duration} ms`);
+      logIfSlow(start, label, sql);
     }
 
     await connection.commit();
