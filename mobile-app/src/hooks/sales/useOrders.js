@@ -71,7 +71,7 @@ const useOrders = () => {
   //   );
 
 
-  const handleCreateOrder = (item) => {
+  const handleCreateNew = (item) => {
     setCurrentView("entry");
     setFormData(item);
   };
@@ -91,7 +91,7 @@ const useOrders = () => {
     setSearchData,
     orderStatusOptions,
     filteredOrders,
-    handleCreateOrder,
+    handleCreateNew,
     handleBack,
   };
 };

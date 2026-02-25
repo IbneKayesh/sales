@@ -5,6 +5,7 @@ import "primereact/resources/primereact.min.css"; // Core CSS
 import "primeicons/primeicons.css"; // Icons
 import "primeflex/primeflex.css";
 import "primeflex/themes/primeone-light.css";
+import "./App.css";
 
 //
 import Layout from "./pages/layouts/Layout";
@@ -44,9 +45,7 @@ import { ModuleProvider } from "./context/ModuleContext";
 import { ToastProvider } from "./context/ToastContext";
 import { AuthProvider } from "./context/AuthContext";
 
-import "./App.css";
-//sales
-import OrderList from "./pages/sales/orders/OrderList";
+
 
 // Placeholder pages for module routes not yet built
 const Placeholder = ({ title }) => (

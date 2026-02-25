@@ -5,43 +5,46 @@ import OutletFormComp from "./OutletFormComp";
 
 const OutletsPage = () => {
   const {
-    outlets,
-    viewComp,
-    selectedOutlet,
-    searchTerm,
-    setSearchTerm,
-    handleViewDetail,
-    handleAdd,
-    handleBack,
-    handleEdit,
-    handleCancel,
+    dataList,
+    isBusy,
+    currentView,
+    errors,
+    formData,
+    searchData,
+    setSearchData,
+    handleCreateNew,
+    // handleBack,
   } = useOutlets();
 
   return (
     <div className="page-container">
-      {viewComp === "list" && (
+      {currentView === "list" && (
         <OutletListComp
-          outlets={outlets}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          handleViewDetail={handleViewDetail}
-          handleAdd={handleAdd}
+          dataList={dataList}
+          isBusy={isBusy}
+          searchData={searchData}
+          setSearchData={setSearchData}
+          onCreateNew={handleCreateNew}
         />
       )}
-      {viewComp === "view" && (
+      {/* {currentView === "view" && (
         <OutletViewComp
           outlet={selectedOutlet}
           handleBack={handleBack}
           handleEdit={handleEdit}
         />
       )}
-      {viewComp === "form" && (
+      {currentView === "form" && (
         <OutletFormComp
           outlet={selectedOutlet}
           handleBack={handleBack}
           handleCancel={handleCancel}
         />
-      )}
+      )} */}
+
+      <button className="btn-fab">
+        <span className="pi pi-plus text-lg"></span>
+      </button>
     </div>
   );
 };

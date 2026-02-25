@@ -1,4 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/context/ToastContext";
+import { contactsAPI } from "@/api/crm/contactsAPI";
 
 const mockOutlets = [
   {
@@ -75,70 +78,107 @@ const mockOutlets = [
 ];
 
 const useOutlets = () => {
-  const [outlets, setOutlets] = useState(mockOutlets);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [viewComp, setViewComp] = useState("list");
-  const [selectedId, setSelectedId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const { user } = useAuth();
+  const { showToast } = useToast();
+  const [dataList, setDataList] = useState([]);
+  const [isBusy, setIsBusy] = useState(false);
+  const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
+  const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({});
+  const [searchData, setSearchData] = useState({
+    search: "",
+    status: null,
+    date: new Date(),
+  });
 
-  const selectedOutlet = useMemo(() => {
-    return outlets.find((o) => o.id === selectedId);
-  }, [outlets, selectedId]);
+  const loadContacts = async () => {
+    try {
+      setIsBusy(true);
+      setDataList([]);
+      const formDataNew = {
+        cntct_users: user?.emply_users,
+        cntct_bsins: user?.emply_bsins,
+      };
 
-  const filteredOutlets = useMemo(() => {
-    return outlets.filter(
-      (o) =>
-        o.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        o.email.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-  }, [outlets, searchTerm]);
-
-  const handleViewDetail = (id) => {
-    setSelectedId(id);
-    setViewComp("view");
-  };
-
-  const handleAdd = () => {
-    setSelectedId(null);
-    setViewComp("form");
-  };
-
-  const handleEdit = () => {
-    setViewComp("form");
-  };
-
-  const handleBack = () => {
-    if (viewComp === "form" && selectedId) {
-      setViewComp("view");
-    } else {
-      setViewComp("list");
-      setSelectedId(null);
+      const response = await contactsAPI.getAll(formDataNew);
+      setDataList(response?.data || []);
+      console.log("loadContacts: ", response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+    } finally {
+      setIsBusy(false);
     }
   };
 
-  const handleCancel = () => {
-    if (selectedId) {
-      setViewComp("view");
-    } else {
-      setViewComp("list");
-    }
+  useEffect(() => {
+    loadContacts();
+  }, [searchData]);
+
+  const handleCreateNew = () => {
+    setCurrentView("form");
   };
+
+  // const [outlets, setOutlets] = useState(mockOutlets);
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState(null);
+  // const [viewComp, setViewComp] = useState("list");
+  // const [selectedId, setSelectedId] = useState(null);
+  // const [searchTerm, setSearchTerm] = useState("");
+
+  // const selectedOutlet = useMemo(() => {
+  //   return outlets.find((o) => o.id === selectedId);
+  // }, [outlets, selectedId]);
+
+  // const filteredOutlets = useMemo(() => {
+  //   return outlets.filter(
+  //     (o) =>
+  //       o.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       o.email.toLowerCase().includes(searchTerm.toLowerCase()),
+  //   );
+  // }, [outlets, searchTerm]);
+
+  // const handleViewDetail = (id) => {
+  //   setSelectedId(id);
+  //   setViewComp("view");
+  // };
+
+  // const handleAdd = () => {
+  //   setSelectedId(null);
+  //   setViewComp("form");
+  // };
+
+  // const handleEdit = () => {
+  //   setViewComp("form");
+  // };
+
+  // const handleBack = () => {
+  //   if (viewComp === "form" && selectedId) {
+  //     setViewComp("view");
+  //   } else {
+  //     setViewComp("list");
+  //     setSelectedId(null);
+  //   }
+  // };
+
+  // const handleCancel = () => {
+  //   if (selectedId) {
+  //     setViewComp("view");
+  //   } else {
+  //     setViewComp("list");
+  //   }
+  // };
 
   return {
-    outlets: filteredOutlets,
-    loading,
-    error,
-    viewComp,
-    setViewComp,
-    selectedOutlet,
-    searchTerm,
-    setSearchTerm,
-    handleViewDetail,
-    handleAdd,
-    handleBack,
-    handleEdit,
-    handleCancel,
+    dataList,
+    isBusy,
+    currentView,
+    errors,
+    formData,
+    searchData,
+    setSearchData,
+    handleCreateNew,
+    // handleBack,
   };
 };
 

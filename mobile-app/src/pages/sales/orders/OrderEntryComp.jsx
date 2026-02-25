@@ -12,7 +12,7 @@ import { demoOptions } from "@/utils/vtable";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
-const OrderEntry = ({ formData, onBack }) => {
+const OrderEntryComp = ({ formData, onBack }) => {
   const [errors, setSerros] = useState([]);
   const [dataList, setDataList] = useState([
     {
@@ -149,4 +149,4 @@ const OrderEntry = ({ formData, onBack }) => {
     </div>
   );
 };
-export default OrderEntry;
+export default OrderEntryComp;

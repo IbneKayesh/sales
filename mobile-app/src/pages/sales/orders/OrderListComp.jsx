@@ -9,14 +9,14 @@ import { Calendar } from "primereact/calendar";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "@/utils/datetime";
 
-const OrderList = ({
+const OrderListComp = ({
   dataList,
   isBusy,
   searchData,
   setSearchData,
   orderStatusOptions,
   filteredOrders,
-  onCreateOrder,
+  onCreateNew,
 }) => {
   const navigate = useNavigate();
   const op = useRef(null);
@@ -159,7 +159,7 @@ const OrderList = ({
                 <>
                   <button
                     className="lite-button lite-button-primary lite-button-sm"
-                    onClick={() => onCreateOrder(item)}
+                    onClick={() => onCreateNew(item)}
                   >
                     <span className="pi pi-pencil mr-1 text-xs"></span>
                     Create
@@ -191,4 +191,4 @@ const OrderList = ({
     </div>
   );
 };
-export default OrderList;
+export default OrderListComp;

@@ -1,18 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../../db/sqlManager");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { cntct_users } = req.body;
+    const { cntct_users, cntct_bsins } = req.body;
 
     // Validate input
-    if (!cntct_users) {
+    if (!cntct_users || !cntct_bsins) {
       return res.json({
         success: false,
-        message: "User ID is required",
+        message: "User ID and Business ID are required",
         data: null,
       });
     }
@@ -24,9 +24,10 @@ router.post("/", async (req, res) => {
     LEFT JOIN tmcb_tarea ta ON ta.id = cnt.cntct_tarea
     LEFT JOIN tmcb_dzone dz ON dz.id = cnt.cntct_dzone
     WHERE cnt.cntct_users = ?
+    AND cnt.cntct_bsins = ?
     AND cnt.cntct_ctype = 'Outlet'
     ORDER BY cnt.cntct_cntnm`;
-    const params = [cntct_users];
+    const params = [cntct_users, cntct_bsins];
 
     const rows = await dbGetAll(sql, params, `Get outlets for ${cntct_users}`);
     res.json({
