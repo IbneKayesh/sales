@@ -1031,3 +1031,32 @@
   border-radius: 10px;
   margin: 0 6px 6px;
 }
+
+
+/*Lite Rounded Button*/
+.lite-round-btn {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: var(--on-surface);
+}
+
+/* Icon focus style */
+.lite-round-btn:focus .pi,
+.lite-round-btn:focus-visible .pi {
+  color: var(--primary);   /* icon color change */
+  font-weight: 700;        /* may not affect all PrimeIcons */
+  transform: scale(1.15);  /* stronger visual emphasis */
+}
+
+/* Optional focus ring */
+.lite-round-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

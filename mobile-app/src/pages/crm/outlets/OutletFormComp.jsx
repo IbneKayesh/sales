@@ -8,18 +8,10 @@ const OutletFormComp = ({ formData, errors, onChange, onBack, onSave }) => {
       <div className="header-row">
         <div className="header-row-actions">
           <button
-            className="lite-button lite-button-secondary lite-button-sm"
-            onClick={() => onBack()}
-          >
-            <span className="pi pi-arrow-left mr-1 text-xs" />
-            Back
-          </button>
-          <button
-            className="lite-button lite-button-primary lite-button-sm"
+            className="lite-round-btn"
             onClick={(e) => onSave(e)}
           >
-            <span className="pi pi-check mr-1 text-xs" />
-            Save
+            <span className="pi pi-save" />
           </button>
         </div>
         <div className="entity-meta-block">

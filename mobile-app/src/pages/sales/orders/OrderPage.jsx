@@ -1,6 +1,8 @@
 import useOrders from "@/hooks/sales/useOrders";
 import OrderListComp from "./OrderListComp";
 import OrderEntryComp from "./OrderEntryComp";
+import TitleTopBar from "@/components/TitleTopBar";
+import LiteLoader from "@/components/LiteLoader";
 
 const OrderPage = () => {
   const {
@@ -18,22 +20,31 @@ const OrderPage = () => {
   } = useOrders();
 
   return (
-    <div className="page-container">
-      {currentView === "list" && (
-        <OrderListComp
-          dataList={dataList}
-          isBusy={isBusy}
-          searchData={searchData}
-          setSearchData={setSearchData}
-          orderStatusOptions={orderStatusOptions}
-          filteredOrders={filteredOrders}
-          onCreateNew={handleCreateNew}
-        />
-      )}
-      {currentView === "entry" && (
-        <OrderEntryComp formData={formData} onBack={handleBack} />
-      )}
-    </div>
+    <>
+      <TitleTopBar
+        viewName={currentView}
+        titleName="Order"
+        idValue={formData.id}
+        funcName={handleBack}
+      />
+      <div className="page-container">
+        {isBusy && <LiteLoader />}
+        {currentView === "list" && (
+          <OrderListComp
+            dataList={dataList}
+            isBusy={isBusy}
+            searchData={searchData}
+            setSearchData={setSearchData}
+            orderStatusOptions={orderStatusOptions}
+            filteredOrders={filteredOrders}
+            onCreateNew={handleCreateNew}
+          />
+        )}
+        {currentView === "entry" && (
+          <OrderEntryComp formData={formData} onBack={handleBack} />
+        )}
+      </div>
+    </>
   );
 };
 

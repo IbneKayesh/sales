@@ -30,18 +30,10 @@ const OutletViewComp = ({ formData, onBack, onEdit }) => {
       <div className="header-row">
         <div className="header-row-actions">
           <button
-            className="lite-button lite-button-secondary lite-button-sm"
-            onClick={() => onBack()}
+            className="lite-round-btn"
+            onClick={() => onEdit(formData.outlet)}
           >
-            <span className="pi pi-arrow-left mr-1 text-xs" />
-            Back
-          </button>
-          <button
-            className="lite-button lite-button-warning lite-button-sm"
-            onClick={() => onEdit()}
-          >
-            <span className="pi pi-pencil mr-1 text-xs" />
-            Edit
+            <span className="pi pi-pencil" />
           </button>
         </div>
         <div className="entity-meta-block">
