@@ -37,7 +37,7 @@ const useOrders = () => {
 
       const response = await ordersAPI.getAll(formDataNew);
       setDataList(response?.data || []);
-      console.log("loadOrders: ", response.data);
+      //console.log("loadOrders: ", response.data);
     } catch (error) {
       console.error("Error loading data:", error);
       showToast("error", "Error", error?.message || "Failed to load data");

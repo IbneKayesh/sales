@@ -1,13 +1,39 @@
+import { useRef } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
-import { useRef, useState } from "react";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "@/utils/datetime";
+
+const statusBadgeClass = (status) => {
+  switch (status) {
+    case "Paid":
+      return "status-badge status-badge--paid";
+    case "Pending":
+      return "status-badge status-badge--pending";
+    case "Overdue":
+      return "status-badge status-badge--overdue";
+    default:
+      return "status-badge status-badge--undelivered";
+  }
+};
+
+const statusIcon = (status) => {
+  switch (status) {
+    case "Paid":
+      return "pi-check-circle";
+    case "Pending":
+      return "pi-clock";
+    case "Overdue":
+      return "pi-exclamation-circle";
+    default:
+      return "pi-minus-circle";
+  }
+};
 
 const OrderListComp = ({
   dataList,
@@ -21,46 +47,18 @@ const OrderListComp = ({
   const navigate = useNavigate();
   const op = useRef(null);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Paid":
-        return "#2e7d32";
-      case "Pending":
-        return "#ed6c02";
-      case "Overdue":
-        return "#d32f2f";
-      default:
-        return "#666";
-    }
-  };
+  const viewOrder = (id) => navigate(`/invoice/view/${id}`);
+  const printOrder = (id) => navigate(`/invoice/print/${id}`);
 
-  const getStatusBg = (status) => {
-    switch (status) {
-      case "Paid":
-        return "#f0fdf4";
-      case "Pending":
-        return "#fffbeb";
-      case "Overdue":
-        return "#fef2f2";
-      default:
-        return "var(--background)";
-    }
-  };
-  const viewOrder = (id) => {
-    navigate(`/invoice/view/${id}`);
-  };
-
-  const printOrder = (id) => {
-    navigate(`/invoice/print/${id}`);
-  };
   return (
     <div className="lite-card">
+      {/* ── Search Bar ── */}
       <div className="search-bar">
         <div className="search-input-wrapper">
           <IconField iconPosition="left" className="search-field">
             <InputIcon className="pi pi-search" />
             <InputText
-              placeholder="Search"
+              placeholder="Search orders…"
               size="small"
               className="w-full"
               value={searchData.search}
@@ -77,13 +75,15 @@ const OrderListComp = ({
             size="small"
             className="search-filter-btn"
             onClick={(e) => op.current.toggle(e)}
+            tooltip="Filter"
+            tooltipOptions={{ position: "left" }}
           />
         </div>
 
         <OverlayPanel ref={op} dismissable>
           <div className="grid w-20rem">
             <div className="col-12">
-              <label className="filter-label">Filter by Status</label>
+              <label className="form-field-label">Filter by Status</label>
             </div>
             <div className="col-12">
               <Dropdown
@@ -97,7 +97,6 @@ const OrderListComp = ({
                 size="small"
               />
             </div>
-
             <div className="col-12">
               <Calendar
                 value={searchData.date}
@@ -112,74 +111,79 @@ const OrderListComp = ({
           </div>
         </OverlayPanel>
       </div>
-      <div className="lite-card-divider"></div>
+
+      <div className="lite-card-divider" />
+
+      {/* ── Section Header ── */}
+      <div className="page-section-header">
+        <div className="page-section-header-bar" />
+        <span className="page-section-header-title">Order List</span>
+        <span className="page-section-header-count">
+          {filteredOrders.length}
+        </span>
+      </div>
+
+      {/* ── List ── */}
       <div className="list-container">
-        {dataList.length === 0 && (
-          <div className="lite-card-item">
-            <div className="lite-card-item-left">
-              <div className="lite-card-item-left-title">No orders found</div>
-            </div>
+        {filteredOrders.length === 0 && (
+          <div className="empty-state">
+            <span className="pi pi-file-o empty-state-icon" />
+            <span className="empty-state-text">No orders found</span>
           </div>
         )}
+
         {filteredOrders.map((item) => (
-          <div
-            key={item.id}
-            className="lite-card-item"
-            style={{
-              background: item.fodrm_odamt === 0 ? "#fffbeb" : "#ffffff",
-            }}
-          >
+          <div key={item.id} className="lite-card-item">
             <div className="lite-card-item-left">
               <div className="lite-card-item-left-title">
-                {item.cnrut_srlno}. {item.cntct_cntnm}
+                <span
+                  style={{ color: "var(--text-secondary)", marginRight: 4 }}
+                >
+                  #{item.cnrut_srlno}
+                </span>
+                {item.cntct_cntnm}
               </div>
               <div className="lite-card-item-left-subtitle">
-                {formatDate(item.cnrut_lvdat)}, {item.rutes_dname},{" "}
+                {formatDate(item.cnrut_lvdat)} · {item.rutes_dname} —{" "}
                 {item.rutes_rname}
               </div>
             </div>
+
             <div className="lite-card-item-right">
               <div className="lite-card-item-right-value">
                 {item.fodrm_odamt}
               </div>
-              <div className="lite-card-item-right-tag">
+              <span className={statusBadgeClass(item.fodrm_stats)}>
                 <span
-                  className="badge-pill"
-                  style={{
-                    background: getStatusBg(item.fodrm_stats),
-                    color: getStatusColor(item.fodrm_stats),
-                  }}
-                >
-                  {item.fodrm_stats}
-                </span>
-              </div>
+                  className={`pi ${statusIcon(item.fodrm_stats)} text-xs`}
+                />
+                {item.fodrm_stats}
+              </span>
             </div>
+
             <div className="lite-card-item-footer">
               {item.fodrm_stats === "Pending" ? (
-                <>
-                  <button
-                    className="lite-button lite-button-primary lite-button-sm"
-                    onClick={() => onCreateNew(item)}
-                  >
-                    <span className="pi pi-pencil mr-1 text-xs"></span>
-                    Create
-                  </button>
-                </>
+                <button
+                  className="lite-button lite-button-primary lite-button-sm"
+                  onClick={() => onCreateNew(item)}
+                >
+                  <span className="pi pi-file-edit mr-1 text-xs" />
+                  Create Order
+                </button>
               ) : (
                 <>
                   <button
                     className="lite-button lite-button-info lite-button-sm"
                     onClick={() => viewOrder(item.id)}
                   >
-                    <span className="pi pi-eye mr-1 text-xs"></span>
+                    <span className="pi pi-eye mr-1 text-xs" />
                     View
                   </button>
-
                   <button
-                    className="lite-button lite-button-info lite-button-sm"
+                    className="lite-button lite-button-outline lite-button-sm"
                     onClick={() => printOrder(item.id)}
                   >
-                    <span className="pi pi-print mr-1 text-xs"></span>
+                    <span className="pi pi-print mr-1 text-xs" />
                     Print
                   </button>
                 </>
@@ -191,4 +195,5 @@ const OrderListComp = ({
     </div>
   );
 };
+
 export default OrderListComp;

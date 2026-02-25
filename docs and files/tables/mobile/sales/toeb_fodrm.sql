@@ -7,7 +7,7 @@ CREATE TABLE `toeb_fodrm` (
   `fodrm_users` VARCHAR(50) NOT NULL,
   `fodrm_bsins` VARCHAR(50) NOT NULL,
   `fodrm_cntct` VARCHAR(50) NOT NULL,
-  `fodrm_ocuid` VARCHAR(50) NOT NULL,
+  `fodrm_empid` VARCHAR(50) NOT NULL,
   `fodrm_rutes` VARCHAR(50) NOT NULL,
   `fodrm_trnno` VARCHAR(50) NOT NULL,
   `fodrm_trdat` DATETIME NOT NULL DEFAULT current_timestamp(),

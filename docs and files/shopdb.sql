@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Feb 24, 2026 at 10:18 AM
+-- Generation Time: Feb 25, 2026 at 07:03 AM
 -- Server version: 12.1.2-MariaDB-ubu2404
 -- PHP Version: 8.3.26
 
@@ -63,21 +63,34 @@ CREATE TABLE `tmcb_cntct` (
 --
 
 INSERT INTO `tmcb_cntct` (`id`, `cntct_users`, `cntct_bsins`, `cntct_ctype`, `cntct_sorce`, `cntct_cntnm`, `cntct_cntps`, `cntct_cntno`, `cntct_email`, `cntct_tinno`, `cntct_trade`, `cntct_ofadr`, `cntct_fcadr`, `cntct_tarea`, `cntct_dzone`, `cntct_cntry`, `cntct_cntad`, `cntct_dspct`, `cntct_crlmt`, `cntct_pybln`, `cntct_adbln`, `cntct_crbln`, `cntct_actve`, `cntct_crusr`, `cntct_crdat`, `cntct_upusr`, `cntct_updat`, `cntct_rvnmr`) VALUES
-('08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'user1', 'business1', 'Supplier', 'Local', 'Bengal Fresh Foods', 'Nusrat Jahan', '01822-000002', 'email@sgd.com', 'TIN-123456', 'TRADE-123456', 'Chittagong Wholesale Market', 'Chittagong Wholesale Market', 'sirajganj-sadar', 'sirajganj', 'Bangladesh', '0', 10.000000, 20000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-14 09:17:52', 'user1', '2026-01-31 10:14:56', 6),
-('11f1664d-5d03-4724-a4dd-57ad3e01ad1a', 'user1', 'business1', 'Customer', 'Local', 'Al Noor Store', 'Javed Hasan', '01623-100104', 'email@sgd.com', 'TIN-123456', 'TRADE-123456', 'Sylhet Zindabazar', 'Sylhet Zindabazar', 'bogra-sadar', 'bogra', 'Bangladesh', '0', 10.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:24:23', 'user1', '2026-02-05 09:58:53', 5),
-('267bb3aa-9177-43d2-8d8b-e0137578cf98', 'user1', 'business1', 'Supplier', 'Local', 'Dhaka Agro Traders', 'Md. Kamal Hossain', '01711-000001', 'email@email.com', '', '', 'Kawran Bazar, Dhaka', 'Kawran Bazar, Dhaka', 'araihazar', 'narayanganj', 'Bangladesh', '0', 0.000000, 20000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 12:02:10', 'user1', '2026-01-31 10:14:56', 4),
-('41981c62-d7fc-4238-a8f1-8c70bd2c1e0e', 'user1', 'business1', 'Customer', 'Local', 'Bismillah Traders', 'Hafiz Uddin', '01921-100103', '', 'TIN-123-123', 'TRADE-123-123', 'Cumilla Sadar', 'Cumilla Sadar', 'araihazar', 'narayanganj', 'Bangladesh', '0', 0.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:24:02', 'user1', '2026-02-05 09:59:08', 4),
-('521e18fc-b57a-48c4-a0a7-d7772edb4b76', 'user1', 'business1', 'Customer', 'Local', 'M/S Amin Enterprise', 'Aminul Islam', '01534-100105', '', '', '', 'Khulna Boyra', 'Khulna Boyra', 'kachpur', 'narayanganj', 'Bangladesh', '0', 10.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:24:45', 'user1', '2026-02-05 09:59:20', 3),
-('639611f4-97e5-4589-904e-190ef11f7f4e', 'user1', 'business1', 'Supplier', 'Local', 'Jisan Dairy Source', 'Akhi Khatun', '01555-000005', '', '', '', 'Mirpur-10, Dhaka', 'Mirpur-10, Dhaka', 'enayetpur', 'sirajganj', 'Bangladesh', '0', 0.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:10:29', 'user1', '2026-01-31 10:14:56', 2),
-('6a0619ca-84e9-4df5-b225-7dd7acb91b86', 'user1', 'business1', 'Supplier', 'Local', 'Green Farm Ltd.', 'Abdul Karim', '01933-000003', '', '', '', 'Bogura Sadar, Bogura', 'Bogura Sadar, Bogura', 'bogra-sadar', 'bogra', 'Bangladesh', '0', 10.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:09:12', 'user1', '2026-01-31 10:14:56', 2),
-('be93309a-ec2b-40d0-9c62-8abe7796b547', 'user1', 'business1', 'Supplier', 'Local', 'Golden Grain Supply', 'Rashed Mahmud', '01644-000004', '', '', '', 'Jashore Industrial Area', 'Jashore Industrial Area', 'kamarkhanda', 'sirajganj', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:09:47', 'user1', '2026-01-31 10:14:56', 2),
+('08eb3501-fcd0-4d99-84c3-ce5309bfe613', 'user1', 'business1', 'Supplier', 'Local', 'Bengal Fresh Foods', 'Nusrat Jahan', '01822-000002', 'email@sgd.com', 'TIN-123456', 'TRADE-123456', 'Chittagong Wholesale Market', 'Chittagong Wholesale Market', 'a3e6b819-790a-42d7-9156-ebbf9e8eab97', '5159fc89-3096-4d5c-8dfe-57ab8cf72ae1', 'Bangladesh', '0', 10.000000, 20000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-14 09:17:52', 'user1', '2026-02-25 04:10:21', 7),
+('11f1664d-5d03-4724-a4dd-57ad3e01ad1a', 'user1', 'business1', 'Customer', 'Local', 'Al Noor Store', 'Javed Hasan', '01623-100104', 'email@sgd.com', 'TIN-123456', 'TRADE-123456', 'Sylhet Zindabazar', 'Sylhet Zindabazar', '3c65c041-5792-4d0f-b0b1-6603f7debb95', '64574f07-96ab-4669-be1e-2ebe107720be', 'Bangladesh', '0', 10.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:24:23', 'user1', '2026-02-25 04:09:06', 6),
+('267bb3aa-9177-43d2-8d8b-e0137578cf98', 'user1', 'business1', 'Supplier', 'Local', 'Dhaka Agro Traders', 'Md. Kamal Hossain', '01711-000001', 'email@email.com', '', '', 'Kawran Bazar, Dhaka', 'Kawran Bazar, Dhaka', 'a3e6b819-790a-42d7-9156-ebbf9e8eab97', '5159fc89-3096-4d5c-8dfe-57ab8cf72ae1', 'Bangladesh', '0', 0.000000, 20000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 12:02:10', 'user1', '2026-02-25 04:10:31', 5),
+('41981c62-d7fc-4238-a8f1-8c70bd2c1e0e', 'user1', 'business1', 'Customer', 'Local', 'Bismillah Traders', 'Hafiz Uddin', '01921-100103', '', 'TIN-123-123', 'TRADE-123-123', 'Cumilla Sadar', 'Cumilla Sadar', '3c65c041-5792-4d0f-b0b1-6603f7debb95', '64574f07-96ab-4669-be1e-2ebe107720be', 'Bangladesh', '0', 0.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:24:02', 'user1', '2026-02-25 04:09:35', 5),
+('521e18fc-b57a-48c4-a0a7-d7772edb4b76', 'user1', 'business1', 'Customer', 'Local', 'M/S Amin Enterprise', 'Aminul Islam', '01534-100105', '', '', '', 'Khulna Boyra', 'Khulna Boyra', '3c65c041-5792-4d0f-b0b1-6603f7debb95', '64574f07-96ab-4669-be1e-2ebe107720be', 'Bangladesh', '0', 10.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:24:45', 'user1', '2026-02-25 04:09:51', 4),
+('639611f4-97e5-4589-904e-190ef11f7f4e', 'user1', 'business1', 'Supplier', 'Local', 'Jisan Dairy Source', 'Akhi Khatun', '01555-000005', '', '', '', 'Mirpur-10, Dhaka', 'Mirpur-10, Dhaka', 'a3e6b819-790a-42d7-9156-ebbf9e8eab97', '5159fc89-3096-4d5c-8dfe-57ab8cf72ae1', 'Bangladesh', '0', 0.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:10:29', 'user1', '2026-02-25 04:10:56', 3),
+('6a0619ca-84e9-4df5-b225-7dd7acb91b86', 'user1', 'business1', 'Supplier', 'Local', 'Green Farm Ltd.', 'Abdul Karim', '01933-000003', '', '', '', 'Bogura Sadar, Bogura', 'Bogura Sadar, Bogura', 'a3e6b819-790a-42d7-9156-ebbf9e8eab97', '5159fc89-3096-4d5c-8dfe-57ab8cf72ae1', 'Bangladesh', '0', 10.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:09:12', 'user1', '2026-02-25 04:10:48', 3),
+('be93309a-ec2b-40d0-9c62-8abe7796b547', 'user1', 'business1', 'Supplier', 'Local', 'Golden Grain Supply', 'Rashed Mahmud', '01644-000004', '', '', '', 'Jashore Industrial Area', 'Jashore Industrial Area', 'a3e6b819-790a-42d7-9156-ebbf9e8eab97', '5159fc89-3096-4d5c-8dfe-57ab8cf72ae1', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-18 11:09:47', 'user1', '2026-02-25 04:10:39', 3),
 ('both', 'user1', 'business1', 'Both', 'Local', 'Both A/C', 'Both A/C', 'Both A/C', 'Both A/C', '', '', 'Both A/C', 'Both A/C', 'sherpur', 'bogra', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 13:04:25', 'user1', '2026-01-31 10:14:56', 3),
-('c370a9f5-7ccf-4e2d-9d7a-7d5873293ddc', 'user1', 'business1', 'Customer', 'Local', 'Shapno Mini Mart', 'Farzana Islam', '01819-100102', 'email@sgd.com', '', '', 'Uttara Sector 7, Dhaka', 'Uttara Sector 7, Dhaka', 'belkuchi', 'sirajganj', 'Bangladesh', '0', 5.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-14 09:23:59', 'user1', '2026-02-05 09:59:30', 4),
-('d5eefaf0-9979-4edf-8fbd-68f3157c4105', 'user1', 'business1', 'Customer', 'Local', 'Rahman General Store', 'Anisur Rahman', '01712-100101', 'email@email.com', '', '', 'Mohammadpur, Dhaka', 'Mohammadpur, Dhaka', 'adamdighi', 'bogra', 'Bangladesh', '0', 0.000000, 50000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 12:02:29', 'user1', '2026-01-31 10:14:56', 4),
-('internal', 'user1', 'business1', 'Internal', 'Local', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', '', '', 'Internal A/C', 'Internal A/C', 'sherpur', 'bogra', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 13:04:25', 'user1', '2026-01-31 10:14:56', 3),
-('outlet1', 'user1', 'business1', 'Outlet', 'Local', 'Maa Enterprise', '', '', '', '', '', '', '', 'badda', 'dhaka', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-18 05:55:17', 1),
-('outlet2', 'user1', 'business1', 'Outlet', 'Local', 'Bhai Bhai Store', '', '', '', '', '', '', '', 'badda', 'dhaka', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 08:07:44', 'user1', '2026-02-18 08:07:58', 1),
-('outlet3', 'user1', 'business1', 'Outlet', 'Local', 'Din Confectionary', '', '', '', '', '', '', '', 'badda', 'dhaka', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 08:07:44', 'user1', '2026-02-18 08:07:58', 1);
+('c370a9f5-7ccf-4e2d-9d7a-7d5873293ddc', 'user1', 'business1', 'Customer', 'Local', 'Shapno Mini Mart', 'Farzana Islam', '01819-100102', 'email@sgd.com', '', '', 'Uttara Sector 7, Dhaka', 'Uttara Sector 7, Dhaka', '3c65c041-5792-4d0f-b0b1-6603f7debb95', '64574f07-96ab-4669-be1e-2ebe107720be', 'Bangladesh', '0', 5.000000, 25000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-14 09:23:59', 'user1', '2026-02-25 04:10:07', 5),
+('cfa54018-aca1-48a7-acde-91da985c0aa8', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 16', 'Outlet 16 Contact Person', 'Outlet 16 Contact Number', '', '', '', 'Outlet 16 Contact Address', '', '', '', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, '850d5993-1d5f-411e-ad8a-b2ceba393e0d', '2026-02-25 07:02:56', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', '2026-02-25 07:02:56', 1),
+('d5e4fa90-4079-45df-8h31-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 13', 'Outlet 13 Contact Person', 'Outlet 13 Contact Number', '', '', '', 'Outlet 13 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
+('d5e4fa90-4079-4edf-8h31-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 12', 'Outlet 12 Contact Person', 'Outlet 12 Contact Number', '', '', '', 'Outlet 12 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
+('d5e4fa90-4079-4fdf-8h31-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 14', 'Outlet 14 Contact Person', 'Outlet 14 Contact Number', '', '', '', 'Outlet 14 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
+('d5e8fa90-4079-4edf-8h31-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 11', 'Outlet 11 Contact Person', 'Outlet 11 Contact Number', '', '', '', 'Outlet 11 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
+('d5e8fa90-4079-4edf-8h3d-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 10', 'Outlet 10 Contact Person', 'Outlet 10 Contact Number', '', '', '', 'Outlet 10 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
+('d5e8fa90-4979-4edf-8h3d-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 9', 'Outlet 9 Contact Person', 'Outlet 9 Contact Number', '', '', '', 'Outlet 9 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
+('d5e8faf0-4979-4edf-8h3d-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 8', 'Outlet 8 Contact Person', 'Outlet 8 Contact Number', '', '', '', 'Outlet 8 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
+('d5eafaf0-9979-4edf-8fbd-68f3157c4105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 2', 'Outlet 2 Contact Person', 'Outlet 2 Contact Number', '', '', '', 'Outlet 2 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 08:07:44', 'user1', '2026-02-25 04:13:30', 2),
+('d5eefaf0-4979-4edf-8fbd-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 5', 'Outlet 5 Contact Person', 'Outlet 5 Contact Number', '', '', '', 'Outlet 5 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', '2026-02-25 06:42:36', 4),
+('d5eefaf0-4979-4edf-8h3d-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 7', 'Outlet 7 Contact Person', 'Outlet 7 Contact Number', '', '', '', 'Outlet 7 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
+('d5eefaf0-4979-4edf-8hbd-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 6', 'Outlet 6 Contact Person', 'Outlet 6 Contact Number', '', '', '', 'Outlet 6 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
+('d5eefaf0-9979-4edf-8fbd-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 4', 'Outlet 4 Contact Person', 'Outlet 4 Contact Number', '', '', '', 'Outlet 4 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
+('d5eefaf0-9979-4edf-8fbd-68f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 3', 'Outlet 3 Contact Person', 'Outlet 3 Contact Number', '', '', '', 'Outlet 3 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
+('d5eefaf0-9979-4edf-8fbd-68f3157c4103', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 1', 'Outlet 1 Contact Person', 'Outlet 1 Contact Number', '', '', '', 'Outlet 1 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 08:07:44', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', '2026-02-25 06:58:21', 8),
+('d5eefaf0-9979-4edf-8fbd-68f3157c4105', 'user1', 'business1', 'Customer', 'Local', 'Rahman General Store', 'Anisur Rahman', '01712-100101', 'email@email.com', '', '', 'Mohammadpur, Dhaka', 'Mohammadpur, Dhaka', '3c65c041-5792-4d0f-b0b1-6603f7debb95', '64574f07-96ab-4669-be1e-2ebe107720be', 'Bangladesh', '0', 0.000000, 50000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 12:02:29', 'user1', '2026-02-25 04:09:59', 5),
+('e5a09c3a-cb9b-43af-b664-73fc231085d6', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 15', 'Outlet 15 Contact Person', 'Outlet 15 Contact Number', '', '', '', 'Outlet 15 Contact Address', '', '3c65c041-5792-4d0f-b0b1-6603f7debb95', '64574f07-96ab-4669-be1e-2ebe107720be', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, '850d5993-1d5f-411e-ad8a-b2ceba393e0d', '2026-02-25 06:40:16', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', '2026-02-25 06:41:42', 3),
+('internal', 'user1', 'business1', 'Internal', 'Local', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', '', '', 'Internal A/C', 'Internal A/C', 'sherpur', 'bogra', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 13:04:25', 'user1', '2026-01-31 10:14:56', 3);
 
 -- --------------------------------------------------------
 
@@ -107,11 +120,20 @@ CREATE TABLE `tmcb_cntrt` (
 --
 
 INSERT INTO `tmcb_cntrt` (`id`, `cnrut_users`, `cnrut_bsins`, `cnrut_cntct`, `cnrut_rutes`, `cnrut_empid`, `cnrut_srlno`, `cnrut_lvdat`, `cnrut_actve`, `cnrut_crusr`, `cnrut_crdat`, `cnrut_upusr`, `cnrut_updat`, `cnrut_rvnmr`) VALUES
-('1fb6f947-26d4-44fb-8154-60c7bb80445c', 'user1', 'business1', 'outlet2', 'route4', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-23 06:19:48', 1, 'user1', '2026-02-23 06:19:48', 'user1', '2026-02-23 06:19:48', 1),
-('7dd5b92e-dfdf-4582-a23a-88ba20c0c99f', 'user1', 'business1', 'outlet3', 'route2', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 2, '2026-02-23 06:19:21', 1, 'user1', '2026-02-23 06:19:21', 'user1', '2026-02-23 06:19:21', 1),
-('8a65db7a-ef7e-442f-9d9c-4dc7d77f9eab', 'user1', 'business1', 'outlet3', 'route1', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-23 06:19:55', 1, 'user1', '2026-02-23 06:19:55', 'user1', '2026-02-23 06:19:55', 1),
-('9210d87d-e640-4c3e-bbcc-75601d7eaf80', 'user1', 'business1', 'outlet1', 'route2', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 3, '2026-02-23 06:19:28', 1, 'user1', '2026-02-23 06:19:28', 'user1', '2026-02-23 06:19:28', 1),
-('cec79be1-3497-40a6-9cb3-51b863cc930e', 'user1', 'business1', 'outlet2', 'route2', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-23 06:01:30', 1, 'user1', '2026-02-23 06:01:30', 'user1', '2026-02-23 06:01:30', 1);
+('247dcd03-208f-45e0-b117-d9361e202e30', 'user1', 'business1', 'd5eefaf0-4979-4edf-8hbd-38f3157c3105', 'b1436084-92a1-4508-a5ea-a43d03f4a85d', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 2, '2026-02-25 04:20:11', 1, 'user1', '2026-02-25 04:20:11', 'user1', '2026-02-25 04:20:11', 1),
+('29a44068-4de6-43ba-91a5-8c99f4e30aa3', 'user1', 'business1', 'd5eefaf0-4979-4edf-8fbd-38f3157c3105', 'b1436084-92a1-4508-a5ea-a43d03f4a85d', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-25 04:20:00', 1, 'user1', '2026-02-25 04:20:00', 'user1', '2026-02-25 04:20:00', 1),
+('3fdf6b45-ceb9-41c2-8345-b3d478697f7d', 'user1', 'business1', 'd5e4fa90-4079-45df-8h31-38f3157c3105', '6d37c284-6fdd-48af-93e3-2c6c981ba7b4', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-25 04:58:37', 1, 'user1', '2026-02-25 04:58:37', 'user1', '2026-02-25 04:58:37', 1),
+('632bb0c0-7b8e-478c-a89d-39bd833a2d60', 'user1', 'business1', 'd5eefaf0-9979-4edf-8fbd-68f3157c4103', '82c28262-913e-455d-afe3-1a7487c693b5', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-25 04:18:56', 1, 'user1', '2026-02-25 04:18:56', 'user1', '2026-02-25 04:18:56', 1),
+('7e968b6b-3fdc-4d9b-8020-e235820c052e', 'user1', 'business1', 'd5e8faf0-4979-4edf-8h3d-38f3157c3105', '7c9c60c9-0a0d-4e84-b4a9-f7cd1e7d4a9b', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 2, '2026-02-25 04:20:53', 1, 'user1', '2026-02-25 04:20:53', 'user1', '2026-02-25 04:20:53', 1),
+('839a9172-40d8-44a0-9797-61a8362ee097', 'user1', 'business1', 'd5eafaf0-9979-4edf-8fbd-68f3157c4105', '82c28262-913e-455d-afe3-1a7487c693b5', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 2, '2026-02-25 04:19:04', 1, 'user1', '2026-02-25 04:19:04', 'user1', '2026-02-25 04:19:04', 1),
+('93c5e824-a57d-4a33-a228-f0957d4fdd25', 'user1', 'business1', 'd5e4fa90-4079-4fdf-8h31-38f3157c3105', '6d37c284-6fdd-48af-93e3-2c6c981ba7b4', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 2, '2026-02-25 04:58:52', 1, 'user1', '2026-02-25 04:58:52', 'user1', '2026-02-25 04:58:52', 1),
+('a098a230-5329-4d4d-865e-15d311df3bfb', 'user1', 'business1', 'd5e8fa90-4079-4edf-8h31-38f3157c3105', '95153004-69ed-448d-8840-20bea8602634', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-25 04:22:24', 1, 'user1', '2026-02-25 04:22:24', 'user1', '2026-02-25 04:22:24', 1),
+('b7ac3a4e-7e2f-4425-87bd-e55d0433f799', 'user1', 'business1', 'd5e8fa90-4979-4edf-8h3d-38f3157c3105', '7e0a4f3c-9dcb-4e21-8235-8de5abeb6f2f', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-25 04:22:04', 1, 'user1', '2026-02-25 04:22:04', 'user1', '2026-02-25 04:22:04', 1),
+('dacb517e-686a-48e7-a5a0-1da2eb427e2f', 'user1', 'business1', 'd5eefaf0-9979-4edf-8fbd-38f3157c3105', 'b0f3bab2-a4d5-443c-b35d-3b9b991505bd', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 2, '2026-02-25 04:19:26', 1, 'user1', '2026-02-25 04:19:26', 'user1', '2026-02-25 04:19:26', 1),
+('ea0b72bf-4e9b-4cca-ac77-a81793de646e', 'user1', 'business1', 'd5eefaf0-9979-4edf-8fbd-68f3157c3105', 'b0f3bab2-a4d5-443c-b35d-3b9b991505bd', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-25 04:19:15', 1, 'user1', '2026-02-25 04:19:15', 'user1', '2026-02-25 04:19:15', 1),
+('eb90238d-7bf0-493e-8159-c34e72ad5ccf', 'user1', 'business1', 'd5e4fa90-4079-4edf-8h31-38f3157c3105', '95153004-69ed-448d-8840-20bea8602634', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 2, '2026-02-25 04:22:31', 1, 'user1', '2026-02-25 04:22:31', 'user1', '2026-02-25 04:22:31', 1),
+('f5a75741-b96a-4acd-b008-154a47268768', 'user1', 'business1', 'd5eefaf0-4979-4edf-8h3d-38f3157c3105', '7c9c60c9-0a0d-4e84-b4a9-f7cd1e7d4a9b', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 1, '2026-02-25 04:20:45', 1, 'user1', '2026-02-25 04:20:45', 'user1', '2026-02-25 04:20:45', 1),
+('ff368f70-c405-4338-a30d-cf2e1e72c5e3', 'user1', 'business1', 'd5e8fa90-4079-4edf-8h3d-38f3157c3105', '7e0a4f3c-9dcb-4e21-8235-8de5abeb6f2f', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 2, '2026-02-25 04:22:17', 1, 'user1', '2026-02-25 04:22:17', 'user1', '2026-02-25 04:22:17', 1);
 
 -- --------------------------------------------------------
 
@@ -138,8 +160,8 @@ CREATE TABLE `tmcb_dlvan` (
 --
 
 INSERT INTO `tmcb_dlvan` (`id`, `dlvan_users`, `dlvan_bsins`, `dlvan_vname`, `dlvan_dname`, `dlvan_actve`, `dlvan_crusr`, `dlvan_crdat`, `dlvan_upusr`, `dlvan_updat`, `dlvan_rvnmr`) VALUES
-('54aeb07f-f041-423d-914f-c5de7915f14f', 'user1', 'business1', 'Delivery Van 1', '', 1, 'user1', '2026-02-19 08:07:28', 'user1', '2026-02-19 08:07:28', 1),
-('b9f74607-1419-4559-8188-6f1b5bdc5165', 'user1', 'business1', 'Pickup No 1', '', 1, 'user1', '2026-02-19 08:07:47', 'user1', '2026-02-19 08:07:47', 1);
+('54aeb07f-f041-423d-914f-c5de7915f14f', 'user1', 'business1', 'Delivery Van 1', 'Driver 1', 1, 'user1', '2026-02-19 08:07:28', 'user1', '2026-02-25 04:16:48', 2),
+('b9f74607-1419-4559-8188-6f1b5bdc5165', 'user1', 'business1', 'Pickup No 1', 'Driver 2', 1, 'user1', '2026-02-19 08:07:47', 'user1', '2026-02-25 04:16:57', 2);
 
 -- --------------------------------------------------------
 
@@ -166,11 +188,10 @@ CREATE TABLE `tmcb_dzone` (
 --
 
 INSERT INTO `tmcb_dzone` (`id`, `dzone_users`, `dzone_bsins`, `dzone_cntry`, `dzone_dname`, `dzone_actve`, `dzone_crusr`, `dzone_crdat`, `dzone_upusr`, `dzone_updat`, `dzone_rvnmr`) VALUES
-('bogra', 'user1', 'business1', 'Bangladesh', 'Bogra', 1, 'user1', '2026-01-25 04:45:54', 'user1', '2026-02-22 07:21:33', 4),
-('d40b3bdc-9f1c-49b7-a75c-c6bd244b7414', 'user1', 'business1', 'Bangladesh', 'Narshindi', 1, 'user1', '2026-02-22 07:21:44', 'user1', '2026-02-22 07:22:13', 3),
-('dhaka', 'user1', 'business1', 'Bangladesh', 'Dhaka', 1, 'user1', '2026-01-25 04:45:54', 'user1', '2026-01-31 10:15:30', 1),
-('narayanganj', 'user1', 'business1', 'Bangladesh', 'Narayanganj', 1, 'user1', '2026-01-25 04:45:54', 'user1', '2026-01-31 10:15:30', 1),
-('sirajganj', 'user1', 'business1', 'Bangladesh', 'Sirajganj', 1, 'user1', '2026-01-25 04:45:54', 'user1', '2026-01-31 10:15:30', 1);
+('27546d84-c122-4118-8373-f4a88a02250b', 'user1', 'business1', 'Bangladesh', 'Zone 1', 1, 'user1', '2026-02-25 04:00:16', 'user1', '2026-02-25 04:00:16', 1),
+('5159fc89-3096-4d5c-8dfe-57ab8cf72ae1', 'user1', 'business1', 'Bangladesh', 'District 2', 1, 'user1', '2026-02-25 04:01:05', 'user1', '2026-02-25 04:01:05', 1),
+('64574f07-96ab-4669-be1e-2ebe107720be', 'user1', 'business1', 'Bangladesh', 'District 1', 1, 'user1', '2026-02-25 04:00:09', 'user1', '2026-02-25 04:00:09', 1),
+('ff11ae77-73d6-4c12-953b-480964bfdb2d', 'user1', 'business1', 'Bangladesh', 'Zone 2', 1, 'user1', '2026-02-25 04:01:20', 'user1', '2026-02-25 04:01:20', 1);
 
 -- --------------------------------------------------------
 
@@ -199,11 +220,13 @@ CREATE TABLE `tmcb_rutes` (
 --
 
 INSERT INTO `tmcb_rutes` (`id`, `rutes_users`, `rutes_bsins`, `rutes_rname`, `rutes_dname`, `rutes_trtry`, `rutes_lvdat`, `rutes_actve`, `rutes_crusr`, `rutes_crdat`, `rutes_upusr`, `rutes_updat`, `rutes_rvnmr`) VALUES
-('route1', 'user1', 'business1', 'Hossain Market', 'Sunday', 'uttar-badda', '2026-02-18 05:45:22', 1, '', '2026-02-18 05:45:22', 'user1', '2026-02-23 03:53:57', 4),
-('route2', 'user1', 'business1', 'Adarshanagar', 'Monday', 'uttar-badda', '2026-02-18 09:14:23', 1, 'user1', '2026-02-18 09:14:23', 'user1', '2026-02-23 04:57:05', 3),
-('route3', 'user1', 'business1', 'Satarkul', 'Thursday', 'uttar-badda', '2026-02-22 09:35:11', 1, 'user1', '2026-02-22 09:35:11', 'user1', '2026-02-23 04:57:10', 2),
-('route4', 'user1', 'business1', 'Baganbari', 'Tuesday', 'uttar-badda', '2026-02-22 09:39:40', 1, 'user1', '2026-02-22 09:39:40', 'user1', '2026-02-23 04:57:15', 2),
-('route5', 'user1', 'business1', 'North Badda', 'Saturday', 'uttar-badda', '2026-02-18 09:12:06', 1, 'user1', '2026-02-18 09:12:06', 'user1', '2026-02-23 04:57:18', 4);
+('6d37c284-6fdd-48af-93e3-2c6c981ba7b4', 'user1', 'business1', 'Route 7', 'Friday', '5dbd9295-dd5e-49c3-a499-73dc2ec82011', '2026-02-25 04:58:24', 1, 'user1', '2026-02-25 04:58:24', 'user1', '2026-02-25 04:58:24', 1),
+('7c9c60c9-0a0d-4e84-b4a9-f7cd1e7d4a9b', 'user1', 'business1', 'Route 4', 'Tuesday', '938df0ba-e593-4def-8f10-a29ce1c294e7', '2026-02-25 04:05:12', 1, 'user1', '2026-02-25 04:05:12', 'user1', '2026-02-25 04:05:12', 1),
+('7e0a4f3c-9dcb-4e21-8235-8de5abeb6f2f', 'user1', 'business1', 'Route 5', 'Wednesday', 'd794a637-06cd-47f9-bce6-f3faf598d9d1', '2026-02-25 04:05:39', 1, 'user1', '2026-02-25 04:05:39', 'user1', '2026-02-25 04:05:39', 1),
+('82c28262-913e-455d-afe3-1a7487c693b5', 'user1', 'business1', 'Route 1', 'Saturday', '5dbd9295-dd5e-49c3-a499-73dc2ec82011', '2026-02-25 04:04:08', 1, 'user1', '2026-02-25 04:04:08', 'user1', '2026-02-25 04:04:08', 1),
+('95153004-69ed-448d-8840-20bea8602634', 'user1', 'business1', 'Route 6', 'Thursday', '938df0ba-e593-4def-8f10-a29ce1c294e7', '2026-02-25 04:05:58', 1, 'user1', '2026-02-25 04:05:58', 'user1', '2026-02-25 04:06:43', 3),
+('b0f3bab2-a4d5-443c-b35d-3b9b991505bd', 'user1', 'business1', 'Route 2', 'Sunday', '66ca5c3d-fd3a-40d4-965e-717872d0d25d', '2026-02-25 04:04:29', 1, 'user1', '2026-02-25 04:04:29', 'user1', '2026-02-25 04:04:29', 1),
+('b1436084-92a1-4508-a5ea-a43d03f4a85d', 'user1', 'business1', 'Route 3', 'Monday', 'd794a637-06cd-47f9-bce6-f3faf598d9d1', '2026-02-25 04:04:57', 1, 'user1', '2026-02-25 04:04:57', 'user1', '2026-02-25 04:04:57', 1);
 
 -- --------------------------------------------------------
 
@@ -230,38 +253,10 @@ CREATE TABLE `tmcb_tarea` (
 --
 
 INSERT INTO `tmcb_tarea` (`id`, `tarea_users`, `tarea_bsins`, `tarea_dzone`, `tarea_tname`, `tarea_actve`, `tarea_crusr`, `tarea_crdat`, `tarea_upusr`, `tarea_updat`, `tarea_rvnmr`) VALUES
-('adamdighi', 'user1', 'business1', 'bogra', 'Adamdighi', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-02-22 07:44:54', 4),
-('araihazar', 'user1', 'business1', 'narayanganj', 'Araihazar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('b4dfa361-9d64-43a9-9330-bdcfe91d82c4', 'user1', 'business1', 'dhaka', 'Gulshan', 1, 'user1', '2026-02-22 09:13:29', 'user1', '2026-02-22 09:13:29', 1),
-('badda', 'user1', 'business1', 'dhaka', 'Badda', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('bandar', 'user1', 'business1', 'narayanganj', 'Bandar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('belkuchi', 'user1', 'business1', 'sirajganj', 'Belkuchi', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('bhairob', 'user1', 'business1', 'narayanganj', 'Bhairob', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('bogra-sadar', 'user1', 'business1', 'bogra', 'Bogra Sadar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-02-22 07:44:38', 2),
-('chauhali', 'user1', 'business1', 'sirajganj', 'Chauhali', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('dhunat', 'user1', 'business1', 'bogra', 'Dhunat', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('dhupchanchia', 'user1', 'business1', 'bogra', 'Dhupchanchia', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('enayetpur', 'user1', 'business1', 'sirajganj', 'Enayetpur', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('gabtali', 'user1', 'business1', 'bogra', 'Gabtali', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('jamuna-river', 'user1', 'business1', 'sirajganj', 'Jamuna River', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('kachpur', 'user1', 'business1', 'narayanganj', 'Kachpur', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('kahaloo', 'user1', 'business1', 'bogra', 'Kahaloo', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('kamarkhanda', 'user1', 'business1', 'sirajganj', 'Kamarkhanda', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('kazipur', 'user1', 'business1', 'sirajganj', 'Kazipur', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('nandigram', 'user1', 'business1', 'bogra', 'Nandigram', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('narayanganj-city-corporation', 'user1', 'business1', 'narayanganj', 'Narayanganj City Corporation', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('narayanganj-sadar', 'user1', 'business1', 'narayanganj', 'Narayanganj Sadar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('raiganj', 'user1', 'business1', 'sirajganj', 'Raiganj', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('rupganj', 'user1', 'business1', 'narayanganj', 'Rupganj', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('sariakandi', 'user1', 'business1', 'bogra', 'Sariakandi', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('shahjadpur', 'user1', 'business1', 'sirajganj', 'Shahjadpur', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('shajahanpur', 'user1', 'business1', 'bogra', 'Shajahanpur', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('sherpur', 'user1', 'business1', 'bogra', 'Sherpur', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('shibganj', 'user1', 'business1', 'bogra', 'Shibganj', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('sirajganj-sadar', 'user1', 'business1', 'sirajganj', 'Sirajganj Sadar', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('sonargaon', 'user1', 'business1', 'narayanganj', 'Sonargaon', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('sonatala', 'user1', 'business1', 'bogra', 'Sonatala', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1),
-('tarash', 'user1', 'business1', 'sirajganj', 'Tarash', 1, 'user1', '2026-01-25 04:57:51', 'user1', '2026-01-31 10:16:17', 1);
+('3c65c041-5792-4d0f-b0b1-6603f7debb95', 'user1', 'business1', '64574f07-96ab-4669-be1e-2ebe107720be', 'Thana 1', 1, 'user1', '2026-02-25 04:00:44', 'user1', '2026-02-25 04:00:44', 1),
+('a3e6b819-790a-42d7-9156-ebbf9e8eab97', 'user1', 'business1', '5159fc89-3096-4d5c-8dfe-57ab8cf72ae1', 'Thana 2', 1, 'user1', '2026-02-25 04:01:32', 'user1', '2026-02-25 04:01:32', 1),
+('a83c3c68-7bce-4417-bf3b-ffdcdd534be3', 'user1', 'business1', '27546d84-c122-4118-8373-f4a88a02250b', 'Area 1', 1, 'user1', '2026-02-25 04:00:56', 'user1', '2026-02-25 04:00:56', 1),
+('fc8bcd32-8c53-4202-9011-780c560e4e3c', 'user1', 'business1', 'ff11ae77-73d6-4c12-953b-480964bfdb2d', 'Area 2', 1, 'user1', '2026-02-25 04:01:43', 'user1', '2026-02-25 04:01:43', 1);
 
 -- --------------------------------------------------------
 
@@ -288,11 +283,10 @@ CREATE TABLE `tmcb_trtry` (
 --
 
 INSERT INTO `tmcb_trtry` (`id`, `trtry_users`, `trtry_bsins`, `trtry_tarea`, `trtry_wname`, `trtry_actve`, `trtry_crusr`, `trtry_crdat`, `trtry_upusr`, `trtry_updat`, `trtry_rvnmr`) VALUES
-('3231dde2-0d26-4af6-8042-4836cce8e7a1', 'user1', 'business1', 'sherpur', 'Chandaikona', 1, 'user1', '2026-02-22 09:06:08', 'user1', '2026-02-22 09:06:08', 1),
-('953aaae2-de9b-4b9d-96bb-d21292738ca0', 'user1', 'business1', 'badda', 'South Badda', 1, 'user1', '2026-02-22 09:00:01', 'user1', '2026-02-22 09:00:12', 3),
-('f38bb6ac-acd3-4e0c-95f8-c74b3e27b9b4', 'user1', 'business1', 'b4dfa361-9d64-43a9-9330-bdcfe91d82c4', 'Gulshan 1 Circle', 1, 'user1', '2026-02-22 09:16:27', 'user1', '2026-02-22 09:16:27', 1),
-('middle-badda', 'user1', 'business1', 'badda', 'Middle Badda', 1, 'user1', '2026-02-18 05:36:57', 'user1', '2026-02-18 05:44:00', 1),
-('uttar-badda', 'user1', 'business1', 'badda', 'Uttar Badda', 1, 'user1', '2026-02-18 05:36:57', 'user1', '2026-02-18 05:43:55', 1);
+('5dbd9295-dd5e-49c3-a499-73dc2ec82011', 'user1', 'business1', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', 'Territory 1', 1, 'user1', '2026-02-25 04:02:47', 'user1', '2026-02-25 04:07:48', 2),
+('66ca5c3d-fd3a-40d4-965e-717872d0d25d', 'user1', 'business1', 'fc8bcd32-8c53-4202-9011-780c560e4e3c', 'Territory 2', 1, 'user1', '2026-02-25 04:03:00', 'user1', '2026-02-25 04:08:01', 2),
+('938df0ba-e593-4def-8f10-a29ce1c294e7', 'user1', 'business1', 'a3e6b819-790a-42d7-9156-ebbf9e8eab97', 'Union 2', 1, 'user1', '2026-02-25 04:02:35', 'user1', '2026-02-25 04:07:31', 2),
+('d794a637-06cd-47f9-bce6-f3faf598d9d1', 'user1', 'business1', '3c65c041-5792-4d0f-b0b1-6603f7debb95', 'Union 1', 1, 'user1', '2026-02-25 04:02:22', 'user1', '2026-02-25 04:07:14', 2);
 
 -- --------------------------------------------------------
 
@@ -613,10 +607,9 @@ CREATE TABLE `tmhb_emply` (
 --
 
 INSERT INTO `tmhb_emply` (`id`, `emply_users`, `emply_bsins`, `emply_ecode`, `emply_crdno`, `emply_ename`, `emply_econt`, `emply_email`, `emply_natid`, `emply_bdate`, `emply_prnam`, `emply_gendr`, `emply_mstas`, `emply_bgrup`, `emply_rlgon`, `emply_edgrd`, `emply_psadr`, `emply_pradr`, `emply_desig`, `emply_jndat`, `emply_cndat`, `emply_rgdat`, `emply_gssal`, `emply_otrat`, `emply_etype`, `emply_pyacc`, `emply_slcyl`, `emply_wksft`, `emply_supid`, `emply_notes`, `emply_login`, `emply_pswrd`, `emply_pictr`, `emply_stats`, `emply_actve`, `emply_crusr`, `emply_crdat`, `emply_upusr`, `emply_updat`, `emply_rvnmr`) VALUES
-('765581bf-b1ae-45de-a6af-2988d97a48ab', 'user1', 'business1', 'staff2', '', 'Staff 2', 'staff2', 'staff2@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff2', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123', '', 'Active', 1, 'user1', '2026-02-23 05:35:32', 'user1', '2026-02-23 05:35:32', 1),
-('850d5993-1d5f-411e-ad8a-b2ceba393e0d', 'user1', 'business1', 'staff1', '', 'Staff 1', 'staff1', 'staff1@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff1', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123456', '', 'Active', 1, 'user1', '2026-02-23 05:31:56', 'user1', '2026-02-23 06:54:25', 3),
-('staff1', 'user1', 'business1', 'code', 'card', 'Jisan', '01722688266', 'jisan@sgd.com', '19915001', '2026-02-15 00:00:00', 'Father Mother', 'Male', 'Single', 'A+', 'Islam', 'Higher Secondary', 'Badda, Dhaka', 'Badda, Dhaka', 'Senior Manager', '2026-02-15 00:00:00', '2026-02-15 00:00:00', '2026-02-15 00:00:00', 0.00, 0.00, 'Regular', 'Cash', 'Full', 'Regular', 'Supervisor', 'notes', 0, '123456', '', 'Active', 1, 'user1', '2026-02-15 06:16:41', 'user1', '2026-02-23 05:31:29', 18),
-('staff2', 'user1', 'business1', '', '', 'Jakia', '01713003745', 'admin@sgd.com', '', '2026-02-15 00:00:00', '', 'Female', 'Single', 'O+', '', '', 'Badda, Dhaka', '', 'Senior Manager', '2026-02-15 00:00:00', '2026-02-15 00:00:00', '2026-02-15 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 0, '', '', 'Active', 1, 'user1', '2026-02-15 07:42:20', 'user1', '2026-02-18 05:48:27', 1);
+('762581bf-b1ae-45de-a6af-2988d97a48ab', 'user1', 'business1', 'staff3', '', 'Staff 3', 'staff3', 'staff3@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff3', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123456', '', 'Active', 1, 'user1', '2026-02-23 05:35:32', 'user1', '2026-02-23 05:35:32', 1),
+('765581bf-b1ae-45de-a6af-2988d97a48ab', 'user1', 'business1', 'staff2', '', 'Staff 2', 'staff2', 'staff2@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff2', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123456', '', 'Active', 1, 'user1', '2026-02-23 05:35:32', 'user1', '2026-02-25 04:29:25', 1),
+('850d5993-1d5f-411e-ad8a-b2ceba393e0d', 'user1', 'business1', 'staff1', '', 'Staff 1', 'staff1', 'staff1@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff1', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123456', '', 'Active', 1, 'user1', '2026-02-23 05:31:56', 'user1', '2026-02-23 06:54:25', 3);
 
 -- --------------------------------------------------------
 
@@ -1844,7 +1837,7 @@ CREATE TABLE `toeb_fodrm` (
   `fodrm_users` varchar(50) NOT NULL,
   `fodrm_bsins` varchar(50) NOT NULL,
   `fodrm_cntct` varchar(50) NOT NULL,
-  `fodrm_ocuid` varchar(50) NOT NULL,
+  `fodrm_empid` varchar(50) NOT NULL,
   `fodrm_rutes` varchar(50) NOT NULL,
   `fodrm_trnno` varchar(50) NOT NULL,
   `fodrm_trdat` datetime NOT NULL DEFAULT current_timestamp(),
@@ -1871,6 +1864,14 @@ CREATE TABLE `toeb_fodrm` (
   `fodrm_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `fodrm_rvnmr` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `toeb_fodrm`
+--
+
+INSERT INTO `toeb_fodrm` (`id`, `fodrm_users`, `fodrm_bsins`, `fodrm_cntct`, `fodrm_empid`, `fodrm_rutes`, `fodrm_trnno`, `fodrm_trdat`, `fodrm_trnte`, `fodrm_odamt`, `fodrm_dlamt`, `fodrm_dsamt`, `fodrm_vtamt`, `fodrm_rnamt`, `fodrm_ttamt`, `fodrm_pyamt`, `fodrm_pdamt`, `fodrm_duamt`, `fodrm_ispad`, `fodrm_ispst`, `fodrm_iscls`, `fodrm_vatcl`, `fodrm_isdlv`, `fodrm_oshpm`, `fodrm_actve`, `fodrm_crusr`, `fodrm_crdat`, `fodrm_upusr`, `fodrm_updat`, `fodrm_rvnmr`) VALUES
+('order1', 'user1', 'business1', 'd5eefaf0-9979-4edf-8fbd-68f3157c4103', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 't', 'TRN-0001', '2026-02-25 05:23:54', NULL, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0, 0, 0, 0, 0, NULL, 1, '', '2026-02-25 05:23:53', '', '2026-02-25 05:37:02', 1),
+('order2', 'user1', 'business1', 'd5eefaf0-9979-4edf-8fbd-68f3157c4103', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', 't', 'TRN-0001', '2026-02-25 05:23:54', NULL, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0, 0, 0, 0, 0, NULL, 1, '', '2026-02-25 05:23:53', '', '2026-02-25 05:37:06', 1);
 
 -- --------------------------------------------------------
 

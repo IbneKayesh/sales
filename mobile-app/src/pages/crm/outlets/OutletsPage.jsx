@@ -12,8 +12,12 @@ const OutletsPage = () => {
     formData,
     searchData,
     setSearchData,
+    handleChange,
     handleCreateNew,
-    // handleBack,
+    handleBack,
+    handleEdit,
+    handleViewOnly,
+    handleSave,
   } = useOutlets();
 
   return (
@@ -24,27 +28,37 @@ const OutletsPage = () => {
           isBusy={isBusy}
           searchData={searchData}
           setSearchData={setSearchData}
-          onCreateNew={handleCreateNew}
+          onEdit={handleEdit}
+          onViewOnly={handleViewOnly}
         />
       )}
-      {/* {currentView === "view" && (
+      {currentView === "viewonly" && (
         <OutletViewComp
-          outlet={selectedOutlet}
-          handleBack={handleBack}
-          handleEdit={handleEdit}
+          formData={formData}
+          onBack={handleBack}
+          onEdit={handleEdit}
         />
       )}
       {currentView === "form" && (
         <OutletFormComp
-          outlet={selectedOutlet}
-          handleBack={handleBack}
-          handleCancel={handleCancel}
+          formData={formData}
+          errors={errors}
+          onChange={handleChange}
+          onBack={handleBack}
+          onSave={handleSave}
         />
-      )} */}
+      )}
 
-      <button className="btn-fab">
-        <span className="pi pi-plus text-lg"></span>
-      </button>
+      {/* FAB — only on list view */}
+      {currentView === "list" && (
+        <button
+          className="btn-fab"
+          onClick={handleCreateNew}
+          title="Add Outlet"
+        >
+          <span className="pi pi-plus" style={{ fontSize: 18 }} />
+        </button>
+      )}
     </div>
   );
 };

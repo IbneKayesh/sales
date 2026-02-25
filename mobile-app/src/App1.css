@@ -246,55 +246,6 @@
   color: var(--error);
 }
 
-/* ── Action Buttons ────────────────────────────────────── */
-.actions-grid {
-  display: flex;
-  gap: 12px;
-  padding: 0 16px 16px;
-}
-
-.action-btn {
-  flex: 1;
-  padding: 12px;
-  border-radius: 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.action-btn:active {
-  background: var(--background);
-}
-
-.action-btn-label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-secondary);
-}
-
-/* ── FAB ───────────────────────────────────────────────── */
-.btn-fab {
-  position: absolute;
-  bottom: 85px;
-  right: 20px;
-  width: 56px;
-  height: 56px;
-  border-radius: 28px;
-  background-color: var(--primary);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.4);
-  border: none;
-  cursor: pointer;
-  z-index: 1000;
-}
 
 /* ── Search Bar ────────────────────────────────────────── */
 .search-container {

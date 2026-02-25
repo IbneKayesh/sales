@@ -1,133 +1,94 @@
-import React, { useState, useEffect } from "react";
-import { ArrowLeft, CardSim, Save, X } from "lucide-react";
-import { Card } from "primereact/card";
+import RequiredText from "@/components/RequiredText";
+import { InputText } from "primereact/inputtext";
 
-const OutletFormComp = ({ outlet, handleBack, handleCancel }) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    tag: "Regular",
-  });
-
-  useEffect(() => {
-    if (outlet) {
-      setFormData({
-        name: outlet.name || "",
-        email: outlet.email || "",
-        phone: outlet.phone || "",
-        address: outlet.address || "",
-        tag: outlet.tag || "Regular",
-      });
-    }
-  }, [outlet]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Saving outlet data:", formData);
-    // In a real app, call an API here
-    handleBack();
-  };
-
+const OutletFormComp = ({ formData, errors, onChange, onBack, onSave }) => {
   return (
-    <div className="app-content">
-      {/* Header */}
-      <div className="view-header">
-        <button onClick={handleCancel} className="header-btn-ghost">
-          <X size={20} />
-        </button>
-        <span className="view-title">
-          {outlet ? "Edit Outlet" : "New Outlet"}
-        </span>
-        <button onClick={handleSubmit} className="btn-save">
-          <Save size={18} />
-          Save
-        </button>
+    <div className="lite-card">
+      {/* ── Header ── */}
+      <div className="header-row">
+        <div className="header-row-actions">
+          <button
+            className="lite-button lite-button-secondary lite-button-sm"
+            onClick={() => onBack()}
+          >
+            <span className="pi pi-arrow-left mr-1 text-xs" />
+            Back
+          </button>
+          <button
+            className="lite-button lite-button-primary lite-button-sm"
+            onClick={(e) => onSave(e)}
+          >
+            <span className="pi pi-check mr-1 text-xs" />
+            Save
+          </button>
+        </div>
+        <div className="entity-meta-block">
+          <span className="entity-meta-name">
+            {formData?.cntct_cntnm || "New Outlet"}
+          </span>
+        </div>
       </div>
 
-      <div style={{ padding: "16px" }}>
-        <form onSubmit={handleSubmit} className="card">
-          <div className="grid">
-            <div className="col-12">
-              <div className="form-group">
-                <label className="form-label">Outlet Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  className="form-input"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Enter outlet name"
-                  required
-                />
-              </div>
-            </div>
+      <div className="lite-card-divider" />
 
-            <div className="col-12">
-              <div className="form-group">
-                <label className="form-label">Email Address</label>
-                <input
-                  type="email"
-                  name="email"
-                  className="form-input"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Enter email"
-                />
-              </div>
-            </div>
-
-            <div className="col-12">
-              <div className="form-group">
-                <label className="form-label">Phone Number</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  className="form-input"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="Enter phone number"
-                />
-              </div>
-            </div>
-
-            <div className="col-12">
-              <div className="form-group">
-                <label className="form-label">Tag</label>
-                <select
-                  name="tag"
-                  className="form-select"
-                  value={formData.tag}
-                  onChange={handleChange}
-                >
-                  <option value="Regular">Regular</option>
-                  <option value="VIP">VIP</option>
-                  <option value="New">New</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="col-12">
-              <div className="form-group">
-                <label className="form-label">Full Address</label>
-                <textarea
-                  name="address"
-                  className="form-textarea"
-                  value={formData.address}
-                  onChange={handleChange}
-                  placeholder="Enter address"
-                  rows="4"
-                />
-              </div>
-            </div>
-          </div>
-        </form>
+      {/* ── Form Fields ── */}
+      <div className="p-3">
+        <div className="form-field-group">
+          <label htmlFor="cntct_cntnm" className="form-field-label required">
+            Outlet Name
+          </label>
+          <InputText
+            id="cntct_cntnm"
+            name="cntct_cntnm"
+            value={formData?.cntct_cntnm ?? ""}
+            onChange={(e) => onChange("cntct_cntnm", e.target.value)}
+            className={`w-full ${errors?.cntct_cntnm ? "p-invalid" : ""}`}
+            placeholder={"Enter outlet name"}
+          />
+          <RequiredText text={errors?.cntct_cntnm} />
+        </div>
+        <div className="form-field-group">
+          <label htmlFor="cntct_cntps" className="form-field-label required">
+            Contact Person
+          </label>
+          <InputText
+            id="cntct_cntps"
+            name="cntct_cntps"
+            value={formData?.cntct_cntps ?? ""}
+            onChange={(e) => onChange("cntct_cntps", e.target.value)}
+            className={`w-full ${errors?.cntct_cntps ? "p-invalid" : ""}`}
+            placeholder={"Enter contact person"}
+          />
+          <RequiredText text={errors?.cntct_cntps} />
+        </div>
+        <div className="form-field-group">
+          <label htmlFor="cntct_cntno" className="form-field-label required">
+            Contact Number
+          </label>
+          <InputText
+            id="cntct_cntno"
+            name="cntct_cntno"
+            value={formData?.cntct_cntno ?? ""}
+            onChange={(e) => onChange("cntct_cntno", e.target.value)}
+            className={`w-full ${errors?.cntct_cntno ? "p-invalid" : ""}`}
+            placeholder={"Enter contact number"}
+          />
+          <RequiredText text={errors?.cntct_cntno} />
+        </div>
+        <div className="form-field-group">
+          <label htmlFor="cntct_ofadr" className="form-field-label required">
+            Address
+          </label>
+          <InputText
+            id="cntct_ofadr"
+            name="cntct_ofadr"
+            value={formData?.cntct_ofadr ?? ""}
+            onChange={(e) => onChange("cntct_ofadr", e.target.value)}
+            className={`w-full ${errors?.cntct_ofadr ? "p-invalid" : ""}`}
+            placeholder={"Enter address"}
+          />
+          <RequiredText text={errors?.cntct_ofadr} />
+        </div>
       </div>
     </div>
   );

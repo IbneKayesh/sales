@@ -45,13 +45,13 @@
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
   font-size: 13px;
   margin: 5px;
-  transition: all 0.2s ease;
   margin-bottom: 1rem;
-  gap:3px;  
-  overflow-y: auto;
+  gap: 6px;
+  padding: 6px;
+  transition: all 0.2s ease;
 }
 
 .lite-card:active {
@@ -63,7 +63,6 @@
   height: 1px;
   background: var(--border);
   width: 100%;
-  
 }
 
 .lite-card-empty {
@@ -83,13 +82,14 @@
   color: var(--text-secondary);
 }
 
-/* ── Search Bar Layout ────────────────────────── */
-.search-bar {
+.lite-card-header {
   padding: 10px 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
+
+/* ── Search Bar Layout ────────────────────────── */
 
 .search-input-wrapper {
   display: flex;
@@ -119,16 +119,15 @@
 
 /* ── Lite Card Item ────────────────────────── */
 .lite-card-item {
-  padding: 12px;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 10px;
-  border-bottom: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 5px;
   transition: all 0.15s ease;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 5px;
-  padding: 0.5rem;
+  border-radius: 8px;
 }
 
 .lite-card-item:last-child {
@@ -153,7 +152,7 @@
 }
 
 .lite-card-item-left-subtitle {
- font-size: 11px;
+  font-size: 11px;
   color: var(--text-secondary);
 }
 
@@ -162,7 +161,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap:4px
+  gap: 4px;
 }
 
 .lite-card-item-right-value {
@@ -172,7 +171,7 @@
 }
 
 .lite-card-item-right-tag {
- font-size: 10px;
+  font-size: 10px;
   padding: 2px 6px;
   border-radius: 5px;
   background: var(--primary-light);
@@ -528,7 +527,6 @@
   font-weight: 700;
 }
 
-
 /* ── Lite Button Base ───────────────────────── */
 
 .lite-button {
@@ -597,6 +595,14 @@
   border: 1px solid var(--error);
 }
 
+/* ── Lite Button Variants warning ───────────────────────── */
+
+.lite-button-warning {
+  background: var(--accent);
+  color: var(--on-secondary);
+  border: 1px solid var(--accent);
+}
+
 /* ── Lite Button Variants Outline ───────────────────────── */
 .lite-button-outline {
   background: var(--background);
@@ -648,18 +654,18 @@
   height: 28px;
   font-size: 13px !important;
 }
-.p-dropdown .p-dropdown-label.p-placeholder{  
+.p-dropdown .p-dropdown-label.p-placeholder {
   padding: 4px !important;
 }
-.p-dropdown-panel .p-dropdown-items .p-dropdown-item{
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
   padding: 8px !important;
   font-size: 13px !important;
 }
-.p-dropdown-label {  
+.p-dropdown-label {
   padding: 4px;
 }
 
-.p-datatable{
+.p-datatable {
   font-size: 13px !important;
 }
 
@@ -673,18 +679,355 @@
 /* ── FAB ───────────────────────────────────────────────── */
 .btn-fab {
   position: absolute;
-  bottom: 65px;
+  bottom: 70px;
   right: 20px;
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  background-color: var(--text-secondary);
-  color: white;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--primary);
+  color: var(--on-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(235, 189, 171, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   border: none;
   cursor: pointer;
   z-index: 1000;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn-fab:active {
+  transform: scale(0.94);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Action Buttons ────────────────────────────────────── */
+.lite-actions-grid {
+  display: flex;
+  gap: 2px;
+  padding: 0 5px 5px;
+}
+
+.lite-action-btn {
+  flex: 1;
+  padding: 5px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.lite-action-btn:active {
+  background: var(--background);
+}
+
+.lite-action-btn-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* ── Search Bar (alias for lite-card-header in list pages) ── */
+.search-bar {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Badge Pill ─────────────────────────────────────────── */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+/* ── Semantic Status Badges ─────────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.status-badge--paid {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.status-badge--pending {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.status-badge--overdue {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.status-badge--undelivered {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.status-badge--delivered {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+/* ── Page Section Header ─────────────────────────────────── */
+.page-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 4px;
+}
+
+.page-section-header-bar {
+  width: 3px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--primary);
+  flex-shrink: 0;
+}
+
+.page-section-header-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.page-section-header-count {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--background);
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+/* ── Entity Meta Block (view / entry header info) ────────── */
+.entity-meta-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.entity-meta-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entity-meta-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Detail Row (key-value pairs in view pages) ──────────── */
+.detail-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 12px 10px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-row-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.detail-row-value {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--on-surface);
+  flex: 1;
+}
+
+/* ── Empty State ─────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 16px;
+  color: var(--text-secondary);
+}
+
+.empty-state-icon {
+  font-size: 28px;
+  opacity: 0.4;
+}
+
+.empty-state-text {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ── Form Field Group ────────────────────────────────────── */
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.form-field-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--on-surface);
+  letter-spacing: 0.3px;
+}
+
+.form-field-label.required::after {
+  content: " *";
+  color: var(--error);
+}
+
+.form-field-error {
+  font-size: 10px;
+  color: var(--error);
+  margin-top: 2px;
+}
+
+/* ── Entry Item Table ────────────────────────────────────── */
+.entry-item-table {
+  padding: 0 4px 6px;
+}
+
+.entry-item-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 6px;
+  align-items: center;
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.entry-item-row.header {
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border);
+}
+
+.entry-item-row:last-child {
+  border-bottom: none;
+}
+
+.entry-item-summary {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 6px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--on-surface);
+  border-top: 1px solid var(--border);
+}
+
+.entry-item-summary-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ── Qty Overlay Panel ───────────────────────────────────── */
+.qty-input-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 180px;
+}
+
+.qty-input-panel-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+/* ── List Item Avatar / Initials ─────────────────────────── */
+.list-item-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+/* ── Header Row (view/entry top bar) ─────────────────────── */
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+}
+
+.header-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ── Item Selector (entry dropdown row) ──────────────────── */
+.item-selector-row {
+  padding: 6px 10px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  background: var(--background);
+  border-radius: 10px;
+  margin: 0 6px 6px;
 }

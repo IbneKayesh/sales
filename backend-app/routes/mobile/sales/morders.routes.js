@@ -70,4 +70,50 @@ ORDER BY trt.cnrut_srlno`;
   }
 });
 
+
+// get outlet orders
+router.post("/get-outlet-orders", async (req, res) => {
+  try {
+    const { fodrm_cntct, fodrm_users, fodrm_bsins} = req.body;
+
+    // Validate input
+    if (!fodrm_cntct || !fodrm_users || !fodrm_bsins) {
+      return res.json({
+        success: false,
+        message: "Outlet ID, User ID and Business ID are required",
+        data: null,
+      });
+    }
+    //console.log("get:", JSON.stringify(req.body));
+    
+    //database action
+    let sql = `SELECT id, fodrm_users, fodrm_bsins, fodrm_cntct, fodrm_empid, fodrm_rutes, fodrm_trnno, fodrm_trdat, fodrm_trnte, fodrm_odamt, fodrm_dlamt, fodrm_dsamt, fodrm_vtamt, fodrm_rnamt, fodrm_ttamt, fodrm_pyamt, fodrm_pdamt, fodrm_duamt, fodrm_ispad, fodrm_ispst, fodrm_iscls, fodrm_vatcl, fodrm_isdlv, fodrm_oshpm
+    FROM toeb_fodrm
+    WHERE fodrm_cntct = ?
+    AND fodrm_users = ?
+    AND fodrm_bsins = ?
+    ORDER BY fodrm_trdat DESC`;
+    let params = [fodrm_cntct, fodrm_users, fodrm_bsins];
+    //console.log("params: ", params);
+
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get orders for ${fodrm_users} and ${fodrm_cntct}`,
+    );
+    res.json({
+      success: true,
+      message: "Orders fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;

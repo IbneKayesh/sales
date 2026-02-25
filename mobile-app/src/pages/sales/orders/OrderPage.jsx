@@ -14,8 +14,9 @@ const OrderPage = () => {
     orderStatusOptions,
     filteredOrders,
     handleCreateNew,
-    handleBack
+    handleBack,
   } = useOrders();
+
   return (
     <div className="page-container">
       {currentView === "list" && (
@@ -30,10 +31,10 @@ const OrderPage = () => {
         />
       )}
       {currentView === "entry" && (
-        <OrderEntryComp formData={formData} onBack={handleBack}
-        />
+        <OrderEntryComp formData={formData} onBack={handleBack} />
       )}
     </div>
   );
 };
+
 export default OrderPage;
