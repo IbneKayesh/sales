@@ -40,7 +40,7 @@ const OrderPage = () => {
             onCreateNew={handleCreateNew}
           />
         )}
-        {currentView === "entry" && (
+        {currentView === "form" && (
           <OrderEntryComp formData={formData} onBack={handleBack} />
         )}
       </div>

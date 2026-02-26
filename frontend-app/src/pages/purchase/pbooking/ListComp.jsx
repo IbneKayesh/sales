@@ -8,6 +8,7 @@ import { Tag } from "primereact/tag";
 import { useState, useMemo } from "react";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
+import EmptyState from "@/components/EmptyState";
 
 const ListComp = ({ dataList, onEdit }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
@@ -190,9 +191,7 @@ const ListComp = ({ dataList, onEdit }) => {
       <div className="flex flex-column">
         <span className="text-blue-600">
           {rowData.mbkng_trnno},{" "}
-          <span className="text-md text-blue-400 mt-1">
-            Booking
-          </span>
+          <span className="text-md text-blue-400 mt-1">Booking</span>
         </span>
         <span className="text-sm font-italic text-green-600 mt-1">
           {rowData.cntct_cntnm},{" "}
@@ -370,7 +369,7 @@ const ListComp = ({ dataList, onEdit }) => {
         rowsPerPageOptions={[15, 50, 100]}
         emptyMessage="No data found."
         size="small"
-        className="shadow-1"
+        className={`shadow-1 ${filteredData.length === 0 && "hidden"}`}
         rowHover
         showGridlines
         globalFilter={globalFilter}
@@ -395,6 +394,7 @@ const ListComp = ({ dataList, onEdit }) => {
         <Column header="Status" body={is_paid_BT} />
         <Column body={action_BT} style={{ width: "100px" }} />
       </DataTable>
+      {filteredData.length === 0 && <EmptyState />}
     </div>
   );
 };

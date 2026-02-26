@@ -3,12 +3,12 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
 import { ToggleButton } from "primereact/togglebutton";
-
 import { useStockReports } from "@/hooks/inventory/useStockReports";
 import PBookingListComp from "./PBookingListComp";
 import PReceiptListComp from "./PReceiptListComp";
 import ITransferListComp from "./ITransferListComp";
 import PInvoiceListComp from "./PInvoiceListComp";
+import EmptyState from "@/components/EmptyState";
 
 const StockReportsPage = () => {
   const { dataList, isBusy, handleLoadReports } = useStockReports();
@@ -99,11 +99,7 @@ const StockReportsPage = () => {
           isSummary={isSummary}
         />
       )}
-      {reportFilter === "" && (
-        <div className="flex align-items-center justify-content-center bg-gray-200 border-round p-5">
-          <p className="text-gray-600">Select a filter to view data</p>
-        </div>
-      )}
+      {reportFilter === "" && <EmptyState />}
     </Card>
   );
 };

@@ -89,7 +89,7 @@ const ProductsPage = () => {
 
   return (
     <>
-      <Card header={getHeader()} className="bg-dark-200 border-round p-3">
+      <Card header={getHeader()} className="border-round p-3">
         {currentView === "list" ? (
           <ProductsListComp
             dataList={dataList}

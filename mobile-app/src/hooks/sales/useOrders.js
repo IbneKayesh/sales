@@ -72,7 +72,7 @@ const useOrders = () => {
 
 
   const handleCreateNew = (item) => {
-    setCurrentView("entry");
+    setCurrentView("form");
     setFormData(item);
   };
 
