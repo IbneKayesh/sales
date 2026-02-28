@@ -32,6 +32,7 @@ JOIN tmib_bitem bitm ON itm.id = bitm.bitem_items
 LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
 LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
 WHERE itm.items_trcks = 0
+AND bitm.bitem_dprat > 0
 AND itm.items_users = ?
 AND bitm.bitem_bsins = ?`;
     const params = [bitem_users, bitem_bsins];

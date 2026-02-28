@@ -3,7 +3,6 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const rateLimiter = require("./middlewares/rateLimiter.js");
-const { initData } = require("./db/initData.js");
 
 //auth
 const authRoutes = require("./routes/auth");

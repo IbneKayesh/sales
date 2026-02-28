@@ -6,9 +6,15 @@ import { demoOptions } from "@/utils/vtable";
 import EmptyState from "@/components/EmptyState";
 import { useProductsSgd } from "@/hooks/inventory/useProductsSgd";
 import { generateGuid } from "@/utils/guid";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
+import { parseAttributes } from "@/utils/jsonParser";
+import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
+import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 
 const OrderFormComp = ({ formData, onBack }) => {
   const { dataList: productList, handleLoadOrderItems } = useProductsSgd();
+  const [availableItemList, setAvailableItemList] = useState([]);
   const [formDataItemList, setFormDataItemList] = useState([]);
 
   const [selectedItem, setSelectedItem] = useState(null);
@@ -18,6 +24,24 @@ const OrderFormComp = ({ formData, onBack }) => {
   useEffect(() => {
     handleLoadOrderItems();
   }, []);
+
+  useEffect(() => {
+    // const filteredList = productList.map((item) => ({
+    //   ...item,
+    //   bitem_sddsp: configs.cbkng_dspct ? item.bitem_sddsp : 0,
+    //   items_sdvat: configs.cbkng_vtpct ? item.items_sdvat : 0,
+    // }));
+
+    const filtered = productList.filter(
+      (item) =>
+        !formDataItemList.some(
+          (orderItem) => orderItem.fodrc_bitem === item.id,
+        ),
+    );
+
+    //const filtered = filteredList;
+    setAvailableItemList(filtered);
+  }, [productList, formDataItemList]);
 
   const onItemSelect = (e) => {
     setSelectedItem(e.value);
@@ -69,11 +93,6 @@ const OrderFormComp = ({ formData, onBack }) => {
     );
   };
 
-  const [dataList, setDataList] = useState([
-    { code: 123, name: "Item 1", quantity: 1, price: 100 },
-    { code: 124, name: "Item 2", quantity: 2, price: 200 },
-  ]);
-
   const handleAddToList = () => {
     if (!selectedItem) return;
 
@@ -113,7 +132,7 @@ const OrderFormComp = ({ formData, onBack }) => {
       fodrc_vtamt: vatAmount,
       fodrc_csrat: costPrice,
       fodrc_ntamt: totalAmount,
-      fodrc_notes: '',
+      fodrc_notes: "",
       fodrc_attrb: {},
       fodrc_dlqty: selectedQty || 1,
       fodrc_dgqty: 0,
@@ -134,11 +153,91 @@ const OrderFormComp = ({ formData, onBack }) => {
     opRef.current.hide();
   };
 
-  const removeItem = (code) =>
-    setDataList(dataList.filter((item) => item.code !== code));
+  const handleRemoveItem = (rowData) => {
+    setFormDataItemList((prev) =>
+      prev.filter((item) => item.id !== rowData.id),
+    );
+  };
 
-  const totalQty = dataList.reduce((s, i) => s + i.quantity, 0);
-  const totalPrice = dataList.reduce((s, i) => s + i.quantity * i.price, 0);
+  const items_iname_BT = (rowData) => {
+    const parsedAttr = parseAttributes(rowData.fodrc_attrb);
+
+    return (
+      <div className="flex flex-column">
+        {/* {JSON.stringify(rowData.cbkng_attrb)} */}
+        <span className="text-md">{`${rowData.items_icode} - ${rowData.items_iname}`}</span>
+        {Object.keys(parsedAttr).length > 0 && (
+          <span className="text-gray-500 text-sm">
+            {Object.entries(parsedAttr)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join(", ")}
+          </span>
+        )}
+      </div>
+    );
+  };
+
+  const items_iname_FT = () => {
+    return (
+      <>
+        <span>{formDataItemList.length} Items </span>
+      </>
+    );
+  };
+
+  const fodrc_itrat_BT = (rowData) => {
+    const formattedPrice = Number(rowData.fodrc_itrat).toFixed(2);
+    const itemAmount = Number(rowData.fodrc_itamt).toFixed(2);
+    return (
+      <>
+        {itemAmount}{" "}
+        <span className="text-sm text-gray-500">({formattedPrice})</span>
+      </>
+    );
+  };
+
+  const fodrc_itqty_BT = (rowData) => {
+    return (
+      <>
+        {Number(rowData.fodrc_itqty).toFixed(2)}{" "}
+        <span className="text-gray-600">{rowData.puofm_untnm} </span>
+        <span className="text-sm text-gray-500">
+          (
+          <ConvertedQtyComponent
+            qty={rowData.fodrc_itqty}
+            dfQty={rowData.items_dfqty}
+            pname={rowData.puofm_untnm}
+            sname={rowData.suofm_untnm}
+          />
+          )
+        </span>
+      </>
+    );
+  };
+  const fodrc_itqty_FT = () => {
+    return formDataItemList
+      .reduce((sum, item) => sum + Number(item.fodrc_itqty || 0), 0)
+      .toFixed(2);
+  };
+  const fodrc_itrat_FT = () => {
+    return formDataItemList
+      .reduce((sum, item) => sum + Number(item.fodrc_itamt || 0), 0)
+      .toFixed(2);
+  };
+  const action_BT = (rowData) => {
+    return (
+      <div className="flex justify-content-center">
+        <button
+          className="lite-button lite-button-danger lite-button-sm"
+          style={{ padding: "0 6px", minWidth: "unset" }}
+          onClick={() => handleRemoveItem(rowData)}
+          title="Remove"
+        >
+          <span className="pi pi-trash text-xs" />
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div className="lite-card">
@@ -166,7 +265,7 @@ const OrderFormComp = ({ formData, onBack }) => {
         <Dropdown
           name="fodrc_bitem"
           value={selectedItem}
-          options={productList}
+          options={availableItemList}
           onChange={onItemSelect}
           className="w-full"
           placeholder="Select item to add…"
@@ -201,51 +300,40 @@ const OrderFormComp = ({ formData, onBack }) => {
       </div>
       {/* ── Items Table ── */}
       <div className="entry-item-table">
-        {/* Header */}
-        <div className="entry-item-row header">
-          <span>Item</span>
-          <span style={{ textAlign: "right" }}>Qty</span>
-          <span style={{ textAlign: "right" }}>Price</span>
-          <span />
-        </div>
-
         {formDataItemList.length === 0 && (
           <EmptyState stateMessage="No items added yet" />
         )}
-
-        {formDataItemList.map((item) => (
-          <div key={item.id} className="entry-item-row">
-            <span style={{ fontWeight: 600 }}>{item.items_icode}-{item.items_iname}</span>
-            <span
-              style={{ textAlign: "right", color: "var(--text-secondary)" }}
-            >
-              {item.fodrc_itqty}
-            </span>
-            <span style={{ textAlign: "right" }}>
-              {item.fodrc_itamt}
-            </span>
-            <button
-              className="lite-button lite-button-danger lite-button-sm"
-              style={{ padding: "0 6px", minWidth: "unset" }}
-              onClick={() => removeItem(item.id)}
-              title="Remove"
-            >
-              <span className="pi pi-trash text-xs" />
-            </button>
-          </div>
-        ))}
-
-        {/* Summary Row */}
-        {dataList.length > 0 && (
-          <div className="entry-item-summary">
-            <span className="entry-item-summary-label">
-              {dataList.length} item{dataList.length !== 1 ? "s" : ""} ·{" "}
-              {totalQty} qty
-            </span>
-            <span>Total</span>
-            <span style={{ fontSize: 14 }}>{totalPrice.toLocaleString()}</span>
-          </div>
-        )}
+        <DataTable
+          value={formDataItemList}
+          dataKey="id"
+          emptyMessage="No items added yet."
+          size="small"
+          className={`shadow-1 ${formDataItemList.length === 0 ? "hidden" : ""}`}
+          showGridlines
+          //footer={dataTable_FT}
+        >
+          <Column
+            field="items_iname"
+            header="Item"
+            body={items_iname_BT}
+            footer={items_iname_FT}
+          />
+          <Column
+            field="fodrc_itqty"
+            header="Qty"
+            body={fodrc_itqty_BT}
+            footer={fodrc_itqty_FT}
+          />
+          <Column
+            field="fodrc_itrat"
+            header="Price"
+            body={fodrc_itrat_BT}
+            footer={fodrc_itrat_FT}
+          />
+          {!formData.edit_stop && (
+            <Column header="#" body={action_BT} style={{ width: "20px" }} />
+          )}
+        </DataTable>
       </div>
     </div>
   );

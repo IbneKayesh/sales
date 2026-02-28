@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Feb 25, 2026 at 07:03 AM
+-- Generation Time: Feb 28, 2026 at 09:46 AM
 -- Server version: 12.1.2-MariaDB-ubu2404
 -- PHP Version: 8.3.26
 
@@ -87,7 +87,7 @@ INSERT INTO `tmcb_cntct` (`id`, `cntct_users`, `cntct_bsins`, `cntct_ctype`, `cn
 ('d5eefaf0-4979-4edf-8hbd-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 6', 'Outlet 6 Contact Person', 'Outlet 6 Contact Number', '', '', '', 'Outlet 6 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
 ('d5eefaf0-9979-4edf-8fbd-38f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 4', 'Outlet 4 Contact Person', 'Outlet 4 Contact Number', '', '', '', 'Outlet 4 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
 ('d5eefaf0-9979-4edf-8fbd-68f3157c3105', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 3', 'Outlet 3 Contact Person', 'Outlet 3 Contact Number', '', '', '', 'Outlet 3 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 05:54:24', 'user1', '2026-02-25 04:14:02', 3),
-('d5eefaf0-9979-4edf-8fbd-68f3157c4103', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 1', 'Outlet 1 Contact Person', 'Outlet 1 Contact Number', '', '', '', 'Outlet 1 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 08:07:44', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', '2026-02-25 06:58:21', 8),
+('d5eefaf0-9979-4edf-8fbd-68f3157c4103', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 1', 'Outlet 1 Contact Person', 'Outlet 1 Contact Number', '', '', '', 'Outlet 1 Office Address', '', 'a83c3c68-7bce-4417-bf3b-ffdcdd534be3', '27546d84-c122-4118-8373-f4a88a02250b', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-02-18 08:07:44', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', '2026-02-26 06:02:26', 11),
 ('d5eefaf0-9979-4edf-8fbd-68f3157c4105', 'user1', 'business1', 'Customer', 'Local', 'Rahman General Store', 'Anisur Rahman', '01712-100101', 'email@email.com', '', '', 'Mohammadpur, Dhaka', 'Mohammadpur, Dhaka', '3c65c041-5792-4d0f-b0b1-6603f7debb95', '64574f07-96ab-4669-be1e-2ebe107720be', 'Bangladesh', '0', 0.000000, 50000.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 12:02:29', 'user1', '2026-02-25 04:09:59', 5),
 ('e5a09c3a-cb9b-43af-b664-73fc231085d6', 'user1', 'business1', 'Outlet', 'Local', 'Outlet 15', 'Outlet 15 Contact Person', 'Outlet 15 Contact Number', '', '', '', 'Outlet 15 Contact Address', '', '3c65c041-5792-4d0f-b0b1-6603f7debb95', '64574f07-96ab-4669-be1e-2ebe107720be', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, '850d5993-1d5f-411e-ad8a-b2ceba393e0d', '2026-02-25 06:40:16', '850d5993-1d5f-411e-ad8a-b2ceba393e0d', '2026-02-25 06:41:42', 3),
 ('internal', 'user1', 'business1', 'Internal', 'Local', 'Internal A/C', 'Internal A/C', 'Internal A/C', 'Internal A/C', '', '', 'Internal A/C', 'Internal A/C', 'sherpur', 'bogra', 'Bangladesh', '0', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-09 13:04:25', 'user1', '2026-01-31 10:14:56', 3);
@@ -160,8 +160,8 @@ CREATE TABLE `tmcb_dlvan` (
 --
 
 INSERT INTO `tmcb_dlvan` (`id`, `dlvan_users`, `dlvan_bsins`, `dlvan_vname`, `dlvan_dname`, `dlvan_actve`, `dlvan_crusr`, `dlvan_crdat`, `dlvan_upusr`, `dlvan_updat`, `dlvan_rvnmr`) VALUES
-('54aeb07f-f041-423d-914f-c5de7915f14f', 'user1', 'business1', 'Delivery Van 1', 'Driver 1', 1, 'user1', '2026-02-19 08:07:28', 'user1', '2026-02-25 04:16:48', 2),
-('b9f74607-1419-4559-8188-6f1b5bdc5165', 'user1', 'business1', 'Pickup No 1', 'Driver 2', 1, 'user1', '2026-02-19 08:07:47', 'user1', '2026-02-25 04:16:57', 2);
+('54aeb07f-f041-423d-914f-c5de7915f14f', 'user1', 'business1', 'Delivery Van 1', 'Driver 1', 1, 'user1', '2026-02-19 08:07:28', 'user1', '2026-02-25 07:51:33', 3),
+('b9f74607-1419-4559-8188-6f1b5bdc5165', 'user1', 'business1', 'Pickup No 1', 'Driver 2', 1, 'user1', '2026-02-19 08:07:47', 'user1', '2026-02-25 07:51:40', 3);
 
 -- --------------------------------------------------------
 
@@ -223,7 +223,7 @@ INSERT INTO `tmcb_rutes` (`id`, `rutes_users`, `rutes_bsins`, `rutes_rname`, `ru
 ('6d37c284-6fdd-48af-93e3-2c6c981ba7b4', 'user1', 'business1', 'Route 7', 'Friday', '5dbd9295-dd5e-49c3-a499-73dc2ec82011', '2026-02-25 04:58:24', 1, 'user1', '2026-02-25 04:58:24', 'user1', '2026-02-25 04:58:24', 1),
 ('7c9c60c9-0a0d-4e84-b4a9-f7cd1e7d4a9b', 'user1', 'business1', 'Route 4', 'Tuesday', '938df0ba-e593-4def-8f10-a29ce1c294e7', '2026-02-25 04:05:12', 1, 'user1', '2026-02-25 04:05:12', 'user1', '2026-02-25 04:05:12', 1),
 ('7e0a4f3c-9dcb-4e21-8235-8de5abeb6f2f', 'user1', 'business1', 'Route 5', 'Wednesday', 'd794a637-06cd-47f9-bce6-f3faf598d9d1', '2026-02-25 04:05:39', 1, 'user1', '2026-02-25 04:05:39', 'user1', '2026-02-25 04:05:39', 1),
-('82c28262-913e-455d-afe3-1a7487c693b5', 'user1', 'business1', 'Route 1', 'Saturday', '5dbd9295-dd5e-49c3-a499-73dc2ec82011', '2026-02-25 04:04:08', 1, 'user1', '2026-02-25 04:04:08', 'user1', '2026-02-25 04:04:08', 1),
+('82c28262-913e-455d-afe3-1a7487c693b5', 'user1', 'business1', 'Route 1', 'Saturday', '5dbd9295-dd5e-49c3-a499-73dc2ec82011', '2026-02-25 04:04:08', 1, 'user1', '2026-02-25 04:04:08', 'user1', '2026-02-25 07:51:51', 2),
 ('95153004-69ed-448d-8840-20bea8602634', 'user1', 'business1', 'Route 6', 'Thursday', '938df0ba-e593-4def-8f10-a29ce1c294e7', '2026-02-25 04:05:58', 1, 'user1', '2026-02-25 04:05:58', 'user1', '2026-02-25 04:06:43', 3),
 ('b0f3bab2-a4d5-443c-b35d-3b9b991505bd', 'user1', 'business1', 'Route 2', 'Sunday', '66ca5c3d-fd3a-40d4-965e-717872d0d25d', '2026-02-25 04:04:29', 1, 'user1', '2026-02-25 04:04:29', 'user1', '2026-02-25 04:04:29', 1),
 ('b1436084-92a1-4508-a5ea-a43d03f4a85d', 'user1', 'business1', 'Route 3', 'Monday', 'd794a637-06cd-47f9-bce6-f3faf598d9d1', '2026-02-25 04:04:57', 1, 'user1', '2026-02-25 04:04:57', 'user1', '2026-02-25 04:04:57', 1);
@@ -609,7 +609,7 @@ CREATE TABLE `tmhb_emply` (
 INSERT INTO `tmhb_emply` (`id`, `emply_users`, `emply_bsins`, `emply_ecode`, `emply_crdno`, `emply_ename`, `emply_econt`, `emply_email`, `emply_natid`, `emply_bdate`, `emply_prnam`, `emply_gendr`, `emply_mstas`, `emply_bgrup`, `emply_rlgon`, `emply_edgrd`, `emply_psadr`, `emply_pradr`, `emply_desig`, `emply_jndat`, `emply_cndat`, `emply_rgdat`, `emply_gssal`, `emply_otrat`, `emply_etype`, `emply_pyacc`, `emply_slcyl`, `emply_wksft`, `emply_supid`, `emply_notes`, `emply_login`, `emply_pswrd`, `emply_pictr`, `emply_stats`, `emply_actve`, `emply_crusr`, `emply_crdat`, `emply_upusr`, `emply_updat`, `emply_rvnmr`) VALUES
 ('762581bf-b1ae-45de-a6af-2988d97a48ab', 'user1', 'business1', 'staff3', '', 'Staff 3', 'staff3', 'staff3@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff3', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123456', '', 'Active', 1, 'user1', '2026-02-23 05:35:32', 'user1', '2026-02-23 05:35:32', 1),
 ('765581bf-b1ae-45de-a6af-2988d97a48ab', 'user1', 'business1', 'staff2', '', 'Staff 2', 'staff2', 'staff2@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff2', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123456', '', 'Active', 1, 'user1', '2026-02-23 05:35:32', 'user1', '2026-02-25 04:29:25', 1),
-('850d5993-1d5f-411e-ad8a-b2ceba393e0d', 'user1', 'business1', 'staff1', '', 'Staff 1', 'staff1', 'staff1@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff1', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123456', '', 'Active', 1, 'user1', '2026-02-23 05:31:56', 'user1', '2026-02-23 06:54:25', 3);
+('850d5993-1d5f-411e-ad8a-b2ceba393e0d', 'user1', 'business1', 'staff1', '', 'Staff 1', 'staff1', 'staff1@sgd.com', '', '2026-02-23 00:00:00', '', '', '', '', '', '', 'staff1', '', 'Trainee Executive', '2026-02-23 00:00:00', '2026-02-23 00:00:00', '2026-02-23 00:00:00', 0.00, 0.00, '', '', '', '', '', '', 1, '123456', '', 'Active', 1, 'user1', '2026-02-23 05:31:56', 'user1', '2026-02-25 07:47:57', 4);
 
 -- --------------------------------------------------------
 
@@ -684,9 +684,9 @@ CREATE TABLE `tmib_bitem` (
 --
 
 INSERT INTO `tmib_bitem` (`id`, `bitem_users`, `bitem_items`, `bitem_bsins`, `bitem_lprat`, `bitem_dprat`, `bitem_mcmrp`, `bitem_sddsp`, `bitem_snote`, `bitem_gstkq`, `bitem_bstkq`, `bitem_istkq`, `bitem_mnqty`, `bitem_mxqty`, `bitem_pbqty`, `bitem_sbqty`, `bitem_mpric`, `bitem_actve`, `bitem_crusr`, `bitem_crdat`, `bitem_upusr`, `bitem_updat`, `bitem_rvnmr`) VALUES
-('1248204a-e407-4245-8952-924a1f832354', 'user1', '4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 100.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:56:36', 'user1', '2026-02-16 04:49:28', 1),
+('1248204a-e407-4245-8952-924a1f832354', 'user1', '4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 'business1', 20.000000, 24.000000, 30.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 100.000000, 0.000000, 9.600000, 1, 'user1', '2026-01-31 10:56:36', 'user1', '2026-02-28 04:40:01', 1),
 ('19debe39-1eaa-4cb1-ba16-3f361ff455ca', 'user1', 'e2e70dc1-9814-400c-8774-2b6b186b79e5', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:15', 'user1', '2026-02-02 05:57:45', 1),
-('1b0483c5-ed8f-43ce-b128-9dbf717e8e67', 'user1', '8873e069-eea6-4f9e-acf0-dd1cb658f9c8', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:55:41', 'user1', '2026-01-31 10:55:41', 1),
+('1b0483c5-ed8f-43ce-b128-9dbf717e8e67', 'user1', '8873e069-eea6-4f9e-acf0-dd1cb658f9c8', 'business1', 15.000000, 17.000000, 20.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 2.750000, 1, 'user1', '2026-01-31 10:55:41', 'user1', '2026-02-28 04:38:43', 1),
 ('2188dcd0-244b-4750-ad51-f86397b196f1', 'user1', 'dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 100.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:04', 'user1', '2026-02-15 11:08:35', 1),
 ('228076b3-b3df-4270-a1b3-a2520267818c', 'user1', '485d61c3-e84e-418b-b91b-2171c17f0391', 'business1', 140.000000, 0.000000, 190.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 24.800000, 1, 'user1', '2026-01-31 10:58:06', 'user1', '2026-02-09 08:14:17', 1),
 ('282533ed-53cf-496a-8611-c452785371fd', 'user1', '42ccd66a-70db-4c7f-93c4-36261a8f064f', 'business1', 300.000000, 0.000000, 380.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 20.000000, 1, 'user1', '2026-01-31 10:57:58', 'user1', '2026-02-08 07:56:52', 1),
@@ -699,16 +699,34 @@ INSERT INTO `tmib_bitem` (`id`, `bitem_users`, `bitem_items`, `bitem_bsins`, `bi
 ('9a04c7bb-e9d8-4adf-8eff-1fe92e43c971', 'user1', 'fa1b188a-c075-4b90-bbea-37e3733f50bb', 'business1', 750.000000, 0.000000, 950.000000, 5.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 17.500000, 1, 'user1', '2026-01-31 10:57:44', 'user1', '2026-02-17 01:50:01', 1),
 ('9a765ccf-f3c5-480a-863d-492c7d9fa196', 'user1', '4dab149a-e220-4cd8-a061-7660ab0168bb', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 11:00:36', 'user1', '2026-01-31 11:00:36', 1),
 ('b9b0e3b5-a1df-43ea-a736-04a54f5df89b', 'user1', '75b05c78-9b6b-42ba-aafa-e76e22f67722', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:31', 'user1', '2026-01-31 10:58:31', 1),
-('bde13886-7498-42b9-bc4d-19bcb62ed918', 'user1', 'f7126510-80c0-416b-a34e-3a514e54d030', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:57:00', 'user1', '2026-01-31 10:57:00', 1),
+('bde13886-7498-42b9-bc4d-19bcb62ed918', 'user1', 'f7126510-80c0-416b-a34e-3a514e54d030', 'business1', 32.000000, 38.000000, 45.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 12.040000, 1, 'user1', '2026-01-31 10:57:00', 'user1', '2026-02-28 04:42:54', 1),
 ('bf05a1d1-2b12-46e8-bf24-5e7edde46136', 'user1', '24614ec4-8ab0-4b50-b3c7-9f154a124770', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:47', 'user1', '2026-02-01 14:22:53', 1),
-('c6fe2a29-7725-4db6-9bed-840c04301d0e', 'user1', 'ad014a04-77d0-4f46-acc9-dee2b02c64f2', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:56:46', 'user1', '2026-01-31 10:56:46', 1),
+('c6fe2a29-7725-4db6-9bed-840c04301d0e', 'user1', 'ad014a04-77d0-4f46-acc9-dee2b02c64f2', 'business1', 35.000000, 42.000000, 50.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 14.300000, 1, 'user1', '2026-01-31 10:56:46', 'user1', '2026-02-28 04:41:25', 1),
 ('d2b89636-0c00-4c61-aa9b-08ff5f37cac7', 'user1', 'f949a24a-3ff8-4349-9ca0-f853de9226c7', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:13', 'user1', '2026-01-31 10:59:13', 1),
 ('df364d84-6063-44c7-8b26-bb9d81fc0bc1', 'user1', '0e5de4e6-86dd-453a-8b94-963ee305e860', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:21', 'user1', '2026-01-31 10:59:21', 1),
 ('dfa047a4-4799-460d-ae14-74697a8f0466', 'user1', 'ae0a4ae3-77f6-4357-8ca9-c05cc1796a7e', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:58:42', 'user1', '2026-01-31 10:58:42', 1),
-('e1e36ac3-d2b5-4f7b-a258-2c3ffcacd131', 'user1', '2bee4dba-5f29-4e65-b772-718c677e326c', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:56:51', 'user1', '2026-01-31 10:56:51', 1),
+('e1e36ac3-d2b5-4f7b-a258-2c3ffcacd131', 'user1', '2bee4dba-5f29-4e65-b772-718c677e326c', 'business1', 18.000000, 24.000000, 30.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 11.280000, 1, 'user1', '2026-01-31 10:56:51', 'user1', '2026-02-28 04:42:02', 1),
 ('eff83204-5f40-4920-9d42-67a27ec6a1a5', 'user1', '2c047e91-44f6-48bc-a591-9ab00deb7b72', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 10:59:30', 'user1', '2026-01-31 10:59:30', 1),
 ('f241e3b7-3f83-42f4-ac10-af8def91799a', 'user1', '38b496e9-6652-4324-8331-ba0ecb0cfeae', 'business1', 55.000000, 0.000000, 75.000000, 0.000000, '', 95.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 11.750000, 1, 'user1', '2026-01-31 10:57:36', 'user1', '2026-02-15 11:08:22', 1),
 ('f4445732-0c3d-4388-b30a-b77cd0151b14', 'user1', '940f8010-5d38-4de4-b66f-d12958ff9ec2', 'business1', 0.000000, 0.000000, 0.000000, 0.000000, '', 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 1, 'user1', '2026-01-31 11:00:20', 'user1', '2026-01-31 11:00:20', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tmib_brand`
+--
+
+CREATE TABLE `tmib_brand` (
+  `id` varchar(50) NOT NULL,
+  `brand_users` varchar(50) NOT NULL,
+  `brand_brnam` varchar(50) NOT NULL,
+  `brand_actve` tinyint(1) NOT NULL DEFAULT 1,
+  `brand_crusr` varchar(50) NOT NULL,
+  `brand_crdat` datetime NOT NULL DEFAULT current_timestamp(),
+  `brand_upusr` varchar(50) NOT NULL,
+  `brand_updat` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `brand_rvnmr` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -836,27 +854,27 @@ CREATE TABLE `tmib_items` (
 INSERT INTO `tmib_items` (`id`, `items_users`, `items_icode`, `items_bcode`, `items_hscod`, `items_iname`, `items_idesc`, `items_puofm`, `items_dfqty`, `items_suofm`, `items_ctgry`, `items_itype`, `items_trcks`, `items_sdvat`, `items_costp`, `items_image`, `items_nofbi`, `items_actve`, `items_crusr`, `items_crdat`, `items_upusr`, `items_updat`, `items_rvnmr`) VALUES
 ('0e5de4e6-86dd-453a-8b94-963ee305e860', 'user1', 'HE-003', 'HE-003', 'HE-003', 'Floor Cleaner', 'Floor Cleaner', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', 1, '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 7.50, 16.00, NULL, 1, 1, 'user1', '2026-01-18 12:08:34', 'user1', '2026-01-31 10:59:21', 1),
 ('24614ec4-8ab0-4b50-b3c7-9f154a124770', 'user1', 'RG-003', 'RG-003', 'RG-003', 'Basmati Rice', 'Basmati Rice', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 5.00, 16.00, NULL, 1, 1, 'user1', '2026-01-12 06:16:06', 'user1', '2026-01-31 10:59:47', 1),
-('2bee4dba-5f29-4e65-b772-718c677e326c', 'user1', 'BS-004', 'BS-004', 'BS-004', 'Potato Chips', 'Potato Chips', '344eb4c8-48c4-475b-b74c-307a0e492622', 20, 'f5ccd3c1-fd1e-4f0e-93be-59dd878c881a', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 20.00, NULL, 1, 1, 'user1', '2026-01-18 12:23:51', 'user1', '2026-01-31 10:56:51', 1),
+('2bee4dba-5f29-4e65-b772-718c677e326c', 'user1', 'BS-004', 'BS-004', 'BS-004', 'Potato Chips 25gm', 'Potato Chips', '344eb4c8-48c4-475b-b74c-307a0e492622', 20, 'f5ccd3c1-fd1e-4f0e-93be-59dd878c881a', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 4.00, NULL, 1, 1, 'user1', '2026-01-18 12:23:51', 'user1', '2026-02-28 04:41:46', 1),
 ('2c047e91-44f6-48bc-a591-9ab00deb7b72', 'user1', 'RG-005', 'RG-005', 'RG-005', 'Masur Dal', 'Masur Dal', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 5.00, 15.00, NULL, 1, 1, 'user1', '2026-01-18 11:49:45', 'user1', '2026-01-31 10:59:30', 1),
 ('38b496e9-6652-4324-8331-ba0ecb0cfeae', 'user1', 'DP-001', 'DP-001', 'DP-001', 'Fresh Milk', 'Fresh Milk', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', 1, '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 5.00, 15.00, NULL, 1, 1, 'user1', '2026-01-18 11:51:08', 'user1', '2026-01-31 10:57:36', 1),
 ('42ccd66a-70db-4c7f-93c4-36261a8f064f', 'user1', 'DP-003', 'DP-003', 'DP-003', 'Yogurt', 'Yogurt', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 5.00, 20.00, NULL, 1, 1, 'user1', '2026-01-18 11:53:02', 'user1', '2026-01-31 10:57:58', 1),
 ('471d3f7f-e3e5-4585-bdbf-5f0a35b05a93', 'user1', 'HE-005', 'HE-005', 'HE-005', 'Tissue Roll', 'Tissue Roll', '344eb4c8-48c4-475b-b74c-307a0e492622', 6, '78a63632-6a35-49ab-8cac-4b5c0d4fb418', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 7.50, 18.00, NULL, 1, 1, 'user1', '2026-01-18 12:10:46', 'user1', '2026-01-31 11:00:06', 1),
 ('485d61c3-e84e-418b-b91b-2171c17f0391', 'user1', 'DP-004', 'DP-004', 'DP-004', 'Butter', 'Butter', '344eb4c8-48c4-475b-b74c-307a0e492622', 1, '344eb4c8-48c4-475b-b74c-307a0e492622', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 5.00, 18.00, NULL, 1, 1, 'user1', '2026-01-18 11:54:16', 'user1', '2026-01-31 10:58:06', 1),
-('4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 'user1', 'BS-002', 'BS-002', 'BS-002', 'Mineral Water 1L', 'Mineral Water 1L', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, 'c1ab2f8e-5030-40a4-85a3-569ad7cc6dd7', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 14.00, NULL, 1, 1, 'user1', '2026-01-18 12:21:19', 'user1', '2026-01-31 10:56:36', 1),
+('4b019cba-eda8-4ad3-a8ac-ece0e6478ffe', 'user1', 'BS-002', 'BS-002', 'BS-002', 'Mineral Water 1L', 'Mineral Water 1L', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, 'c1ab2f8e-5030-40a4-85a3-569ad7cc6dd7', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 2.00, NULL, 1, 1, 'user1', '2026-01-18 12:21:19', 'user1', '2026-02-28 04:40:10', 1),
 ('4b100c2e-68a6-467b-94b7-617a6c7b43dc', 'user1', 'HE-004', 'HE-004', 'HE-004', 'Toilet Cleaner', 'Toilet Cleaner', '344eb4c8-48c4-475b-b74c-307a0e492622', 6, '78a63632-6a35-49ab-8cac-4b5c0d4fb418', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 7.50, 20.00, NULL, 1, 1, 'user1', '2026-01-18 12:09:36', 'user1', '2026-01-31 10:59:55', 1),
 ('4dab149a-e220-4cd8-a061-7660ab0168bb', 'user1', 'RG-002', 'RG-002', 'RG-002', 'Nazirshail Rice', 'Nazirshail Rice', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 5.00, 14.00, NULL, 1, 1, 'user1', '2026-01-12 06:20:57', 'user1', '2026-01-31 11:00:36', 1),
 ('75b05c78-9b6b-42ba-aafa-e76e22f67722', 'user1', 'HE-001', 'HE-001', 'HE-001', 'Laundry Soap', 'Laundry Soap', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '78a63632-6a35-49ab-8cac-4b5c0d4fb418', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 7.50, 20.00, NULL, 1, 1, 'user1', '2026-01-18 12:05:41', 'user1', '2026-01-31 10:58:31', 1),
-('8873e069-eea6-4f9e-acf0-dd1cb658f9c8', 'user1', 'BS-001', 'BS-001', 'BS-001', 'Soft Drink 250ml', 'Soft Drink 250ml', '344eb4c8-48c4-475b-b74c-307a0e492622', 24, 'f5d78785-c08b-46b7-a77f-dcf1a8700dd0', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 15.00, NULL, 1, 1, 'user1', '2026-01-18 12:20:20', 'user1', '2026-01-31 11:11:12', 1),
+('8873e069-eea6-4f9e-acf0-dd1cb658f9c8', 'user1', 'BS-001', 'BS-001', 'BS-001', 'Soft Drink 250ml', 'Soft Drink 250ml', '344eb4c8-48c4-475b-b74c-307a0e492622', 24, 'f5d78785-c08b-46b7-a77f-dcf1a8700dd0', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 2.00, NULL, 1, 1, 'user1', '2026-01-18 12:20:20', 'user1', '2026-02-28 04:39:13', 1),
 ('940f8010-5d38-4de4-b66f-d12958ff9ec2', 'user1', 'RG-001', 'RG-001', 'RG-001', 'Miniket Rice', 'Miniket Rice', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 5.00, 15.00, NULL, 1, 1, 'user1', '2026-01-11 06:06:23', 'user1', '2026-01-31 11:00:20', 1),
 ('940f8010-5d38-4de4-b66f-d12958ff9ecf', 'user1', 'EP-003', 'EP-003', 'EP-003', 'Layer Egg (Dozen)', 'Layer Egg (Dozen)', '61accd0f-ebd7-4c2c-9e33-ba5f92e091d1', 30, 'f5d78785-c08b-46b7-a77f-dcf1a8700dd0', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 5.00, 15.00, NULL, 1, 1, 'user1', '2026-01-11 06:06:23', 'user1', '2026-01-31 10:57:22', 1),
-('ad014a04-77d0-4f46-acc9-dee2b02c64f2', 'user1', 'BS-003', 'BS-003', 'BS-003', 'Juice Pack', 'Juice Pack', '344eb4c8-48c4-475b-b74c-307a0e492622', 10, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 18.00, NULL, 1, 1, 'user1', '2026-01-18 12:22:34', 'user1', '2026-01-31 10:56:46', 1),
+('ad014a04-77d0-4f46-acc9-dee2b02c64f2', 'user1', 'BS-003', 'BS-003', 'BS-003', 'Juice Pack 120ml', 'Juice Pack', '344eb4c8-48c4-475b-b74c-307a0e492622', 10, 'cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 2.00, NULL, 1, 1, 'user1', '2026-01-18 12:22:34', 'user1', '2026-02-28 04:41:05', 1),
 ('ae0a4ae3-77f6-4357-8ca9-c05cc1796a7e', 'user1', 'EP-001', 'EP-001', 'EP-001', 'Layer Egg', 'Layer Egg', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '61accd0f-ebd7-4c2c-9e33-ba5f92e091d1', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 5.00, 20.00, NULL, 1, 1, 'user1', '2026-01-12 06:17:33', 'user1', '2026-01-31 10:58:42', 1),
 ('b3da1017-bea4-44fd-ad13-110e92a48965', 'user1', 'RG-004', 'RG-004', 'RG-004', 'Wheat', 'Wheat', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '36886293-b080-44dc-9c8e-fed94ad161d3', 'Finished Goods', 0, 5.00, 12.00, NULL, 1, 1, 'user1', '2026-01-18 11:49:00', 'user1', '2026-01-31 10:59:41', 1),
 ('dfe206f2-b3a3-4d6c-8b3c-7402582348eb', 'user1', 'EP-002', 'EP-002', 'EP-002', 'Duck Egg', 'Duck Egg', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '61accd0f-ebd7-4c2c-9e33-ba5f92e091d1', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 5.00, 18.00, NULL, 1, 1, 'user1', '2026-01-12 06:38:50', 'user1', '2026-01-31 10:59:04', 1),
 ('e2e70dc1-9814-400c-8774-2b6b186b79e5', 'user1', 'DP-005', 'DP-005', 'DP-005', 'Cheese Slice', 'Cheese Slice', '344eb4c8-48c4-475b-b74c-307a0e492622', 10, '50d3582c-909a-4818-afd7-54a8db8c1a44', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 0, 5.00, 18.00, NULL, 1, 1, 'user1', '2026-01-18 11:55:20', 'user1', '2026-01-31 10:58:15', 1),
 ('e45670a3-981c-47c2-bd6a-a02bd8c0d7b0', 'user1', 'EP-004', 'EP-004', 'EP-004', 'Broiler Chicken', 'Broiler Chicken', 'f13c1fb3-3493-4640-9b13-02bd824b4977', 1000, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 5.00, 12.00, NULL, 1, 1, 'user1', '2026-01-11 06:38:46', 'user1', '2026-01-31 10:58:57', 1),
 ('e483bc2d-6ccd-4b72-8603-775dcd275249', 'user1', 'EP-005', 'EP-005', 'EP-005', 'Deshi Chicken', 'Deshi Chicken', 'f13c1fb3-3493-4640-9b13-02bd824b4977', 1000, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 'e69fe3b2-784f-44d5-9d88-4c228704242f', 'Finished Goods', 0, 5.00, 10.00, NULL, 1, 1, 'user1', '2026-01-12 06:12:16', 'user1', '2026-01-31 10:58:49', 1),
-('f7126510-80c0-416b-a34e-3a514e54d030', 'user1', 'BS-005', 'BS-005', 'BS-005', 'Biscuit', 'Biscuit', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '50d3582c-909a-4818-afd7-54a8db8c1a44', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 15.00, NULL, 1, 1, 'user1', '2026-01-18 12:24:41', 'user1', '2026-01-31 10:57:00', 1),
+('f7126510-80c0-416b-a34e-3a514e54d030', 'user1', 'BS-005', 'BS-005', 'BS-005', 'Biscuit Pineapple 75gm', 'Biscuit', '344eb4c8-48c4-475b-b74c-307a0e492622', 12, '50d3582c-909a-4818-afd7-54a8db8c1a44', 'feacdbbe-2519-4975-96fe-ad18c7899b53', 'Finished Goods', 0, 10.00, 3.00, NULL, 1, 1, 'user1', '2026-01-18 12:24:41', 'user1', '2026-02-28 04:42:37', 1),
 ('f949a24a-3ff8-4349-9ca0-f853de9226c7', 'user1', 'HE-002', 'HE-002', 'HE-002', 'Dishwashing Liquid', 'Dishwashing Liquid', '1f240f2c-50ab-407f-b77d-0ce95922fd6c', 1, '1f240f2c-50ab-407f-b77d-0ce95922fd6c', '204e4887-0af6-4908-add0-240ea380a53b', 'Finished Goods', 0, 7.50, 18.00, NULL, 1, 1, 'user1', '2026-01-18 12:06:48', 'user1', '2026-01-31 10:59:13', 1),
 ('fa1b188a-c075-4b90-bbea-37e3733f50bb', 'user1', 'DP-002', 'DP-002', 'DP-002', 'Powder Milk', 'Powder Milk', '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', 1, '22b30ed6-ee7a-421d-a9a3-dc6c710b9229', '3ed137d4-3863-407a-8f4a-dd1000479780', 'Finished Goods', 1, 5.00, 18.00, NULL, 1, 1, 'user1', '2026-01-18 11:52:20', 'user1', '2026-01-31 14:17:25', 1);
 
@@ -902,7 +920,7 @@ INSERT INTO `tmib_iuofm` (`id`, `iuofm_users`, `iuofm_untnm`, `iuofm_untgr`, `iu
 ('c1ab2f8e-5030-40a4-85a3-569ad7cc6dd7', 'user1', 'Cage', 'Countable', 1, 'user1', '2026-01-14 08:34:18', 'user1', '2026-01-31 10:11:36', 1),
 ('cdd3a6c9-d31b-4a41-8762-69700e2a1108', 'user1', 'Ctn', 'Countable', 1, 'user1', '2026-01-11 04:40:23', 'user1', '2026-01-31 10:11:36', 1),
 ('f13c1fb3-3493-4640-9b13-02bd824b4977', 'user1', 'Gm', 'Weight', 1, 'user1', '2026-01-14 08:33:32', 'user1', '2026-01-31 10:11:36', 1),
-('f2fa8d7c-69d4-439d-9dea-66fba7aac17b', 'user1', 'Bag', 'Mass', 1, 'user1', '2026-01-14 08:34:10', 'user1', '2026-01-31 10:11:36', 1),
+('f2fa8d7c-69d4-439d-9dea-66fba7aac17b', 'user1', 'Bag', 'Mass', 1, 'user1', '2026-01-14 08:34:10', 'user1', '2026-02-26 06:24:43', 1),
 ('f5ccd3c1-fd1e-4f0e-93be-59dd878c881a', 'user1', 'Poly', 'Countable', 1, 'user1', '2026-01-14 08:25:05', 'user1', '2026-01-31 10:11:36', 1),
 ('f5d78785-c08b-46b7-a77f-dcf1a8700dd0', 'user1', 'Crate', 'Mass', 1, 'user1', '2026-01-14 08:33:25', 'user1', '2026-01-31 10:11:36', 1);
 
@@ -2046,6 +2064,12 @@ ALTER TABLE `tmib_attrb`
 -- Indexes for table `tmib_bitem`
 --
 ALTER TABLE `tmib_bitem`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tmib_brand`
+--
+ALTER TABLE `tmib_brand`
   ADD PRIMARY KEY (`id`);
 
 --

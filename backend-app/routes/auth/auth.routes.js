@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const { createSession } = require("../../sessionManager");
@@ -32,7 +32,7 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    const sql_valid_email = `SELECT * FROM tmsb_users WHERE users_email = ?`;
+    const sql_valid_email = `SELECT * FROM tmsb_users WHERE users_email = $1`;
     const params_valid_email = [users_email];
     const row_valid_email = await dbGet(
       sql_valid_email,
@@ -56,8 +56,8 @@ router.post("/register", async (req, res) => {
     scripts.push({
       sql: `INSERT INTO tmsb_users (id, users_email, users_pswrd, users_recky, users_oname, users_bsins,
       users_drole, users_users, users_stats, users_regno, users_nofcr, users_crusr, users_upusr) 
-    VALUES (?, ?, ?, ?, ?, ?,
-    'Admin', ?, 0, 'Standard', ?, ?, ?)`,
+    VALUES ($1, $2, $3, $4, $5, $6,
+    'Admin', $7, 0, 'Standard', $8, $9, $10)`,
       params: [
         id,
         users_email,
@@ -75,7 +75,7 @@ router.post("/register", async (req, res) => {
 
     scripts.push({
       sql: `INSERT INTO tmsb_bsins (id, bsins_users, bsins_bname, bsins_email, bsins_crusr, bsins_upusr) 
-    VALUES (?, ?, ?, ?, ?, ?)`,
+    VALUES ($1, $2, $3, $4, $5, $6)`,
       params: [users_bsins_id, id, bsins_bname, users_email, id, id],
       label: `Created business ${bsins_bname}`,
     });
@@ -83,8 +83,8 @@ router.post("/register", async (req, res) => {
     scripts.push({
       sql: `INSERT INTO tmsb_crgrn (id, crgrn_users, crgrn_bsins, crgrn_tblnm, crgrn_tbltx, crgrn_refno, crgrn_dbgrn, crgrn_crgrn,
        crgrn_crusr, crgrn_upusr) 
-    VALUES (?, ?, ?, 'tmsb_crgrn', 'Registration', ?, 0, ?,
-      ?, ?)`,
+    VALUES ($1, $2, $3, 'tmsb_crgrn', 'Registration', $4, 0, $5,
+      $6, $7)`,
       params: [id, id, users_bsins_id, bsins_bname, noOfGrains, id, id],
       label: `Credited grain for ${users_oname}`,
     });
@@ -124,12 +124,12 @@ router.post("/login", async (req, res) => {
     usr.users_drole,usr.users_users,usr.users_stats,usr.users_regno,
     usr.users_wctxt,usr.users_notes,usr.users_nofcr,usr.users_isrgs,
     bsn.bsins_bname, bsn.bsins_addrs, bsn.bsins_email, bsn.bsins_cntct, bsn.bsins_image, bsn.bsins_binno, bsn.bsins_btags, bsn.bsins_cntry, 
-    bsn.bsins_bstyp, bsn.bsins_tstrn, bsn.bsins_prtrn, bsn.bsins_sltrn, bsn.bsins_stdat, bsn.bsins_pbviw, 'web' as users_sview
+    bsn.bsins_bstyp, bsn.bsins_tstrn, bsn.bsins_prtrn, bsn.bsins_sltrn, bsn.bsins_stdat, bsn.bsins_pbviw
     FROM tmsb_users usr
     LEFT JOIN tmsb_bsins bsn ON usr.users_bsins = bsn.id
-    WHERE usr.users_email = ?
-    AND usr.users_pswrd = ?
-    AND usr.users_actve = 1`;
+    WHERE usr.users_email = $1
+    AND usr.users_pswrd = $2
+    AND usr.users_actve = TRUE`;
     const params = [users_email, users_pswrd];
 
     const row = await dbGet(

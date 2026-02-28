@@ -1,0 +1,209 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict or6QbDnKENDAWOgtv6o0kQy84rMfNPYh1Cie42aRv9YB6qLdNenJJU3sx41cET6
+
+-- Dumped from database version 18.3 (Debian 18.3-1.pgdg13+1)
+-- Dumped by pg_dump version 18.1
+
+-- Started on 2026-02-28 09:44:14 UTC
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 221 (class 1259 OID 16488)
+-- Name: tmsb_bsins; Type: TABLE; Schema: public; Owner: sgdpg
+--
+
+CREATE TABLE public.tmsb_bsins (
+    id character varying(50) NOT NULL,
+    bsins_users character varying(255) NOT NULL,
+    bsins_bname character varying(255) NOT NULL,
+    bsins_addrs character varying(255),
+    bsins_email character varying(255),
+    bsins_cntct character varying(255),
+    bsins_image character varying(255),
+    bsins_binno character varying(255),
+    bsins_btags character varying(255),
+    bsins_cntry character varying(50),
+    bsins_bstyp character varying(50),
+    bsins_tstrn boolean DEFAULT true NOT NULL,
+    bsins_prtrn boolean DEFAULT true NOT NULL,
+    bsins_sltrn boolean DEFAULT true NOT NULL,
+    bsins_stdat timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    bsins_pbviw boolean DEFAULT false NOT NULL,
+    bsins_actve boolean DEFAULT true NOT NULL,
+    bsins_crusr character varying(50) NOT NULL,
+    bsins_crdat timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    bsins_upusr character varying(50) NOT NULL,
+    bsins_updat timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    bsins_rvnmr integer DEFAULT 1 NOT NULL
+);
+
+
+ALTER TABLE public.tmsb_bsins OWNER TO sgdpg;
+
+--
+-- TOC entry 220 (class 1259 OID 16461)
+-- Name: tmsb_crgrn; Type: TABLE; Schema: public; Owner: sgdpg
+--
+
+CREATE TABLE public.tmsb_crgrn (
+    id character varying(50) NOT NULL,
+    crgrn_users character varying(50) NOT NULL,
+    crgrn_bsins character varying(50) NOT NULL,
+    crgrn_tblnm character varying(50) NOT NULL,
+    crgrn_tbltx character varying(50),
+    crgrn_refno character varying(50),
+    crgrn_dbgrn numeric(18,6) DEFAULT 0 NOT NULL,
+    crgrn_crgrn numeric(18,6) DEFAULT 0 NOT NULL,
+    crgrn_isdat timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    crgrn_xpdat timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    crgrn_actve boolean DEFAULT true NOT NULL,
+    crgrn_crusr character varying(50) NOT NULL,
+    crgrn_crdat timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    crgrn_upusr character varying(50) NOT NULL,
+    crgrn_updat timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    crgrn_rvnmr integer DEFAULT 1 NOT NULL
+);
+
+
+ALTER TABLE public.tmsb_crgrn OWNER TO sgdpg;
+
+--
+-- TOC entry 219 (class 1259 OID 16425)
+-- Name: tmsb_users; Type: TABLE; Schema: public; Owner: sgdpg
+--
+
+CREATE TABLE public.tmsb_users (
+    id character varying(50) NOT NULL,
+    users_email character varying(50) NOT NULL,
+    users_pswrd character varying(50) NOT NULL,
+    users_recky character varying(50) NOT NULL,
+    users_oname character varying(255) NOT NULL,
+    users_cntct character varying(50),
+    users_bsins character varying(50),
+    users_drole character varying(50),
+    users_users character varying(50),
+    users_stats integer DEFAULT 0 NOT NULL,
+    users_regno character varying(50),
+    users_regdt timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    users_ltokn character varying(50),
+    users_lstgn timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    users_lstpd timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    users_wctxt character varying(100),
+    users_notes character varying(100),
+    users_nofcr numeric(16,2) DEFAULT 0.00 NOT NULL,
+    users_isrgs boolean DEFAULT true NOT NULL,
+    users_actve boolean DEFAULT true NOT NULL,
+    users_crusr character varying(50) NOT NULL,
+    users_crdat timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    users_upusr character varying(50) NOT NULL,
+    users_updat timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    users_rvnmr integer DEFAULT 1 NOT NULL
+);
+
+
+ALTER TABLE public.tmsb_users OWNER TO sgdpg;
+
+--
+-- TOC entry 3482 (class 0 OID 16488)
+-- Dependencies: 221
+-- Data for Name: tmsb_bsins; Type: TABLE DATA; Schema: public; Owner: sgdpg
+--
+
+COPY public.tmsb_bsins (id, bsins_users, bsins_bname, bsins_addrs, bsins_email, bsins_cntct, bsins_image, bsins_binno, bsins_btags, bsins_cntry, bsins_bstyp, bsins_tstrn, bsins_prtrn, bsins_sltrn, bsins_stdat, bsins_pbviw, bsins_actve, bsins_crusr, bsins_crdat, bsins_upusr, bsins_updat, bsins_rvnmr) FROM stdin;
+49db5d25-9eea-4823-8f58-4189e40fa889	40cbaf59-9028-4297-80b9-e85563ebef37	My Shop BD	\N	admin@sgd.com	\N	\N	\N	\N	\N	\N	t	t	t	2026-02-28 09:00:52.392741	f	t	40cbaf59-9028-4297-80b9-e85563ebef37	2026-02-28 09:00:52.392741	40cbaf59-9028-4297-80b9-e85563ebef37	2026-02-28 09:00:52.392741	1
+\.
+
+
+--
+-- TOC entry 3481 (class 0 OID 16461)
+-- Dependencies: 220
+-- Data for Name: tmsb_crgrn; Type: TABLE DATA; Schema: public; Owner: sgdpg
+--
+
+COPY public.tmsb_crgrn (id, crgrn_users, crgrn_bsins, crgrn_tblnm, crgrn_tbltx, crgrn_refno, crgrn_dbgrn, crgrn_crgrn, crgrn_isdat, crgrn_xpdat, crgrn_actve, crgrn_crusr, crgrn_crdat, crgrn_upusr, crgrn_updat, crgrn_rvnmr) FROM stdin;
+40cbaf59-9028-4297-80b9-e85563ebef37	40cbaf59-9028-4297-80b9-e85563ebef37	49db5d25-9eea-4823-8f58-4189e40fa889	tmsb_crgrn	Registration	My Shop BD	0.000000	1000.000000	2026-02-28 09:00:52.392741	2026-02-28 09:00:52.392741	t	40cbaf59-9028-4297-80b9-e85563ebef37	2026-02-28 09:00:52.392741	40cbaf59-9028-4297-80b9-e85563ebef37	2026-02-28 09:00:52.392741	1
+\.
+
+
+--
+-- TOC entry 3480 (class 0 OID 16425)
+-- Dependencies: 219
+-- Data for Name: tmsb_users; Type: TABLE DATA; Schema: public; Owner: sgdpg
+--
+
+COPY public.tmsb_users (id, users_email, users_pswrd, users_recky, users_oname, users_cntct, users_bsins, users_drole, users_users, users_stats, users_regno, users_regdt, users_ltokn, users_lstgn, users_lstpd, users_wctxt, users_notes, users_nofcr, users_isrgs, users_actve, users_crusr, users_crdat, users_upusr, users_updat, users_rvnmr) FROM stdin;
+40cbaf59-9028-4297-80b9-e85563ebef37	admin@sgd.com	password	recover	Admin	\N	49db5d25-9eea-4823-8f58-4189e40fa889	Admin	40cbaf59-9028-4297-80b9-e85563ebef37	0	Standard	2026-02-28 09:00:52.392741	\N	2026-02-28 09:00:52.392741	2026-02-28 09:00:52.392741	\N	\N	1000.00	t	t	40cbaf59-9028-4297-80b9-e85563ebef37	2026-02-28 09:00:52.392741	40cbaf59-9028-4297-80b9-e85563ebef37	2026-02-28 09:00:52.392741	1
+\.
+
+
+--
+-- TOC entry 3330 (class 2606 OID 16519)
+-- Name: tmsb_bsins ix_bsins_users_bsins_bname; Type: CONSTRAINT; Schema: public; Owner: sgdpg
+--
+
+ALTER TABLE ONLY public.tmsb_bsins
+    ADD CONSTRAINT ix_bsins_users_bsins_bname UNIQUE (bsins_users, bsins_bname);
+
+
+--
+-- TOC entry 3332 (class 2606 OID 16517)
+-- Name: tmsb_bsins tmsb_bsins_pkey; Type: CONSTRAINT; Schema: public; Owner: sgdpg
+--
+
+ALTER TABLE ONLY public.tmsb_bsins
+    ADD CONSTRAINT tmsb_bsins_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3328 (class 2606 OID 16487)
+-- Name: tmsb_crgrn tmsb_crgrn_pkey; Type: CONSTRAINT; Schema: public; Owner: sgdpg
+--
+
+ALTER TABLE ONLY public.tmsb_crgrn
+    ADD CONSTRAINT tmsb_crgrn_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3324 (class 2606 OID 16458)
+-- Name: tmsb_users tmsb_users_pkey; Type: CONSTRAINT; Schema: public; Owner: sgdpg
+--
+
+ALTER TABLE ONLY public.tmsb_users
+    ADD CONSTRAINT tmsb_users_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3326 (class 2606 OID 16460)
+-- Name: tmsb_users tmsb_users_users_email_key; Type: CONSTRAINT; Schema: public; Owner: sgdpg
+--
+
+ALTER TABLE ONLY public.tmsb_users
+    ADD CONSTRAINT tmsb_users_users_email_key UNIQUE (users_email);
+
+
+-- Completed on 2026-02-28 09:44:14 UTC
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict or6QbDnKENDAWOgtv6o0kQy84rMfNPYh1Cie42aRv9YB6qLdNenJJU3sx41cET6
+
