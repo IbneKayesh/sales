@@ -6,6 +6,7 @@ import { ordersAPI } from "@/api/sales/ordersAPI";
 import tmcb_cntcs from "@/models/crm/tmcb_cntcs.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
+import { outletRouteAPI } from "@/api/crm/outletRouteAPI";
 
 const dataModel = generateDataModel(tmcb_cntcs, { edit_stop: 0 });
 
@@ -88,18 +89,42 @@ const useOutlets = () => {
     }
   };
 
+    const loadOutletRoutes = async (item) => {
+    try {
+      setIsBusy(true);
+      const formDataNew = {
+        cnrut_cntct: item.id,
+        cnrut_users: user?.emply_users,
+        cnrut_bsins: user?.emply_bsins,
+      };
+
+      const response = await outletRouteAPI.getByOutlet(formDataNew);
+      const data = response?.data || [];
+      console.log("loadOutletRoutes: ", response.data);
+      return data;
+    } catch (error) {
+      console.error("Error loading data:", error);
+      showToast("error", "Error", error?.message || "Failed to load data");
+      return [];
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+
   const handleViewOnly = async (item) => {
     setCurrentView("viewonly");
     const orders = await loadOutletOrders(item);
+    const outletroutes = await loadOutletRoutes(item);
 
     const formDataNew = {
       outlet: item,
       orders: orders,
+      outletroutes: outletroutes,
     };
     setFormData(formDataNew);
   };
 
-  
   const handleSave = async (e) => {
     e.preventDefault();
 
@@ -156,7 +181,6 @@ const useOutlets = () => {
     }
   };
 
-  
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate({ ...formData, [field]: value }, tmcb_cntcs);
@@ -176,7 +200,7 @@ const useOutlets = () => {
     handleBack,
     handleEdit,
     handleViewOnly,
-    handleSave
+    handleSave,
   };
 };
 

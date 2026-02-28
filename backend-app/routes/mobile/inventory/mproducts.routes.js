@@ -21,7 +21,7 @@ router.post("/get-sales-order-items", async (req, res) => {
     const sql = `SELECT itm.items_icode, itm.items_bcode, itm.items_iname, itm.items_sdvat,
     bitm.id, bitm.bitem_items, bitm.bitem_lprat, bitm.bitem_dprat, bitm.bitem_mcmrp,
     bitm.bitem_sddsp, bitm.bitem_gstkq, bitm.bitem_istkq,
-    bitm.bitem_lprat bitem_csrat, '{}' AS bitem_attrb, '-' AS bitem_srcnm,
+    bitm.bitem_lprat bitem_csrat, '{}' AS bitem_attrb, 'Inventory Stock' AS bitem_srcnm,
     '-' AS bitem_refid, 'Inventory Stock' AS bitem_refno, 
     0 bitem_ohqty,
 puofm.iuofm_untnm as puofm_untnm,

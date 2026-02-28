@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "@/utils/datetime";
+import EmptyState from "@/components/EmptyState";
 
 const getDeliveryBadgeClass = (status) =>
   status
@@ -15,10 +16,7 @@ const OutletViewComp = ({ formData, onBack, onEdit }) => {
 
   if (!formData) {
     return (
-      <div className="empty-state" style={{ marginTop: 40 }}>
-        <span className="pi pi-building empty-state-icon" />
-        <span className="empty-state-text">No outlet selected</span>
-      </div>
+      <EmptyState stateMessage="No outlet selected" style={{ marginTop: 40 }} />
     );
   }
 
@@ -95,6 +93,36 @@ const OutletViewComp = ({ formData, onBack, onEdit }) => {
         </button>
       </div>
 
+      <div className="list-container p-2">
+        {(!formData.outletroutes || formData.outletroutes.length === 0) && (
+          <EmptyState stateMessage="No routes found" />
+        )}
+
+        {formData.outletroutes?.map((item) => (
+          <div key={item.id} className="lite-card-item mb-3">
+            <div className="lite-card-item-left">
+              <div className="lite-card-item-left-title">
+                {item.rutes_rname}
+              </div>
+              <div className="lite-card-item-left-subtitle">
+                {item.rutes_dname}
+              </div>
+            </div>
+            <div className="lite-card-item-right">
+              <div className="lite-card-item-right-value">
+                {item.emply_ecode}-{item.emply_ename}
+              </div>
+              <span className="status-badge status-badge--delivered">
+                Serial: {item.cnrut_srlno}
+              </span>
+            </div>
+            <div className="lite-card-item-footer">
+              {formatDate(item.cnrut_lvdat)}
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div className="lite-card-divider" />
 
       {/* ── Orders Section ── */}
@@ -108,10 +136,7 @@ const OutletViewComp = ({ formData, onBack, onEdit }) => {
 
       <div className="list-container">
         {(!formData.orders || formData.orders.length === 0) && (
-          <div className="empty-state">
-            <span className="pi pi-file-o empty-state-icon" />
-            <span className="empty-state-text">No orders found</span>
-          </div>
+          <EmptyState stateMessage="No orders found" />
         )}
 
         {formData.orders?.map((item) => (

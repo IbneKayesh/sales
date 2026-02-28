@@ -1,6 +1,6 @@
 import useOrders from "@/hooks/sales/useOrders";
 import OrderListComp from "./OrderListComp";
-import OrderEntryComp from "./OrderEntryComp";
+import OrderFormComp from "./OrderFormComp";
 import TitleTopBar from "@/components/TitleTopBar";
 import LiteLoader from "@/components/LiteLoader";
 
@@ -41,7 +41,7 @@ const OrderPage = () => {
           />
         )}
         {currentView === "form" && (
-          <OrderEntryComp formData={formData} onBack={handleBack} />
+          <OrderFormComp formData={formData} onBack={handleBack} />
         )}
       </div>
     </>

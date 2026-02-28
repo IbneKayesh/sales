@@ -123,7 +123,7 @@ const ProfilePage = () => {
         </span>
       </div>
 
-      <div style={{ padding: "0 16px", marginTop: "-20px" }}>
+      <div style={{ padding: "16px", marginTop: "-20px" }}>
         {/* Stats Row */}
         <div
           className="card"

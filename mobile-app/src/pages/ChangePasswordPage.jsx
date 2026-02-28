@@ -6,7 +6,7 @@ const ChangePasswordPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="app-container">
+    <div className="page-container">
       {/* Back Row */}
       <div className="page-header">
         <button className="back-btn" onClick={() => navigate(-1)}>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { orderRouteAPI } from "@/api/crm/orderRouteAPI";
+import { outletRouteAPI } from "@/api/crm/outletRouteAPI";
 import tmcb_rutes from "@/models/crm/tmcb_rutes.json";
 import tmcb_cntrt from "@/models/crm/tmcb_cntrt.json";
 import validate, { generateDataModel } from "@/models/validator";
@@ -21,7 +21,7 @@ export const useOrderRoute = () => {
 
   const loadOrderRoutes = async () => {
     try {
-      const response = await orderRouteAPI.getAll({
+      const response = await outletRouteAPI.getAll({
         rutes_users: user.users_users,
         rutes_bsins: user.users_bsins,
       });
@@ -68,7 +68,7 @@ export const useOrderRoute = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await orderRouteAPI.delete(rowData);
+      const response = await outletRouteAPI.delete(rowData);
 
       const updatedList = dataList.filter((c) => c.id !== rowData.id);
       setDataList(updatedList);
@@ -118,9 +118,9 @@ export const useOrderRoute = () => {
       // Call API and get { message, data }
       let response;
       if (formData.id) {
-        response = await orderRouteAPI.update(formDataNew);
+        response = await outletRouteAPI.update(formDataNew);
       } else {
-        response = await orderRouteAPI.create(formDataNew);
+        response = await outletRouteAPI.create(formDataNew);
       }
 
       // Update toast using API message
@@ -155,7 +155,7 @@ export const useOrderRoute = () => {
     setOutletFormData(dataModel_tmcb_cntrt);
 
     try {
-      const response = await orderRouteAPI.outlets({
+      const response = await outletRouteAPI.outlets({
         cnrut_users: user.users_users,
         cnrut_bsins: user.users_bsins,
         cnrut_rutes: rowData.id,
@@ -176,7 +176,7 @@ export const useOrderRoute = () => {
     //console.log("handleDeleteRouteOutlet: " + JSON.stringify(rowData));
     try {
       // Call API, unwrap { message, data }
-      const response = await orderRouteAPI.deleteOutlet(rowData);
+      const response = await outletRouteAPI.deleteOutlet(rowData);
 
       const updatedList = routeOutlets.filter((c) => c.id !== rowData.id);
       setRouteOutlets(updatedList);
@@ -230,9 +230,9 @@ export const useOrderRoute = () => {
       // Call API and get { message, data }
       let response;
       if (outletFormData.id) {
-        //response = await orderRouteAPI.updateOutlet(formDataNew);
+        //response = await outletRouteAPI.updateOutlet(formDataNew);
       } else {
-        response = await orderRouteAPI.createOutlet(formDataNew);
+        response = await outletRouteAPI.createOutlet(formDataNew);
       }
 
       // Update toast using API message

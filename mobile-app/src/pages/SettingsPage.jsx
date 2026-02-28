@@ -6,7 +6,7 @@ const SettingsPage = () => {
   const { isDark, toggleTheme } = useTheme();
 
   return (
-    <div className="app-container">
+    <div className="page-container">
       {/* Appearance */}
       <div className="card" style={{ padding: 0, overflow: "hidden" }}>
         <div
@@ -210,10 +210,10 @@ const SettingsPage = () => {
       </div>
 
       {/* App Info */}
-      <div className="card">
+      <div className="card p-2">
         <div
           style={{
-            padding: "12px 0 8px",
+            padding: "12px 5px 8px",
             borderBottom: "1px solid var(--border)",
             marginBottom: "12px",
           }}
