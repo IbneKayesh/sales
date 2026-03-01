@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
     //database action
     const sql = `SELECT tbl.*, 0 as edit_stop
       FROM tmib_brand tbl
-      WHERE tbl.brand_users = ?
+      WHERE tbl.brand_users = $1
       ORDER BY tbl.brand_brnam`;
     const params = [brand_users];
 
@@ -65,8 +65,8 @@ router.post("/create", async (req, res) => {
 
     //database action
     const sql = `INSERT INTO tmib_brand
-    (id,brand_users,brand_brnam,iuofm_crusr,iuofm_upusr)
-    VALUES (?,?,?,?,?)`;
+    (id,brand_users,brand_brnam,brand_crusr,brand_upusr)
+    VALUES ($1,$2,$3,$4,$5)`;
     const params = [
       id,
       brand_users,
@@ -116,9 +116,11 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_brand
-    SET brand_brnam = ?,
-    iuofm_upusr = ?
-    WHERE id = ?`;
+    SET brand_brnam = $1,
+    brand_upusr = $2,
+    brand_updat = CURRENT_TIMESTAMP,
+    brand_rvnmr = brand_rvnmr + 1
+    WHERE id = $3`;
     const params = [
       brand_brnam,
       user_id,
@@ -158,8 +160,8 @@ router.post("/delete", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_brand
-    SET brand_actve = 1 - brand_actve
-    WHERE id = ?`;
+    SET brand_actve = NOT brand_actve
+    WHERE id = $1`;
     const params = [id];
 
     await dbRun(sql, params, `Delete brand for ${brand_brnam}`);

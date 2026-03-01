@@ -293,8 +293,9 @@ router.post("/permissions/modules", async (req, res) => {
     //database action
     const sql = `SELECT *
     FROM tmsb_mdule
-    WHERE mdule_actve = 1
+    WHERE mdule_actve = TRUE
     AND mdule_pname = 'basic'
+    AND mdule_mview = 'web'
     ORDER BY mdule_odrby`;
     const params = [];
 
@@ -332,8 +333,8 @@ router.post("/permissions/menus", async (req, res) => {
     //database action
     const sql = `SELECT *
     FROM tmsb_menus
-    WHERE menus_actve = 1
-    AND menus_mdule = ?
+    WHERE menus_actve = TRUE
+    AND menus_mdule = $1
     ORDER BY menus_odrby`;
     const params = [menus_mdule];
 

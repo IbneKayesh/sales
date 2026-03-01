@@ -19,7 +19,7 @@ export const useUnits = () => {
 
   const loadUnits = async () => {
     try {
-      const response = await unitsAPI.getAll({ iuofm_users: user.users_users });
+      const response = await unitsAPI.getAll({ upid: user.users_users });
       //response = { message, data }
       //console.log("response: " + JSON.stringify(response));
       setDataList(response.data);
@@ -67,7 +67,12 @@ export const useUnits = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await unitsAPI.delete(rowData);
+      const formDataNew = {
+        ...rowData,
+        upid: user.users_users,
+        usid: user.id,
+      };
+      const response = await unitsAPI.delete(formDataNew);
 
       // Remove deleted unit from local state
       const updatedList = dataList.filter((u) => u.id !== rowData.id);
@@ -77,7 +82,7 @@ export const useUnits = () => {
         response.success ? "info" : "error",
         response.success ? "Deleted" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
     } catch (error) {
       console.error("Error deleting data:", error);
@@ -108,8 +113,8 @@ export const useUnits = () => {
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        iuofm_users: user.users_users,
-        user_id: user.id,
+        upid: user.users_users,
+        usid: user.id,
       };
 
       // console.log("formDataNew: " + JSON.stringify(formDataNew));
@@ -129,7 +134,7 @@ export const useUnits = () => {
         response.success ? "success" : "error",
         response.success ? "Success" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
 
       handleClear();

@@ -1,4 +1,5 @@
 import { usePermissions } from "@/hooks/usePermissions";
+import EmptyState from "@/components/EmptyState";
 
 const ModulePage = () => {
   const { dataList, isBusy, handleFetchMenus } = usePermissions();
@@ -26,6 +27,9 @@ const ModulePage = () => {
             </div>
           </div>
         ))}
+        {dataList.length === 0 && (
+          <EmptyState stateMessage="No Module found!" />
+        )}
       </div>
     </div>
   );

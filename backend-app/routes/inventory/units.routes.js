@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { iuofm_users } = req.body;
+    const { upid } = req.body;
 
     // Validate input
-    if (!iuofm_users) {
+    if (!upid) {
       return res.json({
         success: false,
         message: "User ID is required",
@@ -20,11 +20,11 @@ router.post("/", async (req, res) => {
     //database action
     const sql = `SELECT tbl.*, 0 as edit_stop
       FROM tmib_iuofm tbl
-      WHERE tbl.iuofm_users = ?
+      WHERE tbl.iuofm_users = $1
       ORDER BY tbl.iuofm_untnm`;
-    const params = [iuofm_users];
+    const params = [upid];
 
-    const rows = await dbGetAll(sql, params, `Get units for ${iuofm_users}`);
+    const rows = await dbGetAll(sql, params, `Get units for ${upid}`);
     res.json({
       success: true,
       message: "Units fetched successfully",
@@ -45,16 +45,16 @@ router.post("/create", async (req, res) => {
   try {
     const {
       id,
-      iuofm_users,
+      upid,
       iuofm_untnm,
       iuofm_untgr,
-      user_id,
+      usid,
     } = req.body;
 
     // Validate input
     if (
       !id ||
-      !iuofm_users ||
+      !upid ||
       !iuofm_untnm
     ) {
       return res.json({
@@ -67,14 +67,14 @@ router.post("/create", async (req, res) => {
     //database action
     const sql = `INSERT INTO tmib_iuofm
     (id,iuofm_users,iuofm_untnm,iuofm_untgr,iuofm_crusr,iuofm_upusr)
-    VALUES (?,?,?,?,?,?)`;
+    VALUES ($1,$2,$3,$4,$5,$6)`;
     const params = [
       id,
-      iuofm_users,
+      upid,
       iuofm_untnm,
       iuofm_untgr,
-      user_id,
-      user_id,
+      usid,
+      usid,
     ];
 
     await dbRun(sql, params, `Create unit for ${iuofm_untnm}`);
@@ -98,16 +98,16 @@ router.post("/update", async (req, res) => {
   try {
     const {
       id,
-      iuofm_users,
+      upid,
       iuofm_untnm,
       iuofm_untgr,
-      user_id,
+      usid,
     } = req.body;
 
     // Validate input
     if (
       !id ||
-      !iuofm_users ||
+      !upid ||
       !iuofm_untnm
     ) {
       return res.json({
@@ -119,16 +119,18 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_iuofm
-    SET iuofm_users = ?,
-    iuofm_untnm = ?,
-    iuofm_untgr = ?,
-    iuofm_upusr = ?
-    WHERE id = ?`;
+    SET iuofm_users = $1,
+    iuofm_untnm = $2,
+    iuofm_untgr = $3,
+    iuofm_upusr = $4,
+    iuofm_updat = CURRENT_TIMESTAMP,
+    iuofm_rvnmr = iuofm_rvnmr + 1
+    WHERE id = $5`;
     const params = [
-      iuofm_users,
+      upid,
       iuofm_untnm,
       iuofm_untgr,
-      user_id,
+      usid,
       id,
     ];
 
@@ -152,7 +154,7 @@ router.post("/update", async (req, res) => {
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, iuofm_untnm} = req.body;
+    const { id, upid, iuofm_untnm, usid} = req.body;
 
     // Validate input
     if (!id) {
@@ -165,9 +167,12 @@ router.post("/delete", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_iuofm
-    SET iuofm_actve = 1 - iuofm_actve
-    WHERE id = ?`;
-    const params = [id];
+    SET iuofm_actve = NOT iuofm_actve,
+    iuofm_upusr = $1,
+    iuofm_updat = CURRENT_TIMESTAMP,
+    iuofm_rvnmr = iuofm_rvnmr + 1
+    WHERE id = $2`;
+    const params = [usid, id];
 
     await dbRun(sql, params, `Delete unit for ${iuofm_untnm}`);
     res.json({
