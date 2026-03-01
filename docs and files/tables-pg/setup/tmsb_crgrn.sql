@@ -16,6 +16,8 @@ CREATE TABLE tmsb_crgrn (
   crgrn_crgrn decimal(18,6) NOT NULL DEFAULT 0,
   crgrn_isdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   crgrn_xpdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  
   crgrn_actve boolean NOT NULL DEFAULT true,
   crgrn_crusr varchar(50) NOT NULL,
   crgrn_crdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

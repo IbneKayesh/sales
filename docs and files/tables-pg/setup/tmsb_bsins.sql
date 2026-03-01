@@ -26,8 +26,8 @@ CREATE TABLE tmsb_bsins (
   -- default
   bsins_stdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   bsins_pbviw boolean NOT NULL DEFAULT false,
-  bsins_actve boolean NOT NULL DEFAULT true,
 
+  bsins_actve boolean NOT NULL DEFAULT true,
   bsins_crusr varchar(50) NOT NULL,
   bsins_crdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   bsins_upusr varchar(50) NOT NULL,
