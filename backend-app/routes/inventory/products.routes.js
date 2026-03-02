@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { items_users } = req.body;
+    const { muser_id } = req.body;
 
     // Validate input
-    if (!items_users) {
+    if (!muser_id) {
       return res.json({
         success: false,
         message: "User ID is required",
@@ -21,16 +21,18 @@ router.post("/", async (req, res) => {
     const sql = `SELECT tbl.*, 0 as edit_stop,
       puofm.iuofm_untnm as puofm_untnm,
       suofm.iuofm_untnm as suofm_untnm,
-      ctgry.ctgry_ctgnm
+      ctgry.ctgry_ctgnm,
+      brand.brand_brnam
       FROM tmib_items tbl
       LEFT JOIN tmib_iuofm puofm ON tbl.items_puofm = puofm.id
       LEFT JOIN tmib_iuofm suofm ON tbl.items_suofm = suofm.id
       LEFT JOIN tmib_ctgry ctgry ON tbl.items_ctgry = ctgry.id
-      WHERE tbl.items_users = ?
+      LEFT JOIN tmib_brand brand ON tbl.items_brand = brand.id
+      WHERE tbl.items_users = $1
       ORDER BY tbl.items_icode`;
-    const params = [items_users];
+    const params = [muser_id];
 
-    const rows = await dbGetAll(sql, params, `Get products for ${items_users}`);
+    const rows = await dbGetAll(sql, params, `Get products for ${muser_id}`);
     res.json({
       success: true,
       message: "Products fetched successfully",
@@ -61,21 +63,25 @@ router.post("/create", async (req, res) => {
       items_dfqty,
       items_suofm,
       items_ctgry,
+      items_brand,
       items_itype,
       items_trcks,
       items_sdvat,
       items_costp,
-      user_id,
+      muser_id,
+      suser_id,
     } = req.body;
+
+    
 
     // Validate input
     if (
       !id ||
-      !items_users ||
       !items_iname ||
       !items_puofm ||
       !items_suofm ||
       !items_ctgry ||
+      !items_brand ||
       !items_itype
     ) {
       return res.json({
@@ -88,14 +94,14 @@ router.post("/create", async (req, res) => {
     //database action
     const sql = `INSERT INTO tmib_items
     (id, items_users, items_icode, items_bcode, items_hscod, items_iname, items_idesc, items_puofm, 
-    items_dfqty, items_suofm, items_ctgry, items_itype, items_trcks, items_sdvat, 
+    items_dfqty, items_suofm, items_ctgry, items_brand, items_itype, items_trcks, items_sdvat, 
     items_costp, items_crusr, items_upusr)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 
-    ?, ?, ?, ?, ?, ?, ?, 
-    ?, ?, ?)`;
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 
+    $9, $10, $11, $12, $13, $14, $15,
+    $16, $17, $18)`;
     const params = [
       id,
-      items_users,
+      muser_id,
       items_icode,
       items_bcode,
       items_hscod,
@@ -105,12 +111,13 @@ router.post("/create", async (req, res) => {
       items_dfqty,
       items_suofm,
       items_ctgry,
+      items_brand,
       items_itype,
       items_trcks,
       items_sdvat,
       items_costp,
-      user_id,
-      user_id,
+      suser_id,
+      suser_id,
     ];
 
     await dbRun(sql, params, `Create product for ${items_iname}`);
@@ -134,7 +141,7 @@ router.post("/update", async (req, res) => {
   try {
     const {
       id,
-      items_users,
+      muser_id,
       items_icode,
       items_bcode,
       items_hscod,
@@ -144,21 +151,23 @@ router.post("/update", async (req, res) => {
       items_dfqty,
       items_suofm,
       items_ctgry,
+      items_brand,
       items_itype,
       items_trcks,
       items_sdvat,
       items_costp,
-      user_id,
+      suser_id,
     } = req.body;
 
     // Validate input
     if (
       !id ||
-      !items_users ||
+      !muser_id ||
       !items_iname ||
       !items_puofm ||
       !items_suofm ||
       !items_ctgry ||
+      !items_brand ||
       !items_itype
     ) {
       return res.json({
@@ -170,21 +179,22 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_items
-    SET items_icode = ?,
-    items_bcode = ?,
-    items_hscod = ?,
-    items_iname = ?,
-    items_idesc = ?,
-    items_puofm = ?,
-    items_dfqty = ?,
-    items_suofm = ?,
-    items_ctgry = ?,
-    items_itype = ?,
-    items_trcks = ?,
-    items_sdvat = ?,
-    items_costp = ?,
-    items_upusr = ?
-    WHERE id = ?`;
+    SET items_icode = $1,
+    items_bcode = $2,
+    items_hscod = $3,
+    items_iname = $4,
+    items_idesc = $5,
+    items_puofm = $6,
+    items_dfqty = $7,
+    items_suofm = $8,
+    items_ctgry = $9,
+    items_brand = $10,
+    items_itype = $11,
+    items_trcks = $12,
+    items_sdvat = $13,
+    items_costp = $14,
+    items_upusr = $15
+    WHERE id = $16`;
     const params = [
       items_icode,
       items_bcode,
@@ -195,11 +205,12 @@ router.post("/update", async (req, res) => {
       items_dfqty,
       items_suofm,
       items_ctgry,
+      items_brand,
       items_itype,
       items_trcks,
       items_sdvat,
       items_costp,
-      user_id,
+      suser_id,
       id,
     ];
 
@@ -222,7 +233,7 @@ router.post("/update", async (req, res) => {
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, items_iname } = req.body;
+    const { id, muser_id, items_iname, suser_id } = req.body;
 
     // Validate input
     if (!id) {
@@ -235,9 +246,12 @@ router.post("/delete", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_items
-    SET items_actve = 1 - items_actve
-    WHERE id = ?`;
-    const params = [id];
+    SET items_actve = NOT items_actve,
+    items_upusr = $1,
+    items_updat = CURRENT_TIMESTAMP,
+    items_rvnmr = items_rvnmr + 1
+    WHERE id = $2`;
+    const params = [suser_id, id];
 
     await dbRun(sql, params, `Delete product for ${items_iname}`);
     res.json({
@@ -273,10 +287,10 @@ router.post("/get-bitem", async (req, res) => {
 
     //database action
     const sql = `SELECT id, bitem_users, bitem_items, bitem_bsins, bitem_lprat, bitem_dprat, bitem_mcmrp, bitem_sddsp, bitem_snote,
-    bitem_gstkq, bitem_bstkq, bitem_mnqty, bitem_mxqty, bitem_pbqty, bitem_sbqty, bitem_mpric, bitem_actve
+    bitem_gstkq, bitem_bstkq, bitem_mnqty, bitem_mxqty, bitem_pbqty, bitem_sbqty, bitem_mpric, bitem_jnote, bitem_actve
     FROM tmib_bitem
-    WHERE bitem_items = ?
-    AND bitem_bsins = ?`;
+    WHERE bitem_items = $1
+    AND bitem_bsins = $2`;
     const params = [bitem_items, bitem_bsins];
 
     const row = await dbGet(sql, params, `Get BItem for ${bitem_items}`);
@@ -318,7 +332,8 @@ router.post("/create-bitem", async (req, res) => {
       bitem_sbqty,
       bitem_mpric,
       bitem_actve,
-      user_id,
+      muser_id,
+      suser_id,
     } = req.body;
 
     // Validate input
@@ -328,7 +343,7 @@ router.post("/create-bitem", async (req, res) => {
       !bitem_items ||
       !bitem_bsins ||
       !bitem_mcmrp ||
-      !user_id
+      !suser_id
     ) {
       return res.json({
         success: false,
@@ -341,9 +356,9 @@ router.post("/create-bitem", async (req, res) => {
     const sql = `INSERT INTO tmib_bitem(id, bitem_users, bitem_items, bitem_bsins, bitem_lprat, bitem_dprat, 
     bitem_mcmrp, bitem_sddsp, bitem_snote, bitem_gstkq, bitem_bstkq, bitem_mnqty, bitem_mxqty, bitem_pbqty, 
     bitem_sbqty, bitem_mpric, bitem_actve, bitem_crusr, bitem_upusr)
-    VALUES (?, ?, ?, ?, ?, ?, 
-    ?, ?, ?, ?, ?, ?, ?, ?, 
-    ?, ?, ?, ?, ?)`;
+    VALUES ($1, $2, $3, $4, $5, $6, 
+    $7, $8, $9, $10, $11, $12, $13, $14, 
+    $15, $16, $17, $18, $19)`;
     const params = [
       id,
       bitem_users,
@@ -362,8 +377,8 @@ router.post("/create-bitem", async (req, res) => {
       bitem_sbqty,
       bitem_mpric,
       bitem_actve,
-      user_id,
-      user_id,
+      suser_id,
+      suser_id,
     ];
 
     await dbRun(sql, params, `Create Business product for ${bitem_items}`);
@@ -405,7 +420,7 @@ router.post("/update-bitem", async (req, res) => {
       bitem_sbqty,
       bitem_mpric,
       bitem_actve,
-      user_id,
+      suser_id,
     } = req.body;
 
     // Validate input
@@ -415,7 +430,7 @@ router.post("/update-bitem", async (req, res) => {
       !bitem_items ||
       !bitem_bsins ||
       !bitem_mcmrp ||
-      !user_id
+      !suser_id
     ) {
       return res.json({
         success: false,
@@ -426,17 +441,17 @@ router.post("/update-bitem", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_bitem
-    SET bitem_lprat = ?,
-    bitem_dprat = ?,
-    bitem_mcmrp = ?,
-    bitem_sddsp = ?,
-    bitem_snote = ?,
-    bitem_mnqty = ?,
-    bitem_mxqty = ?,
-    bitem_mpric = ?,
-    bitem_actve = ?,
-    bitem_upusr = ?
-    WHERE id = ?`;
+    SET bitem_lprat = $1,
+    bitem_dprat = $2,
+    bitem_mcmrp = $3,
+    bitem_sddsp = $4,
+    bitem_snote = $5,
+    bitem_mnqty = $6,
+    bitem_mxqty = $7,
+    bitem_mpric = $8,
+    bitem_actve = $9,
+    bitem_upusr = $10
+    WHERE id = $11`;
     const params = [
       bitem_lprat,
       bitem_dprat,
@@ -447,7 +462,7 @@ router.post("/update-bitem", async (req, res) => {
       bitem_mxqty,
       bitem_mpric,
       bitem_actve,
-      user_id,
+      suser_id,
       id,
     ];
 
@@ -473,10 +488,23 @@ router.post("/update-bitem", async (req, res) => {
 //update count of business items
 const updateTagg = async (id) => {
   const sql = `UPDATE tmib_items itm
+  SET items_nofbi = (
+      SELECT COUNT(*)
+      FROM tmib_bitem b
+      WHERE b.bitem_items = itm.id
+  )
+  WHERE itm.id = $1`;
+  const params = [id];
+
+  await dbRun(sql, params, `Update product tag for ${id}`);
+};
+
+const updateTagg_mysql = async (id) => {
+  const sql = `UPDATE tmib_items itm
   JOIN (
       SELECT itm.bitem_items, count(id) as items_nofbi
       FROM tmib_bitem itm
-      WHERE itm.bitem_items = ?
+      WHERE itm.bitem_items = $1
       GROUP BY itm.bitem_items      
   ) bitm
       ON itm.id = bitm.bitem_items

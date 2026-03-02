@@ -3,21 +3,21 @@ import { Button } from "primereact/button";
 import tmcb_trtry from "@/models/crm/tmcb_trtry.json";
 import RequiredText from "@/components/RequiredText";
 import { Dropdown } from "primereact/dropdown";
-import { useZoneSgd } from "@/hooks/crm/useZoneSgd";
-import { useAreasSgd } from "@/hooks/crm/useAreasSgd";
+import { useDZoneSgd } from "@/hooks/crm/useDZoneSgd";
+import { useTAreaSgd } from "@/hooks/crm/useTAreaSgd";
 import { useEffect } from "react";
 import { countryOptions } from "@/utils/vtable";
 
 const TerritoryFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
-  const { dataList: dzoneOptions, handleLoadZones } = useZoneSgd();
-  const { dataList: tareaOptions, handleLoadAreas } = useAreasSgd();
+  const { dataList: dzoneOptions, handleGetAllActiveDZones } = useDZoneSgd();
+  const { dataList: tareaOptions, handleGetAllActiveTAreas } = useTAreaSgd();
   useEffect(() => {
     if (formData.dzone_cntry) {
-      handleLoadZones(formData.dzone_cntry);
+      handleGetAllActiveDZones(formData.dzone_cntry);
     }
 
     if (formData.tarea_dzone) {
-      handleLoadAreas(formData.tarea_dzone);
+      handleGetAllActiveTAreas(formData.tarea_dzone);
     }
   }, [formData.dzone_cntry, formData.tarea_dzone]);
   return (

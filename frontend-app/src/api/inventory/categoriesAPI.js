@@ -1,4 +1,4 @@
-import { apiRequest } from '@/utils/api.js';
+import { apiRequest } from "@/utils/api.js";
 
 // Categories API
 export const categoriesAPI = {
@@ -19,6 +19,11 @@ export const categoriesAPI = {
     }),
   delete: (data) =>
     apiRequest("/inventory/categories/delete", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getAllActive: (data) =>
+    apiRequest("/inventory/categories/get-all-active", {
       method: "POST",
       body: JSON.stringify(data),
     }),

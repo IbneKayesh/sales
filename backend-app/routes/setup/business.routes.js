@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
@@ -241,6 +241,45 @@ router.post("/delete", async (req, res) => {
       success: true,
       message: "Business deleted successfully",
       data: null,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+// get all active
+router.post("/get-all-active", async (req, res) => {
+  try {
+    const { muser_id } = req.body;
+
+    // Validate input
+    if (!muser_id) {
+      return res.json({
+        success: false,
+        message: "User ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT bsn.*, 0 as edit_stop
+      FROM tmsb_bsins bsn
+      WHERE bsn.bsins_users = $1
+      AND bsn.bsins_actve = TRUE
+      ORDER BY bsn.bsins_bname`;
+
+    const params = [muser_id];
+
+    const rows = await dbGetAll(sql, params, `Get business for ${muser_id}`);
+    res.json({
+      success: true,
+      message: "Business fetched successfully",
+      data: rows,
     });
   } catch (error) {
     console.error("database action error:", error);

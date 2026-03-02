@@ -138,6 +138,14 @@
     "required": true,
     "default": "0"
   },
+  "bitem_jnote": {
+    "type": "string",
+    "label": "Additionals",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter additionals",
+    "required": false
+  },
   "bitem_actve": {
     "type": "number",
     "label": "Active",

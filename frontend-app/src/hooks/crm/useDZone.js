@@ -20,8 +20,8 @@ export const useDZone = () => {
   const loadDZones = async () => {
     try {
       const response = await dzoneAPI.getAll({
-        dzone_users: user.users_users,
-        dzone_bsins: user.users_bsins,
+        muser_id: user.users_users,
+        bsins_id: user.users_bsins,
       });
       //console.log("loadOrderRoutes: ", response.data);
       setDataList(response.data);
@@ -66,7 +66,12 @@ export const useDZone = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await dzoneAPI.delete(rowData);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+      const response = await dzoneAPI.delete(formDataNew);
 
       const updatedList = dataList.filter((c) => c.id !== rowData.id);
       setDataList(updatedList);
@@ -107,9 +112,9 @@ export const useDZone = () => {
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        dzone_users: user.users_users,
-        dzone_bsins: user.users_bsins,
-        user_id: user.id,
+        muser_id: user.users_users,
+        bsins_id: user.users_bsins,
+        suser_id: user.id,
       };
 
       // Call API and get { message, data }

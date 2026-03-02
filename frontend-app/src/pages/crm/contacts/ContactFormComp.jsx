@@ -3,7 +3,7 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import tmcb_cntcs from "@/models/crm/tmcb_cntcs.json";
-import { useZoneSgd } from "@/hooks/crm/useZoneSgd";
+import { useDZoneSgd } from "@/hooks/crm/useDZoneSgd";
 import { useAreasSgd } from "@/hooks/crm/useAreasSgd";
 import { useEffect } from "react";
 import { contactTypeOptions } from "@/utils/vtable";
@@ -18,7 +18,7 @@ const ContactFormComp = ({
   onSave,
   cntct_sorceOptions,
 }) => {
-  const { dataList: dzoneOptions, handleLoadZones } = useZoneSgd();
+  const { dataList: dzoneOptions, handleLoadZones } = useDZoneSgd();
   const { dataList: tareaOptions, handleLoadAreas } = useAreasSgd();
 
   useEffect(() => {

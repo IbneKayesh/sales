@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { dzone_users, dzone_bsins } = req.body;
+    const { muser_id, bsins_id } = req.body;
 
     // Validate input
-    if (!dzone_users || !dzone_bsins) {
+    if (!muser_id || !bsins_id) {
       return res.json({
         success: false,
         message: "User ID and Business ID are required",
@@ -20,11 +20,11 @@ router.post("/", async (req, res) => {
     //database action
     const sql = `SELECT zn.id, zn.dzone_users, zn.dzone_bsins, zn.dzone_cntry, zn.dzone_dname, zn.dzone_actve, 0 as edit_stop
     FROM tmcb_dzone zn
-    WHERE zn.dzone_users = ? AND zn.dzone_bsins = ?
+    WHERE zn.dzone_users = $1 AND zn.dzone_bsins = $2
     ORDER BY zn.dzone_dname ASC`;
-    const params = [dzone_users, dzone_bsins];
+    const params = [muser_id, bsins_id];
 
-    const rows = await dbGetAll(sql, params, `Get dzone for ${dzone_users}`);
+    const rows = await dbGetAll(sql, params, `Get dzone for ${muser_id}`);
     res.json({
       success: true,
       message: "Dzone fetched successfully",
@@ -43,18 +43,19 @@ router.post("/", async (req, res) => {
 // create
 router.post("/create", async (req, res) => {
   try {
-    const { id, dzone_users, dzone_bsins, dzone_cntry, dzone_dname, user_id } =
-      req.body;
+    const {
+      id,
+      dzone_users,
+      dzone_bsins,
+      dzone_cntry,
+      dzone_dname,
+      muser_id,
+      bsins_id,
+      suser_id,
+    } = req.body;
 
     // Validate input
-    if (
-      !id ||
-      !dzone_users ||
-      !dzone_bsins ||
-      !dzone_cntry ||
-      !dzone_dname ||
-      !user_id
-    ) {
+    if (!id || !dzone_cntry || !dzone_dname || !suser_id) {
       return res.json({
         success: false,
         message: "All fields are required",
@@ -64,15 +65,15 @@ router.post("/create", async (req, res) => {
 
     //database action
     const sql = `INSERT INTO tmcb_dzone(id, dzone_users, dzone_bsins, dzone_cntry, dzone_dname, dzone_crusr, dzone_upusr)
-    VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`;
     const params = [
       id,
-      dzone_users,
-      dzone_bsins,
+      muser_id,
+      bsins_id,
       dzone_cntry,
       dzone_dname,
-      user_id,
-      user_id,
+      suser_id,
+      suser_id,
     ];
 
     await dbRun(sql, params, `Create dzone for ${dzone_dname}`);
@@ -100,18 +101,13 @@ router.post("/update", async (req, res) => {
       dzone_bsins,
       dzone_cntry,
       dzone_dname,
-      user_id,
+      muser_id,
+      bsins_id,
+      suser_id,
     } = req.body;
 
     // Validate input
-    if (
-      !id ||
-      !dzone_users ||
-      !dzone_bsins ||
-      !dzone_cntry ||
-      !dzone_dname ||
-      !user_id
-    ) {
+    if (!id || !dzone_cntry || !dzone_dname || !suser_id) {
       return res.json({
         success: false,
         message: "All fields are required",
@@ -121,17 +117,13 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmcb_dzone
-    SET dzone_cntry = ?,
-    dzone_dname = ?,
-    dzone_upusr = ?,
+    SET dzone_cntry = $1,
+    dzone_dname = $2,
+    dzone_upusr = $3,
+    dzone_updat = CURRENT_TIMESTAMP,
     dzone_rvnmr = dzone_rvnmr + 1
-    WHERE id = ?`;
-    const params = [
-      dzone_cntry,
-      dzone_dname,
-      user_id,
-      id,
-    ];
+    WHERE id = $4`;
+    const params = [dzone_cntry, dzone_dname, suser_id, id];
 
     await dbRun(sql, params, `Update dzone for ${dzone_dname}`);
     res.json({
@@ -152,27 +144,30 @@ router.post("/update", async (req, res) => {
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, dzone_dname } = req.body;
+    const { id, muser_id, dzone_dname, suser_id } = req.body;
 
     // Validate input
     if (!id) {
       return res.json({
         success: false,
-        message: "Contact ID is required",
+        message: "Zone ID is required",
         data: null,
       });
     }
 
     //database action
     const sql = `UPDATE tmcb_dzone
-    SET dzone_actve = 1 - dzone_actve
-    WHERE id = ?`;
-    const params = [id];
+    SET dzone_actve = NOT dzone_actve,
+    dzone_upusr = $1,
+    dzone_updat = CURRENT_TIMESTAMP,
+    dzone_rvnmr = dzone_rvnmr + 1
+    WHERE id = $2`;
+    const params = [suser_id, id];
 
     await dbRun(sql, params, `Delete dzone for ${dzone_dname}`);
     res.json({
       success: true,
-      message: "Contact deleted successfully",
+      message: "DZone deleted successfully",
       data: null,
     });
   } catch (error) {
@@ -188,10 +183,10 @@ router.post("/delete", async (req, res) => {
 // get by country
 router.post("/get-by-country", async (req, res) => {
   try {
-    const { dzone_users, dzone_cntry } = req.body;
+    const { muser_id, dzone_cntry } = req.body;
 
     // Validate input
-    if (!dzone_users || !dzone_cntry) {
+    if (!muser_id || !dzone_cntry) {
       return res.json({
         success: false,
         message: "User ID and Country ID are required",
@@ -202,7 +197,8 @@ router.post("/get-by-country", async (req, res) => {
     //database action
     const sql = `SELECT dzn.*, 0 as edit_stop
     FROM tmcb_dzone dzn
-    WHERE dzn.dzone_cntry = ?
+    WHERE dzn.dzone_cntry = $1
+    AND dzn.dzone_actve = TRUE
     ORDER BY dzn.dzone_dname`;
     const params = [dzone_cntry];
 

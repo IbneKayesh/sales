@@ -23,7 +23,7 @@ export const useProducts = () => {
   const loadProducts = async () => {
     try {
       const response = await productsAPI.getAll({
-        items_users: user.users_users,
+        muser_id: user.users_users,
       });
       //response = { message, data }
       //console.log("response: " + JSON.stringify(response));
@@ -77,7 +77,12 @@ export const useProducts = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await productsAPI.delete(rowData);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+      const response = await productsAPI.delete(formDataNew);
 
       // Remove deleted item from local state
       const updatedList = allData.filter((u) => u.id !== rowData.id);
@@ -139,8 +144,8 @@ export const useProducts = () => {
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        items_users: user.users_users,
-        user_id: user.id,
+        muser_id: user.users_users,
+        suser_id: user.id,
       };
 
       // console.log("formDataNew: " + JSON.stringify(formDataNew));
@@ -243,7 +248,8 @@ export const useProducts = () => {
         id: formDataBItem.id || generateGuid(),
         bitem_mpric: bitem_mpric,
         bitem_users: user.users_users,
-        user_id: user.id,
+        muser_id: user.users_users,
+        suser_id: user.id,
       };
 
       // console.log("formDataNew: " + JSON.stringify(formDataNew));

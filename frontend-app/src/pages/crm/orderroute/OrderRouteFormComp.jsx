@@ -3,14 +3,14 @@ import { Button } from "primereact/button";
 import tmcb_rutes from "@/models/crm/tmcb_rutes.json";
 import RequiredText from "@/components/RequiredText";
 import { Dropdown } from "primereact/dropdown";
-import { useZoneSgd } from "@/hooks/crm/useZoneSgd";
+import { useDZoneSgd } from "@/hooks/crm/useDZoneSgd";
 import { useAreasSgd } from "@/hooks/crm/useAreasSgd";
 import { useTerritorySgd } from "@/hooks/crm/useTerritorySgd";
 import { useEffect } from "react";
 import { dayNameOptions, countryOptions } from "@/utils/vtable";
 
 const OrderRouteFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
-  const { dataList: dzoneOptions, handleLoadZones } = useZoneSgd();
+  const { dataList: dzoneOptions, handleLoadZones } = useDZoneSgd();
   const { dataList: tareaOptions, handleLoadAreas } = useAreasSgd();
   const { dataList: territoryOptions, handleLoadTerritories } =
     useTerritorySgd();

@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { businessAPI } from "@/api/setup/businessAPI";
+import { brandsAPI } from "@/api/inventory/brandsAPI";
 
-export const useBusinessSgd = () => {
+export const useBrandsSgd = () => {
   const { user } = useAuth();
   const [dataList, setDataList] = useState([]);
 
-  const handleGetAllActiveBusiness = async () => {
+  const handleGetAllActiveBrands = async () => {
     try {
-      const response = await businessAPI.getAllActive({
+      const response = await brandsAPI.getAllActive({
         muser_id: user.users_users,
       });
-      //console.log("data",response.data);
+      //console.log("data",user.users_bsins);
       setDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
@@ -20,6 +20,6 @@ export const useBusinessSgd = () => {
 
   return {
     dataList,
-    handleGetAllActiveBusiness,
+    handleGetAllActiveBrands,
   };
 };

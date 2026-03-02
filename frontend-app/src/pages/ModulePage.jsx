@@ -9,17 +9,17 @@ const ModulePage = () => {
         {dataList.map((module, index) => (
           <div
             key={module.id}
-            className="col-12 md:col-1 p-2 fadein animation-duration-500"
+            className="col-12 md:col-1 p-2 m-0 fadein animation-duration-500"
             style={{ animationDelay: `${index * 50}ms` }}
           >
             <div
-              className="bg-white p-3 shadow-1 hover:shadow-4 border-round-xl cursor-pointer transition-all transition-duration-300 flex flex-column align-items-center justify-content-center text-center transform hover:-translate-y-1"
+              className="bg-white p-1 shadow-1 hover:shadow-4 border-round-xl cursor-pointer transition-all transition-duration-300 flex flex-column align-items-center justify-content-center text-center transform hover:-translate-y-1"
               onClick={() => handleFetchMenus(module.id)}
             >
               <div
                 className={`${module.mdule_color} text-white border-round-xl w-full h-6rem flex align-items-center justify-content-center mb-2 shadow-2`}
               >
-                <i className={`pi ${module.mdule_micon} text-5xl`}></i>
+                <i className={`${module.mdule_micon} text-5xl`}></i>
               </div>
               <span className="text-900 font-bold text-base pb-1">
                 {module.mdule_mname}

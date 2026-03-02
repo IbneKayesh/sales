@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { ctgry_users } = req.body;
+    const { muser_id } = req.body;
 
     // Validate input
-    if (!ctgry_users) {
+    if (!muser_id) {
       return res.json({
         success: false,
         message: "User ID is required",
@@ -20,11 +20,11 @@ router.post("/", async (req, res) => {
     //database action
     const sql = `SELECT tbl.*, 0 as edit_stop
       FROM tmib_ctgry tbl
-      WHERE tbl.ctgry_users = ?
+      WHERE tbl.ctgry_users = $1
       ORDER BY tbl.ctgry_ctgnm`;
-    const params = [ctgry_users];
+    const params = [muser_id];
 
-    const rows = await dbGetAll(sql, params, `Get categories for ${ctgry_users}`);
+    const rows = await dbGetAll(sql, params, `Get categories for ${muser_id}`);
     res.json({
       success: true,
       message: "Categories fetched successfully",
@@ -45,15 +45,15 @@ router.post("/create", async (req, res) => {
   try {
     const {
       id,
-      ctgry_users,
+      muser_id,
       ctgry_ctgnm,
-      user_id,
+      suser_id,
     } = req.body;
 
     // Validate input
     if (
       !id ||
-      !ctgry_users ||
+      !muser_id ||
       !ctgry_ctgnm
     ) {
       return res.json({
@@ -66,13 +66,13 @@ router.post("/create", async (req, res) => {
     //database action
     const sql = `INSERT INTO tmib_ctgry
     (id,ctgry_users,ctgry_ctgnm,ctgry_crusr,ctgry_upusr)
-    VALUES (?,?,?,?,?)`;
+    VALUES ($1,$2,$3,$4,$5)`;
     const params = [
       id,
-      ctgry_users,
+      muser_id,
       ctgry_ctgnm,
-      user_id,
-      user_id,
+      suser_id,
+      suser_id,
     ];
 
     await dbRun(sql, params, `Create category for ${ctgry_ctgnm}`);
@@ -96,15 +96,15 @@ router.post("/update", async (req, res) => {
   try {
     const {
       id,
-      ctgry_users,
+      muser_id,
       ctgry_ctgnm,
-      user_id,
+      suser_id,
     } = req.body;
 
     // Validate input
     if (
       !id ||
-      !ctgry_users ||
+      !muser_id ||
       !ctgry_ctgnm
     ) {
       return res.json({
@@ -116,14 +116,16 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_ctgry
-    SET ctgry_users = ?,
-    ctgry_ctgnm = ?,
-    ctgry_upusr = ?
-    WHERE id = ?`;
+    SET ctgry_users = $1,
+    ctgry_ctgnm = $2,
+    ctgry_upusr = $3,
+    ctgry_updat = CURRENT_TIMESTAMP,
+    ctgry_rvnmr = ctgry_rvnmr + 1
+    WHERE id = $4`;
     const params = [
-      ctgry_users,
+      muser_id,
       ctgry_ctgnm,
-      user_id,
+      suser_id,
       id,
     ];
 
@@ -143,11 +145,10 @@ router.post("/update", async (req, res) => {
   }
 });
 
-
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, ctgry_ctgnm} = req.body;
+    const { id, muser_id, ctgry_ctgnm, suser_id} = req.body;
 
     // Validate input
     if (!id) {
@@ -160,15 +161,56 @@ router.post("/delete", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_ctgry
-    SET ctgry_actve = 1 - ctgry_actve
-    WHERE id = ?`;
-    const params = [id];
+    SET ctgry_actve = NOT ctgry_actve,
+    ctgry_upusr = $1,
+    ctgry_updat = CURRENT_TIMESTAMP,
+    ctgry_rvnmr = ctgry_rvnmr + 1
+    WHERE id = $2`;
+    const params = [suser_id, id];
 
     await dbRun(sql, params, `Delete category for ${ctgry_ctgnm}`);
     res.json({
       success: true,
       message: "Category deleted successfully",
       data: null,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+// get all active
+router.post("/get-all-active", async (req, res) => {
+  try {
+    const { muser_id } = req.body;
+
+    // Validate input
+    if (!muser_id) {
+      return res.json({
+        success: false,
+        message: "User ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT tbl.*, 0 as edit_stop
+    FROM tmib_ctgry tbl
+    WHERE tbl.ctgry_users = $1
+    AND tbl.ctgry_actve = TRUE
+    ORDER BY tbl.ctgry_ctgnm`;
+    const params = [muser_id];
+
+    const rows = await dbGetAll(sql, params, `Get categories for ${muser_id}`);
+    res.json({
+      success: true,
+      message: "Categories fetched successfully",
+      data: rows,
     });
   } catch (error) {
     console.error("database action error:", error);

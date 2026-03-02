@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { businessAPI } from "@/api/setup/businessAPI";
+import { tareaAPI } from "@/api/crm/tareaAPI";
 
-export const useBusinessSgd = () => {
+
+export const useTAreaSgd = () => {
   const { user } = useAuth();
   const [dataList, setDataList] = useState([]);
 
-  const handleGetAllActiveBusiness = async () => {
+  const handleGetAllActiveTAreas = async (tarea_dzone) => {
     try {
-      const response = await businessAPI.getAllActive({
+      const response = await tareaAPI.getByZone({
         muser_id: user.users_users,
+        tarea_dzone: tarea_dzone,
       });
       //console.log("data",response.data);
       setDataList(response.data);
@@ -20,6 +22,6 @@ export const useBusinessSgd = () => {
 
   return {
     dataList,
-    handleGetAllActiveBusiness,
-  };
+    handleGetAllActiveTAreas,
+  }
 };

@@ -3,12 +3,14 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import tmib_items from "@/models/inventory/tmib_items.json";
-import { productTypeOptions } from "@/utils/vtable";
-import { useCategory } from "@/hooks/inventory/useCategory";
-import { useUnits } from "@/hooks/inventory/useUnits";
-import { useBusiness } from "@/hooks/setup/useBusiness";
+import { productTypeOptions, stockTypeOptions } from "@/utils/vtable";
+import { useCategorySgd } from "@/hooks/inventory/useCategorySgd";
+import { useUnitsSgd } from "@/hooks/inventory/useUnitsSgd";
+import { useBrandsSgd } from "@/hooks/inventory/useBrandsSgd";
+import { useBusinessSgd } from "@/hooks/setup/useBusinessSgd";
 import BFormComp from "./BFormComp";
 import { Chip } from "primereact/chip";
+import { useEffect } from "react";
 
 const ProductsFormComp = ({
   isBusy,
@@ -22,9 +24,19 @@ const ProductsFormComp = ({
   onSaveBItem,
   onFetchBItem,
 }) => {
-  const { dataList: categoryOptions } = useCategory();
-  const { dataList: unitOptions } = useUnits();
-  const { dataList: businessOptions } = useBusiness();
+  const { dataList: unitOptions, handleGetAllActiveUnits } = useUnitsSgd();
+  const { dataList: categoryOptions, handleGetAllActiveCategory } =
+    useCategorySgd();
+  const { dataList: brandOptions, handleGetAllActiveBrands } = useBrandsSgd();
+  const { dataList: businessOptions, handleGetAllActiveBusiness } =
+    useBusinessSgd();
+
+  useEffect(() => {
+    handleGetAllActiveUnits();
+    handleGetAllActiveCategory();
+    handleGetAllActiveBrands();
+    handleGetAllActiveBusiness();
+  }, []);
 
   const handleBItemChange = (key, value) => {
     onChangeBItem(key, value);
@@ -213,6 +225,31 @@ const ProductsFormComp = ({
             <small className="mb-3 text-red-500">{errors.items_ctgry}</small>
           )}
         </div>
+
+        <div className="col-12 md:col-2">
+          <label
+            htmlFor="items_brand"
+            className="block text-900 font-medium mb-2 text-red-800"
+          >
+            {tmib_items.items_brand.label}
+          </label>
+          <Dropdown
+            name="items_brand"
+            value={formData.items_brand}
+            onChange={(e) => onChange("items_brand", e.value)}
+            options={brandOptions}
+            optionLabel="brand_brnam"
+            optionValue="id"
+            className={`w-full ${errors.items_brand ? "p-invalid" : ""}`}
+            placeholder={`Enter ${tmib_items.items_brand.label}`}
+            filter
+            showClear
+          />
+          {errors.items_brand && (
+            <small className="mb-3 text-red-500">{errors.items_brand}</small>
+          )}
+        </div>
+
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_itype"
@@ -234,6 +271,7 @@ const ProductsFormComp = ({
             <small className="mb-3 text-red-500">{errors.items_itype}</small>
           )}
         </div>
+
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_trcks"
@@ -241,19 +279,21 @@ const ProductsFormComp = ({
           >
             {tmib_items.items_trcks.label}
           </label>
-          <ToggleButton
-            onLabel="Tracking"
-            offLabel="No Tracking"
-            onIcon="pi pi-check"
-            offIcon="pi pi-times"
-            checked={formData.items_trcks}
+          <Dropdown
+            name="items_trcks"
+            value={formData.items_trcks}
             onChange={(e) => onChange("items_trcks", e.value)}
-            size="small"
+            options={stockTypeOptions}
+            optionLabel="label"
+            optionValue="value"
+            className={`w-full ${errors.items_trcks ? "p-invalid" : ""}`}
+            placeholder={`Enter ${tmib_items.items_trcks.label}`}
           />
           {errors.items_trcks && (
             <small className="mb-3 text-red-500">{errors.items_trcks}</small>
           )}
         </div>
+
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_sdvat"

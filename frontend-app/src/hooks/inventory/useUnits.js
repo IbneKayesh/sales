@@ -19,7 +19,7 @@ export const useUnits = () => {
 
   const loadUnits = async () => {
     try {
-      const response = await unitsAPI.getAll({ upid: user.users_users });
+      const response = await unitsAPI.getAll({ muser_id: user.users_users });
       //response = { message, data }
       //console.log("response: " + JSON.stringify(response));
       setDataList(response.data);
@@ -69,8 +69,8 @@ export const useUnits = () => {
       // Call API, unwrap { message, data }
       const formDataNew = {
         ...rowData,
-        upid: user.users_users,
-        usid: user.id,
+        muser_id: user.users_users,
+        suser_id: user.id,
       };
       const response = await unitsAPI.delete(formDataNew);
 
@@ -113,8 +113,8 @@ export const useUnits = () => {
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        upid: user.users_users,
-        usid: user.id,
+        muser_id: user.users_users,
+        suser_id: user.id,
       };
 
       // console.log("formDataNew: " + JSON.stringify(formDataNew));

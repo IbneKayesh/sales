@@ -88,6 +88,14 @@
     "placeholder": "Enter category",
     "required": true
   },
+  "items_brand": {
+    "type": "string",
+    "label": "Brand",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter brand",
+    "required": true
+  },  
   "items_itype": {
     "type": "string",
     "label": "Item Type",
@@ -99,7 +107,7 @@
   "items_trcks": {
     "type": "number",
     "label": "Stock Tracking",
-    "maxLength": 1,
+    "maxLength": 2,
     "minLength": 0,
     "placeholder": "Enter stock tracking",
     "required": true,

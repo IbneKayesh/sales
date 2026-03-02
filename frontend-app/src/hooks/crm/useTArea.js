@@ -20,8 +20,8 @@ export const useTArea = () => {
   const loadTAreas = async () => {
     try {
       const response = await tareaAPI.getAll({
-        tarea_users: user.users_users,
-        tarea_bsins: user.users_bsins,
+        muser_id: user.users_users,
+        bsins_id: user.users_bsins,        
       });
       //console.log("loadOrderRoutes: ", response.data);
       setDataList(response.data);
@@ -66,7 +66,12 @@ export const useTArea = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await tareaAPI.delete(rowData);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+      const response = await tareaAPI.delete(formDataNew);
 
       const updatedList = dataList.filter((c) => c.id !== rowData.id);
       setDataList(updatedList);
@@ -107,9 +112,9 @@ export const useTArea = () => {
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        tarea_users: user.users_users,
-        tarea_bsins: user.users_bsins,
-        user_id: user.id,
+        muser_id: user.users_users,
+        bsins_id: user.users_bsins,
+        suser_id: user.id,
       };
 
       // Call API and get { message, data }

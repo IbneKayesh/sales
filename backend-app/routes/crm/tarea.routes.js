@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { tarea_users, tarea_bsins } = req.body;
+    const { muser_id, bsins_id } = req.body;
 
     // Validate input
-    if (!tarea_users || !tarea_bsins) {
+    if (!muser_id || !bsins_id) {
       return res.json({
         success: false,
         message: "User ID and Business ID are required",
@@ -23,12 +23,12 @@ router.post("/", async (req, res) => {
     0 as edit_stop
     FROM tmcb_tarea ara
     LEFT JOIN tmcb_dzone dzo ON dzo.id = ara.tarea_dzone
-    WHERE ara.tarea_users = ?
-    AND ara.tarea_bsins = ?
+    WHERE ara.tarea_users = $1
+    AND ara.tarea_bsins = $2
     ORDER BY dzo.dzone_dname, ara.tarea_tname`;
-    const params = [tarea_users, tarea_bsins];
+    const params = [muser_id, bsins_id];
 
-    const rows = await dbGetAll(sql, params, `Get TArea for ${tarea_users}`);
+    const rows = await dbGetAll(sql, params, `Get TArea for ${muser_id}`);
     res.json({
       success: true,
       message: "TArea fetched successfully",
@@ -53,18 +53,15 @@ router.post("/create", async (req, res) => {
       tarea_bsins,
       tarea_dzone,
       tarea_tname,
-      user_id,
+      muser_id,
+      bsins_id,
+      suser_id,
     } = req.body;
 
+    //console.log(req.body)
+
     // Validate input
-    if (
-      !id ||
-      !tarea_users ||
-      !tarea_bsins ||
-      !tarea_dzone ||
-      !tarea_tname ||
-      !user_id
-    ) {
+    if (!id || !tarea_dzone || !tarea_tname || !suser_id) {
       return res.json({
         success: false,
         message: "All fields are required",
@@ -74,15 +71,15 @@ router.post("/create", async (req, res) => {
 
     //database action
     const sql = `INSERT INTO tmcb_tarea(id, tarea_users, tarea_bsins, tarea_dzone, tarea_tname, tarea_crusr, tarea_upusr)
-    VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`;
     const params = [
       id,
-      tarea_users,
-      tarea_bsins,
+      muser_id,
+      bsins_id,
       tarea_dzone,
       tarea_tname,
-      user_id,
-      user_id,
+      suser_id,
+      suser_id,
     ];
 
     await dbRun(sql, params, `Create TArea for ${tarea_tname}`);
@@ -110,17 +107,17 @@ router.post("/update", async (req, res) => {
       tarea_bsins,
       tarea_dzone,
       tarea_tname,
-      user_id,
+      muser_id,
+      bsins_id,
+      suser_id,
     } = req.body;
 
     // Validate input
     if (
       !id ||
-      !tarea_users ||
-      !tarea_bsins ||
       !tarea_dzone ||
       !tarea_tname ||
-      !user_id
+      !suser_id
     ) {
       return res.json({
         success: false,
@@ -131,17 +128,13 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmcb_tarea
-    SET tarea_tname = ?,
-    tarea_dzone = ?,
-    tarea_upusr = ?,
+    SET tarea_tname = $1,
+    tarea_dzone = $2,
+    tarea_upusr = $3,
+    tarea_updat = CURRENT_TIMESTAMP,
     tarea_rvnmr = tarea_rvnmr + 1
-    WHERE id = ?`;
-    const params = [
-      tarea_tname,
-      tarea_dzone,
-      user_id,
-      id,
-    ];
+    WHERE id = $4`;
+    const params = [tarea_tname, tarea_dzone, suser_id, id];
     await dbRun(sql, params, `Update TArea for ${tarea_tname}`);
     res.json({
       success: true,
@@ -161,7 +154,7 @@ router.post("/update", async (req, res) => {
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, tarea_tname } = req.body;
+    const { id, muser_id, tarea_tname, suser_id } = req.body;
 
     // Validate input
     if (!id) {
@@ -174,9 +167,12 @@ router.post("/delete", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmcb_tarea
-    SET tarea_actve = 1 - tarea_actve
-    WHERE id = ?`;
-    const params = [id];
+    SET tarea_actve = NOT tarea_actve,
+    tarea_upusr = $1,
+    tarea_updat = CURRENT_TIMESTAMP,
+    tarea_rvnmr = tarea_rvnmr + 1
+    WHERE id = $2`;
+    const params = [suser_id, id];
 
     await dbRun(sql, params, `Delete TArea for ${tarea_tname}`);
     res.json({
@@ -197,10 +193,10 @@ router.post("/delete", async (req, res) => {
 // get by dzone
 router.post("/get-by-dzone", async (req, res) => {
   try {
-    const { tarea_users, tarea_dzone } = req.body;
+    const { muser_id, tarea_dzone } = req.body;
 
     // Validate input
-    if (!tarea_users) {
+    if (!muser_id) {
       return res.json({
         success: false,
         message: "User ID is required",
@@ -211,7 +207,7 @@ router.post("/get-by-dzone", async (req, res) => {
     //database action
     const sql = `SELECT ara.*, 0 as edit_stop
     FROM tmcb_tarea ara
-    WHERE ara.tarea_dzone = ?
+    WHERE ara.tarea_dzone = $1
     ORDER BY ara.tarea_tname`;
     const params = [tarea_dzone];
 

@@ -6,10 +6,10 @@ const { v4: uuidv4 } = require("uuid");
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { upid } = req.body;
+    const { muser_id } = req.body;
 
     // Validate input
-    if (!upid) {
+    if (!muser_id) {
       return res.json({
         success: false,
         message: "User ID is required",
@@ -22,9 +22,9 @@ router.post("/", async (req, res) => {
       FROM tmib_iuofm tbl
       WHERE tbl.iuofm_users = $1
       ORDER BY tbl.iuofm_untnm`;
-    const params = [upid];
+    const params = [muser_id];
 
-    const rows = await dbGetAll(sql, params, `Get units for ${upid}`);
+    const rows = await dbGetAll(sql, params, `Get units for ${muser_id}`);
     res.json({
       success: true,
       message: "Units fetched successfully",
@@ -45,16 +45,16 @@ router.post("/create", async (req, res) => {
   try {
     const {
       id,
-      upid,
+      muser_id,
       iuofm_untnm,
       iuofm_untgr,
-      usid,
+      suser_id,
     } = req.body;
 
     // Validate input
     if (
       !id ||
-      !upid ||
+      !muser_id ||
       !iuofm_untnm
     ) {
       return res.json({
@@ -70,11 +70,11 @@ router.post("/create", async (req, res) => {
     VALUES ($1,$2,$3,$4,$5,$6)`;
     const params = [
       id,
-      upid,
+      muser_id,
       iuofm_untnm,
       iuofm_untgr,
-      usid,
-      usid,
+      suser_id,
+      suser_id,
     ];
 
     await dbRun(sql, params, `Create unit for ${iuofm_untnm}`);
@@ -98,16 +98,16 @@ router.post("/update", async (req, res) => {
   try {
     const {
       id,
-      upid,
+      muser_id,
       iuofm_untnm,
       iuofm_untgr,
-      usid,
+      suser_id,
     } = req.body;
 
     // Validate input
     if (
       !id ||
-      !upid ||
+      !muser_id ||
       !iuofm_untnm
     ) {
       return res.json({
@@ -127,10 +127,10 @@ router.post("/update", async (req, res) => {
     iuofm_rvnmr = iuofm_rvnmr + 1
     WHERE id = $5`;
     const params = [
-      upid,
+      muser_id,
       iuofm_untnm,
       iuofm_untgr,
-      usid,
+      suser_id,
       id,
     ];
 
@@ -150,11 +150,10 @@ router.post("/update", async (req, res) => {
   }
 });
 
-
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, upid, iuofm_untnm, usid} = req.body;
+    const { id, muser_id, iuofm_untnm, suser_id} = req.body;
 
     // Validate input
     if (!id) {
@@ -172,7 +171,7 @@ router.post("/delete", async (req, res) => {
     iuofm_updat = CURRENT_TIMESTAMP,
     iuofm_rvnmr = iuofm_rvnmr + 1
     WHERE id = $2`;
-    const params = [usid, id];
+    const params = [suser_id, id];
 
     await dbRun(sql, params, `Delete unit for ${iuofm_untnm}`);
     res.json({
@@ -189,5 +188,44 @@ router.post("/delete", async (req, res) => {
     });
   }
 });
+
+// get all active
+router.post("/get-all-active", async (req, res) => {
+  try {
+    const { muser_id } = req.body;
+
+    // Validate input
+    if (!muser_id) {
+      return res.json({
+        success: false,
+        message: "User ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT tbl.*, 0 as edit_stop
+      FROM tmib_iuofm tbl
+      WHERE tbl.iuofm_users = $1
+      AND tbl.iuofm_actve = TRUE
+      ORDER BY tbl.iuofm_untnm`;
+    const params = [muser_id];
+
+    const rows = await dbGetAll(sql, params, `Get units for ${muser_id}`);
+    res.json({
+      success: true,
+      message: "Units fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 
 module.exports = router;

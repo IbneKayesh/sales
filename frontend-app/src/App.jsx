@@ -35,6 +35,7 @@ import ExpensesPage from "./pages/accounts/expneses/ExpensesPage";
 import ReceivablesPage from "./pages/accounts/receivables/ReceivablesPage";
 //inventory
 import UnitPage from "./pages/inventory/units/UnitPage";
+import BrandPage from "./pages/inventory/brands/BrandPage";
 import CategoryPage from "./pages/inventory/category/CategoryPage";
 import ProductsPage from "./pages/inventory/products/ProductsPage";
 import StockReportsPage from "./pages/inventory/stockreports/StockReportsPage";
@@ -136,7 +137,8 @@ function AppRoutes() {
             <Route path="accounts/expenses" element={<ExpensesPage />} />
             <Route path="accounts/receivables" element={<ReceivablesPage />} />
             //inventory
-            <Route path="inventory/unit" element={<UnitPage />} />
+            <Route path="inventory/units" element={<UnitPage />} />
+            <Route path="inventory/brands" element={<BrandPage />} />
             <Route path="inventory/category" element={<CategoryPage />} />
             <Route path="inventory/products" element={<ProductsPage />} />
             <Route

@@ -57,6 +57,13 @@ const productTypeOptions = [
   { label: "Assets", value: "Assets" },
 ];
 
+
+const stockTypeOptions = [
+  { label: "No Stock", value: 0 },
+  { label: "Single Stock", value: 1 },
+  { label: "Bulk Stock", value: 2 }
+];
+
 const purchaseTypeOptions = [
   { label: "Booking", value: "Booking" },
   { label: "Receipt", value: "Receipt" },
@@ -162,6 +169,7 @@ export {
   defaultList,
   paymentModeOptions,
   productTypeOptions,
+  stockTypeOptions,
   purchaseTypeOptions,
   unitGroupOptions,
   genderOptions,

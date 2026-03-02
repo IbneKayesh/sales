@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
-import { categoriesAPI } from "@/api/inventory/categoriesAPI";
+import { brandsAPI } from "@/api/inventory/brandsAPI";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
-import tmib_ctgry from "@/models/inventory/tmib_ctgry.json";
+import tmib_brand from "@/models/inventory/tmib_brand.json";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
 
-const dataModel = generateDataModel(tmib_ctgry, { edit_stop: 0 });
+const dataModel = generateDataModel(tmib_brand, { edit_stop: 0 });
 
-export const useCategory = () => {
+export const useBrands = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
@@ -17,9 +17,9 @@ export const useCategory = () => {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
-  const loadCategories = async () => {
+  const loadBrands = async () => {
     try {
-      const response = await categoriesAPI.getAll({ muser_id: user.users_users });
+      const response = await brandsAPI.getAll({ muser_id: user.users_users });
       //response = { message, data }
       //console.log("response: " + JSON.stringify(response));
       setDataList(response.data);
@@ -33,12 +33,12 @@ export const useCategory = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadCategories();
+    loadBrands();
   }, []);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmib_ctgry);
+    const newErrors = validate({ ...formData, [field]: value }, tmib_brand);
     setErrors(newErrors);
   };
 
@@ -72,7 +72,7 @@ export const useCategory = () => {
         muser_id: user.users_users,
         suser_id: user.id,
       };
-      const response = await categoriesAPI.delete(formDataNew);
+      const response = await brandsAPI.delete(formDataNew);
 
       // Remove deleted unit from local state
       const updatedList = dataList.filter((u) => u.id !== rowData.id);
@@ -82,7 +82,7 @@ export const useCategory = () => {
         response.success ? "info" : "error",
         response.success ? "Deleted" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
     } catch (error) {
       console.error("Error deleting data:", error);
@@ -91,7 +91,7 @@ export const useCategory = () => {
   };
 
   const handleRefresh = () => {
-    loadCategories();
+    loadBrands();
   };
 
   const handleSave = async (e) => {
@@ -100,7 +100,7 @@ export const useCategory = () => {
       setIsBusy(true);
 
       // Validate form
-      const newErrors = validate(formData, tmib_ctgry);
+      const newErrors = validate(formData, tmib_brand);
       setErrors(newErrors);
       console.log("handleSave: " + JSON.stringify(newErrors));
 
@@ -123,9 +123,9 @@ export const useCategory = () => {
       // Call API and get { message, data }
       let response;
       if (formData.id) {
-        response = await categoriesAPI.update(formDataNew);
+        response = await brandsAPI.update(formDataNew);
       } else {
-        response = await categoriesAPI.create(formDataNew);
+        response = await brandsAPI.create(formDataNew);
       }
       //console.log("response: " + JSON.stringify(response));
 
@@ -134,12 +134,12 @@ export const useCategory = () => {
         response.success ? "success" : "error",
         response.success ? "Success" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
 
       handleClear();
       setCurrentView("list");
-      loadCategories();
+      loadBrands();
     } catch (error) {
       console.error("Error saving data:", error);
 

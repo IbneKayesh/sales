@@ -1,19 +1,18 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { dzoneAPI } from "@/api/crm/dzoneAPI";
+import { categoriesAPI } from "@/api/inventory/categoriesAPI";
 
 
-export const useZoneSgd = () => {
+export const useCategorySgd = () => {
   const { user } = useAuth();
   const [dataList, setDataList] = useState([]);
 
-  const handleLoadZones = async (dzone_cntry) => {
+  const handleGetAllActiveCategory = async () => {
     try {
-      const response = await dzoneAPI.getByCountry({
-        dzone_users: user.users_users,
-        dzone_cntry: dzone_cntry,
+      const response = await categoriesAPI.getAllActive({
+        muser_id: user.users_users,
       });
-      //console.log("data",response.data);
+      //console.log("data",user.users_bsins);
       setDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
@@ -22,6 +21,6 @@ export const useZoneSgd = () => {
 
   return {
     dataList,
-    handleLoadZones,
+    handleGetAllActiveCategory,
   }
 };

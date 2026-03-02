@@ -1,16 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-
 
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { trtry_users, trtry_bsins } = req.body;
+    const { muser_id, bsins_id } = req.body;
 
     // Validate input
-    if (!trtry_users || !trtry_bsins) {
+    if (!muser_id || !bsins_id) {
       return res.json({
         success: false,
         message: "User ID and Business ID are required",
@@ -23,12 +22,12 @@ router.post("/", async (req, res) => {
     FROM tmcb_trtry trt
     LEFT JOIN tmcb_tarea ara ON trt.trtry_tarea = ara.id
     LEFT JOIN tmcb_dzone dz ON ara.tarea_dzone = dz.id
-    WHERE trt.trtry_users = ?
-    AND trt.trtry_bsins = ?
+    WHERE trt.trtry_users = $1
+    AND trt.trtry_bsins = $2
     ORDER BY trt.trtry_wname`;
-    const params = [trtry_users,trtry_bsins];
+    const params = [muser_id, bsins_id];
 
-    const rows = await dbGetAll(sql, params, `Get territories for ${trtry_users}`);
+    const rows = await dbGetAll(sql, params, `Get territories for ${muser_id}`);
     res.json({
       success: true,
       message: "Territories fetched successfully",
@@ -47,18 +46,19 @@ router.post("/", async (req, res) => {
 // create
 router.post("/create", async (req, res) => {
   try {
-    const { id, trtry_users, trtry_bsins, trtry_tarea, trtry_wname, user_id } =
-      req.body;
+    const {
+      id,
+      trtry_users,
+      trtry_bsins,
+      trtry_tarea,
+      trtry_wname,
+      muser_id,
+      bsins_id,
+      suser_id,
+    } = req.body;
 
     // Validate input
-    if (
-      !id ||
-      !trtry_users ||
-      !trtry_bsins ||
-      !trtry_tarea ||
-      !trtry_wname ||
-      !user_id
-    ) {
+    if (!id || !trtry_tarea || !trtry_wname || !suser_id) {
       return res.json({
         success: false,
         message: "All fields are required",
@@ -68,15 +68,15 @@ router.post("/create", async (req, res) => {
 
     //database action
     const sql = `INSERT INTO tmcb_trtry(id, trtry_users, trtry_bsins, trtry_tarea, trtry_wname, trtry_crusr, trtry_upusr)
-    VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`;
     const params = [
       id,
-      trtry_users,
-      trtry_bsins,
+      muser_id,
+      bsins_id,
       trtry_tarea,
       trtry_wname,
-      user_id,
-      user_id,
+      suser_id,
+      suser_id,
     ];
 
     await dbRun(sql, params, `Create territory for ${trtry_wname}`);
@@ -99,7 +99,14 @@ router.post("/create", async (req, res) => {
 router.post("/update", async (req, res) => {
   try {
     const {
-      id, trtry_users, trtry_bsins, trtry_tarea, trtry_wname, user_id
+      id,
+      trtry_users,
+      trtry_bsins,
+      trtry_tarea,
+      trtry_wname,
+      muser_id,
+      bsins_id,
+      suser_id,
     } = req.body;
 
     // Validate input
@@ -109,7 +116,7 @@ router.post("/update", async (req, res) => {
       !trtry_bsins ||
       !trtry_tarea ||
       !trtry_wname ||
-      !user_id
+      !suser_id
     ) {
       return res.json({
         success: false,
@@ -120,17 +127,13 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmcb_trtry
-    SET trtry_tarea = ?,
-    trtry_wname = ?,
-    trtry_upusr = ?,
+    SET trtry_tarea = $1,
+    trtry_wname = $2,
+    trtry_upusr = $3,
+    trtry_updat = CURRENT_TIMESTAMP,
     trtry_rvnmr = trtry_rvnmr + 1
-    WHERE id = ?`;
-    const params = [
-      trtry_tarea,
-      trtry_wname,
-      user_id,
-      id,
-    ];
+    WHERE id = $4`;
+    const params = [trtry_tarea, trtry_wname, suser_id, id];
 
     await dbRun(sql, params, `Update territory for ${trtry_wname}`);
     res.json({
@@ -151,7 +154,7 @@ router.post("/update", async (req, res) => {
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, trtry_wname } = req.body;
+    const { id, muser_id, trtry_wname, suser_id } = req.body;
 
     // Validate input
     if (!id) {
@@ -164,9 +167,12 @@ router.post("/delete", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmcb_trtry
-    SET trtry_actve = 1 - trtry_actve
-    WHERE id = ?`;
-    const params = [id];
+    SET trtry_actve = NOT trtry_actve,
+    trtry_upusr = $1,
+    trtry_updat = CURRENT_TIMESTAMP,
+    trtry_rvnmr = trtry_rvnmr + 1
+    WHERE id = $2`;
+    const params = [suser_id, id];
 
     await dbRun(sql, params, `Delete territory for ${trtry_wname}`);
     res.json({
@@ -207,7 +213,11 @@ router.post("/get-by-tarea", async (req, res) => {
     ORDER BY trt.trtry_wname`;
     const params = [trtry_users, trtry_bsins, trtry_tarea];
 
-    const rows = await dbGetAll(sql, params, `Get territories for ${trtry_tarea}`);
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get territories for ${trtry_tarea}`,
+    );
     res.json({
       success: true,
       message: "Territories fetched successfully",

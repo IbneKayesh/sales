@@ -163,35 +163,35 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
 
   const items_icode_BT = (rowData) => {
     return (
-      <>
-        <span className="text-xl ml-1">{rowData.items_icode}</span>
-        <span className="text-md text-gray-600 ml-1">
+      <div className="flex flex-column">
+        <span className="text-xl">{rowData.items_icode}</span>
+        <span className="text-md text-gray-600">
           {rowData.items_bcode}
         </span>
-        <span className="text-sm text-gray-500 ml-1">
+        <span className="text-sm text-gray-500">
           {rowData.items_hscod}
         </span>
-      </>
+        </div>
     );
   };
   const items_iname_BT = (rowData) => {
     return (
-      <>
+      <div className="flex flex-column">
         <ActiveRowCell
           text={rowData.items_iname}
           status={rowData.items_actve}
         />
-        <span className="text-sm text-gray-600 ml-1">
+        <span className="text-sm text-gray-600">
           {rowData.items_idesc}
         </span>
         <span
           className={`text-sm ${
             rowData.items_nofbi > 0 ? "text-blue-500" : "text-red-500"
-          } ml-1`}
+          }`}
         >
           ({rowData.items_nofbi})
         </span>
-      </>
+        </div>
     );
   };
   const items_puofm_BT = (rowData) => {
@@ -204,30 +204,32 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
 
   const items_ctgry_BT = (rowData) => {
     return (
-      <>
+      <div className="flex flex-column">
         {rowData.ctgry_ctgnm}
-        <span className="text-sm text-gray-600 ml-1">
-          {rowData.items_itype}
-        </span>
-      </>
+        <span className="text-md text-gray-600">{rowData.items_itype}</span>
+        <span className="text-sm text-gray-600">{rowData.brand_brnam}</span>
+      </div>
     );
+  };
+  
+  const items_trcks_BT = (rowData) => {
+    const stockMap = {
+      0: "No Stock",
+      1: "Single Stock",
+      2: "Bulk Stock",
+    };
+  
+    return stockMap[rowData.items_trcks] ?? "Unknown";
   };
 
-  const items_trcks_BT = (rowData) => {
-    return (
-      <>
-        <ActiveRowCell text={"Tracking"} status={rowData.items_trcks} />
-      </>
-    );
-  };
   const items_sdvat_BT = (rowData) => {
     return (
-      <>
+      <div className="flex flex-column">
         VAT% {rowData.items_sdvat}
-        <span className="text-sm text-gray-600 ml-1">
+        <span className="text-sm text-red-600">
           Cost % {rowData.items_costp}
         </span>
-      </>
+      </div>
     );
   };
 
@@ -254,7 +256,7 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
           "puofm_untnm",
           "suofm_untnm",
           "ctgry_ctgnm",
-          "items_itype"
+          "items_itype",
         ]}
         header={header()}
       >

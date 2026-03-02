@@ -1,4 +1,4 @@
-import { apiRequest } from '@/utils/api.js';
+import { apiRequest } from "@/utils/api.js";
 
 // Units API
 export const unitsAPI = {
@@ -19,6 +19,11 @@ export const unitsAPI = {
     }),
   delete: (data) =>
     apiRequest("/inventory/units/delete", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getAllActive: (data) =>
+    apiRequest("/inventory/units/get-all-active", {
       method: "POST",
       body: JSON.stringify(data),
     }),

@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { tareaAPI } from "@/api/crm/tareaAPI";
+import { dzoneAPI } from "@/api/crm/dzoneAPI";
 
 
-export const useAreasSgd = () => {
+export const useDZoneSgd = () => {
   const { user } = useAuth();
   const [dataList, setDataList] = useState([]);
 
-  const handleLoadAreas = async (tarea_dzone) => {
+  const handleGetAllActiveDZones = async (dzone_cntry) => {
     try {
-      const response = await tareaAPI.getByZone({
-        tarea_users: user.users_users,
-        tarea_dzone: tarea_dzone,
+      const response = await dzoneAPI.getByCountry({
+        muser_id: user.users_users,
+        dzone_cntry: dzone_cntry,
       });
       //console.log("data",response.data);
       setDataList(response.data);
@@ -22,6 +22,6 @@ export const useAreasSgd = () => {
 
   return {
     dataList,
-    handleLoadAreas,
+    handleGetAllActiveDZones,
   }
 };

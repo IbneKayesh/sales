@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { brand_users } = req.body;
+    const { muser_id } = req.body;
 
     // Validate input
-    if (!brand_users) {
+    if (!muser_id) {
       return res.json({
         success: false,
         message: "User ID is required",
@@ -22,9 +22,9 @@ router.post("/", async (req, res) => {
       FROM tmib_brand tbl
       WHERE tbl.brand_users = $1
       ORDER BY tbl.brand_brnam`;
-    const params = [brand_users];
+    const params = [muser_id];
 
-    const rows = await dbGetAll(sql, params, `Get brand for ${brand_users}`);
+    const rows = await dbGetAll(sql, params, `Get brand for ${muser_id}`);
     res.json({
       success: true,
       message: "Brand fetched successfully",
@@ -43,37 +43,22 @@ router.post("/", async (req, res) => {
 // create
 router.post("/create", async (req, res) => {
   try {
-    const {
-      id,
-      brand_users,
-      brand_brnam,
-      user_id,
-    } = req.body;
+    const { id, muser_id, brand_brnam, suser_id } = req.body;
 
     // Validate input
-    if (
-      !id ||
-      !brand_users ||
-      !brand_brnam
-    ) {
+    if (!id || !muser_id || !brand_brnam) {
       return res.json({
         success: false,
         message: "All fields are required",
         data: null,
-      }); 
+      });
     }
 
     //database action
     const sql = `INSERT INTO tmib_brand
     (id,brand_users,brand_brnam,brand_crusr,brand_upusr)
     VALUES ($1,$2,$3,$4,$5)`;
-    const params = [
-      id,
-      brand_users,
-      brand_brnam,
-      user_id,
-      user_id,
-    ];
+    const params = [id, muser_id, brand_brnam, suser_id, suser_id];
 
     await dbRun(sql, params, `Create brand for ${brand_brnam}`);
     res.json({
@@ -94,24 +79,15 @@ router.post("/create", async (req, res) => {
 // update
 router.post("/update", async (req, res) => {
   try {
-    const {
-      id,
-      brand_users,
-      brand_brnam,
-      user_id,
-    } = req.body;
+    const { id, muser_id, brand_brnam, suser_id } = req.body;
 
     // Validate input
-    if (
-      !id ||
-      !brand_users ||
-      !brand_brnam
-    ) {
+    if (!id || !muser_id || !brand_brnam) {
       return res.json({
         success: false,
         message: "All fields are required",
         data: null,
-      }); 
+      });
     }
 
     //database action
@@ -121,11 +97,7 @@ router.post("/update", async (req, res) => {
     brand_updat = CURRENT_TIMESTAMP,
     brand_rvnmr = brand_rvnmr + 1
     WHERE id = $3`;
-    const params = [
-      brand_brnam,
-      user_id,
-      id,
-    ];
+    const params = [brand_brnam, suser_id, id];
 
     await dbRun(sql, params, `Update brand for ${brand_brnam}`);
     res.json({
@@ -143,11 +115,10 @@ router.post("/update", async (req, res) => {
   }
 });
 
-
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, brand_brnam} = req.body;
+    const { id, muser_id, brand_brnam, suser_id } = req.body;
 
     // Validate input
     if (!id) {
@@ -160,15 +131,56 @@ router.post("/delete", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_brand
-    SET brand_actve = NOT brand_actve
-    WHERE id = $1`;
-    const params = [id];
+    SET brand_actve = NOT brand_actve,
+    brand_upusr = $1,
+    brand_updat = CURRENT_TIMESTAMP,
+    brand_rvnmr = brand_rvnmr + 1
+    WHERE id = $2`;
+    const params = [suser_id, id];
 
     await dbRun(sql, params, `Delete brand for ${brand_brnam}`);
     res.json({
       success: true,
       message: "Brand deleted successfully",
       data: null,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+// get all active
+router.post("/get-all-active", async (req, res) => {
+  try {
+    const { muser_id } = req.body;
+
+    // Validate input
+    if (!muser_id) {
+      return res.json({
+        success: false,
+        message: "User ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT tbl.*, 0 as edit_stop
+      FROM tmib_brand tbl
+      WHERE tbl.brand_users = $1
+      AND tbl.brand_actve = TRUE
+      ORDER BY tbl.brand_brnam`;
+    const params = [muser_id];
+
+    const rows = await dbGetAll(sql, params, `Get units for ${muser_id}`);
+    res.json({
+      success: true,
+      message: "Units fetched successfully",
+      data: rows,
     });
   } catch (error) {
     console.error("database action error:", error);
