@@ -8,7 +8,7 @@
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border-light);
   color: var(--text-primary);
-  height: 45px;
+  height: 30px;
 }
 
 .topbar-left {
@@ -23,8 +23,8 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: var(--text-white);
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -36,18 +36,13 @@
 
 .topbar-btn:hover {
   background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
+  transform: scale(1);
 }
 
 .topbar-center {
   font-size: 18px;
   font-weight: bold;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.topbar-left .collapse-btn,
-.topbar-left .full-mode-btn {
-  /* Use the common topbar-btn class */
 }
 
 .topbar-avatar {
@@ -57,8 +52,8 @@
 }
 
 .topbar-avatar img {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   border: 2px solid var(--border-medium);
 }
@@ -101,14 +96,11 @@
   background: var(--overlay-heavy);
 }
 
-.nav-icon-btn {
-  /* Use the common topbar-btn class */
-}
 
 /* Ensure all topbar buttons use the common class */
-.topbar .topbar-left .collapse-btn,
+/* .topbar .topbar-left .collapse-btn,
 .topbar .topbar-left .full-mode-btn,
 .logout-button,
 .nav-icon-btn {
   @extend .topbar-btn;
-}
+} */

@@ -7,10 +7,10 @@ export const useContactsSgd = () => {
   const { user } = useAuth();
   const [dataList, setDataList] = useState([]);
 
-  const handleLoadSuppliers = async () => {
+  const handleGetAllActiveSuppliers = async () => {
     try {
       const response = await contactAPI.getAllSuppliers({
-        cntct_users: user.users_users,
+        muser_id: user.users_users,
       });
       //console.log("data",response.data);
       setDataList(response.data);
@@ -60,7 +60,7 @@ export const useContactsSgd = () => {
 
   return {
     dataList,
-    handleLoadSuppliers,
+    handleGetAllActiveSuppliers,
     handleLoadCustomers,
     handleLoadReceiptSuppliers,
     handleLoadRouteOutlets

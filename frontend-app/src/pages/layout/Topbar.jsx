@@ -47,7 +47,7 @@ const Topbar = ({
     <>
       <div className="topbar">
         <div className="topbar-left">
-          <button className="topbar-btn collapse-btn" onClick={onToggleLeftbar}>
+          <button className="topbar-btn" onClick={onToggleLeftbar}>
             <i
               className={`pi ${
                 leftbarCollapsed ? "pi-angle-right" : "pi-angle-left"
@@ -55,7 +55,7 @@ const Topbar = ({
             ></i>
           </button>
           <button
-            className="topbar-btn full-mode-btn"
+            className="topbar-btn"
             onClick={onToggleFullMode}
           >
             <i className="pi pi-expand"></i>

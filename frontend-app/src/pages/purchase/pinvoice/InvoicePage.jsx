@@ -54,10 +54,10 @@ const InvoicePage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Purchase Invoice List"
+            ? "Invoice List"
             : formData.id
-              ? "Edit Purchase Invoice"
-              : "New Purchase Invoice"}
+              ? "Edit Invoice"
+              : "New Invoice"}
         </h3>
 
         <div className="flex gap-2">

@@ -21,12 +21,12 @@ const ItemsComp = ({
   formDataItemList,
   setFormDataItemList,
 }) => {
-  const { dataList: productList, handleLoadBookingItems } = useProductsSgd();
+  const { dataList: productList, handleGetAllActivePBI } = useProductsSgd();
   const [showAttributes, setShowAttributes] = useState(false);
   const [selectedItemAttributes, setSelectedItemAttributes] = useState(null);
 
   useEffect(() => {
-    handleLoadBookingItems();
+    handleGetAllActivePBI();
   }, []);
 
   useEffect(() => {

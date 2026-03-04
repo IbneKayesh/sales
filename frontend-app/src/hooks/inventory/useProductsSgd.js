@@ -6,10 +6,11 @@ export const useProductsSgd = () => {
   const { user } = useAuth();
   const [dataList, setDataList] = useState([]);
 
-  const handleLoadBookingItems = async () => {
+  //Purchase Booking Items
+  const handleGetAllActivePBI = async () => {
     try {
-      const response = await productsAPI.getBookingItems({
-        bitem_bsins: user.users_bsins,
+      const response = await productsAPI.getPurchaseBookingItems({
+        muser_id: user.users_bsins,
       });
       //console.log("data",user.users_bsins);
       setDataList(response.data);
@@ -63,7 +64,7 @@ export const useProductsSgd = () => {
 
   return {
     dataList,
-    handleLoadBookingItems,
+    handleGetAllActivePBI,
     handleLoadTransferItems,
     handleLoadSalesItems,
     handleLoadSalesBookingItems,

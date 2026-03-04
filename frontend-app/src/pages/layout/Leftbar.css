@@ -111,7 +111,7 @@
 .menu-item.selected {
   background: var(--accent-green);
   border-left: 3px solid var(--accent-green);
-  border-bottom: 2px solid var(--text-secondary);
+  border-bottom: 3px solid var(--text-secondary);
 }
 
 .menu-menu-btn {

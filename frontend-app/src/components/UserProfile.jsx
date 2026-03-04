@@ -23,8 +23,8 @@ const UserProfile = ({ onSwitchBusiness, onLogout }) => {
       <span
         className="topbar-btn bg-blue-400 hover:bg-blue-600 transition-colors duration-200 cursor-pointer flex align-items-center justify-content-center border-circle"
         style={{
-          width: "35px",
-          height: "35px",
+          width: "24px",
+          height: "24px",
           color: "white",
           fontWeight: "bold",
         }}
