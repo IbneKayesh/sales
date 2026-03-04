@@ -29,7 +29,7 @@ export const useContacts = () => {
   const loadContacts = async () => {
     try {
       const response = await contactAPI.getAll({
-        cntct_users: user.users_users,
+        muser_id: user.users_users,
       });
       // response = { message, data }
       setDataList(response.data);
@@ -78,7 +78,12 @@ export const useContacts = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await contactAPI.delete(rowData);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+      const response = await contactAPI.delete(formDataNew);
 
       const updatedList = allData.filter((c) => c.id !== rowData.id);
       setAllData(updatedList);
@@ -122,8 +127,10 @@ export const useContacts = () => {
         id: formData.id || generateGuid(),
         cntct_users: user.users_users,
         cntct_bsins: user.users_bsins,
+        muser_id: user.users_users,
+        bsins_id: user.users_bsins,
         cntct_cntad: "0",
-        user_id: user.id,
+        suser_id: user.id,
       };
 
       // Call API and get { message, data }
@@ -159,7 +166,7 @@ export const useContacts = () => {
   const fetchContactListDdl = async (trhed_cntyp) => {
     try {
       const response = await contactAPI.getByType({
-        cntct_users: user.users_users,
+        muser_id: user.users_users,
         cntct_ctype: trhed_cntyp,
       });
       console.log("fetchContactListDdl: ", trhed_cntyp);
@@ -180,8 +187,8 @@ export const useContacts = () => {
   const handleShowContactLedger = async (contact) => {
     try {
       const response = await contactAPI.getContactLedger({
-        paybl_users: user.users_users,
-        paybl_bsins: user.users_bsins,
+        muser_id: user.users_users,
+        bsins_id: user.users_bsins,
         paybl_cntct: contact.id,
       });
       // response = { message, data }
@@ -203,7 +210,7 @@ export const useContacts = () => {
       );
     } else {
       const response = await contactAPI.getAll({
-        cntct_users: user.users_users,
+        muser_id: user.users_users,
       });
       supplierData = response.data;
     }

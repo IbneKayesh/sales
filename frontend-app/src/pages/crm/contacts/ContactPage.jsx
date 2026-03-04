@@ -36,7 +36,7 @@ const ContactPage = () => {
             ? "Contact"
             : formData.id
             ? "Edit Contact"
-            : "Add New Contact"}
+            : "New Contact"}
         </h3>
 
         <div className="flex gap-2">
@@ -52,7 +52,7 @@ const ContactPage = () => {
 
   return (
     <>
-      <Card header={getHeader()} className="bg-dark-200 border-round p-3">
+      <Card header={getHeader()} className="border-round p-3">
         {currentView === "list" ? (
           <ContactListComp
             dataList={dataList}

@@ -144,7 +144,7 @@ const employeeStatusOptions = [
 const contactTypeOptions = [
   { label: "Customer", value: "Customer" },
   { label: "Supplier", value: "Supplier" },
-  { label: "Both", value: "Both" },
+  { label: "Both (Customer/Supplier)", value: "Both" },
   { label: "Outlet", value: "Outlet" },
 ];
 
