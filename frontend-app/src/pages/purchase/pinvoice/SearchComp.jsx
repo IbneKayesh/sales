@@ -56,7 +56,6 @@ const SearchComp = ({
           inputClassName="p-inputtext-sm"
           dateFormat="yy-mm-dd"
           placeholder="Date"
-          showClear
         />
       </div>
     </div>

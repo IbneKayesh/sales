@@ -10,9 +10,10 @@ export const useProductsSgd = () => {
   const handleGetAllActivePBI = async () => {
     try {
       const response = await productsAPI.getPurchaseBookingItems({
-        muser_id: user.users_bsins,
+        muser_id: user.users_users,
+        bsins_id: user.users_bsins,
       });
-      //console.log("data",user.users_bsins);
+      console.log("data",response.data);
       setDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);

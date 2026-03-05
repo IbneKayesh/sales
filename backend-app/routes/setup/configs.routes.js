@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
@@ -20,9 +20,9 @@ router.post("/", async (req, res) => {
     //database action
     const sql = `SELECT cnf.*, 0 as edit_stop
       FROM tmsb_ucnfg cnf
-      WHERE cnf.ucnfg_users = ?
-      AND cnf.ucnfg_cname = ?
-      AND cnf.ucnfg_gname = ?`;
+      WHERE cnf.ucnfg_users = $1
+      AND cnf.ucnfg_cname = $2
+      AND cnf.ucnfg_gname = $3`;
     const params = [ucnfg_users, ucnfg_cname, ucnfg_gname];
 
     const rows = await dbGetAll(sql, params, `Get configs for ${ucnfg_users} - ${ucnfg_cname} - ${ucnfg_gname}`);

@@ -86,7 +86,7 @@ const ItemsComp = ({
     const filtered = filteredList.filter(
       (item) =>
         !formDataItemList.some(
-          (orderItem) => orderItem.cinvc_bitem === item.id,
+          (orderItem) => orderItem.cinvc_bitem === item.bitem_id,
         ),
     );
 
@@ -145,21 +145,46 @@ const ItemsComp = ({
     return (
       <div className="grid">
         <div className="col-12 font-semibold p-1">
-          {option.items_iname} ({option.items_icode})
+          {option.items_icode}-{option.items_iname} ({option.items_bcode})
         </div>
         <div className="grid col-12 text-gray-700 p-2">
-          <div className="col-4 p-0">
-            💵 Price: {Number(option.bitem_lprat).toFixed(2)}
+          <div className="col-2 p-0">
+            🥇 LP: {Number(option.bitem_lprat).toFixed(2)}
           </div>
-          <div className="col-4 p-0">
+          <div className="col-2 p-0">
+            🥈 DP: {Number(option.bitem_dprat).toFixed(2)}
+          </div>
+          <div className="col-2 p-0">
+            🥉 MRP: {Number(option.bitem_mcmrp).toFixed(2)}
+          </div>
+        </div>
+        <div className="grid col-12 text-gray-700 p-2">
+          <div className="col-3 p-0">
             📊 Discount: {Number(option.bitem_sddsp).toFixed(2)}%
           </div>
-          <div className="col-4 p-0">
+          <div className="col-3 p-0">
             📈 VAT: {Number(option.items_sdvat).toFixed(2)}%
           </div>
         </div>
-        <div className="col-12 p-0">
-          📦 Stock: {Number(option.bitem_gstkq).toFixed(2)} {option.puofm_untnm}
+        <div className="grid col-12 text-gray-700 p-2">
+          <div className="col-3 p-0">
+            📑 Bulk Stock: {Number(option.bitem_gstkq).toFixed(2)}{" "}
+            {option.puofm_untnm}
+          </div>
+          <div className="col-3 p-0">
+            📋 Single Stock: {Number(option.bitem_istkq).toFixed(2)}{" "}
+            {option.puofm_untnm}
+          </div>
+        </div>
+        <div className="grid col-12 text-gray-700 p-2">
+          <div className="col-3 p-0">
+            📙 Purchase Booking: {Number(option.bitem_pbqty).toFixed(2)}{" "}
+            {option.puofm_untnm}
+          </div>
+          <div className="col-3 p-0">
+            📗 Sales Booking: {Number(option.bitem_sbqty).toFixed(2)}{" "}
+            {option.puofm_untnm}
+          </div>
         </div>
       </div>
     );
@@ -173,8 +198,9 @@ const ItemsComp = ({
     return (
       <div className="flex flex-column">
         <span className="font-semibold">
-          {option.items_iname}, 📦{Number(option.bitem_gstkq).toFixed(2)}{" "}
-          {option.puofm_untnm}
+          {option.items_icode}-{option.items_iname}, 📦
+          {Number(option.bitem_gstkq).toFixed(2)} {option.puofm_untnm},{" "}
+          {Number(option.bitem_istkq).toFixed(2)} {option.puofm_untnm}
         </span>
       </div>
     );
@@ -195,7 +221,7 @@ const ItemsComp = ({
       return;
     }
 
-    const item = productList.find((i) => i.id === selectedItem);
+    const item = productList.find((i) => i.bitem_id === selectedItem);
     if (!item) return;
 
     const itemAmount = (selectedQty || 1) * item.bitem_lprat;
@@ -208,7 +234,7 @@ const ItemsComp = ({
       id: generateGuid(), // Temporary ID for new items
       cinvc_mbkng: "",
       cinvc_bitem: selectedItem,
-      cinvc_items: item.bitem_items,
+      cinvc_items: item.items_id,
       cinvc_itrat: item.bitem_lprat,
       cinvc_itqty: selectedQty || 1,
       cinvc_itamt: itemAmount,
@@ -511,6 +537,7 @@ const ItemsComp = ({
 
   return (
     <div className="mt-4">
+      {/* {JSON.stringify(formData)} */}
       <ConfirmDialog />
       <Menu model={actionMenuItems} popup ref={menu} id="popup_menu" />
       {!formData.edit_stop && (
@@ -524,7 +551,7 @@ const ItemsComp = ({
               value={selectedItem}
               options={availableItemList}
               optionLabel="items_iname"
-              optionValue="id"
+              optionValue="bitem_id"
               onChange={(e) => setSelectedItem(e.value)}
               placeholder="Select item"
               className="w-full"

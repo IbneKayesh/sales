@@ -73,7 +73,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
     handleChange("cntct_ofadr", selectedObj?.cntct_ofadr || "");
   };
 
-  const isReadOnly = formData.edit_stop === 1;
+  const isReadOnly = formData.edit_stop === true;
 
   return (
     <div className="grid">

@@ -53,7 +53,7 @@ const PaymentComp = ({
             <small className="mb-3 text-red-500">{errors.minvc_trnte}</small>
           )}
         </div>
-        {formData.edit_stop === 1 && formData.minvc_ispad === 0 && (
+        {formData.edit_stop === true && formData.minvc_ispad === 0 && (
           <Tag
             severity="danger"
             value="Unpaid"
@@ -182,7 +182,7 @@ const PaymentComp = ({
               >
                 <i
                   className={
-                    formData.edit_stop === 0
+                    formData.edit_stop === false
                       ? "pi pi-sync text-bold text-white"
                       : "pi pi-sync text-bold text-white"
                   }
@@ -190,7 +190,7 @@ const PaymentComp = ({
                 <span>Round Off (5)</span>
               </div>
               <div>
-                {formData.edit_stop === 1 ? (
+                {formData.edit_stop === true ? (
                   <span className="font-bold">
                     {Number(formData.minvc_rnamt || 0).toFixed(2)}
                   </span>

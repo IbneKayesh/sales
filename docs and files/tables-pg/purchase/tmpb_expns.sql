@@ -29,3 +29,4 @@ CREATE TABLE tmpb_expns (
 
 
 -- expns_inexc [1=Including, 2=Excluding]
+-- true include, false exclude

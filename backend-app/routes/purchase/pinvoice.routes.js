@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
@@ -31,19 +31,19 @@ router.post("/", async (req, res) => {
     cont.cntct_cntnm, cont.cntct_cntps, cont.cntct_cntno, cont.cntct_ofadr, cont.cntct_crlmt
       FROM tmpb_minvc minvc
       LEFT JOIN tmcb_cntct cont on minvc.minvc_cntct = cont.id
-      WHERE minvc.minvc_users = ?
-      AND minvc.minvc_bsins = ?`;
+      WHERE minvc.minvc_users = $1
+      AND minvc.minvc_bsins = $2`;
     let params = [minvc_users, minvc_bsins];
 
     // Optional filters
     if (minvc_cntct) {
-      sql += ` AND cont.cntct_cntnm LIKE ?`;
       params.push(`%${minvc_cntct}%`);
+      sql += ` AND cont.cntct_cntnm ILIKE $${params.length}`;
     }
 
     if (minvc_trnno) {
-      sql += ` AND minvc.minvc_trnno LIKE ?`;
       params.push(`%${minvc_trnno}%`);
+      sql += ` AND minvc.minvc_trnno ILIKE $${params.length}`;
     }
 
     //console.log("params", minvc_trdat);
@@ -58,14 +58,14 @@ router.post("/", async (req, res) => {
         String(dateObj.getDate()).padStart(2, "0");
 
       // console.log("formattedDate", formattedDate);
-
-      sql += ` AND DATE(minvc.minvc_trdat) = ?`;
+      
       params.push(formattedDate);
+      sql += ` AND DATE(minvc.minvc_trdat) = $${params.length}`;
     }
 
     if (minvc_refno) {
-      sql += ` AND minvc.minvc_refno LIKE ?`;
       params.push(`%${minvc_refno}%`);
+      sql += ` AND minvc.minvc_refno LIKE $${params.length}`;
     }
 
     if (search_option) {
@@ -86,10 +86,12 @@ router.post("/", async (req, res) => {
           sql += ` AND minvc.minvc_hscnl = 1`;
           break;
         case "last_3_days":
-          sql += ` AND minvc.minvc_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY)`;
+          //sql += ` AND minvc.minvc_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 3 DAY)`;
+          sql += ` AND minvc.minvc_trdat >= CURRENT_DATE - INTERVAL '3 days'`;
           break;
         case "last_7_days":
-          sql += ` AND minvc.minvc_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)`;
+          //sql += ` AND minvc.minvc_trdat >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)`;
+          sql += ` AND minvc.minvc_trdat >= CURRENT_DATE - INTERVAL '7 days'`;
           break;
         default:
           sql += ``;
@@ -144,7 +146,7 @@ router.post("/invoice-details", async (req, res) => {
     LEFT JOIN tmib_bitem bitm ON invc.cinvc_bitem = bitm.id
     LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
     LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
-    WHERE invc.cinvc_minvc = ?
+    WHERE invc.cinvc_minvc = $1
     ORDER BY itm.items_icode, itm.items_iname`;
     let params = [cinvc_minvc];
 
@@ -186,7 +188,7 @@ router.post("/invoice-expense", async (req, res) => {
     //database action
     let sql = `SELECT expn.*
     FROM tmpb_expns expn
-    WHERE expn.expns_refid = ?
+    WHERE expn.expns_refid = $1
     ORDER BY expn.expns_inexc, expn.expns_xpamt`;
     let params = [expns_refid];
 
@@ -228,7 +230,7 @@ router.post("/invoice-payment", async (req, res) => {
     //database action
     let sql = `SELECT pybl.*
     FROM tmtb_paybl pybl
-    WHERE pybl.paybl_refid = ?
+    WHERE pybl.paybl_refid = $1
     ORDER BY pybl.paybl_cramt,pybl.paybl_trdat`;
     let params = [paybl_refid];
 
@@ -281,13 +283,13 @@ router.post("/create", async (req, res) => {
       minvc_iscls,
       minvc_vatcl,
       minvc_hscnl,
-      user_id,
+      suser_id,
       tmpb_cinvc,
       tmpb_expns,
       tmtb_paybl,
     } = req.body;
 
-    //console.log("create:", JSON.stringify(req.body));
+    console.log("create:", JSON.stringify(req.body));
 
     // Validate input
     if (
@@ -312,9 +314,12 @@ router.post("/create", async (req, res) => {
     const mm = String(now.getMonth() + 1).padStart(2, "0");
     const yy = String(now.getFullYear()).slice(-2);
     const date_part = dd + mm + yy;
-    const sql = `SELECT MAX(CAST(RIGHT(minvc_trnno, 5) AS UNSIGNED)) AS max_seq
+    const sql1 = `SELECT MAX(CAST(RIGHT(minvc_trnno, 5) AS UNSIGNED)) AS max_seq
       FROM tmpb_minvc
       WHERE DATE(minvc_trdat) = CURDATE()`;
+    const sql = `SELECT COALESCE(MAX(CAST(RIGHT(minvc_trnno, 5) AS INTEGER)), 0) AS max_seq
+    FROM tmpb_minvc
+    WHERE DATE(minvc_trdat) = CURRENT_DATE`;
     const max_seq = await dbGet(sql, []);
     const max_seq_no = String((max_seq.max_seq || 0) + 1).padStart(5, "0");
     const minvc_trnno_new = `PI-${date_part}-${max_seq_no}`;
@@ -328,11 +333,11 @@ router.post("/create", async (req, res) => {
       minvc_incst, minvc_excst, minvc_rnamt, minvc_ttamt, minvc_pyamt, minvc_pdamt,
       minvc_duamt, minvc_rtamt, minvc_ispad, minvc_ispst, minvc_iscls, minvc_vatcl,
       minvc_hscnl, minvc_crusr, minvc_upusr)
-      VALUES (?, ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, ?, ?,
-      ?, ?, ?)`,
+      VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11, $12,
+      $13, $14, $15, $16, $17, $18,
+      $19, $20, $21, $22, $23, $24,
+      $25, $26, $27)`,
       params: [
         id,
         minvc_users,
@@ -359,8 +364,8 @@ router.post("/create", async (req, res) => {
         0,
         0,
         0,
-        user_id,
-        user_id,
+        suser_id,
+        suser_id,
       ],
       label: `Created PI master ${minvc_trnno_new}`,
     });
@@ -372,10 +377,10 @@ router.post("/create", async (req, res) => {
         cinvc_itamt, cinvc_dspct, cinvc_dsamt, cinvc_vtpct, cinvc_vtamt, cinvc_csrat,
         cinvc_ntamt, cinvc_notes, cinvc_attrb, cinvc_rtqty, cinvc_slqty, cinvc_ohqty,
         cinvc_crusr, cinvc_upusr)
-        VALUES (?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?,
-        ?, ?)`,
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16, $17, $18,
+        $19, $20)`,
         params: [
           uuidv4(),
           id,
@@ -395,8 +400,8 @@ router.post("/create", async (req, res) => {
           0,
           0,
           det.cinvc_itqty || 1, //det.cinvc_ohqty,
-          user_id,
-          user_id,
+          suser_id,
+          suser_id,
         ],
         label: `Created PI detail ${minvc_trnno_new}`,
       });
@@ -408,9 +413,9 @@ router.post("/create", async (req, res) => {
         sql: `INSERT INTO tmpb_expns(id, expns_users, expns_bsins, expns_cntct, expns_refid, expns_refno,
         expns_srcnm, expns_trdat, expns_inexc, expns_notes, expns_xpamt, expns_crusr,
         expns_upusr)
-        VALUES (?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?,
-        ?)`,
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13)`,
         params: [
           uuidv4(),
           minvc_users,
@@ -423,8 +428,8 @@ router.post("/create", async (req, res) => {
           pay.expns_inexc,
           pay.expns_notes,
           pay.expns_xpamt,
-          user_id,
-          user_id,
+          suser_id,
+          suser_id,
         ],
         label: `Created PI expense ${minvc_trnno_new}`,
       });
@@ -437,9 +442,9 @@ router.post("/create", async (req, res) => {
           sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
         paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
         paybl_cramt, paybl_crusr, paybl_upusr)
-        VALUES (?, ?, ?, ?, ?, ?,
-        ?, ?, ?, ?, ?, ?,
-        ?, ?, ?)`,
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15)`,
           params: [
             uuidv4(),
             minvc_users,
@@ -454,8 +459,8 @@ router.post("/create", async (req, res) => {
             pay.paybl_notes,
             pay.paybl_dbamt,
             0,
-            user_id,
-            user_id,
+            suser_id,
+            suser_id,
           ],
           label: `Created payment debit ${minvc_trnno_new}`,
         });
@@ -467,9 +472,9 @@ router.post("/create", async (req, res) => {
       sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
       paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
       paybl_cramt, paybl_crusr, paybl_upusr)
-      VALUES (?, ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, ?, ?,
-      ?, ?, ?)`,
+      VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11, $12,
+      $13, $14, $15)`,
       params: [
         uuidv4(),
         minvc_users,
@@ -484,8 +489,8 @@ router.post("/create", async (req, res) => {
         "Products",
         0,
         minvc_pyamt,
-        user_id,
-        user_id,
+        suser_id,
+        suser_id,
       ],
       label: `Created payment credit ${minvc_trnno_new}`,
     });
@@ -493,13 +498,29 @@ router.post("/create", async (req, res) => {
     //when posted
     if (minvc_ispst === 1) {
       for (const det of tmpb_cinvc) {
+        // scripts.push({
+        //   sql: `UPDATE tmib_bitem b
+        //   JOIN tmib_items itm ON b.bitem_items = itm.id
+        // SET
+        //   bitem_gstkq = bitem_gstkq + CASE WHEN itm.items_trcks = 1 THEN ? ELSE 0 END,
+        //   bitem_istkq = bitem_istkq + CASE WHEN itm.items_trcks = 2 THEN ? ELSE 0 END
+        // WHERE b.id = ?`,
+        //   params: [
+        //     det.cinvc_itqty, // for gstkq (items_track = 0)
+        //     det.cinvc_itqty, // for istkq (items_track = 1)
+        //     det.cinvc_bitem, // bitem id
+        //   ],
+        //   label: `BItem good, item stock updated`,
+        // });
+
         scripts.push({
           sql: `UPDATE tmib_bitem b
-          JOIN tmib_items itm ON b.bitem_items = itm.id
-        SET
-          bitem_gstkq = bitem_gstkq + CASE WHEN itm.items_trcks = 0 THEN ? ELSE 0 END,
-          bitem_istkq = bitem_istkq + CASE WHEN itm.items_trcks = 1 THEN ? ELSE 0 END
-        WHERE b.id = ?`,
+          SET
+            bitem_gstkq = bitem_gstkq + CASE WHEN itm.items_trcks = 1 THEN $1 ELSE 0 END,
+            bitem_istkq = bitem_istkq + CASE WHEN itm.items_trcks = 2 THEN $2 ELSE 0 END
+          FROM tmib_items itm
+          WHERE b.bitem_items = itm.id
+            AND b.id = $3`,
           params: [
             det.cinvc_itqty, // for gstkq (items_track = 0)
             det.cinvc_itqty, // for istkq (items_track = 1)

@@ -67,13 +67,13 @@ const EntryComp = ({
 
     const include_cost = formDataExpensesList.reduce(
       (sum, item) =>
-        item.expns_inexc === 1 ? sum + (Number(item.expns_xpamt) || 0) : sum,
+        item.expns_inexc === true ? sum + (Number(item.expns_xpamt) || 0) : sum,
       0,
     );
 
     const exclude_cost = formDataExpensesList.reduce(
       (sum, item) =>
-        item.expns_inexc === 2 ? sum + (Number(item.expns_xpamt) || 0) : sum,
+        item.expns_inexc === false ? sum + (Number(item.expns_xpamt) || 0) : sum,
       0,
     );
 
@@ -83,7 +83,7 @@ const EntryComp = ({
     const total_amount = sum_1_3_4 - sum_2_5;
 
     const payable_amount =
-      formData.minvc_vatpy === 1 ? total_amount : total_amount - vat_amount;
+      formData.minvc_vatpy === true ? total_amount : total_amount - vat_amount;
 
     const paid_amount = formDataPaymentList.reduce(
       (sum, item) => sum + (Number(item.paybl_dbamt) || 0),

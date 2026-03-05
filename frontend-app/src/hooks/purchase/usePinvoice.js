@@ -26,7 +26,7 @@ export const usePinvoice = () => {
   const [formDataExpensesList, setFormDataExpensesList] = useState([]);
   const [formDataPaymentList, setFormDataPaymentList] = useState([]);
 
-   //configs
+  //configs
   const [configs, setConfigs] = useState({});
 
   const loadConfigs = async () => {
@@ -80,7 +80,7 @@ export const usePinvoice = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-        loadConfigs();
+    loadConfigs();
   }, []);
 
   const loadInvoiceDetails = async (id) => {
@@ -229,11 +229,10 @@ export const usePinvoice = () => {
       //0 :: Unpaid, 1 :: Paid, 2 :: Partial
       const paidStatus =
         Number(formData.minvc_pdamt) === 0
-          ? "0"
+          ? 0
           : Number(formData.minvc_duamt) === 0
-            ? "1"
-            : "2";
-
+            ? 1
+            : 2;
       // console.log(
       //   "paidStatus:",
       //   paidStatus
@@ -253,7 +252,7 @@ export const usePinvoice = () => {
         minvc_bsins: user.users_bsins,
         minvc_trdat: formatDateForAPI(formData.minvc_trdat),
         minvc_ispad: paidStatus,
-        user_id: user.id,
+        suser_id: user.id,
         tmpb_cinvc: formDataItemListNew,
         tmpb_expns: formDataExpensesList,
         tmtb_paybl: formDataPaymentList,
@@ -300,7 +299,7 @@ export const usePinvoice = () => {
     minvc_trnno: "",
     minvc_trdat: "", //new Date().toLocaleString().split("T")[0],
     minvc_refno: "",
-    search_option: "minvc_ispad",
+    search_option: "last_7_days",
   });
 
   const handleChangeSearchInput = (e) => {
