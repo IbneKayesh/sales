@@ -1,0 +1,309 @@
+{
+  "data": [
+    {
+      "date": "2026-03-07",
+      "title": "v2.4.0 Release — Core sales module shipped with pipeline automation",
+      "changes": [
+        {
+          "type": "fix",
+          "count": 2,
+          "items": [
+            "Resolved null-pointer crash on empty pipeline load",
+            "Fixed incorrect date formatting in export reports"
+          ]
+        },
+        {
+          "type": "improvement",
+          "count": 1,
+          "items": [
+            "Reduced initial load time by 40% via lazy-loading modules"
+          ]
+        },
+        {
+          "type": "feature",
+          "count": 2,
+          "items": [
+            "Pipeline automation rules with trigger conditions",
+            "Bulk deal stage assignment from list view"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-02-20",
+      "title": "Dashboard Redesign — Revamped summary cards with live KPIs and CSV export",
+      "changes": [
+        {
+          "type": "fix",
+          "count": 1,
+          "items": [
+            "Fixed KPI card totals not refreshing on filter change"
+          ]
+        },
+        {
+          "type": "improvement",
+          "count": 3,
+          "items": [
+            "Summary cards now animate on data update",
+            "Chart tooltips display percentage deltas",
+            "CSV export now respects active filters"
+          ]
+        },
+        {
+          "type": "feature",
+          "count": 1,
+          "items": [
+            "Live KPI widgets with real-time data polling"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-02-05",
+      "title": "Reporting Module — Monthly and quarterly report generation with PDF output",
+      "changes": [
+        {
+          "type": "fix",
+          "count": 0,
+          "items": [
+            "No bug fixes in this release"
+          ]
+        },
+        {
+          "type": "improvement",
+          "count": 2,
+          "items": [
+            "PDF layout now includes branded header and footer",
+            "Report scheduling defaults to user's timezone"
+          ]
+        },
+        {
+          "type": "feature",
+          "count": 3,
+          "items": [
+            "Monthly summary report with trend charts",
+            "Quarterly comparison across teams and regions",
+            "One-click PDF download from report view"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-01-18",
+      "title": "Performance Patch — Fixed memory leak in data loader and optimised DB queries",
+      "changes": [
+        {
+          "type": "fix",
+          "count": 4,
+          "items": [
+            "Patched memory leak in streaming data loader",
+            "Closed uncollected DB connections on session end",
+            "Fixed race condition in concurrent API calls",
+            "Resolved timeout error on large dataset queries"
+          ]
+        },
+        {
+          "type": "improvement",
+          "count": 1,
+          "items": [
+            "Optimised N+1 queries in deal list endpoint"
+          ]
+        },
+        {
+          "type": "feature",
+          "count": 0,
+          "items": [
+            "No new features in this release"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2026-01-05",
+      "title": "Customer Profiles — Added contact history timeline and deal stage tracking",
+      "changes": [
+        {
+          "type": "fix",
+          "count": 1,
+          "items": [
+            "Fixed contact avatar not loading for new profiles"
+          ]
+        },
+        {
+          "type": "improvement",
+          "count": 2,
+          "items": [
+            "Timeline entries now grouped by date for clarity",
+            "Deal stage badges show elapsed time since last change"
+          ]
+        },
+        {
+          "type": "feature",
+          "count": 4,
+          "items": [
+            "Full contact interaction history timeline",
+            "Visual deal stage progression tracker",
+            "Linked deals panel on profile sidebar",
+            "Custom tags and notes per contact"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-12-22",
+      "title": "Notification System — In-app alerts and email digests for deal status changes",
+      "changes": [
+        {
+          "type": "fix",
+          "count": 2,
+          "items": [
+            "Fixed duplicate email notifications on bulk updates",
+            "Resolved in-app alert badge count not resetting on read"
+          ]
+        },
+        {
+          "type": "improvement",
+          "count": 1,
+          "items": [
+            "Email digest now batches alerts into a single daily summary"
+          ]
+        },
+        {
+          "type": "feature",
+          "count": 2,
+          "items": [
+            "Real-time in-app notification centre with filters",
+            "Configurable email digest frequency per user"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-12-10",
+      "title": "Role-Based Access — Granular permissions for admin, manager and agent roles",
+      "changes": [
+        {
+          "type": "fix",
+          "count": 3,
+          "items": [
+            "Fixed agent role able to delete deals (permission bypass)",
+            "Resolved permission cache not clearing on role change",
+            "Fixed admin panel accessible without 2FA when required"
+          ]
+        },
+        {
+          "type": "improvement",
+          "count": 0,
+          "items": [
+            "No improvements in this release"
+          ]
+        },
+        {
+          "type": "feature",
+          "count": 1,
+          "items": [
+            "Role permission matrix editor in admin settings"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-11-28",
+      "title": "Pipeline Kanban — Drag-and-drop deal cards across configurable stages",
+      "changes": [
+        {
+          "type": "fix",
+          "count": 0,
+          "items": [
+            "No bug fixes in this release"
+          ]
+        },
+        {
+          "type": "improvement",
+          "count": 1,
+          "items": [
+            "Smooth drag-and-drop animation with drop-zone preview"
+          ]
+        },
+        {
+          "type": "feature",
+          "count": 5,
+          "items": [
+            "Kanban board view for all active deals",
+            "Configurable pipeline stages per team",
+            "Deal card quick-edit on hover",
+            "Column WIP (work-in-progress) limits",
+            "Stage-change webhook triggers"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-11-10",
+      "title": "Bulk Import — CSV / Excel import wizard with field-mapping preview",
+      "changes": [
+        {
+          "type": "fix",
+          "count": 2,
+          "items": [
+            "Fixed import failing silently on rows with empty required fields",
+            "Resolved Excel date columns importing as raw serial numbers"
+          ]
+        },
+        {
+          "type": "improvement",
+          "count": 2,
+          "items": [
+            "Field-mapping preview highlights unmapped columns in amber",
+            "Import progress bar now shows row-level status"
+          ]
+        },
+        {
+          "type": "feature",
+          "count": 1,
+          "items": [
+            "Step-by-step import wizard with field-mapping UI"
+          ]
+        }
+      ]
+    },
+    {
+      "date": "2025-10-25",
+      "title": "v1.0.0 Launch — Initial public release with core lead management",
+      "changes": [
+        {
+          "type": "fix",
+          "count": 5,
+          "items": [
+            "Fixed lead assignment not persisting on page refresh",
+            "Resolved search returning stale results after filter reset",
+            "Fixed broken pagination on leads list beyond page 3",
+            "Corrected currency formatting for non-USD locales",
+            "Fixed logout not clearing session tokens properly"
+          ]
+        },
+        {
+          "type": "improvement",
+          "count": 3,
+          "items": [
+            "Lead list table now sortable by all columns",
+            "Status dropdown uses colour-coded options",
+            "Mobile layout optimised for leads list and detail view"
+          ]
+        },
+        {
+          "type": "feature",
+          "count": 6,
+          "items": [
+            "Core lead management with status tracking",
+            "Team-based lead assignment",
+            "Advanced search and filter panel",
+            "Activity feed per lead record",
+            "Email integration for outbound communications",
+            "Role-based visibility for sensitive lead data"
+          ]
+        }
+      ]
+    }
+  ]
+}
