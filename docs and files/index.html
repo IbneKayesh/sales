@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales Log</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 32px;
+      background: linear-gradient(135deg, #6366f1, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .table-wrapper {
+      max-width: 860px;
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #1e2130;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    /* Header row */
+    .row.header {
+      display: grid;
+      grid-template-columns: 130px 1fr 220px;
+      background: #1a1d2e;
+      border-bottom: 2px solid #2d3148;
+      padding: 14px 20px;
+      gap: 16px;
+    }
+
+    .row.header .cell {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #7c83a4;
+    }
+
+    /* Data rows */
+    .row {
+      display: grid;
+      grid-template-columns: 130px 1fr 220px;
+      padding: 16px 20px;
+      gap: 16px;
+      border-bottom: 1px solid #1a1d2e;
+      background: #13151f;
+      transition: background 0.18s;
+      align-items: start;
+    }
+
+    .row:last-child {
+      border-bottom: none;
+    }
+
+    .row:hover {
+      background: #1a1d2e;
+    }
+
+    /* Date cell */
+    .cell.date {
+      font-size: 0.82rem;
+      color: #9ca3af;
+      padding-top: 2px;
+      white-space: nowrap;
+    }
+
+    /* Title cell */
+    .cell.title {
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+
+    /* Badges cell */
+    .cell.badges {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* Badge group = badge + its collapsible list */
+    .badge-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* Clickable badge button */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 20px;
+      padding: 3px 10px;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      width: fit-content;
+      transition: opacity 0.15s, transform 0.15s;
+      position: relative;
+      user-select: none;
+    }
+
+    .badge:hover {
+      opacity: 0.85;
+      transform: translateY(-1px);
+    }
+
+    .badge.fix {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .badge.improvement {
+      background: rgba(234, 179, 8, 0.12);
+      color: #facc15;
+      border: 1px solid rgba(234, 179, 8, 0.22);
+    }
+
+    .badge.feature {
+      background: rgba(99, 102, 241, 0.14);
+      color: #a78bfa;
+      border: 1px solid rgba(99, 102, 241, 0.28);
+    }
+
+    .badge .count {
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    /* Chevron icon */
+    .badge .chevron {
+      font-size: 0.6rem;
+      margin-left: 2px;
+      display: inline-block;
+      transition: transform 0.22s ease;
+      opacity: 0.7;
+    }
+
+    .badge.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Collapsible detail list */
+    .badge-details {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.28s ease, opacity 0.22s ease;
+      opacity: 0;
+    }
+
+    .badge-details.open {
+      max-height: 400px;
+      opacity: 1;
+    }
+
+    .badge-details ul {
+      list-style: none;
+      padding: 5px 0 4px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .badge-details li {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      line-height: 1.45;
+      display: flex;
+      align-items: flex-start;
+      gap: 5px;
+    }
+
+    .badge-details li::before {
+      content: '▸';
+      flex-shrink: 0;
+      margin-top: 1px;
+      opacity: 0.5;
+    }
+
+    .badge-group.fix-group   .badge-details li::before { color: #f87171; }
+    .badge-group.imp-group   .badge-details li::before { color: #facc15; }
+    .badge-group.feat-group  .badge-details li::before { color: #a78bfa; }
+  </style>
+</head>
+<body>
+
+  <h1>Sales Changelog</h1>
+
+  <div class="table-wrapper">
+    <!-- Header -->
+    <div class="row header">
+      <div class="cell">Date</div>
+      <div class="cell">Title</div>
+      <div class="cell">Changes</div>
+    </div>
+
+    <!-- Rows injected by JS -->
+    <div id="log-body"></div>
+  </div>
+
+  <script>
+    const TYPE_META = {
+      fix:         { label: 'Fix',         groupClass: 'fix-group',  badgeClass: 'fix' },
+      improvement: { label: 'Improvement', groupClass: 'imp-group',  badgeClass: 'improvement' },
+      feature:     { label: 'Feature',     groupClass: 'feat-group', badgeClass: 'feature' },
+    };
+
+    function toggleBadge(btn) {
+      const isOpen = btn.classList.toggle('open');
+      btn.nextElementSibling.classList.toggle('open', isOpen);
+    }
+
+    function buildRow({ date, title, changes }) {
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      // Date
+      const dateCell = document.createElement('div');
+      dateCell.className = 'cell date';
+      dateCell.textContent = date;
+
+      // Title
+      const titleCell = document.createElement('div');
+      titleCell.className = 'cell title';
+      titleCell.textContent = title;
+
+      // Badges
+      const badgesCell = document.createElement('div');
+      badgesCell.className = 'cell badges';
+
+      for (const change of changes) {
+        const meta = TYPE_META[change.type] ?? { label: change.type, groupClass: '', badgeClass: '' };
+
+        const group = document.createElement('div');
+        group.className = `badge-group ${meta.groupClass}`;
+
+        const btn = document.createElement('button');
+        btn.className = `badge ${meta.badgeClass}`;
+        btn.onclick = () => toggleBadge(btn);
+        btn.innerHTML = `<span class="count">${change.count}</span> ${meta.label} <span class="chevron">▼</span>`;
+
+        const details = document.createElement('div');
+        details.className = 'badge-details';
+
+        const ul = document.createElement('ul');
+        for (const item of change.items) {
+          const li = document.createElement('li');
+          li.textContent = item;
+          ul.appendChild(li);
+        }
+        details.appendChild(ul);
+
+        group.appendChild(btn);
+        group.appendChild(details);
+        badgesCell.appendChild(group);
+      }
+
+      row.appendChild(dateCell);
+      row.appendChild(titleCell);
+      row.appendChild(badgesCell);
+      return row;
+    }
+
+    fetch('data.json')
+      .then(r => r.json())
+      .then(({ data }) => {
+        const body = document.getElementById('log-body');
+        for (const entry of data) {
+          body.appendChild(buildRow(entry));
+        }
+      })
+      .catch(err => {
+        document.getElementById('log-body').innerHTML =
+          `<div style="padding:20px;color:#f87171">Failed to load data.json: ${err.message}</div>`;
+      });
+  </script>
+
+</body>
+</html>

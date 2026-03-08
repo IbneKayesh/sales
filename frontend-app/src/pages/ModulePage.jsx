@@ -21,7 +21,7 @@ const ModulePage = () => {
               >
                 <i className={`${module.mdule_micon} text-5xl`}></i>
               </div>
-              <span className="text-900 font-bold text-base pb-1">
+              <span className="text-900 font-bold text-blue-600 pb-1">
                 {module.mdule_mname}
               </span>
             </div>

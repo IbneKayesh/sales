@@ -1,4 +1,4 @@
-.p-accordion-tab .p-accordion-header{
+.p-accordion-tab .p-accordion-header {
   padding: 1px;
   background-color: #a0a0a0;
   border-radius: 5px;
@@ -8,7 +8,6 @@
 .bg-overlay-light {
   background: var(--overlay-light);
 }
-
 
 /* Global CSS for all DataTable cells */
 .p-datatable .p-datatable-thead > tr > th {
@@ -21,7 +20,7 @@
 
 /* Compact versions for tables with size="small" */
 .p-datatable.p-datatable-sm .p-datatable-thead > tr > th {
-  background-color: #616161;
+  background-color: rgb(98, 150, 192);
   color: white;
   padding: 0.4rem 0.6rem !important;
 }
@@ -61,8 +60,13 @@
   height: 2.22rem !important;
 }
 
+.p-splitbutton > .p-button {
+  background-color: rgb(64, 124, 173);
+  border-color: rgb(185, 216, 241);;
+}
+
 /* Global PrimeReact Input & Dropdown Padding Reduction */
-.p-inputtext, 
+.p-inputtext,
 .p-dropdown,
 .p-calendar .p-inputtext {
   padding: 0.5rem 0.6rem !important;
@@ -88,12 +92,15 @@ label {
   margin-top: -0.5rem !important;
 }
 
-.col-12, .md\:col-2, .md\:col-5, .md\:col-1 {
+.col-12,
+.md\:col-2,
+.md\:col-5,
+.md\:col-1 {
   padding: 0.5rem !important;
 }
 
 /* Ensure consistent height for all form components */
-.p-inputtext, 
+.p-inputtext,
 .p-dropdown,
 .p-calendar,
 .p-calendar .p-inputtext {
@@ -120,4 +127,12 @@ label {
 /* Align grid items to the bottom of the label area */
 .form-grid-align {
   align-items: flex-end !important;
+}
+
+.p-card {
+  background-color: aliceblue;
+}
+
+.p-datatable {
+  background-color: aliceblue;
 }
