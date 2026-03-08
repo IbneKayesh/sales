@@ -33,26 +33,37 @@ const Leftbar = ({ menus }) => {
   };
 
   const handleMenuClick = (submenu) => {
-    // Find the parent group and show all submenus of that group as navigation icons
-    const currentMenu = menus.find((menu) =>
-      menu.submenus.some((sub) => sub.id === submenu.id),
-    );
-    if (currentMenu) {
-      const data = getStorageData();
-      const currentGroup = data.currentGroup;
-      if (currentGroup !== currentMenu.menus_gname) {
-        const navigationIcons = currentMenu.submenus.map((sub) => ({
-          id: sub.id,
-          name: sub.menus_mname,
-          icon: sub.menus_micon,
-          url: sub.menus_mlink,
-        }));
-        setStorageData({
-          navigationIcons,
-          currentGroup: currentMenu.menus_gname,
-        });
-      }
+    const clickedItem = {
+      id: submenu.id,
+      name: submenu.menus_mname,
+      icon: submenu.menus_micon,
+      url: submenu.menus_mlink,
+    };
+
+    const data = getStorageData();
+    const prev = data.recentMenus || [];
+
+    // Find if the item already exists
+    const existingIndex = prev.findIndex((m) => m.url === clickedItem.url);
+    let updated;
+
+    if (existingIndex !== -1) {
+      // Increment count and move to top
+      const existingItem = prev[existingIndex];
+      const newItem = {
+        ...existingItem,
+        count: (existingItem.count || 0) + 1,
+      };
+      updated = [
+        newItem,
+        ...prev.filter((_, i) => i !== existingIndex),
+      ];
+    } else {
+      // Add as new with count 1
+      updated = [{ ...clickedItem, count: 1 }, ...prev];
     }
+
+    setStorageData({ recentMenus: updated });
     navigate(submenu.menus_mlink);
   };
 

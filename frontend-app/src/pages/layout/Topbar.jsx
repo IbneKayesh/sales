@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getStorageData } from "@/utils/storage";
 import "./Topbar.css";
 import ActiveBusiness from "@/components/ActiveBusiness";
 import UserProfile from "@/components/UserProfile";
-
 
 const Topbar = ({
   leftbarCollapsed,
@@ -16,30 +15,34 @@ const Topbar = ({
   const { logout, user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [navigationIcons, setNavigationIcons] = useState([]);
+  const [recentMenus, setRecentMenus] = useState([]);
+  const [showRecent, setShowRecent] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const data = getStorageData();
-    setNavigationIcons(data.navigationIcons || []);
+    setRecentMenus(data.recentMenus || []);
   }, [location.pathname]); // Update when route changes
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowRecent(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     logout();
   };
 
-  // Find the selected menu item based on current path
-  const getSelectedMenuName = () => {
-    for (const menu of menus) {
-      for (const submenu of menu.submenus) {
-        if (submenu.url === location.pathname) {
-          return submenu.name;
-        }
-      }
-    }
-    return "Home";
+  const handleRecentClick = (url) => {
+    setShowRecent(false);
+    navigate(url);
   };
-
-  const selectedMenuName = getSelectedMenuName();
 
   const [showActiveBusiness, setShowActiveBusiness] = useState(false);
 
@@ -54,31 +57,43 @@ const Topbar = ({
               }`}
             ></i>
           </button>
-          <button
-            className="topbar-btn"
-            onClick={onToggleFullMode}
-          >
+          <button className="topbar-btn" onClick={onToggleFullMode}>
             <i className="pi pi-expand"></i>
           </button>
         </div>
+
         <div className="topbar-center">
-          {navigationIcons.length > 0 ? (
-            <div className="navigation-icons">
-              {navigationIcons.map((icon) => (
-                <button
-                  key={icon.id}
-                  className="topbar-btn nav-icon-btn mr-1"
-                  onClick={() => navigate(icon.url)}
-                  title={icon.name}
-                >
-                  <i className={icon.icon}></i>
-                </button>
-              ))}
+          {recentMenus.length > 0 && (
+            <div className="recent-menus-wrapper" ref={dropdownRef}>
+              <button
+                className="recent-menus-trigger topbar-btn"
+                onClick={() => setShowRecent((v) => !v)}
+                title="Recent menus"
+              >
+                <i className="pi pi-history"></i>
+              </button>
+
+              {showRecent && (
+                <div className="recent-menus-dropdown">
+                  <div className="recent-menus-header">Recent</div>
+                  {recentMenus.map((menu) => (
+                    <div
+                      key={menu.url}
+                      className={`recent-menu-item${
+                        location.pathname === menu.url ? " active" : ""
+                      }`}
+                      onClick={() => handleRecentClick(menu.url)}
+                    >
+                      <i className={menu.icon}></i>
+                      <span>{menu.name} ({menu.count || 1})</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          ) : (
-            `${selectedMenuName} - SGD`
           )}
         </div>
+
         <div className="topbar-avatar">
           <div className="flex items-center gap-2">
             <button className="topbar-btn hidden">
