@@ -8,6 +8,7 @@ import {
 import "./App.css";
 import { AuthProvider, useAuth } from "./hooks/useAuth.jsx";
 import { ToastProvider } from "./hooks/useToast.jsx";
+import { AppUIProvider } from "./hooks/useAppUI.jsx";
 
 //internal imports
 import LandingPage from "./pages/LandingPage";
@@ -63,7 +64,7 @@ import ProfileSettings from "./pages/setup/users/ProfileSettings.jsx";
 import PasswordPage from "./pages/setup/users/PasswordPage.jsx";
 import DefaultDataPage from "./pages/setup/settings/DefaultDataPage.jsx";
 //reports
-import ShopPage from "./pages/reports/ShopPage.jsx";
+import DashboardPage from "./pages/reports/shop/DashboardPage.jsx";
 
 // mobile imports
 import MobileLayout from "./mobile/layout";
@@ -75,9 +76,11 @@ import MobileSample from "./mobile/sample";
 function App() {
   return (
     <ToastProvider>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <AppUIProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </AppUIProvider>
     </ToastProvider>
   );
 }
@@ -119,8 +122,7 @@ function AppRoutes() {
           >
             <Route index element={<HomePage />} />
             <Route path="module" element={<ModulePage />} />
-            //auth
-            //crm
+            //auth //crm
             <Route path="crm/contact" element={<ContactPage />} />
             <Route path="crm/order-route" element={<OrderRoutePage />} />
             <Route path="crm/delivery-van" element={<DeliveryVanPage />} />
@@ -168,7 +170,7 @@ function AppRoutes() {
             <Route path="setup/users/password" element={<PasswordPage />} />
             <Route path="setup/default-data" element={<DefaultDataPage />} />
             //reports
-            <Route path="reports/shop" element={<ShopPage />} />
+            <Route path="reports/shop/dashboard" element={<DashboardPage />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

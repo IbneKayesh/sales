@@ -5,12 +5,15 @@ import { generateGuid } from "@/utils/guid";
 import tmib_brand from "@/models/inventory/tmib_brand.json";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/useToast";
+import { useLoading, useNotification } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmib_brand, { edit_stop: 0 });
 
 export const useBrands = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
+  const { setIsLoading } = useLoading();
+  const { addNotification } = useNotification();
   const [dataList, setDataList] = useState([]);
   const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
@@ -19,15 +22,25 @@ export const useBrands = () => {
 
   const loadBrands = async () => {
     try {
+      setIsBusy(true);
+      setIsLoading(true);
       const response = await brandsAPI.getAll({ muser_id: user.users_users });
       //response = { message, data }
       //console.log("response: " + JSON.stringify(response));
       setDataList(response.data);
 
+      addNotification(
+        "Data Loaded",
+        "Brands list loaded successfully.",
+        "success",
+      );
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
       showToast("error", "Error", error?.message || "Failed to load data");
+    } finally {
+      setIsBusy(false);
+      setIsLoading(false);
     }
   };
 
@@ -66,6 +79,8 @@ export const useBrands = () => {
 
   const handleDelete = async (rowData) => {
     try {
+      setIsBusy(true);
+      setIsLoading(true);
       // Call API, unwrap { message, data }
       const formDataNew = {
         ...rowData,
@@ -84,9 +99,19 @@ export const useBrands = () => {
         response.message ||
           "Operation " + (response.success ? "successful" : "failed"),
       );
+      if (response.success) {
+        addNotification(
+          "Brand Deleted",
+          `Brand "${rowData.brand_brnam}" deleted successfully.`,
+          "info",
+        );
+      }
     } catch (error) {
       console.error("Error deleting data:", error);
       showToast("error", "Error", error?.message || "Failed to delete data");
+    } finally {
+      setIsBusy(false);
+      setIsLoading(false);
     }
   };
 
@@ -98,6 +123,7 @@ export const useBrands = () => {
     e.preventDefault();
     try {
       setIsBusy(true);
+      setIsLoading(true);
 
       // Validate form
       const newErrors = validate(formData, tmib_brand);
@@ -106,6 +132,7 @@ export const useBrands = () => {
 
       if (Object.keys(newErrors).length > 0) {
         setIsBusy(false);
+        setIsLoading(false);
         return;
       }
 
@@ -137,6 +164,14 @@ export const useBrands = () => {
           "Operation " + (response.success ? "successful" : "failed"),
       );
 
+      if (response.success) {
+        addNotification(
+          formData.id ? "Brand Updated" : "Brand Created",
+          `Brand "${formDataNew.brand_brnam}" ${formData.id ? "updated" : "created"} successfully.`,
+          "success",
+        );
+      }
+
       handleClear();
       setCurrentView("list");
       loadBrands();
@@ -146,6 +181,7 @@ export const useBrands = () => {
       showToast("error", "Error", error?.message || "Failed to save data");
     } finally {
       setIsBusy(false);
+      setIsLoading(false);
     }
   };
 

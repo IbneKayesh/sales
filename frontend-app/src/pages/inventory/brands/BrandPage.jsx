@@ -38,7 +38,7 @@ const BrandPage = () => {
               size="small"
               severity="secondary"
               onClick={handleRefresh}
-              disabled={!isList}
+              disabled={!isList || isBusy}
             />
             <Button
               label="New"
@@ -46,7 +46,7 @@ const BrandPage = () => {
               size="small"
               severity="info"
               onClick={handleAddNew}
-              disabled={!isList}
+              disabled={!isList || isBusy}
             />
             <Button
               label="Back"
@@ -54,7 +54,7 @@ const BrandPage = () => {
               size="small"
               severity="help"
               onClick={handleCancel}
-              disabled={isList}
+              disabled={isList || isBusy}
             />
           </ButtonGroup>
         </div>
