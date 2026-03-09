@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { authAPI } from "@/api/auth/authAPI";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
+import { useToast } from "@/hooks/useAppUI";
 import { setStorageData } from "@/utils/storage";
 
 export const usePermissions = () => {

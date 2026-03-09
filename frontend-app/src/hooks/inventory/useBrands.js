@@ -4,17 +4,17 @@ import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import tmib_brand from "@/models/inventory/tmib_brand.json";
 import { useAuth } from "@/hooks/useAuth";
-import { useLoading, useNotification, useToast } from "@/hooks/useAppUI";
+import { useBusy, useNotification } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmib_brand, { edit_stop: 0 });
+//all error log track to notifcation
+//data changes track to change log
 
 export const useBrands = () => {
   const { user } = useAuth();
-  const { showToast } = useToast();
-  const { setIsLoading } = useLoading();
-  const { addNotification } = useNotification();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const [dataList, setDataList] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
@@ -22,24 +22,20 @@ export const useBrands = () => {
   const loadBrands = async () => {
     try {
       setIsBusy(true);
-      setIsLoading(true);
       const response = await brandsAPI.getAll({ muser_id: user.users_users });
-      //response = { message, data }
-      //console.log("response: " + JSON.stringify(response));
       setDataList(response.data);
-
-      addNotification(
-        "Data Loaded",
-        "Brands list loaded successfully.",
-        "success",
-      );
-      //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Brand",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
-      setIsLoading(false);
     }
   };
 
@@ -70,8 +66,6 @@ export const useBrands = () => {
   };
 
   const handleEdit = (data) => {
-    //console.log("unit: " + JSON.stringify(unit));
-
     setFormData(data);
     setCurrentView("form");
   };
@@ -79,8 +73,6 @@ export const useBrands = () => {
   const handleDelete = async (rowData) => {
     try {
       setIsBusy(true);
-      setIsLoading(true);
-      // Call API, unwrap { message, data }
       const formDataNew = {
         ...rowData,
         muser_id: user.users_users,
@@ -88,29 +80,33 @@ export const useBrands = () => {
       };
       const response = await brandsAPI.delete(formDataNew);
 
-      // Remove deleted unit from local state
-      const updatedList = dataList.filter((u) => u.id !== rowData.id);
-      setDataList(updatedList);
-
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Deleted" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
       if (response.success) {
-        addNotification(
-          "Brand Deleted",
-          `Brand "${rowData.brand_brnam}" deleted successfully.`,
-          "info",
-        );
+        const updatedList = dataList.filter((u) => u.id !== rowData.id);
+        setDataList(updatedList);
       }
+
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `Brand - ${rowData.brand_brnam} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
     } catch (error) {
       console.error("Error deleting data:", error);
-      showToast("error", "Error", error?.message || "Failed to delete data");
+      notify({
+        severity: "error",
+        summary: "Brand",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
-      setIsLoading(false);
     }
   };
 
@@ -121,72 +117,69 @@ export const useBrands = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      setIsBusy(true);
-      setIsLoading(true);
-
-      // Validate form
       const newErrors = validate(formData, tmib_brand);
       setErrors(newErrors);
       console.log("handleSave: " + JSON.stringify(newErrors));
-
       if (Object.keys(newErrors).length > 0) {
-        setIsBusy(false);
-        setIsLoading(false);
         return;
       }
 
-      // Ensure id exists (for create)
+      setIsBusy(true);
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
         muser_id: user.users_users,
         suser_id: user.id,
       };
-
       // console.log("formDataNew: " + JSON.stringify(formDataNew));
       // return;
-
-      // Call API and get { message, data }
       let response;
       if (formData.id) {
         response = await brandsAPI.update(formDataNew);
       } else {
         response = await brandsAPI.create(formDataNew);
       }
-      //console.log("response: " + JSON.stringify(response));
 
-      // Update toast using API message
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Success" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Brand - ${formDataNew.brand_brnam} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
 
       if (response.success) {
-        addNotification(
-          formData.id ? "Brand Updated" : "Brand Created",
-          `Brand "${formDataNew.brand_brnam}" ${formData.id ? "updated" : "created"} successfully.`,
-          "success",
-        );
+        handleClear();
+        setCurrentView("list");
+        loadBrands();
       }
-
-       handleClear();
-       setCurrentView("list");
-       loadBrands();
     } catch (error) {
       console.error("Error saving data:", error);
-
-      showToast("error", "Error", error?.message || "Failed to save data");
+      notify({
+        severity: "error",
+        summary: "Brand",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
-       setIsBusy(false);
-       setIsLoading(false);
+      setIsBusy(false);
     }
   };
 
   return {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,

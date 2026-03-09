@@ -17,16 +17,22 @@ const Topbar = ({
   menus,
 }) => {
   const { logout, user } = useAuth();
-  const { notifications, markAsRead, markAllAsRead, clearNotifications } =
-    useNotification();
+  const {
+    notifications,
+    changesLog,
+    markAsRead,
+    markAllAsRead,
+    clearNotifications,
+    clearChangesLog,
+  } = useNotification();
 
   const location = useLocation();
   const navigate = useNavigate();
-  const [navigationIcons, setNavigationIcons] = useState([]);
   const [recentMenus, setRecentMenus] = useState([]);
   const [showRecent, setShowRecent] = useState(false);
   const dropdownRef = useRef(null);
   const notificationPanel = useRef(null);
+  const logPanel = useRef(null);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -110,10 +116,71 @@ const Topbar = ({
         <div className="topbar-avatar">
           <div className="flex items-center gap-2">
             <button
+              className="topbar-btn"
+              onClick={(e) => {
+                logPanel.current.toggle(e);
+              }}
+              title="Changes Log"
+            >
+              <i className="pi pi-file-edit"></i>
+              {changesLog.length > 0 && (
+                <Badge
+                  value={changesLog.length}
+                  severity="info"
+                  size="small"
+                ></Badge>
+              )}
+            </button>
+            <OverlayPanel
+              ref={logPanel}
+              style={{ width: "400px" }}
+              className="notification-panel shadow-5"
+            >
+              <div className="flex justify-content-between align-items-center mb-2 px-2 border-bottom-1 surface-border pb-2">
+                <span className="font-bold text-xl">Changes Log</span>
+                <Button
+                  label="Clear"
+                  link
+                  className="p-0 text-sm text-pink-500 font-semibold"
+                  onClick={clearChangesLog}
+                  disabled={changesLog.length === 0}
+                />
+              </div>
+              <div
+                className="notification-list overflow-y-auto"
+                style={{ maxHeight: "400px" }}
+              >
+                {changesLog.length === 0 ? (
+                  <div className="p-4 text-center text-500">No logs found</div>
+                ) : (
+                  changesLog.map((log) => (
+                    <div
+                      key={log.id}
+                      className="p-2 mb-1 border-round surface-50 hover:surface-100 transition-all transition-duration-200 border-left-3 border-info"
+                    >
+                      <div className="flex justify-content-between align-items-center gap-2">
+                        <span className="text-sm text-800 flex-1">
+                          {log.message}
+                        </span>
+                        <span
+                          className="text-xs text-500 whitespace-nowrap"
+                          style={{ minWidth: "fit-content" }}
+                        >
+                          {log.timestamp}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </OverlayPanel>
+
+            <button
               className="topbar-btn p-overlay-badge"
               onClick={(e) => {
                 notificationPanel.current.toggle(e);
               }}
+              title="Notifications"
             >
               <i className="pi pi-bell"></i>
               {unreadCount > 0 && (
@@ -158,33 +225,43 @@ const Topbar = ({
                     No new notifications
                   </div>
                 ) : (
-                  notifications.map((n) => (
-                    <div
-                      key={n.id}
-                      className={`p-3 mb-2 border-round cursor-pointer transition-all transition-duration-200 ${
-                        n.read
-                          ? "surface-50 opacity-70"
-                          : "blue-50 border-left-3 border-blue-500 shadow-1"
-                      } hover:surface-100`}
-                      onClick={() => {
-                        if (!n.read) markAsRead(n.id);
-                      }}
-                    >
-                      <div className="flex justify-content-between align-items-start mb-1">
-                        <span
-                          className={`text-sm ${n.read ? "text-700" : "font-bold text-blue-800"}`}
-                        >
-                          {n.title}
-                        </span>
-                        <span className="text-xs text-500">{n.timestamp}</span>
-                      </div>
-                      <p
-                        className={`m-0 text-sm line-height-3 ${n.read ? "text-600" : "text-800"}`}
+                  notifications.map((n) => {
+                    const typeColors = {
+                      success: "green",
+                      info: "blue",
+                      warn: "orange",
+                      error: "red",
+                    };
+                    const color = typeColors[n.type] || "blue";
+
+                    return (
+                      <div
+                        key={n.id}
+                        className={`p-3 mb-2 border-round cursor-pointer transition-all transition-duration-200 ${
+                          n.read
+                            ? "surface-50 opacity-70"
+                            : `${color}-50 border-left-3 border-${color}-500 shadow-1`
+                        } hover:surface-100`}
+                        onClick={() => {
+                          if (!n.read) markAsRead(n.id);
+                        }}
                       >
-                        {n.message}
-                      </p>
-                    </div>
-                  ))
+                        <div className="flex justify-content-between align-items-start mb-1">
+                          <span
+                            className={`text-sm ${n.read ? "text-700" : `font-bold text-${color}-800`}`}
+                          >
+                            {n.title}
+                          </span>
+                          <span className="text-xs text-500">{n.timestamp}</span>
+                        </div>
+                        <p
+                          className={`m-0 text-sm line-height-2 ${n.read ? "text-600" : "text-800"}`}
+                        >
+                          {n.message}
+                        </p>
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </OverlayPanel>

@@ -10,13 +10,13 @@ import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { Toast } from "primereact/toast";
 
 // --- Context Definitions ---
-const LoadingContext = createContext(null);
+const BusyContext = createContext(null);
 const NotificationContext = createContext(null);
 const ToastContext = createContext(null);
 
 // --- Component Definition for Loading Overlay ---
-const LoadingOverlay = ({ isLoading }) => {
-  if (!isLoading) return null;
+const LoadingOverlay = ({ isBusy }) => {
+  if (!isBusy) return null;
   return <LoadingSpinner fullScreen />;
 };
 
@@ -26,10 +26,11 @@ export const AppUIProvider = ({ children }) => {
   const toast = useRef(null);
 
   // Loading State
-  const [isLoading, setIsLoading] = useState(false);
+  const [isBusy, setIsBusy] = useState(false);
 
   // Notification State
   const [notifications, setNotifications] = useState([]);
+  const [changesLog, setChangesLog] = useState([]);
 
   // Toast Action
   const showToast = useCallback((severity, summary, detail, life = 3000) => {
@@ -48,8 +49,25 @@ export const AppUIProvider = ({ children }) => {
         minute: "2-digit",
       }),
       read: false,
+      fromUser: "",
+      toUser: "",
     };
     setNotifications((prev) => [newNotification, ...prev]);
+  }, []);
+
+  const addChangesLog = useCallback((message, type = "info") => {
+    const newLog = {
+      id: `${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      message,
+      type,
+      timestamp: new Date().toLocaleString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        day: "2-digit",
+        month: "short",
+      }),
+    };
+    setChangesLog((prev) => [newLog, ...prev]);
   }, []);
 
   const markAsRead = useCallback((id) => {
@@ -66,29 +84,69 @@ export const AppUIProvider = ({ children }) => {
     setNotifications([]);
   }, []);
 
+  const clearChangesLog = useCallback(() => {
+    setChangesLog([]);
+  }, []);
+
+  // Unified Notify Helper
+  const notify = useCallback(
+    ({
+      severity = "info",
+      summary = "Info",
+      detail = "",
+      toast = true,
+      notification = false,
+      log = false,
+    }) => {
+      // 1. Show Toast
+      if (toast) {
+        showToast(severity, summary, detail);
+      }
+
+      // 2. Add to Notifications (Important info)
+      if (notification) {
+        addNotification(summary, detail, severity);
+      }
+
+      // 3. Add to Changes Log (Audit trail)
+      if (log) {
+        addChangesLog(`${summary} - ${detail}`, severity);
+      }
+    },
+    [showToast, addNotification, addChangesLog],
+  );
+
   // Memoized values to prevent unnecessary re-renders
   const loadingValue = useMemo(
     () => ({
-      isLoading,
-      setIsLoading,
+      isBusy,
+      setIsBusy,
     }),
-    [isLoading],
+    [isBusy],
   );
 
   const notificationValue = useMemo(
     () => ({
       notifications,
+      changesLog,
       addNotification,
+      addChangesLog,
       markAsRead,
       markAllAsRead,
       clearNotifications,
+      clearChangesLog,
+      notify,
     }),
     [
       notifications,
+      changesLog,
       addNotification,
+      addChangesLog,
       markAsRead,
       markAllAsRead,
       clearNotifications,
+      clearChangesLog,
+      notify,
     ],
   );
 
@@ -96,22 +154,22 @@ export const AppUIProvider = ({ children }) => {
 
   return (
     <ToastContext.Provider value={toastValue}>
-      <LoadingContext.Provider value={loadingValue}>
+      <BusyContext.Provider value={loadingValue}>
         <NotificationContext.Provider value={notificationValue}>
           <Toast ref={toast} />
-          <LoadingOverlay isLoading={isLoading} />
+          <LoadingOverlay isBusy={isBusy} />
           {children}
         </NotificationContext.Provider>
-      </LoadingContext.Provider>
+      </BusyContext.Provider>
     </ToastContext.Provider>
   );
 };
 
 // --- Hooks ---
-export const useLoading = () => {
-  const context = useContext(LoadingContext);
+export const useBusy = () => {
+  const context = useContext(BusyContext);
   if (!context) {
-    throw new Error("useLoading must be used within an AppUIProvider");
+    throw new Error("useBusy must be used within an AppUIProvider");
   }
   return context;
 };

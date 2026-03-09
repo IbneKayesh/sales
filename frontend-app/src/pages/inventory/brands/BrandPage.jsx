@@ -7,8 +7,8 @@ import { ButtonGroup } from "primereact/buttongroup";
 
 const BrandPage = () => {
   const {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
@@ -38,7 +38,7 @@ const BrandPage = () => {
               size="small"
               severity="secondary"
               onClick={handleRefresh}
-              disabled={!isList || isBusy}
+              disabled={!isList}
             />
             <Button
               label="New"
@@ -46,7 +46,7 @@ const BrandPage = () => {
               size="small"
               severity="info"
               onClick={handleAddNew}
-              disabled={!isList || isBusy}
+              disabled={!isList}
             />
             <Button
               label="Back"
@@ -54,7 +54,7 @@ const BrandPage = () => {
               size="small"
               severity="help"
               onClick={handleCancel}
-              disabled={isList || isBusy}
+              disabled={isList}
             />
           </ButtonGroup>
         </div>

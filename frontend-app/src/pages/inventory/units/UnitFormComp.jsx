@@ -49,7 +49,7 @@ const UnitFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
             type="button"
             onClick={(e) => onSave(e)}
             label={formData.id ? "Update" : "Save"}
-            icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
+            icon={"pi pi-check"}
             severity="success"
             size="small"
             loading={isBusy}
