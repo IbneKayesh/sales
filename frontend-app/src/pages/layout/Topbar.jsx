@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getStorageData } from "@/utils/storage";
 import "./Topbar.css";
 import ActiveBusiness from "@/components/ActiveBusiness";
 import UserProfile from "@/components/UserProfile";
-
+import { useNotification } from "@/hooks/useAppUI";
+import { OverlayPanel } from "primereact/overlaypanel";
+import { Badge } from "primereact/badge";
+import { Button } from "primereact/button";
 
 const Topbar = ({
   leftbarCollapsed,
@@ -20,6 +23,12 @@ const Topbar = ({
   const location = useLocation();
   const navigate = useNavigate();
   const [navigationIcons, setNavigationIcons] = useState([]);
+  const [recentMenus, setRecentMenus] = useState([]);
+  const [showRecent, setShowRecent] = useState(false);
+  const dropdownRef = useRef(null);
+  const notificationPanel = useRef(null);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   useEffect(() => {
     const data = getStorageData();
@@ -87,7 +96,9 @@ const Topbar = ({
                       onClick={() => handleRecentClick(menu.url)}
                     >
                       <i className={menu.icon}></i>
-                      <span>{menu.name} ({menu.count || 1})</span>
+                      <span>
+                        {menu.name} ({menu.count || 1})
+                      </span>
                     </div>
                   ))}
                 </div>

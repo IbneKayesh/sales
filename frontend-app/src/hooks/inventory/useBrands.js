@@ -4,8 +4,7 @@ import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import tmib_brand from "@/models/inventory/tmib_brand.json";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
-import { useLoading, useNotification } from "@/hooks/useAppUI";
+import { useLoading, useNotification, useToast } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmib_brand, { edit_stop: 0 });
 
@@ -172,16 +171,16 @@ export const useBrands = () => {
         );
       }
 
-      handleClear();
-      setCurrentView("list");
-      loadBrands();
+       handleClear();
+       setCurrentView("list");
+       loadBrands();
     } catch (error) {
       console.error("Error saving data:", error);
 
       showToast("error", "Error", error?.message || "Failed to save data");
     } finally {
-      setIsBusy(false);
-      setIsLoading(false);
+       setIsBusy(false);
+       setIsLoading(false);
     }
   };
 
