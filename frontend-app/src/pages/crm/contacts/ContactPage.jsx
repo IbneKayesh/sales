@@ -7,8 +7,8 @@ import { useContacts } from "@/hooks/crm/useContacts";
 
 const ContactPage = () => {
   const {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
@@ -20,10 +20,15 @@ const ContactPage = () => {
     handleRefresh,
     handleSave,
     cntct_sorceOptions,
+    contactListDdl,
+    fetchContactListDdl,
     //ledger
     handleShowContactLedger,
     ledgerDataList,
-    handleFilterDataList
+    //supplier list
+    supplierList,
+    fetchSupplierList,
+    handleFilterDataList,
   } = useContacts();
 
   const getHeader = () => {
@@ -41,7 +46,7 @@ const ContactPage = () => {
 
         <div className="flex gap-2">
           <ButtonGroup>
-            <Button icon="pi pi-refresh" size="small" severity="secondary" onClick={handleRefresh} disabled={!isList}/>
+            <Button label="Refresh" icon="pi pi-refresh" size="small" severity="secondary" onClick={handleRefresh} disabled={!isList}/>
             <Button label="New" icon="pi pi-plus" size="small" severity="info" onClick={handleAddNew} disabled={!isList}/>
             <Button label="Back" icon="pi pi-arrow-left" size="small" severity="help" onClick={handleCancel} disabled={isList}/>
           </ButtonGroup>

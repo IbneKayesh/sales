@@ -4,16 +4,16 @@ import tmcb_cntcs from "@/models/crm/tmcb_cntcs.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
+import { useBusy, useNotification } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmcb_cntcs, { edit_stop: 0 });
 
 export const useContacts = () => {
   const { user } = useAuth();
-  const { showToast } = useToast();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const [dataList, setDataList] = useState([]);
-  const [allData, setAllData] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
+  const [dataListAll, setDataListAll] = useState([]);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
@@ -28,23 +28,30 @@ export const useContacts = () => {
 
   const loadContacts = async () => {
     try {
+      setIsBusy(true);
       const response = await contactAPI.getAll({
         muser_id: user.users_users,
       });
       // response = { message, data }
       setDataList(response.data);
-      setAllData(response.data);
-
-      //showToast("success", "Success", response.message);
+      setDataListAll(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Contacts",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
   //Fetch data from API on mount
   useEffect(() => {
-    //console.log("useEffect", dataModel);
     loadContacts();
   }, []);
 
@@ -77,6 +84,7 @@ export const useContacts = () => {
 
   const handleDelete = async (rowData) => {
     try {
+      setIsBusy(true);
       // Call API, unwrap { message, data }
       const formDataNew = {
         ...rowData,
@@ -85,19 +93,36 @@ export const useContacts = () => {
       };
       const response = await contactAPI.delete(formDataNew);
 
-      const updatedList = allData.filter((c) => c.id !== rowData.id);
-      setAllData(updatedList);
-      setDataList(updatedList);
+      if (response.success) {
+        const updatedList = dataList.filter((u) => u.id !== rowData.id);
+        setDataList(updatedList);
 
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Deleted" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+        const updatedListAll = dataListAll.filter((u) => u.id !== rowData.id);
+        setDataListAll(updatedListAll);
+      }
+
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `Contact - ${rowData.cntct_cntnm} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
     } catch (error) {
       console.error("Error deleting data:", error);
-      showToast("error", "Error", error?.message || "Failed to delete data");
+      notify({
+        severity: "error",
+        summary: "Contact",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -107,20 +132,16 @@ export const useContacts = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-
     try {
-      setIsBusy(true);
-
       // Validate form
       const newErrors = validate(formData, tmcb_cntcs);
       setErrors(newErrors);
       console.log("handleSave: " + JSON.stringify(newErrors));
-
       if (Object.keys(newErrors).length > 0) {
-        setIsBusy(false);
         return;
       }
 
+      setIsBusy(true);
       // Ensure id exists (for create)
       const formDataNew = {
         ...formData,
@@ -142,20 +163,38 @@ export const useContacts = () => {
       }
 
       // Update toast using API message
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Success" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Contact - ${formDataNew.cntct_cntnm} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
 
-      handleClear();
-      setCurrentView("list");
-      loadContacts();
+      if (response.success) {
+        handleClear();
+        setCurrentView("list");
+        loadContacts();
+      }
     } catch (error) {
       console.error("Error saving data:", error);
-
-      showToast("error", "Error", error?.message || "Failed to save data");
+      notify({
+        severity: "error",
+        summary: "Contact",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
     }
@@ -230,8 +269,8 @@ export const useContacts = () => {
   };
 
   return {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,

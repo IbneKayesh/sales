@@ -517,7 +517,7 @@ const updateTagg_mysql = async (id) => {
 // get business items
 router.post("/get-business-items", async (req, res) => {
   try {
-    const { bitem_bsins } = req.body;
+    const { muser_id, bitem_bsins } = req.body;
 
     // Validate input
     if (!bitem_bsins) {
@@ -536,8 +536,9 @@ router.post("/get-business-items", async (req, res) => {
     itm.items_iname, itm.items_idesc
     FROM tmib_bitem bitm
     LEFT JOIN tmib_items itm on bitm.bitem_items = itm.id
-    WHERE bitm.bitem_bsins = ?`;
-    const params = [bitem_bsins];
+    WHERE bitm.bitem_bsins = $1
+    AND bitm.bitem_users = $2`;
+    const params = [bitem_bsins, muser_id];
 
     const rows = await dbGetAll(sql, params, `Get BItem for ${bitem_bsins}`);
 

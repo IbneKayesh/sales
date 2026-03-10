@@ -22,7 +22,7 @@ const ProductsFormComp = ({
   formDataBItem,
   onChangeBItem,
   onSaveBItem,
-  onFetchBItem,
+  onFetchBItemSelectShop,
 }) => {
   const { dataList: unitOptions, handleGetAllActiveUnits } = useUnitsSgd();
   const { dataList: categoryOptions, handleGetAllActiveCategory } =
@@ -38,9 +38,9 @@ const ProductsFormComp = ({
     handleGetAllActiveBusiness();
   }, []);
 
-  const handleBItemChange = (key, value) => {
+  const handleBItemSelectShop = (key, value) => {
     onChangeBItem(key, value);
-    onFetchBItem(formData.id, value);
+    onFetchBItemSelectShop(formData.id, value);
   };
 
   return (
@@ -336,7 +336,7 @@ const ProductsFormComp = ({
               type="button"
               onClick={(e) => onSave(e)}
               label={formData.id ? "Update" : "Save"}
-              icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
+              icon={"pi pi-check"}
               severity="success"
               size="small"
               loading={isBusy}
@@ -360,7 +360,7 @@ const ProductsFormComp = ({
               }
               value={business.bsins_bname}
               style={{ cursor: "pointer" }}
-              onClick={() => handleBItemChange("bitem_bsins", business.id)}
+              onClick={() => handleBItemSelectShop("bitem_bsins", business.id)}
             />
           ))}
 

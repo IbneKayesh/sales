@@ -63,7 +63,8 @@ export const useProducts = () => {
     setErrors({});
     //BItem
     setFormDataBItem(dataModelBItem);
-    setBusinessItems([]);
+    setBItemList([]);
+    setBItemListAll([]);
   };
 
   const handleCancel = () => {
@@ -224,7 +225,7 @@ export const useProducts = () => {
     }
   };
 
-  // BItem
+  // BItem add/edit/active/inactive
   const [formDataBItem, setFormDataBItem] = useState(dataModelBItem);
 
   const handleChangeBItem = (field, value) => {
@@ -236,7 +237,7 @@ export const useProducts = () => {
     );
     setErrors(newErrors);
   };
-  const handleFetchBItem = async (itemId, businessId) => {
+  const handleFetchBItemSelectShop = async (itemId, businessId) => {
     //console.log("itemId: " + itemId);
     //console.log("businessId: " + businessId);
     //setFormDataBItem(dataModelBItem);
@@ -384,133 +385,149 @@ export const useProducts = () => {
     return margin;
   };
 
-  // Business Items
-  const [businessItems, setBusinessItems] = useState([]);
-  const [allBusinessData, setAllBusinessData] = useState([]);
+  // Business Items list, inventory stock
+  const [BItemList, setBItemList] = useState([]);
+  const [BItemListAll, setBItemListAll] = useState([]);
 
-  const handleItemPriceView = () => {
-    setCurrentView("price");
+  const handleItemInventoryList = () => {
+    setCurrentView("inventory");
   };
 
   const handleFetchBusinessItems = async (businessId) => {
+    //console.log(businessId);
+   //return;
+
     try {
-      setBusinessItems([]);
+      setIsBusy(true);
+      setBItemList([]);
+      setBItemListAll([]);
       const response = await productsAPI.getBusinessItems({
+        muser_id: user.users_users,
         bitem_bsins: businessId,
       });
       //response = { message, data }
       //console.log("response: " + JSON.stringify(response));
-      setBusinessItems(response.data);
-      setAllBusinessData(response.data);
-      //showToast("success", "Success", response.message);
+      setBItemList(response.data);
+      setBItemListAll(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Business Items",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
   const handleFilterBusinessItems = (filterType) => {
+    //return;
     switch (filterType) {
       case "all":
-        setBusinessItems(allBusinessData);
+        setBItemList(BItemListAll);
         break;
       case "low_stock":
-        setBusinessItems(
-          allBusinessData.filter(
+        setBItemList(
+          BItemListAll.filter(
             (i) => Number(i.bitem_gstkq) < Number(i.bitem_mnqty),
           ),
         );
         break;
       case "out_of_stock":
-        setBusinessItems(
-          allBusinessData.filter(
+        setBItemList(
+          BItemListAll.filter(
             (i) => Number(i.bitem_gstkq) === 0 && Number(i.bitem_istkq) === 0,
           ),
         );
         break;
       case "good_or_tracking_stock":
-        setBusinessItems(
-          allBusinessData.filter(
+        setBItemList(
+          BItemListAll.filter(
             (i) => Number(i.bitem_gstkq) > 0 || Number(i.bitem_istkq) > 0,
           ),
         );
         break;
       case "good_stock":
-        setBusinessItems(
-          allBusinessData.filter((i) => Number(i.bitem_gstkq) > 0),
+        setBItemList(
+          BItemListAll.filter((i) => Number(i.bitem_gstkq) > 0),
         );
         break;
       case "tracking_stock":
-        setBusinessItems(
-          allBusinessData.filter((i) => Number(i.bitem_istkq) > 0),
+        setBItemList(
+          BItemListAll.filter((i) => Number(i.bitem_istkq) > 0),
         );
         break;
       case "bad_stock":
-        setBusinessItems(
-          allBusinessData.filter((i) => Number(i.bitem_bstkq) > 0),
+        setBItemList(
+          BItemListAll.filter((i) => Number(i.bitem_bstkq) > 0),
         );
         break;
       case "without_margin":
-        setBusinessItems(
-          allBusinessData.filter((i) => Number(i.bitem_mpric) === 0),
+        setBItemList(
+          BItemListAll.filter((i) => Number(i.bitem_mpric) === 0),
         );
         break;
       case "purchase_bookings":
-        setBusinessItems(
-          allBusinessData.filter((i) => Number(i.bitem_pbqty) > 0),
+        setBItemList(
+          BItemListAll.filter((i) => Number(i.bitem_pbqty) > 0),
         );
         break;
       case "sales_bookings":
-        setBusinessItems(
-          allBusinessData.filter((i) => Number(i.bitem_sbqty) > 0),
+        setBItemList(
+          BItemListAll.filter((i) => Number(i.bitem_sbqty) > 0),
         );
         break;
       case "with_discount":
-        setBusinessItems(
-          allBusinessData.filter((i) => Number(i.bitem_sddsp) > 0),
+        setBItemList(
+          BItemListAll.filter((i) => Number(i.bitem_sddsp) > 0),
         );
         break;
       case "inactives":
-        setBusinessItems(allBusinessData.filter((i) => i.bitem_actve === 0));
+        setBItemList(BItemListAll.filter((i) => i.bitem_actve === 0));
         break;
       default:
-        setBusinessItems(allBusinessData);
+        setBItemList(BItemListAll);
         break;
     }
   };
 
   const handleFilterDataList = (filterType) => {
+    //return;
     switch (filterType) {
       case "all":
-        setDataList(allData);
+        setDataList(dataListAll);
         break;
       case "tracking":
-        setDataList(allData.filter((i) => i.items_trcks === 1));
+        setDataList(dataListAll.filter((i) => i.items_trcks === 1));
         break;
       case "vat":
-        setDataList(allData.filter((i) => Number(i.items_sdvat) > 0));
+        setDataList(dataListAll.filter((i) => Number(i.items_sdvat) > 0));
         break;
       case "without_cost":
-        setDataList(allData.filter((i) => Number(i.items_costp) === 0));
+        setDataList(dataListAll.filter((i) => Number(i.items_costp) === 0));
         break;
       case "without_barcode":
-        setDataList(allData.filter((i) => !i.items_bcode));
+        setDataList(dataListAll.filter((i) => !i.items_bcode));
         break;
       case "without_hsn":
-        setDataList(allData.filter((i) => !i.items_hscod));
+        setDataList(dataListAll.filter((i) => !i.items_hscod));
         break;
       case "inactives":
-        setDataList(allData.filter((i) => i.items_actve === 0));
+        setDataList(dataListAll.filter((i) => i.items_actve === 0));
         break;
       default:
-        setDataList(allData);
+        setDataList(dataListAll);
         break;
     }
   };
 
   return {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
@@ -525,11 +542,11 @@ export const useProducts = () => {
     formDataBItem,
     handleChangeBItem,
     handleSaveBItem,
-    handleFetchBItem,
+    handleFetchBItemSelectShop,
     // Business Items
-    handleItemPriceView,
+    handleItemInventoryList,
     handleFetchBusinessItems,
-    businessItems,
+    BItemList,
     handleFilterDataList,
     handleFilterBusinessItems,
   };

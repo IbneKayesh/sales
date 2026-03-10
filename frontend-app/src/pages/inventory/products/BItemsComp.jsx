@@ -1,6 +1,6 @@
 import { Chip } from "primereact/chip";
-import { useBusiness } from "@/hooks/setup/useBusiness";
-import { useState } from "react";
+import { useBusinessSgd } from "@/hooks/setup/useBusinessSgd";
+import { useEffect, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import ActiveRowCell from "@/components/ActiveRowCell";
@@ -14,10 +14,14 @@ const BItemsComp = ({
   dataList,
   onFilterBusinessItems,
 }) => {
-  const { dataList: businessOptions } = useBusiness();
+  const { dataList: businessOptions, handleGetAllActiveBusiness } = useBusinessSgd();
   const [selBusinessId, setSelBusinessId] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [filterType, setFilterType] = useState("all");
+
+  useEffect(() => {
+    handleGetAllActiveBusiness();
+  }, []);
 
   const filterOptions = [
     { label: "All Items", value: "all", icon: "pi pi-list" },

@@ -295,6 +295,10 @@ router.post("/delete", async (req, res) => {
   }
 });
 
+
+
+
+
 //get-by-type
 router.post("/get-by-type", async (req, res) => {
   try {
@@ -458,7 +462,6 @@ router.post("/customers", async (req, res) => {
   }
 });
 
-
 //receipt-suppliers
 router.post("/receipt-suppliers", async (req, res) => {
   try {
@@ -503,7 +506,6 @@ router.post("/receipt-suppliers", async (req, res) => {
     });
   }
 });
-
 
 //route-outlets-available
 router.post("/route-outlets-available", async (req, res) => {

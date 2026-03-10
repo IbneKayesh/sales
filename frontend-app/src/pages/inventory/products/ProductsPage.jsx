@@ -8,8 +8,8 @@ import BItemsComp from "./BItemsComp";
 
 const ProductsPage = () => {
   const {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
@@ -20,16 +20,15 @@ const ProductsPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-
     // BItem
     formDataBItem,
     handleChangeBItem,
     handleSaveBItem,
-    handleFetchBItem,
+    handleFetchBItemSelectShop,
     // Business Items
-    handleItemPriceView,
+    handleItemInventoryList,
     handleFetchBusinessItems,
-    businessItems,
+    BItemList,
     handleFilterDataList,
     handleFilterBusinessItems,
   } = useProducts();
@@ -44,7 +43,9 @@ const ProductsPage = () => {
             ? "Products List"
             : formData.id
               ? "Edit Product"
-              : "Add New Product"}
+              : currentView === "inventory"
+                ? "Inventory"
+                : "Add Product"}
         </h3>
 
         <div className="flex gap-2">
@@ -66,11 +67,11 @@ const ProductsPage = () => {
               disabled={!isList}
             />
             <Button
-              label="Price"
-              icon="pi pi-credit-card"
+              label="Inventory"
+              icon="pi pi-shop"
               size="small"
-              severity="secondary"
-              onClick={handleItemPriceView}
+              severity="warning"
+              onClick={handleItemInventoryList}
               disabled={!isList}
             />
             <Button
@@ -108,12 +109,12 @@ const ProductsPage = () => {
             formDataBItem={formDataBItem}
             onChangeBItem={handleChangeBItem}
             onSaveBItem={handleSaveBItem}
-            onFetchBItem={handleFetchBItem}
+            onFetchBItemSelectShop={handleFetchBItemSelectShop}
           />
         ) : (
           <BItemsComp
             onFetchBusinessItems={handleFetchBusinessItems}
-            dataList={businessItems}
+            dataList={BItemList}
             onFilterBusinessItems={handleFilterBusinessItems}
           />
         )}
