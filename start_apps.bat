@@ -2,7 +2,7 @@
 cd /d %~dp0
 
 :MENU
-color 0c
+color 0e
 echo.
 echo  -=-=-=- MENU -=-=-=-
 echo Show choice as below-

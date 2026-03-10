@@ -190,8 +190,8 @@ export const useCategory = () => {
   };
 
   return {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,

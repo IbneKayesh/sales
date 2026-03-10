@@ -7,8 +7,8 @@ import { useTerritory } from "@/hooks/crm/useTerritory";
 
 const TerritoryPage = () => {
   const {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
@@ -36,7 +36,7 @@ const TerritoryPage = () => {
 
         <div className="flex gap-2">
           <ButtonGroup>
-            <Button icon="pi pi-refresh" size="small" severity="secondary" onClick={handleRefresh} disabled={!isList}/>
+            <Button label="Refresh" icon="pi pi-refresh" size="small" severity="secondary" onClick={handleRefresh} disabled={!isList}/>
             <Button label="New" icon="pi pi-plus" size="small" severity="info" onClick={handleAddNew} disabled={!isList}/>
             <Button label="Back" icon="pi pi-arrow-left" size="small" severity="help" onClick={handleCancel} disabled={isList}/>
           </ButtonGroup>

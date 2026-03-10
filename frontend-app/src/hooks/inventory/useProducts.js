@@ -5,35 +5,45 @@ import { generateGuid } from "@/utils/guid";
 import tmib_items from "@/models/inventory/tmib_items.json";
 import tmib_bitem from "@/models/inventory/tmib_bitem.json";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
+import { useBusy, useNotification, useToast } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmib_items, { edit_stop: 0 });
 const dataModelBItem = generateDataModel(tmib_bitem, { edit_stop: 0 });
 
 export const useProducts = () => {
   const { user } = useAuth();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
   const [allData, setAllData] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
+  const [dataListAll, setDataListAll] = useState([]);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
   const loadProducts = async () => {
     try {
+      setIsBusy(true);
       const response = await productsAPI.getAll({
         muser_id: user.users_users,
       });
       //response = { message, data }
       //console.log("response: " + JSON.stringify(response));
       setDataList(response.data);
-      setAllData(response.data);
-
-      //showToast("success", "Success", response.message);
+      setDataListAll(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Product",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -53,7 +63,6 @@ export const useProducts = () => {
     setErrors({});
     //BItem
     setFormDataBItem(dataModelBItem);
-
     setBusinessItems([]);
   };
 
@@ -76,7 +85,8 @@ export const useProducts = () => {
 
   const handleDelete = async (rowData) => {
     try {
-      // Call API, unwrap { message, data }
+      setIsBusy(true);
+
       const formDataNew = {
         ...rowData,
         muser_id: user.users_users,
@@ -85,19 +95,38 @@ export const useProducts = () => {
       const response = await productsAPI.delete(formDataNew);
 
       // Remove deleted item from local state
-      const updatedList = allData.filter((u) => u.id !== rowData.id);
-      setAllData(updatedList);
-      setDataList(updatedList);
+      if (response.success) {
+        const updatedList = dataList.filter((u) => u.id !== rowData.id);
+        setDataList(updatedList);
 
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Deleted" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+        const updatedListAll = dataListAll.filter(
+          (u) => u.id !== rowData.id,
+        );
+        setDataListAll(updatedListAll);
+      }
+
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `Product - ${rowData.items_iname} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
     } catch (error) {
       console.error("Error deleting data:", error);
-      showToast("error", "Error", error?.message || "Failed to delete data");
+      notify({
+        severity: "error",
+        summary: "Product",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -108,8 +137,6 @@ export const useProducts = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      setIsBusy(true);
-
       const { items_puofm, items_dfqty, items_suofm } = formData;
 
       if (items_puofm === items_suofm && Number(items_dfqty) > 1) {
@@ -126,7 +153,6 @@ export const useProducts = () => {
           "Warning",
           "If Primary Unit and Secondary Unit are different, Difference Qty must be greater than 1.",
         );
-        setIsBusy(false);
         return;
       }
 
@@ -136,10 +162,10 @@ export const useProducts = () => {
       console.log("handleSave: " + JSON.stringify(newErrors));
 
       if (Object.keys(newErrors).length > 0) {
-        setIsBusy(false);
         return;
       }
 
+      setIsBusy(true);
       // Ensure id exists (for create)
       const formDataNew = {
         ...formData,
@@ -161,20 +187,38 @@ export const useProducts = () => {
       //console.log("response: " + JSON.stringify(response));
 
       // Update toast using API message
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Success" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Product - ${formDataNew.items_iname} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
 
-      handleClear();
-      setCurrentView("list");
-      loadProducts();
+      if (response.success) {
+        handleClear();
+        setCurrentView("list");
+        loadProducts();
+      }
     } catch (error) {
       console.error("Error saving data:", error);
-
-      showToast("error", "Error", error?.message || "Failed to save data");
+      notify({
+        severity: "error",
+        summary: "Brand",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
     }
@@ -198,6 +242,7 @@ export const useProducts = () => {
     //setFormDataBItem(dataModelBItem);
 
     try {
+      setIsBusy(true);
       const response = await productsAPI.getBItem({
         bitem_items: itemId,
         bitem_bsins: businessId,
@@ -221,24 +266,32 @@ export const useProducts = () => {
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Product Warehouse",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
   const handleSaveBItem = async (e) => {
     e.preventDefault();
     try {
-      setIsBusy(true);
-
       // Validate form
       const newErrors = validate(formDataBItem, tmib_bitem);
       setErrors(newErrors);
       console.log("handleSave: " + JSON.stringify(newErrors));
 
       if (Object.keys(newErrors).length > 0) {
-        setIsBusy(false);
         return;
       }
+
+      setIsBusy(true);
 
       const bitem_mpric = calculateApproxMargin();
 
@@ -265,12 +318,23 @@ export const useProducts = () => {
       //console.log("response: " + JSON.stringify(response));
 
       // Update toast using API message
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Success" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Product Warehouse - ${
+          response.success
+            ? formDataBItem.id
+              ? "modified"
+              : "created"
+            : formDataBItem.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
 
       //must clear business to prevent inserting same item in same business
       // setFormDataBItem((prev) => ({
@@ -281,8 +345,14 @@ export const useProducts = () => {
       setFormDataBItem(dataModelBItem);
     } catch (error) {
       console.error("Error saving data:", error);
-
-      showToast("error", "Error", error?.message || "Failed to save data");
+      notify({
+        severity: "error",
+        summary: "Brand",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
     }

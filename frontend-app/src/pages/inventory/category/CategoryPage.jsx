@@ -7,8 +7,8 @@ import { ButtonGroup } from "primereact/buttongroup";
 
 const CategoryPage = () => {
   const {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,

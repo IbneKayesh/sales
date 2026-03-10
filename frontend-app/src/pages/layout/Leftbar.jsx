@@ -104,7 +104,7 @@ const Leftbar = ({ menus }) => {
         ))}
 
         <div className="menu-list">
-          <div className="menu-item bg-gray-900" onClick={() => navigate("/home/module")}>
+          <div className="menu-item bg-blue-900" onClick={() => navigate("/home/module")}>
             <i className="pi pi-arrow-right"></i>
             <div className="menu-name text-gray-300">Goto Modules</div>
           </div>

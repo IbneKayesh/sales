@@ -13,7 +13,7 @@ const ModulePage = () => {
             style={{ animationDelay: `${index * 50}ms` }}
           >
             <div
-              className="bg-white p-1 shadow-1 hover:shadow-4 border-round-xl cursor-pointer transition-all transition-duration-300 flex flex-column align-items-center justify-content-center text-center transform hover:-translate-y-1"
+              className="bg-blue-200 p-1 shadow-1 hover:shadow-4 border-round-xl cursor-pointer transition-all transition-duration-300 flex flex-column align-items-center justify-content-center text-center transform hover:-translate-y-1"
               onClick={() => handleFetchMenus(module.id)}
             >
               <div
@@ -21,7 +21,7 @@ const ModulePage = () => {
               >
                 <i className={`${module.mdule_micon} text-5xl`}></i>
               </div>
-              <span className="text-900 font-bold text-blue-600 pb-1">
+              <span className="text-900 font-bold text-gray-800 pb-1">
                 {module.mdule_mname}
               </span>
             </div>

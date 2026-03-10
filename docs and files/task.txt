@@ -1,7 +1,6 @@
-useBrands.js
-useUnits.js
-useCategory.js >>
-
+Inventory >> Brand, Units, Category
+CRM >> Zone, Area, Territory
+In working >> Products, Products Warehouse
 
 
 
