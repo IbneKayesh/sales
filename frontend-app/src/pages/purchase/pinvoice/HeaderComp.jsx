@@ -182,7 +182,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
             <Checkbox
               id="minvc_ispst"
               name="minvc_ispst"
-              checked={formData.minvc_ispst === 1}
+              checked={!!formData.minvc_ispst}
               onChange={(e) =>
                 handleChange("minvc_ispst", e.checked ? 1 : 0)
               }

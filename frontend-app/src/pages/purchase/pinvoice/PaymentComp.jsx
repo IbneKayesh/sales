@@ -15,7 +15,7 @@ const PaymentComp = ({
   const [payableNote, setPayableNote] = useState("");
   useEffect(() => {
     let note = "";
-    if (formData.minvc_vatpy === 1) {
+    if (!!formData.minvc_vatpy) {
       note += " with Vat";
     }
     setPayableNote(note);
@@ -135,12 +135,11 @@ const PaymentComp = ({
                 -{Number(formData.minvc_dsamt).toFixed(2)}
               </span>
             </div>
-
             <div
               className={`flex justify-content-between`}
               onClick={() =>
                 !formData.edit_stop &&
-                handleChange("minvc_vatpy", formData.minvc_vatpy === 1 ? 0 : 1)
+                handleChange("minvc_vatpy", !formData.minvc_vatpy ? 1 : 0)
               }
             >
               <div
@@ -148,7 +147,7 @@ const PaymentComp = ({
               >
                 <i
                   className={
-                    formData.minvc_vatpy === 1
+                    !!formData.minvc_vatpy
                       ? "pi pi-check-circle text-bold text-white"
                       : "pi pi-circle text-bold text-red-500"
                   }

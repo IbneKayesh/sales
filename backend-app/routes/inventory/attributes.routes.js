@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { attrb_users } = req.body;
+    const { muser_id } = req.body;
 
     // Validate input
-    if (!attrb_users) {
+    if (!muser_id) {
       return res.json({
         success: false,
         message: "User ID is required",
@@ -20,14 +20,14 @@ router.post("/", async (req, res) => {
     //database action
     const sql = `SELECT atb.*, 0 as edit_stop
       FROM tmib_attrb atb
-      WHERE atb.attrb_users = ?
+      WHERE atb.attrb_users = $1
       ORDER BY atb.attrb_aname`;
-    const params = [attrb_users];
+    const params = [muser_id];
 
     const rows = await dbGetAll(
       sql,
       params,
-      `Get attributes for ${attrb_users}`,
+      `Get attributes for ${muser_id}`,
     );
     res.json({
       success: true,

@@ -161,3 +161,29 @@
 .recent-menu-item.active i {
   color: #7dd3fc;
 }
+
+
+.lite-badge {
+  display: inline-block;
+  padding: 2px 4px;
+  font-size: 8px;
+  font-weight: 600;
+  color: #fff;
+  border-radius: 12px;
+}
+
+/* Info */
+.lite-badge-info {
+  background-color: #17a2b8;
+}
+
+/* Danger */
+.lite-badge-danger {
+  background-color: #dc3545;
+}
+
+/* Warning */
+.lite-badge-warning {
+  background-color: #ffc107;
+  color: #212529; /* darker text for visibility */
+}

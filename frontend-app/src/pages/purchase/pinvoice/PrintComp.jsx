@@ -296,7 +296,7 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
             <div className="summary-line">
               <span>VAT:</span>
               <span>
-                {formData?.minvc_vatpy === 1
+                {!!formData?.minvc_vatpy
                   ? formatCurrency(formData?.minvc_vtamt)
                   : 0}
               </span>

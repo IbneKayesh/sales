@@ -214,9 +214,9 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
   
   const items_trcks_BT = (rowData) => {
     const stockMap = {
-      0: "No Stock",
-      1: "Single Stock",
-      2: "Bulk Stock",
+      0: <span className="text-red-500">⚊ No Stock</span>,
+      1: <span>☰ Single Stock</span>,
+      2: <span>☷ Bulk Stock</span>,
     };
   
     return stockMap[rowData.items_trcks] ?? "Unknown";

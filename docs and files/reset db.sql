@@ -3,18 +3,22 @@ CREATE DATABASE shopdb;
 USE shopdb;
 
 
--- purchase
+-- purchase invoice
+DELETE FROM tmpb_cinvc;
+DELETE FROM tmpb_minvc;
 DELETE FROM tmtb_paybl;
 DELETE FROM tmpb_expns;
 
+-- purchase booking
 DELETE FROM tmpb_cbkng;
 DELETE FROM tmpb_mbkng;
 
+
+-- purchase receipt
 DELETE FROM tmpb_crcpt;
 DELETE FROM tmpb_mrcpt;
 
-DELETE FROM tmpb_cinvc;
-DELETE FROM tmpb_minvc;
+
 
 -- sales
 DELETE FROM tmtb_rcvbl;

@@ -573,11 +573,10 @@ router.post("/get-purchase-booking-items", async (req, res) => {
 
     //database action
     const sql = `SELECT itm.items_icode, itm.items_bcode, itm.items_hscod, itm.items_iname, itm.items_idesc,
-    itm.items_puofm, itm.items_dfqty, itm.items_suofm, itm.items_ctgry, itm.items_brand, itm.items_itype,
-    itm.items_sdvat, itm.items_costp, itm.items_image,
-    btm.bitem_lprat, btm.bitem_dprat, btm.bitem_mcmrp, btm.bitem_sddsp,
-    btm.bitem_gstkq, btm.bitem_bstkq, btm.bitem_istkq, btm.bitem_pbqty, btm.bitem_sbqty,
-    btm.bitem_jnote,
+    itm.items_puofm, itm.items_dfqty, itm.items_suofm, itm.items_ctgry, itm.items_brand,
+    itm.items_itype, itm.items_sdvat, itm.items_costp, itm.items_image,
+    btm.bitem_lprat, btm.bitem_dprat, btm.bitem_mcmrp, btm.bitem_sddsp, btm.bitem_gstkq,
+    btm.bitem_bstkq, btm.bitem_istkq, btm.bitem_pbqty, btm.bitem_sbqty, btm.bitem_jnote,
     puofm.iuofm_untnm AS puofm_untnm, suofm.iuofm_untnm AS suofm_untnm,
     itm.id AS items_id, btm.id AS bitem_id
     FROM tmib_items itm

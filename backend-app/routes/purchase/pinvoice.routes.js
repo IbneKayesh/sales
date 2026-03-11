@@ -289,7 +289,7 @@ router.post("/create", async (req, res) => {
       tmtb_paybl,
     } = req.body;
 
-    console.log("create:", JSON.stringify(req.body));
+    //console.log("create:", JSON.stringify(req.body));
 
     // Validate input
     if (
@@ -513,17 +513,21 @@ router.post("/create", async (req, res) => {
         //   label: `BItem good, item stock updated`,
         // });
 
+        // 0 :: No Stock
+        // 1 :: Single Stock
+        // 2 :: Bulk Stock
+
         scripts.push({
           sql: `UPDATE tmib_bitem b
           SET
-            bitem_gstkq = bitem_gstkq + CASE WHEN itm.items_trcks = 1 THEN $1 ELSE 0 END,
-            bitem_istkq = bitem_istkq + CASE WHEN itm.items_trcks = 2 THEN $2 ELSE 0 END
+            bitem_gstkq = bitem_gstkq + CASE WHEN itm.items_trcks = 2 THEN $1 ELSE 0 END,
+            bitem_istkq = bitem_istkq + CASE WHEN itm.items_trcks = 1 THEN $2 ELSE 0 END
           FROM tmib_items itm
           WHERE b.bitem_items = itm.id
             AND b.id = $3`,
           params: [
-            det.cinvc_itqty, // for gstkq (items_track = 0)
-            det.cinvc_itqty, // for istkq (items_track = 1)
+            det.cinvc_itqty,
+            det.cinvc_itqty,
             det.cinvc_bitem, // bitem id
           ],
           label: `BItem good, item stock updated`,

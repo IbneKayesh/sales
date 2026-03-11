@@ -8,7 +8,11 @@ import { formatDateForAPI } from "@/utils/datetime";
 
 const AttributesComp = ({ visible, setVisible, formData, setFormData }) => {
   const [attributes, setAttributes] = useState({});
-  const { dataList: attributesList, handleLoadAttributes } = useAttributesSgd();
+  const {
+    isBusy,
+    dataList: attributesList,
+    handleGetAllActiveAttrib,
+  } = useAttributesSgd();
   useEffect(() => {
     let initialAttributes = formData.cinvc_attrb || {};
     if (typeof initialAttributes === "string") {
@@ -19,8 +23,8 @@ const AttributesComp = ({ visible, setVisible, formData, setFormData }) => {
         initialAttributes = {};
       }
     }
-    setAttributes(initialAttributes);
-    handleLoadAttributes();
+    //setAttributes(initialAttributes);
+    handleGetAllActiveAttrib();
   }, []);
 
   useEffect(() => {
@@ -31,14 +35,14 @@ const AttributesComp = ({ visible, setVisible, formData, setFormData }) => {
     <Dialog
       header="Attributes"
       visible={visible}
-      style={{ minWidth: "50vw" }}
+      style={{ minWidth: "25vw" }}
       onHide={() => {
         if (!visible) return;
         setVisible(false);
       }}
     >
       <div className="m-0">
-        {attributesList.map((attr) => (
+        {attributesList?.map((attr) => (
           <div key={attr.id} className="flex flex-column mb-1">
             <label htmlFor={attr.attrb_aname} className="mb-1">
               {attr.attrb_aname}
@@ -52,6 +56,7 @@ const AttributesComp = ({ visible, setVisible, formData, setFormData }) => {
                     [attr.attrb_aname]: e.target.value,
                   })
                 }
+                placeholder="Enter value"
               />
             ) : null}
             {attr.attrb_dtype === "number" ? (
@@ -63,6 +68,7 @@ const AttributesComp = ({ visible, setVisible, formData, setFormData }) => {
                     [attr.attrb_aname]: e.value,
                   })
                 }
+                placeholder="Enter value"
               />
             ) : null}
             {attr.attrb_dtype === "date" ? (
@@ -84,6 +90,22 @@ const AttributesComp = ({ visible, setVisible, formData, setFormData }) => {
             ) : null}
           </div>
         ))}
+
+        {attributesList.length === 0 && !isBusy && (
+          <span className="text-red-500">Not attributes found</span>
+        )}
+
+        {isBusy && <span>Loading attributes...</span>}
+
+        <span
+          className="p-button p-button-sm mt-2"
+          onClick={() => {
+            if (!visible) return;
+            setVisible(false);
+          }}
+        >
+          Ok
+        </span>
       </div>
     </Dialog>
   );

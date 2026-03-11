@@ -22,6 +22,7 @@ CREATE TABLE tmib_bitem (
   bitem_sbqty decimal(20,6) DEFAULT 0.00,
   bitem_mpric decimal(20,6) DEFAULT 0.00,  
   bitem_jnote VARCHAR(300),
+  
   -- default
   bitem_actve boolean NOT NULL DEFAULT true,
   bitem_crusr VARCHAR(50) NOT NULL,

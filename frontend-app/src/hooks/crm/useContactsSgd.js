@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { contactAPI } from "@/api/crm/contactAPI";
+import { useBusy, useNotification } from "@/hooks/useAppUI";
 
 
 export const useContactsSgd = () => {
   const { user } = useAuth();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const [dataList, setDataList] = useState([]);
 
   const handleGetAllActiveSuppliers = async () => {
     try {
+      setIsBusy(true);
       const response = await contactAPI.getAllSuppliers({
         muser_id: user.users_users,
       });
@@ -16,6 +20,16 @@ export const useContactsSgd = () => {
       setDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "Supplier",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 

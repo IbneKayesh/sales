@@ -2,21 +2,22 @@ import { useState, useEffect } from "react";
 import tmpb_minvc from "@/models/purchase/tmpb_minvc.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
 import { pinvoiceAPI } from "@/api/purchase/pinvoiceAPI";
 import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
 import { closingProcessAPI } from "@/api/setup/closingProcessAPI";
 import { stringifyAttributes } from "@/utils/jsonParser";
 import { configsAPI } from "@/api/setup/configsAPI";
+import { useBusy, useNotification, useToast } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmpb_minvc, { edit_stop: 0 });
 
 export const usePinvoice = () => {
   const { user, business } = useAuth();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
@@ -31,6 +32,7 @@ export const usePinvoice = () => {
 
   const loadConfigs = async () => {
     try {
+      setIsBusy(true);
       const response = await configsAPI.getAll({
         ucnfg_users: user.users_users,
         ucnfg_cname: "Purchase",
@@ -52,12 +54,22 @@ export const usePinvoice = () => {
       }));
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Purchase Config",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
   const loadInvoice = async () => {
     try {
+      setIsBusy(true);
       //console.log("loadInvoice:");
       const response = await pinvoiceAPI.getAll({
         minvc_users: user.users_users,
@@ -74,7 +86,16 @@ export const usePinvoice = () => {
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "PI List",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -85,6 +106,7 @@ export const usePinvoice = () => {
 
   const loadInvoiceDetails = async (id) => {
     try {
+      setIsBusy(true);
       //console.log("loadInvoiceDetails:", id);
       const response = await pinvoiceAPI.getDetails({
         cinvc_minvc: id,
@@ -94,12 +116,22 @@ export const usePinvoice = () => {
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "PI Details",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
   const loadInvoiceExpenses = async (id) => {
     try {
+      setIsBusy(true);
       //console.log("loadInvoiceExpenses:", id);
       const response = await pinvoiceAPI.getExpenses({
         expns_refid: id,
@@ -109,12 +141,22 @@ export const usePinvoice = () => {
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "PI Expenses",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
   const loadInvoicePayment = async (id) => {
     try {
+      setIsBusy(true);
       //console.log("loadInvoicePayment:", id);
       const response = await pinvoiceAPI.getPayment({
         paybl_refid: id,
@@ -124,7 +166,16 @@ export const usePinvoice = () => {
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "PI Payment",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -181,22 +232,43 @@ export const usePinvoice = () => {
 
   const handleDelete = async (rowData) => {
     try {
+      setIsBusy(true);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
       // Call API, unwrap { message, data }
-      const response = await pinvoiceAPI.delete(rowData);
+      const response = await pinvoiceAPI.delete(formDataNew);
 
       // Remove deleted business from local state
-      const updatedList = dataList.filter((s) => s.id !== rowData.id);
-      setDataList(updatedList);
+      if (response.success) {
+        const updatedList = dataList.filter((u) => u.id !== rowData.id);
+        setDataList(updatedList);
+      }
 
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Deleted" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `PI - ${rowData.minvc_trnno} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
     } catch (error) {
       console.error("Error deleting data:", error);
-      showToast("error", "Error", error?.message || "Failed to delete data");
+      notify({
+        severity: "error",
+        summary: "PI",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -214,18 +286,15 @@ export const usePinvoice = () => {
 
       // return;
 
-      setIsBusy(true);
-
       // Validate form
       const newErrors = validate(formData, tmpb_minvc);
       setErrors(newErrors);
       console.log("handleSave:", JSON.stringify(newErrors));
-
       if (Object.keys(newErrors).length > 0) {
-        setIsBusy(false);
         return;
       }
 
+      setIsBusy(true);
       //0 :: Unpaid, 1 :: Paid, 2 :: Partial
       const paidStatus =
         Number(formData.minvc_pdamt) === 0
@@ -269,23 +338,43 @@ export const usePinvoice = () => {
       //console.log("handleSave:", JSON.stringify(response));
 
       // Update toast using API message
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Success" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
 
-      //call update process
-      //await closingProcessAPI("purchase-invoice", user.users_bsins);
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `PI - ${formDataNew.minvc_trnno} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
 
-      // Clear form & reload
-      handleClear();
-      setCurrentView("list");
-      await loadInvoice(); // make sure we wait for updated data
+      if (response.success) {
+        //call update process
+        //await closingProcessAPI("purchase-invoice", user.users_bsins);
+
+        // Clear form & reload
+        handleClear();
+        setCurrentView("list");
+        await loadInvoice(); // make sure we wait for updated data
+      }
     } catch (error) {
       console.error("Error saving data:", error);
-      showToast("error", "Error", error?.message || "Failed to save data");
+      notify({
+        severity: "error",
+        summary: "PI",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
     }
@@ -345,6 +434,7 @@ export const usePinvoice = () => {
     try {
       // Call API, unwrap { message, data }
 
+      setIsBusy(true);
       const formDataNew = {
         ...formData,
         pmstr_users: user.users_users,
@@ -354,23 +444,44 @@ export const usePinvoice = () => {
         tmtb_rcvpy: rowData,
       };
       const response = await pinvoiceAPI.cancelInvoiceItems(formDataNew);
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `PI - ${formDataNew.ss} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
 
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Cancelled" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
-      //reset cancelled rows
-      setCancelledRows([]);
-      setCancelledPayment({});
-      // Clear form & reload
-      handleClear();
-      setCurrentView("list");
-      await loadInvoice(); // make sure we wait for updated data
+      if (response.success) {
+        //reset cancelled rows
+        setCancelledRows([]);
+        setCancelledPayment({});
+        // Clear form & reload
+        handleClear();
+        setCurrentView("list");
+        await loadInvoice(); // make sure we wait for updated data
+      }
     } catch (error) {
-      console.error("Error canceling data:", error);
-      showToast("error", "Error", error?.message || "Failed to cancel data");
+      console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "PI Items",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 

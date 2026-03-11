@@ -1,22 +1,36 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { productsAPI } from "@/api/inventory/productsAPI";
+import { useBusy, useNotification } from "@/hooks/useAppUI";
 
 export const useProductsSgd = () => {
   const { user } = useAuth();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const [dataList, setDataList] = useState([]);
 
   //Purchase Booking Items
   const handleGetAllActivePBI = async () => {
     try {
+      setIsBusy(true);
       const response = await productsAPI.getPurchaseBookingItems({
         muser_id: user.users_users,
         bsins_id: user.users_bsins,
       });
-      console.log("data",response.data);
+      //console.log("data",response.data);
       setDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "PBI Items",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 

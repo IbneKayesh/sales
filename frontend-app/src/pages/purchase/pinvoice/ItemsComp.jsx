@@ -26,7 +26,9 @@ const ItemsComp = ({
   const [selectedItemAttributes, setSelectedItemAttributes] = useState(null);
 
   useEffect(() => {
-    handleGetAllActivePBI();
+    if (!formData.edit_stop) {
+      handleGetAllActivePBI();
+    }
   }, []);
 
   useEffect(() => {

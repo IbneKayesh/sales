@@ -83,22 +83,22 @@ const ListComp = ({ dataList, onEdit }) => {
           data = data.filter((i) => i.minvc_ispad === 2);
           break;
         case "posted":
-          data = data.filter((i) => i.minvc_ispst === 1);
+          data = data.filter((i) => !!i.minvc_ispst);
           break;
         case "draft":
-          data = data.filter((i) => i.minvc_ispst === 0);
+          data = data.filter((i) => !i.minvc_ispst);
           break;
         case "closed":
-          data = data.filter((i) => i.minvc_iscls === 1);
+          data = data.filter((i) => !!i.minvc_iscls);
           break;
         case "vat-collected":
-          data = data.filter((i) => i.minvc_vatcl === 1);
+          data = data.filter((i) => !!i.minvc_vatcl);
           break;
         case "vat-not-collected":
-          data = data.filter((i) => i.minvc_vatcl === 0);
+          data = data.filter((i) => !i.minvc_vatcl);
           break;
         case "cancelled":
-          data = data.filter((i) => i.minvc_hscnl === 1);
+          data = data.filter((i) => !!i.minvc_hscnl);
           break;
       }
     }
@@ -261,7 +261,7 @@ const ListComp = ({ dataList, onEdit }) => {
             className="px-2"
           />
         )}
-        {rowData.minvc_ispst === true ? (
+        {!!rowData.minvc_ispst ? (
           <Tag
             value="Posted"
             severity="info"
@@ -278,7 +278,7 @@ const ListComp = ({ dataList, onEdit }) => {
             className="px-2"
           />
         )}
-        {rowData.minvc_iscls === true ? (
+        {!!rowData.minvc_iscls ? (
           <Tag value="Closed" severity="contrast" rounded />
         ) : null}
       </div>
@@ -328,7 +328,7 @@ const ListComp = ({ dataList, onEdit }) => {
       unpaid: filteredData.filter((i) => i.minvc_ispad === 0).length,
       partial: filteredData.filter((i) => i.minvc_ispad === 2).length,
       due: filteredData.reduce((s, i) => s + Number(i.minvc_duamt || 0), 0),
-      unposted: filteredData.filter((i) => i.minvc_ispst === false).length,
+      unposted: filteredData.filter((i) => !i.minvc_ispst).length,
     };
 
     return (

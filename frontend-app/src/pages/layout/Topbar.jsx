@@ -124,11 +124,7 @@ const Topbar = ({
             >
               <i className="pi pi-file-edit"></i>
               {changesLog.length > 0 && (
-                <Badge
-                  value={changesLog.length}
-                  severity="info"
-                  size="small"
-                ></Badge>
+                <span class="lite-badge lite-badge-danger">{changesLog.length}</span>
               )}
             </button>
             <OverlayPanel
@@ -184,11 +180,7 @@ const Topbar = ({
             >
               <i className="pi pi-bell"></i>
               {unreadCount > 0 && (
-                <Badge
-                  value={unreadCount}
-                  severity="danger"
-                  size="small"
-                ></Badge>
+                <span class="lite-badge lite-badge-warning">{unreadCount}</span>
               )}
             </button>
             <OverlayPanel
