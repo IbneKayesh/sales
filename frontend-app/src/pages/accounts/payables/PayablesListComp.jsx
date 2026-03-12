@@ -22,30 +22,28 @@ const PayablesListComp = ({ dataList, onEdit }) => {
     return (
       <div className="flex flex-column">
         <span className="text-md">
-          {rowData.paybl_refno} on {formatDate(rowData.mbkng_trdat)}
+          {rowData.paybl_refno} due {formatDate(rowData.minvc_trdat)}
         </span>
         <span className="text-sm text-green-500">{rowData.paybl_srcnm}</span>
-        <span className="text-sm text-gray-500">{rowData.paybl_descr}</span>
-        <span className="text-sm text-gray-500">{rowData.paybl_notes}</span>
       </div>
     );
   };
 
   const paybl_dbamt_BT = (rowData) => {
-    const { paybl_cramt, mbkng_pdamt, paybl_dbamt } = rowData;
+    const { minvc_pyamt, minvc_pdamt, minvc_duamt } = rowData;
 
     return (
       <div className="flex gap-1">
         <span className="text-primary font-bold">
-          {Number(paybl_cramt).toFixed(2)}
+          {Number(minvc_pyamt).toFixed(2)}
         </span>
         •
         <span className="text-green font-bold">
-          {Number(mbkng_pdamt).toFixed(2)}
+          {Number(minvc_pdamt).toFixed(2)}
         </span>
         •
         <span className="text-red-500 font-bold">
-          {Number(paybl_dbamt || 0).toFixed(2)}
+          {Number(minvc_duamt || 0).toFixed(2)}
         </span>
       </div>
     );

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT '' AS id, bkng.mbkng_users AS paybl_users, bkng.mbkng_bsins AS paybl_bsins, bkng.mbkng_cntct AS paybl_cntct,
+    const sql1 = `SELECT '' AS id, bkng.mbkng_users AS paybl_users, bkng.mbkng_bsins AS paybl_bsins, bkng.mbkng_cntct AS paybl_cntct,
     'Cash' AS paybl_pymod, bkng.id AS paybl_refid, bkng.mbkng_trnno AS paybl_refno, 'Purchase Booking' AS paybl_srcnm,
     current_timestamp() AS paybl_trdat, '' AS paybl_descr, 'Payment' AS paybl_notes, bkng.mbkng_duamt AS paybl_dbamt, bkng.mbkng_pyamt AS paybl_cramt,
     bkng.mbkng_trdat, bkng.mbkng_pdamt, bkng.mbkng_duamt, tct.cntct_cntnm, tct.cntct_cntps, tct.cntct_cntno, tct.cntct_email, tct.cntct_ofadr
@@ -40,9 +40,27 @@ router.post("/", async (req, res) => {
     AND minvc.minvc_users = ?
     AND minvc.minvc_bsins = ?
     `;
-
+    const sql = `SELECT '' AS id,
+    minvc.minvc_users AS paybl_users, minvc.minvc_bsins AS paybl_bsins,
+    minvc.minvc_cntct AS paybl_cntct, 'Cash' AS paybl_pymod, minvc.id AS paybl_refid,
+    minvc.minvc_trnno AS paybl_refno, 'Purchase Invoice' paybl_srcnm,
+    CURRENT_TIMESTAMP AS paybl_trdat, '' AS paybl_descr,
+    '' AS paybl_notes, 0 AS paybl_dbamt, 0 AS paybl_cramt,
+    minvc.minvc_trdat, minvc.minvc_odamt,
+    minvc.minvc_dsamt, minvc.minvc_vtamt, minvc.minvc_vatpy,
+    minvc.minvc_incst, minvc.minvc_excst, minvc.minvc_rnamt,
+    minvc.minvc_ttamt, minvc.minvc_pyamt, minvc.minvc_pdamt,
+    minvc.minvc_duamt, minvc.minvc_ispad,
+    tct.cntct_cntnm, tct.cntct_cntps, tct.cntct_cntno,
+    tct.cntct_email, tct.cntct_ofadr
+    FROM tmpb_minvc minvc
+    LEFT JOIN tmcb_cntct tct ON minvc.minvc_cntct = tct.id
+    WHERE minvc.minvc_duamt > 0
+    AND minvc.minvc_ispad IN (0, 2)    
+    AND minvc.minvc_users = $1
+    AND minvc.minvc_bsins = $2`;
     //ORDER BY bkng.mbkng_cntct, bkng.mbkng_trnno
-    const params = [paybl_users, paybl_bsins, paybl_users, paybl_bsins];
+    const params = [paybl_users, paybl_bsins];
 
     const rows = await dbGetAll(sql, params, `Get payables for ${paybl_users}`);
     res.json({
@@ -76,7 +94,7 @@ router.post("/create", async (req, res) => {
       paybl_descr,
       paybl_notes,
       paybl_dbamt,
-      user_id,
+      suser_id,
     } = req.body;
     //console.log("create:", JSON.stringify(req.body));
     // Validate input
@@ -104,9 +122,9 @@ router.post("/create", async (req, res) => {
       sql: `INSERT INTO tmtb_paybl(id, paybl_users, paybl_bsins, paybl_cntct, paybl_pymod, paybl_refid,
       paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt,
       paybl_cramt, paybl_crusr, paybl_upusr)
-      VALUES (?, ?, ?, ?, ?, ?,
-      ?, ?, ?, ?, ?, ?,
-      ?, ?, ?)`,
+      VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11, $12,
+      $13, $14, $15)`,
       params: [
         uuidv4(),
         paybl_users,
@@ -121,8 +139,8 @@ router.post("/create", async (req, res) => {
         paybl_notes,
         paybl_dbamt,
         0,
-        user_id,
-        user_id,
+        suser_id,
+        suser_id,
       ],
       label: `Create payable for ${paybl_refno}`,
     });
@@ -147,22 +165,37 @@ router.post("/create", async (req, res) => {
       });
     }
     if (paybl_srcnm === "Purchase Invoice") {
-      scripts.push({
-        sql: `UPDATE tmpb_minvc SET minvc_pdamt = minvc_pdamt + ?, minvc_duamt = minvc_duamt - ? WHERE id = ?`,
-        params: [paybl_dbamt, paybl_dbamt, paybl_refid],
-        label: `Update Purchase Invoice ${paybl_refno}`,
-      });
+      // scripts.push({
+      //   sql: `UPDATE tmpb_minvc SET minvc_pdamt = minvc_pdamt + $1, minvc_duamt = minvc_duamt - $2 WHERE id = $3`,
+      //   params: [paybl_dbamt, paybl_dbamt, paybl_refid],
+      //   label: `Update Purchase Invoice ${paybl_refno}`,
+      // });
+
+      // scripts.push({
+      //   sql: `UPDATE tmpb_minvc
+      //   SET minvc_ispad = 
+      //   CASE
+      //     WHEN minvc_duamt <= 0 THEN 1
+      //     WHEN minvc_duamt > 0 AND minvc_duamt < minvc_pyamt THEN 2
+      //     ELSE 0
+      //   END WHERE id = $1`,
+      //   params: [paybl_refid],
+      //   label: `Update Purchase Invoice Status ${paybl_refno}`,
+      // });
 
       scripts.push({
         sql: `UPDATE tmpb_minvc
-        SET minvc_ispad = 
-        CASE
-          WHEN minvc_duamt <= 0 THEN 1
-          WHEN minvc_duamt > 0 AND minvc_duamt < minvc_pyamt THEN 2
-          ELSE 0
-        END WHERE id = ?`,
-        params: [paybl_refid],
-        label: `Update Purchase Invoice Status ${paybl_refno}`,
+              SET
+                minvc_pdamt = minvc_pdamt + $1,
+                minvc_duamt = minvc_duamt - $2,
+                minvc_ispad = CASE
+                  WHEN (minvc_duamt - $2) <= 0 THEN 1
+                  WHEN (minvc_duamt - $2) < minvc_pyamt THEN 2
+                  ELSE 0
+                END
+              WHERE id = $3`,
+        params: [paybl_dbamt, paybl_dbamt, paybl_refid],
+        label: `Update Purchase Invoice ${paybl_refno}`,
       });
     }
     await dbRunAll(scripts);

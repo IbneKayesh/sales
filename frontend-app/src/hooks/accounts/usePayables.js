@@ -4,22 +4,24 @@ import tmtb_paybl from "@/models/accounts/tmtb_paybl.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
+import { useBusy, useNotification, useToast } from "@/hooks/useAppUI";
 import { formatDateForAPI } from "@/utils/datetime";
 
 const dataModel = generateDataModel(tmtb_paybl, { edit_stop: 0 });
 
 export const usePayables = () => {
   const { user } = useAuth();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
   const loadPayables = async () => {
     try {
+      setIsBusy(true);
       const response = await payablesAPI.getAll({
         paybl_users: user.users_users,
         paybl_bsins: user.users_bsins,
@@ -30,7 +32,16 @@ export const usePayables = () => {
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Payable",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -62,28 +73,49 @@ export const usePayables = () => {
 
   const handleEdit = (data) => {
     //console.log("edit: " + JSON.stringify(data));
-    setFormData({ ...dataModel, ...data });
+    setFormData({ ...dataModel, ...data, paybl_dbamt: data.minvc_duamt });
     setCurrentView("form");
   };
 
   const handleDelete = async (rowData) => {
     try {
+      setIsBusy(true);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+
       // Call API, unwrap { message, data }
-      const response = await payablesAPI.delete(rowData);
+      const response = await payablesAPI.delete(formDataNew);
 
-      // Remove deleted account from local state
-      const updatedList = dataList.filter((s) => s.id !== rowData.id);
-      setDataList(updatedList);
+      if (response.success) {
+        const updatedList = dataList.filter((u) => u.id !== rowData.id);
+        setDataList(updatedList);
+      }
 
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Deleted" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `Payable - ${rowData.id} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
     } catch (error) {
       console.error("Error deleting data:", error);
-      showToast("error", "Error", error?.message || "Failed to delete data");
+      notify({
+        severity: "error",
+        summary: "Payable",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -94,34 +126,31 @@ export const usePayables = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      setIsBusy(true);
-
       // Validate form
       const newErrors = validate(formData, tmtb_paybl);
       setErrors(newErrors);
-      console.log("handleSave:", JSON.stringify(formData));
-
+      console.log("handleSave:", JSON.stringify(newErrors));
       if (Object.keys(newErrors).length > 0) {
-        setIsBusy(false);
         return;
       }
 
-      if (formData.paybl_dbamt > formData.mbkng_duamt) {
+      if (formData.paybl_dbamt > formData.minvc_duamt) {
         showToast(
           "error",
           "Error",
           "Payment amount cannot be greater than payable amount",
         );
-        setIsBusy(false);
         return;
       }
-
+      console.log("formData", formData);
+      setIsBusy(true);
       // Ensure id exists (for create)
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
         paybl_trdat: formatDateForAPI(formData.paybl_trdat),
-        user_id: user.id,
+        muser_id: user.users_users,
+        suser_id: user.id,
       };
 
       // Call API and get { message, data }
@@ -133,19 +162,39 @@ export const usePayables = () => {
       }
 
       // Update toast using API message
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Success" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
-      // Clear form & reload
-      handleClear();
-      setCurrentView("list");
-      await loadPayables(); // make sure we wait for updated data
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Payable - ${formDataNew.paybl_refno} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
+
+      if (response.success) {
+        // Clear form & reload
+        handleClear();
+        setCurrentView("list");
+        await loadPayables(); // make sure we wait for updated data
+      }
     } catch (error) {
       console.error("Error saving data:", error);
-      showToast("error", "Error", error?.message || "Failed to save data");
+      notify({
+        severity: "error",
+        summary: "Brand",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
     }
@@ -175,9 +224,9 @@ export const usePayables = () => {
     }
   };
 
-
   const loadPaymentSummary = async () => {
     try {
+      setIsBusy(true);
       //console.log("loadBookings:");
       const response = await payablesAPI.getPaymentSummary({
         paybl_users: user.users_users,
@@ -194,7 +243,16 @@ export const usePayables = () => {
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Summary",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -217,8 +275,8 @@ export const usePayables = () => {
   ];
 
   return {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
@@ -237,6 +295,6 @@ export const usePayables = () => {
     handleChangeSearchInput,
     handleSearch,
     searchOptions,
-    paymentSummaryList
+    paymentSummaryList,
   };
 };

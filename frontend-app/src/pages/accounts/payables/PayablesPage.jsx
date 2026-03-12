@@ -9,8 +9,8 @@ import PaymentSummaryListComp from "./PaymentSummaryListComp";
 
 const PayablesPage = () => {
   const {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
