@@ -59,7 +59,7 @@ function AppRoutes() {
               <Route path="/menus" element={<MobileMenus />} />
               <Route path="/sample" element={<MobileSample />} />
               <Route path="/about" element={<MobileAbout />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<Navigate to="/home" replace />} />
             </Routes>
           </React.Suspense>
         </MobileLayout>
@@ -94,7 +94,7 @@ function AppRoutes() {
               {AppRoutesList}
               <Route path="*" element={<Navigate to="/home" replace />} />
             </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/home" replace />} />
           </Routes>
         </React.Suspense>
       </div>

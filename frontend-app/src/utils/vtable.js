@@ -163,6 +163,10 @@ const countryOptions = [
   { label: "Other", value: "Other" },
 ];
 
+const userRoleOptions = [
+  { label: "Admin", value: "Admin" },
+  { label: "User", value: "User" },
+];
 export {
   getListByTransHead,
   getTransHeadList,
@@ -183,6 +187,7 @@ export {
   contactTypeOptions,
   dayNameOptions,
   countryOptions,
+  userRoleOptions,
 };
 
 /*

@@ -4,7 +4,8 @@ import EmptyState from "@/components/EmptyState";
 const ModulePage = () => {
   const { dataList, isBusy, handleFetchMenus } = usePermissions();
   return (
-    <div className="p-3 min-h-screen bg-bluegray-50 font-sans flex align-items-center justify-content-center">
+    <div className="p-3 min-h-screen bg-bluegray-200 font-sans flex align-items-center justify-content-center">
+      {isBusy && <span>Loading...</span>}
       <div className="grid justify-content-center w-full max-w-5xl">
         {dataList.map((module, index) => (
           <div

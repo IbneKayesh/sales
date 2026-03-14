@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 //get all
@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
     if (!dlvan_users || !dlvan_bsins) {
       return res.json({
         success: false,
-        message: "User ID and Country ID are required",
+        message: "User ID and Business ID are required",
         data: null,
       });
     }
@@ -20,8 +20,8 @@ router.post("/", async (req, res) => {
     //database action
     const sql = `SELECT dvn.*, 0 as edit_stop
     FROM tmcb_dlvan dvn
-    WHERE dvn.dlvan_users = ?
-    AND dvn.dlvan_bsins = ?
+    WHERE dvn.dlvan_users = $1
+    AND dvn.dlvan_bsins = $2
     ORDER BY dvn.dlvan_vname`;
     const params = [dlvan_users, dlvan_bsins];
 
@@ -69,7 +69,7 @@ router.post("/create", async (req, res) => {
     //database action
     const sql = `INSERT INTO tmcb_dlvan
     (id,dlvan_users,dlvan_bsins,dlvan_vname,dlvan_dname,dlvan_crusr,dlvan_upusr)
-    VALUES (?,?,?,?,?,?,?)`;
+    VALUES ($1,$2,$3,$4,$5,$6,$7)`;
     const params = [
       id,
       dlvan_users,
@@ -123,16 +123,13 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmcb_dlvan
-    SET dlvan_users = ?,
-    dlvan_bsins = ?,
-    dlvan_vname = ?,
-    dlvan_dname = ?,
-    dlvan_upusr = ?,
+    SET dlvan_vname = $1,
+    dlvan_dname = $2,
+    dlvan_upusr = $3,
+    dlvan_updat = CURRENT_TIMESTAMP,
     dlvan_rvnmr = dlvan_rvnmr + 1
-    WHERE id = ?`;
+    WHERE id = $4`;
     const params = [
-      dlvan_users,
-      dlvan_bsins,
       dlvan_vname,
       dlvan_dname,
       user_id,
@@ -171,8 +168,12 @@ router.post("/delete", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmcb_dlvan
-    SET dlvan_actve = 1 - dlvan_actve
-    WHERE id = ?`;
+    SET dlvan_actve = NOT dlvan_actve,
+    dlvan_upusr = $1,
+    dlvan_updat = CURRENT_TIMESTAMP,
+    dlvan_rvnmr = dlvan_rvnmr + 1
+    WHERE id = $2`;
+
     const params = [id];
 
     await dbRun(sql, params, `Delete delivery van for ${dlvan_bsins}`);

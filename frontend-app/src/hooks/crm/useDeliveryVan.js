@@ -4,21 +4,22 @@ import tmcb_dlvan from "@/models/crm/tmcb_dlvan.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
+import { useBusy, useNotification } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmcb_dlvan, { edit_stop: 0 });
 
 export const useDeliveryVan = () => {
   const { user } = useAuth();
-  const { showToast } = useToast();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const [dataList, setDataList] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
   const loadDeliveryVan = async () => {
     try {
+      setIsBusy(true);
       const response = await deliveryVanAPI.getAll({
         dlvan_users: user.users_users,
         dlvan_bsins: user.users_bsins,
@@ -27,7 +28,16 @@ export const useDeliveryVan = () => {
       setDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Delivery Van",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -65,21 +75,42 @@ export const useDeliveryVan = () => {
 
   const handleDelete = async (rowData) => {
     try {
+      setIsBusy(true);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
       // Call API, unwrap { message, data }
-      const response = await deliveryVanAPI.delete(rowData);
+      const response = await deliveryVanAPI.delete(formDataNew);
 
-      const updatedList = dataList.filter((c) => c.id !== rowData.id);
-      setDataList(updatedList);
+      if (response.success) {
+        const updatedList = dataList.filter((u) => u.id !== rowData.id);
+        setDataList(updatedList);
+      }
 
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Deleted" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `Delivery Van - ${rowData.dlvan_vname} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
     } catch (error) {
       console.error("Error deleting data:", error);
-      showToast("error", "Error", error?.message || "Failed to delete data");
+      notify({
+        severity: "error",
+        summary: "Delivery Van",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -91,18 +122,15 @@ export const useDeliveryVan = () => {
     e.preventDefault();
 
     try {
-      setIsBusy(true);
-
       // Validate form
       const newErrors = validate(formData, tmcb_dlvan);
       setErrors(newErrors);
       console.log("handleSave: " + JSON.stringify(newErrors));
-
       if (Object.keys(newErrors).length > 0) {
-        setIsBusy(false);
         return;
       }
 
+      setIsBusy(true);
       // Ensure id exists (for create)
       const formDataNew = {
         ...formData,
@@ -122,20 +150,39 @@ export const useDeliveryVan = () => {
       }
 
       // Update toast using API message
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Success" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
 
-      handleClear();
-      setCurrentView("list");
-      loadDeliveryVan();
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Delivery Van - ${formDataNew.dlvan_vname} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
+
+      if (response.success) {
+        handleClear();
+        setCurrentView("list");
+        loadDeliveryVan();
+      }
     } catch (error) {
       console.error("Error saving data:", error);
-
-      showToast("error", "Error", error?.message || "Failed to save data");
+      notify({
+        severity: "error",
+        summary: "Delivery Van",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
     }

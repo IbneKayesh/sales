@@ -4,35 +4,39 @@ import tmsb_users from "@/models/setup/tmsb_users.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
+import { useBusy, useNotification, useToast } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmsb_users, { edit_stop: 0 });
 
 export const useUsers = () => {
   const { user } = useAuth();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
-  const roleOptions = [
-    { label: "Admin", value: "Admin" },
-    { label: "User", value: "User" },
-    { label: "Field Staff", value: "Field Staff" },
-  ];
-
   const loadUsers = async () => {
     try {
+      setIsBusy(true);
       const response = await usersAPI.getAll({ users_users: user.users_users });
       // response = { message, data }
 
       setDataList(response.data);
-      //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Users",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
   //Fetch data from API on mount
@@ -76,21 +80,43 @@ export const useUsers = () => {
         showToast("error", "Error", "Cannot delete primary user");
         return;
       }
+      setIsBusy(true);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+
       // Call API, unwrap { message, data }
-      const response = await usersAPI.delete(rowData);
+      const response = await usersAPI.delete(formDataNew);
+      
+      if (response.success) {
+        const updatedList = dataList.filter((u) => u.id !== rowData.id);
+        setDataList(updatedList);
+      }
 
-      const updatedList = dataList.filter((u) => u.id !== rowData.id);
-      setDataList(updatedList);
-
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Deleted" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
-      );
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `User - ${rowData.users_oname} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
     } catch (error) {
       console.error("Error deleting data:", error);
-      showToast("error", "Error", error?.message || "Failed to delete data");
+      notify({
+        severity: "error",
+        summary: "User",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -143,7 +169,7 @@ export const useUsers = () => {
         response.success ? "success" : "error",
         response.success ? "Success" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
 
       handleClear();

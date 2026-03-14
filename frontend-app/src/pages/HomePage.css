@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Inter:wght@300;400;600;700&display=swap');
+
+/* converted for React from source HTML/CSS */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.home-container {
+  background: #1f2937; /* Clean, modern dark gray */
+  font-family: "Inter", sans-serif;
+  height: 93vh;
+  width: 100%;
+  overflow: hidden;
+  color: #f3f4f6;
+  position: relative;
+  border-radius: 12px;
+}
+
+/* subtle dot grid background on dark theme */
+.grid-bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.clock-wrapper {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%) perspective(900px) rotateY(-10deg);
+  height: 100vh;
+  transition: transform 0.2s ease;
+}
+
+.clock-svg {
+  height: 100vh;
+  filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.5));
+}
+
+.ring {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.07);
+  stroke-width: 1.5;
+}
+
+.highlight-window {
+  fill: rgba(30, 30, 30, 0.85); /* Dark frosted glass */
+  backdrop-filter: blur(10px);
+  rx: 8px; /* rounded edges for modern feel */
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 1;
+}
+
+.window-border {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 1.5;
+}
+
+.center-laser {
+  stroke: #fcd34d; /* Golden laser */
+  stroke-width: 2.5;
+  stroke-opacity: 0.9;
+  filter: drop-shadow(0 2px 4px rgba(252, 211, 77, 0.3));
+}
+
+text {
+  text-anchor: middle;
+  dominant-baseline: middle;
+  user-select: none;
+}
+
+/* wheels */
+
+.hour-text {
+  font-size: 42px;
+  fill: #f87171; /* Soft Red for Hours */
+  font-weight: 700;
+  opacity: 0.25;
+}
+
+.minute-text {
+  font-size: 30px;
+  fill: #60a5fa; /* Soft Blue for Minutes */
+  font-weight: 600;
+  opacity: 0.3;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.second-text {
+  font-size: 22px;
+  fill: #34d399; /* Soft Emerald for Seconds */
+  font-weight: 400;
+  opacity: 0.35;
+}
+
+/* active glow */
+
+.active-hour {
+  font-size: 54px;
+  fill: #ef4444; /* Bright Red */
+  opacity: 1;
+  filter: drop-shadow(0 2px 8px rgba(239, 68, 68, 0.4));
+}
+
+.active-minute {
+  font-size: 40px;
+  fill: #3b82f6; /* Bright Blue */
+  opacity: 1;
+  filter: drop-shadow(0 2px 6px rgba(59, 130, 246, 0.4));
+}
+
+.active-second {
+  font-size: 30px;
+  fill: #10b981; /* Bright Emerald */
+  opacity: 1;
+  font-weight: 600;
+  filter: drop-shadow(0 2px 4px rgba(16, 185, 129, 0.4));
+}
+
+/* ui text */
+
+.ampm-text {
+  font-family: "Orbitron", sans-serif;
+  font-size: 22px;
+  fill: #fcd34d; /* Golden AM/PM */
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.date-text {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  fill: #9ca3af;
+  letter-spacing: 2px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+g#clock-center > g {
+  transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* fade mask - matching dark bg */
+.fade-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background: linear-gradient(
+    to bottom,
+    #1f2937 0%,
+    rgba(31, 41, 55, 0.9) 15%,
+    rgba(31, 41, 55, 0.7) calc(50% - 35px),
+    transparent calc(50% - 30px),
+    transparent calc(50% + 30px),
+    rgba(31, 41, 55, 0.7) calc(50% + 35px),
+    rgba(31, 41, 55, 0.9) 85%,
+    #1f2937 100%
+  );
+}
