@@ -21,6 +21,11 @@ const HomePage = () => {
   const dateTextRef = useRef(null);
   const wrapperRef = useRef(null);
 
+  const secSplashRef = useRef(null);
+  const secSplashRef2 = useRef(null);
+  const minSplashRef = useRef(null);
+  const minSplashRef2 = useRef(null);
+
   // Generate Hours
   const hours = Array.from({ length: 12 }, (_, i) => {
     const num = i + 1;
@@ -29,7 +34,7 @@ const HomePage = () => {
     return (
       <text
         key={`h-${num}`}
-        className="hour-text"
+        className="watch-hour-text"
         x={pos.x}
         y={pos.y}
         transform={`rotate(${a},${pos.x},${pos.y})`}
@@ -46,7 +51,7 @@ const HomePage = () => {
     return (
       <text
         key={`m-${i}`}
-        className="minute-text"
+        className="watch-minute-text"
         x={pos.x}
         y={pos.y}
         transform={`rotate(${a},${pos.x},${pos.y})`}
@@ -63,7 +68,7 @@ const HomePage = () => {
     return (
       <text
         key={`s-${i}`}
-        className="second-text"
+        className="watch-second-text"
         x={pos.x}
         y={pos.y}
         transform={`rotate(${a},${pos.x},${pos.y})`}
@@ -77,6 +82,8 @@ const HomePage = () => {
     let animationFrameId;
     let lastSecond = 0;
     let secondTurns = 0;
+    let prevSec = new Date().getSeconds();
+    let prevMin = new Date().getMinutes();
 
     const months = [
       "JAN",
@@ -135,7 +142,18 @@ const HomePage = () => {
           "transform",
           `rotate(${-continuousSeconds * 6})`
         );
-        highlight(secondsGroupRef.current, "active-second", s);
+        highlight(secondsGroupRef.current, "watch-active-second", s);
+      }
+
+      if (s !== prevSec) {
+        if (secSplashRef.current && secSplashRef2.current) {
+          secSplashRef.current.classList.remove("watch-play-splash-sec");
+          secSplashRef2.current.classList.remove("watch-play-splash-sec-2");
+          void secSplashRef.current.getBoundingClientRect(); // trigger reflow
+          secSplashRef.current.classList.add("watch-play-splash-sec");
+          secSplashRef2.current.classList.add("watch-play-splash-sec-2");
+        }
+        prevSec = s;
       }
 
       /* MINUTE SNAP */
@@ -145,7 +163,18 @@ const HomePage = () => {
           "transform",
           `rotate(${-minProgress * 6})`
         );
-        highlight(minutesGroupRef.current, "active-minute", m);
+        highlight(minutesGroupRef.current, "watch-active-minute", m);
+      }
+
+      if (m !== prevMin) {
+        if (minSplashRef.current && minSplashRef2.current) {
+          minSplashRef.current.classList.remove("watch-play-splash-min");
+          minSplashRef2.current.classList.remove("watch-play-splash-min-2");
+          void minSplashRef.current.getBoundingClientRect();
+          minSplashRef.current.classList.add("watch-play-splash-min");
+          minSplashRef2.current.classList.add("watch-play-splash-min-2");
+        }
+        prevMin = m;
       }
 
       /* HOUR SNAP */
@@ -155,7 +184,7 @@ const HomePage = () => {
           "transform",
           `rotate(${-hrProgress * 30})`
         );
-        highlight(hoursGroupRef.current, "active-hour", h - 1);
+        highlight(hoursGroupRef.current, "watch-active-hour", h - 1);
       }
 
       animationFrameId = requestAnimationFrame(update);
@@ -180,36 +209,42 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="home-container">
-      <div className="grid-bg"></div>
+    <div className="watch-home-container">
+      <div className="watch-grid-bg"></div>
 
-      <div className="clock-wrapper" ref={wrapperRef}>
-        <svg className="clock-svg" viewBox="0 0 450 800" preserveAspectRatio="xMinYMid meet">
+      <div className="watch-clock-wrapper" ref={wrapperRef}>
+        <svg className="watch-clock-svg" viewBox="0 0 450 800" preserveAspectRatio="xMinYMid meet">
           {/* window */}
           <rect
             x="0"
             y="370"
             width="450"
             height="60"
-            className="highlight-window"
+            className="watch-highlight-window"
           />
 
-          <line x1="0" y1="370" x2="450" y2="370" className="window-border" />
-          <line x1="0" y1="430" x2="450" y2="430" className="window-border" />
+          <line x1="0" y1="370" x2="450" y2="370" className="watch-window-border" />
+          <line x1="0" y1="430" x2="450" y2="430" className="watch-window-border" />
 
-          <line x1="0" y1="400" x2="450" y2="400" className="center-laser" />
+          <line x1="0" y1="400" x2="450" y2="400" className="watch-center-laser" />
 
-          <text ref={ampmTextRef} className="ampm-text" x="60" y="390">
+          {/* Water Splash Ripples */}
+          <circle ref={minSplashRef} className="watch-splash-ripple watch-min-ripple" cx={RM} cy="400" r="0" />
+          <circle ref={minSplashRef2} className="watch-splash-ripple watch-min-ripple-2" cx={RM} cy="400" r="0" />
+          <circle ref={secSplashRef} className="watch-splash-ripple watch-sec-ripple" cx={RS} cy="400" r="0" />
+          <circle ref={secSplashRef2} className="watch-splash-ripple watch-sec-ripple-2" cx={RS} cy="400" r="0" />
+
+          <text ref={ampmTextRef} className="watch-ampm-text" x="60" y="390">
             AM
           </text>
-          <text ref={dateTextRef} className="date-text" x="60" y="420">
+          <text ref={dateTextRef} className="watch-date-text" x="60" y="420">
             14 MAR 2026
           </text>
 
           <g id="clock-center" transform="translate(0,400)">
-            <circle r="140" className="ring" />
-            <circle r="260" className="ring" />
-            <circle r="380" className="ring" />
+            <circle r="140" className="watch-ring" />
+            <circle r="260" className="watch-ring" />
+            <circle r="380" className="watch-ring" />
 
             <g ref={hoursGroupRef}>{hours}</g>
             <g ref={minutesGroupRef}>{minutes}</g>
@@ -217,7 +252,7 @@ const HomePage = () => {
           </g>
         </svg>
 
-        <div className="fade-overlay"></div>
+        <div className="watch-fade-overlay"></div>
       </div>
     </div>
   );

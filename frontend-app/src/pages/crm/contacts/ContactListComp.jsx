@@ -215,25 +215,45 @@ const ContactListComp = ({
 
     return (
       <div className="flex gap-1">
-        <span className="text-green-500 font-bold">
-          {Number(cntct_dspct).toFixed(2)}
-        </span>
+        {cntct_dspct > 0 ? (
+          <span className="text-green-500 font-bold">
+            {Number(cntct_dspct).toFixed(2)}
+          </span>
+        ) : (
+          <span className="text-gray-300">0</span>
+        )}
         •
-        <span className="text-purple-500 font-bold">
-          {Number(cntct_crlmt).toFixed(2)}
-        </span>
+        {cntct_crlmt > 0 ? (
+          <span className="text-purple-500 font-bold">
+            {Number(cntct_crlmt).toFixed(2)}
+          </span>
+        ) : (
+          <span className="text-gray-300">0</span>
+        )}
         •
-        <span className="text-red-500 font-bold">
-          {Number(cntct_pybln).toFixed(2)}
-        </span>
+        {cntct_pybln > 0 ? (
+          <span className="text-red-500 font-bold">
+            {Number(cntct_pybln).toFixed(2)}
+          </span>
+        ) : (
+          <span className="text-gray-300">0</span>
+        )}
         •
-        <span className="text-blue-500 font-bold">
-          {Number(cntct_adbln || 0).toFixed(2)}
-        </span>
+        {cntct_adbln > 0 ? (
+          <span className="text-blue-500 font-bold">
+            {Number(cntct_adbln || 0).toFixed(2)}
+          </span>
+        ) : (
+          <span className="text-gray-300">0</span>
+        )}
         •
-        <span className="text-gray-500 font-bold">
-          {Number(cntct_crbln || 0).toFixed(2)}
-        </span>
+        {cntct_crbln > 0 ? (
+          <span className="text-gray-500 font-bold">
+            {Number(cntct_crbln || 0).toFixed(2)}
+          </span>
+        ) : (
+          <span className="text-gray-300">0</span>
+        )}
       </div>
     );
   };

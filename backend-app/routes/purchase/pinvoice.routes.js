@@ -231,7 +231,7 @@ router.post("/invoice-payment", async (req, res) => {
     let sql = `SELECT pybl.*
     FROM tmtb_paybl pybl
     WHERE pybl.paybl_refid = $1
-    ORDER BY pybl.paybl_cramt,pybl.paybl_trdat`;
+    ORDER BY pybl.paybl_trdat, pybl.paybl_cramt`;
     let params = [paybl_refid];
 
     const rows = await dbGetAll(

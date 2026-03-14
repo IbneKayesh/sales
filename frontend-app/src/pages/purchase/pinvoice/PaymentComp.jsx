@@ -247,7 +247,7 @@ const PaymentComp = ({
             </div>
 
             <div className="flex justify-content-between">
-              <span>Due (9)</span>
+              <span>Due (9) [7-8]</span>
               <span className="text-red-700 font-bold">
                 {formData.minvc_duamt}
               </span>

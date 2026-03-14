@@ -5,6 +5,7 @@ import { getStorageData } from "@/utils/storage";
 import "./Topbar.css";
 import ActiveBusiness from "@/components/ActiveBusiness";
 import UserProfile from "@/components/UserProfile";
+import Calculator from "@/components/common/Calculator";
 import { useNotification } from "@/hooks/useAppUI";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { Badge } from "primereact/badge";
@@ -62,6 +63,7 @@ const Topbar = ({
   };
 
   const [showActiveBusiness, setShowActiveBusiness] = useState(false);
+  const [showCalculator, setShowCalculator] = useState(false);
 
   return (
     <>
@@ -116,6 +118,13 @@ const Topbar = ({
         <div className="topbar-avatar">
           <div className="flex items-center gap-2">
             <button
+              className={`topbar-btn ${showCalculator ? 'active' : ''}`}
+              title="Calculator"
+              onClick={() => setShowCalculator(!showCalculator)}
+            >
+              <i className="pi pi-calculator"></i>
+            </button>
+            <button
               className="topbar-btn"
               onClick={(e) => {
                 logPanel.current.toggle(e);
@@ -124,7 +133,7 @@ const Topbar = ({
             >
               <i className="pi pi-file-edit"></i>
               {changesLog.length > 0 && (
-                <span className="lite-badge lite-badge-danger">{changesLog.length}</span>
+                <span className="lite-badge lite-badge-warning">{changesLog.length}</span>
               )}
             </button>
             <OverlayPanel
@@ -180,7 +189,7 @@ const Topbar = ({
             >
               <i className="pi pi-bell"></i>
               {unreadCount > 0 && (
-                <span className="lite-badge lite-badge-warning">{unreadCount}</span>
+                <span className="lite-badge lite-badge-danger">{unreadCount}</span>
               )}
             </button>
             <OverlayPanel
@@ -271,6 +280,7 @@ const Topbar = ({
           setVisible={setShowActiveBusiness}
         />
       )}
+      <Calculator visible={showCalculator} onClose={() => setShowCalculator(false)} />
     </>
   );
 };

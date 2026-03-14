@@ -1,15 +1,12 @@
-Inventory >> Brand, Units, Category
-CRM >> Zone, Area, Territory
-In working >> Products, Products Warehouse
+Inventory >> Brand, Units, Category, Products, Products Warehouse
+CRM >> Zone, Area, Territory, Contacts
+Purchase >> Invoice
+In working >> 
+payables, 
 
 
 
 
-Purchase >> Booking >> Entry Test, Closing Process Test, Item Booking Qty Plus
-Purchase >> Receipt >> Entry Test, Closing Process Test, Item Booking Qty Minus, Good Stock Qty Plus, Print
-
-
-Purchase >> Invoice >> Entry Test, Closing Process Test, Good Stock Qty Plus, Print
 Purchase >> Receipt, Invoice >> Return
 Purchase >> Booking >> Cancel
 

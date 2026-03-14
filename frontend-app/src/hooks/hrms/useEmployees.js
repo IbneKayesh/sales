@@ -4,32 +4,40 @@ import tmhb_emply from "@/models/hrms/tmhb_emply.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
 import { formatDateForAPI } from "@/utils/datetime";
+import { useBusy, useNotification } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmhb_emply, { edit_stop: 0 });
 
 export const useEmployees = () => {
   const { user } = useAuth();
-  const { showToast } = useToast();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const [dataList, setDataList] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
   const loadEmployees = async () => {
     try {
+      setIsBusy(true);
       const response = await employeesAPI.getAll({
         emply_users: user.users_users,
       });
       //response = { success, message, data }
-
       setDataList(response.data);
-      //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Employees",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -67,22 +75,44 @@ export const useEmployees = () => {
 
   const handleDelete = async (rowData) => {
     try {
+      setIsBusy(true);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
       // Call API, unwrap { message, data }
-      const response = await employeesAPI.delete(rowData);
+      const response = await employeesAPI.delete(formDataNew);
 
       // Remove deleted Employees from local state
-      const updatedList = dataList.filter((s) => s.id !== rowData.id);
-      setDataList(updatedList);
 
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Deleted" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      if (response.success) {
+        const updatedList = dataList.filter((u) => u.id !== rowData.id);
+        setDataList(updatedList);
+      }
+
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `Employees - ${rowData.emply_ename} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
     } catch (error) {
       console.error("Error deleting data:", error);
-      showToast("error", "Error", error?.message || "Failed to delete data");
+      notify({
+        severity: "error",
+        summary: "Employees",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -93,18 +123,15 @@ export const useEmployees = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      setIsBusy(true);
-
       // Validate form
       const newErrors = validate(formData, tmhb_emply);
       setErrors(newErrors);
       console.log("handleSave:", JSON.stringify(formData));
-
       if (Object.keys(newErrors).length > 0) {
-        setIsBusy(false);
         return;
       }
 
+      setIsBusy(true);
       // Ensure id exists (for create)
       const formDataNew = {
         ...formData,
@@ -127,20 +154,39 @@ export const useEmployees = () => {
       }
 
       // Update toast using API message
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Success" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Employees - ${formDataNew.emply_ename} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
 
-      // Clear form & reload
-      handleClear();
-      setCurrentView("list");
-      await loadEmployees(); // make sure we wait for updated data
+      if (response.success) {
+        // Clear form & reload
+        handleClear();
+        setCurrentView("list");
+        await loadEmployees(); // make sure we wait for updated data
+      }
     } catch (error) {
       console.error("Error saving data:", error);
-      showToast("error", "Error", error?.message || "Failed to save data");
+      notify({
+        severity: "error",
+        summary: "Employees",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
     }

@@ -33,8 +33,8 @@ CREATE TABLE tmhb_emply (
 -- Office information
   emply_desig varchar(50),
   emply_jndat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  emply_cndat datetime,
-  emply_rgdat datetime,
+  emply_cndat timestamp,
+  emply_rgdat timestamp,
   emply_gssal DECIMAL(16,2) NOT NULL DEFAULT 0.0000,
   emply_otrat DECIMAL(16,2) NOT NULL DEFAULT 0.0000,
   emply_etype VARCHAR(50),
