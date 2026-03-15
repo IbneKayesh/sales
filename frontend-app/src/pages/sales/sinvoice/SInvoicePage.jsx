@@ -8,6 +8,7 @@ import SearchComp from "./SearchComp";
 
 const SInvoicePage = () => {
   const {
+    configs,
     dataList,
     isBusy,
     currentView,
@@ -53,10 +54,10 @@ const SInvoicePage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Sales Invoice List"
+            ? "Invoice List"
             : formData.id
-            ? "Edit Sales Invoice"
-            : "New Sales Invoice"}
+            ? "Edit Invoice"
+            : "New Invoice"}
         </h3>
 
         <div className="flex gap-2">
@@ -108,6 +109,7 @@ const SInvoicePage = () => {
         <ListComp dataList={dataList} onEdit={handleEdit} />
       ) : (
         <EntryComp
+          configs={configs}
           isBusy={isBusy}
           errors={errors}
           setErrors={setErrors}

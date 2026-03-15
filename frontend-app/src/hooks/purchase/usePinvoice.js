@@ -56,7 +56,7 @@ export const usePinvoice = () => {
       console.error("Error loading data:", error);
       notify({
         severity: "error",
-        summary: "Purchase Config",
+        summary: "Purchase Invoice Config",
         detail: error?.message || "Failed to load data",
         toast: true,
         notification: true,

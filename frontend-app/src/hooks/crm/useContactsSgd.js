@@ -3,7 +3,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { contactAPI } from "@/api/crm/contactAPI";
 import { useBusy, useNotification } from "@/hooks/useAppUI";
 
-
 export const useContactsSgd = () => {
   const { user } = useAuth();
   const { isBusy, setIsBusy } = useBusy();
@@ -33,15 +32,26 @@ export const useContactsSgd = () => {
     }
   };
 
-  const handleLoadCustomers = async () => {
+  const handleGetAllActiveCustomers = async () => {
     try {
+      setIsBusy(true);
       const response = await contactAPI.getAllCustomers({
-        cntct_users: user.users_users,
+        muser_id: user.users_users,
       });
       //console.log("data",response.data);
       setDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "Customer",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -63,7 +73,7 @@ export const useContactsSgd = () => {
       const response = await contactAPI.getRouteOutletsAvailable({
         cntct_users: user.users_users,
         cntct_bsins: user.users_bsins,
-        cnrut_rutes: routeId
+        cnrut_rutes: routeId,
       });
       //console.log("data",response.data);
       setDataList(response.data);
@@ -75,8 +85,8 @@ export const useContactsSgd = () => {
   return {
     dataList,
     handleGetAllActiveSuppliers,
-    handleLoadCustomers,
+    handleGetAllActiveCustomers,
     handleLoadReceiptSuppliers,
-    handleLoadRouteOutlets
-  }
+    handleLoadRouteOutlets,
+  };
 };

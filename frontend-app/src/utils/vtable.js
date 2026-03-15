@@ -60,7 +60,7 @@ const productTypeOptions = [
 
 const stockTypeOptions = [
   { label: "No Stock", value: 0 },
-  { label: "Single Stock", value: 1 },
+  { label: "Tracking Stock", value: 1 },
   { label: "Bulk Stock", value: 2 }
 ];
 

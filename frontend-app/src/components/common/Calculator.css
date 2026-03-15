@@ -212,7 +212,7 @@
 .calc-btn.equals {
   background: linear-gradient(135deg, #e94560, #ff2a2a);
   color: #fff;
-  grid-column: span 2;
+  grid-column: span 4;
 }
 .calc-btn.equals:hover {
   box-shadow: 0 0 20px rgba(233, 69, 96, 0.6);
@@ -224,6 +224,16 @@
 }
 .calc-btn.clear:hover {
   box-shadow: 0 0 15px rgba(255, 159, 67, 0.4);
+  transform: translateY(-2px);
+}
+
+.calc-btn.percent {
+  color: #00ffcc;
+  background: #0d2e2e;
+}
+.calc-btn.percent:hover {
+  background: #0f3d3d;
+  box-shadow: 0 0 15px rgba(0, 255, 204, 0.35);
   transform: translateY(-2px);
 }
 

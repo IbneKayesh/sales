@@ -215,7 +215,7 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
   const items_trcks_BT = (rowData) => {
     const stockMap = {
       0: <span className="text-red-500">⚊ No Stock</span>,
-      1: <span>☰ Single Stock</span>,
+      1: <span>☰ Tracking Stock</span>,
       2: <span>☷ Bulk Stock</span>,
     };
   

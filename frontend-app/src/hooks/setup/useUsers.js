@@ -89,7 +89,7 @@ export const useUsers = () => {
 
       // Call API, unwrap { message, data }
       const response = await usersAPI.delete(formDataNew);
-      
+
       if (response.success) {
         const updatedList = dataList.filter((u) => u.id !== rowData.id);
         setDataList(updatedList);
@@ -165,20 +165,38 @@ export const useUsers = () => {
       //console.log("response: " + JSON.stringify(response));
 
       // Update toast using API message
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Success" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `User - ${formDataNew.users_oname} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
 
-      handleClear();
-      setCurrentView("list");
-      loadUsers();
+      if (response.success) {
+        handleClear();
+        setCurrentView("list");
+        loadUsers();
+      }
     } catch (error) {
       console.error("Error saving data:", error);
-
-      showToast("error", "Error", error?.message || "Failed to save data");
+      notify({
+        severity: "error",
+        summary: "User",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
     }
@@ -197,6 +215,5 @@ export const useUsers = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-    roleOptions,
   };
 };

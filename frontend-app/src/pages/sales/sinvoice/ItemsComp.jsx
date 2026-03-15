@@ -15,13 +15,20 @@ import ZeroRowCell from "@/components/ZeroRowCell";
 import AttributesComp from "./AttributesComp";
 import { parseAttributes } from "@/utils/jsonParser";
 
-const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
-  const { dataList: productList, handleLoadSalesItems } = useProductsSgd();
+const ItemsComp = ({
+  configs,
+  formData,
+  formDataItemList,
+  setFormDataItemList,
+}) => {
+  const { dataList: productList, handleGetAllActiveSII } = useProductsSgd();
   const [showAttributes, setShowAttributes] = useState(false);
   const [selectedItemAttributes, setSelectedItemAttributes] = useState(null);
 
   useEffect(() => {
-    handleLoadSalesItems();
+    if (!formData.edit_stop) {
+      handleGetAllActiveSII();
+    }
   }, []);
 
   useEffect(() => {
@@ -51,11 +58,11 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       icon: "pi pi-plus-circle text-green-600",
       command: () => activeRow && handleAddAttributes(activeRow),
     },
-    {
-      label: "Copy Row",
-      icon: "pi pi-copy text-blue-600",
-      command: () => activeRow && handleCopyRowConfirm(activeRow),
-    },
+    // {
+    //   label: "Copy Row",
+    //   icon: "pi pi-copy text-blue-600",
+    //   command: () => activeRow && handleCopyRowConfirm(activeRow),
+    // },
     {
       label: "Delete",
       icon: "pi pi-trash text-red-600",
@@ -72,22 +79,16 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
   }, [selectedItem]);
 
   useEffect(() => {
-    const filteredList = productList.map((item) => {
-      const updatedItem = { ...item };
-
-      //   updatedItem.discount_percent = pageConfig.include_discount
-      //   ? item.discount_percent
-      //   : 0;
-
-      // updatedItem.vat_percent = pageConfig.include_vat ? item.vat_percent : 0;
-
-      return updatedItem;
-    });
+    const filteredList = productList.map((item) => ({
+      ...item,
+      bitem_sddsp: configs.cinvc_dspct ? item.bitem_sddsp : 0,
+      items_sdvat: configs.cinvc_vtpct ? item.items_sdvat : 0,
+    }));
 
     const filtered = filteredList.filter(
       (item) =>
         !formDataItemList.some(
-          (orderItem) => orderItem.cinvc_bitem === item.id,
+          (orderItem) => orderItem.cinvc_refid === item.bitem_refid,
         ),
     );
 
@@ -147,7 +148,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     return (
       <div className="grid">
         <div className="col-12 font-semibold p-1">
-          {option.items_iname} ({option.items_icode})
+          {option.items_icode}-{option.items_iname} ({option.items_bcode})
         </div>
         <div className="col-12 p-0 text-blue-600 text-sm">
           {Object.keys(parsedAttr).length > 0 &&
@@ -156,12 +157,17 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
               .join(", ")}
         </div>
         <div className="grid col-12 text-gray-700 p-2">
-          <div className="col-3 p-0">
-            💰 DP: {Number(option.bitem_dprat).toFixed(2)}
+          <div className="col-2 p-0">
+            🥇 LP: {Number(option.bitem_lprat).toFixed(2)}
           </div>
-          <div className="col-3 p-0">
-            💵 MRP: {Number(option.bitem_mcmrp).toFixed(2)}
+          <div className="col-2 p-0">
+            🥈 DP: {Number(option.bitem_dprat).toFixed(2)}
           </div>
+          <div className="col-2 p-0">
+            🥉 MRP: {Number(option.bitem_mcmrp).toFixed(2)}
+          </div>
+        </div>
+        <div className="grid col-12 text-gray-700 p-2">
           <div className="col-3 p-0">
             📊 Discount: {Number(option.bitem_sddsp).toFixed(2)}%
           </div>
@@ -170,11 +176,14 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
           </div>
         </div>
         <div className="grid col-12 text-gray-700 p-2">
-          <div className="col-4 p-0">
-            📦 Stock: {Number(option.bitem_ohqty).toFixed(2)}{" "}
+          <div className="col-3 p-0">
+            📑 Bulk Stock: {Number(option.bitem_gstkq).toFixed(2)}{" "}
             {option.puofm_untnm}
           </div>
-          <div className="col-4 p-0">🧾 No: {option.bitem_refno}</div>
+          <div className="col-3 p-0">
+            📋 Single Stock: {Number(option.bitem_istkq).toFixed(2)}{" "}
+            {option.puofm_untnm}
+          </div>
         </div>
       </div>
     );
@@ -188,8 +197,9 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     return (
       <div className="flex flex-column">
         <span className="font-semibold">
-          {option.items_iname}, 📦{Number(option.bitem_ohqty).toFixed(2)}{" "}
-          {option.puofm_untnm}
+          {option.items_icode}-{option.items_iname}, 📦
+          {Number(option.bitem_gstkq).toFixed(2)} {option.puofm_untnm},{" "}
+          {Number(option.bitem_istkq).toFixed(2)} {option.puofm_untnm}
         </span>
       </div>
     );
@@ -210,7 +220,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       return;
     }
 
-    const item = productList.find((i) => i.id === selectedItem);
+    const item = productList.find((i) => i.bitem_refid === selectedItem);
     if (!item) return;
 
     const itemAmount = (selectedQty || 1) * item.bitem_mcmrp;
@@ -222,8 +232,8 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
     const newItemRow = {
       id: generateGuid(), // Temporary ID for new items
       cinvc_minvc: "",
-      cinvc_bitem: selectedItem,
-      cinvc_items: item.bitem_items,
+      cinvc_bitem: item.bitem_id,
+      cinvc_items: item.items_id,
       cinvc_itrat: item.bitem_mcmrp,
       cinvc_itqty: selectedQty || 1,
       cinvc_itamt: itemAmount,
@@ -244,7 +254,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
       items_dfqty: item.items_dfqty,
       puofm_untnm: item.puofm_untnm,
       suofm_untnm: item.suofm_untnm,
-      bitem_ohqty: item.bitem_ohqty,
+      bitem_ohqty: item.bitem_ohqty
     };
     setFormDataItemList([...formDataItemList, newItemRow]);
 
@@ -517,7 +527,7 @@ const ItemsComp = ({ formData, formDataItemList, setFormDataItemList }) => {
               value={selectedItem}
               options={availableItemList}
               optionLabel="items_iname"
-              optionValue="id"
+              optionValue="bitem_refid"
               onChange={(e) => setSelectedItem(e.value)}
               placeholder="Select item"
               className="w-full"

@@ -9,11 +9,12 @@ import { useContactsSgd } from "@/hooks/crm/useContactsSgd";
 import RequiredText from "@/components/RequiredText";
 
 const HeaderComp = ({ errors, formData, handleChange }) => {
-  const { dataList: customerList, handleLoadCustomers } = useContactsSgd();
+  const { dataList: customerList, handleGetAllActiveCustomers } =
+    useContactsSgd();
 
   useEffect(() => {
     if (!formData.edit_stop) {
-      handleLoadCustomers();
+      handleGetAllActiveCustomers();
       //console.log("Customer list loaded");
     }
   }, []);
@@ -73,7 +74,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
     handleChange("cntct_ofadr", selectedObj?.cntct_ofadr || "");
   };
 
-  const isReadOnly = formData.edit_stop === 1;
+  const isReadOnly = formData.edit_stop === true;
 
   return (
     <div className="grid">
@@ -94,8 +95,9 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
         <RequiredText text={errors.minvc_trnno} />
       </div>
       <div className="col-12 md:col-2">
-        <label htmlFor="minvc_trdat" className="block font-bold mb-2 text-red-800">
+        <label htmlFor="minvc_trdat" className="block font-bold mb-2">
           {tmeb_minvc.minvc_trdat.label}
+          {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         <Calendar
           id="minvc_trdat"
@@ -104,7 +106,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           onChange={(e) =>
             handleChange(
               "minvc_trdat",
-              e.value ? e.value.toLocaleString().split("T")[0] : ""
+              e.value ? e.value.toLocaleString().split("T")[0] : "",
             )
           }
           className={`w-full ${errors.minvc_trdat ? "p-invalid" : ""}`}
@@ -116,12 +118,24 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
         <RequiredText text={errors.minvc_trdat} />
       </div>
       <div className="col-12 md:col-5">
-        <label htmlFor="minvc_cntct" className="block font-bold mb-2 text-red-800">
+        <label
+          htmlFor="minvc_cntct"
+          className="block font-bold mb-2 text-red-800"
+        >
           {tmeb_minvc.minvc_cntct.label}
+          {!isReadOnly && <span className="text-red-500">*</span>}
         </label>
         {isReadOnly ? (
           <InputText
-            value={formData.cntct_cntnm + ", " + formData.cntct_cntno + ", " + formData.cntct_cntno + ", " + formData.cntct_ofadr}
+            value={
+              formData.cntct_cntnm +
+              ", " +
+              formData.cntct_cntno +
+              ", " +
+              formData.cntct_cntno +
+              ", " +
+              formData.cntct_ofadr
+            }
             className="w-full"
             disabled
             variant="filled"
@@ -180,10 +194,8 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
             <Checkbox
               id="minvc_ispst"
               name="minvc_ispst"
-              checked={formData.minvc_ispst === 1}
-              onChange={(e) =>
-                handleChange("minvc_ispst", e.checked ? 1 : 0)
-              }
+              checked={!!formData.minvc_ispst}
+              onChange={(e) => handleChange("minvc_ispst", e.checked ? 1 : 0)}
               className={errors.minvc_ispst ? "p-invalid" : ""}
             />
             <RequiredText text={errors.minvc_ispst} />

@@ -21,13 +21,13 @@ const ItemsComp = ({
   formDataItemList,
   setFormDataItemList,
 }) => {
-  const { dataList: productList, handleGetAllActivePBI } = useProductsSgd();
+  const { dataList: productList, handleGetAllActivePII } = useProductsSgd();
   const [showAttributes, setShowAttributes] = useState(false);
   const [selectedItemAttributes, setSelectedItemAttributes] = useState(null);
 
   useEffect(() => {
     if (!formData.edit_stop) {
-      handleGetAllActivePBI();
+      handleGetAllActivePII();
     }
   }, []);
 

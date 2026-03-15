@@ -112,6 +112,21 @@ const Calculator = ({ visible, onClose }) => {
     }
   };
 
+  const inputPercent = () => {
+    const val = parseFloat(currentVal);
+    if (isNaN(val)) return;
+    let result;
+    if (previousVal != null) {
+      // e.g. 200 + 5% => 5% of 200 = 10
+      result = (previousVal * val) / 100;
+    } else {
+      result = val / 100;
+    }
+    result = parseFloat(result.toFixed(8));
+    setCurrentVal(String(result));
+    setWaitingForNewVal(false);
+  };
+
   const performOperation = (op) => {
     const inputValue = parseFloat(currentVal);
 
@@ -160,7 +175,7 @@ const Calculator = ({ visible, onClose }) => {
     newValue = parseFloat(newValue.toFixed(8));
     const newExpr = `${currentValue} ${formatDisplayOperator(operator)} ${inputValue} =`;
     
-    setHistory(prev => [{ expr: newExpr, result: String(newValue) }, ...prev].slice(0, 15)); 
+    setHistory(prev => [{ expr: newExpr, result: String(newValue) }, ...prev].slice(0, 50)); 
     setExpression(newExpr);
     setCurrentVal(String(newValue));
     setPreviousVal(null);
@@ -177,6 +192,7 @@ const Calculator = ({ visible, onClose }) => {
     else if (type === 'backspace') backspace();
     else if (type === 'operator') performOperation(value);
     else if (type === 'equals') calculateEquals();
+    else if (type === 'percent') inputPercent();
   };
   
   useEffect(() => {
@@ -202,6 +218,8 @@ const Calculator = ({ visible, onClose }) => {
         clearAll();
       } else if (e.key.toLowerCase() === 'c') {
         clearEntry();
+      } else if (e.key === '%') {
+        inputPercent();
       }
     };
 
@@ -281,7 +299,8 @@ const Calculator = ({ visible, onClose }) => {
 
           <button className="calc-btn number" style={{gridColumn: 'span 2'}} onClick={(e) => handleButtonClick(e, 'number', 0)}>0</button>
           <button className="calc-btn number" onClick={(e) => handleButtonClick(e, 'dot')}>.</button>
-          <button className="calc-btn equals" onClick={(e) => handleButtonClick(e, 'equals')}>=</button>
+          <button className="calc-btn percent" onClick={(e) => handleButtonClick(e, 'percent')}>%</button>
+          <button className="calc-btn equals" style={{gridColumn: 'span 4'}} onClick={(e) => handleButtonClick(e, 'equals')}>=</button>
         </div>
       </div>
     </div>

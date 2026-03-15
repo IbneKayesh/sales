@@ -47,7 +47,6 @@ router.post("/", async (req, res) => {
     }
 
     //console.log("params", minvc_trdat);
-
     if (minvc_trdat) {
       const dateObj = new Date(minvc_trdat);
       const formattedDate =
@@ -557,6 +556,11 @@ router.post("/create", async (req, res) => {
 
 // update
 router.post("/update", async (req, res) => {
+  return res.json({
+    success: true,
+    message: "Purchase Invoice update is not implemented yet",
+    data: null,
+  });
   try {
     const {
       id,

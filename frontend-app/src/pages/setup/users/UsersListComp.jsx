@@ -67,7 +67,7 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
   const users_email_BT = (rowData) => {
     return (
       <>
-        {rowData.users_isrgs === 1 ? (
+        {rowData.users_isrgs === true ? (
           <i className="pi pi-user text-green-500 mr-2" />
         ) : (
           <i className="pi pi-users text-blue-500 mr-2" />

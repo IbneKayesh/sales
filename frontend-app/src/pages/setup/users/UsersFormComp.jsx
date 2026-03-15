@@ -4,6 +4,8 @@ import { Dropdown } from "primereact/dropdown";
 import tmsb_users from "@/models/setup/tmsb_users.json";
 import { useBusinessSgd } from "@/hooks/setup/useBusinessSgd";
 import { useEffect } from "react";
+import { userRoleOptions } from "@/utils/vtable";
+
 
 const UsersFormComp = ({
   isBusy,
@@ -11,12 +13,12 @@ const UsersFormComp = ({
   formData,
   onChange,
   onSave,
-  roleOptions,
 }) => {
-  const { dataList: businessOptions, handleLoadBusiness } = useBusinessSgd();
+  const { dataList: businessOptions, handleGetAllActiveBusiness } =
+    useBusinessSgd();
 
   useEffect(() => {
-    handleLoadBusiness();
+    handleGetAllActiveBusiness();
   }, []);
   return (
     <div className="grid">
@@ -142,7 +144,7 @@ const UsersFormComp = ({
         <Dropdown
           name="users_drole"
           value={formData.users_drole}
-          options={roleOptions}
+          options={userRoleOptions}
           onChange={(e) => onChange("users_drole", e.value)}
           className={`w-full ${errors.users_drole ? "p-invalid" : ""}`}
           placeholder={`Select ${tmsb_users.users_drole.label}`}
@@ -194,7 +196,7 @@ const UsersFormComp = ({
             type="button"
             onClick={(e) => onSave(e)}
             label={formData.id ? "Update" : "Save"}
-            icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
+            icon={"pi pi-check"}
             severity="success"
             size="small"
             loading={isBusy}

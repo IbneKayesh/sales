@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
     const sql = `SELECT usr.*, 0 as edit_stop, bs.bsins_bname
       FROM tmsb_users usr
       LEFT JOIN tmsb_bsins bs ON usr.users_bsins = bs.id
-      WHERE usr.users_users = ?
+      WHERE usr.users_users = $1
       ORDER BY usr.users_oname`;
     const params = [users_users];
 
@@ -83,9 +83,9 @@ router.post("/create", async (req, res) => {
     (id,users_email,users_pswrd,users_recky,users_oname,users_cntct,
     users_bsins,users_drole,users_users,users_stats,users_regno,
     users_wctxt,users_notes,users_nofcr,users_isrgs,users_crusr,users_upusr)
-    VALUES (?,?,?,?,?,?,
-    ?,?,?,0,'Standard',
-    ?,?,0,0,?,?)`;
+    VALUES ($1,$2,$3,$4,$5,$6,
+    $7,$8,$9,0,'Standard',
+    $10,$11,0,FALSE,$12,$13)`;
     const params = [
       id,
       users_email,
@@ -157,19 +157,19 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmsb_users
-    SET users_email = ?,
-    users_pswrd = ?,
-    users_recky = ?,
-    users_oname = ?,
-    users_cntct = ?,
-    users_bsins = ?,
-    users_drole = ?,
-    users_wctxt = ?,
-    users_notes = ?,
-    users_upusr = ?,
-    users_updat = current_timestamp(),
+    SET users_email = $1,
+    users_pswrd = $2,
+    users_recky = $3,
+    users_oname = $4,
+    users_cntct = $5,
+    users_bsins = $6,
+    users_drole = $7,
+    users_wctxt = $8,
+    users_notes = $9,
+    users_upusr = $10,
+    users_updat = CURRENT_TIMESTAMP,
     users_rvnmr = users_rvnmr + 1
-    WHERE id = ?`;
+    WHERE id = $11`;
     const params = [
       users_email,
       users_pswrd,
@@ -216,8 +216,11 @@ router.post("/delete", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmsb_users
-    SET users_actve = 1 - users_actve
-    WHERE id = ?`;
+    SET users_actve = NOT users_actve,
+    users_upusr = $1,
+    users_updat = CURRENT_TIMESTAMP,
+    users_rvnmr = users_rvnmr + 1
+    WHERE id = $2`;
     const params = [id];
 
     await dbRun(sql, params, `Delete user for ${users_oname}`);

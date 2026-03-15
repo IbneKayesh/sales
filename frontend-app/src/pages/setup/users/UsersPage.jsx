@@ -7,8 +7,8 @@ import { useUsers } from "@/hooks/setup/useUsers";
 
 const UsersPage = () => {
   const {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
@@ -19,7 +19,6 @@ const UsersPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-    roleOptions,
   } = useUsers();
 
   const getHeader = () => {
@@ -28,12 +27,13 @@ const UsersPage = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
-          {isList ? "User List" : formData.id ? "Edit User" : "Add New User"}
+          {isList ? "User List" : formData.id ? "Edit User" : "Add User"}
         </h3>
 
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
+              label="Refresh"
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
@@ -78,7 +78,6 @@ const UsersPage = () => {
             formData={formData}
             onChange={handleChange}
             onSave={handleSave}
-            roleOptions={roleOptions}
           />
         )}
       </Card>

@@ -11,6 +11,7 @@ import ExpensesDlg from "./ExpensesDlg";
 import PaymentDlg from "./PaymentDlg";
 
 const EntryComp = ({
+  configs,
   isBusy,
   errors,
   setErrors,
@@ -23,6 +24,7 @@ const EntryComp = ({
   formDataPaymentList,
   setFormDataPaymentList,
   handleSubmit,
+  
   //cancel booking items
   cancelledRows,
   setCancelledRows,
@@ -66,13 +68,13 @@ const EntryComp = ({
 
     const include_cost = formDataExpensesList.reduce(
       (sum, item) =>
-        item.expns_inexc === 1 ? sum + (Number(item.expns_xpamt) || 0) : sum,
+        !!item.expns_inexc ? sum + (Number(item.expns_xpamt) || 0) : sum,
       0,
     );
 
     const exclude_cost = formDataExpensesList.reduce(
       (sum, item) =>
-        item.expns_inexc === 2 ? sum + (Number(item.expns_xpamt) || 0) : sum,
+        !item.expns_inexc ? sum + (Number(item.expns_xpamt) || 0) : sum,
       0,
     );
 
@@ -82,7 +84,7 @@ const EntryComp = ({
     const total_amount = sum_1_3_4 - sum_2_5;
 
     const payable_amount =
-      formData.minvc_vatpy === 1 ? total_amount : total_amount - vat_amount;
+      !!formData.minvc_vatpy ? total_amount : total_amount - vat_amount;
 
     const paid_amount = formDataPaymentList.reduce(
       (sum, item) => sum + (Number(item.rcvbl_dbamt) || 0),
@@ -170,6 +172,7 @@ const EntryComp = ({
         handleChange={handleChange}
       />
       <ItemsComp
+        configs={configs}
         formData={formData}
         formDataItemList={formDataItemList}
         setFormDataItemList={setFormDataItemList}
@@ -223,7 +226,7 @@ const EntryComp = ({
                   ? "Save with Posted"
                   : "Save as Draft"
             }
-            icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
+            icon={"pi pi-check"}
             severity="success"
             size="small"
             loading={isBusy}

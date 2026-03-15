@@ -23,7 +23,7 @@ export const useProductsSgd = () => {
       console.error("Error loading data:", error);
       notify({
         severity: "error",
-        summary: "PBI Items",
+        summary: "PB Items",
         detail: error?.message || "Failed to load data",
         toast: true,
         notification: true,
@@ -77,11 +77,67 @@ export const useProductsSgd = () => {
     }
   };
 
+
+
+  //Purchase Invoice Items
+  const handleGetAllActivePII = async () => {
+    try {
+      setIsBusy(true);
+      const response = await productsAPI.getPurchaseInvoiceItems({
+        muser_id: user.users_users,
+        bsins_id: user.users_bsins,
+      });
+      //console.log("data",response.data);
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "PI Items",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  //Sales Invoice Items
+  const handleGetAllActiveSII = async () => {
+    try {
+      setIsBusy(true);
+      const response = await productsAPI.getSalesInvoiceItems({
+        muser_id: user.users_users,
+        bsins_id: user.users_bsins,
+      });
+      //console.log("data",response.data);
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "SI Items",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+
+
   return {
     dataList,
     handleGetAllActivePBI,
     handleLoadTransferItems,
     handleLoadSalesItems,
     handleLoadSalesBookingItems,
+    handleGetAllActivePII,
+    handleGetAllActiveSII,
   };
 };

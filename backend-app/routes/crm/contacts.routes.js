@@ -439,6 +439,7 @@ router.post("/customers", async (req, res) => {
     FROM tmcb_cntct cnt
     WHERE cnt.cntct_users = $1
     AND cnt.cntct_ctype IN ('Customer','Both')
+    AND cnt.cntct_actve = TRUE
     ORDER BY cnt.cntct_cntnm`;
     const params = [muser_id];
 

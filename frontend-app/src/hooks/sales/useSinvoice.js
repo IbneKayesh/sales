@@ -2,20 +2,21 @@ import { useState, useEffect } from "react";
 import tmeb_minvc from "@/models/sales/tmeb_minvc.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
 import { sinvoiceAPI } from "@/api/sales/sinvoiceAPI";
 import { generateGuid } from "@/utils/guid";
 import { formatDateForAPI } from "@/utils/datetime";
 import { stringifyAttributes } from "@/utils/jsonParser";
 import { configsAPI } from "@/api/setup/configsAPI";
+import { useBusy, useNotification, useToast } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmeb_minvc, { edit_stop: 0 });
 
 export const useSinvoice = () => {
   const { user, business } = useAuth();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const { showToast } = useToast();
   const [dataList, setDataList] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
@@ -30,6 +31,7 @@ export const useSinvoice = () => {
 
   const loadConfigs = async () => {
     try {
+      setIsBusy(true);
       const response = await configsAPI.getAll({
         ucnfg_users: user.users_users,
         ucnfg_cname: "Sales",
@@ -46,15 +48,27 @@ export const useSinvoice = () => {
         ...prev,
         minvc_vatpy: Number(configsObj["minvc_vatpy"]) ?? prev.minvc_vatpy,
         minvc_ispst: Number(configsObj["minvc_ispst"]) ?? prev.minvc_ispst,
+        cinvc_dspct: Number(configsObj["cinvc_dspct"]) ?? prev.cinvc_dspct,
+        cinvc_vtpct: Number(configsObj["cinvc_vtpct"]) ?? prev.cinvc_vtpct,
       }));
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Sales Invoice Config",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
   const loadInvoice = async () => {
     try {
+      setIsBusy(true);
       //console.log("loadInvoice:");
       const response = await sinvoiceAPI.getAll({
         minvc_users: user.users_users,
@@ -71,7 +85,16 @@ export const useSinvoice = () => {
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "SI List",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -82,6 +105,7 @@ export const useSinvoice = () => {
 
   const loadInvoiceDetails = async (id) => {
     try {
+      setIsBusy(true);
       //console.log("loadInvoiceDetails:", id);
       const response = await sinvoiceAPI.getDetails({
         cinvc_minvc: id,
@@ -91,12 +115,22 @@ export const useSinvoice = () => {
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "SI Details",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
   const loadInvoiceExpenses = async (id) => {
     try {
+      setIsBusy(true);
       //console.log("loadInvoiceExpenses:", id);
       const response = await sinvoiceAPI.getExpenses({
         expns_refid: id,
@@ -106,21 +140,40 @@ export const useSinvoice = () => {
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "SI Expenses",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
   const loadInvoicePayment = async (id) => {
     try {
+      setIsBusy(true);
       //console.log("loadInvoicePayment:", id);
       const response = await sinvoiceAPI.getPayment({
         rcvbl_refid: id,
       });
       //console.log("loadInvoicePayment:", JSON.stringify(response));
-      setFormDataPaymentList(response.data);      
+      setFormDataPaymentList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "SI Payment",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -158,8 +211,8 @@ export const useSinvoice = () => {
   const handleAddNew = () => {
     //console.log("business:", business.bsins_prtrn);
     //check if business is active
-    if (!business.bsins_prtrn) {
-      showToast("error", "Error", "Purchase is not active");
+    if (!business.bsins_sltrn) {
+      showToast("error", "Error", "Sales is not active");
       return;
     }
     handleClear();
@@ -177,22 +230,43 @@ export const useSinvoice = () => {
 
   const handleDelete = async (rowData) => {
     try {
+      setIsBusy(true);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
       // Call API, unwrap { message, data }
-      const response = await sinvoiceAPI.delete(rowData);
+      const response = await sinvoiceAPI.delete(formDataNew);
 
       // Remove deleted business from local state
-      const updatedList = dataList.filter((s) => s.id !== rowData.id);
-      setDataList(updatedList);
+      if (response.success) {
+        const updatedList = dataList.filter((u) => u.id !== rowData.id);
+        setDataList(updatedList);
+      }
 
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Deleted" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `SI - ${rowData.minvc_trnno} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
     } catch (error) {
       console.error("Error deleting data:", error);
-      showToast("error", "Error", error?.message || "Failed to delete data");
+      notify({
+        severity: "error",
+        summary: "SI",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -210,25 +284,21 @@ export const useSinvoice = () => {
 
       // return;
 
-      setIsBusy(true);
-
       // Validate form
       const newErrors = validate(formData, tmeb_minvc);
       setErrors(newErrors);
       console.log("handleSave:", JSON.stringify(newErrors));
-
       if (Object.keys(newErrors).length > 0) {
-        setIsBusy(false);
         return;
       }
 
       //0 :: Unpaid, 1 :: Paid, 2 :: Partial
       const paidStatus =
         Number(formData.minvc_pdamt) === 0
-          ? "0"
+          ? 0
           : Number(formData.minvc_duamt) === 0
-            ? "1"
-            : "2";
+            ? 1
+            : 2;
 
       // console.log(
       //   "paidStatus:",
@@ -266,23 +336,42 @@ export const useSinvoice = () => {
       //console.log("handleSave:", JSON.stringify(response));
 
       // Update toast using API message
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Success" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `SI - ${formDataNew.minvc_trnno} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
 
-      //call update process
-      //await closingProcessAPI("purchase-invoice", user.users_bsins);
+      if (response.success) {
+        //call update process
+        //await closingProcessAPI("purchase-invoice", user.users_bsins);
 
-      // Clear form & reload
-      //handleClear();
-      //setCurrentView("list");
-      //await loadInvoice(); // make sure we wait for updated data
+        // Clear form & reload
+        handleClear();
+        setCurrentView("list");
+        await loadInvoice(); // make sure we wait for updated data
+      }
     } catch (error) {
       console.error("Error saving data:", error);
-      showToast("error", "Error", error?.message || "Failed to save data");
+      notify({
+        severity: "error",
+        summary: "PI",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
     }
@@ -342,6 +431,7 @@ export const useSinvoice = () => {
     try {
       // Call API, unwrap { message, data }
 
+      setIsBusy(true);
       const formDataNew = {
         ...formData,
         pmstr_users: user.users_users,
@@ -352,26 +442,49 @@ export const useSinvoice = () => {
       };
       const response = await sinvoiceAPI.cancelInvoiceItems(formDataNew);
 
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Cancelled" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
-      //reset cancelled rows
-      setCancelledRows([]);
-      setCancelledPayment({});
-      // Clear form & reload
-      handleClear();
-      setCurrentView("list");
-      await loadInvoice(); // make sure we wait for updated data
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `SI - ${formDataNew.ss} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
+
+      if (response.success) {
+        //reset cancelled rows
+        setCancelledRows([]);
+        setCancelledPayment({});
+        // Clear form & reload
+        handleClear();
+        setCurrentView("list");
+        await loadInvoice(); // make sure we wait for updated data
+      }
     } catch (error) {
-      console.error("Error canceling data:", error);
-      showToast("error", "Error", error?.message || "Failed to cancel data");
+      console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "SI Items",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
   return {
+    configs,
     dataList,
     isBusy,
     currentView,

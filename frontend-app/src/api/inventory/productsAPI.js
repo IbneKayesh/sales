@@ -41,6 +41,16 @@ export const productsAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getPurchaseInvoiceItems: (data) =>
+    apiRequest("/inventory/products/get-purchase-invoice-items", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getSalesInvoiceItems: (data) =>
+    apiRequest("/inventory/products/get-sales-invoice-items", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
   getPurchaseBookingItems: (data) =>
     apiRequest("/inventory/products/get-purchase-booking-items", {
       method: "POST",

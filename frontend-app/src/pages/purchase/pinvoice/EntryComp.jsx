@@ -24,6 +24,7 @@ const EntryComp = ({
   formDataPaymentList,
   setFormDataPaymentList,
   handleSubmit,
+  
   //cancel booking items
   cancelledRows,
   setCancelledRows,
@@ -225,7 +226,7 @@ const EntryComp = ({
                   ? "Save with Posted"
                   : "Save as Draft"
             }
-            icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
+            icon={"pi pi-check"}
             severity="success"
             size="small"
             loading={isBusy}

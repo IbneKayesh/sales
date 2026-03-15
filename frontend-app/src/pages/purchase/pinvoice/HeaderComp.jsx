@@ -9,7 +9,8 @@ import { useContactsSgd } from "@/hooks/crm/useContactsSgd";
 import RequiredText from "@/components/RequiredText";
 
 const HeaderComp = ({ errors, formData, handleChange }) => {
-  const { dataList: supplierList, handleGetAllActiveSuppliers } = useContactsSgd();
+  const { dataList: supplierList, handleGetAllActiveSuppliers } =
+    useContactsSgd();
 
   useEffect(() => {
     if (!formData.edit_stop) {
@@ -105,7 +106,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
           onChange={(e) =>
             handleChange(
               "minvc_trdat",
-              e.value ? e.value.toLocaleString().split("T")[0] : ""
+              e.value ? e.value.toLocaleString().split("T")[0] : "",
             )
           }
           className={`w-full ${errors.minvc_trdat ? "p-invalid" : ""}`}
@@ -123,7 +124,15 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
         </label>
         {isReadOnly ? (
           <InputText
-            value={formData.cntct_cntnm + ", " + formData.cntct_cntno + ", " + formData.cntct_cntno + ", " + formData.cntct_ofadr}
+            value={
+              formData.cntct_cntnm +
+              ", " +
+              formData.cntct_cntno +
+              ", " +
+              formData.cntct_cntno +
+              ", " +
+              formData.cntct_ofadr
+            }
             className="w-full"
             disabled
             variant="filled"
@@ -183,9 +192,7 @@ const HeaderComp = ({ errors, formData, handleChange }) => {
               id="minvc_ispst"
               name="minvc_ispst"
               checked={!!formData.minvc_ispst}
-              onChange={(e) =>
-                handleChange("minvc_ispst", e.checked ? 1 : 0)
-              }
+              onChange={(e) => handleChange("minvc_ispst", e.checked ? 1 : 0)}
               className={errors.minvc_ispst ? "p-invalid" : ""}
             />
             <RequiredText text={errors.minvc_ispst} />

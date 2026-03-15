@@ -122,11 +122,13 @@ const InvoicePage = () => {
           formDataPaymentList={formDataPaymentList}
           setFormDataPaymentList={setFormDataPaymentList}
           handleSubmit={handleSave}
+
           //cancel booking items
           cancelledRows={cancelledRows}
           setCancelledRows={setCancelledRows}
           onCancelBookingItems={handleCancelBookingItems}
           setCancelledPayment={setCancelledPayment}
+          
           //cancel
           handleCancel={handleCancel}
         />

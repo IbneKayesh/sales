@@ -191,9 +191,7 @@ const ListComp = ({ dataList, onEdit }) => {
       <div className="flex flex-column">
         <span className="text-blue-600">
           {rowData.minvc_trnno},{" "}
-          <span className="text-md text-blue-400 mt-1">
-            Invoice
-          </span>
+          <span className="text-md text-blue-400 mt-1">Invoice</span>
         </span>
         <span className="text-sm font-italic text-green-600 mt-1">
           {rowData.cntct_cntnm},{" "}
@@ -397,7 +395,7 @@ const ListComp = ({ dataList, onEdit }) => {
         <Column header="Status" body={is_paid_BT} />
         <Column body={action_BT} style={{ width: "100px" }} />
       </DataTable>
-            {filteredData.length === 0 && <EmptyState />}
+      {filteredData.length === 0 && <EmptyState />}
     </div>
   );
 };
