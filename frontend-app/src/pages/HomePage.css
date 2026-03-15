@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Inter:wght@300;400;600;700&display=swap");
+/* Using high-quality local system fonts for better performance and smooth rendering */
 
 /* converted for React from source HTML/CSS */
 
@@ -10,7 +10,14 @@
 
 .watch-home-container {
   background: #1f2937; /* Clean, modern dark gray */
-  font-family: "Inter", sans-serif;
+  /* Prioritize modern Windows Segoe UI Variable for smooth edges */
+  font-family: "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, "Inter", "Roboto", sans-serif;
+  
+  /* Enable font smoothing for that "premium" feel */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+
   height: 93vh;
   width: 100%;
   overflow: hidden;
@@ -25,10 +32,10 @@
   width: 100%;
   height: 100%;
   background-image: radial-gradient(
-    rgba(255, 255, 255, 0.05) 1px,
-    transparent 1px
+    rgba(255, 255, 255, 0.05) 1.5px,
+    transparent 1.5px
   );
-  background-size: 30px 30px;
+  background-size: 25px 25px;
 }
 
 .watch-clock-wrapper {
@@ -286,11 +293,12 @@
 /* ui text */
 
 .watch-ampm-text {
-  font-family: "Orbitron", sans-serif;
+  /* Using local Display font for a tech-look alternative to Orbitron */
+  font-family: "Segoe UI Variable Display", "Segoe UI", sans-serif;
   font-size: 22px;
   fill: #fcd34d; /* Golden AM/PM */
   letter-spacing: 2px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .watch-date-text {

@@ -57,11 +57,10 @@ const productTypeOptions = [
   { label: "Assets", value: "Assets" },
 ];
 
-
 const stockTypeOptions = [
   { label: "No Stock", value: 0 },
   { label: "Tracking Stock", value: 1 },
-  { label: "Bulk Stock", value: 2 }
+  { label: "Bulk Stock", value: 2 },
 ];
 
 const purchaseTypeOptions = [
@@ -167,6 +166,32 @@ const userRoleOptions = [
   { label: "Admin", value: "Admin" },
   { label: "User", value: "User" },
 ];
+
+const businessTagsOptions = [
+  { label: "Retail", value: "Retail" },
+  { label: "Wholesale", value: "Wholesale" },
+  { label: "Services", value: "Services" },
+  { label: "Manufacturing", value: "Manufacturing" },
+  { label: "Grocery", value: "Grocery" },
+  { label: "Import", value: "Import" },
+  { label: "Export", value: "Export" },
+  { label: "Restaurant", value: "Restaurant" },
+  { label: "Clothing", value: "Clothing" },
+  { label: "Electronics", value: "Electronics" },
+  { label: "Furniture", value: "Furniture" },
+  { label: "Pharmacy", value: "Pharmacy" },
+  { label: "Stationery", value: "Stationery" },
+  { label: "Other", value: "Other" },
+];
+
+const businessTypeOptions = [
+  { label: "Store", value: "Store" },
+  { label: "Showroom", value: "Showroom" },
+  { label: "Factory", value: "Factory" },
+  { label: "Warehouse", value: "Warehouse" },
+  { label: "Office", value: "Office" },
+];
+
 export {
   getListByTransHead,
   getTransHeadList,
@@ -188,6 +213,8 @@ export {
   dayNameOptions,
   countryOptions,
   userRoleOptions,
+  businessTagsOptions,
+  businessTypeOptions,
 };
 
 /*

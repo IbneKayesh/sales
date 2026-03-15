@@ -13,12 +13,15 @@ export const useShopSgd = () => {
     try {
       setIsBusy(true);
       setDataList([]);
-      const response = await shopAPI.dashboard({
-        trnsc_users: user.users_users,
-        trnsc_bsins: user.users_bsins,
-        trsrt_trdat: trsrt_trdat,
-        trend_trdat: trend_trdat,
-      });
+      const [response] = await Promise.all([
+        shopAPI.dashboard({
+          trnsc_users: user.users_users,
+          trnsc_bsins: user.users_bsins,
+          trsrt_trdat: trsrt_trdat,
+          trend_trdat: trend_trdat,
+        }),
+        new Promise((resolve) => setTimeout(resolve, 1000)),
+      ]);
       console.log("data", response.data);
       setDataList({ purchase: response.data });
     } catch (error) {

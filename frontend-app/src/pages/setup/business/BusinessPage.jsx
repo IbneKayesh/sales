@@ -7,8 +7,8 @@ import BusinessFormComp from "./BusinessFormComp";
 
 const BusinessPage = () => {
   const {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
@@ -19,9 +19,6 @@ const BusinessPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-    tagsOptions,
-    countryOptions,
-    businessTypeOptions,
   } = useBusiness();
 
   const getHeader = () => {
@@ -34,12 +31,13 @@ const BusinessPage = () => {
             ? "Business List"
             : formData.id
               ? "Edit Business"
-              : "Add New Business"}
+              : "Add Business"}
         </h3>
 
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
+              label="Refresh"
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
@@ -84,9 +82,6 @@ const BusinessPage = () => {
             formData={formData}
             onChange={handleChange}
             onSave={handleSave}
-            tagsOptions={tagsOptions}
-            countryOptions={countryOptions}
-            businessTypeOptions={businessTypeOptions}
           />
         )}
       </Card>

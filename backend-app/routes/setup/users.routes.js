@@ -203,7 +203,7 @@ router.post("/update", async (req, res) => {
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, users_oname} = req.body;
+    const { id, users_oname, suser_id} = req.body;
 
     // Validate input
     if (!id) {
@@ -221,7 +221,7 @@ router.post("/delete", async (req, res) => {
     users_updat = CURRENT_TIMESTAMP,
     users_rvnmr = users_rvnmr + 1
     WHERE id = $2`;
-    const params = [id];
+    const params = [suser_id, id];
 
     await dbRun(sql, params, `Delete user for ${users_oname}`);
     res.json({

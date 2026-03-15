@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
     //database action
     const sql = `SELECT bsn.*, 0 as edit_stop
       FROM tmsb_bsins bsn
-      WHERE bsn.bsins_users = ?
+      WHERE bsn.bsins_users = $1
       ORDER BY bsn.bsins_bname`;
     const params = [bsins_users];
 
@@ -86,7 +86,7 @@ router.post("/create", async (req, res) => {
     (id,bsins_users,bsins_bname,bsins_addrs,bsins_email,bsins_cntct,
     bsins_binno,bsins_btags,bsins_cntry, bsins_bstyp, bsins_tstrn,bsins_prtrn, bsins_sltrn,
     bsins_stdat,bsins_pbviw,bsins_crusr,bsins_upusr)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?, ?, ?, ?)`;
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`;
     const params = [
       id,
       bsins_users,
@@ -166,22 +166,22 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmsb_bsins
-    SET bsins_bname = ?,
-    bsins_addrs = ?,
-    bsins_email = ?,
-    bsins_cntct = ?,
-    bsins_binno = ?,
-    bsins_btags = ?,
-    bsins_cntry = ?,
-    bsins_bstyp = ?,
-    bsins_tstrn = ?,
-    bsins_prtrn = ?,
-    bsins_sltrn = ?,
-    bsins_stdat = ?,
-    bsins_pbviw = ?,
-    bsins_upusr = ?,
+    SET bsins_bname = $1,
+    bsins_addrs = $2,
+    bsins_email = $3,
+    bsins_cntct = $4,
+    bsins_binno = $5,
+    bsins_btags = $6,
+    bsins_cntry = $7,
+    bsins_bstyp = $8,
+    bsins_tstrn = $9,
+    bsins_prtrn = $10,
+    bsins_sltrn = $11,
+    bsins_stdat = $12,
+    bsins_pbviw = $13,
+    bsins_upusr = $14,
     bsins_rvnmr = bsins_rvnmr + 1
-    WHERE id = ?`;
+    WHERE id = $15`;
     const params = [
       bsins_bname,
       bsins_addrs,
@@ -219,7 +219,7 @@ router.post("/update", async (req, res) => {
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, bsins_bname } = req.body;
+    const { id, bsins_bname, suser_id } = req.body;
 
     // Validate input
     if (!id) {
@@ -232,9 +232,12 @@ router.post("/delete", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmsb_bsins
-    SET bsins_actve = 1 - bsins_actve
-    WHERE id = ?`;
-    const params = [id];
+    SET bsins_actve = NOT bsins_actve,
+    bsins_upusr = $1,
+    bsins_updat = CURRENT_TIMESTAMP,
+    bsins_rvnmr = bsins_rvnmr + 1
+    WHERE id = $2`;
+    const params = [suser_id, id];
 
     await dbRun(sql, params, `Delete business for ${bsins_bname}`);
     res.json({

@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { InputSwitch } from "primereact/inputswitch";
 import { Dropdown } from "primereact/dropdown";
 import { Chips } from "primereact/chips";
+import { businessTagsOptions, countryOptions, businessTypeOptions } from "@/utils/vtable";
 
 const BusinessFormComp = ({
   isBusy,
@@ -15,9 +16,6 @@ const BusinessFormComp = ({
   formData,
   onChange,
   onSave,
-  tagsOptions,
-  countryOptions,
-  businessTypeOptions,
 }) => {
   const { business } = useAuth();
   const [bImg, setBImg] = useState(null);
@@ -188,7 +186,7 @@ const BusinessFormComp = ({
         <Dropdown
           name="bsins_btags"
           value={formData.bsins_btags}
-          options={tagsOptions}
+          options={businessTagsOptions}
           onChange={(e) => onChange("bsins_btags", e.value)}
           className={`w-full ${errors.bsins_btags ? "p-invalid" : ""}`}
           placeholder={`Select ${tmsb_bsins.bsins_btags.label}`}

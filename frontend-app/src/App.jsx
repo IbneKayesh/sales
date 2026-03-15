@@ -48,8 +48,8 @@ function AppRoutes() {
             fallback={
               <LoadingSpinner
                 fullScreen
-                message="Loading..."
-                subMessage="Setting up your experience"
+                message="Setting up your experience..."
+                subMessage="Please wait"
               />
             }
           >
@@ -74,8 +74,8 @@ function AppRoutes() {
           fallback={
             <LoadingSpinner
               fullScreen
-              message="Loading..."
-              subMessage="Preparing your page"
+              message="Setting up your experience..."
+              subMessage="Please wait"
             />
           }
         >

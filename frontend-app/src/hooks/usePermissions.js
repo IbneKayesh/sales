@@ -13,11 +13,12 @@ export const usePermissions = () => {
   const loadModules = async () => {
     try {
       setIsBusy(true);
-      const response = await authAPI.permissionsModules({
-        id: user.users_users,
-      });
-      //console.log("response", response);
-      //response = { success, message, data }
+      const [response] = await Promise.all([
+        authAPI.permissionsModules({
+          id: user.users_users,
+        }),
+        new Promise((resolve) => setTimeout(resolve, 500)),
+      ]);
       setDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
@@ -36,10 +37,13 @@ export const usePermissions = () => {
     try {
       //console.log("handleFetchMenus", id);
       setIsBusy(true);
-      const response = await authAPI.permissionsMenus({
-        id: user.users_users,
-        menus_mdule: id,
-      });
+      const [response] = await Promise.all([
+        authAPI.permissionsMenus({
+          id: user.users_users,
+          menus_mdule: id,
+        }),
+        new Promise((resolve) => setTimeout(resolve, 500)),
+      ]);
       //set to storage or send direct to leftbar
       setStorageData({ menus: response.data });
       window.dispatchEvent(new CustomEvent("menusUpdated"));

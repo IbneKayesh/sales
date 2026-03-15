@@ -160,7 +160,7 @@ export const useBrands = () => {
       if (response.success) {
         handleClear();
         setCurrentView("list");
-        loadBrands();
+        await loadBrands();
       }
     } catch (error) {
       console.error("Error saving data:", error);

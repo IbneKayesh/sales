@@ -19,7 +19,7 @@ const DashboardPage = () => {
     { label: "Custom Date", value: "custom" },
   ];
 
-  const handleFetchData = () => {
+  const handleFindData = () => {
     let start = new Date(fromDate);
     let end = new Date(toDate);
 
@@ -90,9 +90,9 @@ const DashboardPage = () => {
           </>
         )}
         <Button
-          label="Fetch Data"
+          label="Find"
           icon="pi pi-search"
-          onClick={handleFetchData}
+          onClick={handleFindData}
           loading={isBusy}
         />
       </div>

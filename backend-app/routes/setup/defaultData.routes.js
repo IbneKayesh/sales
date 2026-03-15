@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
@@ -20,8 +20,8 @@ router.post("/", async (req, res) => {
     //database action
     const sql = `SELECT id, ucnfg_users, ucnfg_bsins, ucnfg_cname, ucnfg_gname, ucnfg_label, ucnfg_value, ucnfg_notes
     FROM tmsb_ucnfg
-    WHERE ucnfg_users = ?
-    AND ucnfg_bsins = ?
+    WHERE ucnfg_users = $1
+    AND ucnfg_bsins = $2
     ORDER BY ucnfg_cname, ucnfg_gname, ucnfg_label `;
     const params = [ucnfg_users, ucnfg_bsins];
 
@@ -75,15 +75,15 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmsb_ucnfg
-    SET ucnfg_value = ?,
-    ucnfg_upusr = ?,
+    SET ucnfg_value = $1,
+    ucnfg_upusr = $2,
     ucnfg_rvnmr = ucnfg_rvnmr + 1
-    WHERE id = ?
-    AND ucnfg_users = ?
-    AND ucnfg_bsins = ?
-    AND ucnfg_cname = ?
-    AND ucnfg_gname = ?
-    AND ucnfg_label = ?`;
+    WHERE id = $3
+    AND ucnfg_users = $4
+    AND ucnfg_bsins = $5
+    AND ucnfg_cname = $6
+    AND ucnfg_gname = $7
+    AND ucnfg_label = $8`;
     const params = [
       ucnfg_value,
       user_id,
