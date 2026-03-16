@@ -296,7 +296,11 @@ const ItemsComp = ({
     const formattedCostPrice = Number(rowData.cinvc_csrat).toFixed(2);
     return (
       <>
-        {formattedPrice}{" "}
+        {formattedPrice > 0 ? (
+          formattedPrice
+        ) : (
+          <span className="text-red-500">{formattedPrice}</span>
+        )}{" "}
         <span className="text-sm text-gray-500">({formattedCostPrice})</span>
       </>
     );
@@ -514,6 +518,7 @@ const ItemsComp = ({
 
   return (
     <div className="mt-4">
+      {JSON.stringify(formDataItemList)}
       <ConfirmDialog />
       <Menu model={actionMenuItems} popup ref={menu} id="popup_menu" />
       {!formData.edit_stop && (

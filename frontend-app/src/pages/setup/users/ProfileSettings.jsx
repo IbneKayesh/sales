@@ -6,15 +6,15 @@ import { Divider } from "primereact/divider";
 import { Avatar } from "primereact/avatar";
 import { Tag } from "primereact/tag";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
+import { useBusy, useNotification, useToast } from "@/hooks/useAppUI";
 import { usersAPI } from "@/api/setup/usersAPI";
 import "./ProfileSettings.css";
 
 const ProfileSettings = () => {
   const { user, business, setStorageData } = useAuth();
+  const { isBusy, setIsBusy } = useBusy();
   const { showToast } = useToast();
   const [formData, setFormData] = useState(null);
-  const [isBusy, setIsBusy] = useState(false);
   const [businessData, setBusinessData] = useState(null);
 
   useEffect(() => {

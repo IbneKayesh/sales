@@ -4,22 +4,23 @@ import tmtb_rcvbl from "@/models/accounts/tmtb_rcvbl.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
+import { useBusy, useNotification, useToast } from "@/hooks/useAppUI";
 import { formatDateForAPI } from "@/utils/datetime";
 
 const dataModel = generateDataModel(tmtb_rcvbl, { edit_stop: 0 });
 
 export const useReceivables = () => {
   const { user } = useAuth();
-  const { showToast } = useToast();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const [dataList, setDataList] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
-  const loadPayables = async () => {
+  const loadReceivable = async () => {
     try {
+      setIsBusy(true);
       const response = await receivablesAPI.getAll({
         rcvbl_users: user.users_users,
         rcvbl_bsins: user.users_bsins,
@@ -31,13 +32,22 @@ export const useReceivables = () => {
       //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Receivable",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadPayables();
+    loadReceivable();
   }, []);
 
   const handleChange = (field, value) => {
@@ -63,66 +73,84 @@ export const useReceivables = () => {
 
   const handleEdit = (data) => {
     //console.log("edit: " + JSON.stringify(data));
-    setFormData({ ...dataModel, ...data });
+    setFormData({ ...dataModel, ...data, rcvbl_dbamt: data.minvc_duamt });
     setCurrentView("form");
   };
 
   const handleDelete = async (rowData) => {
     try {
+      setIsBusy(true);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
       // Call API, unwrap { message, data }
-      const response = await receivablesAPI.delete(rowData);
+      const response = await receivablesAPI.delete(formDataNew);
 
       // Remove deleted account from local state
-      const updatedList = dataList.filter((s) => s.id !== rowData.id);
-      setDataList(updatedList);
+      if (response.success) {
+        const updatedList = dataList.filter((u) => u.id !== rowData.id);
+        setDataList(updatedList);
+      }
 
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Deleted" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `Receivable - ${rowData.id} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
     } catch (error) {
       console.error("Error deleting data:", error);
-      showToast("error", "Error", error?.message || "Failed to delete data");
+      notify({
+        severity: "error",
+        summary: "Receivable",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
   const handleRefresh = () => {
-    loadPayables();
+    loadReceivable();
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      setIsBusy(true);
-
       // Validate form
       const newErrors = validate(formData, tmtb_rcvbl);
       setErrors(newErrors);
-      console.log("handleSave:", JSON.stringify(formData));
-
+      console.log("handleSave:", JSON.stringify(newErrors));
       if (Object.keys(newErrors).length > 0) {
-        setIsBusy(false);
         return;
       }
 
-      if (formData.rcvbl_dbamt > formData.mbkng_duamt) {
+      if (formData.rcvbl_dbamt > formData.minvc_duamt) {
         showToast(
           "error",
           "Error",
           "Payment amount cannot be greater than payable amount",
         );
-        setIsBusy(false);
         return;
       }
 
+      setIsBusy(true);
       // Ensure id exists (for create)
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
         rcvbl_trdat: formatDateForAPI(formData.rcvbl_trdat),
-        user_id: user.id,
+        muser_id: user.users_users,
+        suser_id: user.id,
       };
 
       // Call API and get { message, data }
@@ -134,28 +162,46 @@ export const useReceivables = () => {
       }
 
       // Update toast using API message
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Success" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed"),
-      );
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Receivable - ${formDataNew.rcvbl_refno} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
 
-      //call update process
-      // Clear form & reload
-      handleClear();
-      setCurrentView("list");
-      await loadPayables(); // make sure we wait for updated data
+      if (response.success) {
+        //call update process
+        // Clear form & reload
+        handleClear();
+        setCurrentView("list");
+        await loadReceivable(); // make sure we wait for updated data
+      }
     } catch (error) {
       console.error("Error saving data:", error);
-      showToast("error", "Error", error?.message || "Failed to save data");
+      notify({
+        severity: "error",
+        summary: "Receivable",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
     }
   };
 
   //search
-
   const [receivableSummaryList, setReceivableSummaryList] = useState([]);
   const [searchBoxShow, setSearchBoxShow] = useState(false);
   const [searchBoxData, setSearchBoxData] = useState({
@@ -165,7 +211,6 @@ export const useReceivables = () => {
     rcvbl_descr: "",
     search_option: "last_3_days",
   });
-
 
   const handleChangeSearchInput = (e) => {
     const { name, value } = e.target;
@@ -200,8 +245,6 @@ export const useReceivables = () => {
       showToast("error", "Error", error?.message || "Failed to load data");
     }
   };
-
-
 
   const handleSearch = () => {
     const hasValue = Object.values(searchBoxData).some(
@@ -242,6 +285,6 @@ export const useReceivables = () => {
     handleChangeSearchInput,
     handleSearch,
     searchOptions,
-    receivableSummaryList
+    receivableSummaryList,
   };
 };

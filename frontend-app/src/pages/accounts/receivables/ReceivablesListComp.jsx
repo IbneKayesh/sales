@@ -22,30 +22,28 @@ const ReceivablesListComp = ({ dataList, onEdit }) => {
     return (
       <div className="flex flex-column">
         <span className="text-md">
-          {rowData.rcvbl_refno} on {formatDate(rowData.mbkng_trdat)}
+          {rowData.rcvbl_refno} on {formatDate(rowData.minvc_trdat)}
         </span>
         <span className="text-sm text-green-500">{rowData.rcvbl_srcnm}</span>
-        <span className="text-sm text-gray-500">{rowData.rcvbl_descr}</span>
-        <span className="text-sm text-gray-500">{rowData.rcvbl_notes}</span>
       </div>
     );
   };
 
   const rcvbl_dbamt_BT = (rowData) => {
-    const { rcvbl_cramt, mbkng_pdamt, rcvbl_dbamt } = rowData;
+    const { minvc_pyamt, minvc_pdamt, minvc_duamt } = rowData;
 
     return (
       <div className="flex gap-1">
         <span className="text-primary font-bold">
-          {Number(rcvbl_cramt).toFixed(2)}
+          {Number(minvc_pyamt).toFixed(2)}
         </span>
         •
         <span className="text-green font-bold">
-          {Number(mbkng_pdamt).toFixed(2)}
+          {Number(minvc_pdamt).toFixed(2)}
         </span>
         •
         <span className="text-red-500 font-bold">
-          {Number(rcvbl_dbamt || 0).toFixed(2)}
+          {Number(minvc_duamt || 0).toFixed(2)}
         </span>
       </div>
     );

@@ -494,58 +494,63 @@ router.post("/create", async (req, res) => {
       ],
       label: `Created payment credit ${minvc_trnno_new}`,
     });
-
+   
     //when posted
-    // if (minvc_ispst === 1) {
-    //   for (const det of tmeb_cinvc) {
-    //     scripts.push({
-    //       sql: `UPDATE tmib_bitem b
-    //       JOIN tmib_items itm ON b.bitem_items = itm.id
-    //     SET
-    //       bitem_gstkq = bitem_gstkq - CASE WHEN itm.items_trcks = 0 THEN ? ELSE 0 END,
-    //       bitem_istkq = bitem_istkq - CASE WHEN itm.items_trcks = 1 THEN ? ELSE 0 END
-    //     WHERE b.id = ?`,
-    //       params: [
-    //         det.cinvc_itqty, // for gstkq (items_track = 0)
-    //         det.cinvc_itqty, // for istkq (items_track = 1)
-    //         det.cinvc_bitem, // bitem id
-    //       ],
-    //       label: `BItem good, item stock updated`,
-    //     });
+    if (minvc_ispst === 1) {
+      for (const det of tmeb_cinvc) {
+        scripts.push({
+          sql: `UPDATE tmib_bitem b
+          SET
+            bitem_gstkq = bitem_gstkq - CASE WHEN itm.items_trcks = 2 THEN $1 ELSE 0 END,
+            bitem_istkq = bitem_istkq - CASE WHEN itm.items_trcks = 1 THEN $2 ELSE 0 END
+          FROM tmib_items itm
+          WHERE b.bitem_items = itm.id
+            AND b.id = $3`,
+          params: [
+            det.cinvc_itqty, // for gstkq (items_track = 0)
+            det.cinvc_itqty, // for istkq (items_track = 1)
+            det.cinvc_bitem, // bitem id
+          ],
+          label: `BItem good, item stock updated`,
+        });
 
-    //     if (det.cinvc_srcnm === "Sales Invoice") {
-    //       scripts.push({
-    //         sql: `UPDATE tmeb_cinvc
-    //         SET
-    //         cinvc_ohqty = cinvc_ohqty - ?,
-    //         cinvc_slqty = cinvc_slqty + ?
-    //         WHERE id = ?`,
-    //         params: [
-    //           det.cinvc_itqty, // cinvc_ohqty
-    //           det.cinvc_itqty, // cinvc_slqty
-    //           det.cinvc_refid,
-    //         ],
-    //         label: `Sales Invoice detail updated`,
-    //       });
-    //     } else if (det.cinvc_srcnm === "Sales Receipt") {
-    //       scripts.push({
-    //         sql: `UPDATE tmeb_crcpt
-    //         SET
-    //         crcpt_ohqty = crcpt_ohqty - ?,
-    //         crcpt_slqty = crcpt_slqty + ?
-    //         WHERE id = ?`,
-    //         params: [
-    //           det.cinvc_itqty, // crcpt_ohqty
-    //           det.cinvc_itqty, // crcpt_slqty
-    //           det.cinvc_refid,
-    //         ],
-    //         label: `Sales Receipt detail updated`,
-    //       });
-    //     } else if (det.cinvc_srcnm === "Transfer Stock") {
-    //       //sql script is need
-    //     }
-    //   }
-    // }
+        
+        //console.log("det",det)
+
+        //     if (det.cinvc_srcnm === "Sales Invoice") {
+        //       scripts.push({
+        //         sql: `UPDATE tmeb_cinvc
+        //         SET
+        //         cinvc_ohqty = cinvc_ohqty - ?,
+        //         cinvc_slqty = cinvc_slqty + ?
+        //         WHERE id = ?`,
+        //         params: [
+        //           det.cinvc_itqty, // cinvc_ohqty
+        //           det.cinvc_itqty, // cinvc_slqty
+        //           det.cinvc_refid,
+        //         ],
+        //         label: `Sales Invoice detail updated`,
+        //       });
+        //     } else if (det.cinvc_srcnm === "Sales Receipt") {
+        //       scripts.push({
+        //         sql: `UPDATE tmeb_crcpt
+        //         SET
+        //         crcpt_ohqty = crcpt_ohqty - ?,
+        //         crcpt_slqty = crcpt_slqty + ?
+        //         WHERE id = ?`,
+        //         params: [
+        //           det.cinvc_itqty, // crcpt_ohqty
+        //           det.cinvc_itqty, // crcpt_slqty
+        //           det.cinvc_refid,
+        //         ],
+        //         label: `Sales Receipt detail updated`,
+        //       });
+        //     } else if (det.cinvc_srcnm === "Transfer Stock") {
+        //       //sql script is need
+        //     }
+      }
+    }
+    console.log("scripts",scripts);
 
     await dbRunAll(scripts);
 

@@ -9,8 +9,8 @@ import ReceiveSummaryListComp from "./ReceiveSummaryListComp";
 
 const ReceivablesPage = () => {
   const {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,

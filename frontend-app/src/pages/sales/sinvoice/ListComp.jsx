@@ -259,7 +259,7 @@ const ListComp = ({ dataList, onEdit }) => {
             className="px-2"
           />
         )}
-        {rowData.minvc_ispst === 1 ? (
+        {!!rowData.minvc_ispst ? (
           <Tag
             value="Posted"
             severity="info"
@@ -276,7 +276,7 @@ const ListComp = ({ dataList, onEdit }) => {
             className="px-2"
           />
         )}
-        {rowData.minvc_iscls === 1 ? (
+        {!!rowData.minvc_iscls ? (
           <Tag value="Closed" severity="contrast" rounded />
         ) : null}
       </div>
@@ -326,7 +326,7 @@ const ListComp = ({ dataList, onEdit }) => {
       unpaid: filteredData.filter((i) => i.minvc_ispad === 0).length,
       partial: filteredData.filter((i) => i.minvc_ispad === 2).length,
       due: filteredData.reduce((s, i) => s + Number(i.minvc_duamt || 0), 0),
-      unposted: filteredData.filter((i) => i.minvc_ispst !== 1).length,
+      unposted: filteredData.filter((i) => !i.minvc_ispst).length,
     };
 
     return (
@@ -349,6 +349,9 @@ const ListComp = ({ dataList, onEdit }) => {
           )}
           {stats.unpaid > 0 && (
             <Badge value={`Unpaid: ${stats.unpaid}`} severity="danger" />
+          )}
+          {stats.partial > 0 && (
+            <Badge value={`Partial: ${stats.partial}`} severity="danger" />
           )}
           {stats.unposted > 0 && (
             <Badge value={`Drafts: ${stats.unposted}`} severity="warning" />

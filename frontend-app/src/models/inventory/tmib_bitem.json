@@ -131,10 +131,10 @@
   },
   "bitem_mpric": {
     "type": "decimal",
-    "label": "Margin Price",
+    "label": "Margin Value",
     "maxLength": 99999999,
     "minLength": -99999999,
-    "placeholder": "Enter margin price",
+    "placeholder": "Enter margin value",
     "required": true,
     "default": "0"
   },

@@ -350,6 +350,9 @@ const ListComp = ({ dataList, onEdit }) => {
           {stats.unpaid > 0 && (
             <Badge value={`Unpaid: ${stats.unpaid}`} severity="danger" />
           )}
+          {stats.partial > 0 && (
+            <Badge value={`Partial: ${stats.partial}`} severity="danger" />
+          )}
           {stats.unposted > 0 && (
             <Badge value={`Drafts: ${stats.unposted}`} severity="warning" />
           )}

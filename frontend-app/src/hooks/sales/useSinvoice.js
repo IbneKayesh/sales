@@ -385,7 +385,7 @@ export const useSinvoice = () => {
     minvc_trnno: "",
     minvc_trdat: "", //new Date().toLocaleString().split("T")[0],
     minvc_refno: "",
-    search_option: "last_3_days",
+    search_option: "last_7_days",
   });
 
   const handleChangeSearchInput = (e) => {

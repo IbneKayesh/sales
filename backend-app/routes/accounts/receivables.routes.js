@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT '' AS id, bkng.mbkng_users AS rcvbl_users, bkng.mbkng_bsins AS rcvbl_bsins, bkng.mbkng_cntct AS rcvbl_cntct,
+    const sql1 = `SELECT '' AS id, bkng.mbkng_users AS rcvbl_users, bkng.mbkng_bsins AS rcvbl_bsins, bkng.mbkng_cntct AS rcvbl_cntct,
     'Cash' AS rcvbl_pymod, bkng.id AS rcvbl_refid, bkng.mbkng_trnno AS rcvbl_refno, 'Sales Booking' AS rcvbl_srcnm,
     current_timestamp() AS rcvbl_trdat, '' AS rcvbl_descr, 'Payment' AS rcvbl_notes, bkng.mbkng_duamt AS rcvbl_dbamt, bkng.mbkng_pyamt AS rcvbl_cramt,
     bkng.mbkng_trdat, bkng.mbkng_pdamt, bkng.mbkng_duamt, tct.cntct_cntnm, tct.cntct_cntps, tct.cntct_cntno, tct.cntct_email, tct.cntct_ofadr
@@ -40,9 +40,29 @@ router.post("/", async (req, res) => {
     AND minvc.minvc_users = ?
     AND minvc.minvc_bsins = ?`;
 
+    const sql = `SELECT '' AS id,
+    minvc.minvc_users AS rcvbl_users, minvc.minvc_bsins AS rcvbl_bsins,
+    minvc.minvc_cntct AS rcvbl_cntct, 'Cash' AS rcvbl_pymod, minvc.id AS rcvbl_refid,
+    minvc.minvc_trnno AS rcvbl_refno, 'Sales Invoice' rcvbl_srcnm,
+    CURRENT_TIMESTAMP AS rcvbl_trdat, '' AS rcvbl_descr,
+    '' AS rcvbl_notes, 0 AS rcvbl_dbamt, 0 AS rcvbl_cramt,
+    minvc.minvc_trdat, minvc.minvc_odamt,
+    minvc.minvc_dsamt, minvc.minvc_vtamt, minvc.minvc_vatpy,
+    minvc.minvc_incst, minvc.minvc_excst, minvc.minvc_rnamt,
+    minvc.minvc_ttamt, minvc.minvc_pyamt, minvc.minvc_pdamt,
+    minvc.minvc_duamt, minvc.minvc_ispad,
+    tct.cntct_cntnm, tct.cntct_cntps, tct.cntct_cntno,
+    tct.cntct_email, tct.cntct_ofadr
+    FROM tmeb_minvc minvc
+    LEFT JOIN tmcb_cntct tct ON minvc.minvc_cntct = tct.id
+    WHERE minvc.minvc_duamt > 0
+    AND minvc.minvc_ispad IN (0, 2)    
+    AND minvc.minvc_users = $1
+    AND minvc.minvc_bsins = $2`;
+
     //ORDER BY bkng.mbkng_cntct, bkng.mbkng_trnno
     //const params = [rcvbl_users, rcvbl_bsins, rcvbl_users, rcvbl_bsins];
-    const params = [rcvbl_users, rcvbl_bsins, rcvbl_users, rcvbl_bsins];
+    const params = [rcvbl_users, rcvbl_bsins];
 
     const rows = await dbGetAll(
       sql,
@@ -80,7 +100,7 @@ router.post("/create", async (req, res) => {
       rcvbl_descr,
       rcvbl_notes,
       rcvbl_dbamt,
-      user_id,
+      suser_id,
     } = req.body;
     //console.log("create:", JSON.stringify(req.body));
     // Validate input
@@ -108,9 +128,9 @@ router.post("/create", async (req, res) => {
       sql: `INSERT INTO tmtb_rcvbl(id, rcvbl_users, rcvbl_bsins, rcvbl_cntct, rcvbl_pymod, rcvbl_refid,
     rcvbl_refno, rcvbl_srcnm, rcvbl_trdat, rcvbl_descr, rcvbl_notes, rcvbl_dbamt,
     rcvbl_cramt, rcvbl_crusr, rcvbl_upusr)
-    VALUES (?, ?, ?, ?, ?, ?,
-    ?, ?, ?, ?, ?, ?,
-    ?, ?, ?)`,
+    VALUES ($1, $2, $3, $4, $5, $6,
+    $7, $8, $9, $10, $11, $12,
+    $13, $14, $15)`,
       params: [
         uuidv4(),
         rcvbl_users,
@@ -125,8 +145,8 @@ router.post("/create", async (req, res) => {
         rcvbl_notes,
         rcvbl_dbamt,
         0,
-        user_id,
-        user_id,
+        suser_id,
+        suser_id,
       ],
       label: `Create receivable for ${rcvbl_refno}`,
     });
@@ -151,22 +171,37 @@ router.post("/create", async (req, res) => {
       });
     }
     if (rcvbl_srcnm === "Sales Invoice") {
-      scripts.push({
-        sql: `UPDATE tmeb_minvc SET minvc_pdamt = minvc_pdamt + ?, minvc_duamt = minvc_duamt - ? WHERE id = ?`,
-        params: [rcvbl_dbamt, rcvbl_dbamt, rcvbl_refid],
-        label: `Update Sales Invoice ${rcvbl_refno}`,
-      });
+      // scripts.push({
+      //   sql: `UPDATE tmeb_minvc SET minvc_pdamt = minvc_pdamt + ?, minvc_duamt = minvc_duamt - ? WHERE id = ?`,
+      //   params: [rcvbl_dbamt, rcvbl_dbamt, rcvbl_refid],
+      //   label: `Update Sales Invoice ${rcvbl_refno}`,
+      // });
+
+      // scripts.push({
+      //   sql: `UPDATE tmeb_minvc
+      //   SET minvc_ispad =
+      //   CASE
+      //     WHEN minvc_duamt <= 0 THEN 1
+      //     WHEN minvc_duamt > 0 AND minvc_duamt < minvc_pyamt THEN 2
+      //     ELSE 0
+      //   END WHERE id = ?`,
+      //   params: [rcvbl_refid],
+      //   label: `Update Sales Invoice Status ${rcvbl_refno}`,
+      // });
 
       scripts.push({
         sql: `UPDATE tmeb_minvc
-        SET minvc_ispad = 
-        CASE
-          WHEN minvc_duamt <= 0 THEN 1
-          WHEN minvc_duamt > 0 AND minvc_duamt < minvc_pyamt THEN 2
-          ELSE 0
-        END WHERE id = ?`,
-        params: [rcvbl_refid],
-        label: `Update Sales Invoice Status ${rcvbl_refno}`,
+              SET
+                minvc_pdamt = minvc_pdamt + $1,
+                minvc_duamt = minvc_duamt - $2,
+                minvc_ispad = CASE
+                  WHEN (minvc_duamt - $2) <= 0 THEN 1
+                  WHEN (minvc_duamt - $2) < minvc_pyamt THEN 2
+                  ELSE 0
+                END
+              WHERE id = $3`,
+        params: [rcvbl_dbamt, rcvbl_dbamt, rcvbl_refid],
+        label: `Update Sales Invoice ${rcvbl_refno}`,
       });
     }
     await dbRunAll(scripts);
@@ -280,8 +315,6 @@ router.post("/receivable-details", async (req, res) => {
     });
   }
 });
-
-
 
 //receivable-summary
 router.post("/receivable-summary", async (req, res) => {

@@ -17,16 +17,16 @@ const ExpensesDlg = ({
     id: generateGuid(),
     expns_refno: "[Auto]",
     expns_srcnm: "[Invoice]",
-    expns_inexc: 1,
+    expns_inexc: false,
     expns_notes: "",
     expns_xpamt: "",
   });
 
   useEffect(() => {
     if (dialogName === "Including Expenses") {
-      setFormDataExpenses((prev) => ({ ...prev, expns_inexc: 1 }));
+      setFormDataExpenses((prev) => ({ ...prev, expns_inexc: true }));
     } else {
-      setFormDataExpenses((prev) => ({ ...prev, expns_inexc: 2 }));
+      setFormDataExpenses((prev) => ({ ...prev, expns_inexc: false }));
     }
   }, [dialogName]);
 
@@ -46,7 +46,7 @@ const ExpensesDlg = ({
       id: generateGuid(),
       expns_refno: "[Auto]",
       expns_srcnm: "[Invoice]",
-      expns_inexc: dialogName === "Including Expenses" ? 1 : 2,
+      expns_inexc: dialogName === "Including Expenses" ? true : false,
       expns_notes: "",
       expns_xpamt: "",
     });
@@ -80,16 +80,16 @@ const ExpensesDlg = ({
   };
 
   const inexc_BT = (rowData) => {
-    return rowData.expns_inexc === 1
+    return rowData.expns_inexc === true
       ? "Including"
-      : rowData.expns_inexc === 2
+      : rowData.expns_inexc === false
         ? "Excluding"
         : "Unknown";
   };
 
   const total_including_cost = () => {
     return formDataExpensesList.filter(
-      (item) => item.expns_inexc === 1,
+      (item) => item.expns_inexc === true,
     ).reduce(
       (total, item) => total + Number(item.expns_xpamt),
       0,
@@ -98,7 +98,7 @@ const ExpensesDlg = ({
 
   const total_excluding_cost = () => {
     return formDataExpensesList.filter(
-      (item) => item.expns_inexc === 2,
+      (item) => item.expns_inexc === false,
     ).reduce(
       (total, item) => total + Number(item.expns_xpamt),
       0,

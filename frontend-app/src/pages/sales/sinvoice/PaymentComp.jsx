@@ -15,7 +15,7 @@ const PaymentComp = ({
   const [payableNote, setPayableNote] = useState("");
   useEffect(() => {
     let note = "";
-    if (formData.minvc_vatpy === 1) {
+    if (!!formData.minvc_vatpy) {
       note += " with Vat";
     }
     setPayableNote(note);
@@ -53,7 +53,7 @@ const PaymentComp = ({
             <small className="mb-3 text-red-500">{errors.minvc_trnte}</small>
           )}
         </div>
-        {formData.edit_stop === 1 && formData.minvc_ispad === 0 && (
+        {formData.edit_stop === true && formData.minvc_ispad === 0 && (
           <Tag
             severity="danger"
             value="Unpaid"
@@ -140,7 +140,7 @@ const PaymentComp = ({
               className={`flex justify-content-between`}
               onClick={() =>
                 !formData.edit_stop &&
-                handleChange("minvc_vatpy", formData.minvc_vatpy === 1 ? 0 : 1)
+                handleChange("minvc_vatpy", !formData.minvc_vatpy ? 1 : 0)
               }
             >
               <div
@@ -148,7 +148,7 @@ const PaymentComp = ({
               >
                 <i
                   className={
-                    formData.minvc_vatpy === 1
+                    !!formData.minvc_vatpy
                       ? "pi pi-check-circle text-bold text-white"
                       : "pi pi-circle text-bold text-red-500"
                   }
@@ -182,7 +182,7 @@ const PaymentComp = ({
               >
                 <i
                   className={
-                    formData.edit_stop === 0
+                    formData.edit_stop === false
                       ? "pi pi-sync text-bold text-white"
                       : "pi pi-sync text-bold text-white"
                   }
@@ -190,7 +190,7 @@ const PaymentComp = ({
                 <span>Round Off (5)</span>
               </div>
               <div>
-                {formData.edit_stop === 1 ? (
+                {formData.edit_stop === true ? (
                   <span className="font-bold">
                     {Number(formData.minvc_rnamt || 0).toFixed(2)}
                   </span>
@@ -248,7 +248,7 @@ const PaymentComp = ({
             </div>
 
             <div className="flex justify-content-between">
-              <span>Due (9)</span>
+              <span>Due (9) [7-8]</span>
               <span className="text-red-700 font-bold">
                 {formData.minvc_duamt}
               </span>

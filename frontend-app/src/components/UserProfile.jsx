@@ -60,7 +60,7 @@ const UserProfile = ({ onSwitchBusiness, onLogout }) => {
               className="p-button-text p-button-sm justify-content-start text-gray-700 bg-gray-50 hover:bg-blue-100 transition-colors duration-200"
               onClick={() => {
                 op.current.hide();
-                navigate("/home/auth/profile");
+                navigate("/home/setup/users/profile");
               }}
             />
             <Button

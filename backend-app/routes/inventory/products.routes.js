@@ -537,7 +537,8 @@ router.post("/get-business-items", async (req, res) => {
     FROM tmib_bitem bitm
     LEFT JOIN tmib_items itm on bitm.bitem_items = itm.id
     WHERE bitm.bitem_bsins = $1
-    AND bitm.bitem_users = $2`;
+    AND bitm.bitem_users = $2
+    ORDER BY bitm.bitem_gstkq DESC, bitm.bitem_istkq DESC`;
     const params = [bitem_bsins, muser_id];
 
     const rows = await dbGetAll(sql, params, `Get BItem for ${bitem_bsins}`);

@@ -124,10 +124,10 @@
   },
   "items_costp": {
     "type": "decimal",
-    "label": "Cost Price %",
+    "label": "Cost %",
     "maxLength": 1000,
     "minLength": 0,
-    "placeholder": "Enter cost price %",
+    "placeholder": "Enter cost %",
     "required": true,
     "default": "10"
   }

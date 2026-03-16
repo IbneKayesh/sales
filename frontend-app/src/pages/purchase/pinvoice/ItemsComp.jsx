@@ -299,7 +299,11 @@ const ItemsComp = ({
     const formattedCostPrice = Number(rowData.cinvc_csrat).toFixed(2);
     return (
       <>
-        {formattedPrice}{" "}
+        {formattedPrice > 0 ? (
+          formattedPrice
+        ) : (
+          <span className="text-red-500">{formattedPrice}</span>
+        )}{" "}
         <span className="text-sm text-gray-500">({formattedCostPrice})</span>
       </>
     );

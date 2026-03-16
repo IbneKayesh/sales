@@ -100,7 +100,7 @@ const DashboardPage = () => {
   );
 
   return (
-    <div className="surface-ground p-3 min-h-screen">
+    <div className="surface-ground min-h-screen">
       <Card
         header={getHeader()}
         className="border-round-xl shadow-4 border-none mb-4 overflow-hidden"
@@ -127,9 +127,9 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        <div className="grid mt-3">
-          <div className="col-12 md:col-6 lg:col-4 p-3 font-sans">
-            <div className="surface-card p-4 border-round-xl border-1 surface-border hover:shadow-2 transition-all transition-duration-300">
+        <div className="grid mt-2">
+          <div className="col-12 md:col-4 p-1">
+            <div className="surface-card p-2 border-round-xl border-1 surface-border hover:shadow-2 transition-all transition-duration-300">
               <div className="flex align-items-center justify-content-between mb-4">
                 <div className="flex align-items-center gap-3">
                   <div className="w-3.5rem h-3.5rem flex align-items-center justify-content-center border-round-xl shadow-1 bg-blue-100 text-blue-700">
@@ -198,63 +198,76 @@ const DashboardPage = () => {
               </div>
             </div>
           </div>
-
-          {categories.map((cat, index) => (
-            <div key={index} className="col-12 md:col-6 lg:col-4 p-3 font-sans">
-              <div className="surface-card p-4 border-round-xl border-1 surface-border hover:shadow-2 transition-all transition-duration-300">
-                <div className="flex align-items-center justify-content-between mb-4">
-                  <div className="flex align-items-center gap-3">
-                    <div
-                      className={`w-3.5rem h-3.5rem flex align-items-center justify-content-center border-round-xl shadow-1 ${cat.color}`}
-                    >
-                      <i className={`${cat.icon} text-2xl`}></i>
-                    </div>
-                    <div>
-                      <span className="text-xl font-bold text-900 block">
-                        {cat.label}
-                      </span>
-                      <small className="text-500 uppercase tracking-wider">
-                        {cat.items.length} Activities
-                      </small>
-                    </div>
+          <div className="col-12 md:col-4 p-1">
+            <div className="surface-card p-2 border-round-xl border-1 surface-border hover:shadow-2 transition-all transition-duration-300">
+              <div className="flex align-items-center justify-content-between mb-4">
+                <div className="flex align-items-center gap-3">
+                  <div className="w-3.5rem h-3.5rem flex align-items-center justify-content-center border-round-xl shadow-1 bg-blue-100 text-blue-700">
+                    <i className="pi pi-shopping-bag text-2xl"></i>
                   </div>
-                  <Button
-                    icon="pi pi-ellipsis-v"
-                    severity="secondary"
-                    text
-                    rounded
-                  />
+                  <div>
+                    <span className="text-xl font-bold text-900 block">
+                      Sales Total Of
+                    </span>
+                    <small className="text-500 uppercase tracking-wider">
+                      {dataList.sales &&
+                        dataList.sales.length > 0 &&
+                        dataList.sales[0]?.id + " Activities"}
+                    </small>
+                  </div>
                 </div>
+                <Button
+                  icon="pi pi-ellipsis-v"
+                  severity="secondary"
+                  text
+                  rounded
+                />
+              </div>
 
-                <div className="flex flex-column gap-2">
-                  {cat.items.map((item, i) => (
-                    <div
-                      key={i}
-                      className="flex align-items-center justify-content-between p-2 border-round-lg hover:surface-100 transition-colors"
-                    >
-                      <span className="text-700 font-medium">{item}</span>
-                      <div className="flex align-items-center gap-2">
-                        <span className="text-900 font-bold bg-surface-50 px-3 py-1 border-round-md border-1 surface-border">
-                          0
-                        </span>
-                        <i className="pi pi-angle-right text-400 text-xs"></i>
+              <div className="flex flex-column gap-2">
+                {dataList.sales &&
+                  dataList.sales.length > 0 &&
+                  (() => {
+                    const pData = dataList.sales[0];
+                    const labels = [
+                      { key: "odamt", label: "Order (1)" },
+                      { key: "dsamt", label: "Discount (2)" },
+                      { key: "vtamt", label: "VAT (3)" },
+                      { key: "incst", label: "Including Cost (4)" },
+                      { key: "rnamt", label: "Rounded (5)" },
+                      { key: "ttamt", label: "Total (6) [1+3+4-2+5]" },
+                      { key: "pyamt", label: "Payable (7)" },
+                      { key: "pdamt", label: "Paid (8)" },
+                      { key: "duamt", label: "Due (9) [7-8]" },
+                      { key: "excst", label: "Excluding Cost (10)" },
+                    ];
+                    return labels.map((l, i) => (
+                      <div
+                        key={i}
+                        className="flex align-items-center justify-content-between p-2 border-round-lg hover:surface-100 transition-colors"
+                      >
+                        <span className="text-700 font-medium">{l.label}</span>
+                        <div className="flex align-items-center gap-2">
+                          <span className="text-900 font-bold bg-surface-50 px-3 py-1 border-round-md border-1 surface-border">
+                            {Number(pData[l.key] || 0).toFixed(2)}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ));
+                  })()}
+              </div>
 
-                <div className="mt-4 pt-3 border-top-1 surface-border flex justify-content-end">
-                  <Button
-                    label="View Details"
-                    icon="pi pi-arrow-right"
-                    iconPos="right"
-                    size="small"
-                    text
-                  />
-                </div>
+              <div className="mt-4 pt-3 border-top-1 surface-border flex justify-content-end">
+                <Button
+                  label="View Details"
+                  icon="pi pi-arrow-right"
+                  iconPos="right"
+                  size="small"
+                  text
+                />
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </Card>
     </div>
