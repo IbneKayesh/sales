@@ -463,6 +463,50 @@ router.post("/customers", async (req, res) => {
   }
 });
 
+//distributors
+router.post("/distributors", async (req, res) => {
+  try {
+    const { muser_id } = req.body;
+
+    // Validate input
+    if (!muser_id) {
+      return res.json({
+        success: false,
+        message: "User ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT cnt.*, 0 as edit_stop
+    FROM tmcb_cntct cnt
+    WHERE cnt.cntct_users = $1
+    AND cnt.cntct_ctype IN ('Distributor')
+    AND cnt.cntct_actve = TRUE
+    ORDER BY cnt.cntct_cntnm`;
+    const params = [muser_id];
+
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get distributor for ${muser_id}`,
+    );
+    res.json({
+      success: true,
+      message: "Distributor fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+
 //receipt-suppliers
 router.post("/receipt-suppliers", async (req, res) => {
   try {
@@ -525,7 +569,7 @@ router.post("/route-outlets-available", async (req, res) => {
     //database action
     const sql = `SELECT cnt.id, cnt.cntct_cntnm, cnt.cntct_cntps, cnt.cntct_cntno, cnt.cntct_ofadr
     FROM tmcb_cntct cnt
-    LEFT JOIN tmcb_cntrt trt ON cnt.id = trt.cnrut_cntct AND trt.cnrut_rutes = $1
+    LEFT JOIN tmcb_cntrt trt ON cnt.id = trt.cnrut_utlet AND trt.cnrut_rutes = $1
     WHERE cnt.cntct_ctype = 'Outlet'
     AND trt.cnrut_srlno IS NULL
     AND cnt.cntct_users = $2
@@ -541,6 +585,57 @@ router.post("/route-outlets-available", async (req, res) => {
     res.json({
       success: true,
       message: "Route outlets fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+
+//route-distributors-available
+router.post("/route-distributors-available", async (req, res) => {
+  try {
+    const { muser_id, bsins_id, cnrut_rutes } = req.body;
+
+    // Validate input
+    if (!muser_id || !bsins_id || !cnrut_rutes) {
+      return res.json({
+        success: false,
+        message: "User ID and Business ID and Route ID are required",
+        data: null,
+      });
+    }
+
+
+    //database action
+    const sql = `SELECT cnt.*, 0 as edit_stop
+    FROM tmcb_cntct cnt
+	JOIN tmcb_tarea ara ON cnt.cntct_tarea = ara.id
+	JOIN tmcb_trtry trt ON ara.id = trt.trtry_tarea
+	JOIN tmcb_rutes rts ON trt.id = rts.rutes_trtry
+    WHERE cnt.cntct_users = $1
+    AND cnt.cntct_ctype IN ('Distributor')
+    AND cnt.cntct_actve = TRUE
+	  AND rts.id = $2
+    ORDER BY cnt.cntct_cntnm`;
+    const params = [muser_id, cnrut_rutes];
+
+    //console.log("params",params)
+
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get route distributors for ${muser_id}`,
+    );
+    res.json({
+      success: true,
+      message: "Route distributors fetched successfully",
       data: rows,
     });
   } catch (error) {

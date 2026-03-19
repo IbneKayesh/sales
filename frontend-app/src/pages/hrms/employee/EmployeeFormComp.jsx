@@ -456,8 +456,8 @@ const EmployeeFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
         </label>
         <InputSwitch
           name="emply_login"
-          checked={formData.emply_login === 1}
-          onChange={(e) => onChange("emply_login", e.value ? 1 : 0)}
+          checked={formData.emply_login === true}
+          onChange={(e) => onChange("emply_login", e.value ? true : false)}
           className={`${errors.emply_login ? "p-invalid" : ""}`}
         />
         <RequiredText text={errors.emply_login} />

@@ -494,7 +494,7 @@ router.post("/create", async (req, res) => {
       ],
       label: `Created payment credit ${minvc_trnno_new}`,
     });
-   
+
     //when posted
     if (minvc_ispst === 1) {
       for (const det of tmeb_cinvc) {
@@ -514,43 +514,42 @@ router.post("/create", async (req, res) => {
           label: `BItem good, item stock updated`,
         });
 
-        
         //console.log("det",det)
 
-        //     if (det.cinvc_srcnm === "Sales Invoice") {
-        //       scripts.push({
-        //         sql: `UPDATE tmeb_cinvc
-        //         SET
-        //         cinvc_ohqty = cinvc_ohqty - ?,
-        //         cinvc_slqty = cinvc_slqty + ?
-        //         WHERE id = ?`,
-        //         params: [
-        //           det.cinvc_itqty, // cinvc_ohqty
-        //           det.cinvc_itqty, // cinvc_slqty
-        //           det.cinvc_refid,
-        //         ],
-        //         label: `Sales Invoice detail updated`,
-        //       });
-        //     } else if (det.cinvc_srcnm === "Sales Receipt") {
-        //       scripts.push({
-        //         sql: `UPDATE tmeb_crcpt
-        //         SET
-        //         crcpt_ohqty = crcpt_ohqty - ?,
-        //         crcpt_slqty = crcpt_slqty + ?
-        //         WHERE id = ?`,
-        //         params: [
-        //           det.cinvc_itqty, // crcpt_ohqty
-        //           det.cinvc_itqty, // crcpt_slqty
-        //           det.cinvc_refid,
-        //         ],
-        //         label: `Sales Receipt detail updated`,
-        //       });
-        //     } else if (det.cinvc_srcnm === "Transfer Stock") {
-        //       //sql script is need
-        //     }
+        if (det.cinvc_srcnm === "Purchase Invoice") {
+          scripts.push({
+            sql: `UPDATE tmpb_cinvc
+                SET
+                cinvc_ohqty = cinvc_ohqty - $1,
+                cinvc_slqty = cinvc_slqty + $2
+                WHERE id = $3`,
+            params: [
+              det.cinvc_itqty, // cinvc_ohqty
+              det.cinvc_itqty, // cinvc_slqty
+              det.cinvc_refid,
+            ],
+            label: `Purchase Invoice detail updated`,
+          });
+          //     } else if (det.cinvc_srcnm === "Sales Receipt") {
+          //       scripts.push({
+          //         sql: `UPDATE tmeb_crcpt
+          //         SET
+          //         crcpt_ohqty = crcpt_ohqty - ?,
+          //         crcpt_slqty = crcpt_slqty + ?
+          //         WHERE id = ?`,
+          //         params: [
+          //           det.cinvc_itqty, // crcpt_ohqty
+          //           det.cinvc_itqty, // crcpt_slqty
+          //           det.cinvc_refid,
+          //         ],
+          //         label: `Sales Receipt detail updated`,
+          //       });
+          //     } else if (det.cinvc_srcnm === "Transfer Stock") {
+          //       //sql script is need
+        }
       }
     }
-    console.log("scripts",scripts);
+    //console.log("scripts",scripts);
 
     await dbRunAll(scripts);
 

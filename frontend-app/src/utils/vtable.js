@@ -192,6 +192,13 @@ const businessTypeOptions = [
   { label: "Office", value: "Office" },
 ];
 
+
+const attribTypeOptions = [
+  { label: "Text", value: "text" },
+  { label: "Number", value: "number" },
+  { label: "Calender", value: "calender" }
+];
+
 export {
   getListByTransHead,
   getTransHeadList,
@@ -215,6 +222,7 @@ export {
   userRoleOptions,
   businessTagsOptions,
   businessTypeOptions,
+  attribTypeOptions,
 };
 
 /*

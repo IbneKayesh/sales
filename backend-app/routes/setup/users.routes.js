@@ -133,7 +133,8 @@ router.post("/update", async (req, res) => {
       users_users,
       users_wctxt,
       users_notes,
-      user_id
+      users_cmpid,
+      user_id,
     } = req.body;
 
     // Validate input
@@ -146,6 +147,7 @@ router.post("/update", async (req, res) => {
       !users_cntct ||
       !users_bsins ||
       !users_drole ||
+      !users_cmpid ||
       !users_users
     ) {
       return res.json({
@@ -153,6 +155,51 @@ router.post("/update", async (req, res) => {
         message: "All fields are required",
         data: null,
       });
+    }
+
+    if (users_cmpid === "N" || users_cmpid === "Standard") {
+      //do nothing as traders
+    } else if (users_cmpid === "Y") {
+      //make sure it is primary user
+      const vSql = `SELECT * FROM tmsb_users WHERE id = $1 AND users_isrgs = TRUE`;
+      const vParams = [id];
+      const vRow = await dbGet(
+        vSql,
+        vParams,
+        `Update company for - ${users_oname}`,
+      );
+      if (!vRow) {
+        return res.json({
+          success: false,
+          message: "User is not registered as primary user",
+          data: null,
+        });
+      } else {
+        // and make it as a company and allowed to add distributors companies
+        const sql = `UPDATE tmsb_users SET users_cmpid = 'Y' WHERE id = $1`;
+        const params = [id];
+        await dbRun(sql, params, `Update company for ${users_oname}`);
+      }
+    } else {
+      //find the company that already allowed to me as distributor
+      const vSql = `SELECT * FROM tmsb_users WHERE users_regno = $1 AND users_isrgs = TRUE`;
+      const vParams = [users_cmpid];
+      const vRow = await dbGet(
+        vSql,
+        vParams,
+        `Update distributor for - ${users_oname}`,
+      );
+      if (!vRow) {
+        return res.json({
+          success: false,
+          message: "Invalid company code",
+          data: null,
+        });
+      } else {
+        const sql = `UPDATE tmsb_users SET users_cmpid = $1 WHERE id = $2 AND users_users != $3`;
+        const params = [users_cmpid, id, vRow.users_users];
+        await dbRun(sql, params, `Update distributor for ${users_oname}`);
+      }
     }
 
     //database action
@@ -203,7 +250,7 @@ router.post("/update", async (req, res) => {
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, users_oname, suser_id} = req.body;
+    const { id, users_oname, suser_id } = req.body;
 
     // Validate input
     if (!id) {
@@ -256,10 +303,10 @@ router.post("/change-password", async (req, res) => {
     //database action
     const sql = `SELECT usr.*
     FROM tmsb_users usr
-    WHERE usr.users_email = ?
-    AND usr.users_pswrd = ?
-    AND usr.id = ?
-    AND usr.users_actve = 1`;
+    WHERE usr.users_email = $1
+    AND usr.users_pswrd = $2
+    AND usr.id = $3
+    AND usr.users_actve = TRUE`;
     const params = [users_email, pswrd_current, id];
 
     const row = await dbGet(
@@ -276,12 +323,13 @@ router.post("/change-password", async (req, res) => {
     }
 
     const sql_Updt = `UPDATE tmsb_users 
-    SET users_pswrd = ?,
-    users_lstpd = current_timestamp(),
-    users_upusr = ?,
+    SET users_pswrd = $1,
+    users_lstpd = CURRENT_TIMESTAMP,
+    users_upusr = $2,
+    users_updat = CURRENT_TIMESTAMP,
     users_rvnmr = users_rvnmr + 1
-    WHERE id = ?
-    AND users_email = ?`;
+    WHERE id = $3
+    AND users_email = $4`;
     const params_Updt = [pswrd_new, id, id, users_email];
 
     await dbRun(

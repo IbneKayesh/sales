@@ -10,22 +10,22 @@ import { useEffect } from "react";
 import { dayNameOptions, countryOptions } from "@/utils/vtable";
 
 const OrderRouteFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
-  const { dataList: dzoneOptions, handleLoadZones } = useDZoneSgd();
-  const { dataList: tareaOptions, handleLoadAreas } = useTAreaSgd();
-  const { dataList: territoryOptions, handleLoadTerritories } =
+  const { dataList: dzoneOptions, handleGetAllActiveDZones } = useDZoneSgd();
+  const { dataList: tareaOptions, handleGetAllActiveTAreas } = useTAreaSgd();
+  const { dataList: territoryOptions, handleGetAllActiveTerritories } =
     useTerritorySgd();
 
     
   useEffect(() => {
     if (formData.dzone_cntry) {
-      handleLoadZones(formData.dzone_cntry);
+      handleGetAllActiveDZones(formData.dzone_cntry);
     }
 
     if (formData.tarea_dzone) {
-      handleLoadAreas(formData.tarea_dzone);
+      handleGetAllActiveTAreas(formData.tarea_dzone);
     }
     if (formData.trtry_tarea) {
-      handleLoadTerritories(formData.trtry_tarea);
+      handleGetAllActiveTerritories(formData.trtry_tarea);
     }
   }, [formData.dzone_cntry, formData.tarea_dzone, formData.trtry_tarea]);
 

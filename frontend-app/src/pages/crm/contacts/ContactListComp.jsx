@@ -22,13 +22,14 @@ const ContactListComp = ({
   const [selectedRowDetail, setSelectedRowDetail] = useState({});
   const [dlgLedger, setDlgLedger] = useState(false);
   const [globalFilter, setGlobalFilter] = useState(null);
-  const [filterType, setFilterType] = useState("both");
+  const [filterType, setFilterType] = useState("all");
   const toast = useRef(null);
 
   const filterOptions = [
-    { label: "Both", value: "both", icon: "pi pi-users" },
+    { label: "All", value: "all", icon: "pi pi-list" },
     { label: "Customers", value: "customer", icon: "pi pi-shopping-cart" },
     { label: "Suppliers", value: "supplier", icon: "pi pi-truck" },
+    { label: "Both", value: "both", icon: "pi pi-users" },
     { label: "Outlets", value: "outlet", icon: "pi pi-shop" },
   ];
 

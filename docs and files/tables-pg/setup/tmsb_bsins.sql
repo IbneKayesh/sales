@@ -15,10 +15,12 @@ CREATE TABLE tmsb_bsins (
   bsins_cntct varchar(255),
   bsins_image varchar(255),
   bsins_binno varchar(255),
-  bsins_btags varchar(255),
   bsins_cntry varchar(50),
+  bsins_btags varchar(255),
   bsins_bstyp varchar(50),
 
+  -- transaction types
+  bsins_dstrn boolean NOT NULL DEFAULT false,
   bsins_tstrn boolean NOT NULL DEFAULT true,
   bsins_prtrn boolean NOT NULL DEFAULT true,
   bsins_sltrn boolean NOT NULL DEFAULT true,

@@ -519,6 +519,9 @@ export const useProducts = () => {
       case "inactives":
         setDataList(dataListAll.filter((i) => i.items_actve === 0));
         break;
+      case "no_warehouse":
+        setDataList(dataListAll.filter((i) => i.items_nofbi === 0));
+        break;
       default:
         setDataList(dataListAll);
         break;

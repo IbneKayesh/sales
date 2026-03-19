@@ -39,3 +39,10 @@ DELETE FROM tmib_mtrsf;
 
 DROP DATABASE sgddb WITH (FORCE);
 CREATE DATABASE sgddb;
+
+--reset line stock for bulk item
+UPDATE tmpb_cinvc invc
+SET cinvc_ohqty = 0
+FROM tmib_items itm
+WHERE invc.cinvc_items = itm.id
+  AND itm.items_trcks = 2;

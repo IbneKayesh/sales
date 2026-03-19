@@ -23,6 +23,14 @@
     "placeholder": "Enter your business id",
     "required": false
   },
+  "dlvan_distr": {
+    "type": "string",
+    "label": "Distributor Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter distributor id",
+    "required": true
+  },
   "dlvan_vname": {
     "type": "string",
     "label": "Van name",

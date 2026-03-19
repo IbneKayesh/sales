@@ -370,20 +370,21 @@ router.post("/available-route-employees", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT id, emply_users, emply_bsins, emply_ecode, emply_crdno, emply_ename, emply_econt, emply_email, emply_natid, emply_bdate, emply_prnam, emply_gendr, emply_mstas, emply_bgrup, emply_rlgon, emply_edgrd, emply_psadr, emply_pradr, emply_desig, 
-    emply_pictr
+    const sql = `SELECT id, emply_users, emply_bsins, emply_ecode, emply_crdno,
+    emply_ename, emply_econt, emply_email, emply_natid, emply_bdate,
+    emply_prnam, emply_gendr, emply_mstas, emply_bgrup, emply_rlgon,
+    emply_edgrd, emply_psadr, emply_pradr, emply_desig, emply_pictr
     FROM tmhb_emply emp
-    WHERE emp.emply_users = ?
-    AND emp.emply_bsins = ?
+    WHERE emp.emply_users = $1
+    AND emp.emply_bsins = $2
     AND emp.emply_email IS NOT NULL
     AND emp.emply_email <> ''
     AND emp.emply_pswrd IS NOT NULL
     AND emp.emply_pswrd <> ''
-    AND emp.emply_login = 1
+    AND emp.emply_login = TRUE
     AND emp.emply_stats = 'Active'
-    AND emp.emply_actve = 1
-    ORDER BY emp.emply_ename
-    `;
+    AND emp.emply_actve = TRUE
+    ORDER BY emp.emply_ename`;
     const params = [emply_users, emply_bsins];
 
     const rows = await dbGetAll(

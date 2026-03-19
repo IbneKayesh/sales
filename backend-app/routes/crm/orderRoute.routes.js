@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get all
@@ -18,19 +18,24 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT rts.*, trt.trtry_wname, ara.tarea_tname, dzn.dzone_dname,
-    (
-        SELECT COUNT(*)
-        FROM tmcb_cntrt c
-        WHERE c.cnrut_rutes = rts.id
-        AND c.cnrut_actve = 1
-    ) AS total_outlets
-FROM tmcb_rutes rts
+    const sql = `WITH filtered_routes AS (
+    SELECT * FROM tmcb_rutes
+    WHERE rutes_users = $1
+      AND rutes_bsins = $2
+    ),
+    outlet_counts AS (
+    SELECT cnrut_rutes, COUNT(*) AS total_outlets
+    FROM tmcb_cntrt
+    WHERE cnrut_actve = TRUE
+    GROUP BY cnrut_rutes
+    )
+SELECT rts.*, trt.trtry_wname, ara.tarea_tname, dzn.dzone_dname,
+COALESCE(oc.total_outlets, 0) AS total_outlets
+FROM filtered_routes rts
 LEFT JOIN tmcb_trtry trt ON rts.rutes_trtry = trt.id
 LEFT JOIN tmcb_tarea ara ON trt.trtry_tarea = ara.id
 LEFT JOIN tmcb_dzone dzn ON ara.tarea_dzone = dzn.id
-WHERE rts.rutes_users = ?
-AND rts.rutes_bsins = ?
+LEFT JOIN outlet_counts oc ON oc.cnrut_rutes = rts.id
 ORDER BY rts.rutes_rname`;
     const params = [rutes_users, rutes_bsins];
 
@@ -75,8 +80,8 @@ router.post("/create", async (req, res) => {
     //database action
     const sql = `INSERT INTO tmcb_rutes(id, rutes_users, rutes_bsins, rutes_rname, rutes_dname, rutes_trtry,
     rutes_crusr, rutes_upusr)
-    VALUES (?, ?, ?, ?, ?, ?,
-    ?, ?)`;
+    VALUES ($1, $2, $3, $4, $5, $6,
+    $7, $8)`;
     const params = [
       id,
       rutes_users,
@@ -128,19 +133,14 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmcb_rutes
-    SET rutes_rname = ?,
-    rutes_dname = ?,
-    rutes_trtry = ?,
-    rutes_upusr = ?,
+    SET rutes_rname = $1,
+    rutes_dname = $2,
+    rutes_trtry = $3,
+    rutes_upusr = $4,
+    rutes_updat = CURRENT_TIMESTAMP,
     rutes_rvnmr = rutes_rvnmr + 1
-    WHERE id = ?`;
-    const params = [
-      rutes_rname,
-      rutes_dname,
-      rutes_trtry,
-      user_id,
-      id,
-    ];
+    WHERE id = $5`;
+    const params = [rutes_rname, rutes_dname, rutes_trtry, user_id, id];
 
     await dbRun(sql, params, `Update route for ${rutes_rname}`);
     res.json({
@@ -194,8 +194,6 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-
-
 // get all
 router.post("/outlets", async (req, res) => {
   try {
@@ -211,14 +209,19 @@ router.post("/outlets", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT trt.id, trt.cnrut_users, trt.cnrut_bsins, trt.cnrut_cntct, trt.cnrut_rutes, trt.cnrut_empid, trt.cnrut_srlno, trt.cnrut_lvdat, trt.cnrut_actve,
-    tct.cntct_cntnm, tct.cntct_cntps, tct.cntct_cntno, tct.cntct_ofadr, emp.emply_ecode, emp.emply_ename
+    const sql = `SELECT trt.id, trt.cnrut_users, trt.cnrut_bsins, trt.cnrut_distr, 
+    trt.cnrut_utlet, trt.cnrut_rutes, trt.cnrut_empid, trt.cnrut_srlno, trt.cnrut_lvdat, trt.cnrut_actve,
+    dst.cntct_cntnm AS distr_cntnm, dst.cntct_cntps AS distr_cntps,
+    dst.cntct_cntno AS distr_cntno, dst.cntct_ofadr AS distr_ofadr,
+    tct.cntct_cntnm, tct.cntct_cntps, tct.cntct_cntno, tct.cntct_ofadr,
+    emp.emply_ecode, emp.emply_ename
     FROM tmcb_cntrt trt
-    LEFT JOIN tmcb_cntct tct ON trt.cnrut_cntct = tct.id
+    LEFT JOIN tmcb_cntct dst ON trt.cnrut_distr = dst.id
+    LEFT JOIN tmcb_cntct tct ON trt.cnrut_utlet = tct.id
     LEFT JOIN tmhb_emply emp ON trt.cnrut_empid = emp.id
-    WHERE trt.cnrut_users = ?
-    AND trt.cnrut_bsins = ?
-    AND trt.cnrut_rutes = ?
+    WHERE trt.cnrut_users = $1
+    AND trt.cnrut_bsins = $2
+    AND trt.cnrut_rutes = $3
     ORDER BY trt.cnrut_srlno`;
     const params = [cnrut_users, cnrut_bsins, cnrut_rutes];
 
@@ -275,7 +278,6 @@ router.post("/delete-outlets", async (req, res) => {
   }
 });
 
-
 // create-outlets
 router.post("/create-outlets", async (req, res) => {
   try {
@@ -283,7 +285,8 @@ router.post("/create-outlets", async (req, res) => {
       id,
       cnrut_users,
       cnrut_bsins,
-      cnrut_cntct,
+      cnrut_distr,
+      cnrut_utlet,
       cnrut_rutes,
       cnrut_empid,
       cnrut_srlno,
@@ -291,7 +294,16 @@ router.post("/create-outlets", async (req, res) => {
     } = req.body;
 
     // Validate input
-    if (!id || !cnrut_users || !cnrut_bsins || !cnrut_cntct || !cnrut_rutes || !cnrut_empid || !cnrut_srlno) {
+    if (
+      !id ||
+      !cnrut_users ||
+      !cnrut_bsins ||
+      !cnrut_distr ||
+      !cnrut_utlet ||
+      !cnrut_rutes ||
+      !cnrut_empid ||
+      !cnrut_srlno
+    ) {
       return res.json({
         success: false,
         message: "All fields are required",
@@ -300,15 +312,16 @@ router.post("/create-outlets", async (req, res) => {
     }
 
     //database action
-    const sql = `INSERT INTO tmcb_cntrt(id, cnrut_users, cnrut_bsins, cnrut_cntct, cnrut_rutes, cnrut_empid, cnrut_srlno,
-    cnrut_crusr, cnrut_upusr)
-    VALUES (?, ?, ?, ?, ?, ?, ?,
-    ?, ?)`;
+    const sql = `INSERT INTO tmcb_cntrt(id, cnrut_users, cnrut_bsins, cnrut_distr, cnrut_utlet,
+    cnrut_rutes, cnrut_empid, cnrut_srlno, cnrut_crusr, cnrut_upusr)
+    VALUES ($1, $2, $3, $4, $5,
+    $6, $7, $8, $9, $10)`;
     const params = [
       id,
       cnrut_users,
       cnrut_bsins,
-      cnrut_cntct,
+      cnrut_distr,
+      cnrut_utlet,
       cnrut_rutes,
       cnrut_empid,
       cnrut_srlno,

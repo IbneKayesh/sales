@@ -138,7 +138,7 @@ router.post("/invoice-details", async (req, res) => {
 
     //database action
     let sql = `SELECT invc.*, 0 as edit_stop,
-    itm.items_icode, itm.items_iname, itm.items_dfqty, bitm.bitem_gstkq,
+    itm.items_icode, itm.items_iname, itm.items_dfqty, (bitm.bitem_gstkq + bitm.bitem_istkq) AS bitem_ohqty,
     puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
     FROM tmpb_cinvc invc
     LEFT JOIN tmib_items itm ON invc.cinvc_items = itm.id
@@ -375,11 +375,11 @@ router.post("/create", async (req, res) => {
         sql: `INSERT INTO tmpb_cinvc(id, cinvc_minvc, cinvc_bitem, cinvc_items, cinvc_itrat, cinvc_itqty,
         cinvc_itamt, cinvc_dspct, cinvc_dsamt, cinvc_vtpct, cinvc_vtamt, cinvc_csrat,
         cinvc_ntamt, cinvc_notes, cinvc_attrb, cinvc_rtqty, cinvc_slqty, cinvc_ohqty,
-        cinvc_crusr, cinvc_upusr)
+        cinvc_dprat, cinvc_mcmrp, cinvc_crusr, cinvc_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
         $13, $14, $15, $16, $17, $18,
-        $19, $20)`,
+        $19, $20, $21, $22)`,
         params: [
           uuidv4(),
           id,
@@ -688,7 +688,7 @@ router.post("/update", async (req, res) => {
         sql: `INSERT INTO tmpb_cinvc(id, cinvc_minvc, cinvc_bitem, cinvc_items, cinvc_itrat, cinvc_itqty,
         cinvc_itamt, cinvc_dspct, cinvc_dsamt, cinvc_vtpct, cinvc_vtamt, cinvc_csrat,
         cinvc_ntamt, cinvc_notes, cinvc_attrb, cinvc_rtqty, cinvc_slqty, cinvc_ohqty,
-        cinvc_crusr, cinvc_upusr)
+        cinvc_dprat, cinvc_mcmrp, cinvc_crusr, cinvc_upusr)
         VALUES (?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,
         ?, ?, ?, ?, ?, ?,

@@ -32,14 +32,16 @@ const ItemsComp = ({
   }, []);
 
   useEffect(() => {
-    setFormDataItemList((prev) =>
-      prev.map((item) => {
-        if (item.id === selectedItemAttributes.id) {
-          return { ...item, cinvc_attrb: selectedItemAttributes.cinvc_attrb };
-        }
-        return item;
-      }),
-    );
+    if (selectedItemAttributes) {
+      setFormDataItemList((prev) =>
+        prev.map((item) => {
+          if (item.id === selectedItemAttributes.id) {
+            return { ...item, cinvc_attrb: selectedItemAttributes.cinvc_attrb };
+          }
+          return item;
+        }),
+      );
+    }
   }, [selectedItemAttributes]);
 
   const [availableItemList, setAvailableItemList] = useState([]);
@@ -161,29 +163,33 @@ const ItemsComp = ({
           </div>
         </div>
         <div className="grid col-12 text-gray-700 p-2">
-          <div className="col-3 p-0">
+          <div className="col-2 p-0">
             📊 Discount: {Number(option.bitem_sddsp).toFixed(2)}%
           </div>
-          <div className="col-3 p-0">
+          <div className="col-2 p-0">
             📈 VAT: {Number(option.items_sdvat).toFixed(2)}%
           </div>
         </div>
         <div className="grid col-12 text-gray-700 p-2">
-          <div className="col-3 p-0">
-            📑 Bulk Stock: {Number(option.bitem_gstkq).toFixed(2)}{" "}
+          <div className="col-2 p-0">
+            📑 Bulk: {Number(option.bitem_gstkq).toFixed(2)}{" "}
             {option.puofm_untnm}
           </div>
-          <div className="col-3 p-0">
-            📋 Single Stock: {Number(option.bitem_istkq).toFixed(2)}{" "}
+          <div className="col-2 p-0">
+            📋 Tracking: {Number(option.bitem_istkq).toFixed(2)}{" "}
+            {option.puofm_untnm}
+          </div>
+          <div className="col-2 p-0">
+            📦 Stock: {Number(option.bitem_ohqty).toFixed(2)}{" "}
             {option.puofm_untnm}
           </div>
         </div>
         <div className="grid col-12 text-gray-700 p-2">
-          <div className="col-3 p-0">
+          <div className="col-2 p-0">
             📙 Purchase Booking: {Number(option.bitem_pbqty).toFixed(2)}{" "}
             {option.puofm_untnm}
           </div>
-          <div className="col-3 p-0">
+          <div className="col-2 p-0">
             📗 Sales Booking: {Number(option.bitem_sbqty).toFixed(2)}{" "}
             {option.puofm_untnm}
           </div>
@@ -201,8 +207,7 @@ const ItemsComp = ({
       <div className="flex flex-column">
         <span className="font-semibold">
           {option.items_icode}-{option.items_iname}, 📦
-          {Number(option.bitem_gstkq).toFixed(2)} {option.puofm_untnm},{" "}
-          {Number(option.bitem_istkq).toFixed(2)} {option.puofm_untnm}
+          {Number(option.bitem_ohqty).toFixed(2)} {option.puofm_untnm}
         </span>
       </div>
     );
@@ -234,7 +239,7 @@ const ItemsComp = ({
 
     const newItemRow = {
       id: generateGuid(), // Temporary ID for new items
-      cinvc_mbkng: "",
+      cinvc_minvc: "",
       cinvc_bitem: selectedItem,
       cinvc_items: item.items_id,
       cinvc_itrat: item.bitem_lprat,
@@ -247,17 +252,20 @@ const ItemsComp = ({
       cinvc_csrat: costPrice,
       cinvc_ntamt: totalAmount,
       cinvc_notes: selectedNote,
-      cinvc_attrb: {},
-      cinvc_cnqty: 0,
-      cinvc_rcqty: 0,
-      cinvc_pnqty: selectedQty || 1,
+      cinvc_attrb: "{}",
+      cinvc_attrn: "{}",
+      cinvc_rtqty: 0,
+      cinvc_slqty: 0,
+      cinvc_ohqty: selectedQty || 1,
+      cinvc_dprat: item.bitem_lprat,
+      cinvc_mcmrp: item.bitem_lprat,
 
       items_icode: item.items_icode,
       items_iname: item.items_iname,
       items_dfqty: item.items_dfqty,
       puofm_untnm: item.puofm_untnm,
       suofm_untnm: item.suofm_untnm,
-      bitem_gstkq: item.bitem_gstkq,
+      bitem_ohqty: item.bitem_ohqty,
     };
     setFormDataItemList([...formDataItemList, newItemRow]);
 
@@ -392,27 +400,39 @@ const ItemsComp = ({
     );
   };
 
-  const bitem_gstkq_BT = (rowData) => {
+  const cinvc_rtqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.bitem_gstkq} text={rowData.bitem_gstkq} />
+      <ZeroRowCell value={rowData.cinvc_rtqty} text={rowData.cinvc_rtqty} />
     );
   };
 
-  const cinvc_cnqty_BT = (rowData) => {
+  const cinvc_slqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.cinvc_cnqty} text={rowData.cinvc_cnqty} />
+      <ZeroRowCell value={rowData.cinvc_slqty} text={rowData.cinvc_slqty} />
     );
   };
 
-  const cinvc_rcqty_BT = (rowData) => {
+  const cinvc_ohqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.cinvc_rcqty} text={rowData.cinvc_rcqty} />
+      <ZeroRowCell value={rowData.cinvc_ohqty} text={rowData.cinvc_ohqty} />
     );
   };
 
-  const cinvc_pnqty_BT = (rowData) => {
+  const bitem_ohqty_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.cinvc_pnqty} text={rowData.cinvc_pnqty} />
+      <ZeroRowCell value={rowData.bitem_ohqty} text={rowData.bitem_ohqty} />
+    );
+  };
+
+  const cinvc_dprat_BT = (rowData) => {
+    return (
+      <ZeroRowCell value={rowData.cinvc_dprat} text={rowData.cinvc_dprat} />
+    );
+  };
+
+  const cinvc_mcmrp_BT = (rowData) => {
+    return (
+      <ZeroRowCell value={rowData.cinvc_mcmrp} text={rowData.cinvc_mcmrp} />
     );
   };
 
@@ -520,9 +540,11 @@ const ItemsComp = ({
     newData.cinvc_csrat = costPrice;
     newData.cinvc_ntamt = totalAmount;
 
-    newData.cinvc_cnqty = 0;
-    newData.cinvc_rcqty = 0;
-    newData.cinvc_pnqty = newData.cinvc_itqty;
+    newData.cinvc_rtqty = 0;
+    newData.cinvc_slqty = 0;
+    newData.cinvc_ohqty = newData.cinvc_itqty;
+    //newData.cinvc_dprat = newData.cinvc_itrat;
+    //newData.cinvc_mcmrp = newData.cinvc_itrat;
 
     let _localItems = [...formDataItemList];
     _localItems[index] = newData;
@@ -543,7 +565,7 @@ const ItemsComp = ({
 
   return (
     <div className="mt-4">
-      {/* {JSON.stringify(formData)} */}
+      {/* {JSON.stringify(formDataItemList)} */}
       <ConfirmDialog />
       <Menu model={actionMenuItems} popup ref={menu} id="popup_menu" />
       {!formData.edit_stop && (
@@ -668,31 +690,47 @@ const ItemsComp = ({
         <Column field="cinvc_notes" header="Remarks" editor={textEditor} />
         <Column header="Bulk" body={bulk_BT} />
         <Column
-          field="bitem_gstkq"
+          field="cinvc_rtqty"
+          header="Return"
+          headerStyle={{ backgroundColor: "#49769bff" }}
+          body={cinvc_rtqty_BT}
+          hidden={!showExtraColumns}
+        />
+        <Column
+          field="cinvc_slqty"
+          header="Sales"
+          headerStyle={{ backgroundColor: "#49769bff" }}
+          body={cinvc_slqty_BT}
+          hidden={!showExtraColumns}
+        />
+        <Column
+          field="cinvc_ohqty"
           header="Stock"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={bitem_gstkq_BT}
+          body={cinvc_ohqty_BT}
           hidden={!showExtraColumns}
         />
         <Column
-          field="cinvc_cnqty"
-          header="Cancelled"
+          field="bitem_ohqty"
+          header="Inventory"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={cinvc_cnqty_BT}
+          body={bitem_ohqty_BT}
           hidden={!showExtraColumns}
         />
         <Column
-          field="cinvc_rcqty"
-          header="Invoice"
+          field="cinvc_dprat"
+          header="DP"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={cinvc_rcqty_BT}
+          body={cinvc_dprat_BT}
+          editor={numberEditor}
           hidden={!showExtraColumns}
         />
         <Column
-          field="cinvc_pnqty"
-          header="Available"
+          field="cinvc_mcmrp"
+          header="MRP"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={cinvc_pnqty_BT}
+          body={cinvc_mcmrp_BT}
+          editor={numberEditor}
           hidden={!showExtraColumns}
         />
         <Column

@@ -59,26 +59,32 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
           {rowData.bsins_addrs}, {rowData.bsins_cntry}
         </span>
         <span className="text-sm text-gray-500 flex gap-2">
+          Distributor:
+          {rowData.bsins_dstrn === true ? (
+            <i className="pi pi-check-circle text-green-500"></i>
+          ) : (
+            <i className="pi pi-times-circle text-red-500"></i>
+          )}
           Transfer:
-          {rowData.bsins_tstrn === 1 ? (
+          {rowData.bsins_tstrn === true ? (
             <i className="pi pi-check-circle text-green-500"></i>
           ) : (
             <i className="pi pi-times-circle text-red-500"></i>
           )}
           Purchase:
-          {rowData.bsins_prtrn === 1 ? (
+          {rowData.bsins_prtrn === true ? (
             <i className="pi pi-check-circle text-green-500"></i>
           ) : (
             <i className="pi pi-times-circle text-red-500"></i>
           )}
           Sales:
-          {rowData.bsins_sltrn === 1 ? (
+          {rowData.bsins_sltrn === true ? (
             <i className="pi pi-check-circle text-green-500"></i>
           ) : (
             <i className="pi pi-times-circle text-red-500"></i>
           )}
           Analytics:
-          {rowData.bsins_pbviw === 1 ? (
+          {rowData.bsins_pbviw === true ? (
             <i className="pi pi-check-circle text-green-500"></i>
           ) : (
             <i className="pi pi-times-circle text-red-500"></i>

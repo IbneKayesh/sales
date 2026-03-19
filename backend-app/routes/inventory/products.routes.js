@@ -580,7 +580,7 @@ router.post("/get-purchase-invoice-items", async (req, res) => {
     btm.bitem_lprat, btm.bitem_dprat, btm.bitem_mcmrp, btm.bitem_sddsp, btm.bitem_gstkq,
     btm.bitem_bstkq, btm.bitem_istkq, btm.bitem_pbqty, btm.bitem_sbqty, btm.bitem_jnote,
     puofm.iuofm_untnm AS puofm_untnm, suofm.iuofm_untnm AS suofm_untnm,
-    itm.id AS items_id, btm.id AS bitem_id
+    itm.id AS items_id, btm.id AS bitem_id, (btm.bitem_gstkq + btm.bitem_istkq) AS bitem_ohqty
     FROM tmib_items itm
     JOIN tmib_bitem btm ON itm.id = btm.bitem_items AND btm.bitem_users = itm.items_users
     LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
@@ -626,26 +626,45 @@ router.post("/get-sales-invoice-items", async (req, res) => {
 
     //database action
     //1,2 Tracking Stock, Bulk Stock, with stock
-    const sql = `SELECT itm.items_icode, itm.items_bcode, itm.items_hscod, itm.items_iname, itm.items_idesc,
+    const sql = `SELECT invt.*,
+    puofm.iuofm_untnm AS puofm_untnm, suofm.iuofm_untnm AS suofm_untnm
+    FROM (
+    SELECT itm.items_icode, itm.items_bcode, itm.items_hscod, itm.items_iname, itm.items_idesc,
     itm.items_puofm, itm.items_dfqty, itm.items_suofm, itm.items_ctgry, itm.items_brand,
     itm.items_itype, itm.items_sdvat, itm.items_costp, itm.items_image,
     btm.bitem_lprat, btm.bitem_dprat, btm.bitem_mcmrp, btm.bitem_sddsp, btm.bitem_gstkq,
     btm.bitem_bstkq, btm.bitem_istkq, btm.bitem_pbqty, btm.bitem_sbqty, btm.bitem_jnote,
-    puofm.iuofm_untnm AS puofm_untnm, suofm.iuofm_untnm AS suofm_untnm,
     itm.id AS items_id, btm.id AS bitem_id,
-    'Inventory Stock' AS bitem_trnno, '{}' AS bitem_attrb, 'Inventory Stock' AS bitem_srcnm, btm.id AS bitem_refid,
-    btm.bitem_gstkq AS bitem_ohqty
+    'Inventory Stock' AS bitem_trnno, '{}' AS bitem_attrb, 'Inventory Stock' AS bitem_srcnm,
+    btm.id AS bitem_refid, btm.bitem_gstkq AS bitem_ohqty
     FROM tmib_items itm
     JOIN tmib_bitem btm ON itm.id = btm.bitem_items AND btm.bitem_users = itm.items_users
-    LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
-    LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
-    WHERE itm.items_trcks IN (1,2)
+    WHERE itm.items_trcks IN (2)
     AND itm.items_actve = TRUE
     AND itm.items_users = $1
     AND btm.bitem_bsins = $2
     AND btm.bitem_actve = TRUE
-    AND btm.bitem_gstkq > 0
-    ORDER BY itm.items_iname`;
+    AND btm.bitem_gstkq > 0 
+    UNION ALL
+    SELECT itm.items_icode, itm.items_bcode, itm.items_hscod, itm.items_iname, itm.items_idesc,
+    itm.items_puofm, itm.items_dfqty, itm.items_suofm, itm.items_ctgry, itm.items_brand,
+    itm.items_itype, itm.items_sdvat, itm.items_costp, itm.items_image,
+    cinv.cinvc_itrat AS bitem_lprat, cinv.cinvc_dprat AS bitem_dprat, cinv.cinvc_mcmrp AS bitem_mcmrp, btm.bitem_sddsp, btm.bitem_gstkq,
+    btm.bitem_bstkq, btm.bitem_istkq, btm.bitem_pbqty, btm.bitem_sbqty, btm.bitem_jnote,
+    itm.id AS items_id, btm.id AS bitem_id,
+    minv.minvc_trnno AS bitem_trnno, cinv.cinvc_attrb AS bitem_attrb, 'Purchase Invoice' AS bitem_srcnm,
+    cinv.id AS bitem_refid, cinv.cinvc_ohqty AS bitem_ohqty
+    FROM tmpb_cinvc cinv
+    JOIN tmpb_minvc minv ON cinv.cinvc_minvc = minv.id
+    JOIN tmib_items itm ON cinv.cinvc_items = itm.id AND itm.items_trcks = 1 AND itm.items_actve = TRUE
+    JOIN tmib_bitem btm ON itm.id = btm.bitem_items AND btm.bitem_users = itm.items_users
+    WHERE minv.minvc_users = $1
+    AND minv.minvc_bsins = $2
+    AND cinv.cinvc_ohqty > 0
+    )invt
+    LEFT JOIN tmib_iuofm puofm ON invt.items_puofm = puofm.id
+    LEFT JOIN tmib_iuofm suofm ON invt.items_suofm = suofm.id
+    ORDER BY items_iname`;
     const params = [muser_id, bsins_id];
 
     const rows = await dbGetAll(sql, params, `Get SI Item for ${muser_id}`);

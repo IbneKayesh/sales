@@ -158,7 +158,7 @@ const PrintComp = ({ formData, formDataItemList, formDataPaymentList }) => {
                   <td>{index + 1}</td>
                   <td>
                     <span style={{ fontWeight: 600 }}>{item.items_icode} {item.items_iname}</span>                    
-                    {item.cinvc_attrb && (
+                    {Object.keys(parseAttributes(item.cinvc_attrb)).length > 0 && (
                       <span className="subtext">
                         {Object.entries(parseAttributes(item.cinvc_attrb))
                           .map(([key, value]) => `${key}: ${value}`)

@@ -9,11 +9,12 @@ export const useAttributesSgd = () => {
   const { notify } = useNotification();
   const [dataList, setDataList] = useState([]);
 
-  const handleGetAllActiveAttrib = async () => {
+  const handleGetAllAttribProduct = async (itemsId) => {
     try {
       setIsBusy(true);
-      const response = await attributesAPI.getAll({
+      const response = await attributesAPI.getAllAttribProduct({
         muser_id: user.users_users,
+        items_id: itemsId,
       });
       //console.log("data", user.users_users);
       setDataList(response.data);
@@ -32,5 +33,34 @@ export const useAttributesSgd = () => {
     }
   };
 
-  return { isBusy, dataList, handleGetAllActiveAttrib };
+  const handleGetAllAttribCategory = async (catId) => {
+    try {
+      setIsBusy(true);
+      const response = await attributesAPI.getAllAttribCategory({
+        muser_id: user.users_users,
+        attrb_ctgry: catId,
+      });
+      //console.log("data", user.users_users);
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "PBI Items",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  return {
+    isBusy,
+    dataList,
+    handleGetAllAttribProduct,
+    handleGetAllAttribCategory,
+  };
 };

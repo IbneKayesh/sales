@@ -45,6 +45,17 @@ const DeliveryVanListComp = ({ dataList, onEdit, onDelete }) => {
       },
     });
   };
+  const distr_cntnm_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-md">{rowData.distr_cntnm}</span>
+        <span className="text-sm text-blue-500">
+          {rowData.distr_cntps}, {rowData.distr_cntno}
+        </span>
+        <span className="text-sm text-blue-500">{rowData.distr_ofadr}</span>
+      </div>
+    );
+  };
 
   const dlvan_vname_BT = (rowData) => {
     return (
@@ -94,12 +105,17 @@ const DeliveryVanListComp = ({ dataList, onEdit, onDelete }) => {
         header={header()}
       >
         <Column
+          field="distr_cntnm"
+          header="Distributor"
+          body={distr_cntnm_BT}
+        />
+        <Column
           field="dlvan_vname"
           header="Van"
           sortable
           body={dlvan_vname_BT}
         />
-        <Column field="dlvan_dname" header="Driver"/>
+        <Column field="dlvan_dname" header="Driver" />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>

@@ -5,7 +5,6 @@ const DatabasePage = React.lazy(() => import("../pages/setup/database/DatabasePa
 const BusinessPage = React.lazy(() => import("../pages/setup/business/BusinessPage.jsx"));
 const UsersPage = React.lazy(() => import("../pages/setup/users/UsersPage.jsx"));
 const ProfileSettings = React.lazy(() => import("../pages/setup/users/ProfileSettings.jsx"));
-const PasswordPage = React.lazy(() => import("../pages/setup/users/PasswordPage.jsx"));
 const DefaultDataPage = React.lazy(() => import("../pages/setup/settings/DefaultDataPage.jsx"));
 
 const setupRoutes = (
@@ -14,7 +13,6 @@ const setupRoutes = (
     <Route path="setup/business" element={<BusinessPage />} />
     <Route path="setup/users" element={<UsersPage />} />
     <Route path="setup/users/profile" element={<ProfileSettings />} />
-    <Route path="setup/users/password" element={<PasswordPage />} />
     <Route path="setup/default-data" element={<DefaultDataPage />} />
   </>
 );

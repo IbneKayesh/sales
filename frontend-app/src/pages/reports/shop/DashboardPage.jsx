@@ -16,6 +16,10 @@ const DashboardPage = () => {
   const filterOptions = [
     { label: "Today", value: "today" },
     { label: "Yesterday", value: "yesterday" },
+    { label: "Last 3 Days", value: "last_3_days" },
+    { label: "Last 7 Days", value: "last_7_days" },
+    { label: "Last 15 Days", value: "last_15_days" },
+    { label: "Last 30 Days", value: "last_30_days" },
     { label: "Custom Date", value: "custom" },
   ];
 
@@ -29,7 +33,23 @@ const DashboardPage = () => {
     } else if (dateFilter === "yesterday") {
       start = new Date();
       start.setDate(start.getDate() - 1);
-      end = new Date(start);
+      end = new Date(start); // same day (correct for yesterday)
+    } else if (dateFilter === "last_3_days") {
+      end = new Date(); // today
+      start = new Date();
+      start.setDate(start.getDate() - 2); // include today = 3 days
+    } else if (dateFilter === "last_7_days") {
+      end = new Date();
+      start = new Date();
+      start.setDate(start.getDate() - 6);
+    } else if (dateFilter === "last_15_days") {
+      end = new Date();
+      start = new Date();
+      start.setDate(start.getDate() - 14);
+    } else if (dateFilter === "last_30_days") {
+      end = new Date();
+      start = new Date();
+      start.setDate(start.getDate() - 29);
     }
 
     const formatDate = (date) => {
@@ -42,15 +62,6 @@ const DashboardPage = () => {
 
     handleGetShopDashboard(formatDate(start), formatDate(end));
   };
-
-  const categories = [
-    {
-      label: "Purchase",
-      icon: "pi pi-shopping-bag",
-      color: "bg-blue-100 text-blue-700",
-      items: ["Booking", "Received", "Invoice", "Return", "Booking Cancel"],
-    },
-  ];
 
   const getHeader = () => (
     <div className="flex align-items-center justify-content-between p-2">

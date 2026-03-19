@@ -84,11 +84,12 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
     return (
       <div className="flex flex-column">
         <span className="text-md">
-          <ActiveRowCell text={rowData.users_oname} status={rowData.users_actve} />
+          <ActiveRowCell
+            text={rowData.users_oname}
+            status={rowData.users_actve}
+          />
         </span>
-        <span className="text-sm text-gray-500">
-          {rowData.users_cntct}
-        </span>
+        <span className="text-sm text-gray-500">{rowData.users_cntct}</span>
       </div>
     );
   };
@@ -97,7 +98,10 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
     return (
       <div className="flex flex-column">
         <span className="text-md">
-          <ActiveRowCell text={rowData.users_regno} status={rowData.users_actve} />
+          <ActiveRowCell
+            text={rowData.users_regno}
+            status={rowData.users_actve}
+          />
         </span>
         <span className="text-sm text-gray-500">
           {formatDate(rowData.users_regdt)}
@@ -110,7 +114,10 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
     return (
       <div className="flex flex-column">
         <span className="text-md">
-          <ActiveRowCell text={formatDateTime(rowData.users_lstpd)} status={rowData.users_actve} />
+          <ActiveRowCell
+            text={formatDateTime(rowData.users_lstpd)}
+            status={rowData.users_actve}
+          />
         </span>
         <span className="text-sm text-gray-500">
           Last Login: {formatDateTime(rowData.users_lstgn)}
@@ -123,17 +130,34 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
     return (
       <div className="flex flex-column">
         <span className="text-md">
-          <ActiveRowCell text={rowData.users_wctxt} status={rowData.users_actve} />
+          <ActiveRowCell
+            text={rowData.users_wctxt}
+            status={rowData.users_actve}
+          />
         </span>
-        <span className="text-sm text-gray-500">
-          {rowData.users_notes}
-        </span>
+        <span className="text-sm text-gray-500">{rowData.users_notes}</span>
       </div>
     );
   };
 
   const bsins_bname_BT = (rowData) => {
-    return <span className="text-bold text-blue-500">{rowData.bsins_bname}</span>;
+    const { bsins_bname, users_cmpid } = rowData;
+
+    let label;
+    if (users_cmpid === "N") {
+      label = "Traders";
+    } else if (users_cmpid === "Y") {
+      label = "Company";
+    } else {
+      label = `Distributor of - ${users_cmpid}`;
+    }
+
+    return (
+      <div className="flex flex-column">
+        <span className="text-bold text-blue-500">{bsins_bname}</span>
+        <span className="text-sm text-gray-500">{label}</span>
+      </div>
+    );
   };
 
   return (
@@ -153,11 +177,7 @@ const UsersListComp = ({ dataList, onEdit, onDelete }) => {
         <Column field="users_recky" header="Key" />
         <Column field="users_oname" header="Name" body={users_oname_BT} />
         <Column field="users_regno" header="Registered" body={users_regno_BT} />
-        <Column
-          field="users_lstpd"
-          header="Available"
-          body={users_lstpd_BT}
-        />
+        <Column field="users_lstpd" header="Available" body={users_lstpd_BT} />
         <Column field="users_wctxt" header="Welcome" body={users_wctxt_BT} />
         <Column field="users_nofcr" header="Credits" />
         <Column field="bsins_bname" header="Business" body={bsins_bname_BT} />

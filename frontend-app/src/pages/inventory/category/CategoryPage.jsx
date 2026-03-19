@@ -4,6 +4,7 @@ import CategoryFormComp from "./CategoryFormComp";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
+import AttributesComp from "./AttributesComp";
 
 const CategoryPage = () => {
   const {
@@ -19,6 +20,13 @@ const CategoryPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
+
+    //Attributes
+    handleAttributes,
+    formDataAttributes,
+    handleChangeAttributes,
+    handleSaveAttributes,
+    handleDeleteAttributes,
   } = useCategory();
 
   const getHeader = () => {
@@ -29,9 +37,11 @@ const CategoryPage = () => {
         <h3 className="m-0">
           {isList
             ? "Category List"
-            : formData.id
-              ? "Edit Category"
-              : "New Category"}
+            : currentView === "attributes"
+              ? "Attributes"
+              : formData.id
+                ? "Edit Category"
+                : "New Category"}
         </h3>
 
         <div className="flex gap-2">
@@ -74,8 +84,9 @@ const CategoryPage = () => {
             dataList={dataList}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onAttributes={handleAttributes}
           />
-        ) : (
+        ) : currentView === "form" ? (
           <CategoryFormComp
             isBusy={isBusy}
             errors={errors}
@@ -83,7 +94,17 @@ const CategoryPage = () => {
             onChange={handleChange}
             onSave={handleSave}
           />
-        )}
+        ) : currentView === "attributes" ? (
+          <AttributesComp
+            isBusy={isBusy}
+            errors={errors}
+            formData={formDataAttributes}
+            onChange={handleChangeAttributes}
+            onSave={handleSaveAttributes}
+            onDelete={handleDeleteAttributes}
+            categoryId={formData.id}
+          />
+        ) : null}
       </Card>
     </>
   );

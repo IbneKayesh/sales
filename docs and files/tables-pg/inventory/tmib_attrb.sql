@@ -1,3 +1,4 @@
+-- drop TABLE tmib_attrb;
 --
 -- Table structure for table tmib_attrb
 -- item attributes
@@ -6,6 +7,7 @@ CREATE TABLE tmib_attrb (
   id varchar(50) PRIMARY KEY,
 
   attrb_users VARCHAR(50) NOT NULL,
+  attrb_ctgry VARCHAR(50) NOT NULL,
   attrb_aname VARCHAR(50) NOT NULL,
   attrb_dtype VARCHAR(50) NOT NULL,
 

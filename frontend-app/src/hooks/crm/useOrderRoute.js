@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { outletRouteAPI } from "@/api/crm/outletRouteAPI";
+import { orderRouteAPI } from "@/api/crm/orderRouteAPI";
 import tmcb_rutes from "@/models/crm/tmcb_rutes.json";
 import tmcb_cntrt from "@/models/crm/tmcb_cntrt.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
+import { useBusy, useNotification, useToast } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmcb_rutes, { edit_stop: 0 });
 const dataModel_tmcb_cntrt = generateDataModel(tmcb_cntrt, { edit_stop: 0 });
@@ -13,15 +13,17 @@ const dataModel_tmcb_cntrt = generateDataModel(tmcb_cntrt, { edit_stop: 0 });
 export const useOrderRoute = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const [dataList, setDataList] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
   const loadOrderRoutes = async () => {
     try {
-      const response = await outletRouteAPI.getAll({
+      setIsBusy(true);
+      const response = await orderRouteAPI.getAll({
         rutes_users: user.users_users,
         rutes_bsins: user.users_bsins,
       });
@@ -29,7 +31,16 @@ export const useOrderRoute = () => {
       setDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Routes",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -68,7 +79,7 @@ export const useOrderRoute = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await outletRouteAPI.delete(rowData);
+      const response = await orderRouteAPI.delete(rowData);
 
       const updatedList = dataList.filter((c) => c.id !== rowData.id);
       setDataList(updatedList);
@@ -118,9 +129,9 @@ export const useOrderRoute = () => {
       // Call API and get { message, data }
       let response;
       if (formData.id) {
-        response = await outletRouteAPI.update(formDataNew);
+        response = await orderRouteAPI.update(formDataNew);
       } else {
-        response = await outletRouteAPI.create(formDataNew);
+        response = await orderRouteAPI.create(formDataNew);
       }
 
       // Update toast using API message
@@ -149,13 +160,13 @@ export const useOrderRoute = () => {
   const [routeOutlets, setRouteOutlets] = useState([]);
   const [outletFormData, setOutletFormData] = useState({});
   const handleRouteOutlets = async (rowData) => {
-    console.log("handleOutlets: " + JSON.stringify(rowData));
+    //console.log("handleOutlets: " + JSON.stringify(rowData));
     setSelectedRoute(rowData);
     setCurrentView("outlets");
     setOutletFormData(dataModel_tmcb_cntrt);
 
     try {
-      const response = await outletRouteAPI.outlets({
+      const response = await orderRouteAPI.outlets({
         cnrut_users: user.users_users,
         cnrut_bsins: user.users_bsins,
         cnrut_rutes: rowData.id,
@@ -176,7 +187,7 @@ export const useOrderRoute = () => {
     //console.log("handleDeleteRouteOutlet: " + JSON.stringify(rowData));
     try {
       // Call API, unwrap { message, data }
-      const response = await outletRouteAPI.deleteOutlet(rowData);
+      const response = await orderRouteAPI.deleteOutlet(rowData);
 
       const updatedList = routeOutlets.filter((c) => c.id !== rowData.id);
       setRouteOutlets(updatedList);
@@ -230,9 +241,9 @@ export const useOrderRoute = () => {
       // Call API and get { message, data }
       let response;
       if (outletFormData.id) {
-        //response = await outletRouteAPI.updateOutlet(formDataNew);
+        //response = await orderRouteAPI.updateOutlet(formDataNew);
       } else {
-        response = await outletRouteAPI.createOutlet(formDataNew);
+        response = await orderRouteAPI.createOutlet(formDataNew);
       }
 
       // Update toast using API message
@@ -256,8 +267,8 @@ export const useOrderRoute = () => {
   };
 
   return {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,

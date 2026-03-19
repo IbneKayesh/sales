@@ -21,18 +21,25 @@ const OrderRouteOutletsComp = ({
   errors,
   onSave,
 }) => {
-  const { dataList: outletOptions, handleLoadRouteOutlets } = useContactsSgd();
+  const {
+    dataList: outletOptions,
+    dataList2: distributorOptions,
+    handleGetRouteOutletsAvailable,
+    handleGetRouteDistributorsAvailable,
+  } = useContactsSgd();
   const { dataList: employeeOptions, handleLoadAvailableRouteEmployees } =
     useEmployeesSgd();
   const [employeeList, setEmployeeList] = useState([]);
 
   useEffect(() => {
     if (selectedRoute.id) {
-      handleLoadRouteOutlets(selectedRoute.id);
+      handleGetRouteOutletsAvailable(selectedRoute.id);
+      handleGetRouteDistributorsAvailable(selectedRoute.id);
     }
-    if (selectedRoute.id && selectedRoute.total_outlets === 0) {
+    if (selectedRoute.id && selectedRoute.total_outlets === "0") {
       handleLoadAvailableRouteEmployees();
     }
+    //console.log("selectedRoute", selectedRoute);
   }, [selectedRoute]);
 
   useEffect(() => {
@@ -108,7 +115,17 @@ const OrderRouteOutletsComp = ({
   const cnrut_lvdat_BT = (rowData) => {
     return <>{formatDate(rowData.cnrut_lvdat)}</>;
   };
-
+  const distr_cntnm_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-md">{rowData.distr_cntnm}</span>
+        <span className="text-sm text-blue-500">
+          {rowData.distr_cntps}, {rowData.distr_cntno}
+        </span>
+        <span className="text-sm text-blue-500">{rowData.distr_ofadr}</span>
+      </div>
+    );
+  };
   const cntct_cntnm_BT = (rowData) => {
     return (
       <div className="flex flex-column">
@@ -168,7 +185,7 @@ const OrderRouteOutletsComp = ({
 
         {/* Form Section */}
         <div className="grid formgrid p-fluid">
-          <div className="field col-12 md:col-2">
+          <div className="field col-12 md:col-1">
             <label
               htmlFor="cnrut_srlno"
               className="font-medium text-700 mb-2 block text-red-800"
@@ -184,29 +201,48 @@ const OrderRouteOutletsComp = ({
             />
           </div>
 
-          <div className="field col-12 md:col-4">
+          <div className="field col-12 md:col-3">
             <label
-              htmlFor="cnrut_cntct"
-              className="font-medium text-700 mb-2 block"
+              htmlFor="cnrut_distr"
+              className="font-medium text-700 mb-2 block text-red-800"
+            >
+              Distributor
+            </label>
+            <Dropdown
+              name="cnrut_distr"
+              value={outletFormData.cnrut_distr}
+              options={distributorOptions}
+              onChange={(e) => onChange("cnrut_distr", e.value)}
+              className={`w-full ${errors.cnrut_distr ? "p-invalid" : ""}`}
+              placeholder={`Select Distributor`}
+              optionLabel="cntct_cntnm"
+              optionValue="id"
+            />
+          </div>
+
+          <div className="field col-12 md:col-3">
+            <label
+              htmlFor="cnrut_utlet"
+              className="font-medium text-700 mb-2 block text-red-800"
             >
               Outlet
             </label>
             <Dropdown
-              name="cnrut_cntct"
-              value={outletFormData.cnrut_cntct}
+              name="cnrut_utlet"
+              value={outletFormData.cnrut_utlet}
               options={outletOptions}
-              onChange={(e) => onChange("cnrut_cntct", e.value)}
-              className={`w-full ${errors.cnrut_cntct ? "p-invalid" : ""}`}
+              onChange={(e) => onChange("cnrut_utlet", e.value)}
+              className={`w-full ${errors.cnrut_utlet ? "p-invalid" : ""}`}
               placeholder={`Select Outlet`}
               optionLabel="cntct_cntnm"
               optionValue="id"
             />
           </div>
 
-          <div className="field col-12 md:col-4">
+          <div className="field col-12 md:col-3">
             <label
               htmlFor="cnrut_empid"
-              className="font-medium text-700 mb-2 block"
+              className="font-medium text-700 mb-2 block text-red-800"
             >
               Employee
             </label>
@@ -250,6 +286,11 @@ const OrderRouteOutletsComp = ({
       >
         <Column field="cnrut_srlno" header="Sl No" sortable />
         <Column field="cnrut_lvdat" header="Last Visit" body={cnrut_lvdat_BT} />
+        <Column
+          field="distr_cntnm"
+          header="Distributor"
+          body={distr_cntnm_BT}
+        />
         <Column field="cntct_cntnm" header="Outlet" body={cntct_cntnm_BT} />
         <Column field="emply_ecode" header="Employee" body={emply_ecode_BT} />
         <Column header={dataList?.length + " rows"} body={action_BT} />

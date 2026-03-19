@@ -258,10 +258,10 @@ export const useContacts = () => {
   };
 
   const handleFilterDataList = (filterType) => {
-    if (filterType.toLowerCase() === "both") {
-      setDataList(allData);
+    if (filterType.toLowerCase() === "all") {
+      setDataList(dataListAll);
     } else {
-      const filteredData = allData.filter(
+      const filteredData = dataListAll.filter(
         (c) => c.cntct_ctype.toLowerCase() === filterType.toLowerCase(),
       );
       setDataList(filteredData);

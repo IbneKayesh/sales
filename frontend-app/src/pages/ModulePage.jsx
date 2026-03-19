@@ -9,7 +9,7 @@ const ModulePage = () => {
       <div className="grid justify-content-center w-full max-w-5xl">
         {isBusy && (
           <div className="col-12 p-3 flex justify-content-center">
-            <LoadingSpinner message="Fetching permissions..." subMessage="Please wait..." />
+            <LoadingSpinner />
           </div>
         )}
 

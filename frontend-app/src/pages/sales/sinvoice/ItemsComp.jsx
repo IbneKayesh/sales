@@ -32,14 +32,16 @@ const ItemsComp = ({
   }, []);
 
   useEffect(() => {
-    setFormDataItemList((prev) =>
-      prev.map((item) => {
-        if (item.bitem_refid === selectedItemAttributes.bitem_refid) {
-          return { ...item, cinvc_attrb: selectedItemAttributes.cinvc_attrb };
-        }
-        return item;
-      }),
-    );
+    if (selectedItemAttributes) {
+      setFormDataItemList((prev) =>
+        prev.map((item) => {
+          if (item.bitem_refid === selectedItemAttributes.bitem_refid) {
+            return { ...item, cinvc_attrb: selectedItemAttributes.cinvc_attrb };
+          }
+          return item;
+        }),
+      );
+    }
   }, [selectedItemAttributes]);
 
   const [availableItemList, setAvailableItemList] = useState([]);
@@ -168,20 +170,34 @@ const ItemsComp = ({
           </div>
         </div>
         <div className="grid col-12 text-gray-700 p-2">
-          <div className="col-3 p-0">
+          <div className="col-2 p-0">
             📊 Discount: {Number(option.bitem_sddsp).toFixed(2)}%
           </div>
-          <div className="col-3 p-0">
+          <div className="col-2 p-0">
             📈 VAT: {Number(option.items_sdvat).toFixed(2)}%
           </div>
         </div>
         <div className="grid col-12 text-gray-700 p-2">
-          <div className="col-3 p-0">
-            📑 Bulk Stock: {Number(option.bitem_gstkq).toFixed(2)}{" "}
+          <div className="col-2 p-0">
+            📑 Bulk: {Number(option.bitem_gstkq).toFixed(2)}{" "}
             {option.puofm_untnm}
           </div>
-          <div className="col-3 p-0">
-            📋 Single Stock: {Number(option.bitem_istkq).toFixed(2)}{" "}
+          <div className="col-2 p-0">
+            📋 Tracking: {Number(option.bitem_istkq).toFixed(2)}{" "}
+            {option.puofm_untnm}
+          </div>
+          <div className="col-2 p-0">
+            📦 Stock: {Number(option.bitem_ohqty).toFixed(2)}{" "}
+            {option.puofm_untnm}
+          </div>
+        </div>
+        <div className="grid col-12 text-gray-700 p-2">
+          <div className="col-2 p-0">
+            📙 Purchase Booking: {Number(option.bitem_pbqty).toFixed(2)}{" "}
+            {option.puofm_untnm}
+          </div>
+          <div className="col-2 p-0">
+            📗 Sales Booking: {Number(option.bitem_sbqty).toFixed(2)}{" "}
             {option.puofm_untnm}
           </div>
         </div>
@@ -198,8 +214,7 @@ const ItemsComp = ({
       <div className="flex flex-column">
         <span className="font-semibold">
           {option.items_icode}-{option.items_iname}, 📦
-          {Number(option.bitem_gstkq).toFixed(2)} {option.puofm_untnm},{" "}
-          {Number(option.bitem_istkq).toFixed(2)} {option.puofm_untnm}
+          {Number(option.bitem_ohqty).toFixed(2)} {option.puofm_untnm}
         </span>
       </div>
     );
@@ -254,7 +269,7 @@ const ItemsComp = ({
       items_dfqty: item.items_dfqty,
       puofm_untnm: item.puofm_untnm,
       suofm_untnm: item.suofm_untnm,
-      bitem_ohqty: item.bitem_ohqty
+      bitem_ohqty: item.bitem_ohqty,
     };
     setFormDataItemList([...formDataItemList, newItemRow]);
 
@@ -389,10 +404,8 @@ const ItemsComp = ({
     );
   };
 
-  const bitem_ohqty_BT = (rowData) => {
-    return (
-      <ZeroRowCell value={rowData.bitem_ohqty} text={rowData.bitem_ohqty} />
-    );
+  const cinvc_srcnm_BT = (rowData) => {
+    return rowData.cinvc_srcnm;
   };
 
   const handleDelete = (rowData) => {
@@ -518,7 +531,7 @@ const ItemsComp = ({
 
   return (
     <div className="mt-4">
-      {JSON.stringify(formDataItemList)}
+      {/* {JSON.stringify(formDataItemList)} */}
       <ConfirmDialog />
       <Menu model={actionMenuItems} popup ref={menu} id="popup_menu" />
       {!formData.edit_stop && (
@@ -643,10 +656,10 @@ const ItemsComp = ({
         <Column field="cinvc_notes" header="Remarks" editor={textEditor} />
         <Column header="Bulk" body={bulk_BT} />
         <Column
-          field="bitem_ohqty"
-          header="Stock"
+          field="cinvc_srcnm"
+          header="Source"
           headerStyle={{ backgroundColor: "#49769bff" }}
-          body={bitem_ohqty_BT}
+          body={cinvc_srcnm_BT}
           hidden={!showExtraColumns}
         />
         <Column

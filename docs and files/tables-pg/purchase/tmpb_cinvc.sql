@@ -23,6 +23,8 @@ CREATE TABLE tmpb_cinvc (
   cinvc_rtqty decimal(20,6) NOT NULL DEFAULT 0,
   cinvc_slqty decimal(20,6) NOT NULL DEFAULT 0,
   cinvc_ohqty decimal(20,6) NOT NULL DEFAULT 0,
+  cinvc_dprat decimal(20,6) NOT NULL DEFAULT 0,
+  cinvc_mcmrp decimal(20,6) NOT NULL DEFAULT 0,
 
   -- default
   cinvc_actve boolean NOT NULL DEFAULT true,

@@ -8,15 +8,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { InputSwitch } from "primereact/inputswitch";
 import { Dropdown } from "primereact/dropdown";
 import { Chips } from "primereact/chips";
-import { businessTagsOptions, countryOptions, businessTypeOptions } from "@/utils/vtable";
+import {
+  businessTagsOptions,
+  countryOptions,
+  businessTypeOptions,
+} from "@/utils/vtable";
 
-const BusinessFormComp = ({
-  isBusy,
-  errors,
-  formData,
-  onChange,
-  onSave,
-}) => {
+const BusinessFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   const { business } = useAuth();
   const [bImg, setBImg] = useState(null);
   useEffect(() => {
@@ -158,7 +156,7 @@ const BusinessFormComp = ({
           <small className="mb-3 text-red-500">{errors.bsins_cntct}</small>
         )}
       </div>
-      <div className="col-12 md:col-3">
+      <div className="col-12 md:col-2">
         <label
           htmlFor="bsins_binno"
           className="block text-900 font-medium mb-2"
@@ -176,6 +174,27 @@ const BusinessFormComp = ({
           <small className="mb-3 text-red-500">{errors.bsins_binno}</small>
         )}
       </div>
+
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="bsins_cntry"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmsb_bsins.bsins_cntry.label} <span className="text-red-500">*</span>
+        </label>
+        <Dropdown
+          name="bsins_cntry"
+          value={formData.bsins_cntry}
+          options={countryOptions}
+          onChange={(e) => onChange("bsins_cntry", e.value)}
+          className={`w-full ${errors.bsins_cntry ? "p-invalid" : ""}`}
+          placeholder={`Select ${tmsb_bsins.bsins_cntry.label}`}
+        />
+        {errors.bsins_cntry && (
+          <small className="mb-3 text-red-500">{errors.bsins_cntry}</small>
+        )}
+      </div>
+
       <div className="col-12 md:col-3">
         <label
           htmlFor="bsins_btags"
@@ -193,26 +212,6 @@ const BusinessFormComp = ({
         />
         {errors.bsins_btags && (
           <small className="mb-3 text-red-500">{errors.bsins_btags}</small>
-        )}
-      </div>
-
-      <div className="col-12 md:col-3">
-        <label
-          htmlFor="bsins_cntry"
-          className="block text-900 font-medium mb-2"
-        >
-          {tmsb_bsins.bsins_cntry.label} <span className="text-red-500">*</span>
-        </label>
-        <Dropdown
-          name="bsins_cntry"
-          value={formData.bsins_cntry}
-          options={countryOptions}
-          onChange={(e) => onChange("bsins_cntry", e.value)}
-          className={`w-full ${errors.bsins_cntry ? "p-invalid" : ""}`}
-          placeholder={`Select ${tmsb_bsins.bsins_cntry.label}`}
-        />
-        {errors.bsins_cntry && (
-          <small className="mb-3 text-red-500">{errors.bsins_cntry}</small>
         )}
       </div>
 
@@ -236,6 +235,25 @@ const BusinessFormComp = ({
         )}
       </div>
 
+      
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="bsins_dstrn"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmsb_bsins.bsins_dstrn.label} <span className="text-red-500">*</span>
+        </label>
+        <InputSwitch
+          name="bsins_dstrn"
+          checked={formData.bsins_dstrn === true}
+          onChange={(e) => onChange("bsins_dstrn", e.value ? true : false)}
+          className={`${errors.bsins_dstrn ? "p-invalid" : ""}`}
+        />
+        {errors.bsins_dstrn && (
+          <small className="mb-3 text-red-500">{errors.bsins_dstrn}</small>
+        )}
+      </div>
+
       <div className="col-12 md:col-2">
         <label
           htmlFor="bsins_tstrn"
@@ -245,8 +263,8 @@ const BusinessFormComp = ({
         </label>
         <InputSwitch
           name="bsins_tstrn"
-          checked={formData.bsins_tstrn === 1}
-          onChange={(e) => onChange("bsins_tstrn", e.value ? 1 : 0)}
+          checked={formData.bsins_tstrn === true}
+          onChange={(e) => onChange("bsins_tstrn", e.value ? true : false)}
           className={`${errors.bsins_tstrn ? "p-invalid" : ""}`}
         />
         {errors.bsins_tstrn && (
@@ -262,8 +280,8 @@ const BusinessFormComp = ({
         </label>
         <InputSwitch
           name="bsins_prtrn"
-          checked={formData.bsins_prtrn === 1}
-          onChange={(e) => onChange("bsins_prtrn", e.value ? 1 : 0)}
+          checked={formData.bsins_prtrn === true}
+          onChange={(e) => onChange("bsins_prtrn", e.value ? true : false)}
           className={`${errors.bsins_prtrn ? "p-invalid" : ""}`}
         />
         {errors.bsins_prtrn && (
@@ -279,8 +297,8 @@ const BusinessFormComp = ({
         </label>
         <InputSwitch
           name="bsins_sltrn"
-          checked={formData.bsins_sltrn === 1}
-          onChange={(e) => onChange("bsins_sltrn", e.value ? 1 : 0)}
+          checked={formData.bsins_sltrn === true}
+          onChange={(e) => onChange("bsins_sltrn", e.value ? true : false)}
           className={`${errors.bsins_sltrn ? "p-invalid" : ""}`}
         />
         {errors.bsins_sltrn && (
@@ -323,8 +341,8 @@ const BusinessFormComp = ({
         </label>
         <InputSwitch
           name="bsins_pbviw"
-          checked={formData.bsins_pbviw === 1}
-          onChange={(e) => onChange("bsins_pbviw", e.value ? 1 : 0)}
+          checked={formData.bsins_pbviw === true}
+          onChange={(e) => onChange("bsins_pbviw", e.value ? true : false)}
           className={`${errors.bsins_pbviw ? "p-invalid" : ""}`}
         />
         {errors.bsins_pbviw && (
@@ -337,7 +355,7 @@ const BusinessFormComp = ({
             type="button"
             onClick={(e) => onSave(e)}
             label={formData.id ? "Update" : "Save"}
-            icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
+            icon={"pi pi-check"}
             severity="success"
             size="small"
             loading={isBusy}

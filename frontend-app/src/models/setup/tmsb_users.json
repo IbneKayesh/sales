@@ -146,6 +146,15 @@
     "placeholder": "Is registered",
     "default": false
   },
+  "users_cmpid": {
+    "type": "string",
+    "label": "Company",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter your company",
+    "required": true,
+    "default": "N"
+  },
   "users_actve": {
     "type": "boolean",
     "label": "Is Active",

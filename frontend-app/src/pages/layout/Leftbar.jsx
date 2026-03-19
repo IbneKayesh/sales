@@ -151,7 +151,7 @@ const Leftbar = ({ menus }) => {
             {user?.users_oname}
           </div>
           <div>
-            <strong>Reg No:</strong> {user?.users_regno}
+            <strong>Reg:</strong> {user?.users_regno}
           </div>
           <div>
             <strong>Grains:</strong>{" "}

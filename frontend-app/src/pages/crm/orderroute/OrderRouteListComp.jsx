@@ -49,10 +49,10 @@ const OrderRouteListComp = ({ dataList, onEdit, onDelete, onOutlets }) => {
   const action_BT = (rowData) => {
     let menuItems = [
       {
-        label: "Outlets",
-        icon: "pi pi-shop",
+        label: "Edit",
+        icon: "pi pi-pencil",
         command: () => {
-          onOutlets(rowData);
+          onEdit(rowData);
         },
         disabled: rowData.edit_stop,
       },
@@ -68,11 +68,11 @@ const OrderRouteListComp = ({ dataList, onEdit, onDelete, onOutlets }) => {
     return (
       <div className="flex flex-wrap gap-2">
         <SplitButton
-          icon="pi pi-pencil"
+          icon="pi pi-shop"
           size="small"
-          tooltip="Edit"
+          tooltip="Outlets"
           tooltipOptions={{ position: "top" }}
-          onClick={() => onEdit(rowData)}
+          onClick={() => onOutlets(rowData)}
           model={menuItems}
         />
       </div>

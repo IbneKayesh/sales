@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { usersAPI } from "@/api/setup/usersAPI";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
+import { useBusy, useNotification, useToast } from "@/hooks/useAppUI";
 
 const fromDataModel = {
   pswrd_current: "",
@@ -11,8 +11,9 @@ const fromDataModel = {
 
 export const usePassword = () => {
   const { user } = useAuth();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const { showToast } = useToast();
-  const [isBusy, setIsBusy] = useState(false);
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(fromDataModel);
 
@@ -52,15 +53,14 @@ export const usePassword = () => {
   };
 
   const handleSave = async (e) => {
-    e.preventDefault();
-    setIsBusy(true);
-
-    if (!validateForm()) {
-      setIsBusy(false);
-      return;
-    }
+    if (e && e.preventDefault) e.preventDefault();
 
     try {
+      if (!validateForm()) {
+        return { success: false, message: "Validation failed" };
+      }
+
+      setIsBusy(true);
       const fromDataUser = {
         id: user.id,
         users_email: user.users_email,
@@ -68,26 +68,45 @@ export const usePassword = () => {
         pswrd_new: formData.pswrd_new,
       };
 
-      //console.log("fromDataUser: " + JSON.stringify(fromDataUser));
-
       const response = await usersAPI.changePassword(fromDataUser);
-      //console.log("response: " + JSON.stringify(response));
+      //response = { success, message, data }
 
+      // Update toast using API message
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Password - ${user.users_oname} ${
+          response.success ? "modified" : "modification failed"
+        } by ${user.users_oname}`,
+        toast: false,
+        notification: false,
+        log: true,
+      });
+
+      if (response.success) {
+        setFormData(fromDataModel);
+      }
       showToast(
         response.success ? "success" : "error",
         response.success ? "Success" : "Error",
         response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
+          "Operation " + (response.success ? "successful" : "failed"),
       );
-
-      // Clear form
-      setFormData(fromDataModel);
+      return response;
     } catch (error) {
-      console.error("Error changing password:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      console.error("Error saving data:", error);
+      notify({
+        severity: "error",
+        summary: "Password",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+      return { success: false, message: error?.message || "Operation failed" };
+    } finally {
+      setIsBusy(false);
     }
-
-    setIsBusy(false);
   };
 
   const handleClear = () => {

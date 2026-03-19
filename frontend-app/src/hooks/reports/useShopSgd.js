@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { shopAPI } from "@/api/reports/shopAPI";
 import { useBusy, useNotification } from "@/hooks/useAppUI";
+import { formatDateForAPI } from "@/utils/datetime";
 
 export const useShopSgd = () => {
   const { user } = useAuth();
@@ -17,15 +18,15 @@ export const useShopSgd = () => {
         shopAPI.dPurchase({
           trnsc_users: user.users_users,
           trnsc_bsins: user.users_bsins,
-          trsrt_trdat: trsrt_trdat,
-          trend_trdat: trend_trdat,
+          trsrt_trdat: formatDateForAPI(trsrt_trdat),
+          trend_trdat: formatDateForAPI(trend_trdat),
         }),
 
         shopAPI.dSales({
           trnsc_users: user.users_users,
           trnsc_bsins: user.users_bsins,
-          trsrt_trdat: trsrt_trdat,
-          trend_trdat: trend_trdat,
+          trsrt_trdat: formatDateForAPI(trsrt_trdat),
+          trend_trdat: formatDateForAPI(trend_trdat),
         }),
 
         new Promise((resolve) => setTimeout(resolve, 500)),

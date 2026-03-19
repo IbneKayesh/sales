@@ -42,6 +42,11 @@ export const contactAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getAllDistributors: (data) =>
+    apiRequest(`/crm/contacts/distributors`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
   getAllReceiptSuppliers: (data) =>
     apiRequest(`/crm/contacts/receipt-suppliers`, {
       method: "POST",
@@ -49,6 +54,11 @@ export const contactAPI = {
     }),
   getRouteOutletsAvailable: (data) =>
     apiRequest(`/crm/contacts/route-outlets-available`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getRouteDistributorsAvailable: (data) =>
+    apiRequest(`/crm/contacts/route-distributors-available`, {
       method: "POST",
       body: JSON.stringify(data),
     }),

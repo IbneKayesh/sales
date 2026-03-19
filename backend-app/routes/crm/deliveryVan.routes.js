@@ -18,14 +18,21 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT dvn.*, 0 as edit_stop
+    const sql = `SELECT dvn.*, 0 as edit_stop,
+    dst.cntct_cntnm AS distr_cntnm, dst.cntct_cntps AS distr_cntps,
+    dst.cntct_cntno AS distr_cntno, dst.cntct_ofadr AS distr_ofadr
     FROM tmcb_dlvan dvn
+    LEFT JOIN tmcb_cntct dst ON dvn.dlvan_distr = dst.id
     WHERE dvn.dlvan_users = $1
     AND dvn.dlvan_bsins = $2
     ORDER BY dvn.dlvan_vname`;
     const params = [dlvan_users, dlvan_bsins];
 
-    const rows = await dbGetAll(sql, params, `Get delivery vans for ${dlvan_users} and ${dlvan_bsins}`);
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get delivery vans for ${dlvan_users} and ${dlvan_bsins}`,
+    );
     res.json({
       success: true,
       message: "Delivery vans fetched successfully",
@@ -48,32 +55,30 @@ router.post("/create", async (req, res) => {
       id,
       dlvan_users,
       dlvan_bsins,
+      dlvan_distr,
       dlvan_vname,
       dlvan_dname,
       user_id,
     } = req.body;
 
     // Validate input
-    if (
-      !id ||
-      !dlvan_users ||
-      !dlvan_bsins
-    ) {
+    if (!id || !dlvan_users || !dlvan_bsins || !dlvan_distr) {
       return res.json({
         success: false,
         message: "All fields are required",
         data: null,
-      }); 
+      });
     }
 
     //database action
     const sql = `INSERT INTO tmcb_dlvan
-    (id,dlvan_users,dlvan_bsins,dlvan_vname,dlvan_dname,dlvan_crusr,dlvan_upusr)
-    VALUES ($1,$2,$3,$4,$5,$6,$7)`;
+    (id,dlvan_users,dlvan_bsins,dlvan_distr,dlvan_vname,dlvan_dname,dlvan_crusr,dlvan_upusr)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`;
     const params = [
       id,
       dlvan_users,
       dlvan_bsins,
+      dlvan_distr,
       dlvan_vname,
       dlvan_dname,
       user_id,
@@ -99,42 +104,28 @@ router.post("/create", async (req, res) => {
 // update
 router.post("/update", async (req, res) => {
   try {
-    const {
-      id,
-      dlvan_users,
-      dlvan_bsins,
-      dlvan_vname,
-      dlvan_dname,
-      user_id,
-    } = req.body;
+    const { id, dlvan_users, dlvan_bsins, dlvan_distr, dlvan_vname, dlvan_dname, user_id } =
+      req.body;
 
     // Validate input
-    if (
-      !id ||
-      !dlvan_users ||
-      !dlvan_bsins
-    ) {
+    if (!id || !dlvan_users || !dlvan_bsins || !dlvan_distr) {
       return res.json({
         success: false,
         message: "All fields are required",
         data: null,
-      }); 
+      });
     }
 
     //database action
     const sql = `UPDATE tmcb_dlvan
-    SET dlvan_vname = $1,
-    dlvan_dname = $2,
-    dlvan_upusr = $3,
+    SET dlvan_distr = $1,
+    dlvan_vname = $2,
+    dlvan_dname = $3,
+    dlvan_upusr = $4,
     dlvan_updat = CURRENT_TIMESTAMP,
     dlvan_rvnmr = dlvan_rvnmr + 1
-    WHERE id = $4`;
-    const params = [
-      dlvan_vname,
-      dlvan_dname,
-      user_id,
-      id,
-    ];
+    WHERE id = $5`;
+    const params = [dlvan_distr, dlvan_vname, dlvan_dname, user_id, id];
 
     await dbRun(sql, params, `Update delivery van for ${dlvan_bsins}`);
     res.json({
@@ -155,7 +146,7 @@ router.post("/update", async (req, res) => {
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, dlvan_bsins} = req.body;
+    const { id, dlvan_bsins } = req.body;
 
     // Validate input
     if (!id) {

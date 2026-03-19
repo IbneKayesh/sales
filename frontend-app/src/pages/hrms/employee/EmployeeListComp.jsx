@@ -67,7 +67,7 @@ const EmployeeListComp = ({ dataList, onEdit, onDelete }) => {
         <span className="text-sm text-gray-500">
           Type: {rowData.emply_etype}
         </span>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-600">
           Status: {rowData.emply_stats}
         </span>
       </div>
@@ -137,7 +137,14 @@ const EmployeeListComp = ({ dataList, onEdit, onDelete }) => {
         <span className="text-sm">Shift: {rowData.emply_wksft}</span>
         <span className="text-sm">Supervisor: {rowData.emply_supid}</span>
         <span className="text-sm">Notes: {rowData.emply_notes}</span>
-        <span className="text-sm">Login: {rowData.emply_login ? "Yes" : "No"}</span>
+        <span className="text-sm">
+          Login:{" "}
+          {rowData.emply_login ? (
+            <span className="bg-green-500 text-white border-round px-2 py-1 text-sm">Yes</span>
+          ) : (
+            <span className="bg-red-500 text-white border-round px-2 py-1 text-sm">No</span>
+          )}
+        </span>
       </div>
     );
   };

@@ -7,7 +7,8 @@ CREATE TABLE tmcb_cntrt (
 
   cnrut_users varchar(50) NOT NULL,
   cnrut_bsins varchar(50) NOT NULL,
-  cnrut_cntct varchar(50) NOT NULL,
+  cnrut_distr varchar(50) NOT NULL,
+  cnrut_utlet varchar(50) NOT NULL,
   cnrut_rutes varchar(50) NOT NULL,
   cnrut_empid varchar(50) NOT NULL,
   -- optional

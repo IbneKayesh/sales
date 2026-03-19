@@ -5,33 +5,32 @@ import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { Calendar } from "primereact/calendar";
 import { formatDateForAPI } from "@/utils/datetime";
+import { parseAttributes, stringifyAttributes } from "@/utils/jsonParser";
 
 const AttributesComp = ({ visible, setVisible, formData, setFormData }) => {
-  const [attributes, setAttributes] = useState({});
-  const { dataList: attributesList, handleLoadAttributes } = useAttributesSgd();
+  const [attributes, setAttributes] = useState(() =>
+    parseAttributes(formData.cinvc_attrb),
+  );
+
+  const {
+    isBusy,
+    dataList: attributesList,
+    handleGetAllAttribProduct,
+  } = useAttributesSgd();
+
   useEffect(() => {
-    let initialAttributes = formData.cinvc_attrb || {};
-    if (typeof initialAttributes === "string") {
-      try {
-        initialAttributes = JSON.parse(initialAttributes);
-      } catch (e) {
-        console.warn("Failed to parse attributes string:", e);
-        initialAttributes = {};
-      }
-    }
-    setAttributes(initialAttributes);
-    handleLoadAttributes();
+    handleGetAllAttribProduct(formData.cinvc_items);
   }, []);
 
   useEffect(() => {
-    setFormData({ ...formData, cinvc_attrb: attributes });
+    setFormData({ ...formData, cinvc_attrb: stringifyAttributes(attributes) });
   }, [attributes]);
 
   return (
     <Dialog
       header="Attributes"
       visible={visible}
-      style={{ minWidth: "50vw" }}
+      style={{ minWidth: "25vw" }}
       onHide={() => {
         if (!visible) return;
         setVisible(false);
@@ -40,7 +39,7 @@ const AttributesComp = ({ visible, setVisible, formData, setFormData }) => {
       <div className="m-0">
         {attributesList.map((attr) => (
           <div key={attr.id} className="flex flex-column mb-1">
-            <label htmlFor={attr.attrb_aname} className="mb-1">
+            <label htmlFor={attr.attrb_aname} className="mb-1 font-bold">
               {attr.attrb_aname}
             </label>
             {attr.attrb_dtype === "text" ? (
@@ -84,6 +83,22 @@ const AttributesComp = ({ visible, setVisible, formData, setFormData }) => {
             ) : null}
           </div>
         ))}
+
+        {attributesList.length === 0 && !isBusy && (
+          <span className="text-red-500">Not attributes found</span>
+        )}
+
+        {isBusy && <span>Loading attributes...</span>}
+
+        <span
+          className="p-button p-button-sm mt-2"
+          onClick={() => {
+            if (!visible) return;
+            setVisible(false);
+          }}
+        >
+          Ok
+        </span>
       </div>
     </Dialog>
   );

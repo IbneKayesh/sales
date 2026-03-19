@@ -171,7 +171,7 @@ const UsersFormComp = ({
           <small className="mb-3 text-red-500">{errors.users_wctxt}</small>
         )}
       </div>
-      <div className="col-12 md:col-4">
+      <div className="col-12 md:col-2">
         <label
           htmlFor="users_notes"
           className="block text-900 font-medium mb-2"
@@ -188,6 +188,25 @@ const UsersFormComp = ({
         {errors.users_notes && (
           <small className="mb-3 text-red-500">{errors.users_notes}</small>
         )}
+      </div>
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="users_cmpid"
+          className="block text-900 font-medium mb-2"
+        >
+          {tmsb_users.users_cmpid.label}
+        </label>
+        <InputText
+          name="users_cmpid"
+          value={formData.users_cmpid}
+          onChange={(e) => onChange("users_cmpid", e.target.value)}
+          className={`w-full ${errors.users_cmpid ? "p-invalid" : ""}`}
+          placeholder={`Enter ${tmsb_users.users_cmpid.label}`}
+        />
+        {errors.users_cmpid && (
+          <small className="mb-3 text-red-500">{errors.users_cmpid}</small>
+        )}
+        <small className="mb-1 text-blue-600 text-xs">N: Traders, Y: Company, CODE: Distributor</small>
       </div>
 
       <div className="col-12">

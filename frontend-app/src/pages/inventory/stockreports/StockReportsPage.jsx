@@ -57,11 +57,11 @@ const StockReportsPage = () => {
             onChange={(e) => setIsSummary(e.value)}
           />
           <Button
+            label="Refresh"
             icon="pi pi-refresh"
             size="small"
             severity="secondary"
             onClick={() => handleLoadReports(reportFilter)}
-            tooltip="Refresh Data"
             disabled={isBusy}
           />
         </div>

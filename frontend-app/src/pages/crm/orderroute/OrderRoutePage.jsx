@@ -8,8 +8,8 @@ import { useOrderRoute } from "@/hooks/crm/useOrderRoute";
 
 const OrderRoutePage = () => {
   const {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
@@ -47,6 +47,7 @@ const OrderRoutePage = () => {
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
+              label="Refresh"
               icon="pi pi-refresh"
               size="small"
               severity="secondary"

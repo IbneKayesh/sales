@@ -1,39 +1,39 @@
 import { apiRequest } from "@/utils/api.js";
 
-//outletRouteAPI
-export const outletRouteAPI = {
+//orderRouteAPI
+export const orderRouteAPI = {
   getAll: (data) =>
-    apiRequest("/crm/outlet-route", {
+    apiRequest("/crm/order-route", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   create: (data) =>
-    apiRequest("/crm/outlet-route/create", {
+    apiRequest("/crm/order-route/create", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   update: (data) =>
-    apiRequest("/crm/outlet-route/update", {
+    apiRequest("/crm/order-route/update", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   delete: (data) =>
-    apiRequest("/crm/outlet-route/delete", {
+    apiRequest("/crm/order-route/delete", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   outlets: (data) =>
-    apiRequest("/crm/outlet-route/outlets", {
+    apiRequest("/crm/order-route/outlets", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   deleteOutlet: (data) =>
-    apiRequest("/crm/outlet-route/delete-outlets", {
+    apiRequest("/crm/order-route/delete-outlets", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   createOutlet: (data) =>
-    apiRequest("/crm/outlet-route/create-outlets", {
+    apiRequest("/crm/order-route/create-outlets", {
       method: "POST",
       body: JSON.stringify(data),
     }),

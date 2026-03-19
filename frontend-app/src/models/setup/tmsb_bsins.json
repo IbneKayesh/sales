@@ -55,15 +55,6 @@
     "placeholder": "Enter your BIN",
     "required": false
   },
-  "bsins_btags": {
-    "type": "string",
-    "label": "Tags",
-    "maxLength": 100,
-    "minLength": 6,
-    "placeholder": "Enter business tags",
-    "required": true,
-    "default": "Grocery Store"
-  },
   "bsins_cntry": {
     "type": "string",
     "label": "Country",
@@ -73,6 +64,15 @@
     "required": true,
     "default": "Bangladesh"
   },
+  "bsins_btags": {
+    "type": "string",
+    "label": "Tags",
+    "maxLength": 100,
+    "minLength": 6,
+    "placeholder": "Enter business tags",
+    "required": true,
+    "default": "Grocery Store"
+  },
   "bsins_bstyp": {
     "type": "string",
     "label": "Business Type",
@@ -81,6 +81,15 @@
     "placeholder": "Enter your Business Type",
     "required": true,
     "default": "Store"
+  },
+  "bsins_dstrn": {
+    "type": "number",
+    "label": "Distributor Transaction",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Distributor Transaction",
+    "required": true,
+    "default": 0
   },
   "bsins_tstrn": {
     "type": "number",

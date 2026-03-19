@@ -72,6 +72,7 @@ const PInvoiceListComp = ({ dataList, isBusy, isSummary }) => {
           {Number(rowData.cinvc_ohqty).toFixed(2)} {rowData.puofm_untnm}
         </span>
         <span className="text-blue-600 text-sm">
+          Bulk:{" "}
           <ConvertedQtyComponent
             qty={rowData.cinvc_ohqty}
             dfQty={rowData.items_dfqty}

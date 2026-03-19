@@ -14,7 +14,7 @@ const inventoryRoutes = (
     <Route path="inventory/brands" element={<BrandPage />} />
     <Route path="inventory/category" element={<CategoryPage />} />
     <Route path="inventory/products" element={<ProductsPage />} />
-    <Route path="inventory/stockreports" element={<StockReportsPage />} />
+    <Route path="inventory/reports/tracking-stock" element={<StockReportsPage />} />
     <Route path="inventory/itransfer" element={<TransferPage />} />
   </>
 );

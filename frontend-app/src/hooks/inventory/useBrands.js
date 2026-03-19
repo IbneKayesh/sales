@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBusy, useNotification } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmib_brand, { edit_stop: 0 });
+//example hook
 //all error log track to notifcation
 //data changes track to change log
 

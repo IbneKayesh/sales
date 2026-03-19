@@ -116,14 +116,12 @@ router.post("/update", async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_ctgry
-    SET ctgry_users = $1,
-    ctgry_ctgnm = $2,
-    ctgry_upusr = $3,
+    SET ctgry_ctgnm = $1,
+    ctgry_upusr = $2,
     ctgry_updat = CURRENT_TIMESTAMP,
     ctgry_rvnmr = ctgry_rvnmr + 1
-    WHERE id = $4`;
+    WHERE id = $3`;
     const params = [
-      muser_id,
       ctgry_ctgnm,
       suser_id,
       id,

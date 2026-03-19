@@ -3,11 +3,13 @@ import { Dialog } from "primereact/dialog";
 import { useBusinessSgd } from "@/hooks/setup/useBusinessSgd";
 import { Chip } from "primereact/chip";
 import { getStorageData, setStorageData } from "@/utils/storage";
-import { useToast } from "@/hooks/useToast";
+import { useBusy, useNotification, useToast } from "@/hooks/useAppUI";
 
 export default function ActiveBusiness({ visible, setVisible }) {
   const { showToast } = useToast();
-  const { dataList, handleLoadBusiness } = useBusinessSgd();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
+  const { dataList, handleGetAllActiveBusiness } = useBusinessSgd();
   const [user, setUser] = useState(null);
   const [business, setBusiness] = useState(null);
 
@@ -16,20 +18,28 @@ export default function ActiveBusiness({ visible, setVisible }) {
     setUser(data.user);
     setBusiness(data.business);
 
-    handleLoadBusiness();
+    handleGetAllActiveBusiness();
   }, []);
 
-  const handleSelectBusiness = (id) => {
-    if (user.users_isrgs === 0) {
-      showToast("error", "Error", "You are not authorized to switch business");
+  const handleSelectBusiness = async (id) => {
+    if (user.users_isrgs === false) {
+      notify({
+        severity: "error",
+        summary: "Switch Business",
+        detail: `You are not authorized to switch business - by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
     } else {
+      setIsBusy(true);
       const new_user = { ...user, users_bsins: id };
       setStorageData({ user: new_user });
 
       const selectedBusiness = dataList.find((business) => business.id === id);
       setStorageData({ business: selectedBusiness });
       setVisible(false);
-
+      setIsBusy(false);
       //reload current page
       window.location.reload();
     }

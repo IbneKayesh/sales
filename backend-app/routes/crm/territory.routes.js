@@ -207,9 +207,9 @@ router.post("/get-by-tarea", async (req, res) => {
     //database action
     const sql = `SELECT trt.*, 0 as edit_stop
     FROM tmcb_trtry trt
-    WHERE trt.trtry_users = ?
-    AND trt.trtry_bsins = ?
-    AND trt.trtry_tarea = ?
+    WHERE trt.trtry_users = $1
+    AND trt.trtry_bsins = $2
+    AND trt.trtry_tarea = $3
     ORDER BY trt.trtry_wname`;
     const params = [trtry_users, trtry_bsins, trtry_tarea];
 

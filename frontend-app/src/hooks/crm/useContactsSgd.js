@@ -8,6 +8,7 @@ export const useContactsSgd = () => {
   const { isBusy, setIsBusy } = useBusy();
   const { notify } = useNotification();
   const [dataList, setDataList] = useState([]);
+  const [dataList2, setDataList2] = useState([]);
 
   const handleGetAllActiveSuppliers = async () => {
     try {
@@ -54,6 +55,29 @@ export const useContactsSgd = () => {
       setIsBusy(false);
     }
   };
+  
+  const handleGetAllActiveDistributors = async () => {
+    try {
+      setIsBusy(true);
+      const response = await contactAPI.getAllDistributors({
+        muser_id: user.users_users,
+      });
+      //console.log("data",response.data);
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "Distributor",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
 
   const handleLoadReceiptSuppliers = async () => {
     try {
@@ -68,15 +92,29 @@ export const useContactsSgd = () => {
     }
   };
 
-  const handleLoadRouteOutlets = async (routeId) => {
+  const handleGetRouteOutletsAvailable = async (routeId) => {
     try {
       const response = await contactAPI.getRouteOutletsAvailable({
-        cntct_users: user.users_users,
-        cntct_bsins: user.users_bsins,
+        muser_id: user.users_users,
+        bsins_id: user.users_bsins,
         cnrut_rutes: routeId,
       });
-      //console.log("data",response.data);
+      //console.log("data",response);
       setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
+  };
+
+    const handleGetRouteDistributorsAvailable = async (routeId) => {
+    try {
+      const response = await contactAPI.getRouteDistributorsAvailable({
+        muser_id: user.users_users,
+        bsins_id: user.users_bsins,
+        cnrut_rutes: routeId,
+      });
+      //console.log("data",response);
+      setDataList2(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
     }
@@ -84,9 +122,12 @@ export const useContactsSgd = () => {
 
   return {
     dataList,
+    dataList2,
     handleGetAllActiveSuppliers,
     handleGetAllActiveCustomers,
     handleLoadReceiptSuppliers,
-    handleLoadRouteOutlets,
+    handleGetAllActiveDistributors,
+    handleGetRouteOutletsAvailable,
+    handleGetRouteDistributorsAvailable,
   };
 };

@@ -31,6 +31,7 @@ CREATE TABLE tmsb_users (
 
   users_nofcr decimal(16,2) NOT NULL DEFAULT 0.00,
   users_isrgs boolean NOT NULL DEFAULT true,
+  users_cmpid varchar(50) DEFAULT 'N',
 
   -- default
   users_actve boolean NOT NULL DEFAULT true,

@@ -6,7 +6,7 @@ import ActiveRowCell from "@/components/ActiveRowCell";
 import { useState } from "react";
 import { InputText } from "primereact/inputtext";
 
-const CategoryListComp = ({ dataList, onEdit, onDelete }) => {
+const CategoryListComp = ({ dataList, onEdit, onDelete, onAttributes }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
 
   const handleDelete = (rowData) => {
@@ -26,6 +26,14 @@ const CategoryListComp = ({ dataList, onEdit, onDelete }) => {
   const action_BT = (rowData) => {
     let menuItems = [
       {
+        label: "Edit",
+        icon: "pi pi-pencil",
+        command: () => {
+          onEdit(rowData);
+        },
+        disabled: rowData.edit_stop,
+      },
+      {
         label: "Delete",
         icon: "pi pi-trash text-red-400",
         command: () => {
@@ -37,11 +45,11 @@ const CategoryListComp = ({ dataList, onEdit, onDelete }) => {
     return (
       <div className="flex flex-wrap gap-2">
         <SplitButton
-          icon="pi pi-pencil"
+          icon="pi pi-list"
           size="small"
-          tooltip="Edit"
+          tooltip="Attributes"
           tooltipOptions={{ position: "top" }}
-          onClick={() => onEdit(rowData)}
+          onClick={() => onAttributes(rowData)}
           model={menuItems}
           disabled={rowData.edit_stop}
         />

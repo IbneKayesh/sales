@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManager");
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // purchase-booking
@@ -118,6 +118,8 @@ router.post("/purchase-invoice", async (req, res) => {
       });
     }
 
+    //console.log("asdasd")
+
     //database action
     const sql = `SELECT cnt.cntct_cntnm, minv.minvc_trnno, itm.items_icode, itm.items_iname, itm.items_dfqty,
 cinv.cinvc_attrb,cinv.cinvc_itqty,cinv.cinvc_itamt,cinv.cinvc_rtqty,cinv.cinvc_slqty,cinv.cinvc_ohqty,
@@ -128,7 +130,7 @@ JOIN tmib_items itm ON cinv.cinvc_items = itm.id AND itm.items_trcks = 1
 JOIN tmcb_cntct cnt ON minv.minvc_cntct = cnt.id
 LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
 LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
-WHERE minv.minvc_bsins = ?
+WHERE minv.minvc_bsins = $1
 AND cinv.cinvc_ohqty > 0
 ORDER BY itm.items_iname`;
     const params = [mrcpt_bsins];

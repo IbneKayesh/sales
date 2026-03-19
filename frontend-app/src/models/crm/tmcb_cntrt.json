@@ -23,7 +23,16 @@
     "placeholder": "Enter your business id",
     "required": false
   },
-  "cnrut_cntct": {
+  "cnrut_distr": {
+    "type": "string",
+    "label": "Distributor",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter distributor",
+    "required": true,
+    "default": ""
+  },
+  "cnrut_utlet": {
     "type": "string",
     "label": "Outlet",
     "maxLength": 50,

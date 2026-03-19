@@ -27,6 +27,7 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
     },
     { label: "Without HSN", value: "without_hsn", icon: "pi pi-barcode" },
     { label: "Inactives", value: "inactives", icon: "pi pi-trash" },
+    { label: "No Warehouse", value: "no_warehouse", icon: "pi pi-shop"}
   ];
 
   const handleFilterChange = (e) => {
