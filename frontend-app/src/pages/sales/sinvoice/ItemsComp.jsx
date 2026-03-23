@@ -60,11 +60,6 @@ const ItemsComp = ({
       icon: "pi pi-plus-circle text-green-600",
       command: () => activeRow && handleAddAttributes(activeRow),
     },
-    // {
-    //   label: "Copy Row",
-    //   icon: "pi pi-copy text-blue-600",
-    //   command: () => activeRow && handleCopyRowConfirm(activeRow),
-    // },
     {
       label: "Delete",
       icon: "pi pi-trash text-red-600",
@@ -435,19 +430,6 @@ const ItemsComp = ({
     setShowAttributes(true);
     setSelectedItemAttributes(rowData);
     //console.log(rowData);
-  };
-
-  const handleCopyRowConfirm = (rowData) => {
-    confirmDialog({
-      message: `Are you sure you want to copy item "${rowData.items_iname}"?`,
-      header: "Copy",
-      icon: "pi pi-exclamation-triangle",
-      accept: () => {
-        const newRowData = { ...rowData, id: generateGuid() };
-        setFormDataItemList((prev) => [...prev, newRowData]);
-      },
-      reject: () => {},
-    });
   };
 
   const action_BT = (rowData) => {

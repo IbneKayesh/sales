@@ -49,6 +49,17 @@ const PInvoiceListComp = ({ dataList, isBusy, isSummary }) => {
     );
   };
 
+
+  const cinvc_itrat_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-md">P: {Number(rowData.cinvc_itrat).toFixed(2)}</span>
+        <span className="text-md">DP: {Number(rowData.cinvc_dprat).toFixed(2)}</span>
+        <span className="text-md">MRP: {Number(rowData.cinvc_mcmrp).toFixed(2)}</span>
+      </div>
+    );
+  }
+
   const cinvc_itqty_BT = (rowData) => {
     return (
       <div className="flex flex-column">
@@ -107,6 +118,9 @@ const PInvoiceListComp = ({ dataList, isBusy, isSummary }) => {
         />
         {!isSummary && (
           <Column field="minvc_trnno" header="Invoice" body={minvc_trnno_BT} />
+        )}
+        {!isSummary && (
+          <Column field="cinvc_itrat" header="Price" body={cinvc_itrat_BT} />
         )}
         {!isSummary && (
           <Column

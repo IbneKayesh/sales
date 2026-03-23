@@ -26,9 +26,24 @@ export const accountsLedgerAPI = {
     apiRequest("/accounts/accounts-ledgers/set-default", {
       method: "POST",
       body: JSON.stringify(data),
-    }),    
+    }),
   createTransfer: (data) =>
     apiRequest("/accounts/accounts-ledgers/create-transfer", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  paymentAdvice: (data) =>
+    apiRequest("/accounts/accounts-ledgers/payment-advice", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  addLedgerPaymentAdvice: (data) =>
+    apiRequest("/accounts/accounts-ledgers/add-ledger-payment-advice", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getLedgerPaymentAdvice: (data) =>
+    apiRequest("/accounts/accounts-ledgers/ledger-payment-advice", {
       method: "POST",
       body: JSON.stringify(data),
     }),

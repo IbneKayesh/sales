@@ -7,8 +7,8 @@ import AccountsFormComp from "./AccountsFormComp";
 
 const AccountsPage = () => {
   const {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
@@ -31,15 +31,36 @@ const AccountsPage = () => {
           {isList
             ? "Account List"
             : formData.id
-            ? "Edit Account"
-            : "New Account"}
+              ? "Edit Account"
+              : "New Account"}
         </h3>
 
         <div className="flex gap-2">
           <ButtonGroup>
-            <Button icon="pi pi-refresh" size="small" severity="secondary" onClick={handleRefresh} disabled={!isList}/>
-            <Button label="New" icon="pi pi-plus" size="small" severity="info" onClick={handleAddNew} disabled={!isList}/>
-            <Button label="Back" icon="pi pi-arrow-left" size="small" severity="help" onClick={handleCancel} disabled={isList}/>
+            <Button
+              label="Refresh"
+              icon="pi pi-refresh"
+              size="small"
+              severity="secondary"
+              onClick={handleRefresh}
+              disabled={!isList}
+            />
+            <Button
+              label="New"
+              icon="pi pi-plus"
+              size="small"
+              severity="info"
+              onClick={handleAddNew}
+              disabled={!isList}
+            />
+            <Button
+              label="Back"
+              icon="pi pi-arrow-left"
+              size="small"
+              severity="help"
+              onClick={handleCancel}
+              disabled={isList}
+            />
           </ButtonGroup>
         </div>
       </div>
@@ -48,7 +69,7 @@ const AccountsPage = () => {
 
   return (
     <>
-      <Card header={getHeader()} className="bg-dark-200 border-round p-3">
+      <Card header={getHeader()} className="border-round p-3">
         {currentView === "list" ? (
           <AccountsListComp
             dataList={dataList}

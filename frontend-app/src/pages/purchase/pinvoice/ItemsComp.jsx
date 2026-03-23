@@ -14,6 +14,7 @@ import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 import ZeroRowCell from "@/components/ZeroRowCell";
 import AttributesComp from "./AttributesComp";
 import { parseAttributes } from "@/utils/jsonParser";
+import { useNotification } from "@/hooks/useAppUI";
 
 const ItemsComp = ({
   configs,
@@ -24,6 +25,7 @@ const ItemsComp = ({
   const { dataList: productList, handleGetAllActivePII } = useProductsSgd();
   const [showAttributes, setShowAttributes] = useState(false);
   const [selectedItemAttributes, setSelectedItemAttributes] = useState(null);
+  const { notify } = useNotification();
 
   useEffect(() => {
     if (!formData.edit_stop) {
@@ -471,6 +473,23 @@ const ItemsComp = ({
       header: "Copy",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
+        let attr = rowData.cinvc_attrb;
+
+        const isEmpty =
+          !attr ||
+          attr === "{}" ||
+          (typeof attr === "object" && Object.keys(attr).length === 0);
+
+        if (isEmpty) {
+          //console.log("cinvc_attrb is null or empty", attr);
+          //show like notify :Item attributes (cinvc_attrb) are missing or empty
+          notify({
+            severity: "warn",
+            summary: "Unable to copy",
+            detail: "Item attributes are missing or empty. Add attributes first.",
+          });
+          return;
+        }
         const newRowData = { ...rowData, id: generateGuid() };
         setFormDataItemList((prev) => [...prev, newRowData]);
       },

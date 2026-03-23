@@ -21,36 +21,44 @@
     "maxLength": 100,
     "minLength": 0,
     "placeholder": "Enter business id",
+    "required": false
+  },
+  "ledgr_bacts_from": {
+    "type": "string",
+    "label": "From Account id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter from account id",
     "required": true
   },
-  "ledgr_trhed": {
+  "ledgr_bacts_to": {
     "type": "string",
-    "label": "Transaction Head",
-    "maxLength": 100,
+    "label": "To Account id",
+    "maxLength": 50,
     "minLength": 0,
-    "placeholder": "Enter transaction head",
+    "placeholder": "Enter to account id",
     "required": true
   },
-  "ledgr_cntct": {
+  "ledgr_cntct_from": {
     "type": "string",
-    "label": "Contact id",
-    "maxLength": 100,
+    "label": "From contact id",
+    "maxLength": 50,
     "minLength": 0,
-    "placeholder": "Enter contact id",
+    "placeholder": "Enter from contact id",
     "required": true
   },
-  "ledgr_bacts": {
+  "ledgr_cntct_to": {
     "type": "string",
-    "label": "Account id",
-    "maxLength": 100,
+    "label": "To contact id",
+    "maxLength": 50,
     "minLength": 0,
-    "placeholder": "Enter account id",
+    "placeholder": "Enter to contact id",
     "required": true
   },
   "ledgr_pymod": {
     "type": "string",
     "label": "Payment mode",
-    "maxLength": 100,
+    "maxLength": 50,
     "minLength": 0,
     "placeholder": "Enter payment mode",
     "required": true
@@ -59,7 +67,7 @@
     "type": "date",
     "label": "Transaction Date",
     "placeholder": "Enter transaction date",
-    "required": false,
+    "required": true,
     "default": "new Date() with local format"
   },
   "ledgr_refno": {
@@ -82,7 +90,7 @@
     "type": "decimal",
     "label": "Debit Amount",
     "placeholder": "Enter debit amount",
-    "required": false,
+    "required": true,
     "default": "0"
   },
   "ledgr_cramt": {

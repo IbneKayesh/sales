@@ -7,7 +7,7 @@ import ZeroRowCell from "@/components/ZeroRowCell";
 import { useState } from "react";
 import { InputText } from "primereact/inputtext";
 
-const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
+const LedgerListComp = ({ dataList, onViewAdvice, onDelete }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
   const handleDelete = (rowData) => {
     confirmDialog({
@@ -38,11 +38,12 @@ const LedgerListComp = ({ dataList, onEdit, onDelete }) => {
     return (
       <div className="flex flex-wrap gap-2">
         <SplitButton
-          icon={`${rowData.edit_stop ? "pi pi-eye" : "pi pi-pencil"}`}
+          icon={"pi pi-list"}
           size="small"
-          tooltip={rowData.edit_stop ? "View" : "Edit"}
+          tooltip={"Advice"}
           tooltipOptions={{ position: "top" }}
-          onClick={() => onEdit(rowData)}
+          onClick={() => onViewAdvice(rowData)}
+          disabled={!rowData.ledgr_isref}
           model={menuItems}
         />
       </div>

@@ -55,7 +55,7 @@ export const useContactsSgd = () => {
       setIsBusy(false);
     }
   };
-  
+
   const handleGetAllActiveDistributors = async () => {
     try {
       setIsBusy(true);
@@ -106,7 +106,7 @@ export const useContactsSgd = () => {
     }
   };
 
-    const handleGetRouteDistributorsAvailable = async (routeId) => {
+  const handleGetRouteDistributorsAvailable = async (routeId) => {
     try {
       const response = await contactAPI.getRouteDistributorsAvailable({
         muser_id: user.users_users,
@@ -120,6 +120,30 @@ export const useContactsSgd = () => {
     }
   };
 
+  const handleGetContactsByType = async (typeId) => {
+    try {
+      setIsBusy(true);
+      const response = await contactAPI.getByType({
+        muser_id: user.users_users,
+        cntct_ctype: typeId,
+      });
+      //console.log("data",response.data);
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "Contacts",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     dataList,
     dataList2,
@@ -129,5 +153,6 @@ export const useContactsSgd = () => {
     handleGetAllActiveDistributors,
     handleGetRouteOutletsAvailable,
     handleGetRouteDistributorsAvailable,
+    handleGetContactsByType,
   };
 };

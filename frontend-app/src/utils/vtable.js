@@ -47,6 +47,7 @@ const paymentModeOptions = [
   { label: "Bank", value: "Bank" },
   { label: "MFS", value: "MFS" },
   { label: "Refund", value: "Refund" },
+  { label: "Consolidate", value: "Consolidate" },
 ];
 
 const productTypeOptions = [
@@ -145,6 +146,7 @@ const contactTypeOptions = [
   { label: "Supplier", value: "Supplier" },
   { label: "Both (Customer/Supplier)", value: "Both" },
   { label: "Outlet", value: "Outlet" },
+  { label: "Internal", value: "Internal" },
 ];
 
 const dayNameOptions = [
@@ -192,11 +194,27 @@ const businessTypeOptions = [
   { label: "Office", value: "Office" },
 ];
 
-
 const attribTypeOptions = [
   { label: "Text", value: "text" },
   { label: "Number", value: "number" },
-  { label: "Calender", value: "calender" }
+  { label: "Calender", value: "calender" },
+];
+
+const trhed_grpnmOptions = [
+  { label: "Assets", value: "Assets" },
+  { label: "Liabilities", value: "Liabilities" },
+  { label: "Equity", value: "Equity" },
+  { label: "Revenue", value: "Revenue" },
+  { label: "Expenses", value: "Expenses" },
+];
+
+const trhed_grtypOptions = [
+  { label: "In", value: "In" },
+  { label: "Out", value: "Out" },
+];
+
+const pyadv_srcnmOptions = [
+  { label: "Purchase Invoice", value: "Purchase Invoice" },
 ];
 
 export {
@@ -223,6 +241,9 @@ export {
   businessTagsOptions,
   businessTypeOptions,
   attribTypeOptions,
+  trhed_grpnmOptions,
+  trhed_grtypOptions,
+  pyadv_srcnmOptions,
 };
 
 /*

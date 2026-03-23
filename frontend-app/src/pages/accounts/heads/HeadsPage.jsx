@@ -7,8 +7,8 @@ import HeadsFormComp from "./HeadsFormComp";
 
 const HeadsPage = () => {
   const {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
@@ -32,6 +32,7 @@ const HeadsPage = () => {
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
+              label="Refresh"
               icon="pi pi-refresh"
               size="small"
               severity="secondary"
@@ -44,7 +45,7 @@ const HeadsPage = () => {
               size="small"
               severity="info"
               onClick={handleAddNew}
-              disabled={isList}
+              disabled={!isList}
             />
             <Button
               label="Back"

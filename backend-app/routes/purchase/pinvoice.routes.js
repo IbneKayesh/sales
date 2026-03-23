@@ -399,6 +399,8 @@ router.post("/create", async (req, res) => {
           0,
           0,
           det.cinvc_itqty || 1, //det.cinvc_ohqty,
+          det.cinvc_dprat,
+          det.cinvc_mcmrp,
           suser_id,
           suser_id,
         ],

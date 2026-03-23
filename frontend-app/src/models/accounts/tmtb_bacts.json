@@ -31,6 +31,14 @@
     "placeholder": "Enter branch",
     "required": false
   },
+  "bacts_routn": {
+    "type": "string",
+    "label": "Routing Number",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter routing number",
+    "required": false
+  },
   "bacts_acnam": {
     "type": "string",
     "label": "Account Name",
@@ -45,14 +53,6 @@
     "maxLength": 100,
     "minLength": 0,
     "placeholder": "Enter account number",
-    "required": false
-  },
-  "bacts_routn": {
-    "type": "string",
-    "label": "Routing Number",
-    "maxLength": 100,
-    "minLength": 0,
-    "placeholder": "Enter routing number",
     "required": false
   },
   "bacts_notes": {

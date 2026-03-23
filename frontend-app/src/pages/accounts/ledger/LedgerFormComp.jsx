@@ -4,11 +4,12 @@ import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
-import { paymentModeOptions } from "@/utils/vtable";
-import { useContacts } from "@/hooks/crm/useContacts";
-import { useBusiness } from "@/hooks/setup/useBusiness";
-import { useAccountsHeads } from "@/hooks/accounts/useAccountsHeads";
-import { useAccounts } from "@/hooks/accounts/useAccounts";
+import { useContactsSgd } from "@/hooks/crm/useContactsSgd";
+import { useBusinessSgd } from "@/hooks/setup/useBusinessSgd";
+import { useAccountsHeadsSgd } from "@/hooks/accounts/useAccountsHeadsSgd";
+import { useAccountsSgd } from "@/hooks/accounts/useAccountsSgd";
+import RequiredText from "@/components/RequiredText";
+import { pyadv_srcnmOptions, paymentModeOptions } from "@/utils/vtable";
 
 const LedgerFormComp = ({
   isBusy,
@@ -17,39 +18,80 @@ const LedgerFormComp = ({
   onChange,
   onSave,
   //options
-  selectedHead,
-  setSelectedHead,
 }) => {
-  const { businessListDdl, fetchBusinessListDdl } = useBusiness();
-  const { headListDdl, fetchHeadListDdl } = useAccountsHeads();
-  const { contactListDdl, fetchContactListDdl } = useContacts();
-  const { accountsListDdl, fetchAccountsListDdl } = useAccounts();
+  const { dataList: ledgr_bsinsOptions, handleGetAllActiveBusiness } =
+    useBusinessSgd();
+  const { dataList: ledgr_trhedOptions, handleGetAllActiveHeads } =
+    useAccountsHeadsSgd();
+  const { dataList: ledgr_cntctOptions, handleGetContactsByType } =
+    useContactsSgd();
+  const { dataList: ledgr_bactsOptions, handleGetAllActiveAccounts } =
+    useAccountsSgd();
 
+  const [selectedHead, setSelectedHead] = useState(null);
   useEffect(() => {
-    fetchBusinessListDdl();
-    fetchHeadListDdl();
-    fetchAccountsListDdl();
+    handleGetAllActiveBusiness();
+    handleGetAllActiveHeads();
+    handleGetAllActiveAccounts();
   }, []);
 
   useEffect(() => {
     //contacts
     if (selectedHead) {
-      fetchContactListDdl(selectedHead.trhed_cntyp);
+      handleGetContactsByType(selectedHead.trhed_cntyp);
     }
   }, [selectedHead]);
 
   const handleChange = (name, value) => {
     onChange(name, value);
-    const selectedHead = headListDdl?.find((f) => f.id === value);
+    const selectedHead = ledgr_trhedOptions?.find((f) => f.id === value);
     //console.log("selectedHead: ", selectedHead);
     setSelectedHead(selectedHead || null);
   };
 
+  const ledgr_trhed_IT = (option) => {
+    return (
+      <div className="flex flex-column">
+        <div className="font-semibold">{option.trhed_hednm}</div>
+        <div className="text-sm text-gray-600">
+          {option.trhed_grpnm} of {option.trhed_cntyp} will
+        </div>
+        {option.trhed_grtyp === "In" ? (
+          <span className="text-blue-500">Increase Balance</span>
+        ) : (
+          <span className="text-orange-500">Decrease Balance</span>
+        )}
+      </div>
+    );
+  };
+
+  const ledgr_trhed_VT = (option) => {
+    if (!option) {
+      return "Select Head";
+    }
+
+    return (
+      <div className="flex flex-column">
+        <span className="font-semibold">
+          {option.trhed_grtyp === "In" ? (
+            <span className="text-blue-600">
+              {option.trhed_hednm}, {option.trhed_cntyp}
+            </span>
+          ) : (
+            <span className="text-orange-600">
+              {option.trhed_hednm}, {option.trhed_cntyp}
+            </span>
+          )}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <>
-      {/* {JSON.stringify(selectedHead)} */}
+      {/* {JSON.stringify(formData)} */}
       <div className="grid">
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="ledgr_bsins"
             className="block text-900 font-medium mb-2"
@@ -60,20 +102,18 @@ const LedgerFormComp = ({
           <Dropdown
             name="ledgr_bsins"
             value={formData.ledgr_bsins}
-            options={businessListDdl}
-            optionLabel="label"
-            optionValue="value"
+            options={ledgr_bsinsOptions}
+            optionLabel="bsins_bname"
+            optionValue="id"
             onChange={(e) => onChange("ledgr_bsins", e.value)}
             className={`w-full ${errors.ledgr_bsins ? "p-invalid" : ""}`}
             placeholder={`Select Business`}
             filter
             showClear
           />
-          {errors.ledgr_bsins && (
-            <small className="mb-3 text-red-500">{errors.ledgr_bsins}</small>
-          )}
+          <RequiredText text={errors.ledgr_bsins} />
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="ledgr_trhed"
             className="block text-900 font-medium mb-2"
@@ -84,28 +124,20 @@ const LedgerFormComp = ({
           <Dropdown
             name="ledgr_trhed"
             value={formData.ledgr_trhed}
-            options={headListDdl.map((item) => ({
-              value: item.id,
-              label:
-                item.trhed_hednm +
-                ", " +
-                item.trhed_grpnm +
-                "-" +
-                item.trhed_cntyp,
-            }))}
-            optionLabel="label"
-            optionValue="value"
+            options={ledgr_trhedOptions}
+            optionLabel="trhed_hednm"
+            optionValue="id"
             onChange={(e) => handleChange("ledgr_trhed", e.value)}
-            className={`w-full ${errors.ledgr_trhed ? "p-invalid" : ""}`}
-            placeholder={`Select Head`}
+            className={`w-full ${errors.minvc_cntct ? "p-invalid" : ""}`}
+            placeholder={`Select head`}
             filter
             showClear
+            itemTemplate={ledgr_trhed_IT}
+            valueTemplate={ledgr_trhed_VT}
           />
-          {errors.ledgr_trhed && (
-            <small className="mb-3 text-red-500">{errors.ledgr_trhed}</small>
-          )}
+          <RequiredText text={errors.ledgr_trhed} />
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="ledgr_cntct"
             className="block text-900 font-medium mb-2"
@@ -116,23 +148,18 @@ const LedgerFormComp = ({
           <Dropdown
             name="ledgr_cntct"
             value={formData.ledgr_cntct}
-            options={contactListDdl.map((item) => ({
-              label: item.cntct_cntnm,
-              value: item.id,
-            }))}
-            optionLabel="label"
-            optionValue="value"
+            options={ledgr_cntctOptions}
+            optionLabel="cntct_cntnm"
+            optionValue="id"
             onChange={(e) => onChange("ledgr_cntct", e.value)}
             className={`w-full ${errors.ledgr_cntct ? "p-invalid" : ""}`}
             placeholder={`Select Contact`}
             filter
             showClear
           />
-          {errors.ledgr_cntct && (
-            <small className="mb-3 text-red-500">{errors.ledgr_cntct}</small>
-          )}
+          <RequiredText text={errors.ledgr_cntct} />
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="ledgr_bacts"
             className="block text-900 font-medium mb-2"
@@ -143,20 +170,18 @@ const LedgerFormComp = ({
           <Dropdown
             name="ledgr_bacts"
             value={formData.ledgr_bacts}
-            options={accountsListDdl}
-            optionLabel="label"
-            optionValue="value"
+            options={ledgr_bactsOptions}
+            optionLabel="bacts_bankn"
+            optionValue="id"
             onChange={(e) => onChange("ledgr_bacts", e.value)}
             className={`w-full ${errors.ledgr_bacts ? "p-invalid" : ""}`}
             placeholder={`Select Account`}
             filter
             showClear
           />
-          {errors.ledgr_bacts && (
-            <small className="mb-3 text-red-500">{errors.ledgr_bacts}</small>
-          )}
+          <RequiredText text={errors.ledgr_bacts} />
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="ledgr_pymod"
             className="block text-900 font-medium mb-2"
@@ -176,9 +201,7 @@ const LedgerFormComp = ({
             filter
             showClear
           />
-          {errors.ledgr_pymod && (
-            <small className="mb-3 text-red-500">{errors.ledgr_pymod}</small>
-          )}
+          <RequiredText text={errors.ledgr_pymod} />
         </div>
         <div className="col-12 md:col-2">
           <label
@@ -193,18 +216,16 @@ const LedgerFormComp = ({
             onChange={(e) =>
               onChange(
                 "ledgr_trdat",
-                e.value ? e.value.toISOString().split("T")[0] : ""
+                e.value ? e.value.toISOString().split("T")[0] : "",
               )
             }
             className={`w-full ${errors.ledgr_trdat ? "p-invalid" : ""}`}
             dateFormat="yy-mm-dd"
             placeholder={`Select Ledger Date`}
           />
-          {errors.ledgr_trdat && (
-            <small className="mb-3 text-red-500">{errors.ledgr_trdat}</small>
-          )}
+          <RequiredText text={errors.ledgr_trdat} />
         </div>
-        <div className="col-12 md:col-5">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="ledgr_refno"
             className="block text-900 font-medium mb-2"
@@ -218,11 +239,9 @@ const LedgerFormComp = ({
             className={`w-full ${errors.ledgr_refno ? "p-invalid" : ""}`}
             placeholder={`Enter Ledger Ref`}
           />
-          {errors.ledgr_refno && (
-            <small className="mb-3 text-red-500">{errors.ledgr_refno}</small>
-          )}
+          <RequiredText text={errors.ledgr_refno} />
         </div>
-        <div className="col-12 md:col-5">
+        <div className="col-12 md:col-8">
           <label
             htmlFor="ledgr_notes"
             className="block text-900 font-medium mb-2"
@@ -236,11 +255,9 @@ const LedgerFormComp = ({
             className={`w-full ${errors.ledgr_notes ? "p-invalid" : ""}`}
             placeholder={`Enter Note`}
           />
-          {errors.ledgr_notes && (
-            <small className="mb-3 text-red-500">{errors.ledgr_notes}</small>
-          )}
+          <RequiredText text={errors.ledgr_notes} />
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="ledgr_dbamt"
             className="block text-900 font-medium mb-2"
@@ -258,9 +275,7 @@ const LedgerFormComp = ({
             style={{ width: "100%" }}
             inputStyle={{ width: "100%" }}
           />
-          {errors.ledgr_dbamt && (
-            <small className="mb-3 text-red-500">{errors.ledgr_dbamt}</small>
-          )}
+          <RequiredText text={errors.ledgr_dbamt} />
         </div>
       </div>
 
@@ -268,7 +283,7 @@ const LedgerFormComp = ({
         <Button
           type="button"
           label={formData.id ? "Update" : "Save"}
-          icon={isBusy ? "pi pi-spin pi-spinner" : "pi pi-check"}
+          icon="pi pi-check"
           severity="success"
           size="small"
           loading={isBusy}

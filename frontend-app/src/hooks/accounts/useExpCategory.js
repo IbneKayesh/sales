@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import { accountsHeadsAPI } from "@/api/accounts/accountsHeadsAPI";
-import tmtb_trhed from "@/models/accounts/tmtb_trhed.json";
+import { businessAPI } from "@/api/setup/businessAPI";
+import tmtb_exctg from "@/models/accounts/tmtb_exctg.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
 import { formatDateForAPI } from "@/utils/datetime";
+import { expCategoryAPI } from "@/api/accounts/expCategoryAPI";
 import { useBusy, useNotification } from "@/hooks/useAppUI";
 
-const dataModel = generateDataModel(tmtb_trhed, { edit_stop: 0 });
+const dataModel = generateDataModel(tmtb_exctg, { edit_stop: 0 });
 
-export const useAccountsHeads = () => {
+export const useExpCategory = () => {
   const { user } = useAuth();
   const { isBusy, setIsBusy } = useBusy();
   const { notify } = useNotification();
@@ -18,11 +19,12 @@ export const useAccountsHeads = () => {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
-  const loadAccountsHeads = async () => {
+  const loadCategory = async () => {
     try {
       setIsBusy(true);
-      const response = await accountsHeadsAPI.getAll({
-        trhed_users: user.users_users,
+      const response = await expCategoryAPI.getAll({
+        exctg_users: user.users_users,
+        exctg_bsins: user.users_bsins,
       });
       //response = { success, message, data }
       setDataList(response.data);
@@ -30,7 +32,7 @@ export const useAccountsHeads = () => {
       console.error("Error loading data:", error);
       notify({
         severity: "error",
-        summary: "Heads",
+        summary: "Category",
         detail: error?.message || "Failed to load data",
         toast: true,
         notification: true,
@@ -43,12 +45,12 @@ export const useAccountsHeads = () => {
 
   //Fetch data from API on mount
   useEffect(() => {
-    loadAccountsHeads();
+    loadCategory();
   }, []);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmtb_trhed);
+    const newErrors = validate({ ...formData, [field]: value }, tmtb_exctg);
     setErrors(newErrors);
   };
 
@@ -82,10 +84,9 @@ export const useAccountsHeads = () => {
         muser_id: user.users_users,
         suser_id: user.id,
       };
-      const response = await accountsHeadsAPI.delete(formDataNew);
+      const response = await expCategoryAPI.delete(formDataNew);
 
       // Remove deleted business from local state
-
       if (response.success) {
         const updatedList = dataList.filter((u) => u.id !== rowData.id);
         setDataList(updatedList);
@@ -94,7 +95,7 @@ export const useAccountsHeads = () => {
       notify({
         severity: response.success ? "info" : "error",
         summary: "Delete",
-        detail: `Heads - ${rowData.trhed_hednm} ${
+        detail: `Category - ${rowData.exctg_cname} ${
           response.success ? "is deleted by" : "delete failed by"
         } ${user.users_oname}`,
         toast: true,
@@ -105,7 +106,7 @@ export const useAccountsHeads = () => {
       console.error("Error deleting data:", error);
       notify({
         severity: "error",
-        summary: "Head",
+        summary: "Category",
         detail: error?.message || "Failed to delete data",
         toast: true,
         notification: true,
@@ -117,16 +118,16 @@ export const useAccountsHeads = () => {
   };
 
   const handleRefresh = () => {
-    loadAccountsHeads();
+    loadCategory();
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     try {
       // Validate form
-      const newErrors = validate(formData, tmtb_trhed);
+      const newErrors = validate(formData, tmtb_exctg);
       setErrors(newErrors);
-      console.log("handleSave:", JSON.stringify(formData));
+      console.log("handleSave:", JSON.stringify(newErrors));
       if (Object.keys(newErrors).length > 0) {
         return;
       }
@@ -136,7 +137,8 @@ export const useAccountsHeads = () => {
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
-        trhed_users: user.users_users,
+        exctg_users: user.users_users,
+        exctg_bsins: user.users_bsins,
         muser_id: user.users_users,
         suser_id: user.id,
       };
@@ -144,17 +146,16 @@ export const useAccountsHeads = () => {
       // Call API and get { message, data }
       let response;
       if (formData.id) {
-        response = await accountsHeadsAPI.update(formDataNew);
+        response = await expCategoryAPI.update(formDataNew);
       } else {
-        response = await accountsHeadsAPI.create(formDataNew);
+        response = await expCategoryAPI.create(formDataNew);
       }
 
       // Update toast using API message
-
       notify({
         severity: response.success ? "success" : "error",
         summary: "Submit",
-        detail: `Head - ${formDataNew.trhed_hednm} ${
+        detail: `Category - ${formDataNew.exctg_cname} ${
           response.success
             ? formData.id
               ? "modified"
@@ -172,13 +173,13 @@ export const useAccountsHeads = () => {
         // Clear form & reload
         handleClear();
         setCurrentView("list");
-        await loadAccountsHeads(); // make sure we wait for updated data
+        await loadCategory(); // make sure we wait for updated data
       }
     } catch (error) {
       console.error("Error saving data:", error);
       notify({
         severity: "error",
-        summary: "Head",
+        summary: "Category",
         detail: error?.message || "Failed to save data",
         toast: true,
         notification: true,
@@ -203,6 +204,6 @@ export const useAccountsHeads = () => {
     handleEdit,
     handleDelete,
     handleRefresh,
-    handleSave
+    handleSave,
   };
 };

@@ -123,6 +123,7 @@ router.post("/purchase-invoice", async (req, res) => {
     //database action
     const sql = `SELECT cnt.cntct_cntnm, minv.minvc_trnno, itm.items_icode, itm.items_iname, itm.items_dfqty,
 cinv.cinvc_attrb,cinv.cinvc_itqty,cinv.cinvc_itamt,cinv.cinvc_rtqty,cinv.cinvc_slqty,cinv.cinvc_ohqty,
+cinv.cinvc_itrat, cinv.cinvc_dprat, cinv.cinvc_mcmrp,
 puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
 FROM tmpb_minvc minv
 JOIN tmpb_cinvc cinv ON minv.id = cinv.cinvc_minvc

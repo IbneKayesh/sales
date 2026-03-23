@@ -6,9 +6,9 @@ export const useAccountsSgd = () => {
   const { user } = useAuth();
   const [dataList, setDataList] = useState([]);
 
-  const handleLoadAccounts = async () => {
+  const handleGetAllActiveAccounts = async () => {
     try {
-      const response = await accountsAPI.getAll({
+      const response = await accountsAPI.getAllActive({
         bacts_users: user.users_users,
       });
       //console.log("data",response.data);
@@ -20,6 +20,6 @@ export const useAccountsSgd = () => {
 
   return {
     dataList,
-    handleLoadAccounts,
+    handleGetAllActiveAccounts,
   }
 };

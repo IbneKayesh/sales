@@ -6,82 +6,128 @@ import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import { paymentModeOptions } from "@/utils/vtable";
 import { useAccountsSgd } from "@/hooks/accounts/useAccountsSgd";
+import RequiredText from "@/components/RequiredText";
+import { useContactsSgd } from "@/hooks/crm/useContactsSgd";
 
 const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
-  const { dataList, handleLoadAccounts } = useAccountsSgd();
+  const { dataList: ledgr_bactsOptions, handleGetAllActiveAccounts } =
+    useAccountsSgd();
+  const { dataList: ledgr_cntctOptions, handleGetContactsByType } =
+    useContactsSgd();
+  const [isSameAccount, setisSameAccount] = useState(false);
 
   useEffect(() => {
-    handleLoadAccounts();    
+    handleGetAllActiveAccounts();
   }, []);
+
+  useEffect(() => {
+    handleGetContactsByType("Internal");
+  }, []);
+
+  useEffect(() => {
+    //|| formData.ledgr_cntct_from === formData.ledgr_cntct_to
+    if (formData.ledgr_bacts_from === formData.ledgr_bacts_to ) {
+      setisSameAccount(true);
+    } else {
+      setisSameAccount(false);
+    }
+  }, [formData]);
 
   return (
     <>
+      {JSON.stringify(formData)}
       <div className="grid">
-        <div className="col-12 md:col-4">
+        <div className="col-12 md:col-6">
           <label
             htmlFor="ledgr_bacts_from"
-            className="block text-900 font-medium mb-2"
+            className="block font-bold mb-2 text-red-800"
           >
             From Account
-            <span className="text-red-500">*</span>
           </label>
           <Dropdown
             name="ledgr_bacts_from"
             value={formData.ledgr_bacts_from}
-            options={dataList
-              .filter((item) => Number(item.bacts_crbln) > 0)
-              .map((item) => ({
-                label: item.bacts_bankn,
-                value: item.id,
-              }))}
-            optionLabel="label"
-            optionValue="value"
+            options={ledgr_bactsOptions}
+            optionLabel="bacts_bankn"
+            optionValue="id"
             onChange={(e) => onChange("ledgr_bacts_from", e.value)}
             className={`w-full ${errors.ledgr_bacts_from ? "p-invalid" : ""}`}
             placeholder={`Select From Account`}
             filter
             showClear
           />
-          {errors.ledgr_bacts_from && (
-            <small className="mb-3 text-red-500">
-              {errors.ledgr_bacts_from}
-            </small>
-          )}
+          <RequiredText text={errors.ledgr_bacts_from} />
         </div>
-        <div className="col-12 md:col-4">
+        <div className={`col-12 md:col-6`}>
+          <label
+            htmlFor="ledgr_cntct"
+            className="block font-bold mb-2 text-red-800"
+          >
+            From Contact
+          </label>
+          <Dropdown
+            name="ledgr_cntct_from"
+            value={formData.ledgr_cntct_from}
+            options={ledgr_cntctOptions}
+            optionLabel="cntct_cntnm"
+            optionValue="id"
+            onChange={(e) => onChange("ledgr_cntct_from", e.value)}
+            className={`w-full ${errors.ledgr_cntct_from ? "p-invalid" : ""}`}
+            placeholder={`Select Contact`}
+            filter
+            showClear
+          />
+          <RequiredText text={errors.ledgr_cntct_from} />
+        </div>
+
+        <div className="col-12 md:col-6">
           <label
             htmlFor="ledgr_bacts_to"
-            className="block text-900 font-medium mb-2"
+            className="block font-bold mb-2 text-red-800"
           >
             To Account
-            <span className="text-red-500">*</span>
           </label>
           <Dropdown
             name="ledgr_bacts_to"
             value={formData.ledgr_bacts_to}
-            options={dataList.map((item) => ({
-              label: item.bacts_bankn,
-              value: item.id,
-            }))}
-            optionLabel="label"
-            optionValue="value"
+            options={ledgr_bactsOptions}
+            optionLabel="bacts_bankn"
+            optionValue="id"
             onChange={(e) => onChange("ledgr_bacts_to", e.value)}
             className={`w-full ${errors.ledgr_bacts_to ? "p-invalid" : ""}`}
             placeholder={`Select To Account`}
             filter
             showClear
           />
-          {errors.ledgr_bacts_to && (
-            <small className="mb-3 text-red-500">{errors.ledgr_bacts_to}</small>
-          )}
+          <RequiredText text={errors.ledgr_bacts_to} />
+        </div>
+        <div className={`col-12 md:col-6`}>
+          <label
+            htmlFor="ledgr_cntct"
+            className="block font-bold mb-2 text-red-800"
+          >
+            To Contact
+          </label>
+          <Dropdown
+            name="ledgr_cntct_to"
+            value={formData.ledgr_cntct_to}
+            options={ledgr_cntctOptions}
+            optionLabel="cntct_cntnm"
+            optionValue="id"
+            onChange={(e) => onChange("ledgr_cntct_to", e.value)}
+            className={`w-full ${errors.ledgr_cntct_to ? "p-invalid" : ""}`}
+            placeholder={`Select Contact`}
+            filter
+            showClear
+          />
+          <RequiredText text={errors.ledgr_cntct_to} />
         </div>
         <div className="col-12 md:col-2">
           <label
             htmlFor="ledgr_pymod"
-            className="block text-900 font-medium mb-2"
+            className="block font-bold mb-2 text-red-800"
           >
             Mode
-            <span className="text-red-500">*</span>
           </label>
           <Dropdown
             name="ledgr_pymod"
@@ -95,14 +141,12 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
             filter
             showClear
           />
-          {errors.ledgr_pymod && (
-            <small className="mb-3 text-red-500">{errors.ledgr_pymod}</small>
-          )}
+          <RequiredText text={errors.ledgr_pymod} />
         </div>
         <div className="col-12 md:col-2">
           <label
             htmlFor="ledgr_trdat"
-            className="block text-900 font-medium mb-2"
+            className="block font-bold mb-2 text-red-800"
           >
             Ledger Date <span className="text-red-500">*</span>
           </label>
@@ -112,21 +156,19 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
             onChange={(e) =>
               onChange(
                 "ledgr_trdat",
-                e.value ? e.value.toISOString().split("T")[0] : ""
+                e.value ? e.value.toISOString().split("T")[0] : "",
               )
             }
             className={`w-full ${errors.ledgr_trdat ? "p-invalid" : ""}`}
             dateFormat="yy-mm-dd"
             placeholder={`Select Ledger Date`}
           />
-          {errors.ledgr_trdat && (
-            <small className="mb-3 text-red-500">{errors.ledgr_trdat}</small>
-          )}
+          <RequiredText text={errors.ledgr_trdat} />
         </div>
-        <div className="col-12 md:col-5">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="ledgr_refno"
-            className="block text-900 font-medium mb-2"
+            className="block font-bold mb-2 text-red-800"
           >
             Ledger Ref
           </label>
@@ -137,14 +179,12 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
             className={`w-full ${errors.ledgr_refno ? "p-invalid" : ""}`}
             placeholder={`Enter Ledger Ref`}
           />
-          {errors.ledgr_refno && (
-            <small className="mb-3 text-red-500">{errors.ledgr_refno}</small>
-          )}
+          <RequiredText text={errors.ledgr_refno} />
         </div>
-        <div className="col-12 md:col-5">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="ledgr_notes"
-            className="block text-900 font-medium mb-2"
+            className="block font-bold mb-2"
           >
             Note
           </label>
@@ -155,14 +195,12 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
             className={`w-full ${errors.ledgr_notes ? "p-invalid" : ""}`}
             placeholder={`Enter Note`}
           />
-          {errors.ledgr_notes && (
-            <small className="mb-3 text-red-500">{errors.ledgr_notes}</small>
-          )}
+          <RequiredText text={errors.ledgr_notes} />
         </div>
         <div className="col-12 md:col-2">
           <label
             htmlFor="ledgr_dbamt"
-            className="block text-900 font-medium mb-2"
+            className="block font-bold mb-2 text-red-800"
           >
             Amount <span className="text-red-500">*</span>
           </label>
@@ -170,16 +208,13 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
             name="ledgr_dbamt"
             value={formData.ledgr_dbamt}
             onValueChange={(e) => onChange("ledgr_dbamt", e.value)}
-            mode="currency"
-            currency="BDT"
-            locale="en-US"
             className={`${errors.ledgr_dbamt ? "p-invalid" : ""}`}
             style={{ width: "100%" }}
             inputStyle={{ width: "100%" }}
+            minFractionDigits={2}
+            maxFractionDigits={2}
           />
-          {errors.ledgr_dbamt && (
-            <small className="mb-3 text-red-500">{errors.ledgr_dbamt}</small>
-          )}
+          <RequiredText text={errors.ledgr_dbamt} />
         </div>
       </div>
 
@@ -192,6 +227,7 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           size="small"
           loading={isBusy}
           onClick={onSave}
+          disabled={isSameAccount}
         />
       </div>
     </>

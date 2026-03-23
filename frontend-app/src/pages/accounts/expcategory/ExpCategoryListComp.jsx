@@ -2,13 +2,12 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { SplitButton } from "primereact/splitbutton";
-import { formatDate } from "@/utils/datetime";
 import ActiveRowCell from "@/components/ActiveRowCell";
 
-const ExpensesListComp = ({ dataList, onEdit, onDelete }) => {
+const ExpCategoryListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.exptr_trnte}"?`,
+      message: `Are you sure you want to delete "${rowData.exctg_cname}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -46,8 +45,10 @@ const ExpensesListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const exptr_trdat_BT = (rowData) => {
-    return formatDate(rowData.exptr_trdat);
+  const exctg_cname_BT = (rowData) => {
+    return (
+      <ActiveRowCell text={rowData.exctg_cname} status={rowData.exctg_actve} />
+    );
   };
 
   return (
@@ -63,14 +64,16 @@ const ExpensesListComp = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
       >
-        <Column field="exctg_cname" header="Category" />
-        <Column field="exptr_trdat" header="Date" body={exptr_trdat_BT} />
-        <Column field="exptr_trnte" header="Notes" />
-        <Column field="exptr_examt" header="Amount" />
+        <Column
+          field="exctg_cname"
+          header="Category Name"
+          body={exctg_cname_BT}
+        />
+        <Column field="trhed_hednm" header="Head" />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );
 };
 
-export default ExpensesListComp;
+export default ExpCategoryListComp;

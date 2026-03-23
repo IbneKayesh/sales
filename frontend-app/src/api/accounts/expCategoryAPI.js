@@ -1,34 +1,29 @@
 import { apiRequest } from "@/utils/api.js";
 
-//Accounts API
-export const accountsAPI = {
+//expCategoryAPI
+export const expCategoryAPI = {
   getAll: (data) =>
-    apiRequest("/accounts/accounts", {
+    apiRequest("/accounts/expenses/category", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   create: (data) =>
-    apiRequest("/accounts/accounts/create", {
+    apiRequest("/accounts/expenses/category/create", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   update: (data) =>
-    apiRequest("/accounts/accounts/update", {
+    apiRequest("/accounts/expenses/category/update", {
       method: "POST",
       body: JSON.stringify(data),
     }),
   delete: (data) =>
-    apiRequest("/accounts/accounts/delete", {
+    apiRequest("/accounts/expenses/category/delete", {
       method: "POST",
       body: JSON.stringify(data),
-    }),
-  setDefault: (data) =>
-    apiRequest("/accounts/accounts/set-default", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+    }),    
   getAllActive: (data) =>
-    apiRequest("/accounts/accounts/get-all-active", {
+    apiRequest("/accounts/expenses/category/get-all-active", {
       method: "POST",
       body: JSON.stringify(data),
     }),

@@ -23,21 +23,7 @@ const HeadsListComp = ({ dataList, onEdit, onDelete }) => {
       },
     });
   };
-
   const action_BT = (rowData) => {
-    return (
-      <>
-        <Button
-          icon="pi pi-trash"
-          size="small"
-          tooltip="Delete"
-          tooltipOptions={{ position: "top" }}
-          onClick={() => handleDelete(rowData)}
-          disabled={rowData.edit_stop}
-          severity="danger"
-        />
-      </>
-    );
     let menuItems = [
       {
         label: "Delete",
@@ -65,7 +51,15 @@ const HeadsListComp = ({ dataList, onEdit, onDelete }) => {
 
   const trhed_hednm_BT = (rowData) => {
     return (
-      <ActiveRowCell text={rowData.trhed_hednm} status={rowData.trhed_actve} />
+      <div className="flex flex-column">
+        <div className="font-bold text-md">
+          <ActiveRowCell
+            text={rowData.trhed_hednm}
+            status={rowData.trhed_actve}
+          />
+        </div>
+        <div className="text-sm">{rowData.trhed_descr}</div>
+      </div>
     );
   };
 
@@ -76,6 +70,33 @@ const HeadsListComp = ({ dataList, onEdit, onDelete }) => {
       <div className="flex flex-column">
         <span>{rowData.trhed_grpnm}</span>
         <span className={activeClassStyle}>{rowData.trhed_grtyp}</span>
+      </div>
+    );
+  };
+
+  const trhed_grpnm_BTx = (rowData) => {
+    const adviceText = rowData.trhed_advic
+      ? "Generate Advice"
+      : "Direct Ledger Entry";
+    return (
+      <div className="flex flex-column">
+        <span>{rowData.trhed_grpnm}</span>
+        <span className="font-bold text-blue-400">{adviceText}</span>
+      </div>
+    );
+  };
+
+  const trhed_cntyp_BT = (rowData) => {
+    const activeClassStyle = rowData.trhed_advic
+      ? "text-blue-600"
+      : "text-gray-600";
+    const adviceText = rowData.trhed_advic
+      ? "Generate Advice"
+      : "Direct Ledger Entry";
+    return (
+      <div className="flex flex-column">
+        <span>{rowData.trhed_cntyp}</span>
+        <span className={activeClassStyle}>{adviceText}</span>
       </div>
     );
   };
@@ -113,11 +134,7 @@ const HeadsListComp = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
         globalFilter={globalFilter}
-        globalFilterFields={[
-          "trhed_hednm",
-          "trhed_grpnm",
-          "trhed_cntyp",
-        ]}
+        globalFilterFields={["trhed_hednm", "trhed_grpnm", "trhed_cntyp"]}
         header={header()}
       >
         <Column
@@ -132,7 +149,12 @@ const HeadsListComp = ({ dataList, onEdit, onDelete }) => {
           body={trhed_grpnm_BT}
           sortable
         />
-        <Column field="trhed_cntyp" header="Contact" sortable />
+        <Column
+          field="trhed_cntyp"
+          header="Contact"
+          body={trhed_cntyp_BT}
+          sortable
+        />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>

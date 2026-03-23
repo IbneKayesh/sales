@@ -1,35 +1,45 @@
 import { useState, useEffect } from "react";
 import { accountsAPI } from "@/api/accounts/accountsAPI";
-import tmtb_acnts from "@/models/accounts/tmtb_acnts.json";
+import tmtb_bacts from "@/models/accounts/tmtb_bacts.json";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/useToast";
 import { formatDateForAPI } from "@/utils/datetime";
+import { useBusy, useNotification } from "@/hooks/useAppUI";
 
-const dataModel = generateDataModel(tmtb_acnts, { edit_stop: 0 });
+const dataModel = generateDataModel(tmtb_bacts, { edit_stop: 0 });
 
 export const useAccounts = () => {
   const { user } = useAuth();
-  const { showToast } = useToast();
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
   const [dataList, setDataList] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
   const [currentView, setCurrentView] = useState("list"); // 'list' or 'form'
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
   const loadAccounts = async () => {
     try {
+      setIsBusy(true);
       const response = await accountsAPI.getAll({
         bacts_users: user.users_users,
+        bacts_bsins: user.users_bsins,
       });
       //response = { success, message, data }
 
       setDataList(response.data);
-      //showToast("success", "Success", response.message);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Accounts",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -40,7 +50,7 @@ export const useAccounts = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmtb_acnts);
+    const newErrors = validate({ ...formData, [field]: value }, tmtb_bacts);
     setErrors(newErrors);
   };
 
@@ -68,21 +78,43 @@ export const useAccounts = () => {
   const handleDelete = async (rowData) => {
     try {
       // Call API, unwrap { message, data }
-      const response = await accountsAPI.delete(rowData);
+
+      setIsBusy(true);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+      const response = await accountsAPI.delete(formDataNew);
 
       // Remove deleted account from local state
-      const updatedList = dataList.filter((s) => s.id !== rowData.id);
-      setDataList(updatedList);
+      if (response.success) {
+        const updatedList = dataList.filter((u) => u.id !== rowData.id);
+        setDataList(updatedList);
+      }
 
-      showToast(
-        response.success ? "info" : "error",
-        response.success ? "Deleted" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
-      );
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `Accounts - ${rowData.bacts_bankn} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
     } catch (error) {
       console.error("Error deleting data:", error);
-      showToast("error", "Error", error?.message || "Failed to delete data");
+      notify({
+        severity: "error",
+        summary: "Accounts",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -93,25 +125,23 @@ export const useAccounts = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      setIsBusy(true);
-
       // Validate form
-      const newErrors = validate(formData, tmtb_acnts);
+      const newErrors = validate(formData, tmtb_bacts);
       setErrors(newErrors);
-      console.log("handleSave:", JSON.stringify(formData));
-
+      console.log("handleSave: " + JSON.stringify(newErrors));
       if (Object.keys(newErrors).length > 0) {
-        setIsBusy(false);
         return;
       }
 
       // Ensure id exists (for create)
+      setIsBusy(true);
       const formDataNew = {
         ...formData,
         id: formData.id || generateGuid(),
         bacts_users: user.users_users,
+        bacts_bsins: user.users_bsins,
         bacts_opdat: formatDateForAPI(formData.bacts_opdat),
-        user_id: user.id,
+        suser_id: user.id,
       };
 
       // Call API and get { message, data }
@@ -123,20 +153,40 @@ export const useAccounts = () => {
       }
 
       // Update toast using API message
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Success" : "Error",
-        response.message ||
-          "Operation " + (response.success ? "successful" : "failed")
-      );
 
-      // Clear form & reload
-      handleClear();
-      setCurrentView("list");
-      await loadAccounts(); // make sure we wait for updated data
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Accounts - ${formDataNew.bacts_bankn} ${
+          response.success
+            ? formData.id
+              ? "modified"
+              : "created"
+            : formData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
+
+      if (response.success) {
+        // Clear form & reload
+        handleClear();
+        setCurrentView("list");
+        await loadAccounts(); // make sure we wait for updated data
+      }
     } catch (error) {
       console.error("Error saving data:", error);
-      showToast("error", "Error", error?.message || "Failed to save data");
+      notify({
+        severity: "error",
+        summary: "Accounts",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
     } finally {
       setIsBusy(false);
     }
@@ -144,29 +194,50 @@ export const useAccounts = () => {
 
   const handleSetDefault = async (rowData) => {
     try {
-      const response = await accountsAPI.setDefault(rowData);
+      setIsBusy(true);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+      const response = await accountsAPI.setDefault(formDataNew);
 
-      const updatedList = dataList.map((s) => {
-        if (s.id === rowData.id) {
-          return {
-            ...s,
-            bacts_isdef: s.bacts_isdef === 1 ? 0 : 1,
-          };
-        }
-        return s;
+      if (response.success) {
+        const updatedList = dataList.map((s) => {
+          if (s.id === rowData.id) {
+            return {
+              ...s,
+              bacts_isdef: s.bacts_isdef === true ? false : true,
+            };
+          }
+          return s;
+        });
+
+        setDataList(updatedList);
+      }
+
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Set Default",
+        detail: `Accounts - ${rowData.bacts_bankn} ${
+          response.success ? "is default by" : "default failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
       });
-
-      setDataList(updatedList);
-
-      showToast(
-        response.success ? "success" : "error",
-        response.success ? "Updated" : "Error",
-        response.message ||
-          `Operation ${response.success ? "successful" : "failed"}`
-      );
     } catch (error) {
-      console.error("Error setting default:", error);
-      showToast("error", "Error", error?.message || "Failed to update");
+      console.error("Error setting default data:", error);
+      notify({
+        severity: "error",
+        summary: "Accounts",
+        detail: error?.message || "Failed to default data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 
@@ -180,7 +251,7 @@ export const useAccounts = () => {
         const ddlData = dataList.map((item) => ({
           value: item.id,
           label: item.bacts_bankn,
-          bacts_crbln: item.bacts_crbln
+          bacts_crbln: item.bacts_crbln,
         }));
         setAccountsListDdl(ddlData);
       } else {
@@ -192,7 +263,7 @@ export const useAccounts = () => {
         const ddlData = response.data.map((item) => ({
           value: item.id,
           label: item.bacts_bankn,
-          bacts_crbln: item.bacts_crbln
+          bacts_crbln: item.bacts_crbln,
         }));
         setAccountsListDdl(ddlData);
       }
@@ -203,8 +274,8 @@ export const useAccounts = () => {
   };
 
   return {
-    dataList,
     isBusy,
+    dataList,
     currentView,
     errors,
     formData,
@@ -218,6 +289,6 @@ export const useAccounts = () => {
     handleSetDefault,
     //other functions
     accountsListDdl,
-    fetchAccountsListDdl
+    fetchAccountsListDdl,
   };
 };

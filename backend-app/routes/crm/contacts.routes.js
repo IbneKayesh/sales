@@ -302,10 +302,10 @@ router.post("/delete", async (req, res) => {
 //get-by-type
 router.post("/get-by-type", async (req, res) => {
   try {
-    const { suser_id, cntct_ctype } = req.body;
+    const { muser_id, cntct_ctype } = req.body;
 
     // Validate input
-    if (!suser_id || !cntct_ctype) {
+    if (!muser_id || !cntct_ctype) {
       return res.json({
         success: false,
         message: "User ID and Contact Type are required",
@@ -319,7 +319,7 @@ router.post("/get-by-type", async (req, res) => {
     WHERE cnt.cntct_users = $1
     AND cnt.cntct_ctype = $2
     ORDER BY cnt.cntct_cntnm`;
-    const params = [suser_id, cntct_ctype];
+    const params = [muser_id, cntct_ctype];
 
     const rows = await dbGetAll(sql, params, `Get contacts for ${cntct_ctype}`);
     res.json({

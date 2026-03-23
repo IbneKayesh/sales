@@ -7,8 +7,28 @@ export const accountsHeadsAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  create: (data) =>
+    apiRequest("/accounts/accounts-heads/create", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  update: (data) =>
+    apiRequest("/accounts/accounts-heads/update", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
   delete: (data) =>
     apiRequest("/accounts/accounts-heads/delete", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getAllActive: (data) =>
+    apiRequest("/accounts/accounts-heads/get-all-active", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getAllAdvice: (data) =>
+    apiRequest("/accounts/accounts-heads/get-all-advice", {
       method: "POST",
       body: JSON.stringify(data),
     }),

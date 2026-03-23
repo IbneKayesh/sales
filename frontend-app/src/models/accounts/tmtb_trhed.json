@@ -23,6 +23,14 @@
     "placeholder": "Enter head name",
     "required": true
   },
+  "trhed_descr": {
+    "type": "string",
+    "label": "Descriptions",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter descriptions",
+    "required": false
+  },
   "trhed_grpnm": {
     "type": "string",
     "label": "Group Name",
@@ -35,7 +43,7 @@
     "type": "string",
     "label": "Group type",
     "maxLength": 50,
-    "minLength": 3,
+    "minLength": 2,
     "placeholder": "Enter group type",
     "required": true
   },
@@ -46,5 +54,14 @@
     "minLength": 3,
     "placeholder": "Enter contact type",
     "required": true
+  },
+  "trhed_advic": {
+    "type": "number",
+    "label": "Generate Advice",
+    "maxLength": 2,
+    "minLength": 0,
+    "placeholder": "Generate Advice",
+    "required": true,
+    "default": 0
   }
 }

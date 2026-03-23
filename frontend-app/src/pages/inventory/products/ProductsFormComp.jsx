@@ -11,6 +11,7 @@ import { useBusinessSgd } from "@/hooks/setup/useBusinessSgd";
 import BFormComp from "./BFormComp";
 import { Chip } from "primereact/chip";
 import { useEffect } from "react";
+import RequiredText from "@/components/RequiredText";
 
 const ProductsFormComp = ({
   isBusy,
@@ -49,7 +50,7 @@ const ProductsFormComp = ({
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_icode"
-            className="block text-900 font-medium mb-2"
+            className="block font-bold mb-2"
           >
             {tmib_items.items_icode.label}
           </label>
@@ -60,14 +61,12 @@ const ProductsFormComp = ({
             className={`w-full ${errors.items_icode ? "p-invalid" : ""}`}
             placeholder={`Enter ${tmib_items.items_icode.label}`}
           />
-          {errors.items_icode && (
-            <small className="mb-3 text-red-500">{errors.items_icode}</small>
-          )}
+          <RequiredText text={errors.items_icode} />
         </div>
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_bcode"
-            className="block text-900 font-medium mb-2"
+            className="block font-bold mb-2"
           >
             {tmib_items.items_bcode.label}
           </label>
@@ -78,14 +77,12 @@ const ProductsFormComp = ({
             className={`w-full ${errors.items_bcode ? "p-invalid" : ""}`}
             placeholder={`Enter ${tmib_items.items_bcode.label}`}
           />
-          {errors.items_bcode && (
-            <small className="mb-3 text-red-500">{errors.items_bcode}</small>
-          )}
+          <RequiredText text={errors.items_bcode} />
         </div>
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_hscod"
-            className="block text-900 font-medium mb-2"
+            className="block font-bold mb-2"
           >
             {tmib_items.items_hscod.label}
           </label>
@@ -96,14 +93,12 @@ const ProductsFormComp = ({
             className={`w-full ${errors.items_hscod ? "p-invalid" : ""}`}
             placeholder={`Enter ${tmib_items.items_hscod.label}`}
           />
-          {errors.items_hscod && (
-            <small className="mb-3 text-red-500">{errors.items_hscod}</small>
-          )}
+          <RequiredText text={errors.items_hscod} />
         </div>
         <div className="col-12 md:col-4">
           <label
             htmlFor="items_iname"
-            className="block text-900 font-medium mb-2 text-red-800"
+            className="block font-bold mb-2 text-red-800"
           >
             {tmib_items.items_iname.label}
           </label>
@@ -114,14 +109,12 @@ const ProductsFormComp = ({
             className={`w-full ${errors.items_iname ? "p-invalid" : ""}`}
             placeholder={`Enter ${tmib_items.items_iname.label}`}
           />
-          {errors.items_iname && (
-            <small className="mb-3 text-red-500">{errors.items_iname}</small>
-          )}
+          <RequiredText text={errors.items_iname} />
         </div>
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_idesc"
-            className="block text-900 font-medium mb-2"
+            className="block font-bold mb-2"
           >
             {tmib_items.items_idesc.label}
           </label>
@@ -132,18 +125,15 @@ const ProductsFormComp = ({
             className={`w-full ${errors.items_idesc ? "p-invalid" : ""}`}
             placeholder={`Enter ${tmib_items.items_idesc.label}`}
           />
-          {errors.items_idesc && (
-            <small className="mb-3 text-red-500">{errors.items_idesc}</small>
-          )}
+          <RequiredText text={errors.items_idesc} />
         </div>
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_puofm"
-            className="block text-900 font-medium mb-2 text-red-800"
+            className="block font-bold mb-2 text-red-800"
           >
             {tmib_items.items_puofm.label}
           </label>
-
           <Dropdown
             name="items_puofm"
             value={formData.items_puofm}
@@ -156,15 +146,12 @@ const ProductsFormComp = ({
             filter
             showClear
           />
-
-          {errors.items_puofm && (
-            <small className="mb-3 text-red-500">{errors.items_puofm}</small>
-          )}
+          <RequiredText text={errors.items_puofm} />
         </div>
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_dfqty"
-            className="block text-900 font-medium mb-2 text-red-800"
+            className="block font-bold mb-2 text-red-800"
           >
             {tmib_items.items_dfqty.label}
           </label>
@@ -182,7 +169,7 @@ const ProductsFormComp = ({
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_suofm"
-            className="block text-900 font-medium mb-2 text-red-800"
+            className="block font-bold mb-2 text-red-800"
           >
             {tmib_items.items_suofm.label}
           </label>
@@ -198,14 +185,12 @@ const ProductsFormComp = ({
             filter
             showClear
           />
-          {errors.items_suofm && (
-            <small className="mb-3 text-red-500">{errors.items_suofm}</small>
-          )}
+          <RequiredText text={errors.items_suofm} />
         </div>
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_ctgry"
-            className="block text-900 font-medium mb-2 text-red-800"
+            className="block font-bold mb-2 text-red-800"
           >
             {tmib_items.items_ctgry.label}
           </label>
@@ -221,15 +206,13 @@ const ProductsFormComp = ({
             filter
             showClear
           />
-          {errors.items_ctgry && (
-            <small className="mb-3 text-red-500">{errors.items_ctgry}</small>
-          )}
+          <RequiredText text={errors.items_ctgry} />
         </div>
 
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_brand"
-            className="block text-900 font-medium mb-2 text-red-800"
+            className="block font-bold mb-2 text-red-800"
           >
             {tmib_items.items_brand.label}
           </label>
@@ -245,15 +228,13 @@ const ProductsFormComp = ({
             filter
             showClear
           />
-          {errors.items_brand && (
-            <small className="mb-3 text-red-500">{errors.items_brand}</small>
-          )}
+          <RequiredText text={errors.items_brand} />
         </div>
 
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_itype"
-            className="block text-900 font-medium mb-2 text-red-800"
+            className="block font-bold mb-2 text-red-800"
           >
             {tmib_items.items_itype.label}
           </label>
@@ -267,15 +248,13 @@ const ProductsFormComp = ({
             className={`w-full ${errors.items_itype ? "p-invalid" : ""}`}
             placeholder={`Enter ${tmib_items.items_itype.label}`}
           />
-          {errors.items_itype && (
-            <small className="mb-3 text-red-500">{errors.items_itype}</small>
-          )}
+          <RequiredText text={errors.items_itype} />
         </div>
 
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_trcks"
-            className="block text-900 font-medium mb-2 text-red-800"
+            className="block font-bold mb-2 text-red-800"
           >
             {tmib_items.items_trcks.label}
           </label>
@@ -289,15 +268,13 @@ const ProductsFormComp = ({
             className={`w-full ${errors.items_trcks ? "p-invalid" : ""}`}
             placeholder={`Enter ${tmib_items.items_trcks.label}`}
           />
-          {errors.items_trcks && (
-            <small className="mb-3 text-red-500">{errors.items_trcks}</small>
-          )}
+          <RequiredText text={errors.items_trcks} />
         </div>
 
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_sdvat"
-            className="block text-900 font-medium mb-2 text-red-800"
+            className="block font-bold mb-2 text-red-800"
           >
             {tmib_items.items_sdvat.label}
           </label>
@@ -308,14 +285,12 @@ const ProductsFormComp = ({
             className={`w-full ${errors.items_sdvat ? "p-invalid" : ""}`}
             placeholder={`Enter ${tmib_items.items_sdvat.label}`}
           />
-          {errors.items_sdvat && (
-            <small className="mb-3 text-red-500">{errors.items_sdvat}</small>
-          )}
+          <RequiredText text={errors.items_sdvat} />
         </div>
         <div className="col-12 md:col-2">
           <label
             htmlFor="items_costp"
-            className="block text-900 font-medium mb-2 text-red-800"
+            className="block font-bold mb-2 text-red-800"
           >
             {tmib_items.items_costp.label}
           </label>
@@ -326,9 +301,7 @@ const ProductsFormComp = ({
             className={`w-full ${errors.items_costp ? "p-invalid" : ""}`}
             placeholder={`Enter ${tmib_items.items_costp.label}`}
           />
-          {errors.items_costp && (
-            <small className="mb-3 text-red-500">{errors.items_costp}</small>
-          )}
+          <RequiredText text={errors.items_costp} />
         </div>
         <div className="col-12">
           <div className="flex flex-row-reverse flex-wrap">
@@ -364,9 +337,7 @@ const ProductsFormComp = ({
             />
           ))}
 
-          {errors.bitem_bsins && (
-            <small className="mb-3 text-red-500">{errors.bitem_bsins}</small>
-          )}
+          <RequiredText text={errors.bitem_bsins} />
 
           <BFormComp
             isBusy={isBusy}

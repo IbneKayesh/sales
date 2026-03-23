@@ -27,9 +27,9 @@ const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
   const action_BT = (rowData) => {
     let menuItems = [
       {
-        label: rowData.bacts_isdef === 1 ? "Unset Default" : "Set Default",
+        label: rowData.bacts_isdef === true ? "Unset Default" : "Set Default",
         icon:
-          rowData.bacts_isdef === 1
+          rowData.bacts_isdef === true
             ? "pi pi-times-circle text-red-500"
             : "pi pi-check-circle text-green-500",
         command: () => {
@@ -88,7 +88,7 @@ const AccountsListComp = ({ dataList, onEdit, onDelete, onSetDefault }) => {
   const bacts_isdef_BT = (rowData) => {
     return (
       <>
-        {rowData.bacts_isdef === 1 ? (
+        {rowData.bacts_isdef === true ? (
           <i className="pi pi-check-circle text-green-500" />
         ) : (
           <i className="pi pi-times-circle text-red-500" />
