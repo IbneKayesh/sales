@@ -190,7 +190,7 @@ const ProfileSettings = () => {
       {/* Right Side: Personal & Business Info */}
       <div className="col-12 lg:col-8 px-3">
         <Card
-          className="shadow-3 border-round-2xl surface-card h-full"
+          className="shadow-3 border-round-2xl surface-card h-full p-2"
           title={
             <span className="text-3xl font-bold text-900 px-2">
               Profile Information

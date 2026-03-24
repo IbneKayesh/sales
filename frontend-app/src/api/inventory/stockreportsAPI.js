@@ -22,4 +22,11 @@ export const stockreportsAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  purchaseInvoiceUpdate: (data) =>
+    apiRequest("/inventory/stockreports/purchase-invoice-update", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+    
 };

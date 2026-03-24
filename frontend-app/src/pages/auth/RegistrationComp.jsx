@@ -4,7 +4,7 @@ import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { useAuth } from "@/hooks/useAuth.jsx";
-import { useToast } from "@/hooks/useToast.jsx";
+import { useToast } from "@/hooks/useAppUI.jsx";
 
 const RegistrationComp = () => {
   const [searchParams, setSearchParams] = useSearchParams();

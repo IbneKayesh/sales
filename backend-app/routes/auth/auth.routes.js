@@ -202,9 +202,9 @@ router.post("/recover-password", async (req, res) => {
 
     //database action
     const sql = `SELECT * FROM tmsb_users
-    WHERE users_email = ?
-    AND users_recky = ?
-    AND  users_actve = 1`;
+    WHERE users_email = $1
+    AND users_recky = $2
+    AND users_actve = TRUE`;
     const params = [users_email, users_recky];
 
     const row = await dbGet(
@@ -249,14 +249,32 @@ router.post("/reset-password", async (req, res) => {
     }
 
     //database action
+    const sql_rec = `SELECT *
+    FROM tmsb_users
+    WHERE users_recky = $1    
+    AND id = $2
+    AND users_email = $3
+    AND users_actve = TRUE`;
+    const params_rec = [users_recky, id, users_email];
+    const rec = await dbGet(sql_rec, params_rec);
+    //console.log("rec", rec);
+    if (rec) {
+      return res.json({
+        success: false,
+        message: "Enter a new recovery key",
+        data: null,
+      });
+    }
+
     const sql = `UPDATE tmsb_users 
-    SET users_recky = ?,
-    users_pswrd = ?,
-    users_lstpd = current_timestamp(),
-    users_upusr = ?,
+    SET users_recky = $1,
+    users_pswrd = $2,
+    users_lstpd = current_timestamp,
+    users_upusr = $3,
     users_rvnmr = users_rvnmr + 1
-    WHERE id = ?
-    AND users_email = ?`;
+    WHERE id = $4
+    AND users_email = $5    
+    AND users_actve = TRUE`;
     const params = [users_recky, users_pswrd, id, id, users_email];
 
     await dbRun(sql, params, `Recover user password for ${users_email}`);

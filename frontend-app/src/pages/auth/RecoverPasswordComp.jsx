@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { useToast } from "@/hooks/useToast.jsx";
+import { useToast } from "@/hooks/useAppUI.jsx";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
 const RecoverPasswordComp = () => {

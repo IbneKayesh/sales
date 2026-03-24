@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { stockreportsAPI } from "@/api/inventory/stockreportsAPI";
+import { useBusy, useNotification } from "@/hooks/useAppUI";
 
 export const useStockReports = () => {
   const { user } = useAuth();
   const [dataList, setDataList] = useState([]);
-  const [isBusy, setIsBusy] = useState(false);
+  const { isBusy, setIsBusy } = useBusy();
+  const { notify } = useNotification();
 
   const handleLoadPurchaseBooking = async () => {
     try {
@@ -63,8 +65,7 @@ export const useStockReports = () => {
     }
   };
 
-  useEffect(() => {
-  }, []);
+  useEffect(() => {}, []);
 
   const handleLoadReports = (reportFilter) => {
     setDataList([]);
@@ -82,9 +83,77 @@ export const useStockReports = () => {
     }
   };
 
+  const handleUpdatePrice = async (rowData) => {
+    //console.log("rowData", rowData);
+    try {
+      if (Number(rowData.cinvc_dprat) <= Number(rowData.cinvc_itrat)) {
+        notify({
+          severity: "error",
+          summary: "Price update",
+          detail: "DP must be greater than PP",
+          toast: true,
+          notification: true,
+          log: false,
+        });
+        return;
+      }
+
+      if (Number(rowData.cinvc_mcmrp) <= Number(rowData.cinvc_dprat)) {
+        notify({
+          severity: "error",
+          summary: "Price update",
+          detail: "MRP must be greater than DP",
+          toast: true,
+          notification: true,
+          log: false,
+        });
+        return;
+      }
+
+      setIsBusy(true);
+      const formDataNew = {
+        cinvc_id: rowData.cinvc_id || generateGuid(),
+        cinvc_dprat: rowData.cinvc_dprat || 0,
+        cinvc_mcmrp: rowData.cinvc_mcmrp || 0,
+        suser_id: user.id,
+      };
+      // console.log("formDataNew: " + JSON.stringify(formDataNew));
+      // return;
+      let response = await stockreportsAPI.purchaseInvoiceUpdate(formDataNew);
+
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Price - ${rowData.items_iname} ${
+          response.success ? "modified" : "modification failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
+
+      if (response.success) {
+        await handleLoadPurchaseInvoice();
+      }
+    } catch (error) {
+      console.error("Error saving data:", error);
+      notify({
+        severity: "error",
+        summary: "Price update",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     dataList,
     isBusy,
     handleLoadReports,
+    handleUpdatePrice,
   };
 };

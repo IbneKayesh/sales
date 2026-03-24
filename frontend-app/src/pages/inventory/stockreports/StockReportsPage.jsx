@@ -9,12 +9,17 @@ import PReceiptListComp from "./PReceiptListComp";
 import ITransferListComp from "./ITransferListComp";
 import PInvoiceListComp from "./PInvoiceListComp";
 import EmptyState from "@/components/EmptyState";
+import PriceDlg from "./PriceDlg";
+import { Dialog } from "primereact/dialog";
 
 const StockReportsPage = () => {
-  const { dataList, isBusy, handleLoadReports } = useStockReports();
+  const { dataList, isBusy, handleLoadReports, handleUpdatePrice } =
+    useStockReports();
 
   const [reportFilter, setReportFilter] = useState("");
   const [isSummary, setIsSummary] = useState(false);
+  const [selectedTrackedItem, setSelectedTrackedItem] = useState(null);
+
   useEffect(() => {
     handleLoadReports(reportFilter);
   }, [reportFilter]);
@@ -28,6 +33,19 @@ const StockReportsPage = () => {
 
   const handleReportFilterChange = (e) => {
     setReportFilter(e.value);
+  };
+
+  const handleUpdatePriceDlg = (product) => {
+    setSelectedTrackedItem(product);
+  };
+
+  const onUpdatePrice = () => {
+    handleUpdatePrice(selectedTrackedItem);
+    setSelectedTrackedItem(null);
+  };
+
+ const handleChange = (field, value) => {
+    setSelectedTrackedItem((prev) => ({ ...prev, [field]: value }));
   };
 
   const getHeader = () => {
@@ -69,6 +87,22 @@ const StockReportsPage = () => {
     );
   };
 
+  const dialogFooter = (
+    <div className="flex justify-content-end gap-2">
+      <Button
+        label="Cancel"
+        icon="pi pi-times"
+        onClick={() => setSelectedTrackedItem(null)}
+        severity="secondary"
+      />
+      <Button
+        label="Save"
+        icon="pi pi-save"
+        onClick={() => onUpdatePrice()}
+        severity="success"
+      />
+    </div>
+  );
   return (
     <Card header={getHeader()} className="border-round p-3">
       {reportFilter === "pbooking" && (
@@ -90,6 +124,7 @@ const StockReportsPage = () => {
           dataList={dataList}
           isBusy={isBusy}
           isSummary={isSummary}
+          onUpdatePriceDlg={handleUpdatePriceDlg}
         />
       )}
       {reportFilter === "itransfer" && (
@@ -100,6 +135,21 @@ const StockReportsPage = () => {
         />
       )}
       {reportFilter === "" && <EmptyState />}
+
+      <Dialog
+        header={`Price Update`}
+        visible={!!selectedTrackedItem}
+        onHide={() => setSelectedTrackedItem(null)}
+        closable={true}
+        style={{ width: "25vw" }}
+        footer={dialogFooter}
+      >
+        <>
+          {selectedTrackedItem && (
+            <PriceDlg formData={selectedTrackedItem} onChange={handleChange} />
+          )}
+        </>
+      </Dialog>
     </Card>
   );
 };

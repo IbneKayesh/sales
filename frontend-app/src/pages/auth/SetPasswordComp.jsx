@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Password } from "primereact/password";
-import { useToast } from "@/hooks/useToast.jsx";
+import { useToast } from "@/hooks/useAppUI.jsx";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
 const SetPasswordComp = () => {

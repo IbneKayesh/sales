@@ -5,15 +5,8 @@ import { parseAttributes } from "@/utils/jsonParser";
 import { formatDate } from "@/utils/datetime";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
 import { Button } from "primereact/button";
-import PriceDlgComp from "./PriceDlgComp";
 
-const PInvoiceListComp = ({ dataList, isBusy, isSummary }) => {
-  const [selectedTrackedItem, setSelectedTrackedItem] = useState(null);
-
-  const handleUpdatePrice = (product) => {
-    setSelectedTrackedItem(product);
-  };
-
+const PInvoiceListComp = ({ dataList, isBusy, isSummary, onUpdatePriceDlg }) => {
   const displayData = useMemo(() => {
     if (!isSummary) return dataList;
 
@@ -113,7 +106,7 @@ const PInvoiceListComp = ({ dataList, isBusy, isSummary }) => {
       <Button
         label="Price"
         icon="pi pi-pencil"
-        onClick={() => handleUpdatePrice(rowData)}
+        onClick={() => onUpdatePriceDlg(rowData)}
         severity="info"
         size="small"
       />
@@ -165,7 +158,6 @@ const PInvoiceListComp = ({ dataList, isBusy, isSummary }) => {
         />
         {!isSummary && <Column body={action_BT} style={{ width: "100px" }} />}
       </DataTable>
-      {selectedTrackedItem && <PriceDlgComp formData={selectedTrackedItem} />}
     </div>
   );
 };

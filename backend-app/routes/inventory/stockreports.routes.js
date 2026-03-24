@@ -52,7 +52,6 @@ ORDER BY itm.items_iname`;
   }
 });
 
-
 //purchase-receipt
 router.post("/purchase-receipt", async (req, res) => {
   try {
@@ -102,8 +101,6 @@ ORDER BY itm.items_iname`;
   }
 });
 
-
-
 //purchase-invoice
 router.post("/purchase-invoice", async (req, res) => {
   try {
@@ -123,7 +120,7 @@ router.post("/purchase-invoice", async (req, res) => {
     //database action
     const sql = `SELECT cnt.cntct_cntnm, minv.minvc_trnno, itm.items_icode, itm.items_iname, itm.items_dfqty,
 cinv.cinvc_attrb,cinv.cinvc_itqty,cinv.cinvc_itamt,cinv.cinvc_rtqty,cinv.cinvc_slqty,cinv.cinvc_ohqty,
-cinv.cinvc_itrat, cinv.cinvc_dprat, cinv.cinvc_mcmrp,
+cinv.cinvc_itrat, cinv.cinvc_dprat, cinv.cinvc_mcmrp, cinv.id AS cinvc_id,
 puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
 FROM tmpb_minvc minv
 JOIN tmpb_cinvc cinv ON minv.id = cinv.cinvc_minvc
@@ -155,7 +152,6 @@ ORDER BY itm.items_iname`;
     });
   }
 });
-
 
 //inventory-transfer
 router.post("/inventory-transfer", async (req, res) => {
@@ -195,6 +191,46 @@ ORDER BY itm.items_iname`;
       success: true,
       message: "Stock report fetched successfully",
       data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+//purchase-invoice-update
+router.post("/purchase-invoice-update", async (req, res) => {
+  try {
+    const { cinvc_id, cinvc_dprat, cinvc_mcmrp, suser_id } = req.body;
+
+    // Validate input
+    if (!cinvc_id) {
+      return res.json({
+        success: false,
+        message: "Business ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `UPDATE tmpb_cinvc 
+    SET cinvc_dprat = $1, 
+    cinvc_mcmrp = $2,
+    cinvc_upusr = $3,
+    cinvc_updat = CURRENT_TIMESTAMP,
+    cinvc_rvnmr = cinvc_rvnmr + 1
+    WHERE id = $4`;
+    const params = [cinvc_dprat, cinvc_mcmrp, suser_id, cinvc_id];
+
+    await dbRun(sql, params, `Price updated for ${cinvc_id}`);
+    res.json({
+      success: true,
+      message: "Price updated successfully",
+      data: null,
     });
   } catch (error) {
     console.error("database action error:", error);
