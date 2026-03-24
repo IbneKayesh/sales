@@ -6,6 +6,8 @@ const BusinessPage = React.lazy(() => import("../pages/setup/business/BusinessPa
 const UsersPage = React.lazy(() => import("../pages/setup/users/UsersPage.jsx"));
 const ProfileSettings = React.lazy(() => import("../pages/setup/users/ProfileSettings.jsx"));
 const DefaultDataPage = React.lazy(() => import("../pages/setup/settings/DefaultDataPage.jsx"));
+const InstallationsPage = React.lazy(() => import("../pages/setup/installations/InstallationsPage.jsx"));
+
 
 const setupRoutes = (
   <>
@@ -14,6 +16,7 @@ const setupRoutes = (
     <Route path="setup/users" element={<UsersPage />} />
     <Route path="setup/users/profile" element={<ProfileSettings />} />
     <Route path="setup/default-data" element={<DefaultDataPage />} />
+    <Route path="setup/installations" element={<InstallationsPage />} />
   </>
 );
 

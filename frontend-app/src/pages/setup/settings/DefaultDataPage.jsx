@@ -84,7 +84,7 @@ const DefaultDataPage = () => {
 
     return (
       <div className="col-12 md:col-3">
-        <Card title={category} className="shadow-2 border-round-xl h-full mt-0">
+        <Card title={category} className="shadow-2 border-round-xl h-full mt-0 p-2">
           {groups.map((group) => (
             <SubGroup
               key={group}

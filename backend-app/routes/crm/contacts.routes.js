@@ -353,12 +353,23 @@ router.post("/ledger", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT paybl_pymod, paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt, paybl_cramt
+    const sql = `
+          SELECT paybl_pymod AS pymod, paybl_refno AS refno, paybl_srcnm AS srcnm, paybl_trdat AS trdat,
+          paybl_descr AS descr, paybl_notes AS notes, paybl_dbamt AS dbamt, paybl_cramt AS cramt
+          FROM (
+          SELECT paybl_pymod, paybl_refno, paybl_srcnm, paybl_trdat, paybl_descr, paybl_notes, paybl_dbamt, paybl_cramt
           FROM tmtb_paybl
           WHERE paybl_users = $1
           AND paybl_bsins = $2
           AND paybl_cntct = $3
-          ORDER BY paybl_refno DESC, paybl_trdat DESC`;
+          UNION ALL
+          SELECT rcvbl_pymod, rcvbl_refno, rcvbl_srcnm, rcvbl_trdat, rcvbl_descr, rcvbl_notes, rcvbl_dbamt, rcvbl_cramt
+          FROM tmtb_rcvbl
+          WHERE rcvbl_users = $1
+          AND rcvbl_bsins = $2
+          AND rcvbl_cntct = $3
+          ) AS ledger
+          ORDER BY paybl_trdat DESC, paybl_refno`;
     const params = [muser_id, bsins_id, paybl_cntct];
 
     const rows = await dbGetAll(sql, params, `Get ledgers for ${paybl_cntct}`);

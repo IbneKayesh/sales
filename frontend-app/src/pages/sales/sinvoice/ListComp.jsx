@@ -9,8 +9,11 @@ import { useState, useMemo } from "react";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import EmptyState from "@/components/EmptyState";
+import { useNavigate } from "react-router-dom";
 
-const ListComp = ({ dataList, onEdit }) => {
+const ListComp = ({ dataList, onEdit }) => {  
+  const navigate = useNavigate();
+
   const [globalFilter, setGlobalFilter] = useState(null);
   const [filterType, setFilterType] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -279,8 +282,26 @@ const ListComp = ({ dataList, onEdit }) => {
         {!!rowData.minvc_iscls ? (
           <Tag value="Closed" severity="contrast" rounded />
         ) : null}
+        {!!rowData.minvc_hscnl ? (
+          <Tag
+            value="Returned"
+            severity="contrast"
+            icon="pi pi-undo"
+            rounded
+            className="px-2"
+          />
+        ) : null}
       </div>
     );
+  };
+
+  const handleReturn = (rowData) => {
+    // const data = {
+    //   name: "John",
+    //   age: 25,
+    //   role: "admin",
+    // };
+    navigate("/home/sales/sreturn", { state: rowData });
   };
 
   const handleDelete = (rowData) => {
@@ -296,7 +317,16 @@ const ListComp = ({ dataList, onEdit }) => {
   };
 
   const action_BT = (rowData) => {
+    //console.log("rowData", rowData);
     const menuItems = [
+      {
+        label: "Return",
+        icon: "pi pi-undo text-red-500",
+        className: "text-red-500",
+        command: () => handleReturn(rowData),
+        disabled: !!rowData.minvc_hscnl,
+      },
+      ,
       {
         label: "Delete",
         icon: "pi pi-trash",

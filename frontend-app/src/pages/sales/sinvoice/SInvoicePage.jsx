@@ -37,11 +37,6 @@ const SInvoicePage = () => {
     handleChangeSearchInput,
     handleSearch,
     searchOptions,
-    //cancel booking items
-    cancelledRows,
-    setCancelledRows,
-    handleCancelBookingItems,
-    setCancelledPayment
   } = useSinvoice();
 
   const handleSearchBox = () => {
@@ -122,13 +117,6 @@ const SInvoicePage = () => {
           formDataPaymentList={formDataPaymentList}
           setFormDataPaymentList={setFormDataPaymentList}
           handleSubmit={handleSave}
-          
-          //cancel booking items
-          cancelledRows={cancelledRows}
-          setCancelledRows={setCancelledRows}
-          onCancelBookingItems={handleCancelBookingItems}
-          setCancelledPayment={setCancelledPayment}
-
           //cancel
           handleCancel={handleCancel}
         />

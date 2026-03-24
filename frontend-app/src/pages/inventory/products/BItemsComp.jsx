@@ -205,7 +205,7 @@ const BItemsComp = ({
       <div className="flex flex-column">
         <ZeroRowCell
           value={rowData.bitem_lprat}
-          text={"Purchase: " + Number(rowData.bitem_lprat).toFixed(2)}
+          text={"PP: " + Number(rowData.bitem_lprat).toFixed(2)}
         />
         <ZeroRowCell
           value={rowData.bitem_dprat}

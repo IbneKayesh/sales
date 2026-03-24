@@ -34,7 +34,7 @@ const SearchComp = ({
           name="minvc_cntct"
           value={searchBoxData.minvc_cntct}
           onChange={handleChangeSearchInput}
-          placeholder="Supplier"
+          placeholder="Customer"
           className="w-full p-inputtext-sm"
         />
       </div>

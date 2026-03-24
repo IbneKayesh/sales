@@ -483,7 +483,7 @@ export const useSinvoice = () => {
     }
   };
 
-  return {
+  return {    
     configs,
     dataList,
     isBusy,
@@ -513,11 +513,5 @@ export const useSinvoice = () => {
     handleChangeSearchInput,
     handleSearch,
     searchOptions,
-
-    //cancel Invoice items
-    cancelledRows,
-    setCancelledRows,
-    handleCancelInvoiceItems,
-    setCancelledPayment,
   };
 };

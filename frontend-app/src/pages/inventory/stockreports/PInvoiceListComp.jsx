@@ -1,11 +1,19 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { parseAttributes } from "@/utils/jsonParser";
 import { formatDate } from "@/utils/datetime";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
+import { Button } from "primereact/button";
+import PriceDlgComp from "./PriceDlgComp";
 
 const PInvoiceListComp = ({ dataList, isBusy, isSummary }) => {
+  const [selectedTrackedItem, setSelectedTrackedItem] = useState(null);
+
+  const handleUpdatePrice = (product) => {
+    setSelectedTrackedItem(product);
+  };
+
   const displayData = useMemo(() => {
     if (!isSummary) return dataList;
 
@@ -49,16 +57,21 @@ const PInvoiceListComp = ({ dataList, isBusy, isSummary }) => {
     );
   };
 
-
   const cinvc_itrat_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-md">P: {Number(rowData.cinvc_itrat).toFixed(2)}</span>
-        <span className="text-md">DP: {Number(rowData.cinvc_dprat).toFixed(2)}</span>
-        <span className="text-md">MRP: {Number(rowData.cinvc_mcmrp).toFixed(2)}</span>
+        <span className="text-md">
+          PP: {Number(rowData.cinvc_itrat).toFixed(2)}
+        </span>
+        <span className="text-md">
+          DP: {Number(rowData.cinvc_dprat).toFixed(2)}
+        </span>
+        <span className="text-md">
+          MRP: {Number(rowData.cinvc_mcmrp).toFixed(2)}
+        </span>
       </div>
     );
-  }
+  };
 
   const cinvc_itqty_BT = (rowData) => {
     return (
@@ -92,6 +105,18 @@ const PInvoiceListComp = ({ dataList, isBusy, isSummary }) => {
           />
         </span>
       </div>
+    );
+  };
+
+  const action_BT = (rowData) => {
+    return (
+      <Button
+        label="Price"
+        icon="pi pi-pencil"
+        onClick={() => handleUpdatePrice(rowData)}
+        severity="info"
+        size="small"
+      />
     );
   };
 
@@ -138,7 +163,9 @@ const PInvoiceListComp = ({ dataList, isBusy, isSummary }) => {
           bodyStyle={{ textAlign: "right" }}
           body={cinvc_ohqty_BT}
         />
+        {!isSummary && <Column body={action_BT} style={{ width: "100px" }} />}
       </DataTable>
+      {selectedTrackedItem && <PriceDlgComp formData={selectedTrackedItem} />}
     </div>
   );
 };

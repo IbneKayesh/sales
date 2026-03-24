@@ -14,10 +14,10 @@ const ExpCategoryFormComp = ({
   onChange,
   onSave,
 }) => {
-  const { dataList: exctg_trhedOptions, handleGetAllActiveHeads } =
+  const { dataList: exctg_trhedOptions, handleGetAllAdviceHeads } =
     useAccountsHeadsSgd();
   useEffect(() => {
-    handleGetAllActiveHeads();
+    handleGetAllAdviceHeads();
   }, []);
 
   const ledgr_trhed_IT = (option) => {

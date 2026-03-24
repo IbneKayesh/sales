@@ -20,11 +20,6 @@ export const useContacts = () => {
 
   const cntct_sorceOptions = [{ label: "Local", value: "Local" }];
 
-  // const [ledgerContactList, setLedgerContactList] = useState([]);
-  // const [contactPaymentList, setContactPaymentList] = useState([]);
-  // const [supplierList, setSupplierList] = useState([]);
-  // const [contactCustomerList, setContactCustomerList] = useState([]);
-  // const [contactsLedger, setContactsLedger] = useState([]);
 
   const loadContacts = async () => {
     try {
@@ -224,17 +219,29 @@ export const useContacts = () => {
   //ledger
   const [ledgerDataList, setLedgerDataList] = useState([]);
   const handleShowContactLedger = async (contact) => {
+    //console.log("response", contact);
     try {
+      setIsBusy(true);
       const response = await contactAPI.getContactLedger({
         muser_id: user.users_users,
         bsins_id: user.users_bsins,
         paybl_cntct: contact.id,
       });
       // response = { message, data }
+      //console.log("response", response);
       setLedgerDataList(response.data);
     } catch (error) {
       console.error("Error loading data:", error);
-      showToast("error", "Error", error?.message || "Failed to load data");
+      notify({
+        severity: "error",
+        summary: "Ledger",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
     }
   };
 

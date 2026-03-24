@@ -133,6 +133,11 @@ label {
   background-color: aliceblue;
 }
 
+.p-card-body {
+  padding: 0;
+}
+
 .p-datatable {
   background-color: aliceblue;
 }
+

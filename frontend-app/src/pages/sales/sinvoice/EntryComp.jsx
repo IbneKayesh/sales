@@ -5,7 +5,6 @@ import PaymentComp from "./PaymentComp";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import PrintComp from "./PrintComp";
-import CancelItemsComp from "./CancelItemsComp";
 import { Dialog } from "primereact/dialog";
 import ExpensesDlg from "./ExpensesDlg";
 import PaymentDlg from "./PaymentDlg";
@@ -24,13 +23,6 @@ const EntryComp = ({
   formDataPaymentList,
   setFormDataPaymentList,
   handleSubmit,
-  
-  //cancel booking items
-  cancelledRows,
-  setCancelledRows,
-  onCancelBookingItems,
-  setCancelledPayment,
-
   //cancel
   handleCancel,
 }) => {
@@ -110,18 +102,6 @@ const EntryComp = ({
     formDataExpensesList,
   ]);
 
-  const [showCancelDialog, setShowCancelDialog] = useState(false);
-  const handleShowCancelDlg = () => {
-    const hasCancelableItems = formDataItemList.some(
-      (item) => item.cinvc_pnqty > 0,
-    );
-    if (hasCancelableItems) {
-      setShowCancelDialog(true);
-    }
-  };
-  const handleHideCancelDlg = () => {
-    setShowCancelDialog(false);
-  };
   const handleShowIncludeCost = () => {
     setShowDialog(true);
     setDialogName("Including Expenses");
@@ -201,15 +181,6 @@ const EntryComp = ({
           />
           <Button
             type="button"
-            label="Cancel"
-            icon="pi pi-times"
-            severity="danger"
-            size="small"
-            onClick={handleShowCancelDlg}
-            disabled={!formData.id}
-          />
-          <Button
-            type="button"
             label="Print"
             icon="pi pi-print"
             severity="info"
@@ -278,17 +249,6 @@ const EntryComp = ({
           )}
         </>
       </Dialog>
-
-      <CancelItemsComp
-        visible={showCancelDialog}
-        onHide={handleHideCancelDlg}
-        formData={formData}
-        formDataItemList={formDataItemList}
-        cancelledRows={cancelledRows}
-        setCancelledRows={setCancelledRows}
-        onCancelBookingItems={onCancelBookingItems}
-        setCancelledPayment={setCancelledPayment}
-      />
     </div>
   );
 };

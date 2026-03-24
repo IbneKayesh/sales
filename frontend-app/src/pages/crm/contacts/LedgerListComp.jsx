@@ -5,15 +5,15 @@ import { Column } from "primereact/column";
 import ZeroRowCell from "@/components/ZeroRowCell";
 
 const LedgerListComp = ({ dataList }) => {
-  const paybl_pymod_BT = (rowData) => {
+  const pymod_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-md">{rowData.paybl_pymod}</span>
-        <span className="text-xs">{rowData.paybl_refno}</span>
+        <span className="text-md">{rowData.pymod}</span>
+        <span className="text-xs">{rowData.refno}</span>
       </div>
     );
   };
-  const paybl_trdat_BT = (rowData) => {
+  const trdat_BT = (rowData) => {
     const getSrcNameColor = (srcnm) => {
       switch (srcnm) {
         case "Purchase Receipt":
@@ -30,53 +30,53 @@ const LedgerListComp = ({ dataList }) => {
     };
     return (
       <div className="flex flex-column">
-        <span className="text-md">{formatDate(rowData.paybl_trdat)}</span>
+        <span className="text-md">{formatDate(rowData.trdat)}</span>
         <span
-          className={`text-xs font-bold ${getSrcNameColor(rowData.paybl_srcnm)}`}
+          className={`text-xs font-bold ${getSrcNameColor(rowData.srcnm)}`}
         >
-          {rowData.paybl_srcnm}
+          {rowData.srcnm}
         </span>
       </div>
     );
   };
 
-  const paybl_refno_BT = (rowData) => {
+  const descr_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-md">{rowData.paybl_descr}</span>
-        <span className="text-xs">{rowData.paybl_notes}</span>
+        <span className="text-md">{rowData.descr}</span>
+        <span className="text-xs">{rowData.notes}</span>
       </div>
     );
   };
 
-  const paybl_dbamt_BT = (rowData) => {
+  const dbamt_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.paybl_dbamt} text={rowData.paybl_dbamt} />
+      <ZeroRowCell value={rowData.dbamt} text={rowData.dbamt} />
     );
   };
 
-  const paybl_cramt_BT = (rowData) => {
+  const cramt_BT = (rowData) => {
     return (
-      <ZeroRowCell value={rowData.paybl_cramt} text={rowData.paybl_cramt} />
+      <ZeroRowCell value={rowData.cramt} text={rowData.cramt} />
     );
   };
 
-  const paybl_dbamt_FT = () => {
-    return dataList.reduce((total, row) => total + Number(row.paybl_dbamt), 0);
+  const dbamt_FT = () => {
+    return dataList.reduce((total, row) => total + Number(row.dbamt), 0);
   };
 
-  const paybl_cramt_FT = () => {
-    return dataList.reduce((total, row) => total + Number(row.paybl_cramt), 0);
+  const cramt_FT = () => {
+    return dataList.reduce((total, row) => total + Number(row.cramt), 0);
   };
 
   const account_balance = () => {
     //total debit - total credit;
     const total_debit = dataList.reduce(
-      (total, row) => total + Number(row.paybl_dbamt),
+      (total, row) => total + Number(row.dbamt),
       0,
     );
     const total_credit = dataList.reduce(
-      (total, row) => total + Number(row.paybl_cramt),
+      (total, row) => total + Number(row.cramt),
       0,
     );
     const balance = total_credit - total_debit;
@@ -107,33 +107,33 @@ const LedgerListComp = ({ dataList }) => {
       <DataTable
         value={dataList}
         paginator
-        rows={10}
-        rowsPerPageOptions={[5, 10, 25]}
+        rows={25}
+        rowsPerPageOptions={[25, 50, 100]}
         emptyMessage="No data found."
         size="small"
         rowHover
         showGridlines
         rowClassName={rowClassName}
       >
-        <Column field="paybl_pymod" header="Mode" body={paybl_pymod_BT} />
-        <Column field="paybl_trdat" header="Date" body={paybl_trdat_BT} />
+        <Column field="pymod" header="Mode" body={pymod_BT} />
+        <Column field="trdat" header="Date" body={trdat_BT} />
         <Column
-          field="paybl_refno"
-          header="Ref"
-          body={paybl_refno_BT}
+          field="descr"
+          header="Notes"
+          body={descr_BT}
           footer={account_balance}
         />
         <Column
-          field="paybl_dbamt"
+          field="dbamt"
           header="Debit (-)"
-          body={paybl_dbamt_BT}
-          footer={paybl_dbamt_FT}
+          body={dbamt_BT}
+          footer={dbamt_FT}
         />
         <Column
-          field="paybl_cramt"
+          field="cramt"
           header="Credit (+)"
-          body={paybl_cramt_BT}
-          footer={paybl_cramt_FT}
+          body={cramt_BT}
+          footer={cramt_FT}
         />
       </DataTable>
     </div>
