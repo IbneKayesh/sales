@@ -18,12 +18,23 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT istal_scode,istal_sname,istal_level,istal_notes, unst.ustal_scode, unst.ustal_crdat
+    const sql = `SELECT DISTINCT *
+    FROM (
+    SELECT istal_scode,istal_sname,istal_level,istal_notes, istal_usrbs, unst.ustal_scode, unst.ustal_crdat
     FROM tmsb_istal inst
     LEFT JOIN tmsb_ustal unst ON inst.istal_scode = unst.ustal_scode
     AND unst.ustal_users = $1
     AND unst.ustal_bsins = $2
-    WHERE inst.istal_actve = TRUE`;
+    WHERE inst.istal_actve = TRUE
+    AND inst.istal_usrbs = 'BUSINESS'
+    UNION ALL
+    SELECT istal_scode,istal_sname,istal_level,istal_notes, istal_usrbs, unst.ustal_scode, unst.ustal_crdat
+    FROM tmsb_istal inst
+    LEFT JOIN tmsb_ustal unst ON inst.istal_scode = unst.ustal_scode
+    AND unst.ustal_users = $1
+    WHERE inst.istal_actve = TRUE
+    AND inst.istal_usrbs = 'USER'
+  ) setup`;
     const params = [ustal_users, ustal_bsins];
 
     const rows = await dbGetAll(

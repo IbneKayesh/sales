@@ -1,7 +1,6 @@
 --
 -- Table structure for table `tmsb_istal`
 
-
 CREATE TABLE tmsb_istal (
   id varchar(50) PRIMARY KEY,
 
@@ -9,6 +8,7 @@ CREATE TABLE tmsb_istal (
   istal_sname varchar(50) NOT NULL,  
   istal_level integer NOT NULL DEFAULT 0,
   istal_notes varchar(255),
+  istal_usrbs varchar(10) DEFAULT 'USER',
 
   -- default
   istal_actve boolean NOT NULL DEFAULT true,
