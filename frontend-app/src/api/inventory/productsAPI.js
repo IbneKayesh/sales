@@ -21,6 +21,11 @@ export const productsAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getByCode: (data) =>
+    apiRequest("/inventory/products/get-by-code", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
   getBItem: (data) =>
     apiRequest("/inventory/products/get-bitem", {
       method: "POST",

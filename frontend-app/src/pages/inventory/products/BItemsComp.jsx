@@ -8,13 +8,16 @@ import ZeroRowCell from "@/components/ZeroRowCell";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
+import { SplitButton } from "primereact/splitbutton";
 
 const BItemsComp = ({
   onFetchBusinessItems,
   dataList,
   onFilterBusinessItems,
+  onConvertStock,
 }) => {
-  const { dataList: businessOptions, handleGetAllActiveBusiness } = useBusinessSgd();
+  const { dataList: businessOptions, handleGetAllActiveBusiness } =
+    useBusinessSgd();
   const [selBusinessId, setSelBusinessId] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [filterType, setFilterType] = useState("all");
@@ -176,13 +179,21 @@ const BItemsComp = ({
 
   const action_BT = (rowData) => {
     return (
-      <span
-        className={`pi ${
-          rowData.bitem_actve
-            ? "pi-check-circle text-green-500"
-            : "pi-times-circle text-red-500"
-        }`}
-      ></span>
+      <>
+        {rowData.bitem_frmla ? (
+          <Button
+            type="button"
+            icon="pi pi-arrow-right-arrow-left"
+            severity="success"
+            size="small"
+            tooltip="Convert Stock"
+            tooltipOptions={{ position: "left" }}
+            onClick={() => onConvertStock(rowData)}
+          />
+        ) : (
+          <span className="p-button bg-gray-500"></span>
+        )}
+      </>
     );
   };
 

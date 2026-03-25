@@ -5,6 +5,8 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import BItemsComp from "./BItemsComp";
+import FormulaFormComp from "./FormulaFormComp";
+import ConvertFormComp from "./ConvertFormComp";
 
 const ProductsPage = () => {
   const {
@@ -31,6 +33,15 @@ const ProductsPage = () => {
     BItemList,
     handleFilterDataList,
     handleFilterBusinessItems,
+    //Formula
+    handleFormula,
+    formDataFormula,
+    handleChangeFormula,
+    handleSaveFormula,
+    formulaList,
+    handleDeleteFormula,
+    //convert stock
+    handleConvertStock,
   } = useProducts();
 
   const getHeader = () => {
@@ -97,6 +108,7 @@ const ProductsPage = () => {
             onEdit={handleEdit}
             onDelete={handleDelete}
             onFilterDataList={handleFilterDataList}
+            onFormula={handleFormula}
           />
         ) : currentView === "form" ? (
           <ProductsFormComp
@@ -111,11 +123,32 @@ const ProductsPage = () => {
             onSaveBItem={handleSaveBItem}
             onFetchBItemSelectShop={handleFetchBItemSelectShop}
           />
+        ) : currentView === "formula" ? (
+          <FormulaFormComp
+            isBusy={isBusy}
+            errors={errors}
+            formData={formDataFormula}
+            onChange={handleChangeFormula}
+            onSave={handleSaveFormula}
+            dataList={formulaList}
+            onDelete={handleDeleteFormula}
+          />
+        ) : currentView === "convert" ? (
+          <ConvertFormComp
+            isBusy={isBusy}
+            errors={errors}
+            formData={formDataFormula}
+            onChange={handleChangeFormula}
+            onSave={handleSaveFormula}
+            dataList={formulaList}
+            onDelete={handleDeleteFormula}
+          />
         ) : (
           <BItemsComp
             onFetchBusinessItems={handleFetchBusinessItems}
             dataList={BItemList}
             onFilterBusinessItems={handleFilterBusinessItems}
+            onConvertStock={handleConvertStock}
           />
         )}
       </Card>

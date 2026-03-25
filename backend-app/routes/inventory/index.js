@@ -8,6 +8,8 @@ const productsRoutes = require("./products.routes.js");
 const attributesRoutes = require("./attributes.routes.js");
 const stockreportsRoutes = require("./stockreports.routes.js");
 const itransferRoutes = require("./itransfer.routes.js");
+const stockFormulaRoutes = require("./stockFormula.routes.js");
+
 
 router.use("/units", unitsRoutes);
 router.use("/brands", brandsRoutes);
@@ -16,5 +18,6 @@ router.use("/products", productsRoutes);
 router.use("/attributes", attributesRoutes);
 router.use("/stockreports", stockreportsRoutes);
 router.use("/itransfer", itransferRoutes);
+router.use("/products/formula", stockFormulaRoutes);
 
 module.exports = router;

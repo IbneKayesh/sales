@@ -114,7 +114,7 @@ const DashboardPage = () => {
     <div className="surface-ground min-h-screen">
       <Card
         header={getHeader()}
-        className="border-round-xl shadow-4 border-none mb-4 overflow-hidden"
+        className="border-round-xl shadow-4 border-none mb-4 p-3 overflow-hidden"
       >
         {/* Footer stats summary */}
         <div className="grid">

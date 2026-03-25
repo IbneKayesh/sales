@@ -6,9 +6,12 @@ import tmib_items from "@/models/inventory/tmib_items.json";
 import tmib_bitem from "@/models/inventory/tmib_bitem.json";
 import { useAuth } from "@/hooks/useAuth";
 import { useBusy, useNotification, useToast } from "@/hooks/useAppUI";
+import { formulaAPI } from "@/api/inventory/formulaAPI";
+import tmib_frmla from "@/models/inventory/tmib_frmla.json";
 
 const dataModel = generateDataModel(tmib_items, { edit_stop: 0 });
 const dataModelBItem = generateDataModel(tmib_bitem, { edit_stop: 0 });
+const dataModelFormula = generateDataModel(tmib_frmla, { edit_stop: 0 });
 
 export const useProducts = () => {
   const { user } = useAuth();
@@ -100,9 +103,7 @@ export const useProducts = () => {
         const updatedList = dataList.filter((u) => u.id !== rowData.id);
         setDataList(updatedList);
 
-        const updatedListAll = dataListAll.filter(
-          (u) => u.id !== rowData.id,
-        );
+        const updatedListAll = dataListAll.filter((u) => u.id !== rowData.id);
         setDataListAll(updatedListAll);
       }
 
@@ -395,7 +396,7 @@ export const useProducts = () => {
 
   const handleFetchBusinessItems = async (businessId) => {
     //console.log(businessId);
-   //return;
+    //return;
 
     try {
       setIsBusy(true);
@@ -452,39 +453,25 @@ export const useProducts = () => {
         );
         break;
       case "good_stock":
-        setBItemList(
-          BItemListAll.filter((i) => Number(i.bitem_gstkq) > 0),
-        );
+        setBItemList(BItemListAll.filter((i) => Number(i.bitem_gstkq) > 0));
         break;
       case "tracking_stock":
-        setBItemList(
-          BItemListAll.filter((i) => Number(i.bitem_istkq) > 0),
-        );
+        setBItemList(BItemListAll.filter((i) => Number(i.bitem_istkq) > 0));
         break;
       case "bad_stock":
-        setBItemList(
-          BItemListAll.filter((i) => Number(i.bitem_bstkq) > 0),
-        );
+        setBItemList(BItemListAll.filter((i) => Number(i.bitem_bstkq) > 0));
         break;
       case "without_margin":
-        setBItemList(
-          BItemListAll.filter((i) => Number(i.bitem_mpric) === 0),
-        );
+        setBItemList(BItemListAll.filter((i) => Number(i.bitem_mpric) === 0));
         break;
       case "purchase_bookings":
-        setBItemList(
-          BItemListAll.filter((i) => Number(i.bitem_pbqty) > 0),
-        );
+        setBItemList(BItemListAll.filter((i) => Number(i.bitem_pbqty) > 0));
         break;
       case "sales_bookings":
-        setBItemList(
-          BItemListAll.filter((i) => Number(i.bitem_sbqty) > 0),
-        );
+        setBItemList(BItemListAll.filter((i) => Number(i.bitem_sbqty) > 0));
         break;
       case "with_discount":
-        setBItemList(
-          BItemListAll.filter((i) => Number(i.bitem_sddsp) > 0),
-        );
+        setBItemList(BItemListAll.filter((i) => Number(i.bitem_sddsp) > 0));
         break;
       case "inactives":
         setBItemList(BItemListAll.filter((i) => i.bitem_actve === 0));
@@ -528,6 +515,207 @@ export const useProducts = () => {
     }
   };
 
+  //Formula
+  const [formDataFormula, setFormDataFormula] = useState(dataModelFormula);
+  const [formulaList, setFormulaList] = useState([]);
+  const handleFormula = async (rowData) => {
+    //console.log("rowData: ",rowData);
+    setFormData(rowData);
+    setCurrentView("formula");
+    setFormDataFormula({
+      frmla_mitem: rowData.id,
+      mitem_icode: rowData.items_icode,
+      mitem_iname: rowData.items_iname,
+      mitem_untnm: rowData.puofm_untnm,
+      frmla_mtmqt: 1,
+      frmla_stmqt: 1,
+      frmla_costp: 0,
+    });
+
+    try {
+      setIsBusy(true);
+      const response = await formulaAPI.getByItem({
+        frmla_users: user.users_users,
+        frmla_mitem: rowData.id,
+      });
+      //response = { message, data }
+      //console.log("response: " , response);
+      setFormulaList(response.data);
+      //setDataListAll(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "Formula",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+  const handleChangeFormula = (field, value) => {
+    setFormDataFormula((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate(
+      { ...formDataFormula, [field]: value },
+      tmib_frmla,
+    );
+    setErrors(newErrors);
+  };
+  const handleSaveFormula = async (e) => {
+    e.preventDefault();
+    try {
+      // Validate form
+      const newErrors = validate(formDataFormula, tmib_frmla);
+      setErrors(newErrors);
+      console.log("handleSave: " + JSON.stringify(newErrors));
+
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+
+      setIsBusy(true);
+      // Ensure id exists (for create)
+      const formDataNew = {
+        ...formDataFormula,
+        id: formDataFormula.id || generateGuid(),
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+
+      // console.log("formDataNew: " + JSON.stringify(formDataNew));
+      // return;
+
+      // Call API and get { message, data }
+      let response;
+      if (formDataFormula.id) {
+        response = await formulaAPI.update(formDataNew);
+      } else {
+        response = await formulaAPI.create(formDataNew);
+      }
+      //console.log("response: " + JSON.stringify(response));
+
+      // Update toast using API message
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Formula - ${formDataNew.mitem_iname} ${
+          response.success
+            ? formDataFormula.id
+              ? "modified"
+              : "created"
+            : formDataFormula.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
+
+      if (response.success) {
+        //in view mode in captured
+        handleFormula(formData);
+      }
+    } catch (error) {
+      console.error("Error saving data:", error);
+      notify({
+        severity: "error",
+        summary: "Formula",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleDeleteFormula = async (rowData) => {
+    try {
+      setIsBusy(true);
+
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+      const response = await formulaAPI.delete(formDataNew);
+
+      // Remove deleted item from local state
+      if (response.success) {
+        //in view mode in captured
+        handleFormula(formData);
+      }
+
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `Formula - ${rowData.sitem_iname} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      notify({
+        severity: "error",
+        summary: "Formula",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  //convert stock
+  const handleConvertStock = async (rowData) => {
+    //console.log("rowData: ",rowData);
+    setFormData(rowData);
+    setCurrentView("convert");
+    return;
+    setFormDataFormula({
+      frmla_mitem: rowData.id,
+      mitem_icode: rowData.items_icode,
+      mitem_iname: rowData.items_iname,
+      mitem_untnm: rowData.puofm_untnm,
+      frmla_mtmqt: 1,
+      frmla_stmqt: 1,
+      frmla_costp: 0,
+    });
+
+    try {
+      setIsBusy(true);
+      const response = await formulaAPI.getByItem({
+        frmla_users: user.users_users,
+        frmla_mitem: rowData.id,
+      });
+      //response = { message, data }
+      //console.log("response: " , response);
+      setFormulaList(response.data);
+      //setDataListAll(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "Formula",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
   return {
     isBusy,
     dataList,
@@ -552,5 +740,14 @@ export const useProducts = () => {
     BItemList,
     handleFilterDataList,
     handleFilterBusinessItems,
+    //Formula
+    handleFormula,
+    formDataFormula,
+    handleChangeFormula,
+    handleSaveFormula,
+    formulaList,
+    handleDeleteFormula,
+    //convert stock
+    handleConvertStock,
   };
 };

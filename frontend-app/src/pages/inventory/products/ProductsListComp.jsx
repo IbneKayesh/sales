@@ -10,7 +10,7 @@ import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 
-const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
+const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList, onFormula }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
 
@@ -138,6 +138,13 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList }) => {
 
   const action_BT = (rowData) => {
     let menuItems = [
+      {
+        label: "Stock Formula",
+        icon: "pi pi-list",
+        command: () => {
+          onFormula(rowData);
+        },
+      },      
       {
         label: "Delete",
         icon: "pi pi-trash text-red-400",

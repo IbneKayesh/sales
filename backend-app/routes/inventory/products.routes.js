@@ -269,6 +269,50 @@ router.post("/delete", async (req, res) => {
   }
 });
 
+router.post("/get-by-code", async (req, res) => {
+  try {
+    const { items_icode, items_users } = req.body;
+
+    // Validate input
+    if (!items_icode || !items_users) {
+      return res.json({
+        success: false,
+        message: "All fields are required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `select itm.*,unt.iuofm_untnm
+    from tmib_items itm
+    JOIN tmib_iuofm unt ON itm.items_puofm = unt.id
+    WHERE itm.items_icode = $1
+    AND itm.items_users = $2
+    AND itm.items_actve = TRUE`;
+    const params = [items_icode, items_users];
+
+    const row = await dbGet(sql, params, `Get Item for ${items_icode}`);
+
+    res.json({
+      success: true,
+      message: "Item fetched successfully",
+      //data: row || req.body, //don't return req.body
+      data: row,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+
+
+
+
 //BItem
 
 // get BItem
@@ -286,11 +330,14 @@ router.post("/get-bitem", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT id, bitem_users, bitem_items, bitem_bsins, bitem_lprat, bitem_dprat, bitem_mcmrp, bitem_sddsp, bitem_snote,
-    bitem_gstkq, bitem_bstkq, bitem_mnqty, bitem_mxqty, bitem_pbqty, bitem_sbqty, bitem_mpric, bitem_jnote, bitem_actve
-    FROM tmib_bitem
-    WHERE bitem_items = $1
-    AND bitem_bsins = $2`;
+    const sql = `SELECT btm.id, btm.bitem_users, btm.bitem_items, btm.bitem_bsins, btm.bitem_lprat,
+    btm.bitem_dprat, btm.bitem_mcmrp, btm.bitem_sddsp, btm.bitem_snote,
+    btm.bitem_gstkq, btm.bitem_bstkq, btm.bitem_mnqty, btm.bitem_mxqty,
+    btm.bitem_pbqty, btm.bitem_sbqty, btm.bitem_mpric, btm.bitem_jnote,
+    btm.bitem_actve
+    FROM tmib_bitem btm
+    WHERE btm.bitem_items = $1
+    AND btm.bitem_bsins = $2`;
     const params = [bitem_items, bitem_bsins];
 
     const row = await dbGet(sql, params, `Get BItem for ${bitem_items}`);
@@ -533,7 +580,12 @@ router.post("/get-business-items", async (req, res) => {
     bitm.bitem_dprat, bitm.bitem_mcmrp, bitm.bitem_sddsp, bitm.bitem_snote,
     bitm.bitem_gstkq, bitm.bitem_bstkq, bitm.bitem_istkq, bitm.bitem_mnqty, bitm.bitem_mxqty, bitm.bitem_pbqty, 
     bitm.bitem_sbqty, bitm.bitem_mpric, bitm.bitem_actve,
-    itm.items_iname, itm.items_idesc
+    itm.items_iname, itm.items_idesc,
+    EXISTS (
+      SELECT 1 
+      FROM tmib_frmla frl 
+      WHERE frl.frmla_mitem = bitm.bitem_items
+    ) AS bitem_frmla
     FROM tmib_bitem bitm
     LEFT JOIN tmib_items itm on bitm.bitem_items = itm.id
     WHERE bitm.bitem_bsins = $1

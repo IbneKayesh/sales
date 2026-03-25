@@ -129,6 +129,20 @@ export const useProductsSgd = () => {
     }
   };
 
+  const handleGetByCode = async (icode) => {
+    //console.log("mtrsf_bsins_to ", toBusinessId);
+    //return;
+    try {
+      const response = await productsAPI.getByCode({
+        items_icode: icode,
+        items_users: user.users_users,
+      });
+      //console.log("response",response);
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
+  };
 
 
   return {
@@ -139,5 +153,6 @@ export const useProductsSgd = () => {
     handleLoadSalesBookingItems,
     handleGetAllActivePII,
     handleGetAllActiveSII,
+    handleGetByCode,
   };
 };
