@@ -79,10 +79,37 @@ const formatDateForAPI = (date) => {
   return date;
 };
 
+function isValid24HourTime(time) {
+  // ^ start
+  // (?:[0-1]\d|2\d) → hours: 00–29
+  // : → separator
+  // [0-5]\d → minutes: 00–59
+  // : → separator
+  // [0-5]\d → seconds: 00–59
+  // $ end
+  const regex = /^(?:[0-1]\d|2\d):[0-5]\d:[0-5]\d$/;
+  return regex.test(time);
+}
+
+const formatMinutesToHHMM = (minutes) => {
+  if (minutes == null) return "00:00";
+
+  const hrs = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+
+  // Pad with leading zero
+  const paddedHrs = String(hrs).padStart(2, "0");
+  const paddedMins = String(mins).padStart(2, "0");
+
+  return `${paddedHrs}:${paddedMins}`;
+};
+
 export {
   currentDate,
   currentDateTime,
   formatDate,
   formatDateTime,
   formatDateForAPI,
+  isValid24HourTime,
+  formatMinutesToHHMM,
 };
