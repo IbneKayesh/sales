@@ -19,6 +19,7 @@ CREATE TABLE tmhb_wksft (
   wksft_mnhrs integer NOT NULL DEFAULT 0,
   wksft_crday boolean NOT NULL DEFAULT false,
   wksft_sgpnc boolean NOT NULL DEFAULT false,
+  wksft_ovrtm boolean NOT NULL DEFAULT false,
 
    -- default
   wksft_actve boolean NOT NULL DEFAULT true,

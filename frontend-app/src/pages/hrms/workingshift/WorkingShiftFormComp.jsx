@@ -190,6 +190,21 @@ const WorkingShiftFormComp = ({
         />
         <RequiredText text={errors.wksft_sgpnc} />
       </div>
+      <div className="col-12 md:col-2">
+        <label
+          htmlFor="wksft_ovrtm"
+          className="block font-bold mb-2 text-red-800"
+        >
+          {tmhb_wksft.wksft_ovrtm.label}
+        </label>
+        <InputSwitch
+          name="wksft_ovrtm"
+          checked={formData.wksft_ovrtm === true}
+          onChange={(e) => onChange("wksft_ovrtm", e.value ? true : false)}
+          className={`${errors.wksft_ovrtm ? "p-invalid" : ""}`}
+        />
+        <RequiredText text={errors.wksft_ovrtm} />
+      </div>
       <div className="col-12">
         <div className="flex flex-row-reverse flex-wrap">
           <Button

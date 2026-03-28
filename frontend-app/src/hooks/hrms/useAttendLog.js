@@ -5,6 +5,7 @@ import { generateGuid } from "@/utils/guid";
 import tmhb_atnlg from "@/models/hrms/tmhb_atnlg.json";
 import { useAuth } from "@/hooks/useAuth";
 import { useBusy, useNotification } from "@/hooks/useAppUI";
+import { currentDateTime } from "@/utils/datetime";
 
 const dataModel = generateDataModel(tmhb_atnlg, { edit_stop: 0 });
 const LS_KEY = "attendance_log_pending";
@@ -155,8 +156,8 @@ export const useAttendLog = () => {
       muser_id: user.users_users,
       suser_id: user.id,
       bsins_id: user.users_bsins,
-      atnlg_lgtim: new Date().toISOString(),
-      atnlg_actve: true,
+      atnlg_lgtim: currentDateTime(),
+      atnlg_trmnl: "Web",
       edit_stop: 0,
     };
 

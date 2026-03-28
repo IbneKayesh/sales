@@ -58,18 +58,26 @@ const WorkingShiftListComp = ({ dataList, onEdit, onDelete }) => {
   const wksft_btbst_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <div className="text-sm text-gray-500">Buffer: {rowData.wksft_btbst} mins</div>
+        <div className="text-sm text-gray-500">
+          Buffer: {rowData.wksft_btbst} mins
+        </div>
         <div className="text-md">{rowData.wksft_satim}</div>
-        <div className="text-sm text-gray-500">Grace: {rowData.wksft_gsmin} mins</div>
+        <div className="text-sm text-gray-500">
+          Grace: {rowData.wksft_gsmin} mins
+        </div>
       </div>
     );
   };
   const wksft_gemin_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <div className="text-sm text-gray-500">Grace: {rowData.wksft_gemin} mins</div>
+        <div className="text-sm text-gray-500">
+          Grace: {rowData.wksft_gemin} mins
+        </div>
         <div className="text-md">{rowData.wksft_entim}</div>
-        <div className="text-sm text-gray-500">Buffer: {rowData.wksft_btand} mins</div>
+        <div className="text-sm text-gray-500">
+          Buffer: {rowData.wksft_btand} mins
+        </div>
       </div>
     );
   };
@@ -87,34 +95,39 @@ const WorkingShiftListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const wksft_crday_BT = (rowData) => {
-    return (
-      <div className="flex flex-column">
-        {rowData.wksft_crday ? (
-          <span className="bg-green-500 text-white border-round px-2 py-1 text-sm">
-            Yes
-          </span>
-        ) : (
-          <span className="bg-red-500 text-white border-round px-2 py-1 text-sm">
-            No
-          </span>
-        )}
-      </div>
-    );
-  };
 
-  const wksft_sgpnc_BT = (rowData) => {
+  const others_BT = (rowData) => {
     return (
-      <div className="flex flex-column">
-        {rowData.wksft_sgpnc ? (
-          <span className="bg-green-500 text-white border-round px-2 py-1 text-sm">
-            Yes
-          </span>
-        ) : (
-          <span className="bg-red-500 text-white border-round px-2 py-1 text-sm">
-            No
-          </span>
-        )}
+      <div className="flex flex-column gap-2">
+        {/* First Row: Cross Day */}
+        <div className="flex align-items-center gap-2">
+          <span>Cross Day:</span>
+          {rowData.wksft_crday ? (
+            <i className="pi pi-check" style={{ color: "green" }}></i>
+          ) : (
+            <i className="pi pi-times" style={{ color: "red" }}></i>
+          )}
+        </div>
+
+        {/* Second Row: Single Punch */}
+        <div className="flex align-items-center gap-2">
+          <span>Single Punch:</span>
+          {rowData.wksft_sgpnc ? (
+            <i className="pi pi-check" style={{ color: "green" }}></i>
+          ) : (
+            <i className="pi pi-times" style={{ color: "red" }}></i>
+          )}
+        </div>
+
+        {/* Third Row: Overtime */}
+        <div className="flex align-items-center gap-2">
+          <span>Overtime:</span>
+          {rowData.wksft_ovrtm ? (
+            <i className="pi pi-check" style={{ color: "green" }}></i>
+          ) : (
+            <i className="pi pi-times" style={{ color: "red" }}></i>
+          )}
+        </div>
       </div>
     );
   };
@@ -168,8 +181,7 @@ const WorkingShiftListComp = ({ dataList, onEdit, onDelete }) => {
           header="Working Hours"
           body={wksft_wrhrs_BT}
         />
-        <Column field="wksft_crday" header="Crosday" body={wksft_crday_BT} />
-        <Column field="wksft_sgpnc" header="Single Punch" body={wksft_sgpnc_BT} />
+        <Column header="Others" body={others_BT} />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>

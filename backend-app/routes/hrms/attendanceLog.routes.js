@@ -25,6 +25,8 @@ router.post("/", async (req, res) => {
       AND tbl.atnlg_bsins = $2
       AND emp.emply_ecode IS NOT NULL
       AND TRIM(emp.emply_ecode) <> ''
+      AND tbl.atnlg_lgtim >= CURRENT_DATE - INTERVAL '2 days'
+      AND tbl.atnlg_lgtim < CURRENT_DATE + INTERVAL '1 day'
       UNION ALL
       SELECT tbl.*, 0 as edit_stop, emp.emply_ename
       FROM tmhb_atnlg tbl
@@ -33,6 +35,8 @@ router.post("/", async (req, res) => {
       AND tbl.atnlg_bsins = $2
       AND emp.emply_crdno IS NOT NULL
       AND TRIM(emp.emply_crdno) <> ''
+      AND tbl.atnlg_lgtim >= CURRENT_DATE - INTERVAL '2 days'
+      AND tbl.atnlg_lgtim < CURRENT_DATE + INTERVAL '1 day'
       ORDER BY atnlg_lgtim DESC`;
     const params = [atnlg_users, atnlg_bsins];
 

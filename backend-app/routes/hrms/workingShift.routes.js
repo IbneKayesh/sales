@@ -63,6 +63,7 @@ router.post("/create", async (req, res) => {
       wksft_mnhrs,
       wksft_crday,
       wksft_sgpnc,
+      wksft_ovrtm,
       muser_id,
       suser_id,
     } = req.body;
@@ -93,10 +94,10 @@ router.post("/create", async (req, res) => {
     //database action
     const sql = `INSERT INTO tmhb_wksft(id, wksft_users, wksft_bsins, wksft_sftnm, wksft_btbst,
     wksft_satim, wksft_gsmin, wksft_gemin, wksft_entim, wksft_btand, wksft_wrhrs,
-    wksft_mnhrs, wksft_crday, wksft_sgpnc, wksft_crusr, wksft_upusr)
+    wksft_mnhrs, wksft_crday, wksft_sgpnc, wksft_ovrtm, wksft_crusr, wksft_upusr)
     VALUES ($1, $2, $3, $4, $5,
     $6, $7, $8, $9, $10, $11,
-    $12, $13, $14, $15, $16)`;
+    $12, $13, $14, $15, $16, $17)`;
     const params = [
       id,
       wksft_users,
@@ -112,6 +113,7 @@ router.post("/create", async (req, res) => {
       wksft_mnhrs,
       wksft_crday,
       wksft_sgpnc,
+      wksft_ovrtm,
       suser_id,
       suser_id,
     ];
@@ -149,7 +151,8 @@ router.post("/update", async (req, res) => {
       wksft_wrhrs,
       wksft_mnhrs,
       wksft_crday,
-      wksft_sgpnc,
+      wksft_sgpnc,      
+      wksft_ovrtm,
       muser_id,
       suser_id,
     } = req.body;
@@ -190,10 +193,11 @@ router.post("/update", async (req, res) => {
     wksft_mnhrs = $9,
     wksft_crday = $10,
     wksft_sgpnc = $11,
-    wksft_upusr = $12,
+    wksft_ovrtm = $12, 
+    wksft_upusr = $13,
     wksft_updat = CURRENT_TIMESTAMP,
     wksft_rvnmr= wksft_rvnmr + 1
-    WHERE id = $13`;
+    WHERE id = $14`;
     const params = [
       wksft_sftnm,
       wksft_btbst,
@@ -206,6 +210,7 @@ router.post("/update", async (req, res) => {
       wksft_mnhrs,
       wksft_crday,
       wksft_sgpnc,
+      wksft_ovrtm,
       suser_id,
       id,
     ];
@@ -225,7 +230,6 @@ router.post("/update", async (req, res) => {
     });
   }
 });
-
 
 // delete
 router.post("/delete", async (req, res) => {
@@ -308,7 +312,5 @@ router.post("/get-all-active", async (req, res) => {
     });
   }
 });
-
-
 
 module.exports = router;

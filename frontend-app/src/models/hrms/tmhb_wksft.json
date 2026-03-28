@@ -118,5 +118,14 @@
     "placeholder": "Is single punch",
     "required": true,
     "default": 0
+  },
+  "wksft_ovrtm": {
+    "type": "number",
+    "label": "Overtime",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Is Overtime",
+    "required": true,
+    "default": 0
   }
 }
