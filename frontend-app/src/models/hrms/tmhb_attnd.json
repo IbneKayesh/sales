@@ -1,0 +1,143 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "attnd_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "attnd_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 6,
+    "placeholder": "Enter business id",
+    "required": false
+  },
+  "attnd_emply": {
+    "type": "string",
+    "label": "Employee",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter employee",
+    "required": true
+  },
+  "attnd_wksft": {
+    "type": "string",
+    "label": "Work Shift",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter work shift",
+    "required": true
+  },
+  "attnd_atdat": {
+    "type": "date",
+    "label": "Date",
+    "placeholder": "Select date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "attnd_dname": {
+    "type": "string",
+    "label": "Day Name",
+    "maxLength": 20,
+    "minLength": 1,
+    "placeholder": "Enter day name",
+    "required": true
+  },
+  "attnd_intim": {
+    "type": "time",
+    "label": "In Time",
+    "placeholder": "Enter in time",
+    "required": false
+  },
+  "attnd_stsin": {
+    "type": "string",
+    "label": "In Status",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter in status",
+    "required": false
+  },
+  "attnd_trmni": {
+    "type": "string",
+    "label": "In Terminal",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter in terminal",
+    "required": false
+  },
+  "attnd_outim": {
+    "type": "time",
+    "label": "Out Time",
+    "placeholder": "Enter out time",
+    "required": false
+  },
+  "attnd_stsou": {
+    "type": "string",
+    "label": "Out Status",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter out status",
+    "required": false
+  },
+  "attnd_trmno": {
+    "type": "string",
+    "label": "Out Terminal",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter out terminal",
+    "required": false
+  },
+  "attnd_totwh": {
+    "type": "number",
+    "label": "Total Work Hours",
+    "placeholder": "Enter work hours",
+    "required": false,
+    "default": 0
+  },
+  "attnd_totoh": {
+    "type": "number",
+    "label": "Total Overtime Hours",
+    "placeholder": "Enter overtime hours",
+    "required": false,
+    "default": 0
+  },
+  "attnd_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "attnd_sname": {
+    "type": "string",
+    "label": "Status Name",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter status name",
+    "required": false
+  },
+  "attnd_prsnt": {
+    "type": "boolean",
+    "label": "Present",
+    "required": false,
+    "default": false
+  },
+  "attnd_paybl": {
+    "type": "boolean",
+    "label": "Payable",
+    "required": false,
+    "default": false
+  }
+}

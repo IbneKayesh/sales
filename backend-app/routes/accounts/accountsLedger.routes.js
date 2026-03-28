@@ -301,9 +301,11 @@ router.post("/create-transfer", async (req, res) => {
       ledgr_bacts_to,
       ledgr_cntct_from,
       ledgr_cntct_to,
-      ledgr_pymod,
+      ledgr_pymod_from,
+      ledgr_pymod_to,
       ledgr_trdat,
-      ledgr_refno,
+      ledgr_refno_from,
+      ledgr_refno_to,
       ledgr_notes,
       ledgr_dbamt,
       ledgr_cramt,
@@ -321,9 +323,11 @@ router.post("/create-transfer", async (req, res) => {
       !ledgr_bacts_to ||
       !ledgr_cntct_from ||
       !ledgr_cntct_to ||
-      !ledgr_pymod ||
+      !ledgr_pymod_from ||
+      !ledgr_pymod_to ||
       !ledgr_trdat ||
-      !ledgr_refno ||
+      !ledgr_refno_from ||
+      !ledgr_refno_to ||
       !ledgr_dbamt ||
       !suser_id
     ) {
@@ -386,16 +390,16 @@ router.post("/create-transfer", async (req, res) => {
         head_out.id,
         ledgr_cntct_from,
         ledgr_bacts_from,
-        ledgr_pymod,
+        ledgr_pymod_from,
         ledgr_trdat,
-        ledgr_refno,
+        ledgr_refno_from,
         ledgr_notes,
         ledgr_dbamt,
         0,
         suser_id,
         suser_id,
       ],
-      label: `Created debit ${ledgr_refno}`,
+      label: `Created debit ${ledgr_refno_from}`,
     });
 
     //credit amount
@@ -414,18 +418,19 @@ router.post("/create-transfer", async (req, res) => {
         head_in.id,
         ledgr_cntct_to,
         ledgr_bacts_to,
-        ledgr_pymod,
+        ledgr_pymod_to,
         ledgr_trdat,
-        ledgr_refno,
+        ledgr_refno_to,
         ledgr_notes,
         0,
         ledgr_dbamt,
         suser_id,
         suser_id,
       ],
-      label: `Created credit ${ledgr_refno}`,
+      label: `Created credit ${ledgr_refno_to}`,
     });
 
+    //update debit balance
     scripts.push({
       sql: `UPDATE tmtb_bacts
       SET bacts_crbln = bacts_crbln - $1,
@@ -438,6 +443,7 @@ router.post("/create-transfer", async (req, res) => {
       label: `Updated debit balance for ${ledgr_bacts_from}`,
     });
 
+    //update credit balance
     scripts.push({
       sql: `UPDATE tmtb_bacts
       SET bacts_crbln = bacts_crbln + $1,

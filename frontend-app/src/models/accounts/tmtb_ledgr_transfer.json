@@ -55,7 +55,15 @@
     "placeholder": "Enter to contact id",
     "required": true
   },
-  "ledgr_pymod": {
+  "ledgr_pymod_from": {
+    "type": "string",
+    "label": "Payment mode",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter payment mode",
+    "required": true
+  },
+  "ledgr_pymod_to": {
     "type": "string",
     "label": "Payment mode",
     "maxLength": 50,
@@ -70,7 +78,15 @@
     "required": true,
     "default": "new Date() with local format"
   },
-  "ledgr_refno": {
+  "ledgr_refno_from": {
+    "type": "string",
+    "label": "Reference Number",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter reference number",
+    "required": true
+  },
+  "ledgr_refno_to": {
     "type": "string",
     "label": "Reference Number",
     "maxLength": 50,
@@ -91,6 +107,8 @@
     "label": "Debit Amount",
     "placeholder": "Enter debit amount",
     "required": true,
+    "maxLength": 999999999,
+    "minLength": 1,
     "default": "0"
   },
   "ledgr_cramt": {

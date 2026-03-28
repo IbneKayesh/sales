@@ -16,8 +16,15 @@ import {
   employeeStatusOptions,
 } from "@/utils/vtable";
 import { Dropdown } from "primereact/dropdown";
+import { useWorkingShiftSgd } from "@/hooks/hrms/useWorkingShiftSgd";
 
 const EmployeeFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
+  const { dataList: emply_wksftOptions, handleGetAllActiveWorkingShift } =
+    useWorkingShiftSgd();
+  useEffect(() => {
+    handleGetAllActiveWorkingShift();
+  }, []);
+
   return (
     <div className="grid">
       <div className="col-12 md:col-2">
@@ -415,10 +422,13 @@ const EmployeeFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
         <label htmlFor="emply_wksft" className="block font-bold mb-2">
           {tmhb_emply.emply_wksft.label}
         </label>
-        <InputText
+        <Dropdown
           name="emply_wksft"
           value={formData.emply_wksft}
-          onChange={(e) => onChange("emply_wksft", e.target.value)}
+          onChange={(e) => onChange("emply_wksft", e.value)}
+          options={emply_wksftOptions}
+          optionLabel="wksft_sftnm"
+          optionValue="id"
           className={`w-full ${errors.emply_wksft ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmhb_emply.emply_wksft.label}`}
         />

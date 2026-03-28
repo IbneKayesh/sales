@@ -96,10 +96,10 @@
     "type": "number",
     "label": "Minimum Working Minutes",
     "maxLength": 1440,
-    "minLength": 1,
+    "minLength": 0,
     "placeholder": "Enter minimum minutes",
     "required": true,
-    "default": "1"
+    "default": "0"
   },
   "wksft_crday": {
     "type": "number",

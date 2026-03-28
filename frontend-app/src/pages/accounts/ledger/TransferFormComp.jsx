@@ -25,8 +25,10 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
   }, []);
 
   useEffect(() => {
-    //|| formData.ledgr_cntct_from === formData.ledgr_cntct_to
-    if (formData.ledgr_bacts_from === formData.ledgr_bacts_to ) {
+    if (
+      formData.ledgr_bacts_from === formData.ledgr_bacts_to ||
+      formData.ledgr_cntct_from !== formData.ledgr_cntct_to
+    ) {
       setisSameAccount(true);
     } else {
       setisSameAccount(false);
@@ -35,9 +37,9 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
 
   return (
     <>
-      {JSON.stringify(formData)}
+      {/* {JSON.stringify(formData)} */}
       <div className="grid">
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="ledgr_bacts_from"
             className="block font-bold mb-2 text-red-800"
@@ -58,7 +60,7 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           />
           <RequiredText text={errors.ledgr_bacts_from} />
         </div>
-        <div className={`col-12 md:col-6`}>
+        <div className={`col-12 md:col-3`}>
           <label
             htmlFor="ledgr_cntct"
             className="block font-bold mb-2 text-red-800"
@@ -79,8 +81,45 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           />
           <RequiredText text={errors.ledgr_cntct_from} />
         </div>
+        <div className="col-12 md:col-2">
+          <label
+            htmlFor="ledgr_pymod_from"
+            className="block font-bold mb-2 text-red-800"
+          >
+            From Mode
+          </label>
+          <Dropdown
+            name="ledgr_pymod_from"
+            value={formData.ledgr_pymod_from}
+            options={paymentModeOptions}
+            optionLabel="label"
+            optionValue="value"
+            onChange={(e) => onChange("ledgr_pymod_from", e.value)}
+            className={`w-full ${errors.ledgr_pymod_from ? "p-invalid" : ""}`}
+            placeholder={`Select Mode`}
+            filter
+            showClear
+          />
+          <RequiredText text={errors.ledgr_pymod_from} />
+        </div>
+        <div className="col-12 md:col-4">
+          <label
+            htmlFor="ledgr_refno_from"
+            className="block font-bold mb-2 text-red-800"
+          >
+            From Ref
+          </label>
+          <InputText
+            name="ledgr_refno_from"
+            value={formData.ledgr_refno_from}
+            onChange={(e) => onChange("ledgr_refno_from", e.target.value)}
+            className={`w-full ${errors.ledgr_refno_from ? "p-invalid" : ""}`}
+            placeholder={`Enter Ledger Ref`}
+          />
+          <RequiredText text={errors.ledgr_refno_from} />
+        </div>
 
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <label
             htmlFor="ledgr_bacts_to"
             className="block font-bold mb-2 text-red-800"
@@ -101,7 +140,7 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           />
           <RequiredText text={errors.ledgr_bacts_to} />
         </div>
-        <div className={`col-12 md:col-6`}>
+        <div className={`col-12 md:col-3`}>
           <label
             htmlFor="ledgr_cntct"
             className="block font-bold mb-2 text-red-800"
@@ -124,25 +163,42 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
         </div>
         <div className="col-12 md:col-2">
           <label
-            htmlFor="ledgr_pymod"
+            htmlFor="ledgr_pymod_to"
             className="block font-bold mb-2 text-red-800"
           >
-            Mode
+            To Mode
           </label>
           <Dropdown
-            name="ledgr_pymod"
-            value={formData.ledgr_pymod}
+            name="ledgr_pymod_to"
+            value={formData.ledgr_pymod_to}
             options={paymentModeOptions}
             optionLabel="label"
             optionValue="value"
-            onChange={(e) => onChange("ledgr_pymod", e.value)}
-            className={`w-full ${errors.ledgr_pymod ? "p-invalid" : ""}`}
+            onChange={(e) => onChange("ledgr_pymod_to", e.value)}
+            className={`w-full ${errors.ledgr_pymod_to ? "p-invalid" : ""}`}
             placeholder={`Select Mode`}
             filter
             showClear
           />
-          <RequiredText text={errors.ledgr_pymod} />
+          <RequiredText text={errors.ledgr_pymod_to} />
         </div>
+        <div className="col-12 md:col-4">
+          <label
+            htmlFor="ledgr_refno_to"
+            className="block font-bold mb-2 text-red-800"
+          >
+            To Ref
+          </label>
+          <InputText
+            name="ledgr_refno_to"
+            value={formData.ledgr_refno_to}
+            onChange={(e) => onChange("ledgr_refno_to", e.target.value)}
+            className={`w-full ${errors.ledgr_refno_to ? "p-invalid" : ""}`}
+            placeholder={`Enter Ledger Ref`}
+          />
+          <RequiredText text={errors.ledgr_refno_to} />
+        </div>
+
         <div className="col-12 md:col-2">
           <label
             htmlFor="ledgr_trdat"
@@ -162,30 +218,12 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
             className={`w-full ${errors.ledgr_trdat ? "p-invalid" : ""}`}
             dateFormat="yy-mm-dd"
             placeholder={`Select Ledger Date`}
+            variant="filled"
           />
           <RequiredText text={errors.ledgr_trdat} />
         </div>
-        <div className="col-12 md:col-3">
-          <label
-            htmlFor="ledgr_refno"
-            className="block font-bold mb-2 text-red-800"
-          >
-            Ledger Ref
-          </label>
-          <InputText
-            name="ledgr_refno"
-            value={formData.ledgr_refno}
-            onChange={(e) => onChange("ledgr_refno", e.target.value)}
-            className={`w-full ${errors.ledgr_refno ? "p-invalid" : ""}`}
-            placeholder={`Enter Ledger Ref`}
-          />
-          <RequiredText text={errors.ledgr_refno} />
-        </div>
-        <div className="col-12 md:col-3">
-          <label
-            htmlFor="ledgr_notes"
-            className="block font-bold mb-2"
-          >
+        <div className="col-12 md:col-6">
+          <label htmlFor="ledgr_notes" className="block font-bold mb-2">
             Note
           </label>
           <InputText
@@ -197,7 +235,7 @@ const TransferFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
           />
           <RequiredText text={errors.ledgr_notes} />
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-4">
           <label
             htmlFor="ledgr_dbamt"
             className="block font-bold mb-2 text-red-800"

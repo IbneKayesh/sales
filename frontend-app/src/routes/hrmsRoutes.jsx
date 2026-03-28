@@ -7,6 +7,7 @@ const AttendLogPage = React.lazy(() => import("../pages/hrms/attendlog/AttendLog
 const LeaveEntitlePage = React.lazy(() => import("../pages/hrms/leaveentitle/LeaveEntitlePage.jsx"));
 const HolidaysPage = React.lazy(() => import("../pages/hrms/holidays/HolidaysPage.jsx"));
 const AttendStatusPage = React.lazy(() => import("../pages/hrms/attendstatus/AttendStatusPage.jsx"));
+const AttendancePage = React.lazy(() => import("../pages/hrms/attendance/AttendancePage.jsx"));
 
 const hrmsRoutes = (
   <>
@@ -16,6 +17,7 @@ const hrmsRoutes = (
     <Route path="hrms/setup/leave-entitle" element={<LeaveEntitlePage />} />
     <Route path="hrms/setup/attend-status" element={<AttendStatusPage />} />
     <Route path="hrms/attendance/attend-log" element={<AttendLogPage />} />
+    <Route path="hrms/attendance" element={<AttendancePage />} />
   </>
 );
 

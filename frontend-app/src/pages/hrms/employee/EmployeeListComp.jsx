@@ -134,7 +134,7 @@ const EmployeeListComp = ({ dataList, onEdit, onDelete }) => {
   const emply_wksft_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-sm">Shift: {rowData.emply_wksft}</span>
+        <span className="text-sm">Shift: {rowData.wksft_sftnm}</span>
         <span className="text-sm">Supervisor: {rowData.emply_supid}</span>
         <span className="text-sm">Notes: {rowData.emply_notes}</span>
         <span className="text-sm">

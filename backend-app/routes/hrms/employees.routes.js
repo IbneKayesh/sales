@@ -18,10 +18,11 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT emply.*, 0 as edit_stop
-      FROM tmhb_emply emply
-      WHERE emply.emply_users = $1
-      ORDER BY emply.emply_ecode`;
+    const sql = `SELECT emp.*, 0 as edit_stop, wksft.wksft_sftnm
+      FROM tmhb_emply emp
+      LEFT JOIN tmhb_wksft wksft ON emp.emply_wksft = wksft.id
+      WHERE emp.emply_users = $1
+      ORDER BY emp.emply_ecode`;
     const params = [emply_users];
 
     const rows = await dbGetAll(sql, params, `Get employee for ${emply_users}`);
