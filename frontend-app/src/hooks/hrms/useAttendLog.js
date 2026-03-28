@@ -26,7 +26,7 @@ const lsClear = () => {
   localStorage.removeItem(LS_KEY);
 };
 
-export const useAttendanceLog = () => {
+export const useAttendLog = () => {
   const { user } = useAuth();
   const { isBusy, setIsBusy } = useBusy();
   const { notify } = useNotification();
@@ -154,6 +154,7 @@ export const useAttendanceLog = () => {
       id: generateGuid(),
       muser_id: user.users_users,
       suser_id: user.id,
+      bsins_id: user.users_bsins,
       atnlg_lgtim: new Date().toISOString(),
       atnlg_actve: true,
       edit_stop: 0,

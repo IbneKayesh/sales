@@ -1,4 +1,4 @@
-import { useAttendanceLog } from "@/hooks/hrms/useAttendanceLog";
+import { useAttendLog } from "@/hooks/hrms/useAttendLog";
 import AttendLogListComp from "./AttendLogListComp";
 import AttendLogFormComp from "./AttendLogFormComp";
 import { Card } from "primereact/card";
@@ -6,7 +6,7 @@ import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import { Badge } from "primereact/badge";
 
-const AttendanceLogPage = () => {
+const AttendLogPage = () => {
   const {
     isBusy,
     dataList,
@@ -20,7 +20,7 @@ const AttendanceLogPage = () => {
     handleRefresh,
     handleSave,
     handleSync,
-  } = useAttendanceLog();
+  } = useAttendLog();
 
   const getHeader = () => {
     return (
@@ -77,4 +77,4 @@ const AttendanceLogPage = () => {
   );
 };
 
-export default AttendanceLogPage;
+export default AttendLogPage;
