@@ -532,6 +532,8 @@ export const useProducts = () => {
       frmla_costp: 0,
     });
 
+    setFormulaList([]);
+
     try {
       setIsBusy(true);
       const response = await formulaAPI.getByItem({
@@ -677,26 +679,36 @@ export const useProducts = () => {
   };
 
   //convert stock
+
   const handleConvertStock = async (rowData) => {
-    //console.log("rowData: ",rowData);
+    console.log("rowData: ", rowData);
     setFormData(rowData);
     setCurrentView("convert");
-    return;
+    // return;
     setFormDataFormula({
-      frmla_mitem: rowData.id,
+      cnstk_users: user.users_users,
+      cnstk_bsins: user.users_bsins,
+      cnstk_frmla: "",
+      cnstk_mitem: rowData.bitem_items,
+      cnstk_mtmqt: 1,
+      cnstk_mstkq: rowData.bitem_gstkq,
+      cnstk_sitem: "",
+      cnstk_stmqt: 0,
+      cnstk_cnqty: 0,
+      cnstk_sstkq: 0,
+      cnstk_crusr: "",
+      cnstk_upusr: "",
       mitem_icode: rowData.items_icode,
       mitem_iname: rowData.items_iname,
       mitem_untnm: rowData.puofm_untnm,
-      frmla_mtmqt: 1,
-      frmla_stmqt: 1,
-      frmla_costp: 0,
     });
+    setFormulaList([]);
 
     try {
       setIsBusy(true);
       const response = await formulaAPI.getByItem({
         frmla_users: user.users_users,
-        frmla_mitem: rowData.id,
+        frmla_mitem: rowData.bitem_items,
       });
       //response = { message, data }
       //console.log("response: " , response);
@@ -716,6 +728,21 @@ export const useProducts = () => {
       setIsBusy(false);
     }
   };
+  const handleChangeConvert = (field, value) => {
+    setFormDataFormula((prev) => ({ ...prev, [field]: value }));
+    // const newErrors = validate(
+    //   { ...formDataFormula, [field]: value },
+    //   tmib_frmla,
+    // );
+    //setErrors(newErrors);
+    setFormulaList((prev) =>
+      prev.map((item) => ({
+        ...item,
+        frmla_mtmqt: (item.frmla_stmqt || 0) * (value || 0),
+      })),
+    );
+  };
+
   return {
     isBusy,
     dataList,
@@ -749,5 +776,6 @@ export const useProducts = () => {
     handleDeleteFormula,
     //convert stock
     handleConvertStock,
+    handleChangeConvert,
   };
 };

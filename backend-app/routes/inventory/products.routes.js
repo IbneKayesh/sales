@@ -580,7 +580,9 @@ router.post("/get-business-items", async (req, res) => {
     bitm.bitem_dprat, bitm.bitem_mcmrp, bitm.bitem_sddsp, bitm.bitem_snote,
     bitm.bitem_gstkq, bitm.bitem_bstkq, bitm.bitem_istkq, bitm.bitem_mnqty, bitm.bitem_mxqty, bitm.bitem_pbqty, 
     bitm.bitem_sbqty, bitm.bitem_mpric, bitm.bitem_actve,
-    itm.items_iname, itm.items_idesc,
+    itm.items_icode, itm.items_iname, itm.items_idesc, itm.items_dfqty,
+    puofm.iuofm_untnm as puofm_untnm,
+    suofm.iuofm_untnm as suofm_untnm,    
     EXISTS (
       SELECT 1 
       FROM tmib_frmla frl 
@@ -588,6 +590,8 @@ router.post("/get-business-items", async (req, res) => {
     ) AS bitem_frmla
     FROM tmib_bitem bitm
     LEFT JOIN tmib_items itm on bitm.bitem_items = itm.id
+    JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
+    JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
     WHERE bitm.bitem_bsins = $1
     AND bitm.bitem_users = $2
     ORDER BY bitm.bitem_gstkq DESC, bitm.bitem_istkq DESC`;

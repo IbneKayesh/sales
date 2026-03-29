@@ -206,6 +206,7 @@ const BItemsComp = ({
             status={rowData.bitem_actve}
           />
         </span>
+        <div className="text-sm">{rowData.items_icode}</div>
         <span className="text-sm text-gray-400">{rowData.items_idesc}</span>
       </div>
     );

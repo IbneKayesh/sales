@@ -42,6 +42,7 @@ const ProductsPage = () => {
     handleDeleteFormula,
     //convert stock
     handleConvertStock,
+    handleChangeConvert
   } = useProducts();
 
   const getHeader = () => {
@@ -138,10 +139,9 @@ const ProductsPage = () => {
             isBusy={isBusy}
             errors={errors}
             formData={formDataFormula}
-            onChange={handleChangeFormula}
+            onChange={handleChangeConvert}
             onSave={handleSaveFormula}
             dataList={formulaList}
-            onDelete={handleDeleteFormula}
           />
         ) : (
           <BItemsComp
