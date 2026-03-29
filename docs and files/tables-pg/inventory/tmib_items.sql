@@ -20,8 +20,10 @@ CREATE TABLE tmib_items (
   items_trcks integer NOT NULL DEFAULT 0,
   items_sdvat decimal(4,2) DEFAULT 0.00,
   items_costp decimal(4,2) DEFAULT 0.00,
-  items_image VARCHAR(50) DEFAULT NULL,
   items_nofbi integer NOT NULL DEFAULT 0,
+  items_image VARCHAR(50) DEFAULT NULL,
+  items_alpur boolean NOT NULL DEFAULT true,
+  items_alsal boolean NOT NULL DEFAULT true,
 
 
   -- default

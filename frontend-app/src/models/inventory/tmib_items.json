@@ -95,7 +95,7 @@
     "minLength": 0,
     "placeholder": "Enter brand",
     "required": true
-  },  
+  },
   "items_itype": {
     "type": "string",
     "label": "Item Type",
@@ -130,5 +130,23 @@
     "placeholder": "Enter cost %",
     "required": true,
     "default": "10"
+  },
+  "items_alpur": {
+    "type": "number",
+    "label": "Allow Purchase",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Allow purchase",
+    "required": true,
+    "default": 0
+  },
+  "items_alsal": {
+    "type": "number",
+    "label": "Allow Sales",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Allow sales",
+    "required": true,
+    "default": 0
   }
 }

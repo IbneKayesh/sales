@@ -10,7 +10,13 @@ import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 
-const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList, onFormula }) => {
+const ProductsListComp = ({
+  dataList,
+  onEdit,
+  onDelete,
+  onFilterDataList,
+  onFormula,
+}) => {
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
 
@@ -27,7 +33,7 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList, onForm
     },
     { label: "Without HSN", value: "without_hsn", icon: "pi pi-barcode" },
     { label: "Inactives", value: "inactives", icon: "pi pi-trash" },
-    { label: "No Warehouse", value: "no_warehouse", icon: "pi pi-shop"}
+    { label: "No Warehouse", value: "no_warehouse", icon: "pi pi-shop" },
   ];
 
   const handleFilterChange = (e) => {
@@ -144,7 +150,7 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList, onForm
         command: () => {
           onFormula(rowData);
         },
-      },      
+      },
       {
         label: "Delete",
         icon: "pi pi-trash text-red-400",
@@ -173,13 +179,9 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList, onForm
     return (
       <div className="flex flex-column">
         <span className="text-xl">{rowData.items_icode}</span>
-        <span className="text-md text-gray-600">
-          {rowData.items_bcode}
-        </span>
-        <span className="text-sm text-gray-500">
-          {rowData.items_hscod}
-        </span>
-        </div>
+        <span className="text-md text-gray-600">{rowData.items_bcode}</span>
+        <span className="text-sm text-gray-500">{rowData.items_hscod}</span>
+      </div>
     );
   };
   const items_iname_BT = (rowData) => {
@@ -189,9 +191,7 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList, onForm
           text={rowData.items_iname}
           status={rowData.items_actve}
         />
-        <span className="text-sm text-gray-600">
-          {rowData.items_idesc}
-        </span>
+        <span className="text-sm text-gray-600">{rowData.items_idesc}</span>
         <span
           className={`text-sm ${
             rowData.items_nofbi > 0 ? "text-blue-500" : "text-red-500"
@@ -199,7 +199,7 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList, onForm
         >
           ({rowData.items_nofbi})
         </span>
-        </div>
+      </div>
     );
   };
   const items_puofm_BT = (rowData) => {
@@ -219,15 +219,33 @@ const ProductsListComp = ({ dataList, onEdit, onDelete, onFilterDataList, onForm
       </div>
     );
   };
-  
+
   const items_trcks_BT = (rowData) => {
     const stockMap = {
       0: <span className="text-red-500">⚊ No Stock</span>,
       1: <span>☰ Tracking Stock</span>,
       2: <span>☷ Bulk Stock</span>,
     };
-  
-    return stockMap[rowData.items_trcks] ?? "Unknown";
+
+    return (
+      <div className="flex flex-column">
+        <div className="text-md">
+          {stockMap[rowData.items_trcks] ?? "Unknown"}
+        </div>
+        <div className="text-sm">
+          Purchase:{" "}
+          <i
+            className={`pi ${rowData.items_alpur ? "pi-check-circle text-green-500" : "pi-times-circle text-red-400"}`}
+          />
+        </div>
+        <div className="text-sm">
+          Sales:{" "}
+          <i
+            className={`pi ${rowData.items_alsal ? "pi-check-circle text-green-500" : "pi-times-circle text-red-400"}`}
+          />
+        </div>
+      </div>
+    );
   };
 
   const items_sdvat_BT = (rowData) => {

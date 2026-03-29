@@ -68,11 +68,11 @@ router.post("/create", async (req, res) => {
       items_trcks,
       items_sdvat,
       items_costp,
+      items_alpur,
+      items_alsal,
       muser_id,
       suser_id,
     } = req.body;
-
-    
 
     // Validate input
     if (
@@ -95,10 +95,10 @@ router.post("/create", async (req, res) => {
     const sql = `INSERT INTO tmib_items
     (id, items_users, items_icode, items_bcode, items_hscod, items_iname, items_idesc, items_puofm, 
     items_dfqty, items_suofm, items_ctgry, items_brand, items_itype, items_trcks, items_sdvat, 
-    items_costp, items_crusr, items_upusr)
+    items_costp, items_alpur, items_alsal, items_crusr, items_upusr)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 
     $9, $10, $11, $12, $13, $14, $15,
-    $16, $17, $18)`;
+    $16, $17, $18, $19, $20)`;
     const params = [
       id,
       muser_id,
@@ -116,6 +116,8 @@ router.post("/create", async (req, res) => {
       items_trcks,
       items_sdvat,
       items_costp,
+      items_alpur,
+      items_alsal,
       suser_id,
       suser_id,
     ];
@@ -156,6 +158,8 @@ router.post("/update", async (req, res) => {
       items_trcks,
       items_sdvat,
       items_costp,
+      items_alpur,
+      items_alsal,
       suser_id,
     } = req.body;
 
@@ -193,8 +197,10 @@ router.post("/update", async (req, res) => {
     items_trcks = $12,
     items_sdvat = $13,
     items_costp = $14,
-    items_upusr = $15
-    WHERE id = $16`;
+    items_alpur = $15,
+    items_alsal = $16,
+    items_upusr = $17
+    WHERE id = $18`;
     const params = [
       items_icode,
       items_bcode,
@@ -210,6 +216,8 @@ router.post("/update", async (req, res) => {
       items_trcks,
       items_sdvat,
       items_costp,
+      items_alpur,
+      items_alsal,
       suser_id,
       id,
     ];
@@ -308,10 +316,6 @@ router.post("/get-by-code", async (req, res) => {
     });
   }
 });
-
-
-
-
 
 //BItem
 
@@ -620,7 +624,7 @@ router.post("/get-purchase-invoice-items", async (req, res) => {
     const { muser_id, bsins_id } = req.body;
 
     // Validate input
-    if (!muser_id|| !bsins_id) {
+    if (!muser_id || !bsins_id) {
       return res.json({
         success: false,
         message: "Business ID is required",
@@ -646,6 +650,7 @@ router.post("/get-purchase-invoice-items", async (req, res) => {
     AND itm.items_users = $1
     AND btm.bitem_bsins = $2
     AND btm.bitem_actve = TRUE
+    AND itm.items_alpur = TRUE
     ORDER BY itm.items_iname`;
     const params = [muser_id, bsins_id];
 
@@ -672,7 +677,7 @@ router.post("/get-sales-invoice-items", async (req, res) => {
     const { muser_id, bsins_id } = req.body;
 
     // Validate input
-    if (!muser_id|| !bsins_id) {
+    if (!muser_id || !bsins_id) {
       return res.json({
         success: false,
         message: "Business ID is required",
@@ -700,7 +705,8 @@ router.post("/get-sales-invoice-items", async (req, res) => {
     AND itm.items_users = $1
     AND btm.bitem_bsins = $2
     AND btm.bitem_actve = TRUE
-    AND btm.bitem_gstkq > 0 
+    AND btm.bitem_gstkq > 0
+    AND itm.items_alsal = TRUE
     UNION ALL
     SELECT itm.items_icode, itm.items_bcode, itm.items_hscod, itm.items_iname, itm.items_idesc,
     itm.items_puofm, itm.items_dfqty, itm.items_suofm, itm.items_ctgry, itm.items_brand,
@@ -712,7 +718,7 @@ router.post("/get-sales-invoice-items", async (req, res) => {
     cinv.id AS bitem_refid, cinv.cinvc_ohqty AS bitem_ohqty
     FROM tmpb_cinvc cinv
     JOIN tmpb_minvc minv ON cinv.cinvc_minvc = minv.id
-    JOIN tmib_items itm ON cinv.cinvc_items = itm.id AND itm.items_trcks = 1 AND itm.items_actve = TRUE
+    JOIN tmib_items itm ON cinv.cinvc_items = itm.id AND itm.items_trcks = 1 AND itm.items_actve = TRUE AND itm.items_alsal = TRUE
     JOIN tmib_bitem btm ON itm.id = btm.bitem_items AND btm.bitem_users = itm.items_users
     WHERE minv.minvc_users = $1
     AND minv.minvc_bsins = $2
@@ -740,19 +746,13 @@ router.post("/get-sales-invoice-items", async (req, res) => {
   }
 });
 
-
-
-
-
-
-
 //get-booking-items
 router.post("/get-purchase-booking-items", async (req, res) => {
   try {
     const { muser_id, bsins_id } = req.body;
 
     // Validate input
-    if (!muser_id|| !bsins_id) {
+    if (!muser_id || !bsins_id) {
       return res.json({
         success: false,
         message: "Business ID is required",
@@ -777,6 +777,7 @@ router.post("/get-purchase-booking-items", async (req, res) => {
     AND itm.items_users = $1
     AND btm.bitem_bsins = $2
     AND btm.bitem_actve = TRUE
+    AND itm.items_alpur = TRUE
     ORDER BY itm.items_iname`;
     const params = [muser_id, bsins_id];
 

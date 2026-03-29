@@ -12,6 +12,7 @@ import BFormComp from "./BFormComp";
 import { Chip } from "primereact/chip";
 import { useEffect } from "react";
 import RequiredText from "@/components/RequiredText";
+import { InputSwitch } from "primereact/inputswitch";
 
 const ProductsFormComp = ({
   isBusy,
@@ -48,10 +49,7 @@ const ProductsFormComp = ({
     <>
       <div className="grid">
         <div className="col-12 md:col-2">
-          <label
-            htmlFor="items_icode"
-            className="block font-bold mb-2"
-          >
+          <label htmlFor="items_icode" className="block font-bold mb-2">
             {tmib_items.items_icode.label}
           </label>
           <InputText
@@ -64,10 +62,7 @@ const ProductsFormComp = ({
           <RequiredText text={errors.items_icode} />
         </div>
         <div className="col-12 md:col-2">
-          <label
-            htmlFor="items_bcode"
-            className="block font-bold mb-2"
-          >
+          <label htmlFor="items_bcode" className="block font-bold mb-2">
             {tmib_items.items_bcode.label}
           </label>
           <InputText
@@ -80,10 +75,7 @@ const ProductsFormComp = ({
           <RequiredText text={errors.items_bcode} />
         </div>
         <div className="col-12 md:col-2">
-          <label
-            htmlFor="items_hscod"
-            className="block font-bold mb-2"
-          >
+          <label htmlFor="items_hscod" className="block font-bold mb-2">
             {tmib_items.items_hscod.label}
           </label>
           <InputText
@@ -112,10 +104,7 @@ const ProductsFormComp = ({
           <RequiredText text={errors.items_iname} />
         </div>
         <div className="col-12 md:col-2">
-          <label
-            htmlFor="items_idesc"
-            className="block font-bold mb-2"
-          >
+          <label htmlFor="items_idesc" className="block font-bold mb-2">
             {tmib_items.items_idesc.label}
           </label>
           <InputText
@@ -303,6 +292,31 @@ const ProductsFormComp = ({
           />
           <RequiredText text={errors.items_costp} />
         </div>
+        <div className="col-12 md:col-2">
+          <label htmlFor="items_alpur" className="block font-bold mb-2">
+            {tmib_items.items_alpur.label}
+          </label>
+          <InputSwitch
+            name="items_alpur"
+            checked={formData.items_alpur === true}
+            onChange={(e) => onChange("items_alpur", e.value ? true : false)}
+            className={`${errors.items_alpur ? "p-invalid" : ""}`}
+          />
+          <RequiredText text={errors.items_alpur} />
+        </div>
+        <div className="col-12 md:col-2">
+          <label htmlFor="items_alsal" className="block font-bold mb-2">
+            {tmib_items.items_alsal.label}
+          </label>
+          <InputSwitch
+            name="items_alsal"
+            checked={formData.items_alsal === true}
+            onChange={(e) => onChange("items_alsal", e.value ? true : false)}
+            className={`${errors.items_alsal ? "p-invalid" : ""}`}
+          />
+          <RequiredText text={errors.items_alsal} />
+        </div>
+
         <div className="col-12">
           <div className="flex flex-row-reverse flex-wrap">
             <Button
