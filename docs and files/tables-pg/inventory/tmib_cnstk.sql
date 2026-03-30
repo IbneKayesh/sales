@@ -7,14 +7,16 @@ CREATE TABLE tmib_cnstk (
 
   cnstk_users VARCHAR(50) NOT NULL,
   cnstk_bsins VARCHAR(50) NOT NULL,
-  cnstk_frmla VARCHAR(50) NOT NULL,
+  
   cnstk_mitem VARCHAR(50) NOT NULL,
   cnstk_mtmqt integer NOT NULL DEFAULT 1,
-  cnstk_mstkq integer NOT NULL DEFAULT 1,
+  cnstk_mstkq integer NOT NULL DEFAULT 0,
+
   cnstk_sitem VARCHAR(50) NOT NULL,
   cnstk_stmqt decimal(4,2) DEFAULT 1.00,
+  cnstk_sstkq decimal(4,2) DEFAULT 0.00,
+
   cnstk_cnqty decimal(4,2) DEFAULT 1.00,
-  cnstk_sstkq decimal(4,2) DEFAULT 1.00,
 
   -- default
   cnstk_actve boolean NOT NULL DEFAULT true,

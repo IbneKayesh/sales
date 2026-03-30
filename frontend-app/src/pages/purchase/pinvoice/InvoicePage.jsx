@@ -98,13 +98,13 @@ const InvoicePage = () => {
 
       {searchBoxShow && (
         <SearchComp
-          searchBoxData={searchBoxData}
-          handleChangeSearchInput={handleChangeSearchInput}
-          setSearchBoxShow={setSearchBoxShow}
+          formData={searchBoxData}
+          handleChange={handleChangeSearchInput}
           handleSearch={handleSearch}
           searchOptions={searchOptions}
         />
       )}
+      
       {currentView === "list" ? (
         <ListComp dataList={dataList} onEdit={handleEdit} />
       ) : (

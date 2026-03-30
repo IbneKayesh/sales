@@ -6,7 +6,15 @@ const { v4: uuidv4 } = require("uuid");
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { ledgr_users, ledgr_bsins } = req.body;
+    const {
+      ledgr_users,
+      ledgr_bsins,
+      ledgr_cntct,
+      ledgr_bacts,
+      ledgr_trdat,
+      ledgr_refno,
+      search_option,
+    } = req.body;
 
     // Validate input
     if (!ledgr_users || !ledgr_bsins) {
@@ -18,7 +26,7 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT dgr.*,bsns.bsins_bname, thed.trhed_hednm,
+    let sql = `SELECT dgr.*,bsns.bsins_bname, thed.trhed_hednm,
     cntc.cntct_cntnm, acts.bacts_bankn,
      dgr.ledgr_actve as edit_stop
       FROM tmtb_ledgr dgr
@@ -27,9 +35,59 @@ router.post("/", async (req, res) => {
       LEFT JOIN tmcb_cntct cntc ON dgr.ledgr_cntct = cntc.id
       LEFT JOIN tmtb_bacts acts ON dgr.ledgr_bacts = acts.id
       WHERE dgr.ledgr_users = $1
-      AND dgr.ledgr_bsins = $2
-      ORDER BY dgr.ledgr_crdat DESC`;
-    const params = [ledgr_users, ledgr_bsins];
+      AND dgr.ledgr_bsins = $2`;
+    let params = [ledgr_users, ledgr_bsins];
+
+    // Optional filters
+    if (ledgr_cntct) {
+      params.push(`%${ledgr_cntct}%`);
+      sql += ` AND cntc.cntct_cntnm ILIKE $${params.length}`;
+    }
+
+    if (ledgr_bacts) {
+      params.push(`%${ledgr_bacts}%`);
+      sql += ` AND acts.bacts_bankn ILIKE $${params.length}`;
+    }
+
+    if (ledgr_trdat) {
+      const dateObj = new Date(ledgr_trdat);
+      const formattedDate =
+        dateObj.getFullYear() +
+        "-" +
+        String(dateObj.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(dateObj.getDate()).padStart(2, "0");
+
+      // console.log("formattedDate", formattedDate);
+
+      params.push(formattedDate);
+      sql += ` AND DATE(dgr.ledgr_trdat) = $${params.length}`;
+    }
+
+    if (ledgr_refno) {
+      params.push(`%${ledgr_refno}%`);
+      sql += ` AND dgr.ledgr_refno LIKE $${params.length}`;
+    }
+
+    if (search_option) {
+      switch (search_option) {
+        case "last_3_days":
+          sql += ` AND dgr.ledgr_trdat >= CURRENT_DATE - INTERVAL '3 days'`;
+          break;
+        case "last_7_days":
+          sql += ` AND dgr.ledgr_trdat >= CURRENT_DATE - INTERVAL '7 days'`;
+          break;
+        default:
+          sql += ``;
+          break;
+      }
+      //params.push(`%${search_option}%`);
+    } else if (!search_option && params.length === 2) {
+      //default 3 days
+      sql += ` AND dgr.ledgr_trdat >= CURRENT_DATE - INTERVAL '3 days'`;
+    }
+
+    sql += ` ORDER BY dgr.ledgr_crdat DESC`;
 
     const rows = await dbGetAll(sql, params, `Get ledgers for ${ledgr_users}`);
     res.json({
@@ -492,7 +550,7 @@ router.post("/payment-advice", async (req, res) => {
     const sql_head = `SELECT hed.id, hed.trhed_hednm, COALESCE(ctg.id, 'none') AS exctg_trhed
           FROM tmtb_trhed hed
           LEFT JOIN tmtb_exctg ctg ON ctg.exctg_trhed = hed.id
-          WHERE hed.id = $1`
+          WHERE hed.id = $1`;
     const params_head = [payad_srcnm];
     const head = await dbGet(sql_head, params_head);
 
@@ -508,7 +566,7 @@ router.post("/payment-advice", async (req, res) => {
     //return;
 
     //database action
-    
+
     let sql = "";
     if (head.trhed_hednm === "Purchase Invoice") {
       sql = `SELECT pbl.paybl_users AS payad_users, pbl.paybl_bsins AS payad_bsins,

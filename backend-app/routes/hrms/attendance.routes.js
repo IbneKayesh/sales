@@ -18,11 +18,14 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT tbl.*, 0 as edit_stop
-      FROM tmhb_attnd tbl
-      WHERE tbl.attnd_users = $1
-      AND tbl.attnd_bsins = $2
-      ORDER BY tbl.attnd_atdat DESC, tbl.attnd_emply ASC`;
+    const sql = `SELECT tnd.*,  0 as edit_stop,
+      emp.emply_ecode, emp.emply_ename, wks.wksft_sftnm
+      FROM tmhb_attnd tnd
+      JOIN tmhb_emply emp ON tnd.attnd_emply = emp.id AND tnd.attnd_users = emp.emply_users AND tnd.attnd_bsins = emp.emply_bsins
+      JOIN tmhb_wksft wks ON tnd.attnd_wksft = wks.id AND tnd.attnd_users = wks.wksft_users AND tnd.attnd_bsins = wks.wksft_bsins
+      WHERE tnd.attnd_users = $1
+      AND tnd.attnd_bsins = $2
+      ORDER BY tnd.attnd_atdat DESC, tnd.attnd_emply ASC`;
     const params = [attnd_users, attnd_bsins];
 
     const rows = await dbGetAll(

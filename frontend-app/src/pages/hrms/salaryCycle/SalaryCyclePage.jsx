@@ -1,12 +1,11 @@
+import { useSalaryCycle } from "@/hooks/hrms/useSalaryCycle";
+import SalaryCycleListComp from "./SalaryCycleListComp";
+import SalaryCycleFormComp from "./SalaryCycleFormComp";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import { useExpenses } from "@/hooks/accounts/useExpenses";
-import ExpensesListComp from "./ExpensesListComp";
-import ExpensesFormComp from "./ExpensesFormComp";
-import SearchComp from "./SearchComp";
 
-const ExpensesPage = () => {
+const SalaryCyclePage = () => {
   const {
     isBusy,
     dataList,
@@ -20,18 +19,8 @@ const ExpensesPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-    //search
-    searchBoxShow,
-    setSearchBoxShow,
-    searchBoxData,
-    handleChangeSearchInput,
-    handleSearch,
-    searchOptions,
-  } = useExpenses();
+  } = useSalaryCycle();
 
-  const handleSearchBox = () => {
-    setSearchBoxShow(!searchBoxShow);
-  };
   const getHeader = () => {
     const isList = currentView === "list";
 
@@ -39,20 +28,20 @@ const ExpensesPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Expenses List"
+            ? "Salary Cycle List"
             : formData.id
-              ? "Edit Expenses"
-              : "New Expenses"}
+              ? "Edit Salary Cycle"
+              : "New Salary Cycle"}
         </h3>
 
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
-              label={searchBoxShow ? "Hide" : "Search"}
-              icon={searchBoxShow ? "pi pi-filter-slash" : "pi pi-search"}
+              label="Refresh"
+              icon="pi pi-refresh"
               size="small"
               severity="secondary"
-              onClick={handleSearchBox}
+              onClick={handleRefresh}
               disabled={!isList}
             />
             <Button
@@ -80,24 +69,14 @@ const ExpensesPage = () => {
   return (
     <>
       <Card header={getHeader()} className="border-round p-3">
-        
-        {searchBoxShow && (
-          <SearchComp
-            formData={searchBoxData}
-            handleChange={handleChangeSearchInput}
-            handleSearch={handleSearch}
-            searchOptions={searchOptions}
-          />
-        )}
-
         {currentView === "list" ? (
-          <ExpensesListComp
+          <SalaryCycleListComp
             dataList={dataList}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
         ) : (
-          <ExpensesFormComp
+          <SalaryCycleFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
@@ -110,4 +89,4 @@ const ExpensesPage = () => {
   );
 };
 
-export default ExpensesPage;
+export default SalaryCyclePage;

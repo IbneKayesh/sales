@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import { useToast } from "@/hooks/useAppUI";
 
 const FormulaFormComp = ({
   isBusy,
@@ -17,10 +18,12 @@ const FormulaFormComp = ({
   dataList,
   onDelete,
 }) => {
+  const { showToast } = useToast();
   const { dataList: itemList, handleGetByCode } = useProductsSgd();
 
   useEffect(() => {
     if (formData.mitem_icode === formData.sitem_icode) {
+      showToast("error", "Error", "Unable to add same code");
       ClearSupportItem();
     } else if (formData.sitem_icode) {
       handleGetByCode(formData.sitem_icode);
@@ -40,7 +43,7 @@ const FormulaFormComp = ({
 
   const ClearSupportItem = () => {
     onChange("frmla_sitem", "");
-    //onChange("sitem_icode", "");
+    onChange("sitem_icode", "");
     onChange("sitem_iname", "");
     onChange("sitem_untnm", "");
   };
@@ -215,9 +218,10 @@ const FormulaFormComp = ({
         showGridlines
       >
         <Column field="frmla_mtmqt" header="Master Qty" sortable />
-        <Column field="sitem_iname" header="Support Item" sortable />
-        <Column field="sitem_untnm" header="Support Unit" sortable />
-        <Column field="frmla_stmqt" header="Support Qty" sortable />
+        <Column field="sitem_icode" header="Associate Code" sortable />
+        <Column field="sitem_iname" header="Associate Name" sortable />
+        <Column field="sitem_untnm" header="Associate Unit" sortable />
+        <Column field="frmla_stmqt" header="Associate Qty" sortable />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </>

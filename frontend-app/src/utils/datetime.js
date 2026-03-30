@@ -104,6 +104,20 @@ const formatMinutesToHHMM = (minutes) => {
   return `${paddedHrs}:${paddedMins}`;
 };
 
+const noOfDays = (fromdate, todate) => {
+  if (!fromdate || !todate) return null;
+
+  const start = new Date(fromdate);
+  const end = new Date(todate);
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
+
+  const diffTime = end - start;
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+  return Math.floor(diffDays) + 1; // or Math.ceil depending on your need
+};
+
 export {
   currentDate,
   currentDateTime,
@@ -112,4 +126,5 @@ export {
   formatDateForAPI,
   isValid24HourTime,
   formatMinutesToHHMM,
+  noOfDays
 };

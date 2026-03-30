@@ -14,6 +14,47 @@ const ConvertFormComp = ({
   onSave,
   dataList,
 }) => {
+  const mitem_iname_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <div className="text-md">{rowData.mitem_icode}</div>
+        <div className="text-sm">{rowData.mitem_iname}</div>
+      </div>
+    );
+  };
+
+  const cnstk_mtmqt_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <div className="text-md">Recipe: {rowData.frmla_mtmqt}</div>
+        <div className="text-md font-bold">Required: {rowData.cnstk_mtmqt}</div>
+        <div className="text-md">Stock: {rowData.cnstk_mstkq}</div>
+      </div>
+    );
+  };
+
+  const sitem_iname_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <div className="text-md">{rowData.sitem_icode}</div>
+        <div className="text-sm">{rowData.sitem_iname}</div>
+      </div>
+    );
+  };
+
+  const cnstk_stmqt_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <div className="text-md">Recipe: {rowData.frmla_stmqt}</div>
+        <div
+          className={`text-md font-bold ${rowData.cnstk_stmqt > rowData.cnstk_sstkq && "text-red-500"}`}
+        >
+          Required: {rowData.cnstk_stmqt}
+        </div>
+        <div className="text-md">Stock: {rowData.cnstk_sstkq}</div>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -77,19 +118,19 @@ const ConvertFormComp = ({
           <RequiredText text={errors.cnstk_mstkq} />
         </div>
         <div className="col-12 md:col-2">
-          <label htmlFor="cnstk_mtmqt" className="block font-bold mb-2">
-            Master Item Qty
+          <label htmlFor="cnstk_cnqty" className="block font-bold mb-2">
+            Convert Stock Qty
           </label>
           <InputNumber
-            name="cnstk_mtmqt"
-            value={formData.cnstk_mtmqt}
-            onValueChange={(e) => onChange("cnstk_mtmqt", e.value)}
+            name="cnstk_cnqty"
+            value={formData.cnstk_cnqty}
+            onValueChange={(e) => onChange("cnstk_cnqty", e.value)}
             className="w-full"
             inputClassName="w-10rem"
-            placeholder="Master Qty"
+            placeholder="Convert Qty"
             minFractionDigits={0}
           />
-          <RequiredText text={errors.cnstk_mtmqt} />
+          <RequiredText text={errors.cnstk_cnqty} />
         </div>
       </div>
       <div className="col-12">
@@ -102,7 +143,7 @@ const ConvertFormComp = ({
             severity="success"
             size="small"
             loading={isBusy}
-            disabled={!formData.frmla_sitem}
+            disabled={(formData.cnstk_cnqty || 0) < 1}
           />
         </div>
       </div>
@@ -113,10 +154,31 @@ const ConvertFormComp = ({
         rowHover
         showGridlines
       >
-        <Column field="sitem_iname" header="Support Item" sortable />
-        <Column field="sitem_untnm" header="Support Unit" sortable />
-        <Column field="frmla_stmqt" header="Support Qty" sortable />
-        <Column field="frmla_mtmqt" header="Required Qty" sortable />
+        <Column
+          field="mitem_iname"
+          header="Master Item"
+          body={mitem_iname_BT}
+          sortable
+        />
+        <Column
+          field="cnstk_mtmqt"
+          header="Master Qty"
+          body={cnstk_mtmqt_BT}
+          sortable
+        />
+        <Column
+          field="sitem_iname"
+          header="Associate Item"
+          body={sitem_iname_BT}
+          sortable
+        />
+        <Column
+          field="cnstk_stmqt"
+          header="Associate Qty"
+          body={cnstk_stmqt_BT}
+          sortable
+        />
+        <Column field="cnstk_cnqty" header="Convert Qty" sortable />
       </DataTable>
     </>
   );

@@ -6,7 +6,14 @@ const { v4: uuidv4 } = require("uuid");
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { exptr_users, exptr_bsins } = req.body;
+    const {
+      exptr_users,
+      exptr_bsins,
+      exptr_exctg,
+      exptr_trdat,
+      exptr_trnte,
+      search_option,
+    } = req.body;
 
     // Validate input
     if (!exptr_users || !exptr_bsins) {
@@ -18,13 +25,65 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT ptr.*, 0 as edit_stop, exctg.exctg_cname
+    let sql = `SELECT ptr.*, 0 as edit_stop, exctg.exctg_cname
       FROM tmtb_exptr ptr
       LEFT JOIN tmtb_exctg exctg ON ptr.exptr_exctg = exctg.id
       WHERE ptr.exptr_users = $1
-      AND ptr.exptr_bsins = $2
-      ORDER BY ptr.exptr_trdat`;
-    const params = [exptr_users, exptr_bsins];
+      AND ptr.exptr_bsins = $2`;
+    let params = [exptr_users, exptr_bsins];
+
+    // Optional filters
+    if (exptr_exctg) {
+      params.push(`%${exptr_exctg}%`);
+      sql += ` AND exctg.exctg_cname ILIKE $${params.length}`;
+    }
+
+    //console.log("params", minvc_trdat);
+    if (exptr_trdat) {
+      const dateObj = new Date(exptr_trdat);
+      const formattedDate =
+        dateObj.getFullYear() +
+        "-" +
+        String(dateObj.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(dateObj.getDate()).padStart(2, "0");
+
+      // console.log("formattedDate", formattedDate);
+
+      params.push(formattedDate);
+      sql += ` AND DATE(ptr.exptr_trdat) = $${params.length}`;
+    }
+
+    if (exptr_trnte) {
+      params.push(`%${exptr_trnte}%`);
+      sql += ` AND ptr.exptr_trnte LIKE $${params.length}`;
+    }
+
+    if (search_option) {
+      switch (search_option) {
+        case "last_3_days":
+          sql += ` AND ptr.exptr_trdat >= CURRENT_DATE - INTERVAL '3 days'`;
+          break;
+        case "last_7_days":
+          sql += ` AND ptr.exptr_trdat >= CURRENT_DATE - INTERVAL '7 days'`;
+          break;
+        case "last_15_days":
+          sql += ` AND ptr.exptr_trdat >= CURRENT_DATE - INTERVAL '15 days'`;
+          break;
+        default:
+          sql += ``;
+          break;
+          ``;
+      }
+      //params.push(`%${search_option}%`);
+    } else if (!search_option && params.length === 2) {
+      //default 3 days
+      sql += ` AND ptr.exptr_trdat >= CURRENT_DATE - INTERVAL '3 days'`;
+    }
+
+    sql += ` ORDER BY ptr.exptr_trdat DESC`;
+
+    //console.log("sql ", req.body);
 
     const rows = await dbGetAll(sql, params, `Get expenses for ${exptr_bsins}`);
     res.json({

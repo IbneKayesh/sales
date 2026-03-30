@@ -217,6 +217,13 @@ const pyadv_srcnmOptions = [
   { label: "Purchase Invoice", value: "Purchase Invoice" },
 ];
 
+const scyle_gnameOptions = [
+  { label: "Monthly", value: "Monthly" },
+  { label: "Fortnightly", value: "Fortnightly" },
+  { label: "Weekly", value: "Weekly" },
+  { label: "Daily", value: "Daily" },
+];
+
 export {
   getListByTransHead,
   getTransHeadList,
@@ -244,6 +251,7 @@ export {
   trhed_grpnmOptions,
   trhed_grtypOptions,
   pyadv_srcnmOptions,
+  scyle_gnameOptions,
 };
 
 /*

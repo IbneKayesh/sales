@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBusy, useNotification, useToast } from "@/hooks/useAppUI";
 import { formulaAPI } from "@/api/inventory/formulaAPI";
 import tmib_frmla from "@/models/inventory/tmib_frmla.json";
+import tmib_cnstk from "@/models/inventory/tmib_cnstk.json";
 
 const dataModel = generateDataModel(tmib_items, { edit_stop: 0 });
 const dataModelBItem = generateDataModel(tmib_bitem, { edit_stop: 0 });
@@ -515,6 +516,20 @@ export const useProducts = () => {
     }
   };
 
+  const handleOtherFilterDataList =  (filterType) => {
+
+    //console.log("filterType",filterType)
+        switch (filterType) {
+      case "all":
+        setDataList(dataListAll);
+        break;
+      default:
+        setDataList(dataListAll.filter((i) => i.items_ctgry === filterType));
+        break;
+    }
+  }
+
+
   //Formula
   const [formDataFormula, setFormDataFormula] = useState(dataModelFormula);
   const [formulaList, setFormulaList] = useState([]);
@@ -524,12 +539,16 @@ export const useProducts = () => {
     setCurrentView("formula");
     setFormDataFormula({
       frmla_mitem: rowData.id,
+      frmla_mtmqt: 1,
+      frmla_sitem: "",
+      frmla_stmqt: 1,
+      frmla_costp: 0,
+      frmla_inote: "",
+      //options
+
       mitem_icode: rowData.items_icode,
       mitem_iname: rowData.items_iname,
       mitem_untnm: rowData.puofm_untnm,
-      frmla_mtmqt: 1,
-      frmla_stmqt: 1,
-      frmla_costp: 0,
     });
 
     setFormulaList([]);
@@ -680,24 +699,21 @@ export const useProducts = () => {
 
   //convert stock
 
-  const handleConvertStock = async (rowData) => {
-    console.log("rowData: ", rowData);
+  const handleConvertStock = async (rowData, bsins_id) => {
+    //console.log("rowData: ", rowData, bsins_id);
     setFormData(rowData);
     setCurrentView("convert");
     // return;
     setFormDataFormula({
       cnstk_users: user.users_users,
       cnstk_bsins: user.users_bsins,
-      cnstk_frmla: "",
       cnstk_mitem: rowData.bitem_items,
-      cnstk_mtmqt: 1,
+      cnstk_mtmqt: 1, //from DB
       cnstk_mstkq: rowData.bitem_gstkq,
-      cnstk_sitem: "",
-      cnstk_stmqt: 0,
-      cnstk_cnqty: 0,
-      cnstk_sstkq: 0,
-      cnstk_crusr: "",
-      cnstk_upusr: "",
+      cnstk_sitem: "list-item", //from DB
+      cnstk_stmqt: 1, //from DB
+      cnstk_sstkq: 0, //from DB
+      cnstk_cnqty: 0, //from DB
       mitem_icode: rowData.items_icode,
       mitem_iname: rowData.items_iname,
       mitem_untnm: rowData.puofm_untnm,
@@ -706,12 +722,14 @@ export const useProducts = () => {
 
     try {
       setIsBusy(true);
-      const response = await formulaAPI.getByItem({
+      const response = await formulaAPI.getByItemConvert({
         frmla_users: user.users_users,
         frmla_mitem: rowData.bitem_items,
+        bitem_bsins: bsins_id,
       });
+
       //response = { message, data }
-      //console.log("response: " , response);
+      //console.log("response: ", response);
       setFormulaList(response.data);
       //setDataListAll(response.data);
     } catch (error) {
@@ -728,6 +746,7 @@ export const useProducts = () => {
       setIsBusy(false);
     }
   };
+
   const handleChangeConvert = (field, value) => {
     setFormDataFormula((prev) => ({ ...prev, [field]: value }));
     // const newErrors = validate(
@@ -736,11 +755,98 @@ export const useProducts = () => {
     // );
     //setErrors(newErrors);
     setFormulaList((prev) =>
-      prev.map((item) => ({
-        ...item,
-        frmla_mtmqt: (item.frmla_stmqt || 0) * (value || 0),
-      })),
+      prev.map((item) => {
+        let cnstk_stmqt = (item.frmla_stmqt || 0) * (value || 0);
+        const cnstk_mtmqt = (item.frmla_mtmqt || 0) * (value || 0);
+
+        // Clamp to available stock
+        // if (cnstk_stmqt > (item.cnstk_sstkq || 0)) {
+        //   cnstk_stmqt = 0; // item.cnstk_sstkq || 0;
+        // }
+
+        return {
+          ...item,
+          cnstk_mtmqt: value,
+          cnstk_stmqt,
+          cnstk_cnqty: cnstk_mtmqt,
+        };
+      }),
     );
+  };
+
+  const handleSaveConvertStock = async (e) => {
+    e.preventDefault();
+    try {
+      //console.log("formDataFormula: " + JSON.stringify(formDataFormula));
+      //console.log("formulaList: " + JSON.stringify(formulaList));
+
+      // Validate form
+      const newErrors = validate(formDataFormula, tmib_cnstk);
+      setErrors(newErrors);
+      console.log("handleSave: " + JSON.stringify(newErrors));
+
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+      //return;
+      setIsBusy(true);
+      // Ensure id exists (for create)
+      const formDataNew = {
+        ...formDataFormula,
+        id: formDataFormula.id || generateGuid(),
+        muser_id: user.users_users,
+        suser_id: user.id,
+        tmib_cnstk: formulaList,
+      };
+
+      // console.log("formDataNew: " + JSON.stringify(formDataNew));
+      // return;
+
+      // Call API and get { message, data }
+      let response;
+      if (formDataFormula.id) {
+        //response = await formulaAPI.update(formDataNew);
+      } else {
+        response = await formulaAPI.convertStock(formDataNew);
+      }
+      //console.log("response: " + JSON.stringify(response));
+
+      // Update toast using API message
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Formula - ${formDataNew.mitem_iname} ${
+          response.success
+            ? formDataFormula.id
+              ? "modified"
+              : "created"
+            : formDataFormula.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
+
+      if (response.success) {
+        //in view mode in captured
+        setFormDataFormula({});
+        setFormulaList([]);
+      }
+    } catch (error) {
+      console.error("Error saving data:", error);
+      notify({
+        severity: "error",
+        summary: "Formula",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   return {
@@ -767,6 +873,7 @@ export const useProducts = () => {
     BItemList,
     handleFilterDataList,
     handleFilterBusinessItems,
+    handleOtherFilterDataList,
     //Formula
     handleFormula,
     formDataFormula,
@@ -777,5 +884,6 @@ export const useProducts = () => {
     //convert stock
     handleConvertStock,
     handleChangeConvert,
+    handleSaveConvertStock,
   };
 };

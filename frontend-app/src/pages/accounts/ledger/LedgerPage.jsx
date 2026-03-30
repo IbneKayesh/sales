@@ -7,6 +7,7 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
 import AdviceListComp from "./AdviceListComp";
+import SearchComp from "./SearchComp";
 
 const LedgerPage = () => {
   const {
@@ -37,8 +38,18 @@ const LedgerPage = () => {
     handleAddNewTransfer,
     handleSaveTransfer,
     handleChangeTransfer,
+    //search
+    searchBoxShow,
+    setSearchBoxShow,
+    searchBoxData,
+    handleChangeSearchInput,
+    handleSearch,
+    searchOptions,
   } = useLedger();
 
+  const handleSearchBox = () => {
+    setSearchBoxShow(!searchBoxShow);
+  };
   const getHeader = () => {
     const isList = currentView === "list";
 
@@ -51,11 +62,11 @@ const LedgerPage = () => {
         <div className="flex gap-2">
           <ButtonGroup>
             <Button
-              label="Refresh"
-              icon="pi pi-refresh"
+              label={searchBoxShow ? "Hide" : "Search"}
+              icon={searchBoxShow ? "pi pi-filter-slash" : "pi pi-search"}
               size="small"
               severity="secondary"
-              onClick={handleRefresh}
+              onClick={handleSearchBox}
               disabled={!isList}
             />
             <Button
@@ -98,7 +109,16 @@ const LedgerPage = () => {
 
   return (
     <>
-      <Card header={getHeader()} className="bg-dark-200 border-round p-3">
+      <Card header={getHeader()} className="border-round p-3">
+        {searchBoxShow && (
+          <SearchComp
+            formData={searchBoxData}
+            handleChange={handleChangeSearchInput}
+            handleSearch={handleSearch}
+            searchOptions={searchOptions}
+          />
+        )}
+
         {currentView === "list" ? (
           <LedgerListComp
             dataList={dataList}

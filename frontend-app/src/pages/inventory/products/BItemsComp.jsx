@@ -9,6 +9,7 @@ import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { SplitButton } from "primereact/splitbutton";
+import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
 
 const BItemsComp = ({
   onFetchBusinessItems,
@@ -188,7 +189,7 @@ const BItemsComp = ({
             size="small"
             tooltip="Convert Stock"
             tooltipOptions={{ position: "left" }}
-            onClick={() => onConvertStock(rowData)}
+            onClick={() => onConvertStock(rowData, selBusinessId)}
           />
         ) : (
           <span className="p-button bg-gray-500"></span>
@@ -260,9 +261,11 @@ const BItemsComp = ({
           text={"Tracking: " + Number(rowData.bitem_istkq).toFixed(2)}
         />
         <span className="font-bold">
-          <ZeroRowCell
-            value={totalStock}
-            text={"Total: " + Number(totalStock).toFixed(2)}
+          <ConvertedQtyComponent
+            qty={totalStock}
+            dfQty={rowData.items_dfqty}
+            pname={rowData.puofm_untnm}
+            sname={rowData.suofm_untnm}
           />
         </span>
       </div>
@@ -318,8 +321,8 @@ const BItemsComp = ({
             icon="pi pi-home"
             className={
               selBusinessId === business.id
-                ? "bg-gray-800 text-white mr-2"
-                : "bg-gray-300 text-gray-600 mr-2"
+                ? "bg-blue-800 text-white mr-2"
+                : "bg-blue-300 text-white mr-2"
             }
             value={business.bsins_bname}
             style={{ cursor: "pointer" }}

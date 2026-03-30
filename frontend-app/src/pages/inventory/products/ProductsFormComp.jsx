@@ -342,8 +342,8 @@ const ProductsFormComp = ({
               icon="pi pi-home"
               className={
                 formDataBItem.bitem_bsins === business.id
-                  ? "bg-gray-800 text-white mr-2"
-                  : "bg-gray-300 text-gray-600 mr-2"
+                  ? "bg-blue-800 text-white mr-2"
+                  : "bg-blue-300 text-white mr-2"
               }
               value={business.bsins_bname}
               style={{ cursor: "pointer" }}

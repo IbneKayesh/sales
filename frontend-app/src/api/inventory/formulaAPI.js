@@ -22,4 +22,14 @@ export const formulaAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getByItemConvert: (data) =>
+    apiRequest("/inventory/products/formula/get-by-item-convert", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  convertStock: (data) =>
+    apiRequest("/inventory/products/formula/convert-stock", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

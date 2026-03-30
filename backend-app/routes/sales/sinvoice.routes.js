@@ -97,6 +97,9 @@ router.post("/", async (req, res) => {
           break;
       }
       //params.push(`%${search_option}%`);
+    } else if (!search_option && params.length === 2) {
+      //default 3 days
+      sql += ` AND minvc.minvc_trdat >= CURRENT_DATE - INTERVAL '3 days'`;
     }
 
     sql += ` ORDER BY minvc.minvc_trdat DESC`;

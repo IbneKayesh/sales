@@ -29,6 +29,7 @@ export const useLedger = () => {
       const response = await accountsLedgerAPI.getAll({
         ledgr_users: user.users_users,
         ledgr_bsins: user.users_bsins,
+        ...searchBoxData,
       });
       //response = { success, message, data }
 
@@ -66,6 +67,9 @@ export const useLedger = () => {
     setFormDataPaymentAdvice({});
     setPaymentAdviceList([]);
     setPaymentAdviceSelectedList([]);
+
+    //hide search box
+    setSearchBoxShow(false);
   };
 
   const handleCancel = () => {
@@ -510,6 +514,55 @@ export const useLedger = () => {
       setIsBusy(false);
     }
   };
+
+  //search
+
+  const [searchBoxShow, setSearchBoxShow] = useState(false);
+  const [searchBoxData, setSearchBoxData] = useState({
+    ledgr_cntct: "",
+    ledgr_bacts: "",
+    ledgr_trdat: "", //new Date().toLocaleString().split("T")[0],
+    ledgr_refno: "",
+    search_option: "last_7_days",
+  });
+
+  const handleChangeSearchInput = (e) => {
+    const { name, value } = e.target;
+    if (name === "ledgr_trdat") {
+      const dateValue = e.value
+        ? new Date(e.value).toLocaleString().split("T")[0]
+        : null;
+      setSearchBoxData({ ...searchBoxData, [name]: dateValue });
+    } else {
+      setSearchBoxData({ ...searchBoxData, [name]: value });
+    }
+  };
+
+  const handleSearch = () => {
+    const hasValue = Object.values(searchBoxData).some(
+      (value) => value !== "" && value !== null && value !== undefined,
+    );
+
+    if (!hasValue) {
+      notify({
+        severity: "error",
+        summary: "Ledger",
+        detail: "Please enter at least one search criteria",
+        toast: true,
+        notification: false,
+        log: false,
+      });
+      return;
+    }
+
+    loadLedger();
+  };
+
+  const searchOptions = [
+    { name: "last_3_days", label: "Last 3 Days" },
+    { name: "last_7_days", label: "Last 7 Days" },
+  ];
+
   return {
     isBusy,
     dataList,
@@ -538,5 +591,12 @@ export const useLedger = () => {
     handleAddNewTransfer,
     handleSaveTransfer,
     handleChangeTransfer,
+    //search
+    searchBoxShow,
+    setSearchBoxShow,
+    searchBoxData,
+    handleChangeSearchInput,
+    handleSearch,
+    searchOptions,
   };
 };

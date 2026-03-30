@@ -5,7 +5,7 @@ import { SplitButton } from "primereact/splitbutton";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import { useState } from "react";
 import { InputText } from "primereact/inputtext";
-import { formatDate } from "@/utils/datetime";
+import { formatDate, formatMinutesToHHMM } from "@/utils/datetime";
 
 const AttendListComp = ({ dataList, onEdit, onDelete }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
@@ -49,29 +49,63 @@ const AttendListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-  const attnd_emply_BT = (rowData) => {
+  const emply_ecode_BT = (rowData) => {
     return (
-      <ActiveRowCell text={rowData.attnd_emply} status={rowData.attnd_actve} />
+      <div className="flex flex-column">
+        <div className="text-md">{rowData.emply_ecode}</div>
+        <div className="text-md">{rowData.emply_ename}</div>
+      </div>
     );
   };
 
   const attnd_atdat_BT = (rowData) => {
-    return <span>{formatDate(rowData.attnd_atdat, 1)}</span>;
-  };
-
-  const attnd_prsnt_BT = (rowData) => {
     return (
-      <span
-        className={`pi ${rowData.attnd_prsnt ? "pi-check text-green-500" : "pi-times text-red-400"}`}
-      />
+      <div className="flex flex-column">
+        <div className="text-md">{rowData.attnd_dname}</div>
+        <div className="text-md">{formatDate(rowData.attnd_atdat, 1)}</div>
+      </div>
+    );
+  };
+  const attnd_intim_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <div className="text-md">{rowData.attnd_intim}</div>
+        <div className="text-md">{rowData.attnd_stsin}</div>
+        <div className="text-md">{rowData.attnd_trmni}</div>
+      </div>
+    );
+  };
+  const attnd_outim_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <div className="text-md">{rowData.attnd_outim}</div>
+        <div className="text-md">{rowData.attnd_stsou}</div>
+        <div className="text-md">{rowData.attnd_trmno}</div>
+      </div>
     );
   };
 
-  const attnd_paybl_BT = (rowData) => {
+  const attnd_totwh_BT = (rowData) => {
     return (
-      <span
-        className={`pi ${rowData.attnd_paybl ? "pi-check text-green-500" : "pi-times text-red-400"}`}
-      />
+      <div className="flex flex-column">
+        <div className="text-md">{formatMinutesToHHMM(rowData.attnd_totwh)}</div>
+        <div className="text-md">{formatMinutesToHHMM(rowData.attnd_totoh)}</div>
+      </div>
+    );
+  };
+
+  const attnd_sname_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <div className="text-md">{rowData.attnd_sname}</div>
+        <div className="text-md">{rowData.attnd_notes}</div>
+        <span
+          className={`pi ${rowData.attnd_prsnt ? "pi-check text-green-500" : "pi-times text-red-400"}`}
+        />
+        <span
+          className={`pi ${rowData.attnd_paybl ? "pi-check text-green-500" : "pi-times text-red-400"}`}
+        />
+      </div>
     );
   };
 
@@ -108,13 +142,13 @@ const AttendListComp = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
         globalFilter={globalFilter}
-        globalFilterFields={["attnd_emply"]}
+        globalFilterFields={["emply_ecode"]}
         header={header()}
       >
         <Column
-          field="attnd_emply"
-          header="Employee Code"
-          body={attnd_emply_BT}
+          field="emply_ecode"
+          header="Employee"
+          body={emply_ecode_BT}
           sortable
         />
         <Column
@@ -124,28 +158,29 @@ const AttendListComp = ({ dataList, onEdit, onDelete }) => {
           sortable
         />
         <Column
-          field="attnd_wksft"
-          header="Work Shift"
+          field="attnd_intim"
+          header="Start Time"
+          body={attnd_intim_BT}
+          sortable
+        />
+        <Column
+          field="attnd_outim"
+          header="End Time"
+          body={attnd_outim_BT}
+          sortable
+        />
+        <Column
+          field="attnd_totwh"
+          header="Working Hour"
+          body={attnd_totwh_BT}
           sortable
         />
         <Column
           field="attnd_sname"
           header="Status"
+          body={attnd_sname_BT}
           sortable
         />
-        <Column
-          field="attnd_prsnt"
-          header="Present"
-          body={attnd_prsnt_BT}
-          sortable
-        />
-        <Column
-          field="attnd_paybl"
-          header="Payable"
-          body={attnd_paybl_BT}
-          sortable
-        />
-        <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );

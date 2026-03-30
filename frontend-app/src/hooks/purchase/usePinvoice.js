@@ -409,7 +409,14 @@ export const usePinvoice = () => {
     );
 
     if (!hasValue) {
-      showToast("error", "Error", "Please enter at least one search criteria");
+      notify({
+        severity: "error",
+        summary: "Ledger",
+        detail: "Please enter at least one search criteria",
+        toast: true,
+        notification: false,
+        log: false,
+      });
       return;
     }
 

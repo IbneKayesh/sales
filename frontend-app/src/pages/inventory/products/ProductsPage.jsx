@@ -33,6 +33,7 @@ const ProductsPage = () => {
     BItemList,
     handleFilterDataList,
     handleFilterBusinessItems,
+    handleOtherFilterDataList,
     //Formula
     handleFormula,
     formDataFormula,
@@ -42,7 +43,8 @@ const ProductsPage = () => {
     handleDeleteFormula,
     //convert stock
     handleConvertStock,
-    handleChangeConvert
+    handleChangeConvert,
+    handleSaveConvertStock,
   } = useProducts();
 
   const getHeader = () => {
@@ -110,6 +112,7 @@ const ProductsPage = () => {
             onDelete={handleDelete}
             onFilterDataList={handleFilterDataList}
             onFormula={handleFormula}
+            onOtherFilterDataList={handleOtherFilterDataList}
           />
         ) : currentView === "form" ? (
           <ProductsFormComp
@@ -140,7 +143,7 @@ const ProductsPage = () => {
             errors={errors}
             formData={formDataFormula}
             onChange={handleChangeConvert}
-            onSave={handleSaveFormula}
+            onSave={handleSaveConvertStock}
             dataList={formulaList}
           />
         ) : (

@@ -14,13 +14,13 @@ const SearchComp = ({
     <div className="flex-1">
       <div className="p-inputgroup">
         <span className="p-inputgroup-addon">
-          <i className="pi pi-hashtag"></i>
+          <i className="pi pi-home"></i>
         </span>
         <InputText
-          name="minvc_trnno"
-          value={formData.minvc_trnno}
+          name="ledgr_bacts"
+          value={formData.ledgr_bacts}
           onChange={handleChange}
-          placeholder="Trn No"
+          placeholder="Accounts"
           className="w-full p-inputtext-sm"
         />
       </div>
@@ -31,10 +31,10 @@ const SearchComp = ({
           <i className="pi pi-user"></i>
         </span>
         <InputText
-          name="minvc_cntct"
-          value={formData.minvc_cntct}
+          name="ledgr_cntct"
+          value={formData.ledgr_cntct}
           onChange={handleChange}
-          placeholder="Supplier"
+          placeholder="Contacts"
           className="w-full p-inputtext-sm"
         />
       </div>
@@ -45,10 +45,10 @@ const SearchComp = ({
           <i className="pi pi-calendar"></i>
         </span>
         <Calendar
-          name="minvc_trdat"
+          name="ledgr_trdat"
           value={
-            formData.minvc_trdat
-              ? new Date(formData.minvc_trdat)
+            formData.ledgr_trdat
+              ? new Date(formData.ledgr_trdat)
               : null
           }
           onChange={handleChange}
@@ -65,8 +65,8 @@ const SearchComp = ({
           <i className="pi pi-file"></i>
         </span>
         <InputText
-          name="minvc_refno"
-          value={formData.minvc_refno}
+          name="ledgr_refno"
+          value={formData.ledgr_refno}
           onChange={handleChange}
           placeholder="Ref No"
           className="w-full p-inputtext-sm"

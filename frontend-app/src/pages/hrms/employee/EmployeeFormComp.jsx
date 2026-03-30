@@ -14,6 +14,7 @@ import {
   designationOptions,
   employeeTypeOptions,
   employeeStatusOptions,
+  scyle_gnameOptions,
 } from "@/utils/vtable";
 import { Dropdown } from "primereact/dropdown";
 import { useWorkingShiftSgd } from "@/hooks/hrms/useWorkingShiftSgd";
@@ -409,10 +410,13 @@ const EmployeeFormComp = ({ isBusy, errors, formData, onChange, onSave }) => {
         <label htmlFor="emply_slcyl" className="block font-bold mb-2">
           {tmhb_emply.emply_slcyl.label}
         </label>
-        <InputText
+        <Dropdown
           name="emply_slcyl"
           value={formData.emply_slcyl}
-          onChange={(e) => onChange("emply_slcyl", e.target.value)}
+          onChange={(e) => onChange("emply_slcyl", e.value)}
+          options={scyle_gnameOptions}
+          optionLabel="label"
+          optionValue="value"
           className={`w-full ${errors.emply_slcyl ? "p-invalid" : ""}`}
           placeholder={`Enter ${tmhb_emply.emply_slcyl.label}`}
         />

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
@@ -16,6 +16,7 @@ const ProductsListComp = ({
   onDelete,
   onFilterDataList,
   onFormula,
+  onOtherFilterDataList
 }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
   const toast = useRef(null);
@@ -35,11 +36,39 @@ const ProductsListComp = ({
     { label: "Inactives", value: "inactives", icon: "pi pi-trash" },
     { label: "No Warehouse", value: "no_warehouse", icon: "pi pi-shop" },
   ];
+  const [otherFilterType, setOtherFilterType] = useState(null);
+  const [otherFilterOptions, setOtherFilterOptions] = useState([]);
+
+  useEffect(() => {
+    if (!dataList) return;
+    // Create distinct list based on items_ctgry
+    let uniqueCatList = Array.from(
+      new Map(
+        dataList.map((item) => [
+          item.items_ctgry,
+          {
+            label: item.ctgry_ctgnm,
+            value: item.items_ctgry,
+          },
+        ]),
+      ).values(),
+    );
+    uniqueCatList.push({ label: "All", value: "all" });
+    setOtherFilterOptions(uniqueCatList);
+    //console.log("dataList ", dataList);
+  }, [dataList]);
 
   const handleFilterChange = (e) => {
     setFilterType(e.value);
     if (onFilterDataList) {
       onFilterDataList(e.value);
+    }
+  };
+
+  const handleOtherFilterChange = (e) => {
+    setOtherFilterType(e.value);
+    if (onOtherFilterDataList) {
+      onOtherFilterDataList(e.value);
     }
   };
 
@@ -100,6 +129,14 @@ const ProductsListComp = ({
               }
               return <span>{props.placeholder}</span>;
             }}
+            checkmark={true}
+          />
+          <Dropdown
+            value={otherFilterType}
+            options={otherFilterOptions}
+            onChange={handleOtherFilterChange}
+            placeholder="Select Filter"
+            className="p-inputtext-sm w-full md:w-15rem"
             checkmark={true}
           />
         </div>
