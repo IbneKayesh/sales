@@ -369,14 +369,6 @@ const ItemsComp = ({
     return Number(rowData.cinvc_ntamt).toFixed(2);
   };
 
-  const amount = formDataItemList
-    .reduce((sum, item) => sum + Number(item.cinvc_itamt || 0), 0)
-    .toFixed(2);
-
-  const netAmount = formDataItemList
-    .reduce((sum, item) => sum + Number(item.cinvc_ntamt || 0), 0)
-    .toFixed(2);
-
   const cinvc_ntamt_FT = () => {
     return (
       <>
@@ -387,6 +379,16 @@ const ItemsComp = ({
       </>
     );
   };
+
+  const amount = formDataItemList
+    .reduce((sum, item) => sum + Number(item.cinvc_itamt || 0), 0)
+    .toFixed(2);
+
+  const netAmount = formDataItemList
+    .reduce((sum, item) => sum + Number(item.cinvc_ntamt || 0), 0)
+    .toFixed(2);
+
+
 
   const bulk_BT = (rowData) => {
     return (

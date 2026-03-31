@@ -900,4 +900,114 @@ router.post("/delete", async (req, res) => {
   }
 });
 
+//invoice return
+router.post("/invoice-return", async (req, res) => {
+  try {
+    const { minvc_users, minvc_bsins, minvc_refid } = req.body;
+
+    // Validate input
+    if (!minvc_users || !minvc_bsins || !minvc_refid) {
+      return res.json({
+        success: false,
+        message: "All fields are required",
+        data: null,
+      });
+    }
+    //console.log("req.body", JSON.stringify(req.body));
+
+    //database action
+    const sql = `SELECT '' AS id, minv.minvc_users AS mretn_users, minv.minvc_bsins AS mretn_bsins,
+    minv.minvc_cntct AS mretn_cntct, '' AS mretn_trnno, CURRENT_TIMESTAMP AS mretn_trdat,
+    minv.minvc_trnno AS mretn_refno, minv.minvc_trnte AS mretn_trnte, minv.minvc_odamt AS mretn_odamt,
+    minv.minvc_dsamt AS mretn_dsamt, minv.minvc_vtamt AS mretn_vtamt, minv.minvc_vatpy AS mretn_vatpy,
+    minv.minvc_incst AS mretn_incst, minv.minvc_excst AS mretn_excst, minv.minvc_rnamt AS mretn_rnamt,
+    minv.minvc_ttamt AS mretn_ttamt, minv.minvc_pyamt AS mretn_pyamt, minv.minvc_pdamt AS mretn_pdamt,
+    minv.minvc_duamt AS mretn_duamt, minv.minvc_rtamt AS mretn_rtamt, minv.minvc_ispad AS mretn_ispad,
+    minv.minvc_ispst AS mretn_ispst, minv.minvc_iscls AS mretn_iscls, minv.minvc_vatcl AS mretn_vatcl,
+    minv.minvc_hscnl AS mretn_hscnl, minv.id AS mretn_refid,
+    cont.cntct_cntnm, cont.cntct_cntps, cont.cntct_cntno, cont.cntct_ofadr, cont.cntct_crlmt
+    FROM tmeb_minvc minv    
+    LEFT JOIN tmcb_cntct cont on minv.minvc_cntct = cont.id
+    WHERE minv.minvc_ispad IN (0,1,2)
+    AND minv.minvc_ispst = TRUE
+    AND minv.minvc_hscnl = FALSE
+    AND minv.minvc_users = $1
+    AND minv.minvc_bsins = $2
+    AND minv.id = $3
+    `;
+    const params = [minvc_users, minvc_bsins, minvc_refid];
+
+    const rows = await dbGet(
+      sql,
+      params,
+      `Get Sales invoices for ${minvc_refid}`,
+    );
+    res.json({
+      success: true,
+      message: "Sales invoices fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+//invoice return details
+router.post("/invoice-return-details", async (req, res) => {
+  try {
+    const { minvc_refid } = req.body;
+
+    // Validate input
+    if (!minvc_refid) {
+      return res.json({
+        success: false,
+        message: "All fields are required",
+        data: null,
+      });
+    }
+    //console.log("req.body", JSON.stringify(req.body));
+
+    //database action
+    const sql = `SELECT '' AS id, '' AS cretn_minvc, cinv.cinvc_bitem AS cretn_bitem,
+    cinv.cinvc_items AS cretn_items, cinv.cinvc_itrat AS cretn_itrat, cinv.cinvc_itqty AS cretn_itqty,
+    cinv.cinvc_itamt AS cretn_itamt, cinv.cinvc_dspct AS cretn_dspct, cinv.cinvc_dsamt AS cretn_dsamt,
+    cinv.cinvc_vtpct AS cretn_vtpct, cinv.cinvc_vtamt AS cretn_vtamt, cinv.cinvc_csrat AS cretn_csrat,
+    cinv.cinvc_ntamt AS cretn_ntamt, cinv.cinvc_lprat AS cretn_lprat, cinv.cinvc_notes AS cretn_notes,
+    cinv.cinvc_attrb AS cretn_attrb, cinv.cinvc_attrn AS cretn_attrn, cinv.cinvc_srcnm AS cretn_srcnm,
+    cinv.id AS cretn_refid,
+    itm.items_icode, itm.items_iname, itm.items_dfqty, bitm.bitem_gstkq,
+    puofm.iuofm_untnm as puofm_untnm, suofm.iuofm_untnm as suofm_untnm
+    FROM tmeb_cinvc cinv    
+    LEFT JOIN tmib_items itm ON cinv.cinvc_items = itm.id
+    LEFT JOIN tmib_bitem bitm ON cinv.cinvc_bitem = bitm.id
+    LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
+    LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
+    WHERE cinv.cinvc_minvc = $1`;
+    const params = [ minvc_refid];
+
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get Sales invoices for ${minvc_refid}`,
+    );
+    res.json({
+      success: true,
+      message: "Sales invoices fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;

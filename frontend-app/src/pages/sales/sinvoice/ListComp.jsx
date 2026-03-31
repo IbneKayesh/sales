@@ -301,7 +301,7 @@ const ListComp = ({ dataList, onEdit }) => {
     //   age: 25,
     //   role: "admin",
     // };
-    navigate("/home/sales/sreturn", { state: rowData });
+    navigate("/home/sales/sreturn", { state: rowData.id });
   };
 
   const handleDelete = (rowData) => {

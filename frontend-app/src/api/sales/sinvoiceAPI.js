@@ -37,4 +37,14 @@ export const sinvoiceAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getReturn: (data) =>
+    apiRequest("/sales/sinvoice/invoice-return", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  getReturnDetails: (data) =>
+    apiRequest("/sales/sinvoice/invoice-return-details", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

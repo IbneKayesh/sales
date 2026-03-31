@@ -61,10 +61,9 @@ const SalaryCycleListComp = ({ dataList, onEdit, onDelete }) => {
     return (
       <div className="flex flex-column">
         <div className="text-md">
-          <span className="font-bold">Cycle Group:</span>
+          <span className="font-bold mr-2">Cycle Group:</span>
           {rowData.scyle_gname}
         </div>
-        <span className="font-bold">Name:</span>
         <ActiveRowCell
           text={rowData.scyle_cname}
           status={rowData.scyle_actve}
@@ -120,7 +119,7 @@ const SalaryCycleListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
-    const scyle_iscmp_BT = (rowData) => {
+  const scyle_iscmp_BT = (rowData) => {
     return (
       <span
         className={`pi ${rowData.scyle_iscmp ? "pi-check text-green-500" : "pi-times text-red-400"}`}
