@@ -150,10 +150,36 @@ export const useStockReports = () => {
     }
   };
 
+  const handleGetItemLedger = async (rowData) => {
+    try {
+      setIsBusy(true);
+      const response = await stockreportsAPI.itemLedger({
+        muser_id: user.users_users,
+        bsins_id: user.users_bsins,
+        bitem_id: rowData
+      });
+      console.log("data",response.data);
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "SI Items",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+  
   return {
     dataList,
     isBusy,
     handleLoadReports,
     handleUpdatePrice,
+    handleGetItemLedger
   };
 };

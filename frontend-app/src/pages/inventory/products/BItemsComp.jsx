@@ -10,6 +10,8 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { SplitButton } from "primereact/splitbutton";
 import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
+import { Dialog } from "primereact/dialog";
+import { useStockReports } from "@/hooks/inventory/useStockReports";
 
 const BItemsComp = ({
   onFetchBusinessItems,
@@ -19,9 +21,14 @@ const BItemsComp = ({
 }) => {
   const { dataList: businessOptions, handleGetAllActiveBusiness } =
     useBusinessSgd();
+  const { dataList: itemLedgerDataList, handleGetItemLedger } =
+  useStockReports();
   const [selBusinessId, setSelBusinessId] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [filterType, setFilterType] = useState("all");
+
+  const [ledgerDlg, setLedgerDlg] = useState(false);
+  const [selBItemId, setSelBItemId] = useState(null);
 
   useEffect(() => {
     handleGetAllActiveBusiness();
@@ -178,6 +185,12 @@ const BItemsComp = ({
     onFetchBusinessItems(id);
   };
 
+  const handleLedgerDlg = (rowData) => {
+    setLedgerDlg(true);
+    setSelBItemId(rowData);
+    handleGetItemLedger(rowData.id);
+  };
+
   const action_BT = (rowData) => {
     return (
       <>
@@ -194,6 +207,16 @@ const BItemsComp = ({
         ) : (
           <span className="p-button bg-gray-500"></span>
         )}
+
+        <Button
+          type="button"
+          icon="pi pi-list"
+          severity="success"
+          size="small"
+          tooltip="Ledger"
+          tooltipOptions={{ position: "left" }}
+          onClick={() => handleLedgerDlg(rowData)}
+        />
       </>
     );
   };
@@ -389,6 +412,46 @@ const BItemsComp = ({
           <Column header={dataList?.length + " rows"} body={action_BT} />
         </DataTable>
       </div>
+
+      <Dialog
+        header={
+          <>
+            <span className="text-blue-500">Purchase to Sales Ledger of </span>
+            {/* {selectedItemDetail?.product_code || "N/A"} -{" "}
+            {selectedItemDetail?.product_name || "N/A"}
+            <br />
+            Current Stock:{" "}
+            <ConvertedQtyComponent
+              qty={selectedItemDetail.stock_qty}
+              rowData={selectedItemDetail}
+            />
+            <span className="text-blue-500"> or </span>
+            {selectedItemDetail.stock_qty} {selectedItemDetail.small_unit_name} */}
+          </>
+        }
+        visible={ledgerDlg}
+        // style={{ width: "50vw" }}
+        onHide={() => {
+          if (!ledgerDlg) return;
+          setLedgerDlg(false);
+        }}
+      >
+        <div className="m-0">
+          {/* {JSON.stringify(itemLedger)} */}
+          <DataTable
+            value={itemLedgerDataList}
+            keyField="id"
+            emptyMessage="No data found."
+            size="small"
+            showGridlines
+          >
+            <Column field="minvc_trnno" header="ID" />
+            <Column field="minvc_trdat" header="Date" />
+            <Column field="cinvc_itrat" header="Rate" />
+            <Column field="cinvc_itqty" header="Qty" />
+          </DataTable>
+        </div>
+      </Dialog>
     </>
   );
 };

@@ -5,7 +5,7 @@
 CREATE TABLE tmeb_cretn (
   id varchar(50) PRIMARY KEY,
 
-  cretn_minvc VARCHAR(50) NOT NULL,
+  cretn_mretn VARCHAR(50) NOT NULL,
   cretn_bitem VARCHAR(50) NOT NULL,
   cretn_items VARCHAR(50) NOT NULL,
   cretn_itrat decimal(20,6) NOT NULL DEFAULT 0,

@@ -9,17 +9,24 @@ import ConvertedQtyComponent from "@/components/ConvertedQtyComponent";
 import ConvertedBDTCurrency from "@/components/ConvertedBDTCurrency";
 import { parseAttributes } from "@/utils/jsonParser";
 import tmeb_mretn from "@/models/sales/tmeb_mretn.json";
+import { Button } from "primereact/button";
+import { ButtonGroup } from "primereact/buttongroup";
 
 const EntryComp = ({
+  isBusy,
+  errors,
   formData,
   formDataItemList,
   handleChange,
   onShowIncludeCost,
   onShowExcludeCost,
   onShowPayment,
+  handleSubmit
 }) => {
+  const [disableSubmit, setDisableSubmit] = useState(false);
   const [showExtraColumns, setShowExtraColumns] = useState(false);
   const [payableNote, setPayableNote] = useState("");
+
   useEffect(() => {
     let note = "";
     if (!!formData.mretn_vatpy) {
@@ -27,6 +34,16 @@ const EntryComp = ({
     }
     setPayableNote(note);
   }, [formData.mretn_vatpy]);
+
+  useEffect(() => {
+    const hasCreditLimit = Number(formData.mretn_duamt || 0) > 0;
+    //console.log()
+    if (hasCreditLimit) {
+      setDisableSubmit(true);
+    } else {
+      setDisableSubmit(false);
+    }
+  }, [formData.mretn_duamt]);
 
   const mretn_cntct_val = () => {
     return (
@@ -189,6 +206,7 @@ const EntryComp = ({
       />
     );
   };
+
   const textEditor = (options) => {
     return (
       <InputText
@@ -465,6 +483,38 @@ const EntryComp = ({
             </div>
           </div>
         </div>
+      </div>
+      <div className="flex justify-content-end">
+        <ButtonGroup>
+          <Button
+            type="button"
+            label="Back"
+            icon="pi pi-arrow-left"
+            size="small"
+            severity="help"
+            //onClick={handleCancel}
+            disabled={!formData.id}
+          />
+          <Button
+            type="button"
+            label="Print"
+            icon="pi pi-print"
+            severity="info"
+            size="small"
+            //onClick={handleShowPrint}
+            disabled={!formData.id}
+          />
+          <Button
+            type="button"
+            label={"Save with Posted"}
+            icon={"pi pi-check"}
+            severity="success"
+            size="small"
+            loading={isBusy}
+            onClick={handleSubmit}
+            disabled={disableSubmit}
+          />
+        </ButtonGroup>
       </div>
     </div>
   );

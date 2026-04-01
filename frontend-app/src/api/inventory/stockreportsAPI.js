@@ -1,4 +1,4 @@
-import { apiRequest } from '@/utils/api.js';
+import { apiRequest } from "@/utils/api.js";
 
 //stockreportsAPI
 export const stockreportsAPI = {
@@ -27,6 +27,9 @@ export const stockreportsAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
-
-    
+  itemLedger: (data) =>
+    apiRequest("/inventory/stockreports/item-ledger", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

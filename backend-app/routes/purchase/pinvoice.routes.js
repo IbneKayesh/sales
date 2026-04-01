@@ -530,8 +530,8 @@ router.post("/create", async (req, res) => {
           WHERE b.bitem_items = itm.id
             AND b.id = $3`,
           params: [
-            det.cinvc_itqty,
-            det.cinvc_itqty,
+            Number(det.cinvc_itqty),
+            Number(det.cinvc_itqty),
             det.cinvc_bitem, // bitem id
           ],
           label: `BItem good, item stock updated`,

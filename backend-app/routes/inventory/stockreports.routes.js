@@ -242,4 +242,59 @@ router.post("/purchase-invoice-update", async (req, res) => {
   }
 });
 
+
+// item-ledger
+router.post("/item-ledger", async (req, res) => {
+  try {
+    const { bitem_id } = req.body;
+
+    // Validate input
+    if (!bitem_id) {
+      return res.json({
+        success: false,
+        message: "Business Item ID is required",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT minv.minvc_trnno, minv.minvc_trdat, cinv.cinvc_itrat, cinv.cinvc_itqty, cinv.cinvc_rtqty, cinv.cinvc_slqty, cinv.cinvc_ohqty
+    FROM tmpb_cinvc cinv
+    JOIN tmpb_minvc minv ON cinv.cinvc_minvc = minv.id
+    WHERE cinv.cinvc_bitem = $1
+    UNION ALL
+    SELECT minv.minvc_trnno, minv.minvc_trdat, cinv.cinvc_itrat, 0 - cinv.cinvc_itqty, 0, 0, 0
+    FROM tmeb_cinvc cinv
+    JOIN tmeb_minvc minv ON cinv.cinvc_minvc = minv.id
+    WHERE cinv.cinvc_bitem = $1
+    UNION ALL
+    SELECT minv.mretn_trnno, minv.mretn_trdat, cinv.cretn_itrat, cinv.cretn_itqty, 0, 0, 0
+    FROM tmeb_cretn cinv
+    JOIN tmeb_mretn minv ON cinv.cretn_mretn = minv.id
+    WHERE cinv.cretn_bitem = $1
+    ORDER BY minvc_trdat`;
+    const params = [bitem_id];
+
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `Get ledger report for ${bitem_id}`,
+    );
+    res.json({
+      success: true,
+      message: "Ledger report fetched successfully",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+
+
 module.exports = router;
