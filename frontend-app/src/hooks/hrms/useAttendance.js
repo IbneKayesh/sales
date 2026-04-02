@@ -5,6 +5,7 @@ import { generateGuid } from "@/utils/guid";
 import tmhb_attnd from "@/models/hrms/tmhb_attnd.json";
 import { useAuth } from "@/hooks/useAuth";
 import { useBusy, useNotification } from "@/hooks/useAppUI";
+import { formatDateForAPI } from "@/utils/datetime";
 
 const dataModel = generateDataModel(tmhb_attnd, { edit_stop: 0 });
 
@@ -131,6 +132,7 @@ export const useAttendance = () => {
         id: formData.id || generateGuid(),
         attnd_users: user.users_users,
         attnd_bsins: user.users_bsins,
+        attnd_atdat: formatDateForAPI(formData.attnd_atdat),
         suser_id: user.id,
       };
 
@@ -144,7 +146,7 @@ export const useAttendance = () => {
       notify({
         severity: response.success ? "success" : "error",
         summary: "Submit",
-        detail: `Attendance - ${formDataNew.attnd_emply} ${
+        detail: `Attendance - ${formDataNew.attnd_atdat} ${
           response.success
             ? formData.id
               ? "modified"

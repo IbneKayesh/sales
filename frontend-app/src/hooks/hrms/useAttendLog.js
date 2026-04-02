@@ -63,6 +63,11 @@ export const useAttendLog = () => {
 
   useEffect(() => {
     loadAttendanceLogs();
+    setFormData((prev) => ({
+      ...prev,
+      atnlg_lgtim: new Date(),
+      refresh_time: true,
+    }));
   }, []);
 
   const handleChange = (field, value) => {
@@ -72,7 +77,16 @@ export const useAttendLog = () => {
   };
 
   const handleClear = () => {
+    const memoDateTime = formData.refresh_time
+      ? new Date()
+      : formData.atnlg_lgtim;
+    const memoRefresh_time = formData.refresh_time;
     setFormData(dataModel);
+    setFormData((prev) => ({
+      ...prev,
+      atnlg_lgtim: memoDateTime,
+      refresh_time: memoRefresh_time,
+    }));
     setErrors({});
   };
 
@@ -132,7 +146,7 @@ export const useAttendLog = () => {
 
   const handleRefresh = () => {
     loadAttendanceLogs();
-  };    
+  };
 
   // ── Save to localStorage (fast, no network) ─────────────────────────────────
   const handleSave = (e) => {
@@ -156,7 +170,7 @@ export const useAttendLog = () => {
       muser_id: user.users_users,
       suser_id: user.id,
       bsins_id: user.users_bsins,
-      atnlg_lgtim: currentDateTime(),
+      //atnlg_lgtim: currentDateTime(),
       atnlg_trmnl: "Web",
       edit_stop: 0,
     };
@@ -256,7 +270,6 @@ export const useAttendLog = () => {
       log: false,
     });
   };
-
 
   return {
     isBusy,

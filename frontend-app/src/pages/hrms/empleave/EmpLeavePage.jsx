@@ -1,6 +1,6 @@
 import { useEmpLeave } from "@/hooks/hrms/useEmpLeave";
 import EmpLeaveListComp from "./EmpLeaveListComp";
-import LeaveEntitleFormComp from "./LeaveEntitleFormComp";
+import EmpLeaveFormComp from "./EmpLeaveFormComp";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
@@ -28,11 +28,11 @@ const EmpLeavePage = () => {
     handleChangeSearchInput,
     handleSearch,
     searchOptions,
+    //emp leave
+    handleEmpLeaveList,
+    empLeaveList
   } = useEmpLeave();
 
-  const onChange = (f, v) => {
-    handleChange(f, v);
-  };
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -97,12 +97,14 @@ const EmpLeavePage = () => {
             />
           </>
         ) : (
-          <LeaveEntitleFormComp
+          <EmpLeaveFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
             onChange={handleChange}
             onSave={handleSave}
+            onEmpLeaveList={handleEmpLeaveList}
+            dataList={empLeaveList}
           />
         )}
       </Card>

@@ -41,8 +41,8 @@ const AttendancePage = () => {
               disabled={!isList}
             />
             <Button
-              label="New"
-              icon="pi pi-plus"
+              label="Process"
+              icon="pi pi-sync"
               size="small"
               severity="info"
               onClick={handleAddNew}

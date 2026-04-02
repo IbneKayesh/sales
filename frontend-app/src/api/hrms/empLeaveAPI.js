@@ -27,4 +27,9 @@ export const empLeaveAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getEmpLeaveApp: (data) =>
+    apiRequest("/hrms/attendance/emp-leave/emp-leave-app", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

@@ -309,7 +309,12 @@ export const useEmployees = () => {
       if (response.success) {
         // Clear form & reload
         // handleClear();
-        setEmpSalaryData({});
+        setEmpSalaryData({
+          empsl_slcat: "",
+          empsl_cramt: "",
+          empsl_dbamt: "",
+          empsl_notes: "",
+        });
         await handleEmployeeSalary(formData); // make sure we wait for updated data
       }
     } catch (error) {

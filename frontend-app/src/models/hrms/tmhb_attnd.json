@@ -29,7 +29,7 @@
     "maxLength": 50,
     "minLength": 1,
     "placeholder": "Enter employee",
-    "required": true
+    "required": false
   },
   "attnd_wksft": {
     "type": "string",
@@ -37,7 +37,7 @@
     "maxLength": 50,
     "minLength": 1,
     "placeholder": "Enter work shift",
-    "required": true
+    "required": false
   },
   "attnd_atdat": {
     "type": "date",
@@ -52,7 +52,7 @@
     "maxLength": 20,
     "minLength": 1,
     "placeholder": "Enter day name",
-    "required": true
+    "required": false
   },
   "attnd_intim": {
     "type": "time",

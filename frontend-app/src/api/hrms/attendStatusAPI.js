@@ -32,4 +32,9 @@ export const attendStatusAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getApplLeave: (data) =>
+    apiRequest("/hrms/setup/attend-status/get-app-leave", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

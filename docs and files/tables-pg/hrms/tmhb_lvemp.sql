@@ -12,7 +12,6 @@ CREATE TABLE tmhb_lvemp (
   lvemp_yerid integer NOT NULL DEFAULT 0,
   lvemp_nmbol integer NOT NULL DEFAULT 0,
   lvemp_cnsum integer NOT NULL DEFAULT 0,
-  lvemp_blnce integer NOT NULL DEFAULT 0,
 
    -- default
   lvemp_actve boolean NOT NULL DEFAULT true,

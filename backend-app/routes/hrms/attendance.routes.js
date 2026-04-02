@@ -51,31 +51,11 @@ router.post("/", async (req, res) => {
 // create
 router.post("/create", async (req, res) => {
   try {
-    const {
-      id,
-      attnd_users,
-      attnd_bsins,
-      attnd_emply,
-      attnd_wksft,
-      attnd_atdat,
-      attnd_dname,
-      attnd_intim,
-      attnd_stsin,
-      attnd_trmni,
-      attnd_outim,
-      attnd_stsou,
-      attnd_trmno,
-      attnd_totwh,
-      attnd_totoh,
-      attnd_notes,
-      attnd_sname,
-      attnd_prsnt,
-      attnd_paybl,
-      suser_id,
-    } = req.body;
+    const { id, attnd_users, attnd_bsins, attnd_emply, attnd_atdat, suser_id } =
+      req.body;
 
     // Validate input
-    if (!id || !attnd_users || !attnd_bsins || !attnd_emply || !attnd_wksft || !attnd_atdat || !attnd_dname) {
+    if (!id || !attnd_users || !attnd_bsins || !attnd_atdat) {
       return res.json({
         success: false,
         message: "Required fields are missing",
@@ -83,39 +63,138 @@ router.post("/create", async (req, res) => {
       });
     }
 
-    //database action
-    const sql = `INSERT INTO tmhb_attnd
-    (id, attnd_users, attnd_bsins, attnd_emply, attnd_wksft, attnd_atdat, attnd_dname, attnd_intim, attnd_stsin, attnd_trmni, attnd_outim, attnd_stsou, attnd_trmno, attnd_totwh, attnd_totoh, attnd_notes, attnd_sname, attnd_prsnt, attnd_paybl, attnd_crusr, attnd_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)`;
-    const params = [
-      id,
-      attnd_users,
-      attnd_bsins,
-      attnd_emply,
-      attnd_wksft,
-      new Date(attnd_atdat),
-      attnd_dname,
-      attnd_intim || null,
-      attnd_stsin || "",
-      attnd_trmni || "",
-      attnd_outim || null,
-      attnd_stsou || "",
-      attnd_trmno || "",
-      attnd_totwh || 0,
-      attnd_totoh || 0,
-      attnd_notes || "",
-      attnd_sname || "",
-      attnd_prsnt || false,
-      attnd_paybl || false,
-      suser_id,
-      suser_id,
-    ];
+    const dateObj = new Date(attnd_atdat);
+    dateObj.setDate(dateObj.getDate() + 1);
+    const next_date = dateObj.toISOString().split("T")[0];
+    const yearid = new Date(attnd_atdat).getFullYear();
 
-    await dbRun(sql, params, `Create attendance for ${attnd_emply}`);
+    //database action
+    //build scripts
+    const scripts = [];
+    scripts.push({
+      sql: `INSERT INTO tmhb_attnd (id, attnd_users, attnd_bsins, attnd_emply, attnd_wksft,
+      attnd_atdat, attnd_dname, attnd_sname, attnd_crusr, attnd_upusr)
+      SELECT gen_random_uuid(), emp.emply_users, emp.emply_bsins, emp.id, emp.emply_wksft,
+      $1::date, TO_CHAR($2::date, 'Day'), 'Pending', $3, $4
+      FROM tmhb_emply emp
+      WHERE emp.emply_actve = TRUE
+      AND emp.emply_wksft IS NOT NULL
+      AND NOT EXISTS (
+          SELECT 1
+          FROM tmhb_attnd tnd
+          WHERE tnd.attnd_emply = emp.id
+            AND tnd.attnd_users = emp.emply_users
+            AND tnd.attnd_bsins = emp.emply_bsins
+            AND tnd.attnd_atdat >= $5::date
+            AND tnd.attnd_atdat <  $6::date
+            AND tnd.attnd_users = $7
+            AND tnd.attnd_bsins = $8
+      )`,
+      params: [
+        attnd_atdat,
+        attnd_atdat,
+        suser_id,
+        suser_id,
+        attnd_atdat,
+        next_date,
+        attnd_users,
+        attnd_bsins,
+      ],
+      label: `1. create empty attendance ${attnd_users} for ${attnd_atdat}`,
+    });
+
+    scripts.push({
+      sql: `UPDATE tmhb_attnd t
+    SET 
+    attnd_sname = 'Present',
+    attnd_notes = hdy.hlday_hldnm
+    FROM tmhb_hlday hdy
+    WHERE hdy.hlday_yerid = $1
+    AND hdy.hlday_hldat::DATE = t.attnd_atdat::DATE
+    AND hdy.hlday_users = t.attnd_users
+    AND hdy.hlday_bsins = t.attnd_bsins
+    AND t.attnd_sname = 'Pending'
+    AND hdy.hlday_users = $2
+    AND hdy.hlday_bsins = $3
+    `,
+      params: [yearid, attnd_users, attnd_bsins],
+      label: `2. holiday process`,
+    });
+
+    scripts.push({
+      sql: `UPDATE tmhb_attnd t
+      SET 
+          attnd_sname = qry.atnst_sname,
+          attnd_notes = qry.lvapp_notes
+      FROM (
+      SELECT tnd.id, nst.atnst_sname, ap.lvapp_notes
+      FROM tmhb_lvapp ap
+      JOIN tmhb_attnd tnd ON ap.lvapp_frdat::date = tnd.attnd_atdat::date
+      AND ap.lvapp_todat::date = tnd.attnd_atdat::date
+      AND ap.lvapp_emply = tnd.attnd_emply
+      AND ap.lvapp_users = tnd.attnd_users
+      AND ap.lvapp_bsins = tnd.attnd_bsins
+      JOIN tmhb_atnst nst ON ap.lvapp_atnst = nst.id
+      AND nst.atnst_users = tnd.attnd_users
+      AND nst.atnst_bsins = tnd.attnd_bsins
+      WHERE ap.lvapp_yerid = $1
+      AND tnd.attnd_sname = 'Pending'
+      AND nst.atnst_users = $2
+      AND nst.atnst_bsins = $3
+      )qry
+      WHERE t.id = qry.id`,
+      params: [yearid, attnd_users, attnd_bsins],
+      label: `3. Leave and IOM Process`,
+    });
+
+    scripts.push({
+      sql: `UPDATE tmhb_attnd tnd
+      SET 
+          attnd_intim = qry.atnlg_lgtim,
+          attnd_trmni = qry.atnlg_trmnl
+      FROM (
+          SELECT DISTINCT ON (tnd.id)
+              tnd.id,
+              nlg.atnlg_lgtim::time AS atnlg_lgtim,
+              nlg.atnlg_trmnl
+          FROM tmhb_atnlg nlg
+          JOIN tmhb_emply emp 
+              ON nlg.atnlg_ecode = emp.emply_ecode
+          JOIN tmhb_attnd tnd 
+              ON emp.id = tnd.attnd_emply
+             AND tnd.attnd_users = emp.emply_users
+             AND tnd.attnd_bsins = emp.emply_bsins
+          WHERE tnd.attnd_atdat >= $1::DATE
+            AND tnd.attnd_atdat <  $2::DATE  
+            AND tnd.attnd_users = $3
+            AND tnd.attnd_bsins = $4
+          ORDER BY tnd.id, nlg.atnlg_lgtim ASC
+      ) qry
+      WHERE tnd.id = qry.id
+      AND tnd.attnd_sname = 'Pending'
+      AND tnd.attnd_users = $5
+      AND tnd.attnd_bsins = $6`,
+      params: [
+        attnd_atdat,
+        next_date,
+        attnd_users,
+        attnd_bsins,
+        attnd_users,
+        attnd_bsins,
+      ],
+      label: `4. find min or in time`,
+    });
+    //ORDER BY tnd.id, nlg.atnlg_lgtim ASC  responsible for MIN time from any terminal for each employee, instead of group by
+    //console.log("scripts ", scripts);
+
+    await dbRunAll(scripts);
+
     res.json({
       success: true,
       message: "Attendance created successfully",
-      data: null,
+      data: {
+        ...req.body,
+      },
     });
   } catch (error) {
     console.error("database action error:", error);
@@ -154,7 +233,15 @@ router.post("/update", async (req, res) => {
     } = req.body;
 
     // Validate input
-    if (!id || !attnd_users || !attnd_bsins || !attnd_emply || !attnd_wksft || !attnd_atdat || !attnd_dname) {
+    if (
+      !id ||
+      !attnd_users ||
+      !attnd_bsins ||
+      !attnd_emply ||
+      !attnd_wksft ||
+      !attnd_atdat ||
+      !attnd_dname
+    ) {
       return res.json({
         success: false,
         message: "Required fields are missing",

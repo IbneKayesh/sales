@@ -2,7 +2,7 @@
 INSERT INTO tmhb_attnd (id, attnd_users, attnd_bsins, attnd_emply, attnd_wksft,
 attnd_atdat, attnd_dname, attnd_sname, attnd_crusr, attnd_upusr)
 SELECT gen_random_uuid(), emp.emply_users, emp.emply_bsins, emp.id, emp.emply_wksft,
-DATE '2026-03-28',TO_CHAR(DATE '2026-03-28', 'Day'),'Pending','userid','userid'
+DATE '2026-04-02',TO_CHAR(DATE '2026-04-02', 'Day'),'Pending','userid','userid'
 FROM tmhb_emply emp
 WHERE emp.emply_actve = TRUE
 AND emp.emply_wksft IS NOT NULL
@@ -12,8 +12,8 @@ AND NOT EXISTS (
     WHERE tnd.attnd_emply = emp.id
       AND tnd.attnd_users = emp.emply_users
       AND tnd.attnd_bsins = emp.emply_bsins
-      AND tnd.attnd_atdat >= DATE '2026-03-28'
-      AND tnd.attnd_atdat <  DATE '2026-03-29'
+      AND tnd.attnd_atdat >= DATE '2026-04-01'
+      AND tnd.attnd_atdat <  DATE '2026-04-30'
       AND tnd.attnd_users = $1
       AND tnd.attnd_bsins = $2
 );
@@ -30,7 +30,25 @@ WHERE hdy.hlday_yerid = 2026
   AND t.attnd_sname = 'Pending';
 
 -- 3. Leave and IOM Process
-
+UPDATE tmhb_attnd t
+SET 
+    attnd_sname = qry.atnst_sname,
+    attnd_notes = qry.lvapp_notes
+FROM (
+SELECT tnd.id, nst.atnst_sname, ap.lvapp_notes
+FROM tmhb_lvapp ap
+JOIN tmhb_attnd tnd ON ap.lvapp_frdat::date = tnd.attnd_atdat::date
+AND ap.lvapp_todat::date = tnd.attnd_atdat::date
+AND ap.lvapp_emply = tnd.attnd_emply
+AND ap.lvapp_users = tnd.attnd_users
+AND ap.lvapp_bsins = tnd.attnd_bsins
+JOIN tmhb_atnst nst ON ap.lvapp_atnst = nst.id
+AND nst.atnst_users = tnd.attnd_users
+AND nst.atnst_bsins = tnd.attnd_bsins
+WHERE ap.lvapp_yerid = 2026
+AND tnd.attnd_sname = 'Pending'
+)qry
+WHERE t.id = qry.id
 
 
 
@@ -51,8 +69,8 @@ FROM (
         ON emp.id = tnd.attnd_emply
        AND tnd.attnd_users = emp.emply_users
        AND tnd.attnd_bsins = emp.emply_bsins
-    WHERE tnd.attnd_atdat >= DATE '2026-03-28'
-      AND tnd.attnd_atdat <  DATE '2026-03-29'      
+    WHERE tnd.attnd_atdat >= DATE '2026-04-01'
+      AND tnd.attnd_atdat <  DATE '2026-04-30'      
       AND emp.attnd_users = $1
       AND emp.attnd_bsins = $2
     ORDER BY tnd.id, nlg.atnlg_lgtim ASC   -- MIN time from any terminal for each employee, instead of group by
@@ -79,8 +97,8 @@ FROM (
         ON emp.id = tnd.attnd_emply
        AND tnd.attnd_users = emp.emply_users
        AND tnd.attnd_bsins = emp.emply_bsins
-    WHERE tnd.attnd_atdat >= DATE '2026-03-28'
-      AND tnd.attnd_atdat <  DATE '2026-03-29'  
+    WHERE tnd.attnd_atdat >= DATE '2026-04-01'
+      AND tnd.attnd_atdat <  DATE '2026-04-30'  
       AND emp.attnd_users = $1
       AND emp.attnd_bsins = $2
     ORDER BY tnd.id, nlg.atnlg_lgtim DESC   -- MIN time from any terminal for each employee, instead of group by
@@ -93,7 +111,7 @@ AND tnd.attnd_bsins = $2;
 -- 6. find total working hours
 UPDATE tmhb_attnd
 SET attnd_totwh = EXTRACT(EPOCH FROM (attnd_outim - attnd_intim)) / 60::int
-AND tnd.attnd_sname = 'Pending'
+AND attnd_sname = 'Pending'
 WHERE attnd_users = $1
 AND attnd_bsins = $2;;
 

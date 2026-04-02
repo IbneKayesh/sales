@@ -74,6 +74,10 @@ const EmpLeaveListComp = ({ dataList, onEdit, onDelete }) => {
     );
   };
 
+  const balance_BT = (rowData) => {
+    return Number(rowData.lvemp_nmbol) - Number(rowData.lvemp_cnsum);
+  };
+
   return (
     <div className="p-1">
       <ConfirmDialog />
@@ -92,7 +96,6 @@ const EmpLeaveListComp = ({ dataList, onEdit, onDelete }) => {
           "atnst_sname",
           "lvemp_nmbol",
           "lvemp_cnsum",
-          "lvemp_blnce",
         ]}
         header={header()}
       >
@@ -101,7 +104,7 @@ const EmpLeaveListComp = ({ dataList, onEdit, onDelete }) => {
         <Column field="atnst_sname" header="Leave" sortable />
         <Column field="lvemp_nmbol" header="Total Leave" sortable />
         <Column field="lvemp_cnsum" header="Consumed" sortable />
-        <Column field="lvemp_blnce" header="Available" sortable />
+        <Column header="Available" body={balance_BT} sortable />
       </DataTable>
     </div>
   );
