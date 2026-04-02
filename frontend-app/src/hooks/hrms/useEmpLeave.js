@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { leaveEntitleAPI } from "@/api/hrms/leaveEntitleAPI";
+import { empLeaveAPI } from "@/api/hrms/empLeaveAPI";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid";
 import tmhb_lvntl from "@/models/hrms/tmhb_lvntl.json";
@@ -8,7 +8,7 @@ import { useBusy, useNotification } from "@/hooks/useAppUI";
 
 const dataModel = generateDataModel(tmhb_lvntl, { edit_stop: 0 });
 
-export const useLeaveEntitle = () => {
+export const useEmpLeave = () => {
   const { user } = useAuth();
   const { isBusy, setIsBusy } = useBusy();
   const { notify } = useNotification();
@@ -17,12 +17,13 @@ export const useLeaveEntitle = () => {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState(dataModel);
 
-  const loadLeaveEntitlement = async () => {
+  const loadEmpLeave = async () => {
     try {
       setIsBusy(true);
-      const response = await leaveEntitleAPI.getAll({
-        lvntl_users: user.users_users,
-        lvntl_bsins: user.users_bsins,
+      const response = await empLeaveAPI.getAll({
+        lvemp_users: user.users_users,
+        lvemp_bsins: user.users_bsins,
+        ...searchBoxData
       });
       setDataList(response.data);
     } catch (error) {
@@ -42,7 +43,7 @@ export const useLeaveEntitle = () => {
 
   // Fetch data from API on mount
   useEffect(() => {
-    loadLeaveEntitlement();
+    //loadLeaveEntitlement();
   }, []);
 
   const handleChange = (field, value) => {
@@ -79,7 +80,7 @@ export const useLeaveEntitle = () => {
         muser_id: user.users_users,
         suser_id: user.id,
       };
-      const response = await leaveEntitleAPI.delete(formDataNew);
+      const response = await empLeaveAPI.delete(formDataNew);
 
       if (response.success) {
         const updatedList = dataList.filter((u) => u.id !== rowData.id);
@@ -137,9 +138,9 @@ export const useLeaveEntitle = () => {
 
       let response;
       if (formData.id) {
-        response = await leaveEntitleAPI.update(formDataNew);
+        response = await empLeaveAPI.update(formDataNew);
       } else {
-        response = await leaveEntitleAPI.create(formDataNew);
+        response = await empLeaveAPI.create(formDataNew);
       }
 
       notify({
@@ -179,6 +180,52 @@ export const useLeaveEntitle = () => {
     }
   };
 
+   //search
+  
+    const [searchBoxShow, setSearchBoxShow] = useState(false);
+    const [searchBoxData, setSearchBoxData] = useState({
+      lvemp_yerid: "",
+      lvemp_emply: "",
+      search_option: "last_7_days",
+    });
+  
+    const handleChangeSearchInput = (e) => {
+      const { name, value } = e.target;
+      if (name === "minvc_trdat") {
+        const dateValue = e.value
+          ? new Date(e.value).toLocaleString().split("T")[0]
+          : null;
+        setSearchBoxData({ ...searchBoxData, [name]: dateValue });
+      } else {
+        setSearchBoxData({ ...searchBoxData, [name]: value });
+      }
+    };
+  
+    const handleSearch = () => {
+      const hasValue = Object.values(searchBoxData).some(
+        (value) => value !== "" && value !== null && value !== undefined,
+      );
+  
+      if (!hasValue) {
+        notify({
+          severity: "error",
+          summary: "Ledger",
+          detail: "Please enter at least one search criteria",
+          toast: true,
+          notification: false,
+          log: false,
+        });
+        return;
+      }
+  
+      loadEmpLeave();
+    };
+  
+    const searchOptions = [
+      { name: "all", label: "All" },
+      { name: "none", label: "None" },
+    ];
+
   return {
     isBusy,
     dataList,
@@ -192,5 +239,10 @@ export const useLeaveEntitle = () => {
     handleDelete,
     handleRefresh,
     handleSave,
+    //search
+    searchBoxData,
+    handleChangeSearchInput,
+    handleSearch,
+    searchOptions,
   };
 };

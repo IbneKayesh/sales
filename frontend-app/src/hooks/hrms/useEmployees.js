@@ -6,6 +6,8 @@ import { generateGuid } from "@/utils/guid";
 import { useAuth } from "@/hooks/useAuth";
 import { formatDateForAPI } from "@/utils/datetime";
 import { useBusy, useNotification } from "@/hooks/useAppUI";
+import { empSalaryAPI } from "@/api/hrms/empSalaryAPI";
+import tmhb_empsl from "@/models/hrms/tmhb_empsl.json";
 
 const dataModel = generateDataModel(tmhb_emply, { edit_stop: 0 });
 
@@ -192,6 +194,182 @@ export const useEmployees = () => {
     }
   };
 
+  const [empSalaryData, setEmpSalaryData] = useState({});
+  const [empSalaryList, setEmpSalaryList] = useState([]);
+
+  const handleEmployeeSalary = async (data) => {
+    //console.log("edit: " + JSON.stringify(data));
+
+    try {
+      setIsBusy(true);
+      const response = await empSalaryAPI.getAll({
+        empsl_users: user.users_users,
+        empsl_bsins: user.users_bsins,
+        empsl_emply: data.id,
+      });
+      //response = { success, message, data }
+      //console.log("response", response)
+      setEmpSalaryList(response.data);
+
+      setFormData(data);
+      setCurrentView("emp-salary");
+    } catch (error) {
+      console.error("Error loading data:", error);
+      notify({
+        severity: "error",
+        summary: "Employee Salary",
+        detail: error?.message || "Failed to load data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleChangeEmpSalary = (field, value) => {
+    setEmpSalaryData((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate(
+      { ...empSalaryData, [field]: value },
+      tmhb_empsl,
+    );
+    setErrors(newErrors);
+  };
+
+  const handleSaveEmpSalary = async (e) => {
+    e.preventDefault();
+    try {
+      //console.log("empSalaryData", empSalaryData);
+
+      const cr = Number(empSalaryData.empsl_cramt || 0);
+      const db = Number(empSalaryData.empsl_dbamt || 0);
+
+      // ❌ invalid if both are 0 OR both are > 0
+      if ((cr === 0 && db === 0) || (cr > 0 && db > 0)) {
+        notify({
+          severity: "error",
+          summary: "Employee Salary",
+          detail: "Enter either Credit or Debit (only one required)",
+          toast: true,
+          notification: true,
+          log: false,
+        });
+        return;
+      }
+
+      // ✅ valid case continues here
+
+      // Validate form
+      const newErrors = validate(empSalaryData, tmhb_empsl);
+      setErrors(newErrors);
+      console.log("handleSave:", JSON.stringify(empSalaryData));
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+
+      setIsBusy(true);
+      // Ensure id exists (for create)
+      const formDataNew = {
+        ...empSalaryData,
+        id: empSalaryData.id || generateGuid(),
+        empsl_users: user.users_users,
+        empsl_bsins: user.users_bsins,
+        empsl_emply: formData.id, //as employee id
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+
+      // Call API and get { message, data }
+      let response;
+      if (empSalaryData.id) {
+        // response = await empSalaryAPI.update(formDataNew);
+      } else {
+        response = await empSalaryAPI.create(formDataNew);
+      }
+
+      // Update toast using API message
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Salary - ${formDataNew.empsl_slcat} ${
+          response.success
+            ? empSalaryData.id
+              ? "modified"
+              : "created"
+            : empSalaryData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
+
+      if (response.success) {
+        // Clear form & reload
+        // handleClear();
+        setEmpSalaryData({});
+        await handleEmployeeSalary(formData); // make sure we wait for updated data
+      }
+    } catch (error) {
+      console.error("Error saving data:", error);
+      notify({
+        severity: "error",
+        summary: "Salary",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleDeleteSalary = async (rowData) => {
+    try {
+      setIsBusy(true);
+      const formDataNew = {
+        ...rowData,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+      // Call API, unwrap { message, data }
+      const response = await empSalaryAPI.delete(formDataNew);
+
+      // Remove deleted Employees from local state
+
+      if (response.success) {
+        const updatedList = empSalaryList.filter((u) => u.id !== rowData.id);
+        setEmpSalaryList(updatedList);
+      }
+
+      notify({
+        severity: response.success ? "info" : "error",
+        summary: "Delete",
+        detail: `Salary - ${rowData.empsl_slcat} ${
+          response.success ? "is deleted by" : "delete failed by"
+        } ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
+    } catch (error) {
+      console.error("Error deleting data:", error);
+      notify({
+        severity: "error",
+        summary: "Salary",
+        detail: error?.message || "Failed to delete data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     dataList,
     isBusy,
@@ -205,5 +383,12 @@ export const useEmployees = () => {
     handleDelete,
     handleRefresh,
     handleSave,
+    //salary
+    handleEmployeeSalary,
+    empSalaryData,
+    handleChangeEmpSalary,
+    handleSaveEmpSalary,
+    empSalaryList,
+    handleDeleteSalary,
   };
 };

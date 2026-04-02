@@ -118,6 +118,11 @@ const noOfDays = (fromdate, todate) => {
   return Math.floor(diffDays) + 1; // or Math.ceil depending on your need
 };
 
+function getCurrentYear() {
+  return new Date().getFullYear();
+}
+
+
 export {
   currentDate,
   currentDateTime,
@@ -126,5 +131,6 @@ export {
   formatDateForAPI,
   isValid24HourTime,
   formatMinutesToHHMM,
-  noOfDays
+  noOfDays,
+  getCurrentYear
 };

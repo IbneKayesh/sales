@@ -27,4 +27,9 @@ export const attendStatusAPI = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  createEmpLeave: (data) =>
+    apiRequest("/hrms/setup/attend-status/create-emp-leave", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

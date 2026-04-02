@@ -224,6 +224,26 @@ const scyle_gnameOptions = [
   { label: "Daily", value: "Daily" },
 ];
 
+const empsl_slcatOptions = [
+  { label: "Basic (+)", value: "Basic" },
+  { label: "House Rent (+)", value: "House Rent" },
+  { label: "Medical (+)", value: "Medical" },
+  { label: "Transport (+)", value: "Transport" },
+  { label: "Festival Bonus (+)", value: "Festival Bonus" },
+  { label: "Mobile Allowance (+)", value: "Mobile Allowance" },
+  { label: "Arrear (+)", value: "Arrear" },
+  { label: "Incentive (+)", value: "Incentive" },
+  { label: "Increment (+)", value: "Increment" },
+  { label: "Consolidate (+)", value: "Consolidate" },
+  { label: "Other (+)", value: "Other" },
+  { label: "Income Tax (-)", value: "Income Tax" },
+  { label: "Loan (-)", value: "Loan" },
+  { label: "Absent (-)", value: "Absent" },
+  { label: "Advance (-)", value: "Advance" },
+  { label: "Penalty (-)", value: "Penalty" },
+  { label: "Other (-)", value: "Other" },
+];
+
 export {
   getListByTransHead,
   getTransHeadList,
@@ -252,6 +272,7 @@ export {
   trhed_grtypOptions,
   pyadv_srcnmOptions,
   scyle_gnameOptions,
+  empsl_slcatOptions,
 };
 
 /*

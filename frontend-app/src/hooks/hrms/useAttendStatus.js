@@ -5,6 +5,8 @@ import { generateGuid } from "@/utils/guid";
 import tmhb_atnst from "@/models/hrms/tmhb_atnst.json";
 import { useAuth } from "@/hooks/useAuth";
 import { useBusy, useNotification } from "@/hooks/useAppUI";
+import { getCurrentYear } from "@/utils/datetime";
+import tmhb_lvemp from "@/models/hrms/tmhb_lvemp.json";
 
 const dataModel = generateDataModel(tmhb_atnst, { edit_stop: 0 });
 
@@ -179,6 +181,87 @@ export const useAttendStatus = () => {
     }
   };
 
+  //leave manage
+  const [empLeaveFormData, setEmpLeaveFormData] = useState(null);
+  const handleEmployeeLeave = (data) => {
+    setFormData(data);
+    setCurrentView("emp-leave");
+    setEmpLeaveFormData({
+      lvemp_yerid: getCurrentYear(),
+    });
+  };
+  const handleChangeEmpLeave = (field, value) => {
+    setEmpLeaveFormData((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate(
+      { ...empLeaveFormData, [field]: value },
+      tmhb_lvemp,
+    );
+    setErrors(newErrors);
+  };
+
+  const handleSaveEmpLeave = async (e) => {
+    e.preventDefault();
+    try {
+      const newErrors = validate(empLeaveFormData, tmhb_lvemp);
+      setErrors(newErrors);
+      console.log("handleSave: " + JSON.stringify(newErrors));
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+
+      setIsBusy(true);
+      const formDataNew = {
+        ...empLeaveFormData,
+        id: empLeaveFormData.id || generateGuid(),
+        lvemp_users: user.users_users,
+        lvemp_bsins: user.users_bsins,
+        muser_id: user.users_users,
+        suser_id: user.id,
+      };
+
+      let response;
+      if (empLeaveFormData.id) {
+        //response = await attendStatusAPI.update(formDataNew);
+      } else {
+        response = await attendStatusAPI.createEmpLeave(formDataNew);
+      }
+
+      notify({
+        severity: response.success ? "success" : "error",
+        summary: "Submit",
+        detail: `Employee Leave ${
+          response.success
+            ? empLeaveFormData.id
+              ? "modified"
+              : "created"
+            : empLeaveFormData.id
+              ? "modification failed"
+              : "creation failed"
+        } by ${user.users_oname}`,
+        toast: true,
+        notification: false,
+        log: true,
+      });
+
+      if (response.success) {
+        //handleClear();
+        //setCurrentView("list");
+        //await loadAttendStatus();
+      }
+    } catch (error) {
+      console.error("Error saving data:", error);
+      notify({
+        severity: "error",
+        summary: "Employee Leave",
+        detail: error?.message || "Failed to save data",
+        toast: true,
+        notification: true,
+        log: false,
+      });
+    } finally {
+      setIsBusy(false);
+    }
+  };
   return {
     isBusy,
     dataList,
@@ -192,5 +275,10 @@ export const useAttendStatus = () => {
     handleDelete,
     handleRefresh,
     handleSave,
+    //leave manage
+    handleEmployeeLeave,
+    empLeaveFormData,
+    handleChangeEmpLeave,
+    handleSaveEmpLeave,
   };
 };

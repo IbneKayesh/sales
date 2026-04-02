@@ -5,7 +5,12 @@ import { SplitButton } from "primereact/splitbutton";
 import { formatDate } from "@/utils/datetime";
 import ActiveRowCell from "@/components/ActiveRowCell";
 
-const EmployeeListComp = ({ dataList, onEdit, onDelete }) => {
+const EmployeeListComp = ({
+  dataList,
+  onEdit,
+  onDelete,
+  onEmployeeSalary,
+}) => {
   const handleDelete = (rowData) => {
     confirmDialog({
       message: `Are you sure you want to delete "${rowData.emply_ename}"?`,
@@ -22,6 +27,13 @@ const EmployeeListComp = ({ dataList, onEdit, onDelete }) => {
 
   const action_BT = (rowData) => {
     let menuItems = [
+      {
+        label: "Salary",
+        icon: "pi pi-money-bill",
+        command: () => {
+          onEmployeeSalary(rowData);
+        },
+      },
       {
         label: "Delete",
         icon: "pi pi-trash text-red-400",
@@ -140,9 +152,13 @@ const EmployeeListComp = ({ dataList, onEdit, onDelete }) => {
         <span className="text-sm">
           Login:{" "}
           {rowData.emply_login ? (
-            <span className="bg-green-500 text-white border-round px-2 py-1 text-sm">Yes</span>
+            <span className="bg-green-500 text-white border-round px-2 py-1 text-sm">
+              Yes
+            </span>
           ) : (
-            <span className="bg-red-500 text-white border-round px-2 py-1 text-sm">No</span>
+            <span className="bg-red-500 text-white border-round px-2 py-1 text-sm">
+              No
+            </span>
           )}
         </span>
       </div>

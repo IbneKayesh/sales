@@ -4,6 +4,7 @@ import { ButtonGroup } from "primereact/buttongroup";
 import { useEmployees } from "@/hooks/hrms/useEmployees";
 import EmployeeListComp from "./EmployeeListComp";
 import EmployeeFormComp from "./EmployeeFormComp";
+import EmployeeSalaryComp from "./EmployeeSalaryComp";
 
 const EmployeesPage = () => {
   const {
@@ -19,6 +20,13 @@ const EmployeesPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
+    //salary
+    handleEmployeeSalary,
+    empSalaryData,
+    handleChangeEmpSalary,
+    handleSaveEmpSalary,
+    empSalaryList,
+    handleDeleteSalary,
   } = useEmployees();
 
   const getHeader = () => {
@@ -30,15 +38,36 @@ const EmployeesPage = () => {
           {isList
             ? "Employee List"
             : formData.id
-            ? "Edit Employee"
-            : "New Employee"}
+              ? "Edit Employee"
+              : "New Employee"}
         </h3>
 
         <div className="flex gap-2">
           <ButtonGroup>
-            <Button label="Refresh" icon="pi pi-refresh" size="small" severity="secondary" onClick={handleRefresh} disabled={!isList}/>
-            <Button label="New" icon="pi pi-plus" size="small" severity="info" onClick={handleAddNew} disabled={!isList}/>
-            <Button label="Back" icon="pi pi-arrow-left" size="small" severity="help" onClick={handleCancel} disabled={isList}/>
+            <Button
+              label="Refresh"
+              icon="pi pi-refresh"
+              size="small"
+              severity="secondary"
+              onClick={handleRefresh}
+              disabled={!isList}
+            />
+            <Button
+              label="New"
+              icon="pi pi-plus"
+              size="small"
+              severity="info"
+              onClick={handleAddNew}
+              disabled={!isList}
+            />
+            <Button
+              label="Back"
+              icon="pi pi-arrow-left"
+              size="small"
+              severity="help"
+              onClick={handleCancel}
+              disabled={isList}
+            />
           </ButtonGroup>
         </div>
       </div>
@@ -53,6 +82,17 @@ const EmployeesPage = () => {
             dataList={dataList}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onEmployeeSalary={handleEmployeeSalary}
+          />
+        ) : currentView === "emp-salary" ? (
+          <EmployeeSalaryComp
+            isBusy={isBusy}
+            errors={errors}
+            formData={empSalaryData}
+            onChange={handleChangeEmpSalary}
+            onSave={handleSaveEmpSalary}
+            dataList={empSalaryList}
+            onDelete={handleDeleteSalary}
           />
         ) : (
           <EmployeeFormComp

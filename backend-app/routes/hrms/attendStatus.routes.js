@@ -25,7 +25,6 @@ router.post("/", async (req, res) => {
       ORDER BY tbl.atnst_sname`;
     const params = [atnst_users, atnst_bsins];
 
-
     const rows = await dbGetAll(
       sql,
       params,
@@ -235,6 +234,80 @@ router.post("/get-all-active", async (req, res) => {
       success: true,
       message: "Active attendance status fetched successfully",
       data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+//create-emp-leave
+router.post("/create-emp-leave", async (req, res) => {
+  try {
+    const {
+      id,
+      lvemp_users,
+      lvemp_bsins,
+      lvemp_atnst,
+      lvemp_emply,
+      lvemp_yerid,
+      lvemp_nmbol,
+      lvemp_cnsum,
+      lvemp_blnce,
+      suser_id,
+    } = req.body;
+
+    // Validate input
+    if (!id || !lvemp_users || !lvemp_bsins || !lvemp_yerid) {
+      return res.json({
+        success: false,
+        message: "Required fields are missing",
+        data: null,
+      });
+    }
+
+    //database action
+    //build scripts
+    const scripts = [];
+    scripts.push({
+      sql: `DELETE FROM tmhb_lvemp
+          WHERE lvemp_users = $1
+          AND lvemp_bsins = $2
+          AND lvemp_yerid = $3`,
+      params: [lvemp_users, lvemp_bsins, lvemp_yerid],
+      label: `Delete employee ${lvemp_yerid}`,
+    });
+
+    scripts.push({
+      sql: `INSERT INTO tmhb_lvemp (id, lvemp_users, lvemp_bsins,
+    lvemp_atnst, lvemp_emply, lvemp_yerid, lvemp_nmbol,
+    lvemp_cnsum, lvemp_blnce, lvemp_crusr, lvemp_upusr
+)
+SELECT gen_random_uuid(), nst.atnst_users, nst.atnst_bsins,
+    nst.id, emp.id,  $1, nst.atnst_nappl,
+    0, nst.atnst_nappl, $2, $3
+FROM tmhb_atnst nst
+CROSS JOIN tmhb_emply emp
+WHERE nst.atnst_nappl > 0
+AND nst.atnst_users = $4
+AND nst.atnst_bsins = $5
+ORDER BY emp.id, nst.id`,
+      params: [lvemp_yerid, suser_id, suser_id, lvemp_users, lvemp_bsins],
+      label: `Create employee leave ${lvemp_yerid}`,
+    });
+
+    await dbRunAll(scripts);
+
+    res.json({
+      success: true,
+      message: "Employee created successfully",
+      data: {
+        ...req.body,
+      },
     });
   } catch (error) {
     console.error("database action error:", error);

@@ -5,7 +5,7 @@ import { generateGuid } from "@/utils/guid";
 import tmhb_scyle from "@/models/hrms/tmhb_scyle.json";
 import { useAuth } from "@/hooks/useAuth";
 import { useBusy, useNotification } from "@/hooks/useAppUI";
-import { formatDateForAPI, noOfDays } from "@/utils/datetime";
+import { formatDateForAPI, noOfDays, getCurrentYear } from "@/utils/datetime";
 
 const dataModel = generateDataModel(tmhb_scyle, { edit_stop: 0 });
 
@@ -65,6 +65,10 @@ export const useSalaryCycle = () => {
   const handleAddNew = () => {
     handleClear();
     setCurrentView("form");
+    setFormData((prev) => ({
+      ...prev,
+      scyle_yerid: getCurrentYear(),
+    }));
   };
 
   const handleEdit = (data) => {

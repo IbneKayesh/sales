@@ -5,6 +5,7 @@ import { generateGuid } from "@/utils/guid";
 import tmhb_hlday from "@/models/hrms/tmhb_hlday.json";
 import { useAuth } from "@/hooks/useAuth";
 import { useBusy, useNotification } from "@/hooks/useAppUI";
+import { getCurrentYear } from "@/utils/datetime";
 
 const dataModel = generateDataModel(tmhb_hlday, { edit_stop: 0 });
 
@@ -64,6 +65,10 @@ export const useHolidays = () => {
   const handleAddNew = () => {
     handleClear();
     setCurrentView("form");
+    setFormData((prev) => ({
+      ...prev,
+      hlday_yerid: getCurrentYear(),
+    }));
   };
 
   const handleEdit = (data) => {

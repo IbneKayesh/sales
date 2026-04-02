@@ -1,11 +1,15 @@
-import { useLeaveEntitle } from "@/hooks/hrms/useLeaveEntitle";
-import LeaveEntitleListComp from "./LeaveEntitleListComp";
+import { useEmpLeave } from "@/hooks/hrms/useEmpLeave";
+import EmpLeaveListComp from "./EmpLeaveListComp";
 import LeaveEntitleFormComp from "./LeaveEntitleFormComp";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
+import { InputNumber } from "primereact/inputnumber";
+import { InputText } from "primereact/inputtext";
+import RequiredText from "@/components/RequiredText";
+import SearchComp from "./SearchComp";
 
-const LeaveEntitlePage = () => {
+const EmpLeavePage = () => {
   const {
     isBusy,
     dataList,
@@ -19,7 +23,16 @@ const LeaveEntitlePage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-  } = useLeaveEntitle();
+     //search
+    searchBoxData,
+    handleChangeSearchInput,
+    handleSearch,
+    searchOptions,
+  } = useEmpLeave();
+
+  const onChange = (f, v) => {
+    handleChange(f, v);
+  };
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -28,7 +41,7 @@ const LeaveEntitlePage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Leave Entitlement List"
+            ? "Employee Leave List"
             : formData.id
               ? "Edit Leave Entitlement"
               : "New Leave Entitlement"}
@@ -70,11 +83,19 @@ const LeaveEntitlePage = () => {
     <>
       <Card header={getHeader()} className="border-round p-3">
         {currentView === "list" ? (
-          <LeaveEntitleListComp
-            dataList={dataList}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          <>
+            <SearchComp
+              formData={searchBoxData}
+              handleChange={handleChangeSearchInput}
+              handleSearch={handleSearch}
+              searchOptions={searchOptions}
+            />
+            <EmpLeaveListComp
+              dataList={dataList}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          </>
         ) : (
           <LeaveEntitleFormComp
             isBusy={isBusy}
@@ -89,4 +110,4 @@ const LeaveEntitlePage = () => {
   );
 };
 
-export default LeaveEntitlePage;
+export default EmpLeavePage;

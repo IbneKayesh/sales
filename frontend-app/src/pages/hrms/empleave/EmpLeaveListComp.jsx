@@ -6,7 +6,7 @@ import ActiveRowCell from "@/components/ActiveRowCell";
 import { useState } from "react";
 import { InputText } from "primereact/inputtext";
 
-const LeaveEntitleListComp = ({ dataList, onEdit, onDelete }) => {
+const EmpLeaveListComp = ({ dataList, onEdit, onDelete }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
 
   const handleDelete = (rowData) => {
@@ -87,21 +87,24 @@ const LeaveEntitleListComp = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
         globalFilter={globalFilter}
-        globalFilterFields={["lvntl_atnst"]}
+        globalFilterFields={[
+          "lvemp_yerid",
+          "atnst_sname",
+          "lvemp_nmbol",
+          "lvemp_cnsum",
+          "lvemp_blnce",
+        ]}
         header={header()}
       >
-        <Column field="lvntl_yerid" header="Year" sortable />
-        <Column
-          field="lvntl_atnst"
-          header="Attendance Status"
-          body={lvntl_atnst_BT}
-          sortable
-        />
-        <Column field="lvntl_nmbol" header="Number of Days" sortable />
-        <Column header={dataList?.length + " rows"} body={action_BT} />
+        <Column field="lvemp_yerid" header="Year" sortable />
+        <Column field="emply_ename" header="Name" sortable />
+        <Column field="atnst_sname" header="Leave" sortable />
+        <Column field="lvemp_nmbol" header="Total Leave" sortable />
+        <Column field="lvemp_cnsum" header="Consumed" sortable />
+        <Column field="lvemp_blnce" header="Available" sortable />
       </DataTable>
     </div>
   );
 };
 
-export default LeaveEntitleListComp;
+export default EmpLeaveListComp;
