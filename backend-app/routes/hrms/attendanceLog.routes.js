@@ -75,6 +75,8 @@ router.post("/create", async (req, res) => {
       bsins_id,
     } = req.body;
 
+    console.log("req.body",req.body)
+
     // Validate input - at least one of ecode or crdno is required
     if (!id || !muser_id || !bsins_id || (!atnlg_ecode && !atnlg_crdno)) {
       return res.json({

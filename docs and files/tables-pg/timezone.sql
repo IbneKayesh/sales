@@ -4,3 +4,12 @@ SET TIMEZONE = 'Asia/Dhaka'; -- for BST
 -- For database:
 ALTER DATABASE sgddb SET timezone TO 'Asia/Dhaka';
 -- ALTER DATABASE [DATABASE] SET timezone TO 'Asia/Dhaka';
+
+
+
+
+    scripts.push({
+      sql: ``,
+      params: [],
+      label: ``,
+    });

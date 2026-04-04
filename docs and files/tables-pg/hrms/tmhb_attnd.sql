@@ -23,6 +23,7 @@ CREATE TABLE tmhb_attnd (
   attnd_sname VARCHAR(50), --status name
   attnd_prsnt boolean NOT NULL DEFAULT false, --present
   attnd_paybl boolean NOT NULL DEFAULT false, --payable
+  attnd_ipaid boolean NOT NULL DEFAULT false, --is paid
    -- default
   attnd_actve boolean NOT NULL DEFAULT true,
   attnd_crusr VARCHAR(50) NOT NULL,

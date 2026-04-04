@@ -79,6 +79,22 @@ const formatDateForAPI = (date) => {
   return date;
 };
 
+
+const formatDateTimeForAPI = (date) => {
+  if (!date) return "";
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "";
+
+  const day = d.getDate().toString().padStart(2, "0");
+  const month = (d.getMonth() + 1).toString().padStart(2, "0");
+  const year = d.getFullYear();
+  const hh = d.getHours().toString().padStart(2, "0");
+  const min = d.getMinutes().toString().padStart(2, "0");
+  const ss = d.getSeconds().toString().padStart(2, "0");
+
+  return `${year}-${month}-${day} ${hh}:${min}:${ss}`;
+};
+
 function isValid24HourTime(time) {
   // ^ start
   // (?:[0-1]\d|2\d) → hours: 00–29
@@ -129,6 +145,7 @@ export {
   formatDate,
   formatDateTime,
   formatDateForAPI,
+  formatDateTimeForAPI,
   isValid24HourTime,
   formatMinutesToHHMM,
   noOfDays,

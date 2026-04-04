@@ -111,9 +111,9 @@ AND tnd.attnd_bsins = $2;
 -- 6. find total working hours
 UPDATE tmhb_attnd
 SET attnd_totwh = EXTRACT(EPOCH FROM (attnd_outim - attnd_intim)) / 60::int
-AND attnd_sname = 'Pending'
-WHERE attnd_users = $1
-AND attnd_bsins = $2;;
+WHERE attnd_sname = 'Pending'
+AND attnd_users = $1
+AND attnd_bsins = $2;
 
 -- 7. find In Time status
 UPDATE tmhb_attnd tnd
@@ -153,7 +153,19 @@ AND tnd.attnd_sname = 'Pending'
 AND tnd.attnd_users = $1
 AND tnd.attnd_bsins = $2;
 
--- 9. find final status
+
+-- 09. find overtime
+UPDATE tmhb_attnd tnd
+SET attnd_totoh = tnd.attnd_totwh - wks.wksft_wrhrs
+FROM tmhb_wksft wks
+WHERE tnd.attnd_wksft = wks.id
+AND wks.wksft_ovrtm = TRUE
+AND tnd.attnd_sname = 'Pending'
+AND tnd.attnd_users = $1
+AND tnd.attnd_bsins = $2;
+
+
+-- 10. find final status
 UPDATE tmhb_attnd tnd
 SET attnd_sname = CASE
     WHEN 
@@ -177,16 +189,6 @@ FROM tmhb_wksft wks
 WHERE tnd.attnd_wksft = wks.id
 AND wks.wksft_crday = FALSE
 AND wks.wksft_sgpnc = FALSE
-AND tnd.attnd_sname = 'Pending'
-AND tnd.attnd_users = $1
-AND tnd.attnd_bsins = $2;
-
--- 10. find overtime
-UPDATE tmhb_attnd tnd
-SET attnd_totoh = tnd.attnd_totwh - wks.wksft_wrhrs
-FROM tmhb_wksft wks
-WHERE tnd.attnd_wksft = wks.id
-AND wks.wksft_ovrtm = TRUE
 AND tnd.attnd_sname = 'Pending'
 AND tnd.attnd_users = $1
 AND tnd.attnd_bsins = $2;

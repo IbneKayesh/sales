@@ -5,7 +5,7 @@ import { generateGuid } from "@/utils/guid";
 import tmhb_atnlg from "@/models/hrms/tmhb_atnlg.json";
 import { useAuth } from "@/hooks/useAuth";
 import { useBusy, useNotification } from "@/hooks/useAppUI";
-import { currentDateTime } from "@/utils/datetime";
+import { formatDateTimeForAPI } from "@/utils/datetime";
 
 const dataModel = generateDataModel(tmhb_atnlg, { edit_stop: 0 });
 const LS_KEY = "attendance_log_pending";
@@ -210,8 +210,17 @@ export const useAttendLog = () => {
       setIsBusy(true);
 
       // Fire all inserts in parallel for speed
+      // const results = await Promise.allSettled(
+      //   pending.map((entry) => attendanceLogAPI.create(entry)),
+      // );
+
       const results = await Promise.allSettled(
-        pending.map((entry) => attendanceLogAPI.create(entry)),
+        pending.map((entry) =>
+          attendanceLogAPI.create({
+            ...entry,
+            atnlg_lgtim: formatDateTimeForAPI(entry.atnlg_lgtim),
+          }),
+        ),
       );
 
       const succeeded = results.filter(
