@@ -5,10 +5,10 @@ import { SplitButton } from "primereact/splitbutton";
 import { formatDate } from "@/utils/datetime";
 import ActiveRowCell from "@/components/ActiveRowCell";
 
-const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
+const LevelListComp = ({ dataList, onEdit, onDelete }) => {
   const handleDelete = (rowData) => {
     confirmDialog({
-      message: `Are you sure you want to delete "${rowData.bsins_bname}"?`,
+      message: `Are you sure you want to delete "${rowData.role_name}"?`,
       header: "Delete Confirmation",
       icon: "pi pi-exclamation-triangle",
       accept: () => {
@@ -114,6 +114,23 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
   const bsins_stdat_BT = (rowData) => {
     return <>{formatDate(rowData.bsins_stdat)}</>;
   };
+
+  
+
+
+  const lfcl_name_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">       
+        <span className="text-sm text-gray-500 flex gap-2">
+          {rowData.lfcl_name === "Active" ? (
+            <i className="pi pi-check-circle text-green-500"></i>
+          ) : (
+            <i className="pi pi-times-circle text-red-500"></i>
+          )}
+        </span>
+      </div>
+    );
+  };
   return (
     <div className="p-1">
       <ConfirmDialog />
@@ -127,15 +144,16 @@ const BusinessListComp = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
       >
-        <Column field="bsins_bname" header="Business" body={bsins_bname_BT} />
-        <Column field="bsins_email" header="Contact" body={bsins_email_BT} />
-        <Column field="bsins_binno" header="BIN" />
-        <Column field="bsins_btags" header="Tags" body={bsins_btags_BT} />
-        <Column field="bsins_stdat" header="Date" body={bsins_stdat_BT} />
+        <Column field="id" header="Id" />
+        <Column field="role_name" header="Name" />
+        <Column field="role_code" header="Code" />
+        <Column field="aemp_iusr" header="Created By" />
+        <Column field="aemp_eusr" header="Updated By" />
+        <Column field="lfcl_name" header="Status" body={lfcl_name_BT} />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );
 };
 
-export default BusinessListComp;
+export default LevelListComp;

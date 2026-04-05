@@ -1,0 +1,26 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "role_name": {
+    "type": "string",
+    "label": "Role Name",
+    "maxLength": 100,
+    "minLength": 6,
+    "placeholder": "Enter your role name",
+    "required": true
+  },
+  "role_code": {
+    "type": "string",
+    "label": "Role Code",
+    "maxLength": 100,
+    "minLength": 6,
+    "placeholder": "Enter your role code",
+    "required": false
+  }
+}

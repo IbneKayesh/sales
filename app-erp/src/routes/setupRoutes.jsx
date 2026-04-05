@@ -18,7 +18,7 @@ const setupRoutes = (
     <Route path="setup/users/profile" element={<ProfileSettings />} />
     <Route path="setup/default-data" element={<DefaultDataPage />} />
     <Route path="setup/installations" element={<InstallationsPage />} />    
-    <Route path="setup/role" element={<LevelsPage />} />
+    <Route path="master/role" element={<LevelsPage />} />
   </>
 );
 

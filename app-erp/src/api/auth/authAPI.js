@@ -2,7 +2,7 @@ import { apiRequest } from "@/utils/api.js";
 
 export const authAPI = {
   login: (data) =>
-    apiRequest("/loginApi?key=s1az.com", {
+    apiRequest("/v4/loginApi?key=s1az.com", {
       method: "POST",
       body: JSON.stringify(data),
     }).then((response) => {

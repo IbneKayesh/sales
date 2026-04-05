@@ -1,7 +1,7 @@
 // Centralized API utility for backend communication
 const API_CONFIG = {
   local: "/api", // Uses Vite proxy (localhost:3001)
-  live: "https://api.s1az.com/api/v4",
+  live: "https://api.s1az.com/api",
 };
 
 // Set to API_CONFIG.live or API_CONFIG.local to switch environments

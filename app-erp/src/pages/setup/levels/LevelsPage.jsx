@@ -1,9 +1,9 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import { useBusiness } from "@/hooks/setup/useBusiness";
-import BusinessListComp from "./BusinessListComp";
-import BusinessFormComp from "./BusinessFormComp";
+import { useLevels } from "@/hooks/setup/useLevels";
+import LevelListComp from "./LevelListComp";
+import LevelFormComp from "./LevelFormComp";
 
 const LevelsPage = () => {
   const {
@@ -19,7 +19,7 @@ const LevelsPage = () => {
     handleDelete,
     handleRefresh,
     handleSave,
-  } = useBusiness();
+  } = useLevels();
 
   const getHeader = () => {
     const isList = currentView === "list";
@@ -28,10 +28,10 @@ const LevelsPage = () => {
       <div className="flex align-items-center justify-content-between">
         <h3 className="m-0">
           {isList
-            ? "Business List"
+            ? "Level List"
             : formData.id
-              ? "Edit Business"
-              : "Add Business"}
+              ? "Edit Level"
+              : "Add Level"}
         </h3>
 
         <div className="flex gap-2">
@@ -70,13 +70,13 @@ const LevelsPage = () => {
     <>
       <Card header={getHeader()} className="bg-dark-200 border-round p-3">
         {currentView === "list" ? (
-          <BusinessListComp
+          <LevelListComp
             dataList={dataList}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
         ) : (
-          <BusinessFormComp
+          <LevelFormComp
             isBusy={isBusy}
             errors={errors}
             formData={formData}
