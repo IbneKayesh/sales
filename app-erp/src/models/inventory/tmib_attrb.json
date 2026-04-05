@@ -1,0 +1,42 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "attrb_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "attrb_ctgry": {
+    "type": "string",
+    "label": "Category",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter category",
+    "required": true
+  },  
+  "attrb_aname": {
+    "type": "string",
+    "label": "Attribute Name",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter category",
+    "required": true
+  },  
+  "attrb_dtype": {
+    "type": "string",
+    "label": "Data Type",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter data type",
+    "required": true
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "notes_users": {
+    "type": "string",
+    "label": "User ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter User ID",
+    "required": false
+  },
+  "notes_title": {
+    "type": "string",
+    "label": "Title",
+    "maxLength": 100,
+    "minLength": 1,
+    "placeholder": "Enter note title",
+    "required": true
+  },
+  "notes_descr": {
+    "type": "string",
+    "label": "Description",
+    "maxLength": 500,
+    "minLength": 0,
+    "placeholder": "Enter note description",
+    "required": false
+  },
+  "notes_dudat": {
+    "type": "string",
+    "label": "Due Date",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Select due date",
+    "required": true
+  },
+  "notes_stat": {
+    "type": "string",
+    "label": "Status",
+    "maxLength": 20,
+    "minLength": 1,
+    "placeholder": "Select status",
+    "required": true
+  }
+}

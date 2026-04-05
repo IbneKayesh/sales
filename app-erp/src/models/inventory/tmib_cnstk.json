@@ -1,0 +1,87 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "cnstk_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "cnstk_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter business id",
+    "required": false
+  },
+  "cnstk_mitem": {
+    "type": "string",
+    "label": "Master Item",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter master item",
+    "required": true
+  },
+  "cnstk_mtmqt": {
+    "type": "number",
+    "label": "Master Item Quantity",
+    "maxLength": 10000000000,
+    "minLength": 1,
+    "placeholder": "Enter master item quantity",
+    "required": true,
+    "default": "1"
+  },
+  "cnstk_mstkq": {
+    "type": "number",
+    "label": "Master Stock Quantity",
+    "maxLength": 10000000000,
+    "minLength": 0,
+    "placeholder": "Enter master stock quantity",
+    "required": false,
+    "default": "0"
+  },
+  "cnstk_sitem": {
+    "type": "string",
+    "label": "Support Item",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter support item",
+    "required": true
+  },
+  "cnstk_stmqt": {
+    "type": "number",
+    "label": "Support Item Quantity",
+    "maxLength": 10000000000,
+    "minLength": 1,
+    "placeholder": "Enter support item quantity",
+    "required": true,
+    "default": "1"
+  },
+  "cnstk_sstkq": {
+    "type": "decimal",
+    "label": "Support Stock Quantity",
+    "maxLength": 10000000000,
+    "minLength": 0,
+    "placeholder": "Enter support stock quantity",
+    "required": false,
+    "default": "0"
+  },
+  "cnstk_cnqty": {
+    "type": "decimal",
+    "label": "Converted Stock Qty",
+    "maxLength": 10000000000,
+    "minLength": 0,
+    "placeholder": "Enter converted stock qty",
+    "required": true,
+    "default": "0"
+  }
+}

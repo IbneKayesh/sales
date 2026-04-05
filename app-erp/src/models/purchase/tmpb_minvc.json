@@ -1,0 +1,220 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "minvc_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "minvc_bsins": {
+    "type": "string",
+    "label": "Business id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter business id",
+    "required": false
+  },
+  "minvc_cntct": {
+    "type": "string",
+    "label": "Supplier",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter supplier",
+    "required": true
+  },
+  "minvc_trnno": {
+    "type": "string",
+    "label": "No",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter transaction no",
+    "required": false,
+    "default": "[Auto SL]"
+  },
+  "minvc_trdat": {
+    "type": "date",
+    "label": "Date",
+    "placeholder": "Enter start date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "minvc_refno": {
+    "type": "string",
+    "label": "Reference No",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter reference no",
+    "required": false
+  },
+  "minvc_trnte": {
+    "type": "string",
+    "label": "Note",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter note",
+    "required": false,
+    "default": ""
+  },
+  "minvc_odamt": {
+    "type": "decimal",
+    "label": "Amount (1)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter order amount",
+    "required": true,
+    "default": "0"
+  },
+  "minvc_dsamt": {
+    "type": "decimal",
+    "label": "Discount (2)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter discount amount",
+    "required": true,
+    "default": "0"
+  },
+  "minvc_vtamt": {
+    "type": "decimal",
+    "label": "VAT (3)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter VAT amount",
+    "required": true,
+    "default": "0"
+  },
+  "minvc_vatpy": {
+    "type": "number",
+    "label": "VAT Payable",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Is VAT payable",
+    "required": true,
+    "default": 0
+  },
+  "minvc_incst": {
+    "type": "decimal",
+    "label": "Include cost (4)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter Include cost",
+    "required": true,
+    "default": "0"
+  },
+  "minvc_excst": {
+    "type": "decimal",
+    "label": "Exclude cost (10)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter Exclude cost",
+    "required": true,
+    "default": "0"
+  },
+  "minvc_rnamt": {
+    "type": "decimal",
+    "label": "Round Off (5)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter rounded amount",
+    "required": true,
+    "default": "0"
+  },
+  "minvc_ttamt": {
+    "type": "decimal",
+    "label": "Total (6)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter total amount",
+    "required": true,
+    "default": "0"
+  },
+  "minvc_pyamt": {
+    "type": "decimal",
+    "label": "Payable (7)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter payable amount",
+    "required": true,
+    "default": "0"
+  },
+  "minvc_pdamt": {
+    "type": "decimal",
+    "label": "Paid (8)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter paid amount",
+    "required": true,
+    "default": "0"
+  },
+  "minvc_duamt": {
+    "type": "decimal",
+    "label": "Due (9)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter due amount",
+    "required": true,
+    "default": "0"
+  },
+  "minvc_rtamt": {
+    "type": "decimal",
+    "label": "Returned (11)",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter returned amount",
+    "required": true,
+    "default": "0"
+  },
+  "minvc_ispad": {
+    "type": "number",
+    "label": "Paid",
+    "maxLength": 2,
+    "minLength": 0,
+    "placeholder": "Is paid",
+    "required": true,
+    "default": 0
+  },
+  "minvc_ispst": {
+    "type": "number",
+    "label": "Posted",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Is posted",
+    "required": true,
+    "default": 1
+  },
+  "minvc_iscls": {
+    "type": "number",
+    "label": "Closed",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Is closed",
+    "required": true,
+    "default": 0
+  },
+  "minvc_vatcl": {
+    "type": "number",
+    "label": "VAT Collected",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "VAT Collected",
+    "required": true,
+    "default": 0
+  },
+  "minvc_hscnl": {
+    "type": "number",
+    "label": "Cancelled",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Is cancelled",
+    "required": true,
+    "default": 0
+  }
+}

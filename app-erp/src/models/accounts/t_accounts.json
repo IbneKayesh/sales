@@ -1,0 +1,53 @@
+{
+  "account_id": {
+    "name": "Id",
+    "type": "string",
+    "required": false,
+    "minLength": 0,
+    "maxLength": 36
+  },
+  "bank_id": {
+    "name": "Bank Id",
+    "type": "string",
+    "required": true,
+    "minLength": 0,
+    "maxLength": 36
+  },
+  "account_name": {
+    "name": "Account Name",
+    "type": "string",
+    "required": true,
+    "minLength": 1,
+    "maxLength": 50
+  },
+  "account_no": {
+    "name": "Account No",
+    "type": "string",
+    "required": false  ,
+    "minLength": 0,
+    "maxLength": 50
+  },
+  "account_note": {
+    "name": "Account Note",
+    "type": "string",
+    "required": false,
+    "minLength": 0,
+    "maxLength": 100
+  },
+  "opening_date": {
+    "name": "Opening Date",
+    "type": "string",
+    "required": true,
+    "format": "date"
+  },
+  "current_balance": {
+    "name": "Balance",
+    "type": "number",
+    "required": false
+  },
+  "is_default": {
+    "name": "Is Default",
+    "type": "boolean",
+    "required": false
+  }
+}

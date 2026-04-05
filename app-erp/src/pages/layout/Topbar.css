@@ -1,0 +1,189 @@
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  /* background: var(--overlay-light); */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-primary);
+  height: 35px;
+  background-color: rgb(50, 102, 144);
+  position: relative;
+  z-index: 1000;
+  overflow: visible;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Common class for all topbar buttons - using previous collapse-btn styles */
+.topbar-btn {
+  background: rgba(255, 255, 255, 0.295);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-white);
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.topbar-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1);
+}
+
+.topbar-center {
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  overflow: visible;
+}
+
+.topbar-avatar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-avatar img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border-medium);
+}
+
+.logout-button {
+  /* Use the common topbar-btn class, but override background */
+  background: var(--gradient-main);
+}
+
+.logout-button:hover {
+  background: var(--gradient-secondary);
+  box-shadow: 0 4px 12px var(--accent-purple);
+}
+
+
+/* Ensure all topbar buttons use the common class */
+/* .topbar .topbar-left .collapse-btn,
+.topbar .topbar-left .full-mode-btn,
+.logout-button,
+.nav-icon-btn {
+  @extend .topbar-btn;
+} */
+
+/* ── Recent Menus Dropdown ── */
+.recent-menus-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.recent-menus-trigger {
+  width: 28px;
+  height: 28px;
+  font-size: 15px;
+}
+
+.recent-menus-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 200px;
+  background: #1e3a52;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  z-index: 999999;
+  overflow: hidden;
+  animation: fadeDown 0.15s ease;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.recent-menus-header {
+  padding: 7px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.45);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.recent-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.recent-menu-item i {
+  font-size: 14px;
+  width: 16px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.recent-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.recent-menu-item:hover i {
+  color: #fff;
+}
+
+.recent-menu-item.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 600;
+}
+
+.recent-menu-item.active i {
+  color: #7dd3fc;
+}
+
+
+.lite-badge {
+  display: inline-block;
+  padding: 2px 4px;
+  font-size: 8px;
+  font-weight: 600;
+  color: #fff;
+  border-radius: 12px;
+}
+
+/* Info */
+.lite-badge-info {
+  background-color: #17a2b8;
+}
+
+/* Danger */
+.lite-badge-danger {
+  background-color: #dc3545;
+}
+
+/* Warning */
+.lite-badge-warning {
+  background-color: #ffc107;
+  color: #212529; /* darker text for visibility */
+}

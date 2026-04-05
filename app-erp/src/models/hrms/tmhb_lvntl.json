@@ -1,0 +1,52 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "lvntl_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "lvntl_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter business id",
+    "required": false
+  },
+  "lvntl_yerid": {
+    "type": "number",
+    "label": "Year",
+    "maxLength": 9999,
+    "minLength": 2000,
+    "placeholder": "Enter year",
+    "required": true,
+    "default": 0
+  },
+  "lvntl_atnst": {
+    "type": "string",
+    "label": "Attendance Status",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Select attendance status",
+    "required": true
+  },
+  "lvntl_nmbol": {
+    "type": "number",
+    "label": "Number of Days",
+    "maxLength": 365,
+    "minLength": 1,
+    "placeholder": "Enter number of days",
+    "required": true,
+    "default": 1
+  }
+}

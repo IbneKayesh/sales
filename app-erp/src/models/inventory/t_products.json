@@ -1,0 +1,108 @@
+{
+  "product_id": {
+    "name": "Id",
+    "type": "string",
+    "required": false,
+    "minLength": 0,
+    "maxLength": 36
+  },
+  "product_code": {
+    "name": "Product Code",
+    "type": "string",
+    "required": false,
+    "minLength": 0,
+    "maxLength": 255
+  },
+  "product_name": {
+    "name": "Product Name",
+    "type": "string",
+    "required": true,
+    "minLength": 1,
+    "maxLength": 100
+  },
+  "product_desc": {
+    "name": "Product Description",
+    "type": "string",
+    "required": false,
+    "minLength": 0,
+    "maxLength": 255
+  },
+  "category_id": {
+    "name": "Category",
+    "type": "string",
+    "required": true,
+    "minLength": 1,
+    "maxLength": 36
+  },
+  "small_unit_id": {
+    "name": "Small Unit",
+    "type": "string",
+    "required": true,
+    "minLength": 1,
+    "maxLength": 36
+  },
+  "unit_difference_qty": {
+    "name": "Difference Qty",
+    "type": "number",
+    "required": true
+  },
+  "large_unit_id": {
+    "name": "Large Unit",
+    "type": "string",
+    "required": true,
+    "minLength": 1,
+    "maxLength": 36
+  },
+  "stock_qty": {
+    "name": "Stock Qty",
+    "type": "number",
+    "required": false
+  },
+  "purchase_price": {
+    "name": "Purchase Price",
+    "type": "number",
+    "required": false
+  },
+  "sales_price": {
+    "name": "Sale Price",
+    "type": "number",
+    "required": false
+  },
+  "discount_percent": {
+    "name": "Discount Percent",
+    "type": "number",
+    "required": false
+  },
+  "vat_percent": {
+    "name": "VAT Percent",
+    "type": "number",
+    "required": false
+  },
+  "cost_price_percent": {
+    "name": "Cost Price Percent",
+    "type": "number",
+    "required": false
+  },
+  "margin_price": {
+    "name": "Margin Price",
+    "type": "number",
+    "required": false
+  },
+  "purchase_booking_qty": {
+    "name": "Purchase Booking Qty",
+    "type": "number",
+    "required": false
+  },
+  "sales_booking_qty": {
+    "name": "Sales Booking Qty",
+    "type": "number",
+    "required": false
+  },
+  "shop_id": {
+    "name": "Shop",
+    "type": "string",
+    "required": true,
+    "minLength": 1,
+    "maxLength": 50
+  }
+}

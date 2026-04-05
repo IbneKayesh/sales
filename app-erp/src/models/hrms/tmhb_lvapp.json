@@ -1,0 +1,97 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "lvapp_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "lvapp_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter business id",
+    "required": false
+  },
+  "lvapp_atnst": {
+    "type": "string",
+    "label": "Status Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter status id",
+    "required": true
+  },
+  "lvapp_emply": {
+    "type": "string",
+    "label": "Employee Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter employee id",
+    "required": true
+  },
+  "lvapp_yerid": {
+    "type": "number",
+    "label": "Year",
+    "maxLength": 9999,
+    "minLength": 2026,
+    "placeholder": "Enter year",
+    "required": true,
+    "default": 0
+  },
+  "lvapp_frdat": {
+    "type": "date",
+    "label": "From Date",
+    "placeholder": "Enter from date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "lvapp_todat": {
+    "type": "date",
+    "label": "To Date",
+    "placeholder": "Enter to date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "lvapp_today": {
+    "type": "number",
+    "label": "Number of Days",
+    "maxLength": 365,
+    "minLength": 0,
+    "placeholder": "Enter number of days",
+    "required": false,
+    "default": 0
+  },
+  "lvapp_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "lvapp_fsapp": {
+    "type": "string",
+    "label": "Approver",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter approver",
+    "required": false
+  },
+  "lvapp_fsdat": {
+    "type": "date",
+    "label": "Approve Date",
+    "placeholder": "Enter to date",
+    "required": false,
+    "default": "new Date() with local format"
+  }
+}

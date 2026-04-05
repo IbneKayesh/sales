@@ -1,0 +1,50 @@
+{
+    "id": {
+        "type": "string",
+        "label": "ID",
+        "maxLength": 100,
+        "minLength": 3,
+        "placeholder": "Enter ID",
+        "required": false
+    },
+    "users_email": {
+        "type": "email",
+        "label": "Email",
+        "maxLength": 100,
+        "minLength": 3,
+        "placeholder": "Enter your email",
+        "required": true
+    },
+    "users_pswrd": {
+        "type": "password",
+        "label": "Password",
+        "maxLength": 100,
+        "minLength": 3,
+        "placeholder": "Enter your password",
+        "required": true
+    },
+    "users_recky": {
+        "type": "string",
+        "label": "Recovery Key",
+        "maxLength": 100,
+        "minLength": 6,
+        "placeholder": "Enter your recovery key",
+        "required": true
+    },
+    "users_oname": {
+        "type": "string",
+        "label": "Name",
+        "maxLength": 100,
+        "minLength": 5,
+        "placeholder": "Enter your name",
+        "required": true
+    },
+    "bsins_bname": {
+        "type": "string",
+        "label": "Business Name",
+        "maxLength": 100,
+        "minLength": 6,
+        "placeholder": "Enter your business name",
+        "required": true
+    }
+}

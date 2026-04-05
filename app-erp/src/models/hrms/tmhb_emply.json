@@ -1,0 +1,293 @@
+{
+  "id": {
+    "type": "string",
+    "label": "ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ID",
+    "required": false
+  },
+  "emply_users": {
+    "type": "string",
+    "label": "User Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter user id",
+    "required": false
+  },
+  "emply_bsins": {
+    "type": "string",
+    "label": "Business Id",
+    "maxLength": 50,
+    "minLength": 6,
+    "placeholder": "Enter business id",
+    "required": false
+  },
+  "emply_ecode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter employee code",
+    "required": false
+  },
+  "emply_crdno": {
+    "type": "string",
+    "label": "Card Number",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter card number",
+    "required": false
+  },
+  "emply_ename": {
+    "type": "string",
+    "label": "Employee Name",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter employee name",
+    "required": true
+  },
+  "emply_econt": {
+    "type": "string",
+    "label": "Contact",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter contact",
+    "required": true
+  },
+  "emply_email": {
+    "type": "string",
+    "label": "Email",
+    "maxLength": 100,
+    "minLength": 6,
+    "placeholder": "Enter email",
+    "required": false,
+    "default": ""
+  },
+  "emply_natid": {
+    "type": "string",
+    "label": "National ID",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter national id",
+    "required": false,
+    "default": ""
+  },
+  "emply_bdate": {
+    "type": "date",
+    "label": "Birth Date",
+    "placeholder": "Enter birth date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "emply_prnam": {
+    "type": "string",
+    "label": "Parent Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter parent name",
+    "required": false,
+    "default": ""
+  },
+  "emply_gendr": {
+    "type": "string",
+    "label": "Gender",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter gender",
+    "required": false,
+    "default": ""
+  },
+  "emply_mstas": {
+    "type": "string",
+    "label": "Marital Status",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter marital status",
+    "required": false,
+    "default": ""
+  },
+  "emply_bgrup": {
+    "type": "string",
+    "label": "Blood Group",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter blood group",
+    "required": false,
+    "default": ""
+  },
+  "emply_rlgon": {
+    "type": "string",
+    "label": "Religion",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter blood group",
+    "required": false,
+    "default": ""
+  },
+  "emply_edgrd": {
+    "type": "string",
+    "label": "Education Grade",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter education grade",
+    "required": false,
+    "default": ""
+  },
+  "emply_psadr": {
+    "type": "string",
+    "label": "Present Address",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter present address",
+    "required": true,
+    "default": ""
+  },
+  "emply_pradr": {
+    "type": "string",
+    "label": "Permanent Address",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter permanent address",
+    "required": false,
+    "default": ""
+  },
+  "emply_desig": {
+    "type": "string",
+    "label": "Designation",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter designation",
+    "required": true,
+    "default": ""
+  },
+  "emply_jndat": {
+    "type": "date",
+    "label": "Joining Date",
+    "placeholder": "Enter joining date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "emply_cndat": {
+    "type": "date",
+    "label": "Confirmation Date",
+    "placeholder": "Enter confirmation date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "emply_rgdat": {
+    "type": "date",
+    "label": "Registration Date",
+    "placeholder": "Enter registration date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "emply_gssal": {
+    "type": "number",
+    "label": "Gross Salary",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter gross salary",
+    "required": true,
+    "default": "0"
+  },
+  "emply_otrat": {
+    "type": "number",
+    "label": "OT Rate",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter OT rate",
+    "required": true,
+    "default": "0"
+  },
+  "emply_etype": {
+    "type": "string",
+    "label": "Employee Type",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter employee type",
+    "required": false,
+    "default": ""
+  },
+  "emply_pyacc": {
+    "type": "string",
+    "label": "Payment Account",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter payment account",
+    "required": false,
+    "default": ""
+  },
+  "emply_slcyl": {
+    "type": "string",
+    "label": "Salary Cycle",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter salary cycle",
+    "required": false,
+    "default": ""
+  },
+  "emply_wksft": {
+    "type": "string",
+    "label": "Work Shift",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter work shift",
+    "required": false,
+    "default": ""
+  },
+  "emply_supid": {
+    "type": "string",
+    "label": "Supervisor ID",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter supervisor ID",
+    "required": false,
+    "default": ""
+  },
+  "emply_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 255,
+    "minLength": 0,
+    "placeholder": "Enter notes",
+    "required": false,
+    "default": ""
+  },
+  "emply_login": {
+    "type": "number",
+    "label": "Allow Login",
+    "maxLength": 1,
+    "minLength": 0,
+    "placeholder": "Allow Login",
+    "required": true,
+    "default": 0
+  },
+  "emply_pswrd": {
+    "type": "string",
+    "label": "Password",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter password",
+    "required": false,
+    "default": ""
+  },
+  "emply_pictr": {
+    "type": "string",
+    "label": "Picture",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter picture",
+    "required": false,
+    "default": ""
+  },
+  "emply_stats": {
+    "type": "string",
+    "label": "Status",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter status",
+    "required": true,
+    "default": ""
+  }
+}
