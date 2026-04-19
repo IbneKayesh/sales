@@ -1,0 +1,31 @@
+post
+http://localhost:3002/api/inventory/get
+
+body:
+{
+  "inputs": [
+    {
+      "vers": "v1",
+      "attrb": {
+        "p1": "true"
+      }
+    },
+    {
+      "vers": "v1",
+      "brand": {
+        "p1": "true"
+      }
+    },
+    {
+      "vers": "v2",
+      "amspt": {
+        "p1": "true"
+      }
+    }
+  ]
+}
+
+based on body params
+reconstruct server.js, inventory.js, v1.js
+
+amspt will be null as v2 not found

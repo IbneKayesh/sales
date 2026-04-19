@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
+const default_limit = 1000;
 
 // get all
 router.post("/", async (req, res) => {
@@ -21,8 +22,9 @@ router.post("/", async (req, res) => {
     const sql = `SELECT tbl.*, 0 as edit_stop
       FROM tmib_brand tbl
       WHERE tbl.brand_users = $1
-      ORDER BY tbl.brand_brnam`;
-    const params = [muser_id];
+      ORDER BY tbl.brand_brnam
+      LIMIT $2`;
+    const params = [muser_id, default_limit];
 
     const rows = await dbGetAll(sql, params, `Get brand for ${muser_id}`);
     res.json({
