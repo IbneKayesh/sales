@@ -2,6 +2,17 @@ const jwt = require("jsonwebtoken");
 const { getSession } = require("../sessionManager"); // import your session manager
 
 const authMiddleware = (req, res, next) => {
+  const apiKey = req.headers["sgd-auth"];
+  const validKey = process.env.APP_API_KEY;
+
+  if (!apiKey || apiKey !== validKey) {
+      return res.status(401).json({
+      success: false,
+      message: "Access denied. Invalid SGD Key.",
+      data: null,
+    });
+  }
+
   // Public paths whitelist
   const publicPaths = [
     "/api/auth/login",
@@ -11,7 +22,8 @@ const authMiddleware = (req, res, next) => {
     "/api/auth/reset-password",
     "/api/health",
     "/api/ping",
-    "/api/mobile/auth/login"
+    "/api/mobile/auth/login",
+    "/api/auth/v1/login",
   ];
 
   // Normalize path to ignore query parameters and trailing slashes
@@ -25,9 +37,11 @@ const authMiddleware = (req, res, next) => {
   // Check for Authorization header
   const authHeader = req.headers["authorization"];
   if (!authHeader) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Access denied. No token provided." });
+    return res.status(401).json({
+      success: false,
+      message: "Access denied. No token provided.",
+      data: null,
+    });
   }
 
   const token = authHeader.split(" ")[1]; // Bearer <token>
@@ -35,32 +49,41 @@ const authMiddleware = (req, res, next) => {
     return res.status(401).json({
       success: false,
       message: "Access denied. Invalid token format.",
+      data: null,
     });
   }
 
   try {
     if (!process.env.JWT_SECRET) {
       console.error("JWT_SECRET is not defined in environment variables");
-      return res
-        .status(500)
-        .json({ success: false, message: "Internal Server Error" });
+      return res.status(500).json({
+        success: false,
+        message: "Access denied. JWT Interception is failed.",
+        data: null,
+      });
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Check if session exists and is active
-    // const session = getSession(decoded.sessionId);
-    // if (!session) {
-    //   return res
-    //     .status(401)
-    //     .json({ success: false, message: "Session expired or invalid." });
-    // }
+    const session = getSession(decoded.sessionId);
+    if (!session) {
+      return res.status(401).json({
+      success: false,
+      message: "Access denied. Session is expired or invalid.",
+      data: null,
+    });
+    }
 
     // Attach user info and session to request
     req.user = decoded;
     //req.session = session;
     next();
   } catch (error) {
-    return res.status(401).json({ success: false, message: "Invalid token." });
+    return res.status(401).json({
+      success: false,
+      message: "Access denied. Invalid token format.",
+      data: null,
+    });
   }
 };
 

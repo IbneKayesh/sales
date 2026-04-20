@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require("uuid");
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { bacts_users,bacts_bsins } = req.body;
+    const { bacts_users, bacts_bsins } = req.body;
 
     // Validate input
     if (!bacts_users || !bacts_bsins) {
@@ -22,7 +22,8 @@ router.post("/", async (req, res) => {
       FROM tmtb_bacts acts
       WHERE acts.bacts_users = $1
       AND acts.bacts_bsins = $2
-      ORDER BY acts.bacts_bankn`;
+      ORDER BY acts.bacts_bankn
+      LIMIT 1000`;
     const params = [bacts_users, bacts_bsins];
 
     const rows = await dbGetAll(sql, params, `Get accounts for ${bacts_users}`);

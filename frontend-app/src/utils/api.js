@@ -38,4 +38,40 @@ const apiRequest = async (endpoint, options = {}) => {
   }
 };
 
-export { apiRequest };
+const apiLogin = async (options) => {
+  const endpoint = `/v1/auth/login`;
+  const url = `${API_BASE_URL}${endpoint}`;
+  const config = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer sgd.key.empty",
+      "sgd-auth": import.meta.env.VITE_APP_API_KEY,
+    },
+    ...options,
+  };
+  try {
+    const response = await fetch(url, config);
+    // Safely parse JSON
+    let data = null;
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
+
+    // Handle HTTP errors
+    if (!response.ok) {
+      throw new Error(data?.message || "Request failed");
+    }
+    console.log(data);
+    //create storage
+    
+    return data; // { success, message, data }
+  } catch (error) {
+    console.error(`API request failed: ${endpoint}`, error);
+    throw error;
+  }
+};
+
+export { apiRequest, apiLogin };

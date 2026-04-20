@@ -1,7 +1,7 @@
-import { apiRequest } from "@/utils/api.js";
+import { apiRequest, apiLogin } from "@/utils/api.js";
 
 export const authAPI = {
-  login: (data) =>
+  login2: (data) =>
     apiRequest("/auth/login", {
       method: "POST",
       body: JSON.stringify(data),
@@ -11,6 +11,13 @@ export const authAPI = {
       }
       return response;
     }),
+  login: (data) => {
+    apiLogin({
+      body: JSON.stringify(data),
+    }).then((response) => {
+      //return response;
+    });
+  },
   logout: () =>
     apiRequest("/auth/logout", {
       method: "POST",

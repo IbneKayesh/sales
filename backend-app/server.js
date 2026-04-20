@@ -36,27 +36,14 @@ app.use(rateLimiter);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// API Key validation middleware
 require("dotenv").config();
 const authMiddleware = require("./middlewares/authMiddleware");
-
-app.use("/api", (req, res, next) => {
-  const apiKey = req.headers["app-api-key"];
-  const validKey = process.env.APP_API_KEY;
-
-  //console.log("apiKey", apiKey);
-
-  if (!apiKey || apiKey !== validKey) {
-    return res.status(401).json({ error: "Invalid or missing API key" });
-  }
-
-  next();
-});
 
 // JWT Authentication Middleware
 app.use("/api", authMiddleware);
 
 // Initialize database
+
 //initData();
 
 // Routes
@@ -83,27 +70,42 @@ app.use("/api/sales", salesRoutes);
 app.use("/api/reports", reportsRoutes);
 //mobile
 app.use("/api/mobile", mobileRoutes);
+
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
-  res.json({ status: "OK", message: "Backend server is running" });
+  res.json({ success: true, message: "Backend server is running", data: null });
 });
 app.get("/api/ping", (req, res) => {
-  res.status(200).send({ timestamp: Date.now() });
-});
-
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);
-  res.status(500).json({ error: "Internal server error" });
+  res.status(200).json({
+    success: true,
+    message: "Ping successful",
+    data: {
+      timestamp: Date.now(),
+    },
+  });
 });
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: "Route not found" });
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+    data: null,
+  });
 });
-// Use error handling middleware
-const errorHandler = require("./middlewares/errorHandler");
-app.use(errorHandler);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: err.message || "An unexpected error occurred, Internal Server Error",
+    data: null,
+  });
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
