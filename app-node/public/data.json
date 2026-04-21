@@ -1,0 +1,174 @@
+{
+  "groups": [
+    { 
+      "group_id": 1, 
+      "group_name": "setup",
+      "description": "Configuration and master data setup"
+    },
+    { 
+      "group_id": 2, 
+      "group_name": "sales",
+      "description": "Sales related operations and transactions"
+    },
+    { 
+      "group_id": 3, 
+      "group_name": "purchase",
+      "description": "Purchase and procurement operations"
+    },
+    { 
+      "group_id": 4, 
+      "group_name": "accounts",
+      "description": "Financial accounting and transactions"
+    }
+  ],
+  "tables": [
+    {
+      "table_id": 1,
+      "table_name": "products",
+      "description": "Stores product master information",
+      "columns": [
+        { 
+          "name": "product_id", 
+          "type": "INT", 
+          "length": 11,
+          "is_primary": true,
+          "auto_increment": true,
+          "description": "Primary key of the product"
+        },
+        { 
+          "name": "product_name", 
+          "type": "VARCHAR", 
+          "length": 100,
+          "is_nullable": false,
+          "description": "Name of the product"
+        },
+        { 
+          "name": "price", 
+          "type": "DECIMAL", 
+          "length": "10,2",
+          "default_value": "0.00",
+          "description": "Selling price of the product"
+        },
+        { 
+          "name": "stock", 
+          "type": "INT", 
+          "length": 11,
+          "default_value": "0",
+          "description": "Available stock quantity"
+        }
+      ]
+    },
+    {
+      "table_id": 2,
+      "table_name": "customers",
+      "description": "Stores customer information",
+      "columns": [
+        { 
+          "name": "customer_id", 
+          "type": "INT", 
+          "length": 11,
+          "is_primary": true,
+          "description": "Primary key of the customer"
+        },
+        { 
+          "name": "customer_name", 
+          "type": "VARCHAR", 
+          "length": 100,
+          "is_nullable": false,
+          "description": "Full name of the customer"
+        },
+        { 
+          "name": "email", 
+          "type": "VARCHAR", 
+          "length": 100,
+          "is_unique": true,
+          "description": "Customer email address"
+        },
+        { 
+          "name": "phone", 
+          "type": "VARCHAR", 
+          "length": 20,
+          "is_nullable": true,
+          "description": "Customer contact number"
+        }
+      ]
+    },
+    {
+      "table_id": 3,
+      "table_name": "bank_accounts",
+      "description": "Stores company bank account details",
+      "columns": [
+        { 
+          "name": "account_id", 
+          "type": "INT", 
+          "length": 11,
+          "is_primary": true,
+          "description": "Primary key of the bank account"
+        },
+        { 
+          "name": "account_name", 
+          "type": "VARCHAR", 
+          "length": 100,
+          "description": "Name of the account holder"
+        },
+        { 
+          "name": "account_number", 
+          "type": "VARCHAR", 
+          "length": 50,
+          "is_unique": true,
+          "description": "Bank account number"
+        },
+        { 
+          "name": "balance", 
+          "type": "DECIMAL", 
+          "length": "12,2",
+          "default_value": "0.00",
+          "description": "Current account balance"
+        }
+      ]
+    },
+    {
+      "table_id": 4,
+      "table_name": "users",
+      "description": "Stores user details",
+      "columns": [
+        { 
+          "name": "user_id", 
+          "type": "INT", 
+          "length": 11,
+          "is_primary": true,
+          "description": "Primary key of the user"
+        },
+        { 
+          "name": "user_name", 
+          "type": "VARCHAR", 
+          "length": 100,
+          "description": "Name of the user"
+        }
+      ]
+    },
+    {
+      "table_id": 5,
+      "table_name": "sales_orders",
+      "description": "Stores sales order headers",
+      "columns": [
+        { "name": "order_id", "type": "INT", "length": 11, "is_primary": true },
+        { "name": "customer_id", "type": "INT", "length": 11, "references": { "table": "customers", "column": "customer_id" }, "description": "Link to the customer" },
+        { "name": "order_date", "type": "DATETIME", "default_value": "CURRENT_TIMESTAMP" },
+        { "name": "total_amount", "type": "DECIMAL", "length": "12,2", "default_value": "0.00" }
+      ]
+    }
+  ],
+  "group_table_mapping": [
+    { "group_id": 1, "table_id": 1 },
+    { "group_id": 2, "table_id": 1 },
+    { "group_id": 3, "table_id": 1 },
+
+    { "group_id": 2, "table_id": 2 },
+    { "group_id": 4, "table_id": 2 },
+
+    { "group_id": 4, "table_id": 3 },
+    
+    { "group_id": 2, "table_id": 5 }
+  ]
+}
