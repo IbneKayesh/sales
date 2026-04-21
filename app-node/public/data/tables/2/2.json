@@ -1,0 +1,19 @@
+{
+  "table_id": 2,
+  "table_name": "roles",
+  "description": "Job roles",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true,
+      "auto_increment": true
+    },
+    {
+      "name": "title",
+      "type": "VARCHAR",
+      "length": 100,
+      "is_nullable": false
+    }
+  ]
+}

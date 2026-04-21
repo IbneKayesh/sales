@@ -21,22 +21,23 @@ export const useAccounts = () => {
   const loadAccounts = async () => {
     try {
       setIsBusy(true);
-      const response = await accountsAPI.getAll({
-        bacts_users: user.users_users,
-        bacts_bsins: user.users_bsins,
-      });
-      //response = { success, message, data }
-
+      
+      const response = await accountsAPI.getAll();
+      if (!response.success) {
+        notify({
+          severity: "error",
+          summary: "Accounts",
+          detail: response.message,
+        });
+      }
       setDataList(response.data);
+
     } catch (error) {
       console.error("Error loading data:", error);
       notify({
         severity: "error",
         summary: "Accounts",
         detail: error?.message || "Failed to load data",
-        toast: true,
-        notification: true,
-        log: false,
       });
     } finally {
       setIsBusy(false);

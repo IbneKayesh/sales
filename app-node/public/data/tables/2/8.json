@@ -1,0 +1,23 @@
+{
+  "table_id": 8,
+  "table_name": "payroll_runs",
+  "description": "Monthly payroll",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true,
+      "auto_increment": true
+    },
+    {
+      "name": "month_year",
+      "type": "VARCHAR",
+      "length": 7
+    },
+    {
+      "name": "status",
+      "type": "VARCHAR",
+      "length": 20
+    }
+  ]
+}

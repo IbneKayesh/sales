@@ -1,0 +1,32 @@
+{
+  "table_id": 4,
+  "table_name": "products",
+  "description": "Product catalog",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true,
+      "auto_increment": true
+    },
+    {
+      "name": "category_id",
+      "type": "INT",
+      "references": {
+        "table": "categories",
+        "column": "id"
+      }
+    },
+    {
+      "name": "name",
+      "type": "VARCHAR",
+      "length": 100,
+      "is_nullable": false
+    },
+    {
+      "name": "price",
+      "type": "DECIMAL",
+      "length": "10,2"
+    }
+  ]
+}

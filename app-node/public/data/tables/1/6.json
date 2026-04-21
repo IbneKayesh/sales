@@ -1,0 +1,60 @@
+{
+  "table_id": 6,
+  "table_name": "tmib_brand",
+  "description": "Item Brand",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true
+    },
+    {
+      "name": "brand_users",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Default Users Id"
+    },
+    {
+      "name": "brand_brnam",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Unit Name"
+    },
+    {
+      "name": "brand_actve",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Is Active"
+    },
+    {
+      "name": "brand_crusr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Create User"
+    },
+    {
+      "name": "brand_crdat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Create Date"
+    },
+    {
+      "name": "brand_upusr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Update User"
+    },
+    {
+      "name": "brand_updat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Update Date"
+    },
+    {
+      "name": "brand_rvnmr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Revision Number"
+    }
+  ]
+}

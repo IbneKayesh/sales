@@ -1,0 +1,19 @@
+{
+  "table_id": 1,
+  "table_name": "departments",
+  "description": "Company departments",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true,
+      "auto_increment": true
+    },
+    {
+      "name": "name",
+      "type": "VARCHAR",
+      "length": 100,
+      "is_nullable": false
+    }
+  ]
+}

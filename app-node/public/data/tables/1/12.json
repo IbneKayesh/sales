@@ -1,0 +1,110 @@
+{
+  "table_id": 12,
+  "table_name": "tmib_cnstk",
+  "description": "Stock Conversion",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true
+    },
+    {
+      "name": "cnstk_users",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Default Users Id"
+    },
+    {
+      "name": "cnstk_bsins",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Default Business Id"
+    },
+    {
+      "name": "cnstk_mitem",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Master Item Id",
+      "references": {
+        "table": "tmib_items",
+        "column": "id"
+      }
+    },
+    {
+      "name": "cnstk_mtmqt",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Master Item Qty"
+    },
+    {
+      "name": "cnstk_mstkq",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Master Item Stock"
+    },
+    {
+      "name": "cnstk_sitem",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Support Item Id",
+      "references": {
+        "table": "tmib_items",
+        "column": "id"
+      }
+    },
+    {
+      "name": "cnstk_stmqt",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Support Item Qty"
+    },
+    {
+      "name": "cnstk_sstkq",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Support Item Stock"
+    },
+    {
+      "name": "cnstk_cnqty",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Converted Stock Qty"
+    },
+    {
+      "name": "cnstk_actve",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Is Active"
+    },
+    {
+      "name": "cnstk_crusr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Create User"
+    },
+    {
+      "name": "cnstk_crdat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Create Date"
+    },
+    {
+      "name": "cnstk_upusr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Update User"
+    },
+    {
+      "name": "cnstk_updat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Update Date"
+    },
+    {
+      "name": "cnstk_rvnmr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Revision Number"
+    }
+  ]
+}

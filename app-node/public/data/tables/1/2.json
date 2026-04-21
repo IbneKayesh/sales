@@ -1,0 +1,76 @@
+{
+  "table_id": 2,
+  "table_name": "tmcb_tarea",
+  "description": "Area",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true
+    },
+    {
+      "name": "tarea_users",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Default Users Id"
+    },
+    {
+      "name": "tarea_bsins",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Default Business Id"
+    },
+    {
+      "name": "tarea_dzone",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Zone Id",
+      "references": {
+        "table": "tmcb_dzone",
+        "column": "id"
+      }
+    },
+    {
+      "name": "tarea_tname",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Area / Thana Name"
+    },
+    {
+      "name": "tarea_actve",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Is Active"
+    },
+    {
+      "name": "tarea_crusr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Create User"
+    },
+    {
+      "name": "tarea_crdat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Create Date"
+    },
+    {
+      "name": "tarea_upusr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Update User"
+    },
+    {
+      "name": "tarea_updat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Update Date"
+    },
+    {
+      "name": "tarea_rvnmr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Revision Number"
+    }
+  ]
+}

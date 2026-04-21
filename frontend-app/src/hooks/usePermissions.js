@@ -14,9 +14,7 @@ export const usePermissions = () => {
     try {
       setIsBusy(true);
       const [response] = await Promise.all([
-        authAPI.permissionsModules({
-          id: user.users_users,
-        }),
+        authAPI.permissionsModules(),
         new Promise((resolve) => setTimeout(resolve, 500)),
       ]);
       setDataList(response.data);
@@ -39,7 +37,6 @@ export const usePermissions = () => {
       setIsBusy(true);
       const [response] = await Promise.all([
         authAPI.permissionsMenus({
-          id: user.users_users,
           menus_mdule: id,
         }),
         new Promise((resolve) => setTimeout(resolve, 500)),

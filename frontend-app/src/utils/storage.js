@@ -2,12 +2,13 @@
 const STORAGE_KEY = "sgdwa25";
 
 const defaultData = {
-  user: null,
   fullMode: false,
   leftbarCollapsed: false,
   expandedMenu: null,
   recentMenus: [],
-  business: null,
+  users: null,
+  bsins: null,
+  token: null,
   // Add other data as needed
 };
 

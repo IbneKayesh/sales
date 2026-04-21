@@ -1,0 +1,23 @@
+{
+  "table_id": 10,
+  "table_name": "temporary_promotions",
+  "description": "Legacy promo codes",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true,
+      "auto_increment": true
+    },
+    {
+      "name": "code",
+      "type": "VARCHAR",
+      "length": 50
+    },
+    {
+      "name": "discount",
+      "type": "DECIMAL",
+      "length": "5,2"
+    }
+  ]
+}

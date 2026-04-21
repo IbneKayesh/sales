@@ -9,6 +9,7 @@ const AccountsPage = () => {
   const {
     isBusy,
     dataList,
+    currentTitle,
     currentView,
     errors,
     formData,
@@ -27,7 +28,7 @@ const AccountsPage = () => {
 
     return (
       <div className="flex align-items-center justify-content-between">
-        <h3 className="m-0">
+        <h3 className="m-0"> {currentTitle}
           {isList
             ? "Account List"
             : formData.id

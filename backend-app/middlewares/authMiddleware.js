@@ -2,11 +2,13 @@ const jwt = require("jsonwebtoken");
 const { getSession } = require("../sessionManager"); // import your session manager
 
 const authMiddleware = (req, res, next) => {
-  const apiKey = req.headers["sgd-auth"];
+  //console.log("req", req.body);
+
+  const apiKey = req.headers["sgd-ua-node"];
   const validKey = process.env.APP_API_KEY;
 
   if (!apiKey || apiKey !== validKey) {
-      return res.status(401).json({
+    return res.status(401).json({
       success: false,
       message: "Access denied. Invalid SGD Key.",
       data: null,
@@ -64,14 +66,16 @@ const authMiddleware = (req, res, next) => {
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    //console.log("token", token);
+
     // Check if session exists and is active
     const session = getSession(decoded.sessionId);
     if (!session) {
       return res.status(401).json({
-      success: false,
-      message: "Access denied. Session is expired or invalid.",
-      data: null,
-    });
+        success: false,
+        message: "Access denied. Session is expired or invalid.",
+        data: null,
+      });
     }
 
     // Attach user info and session to request
@@ -81,7 +85,7 @@ const authMiddleware = (req, res, next) => {
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: "Access denied. Invalid token format.",
+      message: error.message || "Access denied. Something went wrong.",
       data: null,
     });
   }

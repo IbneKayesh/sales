@@ -1,0 +1,60 @@
+{
+    "table_id": 7,
+    "table_name": "tmib_ctgry",
+    "description": "Item Category",
+    "columns": [
+      {
+        "name": "id",
+        "type": "INT",
+        "is_primary": true
+      },
+      {
+        "name": "ctgry_users",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Default Users Id"
+      },
+      {
+        "name": "ctgry_ctgnm",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Category Name"
+      },
+      {
+        "name": "ctgry_actve",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Is Active"
+      },
+      {
+        "name": "ctgry_crusr",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Create User"
+      },
+      {
+        "name": "ctgry_crdat",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Create Date"
+      },
+      {
+        "name": "ctgry_upusr",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Update User"
+      },
+      {
+        "name": "ctgry_updat",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Update Date"
+      },
+      {
+        "name": "ctgry_rvnmr",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Revision Number"
+      }
+    ]
+  }

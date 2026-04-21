@@ -95,7 +95,7 @@ export const AppUIProvider = ({ children }) => {
       summary = "Info",
       detail = "",
       toast = true,
-      notification = false,
+      notification = true,
       log = false,
     }) => {
       // 1. Show Toast

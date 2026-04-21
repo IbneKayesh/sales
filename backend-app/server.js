@@ -2,8 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-const rateLimiter = require("./middlewares/rateLimiter.js");
 
+const rateLimiter = require("./middlewares/rateLimiter.js");
 //auth
 const authRoutes = require("./routes/auth");
 //crm

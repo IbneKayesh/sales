@@ -1,0 +1,104 @@
+{
+  "table_id": 10,
+  "table_name": "tmib_frmla",
+  "description": "Stock Conversion Formula",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true
+    },
+    {
+      "name": "frmla_users",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Default Users Id"
+    },
+    {
+      "name": "frmla_bsins",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Default Business Id"
+    },
+    {
+      "name": "frmla_mitem",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Master Item Id",
+      "references": {
+        "table": "tmib_items",
+        "column": "id"
+      }
+    },
+    {
+      "name": "frmla_mtmqt",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Master Item Qty"
+    },
+    {
+      "name": "frmla_sitem",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Support Item Id",
+      "references": {
+        "table": "tmib_items",
+        "column": "id"
+      }
+    },
+    {
+      "name": "frmla_stmqt",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Support Item Qty"
+    },
+    {
+      "name": "frmla_costp",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Cost Price"
+    },
+    {
+      "name": "frmla_inote",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Notes"
+    },
+    {
+      "name": "frmla_actve",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Is Active"
+    },
+    {
+      "name": "frmla_crusr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Create User"
+    },
+    {
+      "name": "frmla_crdat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Create Date"
+    },
+    {
+      "name": "frmla_upusr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Update User"
+    },
+    {
+      "name": "frmla_updat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Update Date"
+    },
+    {
+      "name": "frmla_rvnmr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Revision Number"
+    }
+  ]
+}

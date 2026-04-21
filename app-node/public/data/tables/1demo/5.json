@@ -1,0 +1,26 @@
+{
+  "table_id": 5,
+  "table_name": "inventory",
+  "description": "Stock levels",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true,
+      "auto_increment": true
+    },
+    {
+      "name": "product_id",
+      "type": "INT",
+      "references": {
+        "table": "products",
+        "column": "id"
+      }
+    },
+    {
+      "name": "quantity",
+      "type": "INT",
+      "default_value": 0
+    }
+  ]
+}

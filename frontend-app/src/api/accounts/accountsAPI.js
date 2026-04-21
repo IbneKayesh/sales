@@ -2,11 +2,7 @@ import { apiRequest } from "@/utils/api.js";
 
 //Accounts API
 export const accountsAPI = {
-  getAll: (data) =>
-    apiRequest("/accounts/accounts", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
+  getAll: (data) => apiRequest("/accounts/v1/accounts", { body: data }),
   create: (data) =>
     apiRequest("/accounts/accounts/create", {
       method: "POST",

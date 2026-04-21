@@ -1,0 +1,39 @@
+{
+  "table_id": 3,
+  "table_name": "employees",
+  "description": "Employee records",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true,
+      "auto_increment": true
+    },
+    {
+      "name": "department_id",
+      "type": "INT",
+      "references": {
+        "table": "departments",
+        "column": "id"
+      }
+    },
+    {
+      "name": "role_id",
+      "type": "INT",
+      "references": {
+        "table": "roles",
+        "column": "id"
+      }
+    },
+    {
+      "name": "first_name",
+      "type": "VARCHAR",
+      "length": 50
+    },
+    {
+      "name": "last_name",
+      "type": "VARCHAR",
+      "length": 50
+    }
+  ]
+}

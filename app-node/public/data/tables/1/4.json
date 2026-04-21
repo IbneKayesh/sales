@@ -1,0 +1,88 @@
+{
+    "table_id": 4,
+    "table_name": "tmcb_rutes",
+    "description": "Delivery Routes",
+    "columns": [
+      {
+        "name": "id",
+        "type": "INT",
+        "is_primary": true
+      },
+      {
+        "name": "rutes_users",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Default Users Id"
+      },
+      {
+        "name": "rutes_bsins",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Default Business Id"
+      },
+      {
+        "name": "rutes_rname",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Route Name"
+      },
+      {
+        "name": "rutes_dname",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Day Name"
+      },
+      {
+        "name": "rutes_trtry",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Territory Id",
+        "references": {
+          "table": "tmcb_trtry",
+          "column": "id"
+        }
+      },
+      {
+        "name": "rutes_lvdat",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Last Visit Date"
+      },
+      {
+        "name": "rutes_actve",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Is Active"
+      },
+      {
+        "name": "rutes_crusr",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Create User"
+      },
+      {
+        "name": "rutes_crdat",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Create Date"
+      },
+      {
+        "name": "rutes_upusr",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Update User"
+      },
+      {
+        "name": "rutes_updat",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Update Date"
+      },
+      {
+        "name": "rutes_rvnmr",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Revision Number"
+      }
+    ]
+  }

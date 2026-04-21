@@ -1,0 +1,37 @@
+{
+  "table_id": 5,
+  "table_name": "attendance_logs",
+  "description": "Daily attendance",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true,
+      "auto_increment": true
+    },
+    {
+      "name": "employee_id",
+      "type": "INT",
+      "references": {
+        "table": "employees",
+        "column": "id"
+      }
+    },
+    {
+      "name": "shift_id",
+      "type": "INT",
+      "references": {
+        "table": "shifts",
+        "column": "id"
+      }
+    },
+    {
+      "name": "check_in",
+      "type": "DATETIME"
+    },
+    {
+      "name": "check_out",
+      "type": "DATETIME"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "table_id": 5,
+  "table_name": "tmib_iuofm",
+  "description": "Item Unit",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true
+    },
+    {
+      "name": "iuofm_users",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Default Users Id"
+    },
+    {
+      "name": "iuofm_untnm",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Unit Name"
+    },
+    {
+      "name": "iuofm_untgr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Unit Group"
+    },
+    {
+      "name": "iuofm_actve",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Is Active"
+    },
+    {
+      "name": "iuofm_crusr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Create User"
+    },
+    {
+      "name": "iuofm_crdat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Create Date"
+    },
+    {
+      "name": "iuofm_upusr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Update User"
+    },
+    {
+      "name": "iuofm_updat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Update Date"
+    },
+    {
+      "name": "iuofm_rvnmr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Revision Number"
+    }
+  ]
+}

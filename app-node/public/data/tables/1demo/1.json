@@ -1,0 +1,72 @@
+{
+    "table_id": 1,
+    "table_name": "tmcb_dzone",
+    "description": "Zone",
+    "columns": [
+      {
+        "name": "id",
+        "type": "INT",
+        "is_primary": true
+      },
+      {
+        "name": "dzone_users",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Default Users Id"
+      },
+      {
+        "name": "dzone_bsins",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Default Business Id"
+      },
+      {
+        "name": "dzone_cntry",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Country Id"
+      },
+      {
+        "name": "dzone_dname",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "District / Zone Name"
+      },
+      {
+        "name": "dzone_actve",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Is Active"
+      },
+      {
+        "name": "dzone_crusr",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Create User"
+      },
+      {
+        "name": "dzone_crdat",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Create Date"
+      },
+      {
+        "name": "dzone_upusr",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Update User"
+      },
+      {
+        "name": "dzone_updat",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Update Date"
+      },
+      {
+        "name": "dzone_rvnmr",
+        "type": "VARCHAR",
+        "length": 11,
+        "description": "Revision Number"
+      }
+    ]
+  }

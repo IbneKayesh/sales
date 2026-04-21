@@ -1,0 +1,39 @@
+{
+  "table_id": 7,
+  "table_name": "order_items",
+  "description": "Order line items",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true,
+      "auto_increment": true
+    },
+    {
+      "name": "order_id",
+      "type": "INT",
+      "references": {
+        "table": "orders",
+        "column": "id"
+      }
+    },
+    {
+      "name": "product_id",
+      "type": "INT",
+      "references": {
+        "table": "products",
+        "column": "id"
+      }
+    },
+    {
+      "name": "quantity",
+      "type": "INT",
+      "is_nullable": false
+    },
+    {
+      "name": "price_at_time",
+      "type": "DECIMAL",
+      "length": "10,2"
+    }
+  ]
+}

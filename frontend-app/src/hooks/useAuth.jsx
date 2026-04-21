@@ -25,11 +25,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check if user is logged in
-    const storedUser = getStorageData()?.user;
+    const storedUser = getStorageData()?.users;
     if (storedUser) {
       setUser(storedUser);
     }
-    const storedBusiness = getStorageData()?.business;
+    const storedBusiness = getStorageData()?.bsins;
     if (storedBusiness) {
       setBusiness(storedBusiness);
     }
@@ -44,50 +44,10 @@ export const AuthProvider = ({ children }) => {
       };
       const response = await authAPI.login(reqBody);
       if (response.success) {
-        const { users_sview, ...restData } = response.data;
-
-        const userData = {
-          id: restData.id,
-          users_email: restData.users_email,
-          users_oname: restData.users_oname,
-          users_cntct: restData.users_cntct,
-          users_bsins: restData.users_bsins,
-          users_drole: restData.users_drole,
-          users_users: restData.users_users,
-          users_stats: restData.users_stats,
-          users_regno: restData.users_regno,
-          users_wctxt: restData.users_wctxt,
-          users_notes: restData.users_notes,
-          users_nofcr: restData.users_nofcr,
-          users_isrgs: restData.users_isrgs,
-        };
-        setUser(userData);
-        setStorageData({ user: userData });
-
-        // Handle view preference - store only in memory and sessionStorage
-        // const viewMode = users_sview || "web";
-        // setIsMobileView(viewMode === "mobile");
-        // sessionStorage.setItem("users_sview", viewMode);
-
-        const businessData = {
-          users_bsins: restData.users_bsins,
-          bsins_bname: restData.bsins_bname,
-          bsins_addrs: restData.bsins_addrs,
-          bsins_email: restData.bsins_email,
-          bsins_cntct: restData.bsins_cntct,
-          bsins_image: null,
-          bsins_binno: restData.bsins_binno,
-          bsins_btags : restData.bsins_btags,
-          bsins_cntry: restData.bsins_cntry,
-          bsins_bstyp: restData.bsins_bstyp,
-          bsins_tstrn: restData.bsins_tstrn,
-          bsins_prtrn: restData.bsins_prtrn,
-          bsins_sltrn: restData.bsins_sltrn,
-          bsins_stdat: restData.bsins_stdat,
-          bsins_pbviw: restData.bsins_pbviw,
-        };
-        setBusiness(businessData);
-        setStorageData({ business: businessData });
+        const { users, bsins, token } = response.data;
+        //console.log("users", users);
+        setUser(users);
+        setBusiness(bsins);
       }
       return response;
     } catch (error) {
@@ -97,17 +57,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    try {
-      await authAPI.logout();
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
     setUser(null);
     setBusiness(null);
-    setIsMobileView(false);
     clearStorageData();
-    sessionStorage.removeItem("users_sview");    
-    localStorage.removeItem("sgdWeb25");
   };
 
   const register = async (register) => {

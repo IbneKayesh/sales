@@ -11,7 +11,7 @@ function createSession(user) {
     name: user.users_oname,
     contact: user.users_cntct,
     role: user.users_drole,
-    business: user.bsins_bname,
+    business: user.users_bsins,
     users: user.users_users,
     createdAt: now,
     lastActivity: now,

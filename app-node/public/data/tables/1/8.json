@@ -1,0 +1,178 @@
+{
+  "table_id": 8,
+  "table_name": "tmib_items",
+  "description": "Item Master",
+  "columns": [
+    {
+      "name": "id",
+      "type": "INT",
+      "is_primary": true
+    },
+    {
+      "name": "items_users",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Default Users Id"
+    },
+    {
+      "name": "items_icode",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Item Code"
+    },
+    {
+      "name": "items_bcode",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Barcode"
+    },
+    {
+      "name": "items_hscod",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "HS Code"
+    },
+    {
+      "name": "items_iname",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Item Name"
+    },
+    {
+      "name": "items_idesc",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Item Description"
+    },
+    {
+      "name": "items_puofm",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Primary Unit Id",
+      "references": {
+        "table": "tmib_iuofm",
+        "column": "id"
+      }
+    },
+    {
+      "name": "items_dfqty",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Unit Difference Qty"
+    },
+    {
+      "name": "items_suofm",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Secondary Unit Id",
+      "references": {
+        "table": "tmib_iuofm",
+        "column": "id"
+      }
+    },
+    {
+      "name": "items_ctgry",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Item Category Id",
+      "references": {
+        "table": "tmib_ctgry",
+        "column": "id"
+      }
+    },
+    {
+      "name": "items_brand",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Item Brand Id",
+      "references": {
+        "table": "tmib_brand",
+        "column": "id"
+      }
+    },
+    {
+      "name": "items_itype",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Finished, Raw, Asset, etc"
+    },
+    {
+      "name": "items_trcks",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Stock Tracking"
+    },
+    {
+      "name": "items_sdvat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Sales VAT %"
+    },
+    {
+      "name": "items_costp",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Cost Price %"
+    },
+    {
+      "name": "items_nofbi",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "No of Business Item"
+    },
+    {
+      "name": "items_image",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Item Image"
+    },
+    {
+      "name": "items_alpur",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Allow Purchase"
+    },
+    {
+      "name": "items_alsal",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Allow Sales"
+    },
+    {
+      "name": "items_actve",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Is Active"
+    },
+    {
+      "name": "items_crusr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Create User"
+    },
+    {
+      "name": "items_crdat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Create Date"
+    },
+    {
+      "name": "items_upusr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Update User"
+    },
+    {
+      "name": "items_updat",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Update Date"
+    },
+    {
+      "name": "items_rvnmr",
+      "type": "VARCHAR",
+      "length": 11,
+      "description": "Revision Number"
+    }
+  ]
+}
