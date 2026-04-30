@@ -1,0 +1,140 @@
+/* ========================================
+   JBusy Component Styles
+   ======================================== */
+
+/* Busy Overlay Container */
+.j-busy-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+/* Full app busy with semi-transparent */
+.j-busy-full {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Busy Card */
+.j-busy-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-2xl);
+  background-color: var(--bg-main);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  min-width: 200px;
+}
+
+/* Spinner */
+.j-busy-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: j-busy-spin 0.8s linear infinite;
+}
+
+/* Different spinner sizes */
+.j-busy-sm .j-busy-spinner {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+
+.j-busy-md .j-busy-spinner {
+  width: 32px;
+  height: 32px;
+  border-width: 3px;
+}
+
+.j-busy-lg .j-busy-spinner {
+  width: 48px;
+  height: 48px;
+  border-width: 4px;
+}
+
+/* Message */
+.j-busy-message {
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+/* Loading Text */
+.j-busy-loading-text {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  margin-top: var(--space-xs);
+}
+
+/* Spinner Animation */
+@keyframes j-busy-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Inline Busy */
+.j-busy-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.j-busy-inline .j-busy-spinner {
+  width: 14px;
+  height: 14px;
+  border-width: 2px;
+}
+
+/* Busy with progress bar */
+.j-busy-progress {
+  width: 100%;
+  height: 4px;
+  background-color: var(--bg-muted);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: var(--space-md);
+}
+
+.j-busy-progress-bar {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: var(--radius-full);
+  animation: j-busy-progress 1.5s ease-in-out infinite;
+}
+
+@keyframes j-busy-progress {
+  0% { width: 0%; margin-left: 0%; }
+  50% { width: 50%; margin-left: 25%; }
+  100% { width: 0%; margin-left: 100%; }
+}
+
+/* Skeleton Loading */
+.j-busy-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-muted) 25%,
+    var(--bg-subtle) 50%,
+    var(--bg-muted) 75%
+  );
+  background-size: 200% 100%;
+  animation: j-busy-skeleton 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes j-busy-skeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

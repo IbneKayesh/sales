@@ -1,0 +1,230 @@
+/* ========================================
+   JDialog Component Styles
+   ======================================== */
+
+/* Dialog Overlay */
+.j-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: var(--space-lg);
+  animation: dialog-overlay-fade-in 0.2s ease-out;
+}
+
+@keyframes dialog-overlay-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Dialog Card */
+.j-dialog {
+  background-color: var(--bg-main);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: dialog-slide-up 0.2s ease-out;
+}
+
+@keyframes dialog-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Dialog Header */
+.j-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.j-dialog-title {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.j-dialog-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 18px;
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  line-height: 1;
+}
+
+.j-dialog-close:hover {
+  background-color: var(--bg-muted);
+  color: var(--text-main);
+}
+
+/* Dialog Body */
+.j-dialog-body {
+  padding: var(--space-lg);
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Dialog Footer */
+.j-dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-subtle);
+}
+
+/* Dialog Sizes */
+
+/* Small */
+.j-dialog-sm {
+  max-width: 400px;
+}
+
+/* Medium (Default) */
+.j-dialog-md {
+  max-width: 500px;
+}
+
+/* Large */
+.j-dialog-lg {
+  max-width: 700px;
+}
+
+/* Extra Large */
+.j-dialog-xl {
+  max-width: 900px;
+}
+
+/* Full Width */
+.j-dialog-full {
+  max-width: 95vw;
+}
+
+/* Dialog Types */
+
+/* Confirmation Dialog */
+.j-dialog-confirm .j-dialog {
+  max-width: 400px;
+}
+
+/* Form Dialog */
+.j-dialog-form .j-dialog-body {
+  padding-bottom: var(--space-md);
+}
+
+/* Alert Dialog */
+.j-dialog-alert .j-dialog {
+  max-width: 380px;
+}
+
+/* Dialog with icon */
+.j-dialog-icon-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.j-dialog-icon {
+  font-size: 24px;
+}
+
+/* Escape animation */
+.j-dialog-overlay.closing {
+  animation: dialog-overlay-fade-out 0.15s ease-in forwards;
+}
+
+.j-dialog.closing {
+  animation: dialog-slide-down 0.15s ease-in forwards;
+}
+
+@keyframes dialog-overlay-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes dialog-slide-down {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+}
+
+/* Scrollable body */
+.j-dialog-body-scrollable {
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+/* Dialog Footer aligned left */
+.j-dialog-footer-left {
+  justify-content: flex-start;
+}
+
+/* Dialog Footer spaced */
+.j-dialog-footer-spaced {
+  justify-content: space-between;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .j-dialog-overlay {
+    padding: var(--space-md);
+    align-items: flex-end;
+  }
+  
+  .j-dialog {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    max-height: 85vh;
+  }
+  
+  .j-dialog-footer {
+    flex-direction: column-reverse;
+  }
+  
+  .j-dialog-footer .j-button {
+    width: 100%;
+  }
+}
+
+/* Focus trap styles */
+.j-dialog-overlay:focus {
+  outline: none;
+}
+
+.j-dialog:focus {
+  outline: none;
+}
+
+/* Backdrop click to close */
+.j-dialog-backdrop-close {
+  cursor: pointer;
+}

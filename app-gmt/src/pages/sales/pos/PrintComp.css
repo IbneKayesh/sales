@@ -1,0 +1,195 @@
+.print-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f8f9fa;
+}
+
+.print-actions {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.invoice-wrapper {
+  background-color: white;
+  width: 100%;
+  max-width: 400px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.9rem;
+  color: #000;
+}
+
+.invoice-header {
+  text-align: center;
+  border-bottom: 1px dashed #ccc;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.invoice-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+}
+
+.invoice-header p {
+  margin: 0.2rem 0;
+}
+
+.invoice-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  border-bottom: 1px dashed #ccc;
+  padding-bottom: 1rem;
+}
+
+.invoice-meta p {
+  margin: 0.2rem 0;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.items-table th,
+.items-table td {
+  padding: 0.2rem 0;
+}
+
+.item-row-name td {
+  font-weight: bold;
+  border-bottom: none;
+  padding-top: 0.5rem;
+}
+
+.item-row-details td {
+  font-size: 0.85rem;
+  color: #444;
+  border-bottom: 1px dotted #ccc;
+  padding-bottom: 0.5rem;
+}
+
+.items-table th {
+  text-align: left;
+  border-bottom: 1px solid #000;
+  font-weight: bold;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.invoice-summary {
+  border-top: 1px dashed #ccc;
+  padding-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.summary-row.grand-total {
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-top: 1px solid #000;
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.payment-info {
+  border-top: 1px dashed #ccc;
+  padding-top: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.invoice-footer {
+  text-align: center;
+  margin-top: 2rem;
+  border-top: 1px dashed #ccc;
+  padding-top: 1rem;
+}
+
+.invoice-footer p {
+  margin: 0.2rem 0;
+}
+
+@media print {
+  #root {
+    display: none !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+  }
+
+  .p-dialog-mask {
+    position: static !important;
+    background: none !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  .p-dialog {
+    box-shadow: none !important;
+    border: none !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: static !important;
+  }
+
+  .p-dialog-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  .print-dialog .p-dialog-header,
+  .p-dialog-footer {
+    display: none !important;
+  }
+
+  .invoice-wrapper {
+    margin: 0 !important;
+    padding: 0 !important; /* Removes internal padding when printing */
+    box-shadow: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: static !important;
+  }
+
+  .print-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    background-color: white !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  @page {
+    margin: 0; /* Removes browser default margins */
+  }
+}

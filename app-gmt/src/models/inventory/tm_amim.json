@@ -1,0 +1,59 @@
+{
+  "id": {
+    "type": "number",
+    "label": "Id"
+  },
+  "itcl_name": {
+    "type": "string",
+    "label": "Sub Category Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter sub category name",
+    "required": true
+  },
+  "itcl_code": {
+    "type": "string",
+    "label": "Sub Category Code",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter sub category code",
+    "required": false
+  },
+  "itcg_id": {
+    "type": "number",
+    "label": "Category Id",
+    "maxLength": 1000000,
+    "minLength": 0,
+    "placeholder": "Enter category name",
+    "required": true
+  },
+  "aemp_iusr": {
+    "type": "string",
+    "label": "Created By",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter created by",
+    "required": false
+  },
+  "aemp_eusr": {
+    "type": "string",
+    "label": "Updated By",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter updated by",
+    "required": false
+  },
+  "lfcl_id": {
+    "type": "number",
+    "label": "Status"
+  },
+  "lfcl_name": {
+    "type": "string",
+    "label": "Status Name",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter status name",
+    "required": false
+  },
+  "import_file": {}
+}

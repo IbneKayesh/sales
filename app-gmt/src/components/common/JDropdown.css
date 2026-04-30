@@ -1,0 +1,239 @@
+/* ========================================
+   JDropdown Component Styles
+   ======================================== */
+
+/* Container */
+.j-dropdown-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+  position: relative;
+}
+
+/* Label */
+.j-dropdown-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+/* Dropdown Trigger (Button) */
+.j-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--height-md);
+  padding: 0 var(--space-md);
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.j-dropdown-trigger:hover {
+  border-color: #cbd5e1;
+}
+
+.j-dropdown-trigger.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
+
+.j-dropdown-trigger.error {
+  border-color: var(--danger);
+}
+
+.j-dropdown-trigger.error.active {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* Size Variants */
+.j-dropdown-sm .j-dropdown-trigger {
+  height: var(--height-sm);
+  padding: 0 var(--space-sm);
+  font-size: var(--font-size-sm);
+}
+
+.j-dropdown-md .j-dropdown-trigger {
+  height: var(--height-md);
+  padding: 0 var(--space-md);
+  font-size: var(--font-size-md);
+}
+
+.j-dropdown-lg .j-dropdown-trigger {
+  height: var(--height-lg);
+  padding: 0 var(--space-lg);
+  font-size: var(--font-size-lg);
+}
+
+/* Trigger Text */
+.trigger-text {
+  flex: 1;
+  text-align: left;
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.trigger-text.placeholder {
+  color: var(--text-muted);
+}
+
+/* Trigger Arrow */
+.trigger-arrow {
+  font-size: 10px;
+  color: var(--text-muted);
+  transition: transform var(--transition-fast);
+  margin-left: var(--space-sm);
+}
+
+.j-dropdown-trigger.active .trigger-arrow {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.j-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: var(--space-xs);
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  overflow: hidden;
+  animation: dropdown-slide-down 0.15s ease-out;
+}
+
+@keyframes dropdown-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide in animation */
+.slide-in {
+  animation: dropdown-slide-down 0.15s ease-out;
+}
+
+/* Dropdown Search */
+.j-dropdown-search {
+  padding: var(--space-sm);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Options Container */
+.j-dropdown-options {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Individual Option */
+.j-dropdown-option {
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-md);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.j-dropdown-option:hover {
+  background-color: var(--bg-subtle);
+}
+
+.j-dropdown-option.selected {
+  background-color: var(--primary-subtle);
+  color: var(--primary-dark);
+  font-weight: 500;
+}
+
+/* Focus state for keyboard navigation */
+.j-dropdown-option:focus {
+  outline: none;
+  background-color: var(--bg-muted);
+}
+
+.j-dropdown-option:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+
+/* No Results */
+.j-dropdown-no-results {
+  padding: var(--space-md);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Error Text */
+.j-dropdown-error-text {
+  font-size: var(--font-size-xs);
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Disabled State */
+.j-dropdown-container.disabled .j-dropdown-trigger,
+.j-dropdown-trigger.disabled {
+  background-color: var(--bg-muted);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.j-dropdown-container.disabled .j-dropdown-trigger:hover,
+.j-dropdown-trigger.disabled:hover {
+  border-color: var(--border-color);
+}
+
+/* Dropdown Menu Positioning - for different container positions */
+.j-dropdown-menu.j-dropdown-menu-up {
+  top: auto;
+  bottom: 100%;
+  margin-top: 0;
+  margin-bottom: var(--space-xs);
+  animation: dropdown-slide-up 0.15s ease-out;
+}
+
+@keyframes dropdown-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scrollbar Styling */
+.j-dropdown-options::-webkit-scrollbar {
+  width: 6px;
+}
+
+.j-dropdown-options::-webkit-scrollbar-track {
+  background: var(--bg-subtle);
+}
+
+.j-dropdown-options::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.j-dropdown-options::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}

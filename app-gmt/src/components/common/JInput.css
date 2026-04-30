@@ -1,0 +1,145 @@
+/* ========================================
+   JInput Component Styles
+   ======================================== */
+
+/* Container */
+.j-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+/* Label */
+.j-input-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+/* Input Field Base */
+.j-input-field {
+  width: 100%;
+  padding: 0 var(--space-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  color: var(--text-main);
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+}
+
+/* Size Variants - Compact */
+.j-input-sm .j-input-field {
+  height: var(--height-sm);
+  font-size: var(--font-size-sm);
+  padding: 0 var(--space-sm);
+}
+
+.j-input-md .j-input-field {
+  height: var(--height-md);
+  font-size: var(--font-size-md);
+  padding: 0 var(--space-md);
+}
+
+.j-input-lg .j-input-field {
+  height: var(--height-lg);
+  font-size: var(--font-size-lg);
+  padding: 0 var(--space-lg);
+}
+
+/* Placeholder */
+.j-input-field::placeholder {
+  color: var(--text-muted);
+}
+
+/* Focus State */
+.j-input-field:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+/* Hover State (when not focused) */
+.j-input-field:hover:not(:focus) {
+  border-color: #cbd5e1;
+}
+
+/* Status: Success */
+.j-input-status-success .j-input-field {
+  border-color: var(--success);
+}
+
+.j-input-status-success .j-input-field:focus {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+/* Status: Error */
+.j-input-status-error .j-input-field {
+  border-color: var(--danger);
+}
+
+.j-input-status-error .j-input-field:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* Error Text */
+.j-input-error-text {
+  font-size: var(--font-size-xs);
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Disabled State */
+.j-input-field:disabled {
+  background-color: var(--bg-muted);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Textarea Variant */
+.j-input-field textarea.j-input-field {
+  resize: vertical;
+  min-height: 60px;
+  padding: var(--space-sm) var(--space-md);
+}
+
+/* Input with Icon */
+.j-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.j-input-wrapper .j-input-field {
+  padding-right: 36px;
+}
+
+.j-input-icon {
+  position: absolute;
+  right: var(--space-sm);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* Search Type */
+.j-input-field[type="search"] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.j-input-field[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Number Input Arrows */
+.j-input-field[type="number"]::-webkit-inner-spin-button,
+.j-input-field[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+  height: var(--height-sm);
+}

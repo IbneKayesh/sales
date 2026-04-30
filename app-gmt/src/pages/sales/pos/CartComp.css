@@ -1,0 +1,165 @@
+.cart-comp {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.cart-header {
+  padding: 0.5rem 0.5rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #eafaef;
+}
+
+.cart-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.clear-cart:hover {
+  color: #fa6c6c !important;
+}
+
+.cart-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.cart-customer {
+  padding: 1rem 1.5rem 0;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid #f9f9f9;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+}
+
+.cart-item:hover {
+  background-color: #eff0f1;
+  transform: translateX(4px);
+}
+
+.item-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.item-inline-details {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #777;
+  margin-top: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.inline-detail {
+  background: #f0f0f0;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.qty-input {
+  width: 50px;
+  padding: 0.25rem;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.item-subtotal {
+  font-weight: 600;
+  color: #333;
+  min-width: 60px;
+  text-align: right;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #ff4d4f;
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 5px;
+}
+
+.remove-btn:hover {
+  color: #cf1322;
+}
+
+.empty-cart {
+  text-align: center;
+  color: #999;
+  margin-top: 2rem;
+}
+
+.cart-footer {
+  padding: 1.5rem;
+  border-top: 1px solid #eee;
+  background: #fdfdfd;
+}
+
+.cart-summary-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #ddd;
+  color: #333;
+}
+
+.checkout-btn {
+  width: 100%;
+  padding: 1rem;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.checkout-btn:hover:not(:disabled) {
+  background: #218838;
+}
+
+.checkout-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.checkout-btn.add-more {
+  background:var(--primary);
+}
+
+.checkout-btn.add-more:hover {
+  background: var(--primary-hover);
+}

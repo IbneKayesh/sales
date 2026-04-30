@@ -1,0 +1,205 @@
+/* ========================================
+   JToast Component Styles
+   ======================================== */
+
+/* Toast Container */
+.j-toast-container {
+  position: fixed;
+  top: var(--space-lg);
+  right: var(--space-lg);
+  z-index: 11000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  pointer-events: none;
+}
+
+/* Individual Toast */
+.j-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background-color: var(--bg-main);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  border-left: 4px solid;
+  min-width: 280px;
+  max-width: 400px;
+  pointer-events: auto;
+  animation: toast-slide-in 0.3s ease-out;
+}
+
+/* Slide in animation */
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Toast leaving animation */
+.j-toast.leaving {
+  animation: toast-slide-out 0.3s ease-in forwards;
+}
+
+@keyframes toast-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+/* Toast Icon */
+.j-toast-icon {
+  flex-shrink: 0;
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Toast Content */
+.j-toast-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.j-toast-message {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-main);
+  word-wrap: break-word;
+}
+
+.j-toast-details {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Toast Close Button */
+.j-toast-close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  opacity: 0.6;
+  transition: opacity var(--transition-fast);
+}
+
+.j-toast-close:hover {
+  opacity: 1;
+}
+
+/* Toast Types */
+
+/* Success */
+.j-toast-success {
+  border-left-color: var(--success);
+}
+
+.j-toast-success .j-toast-icon {
+  color: var(--success);
+}
+
+/* Info */
+.j-toast-info {
+  border-left-color: var(--info);
+}
+
+.j-toast-info .j-toast-icon {
+  color: var(--info);
+}
+
+/* Warning */
+.j-toast-warning {
+  border-left-color: var(--warning);
+}
+
+.j-toast-warning .j-toast-icon {
+  color: var(--warning);
+}
+
+/* Danger/Error */
+.j-toast-danger {
+  border-left-color: var(--danger);
+}
+
+.j-toast-danger .j-toast-icon {
+  color: var(--danger);
+}
+
+/* Compact Toast */
+.j-toast-compact {
+  padding: var(--space-sm) var(--space-md);
+  min-width: 200px;
+}
+
+.j-toast-compact .j-toast-icon {
+  font-size: 14px;
+}
+
+.j-toast-compact .j-toast-message {
+  font-size: var(--font-size-xs);
+}
+
+/* Toast Position Variants */
+.j-toast-container.j-toast-top-left {
+  top: var(--space-lg);
+  left: var(--space-lg);
+  right: auto;
+}
+
+.j-toast-container.j-toast-top-center {
+  top: var(--space-lg);
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+.j-toast-container.j-toast-bottom-left {
+  top: auto;
+  bottom: var(--space-lg);
+  left: var(--space-lg);
+  right: auto;
+}
+
+.j-toast-container.j-toast-bottom-center {
+  top: auto;
+  bottom: var(--space-lg);
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+.j-toast-container.j-toast-bottom-right {
+  top: auto;
+  bottom: var(--space-lg);
+}
+
+/* Progress bar in toast */
+.j-toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background-color: currentColor;
+  opacity: 0.3;
+  animation: toast-progress 3s linear forwards;
+}
+
+@keyframes toast-progress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
