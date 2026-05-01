@@ -11,6 +11,7 @@ echo 2. Mobile + API
 echo 3. Web + Mobile + API
 echo 4. Web
 echo 5. Mobile
+echo 6. GMT
 echo 0. Exit
 echo.
 
@@ -21,6 +22,7 @@ if %choice%==2 goto MA
 if %choice%==3 goto WMA
 if %choice%==4 goto W
 if %choice%==5 goto M
+if %choice%==6 goto GMT
 if %choice%==0 goto END
 
 echo Invalid choice. Try again.
@@ -54,6 +56,11 @@ goto MENU
 :M
 start cmd /k "cd mobile-app && npm run dev"
 echo  ---- Mobile Running ----
+goto MENU
+
+:GMT
+start cmd /k "cd app-gmt && npm run dev"
+echo  ---- GMT Running ----
 goto MENU
 
 :END

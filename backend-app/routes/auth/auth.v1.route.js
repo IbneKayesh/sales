@@ -20,10 +20,10 @@ router.post("/login", async (req, res) => {
     }
 
     //database action
-    //validate user
+    //validate user, users_apink,
     const sql_user = `SELECT id, users_email, users_oname, users_cntct, users_bsins, users_drole,
     users_users, users_stats, users_regno, users_regdt, users_ltokn, users_lstgn,
-    users_lstpd, users_wctxt, users_notes, users_nofcr, users_isrgs, users_apink,
+    users_lstpd, users_wctxt, users_notes, users_nofcr, users_isrgs,
     users_actve, users_crusr, users_crdat, users_upusr, users_updat
     FROM tmsb_users usr
     WHERE usr.users_actve = TRUE

@@ -86,5 +86,43 @@
       "group_id": 3,
       "table_id": 9
     }
+  ],
+  "3":[
+    {
+      "group_id": 3,
+      "table_id": 1
+    },
+    {
+      "group_id": 3,
+      "table_id": 2
+    },
+    {
+      "group_id": 3,
+      "table_id": 3
+    },
+    {
+      "group_id": 3,
+      "table_id": 4
+    },
+    {
+      "group_id": 3,
+      "table_id": 5
+    },
+    {
+      "group_id": 3,
+      "table_id": 6
+    },
+    {
+      "group_id": 3,
+      "table_id": 7
+    },
+    {
+      "group_id": 3,
+      "table_id": 8
+    },
+    {
+      "group_id": 3,
+      "table_id": 9
+    }
   ]
 }
