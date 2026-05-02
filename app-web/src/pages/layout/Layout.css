@@ -1,0 +1,7 @@
+/* Component-specific layout tweaks if needed. 
+   Most structural styles are now in index.css to avoid redundancy. */
+
+.content-area {
+  /* Let it inherit the main-wrapper's var(--bg-main) background so white cards contrast nicely */
+  background: transparent;
+}

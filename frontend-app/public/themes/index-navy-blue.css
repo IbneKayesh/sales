@@ -1,0 +1,95 @@
+:root {
+    /* ===============================
+       🎨 Core Brand Colors
+    =============================== */
+    --primary: #1a237e;
+    --primary-hover: #121858;
+    --primary-active: #0d103d;
+    --primary-glow: rgba(26, 35, 126, 0.25);
+    --primary-light: #e8eaf6;
+  
+    /* Semantic Colors */
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #3f51b5;
+  
+    --danger-light: #fecaca;
+    --danger-hover: #fef2f2;
+    --success-light: #dcfce7;
+    --warning-light: #fef3c7;
+    --info-light: #e8eaf6;
+  
+    /* Extra Utility */
+    --blue: #1a237e;
+    --green-light: #d9f8ea;
+  
+    /* ===============================
+       🧱 Background System
+    =============================== */
+    --bg-main: #f0f2f5;
+    --bg-card: #ffffff;
+    --bg-sidebar: #e8eaf6;
+    --bg-topbar: #1a237e;
+  
+    --surface-1: #ffffff;
+    --surface-2: #f5f7fa;
+    --surface-3: #eceff1;
+  
+    /* ===============================
+       📝 Typography
+    =============================== */
+    --text-main: #1f2d3d;
+    --text-muted: #6b7c93;
+    --text-on-primary: #ffffff;
+    --text-white: #ffffff;
+    --text-strong: #0f172a;
+    --text-soft: #94a3b8;
+  
+    /* ===============================
+       🔲 Borders
+    =============================== */
+    --border-color: #d1d9e6;
+    --border-light: #e2e8f0;
+    --border-strong: #b0bec5;
+  
+    /* ===============================
+       🔘 Interaction States
+    =============================== */
+    --hover-bg: rgba(26, 35, 126, 0.06);
+    --active-bg: rgba(26, 35, 126, 0.12);
+    --focus-ring: rgba(26, 35, 126, 0.35);
+  
+    /* ===============================
+       📏 Layout Constants
+    =============================== */
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 80px;
+    --header-height: 44px;
+  
+    --space-xs: 4px;
+    --space-sm: 6px;
+    --space-md: 10px;
+    --space-lg: 14px;
+  
+    /* ===============================
+       🌫 Effects & Shapes
+    =============================== */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-lg:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.05);
+    --shadow-hover:
+      0 20px 25px -5px rgb(0 0 0 / 0.1),
+      0 10px 10px -5px rgb(0 0 0 / 0.04);
+  
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+    --radius-xl: 16px;
+    --radius-lg: 12px;
+    --radius-md: 8px;
+    --radius-sm: 6px;
+  }

@@ -1,22 +1,19 @@
 // Centralized localStorage utility for managing app data
-const STORAGE_KEY = "sgdwa25";
-const STORAGE_KEY_LOGIN = "sgdwaconf2026";
+const STORAGE_KEY = "a1az26Apr04";
+const STORAGE_KEY_LOGIN = "s1azconf2026";
 
 const defaultData = {
-  fullMode: false,
-  leftbarCollapsed: false,
-  expandedMenu: null,
-  recentMenus: [],
   users: null,
   bsins: null,
   token: null,
-  // Add other data as needed
+  menus: [],
+  recent_links: []
 };
 
 const confData = {
   saved_user: null,
   is_saved: false,
-  theme: "green",
+  theme: "green"
 };
 
 const getStorageData = () => {
@@ -47,6 +44,7 @@ const clearStorageData = () => {
   }
 };
 
+
 const getStorageLoginData = () => {
   try {
     const data = localStorage.getItem(STORAGE_KEY_LOGIN);
@@ -67,10 +65,5 @@ const setStorageLoginData = (data) => {
   }
 };
 
-export {
-  getStorageData,
-  setStorageData,
-  clearStorageData,
-  getStorageLoginData,
-  setStorageLoginData,
-};
+
+export { getStorageData, setStorageData, clearStorageData, getStorageLoginData, setStorageLoginData };

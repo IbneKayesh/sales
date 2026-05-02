@@ -1,0 +1,202 @@
+/* Background container */
+.screen {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--bg-main, #eef7f4);
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient glowing orbs for glassmorphism */
+.ambient-light {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: 0;
+  animation: float 10s infinite ease-in-out alternate;
+}
+
+.light-1 {
+  width: 400px;
+  height: 400px;
+  background: rgba(16, 185, 129, 0.25); /* Primary green glow */
+  top: 10%;
+  left: 20%;
+}
+
+.light-2 {
+  width: 350px;
+  height: 350px;
+  background: rgba(42, 104, 203, 0.15); /* Blue glow */
+  bottom: 10%;
+  right: 20%;
+  animation-delay: -5s;
+}
+
+.light-3 {
+  width: 300px;
+  height: 300px;
+  background: rgba(239, 68, 68, 0.15); /* Danger/red soft glow */
+  top: 40%;
+  left: 60%;
+  animation-delay: -2s;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 60px) scale(1.1); }
+}
+
+/* Premium Glass Card */
+.glass-card {
+  width: 380px;
+  height: 440px;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 30px 60px -12px rgba(16, 185, 129, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Clock face container */
+.clock-face {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 
+    inset 0 10px 30px rgba(0, 0, 0, 0.05),
+    0 5px 15px rgba(0, 0, 0, 0.03),
+    0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+/* Hour markers */
+.hour-marker {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.marker {
+  width: 2px;
+  height: 10px;
+  background: var(--text-muted, #64748b);
+  margin: 0 auto;
+  border-radius: 2px;
+  opacity: 0.5;
+}
+
+.hour-marker:nth-child(3n+1) .marker {
+  background: var(--primary, #10b981);
+  height: 14px;
+  width: 3px;
+  opacity: 1;
+  box-shadow: 0 0 5px rgba(16, 185, 129, 0.3);
+}
+
+/* Rings */
+.ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transform-origin: center;
+  transition: transform 0.1s cubic-bezier(0.4, 2.08, 0.55, 0.44);
+}
+
+.ring::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 10px;
+}
+
+/* Second hand */
+.sec::before {
+  width: 2px;
+  height: 140px; /* extends 10px below center */
+  background: linear-gradient(to top, transparent, var(--danger, #ef4444) 30%, var(--danger, #ef4444));
+  top: 10px;
+  box-shadow: 0 -3px 10px rgba(239, 68, 68, 0.4);
+}
+
+/* Minute hand */
+.min::before {
+  width: 4px;
+  height: 100px; /* bottom is at 130px */
+  background: linear-gradient(to top, transparent 10%, var(--primary, #10b981));
+  top: 30px;
+  box-shadow: 0 -2px 10px rgba(16, 185, 129, 0.3);
+}
+
+/* Hour hand */
+.hr::before {
+  width: 6px;
+  height: 70px; /* bottom is at 130px */
+  background: linear-gradient(to top, transparent, var(--text-main, #0f172a));
+  top: 60px;
+  box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.2);
+}
+
+/* Center dot */
+.center-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  background: var(--text-main, #0f172a);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  border: 3px solid #ffffff;
+}
+
+/* Info Section */
+.clock-info {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.digital-time {
+  font-size: 40px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, var(--text-main, #0f172a) 0%, var(--primary, #10b981) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.digital-date {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted, #64748b);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
