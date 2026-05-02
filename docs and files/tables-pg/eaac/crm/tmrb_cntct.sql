@@ -1,35 +1,36 @@
 --
--- Table structure for table tmcb_cntct
+-- Table structure for table tmrb_cntct
 --
 
-CREATE TABLE tmcb_cntct (
+CREATE TABLE tmrb_cntct (
   id varchar(50) PRIMARY KEY,
 
-  cntct_users varchar(50) NOT NULL,
+  cntct_apusr varchar(50) NOT NULL,
   cntct_bsins varchar(50) NOT NULL,
   cntct_ctype varchar(50) NOT NULL,
   cntct_sorce varchar(50) NOT NULL,
   cntct_cntnm varchar(200) NOT NULL,
+  cntct_cntps varchar(50) NOT NULL,
 
   -- optional
-  cntct_cntps varchar(50),
   cntct_cntno varchar(50),
   cntct_email varchar(50),
   cntct_tinno varchar(50),
   cntct_trade varchar(50),
   cntct_ofadr varchar(300),
   cntct_fcadr varchar(300),
+
+  -- relations
   cntct_tarea varchar(50),  
   cntct_dzone varchar(50),  
   cntct_cntry varchar(50),  
   cntct_cntad varchar(50),
+  cntct_crncy varchar(50),
 
   -- default
   cntct_dspct decimal(18,6) NOT NULL DEFAULT 0,
   cntct_crlmt decimal(18,6) NOT NULL DEFAULT 0,
-  cntct_pybln decimal(18,6) NOT NULL DEFAULT 0,
-  cntct_adbln decimal(18,6) NOT NULL DEFAULT 0,
-  cntct_crbln decimal(18,6) NOT NULL DEFAULT 0,
+  cntct_crbal decimal(18,6) NOT NULL DEFAULT 0,
 
   -- default
   cntct_actve boolean NOT NULL DEFAULT true,

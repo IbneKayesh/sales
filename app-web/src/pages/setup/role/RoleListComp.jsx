@@ -13,6 +13,7 @@ const RoleListComp = ({ dataList, onEdit, onDelete }) => {
   const onExportCSV = () => {
     dt.current.exportCSV();
   };
+  
   const role_name_BT = (rowData) => {
     return <ActiveRowCell text={rowData.role_name} status={rowData.lfcl_id} />;
   };

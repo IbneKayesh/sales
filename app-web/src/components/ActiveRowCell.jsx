@@ -2,6 +2,6 @@ const ActiveRowCell = ({
   text,
   status,
   inactiveClass = "text-red-500 line-through",
-}) => <span className={status === 2 ? inactiveClass : undefined}>{text}</span>;
+}) => <span className={!status ? inactiveClass : undefined}>{text}</span>;
 
 export default ActiveRowCell;

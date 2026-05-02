@@ -32,7 +32,7 @@ router.post("/login", async (req, res) => {
     const row_user = await dbGet(
       sql_user,
       params_user,
-      "Get User Login Credential",
+      "Get login credential",
     );
     if (!row_user) {
       return res.json({
@@ -48,7 +48,7 @@ router.post("/login", async (req, res) => {
     WHERE bsn.bsins_actve = TRUE
     AND bsn.id = $1`;
     const params_bsn = [bsins_id];
-    const row_bsn = await dbGet(sql_bsn, params_bsn, `Get user login business`);
+    const row_bsn = await dbGet(sql_bsn, params_bsn, `Get login business`);
     if (!row_bsn) {
       return res.json({
         success: false,
@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
   FROM tmab_menus mnu
   WHERE mnu.menus_actve = TRUE
   ORDER BY mnu.menus_odrby`;
-    const row_menus = await dbGetAll(sql_menus, [], `Get user login menus`);
+    const row_menus = await dbGetAll(sql_menus, [], `Get login menus`);
     if (!row_menus) {
       return res.json({
         success: false,

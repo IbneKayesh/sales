@@ -176,7 +176,7 @@ const Sidebar = ({ collapsed }) => {
   useEffect(() => {
     const data = getStorageData();
     setUserData(data.users);
-    console.log("data", data.menus);
+    //console.log("data", data.menus);
     setUserMenus(data.menus);
 
     const savedRecent = data?.recent_links;

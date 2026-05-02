@@ -15,9 +15,9 @@ const apiRequest = async (endpoint, options = {}) => {
   }
 
   const reqData = {
-    user_s: storedUser.id, //thisUserId //self
-    user_m: storedUser.users_users, //thisMasterUserId //master
-    user_b: storedUser.users_bsins //thisBusinessId //business
+    user_s: storedUser.id, //this User Id or self Id
+    user_c: storedUser.users_apusr, //this Master User Id or contract Id
+    user_b: storedUser.users_bsins //this Business Id
   };
   //merge to body
   const incomingBody = options.body || {};
