@@ -35,20 +35,20 @@ const useLogin = () => {
       setIsBusy(true);
 
       const resp = await login(formData);
-      if (resp.result) {
-        navigate("/");
+      if (resp.success) {
+        console.log("resp",resp)
         if (rememberUser && formData.username) {
           setStorageLoginData({
             saved_user: {
               username: formData.username,
-              usertext: resp.aempName
+              usertext: resp.data.users.users_uname
             },
             is_saved: true,
           });
         } else {
           setStorageLoginData({ saved_user: null, is_saved: false });
-        }
-
+        }        
+        navigate("/");
         //console.log("resp",resp)
       } else {
         showToast("error", "Login", resp.message);

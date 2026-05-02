@@ -1,0 +1,42 @@
+--
+-- Table structure for table `tmcb_users`
+-- master users and workstation users
+
+
+CREATE TABLE tmcb_users (
+  id varchar(50) PRIMARY KEY,
+
+  users_email varchar(50) NOT NULL UNIQUE,
+  users_pswrd varchar(50) NOT NULL,
+  users_recky varchar(50) NOT NULL,
+  users_uname varchar(255) NOT NULL,
+
+  -- optional
+  users_cntct varchar(50),
+  users_stats integer NOT NULL DEFAULT 0,
+  users_regno varchar(50),
+  users_regdt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  users_ltokn varchar(50),
+  users_lstgn timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  users_lstpd timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  users_notes varchar(100),
+  users_nofcr decimal(18,2) NOT NULL DEFAULT 0,
+  users_isprm boolean NOT NULL DEFAULT false,
+  users_apink varchar(50) DEFAULT 'N',
+
+  -- relations
+  users_apusr varchar(50) NOT NULL,
+  users_urole varchar(50),
+  users_bsins varchar(50),
+  users_emply varchar(50),
+
+  -- default
+  users_actve boolean NOT NULL DEFAULT true,
+  users_crusr varchar(50) NOT NULL,
+  users_crdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  users_upusr varchar(50) NOT NULL,
+  users_updat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  users_rvnmr integer NOT NULL DEFAULT 1
+);

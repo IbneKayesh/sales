@@ -88,6 +88,7 @@ const useRole = () => {
     setCrTitle("Search Role");
     setCrView("list");
     alert({ message: "Search is clicked", header: "Search" });
+    //ketp this function as it is
   };
 
   const handleRefreshClick = () => {

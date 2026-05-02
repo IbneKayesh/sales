@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth.jsx";
 import "./Sidebar.css";
 
 const Sidebar = ({ collapsed }) => {
-  const [expandedMenu, setExpandedMenu] = useState(null);
+  const [expandedMenus, setExpandedMenus] = useState([]);
   const [userMenus, setUserMenus] = useState([]);
   const [userData, setUserData] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -55,26 +55,61 @@ const Sidebar = ({ collapsed }) => {
     });
   }, []);
 
-  const sortedMenus = useMemo(() => {
-    const sortFn = (a, b) => a.id - b.id;
+  const buildMenuTree = useCallback((menus) => {
+    if (!menus) return [];
+    const map = {};
+    const tree = [];
 
-    const menusToProcess = [...userMenus];
+    // Initialize map with normalized items
+    menus.forEach((menu) => {
+      map[menu.id] = {
+        ...menu,
+        label: menu.menus_mname || menu.label,
+        link: menu.menus_mlink === "NA" ? null : menu.menus_mlink || menu.link,
+        icon:
+          menu.menus_micon === "default" || !menu.menus_micon
+            ? "pi-circle-fill"
+            : menu.menus_micon,
+        subItems: [],
+      };
+    });
+
+    // Build tree
+    menus.forEach((menu) => {
+      const parentId = menu.menus_menus;
+      if (parentId && parentId !== "NA") {
+        if (map[parentId]) {
+          map[parentId].subItems.push(map[menu.id]);
+        } else {
+          // If parent not found in map, it's a root item
+          tree.push(map[menu.id]);
+        }
+      } else {
+        tree.push(map[menu.id]);
+      }
+    });
+
+    return tree;
+  }, []);
+
+  const sortedMenus = useMemo(() => {
+    const tree = buildMenuTree(userMenus);
+
     if (recentLinks.length > 0) {
-      menusToProcess.push({
+      tree.unshift({
         id: -99,
         label: "Recent",
         icon: "pi-history",
-        subItems: recentLinks,
+        subItems: recentLinks.map((r) => ({
+          ...r,
+          menus_mlink: r.link,
+          menus_mname: r.label,
+        })),
       });
     }
 
-    return menusToProcess
-      .map((menu) => ({
-        ...menu,
-        subItems: menu.subItems ? [...menu.subItems].sort(sortFn) : null,
-      }))
-      .sort(sortFn);
-  }, [userMenus, recentLinks]);
+    return tree;
+  }, [userMenus, recentLinks, buildMenuTree]);
 
   const searchResults = useMemo(() => {
     if (!searchTerm.trim()) return null;
@@ -82,36 +117,68 @@ const Sidebar = ({ collapsed }) => {
     const term = searchTerm.toLowerCase();
     const results = [];
 
-    userMenus.forEach((menu) => {
-      // Check sub-items label OR link
-      if (menu.subItems) {
-        menu.subItems.forEach((sub) => {
-          if (
-            sub.label?.toLowerCase().includes(term) ||
-            sub.link?.toLowerCase().includes(term)
-          ) {
+    const flatten = (items) => {
+      items.forEach((item) => {
+        // Skip the Recent section entirely
+        if (item.id === -99) return;
+
+        if (
+          item.label?.toLowerCase().includes(term) ||
+          item.link?.toLowerCase().includes(term) ||
+          item.menus_mlink?.toLowerCase().includes(term)
+        ) {
+          if (item.link || (item.menus_mlink && item.menus_mlink !== "NA")) {
             results.push({
-              id: `sub-${sub.id}`,
-              label: sub.label,
-              link: sub.link,
-              icon: sub.icon || menu.icon,
-              isParent: false,
-              originalId: sub.id,
+              ...item,
+              id: `search-${item.id}`,
+              originalId: item.id,
             });
           }
-        });
-      }
-    });
+        }
+        if (item.subItems) {
+          flatten(item.subItems);
+        }
+      });
+    };
 
-    return results.sort((a, b) => a.originalId - b.originalId);
-  }, [userMenus, searchTerm]);
+    flatten(sortedMenus);
+    return results;
+  }, [sortedMenus, searchTerm]);
+
+  useEffect(() => {
+    // Don't collapse menus while the user is actively searching;
+    // when search is cleared this runs again and resets to current route.
+    if (searchTerm.trim()) return;
+
+    const findAncestors = (items, targetPath, ancestors = []) => {
+      for (const item of items) {
+        const itemLink = item.link || item.menus_mlink;
+        if (itemLink && itemLink !== "NA" && itemLink === targetPath) {
+          return ancestors;
+        }
+        if (item.subItems && item.subItems.length > 0) {
+          const found = findAncestors(item.subItems, targetPath, [
+            ...ancestors,
+            item.id,
+          ]);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    const ancestors = findAncestors(sortedMenus, location.pathname);
+    if (ancestors) {
+      setExpandedMenus(ancestors);
+    }
+  }, [location.pathname, sortedMenus, searchTerm]);
 
   useEffect(() => {
     const data = getStorageData();
-    if (data?.users?.menu_list) {
-      setUserMenus(data.users.menu_list);
-      setUserData(data.users);
-    }
+    setUserData(data.users);
+    console.log("data", data.menus);
+    setUserMenus(data.menus);
+
     const savedRecent = data?.recent_links;
     if (savedRecent) {
       setRecentLinks(savedRecent);
@@ -127,7 +194,11 @@ const Sidebar = ({ collapsed }) => {
   const toggleMenu = useCallback(
     (menuId) => {
       if (collapsed) return;
-      setExpandedMenu((prev) => (prev === menuId ? null : menuId));
+      setExpandedMenus((prev) =>
+        prev.includes(menuId)
+          ? prev.filter((id) => id !== menuId)
+          : [...prev, menuId],
+      );
     },
     [collapsed],
   );
@@ -137,9 +208,21 @@ const Sidebar = ({ collapsed }) => {
     navigate("/login");
   };
 
-  const isChildActive = (subItems) => {
-    return subItems.some((sub) => location.pathname === sub.link);
-  };
+  const isChildActive = useCallback(
+    (items) => {
+      if (!items) return false;
+      return items.some((item) => {
+        if (item.link && location.pathname === item.link) return true;
+        if (item.menus_mlink && location.pathname === item.menus_mlink)
+          return true;
+        if (item.subItems && item.subItems.length > 0) {
+          return isChildActive(item.subItems);
+        }
+        return false;
+      });
+    },
+    [location.pathname],
+  );
 
   const formatTime = (date) => {
     return date.toLocaleTimeString([], {
@@ -206,7 +289,7 @@ const Sidebar = ({ collapsed }) => {
             ? searchResults.map((item) => (
                 <div key={item.id} className="menu-item">
                   <Link
-                    to={item.link}
+                    to={item.link || item.menus_mlink}
                     className="flex align-items-center w-full"
                     style={{ textDecoration: "none", color: "inherit" }}
                     onClick={() => handleLinkClick(item)}
@@ -215,73 +298,92 @@ const Sidebar = ({ collapsed }) => {
                       className={`icon pi pi-circle-fill mr-2`}
                       aria-hidden="true"
                     ></i>
-                    {!collapsed && <span className="label">{item.label}</span>}
+                    {!collapsed && (
+                      <span className="label">{item.label || item.menus_mname}</span>
+                    )}
                   </Link>
                 </div>
               ))
             : sortedMenus.map((menu) => {
-                const isExpanded = expandedMenu === menu.id;
-                const hasActiveChild =
-                  menu.subItems && isChildActive(menu.subItems);
-                const menuLabel = menu.label || "Menu";
-                return (
-                  <div key={menu.id} className="menu-group">
-                    <div
-                      className={`menu-item ${isExpanded || hasActiveChild ? "expanded" : ""} ${hasActiveChild ? "active" : ""}`}
-                      role="button"
-                      tabIndex={0}
-                      aria-expanded={isExpanded}
-                      aria-label={`Toggle ${menuLabel} ${menu.subItems ? "submenu" : ""}`}
-                      onClick={() => toggleMenu(menu.id)}
-                      onKeyDown={(e) =>
-                        handleMenuKeyDown(e, menu.id, menuLabel)
-                      }
-                      title={collapsed ? menuLabel : ""}
-                    >
-                      <i
-                        className={`icon pi pi-apps ${menu.icon || ""}`}
-                        aria-hidden="true"
-                      ></i>
-                      {!collapsed && <span className="label">{menuLabel}</span>}
-                      {!collapsed && menu.subItems && (
+                const renderMenu = (item, level = 0) => {
+                  const hasSubItems =
+                    item.subItems && item.subItems.length > 0;
+                  const isExpanded = expandedMenus.includes(item.id);
+                  const hasActiveChild =
+                    hasSubItems && isChildActive(item.subItems);
+                  const isActive =
+                    (item.link || item.menus_mlink) &&
+                    location.pathname === (item.link || item.menus_mlink);
+
+                  const isLink =
+                    item.menus_mlink && item.menus_mlink !== "NA";
+
+                  if (isLink && !hasSubItems) {
+                    return (
+                      <Link
+                        key={item.id}
+                        to={item.link || item.menus_mlink}
+                        className={`sub-item ${isActive ? "active" : ""}`}
+                        role="menuitem"
+                        onClick={() => handleLinkClick(item)}
+                        aria-current={isActive ? "page" : undefined}
+                      >
                         <i
-                          className="chevron pi pi-chevron-right"
+                          className={`pi ${level === 0 ? "pi-apps" : "pi-circle-fill sub-icon-dot"}`}
                           aria-hidden="true"
                         ></i>
+                        <span className="label">
+                          {item.id === -99 ? (
+                            <>
+                              {item.label} ({item.count || 1})
+                            </>
+                          ) : (
+                            item.label
+                          )}
+                        </span>
+                      </Link>
+                    );
+                  }
+
+                  return (
+                    <div key={item.id} className="menu-group">
+                      <div
+                        className={`menu-item ${isExpanded || hasActiveChild ? "expanded" : ""} ${hasActiveChild || isActive ? "active" : ""}`}
+                        role="button"
+                        tabIndex={0}
+                        aria-expanded={isExpanded}
+                        onClick={() => toggleMenu(item.id)}
+                        onKeyDown={(e) =>
+                          handleMenuKeyDown(e, item.id, item.label)
+                        }
+                        title={collapsed ? item.label : ""}
+                      >
+                        <i
+                          className={`icon pi ${item.icon || "pi-apps"}`}
+                          aria-hidden="true"
+                        ></i>
+                        {!collapsed && (
+                          <span className="label">{item.label}</span>
+                        )}
+                        {!collapsed && hasSubItems && (
+                          <i
+                            className="chevron pi pi-chevron-right"
+                            aria-hidden="true"
+                          ></i>
+                        )}
+                      </div>
+                      {!collapsed && hasSubItems && (
+                        <div className="sub-menu" role="menu">
+                          {item.subItems.map((sub) =>
+                            renderMenu(sub, level + 1),
+                          )}
+                        </div>
                       )}
                     </div>
-                    {!collapsed && menu.subItems && (
-                      <div className="sub-menu" role="menu">
-                        {menu.subItems.map((sub) => (
-                          <Link
-                            key={sub.id}
-                            to={sub.link}
-                            className={`sub-item ${location.pathname === sub.link ? "active" : ""}`}
-                            role="menuitem"
-                            onClick={() => handleLinkClick(sub)}
-                            aria-current={
-                              location.pathname === sub.link
-                                ? "page"
-                                : undefined
-                            }
-                          >
-                            <i
-                              className="pi pi-circle-fill sub-icon-dot"
-                              aria-hidden="true"
-                            ></i>
-                            {menu.id === -99 ? (
-                              <span className="flex align-items-center gap-1">
-                                {sub.label} ({sub.count || 1})
-                              </span>
-                            ) : (
-                              sub.label
-                            )}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
+                  );
+                };
+
+                return renderMenu(menu);
               })}
 
           <div className="menu-item">
@@ -313,18 +415,19 @@ const Sidebar = ({ collapsed }) => {
           <div className="date">{formatDate(currentTime)}</div>
         </div>
         <div className="user-profile-mini">
+          {/* {JSON.stringify(userData)} */}
           <div className="user-info-inline">
             <div
               className="avatar-xs"
-              aria-label={`User: ${userData?.aempName || "User"}`}
+              aria-label={`User: ${userData?.users_uname || "User"}`}
             >
-              {userData?.aempName?.charAt(0)?.toUpperCase() || "U"}
+              {userData?.users_uname?.charAt(0)?.toUpperCase() || "U"}
             </div>
             <span
               className="user-name-text"
-              aria-label={`User name: ${userData?.aempName || "User"}`}
+              aria-label={`User name: ${userData?.users_uname || "User"}`}
             >
-              {userData?.aempName || "User"}
+              {userData?.users_uname || "User"}
             </span>
           </div>
           <button

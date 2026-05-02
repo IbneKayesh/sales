@@ -7,7 +7,7 @@ import { setStorageLoginData } from "@/utils/storage";
 import "./LoggedUser.css";
 
 const LoggedUser = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, business } = useAuth();
   const navigate = useNavigate();
   const op = useRef(null);
 
@@ -49,15 +49,15 @@ const LoggedUser = () => {
       >
         <div
           className="user-avatar-small"
-          aria-label={`User: ${user?.aempName || "User"}`}
+          aria-label={`User: ${user?.users_uname || "User"}`}
         >
-          {getInitials(user?.aempName)}
+          {getInitials(user?.users_uname)}
         </div>
         <div className="user-trigger-info">
           <span className="user-trigger-name">
-            {user?.aempName?.split(" ")[0]}
+            {user?.users_uname?.split(" ")[0]}
           </span>
-          <span className="user-trigger-role">{user?.user_type || "User"}</span>
+          <span className="user-trigger-role">{user?.urole_rname || "User"}</span>
         </div>
         <i className="pi pi-chevron-down user-trigger-chevron"></i>
       </div>
@@ -67,16 +67,19 @@ const LoggedUser = () => {
         style={{ width: "auto", border: "none" }}
         className="light-panel shadow-8"
       >
+        {/* {JSON.stringify(user)} */}
         <div className="user-profile-card">
           <div className="user-card-header">
             <div
               className="user-card-avatar"
-              aria-label={`User: ${user?.aempName || "User"}`}
+              aria-label={`User: ${user?.users_uname || "User"}`}
             >
-              {getInitials(user?.aempName)}
+              {getInitials(user?.users_uname)}
             </div>
-            <span className="user-card-name">{user?.aempName}</span>
-            <span className="user-card-email">{user?.contName}</span>
+            <span className="user-card-name">{user?.users_uname}</span>
+            <span className="user-card-email">{user?.users_email}</span>
+            <span className="user-card-email">{user?.urole_rname}</span>
+            <span className="user-card-email">{business?.bsins_bname}</span>
           </div>
 
           <div className="user-card-actions">

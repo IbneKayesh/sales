@@ -15,6 +15,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   //auth guard or session holder
   const [user, setUser] = useState(null);
+  const [business, setBusiness] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,22 +24,26 @@ export const AuthProvider = ({ children }) => {
     if (storedUser) {
       setUser(storedUser);
     }
+    const storedBusiness = getStorageData()?.bsins;
+    if (storedBusiness) {
+      setBusiness(storedBusiness);
+    }
     setLoading(false);
   }, []);
 
   const login = async (fromData) => {
     try {
       const reqBody = {
-        email: fromData.username,
-        password: fromData.password,
-        auto_login: '1',
+        users_email: fromData.username,
+        users_pswrd: fromData.password
       }
       const resp = await apiLogin({
         body: reqBody,
       });
       //console.log("resp", resp);
-      if (resp.result) {
-        setUser(resp);
+      if (resp.success) {
+        setUser(resp.data.users);
+        setBusiness(resp.data.bsins);
       }
       return resp;
     } catch (error) {
@@ -49,11 +54,13 @@ export const AuthProvider = ({ children }) => {
   
   const logout = async () => {
     setUser(null);
+    setBusiness(null);
     clearStorageData();
   };
 
   const value = {
     user,
+    business,
     loading,
     login,
     logout

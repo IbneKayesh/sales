@@ -1,6 +1,6 @@
 // Centralized localStorage utility for managing app data
-const STORAGE_KEY = "a1az26Apr04";
-const STORAGE_KEY_LOGIN = "s1azconf2026";
+const STORAGE_KEY = "eaac02May2026user";
+const STORAGE_KEY_LOGIN = "eaac02May2026conf";
 
 const defaultData = {
   users: null,

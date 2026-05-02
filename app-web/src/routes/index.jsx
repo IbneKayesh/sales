@@ -1,8 +1,12 @@
-import setupRoutes from "./setupRoutes";
+import authRoutes from "./authRoutes";
+import crmRoutes from "./crmRoutes";
+import inventoryRoutes from "./inventoryRoutes";
 
 const AppRoutesList = (
     <>
-        {setupRoutes}
+        {authRoutes}
+        {crmRoutes}
+        {inventoryRoutes}
     </>
 );
 export default AppRoutesList;

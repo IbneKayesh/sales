@@ -160,13 +160,13 @@ const Login = () => {
               onClick={handleLogin}
             />
             <p className="login-security-text">
-              Secure login • Protected by SGD
+              Secure login • Protected by EAAC
             </p>
           </div>
 
           <div className="login-footer">
             <p>
-              © {new Date().getFullYear()} BMS Solution. All rights
+              © {new Date().getFullYear()} EAAC Solution. All rights
               reserved.
             </p>
           </div>

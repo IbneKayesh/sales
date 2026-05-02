@@ -21,11 +21,10 @@ router.post("/login", async (req, res) => {
 
     //database action
     //validate user, users_apink,
-    const sql_user = `SELECT id, users_email, users_oname, users_cntct, users_bsins, users_drole,
-    users_users, users_stats, users_regno, users_regdt, users_ltokn, users_lstgn,
-    users_lstpd, users_wctxt, users_notes, users_nofcr, users_isrgs,
-    users_actve, users_crusr, users_crdat, users_upusr, users_updat
-    FROM tmsb_users usr
+    const sql_user = `SELECT usr.id, usr.users_email, usr.users_uname, usr.users_cntct, usr.users_ltokn, usr.users_lstgn,
+    usr.users_lstpd, usr.users_notes, usr.users_nofcr, usr.users_isprm, usr.users_apink,
+    usr.users_apusr, usr.users_urole, usr.users_bsins, usr.users_emply, 'Admin' AS urole_rname
+    FROM tmcb_users usr
     WHERE usr.users_actve = TRUE
     AND usr.users_email = $1
     AND usr.users_pswrd = $2`;
@@ -45,7 +44,7 @@ router.post("/login", async (req, res) => {
 
     const bsins_id = row_user.users_bsins;
     const sql_bsn = `SELECT bsn.*
-    FROM tmsb_bsins bsn
+    FROM tmcb_bsins bsn
     WHERE bsn.bsins_actve = TRUE
     AND bsn.id = $1`;
     const params_bsn = [bsins_id];
@@ -54,6 +53,19 @@ router.post("/login", async (req, res) => {
       return res.json({
         success: false,
         message: "User or Business is not valid",
+        data: null,
+      });
+    }
+
+    const sql_menus = `SELECT id, menus_pname, menus_aname, menus_mname, menus_color, menus_micon, menus_odrby, menus_notes, menus_mlink, menus_menus
+  FROM tmab_menus mnu
+  WHERE mnu.menus_actve = TRUE
+  ORDER BY mnu.menus_odrby`;
+    const row_menus = await dbGetAll(sql_menus, [], `Get user login menus`);
+    if (!row_menus) {
+      return res.json({
+        success: false,
+        message: "Menus not defined",
         data: null,
       });
     }
@@ -81,87 +93,9 @@ router.post("/login", async (req, res) => {
       data: {
         users: row_user,
         bsins: row_bsn,
+        menus: row_menus,
         token,
       },
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: null,
-    });
-  }
-});
-
-//modules
-router.post("/modules", async (req, res) => {
-  try {
-    //console.log("req.body", req.body);
-    const { user_s } = req.body;
-
-    // Validate input
-    if (!user_s) {
-      return res.json({
-        success: false,
-        message: "User Id is required",
-        data: null,
-      });
-    }
-
-    //database action
-    const sql = `SELECT *
-    FROM tmsb_mdule
-    WHERE mdule_actve = TRUE
-    AND mdule_pname = 'basic'
-    AND mdule_mview = 'web'
-    ORDER BY mdule_odrby`;
-    const params = [];
-
-    const rows = await dbGetAll(sql, params, `Get modules for ${user_s}`);
-    res.json({
-      success: true,
-      message: "Modules is fetched successfully",
-      data: rows,
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: null,
-    });
-  }
-});
-
-
-//menus
-router.post("/menus", async (req, res) => {
-  try {
-    const { user_s, menus_mdule } = req.body;
-
-    // Validate input
-    if (!user_s || !menus_mdule) {
-      return res.json({
-        success: false,
-        message: "Module Id is required",
-        data: null,
-      });
-    }
-
-    //database action
-    const sql = `SELECT *
-    FROM tmsb_menus
-    WHERE menus_actve = TRUE
-    AND menus_mdule = $1
-    ORDER BY menus_odrby`;
-    const params = [menus_mdule];
-
-    const rows = await dbGetAll(sql, params, `Get menus for ${menus_mdule}`);
-    res.json({
-      success: true,
-      message: "Menus is fetched successfully",
-      data: rows,
     });
   } catch (error) {
     console.error("database action error:", error);
