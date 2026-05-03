@@ -5,10 +5,11 @@ import tmrb_dzone from "@/models/crm/tmrb_dzone.json";
 const dataModel = generateDataModel(tmrb_dzone);
 import { dzoneAPI } from "@/api/crm/dzoneAPI.js";
 import { shortdataAPI } from "@/api/settings/shortdataAPI.js";
+import { usersAPI } from "@/api/settings/usersAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
-const useDZone = () => {
-  //hooks :: menuId M01-M01-M01,
+const useUsers = () => {
+  //hooks :: menuId M02-M01,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -19,23 +20,25 @@ const useDZone = () => {
     edtpr: false,
     delpr: false,
   });
-  const [crTitle, setCrTitle] = useState("Zone List");
+  const [crTitle, setCrTitle] = useState("Users List");
   const [crView, setCrView] = useState("list");
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
-  const [dzone_cntry_Options, setDzone_cntry_Options] = useState([]);
+
+  //other states
+  const [dataListMenus, setDataListMenus] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M01-M01-M01");
+    const perms = getPageAuth("M02-M01");
     setPageAuth(perms);
   }, [getPageAuth]);
 
   //functions
-  const loadDZone = async () => {
+  const loadUsers = async () => {
     try {
       setIsBusy(true);
-      const resp = await dzoneAPI.getAll({});
+      const resp = await usersAPI.getAll({});
       //console.log("resp", resp);
       setDataList(resp.data || []);
       showToastError(resp);
@@ -57,7 +60,7 @@ const useDZone = () => {
       return;
     }
     setFormData(rowData);
-    setCrTitle("Edit Zone");
+    setCrTitle("Edit Users");
     setCrView("form");
     handleGetCountry();
   };
@@ -88,9 +91,9 @@ const useDZone = () => {
         icon: !resp.success && "pi pi-times-circle text-red-500",
       });
       if (resp.success) {
-        setCrTitle("Zone List");
+        setCrTitle("Users List");
         setCrView("list");
-        loadDZone();
+        loadUsers();
       }
     } catch (error) {
     } finally {
@@ -99,22 +102,22 @@ const useDZone = () => {
   };
 
   const handleBackClick = () => {
-    setCrTitle("Zone List");
+    setCrTitle("Users List");
     setCrView("list");
     setFormData(dataModel);
   };
 
   const handleSearchClick = () => {
-    setCrTitle("Search Zone");
+    setCrTitle("Search Users");
     setCrView("list");
     alert({ message: "Search is clicked", header: "Search" });
     //ketp this function as it is
   };
 
   const handleRefreshClick = () => {
-    setCrTitle("Zone List");
+    setCrTitle("Users List");
     setCrView("list");
-    loadDZone();
+    loadUsers();
   };
 
   const handleAddNewClick = () => {
@@ -122,7 +125,7 @@ const useDZone = () => {
       showToast("warn", "Add", "No add permission");
       return;
     }
-    setCrTitle("Add Zone");
+    setCrTitle("Add Users");
     setCrView("form");
     setFormData(dataModel);
     handleGetCountry();
@@ -147,9 +150,9 @@ const useDZone = () => {
         icon: !resp.success && "pi pi-times-circle text-red-500",
       });
       if (resp.success) {
-        setCrTitle("Zone List");
+        setCrTitle("Users List");
         setCrView("list");
-        loadDZone();
+        loadUsers();
       }
     } catch (error) {
     } finally {
@@ -172,6 +175,25 @@ const useDZone = () => {
       setIsBusy(false);
     }
   };
+
+  //other functions
+  const handleMenuPermission = async (rowData) => {
+    console.log("rowData", rowData);
+
+    try {
+      setIsBusy(true);
+      const resp = await usersAPI.getMenus({ users_id: rowData.id });
+      //console.log("getMenus", resp);
+      setDataListMenus(resp.data || []);
+      showToastError(resp);
+
+      setCrTitle("User Menu List");
+      setCrView("menus");
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
   return {
     //hooks
     pageAuth,
@@ -181,7 +203,7 @@ const useDZone = () => {
     errors,
     dataList,
     //other states
-    dzone_cntry_Options,
+    dataListMenus,
     //functions
     handleChange,
     handleEdit,
@@ -191,6 +213,8 @@ const useDZone = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
+    //other functions
+    handleMenuPermission,
   };
 };
-export default useDZone;
+export default useUsers;

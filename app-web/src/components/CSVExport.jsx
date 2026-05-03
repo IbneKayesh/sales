@@ -9,7 +9,12 @@ import { Button } from "primereact/button";
  *  columns  {Array}   - Optional column config: [{ header: string, accessor: string | fn }]
  *                       When omitted, all keys of the first data object are used as headers.
  */
-const CSVExport = ({ data = [], fileName = "export-data", columns = [] }) => {
+const CSVExport = ({
+  data = [],
+  fileName = "export-data",
+  columns = [],
+  disable = true,
+}) => {
   /** Map raw data rows → plain objects using the column config (or pass through as-is). */
   const formatData = () => {
     if (!data.length) return [];
@@ -21,7 +26,7 @@ const CSVExport = ({ data = [], fileName = "export-data", columns = [] }) => {
           row[col.header] =
             typeof col.accessor === "function"
               ? col.accessor(item)
-              : item[col.accessor] ?? "";
+              : (item[col.accessor] ?? "");
         });
         return row;
       });
@@ -37,7 +42,7 @@ const CSVExport = ({ data = [], fileName = "export-data", columns = [] }) => {
 
     const headers = Object.keys(rows[0]);
     const csvRows = rows.map((row) =>
-      headers.map((h) => JSON.stringify(row[h] ?? "")).join(",")
+      headers.map((h) => JSON.stringify(row[h] ?? "")).join(","),
     );
 
     return [headers.join(","), ...csvRows].join("\n");
@@ -55,7 +60,9 @@ const CSVExport = ({ data = [], fileName = "export-data", columns = [] }) => {
     const url = URL.createObjectURL(blob);
 
     // Ensure the file always has a .csv extension
-    const safeFileName = fileName.endsWith(".csv") ? fileName : `${fileName}.csv`;
+    const safeFileName = fileName.endsWith(".csv")
+      ? fileName
+      : `${fileName}.csv`;
 
     const link = document.createElement("a");
     link.href = url;
@@ -75,10 +82,12 @@ const CSVExport = ({ data = [], fileName = "export-data", columns = [] }) => {
       size="small"
       severity="secondary"
       outlined
-      tooltip={data.length === 0 ? "No data to export" : `Export ${data.length} rows`}
+      tooltip={
+        data.length === 0 ? "No data to export" : `Export ${data.length} rows`
+      }
       tooltipOptions={{ position: "bottom" }}
       onClick={handleExport}
-      disabled={data.length === 0}
+      disabled={data.length === 0 || !disable}
     />
   );
 };

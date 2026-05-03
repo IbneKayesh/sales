@@ -31,7 +31,7 @@ goto MENU
 
 :WA
 start cmd /k "cd backend-app && node server.js"
-start cmd /k "cd frontend-app && npm run dev"
+start cmd /k "cd app-web && npm run dev"
 echo  ---- Web + API Running ----
 goto MENU
 
@@ -59,7 +59,8 @@ echo  ---- Mobile Running ----
 goto MENU
 
 :GMT
-start cmd /k "cd app-gmt && npm run dev"
+start cmd /k "cd app-web && npm run dev"
+start "" "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" http://localhost:5173
 echo  ---- GMT Running ----
 goto MENU
 

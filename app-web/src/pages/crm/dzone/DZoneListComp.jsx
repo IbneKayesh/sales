@@ -6,7 +6,7 @@ import { SplitButton } from "primereact/splitbutton";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import CSVExport from "@/components/CSVExport";
 
-const DZoneListComp = ({ dataList, onEdit, onDelete }) => {
+const DZoneListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
 
   const export_columns = [
@@ -70,6 +70,7 @@ const DZoneListComp = ({ dataList, onEdit, onDelete }) => {
             data={dataList}
             fileName={`dzone-${new Date().toISOString().slice(0, 10)}`}
             columns={export_columns}
+            disable={pageAuth.extpr}
           />
         </div>
       </div>
@@ -79,6 +80,7 @@ const DZoneListComp = ({ dataList, onEdit, onDelete }) => {
   return (
     <div>
       {/* {JSON.stringify(dataList)} */}
+      {/* {JSON.stringify(pageAuth)} */}
       <DataTable
         value={dataList}
         paginator

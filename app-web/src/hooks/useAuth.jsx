@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [business, setBusiness] = useState(null);
   const [userMenus, setUserMenus] = useState([]);
-  const [userMenuSelected, setUserMenuSelected] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -71,10 +70,9 @@ export const AuthProvider = ({ children }) => {
   };
 
 
-  const getUserPermission = useCallback((menuId) => {
+  const getPageAuth = useCallback((menuId) => {
     const menu = userMenus.find((m) => m.id === menuId);
     if (menu) {
-      setUserMenuSelected(menu);
       return {
         extpr: menu.mnusr_extpr,
         addpr: menu.mnusr_addpr,
@@ -82,15 +80,13 @@ export const AuthProvider = ({ children }) => {
         delpr: menu.mnusr_delpr,
       };
     }
-    setUserMenuSelected({});
     return { extpr: false, addpr: false, edtpr: false, delpr: false };
   }, [userMenus]);
 
   const value = {
     user,
     business,
-    userMenuSelected,
-    getUserPermission,
+    getPageAuth,
     loading,
     login,
     logout,

@@ -248,7 +248,7 @@ const GetNewCode = async (user_c, tableName) => {
       AND tcode_tname = $2
       LIMIT 1`;
   const result = await dbGet(sql, [user_c, tableName]);
-  if (!result) throw new Error("Config not found");
+  if (!result) throw new Error("Code generation config is not found");
 
   const prefix = result.tcode_prfix || "ERR"; // fallback
   const length = result.tcode_prlen || 8;

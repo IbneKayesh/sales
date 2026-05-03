@@ -1,11 +1,12 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import useDZone from "@/hooks/crm/useDZone";
-import DZoneFormComp from "./DZoneFormComp";
-import DZoneListComp from "./DZoneListComp";
+import useUsers from "@/hooks/settings/useUsers";
+import UsersFormComp from "./UsersFormComp";
+import UsersListComp from "./UsersListComp";
+import UsersMenuComp from "./UsersMenuComp";
 
-const DZonePage = () => {
+const UsersPage = () => {
   const {
     //hooks
     pageAuth,
@@ -15,7 +16,7 @@ const DZonePage = () => {
     errors,
     dataList,
     //other states
-    dzone_cntry_Options,
+    dataListMenus,
     //functions
     handleChange,
     handleEdit,
@@ -25,7 +26,9 @@ const DZonePage = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
-  } = useDZone();
+    //other functions
+    handleMenuPermission,
+  } = useUsers();
 
   const isList = crView === "list" && true;
   const isForm = crView === "form" && true;
@@ -88,23 +91,32 @@ const DZonePage = () => {
   return (
     <Card title={cardTitle} className="shadow-2 border-round p-2">
       {isList && (
-        <DZoneListComp
+        <UsersListComp
           pageAuth={pageAuth}
           dataList={dataList}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onMenuPermission={handleMenuPermission}
         />
       )}
       {isForm && (
-        <DZoneFormComp
+        <UsersFormComp
           formData={formData}
           errors={errors}
           onChange={handleChange}
           dzone_cntry_Options={dzone_cntry_Options}
         />
       )}
+
+      {crView === "menus" && (
+        <UsersMenuComp
+          pageAuth={pageAuth}
+          dataList={dataListMenus}
+          onEdit={handleEdit}
+        />
+      )}
     </Card>
   );
 };
 
-export default DZonePage;
+export default UsersPage;

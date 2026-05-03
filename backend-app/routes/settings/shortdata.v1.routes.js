@@ -2,8 +2,6 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-const jwt = require("jsonwebtoken");
-const { createSession } = require("../../sessionManager");
 
 // get
 router.post("/", async (req, res) => {
