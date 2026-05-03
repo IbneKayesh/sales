@@ -1,18 +1,25 @@
 import { InputText } from "primereact/inputtext";
 import RequiredText from "@/components/RequiredText";
+import { Dropdown } from "primereact/dropdown";
 import AuditFields from "@/components/AuditFields";
 
-const DZoneFormComp = ({ formData, errors, onChange }) => {
+const DZoneFormComp = ({ formData, errors, onChange, dzone_cntry_Options }) => {
   return (
     <div className="grid">
       <div className="col-12 md:col-6">
         <label className="block font-bold mb-2 text-red-800">Country</label>
-        <InputText
+        <Dropdown
           name="dzone_cntry"
           value={formData.dzone_cntry}
-          onChange={(e) => onChange("dzone_cntry", e.target.value)}
+          onChange={(e) => onChange("dzone_cntry", e.value)}
+          options={dzone_cntry_Options}
+          optionLabel="label_text"
+          optionValue="value_text"
           className={`w-full ${errors.dzone_cntry ? "p-invalid" : ""}`}
+          size={"small"}
           placeholder={`Enter country`}
+          filter
+          showClear
         />
         <RequiredText text={errors.dzone_cntry} />
       </div>

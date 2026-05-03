@@ -57,11 +57,16 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const sql_menus = `SELECT id, menus_pname, menus_aname, menus_mname, menus_color, menus_micon, menus_odrby, menus_notes, menus_mlink, menus_menus
+    const sql_menus = `SELECT mnu.id, menus_pname, menus_aname, menus_mname, menus_color, menus_micon, menus_odrby, menus_notes, menus_mlink, menus_menus,
+mnusr_extpr, mnusr_addpr, mnusr_edtpr, mnusr_delpr
   FROM tmab_menus mnu
+  JOIN tmcb_mnusr usr ON mnu.id = usr.mnusr_menus
   WHERE mnu.menus_actve = TRUE
+  AND usr.mnusr_actve = TRUE
+  AND usr.mnusr_users = $1
   ORDER BY mnu.menus_odrby`;
-    const row_menus = await dbGetAll(sql_menus, [], `Get login menus`);
+
+    const row_menus = await dbGetAll(sql_menus, [row_user.id], `Get login menus`);
     if (!row_menus) {
       return res.json({
         success: false,

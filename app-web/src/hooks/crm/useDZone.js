@@ -1,19 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppUI } from "@/hooks/useAppUI";
 import validate, { generateDataModel } from "@/models/validator";
 import tmrb_dzone from "@/models/crm/tmrb_dzone.json";
 const dataModel = generateDataModel(tmrb_dzone);
-import { apiRequest } from "@/utils/api.js";
 import { dzoneAPI } from "@/api/crm/dzoneAPI.js";
+import { shortdataAPI } from "@/api/settings/shortdataAPI.js";
+import { useAuth } from "@/hooks/useAuth.jsx";
 
 const useDZone = () => {
-  //hooks
-  const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } = useAppUI();
+  //hooks :: menuId M01-M01-M01,
+  //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
+  const { getUserPermission } = useAuth();
+  const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
+    useAppUI();
+  const [uPerms, setUPerms] = useState({
+    extpr: false,
+    addpr: false,
+    edtpr: false,
+    delpr: false,
+  });
   const [crTitle, setCrTitle] = useState("Zone List");
   const [crView, setCrView] = useState("list");
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
+  const [dzone_cntry_Options, setDzone_cntry_Options] = useState([]);
+
+  useEffect(() => {
+    const perms = getUserPermission("M01-M01-M01");
+    setUPerms(perms);
+  }, [getUserPermission]);
 
   //functions
   const loadDZone = async () => {
@@ -36,9 +52,14 @@ const useDZone = () => {
   };
 
   const handleEdit = (rowData) => {
+    if(!uPerms.edtpr){
+      showToast("warn", "Edit", "No Edit Permission");
+      return;
+    }
     setFormData(rowData);
     setCrTitle("Edit Zone");
     setCrView("form");
+    handleGetCountry();
   };
   const handleDelete = (rowData) => {
     confirm({
@@ -96,6 +117,7 @@ const useDZone = () => {
     setCrTitle("Add Zone");
     setCrView("form");
     setFormData(dataModel);
+    handleGetCountry();
   };
 
   const handleSubmitClick = async () => {
@@ -126,13 +148,32 @@ const useDZone = () => {
       setIsBusy(false);
     }
   };
+
+  const handleGetCountry = async () => {
+    if (dzone_cntry_Options.length > 0) {
+      return;
+    }
+    try {
+      setIsBusy(true);
+      const resp = await shortdataAPI.getCountry();
+      //console.log("resp", resp);
+      setDzone_cntry_Options(resp.data);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
   return {
     //hooks
+    uPerms,
     crTitle,
     crView,
     formData,
     errors,
     dataList,
+    //other states
+    dzone_cntry_Options,
     //functions
     handleChange,
     handleEdit,

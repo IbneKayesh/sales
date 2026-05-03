@@ -49,10 +49,17 @@ const apiRequest = async (endpoint, options = {}) => {
     const data = text ? JSON.parse(text) : {};
     if (!response.ok) {
       if (response.status === 401) {
-        //throw new Error("Unauthorized access, login again to start session");
+        //throw new Error("Unauthorized. Please login again.");
         return {
           success: false,
-          message: "Unauthorized access, login again to start session.",
+          message: "Unauthorized. Please login again.",
+          data: [],
+        };
+      }
+      if (response.status === 502) {
+        return {
+          success: false,
+          message: "Unable to connect. Please check your internet and try again.",
           data: [],
         };
       }

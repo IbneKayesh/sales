@@ -52,7 +52,7 @@ const Topbar = ({ sidebarCollapsed, onToggleLeftbar }) => {
               className={`pi ${isFullScreen ? "pi-window-minimize" : "pi-window-maximize"}`}
             ></i>
           </button>
-          <span className="title-gradient">{business.bsins_bname}</span>
+          <span className="title-gradient font-bold">{business.bsins_bname}</span>
         </div>
 
         <div className="topbar-right">

@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
 import { SplitButton } from "primereact/splitbutton";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import CSVExport from "@/components/CSVExport";
@@ -61,19 +60,17 @@ const DZoneListComp = ({ dataList, onEdit, onDelete }) => {
           <InputText
             type="search"
             onInput={(e) => setGlobalFilter(e.target.value)}
-            placeholder="Search..."
+            placeholder="Search here"
             className="p-inputtext-sm"
           />
         </div>
 
-        <div className="flex flex-column md:flex-row align-items-center gap-2 w-full md:w-auto">
-          <div className="card flex flex-wrap gap-2">
-            <CSVExport
-              data={dataList}
-              fileName={`dzone-${new Date().toISOString().slice(0, 10)}`}
-              columns={export_columns}
-            />
-          </div>
+        <div className="flex flex-wrap align-items-center gap-2 w-full md:w-auto">
+          <CSVExport
+            data={dataList}
+            fileName={`dzone-${new Date().toISOString().slice(0, 10)}`}
+            columns={export_columns}
+          />
         </div>
       </div>
     );
@@ -92,12 +89,7 @@ const DZoneListComp = ({ dataList, onEdit, onDelete }) => {
         rowHover
         showGridlines
         globalFilter={globalFilter}
-        globalFilterFields={[
-          "dzone_cntry",
-          "dzone_dcode",
-          "dzone_dname",
-          "dzone_actve",
-        ]}
+        globalFilterFields={export_columns.map((col) => col.accessor)}
         header={dt_HT}
       >
         <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
@@ -108,6 +100,7 @@ const DZoneListComp = ({ dataList, onEdit, onDelete }) => {
           sortable
           body={dzone_dname_BT}
         />
+        <Column field="dzone_cntry" header="Country" sortable />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>

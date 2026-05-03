@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-
 const rateLimiter = require("./middlewares/rateLimiter.js");
 //auth
 const authRoutes = require("./routes/auth");
@@ -26,6 +25,8 @@ const salesRoutes = require("./routes/sales");
 const reportsRoutes = require("./routes/reports");
 //mobile
 const mobileRoutes = require("./routes/mobile");
+//settings
+const settingsRoutes = require("./routes/settings");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -70,7 +71,8 @@ app.use("/api/sales", salesRoutes);
 app.use("/api/reports", reportsRoutes);
 //mobile
 app.use("/api/mobile", mobileRoutes);
-
+//settings
+app.use("/api/settings", settingsRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -100,12 +102,11 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
     success: false,
-    message: err.message || "An unexpected error occurred, Internal Server Error",
+    message:
+      err.message || "An unexpected error occurred, Internal Server Error",
     data: null,
   });
 });
-
-
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -13,6 +13,8 @@ const DZonePage = () => {
     formData,
     errors,
     dataList,
+    //other states
+    dzone_cntry_Options,
     //functions
     handleChange,
     handleEdit,
@@ -33,30 +35,33 @@ const DZonePage = () => {
         <span className="page-title-text">{crTitle}</span>
         <div className="flex gap-2">
           <ButtonGroup>
-            <Button
-              label="Back"
-              icon="pi pi-arrow-left"
-              size="small"
-              severity="secondary"
-              onClick={handleBackClick}
-              disabled={isList}
-            />
-            <Button
-              label="Search"
-              icon="pi pi-search"
-              size="small"
-              severity="info"
-              onClick={handleSearchClick}
-              disabled={isForm}
-            />
-            <Button
-              label="Refresh"
-              icon="pi pi-refresh"
-              size="small"
-              severity="warning"
-              onClick={handleRefreshClick}
-              disabled={isForm}
-            />
+            {isForm && (
+              <Button
+                label="Back"
+                icon="pi pi-arrow-left"
+                size="small"
+                severity="secondary"
+                onClick={handleBackClick}
+              />
+            )}
+            {isList && (
+              <Button
+                label="Find"
+                icon="pi pi-search"
+                size="small"
+                severity="info"
+                onClick={handleSearchClick}
+              />
+            )}
+            {isList && (
+              <Button
+                label="Refresh"
+                icon="pi pi-refresh"
+                size="small"
+                severity="warning"
+                onClick={handleRefreshClick}
+              />
+            )}
             <Button
               label="New"
               icon="pi pi-plus"
@@ -64,14 +69,15 @@ const DZonePage = () => {
               severity="help"
               onClick={handleAddNewClick}
             />
-            <Button
-              label="Submit"
-              icon="pi pi-save"
-              size="small"
-              severity="success"
-              onClick={handleSubmitClick}
-              disabled={isList}
-            />
+            {isForm && (
+              <Button
+                label="Submit"
+                icon="pi pi-save"
+                size="small"
+                severity="success"
+                onClick={handleSubmitClick}
+              />
+            )}
           </ButtonGroup>
         </div>
       </div>
@@ -92,6 +98,7 @@ const DZonePage = () => {
           formData={formData}
           errors={errors}
           onChange={handleChange}
+          dzone_cntry_Options={dzone_cntry_Options}
         />
       )}
     </Card>

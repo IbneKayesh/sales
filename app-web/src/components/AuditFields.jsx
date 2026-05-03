@@ -1,12 +1,7 @@
 import React from "react";
 import { formatDateTime } from "@/utils/datetime";
 
-const normalise = (value) => {
-  if (value === null || value === undefined || value === "") return undefined;
-  if (typeof value === "boolean") return value ? "Yes" : "No";
-  if (typeof value === "number") return String(value);
-  return value;
-};
+import LabelField from "./LabelField";
 
 /**
  * AuditFields — read-only audit info section.
@@ -31,30 +26,10 @@ const labelStyle = {
 };
 
 const AuditField = ({ label, value }) => {
-  const display = normalise(value);
-  const isEmpty = display === undefined;
-
   return (
     <div className="col-12 md:col-2">
       <div style={labelStyle}>{label}</div>
-      <div
-        style={{
-          fontSize: "0.92rem",
-          fontWeight: 500,
-          color: "var(--text-main)",
-          padding: "0.45rem 0",
-          borderBottom: "1px dashed var(--border-strong)",
-          minHeight: "2rem",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        {!isEmpty ? (
-          display
-        ) : (
-          <span style={{ color: "var(--text-muted, #cbd5e1)" }}>—</span>
-        )}
-      </div>
+      <LabelField value={value} />
     </div>
   );
 };
@@ -75,6 +50,7 @@ const AuditFields = ({
         borderTop: "1px solid var(--border-strong)",
         paddingTop: "0.5rem",
         marginTop: "0.25rem",
+        backgroundColor: "var(--surface-3)",
       }}
     >
       <span style={labelStyle}>Record Info</span>

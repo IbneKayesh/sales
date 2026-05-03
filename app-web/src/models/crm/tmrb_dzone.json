@@ -23,8 +23,8 @@
     "type": "string",
     "label": "Name",
     "maxLength": 50,
-    "minLength": 0,
+    "minLength": 3,
     "placeholder": "Enter name",
-    "required": false
+    "required": true
   }
 }

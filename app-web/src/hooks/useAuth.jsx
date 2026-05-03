@@ -1,5 +1,9 @@
-import { useState, useEffect, createContext, useContext } from "react";
-import { getStorageData, setStorageData, clearStorageData } from "@/utils/storage";
+import { useState, useEffect, createContext, useContext, useCallback } from "react";
+import {
+  getStorageData,
+  setStorageData,
+  clearStorageData,
+} from "@/utils/storage";
 import { apiLogin } from "@/utils/api";
 
 const AuthContext = createContext();
@@ -16,6 +20,8 @@ export const AuthProvider = ({ children }) => {
   //auth guard or session holder
   const [user, setUser] = useState(null);
   const [business, setBusiness] = useState(null);
+  const [userMenus, setUserMenus] = useState([]);
+  const [userMenuSelected, setUserMenuSelected] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,6 +34,12 @@ export const AuthProvider = ({ children }) => {
     if (storedBusiness) {
       setBusiness(storedBusiness);
     }
+
+    const storedMenus = getStorageData()?.menus;
+    if (storedMenus) {
+      setUserMenus(storedMenus);
+    }
+
     setLoading(false);
   }, []);
 
@@ -35,8 +47,8 @@ export const AuthProvider = ({ children }) => {
     try {
       const reqBody = {
         users_email: fromData.username,
-        users_pswrd: fromData.password
-      }
+        users_pswrd: fromData.password,
+      };
       const resp = await apiLogin({
         body: reqBody,
       });
@@ -51,19 +63,37 @@ export const AuthProvider = ({ children }) => {
       return error;
     }
   };
-  
+
   const logout = async () => {
     setUser(null);
     setBusiness(null);
     clearStorageData();
   };
 
+
+  const getUserPermission = useCallback((menuId) => {
+    const menu = userMenus.find((m) => m.id === menuId);
+    if (menu) {
+      setUserMenuSelected(menu);
+      return {
+        extpr: menu.mnusr_extpr,
+        addpr: menu.mnusr_addpr,
+        edtpr: menu.mnusr_edtpr,
+        delpr: menu.mnusr_delpr,
+      };
+    }
+    setUserMenuSelected({});
+    return { extpr: false, addpr: false, edtpr: false, delpr: false };
+  }, [userMenus]);
+
   const value = {
     user,
     business,
+    userMenuSelected,
+    getUserPermission,
     loading,
     login,
-    logout
+    logout,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
