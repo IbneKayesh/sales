@@ -1,0 +1,30 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "dzone_cntry": {
+    "type": "string",
+    "label": "Country",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter country",
+    "required": true
+  },
+  "dzone_dcode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter code",
+    "required": false
+  },
+  "dzone_dname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter name",
+    "required": false
+  }
+}

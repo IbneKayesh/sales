@@ -29,6 +29,17 @@ export const AppUIProvider = ({ children }) => {
     toastRef.current?.show({ severity, summary, detail, life });
   }, []);
 
+  const showToastError = useCallback((resp) => {
+    if (!resp.success) {
+      toastRef.current?.show({
+        severity: "error",
+        summary: "Error",
+        detail: resp.message,
+        life: 4000,
+      });
+    }
+  }, []);
+
   // --- Promise confirm ✅
   const confirm = useCallback((options = {}) => {
     confirmDialog({
@@ -59,12 +70,13 @@ export const AppUIProvider = ({ children }) => {
   const uiValue = useMemo(
     () => ({
       showToast,
+      showToastError,
       confirm,
       alert,
       isBusy,
       setIsBusy,
     }),
-    [showToast, confirm, alert, isBusy, setIsBusy],
+    [showToast, showToastError, confirm, alert, isBusy, setIsBusy],
   );
 
   return (

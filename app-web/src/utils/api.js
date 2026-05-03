@@ -11,14 +11,20 @@ const apiRequest = async (endpoint, options = {}) => {
   const token = getStorageData()?.token;
   const storedUser = getStorageData()?.users;
   if (!token || !storedUser) {
-    throw new Error("Unauthorized access, login again to start session");
+    //throw new Error("Unauthorized access, login again to start session");
+    return {
+      success: false,
+      message: "Unauthorized access, login again to start session",
+      data: [],
+    };
   }
 
   const reqData = {
     user_s: storedUser.id, //this User Id or self Id
     user_c: storedUser.users_apusr, //this Master User Id or contract Id
-    user_b: storedUser.users_bsins //this Business Id
+    user_b: storedUser.users_bsins, //this Business Id
   };
+
   //merge to body
   const incomingBody = options.body || {};
   const finalBody = {
@@ -41,20 +47,32 @@ const apiRequest = async (endpoint, options = {}) => {
     const response = await fetch(url, config);
     const text = await response.text();
     const data = text ? JSON.parse(text) : {};
-
     if (!response.ok) {
-      // Optional: Handle 401 specifically to clear token if needed
       if (response.status === 401) {
-        // console.warn('Unauthorized access, consider redirecting to login');
-        throw new Error("Unauthorized access, login again to start session");
+        //throw new Error("Unauthorized access, login again to start session");
+        return {
+          success: false,
+          message: "Unauthorized access, login again to start session.",
+          data: [],
+        };
       }
-      throw new Error(data.error || `HTTP error! status: ${response.status}`);
+      //throw new Error(data.error || `HTTP error! status: ${response.status}`);
+      return {
+        success: false,
+        message: data?.error || `HTTP error! status: ${response.status}`,
+        data: [],
+      };
     }
 
     return data;
   } catch (error) {
     console.error(`API request failed: ${endpoint}`, error);
-    throw error;
+    //throw error;
+    return {
+      success: false,
+      message: error.message || "Network error",
+      data: [],
+    };
   }
 };
 
