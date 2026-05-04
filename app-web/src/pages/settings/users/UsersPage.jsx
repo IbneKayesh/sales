@@ -28,6 +28,7 @@ const UsersPage = () => {
     handleSubmitClick,
     //other functions
     handleMenuPermission,
+    handleAddEditMenu,
   } = useUsers();
 
   const isList = crView === "list" && true;
@@ -39,7 +40,7 @@ const UsersPage = () => {
         <span className="page-title-text">{crTitle}</span>
         <div className="flex gap-2">
           <ButtonGroup>
-            {isForm && (
+            {(isForm || crView === "menus") && (
               <Button
                 label="Back"
                 icon="pi pi-arrow-left"
@@ -66,13 +67,15 @@ const UsersPage = () => {
                 onClick={handleRefreshClick}
               />
             )}
-            <Button
-              label="New"
-              icon="pi pi-plus"
-              size="small"
-              severity="help"
-              onClick={handleAddNewClick}
-            />
+            {(isList || isForm) && (
+              <Button
+                label="New"
+                icon="pi pi-plus"
+                size="small"
+                severity="help"
+                onClick={handleAddNewClick}
+              />
+            )}
             {isForm && (
               <Button
                 label="Submit"
@@ -90,6 +93,7 @@ const UsersPage = () => {
 
   return (
     <Card title={cardTitle} className="shadow-2 border-round p-2">
+      {/* {JSON.stringify(dataListMenus)} */}
       {isList && (
         <UsersListComp
           pageAuth={pageAuth}
@@ -112,7 +116,8 @@ const UsersPage = () => {
         <UsersMenuComp
           pageAuth={pageAuth}
           dataList={dataListMenus}
-          onEdit={handleEdit}
+          onEdit={handleAddEditMenu}
+          formData={formData}
         />
       )}
     </Card>

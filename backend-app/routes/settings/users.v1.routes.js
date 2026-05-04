@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
+const { v4: uuidv4 } = require("uuid");
 
 // get
 router.post("/", async (req, res) => {
@@ -78,6 +79,115 @@ ORDER BY mnu.menus_odrby, mnu.id`;
       message: "Query executed successfully.",
       data: rows,
     });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
+
+router.post("/menus/upsert", async (req, res) => {
+  try {
+    const {
+      menus_id,
+      mnusr_extpr,
+      mnusr_addpr,
+      mnusr_edtpr,
+      mnusr_delpr,
+      mnusr_actve,
+      users_id,
+      user_s,
+      user_c,
+      user_b,
+    } = req.body;
+
+    // Validate input
+    if (!users_id || !user_s || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql = `SELECT *
+        FROM tmcb_mnusr mnu
+        WHERE mnu.mnusr_users = $1
+        AND mnu.mnusr_menus = $2`;
+
+    const params = [users_id, menus_id];
+    const row = await dbGet(sql, params, `get menus- ${users_id}`);
+
+    if (!row) {
+      //
+      // INSERT
+      //
+
+      const sql_insert = `INSERT INTO tmcb_mnusr(
+	id, mnusr_users, mnusr_menus, mnusr_extpr, mnusr_addpr, mnusr_edtpr, mnusr_delpr, mnusr_crusr, mnusr_upusr)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);`;
+      const params_insert = [
+        uuidv4(),
+        users_id,
+        menus_id,
+        mnusr_extpr || false,
+        mnusr_addpr || false,
+        mnusr_edtpr || false,
+        mnusr_delpr || false,
+        user_s,
+        user_s,
+      ];
+      const row_insert = await dbRun(
+        sql_insert,
+        params_insert,
+        `add menus- ${users_id}`,
+      );
+      res.json({
+        success: true,
+        message: `Menus Created successfully.`,
+        data: row_insert,
+      });
+    } else {
+      //
+      // UPDATE
+      //
+
+      const sql_update = `UPDATE tmcb_mnusr
+	SET mnusr_extpr = $1,
+    mnusr_addpr = $2,
+    mnusr_edtpr = $3,
+    mnusr_delpr = $4,
+    mnusr_actve = $5,
+    mnusr_upusr = $6,
+    mnusr_updat = CURRENT_TIMESTAMP,
+    mnusr_rvnmr = mnusr_rvnmr + 1
+	WHERE mnusr_users = $7
+  AND mnusr_menus = $8`;
+      const params_update = [
+        mnusr_extpr || false,
+        mnusr_addpr || false,
+        mnusr_edtpr || false,
+        mnusr_delpr || false,
+        mnusr_actve || false,
+        user_s,
+        users_id,
+        menus_id,
+      ];
+      const row_update = await dbRun(
+        sql_update,
+        params_update,
+        `update menus- ${users_id}`,
+      );
+      res.json({
+        success: true,
+        message: `Menus Updated successfully.`,
+        data: row_update,
+      });
+    }
   } catch (error) {
     console.error("database action error:", error);
     return res.json({

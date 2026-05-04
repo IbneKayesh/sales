@@ -187,6 +187,7 @@ const useUsers = () => {
       setDataListMenus(resp.data || []);
       showToastError(resp);
 
+      setFormData(rowData);
       setCrTitle("User Menu List");
       setCrView("menus");
     } catch (error) {
@@ -194,6 +195,33 @@ const useUsers = () => {
       setIsBusy(false);
     }
   };
+
+  const handleAddEditMenu = async (rowData, field, value) => {
+    setDataListMenus((prev) =>
+      prev.map((m) => (m.id === rowData.id ? { ...m, [field]: value } : m)),
+    );
+
+    //console.log("handleAddEditMenu", rowData);
+    //console.log("field:", field, "value:", value);
+
+    try {
+      setIsBusy(true);
+
+      const reqBody = {
+        ...rowData,
+        [field]: value,
+        users_id: formData.id,
+      };
+
+      const resp = await usersAPI.upsertMenus(reqBody);
+      //console.log("resp", resp);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     //hooks
     pageAuth,
@@ -215,6 +243,7 @@ const useUsers = () => {
     handleSubmitClick,
     //other functions
     handleMenuPermission,
+    handleAddEditMenu,
   };
 };
 export default useUsers;
