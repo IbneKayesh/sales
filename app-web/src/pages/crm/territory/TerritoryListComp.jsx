@@ -6,27 +6,27 @@ import { SplitButton } from "primereact/splitbutton";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import CSVExport from "@/components/CSVExport";
 
-const DZoneListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
+const TerritoryListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
 
   const export_columns = [
-    { header: "Country", accessor: "dzone_cntry" },
-    { header: "Code", accessor: "dzone_dcode" },
-    { header: "Name", accessor: "dzone_dname" },
-    { header: "Active", accessor: "dzone_actve" },
+    { header: "DZone", accessor: "tarea_dzone" },
+    { header: "Code", accessor: "tarea_tcode" },
+    { header: "Name", accessor: "tarea_tname" },
+    { header: "Active", accessor: "tarea_actve" },
   ];
 
-  const dzone_dname_BT = (rowData) => {
+  const tarea_tname_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-sm">
           <ActiveRowCell
-            text={rowData.dzone_dname}
-            status={rowData.dzone_actve}
+            text={rowData.tarea_tname}
+            status={rowData.tarea_actve}
           />
         </span>
         <span className="text-gray-600 text-sm mt-1">
-          {rowData.dzone_dcode}
+          {rowData.tarea_tcode}
         </span>
       </div>
     );
@@ -35,9 +35,9 @@ const DZoneListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const action_BT = (rowData) => {
     let menuItems = [
       {
-        label: rowData.dzone_actve ? "Deactivate" : "Activate",
+        label: rowData.tarea_actve ? "Deactivate" : "Activate",
         icon: `pi ${
-          rowData.dzone_actve
+          rowData.tarea_actve
             ? "pi-trash text-red-400"
             : "pi-check-circle text-green-400"
         }`,
@@ -106,15 +106,15 @@ const DZoneListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
       >
         <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
         <Column
-          field="dzone_dname"
+          field="tarea_tname"
           header="Name"
           sortable
-          body={dzone_dname_BT}
+          body={tarea_tname_BT}
         />
-        <Column field="dzone_cntry" header="Country" sortable />
+        <Column field="dzone_dname" header="D/Zone" sortable />
         <Column header={dataList?.length + " rows"} body={action_BT} />
       </DataTable>
     </div>
   );
 };
-export default DZoneListComp;
+export default TerritoryListComp;

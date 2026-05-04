@@ -23,7 +23,11 @@ export const dzoneAPI = {
       body: data,
     }),
   getAllActive: (data) =>
-    apiRequest("/crm/v1/dzone/getallactive", {
+    apiRequest("/crm/v1/dzone/get-all-active", {
       body: data,
     }),
+    getByCountry: (data) =>
+      apiRequest("/crm/v1/dzone/get-by-country", {
+        body: data,
+      }),
 };

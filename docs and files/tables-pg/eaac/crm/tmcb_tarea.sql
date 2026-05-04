@@ -5,9 +5,10 @@
 CREATE TABLE tmcb_tarea (
   id varchar(50) PRIMARY KEY,
 
-  tarea_users varchar(50) NOT NULL,
+  tarea_apusr varchar(50) NOT NULL,
   tarea_bsins varchar(50) NOT NULL,
   tarea_dzone varchar(50) NOT NULL,
+  tarea_tcode varchar(50) NOT NULL,
   tarea_tname varchar(50) NOT NULL,
 
   -- default

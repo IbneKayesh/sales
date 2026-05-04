@@ -62,7 +62,7 @@ const UsersFormComp = ({
         <RequiredText text={errors.users_uname} />
       </div>
       <div className="col-12 md:col-2">
-        <label className="block font-bold mb-2">Contact No</label>
+        <label className="block font-bold mb-2 text-red-800">Contact No</label>
         <InputText
           name="users_cntct"
           value={formData.users_cntct}
@@ -73,7 +73,7 @@ const UsersFormComp = ({
         <RequiredText text={errors.users_cntct} />
       </div>
       <div className="col-12 md:col-2">
-        <label className="block font-bold mb-2">Reg No</label>
+        <label className="block font-bold mb-2 text-red-800">Reg No</label>
         <InputText
           name="users_regno"
           value={formData.users_regno}
@@ -95,7 +95,7 @@ const UsersFormComp = ({
         <RequiredText text={errors.users_notes} />
       </div>
       <div className="col-12 md:col-2">
-        <label className="block font-bold mb-2">Server Link</label>
+        <label className="block font-bold mb-2 text-red-800">Server Link</label>
         <InputText
           name="users_apink"
           value={formData.users_apink}
