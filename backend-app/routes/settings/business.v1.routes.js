@@ -4,9 +4,9 @@ const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
 // get
-router.post("/", async (req, res) => {
+router.post("/get-all-active", async (req, res) => {
   try {
-    const { shtbl_gname, user_s, user_c, user_b } = req.body;
+    const { user_s, user_c, user_b } = req.body;
 
     // Validate input
     if (!user_c) {
@@ -18,21 +18,21 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT shtbl_dtext AS label_text, shtbl_value as value_text, shtbl_dvalu as default_value
-    FROM tmnb_shtbl
-    WHERE shtbl_apusr= $1
-    AND shtbl_gname = $2
-    AND shtbl_actve = TRUE
-    ORDER BY shtbl_dtext`;
+    const sql = `SELECT bsn.*,
+    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
+    FROM tmnb_bsins bsn
+    LEFT JOIN tmnb_users csr ON bsn.bsins_crusr = csr.id
+    LEFT JOIN tmnb_users usr ON bsn.bsins_upusr = usr.id
+    WHERE bsn.bsins_actve = TRUE
+    AND bsn.bsins_apusr = $1`;
 
-    const params = [user_c, shtbl_gname];
-    const rows = await dbGetAll(sql, params, `get short data- ${user_c}`);
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get business- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
       data: rows,
     });
-
   } catch (error) {
     console.error("database action error:", error);
     return res.json({

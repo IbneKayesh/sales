@@ -52,58 +52,62 @@ const UsersMenuComp = ({ pageAuth, dataList, onEdit, formData }) => {
       <div className="flex align-items-center justify-content-between w-full p-2 umc-text">
         <span className="font-semibold text-lg">{node.label}</span>
         <div className="flex align-items-center gap-4 ml-auto pl-4">
-          <div className="flex align-items-center gap-2">
-            <Checkbox
-              inputId={`extpr-${node.key}`}
-              checked={node.data.mnusr_extpr || false}
-              onChange={(e) => onEdit(node.data, "mnusr_extpr", e.checked)}
-            />
-            <label
-              htmlFor={`extpr-${node.key}`}
-              className="text-sm cursor-pointer umc-label"
-            >
-              Export
-            </label>
-          </div>
-          <div className="flex align-items-center gap-2">
-            <Checkbox
-              inputId={`addpr-${node.key}`}
-              checked={node.data.mnusr_addpr || false}
-              onChange={(e) => onEdit(node.data, "mnusr_addpr", e.checked)}
-            />
-            <label
-              htmlFor={`addpr-${node.key}`}
-              className="text-sm cursor-pointer umc-label"
-            >
-              Add
-            </label>
-          </div>
-          <div className="flex align-items-center gap-2">
-            <Checkbox
-              inputId={`edtpr-${node.key}`}
-              checked={node.data.mnusr_edtpr || false}
-              onChange={(e) => onEdit(node.data, "mnusr_edtpr", e.checked)}
-            />
-            <label
-              htmlFor={`edtpr-${node.key}`}
-              className="text-sm cursor-pointer umc-label"
-            >
-              Edit
-            </label>
-          </div>
-          <div className="flex align-items-center gap-2">
-            <Checkbox
-              inputId={`delpr-${node.key}`}
-              checked={node.data.mnusr_delpr || false}
-              onChange={(e) => onEdit(node.data, "mnusr_delpr", e.checked)}
-            />
-            <label
-              htmlFor={`delpr-${node.key}`}
-              className="text-sm cursor-pointer umc-label"
-            >
-              Delete
-            </label>
-          </div>
+          {node.data.menus_mlink !== "NA" && (
+            <>
+              <div className="flex align-items-center gap-2">
+                <Checkbox
+                  inputId={`extpr-${node.key}`}
+                  checked={node.data.mnusr_extpr || false}
+                  onChange={(e) => onEdit(node.data, "mnusr_extpr", e.checked)}
+                />
+                <label
+                  htmlFor={`extpr-${node.key}`}
+                  className="text-sm cursor-pointer umc-label"
+                >
+                  Export
+                </label>
+              </div>
+              <div className="flex align-items-center gap-2">
+                <Checkbox
+                  inputId={`addpr-${node.key}`}
+                  checked={node.data.mnusr_addpr || false}
+                  onChange={(e) => onEdit(node.data, "mnusr_addpr", e.checked)}
+                />
+                <label
+                  htmlFor={`addpr-${node.key}`}
+                  className="text-sm cursor-pointer umc-label"
+                >
+                  Add
+                </label>
+              </div>
+              <div className="flex align-items-center gap-2">
+                <Checkbox
+                  inputId={`edtpr-${node.key}`}
+                  checked={node.data.mnusr_edtpr || false}
+                  onChange={(e) => onEdit(node.data, "mnusr_edtpr", e.checked)}
+                />
+                <label
+                  htmlFor={`edtpr-${node.key}`}
+                  className="text-sm cursor-pointer umc-label"
+                >
+                  Edit
+                </label>
+              </div>
+              <div className="flex align-items-center gap-2">
+                <Checkbox
+                  inputId={`delpr-${node.key}`}
+                  checked={node.data.mnusr_delpr || false}
+                  onChange={(e) => onEdit(node.data, "mnusr_delpr", e.checked)}
+                />
+                <label
+                  htmlFor={`delpr-${node.key}`}
+                  className="text-sm cursor-pointer umc-label"
+                >
+                  Delete
+                </label>
+              </div>
+            </>
+          )}
           <div className="flex align-items-center gap-2">
             <Checkbox
               inputId={`actve-${node.key}`}
@@ -124,7 +128,7 @@ const UsersMenuComp = ({ pageAuth, dataList, onEdit, formData }) => {
 
   return (
     <div className="p-3">
-      <span className="text-lg font-bold">User: {formData.users_uname}</span>
+      <span className="text-lg font-bold text-primary-700"><i className="pi pi-user mr-1"></i> {formData.users_uname}</span>
       <style>{`
         .umc-tree-content:hover {
           background-color: var(--primary-light) !important;

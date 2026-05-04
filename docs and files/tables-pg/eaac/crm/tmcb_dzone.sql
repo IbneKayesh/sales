@@ -1,8 +1,8 @@
 --
--- Table structure for table tmrb_dzone
+-- Table structure for table tmcb_dzone
 --
 
-CREATE TABLE tmrb_dzone (
+CREATE TABLE tmcb_dzone (
   id varchar(50) PRIMARY KEY,
 
   dzone_apusr varchar(50) NOT NULL,

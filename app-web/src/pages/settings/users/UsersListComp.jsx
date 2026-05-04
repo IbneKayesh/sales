@@ -77,7 +77,7 @@ const UsersListComp = ({ pageAuth, dataList, onEdit, onDelete, onMenuPermission}
           No Of Credit: {rowData.users_nofcr}
         </span>
         <span className="text-gray-700 text-sm mt-1">
-          Is Primary: {rowData.users_isprm}
+          Is Primary: {rowData.users_isprm ? "Primary" : "Secondary"}
         </span>
         <span className="text-gray-700 text-sm mt-1">
           API Link: {rowData.users_apink}
@@ -89,9 +89,6 @@ const UsersListComp = ({ pageAuth, dataList, onEdit, onDelete, onMenuPermission}
   const users_apusr_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-gray-700 text-sm">
-          Master User: {rowData.users_apusr}
-        </span>
         <span className="text-gray-700 text-sm mt-1">
           Role: {rowData.users_urole}
         </span>

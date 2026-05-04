@@ -1,9 +1,9 @@
 --
--- Table structure for table `tmcb_users`
+-- Table structure for table `tmnb_users`
 -- master users and workstation users
 
 
-CREATE TABLE tmcb_users (
+CREATE TABLE tmnb_users (
   id varchar(50) PRIMARY KEY,
 
   users_email varchar(50) NOT NULL UNIQUE,

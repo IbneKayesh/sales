@@ -70,6 +70,7 @@ const Sidebar = ({ collapsed }) => {
           menu.menus_micon === "default" || !menu.menus_micon
             ? "pi-circle-fill"
             : menu.menus_micon,
+        notes: menu.menus_notes,
         subItems: [],
       };
     });
@@ -125,7 +126,8 @@ const Sidebar = ({ collapsed }) => {
         if (
           item.label?.toLowerCase().includes(term) ||
           item.link?.toLowerCase().includes(term) ||
-          item.menus_mlink?.toLowerCase().includes(term)
+          item.notes?.toLowerCase().includes(term) ||
+          item.menus_mlink?.toLowerCase().includes(term) 
         ) {
           if (item.link || (item.menus_mlink && item.menus_mlink !== "NA")) {
             results.push({
@@ -299,15 +301,16 @@ const Sidebar = ({ collapsed }) => {
                       aria-hidden="true"
                     ></i>
                     {!collapsed && (
-                      <span className="label">{item.label || item.menus_mname}</span>
+                      <span className="label">
+                        {item.label || item.menus_mname}
+                      </span>
                     )}
                   </Link>
                 </div>
               ))
             : sortedMenus.map((menu) => {
                 const renderMenu = (item, level = 0) => {
-                  const hasSubItems =
-                    item.subItems && item.subItems.length > 0;
+                  const hasSubItems = item.subItems && item.subItems.length > 0;
                   const isExpanded = expandedMenus.includes(item.id);
                   const hasActiveChild =
                     hasSubItems && isChildActive(item.subItems);
@@ -315,8 +318,7 @@ const Sidebar = ({ collapsed }) => {
                     (item.link || item.menus_mlink) &&
                     location.pathname === (item.link || item.menus_mlink);
 
-                  const isLink =
-                    item.menus_mlink && item.menus_mlink !== "NA";
+                  const isLink = item.menus_mlink && item.menus_mlink !== "NA";
 
                   if (isLink && !hasSubItems) {
                     return (

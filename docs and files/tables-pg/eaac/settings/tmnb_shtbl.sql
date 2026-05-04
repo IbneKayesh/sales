@@ -1,10 +1,10 @@
 --
--- Table structure for table `tmcb_shtbl`
+-- Table structure for table `tmnb_shtbl`
 -- short table
 
 
 
-CREATE TABLE tmcb_shtbl (
+CREATE TABLE tmnb_shtbl (
   id varchar(50) PRIMARY KEY,
 
   shtbl_apusr varchar(50) NOT NULL,

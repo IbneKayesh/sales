@@ -2,21 +2,14 @@ import React, { useState } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useAuth } from "@/hooks/useAuth";
-//import { useToast } from "@/hooks/useAppUI";
+import { useAppUI } from "@/hooks/useAppUI";
 import "./UserProfilePage.css";
 
 const UserProfilePage = () => {
   const { user } = useAuth();
-  //const { toast } = useToast();
+  const { showToast } = useAppUI();
 
-  const [formData, setFormData] = useState({
-    fullName: user?.users_oname || "Admin User",
-    email: user?.users_email || "admin@s1az.com",
-    phone: "+1 234 567 890",
-    role: user?.user_type || "Administrator",
-    department: "Management",
-    location: "New York, USA"
-  });
+  const [formData, setFormData] = useState(user);
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -30,11 +23,12 @@ const UserProfilePage = () => {
 
   const handleSave = () => {
     setIsEditing(false);
-    //toast({ severity: "success", summary: "Success", detail: "Profile updated successfully." });
+    showToast("error", "Update", "Profile updates are restricted." );
   };
 
   return (
     <div className="profile-page-container">
+      {/* {JSON.stringify(user)} */}
       <div className="profile-header">
         <h1>User Profile</h1>
         <p>Manage your personal information and account settings</p>
@@ -45,28 +39,28 @@ const UserProfilePage = () => {
         <div className="profile-card card-professional">
           <div className="profile-card-top">
             <div className="profile-avatar-large">
-              {getInitials(formData.fullName)}
+              {getInitials(formData.users_uname)}
             </div>
-            <h2>{formData.fullName}</h2>
-            <p className="role-badge">{formData.role}</p>
+            <h2>{formData.users_uname}</h2>
+            <p className="role-badge">{formData.urole_rname}</p>
           </div>
           
           <div className="profile-card-details">
             <div className="detail-item">
               <i className="pi pi-envelope"></i>
-              <span>{formData.email}</span>
+              <span>{formData.users_email}</span>
             </div>
             <div className="detail-item">
               <i className="pi pi-phone"></i>
-              <span>{formData.phone}</span>
+              <span>{formData.users_cntct}</span>
             </div>
             <div className="detail-item">
               <i className="pi pi-map-marker"></i>
-              <span>{formData.location}</span>
+              <span>{formData.users_emply}</span>
             </div>
             <div className="detail-item">
               <i className="pi pi-building"></i>
-              <span>{formData.department}</span>
+              <span>{formData.users_bsins}</span>
             </div>
           </div>
         </div>
@@ -103,47 +97,47 @@ const UserProfilePage = () => {
             <div className="form-field">
               <label>Full Name</label>
               <InputText 
-                value={formData.fullName} 
-                onChange={(e) => handleChange("fullName", e.target.value)}
+                value={formData.users_uname} 
+                onChange={(e) => handleChange("users_uname", e.target.value)}
                 disabled={!isEditing}
               />
             </div>
             <div className="form-field">
-              <label>Email Address</label>
+              <label>Email/Login</label>
               <InputText 
-                value={formData.email} 
-                onChange={(e) => handleChange("email", e.target.value)}
+                value={formData.users_email} 
+                onChange={(e) => handleChange("users_email", e.target.value)}
                 disabled={!isEditing}
               />
             </div>
             <div className="form-field">
-              <label>Phone Number</label>
+              <label>Contact</label>
               <InputText 
-                value={formData.phone} 
-                onChange={(e) => handleChange("phone", e.target.value)}
+                value={formData.users_cntct} 
+                onChange={(e) => handleChange("users_cntct", e.target.value)}
                 disabled={!isEditing}
               />
             </div>
             <div className="form-field">
               <label>Role</label>
               <InputText 
-                value={formData.role} 
+                value={formData.urole_rname} 
                 disabled={true} // Roles typically aren't editable here
               />
             </div>
             <div className="form-field">
-              <label>Department</label>
+              <label>Business</label>
               <InputText 
-                value={formData.department} 
-                onChange={(e) => handleChange("department", e.target.value)}
+                value={formData.users_bsins} 
+                onChange={(e) => handleChange("users_bsins", e.target.value)}
                 disabled={!isEditing}
               />
             </div>
             <div className="form-field">
-              <label>Location</label>
+              <label>Employee</label>
               <InputText 
-                value={formData.location} 
-                onChange={(e) => handleChange("location", e.target.value)}
+                value={formData.users_emply} 
+                onChange={(e) => handleChange("users_emply", e.target.value)}
                 disabled={!isEditing}
               />
             </div>

@@ -20,9 +20,9 @@ router.post("/", async (req, res) => {
     //database action
     const sql = `SELECT zn.*,
     csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
-    FROM tmrb_dzone zn
-    LEFT JOIN tmcb_users csr ON zn.dzone_crusr = csr.id
-    LEFT JOIN tmcb_users usr ON zn.dzone_upusr = usr.id
+    FROM tmcb_dzone zn
+    LEFT JOIN tmnb_users csr ON zn.dzone_crusr = csr.id
+    LEFT JOIN tmnb_users usr ON zn.dzone_upusr = usr.id
     WHERE zn.dzone_apusr = $1
     ORDER BY zn.dzone_dname ASC`;
 
@@ -67,9 +67,9 @@ const create = async (req, res) => {
     }
 
     //database action
-    const newCode = await GetNewCode(user_c, "tmrb_dzone");
+    const newCode = await GetNewCode(user_c, "tmcb_dzone");
 
-    const sql = `INSERT INTO tmrb_dzone(id, dzone_apusr, dzone_bsins, dzone_cntry, dzone_dcode, dzone_dname, dzone_crusr, dzone_upusr)
+    const sql = `INSERT INTO tmcb_dzone(id, dzone_apusr, dzone_bsins, dzone_cntry, dzone_dcode, dzone_dname, dzone_crusr, dzone_upusr)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
     const params = [
       uuidv4(),
@@ -122,7 +122,7 @@ const update = async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmrb_dzone
+    const sql = `UPDATE tmcb_dzone
     SET dzone_cntry = $1,
     dzone_dname = $2,
     dzone_upusr = $3,
@@ -178,7 +178,7 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmrb_dzone
+    const sql = `UPDATE tmcb_dzone
     SET dzone_actve = NOT dzone_actve,
     dzone_upusr = $1,
     dzone_updat = CURRENT_TIMESTAMP,
@@ -218,7 +218,7 @@ router.post("/get-by-country", async (req, res) => {
 
     //database action
     const sql = `SELECT dzn.*, 0 as edit_stop
-    FROM tmrb_dzone dzn
+    FROM tmcb_dzone dzn
     WHERE dzn.dzone_cntry = $1
     AND dzn.dzone_actve = TRUE
     ORDER BY dzn.dzone_dname`;

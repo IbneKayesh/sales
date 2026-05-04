@@ -17,6 +17,8 @@ const UsersPage = () => {
     dataList,
     //other states
     dataListMenus,
+    users_urole_Options,
+    users_bsins_Options,
     //functions
     handleChange,
     handleEdit,
@@ -108,7 +110,8 @@ const UsersPage = () => {
           formData={formData}
           errors={errors}
           onChange={handleChange}
-          dzone_cntry_Options={dzone_cntry_Options}
+          users_urole_Options={users_urole_Options}
+          users_bsins_Options={users_bsins_Options}
         />
       )}
 

@@ -1,9 +1,9 @@
 --
--- Table structure for table `tmcb_mnusr`
+-- Table structure for table `tmnb_mnusr`
 -- user menu permissions
 
 
-CREATE TABLE tmcb_mnusr (
+CREATE TABLE tmnb_mnusr (
   id varchar(50) PRIMARY KEY,
 
   mnusr_users varchar(50) NOT NULL,

@@ -1,8 +1,8 @@
 --
--- Table structure for table tmrb_cntct
+-- Table structure for table tmcb_cntct
 --
 
-CREATE TABLE tmrb_cntct (
+CREATE TABLE tmcb_cntct (
   id varchar(50) PRIMARY KEY,
 
   cntct_apusr varchar(50) NOT NULL,

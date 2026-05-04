@@ -1,10 +1,10 @@
 
 --
--- Table structure for table tmcb_bsins
+-- Table structure for table tmnb_bsins
 -- business shop/warehouse/
 -- Business Type Id	[Store, Warehosue, Factory]
 
-CREATE TABLE tmcb_bsins (
+CREATE TABLE tmnb_bsins (
   id varchar(50) PRIMARY KEY,
 
   bsins_bname varchar(255) NOT NULL,
@@ -20,10 +20,10 @@ CREATE TABLE tmcb_bsins (
   bsins_agent boolean NOT NULL DEFAULT false,
 
   -- relations
-  bsins_apusr varchar(50),
-  bsins_cntry varchar(50),
-  bsins_crncy varchar(50),
-  bsins_bstyp varchar(50),
+  bsins_apusr varchar(50) NOT NULL,
+  bsins_cntry varchar(50) NOT NULL,
+  bsins_crncy varchar(50) NOT NULL,
+  bsins_bstyp varchar(50) NOT NULL,
 
   -- default
   bsins_actve boolean NOT NULL DEFAULT true,

@@ -24,7 +24,7 @@ router.post("/login", async (req, res) => {
     const sql_user = `SELECT usr.id, usr.users_email, usr.users_uname, usr.users_cntct, usr.users_ltokn, usr.users_lstgn,
     usr.users_lstpd, usr.users_notes, usr.users_nofcr, usr.users_isprm, usr.users_apink,
     usr.users_apusr, usr.users_urole, usr.users_bsins, usr.users_emply, 'Admin' AS urole_rname
-    FROM tmcb_users usr
+    FROM tmnb_users usr
     WHERE usr.users_actve = TRUE
     AND usr.users_email = $1
     AND usr.users_pswrd = $2`;
@@ -44,7 +44,7 @@ router.post("/login", async (req, res) => {
 
     const bsins_id = row_user.users_bsins;
     const sql_bsn = `SELECT bsn.*
-    FROM tmcb_bsins bsn
+    FROM tmnb_bsins bsn
     WHERE bsn.bsins_actve = TRUE
     AND bsn.id = $1`;
     const params_bsn = [bsins_id];
@@ -52,7 +52,7 @@ router.post("/login", async (req, res) => {
     if (!row_bsn) {
       return res.json({
         success: false,
-        message: "User or Business is not valid",
+        message: "Business is not defined",
         data: null,
       });
     }
@@ -60,17 +60,17 @@ router.post("/login", async (req, res) => {
     const sql_menus = `SELECT mnu.id, menus_pname, menus_aname, menus_mname, menus_color, menus_micon, menus_odrby, menus_notes, menus_mlink, menus_menus,
 mnusr_extpr, mnusr_addpr, mnusr_edtpr, mnusr_delpr
   FROM tmab_menus mnu
-  JOIN tmcb_mnusr usr ON mnu.id = usr.mnusr_menus
+  JOIN tmnb_mnusr usr ON mnu.id = usr.mnusr_menus
   WHERE mnu.menus_actve = TRUE
   AND usr.mnusr_actve = TRUE
   AND usr.mnusr_users = $1
   ORDER BY mnu.menus_odrby`;
 
     const row_menus = await dbGetAll(sql_menus, [row_user.id], `Get login menus`);
-    if (!row_menus) {
+    if (!row_menus || row_menus.length === 0) {
       return res.json({
         success: false,
-        message: "Menus not defined",
+        message: "Menu is not defined",
         data: null,
       });
     }
