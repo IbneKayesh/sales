@@ -1,0 +1,38 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "users_email": {
+    "type": "string",
+    "label": "Email",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter email",
+    "required": true
+  },
+  "users_pswrd": {
+    "type": "string",
+    "label": "Password",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter password",
+    "required": true
+  },
+  "users_pswrd_new": {
+    "type": "string",
+    "label": "New Password",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter new password",
+    "required": true
+  },
+  "users_pswrd_con": {
+    "type": "string",
+    "label": "Confirm Password",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter confirm password",
+    "required": true
+  }
+}

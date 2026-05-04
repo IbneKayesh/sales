@@ -1,57 +1,85 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth.jsx";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useAppUI } from "@/hooks/useAppUI";
-import t_login from "@/models/auth/t_login.json";
 import validate, { generateDataModel } from "@/models/validator";
-import { setStorageLoginData } from "@/utils/storage";
+import tmnb_users_pswd from "@/models/settings/tmnb_users_pswd.json";
+const dataModel = generateDataModel(tmnb_users_pswd);
+import { usersAPI } from "@/api/settings/usersAPI.js";
+import { useAuth } from "@/hooks/useAuth";
 
-const dataModel = generateDataModel(t_login);
-
-const useLogin = () => {
-  // ---Hooks
-  const navigate = useNavigate();
-  const { login } = useAuth();
-  const { showToast, confirm, alert, isBusy, setIsBusy } = useAppUI();
-
-  // ---States
-  const [formData, setFormData] = useState(dataModel);
+const useUserProfile = () => {
+  const { user } = useAuth();
+  const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
+    useAppUI();
+  const [crTitle, setCrTitle] = useState("Profile List");
+  const [crView, setCrView] = useState("list");
+  const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
+  const [dataList, setDataList] = useState([]);
+  const [formDataPswrd, setFormDataPswrd] = useState(dataModel);
 
-  // ---Functions
-  const onChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  //functions
+  const loadUserProfile = async () => {
+    setFormData(user);
   };
 
-  const onLoginClick = async (rememberUser) => {
-    const newErrors = validate(formData, t_login);
-    setErrors(newErrors);
-    //console.log("handleSave: " + JSON.stringify(newErrors));
-    if (Object.keys(newErrors).length > 0) {
-      return;
-    }
+  useEffect(() => {
+    loadUserProfile();
+  }, []);
 
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    //error validation is not required
+  };
+
+  const handleSaveClick = async () => {
+    showToast("error", "Update", "Profile updates are restricted.");
+  };
+
+  const handleChangePaswrd = (field, value) => {
+    setFormDataPswrd((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate(
+      { ...formDataPswrd, [field]: value },
+      tmnb_users_pswd,
+    );
+    setErrors(newErrors);
+  };
+  const handleChangePswrdClick = () => {
+    setCrTitle("Change Password");
+    setCrView("form");
+    setFormDataPswrd({
+      ...dataModel,
+      id: formData.id,
+      users_email: formData.users_email,
+    });
+    setErrors({});
+  };
+
+  const handleSubmitClick = async () => {
     try {
+      const newErrors = validate(formDataPswrd, tmnb_users_pswd);
+      if (formDataPswrd.users_pswrd_new !== formDataPswrd.users_pswrd_con) {
+        newErrors.users_pswrd_con = "Passwords do not match";
+      }
+
+      setErrors(newErrors);
+      //console.log("handleSave: " + JSON.stringify(newErrors));
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+
       setIsBusy(true);
 
-      const resp = await login(formData);
-      if (resp.result) {
-        navigate("/");
-        if (rememberUser && formData.username) {
-          setStorageLoginData({
-            saved_user: {
-              username: formData.username,
-              usertext: resp.aempName
-            },
-            is_saved: true,
-          });
-        } else {
-          setStorageLoginData({ saved_user: null, is_saved: false });
-        }
-
-        //console.log("resp",resp)
-      } else {
-        showToast("error", "Login", resp.message);
+      const resp = await usersAPI.changePassword(formDataPswrd);
+      //console.log("resp", resp);
+      alert({
+        message: resp.message,
+        header: resp.success ? "Updated" : "Error",
+        icon: !resp.success && "pi pi-times-circle text-red-500",
+      });
+      if (resp.success) {
+        setCrTitle("Profile");
+        setCrView("list");
+        loadUserProfile();
       }
     } catch (error) {
     } finally {
@@ -60,10 +88,21 @@ const useLogin = () => {
   };
 
   return {
+    //hooks
+    crTitle,
+    crView,
+    setCrView,
     formData,
+    formDataPswrd,
     errors,
-    onChange,
-    onLoginClick
-  }
+    dataList,
+    //other states
+    //functions
+    handleChange,
+    handleSaveClick,
+    handleChangePaswrd,
+    handleChangePswrdClick,
+    handleSubmitClick,
+  };
 };
-export default useLogin;
+export default useUserProfile;

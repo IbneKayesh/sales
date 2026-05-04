@@ -122,7 +122,7 @@ const create = async (req, res) => {
       users_apusr,
       users_urole,
       users_bsins,
-      'users_emply',
+      "users_emply",
       user_s,
       user_s,
     ];
@@ -466,5 +466,75 @@ const GetMasterUserId = async (users_regno) => {
   //if (!result) throw new Error("Registration No is not found");
   return result;
 };
+
+// change-password
+router.post("/change-password", async (req, res) => {
+  try {
+    const {
+      id,
+      users_email,
+      users_pswrd,
+      users_pswrd_new,
+      user_s,
+      user_c,
+      user_b,
+    } = req.body;
+
+    // Validate input
+    if (!id || !users_email || !users_pswrd || !users_pswrd_new || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: null,
+      });
+    }
+
+    //database action
+    const sql_user = `SELECT usr.*
+    FROM tmnb_users usr
+    WHERE usr.users_email = $1
+    AND usr.users_pswrd = $2
+    AND usr.id = $3
+    AND usr.users_actve = TRUE`;
+    const params_user = [users_email, users_pswrd, id];
+
+    const row_user = await dbGet(
+      sql_user,
+      params_user,
+      `Get login credential- ${users_email}`,
+    );
+    if (!row_user) {
+      return res.json({
+        success: false,
+        message: "Current Email or Password is not valid",
+        data: null,
+      });
+    }
+
+    const sql = `UPDATE tmnb_users 
+    SET users_pswrd = $1,
+    users_lstpd = CURRENT_TIMESTAMP,
+    users_upusr = $2,
+    users_updat = CURRENT_TIMESTAMP,
+    users_rvnmr = users_rvnmr + 1
+    WHERE id = $3
+    AND users_email = $4`;
+    const params = [users_pswrd_new, user_s, id, users_email];
+
+    await dbRun(sql, params, `Change user password for ${users_email}`);
+    res.json({
+      success: true,
+      message: "Password changed successfully",
+      data: null,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
+    });
+  }
+});
 
 module.exports = router;

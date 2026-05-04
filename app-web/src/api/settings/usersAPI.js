@@ -22,4 +22,8 @@ export const usersAPI = {
   getMenus: (data) => apiRequest("/settings/v1/users/menus", { body: data }),
   upsertMenus: (data) =>
     apiRequest("/settings/v1/users/menus/upsert", { body: data }),
+  changePassword: (data) =>
+    apiRequest("/settings/v1/users/change-password", {
+      body: data,
+    }),
 };
