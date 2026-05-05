@@ -11,7 +11,7 @@ goto MENU
 :MENU
 echo.
 echo.
-echo  -=-=-=- MENU -=-=-=-
+echo  -=-=-=- MENU [sales] -=-=-=-
 echo Show choice as below-
 echo 1. Check git status
 echo 2. Add all changes
