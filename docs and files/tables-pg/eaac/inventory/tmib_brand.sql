@@ -5,8 +5,10 @@
 CREATE TABLE tmib_brand (
   id varchar(50) PRIMARY KEY,
 
-  brand_users varchar(50) NOT NULL,
-  brand_brnam varchar(50) NOT NULL,
+  brand_apusr varchar(50) NOT NULL,
+  brand_bsins varchar(50) NOT NULL,
+  brand_bcode varchar(50) NOT NULL,
+  brand_bname varchar(50) NOT NULL,
   -- optional
   
   -- default

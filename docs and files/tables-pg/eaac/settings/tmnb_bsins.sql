@@ -7,6 +7,7 @@
 CREATE TABLE tmnb_bsins (
   id varchar(50) PRIMARY KEY,
 
+  bsins_bcode varchar(50) NOT NULL,
   bsins_bname varchar(255) NOT NULL,
   bsins_addrs varchar(255) NOT NULL,
   
