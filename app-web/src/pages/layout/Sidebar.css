@@ -266,6 +266,16 @@
   font-size: 0.85rem;
 }
 
+.user-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.collapsed .user-details {
+  display: none;
+}
+
 .user-name-text {
   font-size: 0.875rem;
   font-weight: 600;
@@ -276,8 +286,11 @@
   text-overflow: ellipsis;
 }
 
-.collapsed .user-name-text {
-  display: none;
+.user-role-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  margin-top: -2px;
 }
 
 .logout-btn-inline {

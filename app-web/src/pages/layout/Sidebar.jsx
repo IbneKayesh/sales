@@ -127,7 +127,7 @@ const Sidebar = ({ collapsed }) => {
           item.label?.toLowerCase().includes(term) ||
           item.link?.toLowerCase().includes(term) ||
           item.notes?.toLowerCase().includes(term) ||
-          item.menus_mlink?.toLowerCase().includes(term) 
+          item.menus_mlink?.toLowerCase().includes(term)
         ) {
           if (item.link || (item.menus_mlink && item.menus_mlink !== "NA")) {
             results.push({
@@ -425,12 +425,17 @@ const Sidebar = ({ collapsed }) => {
             >
               {userData?.users_uname?.charAt(0)?.toUpperCase() || "U"}
             </div>
-            <span
-              className="user-name-text"
-              aria-label={`User name: ${userData?.users_uname || "User"}`}
-            >
-              {userData?.users_uname || "User"}
-            </span>
+            <div className="user-details">
+              <span
+                className="user-name-text"
+                aria-label={`User name: ${userData?.users_uname || "User"}`}
+              >
+                {userData?.users_uname || "User"}
+              </span>
+              <span className="user-role-text">
+                {userData?.urole_rname || "User"}
+              </span>
+            </div>
           </div>
           <button
             className="logout-btn-inline"

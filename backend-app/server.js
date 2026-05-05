@@ -29,13 +29,20 @@ const mobileRoutes = require("./routes/mobile");
 const settingsRoutes = require("./routes/settings");
 
 const app = express();
+
+// ✅ ADD THIS LINE RIGHT AFTER app initialization
+app.set("trust proxy", 1); // trust first proxy
+
 const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({ origin: "*", methods: ["GET", "POST"] }));
+//app.use(cors({ origin: process.env.FRONTEND_URL, methods: ["GET", "POST", "PUT", "DELETE"] }));
+
 app.use(rateLimiter);
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+//stop massive JSON payload
+app.use(bodyParser.json({ limit: '100kb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '100kb' }));
 
 require("dotenv").config();
 const authMiddleware = require("./middlewares/authMiddleware");

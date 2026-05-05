@@ -1,0 +1,175 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "cntct_ctype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter type",
+    "required": true,
+    "default": "Customer"
+  },
+  "cntct_sorce": {
+    "type": "string",
+    "label": "Source",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter source",
+    "required": true,
+    "default": "Local"
+  },
+  "cntct_ccode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter code",
+    "required": false
+  },
+  "cntct_cntnm": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter name",
+    "required": true
+  },
+  "cntct_cntps": {
+    "type": "string",
+    "label": "Person",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter contact person",
+    "required": true
+  },
+  "cntct_cntno": {
+    "type": "string",
+    "label": "Contact Number",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter contact number",
+    "required": true
+  },
+  "cntct_email": {
+    "type": "string",
+    "label": "Email",
+    "maxLength": 100,
+    "minLength": 3,
+    "placeholder": "Enter email",
+    "required": false
+  },
+  "cntct_tinno": {
+    "type": "string",
+    "label": "TIN",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter TIN",
+    "required": false
+  },
+  "cntct_trade": {
+    "type": "string",
+    "label": "Trade",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter trade",
+    "required": false
+  },
+  "cntct_ofadr": {
+    "type": "string",
+    "label": "Office Address",
+    "maxLength": 300,
+    "minLength": 0,
+    "placeholder": "Enter office address",
+    "required": false
+  },
+  "cntct_fcadr": {
+    "type": "string",
+    "label": "Factory Address",
+    "maxLength": 300,
+    "minLength": 0,
+    "placeholder": "Enter factory address",
+    "required": false
+  },
+  "cntct_trtry": {
+    "type": "string",
+    "label": "Territory",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter territory",
+    "required": false,
+    "default": ""
+  },
+  "cntct_tarea": {
+    "type": "string",
+    "label": "Area",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter t/area",
+    "required": false,
+    "default": ""
+  },
+  "cntct_dzone": {
+    "type": "string",
+    "label": "Zone",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter d/zone",
+    "required": false,
+    "default": ""
+  },
+  "cntct_cntry": {
+    "type": "string",
+    "label": "Country",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter Country",
+    "required": true,
+    "default": "Bangladesh"
+  },
+  "cntct_cntad": {
+    "type": "string",
+    "label": "Contact Address",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter contact address",
+    "required": false
+  },
+  "cntct_crncy": {
+    "type": "string",
+    "label": "Currency",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter currency",
+    "required": true
+  },
+  "cntct_dspct": {
+    "type": "number",
+    "label": "Discount %",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter discount %",
+    "required": true,
+    "default": "0"
+  },
+  "cntct_crlmt": {
+    "type": "number",
+    "label": "Credit Limit",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter credit limit",
+    "required": true,
+    "default": "0"
+  },
+  "cntct_crbal": {
+    "type": "number",
+    "label": "Current Balance",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter current balance [auto]",
+    "required": true,
+    "default": "0"
+  }
+}

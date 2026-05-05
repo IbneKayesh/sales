@@ -26,4 +26,8 @@ export const territoryAPI = {
     apiRequest("/crm/v1/territory/get-all-active", {
       body: data,
     }),
+  getByTArea: (data) =>
+    apiRequest("/crm/v1/territory/get-by-tarea", {
+      body: data,
+    }),
 };

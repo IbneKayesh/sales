@@ -3,12 +3,10 @@ const router = express.Router();
 
 const contactsRoutes = require("./contacts.routes.js");
 const orderRouteRoutes = require("./orderRoute.routes.js");
-const territoryRoutes = require("./territory.routes.js");
 const deliveryVanRoutes = require("./deliveryVan.routes.js");
 
 router.use("/contacts", contactsRoutes);
 router.use("/order-route", orderRouteRoutes);
-router.use("/territory", territoryRoutes);
 router.use("/delivery-van", deliveryVanRoutes);
 
 

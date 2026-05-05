@@ -7,19 +7,23 @@ export const contactAPI = {
       body: data,
     }),
   upsert: (data) =>
-    apiRequest("/crm/v1/dzone/upsert", {
+    apiRequest("/crm/v1/contacts/upsert", {
       body: data,
     }),
   create: (data) =>
-    apiRequest("/crm/v1/dzone/create", {
+    apiRequest("/crm/v1/contacts/create", {
       body: data,
     }),
   update: (data) =>
-    apiRequest("/crm/v1/dzone/update", {
+    apiRequest("/crm/v1/contacts/update", {
       body: data,
     }),
   delete: (data) =>
-    apiRequest("/crm/v1/dzone/delete", {
+    apiRequest("/crm/v1/contacts/delete", {
+      body: data,
+    }),
+  getAddress: (data) =>
+    apiRequest("/crm/v1/contacts/get-address", {
       body: data,
     }),
   getByType: (data) =>
@@ -61,5 +65,9 @@ export const contactAPI = {
     apiRequest(`/crm/contacts/route-distributors-available`, {
       method: "POST",
       body: JSON.stringify(data),
+    }),
+  upsertAddress: (data) =>
+    apiRequest("/crm/v1/contacts/upsert-address", {
+      body: data,
     }),
 };

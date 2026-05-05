@@ -51,7 +51,7 @@ const useTArea = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate({ ...formData, [field]: value }, tmcb_tarea);
     setErrors(newErrors);
-    
+
     if (field === "dzone_cntry") {
       handleGetDZone(value);
     }
@@ -67,7 +67,7 @@ const useTArea = () => {
     setCrView("form");
     handleGetCountry();
   };
-  
+
   const handleDelete = (rowData) => {
     if (!pageAuth.delpr) {
       showToast("warn", "Delete", "No delete permission");
@@ -184,8 +184,11 @@ const useTArea = () => {
   const handleGetDZone = async (dzone_cntry) => {
     // if (dzone_cntry_Options.length > 0) {
     //   return;
-    // }    
+    // }
     //console.log("field", dzone_cntry);
+    if (!dzone_cntry) {
+      return;
+    }
     try {
       setIsBusy(true);
       const resp = await dzoneAPI.getByCountry({ dzone_cntry: dzone_cntry });

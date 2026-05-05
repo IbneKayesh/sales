@@ -1,19 +1,66 @@
+import { useState } from "react";
 import { InputText } from "primereact/inputtext";
 import RequiredText from "@/components/RequiredText";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Dropdown } from "primereact/dropdown";
+import AuditFields from "@/components/AuditFields";
+import ContactsAddressComp from "./ContactsAddressComp";
 
 const ContactsFormComp = ({
   formData,
   errors,
   onChange,
-  cntct_ctype_options,
-  cntct_sorce_options,
-  cntct_crncy_options,
+  cntct_ctype_Options,
+  cntct_sorce_Options,
+  cntct_trtry_Options,
+  cntct_tarea_Options,
+  cntct_dzone_Options,
+  dzone_cntry_Options,
+  cntct_crncy_Options,
+  //contact address
+  formDataAddress,
+  onChangeAddress,
+  onSubmitAddressClick,
+  dataListAddress,
+  onEditAddress,
 }) => {
   return (
     <div className="grid">
       <div className="col-12 md:col-2">
+        <label className="block font-bold mb-2 text-red-800">Type</label>
+        <Dropdown
+          name="cntct_ctype"
+          value={formData.cntct_ctype}
+          onChange={(e) => onChange("cntct_ctype", e.value)}
+          options={cntct_ctype_Options}
+          optionLabel="label"
+          optionValue="value"
+          className={`w-full ${errors.cntct_ctype ? "p-invalid" : ""}`}
+          size={"small"}
+          placeholder={`Enter type`}
+          filter
+          showClear
+        />
+        <RequiredText text={errors.cntct_ctype} />
+      </div>
+      <div className="col-12 md:col-2">
+        <label className="block font-bold mb-2 text-red-800">Type</label>
+        <Dropdown
+          name="cntct_sorce"
+          value={formData.cntct_sorce}
+          onChange={(e) => onChange("cntct_sorce", e.value)}
+          options={cntct_sorce_Options}
+          optionLabel="label"
+          optionValue="value"
+          className={`w-full ${errors.cntct_sorce ? "p-invalid" : ""}`}
+          size={"small"}
+          placeholder={`Enter source`}
+          filter
+          showClear
+        />
+        <RequiredText text={errors.cntct_sorce} />
+      </div>
+      <div className="col-12 md:col-4">
         <label className="block font-bold mb-2 text-red-800">Name</label>
         <InputText
           name="cntct_cntnm"
@@ -47,7 +94,7 @@ const ContactsFormComp = ({
         <RequiredText text={errors.cntct_cntno} />
       </div>
       <div className="col-12 md:col-2">
-        <label className="block font-bold mb-2 text-red-800">Email</label>
+        <label className="block font-bold mb-2">Email</label>
         <InputText
           name="cntct_email"
           value={formData.cntct_email}
@@ -58,7 +105,7 @@ const ContactsFormComp = ({
         <RequiredText text={errors.cntct_email} />
       </div>
       <div className="col-12 md:col-2">
-        <label className="block font-bold mb-2 text-red-800">TIN</label>
+        <label className="block font-bold mb-2">TIN</label>
         <InputText
           name="cntct_tinno"
           value={formData.cntct_tinno}
@@ -69,7 +116,7 @@ const ContactsFormComp = ({
         <RequiredText text={errors.cntct_tinno} />
       </div>
       <div className="col-12 md:col-2">
-        <label className="block font-bold mb-2 text-red-800">Trade</label>
+        <label className="block font-bold mb-2">Trade</label>
         <InputText
           name="cntct_trade"
           value={formData.cntct_trade}
@@ -80,9 +127,7 @@ const ContactsFormComp = ({
         <RequiredText text={errors.cntct_trade} />
       </div>
       <div className="col-12 md:col-6">
-        <label className="block font-bold mb-2 text-red-800">
-          Office Address
-        </label>
+        <label className="block font-bold mb-2">Office Address</label>
         <InputTextarea
           name="cntct_ofadr"
           value={formData.cntct_ofadr}
@@ -95,9 +140,7 @@ const ContactsFormComp = ({
         <RequiredText text={errors.cntct_ofadr} />
       </div>
       <div className="col-12 md:col-6">
-        <label className="block font-bold mb-2 text-red-800">
-          Factory Address
-        </label>
+        <label className="block font-bold mb-2">Factory Address</label>
         <InputTextarea
           name="cntct_fcadr"
           value={formData.cntct_fcadr}
@@ -110,49 +153,150 @@ const ContactsFormComp = ({
         <RequiredText text={errors.cntct_fcadr} />
       </div>
       <div className="col-12 md:col-2">
-        <label className="block font-bold mb-2 text-red-800">Type</label>
+        <label className="block font-bold mb-2 text-red-800">Country</label>
         <Dropdown
-          name="cntct_ctype"
-          value={formData.cntct_ctype}
-          onChange={(e) => onChange("cntct_ctype", e.value)}
-          options={cntct_ctype_options}
-          optionLabel="label"
-          optionValue="value"
-          className={`w-full ${errors.cntct_ctype ? "p-invalid" : ""}`}
+          name="cntct_cntry"
+          value={formData.cntct_cntry}
+          onChange={(e) => onChange("cntct_cntry", e.value)}
+          options={dzone_cntry_Options}
+          optionLabel="label_text"
+          optionValue="value_text"
+          className={`w-full ${errors.cntct_cntry ? "p-invalid" : ""}`}
           size={"small"}
-          placeholder={`Enter type`}
+          placeholder={`Enter country`}
           filter
           showClear
         />
-        <RequiredText text={errors.cntct_ctype} />
+        <RequiredText text={errors.cntct_cntry} />
       </div>
       <div className="col-12 md:col-2">
-        <label className="block font-bold mb-2 text-red-800">Type</label>
+        <label className="block font-bold mb-2">D/Zone</label>
         <Dropdown
-          name="cntct_sorce"
-          value={formData.cntct_sorce}
-          onChange={(e) => onChange("cntct_sorce", e.value)}
-          options={cntct_sorce_options}
-          optionLabel="label"
-          optionValue="value"
-          className={`w-full ${errors.cntct_sorce ? "p-invalid" : ""}`}
+          name="cntct_dzone"
+          value={formData.cntct_dzone}
+          onChange={(e) => onChange("cntct_dzone", e.value)}
+          options={cntct_dzone_Options}
+          optionLabel="dzone_dname"
+          optionValue="id"
+          className={`w-full ${errors.cntct_dzone ? "p-invalid" : ""}`}
           size={"small"}
-          placeholder={`Enter source`}
+          placeholder={`Enter d/zone`}
           filter
           showClear
         />
-        <RequiredText text={errors.cntct_sorce} />
+        <RequiredText text={errors.cntct_dzone} />
+      </div>
+      <div className="col-12 md:col-2">
+        <label className="block font-bold mb-2">T/Area</label>
+        <Dropdown
+          name="cntct_tarea"
+          value={formData.cntct_tarea}
+          onChange={(e) => onChange("cntct_tarea", e.value)}
+          options={cntct_tarea_Options}
+          optionLabel="tarea_tname"
+          optionValue="id"
+          className={`w-full ${errors.cntct_tarea ? "p-invalid" : ""}`}
+          size={"small"}
+          placeholder={`Enter t/area`}
+          filter
+          showClear
+        />
+        <RequiredText text={errors.cntct_tarea} />
+      </div>
+      <div className="col-12 md:col-2">
+        <label className="block font-bold mb-2">Territory</label>
+        <Dropdown
+          name="cntct_trtry"
+          value={formData.cntct_trtry}
+          onChange={(e) => onChange("cntct_trtry", e.value)}
+          options={cntct_trtry_Options}
+          optionLabel="trtry_wname"
+          optionValue="id"
+          className={`w-full ${errors.cntct_trtry ? "p-invalid" : ""}`}
+          size={"small"}
+          placeholder={`Enter territory`}
+          filter
+          showClear
+        />
+        <RequiredText text={errors.cntct_trtry} />
+      </div>
+      <div className="col-12 md:col-2">
+        <label className="block font-bold mb-2 text-red-800">Currency</label>
+        <Dropdown
+          name="cntct_crncy"
+          value={formData.cntct_crncy}
+          onChange={(e) => onChange("cntct_crncy", e.value)}
+          options={cntct_crncy_Options}
+          optionLabel="label_text"
+          optionValue="value_text"
+          className={`w-full ${errors.cntct_crncy ? "p-invalid" : ""}`}
+          size={"small"}
+          placeholder={`Enter currency`}
+          filter
+          showClear
+        />
+        <RequiredText text={errors.cntct_crncy} />
+      </div>
+      <div className="col-12 md:col-2">
+        <label className="block font-bold mb-2 text-red-800">Discount %</label>
+        <InputText
+          name="cntct_dspct"
+          value={formData.cntct_dspct}
+          onChange={(e) => onChange("cntct_dspct", e.target.value)}
+          className={`w-full ${errors.cntct_dspct ? "p-invalid" : ""}`}
+          placeholder={`Enter Discount %`}
+        />
+        <RequiredText text={errors.cntct_dspct} />
+      </div>
+      <div className="col-12 md:col-2">
+        <label className="block font-bold mb-2 text-red-800">
+          Credit Limit
+        </label>
+        <InputText
+          name="cntct_crlmt"
+          value={formData.cntct_crlmt}
+          onChange={(e) => onChange("cntct_crlmt", e.target.value)}
+          className={`w-full ${errors.cntct_crlmt ? "p-invalid" : ""}`}
+          placeholder={`Enter Credit Limit`}
+        />
+        <RequiredText text={errors.cntct_crlmt} />
+      </div>
+      <div className="col-12 md:col-2">
+        <label className="block font-bold mb-2 text-red-800">
+          Current Balance
+        </label>
+        <InputText
+          name="cntct_crbal"
+          value={formData.cntct_crbal}
+          onChange={(e) => onChange("cntct_crbal", e.target.value)}
+          className={`w-full ${errors.cntct_crbal ? "p-invalid" : ""}`}
+          placeholder={`Enter Current Balance`}
+        />
+        <RequiredText text={errors.cntct_crbal} />
       </div>
 
-      <div className="col-12 md:col-12">
-        read only field cntct_crbal - balance
+      <div className="col-12 p-card p-3 mt-3">
+        <h4 className="mt-0 mb-3 text-red-800">Contact Addresses</h4>
+        <ContactsAddressComp
+          formData={formDataAddress}
+          errors={errors}
+          onChange={onChangeAddress}
+          onSaveClick={onSubmitAddressClick}
+          dataList={dataListAddress}
+          onEdit={onEditAddress}
+        />
       </div>
 
-      <div className="col-12 md:col-12">
-        another read only field row cntct_actve - active cntct_crusr - created
-        by cntct_crdat - created date cntct_upusr - updated by cntct_updat -
-        updated date cntct_rvnmr - revision no
-      </div>
+      {formData.id && (
+        <AuditFields
+          active={formData.cntct_actve}
+          createdBy={formData.crusr_cname}
+          createdAt={formData.cntct_crdat}
+          updatedBy={formData.upusr_cname}
+          updatedAt={formData.cntct_updat}
+          revNo={formData.cntct_rvnmr}
+        />
+      )}
     </div>
   );
 };

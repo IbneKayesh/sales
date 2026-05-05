@@ -6,12 +6,13 @@ import { SplitButton } from "primereact/splitbutton";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import CSVExport from "@/components/CSVExport";
 
-const ContactsListComp = ({ dataList, onEdit, onDelete }) => {
+const ContactsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
 
   const export_columns = [
     { header: "Type", accessor: "cntct_ctype" },
     { header: "Source", accessor: "cntct_sorce" },
+    { header: "Code", accessor: "cntct_ccode" },
     { header: "Name", accessor: "cntct_cntnm" },
     { header: "Person", accessor: "cntct_cntps" },
     { header: "Contact No", accessor: "cntct_cntno" },
@@ -20,6 +21,9 @@ const ContactsListComp = ({ dataList, onEdit, onDelete }) => {
     { header: "Trade", accessor: "cntct_trade" },
     { header: "Office Address", accessor: "cntct_ofadr" },
     { header: "Factory Address", accessor: "cntct_fcadr" },
+    { header: "Territory", accessor: "cntct_trtry" },
+    { header: "Area", accessor: "cntct_tarea" },
+    { header: "Zone", accessor: "cntct_dzone" },
     { header: "Country", accessor: "cntct_cntry" },
     { header: "Currency", accessor: "cntct_crncy" },
     { header: "Discount %", accessor: "cntct_dspct" },
@@ -42,10 +46,15 @@ const ContactsListComp = ({ dataList, onEdit, onDelete }) => {
   const cntct_cntnm_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <ActiveRowCell
-          text={rowData.cntct_cntnm}
-          status={rowData.cntct_actve}
-        />
+        <span className="text-sm">
+          <ActiveRowCell
+            text={rowData.cntct_cntnm}
+            status={rowData.cntct_actve}
+          />
+        </span>
+        <span className="text-gray-600 text-sm mt-1">
+          {rowData.cntct_dcode}
+        </span>
         <span className="text-sm">TIN: {rowData.cntct_tinno}</span>
         <span className="text-sm">Trade: {rowData.cntct_trade}</span>
       </div>
@@ -66,7 +75,7 @@ const ContactsListComp = ({ dataList, onEdit, onDelete }) => {
       <div className="flex flex-column">
         <span className="text-sm">Office: {rowData.cntct_ofadr}</span>
         <span className="text-sm">Factory: {rowData.cntct_fcadr}</span>
-        <span className="text-sm">Country: {rowData.cntct_cntry}</span>
+        <span className="text-sm">Location: {rowData.trtry_wname}, {rowData.tarea_tname}, {rowData.dzone_dname}, {rowData.cntry_cname}</span>
       </div>
     );
   };
@@ -74,30 +83,10 @@ const ContactsListComp = ({ dataList, onEdit, onDelete }) => {
   const cntct_crncy_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-sm">Currency: {rowData.cntct_crncy}</span>
+        <span className="text-sm">Currency: {rowData.crncy_cname}</span>
         <span className="text-sm">Discount %: {rowData.cntct_dspct}</span>
         <span className="text-sm">Credit Limit: {rowData.cntct_crlmt}</span>
         <span className="text-sm">Balance: {rowData.cntct_crbal}</span>
-      </div>
-    );
-  };
-
-  //show on form in view mode
-  const cntct_crusr_BT = (rowData) => {
-    return (
-      <div className="flex flex-column">
-        <span className="text-gray-700 text-sm">
-          Created By: {rowData.aemp_iusr}
-        </span>
-        <span className="text-gray-700 text-sm mt-1">
-          Modified By: {rowData.aemp_eusr}
-        </span>
-        <span className="text-gray-700 text-sm">
-          Created Date: {rowData.aemp_iusr}
-        </span>
-        <span className="text-gray-700 text-sm mt-1">
-          Modified Date: {rowData.aemp_eusr}
-        </span>
       </div>
     );
   };
@@ -140,19 +129,18 @@ const ContactsListComp = ({ dataList, onEdit, onDelete }) => {
           <InputText
             type="search"
             onInput={(e) => setGlobalFilter(e.target.value)}
-            placeholder="Search..."
+            placeholder="Search here"
             className="p-inputtext-sm"
           />
         </div>
 
-        <div className="flex flex-column md:flex-row align-items-center gap-2 w-full md:w-auto">
-          <div className="card flex flex-wrap gap-2">
-            <CSVExport
-              data={dataList}
-              fileName={`contacts_${new Date().toISOString().slice(0, 10)}`}
-              columns={export_columns}
-            />
-          </div>
+        <div className="flex flex-wrap align-items-center gap-2 w-full md:w-auto">
+          <CSVExport
+            data={dataList}
+            fileName={`dzone-${new Date().toISOString().slice(0, 10)}`}
+            columns={export_columns}
+            disable={pageAuth.extpr}
+          />
         </div>
       </div>
     );
@@ -169,23 +157,7 @@ const ContactsListComp = ({ dataList, onEdit, onDelete }) => {
       rowHover
       showGridlines
       globalFilter={globalFilter}
-      globalFilterFields={[
-        "cntct_ctype",
-        "cntct_sorce",
-        "cntct_cntnm",
-        "cntct_cntps",
-        "cntct_cntno",
-        "cntct_email",
-        "cntct_tinno",
-        "cntct_trade",
-        "cntct_ofadr",
-        "cntct_fcadr",
-        "cntct_cntry",
-        "cntct_crncy",
-        "cntct_dspct",
-        "cntct_crlmt",
-        "cntct_crbal",
-      ]}
+      globalFilterFields={export_columns.map((col) => col.accessor)}
       header={dt_HT}
     >
       <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
