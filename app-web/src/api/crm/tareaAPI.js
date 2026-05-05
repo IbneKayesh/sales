@@ -26,4 +26,8 @@ export const tareaAPI = {
     apiRequest("/crm/v1/tarea/get-all-active", {
       body: data,
     }),
+    getByDZone: (data) =>
+      apiRequest("/crm/v1/tarea/get-by-dzone", {
+        body: data,
+      }),
 };

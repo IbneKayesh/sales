@@ -22,7 +22,7 @@ CREATE TABLE tmnb_users (
   users_lstpd timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   users_notes varchar(100),
-  users_nofcr decimal(18,2) NOT NULL DEFAULT 0,
+  users_nofcr decimal(18,6) NOT NULL DEFAULT 0,
   users_isprm boolean NOT NULL DEFAULT false,
   users_apink varchar(50) DEFAULT 'N',
 

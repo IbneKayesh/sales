@@ -61,6 +61,7 @@ const useDZone = () => {
     setCrView("form");
     handleGetCountry();
   };
+
   const handleDelete = (rowData) => {
     if (!pageAuth.delpr) {
       showToast("warn", "Delete", "No delete permission");
@@ -77,6 +78,7 @@ const useDZone = () => {
       },
     });
   };
+
   const onDelete = async (rowData) => {
     try {
       setIsBusy(true);
@@ -172,6 +174,7 @@ const useDZone = () => {
       setIsBusy(false);
     }
   };
+  
   return {
     //hooks
     pageAuth,

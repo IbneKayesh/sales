@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: [],
       });
     }
 
@@ -40,7 +40,7 @@ router.post("/", async (req, res) => {
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: [],
     });
   }
 });
@@ -55,7 +55,7 @@ router.post("/get-all-active", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: [],
       });
     }
 
@@ -78,7 +78,7 @@ router.post("/get-all-active", async (req, res) => {
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: [],
     });
   }
 });
@@ -102,7 +102,7 @@ const create = async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: {},
       });
     }
 
@@ -126,14 +126,14 @@ const create = async (req, res) => {
     res.json({
       success: true,
       message: `${tarea_tname} - Created successfully.`,
-      data: null,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: {},
     });
   }
 };
@@ -165,7 +165,7 @@ const update = async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: {},
       });
     }
 
@@ -173,7 +173,7 @@ const update = async (req, res) => {
     const sql = `UPDATE tmcb_tarea
     SET tarea_dzone = $1,
     tarea_tname = $2,
-    tarea_crusr = $3,
+    tarea_upusr = $3,
     tarea_updat = CURRENT_TIMESTAMP,
     tarea_rvnmr = tarea_rvnmr + 1
     WHERE id = $4`;
@@ -183,14 +183,14 @@ const update = async (req, res) => {
     res.json({
       success: true,
       message: `${tarea_tname} - Updated successfully.`,
-      data: null,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: {},
     });
   }
 };
@@ -221,7 +221,7 @@ router.post("/delete", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: {},
       });
     }
 
@@ -238,14 +238,14 @@ router.post("/delete", async (req, res) => {
     res.json({
       success: true,
       message: `${tarea_tname} - ${tarea_actve ? "Deactivate" : "Activate"} successfully.`,
-      data: null,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: {},
     });
   }
 });
@@ -253,29 +253,30 @@ router.post("/delete", async (req, res) => {
 // get by dzone
 router.post("/get-by-dzone", async (req, res) => {
   try {
-    const { id, user_s, user_c, user_b } = req.body;
+    const { tarea_dzone, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!muser_id || !user_c) {
+    if (!user_c) {
       return res.json({
         success: false,
-        message: "User ID and Country ID are required",
-        data: null,
+        message: "All fields in the request body are required.",
+        data: [],
       });
     }
 
     //database action
-    const sql = `SELECT dzn.*, 0 as edit_stop
-    FROM tmcb_tarea dzn
-    WHERE dzn.dzone_cntry = $1
-    AND dzn.dzone_actve = TRUE
-    ORDER BY dzn.tarea_tname`;
-    const params = [dzone_cntry];
+    const sql = `SELECT ta.*, 0 as edit_stop
+    FROM tmcb_tarea ta
+    WHERE ta.tarea_apusr = $1
+    AND ta.tarea_dzone = $2
+    AND ta.tarea_actve = TRUE
+    ORDER BY ta.tarea_tname ASC`;
 
-    const rows = await dbGetAll(sql, params, `Get zones for ${dzone_cntry}`);
+    const params = [user_c, tarea_dzone];
+    const rows = await dbGetAll(sql, params, `get tarea- ${user_c}`);
     res.json({
       success: true,
-      message: "Zones fetched successfully",
+      message: "Query executed successfully.",
       data: rows,
     });
   } catch (error) {
@@ -283,7 +284,7 @@ router.post("/get-by-dzone", async (req, res) => {
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: [],
     });
   }
 });

@@ -3,45 +3,6 @@ const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 
-// get all
-router.post("/", async (req, res) => {
-  try {
-    const { muser_id } = req.body;
-
-    // Validate input
-    if (!muser_id) {
-      return res.json({
-        success: false,
-        message: "User ID is required",
-        data: null,
-      });
-    }
-
-    //database action
-    const sql = `SELECT cnt.*, 0 as edit_stop,
-    ta.tarea_tname, dz.dzone_dname
-    FROM tmcb_cntct cnt
-    LEFT JOIN tmcb_tarea ta ON ta.id = cnt.cntct_tarea
-    LEFT JOIN tmcb_dzone dz ON dz.id = cnt.cntct_dzone
-    WHERE cnt.cntct_users = $1
-    ORDER BY cnt.cntct_cntnm`;
-    const params = [muser_id];
-
-    const rows = await dbGetAll(sql, params, `Get contacts for ${muser_id}`);
-    res.json({
-      success: true,
-      message: "Contacts fetched successfully",
-      data: rows,
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: null,
-    });
-  }
-});
 
 // create
 router.post("/create", async (req, res) => {
@@ -254,50 +215,6 @@ router.post("/update", async (req, res) => {
     });
   }
 });
-
-// delete
-router.post("/delete", async (req, res) => {
-  try {
-    const { id, muser_id, cntct_cntnm, suser_id } = req.body;
-
-    // Validate input
-    if (!id) {
-      return res.json({
-        success: false,
-        message: "Contact ID is required",
-        data: null,
-      });
-    }
-
-    //database action
-    const sql = `UPDATE tmcb_cntct
-    SET cntct_actve = NOT cntct_actve,
-    cntct_upusr = $1,
-    cntct_updat = CURRENT_TIMESTAMP,
-    cntct_rvnmr = cntct_rvnmr + 1
-    WHERE id = $2`;
-    const params = [suser_id, id];
-
-
-    await dbRun(sql, params, `Delete contact for ${cntct_cntnm}`);
-    res.json({
-      success: true,
-      message: "Contact deleted successfully",
-      data: null,
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: null,
-    });
-  }
-});
-
-
-
-
 
 //get-by-type
 router.post("/get-by-type", async (req, res) => {

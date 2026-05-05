@@ -14,7 +14,7 @@ router.post("/", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: [],
       });
     }
 
@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: [],
     });
   }
 });
@@ -54,7 +54,7 @@ router.post("/get-all-active", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: [],
       });
     }
 
@@ -77,7 +77,7 @@ router.post("/get-all-active", async (req, res) => {
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: [],
     });
   }
 });
@@ -102,7 +102,7 @@ const create = async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: {},
       });
     }
 
@@ -126,14 +126,14 @@ const create = async (req, res) => {
     res.json({
       success: true,
       message: `${dzone_dname} - Created successfully.`,
-      data: null,
+    data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: {},
     });
   }
 };
@@ -157,7 +157,7 @@ const update = async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: {},
       });
     }
 
@@ -175,14 +175,14 @@ const update = async (req, res) => {
     res.json({
       success: true,
       message: `${dzone_dname} - Updated successfully.`,
-      data: null,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: {},
     });
   }
 };
@@ -213,7 +213,7 @@ router.post("/delete", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: {},
       });
     }
 
@@ -230,14 +230,14 @@ router.post("/delete", async (req, res) => {
     res.json({
       success: true,
       message: `${dzone_dname} - ${dzone_actve ? "Deactivate" : "Activate"} successfully.`,
-      data: null,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: {},
     });
   }
 });
@@ -252,7 +252,7 @@ router.post("/get-by-country", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: [],
       });
     }
 
@@ -276,7 +276,7 @@ router.post("/get-by-country", async (req, res) => {
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: [],
     });
   }
 });

@@ -9,11 +9,12 @@ CREATE TABLE tmcb_cntct (
   cntct_bsins varchar(50) NOT NULL,
   cntct_ctype varchar(50) NOT NULL,
   cntct_sorce varchar(50) NOT NULL,
+  cntct_ccode varchar(50) NOT NULL,
   cntct_cntnm varchar(200) NOT NULL,
   cntct_cntps varchar(50) NOT NULL,
-
-  -- optional
-  cntct_cntno varchar(50),
+  cntct_cntno varchar(50) NOT NULL,
+  
+  -- optional 
   cntct_email varchar(50),
   cntct_tinno varchar(50),
   cntct_trade varchar(50),
@@ -21,11 +22,12 @@ CREATE TABLE tmcb_cntct (
   cntct_fcadr varchar(300),
 
   -- relations
-  cntct_tarea varchar(50),  
-  cntct_dzone varchar(50),  
-  cntct_cntry varchar(50),  
+  cntct_trtry varchar(50),
+  cntct_tarea varchar(50),
+  cntct_dzone varchar(50),
+  cntct_cntry varchar(50) NOT NULL,
   cntct_cntad varchar(50),
-  cntct_crncy varchar(50),
+  cntct_crncy varchar(50) NOT NULL,
 
   -- default
   cntct_dspct decimal(18,6) NOT NULL DEFAULT 0,

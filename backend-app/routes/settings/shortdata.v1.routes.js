@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: [],
       });
     }
 
@@ -38,7 +38,7 @@ router.post("/", async (req, res) => {
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: [],
     });
   }
 });

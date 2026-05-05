@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: [],
       });
     }
 
@@ -41,7 +41,7 @@ router.post("/", async (req, res) => {
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: [],
     });
   }
 });
@@ -87,7 +87,7 @@ const create = async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: {},
       });
     }
 
@@ -97,7 +97,7 @@ const create = async (req, res) => {
       return res.json({
         success: false,
         message: "Registration No is not valid",
-        data: null,
+        data: {},
       });
     }
 
@@ -131,14 +131,14 @@ const create = async (req, res) => {
     res.json({
       success: true,
       message: `${users_uname} - Created successfully.`,
-      data: null,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: {},
     });
   }
 };
@@ -184,7 +184,7 @@ const update = async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: {},
       });
     }
 
@@ -197,7 +197,7 @@ const update = async (req, res) => {
       return res.json({
         success: false,
         message: "Registration No is not valid",
-        data: null,
+        data: {},
       });
     }
 
@@ -241,14 +241,14 @@ const update = async (req, res) => {
     res.json({
       success: true,
       message: `${users_uname} - Updated successfully.`,
-      data: null,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: {},
     });
   }
 };
@@ -279,7 +279,7 @@ router.post("/delete", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: {},
       });
     }
 
@@ -296,14 +296,14 @@ router.post("/delete", async (req, res) => {
     res.json({
       success: true,
       message: `${users_uname} - ${users_actve ? "Deactivate" : "Activate"} successfully.`,
-      data: null,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: {},
     });
   }
 });
@@ -317,7 +317,7 @@ router.post("/menus", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: [],
       });
     }
 
@@ -346,7 +346,7 @@ ORDER BY mnu.menus_odrby, mnu.id`;
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: [],
     });
   }
 });
@@ -371,7 +371,7 @@ router.post("/menus/upsert", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: {},
       });
     }
 
@@ -419,16 +419,16 @@ router.post("/menus/upsert", async (req, res) => {
       //
 
       const sql_update = `UPDATE tmnb_mnusr
-	SET mnusr_extpr = $1,
-    mnusr_addpr = $2,
-    mnusr_edtpr = $3,
-    mnusr_delpr = $4,
-    mnusr_actve = $5,
-    mnusr_upusr = $6,
-    mnusr_updat = CURRENT_TIMESTAMP,
-    mnusr_rvnmr = mnusr_rvnmr + 1
-	WHERE mnusr_users = $7
-  AND mnusr_menus = $8`;
+    SET mnusr_extpr = $1,
+        mnusr_addpr = $2,
+        mnusr_edtpr = $3,
+        mnusr_delpr = $4,
+        mnusr_actve = $5,
+        mnusr_upusr = $6,
+        mnusr_updat = CURRENT_TIMESTAMP,
+        mnusr_rvnmr = mnusr_rvnmr + 1
+  WHERE mnusr_users = $7
+    AND mnusr_menus = $8`;
       const params_update = [
         mnusr_extpr || false,
         mnusr_addpr || false,
@@ -455,7 +455,7 @@ router.post("/menus/upsert", async (req, res) => {
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: {},
     });
   }
 });
@@ -485,7 +485,7 @@ router.post("/change-password", async (req, res) => {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
-        data: null,
+        data: {},
       });
     }
 
@@ -507,7 +507,7 @@ router.post("/change-password", async (req, res) => {
       return res.json({
         success: false,
         message: "Current Email or Password is not valid",
-        data: null,
+        data: {},
       });
     }
 
@@ -525,14 +525,14 @@ router.post("/change-password", async (req, res) => {
     res.json({
       success: true,
       message: "Password changed successfully",
-      data: null,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: {},
     });
   }
 });

@@ -1,71 +1,75 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppUI } from "@/hooks/useAppUI";
 import validate, { generateDataModel } from "@/models/validator";
-import tm_role from "@/models/setup/tm_role.json";
-const dataModel = generateDataModel(tm_role);
-import { apiRequest } from "@/utils/api.js";
-import { contactAPI } from "@/api/crm/contactAPI.js";
+import tmrb_dzone from "@/models/crm/tmrb_dzone.json";
+const dataModel = generateDataModel(tmrb_dzone);
+import { dzoneAPI } from "@/api/crm/dzoneAPI.js";
+import { shortdataAPI } from "@/api/settings/shortdataAPI.js";
+import { useAuth } from "@/hooks/useAuth.jsx";
 
 const useContacts = () => {
-  //hooks
-  const { showToast, confirm, alert, isBusy, setIsBusy } = useAppUI();
-  const [crTitle, setCrTitle] = useState("Contacts List");
+  //hooks :: menuId M01-M01-M01,
+  //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
+  const { getPageAuth } = useAuth();
+  const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
+    useAppUI();
+  const [pageAuth, setPageAuth] = useState({
+    extpr: false,
+    addpr: false,
+    edtpr: false,
+    delpr: false,
+  });
+  const [crTitle, setCrTitle] = useState("Zone List");
   const [crView, setCrView] = useState("list");
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
+  const [dzone_cntry_Options, setDzone_cntry_Options] = useState([]);
 
-  //other states
-  const cntct_ctype_options = [
-    { label: "Buyer", value: "Buyer" },
-    { label: "Customer", value: "Customer" },
-    { label: "Supplier", value: "Supplier" },
-    { label: "All", value: "All" },
-  ];
-  const cntct_sorce_options = [
-    { label: "Local", value: "Local" },
-    { label: "Foreign", value: "Foreign" },
-  ];
-
-  const cntct_crncy_options = [
-    { label: "BDT", value: "BDT" },
-    { label: "USD", value: "USD" },
-  ];
+  useEffect(() => {
+    const perms = getPageAuth("M01-M01-M01");
+    setPageAuth(perms);
+  }, [getPageAuth]);
 
   //functions
-  const loadContacts = async () => {
+  const loadDZone = async () => {
     try {
       setIsBusy(true);
-      //const apiEndPoint = "/crm/v1/contacts";
-      //const resp = await apiRequest(apiEndPoint, {});
-      const resp = await contactAPI.getAll({});
+      const resp = await dzoneAPI.getAll({});
       //console.log("resp", resp);
-      setDataList(resp.data);
+      setDataList(resp.data || []);
+      showToastError(resp);
     } catch (error) {
     } finally {
       setIsBusy(false);
     }
   };
 
-  useEffect(() => {
-    loadContacts();
-  }, []);
-
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tm_role);
+    const newErrors = validate({ ...formData, [field]: value }, tmrb_dzone);
     setErrors(newErrors);
   };
 
   const handleEdit = (rowData) => {
+    if (!pageAuth.edtpr) {
+      showToast("warn", "Edit", "No edit permission");
+      return;
+    }
     setFormData(rowData);
-    setCrTitle("Edit Contacts");
+    setCrTitle("Edit Zone");
     setCrView("form");
+    handleGetCountry();
   };
+
   const handleDelete = (rowData) => {
+    if (!pageAuth.delpr) {
+      showToast("warn", "Delete", "No delete permission");
+      return;
+    }
     confirm({
-      message: `Do you want to delete this ${rowData.role_name}?`,
-      header: "Delete Confirmation",
+      message: `Do you want to ${rowData.dzone_actve ? "Deactivate" : "Activate"} this ${rowData.dzone_dname}?`,
+      header: "Confirmation!",
       accept: () => {
         onDelete(rowData);
       },
@@ -74,25 +78,21 @@ const useContacts = () => {
       },
     });
   };
+
   const onDelete = async (rowData) => {
     try {
       setIsBusy(true);
-      const apiVersion = "/v7/";
-      const apiEndPoint = `/destroy/${rowData.id}?key=tm_role`;
-      const reqBody = { lfcl_id: rowData.lfcl_id == 1 ? 2 : 1 };
-      const resp = await apiRequest(apiVersion, apiEndPoint, { body: reqBody });
+      const resp = await dzoneAPI.delete(rowData);
       //console.log("resp", resp);
-      if (resp.tm_role.status) {
-        await loadContacts();
-        alert({
-          message: `Contacts deleted successfully ${rowData.role_name}`,
-          header: "Deleted",
-        });
-      } else {
-        alert({
-          message: resp.tm_role.message,
-          header: "Error while Deleting",
-        });
+      alert({
+        message: resp.message,
+        header: "Done",
+        icon: !resp.success && "pi pi-times-circle text-red-500",
+      });
+      if (resp.success) {
+        setCrTitle("Zone List");
+        setCrView("list");
+        loadDZone();
       }
     } catch (error) {
     } finally {
@@ -101,33 +101,38 @@ const useContacts = () => {
   };
 
   const handleBackClick = () => {
-    setCrTitle("Contacts List");
+    setCrTitle("Zone List");
     setCrView("list");
     setFormData(dataModel);
   };
 
   const handleSearchClick = () => {
-    setCrTitle("Search Contacts");
+    setCrTitle("Search Zone");
     setCrView("list");
     alert({ message: "Search is clicked", header: "Search" });
     //ketp this function as it is
   };
 
   const handleRefreshClick = () => {
-    setCrTitle("Contacts List");
+    setCrTitle("Zone List");
     setCrView("list");
-    loadContacts();
+    loadDZone();
   };
 
   const handleAddNewClick = () => {
-    setCrTitle("Add Contacts");
+    if (!pageAuth.addpr) {
+      showToast("warn", "Add", "No add permission");
+      return;
+    }
+    setCrTitle("Add Zone");
     setCrView("form");
     setFormData(dataModel);
+    handleGetCountry();
   };
 
   const handleSubmitClick = async () => {
     try {
-      const newErrors = validate(formData, tm_role);
+      const newErrors = validate(formData, tmrb_dzone);
       setErrors(newErrors);
       //console.log("handleSave: " + JSON.stringify(newErrors));
       if (Object.keys(newErrors).length > 0) {
@@ -135,75 +140,51 @@ const useContacts = () => {
       }
 
       setIsBusy(true);
-      if (formData.id) {
-        const apiVersion = "/v4/";
-        const apiEndPoint = `/update/${formData.id}?key=tm_role`;
-        const reqBody = formData;
-        const resp = await apiRequest(apiVersion, apiEndPoint, {
-          body: reqBody,
-        });
-        //console.log("resp", resp);
-        if (resp.tm_role.status) {
-          //await loadContacts();
-          setDataList((prevList) =>
-            prevList.map((item) =>
-              item.id === reqBody.id
-                ? { ...item, ...reqBody } // merge updated fields
-                : item,
-            ),
-          );
-          alert({
-            message: `Contacts edited successfully ${formData.role_name}`,
-            header: "Edited",
-          });
-          setCrTitle("Contacts List");
-          setCrView("list");
-        } else {
-          alert({
-            message: resp.tm_role.message,
-            header: "Error while Editing",
-          });
-        }
-      } else {
-        const apiVersion = "/v4/";
-        const apiEndPoint = "/store?key=tm_role";
-        const reqBody = formData;
-        const resp = await apiRequest(apiVersion, apiEndPoint, {
-          body: reqBody,
-        });
-        //console.log("resp", resp);
-        if (resp.tm_role.status) {
-          //await loadContacts();
-          setDataList((prev) => [...prev, reqBody]);
-          alert({
-            message: `Contacts saved successfully ${formData.role_name}`,
-            header: "Saved",
-          });
-          setCrTitle("Contacts List");
-          setCrView("list");
-        } else {
-          alert({
-            message: resp.tm_role.message,
-            header: "Error while Saving",
-          });
-        }
+
+      const resp = await dzoneAPI.upsert(formData);
+      //console.log("resp", resp);
+      alert({
+        message: resp.message,
+        header: formData.id ? "Updated" : "Saved",
+        icon: !resp.success && "pi pi-times-circle text-red-500",
+      });
+      if (resp.success) {
+        setCrTitle("Zone List");
+        setCrView("list");
+        loadDZone();
       }
     } catch (error) {
     } finally {
       setIsBusy(false);
     }
   };
+
+  const handleGetCountry = async () => {
+    if (dzone_cntry_Options.length > 0) {
+      return;
+    }
+    try {
+      setIsBusy(true);
+      const resp = await shortdataAPI.getCountry();
+      //console.log("resp", resp);
+      setDzone_cntry_Options(resp.data);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+  
   return {
     //hooks
+    pageAuth,
     crTitle,
     crView,
     formData,
     errors,
     dataList,
     //other states
-    cntct_ctype_options,
-    cntct_sorce_options,
-    cntct_crncy_options,
+    dzone_cntry_Options,
     //functions
     handleChange,
     handleEdit,

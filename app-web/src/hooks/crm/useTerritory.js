@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { useAppUI } from "@/hooks/useAppUI";
 import validate, { generateDataModel } from "@/models/validator";
-import tmcb_tarea from "@/models/crm/tmcb_tarea.json";
-const dataModel = generateDataModel(tmcb_tarea);
+import tmcb_trtry from "@/models/crm/tmcb_trtry.json";
+const dataModel = generateDataModel(tmcb_trtry);
 import { territoryAPI } from "@/api/crm/territoryAPI.js";
 import { shortdataAPI } from "@/api/settings/shortdataAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 import { dzoneAPI } from "@/api/crm/dzoneAPI.js";
+import { tareaAPI } from "@/api/crm/tareaAPI.js";
 
 const useTerritory = () => {
-  //hooks :: menuId M01-M01-M02,
+  //hooks :: menuId M01-M01-M03,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -27,14 +28,15 @@ const useTerritory = () => {
   const [dataList, setDataList] = useState([]);
   const [dzone_cntry_Options, setDzone_cntry_Options] = useState([]);
   const [tarea_dzone_Options, setTarea_dzone_Options] = useState([]);
+  const [trtry_tarea_Options, setTrtry_tarea_Options] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M01-M01-M02");
+    const perms = getPageAuth("M01-M01-M03");
     setPageAuth(perms);
   }, [getPageAuth]);
 
   //functions
-  const loadTArea = async () => {
+  const loadTerritory = async () => {
     try {
       setIsBusy(true);
       const resp = await territoryAPI.getAll({});
@@ -49,11 +51,18 @@ const useTerritory = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmcb_tarea);
+    const newErrors = validate({ ...formData, [field]: value }, tmcb_trtry);
     setErrors(newErrors);
+
+    console.log("field", field);
+    console.log("value", value);
     
     if (field === "dzone_cntry") {
       handleGetDZone(value);
+    }
+
+    if (field === "tarea_dzone") {
+      handleGetTArea(value);
     }
   };
 
@@ -67,13 +76,14 @@ const useTerritory = () => {
     setCrView("form");
     handleGetCountry();
   };
+
   const handleDelete = (rowData) => {
     if (!pageAuth.delpr) {
       showToast("warn", "Delete", "No delete permission");
       return;
     }
     confirm({
-      message: `Do you want to ${rowData.dzone_actve ? "Deactivate" : "Activate"} this ${rowData.dzone_dname}?`,
+      message: `Do you want to ${rowData.trtry_actve ? "Deactivate" : "Activate"} this ${rowData.trtry_wname}?`,
       header: "Confirmation!",
       accept: () => {
         onDelete(rowData);
@@ -83,6 +93,7 @@ const useTerritory = () => {
       },
     });
   };
+
   const onDelete = async (rowData) => {
     try {
       setIsBusy(true);
@@ -96,7 +107,7 @@ const useTerritory = () => {
       if (resp.success) {
         setCrTitle("Territory List");
         setCrView("list");
-        loadTArea();
+        loadTerritory();
       }
     } catch (error) {
     } finally {
@@ -120,7 +131,7 @@ const useTerritory = () => {
   const handleRefreshClick = () => {
     setCrTitle("Territory List");
     setCrView("list");
-    loadTArea();
+    loadTerritory();
   };
 
   const handleAddNewClick = () => {
@@ -136,9 +147,9 @@ const useTerritory = () => {
 
   const handleSubmitClick = async () => {
     try {
-      const newErrors = validate(formData, tmcb_tarea);
+      const newErrors = validate(formData, tmcb_trtry);
       setErrors(newErrors);
-      //console.log("handleSave: " + JSON.stringify(newErrors));
+      console.log("handleSave: ", formData);
       if (Object.keys(newErrors).length > 0) {
         return;
       }
@@ -147,15 +158,17 @@ const useTerritory = () => {
 
       const resp = await territoryAPI.upsert(formData);
       //console.log("resp", resp);
+
       alert({
         message: resp.message,
         header: formData.id ? "Updated" : "Saved",
         icon: !resp.success && "pi pi-times-circle text-red-500",
       });
+      
       if (resp.success) {
         setCrTitle("Territory List");
         setCrView("list");
-        loadTArea();
+        loadTerritory();
       }
     } catch (error) {
     } finally {
@@ -196,6 +209,23 @@ const useTerritory = () => {
     }
   };
 
+  const handleGetTArea = async (tarea_dzone) => {
+    // if (dzone_cntry_Options.length > 0) {
+    //   return;
+    // }    
+    //console.log("field", tarea_dzone);
+    try {
+      setIsBusy(true);
+      const resp = await tareaAPI.getByDZone({ tarea_dzone: tarea_dzone });
+      //console.log("resp", resp);
+      setTrtry_tarea_Options(resp.data);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     //hooks
     pageAuth,
@@ -207,6 +237,7 @@ const useTerritory = () => {
     //other states
     dzone_cntry_Options,
     tarea_dzone_Options,
+    trtry_tarea_Options,
     //functions
     handleChange,
     handleEdit,

@@ -3,15 +3,15 @@
     "type": "string",
     "label": "Id"
   },
-  "tarea_dzone": {
+  "trtry_tarea": {
     "type": "string",
-    "label": "D/Zone",
+    "label": "TArea",
     "maxLength": 50,
     "minLength": 3,
-    "placeholder": "Enter d/zone",
+    "placeholder": "Enter t/area",
     "required": true
   },
-  "tarea_tcode": {
+  "trtry_wcode": {
     "type": "string",
     "label": "Code",
     "maxLength": 50,
@@ -19,7 +19,7 @@
     "placeholder": "Enter code",
     "required": false
   },
-  "tarea_tname": {
+  "trtry_wname": {
     "type": "string",
     "label": "Name",
     "maxLength": 50,

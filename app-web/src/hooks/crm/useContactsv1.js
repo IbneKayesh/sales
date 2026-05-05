@@ -1,33 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppUI } from "@/hooks/useAppUI";
 import validate, { generateDataModel } from "@/models/validator";
 import tm_role from "@/models/setup/tm_role.json";
 const dataModel = generateDataModel(tm_role);
 import { apiRequest } from "@/utils/api.js";
+import { contactAPI } from "@/api/crm/contactAPI.js";
 
-const useRole = () => {
+const useContacts = () => {
   //hooks
   const { showToast, confirm, alert, isBusy, setIsBusy } = useAppUI();
-  const [crTitle, setCrTitle] = useState("Role List");
+  const [crTitle, setCrTitle] = useState("Contacts List");
   const [crView, setCrView] = useState("list");
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
 
+  //other states
+  const cntct_ctype_options = [
+    { label: "Buyer", value: "Buyer" },
+    { label: "Customer", value: "Customer" },
+    { label: "Supplier", value: "Supplier" },
+    { label: "All", value: "All" },
+  ];
+  
+  const cntct_sorce_options = [
+    { label: "Local", value: "Local" },
+    { label: "Foreign", value: "Foreign" },
+  ];
+
+  const cntct_crncy_options = [
+    { label: "BDT", value: "BDT" },
+    { label: "USD", value: "USD" },
+  ];
+
   //functions
-  const loadRoles = async () => {
+  const loadContacts = async () => {
     try {
       setIsBusy(true);
-      const apiVersion = "/v7/";
-      const apiEndPoint = "/data?key=tm_role";
-      const resp = await apiRequest(apiVersion, apiEndPoint, {});
-      //console.log("resp", resp.tm_role.data);
-      setDataList(resp.tm_role.data);
+      //const apiEndPoint = "/crm/v1/contacts";
+      //const resp = await apiRequest(apiEndPoint, {});
+      const resp = await contactAPI.getAll({});
+      //console.log("resp", resp);
+      setDataList(resp.data);
     } catch (error) {
     } finally {
       setIsBusy(false);
     }
   };
+
+  useEffect(() => {
+    loadContacts();
+  }, []);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -37,7 +60,7 @@ const useRole = () => {
 
   const handleEdit = (rowData) => {
     setFormData(rowData);
-    setCrTitle("Edit Role");
+    setCrTitle("Edit Contacts");
     setCrView("form");
   };
 
@@ -63,9 +86,9 @@ const useRole = () => {
       const resp = await apiRequest(apiVersion, apiEndPoint, { body: reqBody });
       //console.log("resp", resp);
       if (resp.tm_role.status) {
-        await loadRoles();
+        await loadContacts();
         alert({
-          message: `Role deleted successfully ${rowData.role_name}`,
+          message: `Contacts deleted successfully ${rowData.role_name}`,
           header: "Deleted",
         });
       } else {
@@ -81,26 +104,26 @@ const useRole = () => {
   };
 
   const handleBackClick = () => {
-    setCrTitle("Role List");
+    setCrTitle("Contacts List");
     setCrView("list");
     setFormData(dataModel);
   };
 
   const handleSearchClick = () => {
-    setCrTitle("Search Role");
+    setCrTitle("Search Contacts");
     setCrView("list");
     alert({ message: "Search is clicked", header: "Search" });
     //ketp this function as it is
   };
 
   const handleRefreshClick = () => {
-    setCrTitle("Role List");
+    setCrTitle("Contacts List");
     setCrView("list");
-    loadRoles();
+    loadContacts();
   };
 
   const handleAddNewClick = () => {
-    setCrTitle("Add Role");
+    setCrTitle("Add Contacts");
     setCrView("form");
     setFormData(dataModel);
   };
@@ -124,7 +147,7 @@ const useRole = () => {
         });
         //console.log("resp", resp);
         if (resp.tm_role.status) {
-          //await loadRoles();
+          //await loadContacts();
           setDataList((prevList) =>
             prevList.map((item) =>
               item.id === reqBody.id
@@ -133,10 +156,10 @@ const useRole = () => {
             ),
           );
           alert({
-            message: `Role edited successfully ${formData.role_name}`,
+            message: `Contacts edited successfully ${formData.role_name}`,
             header: "Edited",
           });
-          setCrTitle("Role List");
+          setCrTitle("Contacts List");
           setCrView("list");
         } else {
           alert({
@@ -153,13 +176,13 @@ const useRole = () => {
         });
         //console.log("resp", resp);
         if (resp.tm_role.status) {
-          //await loadRoles();
+          //await loadContacts();
           setDataList((prev) => [...prev, reqBody]);
           alert({
-            message: `Role saved successfully ${formData.role_name}`,
+            message: `Contacts saved successfully ${formData.role_name}`,
             header: "Saved",
           });
-          setCrTitle("Role List");
+          setCrTitle("Contacts List");
           setCrView("list");
         } else {
           alert({
@@ -173,7 +196,7 @@ const useRole = () => {
       setIsBusy(false);
     }
   };
-  
+
   return {
     //hooks
     crTitle,
@@ -181,6 +204,10 @@ const useRole = () => {
     formData,
     errors,
     dataList,
+    //other states
+    cntct_ctype_options,
+    cntct_sorce_options,
+    cntct_crncy_options,
     //functions
     handleChange,
     handleEdit,
@@ -192,4 +219,4 @@ const useRole = () => {
     handleSubmitClick,
   };
 };
-export default useRole;
+export default useContacts;

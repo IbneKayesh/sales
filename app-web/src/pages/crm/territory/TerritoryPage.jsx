@@ -17,6 +17,7 @@ const TerritoryPage = () => {
     //other states
     dzone_cntry_Options,
     tarea_dzone_Options,
+    trtry_tarea_Options,
     //functions
     handleChange,
     handleEdit,
@@ -103,6 +104,7 @@ const TerritoryPage = () => {
           onChange={handleChange}
           dzone_cntry_Options={dzone_cntry_Options}
           tarea_dzone_Options={tarea_dzone_Options}
+          trtry_tarea_Options={trtry_tarea_Options}
         />
       )}
     </Card>

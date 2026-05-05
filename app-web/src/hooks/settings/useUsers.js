@@ -74,6 +74,7 @@ const useUsers = () => {
     setCrView("form");
     handleGetBusiness();
   };
+
   const handleDelete = (rowData) => {
     if (!pageAuth.delpr) {
       showToast("warn", "Delete", "No delete permission");
@@ -90,6 +91,7 @@ const useUsers = () => {
       },
     });
   };
+  
   const onDelete = async (rowData) => {
     try {
       setIsBusy(true);
@@ -207,7 +209,7 @@ const useUsers = () => {
 
   const handleAddEditMenu = async (rowData, field, value) => {
     setDataListMenus((prev) =>
-      prev.map((m) => (m.id === rowData.id ? { ...m, [field]: value } : m)),
+      prev.map((m) => (m.menus_id === rowData.menus_id ? { ...m, [field]: value } : m)),
     );
 
     //console.log("handleAddEditMenu", rowData);

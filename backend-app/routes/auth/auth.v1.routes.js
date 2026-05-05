@@ -15,7 +15,7 @@ router.post("/login", async (req, res) => {
       return res.json({
         success: false,
         message: "Email and password are required.",
-        data: null,
+        data: {},
       });
     }
 
@@ -29,16 +29,12 @@ router.post("/login", async (req, res) => {
     AND usr.users_email = $1
     AND usr.users_pswrd = $2`;
     const params_user = [users_email, users_pswrd];
-    const row_user = await dbGet(
-      sql_user,
-      params_user,
-      "Get login credential",
-    );
+    const row_user = await dbGet(sql_user, params_user, "Get login credential");
     if (!row_user) {
       return res.json({
         success: false,
         message: "Email or Password is not valid",
-        data: null,
+        data: {},
       });
     }
 
@@ -53,7 +49,7 @@ router.post("/login", async (req, res) => {
       return res.json({
         success: false,
         message: "Business is not defined",
-        data: null,
+        data: {},
       });
     }
 
@@ -66,12 +62,16 @@ mnusr_extpr, mnusr_addpr, mnusr_edtpr, mnusr_delpr
   AND usr.mnusr_users = $1
   ORDER BY mnu.menus_odrby`;
 
-    const row_menus = await dbGetAll(sql_menus, [row_user.id], `Get login menus`);
+    const row_menus = await dbGetAll(
+      sql_menus,
+      [row_user.id],
+      `Get login menus`,
+    );
     if (!row_menus || row_menus.length === 0) {
       return res.json({
         success: false,
         message: "Menu is not defined",
-        data: null,
+        data: [],
       });
     }
 
@@ -107,7 +107,12 @@ mnusr_extpr, mnusr_addpr, mnusr_edtpr, mnusr_delpr
     return res.json({
       success: false,
       message: error.message || "An error occurred during db action",
-      data: null,
+      data: {
+        users: {},
+        bsins: {},
+        menus: [],
+        token: "",
+      },
     });
   }
 });

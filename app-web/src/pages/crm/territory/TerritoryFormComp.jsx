@@ -3,10 +3,17 @@ import RequiredText from "@/components/RequiredText";
 import { Dropdown } from "primereact/dropdown";
 import AuditFields from "@/components/AuditFields";
 
-const TerritoryFormComp = ({ formData, errors, onChange, dzone_cntry_Options, tarea_dzone_Options }) => {
+const TerritoryFormComp = ({
+  formData,
+  errors,
+  onChange,
+  dzone_cntry_Options,
+  tarea_dzone_Options,
+  trtry_tarea_Options,
+}) => {
   return (
     <div className="grid">
-      <div className="col-12 md:col-3">
+      <div className="col-12 md:col-2">
         <label className="block font-bold mb-2 text-red-800">Country</label>
         <Dropdown
           name="dzone_cntry"
@@ -23,7 +30,7 @@ const TerritoryFormComp = ({ formData, errors, onChange, dzone_cntry_Options, ta
         />
         <RequiredText text={errors.dzone_cntry} />
       </div>
-      <div className="col-12 md:col-3">
+      <div className="col-12 md:col-2">
         <label className="block font-bold mb-2 text-red-800">D/Zone</label>
         <Dropdown
           name="tarea_dzone"
@@ -40,26 +47,43 @@ const TerritoryFormComp = ({ formData, errors, onChange, dzone_cntry_Options, ta
         />
         <RequiredText text={errors.tarea_dzone} />
       </div>
-      <div className="col-12 md:col-6">
-        <label className="block font-bold mb-2 text-red-800">T/Aone Name</label>
-        <InputText
-          name="tarea_tname"
-          value={formData.tarea_tname}
-          onChange={(e) => onChange("tarea_tname", e.target.value)}
-          className={`w-full ${errors.tarea_tname ? "p-invalid" : ""}`}
-          placeholder={`Enter D/Zone name`}
+      <div className="col-12 md:col-3">
+        <label className="block font-bold mb-2 text-red-800">T/Area</label>
+        <Dropdown
+          name="trtry_tarea"
+          value={formData.trtry_tarea}
+          onChange={(e) => onChange("trtry_tarea", e.value)}
+          options={trtry_tarea_Options}
+          optionLabel="tarea_tname"
+          optionValue="id"
+          className={`w-full ${errors.trtry_tarea ? "p-invalid" : ""}`}
+          size={"small"}
+          placeholder={`Enter t/area`}
+          filter
+          showClear
         />
-        <RequiredText text={errors.tarea_tname} />
+        <RequiredText text={errors.trtry_tarea} />
+      </div>
+      <div className="col-12 md:col-5">
+        <label className="block font-bold mb-2 text-red-800">Territory Name</label>
+        <InputText
+          name="trtry_wname"
+          value={formData.trtry_wname}
+          onChange={(e) => onChange("trtry_wname", e.target.value)}
+          className={`w-full ${errors.trtry_wname ? "p-invalid" : ""}`}
+          placeholder={`Enter territory name`}
+        />
+        <RequiredText text={errors.trtry_wname} />
       </div>
 
       {formData.id && (
         <AuditFields
-          active={formData.tarea_actve}
+          active={formData.trtry_actve}
           createdBy={formData.crusr_cname}
-          createdAt={formData.tarea_crdat}
+          createdAt={formData.trtry_crdat}
           updatedBy={formData.upusr_cname}
-          updatedAt={formData.tarea_updat}
-          revNo={formData.tarea_rvnmr}
+          updatedAt={formData.trtry_updat}
+          revNo={formData.trtry_rvnmr}
         />
       )}
     </div>
