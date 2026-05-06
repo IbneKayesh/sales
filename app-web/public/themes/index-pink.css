@@ -1,18 +1,18 @@
 :root {
     /* ===============================
-       🎨 Core Brand Colors (Blue - Electric Blue)
+       🎨 Core Brand Colors (Pink - Barbie Pink)
     =============================== */
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --primary-active: #1e40af;
-    --primary-glow: rgba(37, 99, 235, 0.25);
-    --primary-light: #eff6ff;
+    --primary: #f472b6;
+    --primary-hover: #ec4899;
+    --primary-active: #db2777;
+    --primary-glow: rgba(244, 114, 182, 0.25);
+    --primary-light: #fdf2f8;
   
     /* Semantic Colors */
     --success: #22c55e;
     --warning: #f59e0b;
     --danger: #ef4444;
-    --info: #2563eb;
+    --info: #3b82f6;
   
     --danger-light: #fee2e2;
     --danger-hover: #fef2f2;
@@ -21,44 +21,44 @@
     --info-light: #dbeafe;
   
     /* Extra Utility */
-    --blue: #2563eb;
+    --blue: #3b82f6;
     --green-light: #d9f8ea;
   
     /* ===============================
        🧱 Background System
     =============================== */
-    --bg-main: #f8fafc;
+    --bg-main: #fffbff;
     --bg-card: #ffffff;
-    --bg-sidebar: #eff6ff;
-    --bg-topbar: #2563eb;
+    --bg-sidebar: #fdf2f8;
+    --bg-topbar: #f472b6;
   
     --surface-1: #ffffff;
-    --surface-2: #f8fafc;
-    --surface-3: #dbeafe;
+    --surface-2: #fffbff;
+    --surface-3: #fce7f3;
   
     /* ===============================
        📝 Typography
     =============================== */
-    --text-main: #1e3a8a;
-    --text-muted: #1e40af;
+    --text-main: #500724;
+    --text-muted: #831843;
     --text-on-primary: #ffffff;
     --text-white: #ffffff;
-    --text-strong: #172554;
+    --text-strong: #500724;
     --text-soft: #94a3b8;
   
     /* ===============================
        🔲 Borders
     =============================== */
-    --border-color: #dbeafe;
-    --border-light: #eff6ff;
-    --border-strong: #bfdbfe;
+    --border-color: #fce7f3;
+    --border-light: #fdf2f8;
+    --border-strong: #fbcfe8;
   
     /* ===============================
        🔘 Interaction States
     =============================== */
-    --hover-bg: rgba(37, 99, 235, 0.06);
-    --active-bg: rgba(37, 99, 235, 0.12);
-    --focus-ring: rgba(37, 99, 235, 0.35);
+    --hover-bg: rgba(244, 114, 182, 0.06);
+    --active-bg: rgba(244, 114, 182, 0.12);
+    --focus-ring: rgba(244, 114, 182, 0.35);
   
     /* ===============================
        📏 Layout Constants

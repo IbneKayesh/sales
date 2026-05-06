@@ -1,64 +1,64 @@
 :root {
     /* ===============================
-       🎨 Core Brand Colors
+       🎨 Core Brand Colors (Red - Candy)
     =============================== */
-    --primary: #f44336;
-    --primary-hover: #e53935;
-    --primary-active: #d32f2f;
-    --primary-glow: rgba(244, 67, 54, 0.25);
-    --primary-light: #ffebee;
+    --primary: #ef4444;
+    --primary-hover: #dc2626;
+    --primary-active: #b91c1c;
+    --primary-glow: rgba(239, 68, 68, 0.25);
+    --primary-light: #fef2f2;
   
     /* Semantic Colors */
     --success: #22c55e;
     --warning: #f59e0b;
-    --danger: #dc2626;
+    --danger: #ef4444;
     --info: #3b82f6;
   
-    --danger-light: #fecaca;
+    --danger-light: #fee2e2;
     --danger-hover: #fef2f2;
     --success-light: #dcfce7;
     --warning-light: #fef3c7;
     --info-light: #dbeafe;
   
     /* Extra Utility */
-    --blue: #2a68cb;
+    --blue: #3b82f6;
     --green-light: #d9f8ea;
   
     /* ===============================
        🧱 Background System
     =============================== */
-    --bg-main: #fffafa;
+    --bg-main: #fffcfc;
     --bg-card: #ffffff;
-    --bg-sidebar: #fff5f5;
-    --bg-topbar: #f44336;
+    --bg-sidebar: #fef2f2;
+    --bg-topbar: #ef4444;
   
     --surface-1: #ffffff;
-    --surface-2: #fff7f7;
-    --surface-3: #fdeeee;
+    --surface-2: #fffcfc;
+    --surface-3: #fee2e2;
   
     /* ===============================
        📝 Typography
     =============================== */
-    --text-main: #3b2c2c;
-    --text-muted: #8a6b6b;
+    --text-main: #450a0a;
+    --text-muted: #7f1d1d;
     --text-on-primary: #ffffff;
     --text-white: #ffffff;
-    --text-strong: #1f1b1b;
-    --text-soft: #b09191;
+    --text-strong: #450a0a;
+    --text-soft: #94a3b8;
   
     /* ===============================
        🔲 Borders
     =============================== */
-    --border-color: #f3dede;
-    --border-light: #fbecec;
-    --border-strong: #e5bcbc;
+    --border-color: #fee2e2;
+    --border-light: #fef2f2;
+    --border-strong: #fecaca;
   
     /* ===============================
        🔘 Interaction States
     =============================== */
-    --hover-bg: rgba(244, 67, 54, 0.06);
-    --active-bg: rgba(244, 67, 54, 0.12);
-    --focus-ring: rgba(244, 67, 54, 0.35);
+    --hover-bg: rgba(239, 68, 68, 0.06);
+    --active-bg: rgba(239, 68, 68, 0.12);
+    --focus-ring: rgba(239, 68, 68, 0.35);
   
     /* ===============================
        📏 Layout Constants

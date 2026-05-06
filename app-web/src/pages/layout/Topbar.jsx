@@ -3,11 +3,13 @@ import "./Topbar.css";
 import LoggedUser from "./LoggedUser";
 import { useAuth } from "@/hooks/useAuth.jsx";
 import Calculator from "@/components/common/Calculator";
+import SearchBox from "./SearchBox";
 
 const Topbar = ({ sidebarCollapsed, onToggleLeftbar }) => {
   const { business } = useAuth();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showCalculator, setShowCalculator] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
@@ -52,7 +54,16 @@ const Topbar = ({ sidebarCollapsed, onToggleLeftbar }) => {
               className={`pi ${isFullScreen ? "pi-window-minimize" : "pi-window-maximize"}`}
             ></i>
           </button>
-          <span className="title-gradient font-bold">{business.bsins_bname}</span>
+          <button 
+            className="topbar-btn" 
+            title="Search Menu" 
+            onClick={() => setShowSearch(true)}
+          >
+            <i className="pi pi-search"></i>
+          </button>
+          <span className="title-gradient font-bold">
+            {business.bsins_bname}
+          </span>
         </div>
 
         <div className="topbar-right">
@@ -79,6 +90,11 @@ const Topbar = ({ sidebarCollapsed, onToggleLeftbar }) => {
       <Calculator
         visible={showCalculator}
         onClose={() => setShowCalculator(false)}
+      />
+
+      <SearchBox 
+        visible={showSearch} 
+        onClose={() => setShowSearch(false)} 
       />
     </>
   );

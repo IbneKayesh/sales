@@ -132,6 +132,61 @@ const LoggedUser = () => {
                   className="theme-btn teal"
                   onClick={() => changeTheme("teal")}
                 />
+                <button
+                  title="Indigo"
+                  className="theme-btn indigo"
+                  onClick={() => changeTheme("indigo")}
+                />
+                <button
+                  title="Emerald"
+                  className="theme-btn emerald"
+                  onClick={() => changeTheme("emerald")}
+                />
+                <button
+                  title="Amber"
+                  className="theme-btn amber"
+                  onClick={() => changeTheme("amber")}
+                />
+                <button
+                  title="Cyan"
+                  className="theme-btn cyan"
+                  onClick={() => changeTheme("cyan")}
+                />
+                <button
+                  title="Pink"
+                  className="theme-btn pink"
+                  onClick={() => changeTheme("pink")}
+                />
+                <button
+                  title="Violet"
+                  className="theme-btn violet"
+                  onClick={() => changeTheme("violet")}
+                />
+                <button
+                  title="Lime"
+                  className="theme-btn lime"
+                  onClick={() => changeTheme("lime")}
+                />
+                <button
+                  title="Sky"
+                  className="theme-btn sky"
+                  onClick={() => changeTheme("sky")}
+                />
+                <button
+                  title="Slate"
+                  className="theme-btn slate"
+                  onClick={() => changeTheme("slate")}
+                />
+                <button
+                  title="Yellow"
+                  className="theme-btn yellow"
+                  onClick={() => changeTheme("yellow")}
+                />
+                <button
+                  title="Fuchsia"
+                  className="theme-btn fuchsia"
+                  onClick={() => changeTheme("fuchsia")}
+                />
               </div>
             </div>
 

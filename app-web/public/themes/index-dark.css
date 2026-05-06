@@ -1,6 +1,6 @@
 :root {
     /* ===============================
-       🎨 Core Brand Colors (Dark Mode)
+       🎨 Core Brand Colors (Dark - Midnight Charcoal)
     =============================== */
     --primary: #6366f1;
     --primary-hover: #4f46e5;
@@ -27,14 +27,14 @@
     /* ===============================
        🧱 Background System
     =============================== */
-    --bg-main: #0f172a;
-    --bg-card: #1e293b;
+    --bg-main: #020617;
+    --bg-card: #0f172a;
     --bg-sidebar: #020617;
     --bg-topbar: #1e293b;
   
     --surface-1: #1e293b;
-    --surface-2: #334155;
-    --surface-3: #475569;
+    --surface-2: #0f172a;
+    --surface-3: #1e293b;
   
     /* ===============================
        📝 Typography
@@ -49,9 +49,9 @@
     /* ===============================
        🔲 Borders
     =============================== */
-    --border-color: #334155;
-    --border-light: #1e293b;
-    --border-strong: #475569;
+    --border-color: #1e293b;
+    --border-light: #0f172a;
+    --border-strong: #334155;
   
     /* ===============================
        🔘 Interaction States
@@ -75,15 +75,15 @@
     /* ===============================
        🌫 Effects & Shapes
     =============================== */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
     --shadow-md:
-      0 4px 6px -1px rgb(0 0 0 / 0.5),
-      0 2px 4px -2px rgb(0 0 0 / 0.3);
+      0 4px 6px -1px rgb(0 0 0 / 0.7),
+      0 2px 4px -2px rgb(0 0 0 / 0.5);
     --shadow-lg:
-      0 10px 15px -3px rgb(0 0 0 / 0.5),
-      0 4px 6px -4px rgb(0 0 0 / 0.3);
+      0 10px 15px -3px rgb(0 0 0 / 0.7),
+      0 4px 6px -4px rgb(0 0 0 / 0.5);
     --shadow-hover:
-      0 20px 25px -5px rgb(0 0 0 / 0.5),
+      0 20px 25px -5px rgb(0 0 0 / 0.7),
       0 10px 10px -5px rgb(0 0 0 / 0.4);
   
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

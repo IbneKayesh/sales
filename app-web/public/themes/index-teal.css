@@ -1,6 +1,6 @@
 :root {
     /* ===============================
-       🎨 Core Brand Colors
+       🎨 Core Brand Colors (Teal - Ocean Teal)
     =============================== */
     --primary: #0d9488;
     --primary-hover: #0f766e;
@@ -12,46 +12,46 @@
     --success: #10b981;
     --warning: #f59e0b;
     --danger: #ef4444;
-    --info: #0ea5e9;
+    --info: #06b6d4;
   
     --danger-light: #fee2e2;
     --danger-hover: #fef2f2;
-    --success-light: #d1fae5;
+    --success-light: #dcfce7;
     --warning-light: #fef3c7;
-    --info-light: #e0f2fe;
+    --info-light: #cffafe;
   
     /* Extra Utility */
-    --blue: #0284c7;
-    --green-light: #ccfbf1;
+    --blue: #06b6d4;
+    --green-light: #d9f8ea;
   
     /* ===============================
        🧱 Background System
     =============================== */
     --bg-main: #f0fdfa;
     --bg-card: #ffffff;
-    --bg-sidebar: #ccfbf1;
+    --bg-sidebar: #f0fdfa;
     --bg-topbar: #0d9488;
   
     --surface-1: #ffffff;
-    --surface-2: #f4fcfb;
-    --surface-3: #e6f7f5;
+    --surface-2: #f0fdfa;
+    --surface-3: #ccfbf1;
   
     /* ===============================
        📝 Typography
     =============================== */
-    --text-main: #1f2d3d;
-    --text-muted: #6b7c93;
+    --text-main: #134e4a;
+    --text-muted: #115e59;
     --text-on-primary: #ffffff;
     --text-white: #ffffff;
-    --text-strong: #0f172a;
+    --text-strong: #042f2e;
     --text-soft: #94a3b8;
   
     /* ===============================
        🔲 Borders
     =============================== */
-    --border-color: #99f6e4;
-    --border-light: #ccfbf1;
-    --border-strong: #5eead4;
+    --border-color: #ccfbf1;
+    --border-light: #f0fdfa;
+    --border-strong: #99f6e4;
   
     /* ===============================
        🔘 Interaction States

@@ -1,12 +1,12 @@
 :root {
     /* ===============================
-       🎨 Core Brand Colors (Default Fallback)
+       🎨 Core Brand Colors (Green - Forest Green)
     =============================== */
-    --primary: #059669;
-    --primary-hover: #047857;
-    --primary-active: #065f46;
-    --primary-glow: rgba(5, 150, 105, 0.25);
-    --primary-light: #d1fae5;
+    --primary: #16a34a;
+    --primary-hover: #15803d;
+    --primary-active: #166534;
+    --primary-glow: rgba(22, 163, 74, 0.25);
+    --primary-light: #f0fdf4;
   
     /* Semantic Colors */
     --success: #22c55e;
@@ -14,54 +14,51 @@
     --danger: #ef4444;
     --info: #3b82f6;
   
-    --danger-light: #fecaca;
+    --danger-light: #fee2e2;
     --danger-hover: #fef2f2;
     --success-light: #dcfce7;
     --warning-light: #fef3c7;
     --info-light: #dbeafe;
   
     /* Extra Utility */
-    --blue: #2a68cb;
-    --green-light: #d9f8ea;
+    --blue: #3b82f6;
+    --green-light: #dcfce7;
   
     /* ===============================
        🧱 Background System
     =============================== */
-    --bg-main: #eef7f4;
+    --bg-main: #f0fdf4;
     --bg-card: #ffffff;
     --bg-sidebar: #f0fdf4;
-    --bg-topbar: #059669;
+    --bg-topbar: #16a34a;
   
-    /* Surface Layers (NEW - important for PrimeReact overrides) */
     --surface-1: #ffffff;
-    --surface-2: #f9fbfa;
-    --surface-3: #f1f5f9;
+    --surface-2: #f0fdf4;
+    --surface-3: #dcfce7;
   
     /* ===============================
        📝 Typography
     =============================== */
-    --text-main: #0f172a;
-    --text-muted: #64748b;
+    --text-main: #064e3b;
+    --text-muted: #14532d;
     --text-on-primary: #ffffff;
     --text-white: #ffffff;
-  
-    /* Heading + subtle text (NEW) */
-    --text-strong: #020617;
+    --text-strong: #064e3b;
     --text-soft: #94a3b8;
   
     /* ===============================
        🔲 Borders
     =============================== */
-    --border-color: #e2e8f0;
-    --border-light: #f1f5f9;
-    --border-strong: #cbd5e1;
+    --border-color: #dcfce7;
+    --border-light: #f0fdf4;
+    --border-strong: #bbf7d0;
   
     /* ===============================
-       🔘 Interaction States (NEW)
+       🔘 Interaction States
     =============================== */
-    --hover-bg: rgba(5, 150, 105, 0.06);
-    --active-bg: rgba(5, 150, 105, 0.12);
-    --focus-ring: rgba(5, 150, 105, 0.35);
+    --hover-bg: rgba(22, 163, 74, 0.06);
+    --active-bg: rgba(22, 163, 74, 0.12);
+    --focus-ring: rgba(22, 163, 74, 0.35);
   
     /* ===============================
        📏 Layout Constants
@@ -70,7 +67,6 @@
     --sidebar-collapsed-width: 80px;
     --header-height: 44px;
   
-    /* Compact spacing (NEW - useful for ERP density) */
     --space-xs: 4px;
     --space-sm: 6px;
     --space-md: 10px;
@@ -81,11 +77,14 @@
     =============================== */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow-md:
-      0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.05);
     --shadow-lg:
-      0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.05);
     --shadow-hover:
-      0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+      0 20px 25px -5px rgb(0 0 0 / 0.1),
+      0 10px 10px -5px rgb(0 0 0 / 0.04);
   
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   

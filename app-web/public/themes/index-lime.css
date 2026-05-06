@@ -1,18 +1,18 @@
 :root {
     /* ===============================
-       🎨 Core Brand Colors (Blue - Electric Blue)
+       🎨 Core Brand Colors (Lime - Acid Green)
     =============================== */
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --primary-active: #1e40af;
-    --primary-glow: rgba(37, 99, 235, 0.25);
-    --primary-light: #eff6ff;
+    --primary: #84cc16;
+    --primary-hover: #65a30d;
+    --primary-active: #4d7c0f;
+    --primary-glow: rgba(132, 204, 22, 0.25);
+    --primary-light: #f7fee7;
   
     /* Semantic Colors */
     --success: #22c55e;
     --warning: #f59e0b;
     --danger: #ef4444;
-    --info: #2563eb;
+    --info: #3b82f6;
   
     --danger-light: #fee2e2;
     --danger-hover: #fef2f2;
@@ -21,44 +21,44 @@
     --info-light: #dbeafe;
   
     /* Extra Utility */
-    --blue: #2563eb;
+    --blue: #3b82f6;
     --green-light: #d9f8ea;
   
     /* ===============================
        🧱 Background System
     =============================== */
-    --bg-main: #f8fafc;
+    --bg-main: #fafcf7;
     --bg-card: #ffffff;
-    --bg-sidebar: #eff6ff;
-    --bg-topbar: #2563eb;
+    --bg-sidebar: #f7fee7;
+    --bg-topbar: #84cc16;
   
     --surface-1: #ffffff;
-    --surface-2: #f8fafc;
-    --surface-3: #dbeafe;
+    --surface-2: #fafcf7;
+    --surface-3: #ecfccb;
   
     /* ===============================
        📝 Typography
     =============================== */
-    --text-main: #1e3a8a;
-    --text-muted: #1e40af;
+    --text-main: #365314;
+    --text-muted: #4d7c0f;
     --text-on-primary: #ffffff;
     --text-white: #ffffff;
-    --text-strong: #172554;
+    --text-strong: #1a2e05;
     --text-soft: #94a3b8;
   
     /* ===============================
        🔲 Borders
     =============================== */
-    --border-color: #dbeafe;
-    --border-light: #eff6ff;
-    --border-strong: #bfdbfe;
+    --border-color: #ecfccb;
+    --border-light: #f7fee7;
+    --border-strong: #d9f99d;
   
     /* ===============================
        🔘 Interaction States
     =============================== */
-    --hover-bg: rgba(37, 99, 235, 0.06);
-    --active-bg: rgba(37, 99, 235, 0.12);
-    --focus-ring: rgba(37, 99, 235, 0.35);
+    --hover-bg: rgba(132, 204, 22, 0.06);
+    --active-bg: rgba(132, 204, 22, 0.12);
+    --focus-ring: rgba(132, 204, 22, 0.35);
   
     /* ===============================
        📏 Layout Constants

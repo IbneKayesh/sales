@@ -1,12 +1,12 @@
 :root {
     /* ===============================
-       🎨 Core Brand Colors
+       🎨 Core Brand Colors (Orange - Sunset Orange)
     =============================== */
     --primary: #f97316;
     --primary-hover: #ea580c;
     --primary-active: #c2410c;
     --primary-glow: rgba(249, 115, 22, 0.25);
-    --primary-light: #ffedd5;
+    --primary-light: #fff7ed;
   
     /* Semantic Colors */
     --success: #22c55e;
@@ -14,7 +14,7 @@
     --danger: #ef4444;
     --info: #2563eb;
   
-    --danger-light: #fecaca;
+    --danger-light: #fee2e2;
     --danger-hover: #fef2f2;
     --success-light: #dcfce7;
     --warning-light: #fef3c7;
@@ -27,31 +27,31 @@
     /* ===============================
        🧱 Background System
     =============================== */
-    --bg-main: #fffdf7;
+    --bg-main: #fffcf9;
     --bg-card: #ffffff;
-    --bg-sidebar: #fffaf2;
+    --bg-sidebar: #fff7ed;
     --bg-topbar: #f97316;
   
     --surface-1: #ffffff;
-    --surface-2: #fdfaf4;
-    --surface-3: #f8ecf1;
+    --surface-2: #fffcf9;
+    --surface-3: #ffedd5;
   
     /* ===============================
        📝 Typography
     =============================== */
-    --text-main: #1f2d3d;
-    --text-muted: #6b7c93;
+    --text-main: #7c2d12;
+    --text-muted: #9a3412;
     --text-on-primary: #ffffff;
     --text-white: #ffffff;
-    --text-strong: #0f172a;
+    --text-strong: #431407;
     --text-soft: #94a3b8;
   
     /* ===============================
        🔲 Borders
     =============================== */
-    --border-color: #f5ede3;
-    --border-light: #fbf5f1;
-    --border-strong: #e6dbc9;
+    --border-color: #ffedd5;
+    --border-light: #fffcf9;
+    --border-strong: #fed7aa;
   
     /* ===============================
        🔘 Interaction States

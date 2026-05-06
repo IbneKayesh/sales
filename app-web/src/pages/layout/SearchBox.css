@@ -1,0 +1,247 @@
+.search-box-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(6px);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 15vh;
+  transition: all 0.3s ease;
+}
+
+.search-box-container {
+  width: 600px;
+  max-width: 90%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  animation: searchBoxSlide 0.2s ease-out;
+}
+
+@keyframes searchBoxSlide {
+  0% { transform: translateY(-10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.search-box-header {
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.search-box-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box-input-wrapper i.search-icon {
+  position: absolute;
+  left: 15px;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+.search-box-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 10px 15px 10px 45px;
+  color: var(--text-main);
+  font-size: 1.1rem;
+  outline: none;
+}
+
+.search-box-content {
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 10px 0;
+}
+
+/* Sections */
+.search-section-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  letter-spacing: 1px;
+  padding: 10px 20px 5px;
+  font-weight: 600;
+}
+
+.search-badges-container,
+.pinned-badges-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 5px 20px 15px;
+}
+
+/* Compact Badges */
+.search-badge,
+.pinned-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--surface-3); /* Subtle color base */
+  color: var(--text-main);
+}
+
+.search-badge {
+  background: var(--primary-light);
+  border-color: var(--primary-glow);
+  color: var(--primary);
+}
+
+.pinned-badge {
+  background: var(--active-bg);
+  color: var(--primary);
+  border-color: var(--primary);
+  font-weight: 500;
+}
+
+.search-badge:hover,
+.pinned-badge:hover {
+  filter: brightness(0.95);
+  border-color: var(--primary);
+}
+
+.search-badge.active,
+.pinned-badge.active {
+  background: var(--primary);
+  color: var(--text-white);
+  border-color: var(--primary);
+}
+
+.pinned-badge .unpin-action {
+  font-size: 0.7rem;
+  opacity: 0.6;
+  margin-left: 2px;
+}
+
+.pinned-badge:hover .unpin-action {
+  opacity: 1;
+}
+
+/* Search Items - Ultra Simple Style */
+.search-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  color: var(--text-main);
+  transition: background 0.1s ease;
+  cursor: pointer;
+}
+
+.search-item:hover,
+.search-item.active {
+  background: var(--hover-bg);
+}
+
+.search-item i.item-icon {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-right: 12px;
+  opacity: 0.7;
+}
+
+.search-item .item-info {
+  flex: 1;
+}
+
+.search-item .item-label {
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+.search-item .item-category {
+  font-size: 0.7rem;
+  color: var(--text-soft);
+  margin-left: 10px;
+  opacity: 0.6;
+}
+
+.search-item .pin-btn {
+  margin-left: 10px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  opacity: 0;
+}
+
+.search-item:hover .pin-btn,
+.search-item.pinned .pin-btn {
+  opacity: 1;
+}
+
+.search-item.pinned .pin-btn {
+  color: var(--primary);
+}
+
+.search-no-results {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--text-soft);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-no-results i {
+  font-size: 2.5rem;
+  opacity: 0.15;
+}
+
+.search-no-results span {
+  font-size: 0.95rem;
+  opacity: 0.7;
+}
+
+/* Scrollbar */
+.search-box-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.search-box-content::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+/* Footer */
+.search-footer {
+  padding: 10px 20px;
+  background: var(--surface-1);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.search-hint {
+  font-size: 0.65rem;
+  color: var(--text-soft);
+}
+
+.search-hint kbd {
+  background: var(--surface-2);
+  padding: 2px 4px;
+  border-radius: 3px;
+  border: 1px solid var(--border-color);
+  font-family: inherit;
+}
+
+.clear-recent-btn:hover {
+  text-decoration: underline;
+  filter: brightness(1.1);
+}

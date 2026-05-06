@@ -1,64 +1,64 @@
 :root {
     /* ===============================
-       🎨 Core Brand Colors (Blue - Electric Blue)
+       🎨 Core Brand Colors (Violet - Periwinkle)
     =============================== */
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --primary-active: #1e40af;
-    --primary-glow: rgba(37, 99, 235, 0.25);
-    --primary-light: #eff6ff;
+    --primary: #8b5cf6;
+    --primary-hover: #7c3aed;
+    --primary-active: #6d28d9;
+    --primary-glow: rgba(139, 92, 246, 0.25);
+    --primary-light: #f5f3ff;
   
     /* Semantic Colors */
-    --success: #22c55e;
+    --success: #10b981;
     --warning: #f59e0b;
     --danger: #ef4444;
-    --info: #2563eb;
+    --info: #3b82f6;
   
     --danger-light: #fee2e2;
     --danger-hover: #fef2f2;
-    --success-light: #dcfce7;
+    --success-light: #d1fae5;
     --warning-light: #fef3c7;
     --info-light: #dbeafe;
   
     /* Extra Utility */
-    --blue: #2563eb;
-    --green-light: #d9f8ea;
+    --blue: #3b82f6;
+    --green-light: #d1fae5;
   
     /* ===============================
        🧱 Background System
     =============================== */
-    --bg-main: #f8fafc;
+    --bg-main: #fbfaff;
     --bg-card: #ffffff;
-    --bg-sidebar: #eff6ff;
-    --bg-topbar: #2563eb;
+    --bg-sidebar: #f5f3ff;
+    --bg-topbar: #8b5cf6;
   
     --surface-1: #ffffff;
-    --surface-2: #f8fafc;
-    --surface-3: #dbeafe;
+    --surface-2: #fbfaff;
+    --surface-3: #ede9fe;
   
     /* ===============================
        📝 Typography
     =============================== */
-    --text-main: #1e3a8a;
-    --text-muted: #1e40af;
+    --text-main: #2e1065;
+    --text-muted: #4c1d95;
     --text-on-primary: #ffffff;
     --text-white: #ffffff;
-    --text-strong: #172554;
+    --text-strong: #2e1065;
     --text-soft: #94a3b8;
   
     /* ===============================
        🔲 Borders
     =============================== */
-    --border-color: #dbeafe;
-    --border-light: #eff6ff;
-    --border-strong: #bfdbfe;
+    --border-color: #ede9fe;
+    --border-light: #fbfaff;
+    --border-strong: #ddd6fe;
   
     /* ===============================
        🔘 Interaction States
     =============================== */
-    --hover-bg: rgba(37, 99, 235, 0.06);
-    --active-bg: rgba(37, 99, 235, 0.12);
-    --focus-ring: rgba(37, 99, 235, 0.35);
+    --hover-bg: rgba(139, 92, 246, 0.06);
+    --active-bg: rgba(139, 92, 246, 0.12);
+    --focus-ring: rgba(139, 92, 246, 0.35);
   
     /* ===============================
        📏 Layout Constants
