@@ -140,7 +140,7 @@ const ContactsFormComp = ({
         />
         <RequiredText text={errors.cntct_ofadr} />
       </div>
-      <div className="col-12 md:col-6">
+      <div className="col-12 md:col-4">
         <label className="block font-bold mb-2">Factory Address</label>
         <InputTextarea
           name="cntct_fcadr"
@@ -221,6 +221,25 @@ const ContactsFormComp = ({
         />
         <RequiredText text={errors.cntct_trtry} />
       </div>
+
+      <div className="col-12 md:col-2">
+        <label className="block font-bold mb-2">Other Address</label>
+        <Dropdown
+          name="cntct_cntad"
+          value={formData.cntct_cntad}
+          onChange={(e) => onChange("cntct_cntad", e.value)}
+          options={dataListAddress}
+          optionLabel="cntad_ofadr"
+          optionValue="id"
+          className={`w-full ${errors.cntct_cntad ? "p-invalid" : ""}`}
+          size={"small"}
+          placeholder={`Enter address`}
+          filter
+          showClear
+        />
+        <RequiredText text={errors.cntct_cntad} />
+      </div>
+
       <div className="col-12 md:col-2">
         <label className="block font-bold mb-2 text-red-800">Currency</label>
         <Dropdown

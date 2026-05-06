@@ -3,7 +3,7 @@
     "type": "string",
     "label": "Id"
   },
-  "units_ucode": {
+  "mcatg_mcode": {
     "type": "string",
     "label": "Code",
     "maxLength": 50,
@@ -11,20 +11,12 @@
     "placeholder": "Enter code",
     "required": false
   },
-  "units_uname": {
+  "mcatg_mname": {
     "type": "string",
     "label": "Name",
     "maxLength": 50,
-    "minLength": 2,
-    "placeholder": "Enter name",
-    "required": true
-  },
-  "units_untgr": {
-    "type": "string",
-    "label": "Group",
-    "maxLength": 50,
     "minLength": 3,
-    "placeholder": "Enter group",
+    "placeholder": "Enter name",
     "required": true
   }
 }

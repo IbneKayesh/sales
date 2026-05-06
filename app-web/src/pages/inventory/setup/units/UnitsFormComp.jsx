@@ -30,7 +30,7 @@ const UnitsFormComp = ({ formData, errors, onChange, units_untgr_Options }) => {
           value={formData.units_uname}
           onChange={(e) => onChange("units_uname", e.target.value)}
           className={`w-full ${errors.units_uname ? "p-invalid" : ""}`}
-          placeholder={`Enter D/Zone name`}
+          placeholder={`Enter unit name`}
         />
         <RequiredText text={errors.units_uname} />
       </div>

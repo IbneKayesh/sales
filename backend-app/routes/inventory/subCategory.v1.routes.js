@@ -19,16 +19,16 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT unts.*,
+    const sql = `SELECT brnd.*,
     csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
-    FROM tmib_units unts
-    LEFT JOIN tmnb_users csr ON unts.units_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON unts.units_upusr = usr.id
-    WHERE unts.units_apusr = $1
-    ORDER BY unts.units_untgr, unts.units_uname ASC`;
+    FROM tmib_brand brnd
+    LEFT JOIN tmnb_users csr ON brnd.brand_crusr = csr.id
+    LEFT JOIN tmnb_users usr ON brnd.brand_upusr = usr.id
+    WHERE brnd.brand_apusr = $1
+    ORDER BY brnd.brand_bname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get units- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get brand- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -59,14 +59,14 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT unts.*, 0 as edit_stop
-    FROM tmib_units unts
-    WHERE unts.units_apusr = $1
-    AND unts.units_actve = TRUE
-    ORDER BY unts.units_untgr, unts.units_uname ASC`;
+    const sql = `SELECT brnd.*, 0 as edit_stop
+    FROM tmib_brand brnd
+    WHERE brnd.brand_apusr = $1
+    AND brnd.brand_actve = TRUE
+    ORDER BY brnd.brand_bname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get units- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get brand- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -82,22 +82,22 @@ router.post("/get-all-active", async (req, res) => {
   }
 });
 
+
 const create = async (req, res) => {
   try {
     const {
       id,
-      units_apusr,
-      units_bsins,
-      units_ucode,
-      units_uname,
-      units_untgr,
+      brand_apusr,
+      brand_bsins,
+      brand_bcode,
+      brand_bname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!units_uname || !units_untgr || !user_s || !user_c || !user_b) {
+    if (!brand_bname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -106,26 +106,25 @@ const create = async (req, res) => {
     }
 
     //database action
-    const newCode = await GenNewCode(user_c, "tmib_units");
+    const newCode = await GenNewCode(user_c, "tmib_brand");
 
-    const sql = `INSERT INTO tmib_units(id, units_apusr, units_bsins, units_ucode, units_uname, units_untgr, units_crusr, units_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
+    const sql = `INSERT INTO tmib_brand(id, brand_apusr, brand_bsins, brand_bcode, brand_bname, brand_crusr, brand_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
       newCode,
-      units_uname,
-      units_untgr,
+      brand_bname,
       user_s,
       user_s,
     ];
 
-    await dbRun(sql, params, `create units- ${user_c}`);
+    await dbRun(sql, params, `create brand- ${user_c}`);
     res.json({
       success: true,
-      message: `${units_uname} - Created successfully.`,
-      data: {},
+      message: `${brand_bname} - Created successfully.`,
+    data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
@@ -141,18 +140,17 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      units_apusr,
-      units_bsins,
-      units_ucode,
-      units_uname,
-      units_untgr,
+      brand_apusr,
+      brand_bsins,
+      brand_bcode,
+      brand_bname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!id || !units_uname || !units_untgr || !user_s || !user_c || !user_b) {
+    if (!id || !brand_bname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -161,19 +159,18 @@ const update = async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmib_units
-    SET units_uname = $1,
-    units_untgr = $2,
-    units_upusr = $3,
-    units_updat = CURRENT_TIMESTAMP,
-    units_rvnmr = units_rvnmr + 1
-    WHERE id = $4`;
-    const params = [units_uname, units_untgr, user_s, id];
+    const sql = `UPDATE tmib_brand
+    SET brand_bname = $1,
+    brand_upusr = $2,
+    brand_updat = CURRENT_TIMESTAMP,
+    brand_rvnmr = brand_rvnmr + 1
+    WHERE id = $3`;
+    const params = [brand_bname, user_s, id];
 
-    await dbRun(sql, params, `update units- ${user_c}`);
+    await dbRun(sql, params, `update brand- ${user_c}`);
     res.json({
       success: true,
-      message: `${units_uname} - Updated successfully.`,
+      message: `${brand_bname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -205,10 +202,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, units_uname, units_actve, user_s, user_c, user_b } = req.body;
+    const { id, brand_bname, brand_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !units_uname || !user_s || !user_c || !user_b) {
+    if (!id || !brand_bname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -217,18 +214,18 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmib_units
-    SET units_actve = NOT units_actve,
-    units_upusr = $1,
-    units_updat = CURRENT_TIMESTAMP,
-    units_rvnmr = units_rvnmr + 1
+    const sql = `UPDATE tmib_brand
+    SET brand_actve = NOT brand_actve,
+    brand_upusr = $1,
+    brand_updat = CURRENT_TIMESTAMP,
+    brand_rvnmr = brand_rvnmr + 1
     WHERE id = $2`;
     const params = [user_s, id];
 
-    await dbRun(sql, params, `delete units- ${user_c}`);
+    await dbRun(sql, params, `delete brand- ${user_c}`);
     res.json({
       success: true,
-      message: `${units_uname} - ${units_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${brand_bname} - ${brand_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {
@@ -240,5 +237,6 @@ router.post("/delete", async (req, res) => {
     });
   }
 });
+
 
 module.exports = router;

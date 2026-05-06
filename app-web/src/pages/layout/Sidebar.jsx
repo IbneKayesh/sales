@@ -390,22 +390,22 @@ const Sidebar = ({ collapsed }) => {
 
           <div className="menu-item">
             <Link
-              to="/sales-pos"
+              to="/dashboard"
               onClick={() =>
                 handleLinkClick({
-                  id: "pos",
-                  label: "POS",
-                  link: "/sales-pos",
-                  icon: "pi-shopping-cart",
+                  id: "dashboard",
+                  label: "Dashboard",
+                  link: "/dashboard",
+                  icon: "pi-gauge",
                 })
               }
               className="sub-item"
             >
               <i
-                className="icon pi pi-shopping-cart mr-2"
+                className="icon pi pi-gauge mr-2"
                 aria-hidden="true"
               ></i>
-              <span className="label">POS</span>
+              <span className="label">Dashboard</span>
             </Link>
           </div>
         </nav>
