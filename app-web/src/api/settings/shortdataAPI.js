@@ -10,4 +10,8 @@ export const shortdataAPI = {
     apiRequest("/settings/v1/short-data", {
       body: { shtbl_gname: "Currency" },
     }),
+  getUnitGroup: () =>
+    apiRequest("/settings/v1/short-data", {
+      body: { shtbl_gname: "UnitGroup" },
+    }),
 };

@@ -70,4 +70,8 @@ export const contactAPI = {
     apiRequest("/crm/v1/contacts/upsert-address", {
       body: data,
     }),
+  deleteAddress: (data) =>
+    apiRequest("/crm/v1/contacts/delete-address", {
+      body: data,
+    }),
 };

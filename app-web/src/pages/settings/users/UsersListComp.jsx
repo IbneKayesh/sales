@@ -5,6 +5,7 @@ import { InputText } from "primereact/inputtext";
 import { SplitButton } from "primereact/splitbutton";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import CSVExport from "@/components/CSVExport";
+import EmptyState from "@/components/EmptyState";
 
 const UsersListComp = ({
   pageAuth,
@@ -178,56 +179,56 @@ const UsersListComp = ({
     );
   };
 
-  return (
-    <div>
-      <DataTable
-        value={dataList}
-        paginator
-        rows={25}
-        rowsPerPageOptions={[25, 50, 100, 200]}
-        emptyMessage="No data found."
-        size="small"
-        rowHover
-        showGridlines
-        globalFilter={globalFilter}
-        globalFilterFields={export_columns.map((col) => col.accessor)}
-        header={dt_HT}
-      >
-        <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
-        <Column
-          field="users_uname"
-          header="Name"
-          body={users_uname_BT}
-          sortable
-        />
-        <Column field="users_cntct" header="Contact" sortable />
-        <Column
-          field="users_stats"
-          header="Status"
-          body={users_stats_BT}
-          sortable
-        />
-        <Column
-          field="users_ltokn"
-          header="Token"
-          body={users_ltokn_BT}
-          sortable
-        />
-        <Column
-          field="users_notes"
-          header="Notes"
-          body={users_notes_BT}
-          sortable
-        />
-        <Column
-          field="users_apusr"
-          header="Master User"
-          body={users_apusr_BT}
-          sortable
-        />
-        <Column header={dataList?.length + " rows"} body={action_BT} />
-      </DataTable>
-    </div>
+  return dataList.length > 0 ? (
+    <DataTable
+      value={dataList}
+      paginator
+      rows={25}
+      rowsPerPageOptions={[25, 50, 100, 200]}
+      emptyMessage="No data found."
+      size="small"
+      rowHover
+      showGridlines
+      globalFilter={globalFilter}
+      globalFilterFields={export_columns.map((col) => col.accessor)}
+      header={dt_HT}
+    >
+      <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
+      <Column
+        field="users_uname"
+        header="Name"
+        body={users_uname_BT}
+        sortable
+      />
+      <Column field="users_cntct" header="Contact" sortable />
+      <Column
+        field="users_stats"
+        header="Status"
+        body={users_stats_BT}
+        sortable
+      />
+      <Column
+        field="users_ltokn"
+        header="Token"
+        body={users_ltokn_BT}
+        sortable
+      />
+      <Column
+        field="users_notes"
+        header="Notes"
+        body={users_notes_BT}
+        sortable
+      />
+      <Column
+        field="users_apusr"
+        header="Master User"
+        body={users_apusr_BT}
+        sortable
+      />
+      <Column header={dataList?.length + " rows"} body={action_BT} />
+    </DataTable>
+  ) : (
+    <EmptyState />
   );
 };
 export default UsersListComp;

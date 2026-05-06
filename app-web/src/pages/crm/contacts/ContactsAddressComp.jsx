@@ -4,6 +4,8 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { SplitButton } from "primereact/splitbutton";
 import RequiredText from "@/components/RequiredText";
+import EmptyState from "@/components/EmptyState";
+import ActiveRowCell from "@/components/ActiveRowCell";
 
 const ContactsAddressComp = ({
   formData,
@@ -14,6 +16,12 @@ const ContactsAddressComp = ({
   onEdit,
   onDelete,
 }) => {
+  const cntad_ofadr_BT = (rowData) => {
+    return (
+      <ActiveRowCell text={rowData.cntad_ofadr} status={rowData.cntad_actve} />
+    );
+  };
+
   const action_BT = (rowData) => {
     let menuItems = [
       {
@@ -121,25 +129,33 @@ const ContactsAddressComp = ({
         </div>
       </div>
       <div className="mt-4">
-        <DataTable
-          value={dataList}
-          emptyMessage="No addresses found."
-          size="small"
-          rowHover
-          showGridlines
-        >
-          <Column
-            header="Sl"
-            body={(rowData, options) => options.rowIndex + 1}
-          />
-          <Column field="cntad_cntps" header="Person" />
-          <Column field="cntad_cntno" header="Contact No" />
-          <Column field="cntad_email" header="Email" />
-          <Column field="cntad_ofadr" header="Office Address" />
-          <Column field="cntad_notes" header="Notes" />
-          <Column field="cntad_gmaps" header="Google Maps" />
-          <Column header={dataList?.length + " rows"} body={action_BT} />
-        </DataTable>
+        {dataList.length > 0 ? (
+          <DataTable
+            value={dataList}
+            emptyMessage="No addresses found."
+            size="small"
+            rowHover
+            showGridlines
+          >
+            <Column
+              header="Sl"
+              body={(rowData, options) => options.rowIndex + 1}
+            />
+            <Column field="cntad_cntps" header="Person" />
+            <Column field="cntad_cntno" header="Contact No" />
+            <Column field="cntad_email" header="Email" />
+            <Column
+              field="cntad_ofadr"
+              header="Office Address"
+              body={cntad_ofadr_BT}
+            />
+            <Column field="cntad_notes" header="Notes" />
+            <Column field="cntad_gmaps" header="Google Maps" />
+            <Column header={dataList?.length + " rows"} body={action_BT} />
+          </DataTable>
+        ) : (
+          <EmptyState />
+        )}
       </div>
     </>
   );

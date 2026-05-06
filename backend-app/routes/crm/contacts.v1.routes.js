@@ -385,9 +385,10 @@ router.post("/get-address", async (req, res) => {
     LEFT JOIN tmnb_users csr ON tad.cntad_crusr = csr.id
     LEFT JOIN tmnb_users usr ON tad.cntad_upusr = usr.id
     WHERE tad.cntad_apusr = $1
+    AND tad.cntad_cntct = $2
     ORDER BY tad.cntad_ofadr ASC`;
 
-    const params = [user_c];
+    const params = [user_c, cntad_cntct];
     const rows = await dbGetAll(sql, params, `get address- ${user_c}`);
     res.json({
       success: true,
@@ -523,5 +524,45 @@ router.post("/upsert-address", async (req, res) => {
     });
   }
 });
+
+// delete-address
+router.post("/delete-address", async (req, res) => {
+  try {
+    const { id, cntad_ofadr, cntad_actve, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!id || !cntad_ofadr || !user_s || !user_c || !user_b) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: {},
+      });
+    }
+
+    //database action
+    const sql = `UPDATE tmcb_cntad
+    SET cntad_actve = NOT cntad_actve,
+    cntad_upusr = $1,
+    cntad_updat = CURRENT_TIMESTAMP,
+    cntad_rvnmr = cntad_rvnmr + 1
+    WHERE id = $2`;
+    const params = [user_s, id];
+
+    await dbRun(sql, params, `delete contact address- ${user_c}`);
+    res.json({
+      success: true,
+      message: `${cntad_ofadr} - ${cntad_actve ? "Deactivate" : "Activate"} successfully.`,
+      data: {},
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: {},
+    });
+  }
+});
+
 
 module.exports = router;

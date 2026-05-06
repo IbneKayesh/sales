@@ -5,28 +5,30 @@ import { InputText } from "primereact/inputtext";
 import { SplitButton } from "primereact/splitbutton";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import CSVExport from "@/components/CSVExport";
+import EmptyState from "@/components/EmptyState";
 
-const DZoneListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
+const TerritoryListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
 
   const export_columns = [
-    { header: "Country", accessor: "dzone_cntry" },
-    { header: "Code", accessor: "dzone_dcode" },
-    { header: "Name", accessor: "dzone_dname" },
-    { header: "Active", accessor: "dzone_actve" },
+    { header: "DZone", accessor: "dzone_dname" },
+    { header: "TArea", accessor: "tarea_tname" },
+    { header: "Code", accessor: "trtry_wcode" },
+    { header: "Name", accessor: "trtry_wname" },
+    { header: "Active", accessor: "trtry_actve" },
   ];
 
-  const dzone_dname_BT = (rowData) => {
+  const trtry_wname_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-sm">
           <ActiveRowCell
-            text={rowData.dzone_dname}
-            status={rowData.dzone_actve}
+            text={rowData.trtry_wname}
+            status={rowData.trtry_actve}
           />
         </span>
         <span className="text-gray-600 text-sm mt-1">
-          {rowData.dzone_dcode}
+          {rowData.trtry_wcode}
         </span>
       </div>
     );
@@ -35,9 +37,9 @@ const DZoneListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const action_BT = (rowData) => {
     let menuItems = [
       {
-        label: rowData.dzone_actve ? "Deactivate" : "Activate",
+        label: rowData.trtry_actve ? "Deactivate" : "Activate",
         icon: `pi ${
-          rowData.dzone_actve
+          rowData.trtry_actve
             ? "pi-trash text-red-400"
             : "pi-check-circle text-green-400"
         }`,
@@ -87,34 +89,33 @@ const DZoneListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     );
   };
 
-  return (
-    <div>
-      {/* {JSON.stringify(dataList)} */}
-      {/* {JSON.stringify(pageAuth)} */}
-      <DataTable
-        value={dataList}
-        paginator
-        rows={25}
-        rowsPerPageOptions={[25, 50, 100, 200]}
-        emptyMessage="No data found."
-        size="small"
-        rowHover
-        showGridlines
-        globalFilter={globalFilter}
-        globalFilterFields={export_columns.map((col) => col.accessor)}
-        header={dt_HT}
-      >
-        <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
-        <Column
-          field="dzone_dname"
-          header="Name"
-          sortable
-          body={dzone_dname_BT}
-        />
-        <Column field="dzone_cntry" header="Country" sortable />
-        <Column header={dataList?.length + " rows"} body={action_BT} />
-      </DataTable>
-    </div>
+  return dataList.length > 0 ? (
+    <DataTable
+      value={dataList}
+      paginator
+      rows={25}
+      rowsPerPageOptions={[25, 50, 100, 200]}
+      emptyMessage="No data found."
+      size="small"
+      rowHover
+      showGridlines
+      globalFilter={globalFilter}
+      globalFilterFields={export_columns.map((col) => col.accessor)}
+      header={dt_HT}
+    >
+      <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
+      <Column
+        field="trtry_wname"
+        header="Name"
+        sortable
+        body={trtry_wname_BT}
+      />
+      <Column field="tarea_tname" header="T/Area" sortable />
+      <Column field="dzone_dname" header="D/Zone" sortable />
+      <Column header={dataList?.length + " rows"} body={action_BT} />
+    </DataTable>
+  ) : (
+    <EmptyState />
   );
 };
-export default DZoneListComp;
+export default TerritoryListComp;

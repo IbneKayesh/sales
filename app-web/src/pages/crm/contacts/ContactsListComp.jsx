@@ -5,6 +5,7 @@ import { InputText } from "primereact/inputtext";
 import { SplitButton } from "primereact/splitbutton";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import CSVExport from "@/components/CSVExport";
+import EmptyState from "@/components/EmptyState";
 
 const ContactsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
@@ -53,7 +54,7 @@ const ContactsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
           />
         </span>
         <span className="text-gray-600 text-sm mt-1">
-          {rowData.cntct_dcode}
+          Code: {rowData.cntct_ccode}
         </span>
         <span className="text-sm">TIN: {rowData.cntct_tinno}</span>
         <span className="text-sm">Trade: {rowData.cntct_trade}</span>
@@ -75,7 +76,10 @@ const ContactsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
       <div className="flex flex-column">
         <span className="text-sm">Office: {rowData.cntct_ofadr}</span>
         <span className="text-sm">Factory: {rowData.cntct_fcadr}</span>
-        <span className="text-sm">Location: {rowData.trtry_wname}, {rowData.tarea_tname}, {rowData.dzone_dname}, {rowData.cntry_cname}</span>
+        <span className="text-sm">
+          Location: {rowData.trtry_wname}, {rowData.tarea_tname},{" "}
+          {rowData.dzone_dname}, {rowData.cntry_cname}
+        </span>
       </div>
     );
   };
@@ -146,7 +150,7 @@ const ContactsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     );
   };
 
-  return (
+  return dataList.length > 0 ? (
     <DataTable
       value={dataList}
       paginator
@@ -168,6 +172,8 @@ const ContactsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
       <Column header="Credit" body={cntct_crncy_BT} sortable />
       <Column header={dataList?.length + " rows"} body={action_BT} />
     </DataTable>
+  ) : (
+    <EmptyState />
   );
 };
 export default ContactsListComp;

@@ -23,6 +23,7 @@ const ContactsFormComp = ({
   onSubmitAddressClick,
   dataListAddress,
   onEditAddress,
+  onDeleteAddress,
 }) => {
   return (
     <div className="grid">
@@ -284,6 +285,7 @@ const ContactsFormComp = ({
           onSaveClick={onSubmitAddressClick}
           dataList={dataListAddress}
           onEdit={onEditAddress}
+          onDelete={onDeleteAddress}
         />
       </div>
 

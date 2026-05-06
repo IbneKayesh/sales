@@ -51,6 +51,7 @@ const UsersMenuComp = ({ pageAuth, dataList, onEdit, formData }) => {
     return (
       <div className="flex align-items-center justify-content-between w-full p-2 umc-text">
         <span className="font-semibold text-lg">{node.label}</span>
+        <span className="text-xs ml-1">{node.key}</span>
         <div className="flex align-items-center gap-4 ml-auto pl-4">
           {node.data.menus_mlink !== "NA" && (
             <>

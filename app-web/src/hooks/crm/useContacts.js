@@ -12,7 +12,7 @@ import { territoryAPI } from "@/api/crm/territoryAPI.js";
 import tmcb_cntad from "@/models/crm/tmcb_cntad.json";
 
 const useContacts = () => {
-  //hooks :: menuId M01-M01-M04,
+  //hooks :: menuId M01-M02,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -60,7 +60,7 @@ const useContacts = () => {
   const [dataListAddress, setDataListAddress] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M01-M01-M04");
+    const perms = getPageAuth("M01-M02");
     setPageAuth(perms);
   }, [getPageAuth]);
 
@@ -281,7 +281,7 @@ const useContacts = () => {
   //contact address
   const handleGetAddress = async (cntad_cntct) => {
     setDataListAddress([]);
-    //console.log("field", trtry_tarea);
+    //console.log("cntad_cntct", cntad_cntct);
     if (!cntad_cntct) {
       return;
     }
@@ -345,6 +345,43 @@ const useContacts = () => {
     setFormDataAddress(rowData);
   };
 
+  
+  const handleDeleteAddress = (rowData) => {
+    if (!pageAuth.delpr) {
+      showToast("warn", "Delete", "No delete permission");
+      return;
+    }
+    confirm({
+      message: `Do you want to ${rowData.cntad_actve ? "Deactivate" : "Activate"} this ${rowData.cntad_ofadr}?`,
+      header: "Confirmation!",
+      accept: () => {
+        onDeleteAddress(rowData);
+      },
+      reject: () => {
+        console.log("Operation is cancelled");
+      },
+    });
+  };
+
+  const onDeleteAddress = async (rowData) => {
+    try {
+      setIsBusy(true);
+      const resp = await contactAPI.deleteAddress(rowData);
+      //console.log("resp", resp);
+      alert({
+        message: resp.message,
+        header: "Done",
+        icon: !resp.success && "pi pi-times-circle text-red-500",
+      });
+      if (resp.success) {
+        handleGetAddress(rowData.cntad_cntct);
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
 
   return {
     //hooks
@@ -376,7 +413,8 @@ const useContacts = () => {
     handleChangeAddress,
     handleSubmitAddressClick,
     dataListAddress,
-    handleEditAddress
+    handleEditAddress,
+    handleDeleteAddress,
   };
 };
 export default useContacts;

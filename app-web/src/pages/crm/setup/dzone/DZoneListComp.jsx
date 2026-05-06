@@ -5,28 +5,29 @@ import { InputText } from "primereact/inputtext";
 import { SplitButton } from "primereact/splitbutton";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import CSVExport from "@/components/CSVExport";
+import EmptyState from "@/components/EmptyState";
 
-const TAreaListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
+const DZoneListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
 
   const export_columns = [
-    { header: "DZone", accessor: "tarea_dzone" },
-    { header: "Code", accessor: "tarea_tcode" },
-    { header: "Name", accessor: "tarea_tname" },
-    { header: "Active", accessor: "tarea_actve" },
+    { header: "Country", accessor: "dzone_cntry" },
+    { header: "Code", accessor: "dzone_dcode" },
+    { header: "Name", accessor: "dzone_dname" },
+    { header: "Active", accessor: "dzone_actve" },
   ];
 
-  const tarea_tname_BT = (rowData) => {
+  const dzone_dname_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-sm">
           <ActiveRowCell
-            text={rowData.tarea_tname}
-            status={rowData.tarea_actve}
+            text={rowData.dzone_dname}
+            status={rowData.dzone_actve}
           />
         </span>
         <span className="text-gray-600 text-sm mt-1">
-          {rowData.tarea_tcode}
+          {rowData.dzone_dcode}
         </span>
       </div>
     );
@@ -35,9 +36,9 @@ const TAreaListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const action_BT = (rowData) => {
     let menuItems = [
       {
-        label: rowData.tarea_actve ? "Deactivate" : "Activate",
+        label: rowData.dzone_actve ? "Deactivate" : "Activate",
         icon: `pi ${
-          rowData.tarea_actve
+          rowData.dzone_actve
             ? "pi-trash text-red-400"
             : "pi-check-circle text-green-400"
         }`,
@@ -87,34 +88,32 @@ const TAreaListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     );
   };
 
-  return (
-    <div>
-      {/* {JSON.stringify(dataList)} */}
-      {/* {JSON.stringify(pageAuth)} */}
-      <DataTable
-        value={dataList}
-        paginator
-        rows={25}
-        rowsPerPageOptions={[25, 50, 100, 200]}
-        emptyMessage="No data found."
-        size="small"
-        rowHover
-        showGridlines
-        globalFilter={globalFilter}
-        globalFilterFields={export_columns.map((col) => col.accessor)}
-        header={dt_HT}
-      >
-        <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
-        <Column
-          field="tarea_tname"
-          header="Name"
-          sortable
-          body={tarea_tname_BT}
-        />
-        <Column field="dzone_dname" header="D/Zone" sortable />
-        <Column header={dataList?.length + " rows"} body={action_BT} />
-      </DataTable>
-    </div>
+  return dataList.length > 0 ? (
+    <DataTable
+      value={dataList}
+      paginator
+      rows={25}
+      rowsPerPageOptions={[25, 50, 100, 200]}
+      emptyMessage="No data found."
+      size="small"
+      rowHover
+      showGridlines
+      globalFilter={globalFilter}
+      globalFilterFields={export_columns.map((col) => col.accessor)}
+      header={dt_HT}
+    >
+      <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
+      <Column
+        field="dzone_dname"
+        header="Name"
+        sortable
+        body={dzone_dname_BT}
+      />
+      <Column field="dzone_cntry" header="Country" sortable />
+      <Column header={dataList?.length + " rows"} body={action_BT} />
+    </DataTable>
+  ) : (
+    <EmptyState />
   );
 };
-export default TAreaListComp;
+export default DZoneListComp;

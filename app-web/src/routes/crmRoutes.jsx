@@ -4,9 +4,9 @@ import { Route } from "react-router-dom";
 const ContactsPage = React.lazy(
   () => import("../pages/crm/contacts/ContactsPage"),
 );
-const DZonePage = React.lazy(() => import("../pages/crm/dzone/DZonePage"));
-const TAreaPage = React.lazy(() => import("../pages/crm/tarea/TAreaPage"));
-const TerritoryPage = React.lazy(() => import("../pages/crm/territory/TerritoryPage"));
+const DZonePage = React.lazy(() => import("../pages/crm/setup/dzone/DZonePage"));
+const TAreaPage = React.lazy(() => import("../pages/crm/setup/tarea/TAreaPage"));
+const TerritoryPage = React.lazy(() => import("../pages/crm/setup/territory/TerritoryPage"));
 const InquiryPage = React.lazy(() => import("../pages/crm/InquiryPage"));
 
 const crmRoutes = (

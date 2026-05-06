@@ -1,11 +1,11 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import useContacts from "@/hooks/crm/useContacts";
-import ContactsListComp from "./ContactsListComp";
-import ContactsFormComp from "./ContactsFormComp";
+import useUnits from "@/hooks/inventory/useUnits";
+import UnitsFormComp from "./UnitsFormComp";
+import UnitsListComp from "./UnitsListComp";
 
-const ContactsPage = () => {
+const UnitsPage = () => {
   const {
     //hooks
     pageAuth,
@@ -15,13 +15,7 @@ const ContactsPage = () => {
     errors,
     dataList,
     //other states
-    cntct_ctype_Options,
-    cntct_sorce_Options,
-    cntct_trtry_Options,
-    cntct_tarea_Options,
-    cntct_dzone_Options,
-    dzone_cntry_Options,
-    cntct_crncy_Options,
+    units_untgr_Options,
     //functions
     handleChange,
     handleEdit,
@@ -31,14 +25,7 @@ const ContactsPage = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
-    //contact address
-    formDataAddress,
-    handleChangeAddress,
-    handleSubmitAddressClick,
-    dataListAddress,
-    handleEditAddress,
-    handleDeleteAddress,
-  } = useContacts();
+  } = useUnits();
 
   const isList = crView === "list" && true;
   const isForm = crView === "form" && true;
@@ -101,7 +88,7 @@ const ContactsPage = () => {
   return (
     <Card title={cardTitle} className="shadow-2 border-round p-2">
       {isList && (
-        <ContactsListComp
+        <UnitsListComp
           pageAuth={pageAuth}
           dataList={dataList}
           onEdit={handleEdit}
@@ -109,28 +96,15 @@ const ContactsPage = () => {
         />
       )}
       {isForm && (
-        <ContactsFormComp
+        <UnitsFormComp
           formData={formData}
           errors={errors}
           onChange={handleChange}
-          cntct_ctype_Options={cntct_ctype_Options}
-          cntct_sorce_Options={cntct_sorce_Options}
-          cntct_trtry_Options={cntct_trtry_Options}
-          cntct_tarea_Options={cntct_tarea_Options}
-          cntct_dzone_Options={cntct_dzone_Options}
-          dzone_cntry_Options={dzone_cntry_Options}
-          cntct_crncy_Options={cntct_crncy_Options}
-          //contact address
-          formDataAddress={formDataAddress}
-          onChangeAddress={handleChangeAddress}
-          onSubmitAddressClick={handleSubmitAddressClick}
-          dataListAddress={dataListAddress}
-          onEditAddress={handleEditAddress}
-          onDeleteAddress={handleDeleteAddress}
+          units_untgr_Options={units_untgr_Options}
         />
       )}
     </Card>
   );
 };
 
-export default ContactsPage;
+export default UnitsPage;
