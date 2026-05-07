@@ -1,11 +1,11 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import useCategory from "@/hooks/inventory/useCategory.js";
-import CategoryFormComp from "./CategoryFormComp";
-import CategoryListComp from "./CategoryListComp";
+import useAttributes from "@/hooks/inventory/useAttributes.js";
+import AttributesFormComp from "./AttributesFormComp";
+import AttributesListComp from "./AttributesListComp";
 
-const CategoryPage = () => {
+const AttributesPage = () => {
   const {
     //hooks
     pageAuth,
@@ -15,6 +15,8 @@ const CategoryPage = () => {
     errors,
     dataList,
     //other states
+    attrb_mcatg_Options,
+    attrb_dtype_Options,
     //functions
     handleChange,
     handleEdit,
@@ -24,7 +26,7 @@ const CategoryPage = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
-  } = useCategory();
+  } = useAttributes();
 
   const isList = crView === "list" && true;
   const isForm = crView === "form" && true;
@@ -87,7 +89,7 @@ const CategoryPage = () => {
   return (
     <Card title={cardTitle} className="shadow-2 border-round p-2">
       {isList && (
-        <CategoryListComp
+        <AttributesListComp
           pageAuth={pageAuth}
           dataList={dataList}
           onEdit={handleEdit}
@@ -95,14 +97,16 @@ const CategoryPage = () => {
         />
       )}
       {isForm && (
-        <CategoryFormComp
+        <AttributesFormComp
           formData={formData}
           errors={errors}
           onChange={handleChange}
+          attrb_mcatg_Options={attrb_mcatg_Options}
+          attrb_dtype_Options={attrb_dtype_Options}
         />
       )}
     </Card>
   );
 };
 
-export default CategoryPage;
+export default AttributesPage;

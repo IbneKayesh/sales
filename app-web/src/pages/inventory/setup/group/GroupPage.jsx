@@ -1,11 +1,11 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import useCategory from "@/hooks/inventory/useCategory.js";
-import CategoryFormComp from "./CategoryFormComp";
-import CategoryListComp from "./CategoryListComp";
+import useGroup from "@/hooks/inventory/useGroup.js";
+import GroupFormComp from "./GroupFormComp";
+import BrandsListComp from "./GroupListComp";
 
-const CategoryPage = () => {
+const GroupPage = () => {
   const {
     //hooks
     pageAuth,
@@ -24,7 +24,7 @@ const CategoryPage = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
-  } = useCategory();
+  } = useGroup();
 
   const isList = crView === "list" && true;
   const isForm = crView === "form" && true;
@@ -87,7 +87,7 @@ const CategoryPage = () => {
   return (
     <Card title={cardTitle} className="shadow-2 border-round p-2">
       {isList && (
-        <CategoryListComp
+        <BrandsListComp
           pageAuth={pageAuth}
           dataList={dataList}
           onEdit={handleEdit}
@@ -95,7 +95,7 @@ const CategoryPage = () => {
         />
       )}
       {isForm && (
-        <CategoryFormComp
+        <GroupFormComp
           formData={formData}
           errors={errors}
           onChange={handleChange}
@@ -105,4 +105,4 @@ const CategoryPage = () => {
   );
 };
 
-export default CategoryPage;
+export default GroupPage;

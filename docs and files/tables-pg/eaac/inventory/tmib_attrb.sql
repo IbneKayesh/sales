@@ -6,10 +6,13 @@
 CREATE TABLE tmib_attrb (
   id VARCHAR(50) PRIMARY KEY,
 
-  attrb_users VARCHAR(50) NOT NULL,
-  attrb_ctgry VARCHAR(50) NOT NULL,
+  attrb_apusr VARCHAR(50) NOT NULL,
+  attrb_bsins VARCHAR(50) NOT NULL,
+  attrb_mcatg VARCHAR(50) NOT NULL,
+  attrb_acode VARCHAR(50) NOT NULL,
   attrb_aname VARCHAR(50) NOT NULL,
   attrb_dtype VARCHAR(50) NOT NULL,
+  attrb_dvalu VARCHAR(300) NOT NULL,
 
   -- default
   attrb_actve boolean NOT NULL DEFAULT true,

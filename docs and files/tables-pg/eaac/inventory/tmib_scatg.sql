@@ -10,7 +10,9 @@ CREATE TABLE tmib_scatg (
   scatg_mcatg varchar(50) NOT NULL,
   scatg_scode varchar(50) NOT NULL,
   scatg_sname varchar(50) NOT NULL,
+  
   -- optional
+
   -- default
   scatg_actve boolean NOT NULL DEFAULT true,
   scatg_crusr varchar(50) NOT NULL,

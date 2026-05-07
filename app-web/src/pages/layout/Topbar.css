@@ -1,19 +1,18 @@
 .topbar {
   height: var(--header-height);
-  padding: 8px;
+  padding: 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* background: var(--bg-topbar); */
   background: linear-gradient(180deg, var(--bg-topbar), var(--primary-light));
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
   z-index: 1000;
 }
 
 .topbar-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
 }
 
 .topbar-logo {
@@ -24,12 +23,12 @@
   font-size: 1.25rem;
   color: var(--text-main);
   letter-spacing: -0.04em;
-  margin-right: 16px;
+  margin-right: 8px;
 }
 
 .topbar-logo-icon {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   background: linear-gradient(135deg, var(--primary), var(--primary-hover));
   border-radius: var(--radius-md);
   display: flex;
@@ -47,9 +46,21 @@
   gap: 8px;
 }
 
+.topbar-actions {
+  position: relative;
+}
+
+.notifications-dropdown-wrapper {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 1001;
+  transform-origin: top right;
+}
+
 .topbar-btn {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: var(--radius-md);
   border: 1px solid transparent;
   background: transparent;
@@ -73,25 +84,33 @@
 
 .notification-badge {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 8px;
-  height: 8px;
-  background: #ef4444;
+  top: 5px;
+  right: 5px;
+  width: 9px;
+  height: 9px;
+  background: var(--danger);
   border-radius: 50%;
-  border: 2px solid var(--bg-card);
+  border: 2px solid var(--bg-topbar);
+  box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+  animation: pulse-badge 3s infinite;
+}
+
+@keyframes pulse-badge {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { box-shadow: 0 0 0 5px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
 .topbar-divider {
   width: 1px;
-  height: 24px;
+  height: 22px;
   background: var(--border-color);
-  margin: 0 8px;
+  margin: 0 6px;
 }
 
 .topbar-user-section {
   display: flex;
   align-items: center;
-  margin-left: 8px;
+  margin-left: 4px;
 }
 

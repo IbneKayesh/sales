@@ -4,12 +4,14 @@ import LoggedUser from "./LoggedUser";
 import { useAuth } from "@/hooks/useAuth.jsx";
 import Calculator from "@/components/common/Calculator";
 import SearchBox from "./SearchBox";
+import Notifications from "./Notifications";
 
 const Topbar = ({ sidebarCollapsed, onToggleLeftbar }) => {
   const { business } = useAuth();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showCalculator, setShowCalculator] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
@@ -75,10 +77,19 @@ const Topbar = ({ sidebarCollapsed, onToggleLeftbar }) => {
             >
               <i className="pi pi-calculator"></i>
             </button>
-            <button className="topbar-btn action" title="Notifications">
+            <button 
+              className={`topbar-btn action${showNotifications ? " active" : ""}`} 
+              title="Notifications"
+              onClick={() => setShowNotifications((prev) => !prev)}
+            >
               <i className="pi pi-bell"></i>
               <span className="notification-badge"></span>
             </button>
+            {showNotifications && (
+              <div className="notifications-dropdown-wrapper">
+                <Notifications onClose={() => setShowNotifications(false)} />
+              </div>
+            )}
           </div>
           <div className="topbar-divider"></div>
           <div className="topbar-user-section">

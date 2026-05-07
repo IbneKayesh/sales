@@ -1,11 +1,11 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import useCategory from "@/hooks/inventory/useCategory.js";
-import CategoryFormComp from "./CategoryFormComp";
-import CategoryListComp from "./CategoryListComp";
+import useSubCategory from "@/hooks/inventory/useSubCategory.js";
+import SubCategoryFormComp from "./SubCategoryFormComp";
+import SubCategoryListComp from "./SubCategoryListComp";
 
-const CategoryPage = () => {
+const SubCategoryPage = () => {
   const {
     //hooks
     pageAuth,
@@ -15,6 +15,7 @@ const CategoryPage = () => {
     errors,
     dataList,
     //other states
+    scatg_mcatg_Options,
     //functions
     handleChange,
     handleEdit,
@@ -24,7 +25,7 @@ const CategoryPage = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
-  } = useCategory();
+  } = useSubCategory();
 
   const isList = crView === "list" && true;
   const isForm = crView === "form" && true;
@@ -87,7 +88,7 @@ const CategoryPage = () => {
   return (
     <Card title={cardTitle} className="shadow-2 border-round p-2">
       {isList && (
-        <CategoryListComp
+        <SubCategoryListComp
           pageAuth={pageAuth}
           dataList={dataList}
           onEdit={handleEdit}
@@ -95,14 +96,15 @@ const CategoryPage = () => {
         />
       )}
       {isForm && (
-        <CategoryFormComp
+        <SubCategoryFormComp
           formData={formData}
           errors={errors}
           onChange={handleChange}
+          scatg_mcatg_Options={scatg_mcatg_Options}
         />
       )}
     </Card>
   );
 };
 
-export default CategoryPage;
+export default SubCategoryPage;

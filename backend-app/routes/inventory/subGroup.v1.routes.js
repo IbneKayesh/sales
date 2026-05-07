@@ -19,17 +19,17 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT sctg.*, mctg.mcatg_mname,
+    const sql = `SELECT sgrp.*, mctg.mgrup_mname,
     csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
-    FROM tmib_scatg sctg
-    LEFT JOIN tmib_mcatg mctg ON sctg.scatg_mcatg = mctg.id
-    LEFT JOIN tmnb_users csr ON sctg.scatg_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON sctg.scatg_upusr = usr.id
-    WHERE sctg.scatg_apusr = $1
-    ORDER BY sctg.scatg_sname ASC`;
+    FROM tmib_sgrup sgrp
+    LEFT JOIN tmib_mgrup mctg ON sgrp.sgrup_mgrup = mctg.id
+    LEFT JOIN tmnb_users csr ON sgrp.sgrup_crusr = csr.id
+    LEFT JOIN tmnb_users usr ON sgrp.sgrup_upusr = usr.id
+    WHERE sgrp.sgrup_apusr = $1
+    ORDER BY sgrp.sgrup_sname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get sub category- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get sub group- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -60,14 +60,14 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT sctg.*, 0 as edit_stop
-    FROM tmib_scatg sctg
-    WHERE sctg.scatg_apusr = $1
-    AND sctg.scatg_actve = TRUE
-    ORDER BY sctg.scatg_sname ASC`;
+    const sql = `SELECT sgrp.*, 0 as edit_stop
+    FROM tmib_sgrup sgrp
+    WHERE sgrp.sgrup_apusr = $1
+    AND sgrp.sgrup_actve = TRUE
+    ORDER BY sgrp.sgrup_sname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get sub category- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get sub group- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -87,18 +87,18 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      scatg_apusr,
-      scatg_bsins,
-      scatg_mcatg,
-      scatg_scode,
-      scatg_sname,
+      sgrup_apusr,
+      sgrup_bsins,
+      sgrup_mgrup,
+      sgrup_scode,
+      sgrup_sname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!scatg_mcatg || !scatg_sname || !user_s || !user_c || !user_b) {
+    if (!sgrup_mgrup || !sgrup_sname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -107,25 +107,25 @@ const create = async (req, res) => {
     }
 
     //database action
-    const newCode = await GenNewCode(user_c, "tmib_scatg");
+    const newCode = await GenNewCode(user_c, "tmib_sgrup");
 
-    const sql = `INSERT INTO tmib_scatg(id, scatg_apusr, scatg_bsins, scatg_mcatg, scatg_scode, scatg_sname, scatg_crusr, scatg_upusr)
+    const sql = `INSERT INTO tmib_sgrup(id, sgrup_apusr, sgrup_bsins, sgrup_mgrup, sgrup_scode, sgrup_sname, sgrup_crusr, sgrup_upusr)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
-      scatg_mcatg,
+      sgrup_mgrup,
       newCode,
-      scatg_sname,
+      sgrup_sname,
       user_s,
       user_s,
     ];
 
-    await dbRun(sql, params, `create sub category- ${user_c}`);
+    await dbRun(sql, params, `create sub group- ${user_c}`);
     res.json({
       success: true,
-      message: `${scatg_sname} - Created successfully.`,
+      message: `${sgrup_sname} - Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -142,18 +142,18 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      scatg_apusr,
-      scatg_bsins,
-      scatg_mcatg,
-      scatg_scode,
-      scatg_sname,
+      sgrup_apusr,
+      sgrup_bsins,
+      sgrup_mgrup,
+      sgrup_scode,
+      sgrup_sname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!id || !scatg_mcatg || !scatg_sname || !user_s || !user_c || !user_b) {
+    if (!id || !sgrup_mgrup || !sgrup_sname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -162,19 +162,19 @@ const update = async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmib_scatg
-    SET scatg_mcatg = $1,
-    scatg_sname = $2,
-    scatg_upusr = $3,
-    scatg_updat = CURRENT_TIMESTAMP,
-    scatg_rvnmr = scatg_rvnmr + 1
+    const sql = `UPDATE tmib_sgrup
+    SET sgrup_mgrup = $1,
+    sgrup_sname = $2,
+    sgrup_upusr = $3,
+    sgrup_updat = CURRENT_TIMESTAMP,
+    sgrup_rvnmr = sgrup_rvnmr + 1
     WHERE id = $4`;
-    const params = [scatg_mcatg, scatg_sname, user_s, id];
+    const params = [sgrup_mgrup, sgrup_sname, user_s, id];
 
-    await dbRun(sql, params, `update sub category- ${user_c}`);
+    await dbRun(sql, params, `update sub group- ${user_c}`);
     res.json({
       success: true,
-      message: `${scatg_sname} - Updated successfully.`,
+      message: `${sgrup_sname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -206,10 +206,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, scatg_sname, scatg_actve, user_s, user_c, user_b } = req.body;
+    const { id, sgrup_sname, sgrup_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !scatg_sname || !user_s || !user_c || !user_b) {
+    if (!id || !sgrup_sname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -218,18 +218,18 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmib_scatg
-    SET scatg_actve = NOT scatg_actve,
-    scatg_upusr = $1,
-    scatg_updat = CURRENT_TIMESTAMP,
-    scatg_rvnmr = scatg_rvnmr + 1
+    const sql = `UPDATE tmib_sgrup
+    SET sgrup_actve = NOT sgrup_actve,
+    sgrup_upusr = $1,
+    sgrup_updat = CURRENT_TIMESTAMP,
+    sgrup_rvnmr = sgrup_rvnmr + 1
     WHERE id = $2`;
     const params = [user_s, id];
 
-    await dbRun(sql, params, `delete sub category- ${user_c}`);
+    await dbRun(sql, params, `delete sub group- ${user_c}`);
     res.json({
       success: true,
-      message: `${scatg_sname} - ${scatg_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${sgrup_sname} - ${sgrup_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {
