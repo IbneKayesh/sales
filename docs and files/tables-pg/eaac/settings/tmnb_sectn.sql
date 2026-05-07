@@ -11,11 +11,11 @@ CREATE TABLE tmnb_sectn (
   sectn_bsins varchar(50) NOT NULL,
   sectn_dpart varchar(50) NOT NULL,
   sectn_scode varchar(50) NOT NULL,
-  sectn_dname varchar(50) NOT NULL,
+  sectn_sname varchar(50) NOT NULL,
   sectn_ofadr varchar(100) NOT NULL,
 
   -- optional  
-  sectn_emcap integer NOT NULL DEFAULT 1
+  sectn_emcap integer NOT NULL DEFAULT 1,
 
   -- default
   sectn_actve boolean NOT NULL DEFAULT true,

@@ -145,6 +145,14 @@
     "placeholder": "Enter currency",
     "required": true
   },
+  "cntct_price": {
+    "type": "string",
+    "label": "Price",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter price",
+    "required": false
+  },
   "cntct_dspct": {
     "type": "number",
     "label": "Discount %",

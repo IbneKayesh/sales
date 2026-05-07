@@ -7,27 +7,32 @@ import ActiveRowCell from "@/components/ActiveRowCell";
 import CSVExport from "@/components/CSVExport";
 import EmptyState from "@/components/EmptyState";
 
-const TAreaListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
+const PriceListComp = ({
+  pageAuth,
+  dataList,
+  onEdit,
+  onDelete,
+  onProducts,
+}) => {
   const [globalFilter, setGlobalFilter] = useState(null);
 
   const export_columns = [
-    { header: "DZone", accessor: "tarea_dzone" },
-    { header: "Code", accessor: "tarea_tcode" },
-    { header: "Name", accessor: "tarea_tname" },
-    { header: "Active", accessor: "tarea_actve" },
+    { header: "Code", accessor: "price_mcode" },
+    { header: "Name", accessor: "price_mname" },
+    { header: "Active", accessor: "price_actve" },
   ];
 
-  const tarea_tname_BT = (rowData) => {
+  const price_mname_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-sm">
           <ActiveRowCell
-            text={rowData.tarea_tname}
-            status={rowData.tarea_actve}
+            text={rowData.price_mname}
+            status={rowData.price_actve}
           />
         </span>
         <span className="text-gray-600 text-sm mt-1">
-          {rowData.tarea_tcode}
+          {rowData.price_mcode}
         </span>
       </div>
     );
@@ -36,9 +41,14 @@ const TAreaListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const action_BT = (rowData) => {
     let menuItems = [
       {
-        label: rowData.tarea_actve ? "Deactivate" : "Activate",
+        label: "Products",
+        icon: `pi pi-list`,
+        command: () => onProducts(rowData),
+      },
+      {
+        label: rowData.price_actve ? "Deactivate" : "Activate",
         icon: `pi ${
-          rowData.tarea_actve
+          rowData.price_actve
             ? "pi-trash text-red-400"
             : "pi-check-circle text-green-400"
         }`,
@@ -79,7 +89,7 @@ const TAreaListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
         <div className="flex flex-wrap align-items-center gap-2 w-full md:w-auto">
           <CSVExport
             data={dataList}
-            fileName={`tarea-${new Date().toISOString().slice(0, 10)}`}
+            fileName={`price-${new Date().toISOString().slice(0, 10)}`}
             columns={export_columns}
             disable={pageAuth.extpr}
           />
@@ -104,16 +114,15 @@ const TAreaListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     >
       <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
       <Column
-        field="tarea_tname"
+        field="price_mname"
         header="Name"
         sortable
-        body={tarea_tname_BT}
+        body={price_mname_BT}
       />
-      <Column field="dzone_dname" header="D/Zone" sortable />
       <Column header={dataList?.length + " rows"} body={action_BT} />
     </DataTable>
   ) : (
     <EmptyState />
   );
 };
-export default TAreaListComp;
+export default PriceListComp;

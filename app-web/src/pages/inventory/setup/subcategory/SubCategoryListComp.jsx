@@ -78,7 +78,7 @@ const SubCategoryListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
         <div className="flex flex-wrap align-items-center gap-2 w-full md:w-auto">
           <CSVExport
             data={dataList}
-            fileName={`brand-${new Date().toISOString().slice(0, 10)}`}
+            fileName={`sub category-${new Date().toISOString().slice(0, 10)}`}
             columns={export_columns}
             disable={pageAuth.extpr}
           />

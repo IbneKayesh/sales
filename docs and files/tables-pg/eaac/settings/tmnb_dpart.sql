@@ -14,7 +14,7 @@ CREATE TABLE tmnb_dpart (
   dpart_ofadr varchar(100) NOT NULL,
 
   -- optional  
-  dpart_emcap integer NOT NULL DEFAULT 1
+  dpart_emcap integer NOT NULL DEFAULT 1,
 
   -- default
   dpart_actve boolean NOT NULL DEFAULT true,

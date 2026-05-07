@@ -80,7 +80,7 @@ const AttributesListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
         <div className="flex flex-wrap align-items-center gap-2 w-full md:w-auto">
           <CSVExport
             data={dataList}
-            fileName={`brand-${new Date().toISOString().slice(0, 10)}`}
+            fileName={`attributes-${new Date().toISOString().slice(0, 10)}`}
             columns={export_columns}
             disable={pageAuth.extpr}
           />

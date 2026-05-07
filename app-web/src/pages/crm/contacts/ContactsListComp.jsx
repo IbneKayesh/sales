@@ -27,6 +27,7 @@ const ContactsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     { header: "Zone", accessor: "cntct_dzone" },
     { header: "Country", accessor: "cntct_cntry" },
     { header: "Currency", accessor: "cntct_crncy" },
+    { header: "Price", accessor: "price_mname" },
     { header: "Discount %", accessor: "cntct_dspct" },
     { header: "Credit Limit", accessor: "cntct_crlmt" },
     { header: "Balance", accessor: "cntct_crbal" },
@@ -87,6 +88,7 @@ const ContactsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const cntct_crncy_BT = (rowData) => {
     return (
       <div className="flex flex-column">
+        <span className="text-sm">Price: {rowData.price_mname}</span>
         <span className="text-sm">Currency: {rowData.crncy_cname}</span>
         <span className="text-sm">Discount %: {rowData.cntct_dspct}</span>
         <span className="text-sm">Credit Limit: {rowData.cntct_crlmt}</span>
@@ -141,7 +143,7 @@ const ContactsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
         <div className="flex flex-wrap align-items-center gap-2 w-full md:w-auto">
           <CSVExport
             data={dataList}
-            fileName={`dzone-${new Date().toISOString().slice(0, 10)}`}
+            fileName={`contacts-${new Date().toISOString().slice(0, 10)}`}
             columns={export_columns}
             disable={pageAuth.extpr}
           />

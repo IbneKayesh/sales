@@ -1,11 +1,12 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import useContacts from "@/hooks/crm/useContacts";
-import ContactsListComp from "./ContactsListComp";
-import ContactsFormComp from "./ContactsFormComp";
+import usePrice from "@/hooks/inventory/usePrice.js";
+import PriceFormComp from "./PriceFormComp";
+import PriceListComp from "./PriceListComp";
+import SkuPage from "./SkuPage";
 
-const ContactsPage = () => {
+const PricePage = () => {
   const {
     //hooks
     pageAuth,
@@ -15,14 +16,6 @@ const ContactsPage = () => {
     errors,
     dataList,
     //other states
-    cntct_ctype_Options,
-    cntct_sorce_Options,
-    cntct_trtry_Options,
-    cntct_tarea_Options,
-    cntct_dzone_Options,
-    dzone_cntry_Options,
-    cntct_crncy_Options,
-    cntct_price_Options,
     //functions
     handleChange,
     handleEdit,
@@ -32,14 +25,9 @@ const ContactsPage = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
-    //contact address
-    formDataAddress,
-    handleChangeAddress,
-    handleSubmitAddressClick,
-    dataListAddress,
-    handleEditAddress,
-    handleDeleteAddress,
-  } = useContacts();
+    //products
+    handleProducts,
+  } = usePrice();
 
   const isList = crView === "list" && true;
   const isForm = crView === "form" && true;
@@ -102,37 +90,25 @@ const ContactsPage = () => {
   return (
     <Card title={cardTitle} className="shadow-2 border-round p-2">
       {isList && (
-        <ContactsListComp
+        <PriceListComp
           pageAuth={pageAuth}
           dataList={dataList}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onProducts={handleProducts}
         />
       )}
       {isForm && (
-        <ContactsFormComp
+        <PriceFormComp
           formData={formData}
           errors={errors}
           onChange={handleChange}
-          cntct_ctype_Options={cntct_ctype_Options}
-          cntct_sorce_Options={cntct_sorce_Options}
-          cntct_trtry_Options={cntct_trtry_Options}
-          cntct_tarea_Options={cntct_tarea_Options}
-          cntct_dzone_Options={cntct_dzone_Options}
-          dzone_cntry_Options={dzone_cntry_Options}
-          cntct_crncy_Options={cntct_crncy_Options}
-          cntct_price_Options={cntct_price_Options}
-          //contact address
-          formDataAddress={formDataAddress}
-          onChangeAddress={handleChangeAddress}
-          onSubmitAddressClick={handleSubmitAddressClick}
-          dataListAddress={dataListAddress}
-          onEditAddress={handleEditAddress}
-          onDeleteAddress={handleDeleteAddress}
         />
       )}
+
+      {crView === "price-list" && <SkuPage />}
     </Card>
   );
 };
 
-export default ContactsPage;
+export default PricePage;

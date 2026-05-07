@@ -21,3 +21,4 @@ CREATE TABLE tmib_units (
   units_updat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   units_rvnmr integer NOT NULL DEFAULT 1
 );
+

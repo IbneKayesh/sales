@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useAppUI } from "@/hooks/useAppUI";
 import validate, { generateDataModel } from "@/models/validator";
-import tmib_brand from "@/models/inventory/tmib_brand.json";
-const dataModel = generateDataModel(tmib_brand);
-import { brandsAPI } from "@/api/inventory/brandsAPI.js";
+import tmib_price from "@/models/inventory/tmib_price.json";
+const dataModel = generateDataModel(tmib_price);
+import { priceAPI } from "@/api/inventory/priceAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
-const useBrands = () => {
-  //hooks :: menuId M04-M01-M001,
+const usePrice = () => {
+  //hooks :: menuId M04-M02,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -18,22 +18,22 @@ const useBrands = () => {
     edtpr: false,
     delpr: false,
   });
-  const [crTitle, setCrTitle] = useState("Brand List");
+  const [crTitle, setCrTitle] = useState("Price List");
   const [crView, setCrView] = useState("list");
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M04-M01-M001");
+    const perms = getPageAuth("M04-M02");
     setPageAuth(perms);
   }, [getPageAuth]);
 
   //functions
-  const loadBrands = async () => {
+  const loadPrice = async () => {
     try {
       setIsBusy(true);
-      const resp = await brandsAPI.getAll({});
+      const resp = await priceAPI.getAll({});
       //console.log("resp", resp);
       setDataList(resp.data || []);
       showToastError(resp);
@@ -45,7 +45,7 @@ const useBrands = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmib_brand);
+    const newErrors = validate({ ...formData, [field]: value }, tmib_price);
     setErrors(newErrors);
   };
 
@@ -55,7 +55,7 @@ const useBrands = () => {
       return;
     }
     setFormData(rowData);
-    setCrTitle("Edit Brand");
+    setCrTitle("Edit Price");
     setCrView("form");
   };
 
@@ -65,7 +65,7 @@ const useBrands = () => {
       return;
     }
     confirm({
-      message: `Do you want to ${rowData.brand_actve ? "Deactivate" : "Activate"} this ${rowData.brand_bname}?`,
+      message: `Do you want to ${rowData.price_actve ? "Deactivate" : "Activate"} this ${rowData.price_mname}?`,
       header: "Confirmation!",
       accept: () => {
         onDelete(rowData);
@@ -79,7 +79,7 @@ const useBrands = () => {
   const onDelete = async (rowData) => {
     try {
       setIsBusy(true);
-      const resp = await brandsAPI.delete(rowData);
+      const resp = await priceAPI.delete(rowData);
       //console.log("resp", resp);
       alert({
         message: resp.message,
@@ -87,9 +87,9 @@ const useBrands = () => {
         icon: !resp.success && "pi pi-times-circle text-red-500",
       });
       if (resp.success) {
-        setCrTitle("Brand List");
+        setCrTitle("Price List");
         setCrView("list");
-        loadBrands();
+        loadPrice();
       }
     } catch (error) {
     } finally {
@@ -98,22 +98,22 @@ const useBrands = () => {
   };
 
   const handleBackClick = () => {
-    setCrTitle("Brand List");
+    setCrTitle("Price List");
     setCrView("list");
     setFormData(dataModel);
   };
 
   const handleSearchClick = () => {
-    setCrTitle("Search Brand");
+    setCrTitle("Search Price");
     setCrView("list");
     alert({ message: "Search is clicked", header: "Search" });
     //ketp this function as it is
   };
 
   const handleRefreshClick = () => {
-    setCrTitle("Brand List");
+    setCrTitle("Price List");
     setCrView("list");
-    loadBrands();
+    loadPrice();
   };
 
   const handleAddNewClick = () => {
@@ -121,14 +121,14 @@ const useBrands = () => {
       showToast("warn", "Add", "No add permission");
       return;
     }
-    setCrTitle("Add Brand");
+    setCrTitle("Add Price");
     setCrView("form");
     setFormData(dataModel);
   };
 
   const handleSubmitClick = async () => {
     try {
-      const newErrors = validate(formData, tmib_brand);
+      const newErrors = validate(formData, tmib_price);
       setErrors(newErrors);
       //console.log("handleSave: " + JSON.stringify(newErrors));
       if (Object.keys(newErrors).length > 0) {
@@ -137,7 +137,7 @@ const useBrands = () => {
 
       setIsBusy(true);
 
-      const resp = await brandsAPI.upsert(formData);
+      const resp = await priceAPI.upsert(formData);
       //console.log("resp", resp);
       alert({
         message: resp.message,
@@ -145,9 +145,9 @@ const useBrands = () => {
         icon: !resp.success && "pi pi-times-circle text-red-500",
       });
       if (resp.success) {
-        setCrTitle("Brand List");
+        setCrTitle("Price List");
         setCrView("list");
-        loadBrands();
+        loadPrice();
       }
     } catch (error) {
     } finally {
@@ -155,7 +155,14 @@ const useBrands = () => {
     }
   };
 
-  
+  //products
+  const handleProducts = (rowData) => {
+    //console.log("rowData", rowData);
+    setFormData(rowData);
+    setCrTitle("Price List");
+    setCrView("price-list");
+  };
+
   return {
     //hooks
     pageAuth,
@@ -174,6 +181,8 @@ const useBrands = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
+    //products
+    handleProducts,
   };
 };
-export default useBrands;
+export default usePrice;

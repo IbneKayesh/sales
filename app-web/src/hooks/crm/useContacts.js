@@ -9,6 +9,7 @@ import { contactAPI } from "@/api/crm/contactAPI.js";
 import { dzoneAPI } from "@/api/crm/dzoneAPI.js";
 import { tareaAPI } from "@/api/crm/tareaAPI.js";
 import { territoryAPI } from "@/api/crm/territoryAPI.js";
+import { priceAPI } from "@/api/inventory/priceAPI.js";
 import tmcb_cntad from "@/models/crm/tmcb_cntad.json";
 
 const useContacts = () => {
@@ -35,6 +36,8 @@ const useContacts = () => {
   const [cntct_dzone_Options, setCntct_dzone_Options] = useState([]);
   const [dzone_cntry_Options, setDzone_cntry_Options] = useState([]);
   const [cntct_crncy_Options, setCntct_crncy_Options] = useState([]);
+  const [cntct_price_Options, setCntct_price_Options] = useState([]);
+
   const cntct_ctype_Options = [
     { label: "Buyer", value: "Buyer" },
     { label: "Customer", value: "Customer" },
@@ -104,6 +107,7 @@ const useContacts = () => {
     setCrTitle("Edit Contact");
     setCrView("form");
     handleGetCountry();
+    handleGetPrice();
 
     handleGetAddress(rowData.id);
   };
@@ -174,6 +178,7 @@ const useContacts = () => {
     setCrView("form");
     setFormData(dataModel);
     handleGetCountry();
+    handleGetPrice();
     setDataListAddress([]);
   };
 
@@ -244,6 +249,7 @@ const useContacts = () => {
       setIsBusy(false);
     }
   };
+
   const handleGetTArea = async (tarea_dzone) => {
     //console.log("field", tarea_dzone);
     if (!tarea_dzone) {
@@ -277,6 +283,23 @@ const useContacts = () => {
       setIsBusy(false);
     }
   };
+
+  const handleGetPrice = async () => {
+    if (cntct_price_Options.length > 0) {
+      return;
+    }
+    try {
+      setIsBusy(true);
+      const resp = await priceAPI.getAllActive();
+      //console.log("resp", resp);
+      setCntct_price_Options(resp.data);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
 
   //contact address
   const handleGetAddress = async (cntad_cntct) => {
@@ -399,6 +422,7 @@ const useContacts = () => {
     cntct_dzone_Options,
     dzone_cntry_Options,
     cntct_crncy_Options,
+    cntct_price_Options,
     //functions
     handleChange,
     handleEdit,
