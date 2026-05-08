@@ -1,6 +1,6 @@
 {
   "id": "root",
-  "api": "/v1/dashboard",
+  "api": "/reports/v1/dashboard",
   "title": "Business Dashboard",
   "subtitle": "System overview",
   "components": [

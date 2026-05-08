@@ -7,13 +7,14 @@ const defaultData = {
   bsins: null,
   token: null,
   menus: [],
-  recent_links: []
+  recent_links: [],
 };
 
 const confData = {
   saved_user: null,
   is_saved: false,
-  theme: "green"
+  theme: "green",
+  sidebar: "visible",
 };
 
 const getStorageData = () => {
@@ -44,7 +45,6 @@ const clearStorageData = () => {
   }
 };
 
-
 const getStorageLoginData = () => {
   try {
     const data = localStorage.getItem(STORAGE_KEY_LOGIN);
@@ -65,5 +65,10 @@ const setStorageLoginData = (data) => {
   }
 };
 
-
-export { getStorageData, setStorageData, clearStorageData, getStorageLoginData, setStorageLoginData };
+export {
+  getStorageData,
+  setStorageData,
+  clearStorageData,
+  getStorageLoginData,
+  setStorageLoginData,
+};

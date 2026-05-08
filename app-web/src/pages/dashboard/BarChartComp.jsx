@@ -1,81 +1,62 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const BarChartComp = ({ title, data, legendLabels }) => {
-    const barColors = ['bg-blue-500', 'bg-orange-500', 'bg-green-500', 'bg-purple-500'];
+const BarChartComp = ({ title, data, isLoading }) => {
+  const [hovered, setHovered] = useState(null);
+  const colors = ['var(--primary)', 'var(--info)', 'var(--success)', 'var(--warning)', 'var(--danger)', '#8b5cf6', '#ec4899'];
 
-    // Check if any item has multiple values to show legend
-    const isComparable = data && data.some(item => Array.isArray(item.value));
-    const labels = legendLabels || ['Actual', 'Target', 'Previous', 'Forecast'];
-
+  if (isLoading) {
     return (
-        <div className="surface-card shadow-2 p-3 border-round flex flex-column h-full">
-            <div className="text-xl font-medium text-900 mb-2">{title || 'Bar Chart'}</div>
-            
-            {isComparable && (
-                <div className="flex flex-wrap gap-3 mb-4 text-xs text-500">
-                    {data[0].value.map((_, i) => (
-                        <span key={i} className="flex align-items-center">
-                            <div className={`w-1rem h-1rem ${barColors[i % barColors.length]} border-round mr-1`}></div> {labels[i]}
-                        </span>
-                    ))}
-                </div>
-            )}
-
-            <div className="flex align-items-end justify-content-around h-12rem mt-auto">
-                {data && data.map((item, idx) => (
-                    <div key={idx} className="flex flex-column align-items-center h-full justify-content-end w-full px-1">
-                        <div className="flex align-items-end gap-1 w-full justify-content-center h-full">
-                            {Array.isArray(item.value) ? (
-                                item.value.map((val, vIdx) => (
-                                    <div 
-                                        key={vIdx} 
-                                        className={`${barColors[vIdx % barColors.length]} border-round-top cursor-pointer flex flex-column align-items-center justify-content-start pt-1 transition-all transition-duration-200`} 
-                                        style={{ 
-                                            height: `${val}%`, 
-                                            width: '1rem',
-                                            transformOrigin: 'bottom'
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.transform = 'scaleY(1.05)';
-                                            e.currentTarget.style.filter = 'brightness(1.1)';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.transform = 'scaleY(1)';
-                                            e.currentTarget.style.filter = 'brightness(1)';
-                                        }}
-                                        title={`${labels[vIdx]}: ${val}%`}
-                                    >
-                                        <span className="text-white font-bold" style={{ fontSize: '0.5rem', writingMode: 'vertical-rl' }}>{val}</span>
-                                    </div>
-                                ))
-                            ) : (
-                                <div 
-                                    className="bg-blue-500 border-round-top cursor-pointer flex flex-column align-items-center justify-content-start pt-1 transition-all transition-duration-200" 
-                                    style={{ 
-                                        height: `${item.value}%`, 
-                                        width: '2rem',
-                                        transformOrigin: 'bottom'
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.transform = 'scaleY(1.05)';
-                                        e.currentTarget.style.filter = 'brightness(1.1)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.transform = 'scaleY(1)';
-                                        e.currentTarget.style.filter = 'brightness(1)';
-                                    }}
-                                    title={`${item.value}%`}
-                                >
-                                    <span className="text-white font-bold" style={{ fontSize: '0.6rem' }}>{item.value}</span>
-                                </div>
-                            )}
-                        </div>
-                        <span className="text-xs mt-2 text-500">{item.label}</span>
-                    </div>
-                ))}
-            </div>
-        </div>
+      <div className="surface-card p-3 border-round shadow-2 flex align-items-center justify-content-center h-full" style={{ minHeight: '300px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+        <i className="pi pi-spin pi-spinner text-4xl" style={{ color: 'var(--primary)' }}></i>
+      </div>
     );
-}
+  }
+
+  if (!data || !data.labels) return null;
+
+  const labels = data.labels;
+  const values = data.datasets ? data.datasets[0].data : (data.data || []);
+  const maxVal = Math.max(...values, 1);
+
+  return (
+    <div className="surface-card p-3 border-round shadow-2 h-full flex flex-column" style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)' }}>
+      <div className="flex justify-content-between align-items-center mb-4">
+        <h3 className="text-sm font-medium uppercase tracking-wider m-0" style={{ color: 'var(--text-muted)' }}>
+          {title}
+        </h3>
+        <i className="pi pi-chart-bar text-muted"></i>
+      </div>
+      
+      <div className="flex-grow-1 flex align-items-end justify-content-around h-15rem w-full mt-4">
+        {values.map((val, idx) => {
+          const heightPercent = (val / maxVal) * 100;
+          return (
+            <div key={idx} className="flex flex-column align-items-center h-full justify-content-end w-full px-1">
+              <div 
+                className="border-round-top cursor-pointer transition-all transition-duration-300 w-full" 
+                style={{ 
+                  height: `${heightPercent}%`, 
+                  maxWidth: '2rem',
+                  backgroundColor: colors[idx % colors.length],
+                  opacity: hovered === null || hovered === idx ? 1 : 0.6,
+                  transform: hovered === idx ? 'scaleY(1.05)' : 'scaleY(1)',
+                  transformOrigin: 'bottom',
+                  boxShadow: hovered === idx ? `0 4px 12px ${colors[idx % colors.length]}40` : 'none'
+                }}
+                onMouseEnter={() => setHovered(idx)}
+                onMouseLeave={() => setHovered(null)}
+              >
+                <div className="flex justify-content-center pt-2">
+                   <span className="text-xs font-bold text-white" style={{ writingMode: heightPercent < 15 ? 'horizontal-tb' : 'vertical-rl' }}>{val}</span>
+                </div>
+              </div>
+              <span className="text-xs mt-2 text-500 text-center w-full overflow-hidden text-overflow-ellipsis white-space-nowrap">{labels[idx]}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 export default BarChartComp;

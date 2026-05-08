@@ -6,6 +6,7 @@ const dataModel = generateDataModel(tmrb_dzone);
 import { dzoneAPI } from "@/api/crm/dzoneAPI.js";
 import { shortdataAPI } from "@/api/settings/shortdataAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
+import { apiRequest } from "@/utils/api.js";
 
 const useDashboard = () => {
   //hooks :: menuId M01-M01-M01,
@@ -42,9 +43,12 @@ const useDashboard = () => {
         //throw new Error("Failed to load dashboard data");
         console.log("Failed to load dashboard.json");
       }
-      //console.log("resp", resp);
       const data = await resp.json();
+      console.log("data", data);
       setFormData(data || {});
+      const respApi = await apiRequest(data.api, {});
+      console.log("respApi", respApi);
+
       //showToastError(resp);
     } catch (error) {
     } finally {
