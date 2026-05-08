@@ -1,0 +1,65 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "ached_ached": {
+    "type": "string",
+    "label": "Parent",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter parent",
+    "required": true
+  },
+  "ached_hcode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter code",
+    "required": false
+  },
+  "ached_hname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter name",
+    "required": true
+  },
+  "ached_htype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter type",
+    "required": true
+  },
+  "ached_hedno": {
+    "type": "number",
+    "label": "Account No",
+    "maxLength": 99999,
+    "minLength": 1,
+    "placeholder": "Enter account no",
+    "required": false
+  },
+  "ached_child": {
+    "type": "boolean",
+    "label": "Child",
+    "required": false
+  },
+  "ached_alpst": {
+    "type": "boolean",
+    "label": "Allow Post",
+    "required": false,
+    "default": false
+  },
+  "ached_level": {
+    "type": "number",
+    "label": "Level",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter level",
+    "required": false
+  }
+}
