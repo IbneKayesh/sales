@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Tree } from "primereact/tree";
 import { InputText } from "primereact/inputtext";
 import { SplitButton } from "primereact/splitbutton";
@@ -8,40 +8,83 @@ import ActiveRowCell from "@/components/ActiveRowCell";
 import CSVExport from "@/components/CSVExport";
 import EmptyState from "@/components/EmptyState";
 
-const HeadsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
+const CoaListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const [globalFilter, setGlobalFilter] = useState("");
   const [expandedKeys, setExpandedKeys] = useState({});
 
   const export_columns = [
-    { header: "Code", accessor: "ached_hcode" },
-    { header: "Name", accessor: "ached_hname" },
-    { header: "Type", accessor: "ached_htype" },
-    { header: "Sl No", accessor: "ached_hedno" },
-    { header: "Child", accessor: "ached_child" },
-    { header: "Posting", accessor: "ached_alpst" },
-    { header: "Level", accessor: "ached_level" },
-    { header: "Active", accessor: "ached_actve" },
+    { header: "Code", accessor: "chtac_ccode" },
+    { header: "Name", accessor: "chtac_cname" },
+    { header: "Type", accessor: "chtac_ctype" },
+    { header: "Sl No", accessor: "chtac_chtno" },
+    { header: "Child", accessor: "chtac_child" },
+    { header: "Posting", accessor: "chtac_alpst" },
+    { header: "Level", accessor: "chtac_level" },
+    { header: "Active", accessor: "chtac_actve" },
   ];
+
+  // const dataListTree = useMemo(() => {
+  //   if (!dataList || dataList.length === 0) return [];
+
+  //   const map = {};
+  //   const expKeys = {};
+
+  //   dataList.forEach((item) => {
+  //     map[item.id] = {
+  //       key: item.id,
+  //       label: item.chtac_cname,
+  //       data: item,
+  //       children: [],
+  //     };
+  //     expKeys[item.id] = true;
+  //   });
+
+  //   const tree = [];
+  //   dataList.forEach((item) => {
+  //     const parentId = item.chtac_chtac;
+  //     if (parentId === "-" || !map[parentId]) {
+  //       tree.push(map[item.id]);
+  //     } else {
+  //       map[parentId].children.push(map[item.id]);
+  //     }
+  //   });
+
+  //   setExpandedKeys(expKeys);
+  //   return tree;
+  // }, [dataList]);
+
+  useEffect(() => {
+    const expKeys = {};
+
+    dataList.forEach((item) => {
+      //expKeys[item.id] = true;
+      if (item.chtac_chtac === "-") {
+        expKeys[item.id] = true;
+      }
+    });
+
+    setExpandedKeys(expKeys);
+  }, [dataList]);
 
   const dataListTree = useMemo(() => {
     if (!dataList || dataList.length === 0) return [];
 
     const map = {};
-    const expKeys = {};
 
     dataList.forEach((item) => {
       map[item.id] = {
         key: item.id,
-        label: item.ached_hname,
+        label: item.chtac_cname,
         data: item,
         children: [],
       };
-      expKeys[item.id] = true;
     });
 
     const tree = [];
+
     dataList.forEach((item) => {
-      const parentId = item.ached_ached;
+      const parentId = item.chtac_chtac;
+
       if (parentId === "-" || !map[parentId]) {
         tree.push(map[item.id]);
       } else {
@@ -49,7 +92,6 @@ const HeadsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
       }
     });
 
-    setExpandedKeys(expKeys);
     return tree;
   }, [dataList]);
 
@@ -62,11 +104,11 @@ const HeadsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     const filterNode = (node) => {
       const d = node.data;
       const matches = [
-        d.ached_hname,
-        d.ached_hcode,
-        d.ached_htype,
-        String(d.ached_hedno),
-        String(d.ached_level),
+        d.chtac_cname,
+        d.chtac_ccode,
+        d.chtac_ctype,
+        String(d.chtac_chtno),
+        String(d.chtac_level),
       ].some((v) => v && v.toLowerCase().includes(keyword));
 
       const filteredChildren = (node.children || [])
@@ -86,9 +128,9 @@ const HeadsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     const rowData = node.data;
     const menuItems = [
       {
-        label: rowData.ached_actve ? "Deactivate" : "Activate",
+        label: rowData.chtac_actve ? "Deactivate" : "Activate",
         icon: `pi ${
-          rowData.ached_actve
+          rowData.chtac_actve
             ? "pi-trash text-red-400"
             : "pi-check-circle text-green-400"
         }`,
@@ -97,27 +139,27 @@ const HeadsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     ];
 
     return (
-      <div className="flex align-items-center justify-content-between w-full gap-2 hlc-row">
+      <div className="flex align-items-center justify-content-between w-full gap-2 border-1 border-300 border-round p-3">
         {/* Head Name + Active */}
         <div className="flex flex-column mr-5" style={{ minWidth: "25%" }}>
           <span className="text-xl">
             <ActiveRowCell
-              text={rowData.ached_hname}
-              status={rowData.ached_actve}
+              text={rowData.chtac_cname}
+              status={rowData.chtac_actve}
             />
           </span>
 
           <span className="text-xs text-gray-600 mt-1">
-            {rowData.ached_hcode}
+            {rowData.chtac_ccode}
           </span>
-          <span className="text-md text-gray-600">#{rowData.ached_hedno}</span>
+          <span className="text-md text-blue-600">#{rowData.chtac_chtno}</span>
         </div>
 
         {/* Sl No + Type */}
         <div className="flex flex-column mr-5" style={{ minWidth: "5%" }}>
           <span className="text-xs mb-2">Type</span>
           <Badge
-            value={rowData.ached_htype?.toUpperCase()}
+            value={rowData.chtac_ctype?.toUpperCase()}
             severity="secondary"
             className="ml-3"
           />
@@ -127,8 +169,8 @@ const HeadsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
         <div className="flex flex-column mr-5" style={{ minWidth: "5%" }}>
           <span className="text-xs mb-2">Child</span>
           <Badge
-            value={rowData.ached_child ? "Yes" : "No"}
-            severity={rowData.ached_child ? "success" : "danger"}
+            value={rowData.chtac_child ? "Yes" : "No"}
+            severity={rowData.chtac_child ? "success" : "danger"}
           />
         </div>
 
@@ -136,8 +178,8 @@ const HeadsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
         <div className="flex flex-column mr-5" style={{ minWidth: "5%" }}>
           <span className="text-xs mb-2">Posting</span>
           <Badge
-            value={rowData.ached_alpst ? "Yes" : "No"}
-            severity={rowData.ached_alpst ? "success" : "danger"}
+            value={rowData.chtac_alpst ? "Yes" : "No"}
+            severity={rowData.chtac_alpst ? "success" : "danger"}
           />
         </div>
 
@@ -215,7 +257,7 @@ const HeadsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
         />
         <CSVExport
           data={dataList}
-          fileName={`heads-${new Date().toISOString().slice(0, 10)}`}
+          fileName={`coa-${new Date().toISOString().slice(0, 10)}`}
           columns={export_columns}
           disable={pageAuth.extpr}
         />
@@ -240,4 +282,4 @@ const HeadsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   );
 };
 
-export default HeadsListComp;
+export default CoaListComp;

@@ -1,0 +1,70 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "party_vndor": {
+    "type": "string",
+    "label": "Vendor",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter vendor",
+    "required": true
+  },
+  "party_ptype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter type",
+    "required": true
+  },
+  "party_pcode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter code",
+    "required": false
+  },
+  "party_pname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter name",
+    "required": true
+  },
+  "party_chtrc": {
+    "type": "string",
+    "label": "Receivable",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter receivable",
+    "required": true
+  },
+  "party_chtpy": {
+    "type": "string",
+    "label": "Payable",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter payable",
+    "required": true
+  },
+  "party_chtad": {
+    "type": "string",
+    "label": "Advance",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter advance",
+    "required": true
+  },
+  "party_opbal": {
+    "type": "number",
+    "label": "Opening Balance",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter opening balance",
+    "required": false
+  }
+}

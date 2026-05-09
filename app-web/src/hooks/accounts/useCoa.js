@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { useAppUI } from "@/hooks/useAppUI";
 import validate, { generateDataModel } from "@/models/validator";
-import tmtb_ached from "@/models/accounts/tmtb_ached.json";
-const dataModel = generateDataModel(tmtb_ached);
-import { accountHeadsAPI } from "@/api/accounts/accountHeadsAPI.js";
-import { shortdataAPI } from "@/api/settings/shortdataAPI.js";
+import tmtb_chtac from "@/models/accounts/tmtb_chtac.json";
+const dataModel = generateDataModel(tmtb_chtac);
+import { coaAPI } from "@/api/accounts/coaAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
-const useAccountHeads = () => {
+const useCoa = () => {
   //hooks :: menuId M05-M01-M001,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
@@ -19,14 +18,14 @@ const useAccountHeads = () => {
     edtpr: false,
     delpr: false,
   });
-  const [crTitle, setCrTitle] = useState("Account Heads List");
+  const [crTitle, setCrTitle] = useState("COA List");
   const [crView, setCrView] = useState("list");
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
-  const [ached_ached_Options, setAched_ached_Options] = useState([]);
+  const [chtac_chtac_Options, setChtac_chtac_Options] = useState([]);
 
-  const ached_htype_Options = [
+  const chtac_ctype_Options = [
     {
       label: "Asset",
       value: "Asset",
@@ -68,7 +67,7 @@ const useAccountHeads = () => {
   const loadAccountHeads = async () => {
     try {
       setIsBusy(true);
-      const resp = await accountHeadsAPI.getAll({});
+      const resp = await coaAPI.getAll({});
       //console.log("resp", resp);
       setDataList(resp.data || []);
       showToastError(resp);
@@ -76,14 +75,14 @@ const useAccountHeads = () => {
       //make this parent
       const list = resp.data || [];
       const parentOptions = list
-        .filter((item) => item.ached_actve)
-        .filter((item) => !item.ached_alpst)
+        .filter((item) => item.chtac_actve)
+        .filter((item) => !item.chtac_alpst)
         .map((item) => ({
           id: item.id,
-          ached_hname: `${item.ached_hname} (${item.ached_hedno})`,
+          chtac_cname: `${item.chtac_cname} (${item.chtac_chtno})`,
         }));
-      parentOptions.push({ id: "-", ached_hname: "(No Parent)" });
-      setAched_ached_Options(parentOptions);
+      parentOptions.push({ id: "-", chtac_cname: "(No Parent)" });
+      setChtac_chtac_Options(parentOptions);
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -92,7 +91,7 @@ const useAccountHeads = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmtb_ached);
+    const newErrors = validate({ ...formData, [field]: value }, tmtb_chtac);
     setErrors(newErrors);
   };
 
@@ -102,7 +101,7 @@ const useAccountHeads = () => {
       return;
     }
     setFormData(rowData);
-    setCrTitle("Edit Account Heads");
+    setCrTitle("Edit COA");
     setCrView("form");
   };
 
@@ -112,7 +111,7 @@ const useAccountHeads = () => {
       return;
     }
     confirm({
-      message: `Do you want to ${rowData.ached_actve ? "Deactivate" : "Activate"} this ${rowData.ached_hname}?`,
+      message: `Do you want to ${rowData.chtac_actve ? "Deactivate" : "Activate"} this ${rowData.chtac_cname}?`,
       header: "Confirmation!",
       accept: () => {
         onDelete(rowData);
@@ -126,7 +125,7 @@ const useAccountHeads = () => {
   const onDelete = async (rowData) => {
     try {
       setIsBusy(true);
-      const resp = await accountHeadsAPI.delete(rowData);
+      const resp = await coaAPI.delete(rowData);
       //console.log("resp", resp);
       alert({
         message: resp.message,
@@ -134,7 +133,7 @@ const useAccountHeads = () => {
         icon: !resp.success && "pi pi-times-circle text-red-500",
       });
       if (resp.success) {
-        setCrTitle("Account Heads List");
+        setCrTitle("COA List");
         setCrView("list");
         loadAccountHeads();
       }
@@ -145,20 +144,20 @@ const useAccountHeads = () => {
   };
 
   const handleBackClick = () => {
-    setCrTitle("Account Heads List");
+    setCrTitle("COA List");
     setCrView("list");
     setFormData(dataModel);
   };
 
   const handleSearchClick = () => {
-    setCrTitle("Search Account Heads");
+    setCrTitle("Search COA");
     setCrView("list");
     alert({ message: "Search is clicked", header: "Search" });
     //ketp this function as it is
   };
 
   const handleRefreshClick = () => {
-    setCrTitle("Account Heads List");
+    setCrTitle("COA List");
     setCrView("list");
     loadAccountHeads();
   };
@@ -168,31 +167,31 @@ const useAccountHeads = () => {
       showToast("warn", "Add", "No add permission");
       return;
     }
-    setCrTitle("Add Account Heads");
+    setCrTitle("Add COA");
     setCrView("form");
     setFormData(dataModel);
   };
 
   const handleSubmitClick = async () => {
     try {
-      const newErrors = validate(formData, tmtb_ached);
+      const newErrors = validate(formData, tmtb_chtac);
       setErrors(newErrors);
       //console.log("handleSave: ", formData);
       if (Object.keys(newErrors).length > 0) {
         return;
       }
 
-      const ached_hedno = ached_htype_Options.find(
-        (item) => item.value === formData.ached_htype,
+      const chtac_chtno = chtac_ctype_Options.find(
+        (item) => item.value === formData.chtac_ctype,
       )?.range_start;
 
       const reqBody = {
         ...formData,
-        ached_hedno: ached_hedno,
+        chtac_chtno: chtac_chtno,
       };
       setIsBusy(true);
 
-      const resp = await accountHeadsAPI.upsert(reqBody);
+      const resp = await coaAPI.upsert(reqBody);
       console.log("resp", resp);
       alert({
         message: resp.message,
@@ -200,7 +199,7 @@ const useAccountHeads = () => {
         icon: !resp.success && "pi pi-times-circle text-red-500",
       });
       if (resp.success) {
-        setCrTitle("Account Heads List");
+        setCrTitle("COA List");
         setCrView("list");
         loadAccountHeads();
       }
@@ -219,8 +218,8 @@ const useAccountHeads = () => {
     errors,
     dataList,
     //other states
-    ached_ached_Options,
-    ached_htype_Options,
+    chtac_chtac_Options,
+    chtac_ctype_Options,
     //functions
     handleChange,
     handleEdit,
@@ -232,4 +231,4 @@ const useAccountHeads = () => {
     handleSubmitClick,
   };
 };
-export default useAccountHeads;
+export default useCoa;

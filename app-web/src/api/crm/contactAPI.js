@@ -26,6 +26,10 @@ export const contactAPI = {
     apiRequest("/crm/v1/contacts/get-address", {
       body: data,
     }),
+  getAvailContactAccounts: (data) =>
+    apiRequest("/crm/v1/contacts/get-avail-contact-accounts", {
+      body: data,
+    }),
   getByType: (data) =>
     apiRequest("/crm/contacts/get-by-type", {
       method: "POST",

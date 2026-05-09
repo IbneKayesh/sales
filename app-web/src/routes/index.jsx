@@ -3,7 +3,7 @@ import authRoutes from "./authRoutes";
 import crmRoutes from "./crmRoutes";
 import inventoryRoutes from "./inventoryRoutes";
 import settingsRoutes from "./settingsRoutes";
-import accountHeadsRoutes from "./accountHeadsRoutes";
+import accountsRoutes from "./accountsRoutes";
 
 const AppRoutesList = (
   <>
@@ -12,7 +12,7 @@ const AppRoutesList = (
     {crmRoutes}
     {inventoryRoutes}
     {settingsRoutes}
-    {accountHeadsRoutes}
+    {accountsRoutes}
   </>
 );
 export default AppRoutesList;

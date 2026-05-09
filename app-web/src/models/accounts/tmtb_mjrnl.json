@@ -1,0 +1,99 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "mjrnl_dpart": {
+    "type": "string",
+    "label": "C/C",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter c/c",
+    "required": true
+  },
+  "mjrnl_crncy": {
+    "type": "string",
+    "label": "Currency",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter currency",
+    "required": true
+  },
+  "mjrnl_fsyar": {
+    "type": "string",
+    "label": "Fiscal Year",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter year",
+    "required": true
+  },
+  "mjrnl_acprd": {
+    "type": "string",
+    "label": "Period",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter period",
+    "required": true
+  },
+  "mjrnl_trtyp": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter type",
+    "required": true
+  },
+  "mjrnl_trdat": {
+    "type": "date",
+    "label": "Date",
+    "placeholder": "Enter date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "mjrnl_refno": {
+    "type": "string",
+    "label": "Ref No",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ref no",
+    "required": false
+  },
+  "mjrnl_narrt": {
+    "type": "string",
+    "label": "Narration",
+    "maxLength": 100,
+    "minLength": 3,
+    "placeholder": "Enter narration",
+    "required": true
+  },
+  "mjrnl_drval": {
+    "type": "number",
+    "label": "Debit",
+    "placeholder": "Enter debit",
+    "required": false,
+    "default": 0
+  },
+  "mjrnl_crval": {
+    "type": "number",
+    "label": "Credit",
+    "placeholder": "Enter credit",
+    "required": false,
+    "default": 0
+  },
+  "mjrnl_stats": {
+    "type": "string",
+    "label": "Status",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter status",
+    "required": true,
+    "default": "posted"
+  },
+  "mjrnl_apdat": {
+    "type": "date",
+    "label": "Date",
+    "placeholder": "Enter date",
+    "required": true,
+    "default": "new Date() with local format"
+  }  
+}

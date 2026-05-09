@@ -1,11 +1,11 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import useAccountHeads from "@/hooks/accounts/useAccountHeads";
-import HeadsFormComp from "./HeadsFormComp";
-import HeadsListComp from "./HeadsListComp";
+import useJournal from "@/hooks/accounts/useJournal.js";
+import JournalFormComp from "./JournalFormComp";
+import JournalListComp from "./JournalListComp";
 
-const HeadsPage = () => {
+const JournalPage = () => {
   const {
     //hooks
     pageAuth,
@@ -15,8 +15,12 @@ const HeadsPage = () => {
     errors,
     dataList,
     //other states
-    ached_ached_Options,
-    ached_htype_Options,
+    mjrnl_dpart_Options,
+    mjrnl_crncy_Options,
+    mjrnl_fsyar_Options,
+    mjrnl_acprd_Options,
+    mjrnl_trtyp_Options,
+    formDataItems,
     //functions
     handleChange,
     handleEdit,
@@ -26,7 +30,10 @@ const HeadsPage = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
-  } = useAccountHeads();
+    //other functions
+    handleChangeItems,
+    handleAddToListClick,
+  } = useJournal();
 
   const isList = crView === "list" && true;
   const isForm = crView === "form" && true;
@@ -89,7 +96,7 @@ const HeadsPage = () => {
   return (
     <Card title={cardTitle} className="shadow-2 border-round p-2">
       {isList && (
-        <HeadsListComp
+        <JournalListComp
           pageAuth={pageAuth}
           dataList={dataList}
           onEdit={handleEdit}
@@ -97,16 +104,22 @@ const HeadsPage = () => {
         />
       )}
       {isForm && (
-        <HeadsFormComp
+        <JournalFormComp
           formData={formData}
           errors={errors}
           onChange={handleChange}
-          ached_ached_Options={ached_ached_Options}
-          ached_htype_Options={ached_htype_Options}
+          mjrnl_dpart_Options={mjrnl_dpart_Options}
+          mjrnl_crncy_Options={mjrnl_crncy_Options}
+          mjrnl_fsyar_Options={mjrnl_fsyar_Options}
+          mjrnl_acprd_Options={mjrnl_acprd_Options}
+          mjrnl_trtyp_Options={mjrnl_trtyp_Options}
+          onChangeItems={handleChangeItems}
+          onAddToListClick={handleAddToListClick}
+          formDataItems={formDataItems}
         />
       )}
     </Card>
   );
 };
 
-export default HeadsPage;
+export default JournalPage;

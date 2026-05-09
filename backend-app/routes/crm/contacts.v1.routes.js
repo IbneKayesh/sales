@@ -569,4 +569,42 @@ router.post("/delete-address", async (req, res) => {
   }
 });
 
+//get-avail-contact-accounts
+router.post("/get-avail-contact-accounts", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT cnt.*
+    FROM tmcb_cntct cnt
+    LEFT JOIN tmtb_party prt ON cnt.id = prt.party_vndor
+    WHERE prt.party_vndor IS NULL
+    AND cnt.cntct_apusr = $1
+    ORDER BY cnt.cntct_ccode`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get get-avail-contact-accounts- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
 module.exports = router;

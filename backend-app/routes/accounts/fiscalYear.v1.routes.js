@@ -19,16 +19,16 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT achd.*,
+    const sql = `SELECT coa.*,
     csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
-    FROM tmtb_ached achd
-    LEFT JOIN tmnb_users csr ON achd.ached_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON achd.ached_upusr = usr.id
-    WHERE achd.ached_apusr = $1
-    ORDER BY achd.ached_hedno ASC`;
+    FROM tmtb_chtac coa
+    LEFT JOIN tmnb_users csr ON coa.chtac_crusr = csr.id
+    LEFT JOIN tmnb_users usr ON coa.chtac_upusr = usr.id
+    WHERE coa.chtac_apusr = $1
+    ORDER BY coa.chtac_chtno ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get account heads- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get account coa- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -59,14 +59,15 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT achd.*, 0 as edit_stop
-    FROM tmtb_ached achd
-    WHERE achd.ached_apusr = $1
-    AND achd.ached_actve = TRUE
-    ORDER BY achd.ached_hname ASC`;
+    const sql = `SELECT fsy.*, 0 as edit_stop
+    FROM tmtb_fsyar fsy
+    WHERE fsy.fsyar_apusr = $1
+    AND fsy.fsyar_iscur = TRUE
+    AND fsy.fsyar_actve = TRUE
+    ORDER BY fsy.fsyar_fname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get account heads- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get fiscal year- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -86,16 +87,16 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      ached_apusr,
-      ached_bsins,
-      ached_ached,
-      ached_hcode,
-      ached_hname,
-      ached_htype,
-      ached_hedno,
-      ached_child,
-      ached_alpst,
-      ached_level,
+      chtac_apusr,
+      chtac_bsins,
+      chtac_chtac,
+      chtac_ccode,
+      chtac_cname,
+      chtac_ctype,
+      chtac_chtno,
+      chtac_child,
+      chtac_alpst,
+      chtac_level,
       user_s,
       user_c,
       user_b,
@@ -103,10 +104,10 @@ const create = async (req, res) => {
 
     // Validate input
     if (
-      !ached_ached ||
-      !ached_hname ||
-      !ached_htype ||
-      !ached_hedno ||
+      !chtac_chtac ||
+      !chtac_cname ||
+      !chtac_ctype ||
+      !chtac_chtno ||
       !user_s ||
       !user_c ||
       !user_b
@@ -119,15 +120,15 @@ const create = async (req, res) => {
     }
 
     //database action
-    const ached_child_new = ached_ached === "-" ? false : true;
-    const ached_level_new = ached_ached === "-" ? 0 : 1;
-    const newCode = await GenNewCode(user_c, "tmtb_ached");
+    const chtac_child_new = chtac_chtac === "-" ? false : true;
+    const chtac_level_new = chtac_chtac === "-" ? 0 : 1;
+    const newCode = await GenNewCode(user_c, "tmtb_chtac");
 
     const sql_sequence = `SELECT shtbl_value FROM tmnb_shtbl WHERE shtbl_gname = $1 AND shtbl_dvalu = $2`;
     const row_sequence = await dbGet(
       sql_sequence,
-      [ached_htype, ached_htype],
-      `get account heads- ${user_c}`,
+      [chtac_ctype, chtac_ctype],
+      `get account coa- ${user_c}`,
     );
 
     if (!row_sequence) {
@@ -138,44 +139,44 @@ const create = async (req, res) => {
       });
     }
 
-    const sql_sl = `SELECT COUNT(id) AS last_no FROM tmtb_ached WHERE ached_htype = $1`;
+    const sql_sl = `SELECT COUNT(id) AS last_no FROM tmtb_chtac WHERE chtac_ctype = $1`;
     const row_sl = await dbGet(
       sql_sl,
-      [ached_htype],
-      `get account heads- ${user_c}`,
+      [chtac_ctype],
+      `get account coa- ${user_c}`,
     );
 
     //console.log(row_sequence, row_sl);
 
-    const ached_hedno_new =
+    const chtac_chtno_new =
       Number(row_sequence.shtbl_value) + Number(row_sl?.last_no || 0);
 
-    const sql = `INSERT INTO tmtb_ached(id, ached_apusr, ached_bsins, ached_ached, ached_hcode, ached_hname,
-    ached_htype, ached_hedno, ached_child, ached_alpst, ached_level, ached_crusr, ached_upusr)
+    const sql = `INSERT INTO tmtb_chtac(id, chtac_apusr, chtac_bsins, chtac_chtac, chtac_ccode, chtac_cname,
+    chtac_ctype, chtac_chtno, chtac_child, chtac_alpst, chtac_level, chtac_crusr, chtac_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
     $7, $8, $9, $10, $11, $12, $13)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
-      ached_ached,
+      chtac_chtac,
       newCode,
-      ached_hname,
-      ached_htype,
-      ached_hedno_new,
-      ached_child_new,
-      ached_alpst,
-      ached_level_new,
+      chtac_cname,
+      chtac_ctype,
+      chtac_chtno_new,
+      chtac_child_new,
+      chtac_alpst,
+      chtac_level_new,
       user_s,
       user_s,
     ];
 
     //console.log("params", params);
 
-    await dbRun(sql, params, `create account heads- ${user_c}`);
+    await dbRun(sql, params, `create account coa- ${user_c}`);
     res.json({
       success: true,
-      message: `${ached_hname} - Created successfully.`,
+      message: `${chtac_cname} - Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -192,16 +193,16 @@ const update = async (req, res) => {
   try {
    const {
       id,
-      ached_apusr,
-      ached_bsins,
-      ached_ached,
-      ached_hcode,
-      ached_hname,
-      ached_htype,
-      ached_hedno,
-      ached_child,
-      ached_alpst,
-      ached_level,
+      chtac_apusr,
+      chtac_bsins,
+      chtac_chtac,
+      chtac_ccode,
+      chtac_cname,
+      chtac_ctype,
+      chtac_chtno,
+      chtac_child,
+      chtac_alpst,
+      chtac_level,
       user_s,
       user_c,
       user_b,
@@ -209,10 +210,10 @@ const update = async (req, res) => {
 
     // Validate input
     if (
-      !ached_ached ||
-      !ached_hname ||
-      !ached_htype ||
-      !ached_hedno ||
+      !chtac_chtac ||
+      !chtac_cname ||
+      !chtac_ctype ||
+      !chtac_chtno ||
       !user_s ||
       !user_c ||
       !user_b
@@ -225,28 +226,28 @@ const update = async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmtb_ached
-    SET ached_ached = $1,
-    ached_hname = $2,
-    ached_htype = $3,
-    ached_alpst = $4,
-    ached_upusr = $5,
-    ached_updat = CURRENT_TIMESTAMP,
-    ached_rvnmr = ached_rvnmr + 1
+    const sql = `UPDATE tmtb_chtac
+    SET chtac_chtac = $1,
+    chtac_cname = $2,
+    chtac_ctype = $3,
+    chtac_alpst = $4,
+    chtac_upusr = $5,
+    chtac_updat = CURRENT_TIMESTAMP,
+    chtac_rvnmr = chtac_rvnmr + 1
     WHERE id = $6`;
     const params = [
-      ached_ached,
-      ached_hname,
-      ached_htype,
-      ached_alpst,
+      chtac_chtac,
+      chtac_cname,
+      chtac_ctype,
+      chtac_alpst,
       user_s,
       id,
     ];
 
-    await dbRun(sql, params, `update account heads- ${user_c}`);
+    await dbRun(sql, params, `update account coa- ${user_c}`);
     res.json({
       success: true,
-      message: `${ached_hname} - Updated successfully.`,
+      message: `${chtac_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -278,10 +279,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, ached_hname, ached_actve, user_s, user_c, user_b } = req.body;
+    const { id, chtac_cname, chtac_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !ached_hname || !user_s || !user_c || !user_b) {
+    if (!id || !chtac_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -290,18 +291,18 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmtb_ached
-    SET ached_actve = NOT ached_actve,
-    ached_upusr = $1,
+    const sql = `UPDATE tmtb_chtac
+    SET chtac_actve = NOT chtac_actve,
+    chtac_upusr = $1,
     dzone_updat = CURRENT_TIMESTAMP,
-    ached_rvnmr = ached_rvnmr + 1
+    chtac_rvnmr = chtac_rvnmr + 1
     WHERE id = $2`;
     const params = [user_s, id];
 
-    await dbRun(sql, params, `delete account heads- ${user_c}`);
+    await dbRun(sql, params, `delete account coa- ${user_c}`);
     res.json({
       success: true,
-      message: `${ached_hname} - ${ached_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${chtac_cname} - ${chtac_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {
@@ -310,6 +311,46 @@ router.post("/delete", async (req, res) => {
       success: false,
       message: error.message || "An error occurred during db action",
       data: {},
+    });
+  }
+});
+
+
+// get-coa-posting
+router.post("/get-coa-posting", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT cht.*, 0 as edit_stop
+    FROM tmtb_chtac cht
+    WHERE cht.chtac_alpst = TRUE
+    AND cht.chtac_actve = TRUE
+    AND cht.chtac_apusr = $1
+    ORDER BY cht.chtac_ctype ASC, cht.chtac_chtac ASC, cht.chtac_chtno ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get account coa- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
     });
   }
 });
