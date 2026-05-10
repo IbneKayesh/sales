@@ -6,13 +6,13 @@ import tmtb_djrnl from "@/models/accounts/tmtb_djrnl.json";
 const dataModel = generateDataModel(tmtb_mjrnl);
 const dataModelItem = generateDataModel(tmtb_djrnl);
 import { journalAPI } from "@/api/accounts/journalAPI.js";
-import { shortdataAPI } from "@/api/settings/shortdataAPI.js";
 import { departmentsAPI } from "@/api/settings/departmentsAPI.js";
 import { fiscalYearAPI } from "@/api/accounts/fiscalYearAPI.js";
 import { acPeriodAPI } from "@/api/accounts/acPeriodAPI.js";
 import { coaAPI } from "@/api/accounts/coaAPI.js";
 import { partiesAPI } from "@/api/accounts/partiesAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
+import { buildCoaTree, findCoaTree } from "@/utils/jsonParser.js";
 
 const useJournal = () => {
   //hooks :: menuId M05-M02,
@@ -347,15 +347,21 @@ const useJournal = () => {
     }
     try {
       setIsBusy(true);
-      const resp = await coaAPI.getCoaPosting();
+      //const resp = await coaAPI.getCoaPosting();
+      const resp = await coaAPI.getWithPartyCount();
       //console.log("resp1", resp);
 
-      const ddlData = (resp?.data || []).map((item) => ({
-        value_text: item.id,
-        label_text: `${item.chtac_ctype} > ${item.chtac_cname} #${item.chtac_chtno}`,
+      // const ddlData = (resp?.data || []).map((item) => ({
+      //   value_text: item.id,
+      //   label_text: `${item.chtac_ctype} > ${item.chtac_cname} #${item.chtac_chtno}`,
+      // }));
+      // setDjrnl_chtac_Options(ddlData);
+      const list = resp.data.map((item) => ({
+        ...item,
+        chtac_cname: item.party_count > 0 ? item.chtac_cname + " / " + item.party_count : item.chtac_cname,
       }));
-
-      setDjrnl_chtac_Options(ddlData);
+      const coaTree = buildCoaTree(list);
+      setDjrnl_chtac_Options(coaTree);
       showToastError(resp);
     } catch (error) {
     } finally {
@@ -431,10 +437,15 @@ const useJournal = () => {
       return;
     }
 
-    console.log("djrnl_party_Options", djrnl_party_Options);
-    const chtac_cname = djrnl_chtac_Options.find(
-      (item) => item.id === formDataItems.djrnl_chtac,
-    ).chtac_cname;
+    //console.log("djrnl_party_Options", djrnl_party_Options);
+
+    // const chtac_cname = djrnl_chtac_Options.find(
+    //   (item) => item.id === formDataItems.djrnl_chtac,
+    // ).chtac_cname;
+
+    const node = findCoaTree(djrnl_chtac_Options, formDataItems.djrnl_chtac);
+    const chtac_cname = `${node?.data?.chtac_chtno} - ${node?.data?.chtac_cname}`;
+
     const party_pname = djrnl_party_Options.find(
       (item) => item.value_text === formDataItems.djrnl_party,
     ).label_text;

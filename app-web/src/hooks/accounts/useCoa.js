@@ -5,6 +5,7 @@ import tmtb_chtac from "@/models/accounts/tmtb_chtac.json";
 const dataModel = generateDataModel(tmtb_chtac);
 import { coaAPI } from "@/api/accounts/coaAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
+import { buildCoaTree } from "@/utils/jsonParser.js";
 
 const useCoa = () => {
   //hooks :: menuId M05-M01-M001,
@@ -64,25 +65,26 @@ const useCoa = () => {
   }, [getPageAuth]);
 
   //functions
-  const loadAccountHeads = async () => {
+  const loadCoa = async () => {
     try {
       setIsBusy(true);
       const resp = await coaAPI.getAll({});
       //console.log("resp", resp);
-      setDataList(resp.data || []);
+      const list = resp.data || [];
+      setDataList(list);
       showToastError(resp);
 
-      //make this parent
-      const list = resp.data || [];
-      const parentOptions = list
-        .filter((item) => item.chtac_actve)
-        .filter((item) => !item.chtac_alpst)
-        .map((item) => ({
-          id: item.id,
-          chtac_cname: `${item.chtac_cname} (${item.chtac_chtno})`,
-        }));
-      parentOptions.push({ id: "-", chtac_cname: "(No Parent)" });
-      setChtac_chtac_Options(parentOptions);
+      // //make this parent
+      const listActive = list.filter((item) => item.chtac_actve);
+      setChtac_chtac_Options([
+        {
+          key: "-",
+          label: "(No Parent)",
+          data: null,
+          selectable: true,
+          children: buildCoaTree(listActive, "-", false),
+        },
+      ]);
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -135,7 +137,7 @@ const useCoa = () => {
       if (resp.success) {
         setCrTitle("COA List");
         setCrView("list");
-        loadAccountHeads();
+        loadCoa();
       }
     } catch (error) {
     } finally {
@@ -159,7 +161,7 @@ const useCoa = () => {
   const handleRefreshClick = () => {
     setCrTitle("COA List");
     setCrView("list");
-    loadAccountHeads();
+    loadCoa();
   };
 
   const handleAddNewClick = () => {
@@ -201,7 +203,7 @@ const useCoa = () => {
       if (resp.success) {
         setCrTitle("COA List");
         setCrView("list");
-        loadAccountHeads();
+        loadCoa();
       }
     } catch (error) {
     } finally {

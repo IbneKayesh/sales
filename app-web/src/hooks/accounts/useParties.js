@@ -7,6 +7,7 @@ import { partiesAPI } from "@/api/accounts/partiesAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 import { contactAPI } from "@/api/crm/contactAPI.js";
 import { coaAPI } from "@/api/accounts/coaAPI.js";
+import { buildCoaTree } from "@/utils/jsonParser.js";
 
 const useParties = () => {
   //hooks :: menuId M05-M01-M002,
@@ -246,16 +247,10 @@ const useParties = () => {
   const handleGetCoaPosting = async () => {
     try {
       setIsBusy(true);
-      const resp = await coaAPI.getCoaPosting();
-      //console.log("resp", resp.data);
-
-      const ddlData = (resp?.data || []).map((item) => ({
-        value_text: item.id,
-        label_text: `${item.chtac_ctype} > ${item.chtac_cname} #${item.chtac_chtno}`,
-      }));
-
-      //console.log("chtac_list", chtac_list);
-      setParty_chtac_Options(ddlData);
+      //const resp = await coaAPI.getCoaPosting();
+      const resp = await coaAPI.getAllActive();
+      const coaTree= buildCoaTree(resp.data);      
+      setParty_chtac_Options(coaTree);
       showToastError(resp);
     } catch (error) {
     } finally {

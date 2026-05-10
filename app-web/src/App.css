@@ -148,3 +148,15 @@ label {
   min-width: 2rem !important;
   height: 2rem !important;
 }
+
+.p-treeselect {
+  height: 25px;
+}
+.p-treeselect .p-treeselect-label.p-placeholder,
+.p-treeselect-label {
+  padding: 4px;
+  font-size: 11px;
+}
+.p-tree .p-tree-container .p-treenode .p-treenode-content{
+  padding: 0px;
+}

@@ -30,4 +30,8 @@ export const coaAPI = {
     apiRequest("/accounts/v1/coa/get-coa-posting", {
       body: data,
     }),
+  getWithPartyCount: (data) =>
+    apiRequest("/accounts/v1/coa/get-with-party-count", {
+      body: data,
+    }),
 };

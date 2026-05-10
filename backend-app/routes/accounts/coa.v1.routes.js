@@ -63,7 +63,7 @@ router.post("/get-all-active", async (req, res) => {
     FROM tmtb_chtac coa
     WHERE coa.chtac_apusr = $1
     AND coa.chtac_actve = TRUE
-    ORDER BY coa.chtac_cname ASC`;
+    ORDER BY coa.chtac_chtno ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get account coa- ${user_c}`);
@@ -353,5 +353,51 @@ router.post("/get-coa-posting", async (req, res) => {
     });
   }
 });
+
+// get-with-party-count
+router.post("/get-with-party-count", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT coa.id, coa.chtac_apusr, coa.chtac_bsins, coa.chtac_chtac, coa.chtac_ccode, coa.chtac_cname,
+    coa.chtac_ctype, coa.chtac_chtno, coa.chtac_child, coa.chtac_alpst, coa.chtac_level, coa.chtac_actve,
+    coa.chtac_crusr, coa.chtac_crdat, coa.chtac_upusr, coa.chtac_updat, coa.chtac_rvnmr, 0 as edit_stop
+    FROM tmtb_chtac coa
+    LEFT JOIN (
+      SELECT party_chtac, COUNT(*) AS party_count
+      FROM tmtb_party
+      GROUP BY party_chtac
+      ) pty ON coa.id = pty.party_chtac
+    WHERE coa.chtac_apusr = $1
+    AND coa.chtac_actve = TRUE
+    ORDER BY coa.chtac_chtno ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get account coa- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 
 module.exports = router;

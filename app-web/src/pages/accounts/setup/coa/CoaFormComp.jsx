@@ -1,6 +1,7 @@
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Checkbox } from "primereact/checkbox";
+import { TreeSelect } from "primereact/treeselect";
 import AuditFields from "@/components/AuditFields";
 import RequiredText from "@/components/RequiredText";
 
@@ -15,7 +16,7 @@ const CoaFormComp = ({
     <div className="grid">
       <div className="col-12 md:col-3">
         <label className="block font-bold mb-2 text-red-800">Parent</label>
-        <Dropdown
+        {/* <Dropdown
           name="chtac_chtac"
           value={formData.chtac_chtac}
           onChange={(e) => onChange("chtac_chtac", e.value)}
@@ -27,7 +28,19 @@ const CoaFormComp = ({
           placeholder={`Enter parent`}
           filter
           showClear
+        /> */}
+
+        <TreeSelect
+          value={formData.chtac_chtac}
+          options={chtac_chtac_Options}
+          onChange={(e) => onChange("chtac_chtac", e.value)}
+          placeholder="Select COA"
+          className={`w-full ${errors.chtac_chtac ? "p-invalid" : ""}`}
+          size={"small"}
+          filter
+          showClear
         />
+
         <RequiredText text={errors.chtac_chtac} />
       </div>
       <div className="col-12 md:col-5">

@@ -1,6 +1,7 @@
 import { InputText } from "primereact/inputtext";
 import RequiredText from "@/components/RequiredText";
 import { Dropdown } from "primereact/dropdown";
+import { TreeSelect } from "primereact/treeselect";
 import AuditFields from "@/components/AuditFields";
 
 const PartyFormComp = ({
@@ -11,21 +12,20 @@ const PartyFormComp = ({
   party_vndor_Options,
   party_chtac_Options,
 }) => {
+
+
   return (
     <div className="grid">
-      {/* {JSON.stringify(party_chtac_Options)} */}      
+      {/* {JSON.stringify(party_chtac_Options)} */}
       <div className="col-12 md:col-5">
         <label className="block font-bold mb-2 text-red-800">COA</label>
-        <Dropdown
-          name="party_chtac"
+        <TreeSelect
           value={formData.party_chtac}
-          onChange={(e) => onChange("party_chtac", e.value)}
           options={party_chtac_Options}
-          optionLabel="label_text"
-          optionValue="value_text"
+          onChange={(e) => onChange("party_chtac", e.value)}
+          placeholder="Select COA"
           className={`w-full ${errors.party_chtac ? "p-invalid" : ""}`}
           size={"small"}
-          placeholder={`Enter coa`}
           filter
           showClear
         />

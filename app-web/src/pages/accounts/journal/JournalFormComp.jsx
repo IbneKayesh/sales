@@ -4,6 +4,7 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Calendar } from "primereact/calendar";
+import { TreeSelect } from "primereact/treeselect";
 import RequiredText from "@/components/RequiredText";
 import AuditFields from "@/components/AuditFields";
 import EmptyState from "@/components/EmptyState";
@@ -227,23 +228,20 @@ const JournalFormComp = ({
           <div className="grid">
             <div className="col-12 md:col-4">
               <label className="block font-bold mb-2 text-red-800">COA</label>
-              <Dropdown
-                name="djrnl_chtac"
+              <TreeSelect
                 value={formDataItems.djrnl_chtac}
-                onChange={(e) => onChangeItems("djrnl_chtac", e.value)}
                 options={djrnl_chtac_Options}
-                optionLabel="label_text"
-                optionValue="value_text"
+                onChange={(e) => onChangeItems("djrnl_chtac", e.value)}
+                placeholder="Select COA"
                 className={`w-full ${errors.djrnl_chtac ? "p-invalid" : ""}`}
                 size={"small"}
-                placeholder={`Enter COA`}
                 filter
                 showClear
               />
               <RequiredText text={errors.djrnl_chtac} />
             </div>
             <div className="col-12 md:col-4">
-              <label className="block font-bold mb-2 text-red-800">Party</label>
+              <label className="block font-bold mb-2 text-red-800">Party Account</label>
               <Dropdown
                 name="djrnl_party"
                 value={formDataItems.djrnl_party}
