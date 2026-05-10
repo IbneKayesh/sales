@@ -89,6 +89,7 @@ const JournalPage = () => {
                 size="small"
                 severity="success"
                 onClick={handleSubmitClick}
+                disabled={formData.id}
               />
             )}
           </ButtonGroup>

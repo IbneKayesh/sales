@@ -17,7 +17,7 @@
     "maxLength": 50,
     "minLength": 1,
     "placeholder": "Enter currency",
-    "required": true
+    "required": false
   },
   "mjrnl_fsyar": {
     "type": "string",

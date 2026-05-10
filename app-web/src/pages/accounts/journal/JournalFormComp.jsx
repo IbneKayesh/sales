@@ -3,6 +3,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { Calendar } from "primereact/calendar";
 import RequiredText from "@/components/RequiredText";
 import AuditFields from "@/components/AuditFields";
 import EmptyState from "@/components/EmptyState";
@@ -32,6 +33,7 @@ const JournalFormComp = ({
           size="small"
           severity="danger"
           onClick={() => onRemoveItemsClick(rowData)}
+          disabled={formData.id}
         />
       </div>
     );
@@ -58,7 +60,7 @@ const JournalFormComp = ({
           />
           <RequiredText text={errors.mjrnl_dpart} />
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-2 hidden">
           <label className="block font-bold mb-2 text-red-800">Currency</label>
           <Dropdown
             name="mjrnl_crncy"
@@ -141,12 +143,20 @@ const JournalFormComp = ({
         </div>
         <div className="col-12 md:col-2">
           <label className="block font-bold mb-2 text-red-800">Trn Date</label>
-          <InputText
+          <Calendar
             name="mjrnl_trdat"
-            value={formData.mjrnl_trdat}
-            onChange={(e) => onChange("mjrnl_trdat", e.target.value)}
+            value={formData.mjrnl_trdat ? new Date(formData.mjrnl_trdat) : null}
+            onChange={(e) =>
+              onChange(
+                "mjrnl_trdat",
+                e.value ? e.value.toLocaleString().split("T")[0] : "",
+              )
+            }
             className={`w-full ${errors.mjrnl_trdat ? "p-invalid" : ""}`}
-            placeholder={`Enter trn date`}
+            dateFormat="yy-mm-dd"
+            placeholder={`Select trn date`}
+            disabled={formData.id}
+            variant={formData.id ? "filled" : ""}
           />
           <RequiredText text={errors.mjrnl_trdat} />
         </div>
@@ -222,8 +232,8 @@ const JournalFormComp = ({
                 value={formDataItems.djrnl_chtac}
                 onChange={(e) => onChangeItems("djrnl_chtac", e.value)}
                 options={djrnl_chtac_Options}
-                optionLabel="chtac_cname"
-                optionValue="id"
+                optionLabel="label_text"
+                optionValue="value_text"
                 className={`w-full ${errors.djrnl_chtac ? "p-invalid" : ""}`}
                 size={"small"}
                 placeholder={`Enter COA`}

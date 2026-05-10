@@ -13,9 +13,12 @@ const GenNewCode = async (user_c, tableName) => {
   const prefix = result.tcode_prfix || "ERR"; // fallback
   const length = result.tcode_prlen || 8;
 
-  // get count from table
-  const countSql = `SELECT COUNT(id) AS total FROM ${tableName}`;
-  const countResult = await dbGet(countSql, []);
+
+  const regColumn = tableName.split("_")[1];
+  // get count from table by main registered user
+  const countSql = `SELECT COUNT(id) AS total FROM ${tableName} WHERE ${regColumn}_apusr = $1 GROUP BY ${regColumn}_apusr`;
+  //console.log("countSql,"countSql)
+  const countResult = await dbGet(countSql, [user_c]);
   const count = Number(countResult.total) + 1;
 
   // pad sequence

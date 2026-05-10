@@ -376,7 +376,7 @@ router.post("/get-detail", async (req, res) => {
 
     //database action
     const sql = `select jrd.*,
-cht.chtac_cname, pty.party_pname, 0 as edit_stop
+cht.chtac_cname, pty.party_pname  || ' | ' ||  pty.party_ptype  || ' | ' ||  pty.party_pcode AS party_pname, 0 as edit_stop
 FROM tmtb_djrnl jrd
 LEFT JOIN tmtb_chtac cht ON jrd.djrnl_chtac = cht.id
 LEFT JOIN tmtb_party pty ON jrd.djrnl_party = pty.id

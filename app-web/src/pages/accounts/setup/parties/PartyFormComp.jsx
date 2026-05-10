@@ -13,7 +13,24 @@ const PartyFormComp = ({
 }) => {
   return (
     <div className="grid">
-      {/* {JSON.stringify(party_chtac_Options)} */}
+      {/* {JSON.stringify(party_chtac_Options)} */}      
+      <div className="col-12 md:col-5">
+        <label className="block font-bold mb-2 text-red-800">COA</label>
+        <Dropdown
+          name="party_chtac"
+          value={formData.party_chtac}
+          onChange={(e) => onChange("party_chtac", e.value)}
+          options={party_chtac_Options}
+          optionLabel="label_text"
+          optionValue="value_text"
+          className={`w-full ${errors.party_chtac ? "p-invalid" : ""}`}
+          size={"small"}
+          placeholder={`Enter coa`}
+          filter
+          showClear
+        />
+        <RequiredText text={errors.party_chtac} />
+      </div>
       <div className="col-12 md:col-2">
         <label className="block font-bold mb-2 text-red-800">Type</label>
         <Dropdown
@@ -48,7 +65,7 @@ const PartyFormComp = ({
         />
         <RequiredText text={errors.party_vndor} />
       </div>
-      <div className="col-12 md:col-5">
+      <div className="col-12 md:col-9">
         <label className="block font-bold mb-2 text-red-800">
           Account Name
         </label>
@@ -60,23 +77,6 @@ const PartyFormComp = ({
           placeholder={`Enter account name`}
         />
         <RequiredText text={errors.party_pname} />
-      </div>
-      <div className="col-12 md:col-9">
-        <label className="block font-bold mb-2 text-red-800">COA</label>
-        <Dropdown
-          name="party_chtac"
-          value={formData.party_chtac}
-          onChange={(e) => onChange("party_chtac", e.value)}
-          options={party_chtac_Options}
-          optionLabel="chtac_cname"
-          optionValue="id"
-          className={`w-full ${errors.party_chtac ? "p-invalid" : ""}`}
-          size={"small"}
-          placeholder={`Enter coa`}
-          filter
-          showClear
-        />
-        <RequiredText text={errors.party_chtac} />
       </div>
       <div className="col-12 md:col-3">
         <label className="block font-bold mb-2 text-red-800">
@@ -91,7 +91,6 @@ const PartyFormComp = ({
         />
         <RequiredText text={errors.party_opbal} />
       </div>
-
       {formData.id && (
         <AuditFields
           active={formData.party_actve}

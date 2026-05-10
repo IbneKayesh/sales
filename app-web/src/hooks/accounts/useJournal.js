@@ -42,24 +42,24 @@ const useJournal = () => {
       value: "Journal Voucher",
     },
     {
-      label: "Payment Voucher",
-      value: "Payment Voucher",
-    },
-    {
-      label: "Receipt Voucher",
-      value: "Receipt Voucher",
-    },
-    {
       label: "Contra Voucher",
       value: "Contra Voucher",
+    },
+    {
+      label: "Purchase Voucher",
+      value: "Purchase Voucher",
+    },
+    {
+      label: "Payment Voucher",
+      value: "Payment Voucher",
     },
     {
       label: "Sales Voucher",
       value: "Sales Voucher",
     },
     {
-      label: "Purchase Voucher",
-      value: "Purchase Voucher",
+      label: "Receipt Voucher",
+      value: "Receipt Voucher",
     },
     {
       label: "Adjustment Entry",
@@ -237,6 +237,7 @@ const useJournal = () => {
 
       const reqBody = {
         ...formData,
+        mjrnl_crncy: "BDT",
         tmtb_djrnl: dataListItems || [],
       };
 
@@ -275,25 +276,26 @@ const useJournal = () => {
   };
 
   const handleGetCurrency = async () => {
-    if (mjrnl_crncy_Options.length > 0) {
-      return;
-    }
-    try {
-      setIsBusy(true);
-      const resp = await shortdataAPI.getCurrency();
-      //console.log("getCurrency resp", resp);
-      setMjrnl_crncy_Options(resp.data);
-      showToastError(resp);
-      if (resp.data.length === 1) {
-        setFormData((prev) => ({
-          ...prev,
-          mjrnl_crncy: resp.data[0].value_text,
-        }));
-      }
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
+    // if (mjrnl_crncy_Options.length > 0) {
+    //   return;
+    // }
+    // try {
+    //   setIsBusy(true);
+    //   const resp = await shortdataAPI.getCurrency();
+    //   //console.log("getCurrency resp", resp);
+    //   setMjrnl_crncy_Options(resp.data);
+    //   showToastError(resp);
+    //   if (resp.data.length === 1) {
+    //     setFormData((prev) => ({
+    //       ...prev,
+    //       mjrnl_crncy: resp.data[0].value_text,
+    //     }));
+    //   }
+    // } catch (error) {
+    // } finally {
+    //   setIsBusy(false);
+    // }
+    return;
   };
 
   const handleGetFiscalYear = async () => {
@@ -347,7 +349,13 @@ const useJournal = () => {
       setIsBusy(true);
       const resp = await coaAPI.getCoaPosting();
       //console.log("resp1", resp);
-      setDjrnl_chtac_Options(resp.data);
+
+      const ddlData = (resp?.data || []).map((item) => ({
+        value_text: item.id,
+        label_text: `${item.chtac_ctype} > ${item.chtac_cname} #${item.chtac_chtno}`,
+      }));
+
+      setDjrnl_chtac_Options(ddlData);
       showToastError(resp);
     } catch (error) {
     } finally {
@@ -423,8 +431,21 @@ const useJournal = () => {
       return;
     }
 
+    console.log("djrnl_party_Options", djrnl_party_Options);
+    const chtac_cname = djrnl_chtac_Options.find(
+      (item) => item.id === formDataItems.djrnl_chtac,
+    ).chtac_cname;
+    const party_pname = djrnl_party_Options.find(
+      (item) => item.value_text === formDataItems.djrnl_party,
+    ).label_text;
+    const itemBody = {
+      ...formDataItems,
+      chtac_cname: chtac_cname,
+      party_pname: party_pname,
+    };
+
     // ✅ SAFE TO ADD
-    setDataListItems((prev) => [...prev, formDataItems]);
+    setDataListItems((prev) => [...prev, itemBody]);
     setFormDataItems(dataModelItem);
   };
 
@@ -499,7 +520,6 @@ export default useJournal;
 // Liability + Income + Capital
 
 // Apply formula:
-
 // Nature	Formula
 // ASSET	DR - CR
 // EXPENSE	DR - CR

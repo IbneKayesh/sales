@@ -30,6 +30,17 @@ const PartyListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
         <span className="text-gray-600 text-sm mt-1">
           {rowData.party_pcode}
         </span>
+        <span className="text-gray-600 text-sm mt-1">
+          {rowData.party_ptype}
+        </span>
+      </div>
+    );
+  };
+
+  const chtac_cname_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-sm">{rowData.chtac_ctype} / {rowData.chtac_cname}</span>
       </div>
     );
   };
@@ -104,13 +115,13 @@ const PartyListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
       header={dt_HT}
     >
       <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
-      <Column field="party_ptype" header="Type" sortable />
       <Column
         field="party_pname"
         header="Name"
         sortable
         body={party_pname_BT}
       />
+      <Column field="chtac_cname" header="COA" body={chtac_cname_BT} sortable />
       <Column field="party_opbal" header="Opening" sortable />
       <Column header={dataList?.length + " rows"} body={action_BT} />
     </DataTable>

@@ -61,6 +61,10 @@ const useParties = () => {
       label: "Investor",
       value: "Investor",
     },
+    {
+      label: "Inventory",
+      value: "Inventory",
+    },
   ];
 
   useEffect(() => {
@@ -221,7 +225,7 @@ const useParties = () => {
         //console.log("resp", resp);
         const ddlData = (resp?.data || []).map((item) => ({
           value_text: item.id,
-          label_text: item.cntct_cntnm,
+          label_text: `${item.cntct_ctype} > ${item.cntct_cntnm} #${item.cntct_ccode}`,
         }));
         setParty_vndor_Options(ddlData);
         //setParty_vndor_Options([newItem, ...resp.data]);
@@ -245,12 +249,13 @@ const useParties = () => {
       const resp = await coaAPI.getCoaPosting();
       //console.log("resp", resp.data);
 
-      const chtac_list = resp.data.map((item) => ({
-        id: item.id,
-        chtac_cname: `${item.chtac_ctype} > ${item.chtac_cname} #${item.chtac_chtno}`,
+      const ddlData = (resp?.data || []).map((item) => ({
+        value_text: item.id,
+        label_text: `${item.chtac_ctype} > ${item.chtac_cname} #${item.chtac_chtno}`,
       }));
+
       //console.log("chtac_list", chtac_list);
-      setParty_chtac_Options(chtac_list);
+      setParty_chtac_Options(ddlData);
       showToastError(resp);
     } catch (error) {
     } finally {
