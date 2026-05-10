@@ -9,13 +9,11 @@ const PartyFormComp = ({
   onChange,
   party_ptype_Options,
   party_vndor_Options,
-  party_chtrc_Options,
-  party_chtpy_Options,
-  party_chtad_Options,
+  party_chtac_Options,
 }) => {
   return (
     <div className="grid">
-      {/* {JSON.stringify(party_chtrc_Options)} */}
+      {/* {JSON.stringify(party_chtac_Options)} */}
       <div className="col-12 md:col-2">
         <label className="block font-bold mb-2 text-red-800">Type</label>
         <Dropdown
@@ -33,15 +31,15 @@ const PartyFormComp = ({
         />
         <RequiredText text={errors.party_ptype} />
       </div>
-      <div className="col-12 md:col-3">
+      <div className="col-12 md:col-5">
         <label className="block font-bold mb-2 text-red-800">Vendor</label>
         <Dropdown
           name="party_vndor"
           value={formData.party_vndor}
           onChange={(e) => onChange("party_vndor", e.value)}
           options={party_vndor_Options}
-          optionLabel="cntct_cntnm"
-          optionValue="id"
+          optionLabel="label_text"
+          optionValue="value_text"
           className={`w-full ${errors.party_vndor ? "p-invalid" : ""}`}
           size={"small"}
           placeholder={`Enter vendor`}
@@ -50,7 +48,7 @@ const PartyFormComp = ({
         />
         <RequiredText text={errors.party_vndor} />
       </div>
-      <div className="col-12 md:col-7">
+      <div className="col-12 md:col-5">
         <label className="block font-bold mb-2 text-red-800">
           Account Name
         </label>
@@ -60,60 +58,25 @@ const PartyFormComp = ({
           onChange={(e) => onChange("party_pname", e.target.value)}
           className={`w-full ${errors.party_pname ? "p-invalid" : ""}`}
           placeholder={`Enter account name`}
-          disabled={true}
         />
         <RequiredText text={errors.party_pname} />
       </div>
-      <div className="col-12 md:col-3">
-        <label className="block font-bold mb-2 text-red-800">Receivable</label>
+      <div className="col-12 md:col-9">
+        <label className="block font-bold mb-2 text-red-800">COA</label>
         <Dropdown
-          name="party_chtrc"
-          value={formData.party_chtrc}
-          onChange={(e) => onChange("party_chtrc", e.value)}
-          options={party_chtrc_Options}
+          name="party_chtac"
+          value={formData.party_chtac}
+          onChange={(e) => onChange("party_chtac", e.value)}
+          options={party_chtac_Options}
           optionLabel="chtac_cname"
           optionValue="id"
-          className={`w-full ${errors.party_chtrc ? "p-invalid" : ""}`}
+          className={`w-full ${errors.party_chtac ? "p-invalid" : ""}`}
           size={"small"}
-          placeholder={`Enter receivable`}
+          placeholder={`Enter coa`}
           filter
           showClear
         />
-        <RequiredText text={errors.party_chtrc} />
-      </div>
-      <div className="col-12 md:col-3">
-        <label className="block font-bold mb-2 text-red-800">Payable</label>
-        <Dropdown
-          name="party_chtpy"
-          value={formData.party_chtpy}
-          onChange={(e) => onChange("party_chtpy", e.value)}
-          options={party_chtpy_Options}
-          optionLabel="chtac_cname"
-          optionValue="id"
-          className={`w-full ${errors.party_chtpy ? "p-invalid" : ""}`}
-          size={"small"}
-          placeholder={`Enter payable`}
-          filter
-          showClear
-        />
-        <RequiredText text={errors.party_chtpy} />
-      </div>
-      <div className="col-12 md:col-3">
-        <label className="block font-bold mb-2 text-red-800">Advance</label>
-        <Dropdown
-          name="party_chtad"
-          value={formData.party_chtad}
-          onChange={(e) => onChange("party_chtad", e.value)}
-          options={party_chtad_Options}
-          optionLabel="chtac_cname"
-          optionValue="id"
-          className={`w-full ${errors.party_chtad ? "p-invalid" : ""}`}
-          size={"small"}
-          placeholder={`Enter advance`}
-          filter
-          showClear
-        />
-        <RequiredText text={errors.party_chtad} />
+        <RequiredText text={errors.party_chtac} />
       </div>
       <div className="col-12 md:col-3">
         <label className="block font-bold mb-2 text-red-800">

@@ -17,9 +17,7 @@ const PartiesPage = () => {
     //other states
     party_ptype_Options,
     party_vndor_Options,
-    party_chtrc_Options,
-    party_chtpy_Options,
-    party_chtad_Options,
+    party_chtac_Options,
     //functions
     handleChange,
     handleEdit,
@@ -106,9 +104,7 @@ const PartiesPage = () => {
           onChange={handleChange}
           party_ptype_Options={party_ptype_Options}
           party_vndor_Options={party_vndor_Options}
-          party_chtrc_Options={party_chtrc_Options}
-          party_chtpy_Options={party_chtpy_Options}
-          party_chtad_Options={party_chtad_Options}
+          party_chtac_Options={party_chtac_Options}
         />
       )}
     </Card>

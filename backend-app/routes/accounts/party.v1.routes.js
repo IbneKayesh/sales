@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
     LEFT JOIN tmnb_users csr ON prty.party_crusr = csr.id
     LEFT JOIN tmnb_users usr ON prty.party_upusr = usr.id
     WHERE prty.party_apusr = $1
-    ORDER BY prty.party_chtrc ASC`;
+    ORDER BY prty.party_chtac ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get party accounts- ${user_c}`);
@@ -63,7 +63,7 @@ router.post("/get-all-active", async (req, res) => {
     FROM tmtb_party prty
     WHERE prty.party_apusr = $1
     AND prty.party_actve = TRUE
-    ORDER BY prty.party_chtrc ASC`;
+    ORDER BY prty.party_chtac ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get party accounts- ${user_c}`);
@@ -92,9 +92,7 @@ const create = async (req, res) => {
       party_vndor,
       party_pcode,
       party_pname,
-      party_chtrc,
-      party_chtpy,
-      party_chtad,
+      party_chtac,
       party_opbal,
       user_s,
       user_c,
@@ -106,9 +104,7 @@ const create = async (req, res) => {
       !party_ptype ||
       !party_vndor ||
       !party_pname ||
-      !party_chtrc ||
-      !party_chtpy ||
-      !party_chtad ||
+      !party_chtac ||
       !user_s ||
       !user_c ||
       !user_b
@@ -124,9 +120,9 @@ const create = async (req, res) => {
     const newCode = await GenNewCode(user_c, "tmtb_party");
 
     const sql = `INSERT INTO tmtb_party(id, party_apusr, party_bsins, party_ptype, party_vndor, party_pcode,
-    party_pname, party_chtrc, party_chtpy, party_chtad, party_opbal, party_crusr, party_upusr)
+    party_pname, party_chtac, party_opbal, party_crusr, party_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12, $13)`;
+    $7, $8, $9, $10, $11)`;
     const params = [
       uuidv4(),
       user_c,
@@ -135,9 +131,7 @@ const create = async (req, res) => {
       party_vndor,
       newCode,
       party_pname,
-      party_chtrc,
-      party_chtpy,
-      party_chtad,
+      party_chtac,
       party_opbal,
       user_s,
       user_s,
@@ -171,9 +165,7 @@ const update = async (req, res) => {
       party_vndor,
       party_pcode,
       party_pname,
-      party_chtrc,
-      party_chtpy,
-      party_chtad,
+      party_chtac,
       party_opbal,
       user_s,
       user_c,
@@ -185,9 +177,7 @@ const update = async (req, res) => {
       !party_ptype ||
       !party_vndor ||
       !party_pname ||
-      !party_chtrc ||
-      !party_chtpy ||
-      !party_chtad ||
+      !party_chtac ||
       !user_s ||
       !user_c ||
       !user_b
@@ -204,21 +194,17 @@ const update = async (req, res) => {
     SET party_ptype = $1,
     party_vndor = $2,
     party_pname = $3,
-    party_chtrc = $4,
-    party_chtpy = $5,
-    party_chtad = $6,
-    party_opbal = $7,
-    party_upusr = $8,
+    party_chtac = $4,
+    party_opbal = $5,
+    party_upusr = $6,
     party_updat = CURRENT_TIMESTAMP,
     party_rvnmr = party_rvnmr + 1
-    WHERE id = $9`;
+    WHERE id = $7`;
     const params = [
       party_ptype,
       party_vndor,
       party_pname,
-      party_chtrc,
-      party_chtpy,
-      party_chtad,
+      party_chtac,
       party_opbal,
       user_s,
       id,
@@ -291,6 +277,45 @@ router.post("/delete", async (req, res) => {
       success: false,
       message: error.message || "An error occurred during db action",
       data: {},
+    });
+  }
+});
+
+// get-by-coa
+router.post("/get-by-coa", async (req, res) => {
+  try {
+    const { party_chtac, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!party_chtac || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT prty.*, 0 as edit_stop
+    FROM tmtb_party prty
+    WHERE prty.party_apusr = $1
+    AND prty.party_actve = TRUE
+    AND prty.party_chtac = $2
+    ORDER BY prty.party_chtac ASC`;
+
+    const params = [user_c, party_chtac];
+    const rows = await dbGetAll(sql, params, `get party accounts- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
     });
   }
 });

@@ -102,10 +102,13 @@ const create = async (req, res) => {
       mjrnl_stats,
       mjrnl_appid,
       mjrnl_apdat,
+      tmtb_djrnl,
       user_s,
       user_c,
       user_b,
     } = req.body;
+
+    console.log(" req.body;", req.body);
 
     // Validate input
     if (
@@ -117,6 +120,8 @@ const create = async (req, res) => {
       !mjrnl_trdat ||
       !mjrnl_narrt ||
       !mjrnl_stats ||
+      !tmtb_djrnl ||
+      tmtb_djrnl.length === 0 ||
       !user_s ||
       !user_c ||
       !user_b
@@ -138,37 +143,72 @@ const create = async (req, res) => {
       mjrnl_dpart,
     );
 
-    const sql = `INSERT INTO tmtb_mjrnl(id, mjrnl_apusr, mjrnl_bsins, mjrnl_dpart, mjrnl_crncy, mjrnl_fsyar,
+    //build scripts
+    const masterId = uuidv4();
+    const scripts = [];
+
+    scripts.push({
+      sql: `INSERT INTO tmtb_mjrnl(id, mjrnl_apusr, mjrnl_bsins, mjrnl_dpart, mjrnl_crncy, mjrnl_fsyar,
     mjrnl_acprd, mjrnl_trtyp, mjrnl_trnno, mjrnl_trdat, mjrnl_refno, mjrnl_narrt,
     mjrnl_drval, mjrnl_crval, mjrnl_stats, mjrnl_appid, mjrnl_apdat, mjrnl_crusr, mjrnl_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
     $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17, $18, $19)`;
-    const params = [
-      uuidv4(),
-      user_c,
-      user_b,
-      mjrnl_dpart,
-      mjrnl_crncy,
-      mjrnl_fsyar,
-      mjrnl_acprd,
-      mjrnl_trtyp,
-      newTrn,
-      mjrnl_trdat,
-      mjrnl_refno,
-      mjrnl_narrt,
-      mjrnl_drval,
-      mjrnl_crval,
-      mjrnl_stats,
-      mjrnl_appid,
-      mjrnl_apdat,
-      user_s,
-      user_s,
-    ];
+    $13, $14, $15, $16, $17, $18, $19)`,
+      params: [
+        masterId,
+        user_c,
+        user_b,
+        mjrnl_dpart,
+        mjrnl_crncy,
+        mjrnl_fsyar,
+        mjrnl_acprd,
+        mjrnl_trtyp,
+        newTrn,
+        mjrnl_trdat,
+        mjrnl_refno,
+        mjrnl_narrt,
+        mjrnl_drval,
+        mjrnl_crval,
+        mjrnl_stats,
+        mjrnl_appid,
+        mjrnl_apdat,
+        user_s,
+        user_s,
+      ],
+      label: `create journal- ${user_c}`,
+    });
 
+    for (const det of tmtb_djrnl) {
+      scripts.push({
+        sql: `INSERT INTO tmtb_djrnl(id, djrnl_apusr, djrnl_bsins, djrnl_dpart, djrnl_mjrnl, djrnl_chtac,
+        djrnl_party, djrnl_drval, djrnl_crval, djrnl_descr, djrnl_rftyp, djrnl_refid,
+        djrnl_lneno, djrnl_crusr, djrnl_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          mjrnl_dpart,
+          masterId,
+          det.djrnl_chtac,
+          det.djrnl_party,
+          det.djrnl_drval,
+          det.djrnl_crval,
+          det.djrnl_descr || "",
+          det.djrnl_rftyp || "",
+          det.djrnl_refid || "",
+          det.djrnl_lneno,
+          user_s,
+          user_s,
+        ],
+        label: `Created jouranl detail ${newTrn}`,
+      });
+    }
     //console.log("params", params);
 
-    await dbRun(sql, params, `create journal- ${user_c}`);
+    await dbRunAll(scripts);
     res.json({
       success: true,
       message: `${newTrn} - Created successfully.`,
@@ -229,7 +269,6 @@ const update = async (req, res) => {
         data: {},
       });
     }
-
 
     //database action
     const sql = `UPDATE tmtb_mjrnl
@@ -321,13 +360,13 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-// get-coa-posting
-router.post("/get-coa-posting", async (req, res) => {
+// get-detail
+router.post("/get-detail", async (req, res) => {
   try {
-    const { user_s, user_c, user_b } = req.body;
+    const { djrnl_mjrnl, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!user_c) {
+    if (!djrnl_mjrnl || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -336,15 +375,20 @@ router.post("/get-coa-posting", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT cht.*, 0 as edit_stop
-    FROM tmtb_mjrnl cht
-    WHERE cht.mjrnl_trdat = TRUE
-    AND cht.chtac_actve = TRUE
-    AND cht.mjrnl_apusr = $1
-    ORDER BY cht.mjrnl_acprd ASC, cht.mjrnl_dpart ASC, cht.mjrnl_trtyp ASC`;
+    const sql = `select jrd.*,
+cht.chtac_cname, pty.party_pname, 0 as edit_stop
+FROM tmtb_djrnl jrd
+LEFT JOIN tmtb_chtac cht ON jrd.djrnl_chtac = cht.id
+LEFT JOIN tmtb_party pty ON jrd.djrnl_party = pty.id
+WHERE jrd.djrnl_mjrnl = $1
+ORDER BY jrd.djrnl_lneno ASC`;
 
-    const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get account coa- ${user_c}`);
+    const params = [djrnl_mjrnl];
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get detail journal- ${djrnl_mjrnl}`,
+    );
     res.json({
       success: true,
       message: "Query executed successfully.",

@@ -12,9 +12,7 @@ CREATE TABLE tmtb_party (
   party_vndor varchar(50) NOT NULL,
   party_pcode varchar(50) NOT NULL,
   party_pname varchar(50) NOT NULL,
-  party_chtrc varchar(50) NOT NULL,
-  party_chtpy varchar(50) NOT NULL,
-  party_chtad varchar(50) NOT NULL,
+  party_chtac varchar(50) NOT NULL,
   party_opbal decimal(18,6) NOT NULL DEFAULT 0,
   
   -- default

@@ -1,8 +1,11 @@
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 import RequiredText from "@/components/RequiredText";
 import AuditFields from "@/components/AuditFields";
+import EmptyState from "@/components/EmptyState";
 
 const JournalFormComp = ({
   formData,
@@ -13,10 +16,27 @@ const JournalFormComp = ({
   mjrnl_fsyar_Options,
   mjrnl_acprd_Options,
   mjrnl_trtyp_Options,
+  djrnl_chtac_Options,
+  djrnl_party_Options,
   onChangeItems,
   onAddToListClick,
   formDataItems,
+  dataListItems,
+  onRemoveItemsClick,
 }) => {
+  const action_BT = (rowData) => {
+    return (
+      <div className="flex gap-2">
+        <Button
+          icon="pi pi-trash"
+          size="small"
+          severity="danger"
+          onClick={() => onRemoveItemsClick(rowData)}
+        />
+      </div>
+    );
+  };
+
   return (
     <>
       <div className="grid">
@@ -192,90 +212,122 @@ const JournalFormComp = ({
           <RequiredText text={errors.mjrnl_stats} />
         </div>
       </div>
-      {!formData.id && (
-        <div className="grid">
-          <div className="col-12 md:col-2">
-            <label className="block font-bold mb-2 text-red-800">COA</label>
-            <Dropdown
-              name="djrnl_chtac"
-              value={formData.djrnl_chtac}
-              onChange={(e) => onChangeItems("djrnl_chtac", e.value)}
-              options={mjrnl_dpart_Options}
-              optionLabel="dpart_dname"
-              optionValue="id"
-              className={`w-full ${errors.djrnl_chtac ? "p-invalid" : ""}`}
-              size={"small"}
-              placeholder={`Enter COA`}
-              filter
-              showClear
-            />
-            <RequiredText text={errors.djrnl_chtac} />
+      <div className="p-card p-3 mt-3">
+        {!formData.id && (
+          <div className="grid">
+            <div className="col-12 md:col-4">
+              <label className="block font-bold mb-2 text-red-800">COA</label>
+              <Dropdown
+                name="djrnl_chtac"
+                value={formDataItems.djrnl_chtac}
+                onChange={(e) => onChangeItems("djrnl_chtac", e.value)}
+                options={djrnl_chtac_Options}
+                optionLabel="chtac_cname"
+                optionValue="id"
+                className={`w-full ${errors.djrnl_chtac ? "p-invalid" : ""}`}
+                size={"small"}
+                placeholder={`Enter COA`}
+                filter
+                showClear
+              />
+              <RequiredText text={errors.djrnl_chtac} />
+            </div>
+            <div className="col-12 md:col-4">
+              <label className="block font-bold mb-2 text-red-800">Party</label>
+              <Dropdown
+                name="djrnl_party"
+                value={formDataItems.djrnl_party}
+                onChange={(e) => onChangeItems("djrnl_party", e.value)}
+                options={djrnl_party_Options}
+                optionLabel="label_text"
+                optionValue="value_text"
+                className={`w-full ${errors.djrnl_party ? "p-invalid" : ""}`}
+                size={"small"}
+                placeholder={`Enter party`}
+                filter
+                showClear
+              />
+              <RequiredText text={errors.djrnl_party} />
+            </div>
+            <div className="col-12 md:col-2">
+              <label className="block font-bold mb-2 text-red-800">Debit</label>
+              <InputText
+                name="djrnl_drval"
+                value={formDataItems.djrnl_drval}
+                onChange={(e) => onChangeItems("djrnl_drval", e.target.value)}
+                className={`w-full ${errors.djrnl_drval ? "p-invalid" : ""}`}
+                placeholder={`Enter debit`}
+              />
+              <RequiredText text={errors.djrnl_drval} />
+            </div>
+            <div className="col-12 md:col-2">
+              <label className="block font-bold mb-2 text-red-800">
+                Credit
+              </label>
+              <InputText
+                name="djrnl_crval"
+                value={formDataItems.djrnl_crval}
+                onChange={(e) => onChangeItems("djrnl_crval", e.target.value)}
+                className={`w-full ${errors.djrnl_crval ? "p-invalid" : ""}`}
+                placeholder={`Enter credit`}
+              />
+              <RequiredText text={errors.djrnl_crval} />
+            </div>
+            <div className="col-12 md:col-10">
+              <label className="block font-bold mb-2 text-red-800">
+                Description
+              </label>
+              <InputText
+                name="djrnl_descr"
+                value={formDataItems.djrnl_descr}
+                onChange={(e) => onChangeItems("djrnl_descr", e.target.value)}
+                className={`w-full ${errors.djrnl_descr ? "p-invalid" : ""}`}
+                placeholder={`Enter description`}
+              />
+              <RequiredText text={errors.djrnl_descr} />
+            </div>
+            <div className="col-12 md:col-2">
+              <Button
+                label="Add to List"
+                icon="pi pi-plus"
+                size="small"
+                severity="secondary"
+                className="mt-4"
+                onClick={() => onAddToListClick()}
+              />
+            </div>
           </div>
-          <div className="col-12 md:col-2">
-            <label className="block font-bold mb-2 text-red-800">Party</label>
-            <Dropdown
-              name="djrnl_party"
-              value={formData.djrnl_party}
-              onChange={(e) => onChangeItems("djrnl_party", e.value)}
-              options={mjrnl_dpart_Options}
-              optionLabel="dpart_dname"
-              optionValue="id"
-              className={`w-full ${errors.djrnl_party ? "p-invalid" : ""}`}
-              size={"small"}
-              placeholder={`Enter party`}
-              filter
-              showClear
-            />
-            <RequiredText text={errors.djrnl_party} />
+        )}
+        <div className="grid mt-3">
+          <div className="col-12">
+            {dataListItems.length > 0 ? (
+              <DataTable
+                value={dataListItems}
+                emptyMessage="No data found."
+                size="small"
+                rowHover
+                showGridlines
+              >
+                <Column
+                  header="Sl"
+                  body={(rowData, options) => options.rowIndex + 1}
+                />
+                <Column field="chtac_cname" header="COA" />
+                <Column field="party_pname" header="Party" />
+                <Column field="djrnl_drval" header="Debit" />
+                <Column field="djrnl_crval" header="Credit" />
+                <Column field="djrnl_descr" header="Description" />
+                <Column
+                  header={dataListItems?.length + " rows"}
+                  body={action_BT}
+                />
+              </DataTable>
+            ) : (
+              <EmptyState stateMessage={"No journal entries added yet!"} />
+            )}
           </div>
-          <div className="col-12 md:col-2">
-            <label className="block font-bold mb-2 text-red-800">Debit</label>
-            <InputText
-              name="djrnl_drval"
-              value={formData.djrnl_drval}
-              onChange={(e) => onChangeItems("djrnl_drval", e.target.value)}
-              className={`w-full ${errors.djrnl_drval ? "p-invalid" : ""}`}
-              placeholder={`Enter debit`}
-            />
-            <RequiredText text={errors.djrnl_drval} />
-          </div>
-          <div className="col-12 md:col-2">
-            <label className="block font-bold mb-2 text-red-800">Credit</label>
-            <InputText
-              name="djrnl_crval"
-              value={formData.djrnl_crval}
-              onChange={(e) => onChangeItems("djrnl_crval", e.target.value)}
-              className={`w-full ${errors.djrnl_crval ? "p-invalid" : ""}`}
-              placeholder={`Enter credit`}
-            />
-            <RequiredText text={errors.djrnl_crval} />
-          </div>
-          <div className="col-12 md:col-2">
-            <label className="block font-bold mb-2 text-red-800">
-              Description
-            </label>
-            <InputText
-              name="djrnl_descr"
-              value={formData.djrnl_descr}
-              onChange={(e) => onChangeItems("djrnl_descr", e.target.value)}
-              className={`w-full ${errors.djrnl_descr ? "p-invalid" : ""}`}
-              placeholder={`Enter description`}
-            />
-            <RequiredText text={errors.djrnl_descr} />
-          </div>
-          <div className="col-12 md:col-2">
-            <Button
-              label="Add to List"
-              icon="pi pi-plus"
-              size="small"
-              severity="secondary"
-              className="mt-4"
-              onClick={() => onAddToListClick()}
-            />
-          </div>
-          {JSON.stringify(formDataItems)}
         </div>
-      )}
+      </div>
 
       <div className="grid mt-2">
         {formData.id && (

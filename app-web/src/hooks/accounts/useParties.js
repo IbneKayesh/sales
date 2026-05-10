@@ -26,9 +26,7 @@ const useParties = () => {
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
   const [party_vndor_Options, setParty_vndor_Options] = useState([]);
-  const [party_chtrc_Options, setParty_chtrc_Options] = useState([]);
-  const [party_chtpy_Options, setParty_chtpy_Options] = useState([]);
-  const [party_chtad_Options, setParty_chtad_Options] = useState([]);
+  const [party_chtac_Options, setParty_chtac_Options] = useState([]);
 
   const party_ptype_Options = [
     {
@@ -40,8 +38,28 @@ const useParties = () => {
       value: "Employee",
     },
     {
+      label: "Cash",
+      value: "Cash",
+    },
+    {
       label: "Bank",
       value: "Bank",
+    },
+    {
+      label: "Income",
+      value: "Income",
+    },
+    {
+      label: "Expense",
+      value: "Expense",
+    },
+    {
+      label: "Loan",
+      value: "Loan",
+    },
+    {
+      label: "Investor",
+      value: "Investor",
     },
   ];
 
@@ -70,15 +88,13 @@ const useParties = () => {
     setErrors(newErrors);
 
     if (field === "party_ptype") {
-      //reset for any type
-      setParty_vndor_Options([]);
       setFormData((prev) => ({ ...prev, party_pname: "" }));
-      if (value === "Vendor") {
-        handleGetContacts();
-      }
+      handleGetVendorOptions(value);
     }
     if (field === "party_vndor") {
-      const party_pname = party_vndor_Options.find((f) => f.id == value).cntct_cntnm;
+      const party_pname = party_vndor_Options.find(
+        (f) => f.value_text == value,
+      ).label_text;
       setFormData((prev) => ({ ...prev, party_pname: party_pname }));
     }
   };
@@ -193,13 +209,30 @@ const useParties = () => {
 
   //other functions
 
-  const handleGetContacts = async () => {
+  const handleGetVendorOptions = async (ptype) => {
+    //reset for any type
+    setParty_vndor_Options([]);
+
     try {
       setIsBusy(true);
-      const resp = await contactAPI.getAvailContactAccounts();
-      //console.log("resp", resp);
-      setParty_vndor_Options(resp.data);
-      showToastError(resp);
+
+      if (ptype === "Vendor") {
+        const resp = await contactAPI.getAvailContactAccounts();
+        //console.log("resp", resp);
+        const ddlData = (resp?.data || []).map((item) => ({
+          value_text: item.id,
+          label_text: item.cntct_cntnm,
+        }));
+        setParty_vndor_Options(ddlData);
+        //setParty_vndor_Options([newItem, ...resp.data]);
+        showToastError(resp);
+      } else {
+        const newItem = {
+          value_text: "-",
+          label_text: "(new)",
+        };
+        setParty_vndor_Options([newItem]);
+      }
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -212,15 +245,12 @@ const useParties = () => {
       const resp = await coaAPI.getCoaPosting();
       //console.log("resp", resp.data);
 
-      const chtac_list = resp.data
-      .map((item) => ({
+      const chtac_list = resp.data.map((item) => ({
         id: item.id,
         chtac_cname: `${item.chtac_ctype} > ${item.chtac_cname} #${item.chtac_chtno}`,
       }));
       //console.log("chtac_list", chtac_list);
-      setParty_chtrc_Options(chtac_list);
-      setParty_chtpy_Options(chtac_list);
-      setParty_chtad_Options(chtac_list);
+      setParty_chtac_Options(chtac_list);
       showToastError(resp);
     } catch (error) {
     } finally {
@@ -239,9 +269,7 @@ const useParties = () => {
     //other states
     party_ptype_Options,
     party_vndor_Options,
-    party_chtrc_Options,
-    party_chtpy_Options,
-    party_chtad_Options,
+    party_chtac_Options,
     //functions
     handleChange,
     handleEdit,

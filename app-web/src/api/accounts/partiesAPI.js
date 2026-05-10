@@ -26,4 +26,8 @@ export const partiesAPI = {
     apiRequest("/accounts/v1/party/get-all-active", {
       body: data,
     }),
+  getByCoa: (data) =>
+    apiRequest("/accounts/v1/party/get-by-coa", {
+      body: data,
+    }),
 };

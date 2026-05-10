@@ -2,12 +2,16 @@ import { useState, useEffect } from "react";
 import { useAppUI } from "@/hooks/useAppUI";
 import validate, { generateDataModel } from "@/models/validator";
 import tmtb_mjrnl from "@/models/accounts/tmtb_mjrnl.json";
+import tmtb_djrnl from "@/models/accounts/tmtb_djrnl.json";
 const dataModel = generateDataModel(tmtb_mjrnl);
+const dataModelItem = generateDataModel(tmtb_djrnl);
 import { journalAPI } from "@/api/accounts/journalAPI.js";
 import { shortdataAPI } from "@/api/settings/shortdataAPI.js";
 import { departmentsAPI } from "@/api/settings/departmentsAPI.js";
 import { fiscalYearAPI } from "@/api/accounts/fiscalYearAPI.js";
 import { acPeriodAPI } from "@/api/accounts/acPeriodAPI.js";
+import { coaAPI } from "@/api/accounts/coaAPI.js";
+import { partiesAPI } from "@/api/accounts/partiesAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
 const useJournal = () => {
@@ -46,8 +50,16 @@ const useJournal = () => {
       value: "Receipt Voucher",
     },
     {
-      label: "Contra Entry",
-      value: "Contra Entry",
+      label: "Contra Voucher",
+      value: "Contra Voucher",
+    },
+    {
+      label: "Sales Voucher",
+      value: "Sales Voucher",
+    },
+    {
+      label: "Purchase Voucher",
+      value: "Purchase Voucher",
     },
     {
       label: "Adjustment Entry",
@@ -56,13 +68,32 @@ const useJournal = () => {
   ];
 
   //other states items
-  const [formDataItems, setFormDataItems] = useState({});
+  const [djrnl_chtac_Options, setDjrnl_chtac_Options] = useState([]);
+  const [djrnl_party_Options, setDjrnl_party_Options] = useState([]);
+  const [formDataItems, setFormDataItems] = useState(dataModelItem);
   const [dataListItems, setDataListItems] = useState([]);
 
   useEffect(() => {
     const perms = getPageAuth("M05-M02");
     setPageAuth(perms);
   }, [getPageAuth]);
+
+  useEffect(() => {
+    const totalDr = dataListItems.reduce(
+      (acc, curr) => acc + Number(curr.djrnl_drval || 0),
+      0,
+    );
+    const totalCr = dataListItems.reduce(
+      (acc, curr) => acc + Number(curr.djrnl_crval || 0),
+      0,
+    );
+
+    setFormData((prev) => ({
+      ...prev,
+      mjrnl_drval: Number(totalDr).toFixed(2),
+      mjrnl_crval: Number(totalCr).toFixed(2),
+    }));
+  }, [dataListItems]);
 
   //functions
   const loadJournal = async () => {
@@ -72,18 +103,6 @@ const useJournal = () => {
       //console.log("resp", resp);
       setDataList(resp.data || []);
       showToastError(resp);
-
-      //make this parent
-      const list = resp.data || [];
-      const parentOptions = list
-        .filter((item) => item.chtac_actve)
-        .filter((item) => !item.chtac_alpst)
-        .map((item) => ({
-          id: item.id,
-          chtac_cname: `${item.chtac_cname} (${item.chtac_chtno})`,
-        }));
-      parentOptions.push({ id: "-", chtac_cname: "(No Parent)" });
-      setChtac_chtac_Options(parentOptions);
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -108,6 +127,7 @@ const useJournal = () => {
     setFormData(rowData);
     setCrTitle("Edit Journal");
     setCrView("form");
+    handleGetDetail(rowData.id);
   };
 
   const handleDelete = (rowData) => {
@@ -179,7 +199,9 @@ const useJournal = () => {
     handleGetDepartment();
     handleGetCurrency();
     handleGetFiscalYear();
-    //handleGetAccountPeriod();
+    handleGetCOA();
+    setFormDataItems(dataModelItem);
+    setDataListItems([]);
   };
 
   const handleSubmitClick = async () => {
@@ -190,11 +212,35 @@ const useJournal = () => {
       if (Object.keys(newErrors).length > 0) {
         return;
       }
+      //console.log("newErrors", newErrors);
 
       setIsBusy(true);
 
-      //console.log("newErrors", newErrors);
-      const resp = await journalAPI.upsert(formData);
+      if (dataListItems.length === 0) {
+        showToast("error", "Error", "No items added");
+        return;
+      }
+
+      const totalDr = dataListItems.reduce(
+        (acc, curr) => acc + Number(curr.djrnl_drval || 0),
+        0,
+      );
+      const totalCr = dataListItems.reduce(
+        (acc, curr) => acc + Number(curr.djrnl_crval || 0),
+        0,
+      );
+
+      if (Number(totalDr).toFixed(2) !== Number(totalCr).toFixed(2)) {
+        showToast("error", "Error", "Debit and Credit amounts must be equal");
+        return;
+      }
+
+      const reqBody = {
+        ...formData,
+        tmtb_djrnl: dataListItems || [],
+      };
+
+      const resp = await journalAPI.upsert(reqBody);
       alert({
         message: resp.message,
         header: formData.id ? "Updated" : "Saved",
@@ -235,9 +281,15 @@ const useJournal = () => {
     try {
       setIsBusy(true);
       const resp = await shortdataAPI.getCurrency();
-      //console.log("resp", resp);
+      //console.log("getCurrency resp", resp);
       setMjrnl_crncy_Options(resp.data);
       showToastError(resp);
+      if (resp.data.length === 1) {
+        setFormData((prev) => ({
+          ...prev,
+          mjrnl_crncy: resp.data[0].value_text,
+        }));
+      }
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -254,6 +306,12 @@ const useJournal = () => {
       //console.log("resp1", resp);
       setMjrnl_fsyar_Options(resp.data);
       showToastError(resp);
+      // if (resp.data.length === 1) {
+      //   setFormData((prev) => ({
+      //     ...prev,
+      //     mjrnl_fsyar: resp.data[0].id,
+      //   }));
+      // }
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -269,22 +327,124 @@ const useJournal = () => {
       //console.log("resp", resp);
       setMjrnl_acprd_Options(resp.data);
       showToastError(resp);
+      if (resp.data.length === 1) {
+        setFormData((prev) => ({
+          ...prev,
+          mjrnl_acprd: resp.data[0].id,
+        }));
+      }
     } catch (error) {
     } finally {
       setIsBusy(false);
     }
   };
 
-  
-  const handleChangeItems = (field, value) => {
-    setFormDataItems((prev) => ({ ...prev, [field]: value }));
-    //const newErrors = validate({ ...formDataItems, [field]: value }, tmtb_mjrnl);
-   //setErrors(newErrors);
+  const handleGetCOA = async () => {
+    if (mjrnl_fsyar_Options.length > 0) {
+      return;
+    }
+    try {
+      setIsBusy(true);
+      const resp = await coaAPI.getCoaPosting();
+      //console.log("resp1", resp);
+      setDjrnl_chtac_Options(resp.data);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
   };
 
+  const handleGetPartyCoa = async (value) => {
+    try {
+      setIsBusy(true);
+      const resp = await partiesAPI.getByCoa({ party_chtac: value });
+      //console.log("resp1", resp);
 
-  const handleAddToListClick = () => {    
-    console.log("formDataItems", formDataItems)
+      const ddlData = (resp?.data || []).map((item) => ({
+        value_text: item.id,
+        label_text:
+          item.party_pname +
+          " | " +
+          item.party_ptype +
+          " | " +
+          item.party_pcode,
+      }));
+
+      setDjrnl_party_Options(ddlData);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleChangeItems = (field, value) => {
+    setFormDataItems((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate(
+      { ...formDataItems, [field]: value },
+      tmtb_djrnl,
+    );
+    setErrors(newErrors);
+    //console.log("field", field);
+    if (field === "djrnl_chtac") {
+      setFormDataItems((prev) => ({ ...prev, djrnl_party: "" }));
+      handleGetPartyCoa(value);
+    }
+    if (field === "djrnl_drval") {
+      setFormDataItems((prev) => ({ ...prev, djrnl_crval: 0 }));
+    }
+
+    if (field === "djrnl_crval") {
+      setFormDataItems((prev) => ({ ...prev, djrnl_drval: 0 }));
+    }
+  };
+
+  const handleAddToListClick = async () => {
+    const newErrors = validate(formDataItems, tmtb_djrnl);
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+
+    if (formDataItems.djrnl_drval === 0 && formDataItems.djrnl_crval === 0) {
+      showToast("error", "Error", "Enter debit/credit value");
+      return;
+    }
+
+    // ✅ CHECK DUPLICATE FIRST (outside state setter)
+    const exists = dataListItems.some(
+      (x) => x.djrnl_party === formDataItems.djrnl_party,
+    );
+
+    if (exists) {
+      showToast("error", "Error", "Party already exists");
+      return;
+    }
+
+    // ✅ SAFE TO ADD
+    setDataListItems((prev) => [...prev, formDataItems]);
+    setFormDataItems(dataModelItem);
+  };
+
+  const handleRemoveItemsClick = (rowData) => {
+    setDataListItems((prev) =>
+      prev.filter((x) => x.djrnl_party !== rowData.djrnl_party),
+    );
+  };
+
+  const handleGetDetail = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await journalAPI.getDetail({ djrnl_mjrnl: id });
+      //console.log("resp", resp);
+      setDataListItems(resp.data);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   return {
@@ -301,7 +461,10 @@ const useJournal = () => {
     mjrnl_fsyar_Options,
     mjrnl_acprd_Options,
     mjrnl_trtyp_Options,
+    djrnl_chtac_Options,
+    djrnl_party_Options,
     formDataItems,
+    dataListItems,
     //functions
     handleChange,
     handleEdit,
@@ -314,6 +477,32 @@ const useJournal = () => {
     //other functions
     handleChangeItems,
     handleAddToListClick,
+    handleRemoveItemsClick,
   };
 };
 export default useJournal;
+
+// The Golden Rule
+// | Account Type | Debit Effect | Credit Effect |
+// | ------------ | ------------ | ------------- |
+// | Asset        | Increase (+) | Decrease (-)  |
+// | Expense      | Increase (+) | Decrease (-)  |
+// | Liability    | Decrease (-) | Increase (+)  |
+// | Income       | Decrease (-) | Increase (+)  |
+// | Equity       | Decrease (-) | Increase (+)  |
+
+// DEAD CLIC
+// DEAD = Debit increases
+// Assets + Expenses + Drawings
+
+// CLIC = Credit increases
+// Liability + Income + Capital
+
+// Apply formula:
+
+// Nature	Formula
+// ASSET	DR - CR
+// EXPENSE	DR - CR
+// LIABILITY	CR - DR
+// INCOME	CR - DR
+// EQUITY	CR - DR

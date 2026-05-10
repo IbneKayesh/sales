@@ -35,28 +35,12 @@
     "placeholder": "Enter name",
     "required": true
   },
-  "party_chtrc": {
+  "party_chtac": {
     "type": "string",
-    "label": "Receivable",
+    "label": "COA",
     "maxLength": 50,
     "minLength": 3,
-    "placeholder": "Enter receivable",
-    "required": true
-  },
-  "party_chtpy": {
-    "type": "string",
-    "label": "Payable",
-    "maxLength": 50,
-    "minLength": 3,
-    "placeholder": "Enter payable",
-    "required": true
-  },
-  "party_chtad": {
-    "type": "string",
-    "label": "Advance",
-    "maxLength": 50,
-    "minLength": 3,
-    "placeholder": "Enter advance",
+    "placeholder": "Enter coa",
     "required": true
   },
   "party_opbal": {
@@ -65,6 +49,7 @@
     "maxLength": 999999999,
     "minLength": 0,
     "placeholder": "Enter opening balance",
-    "required": false
+    "required": true,
+    "default": 0
   }
 }

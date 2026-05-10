@@ -26,4 +26,8 @@ export const journalAPI = {
     apiRequest("/accounts/v1/journal/get-all-active", {
       body: data,
     }),
+  getDetail: (data) =>
+    apiRequest("/accounts/v1/journal/get-detail", {
+      body: data,
+    }),
 };

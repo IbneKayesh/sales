@@ -20,7 +20,10 @@ const JournalPage = () => {
     mjrnl_fsyar_Options,
     mjrnl_acprd_Options,
     mjrnl_trtyp_Options,
+    djrnl_chtac_Options,
+    djrnl_party_Options,
     formDataItems,
+    dataListItems,
     //functions
     handleChange,
     handleEdit,
@@ -33,6 +36,7 @@ const JournalPage = () => {
     //other functions
     handleChangeItems,
     handleAddToListClick,
+    handleRemoveItemsClick,
   } = useJournal();
 
   const isList = crView === "list" && true;
@@ -113,9 +117,13 @@ const JournalPage = () => {
           mjrnl_fsyar_Options={mjrnl_fsyar_Options}
           mjrnl_acprd_Options={mjrnl_acprd_Options}
           mjrnl_trtyp_Options={mjrnl_trtyp_Options}
+          djrnl_chtac_Options={djrnl_chtac_Options}
+          djrnl_party_Options={djrnl_party_Options}
           onChangeItems={handleChangeItems}
           onAddToListClick={handleAddToListClick}
           formDataItems={formDataItems}
+          dataListItems={dataListItems}
+          onRemoveItemsClick={handleRemoveItemsClick}
         />
       )}
     </Card>
