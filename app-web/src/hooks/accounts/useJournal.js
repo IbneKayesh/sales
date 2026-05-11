@@ -114,9 +114,9 @@ const useJournal = () => {
     const newErrors = validate({ ...formData, [field]: value }, tmtb_mjrnl);
     setErrors(newErrors);
 
-    if (field === "mjrnl_fsyar") {
-      handleGetAccountPeriod(value);
-    }
+    // if (field === "mjrnl_fsyar") {
+    //   handleGetAccountPeriod(value);
+    // }
   };
 
   const handleEdit = (rowData) => {
@@ -299,46 +299,48 @@ const useJournal = () => {
   };
 
   const handleGetFiscalYear = async () => {
-    if (mjrnl_fsyar_Options.length > 0) {
-      return;
-    }
-    try {
-      setIsBusy(true);
-      const resp = await fiscalYearAPI.getAllActive();
-      //console.log("resp1", resp);
-      setMjrnl_fsyar_Options(resp.data);
-      showToastError(resp);
-      // if (resp.data.length === 1) {
-      //   setFormData((prev) => ({
-      //     ...prev,
-      //     mjrnl_fsyar: resp.data[0].id,
-      //   }));
-      // }
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
+    // if (mjrnl_fsyar_Options.length > 0) {
+    //   return;
+    // }
+    // try {
+    //   setIsBusy(true);
+    //   const resp = await fiscalYearAPI.getAllActive();
+    //   //console.log("resp1", resp);
+    //   setMjrnl_fsyar_Options(resp.data);
+    //   showToastError(resp);
+    //   // if (resp.data.length === 1) {
+    //   //   setFormData((prev) => ({
+    //   //     ...prev,
+    //   //     mjrnl_fsyar: resp.data[0].id,
+    //   //   }));
+    //   // }
+    // } catch (error) {
+    // } finally {
+    //   setIsBusy(false);
+    // }
+    return;
   };
   const handleGetAccountPeriod = async (id) => {
-    if (mjrnl_acprd_Options.length > 0) {
-      return;
-    }
-    try {
-      setIsBusy(true);
-      const resp = await acPeriodAPI.getAllActive({ acprd_fsyar: id });
-      //console.log("resp", resp);
-      setMjrnl_acprd_Options(resp.data);
-      showToastError(resp);
-      if (resp.data.length === 1) {
-        setFormData((prev) => ({
-          ...prev,
-          mjrnl_acprd: resp.data[0].id,
-        }));
-      }
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
+    // if (mjrnl_acprd_Options.length > 0) {
+    //   return;
+    // }
+    // try {
+    //   setIsBusy(true);
+    //   const resp = await acPeriodAPI.getAllActive({ acprd_fsyar: id });
+    //   //console.log("resp", resp);
+    //   setMjrnl_acprd_Options(resp.data);
+    //   showToastError(resp);
+    //   if (resp.data.length === 1) {
+    //     setFormData((prev) => ({
+    //       ...prev,
+    //       mjrnl_acprd: resp.data[0].id,
+    //     }));
+    //   }
+    // } catch (error) {
+    // } finally {
+    //   setIsBusy(false);
+    // }
+    return;
   };
 
   const handleGetCOA = async () => {

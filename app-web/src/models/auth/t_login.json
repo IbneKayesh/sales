@@ -13,6 +13,7 @@
     "maxLength": 50,
     "minLength": 3,
     "placeholder": "Enter password",
-    "required": true
+    "required": true,
+    "default": "admin"
   }
 }

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-const { GenNewCode } = require("../../db/genTableCode");
+const { GenNewCode } = require("../../db/genHelper");
 
 // get all
 router.post("/", async (req, res) => {
@@ -371,7 +371,8 @@ router.post("/get-with-party-count", async (req, res) => {
     //database action
     const sql = `SELECT coa.id, coa.chtac_apusr, coa.chtac_bsins, coa.chtac_chtac, coa.chtac_ccode, coa.chtac_cname,
     coa.chtac_ctype, coa.chtac_chtno, coa.chtac_child, coa.chtac_alpst, coa.chtac_level, coa.chtac_actve,
-    coa.chtac_crusr, coa.chtac_crdat, coa.chtac_upusr, coa.chtac_updat, coa.chtac_rvnmr, 0 as edit_stop
+    coa.chtac_crusr, coa.chtac_crdat, coa.chtac_upusr, coa.chtac_updat, coa.chtac_rvnmr, 
+    pty.party_count, 0 as edit_stop
     FROM tmtb_chtac coa
     LEFT JOIN (
       SELECT party_chtac, COUNT(*) AS party_count

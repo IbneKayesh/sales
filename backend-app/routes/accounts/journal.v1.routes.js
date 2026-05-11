@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-const { GenNewCode, GenNewTrn } = require("../../db/genTableCode");
+const {
+  GenNewCode,
+  GenNewTrn,
+  getFiscalYearPeriod,
+} = require("../../db/genHelper");
 
 // get all
 router.post("/", async (req, res) => {
@@ -108,14 +112,14 @@ const create = async (req, res) => {
       user_b,
     } = req.body;
 
-    console.log(" req.body;", req.body);
+    //console.log(" req.body;", req.body);
 
     // Validate input
     if (
       !mjrnl_dpart ||
       !mjrnl_crncy ||
-      !mjrnl_fsyar ||
-      !mjrnl_acprd ||
+      // !mjrnl_fsyar ||
+      // !mjrnl_acprd ||
       !mjrnl_trtyp ||
       !mjrnl_trdat ||
       !mjrnl_narrt ||
@@ -135,6 +139,30 @@ const create = async (req, res) => {
 
     //database action
     //const newCode = await GenNewCode(user_c, "tmtb_mjrnl");
+    const fsyacp = await getFiscalYearPeriod(
+      user_c,
+      user_b,
+      mjrnl_dpart,
+      mjrnl_trdat,
+    );
+    if (!fsyacp) {
+      return res.json({
+        success: false,
+        message: "No active fiscal year or accounting period found",
+        data: {},
+      });
+    }
+    if (fsyacp.length > 1) {
+      return res.json({
+        success: false,
+        message: "Multiple active accounting periods found. Please select one.",
+        data: {},
+      });
+    }
+    //console.log("fsyacp", fsyacp);
+
+    const { fsyar_id, acprd_id } = fsyacp[0];
+
     const newTrn = await GenNewTrn(
       user_c,
       user_b,
@@ -160,8 +188,8 @@ const create = async (req, res) => {
         user_b,
         mjrnl_dpart,
         mjrnl_crncy,
-        mjrnl_fsyar,
-        mjrnl_acprd,
+        fsyar_id,
+        acprd_id,
         mjrnl_trtyp,
         newTrn,
         mjrnl_trdat,

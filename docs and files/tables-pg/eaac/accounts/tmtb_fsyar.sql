@@ -8,6 +8,7 @@ CREATE TABLE tmtb_fsyar (
 
   fsyar_apusr varchar(50) NOT NULL,
   fsyar_bsins varchar(50) NOT NULL,
+  fsyar_dpart varchar(50) NOT NULL,
   fsyar_fname varchar(50) NOT NULL,
   fsyar_stdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   fsyar_endat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

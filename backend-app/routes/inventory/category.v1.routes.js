@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-const { GenNewCode } = require("../../db/genTableCode");
+const { GenNewCode } = require("../../db/genHelper");
 
 // get all
 router.post("/", async (req, res) => {

@@ -44,7 +44,7 @@ const JournalFormComp = ({
     <>
       <div className="grid">
         {/* {JSON.stringify(mjrnl_acprd_Options)} */}
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-3">
           <label className="block font-bold mb-2 text-red-800">C/C</label>
           <Dropdown
             name="mjrnl_dpart"
@@ -77,40 +77,6 @@ const JournalFormComp = ({
             showClear
           />
           <RequiredText text={errors.mjrnl_crncy} />
-        </div>
-        <div className="col-12 md:col-2">
-          <label className="block font-bold mb-2 text-red-800">Year</label>
-          <Dropdown
-            name="mjrnl_fsyar"
-            value={formData.mjrnl_fsyar}
-            onChange={(e) => onChange("mjrnl_fsyar", e.value)}
-            options={mjrnl_fsyar_Options}
-            optionLabel="fsyar_fname"
-            optionValue="id"
-            className={`w-full ${errors.mjrnl_fsyar ? "p-invalid" : ""}`}
-            size={"small"}
-            placeholder={`Enter period`}
-            filter
-            showClear
-          />
-          <RequiredText text={errors.mjrnl_fsyar} />
-        </div>
-        <div className="col-12 md:col-2">
-          <label className="block font-bold mb-2 text-red-800">Period</label>
-          <Dropdown
-            name="mjrnl_acprd"
-            value={formData.mjrnl_acprd}
-            onChange={(e) => onChange("mjrnl_acprd", e.value)}
-            options={mjrnl_acprd_Options}
-            optionLabel="acprd_pname"
-            optionValue="id"
-            className={`w-full ${errors.mjrnl_acprd ? "p-invalid" : ""}`}
-            size={"small"}
-            placeholder={`Enter period`}
-            filter
-            showClear
-          />
-          <RequiredText text={errors.mjrnl_acprd} />
         </div>
         <div className="col-12 md:col-2">
           <label className="block font-bold mb-2 text-red-800">Type</label>
@@ -161,7 +127,7 @@ const JournalFormComp = ({
           />
           <RequiredText text={errors.mjrnl_trdat} />
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-3">
           <label className="block font-bold mb-2 text-red-800">Ref No</label>
           <InputText
             name="mjrnl_refno"
@@ -172,7 +138,7 @@ const JournalFormComp = ({
           />
           <RequiredText text={errors.mjrnl_refno} />
         </div>
-        <div className="col-12 md:col-2">
+        <div className="col-12 md:col-6">
           <label className="block font-bold mb-2 text-red-800">Narration</label>
           <InputText
             name="mjrnl_narrt"

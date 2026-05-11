@@ -25,7 +25,7 @@
     "maxLength": 50,
     "minLength": 1,
     "placeholder": "Enter year",
-    "required": true
+    "required": false
   },
   "mjrnl_acprd": {
     "type": "string",
@@ -33,7 +33,7 @@
     "maxLength": 50,
     "minLength": 1,
     "placeholder": "Enter period",
-    "required": true
+    "required": false
   },
   "mjrnl_trtyp": {
     "type": "string",

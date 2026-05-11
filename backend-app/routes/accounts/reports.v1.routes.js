@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-const { GenNewCode } = require("../../db/genTableCode");
+const { GenNewCode } = require("../../db/genHelper");
 
 
 // get-trial-balance
@@ -24,11 +24,12 @@ router.post("/get-trial-balance", async (req, res) => {
     SUM(djr.djrnl_drval)dr, SUM(djr.djrnl_crval)cr
     from tmtb_djrnl djr
     JOIN tmtb_chtac cht ON djr.djrnl_chtac = cht.id
+    WHERE djr.djrnl_apusr = $1
     GROUP BY cht.chtac_ctype, cht.chtac_cname
-    ORDER BY cht.chtac_cname`;
+    ORDER BY cht.chtac_ctype, cht.chtac_cname`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get party accounts- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get trial balance- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",

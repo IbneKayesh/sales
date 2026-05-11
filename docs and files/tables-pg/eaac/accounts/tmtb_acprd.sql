@@ -8,6 +8,7 @@ CREATE TABLE tmtb_acprd (
 
   acprd_apusr varchar(50) NOT NULL,
   acprd_bsins varchar(50) NOT NULL,
+  acprd_dpart varchar(50) NOT NULL,
   acprd_fsyar varchar(50) NOT NULL,
   acprd_pname varchar(50) NOT NULL,
   acprd_prdno varchar(50) NOT NULL,
