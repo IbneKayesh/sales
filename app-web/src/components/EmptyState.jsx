@@ -3,7 +3,7 @@ import { PrimeIcons } from "primereact/api";
 const EmptyState = ({ stateMessage }) => {
   return (
     <div
-      className="flex flex-column align-items-center justify-content-center border-round p-6 text-center"
+      className="flex flex-column align-items-center justify-content-center border-1 border-300 border-round p-6 text-center"
       style={{ backgroundColor: "var(--hover-bg)" }}
     >
       <i

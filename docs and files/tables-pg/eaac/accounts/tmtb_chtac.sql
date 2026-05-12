@@ -15,7 +15,6 @@ CREATE TABLE tmtb_chtac (
   chtac_chtno integer NOT NULL DEFAULT 0,
   chtac_child boolean NOT NULL DEFAULT false,
   chtac_alpst boolean NOT NULL DEFAULT false,
-  chtac_level integer NOT NULL DEFAULT 0,
   
   -- default
   chtac_actve boolean NOT NULL DEFAULT true,

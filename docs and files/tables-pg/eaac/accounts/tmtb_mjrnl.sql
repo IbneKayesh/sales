@@ -21,7 +21,7 @@ CREATE TABLE tmtb_mjrnl (
   mjrnl_crval decimal(18,6) NOT NULL DEFAULT 0,
   mjrnl_stats varchar(50) NOT NULL,
   mjrnl_appid varchar(50) NULL,
-  mjrnl_apdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  mjrnl_apdat timestamp NULL,
   
   -- default
   mjrnl_actve boolean NOT NULL DEFAULT true,

@@ -115,7 +115,6 @@ const apiLogin = async (options) => {
       const { users, bsins, menus, token } = data.data;
       setStorageData({ users: users });
       setStorageData({ bsins: bsins });
-      setStorageData({ bsins: bsins });
       setStorageData({ menus: menus });
       setStorageData({ token: token });
     }

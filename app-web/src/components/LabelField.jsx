@@ -5,7 +5,7 @@ const normalise = (value) => {
   if (typeof value === "boolean") return value ? "Yes" : "No";
   if (typeof value === "number") return String(value);
   if (value instanceof Date) return value.toLocaleString();
-  
+
   if (typeof value === "string") {
     // Basic check for common ISO date strings
     if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
@@ -38,7 +38,15 @@ const LabelField = ({ value }) => {
       {!isEmpty ? (
         display
       ) : (
-        <span style={{ color: "var(--text-muted, #cbd5e1)" }}>—</span>
+        <span
+          style={{
+            color: "var(--text-muted, #cbd5e1)",
+            display: "block",
+            width: "100%",
+            textAlign: "center",
+            borderBottom: "1px solid #cbd5e1",
+          }}
+        ></span>
       )}
     </div>
   );
