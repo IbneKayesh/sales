@@ -7,7 +7,7 @@ import { partiesAPI } from "@/api/accounts/partiesAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 import { contactAPI } from "@/api/crm/contactAPI.js";
 import { coaAPI } from "@/api/accounts/coaAPI.js";
-import { buildCoaTree } from "@/utils/jsonParser.js";
+import { buildCoaTree, findCoaTree } from "@/utils/jsonParser.js";
 
 const useParties = () => {
   //hooks :: menuId M05-M01-M002,
@@ -33,6 +33,14 @@ const useParties = () => {
     {
       label: "Vendor",
       value: "Vendor",
+    },
+    {
+      label: "Customer",
+      value: "Customer",
+    },
+    {
+      label: "Supplier",
+      value: "Supplier",
     },
     {
       label: "Employee",
@@ -97,10 +105,21 @@ const useParties = () => {
       handleGetVendorOptions(value);
     }
     if (field === "party_vndor") {
-      const party_pname = party_vndor_Options.find(
-        (f) => f.value_text == value,
-      ).label_text;
-      setFormData((prev) => ({ ...prev, party_pname: party_pname }));
+      if (
+        formData.party_ptype === "Vendor" ||
+        formData.party_ptype === "Customer" ||
+        formData.party_ptype === "Supplier"
+      ) {
+        const party_pname = party_vndor_Options.find(
+          (f) => f.value_text == value,
+        ).label_text;
+        setFormData((prev) => ({ ...prev, party_pname: party_pname }));
+      } else {
+        const node = findCoaTree(party_chtac_Options, formData.party_chtac);
+        const chtac_cname = `${node?.data?.chtac_cname} #${node?.data?.chtac_chtno} - A/C`;
+
+        setFormData((prev) => ({ ...prev, party_pname: chtac_cname }));
+      }
     }
   };
 
@@ -220,9 +239,12 @@ const useParties = () => {
 
     try {
       setIsBusy(true);
+      //console.log("ptype", ptype);
 
-      if (ptype === "Vendor") {
-        const resp = await contactAPI.getAvailContactAccounts();
+      if (ptype === "Vendor" || ptype === "Customer" || ptype === "Supplier") {
+        const resp = await contactAPI.getAvailContactAccounts({
+          cntct_ctype: ptype,
+        });
         //console.log("resp", resp);
         const ddlData = (resp?.data || []).map((item) => ({
           value_text: item.id,
@@ -249,7 +271,7 @@ const useParties = () => {
       setIsBusy(true);
       //const resp = await coaAPI.getCoaPosting();
       const resp = await coaAPI.getAllActive();
-      const coaTree= buildCoaTree(resp.data);      
+      const coaTree = buildCoaTree(resp.data);
       setParty_chtac_Options(coaTree);
       showToastError(resp);
     } catch (error) {

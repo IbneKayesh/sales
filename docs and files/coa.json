@@ -1,0 +1,147 @@
+Level 1 → ASSETS
+    Level 2 → Current Assets
+        Level 3 → Cash & Bank
+            Level 4 → Cash on Hand
+            Level 4 → Petty Cash
+            Level 4 → Bank Account - Main
+            Level 4 → Bank Account - Payroll
+
+        Level 3 → Accounts Receivable
+            Level 4 → Trade Receivable
+            Level 4 → Employee Receivable
+            Level 4 → Advance to Supplier
+
+        Level 3 → Inventory
+            Level 4 → Raw Materials
+            Level 4 → Work in Progress
+            Level 4 → Finished Goods
+            Level 4 → Packaging Materials
+
+        Level 3 → Prepaid Expenses [need to add]
+            Level 4 → Prepaid Rent
+            Level 4 → Prepaid Insurance
+            Level 4 → Prepaid Subscription
+
+    Level 2 → Non-Current Assets
+        Level 3 → Fixed Assets
+            Level 4 → Land
+            Level 4 → Building
+            Level 4 → Office Equipment
+            Level 4 → Furniture & Fixtures
+            Level 4 → Vehicles
+            Level 4 → Computer Equipment
+
+        Level 3 → Accumulated Depreciation
+            Level 4 → Accumulated Depreciation - Building
+            Level 4 → Accumulated Depreciation - Vehicles
+            Level 4 → Accumulated Depreciation - Equipment
+
+        Level 3 → Intangible Assets
+            Level 4 → Software License
+            Level 4 → Trademark
+            Level 4 → Goodwill
+
+        Level 3 → Investments
+            Level 4 → Long-Term Investment
+            Level 4 → Shares Investment
+            Level 4 → Fixed Deposit
+
+
+Level 1 → LIABILITIES
+    Level 2 → Current Liabilities
+        Level 3 → Accounts Payable
+            Level 4 → Trade Payable
+            Level 4 → Supplier Payable
+
+        Level 3 → Accrued Expenses
+            Level 4 → Salary Payable
+            Level 4 → Utility Payable
+            Level 4 → Rent Payable
+
+        Level 3 → Taxes Payable
+            Level 4 → VAT Payable
+            Level 4 → Income Tax Payable
+            Level 4 → Payroll Tax Payable
+
+        Level 3 → Short-Term Loans
+            Level 4 → Bank Overdraft
+            Level 4 → Short-Term Bank Loan
+
+    Level 2 → Non-Current Liabilities
+        Level 3 → Long-Term Loans
+            Level 4 → Bank Loan
+            Level 4 → Vehicle Loan
+            Level 4 → Mortgage Loan
+
+        Level 3 → Provisions
+            Level 4 → Employee Benefit Provision
+            Level 4 → Warranty Provision
+
+
+Level 1 → EQUITY
+    Level 2 → Owner's Equity
+        Level 3 → Capital Accounts
+            Level 4 → Owner Capital
+            Level 4 → Partner Capital
+
+        Level 3 → Retained Earnings
+            Level 4 → Current Year Earnings
+            Level 4 → Prior Year Earnings
+
+        Level 3 → Drawings
+            Level 4 → Owner Drawings
+            Level 4 → Partner Withdrawals
+
+
+Level 1 → REVENUE
+    Level 2 → Operating Revenue
+        Level 3 → Sales Revenue
+            Level 4 → Product Sales
+            Level 4 → Service Revenue
+            Level 4 → Export Sales
+
+        Level 3 → Other Operating Income
+            Level 4 → Commission Income
+            Level 4 → Delivery Income
+
+    Level 2 → Non-Operating Revenue
+        Level 3 → Financial Income
+            Level 4 → Interest Income
+            Level 4 → Dividend Income
+
+        Level 3 → Other Income
+            Level 4 → Asset Disposal Gain
+            Level 4 → Foreign Exchange Gain
+
+
+Level 1 → EXPENSES
+    Level 2 → Cost of Goods Sold
+        Level 3 → Direct Costs
+            Level 4 → Raw Material Consumption
+            Level 4 → Direct Labor
+            Level 4 → Factory Overhead
+
+    Level 2 → Operating Expenses
+        Level 3 → Administrative Expenses
+            Level 4 → Office Salary
+            Level 4 → Office Rent
+            Level 4 → Utility Expense
+            Level 4 → Stationery Expense
+
+        Level 3 → Selling & Distribution
+            Level 4 → Advertising Expense
+            Level 4 → Sales Commission
+            Level 4 → Delivery Expense
+
+        Level 3 → IT & Software Expenses
+            Level 4 → Software Subscription
+            Level 4 → Hosting Expense
+            Level 4 → Internet Expense
+
+        Level 3 → Financial Expenses
+            Level 4 → Bank Charges
+            Level 4 → Loan Interest Expense
+
+        Level 3 → Depreciation & Amortization
+            Level 4 → Depreciation Expense
+            Level 4 → Amortization Expense

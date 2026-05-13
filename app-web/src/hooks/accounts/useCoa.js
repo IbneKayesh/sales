@@ -95,6 +95,15 @@ const useCoa = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate({ ...formData, [field]: value }, tmtb_chtac);
     setErrors(newErrors);
+    //[auto]
+    if (field === "chtac_chtac") {
+      const seq = dataList.find((item) => item.id == value)?.chtac_ctype;
+      //console.log("seq", seq);
+      setFormData((prev) => ({
+        ...prev,
+        chtac_ctype: seq,
+      }));
+    }
   };
 
   const handleEdit = (rowData) => {
@@ -194,7 +203,7 @@ const useCoa = () => {
       setIsBusy(true);
 
       const resp = await coaAPI.upsert(reqBody);
-      console.log("resp", resp);
+      //console.log("resp", resp);
       alert({
         message: resp.message,
         header: formData.id ? "Updated" : "Saved",

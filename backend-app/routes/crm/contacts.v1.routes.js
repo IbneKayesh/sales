@@ -572,7 +572,7 @@ router.post("/delete-address", async (req, res) => {
 //get-avail-contact-accounts
 router.post("/get-avail-contact-accounts", async (req, res) => {
   try {
-    const { user_s, user_c, user_b } = req.body;
+    const { cntct_ctype, user_s, user_c, user_b } = req.body;
 
     // Validate input
     if (!user_c) {
@@ -589,9 +589,10 @@ router.post("/get-avail-contact-accounts", async (req, res) => {
     LEFT JOIN tmtb_party prt ON cnt.id = prt.party_vndor
     WHERE prt.party_vndor IS NULL
     AND cnt.cntct_apusr = $1
+    AND cnt.cntct_ctype = $2
     ORDER BY cnt.cntct_ccode`;
 
-    const params = [user_c];
+    const params = [user_c, cntct_ctype];
     const rows = await dbGetAll(sql, params, `get get-avail-contact-accounts- ${user_c}`);
     res.json({
       success: true,

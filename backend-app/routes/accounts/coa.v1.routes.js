@@ -93,9 +93,9 @@ const create = async (req, res) => {
       chtac_cname,
       chtac_ctype,
       chtac_chtno,
+      chtac_ntype,
       chtac_child,
       chtac_alpst,
-      chtac_level,
       user_s,
       user_c,
       user_b,
@@ -119,18 +119,19 @@ const create = async (req, res) => {
     }
 
     //database action
+    const chtac_ntype_new = chtac_ctype === "Asset" || chtac_ctype === "Expense" ? "Dr" : "Cr";
+    //Normal Balance Type (Dr/Cr) 'Dr' = Assets, Expenses 'Cr' = Liabilities, Equity, Income
     const chtac_child_new = chtac_chtac === "-" ? false : true;
-    const chtac_level_new = chtac_chtac === "-" ? 0 : 1;
     const newCode = await GenNewCode(user_c, "tmtb_chtac");
 
-    const sql_sequence = `SELECT shtbl_value FROM tmnb_shtbl WHERE shtbl_gname = $1 AND shtbl_dvalu = $2`;
-    const row_sequence = await dbGet(
-      sql_sequence,
-      [chtac_ctype, chtac_ctype],
+    const sql_sequence_no = `SELECT shtbl_value FROM tmnb_shtbl WHERE shtbl_gname = $1 AND shtbl_dvalu = $2 AND shtbl_apusr = $3`;
+    const row_sequence_no = await dbGet(
+      sql_sequence_no,
+      [chtac_ctype, chtac_ctype, user_c],
       `get account coa- ${user_c}`,
     );
 
-    if (!row_sequence) {
+    if (!row_sequence_no) {
       return res.json({
         success: false,
         message: "No range setup for this account type.",
@@ -138,20 +139,20 @@ const create = async (req, res) => {
       });
     }
 
-    const sql_sl = `SELECT COUNT(id) AS last_no FROM tmtb_chtac WHERE chtac_ctype = $1`;
+    const sql_sl = `SELECT COUNT(id) AS last_no FROM tmtb_chtac WHERE chtac_ctype = $1 AND chtac_apusr = $2`;
     const row_sl = await dbGet(
       sql_sl,
-      [chtac_ctype],
+      [chtac_ctype, user_c],
       `get account coa- ${user_c}`,
     );
 
-    //console.log(row_sequence, row_sl);
+    //console.log(row_sequence_no, row_sl);
 
     const chtac_chtno_new =
-      Number(row_sequence.shtbl_value) + Number(row_sl?.last_no || 0);
+      Number(row_sequence_no.shtbl_value) + Number(row_sl?.last_no || 0);
 
     const sql = `INSERT INTO tmtb_chtac(id, chtac_apusr, chtac_bsins, chtac_chtac, chtac_ccode, chtac_cname,
-    chtac_ctype, chtac_chtno, chtac_child, chtac_alpst, chtac_level, chtac_crusr, chtac_upusr)
+    chtac_ctype, chtac_chtno, chtac_ntype, chtac_child, chtac_alpst, chtac_crusr, chtac_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
     $7, $8, $9, $10, $11, $12, $13)`;
     const params = [
@@ -163,9 +164,9 @@ const create = async (req, res) => {
       chtac_cname,
       chtac_ctype,
       chtac_chtno_new,
+      chtac_ntype_new,
       chtac_child_new,
       chtac_alpst,
-      chtac_level_new,
       user_s,
       user_s,
     ];
@@ -199,9 +200,9 @@ const update = async (req, res) => {
       chtac_cname,
       chtac_ctype,
       chtac_chtno,
+      chtac_ntype,
       chtac_child,
       chtac_alpst,
-      chtac_level,
       user_s,
       user_c,
       user_b,
@@ -228,7 +229,6 @@ const update = async (req, res) => {
     const sql = `UPDATE tmtb_chtac
     SET chtac_chtac = $1,
     chtac_cname = $2,
-    chtac_ctype = $3,
     chtac_alpst = $4,
     chtac_upusr = $5,
     chtac_updat = CURRENT_TIMESTAMP,
@@ -237,7 +237,6 @@ const update = async (req, res) => {
     const params = [
       chtac_chtac,
       chtac_cname,
-      chtac_ctype,
       chtac_alpst,
       user_s,
       id,
@@ -332,7 +331,7 @@ router.post("/get-coa-posting", async (req, res) => {
     //database action
     const sql = `SELECT cht.*, 0 as edit_stop
     FROM tmtb_chtac cht
-    WHERE cht.chtac_alpst = TRUE
+    WHERE cht.chtac_child = TRUE
     AND cht.chtac_actve = TRUE
     AND cht.chtac_apusr = $1
     ORDER BY cht.chtac_ctype ASC, cht.chtac_chtac ASC, cht.chtac_chtno ASC`;
@@ -370,7 +369,7 @@ router.post("/get-with-party-count", async (req, res) => {
 
     //database action
     const sql = `SELECT coa.id, coa.chtac_apusr, coa.chtac_bsins, coa.chtac_chtac, coa.chtac_ccode, coa.chtac_cname,
-    coa.chtac_ctype, coa.chtac_chtno, coa.chtac_child, coa.chtac_alpst, coa.chtac_level, coa.chtac_actve,
+    coa.chtac_ctype, coa.chtac_chtno, coa.chtac_ntype, coa.chtac_child, coa.chtac_alpst, coa.chtac_actve,
     coa.chtac_crusr, coa.chtac_crdat, coa.chtac_upusr, coa.chtac_updat, coa.chtac_rvnmr, 
     pty.party_count, 0 as edit_stop
     FROM tmtb_chtac coa

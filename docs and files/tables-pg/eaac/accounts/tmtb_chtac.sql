@@ -13,6 +13,7 @@ CREATE TABLE tmtb_chtac (
   chtac_cname varchar(50) NOT NULL,
   chtac_ctype varchar(50) NOT NULL,
   chtac_chtno integer NOT NULL DEFAULT 0,
+  chtac_ntype varchar(2) NOT NULL,
   chtac_child boolean NOT NULL DEFAULT false,
   chtac_alpst boolean NOT NULL DEFAULT false,
   

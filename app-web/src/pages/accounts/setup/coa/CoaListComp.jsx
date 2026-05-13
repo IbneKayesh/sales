@@ -139,48 +139,54 @@ const CoaListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     ];
 
     return (
-      <div className="flex align-items-center justify-content-between w-full gap-2 border-1 border-300 border-round p-3">
+      <div className="flex align-items-center justify-content-between w-full gap-2 border-1 border-300 border-round p-2">
         {/* Head Name + Active */}
         <div className="flex flex-column mr-5" style={{ minWidth: "25%" }}>
           <span className="text-xl">
             <ActiveRowCell
-              text={rowData.chtac_cname}
+              text={`${rowData.chtac_cname} (${rowData.chtac_ntype})`}
               status={rowData.chtac_actve}
             />
+            <span className="text-sm text-blue-600 ml-2">
+              #{rowData.chtac_chtno}
+            </span>
+            <span className="text-xs text-gray-600 ml-2">
+              {rowData.chtac_ccode}
+            </span>
           </span>
-
-          <span className="text-xs text-gray-600 mt-1">
-            {rowData.chtac_ccode}
-          </span>
-          <span className="text-md text-blue-600">#{rowData.chtac_chtno}</span>
         </div>
 
         {/* Sl No + Type */}
         <div className="flex flex-column mr-5" style={{ minWidth: "5%" }}>
-          <span className="text-xs mb-2">Type</span>
-          <Badge
-            value={rowData.chtac_ctype?.toUpperCase()}
-            severity="secondary"
-            className="ml-3"
-          />
+          <span className="text-xs gap-2 align-items-center">
+            Type{" "}
+            <Badge
+              value={rowData.chtac_ctype?.toUpperCase()}
+              severity="secondary"
+            />
+          </span>
         </div>
 
         {/* Is Child */}
         <div className="flex flex-column mr-5" style={{ minWidth: "5%" }}>
-          <span className="text-xs mb-2">Child</span>
-          <Badge
-            value={rowData.chtac_child ? "Yes" : "No"}
-            severity={rowData.chtac_child ? "success" : "danger"}
-          />
+          <span className="text-xs gap-2 align-items-center">
+            Child{" "}
+            <Badge
+              value={rowData.chtac_child ? "Yes" : "No"}
+              severity={rowData.chtac_child ? "success" : "danger"}
+            />
+          </span>
         </div>
 
         {/* Posting */}
         <div className="flex flex-column mr-5" style={{ minWidth: "5%" }}>
-          <span className="text-xs mb-2">Posting</span>
-          <Badge
-            value={rowData.chtac_alpst ? "Yes" : "No"}
-            severity={rowData.chtac_alpst ? "success" : "danger"}
-          />
+          <span className="text-xs gap-2 align-items-center">
+            Posting{" "}
+            <Badge
+              value={rowData.chtac_alpst ? "Yes" : "No"}
+              severity={rowData.chtac_alpst ? "success" : "danger"}
+            />
+          </span>
         </div>
 
         {/* Actions */}
