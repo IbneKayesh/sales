@@ -7,6 +7,7 @@ import { partiesAPI } from "@/api/accounts/partiesAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 import { contactAPI } from "@/api/crm/contactAPI.js";
 import { coaAPI } from "@/api/accounts/coaAPI.js";
+import { subGroupAPI } from "@/api/inventory/subGroupAPI.js";
 import { buildCoaTree, findCoaTree } from "@/utils/jsonParser.js";
 
 const useParties = () => {
@@ -104,16 +105,20 @@ const useParties = () => {
       setFormData((prev) => ({ ...prev, party_pname: "" }));
       handleGetVendorOptions(value);
     }
+
+    //console.log("field",field)
+
     if (field === "party_vndor") {
       if (
         formData.party_ptype === "Vendor" ||
         formData.party_ptype === "Customer" ||
-        formData.party_ptype === "Supplier"
+        formData.party_ptype === "Supplier" ||
+        formData.party_ptype === "Inventory"
       ) {
         const party_pname = party_vndor_Options.find(
           (f) => f.value_text == value,
         ).label_text;
-        setFormData((prev) => ({ ...prev, party_pname: party_pname }));
+        setFormData((prev) => ({ ...prev, party_pname: `${party_pname} - A/C` }));
       } else {
         const node = findCoaTree(party_chtac_Options, formData.party_chtac);
         const chtac_cname = `${node?.data?.chtac_cname} #${node?.data?.chtac_chtno} - A/C`;
@@ -253,6 +258,14 @@ const useParties = () => {
         setParty_vndor_Options(ddlData);
         //setParty_vndor_Options([newItem, ...resp.data]);
         showToastError(resp);
+      } else if (ptype === "Inventory") {
+        const resp = await subGroupAPI.getPartyAccounts();
+        //console.log("resp", resp);
+        const ddlData = (resp?.data || []).map((item) => ({
+          value_text: item.id,
+          label_text: `${item.sgrup_sname} #${item.sgrup_scode}`,
+        }));
+        setParty_vndor_Options(ddlData);
       } else {
         const newItem = {
           value_text: "-",

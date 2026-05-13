@@ -304,9 +304,9 @@ const update = async (req, res) => {
     mjrnl_fsyar = $2,
     mjrnl_acprd = $3,
     mjrnl_trdat = $4,
-    chtac_upusr = $5,
-    chtac_updat = CURRENT_TIMESTAMP,
-    chtac_rvnmr = chtac_rvnmr + 1
+    mjrnl_upusr = $5,
+    mjrnl_updat = CURRENT_TIMESTAMP,
+    mjrnl_rvnmr = mjrnl_rvnmr + 1
     WHERE id = $6`;
     const params = [
       mjrnl_dpart,

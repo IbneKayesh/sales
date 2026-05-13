@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAppUI } from "@/hooks/useAppUI";
 import validate, { generateDataModel } from "@/models/validator";
-import tmtb_mjrnl from "@/models/accounts/tmtb_mjrnl.json";
-import tmtb_djrnl from "@/models/accounts/tmtb_djrnl.json";
-const dataModel = generateDataModel(tmtb_mjrnl);
-const dataModelItem = generateDataModel(tmtb_djrnl);
+import tmtb_mjrnl_rpt from "@/models/accounts/tmtb_mjrnl_rpt.json";
+const dataModel = generateDataModel(tmtb_mjrnl_rpt);
 import { journalAPI } from "@/api/accounts/journalAPI.js";
 import { reportsAPI } from "@/api/accounts/reportsAPI.js";
 import { departmentsAPI } from "@/api/settings/departmentsAPI.js";
@@ -18,6 +16,7 @@ import { buildCoaTree, findCoaTree } from "@/utils/jsonParser.js";
 const useReports = () => {
   //hooks :: menuId M05-M03-001,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
+  //SYS_FIND_1 :: Search, SYS_LIST_1 :: List, SYS_FORM_1 :: Entry Form,
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
     useAppUI();
@@ -28,17 +27,16 @@ const useReports = () => {
     delpr: false,
   });
   const [crTitle, setCrTitle] = useState("Reports");
-  const [crView, setCrView] = useState("list");
+  const [crView, setCrView] = useState("SYS_LIST_1");
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
   const [mjrnl_dpart_Options, setMjrnl_dpart_Options] = useState([]);
-  const [mjrnl_crncy_Options, setMjrnl_crncy_Options] = useState([]);
   const [mjrnl_fsyar_Options, setMjrnl_fsyar_Options] = useState([]);
   const [mjrnl_acprd_Options, setMjrnl_acprd_Options] = useState([]);
 
   //SYS_SB_1 :: search box
-  const mjrnl_trtyp_Options = [
+  const report_Options = [
     {
       label: "Trial Balance",
       value: "SYS_TB1",
@@ -60,31 +58,16 @@ const useReports = () => {
   //other states items
   const [djrnl_chtac_Options, setDjrnl_chtac_Options] = useState([]);
   const [djrnl_party_Options, setDjrnl_party_Options] = useState([]);
-  const [formDataItems, setFormDataItems] = useState(dataModelItem);
-  const [dataListItems, setDataListItems] = useState([]);
-
   useEffect(() => {
     const perms = getPageAuth("M05-M03-001");
     setPageAuth(perms);
   }, [getPageAuth]);
 
   //functions
-  const loadJournal = async () => {
-    try {
-      setIsBusy(true);
-      const resp = await journalAPI.getAll({});
-      //console.log("resp", resp);
-      setDataList(resp.data || []);
-      showToastError(resp);
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
-  };
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmtb_mjrnl);
+    const newErrors = validate({ ...formData, [field]: value }, tmtb_mjrnl_rpt);
     setErrors(newErrors);
 
     if (field === "mjrnl_fsyar") {
@@ -95,76 +78,34 @@ const useReports = () => {
     }
   };
 
-  const handleEdit = (rowData) => {
-    if (!pageAuth.edtpr) {
-      showToast("warn", "Edit", "No edit permission");
-      return;
-    }
-    setFormData(rowData);
-    setCrTitle("Edit Journal");
-    setCrView("form");
-    handleGetDetail(rowData.id);
-  };
 
-  const handleDelete = (rowData) => {
-    if (!pageAuth.delpr) {
-      showToast("warn", "Delete", "No delete permission");
-      return;
-    }
-    confirm({
-      message: `Do you want to ${rowData.chtac_actve ? "Deactivate" : "Activate"} this ${rowData.chtac_cname}?`,
-      header: "Confirmation!",
-      accept: () => {
-        onDelete(rowData);
-      },
-      reject: () => {
-        console.log("Operation is cancelled");
-      },
-    });
-  };
-
-  const onDelete = async (rowData) => {
-    try {
-      setIsBusy(true);
-      const resp = await journalAPI.delete(rowData);
-      //console.log("resp", resp);
-      alert({
-        message: resp.message,
-        header: "Done",
-        icon: !resp.success && "pi pi-times-circle text-red-500",
-      });
-      if (resp.success) {
-        setCrTitle("Journal List");
-        setCrView("list");
-        loadJournal();
-      }
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
-  };
-
-  const handleBackClick = () => {
-    setCrTitle("Journal List");
-    setCrView("list");
-    setFormData(dataModel);
-  };
 
   const loadTrialBalance = async () => {
     try {
+      const newErrors = validate(formData, tmtb_mjrnl_rpt);
+      setErrors(newErrors);
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+
       setIsBusy(true);
-      const resp = await reportsAPI.getTrialBalance({});
+      const resp = await reportsAPI.getLedgerData(formData);
       //console.log("resp", resp);
       setDataList(resp.data || []);
       showToastError(resp);
+
+      setCrView("SYS_LIST_1");
     } catch (error) {
     } finally {
       setIsBusy(false);
     }
   };
+
+
+
   const handleSearchClick = async () => {
     setCrTitle("Search Journal");
-    setCrView("SYS_SB_1");
+    setCrView("SYS_FIND_1");
     //alert({ message: "Search is clicked", header: "Search" });
     //ketp this function as it is
     // await loadTrialBalance();
@@ -173,33 +114,12 @@ const useReports = () => {
     handleGetCOA();
   };
 
-  const handleRefreshClick = () => {
-    setCrTitle("Journal List");
-    setCrView("list");
-    loadJournal();
-  };
-
-  const handleAddNewClick = () => {
-    if (!pageAuth.addpr) {
-      showToast("warn", "Add", "No add permission");
-      return;
-    }
-    setCrTitle("Add Journal");
-    setCrView("form");
-    setFormData(dataModel);
-
-    handleGetDepartment();
-    handleGetCurrency();
-    handleGetFiscalYear();
-    handleGetCOA();
-    setFormDataItems(dataModelItem);
-    setDataListItems([]);
-  };
 
   const handleQueryClick = async () => {
-    await loadTrialBalance();
-    setCrView("SYS_TB1")
-  }
+    if (formData.report_type === "SYS_TB1"){      
+      await loadTrialBalance();
+    }
+  };
 
   //other functions
   const handleGetDepartment = async () => {
@@ -230,7 +150,7 @@ const useReports = () => {
     }
     try {
       setIsBusy(true);
-      const resp = await fiscalYearAPI.getAllActive();
+      const resp = await fiscalYearAPI.getAllYear();
       //console.log("resp1", resp);
       setMjrnl_fsyar_Options(resp.data);
       showToastError(resp);
@@ -246,12 +166,13 @@ const useReports = () => {
     }
   };
   const handleGetAccountPeriod = async (id) => {
-    if (mjrnl_acprd_Options.length > 0) {
-      return;
-    }
+    // if (mjrnl_acprd_Options.length > 0) {
+    //   return;
+    // }
+    setMjrnl_acprd_Options([]);
     try {
       setIsBusy(true);
-      const resp = await acPeriodAPI.getAllActive({ acprd_fsyar: id });
+      const resp = await acPeriodAPI.getAllPeriod({ acprd_fsyar: id });
       //console.log("resp", resp);
       setMjrnl_acprd_Options(resp.data);
       showToastError(resp);
@@ -317,18 +238,6 @@ const useReports = () => {
     }
   };
 
-  const handleGetDetail = async (id) => {
-    try {
-      setIsBusy(true);
-      const resp = await journalAPI.getDetail({ djrnl_mjrnl: id });
-      //console.log("resp", resp);
-      setDataListItems(resp.data);
-      showToastError(resp);
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
-  };
 
   return {
     //hooks
@@ -339,6 +248,7 @@ const useReports = () => {
     errors,
     dataList,
     //other states
+    report_Options,
     mjrnl_dpart_Options,
     mjrnl_fsyar_Options,
     mjrnl_acprd_Options,
@@ -346,13 +256,8 @@ const useReports = () => {
     djrnl_party_Options,
     //functions
     handleChange,
-    handleEdit,
-    handleDelete,
-    handleBackClick,
     handleSearchClick,
-    handleRefreshClick,
-    handleAddNewClick,
-    handleQueryClick
+    handleQueryClick,
     //other functions
   };
 };

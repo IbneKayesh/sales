@@ -1,18 +1,12 @@
-import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
-import { Button } from "primereact/button";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Calendar } from "primereact/calendar";
 import RequiredText from "@/components/RequiredText";
-import AuditFields from "@/components/AuditFields";
-import EmptyState from "@/components/EmptyState";
 import { TreeSelect } from "primereact/treeselect";
 
 const SearchComp = ({
   formData,
   errors,
   onChange,
+  report_Options,
   mjrnl_dpart_Options,
   mjrnl_fsyar_Options,
   mjrnl_acprd_Options,
@@ -21,9 +15,26 @@ const SearchComp = ({
 }) => {
   return (
     <>
-      <div className="grid">
+      <div className="grid pb-3 border-bottom-1">
         {/* {JSON.stringify(mjrnl_acprd_Options)} */}
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
+          <label className="block font-bold mb-2 text-red-800">Report</label>
+          <Dropdown
+            name="report_type"
+            value={formData.report_type}
+            onChange={(e) => onChange("report_type", e.value)}
+            options={report_Options}
+            optionLabel="label"
+            optionValue="value"
+            className={`w-full ${errors.report_type ? "p-invalid" : ""}`}
+            size={"small"}
+            placeholder={`Enter report`}
+            filter
+            showClear
+          />
+          <RequiredText text={errors.report_type} />
+        </div>
+        <div className="col-12 md:col-2">
           <label className="block font-bold mb-2 text-red-800">C/C</label>
           <Dropdown
             name="mjrnl_dpart"
@@ -40,7 +51,7 @@ const SearchComp = ({
           />
           <RequiredText text={errors.mjrnl_dpart} />
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label className="block font-bold mb-2 text-red-800">
             Fiscal Year
           </label>
@@ -59,7 +70,7 @@ const SearchComp = ({
           />
           <RequiredText text={errors.mjrnl_fsyar} />
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label className="block font-bold mb-2 text-red-800">Period</label>
           <Dropdown
             name="mjrnl_acprd"
@@ -76,7 +87,7 @@ const SearchComp = ({
           />
           <RequiredText text={errors.mjrnl_acprd} />
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label className="block font-bold mb-2 text-red-800">C/A</label>
           <TreeSelect
             value={formData.djrnl_chtac}
@@ -90,7 +101,7 @@ const SearchComp = ({
           />
           <RequiredText text={errors.djrnl_chtac} />
         </div>
-        <div className="col-12 md:col-3">
+        <div className="col-12 md:col-2">
           <label className="block font-bold mb-2 text-red-800">Party</label>
           <Dropdown
             name="djrnl_party"

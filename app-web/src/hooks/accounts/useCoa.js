@@ -211,7 +211,7 @@ const useCoa = () => {
       });
       if (resp.success) {
         setCrTitle("COA List");
-        setCrView("list");
+        //setCrView("list");
         loadCoa();
       }
     } catch (error) {

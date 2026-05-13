@@ -356,4 +356,46 @@ router.post("/get-coa-posting", async (req, res) => {
   }
 });
 
+
+
+// get-all-period
+router.post("/get-all-period", async (req, res) => {
+  try {
+    const { acprd_fsyar, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!acprd_fsyar || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT acp.*, 0 as edit_stop
+    FROM tmtb_acprd acp
+    WHERE acp.acprd_apusr = $1
+    AND acp.acprd_fsyar = $2
+    AND acp.acprd_actve = TRUE
+    ORDER BY acp.acprd_pname ASC`;
+
+    const params = [user_c, acprd_fsyar];
+    const rows = await dbGetAll(sql, params, `get account period- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+
 module.exports = router;

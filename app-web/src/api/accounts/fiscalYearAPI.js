@@ -4,4 +4,6 @@ import { apiRequest } from "@/utils/api.js";
 export const fiscalYearAPI = {
   getAllActive: (data) =>
     apiRequest("/accounts/v1/fiscal-year/get-all-active", { body: data }),
+  getAllYear: (data) =>
+    apiRequest("/accounts/v1/fiscal-year/get-all-year", { body: data }),
 };

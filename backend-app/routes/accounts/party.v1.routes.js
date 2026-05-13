@@ -118,32 +118,53 @@ const create = async (req, res) => {
     }
 
     //database action
+    const masterId = uuidv4();
+    const scripts = [];
     const newCode = await GenNewCode(user_c, "tmtb_party");
+    scripts.push({
+      sql: `INSERT INTO tmtb_party(id, party_apusr, party_bsins, party_ptype, party_vndor, party_pcode,
+      party_pname, party_chtac, party_opbal, party_crusr, party_upusr)
+      VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11)`,
+      params: [
+        masterId,
+        user_c,
+        user_b,
+        party_ptype,
+        party_vndor,
+        newCode,
+        party_pname,
+        party_chtac,
+        party_opbal,
+        user_s,
+        user_s,
+      ],
+      label: `create party accounts- ${user_c}`,
+    });
 
-    const sql = `INSERT INTO tmtb_party(id, party_apusr, party_bsins, party_ptype, party_vndor, party_pcode,
-    party_pname, party_chtac, party_opbal, party_crusr, party_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11)`;
-    const params = [
-      uuidv4(),
-      user_c,
-      user_b,
-      party_ptype,
-      party_vndor,
-      newCode,
-      party_pname,
-      party_chtac,
-      party_opbal,
-      user_s,
-      user_s,
-    ];
+    if (party_ptype === "Inventory") {
+      scripts.push({
+        sql: `UPDATE tmib_sgrup
+        SET sgrup_chtac = $1,
+        sgrup_upusr = $2,
+        sgrup_updat = CURRENT_TIMESTAMP,
+        sgrup_rvnmr = sgrup_rvnmr + 1
+        WHERE id = $3`,
+        params: [
+          party_chtac,
+          user_s,
+          party_vndor,
+        ],
+        label: `update sub group- ${user_c}`,
+      });
+    }
 
     //console.log("params", params);
 
-    await dbRun(sql, params, `create party accounts- ${user_c}`);
+    await dbRunAll(scripts);
     res.json({
       success: true,
-      message: `${party_pname} - Created successfully.`,
+      message: `${newCode} - Created successfully.`,
       data: {},
     });
   } catch (error) {

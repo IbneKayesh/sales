@@ -25,5 +25,9 @@ export const subGroupAPI = {
   getAllActive: (data) =>
     apiRequest("/inventory/v1/sub-group/get-all-active", {
       body: data,
-    })
+    }),
+  getPartyAccounts: (data) =>
+    apiRequest("/inventory/v1/sub-group/get-party-accounts", {
+      body: data,
+    }),
 };

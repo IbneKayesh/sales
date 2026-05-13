@@ -10,6 +10,7 @@ CREATE TABLE tmib_sgrup (
   sgrup_mgrup varchar(50) NOT NULL,
   sgrup_scode varchar(50) NOT NULL,
   sgrup_sname varchar(50) NOT NULL,
+  sgrup_chtac varchar(50),
   
   -- optional
 

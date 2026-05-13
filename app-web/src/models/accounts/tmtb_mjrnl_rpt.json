@@ -1,0 +1,26 @@
+{
+  "mjrnl_dpart": {
+    "type": "string",
+    "label": "C/C",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter c/c",
+    "required": true
+  },
+  "mjrnl_fsyar": {
+    "type": "string",
+    "label": "Fiscal Year",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter year",
+    "required": true
+  },
+  "mjrnl_acprd": {
+    "type": "string",
+    "label": "Period",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter period",
+    "required": true
+  }
+}

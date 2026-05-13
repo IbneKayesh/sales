@@ -1,0 +1,18 @@
+BALANCE SHEET
+
+ASSETS
+Cash on Hand                1,500.00
+Finished Goods             0.00
+-----------------------------------
+Total Assets               1,500.00
+
+
+EQUITY
+Owner Capital              5,000.00
+Add: Net Profit            1,500.00
+Less: Owner Drawings       (5,000.00)
+-----------------------------------
+Total Equity               1,500.00
+
+
+TOTAL (Assets = Equity)    1,500.00

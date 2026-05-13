@@ -19,10 +19,11 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT sgrp.*, mctg.mgrup_mname,
+    const sql = `SELECT sgrp.*, mctg.mgrup_mname, chtc.chtac_cname,
     csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
     FROM tmib_sgrup sgrp
     LEFT JOIN tmib_mgrup mctg ON sgrp.sgrup_mgrup = mctg.id
+    LEFT JOIN tmtb_chtac chtc ON sgrp.sgrup_chtac = chtc.id
     LEFT JOIN tmnb_users csr ON sgrp.sgrup_crusr = csr.id
     LEFT JOIN tmnb_users usr ON sgrp.sgrup_upusr = usr.id
     WHERE sgrp.sgrup_apusr = $1
@@ -238,6 +239,47 @@ router.post("/delete", async (req, res) => {
       success: false,
       message: error.message || "An error occurred during db action",
       data: {},
+    });
+  }
+});
+
+
+// get-party-accounts
+router.post("/get-party-accounts", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT sgrp.id, sgrp.sgrup_scode, sgrp.sgrup_sname
+    FROM tmib_sgrup sgrp
+    WHERE (sgrp.sgrup_chtac IS NULL
+    OR TRIM(sgrp.sgrup_chtac) = '')
+    AND sgrp.sgrup_actve = TRUE
+    AND sgrp.sgrup_apusr = $1
+    ORDER BY sgrp.sgrup_sname ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get sub category- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
     });
   }
 });

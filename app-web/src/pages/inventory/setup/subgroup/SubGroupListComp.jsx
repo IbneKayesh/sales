@@ -109,6 +109,7 @@ const SubGroupListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
         body={mgrup_mname_BT}
       />
       <Column field="mgrup_mname" header="Category" sortable />
+      <Column field="chtac_cname" header="COA" sortable />
       <Column header={dataList?.length + " rows"} body={action_BT} />
     </DataTable>
   ) : (

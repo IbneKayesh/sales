@@ -355,4 +355,43 @@ router.post("/get-coa-posting", async (req, res) => {
   }
 });
 
+
+// get-all-year
+router.post("/get-all-year", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT fsy.*, 0 as edit_stop
+    FROM tmtb_fsyar fsy
+    WHERE fsy.fsyar_apusr = $1
+    AND fsy.fsyar_actve = TRUE
+    ORDER BY fsy.fsyar_fname DESC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get fiscal year- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 module.exports = router;

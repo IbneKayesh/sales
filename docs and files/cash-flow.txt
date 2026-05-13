@@ -1,0 +1,22 @@
+CASH FLOW STATEMENT
+
+CASH INFLOWS
+Owner Capital              5,000.00
+Cash Sales                 6,500.00
+-----------------------------------
+Total Inflow              11,500.00
+
+
+CASH OUTFLOWS
+Inventory Purchase         5,000.00
+Owner Drawings            5,000.00
+-----------------------------------
+Total Outflow             10,000.00
+
+
+NET CASH FLOW              1,500.00
+
+
+OPENING CASH               0.00
+NET INCREASE               1,500.00
+CLOSING CASH               1,500.00
