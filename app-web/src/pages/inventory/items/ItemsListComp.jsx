@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
@@ -7,32 +7,29 @@ import ActiveRowCell from "@/components/ActiveRowCell";
 import CSVExport from "@/components/CSVExport";
 import EmptyState from "@/components/EmptyState";
 
-const PriceListComp = ({
-  pageAuth,
-  dataList,
-  onEdit,
-  onDelete,
-  onProducts,
-}) => {
+const ItemsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
 
   const export_columns = [
-    { header: "Code", accessor: "price_mcode" },
-    { header: "Name", accessor: "price_pname" },
-    { header: "Active", accessor: "price_actve" },
+    { header: "Code", accessor: "items_icode" },
+    { header: "Name", accessor: "items_iname" },
+    { header: "Brand", accessor: "items_brand" },
+    { header: "Sub Category", accessor: "items_scatg" },
+    { header: "Type", accessor: "items_itype" },
+    { header: "Active", accessor: "items_actve" },
   ];
 
-  const price_pname_BT = (rowData) => {
+  const items_iname_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-sm">
           <ActiveRowCell
-            text={rowData.price_pname}
-            status={rowData.price_actve}
+            text={rowData.items_iname}
+            status={rowData.items_actve}
           />
         </span>
         <span className="text-gray-600 text-sm mt-1">
-          {rowData.price_mcode}
+          {rowData.items_icode}
         </span>
       </div>
     );
@@ -41,14 +38,9 @@ const PriceListComp = ({
   const action_BT = (rowData) => {
     let menuItems = [
       {
-        label: "Products",
-        icon: `pi pi-list`,
-        command: () => onProducts(rowData),
-      },
-      {
-        label: rowData.price_actve ? "Deactivate" : "Activate",
+        label: rowData.items_actve ? "Deactivate" : "Activate",
         icon: `pi ${
-          rowData.price_actve
+          rowData.items_actve
             ? "pi-trash text-red-400"
             : "pi-check-circle text-green-400"
         }`,
@@ -89,7 +81,7 @@ const PriceListComp = ({
         <div className="flex flex-wrap align-items-center gap-2 w-full md:w-auto">
           <CSVExport
             data={dataList}
-            fileName={`price-${new Date().toISOString().slice(0, 10)}`}
+            fileName={`items-${new Date().toISOString().slice(0, 10)}`}
             columns={export_columns}
             disable={pageAuth.extpr}
           />
@@ -114,15 +106,19 @@ const PriceListComp = ({
     >
       <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
       <Column
-        field="price_pname"
+        field="items_iname"
         header="Name"
         sortable
-        body={price_pname_BT}
+        body={items_iname_BT}
       />
+      <Column field="scatg_sname" header="Sub Category" sortable />
+      <Column field="brand_bname" header="Brand" sortable />
+      <Column field="items_itype" header="Type" sortable />
+      <Column field="items_runit" header="Unit" sortable />
       <Column header={dataList?.length + " rows"} body={action_BT} />
     </DataTable>
   ) : (
     <EmptyState />
   );
 };
-export default PriceListComp;
+export default ItemsListComp;

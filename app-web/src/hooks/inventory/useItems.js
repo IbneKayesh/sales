@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useAppUI } from "@/hooks/useAppUI";
 import validate, { generateDataModel } from "@/models/validator";
-import tmib_price from "@/models/inventory/tmib_price.json";
-const dataModel = generateDataModel(tmib_price);
-import { priceAPI } from "@/api/inventory/priceAPI.js";
+import tmib_scatg from "@/models/inventory/tmib_scatg.json";
+const dataModel = generateDataModel(tmib_scatg);
+import { subCategoryAPI } from "@/api/inventory/subCategoryAPI.js";
+import { categoryAPI } from "@/api/inventory/categoryAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
-const usePrice = () => {
-  //hooks :: menuId M04-M02,
+const useSubCategory = () => {
+  //hooks :: menuId M04-M01-M004,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -18,22 +19,23 @@ const usePrice = () => {
     edtpr: false,
     delpr: false,
   });
-  const [crTitle, setCrTitle] = useState("Products List");
+  const [crTitle, setCrTitle] = useState("Sub Category List");
   const [crView, setCrView] = useState("list");
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
+  const [scatg_mcatg_Options, setScatg_mcatg_Options] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M04-M02");
+    const perms = getPageAuth("M04-M01-M004");
     setPageAuth(perms);
   }, [getPageAuth]);
 
   //functions
-  const loadPrice = async () => {
+  const loadSubCategory = async () => {
     try {
       setIsBusy(true);
-      const resp = await priceAPI.getAll({});
+      const resp = await subCategoryAPI.getAll({});
       //console.log("resp", resp);
       setDataList(resp.data || []);
       showToastError(resp);
@@ -45,7 +47,7 @@ const usePrice = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmib_price);
+    const newErrors = validate({ ...formData, [field]: value }, tmib_scatg);
     setErrors(newErrors);
   };
 
@@ -55,8 +57,9 @@ const usePrice = () => {
       return;
     }
     setFormData(rowData);
-    setCrTitle("Edit Products");
+    setCrTitle("Edit Sub Category");
     setCrView("form");
+    handleGetCategory();
   };
 
   const handleDelete = (rowData) => {
@@ -65,7 +68,7 @@ const usePrice = () => {
       return;
     }
     confirm({
-      message: `Do you want to ${rowData.price_actve ? "Deactivate" : "Activate"} this ${rowData.price_pname}?`,
+      message: `Do you want to ${rowData.scatg_actve ? "Deactivate" : "Activate"} this ${rowData.scatg_sname}?`,
       header: "Confirmation!",
       accept: () => {
         onDelete(rowData);
@@ -79,7 +82,7 @@ const usePrice = () => {
   const onDelete = async (rowData) => {
     try {
       setIsBusy(true);
-      const resp = await priceAPI.delete(rowData);
+      const resp = await subCategoryAPI.delete(rowData);
       //console.log("resp", resp);
       alert({
         message: resp.message,
@@ -87,9 +90,9 @@ const usePrice = () => {
         icon: !resp.success && "pi pi-times-circle text-red-500",
       });
       if (resp.success) {
-        setCrTitle("Products List");
+        setCrTitle("Sub Category List");
         setCrView("list");
-        loadPrice();
+        loadSubCategory();
       }
     } catch (error) {
     } finally {
@@ -98,22 +101,22 @@ const usePrice = () => {
   };
 
   const handleBackClick = () => {
-    setCrTitle("Products List");
+    setCrTitle("Sub Category List");
     setCrView("list");
     setFormData(dataModel);
   };
 
   const handleSearchClick = () => {
-    setCrTitle("Search Products");
+    setCrTitle("Search Sub Category");
     setCrView("list");
     alert({ message: "Search is clicked", header: "Search" });
     //ketp this function as it is
   };
 
   const handleRefreshClick = () => {
-    setCrTitle("Products List");
+    setCrTitle("Sub Category List");
     setCrView("list");
-    loadPrice();
+    loadSubCategory();
   };
 
   const handleAddNewClick = () => {
@@ -121,14 +124,15 @@ const usePrice = () => {
       showToast("warn", "Add", "No add permission");
       return;
     }
-    setCrTitle("Add Products");
+    setCrTitle("Add Sub Category");
     setCrView("form");
     setFormData(dataModel);
+    handleGetCategory();
   };
 
   const handleSubmitClick = async () => {
     try {
-      const newErrors = validate(formData, tmib_price);
+      const newErrors = validate(formData, tmib_scatg);
       setErrors(newErrors);
       //console.log("handleSave: " + JSON.stringify(newErrors));
       if (Object.keys(newErrors).length > 0) {
@@ -137,7 +141,7 @@ const usePrice = () => {
 
       setIsBusy(true);
 
-      const resp = await priceAPI.upsert(formData);
+      const resp = await subCategoryAPI.upsert(formData);
       //console.log("resp", resp);
       alert({
         message: resp.message,
@@ -145,9 +149,9 @@ const usePrice = () => {
         icon: !resp.success && "pi pi-times-circle text-red-500",
       });
       if (resp.success) {
-        setCrTitle("Products List");
+        setCrTitle("Sub Category List");
         setCrView("list");
-        loadPrice();
+        loadSubCategory();
       }
     } catch (error) {
     } finally {
@@ -155,14 +159,22 @@ const usePrice = () => {
     }
   };
 
-  //products
-  const handleProducts = (rowData) => {
-    //console.log("rowData", rowData);
-    setFormData(rowData);
-    setCrTitle("Products List");
-    setCrView("products-list");
+  const handleGetCategory = async () => {
+    if (scatg_mcatg_Options.length > 0) {
+      return;
+    }
+    try {
+      setIsBusy(true);
+      const resp = await categoryAPI.getAllActive();
+      //console.log("resp", resp);
+      setScatg_mcatg_Options(resp.data);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
   };
-
+  
   return {
     //hooks
     pageAuth,
@@ -172,6 +184,7 @@ const usePrice = () => {
     errors,
     dataList,
     //other states
+    scatg_mcatg_Options,
     //functions
     handleChange,
     handleEdit,
@@ -181,8 +194,6 @@ const usePrice = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
-    //products
-    handleProducts,
   };
 };
-export default usePrice;
+export default useSubCategory;

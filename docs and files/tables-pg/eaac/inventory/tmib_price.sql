@@ -7,8 +7,8 @@ CREATE TABLE tmib_price (
 
   price_apusr varchar(50) NOT NULL,
   price_bsins varchar(50) NOT NULL,
-  price_mcode varchar(50) NOT NULL,
-  price_mname varchar(50) NOT NULL,
+  price_pcode varchar(50) NOT NULL,
+  price_pname varchar(50) NOT NULL,
   -- optional
   -- default
   price_actve boolean NOT NULL DEFAULT true,

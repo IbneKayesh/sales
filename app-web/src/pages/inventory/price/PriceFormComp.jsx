@@ -8,13 +8,13 @@ const PriceFormComp = ({ formData, errors, onChange }) => {
       <div className="col-12 md:col-6">
         <label className="block font-bold mb-2 text-red-800">Price Name</label>
         <InputText
-          name="price_mname"
-          value={formData.price_mname}
-          onChange={(e) => onChange("price_mname", e.target.value)}
-          className={`w-full ${errors.price_mname ? "p-invalid" : ""}`}
+          name="price_pname"
+          value={formData.price_pname}
+          onChange={(e) => onChange("price_pname", e.target.value)}
+          className={`w-full ${errors.price_pname ? "p-invalid" : ""}`}
           placeholder={`Enter price name`}
         />
-        <RequiredText text={errors.price_mname} />
+        <RequiredText text={errors.price_pname} />
       </div>
 
       {formData.id && (

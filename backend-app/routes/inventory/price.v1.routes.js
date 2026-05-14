@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
     LEFT JOIN tmnb_users csr ON prce.price_crusr = csr.id
     LEFT JOIN tmnb_users usr ON prce.price_upusr = usr.id
     WHERE prce.price_apusr = $1
-    ORDER BY prce.price_mname ASC`;
+    ORDER BY prce.price_pname ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get price- ${user_c}`);
@@ -63,7 +63,7 @@ router.post("/get-all-active", async (req, res) => {
     FROM tmib_price prce
     WHERE prce.price_apusr = $1
     AND prce.price_actve = TRUE
-    ORDER BY prce.price_mname ASC`;
+    ORDER BY prce.price_pname ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get price- ${user_c}`);
@@ -89,15 +89,15 @@ const create = async (req, res) => {
       id,
       price_apusr,
       price_bsins,
-      price_mcode,
-      price_mname,
+      price_pcode,
+      price_pname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!price_mname || !user_s || !user_c || !user_b) {
+    if (!price_pname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -108,14 +108,14 @@ const create = async (req, res) => {
     //database action
     const newCode = await GenNewCode(user_c, "tmib_price");
 
-    const sql = `INSERT INTO tmib_price(id, price_apusr, price_bsins, price_mcode, price_mname, price_crusr, price_upusr)
+    const sql = `INSERT INTO tmib_price(id, price_apusr, price_bsins, price_pcode, price_pname, price_crusr, price_upusr)
     VALUES ($1, $2, $3, $4, $5, $6, $7)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
       newCode,
-      price_mname,
+      price_pname,
       user_s,
       user_s,
     ];
@@ -123,7 +123,7 @@ const create = async (req, res) => {
     await dbRun(sql, params, `create price- ${user_c}`);
     res.json({
       success: true,
-      message: `${price_mname} - Created successfully.`,
+      message: `${price_pname} - Created successfully.`,
     data: {},
     });
   } catch (error) {
@@ -142,15 +142,15 @@ const update = async (req, res) => {
       id,
       price_apusr,
       price_bsins,
-      price_mcode,
-      price_mname,
+      price_pcode,
+      price_pname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!id || !price_mname || !user_s || !user_c || !user_b) {
+    if (!id || !price_pname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -160,17 +160,17 @@ const update = async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_price
-    SET price_mname = $1,
+    SET price_pname = $1,
     price_upusr = $2,
     price_updat = CURRENT_TIMESTAMP,
     price_rvnmr = price_rvnmr + 1
     WHERE id = $3`;
-    const params = [price_mname, user_s, id];
+    const params = [price_pname, user_s, id];
 
     await dbRun(sql, params, `update price- ${user_c}`);
     res.json({
       success: true,
-      message: `${price_mname} - Updated successfully.`,
+      message: `${price_pname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -202,10 +202,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, price_mname, price_actve, user_s, user_c, user_b } = req.body;
+    const { id, price_pname, price_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !price_mname || !user_s || !user_c || !user_b) {
+    if (!id || !price_pname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -225,7 +225,7 @@ router.post("/delete", async (req, res) => {
     await dbRun(sql, params, `delete price- ${user_c}`);
     res.json({
       success: true,
-      message: `${price_mname} - ${price_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${price_pname} - ${price_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {
