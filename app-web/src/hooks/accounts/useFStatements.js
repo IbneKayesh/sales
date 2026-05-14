@@ -3,7 +3,6 @@ import { useAppUI } from "@/hooks/useAppUI";
 import validate, { generateDataModel } from "@/models/validator";
 import tmtb_mjrnl_rpt from "@/models/accounts/tmtb_mjrnl_rpt.json";
 const dataModel = generateDataModel(tmtb_mjrnl_rpt);
-import { journalAPI } from "@/api/accounts/journalAPI.js";
 import { reportsAPI } from "@/api/accounts/reportsAPI.js";
 import { departmentsAPI } from "@/api/settings/departmentsAPI.js";
 import { fiscalYearAPI } from "@/api/accounts/fiscalYearAPI.js";
@@ -37,22 +36,19 @@ const useFStatements = () => {
 
   //SYS_SB_1 :: search box
   const report_Options = [
-    {
-      label: "Trial Balance",
-      value: "SYS_TB1",
-    },
-    {
-      label: "Profit & Loss",
-      value: "SYS_PL1",
-    },
-    {
-      label: "Balance Sheet",
-      value: "SYS_BS1",
-    },
-    {
-      label: "Cash Flow Statement",
-      value: "SYS_CFS1",
-    },
+    { label: "Trial Balance", value: "SYS_TB1" },
+    { label: "Profit & Loss", value: "SYS_PL1" },
+    { label: "Balance Sheet", value: "SYS_BS1" },
+    { label: "Cash Flow Statement", value: "SYS_CFS1" },
+    { label: "General Ledger", value: "SYS_GL1" },
+    { label: "Journal Register", value: "SYS_JR1" },
+    { label: "Account Ledger", value: "SYS_AL1" },
+    { label: "Sub-ledgers", value: "SYS_SL1" },
+    { label: "AR Aging", value: "SYS_AR1" },
+    { label: "AP Aging", value: "SYS_AP1" },
+    { label: "Outstanding", value: "SYS_OS1" },
+    { label: "Bank Reconciliation", value: "SYS_BR1" },
+    { label: "Cash Book", value: "SYS_CB1" }
   ];
 
   //other states items
@@ -80,7 +76,7 @@ const useFStatements = () => {
 
 
 
-  const loadTrialBalance = async () => {
+  const loadJournalDetails = async () => {
     try {
       const newErrors = validate(formData, tmtb_mjrnl_rpt);
       setErrors(newErrors);
@@ -89,8 +85,8 @@ const useFStatements = () => {
       }
 
       setIsBusy(true);
-      const resp = await reportsAPI.getLedgerData(formData);
-      //console.log("resp", resp);
+      const resp = await reportsAPI.getJournalDetails(formData);
+      console.log("resp", resp.data);
       setDataList(resp.data || []);
       showToastError(resp);
 
@@ -116,9 +112,7 @@ const useFStatements = () => {
 
 
   const handleQueryClick = async () => {
-    if (formData.report_type === "SYS_TB1"){      
-      await loadTrialBalance();
-    }
+    await loadJournalDetails();
   };
 
   //other functions

@@ -1,31 +1,19 @@
 import CSVExport from "@/components/CSVExport";
+import { Button } from "primereact/button";
 import EmptyState from "@/components/EmptyState";
+import "./CashFlowComp.css";
 
 const fmtAmt = (val) =>
   Number(val).toLocaleString("en-US", { minimumFractionDigits: 2 });
 
-const S = {
-  wrapper: { display: "flex", flexDirection: "column", alignItems: "center", fontSize: "0.875rem", fontFamily: "inherit", padding: "0.5rem 1rem" },
-  toolbar: { width: "100%", display: "flex", justifyContent: "flex-end", marginBottom: "1.25rem" },
-  report:  { width: "100%", maxWidth: "540px" },
-  title:   { textAlign: "center", fontWeight: 700, fontSize: "1rem", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "1.25rem", color: "var(--text-color, #1f2937)" },
-  sectionHeader: { fontWeight: 700, fontSize: "0.78rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--primary-color, #3b82f6)", padding: "10px 0 4px", borderBottom: "2px solid var(--primary-color, #3b82f6)", marginBottom: "2px" },
-  row: (indent, bold) => ({ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "4px 0", paddingLeft: indent ? "1.25rem" : 0, fontWeight: bold ? 600 : 400, color: "var(--text-color, #1f2937)" }),
-  amount: { minWidth: "9rem", textAlign: "right", fontVariantNumeric: "tabular-nums" },
-  divider: { borderTop: "1px solid #d1d5db", margin: "3px 0" },
-  grandDivider: { borderTop: "2px solid var(--text-color, #1f2937)", margin: "3px 0" },
-  dashed: { borderTop: "1px dashed #d1d5db", margin: "3px 0" },
-  spacer: { height: "1rem" },
-};
-
 const Row = ({ label, amount, bold = false, indent = false }) => (
-  <div style={S.row(indent, bold)}>
+  <div className={`cf-row ${indent ? 'cf-row-indent' : ''} ${bold ? 'cf-row-bold' : 'cf-row-normal'}`}>
     <span>{label}</span>
-    <span style={S.amount}>{fmtAmt(amount)}</span>
+    <span className="cf-amount">{fmtAmt(amount)}</span>
   </div>
 );
 
-const SectionHeader = ({ label }) => <div style={S.sectionHeader}>{label}</div>;
+const SectionHeader = ({ label }) => <div className="cf-section-header">{label}</div>;
 
 // API fields: { chtac_ctype, chtac_cname, dr, cr }
 // Inflows  = Income (cr−dr) + Equity where cr > dr (capital contributions)
@@ -33,21 +21,32 @@ const SectionHeader = ({ label }) => <div style={S.sectionHeader}>{label}</div>;
 const CashFlowComp = ({ pageAuth, dataList }) => {
   if (!dataList || dataList.length === 0) return <EmptyState />;
 
-  const incomeRows = dataList
+  const aggList = dataList?.reduce((acc, row) => {
+    const existing = acc.find(item => item.chtac_cname === row.chtac_cname);
+    if (existing) {
+      existing.djrnl_drval = Number(existing.djrnl_drval || 0) + Number(row.djrnl_drval || 0);
+      existing.djrnl_crval = Number(existing.djrnl_crval || 0) + Number(row.djrnl_crval || 0);
+    } else {
+      acc.push({ ...row, djrnl_drval: Number(row.djrnl_drval || 0), djrnl_crval: Number(row.djrnl_crval || 0) });
+    }
+    return acc;
+  }, []) || [];
+
+  const incomeRows = aggList
     .filter((r) => r.chtac_ctype === "Income")
-    .map((r) => ({ label: r.chtac_cname, amount: Number(r.cr) - Number(r.dr) }));
+    .map((r) => ({ label: r.chtac_cname, amount: Number(r.djrnl_crval) - Number(r.djrnl_drval) }));
 
-  const equityInRows = dataList
-    .filter((r) => r.chtac_ctype === "Equity" && Number(r.cr) > Number(r.dr))
-    .map((r) => ({ label: r.chtac_cname, amount: Number(r.cr) - Number(r.dr) }));
+  const equityInRows = aggList
+    .filter((r) => r.chtac_ctype === "Equity" && Number(r.djrnl_crval) > Number(r.djrnl_drval))
+    .map((r) => ({ label: r.chtac_cname, amount: Number(r.djrnl_crval) - Number(r.djrnl_drval) }));
 
-  const expenseRows = dataList
+  const expenseRows = aggList
     .filter((r) => r.chtac_ctype === "Expense")
-    .map((r) => ({ label: r.chtac_cname, amount: Number(r.dr) - Number(r.cr) }));
+    .map((r) => ({ label: r.chtac_cname, amount: Number(r.djrnl_drval) - Number(r.djrnl_crval) }));
 
-  const equityOutRows = dataList
-    .filter((r) => r.chtac_ctype === "Equity" && Number(r.dr) > Number(r.cr))
-    .map((r) => ({ label: r.chtac_cname, amount: Number(r.dr) - Number(r.cr) }));
+  const equityOutRows = aggList
+    .filter((r) => r.chtac_ctype === "Equity" && Number(r.djrnl_drval) > Number(r.djrnl_crval))
+    .map((r) => ({ label: r.chtac_cname, amount: Number(r.djrnl_drval) - Number(r.djrnl_crval) }));
 
   const inflows  = [...equityInRows, ...incomeRows];
   const outflows = [...expenseRows, ...equityOutRows];
@@ -69,49 +68,57 @@ const CashFlowComp = ({ pageAuth, dataList }) => {
   ];
 
   return (
-    <div style={S.wrapper}>
-      <div style={S.toolbar}>
+    <div className="cf-wrapper">
+      <div className="cf-toolbar hide-on-print">
         <CSVExport
           data={flatList}
           fileName={`cash-flow-${new Date().toISOString().slice(0, 10)}`}
           columns={export_columns}
           disable={pageAuth?.extpr}
         />
+        <Button
+          label="Print"
+          icon="pi pi-print"
+          size="small"
+          severity="info"
+          className="ml-2"
+          onClick={() => window.print()}
+        />
       </div>
 
-      <div style={S.report}>
-        <div style={S.title}>Cash Flow Statement</div>
+      <div className="cf-report">
+        <div className="cf-title">Cash Flow Statement</div>
 
         {/* INFLOWS */}
         <SectionHeader label="Cash Inflows" />
         {inflows.map((row, i) => (
           <Row key={i} label={row.label} amount={row.amount} indent />
         ))}
-        <div style={S.divider} />
+        <div className="cf-divider" />
         <Row label="Total Inflow" amount={totalInflow} bold />
 
-        <div style={S.spacer} />
+        <div className="cf-spacer" />
 
         {/* OUTFLOWS */}
         <SectionHeader label="Cash Outflows" />
         {outflows.map((row, i) => (
           <Row key={i} label={row.label} amount={row.amount} indent />
         ))}
-        <div style={S.divider} />
+        <div className="cf-divider" />
         <Row label="Total Outflow" amount={totalOutflow} bold />
 
-        <div style={{ height: "1.5rem" }} />
+        <div className="cf-spacer-lg" />
 
         {/* NET CASH FLOW */}
-        <div style={S.grandDivider} />
+        <div className="cf-grand-divider" />
         <Row label="NET CASH FLOW" amount={netCashFlow} bold />
-        <div style={S.grandDivider} />
+        <div className="cf-grand-divider" />
 
         {/* CLOSING SUMMARY */}
-        <div style={{ marginTop: "1.25rem" }}>
+        <div className="cf-closing-summary">
           <Row label="Opening Cash" amount={openingCash} />
           <Row label="Net Increase"  amount={netCashFlow} />
-          <div style={S.dashed} />
+          <div className="cf-dashed" />
           <Row label="Closing Cash"  amount={closingCash} bold />
         </div>
       </div>

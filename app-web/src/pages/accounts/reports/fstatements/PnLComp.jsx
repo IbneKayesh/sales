@@ -1,41 +1,41 @@
 import CSVExport from "@/components/CSVExport";
+import { Button } from "primereact/button";
 import EmptyState from "@/components/EmptyState";
+import "./PnLComp.css";
 
 const fmtAmt = (val) =>
   Number(val).toLocaleString("en-US", { minimumFractionDigits: 2 });
 
-const S = {
-  wrapper: { display: "flex", flexDirection: "column", alignItems: "center", fontSize: "0.875rem", fontFamily: "inherit", padding: "0.5rem 1rem" },
-  toolbar: { width: "100%", display: "flex", justifyContent: "flex-end", marginBottom: "1.25rem" },
-  report:  { width: "100%", maxWidth: "540px" },
-  title:   { textAlign: "center", fontWeight: 700, fontSize: "1rem", letterSpacing: "0.06em", textTransform: "uppercase", marginBottom: "1.25rem", color: "var(--text-color, #1f2937)" },
-  sectionHeader: { fontWeight: 700, fontSize: "0.78rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--primary-color, #3b82f6)", padding: "10px 0 4px", borderBottom: "2px solid var(--primary-color, #3b82f6)", marginBottom: "2px" },
-  row: (indent, bold) => ({ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "4px 0", paddingLeft: indent ? "1.25rem" : 0, fontWeight: bold ? 600 : 400, color: "var(--text-color, #1f2937)" }),
-  amount: { minWidth: "9rem", textAlign: "right", fontVariantNumeric: "tabular-nums" },
-  divider: { borderTop: "1px solid #d1d5db", margin: "3px 0" },
-  grandDivider: { borderTop: "2px solid var(--text-color, #1f2937)", margin: "3px 0" },
-  spacer: { height: "1rem" },
-};
-
 const Row = ({ label, amount, bold = false, indent = false }) => (
-  <div style={S.row(indent, bold)}>
+  <div className={`pnl-row ${indent ? 'pnl-row-indent' : ''} ${bold ? 'pnl-row-bold' : 'pnl-row-normal'}`}>
     <span>{label}</span>
-    <span style={S.amount}>{fmtAmt(amount)}</span>
+    <span className="pnl-amount">{fmtAmt(amount)}</span>
   </div>
 );
 
-const SectionHeader = ({ label }) => <div style={S.sectionHeader}>{label}</div>;
+const SectionHeader = ({ label }) => <div className="pnl-section-header">{label}</div>;
 
 const PnLComp = ({ pageAuth, dataList }) => {
   if (!dataList || dataList.length === 0) return <EmptyState />;
 
-  const income = dataList
-    .filter((r) => r.chtac_ctype === "Income")
-    .map((r) => ({ label: r.chtac_cname, amount: Number(r.cr) - Number(r.dr) }));
+  const aggList = dataList?.reduce((acc, row) => {
+    const existing = acc.find(item => item.chtac_cname === row.chtac_cname);
+    if (existing) {
+      existing.djrnl_drval = Number(existing.djrnl_drval || 0) + Number(row.djrnl_drval || 0);
+      existing.djrnl_crval = Number(existing.djrnl_crval || 0) + Number(row.djrnl_crval || 0);
+    } else {
+      acc.push({ ...row, djrnl_drval: Number(row.djrnl_drval || 0), djrnl_crval: Number(row.djrnl_crval || 0) });
+    }
+    return acc;
+  }, []) || [];
 
-  const expenses = dataList
+  const income = aggList
+    .filter((r) => r.chtac_ctype === "Income")
+    .map((r) => ({ label: r.chtac_cname, amount: Number(r.djrnl_crval) - Number(r.djrnl_drval) }));
+
+  const expenses = aggList
     .filter((r) => r.chtac_ctype === "Expense")
-    .map((r) => ({ label: r.chtac_cname, amount: Number(r.dr) - Number(r.cr) }));
+    .map((r) => ({ label: r.chtac_cname, amount: Number(r.djrnl_drval) - Number(r.djrnl_crval) }));
 
   const totalIncome   = income  .reduce((s, r) => s + r.amount, 0);
   const totalExpenses = expenses.reduce((s, r) => s + r.amount, 0);
@@ -52,39 +52,47 @@ const PnLComp = ({ pageAuth, dataList }) => {
   ];
 
   return (
-    <div style={S.wrapper}>
-      <div style={S.toolbar}>
+    <div className="pnl-wrapper">
+      <div className="pnl-toolbar hide-on-print">
         <CSVExport
           data={flatList}
           fileName={`pnl-${new Date().toISOString().slice(0, 10)}`}
           columns={export_columns}
           disable={pageAuth?.extpr}
         />
+        <Button
+          label="Print"
+          icon="pi pi-print"
+          size="small"
+          severity="info"
+          className="ml-2"
+          onClick={() => window.print()}
+        />
       </div>
 
-      <div style={S.report}>
-        <div style={S.title}>Profit &amp; Loss Statement</div>
+      <div className="pnl-report">
+        <div className="pnl-title">Profit &amp; Loss Statement</div>
 
         <SectionHeader label="Income" />
         {income.map((row, i) => (
           <Row key={i} label={row.label} amount={row.amount} indent />
         ))}
-        <div style={S.divider} />
+        <div className="pnl-divider" />
         <Row label="Total Income" amount={totalIncome} bold />
 
-        <div style={S.spacer} />
+        <div className="pnl-spacer" />
 
         <SectionHeader label="Expenses" />
         {expenses.map((row, i) => (
           <Row key={i} label={row.label} amount={row.amount} indent />
         ))}
-        <div style={S.divider} />
+        <div className="pnl-divider" />
         <Row label="Total Expenses" amount={totalExpenses} bold />
 
-        <div style={{ height: "1.5rem" }} />
-        <div style={S.grandDivider} />
+        <div className="pnl-spacer-lg" />
+        <div className="pnl-grand-divider" />
         <Row label={netProfit >= 0 ? "NET PROFIT" : "NET LOSS"} amount={Math.abs(netProfit)} bold />
-        <div style={S.grandDivider} />
+        <div className="pnl-grand-divider" />
       </div>
     </div>
   );

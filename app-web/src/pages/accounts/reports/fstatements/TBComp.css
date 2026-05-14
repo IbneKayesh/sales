@@ -1,0 +1,41 @@
+/* TBComp.css */
+.tb-runbal-zero {
+  color: var(--text-soft, #6b7280);
+}
+
+.tb-runbal-dr {
+  color: var(--success, #16a34a);
+}
+
+.tb-runbal-cr {
+  color: var(--danger, #dc2626);
+}
+
+.tb-diff-label {
+  font-weight: 600;
+}
+
+.tb-diff-success {
+  color: var(--success, #16a34a);
+}
+
+.tb-diff-danger {
+  color: var(--danger, #dc2626);
+}
+
+.tb-footer-val {
+  font-weight: 600;
+}
+
+.tb-dt-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.tb-dt-inputgroup {
+  max-width: 22rem;
+  flex: 1 1 14rem;
+}

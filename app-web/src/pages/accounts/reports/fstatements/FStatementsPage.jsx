@@ -7,6 +7,15 @@ import TBComp from "./TBComp";
 import BalanceSheetComp from "./BalanceSheetComp";
 import CashFlowComp from "./CashFlowComp";
 import PnLComp from "./PnLComp";
+import GLedgerComp from "./GLedgerComp";
+import JRegisterComp from "./JRegisterComp";
+import ALedgerComp from "./ALedgerComp";
+import SLedgerComp from "./SLedgerComp";
+import ARComp from "./ARComp";
+import APComp from "./APComp";
+import OutStandComp from "./OutStandComp";
+import BankRecComp from "./BankRecComp";
+import CashBankComp from "./CashBankComp";
 
 const FStatementsPage = () => {
   const {
@@ -113,6 +122,33 @@ const FStatementsPage = () => {
       )}
       {formData.report_type === "SYS_CFS1" && (
         <CashFlowComp pageAuth={pageAuth} dataList={dataList} />
+      )}
+      {formData.report_type === "SYS_GL1" && (
+        <GLedgerComp pageAuth={pageAuth} dataList={dataList} />
+      )}
+      {formData.report_type === "SYS_JR1" && (
+        <JRegisterComp pageAuth={pageAuth} dataList={dataList} />
+      )}
+      {formData.report_type === "SYS_AL1" && (
+        <ALedgerComp pageAuth={pageAuth} dataList={dataList} />
+      )}
+      {formData.report_type === "SYS_SL1" && (
+        <SLedgerComp pageAuth={pageAuth} dataList={dataList} />
+      )}
+      {formData.report_type === "SYS_AR1" && (
+        <ARComp pageAuth={pageAuth} dataList={dataList} />
+      )}
+      {formData.report_type === "SYS_AP1" && (
+        <APComp pageAuth={pageAuth} dataList={dataList} />
+      )}
+      {formData.report_type === "SYS_OS1" && (
+        <OutStandComp pageAuth={pageAuth} dataList={dataList} />
+      )}
+      {formData.report_type === "SYS_BR1" && (
+        <BankRecComp pageAuth={pageAuth} dataList={dataList} />
+      )}
+      {formData.report_type === "SYS_CB1" && (
+        <CashBankComp pageAuth={pageAuth} dataList={dataList} />
       )}
     </Card>
   );

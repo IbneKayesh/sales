@@ -4,6 +4,7 @@ import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import CSVExport from "@/components/CSVExport";
 import EmptyState from "@/components/EmptyState";
+import "./TBComp.css";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 const fmtAmt = (val) =>
@@ -14,52 +15,57 @@ const TBComp = ({ pageAuth, dataList }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
 
   const export_columns = [
-    { header: "Type",    accessor: "chtac_ctype" },
-    { header: "Name",    accessor: "chtac_cname" },
-    { header: "Debit",   accessor: "dr" },
-    { header: "Credit",  accessor: "cr" },
+    { header: "Type", accessor: "chtac_ctype" },
+    { header: "Name", accessor: "chtac_cname" },
+    { header: "Debit", accessor: "djrnl_drval" },
+    { header: "Credit", accessor: "djrnl_crval" },
   ];
 
   // ── body templates ──────────────────────────────────────────────────────
-  const dr_BT = (row) => fmtAmt(row.dr);
-  const cr_BT = (row) => fmtAmt(row.cr);
+  const dr_BT = (row) => fmtAmt(row.djrnl_drval);
+  const cr_BT = (row) => fmtAmt(row.djrnl_crval);
 
   const runBal_BT = (row) => {
-    const bal = Number(row.dr) - Number(row.cr);
-    if (bal === 0) return <span style={{ color: "#6b7280" }}>—</span>;
-    return bal > 0
-      ? <span style={{ color: "#16a34a" }}>{fmtAmt(bal)} Dr</span>
-      : <span style={{ color: "#dc2626" }}>{fmtAmt(Math.abs(bal))} Cr</span>;
+    const bal = Number(row.djrnl_drval) - Number(row.djrnl_crval);
+    if (bal === 0) return <span className="tb-runbal-zero">—</span>;
+    return bal > 0 ? (
+      <span className="tb-runbal-dr">{fmtAmt(bal)} Dr</span>
+    ) : (
+      <span className="tb-runbal-cr">{fmtAmt(Math.abs(bal))} Cr</span>
+    );
   };
 
   // ── totals ──────────────────────────────────────────────────────────────
-  const totalDr   = dataList?.reduce((s, r) => s + Number(r.dr  || 0), 0) ?? 0;
-  const totalCr   = dataList?.reduce((s, r) => s + Number(r.cr  || 0), 0) ?? 0;
+  const aggList = dataList?.reduce((acc, row) => {
+    const existing = acc.find(item => item.chtac_cname === row.chtac_cname);
+    if (existing) {
+      existing.djrnl_drval = Number(existing.djrnl_drval || 0) + Number(row.djrnl_drval || 0);
+      existing.djrnl_crval = Number(existing.djrnl_crval || 0) + Number(row.djrnl_crval || 0);
+    } else {
+      acc.push({ ...row, djrnl_drval: Number(row.djrnl_drval || 0), djrnl_crval: Number(row.djrnl_crval || 0) });
+    }
+    return acc;
+  }, []) || [];
+
+  const totalDr = aggList.reduce((s, r) => s + Number(r.djrnl_drval || 0), 0);
+  const totalCr = aggList.reduce((s, r) => s + Number(r.djrnl_crval || 0), 0);
   const totalDiff = totalDr - totalCr;
 
   const nameFT = () => (
-    <span style={{ fontWeight: 600 }}>
+    <span className="tb-diff-label">
       Difference&nbsp;:&nbsp;
-      <span style={{ color: totalDiff === 0 ? "#16a34a" : "#dc2626" }}>
+      <span className={totalDiff === 0 ? "tb-diff-success" : "tb-diff-danger"}>
         {fmtAmt(Math.abs(totalDiff))}
       </span>
     </span>
   );
-  const drFT = () => <span style={{ fontWeight: 600 }}>{fmtAmt(totalDr)}</span>;
-  const crFT = () => <span style={{ fontWeight: 600 }}>{fmtAmt(totalCr)}</span>;
+  const drFT = () => <span className="tb-footer-val">{fmtAmt(totalDr)}</span>;
+  const crFT = () => <span className="tb-footer-val">{fmtAmt(totalCr)}</span>;
 
   // ── header ──────────────────────────────────────────────────────────────
   const dt_HT = () => (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: "0.75rem",
-      }}
-    >
-      <div className="p-inputgroup" style={{ maxWidth: "22rem", flex: "1 1 14rem" }}>
+    <div className="tb-dt-header">
+      <div className="p-inputgroup tb-dt-inputgroup">
         <span className="p-inputgroup-addon bg-gray-100">
           <i className="pi pi-search" />
         </span>
@@ -79,11 +85,11 @@ const TBComp = ({ pageAuth, dataList }) => {
     </div>
   );
 
-  if (!dataList || dataList.length === 0) return <EmptyState />;
+  if (!aggList || aggList.length === 0) return <EmptyState />;
 
   return (
     <DataTable
-      value={dataList}
+      value={aggList}
       paginator
       rows={25}
       rowsPerPageOptions={[25, 50, 100, 200]}
@@ -96,19 +102,32 @@ const TBComp = ({ pageAuth, dataList }) => {
       header={dt_HT}
       style={{ fontSize: "0.875rem" }}
     >
-      <Column header="#"          style={{ width: "3rem", textAlign: "center" }}
-              body={(_, opt) => opt.rowIndex + 1} />
-      <Column field="chtac_ctype" header="Type"       style={{ width: "9rem" }} />
-      <Column field="chtac_cname" header="Account"    footer={nameFT} />
-      <Column field="dr"          header="Total Debit"
-              body={dr_BT} footer={drFT}
-              style={{ width: "10rem", textAlign: "right" }} />
-      <Column field="cr"          header="Total Credit"
-              body={cr_BT} footer={crFT}
-              style={{ width: "10rem", textAlign: "right" }} />
-      <Column header="Running Balance"
-              body={runBal_BT}
-              style={{ width: "11rem", textAlign: "right" }} />
+      <Column
+        header="#"
+        style={{ width: "3rem", textAlign: "center" }}
+        body={(_, opt) => opt.rowIndex + 1}
+      />
+      <Column field="chtac_ctype" header="Type" style={{ width: "9rem" }} />
+      <Column field="chtac_cname" header="Account" footer={nameFT} />
+      <Column
+        field="djrnl_drval"
+        header="Total Debit"
+        body={dr_BT}
+        footer={drFT}
+        style={{ width: "10rem", textAlign: "right" }}
+      />
+      <Column
+        field="djrnl_crval"
+        header="Total Credit"
+        body={cr_BT}
+        footer={crFT}
+        style={{ width: "10rem", textAlign: "right" }}
+      />
+      <Column
+        header="Running Balance"
+        body={runBal_BT}
+        style={{ width: "11rem", textAlign: "right" }}
+      />
     </DataTable>
   );
 };

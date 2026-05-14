@@ -1,0 +1,116 @@
+/* CashFlowComp.css */
+.cf-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.875rem;
+  font-family: inherit;
+  padding: 0.5rem 1rem;
+}
+
+.cf-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.25rem;
+}
+
+.cf-report {
+  width: 100%;
+  max-width: 540px;
+}
+
+.cf-title {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  color: var(--text-main, #1f2937);
+}
+
+.cf-section-header {
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--primary, #3b82f6);
+  padding: 10px 0 4px;
+  border-bottom: 2px solid var(--primary, #3b82f6);
+  margin-bottom: 2px;
+}
+
+.cf-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 4px 0;
+  color: var(--text-main, #1f2937);
+}
+
+.cf-row-indent {
+  padding-left: 1.25rem;
+}
+
+.cf-row-bold {
+  font-weight: 600;
+}
+
+.cf-row-normal {
+  font-weight: 400;
+}
+
+.cf-amount {
+  min-width: 9rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cf-divider {
+  border-top: 1px solid var(--border-color, #d1d5db);
+  margin: 3px 0;
+}
+
+.cf-grand-divider {
+  border-top: 2px solid var(--text-main, #1f2937);
+  margin: 3px 0;
+}
+
+.cf-dashed {
+  border-top: 1px dashed var(--border-color, #d1d5db);
+  margin: 3px 0;
+}
+
+.cf-spacer {
+  height: 1rem;
+}
+
+.cf-spacer-lg {
+  height: 1.5rem;
+}
+
+.cf-closing-summary {
+  margin-top: 1.25rem;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .cf-report, .cf-report * {
+    visibility: visible;
+  }
+  .cf-report {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 20px;
+  }
+  .hide-on-print {
+    display: none !important;
+  }
+}
