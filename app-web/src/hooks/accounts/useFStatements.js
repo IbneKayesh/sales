@@ -13,7 +13,7 @@ import { partiesAPI } from "@/api/accounts/partiesAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 import { buildCoaTree, findCoaTree } from "@/utils/jsonParser.js";
 
-const useReports = () => {
+const useFStatements = () => {
   //hooks :: menuId M05-M03-001,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   //SYS_FIND_1 :: Search, SYS_LIST_1 :: List, SYS_FORM_1 :: Entry Form,
@@ -261,4 +261,4 @@ const useReports = () => {
     //other functions
   };
 };
-export default useReports;
+export default useFStatements;

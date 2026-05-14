@@ -1,14 +1,14 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import useReports from "@/hooks/accounts/useReports.js";
+import useFStatements from "@/hooks/accounts/useFStatements.js";
 import SearchComp from "./SearchComp";
 import TBComp from "./TBComp";
 import BalanceSheetComp from "./BalanceSheetComp";
 import CashFlowComp from "./CashFlowComp";
 import PnLComp from "./PnLComp";
 
-const ReportsPage = () => {
+const FStatementsPage = () => {
   const {
     //hooks
     pageAuth,
@@ -29,7 +29,7 @@ const ReportsPage = () => {
     handleSearchClick,
     handleQueryClick,
     //other functions
-  } = useReports();
+  } = useFStatements();
 
   const isList = crView === "list" && true;
   const isForm = crView === "form" && true;
@@ -118,4 +118,4 @@ const ReportsPage = () => {
   );
 };
 
-export default ReportsPage;
+export default FStatementsPage;

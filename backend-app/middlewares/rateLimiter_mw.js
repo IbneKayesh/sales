@@ -1,6 +1,6 @@
 const rateLimit = require('express-rate-limit');
 
-const rateLimiter = rateLimit({
+const rateLimiter_mw = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 1000, // limit each IP to 5000 requests per windowMs
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -16,4 +16,4 @@ const rateLimiter = rateLimit({
 
 
 
-module.exports = rateLimiter;
+module.exports = rateLimiter_mw;

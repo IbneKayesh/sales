@@ -37,6 +37,7 @@ const apiRequest = async (endpoint, options = {}) => {
     headers: {
       "Content-Type": "application/json",
       "sgd-ua-node": import.meta.env.VITE_APP_API_KEY,
+      "x-tenant-id": storedUser.users_apink || 'default', //this Database Id
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },

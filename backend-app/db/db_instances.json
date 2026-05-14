@@ -1,0 +1,23 @@
+{
+  "default": {
+    "host": "localhost",
+    "user": "sgdpg",
+    "password": "sgdpass",
+    "database": "sgddb",
+    "port": 5432
+  },
+  "N": {
+    "host": "localhost",
+    "user": "sgdpg",
+    "password": "sgdpass",
+    "database": "sgddb",
+    "port": 5432
+  },
+  "db1": {
+    "host": "localhost",
+    "user": "sgdpg",
+    "password": "sgdpass",
+    "database": "sgddb_1",
+    "port": 5432
+  }
+}

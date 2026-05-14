@@ -1,8 +1,13 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+// 1. Import the new manager
+const { closeAllPools, connectDB } = require("./db/sqlManagerpg");
 
-const rateLimiter = require("./middlewares/rateLimiter.js");
+const rateLimiter_mw = require("./middlewares/rateLimiter_mw");
+const auth_mw = require("./middlewares/auth_mw");
+const db_mw = require("./middlewares/db_mw");
 //auth
 const authRoutes = require("./routes/auth");
 //crm
@@ -37,22 +42,17 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({ origin: "*", methods: ["GET", "POST"] }));
-//app.use(cors({ origin: process.env.FRONTEND_URL, methods: ["GET", "POST", "PUT", "DELETE"] }));
 
-app.use(rateLimiter);
+app.use(rateLimiter_mw);
 //stop massive JSON payload
 app.use(bodyParser.json({ limit: '100kb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '100kb' }));
 
-require("dotenv").config();
-const authMiddleware = require("./middlewares/authMiddleware");
+// 1. Multi-Tenant Database Context (scoped by x-tenant-id header)
+app.use(db_mw);
 
-// JWT Authentication Middleware
-app.use("/api", authMiddleware);
-
-// Initialize database
-
-//initData();
+// 2. JWT Authentication Middleware (runs within DB context)
+app.use("/api", auth_mw);
 
 // Routes
 
@@ -115,8 +115,34 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const server = app.listen(PORT, async () => {
+  console.log(`🚀 Server is running on port ${PORT}`);
+  
+  // Verify default DB connection on startup
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error("⚠️ Initial database connection check failed:", err.message);
+  }
 });
+
+// Graceful Shutdown
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);
+
+async function shutdown() {
+    console.log("🛑 Shutdown signal received. Closing server...");
+    server.close(async () => {
+        console.log("HTTP server closed.");
+        await closeAllPools();
+        process.exit(0);
+    });
+    
+    // Force shutdown after 10s if graceful fails
+    setTimeout(() => {
+        console.error("Could not close connections in time, forcefully shutting down");
+        process.exit(1);
+    }, 10000);
+}
 
 module.exports = app;

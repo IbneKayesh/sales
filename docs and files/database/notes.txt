@@ -1,0 +1,11 @@
+single postgresql database instance :: sqlManagerpg.js
+
+single mysql/mariadb database instance :: sqlManager.js
+mysql/mariadb database backup :: mysqlBackup.js
+init.js :: test sql mariadb/mysql and create tables
+export.js :: export tables to csv files
+asyncScriptsRunner.js :: example of async scripts runner for multiple sql managers mariadb/mysql
+
+
+
+SELECT datname FROM pg_database;

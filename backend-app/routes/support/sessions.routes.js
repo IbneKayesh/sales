@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { getAllSessions, killSession } = require("../../sessionManager");
-const authMiddleware = require("../../middlewares/authMiddleware");
+const auth_mw = require("../../middlewares/auth_mw");
 
 // Admin-only middleware
 function adminOnly(req, res, next) {
@@ -11,7 +11,7 @@ function adminOnly(req, res, next) {
 }
 
 // List all active sessions
-router.post("/all", authMiddleware, adminOnly, (req, res) => {
+router.post("/all", auth_mw, adminOnly, (req, res) => {
   try {
     const { users } = req.body;
     const sessions = getAllSessions(users);
@@ -31,7 +31,7 @@ router.post("/all", authMiddleware, adminOnly, (req, res) => {
 });
 
 // Kill a session by sessionId
-router.post("/delete", authMiddleware, adminOnly, (req, res) => {
+router.post("/delete", auth_mw, adminOnly, (req, res) => {
   try {
     const { sessionId } = req.body;
     killSession(sessionId);

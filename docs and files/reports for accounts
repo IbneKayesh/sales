@@ -1,0 +1,36 @@
+Financial Reports
+│
+├── Financial Statements
+│   ├── PnL
+│   ├── Balance Sheet
+│   ├── Cash Flow
+│   └── Trial Balance
+│
+├── Ledger Reports
+│   ├── General Ledger
+│   ├── Journal Register
+│   ├── Account Ledger
+│   └── Sub-ledgers
+│
+├── Receivable & Payable
+│   ├── AR Aging
+│   ├── AP Aging
+│   └── Outstanding
+│
+├── Banking & Cash
+│   ├── Bank Reconciliation
+│   └── Cash Book
+│
+├── Inventory & Assets
+│   ├── Inventory Valuation
+│   └── Fixed Asset Register
+│
+├── Taxation
+│   ├── VAT/GST
+│   └── Tax Summary
+│
+└── Management Reports
+    ├── Budget vs Actual
+    ├── KPI Dashboard
+    ├── Variance Analysis
+    └── Forecast Reports

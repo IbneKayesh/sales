@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { getSession } = require("../sessionManager"); // import your session manager
 
-const authMiddleware = (req, res, next) => {
+const auth_mw = (req, res, next) => {
   //console.log("req", req.body);
 
   const apiKey = req.headers["sgd-ua-node"];
@@ -91,4 +91,4 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+module.exports = auth_mw;

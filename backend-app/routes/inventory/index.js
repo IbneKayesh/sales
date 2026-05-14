@@ -3,12 +3,12 @@ const router = express.Router();
 
 const productsRoutes = require("./products.routes.js");
 const stockreportsRoutes = require("./stockreports.routes.js");
-const itransferRoutes = require("./itransfer.routes.js");
+//const itransferRoutes = require("./itransfer.routes.js");
 const stockFormulaRoutes = require("./stockFormula.routes.js");
 
 router.use("/products", productsRoutes);
 router.use("/stockreports", stockreportsRoutes);
-router.use("/itransfer", itransferRoutes);
+//router.use("/itransfer", itransferRoutes);
 router.use("/products/formula", stockFormulaRoutes);
 
 const brandsV1Routes = require("./brands.v1.routes");
