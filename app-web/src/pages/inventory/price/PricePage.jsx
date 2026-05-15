@@ -16,6 +16,7 @@ const PricePage = () => {
     errors,
     dataList,
     //other states
+    price_items_Options,
     //functions
     handleChange,
     handleEdit,
@@ -25,8 +26,6 @@ const PricePage = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
-    //products
-    handleProducts,
   } = usePrice();
 
   const isList = crView === "list" && true;
@@ -95,7 +94,6 @@ const PricePage = () => {
           dataList={dataList}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          onProducts={handleProducts}
         />
       )}
       {isForm && (
@@ -103,6 +101,7 @@ const PricePage = () => {
           formData={formData}
           errors={errors}
           onChange={handleChange}
+          price_items_Options={price_items_Options}
         />
       )}
 

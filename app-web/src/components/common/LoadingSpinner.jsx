@@ -1,5 +1,4 @@
 import React from "react";
-import { ProgressSpinner } from "primereact/progressspinner";
 import "./LoadingSpinner.css";
 
 /**
@@ -14,13 +13,12 @@ const LoadingSpinner = ({
     <div className="loading-card">
       <div className="spinner-wrapper">
         <div className="spinner-glow"></div>
-        <ProgressSpinner
-          className="theme-spinner"
-          style={{ width: "80px", height: "80px" }}
-          strokeWidth="4"
-          fill="transparent"
-          animationDuration="1.5s"
-        />
+        <div className="storm-container">
+          <div className="morph-shape"></div>
+          <div className="storm-ring"></div>
+          <div className="storm-ring delay-1"></div>
+          <div className="storm-ring delay-2"></div>
+        </div>
       </div>
       <div className="loading-text-group">
         <h2 className="loading-title">{message}</h2>

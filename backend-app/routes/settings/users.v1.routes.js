@@ -23,8 +23,9 @@ router.post("/", async (req, res) => {
     usrs.users_notes, usrs.users_nofcr, usrs.users_isprm, usrs.users_apink, usrs.users_apusr,
     usrs.users_urole, usrs.users_bsins, usrs.users_emply, usrs.users_actve, usrs.users_crusr,
     usrs.users_crdat, usrs.users_upusr, usrs.users_updat, usrs.users_rvnmr,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
+    bns.bsins_bname, csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
     FROM tmnb_users usrs
+    LEFT JOIN tmnb_bsins bns ON usrs.users_bsins = bns.id
     LEFT JOIN tmnb_users csr ON usrs.users_crusr = csr.id
     LEFT JOIN tmnb_users usr ON usrs.users_upusr = usr.id
     WHERE usrs.users_apusr = $1`;

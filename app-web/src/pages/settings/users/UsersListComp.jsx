@@ -31,7 +31,7 @@ const UsersListComp = ({
     { header: "Is Primary", accessor: "users_apink" },
     { header: "Master User", accessor: "users_apusr" },
     { header: "Role", accessor: "users_urole" },
-    { header: "Business", accessor: "users_bsins" },
+    { header: "Business", accessor: "bsins_bname" },
     { header: "Employee", accessor: "users_emply" },
     { header: "Active", accessor: "users_actve" },
   ];
@@ -110,7 +110,7 @@ const UsersListComp = ({
           Role: {rowData.users_urole}
         </span>
         <span className="text-gray-700 text-sm mt-1">
-          Business: {rowData.users_bsins}
+          Business: {rowData.bsins_bname}
         </span>
         <span className="text-gray-700 text-sm mt-1">
           Employee: {rowData.users_emply}

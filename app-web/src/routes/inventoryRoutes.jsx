@@ -9,6 +9,7 @@ const AttributesPage = React.lazy(() => import("../pages/inventory/setup/attribu
 const GroupPage = React.lazy(() => import("../pages/inventory/setup/group/GroupPage"));
 const SubGroupPage = React.lazy(() => import("../pages/inventory/setup/subgroup/SubGroupPage"));
 const ItemsPage = React.lazy(() => import("../pages/inventory/items/ItemsPage"));
+const PricePage = React.lazy(() => import("../pages/inventory/price/PricePage"));
 
 const inventoryRoutes = (
   <>
@@ -20,6 +21,7 @@ const inventoryRoutes = (
     <Route path="/inventory/setup/group" element={<GroupPage />} />
     <Route path="/inventory/setup/sub-group" element={<SubGroupPage />} />
     <Route path="/inventory/items" element={<ItemsPage />} />
+    <Route path="/inventory/item-prices" element={<PricePage />} />
   </>
 );
 

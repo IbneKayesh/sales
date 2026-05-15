@@ -79,7 +79,7 @@
   "items_scatg": {
     "type": "string",
     "label": "Sub Category",
-    "maxLength": 11,
+    "maxLength": 50,
     "minLength": 0,
     "placeholder": "Enter sub category",
     "required": true
@@ -131,7 +131,7 @@
     "minLength": 0,
     "placeholder": "Enter fix cost percentage",
     "required": false,
-    "default": 5
+    "default": 1
   },
   "items_image": {
     "type": "string",

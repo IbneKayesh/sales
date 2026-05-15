@@ -69,8 +69,8 @@ const ItemsFormComp = ({
           value={formData.items_runit}
           onChange={(e) => onChange("items_runit", e.value)}
           options={items_runit_Options}
-          optionLabel="label"
-          optionValue="value"
+          optionLabel="units_uname"
+          optionValue="id"
           className={`w-full ${errors.items_runit ? "p-invalid" : ""}`}
           placeholder="Enter retail unit"
           filter
@@ -96,8 +96,8 @@ const ItemsFormComp = ({
           value={formData.items_punit}
           onChange={(e) => onChange("items_punit", e.value)}
           options={items_punit_Options}
-          optionLabel="label"
-          optionValue="value"
+          optionLabel="units_uname"
+          optionValue="id"
           className={`w-full ${errors.items_punit ? "p-invalid" : ""}`}
           placeholder="Enter pack unit"
           filter
@@ -112,8 +112,8 @@ const ItemsFormComp = ({
           value={formData.items_sgrup}
           onChange={(e) => onChange("items_sgrup", e.value)}
           options={items_sgrup_Options}
-          optionLabel="label"
-          optionValue="value"
+          optionLabel="sgrup_sname"
+          optionValue="id"
           className={`w-full ${errors.items_sgrup ? "p-invalid" : ""}`}
           placeholder="Enter sub group"
           filter
@@ -130,8 +130,8 @@ const ItemsFormComp = ({
           value={formData.items_scatg}
           onChange={(e) => onChange("items_scatg", e.value)}
           options={items_scatg_Options}
-          optionLabel="label"
-          optionValue="value"
+          optionLabel="scatg_sname"
+          optionValue="id"
           className={`w-full ${errors.items_scatg ? "p-invalid" : ""}`}
           placeholder="Enter sub category"
           filter
@@ -146,8 +146,8 @@ const ItemsFormComp = ({
           value={formData.items_itype}
           onChange={(e) => onChange("items_itype", e.value)}
           options={items_itype_Options}
-          optionLabel="label"
-          optionValue="value"
+          optionLabel="label_text"
+          optionValue="value_text"
           className={`w-full ${errors.items_itype ? "p-invalid" : ""}`}
           placeholder="Enter type"
           filter
@@ -162,8 +162,8 @@ const ItemsFormComp = ({
           value={formData.items_brand}
           onChange={(e) => onChange("items_brand", e.value)}
           options={items_brand_Options}
-          optionLabel="label"
-          optionValue="value"
+          optionLabel="brand_bname"
+          optionValue="id"
           className={`w-full ${errors.items_brand ? "p-invalid" : ""}`}
           placeholder="Enter brand"
           filter
@@ -275,16 +275,14 @@ const ItemsFormComp = ({
       </div>
 
       {formData.id && (
-        <div className="col-12 mt-3">
-          <AuditFields
-            active={formData.items_actve}
-            createdBy={formData.crusr_cname}
-            createdAt={formData.items_crdat}
-            updatedBy={formData.upusr_cname}
-            updatedAt={formData.items_updat}
-            revNo={formData.items_rvnmr}
-          />
-        </div>
+        <AuditFields
+          active={formData.items_actve}
+          createdBy={formData.crusr_cname}
+          createdAt={formData.items_crdat}
+          updatedBy={formData.upusr_cname}
+          updatedAt={formData.items_updat}
+          revNo={formData.items_rvnmr}
+        />
       )}
     </div>
   );

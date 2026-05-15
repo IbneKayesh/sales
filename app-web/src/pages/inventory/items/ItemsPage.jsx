@@ -30,6 +30,8 @@ const ItemsPage = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
+    //other functions
+    handleCopy
   } = useItems();
 
   const isList = crView === "list" && true;
@@ -98,6 +100,7 @@ const ItemsPage = () => {
           dataList={dataList}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onCopy={handleCopy}
         />
       )}
       {isForm && (
