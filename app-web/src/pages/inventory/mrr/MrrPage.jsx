@@ -1,11 +1,11 @@
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { ButtonGroup } from "primereact/buttongroup";
-import usePrice from "@/hooks/inventory/usePrice.js";
-import PriceFormComp from "./PriceFormComp";
-import PriceListComp from "./PriceListComp";
+import useMrr from "@/hooks/inventory/useMrr.js";
+import MrrFormComp from "./MrrFormComp";
+import MrrListComp from "./MrrListComp";
 
-const PricePage = () => {
+const MrrPage = () => {
   const {
     //hooks
     pageAuth,
@@ -15,6 +15,7 @@ const PricePage = () => {
     errors,
     dataList,
     //other states
+    migrn_cntct_Options,
     price_items_Options,
     //functions
     handleChange,
@@ -25,7 +26,7 @@ const PricePage = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
-  } = usePrice();
+  } = useMrr();
 
   const isList = crView === "list" && true;
   const isForm = crView === "form" && true;
@@ -36,7 +37,7 @@ const PricePage = () => {
         <span className="page-title-text">{crTitle}</span>
         <div className="flex gap-2">
           <ButtonGroup>
-            {isForm && (
+            {crView === "SYS_FRM_1" && (
               <Button
                 label="Back"
                 icon="pi pi-arrow-left"
@@ -45,7 +46,7 @@ const PricePage = () => {
                 onClick={handleBackClick}
               />
             )}
-            {isList && (
+            {crView === "SYS_LST_1" && (
               <Button
                 label="Find"
                 icon="pi pi-search"
@@ -54,7 +55,7 @@ const PricePage = () => {
                 onClick={handleSearchClick}
               />
             )}
-            {isList && (
+            {crView === "SYS_LST_1" && (
               <Button
                 label="Refresh"
                 icon="pi pi-refresh"
@@ -70,7 +71,7 @@ const PricePage = () => {
               severity="help"
               onClick={handleAddNewClick}
             />
-            {isForm && (
+            {crView === "SYS_FRM_1" && (
               <Button
                 label="Submit"
                 icon="pi pi-save"
@@ -87,19 +88,20 @@ const PricePage = () => {
 
   return (
     <Card title={cardTitle} className="shadow-2 border-round p-2">
-      {isList && (
-        <PriceListComp
+      {crView === "SYS_LST_1" && (
+        <MrrListComp
           pageAuth={pageAuth}
           dataList={dataList}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
       )}
-      {isForm && (
-        <PriceFormComp
+      {crView === "SYS_FRM_1" && (
+        <MrrFormComp
           formData={formData}
           errors={errors}
           onChange={handleChange}
+          migrn_cntct_Options={migrn_cntct_Options}
           price_items_Options={price_items_Options}
         />
       )}
@@ -107,4 +109,4 @@ const PricePage = () => {
   );
 };
 
-export default PricePage;
+export default MrrPage;

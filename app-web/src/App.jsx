@@ -14,6 +14,7 @@ import Layout from "@/pages/layout/Layout.jsx";
 // Routes list
 const HomePage = React.lazy(() => import("./pages/HomePage"));
 const LoginPage = React.lazy(() => import("./pages/auth/LoginPage"));
+const LoginPopup = React.lazy(() => import("./pages/auth/LoginPopup"));
 
 import AppRoutesList from "./routes";
 
@@ -30,7 +31,7 @@ function App() {
 }
 
 function AppRoutes() {
-  const { user, loading } = useAuth();
+  const { user, loading, showLoginPopup, setShowLoginPopup } = useAuth();
 
   if (loading) {
     return <LoadingSpinner fullScreen />;
@@ -43,6 +44,10 @@ function AppRoutes() {
     >     
       <Router>
         <React.Suspense fallback={<LoadingSpinner />}>
+          <LoginPopup
+            visible={showLoginPopup}
+            onHide={() => setShowLoginPopup(false)}
+          />
           <Routes>
             <Route
               path="/login"

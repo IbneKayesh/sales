@@ -413,4 +413,58 @@ router.post("/get-new-business-items", async (req, res) => {
 });
 
 
+// get-new-mrr-items
+router.post("/get-new-mrr-items", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT itm.*,
+    prc.price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat, prc.price_dspct,
+    prc.price_gdstk, prc.price_bdstk, prc.price_mnqty, prc.price_mxqty, prc.price_pbqty,
+    prc.price_sbqty,
+    runit.units_uname as runit_uname,
+    punit.units_uname as punit_uname,
+    sgrup.sgrup_sname as sgrup_sname,
+    scatg.scatg_sname as scatg_sname,
+    brand.brand_bname as brand_bname
+    FROM tmib_items itm
+    JOIN tmib_price prc ON itm.id = prc.price_items    
+    JOIN tmib_units runit ON itm.items_runit = runit.id
+    JOIN tmib_units punit ON itm.items_punit = punit.id
+    JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+    JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
+    JOIN tmib_brand brand ON itm.items_brand = brand.id
+    WHERE itm.items_stpur = false
+    AND prc.price_apusr = $1
+    AND prc.price_bsins = $2
+    ORDER BY itm.items_iname ASC`;
+
+    const params = [user_c, user_b];
+    const rows = await dbGetAll(sql, params, `get new mrr items- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+
 module.exports = router;

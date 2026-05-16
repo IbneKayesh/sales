@@ -18,25 +18,33 @@
 }
 
 .login-left-panel::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -20vh;
   left: -20vh;
   width: 60vh;
   height: 60vh;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
   border-radius: 50%;
   z-index: 0;
 }
 
 .login-left-panel::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -10vh;
   right: -10vh;
   width: 40vh;
   height: 40vh;
-  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 70%
+  );
   border-radius: 50%;
   z-index: 0;
 }
@@ -90,14 +98,15 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .login-form-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
 }
-
 
 .form-header {
   text-align: center;
@@ -241,7 +250,6 @@
     padding: 32px 24px;
   }
 }
-
 
 .remember-me {
   display: flex;

@@ -746,57 +746,6 @@ router.post("/get-sales-invoice-items", async (req, res) => {
   }
 });
 
-//get-booking-items
-router.post("/get-purchase-booking-items", async (req, res) => {
-  try {
-    const { muser_id, bsins_id } = req.body;
-
-    // Validate input
-    if (!muser_id || !bsins_id) {
-      return res.json({
-        success: false,
-        message: "Business ID is required",
-        data: null,
-      });
-    }
-
-    //database action
-    const sql = `SELECT itm.items_icode, itm.items_bcode, itm.items_hscod, itm.items_iname, itm.items_idesc,
-    itm.items_puofm, itm.items_dfqty, itm.items_suofm, itm.items_ctgry, itm.items_brand,
-    itm.items_itype, itm.items_sdvat, itm.items_costp, itm.items_image,
-    btm.bitem_lprat, btm.bitem_dprat, btm.bitem_mcmrp, btm.bitem_sddsp, btm.bitem_gstkq,
-    btm.bitem_bstkq, btm.bitem_istkq, btm.bitem_pbqty, btm.bitem_sbqty, btm.bitem_jnote,
-    puofm.iuofm_untnm AS puofm_untnm, suofm.iuofm_untnm AS suofm_untnm,
-    itm.id AS items_id, btm.id AS bitem_id
-    FROM tmib_items itm
-    JOIN tmib_bitem btm ON itm.id = btm.bitem_items AND btm.bitem_users = itm.items_users
-    LEFT JOIN tmib_iuofm puofm ON itm.items_puofm = puofm.id
-    LEFT JOIN tmib_iuofm suofm ON itm.items_suofm = suofm.id
-    WHERE itm.items_trcks IN (0,1,2)
-    AND itm.items_actve = TRUE
-    AND itm.items_users = $1
-    AND btm.bitem_bsins = $2
-    AND btm.bitem_actve = TRUE
-    AND itm.items_alpur = TRUE
-    ORDER BY itm.items_iname`;
-    const params = [muser_id, bsins_id];
-
-    const rows = await dbGetAll(sql, params, `Get BItem for ${muser_id}`);
-
-    res.json({
-      success: true,
-      message: "BItem fetched successfully",
-      data: rows,
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: null,
-    });
-  }
-});
 
 //get-transfer-items
 router.post("/get-transfer-items", async (req, res) => {

@@ -3,6 +3,7 @@ import {
   getStorageData,
   setStorageData,
   clearStorageData,
+  getStorageLoginData,
 } from "@/utils/storage";
 import { apiLogin } from "@/utils/api";
 
@@ -22,6 +23,19 @@ export const AuthProvider = ({ children }) => {
   const [business, setBusiness] = useState(null);
   const [userMenus, setUserMenus] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+
+  const logout = useCallback(async (showPopup = false) => {
+    const stored = getStorageLoginData();
+    setUser(null);
+    setBusiness(null);
+    clearStorageData();
+
+    // If user was saved, show the re-login popup instead of just going to login page
+    if (showPopup && stored && stored.is_saved) {
+      setShowLoginPopup(true);
+    }
+  }, []);
 
   useEffect(() => {
     const storedUser = getStorageData()?.users;
@@ -63,11 +77,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
-    setUser(null);
-    setBusiness(null);
-    clearStorageData();
-  };
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      const stored = getStorageLoginData();
+      if (stored && stored.is_saved) {
+        setShowLoginPopup(true);
+      } else {
+        // Fallback or force logout
+        logout();
+      }
+    };
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
+    return () =>
+      window.removeEventListener("auth:unauthorized", handleUnauthorized);
+  }, [logout]);
 
 
   const getPageAuth = useCallback((menuId) => {
@@ -90,6 +113,8 @@ export const AuthProvider = ({ children }) => {
     loading,
     login,
     logout,
+    showLoginPopup,
+    setShowLoginPopup,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

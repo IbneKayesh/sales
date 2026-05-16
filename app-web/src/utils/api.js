@@ -51,6 +51,7 @@ const apiRequest = async (endpoint, options = {}) => {
     if (!response.ok) {
       if (response.status === 401) {
         //throw new Error("Unauthorized. Please login again.");
+        window.dispatchEvent(new CustomEvent("auth:unauthorized"));
         return {
           success: false,
           message: "Unauthorized. Please login again.",

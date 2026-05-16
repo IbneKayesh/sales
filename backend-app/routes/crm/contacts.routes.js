@@ -94,48 +94,6 @@ router.post("/ledger", async (req, res) => {
   }
 });
 
-//suppliers
-router.post("/suppliers", async (req, res) => {
-  try {
-    const { muser_id } = req.body;
-
-    // Validate input
-    if (!muser_id) {
-      return res.json({
-        success: false,
-        message: "User ID is required",
-        data: null,
-      });
-    }
-
-    //database action
-    const sql = `SELECT cnt.*, 0 as edit_stop
-    FROM tmcb_cntct cnt
-    WHERE cnt.cntct_users = $1
-    AND cnt.cntct_ctype IN ('Supplier','Both')
-    AND cnt.cntct_actve = TRUE
-    ORDER BY cnt.cntct_cntnm`;
-    const params = [muser_id];
-
-    const rows = await dbGetAll(
-      sql,
-      params,
-      `Get suppliers for ${muser_id}`,
-    );
-    res.json({
-      success: true,
-      message: "Suppliers fetched successfully",
-      data: rows,
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: null,
-    });
-  }
-});
 
 //customers
 router.post("/customers", async (req, res) => {

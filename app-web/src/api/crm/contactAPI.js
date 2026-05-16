@@ -30,6 +30,12 @@ export const contactAPI = {
     apiRequest("/crm/v1/contacts/get-avail-contact-accounts", {
       body: data,
     }),
+  getAllSuppliers: (data) =>
+    apiRequest(`/crm/v1/contacts/get-suppliers`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
   getByType: (data) =>
     apiRequest("/crm/contacts/get-by-type", {
       method: "POST",
@@ -37,11 +43,6 @@ export const contactAPI = {
     }),
   getContactLedger: (data) =>
     apiRequest(`/crm/contacts/ledger`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
-  getAllSuppliers: (data) =>
-    apiRequest(`/crm/contacts/suppliers`, {
       method: "POST",
       body: JSON.stringify(data),
     }),

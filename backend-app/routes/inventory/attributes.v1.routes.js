@@ -153,6 +153,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
+   
     const {
       id,
       attrb_apusr,
@@ -169,7 +170,6 @@ const update = async (req, res) => {
 
     // Validate input
     if (
-      !id ||
       !attrb_mcatg ||
       !attrb_aname ||
       !attrb_dtype ||
@@ -194,7 +194,7 @@ const update = async (req, res) => {
     attrb_updat = CURRENT_TIMESTAMP,
     attrb_rvnmr = attrb_rvnmr + 1
     WHERE id = $6`;
-    const params = [attrb_mcatg, attrb_aname, user_s, id];
+    const params = [attrb_mcatg, attrb_aname, attrb_dtype, attrb_dvalu, user_s, id];
 
     await dbRun(sql, params, `update attrb- ${user_c}`);
     res.json({

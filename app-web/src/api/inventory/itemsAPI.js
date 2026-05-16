@@ -30,4 +30,8 @@ export const itemsAPI = {
     apiRequest("/inventory/v1/items/get-new-business-items", {
       body: data,
     }),
+  getNewMrrItems: (data) =>
+    apiRequest("/inventory/v1/items/get-new-mrr-items", {
+      body: data,
+    }),
 };
