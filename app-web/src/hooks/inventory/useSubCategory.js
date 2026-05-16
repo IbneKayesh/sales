@@ -8,7 +8,7 @@ import { categoryAPI } from "@/api/inventory/categoryAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
 const useSubCategory = () => {
-  //hooks :: menuId M04-M01-M004,
+  //hooks :: menuId M06-M01-M004,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -27,7 +27,7 @@ const useSubCategory = () => {
   const [scatg_mcatg_Options, setScatg_mcatg_Options] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M04-M01-M004");
+    const perms = getPageAuth("M06-M01-M004");
     setPageAuth(perms);
   }, [getPageAuth]);
 

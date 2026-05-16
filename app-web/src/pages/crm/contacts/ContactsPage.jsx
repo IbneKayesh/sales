@@ -22,7 +22,6 @@ const ContactsPage = () => {
     cntct_dzone_Options,
     dzone_cntry_Options,
     cntct_crncy_Options,
-    cntct_price_Options,
     //functions
     handleChange,
     handleEdit,
@@ -121,7 +120,6 @@ const ContactsPage = () => {
           cntct_dzone_Options={cntct_dzone_Options}
           dzone_cntry_Options={dzone_cntry_Options}
           cntct_crncy_Options={cntct_crncy_Options}
-          cntct_price_Options={cntct_price_Options}
           //contact address
           formDataAddress={formDataAddress}
           onChangeAddress={handleChangeAddress}

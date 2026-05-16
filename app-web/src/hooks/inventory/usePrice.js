@@ -8,7 +8,7 @@ import { itemsAPI } from "@/api/inventory/itemsAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
 const usePrice = () => {
-  //hooks :: menuId M04-M02,
+  //hooks :: menuId M06-M01-M009,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -27,7 +27,7 @@ const usePrice = () => {
   const [price_items_Options, setPrice_items_Options] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M04-M02");
+    const perms = getPageAuth("M06-M01-M009");
     setPageAuth(perms);
   }, [getPageAuth]);
 

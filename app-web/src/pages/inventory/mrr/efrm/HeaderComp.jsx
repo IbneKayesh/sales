@@ -3,78 +3,78 @@ import RequiredText from "@/components/RequiredText";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 
-const HeaderComp = ({ formData, errors, onChange, migrn_cntct_Options}) => {
+const HeaderComp = ({ formData, errors, onChange, mrrmt_cntct_Options}) => {
   return (
     <div className="grid">
       <div className="col-12 md:col-3">
         <label className="block font-bold mb-2 text-red-800">Contact</label>
         <Dropdown
-          name="migrn_cntct"
-          value={formData.migrn_cntct}
-          onChange={(e) => onChange("migrn_cntct", e.value)}
-          options={migrn_cntct_Options}
+          name="mrrmt_cntct"
+          value={formData.mrrmt_cntct}
+          onChange={(e) => onChange("mrrmt_cntct", e.value)}
+          options={mrrmt_cntct_Options}
           optionLabel="cntct_cntnm"
           optionValue="id"
-          className={`w-full ${errors.migrn_cntct ? "p-invalid" : ""}`}
+          className={`w-full ${errors.mrrmt_cntct ? "p-invalid" : ""}`}
           placeholder="Select contact"
           filter
           showClear
           disabled={formData.id}
         />
-        <RequiredText text={errors.migrn_cntct} />
+        <RequiredText text={errors.mrrmt_cntct} />
       </div>
       <div className="col-12 md:col-2">
         <label className="block font-bold mb-2">Trn No</label>
         <InputText
-          name="migrn_trnno"
-          value={formData.migrn_trnno}
-          onChange={(e) => onChange("migrn_trnno", e.target.value)}
-          className={`w-full ${errors.migrn_trnno ? "p-invalid" : ""}`}
+          name="mrrmt_trnno"
+          value={formData.mrrmt_trnno}
+          onChange={(e) => onChange("mrrmt_trnno", e.target.value)}
+          className={`w-full ${errors.mrrmt_trnno ? "p-invalid" : ""}`}
           placeholder="Trn No [Auto]"
           disabled
         />
-        <RequiredText text={errors.migrn_trnno} />
+        <RequiredText text={errors.mrrmt_trnno} />
       </div>
       <div className="col-12 md:col-2">
         <label className="block font-bold mb-2">Date</label>
         <Calendar
-          name="migrn_trdat"
-          value={formData.migrn_trdat ? new Date(formData.migrn_trdat) : null}
+          name="mrrmt_trdat"
+          value={formData.mrrmt_trdat ? new Date(formData.mrrmt_trdat) : null}
           onChange={(e) =>
             onChange(
-              "migrn_trdat",
+              "mrrmt_trdat",
               e.value ? e.value.toLocaleString().split("T")[0] : "",
             )
           }
-          className={`w-full ${errors.migrn_trdat ? "p-invalid" : ""}`}
+          className={`w-full ${errors.mrrmt_trdat ? "p-invalid" : ""}`}
           dateFormat="yy-mm-dd"
           placeholder={`Select trn date`}
           disabled={formData.id}
           variant={formData.id ? "filled" : ""}
         />
-        <RequiredText text={errors.migrn_trdat} />
+        <RequiredText text={errors.mrrmt_trdat} />
       </div>
       <div className="col-12 md:col-2">
         <label className="block font-bold mb-2">Ref No</label>
         <InputText
-          name="migrn_refno"
-          value={formData.migrn_refno}
-          onChange={(e) => onChange("migrn_refno", e.target.value)}
-          className={`w-full ${errors.migrn_refno ? "p-invalid" : ""}`}
+          name="mrrmt_refno"
+          value={formData.mrrmt_refno}
+          onChange={(e) => onChange("mrrmt_refno", e.target.value)}
+          className={`w-full ${errors.mrrmt_refno ? "p-invalid" : ""}`}
           placeholder="Enter ref no"
         />
-        <RequiredText text={errors.migrn_refno} />
+        <RequiredText text={errors.mrrmt_refno} />
       </div>
       <div className="col-12 md:col-3">
         <label className="block font-bold mb-2">Notes</label>
         <InputText
-          name="migrn_notes"
-          value={formData.migrn_notes}
-          onChange={(e) => onChange("migrn_notes", e.target.value)}
-          className={`w-full ${errors.migrn_notes ? "p-invalid" : ""}`}
+          name="mrrmt_notes"
+          value={formData.mrrmt_notes}
+          onChange={(e) => onChange("mrrmt_notes", e.target.value)}
+          className={`w-full ${errors.mrrmt_notes ? "p-invalid" : ""}`}
           placeholder="Enter notes"
         />
-        <RequiredText text={errors.migrn_notes} />
+        <RequiredText text={errors.mrrmt_notes} />
       </div>
     </div>
   );

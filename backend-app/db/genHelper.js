@@ -33,6 +33,7 @@ const GenNewTrn = async (user_c, user_b, tableName, trnName, dpart_id) => {
   const month = String(now.getMonth() + 1).padStart(2, "0");
   const year = String(now.getFullYear()).slice(-2);
   const datePart = `${month}${year}`;
+  const regColumn = tableName.split("_")[1];
 
   // Prefix from transaction name
   const prefix = getInitials(trnName);
@@ -41,11 +42,11 @@ const GenNewTrn = async (user_c, user_b, tableName, trnName, dpart_id) => {
   const sql = `
     SELECT COUNT(*)::int AS total
     FROM ${tableName} jrn
-    WHERE jrn.mjrnl_apusr = $1
-      AND jrn.mjrnl_bsins = $2
-      AND jrn.mjrnl_dpart = $3
-      AND EXTRACT(MONTH FROM jrn.mjrnl_trdat) = $4
-      AND EXTRACT(YEAR FROM jrn.mjrnl_trdat) = $5
+    WHERE jrn.${regColumn}_apusr = $1
+      AND jrn.${regColumn}_bsins = $2
+      AND jrn.${regColumn}_dpart = $3
+      AND EXTRACT(MONTH FROM jrn.${regColumn}_trdat) = $4
+      AND EXTRACT(YEAR FROM jrn.${regColumn}_trdat) = $5
   `;
 
   const result = await dbGet(sql, [

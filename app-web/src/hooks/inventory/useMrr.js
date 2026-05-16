@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import { useAppUI } from "@/hooks/useAppUI";
 import validate, { generateDataModel } from "@/models/validator";
-import tmib_price from "@/models/inventory/tmib_price.json";
-const dataModel = generateDataModel(tmib_price);
+import tmib_mrrmt from "@/models/inventory/tmib_mrrmt.json";
+import tmib_mrrdt from "@/models/inventory/tmib_mrrdt.json";
+const dataModel = generateDataModel(tmib_mrrmt);
+const dataModelItems = generateDataModel(tmib_mrrdt);
 import { priceAPI } from "@/api/inventory/priceAPI.js";
 import { itemsAPI } from "@/api/inventory/itemsAPI.js";
 import { contactAPI } from "@/api/crm/contactAPI.js";
+import { mrrAPI } from "@/api/inventory/mrrAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
 const useMrr = () => {
@@ -22,23 +25,44 @@ const useMrr = () => {
     delpr: false,
   });
   const [crTitle, setCrTitle] = useState("MRR List");
-  const [crView, setCrView] = useState("SYS_FRM_1");
+  const [crView, setCrView] = useState("SYS_LST_1");
+  const [readOnly, setReadOnly] = useState(false);
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
-  const [migrn_cntct_Options, setMigrn_cntct_Options] = useState([]);
-  const [price_items_Options, setPrice_items_Options] = useState([]);
+  const [mrrmt_cntct_Options, setMrrmt_cntct_Options] = useState([]);
+
+  //other states items
+  const [mrrdt_items_Options, setMrrdt_items_Options] = useState([]);
+  const [dataListItems, setDataListItems] = useState([]);
+  const [formDataItems, setFormDataItems] = useState(dataModelItems);
 
   useEffect(() => {
     const perms = getPageAuth("M06-M04");
     setPageAuth(perms);
   }, [getPageAuth]);
 
+  useEffect(() => {
+    const mrrmt_tramt = dataListItems.reduce(
+      (sum, item) => sum + Number(item.mrrdt_tramt || 0),
+      0,
+    );
+    const mrrdt_dsamt = dataListItems.reduce(
+      (sum, item) => sum + Number(item.mrrdt_dsamt || 0),
+      0,
+    );
+    setFormData((prev) => ({
+      ...prev,
+      mrrmt_tramt: mrrmt_tramt,
+      mrrmt_itmds: mrrdt_dsamt,
+    }));
+  }, [dataListItems]);
+
   //functions
-  const loadPrice = async () => {
+  const loadMrr = async () => {
     try {
       setIsBusy(true);
-      const resp = await priceAPI.getAll({});
+      const resp = await mrrAPI.getAll({ mrrmt_dpart: "dpart1" });
       //console.log("resp", resp);
       setDataList(resp.data || []);
       showToastError(resp);
@@ -50,7 +74,7 @@ const useMrr = () => {
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    const newErrors = validate({ ...formData, [field]: value }, tmib_price);
+    const newErrors = validate({ ...formData, [field]: value }, tmib_mrrmt);
     setErrors(newErrors);
   };
 
@@ -62,9 +86,14 @@ const useMrr = () => {
     setFormData(rowData);
     setCrTitle("Edit MRR");
     setCrView("SYS_FRM_1");
-    setPrice_items_Options([
-      { id: rowData.price_items, items_iname: rowData.items_iname },
+    setMrrmt_cntct_Options([
+      { id: rowData.mrrmt_cntct, cntct_cntnm: rowData.cntct_cntnm },
     ]);
+
+    setMrrdt_items_Options([]);
+
+    setReadOnly(true);
+    handleGetSavedItems(rowData.id);
   };
 
   const handleDelete = (rowData) => {
@@ -97,7 +126,7 @@ const useMrr = () => {
       if (resp.success) {
         setCrTitle("MRR List");
         setCrView("list");
-        loadPrice();
+        loadMrr();
       }
     } catch (error) {
     } finally {
@@ -121,7 +150,7 @@ const useMrr = () => {
   const handleRefreshClick = () => {
     setCrTitle("MRR List");
     setCrView("SYS_LST_1");
-    loadPrice();
+    loadMrr();
   };
 
   const handleAddNewClick = () => {
@@ -132,30 +161,42 @@ const useMrr = () => {
     setCrTitle("Add MRR");
     setCrView("SYS_FRM_1");
     setFormData(dataModel);
+    setFormDataItems(dataModelItems);
+    setDataListItems([]);
     handleGetItems();
     handleGetSuppliers();
+    setReadOnly(false);
+    //console.log("handleSave: " , dataModel);
   };
 
   const handleSubmitClick = async () => {
     try {
-      const newErrors = validate(formData, tmib_price);
+      const newErrors = validate(formData, tmib_mrrmt);
       setErrors(newErrors);
-      console.log("handleSave: " + JSON.stringify(newErrors));
+      //console.log("handleSave: ", newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
       }
 
+      if (dataListItems.length === 0) {
+        showToast("error", "MRR items missing", "No MRR items added yet!");
+        return;
+      }
+
+      const reqBody = {
+        ...formData,
+        mrrmt_dpart: "dpart1",
+        tmib_mrrdt: dataListItems,
+        tmib_mrrpy: [],
+        tmib_mrrcs: [],
+      };
+
+      console.log("reqBody: ", dataListItems);
       setIsBusy(true);
 
       //fetch items name if not already present
-      const items_iname = price_items_Options.find(
-        (item) => item.id === formData.price_items,
-      )?.items_iname;
-      if (items_iname) {
-        formData.items_iname = items_iname;
-      }
 
-      const resp = await priceAPI.upsert(formData);
+      const resp = await mrrAPI.upsert(reqBody);
       //console.log("resp", resp);
       alert({
         message: resp.message,
@@ -163,9 +204,9 @@ const useMrr = () => {
         icon: !resp.success && "pi pi-times-circle text-red-500",
       });
       if (resp.success) {
-        setCrTitle("MRR List");
-        setCrView("SYS_LST_1");
-        loadPrice();
+        //setCrTitle("MRR List");
+        //setCrView("SYS_LST_1");
+        //loadMrr();
       }
     } catch (error) {
     } finally {
@@ -181,8 +222,8 @@ const useMrr = () => {
     try {
       setIsBusy(true);
       const resp = await contactAPI.getAllSuppliers();
-      console.log("resp", resp);
-      setMigrn_cntct_Options(resp.data);
+      //console.log("resp", resp);
+      setMrrmt_cntct_Options(resp.data);
       showToastError(resp);
     } catch (error) {
     } finally {
@@ -197,7 +238,101 @@ const useMrr = () => {
       setIsBusy(true);
       const resp = await itemsAPI.getNewMrrItems();
       //console.log("resp", resp);
-      setPrice_items_Options(resp.data);
+      setMrrdt_items_Options(resp.data);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleChangeItems = (field, value) => {
+    console.log("handleChangeItems", field);
+    if (value === undefined) return;
+    setFormDataItems((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate(
+      { ...formDataItems, [field]: value },
+      tmib_mrrdt,
+    );
+    setErrors(newErrors);
+
+    //fill items entry fields from selected items
+    if (field === "mrrdt_items") {
+      const item_with_price = mrrdt_items_Options.find((item) => {
+        return item.id === value;
+      });
+      //console.log("item_with_price", item_with_price);
+      setFormDataItems((prev) => ({
+        ...prev,
+        mrrdt_price: item_with_price.price_id,
+        sgrup_sname: item_with_price.sgrup_sname,
+        items_icode: item_with_price.items_icode,
+        items_iname: item_with_price.items_iname,
+        runit_uname: item_with_price.runit_uname,
+        punit_uname: item_with_price.punit_uname,
+        items_pkqty: item_with_price.items_pkqty,
+        mrrdt_trate: item_with_price.price_lprat,
+        mrrdt_dspct: item_with_price.price_dspct,
+        mrrdt_dsamt: 0,
+        mrrdt_sdvat: item_with_price.items_sdvat,
+        mrrdt_txpct: 0,
+        mrrdt_fxcst: item_with_price.items_fxcst,
+        mrrdt_otcst: 0,
+        mrrdt_csrat: 0,
+      }));
+    }
+  };
+
+  const handleAddToListClick = async () => {
+    try {
+      const newErrors = validate(formDataItems, tmib_mrrdt);
+      setErrors(newErrors);
+      //console.log("handleSave: ", formDataItems);
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+      const exists = dataListItems.some(
+        (x) => x.mrrdt_items === formDataItems.mrrdt_items,
+      );
+
+      if (exists) {
+        showToast("error", "Error", "Item already exists");
+        return;
+      }
+
+      setIsBusy(true);
+      const mrrdt_tramt =
+        Number(formDataItems.mrrdt_trate) * Number(formDataItems.mrrdt_trqty);
+      const mrrdt_dsamt =
+        (mrrdt_tramt * Number(formDataItems.mrrdt_dspct)) / 100;
+      const mrrdt_ntamt = Number(mrrdt_tramt) - Number(mrrdt_dsamt);
+
+      const itemBody = {
+        ...formDataItems,
+        mrrdt_tramt: mrrdt_tramt,
+        mrrdt_dsamt: mrrdt_dsamt,
+        mrrdt_ntamt: mrrdt_ntamt,
+      };
+      setDataListItems((prev) => [...prev, itemBody]);
+      setFormDataItems(dataModelItems);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleRemoveItemsClick = (rowData) => {
+    setDataListItems((prev) =>
+      prev.filter((x) => x.mrrdt_items !== rowData.mrrdt_items),
+    );
+  };
+
+  const handleGetSavedItems = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await mrrAPI.getMrrItems({ mrrdt_mrrmt: id });
+      //console.log("resp", resp);
+      setDataListItems(resp.data);
       showToastError(resp);
     } catch (error) {
     } finally {
@@ -210,12 +345,15 @@ const useMrr = () => {
     pageAuth,
     crTitle,
     crView,
+    readOnly,
     formData,
     errors,
     dataList,
     //other states
-    migrn_cntct_Options,
-    price_items_Options,
+    mrrmt_cntct_Options,
+    mrrdt_items_Options,
+    dataListItems,
+    formDataItems,
     //functions
     handleChange,
     handleEdit,
@@ -225,6 +363,10 @@ const useMrr = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
+    //other functions
+    handleChangeItems,
+    handleAddToListClick,
+    handleRemoveItemsClick,
   };
 };
 export default useMrr;

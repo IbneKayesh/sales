@@ -17,18 +17,17 @@ router.post("/", async (req, res) => {
         data: [],
       });
     }
-
+//LEFT JOIN tmib_price prc ON cnt.cntct_price = prc.id
     //database action
     const sql = `SELECT cnt.*,
     try.trtry_wname, tar.tarea_tname, dzn.dzone_dname, ctr.shtbl_dtext AS cntry_cname, crn.shtbl_dtext AS crncy_cname,
-    prc.price_mname, csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
+    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
     FROM tmcb_cntct cnt
     LEFT JOIN tmcb_trtry try ON cnt.cntct_trtry = try.id
     LEFT JOIN tmcb_tarea tar ON cnt.cntct_tarea = tar.id
     LEFT JOIN tmcb_dzone dzn ON cnt.cntct_dzone = dzn.id
     JOIN tmnb_shtbl ctr ON cnt.cntct_cntry = ctr.shtbl_value AND ctr.shtbl_gname = 'Country'
     JOIN tmnb_shtbl crn ON cnt.cntct_crncy = crn.shtbl_value AND crn.shtbl_gname = 'Currency'
-    LEFT JOIN tmib_price prc ON cnt.cntct_price = prc.id
     LEFT JOIN tmnb_users csr ON cnt.cntct_crusr = csr.id
     LEFT JOIN tmnb_users usr ON cnt.cntct_upusr = usr.id
     WHERE cnt.cntct_apusr = $1
@@ -112,7 +111,6 @@ const create = async (req, res) => {
       cntct_cntry,
       cntct_cntad,
       cntct_crncy,
-      cntct_price,
       cntct_dspct,
       cntct_crlmt,
       cntct_crbal,
@@ -147,11 +145,11 @@ const create = async (req, res) => {
     const sql = `INSERT INTO tmcb_cntct(id, cntct_apusr, cntct_bsins, cntct_ctype, cntct_sorce, cntct_ccode,
         cntct_cntnm, cntct_cntps, cntct_cntno, cntct_email, cntct_tinno, cntct_trade,
         cntct_ofadr, cntct_fcadr, cntct_trtry, cntct_tarea, cntct_dzone, cntct_cntry,
-        cntct_cntad, cntct_crncy, cntct_price, cntct_dspct, cntct_crlmt, cntct_crbal, cntct_crusr, cntct_upusr)
+        cntct_cntad, cntct_crncy, cntct_dspct, cntct_crlmt, cntct_crbal, cntct_crusr, cntct_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
         $13, $14, $15, $16, $17, $18,
-        $19, $20, $21, $22, $23, $24, $25, $26)`;
+        $19, $20, $21, $22, $23, $24, $25)`;
     const params = [
       uuidv4(),
       user_c,
@@ -173,7 +171,6 @@ const create = async (req, res) => {
       cntct_cntry,
       cntct_cntad,
       cntct_crncy,
-      cntct_price,
       cntct_dspct || 0,
       cntct_crlmt || 0,
       0, //cntct_crbal
@@ -220,7 +217,6 @@ const update = async (req, res) => {
       cntct_cntry,
       cntct_cntad,
       cntct_crncy,
-      cntct_price,
       cntct_dspct,
       cntct_crlmt,
       cntct_crbal,
@@ -268,13 +264,12 @@ const update = async (req, res) => {
     cntct_cntry = $14,
     cntct_cntad = $15,
     cntct_crncy = $16,
-    cntct_price = $17,
-    cntct_dspct = $18,
-    cntct_crlmt = $19,
-    cntct_upusr = $20,
+    cntct_dspct = $17,
+    cntct_crlmt = $18,
+    cntct_upusr = $19,
     cntct_updat = CURRENT_TIMESTAMP,
     cntct_rvnmr = cntct_rvnmr + 1
-    WHERE id = $21`;
+    WHERE id = $20`;
     const params = [
       cntct_ctype,
       cntct_sorce,
@@ -292,7 +287,6 @@ const update = async (req, res) => {
       cntct_cntry,
       cntct_cntad,
       cntct_crncy,
-      cntct_price,
       cntct_dspct,
       cntct_crlmt,
       user_s,
@@ -633,7 +627,7 @@ router.post("/get-suppliers", async (req, res) => {
     ORDER BY cnt.cntct_cntnm`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get contact- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get contact suppliers- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",

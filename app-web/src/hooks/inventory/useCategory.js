@@ -7,7 +7,7 @@ import { categoryAPI } from "@/api/inventory/categoryAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
 const useCategory = () => {
-  //hooks :: menuId M04-M01-M003,
+  //hooks :: menuId M06-M01-M003,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -25,7 +25,7 @@ const useCategory = () => {
   const [dataList, setDataList] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M04-M01-M003");
+    const perms = getPageAuth("M06-M01-M003");
     setPageAuth(perms);
   }, [getPageAuth]);
 

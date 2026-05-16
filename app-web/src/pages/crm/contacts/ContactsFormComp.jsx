@@ -17,7 +17,6 @@ const ContactsFormComp = ({
   cntct_dzone_Options,
   dzone_cntry_Options,
   cntct_crncy_Options,
-  cntct_price_Options,
   //contact address
   formDataAddress,
   onChangeAddress,
@@ -223,7 +222,7 @@ const ContactsFormComp = ({
         <RequiredText text={errors.cntct_trtry} />
       </div>
 
-      <div className="col-12 md:col-2">
+      <div className="col-12 md:col-4">
         <label className="block font-bold mb-2">Other Address</label>
         <Dropdown
           name="cntct_cntad"
@@ -257,24 +256,7 @@ const ContactsFormComp = ({
           showClear
         />
         <RequiredText text={errors.cntct_crncy} />
-      </div>
-      <div className="col-12 md:col-2">
-        <label className="block font-bold mb-2 text-red-800">Price</label>
-        <Dropdown
-          name="cntct_price"
-          value={formData.cntct_price}
-          onChange={(e) => onChange("cntct_price", e.value)}
-          options={cntct_price_Options}
-          optionLabel="price_mname"
-          optionValue="id"
-          className={`w-full ${errors.cntct_price ? "p-invalid" : ""}`}
-          size={"small"}
-          placeholder={`Enter price`}
-          filter
-          showClear
-        />
-        <RequiredText text={errors.cntct_price} />
-      </div>      
+      </div>   
       <div className="col-12 md:col-2">
         <label className="block font-bold mb-2 text-red-800">Discount %</label>
         <InputText

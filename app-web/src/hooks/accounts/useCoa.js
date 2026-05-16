@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth.jsx";
 import { buildCoaTree } from "@/utils/jsonParser.js";
 
 const useCoa = () => {
-  //hooks :: menuId M05-M01-M001,
+  //hooks :: menuId M07-M01-001,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -60,7 +60,7 @@ const useCoa = () => {
   ];
 
   useEffect(() => {
-    const perms = getPageAuth("M05-M01-M001");
+    const perms = getPageAuth("M07-M01-001");
     setPageAuth(perms);
   }, [getPageAuth]);
 

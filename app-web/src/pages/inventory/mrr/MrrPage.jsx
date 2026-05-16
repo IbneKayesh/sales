@@ -11,12 +11,15 @@ const MrrPage = () => {
     pageAuth,
     crTitle,
     crView,
+    readOnly,
     formData,
     errors,
     dataList,
     //other states
-    migrn_cntct_Options,
-    price_items_Options,
+    mrrmt_cntct_Options,
+    mrrdt_items_Options,
+    dataListItems,
+    formDataItems,
     //functions
     handleChange,
     handleEdit,
@@ -26,6 +29,10 @@ const MrrPage = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
+    //other functions
+    handleChangeItems,
+    handleAddToListClick,
+    handleRemoveItemsClick,
   } = useMrr();
 
   const isList = crView === "list" && true;
@@ -98,11 +105,17 @@ const MrrPage = () => {
       )}
       {crView === "SYS_FRM_1" && (
         <MrrFormComp
+          readOnly={readOnly}
           formData={formData}
           errors={errors}
           onChange={handleChange}
-          migrn_cntct_Options={migrn_cntct_Options}
-          price_items_Options={price_items_Options}
+          mrrmt_cntct_Options={mrrmt_cntct_Options}
+          mrrdt_items_Options={mrrdt_items_Options}
+          dataListItems={dataListItems}
+          formDataItems={formDataItems}
+          onChangeItems={handleChangeItems}
+          onAddToListClick={handleAddToListClick}
+          onRemoveItemsClick={handleRemoveItemsClick}
         />
       )}
     </Card>

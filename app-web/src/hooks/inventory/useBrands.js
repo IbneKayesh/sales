@@ -7,7 +7,7 @@ import { brandsAPI } from "@/api/inventory/brandsAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
 const useBrands = () => {
-  //hooks :: menuId M04-M01-M001,
+  //hooks :: menuId M06-M01-M001,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -25,7 +25,7 @@ const useBrands = () => {
   const [dataList, setDataList] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M04-M01-M001");
+    const perms = getPageAuth("M06-M01-M001");
     setPageAuth(perms);
   }, [getPageAuth]);
 

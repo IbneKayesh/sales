@@ -11,7 +11,7 @@ import { subGroupAPI } from "@/api/inventory/subGroupAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
 const useItems = () => {
-  //hooks :: menuId M04-M01-M004,
+  //hooks :: menuId M06-M01-M008,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -43,7 +43,7 @@ const useItems = () => {
   ];
 
   useEffect(() => {
-    const perms = getPageAuth("M04-M01-M004");
+    const perms = getPageAuth("M06-M01-M008");
     setPageAuth(perms);
   }, [getPageAuth]);
 

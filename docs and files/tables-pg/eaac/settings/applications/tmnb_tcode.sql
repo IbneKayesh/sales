@@ -1,9 +1,9 @@
 
 --
--- Table structure for table tmab_tcode
+-- Table structure for table tmnb_tcode
 -- table data codes
 
-CREATE TABLE tmab_tcode (
+CREATE TABLE tmnb_tcode (
   id varchar(50) PRIMARY KEY,
 
   tcode_apusr varchar(50) NOT NULL,

@@ -6,6 +6,7 @@ import { SplitButton } from "primereact/splitbutton";
 import ActiveRowCell from "@/components/ActiveRowCell";
 import CSVExport from "@/components/CSVExport";
 import EmptyState from "@/components/EmptyState";
+import { formatDate } from "@/utils/datetime";
 
 const MrrListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
   const [globalFilter, setGlobalFilter] = useState(null);
@@ -20,69 +21,77 @@ const MrrListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     { header: "Active", accessor: "price_actve" },
   ];
 
-  const items_iname_BT = (rowData) => {
+  const mrrmt_trnno_BT = (rowData) => {
     return (
       <div className="flex flex-column">
-        <span className="text-sm font-bold">
-          <ActiveRowCell
-            text={rowData.items_iname}
-            status={rowData.price_actve}
-          />
-        </span>
+        <span className="text-sm font-bold">{rowData.mrrmt_trnno}</span>
         <span className="text-gray-600 text-sm mt-1">
-          {rowData.price_pcode || "No Code"}
+          {formatDate(rowData.mrrmt_trdat)}
+        </span>
+        <span className="text-sm">{rowData.cntct_cntnm}</span>
+      </div>
+    );
+  };
+
+  const mrrmt_refno_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-sm">{rowData.mrrmt_refno || "No Ref"}</span>
+        <span className="text-sm mt-1">{rowData.mrrmt_notes || "N/A"}</span>
+      </div>
+    );
+  };
+  const mrrmt_tramt_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-sm">
+          Total: {Number(rowData.mrrmt_tramt || 0).toFixed(3)}
+        </span>
+        <span className="text-sm mt-1">
+          Item Discount: {Number(rowData.mrrmt_itmds || 0).toFixed(3)}
+        </span>
+        <span className="text-sm mt-1">
+          Invoice Discount: {Number(rowData.mrrmt_invds || 0).toFixed(3)}
+        </span>
+      </div>
+    );
+  };
+  const mrrmt_vtamt_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-sm">
+          VAT: {Number(rowData.mrrmt_vtamt || 0).toFixed(3)}
+        </span>
+        <span className="text-sm mt-1">
+          TAX: {Number(rowData.mrrmt_txamt || 0).toFixed(3)}
+        </span>
+      </div>
+    );
+  };
+  const mrrmt_icamt_BT = (rowData) => {
+    return (
+      <div className="flex flex-column">
+        <span className="text-sm">
+          Include: {Number(rowData.mrrmt_icamt || 0).toFixed(3)}
+        </span>
+        <span className="text-sm mt-1">
+          Exclude: {Number(rowData.mrrmt_ecamt || 0).toFixed(3)}
         </span>
       </div>
     );
   };
 
-  const price_lprat_BT = (rowData) => {
+  const mrrmt_pyamt_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-sm">
-          LP: {Number(rowData.price_lprat || 0).toFixed(3)}
+          Payable: {Number(rowData.mrrmt_pyamt || 0).toFixed(3)}
         </span>
         <span className="text-sm mt-1">
-          DP: {Number(rowData.price_dprat || 0).toFixed(3)}
+          Paid: {Number(rowData.mrrmt_pdamt || 0).toFixed(3)}
         </span>
         <span className="text-sm mt-1">
-          TP: {Number(rowData.price_tprat || 0).toFixed(3)}
-        </span>
-      </div>
-    );
-  };
-
-  const price_dspct_BT = (rowData) => {
-    return Number(rowData.price_dspct || 0).toFixed(3);
-  };
-
-  const price_gdstk_BT = (rowData) => {
-    return (
-      <div className="flex flex-column">
-        <span className="text-sm">
-          Good: {Number(rowData.price_gdstk || 0).toFixed(3)}
-        </span>
-        <span className="text-sm mt-1">
-          Bad: {Number(rowData.price_bdstk || 0).toFixed(3)}
-        </span>
-      </div>
-    );
-  };
-
-  const price_mnqty_BT = (rowData) => {
-    return (
-      <div className="flex flex-column">
-        <span className="text-sm">
-          Min: {Number(rowData.price_mnqty || 0).toFixed(3)}
-        </span>
-        <span className="text-sm mt-1">
-          Max: {Number(rowData.price_mxqty || 0).toFixed(3)}
-        </span>
-        <span className="text-sm mt-1">
-          Purchase Booking: {Number(rowData.price_pbqty || 0).toFixed(3)}
-        </span>
-        <span className="text-sm mt-1">
-          Sales Booking: {Number(rowData.price_sbqty || 0).toFixed(3)}
+          Due: {Number(rowData.mrrmt_duamt || 0).toFixed(3)}
         </span>
       </div>
     );
@@ -158,25 +167,12 @@ const MrrListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
       header={dt_HT}
     >
       <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
-      <Column
-        field="items_iname"
-        header="Product"
-        sortable
-        body={items_iname_BT}
-      />
-      <Column
-        field="price_lprat"
-        header="Rates (LP/DP/TP)"
-        body={price_lprat_BT}
-      />
-      <Column field="price_mrrat" header="MRP" />
-      <Column field="price_dspct" header="Discount%" body={price_dspct_BT} />
-      <Column field="price_gdstk" header="Stock" body={price_gdstk_BT} />
-      <Column
-        field="price_mnqty"
-        header="Inventory Control"
-        body={price_mnqty_BT}
-      />
+      <Column field="mrrmt_trnno" header="Trn" body={mrrmt_trnno_BT} />
+      <Column field="mrrmt_refno" header="Ref" body={mrrmt_refno_BT} />
+      <Column field="mrrmt_tramt" header="Amount" body={mrrmt_tramt_BT} />
+      <Column field="mrrmt_vtamt" header="VAT/TAX" body={mrrmt_vtamt_BT} />
+      <Column field="mrrmt_icamt" header="Cost" body={mrrmt_icamt_BT} />
+      <Column field="mrrmt_pyamt" header="Payment" body={mrrmt_pyamt_BT} />
       <Column header={dataList?.length + " rows"} body={action_BT} />
     </DataTable>
   ) : (

@@ -8,7 +8,7 @@ import { shortdataAPI } from "@/api/settings/shortdataAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
 const useUnits = () => {
-  //hooks :: menuId M04-M01-M002,
+  //hooks :: menuId M06-M01-M002,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -27,7 +27,7 @@ const useUnits = () => {
   const [units_untgr_Options, setunits_untgr_Options] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M04-M01-M002");
+    const perms = getPageAuth("M06-M01-M002");
     setPageAuth(perms);
   }, [getPageAuth]);
 

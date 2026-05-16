@@ -10,6 +10,8 @@ const auth_mw = require("./middlewares/auth_mw");
 const db_mw = require("./middlewares/db_mw");
 //auth
 const authRoutes = require("./routes/auth");
+//settings
+const settingsRoutes = require("./routes/settings");
 //crm
 const crmRoutes = require("./routes/crm");
 //hrms
@@ -30,8 +32,6 @@ const salesRoutes = require("./routes/sales");
 const reportsRoutes = require("./routes/reports");
 //mobile
 const mobileRoutes = require("./routes/mobile");
-//settings
-const settingsRoutes = require("./routes/settings");
 
 const app = express();
 
@@ -58,6 +58,8 @@ app.use("/api", auth_mw);
 
 //auth
 app.use("/api/auth", authRoutes);
+//settings
+app.use("/api/settings", settingsRoutes);
 //crm
 app.use("/api/crm", crmRoutes);
 //hrms
@@ -78,8 +80,6 @@ app.use("/api/sales", salesRoutes);
 app.use("/api/reports", reportsRoutes);
 //mobile
 app.use("/api/mobile", mobileRoutes);
-//settings
-app.use("/api/settings", settingsRoutes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

@@ -5,10 +5,11 @@ import tmnb_users from "@/models/settings/tmnb_users.json";
 const dataModel = generateDataModel(tmnb_users);
 import { businessAPI } from "@/api/settings/businessAPI.js";
 import { usersAPI } from "@/api/settings/usersAPI.js";
+import { menusAPI } from "@/api/settings/menusAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
 const useUsers = () => {
-  //hooks :: menuId M02-M01,
+  //hooks :: menuId M01-M03,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -40,7 +41,7 @@ const useUsers = () => {
   const [users_bsins_Options, setUsers_bsins_Options] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M02-M01");
+    const perms = getPageAuth("M01-M03");
     setPageAuth(perms);
   }, [getPageAuth]);
 
@@ -193,7 +194,7 @@ const useUsers = () => {
     //console.log("rowData", rowData);
     try {
       setIsBusy(true);
-      const resp = await usersAPI.getMenus({ users_id: rowData.id });
+      const resp = await menusAPI.getMenus({ users_id: rowData.id });
       //console.log("getMenus", resp);
       setDataListMenus(resp.data || []);
       showToastError(resp);
@@ -224,7 +225,7 @@ const useUsers = () => {
         users_id: formData.id,
       };
 
-      const resp = await usersAPI.upsertMenus(reqBody);
+      const resp = await menusAPI.upsertMenus(reqBody);
       //console.log("resp", resp);
       showToastError(resp);
     } catch (error) {

@@ -28,7 +28,7 @@ CREATE TABLE tmcb_cntct (
   cntct_cntry varchar(50) NOT NULL,
   cntct_cntad varchar(50),
   cntct_crncy varchar(50) NOT NULL,
-  cntct_price varchar(50),
+  cntct_price varchar(50), --will be remove
 
   -- default
   cntct_dspct decimal(18,6) NOT NULL DEFAULT 0,

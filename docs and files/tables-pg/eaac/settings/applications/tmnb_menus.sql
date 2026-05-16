@@ -1,10 +1,10 @@
 
 --
--- Table structure for table tmab_menus
+-- Table structure for table tmnb_menus
 -- menus
 -- menus_pname [basic], menus_aname [web, mobile], menus_color [default], menus_mlink [-]
 
-CREATE TABLE tmab_menus (
+CREATE TABLE tmnb_menus (
   id varchar(50) PRIMARY KEY,
 
   menus_pname varchar(50) NOT NULL,

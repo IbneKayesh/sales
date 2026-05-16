@@ -53,9 +53,10 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const sql_menus = `SELECT mnu.id, menus_pname, menus_aname, menus_mname, menus_color, menus_micon, menus_odrby, menus_notes, menus_mlink, menus_menus,
-mnusr_extpr, mnusr_addpr, mnusr_edtpr, mnusr_delpr
-  FROM tmab_menus mnu
+    const sql_menus = `SELECT mnu.id, menus_pname, menus_aname, menus_mname, menus_color, menus_micon,
+    menus_odrby, menus_notes, menus_mlink, menus_menus, mnusr_extpr, mnusr_addpr,
+    mnusr_edtpr, mnusr_delpr
+  FROM tmnb_menus mnu
   JOIN tmnb_mnusr usr ON mnu.id = usr.mnusr_menus
   WHERE mnu.menus_actve = TRUE
   AND usr.mnusr_actve = TRUE
