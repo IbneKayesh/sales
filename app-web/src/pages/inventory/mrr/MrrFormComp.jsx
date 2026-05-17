@@ -5,6 +5,8 @@ import RequiredText from "@/components/RequiredText";
 import AuditFields from "@/components/AuditFields";
 import HeaderComp from "./efrm/HeaderComp";
 import ItemsComp from "./efrm/ItemsComp";
+import CostingComp from "./efrm/CostingComp";
+import ItemsSumComp from "./efrm/ItemsSumComp";
 import PaymComp from "./efrm/PaymComp";
 
 const MrrFormComp = ({
@@ -17,8 +19,17 @@ const MrrFormComp = ({
   dataListItems,
   formDataItems,
   onChangeItems,
-  onAddToListClick,
+  onAddItemsClick,
   onRemoveItemsClick,
+  //costing
+  formDataCosting,
+  dataListCosting,
+  mrrcs_csmod_Options,
+  mrrcs_clmod_Options,
+  mrrcs_chead_Options,
+  onChangeCosting,
+  onAddCostingClick,
+  onRemoveCostingClick,
 }) => {
   return (
     <>
@@ -35,14 +46,55 @@ const MrrFormComp = ({
         onChange={onChangeItems}
         mrrdt_items_Options={mrrdt_items_Options}
         dataList={dataListItems}
-        onAddToListClick={onAddToListClick}
+        onAddItemsClick={onAddItemsClick}
         onRemoveItemsClick={onRemoveItemsClick}
       />
-      <PaymComp
+      <div className="grid m-2">
+        <CostingComp
+          readOnly={readOnly}
+          formData={formDataCosting}
+          errors={errors}
+          onChange={onChangeCosting}
+          mrrcs_csmod_Options={mrrcs_csmod_Options}
+          mrrcs_clmod_Options={mrrcs_clmod_Options}
+          mrrcs_chead_Options={mrrcs_chead_Options}
+          dataList={dataListCosting}
+          onAddItemsClick={onAddCostingClick}
+          onRemoveItemsClick={onRemoveCostingClick}
+        />
+
+        <ItemsSumComp
+          readOnly={readOnly}
+          formData={formData}
+          errors={errors}
+          onChange={onChange}
+        />
+        <PaymComp
+          readOnly={readOnly}
+          formData={formDataCosting}
+          errors={errors}
+          onChange={onChangeCosting}
+          mrrcs_csmod_Options={mrrcs_csmod_Options}
+          mrrcs_clmod_Options={mrrcs_clmod_Options}
+          mrrcs_chead_Options={mrrcs_chead_Options}
+          dataList={dataListCosting}
+          onAddItemsClick={onAddCostingClick}
+          onRemoveItemsClick={onRemoveCostingClick}
+        />
+      </div>
+      {/* <PaymComp
         formData={formData}
         errors={errors}
         onChange={onChange}
-      />
+        formDataCosting={formDataCosting}
+        onChangeCosting={onChangeCosting}
+        mrrcs_csmod_Options={mrrcs_csmod_Options}
+        mrrcs_clmod_Options={mrrcs_clmod_Options}
+        mrrcs_cname_Options={mrrcs_cname_Options}
+        dataListCosting={dataListCosting}
+        onAddCostingClick={onAddCostingClick}
+        onRemoveCostingClick={onRemoveCostingClick}
+      /> */}
       <div className="grid">
         {formData.id && (
           <AuditFields

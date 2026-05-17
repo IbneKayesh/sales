@@ -10,7 +10,7 @@ CREATE TABLE tmib_mrrcs (
   mrrcs_mrrmt VARCHAR(50) NOT NULL,
   mrrcs_csmod VARCHAR(50) NOT NULL,
   mrrcs_clmod VARCHAR(50) NOT NULL,
-  mrrcs_cname VARCHAR(50) NOT NULL,
+  mrrcs_chead VARCHAR(50) NOT NULL,
   mrrcs_value decimal(18,6) DEFAULT 0.00,  
   mrrcs_notes VARCHAR(50),
 

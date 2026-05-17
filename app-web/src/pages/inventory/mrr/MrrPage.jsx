@@ -16,10 +16,6 @@ const MrrPage = () => {
     errors,
     dataList,
     //other states
-    mrrmt_cntct_Options,
-    mrrdt_items_Options,
-    dataListItems,
-    formDataItems,
     //functions
     handleChange,
     handleEdit,
@@ -30,9 +26,24 @@ const MrrPage = () => {
     handleAddNewClick,
     handleSubmitClick,
     //other functions
+    //entry forms + items
+    mrrmt_cntct_Options,
+    mrrdt_items_Options,
+    dataListItems,
+    formDataItems,
     handleChangeItems,
-    handleAddToListClick,
+    handleAddItemsClick,
     handleRemoveItemsClick,
+    //costing forms + costing items
+    formDataCosting,
+    dataListCosting,
+    mrrcs_csmod_Options,
+    mrrcs_clmod_Options,
+    mrrcs_chead_Options,
+    handleChangeCosting,
+    handleAddCostingClick,
+    handleRemoveCostingClick,
+    //payment forms + payment items
   } = useMrr();
 
   const isList = crView === "list" && true;
@@ -114,8 +125,16 @@ const MrrPage = () => {
           dataListItems={dataListItems}
           formDataItems={formDataItems}
           onChangeItems={handleChangeItems}
-          onAddToListClick={handleAddToListClick}
+          onAddItemsClick={handleAddItemsClick}
           onRemoveItemsClick={handleRemoveItemsClick}
+          formDataCosting={formDataCosting}
+          dataListCosting={dataListCosting}
+          mrrcs_csmod_Options={mrrcs_csmod_Options}
+          mrrcs_clmod_Options={mrrcs_clmod_Options}
+          mrrcs_chead_Options={mrrcs_chead_Options}
+          onChangeCosting={handleChangeCosting}
+          onAddCostingClick={handleAddCostingClick}
+          onRemoveCostingClick={handleRemoveCostingClick}
         />
       )}
     </Card>

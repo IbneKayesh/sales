@@ -1,0 +1,42 @@
+{
+  "mrrcs_csmod": {
+    "type": "string",
+    "label": "Cost Mode Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter cost mode id",
+    "required": true
+  },
+  "mrrcs_clmod": {
+    "type": "string",
+    "label": "Calculation Method",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter calculation method",
+    "required": true
+  },
+  "mrrcs_chead": {
+    "type": "string",
+    "label": "Costing Head",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter costing head",
+    "required": true
+  },
+  "mrrcs_value": {
+    "type": "decimal",
+    "label": "Value",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter value",
+    "required": true
+  },
+  "mrrcs_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

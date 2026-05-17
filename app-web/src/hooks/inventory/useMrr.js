@@ -3,9 +3,10 @@ import { useAppUI } from "@/hooks/useAppUI";
 import validate, { generateDataModel } from "@/models/validator";
 import tmib_mrrmt from "@/models/inventory/tmib_mrrmt.json";
 import tmib_mrrdt from "@/models/inventory/tmib_mrrdt.json";
+import tmib_mrrcs from "@/models/inventory/tmib_mrrcs.json";
 const dataModel = generateDataModel(tmib_mrrmt);
 const dataModelItems = generateDataModel(tmib_mrrdt);
-import { priceAPI } from "@/api/inventory/priceAPI.js";
+const dataModelCosting = generateDataModel(tmib_mrrcs);
 import { itemsAPI } from "@/api/inventory/itemsAPI.js";
 import { contactAPI } from "@/api/crm/contactAPI.js";
 import { mrrAPI } from "@/api/inventory/mrrAPI.js";
@@ -30,12 +31,34 @@ const useMrr = () => {
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
-  const [mrrmt_cntct_Options, setMrrmt_cntct_Options] = useState([]);
-
   //other states items
+  const [mrrmt_cntct_Options, setMrrmt_cntct_Options] = useState([]);
   const [mrrdt_items_Options, setMrrdt_items_Options] = useState([]);
   const [dataListItems, setDataListItems] = useState([]);
   const [formDataItems, setFormDataItems] = useState(dataModelItems);
+  //other states costing
+  const [formDataCosting, setFormDataCosting] = useState(dataModelCosting);
+  const [dataListCosting, setDataListCosting] = useState([]);
+  const mrrcs_csmod_Options = [
+    { label_text: "Include", value_text: "Include" },
+    { label_text: "Exclude", value_text: "Exclude" },
+  ];
+  const mrrcs_clmod_Options = [
+    { label_text: "By Value", value_text: "ByValue" },
+    { label_text: "By Qty", value_text: "ByQty" },
+    // { label_text: "By Weight", value_text: "ByWeight" },
+    // { label_text: "Manual", value_text: "Manual" },
+    // { label_text: "Equal Split", value_text: "EqualSplit" },
+  ];
+  const mrrcs_chead_Options = [
+    { label_text: "Freight", value_text: "Freight" },
+    { label_text: "Insurance", value_text: "Insurance" },
+    { label_text: "Customs Duty", value_text: "CustomsDuty" },
+    { label_text: "Other", value_text: "Other" },
+  ];
+  //other states payments
+  //const [frmdataPymt, setFrmdataPymt] = useState(dataModelPymt);
+  const [dataListPymt, setDataListPymt] = useState([]);
 
   useEffect(() => {
     const perms = getPageAuth("M06-M04");
@@ -116,7 +139,7 @@ const useMrr = () => {
   const onDelete = async (rowData) => {
     try {
       setIsBusy(true);
-      const resp = await priceAPI.delete(rowData);
+      const resp = await mrrAPI.delete(rowData);
       //console.log("resp", resp);
       alert({
         message: resp.message,
@@ -214,7 +237,7 @@ const useMrr = () => {
     }
   };
 
-  //other function
+  //other function + items
   const handleGetSuppliers = async () => {
     // if (migrn_cntct_Options.length > 0) {
     //   return;
@@ -283,7 +306,7 @@ const useMrr = () => {
     }
   };
 
-  const handleAddToListClick = async () => {
+  const handleAddItemsClick = async () => {
     try {
       const newErrors = validate(formDataItems, tmib_mrrdt);
       setErrors(newErrors);
@@ -340,6 +363,55 @@ const useMrr = () => {
     }
   };
 
+  //other function + costing
+
+  const handleChangeCosting = (field, value) => {
+    console.log("handleChangeCosting", field);
+    if (value === undefined) return;
+    setFormDataCosting((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate(
+      { ...formDataCosting, [field]: value },
+      tmib_mrrcs,
+    );
+    setErrors(newErrors);
+  };
+
+  const handleAddCostingClick = async () => {
+    try {
+      const newErrors = validate(formDataCosting, tmib_mrrcs);
+      setErrors(newErrors);
+      //console.log("handleSave: ", formDataItems);
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+      const exists = dataListCosting.some(
+        (x) => x.mrrcs_chead === formDataCosting.mrrcs_chead,
+      );
+
+      if (exists) {
+        showToast("error", "Error", "Item already exists");
+        return;
+      }
+
+      setIsBusy(true);
+
+      const itemBody = {
+        ...formDataCosting,
+      };
+      setDataListCosting((prev) => [...prev, itemBody]);
+      setFormDataCosting(dataModelCosting);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleRemoveCostingClick = (rowData) => {
+    setDataListCosting((prev) =>
+      prev.filter((x) => x.mrrcs_chead !== rowData.mrrcs_chead),
+    );
+  };
+
   return {
     //hooks
     pageAuth,
@@ -350,10 +422,6 @@ const useMrr = () => {
     errors,
     dataList,
     //other states
-    mrrmt_cntct_Options,
-    mrrdt_items_Options,
-    dataListItems,
-    formDataItems,
     //functions
     handleChange,
     handleEdit,
@@ -364,9 +432,24 @@ const useMrr = () => {
     handleAddNewClick,
     handleSubmitClick,
     //other functions
+    //entry forms + items
+    mrrmt_cntct_Options,
+    mrrdt_items_Options,
+    dataListItems,
+    formDataItems,
     handleChangeItems,
-    handleAddToListClick,
+    handleAddItemsClick,
     handleRemoveItemsClick,
+    //costing forms + costing items
+    formDataCosting,
+    dataListCosting,
+    mrrcs_csmod_Options,
+    mrrcs_clmod_Options,
+    mrrcs_chead_Options,
+    handleChangeCosting,
+    handleAddCostingClick,
+    handleRemoveCostingClick,
+    //payment forms + payment items
   };
 };
 export default useMrr;

@@ -15,7 +15,7 @@ const ItemsComp = ({
   onChange,
   mrrdt_items_Options,
   dataList,
-  onAddToListClick,
+  onAddItemsClick,
   onRemoveItemsClick,
 }) => {
   const items_iname_BT = (rowData) => {
@@ -120,7 +120,7 @@ const ItemsComp = ({
             <RequiredText text={errors.mrrdt_items} />
           </div>
           <div className="col-12 md:col-2">
-            <label className="block font-bold mb-2">Rate</label>
+            <label className="block font-bold mb-2 text-red-800">Rate</label>
             <InputNumber
               name="mrrdt_trate"
               value={formData.mrrdt_trate}
@@ -134,7 +134,7 @@ const ItemsComp = ({
             <RequiredText text={errors.mrrdt_trate} />
           </div>
           <div className="col-12 md:col-2">
-            <label className="block font-bold mb-2">Qty</label>
+            <label className="block font-bold mb-2 text-red-800">Qty</label>
             <InputNumber
               name="mrrdt_trqty"
               value={formData.mrrdt_trqty}
@@ -148,7 +148,7 @@ const ItemsComp = ({
             <RequiredText text={errors.mrrdt_trqty} />
           </div>
           <div className="col-12 md:col-2">
-            <label className="block font-bold mb-2">Disc%</label>
+            <label className="block font-bold mb-2 text-red-800">Disc%</label>
             <InputNumber
               name="mrrdt_dspct"
               value={formData.mrrdt_dspct}
@@ -162,7 +162,7 @@ const ItemsComp = ({
             <RequiredText text={errors.mrrdt_dspct} />
           </div>
           <div className="col-12 md:col-2">
-            <label className="block font-bold mb-2">Disc</label>
+            <label className="block font-bold mb-2 text-red-800">Disc</label>
             <InputNumber
               name="mrrdt_dsamt"
               value={formData.mrrdt_dsamt}
@@ -177,7 +177,7 @@ const ItemsComp = ({
             <RequiredText text={errors.mrrdt_dsamt} />
           </div>
           <div className="col-12 md:col-2">
-            <label className="block font-bold mb-2">VAT%</label>
+            <label className="block font-bold mb-2 text-red-800">VAT%</label>
             <InputNumber
               name="mrrdt_sdvat"
               value={formData.mrrdt_sdvat}
@@ -191,7 +191,7 @@ const ItemsComp = ({
             <RequiredText text={errors.mrrdt_sdvat} />
           </div>
           <div className="col-12 md:col-2">
-            <label className="block font-bold mb-2">TAX%</label>
+            <label className="block font-bold mb-2 text-red-800">TAX%</label>
             <InputNumber
               name="mrrdt_txpct"
               value={formData.mrrdt_txpct}
@@ -205,7 +205,7 @@ const ItemsComp = ({
             <RequiredText text={errors.mrrdt_txpct} />
           </div>
           <div className="col-12 md:col-2">
-            <label className="block font-bold mb-2">F.Cost%</label>
+            <label className="block font-bold mb-2 text-red-800">F.Cost%</label>
             <InputNumber
               name="mrrdt_fxcst"
               value={formData.mrrdt_fxcst}
@@ -215,6 +215,7 @@ const ItemsComp = ({
               mode="decimal"
               minFractionDigits={2}
               maxFractionDigits={6}
+              disabled={true}
             />
             <RequiredText text={errors.mrrdt_fxcst} />
           </div>
@@ -235,8 +236,7 @@ const ItemsComp = ({
               icon="pi pi-plus"
               size="small"
               severity="info"
-              onClick={() => onAddToListClick()}
-            />
+              onClick={() => onAddItemsClick()}/>
           </div>
         </div>
       )}

@@ -1,0 +1,8 @@
+  Cost Distribution Logic:		
+		
+Method	Formula	Best For
+By Value	Line amount ÷ Total amount × Cost	Freight, VAT
+By Qty	Line qty ÷ Total qty × Cost	Load/Unload
+By Weight	Line weight ÷ Total weight × Cost	Heavy items
+Manual	User enters per line	Special cases
+Equal Split	Cost ÷ number of lines	Simple charges
