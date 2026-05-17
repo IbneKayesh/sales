@@ -90,7 +90,7 @@ const ItemsComp = ({
           outlined
           tooltipOptions={{ position: "left" }}
           onClick={() => onRemoveItemsClick(rowData)}
-          // disabled={readOnly}
+          className={`${readOnly && "hidden"}`}
         />
       </div>
     );
@@ -99,7 +99,7 @@ const ItemsComp = ({
   return (
     <>
       {!readOnly && (
-        <div className="grid">
+        <div className="grid p-card my-2 mx-1">
           <div className="col-12 md:col-4">
             <label className="block font-bold mb-2 text-red-800">
               Products
@@ -236,7 +236,8 @@ const ItemsComp = ({
               icon="pi pi-plus"
               size="small"
               severity="info"
-              onClick={() => onAddItemsClick()}/>
+              onClick={() => onAddItemsClick()}
+            />
           </div>
         </div>
       )}

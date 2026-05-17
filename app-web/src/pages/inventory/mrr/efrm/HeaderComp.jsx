@@ -62,6 +62,7 @@ const HeaderComp = ({ formData, errors, onChange, mrrmt_cntct_Options}) => {
           onChange={(e) => onChange("mrrmt_refno", e.target.value)}
           className={`w-full ${errors.mrrmt_refno ? "p-invalid" : ""}`}
           placeholder="Enter ref no"
+          disabled={formData.id}
         />
         <RequiredText text={errors.mrrmt_refno} />
       </div>
@@ -73,6 +74,7 @@ const HeaderComp = ({ formData, errors, onChange, mrrmt_cntct_Options}) => {
           onChange={(e) => onChange("mrrmt_notes", e.target.value)}
           className={`w-full ${errors.mrrmt_notes ? "p-invalid" : ""}`}
           placeholder="Enter notes"
+          disabled={formData.id}
         />
         <RequiredText text={errors.mrrmt_notes} />
       </div>

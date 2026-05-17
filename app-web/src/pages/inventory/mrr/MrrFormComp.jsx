@@ -21,7 +21,7 @@ const MrrFormComp = ({
   onChangeItems,
   onAddItemsClick,
   onRemoveItemsClick,
-  //costing
+  //costing forms + costing items
   formDataCosting,
   dataListCosting,
   mrrcs_csmod_Options,
@@ -30,6 +30,13 @@ const MrrFormComp = ({
   onChangeCosting,
   onAddCostingClick,
   onRemoveCostingClick,
+  //payment forms + payment items
+  formDataPymt,
+  dataListPymt,
+  mrrpy_pmode_Options,
+  onChangePymt,
+  onAddPaymentClick,
+  onRemovePaymentClick,
 }) => {
   return (
     <>
@@ -49,7 +56,8 @@ const MrrFormComp = ({
         onAddItemsClick={onAddItemsClick}
         onRemoveItemsClick={onRemoveItemsClick}
       />
-      <div className="grid m-2">
+      <div className="grid m-2 gap-3 mb-3">
+        <div className="col-12 md:col-2"></div>
         <CostingComp
           readOnly={readOnly}
           formData={formDataCosting}
@@ -71,30 +79,15 @@ const MrrFormComp = ({
         />
         <PaymComp
           readOnly={readOnly}
-          formData={formDataCosting}
+          formData={formDataPymt}
           errors={errors}
-          onChange={onChangeCosting}
-          mrrcs_csmod_Options={mrrcs_csmod_Options}
-          mrrcs_clmod_Options={mrrcs_clmod_Options}
-          mrrcs_chead_Options={mrrcs_chead_Options}
-          dataList={dataListCosting}
-          onAddItemsClick={onAddCostingClick}
-          onRemoveItemsClick={onRemoveCostingClick}
+          onChange={onChangePymt}
+          mrrpy_pmode_Options={mrrpy_pmode_Options}
+          dataList={dataListPymt}
+          onAddItemsClick={onAddPaymentClick}
+          onRemoveItemsClick={onRemovePaymentClick}
         />
       </div>
-      {/* <PaymComp
-        formData={formData}
-        errors={errors}
-        onChange={onChange}
-        formDataCosting={formDataCosting}
-        onChangeCosting={onChangeCosting}
-        mrrcs_csmod_Options={mrrcs_csmod_Options}
-        mrrcs_clmod_Options={mrrcs_clmod_Options}
-        mrrcs_cname_Options={mrrcs_cname_Options}
-        dataListCosting={dataListCosting}
-        onAddCostingClick={onAddCostingClick}
-        onRemoveCostingClick={onRemoveCostingClick}
-      /> */}
       <div className="grid">
         {formData.id && (
           <AuditFields

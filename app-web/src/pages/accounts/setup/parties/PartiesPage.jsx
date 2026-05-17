@@ -27,6 +27,8 @@ const PartiesPage = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
+    //parties
+    dataListParty,
   } = useParties();
 
   const isList = crView === "list" && true;
@@ -105,6 +107,8 @@ const PartiesPage = () => {
           party_ptype_Options={party_ptype_Options}
           party_vndor_Options={party_vndor_Options}
           party_chtac_Options={party_chtac_Options}
+          //parties
+          dataList={dataListParty}
         />
       )}
     </Card>

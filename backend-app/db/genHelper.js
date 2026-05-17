@@ -3,7 +3,7 @@ const { dbGet, dbGetAll } = require("./sqlManagerpg");
 const GenNewCode = async (user_c, tableName) => {
   // get prefix + length config
   const sql = `SELECT tcode_prfix, tcode_prlen
-        FROM tmab_tcode
+        FROM tmnb_tcode
         WHERE tcode_apusr = $1
         AND tcode_tname = $2
         LIMIT 1`;

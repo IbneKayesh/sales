@@ -30,7 +30,7 @@
   "party_pname": {
     "type": "string",
     "label": "Name",
-    "maxLength": 50,
+    "maxLength": 100,
     "minLength": 3,
     "placeholder": "Enter name",
     "required": true

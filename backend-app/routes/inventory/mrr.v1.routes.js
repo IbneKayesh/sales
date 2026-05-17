@@ -112,12 +112,14 @@ const create = async (req, res) => {
       mrrmt_ipaid,
       mrrmt_isqcp,
       tmib_mrrdt,
+      tmib_mrrpy,
+      tmib_mrrcs,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
-    console.log("req", req);
+    //console.log("req", req);
 
     // Validate input
     if (
@@ -150,7 +152,6 @@ const create = async (req, res) => {
     const scripts = [];
 
     //const newCode = await GenNewCode(user_c, "tmib_mrrmt");
-
     scripts.push({
       sql: `INSERT INTO tmib_mrrmt(id, mrrmt_apusr, mrrmt_bsins, mrrmt_dpart, mrrmt_cntct, mrrmt_trnno,
         mrrmt_trdat, mrrmt_refno, mrrmt_notes, mrrmt_tramt, mrrmt_itmds, mrrmt_invds,
@@ -188,7 +189,7 @@ const create = async (req, res) => {
       ],
       label: `create MRR- ${newTrn}`,
     });
-
+    //details
     for (const det of tmib_mrrdt) {
       scripts.push({
         sql: `INSERT INTO tmib_mrrdt(id, mrrdt_apusr, mrrdt_bsins, mrrdt_mrrmt, mrrdt_price, mrrdt_items,
@@ -224,6 +225,74 @@ const create = async (req, res) => {
         label: `Created MRR detail ${newTrn}`,
       });
     }
+    //payment -mrrpy_pydat
+    for (const det of tmib_mrrpy) {
+      scripts.push({
+        sql: `INSERT INTO tmib_mrrpy(id, mrrpy_apusr, mrrpy_bsins, mrrpy_mrrmt, mrrpy_pmode, mrrpy_pdamt,
+        mrrpy_notes, mrrpy_crusr, mrrpy_upusr)
+          VALUES ($1, $2, $3, $4, $5, $6,
+          $7, $8, $9)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          masterId,
+          det.mrrpy_pmode,
+          det.mrrpy_pdamt,
+          det.mrrpy_notes,
+          user_s,
+          user_s,
+        ],
+        label: `Created MRR payment ${newTrn}`,
+      });
+    }
+    //costing
+    for (const det of tmib_mrrcs) {
+      scripts.push({
+        sql: `INSERT INTO tmib_mrrcs(id, mrrcs_apusr, mrrcs_bsins, mrrcs_mrrmt, mrrcs_csmod, mrrcs_clmod,
+        mrrcs_chead, mrrcs_value, mrrcs_notes, mrrcs_crusr, mrrcs_upusr)
+          VALUES ($1, $2, $3, $4, $5, $6,
+          $7, $8, $9, $10, $11)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          masterId,
+          det.mrrcs_csmod,
+          det.mrrcs_clmod,
+          det.mrrcs_chead,
+          det.mrrcs_value,
+          det.mrrcs_notes,
+          user_s,
+          user_s,
+        ],
+        label: `Created MRR costing ${newTrn}`,
+      });
+    }
+
+    //Auto Journal Entries
+    const Invoice_Discount_Amount = Number(mrrmt_invds);
+    const Item_Amount = tmib_mrrdt.reduce(
+      (sum, item) => sum + item.mrrdt_trate * item.mrrdt_trqty,
+      0,
+    );
+    const Item_Discount = tmib_mrrdt.reduce(
+      (sum, item) => sum + Number(item.mrrdt_dsamt || 0),
+      0,
+    );
+    //will be with each item group but now its for test
+    const Net_Inventory = Item_Amount - (Invoice_Discount_Amount + Item_Discount);
+
+    const Item_Vat = tmib_mrrdt.reduce(
+      (sum, item) => sum + Number(item.mrrdt_sdvat || 0),
+      0,
+    );
+    
+    const Item_Tax = tmib_mrrdt.reduce(
+      (sum, item) => sum + Number(item.mrrdt_txpct || 0),
+      0,
+    );
+
 
     await dbRunAll(scripts);
     res.json({
@@ -413,8 +482,6 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-
-
 // get-mrr-items
 router.post("/get-mrr-items", async (req, res) => {
   try {
@@ -445,6 +512,80 @@ router.post("/get-mrr-items", async (req, res) => {
     //const params = [user_c, user_b];
     const params = [mrrdt_mrrmt];
     const rows = await dbGetAll(sql, params, `get mrr items- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+// get-mrr-costing
+router.post("/get-mrr-costing", async (req, res) => {
+  try {
+    const { mrrcs_mrrmt, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT cst.*
+    FROM tmib_mrrcs cst
+    WHERE mrrcs_mrrmt = $1`;
+
+    //const params = [user_c, user_b];
+    const params = [mrrcs_mrrmt];
+    const rows = await dbGetAll(sql, params, `get mrr costing- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+// get-mrr-payment
+router.post("/get-mrr-payment", async (req, res) => {
+  try {
+    const { mrrpy_mrrmt, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT pym.*
+    FROM tmib_mrrpy pym
+    WHERE mrrpy_mrrmt = $1`;
+
+    //const params = [user_c, user_b];
+    const params = [mrrpy_mrrmt];
+    const rows = await dbGetAll(sql, params, `get mrr payments- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",

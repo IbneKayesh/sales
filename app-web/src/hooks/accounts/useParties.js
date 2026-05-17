@@ -11,7 +11,7 @@ import { subGroupAPI } from "@/api/inventory/subGroupAPI.js";
 import { buildCoaTree, findCoaTree } from "@/utils/jsonParser.js";
 
 const useParties = () => {
-  //hooks :: menuId M05-M01-M002,
+  //hooks :: menuId M07-M01-002,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -77,8 +77,10 @@ const useParties = () => {
     },
   ];
 
+  const [dataListParty, setDataListParty] = useState([]);
+
   useEffect(() => {
-    const perms = getPageAuth("M05-M01-M002");
+    const perms = getPageAuth("M07-M01-002");
     setPageAuth(perms);
   }, [getPageAuth]);
 
@@ -86,10 +88,10 @@ const useParties = () => {
   const loadParties = async () => {
     try {
       setIsBusy(true);
-      const resp = await partiesAPI.getAll({});
+      //const resp = await partiesAPI.getAll({});
       //console.log("resp", resp);
-      setDataList(resp.data || []);
-      showToastError(resp);
+      //setDataList(resp.data || []);
+      //showToastError(resp);
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -118,13 +120,20 @@ const useParties = () => {
         const party_pname = party_vndor_Options.find(
           (f) => f.value_text == value,
         ).label_text;
-        setFormData((prev) => ({ ...prev, party_pname: `${party_pname} - A/C` }));
+        setFormData((prev) => ({
+          ...prev,
+          party_pname: `${party_pname} - A/C`,
+        }));
       } else {
         const node = findCoaTree(party_chtac_Options, formData.party_chtac);
         const chtac_cname = `${node?.data?.chtac_cname} #${node?.data?.chtac_chtno} - A/C`;
 
         setFormData((prev) => ({ ...prev, party_pname: chtac_cname }));
       }
+    }
+
+    if (field === "party_chtac") {
+      handleGetPartiesByCoa(value);
     }
   };
 
@@ -293,6 +302,19 @@ const useParties = () => {
     }
   };
 
+  const handleGetPartiesByCoa = async (coaId) => {
+    try {
+      setIsBusy(true);
+      //const resp = await coaAPI.getCoaPosting();
+      const resp = await partiesAPI.getByCoa({ party_chtac: coaId });
+      setDataListParty(resp.data || []);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     //hooks
     pageAuth,
@@ -314,6 +336,8 @@ const useParties = () => {
     handleRefreshClick,
     handleAddNewClick,
     handleSubmitClick,
+    //parties
+    dataListParty
   };
 };
 export default useParties;

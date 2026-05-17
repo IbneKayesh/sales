@@ -2,7 +2,10 @@ import { InputText } from "primereact/inputtext";
 import RequiredText from "@/components/RequiredText";
 import { Dropdown } from "primereact/dropdown";
 import { TreeSelect } from "primereact/treeselect";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 import AuditFields from "@/components/AuditFields";
+import EmptyState from "@/components/EmptyState";
 
 const PartyFormComp = ({
   formData,
@@ -11,9 +14,9 @@ const PartyFormComp = ({
   party_ptype_Options,
   party_vndor_Options,
   party_chtac_Options,
+  //parties
+  dataList,
 }) => {
-
-
   return (
     <div className="grid">
       {/* {JSON.stringify(party_chtac_Options)} */}
@@ -101,6 +104,34 @@ const PartyFormComp = ({
           revNo={formData.party_rvnmr}
         />
       )}
+
+      <div className="col-12">
+        <div className="p-card">
+          {dataList.length > 0 ? (
+            <DataTable
+              value={dataList}
+              paginator
+              rows={25}
+              rowsPerPageOptions={[25, 50, 100, 200]}
+              emptyMessage="No data found."
+              size="small"
+              rowHover
+              showGridlines
+            >
+              <Column
+                header="Sl"
+                body={(rowData, options) => options.rowIndex + 1}
+              />
+              <Column field="party_ptype" header="Type" />
+              <Column field="party_pcode" header="Code" />
+              <Column field="party_pname" header="Name" sortable />
+              <Column header={dataList?.length + " rows"} />
+            </DataTable>
+          ) : (
+            <EmptyState />
+          )}
+        </div>
+      </div>
     </div>
   );
 };

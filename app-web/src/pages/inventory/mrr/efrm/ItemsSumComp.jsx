@@ -3,7 +3,7 @@ import RequiredText from "@/components/RequiredText";
 
 const ItemsSumComp = ({ readOnly, formData, errors, onChange }) => {
   return (
-    <div className="col-12 md:col-2">
+    <div className="col-12 md:col-2 p-card">
       <label className="block font-bold mb-2">Amount</label>
       <InputNumber
         name="mrrmt_tramt"
@@ -40,6 +40,7 @@ const ItemsSumComp = ({ readOnly, formData, errors, onChange }) => {
         mode="decimal"
         minFractionDigits={2}
         maxFractionDigits={6}
+        disabled={formData.id}
       />
       <RequiredText text={errors.mrrmt_invds} />
       <label className="block font-bold mb-2">VAT</label>

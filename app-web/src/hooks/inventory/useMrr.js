@@ -4,9 +4,11 @@ import validate, { generateDataModel } from "@/models/validator";
 import tmib_mrrmt from "@/models/inventory/tmib_mrrmt.json";
 import tmib_mrrdt from "@/models/inventory/tmib_mrrdt.json";
 import tmib_mrrcs from "@/models/inventory/tmib_mrrcs.json";
+import tmib_mrrpy from "@/models/inventory/tmib_mrrpy.json";
 const dataModel = generateDataModel(tmib_mrrmt);
 const dataModelItems = generateDataModel(tmib_mrrdt);
 const dataModelCosting = generateDataModel(tmib_mrrcs);
+const dataModelPayment = generateDataModel(tmib_mrrpy);
 import { itemsAPI } from "@/api/inventory/itemsAPI.js";
 import { contactAPI } from "@/api/crm/contactAPI.js";
 import { mrrAPI } from "@/api/inventory/mrrAPI.js";
@@ -58,7 +60,13 @@ const useMrr = () => {
   ];
   //other states payments
   //const [frmdataPymt, setFrmdataPymt] = useState(dataModelPymt);
+  const [formDataPymt, setFormDataPymt] = useState(dataModelPayment);
   const [dataListPymt, setDataListPymt] = useState([]);
+  const mrrpy_pmode_Options = [
+    { label_text: "Cash", value_text: "Cash" },
+    { label_text: "Bank", value_text: "Bank" },
+    { label_text: "Wallet", value_text: "Wallet" },
+  ];
 
   useEffect(() => {
     const perms = getPageAuth("M06-M04");
@@ -66,20 +74,87 @@ const useMrr = () => {
   }, [getPageAuth]);
 
   useEffect(() => {
-    const mrrmt_tramt = dataListItems.reduce(
+    const items = Array.isArray(dataListItems) ? dataListItems : [];
+
+    const mrrmt_tramt = items.reduce(
       (sum, item) => sum + Number(item.mrrdt_tramt || 0),
       0,
     );
-    const mrrdt_dsamt = dataListItems.reduce(
+
+    const mrrmt_itmds = items.reduce(
       (sum, item) => sum + Number(item.mrrdt_dsamt || 0),
       0,
     );
+
+    // VAT amount per item
+    const mrrmt_vtamt = items.reduce((sum, item) => {
+      const amount = Number(item.mrrdt_tramt || 0);
+      const vatPct = Number(item.mrrdt_sdvat || 0);
+
+      return sum + (amount * vatPct) / 100;
+    }, 0);
+
+    // Tax amount per item
+    const mrrmt_txamt = items.reduce((sum, item) => {
+      const amount = Number(item.mrrdt_tramt || 0);
+      const taxPct = Number(item.mrrdt_txpct || 0);
+
+      return sum + (amount * taxPct) / 100;
+    }, 0);
+
     setFormData((prev) => ({
       ...prev,
-      mrrmt_tramt: mrrmt_tramt,
-      mrrmt_itmds: mrrdt_dsamt,
+      mrrmt_tramt,
+      mrrmt_itmds,
+      mrrmt_vtamt,
+      mrrmt_txamt,
     }));
   }, [dataListItems]);
+
+  useEffect(() => {
+    //item costing
+    const items = Array.isArray(dataListItems) ? dataListItems : [];
+    const mrrdt_trqty = items.reduce(
+      (sum, item) => sum + Number(item.mrrdt_trqty || 0),
+      0,
+    );
+    const mrrdt_tramt = items.reduce(
+      (sum, item) => sum + Number(item.mrrdt_tramt || 0),
+      0,
+    );
+
+    const cost_qty_value = dataListCosting
+      .filter((item) => item.mrrcs_clmod === "ByQty")
+      .reduce((sum, item) => sum + Number(item.mrrcs_value || 0), 0);
+    const cost_qty_rate = cost_qty_value / mrrdt_trqty;
+
+    const cost_val_value = dataListCosting
+      .filter((item) => item.mrrcs_clmod === "ByValue")
+      .reduce((sum, item) => sum + Number(item.mrrcs_value || 0), 0);
+    const cost_val_rate = cost_val_value / mrrdt_tramt;
+    const mrrdt_otcst = cost_qty_rate + cost_val_rate;
+
+    setDataListItems((prev) =>
+      prev.map((item) => ({
+        ...item,
+        mrrdt_otcst: mrrdt_otcst,
+      })),
+    );
+
+    //master costing
+    const mrrmt_icamt = dataListCosting
+      .filter((item) => item.mrrcs_csmod === "Include")
+      .reduce((sum, item) => sum + Number(item.mrrcs_value || 0), 0);
+    const mrrmt_ecamt = dataListCosting
+      .filter((item) => item.mrrcs_csmod === "Exclude")
+      .reduce((sum, item) => sum + Number(item.mrrcs_value || 0), 0);
+
+    setFormData((prev) => ({
+      ...prev,
+      mrrmt_icamt: mrrmt_icamt,
+      mrrmt_ecamt: mrrmt_ecamt,
+    }));
+  }, [dataListCosting]);
 
   //functions
   const loadMrr = async () => {
@@ -117,6 +192,8 @@ const useMrr = () => {
 
     setReadOnly(true);
     handleGetSavedItems(rowData.id);
+    handleGetSavedCosting(rowData.id);
+    handleGetSavedPayments(rowData.id);
   };
 
   const handleDelete = (rowData) => {
@@ -185,7 +262,11 @@ const useMrr = () => {
     setCrView("SYS_FRM_1");
     setFormData(dataModel);
     setFormDataItems(dataModelItems);
+    setFormDataCosting(dataModelCosting);
+    setFormDataPymt(dataModelPayment);
     setDataListItems([]);
+    setDataListCosting([]);
+    setDataListPymt([]);
     handleGetItems();
     handleGetSuppliers();
     setReadOnly(false);
@@ -194,6 +275,10 @@ const useMrr = () => {
 
   const handleSubmitClick = async () => {
     try {
+      if (readOnly) {
+        showToast("error", "Readonly", "Not allowed!");
+        return;
+      }
       const newErrors = validate(formData, tmib_mrrmt);
       setErrors(newErrors);
       //console.log("handleSave: ", newErrors);
@@ -210,11 +295,11 @@ const useMrr = () => {
         ...formData,
         mrrmt_dpart: "dpart1",
         tmib_mrrdt: dataListItems,
-        tmib_mrrpy: [],
-        tmib_mrrcs: [],
+        tmib_mrrpy: dataListPymt,
+        tmib_mrrcs: dataListCosting,
       };
 
-      console.log("reqBody: ", dataListItems);
+      //console.log("reqBody: ", dataListItems);
       setIsBusy(true);
 
       //fetch items name if not already present
@@ -270,7 +355,7 @@ const useMrr = () => {
   };
 
   const handleChangeItems = (field, value) => {
-    console.log("handleChangeItems", field);
+    //console.log("handleChangeItems", field);
     if (value === undefined) return;
     setFormDataItems((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate(
@@ -295,12 +380,15 @@ const useMrr = () => {
         punit_uname: item_with_price.punit_uname,
         items_pkqty: item_with_price.items_pkqty,
         mrrdt_trate: item_with_price.price_lprat,
+        mrrdt_trqty: "",
+        mrrdt_tramt: 0,
         mrrdt_dspct: item_with_price.price_dspct,
         mrrdt_dsamt: 0,
         mrrdt_sdvat: item_with_price.items_sdvat,
         mrrdt_txpct: 0,
         mrrdt_fxcst: item_with_price.items_fxcst,
         mrrdt_otcst: 0,
+        mrrdt_ntamt: 0,
         mrrdt_csrat: 0,
       }));
     }
@@ -326,15 +414,29 @@ const useMrr = () => {
       setIsBusy(true);
       const mrrdt_tramt =
         Number(formDataItems.mrrdt_trate) * Number(formDataItems.mrrdt_trqty);
-      const mrrdt_dsamt =
-        (mrrdt_tramt * Number(formDataItems.mrrdt_dspct)) / 100;
-      const mrrdt_ntamt = Number(mrrdt_tramt) - Number(mrrdt_dsamt);
+
+      let mrrdt_dsamt = Number(formDataItems.mrrdt_dsamt || 0);
+      if (Number(formDataItems.mrrdt_dspct) > 0) {
+        mrrdt_dsamt = mrrdt_tramt * (Number(formDataItems.mrrdt_dspct) / 100);
+      }
+
+      //console.log("mrrdt_dsamt", mrrdt_dsamt);
+      const mrrdt_fxcst_amount =
+        mrrdt_tramt * (Number(formDataItems.mrrdt_fxcst || 0) / 100);
+
+      //console.log("mrrdt_fxcst_amount", mrrdt_fxcst_amount);
+
+      const mrrdt_csrat =
+        (mrrdt_tramt + mrrdt_fxcst_amount - mrrdt_dsamt) /
+        Number(formDataItems.mrrdt_trqty);
+
+      //console.log("mrrdt_csrat", mrrdt_csrat);
 
       const itemBody = {
         ...formDataItems,
         mrrdt_tramt: mrrdt_tramt,
         mrrdt_dsamt: mrrdt_dsamt,
-        mrrdt_ntamt: mrrdt_ntamt,
+        mrrdt_csrat: mrrdt_csrat,
       };
       setDataListItems((prev) => [...prev, itemBody]);
       setFormDataItems(dataModelItems);
@@ -363,10 +465,36 @@ const useMrr = () => {
     }
   };
 
+  const handleGetSavedCosting = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await mrrAPI.getMrrCosting({ mrrcs_mrrmt: id });
+      //console.log("resp", resp);
+      setDataListCosting(resp.data);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleGetSavedPayments = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await mrrAPI.getMrrPayment({ mrrpy_mrrmt: id });
+      //console.log("resp", resp);
+      setDataListPymt(resp.data);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   //other function + costing
 
   const handleChangeCosting = (field, value) => {
-    console.log("handleChangeCosting", field);
+    //console.log("handleChangeCosting", field);
     if (value === undefined) return;
     setFormDataCosting((prev) => ({ ...prev, [field]: value }));
     const newErrors = validate(
@@ -412,6 +540,52 @@ const useMrr = () => {
     );
   };
 
+  // other function + payments
+
+  const handleChangePymt = (field, value) => {
+    //console.log("handleChangePymt", field);
+    if (value === undefined) return;
+    setFormDataPymt((prev) => ({ ...prev, [field]: value }));
+    const newErrors = validate({ ...formDataPymt, [field]: value }, tmib_mrrpy);
+    setErrors(newErrors);
+  };
+
+  const handleAddPaymentClick = async () => {
+    try {
+      const newErrors = validate(formDataPymt, tmib_mrrpy);
+      setErrors(newErrors);
+      //console.log("handleSave: ", formDataItems);
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+      const exists = dataListPymt.some(
+        (x) => x.mrrpy_pmode === formDataPymt.mrrpy_pmode,
+      );
+
+      if (exists) {
+        showToast("error", "Error", "Item already exists");
+        return;
+      }
+
+      setIsBusy(true);
+
+      const itemBody = {
+        ...formDataPymt,
+      };
+      setDataListPymt((prev) => [...prev, itemBody]);
+      setFormDataPymt(dataModelPayment);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleRemovePaymentClick = (rowData) => {
+    setDataListPymt((prev) =>
+      prev.filter((x) => x.mrrpy_pmode !== rowData.mrrpy_pmode),
+    );
+  };
+
   return {
     //hooks
     pageAuth,
@@ -450,6 +624,12 @@ const useMrr = () => {
     handleAddCostingClick,
     handleRemoveCostingClick,
     //payment forms + payment items
+    formDataPymt,
+    dataListPymt,
+    mrrpy_pmode_Options,
+    handleChangePymt,
+    handleAddPaymentClick,
+    handleRemovePaymentClick,
   };
 };
 export default useMrr;

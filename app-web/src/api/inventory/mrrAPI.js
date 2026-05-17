@@ -30,4 +30,12 @@ export const mrrAPI = {
     apiRequest("/inventory/v1/mrr/get-mrr-items", {
       body: data,
     }),
+  getMrrCosting: (data) =>
+    apiRequest("/inventory/v1/mrr/get-mrr-costing", {
+      body: data,
+    }),
+  getMrrPayment: (data) =>
+    apiRequest("/inventory/v1/mrr/get-mrr-payment", {
+      body: data,
+    }),
 };

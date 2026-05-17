@@ -44,6 +44,12 @@ const MrrPage = () => {
     handleAddCostingClick,
     handleRemoveCostingClick,
     //payment forms + payment items
+    formDataPymt,
+    dataListPymt,
+    mrrpy_pmode_Options,
+    handleChangePymt,
+    handleAddPaymentClick,
+    handleRemovePaymentClick,
   } = useMrr();
 
   const isList = crView === "list" && true;
@@ -127,6 +133,7 @@ const MrrPage = () => {
           onChangeItems={handleChangeItems}
           onAddItemsClick={handleAddItemsClick}
           onRemoveItemsClick={handleRemoveItemsClick}
+          //costing forms + costing items
           formDataCosting={formDataCosting}
           dataListCosting={dataListCosting}
           mrrcs_csmod_Options={mrrcs_csmod_Options}
@@ -135,6 +142,13 @@ const MrrPage = () => {
           onChangeCosting={handleChangeCosting}
           onAddCostingClick={handleAddCostingClick}
           onRemoveCostingClick={handleRemoveCostingClick}
+          //payment forms + payment items
+          formDataPymt={formDataPymt}
+          dataListPymt={dataListPymt}
+          mrrpy_pmode_Options={mrrpy_pmode_Options}
+          onChangePymt={handleChangePymt}
+          onAddPaymentClick={handleAddPaymentClick}
+          onRemovePaymentClick={handleRemovePaymentClick}
         />
       )}
     </Card>
