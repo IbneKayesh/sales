@@ -438,7 +438,7 @@ router.post("/get-new-mrr-items", async (req, res) => {
     sgrup.sgrup_sname as sgrup_sname,
     scatg.scatg_sname as scatg_sname,
     brand.brand_bname as brand_bname,
-    pty.id AS party_id, pty.party_pname
+    pty.id AS party_id, pty.party_pname, pty.party_chtac
     FROM tmib_items itm
     JOIN tmib_price prc ON itm.id = prc.price_items    
     JOIN tmib_units runit ON itm.items_runit = runit.id

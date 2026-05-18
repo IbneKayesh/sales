@@ -13,6 +13,7 @@ CREATE TABLE tmtb_atujr (
   atujr_jcrdr varchar(50) NOT NULL,
   atujr_setup varchar(50) NOT NULL,
   atujr_party varchar(50) NOT NULL,
+  atujr_chtac varchar(50) NOT NULL,
   
   -- default
   atujr_actve boolean NOT NULL DEFAULT true,

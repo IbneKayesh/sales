@@ -69,6 +69,9 @@ const useMrr = () => {
     { label_text: "Wallet", value_text: "Wallet" },
   ];
 
+  //auto journal
+  const [autoJournalConf, setAutoJournalConf] = useState([]);
+
   useEffect(() => {
     const perms = getPageAuth("M06-M04");
     setPageAuth(perms);
@@ -79,6 +82,7 @@ const useMrr = () => {
       const resp = await autoJournalAPI.getByInterface({
         atujr_iface: "SYS_MRR_INV",
       });
+      setAutoJournalConf(resp.data || []);
       console.log("resp", resp.data || []);
     };
     loadAutoJournalByInterface();
@@ -335,6 +339,95 @@ const useMrr = () => {
         return;
       }
 
+      //Auto Journal Entries
+      const Net_Inventory_DR =
+        Number(formData.mrrmt_tramt) -
+        (Number(formData.mrrmt_itmds) + Number(formData.mrrmt_invds));
+
+      const Net_Payable_CR =
+        Net_Inventory_DR +
+        Number(formData.mrrmt_vtamt) +
+        Number(formData.mrrmt_txamt);
+
+      const mjrnl = {
+        mjrnl_dpart: "dpart1",
+        mjrnl_crncy: "BDT",
+        mjrnl_trtyp: "Purchase Voucher",
+        mjrnl_trdat: formData.mrrmt_trdat,
+        mjrnl_narrt: "MRR Auto Journal",
+        mjrnl_drval: Net_Payable_CR,
+        mjrnl_crval: Net_Payable_CR,
+        mjrnl_stats: "posted",
+      };
+      const VAT_ASSET_AR = autoJournalConf.find(
+        (f) => f.atujr_rokey === "VAT_ASSET_AR",
+      );
+      const TAX_ASSET_AR = autoJournalConf.find(
+        (f) => f.atujr_rokey === "TAX_ASSET_AR",
+      );
+      const selected_cntct = mrrmt_cntct_Options.find(
+        (f) => f.id === formData.mrrmt_cntct,
+      );
+
+      const djrnl = [
+        {
+          djrnl_chtac: VAT_ASSET_AR.atujr_chtac,
+          djrnl_party: VAT_ASSET_AR.atujr_party,
+          djrnl_drval: Number(formData.mrrmt_vtamt),
+          djrnl_crval: 0,
+          djrnl_descr: "MRR VAT Receivable",
+          djrnl_rftyp: "MRR",
+          djrnl_refid: "",
+        },
+        {
+          djrnl_chtac: TAX_ASSET_AR.atujr_chtac,
+          djrnl_party: TAX_ASSET_AR.atujr_party,
+          djrnl_drval: Number(formData.mrrmt_txamt),
+          djrnl_crval: 0,
+          djrnl_descr: "MRR TAX Receivable",
+          djrnl_rftyp: "MRR",
+          djrnl_refid: "",
+        },
+        {
+          djrnl_chtac: selected_cntct.party_chtac,
+          djrnl_party: selected_cntct.party_id,
+          djrnl_drval: 0,
+          djrnl_crval: Net_Payable_CR,
+          djrnl_descr: "Accounts Payable",
+          djrnl_rftyp: "MRR",
+          djrnl_refid: "",
+        },
+      ];
+      //console.log("dataListItems", dataListItems);
+      const result = Object.values(
+        dataListItems.reduce((acc, item) => {
+          if (!acc[item.party_id]) {
+            acc[item.party_id] = {
+              party_id: item.party_id,
+              party_chtac: item.party_chtac,
+              mrrdt_tramt: 0,
+            };
+          }
+          acc[item.party_id].mrrdt_tramt += item.mrrdt_tramt;
+          return acc;
+        }, {}),
+      );
+
+      result.forEach((item) => {
+        djrnl.push({
+          djrnl_chtac: item.party_chtac,
+          djrnl_party: item.party_id,
+          djrnl_drval: item.mrrdt_tramt,
+          djrnl_crval: 0,
+          djrnl_descr: "Inventory Asset",
+          djrnl_rftyp: "MRR",
+          djrnl_refid: "",
+        });
+      });
+
+      console.log("djrnl", djrnl);
+      return;
+
       const reqBody = {
         ...formData,
         mrrmt_dpart: "dpart1",
@@ -345,9 +438,6 @@ const useMrr = () => {
 
       //console.log("reqBody: ", dataListItems);
       setIsBusy(true);
-
-      //fetch items name if not already present
-
       const resp = await mrrAPI.upsert(reqBody);
       //console.log("resp", resp);
       alert({
@@ -434,6 +524,8 @@ const useMrr = () => {
         mrrdt_otcst: 0,
         mrrdt_ntamt: 0,
         mrrdt_csrat: 0,
+        party_id: item_with_price.party_id,
+        party_chtac: item_with_price.party_chtac,
       }));
     }
   };
