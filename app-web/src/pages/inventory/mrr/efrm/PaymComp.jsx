@@ -41,7 +41,7 @@ const PaymComp = ({
   };
 
   return (
-    <div className="col-12 md:col-3 p-card">
+    <div className="col-12 md:col-4 p-card">
       {!readOnly && (
         <>
           <label className="block font-bold mb-2 text-red-800">Mode</label>

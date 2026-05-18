@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
         data: [],
       });
     }
-//LEFT JOIN tmib_price prc ON cnt.cntct_price = prc.id
+    //LEFT JOIN tmib_price prc ON cnt.cntct_price = prc.id
     //database action
     const sql = `SELECT cnt.*,
     try.trtry_wname, tar.tarea_tname, dzn.dzone_dname, ctr.shtbl_dtext AS cntry_cname, crn.shtbl_dtext AS crncy_cname,
@@ -587,7 +587,11 @@ router.post("/get-avail-contact-accounts", async (req, res) => {
     ORDER BY cnt.cntct_ccode`;
 
     const params = [user_c, cntct_ctype];
-    const rows = await dbGetAll(sql, params, `get get-avail-contact-accounts- ${user_c}`);
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get get-avail-contact-accounts- ${user_c}`,
+    );
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -602,7 +606,6 @@ router.post("/get-avail-contact-accounts", async (req, res) => {
     });
   }
 });
-
 
 // get-suppliers
 router.post("/get-suppliers", async (req, res) => {
@@ -619,8 +622,11 @@ router.post("/get-suppliers", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT cnt.*, 0 as edit_stop
+    const sql = `SELECT cnt.*, pty.id AS party_id, pty.party_pname, 0 as edit_stop
     FROM tmcb_cntct cnt
+    LEFT JOIN tmtb_party pty ON cnt.id = pty.party_vndor
+    AND pty.party_apusr = cnt.cntct_apusr
+    AND pty.party_bsins = cnt.cntct_bsins
     WHERE cnt.cntct_apusr = $1
     AND cnt.cntct_ctype IN ('Supplier','Both')
     AND cnt.cntct_actve = TRUE

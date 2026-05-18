@@ -12,6 +12,7 @@ const dataModelPayment = generateDataModel(tmib_mrrpy);
 import { itemsAPI } from "@/api/inventory/itemsAPI.js";
 import { contactAPI } from "@/api/crm/contactAPI.js";
 import { mrrAPI } from "@/api/inventory/mrrAPI.js";
+import { autoJournalAPI } from "@/api/accounts/autoJournalAPI.js";
 import { useAuth } from "@/hooks/useAuth.jsx";
 
 const useMrr = () => {
@@ -74,6 +75,16 @@ const useMrr = () => {
   }, [getPageAuth]);
 
   useEffect(() => {
+    const loadAutoJournalByInterface = async () => {
+      const resp = await autoJournalAPI.getByInterface({
+        atujr_iface: "SYS_MRR_INV",
+      });
+      console.log("resp", resp.data || []);
+    };
+    loadAutoJournalByInterface();
+  }, []);
+
+  useEffect(() => {
     const items = Array.isArray(dataListItems) ? dataListItems : [];
 
     const mrrmt_tramt = items.reduce(
@@ -102,18 +113,26 @@ const useMrr = () => {
       return sum + (amount * taxPct) / 100;
     }, 0);
 
+    const mrrmt_pyamt =
+      mrrmt_tramt +
+      Number(formData.mrrmt_icamt || 0) -
+      (Number(mrrmt_itmds || 0) + Number(formData.mrrmt_invds || 0));
+
     setFormData((prev) => ({
       ...prev,
       mrrmt_tramt,
       mrrmt_itmds,
       mrrmt_vtamt,
       mrrmt_txamt,
+      mrrmt_pyamt: mrrmt_pyamt,
+      mrrmt_duamt: mrrmt_pyamt - Number(formData.mrrmt_pdamt || 0),
     }));
   }, [dataListItems]);
 
   useEffect(() => {
     //item costing
     const items = Array.isArray(dataListItems) ? dataListItems : [];
+
     const mrrdt_trqty = items.reduce(
       (sum, item) => sum + Number(item.mrrdt_trqty || 0),
       0,
@@ -135,10 +154,21 @@ const useMrr = () => {
     const mrrdt_otcst = cost_qty_rate + cost_val_rate;
 
     setDataListItems((prev) =>
-      prev.map((item) => ({
-        ...item,
-        mrrdt_otcst: mrrdt_otcst,
-      })),
+      prev.map((item) => {
+        const mrrdt_tramt = Number(item.mrrdt_tramt);
+        const mrrdt_dsamt = Number(item.mrrdt_dsamt);
+        const mrrdt_fxcst_amount =
+          mrrdt_tramt * (Number(item.mrrdt_fxcst || 0) / 100);
+        const mrrdt_csrat =
+          (mrrdt_tramt + mrrdt_fxcst_amount - mrrdt_dsamt) /
+          Number(item.mrrdt_trqty);
+
+        return {
+          ...item,
+          mrrdt_otcst: mrrdt_otcst,
+          mrrdt_csrat: mrrdt_csrat + mrrdt_otcst,
+        };
+      }),
     );
 
     //master costing
@@ -155,6 +185,20 @@ const useMrr = () => {
       mrrmt_ecamt: mrrmt_ecamt,
     }));
   }, [dataListCosting]);
+
+  useEffect(() => {
+    // payment total
+    const mrrpy_pdamt = dataListPymt.reduce(
+      (sum, item) => sum + Number(item.mrrpy_pdamt || 0),
+      0,
+    );
+
+    setFormData((prev) => ({
+      ...prev,
+      mrrmt_pdamt: mrrpy_pdamt,
+      mrrmt_duamt: Number(prev.mrrmt_pyamt || 0) - mrrpy_pdamt,
+    }));
+  }, [dataListPymt]);
 
   //functions
   const loadMrr = async () => {
@@ -453,6 +497,7 @@ const useMrr = () => {
   };
 
   const handleGetSavedItems = async (id) => {
+    setDataListItems([]);
     try {
       setIsBusy(true);
       const resp = await mrrAPI.getMrrItems({ mrrdt_mrrmt: id });
@@ -466,6 +511,7 @@ const useMrr = () => {
   };
 
   const handleGetSavedCosting = async (id) => {
+    setDataListCosting([]);
     try {
       setIsBusy(true);
       const resp = await mrrAPI.getMrrCosting({ mrrcs_mrrmt: id });
@@ -479,6 +525,7 @@ const useMrr = () => {
   };
 
   const handleGetSavedPayments = async (id) => {
+    setDataListPymt([]);
     try {
       setIsBusy(true);
       const resp = await mrrAPI.getMrrPayment({ mrrpy_mrrmt: id });

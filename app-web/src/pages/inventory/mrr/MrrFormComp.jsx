@@ -56,8 +56,7 @@ const MrrFormComp = ({
         onAddItemsClick={onAddItemsClick}
         onRemoveItemsClick={onRemoveItemsClick}
       />
-      <div className="grid m-2 gap-3 mb-3">
-        <div className="col-12 md:col-2"></div>
+      <div className="grid m-2 gap-5 mb-3">
         <CostingComp
           readOnly={readOnly}
           formData={formDataCosting}

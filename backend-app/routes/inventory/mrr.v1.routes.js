@@ -273,7 +273,7 @@ const create = async (req, res) => {
     //Auto Journal Entries
     const Invoice_Discount_Amount = Number(mrrmt_invds);
     const Item_Amount = tmib_mrrdt.reduce(
-      (sum, item) => sum + item.mrrdt_trate * item.mrrdt_trqty,
+      (sum, item) => sum + Number(item.mrrdt_tramt || 0),
       0,
     );
     const Item_Discount = tmib_mrrdt.reduce(
@@ -281,18 +281,35 @@ const create = async (req, res) => {
       0,
     );
     //will be with each item group but now its for test
-    const Net_Inventory = Item_Amount - (Invoice_Discount_Amount + Item_Discount);
+    const Net_Inventory_DR =
+      Item_Amount - (Invoice_Discount_Amount + Item_Discount);
 
-    const Item_Vat = tmib_mrrdt.reduce(
+    const Item_Vat_DR = tmib_mrrdt.reduce(
       (sum, item) => sum + Number(item.mrrdt_sdvat || 0),
       0,
     );
-    
-    const Item_Tax = tmib_mrrdt.reduce(
+
+    const Item_Tax_DR = tmib_mrrdt.reduce(
       (sum, item) => sum + Number(item.mrrdt_txpct || 0),
       0,
     );
 
+    const reqM = {
+      user_c: user_c,
+      user_b: user_b,
+      mjrnl_dpart: mrrmt_dpart,
+      mjrnl_trdat: mrrmt_trdat,
+      mjrnl_trtyp: "Purchase Voucher",
+      mjrnl_crncy: "BDT",
+      mjrnl_refno: newTrn,
+      mjrnl_narrt: "APJ-MRR",
+      mjrnl_drval: 0,
+      mjrnl_crval: 0
+    }
+
+    const reqD = [
+
+    ]
 
     await dbRunAll(scripts);
     res.json({
