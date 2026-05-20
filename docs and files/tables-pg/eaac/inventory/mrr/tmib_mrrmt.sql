@@ -1,3 +1,4 @@
+--drop table tmib_mrrmt;
 --
 -- Table structure for table tmib_mrrmt
 -- mrr master
@@ -26,6 +27,7 @@ CREATE TABLE tmib_mrrmt (
   mrrmt_ipost boolean NOT NULL DEFAULT false,
   mrrmt_ipaid boolean NOT NULL DEFAULT false,
   mrrmt_isqcp boolean NOT NULL DEFAULT false,
+  mrrmt_isapp boolean NOT NULL DEFAULT true,
   
   -- default
   mrrmt_actve boolean NOT NULL DEFAULT true,

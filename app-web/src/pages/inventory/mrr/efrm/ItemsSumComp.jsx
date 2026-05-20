@@ -3,7 +3,7 @@ import RequiredText from "@/components/RequiredText";
 
 const ItemsSumComp = ({ readOnly, formData, errors, onChange }) => {
   return (
-    <div className="col-12 md:col-3 p-card">
+    <div className="col-12 md:col-3 p-card p-card-inner">
       <label className="block font-bold mb-2">Amount</label>
       <InputNumber
         name="mrrmt_tramt"

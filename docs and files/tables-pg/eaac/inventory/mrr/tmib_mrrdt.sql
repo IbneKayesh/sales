@@ -1,3 +1,4 @@
+--drop table tmib_mrrdt;
 --
 -- Table structure for table tmib_mrrdt
 -- mrr details
@@ -22,6 +23,7 @@ CREATE TABLE tmib_mrrdt (
   mrrdt_ntamt decimal(18,6) DEFAULT 0.00,
   mrrdt_notes VARCHAR(100),
   mrrdt_csrat decimal(18,6) DEFAULT 0.00,
+  mrrdt_refid VARCHAR(50),
   
   -- default
   mrrdt_actve boolean NOT NULL DEFAULT true,

@@ -99,7 +99,7 @@ const ItemsComp = ({
   return (
     <>
       {!readOnly && (
-        <div className="grid p-card my-2 mx-1">
+        <div className="grid p-card p-card-inner">
           <div className="col-12 md:col-4">
             <label className="block font-bold mb-2 text-red-800">
               Products

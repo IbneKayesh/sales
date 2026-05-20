@@ -84,6 +84,11 @@
   padding: 0.25rem;
 }
 
+.p-card .p-card-inner {
+  background: var(--bg-card);
+  margin: 5px 2px;
+}
+
 .text-primary {
   color: var(--primary);
 }
