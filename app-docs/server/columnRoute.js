@@ -12,9 +12,9 @@ router.post('/get-by-table', async (req, res) => {
       'SELECT * FROM t_columns WHERE table_id = $1 ORDER BY serial_number ASC, created_at DESC',
       [table_id]
     );
-    res.json({ ok: true, data: result.rows });
+    res.json({ success: true, message: "Ok", data: result.rows });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+    res.status(500).json({ success: false, message: error.message, data: [] });
   }
 });
 
@@ -41,9 +41,9 @@ router.post('/add', async (req, res) => {
       references_table, references_column, column_description, serial_number
     ];
     const result = await pool.query(query, values);
-    res.json({ ok: true, data: result.rows[0] });
+    res.json({ success: true, message: "Ok", data: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+    res.status(500).json({ success: false, message: error.message, data: [] });
   }
 });
 
@@ -71,9 +71,9 @@ router.post('/edit', async (req, res) => {
       references_table, references_column, column_description, serial_number
     ];
     const result = await pool.query(query, values);
-    res.json({ ok: true, data: result.rows[0] });
+    res.json({ success: true, message: "Ok", data: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+    res.status(500).json({ success: false, message: error.message, data: [] });
   }
 });
 
@@ -82,9 +82,9 @@ router.post('/delete', async (req, res) => {
   const { id } = req.body;
   try {
     await pool.query('DELETE FROM t_columns WHERE id = $1', [id]);
-    res.json({ ok: true, message: 'Column deleted successfully' });
+    res.json({ success: true, message: "Column deleted successfully", data: [] });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+    res.status(500).json({ success: false, message: error.message, data: [] });
   }
 });
 

@@ -1,5 +1,0 @@
-DB_PORT=5432
-DB_HOST=127.0.0.1
-DB_USER=sgdpg
-DB_PASS=sgdpass
-DB_NAME=sgddb

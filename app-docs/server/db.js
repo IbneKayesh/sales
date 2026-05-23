@@ -7,7 +7,7 @@ export const pool = new Pool({
   port: 5432,
   user: 'sgdpg',
   password: 'sgdpass',
-  database: 'sgddb',
+  database: 'appdoc',
   max: 10,
   idleTimeoutMillis: 30000,
 });

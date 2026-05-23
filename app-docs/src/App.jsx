@@ -5,7 +5,7 @@ import Tables from "./pages/Tables";
 import Topbar from "./pages/Topbar";
 
 function App() {
-  const [selectedTab, setSelectedTab] = useState("");
+  const [selectedTab, setSelectedTab] = useState("features");
   const handleSelectTab = (tabNo) => {
     setSelectedTab(tabNo);
   };

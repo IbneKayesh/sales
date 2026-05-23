@@ -1,6 +1,3 @@
-// FeatureSidebar.jsx
-import React, { useState, useEffect } from "react";
-
 const FeatureSidebar = ({
   isBusy,
   formData,
@@ -9,67 +6,51 @@ const FeatureSidebar = ({
   feature_priority_options,
   work_type_options,
   work_user_options,
+  onCloseSidebarClick,
   onInputChange,
-  onRowClick,
-  onCloseSidebar,
-  onDelete,
-  onSave,
-  //task
-  taskList,
-  formDataTask,
-  onGetTaskByFeature,
-  onInputChangeTask,
-  onSaveTask,
-  onDoneTask,
-  onDeleteTask,
-  //feature table
-  tableList,
-  featureTableList,
+  onDeleteClick,
+  onSaveClick,
   selectedTableId,
   onInputChangeTable,
-  onAddFeatureTable,
-  onDeleteFeatureTable,
+  onAddFeatureTableClick,
+  tableList,
+  featureTableList,
+  onDeleteFeatureTableClick,
+  formDataTask,
+  onInputChangeTask,
+  onSaveTaskClick,
+  taskList,
+  onDoneTaskClick,
+  onDeleteTaskClick,
 }) => {
-  useEffect(() => {
-    if (formData.id && isSideBar) {
-      onGetTaskByFeature(formData.id);
-    }
-  }, [formData.id, isSideBar]);
   if (!isSideBar) return null;
 
-  return (
-    <div className="sidebar-overlay" onClick={onCloseSidebar}>
-      <div className="sidebar-panel" onClick={(e) => e.stopPropagation()}>
-        {/* Header Section */}
-        <div className="sidebar-header">
-          <div className="sidebar-title-section">
-            <h3 className="sidebar-title">Feature Details</h3>
-          </div>
-          <button
-            className="sidebar-close-btn"
-            onClick={onCloseSidebar}
-            disabled={isBusy}
-            aria-label="Close panel"
-          >
-            ✕
-          </button>
-        </div>
+  const formatDateInput = (value) => {
+    if (!value) return "";
+    try {
+      return new Date(value).toISOString().split("T")[0];
+    } catch {
+      return "";
+    }
+  };
 
-        {/* Scrollable Content */}
-        <div className="sidebar-content">
-          {/* Basic Info Section */}
-          <section className="form-section">
+  return (
+    <div className="sidebar-overlay" onClick={onCloseSidebarClick}>
+      <div
+        className="sidebar-panel features-sidebar"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sidebar-header">
+          <div className="tables-sidebar-header-grid">
             <div className="form-grid form-grid-10-90">
               <div className="form-group">
-                <label className="form-label">Serial No.</label>
+                <label className="form-label">Sl.</label>
                 <input
                   className="form-input"
                   type="text"
                   name="serial_number"
                   value={formData.serial_number || ""}
-                  onChange={(e) => {
-                    onInputChange("serial_number", e.target.value);
-                  }}
+                  onChange={(e) => onInputChange("serial_number", e.target.value)}
                   placeholder="No."
                 />
               </div>
@@ -80,47 +61,51 @@ const FeatureSidebar = ({
                   type="text"
                   name="feature_name"
                   value={formData.feature_name || ""}
-                  onChange={(e) => {
-                    onInputChange("feature_name", e.target.value);
-                  }}
-                  placeholder="Enter feature name"
+                  onChange={(e) => onInputChange("feature_name", e.target.value)}
+                  placeholder="Feature name"
                   required
                 />
               </div>
             </div>
-          </section>
+            <div className="tables-sidebar-close-wrap">
+              <button
+                className="sidebar-close-btn"
+                onClick={onCloseSidebarClick}
+                disabled={isBusy}
+                aria-label="Close panel"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        </div>
 
-          {/* Description Section */}
+        <div className="sidebar-content">
           <section className="form-section">
             <div className="form-group">
               <label className="form-label">Description</label>
-              <textarea
-                className="form-textarea"
+              <input
+                className="form-input"
+                type="text"
                 name="feature_description"
                 value={formData.feature_description || ""}
-                onChange={(e) => {
-                  onInputChange("feature_description", e.target.value);
-                }}
-                placeholder="Enter description"
-                rows="2"
+                onChange={(e) => onInputChange("feature_description", e.target.value)}
+                placeholder="optional"
               />
             </div>
           </section>
 
-          {/* Combined Status, Priority, Work Type, Assigned User Section */}
           <section className="form-section">
-            <div className="form-grid form-grid-4">
+            <div className="form-grid form-grid-4 features-sidebar-form-grid">
               <div className="form-group">
                 <label className="form-label">Status</label>
                 <select
                   className="form-select"
                   name="feature_status"
                   value={formData.feature_status || ""}
-                  onChange={(e) => {
-                    onInputChange("feature_status", e.target.value);
-                  }}
+                  onChange={(e) => onInputChange("feature_status", e.target.value)}
                 >
-                  <option value="">Select status</option>
+                  <option value="-">—</option>
                   {feature_status_options.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.name}
@@ -134,11 +119,9 @@ const FeatureSidebar = ({
                   className="form-select"
                   name="feature_priority"
                   value={formData.feature_priority || ""}
-                  onChange={(e) => {
-                    onInputChange("feature_priority", e.target.value);
-                  }}
+                  onChange={(e) => onInputChange("feature_priority", e.target.value)}
                 >
-                  <option value="">Select priority</option>
+                  <option value="-">—</option>
                   {feature_priority_options.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.name}
@@ -152,11 +135,9 @@ const FeatureSidebar = ({
                   className="form-select"
                   name="work_type"
                   value={formData.work_type || ""}
-                  onChange={(e) => {
-                    onInputChange("work_type", e.target.value);
-                  }}
+                  onChange={(e) => onInputChange("work_type", e.target.value)}
                 >
-                  <option value="">Select work type</option>
+                  <option value="-">—</option>
                   {work_type_options.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.name}
@@ -165,16 +146,14 @@ const FeatureSidebar = ({
                 </select>
               </div>
               <div className="form-group">
-                <label className="form-label">Assigned User</label>
+                <label className="form-label">User</label>
                 <select
                   className="form-select"
                   name="work_user"
                   value={formData.work_user || ""}
-                  onChange={(e) => {
-                    onInputChange("work_user", e.target.value);
-                  }}
+                  onChange={(e) => onInputChange("work_user", e.target.value)}
                 >
-                  <option value="">Select user</option>
+                  <option value="-">—</option>
                   {work_user_options.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.name}
@@ -185,207 +164,200 @@ const FeatureSidebar = ({
             </div>
           </section>
 
-          {/* Timeline Section */}
           <section className="form-section">
-            <div className="form-grid form-grid-3">
+            <div className="form-grid form-grid-3 features-sidebar-form-grid">
               <div className="form-group">
-                <label className="form-label">Start Date</label>
+                <label className="form-label">Start</label>
                 <input
                   className="form-input"
                   type="date"
                   name="start_date"
-                  value={
-                    formData.start_date
-                      ? new Date(formData.start_date)
-                          .toISOString()
-                          .split("T")[0]
-                      : ""
-                  }
+                  value={formatDateInput(formData.start_date)}
                   onChange={(e) => {
                     onInputChange(
                       "start_date",
-                      new Date(e.target.value).toISOString(),
+                      e.target.value ? new Date(e.target.value).toISOString() : "",
                     );
                   }}
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">End Date</label>
+                <label className="form-label">End</label>
                 <input
                   className="form-input"
                   type="date"
                   name="end_date"
-                  value={
-                    formData.end_date
-                      ? new Date(formData.end_date).toISOString().split("T")[0]
-                      : ""
-                  }
+                  value={formatDateInput(formData.end_date)}
                   onChange={(e) => {
                     onInputChange(
                       "end_date",
-                      new Date(e.target.value).toISOString(),
+                      e.target.value ? new Date(e.target.value).toISOString() : "",
                     );
                   }}
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">Progress (%)</label>
+                <label className="form-label">
+                  Progress {formData.progress_percent || 0}%
+                </label>
                 <input
                   className="form-input"
-                  type="number"
+                  type="range"
                   name="progress_percent"
                   min="0"
                   max="100"
+                  step="1"
                   value={formData.progress_percent || 0}
                   onChange={(e) => {
-                    onInputChange(
-                      "progress_percent",
-                      parseInt(e.target.value) || 0,
-                    );
+                    onInputChange("progress_percent", parseInt(e.target.value, 10) || 0);
                   }}
                 />
               </div>
             </div>
           </section>
 
-          {/* Tasks Section */}
+          {formData.id && formData.feature_type === "feature" && (
+            <section className="form-section">
+              <div className="section-header-compact">
+                <h4 className="section-title section-title-compact">Linked Tables</h4>
+                {featureTableList?.length > 0 && (
+                  <span className="section-count">{featureTableList.length}</span>
+                )}
+              </div>
+              <div className="form-input-with-btn features-link-table-row">
+                <select
+                  className="form-select"
+                  value={selectedTableId || ""}
+                  onChange={(e) => onInputChangeTable(e.target.value)}
+                >
+                  <option value="">Select table…</option>
+                  {tableList.map((table) => (
+                    <option key={table.id} value={table.id}>
+                      {table.table_name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  className="btn btn-sm btn-primary"
+                  onClick={onAddFeatureTableClick}
+                  disabled={isBusy || !selectedTableId}
+                >
+                  Link
+                </button>
+              </div>
+
+              {featureTableList && featureTableList.length > 0 ? (
+                <div className="sidebar-chips-grid">
+                  {featureTableList.map((mapping) => (
+                    <div key={mapping.id} className="sidebar-chip">
+                      <span
+                        className="sidebar-chip-label"
+                        title={mapping.table_name || mapping.table_id}
+                      >
+                        {mapping.table_name || mapping.table_id}
+                      </span>
+                      <button
+                        type="button"
+                        className="sidebar-col-btn sidebar-col-btn-delete"
+                        onClick={() =>
+                          onDeleteFeatureTableClick(formData.id, mapping.id)
+                        }
+                        disabled={isBusy}
+                        title="Unlink table"
+                        aria-label={`Unlink ${mapping.table_name || mapping.table_id}`}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="empty-list-text empty-list-text-compact">
+                  No linked tables yet.
+                </p>
+              )}
+            </section>
+          )}
+
           {formData.id && (
             <section className="form-section">
-              <h4 className="section-title">Tasks</h4>
-              <div className="task-input-group">
+              <div className="section-header-compact">
+                <h4 className="section-title section-title-compact">Tasks</h4>
+                {taskList?.length > 0 && (
+                  <span className="section-count">{taskList.length}</span>
+                )}
+              </div>
+              <div className="features-task-add-row">
                 <input
                   className="form-input"
                   type="text"
                   name="task_name"
                   value={formDataTask.task_name || ""}
-                  onChange={(e) => {
-                    onInputChangeTask("task_name", e.target.value);
+                  onChange={(e) => onInputChangeTask("task_name", e.target.value)}
+                  placeholder="New task…"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && formDataTask.task_name?.trim()) {
+                      onSaveTaskClick({
+                        ...formDataTask,
+                        feature_id: formData.id,
+                      });
+                    }
                   }}
-                  placeholder="Add a new task"
                 />
                 <button
                   className="btn btn-sm btn-primary"
                   onClick={() =>
-                    onSaveTask({
+                    onSaveTaskClick({
                       ...formDataTask,
                       feature_id: formData.id,
                     })
                   }
-                  disabled={isBusy || !formDataTask.task_name}
+                  disabled={isBusy || !formDataTask.task_name?.trim()}
                 >
                   Add
                 </button>
               </div>
 
-              <div className="task-list">
-                {taskList && taskList.length > 0 ? (
-                  taskList.map((task) => (
-                    <div key={task.id} className="task-item">
-                      <div className="task-checkbox-group">
+              {taskList && taskList.length > 0 ? (
+                <div className="sidebar-tasks-compact">
+                  {taskList.map((task) => (
+                    <div key={task.id} className="sidebar-task-chip">
+                      <label className="sidebar-task-check">
                         <input
                           className="form-checkbox"
                           type="checkbox"
                           checked={task.is_done || false}
-                          onChange={(e) => {
-                            onDoneTask(task.id, e.target.checked);
-                          }}
+                          onChange={(e) => onDoneTaskClick(task.id, e.target.checked)}
                           disabled={isBusy}
                         />
-                        <span className={`task-name ${task.is_done ? "task-done" : ""}`}>
+                        <span className={`sidebar-task-name${task.is_done ? " task-done" : ""}`}>
                           {task.task_name}
                         </span>
-                      </div>
+                      </label>
                       <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => onDeleteTask(task.id)}
+                        type="button"
+                        className="sidebar-col-btn sidebar-col-btn-delete"
+                        onClick={() => onDeleteTaskClick(task.id)}
                         disabled={isBusy}
+                        title="Delete task"
+                        aria-label={`Delete ${task.task_name}`}
                       >
-                        Delete
+                        ×
                       </button>
                     </div>
-                  ))
-                ) : (
-                  <p className="empty-list-text">No tasks yet</p>
-                )}
-              </div>
-            </section>
-          )}
-
-          {/* Linked Tables Section */}
-          {formData.id && formData.feature_type === "feature" && (
-            <section className="form-section">
-              <h4 className="section-title">Linked Tables</h4>
-              <div className="form-group">
-                <label className="form-label">Select Table</label>
-                <div className="form-input-with-btn">
-                  <select
-                    className="form-select"
-                    value={selectedTableId || ""}
-                    onChange={(e) => onInputChangeTable(e.target.value)}
-                  >
-                    <option value="">Select a table to link</option>
-                    {tableList
-                      .filter(
-                        (table) =>
-                          !featureTableList.some(
-                            (mapping) => mapping.table_id === table.id,
-                          ),
-                      )
-                      .map((table) => (
-                        <option key={table.id} value={table.id}>
-                          {table.table_name}
-                        </option>
-                      ))}
-                  </select>
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={onAddFeatureTable}
-                    disabled={isBusy || !selectedTableId}
-                  >
-                    Add
-                  </button>
+                  ))}
                 </div>
-              </div>
-
-              <div className="linked-tables-list">
-                {featureTableList && featureTableList.length > 0 ? (
-                  featureTableList.map((mapping) => {
-                    const table = tableList.find(
-                      (item) => item.id === mapping.table_id,
-                    );
-                    return (
-                      <div key={mapping.id} className="linked-table-item">
-                        <div className="linked-table-info">
-                          <div className="linked-table-name">
-                            {table?.table_name || "Unknown table"}
-                          </div>
-                          <div className="linked-table-desc">
-                            {table?.table_description || "No description"}
-                          </div>
-                        </div>
-                        <button
-                          className="btn-sm btn-danger"
-                          onClick={() => onDeleteFeatureTable(mapping.id)}
-                          disabled={isBusy}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p className="empty-list-text">No linked tables yet.</p>
-                )}
-              </div>
+              ) : (
+                <p className="empty-list-text empty-list-text-compact">No tasks yet.</p>
+              )}
             </section>
           )}
         </div>
 
-        {/* Footer Section */}
         <div className="sidebar-footer">
           <button
             className="btn btn-secondary"
-            onClick={onCloseSidebar}
+            onClick={onCloseSidebarClick}
             disabled={isBusy}
           >
             Cancel
@@ -393,7 +365,7 @@ const FeatureSidebar = ({
           {formData.id && (
             <button
               className="btn btn-danger"
-              onClick={() => onDelete(formData.id)}
+              onClick={() => onDeleteClick(formData.id)}
               disabled={isBusy}
             >
               Delete
@@ -401,7 +373,7 @@ const FeatureSidebar = ({
           )}
           <button
             className="btn btn-primary"
-            onClick={() => onSave(formData)}
+            onClick={() => onSaveClick(formData)}
             disabled={isBusy}
           >
             {isBusy ? "Saving..." : "Save"}

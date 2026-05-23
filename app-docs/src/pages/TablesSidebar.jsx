@@ -1,4 +1,6 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { formatColumnType, formatColumnTooltip } from "../utils/columnFormat.js";
+import SqlPreviewModal, { SqlViewButton } from "../components/SqlPreviewModal";
 
 const TablesSidebar = ({
   isBusy,
@@ -6,57 +8,40 @@ const TablesSidebar = ({
   formDataColumn,
   columnList,
   isSideBar,
+  dataTypeOptions,
+  createTableSql,
+  copied,
   onInputChange,
   onInputChangeColumn,
   onEditColumn,
+  onCopyColumn,
   onCloseSidebar,
-  onDelete,
+  onDeleteClick,
   onDeleteColumn,
-  onSave,
-  onSaveColumn,
+  onSaveClick,
+  onSaveColumnClick,
+  onCopySql,
 }) => {
+  const [isSqlPreviewOpen, setIsSqlPreviewOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isSideBar) {
+      setIsSqlPreviewOpen(false);
+    }
+  }, [isSideBar]);
+
   if (!isSideBar) return null;
-
-  const handleSaveClick = () => {
-    if (!formData.table_name || formData.table_name.trim() === "") {
-      alert("Please enter a table name");
-      return;
-    }
-    onSave(formData);
-  };
-
-  const handleDeleteClick = () => {
-    if (
-      formData.id &&
-      window.confirm("Are you sure you want to delete this table?")
-    ) {
-      onDelete(formData.id);
-    }
-  };
 
   return (
     <div className="sidebar-overlay" onClick={onCloseSidebar}>
-      <div className="sidebar-panel" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="sidebar-panel tables-sidebar"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header Section */}
         <div className="sidebar-header">
-          <div className="sidebar-title-section">
-            <h3 className="sidebar-title">Table Details</h3>
-          </div>
-          <button
-            className="sidebar-close-btn"
-            onClick={onCloseSidebar}
-            disabled={isBusy}
-            aria-label="Close panel"
-          >
-            ✕
-          </button>
-        </div>
-
-        {/* Scrollable Content */}
-        <div className="sidebar-content">
-          {/* Table Basic Info Section */}
-          <section className="form-section">
-            <div className="form-grid form-grid-2">
+          <div className="tables-sidebar-header-grid">
+            <div className="form-grid form-grid-10-90">
               <div className="form-group">
                 <label className="form-label">Serial No.</label>
                 <input
@@ -85,8 +70,22 @@ const TablesSidebar = ({
                 />
               </div>
             </div>
-          </section>
 
+            <div className="tables-sidebar-close-wrap">
+              <button
+                className="sidebar-close-btn"
+                onClick={onCloseSidebar}
+                disabled={isBusy}
+                aria-label="Close panel"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Scrollable Content */}
+        <div className="sidebar-content">
           {/* Description Section */}
           <section className="form-section">
             <div className="form-group">
@@ -108,10 +107,13 @@ const TablesSidebar = ({
           {formData.id && (
             <>
               {/* Add/Edit Column Form */}
-              <section className="form-section">
-                <div className="form-grid form-grid-5">
+              <section className="form-section tables-sidebar-column-form">
+                <h4 className="section-title section-title-compact">
+                  {formDataColumn.id ? "Edit Column" : "Add Column"}
+                </h4>
+                <div className="form-grid form-grid-4 tables-sidebar-form-grid">
                   <div className="form-group">
-                    <label className="form-label">Column Name *</label>
+                    <label className="form-label">Name *</label>
                     <input
                       className="form-input"
                       type="text"
@@ -120,24 +122,30 @@ const TablesSidebar = ({
                       onChange={(e) => {
                         onInputChangeColumn("column_name", e.target.value);
                       }}
-                      placeholder="Name"
+                      placeholder="column_name"
+                      required
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Data Type</label>
-                    <input
-                      className="form-input"
-                      type="text"
+                    <label className="form-label">Type</label>
+                    <select
                       name="data_type"
-                      value={formDataColumn.data_type || ""}
+                      className="form-select"
+                      value={formDataColumn.data_type}
                       onChange={(e) => {
                         onInputChangeColumn("data_type", e.target.value);
                       }}
-                      placeholder="Type"
-                    />
+                    >
+                      <option value="-">--</option>
+                      {dataTypeOptions.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Data Length</label>
+                    <label className="form-label">Length</label>
                     <input
                       className="form-input"
                       type="number"
@@ -149,11 +157,11 @@ const TablesSidebar = ({
                           e.target.value ? parseInt(e.target.value, 10) : "",
                         );
                       }}
-                      placeholder="Length"
+                      placeholder="—"
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Serial #</label>
+                    <label className="form-label">#</label>
                     <input
                       className="form-input"
                       type="number"
@@ -165,119 +173,123 @@ const TablesSidebar = ({
                           e.target.value ? parseInt(e.target.value, 10) : "",
                         );
                       }}
-                      placeholder="Order"
+                      placeholder="—"
                     />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Nullable</label>
-                    <select
-                      className="form-select"
-                      value={
-                        formDataColumn.is_nullable === undefined
-                          ? "true"
-                          : String(formDataColumn.is_nullable)
-                      }
-                      onChange={(e) => {
-                        onInputChangeColumn(
-                          "is_nullable",
-                          e.target.value === "true",
-                        );
-                      }}
-                    >
-                      <option value="true">Yes</option>
-                      <option value="false">No</option>
-                    </select>
                   </div>
                 </div>
 
-                <div className="form-grid form-grid-4">
+                <div className="form-grid form-grid-4 tables-sidebar-form-grid">
                   <div className="form-group">
-                    <label className="form-label">Primary Key</label>
-                    <select
-                      className="form-select"
-                      value={String(formDataColumn.is_primary || false)}
-                      onChange={(e) => {
-                        onInputChangeColumn(
-                          "is_primary",
-                          e.target.value === "true",
-                        );
-                      }}
-                    >
-                      <option value="false">No</option>
-                      <option value="true">Yes</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Foreign Key</label>
-                    <select
-                      className="form-select"
-                      value={String(formDataColumn.is_foreign || false)}
-                      onChange={(e) => {
-                        onInputChangeColumn(
-                          "is_foreign",
-                          e.target.value === "true",
-                        );
-                      }}
-                    >
-                      <option value="false">No</option>
-                      <option value="true">Yes</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Ref. Table</label>
+                    <label className="form-label">Default</label>
                     <input
                       className="form-input"
                       type="text"
-                      name="references_table"
-                      value={formDataColumn.references_table || ""}
+                      name="default_value"
+                      value={formDataColumn.default_value || ""}
                       onChange={(e) => {
-                        onInputChangeColumn("references_table", e.target.value);
+                        onInputChangeColumn(
+                          "default_value",
+                          e.target.value || "",
+                        );
                       }}
-                      placeholder="Table ID"
+                      placeholder="optional"
                     />
                   </div>
-                  <div className="form-group">
-                    <label className="form-label">Ref. Column</label>
-                    <input
-                      className="form-input"
-                      type="text"
-                      name="references_column"
-                      value={formDataColumn.references_column || ""}
-                      onChange={(e) => {
-                        onInputChangeColumn("references_column", e.target.value);
-                      }}
-                      placeholder="Column ID"
-                    />
+                  <div className="form-group form-checkbox-group tables-sidebar-checks">
+                    <label className="form-checkbox-label">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox"
+                        checked={formDataColumn.is_nullable}
+                        onChange={(e) =>
+                          onInputChangeColumn("is_nullable", e.target.checked)
+                        }
+                      />
+                      Null
+                    </label>
+                    <label className="form-checkbox-label">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox"
+                        checked={formDataColumn.is_primary}
+                        onChange={(e) =>
+                          onInputChangeColumn("is_primary", e.target.checked)
+                        }
+                      />
+                      PK
+                    </label>
+                    <label className="form-checkbox-label">
+                      <input
+                        type="checkbox"
+                        className="form-checkbox"
+                        checked={formDataColumn.is_foreign}
+                        onChange={(e) =>
+                          onInputChangeColumn("is_foreign", e.target.checked)
+                        }
+                      />
+                      FK
+                    </label>
                   </div>
                 </div>
+
+                {formDataColumn.is_foreign && (
+                  <div className="form-grid form-grid-2 tables-sidebar-form-grid">
+                    <div className="form-group">
+                      <label className="form-label">Ref. Table</label>
+                      <input
+                        className="form-input"
+                        type="text"
+                        name="references_table"
+                        value={formDataColumn.references_table || ""}
+                        onChange={(e) => {
+                          onInputChangeColumn(
+                            "references_table",
+                            e.target.value,
+                          );
+                        }}
+                        placeholder="table_id"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Ref. Column</label>
+                      <input
+                        className="form-input"
+                        type="text"
+                        name="references_column"
+                        value={formDataColumn.references_column || ""}
+                        onChange={(e) => {
+                          onInputChangeColumn(
+                            "references_column",
+                            e.target.value,
+                          );
+                        }}
+                        placeholder="column_id"
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="form-group">
                   <label className="form-label">Description</label>
-                  <textarea
-                    className="form-textarea"
+                  <input
+                    className="form-input"
+                    type="text"
                     name="column_description"
                     value={formDataColumn.column_description || ""}
                     onChange={(e) => {
                       onInputChangeColumn("column_description", e.target.value);
                     }}
-                    placeholder="Enter column description"
-                    rows="2"
+                    placeholder="optional"
                   />
                 </div>
 
-                <div className="button-group button-group-full">
+                <div className="button-group button-group-compact">
                   <button
                     className="btn btn-sm btn-primary"
-                    onClick={() => {
-                      if (!formDataColumn.column_name || !formDataColumn.column_name.trim()) {
-                        alert("Please enter a column name.");
-                        return;
-                      }
-                      onSaveColumn(formDataColumn);
-                    }}
+                    onClick={onSaveColumnClick}
                     disabled={isBusy}
                   >
-                    {formDataColumn.id ? "Save Column" : "Add Column"}
+                    {formDataColumn.id ? "Save" : "Add"}
                   </button>
                   <button
                     className="btn btn-sm btn-secondary"
@@ -287,58 +299,132 @@ const TablesSidebar = ({
                     Clear
                   </button>
                   {formDataColumn.id && (
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => onDeleteColumn(formDataColumn.id)}
-                      disabled={isBusy}
-                    >
-                      Delete Column
-                    </button>
+                    <>
+                      <button
+                        className="btn btn-sm btn-secondary"
+                        onClick={() => onCopyColumn(formDataColumn)}
+                        disabled={isBusy}
+                        title="Copy as new column"
+                      >
+                        Copy
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => onDeleteColumn(formDataColumn.id)}
+                        disabled={isBusy}
+                      >
+                        Del
+                      </button>
+                    </>
                   )}
                 </div>
               </section>
 
               {/* Columns List */}
               <section className="form-section">
-                <h4 className="section-title">Existing Columns</h4>
-                <div className="columns-list">
-                  {columnList && columnList.length > 0 ? (
-                    columnList.map((column) => (
-                      <div key={column.id} className="column-item">
-                        <div className="column-info">
-                          <div>
-                            <strong className="column-name">{column.column_name}</strong>
-                            <div className="column-meta">
-                              {column.data_type || "Unknown type"}
-                              {column.is_nullable === false ? " · NOT NULL" : ""}
-                              {column.is_primary ? " · PK" : ""}
-                              {column.is_foreign ? " · FK" : ""}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="column-actions">
-                          <button
-                            className="btn btn-sm btn-primary"
-                            onClick={() => onEditColumn(column)}
-                            disabled={isBusy}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="btn btn-sm btn-danger"
-                            onClick={() => onDeleteColumn(column.id)}
-                            disabled={isBusy}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="empty-list-text">No columns found for this table.</p>
-                  )}
+                <div className="section-header-compact">
+                  <div className="section-header-compact-main">
+                    <h4 className="section-title section-title-compact">
+                      Columns
+                    </h4>
+                    {columnList?.length > 0 && (
+                      <span className="section-count">{columnList.length}</span>
+                    )}
+                  </div>
+                  <SqlViewButton
+                    onClick={() => setIsSqlPreviewOpen(true)}
+                    disabled={isBusy}
+                  />
                 </div>
+                {columnList && columnList.length > 0 ? (
+                  <div className="sidebar-columns-compact">
+                    {columnList.map((column) => (
+                      <div
+                        key={column.id}
+                        className={`sidebar-col-chip${
+                          formDataColumn.id === column.id
+                            ? " sidebar-col-chip-active"
+                            : ""
+                        }`}
+                        title={formatColumnTooltip(column)}
+                      >
+                        <button
+                          type="button"
+                          className="sidebar-col-chip-main"
+                          onClick={() => onEditColumn(column)}
+                          disabled={isBusy}
+                        >
+                          <div className="card-col-chip-row">
+                            <span className="card-col-num">
+                              {column.serial_number ?? "·"}
+                            </span>
+                            <span className="card-col-name">{column.column_name}</span>
+                          </div>
+                          <div className="card-col-chip-meta">
+                            <code className="card-col-type">
+                              {formatColumnType(column)}
+                            </code>
+                            {column.is_nullable === false && (
+                              <span className="flag flag-nn" title="Not Null">
+                                NN
+                              </span>
+                            )}
+                            {column.default_value && (
+                              <span
+                                className="card-col-default"
+                                title={`Default: ${column.default_value}`}
+                              >
+                                ={column.default_value}
+                              </span>
+                            )}
+                            {column.is_primary && (
+                              <span className="flag flag-pk" title="Primary Key">
+                                PK
+                              </span>
+                            )}
+                            {column.is_foreign && (
+                              <span className="flag flag-fk" title="Foreign Key">
+                                FK
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          className="sidebar-col-btn sidebar-col-btn-copy"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onCopyColumn(column);
+                          }}
+                          disabled={isBusy}
+                          title="Copy as new column"
+                          aria-label={`Copy ${column.column_name}`}
+                        >
+                          ⧉
+                        </button>
+                        <button
+                          type="button"
+                          className="sidebar-col-btn sidebar-col-btn-delete"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDeleteColumn(column.id);
+                          }}
+                          disabled={isBusy}
+                          title="Delete column"
+                          aria-label={`Delete ${column.column_name}`}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="empty-list-text empty-list-text-compact">
+                    No columns yet.
+                  </p>
+                )}
               </section>
+
             </>
           )}
         </div>
@@ -355,7 +441,7 @@ const TablesSidebar = ({
           {formData.id && (
             <button
               className="btn btn-danger"
-              onClick={handleDeleteClick}
+              onClick={onDeleteClick}
               disabled={isBusy}
             >
               Delete
@@ -363,13 +449,23 @@ const TablesSidebar = ({
           )}
           <button
             className="btn btn-primary"
-            onClick={handleSaveClick}
+            onClick={onSaveClick}
             disabled={isBusy}
           >
             {isBusy ? "Saving..." : "Save"}
           </button>
         </div>
       </div>
+
+      {isSqlPreviewOpen && (
+        <SqlPreviewModal
+          tableName={formData.table_name}
+          sql={createTableSql}
+          copied={copied}
+          onClose={() => setIsSqlPreviewOpen(false)}
+          onCopy={onCopySql}
+        />
+      )}
     </div>
   );
 };

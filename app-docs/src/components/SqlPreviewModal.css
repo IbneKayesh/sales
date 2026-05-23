@@ -1,0 +1,55 @@
+.sql-preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-modal) + 2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl);
+  background: var(--bg-overlay);
+  backdrop-filter: blur(1px);
+}
+
+.sql-preview-dialog {
+  width: 100%;
+  max-width: 640px;
+  max-height: min(80vh, 560px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-2xl);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-xl);
+}
+
+.sql-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.sql-preview-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sql-preview-dialog .sql-code-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  max-height: 360px;
+}
+
+.sql-preview-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+}

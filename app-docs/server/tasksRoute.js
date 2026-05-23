@@ -12,9 +12,9 @@ router.post('/get-by-feature', async (req, res) => {
       'SELECT * FROM t_task WHERE feature_id = $1 ORDER BY created_at ASC',
       [feature_id]
     );
-    res.json({ ok: true, data: result.rows });
+    res.json({ success: true, message: "Ok", data: result.rows });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+   res.status(500).json({ success: false, message: error.message, data: [] });
   }
 });
 
@@ -28,9 +28,9 @@ router.post('/add', async (req, res) => {
       RETURNING *
     `;
     const result = await pool.query(query, [id, feature_id, task_name, is_done]);
-    res.json({ ok: true, data: result.rows[0] });
+    res.json({ success: true, message: "Ok", data: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+   res.status(500).json({ success: false, message: error.message, data: [] });
   }
 });
 
@@ -45,9 +45,9 @@ router.post('/edit', async (req, res) => {
       RETURNING *
     `;
     const result = await pool.query(query, [id, task_name, is_done]);
-    res.json({ ok: true, data: result.rows[0] });
+    res.json({ success: true, message: "Ok", data: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+   res.status(500).json({ success: false, message: error.message, data: [] });
   }
 });
 
@@ -56,9 +56,9 @@ router.post('/delete', async (req, res) => {
   const { id } = req.body;
   try {
     await pool.query('DELETE FROM t_task WHERE id = $1', [id]);
-    res.json({ ok: true, message: 'Task deleted successfully' });
+    res.json({ success: true, message: "Task deleted successfully", data: [] });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+   res.status(500).json({ success: false, message: error.message, data: [] });
   }
 });
 

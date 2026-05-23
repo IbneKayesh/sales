@@ -1,21 +1,23 @@
 // server/tableRoute.js
-import express from 'express';
-import { pool } from './db.js';
+import express from "express";
+import { pool } from "./db.js";
 
 const router = express.Router();
 
 // get-all
-router.post('/get-all', async (req, res) => {
+router.post("/get-all", async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM t_tables ORDER BY serial_number ASC, created_at DESC');
-    res.json({ ok: true, data: result.rows });
+    const result = await pool.query(
+      "SELECT * FROM t_tables ORDER BY serial_number ASC, created_at DESC",
+    );
+    res.json({ success: true, message: "Ok", data: result.rows });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+    res.status(500).json({ success: false, message: error.message, data: [] });
   }
 });
 
 // add
-router.post('/add', async (req, res) => {
+router.post("/add", async (req, res) => {
   const { id, table_name, table_description, serial_number } = req.body;
   try {
     const query = `
@@ -23,15 +25,20 @@ router.post('/add', async (req, res) => {
       VALUES ($1, $2, $3, $4)
       RETURNING *
     `;
-    const result = await pool.query(query, [id, table_name, table_description, serial_number]);
-    res.json({ ok: true, data: result.rows[0] });
+    const result = await pool.query(query, [
+      id,
+      table_name,
+      table_description,
+      serial_number,
+    ]);
+    res.json({ success: true, message: "Ok", data: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+    res.status(500).json({ success: false, message: error.message, data: [] });
   }
 });
 
 // edit
-router.post('/edit', async (req, res) => {
+router.post("/edit", async (req, res) => {
   const { id, table_name, table_description, serial_number } = req.body;
   try {
     const query = `
@@ -40,21 +47,30 @@ router.post('/edit', async (req, res) => {
       WHERE id = $1
       RETURNING *
     `;
-    const result = await pool.query(query, [id, table_name, table_description, serial_number]);
-    res.json({ ok: true, data: result.rows[0] });
+    const result = await pool.query(query, [
+      id,
+      table_name,
+      table_description,
+      serial_number,
+    ]);
+    res.json({ success: true, message: "Ok", data: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+    res.status(500).json({ success: false, message: error.message, data: [] });
   }
 });
 
 // delete
-router.post('/delete', async (req, res) => {
+router.post("/delete", async (req, res) => {
   const { id } = req.body;
   try {
-    await pool.query('DELETE FROM t_tables WHERE id = $1', [id]);
-    res.json({ ok: true, message: 'Table record deleted successfully' });
+    await pool.query("DELETE FROM t_tables WHERE id = $1", [id]);
+    res.json({
+      success: true,
+      message: "Table record deleted successfully",
+      data: [],
+    });
   } catch (error) {
-    res.status(500).json({ ok: false, error: error.message });
+    res.status(500).json({ success: false, message: error.message, data: [] });
   }
 });
 

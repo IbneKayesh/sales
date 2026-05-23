@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { apiRequest } from "../utils/api";
 import { generateGuid } from "../utils/guid";
+import { useToast } from "../contexts/ToastContext";
+import { useConfirm } from "../contexts/ConfirmContext";
 
 const useFeatures = () => {
+  const { success, error } = useToast();
+  const { confirm } = useConfirm();
   const [isBusy, setIsBusy] = useState(false);
   const [dataList, setDataList] = useState([]);
   const [formData, setFormData] = useState({});
@@ -37,71 +41,19 @@ const useFeatures = () => {
   ];
 
   const handleGetAll = async () => {
-    const resp = await apiRequest("api/features/get-all", { body: {} });
-    setDataList(resp.data);
+    try {
+      const resp = await apiRequest("api/features/get-all", { body: {} });
+      setDataList(resp.data);
+    } catch (err) {
+      error("Error loading features");
+    }
   };
 
   useEffect(() => {
     handleGetAll();
   }, []);
 
-  const handleRowClick = (data) => {
-    setFormData(data);
-    setIsSideBar(true);
-  };
-
-  const handleCloseSidebar = () => {
-    setFormData({});
-    setIsSideBar(false);
-    setSelectedTableId("");
-    setFeatureTableList([]);
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this feature?")) {
-      setIsBusy(true);
-      try {
-        await apiRequest("api/features/delete", { body: { id: id } });
-        handleGetAll();
-        handleCloseSidebar();
-      } catch (err) {
-        console.error("Error deleting feature:", err);
-      } finally {
-        setIsBusy(false);
-      }
-    }
-  };
-
-  const handleSave = async (data) => {
-    setIsBusy(true);
-    try {
-      if (data.id) {
-        const resp = await apiRequest("api/features/edit", { body: data });
-        setFormData(resp.data || data);
-      } else {
-        const reqBody = {
-          ...data,
-          id: generateGuid(),
-        };
-        const resp = await apiRequest("api/features/add", { body: reqBody });
-        setFormData(resp.data || reqBody);
-      }
-      handleGetAll();
-      //handleCloseSidebar();
-    } catch (err) {
-      console.error("Error saving feature:", err);
-    } finally {
-      setIsBusy(false);
-    }
-  };
-
-  const handleInputChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-  const handleAddNew = (config) => {
+  const handleAddClick = (config) => {
     const typeMap = {
       "-": "project",
       project: "module",
@@ -119,100 +71,162 @@ const useFeatures = () => {
       feature_name: "",
       feature_description: "",
       serial_number: "",
-      start_date: "",
-      end_date: "",
+      start_date: new Date().toISOString().split("T")[0],
+      end_date: new Date().toISOString().split("T")[0],
       progress_percent: 0,
     });
     setIsSideBar(true);
   };
 
-  //task
-  const [taskList, setTaskList] = useState([]);
-  const [formDataTask, setFormDataTask] = useState({});
-
-  // feature table mapping
-  const [tableList, setTableList] = useState([]);
-  const [featureTableList, setFeatureTableList] = useState([]);
-  const [selectedTableId, setSelectedTableId] = useState("");
-
-  const handleGetAllTables = async () => {
+  const handleGetByFeatureWithoutTables = async (feature_id) => {
     try {
-      const resp = await apiRequest("api/tables/get-all", { body: {} });
+      const resp = await apiRequest(
+        "api/feature-table/get-by-feature-without-tables",
+        { body: { feature_id } },
+      );
       setTableList(resp.data || []);
     } catch (err) {
-      console.error("Error fetching tables:", err);
+      error("Error fetching tables");
     }
   };
 
-  const handleGetFeatureTables = async (feature_id) => {
+  const handleGetByFeatureWithTables = async (feature_id) => {
     try {
-      const resp = await apiRequest("api/feature-table/get-by-feature", {
-        body: { feature_id },
-      });
+      const resp = await apiRequest(
+        "api/feature-table/get-by-feature-with-tables",
+        {
+          body: { feature_id },
+        },
+      );
       setFeatureTableList(resp.data || []);
     } catch (err) {
-      console.error("Error fetching feature tables:", err);
+      error("Error fetching linked tables");
     }
   };
 
-  useEffect(() => {
-    handleGetAllTables();
-  }, []);
+  const handleEditClick = (data) => {
+    setFormData(data);
+    setIsSideBar(true);
 
-  useEffect(() => {
-    if (formData.id && isSideBar) {
-      handleGetFeatureTables(formData.id);
-    } else {
-      setFeatureTableList([]);
-      setSelectedTableId("");
-    }
-  }, [formData.id, isSideBar]);
-
-  const handleInputChangeTable = (tableId) => {
-    setSelectedTableId(tableId);
-  };
-
-  const handleAddFeatureTable = async () => {
-    if (!formData.id || !selectedTableId) {
-      return;
-    }
-
-    setIsBusy(true);
-    try {
-      await apiRequest("api/feature-table/add", {
-        body: {
-          id: generateGuid(),
-          feature_id: formData.id,
-          table_id: selectedTableId,
-        },
-      });
-      setSelectedTableId("");
-      await handleGetFeatureTables(formData.id);
-    } catch (err) {
-      console.error("Error saving feature-table mapping:", err);
-    } finally {
-      setIsBusy(false);
+    if (data.feature_type === "feature") {
+      handleGetByFeatureWithoutTables(data.id);
+      handleGetByFeatureWithTables(data.id);
+      handleGetTaskByFeature(data.id);
     }
   };
 
-  const handleDeleteFeatureTable = async (id) => {
-    if (!id) return;
+  const handleCloseSidebarClick = () => {
+    setFormData({});
+    setIsSideBar(false);
+  };
 
-    if (window.confirm("Are you sure you want to remove this table from the feature?")) {
+  const handleInputChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleDeleteClick = async (id) => {
+    const ok = await confirm("Are you sure you want to delete this feature?");
+    if (ok) {
       setIsBusy(true);
       try {
-        await apiRequest("api/feature-table/delete", {
-          body: { id },
-        });
-        await handleGetFeatureTables(formData.id);
+        await apiRequest("api/features/delete", { body: { id: id } });
+        success("Feature deleted");
+        handleGetAll();
+        handleCloseSidebarClick();
       } catch (err) {
-        console.error("Error deleting feature-table mapping:", err);
+        error("Error deleting feature");
       } finally {
         setIsBusy(false);
       }
     }
   };
 
+  const handleSaveClick = async (data) => {
+    setIsBusy(true);
+    try {
+      if (data.id) {
+        const resp = await apiRequest("api/features/edit", { body: data });
+        setFormData(resp.data || data);
+        success("Feature updated");
+      } else {
+        const reqBody = {
+          ...data,
+          id: generateGuid(),
+        };
+        const resp = await apiRequest("api/features/add", { body: reqBody });
+        setFormData(resp.data || reqBody);
+        success("Feature created");
+      }
+      handleGetAll();
+    } catch (err) {
+      error("Error saving feature");
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  //linked tables
+  const [selectedTableId, setSelectedTableId] = useState("");
+  const [tableList, setTableList] = useState([]);
+  const [featureTableList, setFeatureTableList] = useState([]);
+
+  const handleInputChangeTable = (tableId) => {
+    setSelectedTableId(tableId);
+  };
+
+  const handleAddFeatureTableClick = async () => {
+    if (!selectedTableId) {
+      return;
+    }
+    setIsBusy(true);
+    try {
+      const resp = await apiRequest("api/feature-table/add", {
+        body: {
+          id: generateGuid(),
+          feature_id: formData.id,
+          table_id: selectedTableId,
+        },
+      });
+      //console.log("resp", resp);
+
+
+
+      setSelectedTableId("");
+      await handleGetByFeatureWithTables(formData.id);
+    } catch (err) {
+      error("Error saving feature-table mapping");
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleDeleteFeatureTableClick = async (feature_id, id) => {
+    if (!id) return;
+
+    const ok = await confirm(
+      "Are you sure you want to remove this table from the feature?",
+    );
+    if (ok) {
+      setIsBusy(true);
+      try {
+        await apiRequest("api/feature-table/delete", {
+          body: { id },
+        });
+        await handleGetByFeatureWithTables(feature_id);
+      } catch (err) {
+        error("Error deleting feature-table mapping");
+      } finally {
+        setIsBusy(false);
+      }
+    }
+  };
+
+  //tasks
+  const [taskList, setTaskList] = useState([]);
+  const [formDataTask, setFormDataTask] = useState({});
   const handleGetTaskByFeature = async (feature_id) => {
     try {
       const resp = await apiRequest("api/tasks/get-by-feature", {
@@ -220,10 +234,9 @@ const useFeatures = () => {
       });
       setTaskList(resp.data || []);
     } catch (err) {
-      console.error("Error fetching tasks:", err);
+      error("Error fetching tasks");
     }
   };
-
   const handleInputChangeTask = (name, value) => {
     setFormDataTask((prev) => ({
       ...prev,
@@ -231,7 +244,7 @@ const useFeatures = () => {
     }));
   };
 
-  const handleSaveTask = async (data) => {
+  const handleSaveTaskClick = async (data) => {
     setIsBusy(true);
     try {
       if (data.id) {
@@ -244,15 +257,15 @@ const useFeatures = () => {
         await apiRequest("api/tasks/add", { body: reqBody });
       }
       setFormDataTask({});
-      await handleGetTaskByFeature(formData.id);
+      await handleGetTaskByFeature(data.feature_id);
     } catch (err) {
-      console.error("Error saving task:", err);
+      error("Error saving task");
     } finally {
       setIsBusy(false);
     }
   };
 
-  const handleDoneTask = async (taskId, isDone) => {
+  const handleDoneTaskClick = async (taskId, isDone) => {
     setIsBusy(true);
     try {
       const task = taskList.find((t) => t.id === taskId);
@@ -260,30 +273,30 @@ const useFeatures = () => {
         await apiRequest("api/tasks/edit", {
           body: { ...task, is_done: isDone },
         });
-        await handleGetTaskByFeature(formData.id);
+        await handleGetTaskByFeature(task.feature_id);
       }
     } catch (err) {
-      console.error("Error updating task:", err);
+      error("Error updating task");
     } finally {
       setIsBusy(false);
     }
   };
 
-  const handleDeleteTask = async (taskId) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
+  const handleDeleteTaskClick = async (taskId) => {
+    const ok = await confirm("Are you sure you want to delete this task?");
+    if (ok) {
       setIsBusy(true);
       try {
         await apiRequest("api/tasks/delete", { body: { id: taskId } });
-        await handleGetTaskByFeature(formData.id);
+        const task = taskList.find((t) => t.id === taskId);
+        await handleGetTaskByFeature(task?.feature_id);
       } catch (err) {
-        console.error("Error deleting task:", err);
+        error("Error deleting task");
       } finally {
         setIsBusy(false);
       }
     }
   };
-
-  //feature table is goes here
 
   return {
     isBusy,
@@ -294,27 +307,29 @@ const useFeatures = () => {
     feature_priority_options,
     work_type_options,
     work_user_options,
+    handleAddClick,
+    handleEditClick,
+    handleCloseSidebarClick,
     handleInputChange,
-    handleRowClick,
-    handleCloseSidebar,
-    handleDelete,
-    handleSave,
-    handleAddNew,
-    //task
-    taskList,
-    formDataTask,
-    handleGetTaskByFeature,
-    handleInputChangeTask,
-    handleSaveTask,
-    handleDoneTask,
-    handleDeleteTask,
-    // feature table
-    tableList,
-    featureTableList,
+    handleDeleteClick,
+    handleSaveClick,
+
+    //feature tables
     selectedTableId,
     handleInputChangeTable,
-    handleAddFeatureTable,
-    handleDeleteFeatureTable,
+    handleAddFeatureTableClick,
+    tableList,
+    featureTableList,
+    handleDeleteFeatureTableClick,
+
+    //task
+    formDataTask,
+    handleInputChangeTask,
+    handleSaveTaskClick,
+    taskList,
+    handleDoneTaskClick,
+    handleDeleteTaskClick,
   };
 };
+
 export default useFeatures;
