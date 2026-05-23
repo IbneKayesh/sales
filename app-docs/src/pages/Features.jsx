@@ -1,6 +1,5 @@
 // Features.jsx
-import React, { useState, useMemo } from "react";
-import "./Features.css";
+import React, { useState } from "react";
 import useFeatures from "../hooks/useFeatures.js";
 import FeatureSidebar from "./FeatureSidebar";
 
@@ -20,6 +19,7 @@ const Features = () => {
     handleDelete,
     handleSave,
     handleAddNew,
+    //task
     taskList,
     formDataTask,
     handleGetTaskByFeature,
@@ -27,6 +27,13 @@ const Features = () => {
     handleSaveTask,
     handleDoneTask,
     handleDeleteTask,
+    //feature table
+    tableList,
+    featureTableList,
+    selectedTableId,
+    handleInputChangeTable,
+    handleAddFeatureTable,
+    handleDeleteFeatureTable,
   } = useFeatures();
 
   const [expandedRows, setExpandedRows] = useState({});
@@ -43,7 +50,9 @@ const Features = () => {
   };
 
   const getRootRows = () => {
-    return dataList.filter((item) => !item.feature_id || item.feature_id === "");
+    return dataList.filter(
+      (item) => !item.feature_id || item.feature_id === "",
+    );
   };
 
   const buildTableRows = () => {
@@ -57,65 +66,56 @@ const Features = () => {
 
         rows.push(
           <tr key={feature.id}>
-            <td className="font-medium" style={{ paddingLeft: `${level * 20}px` }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <td>
+              <div className={`level-${level}`}>
                 {hasChildren ? (
                   <button
+                    className="expand-button"
                     onClick={() => toggleExpand(feature.id)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      padding: "0",
-                      width: "20px",
-                      textAlign: "center",
-                    }}
+                    aria-label={isExpanded ? "Collapse row" : "Expand row"}
                   >
                     {isExpanded ? "▼" : "▶"}
                   </button>
                 ) : (
-                  <span style={{ width: "20px" }}></span>
+                  <span style={{ display: "inline-block", width: "18px" }} />
                 )}
                 <span>{feature.feature_name}</span>
               </div>
             </td>
             <td>{feature.feature_description || "-"}</td>
-            <td>
-              <span className={`badge status-${feature.feature_status}`}>
-                {feature.feature_status}
-              </span>
-            </td>
-            <td>
-              <span
-                className={`badge priority-${feature.feature_priority}`}
-              >
-                {feature.feature_priority}
-              </span>
-            </td>
-            <td>{feature.work_type}</td>
-            <td>{feature.work_user}</td>
+            <td>{feature.feature_status}</td>
+            <td>{feature.feature_priority}</td>
+            <td>{feature.work_type || "-"}</td>
+            <td>{feature.work_user || "-"}</td>
             <td>
               {feature.end_date
                 ? new Date(feature.end_date).toLocaleDateString()
                 : "-"}
             </td>
             <td>
-              <button onClick={(e) => handleRowClick(feature)}>
-                / edit
-              </button>
-
-              <button
-                onClick={(e) =>
-                  handleAddNew({
-                    id: feature.id,
-                    type: feature.feature_type,
-                  })
-                }
-              >
-                + Add
-              </button>
+              <div style={{ display: "flex", gap: "4px" }}>
+                <button
+                  className="btn btn-sm btn-secondary"
+                  onClick={(e) => handleRowClick(feature)}
+                  title="Edit feature"
+                >
+                  / Edit
+                </button>
+                <button
+                  className="btn btn-sm btn-secondary"
+                  onClick={(e) =>
+                    handleAddNew({
+                      id: feature.id,
+                      type: feature.feature_type,
+                    })
+                  }
+                  title="Add sub-feature"
+                >
+                  + Add
+                </button>
+              </div>
             </td>
-          </tr>
+          </tr>,
         );
 
         if (hasChildren && isExpanded) {
@@ -129,22 +129,30 @@ const Features = () => {
   };
 
   return (
-    <div className="features-container">
-      <h2>Features List</h2>
-      <button
-        className="add-button"
-        onClick={(e) => {
-          handleAddNew({
-            id: "",
-            type: "-",
-          });
-        }}
-        disabled={isBusy}
-      >
-        + Add Project
-      </button>
-      <div className="table-responsive">
-        <table className="features-table">
+    <div className="page-container">
+      <div className="page-header">
+        <div className="page-title-section">
+          <h2 className="page-title">Features List</h2>
+          <p className="page-subtitle">
+            Manage and organize your project features
+          </p>
+        </div>
+        <button
+          className="btn btn-primary"
+          onClick={(e) => {
+            handleAddNew({
+              id: "",
+              type: "-",
+            });
+          }}
+          disabled={isBusy}
+        >
+          + Add Project
+        </button>
+      </div>
+
+      <div className="table-wrapper">
+        <table>
           <thead>
             <tr>
               <th>Name</th>
@@ -154,22 +162,13 @@ const Features = () => {
               <th>Work Type</th>
               <th>Assigned User</th>
               <th>End Date</th>
-              <th>Action</th>
+              <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
-            {buildTableRows().length > 0 ? (
-              buildTableRows()
-            ) : (
-              <tr>
-                <td colSpan="8" className="no-data">
-                  No features found.
-                </td>
-              </tr>
-            )}
-          </tbody>
+          <tbody>{buildTableRows().length > 0 && buildTableRows()}</tbody>
         </table>
       </div>
+
       <FeatureSidebar
         isBusy={isBusy}
         formData={formData}
@@ -183,6 +182,7 @@ const Features = () => {
         onCloseSidebar={handleCloseSidebar}
         onDelete={handleDelete}
         onSave={handleSave}
+        //task
         taskList={taskList}
         formDataTask={formDataTask}
         onGetTaskByFeature={handleGetTaskByFeature}
@@ -190,6 +190,13 @@ const Features = () => {
         onSaveTask={handleSaveTask}
         onDoneTask={handleDoneTask}
         onDeleteTask={handleDeleteTask}
+        //feature table
+        tableList={tableList}
+        featureTableList={featureTableList}
+        selectedTableId={selectedTableId}
+        onInputChangeTable={handleInputChangeTable}
+        onAddFeatureTable={handleAddFeatureTable}
+        onDeleteFeatureTable={handleDeleteFeatureTable}
       />
     </div>
   );

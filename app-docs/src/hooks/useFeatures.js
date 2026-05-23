@@ -53,6 +53,8 @@ const useFeatures = () => {
   const handleCloseSidebar = () => {
     setFormData({});
     setIsSideBar(false);
+    setSelectedTableId("");
+    setFeatureTableList([]);
   };
 
   const handleDelete = async (id) => {
@@ -74,18 +76,20 @@ const useFeatures = () => {
     setIsBusy(true);
     try {
       if (data.id) {
-        await apiRequest("api/features/edit", { body: data });
+        const resp = await apiRequest("api/features/edit", { body: data });
+        setFormData(resp.data || data);
       } else {
         const reqBody = {
           ...data,
           id: generateGuid(),
         };
-        await apiRequest("api/features/add", { body: reqBody });
+        const resp = await apiRequest("api/features/add", { body: reqBody });
+        setFormData(resp.data || reqBody);
       }
       handleGetAll();
       //handleCloseSidebar();
     } catch (err) {
-      console.error("Error deleting feature:", err);
+      console.error("Error saving feature:", err);
     } finally {
       setIsBusy(false);
     }
@@ -125,6 +129,89 @@ const useFeatures = () => {
   //task
   const [taskList, setTaskList] = useState([]);
   const [formDataTask, setFormDataTask] = useState({});
+
+  // feature table mapping
+  const [tableList, setTableList] = useState([]);
+  const [featureTableList, setFeatureTableList] = useState([]);
+  const [selectedTableId, setSelectedTableId] = useState("");
+
+  const handleGetAllTables = async () => {
+    try {
+      const resp = await apiRequest("api/tables/get-all", { body: {} });
+      setTableList(resp.data || []);
+    } catch (err) {
+      console.error("Error fetching tables:", err);
+    }
+  };
+
+  const handleGetFeatureTables = async (feature_id) => {
+    try {
+      const resp = await apiRequest("api/feature-table/get-by-feature", {
+        body: { feature_id },
+      });
+      setFeatureTableList(resp.data || []);
+    } catch (err) {
+      console.error("Error fetching feature tables:", err);
+    }
+  };
+
+  useEffect(() => {
+    handleGetAllTables();
+  }, []);
+
+  useEffect(() => {
+    if (formData.id && isSideBar) {
+      handleGetFeatureTables(formData.id);
+    } else {
+      setFeatureTableList([]);
+      setSelectedTableId("");
+    }
+  }, [formData.id, isSideBar]);
+
+  const handleInputChangeTable = (tableId) => {
+    setSelectedTableId(tableId);
+  };
+
+  const handleAddFeatureTable = async () => {
+    if (!formData.id || !selectedTableId) {
+      return;
+    }
+
+    setIsBusy(true);
+    try {
+      await apiRequest("api/feature-table/add", {
+        body: {
+          id: generateGuid(),
+          feature_id: formData.id,
+          table_id: selectedTableId,
+        },
+      });
+      setSelectedTableId("");
+      await handleGetFeatureTables(formData.id);
+    } catch (err) {
+      console.error("Error saving feature-table mapping:", err);
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleDeleteFeatureTable = async (id) => {
+    if (!id) return;
+
+    if (window.confirm("Are you sure you want to remove this table from the feature?")) {
+      setIsBusy(true);
+      try {
+        await apiRequest("api/feature-table/delete", {
+          body: { id },
+        });
+        await handleGetFeatureTables(formData.id);
+      } catch (err) {
+        console.error("Error deleting feature-table mapping:", err);
+      } finally {
+        setIsBusy(false);
+      }
+    }
+  };
 
   const handleGetTaskByFeature = async (feature_id) => {
     try {
@@ -196,6 +283,8 @@ const useFeatures = () => {
     }
   };
 
+  //feature table is goes here
+
   return {
     isBusy,
     dataList,
@@ -211,6 +300,7 @@ const useFeatures = () => {
     handleDelete,
     handleSave,
     handleAddNew,
+    //task
     taskList,
     formDataTask,
     handleGetTaskByFeature,
@@ -218,6 +308,13 @@ const useFeatures = () => {
     handleSaveTask,
     handleDoneTask,
     handleDeleteTask,
+    // feature table
+    tableList,
+    featureTableList,
+    selectedTableId,
+    handleInputChangeTable,
+    handleAddFeatureTable,
+    handleDeleteFeatureTable,
   };
 };
 export default useFeatures;

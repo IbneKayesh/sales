@@ -1,4 +1,3 @@
-import "./Tables.css";
 import useTables from "../hooks/useTables.js";
 import TablesSidebar from "./TablesSidebar";
 
@@ -23,13 +22,25 @@ const Tables = () => {
   } = useTables();
 
   return (
-    <div className="tables-container">
-      <h2>Tables List</h2>
-      <button className="add-button" onClick={handleAddNew} disabled={isBusy}>
-        + Add Table
-      </button>
-      <div className="table-responsive">
-        <table className="tables-table">
+    <div className="page-container">
+      <div className="page-header">
+        <div className="page-title-section">
+          <h2 className="page-title">Tables List</h2>
+          <p className="page-subtitle">
+            Define and manage your database tables
+          </p>
+        </div>
+        <button
+          className="btn btn-primary"
+          onClick={handleAddNew}
+          disabled={isBusy}
+        >
+          + Add Table
+        </button>
+      </div>
+
+      <div className="table-wrapper">
+        <table>
           <thead>
             <tr>
               <th>Serial #</th>
@@ -40,11 +51,12 @@ const Tables = () => {
             </tr>
           </thead>
           <tbody>
-            {dataList && dataList.length > 0 ? (
+            {dataList &&
+              dataList.length > 0 &&
               dataList.map((table) => (
                 <tr key={table.id}>
                   <td>{table.serial_number || "-"}</td>
-                  <td className="font-medium">{table.table_name}</td>
+                  <td>{table.table_name}</td>
                   <td>{table.table_description || "-"}</td>
                   <td>
                     {table.created_at
@@ -52,22 +64,20 @@ const Tables = () => {
                       : "-"}
                   </td>
                   <td>
-                    <button onClick={() => handleRowClick(table)}>
-                      / edit
+                    <button
+                      className="btn btn-sm btn-secondary"
+                      onClick={() => handleRowClick(table)}
+                      title="Edit table"
+                    >
+                      / Edit
                     </button>
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className="no-data">
-                  No tables found.
-                </td>
-              </tr>
-            )}
+              ))}
           </tbody>
         </table>
       </div>
+
       <TablesSidebar
         isBusy={isBusy}
         formData={formData}

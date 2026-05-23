@@ -1,5 +1,4 @@
 import React from "react";
-import "./FeatureSidebar.css";
 
 const TablesSidebar = ({
   isBusy,
@@ -36,105 +35,111 @@ const TablesSidebar = ({
   };
 
   return (
-    <div className="sidebar-backdrop" onClick={onCloseSidebar}>
-      <div className="sidebar-content" onClick={(e) => e.stopPropagation()}>
+    <div className="sidebar-overlay" onClick={onCloseSidebar}>
+      <div className="sidebar-panel" onClick={(e) => e.stopPropagation()}>
+        {/* Header Section */}
         <div className="sidebar-header">
-          <div className="header-field">
-            <label>Serial No.</label>
-            <input
-              type="number"
-              name="serial_number"
-              value={formData.serial_number || ""}
-              onChange={(e) => {
-                onInputChange("serial_number", e.target.value);
-              }}
-              placeholder="Enter serial number"
-            />
-          </div>
-          <div className="header-field">
-            <label>Table Name *</label>
-            <input
-              type="text"
-              name="table_name"
-              value={formData.table_name || ""}
-              onChange={(e) => {
-                onInputChange("table_name", e.target.value);
-              }}
-              placeholder="Enter table name"
-              required
-            />
+          <div className="sidebar-title-section">
+            <h3 className="sidebar-title">Table Details</h3>
           </div>
           <button
-            className="close-button"
+            className="sidebar-close-btn"
             onClick={onCloseSidebar}
             disabled={isBusy}
+            aria-label="Close panel"
           >
-            &times;
+            ✕
           </button>
         </div>
-        <div className="sidebar-body">
-          <div className="detail-group">
-            <label>Description</label>
-            <textarea
-              name="table_description"
-              value={formData.table_description || ""}
-              onChange={(e) => {
-                onInputChange("table_description", e.target.value);
-              }}
-              placeholder="Enter table description"
-              rows="3"
-            />
-          </div>
 
+        {/* Scrollable Content */}
+        <div className="sidebar-content">
+          {/* Table Basic Info Section */}
+          <section className="form-section">
+            <div className="form-grid form-grid-2">
+              <div className="form-group">
+                <label className="form-label">Serial No.</label>
+                <input
+                  className="form-input"
+                  type="number"
+                  name="serial_number"
+                  value={formData.serial_number || ""}
+                  onChange={(e) => {
+                    onInputChange("serial_number", e.target.value);
+                  }}
+                  placeholder="Enter serial number"
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Table Name *</label>
+                <input
+                  className="form-input"
+                  type="text"
+                  name="table_name"
+                  value={formData.table_name || ""}
+                  onChange={(e) => {
+                    onInputChange("table_name", e.target.value);
+                  }}
+                  placeholder="Enter table name"
+                  required
+                />
+              </div>
+            </div>
+          </section>
+
+          {/* Description Section */}
+          <section className="form-section">
+            <div className="form-group">
+              <label className="form-label">Description</label>
+              <textarea
+                className="form-textarea"
+                name="table_description"
+                value={formData.table_description || ""}
+                onChange={(e) => {
+                  onInputChange("table_description", e.target.value);
+                }}
+                placeholder="Enter table description"
+                rows="2"
+              />
+            </div>
+          </section>
+
+          {/* Columns Section */}
           {formData.id && (
             <>
-              <div className="detail-group">
-                <label>Columns</label>
-                <div className="detail-row detail-row-3col">
-                  <div className="detail-group">
-                    <label>Column Name *</label>
+              {/* Add/Edit Column Form */}
+              <section className="form-section">
+                <div className="form-grid form-grid-5">
+                  <div className="form-group">
+                    <label className="form-label">Column Name *</label>
                     <input
+                      className="form-input"
                       type="text"
                       name="column_name"
                       value={formDataColumn.column_name || ""}
                       onChange={(e) => {
                         onInputChangeColumn("column_name", e.target.value);
                       }}
-                      placeholder="Column name"
+                      placeholder="Name"
                     />
                   </div>
-                  <div className="detail-group">
-                    <label>Data Type</label>
+                  <div className="form-group">
+                    <label className="form-label">Data Type</label>
                     <input
+                      className="form-input"
                       type="text"
                       name="data_type"
                       value={formDataColumn.data_type || ""}
                       onChange={(e) => {
                         onInputChangeColumn("data_type", e.target.value);
                       }}
-                      placeholder="Data type"
+                      placeholder="Type"
                     />
                   </div>
-                  <div className="detail-group">
-                    <label>Serial #</label>
+                  <div className="form-group">
+                    <label className="form-label">Data Length</label>
                     <input
-                      type="number"
-                      name="serial_number"
-                      value={formDataColumn.serial_number || ""}
-                      onChange={(e) => {
-                        onInputChangeColumn(
-                          "serial_number",
-                          e.target.value ? parseInt(e.target.value, 10) : "",
-                        );
-                      }}
-                      placeholder="Order"
-                    />
-                  </div>
-                </div>
-                <div className="detail-row detail-row-3col">
-                  <div className="detail-group">
-                    <label>Data Length</label>
-                    <input
+                      className="form-input"
                       type="number"
                       name="data_length"
                       value={formDataColumn.data_length || ""}
@@ -147,9 +152,26 @@ const TablesSidebar = ({
                       placeholder="Length"
                     />
                   </div>
-                  <div className="detail-group">
-                    <label>Nullable</label>
+                  <div className="form-group">
+                    <label className="form-label">Serial #</label>
+                    <input
+                      className="form-input"
+                      type="number"
+                      name="serial_number"
+                      value={formDataColumn.serial_number || ""}
+                      onChange={(e) => {
+                        onInputChangeColumn(
+                          "serial_number",
+                          e.target.value ? parseInt(e.target.value, 10) : "",
+                        );
+                      }}
+                      placeholder="Order"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Nullable</label>
                     <select
+                      className="form-select"
                       value={
                         formDataColumn.is_nullable === undefined
                           ? "true"
@@ -166,9 +188,13 @@ const TablesSidebar = ({
                       <option value="false">No</option>
                     </select>
                   </div>
-                  <div className="detail-group">
-                    <label>Primary Key</label>
+                </div>
+
+                <div className="form-grid form-grid-4">
+                  <div className="form-group">
+                    <label className="form-label">Primary Key</label>
                     <select
+                      className="form-select"
                       value={String(formDataColumn.is_primary || false)}
                       onChange={(e) => {
                         onInputChangeColumn(
@@ -181,11 +207,10 @@ const TablesSidebar = ({
                       <option value="true">Yes</option>
                     </select>
                   </div>
-                </div>
-                <div className="detail-row detail-row-3col">
-                  <div className="detail-group">
-                    <label>Foreign Key</label>
+                  <div className="form-group">
+                    <label className="form-label">Foreign Key</label>
                     <select
+                      className="form-select"
                       value={String(formDataColumn.is_foreign || false)}
                       onChange={(e) => {
                         onInputChangeColumn(
@@ -198,46 +223,51 @@ const TablesSidebar = ({
                       <option value="true">Yes</option>
                     </select>
                   </div>
-                  <div className="detail-group">
-                    <label>References Table</label>
+                  <div className="form-group">
+                    <label className="form-label">Ref. Table</label>
                     <input
+                      className="form-input"
                       type="text"
                       name="references_table"
                       value={formDataColumn.references_table || ""}
                       onChange={(e) => {
                         onInputChangeColumn("references_table", e.target.value);
                       }}
-                      placeholder="Referenced table id"
+                      placeholder="Table ID"
                     />
                   </div>
-                  <div className="detail-group">
-                    <label>References Column</label>
+                  <div className="form-group">
+                    <label className="form-label">Ref. Column</label>
                     <input
+                      className="form-input"
                       type="text"
                       name="references_column"
                       value={formDataColumn.references_column || ""}
                       onChange={(e) => {
                         onInputChangeColumn("references_column", e.target.value);
                       }}
-                      placeholder="Referenced column id"
+                      placeholder="Column ID"
                     />
                   </div>
                 </div>
-                <div className="detail-group">
-                  <label>Description</label>
+
+                <div className="form-group">
+                  <label className="form-label">Description</label>
                   <textarea
+                    className="form-textarea"
                     name="column_description"
                     value={formDataColumn.column_description || ""}
                     onChange={(e) => {
                       onInputChangeColumn("column_description", e.target.value);
                     }}
                     placeholder="Enter column description"
-                    rows="3"
+                    rows="2"
                   />
                 </div>
-                <div className="detail-row" style={{ gap: "8px" }}>
+
+                <div className="button-group button-group-full">
                   <button
-                    className="btn btn-primary"
+                    className="btn btn-sm btn-primary"
                     onClick={() => {
                       if (!formDataColumn.column_name || !formDataColumn.column_name.trim()) {
                         alert("Please enter a column name.");
@@ -250,7 +280,7 @@ const TablesSidebar = ({
                     {formDataColumn.id ? "Save Column" : "Add Column"}
                   </button>
                   <button
-                    className="btn btn-secondary"
+                    className="btn btn-sm btn-secondary"
                     onClick={() => onInputChangeColumn("clear")}
                     disabled={isBusy}
                   >
@@ -258,7 +288,7 @@ const TablesSidebar = ({
                   </button>
                   {formDataColumn.id && (
                     <button
-                      className="btn btn-danger"
+                      className="btn btn-sm btn-danger"
                       onClick={() => onDeleteColumn(formDataColumn.id)}
                       disabled={isBusy}
                     >
@@ -266,18 +296,19 @@ const TablesSidebar = ({
                     </button>
                   )}
                 </div>
-              </div>
+              </section>
 
-              <div className="detail-group">
-                <label>Existing Columns</label>
-                <div className="task-list">
+              {/* Columns List */}
+              <section className="form-section">
+                <h4 className="section-title">Existing Columns</h4>
+                <div className="columns-list">
                   {columnList && columnList.length > 0 ? (
                     columnList.map((column) => (
-                      <div key={column.id} className="task-item">
-                        <div className="task-content">
-                          <div className="task-name">
-                            <strong>{column.column_name}</strong>
-                            <div style={{ color: "#555", fontSize: "12px", marginTop: "4px" }}>
+                      <div key={column.id} className="column-item">
+                        <div className="column-info">
+                          <div>
+                            <strong className="column-name">{column.column_name}</strong>
+                            <div className="column-meta">
                               {column.data_type || "Unknown type"}
                               {column.is_nullable === false ? " · NOT NULL" : ""}
                               {column.is_primary ? " · PK" : ""}
@@ -285,9 +316,9 @@ const TablesSidebar = ({
                             </div>
                           </div>
                         </div>
-                        <div style={{ display: "flex", gap: "8px" }}>
+                        <div className="column-actions">
                           <button
-                            className="btn btn-sm btn-secondary"
+                            className="btn btn-sm btn-primary"
                             onClick={() => onEditColumn(column)}
                             disabled={isBusy}
                           >
@@ -304,16 +335,18 @@ const TablesSidebar = ({
                       </div>
                     ))
                   ) : (
-                    <p className="task-empty">No columns found for this table.</p>
+                    <p className="empty-list-text">No columns found for this table.</p>
                   )}
                 </div>
-              </div>
+              </section>
             </>
           )}
         </div>
+
+        {/* Footer Section */}
         <div className="sidebar-footer">
           <button
-            className="btn-secondary"
+            className="btn btn-secondary"
             onClick={onCloseSidebar}
             disabled={isBusy}
           >
@@ -321,7 +354,7 @@ const TablesSidebar = ({
           </button>
           {formData.id && (
             <button
-              className="btn-danger"
+              className="btn btn-danger"
               onClick={handleDeleteClick}
               disabled={isBusy}
             >
@@ -329,7 +362,7 @@ const TablesSidebar = ({
             </button>
           )}
           <button
-            className="btn-primary"
+            className="btn btn-primary"
             onClick={handleSaveClick}
             disabled={isBusy}
           >

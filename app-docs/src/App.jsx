@@ -1,7 +1,4 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "./assets/vite.svg";
-import heroImg from "./assets/hero.png";
 import "./App.css";
 import Features from "./pages/Features";
 import Tables from "./pages/Tables";
@@ -14,11 +11,13 @@ function App() {
   };
 
   return (
-    <>
-      <Topbar onSelectTab={handleSelectTab} />
-      {selectedTab === "features" && <Features />}
-      {selectedTab === "tables" && <Tables />}
-    </>
+    <div className="app-container">
+      <Topbar onSelectTab={handleSelectTab} activeTab={selectedTab} />
+      <main className="app-content">
+        {selectedTab === "features" && <Features />}
+        {selectedTab === "tables" && <Tables />}
+      </main>
+    </div>
   );
 }
 
