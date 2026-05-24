@@ -1,16 +1,80 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiRequest } from "../utils/api";
 import { generateGuid } from "../utils/guid";
 import { useToast } from "../contexts/ToastContext";
 import { useConfirm } from "../contexts/ConfirmContext";
+import {
+  prepareFeaturePayload,
+  prepareFeatureTablePayload,
+  prepareTaskEditPayload,
+  prepareTaskPayload,
+} from "../utils/schemaValidation.js";
+
+export const FEATURE_TYPE_FILTERS = [
+  { value: "", label: "All types" },
+  { value: "project", label: "Project" },
+  { value: "module", label: "Module" },
+  { value: "submodule", label: "Submodule" },
+  { value: "feature", label: "Feature" },
+];
+
+const featureMatchesFilters = (
+  item,
+  { searchQuery, statusFilter, priorityFilter, typeFilter },
+) => {
+  if (typeFilter && item.feature_type !== typeFilter) return false;
+
+  if (statusFilter) {
+    const status =
+      item.feature_status && item.feature_status !== "-"
+        ? item.feature_status
+        : "";
+    if (status !== statusFilter) return false;
+  }
+
+  if (priorityFilter) {
+    const priority =
+      item.feature_priority && item.feature_priority !== "-"
+        ? item.feature_priority
+        : "";
+    if (priority !== priorityFilter) return false;
+  }
+
+  const q = searchQuery.trim().toLowerCase();
+  if (q) {
+    const name = String(item.feature_name || "").toLowerCase();
+    const desc = String(item.feature_description || "").toLowerCase();
+    const serial = String(item.serial_number ?? "");
+    if (!name.includes(q) && !desc.includes(q) && !serial.includes(q)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+const formatDateInput = (value) => {
+  if (!value) return "";
+  try {
+    return new Date(value).toISOString().split("T")[0];
+  } catch {
+    return "";
+  }
+};
 
 const useFeatures = () => {
-  const { success, error } = useToast();
+  const { success, error, warning } = useToast();
   const { confirm } = useConfirm();
   const [isBusy, setIsBusy] = useState(false);
   const [dataList, setDataList] = useState([]);
   const [formData, setFormData] = useState({});
   const [isSideBar, setIsSideBar] = useState(false);
+
+  const [expandedRows, setExpandedRows] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
 
   const feature_status_options = [
     { name: "Not Started", value: "Not Started" },
@@ -40,11 +104,101 @@ const useFeatures = () => {
     { name: "Documenter", value: "Documenter" },
   ];
 
+  const hasActiveFilters = Boolean(
+    searchQuery.trim() || statusFilter || priorityFilter || typeFilter,
+  );
+
+  const visibleIds = useMemo(() => {
+    if (!hasActiveFilters) return null;
+
+    const filters = { searchQuery, statusFilter, priorityFilter, typeFilter };
+    const byId = new Map(dataList.map((item) => [item.id, item]));
+    const ids = new Set();
+
+    for (const item of dataList) {
+      if (!featureMatchesFilters(item, filters)) continue;
+
+      let current = item;
+      while (current) {
+        ids.add(current.id);
+        const parentId = current.feature_id;
+        current =
+          parentId && parentId !== "" ? byId.get(parentId) : null;
+      }
+    }
+
+    return ids;
+  }, [
+    dataList,
+    hasActiveFilters,
+    searchQuery,
+    statusFilter,
+    priorityFilter,
+    typeFilter,
+  ]);
+
+  useEffect(() => {
+    if (!visibleIds || visibleIds.size === 0) return;
+
+    setExpandedRows((prev) => {
+      const next = { ...prev };
+      let changed = false;
+
+      for (const id of visibleIds) {
+        const hasChildren = dataList.some((item) => item.feature_id === id);
+        if (hasChildren && !next[id]) {
+          next[id] = true;
+          changed = true;
+        }
+      }
+
+      return changed ? next : prev;
+    });
+  }, [visibleIds, dataList]);
+
+  const getChildrenByFeatureId = useCallback(
+    (parentId) =>
+      dataList
+        .filter((item) => item.feature_id === parentId)
+        .filter((item) => !visibleIds || visibleIds.has(item.id))
+        .sort((a, b) => (a.serial_number ?? 0) - (b.serial_number ?? 0)),
+    [dataList, visibleIds],
+  );
+
+  const rootRows = useMemo(
+    () =>
+      dataList
+        .filter(
+          (item) =>
+            (!item.feature_id || item.feature_id === "") &&
+            item.feature_type === "project",
+        )
+        .filter((item) => !visibleIds || visibleIds.has(item.id))
+        .sort((a, b) => (a.serial_number ?? 0) - (b.serial_number ?? 0)),
+    [dataList, visibleIds],
+  );
+
+  const hasVisibleTreeRows = rootRows.length > 0;
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("");
+    setPriorityFilter("");
+    setTypeFilter("");
+  };
+
+  const toggleExpand = (id) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   const handleGetAll = async () => {
     try {
       const resp = await apiRequest("api/features/get-all", { body: {} });
       setDataList(resp.data);
-    } catch (err) {
+    } catch {
       error("Error loading features");
     }
   };
@@ -85,7 +239,7 @@ const useFeatures = () => {
         { body: { feature_id } },
       );
       setTableList(resp.data || []);
-    } catch (err) {
+    } catch {
       error("Error fetching tables");
     }
   };
@@ -99,7 +253,7 @@ const useFeatures = () => {
         },
       );
       setFeatureTableList(resp.data || []);
-    } catch (err) {
+    } catch {
       error("Error fetching linked tables");
     }
   };
@@ -118,6 +272,11 @@ const useFeatures = () => {
   const handleCloseSidebarClick = () => {
     setFormData({});
     setIsSideBar(false);
+    setSelectedTableId("");
+    setTableList([]);
+    setFeatureTableList([]);
+    setTaskList([]);
+    setFormDataTask({});
   };
 
   const handleInputChange = (name, value) => {
@@ -125,6 +284,13 @@ const useFeatures = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleDateChange = (name, dateValue) => {
+    handleInputChange(
+      name,
+      dateValue ? new Date(dateValue).toISOString() : "",
+    );
   };
 
   const handleDeleteClick = async (id) => {
@@ -136,7 +302,7 @@ const useFeatures = () => {
         success("Feature deleted");
         handleGetAll();
         handleCloseSidebarClick();
-      } catch (err) {
+      } catch {
         error("Error deleting feature");
       } finally {
         setIsBusy(false);
@@ -145,30 +311,34 @@ const useFeatures = () => {
   };
 
   const handleSaveClick = async (data) => {
+    const prepared = prepareFeaturePayload(data);
+    if (prepared.error) {
+      warning(prepared.error);
+      return;
+    }
+
+    const { payload } = prepared;
+
     setIsBusy(true);
     try {
-      if (data.id) {
-        const resp = await apiRequest("api/features/edit", { body: data });
-        setFormData(resp.data || data);
+      if (payload.id) {
+        const resp = await apiRequest("api/features/edit", { body: payload });
+        setFormData(resp.data || payload);
         success("Feature updated");
       } else {
-        const reqBody = {
-          ...data,
-          id: generateGuid(),
-        };
+        const reqBody = { ...payload, id: generateGuid() };
         const resp = await apiRequest("api/features/add", { body: reqBody });
         setFormData(resp.data || reqBody);
         success("Feature created");
       }
       handleGetAll();
-    } catch (err) {
+    } catch {
       error("Error saving feature");
     } finally {
       setIsBusy(false);
     }
   };
 
-  //linked tables
   const [selectedTableId, setSelectedTableId] = useState("");
   const [tableList, setTableList] = useState([]);
   const [featureTableList, setFeatureTableList] = useState([]);
@@ -178,25 +348,25 @@ const useFeatures = () => {
   };
 
   const handleAddFeatureTableClick = async () => {
-    if (!selectedTableId) {
+    const prepared = prepareFeatureTablePayload(formData.id, selectedTableId);
+    if (prepared.error) {
+      warning(prepared.error);
       return;
     }
+
     setIsBusy(true);
     try {
-      const resp = await apiRequest("api/feature-table/add", {
+      await apiRequest("api/feature-table/add", {
         body: {
           id: generateGuid(),
-          feature_id: formData.id,
-          table_id: selectedTableId,
+          ...prepared.payload,
         },
       });
-      //console.log("resp", resp);
-
-
 
       setSelectedTableId("");
       await handleGetByFeatureWithTables(formData.id);
-    } catch (err) {
+      await handleGetByFeatureWithoutTables(formData.id);
+    } catch {
       error("Error saving feature-table mapping");
     } finally {
       setIsBusy(false);
@@ -216,7 +386,8 @@ const useFeatures = () => {
           body: { id },
         });
         await handleGetByFeatureWithTables(feature_id);
-      } catch (err) {
+        await handleGetByFeatureWithoutTables(feature_id);
+      } catch {
         error("Error deleting feature-table mapping");
       } finally {
         setIsBusy(false);
@@ -224,19 +395,20 @@ const useFeatures = () => {
     }
   };
 
-  //tasks
   const [taskList, setTaskList] = useState([]);
   const [formDataTask, setFormDataTask] = useState({});
+
   const handleGetTaskByFeature = async (feature_id) => {
     try {
       const resp = await apiRequest("api/tasks/get-by-feature", {
         body: { feature_id },
       });
       setTaskList(resp.data || []);
-    } catch (err) {
+    } catch {
       error("Error fetching tasks");
     }
   };
+
   const handleInputChangeTask = (name, value) => {
     setFormDataTask((prev) => ({
       ...prev,
@@ -245,37 +417,60 @@ const useFeatures = () => {
   };
 
   const handleSaveTaskClick = async (data) => {
+    const prepared = prepareTaskPayload(data, formData.id);
+    if (prepared.error) {
+      warning(prepared.error);
+      return;
+    }
+
+    const { payload } = prepared;
+
     setIsBusy(true);
     try {
-      if (data.id) {
-        await apiRequest("api/tasks/edit", { body: data });
+      if (payload.id) {
+        await apiRequest("api/tasks/edit", { body: payload });
       } else {
-        const reqBody = {
-          ...data,
-          id: generateGuid(),
-        };
-        await apiRequest("api/tasks/add", { body: reqBody });
+        await apiRequest("api/tasks/add", {
+          body: { ...payload, id: generateGuid() },
+        });
       }
       setFormDataTask({});
-      await handleGetTaskByFeature(data.feature_id);
-    } catch (err) {
+      await handleGetTaskByFeature(payload.feature_id);
+    } catch {
       error("Error saving task");
     } finally {
       setIsBusy(false);
     }
   };
 
+  const handleAddTask = () => {
+    handleSaveTaskClick({
+      ...formDataTask,
+      feature_id: formData.id,
+    });
+  };
+
+  const handleTaskKeyDown = (e) => {
+    if (e.key === "Enter" && formDataTask.task_name?.trim()) {
+      handleAddTask();
+    }
+  };
+
   const handleDoneTaskClick = async (taskId, isDone) => {
+    const task = taskList.find((t) => t.id === taskId);
+    if (!task) return;
+
+    const prepared = prepareTaskEditPayload(task, isDone);
+    if (prepared.error) {
+      warning(prepared.error);
+      return;
+    }
+
     setIsBusy(true);
     try {
-      const task = taskList.find((t) => t.id === taskId);
-      if (task) {
-        await apiRequest("api/tasks/edit", {
-          body: { ...task, is_done: isDone },
-        });
-        await handleGetTaskByFeature(task.feature_id);
-      }
-    } catch (err) {
+      await apiRequest("api/tasks/edit", { body: prepared.payload });
+      await handleGetTaskByFeature(task.feature_id);
+    } catch {
       error("Error updating task");
     } finally {
       setIsBusy(false);
@@ -290,7 +485,7 @@ const useFeatures = () => {
         await apiRequest("api/tasks/delete", { body: { id: taskId } });
         const task = taskList.find((t) => t.id === taskId);
         await handleGetTaskByFeature(task?.feature_id);
-      } catch (err) {
+      } catch {
         error("Error deleting task");
       } finally {
         setIsBusy(false);
@@ -313,8 +508,26 @@ const useFeatures = () => {
     handleInputChange,
     handleDeleteClick,
     handleSaveClick,
+    formatDateInput,
+    handleDateChange,
 
-    //feature tables
+    searchQuery,
+    setSearchQuery,
+    statusFilter,
+    setStatusFilter,
+    priorityFilter,
+    setPriorityFilter,
+    typeFilter,
+    setTypeFilter,
+    hasActiveFilters,
+    clearFilters,
+    featureTypeFilters: FEATURE_TYPE_FILTERS,
+    expandedRows,
+    toggleExpand,
+    rootRows,
+    getChildrenByFeatureId,
+    hasVisibleTreeRows,
+
     selectedTableId,
     handleInputChangeTable,
     handleAddFeatureTableClick,
@@ -322,10 +535,11 @@ const useFeatures = () => {
     featureTableList,
     handleDeleteFeatureTableClick,
 
-    //task
     formDataTask,
     handleInputChangeTask,
     handleSaveTaskClick,
+    handleAddTask,
+    handleTaskKeyDown,
     taskList,
     handleDoneTaskClick,
     handleDeleteTaskClick,

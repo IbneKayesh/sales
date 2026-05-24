@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useMemo } from "react";
 import useFeatures from "../hooks/useFeatures.js";
 import FeatureSidebar from "./FeatureSidebar";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -9,49 +9,6 @@ import {
 } from "../utils/featureFormat.js";
 
 const EMPTY = "—";
-
-const FEATURE_TYPE_FILTERS = [
-  { value: "", label: "All types" },
-  { value: "project", label: "Project" },
-  { value: "module", label: "Module" },
-  { value: "submodule", label: "Submodule" },
-  { value: "feature", label: "Feature" },
-];
-
-const featureMatchesFilters = (
-  item,
-  { searchQuery, statusFilter, priorityFilter, typeFilter },
-) => {
-  if (typeFilter && item.feature_type !== typeFilter) return false;
-
-  if (statusFilter) {
-    const status =
-      item.feature_status && item.feature_status !== "-"
-        ? item.feature_status
-        : "";
-    if (status !== statusFilter) return false;
-  }
-
-  if (priorityFilter) {
-    const priority =
-      item.feature_priority && item.feature_priority !== "-"
-        ? item.feature_priority
-        : "";
-    if (priority !== priorityFilter) return false;
-  }
-
-  const q = searchQuery.trim().toLowerCase();
-  if (q) {
-    const name = String(item.feature_name || "").toLowerCase();
-    const desc = String(item.feature_description || "").toLowerCase();
-    const serial = String(item.serial_number ?? "");
-    if (!name.includes(q) && !desc.includes(q) && !serial.includes(q)) {
-      return false;
-    }
-  }
-
-  return true;
-};
 
 const Features = () => {
   const {
@@ -69,6 +26,8 @@ const Features = () => {
     handleInputChange,
     handleDeleteClick,
     handleSaveClick,
+    formatDateInput,
+    handleDateChange,
     selectedTableId,
     handleInputChangeTable,
     handleAddFeatureTableClick,
@@ -77,108 +36,28 @@ const Features = () => {
     handleDeleteFeatureTableClick,
     formDataTask,
     handleInputChangeTask,
-    handleSaveTaskClick,
+    handleAddTask,
+    handleTaskKeyDown,
     taskList,
     handleDoneTaskClick,
     handleDeleteTaskClick,
-  } = useFeatures();
-
-  const [expandedRows, setExpandedRows] = useState({});
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [priorityFilter, setPriorityFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
-
-  const hasActiveFilters = Boolean(
-    searchQuery.trim() || statusFilter || priorityFilter || typeFilter,
-  );
-
-  const visibleIds = useMemo(() => {
-    if (!hasActiveFilters) return null;
-
-    const filters = { searchQuery, statusFilter, priorityFilter, typeFilter };
-    const byId = new Map(dataList.map((item) => [item.id, item]));
-    const ids = new Set();
-
-    for (const item of dataList) {
-      if (!featureMatchesFilters(item, filters)) continue;
-
-      let current = item;
-      while (current) {
-        ids.add(current.id);
-        const parentId = current.feature_id;
-        current =
-          parentId && parentId !== "" ? byId.get(parentId) : null;
-      }
-    }
-
-    return ids;
-  }, [
-    dataList,
-    hasActiveFilters,
     searchQuery,
+    setSearchQuery,
     statusFilter,
+    setStatusFilter,
     priorityFilter,
+    setPriorityFilter,
     typeFilter,
-  ]);
-
-  useEffect(() => {
-    if (!visibleIds || visibleIds.size === 0) return;
-
-    setExpandedRows((prev) => {
-      const next = { ...prev };
-      let changed = false;
-
-      for (const id of visibleIds) {
-        const hasChildren = dataList.some((item) => item.feature_id === id);
-        if (hasChildren && !next[id]) {
-          next[id] = true;
-          changed = true;
-        }
-      }
-
-      return changed ? next : prev;
-    });
-  }, [visibleIds, dataList]);
-
-  const clearFilters = () => {
-    setSearchQuery("");
-    setStatusFilter("");
-    setPriorityFilter("");
-    setTypeFilter("");
-  };
-
-  const toggleExpand = (id) => {
-    setExpandedRows((prev) => ({
-      ...prev,
-
-      [id]: !prev[id],
-    }));
-  };
-
-  const getChildrenByFeatureId = useCallback(
-    (parentId) =>
-      dataList
-        .filter((item) => item.feature_id === parentId)
-        .filter((item) => !visibleIds || visibleIds.has(item.id))
-        .sort((a, b) => (a.serial_number ?? 0) - (b.serial_number ?? 0)),
-
-    [dataList, visibleIds],
-  );
-
-  const rootRows = useMemo(
-    () =>
-      dataList
-        .filter(
-          (item) =>
-            (!item.feature_id || item.feature_id === "") &&
-            item.feature_type === "project",
-        )
-        .filter((item) => !visibleIds || visibleIds.has(item.id))
-        .sort((a, b) => (a.serial_number ?? 0) - (b.serial_number ?? 0)),
-
-    [dataList, visibleIds],
-  );
+    setTypeFilter,
+    hasActiveFilters,
+    clearFilters,
+    featureTypeFilters,
+    expandedRows,
+    toggleExpand,
+    rootRows,
+    getChildrenByFeatureId,
+    hasVisibleTreeRows,
+  } = useFeatures();
 
   const treeRows = useMemo(() => {
     const rows = [];
@@ -186,24 +65,18 @@ const Features = () => {
     const renderRows = (items, depth = 0) => {
       items.forEach((data) => {
         const children = getChildrenByFeatureId(data.id);
-
         const hasChildren = children.length > 0;
-
         const isExpanded = expandedRows[data.id];
-
         const endDateLabel = formatEndDateRemaining(data.end_date);
         const description = data.feature_description?.trim() || "";
-
         const status =
           data.feature_status && data.feature_status !== "-"
             ? data.feature_status
             : null;
-
         const priority =
           data.feature_priority && data.feature_priority !== "-"
             ? data.feature_priority
             : null;
-
         const workType =
           data.work_type && data.work_type !== "-" ? data.work_type : null;
 
@@ -230,13 +103,10 @@ const Features = () => {
                     aria-hidden="true"
                   />
                 )}
-
                 <span className="feature-tree-num">
                   {data.serial_number ?? "·"}
                 </span>
-
                 <span className="feature-tree-name">{data.feature_name}</span>
-
                 <span
                   className={`feature-type-badge feature-type-${data.feature_type || "default"}`}
                 >
@@ -244,7 +114,6 @@ const Features = () => {
                 </span>
               </div>
             </td>
-
             <td className="feature-tree-col-desc">
               <span
                 className="feature-tree-desc"
@@ -253,7 +122,6 @@ const Features = () => {
                 {description || EMPTY}
               </span>
             </td>
-
             <td className="feature-tree-col-status">
               {status ? (
                 <span
@@ -265,7 +133,6 @@ const Features = () => {
                 EMPTY
               )}
             </td>
-
             <td className="feature-tree-col-priority">
               {priority ? (
                 <span
@@ -277,13 +144,10 @@ const Features = () => {
                 EMPTY
               )}
             </td>
-
             <td className="feature-tree-col-work">
               <span className="feature-tree-work">{workType || EMPTY}</span>
             </td>
-
             <td className="feature-tree-col-date">{endDateLabel || EMPTY}</td>
-
             <td className="feature-tree-col-actions">
               <button
                 type="button"
@@ -294,7 +158,6 @@ const Features = () => {
               >
                 Edit
               </button>
-
               {data.feature_type !== "feature" && (
                 <button
                   type="button"
@@ -302,7 +165,6 @@ const Features = () => {
                   onClick={() =>
                     handleAddClick({
                       id: data.id,
-
                       type: data.feature_type,
                     })
                   }
@@ -323,7 +185,6 @@ const Features = () => {
     };
 
     renderRows(rootRows);
-
     return rows;
   }, [
     rootRows,
@@ -332,6 +193,7 @@ const Features = () => {
     isBusy,
     handleEditClick,
     handleAddClick,
+    toggleExpand,
   ]);
 
   return (
@@ -339,7 +201,6 @@ const Features = () => {
       <div className="page-header">
         <div className="page-title-section">
           <h2 className="page-title">Features List</h2>
-
           <p className="page-subtitle">
             Manage and organize your project features
           </p>
@@ -361,7 +222,7 @@ const Features = () => {
               onChange={(e) => setTypeFilter(e.target.value)}
               aria-label="Filter by type"
             >
-              {FEATURE_TYPE_FILTERS.map((opt) => (
+              {featureTypeFilters.map((opt) => (
                 <option key={opt.value || "all"} value={opt.value}>
                   {opt.label}
                 </option>
@@ -417,42 +278,28 @@ const Features = () => {
       <div className="features-compact-wrap">
         {isBusy && dataList.length === 0 ? (
           <LoadingSpinner label="Loading features..." />
-        ) : treeRows.length > 0 ? (
+        ) : hasVisibleTreeRows ? (
           <table className="features-compact-table">
             <colgroup>
               <col className="features-col-name" />
-
               <col className="features-col-desc" />
-
               <col className="features-col-status" />
-
               <col className="features-col-priority" />
-
               <col className="features-col-work" />
-
               <col className="features-col-date" />
-
               <col className="features-col-actions" />
             </colgroup>
-
             <thead>
               <tr>
                 <th>Name</th>
-
                 <th>Description</th>
-
                 <th>Status</th>
-
                 <th>Priority</th>
-
                 <th>Work</th>
-
                 <th className="feature-tree-col-date">End</th>
-
                 <th className="feature-tree-col-actions">Actions</th>
               </tr>
             </thead>
-
             <tbody>{treeRows}</tbody>
           </table>
         ) : (
@@ -474,8 +321,10 @@ const Features = () => {
         feature_priority_options={feature_priority_options}
         work_type_options={work_type_options}
         work_user_options={work_user_options}
+        formatDateInput={formatDateInput}
         onCloseSidebarClick={handleCloseSidebarClick}
         onInputChange={handleInputChange}
+        onDateChange={handleDateChange}
         onDeleteClick={handleDeleteClick}
         onSaveClick={handleSaveClick}
         selectedTableId={selectedTableId}
@@ -486,7 +335,8 @@ const Features = () => {
         onDeleteFeatureTableClick={handleDeleteFeatureTableClick}
         formDataTask={formDataTask}
         onInputChangeTask={handleInputChangeTask}
-        onSaveTaskClick={handleSaveTaskClick}
+        onAddTask={handleAddTask}
+        onTaskKeyDown={handleTaskKeyDown}
         taskList={taskList}
         onDoneTaskClick={handleDoneTaskClick}
         onDeleteTaskClick={handleDeleteTaskClick}

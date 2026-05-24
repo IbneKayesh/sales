@@ -23,6 +23,42 @@ router.post('/get-by-table', async (req, res) => {
   }
 });
 
+// table ids linked to leaf features (feature_type = 'feature') under a scope node
+router.post('/get-table-ids-by-feature-filter', async (req, res) => {
+  const { project_id, module_id, submodule_id, feature_id } = req.body;
+  const scopeId = feature_id || submodule_id || module_id || project_id;
+
+  if (!scopeId) {
+    return res.json({ success: true, message: 'Ok', data: null });
+  }
+
+  try {
+    const result = await pool.query(
+      `WITH RECURSIVE descendants AS (
+         SELECT id, feature_type FROM t_features WHERE id = $1
+         UNION ALL
+         SELECT f.id, f.feature_type
+         FROM t_features f
+         INNER JOIN descendants d ON f.feature_id = d.id
+       ),
+       leaf_features AS (
+         SELECT id FROM descendants WHERE feature_type = 'feature'
+       )
+       SELECT DISTINCT ft.table_id
+       FROM t_feature_table ft
+       INNER JOIN leaf_features lf ON ft.feature_id = lf.id`,
+      [scopeId],
+    );
+    res.json({
+      success: true,
+      message: 'Ok',
+      data: result.rows.map((row) => row.table_id),
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message, data: [] });
+  }
+});
+
 //get-by-feature-without-tables
 router.post('/get-by-feature-without-tables', async (req, res) => {
   const { feature_id } = req.body;
@@ -65,6 +101,13 @@ router.post('/get-by-feature-with-tables', async (req, res) => {
 // add
 router.post('/add', async (req, res) => {
   const { id, feature_id, table_id } = req.body;
+  if (!feature_id || !table_id) {
+    return res.status(400).json({
+      success: false,
+      message: 'feature_id and table_id are required',
+      data: [],
+    });
+  }
   try {
     const query = `
       INSERT INTO t_feature_table (id, feature_id, table_id)

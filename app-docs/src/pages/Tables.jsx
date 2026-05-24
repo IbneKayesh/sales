@@ -1,11 +1,8 @@
 import useTables from "../hooks/useTables.js";
 import TablesSidebar from "./TablesSidebar";
 import LoadingSpinner from "../components/LoadingSpinner";
-import SqlPreviewModal, { SqlViewButton } from "../components/SqlPreviewModal";
-import {
-  formatColumnType,
-  formatColumnTooltip,
-} from "../utils/columnFormat.js";
+import SqlPreviewModal from "../components/SqlPreviewModal";
+import TableErdCard from "../components/TableErdCard";
 
 const Tables = () => {
   const {
@@ -38,24 +35,42 @@ const Tables = () => {
     setSearchQuery,
     filteredTables,
     hasActiveFilters,
-    clearSearch,
+    clearFilters,
+    projectFilter,
+    moduleFilter,
+    submoduleFilter,
+    featureFilter,
+    setFeatureFilter,
+    handleProjectFilterChange,
+    handleModuleFilterChange,
+    handleSubmoduleFilterChange,
+    projectOptions,
+    moduleOptions,
+    submoduleOptions,
+    featureOptions,
+    loadingFeatureFilter,
     expandedCardIds,
     cardColumns,
     loadingColumns,
-    toggleCardExpand,
+    handleToggleColumns,
     expandedFeatureCardIds,
     tableCardFeatures,
     loadingTableFeatures,
     handleToggleFeatures,
+    fkLookup,
+    referencedByIndex,
+    schemaStats,
+    highlightTableId,
+    handleFocusTable,
   } = useTables();
 
   return (
-    <div className="page-container">
+    <div className="page-container schema-erd-page">
       <div className="page-header">
         <div className="page-title-section">
-          <h2 className="page-title">Tables List</h2>
+          <h2 className="page-title">Database Schema</h2>
           <p className="page-subtitle">
-            Define and manage your database tables
+            ERD-style entity view — tables, keys, and relationships
           </p>
         </div>
         <div className="page-header-actions">
@@ -68,11 +83,67 @@ const Tables = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label="Search tables"
             />
+            <select
+              className="form-select page-filter-select"
+              value={projectFilter}
+              onChange={(e) => handleProjectFilterChange(e.target.value)}
+              aria-label="Filter by project"
+            >
+              <option value="">All projects</option>
+              {projectOptions.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.feature_name}
+                </option>
+              ))}
+            </select>
+            <select
+              className="form-select page-filter-select"
+              value={moduleFilter}
+              onChange={(e) => handleModuleFilterChange(e.target.value)}
+              disabled={!projectFilter}
+              aria-label="Filter by module"
+            >
+              <option value="">All modules</option>
+              {moduleOptions.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.feature_name}
+                </option>
+              ))}
+            </select>
+            <select
+              className="form-select page-filter-select"
+              value={submoduleFilter}
+              onChange={(e) => handleSubmoduleFilterChange(e.target.value)}
+              disabled={!moduleFilter}
+              aria-label="Filter by submodule"
+            >
+              <option value="">All submodules</option>
+              {submoduleOptions.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.feature_name}
+                </option>
+              ))}
+            </select>
+            <select
+              className="form-select page-filter-select"
+              value={featureFilter}
+              onChange={(e) => setFeatureFilter(e.target.value)}
+              disabled={!submoduleFilter}
+              aria-label="Filter by feature"
+            >
+              <option value="">All features</option>
+              {featureOptions.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.feature_name}
+                </option>
+              ))}
+            </select>
             {hasActiveFilters && (
               <button
                 type="button"
                 className="btn btn-secondary btn-sm page-filter-clear"
-                onClick={clearSearch}
+                onClick={clearFilters}
+                disabled={loadingFeatureFilter}
               >
                 Clear
               </button>
@@ -83,267 +154,80 @@ const Tables = () => {
             onClick={handleAddNew}
             disabled={isBusy}
           >
-            + Add Table
+            + Add Entity
           </button>
         </div>
       </div>
 
-      <div className="cards-grid">
+      {dataList && dataList.length > 0 && filteredTables.length > 0 && (
+        <div className="schema-erd-toolbar" aria-label="Schema summary">
+          <div className="schema-stat">
+            <span className="schema-stat-value">{schemaStats.tableCount}</span>
+            <span className="schema-stat-label">Tables</span>
+          </div>
+          <div className="schema-stat">
+            <span className="schema-stat-value">{schemaStats.columnCount}</span>
+            <span className="schema-stat-label">Columns</span>
+          </div>
+          <div className="schema-stat">
+            <span className="schema-stat-value">
+              {schemaStats.relationshipCount}
+            </span>
+            <span className="schema-stat-label">Relationships</span>
+          </div>
+          <div className="erd-legend" aria-label="Legend">
+            <span className="erd-legend-item">
+              <span className="erd-key-icon erd-key-pk">🔑</span> Primary key
+            </span>
+            <span className="erd-legend-item">
+              <span className="erd-key-icon erd-key-fk">⧉</span> Foreign key
+            </span>
+            <span className="erd-legend-item">
+              <span className="flag flag-nn">NN</span> Not null
+            </span>
+          </div>
+        </div>
+      )}
+
+      <div className="cards-grid erd-grid">
         {dataList && dataList.length > 0 ? (
-          filteredTables.length > 0 ? (
-          filteredTables.map((table) => {
-            const isExpanded = expandedCardIds.includes(table.id);
-            const columns = cardColumns[table.id] || [];
-            const isLoading = loadingColumns[table.id];
-
-            return (
-              <div key={table.id} className="table-card">
-                {/* Header */}
-                <div className="card-header">
-                  <div className="card-header-left">
-                    <div className="serial-badge">
-                      {table.serial_number || "-"}
-                    </div>
-                    <div className="card-title-group">
-                      <h3 className="card-title" title={table.table_name}>
-                        {table.table_name}
-                      </h3>
-                      <p
-                        className="card-subtitle"
-                        title={table.table_description}
-                      >
-                        {table.table_description || "No description provided."}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="card-header-actions">
-                    <SqlViewButton
-                      onClick={() => handleViewSql(table)}
-                      disabled={isBusy}
-                    />
-                    <button
-                      type="button"
-                      className="btn-icon"
-                      onClick={() => handleRowClick(table)}
-                      title="Edit table details"
-                      disabled={isBusy}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M12 20h9" />
-                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Body (Expanded Columns List) */}
-                {isExpanded && (
-                  <div className="card-body">
-                    {isLoading ? (
-                      <LoadingSpinner label="Loading columns..." />
-                    ) : columns.length > 0 ? (
-                      <div className="card-columns-compact">
-                        {columns.map((col) => (
-                          <div
-                            key={col.id}
-                            className="card-col-chip"
-                            title={formatColumnTooltip(col)}
-                          >
-                            <div className="card-col-chip-row">
-                              <span className="card-col-num">
-                                {col.serial_number ?? "·"}
-                              </span>
-                              <span className="card-col-name">
-                                {col.column_name}
-                              </span>
-                            </div>
-                            <div className="card-col-chip-meta">
-                              <code className="card-col-type">
-                                {formatColumnType(col)}
-                              </code>
-                              {col.is_nullable === false && (
-                                <span className="flag flag-nn" title="Not Null">
-                                  NN
-                                </span>
-                              )}
-                              {col.default_value && (
-                                <span
-                                  className="card-col-default"
-                                  title={`Default: ${col.default_value}`}
-                                >
-                                  ={col.default_value}
-                                </span>
-                              )}
-                              {col.is_primary && (
-                                <span
-                                  className="flag flag-pk"
-                                  title="Primary Key"
-                                >
-                                  PK
-                                </span>
-                              )}
-                              {col.is_foreign && (
-                                <span
-                                  className="flag flag-fk"
-                                  title="Foreign Key"
-                                >
-                                  FK
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                        <p className="card-columns-summary">
-                          {columns.length} column
-                          {columns.length !== 1 ? "s" : ""}
-                        </p>
-                      </div>
-                    ) : (
-                      <p className="empty-columns-text">
-                        No columns defined for this table.
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {/* Features Footer */}
-                <div className="card-features-footer">
-                  <button
-                    className="btn-features-toggle"
-                    onClick={() => handleToggleFeatures(table.id)}
-                    style={{
-                      textAlign: "left",
-                      width: "100%",
-                      padding: 0,
-                      border: "none",
-                      background: "none",
-                      cursor: "pointer",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontWeight: "var(--font-weight-semibold)",
-                        color: "var(--text-secondary)",
-                        fontSize: "var(--font-size-sm)",
-                        marginBottom: 4,
-                        textTransform: "uppercase",
-                        letterSpacing: 0.3,
-                      }}
-                    >
-                      Linked Features
-                    </span>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: 6,
-                        alignItems: "center",
-                      }}
-                    >
-                      {expandedFeatureCardIds.includes(table.id) ? (
-                        loadingTableFeatures[table.id] ? (
-                          <LoadingSpinner label="Loading features..." />
-                        ) : tableCardFeatures[table.id] &&
-                          tableCardFeatures[table.id].length > 0 ? (
-                          tableCardFeatures[table.id].map((ft) => (
-                            <span
-                              key={ft.id}
-                              className="card-feature-badge"
-                              title={
-                                ft.feature_name
-                                  ? `${ft.feature_type} - ${ft.feature_name}`
-                                  : ft.feature_name
-                              }
-                            >
-                              {ft.feature_name}
-                            </span>
-                          ))
-                        ) : (
-                          <span
-                            style={{
-                              fontSize: "var(--font-size-xs)",
-                              color: "var(--text-tertiary)",
-                              fontStyle: "italic",
-                            }}
-                          >
-                            No features linked to this table.
-                          </span>
-                        )
-                      ) : (
-                        <span
-                          style={{
-                            fontSize: "var(--font-size-xs)",
-                            color: "var(--text-tertiary)",
-                          }}
-                        >
-                          Click to view linked features
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                </div>
-
-                {/* Bottom Toggle Button */}
-                <button
-                  className="btn-expand"
-                  onClick={() => toggleCardExpand(table.id)}
-                  title={
-                    isExpanded ? "Collapse column list" : "Expand column list"
-                  }
-                >
-                  <span>
-                    {isExpanded
-                      ? `Hide Columns (${columns.length})`
-                      : `Show Columns${
-                          cardColumns[table.id]?.length
-                            ? ` (${cardColumns[table.id].length})`
-                            : ""
-                        }`}
-                  </span>
-                  <svg
-                    className={`chevron-icon ${isExpanded ? "rotated" : ""}`}
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
-                </button>
-              </div>
-            );
-          })
+          loadingFeatureFilter ? (
+            <LoadingSpinner label="Filtering schema..." />
+          ) : filteredTables.length > 0 ? (
+            filteredTables.map((table) => (
+              <TableErdCard
+                key={table.id}
+                table={table}
+                columns={cardColumns[table.id] || []}
+                columnsLoaded={table.id in cardColumns}
+                isColumnsExpanded={expandedCardIds.includes(table.id)}
+                loading={Boolean(loadingColumns[table.id])}
+                fkLookup={fkLookup}
+                incomingRefs={referencedByIndex[table.id] || []}
+                highlighted={highlightTableId === table.id}
+                isBusy={isBusy}
+                expandedFeatureCardIds={expandedFeatureCardIds}
+                tableCardFeatures={tableCardFeatures}
+                loadingTableFeatures={loadingTableFeatures}
+                onEdit={handleRowClick}
+                onViewSql={handleViewSql}
+                onFocusTable={handleFocusTable}
+                onToggleColumns={handleToggleColumns}
+                onToggleFeatures={handleToggleFeatures}
+              />
+            ))
           ) : (
             <div className="empty-cards-state">
               <h3 className="empty-state-title">No matching tables</h3>
               <p className="empty-state-text">
-                Try a different search term or clear the filter.
+                Try different filters or clear them to see more of the schema.
               </p>
               <button
                 type="button"
                 className="btn btn-secondary"
-                onClick={clearSearch}
+                onClick={clearFilters}
               >
-                Clear search
+                Clear filters
               </button>
             </div>
           )
@@ -361,22 +245,21 @@ const Tables = () => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
-                <path d="M12 8v8" />
-                <path d="M8 12h8" />
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
               </svg>
             </div>
-            <h3 className="empty-state-title">No Tables Found</h3>
+            <h3 className="empty-state-title">No entities yet</h3>
             <p className="empty-state-text">
-              Define your database tables to start managing schema structures,
-              keys, and columns.
+              Create tables to model your database schema with primary keys,
+              foreign keys, and relationships.
             </p>
             <button
               className="btn btn-primary"
               onClick={handleAddNew}
               disabled={isBusy}
             >
-              + Create First Table
+              + Create first table
             </button>
           </div>
         )}
@@ -412,6 +295,9 @@ const Tables = () => {
         onSaveClick={handleSaveClick}
         onSaveColumnClick={handleSaveColumnClick}
         onCopySql={handleCopySql}
+        fkLookup={fkLookup}
+        allTables={dataList}
+        currentTableId={formData.id}
       />
     </div>
   );

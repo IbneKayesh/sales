@@ -1,5 +1,12 @@
-import { useEffect, useState } from "react";
-import { formatColumnType, formatColumnTooltip } from "../utils/columnFormat.js";
+import { useEffect, useMemo, useState } from "react";
+import {
+  formatColumnType,
+  formatColumnTooltip,
+  formatForeignKeyRef,
+  formatForeignKeyTitle,
+} from "../utils/columnFormat.js";
+import { sortColumnsErdOrder } from "../utils/schemaErd.js";
+import { apiRequest } from "../utils/api";
 import SqlPreviewModal, { SqlViewButton } from "../components/SqlPreviewModal";
 
 const TablesSidebar = ({
@@ -21,14 +28,63 @@ const TablesSidebar = ({
   onSaveClick,
   onSaveColumnClick,
   onCopySql,
+  fkLookup = {},
+  allTables = [],
+  currentTableId = "",
 }) => {
   const [isSqlPreviewOpen, setIsSqlPreviewOpen] = useState(false);
+  const [refColumnOptions, setRefColumnOptions] = useState([]);
+  const [loadingRefColumns, setLoadingRefColumns] = useState(false);
+
+  const fkTableOptions = useMemo(
+    () =>
+      allTables
+        .filter((t) => t.id !== currentTableId)
+        .sort((a, b) =>
+          String(a.table_name || "").localeCompare(String(b.table_name || "")),
+        ),
+    [allTables, currentTableId],
+  );
+
+  const sortedColumnList = useMemo(
+    () => sortColumnsErdOrder(columnList),
+    [columnList],
+  );
 
   useEffect(() => {
     if (!isSideBar) {
       setIsSqlPreviewOpen(false);
     }
   }, [isSideBar]);
+
+  useEffect(() => {
+    if (!formDataColumn.is_foreign || !formDataColumn.references_table) {
+      setRefColumnOptions([]);
+      return;
+    }
+
+    let cancelled = false;
+    setLoadingRefColumns(true);
+
+    apiRequest("api/columns/get-by-table", {
+      body: { table_id: formDataColumn.references_table },
+    })
+      .then((resp) => {
+        if (!cancelled) {
+          setRefColumnOptions(sortColumnsErdOrder(resp.data || []));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setRefColumnOptions([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingRefColumns(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [formDataColumn.is_foreign, formDataColumn.references_table]);
 
   if (!isSideBar) return null;
 
@@ -230,44 +286,63 @@ const TablesSidebar = ({
                       FK
                     </label>
                   </div>
+                  {formDataColumn.is_foreign && (
+                    <>
+                      <div className="form-group">
+                        <label className="form-label">References table</label>
+                        <select
+                          className="form-select"
+                          name="references_table"
+                          value={formDataColumn.references_table || ""}
+                          onChange={(e) => {
+                            onInputChangeColumn(
+                              "references_table",
+                              e.target.value,
+                            );
+                            onInputChangeColumn("references_column", "");
+                          }}
+                        >
+                          <option value="">Select table…</option>
+                          {fkTableOptions.map((t) => (
+                            <option key={t.id} value={t.id}>
+                              {t.table_name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">References column</label>
+                        <select
+                          className="form-select"
+                          name="references_column"
+                          value={formDataColumn.references_column || ""}
+                          disabled={
+                            !formDataColumn.references_table ||
+                            loadingRefColumns
+                          }
+                          onChange={(e) => {
+                            onInputChangeColumn(
+                              "references_column",
+                              e.target.value,
+                            );
+                          }}
+                        >
+                          <option value="">
+                            {loadingRefColumns
+                              ? "Loading…"
+                              : "Select column…"}
+                          </option>
+                          {refColumnOptions.map((c) => (
+                            <option key={c.id} value={c.id}>
+                              {c.column_name}
+                              {c.is_primary ? " (PK)" : ""}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </>
+                  )}
                 </div>
-
-                {formDataColumn.is_foreign && (
-                  <div className="form-grid form-grid-2 tables-sidebar-form-grid">
-                    <div className="form-group">
-                      <label className="form-label">Ref. Table</label>
-                      <input
-                        className="form-input"
-                        type="text"
-                        name="references_table"
-                        value={formDataColumn.references_table || ""}
-                        onChange={(e) => {
-                          onInputChangeColumn(
-                            "references_table",
-                            e.target.value,
-                          );
-                        }}
-                        placeholder="table_id"
-                      />
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">Ref. Column</label>
-                      <input
-                        className="form-input"
-                        type="text"
-                        name="references_column"
-                        value={formDataColumn.references_column || ""}
-                        onChange={(e) => {
-                          onInputChangeColumn(
-                            "references_column",
-                            e.target.value,
-                          );
-                        }}
-                        placeholder="column_id"
-                      />
-                    </div>
-                  </div>
-                )}
 
                 <div className="form-group">
                   <label className="form-label">Description</label>
@@ -338,7 +413,7 @@ const TablesSidebar = ({
                 </div>
                 {columnList && columnList.length > 0 ? (
                   <div className="sidebar-columns-compact">
-                    {columnList.map((column) => (
+                    {sortedColumnList.map((column) => (
                       <div
                         key={column.id}
                         className={`sidebar-col-chip${
@@ -346,7 +421,7 @@ const TablesSidebar = ({
                             ? " sidebar-col-chip-active"
                             : ""
                         }`}
-                        title={formatColumnTooltip(column)}
+                        title={formatColumnTooltip(column, fkLookup)}
                       >
                         <button
                           type="button"
@@ -358,36 +433,62 @@ const TablesSidebar = ({
                             <span className="card-col-num">
                               {column.serial_number ?? "·"}
                             </span>
-                            <span className="card-col-name">{column.column_name}</span>
+                            <span className="card-col-name">
+                              {column.column_name}
+                            </span>
+                            <div className="card-col-chip-meta">
+                              <code className="card-col-type">
+                                {formatColumnType(column)}
+                              </code>
+                              {column.is_nullable === false && (
+                                <span className="flag flag-nn" title="Not Null">
+                                  NN
+                                </span>
+                              )}
+                              {column.default_value && (
+                                <span
+                                  className="card-col-default"
+                                  title={`Default: ${column.default_value}`}
+                                >
+                                  ={column.default_value}
+                                </span>
+                              )}
+                              {column.is_primary && (
+                                <span
+                                  className="flag flag-pk"
+                                  title="Primary Key"
+                                >
+                                  PK
+                                </span>
+                              )}
+                              {column.is_foreign && (
+                                <span
+                                  className="flag flag-fk"
+                                  title={formatForeignKeyTitle(
+                                    column,
+                                    fkLookup,
+                                  )}
+                                >
+                                  FK
+                                  {formatForeignKeyRef(column, fkLookup) && (
+                                    <span className="fk-ref">
+                                      →{" "}
+                                      {formatForeignKeyRef(column, fkLookup)}
+                                    </span>
+                                  )}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                          <div className="card-col-chip-meta">
-                            <code className="card-col-type">
-                              {formatColumnType(column)}
-                            </code>
-                            {column.is_nullable === false && (
-                              <span className="flag flag-nn" title="Not Null">
-                                NN
-                              </span>
-                            )}
-                            {column.default_value && (
-                              <span
-                                className="card-col-default"
-                                title={`Default: ${column.default_value}`}
-                              >
-                                ={column.default_value}
-                              </span>
-                            )}
-                            {column.is_primary && (
-                              <span className="flag flag-pk" title="Primary Key">
-                                PK
-                              </span>
-                            )}
-                            {column.is_foreign && (
-                              <span className="flag flag-fk" title="Foreign Key">
-                                FK
-                              </span>
-                            )}
-                          </div>
+                          <p
+                            className={`card-col-desc${
+                              !column.column_description
+                                ? " card-col-desc-empty"
+                                : ""
+                            }`}
+                          >
+                            {column.column_description || "No description."}
+                          </p>
                         </button>
                         <button
                           type="button"
@@ -424,7 +525,6 @@ const TablesSidebar = ({
                   </p>
                 )}
               </section>
-
             </>
           )}
         </div>

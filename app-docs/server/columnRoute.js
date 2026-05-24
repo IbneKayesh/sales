@@ -1,6 +1,7 @@
 // server/columnRoute.js
 import express from 'express';
 import { pool } from './db.js';
+import { normalizeColumnBody } from './normalize.js';
 
 const router = express.Router();
 
@@ -24,7 +25,15 @@ router.post('/add', async (req, res) => {
     id, table_id, column_name, data_type, data_length,
     is_nullable, default_value, is_primary, is_foreign,
     references_table, references_column, column_description, serial_number
-  } = req.body;
+  } = normalizeColumnBody(req.body);
+
+  if (!table_id || !column_name || !data_type) {
+    return res.status(400).json({
+      success: false,
+      message: 'table_id, column_name, and data_type are required',
+      data: [],
+    });
+  }
 
   try {
     const query = `
@@ -53,7 +62,15 @@ router.post('/edit', async (req, res) => {
     id, column_name, data_type, data_length,
     is_nullable, default_value, is_primary, is_foreign,
     references_table, references_column, column_description, serial_number
-  } = req.body;
+  } = normalizeColumnBody(req.body);
+
+  if (!column_name || !data_type) {
+    return res.status(400).json({
+      success: false,
+      message: 'column_name and data_type are required',
+      data: [],
+    });
+  }
 
   try {
     const query = `

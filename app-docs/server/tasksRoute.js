@@ -21,6 +21,13 @@ router.post('/get-by-feature', async (req, res) => {
 // add
 router.post('/add', async (req, res) => {
   const { id, feature_id, task_name, is_done } = req.body;
+  if (!feature_id || !task_name || !String(task_name).trim()) {
+    return res.status(400).json({
+      success: false,
+      message: 'feature_id and task_name are required',
+      data: [],
+    });
+  }
   try {
     const query = `
       INSERT INTO t_task (id, feature_id, task_name, is_done)
@@ -37,6 +44,13 @@ router.post('/add', async (req, res) => {
 // edit
 router.post('/edit', async (req, res) => {
   const { id, task_name, is_done } = req.body;
+  if (!task_name || !String(task_name).trim()) {
+    return res.status(400).json({
+      success: false,
+      message: 'task_name is required',
+      data: [],
+    });
+  }
   try {
     const query = `
       UPDATE t_task 

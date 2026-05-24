@@ -1,6 +1,7 @@
 // server/tableRoute.js
 import express from "express";
 import { pool } from "./db.js";
+import { normalizeTableBody } from "./normalize.js";
 
 const router = express.Router();
 
@@ -18,7 +19,15 @@ router.post("/get-all", async (req, res) => {
 
 // add
 router.post("/add", async (req, res) => {
-  const { id, table_name, table_description, serial_number } = req.body;
+  const { id, table_name, table_description, serial_number } =
+    normalizeTableBody(req.body);
+  if (!table_name) {
+    return res.status(400).json({
+      success: false,
+      message: "table_name is required",
+      data: [],
+    });
+  }
   try {
     const query = `
       INSERT INTO t_tables (id, table_name, table_description, serial_number)
@@ -39,7 +48,15 @@ router.post("/add", async (req, res) => {
 
 // edit
 router.post("/edit", async (req, res) => {
-  const { id, table_name, table_description, serial_number } = req.body;
+  const { id, table_name, table_description, serial_number } =
+    normalizeTableBody(req.body);
+  if (!table_name) {
+    return res.status(400).json({
+      success: false,
+      message: "table_name is required",
+      data: [],
+    });
+  }
   try {
     const query = `
       UPDATE t_tables 

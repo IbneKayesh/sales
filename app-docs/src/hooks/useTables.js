@@ -3,6 +3,18 @@ import { apiRequest } from "../utils/api";
 import { generateGuid } from "../utils/guid";
 import { useToast } from "../contexts/ToastContext";
 import { useConfirm } from "../contexts/ConfirmContext";
+import {
+  prepareColumnPayload,
+  prepareTablePayload,
+} from "../utils/schemaValidation.js";
+import {
+  resolveRefColumnName,
+  resolveRefTableName,
+} from "../utils/columnFormat.js";
+import {
+  buildReferencedByIndex,
+  computeSchemaStats,
+} from "../utils/schemaErd.js";
 
 const DATA_TYPE_OPTIONS = [
   "VARCHAR",
@@ -18,11 +30,16 @@ function quoteIdent(v) {
   return v.includes(".") ? v : v.replace(/"/g, "");
 }
 
-function generateCreateTableSql(tableName, cols) {
+function fkConstraintName(tableName, columnName) {
+  return `fk_${tableName}_${columnName}`.replace(/\W+/g, "_").toLowerCase();
+}
+
+function generateCreateTableSql(tableName, cols, lookup = {}) {
   if (!cols || cols.length === 0) return "";
   const name = tableName || "your_table_name";
+  const { tablesById = {}, columnsById = {} } = lookup;
 
-  const parts = cols.map((c) => {
+  const columnLines = cols.map((c) => {
     const lineParts = [];
     lineParts.push(`${quoteIdent(c.column_name)}`);
     lineParts.push(c.data_type);
@@ -34,6 +51,17 @@ function generateCreateTableSql(tableName, cols) {
     if (c.is_primary) lineParts.push("PRIMARY KEY");
     return "  " + lineParts.join(" ");
   });
+
+  const fkLines = cols
+    .filter((c) => c.is_foreign && c.references_table && c.references_column)
+    .map((c) => {
+      const refTable = resolveRefTableName(c.references_table, tablesById);
+      const refCol = resolveRefColumnName(c.references_column, columnsById);
+      const constraint = fkConstraintName(name, c.column_name);
+      return `  CONSTRAINT ${constraint} FOREIGN KEY (${quoteIdent(c.column_name)}) REFERENCES ${quoteIdent(refTable)} (${quoteIdent(refCol)})`;
+    });
+
+  const parts = [...columnLines, ...fkLines];
 
   return `CREATE TABLE IF NOT EXISTS ${quoteIdent(name)} (\n${parts.join(",\n")}\n);`;
 }
@@ -48,9 +76,17 @@ const useTables = () => {
   const [isSideBar, setIsSideBar] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [projectFilter, setProjectFilter] = useState("");
+  const [moduleFilter, setModuleFilter] = useState("");
+  const [submoduleFilter, setSubmoduleFilter] = useState("");
+  const [featureFilter, setFeatureFilter] = useState("");
+  const [featuresList, setFeaturesList] = useState([]);
+  const [featureFilterTableIds, setFeatureFilterTableIds] = useState(null);
+  const [loadingFeatureFilter, setLoadingFeatureFilter] = useState(false);
   const [expandedCardIds, setExpandedCardIds] = useState([]);
   const [cardColumns, setCardColumns] = useState({});
   const [loadingColumns, setLoadingColumns] = useState({});
+  const [highlightTableId, setHighlightTableId] = useState(null);
   const [expandedFeatureCardIds, setExpandedFeatureCardIds] = useState([]);
   const [tableCardFeatures, setTableCardFeatures] = useState({});
   const [loadingTableFeatures, setLoadingTableFeatures] = useState({});
@@ -61,19 +97,118 @@ const useTables = () => {
   const [copied, setCopied] = useState(false);
   const [sqlPreview, setSqlPreview] = useState(null);
 
-  const filteredTables = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return dataList;
+  const sortFeatures = (a, b) => {
+    const serialA = Number(a.serial_number) || 0;
+    const serialB = Number(b.serial_number) || 0;
+    if (serialA !== serialB) return serialA - serialB;
+    return String(a.feature_name || "").localeCompare(
+      String(b.feature_name || ""),
+    );
+  };
 
-    return dataList.filter((table) => {
+  const projectOptions = useMemo(
+    () =>
+      featuresList
+        .filter((f) => f.feature_type === "project")
+        .sort(sortFeatures),
+    [featuresList],
+  );
+
+  const moduleOptions = useMemo(() => {
+    if (!projectFilter) return [];
+    return featuresList
+      .filter(
+        (f) => f.feature_type === "module" && f.feature_id === projectFilter,
+      )
+      .sort(sortFeatures);
+  }, [featuresList, projectFilter]);
+
+  const submoduleOptions = useMemo(() => {
+    if (!moduleFilter) return [];
+    return featuresList
+      .filter(
+        (f) => f.feature_type === "submodule" && f.feature_id === moduleFilter,
+      )
+      .sort(sortFeatures);
+  }, [featuresList, moduleFilter]);
+
+  const featureOptions = useMemo(() => {
+    if (!submoduleFilter) return [];
+    return featuresList
+      .filter(
+        (f) => f.feature_type === "feature" && f.feature_id === submoduleFilter,
+      )
+      .sort(sortFeatures);
+  }, [featuresList, submoduleFilter]);
+
+  const hasFeatureScopeFilter = Boolean(
+    projectFilter || moduleFilter || submoduleFilter || featureFilter,
+  );
+
+  const filteredTables = useMemo(() => {
+    let list = dataList;
+
+    if (hasFeatureScopeFilter) {
+      if (featureFilterTableIds === null) {
+        return [];
+      }
+      list = list.filter((table) => featureFilterTableIds.has(table.id));
+    }
+
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return list;
+
+    return list.filter((table) => {
       const name = String(table.table_name || "").toLowerCase();
       const desc = String(table.table_description || "").toLowerCase();
       const serial = String(table.serial_number ?? "");
       return name.includes(q) || desc.includes(q) || serial.includes(q);
     });
-  }, [dataList, searchQuery]);
+  }, [dataList, searchQuery, featureFilterTableIds, hasFeatureScopeFilter]);
 
-  const hasActiveFilters = Boolean(searchQuery.trim());
+  const hasActiveFilters = Boolean(
+    searchQuery.trim() || hasFeatureScopeFilter,
+  );
+
+  const tablesById = useMemo(
+    () => Object.fromEntries(dataList.map((t) => [t.id, t])),
+    [dataList],
+  );
+
+  const columnsById = useMemo(() => {
+    const map = {};
+    for (const cols of Object.values(cardColumns)) {
+      for (const c of cols || []) {
+        map[c.id] = c;
+      }
+    }
+    for (const c of columnList || []) {
+      map[c.id] = c;
+    }
+    return map;
+  }, [cardColumns, columnList]);
+
+  const fkLookup = useMemo(
+    () => ({ tablesById, columnsById }),
+    [tablesById, columnsById],
+  );
+
+  const referencedByIndex = useMemo(
+    () => buildReferencedByIndex(cardColumns, tablesById),
+    [cardColumns, tablesById],
+  );
+
+  const schemaStats = useMemo(
+    () => computeSchemaStats(filteredTables, cardColumns),
+    [filteredTables, cardColumns],
+  );
+
+  const fetchColumnsForTable = async (tableId) => {
+    const resp = await apiRequest("api/columns/get-by-table", {
+      body: { table_id: tableId },
+    });
+    return resp.data || [];
+  };
 
   const handleGetAll = async () => {
     try {
@@ -87,6 +222,68 @@ const useTables = () => {
   useEffect(() => {
     handleGetAll();
   }, []);
+
+  useEffect(() => {
+    const loadFeatures = async () => {
+      try {
+        const resp = await apiRequest("api/features/get-all", { body: {} });
+        setFeaturesList(resp.data || []);
+      } catch {
+        error("Error loading feature filters");
+      }
+    };
+    loadFeatures();
+  }, []);
+
+  useEffect(() => {
+    if (!hasFeatureScopeFilter) {
+      setFeatureFilterTableIds(null);
+      return;
+    }
+
+    let cancelled = false;
+    setFeatureFilterTableIds(null);
+    setLoadingFeatureFilter(true);
+
+    const loadFilteredTableIds = async () => {
+      try {
+        const resp = await apiRequest(
+          "api/feature-table/get-table-ids-by-feature-filter",
+          {
+            body: {
+              project_id: projectFilter || undefined,
+              module_id: moduleFilter || undefined,
+              submodule_id: submoduleFilter || undefined,
+              feature_id: featureFilter || undefined,
+            },
+          },
+        );
+        if (!cancelled) {
+          setFeatureFilterTableIds(new Set(resp.data || []));
+        }
+      } catch {
+        if (!cancelled) {
+          error("Error filtering tables by feature");
+          setFeatureFilterTableIds(new Set());
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingFeatureFilter(false);
+        }
+      }
+    };
+
+    loadFilteredTableIds();
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    projectFilter,
+    moduleFilter,
+    submoduleFilter,
+    featureFilter,
+    hasFeatureScopeFilter,
+  ]);
 
   const handleRowClick = (data) => {
     setFormData(data);
@@ -116,17 +313,23 @@ const useTables = () => {
   };
 
   const handleSave = async (data) => {
+    const prepared = prepareTablePayload(data);
+    if (prepared.error) {
+      warning(prepared.error);
+      return;
+    }
+
+    const { payload } = prepared;
+
     setIsBusy(true);
     try {
-      if (data.id) {
-        await apiRequest("api/tables/edit", { body: data });
+      if (payload.id) {
+        await apiRequest("api/tables/edit", { body: payload });
         success("Table updated");
       } else {
-        const reqBody = {
-          ...data,
-          id: generateGuid(),
-        };
-        await apiRequest("api/tables/add", { body: reqBody });
+        await apiRequest("api/tables/add", {
+          body: { ...payload, id: generateGuid() },
+        });
         success("Table created");
       }
       handleGetAll();
@@ -156,10 +359,6 @@ const useTables = () => {
   };
 
   const handleSaveClick = () => {
-    if (!formData.table_name || formData.table_name.trim() === "") {
-      warning("Please enter a table name");
-      return;
-    }
     handleSave(formData);
   };
 
@@ -181,9 +380,11 @@ const useTables = () => {
   useEffect(() => {
     if (columnList) {
       const cols = Array.isArray(columnList) ? columnList : [];
-      setCreateTableSql(generateCreateTableSql(formData.table_name, cols));
+      setCreateTableSql(
+        generateCreateTableSql(formData.table_name, cols, fkLookup),
+      );
     }
-  }, [columnList, formData.table_name]);
+  }, [columnList, formData.table_name, fkLookup]);
 
   useEffect(() => {
     if (!formData.id || !columnList) return;
@@ -197,10 +398,8 @@ const useTables = () => {
 
   const handleGetColumnsByTable = async (table_id) => {
     try {
-      const resp = await apiRequest("api/columns/get-by-table", {
-        body: { table_id },
-      });
-      setColumnList(resp.data || []);
+      const cols = await fetchColumnsForTable(table_id);
+      setColumnList(cols);
     } catch (err) {
       error("Error fetching columns");
     }
@@ -264,39 +463,23 @@ const useTables = () => {
   };
 
   const handleSaveColumn = async (data) => {
-    if (!formData.id) {
-      warning("Please save the table before adding columns.");
+    const prepared = prepareColumnPayload(data, formData.id);
+    if (prepared.error) {
+      warning(prepared.error);
       return;
     }
 
+    const { payload } = prepared;
+
     setIsBusy(true);
     try {
-      const columnData = {
-        ...data,
-        table_id: formData.id,
-      };
-
-      if (data.id) {
-        await apiRequest("api/columns/edit", { body: columnData });
+      if (payload.id) {
+        await apiRequest("api/columns/edit", { body: payload });
         success("Column updated");
       } else {
-        const reqBody = {
-          ...columnData,
-          id: generateGuid(),
-          is_nullable:
-            columnData.is_nullable === undefined
-              ? true
-              : columnData.is_nullable,
-          is_primary:
-            columnData.is_primary === undefined
-              ? false
-              : columnData.is_primary,
-          is_foreign:
-            columnData.is_foreign === undefined
-              ? false
-              : columnData.is_foreign,
-        };
-        await apiRequest("api/columns/add", { body: reqBody });
+        await apiRequest("api/columns/add", {
+          body: { ...payload, id: generateGuid() },
+        });
         success("Column created");
       }
 
@@ -310,13 +493,6 @@ const useTables = () => {
   };
 
   const handleSaveColumnClick = () => {
-    if (
-      !formDataColumn.column_name ||
-      !formDataColumn.column_name.trim()
-    ) {
-      warning("Please enter a column name.");
-      return;
-    }
     handleSaveColumn(formDataColumn);
   };
 
@@ -354,12 +530,9 @@ const useTables = () => {
     });
 
     let cols = cardColumns[table.id];
-    if (!cols) {
+    if (!(table.id in cardColumns)) {
       try {
-        const resp = await apiRequest("api/columns/get-by-table", {
-          body: { table_id: table.id },
-        });
-        cols = resp.data || [];
+        cols = await fetchColumnsForTable(table.id);
         setCardColumns((prev) => ({
           ...prev,
           [table.id]: cols,
@@ -373,7 +546,7 @@ const useTables = () => {
 
     setSqlPreview({
       tableName: table.table_name,
-      sql: generateCreateTableSql(table.table_name, cols),
+      sql: generateCreateTableSql(table.table_name, cols, fkLookup),
       loading: false,
     });
   };
@@ -392,28 +565,46 @@ const useTables = () => {
     }
   };
 
-  const toggleCardExpand = async (tableId) => {
-    setExpandedCardIds((prev) => {
-      if (prev.includes(tableId)) return prev.filter((x) => x !== tableId);
-      return [...prev, tableId];
-    });
+  const loadColumnsForCard = async (tableId) => {
+    if (tableId in cardColumns || loadingColumns[tableId]) return;
 
-    if (!cardColumns[tableId]) {
-      setLoadingColumns((prev) => ({ ...prev, [tableId]: true }));
-      try {
-        const resp = await apiRequest("api/columns/get-by-table", {
-          body: { table_id: tableId },
-        });
-        setCardColumns((prev) => ({
-          ...prev,
-          [tableId]: resp.data || [],
-        }));
-      } catch (err) {
-        error("Error fetching columns for card");
-      } finally {
-        setLoadingColumns((prev) => ({ ...prev, [tableId]: false }));
-      }
+    setLoadingColumns((prev) => ({ ...prev, [tableId]: true }));
+    try {
+      const cols = await fetchColumnsForTable(tableId);
+      setCardColumns((prev) => ({ ...prev, [tableId]: cols }));
+    } catch {
+      error("Error loading columns");
+      setCardColumns((prev) => ({ ...prev, [tableId]: [] }));
+    } finally {
+      setLoadingColumns((prev) => ({ ...prev, [tableId]: false }));
     }
+  };
+
+  const handleFocusTable = async (tableId) => {
+    if (!tableId) return;
+
+    if (!expandedCardIds.includes(tableId)) {
+      setExpandedCardIds((prev) => [...prev, tableId]);
+      await loadColumnsForCard(tableId);
+    }
+
+    setHighlightTableId(tableId);
+    requestAnimationFrame(() => {
+      document
+        .getElementById(`erd-entity-${tableId}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    window.setTimeout(() => setHighlightTableId(null), 2200);
+  };
+
+  const handleToggleColumns = async (tableId) => {
+    if (expandedCardIds.includes(tableId)) {
+      setExpandedCardIds((prev) => prev.filter((id) => id !== tableId));
+      return;
+    }
+
+    setExpandedCardIds((prev) => [...prev, tableId]);
+    await loadColumnsForCard(tableId);
   };
 
   const handleToggleFeatures = async (tableId) => {
@@ -446,7 +637,31 @@ const useTables = () => {
     }
   };
 
-  const clearSearch = () => setSearchQuery("");
+  const handleProjectFilterChange = (value) => {
+    setProjectFilter(value);
+    setModuleFilter("");
+    setSubmoduleFilter("");
+    setFeatureFilter("");
+  };
+
+  const handleModuleFilterChange = (value) => {
+    setModuleFilter(value);
+    setSubmoduleFilter("");
+    setFeatureFilter("");
+  };
+
+  const handleSubmoduleFilterChange = (value) => {
+    setSubmoduleFilter(value);
+    setFeatureFilter("");
+  };
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setProjectFilter("");
+    setModuleFilter("");
+    setSubmoduleFilter("");
+    setFeatureFilter("");
+  };
 
   return {
     isBusy,
@@ -481,15 +696,34 @@ const useTables = () => {
     setSearchQuery,
     filteredTables,
     hasActiveFilters,
-    clearSearch,
+    clearFilters,
+    projectFilter,
+    moduleFilter,
+    submoduleFilter,
+    featureFilter,
+    setFeatureFilter,
+    handleProjectFilterChange,
+    handleModuleFilterChange,
+    handleSubmoduleFilterChange,
+    projectOptions,
+    moduleOptions,
+    submoduleOptions,
+    featureOptions,
+    loadingFeatureFilter,
     expandedCardIds,
     cardColumns,
     loadingColumns,
-    toggleCardExpand,
+    handleToggleColumns,
     expandedFeatureCardIds,
     tableCardFeatures,
     loadingTableFeatures,
     handleToggleFeatures,
+    fkLookup,
+    referencedByIndex,
+    schemaStats,
+    highlightTableId,
+    handleFocusTable,
+    dataList,
   };
 };
 

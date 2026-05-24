@@ -30,7 +30,7 @@ const NAV_ITEMS = [
   },
   {
     id: "tables",
-    label: "Tables",
+    label: "Schema",
     icon: (
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <rect

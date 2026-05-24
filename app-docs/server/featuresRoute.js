@@ -1,6 +1,7 @@
 // server/featureRoute.js
 import express from "express";
 import { pool } from "./db.js";
+import { normalizeFeatureBody } from "./normalize.js";
 
 const router = express.Router();
 
@@ -32,7 +33,23 @@ router.post("/add", async (req, res) => {
     end_date,
     progress_percent,
     serial_number,
-  } = req.body;
+  } = normalizeFeatureBody(req.body);
+
+  if (
+    !feature_type ||
+    !feature_name ||
+    !feature_status ||
+    !feature_priority ||
+    !work_type ||
+    !work_user
+  ) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "feature_type, feature_name, feature_status, feature_priority, work_type, and work_user are required",
+      data: [],
+    });
+  }
 
   try {
     const query = `
@@ -81,7 +98,23 @@ router.post("/edit", async (req, res) => {
     end_date,
     progress_percent,
     serial_number,
-  } = req.body;
+  } = normalizeFeatureBody(req.body);
+
+  if (
+    !feature_type ||
+    !feature_name ||
+    !feature_status ||
+    !feature_priority ||
+    !work_type ||
+    !work_user
+  ) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "feature_type, feature_name, feature_status, feature_priority, work_type, and work_user are required",
+      data: [],
+    });
+  }
 
   try {
     const query = `

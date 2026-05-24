@@ -6,8 +6,10 @@ const FeatureSidebar = ({
   feature_priority_options,
   work_type_options,
   work_user_options,
+  formatDateInput,
   onCloseSidebarClick,
   onInputChange,
+  onDateChange,
   onDeleteClick,
   onSaveClick,
   selectedTableId,
@@ -18,21 +20,13 @@ const FeatureSidebar = ({
   onDeleteFeatureTableClick,
   formDataTask,
   onInputChangeTask,
-  onSaveTaskClick,
+  onAddTask,
+  onTaskKeyDown,
   taskList,
   onDoneTaskClick,
   onDeleteTaskClick,
 }) => {
   if (!isSideBar) return null;
-
-  const formatDateInput = (value) => {
-    if (!value) return "";
-    try {
-      return new Date(value).toISOString().split("T")[0];
-    } catch {
-      return "";
-    }
-  };
 
   return (
     <div className="sidebar-overlay" onClick={onCloseSidebarClick}>
@@ -173,12 +167,7 @@ const FeatureSidebar = ({
                   type="date"
                   name="start_date"
                   value={formatDateInput(formData.start_date)}
-                  onChange={(e) => {
-                    onInputChange(
-                      "start_date",
-                      e.target.value ? new Date(e.target.value).toISOString() : "",
-                    );
-                  }}
+                  onChange={(e) => onDateChange("start_date", e.target.value)}
                 />
               </div>
               <div className="form-group">
@@ -188,12 +177,7 @@ const FeatureSidebar = ({
                   type="date"
                   name="end_date"
                   value={formatDateInput(formData.end_date)}
-                  onChange={(e) => {
-                    onInputChange(
-                      "end_date",
-                      e.target.value ? new Date(e.target.value).toISOString() : "",
-                    );
-                  }}
+                  onChange={(e) => onDateChange("end_date", e.target.value)}
                 />
               </div>
               <div className="form-group">
@@ -209,7 +193,10 @@ const FeatureSidebar = ({
                   step="1"
                   value={formData.progress_percent || 0}
                   onChange={(e) => {
-                    onInputChange("progress_percent", parseInt(e.target.value, 10) || 0);
+                    onInputChange(
+                      "progress_percent",
+                      parseInt(e.target.value, 10) || 0,
+                    );
                   }}
                 />
               </div>
@@ -295,23 +282,11 @@ const FeatureSidebar = ({
                   value={formDataTask.task_name || ""}
                   onChange={(e) => onInputChangeTask("task_name", e.target.value)}
                   placeholder="New task…"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && formDataTask.task_name?.trim()) {
-                      onSaveTaskClick({
-                        ...formDataTask,
-                        feature_id: formData.id,
-                      });
-                    }
-                  }}
+                  onKeyDown={onTaskKeyDown}
                 />
                 <button
                   className="btn btn-sm btn-primary"
-                  onClick={() =>
-                    onSaveTaskClick({
-                      ...formDataTask,
-                      feature_id: formData.id,
-                    })
-                  }
+                  onClick={onAddTask}
                   disabled={isBusy || !formDataTask.task_name?.trim()}
                 >
                   Add
