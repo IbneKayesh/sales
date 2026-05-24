@@ -1,34 +1,12 @@
+import { useEffect, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
+import ColumnChipRows from "./ColumnChipRows";
 import { SqlViewButton } from "./SqlPreviewModal";
+import { formatColumnTooltip } from "../utils/columnFormat.js";
 import {
-  formatColumnTooltip,
-  formatColumnType,
-  formatForeignKeyRef,
-  formatForeignKeyTitle,
-} from "../utils/columnFormat.js";
-import {
-  getColumnErdRole,
   getOutgoingRelationships,
   sortColumnsErdOrder,
 } from "../utils/schemaErd.js";
-
-const KeyIcon = ({ role }) => {
-  if (role === "pk" || role === "pk-fk") {
-    return (
-      <span className="erd-key-icon erd-key-pk" title="Primary Key" aria-hidden>
-        🔑
-      </span>
-    );
-  }
-  if (role === "fk") {
-    return (
-      <span className="erd-key-icon erd-key-fk" title="Foreign Key" aria-hidden>
-        ⧉
-      </span>
-    );
-  }
-  return <span className="erd-key-icon erd-key-none" aria-hidden />;
-};
 
 const TableErdCard = ({
   table,
@@ -49,6 +27,14 @@ const TableErdCard = ({
   onToggleColumns,
   onToggleFeatures,
 }) => {
+  const [showColumnMeta, setShowColumnMeta] = useState(false);
+
+  useEffect(() => {
+    if (!isColumnsExpanded) {
+      setShowColumnMeta(false);
+    }
+  }, [isColumnsExpanded]);
+
   const sortedColumns = sortColumnsErdOrder(columns);
   const outgoing =
     isColumnsExpanded && columnsLoaded
@@ -64,7 +50,7 @@ const TableErdCard = ({
   return (
     <article
       id={`erd-entity-${table.id}`}
-      className={`erd-entity table-card${highlighted ? " erd-entity-highlight" : ""}`}
+      className={`erd-entity table-card${highlighted ? " erd-entity-highlight" : ""}${showColumnMeta ? " erd-entity-meta-visible" : ""}`}
     >
       <header className="erd-entity-header">
         <div className="erd-entity-row-primary">
@@ -130,80 +116,45 @@ const TableErdCard = ({
                   className="erd-columns-list"
                   role="table"
                   aria-label={`${table.table_name} columns`}
+                  title={
+                    showColumnMeta
+                      ? "Click to hide type and keys"
+                      : "Click to show type, length, and keys"
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (e.target.closest(".erd-fk-link")) return;
+                    setShowColumnMeta((prev) => !prev);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key !== "Enter" && e.key !== " ") return;
+                    e.stopPropagation();
+                    if (e.target.closest(".erd-fk-link")) return;
+                    e.preventDefault();
+                    setShowColumnMeta((prev) => !prev);
+                  }}
+                  tabIndex={0}
                 >
-                  {sortedColumns.map((col) => {
-                    const role = getColumnErdRole(col);
-                    const fkRef = formatForeignKeyRef(col, fkLookup);
-
-                    return (
+                  {!showColumnMeta && (
+                    <p className="erd-columns-meta-hint">
+                      Click list to show type and keys under name / description
+                    </p>
+                  )}
+                  {sortedColumns.map((col) => (
                       <div
                         key={col.id}
-                        className={`erd-column-block erd-column-${role}`}
+                        className="erd-column-block"
                         title={formatColumnTooltip(col, fkLookup)}
                       >
-                        <div className="erd-column-line">
-                          <KeyIcon role={role} />
-                          <span className="erd-col-serial">
-                            {col.serial_number ?? "·"}
-                          </span>
-                          <span className="erd-col-name">{col.column_name}</span>
-                          <code className="erd-col-type">
-                            {formatColumnType(col)}
-                          </code>
-                          <div className="erd-col-constraints">
-                            {col.is_nullable === false && (
-                              <span className="flag flag-nn" title="NOT NULL">
-                                NN
-                              </span>
-                            )}
-                            {col.default_value && (
-                              <span
-                                className="card-col-default"
-                                title={`Default: ${col.default_value}`}
-                              >
-                                ={col.default_value}
-                              </span>
-                            )}
-                            {col.is_primary && (
-                              <span className="flag flag-pk" title="Primary Key">
-                                PK
-                              </span>
-                            )}
-                            {col.is_foreign && (
-                              <span
-                                className="flag flag-fk"
-                                title={formatForeignKeyTitle(col, fkLookup)}
-                              >
-                                FK
-                                {fkRef ? (
-                                  <button
-                                    type="button"
-                                    className="erd-fk-link"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      onFocusTable?.(col.references_table);
-                                    }}
-                                    title={`Go to ${fkRef}`}
-                                  >
-                                    → {fkRef}
-                                  </button>
-                                ) : null}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <p
-                          className={`erd-col-description${
-                            !col.column_description
-                              ? " erd-col-description-empty"
-                              : ""
-                          }`}
-                        >
-                          {col.column_description || "—"}
-                        </p>
+                        <ColumnChipRows
+                          column={col}
+                          fkLookup={fkLookup}
+                          showMeta={showColumnMeta}
+                          onFkNavigate={onFocusTable}
+                          fkLinkAsButton
+                        />
                       </div>
-                    );
-                  })}
+                  ))}
                 </div>
               ) : columnsLoaded ? (
                 <span className="erd-section-empty">No columns defined.</span>

@@ -1,12 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  formatColumnType,
-  formatColumnTooltip,
-  formatForeignKeyRef,
-  formatForeignKeyTitle,
-} from "../utils/columnFormat.js";
+import { formatColumnTooltip } from "../utils/columnFormat.js";
 import { sortColumnsErdOrder } from "../utils/schemaErd.js";
 import { apiRequest } from "../utils/api";
+import ColumnChipRows from "../components/ColumnChipRows";
 import SqlPreviewModal, { SqlViewButton } from "../components/SqlPreviewModal";
 
 const TablesSidebar = ({
@@ -429,66 +425,11 @@ const TablesSidebar = ({
                           onClick={() => onEditColumn(column)}
                           disabled={isBusy}
                         >
-                          <div className="card-col-chip-row">
-                            <span className="card-col-num">
-                              {column.serial_number ?? "·"}
-                            </span>
-                            <span className="card-col-name">
-                              {column.column_name}
-                            </span>
-                            <div className="card-col-chip-meta">
-                              <code className="card-col-type">
-                                {formatColumnType(column)}
-                              </code>
-                              {column.is_nullable === false && (
-                                <span className="flag flag-nn" title="Not Null">
-                                  NN
-                                </span>
-                              )}
-                              {column.default_value && (
-                                <span
-                                  className="card-col-default"
-                                  title={`Default: ${column.default_value}`}
-                                >
-                                  ={column.default_value}
-                                </span>
-                              )}
-                              {column.is_primary && (
-                                <span
-                                  className="flag flag-pk"
-                                  title="Primary Key"
-                                >
-                                  PK
-                                </span>
-                              )}
-                              {column.is_foreign && (
-                                <span
-                                  className="flag flag-fk"
-                                  title={formatForeignKeyTitle(
-                                    column,
-                                    fkLookup,
-                                  )}
-                                >
-                                  FK
-                                  {formatForeignKeyRef(column, fkLookup) && (
-                                    <span className="fk-ref">
-                                      →{" "}
-                                      {formatForeignKeyRef(column, fkLookup)}
-                                    </span>
-                                  )}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <p
-                            className={`card-col-desc${
-                              !column.column_description
-                                ? " card-col-desc-empty"
-                                : ""
-                            }`}
-                          >
-                            {column.column_description || "No description."}
-                          </p>
+                          <ColumnChipRows
+                            column={column}
+                            fkLookup={fkLookup}
+                            showMeta
+                          />
                         </button>
                         <button
                           type="button"

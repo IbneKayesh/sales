@@ -8,7 +8,7 @@ export function sortColumnsErdOrder(columns = []) {
 
   for (const col of columns) {
     if (col.is_primary) pk.push(col);
-    else if (col.is_foreign) fk.push(col);
+    //else if (col.is_foreign) fk.push(col);
     else rest.push(col);
   }
 
