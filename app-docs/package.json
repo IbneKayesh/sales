@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "start": "concurrently \"npm run dev\" \"npm run server\"",
-    "dev": "vite",
+    "dev": "vite --port 1702",
     "server": "node server/index.js",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview --port 1702"
   },
   "dependencies": {
     "cors": "^2.8.5",

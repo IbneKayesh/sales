@@ -6,12 +6,12 @@ color 0e
 echo.
 echo  -=-=-=- MENU -=-=-=-
 echo Show choice as below-
-echo 1. Web + API
+echo 1. Web + API (active)
 echo 2. Mobile + API
 echo 3. Web + Mobile + API
 echo 4. Web
 echo 5. Mobile
-echo 6. GMT
+echo 6. Docs (active)
 echo 0. Exit
 echo.
 
@@ -22,7 +22,7 @@ if %choice%==2 goto MA
 if %choice%==3 goto WMA
 if %choice%==4 goto W
 if %choice%==5 goto M
-if %choice%==6 goto GMT
+if %choice%==6 goto DOC
 if %choice%==0 goto END
 
 echo Invalid choice. Try again.
@@ -58,10 +58,9 @@ start cmd /k "cd mobile-app && npm run dev"
 echo  ---- Mobile Running ----
 goto MENU
 
-:GMT
-start cmd /k "cd app-web && npm run dev"
-start "" "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" http://localhost:5173
-echo  ---- GMT Running ----
+:DOC
+start cmd /k "cd app-docs && npm start"
+echo  ---- DOC Running ----
 goto MENU
 
 :END

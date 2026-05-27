@@ -33,6 +33,7 @@ router.post("/add", async (req, res) => {
     end_date,
     progress_percent,
     serial_number,
+    url_link
   } = normalizeFeatureBody(req.body);
 
   if (
@@ -56,8 +57,8 @@ router.post("/add", async (req, res) => {
       INSERT INTO t_features (
         id, feature_id, feature_type, feature_name, feature_description,
         feature_status, feature_priority, work_type, work_user,
-        start_date, end_date, progress_percent, serial_number
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        start_date, end_date, progress_percent, serial_number, url_link
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
       RETURNING *
     `;
     const values = [
@@ -74,6 +75,7 @@ router.post("/add", async (req, res) => {
       end_date,
       progress_percent,
       serial_number,
+      url_link
     ];
     const result = await pool.query(query, values);
     res.json({ success: true, message: "Ok", data: result.rows[0] });
@@ -98,6 +100,7 @@ router.post("/edit", async (req, res) => {
     end_date,
     progress_percent,
     serial_number,
+    url_link
   } = normalizeFeatureBody(req.body);
 
   if (
@@ -122,7 +125,7 @@ router.post("/edit", async (req, res) => {
         feature_id = $2, feature_type = $3, feature_name = $4, feature_description = $5,
         feature_status = $6, feature_priority = $7, work_type = $8, work_user = $9,
         start_date = $10, end_date = $11, progress_percent = $12, serial_number = $13,
-        updated_at = CURRENT_TIMESTAMP
+        url_link = $14, updated_at = CURRENT_TIMESTAMP
       WHERE id = $1
       RETURNING *
     `;
@@ -140,6 +143,7 @@ router.post("/edit", async (req, res) => {
       end_date,
       progress_percent,
       serial_number,
+      url_link
     ];
     const result = await pool.query(query, values);
     res.json({ success: true, message: "Ok", data: result.rows[0] });

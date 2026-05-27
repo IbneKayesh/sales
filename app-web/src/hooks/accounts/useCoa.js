@@ -10,6 +10,7 @@ import { buildCoaTree } from "@/utils/jsonParser.js";
 const useCoa = () => {
   //hooks :: menuId M07-M01-001,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
+  //form :: SYS_FRM_1, list :: SYS_LST_1, search :: SYS_SRC_1
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
     useAppUI();
@@ -20,7 +21,7 @@ const useCoa = () => {
     delpr: false,
   });
   const [crTitle, setCrTitle] = useState("COA List");
-  const [crView, setCrView] = useState("list");
+  const [crView, setCrView] = useState("SYS_LST_1");
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
@@ -113,7 +114,7 @@ const useCoa = () => {
     }
     setFormData(rowData);
     setCrTitle("Edit COA");
-    setCrView("form");
+    setCrView("SYS_FRM_1");
   };
 
   const handleDelete = (rowData) => {
@@ -145,7 +146,7 @@ const useCoa = () => {
       });
       if (resp.success) {
         setCrTitle("COA List");
-        setCrView("list");
+        setCrView("SYS_LST_1");
         loadCoa();
       }
     } catch (error) {
@@ -156,20 +157,20 @@ const useCoa = () => {
 
   const handleBackClick = () => {
     setCrTitle("COA List");
-    setCrView("list");
+    setCrView("SYS_LST_1");
     setFormData(dataModel);
   };
 
   const handleSearchClick = () => {
     setCrTitle("Search COA");
-    setCrView("list");
+    setCrView("SYS_LST_1");
     alert({ message: "Search is clicked", header: "Search" });
     //ketp this function as it is
   };
 
   const handleRefreshClick = () => {
     setCrTitle("COA List");
-    setCrView("list");
+    setCrView("SYS_LST_1");
     loadCoa();
   };
 
@@ -179,8 +180,9 @@ const useCoa = () => {
       return;
     }
     setCrTitle("Add COA");
-    setCrView("form");
+    setCrView("SYS_FRM_1");
     setFormData(dataModel);
+    setErrors({});
   };
 
   const handleSubmitClick = async () => {
@@ -211,7 +213,7 @@ const useCoa = () => {
       });
       if (resp.success) {
         setCrTitle("COA List");
-        //setCrView("list");
+        setCrView("SYS_LST_1");
         loadCoa();
       }
     } catch (error) {

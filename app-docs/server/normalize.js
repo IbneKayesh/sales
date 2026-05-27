@@ -54,4 +54,5 @@ export const normalizeFeatureBody = (body) => ({
   end_date: toDateOrNull(body.end_date),
   progress_percent: toIntOrNull(body.progress_percent) ?? 0,
   serial_number: toIntOrNull(body.serial_number),
+  url_link: toNullIfBlank(body.url_link),
 });

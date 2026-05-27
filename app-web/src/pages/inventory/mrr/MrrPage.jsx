@@ -52,9 +52,6 @@ const MrrPage = () => {
     handleRemovePaymentClick,
   } = useMrr();
 
-  const isList = crView === "list" && true;
-  const isForm = crView === "form" && true;
-
   const cardTitle = () => {
     return (
       <div className="flex align-items-center justify-content-between">

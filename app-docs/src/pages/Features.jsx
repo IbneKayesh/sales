@@ -106,12 +106,26 @@ const Features = () => {
                 <span className="feature-tree-num">
                   {data.serial_number ?? "·"}
                 </span>
-                <span className="feature-tree-name">{data.feature_name}</span>
+                <span
+                  className={`feature-tree-name`}
+                  onClick={() => handleEditClick(data)}
+                  style={{ cursor: "pointer" }}
+                >
+                  {data.feature_name}
+                </span>
                 <span
                   className={`feature-type-badge feature-type-${data.feature_type || "default"}`}
                 >
                   {formatFeatureTypeLabel(data.feature_type)}
                 </span>
+                <a
+                  href={data.url_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`feature-tree-name ${data.url_link ? "url-link" : ""}`}
+                >
+                  {data.url_link}
+                </a>
               </div>
             </td>
             <td className="feature-tree-col-desc">

@@ -3,7 +3,7 @@ import cors from "cors";
 import { pool } from "./db.js";
 
 const app = express();
-const port = 5000;
+const port = 1701;
 
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));

@@ -122,8 +122,7 @@ const useFeatures = () => {
       while (current) {
         ids.add(current.id);
         const parentId = current.feature_id;
-        current =
-          parentId && parentId !== "" ? byId.get(parentId) : null;
+        current = parentId && parentId !== "" ? byId.get(parentId) : null;
       }
     }
 
@@ -228,6 +227,7 @@ const useFeatures = () => {
       start_date: new Date().toISOString().split("T")[0],
       end_date: new Date().toISOString().split("T")[0],
       progress_percent: 0,
+      is_url_link: false,
     });
     setIsSideBar(true);
   };
@@ -265,8 +265,8 @@ const useFeatures = () => {
     if (data.feature_type === "feature") {
       handleGetByFeatureWithoutTables(data.id);
       handleGetByFeatureWithTables(data.id);
-      handleGetTaskByFeature(data.id);
     }
+    handleGetTaskByFeature(data.id);
   };
 
   const handleCloseSidebarClick = () => {
@@ -287,10 +287,7 @@ const useFeatures = () => {
   };
 
   const handleDateChange = (name, dateValue) => {
-    handleInputChange(
-      name,
-      dateValue ? new Date(dateValue).toISOString() : "",
-    );
+    handleInputChange(name, dateValue ? new Date(dateValue).toISOString() : "");
   };
 
   const handleDeleteClick = async (id) => {
@@ -318,6 +315,7 @@ const useFeatures = () => {
     }
 
     const { payload } = prepared;
+    //console.log("prepared",prepared);
 
     setIsBusy(true);
     try {

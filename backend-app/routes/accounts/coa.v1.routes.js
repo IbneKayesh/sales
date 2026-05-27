@@ -229,11 +229,11 @@ const update = async (req, res) => {
     const sql = `UPDATE tmtb_chtac
     SET chtac_chtac = $1,
     chtac_cname = $2,
-    chtac_alpst = $4,
-    chtac_upusr = $5,
+    chtac_alpst = $3,
+    chtac_upusr = $4,
     chtac_updat = CURRENT_TIMESTAMP,
     chtac_rvnmr = chtac_rvnmr + 1
-    WHERE id = $6`;
+    WHERE id = $5`;
     const params = [
       chtac_chtac,
       chtac_cname,

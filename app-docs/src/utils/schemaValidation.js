@@ -35,7 +35,8 @@ const isBlank = (value) => {
   return s === "" || s === "-";
 };
 
-const toOptionalText = (value) => (isBlank(value) ? null : String(value).trim());
+const toOptionalText = (value) =>
+  isBlank(value) ? null : String(value).trim();
 
 const requireText = (value, label, { maxLength } = {}) => {
   if (isBlank(value)) {
@@ -64,7 +65,12 @@ const parseOptionalInt = (value, label, { min } = {}) => {
   return { value: num };
 };
 
-const parseOptionalIntDefault = (value, defaultValue, label, { min, max } = {}) => {
+const parseOptionalIntDefault = (
+  value,
+  defaultValue,
+  label,
+  { min, max } = {},
+) => {
   if (isBlank(value)) {
     return { value: defaultValue };
   }
@@ -151,7 +157,7 @@ export const prepareColumnPayload = (data, tableId) => {
     return { error: serial.error };
   }
 
-  const dataLength = parseOptionalInt(data?.data_length, "Length", { min: 1 });
+  const dataLength = parseOptionalInt(data?.data_length, "Length", { min: 0 });
   if (dataLength.error) {
     return { error: dataLength.error };
   }
@@ -307,6 +313,7 @@ export const prepareFeaturePayload = (data) => {
       end_date: endDate.value,
       progress_percent: progress.value,
       serial_number: serial.value,
+      url_link: data?.url_link
     },
   };
 };

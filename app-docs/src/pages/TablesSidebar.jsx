@@ -428,7 +428,7 @@ const TablesSidebar = ({
                           <ColumnChipRows
                             column={column}
                             fkLookup={fkLookup}
-                            showMeta
+                            showMeta={false}
                           />
                         </button>
                         <button

@@ -1,3 +1,8 @@
+import { useState, useMemo } from "react";
+import { apiRequest } from "../utils/api";
+import { sortColumnsErdOrder } from "../utils/schemaErd.js";
+import ColumnChipRows from "../components/ColumnChipRows";
+
 const FeatureSidebar = ({
   isBusy,
   formData,
@@ -28,6 +33,27 @@ const FeatureSidebar = ({
 }) => {
   if (!isSideBar) return null;
 
+  const [selectedRowsTableId, setSelectedRowsTableId] = useState("");
+  const [columnList, setColumnList] = useState([]);
+  const sortedColumnList = useMemo(
+    () => sortColumnsErdOrder(columnList),
+    [columnList],
+  );
+
+  const handleGetTableColumns = async (table_id) => {
+    if (selectedRowsTableId === table_id) {
+      setSelectedRowsTableId("");
+      setColumnList([]);
+      return;
+    }
+    setColumnList([]);
+    const resp = await apiRequest("api/columns/get-by-table", {
+      body: { table_id: table_id },
+    });
+    setColumnList(sortColumnsErdOrder(resp.data || []));
+    setSelectedRowsTableId(table_id);
+  };
+
   return (
     <div className="sidebar-overlay" onClick={onCloseSidebarClick}>
       <div
@@ -44,7 +70,9 @@ const FeatureSidebar = ({
                   type="text"
                   name="serial_number"
                   value={formData.serial_number || ""}
-                  onChange={(e) => onInputChange("serial_number", e.target.value)}
+                  onChange={(e) =>
+                    onInputChange("serial_number", e.target.value)
+                  }
                   placeholder="No."
                 />
               </div>
@@ -55,7 +83,9 @@ const FeatureSidebar = ({
                   type="text"
                   name="feature_name"
                   value={formData.feature_name || ""}
-                  onChange={(e) => onInputChange("feature_name", e.target.value)}
+                  onChange={(e) =>
+                    onInputChange("feature_name", e.target.value)
+                  }
                   placeholder="Feature name"
                   required
                 />
@@ -78,13 +108,15 @@ const FeatureSidebar = ({
           <section className="form-section">
             <div className="form-group">
               <label className="form-label">Description</label>
-              <input
-                className="form-input"
-                type="text"
+              <textarea
+                className="form-textarea"
                 name="feature_description"
                 value={formData.feature_description || ""}
-                onChange={(e) => onInputChange("feature_description", e.target.value)}
+                onChange={(e) =>
+                  onInputChange("feature_description", e.target.value)
+                }
                 placeholder="optional"
+                rows="2"
               />
             </div>
           </section>
@@ -97,7 +129,9 @@ const FeatureSidebar = ({
                   className="form-select"
                   name="feature_status"
                   value={formData.feature_status || ""}
-                  onChange={(e) => onInputChange("feature_status", e.target.value)}
+                  onChange={(e) =>
+                    onInputChange("feature_status", e.target.value)
+                  }
                 >
                   <option value="-">—</option>
                   {feature_status_options.map((option) => (
@@ -113,7 +147,9 @@ const FeatureSidebar = ({
                   className="form-select"
                   name="feature_priority"
                   value={formData.feature_priority || ""}
-                  onChange={(e) => onInputChange("feature_priority", e.target.value)}
+                  onChange={(e) =>
+                    onInputChange("feature_priority", e.target.value)
+                  }
                 >
                   <option value="-">—</option>
                   {feature_priority_options.map((option) => (
@@ -159,7 +195,7 @@ const FeatureSidebar = ({
           </section>
 
           <section className="form-section">
-            <div className="form-grid form-grid-3 features-sidebar-form-grid">
+            <div className="form-grid form-grid-4 features-sidebar-form-grid">
               <div className="form-group">
                 <label className="form-label">Start</label>
                 <input
@@ -190,7 +226,7 @@ const FeatureSidebar = ({
                   name="progress_percent"
                   min="0"
                   max="100"
-                  step="1"
+                  step="5"
                   value={formData.progress_percent || 0}
                   onChange={(e) => {
                     onInputChange(
@@ -200,15 +236,33 @@ const FeatureSidebar = ({
                   }}
                 />
               </div>
+              <div className="form-group">
+                <label className="form-label">
+                  {formData.url_link ? "URL/Link" : "No URL/Link"}
+                </label>
+                <input
+                  className="form-input"
+                  type="text"
+                  name="url_link"
+                  value={formData.url_link || ""}
+                  onChange={(e) => onInputChange("url_link", e.target.value)}
+                  placeholder="URL/Link"
+                  required
+                />
+              </div>
             </div>
           </section>
 
           {formData.id && formData.feature_type === "feature" && (
             <section className="form-section">
               <div className="section-header-compact">
-                <h4 className="section-title section-title-compact">Linked Tables</h4>
+                <h4 className="section-title section-title-compact">
+                  Linked Tables
+                </h4>
                 {featureTableList?.length > 0 && (
-                  <span className="section-count">{featureTableList.length}</span>
+                  <span className="section-count">
+                    {featureTableList.length}
+                  </span>
                 )}
               </div>
               <div className="form-input-with-btn features-link-table-row">
@@ -236,10 +290,17 @@ const FeatureSidebar = ({
               {featureTableList && featureTableList.length > 0 ? (
                 <div className="sidebar-chips-grid">
                   {featureTableList.map((mapping) => (
-                    <div key={mapping.id} className="sidebar-chip">
+                    <div
+                      key={mapping.id}
+                      className={`sidebar-chip ${mapping.table_id === selectedRowsTableId && "active"}`}
+                    >
                       <span
                         className="sidebar-chip-label"
                         title={mapping.table_name || mapping.table_id}
+                        onClick={(e) => {
+                          handleGetTableColumns(mapping.table_id);
+                        }}
+                        style={{ cursor: "pointer" }}
                       >
                         {mapping.table_name || mapping.table_id}
                       </span>
@@ -263,6 +324,18 @@ const FeatureSidebar = ({
                   No linked tables yet.
                 </p>
               )}
+
+              {sortedColumnList && sortedColumnList.length > 0 && (
+                <div style={{ marginTop: "3px" }}>
+                  {sortedColumnList.map((column) => (
+                    <ColumnChipRows
+                      column={column}
+                      fkLookup={{}}
+                      showMeta={false}
+                    />
+                  ))}
+                </div>
+              )}
             </section>
           )}
 
@@ -280,7 +353,9 @@ const FeatureSidebar = ({
                   type="text"
                   name="task_name"
                   value={formDataTask.task_name || ""}
-                  onChange={(e) => onInputChangeTask("task_name", e.target.value)}
+                  onChange={(e) =>
+                    onInputChangeTask("task_name", e.target.value)
+                  }
                   placeholder="New task…"
                   onKeyDown={onTaskKeyDown}
                 />
@@ -302,10 +377,14 @@ const FeatureSidebar = ({
                           className="form-checkbox"
                           type="checkbox"
                           checked={task.is_done || false}
-                          onChange={(e) => onDoneTaskClick(task.id, e.target.checked)}
+                          onChange={(e) =>
+                            onDoneTaskClick(task.id, e.target.checked)
+                          }
                           disabled={isBusy}
                         />
-                        <span className={`sidebar-task-name${task.is_done ? " task-done" : ""}`}>
+                        <span
+                          className={`sidebar-task-name${task.is_done ? " task-done" : ""}`}
+                        >
                           {task.task_name}
                         </span>
                       </label>
@@ -323,7 +402,9 @@ const FeatureSidebar = ({
                   ))}
                 </div>
               ) : (
-                <p className="empty-list-text empty-list-text-compact">No tasks yet.</p>
+                <p className="empty-list-text empty-list-text-compact">
+                  No tasks yet.
+                </p>
               )}
             </section>
           )}

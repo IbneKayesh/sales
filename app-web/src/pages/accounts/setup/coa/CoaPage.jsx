@@ -37,7 +37,7 @@ const CoaPage = () => {
         <span className="page-title-text">{crTitle}</span>
         <div className="flex gap-2">
           <ButtonGroup>
-            {isForm && (
+            {crView === "SYS_FRM_1" && (
               <Button
                 label="Back"
                 icon="pi pi-arrow-left"
@@ -46,7 +46,7 @@ const CoaPage = () => {
                 onClick={handleBackClick}
               />
             )}
-            {isList && (
+            {crView === "SYS_LST_1" && (
               <Button
                 label="Find"
                 icon="pi pi-search"
@@ -55,7 +55,7 @@ const CoaPage = () => {
                 onClick={handleSearchClick}
               />
             )}
-            {isList && (
+            {crView === "SYS_LST_1" && (
               <Button
                 label="Refresh"
                 icon="pi pi-refresh"
@@ -71,7 +71,7 @@ const CoaPage = () => {
               severity="help"
               onClick={handleAddNewClick}
             />
-            {isForm && (
+            {crView === "SYS_FRM_1" && (
               <Button
                 label="Submit"
                 icon="pi pi-save"
@@ -88,7 +88,7 @@ const CoaPage = () => {
 
   return (
     <Card title={cardTitle} className="shadow-2 border-round p-2">
-      {isList && (
+      {crView === "SYS_LST_1" && (
         <CoaListComp
           pageAuth={pageAuth}
           dataList={dataList}
@@ -96,7 +96,7 @@ const CoaPage = () => {
           onDelete={handleDelete}
         />
       )}
-      {isForm && (
+      {crView === "SYS_FRM_1" && (
         <CoaFormComp
           formData={formData}
           errors={errors}

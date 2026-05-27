@@ -966,6 +966,10 @@ body {
   min-width: 0;
 }
 
+.sidebar-chip.active {
+  background: var(--color-primary-light);
+}
+
 .sidebar-chip-label {
   font-size: 10px;
   font-weight: var(--font-weight-semibold);
@@ -1148,6 +1152,11 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
+}
+
+
+.feature-tree-name.url-link {
+  color: var(--color-info);
 }
 
 .feature-type-badge {
