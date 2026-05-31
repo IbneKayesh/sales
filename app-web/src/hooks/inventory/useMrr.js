@@ -83,7 +83,7 @@ const useMrr = () => {
         atujr_iface: "SYS_MRR_INV",
       });
       setAutoJournalConf(resp.data || []);
-      console.log("resp", resp.data || []);
+      //console.log("resp", resp.data || []);
     };
     loadAutoJournalByInterface();
   }, []);
@@ -544,6 +544,10 @@ const useMrr = () => {
 
       if (exists) {
         showToast("error", "Error", "Item already exists");
+        return;
+      }
+      if (formDataItems.mrrdt_trqty || 0 < 1) {
+        showToast("error", "Error", "Item qty required");
         return;
       }
 

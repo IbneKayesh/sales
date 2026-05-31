@@ -5,6 +5,7 @@ import ColumnChipRows from "../components/ColumnChipRows";
 
 const FeatureSidebar = ({
   isBusy,
+  dataList,
   formData,
   isSideBar,
   feature_status_options,
@@ -39,6 +40,50 @@ const FeatureSidebar = ({
     () => sortColumnsErdOrder(columnList),
     [columnList],
   );
+
+  const getParentOptions = useMemo(() => {
+    if (!formData.feature_type || formData.feature_type === "project" || !dataList) {
+      return [];
+    }
+
+    let targetType = "";
+    if (formData.feature_type === "feature") {
+      targetType = "submodule";
+    } else if (formData.feature_type === "submodule") {
+      targetType = "module";
+    } else if (formData.feature_type === "module") {
+      targetType = "project";
+    }
+
+    if (!targetType) return [];
+
+    const targetItems = dataList.filter(
+      (item) => item.feature_type === targetType && item.id !== formData.id
+    );
+
+    const itemMap = new Map(dataList.map((i) => [i.id, i]));
+    
+    return targetItems.map((item) => {
+      const path = [];
+      let current = item;
+      while (current) {
+        const parentId = current.feature_id;
+        const parent = parentId ? itemMap.get(parentId) : null;
+        if (parent) {
+          path.push(parent.feature_name);
+          current = parent;
+        } else {
+          break;
+        }
+      }
+
+      const ancestry = path.length > 0 ? ` (${path.reverse().join(" > ")})` : "";
+      return {
+        id: item.id,
+        label: `${item.feature_name}${ancestry}`,
+      };
+    }).sort((a, b) => a.label.localeCompare(b.label));
+  }, [formData.feature_type, formData.id, dataList]);
 
   const handleGetTableColumns = async (table_id) => {
     if (selectedRowsTableId === table_id) {
@@ -120,6 +165,34 @@ const FeatureSidebar = ({
               />
             </div>
           </section>
+
+          {getParentOptions.length > 0 && (
+            <section className="form-section">
+              <div className="form-group">
+                <label className="form-label">
+                  {formData.feature_type === "feature"
+                    ? "Parent Submodule"
+                    : formData.feature_type === "submodule"
+                      ? "Parent Module"
+                      : "Parent Project"} *
+                </label>
+                <select
+                  className="form-select"
+                  name="feature_id"
+                  value={formData.feature_id || ""}
+                  onChange={(e) => onInputChange("feature_id", e.target.value)}
+                  required
+                >
+                  <option value="" disabled>Select parent...</option>
+                  {getParentOptions.map((opt) => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </section>
+          )}
 
           <section className="form-section">
             <div className="form-grid form-grid-4 features-sidebar-form-grid">

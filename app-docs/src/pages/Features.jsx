@@ -329,6 +329,7 @@ const Features = () => {
 
       <FeatureSidebar
         isBusy={isBusy}
+        dataList={dataList}
         formData={formData}
         isSideBar={isSideBar}
         feature_status_options={feature_status_options}

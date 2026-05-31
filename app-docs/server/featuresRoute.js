@@ -5,7 +5,19 @@ import { normalizeFeatureBody } from "./normalize.js";
 
 const router = express.Router();
 
-// get-all
+// get-all-test
+// router.get("/get-all-test", async (req, res) => {
+//   try {
+//     const result = await pool.query(
+//       "SELECT * FROM t_features WHERE id ='e90fe74a-a3d3-46aa-9c1d-b3277c50356c'",
+//     );
+//     console.log("data", result.rows)
+//     res.json({ success: true, message: "Ok", data: result.rows });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message, data: [] });
+//   }
+// });
+
 router.post("/get-all", async (req, res) => {
   try {
     const result = await pool.query(

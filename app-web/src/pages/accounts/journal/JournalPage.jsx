@@ -48,7 +48,7 @@ const JournalPage = () => {
         <span className="page-title-text">{crTitle}</span>
         <div className="flex gap-2">
           <ButtonGroup>
-            {isForm && (
+            {crView === "SYS_FRM_1" && (
               <Button
                 label="Back"
                 icon="pi pi-arrow-left"
@@ -57,7 +57,7 @@ const JournalPage = () => {
                 onClick={handleBackClick}
               />
             )}
-            {isList && (
+           {crView === "SYS_LST_1" && (
               <Button
                 label="Find"
                 icon="pi pi-search"
@@ -66,7 +66,7 @@ const JournalPage = () => {
                 onClick={handleSearchClick}
               />
             )}
-            {isList && (
+            {crView === "SYS_LST_1" && (
               <Button
                 label="Refresh"
                 icon="pi pi-refresh"
@@ -82,7 +82,7 @@ const JournalPage = () => {
               severity="help"
               onClick={handleAddNewClick}
             />
-            {isForm && (
+            {crView === "SYS_FRM_1" && (
               <Button
                 label="Submit"
                 icon="pi pi-save"
@@ -100,7 +100,7 @@ const JournalPage = () => {
 
   return (
     <Card title={cardTitle} className="shadow-2 border-round p-2">
-      {isList && (
+     {crView === "SYS_LST_1" && (
         <JournalListComp
           pageAuth={pageAuth}
           dataList={dataList}
@@ -108,7 +108,7 @@ const JournalPage = () => {
           onDelete={handleDelete}
         />
       )}
-      {isForm && (
+     {crView === "SYS_FRM_1" && (
         <JournalFormComp
           formData={formData}
           errors={errors}

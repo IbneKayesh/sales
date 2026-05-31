@@ -15,8 +15,9 @@ import { useAuth } from "@/hooks/useAuth.jsx";
 import { buildCoaTree, findCoaTree } from "@/utils/jsonParser.js";
 
 const useJournal = () => {
-  //hooks :: menuId M05-M02,
+  //hooks :: menuId M07-M03-M001,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
+  //form :: SYS_FRM_1, list :: SYS_LST_1, search :: SYS_SRC_1
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
     useAppUI();
@@ -27,7 +28,7 @@ const useJournal = () => {
     delpr: false,
   });
   const [crTitle, setCrTitle] = useState("Journal List");
-  const [crView, setCrView] = useState("list");
+  const [crView, setCrView] = useState("SYS_LST_1");
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
@@ -74,7 +75,7 @@ const useJournal = () => {
   const [dataListItems, setDataListItems] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M05-M02");
+    const perms = getPageAuth("M07-M03-M001");
     setPageAuth(perms);
   }, [getPageAuth]);
 
@@ -126,7 +127,7 @@ const useJournal = () => {
     }
     setFormData(rowData);
     setCrTitle("Edit Journal");
-    setCrView("form");
+    setCrView("SYS_FRM_1");
     handleGetDetail(rowData.id);
   };
 
@@ -159,7 +160,7 @@ const useJournal = () => {
       });
       if (resp.success) {
         setCrTitle("Journal List");
-        setCrView("list");
+        setCrView("SYS_LST_1");
         loadJournal();
       }
     } catch (error) {
@@ -170,20 +171,20 @@ const useJournal = () => {
 
   const handleBackClick = () => {
     setCrTitle("Journal List");
-    setCrView("list");
+    setCrView("SYS_LST_1");
     setFormData(dataModel);
   };
 
   const handleSearchClick = () => {
     setCrTitle("Search Journal");
-    setCrView("list");
+    setCrView("SYS_LST_1");
     alert({ message: "Search is clicked", header: "Search" });
     //ketp this function as it is
   };
 
   const handleRefreshClick = () => {
     setCrTitle("Journal List");
-    setCrView("list");
+    setCrView("SYS_LST_1");
     loadJournal();
   };
 
@@ -193,7 +194,7 @@ const useJournal = () => {
       return;
     }
     setCrTitle("Add Journal");
-    setCrView("form");
+    setCrView("SYS_FRM_1");
     setFormData(dataModel);
 
     handleGetDepartment();
@@ -249,7 +250,7 @@ const useJournal = () => {
       });
       if (resp.success) {
         setCrTitle("Journal List");
-        setCrView("list");
+        setCrView("SYS_LST_1");
         loadJournal();
       }
     } catch (error) {

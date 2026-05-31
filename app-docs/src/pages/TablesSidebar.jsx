@@ -165,7 +165,12 @@ const TablesSidebar = ({
                 </h4>
                 <div className="form-grid form-grid-4 tables-sidebar-form-grid">
                   <div className="form-group">
-                    <label className="form-label">Name *</label>
+                    <label className="form-label">
+                      Name *
+                      {formDataColumn?.column_name?.length !== 11 && (
+                        <span style={{ color: "red" }}> :Invalid Length</span>
+                      )}
+                    </label>
                     <input
                       className="form-input"
                       type="text"
@@ -324,9 +329,7 @@ const TablesSidebar = ({
                           }}
                         >
                           <option value="">
-                            {loadingRefColumns
-                              ? "Loading…"
-                              : "Select column…"}
+                            {loadingRefColumns ? "Loading…" : "Select column…"}
                           </option>
                           {refColumnOptions.map((c) => (
                             <option key={c.id} value={c.id}>

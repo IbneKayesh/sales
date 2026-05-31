@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Mechanical Calendar</title>
+    <!-- Google Fonts for premium retro-futuristic mechanical design -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="calendar-hardware">
+        <!-- Mechanical trim details -->
+        <div class="metallic-top-trim"></div>
+        <div class="metallic-trim-screw left"></div>
+        <div class="metallic-trim-screw right"></div>
+
+        <!-- The underlying perpetual numbers plate -->
+        <div class="fixed-date-plate" id="date-plate"></div>
+
+        <!-- The sliding interactive dial overlay -->
+        <div class="sliding-overlay" id="slider">
+            <div class="slider-glass-frame" id="slider-glass"></div>
+            <div class="slider-header">
+                <span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span>
+            </div>
+            <div class="cutout-grid" id="cutout-grid"></div>
+        </div>
+
+        <!-- Elegant brand bezel & interactive controls -->
+        <div class="hardware-bottom">
+            <div class="brand-engraving">SGD.COM</div>
+            
+            <div class="month-dial-container">
+                <span class="label">MONTH</span>
+                <div class="month-window" id="month-display">OCT</div>
+                <div class="thumb-wheel" id="month-wheel" title="Scroll or drag to change month"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

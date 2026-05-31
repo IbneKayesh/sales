@@ -12,6 +12,8 @@ export const toIntOrNull = (v) => {
 
 export const toDateOrNull = (v) => {
   if (isBlank(v)) return null;
+  const match = String(v).match(/^(\d{4}-\d{2}-\d{2})/);
+  if (match) return match[1];
   const d = new Date(v);
   if (Number.isNaN(d.getTime())) return null;
   return d.toISOString().split("T")[0];

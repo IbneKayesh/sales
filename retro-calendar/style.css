@@ -1,0 +1,392 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+:root {
+    --cell-w: 38px;
+    --cell-h: 32px;
+    --gap-x: 8px;
+    --gap-y: 8px;
+    --step-width: calc(var(--cell-w) + var(--gap-x));
+
+    /* Design tokens */
+    --color-body-bg-start:    #1c1f26;
+    --color-body-bg-end:      #0d0f13;
+    --color-hardware-light:   #e8e6df;
+    --color-hardware-mid:     #cac8c0;
+    --color-hardware-dark:    #9c9a92;
+    --color-accent:           #2563eb;     /* Corporate blue */
+    --color-accent-light:     #3b82f6;
+    --color-date-text:        #0f172a;     /* Deep navy — max contrast */
+    --color-date-text-shadow: rgba(255,255,255,0.6);
+    --color-dot:              rgba(80, 78, 72, 0.28);
+    --color-brand:            #3d3b36;
+}
+
+/* ─── Body ─────────────────────────────────────────────────────────────────── */
+body {
+    background: radial-gradient(ellipse at 50% 40%, var(--color-body-bg-start) 0%, var(--color-body-bg-end) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Space Grotesk', sans-serif;
+    user-select: none;
+    overflow: hidden;
+}
+
+/* Subtle ambient glow behind the device */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 700px 400px at 50% 50%, rgba(37,99,235,0.07) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* ─── Hardware Body ─────────────────────────────────────────────────────────── */
+.calendar-hardware {
+    position: relative;
+    width: 640px;
+    height: 400px;
+
+    /* Anodized aluminum panel — fine brush texture via repeating-linear-gradient */
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px,
+            transparent 1px, transparent 4px
+        ),
+        linear-gradient(160deg,
+            #f4f2ec 0%,
+            #dddad0 30%,
+            #c8c5bb 60%,
+            #b0aea6 85%,
+            #9e9c94 100%
+        );
+    background-color: #d4d2c8; /* fallback */
+    border-radius: 20px;
+    border: 1px solid #b5b3ac;
+    box-sizing: border-box;
+    padding: 0;
+
+    /* Rich layered shadows for physical depth */
+    box-shadow:
+        inset 0 1.5px 3px rgba(255,255,255,0.85),
+        inset 0 -3px 8px rgba(0,0,0,0.18),
+        0 2px 0 #a8a6a0,
+        0 4px 12px rgba(0,0,0,0.35),
+        0 20px 50px rgba(0,0,0,0.55),
+        0 40px 90px rgba(0,0,0,0.35);
+}
+
+/* ─── Metallic Top Trim ─────────────────────────────────────────────────────── */
+.metallic-top-trim {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 14px;
+    background: linear-gradient(to bottom,
+        #ffffff 0%,
+        #f0eeea 30%,
+        #c8c6c0 75%,
+        #a09e98 100%
+    );
+    background-color: #d8d6d0;
+    border-top-left-radius: 19px;
+    border-top-right-radius: 19px;
+    border-bottom: 1px solid #9a9890;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.9),
+        0 1px 3px rgba(0,0,0,0.12);
+}
+
+/* Accent rule beneath the trim bar */
+.metallic-top-trim::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 32px; right: 32px;
+    height: 2px;
+    background: linear-gradient(to right,
+        transparent,
+        var(--color-accent) 20%,
+        var(--color-accent-light) 50%,
+        var(--color-accent) 80%,
+        transparent
+    );
+    border-radius: 1px;
+    opacity: 0.6;
+}
+
+/* ─── Screws ────────────────────────────────────────────────────────────────── */
+.metallic-trim-screw {
+    position: absolute;
+    top: 20px;
+    width: 11px;
+    height: 11px;
+    background: radial-gradient(circle at 38% 38%,
+        #ffffff 0%,
+        #b0aea8 55%,
+        #5a5855 100%
+    );
+    border-radius: 50%;
+    border: 1px solid #6a6864;
+    box-shadow:
+        inset 0 1px 2px rgba(0,0,0,0.5),
+        0 1px 1px rgba(255,255,255,0.8),
+        0 2px 4px rgba(0,0,0,0.2);
+}
+.metallic-trim-screw.left  { left: 26px; }
+.metallic-trim-screw.right { right: 26px; }
+
+/* Phillips screw head slot */
+.metallic-trim-screw::before,
+.metallic-trim-screw::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 7px; height: 1.5px;
+    background: rgba(30,28,26,0.7);
+    border-radius: 1px;
+    transform-origin: center;
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+.metallic-trim-screw::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+/* ─── Number Plate ──────────────────────────────────────────────────────────── */
+.fixed-date-plate {
+    position: absolute;
+    left: 25px;
+    top: 92px;
+    width: 590px;
+    display: grid;
+    grid-template-columns: repeat(13, var(--cell-w));
+    column-gap: var(--gap-x);
+    row-gap: var(--gap-y);
+}
+
+/* Base: all numbers outside the slider window (dimmer) */
+.date-num {
+    width: var(--cell-w);
+    height: var(--cell-h);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(15, 23, 42, 0.35);   /* Muted — outside slider window */
+    text-shadow: none;
+    letter-spacing: -0.3px;
+}
+
+/* Numbers "visible" through slider — highlighted class added by JS */
+.date-num.visible {
+    color: var(--color-date-text);             /* Deep navy #0f172a */
+    text-shadow:
+        0 1px 0 rgba(255,255,255,0.75),
+        0 -1px 0 rgba(0,0,0,0.05);
+    font-size: 15px;
+}
+
+/* Sunday column visible numbers get the accent red */
+.date-num.visible.sunday {
+    color: #b91c1c;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+
+.date-num.dot {
+    color: var(--color-dot);
+    font-size: 10px;
+    font-weight: 400;
+}
+
+/* ─── Slider Container ──────────────────────────────────────────────────────── */
+.sliding-overlay {
+    position: absolute;
+    top: 46px;
+    left: 14px;
+    width: 336px;
+    height: 246px;
+    cursor: grab;
+    padding: 10px;
+    box-sizing: border-box;
+    touch-action: none;
+    z-index: 10;
+}
+.sliding-overlay:active { cursor: grabbing; }
+
+/* ─── Glass Frame (masked) ──────────────────────────────────────────────────── */
+.slider-glass-frame {
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: rgba(240, 238, 232, 0.28);
+    backdrop-filter: blur(6px) saturate(130%) brightness(1.04);
+    -webkit-backdrop-filter: blur(6px) saturate(130%) brightness(1.04);
+    border: 1.5px solid rgba(255,255,255,0.7);
+    box-shadow:
+        0 8px 32px rgba(0,0,0,0.22),
+        0 1px 0 rgba(255,255,255,0.9) inset,
+        0 -2px 6px rgba(0,0,0,0.1) inset;
+    pointer-events: none;
+    z-index: 1;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+}
+
+/* Accent rule on bottom edge of the slider frame */
+.slider-glass-frame::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 14px; right: 14px;
+    height: 2px;
+    background: linear-gradient(to right,
+        transparent,
+        var(--color-accent) 30%,
+        var(--color-accent-light) 50%,
+        var(--color-accent) 70%,
+        transparent
+    );
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    opacity: 0.5;
+}
+
+/* ─── Day-of-week Header ────────────────────────────────────────────────────── */
+.slider-header {
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+    display: flex;
+    column-gap: var(--gap-x);
+    border-bottom: 1.5px solid rgba(37,99,235,0.2);
+    padding-bottom: 7px;
+    margin-bottom: 8px;
+}
+
+.slider-header span {
+    width: var(--cell-w);
+    text-align: center;
+    font-family: 'Outfit', sans-serif;
+    font-size: 10.5px;
+    font-weight: 800;
+    color: rgba(30, 41, 59, 0.65);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.slider-header span:first-child {
+    color: #b91c1c;
+}
+
+/* ─── Cutout Grid ───────────────────────────────────────────────────────────── */
+.cutout-grid {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(7, var(--cell-w));
+    column-gap: var(--gap-x);
+    row-gap: var(--gap-y);
+}
+
+/* Individual beveled hole */
+.hole {
+    height: var(--cell-h);
+    background: transparent;
+    border-radius: 5px;
+    box-shadow:
+        inset 2px 2px 5px rgba(0,0,0,0.22),
+        inset -1px -1px 2px rgba(255,255,255,0.75);
+    pointer-events: none;
+}
+
+/* ─── Bottom Bezel ──────────────────────────────────────────────────────────── */
+.hardware-bottom {
+    position: absolute;
+    bottom: 22px;
+    left: 24px; right: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0,0,0,0.12);
+    box-shadow: 0 -1px 0 rgba(255,255,255,0.75);
+}
+
+/* ─── Brand Engraving ───────────────────────────────────────────────────────── */
+.brand-engraving {
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 7px;
+    color: transparent;
+    background: linear-gradient(135deg, #6b6860 0%, #3a3835 50%, #6b6860 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    text-shadow: none;
+    /* Engraved shadow below to simulate stamping */
+    filter: drop-shadow(0 1px 0 rgba(255,255,255,0.65)) drop-shadow(0 -0.5px 0 rgba(0,0,0,0.3));
+}
+
+/* ─── Month Controls ────────────────────────────────────────────────────────── */
+.month-dial-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.month-dial-container .label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 9px;
+    font-weight: 800;
+    color: #8a8780;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.month-window {
+    min-width: 52px;
+    text-align: center;
+    padding: 6px 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--color-date-text);
+    background: linear-gradient(160deg, #f8f7f3 0%, #e8e6e0 100%);
+    border-radius: 7px;
+    border: 1px solid #aeaca6;
+    box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.12),
+        inset 0 -1px 2px rgba(255,255,255,0.9),
+        0 1px 3px rgba(0,0,0,0.18);
+}
+
+/* ─── Thumb Wheel ───────────────────────────────────────────────────────────── */
+.thumb-wheel {
+    width: 28px;
+    height: 40px;
+    background: repeating-linear-gradient(
+        to bottom,
+        #232120 0px,
+        #7a7874 3px,
+        #b5b3ae 6px,
+        #7a7874 9px,
+        #232120 12px
+    );
+    border-radius: 5px;
+    cursor: ns-resize;
+    border: 1.5px solid #383633;
+    box-shadow:
+        inset 2px 0 4px rgba(255,255,255,0.12),
+        inset -2px 0 4px rgba(0,0,0,0.5),
+        0 2px 8px rgba(0,0,0,0.4);
+    transition: filter 0.15s ease, transform 0.1s ease;
+}
+.thumb-wheel:hover  { filter: brightness(1.1); }
+.thumb-wheel:active { transform: scaleY(0.95); filter: brightness(0.92); }

@@ -37,10 +37,8 @@ const useContacts = () => {
   const [cntct_crncy_Options, setCntct_crncy_Options] = useState([]);
 
   const cntct_ctype_Options = [
-    { label: "Buyer", value: "Buyer" },
     { label: "Customer", value: "Customer" },
     { label: "Supplier", value: "Supplier" },
-    { label: "All", value: "All" },
   ];
 
   const cntct_sorce_Options = [

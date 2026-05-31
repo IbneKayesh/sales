@@ -91,6 +91,10 @@ const toOptionalDate = (value, label) => {
   if (isBlank(value)) {
     return { value: null };
   }
+  const match = String(value).match(/^(\d{4}-\d{2}-\d{2})/);
+  if (match) {
+    return { value: match[1] };
+  }
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) {
     return { error: `Please enter a valid ${label}.` };

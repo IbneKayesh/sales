@@ -55,11 +55,15 @@ const featureMatchesFilters = (
 
 const formatDateInput = (value) => {
   if (!value) return "";
-  try {
-    return new Date(value).toISOString().split("T")[0];
-  } catch {
-    return "";
-  }
+  return String(value).split("T")[0];
+};
+
+const getLocalTodayString = () => {
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
 
 const useFeatures = () => {
@@ -224,8 +228,8 @@ const useFeatures = () => {
       feature_name: "",
       feature_description: "",
       serial_number: "",
-      start_date: new Date().toISOString().split("T")[0],
-      end_date: new Date().toISOString().split("T")[0],
+      start_date: getLocalTodayString(),
+      end_date: getLocalTodayString(),
       progress_percent: 0,
       is_url_link: false,
     });
@@ -287,7 +291,7 @@ const useFeatures = () => {
   };
 
   const handleDateChange = (name, dateValue) => {
-    handleInputChange(name, dateValue ? new Date(dateValue).toISOString() : "");
+    handleInputChange(name, dateValue || "");
   };
 
   const handleDeleteClick = async (id) => {

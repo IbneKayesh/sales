@@ -3,6 +3,17 @@ const fs = require("fs");
 const path = require("path");
 const { AsyncLocalStorage } = require("async_hooks");
 
+
+// DATE
+//pg.types.setTypeParser(1082, (value) => value);
+
+// TIMESTAMP WITHOUT TIME ZONE
+//pg.types.setTypeParser(1114, (value) => value);
+
+// TIMESTAMP WITH TIME ZONE
+//pg.types.setTypeParser(1184, (value) => value);
+
+
 // 1. Setup Context Storage to track which pool belongs to which request
 const dbContext = new AsyncLocalStorage();
 

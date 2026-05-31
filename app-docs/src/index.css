@@ -620,7 +620,7 @@ body {
   right: 0;
   bottom: 0;
   background-color: var(--bg-overlay);
-  backdrop-filter: blur(1px);
+  backdrop-filter: blur(0.8px);
   z-index: var(--z-modal);
   animation: fadeIn var(--transition-fast);
 }

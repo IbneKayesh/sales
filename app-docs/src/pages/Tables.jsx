@@ -90,6 +90,7 @@ const Tables = () => {
               aria-label="Filter by project"
             >
               <option value="">All projects</option>
+              <option value="NM">Non matched</option>
               {projectOptions.map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.feature_name}
