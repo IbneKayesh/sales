@@ -5,7 +5,7 @@ export const rootMenus = [
     title: "Sales Manager",
     icon: "💼",
     color: "#0078d4",
-    path: "This PC > Sales Manager",
+    path: "System Root > Sales Manager",
     children: [
       {
         id: "sales-orders",
@@ -64,7 +64,7 @@ export const rootMenus = [
     title: "Purchase Manager",
     icon: "🛒",
     color: "#107c41",
-    path: "This PC > Purchase Manager",
+    path: "System Root > Purchase Manager",
     children: [
       {
         id: "purchase-orders",
@@ -103,7 +103,7 @@ export const rootMenus = [
     title: "Inventory Manager",
     icon: "📦",
     color: "#d83b01",
-    path: "This PC > Inventory Manager",
+    path: "System Root > Inventory Manager",
     children: [
       {
         id: "stock-levels",
@@ -132,7 +132,7 @@ export const rootMenus = [
     title: "System Settings",
     icon: "⚙️",
     color: "#8764b8",
-    path: "This PC > Control Panel > Settings",
+    path: "System Root > Control Panel > Settings",
     children: [
       {
         id: "profile-settings",
@@ -161,7 +161,7 @@ export const rootMenus = [
     title: "Notifications",
     icon: "🔔",
     color: "#0078d4",
-    path: "This PC > Notifications",
+    path: "System Root > Notifications",
     children: [
       {
         id: "notifications",
@@ -171,6 +171,24 @@ export const rootMenus = [
         pageKey: "NotificationPage",
         defaultSize: "medium",
         group: "Notifications",
+      },
+    ],
+  },
+  {
+    id: "Preferences",
+    title: "Preferences",
+    icon: "🔔",
+    color: "#0078d4",
+    path: "System Root > Preferences",
+    children: [
+      {
+        id: "Preferences",
+        title: "Preferences",
+        desc: "Preferences log",
+        type: "page",
+        pageKey: "NotificationPage",
+        defaultSize: "medium",
+        group: "Preferences",
       },
     ],
   },

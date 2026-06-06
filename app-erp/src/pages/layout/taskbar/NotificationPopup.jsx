@@ -1,8 +1,15 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
-export default function NotificationPopup({ notifications, onMarkRead, onMarkAllRead, onDismiss, onOpenPage, onClose }) {
+export default function NotificationPopup({
+  notifications,
+  onMarkRead,
+  onMarkAllRead,
+  onDismiss,
+  onOpenPage,
+  onClose,
+}) {
   const popupRef = useRef(null);
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   // Close on click outside
   useEffect(() => {
@@ -11,8 +18,8 @@ export default function NotificationPopup({ notifications, onMarkRead, onMarkAll
         onClose();
       }
     };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
   }, [onClose]);
 
   return (
@@ -26,7 +33,9 @@ export default function NotificationPopup({ notifications, onMarkRead, onMarkAll
           )}
         </span>
         {unreadCount > 0 && (
-          <button className="notif-mark-all-btn" onClick={onMarkAllRead}>Mark all read</button>
+          <button className="notif-mark-all-btn" onClick={onMarkAllRead}>
+            Mark all read
+          </button>
         )}
       </div>
 
@@ -38,10 +47,10 @@ export default function NotificationPopup({ notifications, onMarkRead, onMarkAll
             No notifications
           </div>
         ) : (
-          notifications.map(n => (
+          notifications.map((n) => (
             <div
               key={n.id}
-              className={`notif-item ${n.read ? 'read' : 'unread'}`}
+              className={`notif-item ${n.read ? "read" : "unread"}`}
               onClick={() => !n.read && onMarkRead(n.id)}
             >
               <div className="notif-item-icon">{n.icon}</div>
@@ -52,9 +61,14 @@ export default function NotificationPopup({ notifications, onMarkRead, onMarkAll
               </div>
               <button
                 className="notif-item-dismiss"
-                onClick={e => { e.stopPropagation(); onDismiss(n.id); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDismiss(n.id);
+                }}
                 title="Dismiss"
-              >✕</button>
+              >
+                ✕
+              </button>
             </div>
           ))
         )}
@@ -64,7 +78,10 @@ export default function NotificationPopup({ notifications, onMarkRead, onMarkAll
       <div className="notif-popup-footer">
         <button
           className="notif-open-page-btn"
-          onClick={() => { onOpenPage(); onClose(); }}
+          onClick={() => {
+            onOpenPage();
+            onClose();
+          }}
         >
           📋 View All Notifications
         </button>
