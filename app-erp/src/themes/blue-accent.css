@@ -1,0 +1,6 @@
+:root[data-theme="blue"] {
+  --accent-color: #0078d4;
+  --accent-light: #60cdff;
+  --accent-dark: #005a9e;
+  --accent-glow: rgba(96, 205, 255, 0.45);
+}

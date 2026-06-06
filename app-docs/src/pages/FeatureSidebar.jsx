@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { apiRequest } from "../utils/api";
 import { sortColumnsErdOrder } from "../utils/schemaErd.js";
 import ColumnChipRows from "../components/ColumnChipRows";
+import EmptyListText from "../components/EmptyListText";
 
 const FeatureSidebar = ({
   isBusy,
@@ -393,9 +394,9 @@ const FeatureSidebar = ({
                   ))}
                 </div>
               ) : (
-                <p className="empty-list-text empty-list-text-compact">
+                <EmptyListText compact>
                   No linked tables yet.
-                </p>
+                </EmptyListText>
               )}
 
               {sortedColumnList && sortedColumnList.length > 0 && (
@@ -475,9 +476,9 @@ const FeatureSidebar = ({
                   ))}
                 </div>
               ) : (
-                <p className="empty-list-text empty-list-text-compact">
+                <EmptyListText compact>
                   No tasks yet.
-                </p>
+                </EmptyListText>
               )}
             </section>
           )}

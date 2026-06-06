@@ -6,7 +6,7 @@ color 0e
 echo.
 echo  -=-=-=- MENU -=-=-=-
 echo Show choice as below-
-echo 1. Web + API (active)
+echo 1. Web + API + Docs (active)
 echo 2. Mobile + API
 echo 3. Web + Mobile + API
 echo 4. Web
@@ -32,7 +32,8 @@ goto MENU
 :WA
 start cmd /k "cd backend-app && node server.js"
 start cmd /k "cd app-web && npm run dev"
-echo  ---- Web + API Running ----
+start cmd /k "cd app-docs && npm start"
+echo  ---- Web + API + Docs Running ----
 goto MENU
 
 :MA

@@ -189,4 +189,32 @@ WHERE fsy.fsyar_apusr = $1
   return result;
 };
 
-module.exports = { GenNewCode, GenNewTrn, getFiscalYearPeriod };
+const getDefaultCOAforPartyId = async (user_c, user_b, src_id) => {
+  const sql = `
+    SELECT rcg.parcg_chtac
+    FROM tmtb_parcg rcg
+    WHERE rcg.parcg_apusr = $1
+    AND rcg.parcg_bsins = $2
+    AND rcg.parcg_sorce = $3
+    AND rcg.parcg_actve = TRUE`;
+
+  //console.log(user_c, user_b, dept_id);
+
+  const result = await dbGet(sql, [user_c, user_b, src_id]);
+
+  //console.log(result);
+  if (!result || result.length === 0) {
+    throw new Error(
+      `No default chart of accounts configured for this ${src_id}`,
+    );
+  }
+
+  return result.parcg_chtac;
+};
+
+module.exports = {
+  GenNewCode,
+  GenNewTrn,
+  getFiscalYearPeriod,
+  getDefaultCOAforPartyId,
+};

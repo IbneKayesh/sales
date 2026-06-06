@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-const { GenNewCode } = require("../../db/genHelper");
+const { GenNewCode, getDefaultCOAforPartyId } = require("../../db/genHelper");
 
 // get all
 router.post("/", async (req, res) => {
@@ -140,6 +140,23 @@ const create = async (req, res) => {
     }
 
     //database action
+    let customerDefaultCOA = "";
+
+    if (cntct_ctype === "Customer") {
+      customerDefaultCOA = await getDefaultCOAforPartyId(
+        user_c,
+        user_b,
+        "SYS_PARTY_COA_CNF_CUSTOMER",
+      );
+    }
+    if (cntct_ctype === "Supplier") {
+      supplierDefaultCOA = await getDefaultCOAforPartyId(
+        user_c,
+        user_b,
+        "SYS_PARTY_COA_CNF_SUPPLIER",
+      );
+    }
+
     const newCode = await GenNewCode(user_c, "tmcb_cntct");
 
     const sql = `INSERT INTO tmcb_cntct(id, cntct_apusr, cntct_bsins, cntct_ctype, cntct_sorce, cntct_ccode,
@@ -648,4 +665,9 @@ router.post("/get-suppliers", async (req, res) => {
     });
   }
 });
+
+
+
+
+
 module.exports = router;

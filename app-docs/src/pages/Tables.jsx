@@ -3,6 +3,7 @@ import TablesSidebar from "./TablesSidebar";
 import LoadingSpinner from "../components/LoadingSpinner";
 import SqlPreviewModal from "../components/SqlPreviewModal";
 import TableErdCard from "../components/TableErdCard";
+import EmptyCardsState from "../components/EmptyCardsState";
 
 const Tables = () => {
   const {
@@ -218,11 +219,10 @@ const Tables = () => {
               />
             ))
           ) : (
-            <div className="empty-cards-state">
-              <h3 className="empty-state-title">No matching tables</h3>
-              <p className="empty-state-text">
-                Try different filters or clear them to see more of the schema.
-              </p>
+            <EmptyCardsState
+              title="No matching tables"
+              text="Try different filters or clear them to see more of the schema."
+            >
               <button
                 type="button"
                 className="btn btn-secondary"
@@ -230,11 +230,13 @@ const Tables = () => {
               >
                 Clear filters
               </button>
-            </div>
+            </EmptyCardsState>
           )
         ) : (
-          <div className="empty-cards-state">
-            <div className="empty-state-icon">
+          <EmptyCardsState
+            title="No entities yet"
+            text="Create tables to model your database schema with primary keys, foreign keys, and relationships."
+            icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="36"
@@ -249,12 +251,8 @@ const Tables = () => {
                 <rect x="3" y="3" width="18" height="18" rx="2" />
                 <path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
               </svg>
-            </div>
-            <h3 className="empty-state-title">No entities yet</h3>
-            <p className="empty-state-text">
-              Create tables to model your database schema with primary keys,
-              foreign keys, and relationships.
-            </p>
+            }
+          >
             <button
               className="btn btn-primary"
               onClick={handleAddNew}
@@ -262,7 +260,7 @@ const Tables = () => {
             >
               + Create first table
             </button>
-          </div>
+          </EmptyCardsState>
         )}
       </div>
 

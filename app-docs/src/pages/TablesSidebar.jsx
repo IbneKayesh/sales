@@ -4,6 +4,7 @@ import { sortColumnsErdOrder } from "../utils/schemaErd.js";
 import { apiRequest } from "../utils/api";
 import ColumnChipRows from "../components/ColumnChipRows";
 import SqlPreviewModal, { SqlViewButton } from "../components/SqlPreviewModal";
+import EmptyListText from "../components/EmptyListText";
 
 const TablesSidebar = ({
   isBusy,
@@ -150,7 +151,10 @@ const TablesSidebar = ({
                   onInputChange("table_description", e.target.value);
                 }}
                 placeholder="Enter table description"
-                rows="2"
+                rows={Math.max(
+                  2,
+                  (formData.table_description || "").split("\n").length,
+                )}
               />
             </div>
           </section>
@@ -464,9 +468,7 @@ const TablesSidebar = ({
                     ))}
                   </div>
                 ) : (
-                  <p className="empty-list-text empty-list-text-compact">
-                    No columns yet.
-                  </p>
+                  <EmptyListText compact>No columns yet.</EmptyListText>
                 )}
               </section>
             </>

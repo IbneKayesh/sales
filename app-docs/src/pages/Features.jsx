@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import useFeatures from "../hooks/useFeatures.js";
 import FeatureSidebar from "./FeatureSidebar";
 import LoadingSpinner from "../components/LoadingSpinner";
+import EmptyCardsState from "../components/EmptyCardsState";
 import {
   formatFeatureTypeLabel,
   formatEndDateRemaining,
@@ -317,13 +318,50 @@ const Features = () => {
             <tbody>{treeRows}</tbody>
           </table>
         ) : (
-          <p className="empty-list-text">
-            {dataList.length === 0
-              ? "No features found."
-              : hasActiveFilters
-                ? "No features match your search or filters."
-                : "No features found."}
-          </p>
+          <EmptyCardsState
+            title={dataList.length === 0 ? "No features yet" : "No matching features"}
+            text={
+              dataList.length === 0
+                ? "Create projects and features to manage and organize your project details."
+                : "Try different filters or clear them to see more features."
+            }
+            icon={
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+              </svg>
+            }
+          >
+            {dataList.length === 0 ? (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => handleAddClick({ id: "", type: "-" })}
+                disabled={isBusy}
+              >
+                + Add first project
+              </button>
+            ) : (
+              hasActiveFilters && (
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={clearFilters}
+                >
+                  Clear filters
+                </button>
+              )
+            )}
+          </EmptyCardsState>
         )}
       </div>
 
