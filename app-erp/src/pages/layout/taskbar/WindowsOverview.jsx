@@ -15,7 +15,7 @@ export default function WindowsOverview({ windows, onFocusWindow, onClose }) {
 
   return (
     <div className="overview-overlay" onClick={onClose}>
-      <div className="overview-title">All Open Windows — Quick View</div>
+      <div className="overview-title">Quick View</div>
 
       {windows.length === 0 ? (
         <div className="overview-empty">No windows are currently open.</div>

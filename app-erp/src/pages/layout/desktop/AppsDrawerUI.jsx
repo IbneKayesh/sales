@@ -64,7 +64,11 @@ export default function AppsDrawerUI({ user, onOpenPage, onClose }) {
         style={{ zIndex: 9999 }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="awe-title-header">App Window Explore</div>
+        <div className="awe-title-header">
+          {currentView === "roots"
+            ? "Application Suites"
+            : currentView.title}
+        </div>
 
         <div className="awe-search-bar">
           <div className="awe-search-box">
@@ -109,12 +113,6 @@ export default function AppsDrawerUI({ user, onOpenPage, onClose }) {
               </button>
             )}
           </div>
-        </div>
-
-        <div className="awe-section-label">
-          {currentView === "roots"
-            ? "All Application Suites"
-            : currentView.title}
         </div>
 
         <div className="awe-body">
