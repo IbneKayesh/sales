@@ -166,6 +166,7 @@ export const rootMenus = [
       {
         id: "notifications",
         title: "Notifications",
+    icon: "🔔",
         desc: "Notifications log",
         type: "page",
         pageKey: "NotificationPage",
