@@ -6,6 +6,7 @@ import StartBtn from "./taskbar/StartBtn";
 import SystemClock from "./taskbar/SystemClock";
 import NotificationsBtn from "./taskbar/NotificationsBtn";
 import quickviewImage from "../../assets/screen-options.png";
+import LoggedUserBtn from "./taskbar/LoggedUserBtn";
 
 export default function TaskbarUI({
   windows,
@@ -196,14 +197,11 @@ export default function TaskbarUI({
           isDesktopActive={showDesktopActive}
           onToggleClick={onToggleShowDesktop}
         />
-
-        <button
-          className="profile-avatar-btn"
-          onClick={onProfileClick}
-          title={`Profile: ${user.name}`}
-        >
-          {user.avatarText || user.name.slice(0, 2).toUpperCase()}
-        </button>
+        <LoggedUserBtn
+          avatarText={user.avatarText}
+          userName={user.name}
+          onToggleClick={onProfileClick}
+        />
       </div>
     </div>
   );

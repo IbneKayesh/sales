@@ -6,6 +6,10 @@ import VendorsPage from "../purchase/VendorsPage";
 import StockPage from "../inventory/StockPage";
 import SettingsPage from "../SettingsPage";
 import NotificationPage from "../NotificationPage";
+import desktopImage from "../../assets/desktop.png";
+import searchImage from "../../assets/search.png";
+import addImage from "../../assets/add.png";
+import saveImage from "../../assets/save.png";
 
 // Map string keys to component objects for easy rendering
 const pageMap = {
@@ -188,7 +192,7 @@ export default function PagesUI({
 
   const applyDockVars = useCallback(() => {
     const el = windowRef.current;
-    const taskbar = document.querySelector('.taskbar-container');
+    const taskbar = document.querySelector(".taskbar-container");
     if (!el || !taskbar) return;
 
     const elRect = el.getBoundingClientRect();
@@ -205,19 +209,18 @@ export default function PagesUI({
     const dx = targetX - startX;
     const dy = targetY - startY;
 
-    el.style.setProperty('--wfe-dock-dx', `${dx}px`);
-    el.style.setProperty('--wfe-dock-dy', `${dy}px`);
+    el.style.setProperty("--wfe-dock-dx", `${dx}px`);
+    el.style.setProperty("--wfe-dock-dy", `${dy}px`);
 
     // a little tilt while traveling
     const rot = Math.max(-10, Math.min(10, dx * 0.02));
-    el.style.setProperty('--wfe-dock-rot', `${rot}deg`);
+    el.style.setProperty("--wfe-dock-rot", `${rot}deg`);
 
     // scale: proportional to distance (cap for stability)
     const dist = Math.hypot(dx, dy);
     const scale = Math.max(0.12, Math.min(0.24, 700 / (dist + 1)));
-    el.style.setProperty('--wfe-dock-scale', `${scale}`);
+    el.style.setProperty("--wfe-dock-scale", `${scale}`);
   }, []);
-
 
   const windowRef = useRef(null);
   const dragStart = useRef(null);
@@ -233,10 +236,6 @@ export default function PagesUI({
     }
     prevMinimizedRef.current = minimized;
   }, [minimized, applyDockVars]);
-
-
-
-
 
   // Set window focus on click anywhere inside WFE (NOT triggered by controls)
   const handleWindowClick = () => {
@@ -255,13 +254,15 @@ export default function PagesUI({
   }, []);
 
   // Minimize with dock animation; keep mounted until animation end
-  const handleMinimizeClick = useCallback((e) => {
-    e.stopPropagation();
-    // Prepare CSS vars for transform distance/scale
-    applyDockVars();
-    setAnimState("minimizing");
-  }, [applyDockVars]);
-
+  const handleMinimizeClick = useCallback(
+    (e) => {
+      e.stopPropagation();
+      // Prepare CSS vars for transform distance/scale
+      applyDockVars();
+      setAnimState("minimizing");
+    },
+    [applyDockVars],
+  );
 
   // Maximize/Restore with shake animation
   const handleMaximizeClick = useCallback(
@@ -296,8 +297,6 @@ export default function PagesUI({
       return;
     }
   }, [animState, id, onMinimize]);
-
-
 
   // Dragging Implementation (with wobbly effect)
   const handleHeaderMouseDown = (e) => {
@@ -417,7 +416,6 @@ export default function PagesUI({
     <div
       ref={windowRef}
       className={`wfe-window acrylic-container ${maximized ? "maximized" : ""} ${animState === "minimizing" ? "wfe-animate-out" : ""} ${animState === "restoring" ? "wfe-animate-in" : ""} ${minimized ? "minimized" : ""} ${minimized && animState === "idle" ? "is-fully-minimized" : ""}`}
-
       style={{
         left: maximized ? 0 : `${position.x}px`,
         top: maximized ? 0 : `${position.y}px`,
@@ -428,12 +426,13 @@ export default function PagesUI({
         zIndex,
         border: maximized ? "none" : "1px solid var(--border-acrylic-focus)",
         // Allow explorer to have its own distinct background from the desktop
-        '--wfe-wallpaper-url': wallpaperUrl,
+        backgroundImage: `url(${wallpaperUrl})`,
       }}
       onClick={handleWindowClick}
       onAnimationEnd={handleAnimationEnd}
     >
-      {/* Title Bar */}
+      {/* Title Bar 
+        '--wfe-wallpaper-url': wallpaperUrl, */}
       <div className="wfe-header" onMouseDown={handleHeaderMouseDown}>
         <div className="wfe-header-title">
           <span className="wfe-header-icon">{icon}</span>
@@ -475,16 +474,34 @@ export default function PagesUI({
       <div className="wfe-toolbar wfe-toolbar-custom">
         <div className="wfe-toolbar-actions">
           <button className="wfe-nav-btn wfe-toolbar-btn-sm" title="New">
-            +
+            <img
+              src={addImage}
+              alt="Add Action"
+              width="16"
+              height="16"
+              style={{ color: "var(--accent-light)" }}
+            />
           </button>
           <button className="wfe-nav-btn wfe-toolbar-btn-sm save" title="Save">
-            💾
+            <img
+              src={saveImage}
+              alt="Save Action"
+              width="16"
+              height="16"
+              style={{ color: "var(--accent-light)" }}
+            />
           </button>
           <button
             className="wfe-nav-btn wfe-toolbar-btn-sm search"
             title="Search"
           >
-            🔍
+            <img
+              src={searchImage}
+              alt="Search Action"
+              width="16"
+              height="16"
+              style={{ color: "var(--accent-light)" }}
+            />
           </button>
           {type === "folder" && (
             <>
@@ -501,7 +518,15 @@ export default function PagesUI({
         </div>
 
         <div className="wfe-address-bar wfe-address-bar-left">
-          <span className="wfe-address-bar-pc-icon">💻</span>
+          <span className="wfe-address-bar-pc-icon">
+            <img
+              src={desktopImage}
+              alt="Address Bar Image"
+              width={14}
+              height={14}
+              style={{ color: "var(--accent-light)" }}
+            />
+          </span>
           <input
             type="text"
             className="wfe-address-input wfe-address-input-left"
@@ -581,7 +606,6 @@ export default function PagesUI({
               wallpaperUrl={wallpaperUrl}
               winWallpaperUrl={winWallpaperUrl}
               lockWallpaperUrl={lockWallpaperUrl}
-
               onSetWallpaper={onSetWallpaper}
               onSetWinWallpaper={onSetWinWallpaper}
               onSetLockWallpaper={onSetLockWallpaper}
@@ -608,7 +632,7 @@ export default function PagesUI({
             ? `${filteredChildren.length} item(s) available`
             : "Operational Status: Ready"}
         </div>
-        <div>ERP Client v1.0.0</div>
+        <div>User: Admin</div>
       </div>
 
       {/* Resize Zones */}

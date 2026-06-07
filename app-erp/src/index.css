@@ -387,7 +387,7 @@ body {
 
 /* Window Header / Title Bar */
 .wfe-header {
-  height: 40px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -677,7 +677,7 @@ body {
 
 /* WFE Status Bar */
 .wfe-statusbar {
-  height: 24px;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -734,8 +734,8 @@ body {
     27,
     0.25
   ) !important; /* Fully transparent transparent vibe as requested */
-  backdrop-filter: blur(30px) saturate(160%);
-  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   z-index: 9999;
 }
