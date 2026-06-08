@@ -1,0 +1,15 @@
+.forms-container {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 48px;
+  padding-left: 56px;
+  background: var(--win11-bg);
+}
+
+.forms-container-body {
+  padding: 16px;
+  max-width: 1100px;
+  overflow: auto;
+  height: calc(100vh - 48px);
+}
+

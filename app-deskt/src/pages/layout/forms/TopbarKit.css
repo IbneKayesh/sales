@@ -1,0 +1,74 @@
+.form-topbar {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  gap: 8px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-top-left-radius: var(--win11-radius);
+  border-top-right-radius: var(--win11-radius);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.form-topbar .btn-default {
+  border-radius: var(--win11-radius-xs);
+  height: 32px;
+  min-width: 32px;
+  padding: 0 10px;
+}
+
+.form-topbar .btn-default[aria-label="add"]::before {
+  content: "➕";
+  font-size: 14px;
+  line-height: 1;
+}
+
+.form-topbar .btn-default[aria-label="search"]::before {
+  content: "⌕";
+  font-size: 14px;
+  line-height: 1;
+}
+
+.form-topbar .btn-default[aria-label="close"] {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.form-topbar .btn-default[aria-label="close"]:hover {
+  background: rgba(255, 255, 255, 0.11);
+}
+
+.form-topbar .input-default {
+  height: 32px;
+  max-width: 440px;
+  border-radius: var(--win11-radius-sm);
+}
+
+
+.form-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.form-topbar-center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.form-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}

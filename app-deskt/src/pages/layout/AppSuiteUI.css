@@ -1,0 +1,113 @@
+.app-suite {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 550px;
+  max-width: calc(100vw - 36px);
+  padding: 12px;
+  border-radius: var(--win11-radius);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--win11-shadow);
+}
+
+.app-suite-header {
+  font-size: 12px;
+  color: var(--win11-muted);
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.app-suite-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+}
+
+.app-suite-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  border-radius: var(--win11-radius-sm);
+  cursor: pointer;
+  transition: background 0.15s ease;
+  text-align: center;
+}
+
+.app-suite-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.app-suite-icon {
+  width: 62px;
+  height: 62px;
+  border-radius: var(--win11-radius-xs);
+  background: var(--win11-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+.app-suite-name {
+  font-size: 12px;
+  color: var(--win11-text);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.app-suite-search {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.notificationFlyout {
+  position: absolute;
+  right: 200px;
+  bottom: 60px;
+  width: 320px;
+  max-width: calc(100vw - 220px);
+  padding: 12px;
+  border-radius: var(--win11-radius);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--win11-shadow);
+}
+
+.flyoutHeader {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--win11-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.flyoutContent {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+
+.notificationItem {
+  padding: 12px;
+  font-size: 13px;
+  color: var(--win11-text);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--win11-radius-sm);
+  margin-bottom: 4px;
+}

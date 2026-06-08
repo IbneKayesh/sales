@@ -1,0 +1,59 @@
+/* App-level styles intentionally minimal; layout widgets own their CSS */
+
+.btn-default {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  padding: 6px 12px;
+
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--win11-radius-sm);
+
+  color: var(--win11-text);
+  font-size: 12px;
+  cursor: pointer;
+
+  transition:
+    background 140ms ease,
+    box-shadow 140ms ease,
+    transform 100ms ease;
+}
+
+.btn-default:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.btn-default:active {
+  transform: translateY(1px);
+}
+
+.btn-default:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input-default {
+  flex: 1;
+  padding: 6px 10px;
+
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--win11-radius-sm);
+
+  color: var(--win11-text);
+  font-size: 12px;
+  outline: none;
+
+  transition: background 140ms ease;
+}
+
+.input-default:hover,
+.input-default:focus {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.input-default::placeholder {
+  color: var(--win11-muted);
+}

@@ -1,0 +1,49 @@
+.window-flyout {
+  position: absolute;
+  right: 100px;
+  bottom: 60px;
+  width: 280px;
+  max-height: 400px;
+  padding: 12px;
+  border-radius: var(--win11-radius);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--win11-shadow);
+}
+.window-flyout-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--win11-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.window-flyout-list {
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.window-flyout-item {
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--win11-text);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--win11-radius-sm);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.window-flyout-item::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--win11-accent);
+  flex-shrink: 0;
+}

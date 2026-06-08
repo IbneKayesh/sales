@@ -1,0 +1,43 @@
+.layoutRoot{
+  position:relative;
+  width:100%;
+  min-height:100vh;
+  overflow:hidden;
+}
+
+.desktopLayer{
+  position:absolute;
+  inset:0;
+}
+
+.taskbarLayer{
+  position:fixed;
+  left:0; right:0; bottom:0;
+  pointer-events:none;
+  z-index:9999;
+}
+
+.taskbarLayer > *{
+  pointer-events:auto;
+}
+
+.appsLayer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.appsLayer > *{
+  pointer-events:auto;
+}
+
+.formsLayer{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.formsLayer > *{
+  pointer-events:auto;
+}
+
