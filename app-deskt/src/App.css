@@ -7,8 +7,8 @@
   min-width: 36px;
   padding: 6px 12px;
 
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--win11-panel-hover);
+  border: 1px solid var(--win11-border);
   border-radius: var(--win11-radius-sm);
 
   color: var(--win11-text);
@@ -22,7 +22,7 @@
 }
 
 .btn-default:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--win11-panel-strong);
 }
 
 .btn-default:active {
@@ -38,8 +38,8 @@
   flex: 1;
   padding: 6px 10px;
 
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--win11-panel);
+  border: 1px solid var(--win11-border);
   border-radius: var(--win11-radius-sm);
 
   color: var(--win11-text);
@@ -51,7 +51,7 @@
 
 .input-default:hover,
 .input-default:focus {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--win11-panel2);
 }
 
 .input-default::placeholder {

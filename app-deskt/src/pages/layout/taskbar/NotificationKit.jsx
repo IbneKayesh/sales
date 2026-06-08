@@ -14,7 +14,7 @@ const NotificationKit = ({ onClick, unreadCount }) => {
         height="20"
         width="20"
       />
-      {unreadCount}
+      {unreadCount > 0 && <span className="task-bar-badge">{unreadCount}</span>}
     </button>
   );
 };

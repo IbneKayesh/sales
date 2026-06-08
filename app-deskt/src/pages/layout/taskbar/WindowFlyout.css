@@ -2,48 +2,83 @@
   position: absolute;
   right: 100px;
   bottom: 60px;
-  width: 280px;
-  max-height: 400px;
+  width: 360px;
+  max-height: 450px;
   padding: 12px;
   border-radius: var(--win11-radius);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--win11-panel-hover);
+  border: 1px solid var(--win11-border);
   backdrop-filter: blur(20px);
   box-shadow: var(--win11-shadow);
 }
+
+.window-flyout-list {
+  max-height: 320px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.window-flyout-item {
+  padding: 12px;
+  font-size: 12px;
+  color: var(--win11-text);
+  border: 1px solid var(--win11-border);
+  background: var(--win11-panel-soft);
+  border-radius: var(--win11-radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 60px;
+}
+
+.window-flyout-item:hover {
+  background: var(--win11-panel-hover);
+  border-color: var(--win11-accent);
+}
+
+.window-flyout-item::before {
+  display: none;
+}
+
 .window-flyout-header {
   font-size: 12px;
   font-weight: 600;
   color: var(--win11-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--win11-border-soft);
 }
 
-.window-flyout-list {
-  max-height: 350px;
-  overflow-y: auto;
+.window-flyout-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 12px;
 }
 
-.window-flyout-item {
-  padding: 10px 12px;
-  font-size: 13px;
-  color: var(--win11-text);
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: var(--win11-radius-sm);
-  margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.window-flyout-actions .btn-default {
+  font-size: 11px;
+  padding: 8px 10px;
+  height: auto;
 }
 
-.window-flyout-item::before {
-  content: "";
-  width: 12px;
-  height: 12px;
-  border-radius: 2px;
-  background: var(--win11-accent);
-  flex-shrink: 0;
+.window-flyout-state {
+  color: var(--win11-muted);
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+.window-flyout-empty {
+  color: var(--win11-muted);
+  padding: 20px 12px;
+  text-align: center;
+  grid-column: 1 / -1;
 }

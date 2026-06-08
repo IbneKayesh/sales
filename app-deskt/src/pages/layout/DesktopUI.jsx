@@ -1,126 +1,150 @@
-import "./DesktopUI.css";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AnalogClock from "./desktop/AnalogClock";
-import DigitalClock from "./desktop/DigitalClock";
 import ContextMenu from "./desktop/ContextMenu";
-import { useState, useCallback, useEffect, useRef } from "react";
+import DigitalClock from "./desktop/DigitalClock";
+import "./DesktopUI.css";
 
-const DesktopUI = () => {
+const widgetMap = {
+  analogClock: AnalogClock,
+  digitalClock: DigitalClock,
+};
+
+const DesktopUI = ({
+  recentForms = [],
+  onRestore,
+  onOpenSetup,
+  desktopBackground,
+  onRefreshDesktop,
+  onResetDesktop,
+}) => {
   const [menu, setMenu] = useState(null);
   const [closing, setClosing] = useState(false);
-  const menuRef = useRef(null);
-  const [pos, setPos] = useState({
-    // default position: right top
-    analogClock: { x: 20, y: 18 },
-    digitalClock: { x: 20, y: 210 },
-  });
-  const posRef = useRef(pos);
-  posRef.current = pos;
   const [dragging, setDragging] = useState(null);
+  const [visibleWidgets, setVisibleWidgets] = useState({
+    analogClock: true,
+    digitalClock: true,
+  });
+  const [pos, setPos] = useState({
+    analogClock: { x: 24, y: 18 },
+    digitalClock: { x: 24, y: 210 },
+  });
+  const menuRef = useRef(null);
+
+  const close = useCallback(() => {
+    setClosing(true);
+    window.setTimeout(() => setMenu(null), 100);
+  }, []);
 
   const handleContextMenu = useCallback(
-    (e) => {
-      e.preventDefault();
-      // prevent menu from opening while dragging clocks
+    (event) => {
+      event.preventDefault();
       if (dragging) return;
-      setMenu({ x: e.clientX, y: e.clientY });
+      setMenu({ x: event.clientX, y: event.clientY });
       setClosing(false);
     },
     [dragging],
   );
 
-  const close = useCallback(() => {
-    setClosing(true);
-    setTimeout(() => setMenu(null), 100);
-  }, []);
-
   useEffect(() => {
-    if (!menu) return;
-    const handleClick = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
+    if (!menu) return undefined;
+
+    const handleClick = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
         close();
       }
     };
+
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, [menu, close]);
 
   const startDrag = useCallback(
-    (name, e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      // If a drag is already running, ignore new starts
+    (name, event) => {
+      event.preventDefault();
+      event.stopPropagation();
       if (dragging) return;
 
-      const start = posRef.current[name] || { x: 0, y: 0 };
-      const offsetX = e.clientX - start.x;
-      const offsetY = e.clientY - start.y;
+      const start = pos[name] || { x: 0, y: 0 };
+      const offset = {
+        x: event.clientX - start.x,
+        y: event.clientY - start.y,
+      };
 
       setDragging(name);
 
-      const handleMove = (event) => {
-        setPos((current) => {
-          const container = document.querySelector(".desktopCanvas");
-          const rect = container?.getBoundingClientRect();
-          const relX = rect ? event.clientX - rect.left : event.clientX;
-          const relY = rect ? event.clientY - rect.top : event.clientY;
+      const handleMove = (moveEvent) => {
+        const rect = document
+          .querySelector(".desktopCanvas")
+          ?.getBoundingClientRect();
+        const maxX = rect ? rect.width - 80 : window.innerWidth - 80;
+        const maxY = rect ? rect.height - 80 : window.innerHeight - 80;
+        const nextX = Math.min(Math.max(8, moveEvent.clientX - offset.x), maxX);
+        const nextY = Math.min(Math.max(8, moveEvent.clientY - offset.y), maxY);
 
-          const next = {
-            ...current,
-            [name]: {
-              // we store left offsets, but UI uses `right:`; convert so drag feels natural
-              x: (rect ? rect.width : window.innerWidth) - (relX - 0),
-              y: relY,
-            },
-          };
-          posRef.current = next;
-          return next;
-        });
+        setPos((current) => ({
+          ...current,
+          [name]: { x: nextX, y: nextY },
+        }));
       };
 
       const handleUp = () => {
         window.removeEventListener("mousemove", handleMove);
         window.removeEventListener("mouseup", handleUp);
-        window.removeEventListener("mouseleave", handleUp);
         setDragging(null);
       };
 
-      // Capture mouse even if pointer leaves the clock element
-      window.addEventListener("mousemove", handleMove, { passive: true });
-      window.addEventListener("mouseup", handleUp, { passive: true });
-      window.addEventListener("mouseleave", handleUp);
+      window.addEventListener("mousemove", handleMove);
+      window.addEventListener("mouseup", handleUp);
     },
-    [dragging],
+    [dragging, pos],
   );
 
-  const analogStyle = {
-    right: pos.analogClock.x,
-    top: pos.analogClock.y,
-    cursor: dragging === "analogClock" ? "grabbing" : "grab",
+  const handleToggleWidget = (name) => {
+    setVisibleWidgets((current) => ({
+      ...current,
+      [name]: !current[name],
+    }));
+    close();
   };
-  const digitalStyle = {
-    right: pos.digitalClock.x,
-    top: pos.digitalClock.y,
-    cursor: dragging === "digitalClock" ? "grabbing" : "grab",
+
+  const handleProperties = () => {
+    close();
+    onOpenSetup();
   };
 
   return (
-    <div className="desktopRoot" onContextMenu={handleContextMenu}>
+    <div
+      className="desktopRoot"
+      onContextMenu={handleContextMenu}
+      style={{ "--desktop-background": desktopBackground }}
+    >
       <div className="desktopCanvas">
+        <div className="desktopBackground" />
         <div className="desktopGrid" />
-        <AnalogClock
-          style={analogStyle}
-          onMouseDown={(e) => startDrag("analogClock", e)}
-        />
-        <DigitalClock
-          style={digitalStyle}
-          onMouseDown={(e) => startDrag("digitalClock", e)}
-        />
+        {Object.entries(widgetMap).map(([name, Component]) => {
+          if (!visibleWidgets[name]) return null;
+
+          return (
+            <Component
+              key={name}
+              style={{
+                left: pos[name].x,
+                top: pos[name].y,
+                cursor: dragging === name ? "grabbing" : "grab",
+              }}
+              onMouseDown={(event) => startDrag(name, event)}
+            />
+          );
+        })}
         <div className="desktopIcons">
-          <DesktopIcon name="This PC" icon="💻" />
-          <DesktopIcon name="Documents" icon="📁" />
-          <DesktopIcon name="Downloads" icon="⬇" />
-          <DesktopIcon name="Recycle Bin" icon="🗑" />
+          {recentForms.map((item) => (
+            <DesktopIcon
+              key={item.id}
+              name={item.name}
+              icon={item.icon}
+              onClick={() => onRestore(item)}
+            />
+          ))}
         </div>
       </div>
       {menu && (
@@ -129,7 +153,12 @@ const DesktopUI = () => {
             x={menu.x}
             y={menu.y}
             closing={closing}
+            visibleWidgets={visibleWidgets}
+            onToggleWidget={handleToggleWidget}
+            onProperties={handleProperties}
             onClose={close}
+            onRefresh={onRefreshDesktop}
+            onResetDesktop={onResetDesktop}
           />
         </div>
       )}
@@ -137,11 +166,11 @@ const DesktopUI = () => {
   );
 };
 
-const DesktopIcon = ({ name, icon }) => (
-  <div className="desktopIconItem">
+const DesktopIcon = ({ name, icon, onClick }) => (
+  <button className="desktopIconItem" onClick={onClick} type="button">
     <div className="desktopIconSymbol">{icon}</div>
     <div className="desktopIconLabel">{name}</div>
-  </div>
+  </button>
 );
 
 export default DesktopUI;

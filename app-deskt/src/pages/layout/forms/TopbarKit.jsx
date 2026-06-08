@@ -1,47 +1,64 @@
 import "./TopbarKit.css";
 
-const TopbarKit = ({ onClose, onMinimize, onMaximize }) => {
+const TopbarKit = ({
+  icon,
+  title,
+  isMaximized,
+  onClose,
+  onDragStart,
+  onMinimize,
+  onToggleMaximize,
+  background,
+}) => {
   return (
-    <div className="form-topbar">
+    <div className="form-topbar" style={{ background: background || "var(--win11-panel)" }}>
       <div className="form-topbar-left">
-        <button className="btn-default" aria-label="add" type="button">
+        <button className="btn-default" aria-label="Add" type="button">
           Add
         </button>
-        <button className="btn-default" aria-label="search" type="button">
+        <button className="btn-default" aria-label="Save" type="button">
+          Save
+        </button>
+        <button className="btn-default" aria-label="Search" type="button">
           Search
         </button>
       </div>
-      <div className="form-topbar-center">
-        <input
-          className="input-default"
-          placeholder="Search or type URL"
-          aria-label="search input"
-        />
-      </div>
+      <button
+        className="form-topbar-drag"
+        onMouseDown={onDragStart}
+        type="button"
+        title="Drag window"
+      >
+        {icon && <span className="form-icon">{icon}</span>}
+        <span className="form-title">{title}</span>
+      </button>
       <div className="form-topbar-right">
         <button
-          className="btn-default"
-          aria-label="minimize"
+          className="btn-default icon-button"
+          aria-label="Minimize"
           type="button"
           onClick={onMinimize}
+          title="Minimize"
         >
-          Min
+          ━
         </button>
         <button
-          className="btn-default"
-          aria-label="maximize"
+          className="btn-default icon-button"
+          aria-label={isMaximized ? "Restore" : "Maximize"}
           type="button"
-          onClick={onMaximize}
+          onClick={onToggleMaximize}
+          title={isMaximized ? "Restore down" : "Maximize"}
         >
-          Max
+          {isMaximized ? "❐" : "🗖"}
         </button>
         <button
-          className="btn-default"
-          aria-label="close"
+          className="btn-default icon-button close-button"
+          aria-label="Close"
           type="button"
           onClick={onClose}
+          title="Close"
         >
-          Close
+          ✕
         </button>
       </div>
     </div>
@@ -49,4 +66,3 @@ const TopbarKit = ({ onClose, onMinimize, onMaximize }) => {
 };
 
 export default TopbarKit;
-

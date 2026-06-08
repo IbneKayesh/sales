@@ -3,11 +3,11 @@
   left: var(--menu-x);
   top: var(--menu-y);
   min-width: 180px;
-  background: rgba(30, 30, 30, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--win11-menu-bg);
+  border: 1px solid var(--win11-border-menu);
   border-radius: 8px;
   padding: 6px 0;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--win11-menu-shadow);
   backdrop-filter: blur(12px);
   z-index: 9999;
   animation: contextFadeIn 0.12s ease-out;
@@ -53,13 +53,35 @@
 }
 
 .context-menu-item {
-  padding: 8px 24px;
-  color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  color: var(--win11-text);
   font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.1s;
+  transition: background 0.1s ease, color 0.1s ease;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
 }
 
 .context-menu-item:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--win11-accent-active);
+  color: #ffffff;
+}
+
+.context-menu-item:active {
+  background: var(--win11-accent);
+}
+
+.context-menu-item.danger {
+  color: var(--win11-danger);
+}
+
+.context-menu-item.danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--win11-danger);
 }

@@ -18,6 +18,8 @@ const TaskbarUI = ({
   onShowDesktop,
   onFullScreen,
   isFullScreen,
+  windows = [],
+  onRestoreWindow,
 }) => {
   return (
     <div className="task-bar-container">
@@ -26,7 +28,20 @@ const TaskbarUI = ({
         <TaskViewKit onClick={onShowTaskViewFlyout} />
         <ProfileKit onClick={onProfileFlyout} />
       </div>
-
+      <div className="task-bar-center">
+        {windows.map((item) => (
+          <button
+            key={item.id}
+            className={`task-bar-app ${item.isMinimized ? "" : "active"}`}
+            onClick={() => onRestoreWindow(item)}
+            type="button"
+            title={item.name}
+          >
+            <span className="task-bar-app-icon">{item.icon}</span>
+            <span className="task-bar-app-label">{item.name}</span>
+          </button>
+        ))}
+      </div>
       <div className="task-bar-right">
         <NotificationKit
           onClick={onNotificationFlyout}

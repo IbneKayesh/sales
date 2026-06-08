@@ -7,8 +7,8 @@
   max-width: calc(100vw - 36px);
   padding: 12px;
   border-radius: var(--win11-radius);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--win11-panel);
+  border: 1px solid var(--win11-border);
   backdrop-filter: blur(12px);
   box-shadow: var(--win11-shadow);
 }
@@ -32,6 +32,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  border: 0;
+  background: var(--win11-transparent);
+  color: inherit;
   padding: 12px 8px;
   border-radius: var(--win11-radius-sm);
   cursor: pointer;
@@ -40,18 +43,20 @@
 }
 
 .app-suite-item:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--win11-panel-hover);
 }
 
 .app-suite-icon {
   width: 62px;
   height: 62px;
   border-radius: var(--win11-radius-xs);
-  background: var(--win11-accent);
+  background:
+    linear-gradient(135deg, var(--win11-accent), var(--win11-teal-soft));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 15px;
+  font-weight: 700;
   margin-bottom: 6px;
   flex-shrink: 0;
 }
@@ -80,8 +85,8 @@
   max-width: calc(100vw - 220px);
   padding: 12px;
   border-radius: var(--win11-radius);
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--win11-panel-hover);
+  border: 1px solid var(--win11-border);
   backdrop-filter: blur(20px);
   box-shadow: var(--win11-shadow);
 }
@@ -94,7 +99,7 @@
   letter-spacing: 0.5px;
   margin-bottom: 8px;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--win11-border-soft);
 }
 
 .flyoutContent {
@@ -107,7 +112,7 @@
   padding: 12px;
   font-size: 13px;
   color: var(--win11-text);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--win11-panel-soft);
   border-radius: var(--win11-radius-sm);
   margin-bottom: 4px;
 }
