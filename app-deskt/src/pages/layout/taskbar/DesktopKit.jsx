@@ -1,4 +1,4 @@
-import desktopImage from "../../../assets/desktop.png";
+import desktopImage from "../../../assets/icons/desktop.png";
 
 const DesktopKit = ({ onClick }) => {
   return (

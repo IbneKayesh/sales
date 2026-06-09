@@ -183,7 +183,14 @@ const DesktopUI = ({
 
 const DesktopIcon = ({ name, icon, onClick }) => (
   <button className="desktopIconItem" onClick={onClick} type="button">
-    <div className="desktopIconSymbol">{icon}</div>
+    <div className="desktop-icon-symbol" title={name}>
+      <img
+        src={"../src/assets/icons/" + icon}
+        alt={name}
+        height="48"
+        width="48"
+      />
+    </div>
     <div className="desktopIconLabel">{name}</div>
   </button>
 );

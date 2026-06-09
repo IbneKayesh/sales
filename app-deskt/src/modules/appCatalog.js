@@ -1,5 +1,34 @@
 export const appCatalog = [
   {
+    id: "accounting",
+    name: "Accounting",
+    icon: "desktop.png",
+    forms: "",
+    module: "",
+    size: "",
+    actions: [],
+    leftbar: "",
+    path: "Accounting",
+    parent: "",
+    child: [
+      {
+        id: "accounting-journal-entry",
+        name: "Journal Entry",
+        icon: "bar-chart.png",
+        forms: "JournalPage",
+        module: "",
+        size: "",
+        actions: [],
+        leftbar: [],
+        path: "Accounting > Journal Entry",
+        parent: "accounting",
+      }
+    ],
+  },
+];
+
+export const appCatalog_old = [
+  {
     id: "sales",
     name: "Sales",
     icon: "📊",

@@ -3,22 +3,26 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import InventoryPage from "../inventory/InventoryPage";
 import PurchasePage from "../purchase/PurchasePage";
 import SalesPage from "../sales/SalesPage";
-import SetupPage from "../syspage/SetupPage";
+import SetupDesktopPage from "../syspage/SetupDesktopPage";
 import ProfilePage from "../auth/ProfilePage";
 import NotificationPage from "../syspage/NotificationPage";
 import LeftbarKit from "./forms/LeftbarKit";
 import TopbarKit from "./forms/TopbarKit";
 import "./FormsUI.css";
+//accounts
+import JournalPage from "../accounts/journal/JournalPage";
 
 const pageByModule = {
   sales: SalesPage,
   purchase: PurchasePage,
   inventory: InventoryPage,
   settings: SalesPage,
-  setup: SetupPage,
+  setup: "SetupPage",
   profile: ProfilePage,
   notifications: NotificationPage,
 };
+
+const pageByForms = { JournalPage, SetupDesktopPage };
 
 const FormsUI = ({
   formItem,
@@ -26,7 +30,7 @@ const FormsUI = ({
   onMinimize,
   onFocus,
   onToggleMaximize,
-
+  onDock,
   desktopBackground,
   onSetDesktopBackground,
   onSetTopbarBackground,
@@ -43,7 +47,7 @@ const FormsUI = ({
   const windowRef = useRef(null);
   const lastDragPos = useRef({ x: 0, y: 0 });
   const Page = pageByModule[formItem.module] || SalesPage;
-
+  const RenderPage = pageByForms[formItem.forms];
 
   // Handle smooth drag + wobbly skew feel (ported conceptually from ERP PagesUI)
   const handleDragStart = useCallback(
@@ -92,7 +96,6 @@ const FormsUI = ({
     },
     [formItem, onFocus, position],
   );
-
 
   // Handle resize from corners
   const handleResizeStart = useCallback(
@@ -161,12 +164,14 @@ const FormsUI = ({
         setPosition({ x: Math.max(8, newX), y: Math.max(8, newY) });
 
         // Stretch effect (ported conceptually from ERP PagesUI)
-        const stretchX = resizeCorner.includes("e") || resizeCorner.includes("right")
-          ? 1 + Math.min(0.04, Math.abs(deltaX) * 0.0005)
-          : 1;
-        const stretchY = resizeCorner.includes("s") || resizeCorner.includes("bottom")
-          ? 1 + Math.min(0.04, Math.abs(deltaY) * 0.0005)
-          : 1;
+        const stretchX =
+          resizeCorner.includes("e") || resizeCorner.includes("right")
+            ? 1 + Math.min(0.04, Math.abs(deltaX) * 0.0005)
+            : 1;
+        const stretchY =
+          resizeCorner.includes("s") || resizeCorner.includes("bottom")
+            ? 1 + Math.min(0.04, Math.abs(deltaY) * 0.0005)
+            : 1;
 
         if (windowRef.current) {
           windowRef.current.style.transform = `scale(${stretchX}, ${stretchY})`;
@@ -191,7 +196,6 @@ const FormsUI = ({
     [formItem, onFocus, position, size],
   );
 
-
   if (formItem.isMinimized) {
     return null;
   }
@@ -214,7 +218,7 @@ const FormsUI = ({
       width: "auto",
       zIndex: formItem.zIndex,
     };
-} else if (formItem.layout === "tile") {
+  } else if (formItem.layout === "tile") {
     const tileWidth = `calc(100% / ${formItem.tileCols} - 8px)`;
     const tileHeight = `calc(100% / ${formItem.tileRows} - 8px)`;
     const tileLeft = `calc((100% / ${formItem.tileCols}) * ${formItem.tileCol})`;
@@ -253,17 +257,18 @@ const FormsUI = ({
       <TopbarKit
         icon={formItem.icon}
         title={formItem.name}
-        breadcrumb={formItem.breadcrumb}
+        breadcrumb={formItem.path}
         isMaximized={formItem.isMaximized}
         onDragStart={handleDragStart}
         onClose={() => onClose(formItem)}
         onMinimize={() => onMinimize(formItem)}
         onToggleMaximize={() => onToggleMaximize(formItem)}
         background={topbarBackground}
+        actions={formItem.actions}
       />
       <LeftbarKit activeModule={formItem.module} />
       <main className="forms-container-body">
-        <Page
+        {/* <Page
           formItem={formItem}
           desktopBackground={desktopBackground}
           onSetDesktopBackground={onSetDesktopBackground}
@@ -272,7 +277,8 @@ const FormsUI = ({
           onRead={onReadNotification}
           onMarkAllRead={onMarkAllNotificationsRead}
           onSignOut={onSignOut}
-        />
+        /> */}
+        <RenderPage />
       </main>
 
       {/* Resize handles */}

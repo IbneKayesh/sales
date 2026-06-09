@@ -9,13 +9,17 @@ import WindowFlyout from "./taskbar/WindowFlyout";
 import ProfileFlyout from "./taskbar/ProfileFlyout";
 import NotificationFlyout from "./taskbar/NotificationFlyout";
 
-const setupFormItem = {
+const setupDesktopFormItem = {
   id: "setup-desktop",
-  name: "Desktop Setup",
-  icon: "PS",
-  forms: "SetupPage",
-  module: "setup",
-  size: "medium",
+  name: "Setup Desktop",
+  icon: "desktop.png",
+  forms: "SetupDesktopPage",
+  module: "system-setup-desktop",
+  size: "full",
+  actions: [],
+  leftbar: [],
+  path: "System > Setup > Desktop",
+  parent: "none",
 };
 
 const profileFormItem = {
@@ -77,7 +81,8 @@ const LayoutUI = () => {
   const [desktopBackground, setDesktopBackground] = useState(
     defaultDesktopBackground,
   );
-  const [topbarBackground, setTopbarBackground] = useState("var(--win11-panel)");
+  const [topbarBackground, setTopbarBackground] =
+    useState("var(--win11-panel)");
   const [zSeed, setZSeed] = useState(40);
 
   const nextZIndex = () => {
@@ -159,7 +164,11 @@ const LayoutUI = () => {
 
   const handleResetDesktop = () => {
     // Reset: clear all open windows and recent forms
-    if (confirm("Are you sure you want to reset the desktop? This will close all open windows.")) {
+    if (
+      confirm(
+        "Are you sure you want to reset the desktop? This will close all open windows.",
+      )
+    ) {
       setWindowList([]);
       setRecentForms([]);
       setShowAppSuite(false);
@@ -211,10 +220,9 @@ const LayoutUI = () => {
         },
       ];
     });
-    setRecentForms((prev) => [
-      formItem,
-      ...prev.filter((item) => item.id !== formItem.id),
-    ].slice(0, 8));
+    setRecentForms((prev) =>
+      [formItem, ...prev.filter((item) => item.id !== formItem.id)].slice(0, 8),
+    );
     setShowAppSuite(false);
   };
 
@@ -291,7 +299,7 @@ const LayoutUI = () => {
     setShowWindowFlyout(false);
   };
 
-const handleTileWindows = () => {
+  const handleTileWindows = () => {
     const visible = windowList.filter((item) => !item.isMinimized);
     const targets = visible.length ? visible : windowList;
     const total = targets.length;
@@ -336,8 +344,6 @@ const handleTileWindows = () => {
 
     setShowWindowFlyout(false);
   };
-    
-
 
   const handleDockFormClick = (formItem, side) => {
     const zIndex = nextZIndex();
@@ -380,7 +386,7 @@ const handleTileWindows = () => {
         <DesktopUI
           recentForms={recentForms}
           onRestore={handleOpenPageClick}
-          onOpenSetup={() => handleOpenPageClick(setupFormItem)}
+          onOpenSetup={() => handleOpenPageClick(setupDesktopFormItem)}
           desktopBackground={desktopBackground}
           onRefreshDesktop={handleRefreshDesktop}
           onResetDesktop={handleResetDesktop}
@@ -454,7 +460,10 @@ const handleTileWindows = () => {
         </div>
       )}
       {showWindowFlyout && (
-        <div className="modalLayer" onMouseDown={() => setShowWindowFlyout(false)}>
+        <div
+          className="modalLayer"
+          onMouseDown={() => setShowWindowFlyout(false)}
+        >
           <div onMouseDown={(event) => event.stopPropagation()}>
             <WindowFlyout
               windows={windowList}
@@ -480,10 +489,10 @@ const handleTileWindows = () => {
           onSetDesktopBackground={setDesktopBackground}
           onSetTopbarBackground={setTopbarBackground}
           topbarBackground={topbarBackground}
+          onSignOut={handleSignOut}
           notifications={notifications}
           onReadNotification={handleReadNotification}
           onMarkAllNotificationsRead={handleMarkAllNotificationsRead}
-          onSignOut={handleSignOut}
         />
       ))}
     </div>

@@ -47,8 +47,8 @@
 }
 
 .app-suite-icon {
-  width: 62px;
-  height: 62px;
+  width: 72px;
+  height: 72px;
   border-radius: var(--win11-radius-xs);
   background:
     linear-gradient(135deg, var(--win11-accent), var(--win11-teal-soft));

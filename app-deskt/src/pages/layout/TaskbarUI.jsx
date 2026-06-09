@@ -37,7 +37,14 @@ const TaskbarUI = ({
             type="button"
             title={item.name}
           >
-            <span className="task-bar-app-icon">{item.icon}</span>
+            <span className="task-bar-app-icon">
+              <img
+                src={"../src/assets/icons/" + item.icon}
+                alt={item.name}
+                height="14"
+                width="14"
+              />
+            </span>
             <span className="task-bar-app-label">{item.name}</span>
           </button>
         ))}

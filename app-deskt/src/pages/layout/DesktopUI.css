@@ -76,13 +76,13 @@
   user-select:none;
 }
 
-.desktopIconItem:hover .desktopIconSymbol{
+.desktopIconItem:hover .desktop-icon-symbol{
   transform:scale(1.05);
 }
 
-.desktopIconSymbol{
-  width:48px;
-  height:48px;
+.desktop-icon-symbol{
+  width:72px;
+  height:72px;
   border-radius:8px;
   background: var(--win11-panel-hover);
   border:1px solid var(--win11-border);

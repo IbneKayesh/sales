@@ -62,7 +62,14 @@ const AppSuiteUI = ({ onOpenPageClick }) => {
             onClick={() => handleAppSuiteItemClick(item)}
             type="button"
           >
-            <span className="app-suite-icon">{item.icon}</span>
+            <span className="app-suite-icon" title={item.name}>
+              <img
+                src={"../src/assets/icons/" + item.icon}
+                alt={item.name}
+                height="56"
+                width="56"
+              />
+            </span>
             <span className="app-suite-name">{item.name}</span>
           </button>
         ))}

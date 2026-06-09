@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import "../inventory/InventoryPage.css";
 
 // Predefined style presets for desktop backgrounds
-const backgroundPresets = [
+const backgroundColors = [
   {
     id: "default",
     name: "Default",
@@ -34,8 +33,31 @@ const backgroundPresets = [
   },
 ];
 
+const backgroundImages = [
+  {
+    id: "default",
+    name: "Default",
+    value: 'url("/assets/wallpapers/fractalize-cool_backgrounds.png")',
+  },
+  {
+    id: "ruby-garden",
+    name: "Ruby Garden",
+    value: 'url("/assets/wallpapers/fractalize-ruby_garden.png")',
+  },
+  {
+    id: "bean",
+    name: "Bean",
+    value: "url('/assets/wallpapers/unsplash-bean.jpg')",
+  },
+  {
+    id: "silva",
+    name: "Silva",
+    value: "url('/assets/wallpapers/unsplash-silva.jpg')",
+  },
+];
+
 // Topbar background presets
-const topbarPresets = [
+const topbarColors = [
   { id: "default", name: "Default", value: "var(--win11-panel)" },
   { id: "blue", name: "Blue", value: "#2563eb" },
   { id: "purple", name: "Purple", value: "#7c3aed" },
@@ -43,7 +65,10 @@ const topbarPresets = [
   { id: "dark", name: "Dark", value: "#1f2937" },
 ];
 
-const SetupPage = ({ onSetDesktopBackground, onSetTopbarBackground }) => {
+const SetupDesktopPage = ({
+  onSetDesktopBackground,
+  onSetTopbarBackground,
+}) => {
   const [customBackground, setCustomBackground] = useState("");
   const [topbarColor, setTopbarColor] = useState("#2563eb");
   const [topbarImage, setTopbarImage] = useState("");
@@ -73,7 +98,7 @@ const SetupPage = ({ onSetDesktopBackground, onSetTopbarBackground }) => {
     }
   };
 
-  const handleTopbarPresetSelect = (preset) => {
+  const handletopbarColorselect = (preset) => {
     if (onSetTopbarBackground) {
       onSetTopbarBackground(preset.value);
       localStorage.setItem("topbarBackground", preset.value);
@@ -102,6 +127,17 @@ const SetupPage = ({ onSetDesktopBackground, onSetTopbarBackground }) => {
 
   return (
     <div className="page-container">
+      <div className="topbar-button-container">
+        <button className={`btn-default`} aria-label="Add" type="button">
+          Add
+        </button>
+        <button className={`btn-default`} aria-label="Save" type="button">
+          Save
+        </button>
+        <button className={`btn-default`} aria-label="Search" type="button">
+          Search
+        </button>
+      </div>
       <div className="page-section">
         <h2>System Setup</h2>
       </div>
@@ -109,7 +145,7 @@ const SetupPage = ({ onSetDesktopBackground, onSetTopbarBackground }) => {
       {/* Desktop Background Section */}
       <div className="page-section">
         <h3>Desktop Background</h3>
-        
+
         <h4 style={{ marginTop: "12px", fontSize: "12px", fontWeight: "600" }}>
           Background Presets
         </h4>
@@ -121,7 +157,7 @@ const SetupPage = ({ onSetDesktopBackground, onSetTopbarBackground }) => {
             marginTop: "8px",
           }}
         >
-          {backgroundPresets.map((preset) => (
+          {backgroundColors.map((preset) => (
             <button
               key={preset.id}
               onClick={() => handlePresetSelect(preset)}
@@ -138,6 +174,45 @@ const SetupPage = ({ onSetDesktopBackground, onSetTopbarBackground }) => {
             >
               {preset.name}
             </button>
+          ))}
+        </div>
+
+        <h4 style={{ marginTop: "12px", fontSize: "12px", fontWeight: "600" }}>
+          Background Images
+        </h4>
+        <div
+          style={{
+            display: "flex",
+            gap: "8px",
+            flexWrap: "wrap",
+          }}
+        >
+          {backgroundImages.map((image) => (
+            <div
+              key={image.id}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <div
+                onClick={() => handlePresetSelect(image)}
+                style={{
+                  backgroundImage: image.value,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  width: "64px",
+                  height: "64px",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  border: "1px solid #ccc",
+                }}
+              />
+              <span style={{ fontSize: "11px", marginTop: "4px" }}>
+                {image.name}
+              </span>
+            </div>
           ))}
         </div>
 
@@ -226,10 +301,10 @@ const SetupPage = ({ onSetDesktopBackground, onSetTopbarBackground }) => {
             marginTop: "8px",
           }}
         >
-          {topbarPresets.map((preset) => (
+          {topbarColors.map((preset) => (
             <button
               key={preset.id}
-              onClick={() => handleTopbarPresetSelect(preset)}
+              onClick={() => handletopbarColorselect(preset)}
               style={{
                 padding: "8px",
                 borderRadius: "4px",
@@ -319,4 +394,4 @@ const SetupPage = ({ onSetDesktopBackground, onSetTopbarBackground }) => {
   );
 };
 
-export default SetupPage;
+export default SetupDesktopPage;
