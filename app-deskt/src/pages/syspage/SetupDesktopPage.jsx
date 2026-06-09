@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { getStorageLoginData, setStorageLoginData } from "@/utils/storage";
 
 // Predefined style presets for desktop backgrounds
 const backgroundColors = [
@@ -54,6 +55,21 @@ const backgroundImages = [
     name: "Silva",
     value: "url('/assets/wallpapers/unsplash-silva.jpg')",
   },
+  {
+    id: "abstract-silk",
+    name: "Abstract Silk",
+    value: "url('/assets/wallpapers/abstract-silk.png')",
+  },
+  {
+    id: "forest",
+    name: "Forest",
+    value: "url('/assets/wallpapers/forest.png')",
+  },
+  {
+    id: "nebula",
+    name: "Nebula",
+    value: "url('/assets/wallpapers/nebula.png')",
+  },
 ];
 
 // Topbar background presets
@@ -66,36 +82,25 @@ const topbarColors = [
 ];
 
 const SetupDesktopPage = ({
-  onSetDesktopBackground,
-  onSetTopbarBackground,
+  callFunction1, //set desktop background
+  callFunction2,
 }) => {
   const [customBackground, setCustomBackground] = useState("");
+  const [desktopColor, setDesktopColor] = useState("#2563eb");
   const [topbarColor, setTopbarColor] = useState("#2563eb");
   const [topbarImage, setTopbarImage] = useState("");
-
-  const handlePresetSelect = (preset) => {
-    if (onSetDesktopBackground) {
-      onSetDesktopBackground(preset.value);
-      localStorage.setItem("desktopBackground", preset.value);
-    }
-  };
 
   const handleCustomImageUrl = (url) => {
     if (url.trim()) {
       const backgroundValue = `url('${url}')`;
-      if (onSetDesktopBackground) {
-        onSetDesktopBackground(backgroundValue);
-        localStorage.setItem("desktopBackground", backgroundValue);
-      }
+      callFunction1("background", { value: backgroundValue });
       setCustomBackground(url);
     }
   };
 
   const handleCustomBackgroundColor = (color) => {
-    if (onSetDesktopBackground) {
-      onSetDesktopBackground(color);
-      localStorage.setItem("desktopBackground", color);
-    }
+    callFunction1("background", { value: color });
+    setDesktopColor(color);
   };
 
   const handletopbarColorselect = (preset) => {
@@ -138,9 +143,6 @@ const SetupDesktopPage = ({
           Search
         </button>
       </div>
-      <div className="page-section">
-        <h2>System Setup</h2>
-      </div>
 
       {/* Desktop Background Section */}
       <div className="page-section">
@@ -160,7 +162,7 @@ const SetupDesktopPage = ({
           {backgroundColors.map((preset) => (
             <button
               key={preset.id}
-              onClick={() => handlePresetSelect(preset)}
+              onClick={() => callFunction1("background",preset)}
               style={{
                 padding: "8px",
                 borderRadius: "4px",
@@ -197,7 +199,7 @@ const SetupDesktopPage = ({
               }}
             >
               <div
-                onClick={() => handlePresetSelect(image)}
+                onClick={() => callFunction1("background",image)}
                 style={{
                   backgroundImage: image.value,
                   backgroundSize: "cover",
@@ -222,7 +224,7 @@ const SetupDesktopPage = ({
         <div style={{ display: "flex", gap: "8px", marginTop: "8px" }}>
           <input
             type="color"
-            value={topbarColor}
+            value={desktopColor}
             onChange={(e) => handleCustomBackgroundColor(e.target.value)}
             style={{
               width: "60px",
@@ -235,7 +237,7 @@ const SetupDesktopPage = ({
           <input
             type="text"
             placeholder="#000000"
-            value={topbarColor}
+            value={desktopColor}
             onChange={(e) => handleCustomBackgroundColor(e.target.value)}
             style={{
               flex: 1,
@@ -282,6 +284,49 @@ const SetupDesktopPage = ({
             }}
           >
             Apply
+          </button>
+        </div>
+      </div>
+
+      <div className="page-section">
+        <h3>Desktop Widgets</h3>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+            gap: "8px",
+            marginTop: "8px",
+          }}
+        >
+          <button
+            onClick={() => callFunction1("widget", "analog-clock")}
+            style={{
+              padding: "8px",
+              borderRadius: "4px",
+              border: "1px solid var(--win11-border)",
+              background: "var(--win11-panel)",
+              color: "inherit",
+              cursor: "pointer",
+              fontSize: "11px",
+              fontWeight: "500",
+            }}
+          >
+            Analog Clock
+          </button>
+          <button
+            onClick={() => callFunction1("widget", "digital-clock")}
+            style={{
+              padding: "8px",
+              borderRadius: "4px",
+              border: "1px solid var(--win11-border)",
+              background: "var(--win11-panel)",
+              color: "inherit",
+              cursor: "pointer",
+              fontSize: "11px",
+              fontWeight: "500",
+            }}
+          >
+            Digital Clock
           </button>
         </div>
       </div>

@@ -39,6 +39,8 @@ const FormsUI = ({
   notifications,
   onReadNotification,
   onMarkAllNotificationsRead,
+  callFunction1,
+  callFunction2,
 }) => {
   const [position, setPosition] = useState({ x: 80, y: 56 });
   const [size, setSize] = useState({ width: 900, height: 600 });
@@ -278,7 +280,10 @@ const FormsUI = ({
           onMarkAllRead={onMarkAllNotificationsRead}
           onSignOut={onSignOut}
         /> */}
-        <RenderPage />
+        <RenderPage
+          callFunction1={callFunction1}
+          callFunction2={callFunction2}
+        />
       </main>
 
       {/* Resize handles */}

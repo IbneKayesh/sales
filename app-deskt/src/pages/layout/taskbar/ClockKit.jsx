@@ -8,6 +8,7 @@ const formatClock = () => ({
   date: new Intl.DateTimeFormat("en-BD", {
     month: "short",
     day: "2-digit",
+    year: "2-digit",
   }).format(new Date()),
 });
 

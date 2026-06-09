@@ -23,6 +23,13 @@ const TopbarKit = ({
           aria-label="Add"
           type="button"
         >
+          <img
+            src="../src/assets/icons/add.png"
+            alt="add"
+            height="18"
+            width="18"
+            style={{ marginRight: "4px" }}
+          />
           Add
         </button>
         <button
@@ -30,6 +37,13 @@ const TopbarKit = ({
           aria-label="Save"
           type="button"
         >
+          <img
+            src="../src/assets/icons/save.png"
+            alt="save"
+            height="18"
+            width="18"
+            style={{ marginRight: "4px" }}
+          />
           Save
         </button>
         <button
@@ -37,6 +51,13 @@ const TopbarKit = ({
           aria-label="Search"
           type="button"
         >
+          <img
+            src="../src/assets/icons/search.png"
+            alt="search"
+            height="18"
+            width="18"
+            style={{ marginRight: "4px" }}
+          />
           Search
         </button>
       </div>
@@ -46,6 +67,11 @@ const TopbarKit = ({
         type="button"
         title="Drag window"
       >
+        {breadcrumb && (
+          <span className="form-breadcrumb" title={breadcrumb}>
+            {breadcrumb}
+          </span>
+        )}
         {icon && (
           <span className="form-icon">
             <img
@@ -57,11 +83,6 @@ const TopbarKit = ({
           </span>
         )}
         <span className="form-title">{title}</span>
-        {breadcrumb && (
-          <span className="form-breadcrumb" title={breadcrumb}>
-            [{breadcrumb}]
-          </span>
-        )}
       </button>
       <div className="form-topbar-right">
         <button

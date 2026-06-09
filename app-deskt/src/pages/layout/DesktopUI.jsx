@@ -23,7 +23,7 @@ const DesktopUI = ({
   const [dragging, setDragging] = useState(null);
   const [visibleWidgets, setVisibleWidgets] = useState({
     analogClock: true,
-    digitalClock: true,
+    digitalClock: false,
   });
   const [pos, setPos] = useState({
     analogClock: { x: null, y: 18, right: 24 },
@@ -93,7 +93,9 @@ const DesktopUI = ({
 
         setPos((current) => ({
           ...current,
-          [name]: { x: nextX, y: nextY, right: 0 },
+          // Important: keep either left OR right, not both.
+          // If both are set, the absolutely-positioned element can stretch (full width).
+          [name]: { x: nextX, y: nextY, right: null },
         }));
       };
 

@@ -8,6 +8,7 @@ import TaskViewFlyout from "./taskbar/TaskViewFlyout";
 import WindowFlyout from "./taskbar/WindowFlyout";
 import ProfileFlyout from "./taskbar/ProfileFlyout";
 import NotificationFlyout from "./taskbar/NotificationFlyout";
+import { getStorageLoginData, setStorageLoginData } from "@/utils/storage";
 
 const setupDesktopFormItem = {
   id: "setup-desktop",
@@ -15,7 +16,7 @@ const setupDesktopFormItem = {
   icon: "desktop.png",
   forms: "SetupDesktopPage",
   module: "system-setup-desktop",
-  size: "full",
+  size: "small",
   actions: [],
   leftbar: [],
   path: "System > Setup > Desktop",
@@ -64,9 +65,6 @@ const initialNotifications = [
   },
 ];
 
-const defaultDesktopBackground =
-  "radial-gradient(900px 520px at 18% 12%, var(--win11-body-glow-primary), var(--win11-transparent) 58%), radial-gradient(720px 420px at 78% 18%, var(--win11-body-glow-secondary), var(--win11-transparent) 62%), linear-gradient(135deg, var(--win11-bg), var(--win11-bg-deep))";
-
 const LayoutUI = () => {
   const [showAppSuite, setShowAppSuite] = useState(false);
   const [showTaskViewFlyout, setShowTaskViewFlyout] = useState(false);
@@ -78,9 +76,7 @@ const LayoutUI = () => {
   const [windowList, setWindowList] = useState([]);
   const [recentForms, setRecentForms] = useState([]);
   const [notifications, setNotifications] = useState(initialNotifications);
-  const [desktopBackground, setDesktopBackground] = useState(
-    defaultDesktopBackground,
-  );
+  const [desktopBackground, setDesktopBackground] = useState(null);
   const [topbarBackground, setTopbarBackground] =
     useState("var(--win11-panel)");
   const [zSeed, setZSeed] = useState(40);
@@ -102,14 +98,6 @@ const LayoutUI = () => {
     };
   }, []);
 
-  // Load saved desktop background from localStorage
-  useEffect(() => {
-    const savedBackground = localStorage.getItem("desktopBackground");
-    if (savedBackground) {
-      setDesktopBackground(savedBackground);
-    }
-  }, []);
-
   // Load saved topbar background from localStorage
   useEffect(() => {
     const savedTopbar = localStorage.getItem("topbarBackground");
@@ -117,6 +105,37 @@ const LayoutUI = () => {
       setTopbarBackground(savedTopbar);
     }
   }, []);
+
+  //load desktop icons, background from localStorage on mount
+  useEffect(() => {
+    const loginData = getStorageLoginData();
+    if (loginData.desktop && loginData.desktop.icons) {
+      setRecentForms(loginData.desktop.icons);
+    } else {
+      setRecentForms([]);
+    }
+    if (loginData.desktop && loginData.desktop.wallpaper) {
+      setDesktopBackground(loginData.desktop.wallpaper);
+    } else {
+      setDesktopBackground("#33424e");
+    }
+  }, []);
+
+  const handleSetDesktopBackground = (target, preset) => {
+    console.log("Selected target:", target);
+    console.log("Selected preset:", preset.value);
+
+    if (target === "background") {
+      setDesktopBackground(preset.value);
+      setStorageLoginData({
+        desktop: {
+          ...getStorageLoginData().desktop,
+          wallpaper: preset.value,
+        },
+      });
+    } else if (target === "widget") {
+    }
+  };
 
   const handleAppSuiteToggle = () => {
     setShowAppSuite((value) => !value);
@@ -220,9 +239,23 @@ const LayoutUI = () => {
         },
       ];
     });
-    setRecentForms((prev) =>
-      [formItem, ...prev.filter((item) => item.id !== formItem.id)].slice(0, 8),
-    );
+    // setRecentForms((prev) =>
+    //   [formItem, ...prev.filter((item) => item.id !== formItem.id)].slice(0, 20),
+    // );
+
+    setRecentForms((prev) => {
+      const withoutCurrent = prev.filter((item) => item.id !== formItem.id);
+      const updated = [formItem, ...withoutCurrent];
+
+      setStorageLoginData({
+        desktop: {
+          ...getStorageLoginData().desktop,
+          icons: updated.slice(0, 20),
+        },
+      });
+      return updated.slice(0, 20);
+    });
+
     setShowAppSuite(false);
   };
 
@@ -486,13 +519,15 @@ const LayoutUI = () => {
           onToggleMaximize={handleToggleMaximizeFormClick}
           onDock={handleDockFormClick}
           desktopBackground={desktopBackground}
-          onSetDesktopBackground={setDesktopBackground}
+          onSetDesktopBackground={handleSetDesktopBackground}
           onSetTopbarBackground={setTopbarBackground}
           topbarBackground={topbarBackground}
           onSignOut={handleSignOut}
           notifications={notifications}
           onReadNotification={handleReadNotification}
           onMarkAllNotificationsRead={handleMarkAllNotificationsRead}
+          callFunction1={handleSetDesktopBackground}
+          callFunction2={handleSetDesktopBackground}
         />
       ))}
     </div>
