@@ -291,27 +291,53 @@ const LayoutUI = () => {
     setShowWindowFlyout(false);
   };
 
-  const handleTileWindows = () => {
+const handleTileWindows = () => {
     const visible = windowList.filter((item) => !item.isMinimized);
     const targets = visible.length ? visible : windowList;
+    const total = targets.length;
+
+    if (total <= 1) {
+      setWindowList((prev) =>
+        prev.map((item) =>
+          targets.some((t) => t.id === item.id)
+            ? { ...item, isMinimized: false, isMaximized: false, layout: null }
+            : item,
+        ),
+      );
+      setShowWindowFlyout(false);
+      return;
+    }
+
+    // Windows 11-style tiling: arrange windows in a grid
+    const cols = Math.ceil(Math.sqrt(total));
+    const rows = Math.ceil(total / cols);
+
     setWindowList((prev) =>
       prev.map((item) => {
         const index = targets.findIndex((target) => target.id === item.id);
         if (index === -1) return item;
+
+        const tileCol = index % cols;
+        const tileRow = Math.floor(index / cols);
 
         return {
           ...item,
           isMinimized: false,
           isMaximized: false,
           layout: "tile",
-          tileIndex: index,
-          tileCount: targets.length,
+          tileCol,
+          tileRow,
+          tileCols: cols,
+          tileRows: rows,
           zIndex: 150 + index,
         };
       }),
     );
+
     setShowWindowFlyout(false);
   };
+    
+
 
   const handleDockFormClick = (formItem, side) => {
     const zIndex = nextZIndex();

@@ -1,5 +1,8 @@
+import "./NotificationFlyout.css";
+
 const NotificationFlyout = ({
   notifications = [],
+
   onRead,
   onMarkAllRead,
   onViewAll,

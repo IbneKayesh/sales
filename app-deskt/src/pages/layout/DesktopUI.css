@@ -35,6 +35,15 @@
   /* keep default pointer behavior for icons */
 }
 
+/* ensure the right-click menu isn't covered by other layers */
+.context-menu-layer{
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: auto;
+}
+
+
 .analog-clock,
 .digital-clock{
   pointer-events: auto;

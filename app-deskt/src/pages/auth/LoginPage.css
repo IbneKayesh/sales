@@ -1,113 +1,140 @@
-.login-page {
-  position: fixed;
-  inset: 0;
+/* Lock Screen style (ported to login page) */
+.lockscreen-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  height: 100vh;
+  width: 100vw;
+  padding: 6vh 20px 4vh 20px;
+  position: relative;
+  background: radial-gradient(circle at 50% 30%, #172a45 0%, #080f19 100%);
   overflow: hidden;
-  z-index: 9999;
 }
 
-.login-background {
+.lockscreen-container::before {
+  content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    #0a0a0a 0%,
-    #1a1a2e 50%,
-    #0f3460 100%
-  );
-  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: var(--wallpaper-url);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  opacity: var(--lockscreen-wallpaper-opacity, 0.25);
+  filter: blur(10px);
+  pointer-events: none;
 }
 
-.login-container {
+.lockscreen-clock-container {
+  text-align: center;
+  z-index: 2;
+  color: white;
+  animation: flyoutOpen 0.5s ease;
+}
+
+.lockscreen-time {
+  font-size: 80px;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -1.5px;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.lockscreen-date {
+  font-size: 20px;
+  font-weight: 400;
+  margin-top: 10px;
+  opacity: 0.9;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.lockscreen-login-box {
+  z-index: 2;
+  width: 300px;
+  padding: 24px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  animation: flyoutOpen 0.6s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+.lockscreen-input {
+  width: 100%;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--win11-border, rgba(255, 255, 255, 0.12));
+  border-radius: 4px;
+  color: white;
+  text-align: center;
+  font-family: var(--win11-font, system-ui);
+  font-size: 13px;
+  outline: none;
+  margin-bottom: 12px;
+  padding: 0 10px;
+  transition: all 0.2s;
+}
+
+.lockscreen-input:focus {
+  border-color: var(--win11-accent, #3b82f6);
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 8px var(--win11-accent-glow, rgba(59, 130, 246, 0.18));
+}
+
+.lockscreen-btn {
+  width: 100%;
+  height: 36px;
+  background: var(--win11-accent, #3b82f6);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-size: 13.5px;
+  font-family: var(--win11-font, system-ui);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lockscreen-btn:hover {
+  background: var(--win11-accent-hover, #2563eb);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.lockscreen-btn:active {
+  transform: scale(0.98);
+}
+
+.lockscreen-footer {
+  z-index: 2;
+  font-size: 11.5px;
+  color: var(--win11-muted, rgba(255, 255, 255, 0.65));
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.lockscreen-form-avatar {
+  margin: 0 auto 16px auto;
+  width: 72px;
+  height: 72px;
+  font-size: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-.login-card {
-  width: 100%;
-  max-width: 360px;
-  padding: 40px;
-  border-radius: 12px;
+  border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.login-header {
-  text-align: center;
-  margin-bottom: 32px;
+.lockscreen-form-name {
+  margin-bottom: 8px;
+  font-size: 18px;
 }
 
-.login-header h1 {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0;
-  color: #ffffff;
-  letter-spacing: -0.5px;
-}
-
-.login-header p {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 8px 0 0 0;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-group label {
+.lockscreen-form-role {
   font-size: 12px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.form-group input {
-  padding: 12px 14px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.05);
-  color: #ffffff;
-  font-size: 14px;
-  transition: all 0.2s ease;
-  font-family: inherit;
-}
-
-.form-group input:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.form-group input:focus {
-  outline: none;
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
-}
-
-.form-group input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.form-group input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  color: var(--win11-muted, rgba(255, 255, 255, 0.65));
+  margin-bottom: 20px;
 }
 
 .form-error {
@@ -120,50 +147,14 @@
   margin-top: -8px;
 }
 
-.login-button {
-  padding: 12px 16px;
-  border-radius: 6px;
-  border: 1px solid rgba(59, 130, 246, 0.5);
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+@keyframes flyoutOpen {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
-.login-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-}
-
-.login-button:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.login-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.login-footer {
-  text-align: center;
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.login-footer a {
-  font-size: 12px;
-  color: #3b82f6;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.login-footer a:hover {
-  color: #60a5fa;
-  text-decoration: underline;
-}

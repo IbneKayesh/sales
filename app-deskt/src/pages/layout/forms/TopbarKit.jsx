@@ -3,6 +3,7 @@ import "./TopbarKit.css";
 const TopbarKit = ({
   icon,
   title,
+  breadcrumb,
   isMaximized,
   onClose,
   onDragStart,
@@ -31,6 +32,11 @@ const TopbarKit = ({
       >
         {icon && <span className="form-icon">{icon}</span>}
         <span className="form-title">{title}</span>
+        {breadcrumb && (
+          <span className="form-breadcrumb" title={breadcrumb}>
+            {breadcrumb}
+          </span>
+        )}
       </button>
       <div className="form-topbar-right">
         <button

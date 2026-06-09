@@ -9,6 +9,7 @@ const widgetMap = {
   digitalClock: DigitalClock,
 };
 
+
 const DesktopUI = ({
   recentForms = [],
   onRestore,
@@ -25,8 +26,8 @@ const DesktopUI = ({
     digitalClock: true,
   });
   const [pos, setPos] = useState({
-    analogClock: { x: 24, y: 18 },
-    digitalClock: { x: 24, y: 210 },
+    analogClock: { x: null, y: 18, right: 24 },
+    digitalClock: { x: null, y: 210, right: 24 },
   });
   const menuRef = useRef(null);
 
@@ -37,8 +38,12 @@ const DesktopUI = ({
 
   const handleContextMenu = useCallback(
     (event) => {
+      // prevent the browser/OS context menu
       event.preventDefault();
+      event.stopPropagation();
+
       if (dragging) return;
+
       setMenu({ x: event.clientX, y: event.clientY });
       setClosing(false);
     },
@@ -65,8 +70,13 @@ const DesktopUI = ({
       if (dragging) return;
 
       const start = pos[name] || { x: 0, y: 0 };
+      const widgetWidth = name === "analogClock" ? 160 : 220;
+      const startX =
+        start.x !== null
+          ? start.x
+          : window.innerWidth - (start.right || 24) - widgetWidth;
       const offset = {
-        x: event.clientX - start.x,
+        x: event.clientX - startX,
         y: event.clientY - start.y,
       };
 
@@ -83,7 +93,7 @@ const DesktopUI = ({
 
         setPos((current) => ({
           ...current,
-          [name]: { x: nextX, y: nextY },
+          [name]: { x: nextX, y: nextY, right: 0 },
         }));
       };
 
@@ -128,15 +138,16 @@ const DesktopUI = ({
             <Component
               key={name}
               style={{
-                left: pos[name].x,
+                left: pos[name].x ?? "auto",
                 top: pos[name].y,
+                right: pos[name].right ?? "auto",
                 cursor: dragging === name ? "grabbing" : "grab",
               }}
               onMouseDown={(event) => startDrag(name, event)}
             />
           );
         })}
-        <div className="desktopIcons">
+        <div className="desktopIcons" onContextMenu={handleContextMenu}>
           {recentForms.map((item) => (
             <DesktopIcon
               key={item.id}
@@ -148,7 +159,11 @@ const DesktopUI = ({
         </div>
       </div>
       {menu && (
-        <div ref={menuRef}>
+        <div
+          className="context-menu-layer"
+          ref={menuRef}
+          onContextMenu={(event) => event.preventDefault()}
+        >
           <ContextMenu
             x={menu.x}
             y={menu.y}

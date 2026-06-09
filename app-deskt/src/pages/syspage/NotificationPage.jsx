@@ -1,5 +1,16 @@
-const NotificationPage = ({ notifications = [], onRead, onMarkAllRead, onClose }) => {
+import { useState } from "react";
+import "./NotificationPage.css";
+
+const NotificationPage = ({
+  notifications = [],
+  onRead,
+  onMarkAllRead,
+  onClose,
+  onDismiss,
+}) => {
+  const [activeTab, setActiveTab] = useState("all"); // 'all' | 'unread' | 'read'
   const unreadCount = notifications.filter((n) => !n.isRead).length;
+
 
   const getTypeIcon = (type) => {
     switch (type) {

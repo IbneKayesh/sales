@@ -12,11 +12,15 @@ const ContextMenu = ({
   onResetDesktop,
 }) => {
   return (
+
     <div
       className={`context-menu ${closing ? "closing" : ""}`}
       style={{ "--menu-x": `${x}px`, "--menu-y": `${y}px` }}
       onClick={(event) => event.stopPropagation()}
-      onContextMenu={(event) => event.stopPropagation()}
+      onContextMenu={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+      }}
     >
       <button
         className="context-menu-item"

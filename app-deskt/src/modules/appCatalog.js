@@ -3,19 +3,23 @@ export const appCatalog = [
     id: "sales",
     name: "Sales",
     icon: "📊",
+    path: "/sales",
     child: [
       {
         id: "sales-invoice",
         name: "Sales Invoice",
         icon: "📄",
+        path: "/sales/invoice",
         forms: "SalesPage",
         module: "sales",
         size: "medium",
+        breadcrumb: "/Sales/Sales Invoice",
       },
       {
         id: "sales-order",
         name: "Sales Order",
         icon: "📋",
+        path: "/sales/order",
         forms: "SalesPage",
         module: "sales",
         size: "medium",

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
 
@@ -8,6 +8,26 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const [lockTime, setLockTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setLockTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedLockTime = lockTime.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+
+  const formattedLockDate = lockTime.toLocaleDateString([], {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,62 +63,59 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-background" />
+    <div
+      className="lockscreen-container"
+      style={{
+        '--wallpaper-url': 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920&auto=format&fit=crop',
+        '--lockscreen-wallpaper-opacity': 0.25,
+      }}
+    >
+      {/* Top Clock */}
+      <div className="lockscreen-clock-container">
+        <h1 className="lockscreen-time">{formattedLockTime}</h1>
+        <h2 className="lockscreen-date">{formattedLockDate}</h2>
+      </div>
 
-      <div className="login-container">
-        <div className="login-card">
-          <div className="login-header">
-            <h1>Welcome</h1>
-            <p>Sign in to your account</p>
-          </div>
+      {/* Login Form Box */}
+      <form className="lockscreen-login-box" onSubmit={handleSubmit}>
+        <div className="lockscreen-form-avatar">JD</div>
+        <h3 className="lockscreen-form-name">Welcome</h3>
+        <p className="lockscreen-form-role">Sign in to continue</p>
 
-          <form onSubmit={handleSubmit} className="login-form">
-            <div className="form-group">
-              <label htmlFor="username">Username</label>
-              <input
-                id="username"
-                type="text"
-                placeholder="Enter your username"
-                value={username}
-                onChange={(e) => {
-                  setUsername(e.target.value);
-                  setError("");
-                }}
-                disabled={isLoading}
-              />
-            </div>
+        <input
+          type="text"
+          placeholder="Enter username"
+          className="lockscreen-input"
+          value={username}
+          onChange={(e) => {
+            setUsername(e.target.value);
+            setError('');
+          }}
+          disabled={isLoading}
+          autoFocus
+        />
 
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError("");
-                }}
-                disabled={isLoading}
-              />
-            </div>
+        <input
+          type="password"
+          placeholder="Enter password"
+          className="lockscreen-input"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setError('');
+          }}
+          disabled={isLoading}
+        />
 
-            {error && <div className="form-error">{error}</div>}
+        {error && <div className="form-error">{error}</div>}
 
-            <button
-              type="submit"
-              className="login-button"
-              disabled={isLoading}
-            >
-              {isLoading ? "Signing in..." : "Sign in"}
-            </button>
-          </form>
+        <button type="submit" className="lockscreen-btn" disabled={isLoading}>
+          {isLoading ? 'Signing in...' : 'Sign In'}
+        </button>
+      </form>
 
-          <div className="login-footer">
-            <a href="#forgot">Forgot password?</a>
-          </div>
-        </div>
+      <div className="lockscreen-footer">
+        ⚡ Connected to ERP Enterprise Cloud Services
       </div>
     </div>
   );
