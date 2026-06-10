@@ -30,7 +30,7 @@ const ContextMenu = ({
         }}
         type="button"
       >
-        Refresh
+        Reload
       </button>
       <button
         className="context-menu-item"

@@ -132,18 +132,6 @@ const SetupDesktopPage = ({
 
   return (
     <div className="page-container">
-      <div className="topbar-button-container">
-        <button className={`btn-default`} aria-label="Add" type="button">
-          Add
-        </button>
-        <button className={`btn-default`} aria-label="Save" type="button">
-          Save
-        </button>
-        <button className={`btn-default`} aria-label="Search" type="button">
-          Search
-        </button>
-      </div>
-
       {/* Desktop Background Section */}
       <div className="page-section">
         <h3>Desktop Background</h3>
