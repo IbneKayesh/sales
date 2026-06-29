@@ -6,6 +6,7 @@ import AuditFields from "@/components/AuditFields";
 import RequiredText from "@/components/RequiredText";
 
 const CoaFormComp = ({
+  readOnly,
   formData,
   errors,
   onChange,
@@ -39,6 +40,7 @@ const CoaFormComp = ({
           size={"small"}
           filter
           showClear
+          disabled={readOnly}
         />
 
         <RequiredText text={errors.chtac_chtac} />
@@ -69,6 +71,7 @@ const CoaFormComp = ({
           placeholder={`Enter type`}
           filter
           showClear
+          disabled={readOnly}
         />
         <RequiredText text={errors.chtac_ctype} />
       </div>

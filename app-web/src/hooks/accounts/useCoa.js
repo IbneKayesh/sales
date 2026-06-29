@@ -22,6 +22,7 @@ const useCoa = () => {
   });
   const [crTitle, setCrTitle] = useState("COA List");
   const [crView, setCrView] = useState("SYS_LST_1");
+  const [readOnly, setReadOnly] = useState(false);
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
@@ -115,6 +116,7 @@ const useCoa = () => {
     setFormData(rowData);
     setCrTitle("Edit COA");
     setCrView("SYS_FRM_1");
+    setReadOnly(true);
   };
 
   const handleDelete = (rowData) => {
@@ -181,6 +183,7 @@ const useCoa = () => {
     }
     setCrTitle("Add COA");
     setCrView("SYS_FRM_1");
+    setReadOnly(false);
     setFormData(dataModel);
     setErrors({});
   };
@@ -227,6 +230,7 @@ const useCoa = () => {
     pageAuth,
     crTitle,
     crView,
+    readOnly,
     formData,
     errors,
     dataList,

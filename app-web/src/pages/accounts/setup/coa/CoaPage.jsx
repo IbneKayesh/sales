@@ -11,6 +11,7 @@ const CoaPage = () => {
     pageAuth,
     crTitle,
     crView,
+    readOnly,
     formData,
     errors,
     dataList,
@@ -27,9 +28,6 @@ const CoaPage = () => {
     handleAddNewClick,
     handleSubmitClick,
   } = useCoa();
-
-  const isList = crView === "list" && true;
-  const isForm = crView === "form" && true;
 
   const cardTitle = () => {
     return (
@@ -98,6 +96,7 @@ const CoaPage = () => {
       )}
       {crView === "SYS_FRM_1" && (
         <CoaFormComp
+          readOnly={readOnly}
           formData={formData}
           errors={errors}
           onChange={handleChange}
