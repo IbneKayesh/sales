@@ -1,3 +1,5 @@
+--employee list
+
 CREATE TABLE tmhb_emply (
   -- default 1
   id varchar(50) PRIMARY KEY,
@@ -16,6 +18,7 @@ CREATE TABLE tmhb_emply (
   emply_lstpd timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   emply_isprm boolean NOT NULL DEFAULT false,
   emply_urole varchar(50) NOT NULL DEFAULT 'USER',
+  -- add more columns for employees
   emply_crdno varchar(50) NOT NULL,
   
   -- default 2
