@@ -32,7 +32,7 @@ goto MENU
 :WA
 start cmd /k "cd backend-app && node server.js"
 start cmd /k "cd app-web && npm run dev"
-start cmd /k "cd app-docs && npm start"
+rem start cmd /k "cd app-docs && npm start"
 echo  ---- Web + API + Docs Running ----
 goto MENU
 
