@@ -2,16 +2,16 @@ const { dbGet, dbGetAll } = require("./sqlManagerpg");
 
 const GenNewCode = async (user_c, tableName) => {
   // get prefix + length config
-  const sql = `SELECT tcode_prfix, tcode_prlen
-        FROM tmnb_tcode
-        WHERE tcode_apusr = $1
-        AND tcode_tname = $2
+  const sql = `SELECT ccode_prfix, ccode_prlen
+        FROM tmsb_ccode
+        WHERE ccode_users = $1
+        AND ccode_cname = $2
         LIMIT 1`;
   const result = await dbGet(sql, [user_c, tableName]);
   if (!result) throw new Error("Code generation config is not found");
 
-  const prefix = result.tcode_prfix || "ERR"; // fallback
-  const length = result.tcode_prlen || 8;
+  const prefix = result.ccode_prfix || "ERR"; // fallback
+  const length = result.ccode_prlen || 8;
 
   const regColumn = tableName.split("_")[1];
   // get count from table by main registered user

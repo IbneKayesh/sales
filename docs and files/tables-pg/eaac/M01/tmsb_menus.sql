@@ -7,9 +7,9 @@
 CREATE TABLE tmsb_menus (
   id varchar(50) PRIMARY KEY,
 
-  menus_pname varchar(50) NOT NULL,
-  menus_aname varchar(50) NOT NULL,
-  menus_mname varchar(50) NOT NULL,
+  menus_pname varchar(50) NOT NULL, --package
+  menus_aname varchar(50) NOT NULL, --application
+  menus_mname varchar(50) NOT NULL, --menu name
   menus_color varchar(50) NOT NULL,
   menus_micon varchar(50) NOT NULL,
   menus_odrby integer NOT NULL DEFAULT 0,

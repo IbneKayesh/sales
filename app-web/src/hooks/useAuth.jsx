@@ -95,12 +95,13 @@ export const AuthProvider = ({ children }) => {
 
   const getPageAuth = useCallback((menuId) => {
     const menu = userMenus.find((m) => m.id === menuId);
+    //console.log("menu",menu)
     if (menu) {
       return {
-        extpr: menu.mnusr_extpr,
-        addpr: menu.mnusr_addpr,
-        edtpr: menu.mnusr_edtpr,
-        delpr: menu.mnusr_delpr,
+        extpr: menu.mnemp_extpr || false,
+        addpr: menu.mnemp_addpr || false,
+        edtpr: menu.mnemp_edtpr || false,
+        delpr: menu.mnemp_delpr || false,
       };
     }
     return { extpr: false, addpr: false, edtpr: false, delpr: false };

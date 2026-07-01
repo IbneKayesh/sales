@@ -8,7 +8,7 @@ const FStatementsPage = React.lazy(()=> import("../pages/accounts/reports/fstate
 
 const accountsRoutes = (
   <>
-    <Route path="/accounts/setup/coa" element={<CoaPage />} />
+    <Route path="/accounts/setup/chart-of-accounts" element={<CoaPage />} />
     <Route path="/accounts/setup/parties" element={<PartiesPage />} />
     <Route path="/accounts/journal-voucher" element={<JournalPage />} />
     <Route path="/accounts/reports/financials-statements" element={<FStatementsPage />} />

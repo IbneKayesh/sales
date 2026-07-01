@@ -9,7 +9,7 @@ const apiRequest = async (endpoint, options = {}) => {
   // default attachments
   // Get token from storage
   const token = getStorageData()?.token;
-  const storedUser = getStorageData()?.users;
+  const storedUser = getStorageData()?.emply;
   if (!token || !storedUser) {
     //throw new Error("Unauthorized access, login again to start session");
     return {
@@ -21,8 +21,8 @@ const apiRequest = async (endpoint, options = {}) => {
 
   const reqData = {
     user_s: storedUser.id, //this User Id or self Id
-    user_c: storedUser.users_apusr, //this Master User Id or contract Id
-    user_b: storedUser.users_bsins, //this Business Id
+    user_c: storedUser.emply_users, //this Master User Id or contract Id
+    user_b: storedUser.emply_bsins, //this Business Id
   };
 
   //merge to body
@@ -37,7 +37,7 @@ const apiRequest = async (endpoint, options = {}) => {
     headers: {
       "Content-Type": "application/json",
       "sgd-ua-node": import.meta.env.VITE_APP_API_KEY,
-      "x-tenant-id": storedUser.users_apink || 'default', //this Database Id
+      "x-tenant-id": storedUser.users_aplnk || 'default', //this Database Id
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
@@ -114,9 +114,10 @@ const apiLogin = async (options) => {
     }
     //create storage
     if (data.success) {
-      const { users, bsins, menus, token } = data.data;
-      setStorageData({ users: users });
+      const { emply, bsins, users, menus, token } = data.data;
+      setStorageData({ emply: emply });
       setStorageData({ bsins: bsins });
+      setStorageData({ users: users });
       setStorageData({ menus: menus });
       setStorageData({ token: token });
     }

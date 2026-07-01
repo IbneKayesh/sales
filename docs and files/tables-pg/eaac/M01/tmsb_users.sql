@@ -1,8 +1,8 @@
 -- master users
--- drop table `tmnb_users`
+-- drop table `tmsb_users`
 
 
-CREATE TABLE tmnb_users (
+CREATE TABLE tmsb_users (
     -- default 1
   id varchar(50) PRIMARY KEY,  
 

@@ -6,7 +6,7 @@
 CREATE TABLE tmsb_mnemp (
   id varchar(50) PRIMARY KEY,
 
-  mnemp_users varchar(50) NOT NULL,
+  mnemp_emply varchar(50) NOT NULL,
   mnemp_menus varchar(50) NOT NULL,
 
   -- optional

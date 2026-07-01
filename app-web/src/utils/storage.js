@@ -3,8 +3,9 @@ const STORAGE_KEY = "eaac02May2026user";
 const STORAGE_KEY_LOGIN = "eaac02May2026conf";
 
 const defaultData = {
-  users: null,
+  emply: null,
   bsins: null,
+  users: null,
   token: null,
   menus: [],
   recent_links: [],

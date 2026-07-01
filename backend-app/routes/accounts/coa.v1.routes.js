@@ -24,7 +24,7 @@ router.post("/", async (req, res) => {
     FROM tmtb_chtac coa
     LEFT JOIN tmnb_users csr ON coa.chtac_crusr = csr.id
     LEFT JOIN tmnb_users usr ON coa.chtac_upusr = usr.id
-    WHERE coa.chtac_apusr = $1
+    WHERE coa.chtac_users = $1
     ORDER BY coa.chtac_chtno ASC`;
 
     const params = [user_c];
@@ -61,7 +61,7 @@ router.post("/get-all-active", async (req, res) => {
     //database action
     const sql = `SELECT coa.*, 0 as edit_stop
     FROM tmtb_chtac coa
-    WHERE coa.chtac_apusr = $1
+    WHERE coa.chtac_users = $1
     AND coa.chtac_actve = TRUE
     ORDER BY coa.chtac_chtno ASC`;
 
@@ -86,7 +86,7 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      chtac_apusr,
+      chtac_users,
       chtac_bsins,
       chtac_chtac,
       chtac_ccode,
@@ -124,7 +124,7 @@ const create = async (req, res) => {
     const chtac_child_new = chtac_chtac === "-" ? false : true;
     const newCode = await GenNewCode(user_c, "tmtb_chtac");
 
-    const sql_sequence_no = `SELECT shtbl_value FROM tmnb_shtbl WHERE shtbl_gname = $1 AND shtbl_dvalu = $2 AND shtbl_apusr = $3`;
+    const sql_sequence_no = `SELECT shtbl_value FROM tmsb_shtbl WHERE shtbl_gname = $1 AND shtbl_dvalu = $2 AND shtbl_users = $3`;
     const row_sequence_no = await dbGet(
       sql_sequence_no,
       [chtac_ctype, chtac_ctype, user_c],
@@ -139,7 +139,7 @@ const create = async (req, res) => {
       });
     }
 
-    const sql_sl = `SELECT COUNT(id) AS last_no FROM tmtb_chtac WHERE chtac_ctype = $1 AND chtac_apusr = $2`;
+    const sql_sl = `SELECT COUNT(id) AS last_no FROM tmtb_chtac WHERE chtac_ctype = $1 AND chtac_users = $2`;
     const row_sl = await dbGet(
       sql_sl,
       [chtac_ctype, user_c],
@@ -151,7 +151,7 @@ const create = async (req, res) => {
     const chtac_chtno_new =
       Number(row_sequence_no.shtbl_value) + Number(row_sl?.last_no || 0);
 
-    const sql = `INSERT INTO tmtb_chtac(id, chtac_apusr, chtac_bsins, chtac_chtac, chtac_ccode, chtac_cname,
+    const sql = `INSERT INTO tmtb_chtac(id, chtac_users, chtac_bsins, chtac_chtac, chtac_ccode, chtac_cname,
     chtac_ctype, chtac_chtno, chtac_ntype, chtac_child, chtac_alpst, chtac_crusr, chtac_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
     $7, $8, $9, $10, $11, $12, $13)`;
@@ -193,7 +193,7 @@ const update = async (req, res) => {
   try {
    const {
       id,
-      chtac_apusr,
+      chtac_users,
       chtac_bsins,
       chtac_chtac,
       chtac_ccode,
@@ -333,7 +333,7 @@ router.post("/get-coa-posting", async (req, res) => {
     FROM tmtb_chtac cht
     WHERE cht.chtac_child = TRUE
     AND cht.chtac_actve = TRUE
-    AND cht.chtac_apusr = $1
+    AND cht.chtac_users = $1
     ORDER BY cht.chtac_ctype ASC, cht.chtac_chtac ASC, cht.chtac_chtno ASC`;
 
     const params = [user_c];
@@ -368,7 +368,7 @@ router.post("/get-with-party-count", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT coa.id, coa.chtac_apusr, coa.chtac_bsins, coa.chtac_chtac, coa.chtac_ccode, coa.chtac_cname,
+    const sql = `SELECT coa.id, coa.chtac_users, coa.chtac_bsins, coa.chtac_chtac, coa.chtac_ccode, coa.chtac_cname,
     coa.chtac_ctype, coa.chtac_chtno, coa.chtac_ntype, coa.chtac_child, coa.chtac_alpst, coa.chtac_actve,
     coa.chtac_crusr, coa.chtac_crdat, coa.chtac_upusr, coa.chtac_updat, coa.chtac_rvnmr, 
     pty.party_count, 0 as edit_stop
@@ -378,7 +378,7 @@ router.post("/get-with-party-count", async (req, res) => {
       FROM tmtb_party
       GROUP BY party_chtac
       ) pty ON coa.id = pty.party_chtac
-    WHERE coa.chtac_apusr = $1
+    WHERE coa.chtac_users = $1
     AND coa.chtac_actve = TRUE
     ORDER BY coa.chtac_chtno ASC`;
 

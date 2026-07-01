@@ -5,7 +5,8 @@
     "maxLength": 50,
     "minLength": 3,
     "placeholder": "Enter user name",
-    "required": true
+    "required": true,
+    "default":"kayesh@sgd.com"
   },
   "password": {
     "type": "string",
@@ -14,6 +15,6 @@
     "minLength": 3,
     "placeholder": "Enter password",
     "required": true,
-    "default": "admin"
+    "default": "kayesh"
   }
 }
