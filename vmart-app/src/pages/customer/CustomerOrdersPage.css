@@ -1,0 +1,29 @@
+/* CustomerOrdersPage.css */
+.orders-page { padding: 0 10px 56px; }
+.orders-filter-wrap { padding: 0 0 8px; }
+
+.orders-empty { text-align: center; padding: 40px; color: var(--text-secondary); }
+.orders-empty-icon { font-size: 48px; margin-bottom: 12px; }
+.orders-empty-browse-btn { margin-top: 12px; }
+
+.orders-card { margin: 4px 12px 8px; cursor: pointer; }
+.orders-card-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.orders-card-no { font-size: 13px; font-weight: 800; color: var(--primary); }
+.orders-card-shop { font-size: 12px; font-weight: 600; margin-top: 2px; }
+.orders-card-date { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.orders-card-right { text-align: right; }
+.orders-card-total { font-size: 16px; font-weight: 800; }
+.orders-card-badge-wrap { margin-top: 4px; }
+
+.orders-status-badge {
+  font-size: 10px; font-weight: 700; padding: 3px 8px;
+  border-radius: 10px;
+}
+.orders-card-footer {
+  margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border);
+  font-size: 11px; color: var(--text-secondary);
+  display: flex; justify-content: space-between;
+}
+.orders-card-view-link { color: var(--primary); font-weight: 600; }

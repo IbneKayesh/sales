@@ -9,10 +9,11 @@ import { contactAPI } from "@/api/crm/contactAPI.js";
 import { dzoneAPI } from "@/api/crm/dzoneAPI.js";
 import { tareaAPI } from "@/api/crm/tareaAPI.js";
 import { territoryAPI } from "@/api/crm/territoryAPI.js";
+import { partiesAPI } from "@/api/accounts/partiesAPI.js";
 import tmcb_cntad from "@/models/crm/tmcb_cntad.json";
 
 const useContacts = () => {
-  //hooks :: menuId M03-M03,
+  //hooks :: menuId M06-M01,
   //mnusr_extpr : export, mnusr_addpr : add, mnusr_edtpr : edit, mnusr_delpr : delete
   const { getPageAuth } = useAuth();
   const { showToast, showToastError, confirm, alert, isBusy, setIsBusy } =
@@ -24,12 +25,13 @@ const useContacts = () => {
     delpr: false,
   });
   const [crTitle, setCrTitle] = useState("Contact List");
-  const [crView, setCrView] = useState("list");
+  const [crView, setCrView] = useState("SYS_LST_1");
   const [formData, setFormData] = useState(dataModel);
   const [errors, setErrors] = useState({});
   const [dataList, setDataList] = useState([]);
 
   //other states
+  const [cntct_party_dataList, setCntct_party_dataList] = useState([]);
   const [cntct_trtry_Options, setCntct_trtry_Options] = useState([]);
   const [cntct_tarea_Options, setCntct_tarea_Options] = useState([]);
   const [cntct_dzone_Options, setCntct_dzone_Options] = useState([]);
@@ -59,7 +61,7 @@ const useContacts = () => {
   const [dataListAddress, setDataListAddress] = useState([]);
 
   useEffect(() => {
-    const perms = getPageAuth("M03-M03");
+    const perms = getPageAuth("M06-M01");
     setPageAuth(perms);
   }, [getPageAuth]);
 
@@ -101,9 +103,10 @@ const useContacts = () => {
     }
     setFormData(rowData);
     setCrTitle("Edit Contact");
-    setCrView("form");
+    setCrView("SYS_FRM_1");
     handleGetCountry();
     handleGetAddress(rowData.id);
+    handleGetAccountsParty(rowData.id);
   };
 
   const handleDelete = (rowData) => {
@@ -112,7 +115,7 @@ const useContacts = () => {
       return;
     }
     confirm({
-      message: `Do you want to ${rowData.cntct_actve ? "Deactivate" : "Activate"} this ${rowData.cntct_cntnm}?`,
+      message: `Do you want to ${rowData.cntct_actve ? "Deactivate" : "Activate"} this ${rowData.cntct_cname}?`,
       header: "Confirmation!",
       accept: () => {
         onDelete(rowData);
@@ -135,7 +138,7 @@ const useContacts = () => {
       });
       if (resp.success) {
         setCrTitle("Contact List");
-        setCrView("list");
+        setCrView("SYS_LST_1");
         loadContact();
       }
     } catch (error) {
@@ -146,20 +149,20 @@ const useContacts = () => {
 
   const handleBackClick = () => {
     setCrTitle("Contact List");
-    setCrView("list");
+    setCrView("SYS_LST_1");
     setFormData(dataModel);
   };
 
   const handleSearchClick = () => {
     setCrTitle("Search Contact");
-    setCrView("list");
+    setCrView("SYS_LST_1");
     alert({ message: "Search is clicked", header: "Search" });
     //ketp this function as it is
   };
 
   const handleRefreshClick = () => {
     setCrTitle("Contact List");
-    setCrView("list");
+    setCrView("SYS_LST_1");
     loadContact();
   };
 
@@ -169,7 +172,7 @@ const useContacts = () => {
       return;
     }
     setCrTitle("Add Contact");
-    setCrView("form");
+    setCrView("SYS_FRM_1");
     setFormData(dataModel);
     handleGetCountry();
     setDataListAddress([]);
@@ -195,7 +198,7 @@ const useContacts = () => {
       });
       if (resp.success) {
         setCrTitle("Contact List");
-        setCrView("list");
+        setCrView("SYS_LST_1");
         loadContact();
       }
     } catch (error) {
@@ -327,7 +330,7 @@ const useContacts = () => {
       });
       if (resp.success) {
         //setCrTitle("Contact List");
-        //setCrView("list");
+        //setCrView("SYS_LST_1");
         handleGetAddress(formData.id);
         setFormDataAddress(initFormAddr);
       }
@@ -382,6 +385,27 @@ const useContacts = () => {
   };
 
 
+  // Get Accounts Party
+
+const handleGetAccountsParty = async (party_vndor) => {
+    setCntct_party_dataList([]);
+    //console.log("party_vndor", party_vndor);
+    if (!party_vndor) {
+      return;
+    }
+    try {
+      setIsBusy(true);
+      const resp = await partiesAPI.getByContacts({ party_vndor: party_vndor });
+      //console.log("resp", resp);
+      setCntct_party_dataList(resp.data);
+      showToastError(resp);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+
   return {
     //hooks
     pageAuth,
@@ -391,6 +415,7 @@ const useContacts = () => {
     errors,
     dataList,
     //other states
+    cntct_party_dataList,
     cntct_ctype_Options,
     cntct_sorce_Options,
     cntct_trtry_Options,

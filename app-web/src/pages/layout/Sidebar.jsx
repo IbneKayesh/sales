@@ -7,7 +7,7 @@ import "./Sidebar.css";
 const Sidebar = ({ collapsed }) => {
   const [expandedMenus, setExpandedMenus] = useState([]);
   const [userMenus, setUserMenus] = useState([]);
-  const [userData, setUserData] = useState(null);
+  const [emplyData, setEmplyData] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const location = useLocation();
   const navigate = useNavigate();
@@ -177,7 +177,7 @@ const Sidebar = ({ collapsed }) => {
 
   useEffect(() => {
     const data = getStorageData();
-    setUserData(data.users);
+    setEmplyData(data.emply);
     //console.log("data", data.menus);
     setUserMenus(data.menus);
 
@@ -421,19 +421,19 @@ const Sidebar = ({ collapsed }) => {
           <div className="user-info-inline">
             <div
               className="avatar-xs"
-              aria-label={`User: ${userData?.users_uname || "User"}`}
+              aria-label={`User: ${emplyData?.emply_cname || "User"}`}
             >
-              {userData?.users_uname?.charAt(0)?.toUpperCase() || "U"}
+              {emplyData?.emply_cname?.charAt(0)?.toUpperCase() || "U"}
             </div>
             <div className="user-details">
               <span
                 className="user-name-text"
-                aria-label={`User name: ${userData?.users_uname || "User"}`}
+                aria-label={`User name: ${emplyData?.emply_cname || "User"}`}
               >
-                {userData?.users_uname || "User"}
+                {emplyData?.emply_cname || "User"}
               </span>
               <span className="user-role-text">
-                {userData?.urole_rname || "User"}
+                {emplyData?.emply_urole || "User"}
               </span>
             </div>
           </div>

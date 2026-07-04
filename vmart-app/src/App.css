@@ -1,0 +1,1641 @@
+/* ── Containers ────────────────────────────────────────── */
+.app-container {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-top: 48px;
+  padding-bottom: 56px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.page-container {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-top: 48px;
+  padding-bottom: 56px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.divider-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.divider-text {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ── Material Elevations & Cards ────────────────────────── */
+.lite-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  font-size: 13px;
+  margin: 5px;
+  margin-bottom: 1rem;
+  gap: 6px;
+  padding: 6px;
+  transition: all 0.2s ease;
+}
+
+.lite-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.lite-card-divider {
+  height: 1px;
+  background: var(--border);
+  width: 100%;
+}
+
+.lite-card-empty {
+  padding: 16px 12px 8px;
+}
+
+.lite-card-title {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--on-background);
+}
+
+.lite-card-subtitle {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.lite-card-header {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Search Bar Layout ────────────────────────── */
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.search-field {
+  flex: 1;
+}
+
+.search-field .p-inputtext {
+  height: 28px;
+  font-size: 13px;
+}
+
+.search-filter-btn {
+  height: 36px;
+  width: 36px;
+}
+
+/* ── List Container ────────────────────────── */
+.list-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Lite Card Item ────────────────────────── */
+.lite-card-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 5px;
+  transition: all 0.15s ease;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.lite-card-item:last-child {
+  border-bottom: none;
+}
+
+.lite-card-item:hover {
+  background: var(--surface-hover);
+}
+
+/* ── Lite Card Left Section ────────────────────────── */
+.lite-card-item-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lite-card-item-left-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.lite-card-item-left-subtitle {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ── Lite Card Right Section ────────────────────────── */
+.lite-card-item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.lite-card-item-right-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.lite-card-item-right-tag {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ── Lite Card Footer ────────────────────────── */
+.lite-card-item-footer {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ── Lite Card Item Module ────────────────────────── */
+
+.lite-card-module-container {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lite-card-module-button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  box-shadow: var(--shadow);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.lite-card-module-button:active {
+  transform: scale(0.98);
+}
+
+.lite-card-module-icon-chip {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.lite-card-module-content {
+  flex: 1;
+}
+
+.lite-card-module-title {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--on-surface);
+}
+
+.lite-card-module-description {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.lite-card-module-tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.lite-card-module-tag {
+  font-size: 10px;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-weight: 600;
+}
+
+.lite-card-module-more {
+  font-size: 10px;
+  color: var(--text-secondary);
+  padding: 2px 0;
+}
+
+.lite-card-module-arrow {
+  display: flex;
+  align-items: center;
+}
+
+/* ── Page Headers & Navigation ─────────────────────────── */
+.top-bar {
+  height: 50px;
+  background: var(--surface);
+  color: var(--on-surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 1100;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+}
+
+.top-bar-left,
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lite-icon-btn {
+  background: none;
+  border: none;
+  color: var(--on-surface);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.lite-icon-btn:active {
+  background: var(--background);
+  transform: scale(0.92);
+}
+
+.lite-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+}
+
+.lite-page-title {
+  color: var(--on-surface);
+}
+
+.lite-popup-menu {
+  position: absolute;
+  top: 64px;
+  right: 16px;
+  width: 260px;
+  background: var(--surface);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08);
+  z-index: 1100;
+  animation: fadeIn 0.15s ease-out;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+}
+
+/* ===== User Header ===== */
+.lite-user-circle {
+  padding: 18px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.02), transparent);
+}
+
+.lite-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+.lite-user-name {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--on-surface);
+}
+
+.lite-user-role {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* ===== Attendance Card ===== */
+.lite-menu-item-row-bg {
+  padding: 10px 14px;
+  background: var(--background);
+  border-radius: 14px;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.lite-menu-item-row-bg .text-xs {
+  font-weight: 600;
+  color: #22c55e; /* green status */
+}
+
+/* ===== Menu Items ===== */
+.lite-menu-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  color: var(--on-surface);
+}
+
+.lite-menu-item-row:hover {
+  background: var(--background);
+  transform: translateX(4px);
+}
+
+.lite-menu-item-row:active {
+  transform: scale(0.98);
+}
+
+.lite-menu-item-row:last-child {
+  color: #ef4444;
+}
+
+.lite-menu-item-row:last-child:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* ── Bottom Bar & Navigation ─────────────────────────── */
+.bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: var(--surface);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.nav-item.active {
+  color: var(--primary);
+}
+
+/* ── Navigation Components (Sidebar/Popups) ──────────── */
+.lite-sidebar {
+  position: absolute;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background: var(--surface);
+  z-index: 1200;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.lite-sidebar.open {
+  transform: translateX(280px);
+}
+
+.lite-sidebar-header {
+  padding: 32px 24px;
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-variant) 100%
+  );
+  color: #fff;
+}
+
+.lite-sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.lite-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  color: var(--on-surface);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.lite-sidebar-item:active {
+  background: var(--background);
+  color: var(--primary);
+}
+
+.lite-header-btn-primary {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ── Lite Button Base ───────────────────────── */
+
+.lite-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 42px;
+  height: 28px;
+  padding: 0 10px;
+
+  border-radius: 14px;
+  border: 1px solid var(--border);
+
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow);
+}
+
+/* Hover */
+.lite-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+/* Active */
+.lite-button:active {
+  transform: translateY(0);
+  opacity: 0.9;
+}
+
+/* Disabled */
+.lite-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+/* ── Lite Button Variants Primary ───────────────────────── */
+.lite-button-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+  border: 1px solid var(--primary);
+}
+
+.lite-button-primary:hover {
+  background: var(--primary-variant);
+}
+
+/* ── Lite Button Variants Secondary ───────────────────────── */
+
+.lite-button-secondary {
+  background: var(--secondary);
+  color: var(--on-secondary);
+  border: 1px solid var(--secondary);
+}
+
+/* ── Lite Button Variants Danger ───────────────────────── */
+
+.lite-button-danger {
+  background: var(--error);
+  color: var(--on-error);
+  border: 1px solid var(--error);
+}
+
+/* ── Lite Button Variants warning ───────────────────────── */
+
+.lite-button-warning {
+  background: var(--accent);
+  color: var(--on-secondary);
+  border: 1px solid var(--accent);
+}
+
+/* ── Lite Button Variants Outline ───────────────────────── */
+.lite-button-outline {
+  background: var(--background);
+  color: var(--on-background);
+  border: 1px solid var(--border);
+}
+
+.lite-button-outline:hover {
+  background: var(--surface);
+}
+
+.lite-button-info-outline {
+  background: rgba(14, 165, 233, 0.1);
+  color: var(--info);
+  border: 1px solid var(--info);
+}
+
+.lite-button-info-outline:hover {
+  background: rgba(14, 165, 233, 0.18);
+}
+
+/* ── Lite Button Variants SM ───────────────────────── */
+
+.lite-button-sm {
+  height: 22px;
+  padding: 0 8px;
+  font-size: 11px;
+  border-radius: 11px;
+}
+
+/* ── Lite Button Variants Info ───────────────────────── */
+
+.lite-button-info {
+  background: var(--info);
+  color: var(--on-info);
+  border: 1px solid var(--info);
+}
+
+.lite-button-info:hover {
+  filter: brightness(0.95);
+}
+
+/* ── Customize Primereact ───────────────────────── */
+.p-inputtext {
+  height: 28px;
+  font-size: 13px;
+}
+.p-dropdown {
+  height: 28px;
+  font-size: 13px !important;
+}
+.p-dropdown .p-dropdown-label.p-placeholder {
+  padding: 4px !important;
+}
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+  padding: 8px !important;
+  font-size: 13px !important;
+}
+.p-dropdown-label {
+  padding: 4px;
+}
+
+.p-datatable {
+  font-size: 13px !important;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  padding: 4px !important;
+}
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 4px !important;
+}
+
+/* ── FAB ───────────────────────────────────────────────── */
+.btn-fab {
+  position: absolute;
+  bottom: 70px;
+  right: 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: var(--primary);
+  color: var(--on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn-fab:active {
+  transform: scale(0.94);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Action Buttons ────────────────────────────────────── */
+.lite-actions-grid {
+  display: flex;
+  gap: 2px;
+  padding: 0 5px 5px;
+}
+
+.lite-action-btn {
+  flex: 1;
+  padding: 5px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.lite-action-btn:active {
+  background: var(--background);
+}
+
+.lite-action-btn-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* ── Search Bar (alias for lite-card-header in list pages) ── */
+.search-bar {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Badge Pill ─────────────────────────────────────────── */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+/* ── Semantic Status Badges ─────────────────────────────── */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.status-badge--paid {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.status-badge--pending {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.status-badge--overdue {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.status-badge--undelivered {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.status-badge--delivered {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+/* ── Page Section Header ─────────────────────────────────── */
+.page-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 4px;
+}
+
+.page-section-header-bar {
+  width: 3px;
+  height: 14px;
+  border-radius: 4px;
+  background: var(--primary);
+  flex-shrink: 0;
+}
+
+.page-section-header-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.page-section-header-count {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--background);
+  padding: 1px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+/* ── Entity Meta Block (view / entry header info) ────────── */
+.entity-meta-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.entity-meta-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entity-meta-sub {
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Detail Row (key-value pairs in view pages) ──────────── */
+.detail-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 12px 10px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-row-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.detail-row-value {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--on-surface);
+  flex: 1;
+}
+
+/* ── Empty State ─────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 28px 16px;
+  color: var(--text-secondary);
+}
+
+.empty-state-icon {
+  font-size: 28px;
+  opacity: 0.4;
+}
+
+.empty-state-text {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* ── Form Field Group ────────────────────────────────────── */
+.form-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.form-field-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--on-surface);
+  letter-spacing: 0.3px;
+}
+
+.form-field-label.required::after {
+  content: " *";
+  color: var(--error);
+}
+
+.form-field-error {
+  font-size: 10px;
+  color: var(--error);
+  margin-top: 2px;
+}
+
+/* ── Entry Item Table ────────────────────────────────────── */
+.entry-item-table {
+  padding: 0 4px 6px;
+}
+
+.entry-item-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 6px;
+  align-items: center;
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.entry-item-row.header {
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border);
+}
+
+.entry-item-row:last-child {
+  border-bottom: none;
+}
+
+.entry-item-summary {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 6px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--on-surface);
+  border-top: 1px solid var(--border);
+}
+
+.entry-item-summary-label {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* ── Qty Overlay Panel ───────────────────────────────────── */
+.qty-input-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 180px;
+}
+
+.qty-input-panel-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+/* ── List Item Avatar / Initials ─────────────────────────── */
+.list-item-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+/* ── Header Row (view/entry top bar) ─────────────────────── */
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+}
+
+.header-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ── Item Selector (entry dropdown row) ──────────────────── */
+.item-selector-row {
+  padding: 6px 10px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  background: var(--background);
+  border-radius: 10px;
+  margin: 0 6px 6px;
+}
+
+
+/*Lite Rounded Button*/
+.lite-round-btn {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: var(--secondary);
+}
+
+/* Icon focus style */
+.lite-round-btn:focus .pi,
+.lite-round-btn:focus-visible .pi {
+  color: var(--primary);   /* icon color change */
+  font-weight: 700;        /* may not affect all PrimeIcons */
+  transform: scale(1.15);  /* stronger visual emphasis */
+}
+
+/* Optional focus ring */
+.lite-round-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ── Dashboard Specific ────────────────────────────── */
+.dashboard-greeting {
+  padding: 20px 16px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.greeting-text {
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text-secondary);
+}
+
+.user-name {
+  margin-top: 4px;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--on-surface);
+}
+
+.revenue-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.revenue-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 40px;
+  margin-top: 20px;
+}
+
+.chart-bar-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.chart-bar {
+  width: 100%;
+  border-radius: 4px;
+  transition: height 0.3s ease;
+}
+
+.chart-label {
+  font-size: 9px;
+  opacity: 0.8;
+  font-weight: 700;
+}
+
+.view-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.view-title {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--on-surface);
+}
+
+.header-btn-ghost {
+  background: none;
+  border: none;
+  color: var(--on-surface);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.header-btn-ghost:active {
+  background: var(--background);
+}
+
+
+/* ── Forms & Inputs ────────────────────────────────────── */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-input, 
+.form-select, 
+.form-textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--on-background);
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.form-input:focus, 
+.form-select:focus, 
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.form-textarea {
+  resize: none;
+  min-height: 100px;
+}
+
+.btn-save {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px var(--primary-glow);
+  margin-left: auto;
+}
+
+/* ── List Common ───────────────────────────────────────── */
+.list-container {
+  padding: 8px;
+}
+
+.list-item-card {
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.list-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.list-item-left {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.item-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-top: 4px;
+}
+
+.list-item-right {
+  text-align: right;
+}
+
+.label-small {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.value-bold {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--on-surface);
+}
+
+/* ── Profile & Details ─────────────────────────────────── */
+.profile-header-card {
+  padding: 20px;
+  background: var(--surface);
+  border-radius: 20px;
+  margin: 16px;
+}
+
+.profile-info {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.avatar-large {
+  width: 72px;
+  height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 24px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  text-align: center;
+  padding-top: 16px;
+}
+
+.stat-val {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--on-surface);
+}
+
+.stat-val-error {
+  color: var(--error);
+}
+
+/* ── Search Bar ────────────────────────────────────────── */
+.search-container {
+  padding: 12px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.search-inner {
+  display: flex;
+  gap: 10px;
+}
+
+.search-box {
+  position: relative;
+  flex: 1;
+}
+
+.search-input-global {
+  padding-left: 40px !important;
+  margin-bottom: 0 !important;
+}
+
+.search-icon-global {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+}
+
+.header-side-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Badges ────────────────────────────────────────────── */
+.badge-chip {
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status-delivered { background: rgba(34, 197, 94, 0.1); color: #22C55E; }
+.status-pending { background: rgba(249, 115, 22, 0.1); color: #F97316; }
+.status-overdue { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
+
+/* ── Dashboard Components ──────────────────────────────── */
+.revenue-banner {
+  margin: 8px;
+  border-radius: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.revenue-label {
+  font-size: 11px;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 700;
+}
+
+.revenue-amount {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin: 4px 0;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 8px;
+}
+
+.kpi-card {
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.kpi-icon-bg {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kpi-value-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.kpi-content {
+  margin-top: 12px;
+}
+
+.kpi-value {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--on-surface);
+}
+
+.kpi-trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.section-card {
+  margin: 12px 8px;
+  background: var(--surface);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--on-surface);
+}
+
+.section-action {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ── Progress Indicators ─────────────────────────────── */
+.progress-container {
+  margin-top: 12px;
+}
+
+.progress-bar-bg {
+  height: 8px;
+  border-radius: 4px;
+  background: var(--background);
+  overflow: hidden;
+  margin: 12px 0 8px;
+}
+
+.dashboard-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.dashboard-progress-val {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.dashboard-progress-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  transition: width 1s ease-in-out;
+}
+
+/* ── Activity & Timeline ──────────────────────────────── */
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── Quick Actions ───────────────────────────────────── */
+.quick-actions-row {
+  display: flex;
+  gap: 10px;
+  padding: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.quick-actions-row::-webkit-scrollbar {
+  display: none;
+}
+
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  min-width: 80px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-action-btn:active {
+  background: var(--background);
+  transform: scale(0.95);
+}
+
+.quick-action-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Avatar Round ────────────────────────────────── */
+.avatar-round {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  font-weight: 800;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+/* ── Activity Text Helpers ───────────────────────── */
+.item-main-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-sub-text {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 2px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Hover Background ────────────────────────────── */
+.hover-bg {
+  background: var(--hover-bg, rgba(37, 99, 235, 0.06));
+}
+
+/* ── Table Container ─────────────────────────────── */
+.table-container {
+  overflow-x: auto;
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table-container thead th {
+  padding: 8px 6px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--border);
+}
+
+.table-container tbody td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--border);
+  color: var(--on-surface);
+}
+
+.table-container tbody tr:last-child td {
+  border-bottom: none;
+}
+

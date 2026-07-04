@@ -4,15 +4,17 @@
 --
 
 CREATE TABLE tmtb_party (
+  -- default 1
   id varchar(50) PRIMARY KEY,
-
-  party_apusr varchar(50) NOT NULL,
+  party_users varchar(50) NOT NULL,
   party_bsins varchar(50) NOT NULL,
+  party_ccode varchar(50) NOT NULL,
+
+  -- custom
   party_ptype varchar(50) NOT NULL,
-  party_vndor varchar(50) NOT NULL,
   party_chtac varchar(50) NOT NULL,
-  party_pcode varchar(50) NOT NULL,
-  party_pname varchar(100) NOT NULL,
+  party_vndor varchar(50) NOT NULL,
+  party_cname varchar(100) NOT NULL,
   party_opbal decimal(18,6) NOT NULL DEFAULT 0,
   
   -- default

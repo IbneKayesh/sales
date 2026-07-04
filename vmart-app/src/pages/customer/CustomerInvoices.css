@@ -1,0 +1,199 @@
+/* CustomerInvoices.css */
+.customer-invoices-page {
+  padding-bottom: 80px;
+  background: var(--background);
+}
+
+.customer-invoices-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-variant));
+  color: #fff;
+  padding: 24px 20px 40px;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+
+.customer-invoices-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.customer-invoices-subtitle {
+  margin: 4px 0 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.customer-invoices-content {
+  padding: 0 16px;
+  margin-top: -30px;
+}
+
+.customer-invoices-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.customer-invoices-tab {
+  flex: 1;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.customer-invoices-tab-all {
+  background: var(--primary);
+  color: #fff;
+}
+.customer-invoices-tab-all-inactive {
+  background: var(--surface);
+  color: var(--on-surface);
+}
+
+.customer-invoices-tab-due {
+  background: #d97706;
+  color: #fff;
+}
+.customer-invoices-tab-due-inactive {
+  background: var(--surface);
+  color: var(--on-surface);
+}
+
+.customer-invoices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.customer-invoices-card {
+  background: var(--surface);
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.customer-invoices-card:active {
+  transform: scale(0.98);
+}
+
+.customer-invoices-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.customer-invoices-card-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.customer-invoices-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--primary-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+}
+
+.customer-invoices-card-no {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.customer-invoices-card-date {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.customer-invoices-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.customer-invoices-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+.customer-invoices-total-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.customer-invoices-total-val {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.customer-invoices-due-container {
+  text-align: right;
+}
+
+.customer-invoices-due-label {
+  font-size: 11px;
+  color: #d97706;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.customer-invoices-due-val {
+  font-size: 16px;
+  font-weight: 800;
+  color: #d97706;
+}
+
+.customer-invoices-paid-label {
+  font-size: 11px;
+  color: #16a34a;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.customer-invoices-paid-val {
+  font-size: 16px;
+  font-weight: 800;
+  color: #16a34a;
+}
+
+.customer-invoices-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-secondary);
+}
+
+.customer-invoices-empty-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.customer-invoices-empty-text {
+  font-weight: 600;
+}

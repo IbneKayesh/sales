@@ -22,7 +22,7 @@ const ChangePasswordPage = () => {
             width: 52,
             height: 52,
             borderRadius: 16,
-            background: "rgba(15,118,110,0.1)",
+            background: "var(--primary-glow)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",

@@ -41,7 +41,7 @@ const useLogin = () => {
           setStorageLoginData({
             saved_user: {
               username: formData.username,
-              usertext: resp.data.users.users_uname
+              usertext: resp.data.emply.emply_cname
             },
             is_saved: true,
           });

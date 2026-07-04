@@ -1,0 +1,246 @@
+/* CustomerHome.css — compact layout */
+.customer-home-page {
+  padding-bottom: 56px;
+  background: var(--background);
+}
+
+.customer-home-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-variant));
+  color: #fff;
+  padding: 12px 12px 18px;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.customer-home-greeting {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.customer-home-name {
+  margin: 2px 0 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.customer-home-header-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.customer-home-icon-btn {
+  position: relative;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+  padding: 8px;
+  cursor: pointer;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.customer-home-mini-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ef4444;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--primary);
+}
+
+.customer-home-content {
+  margin-top: -8px;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.customer-home-quick-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.customer-home-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.customer-home-action-icon-orders {
+  background: var(--primary-glow);
+  color: var(--primary);
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.customer-home-action-icon-shops {
+  background: rgba(124, 58, 237, 0.1);
+  color: #7c3aed;
+  padding: 6px;
+  border-radius: 8px;
+}
+
+.customer-home-action-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.customer-home-toolbar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.customer-home-toolbar .ui-filter-strip {
+  flex: 1;
+}
+
+.customer-home-sort {
+  flex-shrink: 0;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+
+.customer-home-product-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.customer-home-product-card {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 12px;
+  margin-bottom: 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.customer-home-wishlist-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  z-index: 1;
+}
+
+.customer-home-wishlist-btn.active {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.customer-home-product-icon {
+  font-size: 32px;
+  text-align: center;
+  background: var(--background);
+  border-radius: 10px;
+  padding: 10px 0;
+}
+
+.customer-home-product-shop-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-glow);
+  border-radius: 4px;
+  padding: 2px 6px;
+  align-self: flex-start;
+}
+
+.customer-home-product-name {
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--on-surface);
+}
+
+.customer-home-product-cat {
+  font-size: 10px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.customer-home-product-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.customer-home-product-price {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.customer-home-product-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.customer-home-product-add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.customer-home-add-added {
+  background: #22c55e;
+  color: #fff;
+}
+
+.customer-home-add-not-added {
+  background: var(--primary);
+  color: #fff;
+}
+
+.customer-home-product-grid .ui-empty-state {
+  grid-column: 1 / -1;
+}

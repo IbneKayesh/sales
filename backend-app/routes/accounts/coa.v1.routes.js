@@ -20,10 +20,10 @@ router.post("/", async (req, res) => {
 
     //database action
     const sql = `SELECT coa.*,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmtb_chtac coa
-    LEFT JOIN tmnb_users csr ON coa.chtac_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON coa.chtac_upusr = usr.id
+    LEFT JOIN tmhb_emply csr ON coa.chtac_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON coa.chtac_upusr = usr.id
     WHERE coa.chtac_users = $1
     ORDER BY coa.chtac_chtno ASC`;
 
@@ -95,7 +95,7 @@ const create = async (req, res) => {
       chtac_chtno,
       chtac_ntype,
       chtac_child,
-      chtac_alpst,
+      chtac_ispst,
       user_s,
       user_c,
       user_b,
@@ -152,7 +152,7 @@ const create = async (req, res) => {
       Number(row_sequence_no.shtbl_value) + Number(row_sl?.last_no || 0);
 
     const sql = `INSERT INTO tmtb_chtac(id, chtac_users, chtac_bsins, chtac_chtac, chtac_ccode, chtac_cname,
-    chtac_ctype, chtac_chtno, chtac_ntype, chtac_child, chtac_alpst, chtac_crusr, chtac_upusr)
+    chtac_ctype, chtac_chtno, chtac_ntype, chtac_child, chtac_ispst, chtac_crusr, chtac_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
     $7, $8, $9, $10, $11, $12, $13)`;
     const params = [
@@ -166,7 +166,7 @@ const create = async (req, res) => {
       chtac_chtno_new,
       chtac_ntype_new,
       chtac_child_new,
-      chtac_alpst,
+      chtac_ispst,
       user_s,
       user_s,
     ];
@@ -202,7 +202,7 @@ const update = async (req, res) => {
       chtac_chtno,
       chtac_ntype,
       chtac_child,
-      chtac_alpst,
+      chtac_ispst,
       user_s,
       user_c,
       user_b,
@@ -229,7 +229,7 @@ const update = async (req, res) => {
     const sql = `UPDATE tmtb_chtac
     SET chtac_chtac = $1,
     chtac_cname = $2,
-    chtac_alpst = $3,
+    chtac_ispst = $3,
     chtac_upusr = $4,
     chtac_updat = CURRENT_TIMESTAMP,
     chtac_rvnmr = chtac_rvnmr + 1
@@ -237,7 +237,7 @@ const update = async (req, res) => {
     const params = [
       chtac_chtac,
       chtac_cname,
-      chtac_alpst,
+      chtac_ispst,
       user_s,
       id,
     ];
@@ -369,7 +369,7 @@ router.post("/get-with-party-count", async (req, res) => {
 
     //database action
     const sql = `SELECT coa.id, coa.chtac_users, coa.chtac_bsins, coa.chtac_chtac, coa.chtac_ccode, coa.chtac_cname,
-    coa.chtac_ctype, coa.chtac_chtno, coa.chtac_ntype, coa.chtac_child, coa.chtac_alpst, coa.chtac_actve,
+    coa.chtac_ctype, coa.chtac_chtno, coa.chtac_ntype, coa.chtac_child, coa.chtac_ispst, coa.chtac_actve,
     coa.chtac_crusr, coa.chtac_crdat, coa.chtac_upusr, coa.chtac_updat, coa.chtac_rvnmr, 
     pty.party_count, 0 as edit_stop
     FROM tmtb_chtac coa

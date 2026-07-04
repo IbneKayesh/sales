@@ -8,14 +8,14 @@ const GenNewCode = async (user_c, tableName) => {
         AND ccode_cname = $2
         LIMIT 1`;
   const result = await dbGet(sql, [user_c, tableName]);
-  if (!result) throw new Error("Code generation config is not found");
+  if (!result) throw new Error(`Code generation config is not found - ${tableName}`);
 
   const prefix = result.ccode_prfix || "ERR"; // fallback
   const length = result.ccode_prlen || 8;
 
   const regColumn = tableName.split("_")[1];
   // get count from table by main registered user
-  const countSql = `SELECT COUNT(id) AS total FROM ${tableName} WHERE ${regColumn}_apusr = $1 GROUP BY ${regColumn}_apusr`;
+  const countSql = `SELECT COUNT(id) AS total FROM ${tableName} WHERE ${regColumn}_users = $1 GROUP BY ${regColumn}_users`;
   //console.log("countSql,"countSql)
   const countResult = await dbGet(countSql, [user_c]);
   const count = Number(countResult?.total || 0) + 1;
@@ -42,7 +42,7 @@ const GenNewTrn = async (user_c, user_b, tableName, trnName, dpart_id) => {
   const sql = `
     SELECT COUNT(*)::int AS total
     FROM ${tableName} jrn
-    WHERE jrn.${regColumn}_apusr = $1
+    WHERE jrn.${regColumn}_users = $1
       AND jrn.${regColumn}_bsins = $2
       AND jrn.${regColumn}_dpart = $3
       AND EXTRACT(MONTH FROM jrn.${regColumn}_trdat) = $4
@@ -191,12 +191,12 @@ WHERE fsy.fsyar_apusr = $1
 
 const getDefaultCOAforPartyId = async (user_c, user_b, src_id) => {
   const sql = `
-    SELECT rcg.parcg_chtac
-    FROM tmtb_parcg rcg
-    WHERE rcg.parcg_apusr = $1
-    AND rcg.parcg_bsins = $2
-    AND rcg.parcg_sorce = $3
-    AND rcg.parcg_actve = TRUE`;
+    SELECT pty.prtya_chtac
+    FROM tmtb_prtya pty
+    WHERE pty.prtya_users = $1
+    AND pty.prtya_bsins = $2
+    AND pty.prtya_sorce = $3
+    AND pty.prtya_actve = TRUE`;
 
   //console.log(user_c, user_b, dept_id);
 
@@ -209,7 +209,7 @@ const getDefaultCOAforPartyId = async (user_c, user_b, src_id) => {
     );
   }
 
-  return result.parcg_chtac;
+  return result.prtya_chtac;
 };
 
 module.exports = {

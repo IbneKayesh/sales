@@ -24,11 +24,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check if user is logged in
-    const storedUser = getStorageData()?.user;
+    const storedUser = getStorageData()?.users;
     if (storedUser) {
       setUser(storedUser);
     }
-    const storedBusiness = getStorageData()?.business;
+    const storedBusiness = getStorageData()?.bsins;
     if (storedBusiness) {
       setBusiness(storedBusiness);
     }
@@ -37,14 +37,20 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (formDataBody) => {
+    console.log("formDataBody", formDataBody);
     try {
       const reqBody = {
         users_email: formDataBody.users_email,
         users_pswrd: formDataBody.users_pswrd,
+        customer_name: formDataBody.customer_name,
+        customer_address: formDataBody.customer_address,
+        virtual_mart: formDataBody.virtual_mart,
+        page_type: formDataBody.page_type,
       };
+
       const response = await authAPI.login(reqBody);
       if (response.success) {
-        const { users_sview, ...restData } = response.data;
+        const userData = response.data.users;
 
         const userData = {
           id: restData.id,
@@ -80,7 +86,7 @@ export const AuthProvider = ({ children }) => {
     }
     setUser(null);
     setBusiness(null);
-    clearStorageData();    
+    clearStorageData();
     localStorage.removeItem("sgdMobile25");
   };
 

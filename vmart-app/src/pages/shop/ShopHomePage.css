@@ -1,0 +1,81 @@
+/* ShopHomePage.css */
+.shop-home-page { padding-bottom: 80px; background: var(--background); }
+.shop-home-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-variant));
+  color: #fff; padding: 24px 20px 40px;
+  border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 12px;
+}
+.shop-home-greeting { margin: 0; font-size: 14px; opacity: 0.9; }
+.shop-home-name { margin: 4px 0 0; font-size: 22px; font-weight: 800; }
+.shop-home-avatar {
+  width: 44px; height: 44px; border-radius: 14px;
+  background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 18px;
+}
+.shop-home-content { padding: 0 16px; margin-top: -30px; }
+
+.shop-home-due-banner {
+  background: var(--surface); padding: 20px; border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08); margin-bottom: 20px;
+  border: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;
+}
+.shop-home-due-label { font-size: 13px; font-weight: 700; color: var(--text-secondary); }
+.shop-home-due-amount { font-size: 32px; font-weight: 900; color: var(--primary); }
+.shop-home-due-badge {
+  display: flex; align-items: center; gap: 6px;
+  color: #d97706; font-size: 12px; font-weight: 700;
+  background: #fffbeb; padding: 6px 10px; border-radius: 8px; align-self: flex-start;
+}
+
+.shop-home-quick-actions {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px;
+}
+.shop-home-quick-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  background: none; border: none; cursor: pointer;
+}
+.shop-home-quick-icon {
+  width: 52px; height: 52px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.shop-home-quick-label {
+  font-size: 11px; font-weight: 700; color: var(--text-secondary); text-align: center;
+}
+
+.shop-home-section {
+  background: var(--surface); border-radius: 20px; padding: 16px;
+  margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.03); border: 1px solid var(--border);
+}
+.shop-home-section-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+}
+.shop-home-section-title { font-size: 15px; font-weight: 800; }
+.shop-home-section-link {
+  font-size: 12px; font-weight: 700; color: var(--primary); cursor: pointer;
+}
+
+.shop-home-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-top: 1px solid var(--border);
+}
+.shop-home-row-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.shop-home-row-icon-order { background: #fffbeb; }
+.shop-home-row-icon-invoice { background: var(--primary-glow); }
+
+.shop-home-row-info { flex: 1; }
+.shop-home-row-main { font-size: 14px; font-weight: 700; }
+.shop-home-row-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.shop-home-row-right { text-align: right; }
+.shop-home-row-amount { font-size: 15px; font-weight: 800; }
+.shop-home-row-badge {
+  display: inline-block; font-size: 10px; font-weight: 800;
+  padding: 2px 8px; border-radius: 8px; margin-top: 4px;
+}

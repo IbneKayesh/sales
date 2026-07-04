@@ -1,0 +1,32 @@
+Data Base ::
+-------------------------
+Customer :: Contact Type Customers
+Supplier :: Contact Type Suppliers
+Local :: Contact Type Source
+Foreign :: Contact Type Source
+
+SYS_PARTY_COA_CNF_CUSTOMER :: Contact Customer > Auto COA Ledger Account
+SYS_PARTY_COA_CNF_SUPPLIER :: Contact Supplier > Auto COA Ledger Account
+
+INVENTORY_RMG :: Raw Material Items
+INVENTORY_PKG :: Packaging Materials
+INVENTORY_FOH :: Factory Overhead
+INVENTORY_FGI :: Finished Goods Items
+INVENTORY_WIP :: Work In Progress Items
+
+ACCOUNT_CASH :: Cash Book Account
+ACCOUNT_BANK :: Bank Account
+ACCOUNT_LOAN :: Investor Account
+ACCOUNT_INVESTOR :: Investor Account
+
+USER_EMPLOYEE :: User Account
+
+
+
+Code Base ::
+-------------------------
+SYS_FRM_1 :: jsx form component
+SYS_LST_1 :: jsx list component
+SYS_SRC_1 :: jsx search component
+
+

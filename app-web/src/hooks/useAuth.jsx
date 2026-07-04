@@ -1,4 +1,10 @@
-import { useState, useEffect, createContext, useContext, useCallback } from "react";
+import {
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+  useCallback,
+} from "react";
 import {
   getStorageData,
   setStorageData,
@@ -19,6 +25,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   //auth guard or session holder
+  const [emply, setEmply] = useState(null);
   const [user, setUser] = useState(null);
   const [business, setBusiness] = useState(null);
   const [userMenus, setUserMenus] = useState([]);
@@ -27,6 +34,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useCallback(async (showPopup = false) => {
     const stored = getStorageLoginData();
+    setEmply(null);
     setUser(null);
     setBusiness(null);
     clearStorageData();
@@ -38,6 +46,10 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    const storedEmply = getStorageData()?.emply;
+    if (storedEmply) {
+      setEmply(storedEmply);
+    }
     const storedUser = getStorageData()?.users;
     //console.log("storedUser", storedUser);
     if (storedUser) {
@@ -67,6 +79,7 @@ export const AuthProvider = ({ children }) => {
       });
       //console.log("resp", resp);
       if (resp.success) {
+        setEmply(resp.data.emply);
         setUser(resp.data.users);
         setBusiness(resp.data.bsins);
       }
@@ -92,22 +105,25 @@ export const AuthProvider = ({ children }) => {
       window.removeEventListener("auth:unauthorized", handleUnauthorized);
   }, [logout]);
 
-
-  const getPageAuth = useCallback((menuId) => {
-    const menu = userMenus.find((m) => m.id === menuId);
-    //console.log("menu",menu)
-    if (menu) {
-      return {
-        extpr: menu.mnemp_extpr || false,
-        addpr: menu.mnemp_addpr || false,
-        edtpr: menu.mnemp_edtpr || false,
-        delpr: menu.mnemp_delpr || false,
-      };
-    }
-    return { extpr: false, addpr: false, edtpr: false, delpr: false };
-  }, [userMenus]);
+  const getPageAuth = useCallback(
+    (menuId) => {
+      const menu = userMenus.find((m) => m.id === menuId);
+      //console.log("menu",menu)
+      if (menu) {
+        return {
+          extpr: menu.mnemp_extpr || false,
+          addpr: menu.mnemp_addpr || false,
+          edtpr: menu.mnemp_edtpr || false,
+          delpr: menu.mnemp_delpr || false,
+        };
+      }
+      return { extpr: false, addpr: false, edtpr: false, delpr: false };
+    },
+    [userMenus],
+  );
 
   const value = {
+    emply,
     user,
     business,
     getPageAuth,

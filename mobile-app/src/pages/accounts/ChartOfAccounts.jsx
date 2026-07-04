@@ -19,8 +19,8 @@ const accountGroups = [
     name: "Assets",
     total: 42500.0,
     icon: <Landmark size={20} />,
-    color: "#0F766E",
-    bg: "rgba(15,118,110,0.12)",
+    color: "var(--primary)",
+    bg: "var(--primary-glow)",
     accounts: [
       { id: "1001", name: "Cash in Hand", balance: 1240.0 },
       { id: "1002", name: "Bank Account (Main)", balance: 31260.0 },

@@ -14,7 +14,7 @@ const ContactsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     { header: "Type", accessor: "cntct_ctype" },
     { header: "Source", accessor: "cntct_sorce" },
     { header: "Code", accessor: "cntct_ccode" },
-    { header: "Name", accessor: "cntct_cntnm" },
+    { header: "Name", accessor: "cntct_cname" },
     { header: "Person", accessor: "cntct_cntps" },
     { header: "Contact No", accessor: "cntct_cntno" },
     { header: "Email", accessor: "cntct_email" },
@@ -44,12 +44,12 @@ const ContactsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
       </div>
     );
   };
-  const cntct_cntnm_BT = (rowData) => {
+  const cntct_cname_BT = (rowData) => {
     return (
       <div className="flex flex-column">
         <span className="text-sm">
           <ActiveRowCell
-            text={rowData.cntct_cntnm}
+            text={rowData.cntct_cname}
             status={rowData.cntct_actve}
           />
         </span>
@@ -166,7 +166,7 @@ const ContactsListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     >
       <Column header="Sl" body={(rowData, options) => options.rowIndex + 1} />
       <Column header="Type" body={cntct_ctype_BT} sortable />
-      <Column header="Name" body={cntct_cntnm_BT} sortable />
+      <Column header="Name" body={cntct_cname_BT} sortable />
       <Column header="Contact" body={cntct_cntps_BT} sortable />
       <Column header="Address" body={cntct_ofadr_BT} sortable />
       <Column header="Credit" body={cntct_crncy_BT} sortable />

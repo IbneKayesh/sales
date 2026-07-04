@@ -3,24 +3,6 @@
     "type": "string",
     "label": "Id"
   },
-  "cntct_ctype": {
-    "type": "string",
-    "label": "Type",
-    "maxLength": 50,
-    "minLength": 3,
-    "placeholder": "Enter type",
-    "required": true,
-    "default": "Customer"
-  },
-  "cntct_sorce": {
-    "type": "string",
-    "label": "Source",
-    "maxLength": 50,
-    "minLength": 3,
-    "placeholder": "Enter source",
-    "required": true,
-    "default": "Local"
-  },
   "cntct_ccode": {
     "type": "string",
     "label": "Code",
@@ -29,7 +11,25 @@
     "placeholder": "Enter code",
     "required": false
   },
-  "cntct_cntnm": {
+  "cntct_ctype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter type",
+    "required": true,
+    "default": "CONTACT_CUSTOMER"
+  },
+  "cntct_sorce": {
+    "type": "string",
+    "label": "Source",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter source",
+    "required": true,
+    "default": "LOCAL"
+  },
+  "cntct_cname": {
     "type": "string",
     "label": "Name",
     "maxLength": 50,
@@ -100,7 +100,7 @@
     "minLength": 0,
     "placeholder": "Enter territory",
     "required": false,
-    "default": ""
+    "default": "DEFAULT"
   },
   "cntct_tarea": {
     "type": "string",
@@ -109,7 +109,7 @@
     "minLength": 0,
     "placeholder": "Enter t/area",
     "required": false,
-    "default": ""
+    "default": "DEFAULT"
   },
   "cntct_dzone": {
     "type": "string",
@@ -118,7 +118,7 @@
     "minLength": 0,
     "placeholder": "Enter d/zone",
     "required": false,
-    "default": ""
+    "default": "DEFAULT"
   },
   "cntct_cntry": {
     "type": "string",
@@ -135,7 +135,8 @@
     "maxLength": 50,
     "minLength": 0,
     "placeholder": "Enter contact address",
-    "required": false
+    "required": false,
+    "default": "DEFAULT"
   },
   "cntct_crncy": {
     "type": "string",
@@ -143,15 +144,8 @@
     "maxLength": 50,
     "minLength": 0,
     "placeholder": "Enter currency",
-    "required": true
-  },
-  "cntct_price": {
-    "type": "string",
-    "label": "Price",
-    "maxLength": 50,
-    "minLength": 0,
-    "placeholder": "Enter price",
-    "required": false
+    "required": true,
+    "default": "BDT"
   },
   "cntct_dspct": {
     "type": "number",

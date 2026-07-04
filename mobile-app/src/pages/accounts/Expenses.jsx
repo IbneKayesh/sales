@@ -50,7 +50,7 @@ const expenses = [
     cat: "Utilities",
     method: "Direct Debit",
     date: "15/02/2026",
-    color: "#0F766E",
+    color: "var(--primary)",
     icon: <Zap size={18} />,
   },
 ];

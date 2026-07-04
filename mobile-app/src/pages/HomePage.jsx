@@ -91,7 +91,7 @@ const recentCustomers = [
     initials: "SM",
     spent: "$1,920",
     tag: "Regular",
-    tagColor: "#0F766E",
+    tagColor: "var(--primary)",
   },
   {
     name: "Tech Corp",
@@ -244,7 +244,7 @@ const HomePage = () => {
         : "Good evening";
 
   return (
-    <div className="app-container p-2">
+    <div className="page-container">
       {/* ── GREETING ─────────────────────── */}
       <div className="dashboard-greeting">
         <div>
@@ -296,8 +296,8 @@ const HomePage = () => {
             {
               label: "Invoice",
               icon: FileText,
-              color: "#0F766E",
-              bg: "rgba(15,118,110,0.1)",
+              color: "var(--primary)",
+              bg: "var(--primary-glow)",
               path: "/invoice/entry",
             },
             {
@@ -324,8 +324,8 @@ const HomePage = () => {
             {
               label: "Outlets",
               icon: Users,
-              color: "#0F766E",
-              bg: "rgba(15,118,110,0.1)",
+              color: "var(--primary)",
+              bg: "var(--primary-glow)",
               path: "/crm/outlets",
             },
           ].map(({ label, icon: Icon, color, bg, path }) => (
@@ -356,8 +356,8 @@ const HomePage = () => {
           change="+8.2%"
           up={true}
           icon={ShoppingCart}
-          iconBg="rgba(15,118,110,0.1)"
-          iconColor="#0F766E"
+          iconBg="var(--primary-glow)"
+          iconColor="var(--primary)"
           sparkData={[30, 42, 35, 54, 48, 62, 58]}
         />
         <KpiItem

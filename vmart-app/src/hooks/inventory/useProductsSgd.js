@@ -1,0 +1,26 @@
+import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { productsAPI } from "@/api/inventory/productsAPI";
+
+export const useProductsSgd = () => {
+  const { user } = useAuth();
+  const [dataList, setDataList] = useState([]);
+
+  const handleLoadOrderItems = async () => {
+    try {
+      const response = await productsAPI.getSalesOrderItems({
+        bitem_users: user?.emply_users,
+        bitem_bsins: user?.emply_bsins,
+      });
+      //console.log("data",user.users_bsins);
+      setDataList(response.data);
+    } catch (error) {
+      console.error("Error loading data:", error);
+    }
+  };
+
+  return {
+    dataList,
+    handleLoadOrderItems,
+  };
+};

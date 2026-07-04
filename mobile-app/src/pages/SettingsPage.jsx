@@ -69,7 +69,7 @@ const SettingsPage = () => {
                 {isDark ? "Dark Mode" : "Light Mode"}
               </div>
               <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
-                {isDark ? "Field Sales Friendly" : "Modern Teal"}
+                {isDark ? "Field Sales Friendly" : "Electric Blue"}
               </div>
             </div>
           </div>

@@ -1,5 +1,11 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  Link
+} from "react-router-dom";
 import "primereact/resources/themes/lara-light-blue/theme.css"; // Choose your theme
 import "primereact/resources/primereact.min.css"; // Core CSS
 import "primeicons/primeicons.css"; // Icons
@@ -14,9 +20,6 @@ import LoginPage from "./pages/auth/LoginPage";
 
 //sales
 import OrderPage from "./pages/sales/orders/OrderPage";
-
-
-
 
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
@@ -40,12 +43,11 @@ import InvoiceEntry from "./pages/invoice/InvoiceEntry";
 import InvoiceList from "./pages/invoice/InvoiceList";
 import InvoiceView from "./pages/invoice/InvoiceView";
 import InvoicePrint from "./pages/invoice/InvoicePrint";
+import  NotFoundComp  from "./components/NotFoundComp";
 import { ThemeProvider } from "./context/ThemeContext";
 import { ModuleProvider } from "./context/ModuleContext";
 import { ToastProvider } from "./context/ToastContext";
 import { AuthProvider } from "./context/AuthContext";
-
-
 
 // Placeholder pages for module routes not yet built
 const Placeholder = ({ title }) => (
@@ -87,7 +89,6 @@ function App() {
                   <Route path="invoice/print/:id" element={<InvoicePrint />} />
                   <Route path="sales/payments" element={<PaymentList />} />
                   <Route path="crm/outlets" element={<OutletsPage />} />
-                
 
                   {/* Products */}
                   <Route path="products/list" element={<ProductList />} />
@@ -113,6 +114,7 @@ function App() {
 
                 {/* Auth */}
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="*" element={<NotFoundComp />} />
               </Routes>
             </Router>
           </AuthProvider>

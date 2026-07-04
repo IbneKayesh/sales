@@ -15,6 +15,7 @@ const ContactsPage = () => {
     errors,
     dataList,
     //other states
+    cntct_party_dataList,
     cntct_ctype_Options,
     cntct_sorce_Options,
     cntct_trtry_Options,
@@ -40,16 +41,13 @@ const ContactsPage = () => {
     handleDeleteAddress,
   } = useContacts();
 
-  const isList = crView === "list" && true;
-  const isForm = crView === "form" && true;
-
   const cardTitle = () => {
     return (
       <div className="flex align-items-center justify-content-between">
         <span className="page-title-text">{crTitle}</span>
         <div className="flex gap-2">
           <ButtonGroup>
-            {isForm && (
+            {crView === "SYS_FRM_1" && (
               <Button
                 label="Back"
                 icon="pi pi-arrow-left"
@@ -58,7 +56,7 @@ const ContactsPage = () => {
                 onClick={handleBackClick}
               />
             )}
-            {isList && (
+            {crView === "SYS_LST_1" && (
               <Button
                 label="Find"
                 icon="pi pi-search"
@@ -67,7 +65,7 @@ const ContactsPage = () => {
                 onClick={handleSearchClick}
               />
             )}
-            {isList && (
+            {crView === "SYS_LST_1" && (
               <Button
                 label="Refresh"
                 icon="pi pi-refresh"
@@ -83,7 +81,7 @@ const ContactsPage = () => {
               severity="help"
               onClick={handleAddNewClick}
             />
-            {isForm && (
+            {crView === "SYS_FRM_1" && (
               <Button
                 label="Submit"
                 icon="pi pi-save"
@@ -100,7 +98,7 @@ const ContactsPage = () => {
 
   return (
     <Card title={cardTitle} className="shadow-2 border-round p-2">
-      {isList && (
+      {crView === "SYS_LST_1" && (
         <ContactsListComp
           pageAuth={pageAuth}
           dataList={dataList}
@@ -108,7 +106,7 @@ const ContactsPage = () => {
           onDelete={handleDelete}
         />
       )}
-      {isForm && (
+      {crView === "SYS_FRM_1" && (
         <ContactsFormComp
           formData={formData}
           errors={errors}
@@ -127,6 +125,7 @@ const ContactsPage = () => {
           dataListAddress={dataListAddress}
           onEditAddress={handleEditAddress}
           onDeleteAddress={handleDeleteAddress}
+          cntct_party_dataList={cntct_party_dataList}
         />
       )}
     </Card>

@@ -18,8 +18,8 @@ const categories = [
     name: "Stationery",
     items: 124,
     icon: <PenTool size={22} />,
-    color: "#0F766E",
-    bg: "rgba(15,118,110,0.12)",
+    color: "var(--primary)",
+    bg: "var(--primary-glow)",
   },
   {
     id: 2,
@@ -50,8 +50,8 @@ const categories = [
     name: "Furniture",
     items: 7,
     icon: <Tag size={22} />,
-    color: "#0F766E",
-    bg: "rgba(15,118,110,0.12)",
+    color: "var(--primary)",
+    bg: "var(--primary-glow)",
   },
 ];
 

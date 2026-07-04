@@ -64,7 +64,7 @@ const Topbar = ({ sidebarCollapsed, onToggleLeftbar }) => {
             <i className="pi pi-search"></i>
           </button>
           <span className="title-gradient font-bold">
-            {business.bsins_bname}
+            {business.bsins_cname}
           </span>
         </div>
 

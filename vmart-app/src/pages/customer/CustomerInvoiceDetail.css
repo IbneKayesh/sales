@@ -1,0 +1,86 @@
+.customer-invoice-detail {
+  padding: 0 12px 16px;
+}
+
+.cid-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 10px;
+}
+
+.cid-title {
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.cid-date {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.cid-summary,
+.cid-items {
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.cid-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 4px 0;
+  color: var(--text-secondary);
+}
+
+.cid-row.cid-total {
+  font-weight: 800;
+  color: var(--on-surface);
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+  padding-top: 8px;
+}
+
+.cid-paid {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.cid-due-box,
+.cid-paid-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cid-due-box {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.cid-paid-box {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.cid-items h3 {
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+
+.cid-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cid-item:last-child {
+  border-bottom: none;
+}

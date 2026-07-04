@@ -6,6 +6,7 @@ const defaultData = {
   emply: null,
   bsins: null,
   users: null,
+  prtnr: null,
   token: null,
   menus: [],
   recent_links: [],

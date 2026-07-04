@@ -82,10 +82,10 @@ const CoaFormComp = ({
         </label>
         <div className="checkbox-container">
           <Checkbox
-            name="chtac_alpst"
-            checked={formData.chtac_alpst}
-            onChange={(e) => onChange("chtac_alpst", e.checked)}
-            className={errors.chtac_alpst ? "p-invalid" : ""}
+            name="chtac_ispst"
+            checked={formData.chtac_ispst}
+            onChange={(e) => onChange("chtac_ispst", e.checked)}
+            className={errors.chtac_ispst ? "p-invalid" : ""}
           />
         </div>
       </div>

@@ -21,17 +21,17 @@ router.post("/", async (req, res) => {
     //database action
     const sql = `SELECT cnt.*,
     try.trtry_wname, tar.tarea_tname, dzn.dzone_dname, ctr.shtbl_dtext AS cntry_cname, crn.shtbl_dtext AS crncy_cname,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmcb_cntct cnt
     LEFT JOIN tmcb_trtry try ON cnt.cntct_trtry = try.id
     LEFT JOIN tmcb_tarea tar ON cnt.cntct_tarea = tar.id
     LEFT JOIN tmcb_dzone dzn ON cnt.cntct_dzone = dzn.id
     JOIN tmnb_shtbl ctr ON cnt.cntct_cntry = ctr.shtbl_value AND ctr.shtbl_gname = 'Country'
     JOIN tmnb_shtbl crn ON cnt.cntct_crncy = crn.shtbl_value AND crn.shtbl_gname = 'Currency'
-    LEFT JOIN tmnb_users csr ON cnt.cntct_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON cnt.cntct_upusr = usr.id
-    WHERE cnt.cntct_apusr = $1
-    ORDER BY cnt.cntct_cntnm ASC`;
+    LEFT JOIN tmhb_emply csr ON cnt.cntct_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON cnt.cntct_upusr = usr.id
+    WHERE cnt.cntct_users = $1
+    ORDER BY cnt.cntct_cname ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get contact- ${user_c}`);
@@ -67,9 +67,9 @@ router.post("/get-all-active", async (req, res) => {
     //database action
     const sql = `SELECT cnt.*, 0 as edit_stop
     FROM tmcb_cntct cnt
-    WHERE cnt.cntct_apusr = $1
+    WHERE cnt.cntct_users = $1
     AND cnt.cntct_actve = TRUE
-    ORDER BY cnt.cntct_cntnm ASC`;
+    ORDER BY cnt.cntct_cname ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get contact- ${user_c}`);
@@ -92,12 +92,12 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      cntct_apusr,
+      cntct_users,
       cntct_bsins,
       cntct_ctype,
       cntct_sorce,
       cntct_ccode,
-      cntct_cntnm,
+      cntct_cname,
       cntct_cntps,
       cntct_cntno,
       cntct_email,
@@ -123,7 +123,7 @@ const create = async (req, res) => {
     if (
       !cntct_ctype ||
       !cntct_sorce ||
-      !cntct_cntnm ||
+      !cntct_cname ||
       !cntct_cntps ||
       !cntct_cntno ||
       !cntct_cntry ||
@@ -140,65 +140,91 @@ const create = async (req, res) => {
     }
 
     //database action
-    let customerDefaultCOA = "";
+    let contactDefaultCOA = "";
 
     if (cntct_ctype === "Customer") {
-      customerDefaultCOA = await getDefaultCOAforPartyId(
+      contactDefaultCOA = await getDefaultCOAforPartyId(
         user_c,
         user_b,
         "SYS_PARTY_COA_CNF_CUSTOMER",
       );
     }
     if (cntct_ctype === "Supplier") {
-      supplierDefaultCOA = await getDefaultCOAforPartyId(
+      contactDefaultCOA = await getDefaultCOAforPartyId(
         user_c,
         user_b,
         "SYS_PARTY_COA_CNF_SUPPLIER",
       );
     }
 
+    const masterId = uuidv4();
+    const scripts = [];
     const newCode = await GenNewCode(user_c, "tmcb_cntct");
-
-    const sql = `INSERT INTO tmcb_cntct(id, cntct_apusr, cntct_bsins, cntct_ctype, cntct_sorce, cntct_ccode,
-        cntct_cntnm, cntct_cntps, cntct_cntno, cntct_email, cntct_tinno, cntct_trade,
+    const newCode_party = await GenNewCode(user_c, "tmtb_party");
+    scripts.push({
+      sql: `INSERT INTO tmcb_cntct(id, cntct_users, cntct_bsins, cntct_ctype, cntct_sorce, cntct_ccode,
+        cntct_cname, cntct_cntps, cntct_cntno, cntct_email, cntct_tinno, cntct_trade,
         cntct_ofadr, cntct_fcadr, cntct_trtry, cntct_tarea, cntct_dzone, cntct_cntry,
         cntct_cntad, cntct_crncy, cntct_dspct, cntct_crlmt, cntct_crbal, cntct_crusr, cntct_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
         $13, $14, $15, $16, $17, $18,
-        $19, $20, $21, $22, $23, $24, $25)`;
-    const params = [
-      uuidv4(),
-      user_c,
-      user_b,
-      cntct_ctype,
-      cntct_sorce,
-      newCode,
-      cntct_cntnm,
-      cntct_cntps,
-      cntct_cntno,
-      cntct_email,
-      cntct_tinno,
-      cntct_trade,
-      cntct_ofadr,
-      cntct_fcadr,
-      cntct_trtry,
-      cntct_tarea,
-      cntct_dzone,
-      cntct_cntry,
-      cntct_cntad,
-      cntct_crncy,
-      cntct_dspct || 0,
-      cntct_crlmt || 0,
-      0, //cntct_crbal
-      user_s,
-      user_s,
-    ];
+        $19, $20, $21, $22, $23, $24, $25)`,
+      params: [
+        masterId,
+        user_c,
+        user_b,
+        cntct_ctype,
+        cntct_sorce,
+        newCode,
+        cntct_cname,
+        cntct_cntps,
+        cntct_cntno,
+        cntct_email,
+        cntct_tinno,
+        cntct_trade,
+        cntct_ofadr,
+        cntct_fcadr,
+        cntct_trtry,
+        cntct_tarea,
+        cntct_dzone,
+        cntct_cntry,
+        cntct_cntad,
+        cntct_crncy,
+        cntct_dspct || 0,
+        cntct_crlmt || 0,
+        0, //cntct_crbal
+        user_s,
+        user_s,
+      ],
+      label: `create contact- ${user_c}`,
+    });
 
-    await dbRun(sql, params, `create contact- ${user_c}`);
+    scripts.push({
+      sql: `INSERT INTO tmtb_party(id, party_users, party_bsins, party_ccode, party_ptype, party_chtac,
+      party_vndor, party_cname, party_opbal, party_crusr, party_upusr)
+      VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11)`,
+      params: [
+        uuidv4(),
+        user_c,
+        user_b,
+        newCode_party,
+        cntct_ctype,
+        contactDefaultCOA,
+        masterId,
+        cntct_cname,
+        cntct_crbal,
+        user_s,
+        user_s,
+      ],
+      label: `create party accounts- ${user_c}`,
+    });
+
+    await dbRunAll(scripts);
     res.json({
       success: true,
-      message: `${cntct_cntnm} - Created successfully.`,
+      message: `${cntct_cname} - Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -215,12 +241,12 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      cntct_apusr,
+      cntct_users,
       cntct_bsins,
       cntct_ctype,
       cntct_sorce,
       cntct_ccode,
-      cntct_cntnm,
+      cntct_cname,
       cntct_cntps,
       cntct_cntno,
       cntct_email,
@@ -247,7 +273,7 @@ const update = async (req, res) => {
       !id ||
       !cntct_ctype ||
       !cntct_sorce ||
-      !cntct_cntnm ||
+      !cntct_cname ||
       !cntct_cntps ||
       !cntct_cntno ||
       !cntct_cntry ||
@@ -267,7 +293,7 @@ const update = async (req, res) => {
     const sql = `UPDATE tmcb_cntct
     SET cntct_ctype = $1,
     cntct_sorce = $2,
-    cntct_cntnm = $3,
+    cntct_cname = $3,
     cntct_cntps = $4,
     cntct_cntno = $5,
     cntct_email = $6,
@@ -290,7 +316,7 @@ const update = async (req, res) => {
     const params = [
       cntct_ctype,
       cntct_sorce,
-      cntct_cntnm,
+      cntct_cname,
       cntct_cntps,
       cntct_cntno,
       cntct_email,
@@ -313,7 +339,7 @@ const update = async (req, res) => {
     await dbRun(sql, params, `update contact- ${user_c}`);
     res.json({
       success: true,
-      message: `${cntct_cntnm} - Updated successfully.`,
+      message: `${cntct_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -345,10 +371,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, cntct_cntnm, dzone_actve, user_s, user_c, user_b } = req.body;
+    const { id, cntct_cname, dzone_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !cntct_cntnm || !user_s || !user_c || !user_b) {
+    if (!id || !cntct_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -368,7 +394,7 @@ router.post("/delete", async (req, res) => {
     await dbRun(sql, params, `delete contact- ${user_c}`);
     res.json({
       success: true,
-      message: `${cntct_cntnm} - ${dzone_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${cntct_cname} - ${dzone_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {
@@ -397,10 +423,10 @@ router.post("/get-address", async (req, res) => {
 
     //database action
     const sql = `SELECT tad.*,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmcb_cntad tad
-    LEFT JOIN tmnb_users csr ON tad.cntad_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON tad.cntad_upusr = usr.id
+    LEFT JOIN tmhb_emply csr ON tad.cntad_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON tad.cntad_upusr = usr.id
     WHERE tad.cntad_apusr = $1
     AND tad.cntad_cntct = $2
     ORDER BY tad.cntad_ofadr ASC`;
@@ -599,7 +625,7 @@ router.post("/get-avail-contact-accounts", async (req, res) => {
     FROM tmcb_cntct cnt
     LEFT JOIN tmtb_party prt ON cnt.id = prt.party_vndor
     WHERE prt.party_vndor IS NULL
-    AND cnt.cntct_apusr = $1
+    AND cnt.cntct_users = $1
     AND cnt.cntct_ctype = $2
     ORDER BY cnt.cntct_ccode`;
 
@@ -642,15 +668,19 @@ router.post("/get-suppliers", async (req, res) => {
     const sql = `SELECT cnt.*, pty.id AS party_id, pty.party_pname, pty.party_chtac, 0 as edit_stop
     FROM tmcb_cntct cnt
     LEFT JOIN tmtb_party pty ON cnt.id = pty.party_vndor
-    AND pty.party_apusr = cnt.cntct_apusr
+    AND pty.party_apusr = cnt.cntct_users
     AND pty.party_bsins = cnt.cntct_bsins
-    WHERE cnt.cntct_apusr = $1
+    WHERE cnt.cntct_users = $1
     AND cnt.cntct_ctype IN ('Supplier','Both')
     AND cnt.cntct_actve = TRUE
-    ORDER BY cnt.cntct_cntnm`;
+    ORDER BY cnt.cntct_cname`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get contact suppliers- ${user_c}`);
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get contact suppliers- ${user_c}`,
+    );
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -665,9 +695,5 @@ router.post("/get-suppliers", async (req, res) => {
     });
   }
 });
-
-
-
-
 
 module.exports = router;

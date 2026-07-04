@@ -5,6 +5,7 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Dropdown } from "primereact/dropdown";
 import AuditFields from "@/components/AuditFields";
 import ContactsAddressComp from "./ContactsAddressComp";
+import AccoutnsCode from "./AccoutnsCode";
 
 const ContactsFormComp = ({
   formData,
@@ -24,6 +25,7 @@ const ContactsFormComp = ({
   dataListAddress,
   onEditAddress,
   onDeleteAddress,
+  cntct_party_dataList
 }) => {
   return (
     <div className="grid">
@@ -64,13 +66,13 @@ const ContactsFormComp = ({
       <div className="col-12 md:col-4">
         <label className="block font-bold mb-2 text-red-800">Name</label>
         <InputText
-          name="cntct_cntnm"
-          value={formData.cntct_cntnm}
-          onChange={(e) => onChange("cntct_cntnm", e.target.value)}
-          className={`w-full ${errors.cntct_cntnm ? "p-invalid" : ""}`}
+          name="cntct_cname"
+          value={formData.cntct_cname}
+          onChange={(e) => onChange("cntct_cname", e.target.value)}
+          className={`w-full ${errors.cntct_cname ? "p-invalid" : ""}`}
           placeholder={`Enter name`}
         />
-        <RequiredText text={errors.cntct_cntnm} />
+        <RequiredText text={errors.cntct_cname} />
       </div>
       <div className="col-12 md:col-2">
         <label className="block font-bold mb-2 text-red-800">Person Name</label>
@@ -256,7 +258,7 @@ const ContactsFormComp = ({
           showClear
         />
         <RequiredText text={errors.cntct_crncy} />
-      </div>   
+      </div>
       <div className="col-12 md:col-2">
         <label className="block font-bold mb-2 text-red-800">Discount %</label>
         <InputText
@@ -306,6 +308,10 @@ const ContactsFormComp = ({
           onEdit={onEditAddress}
           onDelete={onDeleteAddress}
         />
+      </div>
+      <div className="col-12 p-card p-3 mt-3">
+        <h4 className="mt-0 mb-3 text-red-800">Contact Accounts Code</h4>
+        <AccoutnsCode dataList={cntct_party_dataList} />
       </div>
 
       {formData.id && (

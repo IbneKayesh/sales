@@ -5,7 +5,6 @@ const InvoiceView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Mock data fetching
   const invoice = {
     id: id || "INV-1001",
     date: "2024-02-19 14:30",
@@ -26,115 +25,196 @@ const InvoiceView = () => {
   const total = subtotal + tax;
 
   return (
-    <div className="app-container">
-      <header className="header header-with-back">
+    <div className="page-container">
+      {/* Header */}
+      <div className="page-header">
         <button className="back-btn" onClick={() => navigate(-1)}>
-          <ArrowLeft size={24} />
+          <ArrowLeft size={20} />
         </button>
-        <h1>Invoice Details</h1>
-      </header>
+        <span className="page-header-title">Invoice Details</span>
+      </div>
 
-      <div className="card">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            marginBottom: "20px",
-          }}
-        >
-          <div>
-            <h2 style={{ margin: 0, color: "var(--primary)" }}>{invoice.id}</h2>
-            <p style={{ color: "#666", fontSize: "14px", marginTop: "4px" }}>
-              {invoice.date}
-            </p>
-          </div>
-          <span
-            style={{
-              background: "#e8f5e9",
-              color: "#2e7d32",
-              padding: "4px 12px",
-              borderRadius: "16px",
-              fontSize: "12px",
-              fontWeight: "bold",
-            }}
-          >
-            {invoice.status}
-          </span>
-        </div>
-
-        <div style={{ marginBottom: "24px" }}>
-          <label style={{ color: "#888", fontSize: "12px" }}>CUSTOMER</label>
-          <div style={{ fontWeight: 600, fontSize: "16px" }}>
-            {invoice.customer}
-          </div>
-        </div>
-
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Qty</th>
-                <th style={{ textAlign: "right" }}>Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoice.items.map((item, idx) => (
-                <tr key={idx}>
-                  <td>{item.name}</td>
-                  <td>{item.qty}</td>
-                  <td style={{ textAlign: "right" }}>
-                    ${(item.qty * item.price).toFixed(2)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div style={{ marginTop: "24px", textAlign: "right" }}>
-          <div style={{ color: "#666", fontSize: "14px", marginBottom: "4px" }}>
-            Subtotal: ${subtotal.toFixed(2)}
-          </div>
-          <div style={{ color: "#666", fontSize: "14px", marginBottom: "8px" }}>
-            Tax (5%): ${tax.toFixed(2)}
-          </div>
+      <div style={{ padding: "12px" }}>
+        {/* Invoice ID & Status */}
+        <div className="card" style={{ padding: "16px" }}>
           <div
             style={{
-              fontSize: "20px",
-              fontWeight: "bold",
-              color: "var(--primary)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              marginBottom: "16px",
             }}
           >
-            Total: ${total.toFixed(2)}
+            <div>
+              <div
+                style={{
+                  fontSize: "18px",
+                  fontWeight: 800,
+                  color: "var(--primary)",
+                }}
+              >
+                {invoice.id}
+              </div>
+              <div
+                style={{
+                  fontSize: "12px",
+                  color: "var(--text-secondary)",
+                  marginTop: "4px",
+                }}
+              >
+                {invoice.date}
+              </div>
+            </div>
+            <span
+              style={{
+                background: "#e8f5e9",
+                color: "#2e7d32",
+                padding: "4px 12px",
+                borderRadius: "16px",
+                fontSize: "11px",
+                fontWeight: 700,
+              }}
+            >
+              {invoice.status}
+            </span>
+          </div>
+
+          {/* Customer */}
+          <div
+            style={{
+              background: "var(--background)",
+              borderRadius: "10px",
+              padding: "10px 14px",
+              marginBottom: "16px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "10px",
+                fontWeight: 700,
+                color: "var(--text-secondary)",
+                textTransform: "uppercase",
+                letterSpacing: "0.6px",
+                marginBottom: "4px",
+              }}
+            >
+              Customer
+            </div>
+            <div
+              style={{
+                fontWeight: 700,
+                fontSize: "14px",
+                color: "var(--on-surface)",
+              }}
+            >
+              {invoice.customer}
+            </div>
+          </div>
+
+          {/* Items Table */}
+          <div style={{ marginBottom: "16px" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr auto auto",
+                gap: "8px",
+                padding: "6px 0",
+                borderBottom: "2px solid var(--border)",
+                fontSize: "11px",
+                fontWeight: 700,
+                color: "var(--text-secondary)",
+                textTransform: "uppercase",
+              }}
+            >
+              <span>Item</span>
+              <span style={{ textAlign: "center" }}>Qty</span>
+              <span style={{ textAlign: "right" }}>Amount</span>
+            </div>
+            {invoice.items.map((item, idx) => (
+              <div
+                key={idx}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr auto auto",
+                  gap: "8px",
+                  padding: "8px 0",
+                  borderBottom: "1px solid var(--border)",
+                  fontSize: "13px",
+                  color: "var(--on-surface)",
+                }}
+              >
+                <span>{item.name}</span>
+                <span style={{ textAlign: "center", color: "var(--text-secondary)" }}>
+                  {item.qty}
+                </span>
+                <span style={{ textAlign: "right", fontWeight: 600 }}>
+                  ${(item.qty * item.price).toFixed(2)}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Totals */}
+          <div
+            style={{
+              background: "var(--background)",
+              borderRadius: "10px",
+              padding: "12px 14px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: "12px",
+                color: "var(--text-secondary)",
+                marginBottom: "4px",
+              }}
+            >
+              <span>Subtotal</span>
+              <span>${subtotal.toFixed(2)}</span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: "12px",
+                color: "var(--text-secondary)",
+                marginBottom: "10px",
+              }}
+            >
+              <span>Tax (5%)</span>
+              <span>${tax.toFixed(2)}</span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: "16px",
+                fontWeight: 800,
+                color: "var(--primary)",
+                paddingTop: "8px",
+                borderTop: "1px solid var(--border)",
+              }}
+            >
+              <span>Total</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "12px", marginTop: "32px" }}>
+        {/* Action Buttons */}
+        <div style={{ display: "flex", gap: "10px", marginTop: "4px" }}>
           <button
             className="btn-primary"
-            style={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-            }}
+            style={{ flex: 1, gap: "8px" }}
             onClick={() => navigate(`/invoice/print/${invoice.id}`)}
           >
-            <Printer size={20} /> Print POS
+            <Printer size={18} /> Print POS
           </button>
           <button
-            className="btn-primary btn-secondary"
-            style={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-              marginTop: 0,
-            }}
+            className="btn-secondary"
+            style={{ flex: 1, gap: "8px" }}
             onClick={() => {
               if (navigator.share) {
                 navigator
@@ -151,7 +231,7 @@ const InvoiceView = () => {
               }
             }}
           >
-            <Share2 size={20} /> Share
+            <Share2 size={18} /> Share
           </button>
         </div>
       </div>

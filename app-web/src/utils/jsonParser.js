@@ -28,7 +28,7 @@ function buildCoaTree(items, parent = "-", controls = true) {
       key: item.id,
       label: `${item.chtac_chtno} - ${item.chtac_cname}`,
       data: item,
-      selectable: item.chtac_alpst === controls,
+      selectable: item.chtac_ispst === controls,
       children: buildCoaTree(items, item.id, controls),
     }));
 }

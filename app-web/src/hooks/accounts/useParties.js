@@ -32,30 +32,6 @@ const useParties = () => {
 
   const party_ptype_Options = [
     {
-      label: "Vendor",
-      value: "Vendor",
-    },
-    {
-      label: "Customer",
-      value: "Customer",
-    },
-    {
-      label: "Supplier",
-      value: "Supplier",
-    },
-    {
-      label: "Employee",
-      value: "Employee",
-    },
-    {
-      label: "Cash",
-      value: "Cash",
-    },
-    {
-      label: "Bank",
-      value: "Bank",
-    },
-    {
       label: "Income",
       value: "Income",
     },
@@ -64,17 +40,13 @@ const useParties = () => {
       value: "Expense",
     },
     {
-      label: "Loan",
-      value: "Loan",
+      label: "Customer",
+      value: "Customer",
     },
     {
-      label: "Investor",
-      value: "Investor",
-    },
-    {
-      label: "Inventory",
-      value: "Inventory",
-    },
+      label: "Supplier",
+      value: "Supplier",
+    }
   ];
 
   const [dataListParty, setDataListParty] = useState([]);
@@ -104,7 +76,7 @@ const useParties = () => {
     setErrors(newErrors);
 
     if (field === "party_ptype") {
-      setFormData((prev) => ({ ...prev, party_pname: "" }));
+      setFormData((prev) => ({ ...prev, party_cname: "" }));
       handleGetVendorOptions(value);
     }
 
@@ -112,23 +84,22 @@ const useParties = () => {
 
     if (field === "party_vndor") {
       if (
-        formData.party_ptype === "Vendor" ||
         formData.party_ptype === "Customer" ||
         formData.party_ptype === "Supplier" ||
         formData.party_ptype === "Inventory"
       ) {
-        const party_pname = party_vndor_Options.find(
+        const party_cname = party_vndor_Options.find(
           (f) => f.value_text == value,
         ).label_text;
         setFormData((prev) => ({
           ...prev,
-          party_pname: `${party_pname} - A/C`,
+          party_cname: `${party_cname} - A/C`,
         }));
       } else {
         const node = findCoaTree(party_chtac_Options, formData.party_chtac);
         const chtac_cname = `${node?.data?.chtac_cname} #${node?.data?.chtac_chtno} - A/C`;
 
-        setFormData((prev) => ({ ...prev, party_pname: chtac_cname }));
+        setFormData((prev) => ({ ...prev, party_cname: chtac_cname }));
       }
     }
 
@@ -154,7 +125,7 @@ const useParties = () => {
       return;
     }
     confirm({
-      message: `Do you want to ${rowData.party_actve ? "Deactivate" : "Activate"} this ${rowData.party_pname}?`,
+      message: `Do you want to ${rowData.party_actve ? "Deactivate" : "Activate"} this ${rowData.party_cname}?`,
       header: "Confirmation!",
       accept: () => {
         onDelete(rowData);
@@ -255,7 +226,7 @@ const useParties = () => {
       setIsBusy(true);
       //console.log("ptype", ptype);
 
-      if (ptype === "Vendor" || ptype === "Customer" || ptype === "Supplier") {
+      if (ptype === "Customer" || ptype === "Supplier") {
         const resp = await contactAPI.getAvailContactAccounts({
           cntct_ctype: ptype,
         });

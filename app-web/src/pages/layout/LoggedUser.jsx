@@ -7,7 +7,7 @@ import { setStorageLoginData } from "@/utils/storage";
 import "./LoggedUser.css";
 
 const LoggedUser = () => {
-  const { user, logout, business } = useAuth();
+  const { emply, logout, business } = useAuth();
   const navigate = useNavigate();
   const op = useRef(null);
 
@@ -49,15 +49,15 @@ const LoggedUser = () => {
       >
         <div
           className="user-avatar-small"
-          aria-label={`User: ${user?.users_uname || "User"}`}
+          aria-label={`User: ${emply?.emply_cname || "User"}`}
         >
-          {getInitials(user?.users_uname)}
+          {getInitials(emply?.emply_cname)}
         </div>
         <div className="user-trigger-info">
           <span className="user-trigger-name">
-            {user?.users_uname?.split(" ")[0]}
+            {emply?.emply_cname?.split(" ")[0]}
           </span>
-          <span className="user-trigger-role">{user?.urole_rname || "User"}</span>
+          <span className="user-trigger-role">{emply?.emply_urole || "User"}</span>
         </div>
         <i className="pi pi-chevron-down user-trigger-chevron"></i>
       </div>
@@ -72,13 +72,13 @@ const LoggedUser = () => {
           <div className="user-card-header">
             <div
               className="user-card-avatar"
-              aria-label={`User: ${user?.users_uname || "User"}`}
+              aria-label={`User: ${emply?.emply_cname || "User"}`}
             >
-              {getInitials(user?.users_uname)}
+              {getInitials(emply?.emply_cname)}
             </div>
-            <span className="user-card-name">{user?.users_uname}</span>
-            <span className="user-card-email">{user?.users_email}</span>
-            <span className="user-card-email">{user?.urole_rname}</span>
+            <span className="user-card-name">{emply?.emply_cname}</span>
+            <span className="user-card-email">{emply?.emply_email}</span>
+            <span className="user-card-email">{emply?.emply_urole}</span>
             <span className="user-card-email">{business?.bsins_bname}</span>
           </div>
 

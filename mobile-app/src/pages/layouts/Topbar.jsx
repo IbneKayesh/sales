@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import UserMenu from "./UserMenu";
 import Sidebar from "./Sidebar";
+import NotifComp from "../../components/NotifComp";
 
 const Topbar = () => {
   const navigate = useNavigate();
@@ -51,6 +52,7 @@ const Topbar = () => {
         </div>
       </div>
       <UserMenu isOpen={activePopup === "user"} handleUrlNav={handleUrlNav} />
+      <NotifComp isOpen={activePopup === "notif"} />
       <Sidebar isOpen={activePopup === "sidebar"} handleUrlNav={handleUrlNav} />
       {activePopup && <div className="overlay" onClick={closeAll}></div>}
     </>

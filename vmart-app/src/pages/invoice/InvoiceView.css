@@ -1,0 +1,160 @@
+/* InvoiceView.css */
+.invoice-view-page { padding-bottom: 80px; }
+.invoice-view-header {
+  padding: 12px 16px; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+}
+.invoice-view-back-btn { background: none; border: none; cursor: pointer; padding: 4px; }
+.invoice-view-header-info { flex: 1; }
+.invoice-view-invoice-no { font-size: 16px; font-weight: 800; color: var(--primary); }
+.invoice-view-date { font-size: 12px; color: var(--text-secondary); }
+.invoice-view-status-badge {
+  font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 10px;
+}
+
+.invoice-view-body { padding: 12px; }
+
+.invoice-view-card { margin-bottom: 10px; }
+.invoice-view-section-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 700; }
+.invoice-view-customer-name { font-size: 15px; font-weight: 800; }
+.invoice-view-customer-phone { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.invoice-view-order-ref { font-size: 11px; color: var(--primary); margin-top: 4px; }
+
+.invoice-view-delivery-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.invoice-view-del-status-wrap { position: relative; }
+.invoice-view-del-status-btn {
+  border: none; padding: 4px 8px; border-radius: 8px;
+  font-size: 10px; font-weight: 800; cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+}
+.invoice-view-del-dropdown {
+  position: absolute; right: 0; top: 24px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1); min-width: 120px; overflow: hidden;
+}
+.invoice-view-del-dropdown-item {
+  padding: 8px 12px; font-size: 11px; font-weight: 700;
+  cursor: pointer; border-bottom: 1px solid var(--border);
+}
+.invoice-view-del-input {
+  margin-top: 8px; width: 100%; padding: 8px; font-size: 12px;
+  border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box;
+}
+.invoice-view-delivery-man { font-size: 13px; font-weight: 600; }
+
+.invoice-view-items-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.invoice-view-edit-btn {
+  font-size: 12px; color: var(--primary); background: none;
+  border: none; font-weight: 700; cursor: pointer;
+}
+.invoice-view-edit-item-row {
+  padding: 8px; background: var(--background); border-radius: 8px;
+  margin-bottom: 6px; border: 1px solid var(--border);
+}
+.invoice-view-edit-product-select {
+  width: 100%; padding: 6px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--background); margin-bottom: 6px; font-size: 12px;
+}
+.invoice-view-edit-name-input { margin-bottom: 6px; }
+.invoice-view-edit-fields-row { display: flex; gap: 6px; }
+.invoice-view-edit-field { flex: 1; }
+.invoice-view-edit-field-wide { flex: 1.5; }
+.invoice-view-edit-field-label { font-size: 10px; display: block; margin-bottom: 2px; }
+.invoice-view-edit-field-label-discount { color: var(--primary); }
+.invoice-view-edit-remove-btn {
+  background: none; border: none; color: #ef4444;
+  cursor: pointer; padding-top: 16px;
+}
+.invoice-view-add-item-btn {
+  width: 100%; padding: 8px; border: 1px dashed var(--border);
+  border-radius: 8px; background: none; color: var(--primary);
+  font-weight: 700; cursor: pointer; font-size: 13px; margin-bottom: 12px;
+}
+.invoice-view-edit-charges-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.invoice-view-edit-charge-field { flex: 1; }
+.invoice-view-edit-charge-label { font-size: 11px; font-weight: 700; display: block; margin-bottom: 4px; }
+.invoice-view-edit-charge-input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; }
+.invoice-view-edit-actions { display: flex; gap: 8px; }
+.invoice-view-cancel-btn {
+  flex: 1; padding: 8px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface); cursor: pointer;
+}
+.invoice-view-save-btn {
+  flex: 2; padding: 8px; border-radius: 8px; border: none;
+  background: var(--primary); color: #fff; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+
+.invoice-view-item-row {
+  display: flex; justify-content: space-between;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.invoice-view-item-name { font-size: 13px; font-weight: 600; }
+.invoice-view-item-detail { font-size: 11px; color: var(--text-secondary); }
+.invoice-view-item-discount { color: var(--primary); }
+.invoice-view-item-total { font-weight: 700; font-size: 14px; }
+
+.invoice-view-totals-row {
+  display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;
+}
+.invoice-view-totals-row-discount { color: #16a34a; }
+.invoice-view-totals-grand {
+  display: flex; justify-content: space-between; font-size: 16px; font-weight: 800;
+  color: var(--primary); border-top: 1px solid var(--border); padding-top: 8px;
+}
+.invoice-view-totals-paid { display: flex; justify-content: space-between; margin-top: 6px; font-size: 13px; color: #16a34a; }
+.invoice-view-totals-due { display: flex; justify-content: space-between; margin-top: 4px; font-size: 14px; font-weight: 800; color: #d97706; }
+
+.invoice-view-payment-card { margin-bottom: 10px; }
+.invoice-view-payment-label { font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px; }
+.invoice-view-payment-row { display: flex; gap: 8px; }
+.invoice-view-pay-input { flex: 1; }
+.invoice-view-pay-save-btn {
+  background: #16a34a; color: #fff; border: none; border-radius: 8px;
+  padding: 8px 14px; font-weight: 700; cursor: pointer; font-size: 13px;
+}
+.invoice-view-pay-cancel-btn {
+  background: var(--background); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px; cursor: pointer;
+}
+.invoice-view-record-payment-btn {
+  width: 100%; padding: 10px; background: #f0fdf4; border: 1px solid #86efac;
+  border-radius: 10px; color: #16a34a; font-weight: 700; cursor: pointer; font-size: 13px;
+}
+
+.invoice-view-status-card { margin-bottom: 10px; position: relative; }
+.invoice-view-status-label { font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px; }
+.invoice-view-status-btn {
+  width: 100%; padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-radius: 10px; border: 1px solid var(--border);
+  font-weight: 700; cursor: pointer; font-size: 14px;
+}
+.invoice-view-status-dropdown {
+  position: absolute; left: 16px; right: 16px; top: 100%;
+  margin-top: 4px; background: var(--surface); border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 10;
+  border: 1px solid var(--border); overflow: hidden;
+}
+.invoice-view-status-option {
+  width: 100%; padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+  border: none; border-bottom: 1px solid var(--border);
+  cursor: pointer; font-size: 13px;
+}
+
+.invoice-view-actions { display: flex; gap: 10px; margin-top: 16px; }
+.invoice-view-print-btn {
+  flex: 1; padding: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 13px; color: var(--on-surface);
+}
+.invoice-view-share-btn {
+  flex: 1; padding: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--primary); border: none; border-radius: 12px;
+  font-weight: 700; cursor: pointer; font-size: 13px; color: #fff;
+}

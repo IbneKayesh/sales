@@ -18,7 +18,7 @@ const CoaListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     { header: "Type", accessor: "chtac_ctype" },
     { header: "Sl No", accessor: "chtac_chtno" },
     { header: "Child", accessor: "chtac_child" },
-    { header: "Posting", accessor: "chtac_alpst" },
+    { header: "Posting", accessor: "chtac_ispst" },
     { header: "Level", accessor: "chtac_level" },
     { header: "Active", accessor: "chtac_actve" },
   ];
@@ -139,10 +139,10 @@ const CoaListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
     ];
 
     return (
-      <div className="flex align-items-center justify-content-between w-full gap-2 border-1 border-300 border-round p-2">
+      <div className="flex align-items-center justify-content-between w-full gap-2 border-1 border-300 border-round p-1">
         {/* Head Name + Active */}
         <div className="flex flex-column mr-5" style={{ minWidth: "25%" }}>
-          <span className="text-xl">
+          <span className="text-m">
             <ActiveRowCell
               text={`${rowData.chtac_cname} (${rowData.chtac_ntype})`}
               status={rowData.chtac_actve}
@@ -183,8 +183,8 @@ const CoaListComp = ({ pageAuth, dataList, onEdit, onDelete }) => {
           <span className="text-xs gap-2 align-items-center">
             Posting{" "}
             <Badge
-              value={rowData.chtac_alpst ? "Yes" : "No"}
-              severity={rowData.chtac_alpst ? "success" : "danger"}
+              value={rowData.chtac_ispst ? "Yes" : "No"}
+              severity={rowData.chtac_ispst ? "success" : "danger"}
             />
           </span>
         </div>

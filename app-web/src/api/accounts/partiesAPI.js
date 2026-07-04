@@ -30,4 +30,8 @@ export const partiesAPI = {
     apiRequest("/accounts/v1/party/get-by-coa", {
       body: data,
     }),
+  getByContacts: (data) =>
+    apiRequest("/accounts/v1/party/get-by-contacts", {
+      body: data,
+    }),
 };

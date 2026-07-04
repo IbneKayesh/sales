@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
     LEFT JOIN tmnb_users csr ON prty.party_crusr = csr.id
     LEFT JOIN tmnb_users usr ON prty.party_upusr = usr.id
     JOIN tmtb_chtac cht ON prty.party_chtac = cht.id
-    WHERE prty.party_apusr = $1
+    WHERE prty.party_users = $1
     ORDER BY prty.party_chtac ASC`;
 
     const params = [user_c];
@@ -62,7 +62,7 @@ router.post("/get-all-active", async (req, res) => {
     //database action
     const sql = `SELECT prty.*, 0 as edit_stop
     FROM tmtb_party prty
-    WHERE prty.party_apusr = $1
+    WHERE prty.party_users = $1
     AND prty.party_actve = TRUE
     ORDER BY prty.party_chtac ASC`;
 
@@ -87,13 +87,13 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      party_apusr,
+      party_users,
       party_bsins,
+      party_ccode,
       party_ptype,
-      party_vndor,
-      party_pcode,
-      party_pname,
       party_chtac,
+      party_vndor,
+      party_cname,
       party_opbal,
       user_s,
       user_c,
@@ -103,9 +103,9 @@ const create = async (req, res) => {
     // Validate input
     if (
       !party_ptype ||
-      !party_vndor ||
-      !party_pname ||
       !party_chtac ||
+      !party_vndor ||
+      !party_cname ||
       !user_s ||
       !user_c ||
       !user_b
@@ -122,8 +122,8 @@ const create = async (req, res) => {
     const scripts = [];
     const newCode = await GenNewCode(user_c, "tmtb_party");
     scripts.push({
-      sql: `INSERT INTO tmtb_party(id, party_apusr, party_bsins, party_ptype, party_vndor, party_pcode,
-      party_pname, party_chtac, party_opbal, party_crusr, party_upusr)
+      sql: `INSERT INTO tmtb_party(id, party_users, party_bsins, party_ptype, party_vndor, party_ccode,
+      party_cname, party_chtac, party_opbal, party_crusr, party_upusr)
       VALUES ($1, $2, $3, $4, $5, $6,
       $7, $8, $9, $10, $11)`,
       params: [
@@ -133,7 +133,7 @@ const create = async (req, res) => {
         party_ptype,
         party_vndor,
         newCode,
-        party_pname,
+        party_cname,
         party_chtac,
         party_opbal,
         user_s,
@@ -179,15 +179,15 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const {
+       const {
       id,
-      party_apusr,
+      party_users,
       party_bsins,
+      party_ccode,
       party_ptype,
-      party_vndor,
-      party_pcode,
-      party_pname,
       party_chtac,
+      party_vndor,
+      party_cname,
       party_opbal,
       user_s,
       user_c,
@@ -197,9 +197,9 @@ const update = async (req, res) => {
     // Validate input
     if (
       !party_ptype ||
-      !party_vndor ||
-      !party_pname ||
       !party_chtac ||
+      !party_vndor ||
+      !party_cname ||
       !user_s ||
       !user_c ||
       !user_b
@@ -215,7 +215,7 @@ const update = async (req, res) => {
     const sql = `UPDATE tmtb_party
     SET party_ptype = $1,
     party_vndor = $2,
-    party_pname = $3,
+    party_cname = $3,
     party_chtac = $4,
     party_opbal = $5,
     party_upusr = $6,
@@ -225,7 +225,7 @@ const update = async (req, res) => {
     const params = [
       party_ptype,
       party_vndor,
-      party_pname,
+      party_cname,
       party_chtac,
       party_opbal,
       user_s,
@@ -235,7 +235,7 @@ const update = async (req, res) => {
     await dbRun(sql, params, `update party accounts- ${user_c}`);
     res.json({
       success: true,
-      message: `${party_pname} - Updated successfully.`,
+      message: `${party_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -267,10 +267,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, party_pname, party_actve, user_s, user_c, user_b } = req.body;
+    const { id, party_cname, party_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !party_pname || !user_s || !user_c || !user_b) {
+    if (!id || !party_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -290,7 +290,7 @@ router.post("/delete", async (req, res) => {
     await dbRun(sql, params, `delete party accounts- ${user_c}`);
     res.json({
       success: true,
-      message: `${party_pname} - ${party_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${party_cname} - ${party_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {
@@ -320,12 +320,53 @@ router.post("/get-by-coa", async (req, res) => {
     //database action
     const sql = `SELECT prty.*, 0 as edit_stop
     FROM tmtb_party prty
-    WHERE prty.party_apusr = $1
+    WHERE prty.party_users = $1
     AND prty.party_actve = TRUE
     AND prty.party_chtac = $2
     ORDER BY prty.party_chtac ASC`;
 
     const params = [user_c, party_chtac];
+    const rows = await dbGetAll(sql, params, `get party accounts- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+
+// get-by-coa
+router.post("/get-by-contacts", async (req, res) => {
+  try {
+    const { party_vndor, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!party_vndor || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT prty.*,  cht.chtac_cname, cht.chtac_ctype, 0 as edit_stop
+    FROM tmtb_party prty
+    LEFT JOIN tmtb_chtac cht ON prty.party_chtac = cht.id
+    WHERE prty.party_users = $1
+    AND prty.party_actve = TRUE
+    AND prty.party_vndor = $2
+    ORDER BY prty.party_chtac ASC`;
+
+    const params = [user_c, party_vndor];
     const rows = await dbGetAll(sql, params, `get party accounts- ${user_c}`);
     res.json({
       success: true,

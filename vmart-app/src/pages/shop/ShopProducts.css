@@ -1,0 +1,91 @@
+/* ShopProducts.css */
+.shop-products-page { padding-bottom: 80px; background: var(--background); }
+.shop-products-header {
+  background: linear-gradient(135deg, var(--primary), var(--primary-variant));
+  color: #fff; padding: 24px 20px;
+  border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 20px;
+}
+.shop-products-header-title { margin: 0; font-size: 22px; font-weight: 800; }
+.shop-products-header-sub { margin: 4px 0 0; font-size: 14px; opacity: 0.9; }
+.shop-products-add-btn {
+  background: #fff; color: var(--primary); border: none; border-radius: 12px;
+  padding: 8px 14px; font-weight: 700; font-size: 13px;
+  display: flex; align-items: center; gap: 6px; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.shop-products-content-no-form { padding: 0 16px; }
+.shop-products-content-form { padding: 0 16px; margin-top: -30px; }
+
+.shop-products-form-card {
+  background: var(--surface); padding: 20px; border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08); margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+.shop-products-form-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+}
+.shop-products-form-title { font-size: 16px; font-weight: 800; }
+.shop-products-form-close { background: none; border: none; color: var(--text-secondary); cursor: pointer; }
+.shop-products-form-group { margin-bottom: 12px; }
+.shop-products-form-label { font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px; }
+.shop-products-form-input {
+  width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+  font-size: 14px; color: var(--on-surface); background: var(--surface);
+  box-sizing: border-box;
+}
+.shop-products-form-input-center { text-align: center; }
+.shop-products-form-row { display: flex; gap: 12px; margin-bottom: 12px; }
+.shop-products-form-row-item { flex: 1; }
+.shop-products-form-row-icon { flex: 1; }
+.shop-products-form-stock-row {
+  margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+}
+.shop-products-form-stock-cb { width: 18px; height: 18px; accent-color: var(--primary); }
+.shop-products-form-stock-label { font-size: 14px; font-weight: 600; }
+.shop-products-save-btn {
+  width: 100%; padding: 12px; background: var(--primary); color: #fff;
+  border: none; border-radius: 10px; font-weight: 700; font-size: 14px;
+  display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer;
+}
+
+.shop-products-list { display: flex; flex-direction: column; gap: 10px; }
+.shop-products-item {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); padding: 12px; border-radius: 16px;
+  border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.shop-products-item-out { opacity: 0.6; }
+.shop-products-item-left { display: flex; align-items: center; gap: 12px; }
+.shop-products-item-icon {
+  font-size: 28px; background: var(--background);
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center; border-radius: 12px;
+}
+.shop-products-item-name { font-size: 14px; font-weight: 700; }
+.shop-products-item-name-strike { text-decoration: line-through; }
+.shop-products-item-out-badge {
+  font-size: 10px; color: var(--error); background: rgba(239,68,68,0.1);
+  padding: 2px 6px; border-radius: 4px; margin-left: 6px;
+}
+.shop-products-item-cat { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.shop-products-item-price {
+  font-size: 14px; font-weight: 800; color: var(--primary); margin-top: 4px;
+  display: flex; align-items: center; gap: 6px;
+}
+.shop-products-item-original { font-size: 11px; color: var(--text-secondary); text-decoration: line-through; }
+.shop-products-item-actions { display: flex; gap: 8px; }
+.shop-products-edit-btn {
+  background: var(--primary-glow); color: var(--primary); border: none;
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.shop-products-del-btn {
+  background: rgba(239,68,68,0.1); color: #ef4444; border: none;
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.shop-products-empty { text-align: center; padding: 40px; color: var(--text-secondary); }
+.shop-products-empty-icon { font-size: 40px; margin-bottom: 12px; }
