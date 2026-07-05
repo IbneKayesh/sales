@@ -1,0 +1,107 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "bsins_bcode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter code",
+    "required": true
+  },
+  "bsins_bname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 255,
+    "minLength": 1,
+    "placeholder": "Enter name",
+    "required": true
+  },
+  "bsins_addrs": {
+    "type": "string",
+    "label": "Address",
+    "maxLength": 255,
+    "minLength": 1,
+    "placeholder": "Enter address",
+    "required": true
+  },
+  "bsins_email": {
+    "type": "string",
+    "label": "Email",
+    "maxLength": 255,
+    "placeholder": "Enter email",
+    "required": false
+  },
+  "bsins_cntct": {
+    "type": "string",
+    "label": "Contact",
+    "maxLength": 255,
+    "placeholder": "Enter contact",
+    "required": false
+  },
+  "bsins_image": {
+    "type": "string",
+    "label": "Image",
+    "maxLength": 255,
+    "placeholder": "Enter image",
+    "required": false
+  },
+  "bsins_binno": {
+    "type": "string",
+    "label": "BIN No",
+    "maxLength": 255,
+    "placeholder": "Enter BIN no",
+    "required": false
+  },
+  "bsins_stdat": {
+    "type": "string",
+    "label": "Start Date",
+    "required": true
+  },
+  "bsins_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 255,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "bsins_agent": {
+    "type": "boolean",
+    "label": "Agent",
+    "required": true
+  },
+  "bsins_apusr": {
+    "type": "string",
+    "label": "App User",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter app user",
+    "required": true
+  },
+  "bsins_cntry": {
+    "type": "string",
+    "label": "Country",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter country",
+    "required": true
+  },
+  "bsins_crncy": {
+    "type": "string",
+    "label": "Currency",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter currency",
+    "required": true
+  },
+  "bsins_bstyp": {
+    "type": "string",
+    "label": "Business Type",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter business type",
+    "required": true
+  }
+}

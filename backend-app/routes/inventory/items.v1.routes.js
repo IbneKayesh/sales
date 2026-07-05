@@ -487,22 +487,24 @@ router.post("/vmart", async (req, res) => {
 
     //database action
     const sql = `SELECT itm.*,
-    runit.units_uname as runit_uname,
-    punit.units_uname as punit_uname,
-    sgrup.sgrup_sname as sgrup_sname,
-    scatg.scatg_sname as scatg_sname,
-    brand.brand_bname as brand_bname,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
 FROM tmib_items itm
-LEFT JOIN tmib_units runit ON itm.items_runit = runit.id
-LEFT JOIN tmib_units punit ON itm.items_punit = punit.id
-LEFT JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
-LEFT JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
-LEFT JOIN tmib_brand brand ON itm.items_brand = brand.id
 LEFT JOIN tmhb_emply csr ON itm.items_crusr = csr.id
 LEFT JOIN tmhb_emply usr ON itm.items_upusr = usr.id
 WHERE itm.items_users = $1
 ORDER BY itm.items_iname`;
+
+    // runit.units_uname as runit_uname,
+    // punit.units_uname as punit_uname,
+    // sgrup.sgrup_sname as sgrup_sname,
+    // scatg.scatg_sname as scatg_sname,
+    // brand.brand_bname as brand_bname,
+
+// LEFT JOIN tmib_units runit ON itm.items_runit = runit.id
+// LEFT JOIN tmib_units punit ON itm.items_punit = punit.id
+// LEFT JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+// LEFT JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
+// LEFT JOIN tmib_brand brand ON itm.items_brand = brand.id
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get items- ${user_c}`);

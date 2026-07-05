@@ -1,0 +1,87 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "djrnl_dpart": {
+    "type": "string",
+    "label": "C/C",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter c/c",
+    "required": false
+  },
+  "djrnl_mjrnl": {
+    "type": "string",
+    "label": "Journal",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter journal",
+    "required": false
+  },
+  "djrnl_chtac": {
+    "type": "string",
+    "label": "COA",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter COA",
+    "required": true
+  },
+  "djrnl_party": {
+    "type": "string",
+    "label": "Party",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter party",
+    "required": true
+  },
+  "djrnl_drval": {
+    "type": "number",
+    "label": "Debit",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter debit",
+    "required": true,
+    "default": 0
+  },
+  "djrnl_crval": {
+    "type": "number",
+    "label": "Credit",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter credit",
+    "required": true,
+    "default": 0
+  },
+  "djrnl_descr": {
+    "type": "string",
+    "label": "Description",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter description",
+    "required": false
+  },
+  "djrnl_rftyp": {
+    "type": "string",
+    "label": "Ref Type",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ref type",
+    "required": false
+  },
+  "djrnl_refid": {
+    "type": "string",
+    "label": "Ref Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter ref id",
+    "required": false
+  },
+  "djrnl_lneno": {
+    "type": "number",
+    "label": "Line No",
+    "placeholder": "Enter line no",
+    "required": false,
+    "default": 1
+  }
+}

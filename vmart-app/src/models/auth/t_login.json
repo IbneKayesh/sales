@@ -1,0 +1,20 @@
+{
+  "username": {
+    "type": "string",
+    "label": "User name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter user name",
+    "required": true,
+    "default":"kayesh@sgd.com"
+  },
+  "password": {
+    "type": "string",
+    "label": "Password",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter password",
+    "required": true,
+    "default": "kayesh"
+  }
+}

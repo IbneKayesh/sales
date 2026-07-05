@@ -1,0 +1,30 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "trtry_tarea": {
+    "type": "string",
+    "label": "TArea",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter t/area",
+    "required": true
+  },
+  "trtry_wcode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter code",
+    "required": false
+  },
+  "trtry_wname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter name",
+    "required": true
+  }
+}

@@ -21,4 +21,26 @@ const stringifyAttributes = (attrb) => {
   return attrb;
 };
 
-export { parseAttributes, stringifyAttributes };
+function buildCoaTree(items, parent = "-", controls = true) {
+  return items
+    ?.filter((item) => item.chtac_chtac === parent)
+    .map((item) => ({
+      key: item.id,
+      label: `${item.chtac_chtno} - ${item.chtac_cname}`,
+      data: item,
+      selectable: item.chtac_ispst === controls,
+      children: buildCoaTree(items, item.id, controls),
+    }));
+}
+function findCoaTree(nodes, id) {
+  for (const node of nodes || []) {
+    if (node.data?.id === id) return node;
+
+    if (node.children?.length) {
+      const found = findCoaTree(node.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+export { parseAttributes, stringifyAttributes, buildCoaTree, findCoaTree };

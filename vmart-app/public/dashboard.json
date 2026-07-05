@@ -1,0 +1,41 @@
+{
+  "id": "root",
+  "api": "/reports/v1/dashboard",
+  "title": "Business Dashboard",
+  "subtitle": "System overview",
+  "components": [
+    {
+      "id": "crm",
+      "type": "box",
+      "title": "Contacts",
+      "subtitle": "Buyers, Sellers, Suppliers, Customers",
+      "stats": {
+        "value": "500",
+        "change": "12% more than last month"
+      },
+      "next": []
+    },
+    {
+      "id": "inventory",
+      "type": "box",
+      "title": "Products",
+      "subtitle": "Items, Category, Sub Category",
+      "stats": {
+        "value": "500",
+        "change": "-12% less than last month"
+      },
+      "next": []
+    },
+    {
+      "id": "setup",
+      "type": "box",
+      "title": "Setup",
+      "subtitle": "Business, Departments, Sections",
+      "stats": {
+        "value": "500",
+        "change": "12% more than last month"
+      },
+      "next": []
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "chtac_ccode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter code",
+    "required": false
+  },
+  "chtac_chtac": {
+    "type": "string",
+    "label": "Parent",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter parent",
+    "required": true
+  },
+  "chtac_cname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter name",
+    "required": true
+  },
+  "chtac_ctype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter type",
+    "required": true
+  },
+  "chtac_chtno": {
+    "type": "number",
+    "label": "Account No",
+    "maxLength": 99999,
+    "minLength": 1,
+    "placeholder": "Enter account no",
+    "required": false
+  },
+  "chtac_ntype": {
+    "type": "string",
+    "label": "Natural",
+    "maxLength": 2,
+    "minLength": 2,
+    "placeholder": "Enter natural",
+    "required": false
+  },
+  "chtac_child": {
+    "type": "boolean",
+    "label": "Child",
+    "required": false
+  },
+  "chtac_ispst": {
+    "type": "boolean",
+    "label": "Allow Post",
+    "required": false,
+    "default": false
+  }
+}

@@ -1,319 +1,179 @@
-import React, { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
-import { useToast } from "@/context/ToastContext.jsx";
+import { useRef, useState, useEffect } from "react";
+import { InputText } from "primereact/inputtext";
+import { Password } from "primereact/password";
+import { Button } from "primereact/button";
+import { Checkbox } from "primereact/checkbox";
+import RequiredText from "@/components/RequiredText";
+import useLogin from "@/hooks/auth/useLogin";
+import { getStorageLoginData, setStorageLoginData } from "@/utils/storage";
 import "./LoginPage.css";
 
-// Step types
-const STEP = {
-  USER_ID: "USER_ID", // only userId field
-  PASSWORD: "PASSWORD", // userId + password (existing user)
-  REGISTER: "REGISTER", // userId + password + name + address (new user)
-};
+const Login = () => {
+  const { formData, errors, onChange, onLoginClick } = useLogin();
+  const passwordRef = useRef(null);
+  const [isUserSaved, setIsUserSaved] = useState(false);
+  const [rememberUser, setRememberUser] = useState(false);
+  const [savedUser, setSavedUser] = useState({});
+  const [capsLock, setCapsLock] = useState(false);
 
-const LoginPage = () => {
-  const [searchParams] = useSearchParams();
-  const vmart = searchParams.get("vmart");
-  const navigate = useNavigate();
-  const { checkUserId, login, register } = useAuth();
-  const { showToast } = useToast();
+  useEffect(() => {
+    const storedUser = getStorageLoginData();
+    if (storedUser) {
+      const savedUser = storedUser?.saved_user;
+      const isRemembered = storedUser?.is_saved || false;
 
-  const [step, setStep] = useState(STEP.USER_ID);
-  const [loading, setLoading] = useState(false);
+      if (savedUser && isRemembered) {
+        onChange("username", savedUser.username);
+        setIsUserSaved(true);
+        setRememberUser(true);
+        setSavedUser(savedUser);
 
-  const [form, setForm] = useState({
-    userId: "",
-    password: "",
-    name: "",
-    address: "",
-  });
-
-  const set = (field) => (e) => setForm({ ...form, [field]: e.target.value });
-
-  // ── Step 1: check userId ──────────────────────────────────────────────────
-  const handleContinue = async () => {
-    if (!form.userId.trim()) {
-      showToast("warn", "Required", "Please enter your email or mobile number");
-      return;
+        // Use a small delay to ensure the Password component is rendered and ref is attached
+        setTimeout(() => {
+          if (passwordRef.current) {
+            passwordRef.current.focus();
+          }
+        }, 100);
+      }
     }
-    const { found } = await checkUserId(form.userId);
-    if (found && Object.keys(found).length > 0) {
-      setStep(STEP.PASSWORD);
-    } else {
-      setStep(STEP.REGISTER);
+  }, []);
+
+  const handleKeyPress = (e) => {
+    setCapsLock(e.getModifierState("CapsLock"));
+  };
+
+  const handleKeyDownUser = (e) => {
+    if (e.key === "Enter") {
+      if (formData.username.length > 3) {
+        passwordRef.current.focus();
+      }
     }
   };
 
-  // ── Step 2: login ─────────────────────────────────────────────────────────
-  const handleLogin = async () => {
-    if (!form.password) {
-      showToast("warn", "Required", "Please enter your password");
-      return;
-    }
-    setLoading(true);
-    const res = await login({ userId: form.userId, password: form.password });
-    setLoading(false);
-    if (res.success) {
-      showToast("success", "Welcome back!", res.message);
-      navigate("/");
-    } else {
-      showToast("error", "Login Failed", res.message);
+  const handleDifferentUser = () => {
+    onChange("username", "");
+    setIsUserSaved(false);
+    setRememberUser(false);
+    setStorageLoginData({ saved_user: null });
+    setStorageLoginData({ is_saved: false });
+  };
+
+  const handleLogin = () => {
+    onLoginClick(rememberUser);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleLogin();
     }
   };
 
-  // ── Step 3: register ──────────────────────────────────────────────────────
-  const handleRegister = async () => {
-    if (!form.password) {
-      showToast("warn", "Required", "Please enter a password");
-      return;
-    }
-    if (!form.name.trim()) {
-      showToast("warn", "Required", "Please enter your name");
-      return;
-    }
-    if (!form.address.trim()) {
-      showToast("warn", "Required", "Please enter your address");
-      return;
-    }
-
-    if (!vmart) {
-      showToast("warn", "Required", "Please scan QR code again");
-      return;
-    }
-    //set form. shop = vmart
-    setLoading(true);
-    const res = await register({
-      ...form,
-      shop: vmart,
-    });
-    setLoading(false);
-    if (res.success) {
-      showToast("success", "Account Created!", "Welcome to Virtual Mart");
-      navigate("/");
-    } else {
-      showToast("error", "Error", res.message);
-    }
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (step === STEP.USER_ID) handleContinue();
-    if (step === STEP.PASSWORD) handleLogin();
-    if (step === STEP.REGISTER) handleRegister();
-  };
-
-  const stepLabel = {
-    [STEP.USER_ID]: {
-      title: "Sign In",
-      sub: "Enter your email or mobile number",
-    },
-    [STEP.PASSWORD]: {
-      title: "Enter Password",
-      sub: "Welcome back! Please enter your password",
-    },
-    [STEP.REGISTER]: {
-      title: "Create Account",
-      sub: "New here? Fill in your details to get started",
-    },
+  const savedUserAvater = () => {
+    return (
+      <div className="saved-user-container">
+        <div className="saved-user-info">
+          <div className="user-avatar">
+            <i className="pi pi-user" />
+          </div>
+          <div className="user-details">
+            <span className="welcome-text">Welcome back</span>
+            <span className="saved-username">{savedUser.usertext}</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          className="different-user-btn"
+          onClick={handleDifferentUser}
+        >
+          Not you? Try with different user.
+        </button>
+      </div>
+    );
   };
 
   return (
     <div className="login-container">
-      {/* ── Brand ── */}
-      <div className="login-brand-section">
-        <div className="login-logo-container">
-          <img src="/shop-50.png" alt="Logo" />
+      <div className="login-left-panel">
+        <div className="login-left-content">
+          <h1>EAAC</h1>
+          <p>Enterprise.Automation.Analytics.Control</p>
         </div>
-        <h1 className="text-white p-1">Virtual Mart</h1>
-        <span className="text-m text-gray-200">{"Your Trusted Store"}</span>
       </div>
 
-      {/* ── Form ── */}
-      <div className="login-form-section">
-        <h2 className="text-gray-800">
-          {stepLabel[step].title} with {vmart && `Shop No — ${vmart}`}
-        </h2>
-        <span className="text-sm text-gray-600 mb-4">
-          {stepLabel[step].sub}
-        </span>
-
-        <form
-          onSubmit={handleSubmit}
-          className="grid items-center justify-center p-3 mt-3 lite-card"
-        >
-          {/* User ID — always visible */}
-          <div className="col-12">
-            <label className="block font-bold mb-2 text-sm text-gray-700">
-              <span className="pi pi-user mr-2" />
-              Email or Mobile
-            </label>
-            <input
-              type="text"
-              value={form.userId}
-              onChange={set("userId")}
-              placeholder="e.g. john@test.com or 01812..."
-              className="w-full"
-              disabled={step !== STEP.USER_ID}
-              style={{
-                opacity: step !== STEP.USER_ID ? 0.7 : 1,
-                background:
-                  step !== STEP.USER_ID ? "var(--background)" : undefined,
-              }}
-              autoComplete="username"
-            />
-            {step !== STEP.USER_ID && (
-              <button
-                type="button"
-                onClick={() => {
-                  setStep(STEP.USER_ID);
-                  setForm({ ...form, password: "", name: "", address: "" });
-                }}
-                style={{
-                  fontSize: "12px",
-                  color: "var(--primary)",
-                  background: "none",
-                  border: "none",
-                  marginTop: "4px",
-                  cursor: "pointer",
-                }}
-              >
-                &#8678; Change
-              </button>
-            )}
-          </div>
-
-          {/* Password — steps 2 & 3 */}
-          {(step === STEP.PASSWORD || step === STEP.REGISTER) && (
-            <div className="col-12">
-              <label className="block font-bold mb-2 text-sm text-gray-700">
-                <span className="pi pi-lock mr-2" />
-                {step === STEP.REGISTER ? "Create Password" : "Password"}
-              </label>
-              <input
-                type="password"
-                value={form.password}
-                onChange={set("password")}
-                placeholder={
-                  step === STEP.REGISTER
-                    ? "Set a password"
-                    : "Enter your password"
-                }
-                className="w-full"
-                autoComplete={
-                  step === STEP.REGISTER ? "new-password" : "current-password"
-                }
-              />
+      <div className="login-right-panel">
+        <div className="login-content">
+          <div className="login-form-card">
+            <div className="form-header">
+              <h2>Welcome Back</h2>
+              <p>Please enter your credentials to sign in.</p>
             </div>
-          )}
 
-          {/* Name & Address — step 3 only */}
-          {step === STEP.REGISTER && (
-            <>
-              <div className="col-12">
-                <label className="block font-bold mb-2 text-sm text-gray-700">
-                  <span className="pi pi-user-edit mr-2" />
-                  Your Name
-                </label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={set("name")}
-                  placeholder="Enter your full name"
-                  className="w-full"
+            {!isUserSaved ? (
+              <div className="input-group">
+                <label className="hidden">User</label>
+                <InputText
+                  value={formData.username}
+                  onChange={(e) => onChange("username", e.target.value)}
+                  placeholder="Your user"
+                  onKeyDown={handleKeyDownUser}
+                  className="w-full login-input"
                 />
+                <RequiredText text={errors.username} />
               </div>
-              <div className="col-12">
-                <label className="block font-bold mb-2 text-sm text-gray-700">
-                  <span className="pi pi-map-marker mr-2" />
-                  Address
-                </label>
-                <input
-                  type="text"
-                  value={form.address}
-                  onChange={set("address")}
-                  placeholder="Flat, House, Road, Area..."
-                  className="w-full"
-                />
-              </div>
-              <div className="col-12">
-                <p style={{ fontSize: "11px", color: "#888", margin: 0 }}>
-                  ℹ️ ID not found — creating a new customer account
-                </p>
-              </div>
-            </>
-          )}
+            ) : (
+              savedUserAvater()
+            )}
 
-          {/* Submit */}
-          <div className="col-12 mt-3">
-            <button
-              type="submit"
-              className="btn-primary w-full"
-              disabled={loading}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px",
-              }}
-            >
-              {loading && <span className="pi pi-spin pi-spinner" />}
-              {step === STEP.USER_ID && (
-                <>
-                  <span className="pi pi-arrow-right" /> Continue
-                </>
+            <div className="input-group">
+              <label className="hidden">Password</label>
+              <Password
+                ref={passwordRef}
+                value={formData.password}
+                onChange={(e) => onChange("password", e.target.value)}
+                placeholder="Your password"
+                className="w-full login-input"
+                feedback={false}
+                inputStyle={{ width: "100%" }}
+                onKeyDown={handleKeyDown}
+                onKeyUp={handleKeyPress}
+              />
+              <RequiredText text={errors.password} />
+              {capsLock && (
+                <small style={{ color: "red" }}>Caps Lock is ON</small>
               )}
-              {step === STEP.PASSWORD && (
-                <>
-                  <span className="pi pi-sign-in" /> Sign In
-                </>
-              )}
-              {step === STEP.REGISTER && (
-                <>
-                  <span className="pi pi-user-plus" /> Create Account &amp; Sign
-                  In
-                </>
-              )}
-            </button>
+            </div>
+
+            {!isUserSaved && (
+              <div className="remember-me">
+                <Checkbox
+                  inputId="rememberUser"
+                  checked={rememberUser}
+                  onChange={(e) => setRememberUser(e.checked)}
+                />
+                <label htmlFor="rememberUser">Remember Me</label>
+              </div>
+            )}
+            <Button
+              icon="pi pi-sign-in"
+              label="Sign In"
+              className="login-btn"
+              onClick={handleLogin}
+            />
+            <p className="login-security-text">
+              Secure login • Protected by EAAC
+            </p>
           </div>
-        </form>
 
-        {/* Demo hint */}
-        <div
-          style={{
-            marginTop: "16px",
-            padding: "12px",
-            background: "var(--surface)",
-            borderRadius: "12px",
-            border: "1px solid var(--border)",
-          }}
-        >
-          <p
-            style={{
-              fontSize: "11px",
-              color: "#666",
-              margin: 0,
-              lineHeight: 1.6,
-            }}
-          >
-            <strong>Demo accounts:</strong>
-            <br />
-            🏪 Shop: <code>shop1@vmart.com</code> / <code>123456</code>
-            <br />
-            🛒 Customer: <code>john@test.com</code> / <code>123456</code>
-            <br />
-            <em>Or enter any new email/mobile to self-register</em>
-          </p>
-        </div>
-
-        <div
-          className="text-center mt-3"
-          style={{ fontSize: "11px", color: "#aaa" }}
-        >
-          Enterprise · Automation · Analytics · Control
+          <div className="login-footer">
+            <p>
+              © {new Date().getFullYear()} EAAC Solution. All rights
+              reserved.
+            </p>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default Login;

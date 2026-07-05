@@ -1,0 +1,222 @@
+/* Professional Profile Card Styles */
+.user-profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid transparent;
+  user-select: none;
+}
+
+.user-profile-trigger:hover {
+  background: var(--bg-main);
+  border-color: var(--border-color);
+}
+
+.user-profile-trigger:hover .user-trigger-name {
+  color: var(--primary);
+}
+
+.user-profile-trigger:hover .user-trigger-role,
+.user-profile-trigger:hover .user-trigger-chevron {
+  color: var(--primary);
+}
+
+.user-avatar-small {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.7rem;
+  box-shadow: 0 4px 8px var(--primary-glow);
+}
+
+.user-trigger-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.user-trigger-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  transition: var(--transition);
+}
+
+.user-trigger-role {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  transition: var(--transition);
+}
+
+.user-trigger-chevron {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-left: 8px;
+}
+
+/* Professional Profile Card */
+.user-profile-card {
+  width: 300px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+}
+
+.user-card-header {
+  padding: 18px 16px;
+  background: linear-gradient(to bottom, var(--primary-light), var(--bg-card));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.user-card-avatar {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 1.75rem;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 16px var(--primary-glow);
+}
+
+.user-card-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.user-card-email {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.user-card-actions {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-action-btn {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  border: none;
+  background: var(--bg-main);
+  color: var(--text-main);
+}
+
+.user-action-btn:hover {
+  background: var(--bg-main);
+  color: var(--primary);
+}
+
+.user-action-btn .p-button-icon {
+  margin-right: 12px;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+.user-action-btn:hover .p-button-icon {
+  color: var(--primary);
+}
+
+.user-action-btn.logout {
+  margin-top: 8px;
+  border-top: 1px solid var(--border-light);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  color: var(--danger);
+}
+
+.user-action-btn.logout:hover {
+  background: var(--danger-hover);
+  color: var(--danger);
+}
+
+.user-action-btn.logout .p-button-icon {
+  color: var(--danger);
+}
+
+
+.theme-switcher {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.theme-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: block;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.theme-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 0 10px;
+}
+
+.theme-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.theme-btn:hover {
+  transform: scale(1.1);
+}
+
+/* 20 Distinct Colors */
+.theme-btn.red { background: #ef4444; }
+.theme-btn.orange { background: #f97316; }
+.theme-btn.amber { background: #d97706; }
+.theme-btn.yellow { background: #eab308; }
+.theme-btn.lime { background: #84cc16; }
+.theme-btn.green { background: #16a34a; }
+.theme-btn.emerald { background: #10b981; }
+.theme-btn.teal { background: #0d9488; }
+.theme-btn.cyan { background: #06b6d4; }
+.theme-btn.sky { background: #7dd3fc; }
+.theme-btn.blue { background: #2563eb; }
+.theme-btn.indigo { background: #4f46e5; }
+.theme-btn.navy-blue { background: #1e1b4b; }
+.theme-btn.violet { background: #8b5cf6; }
+.theme-btn.purple { background: #9333ea; }
+.theme-btn.fuchsia { background: #d946ef; }
+.theme-btn.pink { background: #f472b6; }
+.theme-btn.rose { background: #e11d48; }
+.theme-btn.slate { background: #64748b; }
+.theme-btn.dark { background: #0f172a; }

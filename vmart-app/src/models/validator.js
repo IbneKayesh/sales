@@ -85,9 +85,8 @@ const validate = (data, schema) => {
       typeof value === "string" &&
       value.length < rules.minLength
     ) {
-      errors[
-        field
-      ] = `${label} must be at least ${rules.minLength} characters long.`;
+      errors[field] =
+        `${label} must be at least ${rules.minLength} characters long.`;
       continue;
     }
 
@@ -96,9 +95,8 @@ const validate = (data, schema) => {
       typeof value === "string" &&
       value.length > rules.maxLength
     ) {
-      errors[
-        field
-      ] = `${label} must be no more than ${rules.maxLength} characters long.`;
+      errors[field] =
+        `${label} must be no more than ${rules.maxLength} characters long.`;
       continue;
     }
 
@@ -122,9 +120,8 @@ const validate = (data, schema) => {
     if (rules.type === "password" && rules.strong) {
       const strongPwdRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/;
       if (!strongPwdRegex.test(value)) {
-        errors[
-          field
-        ] = `${label} must include uppercase, lowercase, number, and special character.`;
+        errors[field] =
+          `${label} must include uppercase, lowercase, number, and special character.`;
         continue;
       }
     }

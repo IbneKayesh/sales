@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
 
       const response = await authAPI.login(reqBody);
       if (response.success) {
-        const userData = response.data.users;
+        const userData1 = response.data.users;
 
         const userData = {
           id: restData.id,

@@ -1,0 +1,159 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "price_apusr": {
+    "type": "string",
+    "label": "Contract Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter contract id",
+    "required": false
+  },
+  "price_bsins": {
+    "type": "string",
+    "label": "Default Business Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter business id",
+    "required": false
+  },
+  "price_items": {
+    "type": "string",
+    "label": "Item Id",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter item id",
+    "required": true
+  },
+  "price_pcode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter code",
+    "required": false
+  },
+  "price_lprat": {
+    "type": "number",
+    "label": "LP Rate",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter LP rate",
+    "required": false,
+    "default": 0
+  },
+  "price_dprat": {
+    "type": "number",
+    "label": "DP Rate",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter DP rate",
+    "required": false,
+    "default": 0
+  },
+  "price_tprat": {
+    "type": "number",
+    "label": "TP Rate",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter TP rate",
+    "required": false,
+    "default": 0
+  },
+  "price_mrrat": {
+    "type": "number",
+    "label": "MRP Rate",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter MRP rate",
+    "required": false,
+    "default": 0
+  },
+  "price_dspct": {
+    "type": "number",
+    "label": "Discount %",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter discount percentage",
+    "required": false,
+    "default": 0
+  },
+  "price_gdstk": {
+    "type": "number",
+    "label": "Good Stock",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter good stock",
+    "required": false,
+    "default": 0
+  },
+  "price_bdstk": {
+    "type": "number",
+    "label": "Bad Stock",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter bad stock",
+    "required": false,
+    "default": 0
+  },
+  "price_mnqty": {
+    "type": "number",
+    "label": "Min Qty",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter min qty",
+    "required": false,
+    "default": 0
+  },
+  "price_mxqty": {
+    "type": "number",
+    "label": "Max Qty",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter max qty",
+    "required": false,
+    "default": 0
+  },
+  "price_pbqty": {
+    "type": "number",
+    "label": "Purchase Booking Qty",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter purchase booking qty",
+    "required": false,
+    "default": 0
+  },
+  "price_sbqty": {
+    "type": "number",
+    "label": "Sales Booking Qty",
+    "maxLength": 999999999,
+    "minLength": 0,
+    "placeholder": "Enter sales booking qty",
+    "required": false,
+    "default": 0
+  },
+  "price_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "minLength": 0,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "price_jnote": {
+    "type": "string",
+    "label": "JSON Notes",
+    "maxLength": 300,
+    "minLength": 0,
+    "placeholder": "Enter JSON notes",
+    "required": false
+  },
+  "price_actve": {
+    "type": "boolean",
+    "label": "Active",
+    "required": false,
+    "default": true
+  }
+}
