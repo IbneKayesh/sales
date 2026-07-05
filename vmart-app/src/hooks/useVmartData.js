@@ -7,6 +7,7 @@ export const DEMO_SHOPS = [
   { id: 1, name: "Green Mart",    address: "12 Main Road, Dhaka",     phone: "01711000001", productsCount: 8  },
   { id: 2, name: "Blue Store",    address: "45 College Ave, Chittagong", phone: "01711000002", productsCount: 6 },
   { id: 3, name: "Fresh Corner",  address: "7 Lake Road, Sylhet",     phone: "01711000003", productsCount: 5  },
+  { id: 4, name: "Janani Store",  address: "Hossain Market, Badda, Dhaka",     phone: "0123456789", productsCount: 5  },
 ];
 
 // ── USERS ────────────────────────────────────────────────────────────────────
@@ -47,7 +48,7 @@ export const DEMO_PRODUCTS = [
 
 // ── CUSTOMERS (for shop owner view) ─────────────────────────────────────────
 export const DEMO_CUSTOMERS = [
-  { id: 201, name: "John Doe",    mobile: "01812000001", email: "john@test.com",  address: "House 1, Road 2, Dhaka",    totalOrders: 4, totalSpent: 2340 },
+  { id: 201, name: "Kayesh",    mobile: "017226888266", email: "ibnekayesh91@gmail.com",  address: "5th Floor, Family Bazar, Sadhinota Soroni, Uttar Badda, Dhaka",    totalOrders: 4, totalSpent: 2340 },
   { id: 202, name: "Sara Ahmed",  mobile: "01812000002", email: "sara@test.com",  address: "Flat 5, Block A, Mirpur",   totalOrders: 2, totalSpent: 1120 },
   { id: 204, name: "Rafiq Islam", mobile: "01913000001", email: "",               address: "Village: Comilla, District: Comilla", totalOrders: 1, totalSpent: 650 },
   { id: 205, name: "Nadia Khan",  mobile: "01614000001", email: "",               address: "Road 12, Gulshan, Dhaka",   totalOrders: 3, totalSpent: 1890 },

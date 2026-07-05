@@ -7,13 +7,19 @@ const InvoicePrint = () => {
   const navigate = useNavigate();
 
   const invoice = {
-    id: id || "INV-1001",
-    date: "19/02/2026 14:30",
-    customer: "John Smith",
+    id: id || "INV-050726-00001",
+    date: "05-JUL-2026 14:30",
+    customer: "Kayesh",
+    address: "5th Floor, Family Bazar, Uttar Badda",
     items: [
-      { name: "Electronics Pro", qty: 1, price: 1200 },
-      { name: "Wireless Mouse", qty: 2, price: 45 },
-      { name: "HDMI Cable", qty: 1, price: 15 },
+      { name: "Muri (deshi)", qty: 1, unit: "KG", price: 0 },
+      { name: "Powder soap (Chaka)", qty: 1, unit: "KG", price: 0 },
+      { name: "Ball soap (Chaka)", qty: 2, unit: "PCS", price: 0 },
+      { name: "Kitchen Bar (small size)", qty: 2, unit: "PCS", price: 0 },
+      { name: "Sunsilk Shampoo (Mini Pack)", qty: 12, unit: "PCS", price: 0 },
+      { name: "Ponds Facewash (White Beauty)", qty: 1, unit: "PCS", price: 0 },
+      { name: "Salt", qty: 1, unit: "KG", price: 0 },
+      { name: "Old Rice (Low Quality)", qty: 1, unit: "KG", price: 0 },
     ],
   };
 
@@ -59,13 +65,13 @@ const InvoicePrint = () => {
                 marginBottom: "4px",
               }}
             >
-              MOBILE STORE
+              Janani Store
             </div>
             <div style={{ fontSize: "11px", color: "#555" }}>
-              123 Tech Avenue, Silicon Valley
+              Hossain Market, Uttar Badda, Dhaka
             </div>
             <div style={{ fontSize: "11px", color: "#555" }}>
-              Tel: +1 234 567 890
+              Mobile: +88 01
             </div>
           </div>
 
@@ -103,6 +109,10 @@ const InvoicePrint = () => {
               <span style={{ fontWeight: 700 }}>Customer:</span>
               <span>{invoice.customer}</span>
             </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ fontWeight: 700 }}>Address:</span>
+              <span>{invoice.address}</span>
+            </div>
           </div>
 
           {/* Divider */}
@@ -131,7 +141,9 @@ const InvoicePrint = () => {
               {invoice.items.map((item, idx) => (
                 <tr key={idx}>
                   <td style={{ padding: "5px 0" }}>{item.name}</td>
-                  <td style={{ textAlign: "center" }}>{item.qty}</td>
+                  <td style={{ textAlign: "center" }}>
+                    {item.qty} {item.unit}
+                  </td>
                   <td style={{ textAlign: "right" }}>
                     {(item.qty * item.price).toFixed(2)}
                   </td>
@@ -141,7 +153,13 @@ const InvoicePrint = () => {
           </table>
 
           {/* Totals */}
-          <div style={{ borderTop: "1px dashed #999", marginTop: "10px", paddingTop: "8px" }}>
+          <div
+            style={{
+              borderTop: "1px dashed #999",
+              marginTop: "10px",
+              paddingTop: "8px",
+            }}
+          >
             <div
               style={{
                 display: "flex",
@@ -155,7 +173,7 @@ const InvoicePrint = () => {
             </div>
             <div
               style={{
-                display: "flex",
+                display: "none",
                 justifyContent: "space-between",
                 fontSize: "11px",
                 marginBottom: "6px",

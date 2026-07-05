@@ -36,6 +36,10 @@ CREATE TABLE tmcb_cntct (
   cntct_crlmt decimal(18,6) NOT NULL DEFAULT 0,
   cntct_crbal decimal(18,6) NOT NULL DEFAULT 0,
 
+  cntct_pswrd varchar(50) DEFAULT 'vmart',
+  cntct_recky varchar(50) DEFAULT 'vmart',
+  cntct_islgn boolean NOT NULL DEFAULT false,
+
   -- default 3
   cntct_actve boolean NOT NULL DEFAULT true,
   cntct_crusr varchar(50) NOT NULL,

@@ -3,12 +3,15 @@
 -- item master business
 
 CREATE TABLE tmib_price (
+  -- default 1
   id varchar(50) PRIMARY KEY,
 
-  price_apusr VARCHAR(50) NOT NULL,
+  price_users VARCHAR(50) NOT NULL,
   price_bsins VARCHAR(50) NOT NULL,
+  price_ccode VARCHAR(50) NOT NULL,
   price_items VARCHAR(50) NOT NULL,
-  price_pcode VARCHAR(50) NOT NULL,
+
+  -- custom
   price_lprat decimal(18,6) DEFAULT 0.00,
   price_dprat decimal(18,6) DEFAULT 0.00,
   price_tprat decimal(18,6) DEFAULT 0.00,
@@ -22,8 +25,8 @@ CREATE TABLE tmib_price (
   price_sbqty decimal(18,6) DEFAULT 0.00,
   price_notes VARCHAR(100),
   price_jnote VARCHAR(300),
-  
-  -- default
+    
+  -- default 2
   price_actve boolean NOT NULL DEFAULT true,
   price_crusr VARCHAR(50) NOT NULL,
   price_crdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -31,13 +31,13 @@ const LoginPage = () => {
   const set = (field) => (e) => setForm({ ...form, [field]: e.target.value });
 
   // ── Step 1: check userId ──────────────────────────────────────────────────
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!form.userId.trim()) {
       showToast("warn", "Required", "Please enter your email or mobile number");
       return;
     }
-    const { found } = checkUserId(form.userId);
-    if (found) {
+    const { found } = await checkUserId(form.userId);
+    if (found && Object.keys(found).length > 0) {
       setStep(STEP.PASSWORD);
     } else {
       setStep(STEP.REGISTER);
@@ -75,8 +75,17 @@ const LoginPage = () => {
       showToast("warn", "Required", "Please enter your address");
       return;
     }
+
+    if (!vmart) {
+      showToast("warn", "Required", "Please scan QR code again");
+      return;
+    }
+    //set form. shop = vmart
     setLoading(true);
-    const res = await register(form);
+    const res = await register({
+      ...form,
+      shop: vmart,
+    });
     setLoading(false);
     if (res.success) {
       showToast("success", "Account Created!", "Welcome to Virtual Mart");
@@ -116,14 +125,14 @@ const LoginPage = () => {
           <img src="/shop-50.png" alt="Logo" />
         </div>
         <h1 className="text-white p-1">Virtual Mart</h1>
-        <span className="text-m text-gray-200">
-          {vmart ? `Shop No — ${vmart}` : "Your Trusted Store"}
-        </span>
+        <span className="text-m text-gray-200">{"Your Trusted Store"}</span>
       </div>
 
       {/* ── Form ── */}
       <div className="login-form-section">
-        <h2 className="text-gray-800">{stepLabel[step].title}</h2>
+        <h2 className="text-gray-800">
+          {stepLabel[step].title} with {vmart && `Shop No — ${vmart}`}
+        </h2>
         <span className="text-sm text-gray-600 mb-4">
           {stepLabel[step].sub}
         </span>

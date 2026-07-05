@@ -24,8 +24,10 @@ const auth_mw = (req, res, next) => {
     "/api/auth/reset-password",
     "/api/health",
     "/api/ping",
-    "/api/mobile/auth/login",
     "/api/auth/v1/login",
+    "/api/auth/v1/vmart/login",
+    "/api/auth/v1/vmart/login-with-password",
+    "/api/auth/v1/vmart/register",
   ];
 
   // Normalize path to ignore query parameters and trailing slashes

@@ -1,11 +1,12 @@
-{"default": {
+{
+  "default-sb": {
     "host": "aws-0-ap-northeast-1.pooler.supabase.com",
     "user": "postgres.bruswmmoudrbavjxzevp",
     "password": "k4?JG8ZbpK%eaNw",
     "database": "postgres",
     "port": 6543
   },
-  "default-docker": {
+  "default": {
     "host": "localhost",
     "user": "sgdpg",
     "password": "sgdpass",

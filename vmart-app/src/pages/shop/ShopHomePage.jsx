@@ -35,11 +35,11 @@ const ShopHomePage = () => {
       {/* ── Greeting ── */}
       <div className="shop-home-header">
         <div>
-          <p className="shop-home-greeting">{greeting} 👋</p>
-          <h1 className="shop-home-name">{user?.name || "Shop Owner"}</h1>
+          <p className="shop-home-greeting">{greeting}! 👋 {user?.name || "Shop User"}</p>
+          <h1 className="shop-home-name">{user?.account || "Shop Name"}</h1>
         </div>
         <div className="shop-home-avatar">
-          {user?.name?.charAt(0) || "S"}
+          {user?.account?.charAt(0) || "S"}
         </div>
       </div>
 

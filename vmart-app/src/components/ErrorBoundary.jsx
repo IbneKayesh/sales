@@ -23,7 +23,7 @@ class ErrorBoundary extends React.Component {
             type="button"
             className="btn-primary"
             style={{ marginTop: "12px", maxWidth: "200px", margin: "12px auto 0" }}
-            onClick={() => window.location.reload()}
+            onClick={() => window.location.href/"login"}
           >
             Refresh
           </button>

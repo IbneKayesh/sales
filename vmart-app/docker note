@@ -1,0 +1,21 @@
+docker compose up --build
+
+
+Your services will be available at:
+
+React: http://localhost:3000
+Express API: http://localhost:5000
+PostgreSQL: localhost:5432
+For production-like local hosting
+
+Instead of running the React development server, build the React app and serve it with Express:
+
+cd client
+npm run build
+
+Then configure Express to serve the build (or dist) folder. This results in only two containers:
+
+PostgreSQL
+Express (serving both the API and the React frontend)
+
+This setup is faster, uses fewer resources, and more closely matches a production deployment while still running completely offline.
