@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { FiDollarSign, FiCheckCircle, FiSearch } from "react-icons/fi";
+import { FiDollarSign, FiCheckCircle, FiSearch, FiX } from "react-icons/fi";
 import { useUI } from "../context/UIContext";
+import { useAuth } from "../context/AuthContext";
 import { load, save, KEYS } from "../../utils/storage";
 
 export default function InvoiceCollectionPage() {
   const { showToast } = useUI();
+  const { user, isCustomer, isShop } = useAuth();
   const [invoices, setInvoices] = useState([]);
   const [search, setSearch] = useState("");
   const [payModal, setPayModal] = useState(null); // invoice id
@@ -14,8 +16,15 @@ export default function InvoiceCollectionPage() {
     setInvoices(load(KEYS.INVOICES));
   }, []);
 
+  /* Filter invoices by role */
+  const roleFiltered = isCustomer
+    ? invoices.filter((inv) => inv.customer?.name === user?.name)
+    : isShop
+    ? invoices.filter((inv) => inv.shop === (user?.shopName || user?.name))
+    : invoices;
+
   /* Invoices with outstanding dues */
-  const dueInvoices = invoices.filter((inv) =>
+  const dueInvoices = roleFiltered.filter((inv) =>
     inv.paymentStatus !== "paid" &&
     (inv.customer.name.toLowerCase().includes(search.toLowerCase()) || inv.invoiceNumber?.toLowerCase().includes(search.toLowerCase()))
   );
@@ -78,15 +87,25 @@ export default function InvoiceCollectionPage() {
 
       {/* Search */}
       <div className="ui-search">
-        <input type="search" className="ui-search-input" placeholder="Search by customer or invoice..."
+        <input type="search" id="invoice-collection-search" name="invoice-collection-search" className="ui-search-input" placeholder="Search by customer or invoice..."
           value={search} onChange={(e) => setSearch(e.target.value)} />
       </div>
 
       {/* Due invoices */}
       {dueInvoices.length === 0 ? (
-        <p className="page-summary" style={{ textAlign: "center", padding: "var(--space-7) 0" }}>
-          {search ? "No matching invoices found." : "All invoices are paid! 🎉"}
-        </p>
+        <div style={{ textAlign: "center", padding: "var(--space-8) var(--space-4)", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-4)" }}>
+            <div style={{ width: 72, height: 72, borderRadius: "50%", background: search ? "var(--error-bg)" : "var(--accent-soft)", display: "grid", placeItems: "center", fontSize: "2rem", color: search ? "var(--error)" : "var(--accent)" }}>
+              {search ? "🔍" : "🎉"}
+            </div>
+            <div>
+              <h3 style={{ margin: 0, color: "var(--text-h)", fontSize: "1.1rem" }}>
+                {search ? "No matching invoices" : "All invoices are paid!"}
+              </h3>
+              <p style={{ color: "var(--text-subtle)", fontSize: "0.9rem", marginTop: "var(--space-2)" }}>
+                {search ? `No invoices match "${search}"` : "Nothing due right now."}
+              </p>
+            </div>
+          </div>
       ) : (
         <div className="ui-card">
           <h3 className="ui-card-title">Due Invoices ({dueInvoices.length})</h3>
@@ -140,21 +159,30 @@ export default function InvoiceCollectionPage() {
         return (
           <div style={{
             position: "fixed", inset: 0, background: "var(--overlay-bg)", zIndex: 100,
-            display: "flex", alignItems: "flex-end", justifyContent: "center",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: "var(--space-4)",
+            animation: "modal-fade-in 0.2s ease",
           }} onClick={() => setPayModal(null)}>
             <div style={{
               background: "var(--bg-surface)", width: "100%", maxWidth: 420,
-              borderRadius: "var(--radius-2xl) var(--radius-2xl) 0 0",
-              padding: "var(--space-6) var(--space-4)", zIndex: 101,
+              borderRadius: "var(--radius-2xl)",
+              padding: "var(--space-6) var(--space-5)",
+              animation: "modal-scale-in 0.25s ease",
             }} onClick={(e) => e.stopPropagation()}>
-              <h3 style={{ margin: 0, color: "var(--text-h)", fontSize: "1.1rem" }}>Record Payment</h3>
-              <p style={{ fontSize: "0.85rem", color: "var(--text-subtle)", marginTop: "var(--space-2)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-4)" }}>
+                <h3 style={{ margin: 0, color: "var(--text-h)", fontSize: "1.1rem" }}>Record Payment</h3>
+                <button onClick={() => setPayModal(null)}
+                  style={{ border: "none", background: "var(--bg-disabled)", width: 32, height: 32, borderRadius: "var(--radius-full)", display: "grid", placeItems: "center", cursor: "pointer", color: "var(--text)" }}>
+                  <FiX />
+                </button>
+              </div>
+              <p style={{ fontSize: "0.85rem", color: "var(--text-subtle)", margin: 0 }}>
                 {inv.customer.name} · {inv.invoiceNumber}
               </p>
 
               <div className="ui-form-field" style={{ marginTop: "var(--space-4)" }}>
-                <label className="ui-form-label">Amount (Max: ₹{maxDue.toFixed(2)})</label>
-                <input type="number" className="ui-input" min={0} step={0.01} max={maxDue}
+                <label className="ui-form-label" htmlFor="collection-amount">Amount (Max: ₹{maxDue.toFixed(2)})</label>
+                <input type="number" id="collection-amount" name="collection-amount" className="ui-input" min={0} step={0.01} max={maxDue}
                   value={payAmount} onChange={(e) => setPayAmount(Math.min(maxDue, Math.max(0, Number(e.target.value) || 0)))} />
               </div>
 

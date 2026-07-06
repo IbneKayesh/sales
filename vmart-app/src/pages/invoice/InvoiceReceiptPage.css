@@ -1,0 +1,200 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   InvoiceReceiptPage – POS Thermal Print Style
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.receipt-paper {
+  background: #fff;
+  color: #222;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  padding: var(--space-6) var(--space-5);
+  font-family: "Courier New", "Menlo", monospace;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.receipt-header {
+  text-align: center;
+  margin-bottom: var(--space-4);
+}
+
+.receipt-store-name {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #000;
+  letter-spacing: 0.02em;
+  font-family: "Courier New", "Menlo", monospace;
+  text-transform: uppercase;
+}
+
+.receipt-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #000;
+  letter-spacing: 0.15em;
+  font-family: "Courier New", "Menlo", monospace;
+}
+
+.receipt-ref {
+  margin: var(--space-1) 0 0;
+  font-size: 0.78rem;
+  color: #555;
+  font-family: "Courier New", "Menlo", monospace;
+}
+
+.receipt-date {
+  margin: var(--space-1) 0 0;
+  font-size: 0.75rem;
+  color: #777;
+  font-family: "Courier New", "Menlo", monospace;
+}
+
+.receipt-divider {
+  border: none;
+  border-top: 1px dashed #bbb;
+  margin: var(--space-3) 0;
+}
+
+.receipt-section {
+  margin: var(--space-3) 0;
+}
+
+.receipt-line {
+  margin: 0;
+  color: #444;
+  font-size: 0.78rem;
+}
+
+.receipt-label {
+  margin: 0 0 var(--space-1);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #888;
+  font-weight: 600;
+}
+
+.receipt-value {
+  margin: 0;
+  font-weight: 700;
+  color: #000;
+  font-size: 0.9rem;
+}
+
+.receipt-table-header {
+  display: grid;
+  grid-template-columns: 2.5fr 0.7fr 1fr 1fr;
+  gap: var(--space-1);
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin-bottom: var(--space-1);
+}
+
+.receipt-th-qty, .receipt-th-price, .receipt-th-total { text-align: right; }
+.receipt-th-desc { text-align: left; }
+
+.receipt-item-row {
+  display: grid;
+  grid-template-columns: 2.5fr 0.7fr 1fr 1fr;
+  gap: var(--space-1);
+  padding: var(--space-1) 0;
+  font-size: 0.8rem;
+  color: #222;
+  border-bottom: 1px dotted #eee;
+}
+
+.receipt-td-qty { text-align: right; color: #555; }
+.receipt-td-price { text-align: right; color: #555; }
+.receipt-td-total { text-align: right; font-weight: 600; color: #000; }
+.receipt-td-desc {
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.receipt-discount {
+  font-size: 0.7rem;
+  color: #d32f2f;
+  margin-left: var(--space-1);
+  font-weight: 500;
+}
+
+.receipt-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.receipt-summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: #333;
+}
+
+.receipt-delivery-agent {
+  font-size: 0.78rem;
+  color: #555;
+}
+
+.receipt-grand-total {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #000;
+}
+
+.receipt-grand-total span:last-child {
+  color: #c62828;
+}
+
+.receipt-status {
+  text-align: center;
+}
+
+.receipt-badge-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.receipt-badge {
+  font-size: 0.7rem;
+  color: #fff;
+  padding: 2px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-family: "Courier New", "Menlo", monospace;
+  text-transform: uppercase;
+}
+
+.receipt-footer {
+  text-align: center;
+  margin-top: var(--space-3);
+}
+
+.receipt-footer p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #555;
+}
+
+.receipt-print-date {
+  margin-top: var(--space-1) !important;
+  font-size: 0.65rem !important;
+  color: #999 !important;
+}
+
+.receipt-sm {
+  font-size: 0.65rem !important;
+  color: #999 !important;
+  margin-top: var(--space-1) !important;
+}

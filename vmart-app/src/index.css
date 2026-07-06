@@ -1,18 +1,198 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   VMart App – Design System Stylesheet (entry point)
-   ═══════════════════════════════════════════════════════════════════════════
-   Import order matters: variables → base → layout → pages → components → responsive
+   VMart App – CSS Foundation (Variables + Base + Global Animations)
    ═══════════════════════════════════════════════════════════════════════════ */
 
-@import "./styles/variables.css";
-@import "./styles/base.css";
-@import "./styles/layout.css";
-@import "./styles/pages.css";
-@import "./styles/components/buttons.css";
-@import "./styles/components/forms.css";
-@import "./styles/components/cards.css";
-@import "./styles/components/list.css";
-@import "./styles/components/link-text.css";
-@import "./styles/components/calendar.css";
-@import "./styles/components/dropdown.css";
-@import "./styles/responsive.css";
+/* ── Variables / Theme Tokens ── */
+:root {
+  /* ── Spacing Scale ── */
+  --space-1: 3px;
+  --space-2: 6px;
+  --space-3: 10px;
+  --space-4: 14px;
+  --space-5: 18px;
+  --space-6: 22px;
+  --space-7: 28px;
+  --space-8: 36px;
+  --space-9: 44px;
+  --space-10: 50px;
+
+  /* ── Border Radius ── */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-2xl: 22px;
+  --radius-full: 9999px;
+
+  /* ── Sizing Tokens ── */
+  --content-width: 420px;
+  --drawer-width: 260px;
+  --icon-sm: 16px;
+  --icon-md: 18px;
+  --icon-lg: 20px;
+  --icon-xl: 24px;
+  --icon-2xl: 36px;
+  --touch-target: 38px;
+  --nav-item-height: 46px;
+  --topbar-height: 48px;
+  --bottom-nav-height: 56px;
+  --transition: 0.15s ease;
+
+  /* ── Light Colors ── */
+  --text: #6b6375;
+  --text-h: #08060d;
+  --text-subtle: #6b7280;
+  --text-inverse: #ffffff;
+  --bg: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-disabled: #f5f5f5;
+  --border: #e5e4e7;
+  --border-strong: #e4e4e4;
+  --border-light: rgba(15, 23, 42, 0.08);
+  --border-lighter: rgba(15, 23, 42, 0.05);
+  --code-bg: #f4f3ec;
+  --accent: #e53935;
+  --accent-soft: rgba(229, 57, 53, 0.08);
+  --accent-soft-dark: rgba(229, 57, 53, 0.15);
+  --accent-primary: #c62828;
+  --accent-primary-end: #d32f2f;
+  --login-gradient-start: #8e0000;
+  --login-gradient-end: #c62828;
+  --error: #dc2626;
+  --error-bg: rgba(220, 38, 38, 0.08);
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --overlay-bg: rgba(15, 23, 42, 0.32);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px,
+    rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+
+  /* ── Typography ── */
+  --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+  --heading: system-ui, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 1024px) {
+  :root { font-size: 16px; }
+}
+
+/* ── Dark Theme ── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --text-subtle: #9ca3af;
+    --text-inverse: #111827;
+    --bg: #16171d;
+    --bg-surface: #16171d;
+    --bg-disabled: #1f2028;
+    --border: #2e303a;
+    --border-strong: #2e303a;
+    --border-light: rgba(255, 255, 255, 0.08);
+    --border-lighter: rgba(255, 255, 255, 0.05);
+    --code-bg: #1f2028;
+    --accent: #ef5350;
+    --accent-soft: rgba(239, 83, 80, 0.15);
+    --accent-soft-dark: rgba(239, 83, 80, 0.15);
+    --accent-primary: #c62828;
+    --accent-primary-end: #d32f2f;
+    --error: #f87171;
+    --error-bg: rgba(248, 113, 113, 0.12);
+    --social-bg: rgba(47, 48, 58, 0.5);
+    --overlay-bg: rgba(0, 0, 0, 0.55);
+    --shadow:
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px,
+      rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  }
+}
+
+/* ── Base Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+}
+
+#root {
+  width: 1126px;
+  max-width: 100%;
+  min-height: 100svh;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  border-inline: 1px solid var(--border);
+  box-sizing: border-box;
+  background: var(--bg);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--heading);
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+h1 {
+  font-size: 56px;
+  letter-spacing: -1.68px;
+  margin: var(--space-7) 0;
+}
+@media (max-width: 1024px) { h1 { font-size: 36px; margin: var(--space-5) 0; } }
+
+h2 {
+  font-size: 24px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+  margin: 0 0 var(--space-2);
+}
+@media (max-width: 1024px) { h2 { font-size: 20px; } }
+
+p { margin: 0; }
+a { color: inherit; text-decoration: none; }
+
+/* ── Global Animation Keyframes ── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-scale-in {
+  from { opacity: 0; transform: scale(0.92) translateY(10px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes dot-bounce {
+  0% { transform: translateX(-50%) scaleX(0.3); opacity: 0; }
+  50% { transform: translateX(-50%) scaleX(1.15); }
+  100% { transform: translateX(-50%) scaleX(1); opacity: 1; }
+}

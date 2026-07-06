@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { FiTrash2, FiPlus, FiMinus, FiShoppingCart, FiArrowRight, FiStore } from "react-icons/fi";
+import { FiTrash2, FiPlus, FiMinus, FiShoppingCart, FiArrowRight, FiShoppingBag } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import SearchableSelect from "../../components/SearchableSelect";
 import { useUI } from "../context/UIContext";
@@ -158,16 +158,26 @@ export default function CartPage() {
       </div>
 
       {cart.length === 0 ? (
-        <p className="page-summary" style={{ textAlign: "center", padding: "var(--space-7) 0" }}>
-          Your cart is empty. Browse products to add items.
-        </p>
+        <div style={{ textAlign: "center", padding: "var(--space-8) var(--space-4)", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-4)" }}>
+            <div style={{ width: 72, height: 72, borderRadius: "50%", background: "var(--accent-soft)", display: "grid", placeItems: "center", fontSize: "2rem", color: "var(--accent)" }}>
+              <FiShoppingCart />
+            </div>
+            <div>
+              <h3 style={{ margin: 0, color: "var(--text-h)", fontSize: "1.1rem" }}>Your cart is empty</h3>
+              <p style={{ color: "var(--text-subtle)", fontSize: "0.9rem", marginTop: "var(--space-2)" }}>Browse products to add items to your cart.</p>
+            </div>
+            <button className="ui-btn ui-btn-primary" onClick={() => navigate("/shopping")}
+              style={{ padding: "var(--space-3) var(--space-6)" }}>
+              Browse Products
+            </button>
+          </div>
       ) : (
         <>
           {/* Grouped by shop */}
           {shopGroups.map((group) => (
             <div key={group.shop} className="ui-card" style={{ padding: "var(--space-4)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", marginBottom: "var(--space-3)", color: "var(--accent)", fontWeight: 600, fontSize: "0.9rem" }}>
-                <FiStore /> {group.shop}
+                <FiShoppingBag /> {group.shop}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
                 {group.items.map((item, idx) => (
@@ -218,6 +228,7 @@ export default function CartPage() {
               options={customers.map((c) => c.name)}
               placeholder="Search or type customer name..."
             />
+            {/* SearchableSelect has an internal input with id="searchable-select-input" */}
           </div>
 
           {/* Summary */}

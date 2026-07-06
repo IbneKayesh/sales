@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback } from "react";
-import { FiCheckCircle, FiAlertCircle, FiAlertTriangle } from "react-icons/fi";
+import { FiCheckCircle, FiAlertCircle, FiAlertTriangle, FiLoader } from "react-icons/fi";
 
 const UIContext = createContext(null);
 
@@ -12,6 +12,7 @@ export function useUI() {
 export function UIProvider({ children }) {
   const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
   const [confirm, setConfirm] = useState({ visible: false, message: "", onConfirm: null });
+  const [isBusy, setIsBusy] = useState(false);
 
   const showToast = useCallback((message, type = "success", duration = 3000) => {
     setToast({ visible: true, message, type });
@@ -29,11 +30,15 @@ export function UIProvider({ children }) {
     setConfirm({ visible: false, message: "", onConfirm: null });
   };
 
+  const setBusy = useCallback((busy) => {
+    setIsBusy(busy);
+  }, []);
+
   const toastIcon = toast.type === "success" ? <FiCheckCircle /> : toast.type === "error" ? <FiAlertCircle /> : <FiAlertTriangle />;
   const toastBg = toast.type === "success" ? "var(--accent-primary)" : toast.type === "error" ? "var(--error)" : "orange";
 
   return (
-    <UIContext.Provider value={{ showToast, showConfirm }}>
+    <UIContext.Provider value={{ showToast, showConfirm, isBusy, setBusy }}>
       {children}
 
       {/* Toast */}
@@ -57,6 +62,33 @@ export function UIProvider({ children }) {
           <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{toast.message}</span>
         </div>
       </div>
+
+      {/* Busy Overlay */}
+      {isBusy && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 1000,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          flexDirection: "column", gap: "var(--space-3)",
+          background: "var(--overlay-bg)",
+        }}>
+          <div style={{
+            width: 48, height: 48, borderRadius: "var(--radius-full)",
+            background: "var(--bg-surface)",
+            display: "grid", placeItems: "center",
+            boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
+            animation: "spin 0.8s linear infinite",
+          }}>
+            <FiLoader size={22} style={{ color: "var(--accent)" }} />
+          </div>
+          <p style={{
+            color: "var(--text-h)", fontSize: "0.85rem", fontWeight: 500,
+            background: "var(--bg-surface)", padding: "var(--space-2) var(--space-4)",
+            borderRadius: "var(--radius-full)", boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+          }}>
+            Please wait…
+          </p>
+        </div>
+      )}
 
       {/* Confirm Dialog */}
       {confirm.visible && (

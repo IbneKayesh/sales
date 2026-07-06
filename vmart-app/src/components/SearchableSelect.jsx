@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { FiChevronDown } from "react-icons/fi";
 
 export default function SearchableSelect({
@@ -7,11 +8,14 @@ export default function SearchableSelect({
   options,
   placeholder = "Search...",
   emptyMessage = "No results found",
+  id = "searchable-select-input",
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [menuStyle, setMenuStyle] = useState({});
   const wrapperRef = useRef(null);
   const inputRef = useRef(null);
+  const menuRef = useRef(null);
 
   /* Filter options by query */
   const filtered = options.filter((opt) =>
@@ -21,7 +25,12 @@ export default function SearchableSelect({
   /* Close on click outside */
   useEffect(() => {
     const handleClick = (e) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target) &&
+        menuRef.current &&
+        !menuRef.current.contains(e.target)
+      ) {
         setOpen(false);
         setQuery("");
       }
@@ -37,6 +46,36 @@ export default function SearchableSelect({
     }
   }, [open]);
 
+  /* Reposition on scroll/resize when open */
+  useEffect(() => {
+    if (!open) return;
+    const reposition = () => positionMenu();
+    window.addEventListener("scroll", reposition, true);
+    window.addEventListener("resize", reposition);
+    return () => {
+      window.removeEventListener("scroll", reposition, true);
+      window.removeEventListener("resize", reposition);
+    };
+  }, [open]);
+
+  const positionMenu = () => {
+    if (!wrapperRef.current) return;
+    const rect = wrapperRef.current.getBoundingClientRect();
+    const menuHeight = Math.min(220, options.length * 36 + 16);
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const top = (spaceBelow < menuHeight && spaceAbove > menuHeight)
+      ? Math.max(rect.top - menuHeight - 4, 4)
+      : rect.bottom + 4;
+    setMenuStyle({
+      position: "fixed",
+      top,
+      left: rect.left,
+      width: rect.width,
+      minWidth: 200,
+    });
+  };
+
   const handleSelect = (opt) => {
     onChange(opt);
     setOpen(false);
@@ -46,7 +85,7 @@ export default function SearchableSelect({
   const handleInputChange = (e) => {
     const val = e.target.value;
     setQuery(val);
-    if (!open) setOpen(true);
+    if (!open) { positionMenu(); setOpen(true); }
     /* If user clears input, reset selection */
     if (val === "" && value !== "") {
       onChange("");
@@ -54,6 +93,7 @@ export default function SearchableSelect({
   };
 
   const handleFocus = () => {
+    positionMenu();
     setOpen(true);
   };
 
@@ -66,6 +106,8 @@ export default function SearchableSelect({
         <input
           ref={inputRef}
           type="text"
+          id={id}
+          name={id}
           className="ui-input"
           placeholder={placeholder}
           value={inputValue}
@@ -87,18 +129,16 @@ export default function SearchableSelect({
         />
       </div>
 
-      {open && (
+      {open && createPortal(
         <div
+          ref={menuRef}
           style={{
-            position: "absolute",
-            top: "calc(100% + 4px)",
-            left: 0,
-            right: 0,
+            ...menuStyle,
+            zIndex: 9999,
             background: "var(--bg-surface)",
             border: "1px solid var(--border)",
             borderRadius: "var(--radius-md)",
-            boxShadow: "var(--shadow)",
-            zIndex: 50,
+            boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
             maxHeight: 220,
             overflowY: "auto",
           }}
@@ -135,17 +175,18 @@ export default function SearchableSelect({
                   transition: "background 0.1s ease",
                 }}
                 onMouseEnter={(e) => {
-                  if (opt !== value) e.target.style.background = "var(--accent-soft)";
+                  if (opt !== value) e.currentTarget.style.background = "var(--accent-soft)";
                 }}
                 onMouseLeave={(e) => {
-                  if (opt !== value) e.target.style.background = "transparent";
+                  if (opt !== value) e.currentTarget.style.background = "transparent";
                 }}
               >
                 {opt}
               </button>
             ))
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

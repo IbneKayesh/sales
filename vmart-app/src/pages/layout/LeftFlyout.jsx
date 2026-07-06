@@ -1,27 +1,42 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { FiHome, FiUser, FiPackage, FiX, FiUsers, FiBox, FiFileText, FiShoppingCart, FiDollarSign, FiStore } from "react-icons/fi";
+import { useAuth, ROLES } from "../context/AuthContext";
+import { FiHome, FiUser, FiPackage, FiX, FiUsers, FiBox, FiFileText, FiShoppingCart, FiDollarSign, FiGrid, FiHeart, FiShoppingBag } from "react-icons/fi";
 
-const drawerItems = [
+const customerItems = [
   { path: "/", icon: FiHome, label: "Home" },
-  { path: "/auth/login", icon: FiUser, label: "Profile" },
-  { path: "/shopping", icon: FiShoppingCart, label: "Shopping" },
+  { path: "/shopping", icon: FiGrid, label: "Shop" },
   { path: "/cart", icon: FiShoppingCart, label: "Cart" },
-  { path: "/order", icon: FiPackage, label: "Orders" },
-  { path: "/shop", icon: FiStore, label: "Shops" },
-  { path: "/customers", icon: FiUsers, label: "Customers" },
+  { path: "/order", icon: FiPackage, label: "My Orders" },
+  { path: "/invoice", icon: FiFileText, label: "My Invoices" },
+  { path: "/favorites", icon: FiHeart, label: "Favorites" },
+];
+
+const shopItems = [
+  { path: "/", icon: FiHome, label: "Home" },
+  { path: "/shop", icon: FiShoppingBag, label: "My Shop" },
   { path: "/products", icon: FiBox, label: "Products" },
+  { path: "/order", icon: FiPackage, label: "Orders" },
+  { path: "/customers", icon: FiUsers, label: "Customers" },
   { path: "/invoice", icon: FiFileText, label: "Invoices" },
   { path: "/invoice-collections", icon: FiDollarSign, label: "Collections" },
 ];
 
+const accountItems = []; /* path set dynamically below */
+
 export default function LeftFlyout({ open, onClose }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { isCustomer, isShop } = useAuth();
+
+  const navItems = isCustomer ? customerItems : isShop ? shopItems : customerItems;
+  const profilePath = isCustomer ? "/customer-profile" : isShop ? "/shop-profile" : "/auth/login";
 
   const handleNav = (path) => {
     navigate(path);
     onClose();
   };
+
+  const sectionLabel = isCustomer ? "Shopping" : isShop ? "Shop Management" : "Menu";
 
   return (
     <>
@@ -37,8 +52,9 @@ export default function LeftFlyout({ open, onClose }) {
 
         <div className="drawer-body">
           <nav>
+            <div className="drawer-section-label">{sectionLabel}</div>
             <ul className="drawer-list">
-              {drawerItems.map(({ path, icon: Icon, label }) => {
+              {navItems.map(({ path, icon: Icon, label }) => {
                 const isActive = pathname === path;
                 return (
                 <li key={label}>
@@ -49,6 +65,16 @@ export default function LeftFlyout({ open, onClose }) {
                 </li>
                 );
               })}
+            </ul>
+
+            <div className="drawer-section-label">Account</div>
+            <ul className="drawer-list">
+              <li>
+                <button className={`drawer-link${pathname === profilePath ? " drawer-link--active" : ""}`} onClick={() => handleNav(profilePath)}>
+                  <FiUser />
+                  Profile
+                </button>
+              </li>
             </ul>
           </nav>
         </div>

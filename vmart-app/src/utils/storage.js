@@ -18,6 +18,9 @@ export const KEYS = {
   INVOICES: "vmart_invoices",
   CART: "vmart_cart",
   SHOPS: "vmart_shops",
+  FAVORITES: "vmart_favorites",
+  REVIEWS: "vmart_reviews",
+  USERS_REGISTRY: "vmart_users_registry",
 };
 
 // ── Session storage (legacy — single-key object for auth data) ──
