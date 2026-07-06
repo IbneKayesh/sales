@@ -1,36 +1,27 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import Sidebar from "./Sidebar";
+import heroImg from "../../assets/vite.svg";
+
 import Topbar from "./Topbar";
-import { getStorageLoginData, setStorageLoginData } from "@/utils/storage";
+import BottomBar from "./BottomBar";
+import LeftFlyout from "./LeftFlyout";
 
-const Layout = () => {
-  const [sidebarVisible, setSidebarVisible] = useState(getStorageLoginData().sidebar === "visible");
-
-  const toggleSidebar = () => {
-    setSidebarVisible((prev) => {
-      const newState = !prev;
-      setStorageLoginData({ sidebar: newState ? "visible" : "hidden" });
-      return newState;
-    });
-  };
+export default function Layout() {
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className={`app-layout ${!sidebarVisible ? "sidebar-collapsed" : ""}`}>
-      <Topbar 
-        sidebarCollapsed={!sidebarVisible}
-        onToggleLeftbar={toggleSidebar} 
-      />
-      <div className="app-container">
-        <Sidebar collapsed={!sidebarVisible} />
-        <div className="main-wrapper">
-          <div className="content-area">
-            <Outlet />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+    <>
+      <div className="phone">
+        <LeftFlyout open={open} onClose={() => setOpen(false)} />
 
-export default Layout;
+        <Topbar onMenu={() => setOpen(true)} />
+
+        <main className="content">
+          <Outlet />
+        </main>
+
+        <BottomBar />
+      </div>
+    </>
+  );
+}

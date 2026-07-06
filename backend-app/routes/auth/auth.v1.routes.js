@@ -159,26 +159,21 @@ router.post("/vmart/login", async (req, res) => {
     }
 
     //database action
-    const sql_user = `SELECT cnt.id, cnt.cntct_users AS users_id,cnt.cntct_bsins AS bsins_id, cnt.cntct_cname AS users_cname,
-      cnt.cntct_cntps AS users_pname, cnt.cntct_email AS users_email, cnt.cntct_cntno AS users_cntno,
-      cnt.cntct_ofadr AS users_addrs, 'CUSTOMER' users_crole, 'N' users_aplnk
-                      FROM tmcb_cntct cnt
-                      WHERE cnt.cntct_email = $1
-                      AND cnt.cntct_islgn = TRUE
-                      AND cnt.cntct_actve = TRUE
-                      UNION ALL
-                      SELECT emp.id, emp.emply_users, emp.emply_bsins, emp.emply_cname,
-      usr.users_cname, emp.emply_email, emp.emply_cntct,
-	  '', 'SHOP', 'N' users_aplnk
-                      FROM tmhb_emply emp
-                      JOIN tmsb_users usr ON emp.emply_users = usr.id
-                      WHERE emp.emply_email  = $1
-                      AND emp.emply_actve = TRUE`;
+    const sql_user = `SELECT cnt.cntct_ccode
+FROM tmcb_cntct cnt
+WHERE cnt.cntct_islgn = TRUE
+AND cnt.cntct_actve = TRUE
+AND cnt.cntct_cntno = $1
+UNION ALL
+SELECT emp.emply_ccode
+FROM tmhb_emply emp
+WHERE emp.emply_actve = TRUE
+AND emp.emply_cntno = $1`;
     const params_user = [users_id];
     const row_user = await dbGet(sql_user, params_user, "Get login credential");
     if (!row_user) {
       return res.json({
-        success: false,
+        success: true, //not found but signup required
         message: "Login Id is not valid",
         data: {
           users: {},

@@ -1,14 +1,38 @@
-import React from "react";
-import Clock from "./Clock";
-import "./HomePage.css";
+ <img src={heroImg} className="hero" />
 
-const HomePage = () => {
-  return (
-    <div className="home-page-container">
-      <Clock />
-    </div>
-  );
-};
+          <h2>Welcome 👋</h2>
 
-export default HomePage;
+          <div className="cards">
+            <div className="card">
+              <span>🔥</span>
+              <h3>Trending</h3>
+            </div>
 
+            <div className="card">
+              <span>📦</span>
+              <h3>Orders</h3>
+            </div>
+
+            <div className="card">
+              <span>💬</span>
+              <h3>Messages</h3>
+            </div>
+
+            <div className="card">
+              <span>⚙️</span>
+              <h3>Settings</h3>
+            </div>
+          </div>
+
+          <div className="list">
+            {[1, 2, 3, 4].map((item) => (
+              <div className="listItem" key={item}>
+                <div className="avatar">{item}</div>
+
+                <div>
+                  <h4>Demo Item {item}</h4>
+                  <p>Lorem ipsum dolor sit amet.</p>
+                </div>
+              </div>
+            ))}
+          </div>

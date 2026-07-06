@@ -9,7 +9,7 @@ CREATE TABLE tmhb_emply (
 
   -- custom
   emply_cname varchar(50) NOT NULL,
-  emply_cntct varchar(50) NOT NULL,
+  emply_cntno varchar(50) NOT NULL,
   emply_email varchar(50) NOT NULL,
   emply_pswrd varchar(50) NOT NULL,
   emply_recky varchar(50) NOT NULL,

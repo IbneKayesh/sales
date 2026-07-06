@@ -9,7 +9,7 @@ CREATE TABLE tmsb_users (
   -- custom
   users_email varchar(50) NOT NULL UNIQUE,
   users_cname varchar(50) NOT NULL,
-  users_cntct varchar(50) NOT NULL,
+  users_cntno varchar(50) NOT NULL,
   users_stats varchar(50) NOT NULL,
   users_regno varchar(50) NOT NULL,
   users_regdt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

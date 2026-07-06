@@ -9,7 +9,7 @@ const apiRequest = async (endpoint, options = {}) => {
   // default attachments
   // Get token from storage
   const token = getStorageData()?.token;
-  const storedUser = getStorageData()?.emply;
+  const storedUser = getStorageData()?.users;
   if (!token || !storedUser) {
     //throw new Error("Unauthorized access, login again to start session");
     return {
@@ -21,8 +21,8 @@ const apiRequest = async (endpoint, options = {}) => {
 
   const reqData = {
     user_s: storedUser.id, //this User Id or self Id
-    user_c: storedUser.emply_users, //this Master User Id or contract Id
-    user_b: storedUser.emply_bsins, //this Business Id
+    user_c: storedUser.users_id, //this Master User Id or contract Id
+    user_b: storedUser.bsins_id, //this Business Id
   };
 
   //merge to body
@@ -37,7 +37,7 @@ const apiRequest = async (endpoint, options = {}) => {
     headers: {
       "Content-Type": "application/json",
       "sgd-ua-node": import.meta.env.VITE_APP_API_KEY,
-      "x-tenant-id": storedUser.users_aplnk || 'default', //this Database Id
+      "x-tenant-id": storedUser.users_aplnk || "default", //this Database Id
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
@@ -61,7 +61,8 @@ const apiRequest = async (endpoint, options = {}) => {
       if (response.status === 502) {
         return {
           success: false,
-          message: "Unable to connect. Please check your internet and try again.",
+          message:
+            "Unable to connect. Please check your internet and try again.",
           data: [],
         };
       }
@@ -85,8 +86,8 @@ const apiRequest = async (endpoint, options = {}) => {
   }
 };
 
-const apiLogin = async (options) => {
-  const endpoint = `/auth/v1/login`;
+const apiLogin = async (endpoint, options) => {
+  //const endpoint = `/auth/v1/vmart/login`;
   const url = `${API_BASE_URL}${endpoint}`;
   const incomingBody = options.body || {};
   const config = {
@@ -114,12 +115,12 @@ const apiLogin = async (options) => {
     }
     //create storage
     if (data.success) {
-      const { emply, bsins, users, menus, token } = data.data;
+      const { emply, bsins, users, token, menus } = data.data;
       setStorageData({ emply: emply });
       setStorageData({ bsins: bsins });
       setStorageData({ users: users });
-      setStorageData({ menus: menus });
       setStorageData({ token: token });
+      setStorageData({ menus: menus });
     }
     return data; // { success, message, data }
   } catch (error) {
