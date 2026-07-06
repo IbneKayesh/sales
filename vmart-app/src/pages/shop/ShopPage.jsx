@@ -1,8 +1,13 @@
 export default function ShopPage() {
   return (
-    <>
-      <h2>Shop</h2>
-      <p>Welcome to the shop page.</p>
-    </>
+    <section className="page-section">
+      <div className="page-header">
+        <div className="page-title-group">
+          <p className="page-eyebrow">Browse</p>
+          <h2 className="page-heading">Shop</h2>
+        </div>
+      </div>
+      <p className="page-summary">Welcome to the shop page.</p>
+    </section>
   );
 }

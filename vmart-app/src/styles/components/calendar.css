@@ -1,0 +1,72 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Calendar – ui-calendar variants
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.ui-calendar {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  width: 100%;
+  max-width: 340px;
+}
+
+.ui-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
+.ui-calendar-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+}
+
+.ui-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.ui-calendar-weekday {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--text-subtle);
+  font-weight: 500;
+  padding: var(--space-1) 0;
+}
+
+.ui-calendar-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  color-scheme: inherit;
+  cursor: pointer;
+}.ui-calendar-day:hover { background: var(--accent-soft); }
+
+.ui-calendar-day--selected {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+}
+
+.ui-calendar-day--selected:hover { background: var(--accent-primary); }
+
+.ui-calendar-day--today { border: 2px solid var(--accent-primary); }
+
+.ui-calendar-day--disabled {
+  color: var(--text-subtle);
+  opacity: 0.4;
+  pointer-events: none;
+}

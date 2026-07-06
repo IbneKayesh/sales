@@ -1,0 +1,27 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Responsive – Media Query Overrides
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 360px) {
+  .app-shell { border-radius: 0; }
+  .app-main { padding: var(--space-4) var(--space-3) calc(var(--bottom-nav-height) + var(--space-4)); }
+}
+
+@media (max-width: 520px) {
+  .auth-page {
+    flex-direction: column;
+    min-height: auto;
+    border-radius: var(--radius-lg);
+  }
+  .auth-content { padding: var(--space-6) var(--space-4) var(--space-5); }
+  .auth-brand { padding: var(--space-6) var(--space-4); }
+  #root { border-inline: none; }
+}
+
+@media (min-width: 421px) {
+  .app-shell {
+    border-radius: 26px;
+    margin: var(--space-4) auto;
+    height: calc(100svh - var(--space-8));
+  }
+}

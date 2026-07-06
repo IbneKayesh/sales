@@ -73,11 +73,20 @@ const useLogin = () => {
       setIsBusy(false);
     }
   };
-
+  const handlePassword = async () => {
+    try {
+      console.log("PASSWORD");
+    } catch (error) {}
+  };
+  const handleRegister = async () => {
+    try {
+      console.log("SIGNUP");
+    } catch (error) {}
+  };
   const handleSubmitLogin = async () => {
-    if (viewTitle === "LOGIN") handleContinue();
-    if (step === STEP.PASSWORD) handleLogin();
-    if (step === STEP.REGISTER) handleRegister();
+    if (crView === "LOGIN") handleContinue();
+    if (crView === "PASSWORD") handlePassword();
+    if (crView === "SIGNUP") handleRegister();
   };
   const handleChangeMobileNo = () => {
     setCrView("LOGIN");

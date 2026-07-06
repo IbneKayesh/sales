@@ -1,4 +1,4 @@
-import { FiShoppingCart, FiLogOut, FiUsers, FiShoppingBag } from "react-icons/fi";
+import { FiLogOut, FiMenu } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 
 export default function Topbar({ onMenu }) {
@@ -14,12 +14,12 @@ export default function Topbar({ onMenu }) {
   } = useAuth();
 
   return (
-    <header className="topbar">
-      <button onClick={onMenu}>☰</button>
+    <header className="app-header">
+      <button className="ui-btn-icon" onClick={onMenu}><FiMenu /></button>
 
-      <h3>Demo App</h3>
+      <h2 className="app-logo-title">Demo App</h2>
 
-      <button onClick={logout}><FiLogOut/></button>
+      <button className="ui-btn-icon" onClick={logout}><FiLogOut/></button>
     </header>
   );
 }
