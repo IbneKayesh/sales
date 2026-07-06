@@ -1,7 +1,7 @@
-// Centralized localStorage utility for managing app data
-const STORAGE_KEY = "eaac05Jul2026user";
+// ── Session storage key (legacy, used by api.js for auth) ──
+const SESSION_KEY = "eaac05Jul2026user";
 
-const defaultData = {
+const defaultSession = {
   emply: null,
   bsins: null,
   users: null,
@@ -10,32 +10,66 @@ const defaultData = {
   recent_links: [],
 };
 
-const getStorageData = () => {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? { ...defaultData, ...JSON.parse(data) } : { ...defaultData };
-  } catch (error) {
-    console.error("Error reading from localStorage:", error);
-    return { ...defaultData };
-  }
+// ── App data keys ──
+export const KEYS = {
+  CUSTOMERS: "vmart_customers",
+  PRODUCTS: "vmart_products",
+  ORDERS: "vmart_orders",
+  INVOICES: "vmart_invoices",
+  CART: "vmart_cart",
+  SHOPS: "vmart_shops",
 };
 
-const setStorageData = (data) => {
+// ── Session storage (legacy — single-key object for auth data) ──
+export function getStorageData() {
+  try {
+    const data = localStorage.getItem(SESSION_KEY);
+    return data ? { ...defaultSession, ...JSON.parse(data) } : { ...defaultSession };
+  } catch {
+    return { ...defaultSession };
+  }
+}
+
+export function setStorageData(data) {
   try {
     const currentData = getStorageData();
     const updatedData = { ...currentData, ...data };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedData));
-  } catch (error) {
-    console.error("Error writing to localStorage:", error);
+    localStorage.setItem(SESSION_KEY, JSON.stringify(updatedData));
+  } catch {
+    // silently fail
   }
-};
+}
 
-const clearStorageData = () => {
+export function clearStorageData() {
   try {
-    localStorage.removeItem(STORAGE_KEY);
-  } catch (error) {
-    console.error("Error clearing localStorage:", error);
+    localStorage.removeItem(SESSION_KEY);
+  } catch {
+    // silently fail
   }
-};
+}
 
-export { getStorageData, setStorageData, clearStorageData };
+// ── Collection storage (flat key-based arrays for app entities) ──
+export function load(key) {
+  try {
+    const data = localStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function save(key, data) {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch {
+    // silently fail
+  }
+}
+
+export function remove(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    // silently fail
+  }
+}

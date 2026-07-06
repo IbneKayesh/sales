@@ -2,12 +2,22 @@
    Responsive – Media Query Overrides
    ═══════════════════════════════════════════════════════════════════════════ */
 
-@media (max-width: 360px) {
-  .app-shell { border-radius: 0; }
-  .app-main { padding: var(--space-4) var(--space-3) calc(var(--bottom-nav-height) + var(--space-4)); }
-}
-
 @media (max-width: 520px) {
+  /* Full-bleed mobile: no borders, no phone frame */
+  #root {
+    border-inline: none;
+  }
+
+  .app-shell {
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .app-main {
+    padding: var(--space-4) var(--space-3) calc(var(--bottom-nav-height) + var(--space-4));
+  }
+
   .auth-page {
     flex-direction: column;
     min-height: auto;
@@ -15,10 +25,9 @@
   }
   .auth-content { padding: var(--space-6) var(--space-4) var(--space-5); }
   .auth-brand { padding: var(--space-6) var(--space-4); }
-  #root { border-inline: none; }
 }
 
-@media (min-width: 421px) {
+@media (min-width: 521px) {
   .app-shell {
     border-radius: 26px;
     margin: var(--space-4) auto;

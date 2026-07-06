@@ -13,7 +13,7 @@
 
 .auth-brand {
   flex: 1;
-  background: linear-gradient(135deg, var(--login-gradient-start), var(--login-gradient-end));
+  background: radial-gradient(circle at center, var(--login-gradient-start), var(--login-gradient-end));
   color: var(--text-inverse);
   display: flex;
   flex-direction: column;

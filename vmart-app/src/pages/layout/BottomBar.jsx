@@ -1,11 +1,11 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { FiHome, FiSearch, FiPlus, FiHeart, FiUser } from "react-icons/fi";
+import { FiHome, FiShoppingCart, FiPackage, FiStore, FiUser } from "react-icons/fi";
 
 const navItems = [
   { path: "/", icon: FiHome, label: "Home" },
-  { path: "/shop", icon: FiSearch, label: "Search" },
-  { path: "/shopping", icon: FiPlus, label: "Cart" },
-  { path: "/favorites", icon: FiHeart, label: "Favorites" },
+  { path: "/shopping", icon: FiShoppingCart, label: "Shop" },
+  { path: "/cart", icon: FiShoppingCart, label: "Cart" },
+  { path: "/order", icon: FiPackage, label: "Orders" },
   { path: "/auth/login", icon: FiUser, label: "Profile" },
 ];
 
