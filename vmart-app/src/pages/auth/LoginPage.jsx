@@ -10,7 +10,7 @@ const LoginPage = () => {
     vmart,
     viewTitle,
     handleChange,
-    handleLogin,
+    handleSubmitLogin,
     handleChangeMobileNo,
   } = useLogin();
 
@@ -45,7 +45,7 @@ const LoginPage = () => {
           </>
         )}
 
-        <button type="button" onClick={handleLogin}>
+        <button type="button" onClick={handleSubmitLogin}>
           {viewTitle.button}
         </button>
 
