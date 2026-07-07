@@ -1,0 +1,214 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   InvoiceCollectionPage – Collections Styles
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Summary card */
+.collect-summary-card {
+  background: var(--accent-soft);
+}
+
+.collect-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.collect-summary-label {
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.collect-summary-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: var(--space-1);
+}
+
+.collect-summary-right {
+  text-align: right;
+}
+
+.collect-summary-subtle {
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+}
+
+.collect-summary-count {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-h);
+  margin-top: var(--space-1);
+}
+
+/* Empty state */
+.collect-empty-state {
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.collect-empty-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+}
+
+.collect-empty-title {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 1.1rem;
+}
+
+.collect-empty-desc {
+  color: var(--text-subtle);
+  font-size: 0.9rem;
+  margin-top: var(--space-2);
+}
+
+/* Invoice list */
+.collect-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.collect-item {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.collect-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.collect-item-name {
+  font-weight: 600;
+  color: var(--text-h);
+  font-size: 0.95rem;
+}
+
+.collect-item-number {
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+  font-family: monospace;
+}
+
+.collect-item-status-row {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.collect-item-badge {
+  font-size: 0.7rem;
+  color: #fff;
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+}
+
+.collect-item-meta {
+  font-size: 0.7rem;
+  color: var(--text-subtle);
+}
+
+.collect-item-amount {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+.collect-item-due-label {
+  font-size: 0.75rem;
+  color: var(--text-subtle);
+}
+
+.collect-partial-info {
+  margin-top: var(--space-2);
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+}
+
+.collect-pay-btn {
+  width: 100%;
+  margin-top: var(--space-2);
+  font-size: 0.85rem;
+  padding: var(--space-2) var(--space-3);
+}
+
+/* Payment modal */
+.collect-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  animation: modal-fade-in 0.2s ease;
+}
+
+.collect-modal-panel {
+  background: var(--bg-surface);
+  width: 100%;
+  max-width: 420px;
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6) var(--space-5);
+  animation: modal-scale-in 0.25s ease;
+}
+
+.collect-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.collect-modal-title {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 1.1rem;
+}
+
+.collect-modal-close {
+  border: none;
+  background: var(--bg-disabled);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.collect-modal-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+  margin: 0;
+}
+
+.collect-modal-field {
+  margin-top: var(--space-4);
+}
+
+.collect-modal-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.collect-modal-btn {
+  flex: 1;
+}

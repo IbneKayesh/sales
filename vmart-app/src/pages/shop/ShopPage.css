@@ -1,0 +1,222 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ShopPage – Shop/Vendor Management Styles
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Header action buttons row */
+.shop-header-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* Add button */
+.shop-add-btn {
+  font-size: 0.85rem;
+  padding: var(--space-2) var(--space-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Empty state container */
+.shop-empty-state {
+  text-align: center;
+  padding: var(--space-8) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Empty state icon circle */
+.shop-empty-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  color: var(--accent);
+}
+
+/* Empty state heading */
+.shop-empty-heading {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 1.1rem;
+}
+
+/* Empty state text */
+.shop-empty-text {
+  color: var(--text-subtle);
+  font-size: 0.9rem;
+  margin-top: var(--space-2);
+}
+
+/* Shop list container */
+.shop-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Shop list item */
+.shop-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.shop-list-item:hover {
+  background: var(--accent-soft);
+}
+
+/* Shop icon avatar */
+.shop-icon-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+/* Shop info area */
+.shop-info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Shop name */
+.shop-name {
+  font-weight: 600;
+  color: var(--text-h);
+  font-size: 0.95rem;
+}
+
+/* Shop description */
+.shop-description {
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+  margin-top: var(--space-1);
+}
+
+/* Shop contact */
+.shop-contact {
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+}
+
+/* Shop action buttons row */
+.shop-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+/* Icon button (edit/delete) */
+.shop-icon-btn {
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.shop-icon-btn--edit {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.shop-icon-btn--delete {
+  background: var(--error-bg);
+  color: var(--error);
+  flex-shrink: 0;
+}
+
+/* Modal overlay */
+.shop-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-bg);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  animation: modal-fade-in 0.2s ease;
+}
+
+/* Modal panel */
+.shop-modal-panel {
+  background: var(--bg-surface);
+  width: 100%;
+  max-width: 420px;
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6) var(--space-5);
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modal-scale-in 0.25s ease;
+}
+
+/* Modal header row */
+.shop-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+/* Modal title */
+.shop-modal-title {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 1.1rem;
+}
+
+/* Modal close button */
+.shop-modal-close {
+  border: none;
+  background: var(--bg-disabled);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--text);
+}
+
+/* Form body container */
+.shop-form-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Form grid (two columns) */
+.shop-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+/* Form action buttons row */
+.shop-form-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+/* Form action button flex */
+.shop-form-btn {
+  flex: 1;
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FiHome, FiShoppingCart, FiPackage, FiGrid, FiUser, FiFileText } from "react-icons/fi";
+import "./BottomBar.css";
 import { useAuth, ROLES } from "../context/AuthContext";
 import { load, KEYS } from "../../utils/storage";
 
@@ -63,19 +64,10 @@ export default function BottomBar() {
             aria-label={label}
             onClick={() => navigate(path)}
           >
-            <div style={{ position: "relative", display: "grid", placeItems: "center" }}>
+            <div className="bottom-icon-wrapper">
               <Icon className="nav-item-icon" />
               {isCartTab && cartCount > 0 && (
-                <span style={{
-                  position: "absolute", top: -6, right: -8,
-                  background: "var(--error)", color: "#fff",
-                  fontSize: "0.55rem", fontWeight: 700,
-                  minWidth: 16, height: 16, borderRadius: "50%",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  padding: "0 3px",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-                  animation: "fade-in 0.2s ease",
-                }}>
+                <span className="bottom-cart-badge">
                   {cartCount > 99 ? "99+" : cartCount}
                 </span>
               )}

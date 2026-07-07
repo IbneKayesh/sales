@@ -1,0 +1,273 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   CustomerProfilePage – Customer Profile Styles
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Header actions */
+.profile-header-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.profile-edit-btn {
+  cursor: pointer;
+  border: none;
+}
+
+/* Profile avatar */
+.profile-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+}
+
+.profile-avatar-sm {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+}
+
+.profile-avatar-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+}
+
+/* Profile card */
+.profile-view-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.profile-role {
+  margin: var(--space-1) 0 0;
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.profile-detail {
+  margin: var(--space-1) 0 0;
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+}
+
+/* Edit form */
+.profile-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.profile-edit-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.profile-edit-title {
+  margin: 0;
+}
+
+.profile-edit-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.profile-edit-btn-primary {
+  flex: 1;
+}
+
+/* Change password */
+.profile-pw-card {
+  padding: var(--space-3);
+}
+
+.profile-pw-card--open {
+  padding: var(--space-4);
+}
+
+.profile-pw-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-1);
+}
+
+.profile-pw-title {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.profile-pw-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.profile-pw-actions {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.profile-pw-clickable {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+
+.profile-pw-clickable-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+}
+
+.profile-pw-clickable-info {
+  flex: 1;
+}
+
+.profile-pw-clickable-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-h);
+}
+
+.profile-pw-clickable-desc {
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+}
+
+/* Empty state */
+.profile-list-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.profile-form-field-zero {
+  margin: 0;
+}
+
+.profile-form-field-margin-zero {
+  margin: 0;
+}
+
+.profile-btn-update {
+  flex: 1;
+  font-size: 0.85rem;
+}
+
+.profile-btn-cancel {
+  font-size: 0.85rem;
+}
+
+.profile-empty-text {
+  text-align: center;
+  padding: var(--space-7) 0;
+}
+
+/* Order/invoice list items */
+.profile-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.profile-list-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+}
+
+.profile-list-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-list-title {
+  font-weight: 600;
+  color: var(--text-h);
+  font-size: 0.9rem;
+}
+
+.profile-list-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+  margin-top: var(--space-1);
+}
+
+/* Status badge */
+.profile-status-badge {
+  font-size: 0.7rem;
+  color: #fff;
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+}
+
+.profile-status-badge--success {
+  background: var(--accent-primary);
+}
+
+.profile-status-badge--neutral {
+  background: var(--text-subtle);
+}
+
+.profile-payment-badge {
+  font-size: 0.7rem;
+  color: #fff;
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+}
+
+.profile-payment-badge--paid {
+  background: green;
+}
+
+.profile-payment-badge--partial {
+  background: orange;
+}
+
+.profile-payment-badge--due {
+  background: var(--error);
+}
+
+/* Sign out button */
+.profile-signout-btn {
+  width: 100%;
+  padding: var(--space-4);
+  color: var(--error);
+}

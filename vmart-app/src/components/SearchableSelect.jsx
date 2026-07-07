@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { FiChevronDown } from "react-icons/fi";
+import "./SearchableSelect.css";
 
 export default function SearchableSelect({
   value,
@@ -101,8 +102,8 @@ export default function SearchableSelect({
   const inputValue = open ? query : value;
 
   return (
-    <div ref={wrapperRef} style={{ position: "relative" }}>
-      <div style={{ position: "relative" }}>
+    <div ref={wrapperRef} className="ss-wrapper">
+      <div className="ss-input-wrapper">
         <input
           ref={inputRef}
           type="text"
@@ -113,45 +114,20 @@ export default function SearchableSelect({
           value={inputValue}
           onChange={handleInputChange}
           onFocus={handleFocus}
-          style={{ paddingRight: 32, cursor: "text" }}
         />
         <FiChevronDown
-          style={{
-            position: "absolute",
-            right: 10,
-            top: "50%",
-            transform: open ? "rotate(180deg)" : "none",
-            transition: "transform 0.15s ease",
-            pointerEvents: "none",
-            color: "var(--text-subtle)",
-            fontSize: 16,
-          }}
+          className={`ss-chevron${open ? " ss-chevron--open" : ""}`}
         />
       </div>
 
       {open && createPortal(
         <div
           ref={menuRef}
-          style={{
-            ...menuStyle,
-            zIndex: 9999,
-            background: "var(--bg-surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--radius-md)",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-            maxHeight: 220,
-            overflowY: "auto",
-          }}
+          className="ss-menu"
+          style={menuStyle}
         >
           {filtered.length === 0 ? (
-            <div
-              style={{
-                padding: "var(--space-3)",
-                color: "var(--text-subtle)",
-                fontSize: "0.85rem",
-                textAlign: "center",
-              }}
-            >
+            <div className="ss-empty">
               {emptyMessage}
             </div>
           ) : (
@@ -160,20 +136,7 @@ export default function SearchableSelect({
                 key={opt}
                 type="button"
                 onClick={() => handleSelect(opt)}
-                style={{
-                  display: "block",
-                  width: "100%",
-                  padding: "var(--space-3)",
-                  border: "none",
-                  background: opt === value ? "var(--accent-soft)" : "transparent",
-                  color: opt === value ? "var(--accent)" : "var(--text)",
-                  font: "inherit",
-                  colorScheme: "inherit",
-                  textAlign: "left",
-                  cursor: "pointer",
-                  fontSize: "0.9rem",
-                  transition: "background 0.1s ease",
-                }}
+                className={`ss-option${opt === value ? " ss-option--selected" : ""}`}
                 onMouseEnter={(e) => {
                   if (opt !== value) e.currentTarget.style.background = "var(--accent-soft)";
                 }}

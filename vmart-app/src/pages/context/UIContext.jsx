@@ -1,5 +1,11 @@
 import { createContext, useContext, useState, useCallback } from "react";
-import { FiCheckCircle, FiAlertCircle, FiAlertTriangle, FiLoader } from "react-icons/fi";
+import {
+  FiCheckCircle,
+  FiAlertCircle,
+  FiAlertTriangle,
+  FiLoader,
+} from "react-icons/fi";
+import "../context/UIContext.css";
 
 const UIContext = createContext(null);
 
@@ -10,14 +16,28 @@ export function useUI() {
 }
 
 export function UIProvider({ children }) {
-  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
-  const [confirm, setConfirm] = useState({ visible: false, message: "", onConfirm: null });
+  const [toast, setToast] = useState({
+    visible: false,
+    message: "",
+    type: "success",
+  });
+  const [confirm, setConfirm] = useState({
+    visible: false,
+    message: "",
+    onConfirm: null,
+  });
   const [isBusy, setIsBusy] = useState(false);
 
-  const showToast = useCallback((message, type = "success", duration = 3000) => {
-    setToast({ visible: true, message, type });
-    setTimeout(() => setToast((prev) => ({ ...prev, visible: false })), duration);
-  }, []);
+  const showToast = useCallback(
+    (message, type = "success", duration = 3000) => {
+      setToast({ visible: true, message, type });
+      setTimeout(
+        () => setToast((prev) => ({ ...prev, visible: false })),
+        duration,
+      );
+    },
+    [],
+  );
 
   const showConfirm = useCallback((message) => {
     return new Promise((resolve) => {
@@ -34,83 +54,67 @@ export function UIProvider({ children }) {
     setIsBusy(busy);
   }, []);
 
-  const toastIcon = toast.type === "success" ? <FiCheckCircle /> : toast.type === "error" ? <FiAlertCircle /> : <FiAlertTriangle />;
-  const toastBg = toast.type === "success" ? "var(--accent-primary)" : toast.type === "error" ? "var(--error)" : "orange";
+  const toastIcon =
+    toast.type === "success" ? (
+      <FiCheckCircle />
+    ) : toast.type === "error" ? (
+      <FiAlertCircle />
+    ) : (
+      <FiAlertTriangle />
+    );
+  const toastBg =
+    toast.type === "success"
+      ? "var(--accent-primary)"
+      : toast.type === "error"
+        ? "var(--error)"
+        : "orange";
 
   return (
     <UIContext.Provider value={{ showToast, showConfirm, isBusy, setBusy }}>
       {children}
 
       {/* Toast */}
-      <div style={{
-        position: "fixed", bottom: 90, left: "50%",
-        zIndex: 999, transition: "opacity 0.3s ease, transform 0.3s ease",
-        opacity: toast.visible ? 1 : 0, pointerEvents: toast.visible ? "auto" : "none",
-        transform: toast.visible ? "translateX(-50%) translateY(0)" : "translateX(-50%) translateY(20px)",
-      }}>
-        <div style={{
-          display: "flex", alignItems: "center", gap: "var(--space-2)",
-          background: toastBg, color: "#fff",
-          padding: "var(--space-3) var(--space-4)",
-          borderRadius: "var(--radius-full)",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
-          fontSize: "0.85rem", fontWeight: 500,
-          maxWidth: "calc(100vw - var(--space-8))",
-          whiteSpace: "nowrap",
-        }}>
-          <span style={{ fontSize: "var(--icon-md)", flexShrink: 0, display: "grid", placeItems: "center" }}>{toastIcon}</span>
-          <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{toast.message}</span>
+      <div
+        className={`ui-toast-container ${toast.visible ? "ui-toast-container--visible" : "ui-toast-container--hidden"}`}
+      >
+        <div className="ui-toast-inner" style={{ background: toastBg }}>
+          <span className="ui-toast-icon">{toastIcon}</span>
+          <span className="ui-toast-message">{toast.message}</span>
         </div>
       </div>
 
       {/* Busy Overlay */}
       {isBusy && (
-        <div style={{
-          position: "fixed", inset: 0, zIndex: 1000,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          flexDirection: "column", gap: "var(--space-3)",
-          background: "var(--overlay-bg)",
-        }}>
-          <div style={{
-            width: 48, height: 48, borderRadius: "var(--radius-full)",
-            background: "var(--bg-surface)",
-            display: "grid", placeItems: "center",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
-            animation: "spin 0.8s linear infinite",
-          }}>
-            <FiLoader size={22} style={{ color: "var(--accent)" }} />
+        <div className="ui-busy-overlay">
+          <div className="ui-busy-spinner">
+            <FiLoader size={22} />
           </div>
-          <p style={{
-            color: "var(--text-h)", fontSize: "0.85rem", fontWeight: 500,
-            background: "var(--bg-surface)", padding: "var(--space-2) var(--space-4)",
-            borderRadius: "var(--radius-full)", boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-          }}>
-            Please wait…
-          </p>
+          <p className="ui-busy-text">Please wait…</p>
         </div>
       )}
 
       {/* Confirm Dialog */}
       {confirm.visible && (
-        <div style={{
-          position: "fixed", inset: 0, background: "var(--overlay-bg)", zIndex: 998,
-          display: "flex", alignItems: "center", justifyContent: "center", padding: "var(--space-4)",
-        }}>
-          <div style={{
-            background: "var(--bg-surface)", width: "100%", maxWidth: 320,
-            borderRadius: "var(--radius-xl)", padding: "var(--space-6) var(--space-5)",
-            textAlign: "center",
-          }}>
-            <div style={{ fontSize: "2.5rem", color: "var(--error)", marginBottom: "var(--space-3)" }}>
+        <div className="ui-confirm-overlay">
+          <div className="ui-confirm-dialog">
+            <div className="ui-confirm-icon">
               <FiAlertTriangle />
             </div>
-            <p style={{ color: "var(--text-h)", fontWeight: 500, fontSize: "1rem", margin: 0 }}>{confirm.message}</p>
-            <p style={{ color: "var(--text-subtle)", fontSize: "0.85rem", marginTop: "var(--space-2)" }}>This action cannot be undone.</p>
-            <div style={{ display: "flex", gap: "var(--space-3)", marginTop: "var(--space-5)" }}>
-              <button className="ui-btn ui-btn-secondary" onClick={() => handleConfirm(false)}
-                style={{ flex: 1, padding: "var(--space-3)" }}>Cancel</button>
-              <button className="ui-btn ui-btn-primary" onClick={() => handleConfirm(true)}
-                style={{ flex: 1, padding: "var(--space-3)", background: "var(--error)" }}>Delete</button>
+            <p className="ui-confirm-message">{confirm.message}</p>
+            <p className="ui-confirm-hint">This action cannot be undone.</p>
+            <div className="ui-confirm-actions">
+              <button
+                className="ui-btn ui-btn-secondary ui-confirm-btn"
+                onClick={() => handleConfirm(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="ui-btn ui-btn-primary ui-confirm-btn ui-confirm-btn--delete"
+                onClick={() => handleConfirm(true)}
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>

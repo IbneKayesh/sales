@@ -1,0 +1,280 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ShopProfilePage – Shop Owner Profile Styles
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Header actions */
+.shoppro-header-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.shoppro-edit-btn {
+  cursor: pointer;
+  border: none;
+}
+
+/* Stats grid */
+.shoppro-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.shoppro-stat-card {
+  text-align: center;
+  padding: var(--space-4);
+}
+
+.shoppro-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.shoppro-stat-card--accent-bg {
+  background: var(--accent-soft);
+}
+
+.shoppro-stat-card--error-bg {
+  background: var(--error-bg);
+}
+
+.shoppro-stat-value--accent {
+  color: var(--accent);
+}
+
+.shoppro-stat-value--error {
+  color: var(--error);
+}
+
+.shoppro-stat-value--green {
+  color: green;
+}
+
+.shoppro-stat-value--default {
+  color: var(--text-h);
+}
+
+.shoppro-list-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.shoppro-stat-label {
+  font-size: 0.8rem;
+  color: var(--text);
+  margin-top: var(--space-1);
+}
+
+/* List items */
+.shoppro-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.shoppro-list-info {
+  flex: 1;
+}
+
+.shoppro-list-name {
+  font-weight: 600;
+  color: var(--text-h);
+  font-size: 0.9rem;
+}
+
+.shoppro-list-amount {
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+  margin-left: var(--space-2);
+}
+
+/* Status badge */
+.shoppro-status-badge {
+  font-size: 0.7rem;
+  color: #fff;
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+}
+
+.shoppro-status-badge--success {
+  background: var(--accent-primary);
+}
+
+.shoppro-status-badge--neutral {
+  background: var(--text-subtle);
+}
+
+/* Empty state */
+.shoppro-empty-text {
+  text-align: center;
+  padding: var(--space-7) 0;
+}
+
+/* ── Edit form ── */
+.shoppro-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.shoppro-edit-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.shoppro-edit-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+}
+
+.shoppro-edit-title {
+  margin: 0;
+}
+
+/* ── View row ── */
+.shoppro-view-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.shoppro-view-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+}
+
+.shoppro-view-info {
+  flex: 1;
+}
+
+.shoppro-view-name {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.shoppro-view-role {
+  margin: var(--space-1) 0 0;
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.shoppro-view-detail {
+  margin: var(--space-1) 0 0;
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+}
+
+/* ── Actions row ── */
+.shoppro-actions-row {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.shoppro-btn-flex {
+  flex: 1;
+}
+
+.shoppro-btn-flex-sm {
+  flex: 1;
+  font-size: 0.85rem;
+}
+
+/* ── Password section ── */
+.shoppro-pw-card {
+  padding: var(--space-3);
+}
+
+.shoppro-pw-card--open {
+  padding: var(--space-4);
+}
+
+.shoppro-pw-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.shoppro-pw-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-1);
+}
+
+.shoppro-pw-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+}
+
+.shoppro-pw-title {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.shoppro-form-field-zero {
+  margin: 0;
+}
+
+/* ── Pw clickable ── */
+.shoppro-pw-clickable {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+
+.shoppro-pw-clickable-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+}
+
+.shoppro-pw-clickable-info {
+  flex: 1;
+}
+
+.shoppro-pw-clickable-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-h);
+}
+
+.shoppro-pw-clickable-desc {
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+}
+
+/* ── Sign out ── */
+.shoppro-signout-btn {
+  width: 100%;
+  padding: var(--space-4);
+  color: var(--error);
+}

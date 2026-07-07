@@ -1,0 +1,13 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   LeftFlyout – Drawer Styles (extends layout.css)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Section label in drawer */
+.drawer-section-label {
+  font-size: 0.7rem;
+  color: var(--text-subtle);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: var(--space-3) var(--space-4) var(--space-1);
+}

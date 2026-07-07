@@ -2,6 +2,78 @@
    InvoiceReceiptPage – POS Thermal Print Style
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ── Section centering ── */
+.receipt-page-center {
+  align-items: center;
+  justify-content: center;
+  min-height: 60dvh;
+  text-align: center;
+}
+
+.receipt-page-section {
+  align-items: center;
+}
+
+.receipt-big-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-3);
+}
+
+.receipt-not-found-title {
+  margin: 0;
+  color: var(--text-h);
+}
+
+.receipt-not-found-desc {
+  color: var(--text-subtle);
+  margin-top: var(--space-2);
+}
+
+.receipt-not-found-btn {
+  margin-top: var(--space-4);
+}
+
+.receipt-spinner {
+  font-size: 2rem;
+}
+
+/* ── Toolbar ── */
+.receipt-toolbar {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.receipt-heading {
+  font-size: 1.2rem;
+}
+
+.receipt-toolbar-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.receipt-toolbar-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* ── Receipt container ── */
+.receipt-container {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+/* ── Partial payment text ── */
+.receipt-partial-text {
+  margin-top: var(--space-2);
+  text-align: center;
+}
+
 .receipt-paper {
   background: #fff;
   color: #222;

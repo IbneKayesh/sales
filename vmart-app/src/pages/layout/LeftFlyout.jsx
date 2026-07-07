@@ -1,6 +1,20 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth, ROLES } from "../context/AuthContext";
-import { FiHome, FiUser, FiPackage, FiX, FiUsers, FiBox, FiFileText, FiShoppingCart, FiDollarSign, FiGrid, FiHeart, FiShoppingBag } from "react-icons/fi";
+import {
+  FiHome,
+  FiUser,
+  FiPackage,
+  FiX,
+  FiUsers,
+  FiBox,
+  FiFileText,
+  FiShoppingCart,
+  FiDollarSign,
+  FiGrid,
+  FiHeart,
+  FiShoppingBag,
+} from "react-icons/fi";
+import "./LeftFlyout.css";
 
 const customerItems = [
   { path: "/", icon: FiHome, label: "Home" },
@@ -28,15 +42,27 @@ export default function LeftFlyout({ open, onClose }) {
   const { pathname } = useLocation();
   const { isCustomer, isShop } = useAuth();
 
-  const navItems = isCustomer ? customerItems : isShop ? shopItems : customerItems;
-  const profilePath = isCustomer ? "/customer-profile" : isShop ? "/shop-profile" : "/auth/login";
+  const navItems = isCustomer
+    ? customerItems
+    : isShop
+      ? shopItems
+      : customerItems;
+  const profilePath = isCustomer
+    ? "/customer-profile"
+    : isShop
+      ? "/shop-profile"
+      : "/auth/login";
 
   const handleNav = (path) => {
     navigate(path);
     onClose();
   };
 
-  const sectionLabel = isCustomer ? "Shopping" : isShop ? "Shop Management" : "Menu";
+  const sectionLabel = isCustomer
+    ? "Shopping"
+    : isShop
+      ? "Shop Management"
+      : "Menu";
 
   return (
     <>
@@ -45,7 +71,11 @@ export default function LeftFlyout({ open, onClose }) {
       <aside className={`drawer-panel${open ? " drawer-panel--open" : ""}`}>
         <div className="drawer-header">
           <h2 className="drawer-title">Menu</h2>
-          <button className="drawer-close-btn" onClick={onClose} aria-label="Close menu">
+          <button
+            className="drawer-close-btn"
+            onClick={onClose}
+            aria-label="Close menu"
+          >
             <FiX />
           </button>
         </div>
@@ -57,12 +87,15 @@ export default function LeftFlyout({ open, onClose }) {
               {navItems.map(({ path, icon: Icon, label }) => {
                 const isActive = pathname === path;
                 return (
-                <li key={label}>
-                  <button className={`drawer-link${isActive ? " drawer-link--active" : ""}`} onClick={() => handleNav(path)}>
-                    <Icon />
-                    {label}
-                  </button>
-                </li>
+                  <li key={label}>
+                    <button
+                      className={`drawer-link${isActive ? " drawer-link--active" : ""}`}
+                      onClick={() => handleNav(path)}
+                    >
+                      <Icon />
+                      {label}
+                    </button>
+                  </li>
                 );
               })}
             </ul>
@@ -70,7 +103,10 @@ export default function LeftFlyout({ open, onClose }) {
             <div className="drawer-section-label">Account</div>
             <ul className="drawer-list">
               <li>
-                <button className={`drawer-link${pathname === profilePath ? " drawer-link--active" : ""}`} onClick={() => handleNav(profilePath)}>
+                <button
+                  className={`drawer-link${pathname === profilePath ? " drawer-link--active" : ""}`}
+                  onClick={() => handleNav(profilePath)}
+                >
                   <FiUser />
                   Profile
                 </button>

@@ -12,6 +12,7 @@ echo 3. Web + Mobile + API
 echo 4. Web
 echo 5. Mobile
 echo 6. Docs (active)
+echo 7. API + vMart
 echo 0. Exit
 echo.
 
@@ -23,6 +24,7 @@ if %choice%==3 goto WMA
 if %choice%==4 goto W
 if %choice%==5 goto M
 if %choice%==6 goto DOC
+if %choice%==7 goto vMart
 if %choice%==0 goto END
 
 echo Invalid choice. Try again.
@@ -62,6 +64,12 @@ goto MENU
 :DOC
 start cmd /k "cd app-docs && npm start"
 echo  ---- DOC Running ----
+goto MENU
+
+:vMart
+start cmd /k "cd backend-app && node server.js"
+start cmd /k "cd vmart-app && npm run dev"
+echo  ---- vMart + API Running ----
 goto MENU
 
 :END

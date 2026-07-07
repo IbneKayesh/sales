@@ -1,0 +1,30 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   BottomBar – Bottom Navigation Styles
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Cart badge */
+.bottom-cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: var(--error);
+  color: #fff;
+  font-size: 0.55rem;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  animation: fade-in 0.2s ease;
+}
+
+/* Icon wrapper for badge positioning */
+.bottom-icon-wrapper {
+  position: relative;
+  display: grid;
+  place-items: center;
+}

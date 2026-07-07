@@ -3,10 +3,11 @@ import { FiHeart, FiTrash2, FiShoppingCart, FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useUI } from "../context/UIContext";
 import { load, save, KEYS } from "../../utils/storage";
+import "./FavoritesPage.css";
 
 export default function FavoritesPage() {
   const navigate = useNavigate();
-  const { showToast } = useUI();
+  const { showToast, setBusy } = useUI();
   const [favorites, setFavorites] = useState([]);
   const [cart, setCart] = useState([]);
 
@@ -16,23 +17,26 @@ export default function FavoritesPage() {
   }, []);
 
   const removeFavorite = (product) => {
+    setBusy(true);
     setFavorites((prev) => {
       const next = prev.filter(
-        (f) => !(f.name === product.name && f.shop === product.shop)
+        (f) => !(f.name === product.name && f.shop === product.shop),
       );
       save(KEYS.FAVORITES, next);
       return next;
     });
     showToast("Removed from favorites");
+    setBusy(false);
   };
 
   const addToCart = (product) => {
+    setBusy(true);
     setCart((prev) => {
       const existing = prev.find((p) => p.name === product.name);
       let next;
       if (existing) {
         next = prev.map((p) =>
-          p.name === product.name ? { ...p, qty: p.qty + 1 } : p
+          p.name === product.name ? { ...p, qty: p.qty + 1 } : p,
         );
       } else {
         next = [
@@ -50,20 +54,7 @@ export default function FavoritesPage() {
       return next;
     });
     showToast(`${product.name} added to cart!`);
-  };
-
-  const cardBase = {
-    borderRadius: "var(--radius-xl)",
-    border: "1px solid var(--border)",
-    overflow: "hidden",
-    background: "var(--bg-surface)",
-  };
-
-  const contentStyle = {
-    padding: "var(--space-4)",
-    display: "flex",
-    flexDirection: "column",
-    gap: "var(--space-3)",
+    setBusy(false);
   };
 
   return (
@@ -73,11 +64,10 @@ export default function FavoritesPage() {
           <p className="page-eyebrow">Saved items</p>
           <h1 className="page-heading">Favorites ({favorites.length})</h1>
         </div>
-        <div style={{ display: "flex", gap: "var(--space-2)" }}>
+        <div className="fav-header-actions">
           <button
-            className="ui-badge"
+            className="ui-badge fav-back-btn"
             onClick={() => navigate("/shopping")}
-            style={{ cursor: "pointer", border: "none" }}
             aria-label="Back to shopping"
           >
             <FiArrowLeft />
@@ -89,100 +79,49 @@ export default function FavoritesPage() {
       </div>
 
       {favorites.length === 0 ? (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "var(--space-8) var(--space-4)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "var(--space-4)",
-          }}
-        >
-          <div
-            style={{
-              width: 72,
-              height: 72,
-              borderRadius: "50%",
-              background: "var(--accent-soft)",
-              display: "grid",
-              placeItems: "center",
-              fontSize: "2rem",
-              color: "var(--accent)",
-            }}
-          >
+        <div className="fav-empty-state">
+          <div className="fav-empty-icon">
             <FiHeart />
           </div>
           <div>
-            <h3 style={{ margin: 0, color: "var(--text-h)", fontSize: "1.1rem" }}>
-              No favorites yet
-            </h3>
-            <p
-              style={{
-                color: "var(--text-subtle)",
-                fontSize: "0.9rem",
-                marginTop: "var(--space-2)",
-              }}
-            >
+            <h3 className="fav-empty-heading">No favorites yet</h3>
+            <p className="fav-empty-text">
               Save products you love by tapping the heart icon on any product.
             </p>
           </div>
           <button
-            className="ui-btn ui-btn-primary"
+            className="ui-btn ui-btn-primary fav-empty-btn"
             onClick={() => navigate("/shopping")}
-            style={{ padding: "var(--space-3) var(--space-6)" }}
           >
             Browse Products
           </button>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+        <div className="fav-list">
           {favorites.map((product, idx) => {
             const finalPrice =
-              product.price -
-              (product.price * (product.discount || 0)) / 100;
+              product.price - (product.price * (product.discount || 0)) / 100;
             return (
-              <div key={`${product.name}-${product.shop}-${idx}`} style={cardBase}>
-                <div style={contentStyle}>
+              <div
+                key={`${product.name}-${product.shop}-${idx}`}
+                className="fav-card"
+              >
+                <div className="fav-card-content">
                   {/* Header */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <h3
-                        className="ui-card-title"
-                        style={{ margin: 0, fontSize: "1rem" }}
-                      >
+                  <div className="fav-card-header">
+                    <div className="fav-card-info">
+                      <h3 className="ui-card-title fav-card-title">
                         {product.name}
                       </h3>
                       {product.category && (
-                        <span
-                          className="ui-tag"
-                          style={{ marginTop: "var(--space-1)", display: "inline-block" }}
-                        >
+                        <span className="ui-tag fav-category-tag">
                           {product.category}
                         </span>
                       )}
                     </div>
                     <button
                       onClick={() => removeFavorite(product)}
-                      style={{
-                        border: "none",
-                        background: "var(--error-bg)",
-                        color: "var(--error)",
-                        width: 36,
-                        height: 36,
-                        borderRadius: "var(--radius-md)",
-                        display: "grid",
-                        placeItems: "center",
-                        cursor: "pointer",
-                        flexShrink: 0,
-                        transition: "opacity 0.15s ease",
-                      }}
+                      className="fav-remove-btn"
                       aria-label="Remove from favorites"
                     >
                       <FiTrash2 />
@@ -192,63 +131,37 @@ export default function FavoritesPage() {
                   {/* Shop chip */}
                   {product.shop && (
                     <button
-                      onClick={() => navigate(`/shopping?shop=${encodeURIComponent(product.shop)}`)}
-                      style={{
-                        fontSize: "0.75rem",
-                        background: "var(--accent-soft)",
-                        color: "var(--accent)",
-                        padding: "2px 10px",
-                        borderRadius: "var(--radius-full)",
-                        fontWeight: 600,
-                        border: "none",
-                        cursor: "pointer",
-                        font: "inherit",
-                        colorScheme: "inherit",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "var(--space-1)",
-                        transition: "background 0.1s ease",
-                      }}
+                      onClick={() =>
+                        navigate(
+                          `/shopping?shop=${encodeURIComponent(product.shop)}`,
+                        )
+                      }
+                      className="fav-shop-chip"
                       title={`Browse all products from ${product.shop}`}
-                      onMouseEnter={(e) => e.currentTarget.style.background = "var(--accent-soft-dark)"}
-                      onMouseLeave={(e) => e.currentTarget.style.background = "var(--accent-soft)"}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background =
+                          "var(--accent-soft-dark)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.background =
+                          "var(--accent-soft)")
+                      }
                     >
                       🏪 {product.shop}
                     </button>
                   )}
 
                   {/* Price */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "baseline",
-                      gap: "var(--space-2)",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontWeight: 700,
-                        fontSize: "1.2rem",
-                        color: "var(--accent)",
-                      }}
-                    >
+                  <div className="fav-price-row">
+                    <span className="fav-price-current">
                       ₹{finalPrice.toFixed(2)}
                     </span>
                     {product.discount > 0 && (
                       <>
-                        <span
-                          style={{
-                            fontSize: "0.85rem",
-                            color: "var(--text-subtle)",
-                            textDecoration: "line-through",
-                          }}
-                        >
+                        <span className="fav-price-original">
                           ₹{product.price.toFixed(2)}
                         </span>
-                        <span
-                          className="ui-tag"
-                          style={{ fontSize: "0.7rem", background: "var(--error-bg)", color: "var(--error)" }}
-                        >
+                        <span className="ui-tag fav-discount-tag">
                           -{product.discount}%
                         </span>
                       </>
@@ -257,13 +170,8 @@ export default function FavoritesPage() {
 
                   {/* Actions */}
                   <button
-                    className="ui-btn ui-btn-primary"
+                    className="ui-btn ui-btn-primary fav-add-btn"
                     onClick={() => addToCart(product)}
-                    style={{
-                      width: "100%",
-                      fontSize: "0.85rem",
-                      padding: "var(--space-3)",
-                    }}
                   >
                     <FiShoppingCart /> Add to Cart
                   </button>
