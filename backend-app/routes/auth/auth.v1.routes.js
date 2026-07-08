@@ -185,7 +185,7 @@ AND emp.emply_cntno = $1`;
 
     res.json({
       success: true,
-      message: "User logged in successfully",
+      message: "User checked successfully",
       data: {
         users: row_user,
         token: "",
@@ -232,7 +232,7 @@ router.post("/vmart/login-with-password", async (req, res) => {
       AND cnt.cntct_actve = TRUE
       UNION ALL
       SELECT emp.id, emp.emply_users, emp.emply_bsins, emp.emply_cname,
-      usr.users_cname, emp.emply_email, emp.emply_cntct,
+      usr.users_cname, emp.emply_email, emp.emply_cntno,
 	    '', 'SHOP', 'N' users_aplnk
       FROM tmhb_emply emp
       JOIN tmsb_users usr ON emp.emply_users = usr.id

@@ -19,7 +19,9 @@ export default function FormField({
       {label && (
         <label className="ui-form-label" htmlFor={htmlFor}>
           {label}
-          {required && <span style={{ color: "var(--error)", marginLeft: 4 }}>*</span>}
+          {required && (
+            <span style={{ color: "var(--error)", marginLeft: 4 }}>*</span>
+          )}
         </label>
       )}
       {children}

@@ -26,7 +26,7 @@ export function UIProvider({ children }) {
     message: "",
     onConfirm: null,
   });
-  const [isBusy, setIsBusy] = useState(false);
+  const [isBusy, setBusy] = useState(false);
 
   const showToast = useCallback(
     (message, type = "success", duration = 3000) => {
@@ -50,8 +50,8 @@ export function UIProvider({ children }) {
     setConfirm({ visible: false, message: "", onConfirm: null });
   };
 
-  const setBusy = useCallback((busy) => {
-    setIsBusy(busy);
+  const setIsBusy = useCallback((busy) => {
+    setBusy(busy);
   }, []);
 
   const toastIcon =
@@ -70,7 +70,7 @@ export function UIProvider({ children }) {
         : "orange";
 
   return (
-    <UIContext.Provider value={{ showToast, showConfirm, isBusy, setBusy }}>
+    <UIContext.Provider value={{ showToast, showConfirm, isBusy, setIsBusy }}>
       {children}
 
       {/* Toast */}

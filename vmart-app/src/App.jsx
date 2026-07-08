@@ -1,5 +1,11 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 
 import { AuthProvider, useAuth } from "./pages/context/AuthContext";
 import { UIProvider } from "./pages/context/UIContext";
@@ -24,50 +30,54 @@ import "./App.css";
 
 /* ── Protected route wrapper ── */
 function ProtectedRoute() {
-  const { isAuthenticated } = useAuth();
-  if (!isAuthenticated) return <Navigate to="/auth/login" replace />;
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/auth/login" replace />;
   return <Outlet />;
 }
 
 function App() {
-  /* Auto-seed sample data on first load */
-  useEffect(() => {
-    seedSampleData();
-  }, []);
-
   return (
     <UIProvider>
       <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          {/* Auth (No Layout) */}
-          <Route path="/auth/login" element={<LoginPage />} />
+        <BrowserRouter>
+          <Routes>
+            {/* Auth (No Layout) */}
+            <Route path="/auth/login" element={<LoginPage />} />
 
-          {/* Protected: requires authentication */}
-          <Route element={<ProtectedRoute />}>
-            {/* App (With Layout) */}
-            <Route element={<Layout />}>
-              <Route path="/customer-profile" element={<CustomerProfilePage />} />
-              <Route path="/shop-profile" element={<ShopProfilePage />} />
-              <Route path="/" element={<HomePage />} />
-              <Route path="/shop" element={<ShopPage />} />
-              <Route path="/shopping" element={<ShoppingPage />} />
-              <Route path="/favorites" element={<FavoritesPage />} />
-              <Route path="/order" element={<OrderPage />} />
-              <Route path="/customers" element={<CustomerPage />} />
-              <Route path="/products" element={<ProductPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/invoice" element={<InvoicePage />} />
-              <Route path="/invoice/:invoiceNumber" element={<InvoiceReceiptPage />} />
-              <Route path="/invoice-collections" element={<InvoiceCollectionPage />} />
+            {/* Protected: requires authentication */}
+            <Route element={<ProtectedRoute />}>
+              {/* App (With Layout) */}
+              <Route element={<Layout />}>
+                <Route
+                  path="/customer-profile"
+                  element={<CustomerProfilePage />}
+                />
+                <Route path="/shop-profile" element={<ShopProfilePage />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/shop" element={<ShopPage />} />
+                <Route path="/shopping" element={<ShoppingPage />} />
+                <Route path="/favorites" element={<FavoritesPage />} />
+                <Route path="/order" element={<OrderPage />} />
+                <Route path="/customers" element={<CustomerPage />} />
+                <Route path="/products" element={<ProductPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/invoice" element={<InvoicePage />} />
+                <Route
+                  path="/invoice/:invoiceNumber"
+                  element={<InvoiceReceiptPage />}
+                />
+                <Route
+                  path="/invoice-collections"
+                  element={<InvoiceCollectionPage />}
+                />
+              </Route>
             </Route>
-          </Route>
 
-          {/* Default */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+            {/* Default */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </UIProvider>
   );
 }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FiHome, FiShoppingCart, FiPackage, FiGrid, FiUser, FiFileText } from "react-icons/fi";
 import "./BottomBar.css";
-import { useAuth, ROLES } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { load, KEYS } from "../../utils/storage";
 
 const customerNav = [

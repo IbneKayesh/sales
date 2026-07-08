@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth, ROLES } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { useUI } from "../context/UIContext";
 import { load, save, KEYS } from "../../utils/storage";
-import LoginNameC from "./LoginNameC";
-import LoginVerifyC from "./LoginVerifyC";
 import LoginForgotC from "./LoginForgotC";
 import LoginRegisterC from "./LoginRegisterC";
+import LogRoleC from "./LogRoleC";
+import LogPassC from "./LogPassC";
 import "./LoginPage.css";
+import useLogin from "@/hooks/useLogin";
+import FormField from "@/components/ui/FormField";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 
 const SECURITY_QUESTIONS = [
   "What is your mother's maiden name?",
@@ -21,6 +25,21 @@ const SECURITY_QUESTIONS = [
 ];
 
 export default function LoginPage() {
+  const {
+    crTitle,
+    crView,
+    formData,
+    errors,
+    vmart,
+    viewTitle,
+    roleName,
+    handleChange,
+    handleSubmitLogin,
+    handleChangeMobileNo,
+    handleChangeRole,
+    handleForgotPassword,
+  } = useLogin();
+
   const navigate = useNavigate();
   const {
     loginAsCustomer,
@@ -33,7 +52,7 @@ export default function LoginPage() {
     verifyPassword,
     verifySecurityAnswer,
   } = useAuth();
-  const { showToast, setBusy, isBusy } = useUI();
+  const { showToast, setIsBusy, isBusy } = useUI();
 
   /* ── Multi-step state ── */
   const [step, setStep] = useState("name"); // "name" | "verify" | "register" | "forgot" | "loggedIn"
@@ -171,7 +190,7 @@ export default function LoginPage() {
                         );
                         return;
                       }
-                      setBusy(true);
+                      setIsBusy(true);
                       try {
                         await changePassword(oldPw, newPw);
                         showToast("Password changed successfully");
@@ -182,12 +201,12 @@ export default function LoginPage() {
                       } catch (err) {
                         showToast(err.message, "error");
                       }
-                      setBusy(false);
+                      setIsBusy(false);
                     }}
-                  disabled={!newPw.trim() || newPw !== confirmNewPw || isBusy}
-                >
-                  Update Password
-                </button>
+                    disabled={!newPw.trim() || newPw !== confirmNewPw || isBusy}
+                  >
+                    Update Password
+                  </button>
                 </div>
               )}
             </div>
@@ -210,7 +229,7 @@ export default function LoginPage() {
     );
   }
 
-  const isShopOwner = role === ROLES.SHOP;
+  const isShopOwner = role === "ROLES.SHOP";
 
   /* ── Handle name submission ── */
   const handleNameSubmit = () => {
@@ -245,10 +264,17 @@ export default function LoginPage() {
     }
   };
 
+  const handleNameSubmit1 = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    console.log("5 seconds later");
+    // Your code here
+  };
+
   /* ── Handle password verification ── */
   const handleVerify = () => {
     if (!loginPassword.trim()) return;
-    setBusy(true);
+    setIsBusy(true);
     const result = verifyPassword(name.trim(), role, loginPassword);
     if (result.valid) {
       const data = result.data;
@@ -276,7 +302,7 @@ export default function LoginPage() {
           : "Account not found",
         "error",
       );
-      setBusy(false);
+      setIsBusy(false);
     }
   };
 
@@ -296,7 +322,7 @@ export default function LoginPage() {
       return;
     }
 
-    setBusy(true);
+    setIsBusy(true);
     const effectiveQuestion =
       securityQuestion === "custom" ? customQuestion : securityQuestion;
 
@@ -363,7 +389,7 @@ export default function LoginPage() {
       return;
     }
 
-    setBusy(true);
+    setIsBusy(true);
     if (role === ROLES.SHOP) {
       loginAsShop({
         name: name.trim(),
@@ -403,48 +429,52 @@ export default function LoginPage() {
     <div className="app-shell app-shell--auth">
       <section className="page-section auth-page">
         <div className="auth-brand">
-          <div className="auth-logo">🚀</div>
+          <div className="auth-logo">🛍️</div>
           <h1 className="auth-brand-title">Virtual Mart</h1>
-          <p className="auth-brand-text">Multi-Vendor Marketplace</p>
+          <p className="auth-brand-text">Your Trusted Store</p>
         </div>
 
         <div className="auth-content">
+          <h3>{viewTitle.title}</h3>
+          <p>{viewTitle.subTitle}</p>
+
           {/* ── Step 1: Enter Name ── */}
-          {step === "name" && (
-            <LoginNameC
-              role={role}
-              onRoleChange={setRole}
-              name={name}
-              onNameChange={setName}
-              onSubmit={handleNameSubmit}
-              disabled={!name.trim()}
-              isBusy={isBusy}
+          {crView === "LOGIN" && (
+            <LogRoleC roleName={roleName} onChangeRole={handleChangeRole} />
+          )}
+
+          <FormField label="Mobile No" htmlFor="users_id">
+            <Input
+              name="users_id"
+              placeholder="Enter contact no"
+              value={formData.user_id}
+              onChange={(e) => handleChange("users_id", e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSubmitLogin();
+              }}
+              autoFocus
+              disabled={crView !== "LOGIN"}
+            />
+          </FormField>
+          {/* ── Step 2: Password Verification ── */}
+          {(crView === "PASSWORD" || crView === "SIGNUP") && (
+            <LogPassC
+              formData={formData}
+              onChangeMobileNo={handleChangeMobileNo}
+              onChange={handleChange}
+              onSubmitLogin={handleSubmitLogin}
+              onForgotPassword={handleForgotPassword}
             />
           )}
 
-          {/* ── Step 2: Password Verification ── */}
-          {step === "verify" && (
-            <LoginVerifyC
-              name={name}
-              isShopOwner={isShopOwner}
-              loginPassword={loginPassword}
-              onLoginPasswordChange={setLoginPassword}
-              onVerify={handleVerify}
-              resolvedQuestion={resolvedQuestion}
-              onBackToName={backToName}
-              onForgot={() => {
-                setForgotAnswer("");
-                setForgotVerified(false);
-                setStep("forgot");
-              }}
-              onSetNewOne={() => {
-                setStep("register");
-                setPassword("");
-                setConfirmPassword("");
-              }}
-              isBusy={isBusy}
-            />
-          )}
+          <Button
+            variant="primary"
+            className="auth-btn-full"
+            onClick={handleSubmitLogin}
+            disabled={isBusy}
+          >
+            {viewTitle.button}
+          </Button>
 
           {/* ── Step 3: Forgot Password ── */}
           {step === "forgot" && (
@@ -503,11 +533,7 @@ export default function LoginPage() {
             />
           )}
 
-          <p className="auth-footer-text">
-            {isShopOwner
-              ? "Manage your products, orders, invoices and collections."
-              : "Browse products from multiple shops and place orders."}
-          </p>
+          <p className="auth-footer-text">Powered by vMart@SGD</p>
         </div>
       </section>
     </div>
