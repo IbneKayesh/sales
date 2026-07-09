@@ -18,13 +18,10 @@ export default function Layout() {
   return (
     <div className="app-shell">
       <LeftFlyout open={open} onClose={() => setOpen(false)} />
-
       <Topbar onMenu={() => setOpen(true)} />
-
       <main className="app-main" ref={mainRef}>
         <Outlet />
       </main>
-
       <BottomBar />
     </div>
   );

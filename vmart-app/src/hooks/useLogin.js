@@ -85,7 +85,7 @@ const useLogin = () => {
         ...formData,
         crView,
       };
-      console.log("reqBody", reqBody);
+      //console.log("reqBody", reqBody);
       if (!formData.users_id) {
         showToast("Mobile No is required", "error");
         return;
@@ -101,7 +101,7 @@ const useLogin = () => {
       const apiUrl = viewTitleMap[crView];
       setIsBusy(true);
       const resp = await apiLogin(apiUrl.url, { body: reqBody });
-      console.log("resp", resp);
+      //console.log("resp", resp);
       if (resp.success) {
         if (resp.data.users && Object.keys(resp.data.users).length > 0) {
           //redirect to home

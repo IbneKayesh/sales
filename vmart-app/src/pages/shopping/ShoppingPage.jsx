@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { FiShoppingCart, FiFilter, FiHeart } from "react-icons/fi";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { data, useNavigate, useSearchParams } from "react-router-dom";
 import { useUI } from "../context/UIContext";
 import { load, save, KEYS } from "../../utils/storage";
 import { calcAvg } from "../../utils/helpers";
@@ -8,13 +8,32 @@ import StarDisplay from "../../components/StarDisplay";
 import ProductDetailModal from "../../components/ProductDetailModal";
 import SearchInput from "../../components/ui/SearchInput";
 import "./ShoppingPage.css";
+import useShopping from "@/hooks/useShopping";
 
 export default function ShoppingPage() {
   const navigate = useNavigate();
+  const {
+    crTitle,
+    crView,
+    formData,
+    errors,
+    dataList,
+    showModal,
+    scatg_options,
+    bsins_options,
+    cartItems,
+    cartItemsQty,
+    handleChange,
+    handleEdit,
+    handleOpenModal,
+    handleCloseModal,
+    handleSubmit,
+    handleAddToCart,
+    isInCart,
+  } = useShopping();
+
   const { showToast, setBusy } = useUI();
   const [products, setProducts] = useState([]);
-  const [cart, setCart] = useState([]);
-  const [shops, setShops] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [selectedShop, setSelectedShop] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -27,18 +46,18 @@ export default function ShoppingPage() {
   const [detailModal, setDetailModal] = useState(null);
   const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    setProducts(load(KEYS.PRODUCTS));
-    setCart(load(KEYS.CART));
-    setShops(load(KEYS.SHOPS));
-    setFavorites(load(KEYS.FAVORITES));
-    setAllReviews(load(KEYS.REVIEWS));
-    const shopParam = searchParams.get("shop");
-    if (shopParam) setSelectedShop(shopParam);
-    return () => {
-      if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
-    };
-  }, []);
+  // useEffect(() => {
+  //   setProducts(load(KEYS.PRODUCTS));
+  //   setCart(load(KEYS.CART));
+  //   setShops(load(KEYS.SHOPS));
+  //   setFavorites(load(KEYS.FAVORITES));
+  //   setAllReviews(load(KEYS.REVIEWS));
+  //   const shopParam = searchParams.get("shop");
+  //   if (shopParam) setSelectedShop(shopParam);
+  //   return () => {
+  //     if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+  //   };
+  // }, []);
 
   const toggleFavorite = useCallback(
     (product) => {
@@ -80,65 +99,14 @@ export default function ShoppingPage() {
       favorites.some((f) => f.name === product.name && f.shop === product.shop),
     [favorites],
   );
-  const isInCart = useCallback(
-    (product) =>
-      cart.some((c) => c.name === product.name && c.shop === product.shop),
-    [cart],
-  );
-  const getCartItem = useCallback(
-    (product) =>
-      cart.find((c) => c.name === product.name && c.shop === product.shop),
-    [cart],
-  );
 
-  const addToCart = useCallback(
-    (product, qty = 1) => {
-      setBusy(true);
-      setCart((prev) => {
-        const existing = prev.find(
-          (p) => p.name === product.name && p.shop === product.shop,
-        );
-        let next;
-        if (existing) {
-          next = prev.map((p) =>
-            p.name === product.name && p.shop === product.shop
-              ? { ...p, qty: p.qty + qty }
-              : p,
-          );
-        } else {
-          next = [
-            ...prev,
-            {
-              name: product.name,
-              qty,
-              price: product.price || 0,
-              discount: product.discount || 0,
-              shop: product.shop || "",
-            },
-          ];
-        }
-        save(KEYS.CART, next);
-        return next;
-      });
-      showToast(`${product.name} added to cart!`);
-      setBusy(false);
-    },
-    [showToast, setBusy],
-  );
+  const getStock = (p) => p.price_gdstk ?? (Number(p.price_gdstk) ? 10 : 0);
+  const inStockProducts = dataList.filter((p) => getStock(p) > 0);
 
-  const cartCount = cart.reduce((s, p) => s + p.qty, 0);
-  const getStock = (p) => p.stock ?? (p.inStock ? 10 : 0);
-  const inStockProducts = products.filter((p) => getStock(p) > 0);
-  const categories = [
-    ...new Set(
-      inStockProducts.filter((p) => p.category).map((p) => p.category),
-    ),
-  ];
-
-  const filtered = products
+  const filtered = dataList
     .filter((p) => {
-      if (selectedShop && p.shop !== selectedShop) return false;
-      if (selectedCategory && p.category !== selectedCategory) return false;
+      if (selectedShop && p.bsins_id !== selectedShop) return false;
+      if (selectedCategory && p.items_scatg !== selectedCategory) return false;
       if (
         searchQuery &&
         !p.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -147,8 +115,8 @@ export default function ShoppingPage() {
       return true;
     })
     .sort((a, b) => {
-      const aPrice = a.price - (a.price * (a.discount || 0)) / 100;
-      const bPrice = b.price - (b.price * (b.discount || 0)) / 100;
+      const aPrice = Number(a.price_mrrat) - (Number(a.price_dspct) * (Number(a.discount) || 0)) / 100;
+      const bPrice = Number(b.price_mrrat) - (Number(b.price_dspct) * (Number(b.discount) || 0)) / 100;
       switch (sortBy) {
         case "name-asc":
           return a.name.localeCompare(b.name);
@@ -168,8 +136,9 @@ export default function ShoppingPage() {
   const getStockStatus = (p) => {
     const stock = getStock(p);
     if (stock <= 0) return { label: "Out of stock", color: "var(--error)" };
-    if (stock <= 5) return { label: `Only ${stock} left`, color: "orange" };
-    return { label: `${stock} in stock`, color: "green" };
+    if (stock <= 5)
+      return { label: `Only ${Number(stock)} left`, color: "orange" };
+    return { label: `${Number(stock)} in stock`, color: "green" };
   };
 
   const getProductReviews = (product) =>
@@ -191,8 +160,8 @@ export default function ShoppingPage() {
           onClick={() => navigate("/cart")}
         >
           <FiShoppingCart />
-          {cartCount > 0 && (
-            <span className="shop-cart-badge">{cartCount}</span>
+          {cartItemsQty > 0 && (
+            <span className="shop-cart-badge">{cartItemsQty}</span>
           )}
         </button>
       </div>
@@ -228,9 +197,9 @@ export default function ShoppingPage() {
             onChange={(e) => setSelectedShop(e.target.value)}
           >
             <option value="">All Shops</option>
-            {shops.map((s) => (
-              <option key={s.name} value={s.name}>
-                {s.name}
+            {bsins_options.map((s) => (
+              <option key={s.bsins_id} value={s.bsins_id}>
+                {s.bsins_cname}
               </option>
             ))}
           </select>
@@ -244,9 +213,9 @@ export default function ShoppingPage() {
             onChange={(e) => setSelectedCategory(e.target.value)}
           >
             <option value="">All Categories</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
+            {scatg_options.map((cat) => (
+              <option key={cat.items_scatg} value={cat.items_scatg}>
+                {cat.items_scatg}
               </option>
             ))}
           </select>
@@ -272,20 +241,20 @@ export default function ShoppingPage() {
       {/* Shop chips */}
       {!selectedShop &&
         !searchQuery &&
-        shops.length > 0 &&
+        bsins_options.length > 0 &&
         filtered.length > 0 && (
           <div className="ui-card shop-chips-card">
             <div className="shop-chips-wrap">
-              {shops.map((s) => {
-                const count = filtered.filter((p) => p.shop === s.name).length;
+              {bsins_options.map((s) => {
+                const count = filtered.filter((p) => p.bsins_id === s.bsins_id).length;
                 if (count === 0) return null;
                 return (
                   <button
-                    key={s.name}
-                    onClick={() => setSelectedShop(s.name)}
+                    key={s.bsins_id}
+                    onClick={() => setSelectedShop(s.bsins_id)}
                     className="shop-chip-btn"
                   >
-                    🏪 {s.name} <span className="shop-chip-count">{count}</span>
+                    🏪 {s.bsins_cname} <span className="shop-chip-count">{count}</span>
                   </button>
                 );
               })}
@@ -294,7 +263,7 @@ export default function ShoppingPage() {
         )}
 
       {/* Product list */}
-      {filtered.length === 0 ? (
+      {dataList.length === 0 ? (
         <div className="shop-empty-state">
           <div className="shop-empty-icon">🛍️</div>
           <div>
@@ -316,8 +285,11 @@ export default function ShoppingPage() {
         </div>
       ) : (
         <div className="shop-product-list">
-          {filtered.map((p, idx) => {
-            const finalPrice = p.price - (p.price * (p.discount || 0)) / 100;
+          {/* {JSON.stringify(dataList)} */}
+          {dataList.map((p, idx) => {
+            const finalPrice =
+              Number(p.price_mrrat) -
+              (Number(p.price_mrrat) * (Number(p.price_dspct) || 0)) / 100;
             const stockStatus = getStockStatus(p);
             const prodReviews = getProductReviews(p);
             const avgRating = calcAvg(prodReviews);
@@ -328,18 +300,18 @@ export default function ShoppingPage() {
                 onClick={() => setDetailModal(p)}
               >
                 <div className="compact-thumb">
-                  {p.image ? (
+                  {p.items_image ? (
                     <img
-                      src={p.image}
-                      alt={p.name}
+                      src={p.items_image}
+                      alt={p.items_iname}
                       className="compact-thumb-img"
                     />
                   ) : (
                     <span className="compact-thumb-placeholder">📦</span>
                   )}
-                  {p.discount > 0 && (
+                  {p.price_dspct > 0 && (
                     <span className="compact-discount-badge">
-                      -{p.discount}%
+                      -{Number(p.price_dspct)}%
                     </span>
                   )}
                   <button
@@ -362,17 +334,17 @@ export default function ShoppingPage() {
                 </div>
                 <div className="compact-info">
                   <div className="compact-name-row">
-                    <span className="compact-name">{p.name}</span>
-                    {p.shop && (
+                    <span className="compact-name">{p.items_iname}</span>
+                    {p.bsins_cname && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           setSelectedShop(p.shop);
                         }}
                         className="compact-shop-badge"
-                        title={`Show only ${p.shop} products`}
+                        title={`Show only ${p.bsins_cname} products`}
                       >
-                        🏪 {p.shop}
+                        🏪 {p.bsins_cname}
                       </button>
                     )}
                   </div>
@@ -394,11 +366,11 @@ export default function ShoppingPage() {
                   <div className="compact-price-row">
                     <div className="compact-price-left">
                       <span className="compact-price-current">
-                        ₹{finalPrice.toFixed(2)}
+                        ৳{finalPrice.toFixed(2)}
                       </span>
                       {p.discount > 0 && (
                         <span className="compact-price-old">
-                          ₹{p.price.toFixed(2)}
+                          ৳{p.price_mrrat.toFixed(2)}
                         </span>
                       )}
                     </div>
@@ -418,7 +390,7 @@ export default function ShoppingPage() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          addToCart(p);
+                          handleAddToCart(p);
                         }}
                         className="ui-btn ui-btn-primary compact-add-btn"
                       >
@@ -438,8 +410,8 @@ export default function ShoppingPage() {
         <ProductDetailModal
           product={detailModal}
           onClose={() => setDetailModal(null)}
-          cart={cart}
-          onAddToCart={addToCart}
+          cart={cartItems}
+          onAddToCart={handleAddToCart}
           onToggleFavorite={toggleFavorite}
           isFavorite={isFavorite}
         />

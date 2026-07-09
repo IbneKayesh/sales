@@ -13,6 +13,7 @@ import {
   FiGrid,
   FiHeart,
   FiShoppingBag,
+  FiLogOut,
 } from "react-icons/fi";
 import "./LeftFlyout.css";
 
@@ -35,42 +36,43 @@ const shopItems = [
   { path: "/invoice-collections", icon: FiDollarSign, label: "Collections" },
 ];
 
-const accountItems = []; /* path set dynamically below */
-
 export default function LeftFlyout({ open, onClose }) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { isCustomer, isShop } = useAuth();
+  const { role, logout } = useAuth();
 
-  const navItems = isCustomer
-    ? customerItems
-    : isShop
-      ? shopItems
-      : customerItems;
-  const profilePath = isCustomer
-    ? "/customer-profile"
-    : isShop
-      ? "/shop-profile"
-      : "/auth/login";
+  const navItems =
+    role === "CUSTOMER"
+      ? customerItems
+      : role === "SHOP"
+        ? shopItems
+        : customerItems;
+
+  const profilePath =
+    role === "CUSTOMER"
+      ? "/customer-profile"
+      : role === "SHOP"
+        ? "/shop-profile"
+        : "/auth/login";
 
   const handleNav = (path) => {
     navigate(path);
     onClose();
   };
 
-  const sectionLabel = isCustomer
-    ? "Shopping"
-    : isShop
+  const sectionLabel =
+    role === "SHOP"
       ? "Shop Management"
-      : "Menu";
+      : role === "CUSTOMER"
+        ? "Shopping"
+        : Menu;
 
   return (
     <>
       {open && <div className="drawer-overlay" onClick={onClose} />}
-
       <aside className={`drawer-panel${open ? " drawer-panel--open" : ""}`}>
         <div className="drawer-header">
-          <h2 className="drawer-title">Menu</h2>
+          <h2 className="drawer-title">vMart 1.0.0</h2>
           <button
             className="drawer-close-btn"
             onClick={onClose}
@@ -109,6 +111,17 @@ export default function LeftFlyout({ open, onClose }) {
                 >
                   <FiUser />
                   Profile
+                </button>
+              </li>
+
+              <li>
+                <button
+                  className={`drawer-link`}
+                  style={{ fontWeight: 700, color: "red"}}
+                  onClick={logout}
+                >
+                  <FiLogOut />
+                  Logout
                 </button>
               </li>
             </ul>

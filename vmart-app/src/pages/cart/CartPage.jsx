@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  FiArrowRight,
-  FiShoppingCart,
-} from "react-icons/fi";
+import { FiArrowRight, FiShoppingCart } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import SearchableSelect from "../../components/SearchableSelect";
 import { useUI } from "../context/UIContext";
@@ -11,9 +8,27 @@ import { load, save, KEYS } from "../../utils/storage";
 import CartConfirmedView from "./CartConfirmedView";
 import CartShopGroup from "./CartShopGroup";
 import "./CartPage.css";
+import useCart from "@/hooks/useCart";
 
 export default function CartPage() {
   const navigate = useNavigate();
+  const {
+    crTitle,
+    crView,
+    formData,
+    errors,
+    dataList,
+    showModal,
+    runit_options,
+    scatg_options,
+    cartItems,
+    handleChange,
+    handleEdit,
+    handleOpenModal,
+    handleCloseModal,
+    handleSubmit,
+  } = useCart();
+
   const { showToast, showConfirm, setBusy, isBusy } = useUI();
   const [cart, setCart] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -21,14 +36,11 @@ export default function CartPage() {
   const [confirmed, setConfirmed] = useState(false);
   const [createdOrders, setCreatedOrders] = useState([]);
 
-  useEffect(() => {
-    setCart(load(KEYS.CART));
-    setCustomers(load(KEYS.CUSTOMERS));
-  }, []);
-
   const updateQty = (name, delta) => {
     setCart((prev) => {
-      const next = prev.map((p) => (p.name === name ? { ...p, qty: Math.max(1, p.qty + delta) } : p));
+      const next = prev.map((p) =>
+        p.name === name ? { ...p, qty: Math.max(1, p.qty + delta) } : p,
+      );
       save(KEYS.CART, next);
       return next;
     });
@@ -48,16 +60,20 @@ export default function CartPage() {
   const groupByShop = (items) => {
     const groups = {};
     items.forEach((item) => {
-      const shop = item.shop || "General";
-      if (!groups[shop]) groups[shop] = { shop, items: [] };
+      console.log("item",item)
+      const shop = item.bsins_id || "General";
+      const shopName = item.bsins_cname
+      if (!groups[shop]) groups[shop] = { shop, shopName, items: [] };
       groups[shop].items.push(item);
     });
     return Object.values(groups);
   };
 
-  const shopGroups = groupByShop(cart);
-  const calcGroupTotal = (group) => group.items.reduce((s, p) => s + calcSubtotal(p), 0);
-  const grandTotal = cart.reduce((s, p) => s + calcSubtotal(p), 0);
+  const shopGroups = groupByShop(cartItems);
+
+  const calcGroupTotal = (group) =>
+    group.items.reduce((s, p) => s + calcSubtotal(p), 0);
+  const grandTotal = cartItems.reduce((s, p) => s + calcSubtotal(p), 0);
   const orderGroupCount = shopGroups.length;
 
   const confirmOrder = () => {
@@ -74,10 +90,21 @@ export default function CartPage() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         shop: group.shop,
-        customer: found ? { name: found.name, contact: found.contact || "", address: found.address || "" } : { name: customerName, contact: "", address: "" },
+        customer: found
+          ? {
+              name: found.name,
+              contact: found.contact || "",
+              address: found.address || "",
+            }
+          : { name: customerName, contact: "", address: "" },
         products: group.items.map((p) => ({ ...p })),
-        deliveryCharge: 0, itemsTotal: groupTotal, grandTotal: groupTotal,
-        status: "pending", paymentStatus: "due", paidAmount: 0, invoiceId: null,
+        deliveryCharge: 0,
+        itemsTotal: groupTotal,
+        grandTotal: groupTotal,
+        status: "pending",
+        paymentStatus: "due",
+        paidAmount: 0,
+        invoiceId: null,
       };
       newOrders.push(order);
       orders.push(order);
@@ -93,7 +120,12 @@ export default function CartPage() {
   };
 
   if (confirmed) {
-    return <CartConfirmedView createdOrders={createdOrders} orderGroupCount={orderGroupCount} />;
+    return (
+      <CartConfirmedView
+        createdOrders={createdOrders}
+        orderGroupCount={orderGroupCount}
+      />
+    );
   }
 
   return (
@@ -101,19 +133,30 @@ export default function CartPage() {
       <div className="page-header">
         <div className="page-title-group">
           <p className="page-eyebrow">Cart</p>
-          <h1 className="page-heading">Your Cart ({cart.length})</h1>
+          <h1 className="page-heading">Your Cart ({cartItems.length})</h1>
         </div>
-        <div className="ui-badge"><FiShoppingCart /></div>
+        <div className="ui-badge">
+          <FiShoppingCart />
+        </div>
       </div>
 
-      {cart.length === 0 ? (
+      {cartItems.length === 0 ? (
         <div className="cart-empty-state">
-          <div className="cart-empty-icon-wrap"><FiShoppingCart /></div>
+          <div className="cart-empty-icon-wrap">
+            <FiShoppingCart />
+          </div>
           <div>
             <h3 className="cart-empty-heading">Your cart is empty</h3>
-            <p className="cart-empty-text">Browse products to add items to your cart.</p>
+            <p className="cart-empty-text">
+              Browse products to add items to your cart.
+            </p>
           </div>
-          <button className="ui-btn ui-btn-primary cart-empty-btn" onClick={() => navigate("/shopping")}>Browse Products</button>
+          <button
+            className="ui-btn ui-btn-primary cart-empty-btn"
+            onClick={() => navigate("/shopping")}
+          >
+            Browse Products
+          </button>
         </div>
       ) : (
         <>
@@ -122,37 +165,49 @@ export default function CartPage() {
               key={group.shop}
               group={group}
               calcGroupTotal={calcGroupTotal}
-              updateQty={updateQty}
-              removeItem={removeItem}
+              onChangeQty={updateQty}
+              onRemoveItem={removeItem}
             />
           ))}
 
-          <div className="ui-card">
+          {/* <div className="ui-card">
             <h3 className="ui-card-title">Customer</h3>
-            <SearchableSelect value={customerName} onChange={setCustomerName}
-              options={customers.map((c) => c.name)} placeholder="Search or type customer name..." />
-          </div>
+            <SearchableSelect
+              value={customerName}
+              onChange={setCustomerName}
+              options={customers.map((c) => c.name)}
+              placeholder="Search or type customer name..."
+            />
+          </div> */}
 
           <div className="ui-card">
             <h3 className="ui-card-title">Summary</h3>
             <div className="cart-summary-rows">
               <div className="cart-summary-row">
                 <span className="cart-summary-label">Items Total</span>
-                <span className="cart-summary-value">₹{grandTotal.toFixed(2)}</span>
+                <span className="cart-summary-value">
+                  ৳{grandTotal.toFixed(2)}
+                </span>
               </div>
               <div className="cart-summary-divider" />
               <div className="cart-summary-total-row">
                 <span className="cart-summary-total-label">Total</span>
-                <span className="cart-summary-total-value">₹{grandTotal.toFixed(2)}</span>
+                <span className="cart-summary-total-value">
+                  ৳{grandTotal.toFixed(2)}
+                </span>
               </div>
               <div className="cart-summary-note">
-                Order will be split into {orderGroupCount} order(s) by shop. Each shop receives its own order.
+                Order will be split into {orderGroupCount} order(s) by shop.
+                Each shop receives its own order.
               </div>
             </div>
           </div>
 
-          <button className="ui-btn ui-btn-primary cart-confirm-btn" onClick={confirmOrder}
-            disabled={!customerName.trim() || cart.length === 0 || isBusy}>
+          <button
+            className="ui-btn ui-btn-primary cart-confirm-btn"
+            onClick={confirmOrder}
+            disabled={cartItems.length === 0 || isBusy}
+          >
             <FiArrowRight /> Confirm & Place Orders ({orderGroupCount})
           </button>
         </>

@@ -39,8 +39,8 @@ export function generateId() {
  * @returns {number} Subtotal after discount.
  */
 export function calcSubtotal(item) {
-  const lineTotal = item.qty * item.price;
-  const discAmount = item.discount > 0 ? (lineTotal * item.discount) / 100 : 0;
+  const lineTotal = item.qty * Number(item.price_mrrat);
+  const discAmount = Number(item.price_dspct) > 0 ? (lineTotal * Number(item.price_dspct)) / 100 : 0;
   return lineTotal - discAmount;
 }
 

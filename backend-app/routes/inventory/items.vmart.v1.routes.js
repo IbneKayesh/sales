@@ -19,25 +19,18 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT itm.*,
-    runit.units_uname as runit_uname,
-    punit.units_uname as punit_uname,
-    sgrup.sgrup_sname as sgrup_sname,
-    scatg.scatg_sname as scatg_sname,
-    brand.brand_bname as brand_bname,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
+    const sql = `SELECT itm.id, itm.items_icode, itm.items_iname, itm.items_runit, itm.items_scatg, itm.items_image,
+prc.id price_id, prc.price_mrrat, prc.price_dspct, prc.price_gdstk
 FROM tmib_items itm
-JOIN tmib_units runit ON itm.items_runit = runit.id
-JOIN tmib_units punit ON itm.items_punit = punit.id
-JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
-JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
-JOIN tmib_brand brand ON itm.items_brand = brand.id
-LEFT JOIN tmnb_users csr ON itm.items_crusr = csr.id
-LEFT JOIN tmnb_users usr ON itm.items_upusr = usr.id
-WHERE itm.items_apusr = $1
-ORDER BY itm.items_iname`;
+JOIN tmib_price prc ON itm.id = prc.price_items
+AND itm.items_bsins = prc.price_bsins
+WHERE itm.items_itype = 'FG'
+AND itm.items_actve = TRUE
+AND prc.price_actve = TRUE
+AND itm.items_users = $1
+AND itm.items_bsins = $2`;
 
-    const params = [user_c];
+    const params = [user_c, user_b];
     const rows = await dbGetAll(sql, params, `get items- ${user_c}`);
     res.json({
       success: true,
@@ -71,7 +64,7 @@ router.post("/get-all-active", async (req, res) => {
     //database action
     const sql = `SELECT itm.*, 0 as edit_stop
     FROM tmib_items itm
-    WHERE itm.items_apusr = $1
+    WHERE itm.items_users = $1
     AND itm.items_actve = TRUE
     ORDER BY itm.items_iname ASC`;
 
@@ -96,8 +89,10 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      items_apusr,
+      items_users,
       items_bsins,
+      items_ccode,
+
       items_icode,
       items_iname,
       items_brcod,
@@ -118,6 +113,9 @@ const create = async (req, res) => {
       items_stpur,
       items_stsal,
       items_stnsf,
+      price_mrrat,
+      price_dspct,
+      price_gdstk,
       user_s,
       user_c,
       user_b,
@@ -127,12 +125,8 @@ const create = async (req, res) => {
     if (
       !items_iname ||
       !items_runit ||
-      !items_pkqty ||
-      !items_punit ||
-      !items_sgrup ||
       !items_scatg ||
-      !items_itype ||
-      !items_brand ||
+      !price_mrrat ||
       !user_s ||
       !user_c ||
       !user_b
@@ -145,49 +139,93 @@ const create = async (req, res) => {
     }
 
     //database action
-    const newCode = await GenNewCode(user_c, "tmib_items");
+    //build scripts
+    const scripts = [];
 
-    const sql = `INSERT INTO tmib_items(id, items_apusr, items_bsins, items_icode, items_iname, items_brcod,
+    const newCode = await GenNewCode(user_c, "tmib_items");
+    const item_id = uuidv4();
+
+    scripts.push({
+      sql: `INSERT INTO tmib_items(id, items_users, items_bsins, items_ccode, items_icode, items_iname, items_brcod,
     items_hscod, items_notes, items_runit, items_pkqty, items_punit, items_sgrup,
     items_scatg, items_itype, items_brand, items_tstck, items_sdvat, items_smrgn,
     items_fxcst, items_image, items_stpur, items_stsal, items_stnsf, items_crusr, items_upusr)
 	VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
         $13, $14, $15, $16, $17, $18,
-        $19, $20, $21, $22, $23, $24, $25)`;
-    const params = [
-      uuidv4(),
-      user_c,
-      user_b,
-      items_icode || newCode,
-      items_iname,
-      items_brcod,
-      items_hscod,
-      items_notes,
-      items_runit,
-      items_pkqty,
-      items_punit,
-      items_sgrup,
-      items_scatg,
-      items_itype,
-      items_brand,
-      items_tstck,
-      items_sdvat,
-      items_smrgn,
-      items_fxcst,
-      items_image,
-      items_stpur,
-      items_stsal,
-      items_stnsf,
-      user_s,
-      user_s,
-    ];
+        $19, $20, $21, $22, $23, $24, $25, $26)`,
+      params: [
+        item_id,
+        user_c,
+        user_b,
+        newCode,
+        items_icode,
+        items_iname,
+        items_brcod,
+        items_hscod,
+        items_notes,
+        items_runit,
+        items_pkqty || 1,
+        items_punit,
+        items_sgrup,
+        items_scatg,
+        items_itype || "FG",
+        items_brand,
+        items_tstck,
+        items_sdvat,
+        items_smrgn,
+        items_fxcst,
+        items_image,
+        items_stpur || false,
+        items_stsal || false,
+        items_stnsf || false,
+        user_s,
+        user_s,
+      ],
+    });
 
-    await dbRun(sql, params, `create item- ${user_c}`);
-    res.json({
+    const newCode2 = await GenNewCode(user_c, "tmib_price");
+
+    scripts.push({
+      sql: `INSERT INTO tmib_price(id, price_users, price_bsins, price_ccode, price_items, 
+      price_lprat, price_dprat, price_tprat, price_mrrat, price_dspct, 
+      price_gdstk, price_bdstk, price_mnqty, price_mxqty, price_pbqty, 
+      price_sbqty, price_notes, price_jnote, 
+      price_crusr, price_upusr
+    )
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`,
+      params: [
+        uuidv4(),
+        user_c,
+        user_b,
+        newCode2,
+        item_id,
+        0,
+        0,
+        0,
+        price_mrrat || 0,
+        price_dspct || 0,
+        price_gdstk || 0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        "",
+        "{}",
+        user_s,
+        user_s,
+      ],
+    });
+
+    await dbRunAll(scripts);
+
+    return res.json({
       success: true,
-      message: `${items_iname} - Created successfully.`,
-      data: {},
+      message: "Item created successfully",
+      data: {
+        ...req.body,
+      },
     });
   } catch (error) {
     console.error("database action error:", error);
@@ -203,8 +241,10 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      items_apusr,
+      items_users,
       items_bsins,
+      items_ccode,
+
       items_icode,
       items_iname,
       items_brcod,
@@ -225,6 +265,10 @@ const update = async (req, res) => {
       items_stpur,
       items_stsal,
       items_stnsf,
+      price_id,
+      price_mrrat,
+      price_dspct,
+      price_gdstk,
       user_s,
       user_c,
       user_b,
@@ -234,12 +278,9 @@ const update = async (req, res) => {
     if (
       !items_iname ||
       !items_runit ||
-      !items_pkqty ||
-      !items_punit ||
-      !items_sgrup ||
       !items_scatg ||
-      !items_itype ||
-      !items_brand ||
+      !price_id ||
+      !price_mrrat ||
       !user_s ||
       !user_c ||
       !user_b
@@ -252,59 +293,39 @@ const update = async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmib_items
+    //build scripts
+    const scripts = [];
+    scripts.push({
+      sql: `UPDATE tmib_items
     SET items_iname = $1,
-    items_brcod = $2,
-    items_hscod = $3,
-    items_notes = $4,
-    items_runit = $5,
-    items_pkqty = $6,
-    items_punit = $7,
-    items_sgrup = $8,
-    items_scatg = $9,
-    items_itype = $10,
-    items_brand = $11,
-    items_tstck = $12,
-    items_sdvat = $13,
-    items_smrgn = $14,
-    items_fxcst = $15,
-    items_image = $16,
-    items_stpur = $17,
-    items_stsal = $18,
-    items_stnsf = $19,
-    items_upusr = $20,
+    items_runit = $2,
+    items_scatg = $3,
+    items_upusr = $4,
     items_updat = CURRENT_TIMESTAMP,
     items_rvnmr = items_rvnmr + 1
-    WHERE id = $21`;
-    const params = [
-      items_iname,
-      items_brcod,
-      items_hscod,
-      items_notes,
-      items_runit,
-      items_pkqty,
-      items_punit,
-      items_sgrup,
-      items_scatg,
-      items_itype,
-      items_brand,
-      items_tstck,
-      items_sdvat,
-      items_smrgn,
-      items_fxcst,
-      items_image,
-      items_stpur,
-      items_stsal,
-      items_stnsf,
-      user_s,
-      id,
-    ];
+    WHERE id = $5`,
+      params: [items_iname, items_runit, items_scatg, user_s, id],
+    });
+    scripts.push({
+      sql: `UPDATE tmib_price
+    SET price_mrrat = $1,
+    price_dspct = $2,
+    price_gdstk = $3,
+    price_upusr = $4,
+    price_updat = CURRENT_TIMESTAMP,
+    price_rvnmr = price_rvnmr + 1
+    WHERE id = $5`,
+      params: [price_mrrat, price_dspct, price_gdstk, user_s, price_id],
+    });
 
-    await dbRun(sql, params, `update item- ${user_c}`);
-    res.json({
+    await dbRunAll(scripts);
+
+    return res.json({
       success: true,
-      message: `${items_iname} - Updated successfully.`,
-      data: {},
+      message: "Item updated successfully",
+      data: {
+        ...req.body,
+      },
     });
   } catch (error) {
     console.error("database action error:", error);
@@ -371,9 +392,8 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-
-// get-new-business-items
-router.post("/get-new-business-items", async (req, res) => {
+// get-all-business-items
+router.post("/get-all-business-items", async (req, res) => {
   try {
     const { user_s, user_c, user_b } = req.body;
 
@@ -387,15 +407,19 @@ router.post("/get-new-business-items", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT itm.*, 0 as edit_stop
-    FROM tmib_items itm
-    LEFT JOIN tmib_price prce ON itm.id = prce.price_items
-    WHERE itm.items_apusr = $1
-    AND itm.items_actve = TRUE
-    AND prce.price_items IS NULL
+    const sql = `SELECT itm.id, itm.items_icode, itm.items_iname, itm.items_runit, itm.items_scatg, itm.items_image,
+prc.id price_id, prc.price_mrrat, prc.price_dspct, prc.price_gdstk,
+bsn.id as bsins_id, bsn.bsins_cname
+FROM tmib_items itm
+left JOIN tmib_price prc ON itm.id = prc.price_items
+AND itm.items_bsins = prc.price_bsins
+left JOIN tmsb_bsins bsn ON itm.items_bsins = bsn.id
+WHERE itm.items_itype = 'FG'
+AND itm.items_actve = TRUE
+AND prc.price_actve = TRUE
     ORDER BY itm.items_iname ASC`;
 
-    const params = [user_c];
+    const params = [];
     const rows = await dbGetAll(sql, params, `get items- ${user_c}`);
     res.json({
       success: true,
@@ -411,7 +435,6 @@ router.post("/get-new-business-items", async (req, res) => {
     });
   }
 });
-
 
 // get-new-mrr-items
 router.post("/get-new-mrr-items", async (req, res) => {

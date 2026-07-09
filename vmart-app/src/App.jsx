@@ -31,6 +31,7 @@ import "./App.css";
 /* ── Protected route wrapper ── */
 function ProtectedRoute() {
   const { user } = useAuth();
+  //console.log("user",user)
   if (!user) return <Navigate to="/auth/login" replace />;
   return <Outlet />;
 }

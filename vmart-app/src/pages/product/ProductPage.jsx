@@ -7,69 +7,32 @@ import {
   FiAlertTriangle,
 } from "react-icons/fi";
 import { useUI } from "../context/UIContext";
-import { load, save, KEYS } from "../../utils/storage";
 import ProductFormModal from "./ProductFormModal";
 import "./ProductPage.css";
+import useProducts from "@/hooks/useProducts";
 
 export default function ProductPage() {
+  const {
+    crTitle,
+    crView,
+    formData,
+    errors,
+    dataList,
+    showModal,
+    runit_options,
+    scatg_options,
+    handleChange,
+    handleEdit,
+    handleOpenModal,
+    handleCloseModal,
+    handleSubmit,
+  } = useProducts();
+
   const { showToast, showConfirm, setBusy, isBusy } = useUI();
-  const [shops, setShops] = useState(() => load(KEYS.SHOPS));
   const [form, setForm] = useState({
-    name: "",
-    category: "",
-    shop: "",
-    price: 0,
-    discount: 0,
-    stock: 0,
     image: "",
   });
-  const [products, setProducts] = useState(() => load(KEYS.PRODUCTS));
-  const [editingIdx, setEditingIdx] = useState(null);
-  const [modal, setModal] = useState(false);
   const fileInputRef = useRef(null);
-
-  useEffect(() => {
-    save(KEYS.PRODUCTS, products);
-  }, [products]);
-
-  const handleChange = (field, value) =>
-    setForm((prev) => ({ ...prev, [field]: value }));
-
-  const resetForm = () => {
-    setForm({
-      name: "",
-      category: "",
-      shop: "",
-      price: 0,
-      discount: 0,
-      stock: 0,
-      image: "",
-    });
-    setEditingIdx(null);
-  };
-
-  const openAdd = () => {
-    resetForm();
-    setModal(true);
-  };
-  const openEdit = (idx) => {
-    const p = products[idx];
-    setForm({
-      name: p.name || "",
-      category: p.category || "",
-      shop: p.shop || "",
-      price: p.price || 0,
-      discount: p.discount || 0,
-      stock: p.stock !== undefined ? p.stock : p.inStock ? 10 : 0,
-      image: p.image || "",
-    });
-    setEditingIdx(idx);
-    setModal(true);
-  };
-  const closeModal = () => {
-    setModal(false);
-    resetForm();
-  };
 
   const handleImageUpload = (e) => {
     const file = e.target.files?.[0];
@@ -88,36 +51,8 @@ export default function ProductPage() {
     reader.readAsDataURL(file);
   };
 
-  const saveProduct = () => {
-    if (!form.name.trim()) return;
-    setBusy(true);
-    const isEdit = editingIdx !== null;
-    if (isEdit)
-      setProducts((prev) => {
-        const n = [...prev];
-        n[editingIdx] = { ...form };
-        return n;
-      });
-    else setProducts((prev) => [...prev, { ...form }]);
-    closeModal();
-    showToast(
-      isEdit ? "Product updated successfully" : "Product added successfully",
-    );
-    setBusy(false);
-  };
-
-  const deleteProduct = async (idx) => {
-    const confirmed = await showConfirm(`Delete ${products[idx].name}?`);
-    if (!confirmed) return;
-    setBusy(true);
-    setProducts((prev) => prev.filter((_, i) => i !== idx));
-    if (editingIdx === idx) closeModal();
-    showToast("Product deleted", "error");
-    setBusy(false);
-  };
-
   const getStockStatus = (p) => {
-    const stock = p.stock ?? (p.inStock ? 10 : 0);
+    const stock = Number(p.price_gdstk) ?? (p.price_gdstk ? 10 : 0);
     if (stock <= 0)
       return {
         label: "Out of Stock",
@@ -138,12 +73,12 @@ export default function ProductPage() {
       <div className="page-header">
         <div className="page-title-group">
           <p className="page-eyebrow">Inventory</p>
-          <h1 className="page-heading">Products ({products.length})</h1>
+          <h1 className="page-heading">Products ({dataList.length})</h1>
         </div>
         <div className="product-header-actions">
           <button
             className="ui-btn ui-btn-primary product-add-btn"
-            onClick={openAdd}
+            onClick={handleOpenModal}
           >
             <FiPlus /> Add
           </button>
@@ -153,7 +88,7 @@ export default function ProductPage() {
         </div>
       </div>
 
-      {products.length === 0 ? (
+      {dataList.length === 0 ? (
         <div className="product-empty-state">
           <div className="product-empty-icon">
             <FiBox />
@@ -168,19 +103,19 @@ export default function ProductPage() {
       ) : (
         <div className="ui-card">
           <div className="product-list">
-            {products.map((p, idx) => {
+            {dataList.map((p, idx) => {
               const stockStatus = getStockStatus(p);
               return (
                 <div
                   key={idx}
                   className="product-list-item"
-                  onClick={() => openEdit(idx)}
+                  onClick={() => handleEdit(p)}
                 >
                   <div className="product-thumb">
                     {p.image ? (
                       <img
                         src={p.image}
-                        alt={p.name}
+                        alt={p.items_iname}
                         className="product-thumb-img"
                       />
                     ) : (
@@ -189,12 +124,14 @@ export default function ProductPage() {
                   </div>
                   <div className="product-info">
                     <div className="product-name-row">
-                      <span className="product-name">{p.name}</span>
-                      {p.category && (
-                        <span className="ui-tag">{p.category}</span>
+                      <span className="product-name">{p.items_iname}</span>
+                      {p.items_scatg && (
+                        <span className="ui-tag">{p.items_scatg}</span>
                       )}
-                      {p.shop && (
-                        <span className="ui-tag ui-tag--shop">🏪 {p.shop}</span>
+                      {p.items_runit && (
+                        <span className="ui-tag ui-tag--shop">
+                          ⚖ {p.items_runit}
+                        </span>
                       )}
                       {stockStatus && (
                         <span
@@ -212,16 +149,18 @@ export default function ProductPage() {
                       )}
                     </div>
                     <div className="product-meta">
-                      ₹{p.price.toFixed(2)}
-                      {p.discount > 0 && (
+                      ৳{Number(p.price_mrrat).toFixed(2)}
+                      {Number(p.price_dspct) > 0 && (
                         <span className="product-discount-text">
-                          -{p.discount}% off
+                          -{Number(p.price_dspct).toFixed(0)}% off
                         </span>
                       )}
-                      {(p.stock ?? (p.inStock ? 10 : 0)) > 0 && (
+                      {(Number(p.price_gdstk) ?? (p.price_gdstk ? 10 : 0)) >
+                        0 && (
                         <span className="product-stock-text">
                           {" "}
-                          · Stock: {p.stock ?? (p.inStock ? 10 : 0)}
+                          · Stock:{" "}
+                          {Number(p.price_gdstk) ?? (p.price_gdstk ? 10 : 0)}
                         </span>
                       )}
                     </div>
@@ -230,14 +169,14 @@ export default function ProductPage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        openEdit(idx);
+                        handleEdit(p);
                       }}
                       className="product-icon-btn product-icon-btn--edit"
                       aria-label="Edit product"
                     >
                       <FiEdit2 />
                     </button>
-                    <button
+                    {/* <button
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteProduct(idx);
@@ -246,7 +185,7 @@ export default function ProductPage() {
                       aria-label="Delete product"
                     >
                       <FiTrash2 />
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               );
@@ -255,17 +194,17 @@ export default function ProductPage() {
         </div>
       )}
 
-      {modal && (
+      {showModal && (
         <ProductFormModal
-          editingIdx={editingIdx}
-          closeModal={closeModal}
-          shops={shops}
-          form={form}
-          handleChange={handleChange}
           isBusy={isBusy}
-          saveProduct={saveProduct}
+          formData={formData}
+          onChange={handleChange}
+          runit_options={runit_options}
+          scatg_options={scatg_options}
           fileInputRef={fileInputRef}
-          handleImageUpload={handleImageUpload}
+          onImageUpload={handleImageUpload}
+          onCloseModal={handleCloseModal}
+          onSubmit={handleSubmit}
         />
       )}
     </section>

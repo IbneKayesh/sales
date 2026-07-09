@@ -236,7 +236,7 @@ router.post("/vmart/login-with-password", async (req, res) => {
 	    '', 'SHOP', 'N' users_aplnk
       FROM tmhb_emply emp
       JOIN tmsb_users usr ON emp.emply_users = usr.id
-      WHERE emp.emply_email  = $1
+      WHERE emp.emply_cntno  = $1
       AND emp.emply_pswrd = $2
       AND emp.emply_actve = TRUE`;
     const params_user = [users_id, users_pswrd];

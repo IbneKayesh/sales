@@ -3,7 +3,6 @@ import {
   useContext,
   useMemo,
   useState,
-  useEffect,
   useCallback,
 } from "react";
 import {
@@ -15,17 +14,10 @@ import {
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [role, setRole] = useState("USER");
-
-  useEffect(() => {
-    const stored = getStorageData()?.users;
-    //console.log("stored",stored)
-    if (stored) {
-      setUser(stored);
-      setRole(stored.users_crole);
-    }
-  }, []);
+  const [user, setUser] = useState(() => getStorageData()?.users ?? null);
+  const [role, setRole] = useState(
+    () => getStorageData()?.users?.users_crole ?? "USER",
+  );
 
   const logout = useCallback(() => {
     setUser(null);
@@ -34,6 +26,8 @@ export function AuthProvider({ children }) {
 
   const saveLoggedAuth = useCallback((updates) => {
     setUser(updates);
+    setRole(updates?.users_crole ?? "USER");
+    setStorageData({ users: updates });
   }, []);
 
   const value = useMemo(

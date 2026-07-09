@@ -1,37 +1,28 @@
 import { FiCamera, FiAlertTriangle, FiX } from "react-icons/fi";
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
-import Select from "../../components/ui/Select";
-import FormField from "../../components/ui/FormField";
-
-const categories = [
-  "Groceries",
-  "Electronics",
-  "Clothing",
-  "Home",
-  "Beauty",
-  "Other",
-];
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import Select from "@/components/ui/Select";
+import FormField from "@/components/ui/FormField";
 
 export default function ProductFormModal({
-  editingIdx,
-  closeModal,
-  shops,
-  form,
-  handleChange,
-  saveProduct,
-  fileInputRef,
-  handleImageUpload,
   isBusy,
+  formData,
+  onChange,
+  runit_options,
+  scatg_options,
+  fileInputRef,
+  onImageUpload,
+  onCloseModal,
+  onSubmit,
 }) {
   return (
-    <div className="product-modal-overlay" onClick={closeModal}>
+    <div className="product-modal-overlay" onClick={onCloseModal}>
       <div className="product-modal-panel" onClick={(e) => e.stopPropagation()}>
         <div className="product-modal-header">
           <h3 className="product-modal-title">
-            {editingIdx !== null ? "Edit Product" : "Add Product"}
+            {formData.id !== null ? "Edit Product" : "Add Product"}
           </h3>
-          <button onClick={closeModal} className="product-modal-close">
+          <button onClick={onCloseModal} className="product-modal-close">
             <FiX />
           </button>
         </div>
@@ -44,9 +35,9 @@ export default function ProductFormModal({
                 onClick={() => fileInputRef.current?.click()}
                 className="product-image-box"
               >
-                {form.image ? (
+                {formData.image ? (
                   <img
-                    src={form.image}
+                    src={formData.image}
                     alt="Preview"
                     className="product-image-preview"
                   />
@@ -67,99 +58,96 @@ export default function ProductFormModal({
               name="product-image"
               accept="image/*"
               className="product-hidden-input"
-              onChange={handleImageUpload}
+              onChange={onImageUpload}
             />
           </FormField>
 
-          <FormField label="Product Name" htmlFor="product-name">
+          <FormField label="Product Name" htmlFor="items_iname">
             <Input
-              id="product-name"
-              name="product-name"
+              name="items_iname"
               placeholder="Product name"
-              value={form.name}
-              onChange={(e) => handleChange("name", e.target.value)}
+              value={formData.items_iname}
+              onChange={(e) => onChange("items_iname", e.target.value)}
             />
-          </FormField>
-
-          <FormField label="Shop / Vendor" htmlFor="product-shop">
-            <Select
-              id="product-shop"
-              name="product-shop"
-              value={form.shop}
-              onChange={(e) => handleChange("shop", e.target.value)}
-            >
-              <option value="">Select shop</option>
-              {shops.map((s) => (
-                <option key={s.name} value={s.name}>
-                  {s.name}
-                </option>
-              ))}
-            </Select>
-          </FormField>
-
-          <FormField label="Category" htmlFor="product-category">
-            <Select
-              id="product-category"
-              name="product-category"
-              value={form.category}
-              onChange={(e) => handleChange("category", e.target.value)}
-            >
-              <option value="">Select category</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </Select>
           </FormField>
 
           <div className="product-form-grid">
-            <FormField label="Price (₹)" htmlFor="product-price">
+            <FormField label="Unit" htmlFor="items_runit">
+              <Select
+                name="items_runit"
+                value={formData.items_runit}
+                onChange={(e) => onChange("items_runit", e.target.value)}
+              >
+                <option value="">Select unit</option>
+                {runit_options.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </Select>
+            </FormField>
+            <FormField label="Category" htmlFor="items_scatg">
+              <Select
+                name="items_scatg"
+                value={formData.items_scatg}
+                onChange={(e) => onChange("items_scatg", e.target.value)}
+              >
+                <option value="">Select category</option>
+                {scatg_options.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </Select>
+            </FormField>
+          </div>
+          <div className="product-form-grid">
+            <FormField label="Price (৳)" htmlFor="price_mrrat">
               <Input
                 type="number"
-                id="product-price"
-                name="product-price"
+                name="price_mrrat"
                 min={0}
                 step={0.01}
                 placeholder="0.00"
-                value={form.price || ""}
+                value={formData.price_mrrat || ""}
                 onChange={(e) =>
-                  handleChange("price", Number(e.target.value) || 0)
+                  onChange("price_mrrat", Number(e.target.value) || 0)
                 }
               />
             </FormField>
-            <FormField label="Discount (%)" htmlFor="product-discount">
+            <FormField label="Discount (%)" htmlFor="price_dspct">
               <Input
                 type="number"
-                id="product-discount"
-                name="product-discount"
+                name="price_dspct"
                 min={0}
                 max={100}
                 placeholder="0"
-                value={form.discount || ""}
+                value={formData.price_dspct || ""}
                 onChange={(e) =>
-                  handleChange("discount", Number(e.target.value) || 0)
+                  onChange("price_dspct", Number(e.target.value) || 0)
                 }
               />
             </FormField>
           </div>
 
-          <FormField label="Stock Quantity" htmlFor="product-stock">
+          <FormField label="Stock Quantity" htmlFor="price_gdstk">
             <Input
               type="number"
-              id="product-stock"
-              name="product-stock"
+              name="price_gdstk"
               min={0}
               placeholder="0 = out of stock"
-              value={form.stock ?? ""}
+              value={formData.price_gdstk ?? ""}
               onChange={(e) =>
-                handleChange("stock", Math.max(0, Number(e.target.value) || 0))
+                onChange(
+                  "price_gdstk",
+                  Math.max(0, Number(e.target.value) || 0),
+                )
               }
             />
-            {form.stock > 0 && form.stock <= 5 && (
+            {formData.price_gdstk > 0 && formData.price_gdstk <= 5 && (
               <div className="product-lowstock-warning">
-                <FiAlertTriangle size={12} /> Low stock — only {form.stock}{" "}
-                units
+                <FiAlertTriangle size={12} /> Low stock — only{" "}
+                {formData.price_gdstk} units
               </div>
             )}
           </FormField>
@@ -168,17 +156,17 @@ export default function ProductFormModal({
             <Button
               variant="secondary"
               className="product-form-btn"
-              onClick={closeModal}
+              onClick={onCloseModal}
             >
               Cancel
             </Button>
             <Button
               variant="primary"
               className="product-form-btn"
-              onClick={saveProduct}
-              disabled={!form.name.trim() || isBusy}
+              onClick={onSubmit}
+              disabled={!formData.items_iname.trim() || isBusy}
             >
-              {editingIdx !== null ? "Update Product" : "Add Product"}
+              {formData.id !== null ? "Update Product" : "Add Product"}
             </Button>
           </div>
         </div>

@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import "./Topbar.css";
 
 export default function Topbar({ onMenu }) {
-  const { user, isAuthenticated, isCustomer, isShop, logout } = useAuth();
+  const { user, role, logout } = useAuth();
 
   return (
     <header className="app-header">
@@ -13,11 +13,11 @@ export default function Topbar({ onMenu }) {
 
       <div className="topbar-center">
         <h2 className="app-logo-title">
-          {isAuthenticated && user ? (
+          {user ? (
             <span className="topbar-user-row">
-              <span className="topbar-user-name">{user.name}</span>
+              <span className="topbar-user-name">{user.users_pname}</span>
               <span className="topbar-role-badge">
-                {isShop ? "SHOP" : "CUSTOMER"}
+                {role == "SHOP" ? "Shop" : "Customer"}
               </span>
             </span>
           ) : (
@@ -26,7 +26,7 @@ export default function Topbar({ onMenu }) {
         </h2>
       </div>
 
-      {isAuthenticated ? (
+      {user ? (
         <button className="ui-btn-icon" onClick={logout}>
           <FiLogOut />
         </button>
