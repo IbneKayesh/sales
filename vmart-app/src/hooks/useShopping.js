@@ -73,7 +73,7 @@ const useShopping = () => {
 
   const handleGetCartItems = async () => {
     const cartItems = getStorageData()?.vMartCart;
-    setCartItems(cartItems || [{ qty: 0 }]);
+    setCartItems(cartItems || []);
   };
 
   useEffect(() => {
@@ -160,6 +160,7 @@ const useShopping = () => {
           },
         ];
       }
+      //console.log("next", next);
       setStorageData({ vMartCart: next });
       return next;
     });

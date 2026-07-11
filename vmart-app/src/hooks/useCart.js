@@ -11,7 +11,7 @@ import {
 
 const useCart = () => {
   const navigate = useNavigate();
-  const { showToast, setIsBusy, isBusy } = useUI();
+  const { showToast, setIsBusy, isBusy, showConfirm } = useUI();
 
   const [crTitle, setCrTitle] = useState("Login");
   const [crView, setCrView] = useState("LOGIN");
@@ -52,9 +52,9 @@ const useCart = () => {
       setIsBusy(false);
     }
   };
-   const handleGetCartItems = async () => {
+  const handleGetCartItems = async () => {
     const cartItems = getStorageData()?.vMartCart;
-    setCartItems(cartItems || [{ qty: 0 }]);
+    setCartItems(cartItems || []);
   };
 
   useEffect(() => {
@@ -138,6 +138,30 @@ const useCart = () => {
   //   setBusy(false);
   // };
 
+  const handleChangeQty = (product_id, delta) => {
+    setCartItems((prev) => {
+      const next = prev.map((p) =>
+        p.id === product_id ? { ...p, qty: Math.max(1, p.qty + delta) } : p,
+      );
+      setStorageData({ vMartCart: next });
+      return next;
+    });
+  };
+
+  const handleRemoveItem = async (product_id) => {
+    const delItem = cartItems.find((f) => f.id === product_id);
+    const confirmed = await showConfirm(
+      `${delItem?.items_iname} - Remove from cart?`,
+    );
+    if (!confirmed) return;
+    setCartItems((prev) => {
+      const next = prev.filter((p) => p.id !== product_id);
+      setStorageData({ vMartCart: next });
+      return next;
+    });
+    showToast("Item removed from cart", "error");
+  };
+
   return {
     crTitle,
     crView,
@@ -153,6 +177,8 @@ const useCart = () => {
     handleOpenModal,
     handleCloseModal,
     handleSubmit,
+    handleChangeQty,
+    handleRemoveItem,
   };
 };
 export default useCart;

@@ -16,7 +16,7 @@ export default function LogPassC({
           onClick={onChangeMobileNo}
           className="auth-ghost-btn auth-ghost-btn--sm auth-ghost-btn--ml"
         >
-          (Not you?)
+          Not you?
         </button>
       </p>
       <FormField label="Password" htmlFor="users_pswrd">

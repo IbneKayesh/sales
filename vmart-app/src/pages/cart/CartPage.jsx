@@ -27,6 +27,8 @@ export default function CartPage() {
     handleOpenModal,
     handleCloseModal,
     handleSubmit,
+    handleChangeQty,
+    handleRemoveItem,
   } = useCart();
 
   const { showToast, showConfirm, setBusy, isBusy } = useUI();
@@ -35,16 +37,6 @@ export default function CartPage() {
   const [customerName, setCustomerName] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [createdOrders, setCreatedOrders] = useState([]);
-
-  const updateQty = (name, delta) => {
-    setCart((prev) => {
-      const next = prev.map((p) =>
-        p.name === name ? { ...p, qty: Math.max(1, p.qty + delta) } : p,
-      );
-      save(KEYS.CART, next);
-      return next;
-    });
-  };
 
   const removeItem = async (name) => {
     const confirmed = await showConfirm(`Remove ${name} from cart?`);
@@ -60,9 +52,9 @@ export default function CartPage() {
   const groupByShop = (items) => {
     const groups = {};
     items.forEach((item) => {
-      console.log("item",item)
+      //console.log("item",item)
       const shop = item.bsins_id || "General";
-      const shopName = item.bsins_cname
+      const shopName = item.bsins_cname;
       if (!groups[shop]) groups[shop] = { shop, shopName, items: [] };
       groups[shop].items.push(item);
     });
@@ -77,9 +69,7 @@ export default function CartPage() {
   const orderGroupCount = shopGroups.length;
 
   const confirmOrder = () => {
-    if (!customerName.trim() || cart.length === 0) return;
     setBusy(true);
-    const found = customers.find((c) => c.name === customerName);
     const orders = load(KEYS.ORDERS);
     const newOrders = [];
 
@@ -109,10 +99,6 @@ export default function CartPage() {
       newOrders.push(order);
       orders.push(order);
     });
-
-    save(KEYS.ORDERS, orders);
-    save(KEYS.CART, []);
-    setCart([]);
     setCreatedOrders(newOrders);
     setConfirmed(true);
     showToast(`${newOrders.length} order(s) placed successfully!`);
@@ -165,8 +151,8 @@ export default function CartPage() {
               key={group.shop}
               group={group}
               calcGroupTotal={calcGroupTotal}
-              onChangeQty={updateQty}
-              onRemoveItem={removeItem}
+              onChangeQty={handleChangeQty}
+              onRemoveItem={handleRemoveItem}
             />
           ))}
 
