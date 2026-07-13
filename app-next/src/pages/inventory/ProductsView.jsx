@@ -1,6 +1,8 @@
 import { useState, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { useSlidePanel } from '../../components/ui/SlidePanel';
 import PanelDetail from '../../components/ui/PanelDetail';
+import DetailModal from '../../components/ui/DetailModal';
+import Badge from '../../components/ui/Badge';
 import { StockBar } from './inventoryConfig';
 import DataTable from '../../components/ui/DataTable';
 import GridView from '../../components/ui/GridView';
@@ -14,6 +16,24 @@ const ProductsView = forwardRef(function ProductsView({ products, setProducts, v
   const { openPanel, closePanel } = useSlidePanel();
   const [formOpen, setFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [previewProduct, setPreviewProduct] = useState(null);
+
+  const productDetailFields = [
+    { key: 'name', label: 'Product', render: (v) => <span style={{ fontWeight: 700, fontSize: '1.05rem' }}>{v}</span> },
+    { key: 'category', label: 'Category' },
+    { key: 'price', label: 'Price', render: (v) => <strong style={{ color: 'var(--accent)' }}>${v?.toLocaleString()}</strong> },
+    { key: 'stock', label: 'In Stock', render: (v, row) => <StockBar stock={v} minStock={row.minStock} /> },
+    { key: 'minStock', label: 'Min Stock' },
+    { key: 'unit', label: 'Unit' },
+  ];
+
+  const bulkProductColumns = [
+    { key: 'id', label: 'SKU' },
+    { key: 'name', label: 'Product' },
+    { key: 'category', label: 'Category' },
+    { key: 'price', label: 'Price', render: (v) => <span style={{ fontWeight: 600 }}>${v?.toLocaleString()}</span> },
+    { key: 'stock', label: 'Stock' },
+  ];
 
   const handleAdd = () => { setEditingProduct(null); setFormOpen(true); };
   const handleEdit = (product) => { setEditingProduct(product); setFormOpen(true); };
@@ -104,16 +124,64 @@ const ProductsView = forwardRef(function ProductsView({ products, setProducts, v
           searchPlaceholder="Search products..."
           onRowClick={openProductPanel}
           expandable
+          exportable
+          exportFilename="inventory-products"
+          bulkActions={{
+            label: 'Delete',
+            modalTitle: 'Delete Products',
+            actionLabel: 'Delete',
+            actionVariant: 'danger',
+            description: 'Select products to remove from inventory. This action cannot be undone.',
+            columns: bulkProductColumns,
+            size: 'lg',
+            confirm: {
+              title: 'Delete Products',
+              message: 'Are you sure you want to delete the selected products? This will open a preview where you can review and confirm.',
+              confirmText: 'Review & Delete',
+            },
+            onAction: async (items) => {
+              await new Promise(resolve => setTimeout(resolve, 500));
+              const ids = items.map(i => i.id);
+              setProducts(prev => prev.filter(p => !ids.includes(p.id)));
+            },
+          }}
           renderExpanded={(row) => (
-            <div className="expanded-fields">
-              {productPanelFields.map(f => (
-                <div key={f.key} className="expanded-field">
-                  <span className="expanded-field-label">{f.label}</span>
-                  <span className="expanded-field-value">
-                    {f.render ? f.render(row[f.key], row) : row[f.key] ?? '—'}
-                  </span>
+            <div className="expanded-card">
+              <div className="expanded-card-header">
+                <div className="expanded-card-id">{row.id}</div>
+                <Badge variant={row.stock === 0 ? 'out' : row.stock <= row.minStock ? 'low' : 'completed'}>
+                  {row.stock === 0 ? 'Out of Stock' : row.stock <= row.minStock ? 'Low Stock' : 'In Stock'}
+                </Badge>
+              </div>
+              <div className="expanded-card-fields">
+                <div className="expanded-card-field expanded-card-field-full">
+                  <span className="expanded-card-label">Product</span>
+                  <span className="expanded-card-value" style={{ fontWeight: 700, fontSize: '1.05rem' }}>{row.name}</span>
                 </div>
-              ))}
+                {productPanelFields.slice(1).map(f => (
+                  <div key={f.key} className="expanded-card-field">
+                    <span className="expanded-card-label">{f.label}</span>
+                    <span className="expanded-card-value">
+                      {f.render ? f.render(row[f.key], row) : row[f.key] ?? '—'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="expanded-card-actions">
+                <button className="expanded-card-btn" onClick={(e) => { e.stopPropagation(); openProductPanel(row); }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  Full Details
+                </button>
+                <button className="expanded-card-btn secondary" onClick={(e) => { e.stopPropagation(); setPreviewProduct(row); }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+                  </svg>
+                  Quick Preview
+                </button>
+              </div>
             </div>
           )}
         />
@@ -128,6 +196,22 @@ const ProductsView = forwardRef(function ProductsView({ products, setProducts, v
           onCardClick={openProductPanel}
         />
       )}
+
+      {/* Quick Preview DetailModal */}
+      <DetailModal
+        open={!!previewProduct}
+        onClose={() => setPreviewProduct(null)}
+        title={previewProduct?.name || 'Product'}
+        item={previewProduct}
+        fields={productDetailFields}
+        badge={{
+          label: previewProduct?.stock === 0 ? 'Out of Stock' : previewProduct?.stock <= previewProduct?.minStock ? 'Low Stock' : 'In Stock',
+          variant: previewProduct?.stock === 0 ? 'out' : previewProduct?.stock <= previewProduct?.minStock ? 'low' : 'completed',
+        }}
+        actions={[
+          { label: 'Full Details', variant: 'primary', onClick: (item) => { setPreviewProduct(null); openProductPanel(item); } },
+        ]}
+      />
 
       <FormModal
         open={formOpen}

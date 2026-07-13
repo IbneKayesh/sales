@@ -4,6 +4,22 @@ export const pageTitles = {
   '/purchase': 'Purchase Management',
   '/inventory': 'Inventory Management',
   '/reports': 'Analytics & Reports',
+  // ─── ERP Modules ──────────────────────────────
+  '/hr': 'Human Resources',
+  '/accounting': 'Accounting & Finance',
+  '/crm': 'Customer Relationship Management',
+  '/manufacturing': 'Manufacturing & Production',
+  '/projects': 'Project Management',
+  '/supplychain': 'Supply Chain Management',
+  '/assets': 'Assets Management',
+  '/settings': 'Settings & Administration',
+  // ─── Sidebar Sub-Pages ────────────────────────
+  '/sales/create': 'New Sales Order',
+  '/sales/returns': 'Returns Management',
+  '/purchase/create': 'New Purchase Order',
+  '/inventory/categories': 'Product Categories',
+  // ─── Demo / Playground ────────────────────────
+  '/demo/modals': 'Modal Components Demo',
 };
 
 // Dynamic paths for detail pages (matched by pattern, not exact)

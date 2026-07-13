@@ -18,6 +18,19 @@ import {
   loadOrderDetail,
   loadProductDetail,
   loadPODetail,
+  loadHr,
+  loadAccounting,
+  loadCrm,
+  loadManufacturing,
+  loadProjects,
+  loadSupplyChain,
+  loadAssets,
+  loadSettings,
+  loadNewOrder,
+  loadReturns,
+  loadNewPurchase,
+  loadCategories,
+  loadModalDemo,
 } from './config/loaders';
 import { preloadPriority } from './utils/preload';
 import './App.css';
@@ -33,6 +46,19 @@ const NotFound = lazy(loadNotFound);
 const OrderDetail = lazy(loadOrderDetail);
 const ProductDetail = lazy(loadProductDetail);
 const PODetail = lazy(loadPODetail);
+const Hr = lazy(loadHr);
+const Accounting = lazy(loadAccounting);
+const Crm = lazy(loadCrm);
+const Manufacturing = lazy(loadManufacturing);
+const Projects = lazy(loadProjects);
+const SupplyChain = lazy(loadSupplyChain);
+const Assets = lazy(loadAssets);
+const Settings = lazy(loadSettings);
+const NewOrder = lazy(loadNewOrder);
+const Returns = lazy(loadReturns);
+const NewPurchase = lazy(loadNewPurchase);
+const Categories = lazy(loadCategories);
+const ModalDemo = lazy(loadModalDemo);
 
 function App() {
   // Preload likely first-click pages after initial mount
@@ -59,14 +85,30 @@ function App() {
                   </ProtectedRoute>
                 }
               >
-                <Route path="/" element={<RetryableBoundary><Dashboard /></RetryableBoundary>} />
-                <Route path="/sales" element={<RetryableBoundary><Sales /></RetryableBoundary>} />
-                <Route path="/sales/:id" element={<RetryableBoundary><OrderDetail /></RetryableBoundary>} />
-                <Route path="/purchase" element={<RetryableBoundary><Purchase /></RetryableBoundary>} />
-                <Route path="/purchase/:id" element={<RetryableBoundary><PODetail /></RetryableBoundary>} />
-                <Route path="/inventory" element={<RetryableBoundary><Inventory /></RetryableBoundary>} />
-                <Route path="/inventory/:id" element={<RetryableBoundary><ProductDetail /></RetryableBoundary>} />
-                <Route path="/reports" element={<RetryableBoundary><Dashboard /></RetryableBoundary>} />
+                <Route path="/" element={<Dashboard />} />
+                {/* Sales — sub-routes BEFORE :id to avoid param capture */}
+                <Route path="/sales/create" element={<NewOrder />} />
+                <Route path="/sales/returns" element={<Returns />} />
+                <Route path="/sales" element={<Sales />} />
+                <Route path="/sales/:id" element={<OrderDetail />} />
+                {/* Purchase — sub-routes BEFORE :id */}
+                <Route path="/purchase/create" element={<NewPurchase />} />
+                <Route path="/purchase" element={<Purchase />} />
+                <Route path="/purchase/:id" element={<PODetail />} />
+                {/* Inventory — sub-routes BEFORE :id */}
+                <Route path="/inventory/categories" element={<Categories />} />
+                <Route path="/inventory" element={<Inventory />} />
+                <Route path="/inventory/:id" element={<ProductDetail />} />
+                <Route path="/reports" element={<Dashboard />} />
+                <Route path="/hr" element={<Hr />} />
+                <Route path="/accounting" element={<Accounting />} />
+                <Route path="/crm" element={<Crm />} />
+                <Route path="/manufacturing" element={<Manufacturing />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/supplychain" element={<SupplyChain />} />
+                <Route path="/assets" element={<Assets />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/demo/modals" element={<ModalDemo />} />
               </Route>
 
               <Route path="*" element={<RetryableBoundary><NotFound /></RetryableBoundary>} />

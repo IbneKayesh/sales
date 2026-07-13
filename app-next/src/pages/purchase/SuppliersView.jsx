@@ -8,6 +8,8 @@ export default function SuppliersView({ suppliers }) {
       data={suppliers}
       searchable
       searchPlaceholder="Search suppliers..."
+      exportable
+      exportFilename="purchase-suppliers"
     />
   );
 }

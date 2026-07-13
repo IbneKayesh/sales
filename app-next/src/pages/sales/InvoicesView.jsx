@@ -8,6 +8,8 @@ export default function InvoicesView({ invoices }) {
       data={invoices}
       searchable
       searchPlaceholder="Search invoices..."
+      exportable
+      exportFilename="sales-invoices"
     />
   );
 }

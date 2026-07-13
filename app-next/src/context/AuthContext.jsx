@@ -12,15 +12,15 @@ const MOCK_USERS = [
 // Role-based permissions
 const ROLE_PERMISSIONS = {
   'System Manager': {
-    routes: ['/', '/sales', '/purchase', '/inventory', '/reports'],
+    routes: ['/', '/sales', '/sales/create', '/sales/returns', '/purchase', '/purchase/create', '/inventory', '/inventory/categories', '/reports', '/hr', '/accounting', '/crm', '/manufacturing', '/projects', '/supplychain', '/assets', '/settings', '/demo/modals'],
     permissions: ['read', 'write', 'delete', 'manage-users'],
   },
   'Operations Manager': {
-    routes: ['/', '/sales', '/purchase', '/inventory'],
+    routes: ['/', '/sales', '/sales/create', '/sales/returns', '/purchase', '/purchase/create', '/inventory', '/inventory/categories', '/hr', '/crm', '/projects'],
     permissions: ['read', 'write'],
   },
   'Inventory Staff': {
-    routes: ['/', '/inventory'],
+    routes: ['/', '/inventory', '/inventory/categories', '/manufacturing', '/supplychain'],
     permissions: ['read', 'write'],
   },
 };

@@ -1,6 +1,7 @@
 import { useState, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { useSlidePanel } from '../../components/ui/SlidePanel';
 import PanelDetail from '../../components/ui/PanelDetail';
+import DetailModal from '../../components/ui/DetailModal';
 import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
 import GridView from '../../components/ui/GridView';
@@ -19,11 +20,29 @@ const orderPanelFields = [
   { key: 'date', label: 'Date' },
 ];
 
+const orderDetailFields = [
+  { key: 'customer', label: 'Customer' },
+  { key: 'product', label: 'Product' },
+  { key: 'amount', label: 'Amount', render: (v) => <strong style={{ color: 'var(--accent)' }}>${v?.toLocaleString()}</strong> },
+  { key: 'status', label: 'Status', render: (v) => <Badge variant={v}>{v}</Badge> },
+  { key: 'payment', label: 'Payment', render: (v) => <Badge variant={v}>{v}</Badge> },
+  { key: 'date', label: 'Date' },
+];
+
+const bulkOrderColumns = [
+  { key: 'id', label: 'Order ID' },
+  { key: 'customer', label: 'Customer' },
+  { key: 'product', label: 'Product' },
+  { key: 'amount', label: 'Amount', render: (v) => <span style={{ fontWeight: 600 }}>${v?.toLocaleString()}</span> },
+  { key: 'status', label: 'Status', render: (v) => <Badge variant={v}>{v}</Badge> },
+];
+
 const OrdersView = forwardRef(function OrdersView({ orders, setOrders, viewMode }, ref) {
   const { toast } = useToast();
   const { openPanel, closePanel } = useSlidePanel();
   const [formOpen, setFormOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
+  const [previewOrder, setPreviewOrder] = useState(null);
 
   const handleAdd = () => { setEditingOrder(null); setFormOpen(true); };
   const handleEdit = (order) => { setEditingOrder(order); setFormOpen(true); };
@@ -105,16 +124,58 @@ const OrdersView = forwardRef(function OrdersView({ orders, setOrders, viewMode 
           searchPlaceholder="Search orders..."
           onRowClick={openOrderPanel}
           expandable
+          exportable
+          exportFilename="sales-orders"
+          bulkActions={{
+            label: 'Delete',
+            modalTitle: 'Delete Orders',
+            actionLabel: 'Delete',
+            actionVariant: 'danger',
+            description: 'Select orders to remove. This action cannot be undone.',
+            columns: bulkOrderColumns,
+            size: 'lg',
+            confirm: {
+              title: 'Delete Orders',
+              message: 'Are you sure you want to delete the selected orders? This will open a preview where you can review and confirm.',
+              confirmText: 'Review & Delete',
+            },
+            onAction: async (items) => {
+              await new Promise(resolve => setTimeout(resolve, 500));
+              const ids = items.map(i => i.id);
+              setOrders(prev => prev.filter(o => !ids.includes(o.id)));
+            },
+          }}
           renderExpanded={(row) => (
-            <div className="expanded-fields">
-              {orderPanelFields.map(f => (
-                <div key={f.key} className="expanded-field">
-                  <span className="expanded-field-label">{f.label}</span>
-                  <span className="expanded-field-value">
-                    {f.render ? f.render(row[f.key], row) : row[f.key] ?? '—'}
-                  </span>
-                </div>
-              ))}
+            <div className="expanded-card">
+              <div className="expanded-card-header">
+                <div className="expanded-card-id">{row.id}</div>
+                <Badge variant={row.status}>{row.status}</Badge>
+              </div>
+              <div className="expanded-card-fields">
+                {orderPanelFields.map(f => (
+                  <div key={f.key} className="expanded-card-field">
+                    <span className="expanded-card-label">{f.label}</span>
+                    <span className="expanded-card-value">
+                      {f.render ? f.render(row[f.key], row) : row[f.key] ?? '—'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="expanded-card-actions">
+                <button className="expanded-card-btn" onClick={(e) => { e.stopPropagation(); openOrderPanel(row); }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  Full Details
+                </button>
+                <button className="expanded-card-btn secondary" onClick={(e) => { e.stopPropagation(); setPreviewOrder(row); }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+                  </svg>
+                  Quick Preview
+                </button>
+              </div>
             </div>
           )}
         />
@@ -129,6 +190,19 @@ const OrdersView = forwardRef(function OrdersView({ orders, setOrders, viewMode 
           onCardClick={openOrderPanel}
         />
       )}
+
+      {/* Quick Preview DetailModal */}
+      <DetailModal
+        open={!!previewOrder}
+        onClose={() => setPreviewOrder(null)}
+        title={`Order ${previewOrder?.id}`}
+        item={previewOrder}
+        fields={orderDetailFields}
+        badge={{ label: previewOrder?.status, variant: previewOrder?.status }}
+        actions={[
+          { label: 'Full Details', variant: 'primary', onClick: (item) => { setPreviewOrder(null); openOrderPanel(item); } },
+        ]}
+      />
 
       <FormModal
         open={formOpen}

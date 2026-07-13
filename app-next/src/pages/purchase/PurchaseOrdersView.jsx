@@ -1,6 +1,8 @@
 import { useState, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { useSlidePanel } from '../../components/ui/SlidePanel';
 import PanelDetail from '../../components/ui/PanelDetail';
+import DetailModal from '../../components/ui/DetailModal';
+import Badge from '../../components/ui/Badge';
 import DataTable from '../../components/ui/DataTable';
 import GridView from '../../components/ui/GridView';
 import FormModal from '../../components/ui/FormModal';
@@ -13,6 +15,24 @@ const PurchaseOrdersView = forwardRef(function PurchaseOrdersView({ pos, setPos,
   const { openPanel, closePanel } = useSlidePanel();
   const [formOpen, setFormOpen] = useState(false);
   const [editingPO, setEditingPO] = useState(null);
+  const [previewPO, setPreviewPO] = useState(null);
+
+  const poDetailFields = [
+    { key: 'supplier', label: 'Supplier', render: (v) => <span style={{ fontWeight: 700 }}>{v}</span> },
+    { key: 'items', label: 'Items', render: (v) => `${v} pcs` },
+    { key: 'total', label: 'Total', render: (v) => <strong style={{ color: 'var(--accent)' }}>${v?.toLocaleString()}</strong> },
+    { key: 'status', label: 'Status', render: (v) => <Badge variant={v}>{v}</Badge> },
+    { key: 'date', label: 'Ordered' },
+    { key: 'expected', label: 'Expected' },
+  ];
+
+  const bulkPOColumns = [
+    { key: 'id', label: 'PO #' },
+    { key: 'supplier', label: 'Supplier' },
+    { key: 'items', label: 'Items' },
+    { key: 'total', label: 'Total', render: (v) => <span style={{ fontWeight: 600 }}>${v?.toLocaleString()}</span> },
+    { key: 'status', label: 'Status', render: (v) => <Badge variant={v}>{v}</Badge> },
+  ];
 
   const handleAdd = () => { setEditingPO(null); setFormOpen(true); };
   const handleEdit = (po) => { setEditingPO(po); setFormOpen(true); };
@@ -103,16 +123,58 @@ const PurchaseOrdersView = forwardRef(function PurchaseOrdersView({ pos, setPos,
           searchPlaceholder="Search PO..."
           onRowClick={openPOPanel}
           expandable
+          exportable
+          exportFilename="purchase-orders"
+          bulkActions={{
+            label: 'Delete',
+            modalTitle: 'Delete Purchase Orders',
+            actionLabel: 'Delete',
+            actionVariant: 'danger',
+            description: 'Select purchase orders to remove. This action cannot be undone.',
+            columns: bulkPOColumns,
+            size: 'lg',
+            confirm: {
+              title: 'Delete Purchase Orders',
+              message: 'Are you sure you want to delete the selected purchase orders? This will open a preview where you can review and confirm.',
+              confirmText: 'Review & Delete',
+            },
+            onAction: async (items) => {
+              await new Promise(resolve => setTimeout(resolve, 500));
+              const ids = items.map(i => i.id);
+              setPos(prev => prev.filter(p => !ids.includes(p.id)));
+            },
+          }}
           renderExpanded={(row) => (
-            <div className="expanded-fields">
-              {poPanelFields.map(f => (
-                <div key={f.key} className="expanded-field">
-                  <span className="expanded-field-label">{f.label}</span>
-                  <span className="expanded-field-value">
-                    {f.render ? f.render(row[f.key], row) : row[f.key] ?? '—'}
-                  </span>
-                </div>
-              ))}
+            <div className="expanded-card">
+              <div className="expanded-card-header">
+                <div className="expanded-card-id">{row.id}</div>
+                <Badge variant={row.status}>{row.status}</Badge>
+              </div>
+              <div className="expanded-card-fields">
+                {poPanelFields.map(f => (
+                  <div key={f.key} className="expanded-card-field">
+                    <span className="expanded-card-label">{f.label}</span>
+                    <span className="expanded-card-value">
+                      {f.render ? f.render(row[f.key], row) : row[f.key] ?? '—'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="expanded-card-actions">
+                <button className="expanded-card-btn" onClick={(e) => { e.stopPropagation(); openPOPanel(row); }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  Full Details
+                </button>
+                <button className="expanded-card-btn secondary" onClick={(e) => { e.stopPropagation(); setPreviewPO(row); }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
+                  </svg>
+                  Quick Preview
+                </button>
+              </div>
             </div>
           )}
         />
@@ -126,6 +188,19 @@ const PurchaseOrdersView = forwardRef(function PurchaseOrdersView({ pos, setPos,
           onCardClick={openPOPanel}
         />
       )}
+
+      {/* Quick Preview DetailModal */}
+      <DetailModal
+        open={!!previewPO}
+        onClose={() => setPreviewPO(null)}
+        title={`PO: ${previewPO?.supplier || ''}`}
+        item={previewPO}
+        fields={poDetailFields}
+        badge={{ label: previewPO?.status, variant: previewPO?.status }}
+        actions={[
+          { label: 'Full Details', variant: 'primary', onClick: (item) => { setPreviewPO(null); openPOPanel(item); } },
+        ]}
+      />
 
       <FormModal
         open={formOpen}

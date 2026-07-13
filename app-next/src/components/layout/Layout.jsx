@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import PageTransition from '../ui/PageTransition';
+import { RetryableBoundary } from '../ui/ErrorBoundary';
 import Breadcrumb from '../ui/Breadcrumb';
 import TabBar from './TabBar';
 import { TabProvider } from '../../context/TabContext';
@@ -46,7 +47,9 @@ export default function Layout() {
           <main className="main-content">
             <Breadcrumb />
             <PageTransition>
-              <Outlet />
+              <RetryableBoundary>
+                <Outlet />
+              </RetryableBoundary>
             </PageTransition>
           </main>
         </div>

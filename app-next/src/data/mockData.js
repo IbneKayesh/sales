@@ -105,3 +105,22 @@ export const topSellingProducts = [
   { name: 'iPad Air', sold: 87, revenue: 65163 },
   { name: 'Apple Watch S9', sold: 76, revenue: 37924 },
 ];
+
+export const returns = [
+  { id: 'RET-001', orderId: 'ORD-003', customer: 'Emily Davis', product: 'AirPods Pro 2', amount: 249, reason: 'Defective — left earbud not charging', status: 'approved', date: '2026-07-11', refundStatus: 'completed', processedBy: 'Admin User' },
+  { id: 'RET-002', orderId: 'ORD-006', customer: 'David Thompson', product: 'iMac 24"', amount: 1899, reason: 'Customer changed mind — unopened box', status: 'approved', date: '2026-07-10', refundStatus: 'completed', processedBy: 'Sarah Manager' },
+  { id: 'RET-003', orderId: 'ORD-007', customer: 'Anna Martinez', product: 'Mac Mini', amount: 1099, reason: 'Received wrong configuration', status: 'pending', date: '2026-07-09', refundStatus: 'pending', processedBy: '—' },
+  { id: 'RET-004', orderId: 'ORD-004', customer: 'James Wilson', product: 'iPad Air', amount: 749, reason: 'Scratched screen on arrival', status: 'pending', date: '2026-07-08', refundStatus: 'pending', processedBy: '—' },
+  { id: 'RET-005', orderId: 'ORD-002', customer: 'Michael Chen', product: 'MacBook Air M3', amount: 1599, reason: 'Damaged during shipping', status: 'rejected', date: '2026-07-07', refundStatus: 'none', processedBy: 'Admin User', rejectionReason: 'Physical damage beyond acceptable range' },
+  { id: 'RET-006', orderId: 'ORD-009', customer: 'Jessica Brown', product: 'Apple Watch Series 9', amount: 499, reason: 'Battery drains too fast', status: 'pending', date: '2026-07-06', refundStatus: 'pending', processedBy: '—' },
+];
+
+export const categories = [
+  { id: 'CAT-001', name: 'Smartphones', productCount: 2, totalValue: 2798, avgPrice: 1399, color: '#6366f1', icon: '<path d="M4 4h16v16H4z"/><path d="M9 4v16"/><path d="M4 9h16"/>' },
+  { id: 'CAT-002', name: 'Laptops', productCount: 2, totalValue: 4098, avgPrice: 2049, color: '#8b5cf6', icon: '<rect x="2" y="2" width="20" height="16" rx="2"/><path d="M6 22h12"/>' },
+  { id: 'CAT-003', name: 'Tablets', productCount: 2, totalValue: 2048, avgPrice: 1024, color: '#a855f7', icon: '<rect x="2" y="2" width="20" height="16" rx="2"/><path d="M6 22h12"/>' },
+  { id: 'CAT-004', name: 'Wearables', productCount: 2, totalValue: 1398, avgPrice: 699, color: '#d946ef', icon: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>' },
+  { id: 'CAT-005', name: 'Audio', productCount: 2, totalValue: 798, avgPrice: 399, color: '#ec4899', icon: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>' },
+  { id: 'CAT-006', name: 'Desktops', productCount: 3, totalValue: 9997, avgPrice: 3332, color: '#f43f5e', icon: '<rect x="2" y="2" width="20" height="16" rx="2"/><path d="M6 22h12"/><path d="M8 22l-1-3h10l-1 3"/>' },
+  { id: 'CAT-007', name: 'Accessories', productCount: 2, totalValue: 1948, avgPrice: 974, color: '#f97316', icon: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>' },
+];

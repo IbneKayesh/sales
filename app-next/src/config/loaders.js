@@ -22,6 +22,22 @@ const loaders = {
   OrderDetail:    () => import('../pages/OrderDetail'),
   ProductDetail:  () => import('../pages/ProductDetail'),
   PODetail:       () => import('../pages/PurchaseOrderDetail'),
+  // ─── ERP Modules ──────────────────────────────
+  Hr:          () => import('../pages/hr/Hr'),
+  Accounting:  () => import('../pages/accounting/Accounting'),
+  Crm:         () => import('../pages/crm/Crm'),
+  Manufacturing: () => import('../pages/manufacturing/Manufacturing'),
+  Projects:    () => import('../pages/projects/Projects'),
+  SupplyChain: () => import('../pages/supplychain/SupplyChain'),
+  Assets:      () => import('../pages/assets/Assets'),
+  Settings:    () => import('../pages/settings/Settings'),
+  // ─── Sidebar Sub-Pages ──────────────────────────
+  NewOrder:    () => import('../pages/sales/NewOrderPage'),
+  Returns:     () => import('../pages/sales/ReturnsPage'),
+  NewPurchase: () => import('../pages/purchase/NewPurchasePage'),
+  Categories:  () => import('../pages/inventory/CategoriesPage'),
+  // ─── Demo / Playground ─────────────────────────
+  ModalDemo:   () => import('../pages/ModalDemo'),
 };
 
 // ─── Path-based lookup (for preload.js) ──────────────────────────────
@@ -34,7 +50,21 @@ export const pathToLoader = {
   '/purchase':  loaders.Purchase,
   '/inventory': loaders.Inventory,
   '/login':     loaders.Login,
-  '/reports':   loaders.Dashboard,  // Same component, different route
+  '/reports':   loaders.Dashboard,
+  '/hr':        loaders.Hr,
+  '/accounting': loaders.Accounting,
+  '/crm':       loaders.Crm,
+  '/manufacturing': loaders.Manufacturing,
+  '/projects':  loaders.Projects,
+  '/supplychain': loaders.SupplyChain,
+  '/assets':    loaders.Assets,
+  '/settings':  loaders.Settings,
+  // ─── Sidebar Sub-Pages ──────────────────────────
+  '/sales/create':     loaders.NewOrder,
+  '/sales/returns':    loaders.Returns,
+  '/purchase/create':  loaders.NewPurchase,
+  '/inventory/categories': loaders.Categories,
+  '/demo/modals':         loaders.ModalDemo,
 };
 
 // ─── Separate named exports (for React.lazy to use directly) ─────────
@@ -49,3 +79,18 @@ export const loadNotFound = loaders.NotFound;
 export const loadOrderDetail = loaders.OrderDetail;
 export const loadProductDetail = loaders.ProductDetail;
 export const loadPODetail = loaders.PODetail;
+export const loadHr = loaders.Hr;
+export const loadAccounting = loaders.Accounting;
+export const loadCrm = loaders.Crm;
+export const loadManufacturing = loaders.Manufacturing;
+export const loadProjects = loaders.Projects;
+export const loadSupplyChain = loaders.SupplyChain;
+export const loadAssets = loaders.Assets;
+export const loadSettings = loaders.Settings;
+// ─── Sidebar Sub-Pages ──────────────────────────────────
+export const loadNewOrder = loaders.NewOrder;
+export const loadReturns = loaders.Returns;
+export const loadNewPurchase = loaders.NewPurchase;
+export const loadCategories = loaders.Categories;
+// ─── Demo / Playground ──────────────────────────────────
+export const loadModalDemo = loaders.ModalDemo;
