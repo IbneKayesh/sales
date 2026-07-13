@@ -1,0 +1,118 @@
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-family: var(--font-body);
+}
+
+.th {
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-align: left;
+  white-space: nowrap;
+  background-color: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.right {
+  text-align: right;
+}
+
+.actionsCol {
+  text-align: center;
+  width: 80px;
+}
+
+.row {
+  transition: background-color 0.1s ease;
+}
+
+.row:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.rowEven {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.td {
+  padding: 10px 14px;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
+}
+
+.customerName {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.product {
+  color: var(--color-text-secondary);
+}
+
+.total {
+  font-weight: 600;
+  color: #10b981;
+}
+
+.muted {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.actionsCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.editBtn,
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.editBtn svg,
+.deleteBtn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.editBtn {
+  color: #60a5fa;
+  background-color: rgba(59, 130, 246, 0.08);
+}
+
+.editBtn:hover {
+  background-color: rgba(59, 130, 246, 0.18);
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.deleteBtn {
+  color: #f87171;
+  background-color: rgba(239, 68, 68, 0.08);
+}
+
+.deleteBtn:hover {
+  background-color: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.25);
+}

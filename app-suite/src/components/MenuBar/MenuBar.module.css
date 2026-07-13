@@ -1,0 +1,129 @@
+.menuBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 30px;
+  padding: 0 12px;
+  background-color: rgba(15, 15, 20, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10000;
+  box-sizing: border-box;
+}
+
+.leftSection,
+.rightSection {
+  display: flex;
+  align-items: center;
+}
+
+.leftSection {
+  gap: 16px;
+}
+
+.launcherBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  color: var(--color-text-primary);
+  background-color: transparent;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.launcherBtn:hover {
+  background-color: var(--glass-bg-hover);
+}
+
+.launcherBtn:active,
+.launcherBtnActive {
+  color: var(--accent-hover);
+}
+
+.launcherIcon {
+  width: 13px;
+  height: 13px;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.launcherBtn:hover .launcherIcon {
+  transform: rotate(90deg);
+}
+
+.activeAppName {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  cursor: default;
+  user-select: none;
+}
+
+.staticMenu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menuItemBtn {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.menuItemBtn:hover {
+  color: var(--color-text-primary);
+  background-color: var(--glass-bg-hover);
+}
+
+.centerSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.divider {
+  width: 1px;
+  height: 14px;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.avatarWrapper {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.avatarWrapper:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .staticMenu {
+    display: none;
+  }
+}

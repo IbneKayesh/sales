@@ -1,0 +1,63 @@
+.nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.appItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background-color: transparent;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.appItem:hover {
+  color: var(--color-text-primary);
+  background-color: var(--glass-bg-hover);
+  border-color: var(--glass-border);
+}
+
+.appItemActive {
+  color: var(--color-text-primary);
+  background-color: var(--glass-bg-active);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.appItem:hover .indicator {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+.appItemActive .indicator {
+  background-color: var(--accent-hover);
+  box-shadow: 0 0 8px var(--accent-hover);
+  transform: scale(1.2);
+}
+
+@media (max-width: 600px) {
+  .nav {
+    gap: 6px;
+  }
+  
+  .appItem {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
