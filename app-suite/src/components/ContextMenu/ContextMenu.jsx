@@ -7,7 +7,7 @@ import styles from './ContextMenu.module.css';
 
 const ContextMenu = () => {
   const { menuState, closeMenu } = useContextMenu();
-  const { openWindow } = useWindowManager();
+  const { openWindow, closeWindow, minimizeWindow } = useWindowManager();
   const { resetPositions, clearRecentApps, resetLayout } = useDesktop();
   const { addToast } = useToast();
   const menuRef = useRef(null);
@@ -42,6 +42,92 @@ const ContextMenu = () => {
     closeMenu();
   };
 
+  const ctx = menuState.context;
+
+  // ── Dock context menu ──────────────────────────────────────────────
+  if (ctx?.type === 'dock') {
+    return (
+      <div
+        ref={menuRef}
+        className={styles.menu}
+        role="menu"
+        tabIndex="-1"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          className={`${styles.menuItem} ${styles.menuHeader}`}
+          role="menuitem"
+          disabled
+        >
+          <span className={styles.headerLabel}>{ctx.appLabel}</span>
+        </button>
+
+        <div className={styles.separator} />
+
+        <button
+          className={styles.menuItem}
+          role="menuitem"
+          onClick={() => handleAction(() => openWindow(ctx.appId))}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.menuIcon}>
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          <span>Open</span>
+          {ctx.isOpen && <span className={styles.shortcut}>⌘O</span>}
+        </button>
+
+        <button
+          className={styles.menuItem}
+          role="menuitem"
+          onClick={() => {
+            handleAction(() => {
+              openWindow('files');
+              addToast({ message: `Opening location of ${ctx.appLabel}...`, type: 'info' });
+            });
+          }}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.menuIcon}>
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
+          <span>Show in Finder</span>
+        </button>
+
+        {ctx.isOpen && (
+          <>
+            <div className={styles.separator} />
+
+            <button
+              className={styles.menuItem}
+              role="menuitem"
+              onClick={() => handleAction(() => minimizeWindow(ctx.appId))}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.menuIcon}>
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              <span>Minimize</span>
+              <span className={styles.shortcut}>⌘M</span>
+            </button>
+
+            <button
+              className={`${styles.menuItem} ${styles.danger}`}
+              role="menuitem"
+              onClick={() => handleAction(() => closeWindow(ctx.appId))}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.menuIcon}>
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+              <span>Quit</span>
+              <span className={styles.shortcut}>⌘Q</span>
+            </button>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // ── Desktop context menu ───────────────────────────────────────────
   return (
     <div
       ref={menuRef}

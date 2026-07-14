@@ -11,12 +11,28 @@ export const ToastProvider = ({ children }) => {
     return id;
   }, []);
 
+  const addActionToast = useCallback((message, type = 'info', windowId = null) => {
+    return new Promise((resolve) => {
+      const id = Math.random().toString(36).substring(2, 9);
+      setToasts((prev) => [...prev, {
+        id,
+        message,
+        type,
+        duration: Infinity,
+        windowId,
+        actionLabel: 'OK',
+        onAction: () => resolve(true),
+        isAction: true,
+      }]);
+    });
+  }, []);
+
   const removeToast = useCallback((id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
   return (
-    <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
+    <ToastContext.Provider value={{ toasts, addToast, addActionToast, removeToast }}>
       {children}
     </ToastContext.Provider>
   );

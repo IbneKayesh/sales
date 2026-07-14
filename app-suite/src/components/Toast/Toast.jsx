@@ -38,7 +38,7 @@ const getToastIcon = (type) => {
 };
 
 const Toast = ({ toast, onClose }) => {
-  const { id, message, type, duration, actionLabel, onAction } = toast;
+  const { id, message, type, duration, actionLabel, onAction, isAction } = toast;
 
   useEffect(() => {
     if (duration === Infinity) return;
@@ -53,23 +53,50 @@ const Toast = ({ toast, onClose }) => {
     onClose(id);
   };
 
+  const handleDismiss = () => {
+    if (isAction) return;
+    onClose(id);
+  };
+
+  const timerStyle = isAction || duration === Infinity
+    ? {}
+    : { animationDuration: `${duration}ms` };
+
   return (
-    <div className={`${styles.toast} ${styles[type]}`} role="alert">
-      <div className={styles.iconContainer}>{getToastIcon(type)}</div>
-      <div className={styles.content}>
-        <p className={styles.message}>{message}</p>
-      </div>
-      {actionLabel && (
-        <button className={styles.actionBtn} onClick={handleAction}>
-          {actionLabel}
-        </button>
+    <div className={`${styles.toast} ${styles[type]} ${isAction ? styles.actionToast : ''}`} role="alert">
+      {!isAction && duration !== Infinity && (
+        <div className={styles.timerBar}>
+          <span className={styles.timerFill} style={timerStyle} />
+        </div>
       )}
-      <button className={styles.closeBtn} onClick={() => onClose(id)} aria-label="Close Notification">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
-      </button>
+      <div className={styles.toastBody}>
+        <div className={styles.iconContainer}>{getToastIcon(type)}</div>
+        <div className={styles.content}>
+          <p className={styles.message}>{message}</p>
+        </div>
+        <div className={styles.actionGroup}>
+          {actionLabel && (
+            <button className={isAction ? styles.okBtn : styles.actionBtn} onClick={handleAction}>
+              {isAction && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.okIcon}>
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              )}
+              {actionLabel}
+            </button>
+          )}
+          <button
+            className={`${styles.closeBtn} ${isAction ? styles.closeBtnHidden : ''}`}
+            onClick={handleDismiss}
+            aria-label="Close Notification"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

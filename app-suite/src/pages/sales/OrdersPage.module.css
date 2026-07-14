@@ -1,0 +1,143 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin: 2px 0 0 0;
+}
+
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.searchInput {
+  padding: 7px 10px 7px 32px;
+  border-radius: 6px;
+  border: 1px solid var(--glass-border);
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+  width: 200px;
+  transition: all 0.15s ease;
+}
+
+.searchInput:focus {
+  border-color: var(--accent-hover);
+  background-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
+}
+
+.content {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.th {
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-align: left;
+  white-space: nowrap;
+  background-color: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.right { text-align: right; }
+
+.row { transition: background-color 0.1s ease; }
+.row:hover { background-color: rgba(255, 255, 255, 0.03); }
+.rowEven { background-color: rgba(0, 0, 0, 0.08); }
+
+.td {
+  padding: 10px 14px;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
+}
+
+.orderId {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.customer {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.total {
+  font-weight: 600;
+  color: #10b981;
+}
+
+.muted { color: var(--color-text-muted); white-space: nowrap; }
+
+.statusBadge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.statusPending { color: #fbbf24; background-color: rgba(251, 191, 36, 0.1); }
+.statusProcessing { color: #60a5fa; background-color: rgba(96, 165, 250, 0.1); }
+.statusShipped { color: #a78bfa; background-color: rgba(167, 139, 250, 0.1); }
+.statusDelivered { color: #34d399; background-color: rgba(52, 211, 153, 0.1); }

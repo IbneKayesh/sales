@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from './AuthContext';
 
 const DesktopContext = createContext();
@@ -48,6 +48,16 @@ export const DesktopProvider = ({ children }) => {
   const [activeWallpaper, setActiveWallpaperState] = useState(() =>
     readLS(key(userId, 'wallpaper'), 'default')
   );
+  // 'preset' uses the wallpaper ID from wallpapers array; 'custom' uses the user's own value
+  const [customWallpaper, setCustomWallpaperState] = useState(() =>
+    readLS(key(userId, 'customWallpaper'), '')
+  );
+
+  // ── Dashboard widgets ──────────────────────────────────────────────────
+  const ALL_WIDGETS = ['system-status', 'sales-summary', 'recent-activity', 'quick-actions'];
+  const [widgetOrder, setWidgetOrderState] = useState(() =>
+    readLS(key(userId, 'widgetOrder'), ALL_WIDGETS)
+  );
 
   // ── Prefs ──────────────────────────────────────────────────────────────
   const [showIcons, setShowIconsState] = useState(() =>
@@ -55,6 +65,12 @@ export const DesktopProvider = ({ children }) => {
   );
   const [showRecentApps, setShowRecentAppsState] = useState(() =>
     readLS(key(userId, 'showRecentApps'), true)
+  );
+  const [darkMode, setDarkModeState] = useState(() =>
+    readLS(key(userId, 'darkMode'), true)
+  );
+  const [animations, setAnimationsState] = useState(() =>
+    readLS(key(userId, 'animations'), true)
   );
 
   // ── Recent apps ────────────────────────────────────────────────────────
@@ -73,19 +89,56 @@ export const DesktopProvider = ({ children }) => {
     setActiveWallpaperState(readLS(key(uid, 'wallpaper'), 'default'));
     setShowIconsState(readLS(key(uid, 'showIcons'), true));
     setShowRecentAppsState(readLS(key(uid, 'showRecentApps'), true));
+    setDarkModeState(readLS(key(uid, 'darkMode'), true));
+    setAnimationsState(readLS(key(uid, 'animations'), true));
+    setCustomWallpaperState(readLS(key(uid, 'customWallpaper'), ''));
     setRecentApps(readLS(key(uid, 'recentApps'), []));
+    setWidgetOrderState(readLS(key(uid, 'widgetOrder'), ALL_WIDGETS));
     setPositions(readLS(key(uid, 'positions'), getDefaultPositions()));
   }, [currentUser?.id]);
+
+  // Determine which CSS value to apply for the desktop background
+  const resolvedWallpaper = useMemo(() => {
+    if (customWallpaper) return customWallpaper;
+    const wp = wallpapers.find((w) => w.id === activeWallpaper) || wallpapers[0];
+    return wp.value;
+  }, [activeWallpaper, customWallpaper]);
 
   // Persist each piece to the per-user key whenever it changes
   useEffect(() => {
     writeLS(key(userId, 'wallpaper'), activeWallpaper);
-    const wp = wallpapers.find((w) => w.id === activeWallpaper) || wallpapers[0];
-    document.documentElement.style.setProperty('--desktop-wallpaper', wp.value);
-  }, [activeWallpaper, userId]);
+    document.documentElement.style.setProperty('--desktop-wallpaper', resolvedWallpaper);
+  }, [activeWallpaper, resolvedWallpaper, userId]);
+  useEffect(() => { writeLS(key(userId, 'customWallpaper'), customWallpaper); }, [customWallpaper, userId]);
 
+  useEffect(() => { writeLS(key(userId, 'widgetOrder'), widgetOrder); }, [widgetOrder, userId]);
   useEffect(() => { writeLS(key(userId, 'showIcons'), showIcons); }, [showIcons, userId]);
   useEffect(() => { writeLS(key(userId, 'showRecentApps'), showRecentApps); }, [showRecentApps, userId]);
+  useEffect(() => { writeLS(key(userId, 'darkMode'), darkMode); }, [darkMode, userId]);
+  useEffect(() => { writeLS(key(userId, 'animations'), animations); }, [animations, userId]);
+
+  // Apply darkMode to the document
+  useEffect(() => {
+    if (!darkMode) {
+      document.documentElement.style.setProperty('--color-text-primary', 'rgba(0, 0, 0, 0.92)');
+      document.documentElement.style.setProperty('--color-text-secondary', 'rgba(0, 0, 0, 0.65)');
+      document.documentElement.style.setProperty('--color-text-muted', 'rgba(0, 0, 0, 0.45)');
+    } else {
+      document.documentElement.style.setProperty('--color-text-primary', 'rgba(255, 255, 255, 0.95)');
+      document.documentElement.style.setProperty('--color-text-secondary', 'rgba(255, 255, 255, 0.7)');
+      document.documentElement.style.setProperty('--color-text-muted', 'rgba(255, 255, 255, 0.5)');
+    }
+  }, [darkMode]);
+
+  // Apply animations toggle by toggling a class on <html>
+  useEffect(() => {
+    if (animations) {
+      document.documentElement.classList.remove('animations-off');
+    } else {
+      document.documentElement.classList.add('animations-off');
+    }
+    return () => document.documentElement.classList.remove('animations-off');
+  }, [animations]);
   useEffect(() => { writeLS(key(userId, 'recentApps'), recentApps); }, [recentApps, userId]);
   useEffect(() => { writeLS(key(userId, 'positions'), positions); }, [positions, userId]);
 
@@ -111,9 +164,25 @@ export const DesktopProvider = ({ children }) => {
   }, []);
 
   // Wrapped setters that also persist
-  const setActiveWallpaper = useCallback((id) => setActiveWallpaperState(id), []);
+  const setWidgetOrder = useCallback((order) => setWidgetOrderState(order), []);
+  const toggleWidget = useCallback((widgetId) => {
+    setWidgetOrderState((prev) => {
+      if (prev.includes(widgetId)) return prev.filter((id) => id !== widgetId);
+      return [...prev, widgetId];
+    });
+  }, []);
+  const setActiveWallpaper = useCallback((id) => {
+    setCustomWallpaperState('');
+    setActiveWallpaperState(id);
+  }, []);
+  const setCustomWallpaper = useCallback((value) => {
+    setCustomWallpaperState(value);
+    setActiveWallpaperState('custom');
+  }, []);
   const setShowIcons = useCallback((v) => setShowIconsState(v), []);
   const setShowRecentApps = useCallback((v) => setShowRecentAppsState(v), []);
+  const setDarkMode = useCallback((v) => setDarkModeState(v), []);
+  const setAnimations = useCallback((v) => setAnimationsState(v), []);
 
   const addRecentApp = useCallback((appId) => {
     setRecentApps((prev) => {
@@ -159,8 +228,11 @@ export const DesktopProvider = ({ children }) => {
 
   const resetLayout = useCallback(() => {
     setActiveWallpaperState('default');
+    setCustomWallpaperState('');
     setShowIconsState(true);
     setShowRecentAppsState(true);
+    setDarkModeState(true);
+    setAnimationsState(true);
     setRecentApps([]);
     setPositions(getDefaultPositions());
   }, []);
@@ -171,8 +243,18 @@ export const DesktopProvider = ({ children }) => {
         wallpapers,
         activeWallpaper,
         setActiveWallpaper,
+        customWallpaper,
+        setCustomWallpaper,
+        widgetOrder,
+        setWidgetOrder,
+        toggleWidget,
+        allWidgets: ALL_WIDGETS,
         showIcons,
         setShowIcons,
+        darkMode,
+        setDarkMode,
+        animations,
+        setAnimations,
         showRecentApps,
         setShowRecentApps,
         recentApps,

@@ -87,8 +87,4 @@
   opacity: 0.35;
 }
 
-.iconContainer:nth-child(1) .iconGlow { background-color: #3b82f6; }
-.iconContainer:nth-child(2) .iconGlow { background-color: #ec4899; }
-.iconContainer:nth-child(3) .iconGlow { background-color: #10b981; }
-.iconContainer:nth-child(4) .iconGlow { background-color: #3b82f6; }
-.iconContainer:nth-child(5) .iconGlow { background-color: #f59e0b; }
+

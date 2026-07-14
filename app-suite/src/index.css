@@ -54,6 +54,14 @@ button {
   outline: none;
 }
 
+/* Disable animations when toggled off via DesktopContext */
+.animations-off *,
+.animations-off *::before,
+.animations-off *::after {
+  animation-duration: 0s !important;
+  transition-duration: 0s !important;
+}
+
 /* Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;

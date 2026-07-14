@@ -11,17 +11,22 @@ export const ContextMenuProvider = ({ children }) => {
 
   useEffect(() => {
     if (!menuState) return;
-    const handleClose = () => closeMenu();
+    const handleClose = () => {
+      closeMenu();
+    };
+    const handleKey = (e) => {
+      if (e.key === 'Escape') closeMenu();
+    };
     document.addEventListener('click', handleClose);
-    document.addEventListener('keydown', handleClose);
+    document.addEventListener('keydown', handleKey);
     return () => {
       document.removeEventListener('click', handleClose);
-      document.removeEventListener('keydown', handleClose);
+      document.removeEventListener('keydown', handleKey);
     };
   }, [menuState, closeMenu]);
 
-  const showMenu = useCallback((x, y) => {
-    setMenuState({ x, y });
+  const showMenu = useCallback((x, y, context) => {
+    setMenuState({ x, y, context });
   }, []);
 
   return (

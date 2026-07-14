@@ -1,0 +1,553 @@
+/* ── Wrapper ──────────────────────────────────────────────────────────────── */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-family: var(--font-body);
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────────────────── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbarRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+/* ── Search ───────────────────────────────────────────────────────────────── */
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchSvg {
+  position: absolute;
+  left: 10px;
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.searchInput {
+  padding: 6px 28px 6px 32px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 12px;
+  outline: none;
+  width: 200px;
+  transition: all 0.15s ease;
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-muted);
+}
+
+.searchInput:focus {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
+}
+
+.searchClear {
+  position: absolute;
+  right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-muted);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.searchClear:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--color-text-primary);
+}
+
+/* ── Column toggle ────────────────────────────────────────────────────────── */
+.columnToggle {
+  position: relative;
+}
+
+.colToggleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.04);
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.colToggleBtn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--color-text-primary);
+}
+
+.colMenu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  min-width: 160px;
+  background-color: rgba(22, 22, 35, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  animation: fadeIn 0.12s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.colMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  transition: all 0.1s ease;
+  user-select: none;
+}
+
+.colMenuItem:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--color-text-primary);
+}
+
+.colCheckbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+  transition: all 0.12s ease;
+}
+
+.colCheckboxChecked {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.colCheckboxChecked svg {
+  color: white;
+}
+
+/* ── Table scroll ─────────────────────────────────────────────────────────── */
+.tableScroll {
+  flex: 1;
+  overflow: auto;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tableScroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.tableScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tableScroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.tableScroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.tableCompact .th,
+.tableCompact .td {
+  padding: 7px 12px;
+  font-size: 11px;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+.headerRow {
+  z-index: 50;
+}
+
+.th {
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-align: left;
+  white-space: nowrap;
+  background-color: rgba(12, 12, 20, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  user-select: none;
+  transition: background-color 0.12s ease;
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.thRight {
+  text-align: right;
+}
+
+.thCenter {
+  text-align: center;
+}
+
+.thSortable {
+  cursor: pointer;
+}
+
+.thSortable:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.thSorted {
+  color: var(--accent-color);
+}
+
+.thCheckbox {
+  width: 40px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.thContent {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Sort icon ────────────────────────────────────────────────────────────── */
+.sortIcon {
+  width: 12px;
+  height: 12px;
+  opacity: 0.2;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
+}
+
+.sortIconActive {
+  opacity: 1;
+  color: var(--accent-color);
+}
+
+.thSortable:hover .sortIcon:not(.sortIconActive) {
+  opacity: 0.5;
+}
+
+/* ── Body rows ────────────────────────────────────────────────────────────── */
+.row {
+  transition: background-color 0.1s ease;
+}
+
+.row:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.rowEven {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.rowSelected {
+  background-color: rgba(99, 102, 241, 0.08) !important;
+}
+
+.rowHover {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+.rowClickable {
+  cursor: pointer;
+}
+
+/* ── Cells ────────────────────────────────────────────────────────────────── */
+.td {
+  padding: 10px 14px;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
+}
+
+.tdRight {
+  text-align: right;
+}
+
+.tdCenter {
+  text-align: center;
+}
+
+.tdMono {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 11px;
+}
+
+.tdNowrap {
+  white-space: nowrap;
+}
+
+.tdCheckbox {
+  text-align: center;
+}
+
+/* ── Selection checkbox ───────────────────────────────────────────────────── */
+.selectCheckbox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  flex-shrink: 0;
+  background-color: transparent;
+}
+
+.selectCheckbox:hover {
+  border-color: var(--accent-color);
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+.selectChecked {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.selectChecked svg {
+  color: white;
+}
+
+.selectIndeterminate {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.indeterminateDash {
+  width: 8px;
+  height: 2px;
+  background-color: white;
+  border-radius: 1px;
+}
+
+/* ── Loading ──────────────────────────────────────────────────────────────── */
+.loadingCell {
+  text-align: center;
+  padding: 48px 20px;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.loaderBar {
+  width: 40px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+  background-size: 200% 100%;
+  animation: loaderSlide 1s ease-in-out infinite;
+}
+
+@keyframes loaderSlide {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.loaderText {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* ── Empty state ──────────────────────────────────────────────────────────── */
+.emptyCell {
+  text-align: center;
+  padding: 48px 20px;
+}
+
+.emptyIcon {
+  width: 40px;
+  height: 40px;
+  color: rgba(255, 255, 255, 0.1);
+  margin-bottom: 10px;
+}
+
+.emptyText {
+  display: block;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-bottom: 14px;
+}
+
+.emptyActionBtn {
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--accent-color);
+  color: white;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.emptyActionBtn:hover {
+  background-color: var(--accent-hover);
+}
+
+/* ── Pagination ───────────────────────────────────────────────────────────── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.pageInfo {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.pageControls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.pageBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--color-text-primary);
+}
+
+.pageBtn:disabled {
+  opacity: 0.25;
+  cursor: not-allowed;
+}
+
+.pageNumBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 5px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.pageNumBtn:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--color-text-primary);
+}
+
+.pageNumBtnActive {
+  background-color: var(--accent-color) !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+.pageEllipsis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 28px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+/* ── Row count ────────────────────────────────────────────────────────────── */
+.rowCount {
+  padding: 8px 14px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-align: right;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+}

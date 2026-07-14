@@ -11,6 +11,21 @@ export const ConfirmProvider = ({ children }) => {
         title,
         description,
         resolve,
+        windowId: options.windowId || null,
+        action: null,
+        options,
+      });
+    });
+  }, []);
+
+  const confirmWithAction = useCallback((title, description, action, options = {}) => {
+    return new Promise((resolve) => {
+      setDialogState({
+        title,
+        description,
+        resolve,
+        windowId: options.windowId || null,
+        action,
         options,
       });
     });
@@ -31,7 +46,7 @@ export const ConfirmProvider = ({ children }) => {
   }, [dialogState]);
 
   return (
-    <ConfirmContext.Provider value={{ confirm, dialogState, handleConfirm, handleCancel }}>
+    <ConfirmContext.Provider value={{ confirm, confirmWithAction, dialogState, handleConfirm, handleCancel }}>
       {children}
     </ConfirmContext.Provider>
   );

@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useWindowManager } from '../../context/WindowManagerContext';
+import WindowConfirm from '../Confirm/WindowConfirm';
+import WindowActionToast from '../Toast/WindowActionToast';
 import styles from './Window.module.css';
 
 const Window = ({ id, title, isOpen, isMinimized, isMaximized, x, y, width, height, zIndex, children }) => {
@@ -143,6 +145,8 @@ const Window = ({ id, title, isOpen, isMinimized, isMaximized, x, y, width, heig
       </header>
 
       <div className={styles.windowContent}>
+        <WindowConfirm windowId={id} />
+        <WindowActionToast windowId={id} />
         {children}
       </div>
     </div>

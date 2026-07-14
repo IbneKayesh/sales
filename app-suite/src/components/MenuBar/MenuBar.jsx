@@ -2,12 +2,13 @@ import React from 'react';
 import { useWindowManager } from '../../context/WindowManagerContext';
 import Clock from './Clock';
 import SystemStatus from './SystemStatus';
+import WindowMenu from './WindowMenu';
 import WindowTabs from '../WindowTabs/WindowTabs';
 import FullscreenToggle from '../FullscreenToggle/FullscreenToggle';
 import UserMenu from '../UserMenu/UserMenu';
 import styles from './MenuBar.module.css';
 
-const menuItems = ['File', 'Edit', 'View', 'Window', 'Help'];
+const menuItems = ['File', 'Edit', 'View', 'Help'];
 
 const MenuBar = ({ toggleLauncher, isLauncherOpen }) => {
   const { activeWindowId, windows } = useWindowManager();
@@ -52,6 +53,7 @@ const MenuBar = ({ toggleLauncher, isLauncherOpen }) => {
               {item}
             </button>
           ))}
+          <WindowMenu />
         </nav>
       </div>
 

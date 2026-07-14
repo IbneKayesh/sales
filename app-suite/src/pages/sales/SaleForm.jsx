@@ -10,6 +10,7 @@ const SaleForm = ({ initialData, onSubmit }) => {
       : EMPTY
   );
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
 
   const field = (name) => ({
     value: form[name],
@@ -25,17 +26,22 @@ const SaleForm = ({ initialData, onSubmit }) => {
     return errs;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validate();
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
-    onSubmit({
-      customerName: form.customerName.trim(),
-      product: form.product.trim(),
-      quantity: Number(form.quantity),
-      unitPrice: Number(form.unitPrice),
-    });
+    setSubmitting(true);
+    try {
+      await onSubmit({
+        customerName: form.customerName.trim(),
+        product: form.product.trim(),
+        quantity: Number(form.quantity),
+        unitPrice: Number(form.unitPrice),
+      });
+    } catch {
+      setSubmitting(false);
+    }
   };
 
   const preview = Number(form.quantity) && Number(form.unitPrice)
@@ -78,8 +84,12 @@ const SaleForm = ({ initialData, onSubmit }) => {
       )}
 
       <div className={styles.actions}>
-        <button type="submit" className={styles.submitBtn}>
-          {initialData ? 'Save Changes' : 'Create Sale'}
+        <button type="submit" className={styles.submitBtn} disabled={submitting}>
+          {submitting ? (
+            <span className={styles.spinner} />
+          ) : (
+            initialData ? 'Save Changes' : 'Create Sale'
+          )}
         </button>
       </div>
     </form>

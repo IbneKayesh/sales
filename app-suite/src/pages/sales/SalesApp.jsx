@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSales } from '../../context/SalesContext';
+import useSales from '../../hooks/useSales';
 import { useToast } from '../../context/ToastContext';
 import { useConfirm } from '../../context/ConfirmContext';
 import SalesToolbar from './SalesToolbar';
@@ -9,12 +9,13 @@ import styles from './SalesApp.module.css';
 
 const SalesApp = () => {
   const { sales, addSale, updateSale, deleteSale } = useSales();
-  const { addToast } = useToast();
-  const { confirm } = useConfirm();
+  const { addToast, addActionToast } = useToast();
+  const { confirmWithAction } = useConfirm();
   const [view, setView] = useState('list');
   const [currentSaleId, setCurrentSaleId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [productFilter, setProductFilter] = useState('All');
+  const [deletingId, setDeletingId] = useState(null);
 
   const filteredSales = sales.filter((sale) => {
     const matchesSearch = sale.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -23,30 +24,38 @@ const SalesApp = () => {
     return matchesSearch && matchesProduct;
   });
 
-  const handleAdd = (saleData) => {
+  const handleAdd = async (saleData) => {
+    // Simulate network latency so the loading spinner is visible
+    await new Promise((resolve) => setTimeout(resolve, 500));
     addSale(saleData);
     addToast({ message: `Sale transaction for ${saleData.customerName} created`, type: 'success' });
+    await addActionToast(`Transaction for ${saleData.customerName} has been recorded`, 'success', 'sales');
     setView('list');
   };
 
-  const handleEdit = (saleData) => {
+  const handleEdit = async (saleData) => {
+    // Simulate network latency so the loading spinner is visible
+    await new Promise((resolve) => setTimeout(resolve, 500));
     updateSale(currentSaleId, saleData);
     addToast({ message: `Sale transaction for ${saleData.customerName} updated`, type: 'success' });
+    await addActionToast(`Transaction for ${saleData.customerName} has been updated`, 'success', 'sales');
     setView('list');
     setCurrentSaleId(null);
   };
 
   const handleDelete = async (id, customerName) => {
-    const isConfirmed = await confirm(
+    await confirmWithAction(
       'Delete Transaction',
       `Are you sure you want to delete the sale transaction for "${customerName}"? This action cannot be undone.`,
-      { confirmLabel: 'Delete', cancelLabel: 'Keep', danger: true }
+      async () => {
+        setDeletingId(id);
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        deleteSale(id);
+        setDeletingId(null);
+        await addActionToast(`Transaction for ${customerName} has been deleted`, 'info', 'sales');
+      },
+      { confirmLabel: 'Delete', cancelLabel: 'Keep', danger: true, windowId: 'sales' }
     );
-
-    if (isConfirmed) {
-      deleteSale(id);
-      addToast({ message: `Transaction for ${customerName} deleted`, type: 'success' });
-    }
   };
 
   const startEdit = (id) => {
@@ -87,6 +96,7 @@ const SalesApp = () => {
                 sales={filteredSales}
                 onEdit={startEdit}
                 onDelete={handleDelete}
+                deletingId={deletingId}
               />
             )}
           </div>

@@ -148,6 +148,39 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(safe);
   }, [currentUser]);
 
+  const changePassword = useCallback((currentPassword, newPassword) => {
+    if (!currentUser) return Promise.reject(new Error('Not authenticated'));
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const freshUsers = loadUsers();
+        const user = freshUsers.find((u) => u.id === currentUser.id);
+        if (!user) {
+          reject(new Error('User not found'));
+          return;
+        }
+        if (user.password !== currentPassword) {
+          reject(new Error('Current password is incorrect'));
+          return;
+        }
+        const updated = freshUsers.map((u) =>
+          u.id === currentUser.id ? { ...u, password: newPassword } : u
+        );
+        saveUsers(updated);
+        setUsers(updated);
+        resolve(true);
+      }, 500);
+    });
+  }, [currentUser]);
+
+  const deleteUser = useCallback((userId) => {
+    const freshUsers = loadUsers();
+    const filtered = freshUsers.filter((u) => u.id !== userId);
+    if (filtered.length === freshUsers.length) return false; // user not found
+    saveUsers(filtered);
+    setUsers(filtered);
+    return true;
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -159,6 +192,8 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         updateProfile,
+        deleteUser,
+        changePassword,
         defaultAvatarImg: avatarImg,
       }}
     >

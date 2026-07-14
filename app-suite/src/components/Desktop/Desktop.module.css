@@ -6,13 +6,33 @@
   box-sizing: border-box;
 }
 
+.dashboardBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  animation: dashFadeIn 0.4s ease-out;
+}
+
+@keyframes dashFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .iconsGrid {
   position: absolute;
   top: 16px;
   right: 16px;
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   gap: 12px;
+  max-height: calc(100% - 32px);
+  align-content: flex-start;
   z-index: 5;
 }
 
@@ -28,26 +48,4 @@
 
 .windowsContainer > * {
   pointer-events: auto;
-}
-
-.placeholderView {
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.placeholderView h2 {
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding-bottom: 12px;
-}
-
-.placeholderView p {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  line-height: 1.6;
 }
