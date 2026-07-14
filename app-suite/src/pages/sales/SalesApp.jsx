@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import useSales from '../../hooks/useSales';
-import { useToast } from '../../context/ToastContext';
-import { useConfirm } from '../../context/ConfirmContext';
+import { useToast, useConfirm } from '@/context/FeedbackContext';
 import SalesToolbar from './SalesToolbar';
 import SalesTable from './SalesTable';
 import SaleForm from './SaleForm';

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { useConfirm } from '../../context/ConfirmContext';
-import { useToast } from '../../context/ToastContext';
+import { useToast, useConfirm } from '@/context/FeedbackContext';
 import styles from './TrashPage.module.css';
 
 // ── Mock deleted items ────────────────────────────────────────────────────

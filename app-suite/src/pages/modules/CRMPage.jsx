@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import useCRM from '../../hooks/useCRM';
-import { useToast } from '../../context/ToastContext';
-import { useConfirm } from '../../context/ConfirmContext';
+import { useToast, useConfirm } from '@/context/FeedbackContext';
 import DataTable from '../../components/DataTable/DataTable';
 
 const stageStyles = {

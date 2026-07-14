@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { useToast } from '../../context/ToastContext';
-import { useConfirm } from '../../context/ConfirmContext';
+import { useToast, useConfirm } from '@/context/FeedbackContext';
 import useInventory from '../../hooks/useInventory';
 import DataTable from '../../components/DataTable/DataTable';
 import styles from './InventoryPage.module.css';

@@ -1,11 +1,12 @@
 import React from 'react';
-import { useWindowManager } from '../../context/WindowManagerContext';
+import { useWindowManager } from '@/context/WindowManagerContext';
 import Clock from './Clock';
 import SystemStatus from './SystemStatus';
 import WindowMenu from './WindowMenu';
 import WindowTabs from '../WindowTabs/WindowTabs';
 import FullscreenToggle from '../FullscreenToggle/FullscreenToggle';
 import UserMenu from '../UserMenu/UserMenu';
+import { IconGrid } from '@/assets/icons';
 import styles from './MenuBar.module.css';
 
 const menuItems = ['File', 'Edit', 'View', 'Help'];
@@ -27,22 +28,7 @@ const MenuBar = ({ toggleLauncher, isLauncherOpen }) => {
           aria-label="Open App Launcher"
           aria-expanded={isLauncherOpen}
         >
-          <svg
-            className={styles.launcherIcon}
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="5" cy="5" r="2" />
-            <circle cx="12" cy="5" r="2" />
-            <circle cx="19" cy="5" r="2" />
-            <circle cx="5" cy="12" r="2" />
-            <circle cx="12" cy="12" r="2" />
-            <circle cx="19" cy="12" r="2" />
-            <circle cx="5" cy="19" r="2" />
-            <circle cx="12" cy="19" r="2" />
-            <circle cx="19" cy="19" r="2" />
-          </svg>
+          <IconGrid className={styles.launcherIcon} />
         </button>
 
         <span className={styles.activeAppName}>{activeAppName}</span>

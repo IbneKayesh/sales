@@ -1,214 +1,25 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { APP_ROUTES, appConfigById } from "@/routes/appConfig";
 
 const WindowManagerContext = createContext();
 
-const initialWindowsList = [
-  {
-    id: "home",
-    title: "Home",
+// ── Generate initial window states from appConfig ────────────────────────
+const initialWindowsList = APP_ROUTES.map((route) => {
+  const win = route.defaultWindow || { width: 700, height: 500, x: 100, y: 60 };
+  return {
+    id: route.id,
+    title: route.title,
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    x: 80,
-    y: 60,
-    width: 800,
-    height: 540,
+    x: win.x,
+    y: win.y,
+    width: win.width,
+    height: win.height,
     zIndex: 10,
-  },
-  {
-    id: "files",
-    title: "Finder",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 80,
-    y: 80,
-    width: 750,
-    height: 480,
-    zIndex: 10,
-  },
-  {
-    id: "gallery",
-    title: "System Gallery",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 140,
-    y: 120,
-    width: 800,
-    height: 500,
-    zIndex: 10,
-  },
-  {
-    id: "settings",
-    title: "System Settings",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 200,
-    y: 60,
-    width: 680,
-    height: 460,
-    zIndex: 10,
-  },
-  {
-    id: "documents",
-    title: "Documents",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 260,
-    y: 150,
-    width: 600,
-    height: 400,
-    zIndex: 10,
-  },
-  {
-    id: "trash",
-    title: "Trash",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 320,
-    y: 180,
-    width: 500,
-    height: 350,
-    zIndex: 10,
-  },
-  {
-    id: "sales",
-    title: "Sales",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 100,
-    y: 60,
-    width: 860,
-    height: 540,
-    zIndex: 10,
-  },
-  {
-    id: "sales.orders",
-    title: "Orders",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 120,
-    y: 70,
-    width: 800,
-    height: 500,
-    zIndex: 10,
-  },
-  {
-    id: "sales.invoices",
-    title: "Invoices",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 140,
-    y: 80,
-    width: 800,
-    height: 500,
-    zIndex: 10,
-  },
-  {
-    id: "sales.delivery",
-    title: "Delivery",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 160,
-    y: 90,
-    width: 720,
-    height: 520,
-    zIndex: 10,
-  },
-  {
-    id: "sales.reports",
-    title: "Reports",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 180,
-    y: 100,
-    width: 740,
-    height: 480,
-    zIndex: 10,
-  },
-  {
-    id: "purchase",
-    title: "Purchase",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 100,
-    y: 80,
-    width: 800,
-    height: 500,
-    zIndex: 10,
-  },
-  {
-    id: "hr",
-    title: "HR",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 140,
-    y: 100,
-    width: 780,
-    height: 480,
-    zIndex: 10,
-  },
-  {
-    id: "crm",
-    title: "CRM",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 180,
-    y: 120,
-    width: 820,
-    height: 520,
-    zIndex: 10,
-  },
-  {
-    id: "inventory",
-    title: "Inventory",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 120,
-    y: 60,
-    width: 800,
-    height: 520,
-    zIndex: 10,
-  },
-  {
-    id: "profile",
-    title: "Profile Settings",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 140,
-    y: 80,
-    width: 720,
-    height: 540,
-    zIndex: 10,
-  },
-  {
-    id: "notifications",
-    title: "Notifications",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    x: 120,
-    y: 70,
-    width: 700,
-    height: 520,
-    zIndex: 10,
-  },
-];
+  };
+});
 
 export const WindowManagerProvider = ({ children }) => {
   const [windows, setWindows] = useState(initialWindowsList);
@@ -217,6 +28,12 @@ export const WindowManagerProvider = ({ children }) => {
   const [recents, setRecents] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Resolve the route URL from appConfig, fallback to /id
+  const resolveUrl = useCallback((id) => {
+    const route = appConfigById[id];
+    return route?.url || `/${id}`;
+  }, []);
 
   const addToRecents = useCallback((id) => {
     setRecents((prev) => {
@@ -237,7 +54,7 @@ export const WindowManagerProvider = ({ children }) => {
       ),
     );
     setActiveWindowId(id);
-    setTimeout(() => navigate(`/${id}`), 0);
+    setTimeout(() => navigate(resolveUrl(id)), 0);
   };
 
   const closeWindow = (id) => {
@@ -253,7 +70,7 @@ export const WindowManagerProvider = ({ children }) => {
         const sorted = [...openRemaining].sort((a, b) => b.zIndex - a.zIndex);
         const nextActiveId = sorted[0].id;
         setActiveWindowId(nextActiveId);
-        setTimeout(() => navigate(`/${nextActiveId}`), 0);
+        setTimeout(() => navigate(resolveUrl(nextActiveId)), 0);
       } else {
         setActiveWindowId(null);
         setTimeout(() => navigate("/"), 0);
@@ -276,7 +93,7 @@ export const WindowManagerProvider = ({ children }) => {
         const sorted = [...openRemaining].sort((a, b) => b.zIndex - a.zIndex);
         const nextActiveId = sorted[0].id;
         setActiveWindowId(nextActiveId);
-        setTimeout(() => navigate(`/${nextActiveId}`), 0);
+        setTimeout(() => navigate(resolveUrl(nextActiveId)), 0);
       } else {
         setActiveWindowId(null);
         setTimeout(() => navigate("/"), 0);
@@ -295,7 +112,7 @@ export const WindowManagerProvider = ({ children }) => {
       ),
     );
     setActiveWindowId(id);
-    setTimeout(() => navigate(`/${id}`), 0);
+    setTimeout(() => navigate(resolveUrl(id)), 0);
   };
 
   const focusWindow = (id) => {
@@ -305,7 +122,7 @@ export const WindowManagerProvider = ({ children }) => {
       prev.map((win) => (win.id === id ? { ...win, zIndex: nextZ } : win)),
     );
     setActiveWindowId(id);
-    setTimeout(() => navigate(`/${id}`), 0);
+    setTimeout(() => navigate(resolveUrl(id)), 0);
   };
 
   const toggleMaximize = (id) => {
@@ -324,7 +141,7 @@ export const WindowManagerProvider = ({ children }) => {
 
   useEffect(() => {
     const path = location.pathname.substring(1);
-    if (path && initialWindowsList.some((w) => w.id === path)) {
+    if (path && appConfigById[path]) {
       addToRecents(path);
       setMaxZIndex((currentZ) => {
         const nextZ = currentZ + 1;
@@ -373,12 +190,11 @@ export const WindowManagerProvider = ({ children }) => {
           ? { ...win, isMinimized: false, zIndex: nextZ }
           : win
       );
-      // Focus the topmost restored window
       const openWindows = updated.filter((w) => w.isOpen && !w.isMinimized);
       if (openWindows.length > 0) {
         const sorted = [...openWindows].sort((a, b) => b.zIndex - a.zIndex);
         setActiveWindowId(sorted[0].id);
-        setTimeout(() => navigate(`/${sorted[0].id}`), 0);
+        setTimeout(() => navigate(resolveUrl(sorted[0].id)), 0);
       }
       return updated;
     });

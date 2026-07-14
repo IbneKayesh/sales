@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useToast } from '../../context/ToastContext';
-import { useConfirm } from '../../context/ConfirmContext';
+import { useToast, useConfirm } from '@/context/FeedbackContext';
 import Avatar from '../../components/Avatar/Avatar';
 import styles from './ProfilePage.module.css';
 

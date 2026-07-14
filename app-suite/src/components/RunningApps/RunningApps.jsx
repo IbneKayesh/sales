@@ -1,28 +1,24 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { getNavBarApps } from '@/routes/appConfig';
 import styles from './RunningApps.module.css';
 
-const apps = [
-  { name: 'Home', path: '/' },
-  { name: 'Files', path: '/files' },
-  { name: 'Gallery', path: '/gallery' },
-  { name: 'Settings', path: '/settings' }
-];
-
 const RunningApps = () => {
+  const apps = getNavBarApps();
+
   return (
     <nav className={styles.nav} aria-label="Running Applications">
       {apps.map((app) => (
         <NavLink
-          key={app.path}
-          to={app.path}
+          key={app.id}
+          to={app.url}
           className={({ isActive }) =>
             `${styles.appItem} ${isActive ? styles.appItemActive : ''}`
           }
-          end={app.path === '/'}
+          end={app.url === '/'}
         >
           <span className={styles.indicator} />
-          <span className={styles.appName}>{app.name}</span>
+          <span className={styles.appName}>{app.label}</span>
         </NavLink>
       ))}
     </nav>

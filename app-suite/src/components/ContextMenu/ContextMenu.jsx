@@ -1,8 +1,7 @@
 import React, { useRef, useEffect } from 'react';
-import { useContextMenu } from '../../context/ContextMenuContext';
-import { useWindowManager } from '../../context/WindowManagerContext';
-import { useDesktop } from '../../context/DesktopContext';
-import { useToast } from '../../context/ToastContext';
+import { useWindowManager } from '@/context/WindowManagerContext';
+import { useContextMenu, useDesktop } from '@/context/DesktopContext';
+import { useToast } from '@/context/FeedbackContext';
 import styles from './ContextMenu.module.css';
 
 const ContextMenu = () => {

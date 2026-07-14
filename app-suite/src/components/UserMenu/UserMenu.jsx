@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useWindowManager } from '../../context/WindowManagerContext';
-import { useToast } from '../../context/ToastContext';
+import { useToast } from '@/context/FeedbackContext';
 import Avatar from '../Avatar/Avatar';
 import styles from './UserMenu.module.css';
 

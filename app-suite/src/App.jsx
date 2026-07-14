@@ -1,61 +1,70 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
-import DesktopLayout from './layouts/DesktopLayout/DesktopLayout';
-import LoginPage from './pages/auth/LoginPage';
-import FilesPage from './pages/system/FilesPage';
-import GalleryPage from './pages/system/GalleryPage';
-import SettingsPage from './pages/system/SettingsPage';
-import HomePage from './pages/HomePage';
-import SalesApp from './pages/sales/SalesApp';
-import OrdersPage from './pages/sales/OrdersPage';
-import InvoicePage from './pages/sales/InvoicePage';
-import DeliveryPage from './pages/sales/DeliveryPage';
-import ReportsPage from './pages/sales/ReportsPage';
-import InventoryPage from './pages/inventory/InventoryPage';
-import PurchasePage from './pages/modules/PurchasePage';
-import HRPage from './pages/modules/HRPage';
-import CRMPage from './pages/modules/CRMPage';
-import DocumentsPage from './pages/system/DocumentsPage';
-import TrashPage from './pages/system/TrashPage';
-import NotificationPage from './pages/system/NotificationPage';
-import ProfilePage from './pages/system/ProfilePage';
+import { AuthProvider } from '@/context/AuthContext';
+import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute';
+import DesktopLayout from '@/layouts/DesktopLayout/DesktopLayout';
+import PageLoader from '@/components/PageLoader/PageLoader';
+import { APP_ROUTES } from '@/routes/appConfig';
 
-import IndexRoutes from "./routes/Index";
+const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
+const NotFoundPage = lazy(() => import('@/pages/system/NotFoundPage/NotFoundPage'));
+
+// ── Lazy-loaded page components ──────────────────────────────────────────
+// Map each route id to its lazy-loaded page component.
+const pageComponents = {
+  home:         lazy(() => import('@/pages/HomePage')),
+  files:        lazy(() => import('@/pages/system/FilesPage')),
+  gallery:      lazy(() => import('@/pages/system/GalleryPage')),
+  settings:     lazy(() => import('@/pages/system/SettingsPage')),
+  documents:    lazy(() => import('@/pages/system/DocumentsPage')),
+  trash:        lazy(() => import('@/pages/system/TrashPage')),
+  sales:        lazy(() => import('@/pages/sales/SalesApp')),
+  'sales.orders':   lazy(() => import('@/pages/sales/OrdersPage')),
+  'sales.invoices': lazy(() => import('@/pages/sales/InvoicePage')),
+  'sales.delivery': lazy(() => import('@/pages/sales/DeliveryPage')),
+  'sales.reports':  lazy(() => import('@/pages/sales/ReportsPage')),
+  inventory:    lazy(() => import('@/pages/inventory/InventoryPage')),
+  purchase:     lazy(() => import('@/pages/modules/PurchasePage')),
+  hr:           lazy(() => import('@/pages/modules/HRPage')),
+  crm:          lazy(() => import('@/pages/modules/CRMPage')),
+  profile:      lazy(() => import('@/pages/system/ProfilePage')),
+  notifications: lazy(() => import('@/pages/system/NotificationPage')),
+};
+
+import IndexRoutes from "@/routes/Index";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
 
-          <Route element={<ProtectedRoute />}>
-            <Route element={<DesktopLayout />}>
-              <Route path="/" element={null} />
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/files" element={<FilesPage />} />
-              <Route path="/gallery" element={<GalleryPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/sales" element={<SalesApp />} />
-              <Route path="/purchase" element={<PurchasePage />} />
-              <Route path="/hr" element={<HRPage />} />
-              <Route path="/crm" element={<CRMPage />} />
-              <Route path="/inventory" element={<InventoryPage />} />
-              <Route path="/sales.orders" element={<OrdersPage />} />
-              <Route path="/sales.invoices" element={<InvoicePage />} />
-              <Route path="/sales.delivery" element={<DeliveryPage />} />
-              <Route path="/sales.reports" element={<ReportsPage />} />
-              <Route path="/documents" element={<DocumentsPage />} />
-              <Route path="/trash" element={<TrashPage />} />
-              <Route path="/notifications" element={<NotificationPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              {IndexRoutes}
-              <Route path="*" element={<HomePage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route element={<DesktopLayout />}>
+                <Route path="/" element={null} />
+                <Route path="/home" element={null} />
+
+                {/* Generate routes dynamically from appConfig */}
+                {APP_ROUTES.filter((r) => r.id !== 'home').map((route) => {
+                  const PageComponent = pageComponents[route.id];
+                  if (!PageComponent) return null;
+                  return (
+                    <Route
+                      key={route.id}
+                      path={route.url}
+                      element={<PageComponent />}
+                    />
+                  );
+                })}
+
+                {IndexRoutes}
+                <Route path="*" element={<NotFoundPage />} />
+              </Route>
             </Route>
-          </Route>
-        </Routes>
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </AuthProvider>
   );

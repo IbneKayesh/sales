@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useConfirm } from '../../context/ConfirmContext';
+import { useConfirm } from '@/context/FeedbackContext';
 import styles from './ConfirmDialog.module.css';
 
 const EXIT_DURATION = 150;
@@ -14,7 +14,6 @@ const ConfirmDialog = () => {
   const confirmBtnRef = useRef(null);
   const timeoutRef = useRef(null);
 
-  // Snapshot dialog data via ref so we can render during exit animation
   if (dialogState && !dialogState.windowId) {
     exitDataRef.current = {
       title: dialogState.title,
@@ -78,7 +77,6 @@ const ConfirmDialog = () => {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [show, exiting]);
 
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);

@@ -48,7 +48,6 @@ export const DesktopProvider = ({ children }) => {
   const [activeWallpaper, setActiveWallpaperState] = useState(() =>
     readLS(key(userId, 'wallpaper'), 'default')
   );
-  // 'preset' uses the wallpaper ID from wallpapers array; 'custom' uses the user's own value
   const [customWallpaper, setCustomWallpaperState] = useState(() =>
     readLS(key(userId, 'customWallpaper'), '')
   );
@@ -83,6 +82,31 @@ export const DesktopProvider = ({ children }) => {
     readLS(key(userId, 'positions'), getDefaultPositions())
   );
 
+  // ── Context menu state (merged from ContextMenuContext) ────────────────
+  const [menuState, setMenuState] = useState(null);
+
+  const closeMenu = useCallback(() => {
+    setMenuState(null);
+  }, []);
+
+  useEffect(() => {
+    if (!menuState) return;
+    const handleClose = () => closeMenu();
+    const handleKey = (e) => {
+      if (e.key === 'Escape') closeMenu();
+    };
+    document.addEventListener('click', handleClose);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('click', handleClose);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [menuState, closeMenu]);
+
+  const showMenu = useCallback((x, y, context) => {
+    setMenuState({ x, y, context });
+  }, []);
+
   // When the logged-in user changes, reload all their desktop data
   useEffect(() => {
     const uid = currentUser?.id ?? 'guest';
@@ -97,27 +121,23 @@ export const DesktopProvider = ({ children }) => {
     setPositions(readLS(key(uid, 'positions'), getDefaultPositions()));
   }, [currentUser?.id]);
 
-  // Determine which CSS value to apply for the desktop background
   const resolvedWallpaper = useMemo(() => {
     if (customWallpaper) return customWallpaper;
     const wp = wallpapers.find((w) => w.id === activeWallpaper) || wallpapers[0];
     return wp.value;
   }, [activeWallpaper, customWallpaper]);
 
-  // Persist each piece to the per-user key whenever it changes
   useEffect(() => {
     writeLS(key(userId, 'wallpaper'), activeWallpaper);
     document.documentElement.style.setProperty('--desktop-wallpaper', resolvedWallpaper);
   }, [activeWallpaper, resolvedWallpaper, userId]);
   useEffect(() => { writeLS(key(userId, 'customWallpaper'), customWallpaper); }, [customWallpaper, userId]);
-
   useEffect(() => { writeLS(key(userId, 'widgetOrder'), widgetOrder); }, [widgetOrder, userId]);
   useEffect(() => { writeLS(key(userId, 'showIcons'), showIcons); }, [showIcons, userId]);
   useEffect(() => { writeLS(key(userId, 'showRecentApps'), showRecentApps); }, [showRecentApps, userId]);
   useEffect(() => { writeLS(key(userId, 'darkMode'), darkMode); }, [darkMode, userId]);
   useEffect(() => { writeLS(key(userId, 'animations'), animations); }, [animations, userId]);
 
-  // Apply darkMode to the document
   useEffect(() => {
     if (!darkMode) {
       document.documentElement.style.setProperty('--color-text-primary', 'rgba(0, 0, 0, 0.92)');
@@ -130,7 +150,6 @@ export const DesktopProvider = ({ children }) => {
     }
   }, [darkMode]);
 
-  // Apply animations toggle by toggling a class on <html>
   useEffect(() => {
     if (animations) {
       document.documentElement.classList.remove('animations-off');
@@ -142,7 +161,6 @@ export const DesktopProvider = ({ children }) => {
   useEffect(() => { writeLS(key(userId, 'recentApps'), recentApps); }, [recentApps, userId]);
   useEffect(() => { writeLS(key(userId, 'positions'), positions); }, [positions, userId]);
 
-  // Resize clamping
   useEffect(() => {
     const handleResize = () => {
       setPositions((prev) => {
@@ -163,7 +181,6 @@ export const DesktopProvider = ({ children }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Wrapped setters that also persist
   const setWidgetOrder = useCallback((order) => setWidgetOrderState(order), []);
   const toggleWidget = useCallback((widgetId) => {
     setWidgetOrderState((prev) => {
@@ -240,6 +257,7 @@ export const DesktopProvider = ({ children }) => {
   return (
     <DesktopContext.Provider
       value={{
+        // Desktop context
         wallpapers,
         activeWallpaper,
         setActiveWallpaper,
@@ -265,6 +283,10 @@ export const DesktopProvider = ({ children }) => {
         updatePosition,
         resetPositions,
         resetLayout,
+        // Context menu (merged)
+        menuState,
+        showMenu,
+        closeMenu,
       }}
     >
       {children}
@@ -275,5 +297,12 @@ export const DesktopProvider = ({ children }) => {
 export const useDesktop = () => {
   const ctx = useContext(DesktopContext);
   if (!ctx) throw new Error('useDesktop must be used within a DesktopProvider');
+  return ctx;
+};
+
+// Re-export context menu hook from DesktopContext for convenience
+export const useContextMenu = () => {
+  const ctx = useContext(DesktopContext);
+  if (!ctx) throw new Error('useContextMenu must be used within a DesktopProvider');
   return ctx;
 };

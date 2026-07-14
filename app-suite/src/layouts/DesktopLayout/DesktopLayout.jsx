@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { WindowManagerProvider } from '../../context/WindowManagerContext';
-import { DesktopProvider } from '../../context/DesktopContext';
-import { ToastProvider } from '../../context/ToastContext';
-import { ConfirmProvider } from '../../context/ConfirmContext';
-import { ContextMenuProvider } from '../../context/ContextMenuContext';
-import MenuBar from '../../components/MenuBar/MenuBar';
-import AppLauncher from '../../components/AppLauncher/AppLauncher';
-import Dock from '../../components/Dock/Dock';
-import Desktop from '../../components/Desktop/Desktop';
-import ToastContainer from '../../components/Toast/ToastContainer';
-import ConfirmDialog from '../../components/Confirm/ConfirmDialog';
-import ContextMenu from '../../components/ContextMenu/ContextMenu';
+import { WindowManagerProvider } from '@/context/WindowManagerContext';
+import { DesktopProvider } from '@/context/DesktopContext';
+import { FeedbackProvider } from '@/context/FeedbackContext';
+import MenuBar from '@/components/MenuBar/MenuBar';
+import AppLauncher from '@/components/AppLauncher/AppLauncher';
+import Dock from '@/components/Dock/Dock';
+import Desktop from '@/components/Desktop/Desktop';
+import FeedbackDialog from '@/components/Feedback/FeedbackDialog';
+import ContextMenu from '@/components/ContextMenu/ContextMenu';
 import styles from './DesktopLayout.module.css';
 
 const DesktopLayout = () => {
@@ -21,38 +18,33 @@ const DesktopLayout = () => {
   const closeLauncher = () => setIsLauncherOpen(false);
 
   return (
-    <ToastProvider>
-      <ConfirmProvider>
-        <DesktopProvider>
-          <ContextMenuProvider>
-            <WindowManagerProvider>
-              <div className={styles.layout}>
-                <MenuBar toggleLauncher={toggleLauncher} isLauncherOpen={isLauncherOpen} />
+    <FeedbackProvider>
+      <DesktopProvider>
+        <WindowManagerProvider>
+          <div className={styles.layout}>
+            <MenuBar toggleLauncher={toggleLauncher} isLauncherOpen={isLauncherOpen} />
 
-                <div className={styles.mainArea}>
-                  <Desktop />
-                  <Dock />
+            <div className={styles.mainArea}>
+              <Desktop />
+              <Dock />
 
-                  {isLauncherOpen && (
-                    <AppLauncher isOpen={isLauncherOpen} closeLauncher={closeLauncher} />
-                  )}
+              {isLauncherOpen && (
+                <AppLauncher isOpen={isLauncherOpen} closeLauncher={closeLauncher} />
+              )}
 
-                  <ContextMenu />
-                </div>
-              </div>
+              <ContextMenu />
+            </div>
+          </div>
 
-              {/* Outlet: keeps React Router lifecycle active but is visually hidden */}
-              <div className={styles.hiddenOutlet}>
-                <Outlet />
-              </div>
+          {/* Outlet: keeps React Router lifecycle active but is visually hidden */}
+          <div className={styles.hiddenOutlet}>
+            <Outlet />
+          </div>
 
-              <ToastContainer />
-              <ConfirmDialog />
-            </WindowManagerProvider>
-          </ContextMenuProvider>
-        </DesktopProvider>
-      </ConfirmProvider>
-    </ToastProvider>
+          <FeedbackDialog />
+        </WindowManagerProvider>
+      </DesktopProvider>
+    </FeedbackProvider>
   );
 };
 
