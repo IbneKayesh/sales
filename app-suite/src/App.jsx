@@ -22,6 +22,8 @@ import TrashPage from './pages/system/TrashPage';
 import NotificationPage from './pages/system/NotificationPage';
 import ProfilePage from './pages/system/ProfilePage';
 
+import IndexRoutes from "./routes/Index";
+
 function App() {
   return (
     <AuthProvider>
@@ -49,6 +51,8 @@ function App() {
               <Route path="/trash" element={<TrashPage />} />
               <Route path="/notifications" element={<NotificationPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              {IndexRoutes}
+              <Route path="*" element={<HomePage />} />
             </Route>
           </Route>
         </Routes>
