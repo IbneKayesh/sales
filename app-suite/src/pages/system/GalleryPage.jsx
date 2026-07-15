@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { IconEyeOpen } from '@/assets/icons';
+import ButtonGroup from '@/components/ButtonGroup/ButtonGroup';
 import styles from './GalleryPage.module.css';
 
 const categories = ['All', 'Photography', 'Illustration', '3D Render'];
@@ -27,17 +29,14 @@ const GalleryPage = () => {
           <p className={styles.subtitle}>Explore visual creations and system graphics</p>
         </div>
 
-        <nav className={styles.categories} aria-label="Gallery Categories">
-          {categories.map((category) => (
-            <button
-              key={category}
-              className={`${styles.categoryBtn} ${activeCategory === category ? styles.categoryBtnActive : ''}`}
-              onClick={() => setActiveCategory(category)}
-            >
-              {category}
-            </button>
-          ))}
-        </nav>
+        <ButtonGroup
+          buttons={categories.map((cat) => ({ id: cat, label: cat }))}
+          activeId={activeCategory}
+          onChange={setActiveCategory}
+          size="sm"
+          variant="outline"
+          ariaLabel="Gallery Categories"
+        />
       </header>
 
       <main className={styles.grid}>
@@ -49,10 +48,7 @@ const GalleryPage = () => {
             <div className={`${styles.mediaContainer} ${item.bgStyle}`}>
               <div className={styles.overlay}>
                 <button className={styles.previewBtn} aria-label={`View ${item.title}`}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.btnIcon}>
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
+                  <IconEyeOpen className={styles.btnIcon} />
                 </button>
               </div>
             </div>

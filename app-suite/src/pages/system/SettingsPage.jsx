@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useDesktop } from '../../context/DesktopContext';
 import { useToast, useConfirm } from '@/context/FeedbackContext';
+import { IconCheck, IconColorWheel, IconFileImage, IconUpload, IconDelete, IconMonitor, IconSettings, IconProfile, IconUser } from '@/assets/icons';
+import ButtonGroup from '@/components/ButtonGroup/ButtonGroup';
 import styles from './SettingsPage.module.css';
 
 const sections = [
-  { id: 'appearance', label: 'Appearance' },
-  { id: 'system', label: 'System' },
-  { id: 'account', label: 'Account' },
-  { id: 'users', label: 'Users' },
+  { id: 'appearance', label: 'Appearance', icon: <IconMonitor /> },
+  { id: 'system', label: 'System', icon: <IconSettings /> },
+  { id: 'account', label: 'Account', icon: <IconProfile /> },
+  { id: 'users', label: 'Users', icon: <IconUser /> },
 ];
 
 const SettingsPage = () => {
@@ -109,17 +111,15 @@ const SettingsPage = () => {
 
       <div className={styles.layout}>
         <aside className={styles.sidebar}>
-          <nav className={styles.sideNav} aria-label="Settings Categories">
-            {sections.map((section) => (
-              <button
-                key={section.id}
-                className={`${styles.navBtn} ${activeSection === section.id ? styles.navBtnActive : ''}`}
-                onClick={() => setActiveSection(section.id)}
-              >
-                <span>{section.label}</span>
-              </button>
-            ))}
-          </nav>
+          <ButtonGroup
+            buttons={sections.map((s) => ({ id: s.id, label: s.label, icon: s.icon }))}
+            activeId={activeSection}
+            onChange={setActiveSection}
+            size="md"
+            variant="ghost"
+            direction="vertical"
+            ariaLabel="Settings Categories"
+          />
         </aside>
 
         <main className={styles.contentPane}>
@@ -141,9 +141,7 @@ const SettingsPage = () => {
                     />
                     <div className={styles.wallpaperName}>
                       {activeWallpaper === wp.id && (
-                        <svg className={styles.wallpaperCheck} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
+                        <IconCheck className={styles.wallpaperCheck} />
                       )}
                       <span>{wp.name}</span>
                     </div>
@@ -155,14 +153,7 @@ const SettingsPage = () => {
               <div className={styles.customBgSection}>
                 <div className={styles.customBgRow}>
                   <div className={styles.customBgLabel}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.customBgIcon}>
-                      <circle cx="12" cy="12" r="10" />
-                      <circle cx="12" cy="12" r="4" />
-                      <line x1="4.93" y1="4.93" x2="9.17" y2="9.17" />
-                      <line x1="14.83" y1="14.83" x2="19.07" y2="19.07" />
-                      <line x1="14.83" y1="9.17" x2="19.07" y2="4.93" />
-                      <line x1="4.93" y1="19.07" x2="9.17" y2="14.83" />
-                    </svg>
+                    <IconColorWheel className={styles.customBgIcon} />
                     <span>Solid Color</span>
                   </div>
                   <div className={styles.colorPickerRow}>
@@ -192,11 +183,7 @@ const SettingsPage = () => {
 
                 <div className={styles.customBgRow}>
                   <div className={styles.customBgLabel}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.customBgIcon}>
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                      <circle cx="8.5" cy="8.5" r="1.5" />
-                      <polyline points="21 15 16 10 5 21" />
-                    </svg>
+                    <IconFileImage className={styles.customBgIcon} />
                     <span>Upload Image</span>
                   </div>
                   <div className={styles.uploadRow}>
@@ -204,11 +191,7 @@ const SettingsPage = () => {
                       className={styles.uploadBtn}
                       onClick={() => fileInputRef.current?.click()}
                     >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.uploadBtnIcon}>
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="17 8 12 3 7 8" />
-                        <line x1="12" y1="3" x2="12" y2="15" />
-                      </svg>
+                      <IconUpload className={styles.uploadBtnIcon} />
                       {customPreview ? 'Change Image' : 'Choose Image'}
                     </button>
                     <input
@@ -229,9 +212,7 @@ const SettingsPage = () => {
 
                 {activeWallpaper === 'custom' && (
                   <div className={styles.customActiveBadge}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.customActiveBadgeIcon}>
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
+                    <IconCheck className={styles.customActiveBadgeIcon} />
                     Custom background is active
                   </div>
                 )}
@@ -406,12 +387,7 @@ const SettingsPage = () => {
                           {deletingUserId === user.id ? (
                             <span className={styles.deleteSpinner} />
                           ) : (
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.deleteIcon}>
-                              <polyline points="3 6 5 6 21 6" />
-                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                              <line x1="10" y1="11" x2="10" y2="17" />
-                              <line x1="14" y1="11" x2="14" y2="17" />
-                            </svg>
+                            <IconDelete className={styles.deleteIcon} />
                           )}
                           {deletingUserId === user.id ? 'Deleting' : 'Delete'}
                         </button>

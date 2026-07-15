@@ -1,8 +1,0 @@
-.clock {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text-primary);
-  user-select: none;
-  cursor: default;
-  white-space: nowrap;
-}

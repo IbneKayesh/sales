@@ -13,24 +13,8 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid var(--glass-bg-hover-light);
   overflow-y: auto;
-}
-
-.sidebarSection {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.sidebarTitle {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  padding: 0 8px;
-  margin-bottom: 4px;
 }
 
 .sidebarItem {
@@ -50,7 +34,7 @@
 }
 
 .sidebarItem:hover {
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: var(--glass-bg-light);
   color: var(--color-text-primary);
 }
 
@@ -89,7 +73,7 @@
 .sidebarCount {
   font-size: 10px;
   color: var(--color-text-muted);
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--glass-bg-hover-light);
   padding: 0 5px;
   border-radius: 4px;
   line-height: 1.5;
@@ -109,7 +93,7 @@
   justify-content: space-between;
   padding: 14px 20px 12px;
   flex-shrink: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--glass-bg-hover-light);
 }
 
 .toolbarLeft {
@@ -149,8 +133,8 @@
   width: 180px;
   padding: 6px 9px 6px 28px;
   border-radius: 7px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-bg-medium);
+  background-color: var(--glass-bg-subtle);
   color: var(--color-text-primary);
   font-family: inherit;
   font-size: 12px;
@@ -163,7 +147,7 @@
 }
 
 .searchInput:focus {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--glass-bg-hover-light);
   border-color: var(--accent-hover);
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
   width: 220px;
@@ -183,7 +167,7 @@
   background: transparent;
 }
 .fileList::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--glass-bg-strong);
   border-radius: 3px;
 }
 
@@ -200,8 +184,8 @@
 }
 
 .fileRow:hover {
-  background-color: rgba(255, 255, 255, 0.03);
-  border-color: rgba(255, 255, 255, 0.04);
+  background-color: var(--glass-bg-subtle);
+  border-color: var(--glass-bg-light);
 }
 
 .fileRowSelected {
@@ -286,7 +270,7 @@
 }
 
 .fileAction:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--glass-bg-strong);
   color: var(--color-text-primary);
 }
 

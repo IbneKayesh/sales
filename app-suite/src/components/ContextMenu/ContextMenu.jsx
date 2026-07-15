@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { useWindowManager } from '@/context/WindowManagerContext';
 import { useContextMenu, useDesktop } from '@/context/DesktopContext';
 import { useToast } from '@/context/FeedbackContext';
+import { IconHomeSimple, IconFolderOpen, IconMinus, IconClose } from '@/assets/icons';
 import styles from './ContextMenu.module.css';
 
 const ContextMenu = () => {
@@ -68,10 +69,7 @@ const ContextMenu = () => {
           role="menuitem"
           onClick={() => handleAction(() => openWindow(ctx.appId))}
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.menuIcon}>
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <polyline points="9 22 9 12 15 12 15 22" />
-          </svg>
+          <IconHomeSimple className={styles.menuIcon} />
           <span>Open</span>
           {ctx.isOpen && <span className={styles.shortcut}>⌘O</span>}
         </button>
@@ -86,9 +84,7 @@ const ContextMenu = () => {
             });
           }}
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.menuIcon}>
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-          </svg>
+          <IconFolderOpen className={styles.menuIcon} />
           <span>Show in Finder</span>
         </button>
 
@@ -101,9 +97,7 @@ const ContextMenu = () => {
               role="menuitem"
               onClick={() => handleAction(() => minimizeWindow(ctx.appId))}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.menuIcon}>
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
+              <IconMinus className={styles.menuIcon} />
               <span>Minimize</span>
               <span className={styles.shortcut}>⌘M</span>
             </button>
@@ -113,10 +107,7 @@ const ContextMenu = () => {
               role="menuitem"
               onClick={() => handleAction(() => closeWindow(ctx.appId))}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.menuIcon}>
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              <IconClose className={styles.menuIcon} />
               <span>Quit</span>
               <span className={styles.shortcut}>⌘Q</span>
             </button>

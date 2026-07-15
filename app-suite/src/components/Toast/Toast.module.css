@@ -7,7 +7,7 @@
   background-color: rgba(18, 18, 28, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-bg-strong);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   color: var(--color-text-primary);
   overflow: hidden;
@@ -66,7 +66,7 @@
 .timerBar {
   width: 100%;
   height: 3px;
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: var(--glass-bg-medium);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -112,8 +112,8 @@
 .actionBtn {
   padding: 4px 8px;
   border-radius: 4px;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: var(--glass-bg-hover);
+  border: 1px solid var(--glass-bg-hover-light);
   color: var(--color-text-primary);
   font-size: 11px;
   font-weight: 600;
@@ -133,7 +133,7 @@
   padding: 6px 16px;
   border-radius: 8px;
   background-color: var(--accent-color);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border-strong);
   color: white;
   font-size: 12px;
   font-weight: 600;
@@ -212,4 +212,37 @@
 }
 .iconInfo {
   color: #3b82f6;
+}
+
+/* ── Toast Container (fixed top-right, global) ──────────────────────────── */
+.regularContainer {
+  position: fixed;
+  top: 50px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 999999;
+  pointer-events: none;
+}
+
+.regularContainer > * {
+  pointer-events: auto;
+}
+
+/* ── Toast Container (in-window, mode="window") ─────────────────────────── */
+.windowContainer {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+  pointer-events: none;
+  max-width: 320px;
+}
+
+.windowContainer > * {
+  pointer-events: auto;
 }

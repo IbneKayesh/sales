@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useWindowManager } from '../../context/WindowManagerContext';
+import { IconCheck, IconWarning, IconError, IconInfo, IconClose, IconBell } from '@/assets/icons';
 import styles from './NotificationPanel.module.css';
 
 // ── Demo notifications ────────────────────────────────────────────────────
@@ -66,36 +67,14 @@ const DEMO_NOTIFICATIONS = [
 const TypeIcon = ({ type }) => {
   switch (type) {
     case 'success':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.iconSuccess}>
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
-      );
+      return <IconCheck className={styles.iconSuccess} />;
     case 'warning':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.iconWarning}>
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-          <line x1="12" y1="9" x2="12" y2="13" />
-          <line x1="12" y1="17" x2="12.01" y2="17" />
-        </svg>
-      );
+      return <IconWarning className={styles.iconWarning} />;
     case 'error':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.iconError}>
-          <circle cx="12" cy="12" r="10" />
-          <line x1="15" y1="9" x2="9" y2="15" />
-          <line x1="9" y1="9" x2="15" y2="15" />
-        </svg>
-      );
+      return <IconError className={styles.iconError} />;
     case 'info':
     default:
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.iconInfo}>
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="16" x2="12" y2="12" />
-          <line x1="12" y1="8" x2="12.01" y2="8" />
-        </svg>
-      );
+      return <IconInfo className={styles.iconInfo} />;
   }
 };
 
@@ -151,10 +130,7 @@ const NotificationPanel = () => {
         aria-expanded={isOpen}
         aria-haspopup="dialog"
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={styles.bellIcon}>
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-        </svg>
+        <IconBell className={styles.bellIcon} />
         {unreadCount > 0 && (
           <span className={styles.badge} aria-label={`${unreadCount} unread notifications`}>
             {unreadCount}
@@ -181,9 +157,7 @@ const NotificationPanel = () => {
           <div className={styles.list}>
             {notifications.length === 0 ? (
               <div className={styles.empty}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.emptyIcon}>
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                </svg>
+                <IconBell className={styles.emptyIcon} />
                 <p>No notifications</p>
               </div>
             ) : (
@@ -203,10 +177,7 @@ const NotificationPanel = () => {
                         onClick={(e) => dismissNotification(e, n.id)}
                         aria-label="Dismiss notification"
                       >
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <line x1="18" y1="6" x2="6" y2="18" />
-                          <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
+                        <IconClose />
                       </button>
                     </div>
                     <p className={styles.notifMessage}>{n.message}</p>

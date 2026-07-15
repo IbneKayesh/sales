@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useConfirm } from '@/context/FeedbackContext';
+import { IconWarning } from '@/assets/icons';
 import styles from './ConfirmDialog.module.css';
 
 const EXIT_DURATION = 150;
 
-const ConfirmDialog = () => {
+const ConfirmDialog = ({ windowed = false }) => {
   const { dialogState, handleConfirm, handleCancel } = useConfirm();
   const [exiting, setExiting] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -14,7 +15,12 @@ const ConfirmDialog = () => {
   const confirmBtnRef = useRef(null);
   const timeoutRef = useRef(null);
 
-  if (dialogState && !dialogState.windowId) {
+  const matchesScope = windowed
+    ? (dialogState && dialogState.windowId)
+    : (dialogState && !dialogState.windowId);
+
+  // Store dialog data when it matches this component's scope
+  if (matchesScope) {
     exitDataRef.current = {
       title: dialogState.title,
       description: dialogState.description,
@@ -23,7 +29,7 @@ const ConfirmDialog = () => {
     };
   }
 
-  const show = (dialogState && !dialogState.windowId) || exiting;
+  const show = matchesScope || exiting;
   const canInteract = !exiting && !loading;
 
   const startExit = (onComplete) => {
@@ -37,16 +43,21 @@ const ConfirmDialog = () => {
   };
 
   const handleExitCancel = () => {
-    if (!canInteract) return;
+    if (!windowed && !canInteract) return;
     startExit(handleCancel);
   };
 
   const handleExitConfirm = async () => {
-    if (!canInteract) return;
+    if (!windowed && !canInteract) return;
     const data = exitDataRef.current;
     if (!data) return;
 
-    if (data.action) {
+    if (data.action && windowed) {
+      // Window mode — synchronous execution
+      data.action();
+      startExit(handleConfirm);
+    } else if (data.action) {
+      // Global mode — async with loading state
       loadingRef.current = true;
       setLoading(true);
       try {
@@ -64,18 +75,15 @@ const ConfirmDialog = () => {
 
   useEffect(() => {
     if (!show || exiting) return;
-
     confirmBtnRef.current?.focus();
-
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && !loadingRef.current) {
+      if (e.key === 'Escape' && (!loadingRef.current || windowed)) {
         handleExitCancel();
       }
     };
-
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [show, exiting]);
+  }, [show, exiting, windowed]);
 
   useEffect(() => {
     return () => {
@@ -87,51 +95,85 @@ const ConfirmDialog = () => {
   if (!show || !data) return null;
 
   const { title, description, options } = data;
-  const clickOutsideToClose = options.clickOutsideToClose ?? true;
 
-  const handleOverlayClick = (e) => {
-    if (!canInteract) return;
-    if (clickOutsideToClose && modalRef.current && !modalRef.current.contains(e.target)) {
-      handleExitCancel();
-    }
-  };
+  // ── Global mode ───────────────────────────────────────────────────────
+  if (!windowed) {
+    const clickOutsideToClose = options.clickOutsideToClose ?? true;
 
-  return (
-    <div className={`${styles.overlay} ${exiting ? styles.overlayExiting : ''}`} onClick={handleOverlayClick} role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-desc">
-      <div className={`${styles.dialog} ${exiting ? styles.dialogExiting : ''}`} ref={modalRef}>
-        <div className={styles.header}>
-          <h2 id="confirm-title" className={styles.title}>{title}</h2>
-        </div>
-        <div className={styles.body}>
-          <p id="confirm-desc" className={styles.description}>{description}</p>
-        </div>
-        {loading && (
-          <div className={styles.loadingBar}>
-            <span className={styles.loadingBarFill} />
+    const handleOverlayClick = (e) => {
+      if (!canInteract) return;
+      if (clickOutsideToClose && modalRef.current && !modalRef.current.contains(e.target)) {
+        handleExitCancel();
+      }
+    };
+
+    return (
+      <div
+        className={`${styles.overlay} ${exiting ? styles.overlayExiting : ''}`}
+        onClick={handleOverlayClick}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-title"
+        aria-describedby="confirm-desc"
+      >
+        <div className={`${styles.dialog} ${exiting ? styles.dialogExiting : ''}`} ref={modalRef}>
+          <div className={styles.body}>
+            <h2 id="confirm-title" className={styles.title}>{title}</h2>
+            <p id="confirm-desc" className={styles.description}>{description}</p>
           </div>
-        )}
-        <div className={styles.footer}>
-          <button
-            className={styles.cancelBtn}
-            onClick={handleExitCancel}
-            disabled={!canInteract}
-          >
-            {loading ? 'Please wait…' : (options.cancelLabel || 'Cancel')}
+          {loading && (
+            <div className={styles.loadingBar}>
+              <span className={styles.loadingBarFill} />
+            </div>
+          )}
+          <div className={styles.footer}>
+            <button
+              className={styles.cancelBtn}
+              onClick={handleExitCancel}
+              disabled={!canInteract}
+            >
+              {loading ? 'Please wait…' : (options.cancelLabel || 'Cancel')}
+            </button>
+            <button
+              ref={confirmBtnRef}
+              className={`${styles.confirmBtn} ${loading ? styles.confirmBtnLoading : ''} ${options.danger ? styles.confirmBtnDanger : ''}`}
+              onClick={handleExitConfirm}
+              disabled={!canInteract}
+            >
+              {loading ? (
+                <>
+                  <span className={styles.spinner} />
+                  {options.loadingLabel || 'Deleting…'}
+                </>
+              ) : (
+                options.confirmLabel || 'Confirm'
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Window mode ───────────────────────────────────────────────────────
+  return (
+    <div className={`${styles.windowOverlay} ${exiting ? styles.windowOverlayExiting : ''}`}>
+      <div className={`${styles.windowDialog} ${exiting ? styles.windowDialogExiting : ''}`} ref={modalRef} role="dialog" aria-modal="true">
+        <div className={styles.body}>
+          <IconWarning className={styles.warningIcon} />
+          <h2 className={styles.windowTitle}>{title}</h2>
+          <p className={styles.windowDescription}>{description}</p>
+        </div>
+        <div className={styles.windowFooter}>
+          <button className={styles.windowCancelBtn} onClick={handleExitCancel}>
+            {options.cancelLabel || 'Cancel'}
           </button>
           <button
             ref={confirmBtnRef}
-            className={`${styles.confirmBtn} ${loading ? styles.confirmBtnLoading : ''} ${options.danger ? styles.confirmBtnDanger : ''}`}
+            className={`${styles.windowConfirmBtn} ${options.danger ? styles.windowConfirmBtnDanger : ''}`}
             onClick={handleExitConfirm}
-            disabled={!canInteract}
           >
-            {loading ? (
-              <>
-                <span className={styles.spinner} />
-                {options.loadingLabel || 'Deleting…'}
-              </>
-            ) : (
-              options.confirmLabel || 'Confirm'
-            )}
+            {options.confirmLabel || 'Confirm'}
           </button>
         </div>
       </div>

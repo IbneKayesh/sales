@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useToast, useConfirm } from '@/context/FeedbackContext';
+import { IconFilePdf, IconFileImage, IconFileCode, IconFile, IconTrash, IconCheck, IconCheckboxUnchecked, IconCheckboxChecked, IconRestore, IconClose } from '@/assets/icons';
 import styles from './TrashPage.module.css';
 
 // ── Mock deleted items ────────────────────────────────────────────────────
@@ -56,37 +57,10 @@ const INITIAL_ITEMS = [
 
 const typeIcon = (type) => {
   switch (type) {
-    case 'pdf':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <polyline points="14 2 14 8 20 8" />
-          <line x1="16" y1="13" x2="8" y2="13" />
-          <line x1="16" y1="17" x2="8" y2="17" />
-        </svg>
-      );
-    case 'image':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-          <circle cx="8.5" cy="8.5" r="1.5" />
-          <polyline points="21 15 16 10 5 21" />
-        </svg>
-      );
-    case 'code':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="16 18 22 12 16 6" />
-          <polyline points="8 6 2 12 8 18" />
-        </svg>
-      );
-    default:
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-          <polyline points="14 2 14 8 20 8" />
-        </svg>
-      );
+    case 'pdf':   return <IconFilePdf />;
+    case 'image': return <IconFileImage />;
+    case 'code':  return <IconFileCode />;
+    default:      return <IconFile />;
   }
 };
 
@@ -156,10 +130,7 @@ const TrashPage = () => {
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <div className={styles.trashIcon}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-            </svg>
+            <IconTrash />
           </div>
           <div>
             <h1 className={styles.title}>Trash</h1>
@@ -174,34 +145,23 @@ const TrashPage = () => {
           {items.length > 0 && (
             <>
               <button className={styles.actionBtn} onClick={selectAll}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.btnIcon}>
-                  {selected.size === items.length ? (
-                    <>
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" fill="currentColor" />
-                      <polyline points="9 12 12 15 17 8" stroke="#fff" />
-                    </>
-                  ) : (
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                  )}
-                </svg>
+                {selected.size === items.length ? (
+                  <IconCheckboxChecked className={styles.btnIcon} />
+                ) : (
+                  <IconCheckboxUnchecked className={styles.btnIcon} />
+                )}
                 {selected.size === items.length ? 'Deselect All' : 'Select All'}
               </button>
 
               {selected.size > 0 && (
                 <button className={styles.actionBtn} onClick={restoreSelected}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.btnIcon}>
-                    <polyline points="1 4 1 10 7 10" />
-                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-                  </svg>
+                  <IconRestore className={styles.btnIcon} />
                   Restore ({selected.size})
                 </button>
               )}
 
               <button className={`${styles.actionBtn} ${styles.actionDanger}`} onClick={emptyTrash}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.btnIcon}>
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                </svg>
+                <IconTrash className={styles.btnIcon} />
                 Empty Trash
               </button>
             </>
@@ -213,10 +173,7 @@ const TrashPage = () => {
       <div className={styles.listSection}>
         {items.length === 0 ? (
           <div className={styles.empty}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={styles.emptyIcon}>
-              <polyline points="3 6 5 6 21 6" />
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-            </svg>
+            <IconTrash className={styles.emptyIcon} />
             <h3>Trash is empty</h3>
             <p>Deleted files and folders will appear here for 30 days before permanent erasure.</p>
           </div>
@@ -237,9 +194,7 @@ const TrashPage = () => {
                 <div className={styles.itemCheck} onClick={() => toggleSelect(item.id)}>
                   <div className={`${styles.checkbox} ${selected.has(item.id) ? styles.checkboxChecked : ''}`}>
                     {selected.has(item.id) && (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
+                      <IconCheck />
                     )}
                   </div>
                 </div>
@@ -254,10 +209,7 @@ const TrashPage = () => {
                 <span className={styles.cellDate}>{item.deletedDate}</span>
                 <div className={styles.cellAction}>
                   <button className={styles.restoreBtn} onClick={() => restoreItem(item.id)} title="Restore">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="1 4 1 10 7 10" />
-                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
-                    </svg>
+                    <IconRestore />
                   </button>
                 </div>
               </div>

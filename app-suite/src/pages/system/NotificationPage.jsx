@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { IconCheck, IconWarning, IconError, IconInfo, IconSearch, IconBell, IconRead, IconClose } from '@/assets/icons';
 import styles from './NotificationPage.module.css';
 
 // ── Expanded Demo Notifications ───────────────────────────────────────────
@@ -109,36 +110,14 @@ const DEMO_NOTIFICATIONS = [
 const TypeIcon = ({ type }) => {
   switch (type) {
     case 'success':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.typeIcon}>
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
-      );
+      return <IconCheck className={styles.typeIcon} />;
     case 'warning':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.typeIcon}>
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-          <line x1="12" y1="9" x2="12" y2="13" />
-          <line x1="12" y1="17" x2="12.01" y2="17" />
-        </svg>
-      );
+      return <IconWarning className={styles.typeIcon} />;
     case 'error':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.typeIcon}>
-          <circle cx="12" cy="12" r="10" />
-          <line x1="15" y1="9" x2="9" y2="15" />
-          <line x1="9" y1="9" x2="15" y2="15" />
-        </svg>
-      );
+      return <IconError className={styles.typeIcon} />;
     case 'info':
     default:
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.typeIcon}>
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="16" x2="12" y2="12" />
-          <line x1="12" y1="8" x2="12.01" y2="8" />
-        </svg>
-      );
+      return <IconInfo className={styles.typeIcon} />;
   }
 };
 
@@ -214,9 +193,7 @@ const NotificationPage = () => {
         <div className={styles.headerActions}>
           {unreadCount > 0 && (
             <button className={styles.markAllBtn} onClick={markAllRead}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.btnIcon}>
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
+              <IconCheck className={styles.btnIcon} />
               Mark All Read
             </button>
           )}
@@ -245,10 +222,7 @@ const NotificationPage = () => {
           ))}
         </div>
         <div className={styles.searchWrap}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className={styles.searchIcon}>
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+          <IconSearch className={styles.searchIcon} />
           <input
             type="text"
             className={styles.searchInput}
@@ -263,9 +237,7 @@ const NotificationPage = () => {
       <div className={styles.listSection}>
         {filtered.length === 0 ? (
           <div className={styles.empty}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={styles.emptyIcon}>
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            </svg>
+            <IconBell className={styles.emptyIcon} />
             <h3>No notifications found</h3>
             <p>
               {searchQuery
@@ -303,20 +275,14 @@ const NotificationPage = () => {
                     onClick={(e) => { e.stopPropagation(); toggleRead(n.id); }}
                     title={n.read ? 'Mark as unread' : 'Mark as read'}
                   >
-                    <svg viewBox="0 0 24 24" fill={n.read ? 'none' : 'currentColor'} stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                      <polyline points="22 4 12 14.01 9 11.01" />
-                    </svg>
+                    <IconRead fill={n.read ? 'none' : 'currentColor'} />
                   </button>
                   <button
                     className={styles.actionBtn}
                     onClick={(e) => { e.stopPropagation(); dismissNotification(n.id); }}
                     title="Dismiss"
                   >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
+                    <IconClose />
                   </button>
                 </div>
               </div>

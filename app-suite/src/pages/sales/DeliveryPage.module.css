@@ -13,7 +13,7 @@
   justify-content: space-between;
   gap: 16px;
   padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--glass-bg-medium);
   background-color: rgba(0, 0, 0, 0.15);
 }
 
@@ -50,7 +50,7 @@
   padding: 7px 10px 7px 32px;
   border-radius: 6px;
   border: 1px solid var(--glass-border);
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--glass-bg-hover-light);
   color: var(--color-text-primary);
   font-family: inherit;
   font-size: 12px;
@@ -113,13 +113,13 @@
   margin-bottom: 12px;
   border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-bg-light);
   transition: all 0.15s ease;
 }
 
 .cardBody:hover {
-  background-color: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--glass-bg-light);
+  border-color: var(--glass-bg-strong);
 }
 
 .cardHeader {
@@ -139,7 +139,7 @@
   font-size: 10px;
   color: var(--color-text-muted);
   margin-left: 8px;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--glass-bg-hover-light);
   padding: 1px 6px;
   border-radius: 4px;
 }

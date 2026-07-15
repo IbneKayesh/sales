@@ -1,14 +1,9 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useWindowManager } from '@/context/WindowManagerContext';
+import { useAuth } from '@/context/AuthContext';
 import { APP_ROUTES, appConfigById, getLauncherApps, getChildApps, getAppIcon } from '@/routes/appConfig';
+import { IconBackArrow, IconSearch, IconSearch as IconSearchX, IconLogout } from '@/assets/icons';
 import styles from './AppLauncher.module.css';
-
-// ── Back arrow icon ───────────────────────────────────────────────────────
-const BackIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={styles.backIcon}>
-    <polyline points="15 18 9 12 15 6" />
-  </svg>
-);
 
 // ── Map category to launcher card style ───────────────────────────────────
 const getCardStyle = (route) => {
@@ -43,6 +38,7 @@ const getCardStyle = (route) => {
 // ── AppLauncher Component ──────────────────────────────────────────────────
 const AppLauncher = ({ isOpen, closeLauncher }) => {
   const { openWindow } = useWindowManager();
+  const { logout } = useAuth();
   const launcherRef = useRef(null);
   const [activeGroupId, setActiveGroupId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -141,7 +137,7 @@ const AppLauncher = ({ isOpen, closeLauncher }) => {
         <div className={styles.header}>
           {isInSubView && (
             <button className={styles.backBtn} onClick={goBack} aria-label="Back to all apps">
-              <BackIcon />
+              <IconBackArrow className={styles.backIcon} />
             </button>
           )}
           <div className={styles.headerInfo}>
@@ -153,10 +149,7 @@ const AppLauncher = ({ isOpen, closeLauncher }) => {
             </span>
           </div>
           <div className={styles.searchContainer}>
-            <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
+            <IconSearch className={styles.searchIcon} />
             <input
               type="text"
               placeholder="Search..."
@@ -172,10 +165,7 @@ const AppLauncher = ({ isOpen, closeLauncher }) => {
         <div className={styles.iconGrid}>
           {displayedItems.length === 0 ? (
             <div className={styles.emptyState}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.emptyIcon}>
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
+              <IconSearchX className={styles.emptyIcon} />
               <p>No apps found</p>
             </div>
           ) : (
@@ -206,12 +196,18 @@ const AppLauncher = ({ isOpen, closeLauncher }) => {
           <span className={styles.footerHint}>
             Press <kbd className={styles.kbd}>Esc</kbd> to {isInSubView ? 'go back' : 'close'}
           </span>
-          {isInSubView && (
-            <button className={styles.footerBackBtn} onClick={goBack}>
-              <BackIcon />
-              Back
+          <div className={styles.footerRight}>
+            {isInSubView && (
+              <button className={styles.footerBackBtn} onClick={goBack}>
+                <IconBackArrow className={styles.backIcon} />
+                Back
+              </button>
+            )}
+            <button className={styles.logoutBtn} onClick={logout} title="End session">
+              <IconLogout className={styles.logoutIcon} />
+              Logout
             </button>
-          )}
+          </div>
         </div>
       </div>
     </div>

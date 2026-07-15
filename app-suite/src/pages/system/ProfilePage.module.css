@@ -9,7 +9,7 @@
 }
 .page::-webkit-scrollbar-track { background: transparent; }
 .page::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--glass-bg-strong);
   border-radius: 3px;
 }
 
@@ -107,7 +107,7 @@
 /* ── Section ────────────────────────────────────────────────────────────── */
 .section {
   background-color: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-bg-hover-light);
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -156,8 +156,8 @@
   width: 100%;
   padding: 8px 12px;
   border-radius: 7px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-bg-strong);
+  background-color: var(--glass-bg-subtle);
   color: var(--color-text-primary);
   font-family: inherit;
   font-size: 12px;
@@ -168,7 +168,7 @@
 
 .fieldInput:focus {
   border-color: var(--accent-hover);
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--glass-bg-hover-light);
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
@@ -190,8 +190,8 @@
   width: 100%;
   padding: 8px 12px;
   border-radius: 7px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-bg-strong);
+  background-color: var(--glass-bg-subtle);
   color: var(--color-text-primary);
   font-family: inherit;
   font-size: 12px;
@@ -204,7 +204,7 @@
 
 .fieldTextarea:focus {
   border-color: var(--accent-hover);
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--glass-bg-hover-light);
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
@@ -218,7 +218,7 @@
   font-weight: 600;
   color: white;
   background-color: var(--accent-color);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border-strong);
   padding: 8px 18px;
   border-radius: 8px;
   cursor: pointer;
@@ -316,7 +316,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--glass-bg-light);
 }
 
 .infoItem:last-child {

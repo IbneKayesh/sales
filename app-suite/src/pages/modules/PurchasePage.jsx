@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import usePurchase from '../../hooks/usePurchase';
 import { useToast, useConfirm } from '@/context/FeedbackContext';
+import { IconSearch, IconPlus, IconEdit, IconDelete } from '@/assets/icons';
+import PageShell from '@/components/PageShell/PageShell';
 import DataTable from '../../components/DataTable/DataTable';
 
 const statusStyles = {
@@ -139,19 +141,13 @@ export default function PurchasePage() {
       render: (_, row) => (
         <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
           <button style={editBtnStyle} onClick={() => startEdit(row.id)} aria-label="Edit PO">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
+            <IconEdit width="13" height="13" />
           </button>
           <button style={deleteBtnStyle} onClick={() => handleDelete(row.id, row.vendor)} disabled={deletingId === row.id} aria-label="Delete PO">
             {deletingId === row.id ? (
               <span style={{ width:13, height:13, border:'2px solid rgba(248,113,113,0.2)', borderTopColor:'#f87171', borderRadius:'50%', animation:'spin 0.7s linear infinite', display:'block' }} />
             ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="13" height="13">
-                <polyline points="3 6 5 6 21 6" />
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-              </svg>
+              <IconDelete width="13" height="13" />
             )}
           </button>
         </div>
@@ -159,53 +155,44 @@ export default function PurchasePage() {
     },
   ];
 
+  const isListView = view === 'list';
+
   return (
-    <>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-      <div style={{ display:'flex', flexDirection:'column', height:'100%', color:'var(--color-text-primary)', fontFamily:'var(--font-body)' }}>
-      {view === 'list' ? (
-        <>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:16, padding:'14px 20px', borderBottom:'1px solid rgba(255,255,255,0.06)', backgroundColor:'rgba(0,0,0,0.15)' }}>
-            <div>
-              <h2 style={{ fontFamily:'var(--font-display)', fontSize:16, fontWeight:600, margin:0 }}>Purchase Orders</h2>
-              <p style={{ fontSize:11, color:'var(--color-text-muted)', margin:'2px 0 0' }}>Manage procurement and vendor orders</p>
+    <PageShell
+      title={isListView ? 'Purchase Orders' : (view === 'add' ? 'Create Purchase Order' : 'Edit Purchase Order')}
+      subtitle={isListView ? 'Manage procurement and vendor orders' : undefined}
+      compact
+    >
+      <PageShell.Actions>
+        {isListView ? (
+          <>
+            <div style={{ position:'relative' }}>
+              <IconSearch style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', width:14, height:14, color:'var(--color-text-muted)', pointerEvents:'none' }} width="14" height="14" />
+              <input style={{ padding:'7px 10px 7px 32px', borderRadius:6, border:'1px solid var(--glass-border)', backgroundColor:'rgba(255,255,255,0.05)', color:'var(--color-text-primary)', fontFamily:'inherit', fontSize:12, outline:'none', width:200 }} placeholder="Search orders..." value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
-            <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-              <div style={{ position:'relative' }}>
-                <svg style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', width:14, height:14, color:'var(--color-text-muted)', pointerEvents:'none' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input style={{ padding:'7px 10px 7px 32px', borderRadius:6, border:'1px solid var(--glass-border)', backgroundColor:'rgba(255,255,255,0.05)', color:'var(--color-text-primary)', fontFamily:'inherit', fontSize:12, outline:'none', width:200 }} placeholder="Search orders..." value={search} onChange={(e) => setSearch(e.target.value)} />
-              </div>
-              <button onClick={startAdd} style={{ display:'inline-flex', alignItems:'center', gap:5, padding:'7px 12px', borderRadius:6, border:'1px solid rgba(255,255,255,0.1)', backgroundColor:'var(--accent-color)', color:'white', fontFamily:'inherit', fontSize:12, fontWeight:600, cursor:'pointer' }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                New PO
-              </button>
-            </div>
-          </div>
-          <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'auto', padding:20, gap:16 }}>
-            <div style={{ display:'flex', gap:12 }}>
-              {[
-                { label: 'Total Orders', value: purchases.length },
-                { label: 'Pending', value: purchases.filter(p => p.status === 'Pending').length },
-                { label: 'Total Value', value: fmt(purchases.reduce((s,p) => s + p.total, 0)) },
-              ].map((s, i) => (
-                <div key={i} style={{ flex:1, display:'flex', flexDirection:'column', gap:2, padding:'12px 16px', borderRadius:8, backgroundColor:'rgba(0,0,0,0.15)', border:'1px solid rgba(255,255,255,0.04)' }}>
-                  <span style={{ fontSize:10, color:'var(--color-text-muted)', textTransform:'uppercase', letterSpacing:'0.4px' }}>{s.label}</span>
-                  <span style={{ fontSize:18, fontWeight:700, color:'var(--color-text-primary)', fontFamily:'var(--font-display)' }}>{s.value}</span>
-                </div>
-              ))}
-            </div>
-            <DataTable columns={columns} data={filtered} keyField="id" sortable paginated pageSize={15} emptyMessage="No purchase orders found" emptyAction={{ label: 'New PO', onClick: startAdd }} />
-          </div>
-        </>
-      ) : (
-        <div style={{ padding:20, overflow:'auto' }}>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:20 }}>
-            <h2 style={{ fontFamily:'var(--font-display)', fontSize:16, fontWeight:600, margin:0 }}>{view === 'add' ? 'Create Purchase Order' : 'Edit Purchase Order'}</h2>
-            <button onClick={cancelForm} style={{ padding:'6px 14px', borderRadius:6, border:'1px solid rgba(255,255,255,0.08)', backgroundColor:'rgba(255,255,255,0.05)', color:'var(--color-text-primary)', fontFamily:'inherit', fontSize:12, cursor:'pointer' }}>Cancel</button>
-          </div>
-          <form onSubmit={handleSubmit} style={{ display:'flex', flexDirection:'column', gap:20, maxWidth:600 }}>
+            <button onClick={startAdd} style={{ display:'inline-flex', alignItems:'center', gap:5, padding:'7px 12px', borderRadius:6, border:'1px solid rgba(255,255,255,0.1)', backgroundColor:'var(--accent-color)', color:'white', fontFamily:'inherit', fontSize:12, fontWeight:600, cursor:'pointer' }}>
+              <IconPlus width="14" height="14" />
+              New PO
+            </button>
+          </>
+        ) : (
+          <button onClick={cancelForm} style={{ padding:'6px 14px', borderRadius:6, border:'1px solid rgba(255,255,255,0.08)', backgroundColor:'rgba(255,255,255,0.05)', color:'var(--color-text-primary)', fontFamily:'inherit', fontSize:12, cursor:'pointer' }}>Cancel</button>
+        )}
+      </PageShell.Actions>
+
+      {isListView && (
+        <PageShell.Stats>
+          <PageShell.Stat label="Total Orders" value={purchases.length} />
+          <PageShell.Stat label="Pending" value={purchases.filter(p => p.status === 'Pending').length} />
+          <PageShell.Stat label="Total Value" value={fmt(purchases.reduce((s,p) => s + p.total, 0))} />
+        </PageShell.Stats>
+      )}
+
+      <PageShell.Body>
+        {isListView ? (
+          <DataTable columns={columns} data={filtered} keyField="id" sortable paginated pageSize={15} emptyMessage="No purchase orders found" emptyAction={{ label: 'New PO', onClick: startAdd }} />
+        ) : (
+          <form onSubmit={handleSubmit} id="po-form" style={{ display:'flex', flexDirection:'column', gap:20, maxWidth:600 }}>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14 }}>
               {[
                 { label: 'Vendor *', key: 'vendor', placeholder: 'e.g. TechMart Supplies' },
@@ -226,17 +213,19 @@ export default function PurchasePage() {
                 <span style={{ fontSize:16, fontWeight:700, color:'#10b981' }}>{preview}</span>
               </div>
             )}
-            <div style={{ display:'flex', justifyContent:'flex-end' }}>
-              <button type="submit" disabled={submitting} style={{ padding:'9px 20px', borderRadius:7, fontSize:13, fontWeight:600, color:'white', backgroundColor:'var(--accent-color)', border:'1px solid rgba(255,255,255,0.1)', cursor:'pointer', display:'flex', alignItems:'center', gap:8, minWidth:120, justifyContent:'center', opacity: submitting ? 0.7 : 1 }}>
-                {submitting ? (
-                  <span style={{ width:16, height:16, border:'2px solid rgba(255,255,255,0.2)', borderTopColor:'white', borderRadius:'50%', animation:'spin 0.7s linear infinite', display:'block' }} />
-                ) : (view === 'add' ? 'Create PO' : 'Save Changes')}
-              </button>
-            </div>
           </form>
-        </div>
+        )}
+      </PageShell.Body>
+
+      {!isListView && (
+        <PageShell.Footer>
+          <button type="submit" form="po-form" disabled={submitting} style={{ padding:'9px 20px', borderRadius:7, fontSize:13, fontWeight:600, color:'white', backgroundColor:'var(--accent-color)', border:'1px solid rgba(255,255,255,0.1)', cursor:'pointer', display:'flex', alignItems:'center', gap:8, minWidth:120, justifyContent:'center', opacity: submitting ? 0.7 : 1 }}>
+            {submitting ? (
+              <span style={{ width:16, height:16, border:'2px solid rgba(255,255,255,0.2)', borderTopColor:'white', borderRadius:'50%', animation:'spin 0.7s linear infinite', display:'block' }} />
+            ) : (view === 'add' ? 'Create PO' : 'Save Changes')}
+          </button>
+        </PageShell.Footer>
       )}
-    </div>
-    </>
+    </PageShell>
   );
 }

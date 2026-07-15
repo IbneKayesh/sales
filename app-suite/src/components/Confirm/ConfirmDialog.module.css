@@ -34,7 +34,7 @@
   background-color: rgba(18, 18, 28, 0.85);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border-strong);
   border-radius: 16px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   padding: 24px;
@@ -112,18 +112,18 @@
 }
 
 .cancelBtn {
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--glass-bg-hover-light);
+  border: 1px solid var(--glass-bg-strong);
   color: var(--color-text-primary);
 }
 
 .cancelBtn:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--glass-bg-hover);
 }
 
 .confirmBtn {
   background-color: var(--accent-color);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border-strong);
   color: white;
   display: inline-flex;
   align-items: center;
@@ -172,7 +172,7 @@
   width: 100%;
   height: 3px;
   border-radius: 2px;
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: var(--glass-bg-medium);
   overflow: hidden;
   margin: -4px 0 0;
 }
@@ -190,4 +190,139 @@
 @keyframes loadingSlide {
   0%   { transform: translateX(-100%); }
   100% { transform: translateX(350%); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ── Window Confirm (in-window variant) ───────────────────────────────────
+   ══════════════════════════════════════════════════════════════════════════
+   These classes use a .window prefix to avoid conflicts with the global
+   overlay styles above.   Used by ConfirmDialog (windowed mode) for in-window dialogs.
+   Positioned at bottom-right, same as the in-window ToastContainer. */
+
+.windowDialog {
+  pointer-events: auto;
+}
+
+.windowOverlay {
+  animation: windowConfirmIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.windowOverlayExiting {
+  animation: windowConfirmOut 0.15s ease-in forwards;
+}
+
+@keyframes windowConfirmIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes windowConfirmOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+}
+
+
+
+.windowDialog {
+  width: 340px;
+  max-width: calc(100% - 32px);
+  background-color: rgba(18, 18, 28, 0.95);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid var(--glass-border-strong);
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: dialogScaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.windowDialogExiting {
+  animation: dialogScaleDown 0.15s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.windowTitle {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.windowDescription {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.windowFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.windowCancelBtn,
+.windowConfirmBtn {
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.windowCancelBtn:disabled,
+.windowConfirmBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.windowCancelBtn {
+  background-color: var(--glass-bg-hover-light);
+  border: 1px solid var(--glass-border);
+  color: var(--color-text-primary);
+}
+
+.windowCancelBtn:hover:not(:disabled) {
+  background-color: var(--glass-bg-hover);
+}
+
+.windowConfirmBtn {
+  background-color: var(--accent-color);
+  border: 1px solid var(--glass-border-strong);
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.windowConfirmBtn:hover:not(:disabled) {
+  background-color: var(--accent-hover);
+}
+
+.windowConfirmBtnDanger {
+  background-color: #ef4444;
+}
+
+.windowConfirmBtnDanger:hover:not(:disabled) {
+  background-color: #dc2626;
 }

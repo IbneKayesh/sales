@@ -22,7 +22,7 @@
   text-align: center;
   padding: 48px 24px;
   background-color: rgba(0, 0, 0, 0.15);
-  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border: 1px dashed var(--glass-bg-strong);
   border-radius: 12px;
   gap: 12px;
 }
@@ -56,7 +56,7 @@
   font-weight: 600;
   color: white;
   background-color: var(--accent-color);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border-strong);
   transition: background-color 0.15s ease;
 }
 
@@ -90,12 +90,12 @@
   font-size: 12px;
   font-weight: 500;
   color: var(--color-text-secondary);
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--glass-bg-hover-light);
+  border: 1px solid var(--glass-bg-strong);
   transition: all 0.15s ease;
 }
 
 .backBtn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--glass-bg-hover);
   color: var(--color-text-primary);
 }

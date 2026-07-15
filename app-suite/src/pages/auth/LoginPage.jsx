@@ -1,24 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { IconEyeOpen, IconEyeOff, IconOSLogo, IconArrowRight, IconUserPlus, IconUser, IconChevronLeft, IconUnlock } from '@/assets/icons';
 import Avatar from '../../components/Avatar/Avatar';
 import styles from './LoginPage.module.css';
-
-// ── Eye icons ─────────────────────────────────────────────────────────────
-const EyeOpenIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-    <circle cx="12" cy="12" r="3" />
-  </svg>
-);
-
-const EyeClosedIcon = ({ className }) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-    <line x1="1" y1="1" x2="23" y2="23" />
-  </svg>
-);
 
 const PasswordInput = ({ value, onChange, placeholder, disabled, autoFocus }) => {
   const [show, setShow] = useState(false);
@@ -50,7 +35,7 @@ const PasswordInput = ({ value, onChange, placeholder, disabled, autoFocus }) =>
         disabled={disabled}
         aria-label={show ? 'Hide password' : 'Show password'}
       >
-        {show ? <EyeClosedIcon className={styles.eyeIcon} /> : <EyeOpenIcon className={styles.eyeIcon} />}
+        {show ? <IconEyeOff className={styles.eyeIcon} /> : <IconEyeOpen className={styles.eyeIcon} />}
       </button>
     </div>
   );
@@ -118,14 +103,7 @@ const UserListView = ({ users, onSelectUser, onSwitchMode }) => {
   return (
     <div className={styles.userListContainer}>
       <div className={styles.userListHeader}>
-        <svg className={styles.osLogo} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <circle cx="12" cy="12" r="10" />
-          <circle cx="12" cy="12" r="4" />
-          <line x1="4.93" y1="4.93" x2="9.17" y2="9.17" />
-          <line x1="14.83" y1="14.83" x2="19.07" y2="19.07" />
-          <line x1="14.83" y1="9.17" x2="19.07" y2="4.93" />
-          <line x1="4.93" y1="19.07" x2="9.17" y2="14.83" />
-        </svg>
+        <IconOSLogo className={styles.osLogo} />
         <h1 className={styles.osTitle}>App Suite OS</h1>
         <p className={styles.osSubtitle}>Select a user to sign in</p>
       </div>
@@ -151,27 +129,15 @@ const UserListView = ({ users, onSelectUser, onSwitchMode }) => {
 
       <div className={styles.userListFooter}>
         <button className={styles.footerLink} onClick={() => onSwitchMode('login')}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.footerIcon}>
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-            <polyline points="10 17 15 12 10 7" />
-            <line x1="15" y1="12" x2="3" y2="12" />
-          </svg>
+          <IconArrowRight className={styles.footerIcon} />
           Other User…
         </button>
         <button className={styles.footerLink} onClick={() => onSwitchMode('register')}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.footerIcon}>
-            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="8.5" cy="7" r="4" />
-            <line x1="20" y1="8" x2="20" y2="14" />
-            <line x1="23" y1="11" x2="17" y2="11" />
-          </svg>
+          <IconUserPlus className={styles.footerIcon} />
           Create Account
         </button>
         <button className={styles.footerLink} onClick={() => onSwitchMode('newUser')}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.footerIcon}>
-            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="8.5" cy="7" r="4" />
-          </svg>
+          <IconUser className={styles.footerIcon} />
           Quick Start
         </button>
       </div>
@@ -231,10 +197,7 @@ const UserPasswordView = ({ user, onBack, onSuccess }) => {
               <span className={styles.loader} />
             ) : (
               <>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.unlockIcon}>
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                </svg>
+                <IconUnlock className={styles.unlockIcon} />
                 Unlock
               </>
             )}
@@ -242,9 +205,7 @@ const UserPasswordView = ({ user, onBack, onSuccess }) => {
         </form>
 
         <button className={styles.notYouBtn} onClick={onBack} type="button">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.notYouIcon}>
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
+          <IconChevronLeft className={styles.notYouIcon} />
           Not you? Try another user
         </button>
 
@@ -284,9 +245,7 @@ const LoginForm = ({ onSuccess, onSwitchMode }) => {
   return (
     <div className={styles.formContainer}>
       <button className={styles.backArrow} onClick={() => onSwitchMode('userlist')} type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
+        <IconChevronLeft />
         Back
       </button>
 
@@ -386,9 +345,7 @@ const RegisterForm = ({ onSuccess, onSwitchMode }) => {
   return (
     <div className={styles.formContainer}>
       <button className={styles.backArrow} onClick={() => onSwitchMode('userlist')} type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
+        <IconChevronLeft />
         Back
       </button>
 
@@ -489,9 +446,7 @@ const NewUserForm = ({ onSuccess, onSwitchMode }) => {
   return (
     <div className={styles.formContainer}>
       <button className={styles.backArrow} onClick={() => onSwitchMode('userlist')} type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
+        <IconChevronLeft />
         Back
       </button>
 

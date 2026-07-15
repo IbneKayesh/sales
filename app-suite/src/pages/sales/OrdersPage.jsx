@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { IconSearch } from '@/assets/icons';
 import DataTable from '../../components/DataTable/DataTable';
 import styles from './OrdersPage.module.css';
 
@@ -44,9 +45,7 @@ const OrdersPage = () => {
           <p className={styles.subtitle}>Manage and track customer orders</p>
         </div>
         <div className={styles.searchWrapper}>
-          <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+          <IconSearch className={styles.searchIcon} />
           <input className={styles.searchInput} placeholder="Search orders..." value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
       </div>

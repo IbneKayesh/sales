@@ -57,6 +57,7 @@ export const AuthProvider = ({ children }) => {
         if (found) {
           setCurrentUser(sanitizeUser(found));
           setIsAuthenticated(true);
+          document.documentElement.requestFullscreen().catch(() => {});
         }
       }
     } catch {
@@ -81,6 +82,7 @@ export const AuthProvider = ({ children }) => {
           setCurrentUser(safe);
           setIsAuthenticated(true);
           setLoading(false);
+          document.documentElement.requestFullscreen().catch(() => {});
           resolve(safe);
         } else {
           setLoading(false);
@@ -123,12 +125,14 @@ export const AuthProvider = ({ children }) => {
         setCurrentUser(safe);
         setIsAuthenticated(true);
         setLoading(false);
+        document.documentElement.requestFullscreen().catch(() => {});
         resolve(safe);
       }, 900);
     });
   }, []);
 
   const logout = useCallback(() => {
+    document.exitFullscreen().catch(() => {});
     sessionStorage.removeItem(SESSION_KEY);
     setCurrentUser(null);
     setIsAuthenticated(false);

@@ -1,51 +1,18 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { IconSearch, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconCheck, IconGridRect, IconFileExcel } from '@/assets/icons';
 import styles from './DataTable.module.css';
 
 // ── Icons ──────────────────────────────────────────────────────────────────
-const SortIcon = ({ active, dir }) => (
-  <svg className={`${styles.sortIcon} ${active ? styles.sortIconActive : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    {dir === 'asc' ? (
-      <polyline points="18 15 12 9 6 15" />
-    ) : (
-      <polyline points="6 9 12 15 18 9" />
-    )}
-  </svg>
-);
+const SortIcon = ({ active, dir }) => {
+  const Icon = dir === 'asc' ? IconChevronUp : IconChevronDown;
+  return <Icon className={`${styles.sortIcon} ${active ? styles.sortIconActive : ''}`} />;
+};
 
-const SearchIcon = () => (
-  <svg className={styles.searchSvg} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
-
-const ChevronLeft = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="15 18 9 12 15 6" />
-  </svg>
-);
-
-const ChevronRight = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="9 18 15 12 9 6" />
-  </svg>
-);
-
-const ColumnsIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-    <line x1="12" y1="3" x2="12" y2="21" />
-    <line x1="3" y1="12" x2="21" y2="12" />
-  </svg>
-);
-
-const CheckIcon = () => (
-  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12" />
-  </svg>
-);
-
-// ── Helper ─────────────────────────────────────────────────────────────────
+const TableSearchIcon = () => <IconSearch className={styles.searchSvg} />;
+const TableChevronLeft = () => <IconChevronLeft width="14" height="14" />;
+const TableChevronRight = () => <IconChevronRight width="14" height="14" />;
+const TableColumnsIcon = () => <IconGridRect width="14" height="14" />;
+const TableCheckIcon = () => <IconCheck width="12" height="12" />;  // ── Helper ─────────────────────────────────────────────────────────────────
 const defaultRender = (value) => {
   if (value === null || value === undefined) return '—';
   return String(value);
@@ -96,6 +63,14 @@ const DataTable = ({
   currentPage: controlledPage,
   onPageChange,
 
+  // Export
+  exportable = false,
+  exportFilename = 'export',
+  exportData,
+
+  // Column search
+  columnSearch = false,
+
   // Column visibility
   columnToggle = false,
 
@@ -118,25 +93,32 @@ const DataTable = ({
   const [internalPage, setInternalPage] = useState(1);
   const [hiddenColumns, setHiddenColumns] = useState([]);
   const [showColumnMenu, setShowColumnMenu] = useState(false);
+  const [showExportMenu, setShowExportMenu] = useState(false);
   const [hoveredRow, setHoveredRow] = useState(null);
+  const [columnQueries, setColumnQueries] = useState({});
+  const columnSearchRefs = useRef({});
   const columnMenuRef = useRef(null);
+  const exportMenuRef = useRef(null);
   const headerRef = useRef(null);
   const searchInputRef = useRef(null);
 
   const isControlledPage = controlledPage !== undefined;
   const currentPage = isControlledPage ? controlledPage : internalPage;
 
-  // Close column menu on click outside
+  // Close dropdowns on click outside
   useEffect(() => {
-    if (!showColumnMenu) return;
+    if (!showColumnMenu && !showExportMenu) return;
     const handleClick = (e) => {
-      if (columnMenuRef.current && !columnMenuRef.current.contains(e.target)) {
+      if (showColumnMenu && columnMenuRef.current && !columnMenuRef.current.contains(e.target)) {
         setShowColumnMenu(false);
+      }
+      if (showExportMenu && exportMenuRef.current && !exportMenuRef.current.contains(e.target)) {
+        setShowExportMenu(false);
       }
     };
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
-  }, [showColumnMenu]);
+  }, [showColumnMenu, showExportMenu]);
 
   // Auto-focus search on Ctrl+F / Cmd+F
   useEffect(() => {
@@ -149,6 +131,50 @@ const DataTable = ({
     document.addEventListener('keydown', handleKey);
     return () => document.removeEventListener('keydown', handleKey);
   }, [searchable]);
+
+  // ── Export (CSV) ───────────────────────────────────────────────────────
+  const handleExport = (mode = 'all') => {
+    setShowExportMenu(false);
+
+    // Determine which data to export
+    let dataToExport;
+    if (mode === 'page' && paginated) {
+      dataToExport = paginatedData;
+    } else if (mode === 'full') {
+      dataToExport = exportData || data;
+    } else {
+      dataToExport = exportData || processedData;
+    }
+
+    const cols = visibleColumns.filter((c) => c.key !== 'actions');
+
+    // Build header row
+    const headers = cols.map((c) => {
+      let label = c.label || c.key;
+      return /[,"]/.test(label) ? `"${label.replace(/"/g, '""')}"` : label;
+    });
+
+    // Build data rows
+    const rows = dataToExport.map((row) =>
+      cols.map((col) => {
+        const rawValue = getNestedValue(row, col.key);
+        const strValue = rawValue == null ? '' : String(rawValue);
+        return /[,"]/.test(strValue) ? `"${strValue.replace(/"/g, '""')}"` : strValue;
+      }).join(',')
+    );
+
+    const suffix = mode === 'page' && paginated ? `-page-${currentPage}` : '';
+    const csv = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${exportFilename}${suffix}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   // ── Sort ───────────────────────────────────────────────────────────────
   const handleSort = (key) => {
@@ -209,9 +235,34 @@ const DataTable = ({
     }
   };
 
+  // ── Column search handler ────────────────────────────────────────────
+  const handleColumnSearch = (colKey, value) => {
+    setColumnQueries((prev) => {
+      const next = { ...prev };
+      if (value) {
+        next[colKey] = value.toLowerCase();
+      } else {
+        delete next[colKey];
+      }
+      return next;
+    });
+  };
+
   // ── Processed data ────────────────────────────────────────────────────
   const processedData = useMemo(() => {
     let result = [...data];
+
+    // Column-level filtering
+    const hasColumnFilters = columnSearch && Object.keys(columnQueries).length > 0;
+    if (hasColumnFilters) {
+      result = result.filter((row) =>
+        Object.entries(columnQueries).every(([colKey, query]) => {
+          const rawValue = getNestedValue(row, colKey);
+          const str = rawValue == null ? '' : String(rawValue).toLowerCase();
+          return str.includes(query);
+        })
+      );
+    }
 
     // Server-side sort: if onSort is provided, don't sort client-side
     if (sortKey && sortable && !onSort) {
@@ -232,7 +283,7 @@ const DataTable = ({
     }
 
     return result;
-  }, [data, sortKey, sortDir, sortable, onSort]);
+  }, [data, sortKey, sortDir, sortable, onSort, columnSearch, columnQueries]);
 
   const paginatedData = useMemo(() => {
     if (!paginated) return processedData;
@@ -260,7 +311,7 @@ const DataTable = ({
           <div className={styles.toolbarRight}>
             {searchable && (
               <div className={styles.searchWrapper}>
-                <SearchIcon />
+                <TableSearchIcon />
                 <input
                   ref={searchInputRef}
                   type="text"
@@ -276,6 +327,50 @@ const DataTable = ({
                 )}
               </div>
             )}
+            {exportable && (
+              <div className={styles.exportDropdown} ref={exportMenuRef}>                    <button
+                  className={`${styles.exportBtn} ${showExportMenu ? styles.exportBtnOpen : ''}`}
+                  onClick={() => setShowExportMenu((p) => !p)}
+                  title="Export data"
+                >
+                  <IconFileExcel />
+                  <span>Export</span>
+                </button>
+                {showExportMenu && (
+                  <div className={styles.exportMenu} role="menu" aria-label="Export options">
+                    <button
+                      className={styles.exportMenuItem}
+                      onClick={() => handleExport('all')}
+                      role="menuitem"
+                    >
+                      <span className={styles.exportMenuIcon}><IconFileExcel /></span>
+                      <span className={styles.exportMenuLabel}>Export CSV</span>
+                      <span className={styles.exportMenuHint}>Filtered view as CSV</span>
+                    </button>
+                    {paginated && (
+                      <button
+                        className={styles.exportMenuItem}
+                        onClick={() => handleExport('page')}
+                        role="menuitem"
+                      >
+                        <span className={styles.exportMenuIcon}><IconFileExcel /></span>
+                        <span className={styles.exportMenuLabel}>Export Current Page</span>
+                        <span className={styles.exportMenuHint}>Page {currentPage} only</span>
+                      </button>
+                    )}
+                    <button
+                      className={styles.exportMenuItem}
+                      onClick={() => handleExport('full')}
+                      role="menuitem"
+                    >
+                      <span className={styles.exportMenuIcon}><IconFileExcel /></span>
+                      <span className={styles.exportMenuLabel}>Export All Pages</span>
+                      <span className={styles.exportMenuHint}>Unfiltered full dataset</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
             {columnToggle && (
               <div className={styles.columnToggle} ref={columnMenuRef}>
                 <button
@@ -283,7 +378,7 @@ const DataTable = ({
                   onClick={() => setShowColumnMenu((p) => !p)}
                   title="Toggle columns"
                 >
-                  <ColumnsIcon />
+                  <TableColumnsIcon />
                   <span>Columns</span>
                 </button>
                 {showColumnMenu && (
@@ -305,7 +400,7 @@ const DataTable = ({
                           }
                         >
                           <span className={`${styles.colCheckbox} ${!isHidden ? styles.colCheckboxChecked : ''}`}>
-                            {!isHidden && <CheckIcon />}
+                            {!isHidden && <TableCheckIcon />}
                           </span>
                           <span>{col.label || col.key}</span>
                         </div>
@@ -331,7 +426,7 @@ const DataTable = ({
                     className={`${styles.selectCheckbox} ${allSelected ? styles.selectChecked : someSelected ? styles.selectIndeterminate : ''}`}
                     onClick={handleSelectAll}
                   >
-                    {allSelected && <CheckIcon />}
+                    {allSelected && <TableCheckIcon />}
                     {someSelected && <span className={styles.indeterminateDash} />}
                   </span>
                 </th>
@@ -339,12 +434,14 @@ const DataTable = ({
               {visibleColumns.map((col) => {
                 const isSorted = sortable && sortKey === col.key;
                 const colSortable = sortable && col.sortable !== false;
+                const colSearchable = columnSearch && col.key !== 'actions' && col.searchable !== false;
+                const colQuery = columnQueries[col.key] || '';
                 return (
                   <th
                     key={col.key}
                     className={`${styles.th} ${col.className || ''} ${
                       col.align === 'right' ? styles.thRight : col.align === 'center' ? styles.thCenter : ''
-                    } ${colSortable ? styles.thSortable : ''} ${isSorted ? styles.thSorted : ''}`}
+                    } ${colSortable ? styles.thSortable : ''} ${isSorted ? styles.thSorted : ''} ${colSearchable ? styles.thSearchable : ''}`}
                     style={col.width ? { width: col.width, minWidth: col.width } : undefined}
                     onClick={colSortable ? () => handleSort(col.key) : undefined}
                     role={colSortable ? 'columnheader' : undefined}
@@ -359,6 +456,30 @@ const DataTable = ({
                         />
                       )}
                     </span>
+                    {colSearchable && (
+                      <div className={styles.colSearchWrap}>
+                        <input
+                          ref={(el) => { columnSearchRefs.current[col.key] = el; }}
+                          type="text"
+                          className={styles.colSearchInput}
+                          placeholder="Filter…"
+                          value={colQuery}
+                          onChange={(e) => handleColumnSearch(col.key, e.target.value)}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        {colQuery && (
+                          <button
+                            className={styles.colSearchClear}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleColumnSearch(col.key, '');
+                            }}
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </th>
                 );
               })}
@@ -379,10 +500,7 @@ const DataTable = ({
             ) : displayData.length === 0 ? (
               <tr>
                 <td colSpan={visibleColumns.length + (selectable ? 1 : 0)} className={styles.emptyCell}>
-                  <svg className={styles.emptyIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="8" y1="12" x2="16" y2="12" />
-                  </svg>
+                  <IconMinusCircle className={styles.emptyIcon} />
                   <span className={styles.emptyText}>{emptyMessage}</span>
                   {emptyAction && (
                     <button className={styles.emptyActionBtn} onClick={emptyAction.onClick}>
@@ -413,7 +531,7 @@ const DataTable = ({
                           className={`${styles.selectCheckbox} ${isSelected ? styles.selectChecked : ''}`}
                           onClick={() => handleSelectRow(rowId)}
                         >
-                          {isSelected && <CheckIcon />}
+                          {isSelected && <TableCheckIcon />}
                         </span>
                       </td>
                     )}
@@ -453,7 +571,7 @@ const DataTable = ({
               onClick={() => goToPage(currentPage - 1)}
               aria-label="Previous page"
             >
-              <ChevronLeft />
+              <TableChevronLeft />
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1)
               .filter((p) => {
@@ -483,7 +601,7 @@ const DataTable = ({
               onClick={() => goToPage(currentPage + 1)}
               aria-label="Next page"
             >
-              <ChevronRight />
+              <TableChevronRight />
             </button>
           </div>
         </div>

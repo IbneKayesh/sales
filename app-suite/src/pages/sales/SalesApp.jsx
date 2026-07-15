@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { IconMinusCircle } from '@/assets/icons';
 import useSales from '../../hooks/useSales';
 import { useToast, useConfirm } from '@/context/FeedbackContext';
 import SalesToolbar from './SalesToolbar';
@@ -80,10 +81,7 @@ const SalesApp = () => {
           <div className={styles.content}>
             {filteredSales.length === 0 ? (
               <div className={styles.emptyState}>
-                <svg className={styles.emptyIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="8" y1="12" x2="16" y2="12" />
-                </svg>
+                <IconMinusCircle className={styles.emptyIcon} />
                 <h3>No Transactions Found</h3>
                 <p>Try refining your search terms or create a new sale entry to begin.</p>
                 <button className={styles.emptyAddBtn} onClick={() => setView('add')}>

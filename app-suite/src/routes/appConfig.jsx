@@ -10,7 +10,16 @@ import { APP_ICONS } from "@/assets/icons";
  * Get an icon component by app id. Returns null if not found.
  */
 export const getAppIcon = (id) => {
-  return APP_ICONS[id] || null;
+  if (!(id in APP_ICONS)) {
+    if (import.meta.env.DEV) {
+      console.warn(
+        `[appConfig] No registered icon for app "${id}". ` +
+        `Add it to APP_ICONS in src/assets/icons/index.jsx`
+      );
+    }
+    return null;
+  }
+  return APP_ICONS[id];
 };
 
 // ── Route definitions ─────────────────────────────────────────────────────
@@ -248,6 +257,21 @@ export const APP_ROUTES = [
     category: 'modules',
     defaultWindow: { width: 820, height: 520, x: 180, y: 120 },
     color: { bg: 'rgba(16, 185, 129, 0.15)', color: '#34d399' },
+    defaultApp: true,
+    showInDock: true,
+    showInLauncher: true,
+    showOnDesktop: true,
+  },
+  {
+    id: 'products',
+    title: 'Products',
+    label: 'Products',
+    url: '/products',
+    description: 'Manage product catalog and pricing information.',
+    parentId: null,
+    category: 'modules',
+    defaultWindow: { width: 840, height: 540, x: 100, y: 60 },
+    color: { bg: 'rgba(139, 92, 246, 0.15)', color: '#a78bfa' },
     defaultApp: true,
     showInDock: true,
     showInLauncher: true,

@@ -5,7 +5,7 @@
   background-color: rgba(28, 28, 40, 0.75);
   backdrop-filter: blur(25px) saturate(1.8);
   -webkit-backdrop-filter: blur(25px) saturate(1.8);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--glass-active-border);
   border-radius: 12px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.45);
   overflow: hidden;
@@ -30,7 +30,7 @@
 }
 
 .windowInactive {
-  border-color: rgba(255, 255, 255, 0.06);
+  border-color: var(--glass-border-medium);
   opacity: 0.95;
 }
 
@@ -40,8 +40,8 @@
   justify-content: space-between;
   height: 38px;
   padding: 0 12px;
-  background-color: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--glass-bg-subtle);
+  border-bottom: 1px solid var(--glass-border);
   cursor: default;
   user-select: none;
 }
@@ -142,4 +142,21 @@
 
 .windowMaximized {
   border-radius: 0;
+}
+
+/* ── Overlay Container (ConfirmDialog + ToastContainer) ───────────────── */
+.windowOverlayContainer {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+  pointer-events: none;
+  max-width: 360px;
+}
+
+.windowOverlayContainer > * {
+  pointer-events: auto;
 }

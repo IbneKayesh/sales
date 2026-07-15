@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useDesktop } from '../context/DesktopContext';
 import { useToast } from '@/context/FeedbackContext';
+import { IconMonitor, IconDollar, IconClock, IconZap, IconPlus, IconFile, IconBox, IconChart, IconGridRect, IconCheck, IconDrag, IconClose } from '@/assets/icons';
 import styles from './HomePage.module.css';
 
 // ── Widget Definitions ────────────────────────────────────────────────────
@@ -35,33 +36,13 @@ const WIDGET_DEFS = {
 const SvgIcon = ({ icon }) => {
   switch (icon) {
     case 'monitor':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.cardIcon}>
-          <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-          <line x1="8" y1="21" x2="16" y2="21" />
-          <line x1="12" y1="17" x2="12" y2="21" />
-        </svg>
-      );
+      return <IconMonitor className={styles.cardIcon} />;
     case 'dollar':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.cardIcon}>
-          <line x1="12" y1="1" x2="12" y2="23" />
-          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-        </svg>
-      );
+      return <IconDollar className={styles.cardIcon} />;
     case 'clock':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.cardIcon}>
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
-      );
+      return <IconClock className={styles.cardIcon} />;
     case 'zap':
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.cardIcon}>
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-        </svg>
-      );
+      return <IconZap className={styles.cardIcon} />;
     default:
       return null;
   }
@@ -170,13 +151,13 @@ const QuickActionsWidget = () => {
   const actIcon = (name) => {
     switch (name) {
       case 'plus':
-        return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>;
+        return <IconPlus />;
       case 'file':
-        return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>;
+        return <IconFile />;
       case 'box':
-        return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /></svg>;
+        return <IconBox />;
       case 'chart':
-        return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>;
+        return <IconChart />;
       default:
         return null;
     }
@@ -303,22 +284,14 @@ const HomePage = () => {
               onClick={() => setShowPicker((p) => !p)}
               title="Customize widgets"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
+              <IconPlus />
               <span>Widgets</span>
             </button>
 
             {showPicker && (
               <div className={styles.widgetPicker} ref={pickerRef}>
                 <div className={styles.pickerHeader}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.pickerIcon}>
-                    <rect x="3" y="3" width="7" height="7" />
-                    <rect x="14" y="3" width="7" height="7" />
-                    <rect x="3" y="14" width="7" height="7" />
-                    <rect x="14" y="14" width="7" height="7" />
-                  </svg>
+                  <IconGridRect className={styles.pickerIcon} />
                   Customize Dashboard
                 </div>
                 <p className={styles.pickerHint}>Drag widgets to reorder. Toggle to show/hide.</p>
@@ -343,9 +316,9 @@ const HomePage = () => {
                           title={isActive ? 'Remove from dashboard' : 'Add to dashboard'}
                         >
                           {isActive ? (
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12" /></svg>
+                            <IconCheck />
                           ) : (
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                            <IconPlus />
                           )}
                         </button>
                       </div>
@@ -365,12 +338,7 @@ const HomePage = () => {
       {/* ── Draggable Widget Grid ───────────────────────────────────── */}
       {visibleWidgets.length === 0 ? (
         <div className={styles.emptyState}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={styles.emptyIcon}>
-            <rect x="3" y="3" width="7" height="7" />
-            <rect x="14" y="3" width="7" height="7" />
-            <rect x="3" y="14" width="7" height="7" />
-            <rect x="14" y="14" width="7" height="7" />
-          </svg>
+          <IconGridRect className={styles.emptyIcon} />
           <h3>No widgets pinned</h3>
           <p>Click the <strong>+ Widgets</strong> button above to add widgets to your dashboard.</p>
         </div>
@@ -392,11 +360,7 @@ const HomePage = () => {
               >
                 <div className={styles.widgetHeader}>
                   <div className={styles.widgetDragHandle}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={styles.dragIcon}>
-                      <line x1="8" y1="6" x2="16" y2="6" />
-                      <line x1="8" y1="12" x2="16" y2="12" />
-                      <line x1="8" y1="18" x2="16" y2="18" />
-                    </svg>
+                    <IconDrag className={styles.dragIcon} />
                   </div>
                   <h3 className={styles.cardTitle}>
                     {def && <SvgIcon icon={def.icon} />}
@@ -407,10 +371,7 @@ const HomePage = () => {
                     onClick={() => toggleWidget(id)}
                     title={`Remove ${def?.title || id}`}
                   >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <line x1="18" y1="6" x2="6" y2="18" />
-                      <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
+                    <IconClose />
                   </button>
                 </div>
                 <div className={styles.widgetBody}>

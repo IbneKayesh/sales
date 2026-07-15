@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { IconSearch } from '@/assets/icons';
 import styles from './DeliveryPage.module.css';
 
 const MOCK_DELIVERIES = [
@@ -29,9 +30,7 @@ const DeliveryPage = () => {
           <p className={styles.subtitle}>Track shipment and delivery status</p>
         </div>
         <div className={styles.searchWrapper}>
-          <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+          <IconSearch className={styles.searchIcon} />
           <input className={styles.searchInput} placeholder="Search deliveries..." value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
       </div>

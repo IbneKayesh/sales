@@ -14,13 +14,13 @@
 }
 
 .iconContainer:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--glass-bg-strong);
+  border-color: var(--glass-bg-hover-light);
 }
 
 .iconContainer:focus {
-  background-color: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--glass-active-border);
+  border-color: var(--glass-border-strong);
   box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
 }
 

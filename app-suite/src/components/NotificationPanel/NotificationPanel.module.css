@@ -72,10 +72,10 @@
   background-color: rgba(18, 18, 28, 0.92);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--glass-border-strong);
   border-radius: 14px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
-  z-index: 99999;
+  box-shadow: var(--shadow-xl);
+  z-index: var(--z-modal);
   animation: dropdownOpen 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -89,7 +89,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--glass-border-medium);
 }
 
 .dropdownTitle {
@@ -146,7 +146,7 @@
   gap: 12px;
   padding: 10px 16px;
   transition: background-color 0.12s ease;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--glass-bg-subtle);
 }
 
 .notificationItem:last-child {
@@ -225,7 +225,7 @@
 }
 
 .dismissBtn:hover {
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--glass-bg-strong);
   color: var(--color-text-primary);
 }
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { IconChevronLeft, IconChevronRight } from '@/assets/icons';
 import DataTable from '../../components/DataTable/DataTable';
 import styles from './ReportsPage.module.css';
 
@@ -49,9 +50,7 @@ const ReportsPage = () => {
               <span className={styles.metricLabel}>{m.label}</span>
               <span className={styles.metricValue}>{m.value}</span>
               <span className={`${styles.metricChange} ${m.positive ? styles.changeUp : styles.changeDown}`}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={styles.changeIcon}>
-                  {m.positive ? <polyline points="18 15 12 9 6 15" /> : <polyline points="6 9 12 15 18 9" />}
-                </svg>
+                {m.positive ? <IconChevronRight className={styles.changeIcon} /> : <IconChevronLeft className={styles.changeIcon} />}
                 {m.change} vs last period
               </span>
             </div>
