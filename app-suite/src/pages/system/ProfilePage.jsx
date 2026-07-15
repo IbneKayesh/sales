@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast, useConfirm } from '@/context/FeedbackContext';
+import { fmtDateLong } from '@/utils/dataFormat';
 import { IconEyeOpen, IconEyeOff, IconCamera, IconSave, IconUnlock } from '@/assets/icons';
 import Avatar from '../../components/Avatar/Avatar';
 import styles from './ProfilePage.module.css';
@@ -254,11 +255,7 @@ const ProfilePage = () => {
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Member Since</span>
                 <span className={styles.infoValue}>
-                  {currentUser?.createdAt
-                    ? new Date(currentUser.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric', month: 'long', day: 'numeric'
-                      })
-                    : '—'}
+                  {fmtDateLong(currentUser.createdAt) || '—'}
                 </span>
               </div>
               <div className={styles.infoItem}>

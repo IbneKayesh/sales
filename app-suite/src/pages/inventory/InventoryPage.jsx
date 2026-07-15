@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import { useToast, useConfirm } from '@/context/FeedbackContext';
 import { IconSearch, IconPlus, IconEdit, IconDelete } from '@/assets/icons';
+import { fmtCurrency, fmtDate } from '@/utils/dataFormat';
 import PageShell from '@/components/PageShell/PageShell';
 import useInventory from '../../hooks/useInventory';
 import DataTable from '../../components/DataTable/DataTable';
 import styles from './InventoryPage.module.css';
 
 const EMPTY_FORM = { name: '', sku: '', category: '', stock: '', price: '' };
-
-// ── Helpers ────────────────────────────────────────────────────────────────
-const fmtCurrency = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
-const fmtDate = (iso) => new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 
 // ── Inventory App ──────────────────────────────────────────────────────────
 const InventoryPage = () => {

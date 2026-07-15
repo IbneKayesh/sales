@@ -1,0 +1,40 @@
+/* ── Base skeleton with shimmer animation ────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--glass-bg-light) 25%,
+    rgba(255, 255, 255, 0.06) 50%,
+    var(--glass-bg-light) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm, 4px);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Variants ────────────────────────────────────────────────────────────── */
+.line {
+  border-radius: 4px;
+}
+
+.circle {
+  border-radius: 50%;
+}
+
+.block {
+  border-radius: var(--radius-md, 6px);
+}
+
+.card {
+  border-radius: var(--radius-lg, 8px);
+}
+
+/* ── Text group ──────────────────────────────────────────────────────────── */
+.textGroup {
+  display: flex;
+  flex-direction: column;
+}

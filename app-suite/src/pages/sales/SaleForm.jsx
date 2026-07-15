@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { fmtCurrency } from '@/utils/dataFormat';
 import styles from './SaleForm.module.css';
 
 const EMPTY = { customerName: '', product: '', quantity: '', unitPrice: '' };
@@ -45,7 +46,7 @@ const SaleForm = ({ initialData, onSubmit }) => {
   };
 
   const preview = Number(form.quantity) && Number(form.unitPrice)
-    ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(form.quantity) * Number(form.unitPrice))
+    ? fmtCurrency(Number(form.quantity) * Number(form.unitPrice))
     : null;
 
   return (

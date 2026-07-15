@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useDesktop } from '../context/DesktopContext';
 import { useToast } from '@/context/FeedbackContext';
+import { fmtDateFull } from '@/utils/dataFormat';
 import { IconMonitor, IconDollar, IconClock, IconZap, IconPlus, IconFile, IconBox, IconChart, IconGridRect, IconCheck, IconDrag, IconClose } from '@/assets/icons';
 import styles from './HomePage.module.css';
 
@@ -209,9 +210,6 @@ const HomePage = () => {
   const formatTime = (date) =>
     date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-  const formatDate = (date) =>
-    date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-
   const getGreeting = () => {
     const hour = time.getHours();
     if (hour < 12) return 'Good Morning';
@@ -276,7 +274,7 @@ const HomePage = () => {
         <div className={styles.heroTopRow}>
           <div className={styles.timeWidget}>
             <h1 className={styles.clock}>{formatTime(time)}</h1>
-            <p className={styles.date}>{formatDate(time)}</p>
+            <p className={styles.date}>{fmtDateFull(time)}</p>
           </div>
           <div className={styles.widgetToolbar}>
             <button

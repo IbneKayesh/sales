@@ -1,10 +1,8 @@
 import React from 'react';
+import { fmtCurrency, fmtDate } from '@/utils/dataFormat';
 import { IconEdit, IconDelete } from '@/assets/icons';
 import DataTable from '../../components/DataTable/DataTable';
 import styles from './SalesTable.module.css';
-
-const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
-const fmtDate = (iso) => new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 
 const SalesTable = ({ sales, onEdit, onDelete, deletingId }) => {
   const columns = [
@@ -30,14 +28,14 @@ const SalesTable = ({ sales, onEdit, onDelete, deletingId }) => {
       label: 'Unit Price',
       align: 'right',
       sortable: true,
-      render: (val) => fmt(val),
+      render: (val) => fmtCurrency(val),
     },
     {
       key: 'total',
       label: 'Total',
       align: 'right',
       sortable: true,
-      render: (val) => <span className={styles.total}>{fmt(val)}</span>,
+      render: (val) => <span className={styles.total}>{fmtCurrency(val)}</span>,
     },
     {
       key: 'createdAt',

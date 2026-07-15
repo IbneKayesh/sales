@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { fmtCurrency } from '@/utils/dataFormat';
 import { IconChevronLeft, IconChevronRight } from '@/assets/icons';
 import DataTable from '../../components/DataTable/DataTable';
 import styles from './ReportsPage.module.css';
@@ -18,14 +19,12 @@ const MOCK_RECENT = [
   { date: '2026-07-09', revenue: 1980, orders: 5, topProduct: 'AI Inference Unit' },
 ];
 
-const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
-
 const ReportsPage = () => {
   const [period, setPeriod] = useState('weekly');
 
   const columns = [
     { key: 'date', label: 'Date', render: (val) => <span className={styles.muted}>{val}</span> },
-    { key: 'revenue', label: 'Revenue', align: 'right', sortable: true, render: (val) => <span className={styles.revenue}>{fmt(val)}</span> },
+    { key: 'revenue', label: 'Revenue', align: 'right', sortable: true, render: (val) => <span className={styles.revenue}>{fmtCurrency(val)}</span> },
     { key: 'orders', label: 'Orders', align: 'right', sortable: true },
     { key: 'topProduct', label: 'Top Product', sortable: true },
   ];

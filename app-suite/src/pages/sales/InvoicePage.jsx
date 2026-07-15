@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { fmtCurrency } from '@/utils/dataFormat';
 import { IconSearch } from '@/assets/icons';
 import DataTable from '../../components/DataTable/DataTable';
 import styles from './InvoicePage.module.css';
@@ -18,8 +19,6 @@ const statusStyles = {
   Draft: styles.statusDraft,
 };
 
-const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
-
 const InvoicePage = () => {
   const [search, setSearch] = useState('');
 
@@ -30,7 +29,7 @@ const InvoicePage = () => {
   const columns = [
     { key: 'id', label: 'Invoice', sortable: true, render: (val) => <code className={styles.invoiceId}>{val}</code> },
     { key: 'customer', label: 'Customer', sortable: true, render: (val) => <span className={styles.customer}>{val}</span> },
-    { key: 'amount', label: 'Amount', align: 'right', sortable: true, render: (val) => <span className={styles.amount}>{fmt(val)}</span> },
+    { key: 'amount', label: 'Amount', align: 'right', sortable: true, render: (val) => <span className={styles.amount}>{fmtCurrency(val)}</span> },
     { key: 'status', label: 'Status', sortable: true, render: (val) => <span className={`${styles.statusBadge} ${statusStyles[val]}`}>{val}</span> },
     { key: 'issued', label: 'Issued', render: (val) => <span className={styles.muted}>{val}</span> },
     { key: 'due', label: 'Due Date', render: (val) => <span className={styles.muted}>{val}</span> },
@@ -55,7 +54,7 @@ const InvoicePage = () => {
             <span className={styles.statLabel}>Total</span>
           </div>
           <div className={styles.statItem}>
-            <span className={styles.statValue}>{fmt(MOCK_INVOICES.reduce((s, i) => s + i.amount, 0))}</span>
+            <span className={styles.statValue}>{fmtCurrency(MOCK_INVOICES.reduce((s, i) => s + i.amount, 0))}</span>
             <span className={styles.statLabel}>Outstanding</span>
           </div>
           <div className={styles.statItem}>

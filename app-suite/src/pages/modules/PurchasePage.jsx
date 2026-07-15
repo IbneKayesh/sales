@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { fmtCurrency } from '@/utils/dataFormat';
 import usePurchase from '../../hooks/usePurchase';
 import { useToast, useConfirm } from '@/context/FeedbackContext';
 import { IconSearch, IconPlus, IconEdit, IconDelete } from '@/assets/icons';
@@ -10,8 +11,6 @@ const statusStyles = {
   Approved: { color: '#60a5fa', bg: 'rgba(96,165,250,0.1)' },
   Delivered: { color: '#34d399', bg: 'rgba(52,211,153,0.1)' },
 };
-
-const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
 
 const StatusBadge = ({ status }) => (
   <span style={{ fontSize:10, fontWeight:600, padding:'2px 8px', borderRadius:4, ...statusStyles[status] }}>{status}</span>
@@ -126,14 +125,14 @@ export default function PurchasePage() {
     setView('list'); setCurrentId(null); setForm(EMPTY_FORM); setFormErrors({});
   };
 
-  const preview = Number(form.qty) && Number(form.unitPrice) ? fmt(Number(form.qty) * Number(form.unitPrice)) : null;
+  const preview = Number(form.qty) && Number(form.unitPrice) ? fmtCurrency(Number(form.qty) * Number(form.unitPrice)) : null;
 
   const columns = [
     { key: 'id', label: 'PO #', sortable: true, render: (val) => <code style={{ fontSize:11, color:'var(--color-text-muted)', backgroundColor:'rgba(255,255,255,0.05)', padding:'2px 6px', borderRadius:4 }}>{val}</code> },
     { key: 'vendor', label: 'Vendor', sortable: true },
     { key: 'item', label: 'Item', sortable: true },
     { key: 'qty', label: 'Qty', align: 'right', sortable: true },
-    { key: 'total', label: 'Total', align: 'right', sortable: true, render: (val) => <span style={{ fontWeight:600, color:'#10b981' }}>{fmt(val)}</span> },
+    { key: 'total', label: 'Total', align: 'right', sortable: true, render: (val) => <span style={{ fontWeight:600, color:'#10b981' }}>{fmtCurrency(val)}</span> },
     { key: 'status', label: 'Status', sortable: true, render: (val) => <StatusBadge status={val} /> },
     { key: 'date', label: 'Date', sortable: true },
     {
@@ -184,7 +183,7 @@ export default function PurchasePage() {
         <PageShell.Stats>
           <PageShell.Stat label="Total Orders" value={purchases.length} />
           <PageShell.Stat label="Pending" value={purchases.filter(p => p.status === 'Pending').length} />
-          <PageShell.Stat label="Total Value" value={fmt(purchases.reduce((s,p) => s + p.total, 0))} />
+          <PageShell.Stat label="Total Value" value={fmtCurrency(purchases.reduce((s,p) => s + p.total, 0))} />
         </PageShell.Stats>
       )}
 

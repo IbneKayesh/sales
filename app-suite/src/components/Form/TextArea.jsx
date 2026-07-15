@@ -1,16 +1,14 @@
 import React, { useId } from 'react';
-import styles from './InputText.module.css';
+import styles from './TextArea.module.css';
 
-const InputText = ({
+const TextArea = ({
   label,
   error,
-  icon,
   className,
-  inputClassName,
-  wrapperClassName,
   id: externalId,
   required,
   disabled,
+  rows = 3,
   onChange,
   ...props
 }) => {
@@ -22,23 +20,18 @@ const InputText = ({
   };
 
   return (
-    <div className={`${styles.wrapper} ${wrapperClassName || ''}`}>
+    <div className={`${styles.wrapper} ${className || ''}`}>
       {label && (
         <label className={styles.label} htmlFor={inputId}>
           {label}
           {required && <span className={styles.required}> *</span>}
         </label>
       )}
-      <div className={`${styles.inputContainer} ${error ? styles.inputError : ''} ${disabled ? styles.inputDisabled : ''} ${className || ''}`}>
-        {icon && (
-          <span className={styles.iconLeft}>
-            {icon}
-          </span>
-        )}
-        <input
+      <div className={`${styles.container} ${error ? styles.containerError : ''} ${disabled ? styles.containerDisabled : ''}`}>
+        <textarea
           id={inputId}
-          type="text"
-          className={`${styles.input} ${icon ? styles.inputWithIcon : ''} ${inputClassName || ''}`}
+          className={styles.textarea}
+          rows={rows}
           required={required}
           disabled={disabled}
           onChange={handleChange}
@@ -50,4 +43,4 @@ const InputText = ({
   );
 };
 
-export default InputText;
+export default TextArea;

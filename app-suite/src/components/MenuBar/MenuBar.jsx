@@ -15,6 +15,7 @@ import RunningApps from '../RunningApps/RunningApps';
 import WindowTabs from '../WindowTabs/WindowTabs';
 import NotificationPanel from '../NotificationPanel/NotificationPanel';
 import Avatar from '../Avatar/Avatar';
+import { fmtDate } from '@/utils/dataFormat';
 import {
   IconGrid, IconSearch, IconSettings, IconProfile,
   IconFullscreenEnter, IconFullscreenExit,
@@ -28,13 +29,6 @@ import styles from './MenuBar.module.css';
 // ═══════════════════════════════════════════════════════════════════════════
 
 const menuItems = ['File', 'Edit', 'View'];
-
-const formatDate = (iso) => {
-  if (!iso) return '\u2014';
-  try {
-    return new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-  } catch { return '\u2014'; }
-};
 
 // ═══════════════════════════════════════════════════════════════════════════
 // ── MenuBar Component ────────────────────────────────────────────────────
@@ -395,7 +389,7 @@ const MenuBar = ({ toggleLauncher, isLauncherOpen }) => {
 
             {currentUser.createdAt && (
               <div className={styles.memberSince}>
-                Member since {formatDate(currentUser.createdAt)}
+                Member since {fmtDate(currentUser.createdAt) || '—'}
               </div>
             )}
 

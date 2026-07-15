@@ -1,0 +1,95 @@
+{
+  "name": {
+    "type": "string",
+    "required": true,
+    "minLength": 1,
+    "maxLength": 200,
+    "default": "",
+    "label": "Product Name",
+    "placeholder": "e.g. AI Inference Unit",
+    "errorMessage": "Product name is required"
+  },
+  "sku": {
+    "type": "string",
+    "required": true,
+    "minLength": 1,
+    "maxLength": 50,
+    "default": "",
+    "label": "SKU",
+    "placeholder": "e.g. AIU-005",
+    "errorMessage": "SKU is required",
+    "transform": "uppercase"
+  },
+  "category": {
+    "type": "string",
+    "required": true,
+    "enum": ["Software", "Infrastructure", "Hardware", "AI", "Services", "Other"],
+    "default": "Software",
+    "label": "Category",
+    "errorMessage": "Category is required"
+  },
+  "description": {
+    "type": "string",
+    "required": false,
+    "multiline": true,
+    "rows": 3,
+    "maxLength": 1000,
+    "default": "",
+    "label": "Description",
+    "placeholder": "Brief product description..."
+  },
+  "costPrice": {
+    "type": "decimal",
+    "required": true,
+    "min": 0,
+    "precision": 2,
+    "step": "0.01",
+    "default": "",
+    "label": "Cost Price (USD)",
+    "placeholder": "0.00",
+    "errorMessage": "Enter a valid cost price"
+  },
+  "sellingPrice": {
+    "type": "decimal",
+    "required": true,
+    "min": 0.01,
+    "precision": 2,
+    "step": "0.01",
+    "default": "",
+    "label": "Selling Price (USD)",
+    "placeholder": "0.00",
+    "errorMessage": "Enter a valid selling price"
+  },
+  "taxRate": {
+    "type": "decimal",
+    "required": false,
+    "min": 0,
+    "max": 100,
+    "precision": 1,
+    "step": "0.5",
+    "default": "8",
+    "label": "Tax Rate (%)",
+    "placeholder": "0",
+    "errorMessage": "Tax rate must be 0–100"
+  },
+  "isActive": {
+    "type": "boolean",
+    "required": false,
+    "default": true,
+    "label": "Active"
+  },
+  "releaseDate": {
+    "type": "date",
+    "required": false,
+    "default": "",
+    "label": "Release Date",
+    "placeholder": "YYYY-MM-DD"
+  },
+  "variants": {
+    "type": "array",
+    "required": false,
+    "default": [],
+    "label": "Variants",
+    "itemModelRef": "product-variant"
+  }
+}

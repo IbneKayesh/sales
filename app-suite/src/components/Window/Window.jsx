@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useWindowManager } from '../../context/WindowManagerContext';
 import { getAppIcon } from '@/routes/appConfig';
-import ConfirmDialog from '../Confirm/ConfirmDialog';
-import ToastContainer from '../Toast/ToastContainer';
+import FeedbackDialog from '@/components/Feedback/FeedbackDialog';
 import styles from './Window.module.css';
 
 const Window = ({ id, title, isOpen, isMinimized, isMaximized, x, y, width, height, zIndex, children }) => {
@@ -115,8 +114,7 @@ const Window = ({ id, title, isOpen, isMinimized, isMaximized, x, y, width, heig
       <div className={styles.windowContent}>
         {children}
         <div className={styles.windowOverlayContainer}>
-          <ConfirmDialog windowed />
-          <ToastContainer mode="window" windowId={id} />
+          <FeedbackDialog mode="window" windowId={id} />
         </div>
       </div>
     </div>

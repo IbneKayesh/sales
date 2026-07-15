@@ -11,10 +11,15 @@ const InputNumber = ({
   min,
   max,
   step,
+  onChange,
   ...props
 }) => {
   const generatedId = useId();
   const inputId = externalId || generatedId;
+
+  const handleChange = (e) => {
+    onChange?.(e.target.value);
+  };
 
   return (
     <div className={`${styles.wrapper} ${className || ''}`}>
@@ -34,6 +39,7 @@ const InputNumber = ({
           step={step}
           required={required}
           disabled={disabled}
+          onChange={handleChange}
           {...props}
         />
       </div>

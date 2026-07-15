@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useMemo, useCallback, useId } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback, useId, useLayoutEffect } from 'react';
 import { IconSearch, IconChevronDown, IconClose } from '@/assets/icons';
 import styles from './Dropdown.module.css';
 
@@ -19,7 +19,9 @@ const Dropdown = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [flipUp, setFlipUp] = useState(false);
   const containerRef = useRef(null);
+  const panelRef = useRef(null);
   const searchRef = useRef(null);
   const generatedId = useId();
   const dropdownId = externalId || generatedId;
@@ -62,6 +64,29 @@ const Dropdown = ({
   useEffect(() => {
     if (isOpen) {
       searchRef.current?.focus();
+    }
+  }, [isOpen]);
+
+  // Measure available space and flip panel up if it would overflow viewport
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      setFlipUp(false);
+      return;
+    }
+
+    const panel = panelRef.current;
+    const container = containerRef.current;
+    if (!panel || !container) return;
+
+    const rect = container.getBoundingClientRect();
+    const panelHeight = panel.offsetHeight;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const spaceAbove = rect.top;
+
+    if (panelHeight > spaceBelow && spaceAbove > panelHeight) {
+      setFlipUp(true);
+    } else {
+      setFlipUp(false);
     }
   }, [isOpen]);
 
@@ -123,7 +148,12 @@ const Dropdown = ({
 
       {/* ── Dropdown Panel ──────────────────────────────────────────── */}
       {isOpen && (
-        <div className={styles.panel} role="listbox" aria-label={label || 'Select options'}>
+        <div
+          ref={panelRef}
+          className={`${styles.panel} ${flipUp ? styles.panelUp : styles.panelDown}`}
+          role="listbox"
+          aria-label={label || 'Select options'}
+        >
           {searchable && (
             <div className={styles.searchWrapper}>
               <IconSearch className={styles.searchIcon} />

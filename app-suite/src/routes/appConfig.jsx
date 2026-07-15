@@ -270,7 +270,7 @@ export const APP_ROUTES = [
     description: 'Manage product catalog and pricing information.',
     parentId: null,
     category: 'modules',
-    defaultWindow: { width: 840, height: 540, x: 100, y: 60 },
+    defaultWindow: { width: 900, height: 600, x: 100, y: 60 },
     color: { bg: 'rgba(139, 92, 246, 0.15)', color: '#a78bfa' },
     defaultApp: true,
     showInDock: true,

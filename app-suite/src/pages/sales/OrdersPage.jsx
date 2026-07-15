@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { fmtCurrency } from '@/utils/dataFormat';
 import { IconSearch } from '@/assets/icons';
 import DataTable from '../../components/DataTable/DataTable';
 import styles from './OrdersPage.module.css';
@@ -18,8 +19,6 @@ const statusStyles = {
   Delivered: styles.statusDelivered,
 };
 
-const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
-
 const OrdersPage = () => {
   const [search, setSearch] = useState('');
 
@@ -32,7 +31,7 @@ const OrdersPage = () => {
     { key: 'customer', label: 'Customer', sortable: true, render: (val) => <span className={styles.customer}>{val}</span> },
     { key: 'product', label: 'Product', sortable: true },
     { key: 'qty', label: 'Qty', align: 'right', sortable: true },
-    { key: 'total', label: 'Total', align: 'right', sortable: true, render: (val) => <span className={styles.total}>{fmt(val)}</span> },
+    { key: 'total', label: 'Total', align: 'right', sortable: true, render: (val) => <span className={styles.total}>{fmtCurrency(val)}</span> },
     { key: 'status', label: 'Status', sortable: true, render: (val) => <span className={`${styles.statusBadge} ${statusStyles[val]}`}>{val}</span> },
     { key: 'date', label: 'Date', sortable: true, render: (val) => <span className={styles.muted}>{val}</span> },
   ];
