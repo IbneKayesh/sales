@@ -589,6 +589,7 @@ export const APP_ICONS = {
   crm:          IconCRM,
   notifications: IconNotifications,
   profile:      IconProfile,
+  "M05-M01-M001": IconFileExcel
 };
 
 

@@ -1,11 +1,18 @@
-import React from 'react';
-import { fmtCurrency } from '@/utils/dataFormat';
-import CollapsiblePanel from '@/components/CollapsiblePanel/CollapsiblePanel';
-import { InputText, InputNumber, TextArea, Dropdown, Checkbox } from '@/components/Form';
-import { getFormDefaults } from '@/utils/modelValidator';
-import variantModel from '@/models/product-variant.json';
-import { IconPackage, IconDollar, IconPlus, IconMinus } from '@/assets/icons';
-import styles from './ProductsPage.module.css';
+import React from "react";
+import { fmtCurrency } from "@/utils/dataFormat";
+import CollapsiblePanel from "@/components/CollapsiblePanel/CollapsiblePanel";
+import {
+  InputText,
+  InputNumber,
+  TextArea,
+  Dropdown,
+  Checkbox,
+  TextInput,
+} from "@/components/Form";
+import { getFormDefaults } from "@/utils/modelValidator";
+import variantModel from "@/models/product-variant.json";
+import { IconPackage, IconDollar, IconPlus, IconMinus } from "@/assets/icons";
+import styles from "./ProductsPage.module.css";
 
 // ── Variant Manager ───────────────────────────────────────────────────────
 const VariantManager = ({ variants, onChange, variantModel }) => {
@@ -28,7 +35,9 @@ const VariantManager = ({ variants, onChange, variantModel }) => {
   if (variants.length === 0) {
     return (
       <div className={styles.variantEmpty}>
-        <p className={styles.variantEmptyText}>No variants yet. Add size, color, or SKU options.</p>
+        <p className={styles.variantEmptyText}>
+          No variants yet. Add size, color, or SKU options.
+        </p>
         <button className={styles.variantAddBtn} onClick={addVariant}>
           <IconPlus />
           Add Variant
@@ -44,10 +53,19 @@ const VariantManager = ({ variants, onChange, variantModel }) => {
           <div className={styles.variantRowHeader}>
             <span className={styles.variantIndex}>#{idx + 1}</span>
             {v.color && (
-              <span className={styles.variantSwatch} style={{ backgroundColor: v.color }} />
+              <span
+                className={styles.variantSwatch}
+                style={{ backgroundColor: v.color }}
+              />
             )}
-            <span className={styles.variantRowTitle}>{v.name || 'New Variant'}</span>
-            <button className={styles.variantRemoveBtn} onClick={() => removeVariant(v.id)} aria-label="Remove variant">
+            <span className={styles.variantRowTitle}>
+              {v.name || "New Variant"}
+            </span>
+            <button
+              className={styles.variantRemoveBtn}
+              onClick={() => removeVariant(v.id)}
+              aria-label="Remove variant"
+            >
               <IconMinus />
             </button>
           </div>
@@ -57,7 +75,7 @@ const VariantManager = ({ variants, onChange, variantModel }) => {
                 label="Variant Name"
                 placeholder="e.g. Small, Red, Pro"
                 value={v.name}
-                onChange={(val) => updateVariant(v.id, 'name', val)}
+                onChange={(val) => updateVariant(v.id, "name", val)}
               />
             </div>
             <div className={styles.variantField}>
@@ -65,7 +83,7 @@ const VariantManager = ({ variants, onChange, variantModel }) => {
                 label="SKU"
                 placeholder="e.g. AIU-005-PRO"
                 value={v.sku}
-                onChange={(val) => updateVariant(v.id, 'sku', val)}
+                onChange={(val) => updateVariant(v.id, "sku", val)}
               />
             </div>
             <div className={styles.variantField}>
@@ -73,7 +91,7 @@ const VariantManager = ({ variants, onChange, variantModel }) => {
                 label="Size"
                 placeholder="e.g. 2GB, XL, 10cm"
                 value={v.size}
-                onChange={(val) => updateVariant(v.id, 'size', val)}
+                onChange={(val) => updateVariant(v.id, "size", val)}
               />
             </div>
             <div className={styles.variantField}>
@@ -82,10 +100,13 @@ const VariantManager = ({ variants, onChange, variantModel }) => {
                 <InputText
                   placeholder="#hex or name"
                   value={v.color}
-                  onChange={(val) => updateVariant(v.id, 'color', val)}
+                  onChange={(val) => updateVariant(v.id, "color", val)}
                 />
                 {v.color && (
-                  <span className={styles.variantSwatchInput} style={{ backgroundColor: v.color }} />
+                  <span
+                    className={styles.variantSwatchInput}
+                    style={{ backgroundColor: v.color }}
+                  />
                 )}
               </div>
             </div>
@@ -94,7 +115,9 @@ const VariantManager = ({ variants, onChange, variantModel }) => {
                 label="Price Adj. ($)"
                 placeholder="0"
                 value={v.priceAdjustment}
-                onChange={(val) => updateVariant(v.id, 'priceAdjustment', Number(val))}
+                onChange={(val) =>
+                  updateVariant(v.id, "priceAdjustment", Number(val))
+                }
               />
             </div>
             <div className={styles.variantField}>
@@ -103,13 +126,16 @@ const VariantManager = ({ variants, onChange, variantModel }) => {
                 placeholder="0"
                 min={0}
                 value={v.stock}
-                onChange={(val) => updateVariant(v.id, 'stock', Number(val))}
+                onChange={(val) => updateVariant(v.id, "stock", Number(val))}
               />
             </div>
           </div>
         </div>
       ))}
-      <button className={`${styles.variantAddBtn} ${styles.variantAddBtnFull}`} onClick={addVariant}>
+      <button
+        className={`${styles.variantAddBtn} ${styles.variantAddBtnFull}`}
+        onClick={addVariant}
+      >
         <IconPlus />
         Add Another Variant
       </button>
@@ -118,16 +144,18 @@ const VariantManager = ({ variants, onChange, variantModel }) => {
 };
 
 // ── Products Entry View (Form) ────────────────────────────────────────────
-const ProductsEntryView = ({
-  form,
-  setForm,
-  formErrors,
-  calculatedMargin,
-}) => {
+const ProductsEntryView = ({ form, setForm, formErrors, calculatedMargin }) => {
   const field = (name) => ({
     value: form[name],
     onChange: (val) => setForm((p) => ({ ...p, [name]: val })),
   });
+
+  const [name, setName] = React.useState("");
+
+  const handleChange = (value) => {
+    console.log("Hello World", value);
+    setName(value);
+  };
 
   return (
     <div className={styles.formArea}>
@@ -139,6 +167,69 @@ const ProductsEntryView = ({
         size="md"
         className={styles.collapsiblePanel}
       >
+        <div className="grid">
+          <div className="col-2">
+            <TextInput
+              id="text-input"
+              value={name}
+              required={true}
+              disabled={false}
+              onChange={handleChange}
+              label="text-input-label"
+              error="tes"
+              placeholder="Enter text input"
+            />
+          </div>
+          <div className="col-3">
+            <TextInput
+              id="text-input"
+              value={name}
+              required={true}
+              disabled={false}
+              onChange={handleChange}
+              label="text-input-label"
+              error="tes"
+              placeholder="Enter text input"
+            />
+          </div>
+          <div className="col-3">
+            <TextInput
+              id="text-input"
+              value={name}
+              required={true}
+              disabled={false}
+              onChange={handleChange}
+              label="text-input-label"
+              error="tes"
+              placeholder="Enter text input"
+            />
+          </div>
+          <div className="col-3">
+            <TextInput
+              id="text-input"
+              value={name}
+              required={true}
+              disabled={false}
+              onChange={handleChange}
+              label="text-input-label"
+              error="tes"
+              placeholder="Enter text input"
+            />
+          </div>
+          <div className="col-1">
+            <TextInput
+              id="text-input"
+              value={name}
+              required={true}
+              disabled={false}
+              onChange={handleChange}
+              label="text-input-label"
+              error="tes"
+              placeholder="Enter text input"
+            />
+          </div>
+        </div>
+
         <div className={styles.formGrid}>
           {/* Row 1: Name (wide) + SKU (narrow) */}
           <div className={`${styles.fieldGroup} ${styles.fieldSpan3}`}>
@@ -148,7 +239,7 @@ const ProductsEntryView = ({
               required
               placeholder="e.g. AI Inference Unit"
               error={formErrors.name}
-              {...field('name')}
+              {...field("name")}
             />
           </div>
           <div className={`${styles.fieldGroup} ${styles.fieldSpan1}`}>
@@ -158,7 +249,7 @@ const ProductsEntryView = ({
               required
               placeholder="e.g. AIU-005"
               error={formErrors.sku}
-              {...field('sku')}
+              {...field("sku")}
             />
           </div>
 
@@ -169,12 +260,12 @@ const ProductsEntryView = ({
               label="Category"
               required
               options={[
-                { value: 'Software', label: 'Software' },
-                { value: 'Infrastructure', label: 'Infrastructure' },
-                { value: 'Hardware', label: 'Hardware' },
-                { value: 'AI', label: 'AI' },
-                { value: 'Services', label: 'Services' },
-                { value: 'Other', label: 'Other' },
+                { value: "Software", label: "Software" },
+                { value: "Infrastructure", label: "Infrastructure" },
+                { value: "Hardware", label: "Hardware" },
+                { value: "AI", label: "AI" },
+                { value: "Services", label: "Services" },
+                { value: "Other", label: "Other" },
               ]}
               value={form.category}
               onChange={(val) => setForm((p) => ({ ...p, category: val }))}
@@ -188,7 +279,7 @@ const ProductsEntryView = ({
               id="prod-release"
               label="Release Date"
               type="date"
-              value={form.releaseDate || ''}
+              value={form.releaseDate || ""}
               onChange={(val) => setForm((p) => ({ ...p, releaseDate: val }))}
               error={formErrors.releaseDate}
             />
@@ -198,9 +289,13 @@ const ProductsEntryView = ({
               id="prod-active"
               label="Active"
               checked={!!form.isActive}
-              onChange={(e) => setForm((p) => ({ ...p, isActive: e.target.checked }))}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, isActive: e.target.checked }))
+              }
             />
-            {formErrors.isActive && <span className={styles.fieldError}>{formErrors.isActive}</span>}
+            {formErrors.isActive && (
+              <span className={styles.fieldError}>{formErrors.isActive}</span>
+            )}
           </div>
 
           {/* Row 3: Description (full width) */}
@@ -210,7 +305,7 @@ const ProductsEntryView = ({
               label="Description"
               placeholder="Brief product description..."
               rows={3}
-              value={form.description || ''}
+              value={form.description || ""}
               onChange={(val) => setForm((p) => ({ ...p, description: val }))}
               error={formErrors.description}
             />
@@ -237,7 +332,7 @@ const ProductsEntryView = ({
               step="0.01"
               placeholder="0.00"
               error={formErrors.costPrice}
-              {...field('costPrice')}
+              {...field("costPrice")}
             />
           </div>
           <div className={`${styles.fieldGroup} ${styles.fieldSpan1}`}>
@@ -249,7 +344,7 @@ const ProductsEntryView = ({
               step="0.01"
               placeholder="0.00"
               error={formErrors.sellingPrice}
-              {...field('sellingPrice')}
+              {...field("sellingPrice")}
             />
           </div>
           <div className={`${styles.fieldGroup} ${styles.fieldSpan1}`}>
@@ -261,18 +356,23 @@ const ProductsEntryView = ({
               step="0.5"
               placeholder="0"
               error={formErrors.taxRate}
-              {...field('taxRate')}
+              {...field("taxRate")}
             />
           </div>
           <div className={`${styles.fieldGroup} ${styles.fieldSpan1}`}>
             <label className={styles.label}>Margin</label>
             <div className={styles.marginDisplay}>
-              <span className={`${styles.marginValue} ${calculatedMargin >= 30 ? styles.marginGood : calculatedMargin >= 10 ? styles.marginOk : styles.marginBad}`}>
+              <span
+                className={`${styles.marginValue} ${calculatedMargin >= 30 ? styles.marginGood : calculatedMargin >= 10 ? styles.marginOk : styles.marginBad}`}
+              >
                 {calculatedMargin}%
               </span>
               {Number(form.sellingPrice) > 0 && (
                 <span className={styles.marginProfit}>
-                  +{fmtCurrency(Number(form.sellingPrice) - Number(form.costPrice || 0))}
+                  +
+                  {fmtCurrency(
+                    Number(form.sellingPrice) - Number(form.costPrice || 0),
+                  )}
                 </span>
               )}
             </div>
@@ -284,22 +384,30 @@ const ProductsEntryView = ({
               <div className={styles.priceSummary}>
                 <div className={styles.priceItem}>
                   <span className={styles.priceLabel}>Cost</span>
-                  <span className={styles.priceCost}>{fmtCurrency(Number(form.costPrice))}</span>
+                  <span className={styles.priceCost}>
+                    {fmtCurrency(Number(form.costPrice))}
+                  </span>
                 </div>
                 <div className={styles.priceArrow}>
                   <span>→</span>
                 </div>
                 <div className={styles.priceItem}>
                   <span className={styles.priceLabel}>Sell</span>
-                  <span className={styles.priceSell}>{fmtCurrency(Number(form.sellingPrice))}</span>
+                  <span className={styles.priceSell}>
+                    {fmtCurrency(Number(form.sellingPrice))}
+                  </span>
                 </div>
                 <div className={styles.priceArrow}>
                   <span>→</span>
                 </div>
                 <div className={styles.priceItem}>
                   <span className={styles.priceLabel}>Profit</span>
-                  <span className={`${styles.priceProfit} ${calculatedMargin >= 0 ? styles.marginGood : styles.marginBad}`}>
-                    {fmtCurrency(Number(form.sellingPrice) - Number(form.costPrice))}
+                  <span
+                    className={`${styles.priceProfit} ${calculatedMargin >= 0 ? styles.marginGood : styles.marginBad}`}
+                  >
+                    {fmtCurrency(
+                      Number(form.sellingPrice) - Number(form.costPrice),
+                    )}
                   </span>
                 </div>
               </div>
