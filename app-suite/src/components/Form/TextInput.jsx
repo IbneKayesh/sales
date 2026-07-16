@@ -11,29 +11,26 @@ const TextInput = ({
   error,
   placeholder
 }) => {
-  const generatedId = useId();
-  const inputId = id || generatedId;
-
   const handleChange = (e) => {
-    onChange?.(e.target.value);
+    onChange?.(id, e.target.value);
   };
 
   return (
     <div className="input-box">
       {label && (
-        <label className="input-label" htmlFor={inputId}>
+        <label className="input-label" htmlFor={id}>
           {label}
           {required && <span className="input-required">*</span>}
         </label>
       )}
       <input
-        id={inputId}
+        id={id}
         type="text"
         value={value}
         onChange={handleChange}
         required={required}
         disabled={disabled}
-        className={`input-text ${disabled ? "input-disabled" : ""} ${error ? "input-error" : ""}`}
+        className={`input-text ${disabled ? "input-disabled" : ""}`}
         placeholder={placeholder}
       ></input>
       {error && <span className="input-error">{error}</span>}

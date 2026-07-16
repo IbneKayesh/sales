@@ -2,10 +2,10 @@ import CollapsiblePanel from "@/components/CollapsiblePanel/CollapsiblePanel";
 import { IconPackage } from "@/assets/icons";
 import { TextInput } from "@/components/Form";
 
-const ProductFormView = ({ formData, formErrors, onChange }) => {
+const ProductListView = ({ formData, formErrors, onChange }) => {
   return (
     <CollapsiblePanel
-      title="Production Information"
+      title="Production List"
       icon={<IconPackage />}
       defaultOpen
       size="md"
@@ -40,4 +40,4 @@ const ProductFormView = ({ formData, formErrors, onChange }) => {
   );
 };
 
-export default ProductFormView;
+export default ProductListView;

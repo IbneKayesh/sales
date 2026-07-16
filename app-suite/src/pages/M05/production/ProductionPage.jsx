@@ -18,6 +18,7 @@ import PageShell from "@/components/PageShell/PageShell";
 import ButtonGroup from "@/components/ButtonGroup/ButtonGroup";
 import useProduction from "@/hooks/M05/useProduction.js";
 import ProductFormView from "./ProductFormView.jsx";
+import ProductListView from "./ProductListView.jsx";
 
 const ProductionPage = () => {
   const {
@@ -26,27 +27,39 @@ const ProductionPage = () => {
     crTitle,
     crView,
     formData,
-    errors,
+    formErrors,
     dataList,
     //functions
-    handleAddNew,
     handleChange,
+    handleAddNew,
+    handleSave,
+    handleCancel,
   } = useProduction();
 
-  const crButtons = useMemo(
-    () => [
-      {
-        id: "new",
-        label: "New",
-        icon: <IconPlus />,
-        onClick: handleAddNew,
-        views: ["SYS_LST_1"],
-      },
-    ],
-    [crView],
-  );
+  const crButtons = [
+    {
+      id: "new",
+      label: "New",
+      icon: <IconPlus />,
+      onClick: handleAddNew,
+      views: ["SYS_LST_1"],
+    },
+    {
+      id: "save",
+      label: "Save",
+      icon: <IconSave />,
+      onClick: handleSave,
+      views: ["SYS_FRM_1"],
+    },
+    {
+      id: "cancel",
+      label: "Cancel",
+      icon: <IconBackArrow />,
+      onClick: handleCancel,
+      views: ["SYS_FRM_1"],
+    },
+  ];
 
-  
   const vsButtons = useMemo(() => {
     return crButtons.filter((btn) => btn.views.includes(crView));
   }, [crButtons, crView]);
@@ -58,7 +71,6 @@ const ProductionPage = () => {
     },
     [vsButtons],
   );
-
 
   return (
     <PageShell title="Production" subtitle="Production Items" compact>
@@ -76,7 +88,21 @@ const ProductionPage = () => {
       </PageShell.Actions>
       <PageShell.Stats></PageShell.Stats>
       <PageShell.Body>
-        <ProductFormView/>
+        {/* {JSON.stringify(errors)} */}
+        {crView === "SYS_FRM_1" && (
+          <ProductFormView
+            formData={formData}
+            formErrors={formErrors}
+            onChange={handleChange}
+          />
+        )}
+        {crView === "SYS_LST_1" && (
+          <ProductListView
+            formData={formData}
+            formErrors={formErrors}
+            onChange={handleChange}
+          />
+        )}
       </PageShell.Body>
       <PageShell.Footer></PageShell.Footer>
     </PageShell>

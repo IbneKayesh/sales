@@ -2,7 +2,7 @@
   "prods_cname": {
     "type": "string",
     "required": true,
-    "minLength": 1,
+    "minLength": 5,
     "maxLength": 200,
     "default": "",
     "label": "Production name",

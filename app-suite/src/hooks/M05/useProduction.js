@@ -1,15 +1,6 @@
 import { useState, useEffect } from "react";
 import tmmb_prods from "@/models/M05/tmmb_prods.json";
 import { validateModel, getFormDefaults } from "@/utils/modelValidator";
-import {
-  IconPlus,
-  IconEdit,
-  IconDelete,
-  IconSave,
-  IconSearch,
-  IconBackArrow,
-  IconClose,
-} from "@/assets/icons";
 
 const EMPTY_FORM = getFormDefaults(tmmb_prods);
 
@@ -22,21 +13,46 @@ const useProduction = () => {
     edtpr: false,
     delpr: false,
   });
-  const [crTitle, setCrTitle] = useState("Brand List");
-  const [crView, setCrView] = useState("SYS_LST_1");
+  const [crTitle, setCrTitle] = useState("Production List");
+  const [crView, setCrView] = useState("SYS_FRM_1");
   const [formData, setFormData] = useState(EMPTY_FORM);
-  const [errors, setErrors] = useState({});
+  const [formErrors, setFormErrors] = useState({});
   const [dataList, setDataList] = useState([]);
-
 
   //functions
 
-  const handleAddNew = () => {
-    console.log("handleAddNew");
+  const resetForm = () => {
+    setFormData(EMPTY_FORM);
+    setFormErrors({});
   };
 
-  const handleChange = () => {
-    console.log("handleChange");
+  const handleAddNew = () => {
+    setCrView("SYS_FRM_1");
+    resetForm();
+  };
+
+  const handleChange = (f, v) => {
+    // console.log("f", f);
+    // console.log("v", v);
+    setFormData((prev) => ({
+      ...prev,
+      [f]: v,
+    }));
+  };
+  const handleSave = async () => {
+    //console.log("handleSave", formData);
+    const frmErr = validateModel(formData, tmmb_prods);
+    //console.log("handleSaveErrr", frmErr);
+    setFormErrors(frmErr);
+    if (Object.keys(frmErr).length > 0) return;
+
+    setDataList((prev) => [...prev, { ...formData }]);
+    resetForm();
+    setCrView("SYS_LST_1");
+  };
+  const handleCancel = () => {
+    setCrView("SYS_LST_1");
+    resetForm();
   };
 
   return {
@@ -45,11 +61,13 @@ const useProduction = () => {
     crTitle,
     crView,
     formData,
-    errors,
+    formErrors,
     dataList,
     //functions
-    handleAddNew,
     handleChange,
+    handleAddNew,
+    handleSave,
+    handleCancel,
   };
 };
 export default useProduction;
