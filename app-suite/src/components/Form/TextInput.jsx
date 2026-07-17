@@ -1,4 +1,5 @@
-import React, { useId } from "react";
+import { useId } from 'react';
+
 import './TextInput.css';
 
 const TextInput = ({
@@ -16,11 +17,11 @@ const TextInput = ({
   };
 
   return (
-    <div className="input-box">
+    <div className="d-flex flex-column gap-2 w-100 mb-1">
       {label && (
-        <label className="input-label" htmlFor={id}>
+        <label className="fs-10 fw-600 text-primary text-uppercase user-select-none" htmlFor={id} style={{letterSpacing:'0.3px'}}>
           {label}
-          {required && <span className="input-required">*</span>}
+          {required && <span className="text-danger">*</span>}
         </label>
       )}
       <input
@@ -30,10 +31,10 @@ const TextInput = ({
         onChange={handleChange}
         required={required}
         disabled={disabled}
-        className={`input-text ${disabled ? "input-disabled" : ""}`}
+        className={`input-text w-100 px-2 py-1-5 border rounded-sm bg-none fs-12 text-primary ${disabled ? "text-muted cursor-not-allowed" : ""}`}
         placeholder={placeholder}
       ></input>
-      {error && <span className="input-error">{error}</span>}
+      {error && <span className="fs-10 text-danger" style={{lineHeight:'1.2', minHeight:'10px'}}>{error}</span>}
     </div>
   );
 };

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { fmtCurrency } from '@/utils/dataFormat';
-import styles from './SaleForm.module.css';
+import { useState } from 'react';
 
+import { fmtCurrency } from '@/utils/dataFormat';
+import './SaleForm.css';
 const EMPTY = { customerName: '', product: '', quantity: '', unitPrice: '' };
 
 const SaleForm = ({ initialData, onSubmit }) => {
@@ -50,44 +50,44 @@ const SaleForm = ({ initialData, onSubmit }) => {
     : null;
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <div className={styles.grid}>
-        <div className={styles.fieldGroup}>
-          <label className={styles.label} htmlFor="sf-customer">Customer Name *</label>
-          <input id="sf-customer" type="text" className={styles.input} placeholder="e.g. Acme Corp" {...field('customerName')} />
-          {errors.customerName && <span className={styles.fieldError}>{errors.customerName}</span>}
+    <form onSubmit={handleSubmit} className="form">
+      <div className="grid">
+        <div className="fieldGroup">
+          <label className="label" htmlFor="sf-customer">Customer Name *</label>
+          <input id="sf-customer" type="text" className="input" placeholder="e.g. Acme Corp" {...field('customerName')} />
+          {errors.customerName && <span className="fieldError">{errors.customerName}</span>}
         </div>
 
-        <div className={styles.fieldGroup}>
-          <label className={styles.label} htmlFor="sf-product">Product / Service *</label>
-          <input id="sf-product" type="text" className={styles.input} placeholder="e.g. Enterprise License" {...field('product')} />
-          {errors.product && <span className={styles.fieldError}>{errors.product}</span>}
+        <div className="fieldGroup">
+          <label className="label" htmlFor="sf-product">Product / Service *</label>
+          <input id="sf-product" type="text" className="input" placeholder="e.g. Enterprise License" {...field('product')} />
+          {errors.product && <span className="fieldError">{errors.product}</span>}
         </div>
 
-        <div className={styles.fieldGroup}>
-          <label className={styles.label} htmlFor="sf-qty">Quantity *</label>
-          <input id="sf-qty" type="number" min="1" className={styles.input} placeholder="1" {...field('quantity')} />
-          {errors.quantity && <span className={styles.fieldError}>{errors.quantity}</span>}
+        <div className="fieldGroup">
+          <label className="label" htmlFor="sf-qty">Quantity *</label>
+          <input id="sf-qty" type="number" min="1" className="input" placeholder="1" {...field('quantity')} />
+          {errors.quantity && <span className="fieldError">{errors.quantity}</span>}
         </div>
 
-        <div className={styles.fieldGroup}>
-          <label className={styles.label} htmlFor="sf-price">Unit Price (USD) *</label>
-          <input id="sf-price" type="number" min="0.01" step="0.01" className={styles.input} placeholder="0.00" {...field('unitPrice')} />
-          {errors.unitPrice && <span className={styles.fieldError}>{errors.unitPrice}</span>}
+        <div className="fieldGroup">
+          <label className="label" htmlFor="sf-price">Unit Price (USD) *</label>
+          <input id="sf-price" type="number" min="0.01" step="0.01" className="input" placeholder="0.00" {...field('unitPrice')} />
+          {errors.unitPrice && <span className="fieldError">{errors.unitPrice}</span>}
         </div>
       </div>
 
       {preview && (
-        <div className={styles.preview}>
-          <span className={styles.previewLabel}>Total</span>
-          <span className={styles.previewValue}>{preview}</span>
+        <div className="preview">
+          <span className="previewLabel">Total</span>
+          <span className="previewValue">{preview}</span>
         </div>
       )}
 
-      <div className={styles.actions}>
-        <button type="submit" className={styles.submitBtn} disabled={submitting}>
+      <div className="actions">
+        <button type="submit" className="submitBtn" disabled={submitting}>
           {submitting ? (
-            <span className={styles.spinner} />
+            <span className="spinner" />
           ) : (
             initialData ? 'Save Changes' : 'Create Sale'
           )}

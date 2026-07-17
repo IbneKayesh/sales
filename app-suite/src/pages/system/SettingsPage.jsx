@@ -4,8 +4,7 @@ import { useDesktop } from '../../context/DesktopContext';
 import { useToast, useConfirm } from '@/context/FeedbackContext';
 import { IconCheck, IconColorWheel, IconFileImage, IconUpload, IconDelete, IconMonitor, IconSettings, IconProfile, IconUser } from '@/assets/icons';
 import ButtonGroup from '@/components/ButtonGroup/ButtonGroup';
-import styles from './SettingsPage.module.css';
-
+import './SettingsPage.css';
 const sections = [
   { id: 'appearance', label: 'Appearance', icon: <IconMonitor /> },
   { id: 'system', label: 'System', icon: <IconSettings /> },
@@ -103,14 +102,14 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>System Settings</h1>
-        <p className={styles.subtitle}>Configure preferences and user customization options</p>
+    <div className="container">
+      <header className="header">
+        <h1 className="title">System Settings</h1>
+        <p className="subtitle">Configure preferences and user customization options</p>
       </header>
 
-      <div className={styles.layout}>
-        <aside className={styles.sidebar}>
+      <div className="layout">
+        <aside className="sidebar">
           <ButtonGroup
             buttons={sections.map((s) => ({ id: s.id, label: s.label, icon: s.icon }))}
             activeId={activeSection}
@@ -122,26 +121,26 @@ const SettingsPage = () => {
           />
         </aside>
 
-        <main className={styles.contentPane}>
+        <main className="contentPane">
           {/* ── Appearance ─────────────────────────────────────────────── */}
           {activeSection === 'appearance' && (
-            <div className={styles.sectionBody}>
-              <h2 className={styles.sectionTitle}>Desktop Wallpaper</h2>
-              <div className={styles.wallpaperGrid}>
+            <div className="sectionBody">
+              <h2 className="sectionTitle">Desktop Wallpaper</h2>
+              <div className="wallpaperGrid">
                 {wallpapers.map((wp) => (
                   <button
                     key={wp.id}
-                    className={`${styles.wallpaperCard} ${activeWallpaper === wp.id ? styles.wallpaperActive : ''}`}
+                    className={`wallpaperCard ${activeWallpaper === wp.id ? 'wallpaperActive' : ''}`}
                     onClick={() => handleWallpaperChange(wp.id)}
                     title={wp.name}
                   >
                     <div
-                      className={`${styles.wallpaperPreview} ${wp.id === 'default' ? styles.wallpaperPreviewDefault : ''}`}
+                      className={`wallpaperPreview ${wp.id === 'default' ? 'wallpaperPreviewDefault' : ''}`}
                       style={wp.id !== 'default' ? { background: wp.value } : undefined}
                     />
-                    <div className={styles.wallpaperName}>
+                    <div className="wallpaperName">
                       {activeWallpaper === wp.id && (
-                        <IconCheck className={styles.wallpaperCheck} />
+                        <IconCheck className="wallpaperCheck" />
                       )}
                       <span>{wp.name}</span>
                     </div>
@@ -149,29 +148,29 @@ const SettingsPage = () => {
                 ))}
               </div>
 
-              <h2 className={styles.sectionTitle}>Custom Background</h2>
-              <div className={styles.customBgSection}>
-                <div className={styles.customBgRow}>
-                  <div className={styles.customBgLabel}>
-                    <IconColorWheel className={styles.customBgIcon} />
+              <h2 className="sectionTitle">Custom Background</h2>
+              <div className="customBgSection">
+                <div className="customBgRow">
+                  <div className="customBgLabel">
+                    <IconColorWheel className="customBgIcon" />
                     <span>Solid Color</span>
                   </div>
-                  <div className={styles.colorPickerRow}>
-                    <div className={styles.colorPreviewWrap}>
+                  <div className="colorPickerRow">
+                    <div className="colorPreviewWrap">
                       <div
-                        className={styles.colorPreviewBox}
+                        className="colorPreviewBox"
                         style={{ backgroundColor: customColor }}
                       />
                       <input
                         type="color"
-                        className={styles.colorInput}
+                        className="colorInput"
                         value={customColor}
                         onChange={(e) => setCustomColor(e.target.value)}
                         aria-label="Pick a desktop background color"
                       />
                     </div>
                     <button
-                      className={styles.applyBtn}
+                      className="applyBtn"
                       onClick={handleColorApply}
                     >
                       Apply Color
@@ -179,100 +178,100 @@ const SettingsPage = () => {
                   </div>
                 </div>
 
-                <div className={styles.dividerLine} />
+                <div className="dividerLine" />
 
-                <div className={styles.customBgRow}>
-                  <div className={styles.customBgLabel}>
-                    <IconFileImage className={styles.customBgIcon} />
+                <div className="customBgRow">
+                  <div className="customBgLabel">
+                    <IconFileImage className="customBgIcon" />
                     <span>Upload Image</span>
                   </div>
-                  <div className={styles.uploadRow}>
+                  <div className="uploadRow">
                     <button
-                      className={styles.uploadBtn}
+                      className="uploadBtn"
                       onClick={() => fileInputRef.current?.click()}
                     >
-                      <IconUpload className={styles.uploadBtnIcon} />
+                      <IconUpload className="uploadBtnIcon" />
                       {customPreview ? 'Change Image' : 'Choose Image'}
                     </button>
                     <input
                       ref={fileInputRef}
                       type="file"
                       accept="image/*"
-                      className={styles.fileInput}
+                      className="fileInput"
                       onChange={handleImageUpload}
                       aria-label="Upload an image for desktop background"
                     />
                     {customPreview && (
-                      <div className={styles.uploadPreview}>
-                        <img src={customPreview} alt="Custom desktop background preview" className={styles.uploadPreviewImg} />
+                      <div className="uploadPreview">
+                        <img src={customPreview} alt="Custom desktop background preview" className="uploadPreviewImg" />
                       </div>
                     )}
                   </div>
                 </div>
 
                 {activeWallpaper === 'custom' && (
-                  <div className={styles.customActiveBadge}>
-                    <IconCheck className={styles.customActiveBadgeIcon} />
+                  <div className="customActiveBadge">
+                    <IconCheck className="customActiveBadgeIcon" />
                     Custom background is active
                   </div>
                 )}
               </div>
 
-              <h2 className={styles.sectionTitle}>Display Preferences</h2>
-              <div className={styles.settingGroup}>
-                <div className={styles.settingRow}>
-                  <div className={styles.settingText}>
-                    <div className={styles.settingLabel}>Dark Mode</div>
-                    <div className={styles.settingDesc}>Use dark styles across all system UI.</div>
+              <h2 className="sectionTitle">Display Preferences</h2>
+              <div className="settingGroup">
+                <div className="settingRow">
+                  <div className="settingText">
+                    <div className="settingLabel">Dark Mode</div>
+                    <div className="settingDesc">Use dark styles across all system UI.</div>
                   </div>
                   <button
-                    className={`${styles.toggle} ${darkMode ? styles.toggleOn : ''}`}
+                    className={`toggle ${darkMode ? 'toggleOn' : ''}`}
                     onClick={() => setDarkMode(!darkMode)}
                     aria-label="Toggle Dark Mode"
                   >
-                    <span className={styles.toggleKnob} />
+                    <span className="toggleKnob" />
                   </button>
                 </div>
 
-                <div className={styles.settingRow}>
-                  <div className={styles.settingText}>
-                    <div className={styles.settingLabel}>System Animations</div>
-                    <div className={styles.settingDesc}>Enable transitions and active micro-animations.</div>
+                <div className="settingRow">
+                  <div className="settingText">
+                    <div className="settingLabel">System Animations</div>
+                    <div className="settingDesc">Enable transitions and active micro-animations.</div>
                   </div>
                   <button
-                    className={`${styles.toggle} ${animations ? styles.toggleOn : ''}`}
+                    className={`toggle ${animations ? 'toggleOn' : ''}`}
                     onClick={() => setAnimations(!animations)}
                     aria-label="Toggle Animations"
                   >
-                    <span className={styles.toggleKnob} />
+                    <span className="toggleKnob" />
                   </button>
                 </div>
 
-                <div className={styles.settingRow}>
-                  <div className={styles.settingText}>
-                    <div className={styles.settingLabel}>Show Desktop Icons</div>
-                    <div className={styles.settingDesc}>Display recently opened app icons on the desktop.</div>
+                <div className="settingRow">
+                  <div className="settingText">
+                    <div className="settingLabel">Show Desktop Icons</div>
+                    <div className="settingDesc">Display recently opened app icons on the desktop.</div>
                   </div>
                   <button
-                    className={`${styles.toggle} ${showIcons ? styles.toggleOn : ''}`}
+                    className={`toggle ${showIcons ? 'toggleOn' : ''}`}
                     onClick={() => setShowIcons(!showIcons)}
                     aria-label="Toggle Desktop Icons"
                   >
-                    <span className={styles.toggleKnob} />
+                    <span className="toggleKnob" />
                   </button>
                 </div>
 
-                <div className={styles.settingRow}>
-                  <div className={styles.settingText}>
-                    <div className={styles.settingLabel}>Show Recent Apps</div>
-                    <div className={styles.settingDesc}>Show recently used applications in the menu bar.</div>
+                <div className="settingRow">
+                  <div className="settingText">
+                    <div className="settingLabel">Show Recent Apps</div>
+                    <div className="settingDesc">Show recently used applications in the menu bar.</div>
                   </div>
                   <button
-                    className={`${styles.toggle} ${showRecentApps ? styles.toggleOn : ''}`}
+                    className={`toggle ${showRecentApps ? 'toggleOn' : ''}`}
                     onClick={() => setShowRecentApps(!showRecentApps)}
                     aria-label="Toggle Recent Apps"
                   >
-                    <span className={styles.toggleKnob} />
+                    <span className="toggleKnob" />
                   </button>
                 </div>
               </div>
@@ -281,21 +280,21 @@ const SettingsPage = () => {
 
           {/* ── System ─────────────────────────────────────────────────── */}
           {activeSection === 'system' && (
-            <div className={styles.sectionBody}>
-              <h2 className={styles.sectionTitle}>System Details</h2>
-              <div className={styles.settingGroup}>
-                <div className={styles.settingCol}>
-                  <label htmlFor="hostname-input" className={styles.inputLabel}>Device Hostname</label>
-                  <div className={styles.hostnameRow}>
+            <div className="sectionBody">
+              <h2 className="sectionTitle">System Details</h2>
+              <div className="settingGroup">
+                <div className="settingCol">
+                  <label htmlFor="hostname-input" className="inputLabel">Device Hostname</label>
+                  <div className="hostnameRow">
                     <input
                       id="hostname-input"
                       type="text"
                       value={hostname}
                       onChange={(e) => setHostname(e.target.value)}
-                      className={styles.textField}
+                      className="textField"
                     />
                     <button
-                      className={styles.applySmallBtn}
+                      className="applySmallBtn"
                       onClick={async () => {
                         await addActionToast(`Hostname changed to "${hostname}"`, 'info', 'settings');
                         addToast({ message: 'Hostname updated', type: 'success' });
@@ -304,7 +303,7 @@ const SettingsPage = () => {
                       Update
                     </button>
                   </div>
-                  <span className={styles.inputHelp}>This hostname identifies your device on local networks.</span>
+                  <span className="inputHelp">This hostname identifies your device on local networks.</span>
                 </div>
               </div>
             </div>
@@ -312,29 +311,29 @@ const SettingsPage = () => {
 
           {/* ── Account ────────────────────────────────────────────────── */}
           {activeSection === 'account' && (
-            <div className={styles.sectionBody}>
-              <h2 className={styles.sectionTitle}>User Account</h2>
-              <div className={styles.settingGroup}>
-                <div className={styles.profileDetails}>
-                  <div className={styles.profileItem}>
-                    <span className={styles.profileLabel}>Profile Name</span>
-                    <span className={styles.profileVal}>{currentUser?.displayName || '—'}</span>
+            <div className="sectionBody">
+              <h2 className="sectionTitle">User Account</h2>
+              <div className="settingGroup">
+                <div className="profileDetails">
+                  <div className="profileItem">
+                    <span className="profileLabel">Profile Name</span>
+                    <span className="profileVal">{currentUser?.displayName || '—'}</span>
                   </div>
-                  <div className={styles.profileItem}>
-                    <span className={styles.profileLabel}>Username</span>
-                    <span className={styles.profileVal}>@{currentUser?.username || '—'}</span>
+                  <div className="profileItem">
+                    <span className="profileLabel">Username</span>
+                    <span className="profileVal">@{currentUser?.username || '—'}</span>
                   </div>
-                  <div className={styles.profileItem}>
-                    <span className={styles.profileLabel}>Email</span>
-                    <span className={styles.profileVal}>{currentUser?.email || '—'}</span>
+                  <div className="profileItem">
+                    <span className="profileLabel">Email</span>
+                    <span className="profileVal">{currentUser?.email || '—'}</span>
                   </div>
-                  <div className={styles.profileItem}>
-                    <span className={styles.profileLabel}>Account Privilege</span>
-                    <span className={styles.profileVal}>{currentUser?.role || '—'}</span>
+                  <div className="profileItem">
+                    <span className="profileLabel">Account Privilege</span>
+                    <span className="profileVal">{currentUser?.role || '—'}</span>
                   </div>
-                  <div className={styles.profileItem}>
-                    <span className={styles.profileLabel}>Member Since</span>
-                    <span className={styles.profileVal}>{currentUser?.createdAt ? formatDate(currentUser.createdAt) : '—'}</span>
+                  <div className="profileItem">
+                    <span className="profileLabel">Member Since</span>
+                    <span className="profileVal">{currentUser?.createdAt ? formatDate(currentUser.createdAt) : '—'}</span>
                   </div>
                 </div>
               </div>
@@ -343,51 +342,51 @@ const SettingsPage = () => {
 
           {/* ── Users ──────────────────────────────────────────────────── */}
           {activeSection === 'users' && (
-            <div className={styles.sectionBody}>
-              <div className={styles.usersHeader}>
-                <h2 className={styles.sectionTitle}>User Management</h2>
-                <span className={styles.userCount}>{users.length} registered user{users.length !== 1 ? 's' : ''}</span>
+            <div className="sectionBody">
+              <div className="usersHeader">
+                <h2 className="sectionTitle">User Management</h2>
+                <span className="userCount">{users.length} registered user{users.length !== 1 ? 's' : ''}</span>
               </div>
-              <div className={styles.userTable}>
-                <div className={styles.userTableHead}>
-                  <span className={styles.userColUser}>User</span>
-                  <span className={styles.userColRole}>Role</span>
-                  <span className={styles.userColDate}>Created</span>
-                  <span className={styles.userColAction}>Action</span>
+              <div className="userTable">
+                <div className="userTableHead">
+                  <span className="userColUser">User</span>
+                  <span className="userColRole">Role</span>
+                  <span className="userColDate">Created</span>
+                  <span className="userColAction">Action</span>
                 </div>
                 {users.map((user) => {
                   const isCurrentUser = user.id === currentUser?.id;
                   return (
-                    <div key={user.id} className={`${styles.userRow} ${isCurrentUser ? styles.userRowCurrent : ''}`}>
-                      <div className={styles.userCellUser}>
-                        <div className={styles.userAvatar}>
+                    <div key={user.id} className={`userRow ${isCurrentUser ? 'userRowCurrent' : ''}`}>
+                      <div className="userCellUser">
+                        <div className="userAvatar">
                           {user.displayName?.charAt(0)?.toUpperCase() || '?'}
                         </div>
-                        <div className={styles.userInfo}>
-                          <div className={styles.userDisplayName}>
+                        <div className="userInfo">
+                          <div className="userDisplayName">
                             {user.displayName}
-                            {isCurrentUser && <span className={styles.youBadge}>You</span>}
+                            {isCurrentUser && <span className="youBadge">You</span>}
                           </div>
-                          <div className={styles.userUsername}>@{user.username}</div>
+                          <div className="userUsername">@{user.username}</div>
                         </div>
                       </div>
-                      <div className={styles.userCellRole}>
-                        <span className={`${styles.roleBadge} ${user.role === 'System Administrator' ? styles.roleAdmin : styles.roleStandard}`}>
+                      <div className="userCellRole">
+                        <span className={`roleBadge ${user.role === 'System Administrator' ? 'roleAdmin' : 'roleStandard'}`}>
                           {user.role}
                         </span>
                       </div>
-                      <div className={styles.userCellDate}>{formatDate(user.createdAt)}</div>
-                      <div className={styles.userCellAction}>
+                      <div className="userCellDate">{formatDate(user.createdAt)}</div>
+                      <div className="userCellAction">
                         <button
-                          className={styles.deleteBtn}
+                          className="deleteBtn"
                           onClick={() => handleDeleteUser(user)}
                           disabled={isCurrentUser || deletingUserId === user.id}
                           title={isCurrentUser ? 'Cannot delete your own account' : `Delete ${user.displayName}`}
                         >
                           {deletingUserId === user.id ? (
-                            <span className={styles.deleteSpinner} />
+                            <span className="deleteSpinner" />
                           ) : (
-                            <IconDelete className={styles.deleteIcon} />
+                            <IconDelete className="deleteIcon" />
                           )}
                           {deletingUserId === user.id ? 'Deleting' : 'Delete'}
                         </button>

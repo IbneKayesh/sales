@@ -1,38 +1,38 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+
 import { useWindowManager } from '@/context/WindowManagerContext';
 import { useAuth } from '@/context/AuthContext';
 import { APP_ROUTES, appConfigById, getLauncherApps, getChildApps, getAppIcon } from '@/routes/appConfig';
 import { IconBackArrow, IconSearch, IconSearch as IconSearchX, IconLogout } from '@/assets/icons';
-import styles from './AppLauncher.module.css';
-
+import './AppLauncher.css';
 // ── Map category to launcher card style ───────────────────────────────────
 const getCardStyle = (route) => {
   const map = {
-    dashboard: styles.cardHome,
+    dashboard: 'cardHome',
     system: {
-      files: styles.cardFiles,
-      gallery: styles.cardGallery,
-      settings: styles.cardSettings,
-      documents: styles.cardDocuments,
-      trash: styles.cardTrash,
+      files: 'cardFiles',
+      gallery: 'cardGallery',
+      settings: 'cardSettings',
+      documents: 'cardDocuments',
+      trash: 'cardTrash',
     },
-    sales: styles.cardSales,
+    sales: 'cardSales',
     modules: {
-      inventory: styles.cardInventory,
-      purchase: styles.cardPurchase,
-      hr: styles.cardHR,
-      crm: styles.cardCRM,
+      inventory: 'cardInventory',
+      purchase: 'cardPurchase',
+      hr: 'cardHR',
+      crm: 'cardCRM',
     },
     user: {
-      profile: styles.cardProfile,
-      notifications: styles.cardNotifications,
+      profile: 'cardProfile',
+      notifications: 'cardNotifications',
     },
   };
 
   const entry = route.parentId ? map[appConfigById[route.parentId]?.category] : map[route.category];
-  if (typeof entry === 'string') return entry || styles.cardDefault;
-  if (entry && typeof entry === 'object') return entry[route.id] || styles.cardDefault;
-  return styles.cardDefault;
+  if (typeof entry === 'string') return entry || 'cardDefault';
+  if (entry && typeof entry === 'object') return entry[route.id] || 'cardDefault';
+  return 'cardDefault';
 };
 
 // ── AppLauncher Component ──────────────────────────────────────────────────
@@ -131,29 +131,29 @@ const AppLauncher = ({ isOpen, closeLauncher }) => {
   })();
 
   return (
-    <div className={styles.overlay}>
-      <div className={styles.launcher} ref={launcherRef} role="dialog" aria-modal="true" aria-label="Application Launcher">
+    <div className="overlay">
+      <div className="launcher" ref={launcherRef} role="dialog" aria-modal="true" aria-label="Application Launcher">
         {/* ── Header with back button ──────────────────────────────────── */}
-        <div className={styles.header}>
+        <div className="header">
           {isInSubView && (
-            <button className={styles.backBtn} onClick={goBack} aria-label="Back to all apps">
-              <IconBackArrow className={styles.backIcon} />
+            <button className="backBtn" onClick={goBack} aria-label="Back to all apps">
+              <IconBackArrow className="backIcon" />
             </button>
           )}
-          <div className={styles.headerInfo}>
-            <h2 className={styles.headerTitle}>
+          <div className="headerInfo">
+            <h2 className="headerTitle">
               {isInSubView ? activeGroup.label : 'Apps'}
             </h2>
-            <span className={styles.headerCount}>
+            <span className="headerCount">
               {displayedItems.length} {displayedItems.length === 1 ? 'app' : 'apps'}
             </span>
           </div>
-          <div className={styles.searchContainer}>
-            <IconSearch className={styles.searchIcon} />
+          <div className="searchContainer">
+            <IconSearch className="searchIcon" />
             <input
               type="text"
               placeholder="Search..."
-              className={styles.searchInput}
+              className="searchInput"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               autoFocus
@@ -162,10 +162,10 @@ const AppLauncher = ({ isOpen, closeLauncher }) => {
         </div>
 
         {/* ── Icon Grid ────────────────────────────────────────────────── */}
-        <div className={styles.iconGrid}>
+        <div className="iconGrid">
           {displayedItems.length === 0 ? (
-            <div className={styles.emptyState}>
-              <IconSearchX className={styles.emptyIcon} />
+            <div className="emptyState">
+              <IconSearchX className="emptyIcon" />
               <p>No apps found</p>
             </div>
           ) : (
@@ -174,16 +174,16 @@ const AppLauncher = ({ isOpen, closeLauncher }) => {
               return (
                 <button
                   key={item.id}
-                  className={`${styles.iconCard} ${item.classStyle || getCardStyle(item) || styles.cardDefault}`}
+                  className={`iconCard ${item.classStyle || getCardStyle(item) || 'cardDefault'}`}
                   onClick={() => (isGroup ? openGroup(item.id) : handleLaunch(item.id))}
                   title={item.description}
                 >
-                  <div className={styles.iconCircle}>
+                  <div className="iconCircle">
                     {item.icon}
                   </div>
-                  <span className={styles.iconLabel}>{item.label}</span>
+                  <span className="iconLabel">{item.label}</span>
                   {isGroup && item.children && (
-                    <span className={styles.childCountBadge}>{item.children.length}</span>
+                    <span className="childCountBadge">{item.children.length}</span>
                   )}
                 </button>
               );
@@ -192,19 +192,19 @@ const AppLauncher = ({ isOpen, closeLauncher }) => {
         </div>
 
         {/* ── Footer ──────────────────────────────────────────────────── */}
-        <div className={styles.footer}>
-          <span className={styles.footerHint}>
-            Press <kbd className={styles.kbd}>Esc</kbd> to {isInSubView ? 'go back' : 'close'}
+        <div className="footer">
+          <span className="footerHint">
+            Press <kbd className="kbd">Esc</kbd> to {isInSubView ? 'go back' : 'close'}
           </span>
-          <div className={styles.footerRight}>
+          <div className="footerRight">
             {isInSubView && (
-              <button className={styles.footerBackBtn} onClick={goBack}>
-                <IconBackArrow className={styles.backIcon} />
+              <button className="footerBackBtn" onClick={goBack}>
+                <IconBackArrow className="backIcon" />
                 Back
               </button>
             )}
-            <button className={styles.logoutBtn} onClick={logout} title="End session">
-              <IconLogout className={styles.logoutIcon} />
+            <button className="logoutBtn" onClick={logout} title="End session">
+              <IconLogout className="logoutIcon" />
               Logout
             </button>
           </div>

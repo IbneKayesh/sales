@@ -1,6 +1,5 @@
-import React from 'react';
-import styles from './ButtonGroup.module.css';
 
+import './ButtonGroup.css';
 /**
  * ButtonGroup — a reusable segmented button group component.
  *
@@ -63,11 +62,11 @@ const ButtonGroup = ({
   if (!buttons || buttons.length === 0) return null;
 
   const wrapperClass = [
-    styles.group,
-    styles[direction],
-    styles[`size${size.charAt(0).toUpperCase() + size.slice(1)}`],
-    styles[`variant${variant.charAt(0).toUpperCase() + variant.slice(1)}`],
-    compact ? styles.compact : '',
+    'btn-group',
+    direction,
+    `size-${size}`,
+    `variant-${variant}`,
+    compact ? 'compact' : '',
     className || '',
   ]
     .filter(Boolean)
@@ -82,10 +81,10 @@ const ButtonGroup = ({
       {buttons.map((btn) => {
         const active = isActive(btn.id);
         const btnClass = [
-          styles.btn,
-          active ? styles.btnActive : '',
-          btn.danger ? styles.btnDanger : '',
-          btn.icon && !btn.label ? styles.btnIconOnly : '',
+          'btn-item',
+          active ? 'btn-active' : '',
+          btn.danger ? 'btn-danger-item' : '',
+          btn.icon && !btn.label ? 'btn-icon-only' : '',
         ]
           .filter(Boolean)
           .join(' ');
@@ -100,15 +99,15 @@ const ButtonGroup = ({
             type="button"
           >
             {btn.icon && (
-              <span className={styles.btnIcon}>
+              <span className="btn-item-icon">
                 {btn.icon}
               </span>
             )}
             {btn.label && (
-              <span className={styles.btnLabel}>{btn.label}</span>
+              <span className="btn-item-label">{btn.label}</span>
             )}
             {btn.count !== undefined && (
-              <span className={styles.btnCount}>{btn.count}</span>
+              <span className="btn-item-count">{btn.count}</span>
             )}
           </button>
         );

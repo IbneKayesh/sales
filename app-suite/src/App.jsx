@@ -1,11 +1,11 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute/ProtectedRoute';
 import DesktopLayout from '@/layouts/DesktopLayout/DesktopLayout';
 import PageLoader from '@/components/PageLoader/PageLoader';
-import { APP_ROUTES } from '@/routes/appConfig';
-import { LAZY_PAGES } from '@/routes/pageRegistry';
+import { APP_ROUTES, LAZY_PAGES } from '@/routes/appConfig';
 
 const LoginPage = lazy(() => import('@/pages/auth/LoginPage'));
 const NotFoundPage = lazy(() => import('@/pages/system/NotFoundPage/NotFoundPage'));

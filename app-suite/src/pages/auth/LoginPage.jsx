@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { IconEyeOpen, IconEyeOff, IconOSLogo, IconArrowRight, IconUserPlus, IconUser, IconChevronLeft, IconUnlock } from '@/assets/icons';
 import Avatar from '../../components/Avatar/Avatar';
-import styles from './LoginPage.module.css';
-
+import './LoginPage.css';
 const PasswordInput = ({ value, onChange, placeholder, disabled, autoFocus }) => {
   const [show, setShow] = useState(false);
   const ref = useRef(null);
@@ -17,25 +17,25 @@ const PasswordInput = ({ value, onChange, placeholder, disabled, autoFocus }) =>
   }, [autoFocus]);
 
   return (
-    <div className={styles.pwInputWrapper}>
+    <div className="pwInputWrapper">
       <input
         ref={ref}
         type={show ? 'text' : 'password'}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={styles.pwInput}
+        className="pwInput"
         disabled={disabled}
         autoComplete="off"
       />
       <button
         type="button"
-        className={styles.eyeBtn}
+        className="eyeBtn"
         onClick={() => setShow((p) => !p)}
         disabled={disabled}
         aria-label={show ? 'Hide password' : 'Show password'}
       >
-        {show ? <IconEyeOff className={styles.eyeIcon} /> : <IconEyeOpen className={styles.eyeIcon} />}
+        {show ? <IconEyeOff className="eyeIcon" /> : <IconEyeOpen className="eyeIcon" />}
       </button>
     </div>
   );
@@ -72,7 +72,7 @@ const UserAvatarCircle = ({ user, size = 72 }) => {
   if (user.avatar) {
     return (
       <div
-        className={styles.userAvatarImg}
+        className="userAvatarImg"
         style={{
           width: size,
           height: size,
@@ -86,14 +86,14 @@ const UserAvatarCircle = ({ user, size = 72 }) => {
 
   return (
     <div
-      className={styles.userAvatarCircle}
+      className="userAvatarCircle"
       style={{
         width: size,
         height: size,
         background: `linear-gradient(135deg, ${grad1}, ${grad2})`,
       }}
     >
-      <span className={styles.userAvatarInitials}>{initials}</span>
+      <span className="userAvatarInitials">{initials}</span>
     </div>
   );
 };
@@ -101,25 +101,25 @@ const UserAvatarCircle = ({ user, size = 72 }) => {
 // ── Step 1: User List ─────────────────────────────────────────────────────
 const UserListView = ({ users, onSelectUser, onSwitchMode }) => {
   return (
-    <div className={styles.userListContainer}>
-      <div className={styles.userListHeader}>
-        <IconOSLogo className={styles.osLogo} />
-        <h1 className={styles.osTitle}>App Suite OS</h1>
-        <p className={styles.osSubtitle}>Select a user to sign in</p>
+    <div className="userListContainer">
+      <div className="userListHeader">
+        <IconOSLogo className="osLogo" />
+        <h1 className="osTitle">App Suite OS</h1>
+        <p className="osSubtitle">Select a user to sign in</p>
       </div>
 
-      <div className={styles.userListScroller}>
-        <div className={styles.userListGrid}>
+      <div className="userListScroller">
+        <div className="userListGrid">
           {users.map((user) => (
             <button
               key={user.id}
-              className={styles.userCard}
+              className="userCard"
               onClick={() => onSelectUser(user)}
             >
-              <div className={styles.userCardAvatar}>
+              <div className="userCardAvatar">
                 <UserAvatarCircle user={user} size={76} />
               </div>
-              <span className={styles.userCardName}>
+              <span className="userCardName">
                 {user.displayName || user.username}
               </span>
             </button>
@@ -127,17 +127,17 @@ const UserListView = ({ users, onSelectUser, onSwitchMode }) => {
         </div>
       </div>
 
-      <div className={styles.userListFooter}>
-        <button className={styles.footerLink} onClick={() => onSwitchMode('login')}>
-          <IconArrowRight className={styles.footerIcon} />
+      <div className="userListFooter">
+        <button className="footerLink" onClick={() => onSwitchMode('login')}>
+          <IconArrowRight className="footerIcon" />
           Other User…
         </button>
-        <button className={styles.footerLink} onClick={() => onSwitchMode('register')}>
-          <IconUserPlus className={styles.footerIcon} />
+        <button className="footerLink" onClick={() => onSwitchMode('register')}>
+          <IconUserPlus className="footerIcon" />
           Create Account
         </button>
-        <button className={styles.footerLink} onClick={() => onSwitchMode('newUser')}>
-          <IconUser className={styles.footerIcon} />
+        <button className="footerLink" onClick={() => onSwitchMode('newUser')}>
+          <IconUser className="footerIcon" />
           Quick Start
         </button>
       </div>
@@ -170,18 +170,18 @@ const UserPasswordView = ({ user, onBack, onSuccess }) => {
   };
 
   return (
-    <div className={styles.passwordContainer}>
-      <div className={styles.passwordCard}>
-        <div className={styles.passwordAvatarWrap}>
+    <div className="passwordContainer">
+      <div className="passwordCard">
+        <div className="passwordAvatarWrap">
           <UserAvatarCircle user={user} size={88} />
         </div>
 
-        <h2 className={styles.passwordUserName}>
+        <h2 className="passwordUserName">
           {user.displayName || user.username}
         </h2>
-        <p className={styles.passwordHint}>Enter your password to unlock</p>
+        <p className="passwordHint">Enter your password to unlock</p>
 
-        <form onSubmit={handleSubmit} className={styles.passwordForm}>
+        <form onSubmit={handleSubmit} className="passwordForm">
           <PasswordInput
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -190,27 +190,27 @@ const UserPasswordView = ({ user, onBack, onSuccess }) => {
             autoFocus
           />
 
-          {error && <div className={styles.errorArea} role="alert">{error}</div>}
+          {error && <div className="errorArea" role="alert">{error}</div>}
 
-          <button type="submit" className={styles.unlockBtn} disabled={isSubmitting}>
+          <button type="submit" className="unlockBtn" disabled={isSubmitting}>
             {isSubmitting ? (
-              <span className={styles.loader} />
+              <span className="loader" />
             ) : (
               <>
-                <IconUnlock className={styles.unlockIcon} />
+                <IconUnlock className="unlockIcon" />
                 Unlock
               </>
             )}
           </button>
         </form>
 
-        <button className={styles.notYouBtn} onClick={onBack} type="button">
-          <IconChevronLeft className={styles.notYouIcon} />
+        <button className="notYouBtn" onClick={onBack} type="button">
+          <IconChevronLeft className="notYouIcon" />
           Not you? Try another user
         </button>
 
-        <div className={styles.passwordHintRow}>
-          <span className={styles.passwordHintLabel}>Demo: password is "demo123"</span>
+        <div className="passwordHintRow">
+          <span className="passwordHintLabel">Demo: password is "demo123"</span>
         </div>
       </div>
     </div>
@@ -243,27 +243,27 @@ const LoginForm = ({ onSuccess, onSwitchMode }) => {
   };
 
   return (
-    <div className={styles.formContainer}>
-      <button className={styles.backArrow} onClick={() => onSwitchMode('userlist')} type="button">
+    <div className="formContainer">
+      <button className="backArrow" onClick={() => onSwitchMode('userlist')} type="button">
         <IconChevronLeft />
         Back
       </button>
 
-      <div className={styles.formCard}>
-        <div className={styles.avatarWrapper}>
+      <div className="formCard">
+        <div className="avatarWrapper">
           <Avatar src={defaultAvatarImg} alt="Login" size="large" />
         </div>
-        <h1 className={styles.formTitle}>Sign In</h1>
-        <p className={styles.formSub}>Enter your account credentials</p>
+        <h1 className="formTitle">Sign In</h1>
+        <p className="formSub">Enter your account credentials</p>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.inputWrapper}>
+        <form onSubmit={handleSubmit} className="form">
+          <div className="inputWrapper">
             <input
               type="text"
               placeholder="Username or Email"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
-              className={styles.inputField}
+              className="inputField"
               disabled={isSubmitting}
               autoFocus
             />
@@ -276,16 +276,16 @@ const LoginForm = ({ onSuccess, onSwitchMode }) => {
             disabled={isSubmitting}
           />
 
-          {error && <div className={styles.errorArea} role="alert">{error}</div>}
+          {error && <div className="errorArea" role="alert">{error}</div>}
 
-          <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
-            {isSubmitting ? <span className={styles.loader} /> : <span>Sign In</span>}
+          <button type="submit" className="submitBtn" disabled={isSubmitting}>
+            {isSubmitting ? <span className="loader" /> : <span>Sign In</span>}
           </button>
         </form>
 
-        <div className={styles.switchArea}>
-          <span className={styles.switchLabel}>New here?</span>
-          <button className={styles.switchBtn} onClick={() => onSwitchMode('register')} type="button">
+        <div className="switchArea">
+          <span className="switchLabel">New here?</span>
+          <button className="switchBtn" onClick={() => onSwitchMode('register')} type="button">
             Create an Account
           </button>
         </div>
@@ -343,48 +343,48 @@ const RegisterForm = ({ onSuccess, onSwitchMode }) => {
   };
 
   return (
-    <div className={styles.formContainer}>
-      <button className={styles.backArrow} onClick={() => onSwitchMode('userlist')} type="button">
+    <div className="formContainer">
+      <button className="backArrow" onClick={() => onSwitchMode('userlist')} type="button">
         <IconChevronLeft />
         Back
       </button>
 
-      <div className={`${styles.formCard} ${styles.formCardTall}`}>
-        <h1 className={styles.formTitle}>Create Account</h1>
-        <p className={styles.formSub}>Join the desktop environment</p>
+      <div className={`formCard formCardTall`}>
+        <h1 className="formTitle">Create Account</h1>
+        <p className="formSub">Join the desktop environment</p>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.inputWrapper}>
-            <input type="text" placeholder="Display Name" {...field('displayName')} className={styles.inputField} disabled={isSubmitting} autoFocus />
+        <form onSubmit={handleSubmit} className="form">
+          <div className="inputWrapper">
+            <input type="text" placeholder="Display Name" {...field('displayName')} className="inputField" disabled={isSubmitting} autoFocus />
           </div>
-          {errors.displayName && <span className={styles.fieldError}>{errors.displayName}</span>}
+          {errors.displayName && <span className="fieldError">{errors.displayName}</span>}
 
-          <div className={styles.inputWrapper}>
-            <input type="text" placeholder="Username" {...field('username')} className={styles.inputField} disabled={isSubmitting} autoComplete="off" />
+          <div className="inputWrapper">
+            <input type="text" placeholder="Username" {...field('username')} className="inputField" disabled={isSubmitting} autoComplete="off" />
           </div>
-          {errors.username && <span className={styles.fieldError}>{errors.username}</span>}
+          {errors.username && <span className="fieldError">{errors.username}</span>}
 
-          <div className={styles.inputWrapper}>
-            <input type="email" placeholder="Email Address" {...field('email')} className={styles.inputField} disabled={isSubmitting} />
+          <div className="inputWrapper">
+            <input type="email" placeholder="Email Address" {...field('email')} className="inputField" disabled={isSubmitting} />
           </div>
-          {errors.email && <span className={styles.fieldError}>{errors.email}</span>}
+          {errors.email && <span className="fieldError">{errors.email}</span>}
 
           <PasswordInput value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} placeholder="Password (min 6 chars)" disabled={isSubmitting} />
-          {errors.password && <span className={styles.fieldError}>{errors.password}</span>}
+          {errors.password && <span className="fieldError">{errors.password}</span>}
 
           <PasswordInput value={form.confirmPassword} onChange={(e) => setForm((p) => ({ ...p, confirmPassword: e.target.value }))} placeholder="Confirm Password" disabled={isSubmitting} />
-          {errors.confirmPassword && <span className={styles.fieldError}>{errors.confirmPassword}</span>}
+          {errors.confirmPassword && <span className="fieldError">{errors.confirmPassword}</span>}
 
-          {globalError && <div className={styles.errorArea} role="alert">{globalError}</div>}
+          {globalError && <div className="errorArea" role="alert">{globalError}</div>}
 
-          <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
-            {isSubmitting ? <span className={styles.loader} /> : <span>Create Account</span>}
+          <button type="submit" className="submitBtn" disabled={isSubmitting}>
+            {isSubmitting ? <span className="loader" /> : <span>Create Account</span>}
           </button>
         </form>
 
-        <div className={styles.switchArea}>
-          <span className={styles.switchLabel}>Already registered?</span>
-          <button className={styles.switchBtn} onClick={() => onSwitchMode('login')} type="button">
+        <div className="switchArea">
+          <span className="switchLabel">Already registered?</span>
+          <button className="switchBtn" onClick={() => onSwitchMode('login')} type="button">
             Back to Sign In
           </button>
         </div>
@@ -444,38 +444,38 @@ const NewUserForm = ({ onSuccess, onSwitchMode }) => {
   };
 
   return (
-    <div className={styles.formContainer}>
-      <button className={styles.backArrow} onClick={() => onSwitchMode('userlist')} type="button">
+    <div className="formContainer">
+      <button className="backArrow" onClick={() => onSwitchMode('userlist')} type="button">
         <IconChevronLeft />
         Back
       </button>
 
-      <div className={styles.formCard}>
-        <h1 className={styles.formTitle}>Quick Start</h1>
-        <p className={styles.formSub}>Pick a username and password to get started</p>
+      <div className="formCard">
+        <h1 className="formTitle">Quick Start</h1>
+        <p className="formSub">Pick a username and password to get started</p>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.inputWrapper}>
-            <input type="text" placeholder="Choose a Username" value={form.username} onChange={(e) => setForm((p) => ({ ...p, username: e.target.value }))} className={styles.inputField} disabled={isSubmitting} autoFocus autoComplete="off" />
+        <form onSubmit={handleSubmit} className="form">
+          <div className="inputWrapper">
+            <input type="text" placeholder="Choose a Username" value={form.username} onChange={(e) => setForm((p) => ({ ...p, username: e.target.value }))} className="inputField" disabled={isSubmitting} autoFocus autoComplete="off" />
           </div>
-          {errors.username && <span className={styles.fieldError}>{errors.username}</span>}
+          {errors.username && <span className="fieldError">{errors.username}</span>}
 
           <PasswordInput value={form.password} onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))} placeholder="Password (min 6 chars)" disabled={isSubmitting} />
-          {errors.password && <span className={styles.fieldError}>{errors.password}</span>}
+          {errors.password && <span className="fieldError">{errors.password}</span>}
 
           <PasswordInput value={form.confirmPassword} onChange={(e) => setForm((p) => ({ ...p, confirmPassword: e.target.value }))} placeholder="Confirm Password" disabled={isSubmitting} />
-          {errors.confirmPassword && <span className={styles.fieldError}>{errors.confirmPassword}</span>}
+          {errors.confirmPassword && <span className="fieldError">{errors.confirmPassword}</span>}
 
-          {globalError && <div className={styles.errorArea} role="alert">{globalError}</div>}
+          {globalError && <div className="errorArea" role="alert">{globalError}</div>}
 
-          <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
-            {isSubmitting ? <span className={styles.loader} /> : <span>Get Started</span>}
+          <button type="submit" className="submitBtn" disabled={isSubmitting}>
+            {isSubmitting ? <span className="loader" /> : <span>Get Started</span>}
           </button>
         </form>
 
-        <div className={styles.switchArea}>
-          <span className={styles.switchLabel}>Already have an account?</span>
-          <button className={styles.switchBtn} onClick={() => onSwitchMode('login')} type="button">
+        <div className="switchArea">
+          <span className="switchLabel">Already have an account?</span>
+          <button className="switchBtn" onClick={() => onSwitchMode('login')} type="button">
             Sign In
           </button>
         </div>
@@ -514,7 +514,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div className="page">
       {mode === 'userlist' && (
         <UserListView
           users={users}

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { IconSearch } from '@/assets/icons';
-import styles from './DeliveryPage.module.css';
+import './DeliveryPage.css';
 
 const MOCK_DELIVERIES = [
   { id: 'DEL-001', order: 'ORD-001', customer: 'Acme Corp', item: 'Enterprise Suite', qty: 5, carrier: 'FedEx', status: 'In Transit', eta: '2026-07-15' },
@@ -9,11 +9,12 @@ const MOCK_DELIVERIES = [
   { id: 'DEL-004', order: 'ORD-005', customer: 'Stark Industries', item: 'AI Unit', qty: 1, carrier: 'FedEx', status: 'Pending Pickup', eta: '2026-07-20' },
 ];
 
-const statusStyles = {
-  'Pending Pickup': styles.statusPending,
-  Processing: styles.statusProcessing,
-  'In Transit': styles.statusTransit,
-  Delivered: styles.statusDelivered,
+// Map status to badge variant classes from framework.css
+const badgeVariant = {
+  'Pending Pickup': 'badge badge-warning',
+  Processing: 'badge badge-info',
+  'In Transit': 'badge badge-accent',
+  Delivered: 'badge badge-success',
 };
 
 const DeliveryPage = () => {
@@ -23,49 +24,56 @@ const DeliveryPage = () => {
   );
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
+    <div className="d-flex flex-column h-100" style={{boxSizing:'border-box', color:'var(--color-text-primary)', fontFamily:'var(--font-body)'}}>
+      {/* ── Header — uses d-flex, gap, px/py utilities ────────────────── */}
+      <div className="d-flex ai-center jc-between gap-4 px-5 py-4 border-bottom" style={{backgroundColor:'rgba(0,0,0,0.15)'}}>
         <div>
-          <h2 className={styles.title}>Deliveries</h2>
-          <p className={styles.subtitle}>Track shipment and delivery status</p>
+          <h2 className="fs-16 fw-600 text-primary" style={{fontFamily:'var(--font-display)', margin:0}}>Deliveries</h2>
+          <p className="fs-11 text-muted" style={{margin:'2px 0 0 0'}}>Track shipment and delivery status</p>
         </div>
-        <div className={styles.searchWrapper}>
-          <IconSearch className={styles.searchIcon} />
-          <input className={styles.searchInput} placeholder="Search deliveries..." value={search} onChange={(e) => setSearch(e.target.value)} />
+        <div className="pos-relative d-flex ai-center">
+          <IconSearch className="pos-absolute pointer-events-none" style={{left:'10px', width:'14px', height:'14px', color:'var(--color-text-muted)'}} />
+          <input className="delivery-search" placeholder="Search deliveries..." value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
       </div>
-      <div className={styles.content}>
-        <div className={styles.timeline}>
+
+      {/* ── Content area ───────────────────────────────────────────── */}
+      <div className="flex-1 overflow-auto p-6 px-5">
+        <div className="d-flex flex-column" style={{gap:0}}>
           {filtered.map((d, i) => (
-            <div key={d.id} className={styles.deliveryCard}>
-              <div className={styles.cardLeft}>
-                <div className={styles.timelineDot} />
-                {i < filtered.length - 1 && <div className={styles.timelineLine} />}
+            <div key={d.id} className="d-flex gap-4 pos-relative">
+              {/* ── Timeline column ──────────────────────────────── */}
+              <div className="d-flex flex-column ai-center" style={{width:'20px', flexShrink:0}}>
+                <div className="delivery-dot" />
+                {i < filtered.length - 1 && <div className="delivery-line" />}
               </div>
-              <div className={styles.cardBody}>
-                <div className={styles.cardHeader}>
+
+              {/* ── Card body ────────────────────────────────────── */}
+              <div className="delivery-card flex-1">
+                <div className="d-flex jc-between ai-center mb-3">
                   <div>
-                    <span className={styles.deliveryId}>{d.id}</span>
-                    <span className={styles.orderRef}>Order {d.order}</span>
+                    <span className="fw-600 fs-13 text-primary">{d.id}</span>
+                    <span className="order-ref fs-10 text-muted ml-2">{'Order ' + d.order}</span>
                   </div>
-                  <span className={`${styles.statusBadge} ${statusStyles[d.status]}`}>{d.status}</span>
+                  <span className={badgeVariant[d.status]}>{d.status}</span>
                 </div>
-                <div className={styles.cardDetails}>
-                  <div className={styles.detailRow}>
-                    <span className={styles.detailLabel}>Customer</span>
-                    <span className={styles.detailValue}>{d.customer}</span>
+
+                <div className="detail-grid">
+                  <div className="d-flex flex-column" style={{gap:'1px'}}>
+                    <span className="detail-label">Customer</span>
+                    <span className="detail-value">{d.customer}</span>
                   </div>
-                  <div className={styles.detailRow}>
-                    <span className={styles.detailLabel}>Item</span>
-                    <span className={styles.detailValue}>{d.item} × {d.qty}</span>
+                  <div className="d-flex flex-column" style={{gap:'1px'}}>
+                    <span className="detail-label">Item</span>
+                    <span className="detail-value">{d.item} × {d.qty}</span>
                   </div>
-                  <div className={styles.detailRow}>
-                    <span className={styles.detailLabel}>Carrier</span>
-                    <span className={styles.detailValue}>{d.carrier}</span>
+                  <div className="d-flex flex-column" style={{gap:'1px'}}>
+                    <span className="detail-label">Carrier</span>
+                    <span className="detail-value">{d.carrier}</span>
                   </div>
-                  <div className={styles.detailRow}>
-                    <span className={styles.detailLabel}>ETA</span>
-                    <span className={styles.detailValue}>{d.eta}</span>
+                  <div className="d-flex flex-column" style={{gap:'1px'}}>
+                    <span className="detail-label">ETA</span>
+                    <span className="detail-value">{d.eta}</span>
                   </div>
                 </div>
               </div>

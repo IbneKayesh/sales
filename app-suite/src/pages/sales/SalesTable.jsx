@@ -1,16 +1,15 @@
-import React from 'react';
+
 import { fmtCurrency, fmtDate } from '@/utils/dataFormat';
 import { IconEdit, IconDelete } from '@/assets/icons';
 import DataTable from '../../components/DataTable/DataTable';
-import styles from './SalesTable.module.css';
-
+import './SalesTable.css';
 const SalesTable = ({ sales, onEdit, onDelete, deletingId }) => {
   const columns = [
     {
       key: 'customerName',
       label: 'Customer',
       sortable: true,
-      render: (val) => <span className={styles.customerName}>{val}</span>,
+      render: (val) => <span className="customerName">{val}</span>,
     },
     {
       key: 'product',
@@ -35,31 +34,31 @@ const SalesTable = ({ sales, onEdit, onDelete, deletingId }) => {
       label: 'Total',
       align: 'right',
       sortable: true,
-      render: (val) => <span className={styles.total}>{fmtCurrency(val)}</span>,
+      render: (val) => <span className="total">{fmtCurrency(val)}</span>,
     },
     {
       key: 'createdAt',
       label: 'Date',
       sortable: true,
-      render: (val) => <span className={styles.muted}>{fmtDate(val)}</span>,
+      render: (val) => <span className="muted">{fmtDate(val)}</span>,
     },
     {
       key: 'actions',
       label: '',
       width: 80,
       render: (_, row) => (
-        <div className={styles.actionsCell}>
-          <button className={styles.editBtn} onClick={() => onEdit(row.id)} aria-label="Edit sale">
+        <div className="actionsCell">
+          <button className="editBtn" onClick={() => onEdit(row.id)} aria-label="Edit sale">
             <IconEdit />
           </button>
           <button
-            className={styles.deleteBtn}
+            className="deleteBtn"
             onClick={() => onDelete(row.id, row.customerName)}
             disabled={deletingId === row.id}
             aria-label="Delete sale"
           >
             {deletingId === row.id ? (
-              <span className={styles.deleteSpinner} />
+              <span className="deleteSpinner" />
             ) : (
               <IconDelete />
             )}

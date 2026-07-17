@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+
 import { NavLink } from 'react-router-dom';
 import { getNavBarApps } from '@/routes/appConfig';
-import styles from './RunningApps.module.css';
-
+import './RunningApps.css';
 const RunningApps = () => {
   const apps = getNavBarApps();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -34,20 +34,20 @@ const RunningApps = () => {
   }, [menuOpen, close]);
 
   return (
-    <div className={styles.wrapper} ref={containerRef}>
+    <div className="wrapper" ref={containerRef}>
       {/* Desktop nav — visible on wide screens */}
-      <nav className={styles.nav} aria-label="Running Applications">
+      <nav className="nav" aria-label="Running Applications">
         {apps.map((app) => (
           <NavLink
             key={app.id}
             to={app.url}
             className={({ isActive }) =>
-              `${styles.appItem} ${isActive ? styles.appItemActive : ''}`
+              `appItem ${isActive ? 'appItemActive' : ''}`
             }
             end={app.url === '/'}
           >
-            <span className={styles.indicator} />
-            <span className={styles.appName}>{app.label}</span>
+            <span className="indicator" />
+            <span className="appName">{app.label}</span>
           </NavLink>
         ))}
       </nav>
@@ -55,7 +55,7 @@ const RunningApps = () => {
       {/* Mobile toggle button */}
       <button
         ref={triggerRef}
-        className={`${styles.toggleBtn} ${menuOpen ? styles.toggleBtnOpen : ''}`}
+        className={`toggleBtn ${menuOpen ? 'toggleBtnOpen' : ''}`}
         onClick={toggle}
         aria-label="Toggle navigation apps"
         aria-expanded={menuOpen}
@@ -70,19 +70,19 @@ const RunningApps = () => {
 
       {/* Mobile dropdown */}
       {menuOpen && (
-        <div className={styles.dropdown} role="menu" aria-label="Navigation apps">
+        <div className="dropdown" role="menu" aria-label="Navigation apps">
           {apps.map((app) => (
             <NavLink
               key={app.id}
               to={app.url}
               className={({ isActive }) =>
-                `${styles.dropdownItem} ${isActive ? styles.dropdownItemActive : ''}`
+                `dropdownItem ${isActive ? 'dropdownItemActive' : ''}`
               }
               end={app.url === '/'}
               onClick={close}
             >
-              <span className={styles.dropdownIndicator} />
-              <span className={styles.dropdownLabel}>{app.label}</span>
+              <span className="dropdownIndicator" />
+              <span className="dropdownLabel">{app.label}</span>
             </NavLink>
           ))}
         </div>

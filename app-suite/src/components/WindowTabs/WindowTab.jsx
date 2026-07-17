@@ -1,8 +1,7 @@
-import React from 'react';
+
 import { useWindowManager } from '@/context/WindowManagerContext';
 import { getAppIcon } from '@/routes/appConfig';
-import styles from './WindowTab.module.css';
-
+import './WindowTab.css';
 const WindowTab = ({ window: win }) => {
   const { activeWindowId, focusWindow, restoreWindow } = useWindowManager();
 
@@ -19,18 +18,18 @@ const WindowTab = ({ window: win }) => {
 
   return (
     <button
-      className={`${styles.tab} ${isActive ? styles.tabActive : ''} ${win.isMinimized ? styles.tabMinimized : ''}`}
+      className={`tab ${isActive ? 'tabActive' : ''} ${win.isMinimized ? 'tabMinimized' : ''}`}
       onClick={handleClick}
       title={win.isMinimized ? `${win.title} (minimized)` : win.title}
       aria-label={win.title}
       aria-pressed={isActive}
     >
-      <span className={styles.tabIcon}>
+      <span className="tabIcon">
         {Icon ? <Icon /> : null}
       </span>
-      <span className={styles.tabName}>{win.title}</span>
-      {win.isMinimized && <span className={styles.minimizedDot} aria-hidden="true" />}
-      <span className={`${styles.activeDot} ${isActive ? styles.activeDotVisible : ''}`} aria-hidden="true" />
+      <span className="tabName">{win.title}</span>
+      {win.isMinimized && <span className="minimizedDot" aria-hidden="true" />}
+      <span className={`activeDot ${isActive ? 'activeDotVisible' : ''}`} aria-hidden="true" />
     </button>
   );
 };

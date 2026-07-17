@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+
 import { useWindowManager } from '@/context/WindowManagerContext';
 import { useContextMenu } from '@/context/DesktopContext';
 import DesktopIcon from './DesktopIcon';
 import Window from '../Window/Window';
 import HomePage from '@/pages/HomePage';
-import { getPageElement } from '@/routes/pageRegistry';
-import { appConfigById } from '@/routes/appConfig';
-import styles from './Desktop.module.css';
-
+import { appConfigById, getPageElement } from '@/routes/appConfig';
+import './Desktop.css';
 const Desktop = () => {
   const { windows, openWindow, recents } = useWindowManager();
   const { showMenu } = useContextMenu();
@@ -24,17 +23,17 @@ const Desktop = () => {
 
   return (
     <div
-      className={styles.desktopWorkspace}
+      className="desktop-workspace pos-relative w-100 h-100 overflow-hidden"
       onClick={handleDesktopClick}
       onContextMenu={handleContextMenu}
     >
       {!hasOpenWindows && (
-        <div className={styles.dashboardBg}>
+        <div className="dashboard-bg pos-absolute top-0 left-0 w-100 h-100 z-1 overflow-y-auto overflow-x-hidden">
           <HomePage />
         </div>
       )}
 
-      <div className={styles.iconsGrid}>
+      <div className="desktop-icons pos-absolute top-4 right-4 z-5 d-flex flex-column flex-wrap gap-12" style={{maxHeight:'calc(100% - 32px)',alignContent:'flex-start'}}>
         {recents.map((id) => {
           const cfg = appConfigById[id];
           if (!cfg) return null;
@@ -51,7 +50,7 @@ const Desktop = () => {
         })}
       </div>
 
-      <div className={styles.windowsContainer}>
+      <div className="desktop-windows pos-absolute top-0 left-0 w-100 h-100 pointer-events-none z-10">
         {windows.map((win) => (
           <Window key={win.id} {...win}>
             {getPageElement(win.id)}

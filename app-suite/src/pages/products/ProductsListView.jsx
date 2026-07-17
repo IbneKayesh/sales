@@ -1,31 +1,30 @@
-import React from 'react';
+
 import { fmtCurrency, fmtDate } from '@/utils/dataFormat';
 import DataTable from '@/components/DataTable/DataTable';
 import Skeleton from '@/components/Skeleton/Skeleton';
 import { IconPackage, IconEyeOpen, IconEdit, IconDelete } from '@/assets/icons';
-import styles from './ProductsPage.module.css';
-
+import './ProductsPage.css';
 const ListSkeleton = () => (
   <>
-    <div className={styles.statsRow}>
+    <div className="statsRow">
       {[1, 2, 3].map((i) => (
-        <div key={i} className={styles.statItem}>
+        <div key={i} className="statItem">
           <Skeleton.Line width="60%" height={20} />
           <Skeleton.Line width="40%" height={10} />
         </div>
       ))}
     </div>
-    <div className={styles.tableSkeleton}>
+    <div className="tableSkeleton">
       {/* Table header */}
-      <div className={styles.tableSkeletonHeader}>
+      <div className="tableSkeletonHeader">
         {[0, 1, 2, 3, 4, 5].map((i) => (
           <Skeleton.Line key={i} height={12} width={i === 0 ? 180 : 80} />
         ))}
       </div>
       {/* Table rows */}
       {[1, 2, 3, 4, 5].map((row) => (
-        <div key={row} className={styles.tableSkeletonRow}>
-          <div className={styles.tableSkeletonCell}>
+        <div key={row} className="tableSkeletonRow">
+          <div className="tableSkeletonCell">
             <Skeleton.Circle size={26} />
             <Skeleton.Text lines={2} lineHeight={9} gap={4} />
           </div>
@@ -56,22 +55,22 @@ const ProductsListView = ({
 
   return (
     <>
-      <div className={styles.statsRow}>
-        <div className={styles.statItem}>
-          <span className={styles.statValue}>{totalProducts}</span>
-          <span className={styles.statLabel}>Total Products</span>
+      <div className="statsRow">
+        <div className="statItem">
+          <span className="statValue">{totalProducts}</span>
+          <span className="statLabel">Total Products</span>
         </div>
-        <div className={styles.statItem}>
+        <div className="statItem">
           <span
-            className={`${styles.statValue} ${avgMargin >= 30 ? styles.marginGood : avgMargin >= 10 ? styles.marginOk : styles.marginBad}`}
+            className={`statValue ${avgMargin >= 30 ? 'marginGood' : avgMargin >= 10 ? 'marginOk' : 'marginBad'}`}
           >
             {avgMargin}%
           </span>
-          <span className={styles.statLabel}>Avg. Margin</span>
+          <span className="statLabel">Avg. Margin</span>
         </div>
-        <div className={styles.statItem}>
-          <span className={styles.statValue}>{fmtCurrency(totalValue)}</span>
-          <span className={styles.statLabel}>Portfolio Value</span>
+        <div className="statItem">
+          <span className="statValue">{fmtCurrency(totalValue)}</span>
+          <span className="statLabel">Portfolio Value</span>
         </div>
       </div>
 
@@ -84,14 +83,14 @@ const ProductsListView = ({
             render: (val, row) => {
               const vCount = row.variants ? row.variants.length : 0;
               return (
-                <div className={styles.productCell}>
-                  <div className={styles.productIcon}><IconPackage /></div>
-                  <div className={styles.productInfo}>
-                    <span className={styles.productName}>{val}</span>
-                    <div className={styles.productMeta}>
-                      <code className={styles.productSku}>{row.sku}</code>
+                <div className="productCell">
+                  <div className="productIcon"><IconPackage /></div>
+                  <div className="productInfo">
+                    <span className="productName">{val}</span>
+                    <div className="productMeta">
+                      <code className="productSku">{row.sku}</code>
                       {vCount > 0 && (
-                        <span className={styles.variantCountBadge}>{vCount} var.</span>
+                        <span className="variantCountBadge">{vCount} var.</span>
                       )}
                     </div>
                   </div>
@@ -103,21 +102,21 @@ const ProductsListView = ({
             key: 'category',
             label: 'Category',
             sortable: true,
-            render: (val) => <span className={styles.categoryBadge}>{val}</span>,
+            render: (val) => <span className="categoryBadge">{val}</span>,
           },
           {
             key: 'costPrice',
             label: 'Cost',
             align: 'right',
             sortable: true,
-            render: (val) => <span className={styles.muted}>{fmtCurrency(val)}</span>,
+            render: (val) => <span className="muted">{fmtCurrency(val)}</span>,
           },
           {
             key: 'sellingPrice',
             label: 'Selling Price',
             align: 'right',
             sortable: true,
-            render: (val) => <span className={styles.priceVal}>{fmtCurrency(val)}</span>,
+            render: (val) => <span className="priceVal">{fmtCurrency(val)}</span>,
           },
           {
             key: 'margin',
@@ -125,7 +124,7 @@ const ProductsListView = ({
             align: 'right',
             sortable: true,
             render: (val) => (
-              <span className={`${styles.marginBadge} ${val >= 30 ? styles.marginGood : val >= 10 ? styles.marginOk : styles.marginBad}`}>
+              <span className={`marginBadge ${val >= 30 ? 'marginGood' : val >= 10 ? 'marginOk' : 'marginBad'}`}>
                 {val}%
               </span>
             ),
@@ -134,28 +133,28 @@ const ProductsListView = ({
             key: 'createdAt',
             label: 'Created',
             sortable: true,
-            render: (val) => <span className={styles.muted}>{fmtDate(val)}</span>,
+            render: (val) => <span className="muted">{fmtDate(val)}</span>,
           },
           {
             key: 'actions',
             label: '',
             width: 110,
             render: (_, row) => (
-              <div className={styles.actionsCell}>
-                <button className={styles.viewBtn} onClick={() => onView(row.id)} aria-label="View product details">
+              <div className="actionsCell">
+                <button className="viewBtn" onClick={() => onView(row.id)} aria-label="View product details">
                   <IconEyeOpen />
                 </button>
-                <button className={styles.editBtn} onClick={() => onEdit(row.id)} aria-label="Edit product">
+                <button className="editBtn" onClick={() => onEdit(row.id)} aria-label="Edit product">
                   <IconEdit />
                 </button>
                 <button
-                  className={styles.deleteBtn}
+                  className="deleteBtn"
                   onClick={() => onDelete(row.id, row.name)}
                   disabled={deletingId === row.id}
                   aria-label="Delete product"
                 >
                   {deletingId === row.id ? (
-                    <span className={styles.spinnerSmall} />
+                    <span className="spinnerSmall" />
                   ) : (
                     <IconDelete />
                   )}

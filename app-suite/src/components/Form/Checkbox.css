@@ -1,0 +1,20 @@
+.checkbox {
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  background-color: transparent;
+  transition: all var(--transition-fast);
+}
+
+label:hover .checkbox:not(.checkboxDisabled) {
+  border-color: var(--accent-color);
+  background-color: rgba(99, 102, 241, 0.08);
+}
+
+.checked {
+  background-color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+}
+
+.checkboxDisabled {
+  border-color: var(--glass-border-medium);
+  background-color: rgba(255, 255, 255, 0.02);
+}

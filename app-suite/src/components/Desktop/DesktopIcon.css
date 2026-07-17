@@ -1,0 +1,48 @@
+/* ── Base icon container ───────────────────────────────────────────────── */
+.desktop-icon {
+  outline: none;
+  transition: all 0.15s ease-out;
+}
+
+.desktop-icon:hover {
+  background-color: var(--glass-bg-strong);
+  border-color: var(--glass-bg-hover-light);
+}
+
+.desktop-icon:focus {
+  background-color: var(--glass-active-border);
+  border-color: var(--glass-border-strong);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+}
+
+/* ── Selected state ────────────────────────────────────────────────────── */
+.desktop-icon-selected,
+.desktop-icon-selected:hover,
+.desktop-icon-selected:focus {
+  background-color: rgba(139, 92, 246, 0.25);
+  border-color: rgba(139, 92, 246, 0.4);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.15);
+}
+
+.desktop-icon-selected .desktop-icon-glow { opacity: 0.35; }
+
+/* ── Icon wrapper hover effects ────────────────────────────────────────── */
+.desktop-icon-wrap {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.desktop-icon:hover .desktop-icon-wrap { transform: scale(1.06); }
+.desktop-icon:active .desktop-icon-wrap { transform: scale(0.95); }
+
+/* ── Glow effect ───────────────────────────────────────────────────────── */
+.desktop-icon-glow {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  filter: blur(16px);
+  opacity: 0.15;
+  transition: opacity 0.2s ease;
+}
+
+.desktop-icon:hover .desktop-icon-glow { opacity: 0.35; }

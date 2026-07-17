@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+
 import useHR from '../../hooks/useHR';
 import { useToast, useConfirm } from '@/context/FeedbackContext';
 import { IconSearch, IconPlus, IconEdit, IconDelete } from '@/assets/icons';

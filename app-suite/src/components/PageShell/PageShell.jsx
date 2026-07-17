@@ -1,59 +1,35 @@
 import React from 'react';
-import styles from './PageShell.module.css';
-
-// ═══════════════════════════════════════════════════════════════════════════
-// ── PageShell — Reusable ERP Page Layout ─────────────────────────────────
-// ═══════════════════════════════════════════════════════════════════════════
-//
-// Compound component providing the standard ERP page structure:
-//
-//   <PageShell title="Products" subtitle="Manage catalog">
-//     <PageShell.Actions>
-//       <ButtonGroup ... />
-//     </PageShell.Actions>
-//     <PageShell.Stats>
-//       <PageShell.Stat label="Total" value="42" />
-//       <PageShell.Stat label="Margin" value="45%" />
-//     </PageShell.Stats>
-//     <PageShell.Body>
-//       <DataTable ... />
-//     </PageShell.Body>
-//     <PageShell.Footer>
-//       <button>Save</button>
-//     </PageShell.Footer>
-//   </PageShell>
-//
-// ═══════════════════════════════════════════════════════════════════════════
+import './PageShell.css';
 
 // ── Sub-component helpers ─────────────────────────────────────────────────
 const Actions = ({ children }) => (
-  <div className={styles.actions}>{children}</div>
+  <div className="card-actions">{children}</div>
 );
 
 const Stats = ({ children }) => (
-  <div className={styles.stats}>{children}</div>
+  <div className="card-stats">{children}</div>
 );
 
 const STAT_VARIANTS = ['warning', 'success', 'danger', 'accent'];
 
 const Stat = ({ label, value, variant, className }) => {
   const variantClass = variant && STAT_VARIANTS.includes(variant)
-    ? styles[`stat${variant.charAt(0).toUpperCase() + variant.slice(1)}`]
+    ? `card-stat-${variant}`
     : '';
   return (
-    <div className={`${styles.stat} ${variantClass} ${className || ''}`}>
-      <span className={styles.statValue}>{value}</span>
-      <span className={styles.statLabel}>{label}</span>
+    <div className={`card-stat ${variantClass} ${className || ''}`}>
+      <span className="card-stat-value">{value}</span>
+      <span className="card-stat-label">{label}</span>
     </div>
   );
 };
 
 const Body = ({ children, className }) => (
-  <div className={`${styles.body} ${className || ''}`}>{children}</div>
+  <div className={`card-body ${className || ''}`}>{children}</div>
 );
 
 const Footer = ({ children }) => (
-  <div className={styles.footer}>{children}</div>
+  <div className="card-footer">{children}</div>
 );
 
 // ── Main PageShell component ──────────────────────────────────────────────
@@ -81,12 +57,12 @@ const PageShell = ({
   });
 
   return (
-    <div className={`${styles.shell} ${compact ? styles.compact : ''} ${className || ''}`}>
+    <div className={`card ${compact ? 'card-compact' : ''} ${className || ''}`}>
       {/* ── Header: Title + Subtitle + Actions ──────────────────────── */}
-      <header className={styles.header}>
-        <div className={styles.headerInfo}>
-          <h1 className={styles.title}>{title}</h1>
-          {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+      <header className="card-header">
+        <div className="card-header-info">
+          <h1 className="card-title">{title}</h1>
+          {subtitle && <p className="card-subtitle">{subtitle}</p>}
         </div>
         {actionsNode}
       </header>

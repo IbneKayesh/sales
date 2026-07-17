@@ -1,8 +1,7 @@
-import React from 'react';
+
 import { useWindowManager } from '../../context/WindowManagerContext';
 import WindowTab from './WindowTab';
-import styles from './WindowTabs.module.css';
-
+import './WindowTabs.css';
 const WindowTabs = () => {
   const { windows } = useWindowManager();
 
@@ -11,7 +10,7 @@ const WindowTabs = () => {
   if (openWindows.length === 0) return null;
 
   return (
-    <nav className={styles.tabsContainer} aria-label="Open Applications">
+    <nav className="tabsContainer" aria-label="Open Applications">
       {openWindows.map((win) => (
         <WindowTab key={win.id} window={win} />
       ))}

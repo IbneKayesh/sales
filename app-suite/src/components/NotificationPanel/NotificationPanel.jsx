@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+
 import { useWindowManager } from '../../context/WindowManagerContext';
 import { IconCheck, IconWarning, IconError, IconInfo, IconClose, IconBell } from '@/assets/icons';
-import styles from './NotificationPanel.module.css';
-
+import './NotificationPanel.css';
 // ── Demo notifications ────────────────────────────────────────────────────
 const DEMO_NOTIFICATIONS = [
   {
@@ -67,14 +67,14 @@ const DEMO_NOTIFICATIONS = [
 const TypeIcon = ({ type }) => {
   switch (type) {
     case 'success':
-      return <IconCheck className={styles.iconSuccess} />;
+      return <IconCheck className="iconSuccess" />;
     case 'warning':
-      return <IconWarning className={styles.iconWarning} />;
+      return <IconWarning className="iconWarning" />;
     case 'error':
-      return <IconError className={styles.iconError} />;
+      return <IconError className="iconError" />;
     case 'info':
     default:
-      return <IconInfo className={styles.iconInfo} />;
+      return <IconInfo className="iconInfo" />;
   }
 };
 
@@ -121,67 +121,67 @@ const NotificationPanel = () => {
   }, [isOpen, close]);
 
   return (
-    <div className={styles.container} ref={containerRef}>
+    <div className="container" ref={containerRef}>
       <button
         ref={triggerRef}
-        className={`${styles.trigger} ${isOpen ? styles.triggerOpen : ''}`}
+        className={`trigger ${isOpen ? 'triggerOpen' : ''}`}
         onClick={toggle}
         aria-label="Notifications"
         aria-expanded={isOpen}
         aria-haspopup="dialog"
       >
-        <IconBell className={styles.bellIcon} />
+        <IconBell className="bellIcon" />
         {unreadCount > 0 && (
-          <span className={styles.badge} aria-label={`${unreadCount} unread notifications`}>
+          <span className="badge" aria-label={`${unreadCount} unread notifications`}>
             {unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className={styles.dropdown} role="dialog" aria-label="Notifications">
-          <div className={styles.dropdownHeader}>
-            <h3 className={styles.dropdownTitle}>Notifications</h3>
-            <div className={styles.dropdownActions}>
+        <div className="dropdown" role="dialog" aria-label="Notifications">
+          <div className="dropdownHeader">
+            <h3 className="dropdownTitle">Notifications</h3>
+            <div className="dropdownActions">
               {unreadCount > 0 && (
-                <button className={styles.markAllBtn} onClick={markAllRead}>
+                <button className="markAllBtn" onClick={markAllRead}>
                   Mark all read
                 </button>
               )}
-              <button className={styles.viewAllBtn} onClick={() => { openWindow('notifications'); close(); }}>
+              <button className="viewAllBtn" onClick={() => { openWindow('notifications'); close(); }}>
                 View All
               </button>
             </div>
           </div>
 
-          <div className={styles.list}>
+          <div className="list">
             {notifications.length === 0 ? (
-              <div className={styles.empty}>
-                <IconBell className={styles.emptyIcon} />
+              <div className="empty">
+                <IconBell className="emptyIcon" />
                 <p>No notifications</p>
               </div>
             ) : (
               notifications.map((n) => (
                 <div
                   key={n.id}
-                  className={`${styles.notificationItem} ${n.read ? styles.read : styles.unread}`}
+                  className={`notificationItem ${n.read ? 'read' : 'unread'}`}
                 >
-                  <div className={styles.notifIcon}>
+                  <div className="notifIcon">
                     <TypeIcon type={n.type} />
                   </div>
-                  <div className={styles.notifBody}>
-                    <div className={styles.notifHeader}>
-                      <span className={styles.notifTitle}>{n.title}</span>
+                  <div className="notifBody">
+                    <div className="notifHeader">
+                      <span className="notifTitle">{n.title}</span>
                       <button
-                        className={styles.dismissBtn}
+                        className="dismissBtn"
                         onClick={(e) => dismissNotification(e, n.id)}
                         aria-label="Dismiss notification"
                       >
                         <IconClose />
                       </button>
                     </div>
-                    <p className={styles.notifMessage}>{n.message}</p>
-                    <span className={styles.notifTime}>{n.time}</span>
+                    <p className="notifMessage">{n.message}</p>
+                    <span className="notifTime">{n.time}</span>
                   </div>
                 </div>
               ))

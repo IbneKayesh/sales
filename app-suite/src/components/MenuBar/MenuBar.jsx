@@ -5,7 +5,8 @@
 // Clock, FullscreenToggle, WindowMenu, and HelpMenu into one file.
 // ═══════════════════════════════════════════════════════════════════════════
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import { useWindowManager } from '@/context/WindowManagerContext';
 import { useAuth } from '@/context/AuthContext';
@@ -22,8 +23,7 @@ import {
   IconMonitor, IconDelete, IconInfo, IconFile,
   IconSend, IconCheck, IconClose,
 } from '@/assets/icons';
-import styles from './MenuBar.module.css';
-
+import './MenuBar.css';
 // ═══════════════════════════════════════════════════════════════════════════
 // ── Constants & Helpers ───────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════════
@@ -238,10 +238,10 @@ const MenuBar = ({ toggleLauncher, isLauncherOpen }) => {
   // ═════════════════════════════════════════════════════════════════════════
 
   const renderWindowMenu = () => (
-    <div className={styles.windowContainer} ref={windowContainerRef}>
+    <div className="windowContainer" ref={windowContainerRef}>
       <button
         ref={windowTriggerRef}
-        className={`${styles.windowTrigger} ${windowMenuOpen ? styles.windowTriggerOpen : ''}`}
+        className={`windowTrigger ${windowMenuOpen ? 'windowTriggerOpen' : ''}`}
         onClick={toggleWindowMenu}
         aria-label="Window menu"
         aria-expanded={windowMenuOpen}
@@ -250,46 +250,46 @@ const MenuBar = ({ toggleLauncher, isLauncherOpen }) => {
         Window
       </button>
       {windowMenuOpen && (
-        <div className={styles.windowDropdown} role="menu" aria-label="Window menu">
-          <div className={styles.windowDropdownHeader}>
-            <span className={styles.windowDropdownTitle}>Window Actions</span>
+        <div className="windowDropdown" role="menu" aria-label="Window menu">
+          <div className="windowDropdownHeader">
+            <span className="windowDropdownTitle">Window Actions</span>
             {hasOpen && (
-              <span className={styles.windowCount}>
+              <span className="windowCount">
                 {openCount} open{minimizedCount > 0 ? `, ${minimizedCount} hidden` : ''}
               </span>
             )}
           </div>
-          <div className={styles.windowMenuList}>
+          <div className="windowMenuList">
             <button
-              className={styles.windowMenuItem}
+              className="windowMenuItem"
               onClick={() => handleWindowAction(restoreAllWindows)}
               disabled={minimizedCount === 0}
               role="menuitem"
             >
-              <IconMonitor className={styles.windowMenuIcon} />
-              <span className={styles.windowMenuLabel}>Show All Windows</span>
-              {minimizedCount === 0 && <span className={styles.windowMenuHint}>No hidden windows</span>}
+              <IconMonitor className="windowMenuIcon" />
+              <span className="windowMenuLabel">Show All Windows</span>
+              {minimizedCount === 0 && <span className="windowMenuHint">No hidden windows</span>}
             </button>
             <button
-              className={styles.windowMenuItem}
+              className="windowMenuItem"
               onClick={() => handleWindowAction(minimizeAllWindows)}
               disabled={openCount === 0}
               role="menuitem"
             >
-              <IconMonitor className={styles.windowMenuIcon} />
-              <span className={styles.windowMenuLabel}>Hide All Windows</span>
-              {openCount === 0 && <span className={styles.windowMenuHint}>No open windows</span>}
+              <IconMonitor className="windowMenuIcon" />
+              <span className="windowMenuLabel">Hide All Windows</span>
+              {openCount === 0 && <span className="windowMenuHint">No open windows</span>}
             </button>
-            <div className={styles.windowDivider} />
+            <div className="windowDivider" />
             <button
-              className={`${styles.windowMenuItem} ${styles.windowMenuItemDanger}`}
+              className={`windowMenuItem windowMenuItemDanger`}
               onClick={() => handleWindowAction(closeAllWindows)}
               disabled={!hasOpen}
               role="menuitem"
             >
-              <IconDelete className={styles.windowMenuIcon} />
-              <span className={styles.windowMenuLabel}>Close All Windows</span>
-              {!hasOpen && <span className={styles.windowMenuHint}>No windows open</span>}
+              <IconDelete className="windowMenuIcon" />
+              <span className="windowMenuLabel">Close All Windows</span>
+              {!hasOpen && <span className="windowMenuHint">No windows open</span>}
             </button>
           </div>
         </div>
@@ -302,10 +302,10 @@ const MenuBar = ({ toggleLauncher, isLauncherOpen }) => {
   // ═════════════════════════════════════════════════════════════════════════
 
   const renderHelpMenu = () => (
-    <div className={styles.helpContainer} ref={helpContainerRef}>
+    <div className="helpContainer" ref={helpContainerRef}>
       <button
         ref={helpTriggerRef}
-        className={`${styles.helpTrigger} ${helpMenuOpen ? styles.helpTriggerOpen : ''}`}
+        className={`helpTrigger ${helpMenuOpen ? 'helpTriggerOpen' : ''}`}
         onClick={toggleHelpMenu}
         aria-label="Help menu"
         aria-expanded={helpMenuOpen}
@@ -314,41 +314,41 @@ const MenuBar = ({ toggleLauncher, isLauncherOpen }) => {
         Help
       </button>
       {helpMenuOpen && (
-        <div className={styles.helpDropdown} role="menu" aria-label="Help menu">
-          <div className={styles.helpDropdownHeader}>
-            <span className={styles.helpDropdownTitle}>Help & Support</span>
+        <div className="helpDropdown" role="menu" aria-label="Help menu">
+          <div className="helpDropdownHeader">
+            <span className="helpDropdownTitle">Help & Support</span>
           </div>
-          <div className={styles.helpMenuList}>
+          <div className="helpMenuList">
             <button
-              className={styles.helpMenuItem}
+              className="helpMenuItem"
               onClick={() => {
                 window.open('https://docs.example.com/app-suite', '_blank', 'noopener,noreferrer');
                 closeHelpMenu();
               }}
               role="menuitem"
             >
-              <IconFile className={styles.helpMenuIcon} />
-              <span className={styles.helpMenuLabel}>Online Guideline</span>
-              <span className={styles.helpMenuHint}>Open documentation</span>
+              <IconFile className="helpMenuIcon" />
+              <span className="helpMenuLabel">Online Guideline</span>
+              <span className="helpMenuHint">Open documentation</span>
             </button>
             <button
-              className={styles.helpMenuItem}
+              className="helpMenuItem"
               onClick={() => handleHelpAction('support')}
               role="menuitem"
             >
-              <IconSend className={styles.helpMenuIcon} />
-              <span className={styles.helpMenuLabel}>Support Request</span>
-              <span className={styles.helpMenuHint}>Submit a ticket</span>
+              <IconSend className="helpMenuIcon" />
+              <span className="helpMenuLabel">Support Request</span>
+              <span className="helpMenuHint">Submit a ticket</span>
             </button>
-            <div className={styles.helpDivider} />
+            <div className="helpDivider" />
             <button
-              className={styles.helpMenuItem}
+              className="helpMenuItem"
               onClick={() => handleHelpAction('version')}
               role="menuitem"
             >
-              <IconInfo className={styles.helpMenuIcon} />
-              <span className={styles.helpMenuLabel}>Version</span>
-              <span className={styles.helpMenuHint}>App information</span>
+              <IconInfo className="helpMenuIcon" />
+              <span className="helpMenuLabel">Version</span>
+              <span className="helpMenuHint">App information</span>
             </button>
           </div>
         </div>
@@ -362,10 +362,10 @@ const MenuBar = ({ toggleLauncher, isLauncherOpen }) => {
 
   const renderUserMenu = () => (
     currentUser && (
-      <div className={styles.userContainer} ref={userContainerRef}>
+      <div className="userContainer" ref={userContainerRef}>
         <button
           ref={userTriggerRef}
-          className={`${styles.userTrigger} ${userMenuOpen ? styles.userTriggerOpen : ''}`}
+          className={`userTrigger ${userMenuOpen ? 'userTriggerOpen' : ''}`}
           onClick={handleUserTriggerClick}
           aria-label="User profile options"
           aria-expanded={userMenuOpen}
@@ -375,48 +375,48 @@ const MenuBar = ({ toggleLauncher, isLauncherOpen }) => {
         </button>
 
         {userMenuOpen && (
-          <div className={styles.userDropdown} role="menu" aria-label="User menu">
-            <div className={styles.userHeader}>
+          <div className="userDropdown" role="menu" aria-label="User menu">
+            <div className="userHeader">
               <Avatar src={avatarSrc} alt={currentUser.displayName} size="large" />
-              <div className={styles.userMeta}>
-                <span className={styles.displayName}>{currentUser.displayName}</span>
-                <span className={styles.username}>@{currentUser.username}</span>
-                <span className={styles.email}>{currentUser.email}</span>
+              <div className="userMeta">
+                <span className="displayName">{currentUser.displayName}</span>
+                <span className="username">@{currentUser.username}</span>
+                <span className="email">{currentUser.email}</span>
               </div>
             </div>
 
-            <div className={styles.roleBadge}>{currentUser.role}</div>
+            <div className="roleBadge">{currentUser.role}</div>
 
             {currentUser.createdAt && (
-              <div className={styles.memberSince}>
+              <div className="memberSince">
                 Member since {fmtDate(currentUser.createdAt) || '—'}
               </div>
             )}
 
-            <div className={styles.userDivider} />
+            <div className="userDivider" />
 
-            <ul className={styles.menuList}>
+            <ul className="menuList">
               <li role="none">
-                <button className={styles.menuItem} onClick={() => { openWindow('profile'); closeUserMenu(); }}>
-                  <IconProfile className={styles.menuItemIcon} />
+                <button className="menuItem" onClick={() => { openWindow('profile'); closeUserMenu(); }}>
+                  <IconProfile className="menuItemIcon" />
                   Profile Settings
                 </button>
               </li>
               <li role="none">
-                <button className={styles.menuItem} onClick={() => { openWindow('settings'); closeUserMenu(); }}>
-                  <IconSettings className={styles.menuItemIcon} />
+                <button className="menuItem" onClick={() => { openWindow('settings'); closeUserMenu(); }}>
+                  <IconSettings className="menuItemIcon" />
                   Preferences
                 </button>
               </li>
               <li role="none">
-                <button className={styles.menuItem} onClick={closeUserMenu}>
+                <button className="menuItem" onClick={closeUserMenu}>
                   Lock Screen
                 </button>
               </li>
-              <div className={styles.userDivider} />
+              <div className="userDivider" />
               <li role="none">
                 <button
-                  className={`${styles.menuItem} ${styles.menuItemDanger}`}
+                  className={`menuItem menuItemDanger`}
                   role="menuitem"
                   onClick={handleLogout}
                 >
@@ -436,23 +436,23 @@ const MenuBar = ({ toggleLauncher, isLauncherOpen }) => {
 
   return (
     <>
-      <header className={styles.menuBar} aria-label="System Menu Bar">
+      <header className="menuBar" aria-label="System Menu Bar">
         {/* ── Left: Launcher, App Name, Static Menus ───────────────────── */}
-        <div className={styles.leftSection}>
+        <div className="leftSection">
           <button
-            className={`${styles.launcherBtn} ${isLauncherOpen ? styles.launcherBtnActive : ''}`}
+            className={`launcherBtn ${isLauncherOpen ? 'launcherBtnActive' : ''}`}
             onClick={toggleLauncher}
             aria-label="Open App Launcher"
             aria-expanded={isLauncherOpen}
           >
-            <IconGrid className={styles.launcherIcon} />
+            <IconGrid className="launcherIcon" />
           </button>
 
-          <span className={styles.activeAppName}>{activeAppName}</span>
+          <span className="activeAppName">{activeAppName}</span>
 
-          <nav className={styles.staticMenu} aria-label="Application Menu">
+          <nav className="staticMenu" aria-label="Application Menu">
             {menuItems.map((item) => (
-              <button key={item} className={styles.menuItemBtn}>
+              <button key={item} className="menuItemBtn">
                 {item}
               </button>
             ))}
@@ -462,53 +462,53 @@ const MenuBar = ({ toggleLauncher, isLauncherOpen }) => {
         </div>
 
         {/* ── Center: Window Tabs + Running Apps ──────────────────────── */}
-        <div className={styles.centerSection}>
+        <div className="centerSection">
           <WindowTabs />
           <RunningApps />
         </div>
 
         {/* ── Right: System Status, Clock, Fullscreen, User Menu ──────── */}
-        <div className={styles.rightSection}>
+        <div className="rightSection">
           {/* ── Status Icons ──────────────────────────────────────────── */}
-          <div className={styles.statusIcons}>
-            <button className={styles.iconBtn} aria-label="Search">
-              <IconSearch className={styles.svgIcon} />
+          <div className="statusIcons">
+            <button className="iconBtn" aria-label="Search">
+              <IconSearch className="svgIcon" />
             </button>
             <NotificationPanel />
             <button
-              className={styles.iconBtn}
+              className="iconBtn"
               aria-label="Settings"
               title="Settings"
               onClick={() => openWindow('settings')}
             >
-              <IconSettings className={styles.svgIcon} />
+              <IconSettings className="svgIcon" />
             </button>
           </div>
 
-          <span className={styles.divider} />
+          <span className="divider" />
 
           {/* ── Clock ─────────────────────────────────────────────────── */}
-          <div className={styles.clock} aria-label="System Clock">
+          <div className="clock" aria-label="System Clock">
             {formatDateTime(clockTime)}
           </div>
 
-          <span className={styles.divider} />
+          <span className="divider" />
 
           {/* ── Fullscreen Toggle ─────────────────────────────────────── */}
           <button
-            className={styles.fullscreenBtn}
+            className="fullscreenBtn"
             onClick={toggleFullscreen}
             aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
             title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
           >
             {isFullscreen ? (
-              <IconFullscreenExit className={styles.fullscreenIcon} />
+              <IconFullscreenExit className="fullscreenIcon" />
             ) : (
-              <IconFullscreenEnter className={styles.fullscreenIcon} />
+              <IconFullscreenEnter className="fullscreenIcon" />
             )}
           </button>
 
-          <span className={styles.divider} />
+          <span className="divider" />
 
           {/* ── User Menu ─────────────────────────────────────────────── */}
           {renderUserMenu()}
@@ -557,7 +557,7 @@ const Modal = ({ title, children, onClose }) => {
 
   return (
     <div
-      className={`${styles.modalOverlay} ${exiting ? styles.modalOverlayExiting : ''}`}
+      className={`modalOverlay ${exiting ? 'modalOverlayExiting' : ''}`}
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
@@ -566,19 +566,19 @@ const Modal = ({ title, children, onClose }) => {
       <div
         ref={modalRef}
         tabIndex={-1}
-        className={`${styles.modalDialog} ${exiting ? styles.modalDialogExiting : ''}`}
+        className={`modalDialog ${exiting ? 'modalDialogExiting' : ''}`}
       >
-        <div className={styles.modalHeader}>
-          <h2 id="help-modal-title" className={styles.modalTitle}>{title}</h2>
+        <div className="modalHeader">
+          <h2 id="help-modal-title" className="modalTitle">{title}</h2>
           <button
-            className={styles.modalCloseBtn}
+            className="modalCloseBtn"
             onClick={handleClose}
             aria-label="Close dialog"
           >
             <IconClose size={16} />
           </button>
         </div>
-        <div className={styles.modalBody}>
+        <div className="modalBody">
           {children}
         </div>
       </div>
@@ -608,25 +608,25 @@ const SupportRequestForm = ({ onClose }) => {
 
   if (submitted) {
     return (
-      <div className={styles.successState}>
-        <div className={styles.successIcon}>
+      <div className="successState">
+        <div className="successIcon">
           <IconCheck size={32} />
         </div>
-        <p className={styles.successText}>Support request sent successfully!</p>
-        <p className={styles.successSubtext}>We'll get back to you within 24 hours.</p>
+        <p className="successText">Support request sent successfully!</p>
+        <p className="successSubtext">We'll get back to you within 24 hours.</p>
       </div>
     );
   }
 
   return (
-    <form className={styles.supportForm} onSubmit={handleSubmit}>
-      <div className={styles.formGroup}>
-        <label className={styles.formLabel} htmlFor="support-subject">Subject</label>
+    <form className="supportForm" onSubmit={handleSubmit}>
+      <div className="formGroup">
+        <label className="formLabel" htmlFor="support-subject">Subject</label>
         <input
           ref={subjectRef}
           id="support-subject"
           type="text"
-          className={styles.formInput}
+          className="formInput"
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
           placeholder="Brief description of your issue…"
@@ -634,11 +634,11 @@ const SupportRequestForm = ({ onClose }) => {
           required
         />
       </div>
-      <div className={styles.formGroup}>
-        <label className={styles.formLabel} htmlFor="support-message">Message</label>
+      <div className="formGroup">
+        <label className="formLabel" htmlFor="support-message">Message</label>
         <textarea
           id="support-message"
-          className={styles.formTextarea}
+          className="formTextarea"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Describe your issue in detail…"
@@ -646,15 +646,15 @@ const SupportRequestForm = ({ onClose }) => {
           maxLength={1000}
           required
         />
-        <span className={styles.charCount}>{message.length}/1000</span>
+        <span className="charCount">{message.length}/1000</span>
       </div>
-      <div className={styles.formFooter}>
-        <button type="button" className={styles.formCancelBtn} onClick={onClose}>
+      <div className="formFooter">
+        <button type="button" className="formCancelBtn" onClick={onClose}>
           Cancel
         </button>
         <button
           type="submit"
-          className={styles.formSubmitBtn}
+          className="formSubmitBtn"
           disabled={!subject.trim() || !message.trim()}
         >
           <IconSend size={14} />
@@ -672,28 +672,28 @@ const VersionInfo = () => {
   const appName = 'App Suite';
 
   return (
-    <div className={styles.versionInfo}>
-      <div className={styles.versionLogo}>
-        <div className={styles.versionLogoIcon}>
+    <div className="versionInfo">
+      <div className="versionLogo">
+        <div className="versionLogoIcon">
           <IconInfo size={28} />
         </div>
       </div>
-      <h3 className={styles.versionAppName}>{appName}</h3>
-      <div className={styles.versionDetails}>
-        <div className={styles.versionRow}>
-          <span className={styles.versionLabel}>Version</span>
-          <span className={styles.versionValue}>{appVersion}</span>
+      <h3 className="versionAppName">{appName}</h3>
+      <div className="versionDetails">
+        <div className="versionRow">
+          <span className="versionLabel">Version</span>
+          <span className="versionValue">{appVersion}</span>
         </div>
-        <div className={styles.versionRow}>
-          <span className={styles.versionLabel}>Build Date</span>
-          <span className={styles.versionValue}>{buildDate}</span>
+        <div className="versionRow">
+          <span className="versionLabel">Build Date</span>
+          <span className="versionValue">{buildDate}</span>
         </div>
-        <div className={styles.versionRow}>
-          <span className={styles.versionLabel}>Environment</span>
-          <span className={styles.versionValue}>{import.meta.env.MODE || 'production'}</span>
+        <div className="versionRow">
+          <span className="versionLabel">Environment</span>
+          <span className="versionValue">{import.meta.env.MODE || 'production'}</span>
         </div>
       </div>
-      <p className={styles.versionCopyright}>
+      <p className="versionCopyright">
         &copy; {new Date().getFullYear()} {appName}. All rights reserved.
       </p>
     </div>

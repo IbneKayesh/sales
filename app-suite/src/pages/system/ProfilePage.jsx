@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
+
 import { useAuth } from '../../context/AuthContext';
 import { useToast, useConfirm } from '@/context/FeedbackContext';
 import { fmtDateLong } from '@/utils/dataFormat';
 import { IconEyeOpen, IconEyeOff, IconCamera, IconSave, IconUnlock } from '@/assets/icons';
 import Avatar from '../../components/Avatar/Avatar';
-import styles from './ProfilePage.module.css';
-
+import './ProfilePage.css';
 const ProfilePage = () => {
   const { currentUser, updateProfile, changePassword, defaultAvatarImg } = useAuth();
   const { addToast } = useToast();
@@ -92,74 +92,74 @@ const ProfilePage = () => {
   const PwToggle = ({ field }) => (
     <button
       type="button"
-      className={styles.pwToggle}
+      className="pwToggle"
       onClick={() => setShowPw((p) => ({ ...p, [field]: !p[field] }))}
       tabIndex={-1}
     >
-      {showPw[field] ? <IconEyeOff className={styles.pwToggleIcon} /> : <IconEyeOpen className={styles.pwToggleIcon} />}
+      {showPw[field] ? <IconEyeOff className="pwToggleIcon" /> : <IconEyeOpen className="pwToggleIcon" />}
     </button>
   );
 
   return (
-    <div className={styles.page}>
-      <div className={styles.layout}>
+    <div className="page">
+      <div className="layout">
         {/* ── Avatar Column ───────────────────────────────────────── */}
-        <div className={styles.avatarColumn}>
-          <div className={styles.avatarWrap}>
+        <div className="avatarColumn">
+          <div className="avatarWrap">
             <Avatar src={avatarSrc} alt={currentUser?.displayName || 'User'} size="xlarge" />
-            <button className={styles.avatarOverlay} onClick={() => fileInputRef.current?.click()} title="Change avatar">
-              <IconCamera className={styles.cameraIcon} />
+            <button className="avatarOverlay" onClick={() => fileInputRef.current?.click()} title="Change avatar">
+              <IconCamera className="cameraIcon" />
             </button>
           </div>
-          <input ref={fileInputRef} type="file" accept="image/*" className={styles.fileInput} onChange={handleAvatarChange} />
-          <span className={styles.avatarHint}>Click to change photo</span>
-          <div className={styles.roleBadge}>
+          <input ref={fileInputRef} type="file" accept="image/*" className="fileInput" onChange={handleAvatarChange} />
+          <span className="avatarHint">Click to change photo</span>
+          <div className="roleBadge">
             {currentUser?.role || 'User'}
           </div>
         </div>
 
         {/* ── Profile Fields ──────────────────────────────────────── */}
-        <div className={styles.fieldsColumn}>
-          <h1 className={styles.title}>Profile Settings</h1>
-          <p className={styles.subtitle}>Manage your personal information and security</p>
+        <div className="fieldsColumn">
+          <h1 className="title">Profile Settings</h1>
+          <p className="subtitle">Manage your personal information and security</p>
 
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>Personal Information</h2>
-            <div className={styles.fieldGrid}>
-              <div className={styles.field}>
-                <label className={styles.fieldLabel}>Display Name</label>
+          <div className="section">
+            <h2 className="sectionTitle">Personal Information</h2>
+            <div className="fieldGrid">
+              <div className="field">
+                <label className="fieldLabel">Display Name</label>
                 <input
                   type="text"
-                  className={styles.fieldInput}
+                  className="fieldInput"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Your display name"
                 />
               </div>
-              <div className={styles.field}>
-                <label className={styles.fieldLabel}>Username</label>
+              <div className="field">
+                <label className="fieldLabel">Username</label>
                 <input
                   type="text"
-                  className={`${styles.fieldInput} ${styles.fieldDisabled}`}
+                  className={`fieldInput fieldDisabled`}
                   value={`@${currentUser?.username || ''}`}
                   disabled
                 />
-                <span className={styles.fieldHint}>Username cannot be changed</span>
+                <span className="fieldHint">Username cannot be changed</span>
               </div>
-              <div className={styles.field}>
-                <label className={styles.fieldLabel}>Email Address</label>
+              <div className="field">
+                <label className="fieldLabel">Email Address</label>
                 <input
                   type="email"
-                  className={styles.fieldInput}
+                  className="fieldInput"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
                 />
               </div>
-              <div className={`${styles.field} ${styles.fieldFull}`}>
-                <label className={styles.fieldLabel}>Bio</label>
+              <div className={`field fieldFull`}>
+                <label className="fieldLabel">Bio</label>
                 <textarea
-                  className={styles.fieldTextarea}
+                  className="fieldTextarea"
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
                   placeholder="Write a short bio..."
@@ -169,30 +169,30 @@ const ProfilePage = () => {
             </div>
 
             <button
-              className={styles.saveBtn}
+              className="saveBtn"
               onClick={handleSaveProfile}
               disabled={saving}
             >
               {saving ? (
-                <><span className={styles.btnSpinner} /> Saving...</>
+                <><span className="btnSpinner" /> Saving...</>
               ) : (
-                <><IconSave className={styles.saveIcon} /> Save Changes</>
+                <><IconSave className="saveIcon" /> Save Changes</>
               )}
             </button>
           </div>
 
           {/* ── Change Password ───────────────────────────────────── */}
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>Change Password</h2>
-            <p className={styles.sectionDesc}>Enter your current password and a new password.</p>
+          <div className="section">
+            <h2 className="sectionTitle">Change Password</h2>
+            <p className="sectionDesc">Enter your current password and a new password.</p>
 
-            <div className={styles.pwFields}>
-              <div className={styles.field}>
-                <label className={styles.fieldLabel}>Current Password</label>
-                <div className={styles.pwInputWrap}>
+            <div className="pwFields">
+              <div className="field">
+                <label className="fieldLabel">Current Password</label>
+                <div className="pwInputWrap">
                   <input
                     type={showPw.current ? 'text' : 'password'}
-                    className={styles.fieldInput}
+                    className="fieldInput"
                     value={currentPw}
                     onChange={(e) => setCurrentPw(e.target.value)}
                     placeholder="Enter current password"
@@ -201,12 +201,12 @@ const ProfilePage = () => {
                   <PwToggle field="current" />
                 </div>
               </div>
-              <div className={styles.field}>
-                <label className={styles.fieldLabel}>New Password</label>
-                <div className={styles.pwInputWrap}>
+              <div className="field">
+                <label className="fieldLabel">New Password</label>
+                <div className="pwInputWrap">
                   <input
                     type={showPw.new ? 'text' : 'password'}
-                    className={styles.fieldInput}
+                    className="fieldInput"
                     value={newPw}
                     onChange={(e) => setNewPw(e.target.value)}
                     placeholder="Min 6 characters"
@@ -215,12 +215,12 @@ const ProfilePage = () => {
                   <PwToggle field="new" />
                 </div>
               </div>
-              <div className={styles.field}>
-                <label className={styles.fieldLabel}>Confirm New Password</label>
-                <div className={styles.pwInputWrap}>
+              <div className="field">
+                <label className="fieldLabel">Confirm New Password</label>
+                <div className="pwInputWrap">
                   <input
                     type={showPw.confirm ? 'text' : 'password'}
-                    className={styles.fieldInput}
+                    className="fieldInput"
                     value={confirmPw}
                     onChange={(e) => setConfirmPw(e.target.value)}
                     placeholder="Re-enter new password"
@@ -232,35 +232,35 @@ const ProfilePage = () => {
             </div>
 
             <button
-              className={`${styles.saveBtn} ${styles.pwBtn}`}
+              className={`saveBtn pwBtn`}
               onClick={handleChangePassword}
               disabled={changingPw}
             >
               {changingPw ? (
-                <><span className={styles.btnSpinner} /> Changing...</>
+                <><span className="btnSpinner" /> Changing...</>
               ) : (
-                <><IconUnlock className={styles.saveIcon} /> Change Password</>
+                <><IconUnlock className="saveIcon" /> Change Password</>
               )}
             </button>
           </div>
 
           {/* ── Account Info ──────────────────────────────────────── */}
-          <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>Account Info</h2>
-            <div className={styles.infoGrid}>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Role</span>
-                <span className={styles.infoValue}>{currentUser?.role || '—'}</span>
+          <div className="section">
+            <h2 className="sectionTitle">Account Info</h2>
+            <div className="infoGrid">
+              <div className="infoItem">
+                <span className="infoLabel">Role</span>
+                <span className="infoValue">{currentUser?.role || '—'}</span>
               </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Member Since</span>
-                <span className={styles.infoValue}>
+              <div className="infoItem">
+                <span className="infoLabel">Member Since</span>
+                <span className="infoValue">
                   {fmtDateLong(currentUser.createdAt) || '—'}
                 </span>
               </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>User ID</span>
-                <span className={`${styles.infoValue} ${styles.infoMono}`}>{currentUser?.id || '—'}</span>
+              <div className="infoItem">
+                <span className="infoLabel">User ID</span>
+                <span className={`infoValue infoMono`}>{currentUser?.id || '—'}</span>
               </div>
             </div>
           </div>

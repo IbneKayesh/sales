@@ -1,18 +1,6 @@
-.dockOuter {
-  position: absolute;
-  bottom: 10px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 100;
-}
+.dock-outer { bottom: 10px; pointer-events: none; }
 
 .dock {
-  display: flex;
-  align-items: flex-end;
-  gap: 6px;
   padding: 8px 14px;
   background-color: rgba(22, 22, 32, 0.6);
   backdrop-filter: blur(30px);
@@ -25,36 +13,25 @@
 }
 
 @keyframes dockAppear {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-.dockItem {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 4px;
+.dock-item {
   border-radius: 10px;
   background-color: transparent;
   border: none;
-  cursor: pointer;
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.dockItem:hover {
-  transform: translateY(-6px) scale(1.12);
-}
+.dock-item:hover { transform: translateY(-6px) scale(1.12); }
+.dock-item:active { transform: translateY(-2px) scale(0.95); }
 
-/* ── Hover Tooltip ─────────────────────────────────────────────────────── */
-.tooltip {
+.dock-item:hover .dock-icon { border-radius: 14px; }
+.dock-icon svg { width: 22px; height: 22px; }
+
+/* ── Tooltip ────────────────────────────────────────────────────────────── */
+.dock-tooltip {
   position: absolute;
   bottom: calc(100% + 10px);
   left: 50%;
@@ -77,14 +54,7 @@
   z-index: 200;
 }
 
-.dockItem:hover .tooltip {
-  opacity: 1;
-  /* Counter parent's scale(1.12) so tooltip text stays crisp */
-  transform: translateX(-50%) scale(0.893);
-}
-
-/* ── Tooltip arrow ─────────────────────────────────────────────────────── */
-.tooltip::after {
+.dock-tooltip::after {
   content: '';
   position: absolute;
   top: 100%;
@@ -94,30 +64,13 @@
   border-top-color: rgba(30, 30, 42, 0.85);
 }
 
-.dockItem:active {
-  transform: translateY(-2px) scale(0.95);
+.dock-item:hover .dock-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) scale(0.893);
 }
 
-.dockIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  transition: all 0.2s ease;
-}
-
-.dockIcon svg {
-  width: 22px;
-  height: 22px;
-}
-
-.dockItem:hover .dockIcon {
-  border-radius: 14px;
-}
-
-.dot {
+/* ── Running dot ─────────────────────────────────────────────────────────── */
+.dock-dot {
   position: absolute;
   bottom: -2px;
   left: 50%;
@@ -140,12 +93,6 @@
     padding: 6px 10px;
     border-radius: 14px;
   }
-  .dockIcon {
-    width: 36px;
-    height: 36px;
-  }
-  .dockIcon svg {
-    width: 18px;
-    height: 18px;
-  }
+  .dock-icon { width: 36px; height: 36px; }
+  .dock-icon svg { width: 18px; height: 18px; }
 }

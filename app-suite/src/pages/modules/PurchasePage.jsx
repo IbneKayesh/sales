@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+
 import { fmtCurrency } from '@/utils/dataFormat';
 import usePurchase from '../../hooks/usePurchase';
 import { useToast, useConfirm } from '@/context/FeedbackContext';

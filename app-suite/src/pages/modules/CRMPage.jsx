@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+
 import useCRM from '../../hooks/useCRM';
 import { useToast, useConfirm } from '@/context/FeedbackContext';
 import { IconSearch, IconPlus, IconEdit, IconDelete } from '@/assets/icons';

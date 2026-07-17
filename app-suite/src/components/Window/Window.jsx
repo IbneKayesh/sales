@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+
 import { useWindowManager } from '../../context/WindowManagerContext';
 import { getAppIcon } from '@/routes/appConfig';
 import FeedbackDialog from '@/components/Feedback/FeedbackDialog';
-import styles from './Window.module.css';
-
+import './Window.css';
 const Window = ({ id, title, isOpen, isMinimized, isMaximized, x, y, width, height, zIndex, children }) => {
   const { focusWindow, closeWindow, minimizeWindow, toggleMaximize, activeWindowId, updateWindowPosition } = useWindowManager();
   const windowRef = useRef(null);
@@ -34,7 +34,7 @@ const Window = ({ id, title, isOpen, isMinimized, isMaximized, x, y, width, heig
 
   const handleHeaderMouseDown = (e) => {
     if (e.button !== 0) return;
-    if (e.target.closest('[class*="controlBtn"]')) return;
+    if (e.target.closest('[class*="window-btn"]')) return;
     
     e.preventDefault();
     focusWindow(id);
@@ -70,50 +70,50 @@ const Window = ({ id, title, isOpen, isMinimized, isMaximized, x, y, width, heig
   return (
     <div
       ref={windowRef}
-      className={`${styles.windowContainer} ${isActive ? styles.windowActive : styles.windowInactive} ${isMaximized ? styles.windowMaximized : ''}`}
+      className={`window-container pos-absolute d-flex flex-column ${isActive ? 'window-active' : 'window-inactive'} ${isMaximized ? 'window-maximized' : ''}`}
       onMouseDown={handleMouseDown}
       role="dialog"
       aria-label={`${title} window`}
     >
       <header
-        className={styles.windowHeader}
+        className="window-header d-flex ai-center jc-between user-select-none"
         onMouseDown={handleHeaderMouseDown}
       >
-        <div className={styles.windowControls}>
+        <div className="window-controls d-flex ai-center gap-2">
           <button
-            className={`${styles.controlBtn} ${styles.closeBtn}`}
+            className={`window-btn close-btn`}
             onClick={() => closeWindow(id)}
             aria-label="Close window"
           >
-            <span className={styles.controlSymbol}>×</span>
+            <span className="window-symbol">×</span>
           </button>
           <button
-            className={`${styles.controlBtn} ${styles.minimizeBtn}`}
+            className={`window-btn minimize-btn`}
             onClick={() => minimizeWindow(id)}
             aria-label="Minimize window"
           >
-            <span className={styles.controlSymbol}>−</span>
+            <span className="window-symbol">−</span>
           </button>
           <button
-            className={`${styles.controlBtn} ${styles.maximizeBtn}`}
+            className={`window-btn maximize-btn`}
             onClick={() => toggleMaximize(id)}
             aria-label="Maximize window"
           >
-            <span className={styles.controlSymbol}>+</span>
+            <span className="window-symbol">+</span>
           </button>
         </div>
 
-        <div className={styles.titleArea}>
-          {IconComponent ? <IconComponent className={styles.appIcon} /> : null}
-          <span className={styles.titleText}>{title}</span>
+        <div className="window-title d-flex ai-center gap-2 fs-13 fw-600">
+          {IconComponent ? <IconComponent className="w-14 h-14" /> : null}
+          <span className="text-nowrap">{title}</span>
         </div>
         
-        <div className={styles.headerSpacer} />
+        <div style={{width:'52px'}} />
       </header>
 
-      <div className={styles.windowContent}>
+      <div className="window-content flex-1 overflow-auto pos-relative">
         {children}
-        <div className={styles.windowOverlayContainer}>
+        <div className="window-overlay pos-absolute bottom-3 right-3 d-flex flex-column gap-2 z-10 pointer-events-none" style={{maxWidth:'360px'}}>
           <FeedbackDialog mode="window" windowId={id} />
         </div>
       </div>

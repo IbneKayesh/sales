@@ -1,9 +1,8 @@
-import React from 'react';
+
 import { useWindowManager } from '@/context/WindowManagerContext';
 import { useContextMenu } from '@/context/DesktopContext';
 import { getDockApps, getAppIcon } from '@/routes/appConfig';
-import styles from './Dock.module.css';
-
+import './Dock.css';
 const DEFAULT_COLOR = { bg: 'rgba(255,255,255,0.08)', color: '#fff' };
 
 const Dock = () => {
@@ -30,8 +29,8 @@ const Dock = () => {
   };
 
   return (
-    <div className={styles.dockOuter}>
-      <div className={styles.dock} role="toolbar" aria-label="Application Dock">
+    <div className="dock-outer pos-absolute bottom-0 left-0 right-0 d-flex jc-center pointer-events-none z-100" style={{bottom:'10px'}}>
+      <div className="dock d-flex ai-end gap-1 px-3 py-2" role="toolbar" aria-label="Application Dock" style={{pointerEvents:'auto'}}>
         {dockApps.map((app) => {
           const colors = app.color || DEFAULT_COLOR;
           const Icon = getAppIcon(app.id);
@@ -39,20 +38,20 @@ const Dock = () => {
           return (
             <button
               key={app.id}
-              className={styles.dockItem}
+              className="dock-item pos-relative d-flex flex-column ai-center gap-1 p-1 cursor-pointer"
               onClick={() => handleClick(app.id)}
               onContextMenu={(e) => handleContextMenu(e, app)}
               title={app.label}
               aria-label={`${app.label}${isOpen ? ' (running)' : ''}`}
             >
-              <span className={styles.tooltip}>{app.label}</span>
+              <span className="dock-tooltip">{app.label}</span>
               <div
-                className={styles.dockIcon}
-                style={{ backgroundColor: colors.bg, color: colors.color }}
+                className="dock-icon d-flex ai-center jc-center w-44 h-44"
+                style={{ backgroundColor: colors.bg, color: colors.color, borderRadius:'12px', transition:'all 0.2s ease' }}
               >
                 {Icon ? <Icon /> : null}
               </div>
-              {isOpen && <span className={styles.dot} />}
+              {isOpen && <span className="dock-dot" />}
             </button>
           );
         })}

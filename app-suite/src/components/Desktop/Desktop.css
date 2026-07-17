@@ -1,0 +1,10 @@
+.desktop-workspace { box-sizing: border-box; }
+
+.dashboard-bg { animation: dashFadeIn 0.4s ease-out; }
+
+@keyframes dashFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.desktop-windows > * { pointer-events: auto; }

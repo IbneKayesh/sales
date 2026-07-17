@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+
 import { Outlet } from 'react-router-dom';
 import { WindowManagerProvider } from '@/context/WindowManagerContext';
 import { DesktopProvider } from '@/context/DesktopContext';
@@ -9,8 +10,7 @@ import Dock from '@/components/Dock/Dock';
 import Desktop from '@/components/Desktop/Desktop';
 import FeedbackDialog from '@/components/Feedback/FeedbackDialog';
 import ContextMenu from '@/components/ContextMenu/ContextMenu';
-import styles from './DesktopLayout.module.css';
-
+import './DesktopLayout.css';
 const DesktopLayout = () => {
   const [isLauncherOpen, setIsLauncherOpen] = useState(false);
 
@@ -21,10 +21,10 @@ const DesktopLayout = () => {
     <FeedbackProvider>
       <DesktopProvider>
         <WindowManagerProvider>
-          <div className={styles.layout}>
+          <div className="layout">
             <MenuBar toggleLauncher={toggleLauncher} isLauncherOpen={isLauncherOpen} />
 
-            <div className={styles.mainArea}>
+            <div className="mainArea">
               <Desktop />
               <Dock />
 
@@ -37,7 +37,7 @@ const DesktopLayout = () => {
           </div>
 
           {/* Outlet: keeps React Router lifecycle active but is visually hidden */}
-          <div className={styles.hiddenOutlet}>
+          <div className="hiddenOutlet">
             <Outlet />
           </div>
 

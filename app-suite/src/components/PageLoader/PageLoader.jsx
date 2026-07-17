@@ -1,14 +1,13 @@
-import styles from './PageLoader.module.css';
-
+import './PageLoader.css';
 const PageLoader = () => {
   return (
-    <div className={styles.container}>
-      <div className={styles.spinner}>
-        <div className={styles.orb} />
-        <div className={styles.orb} />
-        <div className={styles.orb} />
+    <div className="container">
+      <div className="spinner">
+        <div className="orb" />
+        <div className="orb" />
+        <div className="orb" />
       </div>
-      <p className={styles.text}>Loading...</p>
+      <p className="text">Loading...</p>
     </div>
   );
 };

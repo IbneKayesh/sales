@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+
 import { IconMinusCircle } from '@/assets/icons';
 import useSales from '../../hooks/useSales';
 import { useToast, useConfirm } from '@/context/FeedbackContext';
 import SalesToolbar from './SalesToolbar';
 import SalesTable from './SalesTable';
 import SaleForm from './SaleForm';
-import styles from './SalesApp.module.css';
-
+import './SalesApp.css';
 const SalesApp = () => {
   const { sales, addSale, updateSale, deleteSale } = useSales();
   const { addToast, addActionToast } = useToast();
@@ -67,7 +67,7 @@ const SalesApp = () => {
   const productsList = ['All', ...new Set(sales.map((s) => s.product))];
 
   return (
-    <div className={styles.container}>
+    <div className="container">
       {view === 'list' && (
         <>
           <SalesToolbar
@@ -78,13 +78,13 @@ const SalesApp = () => {
             productsList={productsList}
             onAddTrigger={() => setView('add')}
           />
-          <div className={styles.content}>
+          <div className="content">
             {filteredSales.length === 0 ? (
-              <div className={styles.emptyState}>
-                <IconMinusCircle className={styles.emptyIcon} />
+              <div className="emptyState">
+                <IconMinusCircle className="emptyIcon" />
                 <h3>No Transactions Found</h3>
                 <p>Try refining your search terms or create a new sale entry to begin.</p>
-                <button className={styles.emptyAddBtn} onClick={() => setView('add')}>
+                <button className="emptyAddBtn" onClick={() => setView('add')}>
                   Create Transaction
                 </button>
               </div>
@@ -101,20 +101,20 @@ const SalesApp = () => {
       )}
 
       {view === 'add' && (
-        <div className={styles.formContainer}>
-          <div className={styles.formHeader}>
+        <div className="formContainer">
+          <div className="formHeader">
             <h2>Create New Sale</h2>
-            <button className={styles.backBtn} onClick={() => setView('list')}>Cancel</button>
+            <button className="backBtn" onClick={() => setView('list')}>Cancel</button>
           </div>
           <SaleForm onSubmit={handleAdd} />
         </div>
       )}
 
       {view === 'edit' && activeEditSale && (
-        <div className={styles.formContainer}>
-          <div className={styles.formHeader}>
+        <div className="formContainer">
+          <div className="formHeader">
             <h2>Edit Sale</h2>
-            <button className={styles.backBtn} onClick={() => {
+            <button className="backBtn" onClick={() => {
               setView('list');
               setCurrentSaleId(null);
             }}>Cancel</button>

@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { IconCheck, IconWarning, IconError, IconInfo, IconSearch, IconBell, IconRead, IconClose } from '@/assets/icons';
-import styles from './NotificationPage.module.css';
+import { useState, useMemo } from 'react';
 
+import { IconCheck, IconWarning, IconError, IconInfo, IconSearch, IconBell, IconRead, IconClose } from '@/assets/icons';
+import './NotificationPage.css';
 // ── Expanded Demo Notifications ───────────────────────────────────────────
 const DEMO_NOTIFICATIONS = [
   {
@@ -110,14 +110,14 @@ const DEMO_NOTIFICATIONS = [
 const TypeIcon = ({ type }) => {
   switch (type) {
     case 'success':
-      return <IconCheck className={styles.typeIcon} />;
+      return <IconCheck className="typeIcon" />;
     case 'warning':
-      return <IconWarning className={styles.typeIcon} />;
+      return <IconWarning className="typeIcon" />;
     case 'error':
-      return <IconError className={styles.typeIcon} />;
+      return <IconError className="typeIcon" />;
     case 'info':
     default:
-      return <IconInfo className={styles.typeIcon} />;
+      return <IconInfo className="typeIcon" />;
   }
 };
 
@@ -170,30 +170,30 @@ const NotificationPage = () => {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case 'success': return styles.typeSuccess;
-      case 'warning': return styles.typeWarning;
-      case 'error':   return styles.typeError;
-      case 'info':    return styles.typeInfo;
+      case 'success': return 'typeSuccess';
+      case 'warning': return 'typeWarning';
+      case 'error':   return 'typeError';
+      case 'info':    return 'typeInfo';
       default:        return '';
     }
   };
 
   return (
-    <div className={styles.page}>
+    <div className="page">
       {/* ── Header ──────────────────────────────────────────────────── */}
-      <div className={styles.header}>
-        <div className={styles.headerLeft}>
-          <h1 className={styles.title}>Notifications</h1>
-          <span className={styles.subtitle}>
+      <div className="header">
+        <div className="headerLeft">
+          <h1 className="title">Notifications</h1>
+          <span className="subtitle">
             {unreadCount > 0
               ? `${unreadCount} unread out of ${notifications.length} total`
               : `${notifications.length} notification${notifications.length !== 1 ? 's' : ''}`}
           </span>
         </div>
-        <div className={styles.headerActions}>
+        <div className="headerActions">
           {unreadCount > 0 && (
-            <button className={styles.markAllBtn} onClick={markAllRead}>
-              <IconCheck className={styles.btnIcon} />
+            <button className="markAllBtn" onClick={markAllRead}>
+              <IconCheck className="btnIcon" />
               Mark All Read
             </button>
           )}
@@ -201,8 +201,8 @@ const NotificationPage = () => {
       </div>
 
       {/* ── Filter Tabs + Search ────────────────────────────────────── */}
-      <div className={styles.toolbar}>
-        <div className={styles.filterTabs}>
+      <div className="toolbar">
+        <div className="filterTabs">
           {[
             { key: 'all', label: 'All', count: typeCounts.all },
             { key: 'unread', label: 'Unread', count: typeCounts.unread },
@@ -213,19 +213,19 @@ const NotificationPage = () => {
           ].map((tab) => (
             <button
               key={tab.key}
-              className={`${styles.filterTab} ${filter === tab.key ? styles.filterTabActive : ''} ${tab.key === 'warning' ? styles.filterTabWarning : ''} ${tab.key === 'error' ? styles.filterTabError : ''}`}
+              className={`filterTab ${filter === tab.key ? 'filterTabActive' : ''} ${tab.key === 'warning' ? 'filterTabWarning' : ''} ${tab.key === 'error' ? 'filterTabError' : ''}`}
               onClick={() => setFilter(tab.key)}
             >
               {tab.label}
-              <span className={styles.filterCount}>{tab.count}</span>
+              <span className="filterCount">{tab.count}</span>
             </button>
           ))}
         </div>
-        <div className={styles.searchWrap}>
-          <IconSearch className={styles.searchIcon} />
+        <div className="searchWrap">
+          <IconSearch className="searchIcon" />
           <input
             type="text"
-            className={styles.searchInput}
+            className="searchInput"
             placeholder="Search notifications..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -234,10 +234,10 @@ const NotificationPage = () => {
       </div>
 
       {/* ── Notification List ───────────────────────────────────────── */}
-      <div className={styles.listSection}>
+      <div className="listSection">
         {filtered.length === 0 ? (
-          <div className={styles.empty}>
-            <IconBell className={styles.emptyIcon} />
+          <div className="empty">
+            <IconBell className="emptyIcon" />
             <h3>No notifications found</h3>
             <p>
               {searchQuery
@@ -251,34 +251,34 @@ const NotificationPage = () => {
           filtered.map((n) => (
             <div
               key={n.id}
-              className={`${styles.item} ${n.read ? styles.itemRead : styles.itemUnread} ${expandedId === n.id ? styles.itemExpanded : ''}`}
+              className={`item ${n.read ? 'itemRead' : 'itemUnread'} ${expandedId === n.id ? 'itemExpanded' : ''}`}
             >
-              <div className={styles.itemMain} onClick={() => setExpandedId(expandedId === n.id ? null : n.id)}>
-                <div className={`${styles.itemIcon} ${getTypeColor(n.type)}`}>
+              <div className="itemMain" onClick={() => setExpandedId(expandedId === n.id ? null : n.id)}>
+                <div className={`itemIcon ${getTypeColor(n.type)}`}>
                   <TypeIcon type={n.type} />
                 </div>
-                <div className={styles.itemBody}>
-                  <div className={styles.itemHeader}>
-                    <span className={styles.itemTitle}>{n.title}</span>
-                    <span className={styles.itemTime}>{n.time}</span>
+                <div className="itemBody">
+                  <div className="itemHeader">
+                    <span className="itemTitle">{n.title}</span>
+                    <span className="itemTime">{n.time}</span>
                   </div>
-                  <p className={styles.itemMessage}>{n.message}</p>
+                  <p className="itemMessage">{n.message}</p>
                   {expandedId === n.id && n.details && (
-                    <div className={styles.itemDetails}>
+                    <div className="itemDetails">
                       <p>{n.details}</p>
                     </div>
                   )}
                 </div>
-                <div className={styles.itemActions}>
+                <div className="itemActions">
                   <button
-                    className={styles.actionBtn}
+                    className="actionBtn"
                     onClick={(e) => { e.stopPropagation(); toggleRead(n.id); }}
                     title={n.read ? 'Mark as unread' : 'Mark as read'}
                   >
                     <IconRead fill={n.read ? 'none' : 'currentColor'} />
                   </button>
                   <button
-                    className={styles.actionBtn}
+                    className="actionBtn"
                     onClick={(e) => { e.stopPropagation(); dismissNotification(n.id); }}
                     title="Dismiss"
                   >

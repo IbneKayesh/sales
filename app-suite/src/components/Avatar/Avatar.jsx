@@ -1,15 +1,14 @@
-import React from 'react';
-import styles from './Avatar.module.css';
 
+import './Avatar.css';
 const Avatar = ({ src, alt = 'User Avatar', size = 'medium', className = '' }) => {
-  const sizeClass = styles[size] || styles.medium;
+  const sizeClass = size || 'medium';
   
   return (
-    <div className={`${styles.avatarContainer} ${sizeClass} ${className}`}>
+    <div className={`avatarContainer ${sizeClass} ${className}`}>
       {src ? (
-        <img src={src} alt={alt} className={styles.avatarImg} />
+        <img src={src} alt={alt} className="avatarImg" />
       ) : (
-        <span className={styles.initials}>{alt.charAt(0).toUpperCase()}</span>
+        <span className="initials">{alt.charAt(0).toUpperCase()}</span>
       )}
     </div>
   );

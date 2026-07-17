@@ -1,14 +1,14 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { IconSearch, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconCheck, IconGridRect, IconFileExcel } from '@/assets/icons';
-import styles from './DataTable.module.css';
+import { useState, useMemo, useRef, useEffect } from 'react';
 
+import { IconSearch, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconCheck, IconGridRect, IconFileExcel } from '@/assets/icons';
+import './DataTable.css';
 // ── Icons ──────────────────────────────────────────────────────────────────
 const SortIcon = ({ active, dir }) => {
   const Icon = dir === 'asc' ? IconChevronUp : IconChevronDown;
-  return <Icon className={`${styles.sortIcon} ${active ? styles.sortIconActive : ''}`} />;
+  return <Icon className={`sortIcon ${active ? 'sortIconActive' : ''}`} />;
 };
 
-const TableSearchIcon = () => <IconSearch className={styles.searchSvg} />;
+const TableSearchIcon = () => <IconSearch className="searchSvg" />;
 const TableChevronLeft = () => <IconChevronLeft width="14" height="14" />;
 const TableChevronRight = () => <IconChevronRight width="14" height="14" />;
 const TableColumnsIcon = () => <IconGridRect width="14" height="14" />;
@@ -301,35 +301,35 @@ const DataTable = ({
 
   // ── Render ─────────────────────────────────────────────────────────────
   return (
-    <div className={`${styles.wrapper} ${className || ''}`}>
+    <div className={`wrapper ${className || ''}`}>
       {/* ── Toolbar ──────────────────────────────────────────────────── */}
       {(searchable || columnToggle || toolbarActions) && (
-        <div className={styles.toolbar}>
-          <div className={styles.toolbarLeft}>
+        <div className="toolbar">
+          <div className="toolbarLeft">
             {toolbarActions}
           </div>
-          <div className={styles.toolbarRight}>
+          <div className="toolbarRight">
             {searchable && (
-              <div className={styles.searchWrapper}>
+              <div className="searchWrapper">
                 <TableSearchIcon />
                 <input
                   ref={searchInputRef}
                   type="text"
-                  className={styles.searchInput}
+                  className="searchInput"
                   placeholder={searchPlaceholder}
                   value={searchQuery}
                   onChange={(e) => onSearchChange?.(e.target.value)}
                 />
                 {searchQuery && (
-                  <button className={styles.searchClear} onClick={() => onSearchChange?.('')}>
+                  <button className="searchClear" onClick={() => onSearchChange?.('')}>
                     ×
                   </button>
                 )}
               </div>
             )}
             {exportable && (
-              <div className={styles.exportDropdown} ref={exportMenuRef}>                    <button
-                  className={`${styles.exportBtn} ${showExportMenu ? styles.exportBtnOpen : ''}`}
+              <div className="exportDropdown" ref={exportMenuRef}>                    <button
+                  className={`exportBtn ${showExportMenu ? 'exportBtnOpen' : ''}`}
                   onClick={() => setShowExportMenu((p) => !p)}
                   title="Export data"
                 >
@@ -337,44 +337,44 @@ const DataTable = ({
                   <span>Export</span>
                 </button>
                 {showExportMenu && (
-                  <div className={styles.exportMenu} role="menu" aria-label="Export options">
+                  <div className="exportMenu" role="menu" aria-label="Export options">
                     <button
-                      className={styles.exportMenuItem}
+                      className="exportMenuItem"
                       onClick={() => handleExport('all')}
                       role="menuitem"
                     >
-                      <span className={styles.exportMenuIcon}><IconFileExcel /></span>
-                      <span className={styles.exportMenuLabel}>Export CSV</span>
-                      <span className={styles.exportMenuHint}>Filtered view as CSV</span>
+                      <span className="exportMenuIcon"><IconFileExcel /></span>
+                      <span className="exportMenuLabel">Export CSV</span>
+                      <span className="exportMenuHint">Filtered view as CSV</span>
                     </button>
                     {paginated && (
                       <button
-                        className={styles.exportMenuItem}
+                        className="exportMenuItem"
                         onClick={() => handleExport('page')}
                         role="menuitem"
                       >
-                        <span className={styles.exportMenuIcon}><IconFileExcel /></span>
-                        <span className={styles.exportMenuLabel}>Export Current Page</span>
-                        <span className={styles.exportMenuHint}>Page {currentPage} only</span>
+                        <span className="exportMenuIcon"><IconFileExcel /></span>
+                        <span className="exportMenuLabel">Export Current Page</span>
+                        <span className="exportMenuHint">Page {currentPage} only</span>
                       </button>
                     )}
                     <button
-                      className={styles.exportMenuItem}
+                      className="exportMenuItem"
                       onClick={() => handleExport('full')}
                       role="menuitem"
                     >
-                      <span className={styles.exportMenuIcon}><IconFileExcel /></span>
-                      <span className={styles.exportMenuLabel}>Export All Pages</span>
-                      <span className={styles.exportMenuHint}>Unfiltered full dataset</span>
+                      <span className="exportMenuIcon"><IconFileExcel /></span>
+                      <span className="exportMenuLabel">Export All Pages</span>
+                      <span className="exportMenuHint">Unfiltered full dataset</span>
                     </button>
                   </div>
                 )}
               </div>
             )}
             {columnToggle && (
-              <div className={styles.columnToggle} ref={columnMenuRef}>
+              <div className="columnToggle" ref={columnMenuRef}>
                 <button
-                  className={styles.colToggleBtn}
+                  className="colToggleBtn"
                   onClick={() => setShowColumnMenu((p) => !p)}
                   title="Toggle columns"
                 >
@@ -382,13 +382,13 @@ const DataTable = ({
                   <span>Columns</span>
                 </button>
                 {showColumnMenu && (
-                  <div className={styles.colMenu}>
+                  <div className="colMenu">
                     {columns.map((col) => {
                       const isHidden = hiddenColumns.includes(col.key);
                       return (
                         <div
                           key={col.key}
-                          className={styles.colMenuItem}
+                          className="colMenuItem"
                           role="menuitemcheckbox"
                           aria-checked={!isHidden}
                           onClick={() =>
@@ -399,7 +399,7 @@ const DataTable = ({
                             )
                           }
                         >
-                          <span className={`${styles.colCheckbox} ${!isHidden ? styles.colCheckboxChecked : ''}`}>
+                          <span className={`colCheckbox ${!isHidden ? 'colCheckboxChecked' : ''}`}>
                             {!isHidden && <TableCheckIcon />}
                           </span>
                           <span>{col.label || col.key}</span>
@@ -415,19 +415,19 @@ const DataTable = ({
       )}
 
       {/* ── Table area ────────────────────────────────────────────────── */}
-      <div className={styles.tableScroll}>
-        <table className={`${styles.table} ${compact ? styles.tableCompact : ''}`}>
+      <div className="tableScroll">
+        <table className={`table ${compact ? 'tableCompact' : ''}`}>
           {/* ── Header ────────────────────────────────────────────────── */}
           <thead ref={headerRef}>
-            <tr className={styles.headerRow}>
+            <tr className="headerRow">
               {selectable && (
-                <th className={`${styles.th} ${styles.thCheckbox}`} onClick={(e) => e.stopPropagation()}>
+                <th className={`th thCheckbox`} onClick={(e) => e.stopPropagation()}>
                   <span
-                    className={`${styles.selectCheckbox} ${allSelected ? styles.selectChecked : someSelected ? styles.selectIndeterminate : ''}`}
+                    className={`selectCheckbox ${allSelected ? 'selectChecked' : someSelected ? 'selectIndeterminate' : ''}`}
                     onClick={handleSelectAll}
                   >
                     {allSelected && <TableCheckIcon />}
-                    {someSelected && <span className={styles.indeterminateDash} />}
+                    {someSelected && <span className="indeterminateDash" />}
                   </span>
                 </th>
               )}
@@ -439,15 +439,15 @@ const DataTable = ({
                 return (
                   <th
                     key={col.key}
-                    className={`${styles.th} ${col.className || ''} ${
-                      col.align === 'right' ? styles.thRight : col.align === 'center' ? styles.thCenter : ''
-                    } ${colSortable ? styles.thSortable : ''} ${isSorted ? styles.thSorted : ''} ${colSearchable ? styles.thSearchable : ''}`}
+                    className={`th ${col.className || ''} ${
+                      col.align === 'right' ? 'thRight' : col.align === 'center' ? 'thCenter' : ''
+                    } ${colSortable ? 'thSortable' : ''} ${isSorted ? 'thSorted' : ''} ${colSearchable ? 'thSearchable' : ''}`}
                     style={col.width ? { width: col.width, minWidth: col.width } : undefined}
                     onClick={colSortable ? () => handleSort(col.key) : undefined}
                     role={colSortable ? 'columnheader' : undefined}
                     aria-sort={isSorted ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}
                   >
-                    <span className={styles.thContent}>
+                    <span className="thContent">
                       {col.label || col.key}
                       {colSortable && (
                         <SortIcon
@@ -457,11 +457,11 @@ const DataTable = ({
                       )}
                     </span>
                     {colSearchable && (
-                      <div className={styles.colSearchWrap}>
+                      <div className="colSearchWrap">
                         <input
                           ref={(el) => { columnSearchRefs.current[col.key] = el; }}
                           type="text"
-                          className={styles.colSearchInput}
+                          className="colSearchInput"
                           placeholder="Filter…"
                           value={colQuery}
                           onChange={(e) => handleColumnSearch(col.key, e.target.value)}
@@ -469,7 +469,7 @@ const DataTable = ({
                         />
                         {colQuery && (
                           <button
-                            className={styles.colSearchClear}
+                            className="colSearchClear"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleColumnSearch(col.key, '');
@@ -490,20 +490,20 @@ const DataTable = ({
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={visibleColumns.length + (selectable ? 1 : 0)} className={styles.loadingCell}>
-                  <div className={styles.loader}>
-                    <span className={styles.loaderBar} />
+                <td colSpan={visibleColumns.length + (selectable ? 1 : 0)} className="loadingCell">
+                  <div className="loader">
+                    <span className="loaderBar" />
                   </div>
-                  <span className={styles.loaderText}>Loading data…</span>
+                  <span className="loaderText">Loading data…</span>
                 </td>
               </tr>
             ) : displayData.length === 0 ? (
               <tr>
-                <td colSpan={visibleColumns.length + (selectable ? 1 : 0)} className={styles.emptyCell}>
-                  <IconMinusCircle className={styles.emptyIcon} />
-                  <span className={styles.emptyText}>{emptyMessage}</span>
+                <td colSpan={visibleColumns.length + (selectable ? 1 : 0)} className="emptyCell">
+                  <IconMinusCircle className="emptyIcon" />
+                  <span className="emptyText">{emptyMessage}</span>
                   {emptyAction && (
-                    <button className={styles.emptyActionBtn} onClick={emptyAction.onClick}>
+                    <button className="emptyActionBtn" onClick={emptyAction.onClick}>
                       {emptyAction.label}
                     </button>
                   )}
@@ -517,18 +517,18 @@ const DataTable = ({
                 return (
                   <tr
                     key={rowId ?? idx}
-                    className={`${styles.row} ${idx % 2 === 0 ? styles.rowEven : ''} ${
-                      isSelected ? styles.rowSelected : ''
-                    } ${isHovered ? styles.rowHover : ''} ${onRowClick ? styles.rowClickable : ''}`}
+                    className={`row ${idx % 2 === 0 ? 'rowEven' : ''} ${
+                      isSelected ? 'rowSelected' : ''
+                    } ${isHovered ? 'rowHover' : ''} ${onRowClick ? 'rowClickable' : ''}`}
                     onClick={() => onRowClick?.(row)}
                     onDoubleClick={() => onRowDoubleClick?.(row)}
                     onMouseEnter={() => setHoveredRow(rowId)}
                     onMouseLeave={() => setHoveredRow(null)}
                   >
                     {selectable && (
-                      <td className={`${styles.td} ${styles.tdCheckbox}`} onClick={(e) => e.stopPropagation()}>
+                      <td className={`td tdCheckbox`} onClick={(e) => e.stopPropagation()}>
                         <span
-                          className={`${styles.selectCheckbox} ${isSelected ? styles.selectChecked : ''}`}
+                          className={`selectCheckbox ${isSelected ? 'selectChecked' : ''}`}
                           onClick={() => handleSelectRow(rowId)}
                         >
                           {isSelected && <TableCheckIcon />}
@@ -541,9 +541,9 @@ const DataTable = ({
                       return (
                         <td
                           key={col.key}
-                          className={`${styles.td} ${col.className || ''} ${
-                            col.align === 'right' ? styles.tdRight : col.align === 'center' ? styles.tdCenter : ''
-                          } ${col.mono ? styles.tdMono : ''} ${col.nowrap ? styles.tdNowrap : ''}`}
+                          className={`td ${col.className || ''} ${
+                            col.align === 'right' ? 'tdRight' : col.align === 'center' ? 'tdCenter' : ''
+                          } ${col.mono ? 'tdMono' : ''} ${col.nowrap ? 'tdNowrap' : ''}`}
                           style={col.width ? { maxWidth: col.width } : undefined}
                         >
                           {rendered}
@@ -560,13 +560,13 @@ const DataTable = ({
 
       {/* ── Footer / Pagination ────────────────────────────────────────── */}
       {paginated && totalPages > 1 && (
-        <div className={styles.pagination}>
-          <span className={styles.pageInfo}>
+        <div className="pagination">
+          <span className="pageInfo">
             {processedData.length} rows · Page {currentPage} of {totalPages}
           </span>
-          <div className={styles.pageControls}>
+          <div className="pageControls">
             <button
-              className={styles.pageBtn}
+              className="pageBtn"
               disabled={currentPage <= 1}
               onClick={() => goToPage(currentPage - 1)}
               aria-label="Previous page"
@@ -582,12 +582,12 @@ const DataTable = ({
               })
               .reduce((acc, p, i, arr) => {
                 if (i > 0 && p - arr[i - 1] > 1) {
-                  acc.push(<span key={`ellipsis-${p}`} className={styles.pageEllipsis}>…</span>);
+                  acc.push(<span key={`ellipsis-${p}`} className="pageEllipsis">…</span>);
                 }
                 acc.push(
                   <button
                     key={p}
-                    className={`${styles.pageNumBtn} ${p === currentPage ? styles.pageNumBtnActive : ''}`}
+                    className={`pageNumBtn ${p === currentPage ? 'pageNumBtnActive' : ''}`}
                     onClick={() => goToPage(p)}
                   >
                     {p}
@@ -596,7 +596,7 @@ const DataTable = ({
                 return acc;
               }, [])}
             <button
-              className={styles.pageBtn}
+              className="pageBtn"
               disabled={currentPage >= totalPages}
               onClick={() => goToPage(currentPage + 1)}
               aria-label="Next page"
@@ -608,7 +608,7 @@ const DataTable = ({
       )}
 
       {!paginated && data.length > 0 && (
-        <div className={styles.rowCount}>
+        <div className="rowCount">
           {data.length} row{data.length !== 1 ? 's' : ''}
         </div>
       )}

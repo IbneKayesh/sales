@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect, useMemo, useCallback, useId, useLayoutEffect } from 'react';
-import { IconSearch, IconChevronDown, IconClose } from '@/assets/icons';
-import styles from './Dropdown.module.css';
+import { useState, useRef, useEffect, useMemo, useCallback, useId, useLayoutEffect } from 'react';
 
+import { IconSearch, IconChevronDown, IconClose } from '@/assets/icons';
+import './Dropdown.css';
 const Dropdown = ({
   label,
   options = [],
@@ -112,70 +112,70 @@ const Dropdown = ({
   }, [isOpen, close]);
 
   return (
-    <div className={`${styles.wrapper} ${className || ''}`} ref={containerRef}>
+    <div className={`pos-relative d-flex flex-column gap-2 ${className || ''}`} ref={containerRef}>
       {label && (
-        <label className={styles.label} htmlFor={dropdownId}>
+        <label className="fs-10 fw-600 text-secondary text-uppercase user-select-none" htmlFor={dropdownId} style={{letterSpacing:'0.3px'}}>
           {label}
-          {required && <span className={styles.required}> *</span>}
+          {required && <span className="text-danger"> *</span>}
         </label>
       )}
 
       <button
         id={dropdownId}
         type="button"
-        className={`${styles.trigger} ${isOpen ? styles.triggerOpen : ''} ${error ? styles.triggerError : ''} ${disabled ? styles.triggerDisabled : ''}`}
+        className={`d-flex ai-center jc-between gap-1 w-100 px-2 py-1-5 rounded-sm border bg-transparent fs-11 text-left cursor-pointer user-select-none ${isOpen ? 'triggerOpen' : ''} ${error ? 'triggerError' : ''} ${disabled ? 'triggerDisabled' : ''}`}
         onClick={toggle}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         disabled={disabled}
       >
-        <span className={`${styles.triggerText} ${!selectedOption ? styles.triggerPlaceholder : ''}`}>
+        <span className={`flex-1 text-nowrap text-truncate ${!selectedOption ? 'text-muted' : ''}`}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <span className={styles.triggerIcons}>
+        <span className="d-flex ai-center gap-0 flex-shrink-0">
           {clearable && value && (
-            <span className={styles.clearBtn} onClick={handleClear} role="button" aria-label="Clear selection">
+            <span className="d-flex ai-center jc-center w-14 h-14 rounded-circle text-muted" onClick={handleClear} role="button" aria-label="Clear selection" style={{transition:'all 0.12s ease'}}>
               <IconClose size={12} />
             </span>
           )}
-          <span className={`${styles.arrow} ${isOpen ? styles.arrowOpen : ''}`}>
+          <span className={`d-flex ai-center text-muted ${isOpen ? 'arrowOpen' : ''}`}>
             <IconChevronDown size={14} />
           </span>
         </span>
       </button>
 
-      {error && <span className={styles.errorText}>{error}</span>}
+      {error && <span className="fs-9 text-danger" style={{lineHeight:'1.2', minHeight:'10px'}}>{error}</span>}
 
       {/* ── Dropdown Panel ──────────────────────────────────────────── */}
       {isOpen && (
         <div
           ref={panelRef}
-          className={`${styles.panel} ${flipUp ? styles.panelUp : styles.panelDown}`}
+          className={`panel ${flipUp ? 'panelUp' : 'panelDown'}`}
           role="listbox"
           aria-label={label || 'Select options'}
         >
           {searchable && (
-            <div className={styles.searchWrapper}>
-              <IconSearch className={styles.searchIcon} />
+            <div className="pos-relative d-flex ai-center px-1-5 py-1-5 border-bottom" style={{borderColor:'var(--glass-border-medium)'}}>
+              <IconSearch className="pos-absolute w-12 h-12 text-muted pointer-events-none" style={{left:'12px'}} />
               <input
                 ref={searchRef}
                 type="text"
-                className={styles.searchInput}
+                className="searchInput w-100 px-1-5 py-1 rounded-sm border bg-none fs-11 text-primary"
                 placeholder={searchPlaceholder}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
               {search && (
-                <button className={styles.searchClear} onClick={() => setSearch('')}>
+                <button className="pos-absolute d-flex ai-center jc-center w-14 h-14 rounded-circle text-muted" onClick={() => setSearch('')} style={{right:'10px'}}>
                   <IconClose size={12} />
                 </button>
               )}
             </div>
           )}
 
-          <div className={styles.optionsList}>
+          <div className="optionsList overflow-y-auto" style={{maxHeight:'300px', padding:'2px'}}>
             {filteredOptions.length === 0 ? (
-              <div className={styles.emptyState}>
+              <div className="py-3 px-2 text-center fs-11 text-muted">
                 {search ? `No results for "${search}"` : 'No options available'}
               </div>
             ) : (
@@ -185,18 +185,18 @@ const Dropdown = ({
                   <button
                     key={opt.value}
                     type="button"
-                    className={`${styles.optionItem} ${isSelected ? styles.optionSelected : ''}`}
+                    className={`d-flex ai-center gap-1 w-100 px-2 py-1 rounded-sm fs-11 fw-500 text-secondary bg-none border-none text-left cursor-pointer ${isSelected ? 'optionSelected' : ''}`}
                     onClick={() => handleSelect(opt)}
                     role="option"
                     aria-selected={isSelected}
                   >
                     {opt.icon && (
-                      <span className={styles.optionIcon}>{opt.icon}</span>
+                      <span className="d-flex ai-center flex-shrink-0">{opt.icon}</span>
                     )}
-                    <span className={styles.optionLabel}>
+                    <span className="flex-1 text-nowrap text-truncate">
                       {opt.label || String(opt.value)}
                     </span>
-                    {isSelected && <span className={styles.optionCheck}>✓</span>}
+                    {isSelected && <span className="flex-shrink-0 fs-10 text-accent">✓</span>}
                   </button>
                 );
               })

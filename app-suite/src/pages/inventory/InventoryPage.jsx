@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+
 import { useToast, useConfirm } from '@/context/FeedbackContext';
 import { IconSearch, IconPlus, IconEdit, IconDelete } from '@/assets/icons';
 import { fmtCurrency, fmtDate } from '@/utils/dataFormat';
 import PageShell from '@/components/PageShell/PageShell';
 import useInventory from '../../hooks/useInventory';
 import DataTable from '../../components/DataTable/DataTable';
-import styles from './InventoryPage.module.css';
-
+import './InventoryPage.css';
 const EMPTY_FORM = { name: '', sku: '', category: '', stock: '', price: '' };
 
 // ── Inventory App ──────────────────────────────────────────────────────────
@@ -134,10 +134,10 @@ const InventoryPage = () => {
   });
 
   const stockColor = (stock) => {
-    if (stock === 0) return styles.stockNone;
-    if (stock < 10) return styles.stockCritical;
-    if (stock < 20) return styles.stockLow;
-    return styles.stockOk;
+    if (stock === 0) return 'stockNone';
+    if (stock < 10) return 'stockCritical';
+    if (stock < 20) return 'stockLow';
+    return 'stockOk';
   };
 
   // ── Render ──────────────────────────────────────────────────────────────
@@ -152,18 +152,18 @@ const InventoryPage = () => {
       <PageShell.Actions>
         {isListView ? (
           <>
-            <div className={styles.searchWrapper}>
-              <IconSearch className={styles.searchIcon} />
+            <div className="searchWrapper">
+              <IconSearch className="searchIcon" />
               <input
                 type="text"
-                className={styles.searchInput}
+                className="searchInput"
                 placeholder="Search product or SKU…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <select
-              className={styles.filterSelect}
+              className="filterSelect"
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
               aria-label="Filter by category"
@@ -172,13 +172,13 @@ const InventoryPage = () => {
                 <option key={c} value={c}>{c}</option>
               ))}
             </select>
-            <button className={styles.addBtn} onClick={startAdd}>
-              <IconPlus className={styles.addIcon} />
+            <button className="addBtn" onClick={startAdd}>
+              <IconPlus className="addIcon" />
               Add Product
             </button>
           </>
         ) : (
-          <button className={styles.backBtn} onClick={cancelForm}>
+          <button className="backBtn" onClick={cancelForm}>
             Cancel
           </button>
         )}
@@ -205,19 +205,19 @@ const InventoryPage = () => {
                 key: 'name',
                 label: 'Product',
                 sortable: true,
-                render: (val) => <span className={styles.productName}>{val}</span>,
+                render: (val) => <span className="productName">{val}</span>,
               },
               {
                 key: 'sku',
                 label: 'SKU',
                 sortable: true,
-                render: (val) => <code className={styles.sku}>{val}</code>,
+                render: (val) => <code className="sku">{val}</code>,
               },
               {
                 key: 'category',
                 label: 'Category',
                 sortable: true,
-                render: (val) => <span className={styles.categoryBadge}>{val}</span>,
+                render: (val) => <span className="categoryBadge">{val}</span>,
               },
               {
                 key: 'stock',
@@ -225,7 +225,7 @@ const InventoryPage = () => {
                 align: 'right',
                 sortable: true,
                 render: (val, row) => (
-                  <span className={`${styles.stockBadge} ${stockColor(val)}`}>{val}</span>
+                  <span className={`stockBadge ${stockColor(val)}`}>{val}</span>
                 ),
               },
               {
@@ -239,31 +239,31 @@ const InventoryPage = () => {
                 key: '',
                 label: 'Total Value',
                 align: 'right',
-                render: (_, row) => <span className={styles.totalVal}>{fmtCurrency(row.stock * row.price)}</span>,
+                render: (_, row) => <span className="totalVal">{fmtCurrency(row.stock * row.price)}</span>,
               },
               {
                 key: 'createdAt',
                 label: 'Added',
                 sortable: true,
-                render: (val) => <span className={styles.muted}>{fmtDate(val)}</span>,
+                render: (val) => <span className="muted">{fmtDate(val)}</span>,
               },
               {
                 key: 'actions',
                 label: '',
                 width: 80,
                 render: (_, row) => (
-                  <div className={styles.actionsCell}>
-                    <button className={styles.editBtn} onClick={() => startEdit(row.id)} aria-label="Edit product">
+                  <div className="actionsCell">
+                    <button className="editBtn" onClick={() => startEdit(row.id)} aria-label="Edit product">
                       <IconEdit />
                     </button>
                     <button
-                      className={styles.deleteBtn}
+                      className="deleteBtn"
                       onClick={() => handleDelete(row.id, row.name)}
                       disabled={deletingId === row.id}
                       aria-label="Delete product"
                     >
                       {deletingId === row.id ? (
-                        <span className={styles.deleteSpinner} />
+                        <span className="deleteSpinner" />
                       ) : (
                         <IconDelete />
                       )}
@@ -281,39 +281,39 @@ const InventoryPage = () => {
             emptyAction={{ label: 'Add Product', onClick: startAdd }}
           />
         ) : (
-          <form onSubmit={handleSubmit} id="inv-form" className={styles.form}>
-            <div className={styles.formGrid}>
-              <div className={styles.fieldGroup}>
-                <label className={styles.label} htmlFor="inv-name">Product Name *</label>
-                <input id="inv-name" type="text" className={styles.input} placeholder="e.g. AI Inference Unit" {...field('name')} />
-                {formErrors.name && <span className={styles.fieldError}>{formErrors.name}</span>}
+          <form onSubmit={handleSubmit} id="inv-form" className="form">
+            <div className="formGrid">
+              <div className="fieldGroup">
+                <label className="label" htmlFor="inv-name">Product Name *</label>
+                <input id="inv-name" type="text" className="input" placeholder="e.g. AI Inference Unit" {...field('name')} />
+                {formErrors.name && <span className="fieldError">{formErrors.name}</span>}
               </div>
-              <div className={styles.fieldGroup}>
-                <label className={styles.label} htmlFor="inv-sku">SKU *</label>
-                <input id="inv-sku" type="text" className={styles.input} placeholder="e.g. AIU-005" {...field('sku')} />
-                {formErrors.sku && <span className={styles.fieldError}>{formErrors.sku}</span>}
+              <div className="fieldGroup">
+                <label className="label" htmlFor="inv-sku">SKU *</label>
+                <input id="inv-sku" type="text" className="input" placeholder="e.g. AIU-005" {...field('sku')} />
+                {formErrors.sku && <span className="fieldError">{formErrors.sku}</span>}
               </div>
-              <div className={styles.fieldGroup}>
-                <label className={styles.label} htmlFor="inv-category">Category *</label>
-                <input id="inv-category" type="text" className={styles.input} placeholder="e.g. Hardware, Software" {...field('category')} />
-                {formErrors.category && <span className={styles.fieldError}>{formErrors.category}</span>}
+              <div className="fieldGroup">
+                <label className="label" htmlFor="inv-category">Category *</label>
+                <input id="inv-category" type="text" className="input" placeholder="e.g. Hardware, Software" {...field('category')} />
+                {formErrors.category && <span className="fieldError">{formErrors.category}</span>}
               </div>
-              <div className={styles.fieldGroup}>
-                <label className={styles.label} htmlFor="inv-stock">Stock Quantity *</label>
-                <input id="inv-stock" type="number" min="0" className={styles.input} placeholder="0" {...field('stock')} />
-                {formErrors.stock && <span className={styles.fieldError}>{formErrors.stock}</span>}
+              <div className="fieldGroup">
+                <label className="label" htmlFor="inv-stock">Stock Quantity *</label>
+                <input id="inv-stock" type="number" min="0" className="input" placeholder="0" {...field('stock')} />
+                {formErrors.stock && <span className="fieldError">{formErrors.stock}</span>}
               </div>
-              <div className={styles.fieldGroup}>
-                <label className={styles.label} htmlFor="inv-price">Unit Price (USD) *</label>
-                <input id="inv-price" type="number" min="0.01" step="0.01" className={styles.input} placeholder="0.00" {...field('price')} />
-                {formErrors.price && <span className={styles.fieldError}>{formErrors.price}</span>}
+              <div className="fieldGroup">
+                <label className="label" htmlFor="inv-price">Unit Price (USD) *</label>
+                <input id="inv-price" type="number" min="0.01" step="0.01" className="input" placeholder="0.00" {...field('price')} />
+                {formErrors.price && <span className="fieldError">{formErrors.price}</span>}
               </div>
             </div>
 
             {Number(form.stock) > 0 && Number(form.price) > 0 && (
-              <div className={styles.preview}>
-                <span className={styles.previewLabel}>Estimated Value</span>
-                <span className={styles.previewValue}>{fmtCurrency(Number(form.stock) * Number(form.price))}</span>
+              <div className="preview">
+                <span className="previewLabel">Estimated Value</span>
+                <span className="previewValue">{fmtCurrency(Number(form.stock) * Number(form.price))}</span>
               </div>
             )}
           </form>
@@ -322,9 +322,9 @@ const InventoryPage = () => {
 
       {!isListView && (
         <PageShell.Footer>
-          <button type="submit" form="inv-form" className={styles.submitBtn} disabled={submitting}>
+          <button type="submit" form="inv-form" className="submitBtn" disabled={submitting}>
             {submitting ? (
-              <span className={styles.spinner} />
+              <span className="spinner" />
             ) : (
               view === 'add' ? 'Add Product' : 'Save Changes'
             )}

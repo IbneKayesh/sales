@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+
 import { useToast, useConfirm } from '@/context/FeedbackContext';
 import { IconFilePdf, IconFileImage, IconFileCode, IconFile, IconTrash, IconCheck, IconCheckboxUnchecked, IconCheckboxChecked, IconRestore, IconClose } from '@/assets/icons';
-import styles from './TrashPage.module.css';
-
+import './TrashPage.css';
 // ── Mock deleted items ────────────────────────────────────────────────────
 const INITIAL_ITEMS = [
   {
@@ -66,9 +66,9 @@ const typeIcon = (type) => {
 
 const typeBadge = (type) => {
   switch (type) {
-    case 'pdf':   return styles.badgePdf;
-    case 'image': return styles.badgeImage;
-    case 'code':  return styles.badgeCode;
+    case 'pdf':   return 'badgePdf';
+    case 'image': return 'badgeImage';
+    case 'code':  return 'badgeCode';
     default:      return '';
   }
 };
@@ -125,43 +125,43 @@ const TrashPage = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div className="page">
       {/* ── Header ─────────────────────────────────────────────────── */}
-      <div className={styles.header}>
-        <div className={styles.headerLeft}>
-          <div className={styles.trashIcon}>
+      <div className="header">
+        <div className="headerLeft">
+          <div className="trashIcon">
             <IconTrash />
           </div>
           <div>
-            <h1 className={styles.title}>Trash</h1>
-            <span className={styles.subtitle}>
+            <h1 className="title">Trash</h1>
+            <span className="subtitle">
               {items.length === 0
                 ? 'Trash is empty'
                 : `${items.length} item${items.length !== 1 ? 's' : ''} — items are permanently deleted after 30 days`}
             </span>
           </div>
         </div>
-        <div className={styles.headerActions}>
+        <div className="headerActions">
           {items.length > 0 && (
             <>
-              <button className={styles.actionBtn} onClick={selectAll}>
+              <button className="actionBtn" onClick={selectAll}>
                 {selected.size === items.length ? (
-                  <IconCheckboxChecked className={styles.btnIcon} />
+                  <IconCheckboxChecked className="btnIcon" />
                 ) : (
-                  <IconCheckboxUnchecked className={styles.btnIcon} />
+                  <IconCheckboxUnchecked className="btnIcon" />
                 )}
                 {selected.size === items.length ? 'Deselect All' : 'Select All'}
               </button>
 
               {selected.size > 0 && (
-                <button className={styles.actionBtn} onClick={restoreSelected}>
-                  <IconRestore className={styles.btnIcon} />
+                <button className="actionBtn" onClick={restoreSelected}>
+                  <IconRestore className="btnIcon" />
                   Restore ({selected.size})
                 </button>
               )}
 
-              <button className={`${styles.actionBtn} ${styles.actionDanger}`} onClick={emptyTrash}>
-                <IconTrash className={styles.btnIcon} />
+              <button className={`actionBtn actionDanger`} onClick={emptyTrash}>
+                <IconTrash className="btnIcon" />
                 Empty Trash
               </button>
             </>
@@ -170,45 +170,45 @@ const TrashPage = () => {
       </div>
 
       {/* ── Item List ───────────────────────────────────────────────── */}
-      <div className={styles.listSection}>
+      <div className="listSection">
         {items.length === 0 ? (
-          <div className={styles.empty}>
-            <IconTrash className={styles.emptyIcon} />
+          <div className="empty">
+            <IconTrash className="emptyIcon" />
             <h3>Trash is empty</h3>
             <p>Deleted files and folders will appear here for 30 days before permanent erasure.</p>
           </div>
         ) : (
           <>
-            <div className={styles.listHeader}>
-              <span className={styles.colName}>Name</span>
-              <span className={styles.colFrom}>Deleted From</span>
-              <span className={styles.colSize}>Size</span>
-              <span className={styles.colDate}>Deleted</span>
-              <span className={styles.colAction} />
+            <div className="listHeader">
+              <span className="colName">Name</span>
+              <span className="colFrom">Deleted From</span>
+              <span className="colSize">Size</span>
+              <span className="colDate">Deleted</span>
+              <span className="colAction" />
             </div>
             {items.map((item) => (
               <div
                 key={item.id}
-                className={`${styles.itemRow} ${selected.has(item.id) ? styles.itemSelected : ''}`}
+                className={`itemRow ${selected.has(item.id) ? 'itemSelected' : ''}`}
               >
-                <div className={styles.itemCheck} onClick={() => toggleSelect(item.id)}>
-                  <div className={`${styles.checkbox} ${selected.has(item.id) ? styles.checkboxChecked : ''}`}>
+                <div className="itemCheck" onClick={() => toggleSelect(item.id)}>
+                  <div className={`checkbox ${selected.has(item.id) ? 'checkboxChecked' : ''}`}>
                     {selected.has(item.id) && (
                       <IconCheck />
                     )}
                   </div>
                 </div>
-                <div className={styles.cellName}>
-                  <div className={`${styles.itemIcon} ${typeBadge(item.type)}`}>
+                <div className="cellName">
+                  <div className={`itemIcon ${typeBadge(item.type)}`}>
                     {typeIcon(item.type)}
                   </div>
-                  <span className={styles.itemName}>{item.name}</span>
+                  <span className="itemName">{item.name}</span>
                 </div>
-                <span className={styles.cellFrom}>{item.deletedFrom}</span>
-                <span className={styles.cellSize}>{item.size}</span>
-                <span className={styles.cellDate}>{item.deletedDate}</span>
-                <div className={styles.cellAction}>
-                  <button className={styles.restoreBtn} onClick={() => restoreItem(item.id)} title="Restore">
+                <span className="cellFrom">{item.deletedFrom}</span>
+                <span className="cellSize">{item.size}</span>
+                <span className="cellDate">{item.deletedDate}</span>
+                <div className="cellAction">
+                  <button className="restoreBtn" onClick={() => restoreItem(item.id)} title="Restore">
                     <IconRestore />
                   </button>
                 </div>

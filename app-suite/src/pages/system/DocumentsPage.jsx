@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+
 import { IconFolderOpen, IconFile, IconFileImage, IconFileCode, IconFilePdf, IconHomeSimple, IconTrendingUp, IconPencil, IconSearch, IconSearch as IconSearchIcon, IconMore } from '@/assets/icons';
 import CollapsiblePanel from '@/components/CollapsiblePanel/CollapsiblePanel';
-import styles from './DocumentsPage.module.css';
-
+import './DocumentsPage.css';
 const typeIcon = (type) => {
   switch (type) {
     case 'folder': return <IconFolderOpen />;
@@ -15,11 +15,11 @@ const typeIcon = (type) => {
 
 const typeBadge = (type) => {
   switch (type) {
-    case 'folder': return styles.badgeFolder;
-    case 'image':  return styles.badgeImage;
-    case 'code':   return styles.badgeCode;
-    case 'pdf':    return styles.badgePdf;
-    default:       return styles.badgeFile;
+    case 'folder': return 'badgeFolder';
+    case 'image':  return 'badgeImage';
+    case 'code':   return 'badgeCode';
+    case 'pdf':    return 'badgePdf';
+    default:       return 'badgeFile';
   }
 };
 
@@ -76,20 +76,20 @@ const DocumentsPage = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div className="page">
       {/* ── Sidebar ─────────────────────────────────────────────────── */}
-      <aside className={styles.sidebar}>
+      <aside className="sidebar">
         <CollapsiblePanel title="Quick Access" defaultOpen size="sm">
-          <button className={`${styles.sidebarItem} ${!activeFolder ? styles.sidebarActive : ''}`} onClick={() => setActiveFolder(null)}>
-            <IconHomeSimple className={styles.sidebarIcon} />
+          <button className={`sidebarItem ${!activeFolder ? 'sidebarActive' : ''}`} onClick={() => setActiveFolder(null)}>
+            <IconHomeSimple className="sidebarIcon" />
             All Files
           </button>
-          <button className={styles.sidebarItem}>
-            <IconTrendingUp className={styles.sidebarIcon} />
+          <button className="sidebarItem">
+            <IconTrendingUp className="sidebarIcon" />
             Recent
           </button>
-          <button className={styles.sidebarItem}>
-            <IconPencil className={styles.sidebarIcon} />
+          <button className="sidebarItem">
+            <IconPencil className="sidebarIcon" />
             Favorites
           </button>
         </CollapsiblePanel>
@@ -98,30 +98,30 @@ const DocumentsPage = () => {
           {FOLDERS.map((folder) => (
             <button
               key={folder.id}
-              className={`${styles.sidebarItem} ${styles.sidebarFolder} ${activeFolder === folder.id ? styles.sidebarActive : ''}`}
+              className={`sidebarItem sidebarFolder ${activeFolder === folder.id ? 'sidebarActive' : ''}`}
               onClick={() => setActiveFolder(folder.id)}
             >
               <IconFolderOpen />
-              <span className={styles.sidebarLabel}>{folder.name}</span>
-              <span className={styles.sidebarCount}>{folder.items}</span>
+              <span className="sidebarLabel">{folder.name}</span>
+              <span className="sidebarCount">{folder.items}</span>
             </button>
           ))}
         </CollapsiblePanel>
       </aside>
 
       {/* ── Main Content ────────────────────────────────────────────── */}
-      <div className={styles.main}>
+      <div className="main">
         {/* Toolbar */}
-        <div className={styles.toolbar}>
-          <div className={styles.toolbarLeft}>
-            <h2 className={styles.pageTitle}>{activeFolder ? FOLDERS.find((f) => f.id === activeFolder)?.name : 'All Files'}</h2>
-            <span className={styles.fileCount}>{filtered.length} file{filtered.length !== 1 ? 's' : ''}</span>
+        <div className="toolbar">
+          <div className="toolbarLeft">
+            <h2 className="pageTitle">{activeFolder ? FOLDERS.find((f) => f.id === activeFolder)?.name : 'All Files'}</h2>
+            <span className="fileCount">{filtered.length} file{filtered.length !== 1 ? 's' : ''}</span>
           </div>
-          <div className={styles.searchWrap}>
-            <IconSearch className={styles.searchIcon} />
+          <div className="searchWrap">
+            <IconSearch className="searchIcon" />
             <input
               type="text"
-              className={styles.searchInput}
+              className="searchInput"
               placeholder="Search files..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -130,10 +130,10 @@ const DocumentsPage = () => {
         </div>
 
         {/* File List */}
-        <div className={styles.fileList}>
+        <div className="fileList">
           {filtered.length === 0 ? (
-            <div className={styles.empty}>
-              <IconFile className={styles.emptyIcon} />
+            <div className="empty">
+              <IconFile className="emptyIcon" />
               <h3>No files found</h3>
               <p>{search ? 'Try a different search term.' : 'This folder is empty.'}</p>
             </div>
@@ -141,21 +141,21 @@ const DocumentsPage = () => {
             filtered.map((file) => (
               <div
                 key={file.id}
-                className={`${styles.fileRow} ${selectedFile?.id === file.id ? styles.fileRowSelected : ''}`}
+                className={`fileRow ${selectedFile?.id === file.id ? 'fileRowSelected' : ''}`}
                 onClick={() => handleFileClick(file)}
               >
-                <div className={`${styles.fileIcon} ${typeBadge(file.type)}`}>
+                <div className={`fileIcon ${typeBadge(file.type)}`}>
                   {typeIcon(file.type)}
                 </div>
-                <div className={styles.fileInfo}>
-                  <div className={styles.fileName}>{file.name}</div>
-                  <div className={styles.fileMeta}>
-                    <span className={`${styles.fileBadge} ${typeBadge(file.type)}`}>{typeLabel(file.type)}</span>
+                <div className="fileInfo">
+                  <div className="fileName">{file.name}</div>
+                  <div className="fileMeta">
+                    <span className={`fileBadge ${typeBadge(file.type)}`}>{typeLabel(file.type)}</span>
                     <span>{file.size}</span>
                     <span>{file.modified}</span>
                   </div>
                 </div>
-                <button className={styles.fileAction} title="More options" onClick={(e) => e.stopPropagation()}>
+                <button className="fileAction" title="More options" onClick={(e) => e.stopPropagation()}>
                   <IconMore />
                 </button>
               </div>

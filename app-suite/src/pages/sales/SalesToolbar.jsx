@@ -1,19 +1,20 @@
-import React from 'react';
+
 import { IconSearch, IconPlus } from '@/assets/icons';
-import styles from './SalesToolbar.module.css';
+import './SalesToolbar.css';
 
 const SalesToolbar = ({ searchQuery, setSearchQuery, productFilter, setProductFilter, productsList, onAddTrigger }) => {
   return (
-    <div className={styles.toolbar}>
-      <div className={styles.left}>
-        <h2 className={styles.title}>Sales Transactions</h2>
+    <div className="d-flex ai-center jc-between flex-wrap gap-3 px-5 py-4 border-bottom" style={{backgroundColor:'rgba(0,0,0,0.15)'}}>
+      <div>
+        <h2 className="fs-16 fw-600 text-primary" style={{fontFamily:'var(--font-display)', margin:0}}>Sales Transactions</h2>
       </div>
-      <div className={styles.controls}>
-        <div className={styles.searchWrapper}>
-          <IconSearch className={styles.searchIcon} />
+      <div className="d-flex ai-center gap-2">
+        <div className="pos-relative d-flex ai-center">
+          <IconSearch className="pos-absolute pointer-events-none" style={{left:'10px', width:'14px', height:'14px', color:'var(--color-text-muted)'}} />
           <input
             type="text"
-            className={styles.searchInput}
+            className="search-input"
+            style={{padding:'7px 10px 7px 32px', borderRadius:'6px', border:'1px solid var(--glass-border)', backgroundColor:'var(--glass-bg-hover-light)', color:'var(--color-text-primary)', fontFamily:'inherit', fontSize:'12px', outline:'none', width:'200px', transition:'all 0.15s ease'}}
             placeholder="Search customer or product…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -21,7 +22,8 @@ const SalesToolbar = ({ searchQuery, setSearchQuery, productFilter, setProductFi
         </div>
 
         <select
-          className={styles.filterSelect}
+          className="filter-select"
+          style={{padding:'7px 10px', borderRadius:'6px', border:'1px solid var(--glass-border)', backgroundColor:'var(--glass-bg-hover-light)', color:'var(--color-text-primary)', fontFamily:'inherit', fontSize:'12px', outline:'none', cursor:'pointer', transition:'border-color 0.15s ease'}}
           value={productFilter}
           onChange={(e) => setProductFilter(e.target.value)}
           aria-label="Filter by product"
@@ -31,8 +33,8 @@ const SalesToolbar = ({ searchQuery, setSearchQuery, productFilter, setProductFi
           ))}
         </select>
 
-        <button className={styles.addBtn} onClick={onAddTrigger}>
-          <IconPlus className={styles.addIcon} />
+        <button className="btn btn-primary" onClick={onAddTrigger}>
+          <IconPlus style={{width:'13px', height:'13px'}} />
           New Sale
         </button>
       </div>

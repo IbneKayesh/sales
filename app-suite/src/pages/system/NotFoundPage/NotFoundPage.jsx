@@ -1,25 +1,24 @@
 import { useNavigate } from 'react-router-dom';
 import { IconHomeArrow, IconChevronLeft } from '@/assets/icons';
-import styles from './NotFoundPage.module.css';
-
+import './NotFoundPage.css';
 const NotFoundPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className={styles.container}>
-      <div className={styles.graphic}>
-        <span className={styles.code}>404</span>
+    <div className="container">
+      <div className="graphic">
+        <span className="code">404</span>
       </div>
-      <h1 className={styles.title}>Page Not Found</h1>
-      <p className={styles.description}>
+      <h1 className="title">Page Not Found</h1>
+      <p className="description">
         The page you're looking for doesn't exist or has been moved.
       </p>
-      <div className={styles.actions}>
-        <button className={styles.homeBtn} onClick={() => navigate('/home')}>
+      <div className="actions">
+        <button className="homeBtn" onClick={() => navigate('/home')}>
           <IconHomeArrow width="16" height="16" />
           Go Home
         </button>
-        <button className={styles.backBtn} onClick={() => navigate(-1)}>
+        <button className="backBtn" onClick={() => navigate(-1)}>
           <IconChevronLeft width="16" height="16" />
           Go Back
         </button>

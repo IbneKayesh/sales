@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+
 import { useToast, useConfirm } from '@/context/FeedbackContext';
 import { IconPlus, IconEdit, IconDelete, IconSave, IconSearch, IconBackArrow, IconClose } from '@/assets/icons';
 import PageShell from '@/components/PageShell/PageShell';
@@ -11,8 +12,7 @@ import variantModel from '@/models/product-variant.json';
 import ProductsListView from './ProductsListView';
 import ProductsEntryView from './ProductsEntryView';
 import ProductsDetailsView from './ProductsDetailsView';
-import styles from './ProductsPage.module.css';
-
+import './ProductsPage.css';
 const EMPTY_FORM = getFormDefaults(productModel);
 const MODELS = { 'product-variant': variantModel };
 
@@ -228,18 +228,18 @@ const ProductsPage = () => {
       {/* ── Actions: Search + Toolbar ────────────────────────────────── */}
       <PageShell.Actions>
         {isListView && (
-          <div className={styles.searchRow}>
-            <IconSearch className={styles.searchIcon} />
+          <div className="searchRow">
+            <IconSearch className="searchIcon" />
             <input
               ref={searchRef}
               type="text"
-              className={styles.searchInput}
+              className="searchInput"
               placeholder="Search by name, SKU, or category..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             {searchQuery && (
-              <button className={styles.searchClear} onClick={() => setSearchQuery('')}>
+              <button className="searchClear" onClick={() => setSearchQuery('')}>
                 <IconClose />
               </button>
             )}
@@ -307,15 +307,15 @@ const ProductsPage = () => {
       {/* ── Footer (form view only) ──────────────────────────────────── */}
       {isFormView && (
         <PageShell.Footer>
-          <button className={styles.saveBtn} onClick={handleSubmit} disabled={submitting}>
+          <button className="saveBtn" onClick={handleSubmit} disabled={submitting}>
             {submitting ? (
-              <span className={styles.spinner} />
+              <span className="spinner" />
             ) : (
               <IconSave />
             )}
             {currentId ? 'Update Product' : 'Create Product'}
           </button>
-          <button className={styles.cancelBtn} onClick={resetForm}>
+          <button className="cancelBtn" onClick={resetForm}>
             Cancel
           </button>
         </PageShell.Footer>

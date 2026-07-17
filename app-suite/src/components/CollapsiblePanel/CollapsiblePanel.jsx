@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { IconChevronRight } from '@/assets/icons';
-import styles from './CollapsiblePanel.module.css';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
+import { IconChevronRight } from '@/assets/icons';
+import './CollapsiblePanel.css';
 /**
  * CollapsiblePanel — a reusable collapsible/expandable section.
  *
@@ -67,9 +67,9 @@ const CollapsiblePanel = ({
   }, [isControlled, isOpen, onToggle]);
 
   const wrapperClass = [
-    styles.panel,
-    styles[`size${size.charAt(0).toUpperCase() + size.slice(1)}`],
-    isOpen ? styles.open : '',
+    'panel',
+    `size${size.charAt(0).toUpperCase() + size.slice(1)}`,
+    isOpen ? 'open' : '',
     className || '',
   ]
     .filter(Boolean)
@@ -78,29 +78,29 @@ const CollapsiblePanel = ({
   return (
     <div className={wrapperClass}>
       <button
-        className={styles.header}
+        className="cp-header"
         onClick={handleToggle}
         aria-expanded={isOpen}
         type="button"
       >
-        <span className={styles.arrowWrap}>
-          <IconChevronRight className={styles.arrow} />
+        <span className="cp-arrow-wrap">
+          <IconChevronRight className="cp-arrow" />
         </span>
 
-        {icon && <span className={styles.headerIcon}>{icon}</span>}
+        {icon && <span className="cp-header-icon">{icon}</span>}
 
-        <span className={styles.title}>{title}</span>
+        <span className="cp-title">{title}</span>
 
-        {actions && <span className={styles.actions}>{actions}</span>}
+        {actions && <span className="cp-actions">{actions}</span>}
       </button>
 
       <div
-        className={styles.contentWrapper}
+        className="cp-content-wrap"
         style={{
           maxHeight: isOpen ? `${Math.max(contentHeight, collapsedHeight + 1)}px` : `${collapsedHeight}px`,
         }}
       >
-        <div ref={contentRef} className={styles.content}>
+        <div ref={contentRef} className="cp-content">
           {children}
         </div>
       </div>

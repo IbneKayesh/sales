@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+
 import { useAuth } from '../context/AuthContext';
 import { useDesktop } from '../context/DesktopContext';
 import { useToast } from '@/context/FeedbackContext';
 import { fmtDateFull } from '@/utils/dataFormat';
 import { IconMonitor, IconDollar, IconClock, IconZap, IconPlus, IconFile, IconBox, IconChart, IconGridRect, IconCheck, IconDrag, IconClose } from '@/assets/icons';
-import styles from './HomePage.module.css';
-
+import './HomePage.css';
 // ── Widget Definitions ────────────────────────────────────────────────────
 const WIDGET_DEFS = {
   'system-status': {
@@ -37,13 +37,13 @@ const WIDGET_DEFS = {
 const SvgIcon = ({ icon }) => {
   switch (icon) {
     case 'monitor':
-      return <IconMonitor className={styles.cardIcon} />;
+      return <IconMonitor className="cardIcon" />;
     case 'dollar':
-      return <IconDollar className={styles.cardIcon} />;
+      return <IconDollar className="cardIcon" />;
     case 'clock':
-      return <IconClock className={styles.cardIcon} />;
+      return <IconClock className="cardIcon" />;
     case 'zap':
-      return <IconZap className={styles.cardIcon} />;
+      return <IconZap className="cardIcon" />;
     default:
       return null;
   }
@@ -52,90 +52,90 @@ const SvgIcon = ({ icon }) => {
 // ── Individual Widget Components ──────────────────────────────────────────
 
 const SystemStatusWidget = () => (
-  <div className={styles.statusList}>
-    <div className={styles.statusItem}>
-      <div className={styles.statusLabel}>
+  <div className="statusList">
+    <div className="statusItem">
+      <div className="statusLabel">
         <span>CPU Usage</span>
         <span>28%</span>
       </div>
-      <div className={styles.progressBar}>
-        <div className={`${styles.progressFill} ${styles.progressCpu}`} />
+      <div className="progressBar">
+        <div className={`progressFill progressCpu`} />
       </div>
     </div>
-    <div className={styles.statusItem}>
-      <div className={styles.statusLabel}>
+    <div className="statusItem">
+      <div className="statusLabel">
         <span>Memory</span>
         <span>4.2 GB / 16 GB</span>
       </div>
-      <div className={styles.progressBar}>
-        <div className={`${styles.progressFill} ${styles.progressMem}`} />
+      <div className="progressBar">
+        <div className={`progressFill progressMem`} />
       </div>
     </div>
-    <div className={styles.statusItem}>
-      <div className={styles.statusLabel}>
+    <div className="statusItem">
+      <div className="statusLabel">
         <span>Storage</span>
         <span>124 GB / 512 GB</span>
       </div>
-      <div className={styles.progressBar}>
-        <div className={`${styles.progressFill} ${styles.progressStorage}`} />
+      <div className="progressBar">
+        <div className={`progressFill progressStorage`} />
       </div>
     </div>
   </div>
 );
 
 const SalesSummaryWidget = () => (
-  <div className={styles.statsGrid}>
-    <div className={styles.statItem}>
-      <span className={styles.statValue}>$24,580</span>
-      <span className={styles.statLabel}>Total Revenue</span>
-      <span className={`${styles.statTrend} ${styles.trendUp}`}>+12.3%</span>
+  <div className="statsGrid">
+    <div className="statItem">
+      <span className="statValue">$24,580</span>
+      <span className="statLabel">Total Revenue</span>
+      <span className={`statTrend trendUp`}>+12.3%</span>
     </div>
-    <div className={styles.statItem}>
-      <span className={styles.statValue}>47</span>
-      <span className={styles.statLabel}>Orders</span>
-      <span className={`${styles.statTrend} ${styles.trendUp}`}>+8</span>
+    <div className="statItem">
+      <span className="statValue">47</span>
+      <span className="statLabel">Orders</span>
+      <span className={`statTrend trendUp`}>+8</span>
     </div>
-    <div className={styles.statItem}>
-      <span className={styles.statValue}>12</span>
-      <span className={styles.statLabel}>Pending</span>
-      <span className={`${styles.statTrend} ${styles.trendNeutral}`}>= 0</span>
+    <div className="statItem">
+      <span className="statValue">12</span>
+      <span className="statLabel">Pending</span>
+      <span className={`statTrend trendNeutral`}>= 0</span>
     </div>
-    <div className={styles.statItem}>
-      <span className={styles.statValue}>$3,420</span>
-      <span className={styles.statLabel}>Avg. Order</span>
-      <span className={`${styles.statTrend} ${styles.trendUp}`}>+5.7%</span>
+    <div className="statItem">
+      <span className="statValue">$3,420</span>
+      <span className="statLabel">Avg. Order</span>
+      <span className={`statTrend trendUp`}>+5.7%</span>
     </div>
   </div>
 );
 
 const RecentActivityWidget = () => (
-  <div className={styles.activityList}>
-    <div className={styles.activityItem}>
-      <div className={`${styles.activityDot} ${styles.dotSuccess}`} />
-      <div className={styles.activityText}>
-        <span className={styles.activityTitle}>Sale completed</span>
-        <span className={styles.activityMeta}>Invoice INV-001 • 2 min ago</span>
+  <div className="activityList">
+    <div className="activityItem">
+      <div className={`activityDot dotSuccess`} />
+      <div className="activityText">
+        <span className="activityTitle">Sale completed</span>
+        <span className="activityMeta">Invoice INV-001 • 2 min ago</span>
       </div>
     </div>
-    <div className={styles.activityItem}>
-      <div className={`${styles.activityDot} ${styles.dotWarning}`} />
-      <div className={styles.activityText}>
-        <span className={styles.activityTitle}>Low stock alert</span>
-        <span className={styles.activityMeta}>AIU-005: 8 remaining • 15 min ago</span>
+    <div className="activityItem">
+      <div className={`activityDot dotWarning`} />
+      <div className="activityText">
+        <span className="activityTitle">Low stock alert</span>
+        <span className="activityMeta">AIU-005: 8 remaining • 15 min ago</span>
       </div>
     </div>
-    <div className={styles.activityItem}>
-      <div className={`${styles.activityDot} ${styles.dotInfo}`} />
-      <div className={styles.activityText}>
-        <span className={styles.activityTitle}>Order shipped</span>
-        <span className={styles.activityMeta}>ORD-004 via DHL • 1 hour ago</span>
+    <div className="activityItem">
+      <div className={`activityDot dotInfo`} />
+      <div className="activityText">
+        <span className="activityTitle">Order shipped</span>
+        <span className="activityMeta">ORD-004 via DHL • 1 hour ago</span>
       </div>
     </div>
-    <div className={styles.activityItem}>
-      <div className={`${styles.activityDot} ${styles.dotSuccess}`} />
-      <div className={styles.activityText}>
-        <span className={styles.activityTitle}>Inventory updated</span>
-        <span className={styles.activityMeta}>12 new items added • Yesterday</span>
+    <div className="activityItem">
+      <div className={`activityDot dotSuccess`} />
+      <div className="activityText">
+        <span className="activityTitle">Inventory updated</span>
+        <span className="activityMeta">12 new items added • Yesterday</span>
       </div>
     </div>
   </div>
@@ -164,9 +164,9 @@ const QuickActionsWidget = () => {
     }
   };
   return (
-    <div className={styles.actionsGrid}>
+    <div className="actionsGrid">
       {actions.map((a) => (
-        <button key={a.label} className={styles.actionBtn} onClick={() => addToast({ message: `Opening ${a.label}...`, type: 'info' })}>
+        <button key={a.label} className="actionBtn" onClick={() => addToast({ message: `Opening ${a.label}...`, type: 'info' })}>
           {actIcon(a.icon)}
           <span>{a.label}</span>
         </button>
@@ -227,7 +227,7 @@ const HomePage = () => {
     e.dataTransfer.setData('text/plain', String(idx));
     // Delay adding the dragging class for a cleaner visual
     setTimeout(() => {
-      if (e.target) e.target.closest(`.${styles.widgetCard}`)?.classList.add(styles.dragging);
+      if (e.target) e.target.closest(`.widgetCard`)?.classList.add('dragging');
     }, 0);
   }, []);
 
@@ -256,29 +256,29 @@ const HomePage = () => {
     setDragIdx(null);
     setOverIdx(null);
     // Clean up dragging class
-    document.querySelectorAll(`.${styles.dragging}`).forEach((el) => el.classList.remove(styles.dragging));
+    document.querySelectorAll(`.dragging`).forEach((el) => el.classList.remove('dragging'));
   }, [dragIdx, widgetOrder, setWidgetOrder]);
 
   const handleDragEnd = useCallback(() => {
     setDragIdx(null);
     setOverIdx(null);
-    document.querySelectorAll(`.${styles.dragging}`).forEach((el) => el.classList.remove(styles.dragging));
+    document.querySelectorAll(`.dragging`).forEach((el) => el.classList.remove('dragging'));
   }, []);
 
   const displayName = currentUser?.displayName || 'Guest';
 
   return (
-    <div className={styles.container}>
+    <div className="container">
       {/* ── Hero Section ────────────────────────────────────────────── */}
-      <div className={styles.heroSection}>
-        <div className={styles.heroTopRow}>
-          <div className={styles.timeWidget}>
-            <h1 className={styles.clock}>{formatTime(time)}</h1>
-            <p className={styles.date}>{fmtDateFull(time)}</p>
+      <div className="heroSection">
+        <div className="heroTopRow">
+          <div className="timeWidget">
+            <h1 className="clock">{formatTime(time)}</h1>
+            <p className="date">{fmtDateFull(time)}</p>
           </div>
-          <div className={styles.widgetToolbar}>
+          <div className="widgetToolbar">
             <button
-              className={styles.addWidgetBtn}
+              className="addWidgetBtn"
               onClick={() => setShowPicker((p) => !p)}
               title="Customize widgets"
             >
@@ -287,29 +287,29 @@ const HomePage = () => {
             </button>
 
             {showPicker && (
-              <div className={styles.widgetPicker} ref={pickerRef}>
-                <div className={styles.pickerHeader}>
-                  <IconGridRect className={styles.pickerIcon} />
+              <div className="widgetPicker" ref={pickerRef}>
+                <div className="pickerHeader">
+                  <IconGridRect className="pickerIcon" />
                   Customize Dashboard
                 </div>
-                <p className={styles.pickerHint}>Drag widgets to reorder. Toggle to show/hide.</p>
+                <p className="pickerHint">Drag widgets to reorder. Toggle to show/hide.</p>
                 {allWidgets.map((id) => {
                   const def = WIDGET_DEFS[id];
                   const isActive = visibleWidgets.includes(id);
                   const idx = visibleWidgets.indexOf(id);
                   return (
-                    <div key={id} className={styles.pickerRow}>
-                      <div className={styles.pickerInfo}>
+                    <div key={id} className="pickerRow">
+                      <div className="pickerInfo">
                         {def && <SvgIcon icon={def.icon} />}
-                        <div className={styles.pickerText}>
-                          <span className={styles.pickerName}>{def?.title || id}</span>
-                          <span className={styles.pickerDesc}>{def?.description}</span>
+                        <div className="pickerText">
+                          <span className="pickerName">{def?.title || id}</span>
+                          <span className="pickerDesc">{def?.description}</span>
                         </div>
                       </div>
-                      <div className={styles.pickerControls}>
-                        <span className={styles.pickerPos}>#{idx + 1}</span>
+                      <div className="pickerControls">
+                        <span className="pickerPos">#{idx + 1}</span>
                         <button
-                          className={`${styles.pinBtn} ${isActive ? styles.pinBtnActive : ''}`}
+                          className={`pinBtn ${isActive ? 'pinBtnActive' : ''}`}
                           onClick={() => toggleWidget(id)}
                           title={isActive ? 'Remove from dashboard' : 'Add to dashboard'}
                         >
@@ -327,28 +327,28 @@ const HomePage = () => {
             )}
           </div>
         </div>
-        <div className={styles.welcomeWidget}>
-          <h2 className={styles.greeting}>{getGreeting()}, {displayName}</h2>
-          <p className={styles.subtitle}>Welcome back to your workspace. All systems are fully operational.</p>
+        <div className="welcomeWidget">
+          <h2 className="greeting">{getGreeting()}, {displayName}</h2>
+          <p className="subtitle">Welcome back to your workspace. All systems are fully operational.</p>
         </div>
       </div>
 
       {/* ── Draggable Widget Grid ───────────────────────────────────── */}
       {visibleWidgets.length === 0 ? (
-        <div className={styles.emptyState}>
-          <IconGridRect className={styles.emptyIcon} />
+        <div className="emptyState">
+          <IconGridRect className="emptyIcon" />
           <h3>No widgets pinned</h3>
           <p>Click the <strong>+ Widgets</strong> button above to add widgets to your dashboard.</p>
         </div>
       ) : (
-        <div className={styles.dashboardGrid}>
+        <div className="dashboardGrid">
           {visibleWidgets.map((id, idx) => {
             const Widget = WIDGET_COMPONENTS[id];
             const def = WIDGET_DEFS[id];
             return (
               <div
                 key={id}
-                className={`${styles.widgetCard} ${dragIdx === idx ? styles.dragging : ''} ${overIdx === idx ? styles.dragOver : ''}`}
+                className={`widgetCard ${dragIdx === idx ? 'dragging' : ''} ${overIdx === idx ? 'dragOver' : ''}`}
                 draggable
                 onDragStart={(e) => handleDragStart(e, idx)}
                 onDragOver={(e) => handleDragOver(e, idx)}
@@ -356,23 +356,23 @@ const HomePage = () => {
                 onDrop={(e) => handleDrop(e, idx)}
                 onDragEnd={handleDragEnd}
               >
-                <div className={styles.widgetHeader}>
-                  <div className={styles.widgetDragHandle}>
-                    <IconDrag className={styles.dragIcon} />
+                <div className="widgetHeader">
+                  <div className="widgetDragHandle">
+                    <IconDrag className="dragIcon" />
                   </div>
-                  <h3 className={styles.cardTitle}>
+                  <h3 className="cardTitle">
                     {def && <SvgIcon icon={def.icon} />}
                     {def?.title || id}
                   </h3>
                   <button
-                    className={styles.removeWidgetBtn}
+                    className="removeWidgetBtn"
                     onClick={() => toggleWidget(id)}
                     title={`Remove ${def?.title || id}`}
                   >
                     <IconClose />
                   </button>
                 </div>
-                <div className={styles.widgetBody}>
+                <div className="widgetBody">
                   <Widget />
                 </div>
               </div>

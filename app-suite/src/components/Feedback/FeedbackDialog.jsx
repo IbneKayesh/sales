@@ -1,18 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
 import { useToast, useConfirm } from '@/context/FeedbackContext';
 import { IconCheck, IconWarning, IconInfo, IconError, IconClose } from '@/assets/icons';
-import styles from './FeedbackDialog.module.css';
-
+import './FeedbackDialog.css';
 const EXIT_DURATION = 150;
 
 // ── Toast icon helper ────────────────────────────────────────────────────
 const getToastIcon = (type) => {
   switch (type) {
-    case 'success': return <IconCheck className={styles.iconSuccess} />;
-    case 'error':   return <IconError className={styles.iconError} />;
-    case 'warning': return <IconWarning className={styles.iconWarning} />;
+    case 'success': return <IconCheck className="iconSuccess" />;
+    case 'error':   return <IconError className="iconError" />;
+    case 'warning': return <IconWarning className="iconWarning" />;
     case 'info':
-    default:        return <IconInfo className={styles.iconInfo} />;
+    default:        return <IconInfo className="iconInfo" />;
   }
 };
 
@@ -36,26 +36,26 @@ const ToastItem = ({ toast, onClose }) => {
     : { animationDuration: `${duration}ms` };
 
   return (
-    <div className={`${styles.toast} ${styles[type]} ${isAction ? styles.actionToast : ''}`} role="alert">
+    <div className={`toast ${type} ${isAction ? 'actionToast' : ''}`} role="alert">
       {!isAction && duration !== Infinity && (
-        <div className={styles.timerBar}>
-          <span className={styles.timerFill} style={timerStyle} />
+        <div className="timerBar">
+          <span className="timerFill" style={timerStyle} />
         </div>
       )}
-      <div className={styles.toastBody}>
-        <div className={styles.iconContainer}>{getToastIcon(type)}</div>
-        <div className={styles.content}>
-          <p className={styles.message}>{message}</p>
+      <div className="toastBody">
+        <div className="iconContainer">{getToastIcon(type)}</div>
+        <div className="content">
+          <p className="message">{message}</p>
         </div>
-        <div className={styles.actionGroup}>
+        <div className="actionGroup">
           {actionLabel && (
-            <button className={isAction ? styles.okBtn : styles.actionBtn} onClick={handleAction}>
-              {isAction && <IconCheck className={styles.okIcon} />}
+            <button className={isAction ? 'okBtn' : 'actionBtn'} onClick={handleAction}>
+              {isAction && <IconCheck className="okIcon" />}
               {actionLabel}
             </button>
           )}
           <button
-            className={`${styles.closeBtn} ${isAction ? styles.closeBtnHidden : ''}`}
+            className={`closeBtn ${isAction ? 'closeBtnHidden' : ''}`}
             onClick={() => { if (!isAction) onClose(id); }}
             aria-label="Close Notification"
           >
@@ -173,7 +173,7 @@ const FeedbackDialog = ({ mode = 'global', windowId }) => {
   const confirmData = exitDataRef.current;
 
   // ── Toast container class ────────────────────────────────────────────
-  const containerClass = mode === 'window' ? styles.windowContainer : styles.regularContainer;
+  const containerClass = mode === 'window' ? 'windowContainer' : 'regularContainer';
 
   return (
     <>
@@ -189,20 +189,20 @@ const FeedbackDialog = ({ mode = 'global', windowId }) => {
       {/* ── Confirm dialog ──────────────────────────────────────────── */}
       {showConfirm && confirmData && (
         mode === 'window' ? (
-          <div className={`${styles.windowOverlay} ${exiting ? styles.windowOverlayExiting : ''}`}>
-            <div className={`${styles.windowDialog} ${exiting ? styles.windowDialogExiting : ''}`} ref={modalRef} role="dialog" aria-modal="true">
-              <div className={styles.body}>
-                <IconWarning className={styles.warningIcon} />
-                <h2 className={styles.windowTitle}>{confirmData.title}</h2>
-                <p className={styles.windowDescription}>{confirmData.description}</p>
+          <div className={`windowOverlay ${exiting ? 'windowOverlayExiting' : ''}`}>
+            <div className={`windowDialog ${exiting ? 'windowDialogExiting' : ''}`} ref={modalRef} role="dialog" aria-modal="true">
+              <div className="body">
+                <IconWarning className="warningIcon" />
+                <h2 className="windowTitle">{confirmData.title}</h2>
+                <p className="windowDescription">{confirmData.description}</p>
               </div>
-              <div className={styles.windowFooter}>
-                <button className={styles.windowCancelBtn} onClick={handleExitCancel}>
+              <div className="windowFooter">
+                <button className="windowCancelBtn" onClick={handleExitCancel}>
                   {confirmData.options.cancelLabel || 'Cancel'}
                 </button>
                 <button
                   ref={confirmBtnRef}
-                  className={`${styles.windowConfirmBtn} ${confirmData.options.danger ? styles.windowConfirmBtnDanger : ''}`}
+                  className={`windowConfirmBtn ${confirmData.options.danger ? 'windowConfirmBtnDanger' : ''}`}
                   onClick={handleExitConfirm}
                 >
                   {confirmData.options.confirmLabel || 'Confirm'}
@@ -212,7 +212,7 @@ const FeedbackDialog = ({ mode = 'global', windowId }) => {
           </div>
         ) : (
           <div
-            className={`${styles.overlay} ${exiting ? styles.overlayExiting : ''}`}
+            className={`overlay ${exiting ? 'overlayExiting' : ''}`}
             onClick={(e) => {
               const clickOutside = confirmData.options.clickOutsideToClose ?? true;
               if (canInteract && clickOutside && modalRef.current && !modalRef.current.contains(e.target)) {
@@ -224,28 +224,28 @@ const FeedbackDialog = ({ mode = 'global', windowId }) => {
             aria-labelledby="confirm-title"
             aria-describedby="confirm-desc"
           >
-            <div className={`${styles.dialog} ${exiting ? styles.dialogExiting : ''}`} ref={modalRef}>
-              <div className={styles.body}>
-                <h2 id="confirm-title" className={styles.title}>{confirmData.title}</h2>
-                <p id="confirm-desc" className={styles.description}>{confirmData.description}</p>
+            <div className={`dialog ${exiting ? 'dialogExiting' : ''}`} ref={modalRef}>
+              <div className="body">
+                <h2 id="confirm-title" className="title">{confirmData.title}</h2>
+                <p id="confirm-desc" className="description">{confirmData.description}</p>
               </div>
               {loading && (
-                <div className={styles.loadingBar}>
-                  <span className={styles.loadingBarFill} />
+                <div className="loadingBar">
+                  <span className="loadingBarFill" />
                 </div>
               )}
-              <div className={styles.footer}>
-                <button className={styles.cancelBtn} onClick={handleExitCancel} disabled={!canInteract}>
+              <div className="footer">
+                <button className="cancelBtn" onClick={handleExitCancel} disabled={!canInteract}>
                   {loading ? 'Please wait…' : (confirmData.options.cancelLabel || 'Cancel')}
                 </button>
                 <button
                   ref={confirmBtnRef}
-                  className={`${styles.confirmBtn} ${loading ? styles.confirmBtnLoading : ''} ${confirmData.options.danger ? styles.confirmBtnDanger : ''}`}
+                  className={`confirmBtn ${loading ? 'confirmBtnLoading' : ''} ${confirmData.options.danger ? 'confirmBtnDanger' : ''}`}
                   onClick={handleExitConfirm}
                   disabled={!canInteract}
                 >
                   {loading ? (
-                    <><span className={styles.spinner} />{confirmData.options.loadingLabel || 'Deleting…'}</>
+                    <><span className="spinner" />{confirmData.options.loadingLabel || 'Deleting…'}</>
                   ) : (
                     confirmData.options.confirmLabel || 'Confirm'
                   )}
