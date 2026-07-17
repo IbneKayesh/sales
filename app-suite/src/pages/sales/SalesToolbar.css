@@ -1,9 +1,0 @@
-.search-input:focus {
-  border-color: var(--accent-hover) !important;
-  background-color: var(--glass-bg-strong) !important;
-  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15) !important;
-}
-
-.filter-select:focus {
-  border-color: var(--accent-hover) !important;
-}

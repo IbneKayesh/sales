@@ -1,7 +1,0 @@
-.input-text {
-  border: 1px solid var(--color-text-secondary);
-  outline: none;
-  box-sizing: border-box;
-}
-
-.input-text::placeholder { color: var(--color-text-muted); }
