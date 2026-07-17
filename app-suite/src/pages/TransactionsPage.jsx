@@ -19,16 +19,14 @@ const statusOptions = [
   { value: 'refunded', label: 'Refunded' },
 ]
 
-const statusColors = {
-  completed: { bg: 'rgba(34, 197, 94, 0.12)', color: '#22c55e' },
-  pending: { bg: 'rgba(245, 158, 11, 0.12)', color: '#f59e0b' },
-  failed: { bg: 'rgba(239, 68, 68, 0.12)', color: '#ef4444' },
-  refunded: { bg: 'rgba(107, 114, 128, 0.12)', color: '#6b7280' },
-}
-
-const typeColors = {
-  income: { bg: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', label: 'Income' },
-  expense: { bg: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', label: 'Expense' },
+const badgeClass = (status) => {
+  const map = {
+    active: 'badge--success', completed: 'badge--success',
+    pending: 'badge--warning',
+    inactive: 'badge--danger', failed: 'badge--danger',
+    archived: 'badge--muted', refunded: 'badge--muted',
+  }
+  return `badge ${map[status] || 'badge--muted'}`
 }
 
 function fmtCurrency(n) {
@@ -36,34 +34,18 @@ function fmtCurrency(n) {
   return `${sign}$${Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
-const StatusBadge = ({ status }) => {
-  const c = statusColors[status] || statusColors.pending
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 5,
-      padding: '2px 10px', fontSize: '12px', fontWeight: 600,
-      lineHeight: '20px', borderRadius: 100,
-      background: c.bg, color: c.color,
-    }}>
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: c.color }} />
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </span>
-  )
-}
+const StatusBadge = ({ status }) => (
+  <span className={badgeClass(status)}>
+    <span className="badge__dot" />
+    {status.charAt(0).toUpperCase() + status.slice(1)}
+  </span>
+)
 
-const TypeBadge = ({ type }) => {
-  const c = typeColors[type] || typeColors.expense
-  return (
-    <span style={{
-      display: 'inline-flex', alignItems: 'center', gap: 5,
-      padding: '2px 8px', fontSize: '11px', fontWeight: 700,
-      borderRadius: 4, background: c.bg, color: c.color,
-      textTransform: 'uppercase', letterSpacing: '0.5px',
-    }}>
-      {c.label}
-    </span>
-  )
-}
+const TypeBadge = ({ type }) => (
+  <span className={`type-badge type-badge--${type}`}>
+    {type === 'income' ? 'Income' : 'Expense'}
+  </span>
+)
 
 const initialForm = {
   date: '',
@@ -216,7 +198,7 @@ export default function TransactionsPage() {
       header: 'Category',
       width: '130px',
       render: (val) => (
-        <span style={{ fontSize: '13px', color: 'var(--text)' }}>
+        <span className="small">
           {val ? val.charAt(0).toUpperCase() + val.slice(1) : '—'}
         </span>
       ),
@@ -231,16 +213,11 @@ export default function TransactionsPage() {
       key: 'amount',
       header: 'Amount',
       width: '120px',
-      render: (val, row) => (
-        <span style={{
-          fontWeight: 600,
-          fontFamily: "'SF Mono', 'Fira Code', monospace",
-          fontSize: '14px',
-          color: row.type === 'income' ? '#22c55e' : '#ef4444',
-        }}>
-          {row.type === 'income' ? '+' : '-'}{fmtCurrency(val)}
-        </span>
-      ),
+      render: (val, row) => {
+        const sign = row.type === 'income' ? '+' : '-'
+        const cls = `text-mono ${row.type === 'income' ? 'text-mono--success' : 'text-mono--danger'}`
+        return <span className={cls}>{sign}{fmtCurrency(val)}</span>
+      },
     },
     {
       key: 'status',
@@ -254,12 +231,12 @@ export default function TransactionsPage() {
       width: '90px',
       sortable: false,
       render: (_, row) => (
-        <span style={{ display: 'inline-flex', gap: 4 }}>
-          <button type="button" className="txn__action-btn" title="Edit"
+        <span className="d-inline-flex gap-1">
+          <button type="button" className="action-btn" title="Edit"
             onClick={(e) => { e.stopPropagation(); openEditForm(row) }}>
             <IconEdit size={14} />
           </button>
-          <button type="button" className="txn__action-btn txn__action-btn--danger" title="Delete"
+          <button type="button" className="action-btn action-btn--danger" title="Delete"
             onClick={(e) => { e.stopPropagation(); setDeleteTarget(row) }}>
             <IconDelete size={14} />
           </button>
@@ -274,7 +251,7 @@ export default function TransactionsPage() {
       <DataCardGrid>
         <DataCard variant="success" icon={<IconDollar size={22} />} value={fmtCurrency(totalRevenue)} label="Revenue (Completed)" badge="Income" trend="up" />
         <DataCard variant="danger" icon={<IconBox size={22} />} value={fmtCurrency(totalExpenses)} label="Expenses (Completed)" badge="Outflow" trend="down" />
-        <DataCard variant="secondary" icon={<IconActivity size={22} />} value={fmtCurrency(netIncome)} label="Net Income" badge={netIncome >= 0 ? 'Profitable' : 'Loss'} trend={netIncome >= 0 ? 'up' : 'down'} valueStyle={{ color: netIncome >= 0 ? '#22c55e' : '#ef4444' }} />
+        <DataCard variant="secondary" icon={<IconActivity size={22} />} value={fmtCurrency(netIncome)} label="Net Income" badge={netIncome >= 0 ? 'Profitable' : 'Loss'} trend={netIncome >= 0 ? 'up' : 'down'} valueStyle={{ color: netIncome >= 0 ? 'var(--success)' : 'var(--danger)' }} />
         <DataCard variant="warning" icon={<IconActivity size={22} />} value={pendingTxns + failedTxns} label="Pending + Failed" badge={failedTxns > 0 ? `${failedTxns} failed` : `${pendingTxns} pending`} trend="down" />
       </DataCardGrid>
 
@@ -288,7 +265,7 @@ export default function TransactionsPage() {
           <PageCardActions>
             {formMode ? (
               <Button variant="ghost" size="sm" onClick={closeForm}>
-                <IconClose size={14} style={{ marginRight: 4 }} />
+                <IconClose size={14} className="icon-left" />
                 Cancel
               </Button>
             ) : (
@@ -301,11 +278,11 @@ export default function TransactionsPage() {
                   className="txn__filter-dropdown"
                 />
                 <Button size="sm" variant="outline">
-                  <IconDownload size={14} style={{ marginRight: 4 }} />
+                  <IconDownload size={14} className="icon-left" />
                   Export
                 </Button>
                 <Button size="sm" onClick={openAddForm}>
-                  <IconPlus size={14} style={{ marginRight: 4 }} />
+                  <IconPlus size={14} className="icon-left" />
                   New Transaction
                 </Button>
               </>
@@ -315,7 +292,7 @@ export default function TransactionsPage() {
 
         {formMode ? (
           <PageCardBody>
-            <div className="txn__form-wrap">
+            <div className="form-wrap">
               <div className="grid">
                 <div className="col-span-6">
                   <InputCalendar
@@ -421,12 +398,12 @@ export default function TransactionsPage() {
                 </div>
               </div>
 
-              <div className="txn__form-actions">
+              <div className="form-actions">
                 <Button variant="secondary" onClick={closeForm} disabled={saving}>
                   Cancel
                 </Button>
                 <Button variant="primary" onClick={handleSave} loading={saving}>
-                  <IconSave size={16} style={{ marginRight: 4 }} />
+                  <IconSave size={16} className="icon-left" />
                   {formMode === 'add' ? 'Create Transaction' : 'Update Transaction'}
                 </Button>
               </div>

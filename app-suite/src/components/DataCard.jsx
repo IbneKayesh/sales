@@ -35,16 +35,16 @@ export function DataCardGrid({ children, cols = 4, gap = 16, className = '', sty
 
 /* ---------- Variant colour map ---------- */
 const variantStyles = {
-  accent:    { bg: 'var(--accent-bg)',          color: 'var(--accent)' },
+  accent:    { bg: 'var(--primary-bg)',          color: 'var(--primary)' },
   secondary: { bg: 'var(--secondary-bg)',       color: 'var(--secondary)' },
-  success:   { bg: 'rgba(34,197,94,0.12)',      color: '#22c55e' },
-  danger:    { bg: 'rgba(239,68,68,0.12)',      color: '#ef4444' },
-  warning:   { bg: 'rgba(245,158,11,0.12)',     color: '#f59e0b' },
+  success:   { bg: 'var(--success-bg)',         color: 'var(--success)' },
+  danger:    { bg: 'var(--danger-bg)',          color: 'var(--danger)' },
+  warning:   { bg: 'var(--warning-bg)',         color: 'var(--warning)' },
 }
 
 const trendStyles = {
-  up:   { bg: 'rgba(34,197,94,0.1)',   color: '#22c55e' },
-  down: { bg: 'rgba(239,68,68,0.1)',   color: '#ef4444' },
+  up:   { bg: 'var(--success-bg)',   color: 'var(--success)' },
+  down: { bg: 'var(--danger-bg)',    color: 'var(--danger)' },
 }
 
 /* ---------- Single card ---------- */

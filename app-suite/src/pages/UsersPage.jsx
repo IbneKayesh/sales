@@ -27,42 +27,22 @@ const departmentOptions = [
   { value: 'operations', label: 'Operations' },
 ]
 
-const statusColors = {
-  active: { bg: 'rgba(34, 197, 94, 0.12)', color: '#22c55e' },
-  pending: { bg: 'rgba(245, 158, 11, 0.12)', color: '#f59e0b' },
-  inactive: { bg: 'rgba(239, 68, 68, 0.12)', color: '#ef4444' },
-  archived: { bg: 'rgba(107, 114, 128, 0.12)', color: '#6b7280' },
+const badgeClass = (status) => {
+  const map = {
+    active: 'badge--success', completed: 'badge--success',
+    pending: 'badge--warning',
+    inactive: 'badge--danger', failed: 'badge--danger',
+    archived: 'badge--muted', refunded: 'badge--muted',
+  }
+  return `badge ${map[status] || 'badge--muted'}`
 }
 
-const StatusBadge = ({ status }) => {
-  const colors = statusColors[status] || statusColors.archived
-  return (
-    <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 5,
-        padding: '2px 10px',
-        fontSize: '12px',
-        fontWeight: 600,
-        lineHeight: '20px',
-        borderRadius: 100,
-        background: colors.bg,
-        color: colors.color,
-      }}
-    >
-      <span
-        style={{
-          width: 6,
-          height: 6,
-          borderRadius: '50%',
-          background: colors.color,
-        }}
-      />
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </span>
-  )
-}
+const StatusBadge = ({ status }) => (
+  <span className={badgeClass(status)}>
+    <span className="badge__dot" />
+    {status.charAt(0).toUpperCase() + status.slice(1)}
+  </span>
+)
 
 const initialForm = {
   name: '',
@@ -217,7 +197,7 @@ export default function UsersPage() {
       width: '150px',
       render: (val) => {
         const dept = departmentOptions.find((d) => d.value === val)
-        return <span style={{ fontSize: '13px', color: 'var(--text)' }}>{dept?.label || val || '—'}</span>
+        return <span className="small">{dept?.label || val || '—'}</span>
       },
     },
     {
@@ -226,10 +206,10 @@ export default function UsersPage() {
       width: '110px',
       sortable: false,
       render: (_, row) => (
-        <span style={{ display: 'inline-flex', gap: 4 }}>
+        <span className="d-inline-flex gap-1">
           <button
             type="button"
-            className="users__action-btn"
+            className="action-btn"
             onClick={(e) => {
               e.stopPropagation()
               openEditForm(row)
@@ -240,7 +220,7 @@ export default function UsersPage() {
           </button>
           <button
             type="button"
-            className="users__action-btn users__action-btn--danger"
+            className="action-btn action-btn--danger"
             onClick={(e) => {
               e.stopPropagation()
               setDeleteTarget(row)
@@ -265,12 +245,12 @@ export default function UsersPage() {
           <PageCardActions>
             {formMode ? (
               <Button variant="ghost" size="sm" onClick={closeForm}>
-                <IconClose size={14} style={{ marginRight: 4 }} />
+                <IconClose size={14} className="icon-left" />
                 Cancel
               </Button>
             ) : (
               <Button size="sm" onClick={openAddForm}>
-                <IconPlus size={14} style={{ marginRight: 4 }} />
+                <IconPlus size={14} className="icon-left" />
                 Add User
               </Button>
             )}
@@ -280,7 +260,7 @@ export default function UsersPage() {
         {formMode ? (
           /* ---- Create/Edit Form ---- */
           <PageCardBody>
-            <div className="users__form-wrap">
+            <div className="form-wrap">
               <div className="grid">
                 <div className="col-span-6">
                   <InputText
@@ -370,12 +350,12 @@ export default function UsersPage() {
                 )
               })()}
 
-              <div className="users__form-actions">
+              <div className="form-actions">
                 <Button variant="secondary" onClick={closeForm} disabled={saving}>
                   Cancel
                 </Button>
                 <Button variant="primary" onClick={handleSave} loading={saving}>
-                  <IconSave size={16} style={{ marginRight: 4 }} />
+                  <IconSave size={16} className="icon-left" />
                   {formMode === 'add' ? 'Create User' : 'Update User'}
                 </Button>
               </div>

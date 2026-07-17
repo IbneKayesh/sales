@@ -3,46 +3,46 @@ import { IconSpinner } from '../icons'
 
 const variants = {
   primary: {
-    bg: 'var(--accent)',
-    color: '#fff',
-    border: 'var(--accent)',
-    hoverBg: 'var(--accent-border)',
-    hoverColor: '#fff',
+    bg: 'var(--primary)',
+    color: 'var(--primary-on)',
+    border: 'var(--primary)',
+    hoverBg: 'var(--primary-hover)',
+    hoverColor: 'var(--primary-on)',
   },
   secondary: {
     bg: 'transparent',
-    color: 'var(--text-h)',
+    color: 'var(--text-primary)',
     border: 'var(--border)',
-    hoverBg: 'var(--code-bg)',
-    hoverColor: 'var(--text-h)',
+    hoverBg: 'var(--surface-alt)',
+    hoverColor: 'var(--text-primary)',
   },
   outline: {
     bg: 'transparent',
-    color: 'var(--accent)',
-    border: 'var(--accent-border)',
-    hoverBg: 'var(--accent-bg)',
-    hoverColor: 'var(--accent)',
+    color: 'var(--primary)',
+    border: 'var(--primary-border)',
+    hoverBg: 'var(--primary-bg)',
+    hoverColor: 'var(--primary)',
   },
   ghost: {
     bg: 'transparent',
-    color: 'var(--text)',
+    color: 'var(--text-secondary)',
     border: 'transparent',
-    hoverBg: 'var(--code-bg)',
-    hoverColor: 'var(--text-h)',
+    hoverBg: 'var(--surface-alt)',
+    hoverColor: 'var(--text-primary)',
   },
   danger: {
-    bg: '#ef4444',
-    color: '#fff',
-    border: '#ef4444',
-    hoverBg: '#dc2626',
-    hoverColor: '#fff',
+    bg: 'var(--danger)',
+    color: 'var(--danger-on)',
+    border: 'var(--danger)',
+    hoverBg: 'var(--danger-hover)',
+    hoverColor: 'var(--danger-on)',
   },
 }
 
 const sizes = {
-  sm: { padding: '8px 14px', fontSize: '13px', gap: '4px' },
-  md: { padding: '12px 20px', fontSize: '15px', gap: '6px' },
-  lg: { padding: '12px 28px', fontSize: '17px', gap: '8px' },
+  sm: { padding: '6px 12px', fontSize: '13px', gap: '4px' },
+  md: { padding: '8px 16px', fontSize: '15px', gap: '6px' },
+  lg: { padding: '10px 22px', fontSize: '17px', gap: '8px' },
 }
 
 export default function Button({

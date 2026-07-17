@@ -27,78 +27,36 @@ const roleOptions = [
   { value: 'contributor', label: 'Contributor' },
 ]
 
-const statusColors = {
-  Active: { bg: 'rgba(34, 197, 94, 0.12)', color: '#22c55e' },
-  Pending: { bg: 'rgba(245, 158, 11, 0.12)', color: '#f59e0b' },
-  Inactive: { bg: 'rgba(239, 68, 68, 0.12)', color: '#ef4444' },
-  Archived: { bg: 'rgba(107, 114, 128, 0.12)', color: '#6b7280' },
+const badgeClass = (status) => {
+  const map = {
+    Active: 'badge--success', Pending: 'badge--warning',
+    Inactive: 'badge--danger', Archived: 'badge--muted',
+  }
+  return `badge ${map[status] || 'badge--muted'}`
 }
 
-const StatusBadge = ({ status }) => {
-  const colors = statusColors[status] || statusColors.Archived
-  return (
-    <span style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: 5,
-      padding: '2px 10px',
-      fontSize: '12px',
-      fontWeight: 600,
-      lineHeight: '20px',
-      borderRadius: 100,
-      background: colors.bg,
-      color: colors.color,
-    }}>
-      <span style={{
-        width: 6,
-        height: 6,
-        borderRadius: '50%',
-        background: colors.color,
-      }} />
-      {status}
-    </span>
-  )
-}
+const StatusBadge = ({ status }) => (
+  <span className={badgeClass(status)}>
+    <span className="badge__dot" />
+    {status}
+  </span>
+)
 
 const ActionButtons = ({ row }) => (
-  <span style={{ display: 'inline-flex', gap: 4 }}>
+  <span className="d-inline-flex gap-1">
     <button
+      type="button"
+      className="action-btn"
       onClick={(e) => { e.stopPropagation(); toast.info(`Editing ${row.name}`) }}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 28,
-        height: 28,
-        border: 'none',
-        borderRadius: 5,
-        background: 'transparent',
-        color: 'var(--text)',
-        cursor: 'pointer',
-        transition: 'all 0.12s',
-      }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--code-bg)'; e.currentTarget.style.color = 'var(--text-h)' }}
-      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text)' }}
+      title="Edit"
     >
       <IconEdit size={14} />
     </button>
     <button
+      type="button"
+      className="action-btn action-btn--danger"
       onClick={(e) => { e.stopPropagation(); toast.error(`Deleted ${row.name}`) }}
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 28,
-        height: 28,
-        border: 'none',
-        borderRadius: 5,
-        background: 'transparent',
-        color: 'var(--text)',
-        cursor: 'pointer',
-        transition: 'all 0.12s',
-      }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; e.currentTarget.style.color = '#ef4444' }}
-      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text)' }}
+      title="Delete"
     >
       <IconDelete size={14} />
     </button>
