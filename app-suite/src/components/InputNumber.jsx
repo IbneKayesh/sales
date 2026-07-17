@@ -12,6 +12,7 @@ export default function InputNumber({
   required = false,
   name,
   error,
+  dense = false,
   className = '',
   ...rest
 }) {
@@ -20,7 +21,7 @@ export default function InputNumber({
 
   return (
     <div
-      className={`input-number${focused ? ' input-number--focused' : ''}${error ? ' input-number--error' : ''}${disabled ? ' input-number--disabled' : ''}${className ? ' ' + className : ''}`}
+      className={`input-number${focused ? ' input-number--focused' : ''}${error ? ' input-number--error' : ''}${disabled ? ' input-number--disabled' : ''}${dense ? ' input-number--dense' : ''}${className ? ' ' + className : ''}`}
     >
       {label && (
         <label className="input-number__label" htmlFor={inputId}>

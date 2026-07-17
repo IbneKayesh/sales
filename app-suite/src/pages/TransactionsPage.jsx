@@ -1,5 +1,6 @@
-import { useState, useCallback } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useApp } from '../context/AppContext'
+import { useUI } from '../context/AppUIContext'
 import PageCard, { PageCardHeader, PageCardTitle, PageCardActions, PageCardBody } from '../components/PageCard'
 import Button from '../components/Button'
 import InputText from '../components/InputText'
@@ -7,45 +8,33 @@ import InputNumber from '../components/InputNumber'
 import InputCalendar from '../components/InputCalendar'
 import Dropdown from '../components/Dropdown'
 import DataTable from '../components/DataTable'
-import Confirm from '../components/Confirm'
-import { toast } from '../components/ToastBox'
 import DataCard, { DataCardGrid } from '../components/DataCard'
-import { IconClose, IconPlus, IconEdit, IconDelete, IconSave, IconDownload, IconDollar, IconBox, IconActivity } from '../icons'
+import { toast } from '../components/ToastBox'
+import Badge from '../components/Badge'
+import StatListItem from '../components/StatListItem'
+import {
+  IconClose, IconPlus, IconEdit, IconDelete, IconSave,
+  IconDollar, IconBox, IconActivity, IconDownload,
+  IconCheck, IconWarning, IconInfo,
+} from '../icons'
 
-const statusOptions = [
-  { value: 'completed', label: 'Completed' },
-  { value: 'pending', label: 'Pending' },
-  { value: 'failed', label: 'Failed' },
-  { value: 'refunded', label: 'Refunded' },
-]
+/* ========================================================================
+   Helpers
+   ======================================================================== */
 
-const badgeClass = (status) => {
-  const map = {
-    active: 'badge--success', completed: 'badge--success',
-    pending: 'badge--warning',
-    inactive: 'badge--danger', failed: 'badge--danger',
-    archived: 'badge--muted', refunded: 'badge--muted',
-  }
-  return `badge ${map[status] || 'badge--muted'}`
+function fmtCurrency(n, fractionDigits = 2) {
+  const sign = n < 0 ? '−' : ''
+  return `${sign}$${Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits })}`
 }
 
-function fmtCurrency(n) {
-  const sign = n < 0 ? '-' : ''
-  return `${sign}$${Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00')
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-const StatusBadge = ({ status }) => (
-  <span className={badgeClass(status)}>
-    <span className="badge__dot" />
-    {status.charAt(0).toUpperCase() + status.slice(1)}
-  </span>
-)
-
-const TypeBadge = ({ type }) => (
-  <span className={`type-badge type-badge--${type}`}>
-    {type === 'income' ? 'Income' : 'Expense'}
-  </span>
-)
+/* ========================================================================
+   Form state
+   ======================================================================== */
 
 const initialForm = {
   date: '',
@@ -57,29 +46,98 @@ const initialForm = {
   userId: '',
 }
 
+const statusOptions = [
+  { value: 'completed', label: 'Completed' },
+  { value: 'pending',   label: 'Pending' },
+  { value: 'failed',    label: 'Failed' },
+  { value: 'refunded',  label: 'Refunded' },
+]
+
+/* ========================================================================
+   Component
+   ======================================================================== */
+
 export default function TransactionsPage() {
   const { transactions, addTransaction, updateTransaction, deleteTransaction, users } = useApp()
+  const { totalRevenue, totalExpenses, pendingCount, failedCount } = useMemo(() => {
+    const revenue = transactions.filter((t) => t.type === 'income').reduce((s, t) => s + t.amount, 0)
+    const expenses = transactions.filter((t) => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
+    const pending = transactions.filter((t) => t.status === 'pending').length
+    const failed = transactions.filter((t) => t.status === 'failed').length
+    return { totalRevenue: revenue, totalExpenses: expenses, pendingCount: pending, failedCount: failed }
+  }, [transactions])
+  const netIncome = totalRevenue - totalExpenses
+
+  const [categoryFilter, setCategoryFilter] = useState('')
   const [formMode, setFormMode] = useState(null)
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(initialForm)
   const [formErrors, setFormErrors] = useState({})
-  const [saving, setSaving] = useState(false)
-  const [deleteTarget, setDeleteTarget] = useState(null)
-  const [categoryFilter, setCategoryFilter] = useState('')
+  const { confirm, showLoading, hideLoading } = useUI()
 
-  const totalRevenue = transactions
-    .filter((t) => t.status === 'completed' && t.type === 'income')
-    .reduce((s, t) => s + t.amount, 0)
-  const totalExpenses = transactions
-    .filter((t) => t.status === 'completed' && t.type === 'expense')
-    .reduce((s, t) => s + t.amount, 0)
-  const pendingTxns = transactions.filter((t) => t.status === 'pending').length
-  const failedTxns = transactions.filter((t) => t.status === 'failed').length
-  const netIncome = totalRevenue - totalExpenses
+  // Column definitions — inside component to access openEditForm & handleDelete
+  const txnColumns = [
+    { key: 'date', header: 'Date', width: '110px', render: (v) => <span style={{ whiteSpace: 'nowrap' }}>{formatDate(v)}</span> },
+    { key: 'description', header: 'Description', width: 'auto' },
+    { key: 'category', header: 'Category', width: '120px', render: (v) => v.charAt(0).toUpperCase() + v.slice(1) },
+    { key: 'type', header: 'Type', width: '80px', render: (v) => <Badge type={v}>{v === 'income' ? 'Income' : 'Expense'}</Badge> },
+    {
+      key: 'amount',
+      header: 'Amount',
+      width: '110px',
+      render: (v, row) => (
+        <span className={`text-mono text-mono--${row.type === 'income' ? 'success' : 'danger'}`}>
+          {row.type === 'income' ? '+' : '–'}{fmtCurrency(Math.abs(v), 2)}
+        </span>
+      ),
+    },
+    { key: 'status', header: 'Status', width: '110px', render: (v) => <Badge variant={v === 'completed' ? 'success' : v === 'pending' ? 'warning' : v === 'failed' ? 'danger' : 'muted'} icon={v === 'completed' ? <IconCheck size={12} /> : v === 'pending' ? <IconWarning size={12} /> : v === 'failed' ? <IconClose size={12} /> : <IconInfo size={12} />}>{v.charAt(0).toUpperCase() + v.slice(1)}</Badge> },
+    {
+      key: 'actions',
+      header: 'Actions',
+      width: '110px',
+      sortable: false,
+      render: (_, row) => (
+        <span className="d-inline-flex gap-1">
+          <Button variant="ghost" size="sm" title="Edit"
+            onClick={(e) => { e.stopPropagation(); openEditForm(row) }}>
+            <IconEdit size={14} />
+          </Button>
+          <Button variant="ghost" size="sm" className="btn--icon-danger" title="Delete"
+            onClick={(e) => { e.stopPropagation(); handleDelete(row) }}>
+            <IconDelete size={14} />
+          </Button>
+        </span>
+      ),
+    },
+  ]
 
-  const displayedData = categoryFilter
-    ? transactions.filter((t) => t.category === categoryFilter)
-    : transactions
+  const displayedData = useMemo(() => {
+    if (categoryFilter && categoryFilter !== 'all') {
+      const cats = categoryFilter === 'income'
+        ? transactions.filter((t) => t.type === 'income')
+        : categoryFilter === 'expense'
+          ? transactions.filter((t) => t.type === 'expense')
+          : transactions.filter((t) => t.category === categoryFilter)
+      return cats
+    }
+    return transactions
+  }, [transactions, categoryFilter])
+
+  const filterOptions = useMemo(() => [
+    { value: 'all', label: 'All Transactions' },
+    { value: 'income', label: 'Income' },
+    { value: 'expense', label: 'Expenses' },
+    ...Array.from(new Set(transactions.map((t) => t.category))).map((cat) => ({
+      value: cat,
+      label: cat.charAt(0).toUpperCase() + cat.slice(1),
+    })),
+  ], [transactions])
+
+  const userOptions = useMemo(() =>
+    users.map((u) => ({ value: String(u.id), label: u.name })),
+    [users],
+  )
 
   const openAddForm = useCallback(() => {
     setForm({ ...initialForm })
@@ -142,9 +200,12 @@ export default function TransactionsPage() {
       toast.warning('Please fix the form errors before saving.')
       return
     }
-    setSaving(true)
+    showLoading(
+      formMode === 'add' ? 'Creating transaction...' : 'Updating transaction...',
+      'Please wait, saving the data'
+    )
     try {
-      await new Promise((r) => setTimeout(r, 300))
+      await new Promise((r) => setTimeout(r, 1200))
       const data = {
         ...form,
         amount: parseFloat(form.amount),
@@ -161,289 +222,302 @@ export default function TransactionsPage() {
     } catch {
       toast.error('An error occurred while saving.')
     } finally {
-      setSaving(false)
+      hideLoading()
     }
-  }, [form, formMode, editingId, addTransaction, updateTransaction, closeForm, validate])
+  }, [form, formMode, editingId, addTransaction, updateTransaction, closeForm, showLoading, hideLoading])
 
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!deleteTarget) return
+  const handleDelete = useCallback(async (txn) => {
+    const confirmed = await confirm({
+      title: 'Delete Transaction',
+      message: `Are you sure you want to delete "${txn.description}"? This action cannot be undone.`,
+      confirmText: 'Delete',
+      variant: 'danger',
+    })
+
+    if (!confirmed) return
+
+    showLoading(`Deleting "${txn.description}"...`, 'Removing transaction from system')
     try {
-      await new Promise((r) => setTimeout(r, 200))
-      deleteTransaction(deleteTarget.id)
-      toast.error(`Transaction "${deleteTarget.description}" has been deleted.`)
+      await new Promise((r) => setTimeout(r, 500))
+      deleteTransaction(txn.id)
+      toast.error(`Transaction "${txn.description}" has been deleted.`)
     } catch {
       toast.error('Failed to delete transaction.')
     } finally {
-      setDeleteTarget(null)
+      hideLoading()
     }
-  }, [deleteTarget, deleteTransaction])
-
-  const userOptions = users.map((u) => ({ value: String(u.id), label: u.name }))
-
-  // Category filter options: unique categories from transactions
-  const filterOptions = [
-    { value: '', label: 'All Categories' },
-    ...Array.from(new Set(transactions.map((t) => t.category))).map((cat) => ({
-      value: cat,
-      label: cat.charAt(0).toUpperCase() + cat.slice(1),
-    })),
-  ]
-
-  const transactionColumns = [
-    { key: 'id', header: 'ID', width: '60px' },
-    { key: 'date', header: 'Date', width: '110px' },
-    { key: 'description', header: 'Description', width: '240px' },
-    {
-      key: 'category',
-      header: 'Category',
-      width: '130px',
-      render: (val) => (
-        <span className="small">
-          {val ? val.charAt(0).toUpperCase() + val.slice(1) : '—'}
-        </span>
-      ),
-    },
-    {
-      key: 'type',
-      header: 'Type',
-      width: '80px',
-      render: (val) => <TypeBadge type={val} />,
-    },
-    {
-      key: 'amount',
-      header: 'Amount',
-      width: '120px',
-      render: (val, row) => {
-        const sign = row.type === 'income' ? '+' : '-'
-        const cls = `text-mono ${row.type === 'income' ? 'text-mono--success' : 'text-mono--danger'}`
-        return <span className={cls}>{sign}{fmtCurrency(val)}</span>
-      },
-    },
-    {
-      key: 'status',
-      header: 'Status',
-      width: '110px',
-      render: (val) => <StatusBadge status={val} />,
-    },
-    {
-      key: 'actions',
-      header: 'Actions',
-      width: '90px',
-      sortable: false,
-      render: (_, row) => (
-        <span className="d-inline-flex gap-1">
-          <button type="button" className="action-btn" title="Edit"
-            onClick={(e) => { e.stopPropagation(); openEditForm(row) }}>
-            <IconEdit size={14} />
-          </button>
-          <button type="button" className="action-btn action-btn--danger" title="Delete"
-            onClick={(e) => { e.stopPropagation(); setDeleteTarget(row) }}>
-            <IconDelete size={14} />
-          </button>
-        </span>
-      ),
-    },
-  ]
+  }, [deleteTransaction, confirm, showLoading, hideLoading])
 
   return (
-    <div className="txn-page">
-      {/* Stats Cards */}
+    <div className="page-wrap">
+      {/* Page Header */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        gap: 'var(--sp-4)',
+        flexWrap: 'wrap',
+      }}>
+        <div style={{ textAlign: 'left' }}>
+          <h2 style={{
+            fontSize: 'var(--fs-2xl)',
+            fontWeight: 'var(--fw-bold)',
+            color: 'var(--text-primary)',
+            margin: 0,
+            letterSpacing: '-0.3px',
+          }}>
+            Transactions
+          </h2>
+          <p style={{
+            fontSize: 'var(--fs-sm)',
+            color: 'var(--text-muted)',
+            margin: 'var(--sp-1) 0 0',
+          }}>
+            {transactions.length} records &middot; Net {netIncome >= 0 ? '+' : '–'}{fmtCurrency(Math.abs(netIncome), 0)}
+          </p>
+        </div>
+        {!formMode && (
+          <div style={{ display: 'flex', gap: 'var(--sp-2)', flexShrink: 0 }}>
+            <Dropdown
+              options={filterOptions}
+              value={categoryFilter || 'all'}
+              onChange={(e) => setCategoryFilter(e.target.value === 'all' ? '' : e.target.value)}
+              dense
+            />
+            <Button variant="secondary" size="sm">
+              <IconDownload size={14} />
+              Export
+            </Button>
+            <Button variant="primary" size="sm" onClick={openAddForm}>
+              <IconPlus size={14} />
+              New Transaction
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* Stat Cards */}
       <DataCardGrid>
-        <DataCard variant="success" icon={<IconDollar size={22} />} value={fmtCurrency(totalRevenue)} label="Revenue (Completed)" badge="Income" trend="up" />
-        <DataCard variant="danger" icon={<IconBox size={22} />} value={fmtCurrency(totalExpenses)} label="Expenses (Completed)" badge="Outflow" trend="down" />
-        <DataCard variant="secondary" icon={<IconActivity size={22} />} value={fmtCurrency(netIncome)} label="Net Income" badge={netIncome >= 0 ? 'Profitable' : 'Loss'} trend={netIncome >= 0 ? 'up' : 'down'} valueStyle={{ color: netIncome >= 0 ? 'var(--success)' : 'var(--danger)' }} />
-        <DataCard variant="warning" icon={<IconActivity size={22} />} value={pendingTxns + failedTxns} label="Pending + Failed" badge={failedTxns > 0 ? `${failedTxns} failed` : `${pendingTxns} pending`} trend="down" />
+        <DataCard
+          variant="success"
+          icon={<IconDollar size={22} />}
+          value={fmtCurrency(totalRevenue, 0)}
+          label="Revenue"
+          badge="Income"
+          trend="up"
+        />
+        <DataCard
+          variant="danger"
+          icon={<IconBox size={22} />}
+          value={fmtCurrency(totalExpenses, 0)}
+          label="Expenses"
+          badge="Outflow"
+          trend="down"
+        />
+        <DataCard
+          variant="secondary"
+          icon={<IconActivity size={22} />}
+          value={fmtCurrency(netIncome, 0)}
+          label="Net Income"
+          badge={netIncome >= 0 ? 'Profitable' : 'Loss'}
+          trend={netIncome >= 0 ? 'up' : 'down'}
+          valueStyle={{ color: netIncome >= 0 ? 'var(--success)' : 'var(--danger)' }}
+        />
+        <DataCard
+          variant="warning"
+          icon={<IconActivity size={22} />}
+          value={pendingCount + failedCount}
+          label="Pending + Failed"
+          badge={failedCount > 0 ? `${failedCount} failed` : `${pendingCount} pending`}
+          trend={failedCount > 0 ? 'down' : undefined}
+        />
       </DataCardGrid>
 
-      {/* Main Card */}
-      <PageCard>
-        <PageCardHeader>
-          <PageCardTitle
-            title="Transactions"
-            subtitle={`${transactions.length} records · Net ${fmtCurrency(netIncome)}`}
-          />
-          <PageCardActions>
+      {/* Main Content */}
+      <div className="grid" style={{ gap: 'var(--sp-4)' }}>
+        <div className={`col-span-${formMode ? '12' : '8'}`}>
+          <PageCard>
+            <PageCardHeader>
+              <PageCardTitle
+                title={formMode === 'add' ? 'New Transaction' : formMode === 'edit' ? 'Edit Transaction' : 'All Transactions'}
+                subtitle={
+                  formMode
+                    ? `Fill in the details below to ${formMode === 'add' ? 'create' : 'update'} the transaction`
+                    : `${displayedData.length} of ${transactions.length} records`
+                }
+              />
+              {formMode && (
+                <PageCardActions>
+                  <Button variant="ghost" size="sm" onClick={closeForm}>
+                    <IconClose size={14} />
+                    Cancel
+                  </Button>
+                </PageCardActions>
+              )}
+            </PageCardHeader>
+
             {formMode ? (
-              <Button variant="ghost" size="sm" onClick={closeForm}>
-                <IconClose size={14} className="icon-left" />
-                Cancel
-              </Button>
+              <PageCardBody>
+                <div className="form-wrap">
+                  <div className="grid">
+                    <div className="col-span-4">
+                      <InputCalendar
+                        label="Date"
+                        value={form.date}
+                        name="date"
+                        onChange={handleFormChange}
+                        error={formErrors.date}
+                        required
+                      />
+                    </div>
+                    <div className="col-span-8">
+                      <InputText
+                        label="Description"
+                        placeholder="e.g. Office supplies — Staples"
+                        value={form.description}
+                        name="description"
+                        onChange={handleFormChange}
+                        error={formErrors.description}
+                        required
+                      />
+                    </div>
+                    <div className="col-span-4">
+                      <Dropdown
+                        label="Type"
+                        options={[
+                          { value: 'expense', label: 'Expense' },
+                          { value: 'income', label: 'Income' },
+                        ]}
+                        value={form.type}
+                        name="type"
+                        onChange={(e) => {
+                          handleFormChange(e)
+                          if (e.target.value === 'income' && !form.category) {
+                            setForm((prev) => ({ ...prev, category: 'revenue' }))
+                          }
+                        }}
+                      />
+                    </div>
+                    <div className="col-span-4">
+                      <Dropdown
+                        label="Category"
+                        options={
+                          form.type === 'income'
+                            ? [{ value: 'revenue', label: 'Revenue' }]
+                            : [
+                                { value: 'software', label: 'Software & SaaS' },
+                                { value: 'office', label: 'Office Supplies' },
+                                { value: 'utilities', label: 'Utilities' },
+                                { value: 'payroll', label: 'Payroll' },
+                                { value: 'marketing', label: 'Marketing' },
+                                { value: 'travel', label: 'Travel' },
+                                { value: 'misc', label: 'Miscellaneous' },
+                              ]
+                        }
+                        value={form.category}
+                        name="category"
+                        onChange={handleFormChange}
+                        placeholder="Select category..."
+                        error={formErrors.category}
+                        searchable
+                      />
+                    </div>
+                    <div className="col-span-4">
+                      <InputNumber
+                        label="Amount"
+                        placeholder="0.00"
+                        value={form.amount}
+                        name="amount"
+                        onChange={(e) => {
+                          const val = e.target.value
+                          if (val === '' || /^\d*\.?\d{0,2}$/.test(val)) {
+                            handleFormChange({ target: { name: 'amount', value: val } })
+                          }
+                        }}
+                        error={formErrors.amount}
+                        min={0}
+                        step={0.01}
+                        required
+                      />
+                    </div>
+                    <div className="col-span-6">
+                      <Dropdown
+                        label="Assigned User"
+                        options={userOptions}
+                        value={form.userId}
+                        name="userId"
+                        onChange={handleFormChange}
+                        placeholder="Select user..."
+                        error={formErrors.userId}
+                        searchable
+                      />
+                    </div>
+                    <div className="col-span-6">
+                      <Dropdown
+                        label="Status"
+                        options={statusOptions}
+                        value={form.status}
+                        name="status"
+                        onChange={handleFormChange}
+                        placeholder="Select status..."
+                      />
+                    </div>
+                  </div>
+                  <div className="form-actions">
+                    <Button variant="secondary" onClick={closeForm}>
+                      Cancel
+                    </Button>
+                    <Button variant="primary" onClick={handleSave}>
+                      <IconSave size={16} />
+                      {formMode === 'add' ? 'Create Transaction' : 'Update Transaction'}
+                    </Button>
+                  </div>
+                </div>
+              </PageCardBody>
             ) : (
-              <>
-                <Dropdown
-                  options={filterOptions}
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-                  placeholder="All Categories"
-                  className="txn__filter-dropdown"
+              <PageCardBody>
+                <DataTable
+                  columns={txnColumns}
+                  data={displayedData}
+                  pageSize={8}
+                  sortable
+                  searchable
+                  striped
+                  hoverable
+                  exportable
+                  exportFilename="transactions-export.csv"
+                  onRowClick={(row) => openEditForm(row)}
+                  emptyMessage="No transactions found"
                 />
-                <Button size="sm" variant="outline">
-                  <IconDownload size={14} className="icon-left" />
-                  Export
-                </Button>
-                <Button size="sm" onClick={openAddForm}>
-                  <IconPlus size={14} className="icon-left" />
-                  New Transaction
-                </Button>
-              </>
+              </PageCardBody>
             )}
-          </PageCardActions>
-        </PageCardHeader>
+          </PageCard>
+        </div>
 
-        {formMode ? (
-          <PageCardBody>
-            <div className="form-wrap">
-              <div className="grid">
-                <div className="col-span-6">
-                  <InputCalendar
-                    label="Date"
-                    value={form.date}
-                    name="date"
-                    onChange={handleFormChange}
-                    error={formErrors.date}
-                    required
-                  />
+        {/* Sidebar — hidden when form is open */}
+        {!formMode && (
+          <div className="col-span-4">
+            <PageCard>
+              <PageCardHeader>
+                <PageCardTitle
+                  title="Summary"
+                  subtitle="Financial breakdown"
+                />
+              </PageCardHeader>
+              <PageCardBody>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+                  <StatListItem label="Total Revenue" value={fmtCurrency(totalRevenue, 0)} sub={`${transactions.filter((t) => t.type === 'income').length} transactions`} color="var(--success)" />
+                  <StatListItem label="Total Expenses" value={fmtCurrency(totalExpenses, 0)} sub={`${transactions.filter((t) => t.type === 'expense').length} transactions`} color="var(--danger)" />
+                  <StatListItem label="Net Income" value={fmtCurrency(netIncome, 0)} sub={netIncome >= 0 ? 'Positive cash flow' : 'Negative cash flow'} color={netIncome >= 0 ? 'var(--success)' : 'var(--danger)'} />
+                  <StatListItem label="Pending Review" value={pendingCount} sub={`${failedCount} failed require attention`} color={pendingCount > 0 || failedCount > 0 ? 'var(--warning)' : 'var(--text-muted)'} />
                 </div>
-                <div className="col-span-6">
-                  <InputText
-                    label="Description"
-                    placeholder="e.g. Office supplies - Staples"
-                    value={form.description}
-                    name="description"
-                    onChange={handleFormChange}
-                    error={formErrors.description}
-                    required
-                  />
-                </div>
-                <div className="col-span-6">
-                  <Dropdown
-                    label="Type"
-                    options={[
-                      { value: 'expense', label: 'Expense' },
-                      { value: 'income', label: 'Income' },
-                    ]}
-                    value={form.type}
-                    name="type"
-                    onChange={(e) => {
-                      handleFormChange(e)
-                      if (e.target.value === 'income' && !form.category) {
-                        setForm((prev) => ({ ...prev, category: 'revenue' }))
-                      }
-                    }}
-                  />
-                </div>
-                <div className="col-span-6">
-                  <Dropdown
-                    label="Category"
-                    options={[
-                      ...(form.type === 'income'
-                        ? [{ value: 'revenue', label: 'Revenue' }]
-                        : [
-                          { value: 'software', label: 'Software & SaaS' },
-                          { value: 'office', label: 'Office Supplies' },
-                          { value: 'utilities', label: 'Utilities' },
-                          { value: 'payroll', label: 'Payroll' },
-                          { value: 'marketing', label: 'Marketing' },
-                          { value: 'travel', label: 'Travel' },
-                          { value: 'misc', label: 'Miscellaneous' },
-                        ]),
-                    ]}
-                    value={form.category}
-                    name="category"
-                    onChange={handleFormChange}
-                    placeholder="Select category..."
-                    error={formErrors.category}
-                    searchable
-                  />
-                </div>
-                <div className="col-span-6">
-                  <InputNumber
-                    label="Amount"
-                    placeholder="0.00"
-                    value={form.amount}
-                    name="amount"
-                    onChange={(e) => {
-                      const val = e.target.value
-                      if (val === '' || /^\d*\.?\d{0,2}$/.test(val)) {
-                        handleFormChange({ target: { name: 'amount', value: val } })
-                      }
-                    }}
-                    error={formErrors.amount}
-                    min={0}
-                    step={0.01}
-                    required
-                  />
-                </div>
-                <div className="col-span-6">
-                  <Dropdown
-                    label="Assigned User"
-                    options={userOptions}
-                    value={form.userId}
-                    name="userId"
-                    onChange={handleFormChange}
-                    placeholder="Select user..."
-                    error={formErrors.userId}
-                    searchable
-                  />
-                </div>
-                <div className="col-span-6">
-                  <Dropdown
-                    label="Status"
-                    options={statusOptions}
-                    value={form.status}
-                    name="status"
-                    onChange={handleFormChange}
-                    placeholder="Select status..."
-                  />
-                </div>
-              </div>
-
-              <div className="form-actions">
-                <Button variant="secondary" onClick={closeForm} disabled={saving}>
-                  Cancel
-                </Button>
-                <Button variant="primary" onClick={handleSave} loading={saving}>
-                  <IconSave size={16} className="icon-left" />
-                  {formMode === 'add' ? 'Create Transaction' : 'Update Transaction'}
-                </Button>
-              </div>
-            </div>
-          </PageCardBody>
-        ) : (
-          <PageCardBody>
-            <DataTable
-              columns={transactionColumns}
-              data={displayedData}
-              pageSize={8}
-              sortable
-              searchable
-              striped
-              hoverable
-              exportable
-              exportFilename="transactions-export.csv"
-              onRowClick={(row) => openEditForm(row)}
-              emptyMessage="No transactions found"
-            />
-          </PageCardBody>
+              </PageCardBody>
+            </PageCard>
+          </div>
         )}
-      </PageCard>
+      </div>
 
-      <Confirm
-        open={!!deleteTarget}
-        title="Delete Transaction"
-        message={
-          deleteTarget
-            ? `Are you sure you want to delete "${deleteTarget.description}" (${fmtCurrency(deleteTarget.amount)})? This action cannot be undone.`
-            : ''
-        }
-        confirmText="Delete"
-        cancelText="Cancel"
-        variant="danger"
-        onConfirm={handleDeleteConfirm}
-        onCancel={() => setDeleteTarget(null)}
-      />
+      {/* Global Confirm dialog handles the confirmation UI via useUI().confirm() */}
     </div>
   )
 }
-
-

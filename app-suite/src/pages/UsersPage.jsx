@@ -1,13 +1,14 @@
 import { useState, useCallback } from 'react'
 import { useApp } from '../context/AppContext'
+import { useUI } from '../context/AppUIContext'
 import PageCard, { PageCardHeader, PageCardTitle, PageCardActions, PageCardBody } from '../components/PageCard'
 import Button from '../components/Button'
 import InputText from '../components/InputText'
 import Dropdown from '../components/Dropdown'
 import DataTable from '../components/DataTable'
-import Confirm from '../components/Confirm'
 import { toast } from '../components/ToastBox'
-import { IconClose, IconPlus, IconEdit, IconDelete, IconCheck, IconSave } from '../icons'
+import Badge from '../components/Badge'
+import { IconClose, IconPlus, IconEdit, IconDelete, IconCheck, IconSave, IconWarning, IconInfo } from '../icons'
 
 const statusOptions = [
   { value: 'active', label: 'Active' },
@@ -27,23 +28,6 @@ const departmentOptions = [
   { value: 'operations', label: 'Operations' },
 ]
 
-const badgeClass = (status) => {
-  const map = {
-    active: 'badge--success', completed: 'badge--success',
-    pending: 'badge--warning',
-    inactive: 'badge--danger', failed: 'badge--danger',
-    archived: 'badge--muted', refunded: 'badge--muted',
-  }
-  return `badge ${map[status] || 'badge--muted'}`
-}
-
-const StatusBadge = ({ status }) => (
-  <span className={badgeClass(status)}>
-    <span className="badge__dot" />
-    {status.charAt(0).toUpperCase() + status.slice(1)}
-  </span>
-)
-
 const initialForm = {
   name: '',
   email: '',
@@ -59,9 +43,7 @@ export default function UsersPage() {
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(initialForm)
   const [formErrors, setFormErrors] = useState({})
-  const [saving, setSaving] = useState(false)
-  const [deleteTarget, setDeleteTarget] = useState(null)
-  const [deleting, setDeleting] = useState(false)
+  const { confirm, showLoading, hideLoading } = useUI()
 
   const openAddForm = useCallback(() => {
     setForm({ ...initialForm })
@@ -123,9 +105,12 @@ export default function UsersPage() {
       return
     }
 
-    setSaving(true)
+    showLoading(
+      formMode === 'add' ? 'Creating user...' : 'Updating user...',
+      'Please wait, saving the data'
+    )
     try {
-      await new Promise((r) => setTimeout(r, 300)) // simulate async
+      await new Promise((r) => setTimeout(r, 1200)) // simulate async
 
       if (formMode === 'add') {
         addUser(form)
@@ -138,24 +123,31 @@ export default function UsersPage() {
     } catch {
       toast.error('An error occurred while saving.')
     } finally {
-      setSaving(false)
+      hideLoading()
     }
-  }, [form, formMode, editingId, addUser, updateUser, closeForm, validate])
+  }, [form, formMode, editingId, addUser, updateUser, closeForm, validate, showLoading, hideLoading])
 
-  const handleDeleteConfirm = useCallback(async () => {
-    if (!deleteTarget) return
-    setDeleting(true)
+  const handleDelete = useCallback(async (user) => {
+    const confirmed = await confirm({
+      title: 'Delete User',
+      message: `Are you sure you want to delete "${user.name}"? This action cannot be undone and will permanently remove the user from the system.`,
+      confirmText: 'Delete',
+      variant: 'danger',
+    })
+
+    if (!confirmed) return
+
+    showLoading(`Deleting "${user.name}"...`, 'Removing user from system')
     try {
-      await new Promise((r) => setTimeout(r, 200))
-      deleteUser(deleteTarget.id)
-      toast.error(`User "${deleteTarget.name}" has been deleted.`)
+      await new Promise((r) => setTimeout(r, 500))
+      deleteUser(user.id)
+      toast.error(`User "${user.name}" has been deleted.`)
     } catch {
       toast.error('Failed to delete user.')
     } finally {
-      setDeleting(false)
-      setDeleteTarget(null)
+      hideLoading()
     }
-  }, [deleteTarget, deleteUser])
+  }, [deleteUser, confirm, showLoading, hideLoading])
 
   const userColumns = [
     { key: 'name', header: 'Name', width: '180px' },
@@ -175,7 +167,7 @@ export default function UsersPage() {
               padding: '2px 8px',
               fontSize: '12px',
               fontWeight: 600,
-              borderRadius: 5,
+              borderRadius: 'var(--radius-md)',
               background: role ? `${role.color}18` : 'var(--code-bg)',
               color: role?.color || 'var(--text)',
             }}
@@ -189,7 +181,10 @@ export default function UsersPage() {
       key: 'status',
       header: 'Status',
       width: '120px',
-      render: (val) => <StatusBadge status={val} />,
+      render: (val) => {
+        const v = val || ''
+        return <Badge variant={v === 'active' || v === 'completed' ? 'success' : v === 'pending' ? 'warning' : v === 'inactive' || v === 'failed' ? 'danger' : 'muted'} icon={v === 'active' || v === 'completed' ? <IconCheck size={12} /> : v === 'pending' ? <IconWarning size={12} /> : v === 'inactive' || v === 'failed' ? <IconClose size={12} /> : <IconInfo size={12} />}>{v.charAt(0).toUpperCase() + v.slice(1)}</Badge>
+      },
     },
     {
       key: 'department',
@@ -207,9 +202,9 @@ export default function UsersPage() {
       sortable: false,
       render: (_, row) => (
         <span className="d-inline-flex gap-1">
-          <button
-            type="button"
-            className="action-btn"
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={(e) => {
               e.stopPropagation()
               openEditForm(row)
@@ -217,25 +212,26 @@ export default function UsersPage() {
             title="Edit user"
           >
             <IconEdit size={14} />
-          </button>
-          <button
-            type="button"
-            className="action-btn action-btn--danger"
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="btn--icon-danger"
             onClick={(e) => {
               e.stopPropagation()
-              setDeleteTarget(row)
+              handleDelete(row)
             }}
             title="Delete user"
           >
             <IconDelete size={14} />
-          </button>
+          </Button>
         </span>
       ),
     },
   ]
 
   return (
-    <div className="users-page">
+    <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
@@ -351,10 +347,10 @@ export default function UsersPage() {
               })()}
 
               <div className="form-actions">
-                <Button variant="secondary" onClick={closeForm} disabled={saving}>
+                <Button variant="secondary" onClick={closeForm}>
                   Cancel
                 </Button>
-                <Button variant="primary" onClick={handleSave} loading={saving}>
+                <Button variant="primary" onClick={handleSave}>
                   <IconSave size={16} className="icon-left" />
                   {formMode === 'add' ? 'Create User' : 'Update User'}
                 </Button>
@@ -381,21 +377,8 @@ export default function UsersPage() {
         )}
       </PageCard>
 
-      {/* Delete Confirmation */}
-      <Confirm
-        open={!!deleteTarget}
-        title="Delete User"
-        message={
-          deleteTarget
-            ? `Are you sure you want to delete "${deleteTarget.name}"? This action cannot be undone and will permanently remove the user from the system.`
-            : ''
-        }
-        confirmText="Delete"
-        cancelText="Cancel"
-        variant="danger"
-        onConfirm={handleDeleteConfirm}
-        onCancel={() => setDeleteTarget(null)}
-      />
+      {/* Delete progress indicator */}
+      {/* Global Confirm dialog handles the confirmation UI via useUI().confirm() */}
     </div>
   )
 }

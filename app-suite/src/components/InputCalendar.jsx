@@ -17,6 +17,7 @@ export default function InputCalendar({
   required = false,
   name,
   error,
+  dense = false,
   className = '',
   format = 'YYYY-MM-DD',
   ...rest
@@ -113,7 +114,7 @@ export default function InputCalendar({
 
   return (
     <div
-      className={`input-calendar${focused ? ' input-calendar--focused' : ''}${error ? ' input-calendar--error' : ''}${disabled ? ' input-calendar--disabled' : ''}${open ? ' input-calendar--open' : ''}${className ? ' ' + className : ''}`}
+      className={`input-calendar${focused ? ' input-calendar--focused' : ''}${error ? ' input-calendar--error' : ''}${disabled ? ' input-calendar--disabled' : ''}${open ? ' input-calendar--open' : ''}${dense ? ' input-calendar--dense' : ''}${className ? ' ' + className : ''}`}
       ref={wrapRef}
     >
       {label && (

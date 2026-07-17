@@ -40,7 +40,8 @@ const variants = {
 }
 
 const sizes = {
-  sm: { padding: '6px 12px', fontSize: '13px', gap: '4px' },
+  xs: { padding: '5px 10px', fontSize: '12px', gap: '4px' },
+  sm: { padding: '7px 12px', fontSize: '13px', gap: '4px' },
   md: { padding: '8px 16px', fontSize: '15px', gap: '6px' },
   lg: { padding: '10px 22px', fontSize: '17px', gap: '8px' },
 }

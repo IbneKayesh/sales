@@ -13,6 +13,7 @@ export default function Dropdown({
   required = false,
   name,
   error,
+  dense = false,
   className = '',
   ...rest
 }) {
@@ -62,7 +63,7 @@ export default function Dropdown({
 
   return (
     <div
-      className={`dropdown${focused ? ' dropdown--focused' : ''}${open ? ' dropdown--open' : ''}${error ? ' dropdown--error' : ''}${disabled ? ' dropdown--disabled' : ''}${className ? ' ' + className : ''}`}
+      className={`dropdown${focused ? ' dropdown--focused' : ''}${open ? ' dropdown--open' : ''}${error ? ' dropdown--error' : ''}${disabled ? ' dropdown--disabled' : ''}${dense ? ' dropdown--dense' : ''}${className ? ' ' + className : ''}`}
       ref={wrapRef}
     >
       {label && (

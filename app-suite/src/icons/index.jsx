@@ -4,8 +4,6 @@
    Most icons use currentColor for fill/stroke
    ======================================== */
 
-import React from 'react'
-
 function withDefaults(Component) {
   return function IconWrapper({ size = 24, width, height, className, ...props }) {
     return (
@@ -181,12 +179,20 @@ export const IconLogo = withDefaults((props) => {
   return (
     <svg width={width ?? s} height={height ?? s} viewBox="0 0 32 32" fill="none" {...rest}>
       <rect width="32" height="32" rx="8" fill="var(--accent)" />
-      <path d="M8 22V10h4l4 6 4-6h4v12h-4v-7l-4 6-4-6v7H8z" fill="#fff" />
+      <path d="M8 22V10h4l4 6 4-6h4v12h-4v-7l-4 6-4-6v7H8z" fill="var(--primary-on)" />
     </svg>
   )
 })
 
 // ─── Analytics / Stat Cards ─────────────────
+
+export const IconLogout = withDefaults((props) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <polyline points="16 17 21 12 16 7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
+  </svg>
+))
 
 export const IconUsers = withDefaults((props) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -219,6 +225,14 @@ export const IconActivity = withDefaults((props) => (
 ))
 
 // ─── Data / Files ──────────────────────────
+
+export const IconFile = withDefaults((props) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="9" y1="15" x2="15" y2="15" />
+  </svg>
+))
 
 export const IconDownload = withDefaults((props) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>

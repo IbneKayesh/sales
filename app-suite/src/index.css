@@ -70,28 +70,28 @@
   --muted-bg:             rgba(107, 114, 128, 0.12);
   --muted-on:             #ffffff;
 
-  /* ---- Surface & Background Colors (Light) ---- */
-  --bg:                   #f5f6f8;
-  --surface:              #ffffff;
-  --surface-alt:          #f0f1f3;
-  --surface-hover:        #e8eaed;
+  /* ---- Surface & Background Colors (Light — Purple Theme) ---- */
+  --bg:                   #ede9fe;
+  --surface:              #f5f3ff;
+  --surface-alt:          #e6defa;
+  --surface-hover:        #ddd6fe;
 
-  --sidebar-bg:           #ffffff;
-  --sidebar-hover:        #f0f1f3;
+  --sidebar-bg:           #f5f3ff;
+  --sidebar-hover:        #e6defa;
   --sidebar-active:       rgba(124, 58, 237, 0.08);
 
-  --header-bg:            #ffffff;
-  --footer-bg:            #f0f1f3;
+  --header-bg:            #f5f3ff;
+  --footer-bg:            #ede9fe;
 
-  --card-bg:              #ffffff;
-  --modal-bg:             #ffffff;
+  --card-bg:              #f5f3ff;
+  --modal-bg:             #f5f3ff;
 
-  --table-header:         #f0f1f3;
+  --table-header:         #e6defa;
   --table-hover:          rgba(124, 58, 237, 0.04);
   --table-selected:       rgba(124, 58, 237, 0.08);
-  --table-stripe:         rgba(244, 245, 247, 0.50);
+  --table-stripe:         rgba(245, 243, 255, 0.50);
 
-  --social-bg:            rgba(244, 245, 247, 0.50);
+  --social-bg:            rgba(245, 243, 255, 0.50);
 
   /* ---- Text Colors ---- */
   --text-primary:         #111827;
@@ -106,8 +106,8 @@
   --icon-muted:           #9ca3af;
 
   /* ---- Border Colors ---- */
-  --border:               #e2e5e8;
-  --border-light:         #f0f1f3;
+  --border:               #c4b5fd;
+  --border-light:         #d5caf5;
 
   /* ---- Overlay ---- */
   --overlay-bg:           rgba(0, 0, 0, 0.40);
@@ -115,8 +115,13 @@
   /* ---- Focus ---- */
   --focus-ring:           0 0 0 3px var(--primary-bg);
 
-  /* ---- Shadow Color ---- */
-  --shadow-color:         rgba(0, 0, 0, 0.06);
+  /* ---- Shadow Colors (per elevation) — Purple-tinted ---- */
+  --shadow-color-xs:      rgba(124, 58, 237, 0.04);
+  --shadow-color-sm:      rgba(124, 58, 237, 0.06);
+  --shadow-color-md:      rgba(124, 58, 237, 0.08);
+  --shadow-color-lg:      rgba(124, 58, 237, 0.10);
+  --shadow-color-xl:      rgba(124, 58, 237, 0.15);
+  --shadow-color:         var(--shadow-color-md);
 
   /* ========================================================================
      TYPOGRAPHY
@@ -175,11 +180,11 @@
      SHADOWS
      ======================================================================== */
 
-  --shadow-xs:            0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm:            0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md:            0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg:            0 8px 24px rgba(0, 0, 0, 0.08);
-  --shadow-xl:            0 25px 50px rgba(0, 0, 0, 0.12);
+  --shadow-xs:            0 1px 2px var(--shadow-color-xs);
+  --shadow-sm:            0 1px 3px var(--shadow-color-sm);
+  --shadow-md:            0 4px 12px var(--shadow-color-md);
+  --shadow-lg:            0 8px 24px var(--shadow-color-lg);
+  --shadow-xl:            0 25px 50px var(--shadow-color-xl);
 
   /* ========================================================================
      TRANSITIONS
@@ -305,13 +310,12 @@
 
     --overlay-bg:           rgba(0, 0, 0, 0.60);
 
-    --shadow-color:         rgba(0, 0, 0, 0.30);
-
-    --shadow-xs:            0 1px 2px rgba(0, 0, 0, 0.20);
-    --shadow-sm:            0 1px 3px rgba(0, 0, 0, 0.25);
-    --shadow-md:            0 4px 12px rgba(0, 0, 0, 0.30);
-    --shadow-lg:            0 8px 24px rgba(0, 0, 0, 0.35);
-    --shadow-xl:            0 25px 50px rgba(0, 0, 0, 0.40);
+    --shadow-color-xs:      rgba(0, 0, 0, 0.20);
+    --shadow-color-sm:      rgba(0, 0, 0, 0.25);
+    --shadow-color-md:      rgba(0, 0, 0, 0.30);
+    --shadow-color-lg:      rgba(0, 0, 0, 0.35);
+    --shadow-color-xl:      rgba(0, 0, 0, 0.40);
+    --shadow-color:         var(--shadow-color-md);
   }
 }
 
@@ -337,6 +341,7 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
 }
 
 img, svg, video, canvas, audio, iframe, embed, object {
@@ -427,6 +432,20 @@ table {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+@keyframes bar-rise {
+  from { transform: scaleY(0); opacity: 0; }
+  to   { transform: scaleY(1); opacity: var(--bar-opacity, 0.85); }
+}
+
+/* --------------------------------------------------------------------------
+   5b. Bar Chart Animation Class
+   -------------------------------------------------------------------------- */
+
+.chart-bar {
+  animation: bar-rise 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform-origin: bottom;
 }
 
 /* --------------------------------------------------------------------------

@@ -15,6 +15,7 @@ export default function InputText({
   name,
   id,
   maxLength,
+  dense = false,
   className = '',
   ...rest
 }) {
@@ -23,7 +24,7 @@ export default function InputText({
 
   return (
     <div
-      className={`input-text${focused ? ' input-text--focused' : ''}${error ? ' input-text--error' : ''}${disabled ? ' input-text--disabled' : ''}${className ? ' ' + className : ''}`}
+      className={`input-text${focused ? ' input-text--focused' : ''}${error ? ' input-text--error' : ''}${disabled ? ' input-text--disabled' : ''}${dense ? ' input-text--dense' : ''}${className ? ' ' + className : ''}`}
     >
       {label && (
         <label className="input-text__label" htmlFor={inputId}>
