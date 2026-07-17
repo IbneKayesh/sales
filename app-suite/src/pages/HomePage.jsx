@@ -1,0 +1,1 @@
+implement pagecard, all inputs

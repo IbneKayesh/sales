@@ -82,6 +82,7 @@ export const AuthProvider = ({ children }) => {
         setEmply(resp.data.emply);
         setUser(resp.data.users);
         setBusiness(resp.data.bsins);
+        setUserMenus(resp.data.menus);
       }
       return resp;
     } catch (error) {
