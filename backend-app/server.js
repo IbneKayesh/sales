@@ -32,6 +32,8 @@ const salesRoutes = require("./routes/sales");
 const reportsRoutes = require("./routes/reports");
 //mobile
 const mobileRoutes = require("./routes/mobile");
+//M05 :: Manufacturing
+const m05Routes = require("./routes/M05");
 
 const app = express();
 
@@ -80,6 +82,8 @@ app.use("/api/sales", salesRoutes);
 app.use("/api/reports", reportsRoutes);
 //mobile
 app.use("/api/mobile", mobileRoutes);
+//M05 :: Manufacturing
+app.use("/api/manufacturing", m05Routes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

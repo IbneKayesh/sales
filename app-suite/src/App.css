@@ -1467,9 +1467,9 @@ code {
   position: relative;
   display: flex;
   align-items: center;
-  gap: var(--sp-3);
-  padding: 0 var(--sp-3);
-  height: 64px;
+  gap: var(--sp-2);
+  padding: 0 var(--sp-1);
+  height: 48px;
   border-bottom: 1px solid var(--border);
   background: var(--header-bg);
   z-index: var(--z-sticky);
@@ -2147,7 +2147,7 @@ code {
 }
 
 .module-page__menu-label {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-xs);
   font-weight: var(--fw-medium);
   line-height: 1.2;
   max-width: 80px;

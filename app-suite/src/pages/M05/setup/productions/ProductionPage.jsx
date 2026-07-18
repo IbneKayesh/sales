@@ -5,10 +5,11 @@ import PageCard, {
   PageCardBody,
 } from "@/components/PageCard";
 import GroupButton from "@/components/GroupButton";
-import useChartOfAccounts from "@/hooks/M08/useChartOfAccounts";
-import COAList from "./COAList";
+import useProduction from "@/hooks/M05/useProduction";
+import ProductionList from "./ProductionList";
+import ProductionForm from "./ProductionForm";
 
-const ChartOfAccountsPage = () => {
+const ProductionPage = () => {
   const {
     isBusy,
     pgView,
@@ -23,16 +24,15 @@ const ChartOfAccountsPage = () => {
     //functions
     handleSetView,
     handleEdit,
-  } = useChartOfAccounts();
+    handleDelete,
+    handleChange,
+  } = useProduction();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
-          <PageCardTitle
-            title="Chart of Accounts"
-            subtitle="All accounts heads"
-          />
+          <PageCardTitle title="Productions" subtitle="All Productions" />
           <PageCardActions>
             <GroupButton
               options={[
@@ -50,11 +50,24 @@ const ChartOfAccountsPage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView.view === "SYS_VW_LST_1" && (
-            <COAList listData={listData} onEdit={handleEdit} />
+            <ProductionList
+              listData={listData}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
+          {pgView.view === "SYS_VW_FRM_1" && (
+            <ProductionForm
+              readOnly={readOnly}
+              stopEdit={stopEdit}
+              formData={formData}
+              formErrors={formErrors}
+              onChange={handleChange}
+            />
           )}
         </PageCardBody>
       </PageCard>
     </div>
   );
 };
-export default ChartOfAccountsPage;
+export default ProductionPage;

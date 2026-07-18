@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
+import { useUI } from "@/context/AppUIContext.jsx";
+import { productionAPI } from "@/api/M05/productionAPI.js";
 
-const useChartOfAccounts = () => {
-  const [isBusy, setIsBusy] = useState(false);
-  const [pgView, setPgView] = useState({ button: "SYS_BT_SRC_1", view: "SYS_VW_LST_1" });
+const useProduction = () => {
+  const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
+  const [pgView, setPgView] = useState({
+    button: "SYS_BT_SRC_1",
+    view: "SYS_VW_LST_1",
+  });
   const [pgId, setPgId] = useState("M05-M01-M001");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
@@ -18,28 +23,10 @@ const useChartOfAccounts = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
-  const getAllCoa = async () => {
+  const getAllProduction = async () => {
     try {
       setIsBusy(true);
-      //coaAPI will update later
-      const resp = [
-        {
-          name: "Assets",
-          id: 1,
-          children: [
-            { name: "Current Assets", id: 2 },
-            { name: "Fixed Assets", id: 3 },
-          ],
-        },
-        {
-          name: "Liabilities",
-          id: 4,
-          children: [
-            { name: "Current Liabilities", id: 5 },
-            { name: "Long-term Liabilities", id: 6 },
-          ],
-        },
-      ]; //await coaAPI.getAll({});
+      const resp = await productionAPI.getAll({});
       //console.log("resp", resp);
       const list = resp.data || [];
       setListData(list);
@@ -50,7 +37,7 @@ const useChartOfAccounts = () => {
   };
 
   useEffect(() => {
-    getAllCoa();
+    getAllProduction();
   }, []);
 
   const handleSetView = (btn) => {
@@ -70,6 +57,26 @@ const useChartOfAccounts = () => {
     setFormData(rowData);
   };
 
+  const handleDelete = async (rowData) => {
+    const confirmation = await confirmBox({
+      title: "Delete",
+      message: `Are you sure you want to delete "${rowData.prods_cname}"? This action cannot be undone and will permanently remove the user from the system.`,
+      confirmText: "Delete",
+      variant: "danger",
+    });
+    if (!confirmation) return;
+    // await alertBox({
+    //   title: "Deleted",
+    //   message: `"${rowData.prods_cname}" has been permanently removed from the system.`,
+    //   variant: "success",
+    //   confirmText: "Done",
+    // });
+    showToast(`"${rowData.prods_cname}" deleted successfully!`, {
+      type: "success",
+    });
+  };
+
+  const handleChange = (f, v) => {};
   return {
     isBusy,
     pgView,
@@ -84,6 +91,8 @@ const useChartOfAccounts = () => {
     //functions
     handleSetView,
     handleEdit,
+    handleDelete,
+    handleChange,
   };
 };
-export default useChartOfAccounts;
+export default useProduction;

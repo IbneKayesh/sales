@@ -7,7 +7,7 @@ CREATE TABLE tmmb_prods (
 
   -- custom
   prods_cname varchar(50) NOT NULL,
-  prods_prono integer NOT NULL DEFAULT 0,
+  prods_prono integer NOT NULL DEFAULT 1,
   
   -- default 2
   prods_actve boolean NOT NULL DEFAULT true,

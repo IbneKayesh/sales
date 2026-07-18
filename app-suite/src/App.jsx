@@ -8,7 +8,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 import './App.css'
 
 function AppContent() {
-  const { user } = useApp()
+  const { user, logout } = useApp()
 
   if (!user) {
     return <LoginPage />

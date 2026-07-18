@@ -1,56 +1,185 @@
-import { useNavigate } from 'react-router-dom'
-import PageCard, { PageCardHeader, PageCardTitle, PageCardBody } from '../../components/PageCard'
+import { useNavigate } from "react-router-dom";
+import PageCard, {
+  PageCardHeader,
+  PageCardTitle,
+  PageCardBody,
+} from "@/components/PageCard";
+import {
+  IconHome,
+  IconAccounts,
+  IconActivity,
+  IconFile,
+  IconUsers,
+  IconManufacture,
+} from "@/icons";
 
 const modules = [
-  { id: 1, name: 'Dashboard', icon: 'fa fa-home', color: '#7c3aed', order_by: 1 },
-  { id: 2, name: 'Accounts', icon: 'fa fa-cog', color: '#22c55e', order_by: 2 },
-  { id: 3, name: 'Examples', icon: 'fa fa-cog', color: '#f59e0b', order_by: 3 },
-]
+  {
+    id: "M01",
+    menus_mname: "Dashboard",
+    menus_micon: <IconHome />,
+    menus_color: "#7c3aed",
+    menus_odrby: 1,
+  },
+  {
+    id: "M05",
+    menus_mname: "Manufacturing",
+    menus_micon: <IconManufacture />,
+    menus_color: "#22c55e",
+    menus_odrby: 5,
+  },
+  {
+    id: "M08",
+    menus_mname: "Accounts",
+    menus_micon: <IconAccounts />,
+    menus_color: "#22c55e",
+    menus_odrby: 8,
+  },
+  {
+    id: "M09",
+    menus_mname: "Examples",
+    menus_micon: <IconActivity />,
+    menus_color: "#f59e0b",
+    menus_odrby: 9,
+  },
+];
 
 const menus = [
-  { id: 1, name: 'Home', parent_id: 1, icon: 'fa fa-house', url_link: '/' },
-  { id: 2, name: 'Reports', parent_id: 1, icon: 'fa fa-chart-bar', url_link: '/reports' },
-  { id: 3, name: 'Chart of Accounts', parent_id: 2, icon: 'fa fa-users', url_link: '/M08/chart-of-accounts' },
-  { id: 4, name: 'Transactions', parent_id: 2, icon: '◈', url_link: '/transactions' },
-  { id: 5, name: 'Roles', parent_id: 2, icon: 'fa fa-user-shield', url_link: '/roles' },
-  { id: 6, name: 'Users', parent_id: 2, icon: '◐', url_link: '/users' },
-  { id: 7, name: 'Settings', parent_id: 2, icon: '⚙', url_link: '/settings' },
-  { id: 8, name: 'UI Examples', parent_id: 3, icon: 'fa fa-palette', url_link: '/examples' },
-  { id: 9, name: 'Modules', parent_id: 3, icon: '⊞', url_link: '/M01/modules' },
-]
+  {
+    id: "M01-M01-M001",
+    menus_mname: "Home",
+    menus_color: "#f59e0b",
+    menus_micon: <IconHome />,
+    menus_odrby: 1,
+    menus_mlink: "/",
+    menus_menus: "M01",
+  },
+  {
+    id: "M05-M01-M001",
+    menus_mname: "Productions",
+    menus_color: "#f59e0b",
+    menus_micon: <IconManufacture />,
+    menus_odrby: 1,
+    menus_mlink: "/M05/productions",
+    menus_menus: "M05",
+  },
+  {
+    id: "M08-M01-M001",
+    menus_mname: "Chart of Accounts",
+    menus_color: "#f59e0b",
+    menus_micon: <IconAccounts />,
+    menus_odrby: 1,
+    menus_mlink: "/M08/chart-of-accounts",
+    menus_menus: "M08",
+  },
+  {
+    id: "M08-M01-M002",
+    menus_mname: "Party Accounts",
+    menus_color: "#f59e0b",
+    menus_micon: <IconUsers />,
+    menus_odrby: 2,
+    menus_mlink: "/M08/party-accounts",
+    menus_menus: "M08",
+  },
+  {
+    id: "M09-M01-M001",
+    menus_mname: "Reports",
+    menus_color: "#f59e0b",
+    menus_micon: <IconFile />,
+    menus_odrby: 1,
+    menus_mlink: "/reports",
+    menus_menus: "M09",
+  },
+  {
+    id: "M09-M01-M002",
+    menus_mname: "Transactions",
+    menus_color: "#f59e0b",
+    menus_micon: <IconFile />,
+    menus_odrby: 1,
+    menus_mlink: "/transactions",
+    menus_menus: "M09",
+  },
+  {
+    id: "M09-M01-M003",
+    menus_mname: "Roles",
+    menus_color: "#f59e0b",
+    menus_micon: <IconFile />,
+    menus_odrby: 1,
+    menus_mlink: "/roles",
+    menus_menus: "M09",
+  },
+  {
+    id: "M09-M01-M004",
+    menus_mname: "Users",
+    menus_color: "#f59e0b",
+    menus_micon: <IconFile />,
+    menus_odrby: 1,
+    menus_mlink: "/users",
+    menus_menus: "M09",
+  },
+  {
+    id: "M09-M01-M005",
+    menus_mname: "Settings",
+    menus_color: "#f59e0b",
+    menus_micon: <IconFile />,
+    menus_odrby: 1,
+    menus_mlink: "/settings",
+    menus_menus: "M09",
+  },
+  {
+    id: "M09-M01-M006",
+    menus_mname: "UI Examples",
+    menus_color: "#f59e0b",
+    menus_micon: <IconFile />,
+    menus_odrby: 1,
+    menus_mlink: "/examples",
+    menus_menus: "M09",
+  },
+  {
+    id: "M09-M01-M007",
+    menus_mname: "Modules",
+    menus_color: "#f59e0b",
+    menus_micon: <IconFile />,
+    menus_odrby: 1,
+    menus_mlink: "/M01/modules",
+    menus_menus: "M09",
+  },
+];
 
 // Topbar navigation items — sourced from here so ModulePage is the menu authority
 export const navItems = [
-  { to: '/', label: 'Dashboard', icon: '◉' },
-  { to: '/users', label: 'Users', icon: '◐' },
-  { to: '/transactions', label: 'Transactions', icon: '◈' },
-  { to: '/reports', label: 'Reports', icon: '▣' },
-  { to: '/settings', label: 'Settings', icon: '⚙' },
-  { to: '/examples', label: 'Examples', icon: '✦' },
-  { to: '/M08/chart-of-accounts', label: 'COA', icon: '◐' },
-  { to: '/M01/modules', label: 'Modules', icon: '⊞' },
-]
+  { to: "/", label: "Dashboard", icon: "◉" },
+  { to: "/users", label: "Users", icon: "◐" },
+  { to: "/transactions", label: "Transactions", icon: "◈" },
+  { to: "/reports", label: "Reports", icon: "▣" },
+  { to: "/settings", label: "Settings", icon: "⚙" },
+  { to: "/examples", label: "Examples", icon: "✦" },
+  { to: "/M08/chart-of-accounts", label: "COA", icon: "◐" },
+  { to: "/M01/modules", label: "Modules", icon: "⊞" },
+];
 
 const ModulePage = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div className="page-wrap">
       <div className="module-page__header">
         <div>
-          <h2 className="module-page__title">Modules</h2>
+          <h2 className="module-page__title">Applications</h2>
           <p className="module-page__subtitle">
-            {modules.length} modules &middot; {menus.length} menus
+            {modules.length} applications &middot; {menus.length} features
           </p>
         </div>
       </div>
 
       <div className="module-page__list">
         {[...modules]
-          .sort((a, b) => a.order_by - b.order_by)
+          .sort((a, b) => a.menus_odrby - b.menus_odrby)
           .map((module) => {
-            const modMenus = menus.filter((menu) => menu.parent_id === module.id)
-            if (modMenus.length === 0) return null
+            const modMenus = menus.filter(
+              (menu) => menu.menus_menus === module.id,
+            );
+            if (modMenus.length === 0) return null;
 
             return (
               <PageCard key={module.id}>
@@ -58,13 +187,14 @@ const ModulePage = () => {
                   <div className="module-page__card-header">
                     <div
                       className="module-page__card-icon"
-                      style={{ background: `${module.color}18` }}
+                      style={{ background: `${module.menus_color}18` }}
                     >
-                      <i className={module.icon} style={{ fontSize: 18, color: module.color }} />
+                      {module.menus_micon}
+                      <i style={{ fontSize: 18, color: module.menus_color }} />
                     </div>
                     <PageCardTitle
-                      title={module.name}
-                      subtitle={`${modMenus.length} menu${modMenus.length === 1 ? '' : 's'}`}
+                      title={`${module.menus_mname} (${module.id})`}
+                      subtitle={`${modMenus.length} feature${modMenus.length === 1 ? "" : "s"}`}
                     />
                   </div>
                 </PageCardHeader>
@@ -75,31 +205,32 @@ const ModulePage = () => {
                         key={menu.id}
                         type="button"
                         className="module-page__menu-item"
-                        onClick={() => navigate(menu.url_link)}
+                        onClick={() => navigate(menu.menus_mlink)}
+                        title={menu.menus_mname}
                       >
                         <div
                           className="module-page__menu-icon"
-                          style={{ background: `${module.color}18` }}
+                          style={{ background: `${menu.menus_color}18` }}
                         >
-                          {menu.icon && menu.icon.startsWith('fa ') ? (
-                            <i className={menu.icon} style={{ fontSize: 20, color: module.color }} />
-                          ) : (
-                            <span style={{ fontSize: 20, color: module.color, fontWeight: 'bold' }}>
-                              {menu.icon || '•'}
-                            </span>
-                          )}
+                          {menu.menus_micon}
+                          <i
+                            className={menu.menus_micon}
+                            style={{ fontSize: 20, color: menu.menus_color }}
+                          />
                         </div>
-                        <span className="module-page__menu-label">{menu.name}</span>
+                        <span className="module-page__menu-label">
+                          {menu.menus_mname}
+                        </span>
                       </button>
                     ))}
                   </div>
                 </PageCardBody>
               </PageCard>
-            )
+            );
           })}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ModulePage
+export default ModulePage;

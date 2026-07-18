@@ -1,8 +1,8 @@
-import { createContext, useContext, useState, useCallback } from 'react'
-import Confirm from '../components/Confirm'
-import Progress from '../components/Progress'
-import ToastBox from '../components/ToastBox'
-import { IconCogs, IconSuccess, IconError, IconInfo, IconWarning, IconClose } from '../icons'
+import { createContext, useContext, useState, useCallback, useRef} from 'react'
+import Confirm from '@/components/Confirm'
+import Progress from '@/components/Progress'
+import ToastBox from '@/components/ToastBox'
+import { IconCogs, IconSuccess, IconError, IconInfo, IconWarning, IconClose } from '@/icons'
 
 const UIContext = createContext(null)
 
@@ -41,7 +41,7 @@ export function AppUIProvider({ children }) {
     resolve: null,
   })
 
-  const confirm = useCallback((options = {}) => {
+  const confirmBox = useCallback((options = {}) => {
     return new Promise((resolve) => {
       setConfirmState({
         open: true,
@@ -79,7 +79,7 @@ export function AppUIProvider({ children }) {
     resolve: null,
   })
 
-  const alert = useCallback((options = {}) => {
+  const alertBox = useCallback((options = {}) => {
     return new Promise((resolve) => {
       setAlertState({
         open: true,
@@ -113,8 +113,8 @@ export function AppUIProvider({ children }) {
 
   const value = {
     showToast,
-    confirm,
-    alert,
+    confirmBox,
+    alertBox,
     isBusy,
     setIsBusy,
   }

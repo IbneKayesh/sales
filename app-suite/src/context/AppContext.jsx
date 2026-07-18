@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiLogin } from "@/utils/api";
 
 const AppContext = createContext(null);
@@ -313,6 +314,7 @@ const categoryOptions = [
 ];
 
 export function AppProvider({ children }) {
+  const navigate = useNavigate();
   //auth guard or session holder
   const [emply, setEmply] = useState(null);
   const [user, setUser] = useState(null);
@@ -353,6 +355,10 @@ export function AppProvider({ children }) {
 
   const logout = useCallback(() => {
     setUser(null);
+    setEmply(null);
+    setBusiness(null);
+    setUserMenus([]);
+    navigate("/login");
   }, []);
 
   const addUser = useCallback((userData) => {
