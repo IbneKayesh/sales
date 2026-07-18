@@ -43,7 +43,7 @@ export default function UsersPage() {
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(initialForm)
   const [formErrors, setFormErrors] = useState({})
-  const { confirm, showLoading, hideLoading } = useUI()
+  const { confirm, alert, isBusy, setIsBusy } = useUI()
 
   const openAddForm = useCallback(() => {
     setForm({ ...initialForm })
@@ -105,10 +105,7 @@ export default function UsersPage() {
       return
     }
 
-    showLoading(
-      formMode === 'add' ? 'Creating user...' : 'Updating user...',
-      'Please wait, saving the data'
-    )
+    setIsBusy(true)
     try {
       await new Promise((r) => setTimeout(r, 1200)) // simulate async
 
@@ -123,9 +120,9 @@ export default function UsersPage() {
     } catch {
       toast.error('An error occurred while saving.')
     } finally {
-      hideLoading()
+      setIsBusy(false)
     }
-  }, [form, formMode, editingId, addUser, updateUser, closeForm, validate, showLoading, hideLoading])
+  }, [form, formMode, editingId, addUser, updateUser, closeForm, validate, setIsBusy])
 
   const handleDelete = useCallback(async (user) => {
     const confirmed = await confirm({
@@ -137,17 +134,27 @@ export default function UsersPage() {
 
     if (!confirmed) return
 
-    showLoading(`Deleting "${user.name}"...`, 'Removing user from system')
+    setIsBusy(true)
     try {
       await new Promise((r) => setTimeout(r, 500))
       deleteUser(user.id)
-      toast.error(`User "${user.name}" has been deleted.`)
+      setIsBusy(false)
+      await alert({
+        title: 'User Deleted',
+        message: `"${user.name}" has been permanently removed from the system.`,
+        variant: 'success',
+        confirmText: 'Done',
+      })
     } catch {
-      toast.error('Failed to delete user.')
-    } finally {
-      hideLoading()
+      setIsBusy(false)
+      await alert({
+        title: 'Deletion Failed',
+        message: `An error occurred while deleting "${user.name}". Please try again.`,
+        variant: 'danger',
+        confirmText: 'Dismiss',
+      })
     }
-  }, [deleteUser, confirm, showLoading, hideLoading])
+  }, [deleteUser, confirm, alert, setIsBusy])
 
   const userColumns = [
     { key: 'name', header: 'Name', width: '180px' },
@@ -240,7 +247,7 @@ export default function UsersPage() {
           />
           <PageCardActions>
             {formMode ? (
-              <Button variant="ghost" size="sm" onClick={closeForm}>
+              <Button variant="ghost" size="sm" onClick={closeForm} disabled={isBusy}>
                 <IconClose size={14} className="icon-left" />
                 Cancel
               </Button>
@@ -267,6 +274,7 @@ export default function UsersPage() {
                     onChange={handleFormChange}
                     error={formErrors.name}
                     required
+                    disabled={isBusy}
                   />
                 </div>
                 <div className="col-span-6">
@@ -279,6 +287,7 @@ export default function UsersPage() {
                     error={formErrors.email}
                     type="email"
                     required
+                    disabled={isBusy}
                   />
                 </div>
                 <div className="col-span-6">
@@ -288,6 +297,7 @@ export default function UsersPage() {
                     value={form.phone}
                     name="phone"
                     onChange={handleFormChange}
+                    disabled={isBusy}
                   />
                 </div>
                 <div className="col-span-6">
@@ -300,6 +310,7 @@ export default function UsersPage() {
                     placeholder="Select department..."
                     error={formErrors.department}
                     searchable
+                    disabled={isBusy}
                   />
                 </div>
                 <div className="col-span-6">
@@ -311,6 +322,7 @@ export default function UsersPage() {
                     onChange={handleFormChange}
                     placeholder="Select role..."
                     error={formErrors.role}
+                    disabled={isBusy}
                   />
                 </div>
                 <div className="col-span-6">
@@ -321,6 +333,7 @@ export default function UsersPage() {
                     name="status"
                     onChange={handleFormChange}
                     placeholder="Select status..."
+                    disabled={isBusy}
                   />
                 </div>
               </div>
@@ -347,10 +360,10 @@ export default function UsersPage() {
               })()}
 
               <div className="form-actions">
-                <Button variant="secondary" onClick={closeForm}>
+                <Button variant="secondary" onClick={closeForm} disabled={isBusy}>
                   Cancel
                 </Button>
-                <Button variant="primary" onClick={handleSave}>
+                <Button variant="primary" onClick={handleSave} disabled={isBusy}>
                   <IconSave size={16} className="icon-left" />
                   {formMode === 'add' ? 'Create User' : 'Update User'}
                 </Button>

@@ -963,7 +963,7 @@ code {
 }
 
 .data-table--dense .data-table__search-input {
-  padding: var(--sp-1) 30px var(--sp-1) 32px;
+  padding: var(--sp-1) 20px var(--sp-1) 22px;
   font-size: var(--fs-xs);
 }
 
@@ -991,6 +991,7 @@ code {
   display: flex;
   flex-direction: column;
   gap: var(--sp-3);
+  width: 100%;
   font-size: var(--fs-sm);
 }
 
@@ -1031,7 +1032,7 @@ code {
 
 .data-table__search-input {
   width: 100%;
-  padding: var(--sp-1) 36px var(--sp-1) 38px;
+  padding: var(--sp-1) 26px var(--sp-1) 28px;
   font-size: var(--fs-sm);
   font-family: var(--font-sans);
   color: var(--text-primary);
@@ -1410,7 +1411,7 @@ code {
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--sp-4);
-  padding: var(--sp-5) var(--sp-6);
+  padding: var(--sp-3) var(--sp-4);
   border-bottom: 1px solid var(--border);
 }
 
@@ -1444,7 +1445,7 @@ code {
 }
 
 .page-card__body {
-  padding: var(--sp-6);
+  padding: var(--sp-2);
   text-align: left;
 }
 
@@ -2045,7 +2046,118 @@ code {
 }
 
 /* --------------------------------------------------------------------------
-   17. 12-Column Grid System
+   17. Module Page
+   -------------------------------------------------------------------------- */
+
+.module-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-6);
+}
+
+.module-page__title {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.module-page__subtitle {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  margin: var(--sp-1) 0 0;
+}
+
+.module-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.module-page__card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.module-page__card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Android-style app icon grid */
+.module-page__menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: var(--sp-3);
+}
+
+.module-page__menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-2);
+  border: none;
+  border-radius: var(--radius-xl);
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  text-align: center;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.module-page__menu-item:hover {
+  background: var(--surface-alt);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.module-page__menu-item:focus-visible {
+  box-shadow: 0 0 0 3px var(--primary-border);
+}
+
+.module-page__menu-item:active {
+  transform: scale(0.95);
+}
+
+.module-page__menu-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.module-page__menu-item:hover .module-page__menu-icon {
+  transform: scale(1.1);
+}
+
+.module-page__menu-label {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  line-height: 1.2;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   18. 12-Column Grid System
    -------------------------------------------------------------------------- */
 
 .grid {

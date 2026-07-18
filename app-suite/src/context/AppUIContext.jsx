@@ -68,22 +68,54 @@ export function AppUIProvider({ children }) {
     res?.(false)
   }, [confirmState.resolve])
 
-  /* ─── Global Loading Overlay ────────────────── */
-  const [loading, setLoading] = useState({ active: false, label: '', description: '' })
+  /* ─── Global Alert ──────────────────────────── */
+  const [alertState, setAlertState] = useState({
+    open: false,
+    title: '',
+    message: '',
+    confirmText: 'OK',
+    variant: 'primary',
+    resolve: null,
+  })
 
-  const showLoading = useCallback((label = 'Loading...', description = '') => {
-    setLoading({ active: true, label, description })
+  const alert = useCallback((options = {}) => {
+    return new Promise((resolve) => {
+      setAlertState({
+        open: true,
+        title: options.title || 'Notice',
+        message: options.message || '',
+        confirmText: options.confirmText || 'OK',
+        variant: options.variant || 'primary',
+        resolve,
+      })
+    })
   }, [])
 
-  const hideLoading = useCallback(() => {
-    setLoading({ active: false, label: '', description: '' })
+  const handleAlertConfirm = useCallback(() => {
+    const res = alertState.resolve
+    setAlertState((prev) => ({ ...prev, open: false }))
+    res?.()
+  }, [alertState.resolve])
+
+  /* ─── Global Busy State & Loading Overlay ──── */
+  const [isBusy, setBusy] = useState(false)
+  const [loading, setLoading] = useState({ active: false, label: '', description: '' })
+
+  const setIsBusy = useCallback((busy) => {
+    setBusy(busy)
+    if (busy) {
+      setLoading({ active: true, label: 'Loading...', description: 'Please wait while the operation completes.' })
+    } else {
+      setLoading({ active: false, label: '', description: '' })
+    }
   }, [])
 
   const value = {
     showToast,
     confirm,
-    showLoading,
-    hideLoading,
+    alert,
+    isBusy,
+    setIsBusy,
   }
 
   return (
@@ -104,6 +136,17 @@ export function AppUIProvider({ children }) {
         variant={confirmState.variant}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
+      />
+
+      {/* Global alert dialog */}
+      <Confirm
+        open={alertState.open}
+        title={alertState.title}
+        message={alertState.message}
+        confirmText={alertState.confirmText}
+        variant={alertState.variant}
+        confirmOnly={true}
+        onConfirm={handleAlertConfirm}
       />
 
       {/* Global loading overlay — full-screen modal popup */}

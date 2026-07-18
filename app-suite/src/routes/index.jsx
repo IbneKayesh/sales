@@ -9,6 +9,7 @@ import LoginPage from '../pages/auth/LoginPage'
 import NotificationPage from '../pages/NotificationPage'
 import NotFoundPage from '../pages/NotFoundPage'
 import ChartOfAccountsPage from '@/pages/M08/setup/coa/ChartOfAccountsPage'
+import ModulePage from '@/pages/M01/ModulePage'
 
 const routes = [
   { path: '/',          element: <HomePage /> },
@@ -19,7 +20,8 @@ const routes = [
   { path: '/settings',  element: <SettingsPage /> },
   { path: '/examples',  element: <ExamplesPage /> },
   { path: '/notifications', element: <NotificationPage /> },
-  { path: '/m08/chart-of-accounts', element: <ChartOfAccountsPage /> },
+  { path: '/M08/chart-of-accounts', element: <ChartOfAccountsPage /> },
+  { path: '/M01/modules', element: <ModulePage /> },
   { path: '*',          element: <NotFoundPage /> },
 ]
 

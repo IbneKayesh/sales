@@ -1,16 +1,56 @@
 import { useEffect, useState } from "react";
 
 const useChartOfAccounts = () => {
-  const [pgView, setPgView] = useState({ button: "search", view: "SYS_LST_1" });
-  const [formData, setFormData] = useState(null);
-  const [dataList, setDataList] = useState([]);
+  const [isBusy, setIsBusy] = useState(false);
+  const [pgView, setPgView] = useState({ button: "SYS_BT_SRC_1", view: "SYS_VW_LST_1" });
+  const [pgId, setPgId] = useState("M05-M01-M001");
+  const [pageAuth, setPageAuth] = useState({
+    extpr: false,
+    addpr: false,
+    edtpr: false,
+    delpr: false,
+  });
+  const [readOnly, setReadOnly] = useState(false);
+  const [stopEdit, setStopEdit] = useState(false);
+  const [listData, setListData] = useState([]);
+  const [formData, setFormData] = useState({});
+  const [listDataItem, setListDataItem] = useState([]);
+  const [formDataItem, setFormDataItem] = useState({});
+  const [formErrors, setFormErrors] = useState({});
+
+  const getAllCoa = async () => {
+    try {
+      setIsBusy(true);
+      //coaAPI will update later
+      const resp = [
+        {
+          name: "Assets",
+          id: 1,
+          children: [
+            { name: "Current Assets", id: 2 },
+            { name: "Fixed Assets", id: 3 },
+          ],
+        },
+        {
+          name: "Liabilities",
+          id: 4,
+          children: [
+            { name: "Current Liabilities", id: 5 },
+            { name: "Long-term Liabilities", id: 6 },
+          ],
+        },
+      ]; //await coaAPI.getAll({});
+      //console.log("resp", resp);
+      const list = resp.data || [];
+      setListData(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
 
   useEffect(() => {
-    setDataList([
-      {
-        name: "User",
-      },
-    ]);
+    getAllCoa();
   }, []);
 
   const handleSetView = (btn) => {
@@ -22,7 +62,6 @@ const useChartOfAccounts = () => {
       setPgView({ button: btn, view: "SYS_VW_LST_1" });
     } else {
       //do nothing
-      //setPgView({ button: "search", view: "SYS_LST_1" });
     }
   };
 
@@ -32,9 +71,17 @@ const useChartOfAccounts = () => {
   };
 
   return {
+    isBusy,
     pgView,
+    pageAuth,
+    readOnly,
+    stopEdit,
+    listData,
     formData,
-    dataList,
+    listDataItem,
+    formDataItem,
+    formErrors,
+    //functions
     handleSetView,
     handleEdit,
   };

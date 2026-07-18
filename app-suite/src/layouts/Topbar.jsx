@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { IconLogo, IconBell, IconLogout, IconUsers, IconEdit, IconInfo, IconCheck, IconClose, IconDollar, IconBox, IconActivity } from '../icons'
+import { navItems } from '../pages/M01/ModulePage'
 
 export default function Topbar({ className = '', ...rest }) {
   const { user, logout } = useApp()
@@ -11,16 +12,6 @@ export default function Topbar({ className = '', ...rest }) {
   const [notifOpen, setNotifOpen] = useState(false)
   const profileRef = useRef(null)
   const notifRef = useRef(null)
-
-  const navItems = [
-    { to: '/', label: 'Dashboard', icon: '◉' },
-    { to: '/users', label: 'Users', icon: '◐' },
-    { to: '/transactions', label: 'Transactions', icon: '◈' },
-    { to: '/reports', label: 'Reports', icon: '▣' },
-    { to: '/settings', label: 'Settings', icon: '⚙' },
-    { to: '/examples', label: 'Examples', icon: '✦' },
-    { to: '/m08/chart-of-accounts', label: 'COA', icon: '◐' },
-  ]
 
   const notifications = [
     { id: 1, type: 'success', icon: <IconDollar size={16} />, title: 'Payment received', message: '$3,500 from ABC Corp — Invoice #1024', time: '2 min ago', read: false },

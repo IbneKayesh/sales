@@ -9,23 +9,57 @@ import GroupButton from '../components/GroupButton'
 import Checkbox from '../components/Checkbox'
 import DataTable from '../components/DataTable'
 import DataCard, { DataCardGrid } from '../components/DataCard'
-import Confirm from '../components/Confirm'
+import { useUI } from '../context/AppUIContext'
 import FileUpload from '../components/FileUpload'
 import Progress from '../components/Progress'
 import LoadableCard from '../components/LoadableCard'
 import Modal, { ModalHeader, ModalTitle, ModalBody, ModalFooter } from '../components/Modal'
 import SidePanel, { SidePanelHeader, SidePanelTitle, SidePanelBody, SidePanelFooter } from '../components/SidePanel'
+import SaveOverlay from '../components/SaveOverlay'
 import { toast } from '../components/ToastBox'
 import Badge from '../components/Badge'
 import EmptyState from '../components/EmptyState'
 import ErrorBoundary from '../components/ErrorBoundary'
-import { IconUsers, IconDollar, IconBox, IconActivity, IconSave, IconCheck, IconClose, IconInfo, IconWarning } from '../icons'
+import { IconUsers, IconDollar, IconBox, IconActivity, IconSave, IconCheck, IconClose, IconInfo, IconWarning, IconEdit, IconDelete } from '../icons'
 
 const sampleColumns = [
   { key: 'name', header: 'Name', width: '160px' },
   { key: 'email', header: 'Email', width: '200px' },
   { key: 'role', header: 'Role', width: '100px' },
   { key: 'status', header: 'Status', width: '100px', render: (v) => <Badge variant={v === 'active' ? 'success' : v === 'pending' ? 'warning' : 'danger'} icon={v === 'active' ? <IconCheck size={12} /> : v === 'pending' ? <IconWarning size={12} /> : <IconClose size={12} />}>{v.charAt(0).toUpperCase() + v.slice(1)}</Badge> },
+  {
+    key: 'actions',
+    header: 'Actions',
+    width: '110px',
+    sortable: false,
+    render: (_, row) => (
+      <span style={{ display: 'inline-flex', gap: 'var(--sp-1)' }}>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation()
+            toast.info(`Editing ${row.name}`)
+          }}
+          title="Edit"
+        >
+          <IconEdit size={14} />
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="btn--icon-danger"
+          onClick={(e) => {
+            e.stopPropagation()
+            toast.warning(`Deleting ${row.name}`)
+          }}
+          title="Delete"
+        >
+          <IconDelete size={14} />
+        </Button>
+      </span>
+    ),
+  },
 ]
 
 const sampleData = [
@@ -47,7 +81,7 @@ export default function ExamplesPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [panelOpen, setPanelOpen] = useState(false)
   const [panelSide, setPanelSide] = useState('right')
-  const [confirmOpen, setConfirmOpen] = useState(false)
+  const { confirm, alert, isBusy, setIsBusy } = useUI()
   const [saveLoading, setSaveLoading] = useState(false)
 
   const handleSaveWithProgress = () => {
@@ -361,55 +395,141 @@ export default function ExamplesPage() {
       </PageCard>
 
       {/* Overlay Modal — appears when saving */}
-      {saveLoading && (
-        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) return }}>
-          <div className="modal modal--sm" style={{ textAlign: 'center', padding: 'var(--sp-8)' }}>
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 'var(--sp-5)',
-            }}>
-              <div style={{
-                width: 64,
-                height: 64,
-                borderRadius: '50%',
-                background: 'var(--primary-bg)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                <IconSave size={28} style={{ color: 'var(--primary)' }} />
+      <SaveOverlay
+        open={saveLoading}
+        title="Please wait, saving the data"
+        message="Your project is being saved. This will only take a moment."
+        progressLabel="Saving project..."
+      />
+
+      {/* ── Section: Global UI Controls ── */}
+      <PageCard>
+        <PageCardHeader>
+          <PageCardTitle
+            title="Global UI Controls"
+            subtitle="Alert dialog, busy state, and loading overlay — accessible app-wide via useUI()"
+          />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            {/* Alert demo */}
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontWeight: 'var(--fw-medium)', fontSize: 'var(--fs-sm)' }}>
+                Alert Dialog
+              </h4>
+              <p className="small" style={{ margin: 0, color: 'var(--text-muted)' }}>
+                Show a single-button modal that waits for user acknowledgment.
+              </p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-2)' }}>
+                <Button size="sm" variant="outline" onClick={async () => {
+                  await alert({ title: 'Information', message: 'This is an informational alert. Click OK to dismiss.', variant: 'primary' })
+                  toast.success('Alert acknowledged')
+                }}>
+                  <IconInfo size={14} className="icon-left" />
+                  Info Alert
+                </Button>
+                <Button size="sm" variant="outline" onClick={async () => {
+                  await alert({ title: 'Success', message: 'Operation completed successfully!', variant: 'success', confirmText: 'Great!' })
+                  toast.success('Success alert acknowledged')
+                }}>
+                  <IconCheck size={14} className="icon-left" />
+                  Success Alert
+                </Button>
+                <Button size="sm" variant="outline" onClick={async () => {
+                  await alert({ title: 'Warning', message: 'Please review your input before proceeding.', variant: 'warning' })
+                  toast.success('Warning alert acknowledged')
+                }}>
+                  <IconWarning size={14} className="icon-left" />
+                  Warning Alert
+                </Button>
+                <Button size="sm" variant="outline" onClick={async () => {
+                  await alert({ title: 'Error', message: 'An unexpected error occurred. Please try again.', variant: 'danger', confirmText: 'Dismiss' })
+                  toast.success('Error alert acknowledged')
+                }}>
+                  <IconClose size={14} className="icon-left" />
+                  Error Alert
+                </Button>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)', width: '100%' }}>
-                <h3 style={{
-                  fontSize: 'var(--fs-lg)',
-                  fontWeight: 'var(--fw-semibold)',
-                  color: 'var(--text-primary)',
-                  margin: 0,
-                }}>
-                  Please wait, saving the data
-                </h3>
-                <p style={{
-                  fontSize: 'var(--fs-sm)',
-                  color: 'var(--text-secondary)',
-                  margin: 0,
-                  lineHeight: 1.5,
-                }}>
-                  Your project is being saved. This will only take a moment.
-                </p>
-                <Progress
-                  pulse
-                  size="md"
-                  variant="primary"
-                  label="Saving project..."
-                  showValue={false}
-                />
+            </div>
+
+            {/* isBusy demo */}
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontWeight: 'var(--fw-medium)', fontSize: 'var(--fs-sm)' }}>
+                Busy State
+              </h4>
+              <p className="small" style={{ margin: 0, color: 'var(--text-muted)' }}>
+                Set <code>isBusy</code> to block UI interactions during critical operations.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+                {/* Busy indicator badge */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)' }}>
+                  <Badge variant={isBusy ? 'warning' : 'success'} dot>
+                    {isBusy ? 'Busy' : 'Idle'}
+                  </Badge>
+                  <span className="small" style={{ color: isBusy ? 'var(--warning)' : 'var(--success)' }}>
+                    {isBusy ? 'UI is currently blocked' : 'UI is free to interact'}
+                  </span>
+                </div>
+
+                {/* Demo form inputs that disable when busy */}
+                <div className="grid" style={{ gap: 'var(--sp-2)' }}>
+                  <div className="col-span-6">
+                    <InputText
+                      label="Username"
+                      placeholder="Enter username"
+                      disabled={isBusy}
+                    />
+                  </div>
+                  <div className="col-span-6">
+                    <Dropdown
+                      label="Action"
+                      options={[
+                        { value: 'save', label: 'Save' },
+                        { value: 'delete', label: 'Delete' },
+                        { value: 'export', label: 'Export' },
+                      ]}
+                      placeholder="Select action..."
+                      disabled={isBusy}
+                    />
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div style={{ display: 'flex', gap: 'var(--sp-2)' }}>
+                  <Button
+                    size="sm"
+                    variant="primary"
+                    disabled={isBusy}
+                    onClick={async () => {
+                      setIsBusy(true)
+                      try {
+                        await new Promise((r) => setTimeout(r, 2000))
+                        toast.success('Operation completed! Use setIsBusy(false) to release the UI.')
+                      } finally {
+                        setIsBusy(false)
+                      }
+                    }}
+                  >
+                    <IconSave size={14} className="icon-left" />
+                    Simulate 2s API Call
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    disabled={!isBusy}
+                    onClick={() => {
+                      setIsBusy(false)
+                      toast.info('Busy state released manually')
+                    }}
+                  >
+                    Release Busy
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        </PageCardBody>
+      </PageCard>
 
       {/* ── Section: File Upload ── */}
       <PageCard>
@@ -572,7 +692,17 @@ export default function ExamplesPage() {
             <Button size="sm" variant="outline" onClick={() => setModalOpen(true)}>
               Open Modal
             </Button>
-            <Button size="sm" variant="danger" onClick={() => setConfirmOpen(true)}>
+            <Button size="sm" variant="danger" onClick={async () => {
+              const confirmed = await confirm({
+                title: 'Delete Item',
+                message: 'Are you sure you want to delete this item? This action cannot be undone.',
+                confirmText: 'Delete',
+                variant: 'danger',
+              })
+              if (confirmed) {
+                toast.error('Item deleted!')
+              }
+            }}>
               Open Confirm
             </Button>
           </PageCardActions>
@@ -647,17 +777,7 @@ export default function ExamplesPage() {
         </SidePanelFooter>
       </SidePanel>
 
-      {/* ── Confirm ── */}
-      <Confirm
-        open={confirmOpen}
-        title="Delete Item"
-        message="Are you sure you want to delete this item? This action cannot be undone."
-        confirmText="Delete"
-        cancelText="Cancel"
-        variant="danger"
-        onConfirm={() => { toast.error('Item deleted!'); setConfirmOpen(false) }}
-        onCancel={() => setConfirmOpen(false)}
-      />
+
     </div>
   )
 }

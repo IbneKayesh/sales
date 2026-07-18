@@ -73,7 +73,7 @@ export default function TransactionsPage() {
   const [editingId, setEditingId] = useState(null)
   const [form, setForm] = useState(initialForm)
   const [formErrors, setFormErrors] = useState({})
-  const { confirm, showLoading, hideLoading } = useUI()
+  const { confirm, alert, isBusy, setIsBusy } = useUI()
 
   // Column definitions — inside component to access openEditForm & handleDelete
   const txnColumns = [
@@ -200,10 +200,7 @@ export default function TransactionsPage() {
       toast.warning('Please fix the form errors before saving.')
       return
     }
-    showLoading(
-      formMode === 'add' ? 'Creating transaction...' : 'Updating transaction...',
-      'Please wait, saving the data'
-    )
+    setIsBusy(true)
     try {
       await new Promise((r) => setTimeout(r, 1200))
       const data = {
@@ -222,9 +219,9 @@ export default function TransactionsPage() {
     } catch {
       toast.error('An error occurred while saving.')
     } finally {
-      hideLoading()
+      setIsBusy(false)
     }
-  }, [form, formMode, editingId, addTransaction, updateTransaction, closeForm, showLoading, hideLoading])
+  }, [form, formMode, editingId, addTransaction, updateTransaction, closeForm, setIsBusy])
 
   const handleDelete = useCallback(async (txn) => {
     const confirmed = await confirm({
@@ -236,17 +233,27 @@ export default function TransactionsPage() {
 
     if (!confirmed) return
 
-    showLoading(`Deleting "${txn.description}"...`, 'Removing transaction from system')
+    setIsBusy(true)
     try {
       await new Promise((r) => setTimeout(r, 500))
       deleteTransaction(txn.id)
-      toast.error(`Transaction "${txn.description}" has been deleted.`)
+      setIsBusy(false)
+      await alert({
+        title: 'Transaction Deleted',
+        message: `"${txn.description}" has been permanently removed from the system.`,
+        variant: 'success',
+        confirmText: 'Done',
+      })
     } catch {
-      toast.error('Failed to delete transaction.')
-    } finally {
-      hideLoading()
+      setIsBusy(false)
+      await alert({
+        title: 'Deletion Failed',
+        message: `An error occurred while deleting "${txn.description}". Please try again.`,
+        variant: 'danger',
+        confirmText: 'Dismiss',
+      })
     }
-  }, [deleteTransaction, confirm, showLoading, hideLoading])
+  }, [deleteTransaction, confirm, alert, setIsBusy])
 
   return (
     <div className="page-wrap">
@@ -348,7 +355,7 @@ export default function TransactionsPage() {
               />
               {formMode && (
                 <PageCardActions>
-                  <Button variant="ghost" size="sm" onClick={closeForm}>
+                  <Button variant="ghost" size="sm" onClick={closeForm} disabled={isBusy}>
                     <IconClose size={14} />
                     Cancel
                   </Button>
@@ -368,6 +375,7 @@ export default function TransactionsPage() {
                         onChange={handleFormChange}
                         error={formErrors.date}
                         required
+                        disabled={isBusy}
                       />
                     </div>
                     <div className="col-span-8">
@@ -379,6 +387,7 @@ export default function TransactionsPage() {
                         onChange={handleFormChange}
                         error={formErrors.description}
                         required
+                        disabled={isBusy}
                       />
                     </div>
                     <div className="col-span-4">
@@ -396,6 +405,7 @@ export default function TransactionsPage() {
                             setForm((prev) => ({ ...prev, category: 'revenue' }))
                           }
                         }}
+                        disabled={isBusy}
                       />
                     </div>
                     <div className="col-span-4">
@@ -420,6 +430,7 @@ export default function TransactionsPage() {
                         placeholder="Select category..."
                         error={formErrors.category}
                         searchable
+                        disabled={isBusy}
                       />
                     </div>
                     <div className="col-span-4">
@@ -438,6 +449,7 @@ export default function TransactionsPage() {
                         min={0}
                         step={0.01}
                         required
+                        disabled={isBusy}
                       />
                     </div>
                     <div className="col-span-6">
@@ -450,6 +462,7 @@ export default function TransactionsPage() {
                         placeholder="Select user..."
                         error={formErrors.userId}
                         searchable
+                        disabled={isBusy}
                       />
                     </div>
                     <div className="col-span-6">
@@ -460,14 +473,15 @@ export default function TransactionsPage() {
                         name="status"
                         onChange={handleFormChange}
                         placeholder="Select status..."
+                        disabled={isBusy}
                       />
                     </div>
                   </div>
                   <div className="form-actions">
-                    <Button variant="secondary" onClick={closeForm}>
+                    <Button variant="secondary" onClick={closeForm} disabled={isBusy}>
                       Cancel
                     </Button>
-                    <Button variant="primary" onClick={handleSave}>
+                    <Button variant="primary" onClick={handleSave} disabled={isBusy}>
                       <IconSave size={16} />
                       {formMode === 'add' ? 'Create Transaction' : 'Update Transaction'}
                     </Button>
