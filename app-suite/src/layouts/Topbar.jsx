@@ -19,6 +19,7 @@ export default function Topbar({ className = '', ...rest }) {
     { to: '/reports', label: 'Reports', icon: '▣' },
     { to: '/settings', label: 'Settings', icon: '⚙' },
     { to: '/examples', label: 'Examples', icon: '✦' },
+    { to: '/m08/chart-of-accounts', label: 'COA', icon: '◐' },
   ]
 
   const notifications = [

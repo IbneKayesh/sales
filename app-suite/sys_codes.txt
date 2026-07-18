@@ -1,0 +1,8 @@
+view
+list view: SYS_VW_LST_1
+form view: SYS_VW_FRM_1
+button
+search button: SYS_BT_SRC_1
+add button: SYS_BT_ADD_1
+cancel button: SYS_BT_CNL_1
+save button: SYS_BT_SVE_1
