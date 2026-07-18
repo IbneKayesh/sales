@@ -2,12 +2,10 @@ import { useState, useRef, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { IconLogo, IconBell, IconLogout, IconUsers, IconEdit, IconInfo, IconCheck, IconClose, IconDollar, IconBox, IconActivity } from '../icons'
-import { navItems } from '../pages/M01/ModulePage'
 
 export default function Topbar({ className = '', ...rest }) {
   const { user, logout } = useApp()
   const navigate = useNavigate()
-  const [menuOpen, setMenuOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const profileRef = useRef(null)
@@ -47,12 +45,6 @@ export default function Topbar({ className = '', ...rest }) {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [notifOpen])
 
-  const linkClass = ({ isActive }) =>
-    `topbar__link${isActive ? ' topbar__link--active' : ''}`
-
-  const mobileLinkClass = ({ isActive }) =>
-    `topbar__mobile-link${isActive ? ' topbar__mobile-link--active' : ''}`
-
   const handleLogout = () => {
     logout()
     navigate('/login')
@@ -67,26 +59,14 @@ export default function Topbar({ className = '', ...rest }) {
 
   return (
     <header className={`topbar${className ? ' ' + className : ''}`} {...rest}>
-      <div className="topbar__brand">
+      <NavLink to="/M01/modules" className="topbar__brand">
         <span className="topbar__logo">
           <IconLogo size={28} />
         </span>
-        <span className="topbar__title">ERP Suite</span>
-      </div>
+        <span className="topbar__title">bSuite</span>
+      </NavLink>
 
-      <nav className="topbar__nav">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            className={linkClass}
-            end={item.to === '/'}
-          >
-            <span className="topbar__link-icon">{item.icon}</span>
-            <span className="topbar__link-label">{item.label}</span>
-          </NavLink>
-        ))}
-      </nav>
+      <div className="topbar__nav" />
 
       <div className="topbar__right">
         <div className="topbar__notif-wrap" ref={notifRef}>
@@ -200,34 +180,6 @@ export default function Topbar({ className = '', ...rest }) {
           )}
         </div>
       </div>
-
-      <button
-        type="button"
-        className={`topbar__hamburger${menuOpen ? ' topbar__hamburger--open' : ''}`}
-        onClick={() => setMenuOpen(!menuOpen)}
-        aria-label="Toggle menu"
-      >
-        <span />
-        <span />
-        <span />
-      </button>
-
-      {menuOpen && (
-        <div className="topbar__mobile-menu">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={mobileLinkClass}
-              end={item.to === '/'}
-              onClick={() => setMenuOpen(false)}
-            >
-              <span className="topbar__mobile-link-icon">{item.icon}</span>
-              {item.label}
-            </NavLink>
-          ))}
-        </div>
-      )}
     </header>
   )
 }

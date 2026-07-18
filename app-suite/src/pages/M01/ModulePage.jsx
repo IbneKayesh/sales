@@ -11,8 +11,12 @@ const menus = [
   { id: 1, name: 'Home', parent_id: 1, icon: 'fa fa-house', url_link: '/' },
   { id: 2, name: 'Reports', parent_id: 1, icon: 'fa fa-chart-bar', url_link: '/reports' },
   { id: 3, name: 'Chart of Accounts', parent_id: 2, icon: 'fa fa-users', url_link: '/M08/chart-of-accounts' },
-  { id: 4, name: 'Roles', parent_id: 2, icon: 'fa fa-user-shield', url_link: '/roles' },
-  { id: 5, name: 'UI Examples', parent_id: 3, icon: 'fa fa-palette', url_link: '/examples' },
+  { id: 4, name: 'Transactions', parent_id: 2, icon: '◈', url_link: '/transactions' },
+  { id: 5, name: 'Roles', parent_id: 2, icon: 'fa fa-user-shield', url_link: '/roles' },
+  { id: 6, name: 'Users', parent_id: 2, icon: '◐', url_link: '/users' },
+  { id: 7, name: 'Settings', parent_id: 2, icon: '⚙', url_link: '/settings' },
+  { id: 8, name: 'UI Examples', parent_id: 3, icon: 'fa fa-palette', url_link: '/examples' },
+  { id: 9, name: 'Modules', parent_id: 3, icon: '⊞', url_link: '/M01/modules' },
 ]
 
 // Topbar navigation items — sourced from here so ModulePage is the menu authority
@@ -77,7 +81,13 @@ const ModulePage = () => {
                           className="module-page__menu-icon"
                           style={{ background: `${module.color}18` }}
                         >
-                          <i className={menu.icon} style={{ fontSize: 20, color: module.color }} />
+                          {menu.icon && menu.icon.startsWith('fa ') ? (
+                            <i className={menu.icon} style={{ fontSize: 20, color: module.color }} />
+                          ) : (
+                            <span style={{ fontSize: 20, color: module.color, fontWeight: 'bold' }}>
+                              {menu.icon || '•'}
+                            </span>
+                          )}
                         </div>
                         <span className="module-page__menu-label">{menu.name}</span>
                       </button>
