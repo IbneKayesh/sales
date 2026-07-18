@@ -23,12 +23,12 @@ router.post("/login", async (req, res) => {
     //database action
     //validate user, users_apink,
     //emply_pswrd, emply_recky, emply_ltokn,
-    const sql_emp = `SELECT id, emply_users, emply_bsins, emply_ccode, emply_cname, emply_cntct,
-                    emply_email, emply_lstgn, emply_lstpd, emply_isprm, emply_urole, emply_crdno
-                    FROM tmhb_emply emp
-                    WHERE emp.emply_actve = TRUE
-                    AND emp.emply_email = $1
-                    AND emp.emply_pswrd = $2`;
+    const sql_emp = `SELECT id, emply_users, emply_bsins, emply_ccode, emply_cname, emply_cntno,
+                      emply_email, emply_lstgn, emply_lstpd, emply_isprm, emply_urole, emply_crdno
+                      FROM tmhb_emply emp
+                      WHERE emp.emply_actve = TRUE
+                      AND emp.emply_email = $1
+                      AND emp.emply_pswrd = $2`;
     const params_emp = [users_email, users_pswrd];
     const row_emp = await dbGet(sql_emp, params_emp, "Get login credential");
     if (!row_emp) {
@@ -58,7 +58,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const sql_user = `SELECT id, users_email, users_cname, users_cntct, users_stats, users_regno,
+    const sql_user = `SELECT id, users_email, users_cname, users_cntno, users_stats, users_regno,
                       users_regdt, users_expdt, users_notes, users_aplnk, users_agent, users_nofcr,
                       users_bsnno, users_usrno, users_pkgnm, users_cyldt, users_blval, users_pymdt
                       FROM tmsb_users usr
@@ -74,28 +74,28 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const sql_menus = `SELECT mnu.id, menus_pname, menus_aname, menus_mname, menus_color, menus_micon,
-    menus_odrby, menus_notes, menus_mlink, menus_menus, mnemp_extpr, mnemp_addpr,
-    mnemp_edtpr, mnemp_delpr
-  FROM tmsb_menus mnu
-  JOIN tmsb_mnemp emp ON mnu.id = emp.mnemp_menus
-  WHERE mnu.menus_actve = TRUE
-  AND emp.mnemp_actve = TRUE
-  AND emp.mnemp_emply = $1
-  ORDER BY mnu.menus_odrby`;
+    //   const sql_menus = `SELECT mnu.id, menus_pname, menus_aname, menus_mname, menus_color, menus_micon,
+    //   menus_odrby, menus_notes, menus_mlink, menus_menus, mnemp_extpr, mnemp_addpr,
+    //   mnemp_edtpr, mnemp_delpr
+    // FROM tmsb_menus mnu
+    // JOIN tmsb_mnemp emp ON mnu.id = emp.mnemp_menus
+    // WHERE mnu.menus_actve = TRUE
+    // AND emp.mnemp_actve = TRUE
+    // AND emp.mnemp_emply = $1
+    // ORDER BY mnu.menus_odrby`;
 
-    const row_menus = await dbGetAll(
-      sql_menus,
-      [row_emp.id],
-      `Get login menus`,
-    );
-    if (!row_menus || row_menus.length === 0) {
-      return res.json({
-        success: false,
-        message: "Menu is not defined",
-        data: [],
-      });
-    }
+    //   const row_menus = await dbGetAll(
+    //     sql_menus,
+    //     [row_emp.id],
+    //     `Get login menus`,
+    //   );
+    //   if (!row_menus || row_menus.length === 0) {
+    //     return res.json({
+    //       success: false,
+    //       message: "Menu is not defined",
+    //       data: [],
+    //     });
+    //   }
 
     // inside login route, after validating user
     const session = createSession(row_user);
@@ -121,7 +121,8 @@ router.post("/login", async (req, res) => {
         emply: row_emp,
         bsins: row_bsn,
         users: row_user,
-        menus: row_menus,
+        // menus: row_menus,
+        menus: [],
         token,
       },
     });
@@ -408,7 +409,7 @@ router.post("/vmart/register", async (req, res) => {
       users_cntno: email,
       users_addrs: address,
       users_crole: "CUSTOMER",
-      users_aplnk: 'N'
+      users_aplnk: "N",
     };
     //console.log("data", data);
 

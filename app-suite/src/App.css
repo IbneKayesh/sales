@@ -1334,7 +1334,7 @@ code {
   display: flex;
   align-items: center;
   gap: var(--sp-3);
-  padding: 14px var(--sp-4);
+  padding: 14px var(--sp-1);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);

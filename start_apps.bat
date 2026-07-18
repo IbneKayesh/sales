@@ -10,7 +10,7 @@ echo 1. Web + API + Docs (active)
 echo 2. Mobile + API
 echo 3. Web + Mobile + API
 echo 4. Web
-echo 5. Mobile
+echo 5. Suite + API
 echo 6. Docs (active)
 echo 7. API + vMart
 echo 0. Exit
@@ -57,8 +57,9 @@ echo  ---- Web Running ----
 goto MENU
 
 :M
-start cmd /k "cd mobile-app && npm run dev"
-echo  ---- Mobile Running ----
+start cmd /k "cd backend-app && node server.js"
+start cmd /k "cd app-suite && npm run dev"
+echo  ---- Suite + API Running ----
 goto MENU
 
 :DOC

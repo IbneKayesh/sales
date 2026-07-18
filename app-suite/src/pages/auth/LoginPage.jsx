@@ -1,61 +1,24 @@
-import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useApp } from '../../context/AppContext'
-import { IconLogo, IconSpinner } from '../../icons'
+import { useState, useRef, useEffect } from "react";
+import { IconLogo, IconSpinner } from "@/icons";
+import useLogin from "@/hooks/useLogin";
 
 export default function LoginPage() {
-  const { login } = useApp()
-  const navigate = useNavigate()
-  const emailRef = useRef(null)
+  const {
+    isBusy,
+    formData,
+    formErrors,
+    //functions
+    handleChange,
+    handleSubmitClick,
+  } = useLogin();
 
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
+  const usernameRef = useRef(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    emailRef.current?.focus()
-  }, [])
+    usernameRef.current?.focus();
+  }, []);
 
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
-    if (error) setError('')
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
-
-    const email = form.email.trim()
-    const password = form.password.trim()
-
-    if (!email) {
-      setError('Please enter your email address.')
-      return
-    }
-    if (!password) {
-      setError('Please enter your password.')
-      return
-    }
-
-    setLoading(true)
-
-    // Simulate API call delay
-    await new Promise((r) => setTimeout(r, 800))
-
-    // Demo login — accept any credentials and log in as a default admin user
-    const userData = {
-      id: 1,
-      name: email.includes('admin') ? 'Admin User' : email.split('@')[0].replace(/[^a-zA-Z0-9]/g, ' ') || 'User',
-      email,
-      role: email.includes('admin') ? 'admin' : 'editor',
-      avatar: email.charAt(0).toUpperCase(),
-    }
-
-    login(userData)
-    setLoading(false)
-    navigate('/')
-  }
 
   return (
     <div className="login-page">
@@ -75,69 +38,70 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
-        <form className="login-page__form" onSubmit={handleSubmit} noValidate>
+        <div className="login-page__form">
           <div className="login-page__field">
-            <label className="login-page__label" htmlFor="login-email">
-              Email address
+            <label className="login-page__label" htmlFor="username">
+              User Name
             </label>
-            <div className={`login-page__input-wrap${error && !form.email.trim() ? ' login-page__input-wrap--error' : ''}`}>
+            <div
+              className={`login-page__input-wrap${formErrors && !formData.username ? " login-page__input-wrap--error" : ""}`}
+            >
               <input
-                ref={emailRef}
-                id="login-email"
-                name="email"
-                type="email"
+                ref={usernameRef}
+                id="username"
+                name="username"
+                type="text"
                 className="login-page__input"
-                placeholder="you@company.com"
-                value={form.email}
-                onChange={handleChange}
+                placeholder="user@sgd.com"
+                value={formData.username}
+                onChange={(e) => handleChange("username", e.target.value)}
                 autoComplete="email"
-                disabled={loading}
+                disabled={isBusy}
               />
             </div>
           </div>
 
           <div className="login-page__field">
-            <label className="login-page__label" htmlFor="login-password">
+            <label className="login-page__label" htmlFor="password">
               Password
             </label>
-            <div className={`login-page__input-wrap${error && !form.password.trim() ? ' login-page__input-wrap--error' : ''}`}>
+            <div
+              className={`login-page__input-wrap${formErrors && !formData?.password ? " login-page__input-wrap--error" : ""}`}
+            >
               <input
-                id="login-password"
+                id="password"
                 name="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 className="login-page__input"
                 placeholder="Enter your password"
-                value={form.password}
-                onChange={handleChange}
+                value={formData.password}
+                onChange={(e) => handleChange("password", e.target.value)}
                 autoComplete="current-password"
-                disabled={loading}
+                disabled={isBusy}
               />
               <button
                 type="button"
                 className="login-page__toggle-pw"
                 onClick={() => setShowPassword(!showPassword)}
                 tabIndex={-1}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? 'Hide' : 'Show'}
+                {showPassword ? "Hide" : "Show"}
               </button>
             </div>
           </div>
 
           {/* Error */}
-          {error && (
-            <div className="login-page__error">
-              {error}
-            </div>
-          )}
+          {formErrors && <div className="login-page__error">{formErrors}</div>}
 
           {/* Submit */}
           <button
-            type="submit"
+            type="button"
             className="login-page__submit"
-            disabled={loading}
+            onClick={handleSubmitClick}
+            disabled={isBusy}
           >
-            {loading ? (
+            {isBusy ? (
               <>
                 <span className="login-page__spinner">
                   <IconSpinner size={18} />
@@ -145,17 +109,17 @@ export default function LoginPage() {
                 Signing in…
               </>
             ) : (
-              'Sign in'
+              "Sign in"
             )}
           </button>
-        </form>
+        </div>
 
         {/* Demo hint */}
         <p className="login-page__hint">
-          Demo: enter any email &amp; password, or use{' '}
+          Demo: enter any email &amp; password, or use{" "}
           <strong>admin@example.com</strong>
         </p>
       </div>
     </div>
-  )
+  );
 }
