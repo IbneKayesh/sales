@@ -4,12 +4,7 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import {
-  IconSearch,
-  IconClose,
-  IconPlus,
-  IconSave,
-} from "@/icons";
+import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
 import useUnits from "@/hooks/M04/useUnits";
 import UnitsList from "./UnitsList";
@@ -61,7 +56,7 @@ const UnitsPage = () => {
               </Button>
             )}
             {pgView === "SYS_VW_FRM_1" && (
-              <Button size="sm" onClick={handleSubmit} variant="info">
+              <Button variant="info" size="sm" onClick={handleSubmit}>
                 <IconSave size={14} className="icon-left" />
                 {formData?.id ? "Update" : "Create"}
               </Button>

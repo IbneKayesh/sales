@@ -11,8 +11,7 @@ router.use("/stockreports", stockreportsRoutes);
 //router.use("/itransfer", itransferRoutes);
 router.use("/products/formula", stockFormulaRoutes);
 
-const brandsV1Routes = require("./brands.v1.routes");
-const unitsV1Routes = require("./units.v1.routes");
+
 const categoryV1Routes = require("./category.v1.routes");
 const subCategoryV1Routes = require("./subCategory.v1.routes");
 const attributesV1Routes = require("./attributes.v1.routes");
@@ -23,8 +22,7 @@ const itemsV1Routes = require("./items.v1.routes");
 const mrrV1Routes = require("./mrr.v1.routes");
 const itemsvmartV1Routes = require("./items.vmart.v1.routes.js");
 
-router.use("/v1/brands", brandsV1Routes);
-router.use("/v1/units", unitsV1Routes);
+
 router.use("/v1/category", categoryV1Routes);
 router.use("/v1/sub-category", subCategoryV1Routes);
 router.use("/v1/attributes", attributesV1Routes);

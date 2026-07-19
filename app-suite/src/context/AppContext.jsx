@@ -1,7 +1,13 @@
-import { createContext, useContext, useState, useCallback, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { apiLogin } from "@/utils/api";
-import { clearStorageData } from "@/utils/storage";
+import { clearStorageData, getStorageData } from "@/utils/storage";
 import { toast } from "@/components/ToastBox";
 
 const AppContext = createContext(null);
@@ -343,7 +349,28 @@ export function AppProvider({ children }) {
       navigate("/auth/login");
     };
     window.addEventListener("auth:unauthorized", handleUnauthorized);
-    return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
+    return () =>
+      window.removeEventListener("auth:unauthorized", handleUnauthorized);
+  }, []);
+
+  useEffect(() => {
+    const storedEmply = getStorageData()?.emply;
+    if (storedEmply) {
+      setEmply(storedEmply);
+    }
+    const storedUser = getStorageData()?.users;
+    if (storedUser) {
+      setUser(storedUser);
+    }
+    const storedBusiness = getStorageData()?.bsins;
+    if (storedBusiness) {
+      setBusiness(storedBusiness);
+    }
+
+    const storedMenus = getStorageData()?.menus;
+    if (storedMenus) {
+      setUserMenus(storedMenus);
+    }
   }, []);
 
   const login = async (fromData) => {

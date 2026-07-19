@@ -1,10 +1,9 @@
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
+import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
-import {
-  IconClose,
-  IconSave,
-} from "@/icons";
+import { IconClose, IconSave } from "@/icons";
+import { cntry_Options } from "@/utils/vtable.js";
 
 const BrandForm = ({
   isBusy,
@@ -20,13 +19,14 @@ const BrandForm = ({
     <div className="form-wrap">
       <div className="grid">
         <div className="col-span-6">
-          <InputText
-            label="Brand Code"
-            placeholder="Enter brand code"
-            value={formData.brand_ccode}
-            onChange={(e) => onChange("brand_ccode", e.target.value)}
-            error={formErrors.brand_ccode}
+          <Dropdown
+            label="Country"
+            options={cntry_Options}
+            value={formData.brand_cntry}
+            onChange={(e) => onChange("brand_cntry", e.target.value)}
+            error={formErrors.brand_cntry}
             required
+            placeholder="Select..."
             disabled={readOnly}
           />
         </div>

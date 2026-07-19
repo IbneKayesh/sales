@@ -4,7 +4,7 @@ import MgrupPage from "@/pages/M04/setup/mgrups/MgrupPage";
 import AttrbPage from "@/pages/M04/setup/attrbs/AttrbPage";
 import ScatgPage from "@/pages/M04/setup/scatgs/ScatgPage";
 import SgrupPage from "@/pages/M04/setup/sgrups/SgrupPage";
-import UnitsPage from "@/pages/M04/setup/unitses/UnitsPage";
+import UnitsPage from "@/pages/M04/setup/units/UnitsPage";
 
 const routes = [
   { path: "/inventory/setup/brands", element: <BrandPage /> },

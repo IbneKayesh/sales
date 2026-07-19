@@ -80,7 +80,7 @@ const ProductionPage = () => {
               </Button>
             )}
             {pgView === "SYS_VW_FRM_1" && (
-              <Button size="sm" onClick={handleSubmit} variant="info">
+              <Button variant="info" size="sm" onClick={handleSubmit} >
                 <IconSave size={14} className="icon-left" />
                 {formData?.id ? "Update" : "Create"}
               </Button>

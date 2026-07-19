@@ -11,6 +11,7 @@ CREATE TABLE tmib_brand (
   brand_ccode varchar(50) NOT NULL,
   brand_cntry varchar(50) NOT NULL,
   brand_cname varchar(50) NOT NULL,
+  
   -- optional
   
   -- default

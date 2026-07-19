@@ -8,7 +8,7 @@ const dataModel = generateDataModel(tmib_units);
 const useUnits = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M04-M07-M001");
+  const [pgId, setPgId] = useState("M04-M02-M002");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -41,6 +41,8 @@ const useUnits = () => {
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formData, [f]: v }, tmib_units);
+    setFormErrors(newErrors);
   };
 
   const handleEdit = (rowData) => {

@@ -9,6 +9,7 @@ import {
 const BrandList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "brand_ccode", header: "Code", width: "180px" },
+    { key: "brand_cntry", header: "Country", width: "180px" },
     { key: "brand_cname", header: "Brand Name", width: "200px" },
     {
       key: "brand_actve",

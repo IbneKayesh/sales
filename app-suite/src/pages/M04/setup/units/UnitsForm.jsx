@@ -1,10 +1,9 @@
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
+import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
-import {
-  IconClose,
-  IconSave,
-} from "@/icons";
+import { IconClose, IconSave } from "@/icons";
+import { untgr_Options } from "@/utils/vtable.js";
 
 const UnitsForm = ({
   isBusy,
@@ -19,18 +18,7 @@ const UnitsForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-4">
-          <InputText
-            label="Unit Code"
-            placeholder="Enter unit code"
-            value={formData.units_ccode}
-            onChange={(e) => onChange("units_ccode", e.target.value)}
-            error={formErrors.units_ccode}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
+        <div className="col-span-6">
           <InputText
             label="Unit Name"
             placeholder="Enter unit name"
@@ -41,13 +29,15 @@ const UnitsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
-          <InputText
+        <div className="col-span-6">
+          <Dropdown
             label="Unit Group"
-            placeholder="Enter unit group"
+            options={untgr_Options}
             value={formData.units_untgr}
             onChange={(e) => onChange("units_untgr", e.target.value)}
             error={formErrors.units_untgr}
+            required
+            placeholder="Select..."
             disabled={readOnly}
           />
         </div>

@@ -7,8 +7,10 @@
     "type": "string",
     "label": "Country",
     "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter Country",
     "required": true,
-    "default": "Bangladesh"
+    "default":"Bangladesh"
   },
   "brand_cname": {
     "type": "string",
