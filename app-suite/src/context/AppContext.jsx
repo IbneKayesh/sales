@@ -1,6 +1,8 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiLogin } from "@/utils/api";
+import { clearStorageData } from "@/utils/storage";
+import { toast } from "@/components/ToastBox";
 
 const AppContext = createContext(null);
 
@@ -330,6 +332,20 @@ export function AppProvider({ children }) {
     setSidebarOpen((prev) => !prev);
   }, []);
 
+  // Listen for unauthorized API responses and redirect to login
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      clearStorageData();
+      setUser(null);
+      setEmply(null);
+      setBusiness(null);
+      setUserMenus([]);
+      navigate("/auth/login");
+    };
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
+  }, []);
+
   const login = async (fromData) => {
     try {
       const reqBody = {
@@ -354,11 +370,12 @@ export function AppProvider({ children }) {
   };
 
   const logout = useCallback(() => {
+    clearStorageData();
     setUser(null);
     setEmply(null);
     setBusiness(null);
     setUserMenus([]);
-    navigate("/login");
+    navigate("/auth/login");
   }, []);
 
   const addUser = useCallback((userData) => {

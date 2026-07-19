@@ -1,4 +1,5 @@
 import { getStorageData, setStorageData } from "./storage";
+import { toast } from "../components/ToastBox";
 
 // Centralized API utility for backend communication
 const API_BASE_URL = "/api";
@@ -50,6 +51,7 @@ const apiRequest = async (endpoint, options = {}) => {
     const data = text ? JSON.parse(text) : {};
     if (!response.ok) {
       if (response.status === 401) {
+        toast.error("Session expired.");
         //throw new Error("Unauthorized. Please login again.");
         window.dispatchEvent(new CustomEvent("auth:unauthorized"));
         return {
@@ -82,6 +84,20 @@ const apiRequest = async (endpoint, options = {}) => {
       message: error.message || "Network error",
       data: [],
     };
+  }
+};
+
+const healthCheck = async () => {
+  try {
+    // Use a known-working endpoint — /api/ and /api/status both return 200
+    const response = await fetch(`${API_BASE_URL}/health`, {
+      method: "GET",
+      headers: { "sgd-ua-node": import.meta.env.VITE_APP_API_KEY },
+      signal: AbortSignal.timeout(5000),
+    });
+    return { online: response.ok, status: response.status };
+  } catch {
+    return { online: false, status: 0 };
   }
 };
 
@@ -128,4 +144,4 @@ const apiLogin = async (options) => {
   }
 };
 
-export { apiRequest, apiLogin };
+export { apiRequest, apiLogin, healthCheck };

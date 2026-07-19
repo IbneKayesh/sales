@@ -3,13 +3,14 @@
 --
 
 CREATE TABLE tmib_scatg (
+  -- default 1
   id varchar(50) PRIMARY KEY,
 
-  scatg_apusr varchar(50) NOT NULL,
+  scatg_users varchar(50) NOT NULL,
   scatg_bsins varchar(50) NOT NULL,
+  scatg_ccode varchar(50) NOT NULL,
   scatg_mcatg varchar(50) NOT NULL,
-  scatg_scode varchar(50) NOT NULL,
-  scatg_sname varchar(50) NOT NULL,
+  scatg_cname varchar(50) NOT NULL,
   
   -- optional
 

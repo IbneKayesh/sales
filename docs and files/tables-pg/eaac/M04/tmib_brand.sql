@@ -3,12 +3,14 @@
 --
 
 CREATE TABLE tmib_brand (
+  -- default 1
   id varchar(50) PRIMARY KEY,
 
-  brand_apusr varchar(50) NOT NULL,
+  brand_users varchar(50) NOT NULL,
   brand_bsins varchar(50) NOT NULL,
-  brand_bcode varchar(50) NOT NULL,
-  brand_bname varchar(50) NOT NULL,
+  brand_ccode varchar(50) NOT NULL,
+  brand_cntry varchar(50) NOT NULL,
+  brand_cname varchar(50) NOT NULL,
   -- optional
   
   -- default

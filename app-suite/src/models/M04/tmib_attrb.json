@@ -1,0 +1,53 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "attrb_users": {
+    "type": "string",
+    "label": "User",
+    "maxLength": 50,
+    "placeholder": "Enter user",
+    "required": true
+  },
+  "attrb_bsins": {
+    "type": "string",
+    "label": "Business Instance",
+    "maxLength": 50,
+    "placeholder": "Enter business instance"
+  },
+  "attrb_ccode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "placeholder": "Enter code"
+  },
+  "attrb_mcatg": {
+    "type": "string",
+    "label": "Main Category",
+    "maxLength": 50,
+    "placeholder": "Enter main category",
+    "required": true
+  },
+  "attrb_cname": {
+    "type": "string",
+    "label": "Attribute Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter attribute name",
+    "required": true
+  },
+  "attrb_dtype": {
+    "type": "string",
+    "label": "Data Type",
+    "maxLength": 50,
+    "placeholder": "Enter data type",
+    "required": true
+  },
+  "attrb_dvalu": {
+    "type": "string",
+    "label": "Default Value",
+    "maxLength": 300,
+    "placeholder": "Enter default value"
+  }
+}

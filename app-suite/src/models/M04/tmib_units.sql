@@ -3,12 +3,13 @@
 --
 
 CREATE TABLE tmib_units (
+  -- default 1
   id varchar(50) PRIMARY KEY,
 
-  units_apusr varchar(50) NOT NULL,
+  units_users varchar(50) NOT NULL,
   units_bsins varchar(50) NOT NULL,
-  units_ucode varchar(50) NOT NULL,
-  units_uname varchar(50) NOT NULL,
+  units_ccode varchar(50) NOT NULL,
+  units_cname varchar(50) NOT NULL,
 
   -- optional
   units_untgr varchar(50), --will be short table

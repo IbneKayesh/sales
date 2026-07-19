@@ -15,6 +15,7 @@ import {
   IconActivity,
   IconBar,
 } from "../icons";
+import { toast } from "../components/ToastBox";
 
 export default function Topbar({ className = "", ...rest }) {
   const { user, logout } = useApp();
@@ -99,8 +100,8 @@ export default function Topbar({ className = "", ...rest }) {
   }, [notifOpen]);
 
   const handleLogout = () => {
+    toast.success("Logged out successfully.");
     logout();
-    navigate("/login");
   };
 
   const initials = user?.name

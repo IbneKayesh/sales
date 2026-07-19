@@ -3,12 +3,13 @@
 --
 
 CREATE TABLE tmib_mgrup (
+  -- default 1
   id varchar(50) PRIMARY KEY,
 
-  mgrup_apusr varchar(50) NOT NULL,
+  mgrup_users varchar(50) NOT NULL,
   mgrup_bsins varchar(50) NOT NULL,
-  mgrup_mcode varchar(50) NOT NULL,
-  mgrup_mname varchar(50) NOT NULL,
+  mgrup_ccode varchar(50) NOT NULL,
+  mgrup_cname varchar(50) NOT NULL,
   -- optional
   -- default
   mgrup_actve boolean NOT NULL DEFAULT true,

@@ -3582,6 +3582,64 @@ code {
   color: var(--text-secondary);
 }
 
+/* ── Backend Status Indicator ── */
+.login-page__backend {
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border);
+}
+
+.login-page__backend-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3);
+  font-size: var(--fs-xs);
+  font-family: var(--font-sans);
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.login-page__backend-btn:hover {
+  border-color: var(--text-muted);
+  color: var(--text-secondary);
+}
+
+.login-page__backend-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-page__backend-btn--online {
+  color: var(--success);
+  border-color: var(--success-border, var(--success));
+}
+
+.login-page__backend-btn--online:hover {
+  color: var(--success);
+  border-color: var(--success);
+}
+
+.login-page__backend-btn--offline {
+  color: var(--danger);
+  border-color: var(--danger-border, var(--danger));
+}
+
+.login-page__backend-btn--offline:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.login-page__backend-btn--checking {
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
 /* --------------------------------------------------------------------------
    23. Page: UsersPage — permissions preview
    -------------------------------------------------------------------------- */

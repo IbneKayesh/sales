@@ -83,7 +83,7 @@ app.use("/api/reports", reportsRoutes);
 //mobile
 app.use("/api/mobile", mobileRoutes);
 //M05 :: Manufacturing
-app.use("/api/manufacturing", m05Routes);
+app.use("/api/M05", m05Routes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

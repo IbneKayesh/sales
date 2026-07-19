@@ -3,14 +3,14 @@
 --
 
 CREATE TABLE tmib_sgrup (
+  -- default 1
   id varchar(50) PRIMARY KEY,
 
-  sgrup_apusr varchar(50) NOT NULL,
+  sgrup_users varchar(50) NOT NULL,
   sgrup_bsins varchar(50) NOT NULL,
+  sgrup_ccode varchar(50) NOT NULL,
   sgrup_mgrup varchar(50) NOT NULL,
-  sgrup_scode varchar(50) NOT NULL,
-  sgrup_sname varchar(50) NOT NULL,
-  sgrup_chtac varchar(50),
+  sgrup_cname varchar(50) NOT NULL,
   
   -- optional
 

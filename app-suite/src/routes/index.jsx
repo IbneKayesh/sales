@@ -1,42 +1,27 @@
 import { Route } from "react-router-dom";
-import HomePage from "../pages/HomePage";
-import UsersPage from "../pages/UsersPage";
-import TransactionsPage from "../pages/TransactionsPage";
-import ReportsPage from "../pages/ReportsPage";
-import SettingsPage from "../pages/SettingsPage";
-import ExamplesPage from "../pages/ExamplesPage";
-import LoginPage from "../pages/auth/LoginPage";
-import NotificationPage from "../pages/NotificationPage";
-import NotFoundPage from "../pages/NotFoundPage";
-import ProductionPage from "@/pages/M05/setup/productions/ProductionPage";
-import ContactPage from "@/pages/M06/setup/contacts/ContactPage";
-import DeliveryZonePage from "@/pages/M06/setup/deliveryzones/DeliveryZonePage";
-import TerritoryAreaPage from "@/pages/M06/setup/territoryareas/TerritoryAreaPage";
-import TerritoryPage from "@/pages/M06/setup/territories/TerritoryPage";
-import ChartOfAccountsPage from "@/pages/M08/setup/coa/ChartOfAccountsPage";
-import ModulePage from "@/pages/M01/ModulePage";
+import mainRoutes from "./mainRoutes";
+import M01Routes from "./M01Routes";
+import M04Routes from "./M04Routes";
+import M05Routes from "./M05Routes";
+import M06Routes from "./M06Routes";
+import M08Routes from "./M08Routes";
+import ProtectedRoute from "./ProtectedRoute";
+
+// Routes that don't require authentication
+const publicPaths = new Set(["/auth/login", "*"]);
 
 const routes = [
-  { path: "/", element: <HomePage /> },
-  { path: "/login", element: <LoginPage /> },
-  { path: "/users", element: <UsersPage /> },
-  { path: "/transactions", element: <TransactionsPage /> },
-  { path: "/reports", element: <ReportsPage /> },
-  { path: "/settings", element: <SettingsPage /> },
-  { path: "/examples", element: <ExamplesPage /> },
-  { path: "/notifications", element: <NotificationPage /> },
-  { path: "/M05/productions", element: <ProductionPage /> },
-  { path: "/M06/contacts", element: <ContactPage /> },
-  { path: "/M06/delivery-zones", element: <DeliveryZonePage /> },
-  { path: "/M06/territory-areas", element: <TerritoryAreaPage /> },
-  { path: "/M06/territories", element: <TerritoryPage /> },
-  { path: "/M08/chart-of-accounts", element: <ChartOfAccountsPage /> },
-  { path: "/M01/modules", element: <ModulePage /> },
-  { path: "*", element: <NotFoundPage /> },
+  ...mainRoutes,
+  ...M01Routes,
+  ...M04Routes,
+  ...M05Routes,
+  ...M06Routes,
+  ...M08Routes,
 ];
 
 export default function getRoutes() {
-  return routes.map(({ path, element }) => (
-    <Route key={path} path={path} element={element} />
-  ));
+  return routes.map(({ path, element }) => {
+    const wrapped = publicPaths.has(path) ? element : <ProtectedRoute>{element}</ProtectedRoute>;
+    return <Route key={path} path={path} element={wrapped} />;
+  });
 }

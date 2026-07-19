@@ -1,29 +1,29 @@
 import { apiRequest } from "@/utils/api.js";
 
-//productionAPI
-export const productionAPI = {
+//unitsAPI
+export const unitsAPI = {
   getAll: (data) =>
-    apiRequest("/M05/v1/productions", {
+    apiRequest("/inventory/v1/units", {
       body: data,
     }),
   upsert: (data) =>
-    apiRequest("/M05/v1/productions/upsert", {
+    apiRequest("/inventory/v1/units/upsert", {
       body: data,
     }),
   create: (data) =>
-    apiRequest("/M05/v1/productions/create", {
+    apiRequest("/inventory/v1/units/create", {
       body: data,
     }),
   update: (data) =>
-    apiRequest("/M05/v1/productions/update", {
+    apiRequest("/inventory/v1/units/update", {
       body: data,
     }),
   delete: (data) =>
-    apiRequest("/M05/v1/productions/delete", {
+    apiRequest("/inventory/v1/units/delete", {
       body: data,
     }),
   getAllActive: (data) =>
-    apiRequest("/M05/v1/productions/get-all-active", {
+    apiRequest("/inventory/v1/units/get-all-active", {
       body: data,
     }),
 };

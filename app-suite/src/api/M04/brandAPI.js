@@ -1,29 +1,29 @@
 import { apiRequest } from "@/utils/api.js";
 
-//productionAPI
-export const productionAPI = {
+//brandAPI
+export const brandAPI = {
   getAll: (data) =>
-    apiRequest("/M05/v1/productions", {
+    apiRequest("/M04/v1/brands", {
       body: data,
     }),
   upsert: (data) =>
-    apiRequest("/M05/v1/productions/upsert", {
+    apiRequest("/M04/v1/brands/upsert", {
       body: data,
     }),
   create: (data) =>
-    apiRequest("/M05/v1/productions/create", {
+    apiRequest("/M04/v1/brands/create", {
       body: data,
     }),
   update: (data) =>
-    apiRequest("/M05/v1/productions/update", {
+    apiRequest("/M04/v1/brands/update", {
       body: data,
     }),
   delete: (data) =>
-    apiRequest("/M05/v1/productions/delete", {
+    apiRequest("/M04/v1/brands/delete", {
       body: data,
     }),
   getAllActive: (data) =>
-    apiRequest("/M05/v1/productions/get-all-active", {
+    apiRequest("/M04/v1/brands/get-all-active", {
       body: data,
     }),
 };

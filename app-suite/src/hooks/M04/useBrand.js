@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { productionAPI } from "@/api/M05/productionAPI.js";
+import { brandAPI } from "@/api/M04/brandAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmmb_prods from "@/models/M05/tmmb_prods.json";
-const dataModel = generateDataModel(tmmb_prods);
+import tmib_brand from "@/models/M04/tmib_brand.json";
+const dataModel = generateDataModel(tmib_brand);
 
-const useProduction = () => {
+const useBrand = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M05-M01-M001");
+  const [pgId, setPgId] = useState("M04-M02-M001");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -23,11 +23,10 @@ const useProduction = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
-  const getAllProduction = async () => {
+  const getAllBrand = async () => {
     try {
       setIsBusy(true);
-      const resp = await productionAPI.getAll({});
-      //console.log("resp", resp);
+      const resp = await brandAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -37,12 +36,12 @@ const useProduction = () => {
   };
 
   useEffect(() => {
-    getAllProduction();
+    getAllBrand();
   }, []);
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmmb_prods);
+    const newErrors = validate({ ...formData, [f]: v }, tmib_brand);
     setFormErrors(newErrors);
   };
 
@@ -52,20 +51,8 @@ const useProduction = () => {
   };
 
   const handleDelete = async (rowData) => {
-    // const confirmation = await confirmBox({
-    //   title: "Delete",
-    //   message: `Are you sure you want to delete "${rowData.prods_cname}"? This action cannot be undone and will permanently remove the user from the system.`,
-    //   confirmText: "Delete",
-    //   variant: "danger",
-    // });
-    // await alertBox({
-    //   title: "Deleted",
-    //   message: `"${rowData.prods_cname}" has been permanently removed from the system.`,
-    //   variant: "success",
-    //   confirmText: "Done",
-    // });
-    const isActive = rowData.prods_actve;
-    const dataName = rowData.prods_cname;
+    const isActive = rowData.brand_actve;
+    const dataName = rowData.brand_cname;
     const confirmation = await confirmBox({
       title: isActive ? "Deactivate" : "Activate",
       message: `Are you sure you want to ${
@@ -78,8 +65,7 @@ const useProduction = () => {
 
     try {
       setIsBusy(true);
-      const resp = await productionAPI.delete(rowData);
-      //console.log("resp", resp);
+      const resp = await brandAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -93,7 +79,7 @@ const useProduction = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllProduction();
+        getAllBrand();
       }
     } catch (error) {
     } finally {
@@ -102,7 +88,7 @@ const useProduction = () => {
   };
 
   const handleSearch = async () => {
-    getAllProduction();
+    getAllBrand();
   };
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
@@ -120,9 +106,8 @@ const useProduction = () => {
 
   const handleSubmit = async () => {
     try {
-      const newErrors = validate(formData, tmmb_prods);
+      const newErrors = validate(formData, tmib_brand);
       setFormErrors(newErrors);
-      //console.log("handleSave: ", newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
       }
@@ -132,8 +117,7 @@ const useProduction = () => {
       };
       setIsBusy(true);
 
-      const resp = await productionAPI.upsert(reqBody);
-      //console.log("resp", resp);
+      const resp = await brandAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -143,7 +127,7 @@ const useProduction = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllProduction();
+        getAllBrand();
       }
     } catch (error) {
     } finally {
@@ -172,4 +156,4 @@ const useProduction = () => {
     handleSubmit,
   };
 };
-export default useProduction;
+export default useBrand;

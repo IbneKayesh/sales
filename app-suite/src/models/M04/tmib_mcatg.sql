@@ -3,12 +3,13 @@
 --
 
 CREATE TABLE tmib_mcatg (
+  -- default 1
   id varchar(50) PRIMARY KEY,
 
-  mcatg_apusr varchar(50) NOT NULL,
+  mcatg_users varchar(50) NOT NULL,
   mcatg_bsins varchar(50) NOT NULL,
-  mcatg_mcode varchar(50) NOT NULL,
-  mcatg_mname varchar(50) NOT NULL,
+  mcatg_ccode varchar(50) NOT NULL,
+  mcatg_cname varchar(50) NOT NULL,
   -- optional
   -- default
   mcatg_actve boolean NOT NULL DEFAULT true,

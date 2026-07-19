@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { IconLogo, IconSpinner } from "@/icons";
+import { IconLogo, IconSpinner, IconCheck, IconClose } from "@/icons";
 import useLogin from "@/hooks/useLogin";
+import { healthCheck } from "@/utils/api";
 
 export default function LoginPage() {
   const {
@@ -14,10 +15,20 @@ export default function LoginPage() {
 
   const usernameRef = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [backendStatus, setBackendStatus] = useState(null); // null | true | false
+  const [checking, setChecking] = useState(false);
 
   useEffect(() => {
     usernameRef.current?.focus();
+    checkBackend();
   }, []);
+
+  const checkBackend = async () => {
+    setChecking(true);
+    const result = await healthCheck();
+    setBackendStatus(result.online);
+    setChecking(false);
+  };
 
 
   return (
@@ -116,9 +127,36 @@ export default function LoginPage() {
 
         {/* Demo hint */}
         <p className="login-page__hint">
-          Demo: enter any email &amp; password, or use{" "}
-          <strong>admin@example.com</strong>
+          bSuite©{new Date().getFullYear()}
         </p>
+
+        {/* Backend status */}
+        <div className="login-page__backend">
+          <button
+            type="button"
+            className={`login-page__backend-btn login-page__backend-btn--${backendStatus === null ? "checking" : backendStatus ? "online" : "offline"}`}
+            onClick={checkBackend}
+            disabled={checking}
+            title={backendStatus === null ? "Checking backend…" : backendStatus ? "Backend connected" : "Backend unreachable — click to retry"}
+          >
+            {checking ? (
+              <IconSpinner size={12} />
+            ) : backendStatus ? (
+              <IconCheck size={12} />
+            ) : (
+              <IconClose size={12} />
+            )}
+            <span>
+              {checking
+                ? "Checking…"
+                : backendStatus === null
+                  ? "Connecting…"
+                  : backendStatus
+                    ? "Server connected"
+                    : "Server offline"}
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );
