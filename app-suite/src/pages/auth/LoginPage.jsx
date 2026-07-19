@@ -33,7 +33,7 @@ export default function LoginPage() {
           <span className="login-page__logo">
             <IconLogo size={40} />
           </span>
-          <h1 className="login-page__title">ERP Suite</h1>
+          <h1 className="login-page__title">bSuite</h1>
           <p className="login-page__subtitle">Sign in to your account</p>
         </div>
 

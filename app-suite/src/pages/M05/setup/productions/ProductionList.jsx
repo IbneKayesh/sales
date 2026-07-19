@@ -1,6 +1,7 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import Button from "@/components/Button";
+import ActionButton from "@/components/ActionButton";
 import {
   IconClose,
   IconPlus,
@@ -36,31 +37,12 @@ const ProductionList = ({ listData, onEdit, onDelete }) => {
       width: "110px",
       sortable: false,
       render: (_, row) => (
-        <span className="d-inline-flex gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit(row);
-            }}
-            title="Edit"
-          >
-            <IconEdit size={14} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="btn--icon-danger"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete(row);
-            }}
-            title="Delete"
-          >
-            <IconDelete size={14} />
-          </Button>
-        </span>
+        <ActionButton
+          rowData={row}
+          actve={row.prods_actve}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
       ),
     },
   ];

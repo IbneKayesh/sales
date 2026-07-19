@@ -37,6 +37,20 @@ const variants = {
     hoverBg: 'var(--danger-hover)',
     hoverColor: 'var(--danger-on)',
   },
+  success: {
+    bg: 'var(--success)',
+    color: 'var(--success-on)',
+    border: 'var(--success)',
+    hoverBg: 'var(--success-hover)',
+    hoverColor: 'var(--success-on)',
+  },
+  info: {
+    bg: 'var(--info)',
+    color: 'var(--info-on)',
+    border: 'var(--info)',
+    hoverBg: 'var(--info-hover)',
+    hoverColor: 'var(--info-on)',
+  },
 }
 
 const sizes = {

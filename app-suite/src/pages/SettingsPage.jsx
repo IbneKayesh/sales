@@ -32,7 +32,7 @@ const currencyOptions = [
 
 export default function SettingsPage() {
   const [profile, setProfile] = useState({
-    name: 'Kayesh Ahmed',
+    name: 'Ibne Kayesh',
     email: 'kayesh@example.com',
     company: 'AppSuite Inc.',
     phone: '+1-555-0123',

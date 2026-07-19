@@ -1,0 +1,23 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "prods_cname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter name",
+    "required": true
+  },
+  "prods_prono": {
+    "type": "number",
+    "label": "Number",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter no",
+    "required": true,
+    "default": 1
+  }
+}

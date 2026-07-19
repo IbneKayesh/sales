@@ -1,5 +1,5 @@
-import { useRef, useEffect } from 'react'
-import { IconCheckboxCheck, IconCheckboxIndeterminate } from '../icons'
+import { useRef, useEffect } from "react";
+import { IconCheckboxCheck, IconCheckboxIndeterminate } from "../icons";
 
 export default function Checkbox({
   label,
@@ -9,21 +9,21 @@ export default function Checkbox({
   onChange,
   id,
   name,
-  className = '',
+  className = "",
   ...rest
 }) {
-  const ref = useRef(null)
-  const inputId = id || name || `cb-${Math.random().toString(36).slice(2, 8)}`
+  const ref = useRef(null);
+  const inputId = id || name || `cb-${Math.random().toString(36).slice(2, 8)}`;
 
   useEffect(() => {
     if (ref.current) {
-      ref.current.indeterminate = indeterminate
+      ref.current.indeterminate = indeterminate;
     }
-  }, [indeterminate])
+  }, [indeterminate]);
 
   return (
     <label
-      className={`checkbox${disabled ? ' checkbox--disabled' : ''}${className ? ' ' + className : ''}`}
+      className={`checkbox${disabled ? " checkbox--disabled" : ""}${className ? " " + className : ""}`}
       htmlFor={inputId}
     >
       <span className="checkbox__input-wrap">
@@ -48,5 +48,5 @@ export default function Checkbox({
       </span>
       {label && <span className="checkbox__label">{label}</span>}
     </label>
-  )
+  );
 }
