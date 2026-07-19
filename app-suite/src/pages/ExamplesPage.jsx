@@ -20,7 +20,10 @@ import { toast } from '../components/ToastBox'
 import Badge from '../components/Badge'
 import EmptyState from '../components/EmptyState'
 import ErrorBoundary from '../components/ErrorBoundary'
-import { IconUsers, IconDollar, IconBox, IconActivity, IconSave, IconCheck, IconClose, IconInfo, IconWarning, IconEdit, IconDelete } from '../icons'
+import ActionButton from '../components/ActionButton'
+import AuditData from '../components/AuditData'
+import StatListItem from '../components/StatListItem'
+import { IconUsers, IconDollar, IconBox, IconActivity, IconSave, IconCheck, IconClose, IconInfo, IconWarning, IconEdit, IconDelete, IconSearch, IconPhone } from '../icons'
 
 const sampleColumns = [
   { key: 'name', header: 'Name', width: '160px' },
@@ -81,8 +84,24 @@ export default function ExamplesPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [panelOpen, setPanelOpen] = useState(false)
   const [panelSide, setPanelSide] = useState('right')
-  const { confirm, alert, isBusy, setIsBusy } = useUI()
+  const { confirmBox: confirm, alertBox: alert, isBusy, setIsBusy } = useUI()
   const [saveLoading, setSaveLoading] = useState(false)
+  const [inputRequired, setInputRequired] = useState('')
+  const [inputWithIcon, setInputWithIcon] = useState('')
+  const [inputError, setInputError] = useState('invalid@')
+  const [numError, setNumError] = useState('-5')
+  const [ddErrorVal, setDdErrorVal] = useState('')
+  const [ddClearVal, setDdClearVal] = useState('')
+  const [calErrorVal, setCalErrorVal] = useState('')
+  const [checkedDisabled, setCheckedDisabled] = useState(true)
+  const [statItems] = useState([
+    { label: 'Total Revenue', value: '$52,400', sub: '+12.5% vs last month', color: 'var(--success)' },
+    { label: 'Active Users', value: '1,024', sub: '86 new this week', color: 'var(--primary)' },
+    { label: 'Bounce Rate', value: '24.3%', sub: '-3.2% improvement', color: 'var(--warning)' },
+    { label: 'Avg. Response', value: '1.2s', sub: '98th percentile', color: 'var(--accent)' },
+  ])
+  const [actionRow] = useState({ prods_cname: 'Production Line A', prods_actve: true })
+  const [inactiveRow] = useState({ prods_cname: 'Production Line B', prods_actve: false })
 
   const handleSaveWithProgress = () => {
     if (saveLoading) return
@@ -171,6 +190,62 @@ export default function ExamplesPage() {
           <div className="home-page__checks">
             <Checkbox label="Checkbox example" checked={checked1} onChange={() => setChecked1(!checked1)} />
             <Checkbox label="Indeterminate checkbox" indeterminate={true} checked={checked2} onChange={() => setChecked2(!checked2)} />
+            <Checkbox label="Disabled checkbox" checked={checkedDisabled} disabled onChange={() => {}} />
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Input States (error, required, dense, disabled, icons) ── */}
+      <PageCard>
+        <PageCardHeader>
+          <PageCardTitle title="Input States & Variants" subtitle="Error, required, dense, disabled, readOnly, and icon variants for all form inputs" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            {/* Error states */}
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Error</h4>
+              <InputText label="Email" value={inputError} onChange={(e) => setInputError(e.target.value)} error="Invalid email format" placeholder="email@example.com" />
+              <InputNumber label="Age" value={numError} onChange={(e) => setNumError(e.target.value)} error="Must be 0 or higher" min={0} />
+              <Dropdown label="Category" options={ddOptions} value={ddErrorVal} onChange={(e) => setDdErrorVal(e.target.value)} error="Please select a category" placeholder="Select..." />
+              <InputCalendar label="Date" value={calErrorVal} name="cal-err" onChange={(e) => setCalErrorVal(e.target.value)} error="Date is required" />
+            </div>
+
+            {/* Required & Dense */}
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Required &amp; Dense</h4>
+              <InputText label="Full Name" value={inputRequired} onChange={(e) => setInputRequired(e.target.value)} required placeholder="Required field" />
+              <InputText label="Compact" dense placeholder="Dense variant" />
+              <Dropdown label="Priority" options={[
+                { value: 'low', label: 'Low' },
+                { value: 'medium', label: 'Medium' },
+                { value: 'high', label: 'High' },
+              ]} placeholder="Select..." dense />
+              <InputNumber label="Quantity" dense placeholder="0" />
+              <InputCalendar label="Date (DD/MM/YYYY)" dense format="DD/MM/YYYY" />
+            </div>
+
+            {/* Disabled & Icons */}
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Disabled &amp; Icons</h4>
+              <InputText label="Username" value="john.doe" disabled />
+              <InputText
+                label="Search"
+                value={inputWithIcon}
+                onChange={(e) => setInputWithIcon(e.target.value)}
+                icon={<IconSearch size={14} />}
+                placeholder="Search..."
+              />
+              <InputText
+                label="Phone"
+                icon={<IconPhone size={14} />}
+                placeholder="+1 (555) 000-0000"
+              />
+              <Dropdown label="Status" options={[
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' },
+              ]} value={ddClearVal} onChange={(e) => setDdClearVal(e.target.value)} clearable placeholder="Clearable..." />
+            </div>
           </div>
         </PageCardBody>
       </PageCard>
@@ -673,6 +748,119 @@ export default function ExamplesPage() {
                   This content is wrapped with a custom fallback.
                 </div>
               </ErrorBoundary>
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Stat List Items ── */}
+      <PageCard>
+        <PageCardHeader>
+          <PageCardTitle title="Stat List Items" subtitle="Label, value, sub-text, and colored dot indicator" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Dashboard Stats</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+                {statItems.map((item, i) => (
+                  <StatListItem key={i} label={item.label} value={item.value} sub={item.sub} color={item.color} />
+                ))}
+              </div>
+            </div>
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Custom Colors</h4>
+              <StatListItem label="Server Uptime" value="99.97%" sub="Last 30 days" color="var(--success)" />
+              <StatListItem label="Error Rate" value="0.03%" sub="Within threshold" color="var(--danger)" />
+              <StatListItem label="Queue Depth" value="12" sub="2 pending, 10 processed" color="var(--info)" />
+              <StatListItem label="Cache Hit Rate" value="94.2%" sub="+2.1% from last week" color="var(--accent)" />
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Audit Data ── */}
+      <PageCard>
+        <PageCardHeader>
+          <PageCardTitle title="Audit Data" subtitle="Audit trail row showing active status, created by/date, updated by/date, and revision number" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+            <AuditData
+              actve={true}
+              cname="Admin User"
+              cdate="2026-01-15T08:30:00"
+              uname="Admin User"
+              udate="2026-07-19T14:22:00"
+              rvnmr={3}
+            />
+            <AuditData
+              actve={false}
+              cname="Jane Smith"
+              cdate="2026-03-22T10:15:00"
+              uname="Admin User"
+              udate="2026-06-10T09:45:00"
+              rvnmr={7}
+            />
+            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)', paddingLeft: 'var(--sp-2)' }}>
+              Columns: Status | Created By | Created Date | Updated By | Updated Date | Revision
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Action Buttons ── */}
+      <PageCard>
+        <PageCardHeader>
+          <PageCardTitle title="Action Buttons" subtitle="Row action buttons for Edit, Activate, and Deactivate — shown conditionally based on active state" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>
+                Active Row — shows Deactivate button
+              </h4>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: 'var(--sp-3) var(--sp-4)',
+                background: 'var(--surface-alt)',
+                borderRadius: 'var(--radius-lg)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
+                  <Badge variant="success" dot>{actionRow.prods_cname}</Badge>
+                </div>
+                <ActionButton
+                  rowData={actionRow}
+                  actve={actionRow.prods_actve}
+                  onEdit={(row) => toast.info(`Editing ${row.prods_cname}`)}
+                  onDelete={(row) => toast.warning(`${row.prods_cname} deactivated`)}
+                />
+              </div>
+            </div>
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>
+                Inactive Row — shows Activate button
+              </h4>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: 'var(--sp-3) var(--sp-4)',
+                background: 'var(--surface-alt)',
+                borderRadius: 'var(--radius-lg)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
+                  <Badge variant="danger" dot>{inactiveRow.prods_cname}</Badge>
+                </div>
+                <ActionButton
+                  rowData={inactiveRow}
+                  actve={inactiveRow.prods_actve}
+                  onEdit={(row) => toast.info(`Editing ${row.prods_cname}`)}
+                  onDelete={(row) => toast.success(`${row.prods_cname} activated`)}
+                />
+              </div>
             </div>
           </div>
         </PageCardBody>

@@ -92,27 +92,21 @@ export function AppUIProvider({ children }) {
     message: "",
     confirmText: "OK",
     variant: "primary",
-    resolve: null,
   });
 
   const alertBox = useCallback((options = {}) => {
-    return new Promise((resolve) => {
-      setAlertState({
-        open: true,
-        title: options.title || "Notice",
-        message: options.message || "",
-        confirmText: options.confirmText || "OK",
-        variant: options.variant || "primary",
-        resolve,
-      });
+    setAlertState({
+      open: true,
+      title: options.title || "Notice",
+      message: options.message || "",
+      confirmText: options.confirmText || "OK",
+      variant: options.variant || "primary",
     });
   }, []);
 
   const handleAlertConfirm = useCallback(() => {
-    const res = alertState.resolve;
     setAlertState((prev) => ({ ...prev, open: false }));
-    res?.();
-  }, [alertState.resolve]);
+  }, []);
 
   /* ─── Global Busy State & Loading Overlay ──── */
   const [isBusy, setBusy] = useState(false);

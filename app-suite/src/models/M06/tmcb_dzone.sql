@@ -3,13 +3,14 @@
 --
 
 CREATE TABLE tmcb_dzone (
+  -- default 1
   id varchar(50) PRIMARY KEY,
 
-  dzone_apusr varchar(50) NOT NULL,
+  dzone_users varchar(50) NOT NULL,
   dzone_bsins varchar(50) NOT NULL,
+  dzone_ccode varchar(50) NOT NULL,
   dzone_cntry varchar(50) NOT NULL,
-  dzone_dcode varchar(50) NOT NULL,
-  dzone_dname varchar(50) NOT NULL,
+  dzone_cname varchar(50) NOT NULL,
 
     -- default
   dzone_actve boolean NOT NULL DEFAULT true,

@@ -1,0 +1,21 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "tarea_cname": {
+    "type": "string",
+    "label": "Area Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter area name",
+    "required": true
+  },
+  "tarea_dzone": {
+    "type": "string",
+    "label": "Delivery Zone",
+    "maxLength": 50,
+    "placeholder": "Enter delivery zone",
+    "required": true
+  }
+}

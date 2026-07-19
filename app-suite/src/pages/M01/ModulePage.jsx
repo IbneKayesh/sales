@@ -11,6 +11,7 @@ import {
   IconFile,
   IconUsers,
   IconManufacture,
+  IconCRM,
 } from "@/icons";
 
 const modules = [
@@ -27,6 +28,13 @@ const modules = [
     menus_micon: <IconManufacture />,
     menus_color: "#22c55e",
     menus_odrby: 5,
+  },
+  {
+    id: "M06",
+    menus_mname: "CRM",
+    menus_micon: <IconCRM />,
+    menus_color: "#3b82f6",
+    menus_odrby: 6,
   },
   {
     id: "M08",
@@ -62,6 +70,42 @@ const menus = [
     menus_odrby: 1,
     menus_mlink: "/M05/productions",
     menus_menus: "M05",
+  },
+  {
+    id: "M06-M01-M001",
+    menus_mname: "Contacts",
+    menus_color: "#3b82f6",
+    menus_micon: <IconCRM />,
+    menus_odrby: 1,
+    menus_mlink: "/M06/contacts",
+    menus_menus: "M06",
+  },
+  {
+    id: "M06-M01-M002",
+    menus_mname: "Delivery Zones",
+    menus_color: "#3b82f6",
+    menus_micon: <IconCRM />,
+    menus_odrby: 2,
+    menus_mlink: "/M06/delivery-zones",
+    menus_menus: "M06",
+  },
+  {
+    id: "M06-M01-M003",
+    menus_mname: "Territory Areas",
+    menus_color: "#3b82f6",
+    menus_micon: <IconCRM />,
+    menus_odrby: 3,
+    menus_mlink: "/M06/territory-areas",
+    menus_menus: "M06",
+  },
+  {
+    id: "M06-M01-M004",
+    menus_mname: "Territories",
+    menus_color: "#3b82f6",
+    menus_micon: <IconCRM />,
+    menus_odrby: 4,
+    menus_mlink: "/M06/territories",
+    menus_menus: "M06",
   },
   {
     id: "M08-M01-M001",
@@ -154,6 +198,7 @@ export const navItems = [
   { to: "/reports", label: "Reports", icon: "▣" },
   { to: "/settings", label: "Settings", icon: "⚙" },
   { to: "/examples", label: "Examples", icon: "✦" },
+  { to: "/M06/contacts", label: "Contacts", icon: "⊕" },
   { to: "/M08/chart-of-accounts", label: "COA", icon: "◐" },
   { to: "/M01/modules", label: "Modules", icon: "⊞" },
 ];

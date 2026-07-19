@@ -9,6 +9,10 @@ import LoginPage from "../pages/auth/LoginPage";
 import NotificationPage from "../pages/NotificationPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProductionPage from "@/pages/M05/setup/productions/ProductionPage";
+import ContactPage from "@/pages/M06/setup/contacts/ContactPage";
+import DeliveryZonePage from "@/pages/M06/setup/deliveryzones/DeliveryZonePage";
+import TerritoryAreaPage from "@/pages/M06/setup/territoryareas/TerritoryAreaPage";
+import TerritoryPage from "@/pages/M06/setup/territories/TerritoryPage";
 import ChartOfAccountsPage from "@/pages/M08/setup/coa/ChartOfAccountsPage";
 import ModulePage from "@/pages/M01/ModulePage";
 
@@ -22,6 +26,10 @@ const routes = [
   { path: "/examples", element: <ExamplesPage /> },
   { path: "/notifications", element: <NotificationPage /> },
   { path: "/M05/productions", element: <ProductionPage /> },
+  { path: "/M06/contacts", element: <ContactPage /> },
+  { path: "/M06/delivery-zones", element: <DeliveryZonePage /> },
+  { path: "/M06/territory-areas", element: <TerritoryAreaPage /> },
+  { path: "/M06/territories", element: <TerritoryPage /> },
   { path: "/M08/chart-of-accounts", element: <ChartOfAccountsPage /> },
   { path: "/M01/modules", element: <ModulePage /> },
   { path: "*", element: <NotFoundPage /> },

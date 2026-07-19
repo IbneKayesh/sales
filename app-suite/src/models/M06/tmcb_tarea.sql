@@ -3,13 +3,14 @@
 --
 
 CREATE TABLE tmcb_tarea (
+  -- default 1
   id varchar(50) PRIMARY KEY,
 
-  tarea_apusr varchar(50) NOT NULL,
+  tarea_users varchar(50) NOT NULL,
   tarea_bsins varchar(50) NOT NULL,
+  tarea_ccode varchar(50) NOT NULL,
   tarea_dzone varchar(50) NOT NULL,
-  tarea_tcode varchar(50) NOT NULL,
-  tarea_tname varchar(50) NOT NULL,
+  tarea_cname varchar(50) NOT NULL,
 
   -- default
   tarea_actve boolean NOT NULL DEFAULT true,

@@ -3,13 +3,14 @@
 --
 
 CREATE TABLE tmcb_trtry (
+  -- default 1
   id varchar(50) PRIMARY KEY,
 
-  trtry_apusr varchar(50) NOT NULL,
+  trtry_users varchar(50) NOT NULL,
   trtry_bsins varchar(50) NOT NULL,
+  trtry_ccode varchar(50) NOT NULL,
   trtry_tarea varchar(50) NOT NULL,
-  trtry_wcode varchar(50) NOT NULL,
-  trtry_wname varchar(50) NOT NULL,
+  trtry_cname varchar(50) NOT NULL,
 
   -- default
   trtry_actve boolean NOT NULL DEFAULT true,

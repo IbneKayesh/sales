@@ -1,13 +1,4 @@
-1. app-suite/src/components/ (5 files)
-Dropdown.jsx
-FileUpload.jsx
-InputCalendar.jsx
-InputNumber.jsx
-InputText.jsx
-
-1. when required then star will be red
-2. error text will be red, reduce text size
-3. reduce padding between input and error text
-
-
-2. remove alertBox await feature, make this only alertBox, here only show messages without any promise, remove promise from alertBox if any, promise only for ConfirmBox, keep confirmbox as await promise
+1. src/models/M06/*.sql convert them into .json and as example src/models/M05/tmmb_prods.json
+2. src/api/M06/*.js create API's as example src/api/M05/productionAPI.js
+3. src/hooks/M06/*.js create hook's as example src/hooks/M05/*.js
+4. src/pages/M06/*.jsx create pages as example src/pages/M05/*.jsx

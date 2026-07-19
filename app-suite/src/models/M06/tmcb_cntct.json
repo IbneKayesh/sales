@@ -1,0 +1,99 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "cntct_cname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 200,
+    "minLength": 3,
+    "placeholder": "Enter contact name",
+    "required": true
+  },
+  "cntct_ccode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "placeholder": "Enter code"
+  },
+  "cntct_ctype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Enter contact type",
+    "required": true
+  },
+  "cntct_sorce": {
+    "type": "string",
+    "label": "Source",
+    "maxLength": 50,
+    "default": "Local"
+  },
+  "cntct_cntps": {
+    "type": "string",
+    "label": "Contact Person",
+    "maxLength": 50,
+    "placeholder": "Enter person name"
+  },
+  "cntct_cntno": {
+    "type": "string",
+    "label": "Contact No",
+    "maxLength": 50,
+    "placeholder": "Enter contact number",
+    "required": true
+  },
+  "cntct_email": {
+    "type": "email",
+    "label": "Email",
+    "maxLength": 50,
+    "placeholder": "email@example.com"
+  },
+  "cntct_tinno": {
+    "type": "string",
+    "label": "TIN No",
+    "maxLength": 50
+  },
+  "cntct_trade": {
+    "type": "string",
+    "label": "Trade",
+    "maxLength": 50
+  },
+  "cntct_ofadr": {
+    "type": "string",
+    "label": "Office Address",
+    "maxLength": 300
+  },
+  "cntct_fcadr": {
+    "type": "string",
+    "label": "Factory Address",
+    "maxLength": 300
+  },
+  "cntct_cntry": {
+    "type": "string",
+    "label": "Country",
+    "maxLength": 50,
+    "default": "Bangladesh"
+  },
+  "cntct_crncy": {
+    "type": "string",
+    "label": "Currency",
+    "maxLength": 50,
+    "default": "BDT"
+  },
+  "cntct_dspct": {
+    "type": "decimal",
+    "label": "Discount %",
+    "default": 0
+  },
+  "cntct_crlmt": {
+    "type": "decimal",
+    "label": "Credit Limit",
+    "default": 0
+  },
+  "cntct_crbal": {
+    "type": "decimal",
+    "label": "Credit Balance",
+    "default": 0
+  }
+}
