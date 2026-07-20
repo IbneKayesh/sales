@@ -7,10 +7,10 @@ const { GenNewCode } = require("../../db/genHelper");
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { user_s, user_c, user_b } = req.body;
+    const { scatg_mcatg, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!user_c) {
+    if (!scatg_mcatg || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -19,17 +19,17 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT sctg.*, mctg.mcatg_mname,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
+    const sql = `SELECT sctg.*,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmib_scatg sctg
-    LEFT JOIN tmib_mcatg mctg ON sctg.scatg_mcatg = mctg.id
-    LEFT JOIN tmnb_users csr ON sctg.scatg_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON sctg.scatg_upusr = usr.id
-    WHERE sctg.scatg_apusr = $1
-    ORDER BY sctg.scatg_sname ASC`;
+    LEFT JOIN tmhb_emply csr ON sctg.scatg_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON sctg.scatg_upusr = usr.id
+    WHERE sctg.scatg_users = $1
+    AND sctg.scatg_mcatg = $2
+    ORDER BY sctg.scatg_cname ASC`;
 
-    const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get sub category- ${user_c}`);
+    const params = [scatg_mcatg, user_c];
+    const rows = await dbGetAll(sql, params, `get sub catgeory- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -62,12 +62,12 @@ router.post("/get-all-active", async (req, res) => {
     //database action
     const sql = `SELECT sctg.*, 0 as edit_stop
     FROM tmib_scatg sctg
-    WHERE sctg.scatg_apusr = $1
+    WHERE sctg.scatg_users = $1
     AND sctg.scatg_actve = TRUE
-    ORDER BY sctg.scatg_sname ASC`;
+    ORDER BY sctg.scatg_cname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get sub category- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get sub catgeory- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -87,18 +87,18 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      scatg_apusr,
+      scatg_users,
       scatg_bsins,
+      scatg_ccode,
       scatg_mcatg,
-      scatg_scode,
-      scatg_sname,
+      scatg_cname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!scatg_mcatg || !scatg_sname || !user_s || !user_c || !user_b) {
+    if (!scatg_mcatg || !scatg_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -109,23 +109,23 @@ const create = async (req, res) => {
     //database action
     const newCode = await GenNewCode(user_c, "tmib_scatg");
 
-    const sql = `INSERT INTO tmib_scatg(id, scatg_apusr, scatg_bsins, scatg_mcatg, scatg_scode, scatg_sname, scatg_crusr, scatg_upusr)
+    const sql = `INSERT INTO tmib_scatg(id, scatg_users, scatg_bsins, scatg_ccode, scatg_mcatg, scatg_cname, scatg_crusr, scatg_upusr)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
-      scatg_mcatg,
       newCode,
-      scatg_sname,
+      scatg_mcatg,
+      scatg_cname,
       user_s,
       user_s,
     ];
 
-    await dbRun(sql, params, `create sub category- ${user_c}`);
+    await dbRun(sql, params, `create sub catgeory- ${user_c}`);
     res.json({
       success: true,
-      message: `${scatg_sname} - Created successfully.`,
+      message: `${scatg_cname} - Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -142,18 +142,18 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      scatg_apusr,
+      scatg_users,
       scatg_bsins,
+      scatg_ccode,
       scatg_mcatg,
-      scatg_scode,
-      scatg_sname,
+      scatg_cname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!id || !scatg_mcatg || !scatg_sname || !user_s || !user_c || !user_b) {
+    if (!id || !scatg_mcatg || !scatg_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -163,18 +163,17 @@ const update = async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_scatg
-    SET scatg_mcatg = $1,
-    scatg_sname = $2,
-    scatg_upusr = $3,
+    SET scatg_cname = $1,
+    scatg_upusr = $2,
     scatg_updat = CURRENT_TIMESTAMP,
     scatg_rvnmr = scatg_rvnmr + 1
-    WHERE id = $4`;
-    const params = [scatg_mcatg, scatg_sname, user_s, id];
+    WHERE id = $3`;
+    const params = [scatg_cname, user_s, id];
 
-    await dbRun(sql, params, `update sub category- ${user_c}`);
+    await dbRun(sql, params, `update sub catgeory- ${user_c}`);
     res.json({
       success: true,
-      message: `${scatg_sname} - Updated successfully.`,
+      message: `${scatg_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -206,10 +205,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, scatg_sname, scatg_actve, user_s, user_c, user_b } = req.body;
+    const { id, scatg_cname, scatg_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !scatg_sname || !user_s || !user_c || !user_b) {
+    if (!id || !scatg_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -226,10 +225,10 @@ router.post("/delete", async (req, res) => {
     WHERE id = $2`;
     const params = [user_s, id];
 
-    await dbRun(sql, params, `delete sub category- ${user_c}`);
+    await dbRun(sql, params, `delete sub catgeory- ${user_c}`);
     res.json({
       success: true,
-      message: `${scatg_sname} - ${scatg_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${scatg_cname} - ${scatg_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {

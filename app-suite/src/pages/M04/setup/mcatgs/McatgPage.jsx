@@ -9,11 +9,14 @@ import {
   IconClose,
   IconPlus,
   IconSave,
+  IconChevronLeft,
 } from "@/icons";
 import Button from "@/components/Button";
-import useMcatg from "@/hooks/M04/useMcatg";
+import useCategories from "@/hooks/M04/useCategories";
 import McatgList from "./McatgList";
 import McatgForm from "./McatgForm";
+import ScatgList from "./ScatgList";
+import ScatgForm from "./ScatgForm";
 
 const McatgPage = () => {
   const {
@@ -35,13 +38,21 @@ const McatgPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-  } = useMcatg();
+    //sub category
+    handleSubCategory,
+    handleChangeSubCat,
+    handleEditSubCat,
+    handleAddNewSubCat,
+  } = useCategories();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
-          <PageCardTitle title="Main Categories" subtitle="All Main Categories" />
+          <PageCardTitle
+            title="Categories"
+            subtitle={`${listData.length} Categories`}
+          />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
               <Button variant="info" size="sm" onClick={handleSearch}>
@@ -67,6 +78,18 @@ const McatgPage = () => {
                 {formData?.id ? "Update" : "Create"}
               </Button>
             )}
+            {pgView === "SYS_VW_LST_2" && (
+              <Button variant="secondary" size="sm" onClick={handleCancel}>
+                <IconChevronLeft size={14} className="icon-left" />
+                Category
+              </Button>
+            )}
+            {pgView === "SYS_VW_LST_2" && (
+              <Button size="sm" onClick={handleAddNewSubCat}>
+                <IconPlus size={14} className="icon-left" />
+                Add
+              </Button>
+            )}
           </PageCardActions>
         </PageCardHeader>
         <PageCardBody>
@@ -75,10 +98,32 @@ const McatgPage = () => {
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onSubCategory={handleSubCategory}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
             <McatgForm
+              isBusy={isBusy}
+              readOnly={readOnly}
+              stopEdit={stopEdit}
+              formData={formData}
+              formErrors={formErrors}
+              onChange={handleChange}
+              onCancel={handleCancel}
+              onSubmit={handleSubmit}
+            />
+          )}
+
+          {pgView === "SYS_VW_LST_2" && (
+            <ScatgList
+              listData={listDataItem}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onSubCategory={handleSubCategory}
+            />
+          )}
+          {pgView === "SYS_VW_FRM_2" && (
+            <ScatgForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}

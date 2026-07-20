@@ -8,12 +8,12 @@ import UnitsPage from "@/pages/M04/setup/units/UnitsPage";
 
 const routes = [
   { path: "/inventory/setup/brands", element: <BrandPage /> },
-  { path: "/M04/main-categories", element: <McatgPage /> },
+  { path: "/inventory/setup/categories", element: <McatgPage /> },
   { path: "/M04/main-groups", element: <MgrupPage /> },
   { path: "/M04/attributes", element: <AttrbPage /> },
   { path: "/M04/sub-categories", element: <ScatgPage /> },
   { path: "/M04/sub-groups", element: <SgrupPage /> },
-  { path: "/M04/units", element: <UnitsPage /> },
+  { path: "/inventory/setup/units", element: <UnitsPage /> },
 ];
 
 export default routes;

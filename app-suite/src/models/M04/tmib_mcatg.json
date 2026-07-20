@@ -3,13 +3,6 @@
     "type": "string",
     "label": "Id"
   },
-  "mcatg_ccode": {
-    "type": "string",
-    "label": "Code",
-    "maxLength": 50,
-    "placeholder": "Enter category code",
-    "required": true
-  },
   "mcatg_cname": {
     "type": "string",
     "label": "Category Name",

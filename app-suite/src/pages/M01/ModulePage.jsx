@@ -81,11 +81,11 @@ const menus = [
   },
   {
     id: "M04-M02-M001",
-    menus_mname: "Main Categories",
+    menus_mname: "Categories",
     menus_color: "#f97316",
     menus_micon: <IconBox />,
     menus_odrby: 2,
-    menus_mlink: "/M04/main-categories",
+    menus_mlink: "/inventory/setup/categories",
     menus_menus: "M04",
   },
   {
@@ -130,7 +130,7 @@ const menus = [
     menus_color: "#f97316",
     menus_micon: <IconBox />,
     menus_odrby: 7,
-    menus_mlink: "/M04/units",
+    menus_mlink: "/inventory/setup/units",
     menus_menus: "M04",
   },
   {

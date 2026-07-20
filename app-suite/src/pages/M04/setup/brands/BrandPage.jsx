@@ -4,12 +4,7 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import {
-  IconSearch,
-  IconClose,
-  IconPlus,
-  IconSave,
-} from "@/icons";
+import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
 import useBrand from "@/hooks/M04/useBrand";
 import BrandList from "./BrandList";
@@ -41,7 +36,10 @@ const BrandPage = () => {
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
-          <PageCardTitle title="Brands" subtitle="All Brands" />
+          <PageCardTitle
+            title="Brands"
+            subtitle={`${listData.length} Brands`}
+          />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
               <Button variant="info" size="sm" onClick={handleSearch}>

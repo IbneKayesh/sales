@@ -1,12 +1,10 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import Button from "@/components/Button";
+import { IconClose, IconCheck, IconBar } from "@/icons";
 
-const McatgList = ({ listData, onEdit, onDelete }) => {
+const McatgList = ({ listData, onEdit, onDelete, onSubCategory }) => {
   const dtColumns = [
     { key: "mcatg_ccode", header: "Code", width: "180px" },
     { key: "mcatg_cname", header: "Category Name", width: "200px" },
@@ -29,12 +27,25 @@ const McatgList = ({ listData, onEdit, onDelete }) => {
       width: "110px",
       sortable: false,
       render: (_, row) => (
-        <ActionButton
-          rowData={row}
-          actve={row.mcatg_actve}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        <>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSubCategory(row);
+            }}
+            title="Sub Categories"
+          >
+            <IconBar size={14} />
+          </Button>
+          <ActionButton
+            rowData={row}
+            actve={row.mcatg_actve}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        </>
       ),
     },
   ];

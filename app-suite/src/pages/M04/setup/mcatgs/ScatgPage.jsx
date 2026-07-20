@@ -6,11 +6,11 @@ import PageCard, {
 } from "@/components/PageCard";
 import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
-import useUnits from "@/hooks/M04/useUnits";
-import UnitsList from "./UnitsList";
-import UnitsForm from "./UnitsForm";
+import useScatg from "@/hooks/M04/useScatg";
+import ScatgList from "./ScatgList";
+import ScatgForm from "./ScatgForm";
 
-const UnitsPage = () => {
+const ScatgPage = () => {
   const {
     isBusy,
     pgView,
@@ -29,16 +29,13 @@ const UnitsPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-  } = useUnits();
+  } = useScatg();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
-          <PageCardTitle
-            title="Units"
-            subtitle={`${listData.length} Units`}
-          />
+          <PageCardTitle title="Sub Categories" subtitle="All Sub Categories" />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
               <Button variant="info" size="sm" onClick={handleSearch}>
@@ -68,14 +65,14 @@ const UnitsPage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <UnitsList
+            <ScatgList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
-            <UnitsForm
+            <ScatgForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
@@ -91,4 +88,4 @@ const UnitsPage = () => {
     </div>
   );
 };
-export default UnitsPage;
+export default ScatgPage;

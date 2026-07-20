@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { mcatgAPI } from "@/api/M04/mcatgAPI.js";
+import { categoriesAPI } from "@/api/M04/categoriesAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmib_mcatg from "@/models/M04/tmib_mcatg.json";
 const dataModel = generateDataModel(tmib_mcatg);
+import { subCategoriesAPI } from "@/api/M04/subCategoriesAPI.js";
+import tmib_scatg from "@/models/M04/tmib_scatg.json";
+const dataModelItem = generateDataModel(tmib_scatg);
 
-const useMcatg = () => {
+const useCategories = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M04-M02-M001");
+  const [pgId, setPgId] = useState("M04-M02-M003");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -23,10 +26,10 @@ const useMcatg = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
-  const getAllMcatg = async () => {
+  const getAllCategories = async () => {
     try {
       setIsBusy(true);
-      const resp = await mcatgAPI.getAll({});
+      const resp = await categoriesAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -36,11 +39,13 @@ const useMcatg = () => {
   };
 
   useEffect(() => {
-    getAllMcatg();
+    getAllCategories();
   }, []);
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formData, [f]: v }, tmib_brand);
+    setFormErrors(newErrors);
   };
 
   const handleEdit = (rowData) => {
@@ -63,7 +68,7 @@ const useMcatg = () => {
 
     try {
       setIsBusy(true);
-      const resp = await mcatgAPI.delete(rowData);
+      const resp = await categoriesAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -77,7 +82,7 @@ const useMcatg = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllMcatg();
+        getAllCategories();
       }
     } catch (error) {
     } finally {
@@ -86,8 +91,9 @@ const useMcatg = () => {
   };
 
   const handleSearch = async () => {
-    getAllMcatg();
+    getAllCategories();
   };
+
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
     setFormData(dataModel);
@@ -115,7 +121,7 @@ const useMcatg = () => {
       };
       setIsBusy(true);
 
-      const resp = await mcatgAPI.upsert(reqBody);
+      const resp = await categoriesAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -125,12 +131,51 @@ const useMcatg = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllMcatg();
+        getAllCategories();
       }
     } catch (error) {
     } finally {
       setIsBusy(false);
     }
+  };
+
+  //sub category
+  const [thisCategory, setThisCategory] = useState("");
+
+  const getSubAllCategories = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await subCategoriesAPI.getAll({ scatg_mcatg: id });
+      const list = resp.data || [];
+      setListDataItem(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleSubCategory = async (rowData) => {
+    setThisCategory(rowData);
+    setPgView("SYS_VW_LST_2");
+    getSubAllCategories(rowData.id);
+  };
+
+  const handleChangeSubCat = (f, v) => {
+    setFormDataItem((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formDataItem, [f]: v }, tmib_scatg);
+    setFormErrors(newErrors);
+  };
+
+  const handleEditSubCat = (rowData) => {
+    setPgView("SYS_VW_FRM_2");
+    setFormDataItem(rowData);
+  };
+
+  const handleAddNewSubCat = () => {
+    setPgView("SYS_VW_FRM_2");
+    setFormDataItem(dataModelItem);
+    setReadOnly(false);
+    setStopEdit(false);
   };
 
   return {
@@ -152,6 +197,11 @@ const useMcatg = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //sub category
+    handleSubCategory,
+    handleChangeSubCat,
+    handleEditSubCat,
+    handleAddNewSubCat,
   };
 };
-export default useMcatg;
+export default useCategories;

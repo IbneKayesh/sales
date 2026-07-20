@@ -20,12 +20,12 @@ router.post("/", async (req, res) => {
 
     //database action
     const sql = `SELECT mctg.*,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmib_mcatg mctg
-    LEFT JOIN tmnb_users csr ON mctg.mcatg_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON mctg.mcatg_upusr = usr.id
-    WHERE mctg.mcatg_apusr = $1
-    ORDER BY mctg.mcatg_mname ASC`;
+    LEFT JOIN tmhb_emply csr ON mctg.mcatg_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON mctg.mcatg_upusr = usr.id
+    WHERE mctg.mcatg_users = $1
+    ORDER BY mctg.mcatg_cname ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get catgeory- ${user_c}`);
@@ -61,9 +61,9 @@ router.post("/get-all-active", async (req, res) => {
     //database action
     const sql = `SELECT mctg.*, 0 as edit_stop
     FROM tmib_mcatg mctg
-    WHERE mctg.mcatg_apusr = $1
+    WHERE mctg.mcatg_users = $1
     AND mctg.mcatg_actve = TRUE
-    ORDER BY mctg.mcatg_mname ASC`;
+    ORDER BY mctg.mcatg_cname ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get catgeory- ${user_c}`);
@@ -87,17 +87,17 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      mcatg_apusr,
+      mcatg_users,
       mcatg_bsins,
-      mcatg_mcode,
-      mcatg_mname,
+      mcatg_ccode,
+      mcatg_cname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!mcatg_mname || !user_s || !user_c || !user_b) {
+    if (!mcatg_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -108,14 +108,14 @@ const create = async (req, res) => {
     //database action
     const newCode = await GenNewCode(user_c, "tmib_mcatg");
 
-    const sql = `INSERT INTO tmib_mcatg(id, mcatg_apusr, mcatg_bsins, mcatg_mcode, mcatg_mname, mcatg_crusr, mcatg_upusr)
+    const sql = `INSERT INTO tmib_mcatg(id, mcatg_users, mcatg_bsins, mcatg_ccode, mcatg_cname, mcatg_crusr, mcatg_upusr)
     VALUES ($1, $2, $3, $4, $5, $6, $7)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
       newCode,
-      mcatg_mname,
+      mcatg_cname,
       user_s,
       user_s,
     ];
@@ -123,7 +123,7 @@ const create = async (req, res) => {
     await dbRun(sql, params, `create catgeory- ${user_c}`);
     res.json({
       success: true,
-      message: `${mcatg_mname} - Created successfully.`,
+      message: `${mcatg_cname} - Created successfully.`,
     data: {},
     });
   } catch (error) {
@@ -140,17 +140,17 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      mcatg_apusr,
+      mcatg_users,
       mcatg_bsins,
-      mcatg_mcode,
-      mcatg_mname,
+      mcatg_ccode,
+      mcatg_cname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!id || !mcatg_mname || !user_s || !user_c || !user_b) {
+    if (!id || !mcatg_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -160,17 +160,17 @@ const update = async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_mcatg
-    SET mcatg_mname = $1,
+    SET mcatg_cname = $1,
     mcatg_upusr = $2,
     mcatg_updat = CURRENT_TIMESTAMP,
     mcatg_rvnmr = mcatg_rvnmr + 1
     WHERE id = $3`;
-    const params = [mcatg_mname, user_s, id];
+    const params = [mcatg_cname, user_s, id];
 
     await dbRun(sql, params, `update catgeory- ${user_c}`);
     res.json({
       success: true,
-      message: `${mcatg_mname} - Updated successfully.`,
+      message: `${mcatg_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -202,10 +202,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, mcatg_mname, mcatg_actve, user_s, user_c, user_b } = req.body;
+    const { id, mcatg_cname, mcatg_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !mcatg_mname || !user_s || !user_c || !user_b) {
+    if (!id || !mcatg_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -225,7 +225,7 @@ router.post("/delete", async (req, res) => {
     await dbRun(sql, params, `delete catgeory- ${user_c}`);
     res.json({
       success: true,
-      message: `${mcatg_mname} - ${mcatg_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${mcatg_cname} - ${mcatg_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {

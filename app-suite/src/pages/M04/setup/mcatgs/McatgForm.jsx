@@ -21,17 +21,6 @@ const McatgForm = ({
       <div className="grid">
         <div className="col-span-6">
           <InputText
-            label="Category Code"
-            placeholder="Enter category code"
-            value={formData.mcatg_ccode}
-            onChange={(e) => onChange("mcatg_ccode", e.target.value)}
-            error={formErrors.mcatg_ccode}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-6">
-          <InputText
             label="Category Name"
             placeholder="Enter category name"
             value={formData.mcatg_cname}

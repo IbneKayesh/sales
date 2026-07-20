@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { scatgAPI } from "@/api/M04/scatgAPI.js";
+import { subCategoriesAPI } from "@/api/M04/subCategoriesAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmib_scatg from "@/models/M04/tmib_scatg.json";
 const dataModel = generateDataModel(tmib_scatg);
@@ -26,7 +26,7 @@ const useScatg = () => {
   const getAllScatg = async () => {
     try {
       setIsBusy(true);
-      const resp = await scatgAPI.getAll({});
+      const resp = await subCategoriesAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -63,7 +63,7 @@ const useScatg = () => {
 
     try {
       setIsBusy(true);
-      const resp = await scatgAPI.delete(rowData);
+      const resp = await subCategoriesAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -115,7 +115,7 @@ const useScatg = () => {
       };
       setIsBusy(true);
 
-      const resp = await scatgAPI.upsert(reqBody);
+      const resp = await subCategoriesAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
