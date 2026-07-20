@@ -1217,6 +1217,7 @@ code {
 .data-table__table {
   min-width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .data-table__th {

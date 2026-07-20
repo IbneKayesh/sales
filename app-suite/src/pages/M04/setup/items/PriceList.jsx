@@ -33,7 +33,7 @@ const PriceList = ({ listData, onEdit, onDelete }) => {
     {
       key: "actions",
       header: "Actions",
-      width: "110px",
+      width: "150px",
       sortable: false,
       render: (_, row) => (
         <ActionButton

@@ -146,7 +146,7 @@ export default function DataTable({
                   key={col.key || col.accessor}
                   className={`data-table__th${col.sortable !== false && sortable ? ' data-table__th--sortable' : ''}${sortKey === (col.key || col.accessor) ? ` data-table__th--${sortDir}` : ''}${stickyFirst && ci === 0 ? ' data-table__th--sticky' : ''}`}
                   onClick={() => handleSort(col.key || col.accessor)}
-                  style={col.width ? { width: col.width } : undefined}
+                  style={col.width ? { width: col.width, minWidth: col.width } : undefined}
                 >
                   <div className="data-table__th-inner">
                     <span>{col.header || col.label || col.key}</span>
@@ -171,7 +171,7 @@ export default function DataTable({
                   {columns.map((col, ci) => {
                     const val = col.accessor ? row[col.accessor] : row[col.key]
                     return (
-                      <td key={col.key || col.accessor} className={`data-table__td${stickyFirst && ci === 0 ? ' data-table__td--sticky' : ''}`}>
+                      <td key={col.key || col.accessor} className={`data-table__td${stickyFirst && ci === 0 ? ' data-table__td--sticky' : ''}`} style={col.width ? { minWidth: col.width } : undefined}>
                         {col.render ? col.render(val, row) : (val ?? '—')}
                       </td>
                     )
