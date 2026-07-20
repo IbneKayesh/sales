@@ -29,31 +29,25 @@ const useBOM = () => {
   });
   const [readOnly, setReadOnly] = useState(false);
   const [stopEdit, setStopEdit] = useState(false);
-  //BOM master
   const [listData, setListData] = useState([]);
   const [formData, setFormData] = useState(dataModel);
+  const [listDataItem, setListDataItem] = useState([]);
+  const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
-  //sub-section tab
-  const [activeTab, setActiveTab] = useState("raw-materials");
-  const [showSubForm, setShowSubForm] = useState(false);
-  //raw materials
-  const [listDataRM, setListDataRM] = useState([]);
-  const [formDataRM, setFormDataRM] = useState({});
-  const [formErrorsRM, setFormErrorsRM] = useState({});
-  //factory overhead
+  //others
+  const [listDataRMPM, setListDataRMPM] = useState([]);
+  const [formDataRMPM, setFormDataRMPM] = useState({});
+
   const [listDataFOH, setListDataFOH] = useState([]);
   const [formDataFOH, setFormDataFOH] = useState({});
-  const [formErrorsFOH, setFormErrorsFOH] = useState({});
-  //output SFG
-  const [listDataSFG, setListDataSFG] = useState([]);
-  const [formDataSFG, setFormDataSFG] = useState({});
-  const [formErrorsSFG, setFormErrorsSFG] = useState({});
-  //other
+
+  const [listDataSFGFG, setListDataSFGFG] = useState([]);
+  const [formDataSFGFG, setFormDataSFGFG] = useState({});
+
   const [dpart_Options, setDpart_Options] = useState([]);
   const [units_Options, setUnits_Options] = useState([]);
-  const [itemOptions, setItemOptions] = useState([]);
-  //current BOM id for sub-section queries
-  const [currentBOMId, setCurrentBOMId] = useState("");
+  const [items_Options, setItems_Options] = useState([]);
+  const [items_store_Options, setItems_store_Options] = useState([]);
 
   // ---------- BOM Master ----------
   const getAllBOM = async () => {
@@ -77,8 +71,7 @@ const useBOM = () => {
       const resp = await departmentAPI.getAllActive({});
       const list = resp.data || [];
       setDpart_Options(list);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const getAllUnits = async () => {
@@ -86,17 +79,15 @@ const useBOM = () => {
       const resp = await unitsAPI.getAllActive({});
       const list = resp.data || [];
       setUnits_Options(list);
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   const getAllItems = async () => {
     try {
-      const resp = await itemsAPI.getAllActive({});
+      const resp = await itemsAPI.getAllActive();
       const list = resp.data || [];
-      setItemOptions(list);
-    } catch (error) {
-    }
+      setItems_store_Options(list);
+    } catch (error) {}
   };
 
   const handleChange = (f, v) => {
@@ -108,26 +99,20 @@ const useBOM = () => {
   const handleEdit = (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
-    setCurrentBOMId(rowData.id);
-    setActiveTab("raw-materials");
-    setShowSubForm(false);
-    getAllDepartments();
-    getAllUnits();
-    getAllItems();
-    loadAllSubSections(rowData.id);
+    loadAllDetails(rowData.id);
   };
 
-  const loadAllSubSections = async (bomId) => {
+  const loadAllDetails = async (id) => {
     try {
       setIsBusy(true);
       const [rmResp, fohResp, sfgResp] = await Promise.all([
-        rawMaterialAPI.getAll({ borpm_bommf: bomId }),
-        bofohAPI.getAll({ bofoh_bommf: bomId }),
-        bosfgAPI.getAll({ bosfg_bommf: bomId }),
+        rawMaterialAPI.getAll({ borpm_bommf: id }),
+        bofohAPI.getAll({ bofoh_bommf: id }),
+        bosfgAPI.getAll({ bosfg_bommf: id }),
       ]);
-      setListDataRM(rmResp.data || []);
+      setListDataRMPM(rmResp.data || []);
       setListDataFOH(fohResp.data || []);
-      setListDataSFG(sfgResp.data || []);
+      setListDataSFGFG(sfgResp.data || []);
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -178,14 +163,11 @@ const useBOM = () => {
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
     setFormData(dataModel);
-    setCurrentBOMId("");
     setReadOnly(false);
     setStopEdit(false);
-    setActiveTab("raw-materials");
-    setShowSubForm(false);
-    setListDataRM([]);
+    setListDataRMPM([]);
     setListDataFOH([]);
-    setListDataSFG([]);
+    setListDataSFGFG([]);
     getAllDepartments();
     getAllUnits();
     getAllItems();
@@ -205,7 +187,18 @@ const useBOM = () => {
       if (Object.keys(newErrors).length > 0) {
         return;
       }
-      const reqBody = { ...formData };
+      if (listDataRMPM.length === 0) {
+        showToast("At least 1 item is required", { type: "warning" });
+        return;
+      }
+
+      const reqBody = {
+        ...formData,
+        tmmb_borpm: formDataRMPM,
+        tmmb_bofoh: listDataFOH,
+        tmmb_bosfg: listDataSFGFG,
+      };
+
       setIsBusy(true);
       const resp = await bomAPI.upsert(reqBody);
       alertBox({
@@ -225,248 +218,82 @@ const useBOM = () => {
     }
   };
 
-  // ---------- Tab Switching ----------
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setShowSubForm(false);
-  };
+  // ---------- RM / PM ----------
 
-  // ---------- Raw Materials ----------
-  const handleAddRM = () => {
-    setFormDataRM({ ...dataModelRM, borpm_bommf: currentBOMId });
-    setFormErrorsRM({});
-    setShowSubForm(true);
-    getAllItems();
-  };
-
-  const handleEditRM = (rowData) => {
-    setFormDataRM(rowData);
-    setFormErrorsRM({});
-    setShowSubForm(true);
-    getAllItems();
-  };
-
-  const handleChangeRM = (f, v) => {
-    setFormDataRM((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataRM, [f]: v }, tmmb_borpm);
-    setFormErrorsRM(newErrors);
-  };
-
-  const handleCancelRM = () => {
-    setShowSubForm(false);
-    setFormDataRM({});
-    setFormErrorsRM({});
-  };
-
-  const handleSubmitRM = async () => {
-    try {
-      const newErrors = validate(formDataRM, tmmb_borpm);
-      setFormErrorsRM(newErrors);
-      if (Object.keys(newErrors).length > 0) return;
-      setIsBusy(true);
-      const resp = await rawMaterialAPI.upsert({ ...formDataRM });
-      alertBox({
-        title: resp.success ? (formDataRM.id ? "Updated" : "Saved") : "Error",
-        message: resp.message,
-        variant: resp.success ? "success" : "danger",
-        confirmText: resp.success ? "Done" : "Close",
-      });
-      if (resp.success) {
-        setShowSubForm(false);
-        setFormDataRM({});
-        loadAllSubSections(currentBOMId);
-      }
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
+  const handleChangeRMPM = (f, v) => {
+    setFormDataRMPM((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formDataRMPM, [f]: v }, tmmb_borpm);
+    setFormErrors(newErrors);
+    if (f === "borpm_types") {
+      const current_items = items_store_Options.filter(
+        (item) => item.items_itype === v,
+      );
+      setItems_Options(current_items);
     }
   };
 
-  const handleDeleteRM = async (rowData) => {
-    const isActive = rowData.borpm_actve;
-    const dataName = rowData.borpm_items;
+  const handleAddToListRMPM = () => {
+    const newErrors = validate(formDataRMPM, tmmb_borpm);
+    setFormErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+    if (
+      ["", 0, "0", null, undefined].includes(formDataRMPM.borpm_rmqty) &&
+      ["", 0, "0", null, undefined].includes(formDataRMPM.borpm_rmrto)
+    ) {
+      showToast("Qty or Ratio both are Empty", { type: "warning" });
+      return;
+    }
+    const items_iname = items_Options.find(
+      (opt) => opt.id === formDataRMPM.borpm_items,
+    );
+
+    const units_cname = units_Options.find(
+      (opt) => opt.id === formDataRMPM.borpm_units,
+    );
+
+    const borpm_rmval =
+      (Number(formDataRMPM.borpm_rmqty) || 0) *
+      (Number(formDataRMPM.borpm_rmrat) || 0);
+
+    setListDataRMPM((prev) => [
+      ...prev,
+      {
+        ...formDataRMPM,
+        borpm_rmval: borpm_rmval || 0,
+        items_iname: items_iname?.items_iname || "Invalid Item",
+        units_cname: units_cname?.units_cname || "Invalid Unit",
+        borpm_actve: true,
+      },
+    ]);
+    setFormDataRMPM({});
+  };
+
+  const handleEditRMPM = (rowData) => {
+    setPgView("SYS_VW_FRM_1");
+    setFormDataRMPM(rowData);
+  };
+
+  const handleDeleteRMPM = async (rowData) => {
+    const dataName = rowData.items_iname;
     const confirmation = await confirmBox({
-      title: isActive ? "Deactivate" : "Activate",
-      message: `Are you sure you want to ${
-        isActive ? "deactivate" : "activate"
-      } "${dataName}"?`,
-      confirmText: isActive ? "Deactivate" : "Activate",
-      variant: isActive ? "danger" : "success",
+      title: "Remove",
+      message: `Are you sure you want to remove "${dataName}"?`,
+      confirmText: "Remove",
+      variant: "danger",
     });
     if (!confirmation) return;
-    try {
-      setIsBusy(true);
-      const resp = await rawMaterialAPI.delete(rowData);
-      alertBox({
-        title: resp.success ? (isActive ? "Deactivated" : "Activated") : "Error",
-        message: resp.message,
-        variant: resp.success ? "success" : "danger",
-        confirmText: resp.success ? "Done" : "Close",
-      });
-      if (resp.success) loadAllSubSections(currentBOMId);
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
+    setListDataRMPM((prev) =>
+      prev.filter((item) => item.borpm_items !== rowData.borpm_items),
+    );
+    showToast("Removed successfully", { type: "success" });
   };
 
-  // ---------- Factory Overhead ----------
-  const handleAddFOH = () => {
-    setFormDataFOH({ ...dataModelFOH, bofoh_bommf: currentBOMId });
-    setFormErrorsFOH({});
-    setShowSubForm(true);
-    getAllItems();
-  };
+  // ---------- FACTORY OVERHEAD ----------
 
-  const handleEditFOH = (rowData) => {
-    setFormDataFOH(rowData);
-    setFormErrorsFOH({});
-    setShowSubForm(true);
-    getAllItems();
-  };
-
-  const handleChangeFOH = (f, v) => {
-    setFormDataFOH((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataFOH, [f]: v }, tmmb_bofoh);
-    setFormErrorsFOH(newErrors);
-  };
-
-  const handleCancelFOH = () => {
-    setShowSubForm(false);
-    setFormDataFOH({});
-    setFormErrorsFOH({});
-  };
-
-  const handleSubmitFOH = async () => {
-    try {
-      const newErrors = validate(formDataFOH, tmmb_bofoh);
-      setFormErrorsFOH(newErrors);
-      if (Object.keys(newErrors).length > 0) return;
-      setIsBusy(true);
-      const resp = await bofohAPI.upsert({ ...formDataFOH });
-      alertBox({
-        title: resp.success ? (formDataFOH.id ? "Updated" : "Saved") : "Error",
-        message: resp.message,
-        variant: resp.success ? "success" : "danger",
-        confirmText: resp.success ? "Done" : "Close",
-      });
-      if (resp.success) {
-        setShowSubForm(false);
-        setFormDataFOH({});
-        loadAllSubSections(currentBOMId);
-      }
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
-  };
-
-  const handleDeleteFOH = async (rowData) => {
-    const isActive = rowData.bofoh_actve;
-    const dataName = rowData.bofoh_items;
-    const confirmation = await confirmBox({
-      title: isActive ? "Deactivate" : "Activate",
-      message: `Are you sure you want to ${
-        isActive ? "deactivate" : "activate"
-      } "${dataName}"?`,
-      confirmText: isActive ? "Deactivate" : "Activate",
-      variant: isActive ? "danger" : "success",
-    });
-    if (!confirmation) return;
-    try {
-      setIsBusy(true);
-      const resp = await bofohAPI.delete(rowData);
-      alertBox({
-        title: resp.success ? (isActive ? "Deactivated" : "Activated") : "Error",
-        message: resp.message,
-        variant: resp.success ? "success" : "danger",
-        confirmText: resp.success ? "Done" : "Close",
-      });
-      if (resp.success) loadAllSubSections(currentBOMId);
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
-  };
-
-  // ---------- Output SFG/FG ----------
-  const handleAddSFG = () => {
-    setFormDataSFG({ ...dataModelSFG, bosfg_bommf: currentBOMId });
-    setFormErrorsSFG({});
-    setShowSubForm(true);
-    getAllItems();
-  };
-
-  const handleEditSFG = (rowData) => {
-    setFormDataSFG(rowData);
-    setFormErrorsSFG({});
-    setShowSubForm(true);
-    getAllItems();
-  };
-
-  const handleChangeSFG = (f, v) => {
-    setFormDataSFG((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataSFG, [f]: v }, tmmb_bosfg);
-    setFormErrorsSFG(newErrors);
-  };
-
-  const handleCancelSFG = () => {
-    setShowSubForm(false);
-    setFormDataSFG({});
-    setFormErrorsSFG({});
-  };
-
-  const handleSubmitSFG = async () => {
-    try {
-      const newErrors = validate(formDataSFG, tmmb_bosfg);
-      setFormErrorsSFG(newErrors);
-      if (Object.keys(newErrors).length > 0) return;
-      setIsBusy(true);
-      const resp = await bosfgAPI.upsert({ ...formDataSFG });
-      alertBox({
-        title: resp.success ? (formDataSFG.id ? "Updated" : "Saved") : "Error",
-        message: resp.message,
-        variant: resp.success ? "success" : "danger",
-        confirmText: resp.success ? "Done" : "Close",
-      });
-      if (resp.success) {
-        setShowSubForm(false);
-        setFormDataSFG({});
-        loadAllSubSections(currentBOMId);
-      }
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
-  };
-
-  const handleDeleteSFG = async (rowData) => {
-    const isActive = rowData.bosfg_actve;
-    const dataName = rowData.bosfg_items;
-    const confirmation = await confirmBox({
-      title: isActive ? "Deactivate" : "Activate",
-      message: `Are you sure you want to ${
-        isActive ? "deactivate" : "activate"
-      } "${dataName}"?`,
-      confirmText: isActive ? "Deactivate" : "Activate",
-      variant: isActive ? "danger" : "success",
-    });
-    if (!confirmation) return;
-    try {
-      setIsBusy(true);
-      const resp = await bosfgAPI.delete(rowData);
-      alertBox({
-        title: resp.success ? (isActive ? "Deactivated" : "Activated") : "Error",
-        message: resp.message,
-        variant: resp.success ? "success" : "danger",
-        confirmText: resp.success ? "Done" : "Close",
-      });
-      if (resp.success) loadAllSubSections(currentBOMId);
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
-  };
+  
+  // ---------- SFG /FG ----------
 
   return {
     isBusy,
@@ -476,27 +303,19 @@ const useBOM = () => {
     stopEdit,
     listData,
     formData,
+    listDataItem,
+    formDataItem,
     formErrors,
-    activeTab,
-    showSubForm,
-    currentBOMId,
-    //raw materials
-    listDataRM,
-    formDataRM,
-    formErrorsRM,
-    //factory overhead
+    //others
+    listDataRMPM,
+    formDataRMPM,
     listDataFOH,
-    formDataFOH,
-    formErrorsFOH,
-    //output SFG
-    listDataSFG,
-    formDataSFG,
-    formErrorsSFG,
-    //other
+    listDataSFGFG,
+    formDataSFGFG,
     dpart_Options,
     units_Options,
-    itemOptions,
-    //BOM master
+    items_Options,
+    //functions
     handleChange,
     handleEdit,
     handleDelete,
@@ -504,29 +323,11 @@ const useBOM = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-    //tab
-    handleTabChange,
-    //raw materials
-    handleAddRM,
-    handleEditRM,
-    handleChangeRM,
-    handleCancelRM,
-    handleSubmitRM,
-    handleDeleteRM,
-    //factory overhead
-    handleAddFOH,
-    handleEditFOH,
-    handleChangeFOH,
-    handleCancelFOH,
-    handleSubmitFOH,
-    handleDeleteFOH,
-    //output SFG
-    handleAddSFG,
-    handleEditSFG,
-    handleChangeSFG,
-    handleCancelSFG,
-    handleSubmitSFG,
-    handleDeleteSFG,
+    //other
+    handleChangeRMPM,
+    handleAddToListRMPM,
+    handleEditRMPM,
+    handleDeleteRMPM,
   };
 };
 export default useBOM;

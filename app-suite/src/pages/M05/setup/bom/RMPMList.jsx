@@ -1,32 +1,28 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import { IconClose, IconCheck } from "@/icons";
 
-const RawMaterialList = ({ listData, onEdit, onDelete }) => {
+const RMPMList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "borpm_items", header: "Item", width: "200px" },
-    { key: "borpm_types", header: "Type", width: "100px" },
-    { key: "borpm_rmqty", header: "Quantity", width: "100px" },
-    { key: "borpm_rmrto", header: "Ratio", width: "100px" },
-    { key: "borpm_rmrat", header: "Rate", width: "100px" },
-    { key: "borpm_rmval", header: "Value", width: "100px" },
+    { key: "borpm_types", header: "Type", width: "80px" },
+    { key: "items_iname", header: "Item", width: "200px" },
     {
-      key: "borpm_actve",
-      header: "Status",
-      width: "120px",
-      render: (v) => {
+      key: "borpm_rmqty",
+      header: "Quantity",
+      width: "80px",
+      render: (_, row) => {
         return (
-          <Badge variant={v ? "success" : "danger"}>
-            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
-          </Badge>
+          <span>
+            {row.borpm_rmqty} {row.units_cname}
+          </span>
         );
       },
     },
+    { key: "borpm_rmrto", header: "Ratio", width: "80px" },
+    { key: "borpm_rmrat", header: "Rate", width: "80px" },
+    { key: "borpm_rmval", header: "Value", width: "80px" },
+    { key: "borpm_notes", header: "Notes", width: "100px" },
     {
       key: "actions",
       header: "Actions",
@@ -58,4 +54,4 @@ const RawMaterialList = ({ listData, onEdit, onDelete }) => {
     />
   );
 };
-export default RawMaterialList;
+export default RMPMList;

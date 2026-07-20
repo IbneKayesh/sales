@@ -15,7 +15,7 @@ const sfgInOut_Options = [
   { label: "Output", value: "Output" },
 ];
 
-const OutputSFGForm = ({
+const SFGForm = ({
   isBusy,
   formData,
   formErrors,
@@ -151,4 +151,4 @@ const OutputSFGForm = ({
     </div>
   );
 };
-export default OutputSFGForm;
+export default SFGForm;

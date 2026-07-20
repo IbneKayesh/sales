@@ -4,18 +4,16 @@ import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
 import { IconClose, IconCheck, IconPlus } from "@/icons";
 
-const OutputSFGList = ({ listData, onEdit, onDelete, onAdd }) => {
+const FOHList = ({ listData, onEdit, onDelete, onAdd }) => {
   const dtColumns = [
-    { key: "bosfg_items", header: "Item", width: "200px" },
-    { key: "bosfg_types", header: "Type", width: "100px" },
-    { key: "bosfg_inout", header: "I/O", width: "80px" },
-    { key: "bosfg_group", header: "Group", width: "100px" },
-    { key: "bosfg_rmqty", header: "Quantity", width: "100px" },
-    { key: "bosfg_rmrto", header: "Ratio", width: "100px" },
-    { key: "bosfg_rmrat", header: "Rate", width: "100px" },
-    { key: "bosfg_rmval", header: "Value", width: "100px" },
+    { key: "bofoh_items", header: "Item", width: "200px" },
+    { key: "bofoh_types", header: "Type", width: "100px" },
+    { key: "bofoh_rmqty", header: "Quantity", width: "100px" },
+    { key: "bofoh_rmrto", header: "Ratio", width: "100px" },
+    { key: "bofoh_rmrat", header: "Rate", width: "100px" },
+    { key: "bofoh_rmval", header: "Value", width: "100px" },
     {
-      key: "bosfg_actve",
+      key: "bofoh_actve",
       header: "Status",
       width: "120px",
       render: (v) => {
@@ -35,7 +33,7 @@ const OutputSFGList = ({ listData, onEdit, onDelete, onAdd }) => {
       render: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.bosfg_actve}
+          actve={row.bofoh_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />
@@ -58,9 +56,9 @@ const OutputSFGList = ({ listData, onEdit, onDelete, onAdd }) => {
         striped
         hoverable
         onRowClick={(row) => onEdit(row)}
-        emptyMessage="No output SFG/FG items found"
+        emptyMessage="No factory overhead items found"
       />
     </div>
   );
 };
-export default OutputSFGList;
+export default FOHList;

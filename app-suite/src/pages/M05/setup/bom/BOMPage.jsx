@@ -15,12 +15,8 @@ import Button from "@/components/Button";
 import useBOM from "@/hooks/M05/useBOM";
 import BOMList from "./BOMList";
 import BOMForm from "./BOMForm";
-import RawMaterialList from "./RawMaterialList";
-import RawMaterialForm from "./RawMaterialForm";
-import FactoryOverheadList from "./FactoryOverheadList";
-import FactoryOverheadForm from "./FactoryOverheadForm";
-import OutputSFGList from "./OutputSFGList";
-import OutputSFGForm from "./OutputSFGForm";
+import RMPMForm from "./RMPMForm";
+import RMPMList from "./RMPMList";
 
 const BOMPage = () => {
   const {
@@ -31,26 +27,19 @@ const BOMPage = () => {
     stopEdit,
     listData,
     formData,
+    listDataItem,
+    formDataItem,
     formErrors,
-    activeTab,
-    showSubForm,
-    //raw materials
-    listDataRM,
-    formDataRM,
-    formErrorsRM,
-    //factory overhead
+    //others
+    listDataRMPM,
+    formDataRMPM,
     listDataFOH,
-    formDataFOH,
-    formErrorsFOH,
-    //output SFG
-    listDataSFG,
-    formDataSFG,
-    formErrorsSFG,
-    //other
+    listDataSFGFG,
+    formDataSFGFG,
     dpart_Options,
     units_Options,
-    itemOptions,
-    //BOM master
+    items_Options,
+    //functions
     handleChange,
     handleEdit,
     handleDelete,
@@ -58,29 +47,11 @@ const BOMPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-    //tab
-    handleTabChange,
-    //raw materials
-    handleAddRM,
-    handleEditRM,
-    handleChangeRM,
-    handleCancelRM,
-    handleSubmitRM,
-    handleDeleteRM,
-    //factory overhead
-    handleAddFOH,
-    handleEditFOH,
-    handleChangeFOH,
-    handleCancelFOH,
-    handleSubmitFOH,
-    handleDeleteFOH,
-    //output SFG
-    handleAddSFG,
-    handleEditSFG,
-    handleChangeSFG,
-    handleCancelSFG,
-    handleSubmitSFG,
-    handleDeleteSFG,
+    //other
+    handleChangeRMPM,
+    handleAddToListRMPM,
+    handleEditRMPM,
+    handleDeleteRMPM,
   } = useBOM();
 
   return (
@@ -132,117 +103,41 @@ const BOMPage = () => {
           )}
 
           {pgView === "SYS_VW_FRM_1" && (
-            <div className="entry-screen">
-              {/* BOM Master Form */}
-              <BOMForm
-                isBusy={isBusy}
-                readOnly={readOnly}
-                stopEdit={stopEdit}
-                formData={formData}
-                formErrors={formErrors}
-                onChange={handleChange}
-                onCancel={handleCancel}
-                onSubmit={handleSubmit}
-                dpart_Options={dpart_Options}
-                units_Options={units_Options}
-              />
-
-              {/* Sub-Section Tabs */}
-              <div className="sub-section-tabs">
-                <div className="tabs-header">
-                  <button
-                    type="button"
-                    className={`tab-btn${activeTab === "raw-materials" ? " tab-btn--active" : ""}`}
-                    onClick={() => handleTabChange("raw-materials")}
-                  >
-                    Raw Materials ({listDataRM.length})
-                  </button>
-                  <button
-                    type="button"
-                    className={`tab-btn${activeTab === "factory-overhead" ? " tab-btn--active" : ""}`}
-                    onClick={() => handleTabChange("factory-overhead")}
-                  >
-                    Factory Overhead ({listDataFOH.length})
-                  </button>
-                  <button
-                    type="button"
-                    className={`tab-btn${activeTab === "output-sfg" ? " tab-btn--active" : ""}`}
-                    onClick={() => handleTabChange("output-sfg")}
-                  >
-                    Output SFG/FG ({listDataSFG.length})
-                  </button>
-                </div>
-
-                <div className="tab-content">
-                  {/* Raw Materials Tab */}
-                  {activeTab === "raw-materials" && !showSubForm && (
-                    <RawMaterialList
-                      listData={listDataRM}
-                      onEdit={handleEditRM}
-                      onDelete={handleDeleteRM}
-                      onAdd={handleAddRM}
-                    />
-                  )}
-                  {activeTab === "raw-materials" && showSubForm && (
-                    <RawMaterialForm
-                      isBusy={isBusy}
-                      formData={formDataRM}
-                      formErrors={formErrorsRM}
-                      itemOptions={itemOptions}
-                      units_Options={units_Options}
-                      onChange={handleChangeRM}
-                      onCancel={handleCancelRM}
-                      onSubmit={handleSubmitRM}
-                    />
-                  )}
-
-                  {/* Factory Overhead Tab */}
-                  {activeTab === "factory-overhead" && !showSubForm && (
-                    <FactoryOverheadList
-                      listData={listDataFOH}
-                      onEdit={handleEditFOH}
-                      onDelete={handleDeleteFOH}
-                      onAdd={handleAddFOH}
-                    />
-                  )}
-                  {activeTab === "factory-overhead" && showSubForm && (
-                    <FactoryOverheadForm
-                      isBusy={isBusy}
-                      formData={formDataFOH}
-                      formErrors={formErrorsFOH}
-                      itemOptions={itemOptions}
-                      unitsOptions={units_Options}
-                      onChange={handleChangeFOH}
-                      onCancel={handleCancelFOH}
-                      onSubmit={handleSubmitFOH}
-                    />
-                  )}
-
-                  {/* Output SFG Tab */}
-                  {activeTab === "output-sfg" && !showSubForm && (
-                    <OutputSFGList
-                      listData={listDataSFG}
-                      onEdit={handleEditSFG}
-                      onDelete={handleDeleteSFG}
-                      onAdd={handleAddSFG}
-                    />
-                  )}
-                  {activeTab === "output-sfg" && showSubForm && (
-                    <OutputSFGForm
-                      isBusy={isBusy}
-                      formData={formDataSFG}
-                      formErrors={formErrorsSFG}
-                      itemOptions={itemOptions}
-                      unitsOptions={units_Options}
-                      onChange={handleChangeSFG}
-                      onCancel={handleCancelSFG}
-                      onSubmit={handleSubmitSFG}
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
+            <BOMForm
+              isBusy={isBusy}
+              readOnly={readOnly}
+              stopEdit={stopEdit}
+              formData={formData}
+              formErrors={formErrors}
+              onChange={handleChange}
+              onCancel={handleCancel}
+              onSubmit={handleSubmit}
+              dpart_Options={dpart_Options}
+              units_Options={units_Options}
+            />
           )}
+          {pgView === "SYS_VW_FRM_1" && (
+            <RMPMForm
+              isBusy={isBusy}
+              readOnly={readOnly}
+              stopEdit={stopEdit}
+              formData={formDataRMPM}
+              formErrors={formErrors}
+              onChange={handleChangeRMPM}
+              onAddToList={handleAddToListRMPM}
+              items_Options={items_Options}
+              units_Options={units_Options}
+            />
+          )}
+          {pgView === "SYS_VW_FRM_1" && listDataRMPM.length > 0 && (
+            <RMPMList
+              listData={listDataRMPM}
+              onEdit={handleEditRMPM}
+              onDelete={handleDeleteRMPM}
+            />
+          )}
+          //FOHList, FOHForm
+          //SFGForm, SFGList
         </PageCardBody>
       </PageCard>
     </div>

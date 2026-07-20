@@ -4,7 +4,7 @@ import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import { IconClose, IconSave } from "@/icons";
 
-const FactoryOverheadForm = ({
+const FOHForm = ({
   isBusy,
   formData,
   formErrors,
@@ -118,4 +118,4 @@ const FactoryOverheadForm = ({
     </div>
   );
 };
-export default FactoryOverheadForm;
+export default FOHForm;

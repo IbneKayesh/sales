@@ -210,25 +210,27 @@ const update = async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_price
-    SET price_lprat = $1,
-    price_dprat = $2,
-    price_tprat = $3,
-    price_mrrat = $4,
-    price_dspct = $5,
-    price_gdstk = $6,
-    price_bdstk = $7,
-    price_mnqty = $8,
-    price_mxqty = $9,
-    price_pbqty = $10,
-    price_sbqty = $11,
-    price_notes = $12,
-    price_jnote = $13,
-    price_upusr = $14,
+    SET price_cname = $1,
+    price_lprat = $2,
+    price_dprat = $3,
+    price_tprat = $4,
+    price_mrrat = $5,
+    price_dspct = $6,
+    price_gdstk = $7,
+    price_bdstk = $8,
+    price_mnqty = $9,
+    price_mxqty = $10,
+    price_pbqty = $11,
+    price_sbqty = $12,
+    price_notes = $13,
+    price_jnote = $14,
+    price_upusr = $15,
     price_updat = CURRENT_TIMESTAMP,
     price_rvnmr = price_rvnmr + 1
-    WHERE id = $15`;
+    WHERE id = $16`;
 
     const params = [
+      price_cname,
       price_lprat || 0,
       price_dprat || 0,
       price_tprat || 0,
@@ -246,7 +248,7 @@ const update = async (req, res) => {
       id,
     ];
 
-    await dbRun(sql, params, `update price- ${user_c}`);
+    await dbRun(sql, params, `update price- ${price_cname}`);
     res.json({
       success: true,
       message: `Price - ${price_cname} Updated successfully.`,

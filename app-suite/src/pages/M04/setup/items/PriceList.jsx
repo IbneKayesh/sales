@@ -5,7 +5,8 @@ import { IconClose, IconCheck } from "@/icons";
 
 const PriceList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "price_cname", header: "Price Name", width: "200px" },
+    { key: "items_iname", header: "Name", width: "200px" },
+    { key: "price_cname", header: "Price", width: "200px" },
     { key: "price_lprat", header: "L.Purchase Rate", width: "80px" },
     { key: "price_dprat", header: "Distributor Rate", width: "80px" },
     { key: "price_tprat", header: "Trade Rate", width: "80px" },

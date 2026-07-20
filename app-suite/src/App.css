@@ -208,6 +208,7 @@ code {
   border-radius: var(--radius-lg);
   transition: all var(--transition-normal);
   white-space: nowrap;
+  min-width: 40px;
 }
 
 .btn:focus-visible {

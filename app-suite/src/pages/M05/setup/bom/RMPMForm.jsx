@@ -2,41 +2,23 @@ import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
-import AuditData from "@/components/AuditData";
-import {
-  IconClose,
-  IconSave,
-} from "@/icons";
+import { IconPlus } from "@/icons";
 
-const RawMaterialForm = ({
+const RMPMForm = ({
   isBusy,
   readOnly,
   stopEdit,
   formData,
   formErrors,
   onChange,
-  onCancel,
-  onSubmit,
-  itemOptions,
+  onAddToList,
+  items_Options,
   units_Options,
 }) => {
   return (
     <div className="form-wrap">
+      <h4>RM/PM</h4>
       <div className="grid">
-        <div className="col-span-3">
-          <Dropdown
-            label="Item"
-            options={itemOptions}
-            value={formData.borpm_items}
-            onChange={(e) => onChange("borpm_items", e.target.value)}
-            error={formErrors.borpm_items}
-            required
-            placeholder="Select item..."
-            disabled={readOnly}
-            optionValue="id"
-            optionLabel="items_iname"
-          />
-        </div>
         <div className="col-span-3">
           <Dropdown
             label="Type"
@@ -48,8 +30,22 @@ const RawMaterialForm = ({
             onChange={(e) => onChange("borpm_types", e.target.value)}
             error={formErrors.borpm_types}
             required
-            placeholder="Select type..."
+            placeholder="Select..."
             disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <Dropdown
+            label="Item"
+            options={items_Options}
+            value={formData.borpm_items}
+            onChange={(e) => onChange("borpm_items", e.target.value)}
+            error={formErrors.borpm_items}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="items_iname"
           />
         </div>
         <div className="col-span-2">
@@ -85,19 +81,6 @@ const RawMaterialForm = ({
             disabled={readOnly}
           />
         </div>
-      </div>
-      <div className="grid">
-        <div className="col-span-3">
-          <InputNumber
-            label="Value"
-            placeholder="Enter value"
-            value={formData.borpm_rmval}
-            onChange={(e) => onChange("borpm_rmval", e.target.value)}
-            error={formErrors.borpm_rmval}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
         <div className="col-span-3">
           <Dropdown
             label="Unit"
@@ -106,13 +89,13 @@ const RawMaterialForm = ({
             onChange={(e) => onChange("borpm_units", e.target.value)}
             error={formErrors.borpm_units}
             required
-            placeholder="Select unit..."
+            placeholder="Select..."
             disabled={readOnly}
             optionValue="id"
             optionLabel="units_cname"
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-9">
           <InputText
             label="Notes"
             placeholder="Enter notes"
@@ -123,27 +106,13 @@ const RawMaterialForm = ({
           />
         </div>
       </div>
-      {formData?.id && (
-        <AuditData
-          actve={formData.borpm_actve}
-          cname={formData.crusr_cname}
-          cdate={formData.borpm_crdat}
-          uname={formData.upusr_cname}
-          udate={formData.borpm_updat}
-          rvnmr={formData.borpm_rvnmr}
-        />
-      )}
       <div className="form-actions">
-        <Button variant="secondary" onClick={onCancel} disabled={isBusy}>
-          <IconClose size={16} className="icon-left" />
-          Cancel
-        </Button>
-        <Button variant="info" onClick={onSubmit} disabled={isBusy}>
-          <IconSave size={16} className="icon-left" />
-          {formData?.id ? "Update" : "Create"}
+        <Button variant="outline" onClick={onAddToList} disabled={isBusy}>
+          <IconPlus size={16} className="icon-left" />
+          Add
         </Button>
       </div>
     </div>
   );
 };
-export default RawMaterialForm;
+export default RMPMForm;
