@@ -42,7 +42,10 @@ const McatgPage = () => {
     handleSubCategory,
     handleChangeSubCat,
     handleEditSubCat,
+    handleDeleteSubCat,
     handleAddNewSubCat,
+    handleCancelSubCat,
+    handleSubmitSubCat,
   } = useCategories();
 
   return (
@@ -50,8 +53,20 @@ const McatgPage = () => {
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
-            title="Categories"
-            subtitle={`${listData.length} Categories`}
+            title={
+              ["SYS_VW_LST_1", "SYS_VW_FRM_1"].some((view) =>
+                pgView.includes(view),
+              )
+                ? "Categories"
+                : "Sub Categories"
+            }
+            subtitle={
+              ["SYS_VW_LST_1", "SYS_VW_FRM_1"].some((view) =>
+                pgView.includes(view),
+              )
+                ? listData.length + " Categories"
+                : listDataItem.length + " Sub Categories"
+            }
           />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
@@ -117,9 +132,8 @@ const McatgPage = () => {
           {pgView === "SYS_VW_LST_2" && (
             <ScatgList
               listData={listDataItem}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onSubCategory={handleSubCategory}
+              onEdit={handleEditSubCat}
+              onDelete={handleDeleteSubCat}
             />
           )}
           {pgView === "SYS_VW_FRM_2" && (
@@ -127,11 +141,11 @@ const McatgPage = () => {
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
-              formData={formData}
+              formData={formDataItem}
               formErrors={formErrors}
-              onChange={handleChange}
-              onCancel={handleCancel}
-              onSubmit={handleSubmit}
+              onChange={handleChangeSubCat}
+              onCancel={handleCancelSubCat}
+              onSubmit={handleSubmitSubCat}
             />
           )}
         </PageCardBody>

@@ -3,18 +3,11 @@
     "type": "string",
     "label": "Id"
   },
-  "scatg_ccode": {
-    "type": "string",
-    "label": "Code",
-    "maxLength": 50,
-    "placeholder": "Enter sub category code",
-    "required": true
-  },
   "scatg_mcatg": {
     "type": "string",
-    "label": "Main Category",
+    "label": "Category",
     "maxLength": 50,
-    "placeholder": "Enter main category",
+    "placeholder": "Enter category",
     "required": true
   },
   "scatg_cname": {

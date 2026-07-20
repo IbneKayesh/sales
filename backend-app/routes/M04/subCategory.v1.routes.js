@@ -28,7 +28,7 @@ router.post("/", async (req, res) => {
     AND sctg.scatg_mcatg = $2
     ORDER BY sctg.scatg_cname ASC`;
 
-    const params = [scatg_mcatg, user_c];
+    const params = [user_c, scatg_mcatg];
     const rows = await dbGetAll(sql, params, `get sub catgeory- ${user_c}`);
     res.json({
       success: true,

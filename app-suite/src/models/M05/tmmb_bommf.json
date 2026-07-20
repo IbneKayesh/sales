@@ -1,0 +1,84 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "bommf_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select department",
+    "required": true
+  },
+  "bommf_cname": {
+    "type": "string",
+    "label": "BOM Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter BOM name",
+    "required": true
+  },
+  "bommf_prono": {
+    "type": "number",
+    "label": "Process No",
+    "maxLength": 50,
+    "minLength": 1,
+    "required": true,
+    "default": 1
+  },
+  "bommf_inout": {
+    "type": "string",
+    "label": "Input / Output",
+    "maxLength": 50,
+    "placeholder": "Enter input/output",
+    "required": true
+  },
+  "bommf_units": {
+    "type": "string",
+    "label": "Unit",
+    "maxLength": 50,
+    "placeholder": "Select unit",
+    "required": true
+  },
+  "bommf_bmqty": {
+    "type": "number",
+    "label": "BOM Quantity",
+    "maxLength": 99999999,
+    "minLength": 1,
+    "required": true,
+    "default": 1
+  },
+  "bommf_bmval": {
+    "type": "number",
+    "label": "BOM Value",
+    "maxLength": 99999999,
+    "minLength": 1,
+    "required": true,
+    "default": 1
+  },
+  "bommf_frdat": {
+    "type": "datetime",
+    "label": "From Date",
+    "required": true
+  },
+  "bommf_todat": {
+    "type": "datetime",
+    "label": "To Date",
+    "required": true
+  },
+  "bommf_estim": {
+    "type": "number",
+    "label": "Estimated Value",
+    "maxLength": 4320,
+    "minLength": 1,
+    "required": true,
+    "default": 1
+  },
+  "bommf_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

@@ -15,4 +15,9 @@ const untgr_Options = [
   { label: "Weight", value: "Weight" },
 ];
 
-export { cntry_Options, crncy_Options, untgr_Options };
+const inout_Options = [
+  { label: "Input", value: "Input" },
+  { label: "Output", value: "Output" },
+];
+
+export { cntry_Options, crncy_Options, untgr_Options, inout_Options };

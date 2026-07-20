@@ -3,13 +3,6 @@
     "type": "string",
     "label": "Id"
   },
-  "mgrup_ccode": {
-    "type": "string",
-    "label": "Code",
-    "maxLength": 50,
-    "placeholder": "Enter group code",
-    "required": true
-  },
   "mgrup_cname": {
     "type": "string",
     "label": "Group Name",

@@ -1,12 +1,12 @@
-import { useState, useRef, useEffect } from 'react'
-import { IconClose, IconChevronDown, IconSearch, IconCheck } from '../icons'
+import { useState, useRef, useEffect } from "react";
+import { IconClose, IconChevronDown, IconSearch, IconCheck } from "../icons";
 
 export default function Dropdown({
   label,
   options = [],
   value,
   onChange,
-  placeholder = 'Select...',
+  placeholder = "Select...",
   searchable = true,
   clearable = false,
   disabled = false,
@@ -14,56 +14,79 @@ export default function Dropdown({
   name,
   error,
   dense = false,
-  className = '',
+  className = "",
+  optionLabel = "label",
+  optionValue = "value",
   ...rest
 }) {
-  const [open, setOpen] = useState(false)
-  const [search, setSearch] = useState('')
-  const [focused, setFocused] = useState(false)
-  const wrapRef = useRef(null)
-  const searchRef = useRef(null)
-  const inputId = name || `dd-${Math.random().toString(36).slice(2, 8)}`
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [focused, setFocused] = useState(false);
+  const wrapRef = useRef(null);
+  const searchRef = useRef(null);
+  const inputId = name || `dd-${Math.random().toString(36).slice(2, 8)}`;
 
   useEffect(() => {
     function handleClick(e) {
       if (wrapRef.current && !wrapRef.current.contains(e.target)) {
-        setOpen(false)
-        setSearch('')
+        setOpen(false);
+        setSearch("");
       }
     }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [])
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   useEffect(() => {
     if (open && searchRef.current) {
-      searchRef.current.focus()
+      searchRef.current.focus();
     }
-  }, [open])
+  }, [open]);
 
-  const filtered = searchable && search
-    ? options.filter((opt) =>
-        opt.label.toLowerCase().includes(search.toLowerCase()),
-      )
-    : options
+  const filtered_v1 =
+    searchable && search
+      ? options.filter((opt) =>
+          opt.label.toLowerCase().includes(search.toLowerCase()),
+        )
+      : options;
 
-  const selected = options.find((opt) => opt.value === value)
-  const displayText = selected?.label || placeholder
+  const filtered =
+    searchable && search
+      ? options.filter((opt) =>
+          String(opt[optionLabel] ?? "")
+            .toLowerCase()
+            .includes(search.toLowerCase()),
+        )
+      : options;
+
+  const selected_v1 = options.find((opt) => opt.value === value);
+  const selected = options.find((opt) => opt[optionValue] === value);
+
+  const displayText_v1 = selected?.label || placeholder;
+  const displayText = selected?.[optionLabel] || placeholder;
 
   const handleSelect = (opt) => {
-    if (onChange) onChange({ target: { value: opt.value, name } })
-    setOpen(false)
-    setSearch('')
-  }
+    //if (onChange) onChange({ target: { value: opt.value, name } });
+    if (onChange) {
+      onChange({
+        target: {
+          value: opt[optionValue],
+          name,
+        },
+      });
+    }
+    setOpen(false);
+    setSearch("");
+  };
 
   const handleClear = (e) => {
-    e.stopPropagation()
-    if (onChange) onChange({ target: { value: '', name } })
-  }
+    e.stopPropagation();
+    if (onChange) onChange({ target: { value: "", name } });
+  };
 
   return (
     <div
-      className={`dropdown${focused ? ' dropdown--focused' : ''}${open ? ' dropdown--open' : ''}${error ? ' dropdown--error' : ''}${disabled ? ' dropdown--disabled' : ''}${dense ? ' dropdown--dense' : ''}${className ? ' ' + className : ''}`}
+      className={`dropdown${focused ? " dropdown--focused" : ""}${open ? " dropdown--open" : ""}${error ? " dropdown--error" : ""}${disabled ? " dropdown--disabled" : ""}${dense ? " dropdown--dense" : ""}${className ? " " + className : ""}`}
       ref={wrapRef}
     >
       {label && (
@@ -83,14 +106,16 @@ export default function Dropdown({
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            !disabled && setOpen(!open)
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            !disabled && setOpen(!open);
           }
-          if (e.key === 'Escape') setOpen(false)
+          if (e.key === "Escape") setOpen(false);
         }}
       >
-        <span className={`dropdown__value${!selected ? ' dropdown__value--placeholder' : ''}`}>
+        <span
+          className={`dropdown__value${!selected ? " dropdown__value--placeholder" : ""}`}
+        >
           {displayText}
         </span>
         <div className="dropdown__actions">
@@ -105,7 +130,9 @@ export default function Dropdown({
               <IconClose size={14} />
             </button>
           )}
-          <span className={`dropdown__arrow${open ? ' dropdown__arrow--open' : ''}`}>
+          <span
+            className={`dropdown__arrow${open ? " dropdown__arrow--open" : ""}`}
+          >
             <IconChevronDown size={14} />
           </span>
         </div>
@@ -132,16 +159,23 @@ export default function Dropdown({
             {filtered.length > 0 ? (
               filtered.map((opt) => (
                 <button
-                  key={opt.value}
+                  //key={opt.value}
+                  key={opt[optionValue]}
                   type="button"
-                  className={`dropdown__option${opt.value === value ? ' dropdown__option--selected' : ''}`}
+                  //className={`dropdown__option${opt.value === value ? " dropdown__option--selected" : ""}`}
+                  className={`dropdown__option${opt[optionValue] === value ? " dropdown__option--selected" : ""}`}
                   role="option"
-                  aria-selected={opt.value === value}
+                  //aria-selected={opt.value === value}
+                  aria-selected={opt[optionValue] === value}
                   onClick={() => handleSelect(opt)}
                 >
-                  {opt.icon && <span className="dropdown__option-icon">{opt.icon}</span>}
-                  <span>{opt.label}</span>
-                  {opt.value === value && (
+                  {opt.icon && (
+                    <span className="dropdown__option-icon">{opt.icon}</span>
+                  )}
+                  {/* <span>{opt.label}</span> */}
+                  <span>{opt[optionLabel]}</span>
+                  {/* {opt.value === value && ( */}
+                  {opt[optionValue] === value && (
                     <span className="dropdown__check">
                       <IconCheck size={14} />
                     </span>
@@ -156,5 +190,5 @@ export default function Dropdown({
       )}
       {error && <span className="dropdown__error">{error}</span>}
     </div>
-  )
+  );
 }

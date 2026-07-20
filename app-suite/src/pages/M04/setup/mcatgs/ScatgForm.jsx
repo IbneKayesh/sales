@@ -21,28 +21,6 @@ const ScatgForm = ({
       <div className="grid">
         <div className="col-span-4">
           <InputText
-            label="Code"
-            placeholder="Enter sub category code"
-            value={formData.scatg_ccode}
-            onChange={(e) => onChange("scatg_ccode", e.target.value)}
-            error={formErrors.scatg_ccode}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputText
-            label="Main Category"
-            placeholder="Enter main category"
-            value={formData.scatg_mcatg}
-            onChange={(e) => onChange("scatg_mcatg", e.target.value)}
-            error={formErrors.scatg_mcatg}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputText
             label="Sub Category Name"
             placeholder="Enter sub category name"
             value={formData.scatg_cname}

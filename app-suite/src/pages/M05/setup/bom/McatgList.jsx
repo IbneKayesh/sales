@@ -4,12 +4,12 @@ import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
 import { IconClose, IconCheck, IconBar } from "@/icons";
 
-const MgrupList = ({ listData, onEdit, onDelete, onSubGroup }) => {
+const McatgList = ({ listData, onEdit, onDelete, onSubCategory }) => {
   const dtColumns = [
-    { key: "mgrup_ccode", header: "Code", width: "180px" },
-    { key: "mgrup_cname", header: "Group Name", width: "200px" },
+    { key: "mcatg_ccode", header: "Code", width: "180px" },
+    { key: "mcatg_cname", header: "Category Name", width: "200px" },
     {
-      key: "mgrup_actve",
+      key: "mcatg_actve",
       header: "Status",
       width: "120px",
       render: (v) => {
@@ -33,15 +33,15 @@ const MgrupList = ({ listData, onEdit, onDelete, onSubGroup }) => {
             size="sm"
             onClick={(e) => {
               e.stopPropagation();
-              onSubGroup(row);
+              onSubCategory(row);
             }}
-            title="Sub Group"
+            title="Sub Categories"
           >
             <IconBar size={14} />
           </Button>
           <ActionButton
             rowData={row}
-            actve={row.mgrup_actve}
+            actve={row.mcatg_actve}
             onEdit={onEdit}
             onDelete={onDelete}
           />
@@ -59,10 +59,10 @@ const MgrupList = ({ listData, onEdit, onDelete, onSubGroup }) => {
       striped
       hoverable
       exportable
-      exportFilename="main-groups-export.csv"
+      exportFilename="main-categories-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No main groups found"
+      emptyMessage="No main categories found"
     />
   );
 };
-export default MgrupList;
+export default McatgList;

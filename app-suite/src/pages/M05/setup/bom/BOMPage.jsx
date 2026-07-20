@@ -12,13 +12,13 @@ import {
   IconChevronLeft,
 } from "@/icons";
 import Button from "@/components/Button";
-import useGroups from "@/hooks/M04/useGroups";
-import MgrupList from "./MgrupList";
-import MgrupForm from "./MgrupForm";
-import SgrupList from "./SgrupList";
-import SgrupForm from "./SgrupForm";
+import useBOM from "@/hooks/M05/useBOM";
+import McatgList from "./McatgList";
+import BOMForm from "./BOMForm";
+import ScatgList from "./ScatgList";
+import ScatgForm from "./ScatgForm";
 
-const MgrupPage = () => {
+const McatgPage = () => {
   const {
     isBusy,
     pgView,
@@ -30,6 +30,9 @@ const MgrupPage = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //other
+    dpart_Options,
+    units_Options,
     //functions
     handleChange,
     handleEdit,
@@ -38,15 +41,15 @@ const MgrupPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-    //sub group
-    handleSubGroup,
-    handleChangeSubGroup,
-    handleEditSubGroup,
-    handleDeleteSubGroup,
-    handleAddNewSubGroup,
-    handleCancelSubGroup,
-    handleSubmitSubGroup,
-  } = useGroups();
+    //sub category
+    handleSubCategory,
+    handleChangeSubCat,
+    handleEditSubCat,
+    handleDeleteSubCat,
+    handleAddNewSubCat,
+    handleCancelSubCat,
+    handleSubmitSubCat,
+  } = useBOM();
 
   return (
     <div className="page-wrap">
@@ -57,15 +60,15 @@ const MgrupPage = () => {
               ["SYS_VW_LST_1", "SYS_VW_FRM_1"].some((view) =>
                 pgView.includes(view),
               )
-                ? "Groups"
-                : "Sub Groups"
+                ? "BOM"
+                : "Sub Categories"
             }
             subtitle={
               ["SYS_VW_LST_1", "SYS_VW_FRM_1"].some((view) =>
                 pgView.includes(view),
               )
-                ? listData.length + " Groups"
-                : listDataItem.length + " Sub Groups"
+                ? listData.length + " BOM"
+                : listDataItem.length + " Sub Categories"
             }
           />
           <PageCardActions>
@@ -96,11 +99,11 @@ const MgrupPage = () => {
             {pgView === "SYS_VW_LST_2" && (
               <Button variant="secondary" size="sm" onClick={handleCancel}>
                 <IconChevronLeft size={14} className="icon-left" />
-                Group
+                Category
               </Button>
             )}
             {pgView === "SYS_VW_LST_2" && (
-              <Button size="sm" onClick={handleAddNewSubGroup}>
+              <Button size="sm" onClick={handleAddNewSubCat}>
                 <IconPlus size={14} className="icon-left" />
                 Add
               </Button>
@@ -109,15 +112,15 @@ const MgrupPage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <MgrupList
+            <McatgList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              onSubGroup={handleSubGroup}
+              onSubCategory={handleSubCategory}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
-            <MgrupForm
+            <BOMForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
@@ -126,26 +129,28 @@ const MgrupPage = () => {
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}
+              dpart_Options={dpart_Options}
+              units_Options={units_Options}
             />
           )}
 
           {pgView === "SYS_VW_LST_2" && (
-            <SgrupList
+            <ScatgList
               listData={listDataItem}
-              onEdit={handleEditSubGroup}
-              onDelete={handleDeleteSubGroup}
+              onEdit={handleEditSubCat}
+              onDelete={handleDeleteSubCat}
             />
           )}
           {pgView === "SYS_VW_FRM_2" && (
-            <SgrupForm
+            <ScatgForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
               formData={formDataItem}
               formErrors={formErrors}
-              onChange={handleChangeSubGroup}
-              onCancel={handleCancelSubGroup}
-              onSubmit={handleSubmitSubGroup}
+              onChange={handleChangeSubCat}
+              onCancel={handleCancelSubCat}
+              onSubmit={handleSubmitSubCat}
             />
           )}
         </PageCardBody>
@@ -153,4 +158,4 @@ const MgrupPage = () => {
     </div>
   );
 };
-export default MgrupPage;
+export default McatgPage;

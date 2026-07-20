@@ -10,6 +10,7 @@ CREATE TABLE tmib_price (
   price_bsins VARCHAR(50) NOT NULL,
   price_ccode VARCHAR(50) NOT NULL,
   price_items VARCHAR(50) NOT NULL,
+  price_cname VARCHAR(50) NOT NULL,
 
   -- custom
   price_lprat decimal(18,6) DEFAULT 0.00,

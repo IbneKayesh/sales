@@ -19,16 +19,16 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT dpart.*,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
-    FROM tmnb_dpart dpart
-    LEFT JOIN tmnb_users csr ON dpart.dpart_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON dpart.dpart_upusr = usr.id
-    WHERE dpart.dpart_apusr = $1
-    ORDER BY dpart.dpart_dname ASC`;
+    const sql = `SELECT dprt.*,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmsb_dpart dprt
+    LEFT JOIN tmhb_emply csr ON dprt.dpart_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON dprt.dpart_upusr = usr.id
+    WHERE dprt.dpart_users = $1
+    ORDER BY dprt.dpart_cname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get department- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get Department- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -59,14 +59,14 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT dpart.*, 0 as edit_stop
-    FROM tmnb_dpart dpart
-    WHERE dpart.dpart_apusr = $1
-    AND dpart.dpart_actve = TRUE
-    ORDER BY dpart.dpart_dname ASC`;
+    const sql = `SELECT dprt.*, 0 as edit_stop
+    FROM tmsb_dpart dprt
+    WHERE dprt.dpart_users = $1
+    AND dprt.dpart_actve = TRUE
+    ORDER BY dprt.dpart_cname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get department- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get Department- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -87,19 +87,17 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      dpart_apusr,
+      dpart_users,
       dpart_bsins,
-      dpart_dcode,
-      dpart_dname,
-      dpart_ofadr,
-      dpart_emcap,
+      dpart_ccode,
+      dpart_cname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!dpart_dname || !user_s || !user_c || !user_b) {
+    if (!dpart_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -108,26 +106,24 @@ const create = async (req, res) => {
     }
 
     //database action
-    const newCode = await GenNewCode(user_c, "tmnb_dpart");
+    const newCode = await GenNewCode(user_c, "tmsb_dpart");
 
-    const sql = `INSERT INTO tmnb_dpart(id, dpart_apusr, dpart_bsins, dpart_dcode, dpart_dname, dpart_ofadr, dpart_emcap, dpart_crusr, dpart_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
+    const sql = `INSERT INTO tmsb_dpart(id, dpart_users, dpart_bsins, dpart_ccode, dpart_cname, dpart_crusr, dpart_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
       newCode,
-      dpart_dname,
-      dpart_ofadr || "",
-      dpart_emcap || 1,
+      dpart_cname,
       user_s,
       user_s,
     ];
 
-    await dbRun(sql, params, `create department- ${user_c}`);
+    await dbRun(sql, params, `create Department- ${user_c}`);
     res.json({
       success: true,
-      message: `${dpart_dname} - Created successfully.`,
+      message: `${dpart_cname} - Created successfully.`,
     data: {},
     });
   } catch (error) {
@@ -144,19 +140,17 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      dpart_apusr,
+      dpart_users,
       dpart_bsins,
-      dpart_dcode,
-      dpart_dname,
-      dpart_ofadr,
-      dpart_emcap,
+      dpart_ccode,
+      dpart_cname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!id || !dpart_dname || !user_s || !user_c || !user_b) {
+    if (!id || !dpart_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -165,20 +159,18 @@ const update = async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmnb_dpart
-    SET dpart_dname = $1,
-    dpart_ofadr = $2,
-    dpart_emcap = $3,
-    dpart_upusr = $4,
+    const sql = `UPDATE tmsb_dpart
+    SET dpart_cname = $1,
+    dpart_upusr = $2,
     dpart_updat = CURRENT_TIMESTAMP,
     dpart_rvnmr = dpart_rvnmr + 1
-    WHERE id = $5`;
-    const params = [dpart_dname, dpart_ofadr, dpart_emcap, user_s, id];
+    WHERE id = $3`;
+    const params = [dpart_cname, user_s, id];
 
-    await dbRun(sql, params, `update department- ${user_c}`);
+    await dbRun(sql, params, `update Department- ${user_c}`);
     res.json({
       success: true,
-      message: `${dpart_dname} - Updated successfully.`,
+      message: `${dpart_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -210,10 +202,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, dpart_dname, dpart_actve, user_s, user_c, user_b } = req.body;
+    const { id, dpart_cname, dpart_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !dpart_dname || !user_s || !user_c || !user_b) {
+    if (!id || !dpart_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -222,7 +214,7 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmnb_dpart
+    const sql = `UPDATE tmsb_dpart
     SET dpart_actve = NOT dpart_actve,
     dpart_upusr = $1,
     dpart_updat = CURRENT_TIMESTAMP,
@@ -230,10 +222,10 @@ router.post("/delete", async (req, res) => {
     WHERE id = $2`;
     const params = [user_s, id];
 
-    await dbRun(sql, params, `delete department- ${user_c}`);
+    await dbRun(sql, params, `delete Department- ${user_c}`);
     res.json({
       success: true,
-      message: `${dpart_dname} - ${dpart_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${dpart_cname} - ${dpart_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {

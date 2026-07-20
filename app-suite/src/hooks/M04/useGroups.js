@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { categoriesAPI } from "@/api/M04/categoriesAPI.js";
+import { groupsAPI } from "@/api/M04/groupsAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmib_mcatg from "@/models/M04/tmib_mcatg.json";
-const dataModel = generateDataModel(tmib_mcatg);
-import { subCategoriesAPI } from "@/api/M04/subCategoriesAPI.js";
-import tmib_scatg from "@/models/M04/tmib_scatg.json";
-const dataModelItem = generateDataModel(tmib_scatg);
+import tmib_mgrup from "@/models/M04/tmib_mgrup.json";
+const dataModel = generateDataModel(tmib_mgrup);
+import { subGroupsAPI } from "@/api/M04/subGroupsAPI.js";
+import tmib_sgrup from "@/models/M04/tmib_sgrup.json";
+const dataModelItem = generateDataModel(tmib_sgrup);
 
-const useCategories = () => {
+const useGroups = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M04-M02-M003");
+  const [pgId, setPgId] = useState("M04-M02-M006");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -26,10 +26,10 @@ const useCategories = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
-  const getAllCategories = async () => {
+  const getAllGroups = async () => {
     try {
       setIsBusy(true);
-      const resp = await categoriesAPI.getAll({});
+      const resp = await groupsAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -39,12 +39,12 @@ const useCategories = () => {
   };
 
   useEffect(() => {
-    getAllCategories();
+    getAllGroups();
   }, []);
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmib_mcatg);
+    const newErrors = validate({ ...formData, [f]: v }, tmib_mgrup);
     setFormErrors(newErrors);
   };
 
@@ -54,8 +54,8 @@ const useCategories = () => {
   };
 
   const handleDelete = async (rowData) => {
-    const isActive = rowData.mcatg_actve;
-    const dataName = rowData.mcatg_cname;
+    const isActive = rowData.mgrup_actve;
+    const dataName = rowData.mgrup_cname;
     const confirmation = await confirmBox({
       title: isActive ? "Deactivate" : "Activate",
       message: `Are you sure you want to ${
@@ -68,7 +68,7 @@ const useCategories = () => {
 
     try {
       setIsBusy(true);
-      const resp = await categoriesAPI.delete(rowData);
+      const resp = await groupsAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -82,7 +82,7 @@ const useCategories = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllCategories();
+        getAllGroups();
       }
     } catch (error) {
     } finally {
@@ -91,9 +91,8 @@ const useCategories = () => {
   };
 
   const handleSearch = async () => {
-    getAllCategories();
+    getAllGroups();
   };
-
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
     setFormData(dataModel);
@@ -110,7 +109,7 @@ const useCategories = () => {
 
   const handleSubmit = async () => {
     try {
-      const newErrors = validate(formData, tmib_mcatg);
+      const newErrors = validate(formData, tmib_mgrup);
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
@@ -121,7 +120,7 @@ const useCategories = () => {
       };
       setIsBusy(true);
 
-      const resp = await categoriesAPI.upsert(reqBody);
+      const resp = await groupsAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -131,7 +130,7 @@ const useCategories = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllCategories();
+        getAllGroups();
       }
     } catch (error) {
     } finally {
@@ -139,13 +138,13 @@ const useCategories = () => {
     }
   };
 
-  //sub category
-  const [thisCategory, setThisCategory] = useState("");
+  //sub group
+  const [thisGroup, setThisGroup] = useState("");
 
-  const getAllSubCategories = async (id) => {
+  const getAllSubGroups = async (id) => {
     try {
       setIsBusy(true);
-      const resp = await subCategoriesAPI.getAll({ scatg_mcatg: id });
+      const resp = await subGroupsAPI.getAll({ sgrup_mgrup: id });
       const list = resp.data || [];
       //console.log(resp);
       setListDataItem(list);
@@ -155,26 +154,26 @@ const useCategories = () => {
     }
   };
 
-  const handleSubCategory = async (rowData) => {
-    setThisCategory(rowData);
+  const handleSubGroup = async (rowData) => {
+    setThisGroup(rowData);
     setPgView("SYS_VW_LST_2");
-    getAllSubCategories(rowData.id);
+    getAllSubGroups(rowData.id);
   };
 
-  const handleChangeSubCat = (f, v) => {
+  const handleChangeSubGroup = (f, v) => {
     setFormDataItem((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataItem, [f]: v }, tmib_scatg);
+    const newErrors = validate({ ...formDataItem, [f]: v }, tmib_sgrup);
     setFormErrors(newErrors);
   };
 
-  const handleEditSubCat = (rowData) => {
+  const handleEditSubGroup = (rowData) => {
     setPgView("SYS_VW_FRM_2");
     setFormDataItem(rowData);
   };
 
-  const handleDeleteSubCat = async (rowData) => {
-    const isActive = rowData.scatg_actve;
-    const dataName = rowData.scatg_cname;
+  const handleDeleteSubGroup = async (rowData) => {
+    const isActive = rowData.sgrup_actve;
+    const dataName = rowData.sgrup_cname;
     const confirmation = await confirmBox({
       title: isActive ? "Deactivate" : "Activate",
       message: `Are you sure you want to ${
@@ -187,7 +186,7 @@ const useCategories = () => {
 
     try {
       setIsBusy(true);
-      const resp = await subCategoriesAPI.delete(rowData);
+      const resp = await subGroupsAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -201,7 +200,7 @@ const useCategories = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_2");
         setFormDataItem(dataModelItem);
-        getAllSubCategories(thisCategory.id);
+        getAllSubGroups(thisGroup.id);
       }
     } catch (error) {
     } finally {
@@ -209,23 +208,23 @@ const useCategories = () => {
     }
   };
 
-  const handleAddNewSubCat = () => {
+  const handleAddNewSubGroup = () => {
     setPgView("SYS_VW_FRM_2");
-    setFormDataItem({ ...dataModelItem, scatg_mcatg: thisCategory.id });
+    setFormDataItem({ ...dataModelItem, sgrup_mgrup: thisGroup.id });
     setReadOnly(false);
     setStopEdit(false);
   };
 
-  const handleCancelSubCat = () => {
+  const handleCancelSubGroup = () => {
     setPgView("SYS_VW_LST_2");
     setFormDataItem(dataModelItem);
     setReadOnly(false);
     setStopEdit(false);
   };
 
-  const handleSubmitSubCat = async () => {
+  const handleSubmitSubGroup = async () => {
     try {
-      const newErrors = validate(formDataItem, tmib_scatg);
+      const newErrors = validate(formDataItem, tmib_sgrup);
       setFormErrors(newErrors);
 
       //console.log("handleSubmitSubCat", newErrors);
@@ -238,7 +237,7 @@ const useCategories = () => {
       };
       setIsBusy(true);
 
-      const resp = await subCategoriesAPI.upsert(reqBody);
+      const resp = await subGroupsAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formDataItem.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -248,7 +247,7 @@ const useCategories = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_2");
         setFormDataItem(dataModelItem);
-        getAllSubCategories(thisCategory.id);
+        getAllSubGroups(thisGroup.id);
       }
     } catch (error) {
     } finally {
@@ -275,14 +274,14 @@ const useCategories = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-    //sub category
-    handleSubCategory,
-    handleChangeSubCat,
-    handleEditSubCat,
-    handleDeleteSubCat,
-    handleAddNewSubCat,
-    handleCancelSubCat,
-    handleSubmitSubCat,
+    //sub group
+    handleSubGroup,
+    handleChangeSubGroup,
+    handleEditSubGroup,
+    handleDeleteSubGroup,
+    handleAddNewSubGroup,
+    handleCancelSubGroup,
+    handleSubmitSubGroup,
   };
 };
-export default useCategories;
+export default useGroups;

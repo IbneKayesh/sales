@@ -7,10 +7,10 @@ const { GenNewCode } = require("../../db/genHelper");
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { user_s, user_c, user_b } = req.body;
+    const { sgrup_mgrup, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!user_c) {
+    if (!sgrup_mgrup || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -19,16 +19,17 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT mgrp.*,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
-    FROM tmib_mgrup mgrp
-    LEFT JOIN tmnb_users csr ON mgrp.mgrup_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON mgrp.mgrup_upusr = usr.id
-    WHERE mgrp.mgrup_apusr = $1
-    ORDER BY mgrp.mgrup_mname ASC`;
+    const sql = `SELECT sgrp.*,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmib_sgrup sgrp
+    LEFT JOIN tmhb_emply csr ON sgrp.sgrup_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON sgrp.sgrup_upusr = usr.id
+    WHERE sgrp.sgrup_users = $1
+    AND sgrp.sgrup_mgrup = $2
+    ORDER BY sgrp.sgrup_cname ASC`;
 
-    const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get group- ${user_c}`);
+    const params = [user_c, sgrup_mgrup];
+    const rows = await dbGetAll(sql, params, `get sub group- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -59,14 +60,14 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT mgrp.*, 0 as edit_stop
-    FROM tmib_mgrup mgrp
-    WHERE mgrp.mgrup_apusr = $1
-    AND mgrp.mgrup_actve = TRUE
-    ORDER BY mgrp.mgrup_mname ASC`;
+    const sql = `SELECT sgrp.*, 0 as edit_stop
+    FROM tmib_sgrup sgrp
+    WHERE sgrp.sgrup_users = $1
+    AND sgrp.sgrup_actve = TRUE
+    ORDER BY sgrp.sgrup_cname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get group- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get sub group- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -82,22 +83,22 @@ router.post("/get-all-active", async (req, res) => {
   }
 });
 
-
 const create = async (req, res) => {
   try {
     const {
       id,
-      mgrup_apusr,
-      mgrup_bsins,
-      mgrup_mcode,
-      mgrup_mname,
+      sgrup_users,
+      sgrup_bsins,
+      sgrup_ccode,
+      sgrup_mgrup,
+      sgrup_cname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!mgrup_mname || !user_s || !user_c || !user_b) {
+    if (!sgrup_mgrup || !sgrup_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -106,25 +107,26 @@ const create = async (req, res) => {
     }
 
     //database action
-    const newCode = await GenNewCode(user_c, "tmib_mgrup");
+    const newCode = await GenNewCode(user_c, "tmib_sgrup");
 
-    const sql = `INSERT INTO tmib_mgrup(id, mgrup_apusr, mgrup_bsins, mgrup_mcode, mgrup_mname, mgrup_crusr, mgrup_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+    const sql = `INSERT INTO tmib_sgrup(id, sgrup_users, sgrup_bsins, sgrup_ccode, sgrup_mgrup, sgrup_cname, sgrup_crusr, sgrup_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
       newCode,
-      mgrup_mname,
+      sgrup_mgrup,
+      sgrup_cname,
       user_s,
       user_s,
     ];
 
-    await dbRun(sql, params, `create group- ${user_c}`);
+    await dbRun(sql, params, `create sub group- ${user_c}`);
     res.json({
       success: true,
-      message: `${mgrup_mname} - Created successfully.`,
-    data: {},
+      message: `${sgrup_cname} - Created successfully.`,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
@@ -140,17 +142,18 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      mgrup_apusr,
-      mgrup_bsins,
-      mgrup_mcode,
-      mgrup_mname,
+      sgrup_users,
+      sgrup_bsins,
+      sgrup_ccode,
+      sgrup_mgrup,
+      sgrup_cname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!id || !mgrup_mname || !user_s || !user_c || !user_b) {
+    if (!id || !sgrup_mgrup || !sgrup_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -159,18 +162,18 @@ const update = async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmib_mgrup
-    SET mgrup_mname = $1,
-    mgrup_upusr = $2,
-    mgrup_updat = CURRENT_TIMESTAMP,
-    mgrup_rvnmr = mgrup_rvnmr + 1
+    const sql = `UPDATE tmib_sgrup
+    SET sgrup_cname = $1,
+    sgrup_upusr = $2,
+    sgrup_updat = CURRENT_TIMESTAMP,
+    sgrup_rvnmr = sgrup_rvnmr + 1
     WHERE id = $3`;
-    const params = [mgrup_mname, user_s, id];
+    const params = [sgrup_cname, user_s, id];
 
-    await dbRun(sql, params, `update group- ${user_c}`);
+    await dbRun(sql, params, `update sub group- ${user_c}`);
     res.json({
       success: true,
-      message: `${mgrup_mname} - Updated successfully.`,
+      message: `${sgrup_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -202,10 +205,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, mgrup_mname, mgrup_actve, user_s, user_c, user_b } = req.body;
+    const { id, sgrup_cname, sgrup_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !mgrup_mname || !user_s || !user_c || !user_b) {
+    if (!id || !sgrup_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -214,18 +217,18 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmib_mgrup
-    SET mgrup_actve = NOT mgrup_actve,
-    mgrup_upusr = $1,
-    mgrup_updat = CURRENT_TIMESTAMP,
-    mgrup_rvnmr = mgrup_rvnmr + 1
+    const sql = `UPDATE tmib_sgrup
+    SET sgrup_actve = NOT sgrup_actve,
+    sgrup_upusr = $1,
+    sgrup_updat = CURRENT_TIMESTAMP,
+    sgrup_rvnmr = sgrup_rvnmr + 1
     WHERE id = $2`;
     const params = [user_s, id];
 
-    await dbRun(sql, params, `delete group- ${user_c}`);
+    await dbRun(sql, params, `delete sub group- ${user_c}`);
     res.json({
       success: true,
-      message: `${mgrup_mname} - ${mgrup_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${sgrup_cname} - ${sgrup_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {
@@ -237,6 +240,5 @@ router.post("/delete", async (req, res) => {
     });
   }
 });
-
 
 module.exports = router;

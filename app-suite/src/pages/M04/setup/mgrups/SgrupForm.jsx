@@ -21,28 +21,6 @@ const SgrupForm = ({
       <div className="grid">
         <div className="col-span-4">
           <InputText
-            label="Code"
-            placeholder="Enter sub group code"
-            value={formData.sgrup_ccode}
-            onChange={(e) => onChange("sgrup_ccode", e.target.value)}
-            error={formErrors.sgrup_ccode}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputText
-            label="Main Group"
-            placeholder="Enter main group"
-            value={formData.sgrup_mgrup}
-            onChange={(e) => onChange("sgrup_mgrup", e.target.value)}
-            error={formErrors.sgrup_mgrup}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputText
             label="Sub Group Name"
             placeholder="Enter sub group name"
             value={formData.sgrup_cname}

@@ -9,7 +9,6 @@ import {
 const SgrupList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "sgrup_ccode", header: "Code", width: "120px" },
-    { key: "sgrup_mgrup", header: "Main Group", width: "180px" },
     { key: "sgrup_cname", header: "Sub Group Name", width: "200px" },
     {
       key: "sgrup_actve",

@@ -13,8 +13,6 @@ router.use("/products/formula", stockFormulaRoutes);
 
 
 const attributesV1Routes = require("./attributes.v1.routes");
-const groupV1Routes = require("./group.v1.routes");
-const subGroupV1Routes = require("./subGroup.v1.routes");
 const priceV1Routes = require("./price.v1.routes");
 const itemsV1Routes = require("./items.v1.routes");
 const mrrV1Routes = require("./mrr.v1.routes");
@@ -22,8 +20,6 @@ const itemsvmartV1Routes = require("./items.vmart.v1.routes.js");
 
 
 router.use("/v1/attributes", attributesV1Routes);
-router.use("/v1/group", groupV1Routes);
-router.use("/v1/sub-group", subGroupV1Routes);
 router.use("/v1/price", priceV1Routes);
 router.use("/v1/items", itemsV1Routes);
 router.use("/v1/mrr", mrrV1Routes);

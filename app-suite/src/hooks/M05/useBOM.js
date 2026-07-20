@@ -2,16 +2,18 @@ import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
 import { categoriesAPI } from "@/api/M04/categoriesAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmib_mcatg from "@/models/M04/tmib_mcatg.json";
-const dataModel = generateDataModel(tmib_mcatg);
+import tmmb_bommf from "@/models/M05/tmmb_bommf.json";
+const dataModel = generateDataModel(tmmb_bommf);
 import { subCategoriesAPI } from "@/api/M04/subCategoriesAPI.js";
 import tmib_scatg from "@/models/M04/tmib_scatg.json";
 const dataModelItem = generateDataModel(tmib_scatg);
+import { departmentAPI } from "@/api/M01/departmentAPI.js";
+import { unitsAPI } from "@/api/M04/unitsAPI.js";
 
-const useCategories = () => {
+const useBOM = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M04-M02-M003");
+  const [pgId, setPgId] = useState("M05-M01-M002");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -25,6 +27,9 @@ const useCategories = () => {
   const [listDataItem, setListDataItem] = useState([]);
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
+  //other
+  const [dpart_Options, setDpart_Options] = useState([]);
+  const [units_Options, setUnits_Options] = useState([]);
 
   const getAllCategories = async () => {
     try {
@@ -42,9 +47,35 @@ const useCategories = () => {
     getAllCategories();
   }, []);
 
+  const getAllDepartments = async () => {
+    try {
+      setIsBusy(true);
+      const resp = await departmentAPI.getAllActive({});
+      //console.log("getAllDepartments", resp);
+      const list = resp.data || [];
+      setDpart_Options(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const getAllUnits = async () => {
+    try {
+      setIsBusy(true);
+      const resp = await unitsAPI.getAllActive({});
+      //console.log("getAllUnits", resp);
+      const list = resp.data || [];
+      setUnits_Options(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmib_mcatg);
+    const newErrors = validate({ ...formData, [f]: v }, tmmb_bommf);
     setFormErrors(newErrors);
   };
 
@@ -99,6 +130,8 @@ const useCategories = () => {
     setFormData(dataModel);
     setReadOnly(false);
     setStopEdit(false);
+    getAllDepartments();
+    getAllUnits();
   };
 
   const handleCancel = () => {
@@ -110,7 +143,7 @@ const useCategories = () => {
 
   const handleSubmit = async () => {
     try {
-      const newErrors = validate(formData, tmib_mcatg);
+      const newErrors = validate(formData, tmmb_bommf);
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
@@ -267,6 +300,9 @@ const useCategories = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //other
+    dpart_Options,
+    units_Options,
     //functions
     handleChange,
     handleEdit,
@@ -285,4 +321,4 @@ const useCategories = () => {
     handleSubmitSubCat,
   };
 };
-export default useCategories;
+export default useBOM;

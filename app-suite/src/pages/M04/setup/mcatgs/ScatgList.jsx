@@ -9,7 +9,6 @@ import {
 const ScatgList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "scatg_ccode", header: "Code", width: "120px" },
-    { key: "scatg_mcatg", header: "Main Category", width: "180px" },
     { key: "scatg_cname", header: "Sub Category Name", width: "200px" },
     {
       key: "scatg_actve",

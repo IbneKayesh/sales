@@ -21,17 +21,6 @@ const MgrupForm = ({
       <div className="grid">
         <div className="col-span-6">
           <InputText
-            label="Group Code"
-            placeholder="Enter group code"
-            value={formData.mgrup_ccode}
-            onChange={(e) => onChange("mgrup_ccode", e.target.value)}
-            error={formErrors.mgrup_ccode}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-6">
-          <InputText
             label="Group Name"
             placeholder="Enter group name"
             value={formData.mgrup_cname}

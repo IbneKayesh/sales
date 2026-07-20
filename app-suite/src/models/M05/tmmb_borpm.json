@@ -1,0 +1,103 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "borpm_users": {
+    "type": "string",
+    "label": "User",
+    "maxLength": 50,
+    "placeholder": "Select user",
+    "required": true
+  },
+  "borpm_bsins": {
+    "type": "string",
+    "label": "Business",
+    "maxLength": 50,
+    "placeholder": "Select business",
+    "required": true
+  },
+  "borpm_bommf": {
+    "type": "string",
+    "label": "BOM",
+    "maxLength": 50,
+    "placeholder": "Select BOM",
+    "required": true
+  },
+  "borpm_items": {
+    "type": "string",
+    "label": "Item",
+    "maxLength": 50,
+    "placeholder": "Select item",
+    "required": true
+  },
+  "borpm_units": {
+    "type": "string",
+    "label": "Unit",
+    "maxLength": 50,
+    "placeholder": "Select unit",
+    "required": true
+  },
+  "borpm_types": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Enter type (RM/PM)",
+    "required": true
+  },
+  "borpm_rmqty": {
+    "type": "number",
+    "label": "Quantity",
+    "required": false
+  },
+  "borpm_rmrto": {
+    "type": "number",
+    "label": "Ratio",
+    "required": false
+  },
+  "borpm_rmrat": {
+    "type": "number",
+    "label": "Rate",
+    "required": false
+  },
+  "borpm_rmval": {
+    "type": "number",
+    "label": "Value",
+    "required": false
+  },
+  "borpm_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "borpm_actve": {
+    "type": "boolean",
+    "label": "Active"
+  },
+  "borpm_crusr": {
+    "type": "string",
+    "label": "Created By",
+    "maxLength": 50,
+    "required": true
+  },
+  "borpm_crdat": {
+    "type": "datetime",
+    "label": "Created Date"
+  },
+  "borpm_upusr": {
+    "type": "string",
+    "label": "Updated By",
+    "maxLength": 50,
+    "required": true
+  },
+  "borpm_updat": {
+    "type": "datetime",
+    "label": "Updated Date"
+  },
+  "borpm_rvnmr": {
+    "type": "number",
+    "label": "Revision No"
+  }
+}
