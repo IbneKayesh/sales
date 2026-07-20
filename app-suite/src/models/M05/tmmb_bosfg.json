@@ -1,0 +1,74 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "bosfg_bommf": {
+    "type": "string",
+    "label": "BOM",
+    "maxLength": 50,
+    "placeholder": "Select BOM",
+    "required": true
+  },
+  "bosfg_items": {
+    "type": "string",
+    "label": "Item",
+    "maxLength": 50,
+    "placeholder": "Select item",
+    "required": true
+  },
+  "bosfg_units": {
+    "type": "string",
+    "label": "Unit",
+    "maxLength": 50,
+    "placeholder": "Select unit",
+    "required": true
+  },
+  "bosfg_types": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Enter type (SFG/FG)",
+    "required": true
+  },
+  "bosfg_inout": {
+    "type": "string",
+    "label": "Input / Output",
+    "maxLength": 50,
+    "placeholder": "Select input/output",
+    "required": true
+  },
+  "bosfg_group": {
+    "type": "string",
+    "label": "Group",
+    "maxLength": 50,
+    "placeholder": "Select group (MAIN/CO/BY)",
+    "required": true
+  },
+  "bosfg_rmqty": {
+    "type": "decimal",
+    "label": "Quantity",
+    "default": 1
+  },
+  "bosfg_rmrto": {
+    "type": "decimal",
+    "label": "Ratio",
+    "default": 1
+  },
+  "bosfg_rmrat": {
+    "type": "decimal",
+    "label": "Rate",
+    "default": 1
+  },
+  "bosfg_rmval": {
+    "type": "decimal",
+    "label": "Value",
+    "default": 1
+  },
+  "bosfg_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes"
+  }
+}

@@ -2,14 +2,17 @@ import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
-import { IconClose, IconCheck, IconBar } from "@/icons";
+import { IconClose, IconCheck, IconDollar } from "@/icons";
 
-const McatgList = ({ listData, onEdit, onDelete, onSubCategory }) => {
+const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
   const dtColumns = [
-    { key: "mcatg_ccode", header: "Code", width: "180px" },
-    { key: "mcatg_cname", header: "Category Name", width: "200px" },
+    { key: "items_icode", header: "Code", width: "120px" },
+    { key: "items_iname", header: "Item Name", width: "200px" },
+    { key: "items_brcod", header: "Barcode", width: "140px" },
+    { key: "items_itype", header: "Type", width: "80px" },
+    { key: "items_brand", header: "Brand", width: "120px" },
     {
-      key: "mcatg_actve",
+      key: "items_actve",
       header: "Status",
       width: "120px",
       render: (v) => {
@@ -24,7 +27,7 @@ const McatgList = ({ listData, onEdit, onDelete, onSubCategory }) => {
     {
       key: "actions",
       header: "Actions",
-      width: "110px",
+      width: "150px",
       sortable: false,
       render: (_, row) => (
         <>
@@ -33,15 +36,15 @@ const McatgList = ({ listData, onEdit, onDelete, onSubCategory }) => {
             size="sm"
             onClick={(e) => {
               e.stopPropagation();
-              onSubCategory(row);
+              onPrice(row);
             }}
-            title="Sub Categories"
+            title="Prices"
           >
-            <IconBar size={14} />
+            <IconDollar size={14} />
           </Button>
           <ActionButton
             rowData={row}
-            actve={row.mcatg_actve}
+            actve={row.items_actve}
             onEdit={onEdit}
             onDelete={onDelete}
           />
@@ -59,10 +62,10 @@ const McatgList = ({ listData, onEdit, onDelete, onSubCategory }) => {
       striped
       hoverable
       exportable
-      exportFilename="main-categories-export.csv"
+      exportFilename="items-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No main categories found"
+      emptyMessage="No items found"
     />
   );
 };
-export default McatgList;
+export default ItemsList;

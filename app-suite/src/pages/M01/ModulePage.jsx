@@ -116,6 +116,15 @@ const menus = [
     menus_menus: "M04",
   },
   {
+    id: "M04-M07-M002",
+    menus_mname: "Items",
+    menus_color: "#f97316",
+    menus_micon: <IconBox />,
+    menus_odrby: 7,
+    menus_mlink: "/inventory/setup/items",
+    menus_menus: "M04",
+  },
+  {
     id: "M05-M01-M001",
     menus_mname: "Productions",
     menus_color: "#f59e0b",

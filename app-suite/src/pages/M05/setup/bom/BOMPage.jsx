@@ -13,12 +13,16 @@ import {
 } from "@/icons";
 import Button from "@/components/Button";
 import useBOM from "@/hooks/M05/useBOM";
-import McatgList from "./McatgList";
+import BOMList from "./BOMList";
 import BOMForm from "./BOMForm";
-import ScatgList from "./ScatgList";
-import ScatgForm from "./ScatgForm";
+import RawMaterialList from "./RawMaterialList";
+import RawMaterialForm from "./RawMaterialForm";
+import FactoryOverheadList from "./FactoryOverheadList";
+import FactoryOverheadForm from "./FactoryOverheadForm";
+import OutputSFGList from "./OutputSFGList";
+import OutputSFGForm from "./OutputSFGForm";
 
-const McatgPage = () => {
+const BOMPage = () => {
   const {
     isBusy,
     pgView,
@@ -27,13 +31,26 @@ const McatgPage = () => {
     stopEdit,
     listData,
     formData,
-    listDataItem,
-    formDataItem,
     formErrors,
+    activeTab,
+    showSubForm,
+    //raw materials
+    listDataRM,
+    formDataRM,
+    formErrorsRM,
+    //factory overhead
+    listDataFOH,
+    formDataFOH,
+    formErrorsFOH,
+    //output SFG
+    listDataSFG,
+    formDataSFG,
+    formErrorsSFG,
     //other
     dpart_Options,
     units_Options,
-    //functions
+    itemOptions,
+    //BOM master
     handleChange,
     handleEdit,
     handleDelete,
@@ -41,14 +58,29 @@ const McatgPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-    //sub category
-    handleSubCategory,
-    handleChangeSubCat,
-    handleEditSubCat,
-    handleDeleteSubCat,
-    handleAddNewSubCat,
-    handleCancelSubCat,
-    handleSubmitSubCat,
+    //tab
+    handleTabChange,
+    //raw materials
+    handleAddRM,
+    handleEditRM,
+    handleChangeRM,
+    handleCancelRM,
+    handleSubmitRM,
+    handleDeleteRM,
+    //factory overhead
+    handleAddFOH,
+    handleEditFOH,
+    handleChangeFOH,
+    handleCancelFOH,
+    handleSubmitFOH,
+    handleDeleteFOH,
+    //output SFG
+    handleAddSFG,
+    handleEditSFG,
+    handleChangeSFG,
+    handleCancelSFG,
+    handleSubmitSFG,
+    handleDeleteSFG,
   } = useBOM();
 
   return (
@@ -56,19 +88,11 @@ const McatgPage = () => {
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
-            title={
-              ["SYS_VW_LST_1", "SYS_VW_FRM_1"].some((view) =>
-                pgView.includes(view),
-              )
-                ? "BOM"
-                : "Sub Categories"
-            }
+            title={pgView === "SYS_VW_LST_1" ? "BOM" : "BOM Entry"}
             subtitle={
-              ["SYS_VW_LST_1", "SYS_VW_FRM_1"].some((view) =>
-                pgView.includes(view),
-              )
+              pgView === "SYS_VW_LST_1"
                 ? listData.length + " BOM"
-                : listDataItem.length + " Sub Categories"
+                : formData?.bommf_cname || "New BOM"
             }
           />
           <PageCardActions>
@@ -96,66 +120,132 @@ const McatgPage = () => {
                 {formData?.id ? "Update" : "Create"}
               </Button>
             )}
-            {pgView === "SYS_VW_LST_2" && (
-              <Button variant="secondary" size="sm" onClick={handleCancel}>
-                <IconChevronLeft size={14} className="icon-left" />
-                Category
-              </Button>
-            )}
-            {pgView === "SYS_VW_LST_2" && (
-              <Button size="sm" onClick={handleAddNewSubCat}>
-                <IconPlus size={14} className="icon-left" />
-                Add
-              </Button>
-            )}
           </PageCardActions>
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <McatgList
+            <BOMList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              onSubCategory={handleSubCategory}
-            />
-          )}
-          {pgView === "SYS_VW_FRM_1" && (
-            <BOMForm
-              isBusy={isBusy}
-              readOnly={readOnly}
-              stopEdit={stopEdit}
-              formData={formData}
-              formErrors={formErrors}
-              onChange={handleChange}
-              onCancel={handleCancel}
-              onSubmit={handleSubmit}
-              dpart_Options={dpart_Options}
-              units_Options={units_Options}
             />
           )}
 
-          {pgView === "SYS_VW_LST_2" && (
-            <ScatgList
-              listData={listDataItem}
-              onEdit={handleEditSubCat}
-              onDelete={handleDeleteSubCat}
-            />
-          )}
-          {pgView === "SYS_VW_FRM_2" && (
-            <ScatgForm
-              isBusy={isBusy}
-              readOnly={readOnly}
-              stopEdit={stopEdit}
-              formData={formDataItem}
-              formErrors={formErrors}
-              onChange={handleChangeSubCat}
-              onCancel={handleCancelSubCat}
-              onSubmit={handleSubmitSubCat}
-            />
+          {pgView === "SYS_VW_FRM_1" && (
+            <div className="entry-screen">
+              {/* BOM Master Form */}
+              <BOMForm
+                isBusy={isBusy}
+                readOnly={readOnly}
+                stopEdit={stopEdit}
+                formData={formData}
+                formErrors={formErrors}
+                onChange={handleChange}
+                onCancel={handleCancel}
+                onSubmit={handleSubmit}
+                dpart_Options={dpart_Options}
+                units_Options={units_Options}
+              />
+
+              {/* Sub-Section Tabs */}
+              <div className="sub-section-tabs">
+                <div className="tabs-header">
+                  <button
+                    type="button"
+                    className={`tab-btn${activeTab === "raw-materials" ? " tab-btn--active" : ""}`}
+                    onClick={() => handleTabChange("raw-materials")}
+                  >
+                    Raw Materials ({listDataRM.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`tab-btn${activeTab === "factory-overhead" ? " tab-btn--active" : ""}`}
+                    onClick={() => handleTabChange("factory-overhead")}
+                  >
+                    Factory Overhead ({listDataFOH.length})
+                  </button>
+                  <button
+                    type="button"
+                    className={`tab-btn${activeTab === "output-sfg" ? " tab-btn--active" : ""}`}
+                    onClick={() => handleTabChange("output-sfg")}
+                  >
+                    Output SFG/FG ({listDataSFG.length})
+                  </button>
+                </div>
+
+                <div className="tab-content">
+                  {/* Raw Materials Tab */}
+                  {activeTab === "raw-materials" && !showSubForm && (
+                    <RawMaterialList
+                      listData={listDataRM}
+                      onEdit={handleEditRM}
+                      onDelete={handleDeleteRM}
+                      onAdd={handleAddRM}
+                    />
+                  )}
+                  {activeTab === "raw-materials" && showSubForm && (
+                    <RawMaterialForm
+                      isBusy={isBusy}
+                      formData={formDataRM}
+                      formErrors={formErrorsRM}
+                      itemOptions={itemOptions}
+                      units_Options={units_Options}
+                      onChange={handleChangeRM}
+                      onCancel={handleCancelRM}
+                      onSubmit={handleSubmitRM}
+                    />
+                  )}
+
+                  {/* Factory Overhead Tab */}
+                  {activeTab === "factory-overhead" && !showSubForm && (
+                    <FactoryOverheadList
+                      listData={listDataFOH}
+                      onEdit={handleEditFOH}
+                      onDelete={handleDeleteFOH}
+                      onAdd={handleAddFOH}
+                    />
+                  )}
+                  {activeTab === "factory-overhead" && showSubForm && (
+                    <FactoryOverheadForm
+                      isBusy={isBusy}
+                      formData={formDataFOH}
+                      formErrors={formErrorsFOH}
+                      itemOptions={itemOptions}
+                      unitsOptions={units_Options}
+                      onChange={handleChangeFOH}
+                      onCancel={handleCancelFOH}
+                      onSubmit={handleSubmitFOH}
+                    />
+                  )}
+
+                  {/* Output SFG Tab */}
+                  {activeTab === "output-sfg" && !showSubForm && (
+                    <OutputSFGList
+                      listData={listDataSFG}
+                      onEdit={handleEditSFG}
+                      onDelete={handleDeleteSFG}
+                      onAdd={handleAddSFG}
+                    />
+                  )}
+                  {activeTab === "output-sfg" && showSubForm && (
+                    <OutputSFGForm
+                      isBusy={isBusy}
+                      formData={formDataSFG}
+                      formErrors={formErrorsSFG}
+                      itemOptions={itemOptions}
+                      unitsOptions={units_Options}
+                      onChange={handleChangeSFG}
+                      onCancel={handleCancelSFG}
+                      onSubmit={handleSubmitSFG}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
           )}
         </PageCardBody>
       </PageCard>
     </div>
   );
 };
-export default McatgPage;
+export default BOMPage;

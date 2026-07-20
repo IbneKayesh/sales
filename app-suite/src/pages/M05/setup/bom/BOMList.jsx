@@ -1,17 +1,17 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import { IconClose, IconCheck } from "@/icons";
 
-const ScatgList = ({ listData, onEdit, onDelete }) => {
+const BOMList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "scatg_ccode", header: "Code", width: "120px" },
-    { key: "scatg_cname", header: "Sub Category Name", width: "200px" },
+    { key: "bommf_cname", header: "Process Name", width: "200px" },
+    { key: "bommf_prono", header: "Process No", width: "120px" },
+    { key: "bommf_inout", header: "Input/Output", width: "120px" },
+    { key: "bommf_bmqty", header: "Qty", width: "100px" },
+    { key: "bommf_estim", header: "Est Minutes", width: "120px" },
     {
-      key: "scatg_actve",
+      key: "bommf_actve",
       header: "Status",
       width: "120px",
       render: (v) => {
@@ -31,7 +31,7 @@ const ScatgList = ({ listData, onEdit, onDelete }) => {
       render: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.scatg_actve}
+          actve={row.bommf_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />
@@ -48,10 +48,10 @@ const ScatgList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="sub-categories-export.csv"
+      exportFilename="bom-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No sub categories found"
+      emptyMessage="No BOM records found"
     />
   );
 };
-export default ScatgList;
+export default BOMList;

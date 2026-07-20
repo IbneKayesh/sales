@@ -1,0 +1,119 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "items_icode": {
+    "type": "string",
+    "label": "Item Code",
+    "maxLength": 50,
+    "placeholder": "Enter item code"
+  },
+  "items_iname": {
+    "type": "string",
+    "label": "Item Name",
+    "maxLength": 100,
+    "minLength": 3,
+    "placeholder": "Enter item name",
+    "required": true
+  },
+  "items_brcod": {
+    "type": "string",
+    "label": "Barcode",
+    "maxLength": 50,
+    "placeholder": "Enter barcode"
+  },
+  "items_hscod": {
+    "type": "string",
+    "label": "HS Code",
+    "maxLength": 50,
+    "placeholder": "Enter HS code"
+  },
+  "items_runit": {
+    "type": "string",
+    "label": "Re-order Unit",
+    "maxLength": 50,
+    "placeholder": "Enter re-order unit"
+  },
+  "items_pkqty": {
+    "type": "number",
+    "label": "Pack Quantity",
+    "default": 1,
+    "placeholder": "Enter pack quantity"
+  },
+  "items_punit": {
+    "type": "string",
+    "label": "Purchase Unit",
+    "maxLength": 50,
+    "placeholder": "Enter purchase unit"
+  },
+  "items_sgrup": {
+    "type": "string",
+    "label": "Sub Group",
+    "maxLength": 50,
+    "placeholder": "Select sub group"
+  },
+  "items_scatg": {
+    "type": "string",
+    "label": "Sub Category",
+    "maxLength": 50,
+    "placeholder": "Select sub category"
+  },
+  "items_itype": {
+    "type": "string",
+    "label": "Item Type",
+    "default": "FG",
+    "maxLength": 2,
+    "placeholder": "Select item type"
+  },
+  "items_brand": {
+    "type": "string",
+    "label": "Brand",
+    "maxLength": 50,
+    "placeholder": "Select brand"
+  },
+  "items_tstck": {
+    "type": "string",
+    "label": "Track Stock",
+    "default": "true"
+  },
+  "items_sdvat": {
+    "type": "decimal",
+    "label": "SD VAT (%)",
+    "default": 0.00,
+    "placeholder": "Enter SD VAT %"
+  },
+  "items_smrgn": {
+    "type": "decimal",
+    "label": "Margin (%)",
+    "default": 0.00,
+    "placeholder": "Enter margin %"
+  },
+  "items_fxcst": {
+    "type": "decimal",
+    "label": "Fixed Cost",
+    "default": 0.00,
+    "placeholder": "Enter fixed cost"
+  },
+  "items_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes"
+  },
+  "items_stpur": {
+    "type": "string",
+    "label": "Stop Purchase",
+    "default": "true"
+  },
+  "items_stsal": {
+    "type": "string",
+    "label": "Stop Sale",
+    "default": "true"
+  },
+  "items_stnsf": {
+    "type": "string",
+    "label": "Stop NSF",
+    "default": "true"
+  }
+}

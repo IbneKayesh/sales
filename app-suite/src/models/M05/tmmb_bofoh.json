@@ -1,0 +1,60 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "bofoh_bommf": {
+    "type": "string",
+    "label": "BOM",
+    "maxLength": 50,
+    "placeholder": "Select BOM",
+    "required": true
+  },
+  "bofoh_items": {
+    "type": "string",
+    "label": "Item",
+    "maxLength": 50,
+    "placeholder": "Select item",
+    "required": true
+  },
+  "bofoh_units": {
+    "type": "string",
+    "label": "Unit",
+    "maxLength": 50,
+    "placeholder": "Select unit",
+    "required": true
+  },
+  "bofoh_types": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Enter type (FOH)",
+    "required": true
+  },
+  "bofoh_rmqty": {
+    "type": "decimal",
+    "label": "Quantity",
+    "default": 1
+  },
+  "bofoh_rmrto": {
+    "type": "decimal",
+    "label": "Ratio",
+    "default": 1
+  },
+  "bofoh_rmrat": {
+    "type": "decimal",
+    "label": "Rate",
+    "default": 1
+  },
+  "bofoh_rmval": {
+    "type": "decimal",
+    "label": "Value",
+    "default": 1
+  },
+  "bofoh_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes"
+  }
+}

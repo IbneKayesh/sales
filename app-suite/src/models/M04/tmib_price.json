@@ -1,0 +1,99 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "price_items": {
+    "type": "string",
+    "label": "Item",
+    "maxLength": 50,
+    "placeholder": "Select item",
+    "required": true
+  },
+  "price_cname": {
+    "type": "string",
+    "label": "Price Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter price name",
+    "required": true
+  },
+  "price_lprat": {
+    "type": "decimal",
+    "label": "Last Purchase Rate",
+    "default": 0.00,
+    "placeholder": "Enter last purchase rate"
+  },
+  "price_dprat": {
+    "type": "decimal",
+    "label": "Distributor Rate",
+    "default": 0.00,
+    "placeholder": "Enter distributor rate"
+  },
+  "price_tprat": {
+    "type": "decimal",
+    "label": "Trade Rate",
+    "default": 0.00,
+    "placeholder": "Enter trade rate"
+  },
+  "price_mrrat": {
+    "type": "decimal",
+    "label": "MRP Rate",
+    "default": 0.00,
+    "placeholder": "Enter MRP rate"
+  },
+  "price_dspct": {
+    "type": "decimal",
+    "label": "Discount (%)",
+    "default": 0.00,
+    "placeholder": "Enter discount %"
+  },
+  "price_gdstk": {
+    "type": "decimal",
+    "label": "Godown Stock",
+    "default": 0.00,
+    "placeholder": "Enter godown stock"
+  },
+  "price_bdstk": {
+    "type": "decimal",
+    "label": "Branch Stock",
+    "default": 0.00,
+    "placeholder": "Enter branch stock"
+  },
+  "price_mnqty": {
+    "type": "decimal",
+    "label": "Min Quantity",
+    "default": 0.00,
+    "placeholder": "Enter min quantity"
+  },
+  "price_mxqty": {
+    "type": "decimal",
+    "label": "Max Quantity",
+    "default": 0.00,
+    "placeholder": "Enter max quantity"
+  },
+  "price_pbqty": {
+    "type": "decimal",
+    "label": "Purchase Budget Qty",
+    "default": 0.00,
+    "placeholder": "Enter purchase budget qty"
+  },
+  "price_sbqty": {
+    "type": "decimal",
+    "label": "Sales Budget Qty",
+    "default": 0.00,
+    "placeholder": "Enter sales budget qty"
+  },
+  "price_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "placeholder": "Enter notes"
+  },
+  "price_jnote": {
+    "type": "string",
+    "label": "Journal Note",
+    "maxLength": 300,
+    "placeholder": "Enter journal note"
+  }
+}

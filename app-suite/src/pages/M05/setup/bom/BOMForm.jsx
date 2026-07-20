@@ -164,12 +164,12 @@ const BOMForm = ({
       </div>
       {formData?.id && (
         <AuditData
-          actve={formData.mcatg_actve}
+          actve={formData.bommf_actve}
           cname={formData.crusr_cname}
-          cdate={formData.mcatg_crdat}
+          cdate={formData.bommf_crdat}
           uname={formData.upusr_cname}
-          udate={formData.mcatg_updat}
-          rvnmr={formData.mcatg_rvnmr}
+          udate={formData.bommf_updat}
+          rvnmr={formData.bommf_rvnmr}
         />
       )}
       <div className="form-actions">
