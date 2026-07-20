@@ -22,67 +22,78 @@
     "type": "decimal",
     "label": "Last Purchase Rate",
     "default": 0.00,
-    "placeholder": "Enter last purchase rate"
+    "placeholder": "Enter last purchase rate",
+    "required": true
   },
   "price_dprat": {
     "type": "decimal",
     "label": "Distributor Rate",
     "default": 0.00,
-    "placeholder": "Enter distributor rate"
+    "placeholder": "Enter distributor rate",
+    "required": true
   },
   "price_tprat": {
     "type": "decimal",
     "label": "Trade Rate",
     "default": 0.00,
-    "placeholder": "Enter trade rate"
+    "placeholder": "Enter trade rate",
+    "required": true
   },
   "price_mrrat": {
     "type": "decimal",
     "label": "MRP Rate",
     "default": 0.00,
-    "placeholder": "Enter MRP rate"
+    "placeholder": "Enter MRP rate",
+    "required": true
   },
   "price_dspct": {
     "type": "decimal",
     "label": "Discount (%)",
     "default": 0.00,
-    "placeholder": "Enter discount %"
+    "placeholder": "Enter discount %",
+    "required": true
   },
   "price_gdstk": {
     "type": "decimal",
-    "label": "Godown Stock",
+    "label": "Good Stock",
     "default": 0.00,
-    "placeholder": "Enter godown stock"
+    "placeholder": "Enter good stock",
+    "required": true
   },
   "price_bdstk": {
     "type": "decimal",
-    "label": "Branch Stock",
+    "label": "Bad Stock",
     "default": 0.00,
-    "placeholder": "Enter branch stock"
+    "placeholder": "Enter bad stock",
+    "required": true
   },
   "price_mnqty": {
     "type": "decimal",
     "label": "Min Quantity",
     "default": 0.00,
-    "placeholder": "Enter min quantity"
+    "placeholder": "Enter min quantity",
+    "required": true
   },
   "price_mxqty": {
     "type": "decimal",
     "label": "Max Quantity",
     "default": 0.00,
-    "placeholder": "Enter max quantity"
+    "placeholder": "Enter max quantity",
+    "required": true
   },
   "price_pbqty": {
     "type": "decimal",
-    "label": "Purchase Budget Qty",
+    "label": "Purchase booking Qty",
     "default": 0.00,
-    "placeholder": "Enter purchase budget qty"
+    "placeholder": "Enter purchase booking qty",
+    "required": true
   },
   "price_sbqty": {
     "type": "decimal",
-    "label": "Sales Budget Qty",
+    "label": "Sales booking Qty",
     "default": 0.00,
-    "placeholder": "Enter sales budget qty"
+    "placeholder": "Enter sales booking qty",
+    "required": true
   },
   "price_notes": {
     "type": "string",

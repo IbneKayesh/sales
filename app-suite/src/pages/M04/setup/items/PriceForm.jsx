@@ -2,10 +2,7 @@ import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import AuditData from "@/components/AuditData";
-import {
-  IconClose,
-  IconSave,
-} from "@/icons";
+import { IconClose, IconSave } from "@/icons";
 
 const PriceForm = ({
   isBusy,
@@ -31,9 +28,7 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-      </div>
-      <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Last Purchase Rate"
             placeholder="Enter last purchase rate"
@@ -44,7 +39,7 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Distributor Rate"
             placeholder="Enter distributor rate"
@@ -55,7 +50,7 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Trade Rate"
             placeholder="Enter trade rate"
@@ -66,7 +61,7 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="MRP Rate"
             placeholder="Enter MRP rate"
@@ -77,9 +72,7 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-      </div>
-      <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Discount (%)"
             placeholder="Enter discount %"
@@ -90,10 +83,10 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
-            label="Godown Stock"
-            placeholder="Enter godown stock"
+            label="Good Stock"
+            placeholder="Enter good stock"
             value={formData.price_gdstk}
             onChange={(e) => onChange("price_gdstk", e.target.value)}
             error={formErrors.price_gdstk}
@@ -101,10 +94,10 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
-            label="Branch Stock"
-            placeholder="Enter branch stock"
+            label="Bad Stock"
+            placeholder="Enter bad stock"
             value={formData.price_bdstk}
             onChange={(e) => onChange("price_bdstk", e.target.value)}
             error={formErrors.price_bdstk}
@@ -112,7 +105,7 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Min Quantity"
             placeholder="Enter min quantity"
@@ -123,9 +116,7 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-      </div>
-      <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Max Quantity"
             placeholder="Enter max quantity"
@@ -136,10 +127,10 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
-            label="Purchase Budget Qty"
-            placeholder="Enter purchase budget qty"
+            label="Purchase Booking Qty"
+            placeholder="Enter purchase booking qty"
             value={formData.price_pbqty}
             onChange={(e) => onChange("price_pbqty", e.target.value)}
             error={formErrors.price_pbqty}
@@ -147,10 +138,10 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
-            label="Sales Budget Qty"
-            placeholder="Enter sales budget qty"
+            label="Sales Booking Qty"
+            placeholder="Enter sales booking qty"
             value={formData.price_sbqty}
             onChange={(e) => onChange("price_sbqty", e.target.value)}
             error={formErrors.price_sbqty}
@@ -168,12 +159,10 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-      </div>
-      <div className="grid">
-        <div className="col-span-6">
+        <div className="col-span-5">
           <InputText
-            label="Journal Note"
-            placeholder="Enter journal note"
+            label="JSON Note"
+            placeholder="Enter json note"
             value={formData.price_jnote}
             onChange={(e) => onChange("price_jnote", e.target.value)}
             error={formErrors.price_jnote}

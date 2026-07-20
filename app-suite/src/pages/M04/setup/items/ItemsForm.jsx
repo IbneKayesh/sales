@@ -3,24 +3,8 @@ import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
-import {
-  IconClose,
-  IconSave,
-} from "@/icons";
-
-const itype_Options = [
-  { label: "Raw Material (RM)", value: "RM" },
-  { label: "Packing Material (PM)", value: "PM" },
-  { label: "Semi Finished (SFG)", value: "SFG" },
-  { label: "Finished Goods (FG)", value: "FG" },
-  { label: "FOH", value: "FOH" },
-  { label: "Service (SVC)", value: "SVC" },
-];
-
-const boolean_Options = [
-  { label: "Yes", value: "true" },
-  { label: "No", value: "false" },
-];
+import { IconClose, IconSave } from "@/icons";
+import { itype_Options, bool_Options} from "@/utils/vtable.js";
 
 const ItemsForm = ({
   isBusy,
@@ -31,14 +15,25 @@ const ItemsForm = ({
   onChange,
   onCancel,
   onSubmit,
-  brandOptions,
-  subGroupOptions,
-  subCategoryOptions,
-  unitsOptions,
+  //others
+  units_Options,
+  sgrup_Options,
+  scatg_Options,
+  brand_Options,
 }) => {
   return (
     <div className="form-wrap">
       <div className="grid">
+        <div className="col-span-3">
+          <InputText
+            label="Item Code"
+            placeholder="Enter item code"
+            value={formData.items_icode}
+            onChange={(e) => onChange("items_icode", e.target.value)}
+            error={formErrors.items_icode}
+            disabled={readOnly}
+          />
+        </div>
         <div className="col-span-6">
           <InputText
             label="Item Name"
@@ -52,16 +47,6 @@ const ItemsForm = ({
         </div>
         <div className="col-span-3">
           <InputText
-            label="Item Code"
-            placeholder="Enter item code"
-            value={formData.items_icode}
-            onChange={(e) => onChange("items_icode", e.target.value)}
-            error={formErrors.items_icode}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputText
             label="Barcode"
             placeholder="Enter barcode"
             value={formData.items_brcod}
@@ -70,60 +55,6 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-      </div>
-      <div className="grid">
-        <div className="col-span-3">
-          <Dropdown
-            label="Item Type"
-            options={itype_Options}
-            value={formData.items_itype}
-            onChange={(e) => onChange("items_itype", e.target.value)}
-            error={formErrors.items_itype}
-            placeholder="Select type..."
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <Dropdown
-            label="Brand"
-            options={brandOptions}
-            value={formData.items_brand}
-            onChange={(e) => onChange("items_brand", e.target.value)}
-            error={formErrors.items_brand}
-            placeholder="Select brand..."
-            disabled={readOnly}
-            optionValue="id"
-            optionLabel="brand_cname"
-          />
-        </div>
-        <div className="col-span-3">
-          <Dropdown
-            label="Sub Group"
-            options={subGroupOptions}
-            value={formData.items_sgrup}
-            onChange={(e) => onChange("items_sgrup", e.target.value)}
-            error={formErrors.items_sgrup}
-            placeholder="Select sub group..."
-            disabled={readOnly}
-            optionValue="id"
-            optionLabel="sgrup_cname"
-          />
-        </div>
-        <div className="col-span-3">
-          <Dropdown
-            label="Sub Category"
-            options={subCategoryOptions}
-            value={formData.items_scatg}
-            onChange={(e) => onChange("items_scatg", e.target.value)}
-            error={formErrors.items_scatg}
-            placeholder="Select sub category..."
-            disabled={readOnly}
-            optionValue="id"
-            optionLabel="scatg_cname"
-          />
-        </div>
-      </div>
-      <div className="grid">
         <div className="col-span-3">
           <InputText
             label="HS Code"
@@ -134,20 +65,30 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
+        <div className="col-span-9">
+          <InputText
+            label="Notes"
+            placeholder="Enter notes"
+            value={formData.items_notes}
+            onChange={(e) => onChange("items_notes", e.target.value)}
+            error={formErrors.items_notes}
+            disabled={readOnly}
+          />
+        </div>
         <div className="col-span-3">
           <Dropdown
-            label="Re-order Unit"
-            options={unitsOptions}
+            label="Retail Unit"
+            options={units_Options}
             value={formData.items_runit}
             onChange={(e) => onChange("items_runit", e.target.value)}
             error={formErrors.items_runit}
-            placeholder="Select re-order unit..."
+            placeholder="Select..."
             disabled={readOnly}
             optionValue="id"
             optionLabel="units_cname"
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3">
           <InputNumber
             label="Pack Qty"
             placeholder="Enter pack qty"
@@ -157,23 +98,73 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3">
           <Dropdown
-            label="Purchase Unit"
-            options={unitsOptions}
+            label="Packing Unit"
+            options={units_Options}
             value={formData.items_punit}
             onChange={(e) => onChange("items_punit", e.target.value)}
             error={formErrors.items_punit}
-            placeholder="Select purchase unit..."
+            placeholder="Select..."
             disabled={readOnly}
             optionValue="id"
             optionLabel="units_cname"
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3">
+          <Dropdown
+            label="Sub Group"
+            options={sgrup_Options}
+            value={formData.items_sgrup}
+            onChange={(e) => onChange("items_sgrup", e.target.value)}
+            error={formErrors.items_sgrup}
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="sgrup_cname"
+          />
+        </div>
+        <div className="col-span-3">
+          <Dropdown
+            label="Sub Category"
+            options={scatg_Options}
+            value={formData.items_scatg}
+            onChange={(e) => onChange("items_scatg", e.target.value)}
+            error={formErrors.items_scatg}
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="scatg_cname"
+          />
+        </div>
+        <div className="col-span-3">
+          <Dropdown
+            label="Item Type"
+            options={itype_Options}
+            value={formData.items_itype}
+            onChange={(e) => onChange("items_itype", e.target.value)}
+            error={formErrors.items_itype}
+            placeholder="Select..."
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <Dropdown
+            label="Brand"
+            options={brand_Options}
+            value={formData.items_brand}
+            onChange={(e) => onChange("items_brand", e.target.value)}
+            error={formErrors.items_brand}
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="brand_cname"
+          />
+        </div>
+        <div className="col-span-3">
           <Dropdown
             label="Track Stock"
-            options={boolean_Options}
+            options={bool_Options}
             value={formData.items_tstck}
             onChange={(e) => onChange("items_tstck", e.target.value)}
             error={formErrors.items_tstck}
@@ -181,9 +172,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-      </div>
-      <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="SD VAT (%)"
             placeholder="Enter SD VAT %"
@@ -194,7 +183,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Margin (%)"
             placeholder="Enter margin %"
@@ -205,7 +194,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Fixed Cost"
             placeholder="Enter fixed cost"
@@ -216,22 +205,10 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
-          <InputText
-            label="Notes"
-            placeholder="Enter notes"
-            value={formData.items_notes}
-            onChange={(e) => onChange("items_notes", e.target.value)}
-            error={formErrors.items_notes}
-            disabled={readOnly}
-          />
-        </div>
-      </div>
-      <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Stop Purchase"
-            options={boolean_Options}
+            options={bool_Options}
             value={formData.items_stpur}
             onChange={(e) => onChange("items_stpur", e.target.value)}
             error={formErrors.items_stpur}
@@ -239,10 +216,10 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Stop Sale"
-            options={boolean_Options}
+            options={bool_Options}
             value={formData.items_stsal}
             onChange={(e) => onChange("items_stsal", e.target.value)}
             error={formErrors.items_stsal}
@@ -250,10 +227,10 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
-            label="Stop NSF"
-            options={boolean_Options}
+            label="Stop Transfer"
+            options={bool_Options}
             value={formData.items_stnsf}
             onChange={(e) => onChange("items_stnsf", e.target.value)}
             error={formErrors.items_stnsf}

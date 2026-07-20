@@ -7,10 +7,34 @@ import { IconClose, IconCheck, IconDollar } from "@/icons";
 const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
   const dtColumns = [
     { key: "items_icode", header: "Code", width: "120px" },
-    { key: "items_iname", header: "Item Name", width: "200px" },
+    {
+      key: "items_iname",
+      header: "Item Name",
+      width: "200px",
+      render: (_, row) => {
+        return (
+          <span>
+            {row.items_iname}, {row.items_itype}
+          </span>
+        );
+      },
+    },
     { key: "items_brcod", header: "Barcode", width: "140px" },
-    { key: "items_itype", header: "Type", width: "80px" },
-    { key: "items_brand", header: "Brand", width: "120px" },
+    {
+      key: "runit_cname",
+      header: "Unit",
+      width: "200px",
+      render: (_, row) => {
+        return (
+          <span>
+            {row.items_pkqty} x {row.runit_cname} = 1 {row.punit_cname}
+          </span>
+        );
+      },
+    },
+    { key: "sgrup_cname", header: "Group", width: "80px" },
+    { key: "scatg_cname", header: "Category", width: "80px" },
+    { key: "brand_cname", header: "Brand", width: "120px" },
     {
       key: "items_actve",
       header: "Status",

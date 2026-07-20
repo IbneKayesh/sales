@@ -7,7 +7,9 @@
     "type": "string",
     "label": "Item Code",
     "maxLength": 50,
-    "placeholder": "Enter item code"
+    "minLength": 0,
+    "placeholder": "Enter item code",
+    "required": false
   },
   "items_iname": {
     "type": "string",
@@ -31,49 +33,56 @@
   },
   "items_runit": {
     "type": "string",
-    "label": "Re-order Unit",
+    "label": "Retail Unit",
     "maxLength": 50,
-    "placeholder": "Enter re-order unit"
+    "placeholder": "Enter retail unit",
+    "required": true
   },
   "items_pkqty": {
     "type": "number",
     "label": "Pack Quantity",
     "default": 1,
-    "placeholder": "Enter pack quantity"
+    "placeholder": "Enter pack quantity",
+    "required": true
   },
   "items_punit": {
     "type": "string",
-    "label": "Purchase Unit",
+    "label": "Packing Unit",
     "maxLength": 50,
-    "placeholder": "Enter purchase unit"
+    "placeholder": "Enter Packing unit",
+    "required": true
   },
   "items_sgrup": {
     "type": "string",
     "label": "Sub Group",
     "maxLength": 50,
-    "placeholder": "Select sub group"
+    "placeholder": "Select sub group",
+    "required": true
   },
   "items_scatg": {
     "type": "string",
     "label": "Sub Category",
     "maxLength": 50,
-    "placeholder": "Select sub category"
+    "placeholder": "Select sub category",
+    "required": true
   },
   "items_itype": {
     "type": "string",
     "label": "Item Type",
     "default": "FG",
     "maxLength": 2,
-    "placeholder": "Select item type"
+    "placeholder": "Select item type",
+    "required": true
   },
   "items_brand": {
     "type": "string",
     "label": "Brand",
     "maxLength": 50,
-    "placeholder": "Select brand"
+    "placeholder": "Select brand",
+    "required": true
   },
   "items_tstck": {
-    "type": "string",
+    "type": "boolean",
     "label": "Track Stock",
     "default": "true"
   },
@@ -81,19 +90,28 @@
     "type": "decimal",
     "label": "SD VAT (%)",
     "default": 0.00,
-    "placeholder": "Enter SD VAT %"
+    "maxLength": 500,
+    "minLength": 0,
+    "placeholder": "Enter SD VAT %",
+    "required": true
   },
   "items_smrgn": {
     "type": "decimal",
     "label": "Margin (%)",
+    "maxLength": 1000,
+    "minLength": 0,
     "default": 0.00,
-    "placeholder": "Enter margin %"
+    "placeholder": "Enter margin %",
+    "required": true
   },
   "items_fxcst": {
     "type": "decimal",
     "label": "Fixed Cost",
     "default": 0.00,
-    "placeholder": "Enter fixed cost"
+    "maxLength": 500,
+    "minLength": 0,
+    "placeholder": "Enter fixed cost",
+    "required": true
   },
   "items_notes": {
     "type": "string",
@@ -102,18 +120,18 @@
     "placeholder": "Enter notes"
   },
   "items_stpur": {
-    "type": "string",
+    "type": "boolean",
     "label": "Stop Purchase",
-    "default": "true"
+    "default": "false"
   },
   "items_stsal": {
-    "type": "string",
+    "type": "boolean",
     "label": "Stop Sale",
-    "default": "true"
+    "default": "false"
   },
   "items_stnsf": {
     "type": "string",
-    "label": "Stop NSF",
-    "default": "true"
+    "label": "Stop Transfer",
+    "default": "false"
   }
 }

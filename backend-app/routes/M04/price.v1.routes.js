@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
     LEFT JOIN tmib_items itm ON prce.price_items = itm.id
     LEFT JOIN tmnb_users csr ON prce.price_crusr = csr.id
     LEFT JOIN tmnb_users usr ON prce.price_upusr = usr.id
-    WHERE prce.price_apusr = $1
+    WHERE prce.price_users = $1
     ORDER BY itm.items_iname ASC`;
 
     const params = [user_c];
@@ -63,7 +63,7 @@ router.post("/get-all-active", async (req, res) => {
     const sql = `SELECT prce.*, itm.items_iname, 0 as edit_stop
     FROM tmib_price prce
     LEFT JOIN tmib_items itm ON prce.price_items = itm.id
-    WHERE prce.price_apusr = $1
+    WHERE prce.price_users = $1
     AND prce.price_actve = TRUE
     ORDER BY itm.items_iname ASC`;
 
@@ -88,11 +88,11 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      items_iname,
-      price_apusr,
+      price_users,
       price_bsins,
+      price_ccode,
       price_items,
-      price_pcode,
+      price_cname,
       price_lprat,
       price_dprat,
       price_tprat,
@@ -124,20 +124,21 @@ const create = async (req, res) => {
     const newCode = await GenNewCode(user_c, "tmib_price");
 
     const sql = `INSERT INTO tmib_price(
-      id, price_apusr, price_bsins, price_items, price_pcode, 
+      id, price_users, price_bsins, price_ccode, price_items, price_cname,
       price_lprat, price_dprat, price_tprat, price_mrrat, price_dspct, 
       price_gdstk, price_bdstk, price_mnqty, price_mxqty, price_pbqty, 
       price_sbqty, price_notes, price_jnote, 
       price_crusr, price_upusr
     )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`;
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)`;
 
     const params = [
       uuidv4(),
       user_c,
       user_b,
-      price_items,
       newCode,
+      price_items,
+      price_cname,
       price_lprat || 0,
       price_dprat || 0,
       price_tprat || 0,
@@ -158,7 +159,7 @@ const create = async (req, res) => {
     await dbRun(sql, params, `create price- ${user_c}`);
     res.json({
       success: true,
-      message: `Price - ${items_iname} Created successfully.`,
+      message: `Price - ${price_cname} Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -173,13 +174,13 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-     const {
+    const {
       id,
-      items_iname,
-      price_apusr,
+      price_users,
       price_bsins,
+      price_ccode,
       price_items,
-      price_pcode,
+      price_cname,
       price_lprat,
       price_dprat,
       price_tprat,
@@ -248,7 +249,7 @@ const update = async (req, res) => {
     await dbRun(sql, params, `update price- ${user_c}`);
     res.json({
       success: true,
-      message: `Price - ${items_iname} Updated successfully.`,
+      message: `Price - ${price_cname} Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -280,7 +281,7 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, items_iname, price_actve, user_s, user_c, user_b } = req.body;
+    const { id, price_cname, price_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
     if (!id || !user_s || !user_c || !user_b) {
@@ -303,7 +304,7 @@ router.post("/delete", async (req, res) => {
     await dbRun(sql, params, `delete price- ${user_c}`);
     res.json({
       success: true,
-      message: `Price - ${items_iname ? "Deactivate" : "Activate"} successfully.`,
+      message: `Price - ${price_cname ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {
@@ -312,6 +313,48 @@ router.post("/delete", async (req, res) => {
       success: false,
       message: error.message || "An error occurred during db action",
       data: {},
+    });
+  }
+});
+
+// get by item
+router.post("/get-by-item", async (req, res) => {
+  try {
+    const { price_items, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!price_items || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT prce.*, itm.items_iname,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmib_price prce
+    LEFT JOIN tmib_items itm ON prce.price_items = itm.id
+    LEFT JOIN tmhb_emply csr ON prce.price_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON prce.price_upusr = usr.id
+    WHERE prce.price_users = $1
+    AND prce.price_items = $2
+    ORDER BY itm.items_iname ASC`;
+
+    const params = [user_c, price_items];
+    const rows = await dbGetAll(sql, params, `get price- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
     });
   }
 });

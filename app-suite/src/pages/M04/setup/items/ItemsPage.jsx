@@ -30,11 +30,11 @@ const ItemsPage = () => {
     listDataItem,
     formDataItem,
     formErrors,
-    //dropdown options
-    brandOptions,
-    subGroupOptions,
-    subCategoryOptions,
-    unitsOptions,
+    //others
+    units_Options,
+    sgrup_Options,
+    scatg_Options,
+    brand_Options,
     //functions
     handleChange,
     handleEdit,
@@ -131,10 +131,11 @@ const ItemsPage = () => {
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}
-              brandOptions={brandOptions}
-              subGroupOptions={subGroupOptions}
-              subCategoryOptions={subCategoryOptions}
-              unitsOptions={unitsOptions}
+              //others
+              units_Options={units_Options}
+              sgrup_Options={sgrup_Options}
+              scatg_Options={scatg_Options}
+              brand_Options={brand_Options}
             />
           )}
 

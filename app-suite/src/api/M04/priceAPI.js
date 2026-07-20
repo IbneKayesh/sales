@@ -26,4 +26,8 @@ export const priceAPI = {
     apiRequest("/M04/v1/prices/get-all-active", {
       body: data,
     }),
+  getAllByItem: (data) =>
+    apiRequest("/M04/v1/prices/get-by-item", {
+      body: data,
+    }),
 };

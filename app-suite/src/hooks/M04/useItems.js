@@ -15,7 +15,7 @@ import { unitsAPI } from "@/api/M04/unitsAPI.js";
 const useItems = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M04-M02-M007");
+  const [pgId, setPgId] = useState("M04-M01-M001");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -29,11 +29,11 @@ const useItems = () => {
   const [listDataItem, setListDataItem] = useState([]);
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
-  //dropdown options
-  const [brandOptions, setBrandOptions] = useState([]);
-  const [subGroupOptions, setSubGroupOptions] = useState([]);
-  const [subCategoryOptions, setSubCategoryOptions] = useState([]);
-  const [unitsOptions, setUnitsOptions] = useState([]);
+  //others
+  const [units_Options, setUnits_Options] = useState([]);
+  const [sgrup_Options, setSgrup_Options] = useState([]);
+  const [scatg_Options, setScatg_Options] = useState([]);
+  const [brand_Options, setBrand_Options] = useState([]);
 
   const getAllItems = async () => {
     try {
@@ -103,40 +103,36 @@ const useItems = () => {
     getAllItems();
   };
 
-  const getAllBrands = async () => {
+  const getAllUnits = async () => {
     try {
-      const resp = await brandAPI.getAllActive({});
+      const resp = await unitsAPI.getAllActive({});
       const list = resp.data || [];
-      setBrandOptions(list);
-    } catch (error) {
-    }
+      setUnits_Options(list);
+    } catch (error) {}
   };
 
   const getAllSubGroups = async () => {
     try {
       const resp = await subGroupsAPI.getAllActive({});
       const list = resp.data || [];
-      setSubGroupOptions(list);
-    } catch (error) {
-    }
+      setSgrup_Options(list);
+    } catch (error) {}
   };
 
   const getAllSubCategories = async () => {
     try {
       const resp = await subCategoriesAPI.getAllActive({});
       const list = resp.data || [];
-      setSubCategoryOptions(list);
-    } catch (error) {
-    }
+      setScatg_Options(list);
+    } catch (error) {}
   };
 
-  const getAllUnits = async () => {
+  const getAllBrands = async () => {
     try {
-      const resp = await unitsAPI.getAllActive({});
+      const resp = await brandAPI.getAllActive({});
       const list = resp.data || [];
-      setUnitsOptions(list);
-    } catch (error) {
-    }
+      setBrand_Options(list);
+    } catch (error) {}
   };
 
   const handleAddNew = () => {
@@ -144,10 +140,10 @@ const useItems = () => {
     setFormData(dataModel);
     setReadOnly(false);
     setStopEdit(false);
-    getAllBrands();
+    getAllUnits();
     getAllSubGroups();
     getAllSubCategories();
-    getAllUnits();
+    getAllBrands();
   };
 
   const handleCancel = () => {
@@ -194,7 +190,7 @@ const useItems = () => {
   const getAllPrices = async (id) => {
     try {
       setIsBusy(true);
-      const resp = await priceAPI.getAll({ price_items: id });
+      const resp = await priceAPI.getAllByItem({ price_items: id });
       const list = resp.data || [];
       setListDataItem(list);
     } catch (error) {
@@ -313,11 +309,11 @@ const useItems = () => {
     listDataItem,
     formDataItem,
     formErrors,
-    //dropdown options
-    brandOptions,
-    subGroupOptions,
-    subCategoryOptions,
-    unitsOptions,
+    //others
+    units_Options,
+    sgrup_Options,
+    scatg_Options,
+    brand_Options,
     //functions
     handleChange,
     handleEdit,

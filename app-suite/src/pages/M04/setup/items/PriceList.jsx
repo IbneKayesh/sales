@@ -1,18 +1,22 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import { IconClose, IconCheck } from "@/icons";
 
 const PriceList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "price_cname", header: "Price Name", width: "200px" },
-    { key: "price_mrrat", header: "MRP", width: "120px" },
-    { key: "price_tprat", header: "Trade Rate", width: "120px" },
+    { key: "price_lprat", header: "L.Purchase Rate", width: "120px" },
     { key: "price_dprat", header: "Distributor Rate", width: "120px" },
-    { key: "price_lprat", header: "Last Purchase Rate", width: "120px" },
+    { key: "price_tprat", header: "Trade Rate", width: "120px" },
+    { key: "price_mrrat", header: "MRP", width: "120px" },
+    { key: "price_dspct", header: "Discount %", width: "120px" },
+    { key: "price_gdstk", header: "Good Stock", width: "120px" },
+    { key: "price_bdstk", header: "Bad Stock", width: "120px" },
+    { key: "price_mnqty", header: "Min Qty", width: "120px" },
+    { key: "price_mxqty", header: "Max Qty", width: "120px" },
+    { key: "price_pbqty", header: "Purchase Booked", width: "120px" },
+    { key: "price_sbqty", header: "Sales Booked", width: "120px" },
     {
       key: "price_actve",
       header: "Status",

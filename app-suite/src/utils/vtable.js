@@ -20,4 +20,25 @@ const inout_Options = [
   { label: "Output", value: "Output" },
 ];
 
-export { cntry_Options, crncy_Options, untgr_Options, inout_Options };
+const itype_Options = [
+  { label: "Raw Material (RM)", value: "RM" },
+  { label: "Packing Material (PM)", value: "PM" },
+  { label: "Semi Finished (SFG)", value: "SFG" },
+  { label: "Finished Goods (FG)", value: "FG" },
+  { label: "Factory Overhead (FOH)", value: "FOH" },
+  { label: "Service (SVC)", value: "SVC" },
+];
+
+const bool_Options = [
+  { label: "Yes", value: "true" },
+  { label: "No", value: "false" },
+];
+
+export {
+  cntry_Options,
+  crncy_Options,
+  untgr_Options,
+  inout_Options,
+  itype_Options,
+  bool_Options,
+};
