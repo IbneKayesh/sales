@@ -43,34 +43,24 @@ export default function Dropdown({
     }
   }, [open]);
 
-  const filtered_v1 =
-    searchable && search
-      ? options.filter((opt) =>
-          opt.label.toLowerCase().includes(search.toLowerCase()),
-        )
-      : options;
-
   const filtered =
     searchable && search
       ? options.filter((opt) =>
-          String(opt[optionLabel] ?? "")
+          String(opt?.[optionLabel] ?? "")
             .toLowerCase()
             .includes(search.toLowerCase()),
         )
       : options;
 
-  const selected_v1 = options.find((opt) => opt.value === value);
-  const selected = options.find((opt) => opt[optionValue] === value);
+  const selected = options.find((opt) => opt?.[optionValue] === value);
 
-  const displayText_v1 = selected?.label || placeholder;
   const displayText = selected?.[optionLabel] || placeholder;
 
   const handleSelect = (opt) => {
-    //if (onChange) onChange({ target: { value: opt.value, name } });
     if (onChange) {
       onChange({
         target: {
-          value: opt[optionValue],
+          value: opt?.[optionValue] ?? "",
           name,
         },
       });
@@ -157,25 +147,20 @@ export default function Dropdown({
           )}
           <div className="dropdown__options">
             {filtered.length > 0 ? (
-              filtered.map((opt) => (
+              filtered.map((opt, idx) => (
                 <button
-                  //key={opt.value}
-                  key={opt[optionValue]}
+                  key={opt?.[optionValue] ?? idx}
                   type="button"
-                  //className={`dropdown__option${opt.value === value ? " dropdown__option--selected" : ""}`}
-                  className={`dropdown__option${opt[optionValue] === value ? " dropdown__option--selected" : ""}`}
+                  className={`dropdown__option${opt?.[optionValue] === value ? " dropdown__option--selected" : ""}`}
                   role="option"
-                  //aria-selected={opt.value === value}
-                  aria-selected={opt[optionValue] === value}
+                  aria-selected={opt?.[optionValue] === value}
                   onClick={() => handleSelect(opt)}
                 >
-                  {opt.icon && (
+                  {opt?.icon && (
                     <span className="dropdown__option-icon">{opt.icon}</span>
                   )}
-                  {/* <span>{opt.label}</span> */}
-                  <span>{opt[optionLabel]}</span>
-                  {/* {opt.value === value && ( */}
-                  {opt[optionValue] === value && (
+                  <span>{opt?.[optionLabel] ?? ""}</span>
+                  {opt?.[optionValue] === value && (
                     <span className="dropdown__check">
                       <IconCheck size={14} />
                     </span>

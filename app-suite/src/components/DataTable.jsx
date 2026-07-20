@@ -46,6 +46,7 @@ export default function DataTable({
   toolbarActions,
   exportable = false,
   exportFilename,
+  stickyFirst = true,
   ...rest
 }) {
   const [sortKey, setSortKey] = useState(null)
@@ -140,10 +141,10 @@ export default function DataTable({
         <table className="data-table__table">
           <thead>
             <tr>
-              {columns.map((col) => (
+              {columns.map((col, ci) => (
                 <th
                   key={col.key || col.accessor}
-                  className={`data-table__th${col.sortable !== false && sortable ? ' data-table__th--sortable' : ''}${sortKey === (col.key || col.accessor) ? ` data-table__th--${sortDir}` : ''}`}
+                  className={`data-table__th${col.sortable !== false && sortable ? ' data-table__th--sortable' : ''}${sortKey === (col.key || col.accessor) ? ` data-table__th--${sortDir}` : ''}${stickyFirst && ci === 0 ? ' data-table__th--sticky' : ''}`}
                   onClick={() => handleSort(col.key || col.accessor)}
                   style={col.width ? { width: col.width } : undefined}
                 >
@@ -167,10 +168,10 @@ export default function DataTable({
                   className={`data-table__tr${striped && i % 2 === 1 ? ' data-table__tr--striped' : ''}${hoverable ? ' data-table__tr--hoverable' : ''}${onRowClick ? ' data-table__tr--clickable' : ''}`}
                   onClick={() => onRowClick && onRowClick(row)}
                 >
-                  {columns.map((col) => {
+                  {columns.map((col, ci) => {
                     const val = col.accessor ? row[col.accessor] : row[col.key]
                     return (
-                      <td key={col.key || col.accessor} className="data-table__td">
+                      <td key={col.key || col.accessor} className={`data-table__td${stickyFirst && ci === 0 ? ' data-table__td--sticky' : ''}`}>
                         {col.render ? col.render(val, row) : (val ?? '—')}
                       </td>
                     )
