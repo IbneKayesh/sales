@@ -7,6 +7,9 @@ const dataModel = generateDataModel(tmib_mcatg);
 import { subCategoriesAPI } from "@/api/M04/subCategoriesAPI.js";
 import tmib_scatg from "@/models/M04/tmib_scatg.json";
 const dataModelItem = generateDataModel(tmib_scatg);
+import { attrbAPI } from "@/api/M04/attrbAPI.js";
+import tmib_attrb from "@/models/M04/tmib_attrb.json";
+const dataModelAttrb = generateDataModel(tmib_attrb);
 
 const useCategories = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -257,11 +260,123 @@ const useCategories = () => {
   };
 
   //attributes
-  //implement below
-  //SYS_VW_LST_3, SYS_VW_FRM_3
-  //getAllAttributes,handleAttributes,handleChangeAttributes,handleEditAttributes
-  //handleDeleteAttributes, handleAddNewAttributes, handleCancelAttributes
-  //handleSubmitAttributes
+  const [thisCategoryAttrb, setThisCategoryAttrb] = useState("");
+  const [listDataAttrb, setListDataAttrb] = useState([]);
+  const [formDataAttrb, setFormDataAttrb] = useState(dataModelAttrb);
+  const [formErrorsAttrb, setFormErrorsAttrb] = useState({});
+
+  const getAllAttributes = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await attrbAPI.getAll({ attrb_mcatg: id });
+      const list = resp.data || [];
+      setListDataAttrb(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleAttributes = async (rowData) => {
+    setThisCategoryAttrb(rowData);
+    setPgView("SYS_VW_LST_3");
+    getAllAttributes(rowData.id);
+  };
+
+  const handleChangeAttrb = (f, v) => {
+    setFormDataAttrb((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formDataAttrb, [f]: v }, tmib_attrb);
+    setFormErrorsAttrb(newErrors);
+  };
+
+  const handleEditAttrb = (rowData) => {
+    setPgView("SYS_VW_FRM_3");
+    setFormDataAttrb(rowData);
+  };
+
+  const handleDeleteAttrb = async (rowData) => {
+    const isActive = rowData.attrb_actve;
+    const dataName = rowData.attrb_cname;
+    const confirmation = await confirmBox({
+      title: isActive ? "Deactivate" : "Activate",
+      message: `Are you sure you want to ${
+        isActive ? "deactivate" : "activate"
+      } "${dataName}"?`,
+      confirmText: isActive ? "Deactivate" : "Activate",
+      variant: isActive ? "danger" : "success",
+    });
+    if (!confirmation) return;
+
+    try {
+      setIsBusy(true);
+      const resp = await attrbAPI.delete(rowData);
+      alertBox({
+        title: resp.success
+          ? isActive
+            ? "Deactivated"
+            : "Activated"
+          : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        setPgView("SYS_VW_LST_3");
+        setFormDataAttrb(dataModelAttrb);
+        getAllAttributes(thisCategoryAttrb.id);
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleAddNewAttrb = () => {
+    setPgView("SYS_VW_FRM_3");
+    setFormDataAttrb({ ...dataModelAttrb, attrb_mcatg: thisCategoryAttrb.id });
+    setReadOnly(false);
+    setStopEdit(false);
+  };
+
+  const handleCancelAttrb = () => {
+    setPgView("SYS_VW_LST_3");
+    setFormDataAttrb(dataModelAttrb);
+    setReadOnly(false);
+    setStopEdit(false);
+  };
+
+  const handleSubmitAttrb = async () => {
+    try {
+      const newErrors = validate(formDataAttrb, tmib_attrb);
+      setFormErrorsAttrb(newErrors);
+
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+
+      const reqBody = {
+        ...formDataAttrb,
+      };
+      setIsBusy(true);
+
+      const resp = await attrbAPI.upsert(reqBody);
+      alertBox({
+        title: resp.success ? (formDataAttrb.id ? "Updated" : "Saved") : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        setPgView("SYS_VW_LST_3");
+        setFormDataAttrb(dataModelAttrb);
+        getAllAttributes(thisCategoryAttrb.id);
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     isBusy,
     pgView,
@@ -289,6 +404,17 @@ const useCategories = () => {
     handleAddNewSubCat,
     handleCancelSubCat,
     handleSubmitSubCat,
+    //attributes
+    listDataAttrb,
+    formDataAttrb,
+    formErrorsAttrb,
+    handleAttributes,
+    handleChangeAttrb,
+    handleEditAttrb,
+    handleDeleteAttrb,
+    handleAddNewAttrb,
+    handleCancelAttrb,
+    handleSubmitAttrb,
   };
 };
 export default useCategories;
