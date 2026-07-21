@@ -136,7 +136,8 @@ const BOMPage = () => {
               onDelete={handleDeleteRMPM}
             />
           )}
-          //FOHList, FOHForm
+          //do below similar as RMPM
+          //FOHForm, FOHList
           //SFGForm, SFGList
         </PageCardBody>
       </PageCard>

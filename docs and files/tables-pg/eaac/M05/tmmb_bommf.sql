@@ -6,6 +6,7 @@ CREATE TABLE tmmb_bommf (
   bommf_bsins varchar(50) NOT NULL,
   bommf_ccode varchar(50) NOT NULL,
   bommf_dpart varchar(50) NOT NULL,
+  bommf_prods varchar(50) NOT NULL,
 
   -- custom
   bommf_trnno varchar(50) NOT NULL,
