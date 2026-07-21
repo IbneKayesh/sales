@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const sql = `
+    const sql1 = `
       SELECT pd.*,
              csr.emply_cname AS crusr_cname,
              usr.emply_cname AS upusr_cname,
@@ -27,6 +27,20 @@ router.post("/", async (req, res) => {
       FROM tmmb_prods pd
       LEFT JOIN tmhb_emply csr ON pd.prods_crusr = csr.id
       LEFT JOIN tmhb_emply usr ON pd.prods_upusr = usr.id
+      WHERE pd.prods_users = $1
+      ORDER BY pd.prods_prono, pd.prods_cname`;
+      const sql = `SELECT pd.*,
+             csr.emply_cname AS crusr_cname,
+             usr.emply_cname AS upusr_cname,
+			 COALESCE(bm.bommf_count, 0) AS bommf_count,
+             0 AS edit_stop
+      FROM tmmb_prods pd
+      LEFT JOIN tmhb_emply csr ON pd.prods_crusr = csr.id
+      LEFT JOIN tmhb_emply usr ON pd.prods_upusr = usr.id
+	  LEFT JOIN ( 	SELECT bommf_prods, COUNT(*) AS bommf_count
+    				FROM tmmb_bommf
+    				GROUP BY bommf_prods
+		) bm ON bm.bommf_prods = pd.id
       WHERE pd.prods_users = $1
       ORDER BY pd.prods_prono, pd.prods_cname`;
 

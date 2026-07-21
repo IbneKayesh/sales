@@ -17,7 +17,7 @@ const RMPMForm = ({
 }) => {
   return (
     <div className="form-wrap">
-      <h4>Input → RM/PM</h4>
+      <h4>Input → RM/PM/SFG/FG</h4>
       <div className="grid">
         <div className="col-span-3">
           <Dropdown
@@ -25,6 +25,8 @@ const RMPMForm = ({
             options={[
               { label: "Raw Material (RM)", value: "RM" },
               { label: "Packing Material (PM)", value: "PM" },
+              { label: "Semi-FG", value: "SFG" },
+              { label: "FG", value: "FG" },
             ]}
             value={formData.borpm_types}
             onChange={(e) => onChange("borpm_types", e.target.value)}

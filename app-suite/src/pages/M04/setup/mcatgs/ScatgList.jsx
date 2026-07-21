@@ -48,7 +48,7 @@ const ScatgList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="sub-categories-export.csv"
+      exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No sub categories found"
     />

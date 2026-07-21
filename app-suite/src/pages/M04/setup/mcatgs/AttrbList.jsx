@@ -8,11 +8,9 @@ import {
 
 const AttrbList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "attrb_ccode", header: "Code", width: "100px" },
-    { key: "attrb_cname", header: "Attribute Name", width: "180px" },
-    { key: "attrb_mcatg", header: "Main Category", width: "150px" },
+    { key: "attrb_cname", header: "Name", width: "120px" },
     { key: "attrb_dtype", header: "Data Type", width: "120px" },
-    { key: "attrb_dvalu", header: "Default Value", width: "150px" },
+    { key: "attrb_dvalu", header: "Default", width: "150px" },
     {
       key: "attrb_actve",
       header: "Status",
@@ -51,7 +49,7 @@ const AttrbList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="attributes-export.csv"
+      exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No attributes found"
     />

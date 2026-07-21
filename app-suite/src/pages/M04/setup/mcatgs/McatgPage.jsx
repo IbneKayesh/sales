@@ -46,6 +46,8 @@ const McatgPage = () => {
     handleAddNewSubCat,
     handleCancelSubCat,
     handleSubmitSubCat,
+    //attributes
+    handleAttributes,
   } = useCategories();
 
   return (
@@ -114,6 +116,7 @@ const McatgPage = () => {
               onEdit={handleEdit}
               onDelete={handleDelete}
               onSubCategory={handleSubCategory}
+              onAttributes={handleAttributes}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
@@ -148,6 +151,9 @@ const McatgPage = () => {
               onSubmit={handleSubmitSubCat}
             />
           )}
+
+          //AttrbList.jsx, AttrbForm.jsx, SYS_VW_LST_3, SYS_VW_FRM_3
+
         </PageCardBody>
       </PageCard>
     </div>

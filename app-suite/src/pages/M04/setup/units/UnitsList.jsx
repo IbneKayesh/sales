@@ -49,7 +49,7 @@ const UnitsList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="units-export.csv"
+      exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No units found"
     />

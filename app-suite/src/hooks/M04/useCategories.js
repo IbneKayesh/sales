@@ -256,6 +256,12 @@ const useCategories = () => {
     }
   };
 
+  //attributes
+  //implement below
+  //SYS_VW_LST_3, SYS_VW_FRM_3
+  //getAllAttributes,handleAttributes,handleChangeAttributes,handleEditAttributes
+  //handleDeleteAttributes, handleAddNewAttributes, handleCancelAttributes
+  //handleSubmitAttributes
   return {
     isBusy,
     pgView,

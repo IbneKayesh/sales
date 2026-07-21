@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
       LEFT JOIN tmhb_emply csr ON bm.bommf_crusr = csr.id
       LEFT JOIN tmhb_emply usr ON bm.bommf_upusr = usr.id
       WHERE bm.bommf_users = $1
-      ORDER BY bm.bommf_cname;`
+      ORDER BY pdt.prods_cname, bm.bommf_cname;`
 
     const rows = await dbGetAll(sql, [user_c], `Get BOM - ${user_c}`);
 

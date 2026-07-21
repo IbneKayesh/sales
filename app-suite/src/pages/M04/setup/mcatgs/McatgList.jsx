@@ -4,7 +4,13 @@ import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
 import { IconClose, IconCheck, IconBar } from "@/icons";
 
-const McatgList = ({ listData, onEdit, onDelete, onSubCategory }) => {
+const McatgList = ({
+  listData,
+  onEdit,
+  onDelete,
+  onSubCategory,
+  onAttributes,
+}) => {
   const dtColumns = [
     { key: "mcatg_ccode", header: "Code", width: "180px" },
     { key: "mcatg_cname", header: "Category Name", width: "200px" },
@@ -39,6 +45,17 @@ const McatgList = ({ listData, onEdit, onDelete, onSubCategory }) => {
           >
             <IconBar size={14} />
           </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAttributes(row);
+            }}
+            title="Attributes"
+          >
+            <IconBar size={14} />
+          </Button>
           <ActionButton
             rowData={row}
             actve={row.mcatg_actve}
@@ -59,7 +76,7 @@ const McatgList = ({ listData, onEdit, onDelete, onSubCategory }) => {
       striped
       hoverable
       exportable
-      exportFilename="main-categories-export.csv"
+      exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No main categories found"
     />

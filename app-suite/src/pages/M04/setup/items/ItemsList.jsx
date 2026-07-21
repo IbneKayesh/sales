@@ -86,7 +86,7 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
       striped
       hoverable
       exportable
-      exportFilename="items-export.csv"
+      exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No items found"
     />

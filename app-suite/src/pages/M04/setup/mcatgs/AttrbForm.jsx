@@ -21,50 +21,6 @@ const AttrbForm = ({
       <div className="grid">
         <div className="col-span-4">
           <InputText
-            label="User"
-            placeholder="Enter user"
-            value={formData.attrb_users}
-            onChange={(e) => onChange("attrb_users", e.target.value)}
-            error={formErrors.attrb_users}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputText
-            label="Business Instance"
-            placeholder="Enter business instance"
-            value={formData.attrb_bsins}
-            onChange={(e) => onChange("attrb_bsins", e.target.value)}
-            error={formErrors.attrb_bsins}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputText
-            label="Code"
-            placeholder="Enter code"
-            value={formData.attrb_ccode}
-            onChange={(e) => onChange("attrb_ccode", e.target.value)}
-            error={formErrors.attrb_ccode}
-            disabled={readOnly}
-          />
-        </div>
-      </div>
-      <div className="grid">
-        <div className="col-span-4">
-          <InputText
-            label="Main Category"
-            placeholder="Enter main category"
-            value={formData.attrb_mcatg}
-            onChange={(e) => onChange("attrb_mcatg", e.target.value)}
-            error={formErrors.attrb_mcatg}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputText
             label="Attribute Name"
             placeholder="Enter attribute name"
             value={formData.attrb_cname}

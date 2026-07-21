@@ -17,7 +17,8 @@ const ProductionList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "prods_ccode", header: "Code", width: "180px" },
     { key: "prods_cname", header: "Name", width: "180px" },
-    { key: "prods_prono", header: "Production No", width: "180px" },
+    { key: "prods_prono", header: "No of Process", width: "180px" },
+    { key: "bommf_count", header: "No of BOM", width: "80px" },
     {
       key: "prods_actve",
       header: "Status",

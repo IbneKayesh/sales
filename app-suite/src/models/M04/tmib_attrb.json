@@ -3,25 +3,6 @@
     "type": "string",
     "label": "Id"
   },
-  "attrb_users": {
-    "type": "string",
-    "label": "User",
-    "maxLength": 50,
-    "placeholder": "Enter user",
-    "required": true
-  },
-  "attrb_bsins": {
-    "type": "string",
-    "label": "Business Instance",
-    "maxLength": 50,
-    "placeholder": "Enter business instance"
-  },
-  "attrb_ccode": {
-    "type": "string",
-    "label": "Code",
-    "maxLength": 50,
-    "placeholder": "Enter code"
-  },
   "attrb_mcatg": {
     "type": "string",
     "label": "Main Category",

@@ -59,7 +59,7 @@ const MgrupList = ({ listData, onEdit, onDelete, onSubGroup }) => {
       striped
       hoverable
       exportable
-      exportFilename="main-groups-export.csv"
+      exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No main groups found"
     />
