@@ -1,0 +1,114 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "prfoh_users": {
+    "type": "string",
+    "label": "User",
+    "maxLength": 50,
+    "placeholder": "Select user",
+    "required": true
+  },
+  "prfoh_bsins": {
+    "type": "string",
+    "label": "Business Instance",
+    "maxLength": 50,
+    "placeholder": "Select business",
+    "required": true
+  },
+  "prfoh_promf": {
+    "type": "string",
+    "label": "Process",
+    "maxLength": 50,
+    "placeholder": "Select process",
+    "required": true
+  },
+  "prfoh_bofoh": {
+    "type": "string",
+    "label": "BOM FOH",
+    "maxLength": 50,
+    "placeholder": "Select BOM FOH",
+    "required": true
+  },
+  "prfoh_items": {
+    "type": "string",
+    "label": "Item",
+    "maxLength": 50,
+    "placeholder": "Select item",
+    "required": true
+  },
+  "prfoh_units": {
+    "type": "string",
+    "label": "Unit",
+    "maxLength": 50,
+    "placeholder": "Select unit",
+    "required": true
+  },
+  "prfoh_types": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Enter type (FOH)",
+    "required": true
+  },
+  "prfoh_foqty": {
+    "type": "decimal",
+    "label": "Quantity",
+    "required": false
+  },
+  "prfoh_forto": {
+    "type": "decimal",
+    "label": "Ratio",
+    "required": false
+  },
+  "prfoh_forat": {
+    "type": "decimal",
+    "label": "Rate",
+    "required": true
+  },
+  "prfoh_foval": {
+    "type": "decimal",
+    "label": "Value",
+    "required": false
+  },
+  "prfoh_prqty": {
+    "type": "decimal",
+    "label": "Process Quantity",
+    "required": false
+  },
+  "prfoh_prrto": {
+    "type": "decimal",
+    "label": "Process Ratio",
+    "required": false
+  },
+  "prfoh_prrat": {
+    "type": "decimal",
+    "label": "Process Rate",
+    "required": false
+  },
+  "prfoh_prval": {
+    "type": "decimal",
+    "label": "Process Value",
+    "required": false
+  },
+  "prfoh_ispst": {
+    "type": "string",
+    "label": "Is Posted",
+    "required": false
+  },
+  "prfoh_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select department",
+    "required": false
+  },
+  "prfoh_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

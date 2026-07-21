@@ -1,0 +1,133 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "promf_users": {
+    "type": "string",
+    "label": "User",
+    "maxLength": 50,
+    "placeholder": "Select user",
+    "required": true
+  },
+  "promf_bsins": {
+    "type": "string",
+    "label": "Business Instance",
+    "maxLength": 50,
+    "placeholder": "Select business",
+    "required": true
+  },
+  "promf_ccode": {
+    "type": "string",
+    "label": "Company Code",
+    "maxLength": 50,
+    "placeholder": "Select company",
+    "required": true
+  },
+  "promf_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select department",
+    "required": true
+  },
+  "promf_bommf": {
+    "type": "string",
+    "label": "BOM",
+    "maxLength": 50,
+    "placeholder": "Select BOM",
+    "required": true
+  },
+  "promf_bkngm": {
+    "type": "string",
+    "label": "Booking",
+    "maxLength": 50,
+    "placeholder": "Select booking",
+    "required": false
+  },
+  "promf_trnno": {
+    "type": "string",
+    "label": "Transaction No",
+    "maxLength": 50,
+    "placeholder": "Enter transaction no",
+    "required": true
+  },
+  "promf_trdat": {
+    "type": "datetime",
+    "label": "Transaction Date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "promf_cname": {
+    "type": "string",
+    "label": "Process Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter process name",
+    "required": true
+  },
+  "promf_prono": {
+    "type": "number",
+    "label": "Process No",
+    "maxLength": 50,
+    "minLength": 1,
+    "required": true,
+    "default": 1
+  },
+  "promf_units": {
+    "type": "string",
+    "label": "Unit",
+    "maxLength": 50,
+    "placeholder": "Select unit",
+    "required": true
+  },
+  "promf_bmqty": {
+    "type": "decimal",
+    "label": "BOM Quantity",
+    "required": true,
+    "default": 1
+  },
+  "promf_bmval": {
+    "type": "decimal",
+    "label": "BOM Value",
+    "required": true,
+    "default": 1
+  },
+  "promf_prqty": {
+    "type": "decimal",
+    "label": "Process Quantity",
+    "required": true,
+    "default": 1
+  },
+  "promf_prval": {
+    "type": "decimal",
+    "label": "Process Value",
+    "required": false,
+    "default": 1
+  },
+  "promf_frdat": {
+    "type": "datetime",
+    "label": "From Date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "promf_todat": {
+    "type": "datetime",
+    "label": "To Date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "promf_prtim": {
+    "type": "decimal",
+    "label": "Process Time (Min)",
+    "required": false,
+    "default": 1
+  },
+  "promf_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "prsfg_users": {
+    "type": "string",
+    "label": "User",
+    "maxLength": 50,
+    "placeholder": "Select user",
+    "required": true
+  },
+  "prsfg_bsins": {
+    "type": "string",
+    "label": "Business Instance",
+    "maxLength": 50,
+    "placeholder": "Select business",
+    "required": true
+  },
+  "prsfg_promf": {
+    "type": "string",
+    "label": "Process",
+    "maxLength": 50,
+    "placeholder": "Select process",
+    "required": true
+  },
+  "prsfg_bosfg": {
+    "type": "string",
+    "label": "BOM SFG/FG",
+    "maxLength": 50,
+    "placeholder": "Select BOM SFG/FG",
+    "required": true
+  },
+  "prsfg_items": {
+    "type": "string",
+    "label": "Item",
+    "maxLength": 50,
+    "placeholder": "Select item",
+    "required": true
+  },
+  "prsfg_units": {
+    "type": "string",
+    "label": "Unit",
+    "maxLength": 50,
+    "placeholder": "Select unit",
+    "required": true
+  },
+  "prsfg_types": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Enter type (SFG/FG)",
+    "required": true
+  },
+  "prsfg_group": {
+    "type": "string",
+    "label": "Group",
+    "maxLength": 50,
+    "placeholder": "Select group (MAIN/CO/BY)",
+    "required": true
+  },
+  "prsfg_fgqty": {
+    "type": "decimal",
+    "label": "Quantity",
+    "required": false
+  },
+  "prsfg_fgrto": {
+    "type": "decimal",
+    "label": "Ratio",
+    "required": false
+  },
+  "prsfg_fgrat": {
+    "type": "decimal",
+    "label": "Rate",
+    "required": true
+  },
+  "prsfg_fgval": {
+    "type": "decimal",
+    "label": "Value",
+    "required": false
+  },
+  "prsfg_prqty": {
+    "type": "decimal",
+    "label": "Process Quantity",
+    "required": false
+  },
+  "prsfg_prrto": {
+    "type": "decimal",
+    "label": "Process Ratio",
+    "required": false
+  },
+  "prsfg_prrat": {
+    "type": "decimal",
+    "label": "Process Rate",
+    "required": false
+  },
+  "prsfg_prval": {
+    "type": "decimal",
+    "label": "Process Value",
+    "required": false
+  },
+  "prsfg_ispst": {
+    "type": "string",
+    "label": "Is Posted",
+    "required": false
+  },
+  "prsfg_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select department",
+    "required": false
+  },
+  "prsfg_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

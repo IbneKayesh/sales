@@ -1,0 +1,131 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "prbtc_users": {
+    "type": "string",
+    "label": "User",
+    "maxLength": 50,
+    "placeholder": "Select user",
+    "required": true
+  },
+  "prbtc_bsins": {
+    "type": "string",
+    "label": "Business Instance",
+    "maxLength": 50,
+    "placeholder": "Select business",
+    "required": true
+  },
+  "prbtc_promf": {
+    "type": "string",
+    "label": "Process",
+    "maxLength": 50,
+    "placeholder": "Select process",
+    "required": true
+  },
+  "prbtc_bosfg": {
+    "type": "string",
+    "label": "BOM SFG/FG",
+    "maxLength": 50,
+    "placeholder": "Select BOM SFG/FG",
+    "required": true
+  },
+  "prbtc_prsfg": {
+    "type": "string",
+    "label": "Process SFG/FG",
+    "maxLength": 50,
+    "placeholder": "Select process SFG/FG",
+    "required": true
+  },
+  "prbtc_items": {
+    "type": "string",
+    "label": "Item",
+    "maxLength": 50,
+    "placeholder": "Select item",
+    "required": true
+  },
+  "prbtc_units": {
+    "type": "string",
+    "label": "Unit",
+    "maxLength": 50,
+    "placeholder": "Select unit",
+    "required": true
+  },
+  "prbtc_types": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Enter type (RM/PM/SFG/FG)",
+    "required": true
+  },
+  "prbtc_group": {
+    "type": "string",
+    "label": "Group",
+    "maxLength": 50,
+    "placeholder": "Select group (MAIN/CO/BY)",
+    "required": true
+  },
+  "prbtc_batch": {
+    "type": "string",
+    "label": "Batch No",
+    "maxLength": 50,
+    "placeholder": "Enter batch no",
+    "required": false
+  },
+  "prbtc_gaqty": {
+    "type": "decimal",
+    "label": "Good Quantity (A)",
+    "required": false
+  },
+  "prbtc_gbqty": {
+    "type": "decimal",
+    "label": "Good Quantity (B)",
+    "required": false
+  },
+  "prbtc_rjqty": {
+    "type": "decimal",
+    "label": "Reject Quantity",
+    "required": false
+  },
+  "prbtc_pbrat": {
+    "type": "decimal",
+    "label": "Rate",
+    "required": false,
+    "default": 1
+  },
+  "prbtc_pbval": {
+    "type": "decimal",
+    "label": "Value",
+    "required": false,
+    "default": 1
+  },
+  "prbtc_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select department",
+    "required": false
+  },
+  "prbtc_wkshf": {
+    "type": "string",
+    "label": "Work Shift",
+    "maxLength": 50,
+    "placeholder": "Select work shift",
+    "required": false
+  },
+  "prbtc_emply": {
+    "type": "string",
+    "label": "Employee",
+    "maxLength": 50,
+    "placeholder": "Select employee",
+    "required": false
+  },
+  "prbtc_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

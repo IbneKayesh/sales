@@ -1,0 +1,114 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "prrpm_users": {
+    "type": "string",
+    "label": "User",
+    "maxLength": 50,
+    "placeholder": "Select user",
+    "required": true
+  },
+  "prrpm_bsins": {
+    "type": "string",
+    "label": "Business Instance",
+    "maxLength": 50,
+    "placeholder": "Select business",
+    "required": true
+  },
+  "prrpm_promf": {
+    "type": "string",
+    "label": "Process",
+    "maxLength": 50,
+    "placeholder": "Select process",
+    "required": true
+  },
+  "prrpm_borpm": {
+    "type": "string",
+    "label": "BOM RM/PM",
+    "maxLength": 50,
+    "placeholder": "Select BOM RM/PM",
+    "required": true
+  },
+  "prrpm_items": {
+    "type": "string",
+    "label": "Item",
+    "maxLength": 50,
+    "placeholder": "Select item",
+    "required": true
+  },
+  "prrpm_units": {
+    "type": "string",
+    "label": "Unit",
+    "maxLength": 50,
+    "placeholder": "Select unit",
+    "required": true
+  },
+  "prrpm_types": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Enter type (RM/PM/SFG/FG)",
+    "required": true
+  },
+  "prrpm_rmqty": {
+    "type": "decimal",
+    "label": "Quantity",
+    "required": false
+  },
+  "prrpm_rmrto": {
+    "type": "decimal",
+    "label": "Ratio",
+    "required": false
+  },
+  "prrpm_rmrat": {
+    "type": "decimal",
+    "label": "Rate",
+    "required": true
+  },
+  "prrpm_rmval": {
+    "type": "decimal",
+    "label": "Value",
+    "required": false
+  },
+  "prrpm_prqty": {
+    "type": "decimal",
+    "label": "Process Quantity",
+    "required": false
+  },
+  "prrpm_prrto": {
+    "type": "decimal",
+    "label": "Process Ratio",
+    "required": false
+  },
+  "prrpm_prrat": {
+    "type": "decimal",
+    "label": "Process Rate",
+    "required": false
+  },
+  "prrpm_prval": {
+    "type": "decimal",
+    "label": "Process Value",
+    "required": false
+  },
+  "prrpm_ispst": {
+    "type": "string",
+    "label": "Is Posted",
+    "required": false
+  },
+  "prrpm_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select department",
+    "required": false
+  },
+  "prrpm_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}
