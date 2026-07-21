@@ -60,6 +60,10 @@ const useItems = () => {
   const handleEdit = (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
+    getAllUnits();
+    getAllSubGroups();
+    getAllSubCategories();
+    getAllBrands();
   };
 
   const handleDelete = async (rowData) => {
@@ -104,6 +108,9 @@ const useItems = () => {
   };
 
   const getAllUnits = async () => {
+    if (units_Options.length > 0) {
+      return;
+    }
     try {
       const resp = await unitsAPI.getAllActive({});
       const list = resp.data || [];
@@ -112,6 +119,9 @@ const useItems = () => {
   };
 
   const getAllSubGroups = async () => {
+    if (sgrup_Options.length > 0) {
+      return;
+    }
     try {
       const resp = await subGroupsAPI.getAllActive({});
       const list = resp.data || [];
@@ -120,6 +130,9 @@ const useItems = () => {
   };
 
   const getAllSubCategories = async () => {
+    if (scatg_Options.length > 0) {
+      return;
+    }
     try {
       const resp = await subCategoriesAPI.getAllActive({});
       const list = resp.data || [];
@@ -128,6 +141,9 @@ const useItems = () => {
   };
 
   const getAllBrands = async () => {
+    if (brand_Options.length > 0) {
+      return;
+    }
     try {
       const resp = await brandAPI.getAllActive({});
       const list = resp.data || [];

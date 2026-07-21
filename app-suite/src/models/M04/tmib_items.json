@@ -130,7 +130,7 @@
     "default": "false"
   },
   "items_stnsf": {
-    "type": "string",
+    "type": "boolean",
     "label": "Stop Transfer",
     "default": "false"
   }

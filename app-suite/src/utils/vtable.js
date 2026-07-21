@@ -30,8 +30,8 @@ const itype_Options = [
 ];
 
 const bool_Options = [
-  { label: "Yes", value: "true" },
-  { label: "No", value: "false" },
+  { label: "Yes", value: true },
+  { label: "No", value: false },
 ];
 
 export {

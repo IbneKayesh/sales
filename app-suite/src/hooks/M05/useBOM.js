@@ -66,6 +66,9 @@ const useBOM = () => {
   }, []);
 
   const getAllDepartments = async () => {
+    if (dpart_Options.length > 0) {
+      return;
+    }
     try {
       const resp = await departmentAPI.getAllActive({});
       const list = resp.data || [];
@@ -74,6 +77,9 @@ const useBOM = () => {
   };
 
   const getAllProductions = async () => {
+    if (prods_Options.length > 0) {
+      return;
+    }
     try {
       const resp = await productionAPI.getAllActive({});
       const list = resp.data || [];
@@ -82,6 +88,9 @@ const useBOM = () => {
   };
 
   const getAllUnits = async () => {
+    if (units_Options.length > 0) {
+      return;
+    }
     try {
       const resp = await unitsAPI.getAllActive({});
       const list = resp.data || [];
@@ -111,32 +120,36 @@ const useBOM = () => {
     }
   };
 
-  const handleEdit = (rowData) => {
+  const handleEdit = async (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setReadOnly(true);
     setFormData(rowData);
     loadAllDetails(rowData.id);
 
-    setDpart_Options([
-      {
-        id: rowData.bommf_dpart,
-        dpart_cname: rowData.dpart_cname,
-      },
-    ]);
+    // setDpart_Options([
+    //   {
+    //     id: rowData.bommf_dpart,
+    //     dpart_cname: rowData.dpart_cname,
+    //   },
+    // ]);
+    getAllDepartments();
 
-    setProds_Options([
-      {
-        id: rowData.bommf_prods,
-        prods_cname: rowData.prods_cname,
-      },
-    ]);
+    // setProds_Options([
+    //   {
+    //     id: rowData.bommf_prods,
+    //     prods_cname: rowData.prods_cname,
+    //   },
+    // ]);
 
-    setUnits_Options([
-      {
-        id: rowData.bommf_units,
-        units_cname: rowData.units_cname,
-      },
-    ]);
+    getAllProductions();
+
+    // setUnits_Options([
+    //   {
+    //     id: rowData.bommf_units,
+    //     units_cname: rowData.units_cname,
+    //   },
+    // ]);
+    getAllUnits();
   };
 
   const loadAllDetails = async (id) => {

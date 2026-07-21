@@ -98,15 +98,6 @@ const menus = [
     menus_menus: "M04",
   },
   {
-    id: "M04-M04-M001",
-    menus_mname: "Attributes",
-    menus_color: "#f97316",
-    menus_micon: <IconBox />,
-    menus_odrby: 4,
-    menus_mlink: "/M04/attributes",
-    menus_menus: "M04",
-  },
-  {
     id: "M04-M07-M001",
     menus_mname: "Units",
     menus_color: "#f97316",
