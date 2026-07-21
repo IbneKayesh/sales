@@ -70,7 +70,7 @@
     "type": "string",
     "label": "Item Type",
     "default": "FG",
-    "maxLength": 2,
+    "maxLength": 5,
     "placeholder": "Select item type",
     "required": true
   },

@@ -4,16 +4,14 @@ import { bomAPI } from "@/api/M05/bomAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmmb_bommf from "@/models/M05/tmmb_bommf.json";
 const dataModel = generateDataModel(tmmb_bommf);
-import { rawMaterialAPI } from "@/api/M05/rawMaterialAPI.js";
 import tmmb_borpm from "@/models/M05/tmmb_borpm.json";
 const dataModelRM = generateDataModel(tmmb_borpm);
-import { bofohAPI } from "@/api/M05/bofohAPI.js";
 import tmmb_bofoh from "@/models/M05/tmmb_bofoh.json";
 const dataModelFOH = generateDataModel(tmmb_bofoh);
-import { bosfgAPI } from "@/api/M05/bosfgAPI.js";
 import tmmb_bosfg from "@/models/M05/tmmb_bosfg.json";
 const dataModelSFG = generateDataModel(tmmb_bosfg);
 import { departmentAPI } from "@/api/M01/departmentAPI.js";
+import { productionAPI } from "@/api/M05/productionAPI.js";
 import { unitsAPI } from "@/api/M04/unitsAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
 
@@ -36,15 +34,16 @@ const useBOM = () => {
   const [formErrors, setFormErrors] = useState({});
   //others
   const [listDataRMPM, setListDataRMPM] = useState([]);
-  const [formDataRMPM, setFormDataRMPM] = useState({});
+  const [formDataRMPM, setFormDataRMPM] = useState(dataModelRM);
 
   const [listDataFOH, setListDataFOH] = useState([]);
-  const [formDataFOH, setFormDataFOH] = useState({});
+  const [formDataFOH, setFormDataFOH] = useState(dataModelFOH);
 
   const [listDataSFGFG, setListDataSFGFG] = useState([]);
-  const [formDataSFGFG, setFormDataSFGFG] = useState({});
+  const [formDataSFGFG, setFormDataSFGFG] = useState(dataModelSFG);
 
   const [dpart_Options, setDpart_Options] = useState([]);
+  const [prods_Options, setProds_Options] = useState([]);
   const [units_Options, setUnits_Options] = useState([]);
   const [items_Options, setItems_Options] = useState([]);
   const [items_store_Options, setItems_store_Options] = useState([]);
@@ -74,6 +73,14 @@ const useBOM = () => {
     } catch (error) {}
   };
 
+  const getAllProductions = async () => {
+    try {
+      const resp = await productionAPI.getAllActive({});
+      const list = resp.data || [];
+      setProds_Options(list);
+    } catch (error) {}
+  };
+
   const getAllUnits = async () => {
     try {
       const resp = await unitsAPI.getAllActive({});
@@ -94,22 +101,56 @@ const useBOM = () => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmmb_bommf);
     setFormErrors(newErrors);
+
+    if (f === "bommf_prods") {
+      const prods_cname = prods_Options.find((opt) => opt.id === v);
+      setFormData((prev) => ({
+        ...prev,
+        bommf_cname: prods_cname?.prods_cname || "Process 1",
+      }));
+    }
   };
 
   const handleEdit = (rowData) => {
     setPgView("SYS_VW_FRM_1");
+    setReadOnly(true);
     setFormData(rowData);
     loadAllDetails(rowData.id);
+
+    setDpart_Options([
+      {
+        id: rowData.bommf_dpart,
+        dpart_cname: rowData.dpart_cname,
+      },
+    ]);
+
+    setProds_Options([
+      {
+        id: rowData.bommf_prods,
+        prods_cname: rowData.prods_cname,
+      },
+    ]);
+
+    setUnits_Options([
+      {
+        id: rowData.bommf_units,
+        units_cname: rowData.units_cname,
+      },
+    ]);
   };
 
   const loadAllDetails = async (id) => {
     try {
       setIsBusy(true);
       const [rmResp, fohResp, sfgResp] = await Promise.all([
-        rawMaterialAPI.getAll({ borpm_bommf: id }),
-        bofohAPI.getAll({ bofoh_bommf: id }),
-        bosfgAPI.getAll({ bosfg_bommf: id }),
+        bomAPI.getRMPMbyBOMId({ borpm_bommf: id }),
+        bomAPI.getFOHbyBOMId({ bofoh_bommf: id }),
+        bomAPI.getSFGFGbyBOMId({ bosfg_bommf: id }),
       ]);
+      // console.log("loadAllDetails", id);
+      // console.log("rmResp", rmResp);
+      // console.log("fohResp", fohResp);
+      // console.log("sfgResp", sfgResp);
       setListDataRMPM(rmResp.data || []);
       setListDataFOH(fohResp.data || []);
       setListDataSFGFG(sfgResp.data || []);
@@ -169,6 +210,7 @@ const useBOM = () => {
     setListDataFOH([]);
     setListDataSFGFG([]);
     getAllDepartments();
+    getAllProductions();
     getAllUnits();
     getAllItems();
   };
@@ -188,17 +230,29 @@ const useBOM = () => {
         return;
       }
       if (listDataRMPM.length === 0) {
-        showToast("At least 1 item is required", { type: "warning" });
+        showToast("At least 1 Raw Material is required", { type: "warning" });
+        return;
+      }
+      if (listDataFOH.length === 0) {
+        showToast("At least 1 Factory Overhead is required", {
+          type: "warning",
+        });
+        return;
+      }
+      if (listDataSFGFG.length === 0) {
+        showToast("At least 1 SFG/FG is required", { type: "warning" });
         return;
       }
 
       const reqBody = {
         ...formData,
-        tmmb_borpm: formDataRMPM,
+        tmmb_borpm: listDataRMPM,
         tmmb_bofoh: listDataFOH,
         tmmb_bosfg: listDataSFGFG,
       };
 
+      //console.log("reqBody", reqBody);
+      //return;
       setIsBusy(true);
       const resp = await bomAPI.upsert(reqBody);
       alertBox({
@@ -292,8 +346,147 @@ const useBOM = () => {
 
   // ---------- FACTORY OVERHEAD ----------
 
-  
+  const handleChangeFOH = (f, v) => {
+    setFormDataFOH((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formDataFOH, [f]: v }, tmmb_bofoh);
+    setFormErrors(newErrors);
+    if (f === "bofoh_types") {
+      const current_items = items_store_Options.filter(
+        (item) => item.items_itype === v,
+      );
+      setItems_Options(current_items);
+    }
+  };
+
+  const handleAddToListFOH = () => {
+    const newErrors = validate(formDataFOH, tmmb_bofoh);
+    setFormErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+    if (
+      ["", 0, "0", null, undefined].includes(formDataFOH.bofoh_foqty) &&
+      ["", 0, "0", null, undefined].includes(formDataFOH.bofoh_forto)
+    ) {
+      showToast("Qty or Ratio both are Empty", { type: "warning" });
+      return;
+    }
+    const items_iname = items_store_Options.find(
+      (opt) => opt.id === formDataFOH.bofoh_items,
+    );
+
+    const units_cname = units_Options.find(
+      (opt) => opt.id === formDataFOH.bofoh_units,
+    );
+
+    const bofoh_foval =
+      (Number(formDataFOH.bofoh_foqty) || 0) *
+      (Number(formDataFOH.bofoh_forat) || 0);
+
+    setListDataFOH((prev) => [
+      ...prev,
+      {
+        ...formDataFOH,
+        bofoh_foval: bofoh_foval || 0,
+        items_iname: items_iname?.items_iname || "Invalid Item",
+        units_cname: units_cname?.units_cname || "Invalid Unit",
+        bofoh_actve: true,
+      },
+    ]);
+    setFormDataFOH({});
+  };
+
+  const handleEditFOH = (rowData) => {
+    setPgView("SYS_VW_FRM_1");
+    setFormDataFOH(rowData);
+  };
+
+  const handleDeleteFOH = async (rowData) => {
+    const dataName = rowData.items_iname;
+    const confirmation = await confirmBox({
+      title: "Remove",
+      message: `Are you sure you want to remove "${dataName}"?`,
+      confirmText: "Remove",
+      variant: "danger",
+    });
+    if (!confirmation) return;
+    setListDataFOH((prev) =>
+      prev.filter((item) => item.bofoh_items !== rowData.bofoh_items),
+    );
+    showToast("Removed successfully", { type: "success" });
+  };
+
   // ---------- SFG /FG ----------
+
+  const handleChangeSFG = (f, v) => {
+    setFormDataSFGFG((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formDataSFGFG, [f]: v }, tmmb_bosfg);
+    setFormErrors(newErrors);
+    if (f === "bosfg_types") {
+      const current_items = items_store_Options.filter(
+        (item) => item.items_itype === v,
+      );
+      setItems_Options(current_items);
+    }
+  };
+
+  const handleAddToListSFG = () => {
+    const newErrors = validate(formDataSFGFG, tmmb_bosfg);
+    setFormErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+    if (
+      ["", 0, "0", null, undefined].includes(formDataSFGFG.bosfg_fgqty) &&
+      ["", 0, "0", null, undefined].includes(formDataSFGFG.bosfg_fgrto)
+    ) {
+      showToast("Qty or Ratio both are Empty", { type: "warning" });
+      return;
+    }
+    const items_iname = items_store_Options.find(
+      (opt) => opt.id === formDataSFGFG.bosfg_items,
+    );
+
+    const units_cname = units_Options.find(
+      (opt) => opt.id === formDataSFGFG.bosfg_units,
+    );
+
+    const bosfg_fgval =
+      (Number(formDataSFGFG.bosfg_fgqty) || 0) *
+      (Number(formDataSFGFG.bosfg_fgrat) || 0);
+
+    setListDataSFGFG((prev) => [
+      ...prev,
+      {
+        ...formDataSFGFG,
+        bosfg_fgval: bosfg_fgval || 0,
+        items_iname: items_iname?.items_iname || "Invalid Item",
+        units_cname: units_cname?.units_cname || "Invalid Unit",
+        bosfg_actve: true,
+      },
+    ]);
+    setFormDataSFGFG({});
+  };
+
+  const handleEditSFG = (rowData) => {
+    setPgView("SYS_VW_FRM_1");
+    setFormDataSFGFG(rowData);
+  };
+
+  const handleDeleteSFG = async (rowData) => {
+    const dataName = rowData.items_iname;
+    const confirmation = await confirmBox({
+      title: "Remove",
+      message: `Are you sure you want to remove "${dataName}"?`,
+      confirmText: "Remove",
+      variant: "danger",
+    });
+    if (!confirmation) return;
+    setListDataSFGFG((prev) =>
+      prev.filter((item) => item.bosfg_items !== rowData.bosfg_items),
+    );
+    showToast("Removed successfully", { type: "success" });
+  };
 
   return {
     isBusy,
@@ -310,9 +503,11 @@ const useBOM = () => {
     listDataRMPM,
     formDataRMPM,
     listDataFOH,
+    formDataFOH,
     listDataSFGFG,
     formDataSFGFG,
     dpart_Options,
+    prods_Options,
     units_Options,
     items_Options,
     //functions
@@ -328,6 +523,16 @@ const useBOM = () => {
     handleAddToListRMPM,
     handleEditRMPM,
     handleDeleteRMPM,
+    //foh
+    handleChangeFOH,
+    handleAddToListFOH,
+    handleEditFOH,
+    handleDeleteFOH,
+    //sfg
+    handleChangeSFG,
+    handleAddToListSFG,
+    handleEditSFG,
+    handleDeleteSFG,
   };
 };
 export default useBOM;

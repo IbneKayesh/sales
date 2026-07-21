@@ -39,7 +39,7 @@ export default function InputCalendar({
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
-  const selectedDate = value ? new Date(value + 'T00:00:00') : null
+  const selectedDate = value ? new Date((value.includes('T') ? value.split('T')[0] : value) + 'T00:00:00') : null
 
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate()
   const firstDay = new Date(viewYear, viewMonth, 1).getDay()

@@ -1,32 +1,27 @@
 import DataTable from "@/components/DataTable";
-import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import Button from "@/components/Button";
-import { IconClose, IconCheck, IconPlus } from "@/icons";
 
-const SFGList = ({ listData, onEdit, onDelete, onAdd }) => {
+const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
   const dtColumns = [
-    { key: "bosfg_items", header: "Item", width: "200px" },
     { key: "bosfg_types", header: "Type", width: "100px" },
-    { key: "bosfg_inout", header: "I/O", width: "80px" },
-    { key: "bosfg_group", header: "Group", width: "100px" },
-    { key: "bosfg_rmqty", header: "Quantity", width: "100px" },
-    { key: "bosfg_rmrto", header: "Ratio", width: "100px" },
-    { key: "bosfg_rmrat", header: "Rate", width: "100px" },
-    { key: "bosfg_rmval", header: "Value", width: "100px" },
+    { key: "items_iname", header: "Item", width: "200px" },
+    { key: "bosfg_group", header: "Group", width: "80px" },
     {
-      key: "bosfg_actve",
-      header: "Status",
-      width: "120px",
-      render: (v) => {
+      key: "bosfg_fgqty",
+      header: "Quantity",
+      width: "80px",
+      render: (_, row) => {
         return (
-          <Badge variant={v ? "success" : "danger"}>
-            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
-          </Badge>
+          <span>
+            {row.bosfg_fgqty} {row.units_cname}
+          </span>
         );
       },
     },
+    { key: "bosfg_fgrto", header: "Ratio", width: "80px" },
+    { key: "bosfg_fgrat", header: "Rate", width: "80px" },
+    { key: "bosfg_fgval", header: "Value", width: "80px" },
+    { key: "bosfg_notes", header: "Notes", width: "100px" },
     {
       key: "actions",
       header: "Actions",
@@ -40,27 +35,24 @@ const SFGList = ({ listData, onEdit, onDelete, onAdd }) => {
           onDelete={onDelete}
         />
       ),
+      visible: !readOnly
     },
   ];
   return (
-    <div>
-      <div className="data-table__toolbar" style={{ justifyContent: "flex-end", marginBottom: "8px" }}>
-        <Button size="sm" onClick={onAdd}>
-          <IconPlus size={14} className="icon-left" />
-          Add
-        </Button>
-      </div>
-      <DataTable
-        columns={dtColumns}
-        data={listData}
-        pageSize={5}
-        sortable
-        striped
-        hoverable
-        onRowClick={(row) => onEdit(row)}
-        emptyMessage="No output SFG/FG items found"
-      />
-    </div>
+    <DataTable
+      columns={dtColumns}
+      data={listData}
+      pageSize={10}
+      sortable
+      searchable
+      striped
+      hoverable
+      exportable
+      exportFilename="data-export.csv"
+      onRowClick={(row) => onEdit(row)}
+      emptyMessage="No SFG/FG found"
+      className="mt-2"
+    />
   );
 };
 export default SFGList;

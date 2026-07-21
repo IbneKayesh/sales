@@ -10,10 +10,10 @@ CREATE TABLE tmmb_bofoh (
 
   -- custom
   bofoh_types varchar(50) NOT NULL, --FOH
-  bofoh_rmqty decimal(18,6) DEFAULT 1,
-  bofoh_rmrto decimal(18,6) DEFAULT 1,
-  bofoh_rmrat decimal(18,6) DEFAULT 1,
-  bofoh_rmval decimal(18,6) DEFAULT 1,
+  bofoh_foqty decimal(18,6) DEFAULT 1,
+  bofoh_forto decimal(18,6) DEFAULT 1,
+  bofoh_forat decimal(18,6) DEFAULT 1,
+  bofoh_foval decimal(18,6) DEFAULT 1,
   bofoh_notes VARCHAR(50),
   
   -- default 2

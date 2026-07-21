@@ -10,12 +10,11 @@ CREATE TABLE tmmb_bosfg (
 
   -- custom
   bosfg_types varchar(50) NOT NULL, --RM/PM
-  bosfg_inout varchar(50) NOT NULL,
   bosfg_group varchar(50) NOT NULL, --MAIN,CO,BY
-  bosfg_rmqty decimal(18,6) DEFAULT 1,
-  bosfg_rmrto decimal(18,6) DEFAULT 1,
-  bosfg_rmrat decimal(18,6) DEFAULT 1,
-  bosfg_rmval decimal(18,6) DEFAULT 1,
+  bosfg_fgqty decimal(18,6) DEFAULT 1,
+  bosfg_fgrto decimal(18,6) DEFAULT 1,
+  bosfg_fgrat decimal(18,6) DEFAULT 1,
+  bosfg_fgval decimal(18,6) DEFAULT 1,
   bosfg_notes VARCHAR(50),
   
   -- default 2

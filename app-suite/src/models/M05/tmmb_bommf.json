@@ -10,6 +10,13 @@
     "placeholder": "Select department",
     "required": true
   },
+  "bommf_prods": {
+    "type": "string",
+    "label": "Production",
+    "maxLength": 50,
+    "placeholder": "Select production",
+    "required": true
+  },
   "bommf_cname": {
     "type": "string",
     "label": "BOM Name",
@@ -59,7 +66,8 @@
   "bommf_frdat": {
     "type": "datetime",
     "label": "From Date",
-    "required": true
+    "required": true,
+    "default": "new Date() with local format"
   },
   "bommf_todat": {
     "type": "datetime",

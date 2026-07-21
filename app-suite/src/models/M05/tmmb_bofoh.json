@@ -3,13 +3,6 @@
     "type": "string",
     "label": "Id"
   },
-  "bofoh_bommf": {
-    "type": "string",
-    "label": "BOM",
-    "maxLength": 50,
-    "placeholder": "Select BOM",
-    "required": true
-  },
   "bofoh_items": {
     "type": "string",
     "label": "Item",
@@ -28,33 +21,34 @@
     "type": "string",
     "label": "Type",
     "maxLength": 50,
-    "placeholder": "Enter type (FOH)",
+    "placeholder": "Enter type (RM/PM)",
     "required": true
   },
-  "bofoh_rmqty": {
-    "type": "decimal",
+  "bofoh_foqty": {
+    "type": "number",
     "label": "Quantity",
-    "default": 1
+    "required": false
   },
-  "bofoh_rmrto": {
-    "type": "decimal",
+  "bofoh_forto": {
+    "type": "number",
     "label": "Ratio",
-    "default": 1
+    "required": false
   },
-  "bofoh_rmrat": {
-    "type": "decimal",
+  "bofoh_forat": {
+    "type": "number",
     "label": "Rate",
-    "default": 1
+    "required": true
   },
-  "bofoh_rmval": {
-    "type": "decimal",
+  "bofoh_foval": {
+    "type": "number",
     "label": "Value",
-    "default": 1
+    "required": false
   },
   "bofoh_notes": {
     "type": "string",
     "label": "Notes",
     "maxLength": 50,
-    "placeholder": "Enter notes"
+    "placeholder": "Enter notes",
+    "required": false
   }
 }

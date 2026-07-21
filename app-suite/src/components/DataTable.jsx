@@ -4,8 +4,8 @@ import { IconSearch, IconClose, IconSort, IconChevronLeft, IconChevronRight, Ico
 function exportToCsv(data, columns, filename) {
   if (!data.length) return
 
-  // Build header row from data columns (exclude action columns marked sortable: false)
-  const dataCols = columns.filter((col) => col.sortable !== false)
+  // Build header row from visible data columns (exclude action columns marked sortable: false)
+  const dataCols = columns.filter((col) => col.sortable !== false && col.visible !== false)
 
   const headers = dataCols.map((col) => {
     const val = col.header || col.label || col.key || ''
@@ -49,6 +49,14 @@ export default function DataTable({
   stickyFirst = true,
   ...rest
 }) {
+  // Filter out columns marked as hidden
+  const visibleColumns = columns.filter((col) => col.visible !== false)
+
+  // If no columns are visible, render nothing
+  if (visibleColumns.length === 0) {
+    return null
+  }
+
   const [sortKey, setSortKey] = useState(null)
   const [sortDir, setSortDir] = useState('asc')
   const [page, setPage] = useState(0)
@@ -67,7 +75,7 @@ export default function DataTable({
 
   const filtered = searchable && searchQuery
     ? data.filter((row) =>
-        columns.some((col) => {
+        visibleColumns.some((col) => {
           const val = col.accessor ? row[col.accessor] : row[col.key]
           return val != null && String(val).toLowerCase().includes(searchQuery.toLowerCase())
         }),
@@ -141,7 +149,7 @@ export default function DataTable({
         <table className="data-table__table">
           <thead>
             <tr>
-              {columns.map((col, ci) => (
+              {visibleColumns.map((col, ci) => (
                 <th
                   key={col.key || col.accessor}
                   className={`data-table__th${col.sortable !== false && sortable ? ' data-table__th--sortable' : ''}${sortKey === (col.key || col.accessor) ? ` data-table__th--${sortDir}` : ''}${stickyFirst && ci === 0 ? ' data-table__th--sticky' : ''}`}
@@ -168,7 +176,7 @@ export default function DataTable({
                   className={`data-table__tr${striped && i % 2 === 1 ? ' data-table__tr--striped' : ''}${hoverable ? ' data-table__tr--hoverable' : ''}${onRowClick ? ' data-table__tr--clickable' : ''}`}
                   onClick={() => onRowClick && onRowClick(row)}
                 >
-                  {columns.map((col, ci) => {
+                  {visibleColumns.map((col, ci) => {
                     const val = col.accessor ? row[col.accessor] : row[col.key]
                     return (
                       <td key={col.key || col.accessor} className={`data-table__td${stickyFirst && ci === 0 ? ' data-table__td--sticky' : ''}`} style={col.width ? { width: col.width } : undefined}>
@@ -180,7 +188,7 @@ export default function DataTable({
               ))
             ) : (
               <tr>
-                <td colSpan={columns.length} className="data-table__empty">
+                <td colSpan={visibleColumns.length} className="data-table__empty">
                   {emptyMessage}
                 </td>
               </tr>

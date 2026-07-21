@@ -1,30 +1,26 @@
 import DataTable from "@/components/DataTable";
-import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import Button from "@/components/Button";
-import { IconClose, IconCheck, IconPlus } from "@/icons";
 
-const FOHList = ({ listData, onEdit, onDelete, onAdd }) => {
+const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "bofoh_items", header: "Item", width: "200px" },
-    { key: "bofoh_types", header: "Type", width: "100px" },
-    { key: "bofoh_rmqty", header: "Quantity", width: "100px" },
-    { key: "bofoh_rmrto", header: "Ratio", width: "100px" },
-    { key: "bofoh_rmrat", header: "Rate", width: "100px" },
-    { key: "bofoh_rmval", header: "Value", width: "100px" },
+    { key: "bofoh_types", header: "Type", width: "80px" },
+    { key: "items_iname", header: "Item", width: "200px" },
     {
-      key: "bofoh_actve",
-      header: "Status",
-      width: "120px",
-      render: (v) => {
+      key: "bofoh_foqty",
+      header: "Quantity",
+      width: "80px",
+      render: (_, row) => {
         return (
-          <Badge variant={v ? "success" : "danger"}>
-            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
-          </Badge>
+          <span>
+            {row.bofoh_foqty} {row.units_cname}
+          </span>
         );
       },
     },
+    { key: "bofoh_forto", header: "Ratio", width: "80px" },
+    { key: "bofoh_forat", header: "Rate", width: "80px" },
+    { key: "bofoh_foval", header: "Value", width: "80px" },
+    { key: "bofoh_notes", header: "Notes", width: "100px" },
     {
       key: "actions",
       header: "Actions",
@@ -38,27 +34,24 @@ const FOHList = ({ listData, onEdit, onDelete, onAdd }) => {
           onDelete={onDelete}
         />
       ),
+      visible: !readOnly
     },
   ];
   return (
-    <div>
-      <div className="data-table__toolbar" style={{ justifyContent: "flex-end", marginBottom: "8px" }}>
-        <Button size="sm" onClick={onAdd}>
-          <IconPlus size={14} className="icon-left" />
-          Add
-        </Button>
-      </div>
-      <DataTable
-        columns={dtColumns}
-        data={listData}
-        pageSize={5}
-        sortable
-        striped
-        hoverable
-        onRowClick={(row) => onEdit(row)}
-        emptyMessage="No factory overhead items found"
-      />
-    </div>
+    <DataTable
+      columns={dtColumns}
+      data={listData}
+      pageSize={10}
+      sortable
+      searchable
+      striped
+      hoverable
+      exportable
+      exportFilename="data-export.csv"
+      onRowClick={(row) => onEdit(row)}
+      emptyMessage="No factory overhead found"
+      className="mt-2"
+    />
   );
 };
 export default FOHList;

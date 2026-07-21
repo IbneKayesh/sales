@@ -1,156 +1,210 @@
 const currentDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, "0");
-    const day = today.getDate().toString().padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-  
-  const currentDateTime = () => {
-    const now = new Date();
-    const yyyy = now.getFullYear();
-    const mm = (now.getMonth() + 1).toString().padStart(2, "0");
-    const dd = now.getDate().toString().padStart(2, "0");
-    const hh = now.getHours().toString().padStart(2, "0");
-    const min = now.getMinutes().toString().padStart(2, "0");
-    const ss = now.getSeconds().toString().padStart(2, "0");
-    return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
-  };
-  
-  const formatDate = (date) => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = (today.getMonth() + 1).toString().padStart(2, "0");
+  const day = today.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
-    if (!date) return "";
-    // Check if it's already a JS Date object
-    let d = date;
-    if (typeof date === "string") {
-      // If it's a full ISO string (has T), Date constructor handles it usually.
-      // If it's pure YYYY-MM-DD, splitting is safer to avoid timezone shift.
-      if (date.includes("T")) {
-        d = new Date(date);
-      } else {
-        const [year, month, day] = date.split("-");
-        return `${day}-${month}-${year}`;
-      }
-    } else if (!(date instanceof Date)) {
-      return "";
-    }
-    
+const currentDateTime = () => {
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = (now.getMonth() + 1).toString().padStart(2, "0");
+  const dd = now.getDate().toString().padStart(2, "0");
+  const hh = now.getHours().toString().padStart(2, "0");
+  const min = now.getMinutes().toString().padStart(2, "0");
+  const ss = now.getSeconds().toString().padStart(2, "0");
+  return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+};
 
-    // If it ended up as a Date object from ISO string
-    if (isNaN(d.getTime())) return "";
-  
-    const day = d.getDate().toString().padStart(2, "0");
-    const month = (d.getMonth() + 1).toString().padStart(2, "0");
-    const year = d.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-  
-  const formatDateTime = (date) => {
-    if (!date) return "";
-    const d = new Date(date);
-    if (isNaN(d.getTime())) return "";
-  
-    const day = d.getDate().toString().padStart(2, "0");
-    const month = (d.getMonth() + 1).toString().padStart(2, "0");
-    const year = d.getFullYear();
-    const hh = d.getHours().toString().padStart(2, "0");
-    const min = d.getMinutes().toString().padStart(2, "0");
-    const ss = d.getSeconds().toString().padStart(2, "0");
-  
-    return `${day}-${month}-${year} ${hh}:${min}:${ss}`;
-  };
-  
-  const formatDateForAPI = (date) => {
-    if (!date) return null;
-  
-    let d = date;
-    // If it's a string and looks like an ISO date, parse it
-    if (typeof date === "string" && date.includes("T")) {
+const formatDate = (date) => {
+  if (!date) return "";
+  // Check if it's already a JS Date object
+  let d = date;
+  if (typeof date === "string") {
+    // If it's a full ISO string (has T), Date constructor handles it usually.
+    // If it's pure YYYY-MM-DD, splitting is safer to avoid timezone shift.
+    if (date.includes("T")) {
       d = new Date(date);
+    } else {
+      const [year, month, day] = date.split("-");
+      return `${day}-${month}-${year}`;
     }
-  
-    // If it's a Date object (or became one), convert to YYYY-MM-DD using local time
-    if (d instanceof Date && !isNaN(d.getTime())) {
-      const year = d.getFullYear();
-      const month = (d.getMonth() + 1).toString().padStart(2, "0");
-      const day = d.getDate().toString().padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    }
-  
-    // If it's already a string (and didn't contain T), assume it's correct or return as is
-    return date;
-  };
-  
-  
-  const formatDateTimeForAPI = (date) => {
-    if (!date) return "";
-    const d = new Date(date);
-    if (isNaN(d.getTime())) return "";
-  
-    const day = d.getDate().toString().padStart(2, "0");
-    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+  } else if (!(date instanceof Date)) {
+    return "";
+  }
+
+  // If it ended up as a Date object from ISO string
+  if (isNaN(d.getTime())) return "";
+
+  const day = d.getDate().toString().padStart(2, "0");
+  const month = (d.getMonth() + 1).toString().padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
+const formatDateTime = (date) => {
+  if (!date) return "";
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "";
+
+  const day = d.getDate().toString().padStart(2, "0");
+  const month = (d.getMonth() + 1).toString().padStart(2, "0");
+  const year = d.getFullYear();
+  const hh = d.getHours().toString().padStart(2, "0");
+  const min = d.getMinutes().toString().padStart(2, "0");
+  const ss = d.getSeconds().toString().padStart(2, "0");
+
+  return `${day}-${month}-${year} ${hh}:${min}:${ss}`;
+};
+
+const formatDateForAPI = (date) => {
+  if (!date) return null;
+
+  let d = date;
+  // If it's a string and looks like an ISO date, parse it
+  if (typeof date === "string" && date.includes("T")) {
+    d = new Date(date);
+  }
+
+  // If it's a Date object (or became one), convert to YYYY-MM-DD using local time
+  if (d instanceof Date && !isNaN(d.getTime())) {
     const year = d.getFullYear();
-    const hh = d.getHours().toString().padStart(2, "0");
-    const min = d.getMinutes().toString().padStart(2, "0");
-    const ss = d.getSeconds().toString().padStart(2, "0");
-  
-    return `${year}-${month}-${day} ${hh}:${min}:${ss}`;
-  };
-  
-  function isValid24HourTime(time) {
-    // ^ start
-    // (?:[0-1]\d|2\d) → hours: 00–29
-    // : → separator
-    // [0-5]\d → minutes: 00–59
-    // : → separator
-    // [0-5]\d → seconds: 00–59
-    // $ end
-    const regex = /^(?:[0-1]\d|2\d):[0-5]\d:[0-5]\d$/;
-    return regex.test(time);
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
-  
-  const formatMinutesToHHMM = (minutes) => {
-    if (minutes == null) return "00:00";
-  
-    const hrs = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-  
-    // Pad with leading zero
-    const paddedHrs = String(hrs).padStart(2, "0");
-    const paddedMins = String(mins).padStart(2, "0");
-  
-    return `${paddedHrs}:${paddedMins}`;
-  };
-  
-  const noOfDays = (fromdate, todate) => {
-    if (!fromdate || !todate) return null;
-  
-    const start = new Date(fromdate);
-    const end = new Date(todate);
-  
-    if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
-  
-    const diffTime = end - start;
-    const diffDays = diffTime / (1000 * 60 * 60 * 24);
-  
-    return Math.floor(diffDays) + 1; // or Math.ceil depending on your need
-  };
-  
-  function getCurrentYear() {
-    return new Date().getFullYear();
+
+  // If it's already a string (and didn't contain T), assume it's correct or return as is
+  return date;
+};
+
+const formatDateTimeForAPI = (date) => {
+  if (!date) return "";
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "";
+
+  const day = d.getDate().toString().padStart(2, "0");
+  const month = (d.getMonth() + 1).toString().padStart(2, "0");
+  const year = d.getFullYear();
+  const hh = d.getHours().toString().padStart(2, "0");
+  const min = d.getMinutes().toString().padStart(2, "0");
+  const ss = d.getSeconds().toString().padStart(2, "0");
+
+  return `${year}-${month}-${day} ${hh}:${min}:${ss}`;
+};
+
+function isValid24HourTime(time) {
+  // ^ start
+  // (?:[0-1]\d|2\d) → hours: 00–29
+  // : → separator
+  // [0-5]\d → minutes: 00–59
+  // : → separator
+  // [0-5]\d → seconds: 00–59
+  // $ end
+  const regex = /^(?:[0-1]\d|2\d):[0-5]\d:[0-5]\d$/;
+  return regex.test(time);
+}
+
+const formatMinutesToHHMM = (minutes) => {
+  if (minutes == null) return "00:00";
+
+  const hrs = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+
+  // Pad with leading zero
+  const paddedHrs = String(hrs).padStart(2, "0");
+  const paddedMins = String(mins).padStart(2, "0");
+
+  return `${paddedHrs}:${paddedMins}`;
+};
+
+const noOfDays = (fromdate, todate) => {
+  if (!fromdate || !todate) return null;
+
+  const start = new Date(fromdate);
+  const end = new Date(todate);
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
+
+  const diffTime = end - start;
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+  return Math.floor(diffDays) + 1; // or Math.ceil depending on your need
+};
+
+function getCurrentYear() {
+  return new Date().getFullYear();
+}
+
+function getRelativeDays(date) {
+  const now = new Date();
+  const inputDate = new Date(date);
+
+  const diffMs = now - inputDate;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 1) {
+    return "Today";
   }
-  
-  
-  export {
-    currentDate,
-    currentDateTime,
-    formatDate,
-    formatDateTime,
-    formatDateForAPI,
-    formatDateTimeForAPI,
-    isValid24HourTime,
-    formatMinutesToHHMM,
-    noOfDays,
-    getCurrentYear
-  };
-  
+
+  if (diffDays <= 30) {
+    return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+  }
+
+  const months = Math.floor(diffDays / 30);
+
+  if (months < 12) {
+    return `${months} month${months > 1 ? "s" : ""} ago`;
+  }
+
+  const years = Math.floor(months / 12);
+  return `${years} year${years > 1 ? "s" : ""} ago`;
+}
+
+function getRemainingDays(expiryDate) {
+  const now = new Date();
+  const expiry = new Date(expiryDate);
+
+  const diffMs = expiry - now;
+
+  if (diffMs <= 0) {
+    return "Expired";
+  }
+
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays <= 30) {
+    return `${diffDays} day${diffDays > 1 ? "s" : ""}`;
+  }
+
+  const months = Math.floor(diffDays / 30);
+
+  if (months < 12) {
+    return `${months} month${months > 1 ? "s" : ""}`;
+  }
+
+  const years = Math.floor(months / 12);
+  const remainingMonths = months % 12;
+
+  if (remainingMonths === 0) {
+    return `${years} year${years > 1 ? "s" : ""}`;
+  }
+
+  return `${years} year${years > 1 ? "s" : ""} ${remainingMonths} month${remainingMonths > 1 ? "s" : ""}`;
+}
+
+export {
+  currentDate,
+  currentDateTime,
+  formatDate,
+  formatDateTime,
+  formatDateForAPI,
+  formatDateTimeForAPI,
+  isValid24HourTime,
+  formatMinutesToHHMM,
+  noOfDays,
+  getCurrentYear,
+  getRelativeDays,
+  getRemainingDays,
+};

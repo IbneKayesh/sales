@@ -2,7 +2,7 @@ import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
-import { IconPlus } from "@/icons";
+import { IconPlus, } from "@/icons";
 
 const RMPMForm = ({
   isBusy,
@@ -17,7 +17,7 @@ const RMPMForm = ({
 }) => {
   return (
     <div className="form-wrap">
-      <h4>RM/PM</h4>
+      <h4>Input → RM/PM</h4>
       <div className="grid">
         <div className="col-span-3">
           <Dropdown

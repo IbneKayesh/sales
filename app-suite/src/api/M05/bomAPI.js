@@ -26,4 +26,16 @@ export const bomAPI = {
     apiRequest("/M05/v1/bom/get-all-active", {
       body: data,
     }),
+  getRMPMbyBOMId: (data) =>
+    apiRequest("/M05/v1/bom/get-rmpm-by-bom", {
+      body: data,
+    }),
+  getFOHbyBOMId: (data) =>
+    apiRequest("/M05/v1/bom/get-foh-by-bom", {
+      body: data,
+    }),
+  getSFGFGbyBOMId: (data) =>
+    apiRequest("/M05/v1/bom/get-sfg-by-bom", {
+      body: data,
+    }),
 };

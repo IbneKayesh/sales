@@ -20,7 +20,7 @@ CREATE TABLE tmib_items (
   items_punit VARCHAR(50),
   items_sgrup VARCHAR(50),
   items_scatg VARCHAR(50),
-  items_itype VARCHAR(2) DEFAULT 'FG', --RM,PM,SFG,FG,FOH,SVC
+  items_itype VARCHAR(5) DEFAULT 'FG', --RM,PM,SFG,FG,FOH,SVC
   items_brand VARCHAR(50),
   items_tstck boolean DEFAULT true,
   items_sdvat decimal(4,2) DEFAULT 0.00,

@@ -1,9 +1,7 @@
 import DataTable from "@/components/DataTable";
-import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import { IconClose, IconCheck } from "@/icons";
 
-const RMPMList = ({ listData, onEdit, onDelete }) => {
+const RMPMList = ({readOnly, listData, onEdit, onDelete}) => {
   const dtColumns = [
     { key: "borpm_types", header: "Type", width: "80px" },
     { key: "items_iname", header: "Item", width: "200px" },
@@ -36,6 +34,7 @@ const RMPMList = ({ listData, onEdit, onDelete }) => {
           onDelete={onDelete}
         />
       ),
+      visible: !readOnly
     },
   ];
   return (
@@ -48,9 +47,10 @@ const RMPMList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="raw-materials-export.csv"
+      exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No raw materials found"
+      className="mt-2"
     />
   );
 };

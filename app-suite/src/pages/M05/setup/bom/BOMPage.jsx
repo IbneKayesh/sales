@@ -17,6 +17,10 @@ import BOMList from "./BOMList";
 import BOMForm from "./BOMForm";
 import RMPMForm from "./RMPMForm";
 import RMPMList from "./RMPMList";
+import FOHForm from "./FOHForm";
+import FOHList from "./FOHList";
+import SFGForm from "./SFGForm";
+import SFGList from "./SFGList";
 
 const BOMPage = () => {
   const {
@@ -34,9 +38,11 @@ const BOMPage = () => {
     listDataRMPM,
     formDataRMPM,
     listDataFOH,
+    formDataFOH,
     listDataSFGFG,
     formDataSFGFG,
     dpart_Options,
+    prods_Options,
     units_Options,
     items_Options,
     //functions
@@ -52,10 +58,23 @@ const BOMPage = () => {
     handleAddToListRMPM,
     handleEditRMPM,
     handleDeleteRMPM,
+    //foh
+    handleChangeFOH,
+    handleAddToListFOH,
+    handleEditFOH,
+    handleDeleteFOH,
+    //sfg
+    handleChangeSFG,
+    handleAddToListSFG,
+    handleEditSFG,
+    handleDeleteSFG,
   } = useBOM();
 
   return (
     <div className="page-wrap">
+      {/* {JSON.stringify(formDataRMPM)}
+      {JSON.stringify(formDataFOH)}
+      {JSON.stringify(formDataSFGFG)} */}
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
@@ -86,7 +105,12 @@ const BOMPage = () => {
               </Button>
             )}
             {pgView === "SYS_VW_FRM_1" && (
-              <Button variant="info" size="sm" onClick={handleSubmit}>
+              <Button
+                variant="info"
+                size="sm"
+                onClick={handleSubmit}
+                disabled={readOnly}
+              >
                 <IconSave size={14} className="icon-left" />
                 {formData?.id ? "Update" : "Create"}
               </Button>
@@ -113,10 +137,11 @@ const BOMPage = () => {
               onCancel={handleCancel}
               onSubmit={handleSubmit}
               dpart_Options={dpart_Options}
+              prods_Options={prods_Options}
               units_Options={units_Options}
             />
           )}
-          {pgView === "SYS_VW_FRM_1" && (
+          {pgView === "SYS_VW_FRM_1" && !readOnly && (
             <RMPMForm
               isBusy={isBusy}
               readOnly={readOnly}
@@ -131,14 +156,54 @@ const BOMPage = () => {
           )}
           {pgView === "SYS_VW_FRM_1" && listDataRMPM.length > 0 && (
             <RMPMList
+              readOnly={readOnly}
               listData={listDataRMPM}
               onEdit={handleEditRMPM}
               onDelete={handleDeleteRMPM}
             />
           )}
-          //do below similar as RMPM
-          //FOHForm, FOHList
-          //SFGForm, SFGList
+          {pgView === "SYS_VW_FRM_1" && !readOnly && (
+            <FOHForm
+              isBusy={isBusy}
+              readOnly={readOnly}
+              stopEdit={stopEdit}
+              formData={formDataFOH}
+              formErrors={formErrors}
+              onChange={handleChangeFOH}
+              onAddToList={handleAddToListFOH}
+              items_Options={items_Options}
+              units_Options={units_Options}
+            />
+          )}
+          {pgView === "SYS_VW_FRM_1" && listDataFOH.length > 0 && (
+            <FOHList
+              readOnly={readOnly}
+              listData={listDataFOH}
+              onEdit={handleEditFOH}
+              onDelete={handleDeleteFOH}
+            />
+          )}
+          {pgView === "SYS_VW_FRM_1" && !readOnly && (
+            <SFGForm
+              isBusy={isBusy}
+              readOnly={readOnly}
+              stopEdit={stopEdit}
+              formData={formDataSFGFG}
+              formErrors={formErrors}
+              onChange={handleChangeSFG}
+              onAddToList={handleAddToListSFG}
+              items_Options={items_Options}
+              units_Options={units_Options}
+            />
+          )}
+          {pgView === "SYS_VW_FRM_1" && listDataSFGFG.length > 0 && (
+            <SFGList
+              readOnly={readOnly}
+              listData={listDataSFGFG}
+              onEdit={handleEditSFG}
+              onDelete={handleDeleteSFG}
+            />
+          )}
         </PageCardBody>
       </PageCard>
     </div>

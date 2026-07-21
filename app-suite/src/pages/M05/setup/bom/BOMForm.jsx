@@ -17,6 +17,7 @@ const BOMForm = ({
   onCancel,
   onSubmit,
   dpart_Options,
+  prods_Options,
   units_Options,
 }) => {
   return (
@@ -36,7 +37,21 @@ const BOMForm = ({
             optionLabel="dpart_cname"
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-3">
+          <Dropdown
+            label="Production"
+            options={prods_Options}
+            value={formData.bommf_prods}
+            onChange={(e) => onChange("bommf_prods", e.target.value)}
+            error={formErrors.bommf_prods}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="prods_cname"
+          />
+        </div>
+        <div className="col-span-3">
           <InputText
             label="Process Name"
             placeholder="Enter process name"
@@ -177,7 +192,7 @@ const BOMForm = ({
           <IconClose size={16} className="icon-left" />
           Cancel
         </Button>
-        <Button variant="info" onClick={onSubmit} disabled={isBusy}>
+        <Button variant="info" onClick={onSubmit} disabled={isBusy || readOnly}>
           <IconSave size={16} className="icon-left" />
           {formData?.id ? "Update" : "Create"}
         </Button>

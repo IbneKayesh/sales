@@ -2,18 +2,27 @@ import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import { IconClose, IconCheck } from "@/icons";
+import { getRelativeDays } from "@/utils/datetime.js";
 
 const BOMList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "bommf_cname", header: "Process Name", width: "200px" },
-    { key: "bommf_prono", header: "Process No", width: "120px" },
-    { key: "bommf_inout", header: "Input/Output", width: "120px" },
-    { key: "bommf_bmqty", header: "Qty", width: "100px" },
-    { key: "bommf_estim", header: "Est Minutes", width: "120px" },
+    { key: "bommf_trnno", header: "Trn No", width: "80px" },
+    {
+      key: "bommf_trdat",
+      header: "Trn Date",
+      width: "80px",
+      render: (v) => getRelativeDays(v),
+    },
+    { key: "prods_cname", header: "Production", width: "200px" },
+    { key: "bommf_cname", header: "Process", width: "200px" },
+    { key: "bommf_prono", header: "Process No", width: "80px" },
+    { key: "bommf_inout", header: "Input/Output", width: "80px" },
+    { key: "bommf_bmqty", header: "Qty", width: "80px" },
+    { key: "bommf_estim", header: "Est Minutes", width: "80px" },
     {
       key: "bommf_actve",
       header: "Status",
-      width: "120px",
+      width: "110px",
       render: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
@@ -48,9 +57,10 @@ const BOMList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="bom-export.csv"
+      exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No BOM records found"
+      className="mt-2"
     />
   );
 };

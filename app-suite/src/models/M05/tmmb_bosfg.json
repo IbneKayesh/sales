@@ -3,13 +3,6 @@
     "type": "string",
     "label": "Id"
   },
-  "bosfg_bommf": {
-    "type": "string",
-    "label": "BOM",
-    "maxLength": 50,
-    "placeholder": "Select BOM",
-    "required": true
-  },
   "bosfg_items": {
     "type": "string",
     "label": "Item",
@@ -31,13 +24,6 @@
     "placeholder": "Enter type (SFG/FG)",
     "required": true
   },
-  "bosfg_inout": {
-    "type": "string",
-    "label": "Input / Output",
-    "maxLength": 50,
-    "placeholder": "Select input/output",
-    "required": true
-  },
   "bosfg_group": {
     "type": "string",
     "label": "Group",
@@ -45,30 +31,31 @@
     "placeholder": "Select group (MAIN/CO/BY)",
     "required": true
   },
-  "bosfg_rmqty": {
+  "bosfg_fgqty": {
     "type": "decimal",
     "label": "Quantity",
-    "default": 1
+    "required": false
   },
-  "bosfg_rmrto": {
+  "bosfg_fgrto": {
     "type": "decimal",
     "label": "Ratio",
-    "default": 1
+    "required": false
   },
-  "bosfg_rmrat": {
+  "bosfg_fgrat": {
     "type": "decimal",
     "label": "Rate",
-    "default": 1
+    "required": true
   },
-  "bosfg_rmval": {
+  "bosfg_fgval": {
     "type": "decimal",
     "label": "Value",
-    "default": 1
+    "required": false
   },
   "bosfg_notes": {
     "type": "string",
     "label": "Notes",
     "maxLength": 50,
-    "placeholder": "Enter notes"
+    "placeholder": "Enter notes",
+    "required": false
   }
 }

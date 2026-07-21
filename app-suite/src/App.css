@@ -70,6 +70,22 @@ code {
   background: var(--surface-alt);
 }
 
+.mt-1 {
+  margin-top: var(--sp-1);
+}
+.mt-2 {
+  margin-top: var(--sp-2);
+}
+.mt-3 {
+  margin-top: var(--sp-3);
+}
+.mt-4 {
+  margin-top: var(--sp-4);
+}
+.mt-5 {
+  margin-top: var(--sp-5);
+}
+
 /* --------------------------------------------------------------------------
    2. Shared Component Patterns
    -------------------------------------------------------------------------- */
