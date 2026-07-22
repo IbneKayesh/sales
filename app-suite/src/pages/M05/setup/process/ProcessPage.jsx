@@ -124,6 +124,10 @@ const ProcessPage = () => {
                   <IconPlus size={14} className="icon-left" />
                   Add SFG/FG
                 </Button>
+                <Button variant="outline" size="sm" onClick={() => handleShowModal("Batch")}>
+                  <IconPlus size={14} className="icon-left" />
+                  Add Batch
+                </Button>
               </>
             )}
             {pgView === "SYS_VW_FRM_1" && (
@@ -193,19 +197,7 @@ const ProcessPage = () => {
               onDelete={handleDeleteSFG}
             />
           )}
-          {pgView === "SYS_VW_FRM_1" && !readOnly && (
-            <BatchForm
-              isBusy={isBusy}
-              readOnly={readOnly}
-              stopEdit={stopEdit}
-              formData={formDataBatch}
-              formErrors={formErrors}
-              onChange={handleChangeBatch}
-              onAddToList={handleAddToListBatch}
-              items_Options={items_Options}
-              units_Options={units_Options}
-            />
-          )}
+
           {pgView === "SYS_VW_FRM_1" && listDataBatch.length > 0 && (
             <BatchList
               readOnly={readOnly}
@@ -260,6 +252,19 @@ const ProcessPage = () => {
                   formErrors={formErrors}
                   onChange={handleChangeSFG}
                   onAddToList={handleAddToListSFG}
+                  items_Options={items_Options}
+                  units_Options={units_Options}
+                />
+              )}
+              {showModal.modal === "Batch" && (
+                <BatchForm
+                  isBusy={isBusy}
+                  readOnly={readOnly}
+                  stopEdit={stopEdit}
+                  formData={formDataBatch}
+                  formErrors={formErrors}
+                  onChange={handleChangeBatch}
+                  onAddToList={handleAddToListBatch}
                   items_Options={items_Options}
                   units_Options={units_Options}
                 />

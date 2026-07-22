@@ -617,10 +617,11 @@ const useProcess = () => {
       },
     ]);
     setFormDataBatch({});
+    handleHideModal();
   };
 
   const handleEditBatch = (rowData) => {
-    setPgView("SYS_VW_FRM_1");
+    handleShowModal("Batch");
     setFormDataBatch(rowData);
   };
 
@@ -632,6 +633,8 @@ const useProcess = () => {
       setFormDataFOH(dataModelFOH);
     } else if (modal === "SFG") {
       setFormDataSFGFG(dataModelSFG);
+    } else if (modal === "Batch") {
+      setFormDataBatch(dataModelBatch);
     }
 
     setShowModal({ show: true, modal: modal });
@@ -652,6 +655,12 @@ const useProcess = () => {
         setModalTitle({
           title: "Add SFG/FG",
           subTitle: "Semi-Finished / Finished Goods",
+        });
+        break;
+      case "Batch":
+        setModalTitle({
+          title: "Add Batch Output",
+          subTitle: "Batch Output Entry",
         });
         break;
       default:

@@ -52,20 +52,23 @@ const BatchList = ({ readOnly, listData, onEdit, onDelete }) => {
     },
   ];
   return (
-    <DataTable
-      columns={dtColumns}
-      data={listData}
-      pageSize={10}
-      sortable
-      searchable
-      striped
-      hoverable
-      exportable
-      exportFilename="data-export.csv"
-      onRowClick={(row) => onEdit(row)}
-      emptyMessage="No batch records found"
-      className="mt-2"
-    />
+    <>
+      <p>Output → Batch</p>
+      <DataTable
+        columns={dtColumns}
+        data={listData}
+        pageSize={10}
+        sortable
+        searchable={false}
+        striped
+        hoverable
+        exportable={false}
+        exportFilename="data-export.csv"
+        onRowClick={(row) => onEdit(row)}
+        emptyMessage="No batch records found"
+        className="mt-2"
+      />
+    </>
   );
 };
 export default BatchList;
