@@ -40,20 +40,23 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
     },
   ];
   return (
-    <DataTable
-      columns={dtColumns}
-      data={listData}
-      pageSize={10}
-      sortable
-      searchable
-      striped
-      hoverable
-      exportable
-      exportFilename="data-export.csv"
-      onRowClick={(row) => onEdit(row)}
-      emptyMessage="No raw materials found"
-      className="mt-2"
-    />
+    <>
+      <p>Input → RM/PM/SFG/FG</p>
+      <DataTable
+        columns={dtColumns}
+        data={listData}
+        pageSize={10}
+        sortable
+        searchable={false}
+        striped
+        hoverable
+        exportable={false}
+        exportFilename="data-export.csv"
+        onRowClick={(row) => onEdit(row)}
+        emptyMessage="No raw materials found"
+        className="mt-2"
+      />
+    </>
   );
 };
 export default RMPMList;

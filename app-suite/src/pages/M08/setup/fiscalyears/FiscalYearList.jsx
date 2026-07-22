@@ -1,42 +1,30 @@
 import DataTable from "@/components/DataTable";
-import { IconCheck, IconClose } from "@/icons";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
+import {
+  IconClose,
+  IconCheck,
+} from "@/icons";
 
-const COAList = ({ listData, onEdit, onDelete }) => {
+const FiscalYearList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "chtac_cname", header: "Name", width: "180px" },
-    { key: "chtac_ctype", header: "Type", width: "180px" },
-    { key: "chtac_chtno", header: "Chart No", width: "140px" },
-    { key: "chtac_ntype", header: "Nature Type", width: "120px" },
+    { key: "fsyar_cname", header: "Fiscal Year", width: "180px" },
+    { key: "fsyar_stdat", header: "Start Date", width: "140px" },
+    { key: "fsyar_endat", header: "End Date", width: "140px" },
+    { key: "fsyar_stats", header: "Status", width: "120px" },
     {
-      key: "chtac_child",
-      header: "Child",
+      key: "fsyar_iscur",
+      header: "Current",
       width: "100px",
       render: (v) => (
-        <Badge
-          variant={v ? "success" : "muted"}
-          icon={v ? <IconCheck size={12} /> : <IconClose size={12} />}
-        >
+        <Badge variant={v ? "success" : "muted"}>
+          {v ? <IconCheck size={12} /> : <IconClose size={12} />}
           {v ? "Yes" : "No"}
         </Badge>
       ),
     },
     {
-      key: "chtac_ispst",
-      header: "Postable",
-      width: "120px",
-      render: (v) => (
-        <Badge
-          variant={v ? "success" : "danger"}
-          icon={v ? <IconCheck size={12} /> : <IconClose size={12} />}
-        >
-          {v ? "Allowed" : "Not Allowed"}
-        </Badge>
-      ),
-    },
-    {
-      key: "chtac_actve",
+      key: "fsyar_actve",
       header: "Status",
       width: "100px",
       render: (v) => (
@@ -54,7 +42,7 @@ const COAList = ({ listData, onEdit, onDelete }) => {
       render: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.chtac_actve}
+          actve={row.fsyar_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />
@@ -73,8 +61,8 @@ const COAList = ({ listData, onEdit, onDelete }) => {
       exportable
       exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No data found"
+      emptyMessage="No fiscal years found"
     />
   );
 };
-export default COAList;
+export default FiscalYearList;

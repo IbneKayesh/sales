@@ -1,0 +1,52 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "fsyar_cname": {
+    "type": "string",
+    "label": "Fiscal Year",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter fiscal year",
+    "required": true
+  },
+  "fsyar_stdat": {
+    "type": "date",
+    "label": "Start Date",
+    "placeholder": "Select start date",
+    "required": true
+  },
+  "fsyar_endat": {
+    "type": "date",
+    "label": "End Date",
+    "placeholder": "Select end date",
+    "required": true
+  },
+  "fsyar_stats": {
+    "type": "string",
+    "label": "Status",
+    "maxLength": 50,
+    "placeholder": "Enter status",
+    "required": true
+  },
+  "fsyar_iscur": {
+    "type": "boolean",
+    "label": "Is Current",
+    "default": false
+  },
+  "fsyar_opbal": {
+    "type": "decimal",
+    "label": "Opening Balance",
+    "default": 0,
+    "placeholder": "Enter opening balance",
+    "required": true
+  },
+  "fsyar_clbal": {
+    "type": "decimal",
+    "label": "Closing Balance",
+    "default": 0,
+    "placeholder": "Enter closing balance",
+    "required": true
+  }
+}

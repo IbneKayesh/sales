@@ -17,7 +17,6 @@ const RMPMForm = ({
 }) => {
   return (
     <div className="form-wrap">
-      <h4>Input → RM/PM/SFG/FG</h4>
       <div className="grid">
         <div className="col-span-3">
           <Dropdown

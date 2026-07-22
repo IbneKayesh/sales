@@ -1,0 +1,60 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "acprd_cname": {
+    "type": "string",
+    "label": "Period Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter period name",
+    "required": true
+  },
+  "acprd_trnno": {
+    "type": "string",
+    "label": "Transaction No",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter transaction number",
+    "required": true
+  },
+  "acprd_stdat": {
+    "type": "date",
+    "label": "Start Date",
+    "placeholder": "Select start date",
+    "required": true
+  },
+  "acprd_endat": {
+    "type": "date",
+    "label": "End Date",
+    "placeholder": "Select end date",
+    "required": true
+  },
+  "acprd_stats": {
+    "type": "string",
+    "label": "Status",
+    "maxLength": 50,
+    "placeholder": "Enter status",
+    "required": true
+  },
+  "acprd_iscur": {
+    "type": "boolean",
+    "label": "Is Current",
+    "default": false
+  },
+  "acprd_opbal": {
+    "type": "decimal",
+    "label": "Opening Balance",
+    "default": 0,
+    "placeholder": "Enter opening balance",
+    "required": true
+  },
+  "acprd_clbal": {
+    "type": "decimal",
+    "label": "Closing Balance",
+    "default": 0,
+    "placeholder": "Enter closing balance",
+    "required": true
+  }
+}

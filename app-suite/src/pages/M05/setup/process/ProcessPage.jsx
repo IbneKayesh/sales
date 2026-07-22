@@ -9,8 +9,10 @@ import {
   IconClose,
   IconPlus,
   IconSave,
+  IconChevronLeft,
 } from "@/icons";
 import Button from "@/components/Button";
+import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
 import useProcess from "@/hooks/M05/useProcess";
 import ProcessList from "./ProcessList";
 import ProcessForm from "./ProcessForm";
@@ -76,6 +78,11 @@ const ProcessPage = () => {
     handleAddToListBatch,
     handleEditBatch,
     handleDeleteBatch,
+    //modal
+    showModal,
+    modalTitle,
+    handleShowModal,
+    handleHideModal,
   } = useProcess();
 
   return (
@@ -102,6 +109,22 @@ const ProcessPage = () => {
                 <IconPlus size={14} className="icon-left" />
                 Add
               </Button>
+            )}
+            {pgView === "SYS_VW_FRM_1" && !readOnly && (
+              <>
+                <Button variant="outline" size="sm" onClick={() => handleShowModal("RMPM")}>
+                  <IconPlus size={14} className="icon-left" />
+                  Add RM/PM
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => handleShowModal("FOH")}>
+                  <IconPlus size={14} className="icon-left" />
+                  Add FOH
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => handleShowModal("SFG")}>
+                  <IconPlus size={14} className="icon-left" />
+                  Add SFG/FG
+                </Button>
+              </>
             )}
             {pgView === "SYS_VW_FRM_1" && (
               <Button variant="secondary" size="sm" onClick={handleCancel}>
@@ -146,19 +169,6 @@ const ProcessPage = () => {
               units_Options={units_Options}
             />
           )}
-          {pgView === "SYS_VW_FRM_1" && !readOnly && (
-            <RMPMForm
-              isBusy={isBusy}
-              readOnly={readOnly}
-              stopEdit={stopEdit}
-              formData={formDataRMPM}
-              formErrors={formErrors}
-              onChange={handleChangeRMPM}
-              onAddToList={handleAddToListRMPM}
-              items_Options={items_Options}
-              units_Options={units_Options}
-            />
-          )}
           {pgView === "SYS_VW_FRM_1" && listDataRMPM.length > 0 && (
             <RMPMList
               readOnly={readOnly}
@@ -167,38 +177,12 @@ const ProcessPage = () => {
               onDelete={handleDeleteRMPM}
             />
           )}
-          {pgView === "SYS_VW_FRM_1" && !readOnly && (
-            <FOHForm
-              isBusy={isBusy}
-              readOnly={readOnly}
-              stopEdit={stopEdit}
-              formData={formDataFOH}
-              formErrors={formErrors}
-              onChange={handleChangeFOH}
-              onAddToList={handleAddToListFOH}
-              items_Options={items_Options}
-              units_Options={units_Options}
-            />
-          )}
           {pgView === "SYS_VW_FRM_1" && listDataFOH.length > 0 && (
             <FOHList
               readOnly={readOnly}
               listData={listDataFOH}
               onEdit={handleEditFOH}
               onDelete={handleDeleteFOH}
-            />
-          )}
-          {pgView === "SYS_VW_FRM_1" && !readOnly && (
-            <SFGForm
-              isBusy={isBusy}
-              readOnly={readOnly}
-              stopEdit={stopEdit}
-              formData={formDataSFGFG}
-              formErrors={formErrors}
-              onChange={handleChangeSFG}
-              onAddToList={handleAddToListSFG}
-              items_Options={items_Options}
-              units_Options={units_Options}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && listDataSFGFG.length > 0 && (
@@ -230,6 +214,58 @@ const ProcessPage = () => {
               onDelete={handleDeleteBatch}
             />
           )}
+
+          {/* Single Modal for RMPM / FOH / SFG forms */}
+          <Modal open={showModal.show} onClose={handleHideModal} size="lg">
+            <ModalHeader>
+              <ModalTitle
+                title={modalTitle.title}
+                subtitle={modalTitle.subTitle}
+                onClose={handleHideModal}
+              />
+            </ModalHeader>
+            <ModalBody>
+              {showModal.modal === "RMPM" && (
+                <RMPMForm
+                  isBusy={isBusy}
+                  readOnly={readOnly}
+                  stopEdit={stopEdit}
+                  formData={formDataRMPM}
+                  formErrors={formErrors}
+                  onChange={handleChangeRMPM}
+                  onAddToList={handleAddToListRMPM}
+                  items_Options={items_Options}
+                  units_Options={units_Options}
+                />
+              )}
+              {showModal.modal === "FOH" && (
+                <FOHForm
+                  isBusy={isBusy}
+                  readOnly={readOnly}
+                  stopEdit={stopEdit}
+                  formData={formDataFOH}
+                  formErrors={formErrors}
+                  onChange={handleChangeFOH}
+                  onAddToList={handleAddToListFOH}
+                  items_Options={items_Options}
+                  units_Options={units_Options}
+                />
+              )}
+              {showModal.modal === "SFG" && (
+                <SFGForm
+                  isBusy={isBusy}
+                  readOnly={readOnly}
+                  stopEdit={stopEdit}
+                  formData={formDataSFGFG}
+                  formErrors={formErrors}
+                  onChange={handleChangeSFG}
+                  onAddToList={handleAddToListSFG}
+                  items_Options={items_Options}
+                  units_Options={units_Options}
+                />
+              )}
+            </ModalBody>
+          </Modal>
         </PageCardBody>
       </PageCard>
     </div>

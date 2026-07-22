@@ -6,11 +6,11 @@ import PageCard, {
 } from "@/components/PageCard";
 import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
-import useChartOfAccounts from "@/hooks/M08/useChartOfAccounts";
-import COAList from "./COAList";
-import COAForm from "./COAForm";
+import useFiscalYear from "@/hooks/M08/useFiscalYear";
+import FiscalYearList from "./FiscalYearList";
+import FiscalYearForm from "./FiscalYearForm";
 
-const ChartOfAccountsPage = () => {
+const FiscalYearPage = () => {
   const {
     isBusy,
     pgView,
@@ -30,15 +30,15 @@ const ChartOfAccountsPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-  } = useChartOfAccounts();
+  } = useFiscalYear();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
-            title="Chart of Accounts"
-            subtitle={`${listData.length} Account heads`}
+            title="Fiscal Years"
+            subtitle={`${listData.length} Fiscal Years`}
           />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
@@ -69,14 +69,14 @@ const ChartOfAccountsPage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <COAList
+            <FiscalYearList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
-            <COAForm
+            <FiscalYearForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
@@ -92,4 +92,4 @@ const ChartOfAccountsPage = () => {
     </div>
   );
 };
-export default ChartOfAccountsPage;
+export default FiscalYearPage;

@@ -20,8 +20,12 @@ toast.error = (msg, opts) => toast(msg, { ...opts, type: 'error' })
 toast.info = (msg, opts) => toast(msg, { ...opts, type: 'info' })
 toast.warning = (msg, opts) => toast(msg, { ...opts, type: 'warning' })
 
-export default function ToastBox({ maxToasts = 5, className = '' }) {
+const POSITIONS = ['top-right', 'top-left', 'bottom-right', 'bottom-left']
+
+export default function ToastBox({ position = 'top-right', maxToasts = 5, className = '' }) {
   const [toasts, setToasts] = useState([])
+
+  const posClass = POSITIONS.includes(position) ? `toast-box--${position}` : ''
 
   const addToast = useCallback((t) => {
     setToasts((prev) => [...prev.slice(-(maxToasts - 1)), t])
@@ -37,7 +41,7 @@ export default function ToastBox({ maxToasts = 5, className = '' }) {
   }
 
   return (
-    <div className={`toast-box${className ? ' ' + className : ''}`} aria-live="polite">
+    <div className={`toast-box${posClass ? ' ' + posClass : ''}${className ? ' ' + className : ''}`} aria-live="polite">
       {toasts.map((t) => (
         <ToastItem key={t.id} toast={t} onRemove={removeToast} />
       ))}

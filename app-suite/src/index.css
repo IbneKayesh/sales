@@ -417,13 +417,23 @@ table {
 }
 
 @keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(40px); }
-  to   { opacity: 1; transform: translateX(0); }
+  from { opacity: 0; transform: translateX(40px) translateY(-8px); }
+  to   { opacity: 1; transform: translateX(0) translateY(0); }
 }
 
 @keyframes slide-out-right {
-  from { opacity: 1; transform: translateX(0); }
-  to   { opacity: 0; transform: translateX(40px); }
+  from { opacity: 1; transform: translateX(0); max-height: 100px; margin-bottom: var(--sp-3); padding: var(--sp-3) var(--sp-4); }
+  to   { opacity: 0; transform: translateX(40px); max-height: 0; margin-bottom: 0; padding: 0 var(--sp-4); }
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-40px) translateY(-8px); }
+  to   { opacity: 1; transform: translateX(0) translateY(0); }
+}
+
+@keyframes slide-out-left {
+  from { opacity: 1; transform: translateX(0); max-height: 100px; margin-bottom: var(--sp-3); padding: var(--sp-3) var(--sp-4); }
+  to   { opacity: 0; transform: translateX(-40px); max-height: 0; margin-bottom: 0; padding: 0 var(--sp-4); }
 }
 
 @keyframes scale-in {

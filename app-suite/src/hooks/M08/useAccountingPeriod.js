@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { coaAPI } from "@/api/M08/coaAPI.js";
+import { acprdAPI } from "@/api/M08/acprdAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmtb_chtac from "@/models/M08/tmtb_chtac.json";
-const dataModel = generateDataModel(tmtb_chtac);
+import tmtb_acprd from "@/models/M08/tmtb_acprd.json";
+const dataModel = generateDataModel(tmtb_acprd);
 
-const useChartOfAccounts = () => {
+const useAccountingPeriod = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M08-M01-M001");
+  const [pgId, setPgId] = useState("M08-M02-M001");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -23,10 +23,10 @@ const useChartOfAccounts = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
-  const getAllCoa = async () => {
+  const getAllAccountingPeriod = async () => {
     try {
       setIsBusy(true);
-      const resp = await coaAPI.getAll({});
+      const resp = await acprdAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -36,12 +36,12 @@ const useChartOfAccounts = () => {
   };
 
   useEffect(() => {
-    getAllCoa();
+    getAllAccountingPeriod();
   }, []);
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmtb_chtac);
+    const newErrors = validate({ ...formData, [f]: v }, tmtb_acprd);
     setFormErrors(newErrors);
   };
 
@@ -51,8 +51,8 @@ const useChartOfAccounts = () => {
   };
 
   const handleDelete = async (rowData) => {
-    const isActive = rowData.chtac_actve;
-    const dataName = rowData.chtac_cname;
+    const isActive = rowData.acprd_actve;
+    const dataName = rowData.acprd_cname;
     const confirmation = await confirmBox({
       title: isActive ? "Deactivate" : "Activate",
       message: `Are you sure you want to ${
@@ -65,7 +65,7 @@ const useChartOfAccounts = () => {
 
     try {
       setIsBusy(true);
-      const resp = await coaAPI.delete(rowData);
+      const resp = await acprdAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -79,7 +79,7 @@ const useChartOfAccounts = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllCoa();
+        getAllAccountingPeriod();
       }
     } catch (error) {
     } finally {
@@ -88,9 +88,8 @@ const useChartOfAccounts = () => {
   };
 
   const handleSearch = async () => {
-    getAllCoa();
+    getAllAccountingPeriod();
   };
-
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
     setFormData(dataModel);
@@ -107,7 +106,7 @@ const useChartOfAccounts = () => {
 
   const handleSubmit = async () => {
     try {
-      const newErrors = validate(formData, tmtb_chtac);
+      const newErrors = validate(formData, tmtb_acprd);
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
@@ -118,7 +117,7 @@ const useChartOfAccounts = () => {
       };
       setIsBusy(true);
 
-      const resp = await coaAPI.upsert(reqBody);
+      const resp = await acprdAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -128,7 +127,7 @@ const useChartOfAccounts = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllCoa();
+        getAllAccountingPeriod();
       }
     } catch (error) {
     } finally {
@@ -157,4 +156,4 @@ const useChartOfAccounts = () => {
     handleSubmit,
   };
 };
-export default useChartOfAccounts;
+export default useAccountingPeriod;

@@ -23,7 +23,6 @@ const SFGForm = ({
 }) => {
   return (
     <div className="form-wrap">
-      <h4>Output → SFG/FG</h4>
       <div className="grid">
         <div className="col-span-3">
           <Dropdown

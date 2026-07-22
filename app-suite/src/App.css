@@ -1569,45 +1569,125 @@ code {
   z-index: var(--z-toast);
   display: flex;
   flex-direction: column;
-  gap: var(--sp-2);
-  max-width: 400px;
+  max-width: 420px;
+  min-width: 320px;
   pointer-events: none;
 }
 
+.toast-box--top-left {
+  top: var(--sp-5);
+  left: var(--sp-5);
+  right: auto;
+}
+
+.toast-box--bottom-right {
+  top: auto;
+  bottom: var(--sp-5);
+  right: var(--sp-5);
+  flex-direction: column-reverse;
+}
+
+.toast-box--bottom-left {
+  top: auto;
+  bottom: var(--sp-5);
+  left: var(--sp-5);
+  right: auto;
+  flex-direction: column-reverse;
+}
+
 .toast-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--sp-3);
-  padding: 14px var(--sp-1);
+  padding: var(--sp-3) var(--sp-4);
+  margin-bottom: var(--sp-3);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
+  overflow: hidden;
   pointer-events: auto;
   animation: slide-in-right var(--transition-slow);
 }
 
+.toast-box--top-left .toast-item {
+  animation: slide-in-left var(--transition-slow);
+}
+
+.toast-box--bottom-right .toast-item {
+  animation: slide-in-right var(--transition-slow);
+}
+
+.toast-box--bottom-left .toast-item {
+  animation: slide-in-left var(--transition-slow);
+}
+
+.toast-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: transparent;
+  pointer-events: none;
+  transition: background var(--transition-fast);
+}
+
+.toast-item:last-child {
+  margin-bottom: 0;
+}
+
 .toast-item--exiting {
-  animation: slide-out-right var(--transition-fast) forwards;
+  animation: slide-out-right 0.25s ease forwards;
+}
+
+.toast-box--top-left .toast-item--exiting,
+.toast-box--bottom-left .toast-item--exiting {
+  animation: slide-out-left 0.25s ease forwards;
 }
 
 .toast-item__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
   color: inherit;
 }
 
+.toast-item--success::before {
+  background: var(--success);
+}
 .toast-item--success .toast-item__icon {
+  background: var(--success-bg);
   color: var(--success);
 }
 
+.toast-item--error::before {
+  background: var(--danger);
+}
 .toast-item--error .toast-item__icon {
+  background: var(--danger-bg);
   color: var(--danger);
 }
 
+.toast-item--info::before {
+  background: var(--primary);
+}
 .toast-item--info .toast-item__icon {
+  background: var(--primary-bg);
   color: var(--primary);
 }
 
+.toast-item--warning::before {
+  background: var(--warning);
+}
 .toast-item--warning .toast-item__icon {
+  background: var(--warning-bg);
   color: var(--warning);
 }
 

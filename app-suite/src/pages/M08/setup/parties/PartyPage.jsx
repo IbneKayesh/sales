@@ -6,11 +6,11 @@ import PageCard, {
 } from "@/components/PageCard";
 import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
-import useChartOfAccounts from "@/hooks/M08/useChartOfAccounts";
-import COAList from "./COAList";
-import COAForm from "./COAForm";
+import useParty from "@/hooks/M08/useParty";
+import PartyList from "./PartyList";
+import PartyForm from "./PartyForm";
 
-const ChartOfAccountsPage = () => {
+const PartyPage = () => {
   const {
     isBusy,
     pgView,
@@ -30,15 +30,15 @@ const ChartOfAccountsPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-  } = useChartOfAccounts();
+  } = useParty();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
-            title="Chart of Accounts"
-            subtitle={`${listData.length} Account heads`}
+            title="Parties"
+            subtitle={`${listData.length} Parties`}
           />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
@@ -69,14 +69,14 @@ const ChartOfAccountsPage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <COAList
+            <PartyList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
-            <COAForm
+            <PartyForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
@@ -92,4 +92,4 @@ const ChartOfAccountsPage = () => {
     </div>
   );
 };
-export default ChartOfAccountsPage;
+export default PartyPage;

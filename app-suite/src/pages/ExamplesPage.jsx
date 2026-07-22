@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import PageCard, { PageCardHeader, PageCardTitle, PageCardActions, PageCardBody } from '@/components/PageCard'
+import PageCard, { PageCardHeader, PageCardTitle, PageCardActions, PageCardBody, PageCardFooter } from '@/components/PageCard'
 import Button from '@/components/Button'
 import InputText from '@/components/InputText'
 import InputNumber from '@/components/InputNumber'
@@ -16,6 +16,7 @@ import Progress from '@/components/Progress'
 import LoadableCard from '@/components/LoadableCard'
 import Modal, { ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@/components/Modal'
 import SidePanel, { SidePanelHeader, SidePanelTitle, SidePanelBody, SidePanelFooter } from '@/components/SidePanel'
+import Confirm from '@/components/Confirm'
 import SaveOverlay from '@/components/SaveOverlay'
 import { toast } from '@/components/ToastBox'
 import Badge from '@/components/Badge'
@@ -85,6 +86,8 @@ export default function ExamplesPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [panelOpen, setPanelOpen] = useState(false)
   const [panelSide, setPanelSide] = useState('right')
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [confirmResult, setConfirmResult] = useState(null)
   const { confirmBox: confirm, alertBox: alert, isBusy, setIsBusy } = useUI()
   const [saveLoading, setSaveLoading] = useState(false)
   const [inputRequired, setInputRequired] = useState('')
@@ -282,6 +285,46 @@ export default function ExamplesPage() {
             <Button variant="secondary" size="sm" onClick={() => toast.error('Error toast')}>Toast Error</Button>
           </div>
         </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: PageCard with Footer ── */}
+      <PageCard>
+        <PageCardHeader>
+          <PageCardTitle title="PageCard With Footer" subtitle="A complete PageCard with Header, Body, and Footer — footer typically holds actions" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+              The <code>PageCardFooter</code> component provides a bottom section for action buttons, usually Cancel on the left and primary actions on the right.
+            </p>
+            <div className="grid" style={{ gap: 'var(--sp-3)' }}>
+              <div className="col-span-4">
+                <InputText label="Project Name" placeholder="Enter project name" />
+              </div>
+              <div className="col-span-4">
+                <Dropdown
+                  label="Status"
+                  options={[
+                    { value: 'planning', label: 'Planning' },
+                    { value: 'active', label: 'Active' },
+                    { value: 'completed', label: 'Completed' },
+                  ]}
+                  placeholder="Select status..."
+                />
+              </div>
+              <div className="col-span-4" style={{ display: 'flex', alignItems: 'flex-end' }}>
+                <InputCalendar label="Due Date" dense placeholder="Pick a date" />
+              </div>
+            </div>
+          </div>
+        </PageCardBody>
+        <PageCardFooter>
+          <Button variant="secondary" size="sm" onClick={() => toast.info('Cancelled')}>Cancel</Button>
+          <Button variant="primary" size="sm" onClick={() => toast.success('Project saved!')}>
+            <IconSave size={14} className="icon-left" />
+            Save Project
+          </Button>
+        </PageCardFooter>
       </PageCard>
 
       {/* ── Section: Data Table ── */}
@@ -913,6 +956,35 @@ export default function ExamplesPage() {
         </PageCardBody>
       </PageCard>
 
+      {/* ── Section: Standalone Confirm ── */}
+      <PageCard>
+        <PageCardHeader>
+          <PageCardTitle title="Confirm (Standalone)" subtitle="Direct Confirm component with local state — onConfirm/onCancel callbacks" />
+          <PageCardActions>
+            <Button size="sm" variant="danger" onClick={() => { setConfirmOpen(true); setConfirmResult(null) }}>
+              Open Confirm
+            </Button>
+          </PageCardActions>
+        </PageCardHeader>
+        <PageCardBody>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+              Unlike the global confirm from <code>useUI()</code>, this uses the <code>Confirm</code> component directly with local <code>open</code> state and <code>onConfirm</code> / <code>onCancel</code> callbacks.
+            </p>
+            {confirmResult !== null && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', fontSize: 'var(--fs-sm)' }}>
+                <Badge variant={confirmResult ? 'success' : 'muted'} dot>
+                  {confirmResult ? 'Confirmed' : 'Cancelled'}
+                </Badge>
+                <span style={{ color: 'var(--text-muted)' }}>
+                  User {confirmResult ? 'accepted' : 'declined'} the action
+                </span>
+              </div>
+            )}
+          </div>
+        </PageCardBody>
+      </PageCard>
+
       {/* ── Modal ── */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} size="lg">
         <ModalHeader>
@@ -975,6 +1047,24 @@ export default function ExamplesPage() {
         </SidePanelFooter>
       </SidePanel>
 
+      {/* ── Standalone Confirm ── */}
+      <Confirm
+        open={confirmOpen}
+        title="Delete Record"
+        message="Are you sure you want to delete this record? This action cannot be undone."
+        confirmText="Delete"
+        variant="danger"
+        onConfirm={() => {
+          setConfirmOpen(false)
+          setConfirmResult(true)
+          toast.error('Record deleted!')
+        }}
+        onCancel={() => {
+          setConfirmOpen(false)
+          setConfirmResult(false)
+          toast.info('Delete cancelled')
+        }}
+      />
 
     </div>
   )

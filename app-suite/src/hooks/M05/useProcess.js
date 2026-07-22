@@ -35,6 +35,9 @@ const useProcess = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
   //others
+  const [showModal, setShowModal] = useState({ show: false, modal: "" });
+  const [modalTitle, setModalTitle] = useState({ title: "", subTitle: "" });
+
   const [listDataRMPM, setListDataRMPM] = useState([]);
   const [formDataRMPM, setFormDataRMPM] = useState(dataModelRM);
 
@@ -136,49 +139,65 @@ const useProcess = () => {
 
     if (f === "promf_bommf") {
       const bom = bom_Options.find((opt) => opt.id === v);
+      const bmqty = Number(bom?.bommf_bmqty) || 0;
       setFormData((prev) => ({
         ...prev,
         promf_cname: bom?.bommf_cname || "Process 1",
         promf_prono: bom?.bommf_prono || 1,
         promf_units: bom?.bommf_units || "",
         units_cname: bom?.units_cname || "",
-        promf_bmqty: bom?.bommf_bmqty || 0,
+        promf_bmqty: bmqty,
         promf_bmval: bom.bommf_bmval || 0,
+        promf_prqty: bmqty,
       }));
-      loadAllDetailsBOM(v);
+      await loadAllDetailsBOM(v);
+      if (bmqty) recalcProcessQtys(bmqty, bmqty);
     }
-    if (f === "promf_prqty") {
-      //RM/PM
-      setListDataRMPM((prev) => {
-        return prev.map((item) => {
-          let reqQty = (item.prrpm_rmqty * v) / formData.promf_bmqty;
-          return {
-            ...item,
-            prrpm_prqty: reqQty,
-          };
-        });
-      });
-      //FOH
-      setListDataFOH((prev) => {
-        return prev.map((item) => {
-          let reqQty = (item.prfoh_foqty * v) / formData.promf_bmqty;
-          return {
-            ...item,
-            prfoh_prqty: reqQty,
-          };
-        });
-      });
-      //SFG
-      setListDataSFGFG((prev) => {
-        return prev.map((item) => {
-          let reqQty = (item.prsfg_fgqty * v) / formData.promf_bmqty;
-          return {
-            ...item,
-            prsfg_prqty: reqQty,
-          };
-        });
-      });
+    if (f === "promf_prqty" || f === "promf_bmqty") {
+      const bmqty = f === "promf_bmqty" ? v : formData.promf_bmqty;
+      const prqty = f === "promf_prqty" ? v : formData.promf_prqty;
+      recalcProcessQtys(bmqty, prqty);
     }
+  };
+
+  const round2 = (n) => Math.round(Number(n) * 100) / 100;
+
+  const recalcProcessQtys = (bmqty, prqty) => {
+    if (!bmqty || !prqty) return;
+
+    //RM/PM
+    setListDataRMPM((prev) => {
+      return prev.map((item) => {
+        let reqQty = (Number(item.prrpm_rmqty) * Number(prqty)) / Number(bmqty);
+        return {
+          ...item,
+          prrpm_prqty: round2(reqQty || 0),
+          prrpm_prval: round2((reqQty || 0) * (Number(item.prrpm_rmrat) || 0)),
+        };
+      });
+    });
+    //FOH
+    setListDataFOH((prev) => {
+      return prev.map((item) => {
+        let reqQty = (Number(item.prfoh_foqty) * Number(prqty)) / Number(bmqty);
+        return {
+          ...item,
+          prfoh_prqty: round2(reqQty || 0),
+          prfoh_prval: round2((reqQty || 0) * (Number(item.prfoh_forat) || 0)),
+        };
+      });
+    });
+    //SFG
+    setListDataSFGFG((prev) => {
+      return prev.map((item) => {
+        let reqQty = (Number(item.prsfg_fgqty) * Number(prqty)) / Number(bmqty);
+        return {
+          ...item,
+          prsfg_prqty: round2(reqQty || 0),
+          prsfg_prval: round2((reqQty || 0) * (Number(item.prsfg_fgrat) || 0)),
+        };
+      });
+    });
   };
 
   const handleEdit = async (rowData) => {
@@ -357,25 +376,27 @@ const useProcess = () => {
       (opt) => opt.id === formDataRMPM.prrpm_units,
     );
 
-    const prrpm_rmval =
+    const prrpm_rmval = round2(
       (Number(formDataRMPM.prrpm_rmqty) || 0) *
-      (Number(formDataRMPM.prrpm_rmrat) || 0);
+      (Number(formDataRMPM.prrpm_rmrat) || 0)
+    );
 
     setListDataRMPM((prev) => [
       ...prev,
       {
         ...formDataRMPM,
-        prrpm_rmval: prrpm_rmval || 0,
+        prrpm_rmval: prrpm_rmval,
         items_iname: items_iname?.items_iname || "Invalid Item",
         units_cname: units_cname?.units_cname || "Invalid Unit",
         prrpm_actve: true,
       },
     ]);
     setFormDataRMPM({});
+    handleHideModal();
   };
 
   const handleEditRMPM = (rowData) => {
-    setPgView("SYS_VW_FRM_1");
+    handleShowModal("RMPM");
     setFormDataRMPM(rowData);
   };
 
@@ -429,25 +450,27 @@ const useProcess = () => {
       (opt) => opt.id === formDataFOH.prfoh_units,
     );
 
-    const prfoh_foval =
+    const prfoh_foval = round2(
       (Number(formDataFOH.prfoh_foqty) || 0) *
-      (Number(formDataFOH.prfoh_forat) || 0);
+      (Number(formDataFOH.prfoh_forat) || 0)
+    );
 
     setListDataFOH((prev) => [
       ...prev,
       {
         ...formDataFOH,
-        prfoh_foval: prfoh_foval || 0,
+        prfoh_foval: prfoh_foval,
         items_iname: items_iname?.items_iname || "Invalid Item",
         units_cname: units_cname?.units_cname || "Invalid Unit",
         prfoh_actve: true,
       },
     ]);
     setFormDataFOH({});
+    handleHideModal();
   };
 
   const handleEditFOH = (rowData) => {
-    setPgView("SYS_VW_FRM_1");
+    handleShowModal("FOH");
     setFormDataFOH(rowData);
   };
 
@@ -501,25 +524,27 @@ const useProcess = () => {
       (opt) => opt.id === formDataSFGFG.prsfg_units,
     );
 
-    const prsfg_fgval =
+    const prsfg_fgval = round2(
       (Number(formDataSFGFG.prsfg_fgqty) || 0) *
-      (Number(formDataSFGFG.prsfg_fgrat) || 0);
+      (Number(formDataSFGFG.prsfg_fgrat) || 0)
+    );
 
     setListDataSFGFG((prev) => [
       ...prev,
       {
         ...formDataSFGFG,
-        prsfg_fgval: prsfg_fgval || 0,
+        prsfg_fgval: prsfg_fgval,
         items_iname: items_iname?.items_iname || "Invalid Item",
         units_cname: units_cname?.units_cname || "Invalid Unit",
         prsfg_actve: true,
       },
     ]);
     setFormDataSFGFG({});
+    handleHideModal();
   };
 
   const handleEditSFG = (rowData) => {
-    setPgView("SYS_VW_FRM_1");
+    handleShowModal("SFG");
     setFormDataSFGFG(rowData);
   };
 
@@ -575,16 +600,17 @@ const useProcess = () => {
       (opt) => opt.id === formDataBatch.prbtc_units,
     );
 
-    const prbtc_pbval =
+    const prbtc_pbval = round2(
       ((Number(formDataBatch.prbtc_gaqty) || 0) +
         (Number(formDataBatch.prbtc_gbqty) || 0)) *
-      (Number(formDataBatch.prbtc_pbrat) || 0);
+      (Number(formDataBatch.prbtc_pbrat) || 0)
+    );
 
     setListDataBatch((prev) => [
       ...prev,
       {
         ...formDataBatch,
-        prbtc_pbval: prbtc_pbval || 0,
+        prbtc_pbval: prbtc_pbval,
         items_iname: items_iname?.items_iname || "Invalid Item",
         units_cname: units_cname?.units_cname || "Invalid Unit",
         prbtc_actve: true,
@@ -596,6 +622,45 @@ const useProcess = () => {
   const handleEditBatch = (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormDataBatch(rowData);
+  };
+
+  //modal
+  const handleShowModal = (modal) => {
+    if (modal === "RMPM") {
+      setFormDataRMPM(dataModelRM);
+    } else if (modal === "FOH") {
+      setFormDataFOH(dataModelFOH);
+    } else if (modal === "SFG") {
+      setFormDataSFGFG(dataModelSFG);
+    }
+
+    setShowModal({ show: true, modal: modal });
+    switch (modal) {
+      case "RMPM":
+        setModalTitle({
+          title: "Add RM/PM",
+          subTitle: "Raw Material / Packing Material",
+        });
+        break;
+      case "FOH":
+        setModalTitle({
+          title: "Add FOH",
+          subTitle: "Factory Overhead",
+        });
+        break;
+      case "SFG":
+        setModalTitle({
+          title: "Add SFG/FG",
+          subTitle: "Semi-Finished / Finished Goods",
+        });
+        break;
+      default:
+        setModalTitle({ title: "", subTitle: "" });
+    }
+  };
+  const handleHideModal = () => {
+    setShowModal({ show: false, modal: "" });
+    setModalTitle({ title: "", subTitle: "" });
   };
 
   const handleDeleteBatch = async (rowData) => {
@@ -637,6 +702,11 @@ const useProcess = () => {
     bom_Options,
     units_Options,
     items_Options,
+    //modal
+    showModal,
+    modalTitle,
+    handleShowModal,
+    handleHideModal,
     //functions
     handleChange,
     handleEdit,
