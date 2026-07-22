@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Button from './Button'
 import { IconInfo } from '../icons'
 
@@ -16,8 +16,36 @@ export default function Confirm({
   ...rest
 }) {
   const [confirming, setConfirming] = useState(false)
+  const [closing, setClosing] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const timerRef = useRef(null)
 
-  if (!open) return null
+  // Handle open/close state with exit animation
+  useEffect(() => {
+    if (open) {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
+      setClosing(false)
+      setMounted(true)
+    } else if (mounted) {
+      setClosing(true)
+      timerRef.current = setTimeout(() => {
+        setMounted(false)
+        setClosing(false)
+        timerRef.current = null
+      }, 300)
+    }
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
+    }
+  }, [open])
+
+  if (!mounted) return null
 
   const handleConfirm = async () => {
     setConfirming(true)
@@ -29,14 +57,17 @@ export default function Confirm({
   }
 
   const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget && !confirmOnly) {
+    if (e.target === e.currentTarget && !confirmOnly && !closing) {
       onCancel?.()
     }
   }
 
+  const overlayClass = `confirm-overlay${closing ? ' confirm-overlay--closing' : ''}`
+  const dialogClass = `confirm${closing ? ' confirm--closing' : ''}${className ? ' ' + className : ''}`
+
   return (
-    <div className="confirm-overlay" onClick={handleBackdropClick} {...rest}>
-      <div className="confirm" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div className={overlayClass} onClick={handleBackdropClick} {...rest}>
+      <div className={dialogClass} role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
         <div className="confirm__icon-wrap">
           <div className="confirm__icon">
             <IconInfo size={24} />

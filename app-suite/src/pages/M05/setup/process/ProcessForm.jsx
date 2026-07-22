@@ -3,6 +3,7 @@ import InputText from "@/components/InputText";
 import Dropdown from "@/components/Dropdown";
 import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
+import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 import { inout_Options } from "@/utils/vtable.js";
@@ -66,67 +67,19 @@ const ProcessForm = ({
         </div>
 
         <div className="col-span-3">
-          <InputText
-            label="Process Name"
-            placeholder="Enter process name"
-            value={formData.promf_cname}
-            onChange={(e) => onChange("promf_cname", e.target.value)}
-            error={formErrors.promf_cname}
-            required
-            disabled={readOnly}
-          />
+          <InputLabel label="Process Name" value={formData.promf_cname} />
         </div>
         <div className="col-span-2">
-          <InputNumber
-            label="Process Sl No"
-            placeholder="Enter Process Sl No"
-            value={formData.promf_prono}
-            onChange={(e) => onChange("promf_prono", e.target.value)}
-            min={1}
-            max={50}
-            step={1}
-            error={formErrors.promf_prono}
-            required
-            disabled={readOnly}
-          />
+          <InputLabel label="Process Sl No" value={formData.promf_prono} />
         </div>
         <div className="col-span-2">
-          <Dropdown
-            label="Unit"
-            options={units_Options}
-            value={formData.promf_units}
-            onChange={(e) => onChange("promf_units", e.target.value)}
-            error={formErrors.promf_units}
-            required
-            placeholder="Select..."
-            disabled={readOnly}
-            optionValue="id"
-            optionLabel="units_cname"
-          />
+          <InputLabel label="Unit" value={formData.units_cname} />
         </div>
         <div className="col-span-2">
-          <InputNumber
-            label="BOM Qty"
-            placeholder="Enter Qty"
-            value={formData.promf_bmqty}
-            onChange={(e) => onChange("promf_bmqty", e.target.value)}
-            min={1}
-            error={formErrors.promf_bmqty}
-            required
-            disabled={readOnly}
-          />
+          <InputLabel label="BOM Qty" value={formData.promf_bmqty} />
         </div>
         <div className="col-span-2">
-          <InputNumber
-            label="BOM Value"
-            placeholder="Enter Value"
-            value={formData.promf_bmval}
-            onChange={(e) => onChange("promf_bmval", e.target.value)}
-            min={1}
-            error={formErrors.promf_bmval}
-            required
-            disabled={readOnly}
-          />
+          <InputLabel label="BOM Value" value={formData.promf_bmval} />
         </div>
         <div className="col-span-2">
           <InputNumber

@@ -4,6 +4,7 @@ import Button from '@/components/Button'
 import InputText from '@/components/InputText'
 import InputNumber from '@/components/InputNumber'
 import InputCalendar from '@/components/InputCalendar'
+import InputLabel from '@/components/InputLabel'
 import Dropdown from '@/components/Dropdown'
 import GroupButton from '@/components/GroupButton'
 import Checkbox from '@/components/Checkbox'
@@ -245,6 +246,15 @@ export default function ExamplesPage() {
                 { value: 'active', label: 'Active' },
                 { value: 'inactive', label: 'Inactive' },
               ]} value={ddClearVal} onChange={(e) => setDdClearVal(e.target.value)} clearable placeholder="Clearable..." />
+            </div>
+
+            {/* InputLabel — read-only display */}
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>InputLabel (Read-only field)</h4>
+              <InputLabel label="Full Name" value="John Doe" />
+              <InputLabel label="Email" value="john.doe@company.com" icon={<IconSearch size={14} />} />
+              <InputLabel label="Department" value="Engineering" dense />
+              <InputLabel label="Employee ID" value="EMP-0042" dense />
             </div>
           </div>
         </PageCardBody>
@@ -904,7 +914,7 @@ export default function ExamplesPage() {
       </PageCard>
 
       {/* ── Modal ── */}
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} size="md">
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)} size="lg">
         <ModalHeader>
           <ModalTitle
             title="Example Modal"

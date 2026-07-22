@@ -1,8 +1,8 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useState, useRef } from 'react'
 import { IconClose } from '../icons'
 
 /**
- * SidePanel — Slides in from left or right.
+ * SidePanel — Slides in from left or right with open/close transitions.
  *
  * Usage:
  *   <SidePanel open={isOpen} onClose={...} position="right" size="md">
@@ -28,14 +28,43 @@ export default function SidePanel({
   className = '',
   ...rest
 }) {
+  const [closing, setClosing] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const timerRef = useRef(null)
+
+  // Handle open/close state with exit animation
+  useEffect(() => {
+    if (open) {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
+      setClosing(false)
+      setMounted(true)
+    } else if (mounted) {
+      setClosing(true)
+      timerRef.current = setTimeout(() => {
+        setMounted(false)
+        setClosing(false)
+        timerRef.current = null
+      }, 300)
+    }
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
+    }
+  }, [open])
+
   const handleKeyDown = useCallback((e) => {
-    if (closeOnEscape && e.key === 'Escape') {
+    if (closeOnEscape && e.key === 'Escape' && open) {
       onClose?.()
     }
-  }, [closeOnEscape, onClose])
+  }, [closeOnEscape, onClose, open])
 
   useEffect(() => {
-    if (!open) return
+    if (!mounted) return
     document.addEventListener('keydown', handleKeyDown)
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
@@ -43,22 +72,23 @@ export default function SidePanel({
       document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = prev
     }
-  }, [open, handleKeyDown])
+  }, [mounted, handleKeyDown])
 
-  if (!open) return null
+  if (!mounted) return null
 
   const handleBackdrop = (e) => {
-    if (e.target === e.currentTarget) {
+    if (e.target === e.currentTarget && !closing) {
       if (closeOnBackdrop) onClose?.()
       else onBackdropClick?.()
     }
   }
 
+  const overlayClass = `sidepanel-overlay${closing ? ' sidepanel-overlay--closing' : ''}`
+  const panelClass = `sidepanel sidepanel--${position} sidepanel--${size}${closing ? ' sidepanel--closing' : ''}${className ? ' ' + className : ''}`
+
   return (
-    <div className="sidepanel-overlay" onClick={handleBackdrop} role="dialog" aria-modal="true" {...rest}>
-      <div
-        className={`sidepanel sidepanel--${position} sidepanel--${size}${className ? ' ' + className : ''}`}
-      >
+    <div className={overlayClass} onClick={handleBackdrop} role="dialog" aria-modal="true" {...rest}>
+      <div className={panelClass}>
         {children}
       </div>
     </div>

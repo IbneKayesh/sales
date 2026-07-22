@@ -17,9 +17,8 @@ const FOHForm = ({
 }) => {
   return (
     <div className="form-wrap">
-      <h4>Input → FOH</h4>
       <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-4">
           <Dropdown
             label="Type"
             options={[{ label: "Factory Overhead (FOH)", value: "FOH" }]}
@@ -31,7 +30,7 @@ const FOHForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-4">
           <Dropdown
             label="Item"
             options={items_Options}
@@ -45,7 +44,7 @@ const FOHForm = ({
             optionLabel="items_iname"
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-4">
           <InputNumber
             label="Quantity"
             placeholder="Enter qty"
@@ -56,7 +55,7 @@ const FOHForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-4">
           <InputNumber
             label="Ratio"
             placeholder="Enter ratio"
@@ -67,7 +66,7 @@ const FOHForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-4">
           <InputNumber
             label="Rate"
             placeholder="Enter rate"
@@ -78,7 +77,7 @@ const FOHForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-4">
           <Dropdown
             label="Unit"
             options={units_Options}
@@ -92,7 +91,7 @@ const FOHForm = ({
             optionLabel="units_cname"
           />
         </div>
-        <div className="col-span-9">
+        <div className="col-span-12">
           <InputText
             label="Notes"
             placeholder="Enter notes"

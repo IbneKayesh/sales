@@ -1,8 +1,8 @@
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useState, useRef } from 'react'
 import { IconClose } from '../icons'
 
 /**
- * Modal — Full-featured modal dialog.
+ * Modal — Full-featured modal dialog with open/close transitions.
  *
  * Usage:
  *   <Modal open={isOpen} onClose={() => setIsOpen(false)}>
@@ -33,36 +33,71 @@ export default function Modal({
   className = '',
   ...rest
 }) {
+  const [closing, setClosing] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const timerRef = useRef(null)
+
+  // Handle open/close state with exit animation
+  useEffect(() => {
+    if (open) {
+      // Clear any pending close timer
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
+      setClosing(false)
+      setMounted(true)
+    } else if (mounted) {
+      // Start exit animation
+      setClosing(true)
+      // Remove from DOM after animation completes
+      timerRef.current = setTimeout(() => {
+        setMounted(false)
+        setClosing(false)
+        timerRef.current = null
+      }, 300) // slightly longer than the longest CSS animation (--transition-slow: 0.25s)
+    }
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
+    }
+  }, [open])
+
   const handleKeyDown = useCallback((e) => {
-    if (closeOnEscape && e.key === 'Escape') {
+    if (closeOnEscape && e.key === 'Escape' && open) {
       onClose?.()
     }
-  }, [closeOnEscape, onClose])
+  }, [closeOnEscape, onClose, open])
 
   useEffect(() => {
-    if (!open) return
+    if (!mounted) return
     document.addEventListener('keydown', handleKeyDown)
-    // Prevent body scroll while modal is open
+    // Prevent body scroll while modal is open (but allow during close animation)
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = prev
     }
-  }, [open, handleKeyDown])
+  }, [mounted, handleKeyDown])
 
-  if (!open) return null
+  if (!mounted) return null
 
   const handleBackdrop = (e) => {
-    if (e.target === e.currentTarget) {
+    if (e.target === e.currentTarget && !closing) {
       if (closeOnBackdrop) onClose?.()
       else onBackdropClick?.()
     }
   }
 
+  const overlayClass = `modal-overlay${closing ? ' modal-overlay--closing' : ''}`
+  const modalClass = `modal modal--${size}${closing ? ' modal--closing' : ''}${className ? ' ' + className : ''}`
+
   return (
-    <div className="modal-overlay" onClick={handleBackdrop} role="dialog" aria-modal="true" {...rest}>
-      <div className={`modal modal--${size}${className ? ' ' + className : ''}`}>
+    <div className={overlayClass} onClick={handleBackdrop} role="dialog" aria-modal="true" {...rest}>
+      <div className={modalClass}>
         {children}
       </div>
     </div>

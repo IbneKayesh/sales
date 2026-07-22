@@ -113,16 +113,12 @@ const useProcess = () => {
       setIsBusy(true);
       const [rmResp, fohResp, sfgResp] = await Promise.all([
         bomAPI.getRMPMbyBOMForProcess({ borpm_bommf: id }),
-        bomAPI.getFOHbyBOMId({ bofoh_bommf: id }),
-        bomAPI.getSFGFGbyBOMId({ bosfg_bommf: id }),
+        bomAPI.getFOHbyBOMForProcess({ bofoh_bommf: id }),
+        bomAPI.getSFGFGbyBOMForProcess({ bosfg_bommf: id }),
       ]);
       setListDataRMPM(rmResp.data || []);
-      // setListDataFOH(fohResp.data || []);
-      // setListDataSFGFG(sfgResp.data || []);
-
-      console.log("rmResp", rmResp.data);
-      console.log("fohResp", fohResp.data);
-      console.log("sfgResp", sfgResp.data);
+      setListDataFOH(fohResp.data || []);
+      setListDataSFGFG(sfgResp.data || []);
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -140,16 +136,48 @@ const useProcess = () => {
 
     if (f === "promf_bommf") {
       const bom = bom_Options.find((opt) => opt.id === v);
-
       setFormData((prev) => ({
         ...prev,
         promf_cname: bom?.bommf_cname || "Process 1",
         promf_prono: bom?.bommf_prono || 1,
         promf_units: bom?.bommf_units || "",
+        units_cname: bom?.units_cname || "",
         promf_bmqty: bom?.bommf_bmqty || 0,
         promf_bmval: bom.bommf_bmval || 0,
       }));
       loadAllDetailsBOM(v);
+    }
+    if (f === "promf_prqty") {
+      //RM/PM
+      setListDataRMPM((prev) => {
+        return prev.map((item) => {
+          let reqQty = (item.prrpm_rmqty * v) / formData.promf_bmqty;
+          return {
+            ...item,
+            prrpm_prqty: reqQty,
+          };
+        });
+      });
+      //FOH
+      setListDataFOH((prev) => {
+        return prev.map((item) => {
+          let reqQty = (item.prfoh_foqty * v) / formData.promf_bmqty;
+          return {
+            ...item,
+            prfoh_prqty: reqQty,
+          };
+        });
+      });
+      //SFG
+      setListDataSFGFG((prev) => {
+        return prev.map((item) => {
+          let reqQty = (item.prsfg_fgqty * v) / formData.promf_bmqty;
+          return {
+            ...item,
+            prsfg_prqty: reqQty,
+          };
+        });
+      });
     }
   };
 

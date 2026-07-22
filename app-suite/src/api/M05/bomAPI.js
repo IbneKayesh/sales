@@ -46,4 +46,12 @@ export const bomAPI = {
     apiRequest("/M05/v1/bom/get-rmpm-by-bom-fr-process", {
       body: data,
     }),
+  getFOHbyBOMForProcess: (data) =>
+    apiRequest("/M05/v1/bom/get-foh-by-bom-fr-process", {
+      body: data,
+    }),
+  getSFGFGbyBOMForProcess: (data) =>
+    apiRequest("/M05/v1/bom/get-sfg-by-bom-fr-process", {
+      body: data,
+    }),
 };

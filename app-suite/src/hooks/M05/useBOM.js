@@ -33,6 +33,9 @@ const useBOM = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
   //others
+  const [showModal, setShowModal] = useState({ show: false, modal: "" });
+  const [modalTitle, setModalTitle] = useState({ title: "", subTitle: "" });
+
   const [listDataRMPM, setListDataRMPM] = useState([]);
   const [formDataRMPM, setFormDataRMPM] = useState(dataModelRM);
 
@@ -335,10 +338,11 @@ const useBOM = () => {
       },
     ]);
     setFormDataRMPM({});
+    handleHideModal();
   };
 
   const handleEditRMPM = (rowData) => {
-    setPgView("SYS_VW_FRM_1");
+    handleShowModal("RMPM");
     setFormDataRMPM(rowData);
   };
 
@@ -407,10 +411,11 @@ const useBOM = () => {
       },
     ]);
     setFormDataFOH({});
+    handleHideModal();
   };
 
   const handleEditFOH = (rowData) => {
-    setPgView("SYS_VW_FRM_1");
+    handleShowModal("FOH");
     setFormDataFOH(rowData);
   };
 
@@ -479,10 +484,11 @@ const useBOM = () => {
       },
     ]);
     setFormDataSFGFG({});
+    handleHideModal();
   };
 
   const handleEditSFG = (rowData) => {
-    setPgView("SYS_VW_FRM_1");
+    handleShowModal("SFG");
     setFormDataSFGFG(rowData);
   };
 
@@ -499,6 +505,46 @@ const useBOM = () => {
       prev.filter((item) => item.bosfg_items !== rowData.bosfg_items),
     );
     showToast("Removed successfully", { type: "success" });
+  };
+
+  //modal
+  const handleShowModal = (modal) => {
+    // Reset form data based on modal type
+    if (modal === "RMPM") {
+      setFormDataRMPM(dataModelRM);
+    } else if (modal === "FOH") {
+      setFormDataFOH(dataModelFOH);
+    } else if (modal === "SFG") {
+      setFormDataSFGFG(dataModelSFG);
+    }
+
+    setShowModal({ show: true, modal: modal });
+    switch (modal) {
+      case "RMPM":
+        setModalTitle({
+          title: "Add RM/PM",
+          subTitle: "Raw Material / Packing Material",
+        });
+        break;
+      case "FOH":
+        setModalTitle({
+          title: "Add FOH",
+          subTitle: "Factory Overhead",
+        });
+        break;
+      case "SFG":
+        setModalTitle({
+          title: "Add SFG/FG",
+          subTitle: "Semi-Finished / Finished Goods",
+        });
+        break;
+      default:
+        setModalTitle({ title: "", subTitle: "" });
+    }
+  };
+  const handleHideModal = () => {
+    setShowModal({ show: false, modal: "" });
+    setModalTitle({ title: "", subTitle: "" });
   };
 
   return {
@@ -546,6 +592,11 @@ const useBOM = () => {
     handleAddToListSFG,
     handleEditSFG,
     handleDeleteSFG,
+    //modal
+    showModal,
+    modalTitle,
+    handleShowModal,
+    handleHideModal,
   };
 };
 export default useBOM;

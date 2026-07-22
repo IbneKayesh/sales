@@ -23,9 +23,8 @@ const SFGForm = ({
 }) => {
   return (
     <div className="form-wrap">
-      <h4>Output → SFG/FG</h4>
       <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-4">
           <Dropdown
             label="Group"
             options={group_Options}
@@ -37,7 +36,7 @@ const SFGForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-4">
           <Dropdown
             label="Type"
             options={[
@@ -52,7 +51,7 @@ const SFGForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-4">
           <Dropdown
             label="Item"
             options={items_Options}
@@ -66,7 +65,7 @@ const SFGForm = ({
             optionLabel="items_iname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-4">
           <InputNumber
             label="Quantity"
             placeholder="Enter qty"
@@ -77,7 +76,7 @@ const SFGForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-4">
           <InputNumber
             label="Ratio"
             placeholder="Enter ratio"
@@ -88,7 +87,7 @@ const SFGForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-4">
           <InputNumber
             label="Rate"
             placeholder="Enter rate"
@@ -99,7 +98,7 @@ const SFGForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-4">
           <Dropdown
             label="Unit"
             options={units_Options}
@@ -113,7 +112,7 @@ const SFGForm = ({
             optionLabel="units_cname"
           />
         </div>
-        <div className="col-span-5">
+        <div className="col-span-8">
           <InputText
             label="Notes"
             placeholder="Enter notes"

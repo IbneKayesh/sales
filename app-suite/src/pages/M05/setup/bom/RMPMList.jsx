@@ -1,7 +1,7 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
 
-const RMPMList = ({readOnly, listData, onEdit, onDelete}) => {
+const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "borpm_types", header: "Type", width: "80px" },
     { key: "items_iname", header: "Item", width: "200px" },
@@ -34,24 +34,27 @@ const RMPMList = ({readOnly, listData, onEdit, onDelete}) => {
           onDelete={onDelete}
         />
       ),
-      visible: !readOnly
+      visible: !readOnly,
     },
   ];
   return (
-    <DataTable
-      columns={dtColumns}
-      data={listData}
-      pageSize={10}
-      sortable
-      searchable
-      striped
-      hoverable
-      exportable
-      exportFilename="data-export.csv"
-      onRowClick={(row) => onEdit(row)}
-      emptyMessage="No raw materials found"
-      className="mt-2"
-    />
+    <>
+      <p>Input → RM/PM/SFG/FG</p>
+      <DataTable
+        columns={dtColumns}
+        data={listData}
+        pageSize={10}
+        sortable
+        searchable={false}
+        striped
+        hoverable
+        exportable={false}
+        exportFilename="data-export.csv"
+        onRowClick={(row) => onEdit(row)}
+        emptyMessage="No raw materials found"
+        className="mt-2"
+      />
+    </>
   );
 };
 export default RMPMList;

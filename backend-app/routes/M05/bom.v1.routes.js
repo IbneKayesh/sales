@@ -590,8 +590,9 @@ router.post("/get-by-department", async (req, res) => {
     }
 
     const sql = `
-      SELECT bm.*,0 AS edit_stop
+      SELECT bm.*, unt.units_cname, 0 AS edit_stop
       FROM tmmb_bommf bm
+      JOIN tmib_units unt ON bm.bommf_units = unt.id
       WHERE bm.bommf_users = $1
       AND bm.bommf_dpart = $2
       AND bm.bommf_actve = TRUE
@@ -665,4 +666,105 @@ ORDER BY rpm.borpm_items ASC`;
     });
   }
 });
+
+
+// =====================
+// Get get-foh-by-bom-fr-process
+// =====================
+router.post("/get-foh-by-bom-fr-process", async (req, res) => {
+  try {
+    const { bofoh_bommf, user_c } = req.body;
+
+    if (!bofoh_bommf || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+    const sql = `SELECT '' AS id,foh.bofoh_users AS prfoh_users, foh.bofoh_bsins AS prfoh_bsins, '' AS prfoh_promf,
+foh.id AS prfoh_bofoh, foh.bofoh_items AS prfoh_items, foh.bofoh_units AS prfoh_units,
+foh.bofoh_types AS prfoh_types, foh.bofoh_foqty AS prfoh_foqty, foh.bofoh_forto AS prfoh_forto,
+foh.bofoh_forat AS prfoh_forat, foh.bofoh_foval AS prfoh_foval, foh.bofoh_foqty AS prfoh_prqty, 
+foh.bofoh_forto AS prfoh_prrto, foh.bofoh_forat AS prfoh_prrat, foh.bofoh_foval AS prfoh_prval,
+false AS prfoh_ispst, '' AS prfoh_dpart,'' AS prfoh_notes, itm.items_iname, unt.units_cname
+FROM tmmb_bofoh foh
+JOIN tmib_items itm ON foh.bofoh_items = itm.id
+JOIN tmib_units unt ON foh.bofoh_units = unt.id
+WHERE foh.bofoh_bommf = $1
+AND foh.bofoh_users = $2
+ORDER BY foh.bofoh_items ASC`;
+
+    const rows = await dbGetAll(
+      sql,
+      [bofoh_bommf, user_c],
+      `Get FOH by BOM - ${user_c}`,
+    );
+
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+
+
+// =====================
+// Get get-sfg-by-bom-fr-process
+// =====================
+router.post("/get-sfg-by-bom-fr-process", async (req, res) => {
+  try {
+    const { bosfg_bommf, user_c } = req.body;
+
+    if (!bosfg_bommf || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+    const sql = `SELECT '' AS id, sfg.bosfg_users AS prsfg_users, sfg.bosfg_bsins AS prsfg_bsins, '' AS prsfg_promf,
+sfg.id AS prsfg_bosfg, sfg.bosfg_items AS prsfg_items, sfg.bosfg_units AS prsfg_units,
+sfg.bosfg_types AS prsfg_types, sfg.bosfg_group AS prsfg_group, sfg.bosfg_fgqty AS prsfg_fgqty,
+sfg.bosfg_fgrto AS prsfg_fgrto, sfg.bosfg_fgrat AS prsfg_fgrat, sfg.bosfg_fgval AS prsfg_fgval,
+sfg.bosfg_fgqty AS prsfg_prqty, sfg.bosfg_fgrto AS prsfg_prrto, sfg.bosfg_fgrat AS prsfg_prrat,
+sfg.bosfg_fgval AS prsfg_prval, 'false' AS prsfg_ispst, '' AS prsfg_dpart, '' AS prsfg_notes, itm.items_iname, unt.units_cname
+FROM tmmb_bosfg sfg
+JOIN tmib_items itm ON sfg.bosfg_items = itm.id
+JOIN tmib_units unt ON sfg.bosfg_units = unt.id
+WHERE sfg.bosfg_bommf = $1
+AND sfg.bosfg_users = $2
+ORDER BY sfg.bosfg_items ASC`;
+
+    const rows = await dbGetAll(
+      sql,
+      [bosfg_bommf, user_c],
+      `Get SFG by BOM - ${user_c}`,
+    );
+
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+
 module.exports = router;

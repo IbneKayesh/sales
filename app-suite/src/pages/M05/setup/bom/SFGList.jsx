@@ -35,24 +35,27 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
           onDelete={onDelete}
         />
       ),
-      visible: !readOnly
+      visible: !readOnly,
     },
   ];
   return (
-    <DataTable
-      columns={dtColumns}
-      data={listData}
-      pageSize={10}
-      sortable
-      searchable
-      striped
-      hoverable
-      exportable
-      exportFilename="data-export.csv"
-      onRowClick={(row) => onEdit(row)}
-      emptyMessage="No SFG/FG found"
-      className="mt-2"
-    />
+    <>
+      <p>Output → SFG/FG</p>
+      <DataTable
+        columns={dtColumns}
+        data={listData}
+        pageSize={10}
+        sortable
+        searchable={false}
+        striped
+        hoverable
+        exportable={false}
+        exportFilename="data-export.csv"
+        onRowClick={(row) => onEdit(row)}
+        emptyMessage="No SFG/FG found"
+        className="mt-2"
+      />
+    </>
   );
 };
 export default SFGList;
