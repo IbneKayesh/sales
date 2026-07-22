@@ -134,6 +134,15 @@ const menus = [
     menus_menus: "M05",
   },
   {
+    id: "M05-M02-M001",
+    menus_mname: "Process",
+    menus_color: "#f59e0b",
+    menus_micon: <IconManufacture />,
+    menus_odrby: 3,
+    menus_mlink: "/manufacturing/process",
+    menus_menus: "M05",
+  },
+  {
     id: "M06-M01-M001",
     menus_mname: "Contacts",
     menus_color: "#3b82f6",

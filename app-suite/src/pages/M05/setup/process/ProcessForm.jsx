@@ -7,6 +7,7 @@ import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 import { inout_Options } from "@/utils/vtable.js";
 
+const bkngm_Options = [{ label: "No Order", value: "" }];
 const ProcessForm = ({
   isBusy,
   readOnly,
@@ -52,6 +53,19 @@ const ProcessForm = ({
           />
         </div>
         <div className="col-span-3">
+          <Dropdown
+            label="Work Order"
+            options={bkngm_Options}
+            value={formData.promf_bkngm}
+            onChange={(e) => onChange("promf_bkngm", e.target.value)}
+            error={formErrors.promf_bkngm}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+          />
+        </div>
+
+        <div className="col-span-3">
           <InputText
             label="Process Name"
             placeholder="Enter process name"
@@ -62,10 +76,10 @@ const ProcessForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
-            label="Process No"
-            placeholder="Enter Process No"
+            label="Process Sl No"
+            placeholder="Enter Process Sl No"
             value={formData.promf_prono}
             onChange={(e) => onChange("promf_prono", e.target.value)}
             min={1}
@@ -76,29 +90,7 @@ const ProcessForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
-          <InputText
-            label="Transaction No"
-            placeholder="Enter transaction no"
-            value={formData.promf_trnno}
-            onChange={(e) => onChange("promf_trnno", e.target.value)}
-            error={formErrors.promf_trnno}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputCalendar
-            label="Transaction Date"
-            value={formData.promf_trdat}
-            onChange={(e) => onChange("promf_trdat", e.target.value)}
-            placeholder="Select..."
-            error={formErrors.promf_trdat}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Unit"
             options={units_Options}
@@ -194,7 +186,7 @@ const ProcessForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-6">
           <InputText
             label="Note"
             placeholder="Enter note"

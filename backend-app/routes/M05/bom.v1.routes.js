@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
       LEFT JOIN tmhb_emply csr ON bm.bommf_crusr = csr.id
       LEFT JOIN tmhb_emply usr ON bm.bommf_upusr = usr.id
       WHERE bm.bommf_users = $1
-      ORDER BY pdt.prods_cname, bm.bommf_cname;`
+      ORDER BY pdt.prods_cname, bm.bommf_cname;`;
 
     const rows = await dbGetAll(sql, [user_c], `Get BOM - ${user_c}`);
 
@@ -529,7 +529,6 @@ JOIN tmib_units unt ON foh.bofoh_units = unt.id
   }
 });
 
-
 // =====================
 // Get get-sfg-by-bom
 // =====================
@@ -575,4 +574,95 @@ JOIN tmib_units unt ON sfg.bosfg_units = unt.id
   }
 });
 
+// =====================
+// get by department
+// =====================
+router.post("/get-by-department", async (req, res) => {
+  try {
+    const { bommf_dpart, user_c } = req.body;
+
+    if (!bommf_dpart || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    const sql = `
+      SELECT bm.*,0 AS edit_stop
+      FROM tmmb_bommf bm
+      WHERE bm.bommf_users = $1
+      AND bm.bommf_dpart = $2
+      AND bm.bommf_actve = TRUE
+      ORDER BY bm.bommf_cname ASC`;
+
+    const rows = await dbGetAll(
+      sql,
+      [user_c, bommf_dpart],
+      `Get Active BOM - ${user_c}`,
+    );
+
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+// =====================
+// Get get-rmpm-by-bom-fr-process
+// =====================
+router.post("/get-rmpm-by-bom-fr-process", async (req, res) => {
+  try {
+    const { borpm_bommf, user_c } = req.body;
+
+    if (!borpm_bommf || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+    const sql = `SELECT '' AS id, rpm.borpm_users AS prrpm_users, rpm.borpm_bsins AS prrpm_bsins, '' AS prrpm_promf,
+rpm.id AS prrpm_borpm, rpm.borpm_items AS prrpm_items, rpm.borpm_units AS prrpm_units,
+rpm.borpm_types AS prrpm_types, rpm.borpm_rmqty AS prrpm_rmqty, rpm.borpm_rmrto AS prrpm_rmrto,
+rpm.borpm_rmrat AS prrpm_rmrat, rpm.borpm_rmval AS prrpm_rmval, rpm.borpm_rmqty AS prrpm_prqty,
+rpm.borpm_rmrto AS prrpm_prrto, rpm.borpm_rmrat AS prrpm_prrat, rpm.borpm_rmval AS prrpm_prval,
+false AS prrpm_ispst, '' AS prrpm_dpart, '' AS prrpm_notes, itm.items_iname, unt.units_cname
+FROM tmmb_borpm rpm
+JOIN tmib_items itm ON rpm.borpm_items = itm.id
+JOIN tmib_units unt ON rpm.borpm_units = unt.id
+WHERE rpm.borpm_bommf = $1
+AND rpm.borpm_users = $2
+ORDER BY rpm.borpm_items ASC`;
+
+    const rows = await dbGetAll(
+      sql,
+      [borpm_bommf, user_c],
+      `Get RM/PM by BOM - ${user_c}`,
+    );
+
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
 module.exports = router;

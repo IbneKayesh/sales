@@ -20,7 +20,7 @@ import { itemsAPI } from "@/api/M04/itemsAPI.js";
 const useProcess = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M05-M01-M003");
+  const [pgId, setPgId] = useState("M05-M02-M001");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -81,12 +81,9 @@ const useProcess = () => {
     } catch (error) {}
   };
 
-  const getAllBOMs = async () => {
-    if (bom_Options.length > 0) {
-      return;
-    }
+  const getAllBOMByDepartment = async (id) => {
     try {
-      const resp = await bomAPI.getAllActive({});
+      const resp = await bomAPI.getByDepartment({ bommf_dpart: id });
       const list = resp.data || [];
       setBom_Options(list);
     } catch (error) {}
@@ -111,17 +108,48 @@ const useProcess = () => {
     } catch (error) {}
   };
 
-  const handleChange = (f, v) => {
+  const loadAllDetailsBOM = async (id) => {
+    try {
+      setIsBusy(true);
+      const [rmResp, fohResp, sfgResp] = await Promise.all([
+        bomAPI.getRMPMbyBOMForProcess({ borpm_bommf: id }),
+        bomAPI.getFOHbyBOMId({ bofoh_bommf: id }),
+        bomAPI.getSFGFGbyBOMId({ bosfg_bommf: id }),
+      ]);
+      setListDataRMPM(rmResp.data || []);
+      // setListDataFOH(fohResp.data || []);
+      // setListDataSFGFG(sfgResp.data || []);
+
+      console.log("rmResp", rmResp.data);
+      console.log("fohResp", fohResp.data);
+      console.log("sfgResp", sfgResp.data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleChange = async (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmmb_promf);
     setFormErrors(newErrors);
 
+    if (f === "promf_dpart") {
+      getAllBOMByDepartment(v);
+    }
+
     if (f === "promf_bommf") {
       const bom = bom_Options.find((opt) => opt.id === v);
+
       setFormData((prev) => ({
         ...prev,
         promf_cname: bom?.bommf_cname || "Process 1",
+        promf_prono: bom?.bommf_prono || 1,
+        promf_units: bom?.bommf_units || "",
+        promf_bmqty: bom?.bommf_bmqty || 0,
+        promf_bmval: bom.bommf_bmval || 0,
       }));
+      loadAllDetailsBOM(v);
     }
   };
 
@@ -205,7 +233,7 @@ const useProcess = () => {
     setListDataSFGFG([]);
     setListDataBatch([]);
     getAllDepartments();
-    getAllBOMs();
+    //getAllBOMs();
     getAllUnits();
     getAllItems();
   };
