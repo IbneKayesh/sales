@@ -1,10 +1,9 @@
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import AuditData from "@/components/AuditData";
-import {
-  IconClose,
-  IconSave,
-} from "@/icons";
+import Dropdown from "@/components/Dropdown";
+import { IconClose, IconSave } from "@/icons";
+import { dtype_Options } from "@/utils/vtable";
 
 const AttrbForm = ({
   isBusy,
@@ -30,18 +29,19 @@ const AttrbForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
-          <InputText
+        <div className="col-span-4">
+          <Dropdown
             label="Data Type"
-            placeholder="Enter data type"
+            options={dtype_Options}
             value={formData.attrb_dtype}
             onChange={(e) => onChange("attrb_dtype", e.target.value)}
             error={formErrors.attrb_dtype}
             required
+            placeholder="Select..."
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-4">
           <InputText
             label="Default Value"
             placeholder="Enter default value"

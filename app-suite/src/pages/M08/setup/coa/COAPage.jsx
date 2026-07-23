@@ -10,7 +10,7 @@ import useChartOfAccounts from "@/hooks/M08/useChartOfAccounts";
 import COAList from "./COAList";
 import COAForm from "./COAForm";
 
-const ChartOfAccountsPage = () => {
+const COAPage = () => {
   const {
     isBusy,
     pgView,
@@ -22,6 +22,8 @@ const ChartOfAccountsPage = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    chtac_chtac_Options,
     //functions
     handleChange,
     handleEdit,
@@ -85,6 +87,7 @@ const ChartOfAccountsPage = () => {
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}
+              chtac_chtac_Options={chtac_chtac_Options}
             />
           )}
         </PageCardBody>
@@ -92,4 +95,4 @@ const ChartOfAccountsPage = () => {
     </div>
   );
 };
-export default ChartOfAccountsPage;
+export default COAPage;

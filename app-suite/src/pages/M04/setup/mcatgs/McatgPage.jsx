@@ -51,7 +51,6 @@ const McatgPage = () => {
     //attributes
     listDataAttrb,
     formDataAttrb,
-    formErrorsAttrb,
     handleAttributes,
     handleChangeAttrb,
     handleEditAttrb,
@@ -208,7 +207,7 @@ const McatgPage = () => {
               readOnly={readOnly}
               stopEdit={stopEdit}
               formData={formDataAttrb}
-              formErrors={formErrorsAttrb}
+              formErrors={formErrors}
               onChange={handleChangeAttrb}
               onCancel={handleCancelAttrb}
               onSubmit={handleSubmitAttrb}

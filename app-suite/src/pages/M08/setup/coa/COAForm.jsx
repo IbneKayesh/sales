@@ -5,7 +5,7 @@ import Dropdown from "@/components/Dropdown";
 import Checkbox from "@/components/Checkbox";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
-import { chtac_ntype_Options } from "@/utils/vtable.js";
+import { chtac_ntype_Options, chtac_ctype_Options } from "@/utils/vtable.js";
 
 const COAForm = ({
   isBusy,
@@ -16,11 +16,26 @@ const COAForm = ({
   onChange,
   onCancel,
   onSubmit,
+  chtac_chtac_Options,
 }) => {
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-6">
+        <div className="col-span-4">
+          <Dropdown
+            label="Parent Account"
+            options={chtac_chtac_Options}
+            value={formData.chtac_chtac}
+            onChange={(e) => onChange("chtac_chtac", e.target.value)}
+            error={formErrors.chtac_chtac}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="chtac_cname"
+          />
+        </div>
+        <div className="col-span-8">
           <InputText
             label="Account Name"
             placeholder="Enter account name"
@@ -31,35 +46,15 @@ const COAForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-6">
-          <InputText
+        <div className="col-span-4">
+          <Dropdown
             label="Account Type"
-            placeholder="Enter account type"
+            options={chtac_ctype_Options}
             value={formData.chtac_ctype}
             onChange={(e) => onChange("chtac_ctype", e.target.value)}
             error={formErrors.chtac_ctype}
             required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputText
-            label="Parent Account"
-            placeholder="Select parent account"
-            value={formData.chtac_chtac}
-            onChange={(e) => onChange("chtac_chtac", e.target.value)}
-            error={formErrors.chtac_chtac}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputNumber
-            label="Chart Number"
-            placeholder="Enter chart number"
-            value={formData.chtac_chtno}
-            onChange={(e) => onChange("chtac_chtno", e.target.value)}
-            error={formErrors.chtac_chtno}
-            required
+            placeholder="Select..."
             disabled={readOnly}
           />
         </div>
@@ -75,18 +70,19 @@ const COAForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4" style={{ display: "flex", alignItems: "flex-end", paddingBottom: "var(--sp-2)" }}>
-          <Checkbox
-            label="Is Child"
-            checked={formData.chtac_child === true || formData.chtac_child === "true"}
-            onChange={(e) => onChange("chtac_child", e.target.checked)}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4" style={{ display: "flex", alignItems: "flex-end", paddingBottom: "var(--sp-2)" }}>
+        <div
+          className="col-span-4"
+          style={{
+            display: "flex",
+            alignItems: "flex-end",
+            paddingBottom: "var(--sp-6)",
+          }}
+        >
           <Checkbox
             label="Is Postable"
-            checked={formData.chtac_ispst === true || formData.chtac_ispst === "true"}
+            checked={
+              formData.chtac_ispst === true || formData.chtac_ispst === "true"
+            }
             onChange={(e) => onChange("chtac_ispst", e.target.checked)}
             disabled={readOnly}
           />

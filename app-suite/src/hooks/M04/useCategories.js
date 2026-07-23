@@ -28,6 +28,10 @@ const useCategories = () => {
   const [listDataItem, setListDataItem] = useState([]);
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
+  //others
+  const [listDataAttrb, setListDataAttrb] = useState([]);
+  const [formDataAttrb, setFormDataAttrb] = useState(dataModelAttrb);
+
 
   const getAllCategories = async () => {
     try {
@@ -260,11 +264,6 @@ const useCategories = () => {
   };
 
   //attributes
-  const [thisCategoryAttrb, setThisCategoryAttrb] = useState("");
-  const [listDataAttrb, setListDataAttrb] = useState([]);
-  const [formDataAttrb, setFormDataAttrb] = useState(dataModelAttrb);
-  const [formErrorsAttrb, setFormErrorsAttrb] = useState({});
-
   const getAllAttributes = async (id) => {
     try {
       setIsBusy(true);
@@ -278,7 +277,7 @@ const useCategories = () => {
   };
 
   const handleAttributes = async (rowData) => {
-    setThisCategoryAttrb(rowData);
+    setThisCategory(rowData);
     setPgView("SYS_VW_LST_3");
     getAllAttributes(rowData.id);
   };
@@ -286,7 +285,7 @@ const useCategories = () => {
   const handleChangeAttrb = (f, v) => {
     setFormDataAttrb((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formDataAttrb, [f]: v }, tmib_attrb);
-    setFormErrorsAttrb(newErrors);
+    setFormErrors(newErrors);
   };
 
   const handleEditAttrb = (rowData) => {
@@ -323,7 +322,7 @@ const useCategories = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_3");
         setFormDataAttrb(dataModelAttrb);
-        getAllAttributes(thisCategoryAttrb.id);
+        getAllAttributes(thisCategory.id);
       }
     } catch (error) {
     } finally {
@@ -333,7 +332,7 @@ const useCategories = () => {
 
   const handleAddNewAttrb = () => {
     setPgView("SYS_VW_FRM_3");
-    setFormDataAttrb({ ...dataModelAttrb, attrb_mcatg: thisCategoryAttrb.id });
+    setFormDataAttrb({ ...dataModelAttrb, attrb_mcatg: thisCategory.id });
     setReadOnly(false);
     setStopEdit(false);
   };
@@ -348,7 +347,7 @@ const useCategories = () => {
   const handleSubmitAttrb = async () => {
     try {
       const newErrors = validate(formDataAttrb, tmib_attrb);
-      setFormErrorsAttrb(newErrors);
+      setFormErrors(newErrors);
 
       if (Object.keys(newErrors).length > 0) {
         return;
@@ -369,7 +368,7 @@ const useCategories = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_3");
         setFormDataAttrb(dataModelAttrb);
-        getAllAttributes(thisCategoryAttrb.id);
+        getAllAttributes(thisCategory.id);
       }
     } catch (error) {
     } finally {
@@ -407,7 +406,6 @@ const useCategories = () => {
     //attributes
     listDataAttrb,
     formDataAttrb,
-    formErrorsAttrb,
     handleAttributes,
     handleChangeAttrb,
     handleEditAttrb,

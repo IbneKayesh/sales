@@ -1,11 +1,16 @@
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
+import Dropdown from "@/components/Dropdown";
 import InputNumber from "@/components/InputNumber";
+import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
+import { IconClose, IconSave } from "@/icons";
 import {
-  IconClose,
-  IconSave,
-} from "@/icons";
+  cntry_Options,
+  crncy_Options,
+  sorce_Options,
+  ctype_Options,
+} from "@/utils/vtable.js";
 
 const ContactForm = ({
   isBusy,
@@ -20,7 +25,7 @@ const ContactForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-4">
+        <div className="col-span-6">
           <InputText
             label="Contact Name"
             placeholder="Enter contact name"
@@ -31,7 +36,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputText
             label="Code"
             placeholder="Enter code"
@@ -41,26 +46,27 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
-          <InputText
+        <div className="col-span-3">
+          <Dropdown
             label="Type"
-            placeholder="Enter contact type"
+            options={ctype_Options}
             value={formData.cntct_ctype}
             onChange={(e) => onChange("cntct_ctype", e.target.value)}
             error={formErrors.cntct_ctype}
             required
+            placeholder="Select..."
             disabled={readOnly}
           />
         </div>
-      </div>
-      <div className="grid">
-        <div className="col-span-4">
-          <InputText
+        <div className="col-span-3">
+          <Dropdown
             label="Source"
-            placeholder="Enter source"
+            options={sorce_Options}
             value={formData.cntct_sorce}
             onChange={(e) => onChange("cntct_sorce", e.target.value)}
             error={formErrors.cntct_sorce}
+            required
+            placeholder="Select..."
             disabled={readOnly}
           />
         </div>
@@ -74,7 +80,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputText
             label="Contact No"
             placeholder="Enter contact number"
@@ -85,9 +91,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-      </div>
-      <div className="grid">
-        <div className="col-span-4">
+        <div className="col-span-2">
           <InputText
             label="Email"
             placeholder="email@example.com"
@@ -97,7 +101,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-2">
           <InputText
             label="TIN No"
             placeholder="Enter TIN number"
@@ -117,8 +121,6 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-      </div>
-      <div className="grid">
         <div className="col-span-6">
           <InputText
             label="Office Address"
@@ -129,7 +131,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-8">
           <InputText
             label="Factory Address"
             placeholder="Enter factory address"
@@ -139,29 +141,31 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-      </div>
-      <div className="grid">
-        <div className="col-span-3">
-          <InputText
+        <div className="col-span-4">
+          <Dropdown
             label="Country"
-            placeholder="Enter country"
+            options={cntry_Options}
             value={formData.cntct_cntry}
             onChange={(e) => onChange("cntct_cntry", e.target.value)}
             error={formErrors.cntct_cntry}
+            required
+            placeholder="Select..."
             disabled={readOnly}
           />
         </div>
         <div className="col-span-3">
-          <InputText
+          <Dropdown
             label="Currency"
-            placeholder="Enter currency"
+            options={crncy_Options}
             value={formData.cntct_crncy}
             onChange={(e) => onChange("cntct_crncy", e.target.value)}
             error={formErrors.cntct_crncy}
+            required
+            placeholder="Select..."
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3">
           <InputNumber
             label="Discount %"
             placeholder="0"
@@ -174,29 +178,11 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="Credit Limit"
-            placeholder="0"
-            value={formData.cntct_crlmt}
-            onChange={(e) => onChange("cntct_crlmt", e.target.value)}
-            min={0}
-            step={0.01}
-            error={formErrors.cntct_crlmt}
-            disabled={readOnly}
-          />
+        <div className="col-span-3">
+          <InputLabel label="Credit Limit" value={formData.cntct_crlmt} />
         </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="Credit Balance"
-            placeholder="0"
-            value={formData.cntct_crbal}
-            onChange={(e) => onChange("cntct_crbal", e.target.value)}
-            min={0}
-            step={0.01}
-            error={formErrors.cntct_crbal}
-            disabled={readOnly}
-          />
+        <div className="col-span-3">
+          <InputLabel label="Credit Balance" value={formData.cntct_crbal} />
         </div>
       </div>
       {formData?.id && (

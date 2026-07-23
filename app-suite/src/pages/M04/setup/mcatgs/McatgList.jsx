@@ -2,7 +2,7 @@ import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
-import { IconClose, IconCheck, IconBar } from "@/icons";
+import { IconClose, IconCheck, IconBar, IconMenu } from "@/icons";
 
 const McatgList = ({
   listData,
@@ -54,7 +54,7 @@ const McatgList = ({
             }}
             title="Attributes"
           >
-            <IconBar size={14} />
+            <IconMenu size={14} />
           </Button>
           <ActionButton
             rowData={row}

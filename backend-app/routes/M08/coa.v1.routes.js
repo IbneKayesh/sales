@@ -119,7 +119,7 @@ const create = async (req, res) => {
     }
 
     //database action
-    const chtac_ntype_new = chtac_ctype === "Asset" || chtac_ctype === "Expense" ? "Dr" : "Cr";
+    //const chtac_ntype_new = chtac_ctype === "Asset" || chtac_ctype === "Expense" ? "Dr" : "Cr";
     //Normal Balance Type (Dr/Cr) 'Dr' = Assets, Expenses 'Cr' = Liabilities, Equity, Income
     const chtac_child_new = chtac_chtac === "-" ? false : true;
     const newCode = await GenNewCode(user_c, "tmtb_chtac");
@@ -164,7 +164,7 @@ const create = async (req, res) => {
       chtac_cname,
       chtac_ctype,
       chtac_chtno_new,
-      chtac_ntype_new,
+      chtac_ntype,
       chtac_child_new,
       chtac_ispst,
       user_s,

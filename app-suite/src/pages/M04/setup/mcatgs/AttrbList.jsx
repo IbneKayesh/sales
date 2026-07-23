@@ -9,8 +9,8 @@ import {
 const AttrbList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "attrb_cname", header: "Name", width: "120px" },
-    { key: "attrb_dtype", header: "Data Type", width: "120px" },
-    { key: "attrb_dvalu", header: "Default", width: "150px" },
+    { key: "attrb_dtype", header: "Data Type", width: "80px" },
+    { key: "attrb_dvalu", header: "Default", width: "80px" },
     {
       key: "attrb_actve",
       header: "Status",

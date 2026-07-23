@@ -7,10 +7,10 @@ const { GenNewCode } = require("../../db/genHelper");
 // get all
 router.post("/", async (req, res) => {
   try {
-    const { user_s, user_c, user_b } = req.body;
+    const { attrb_mcatg, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!user_c) {
+    if (!attrb_mcatg || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -19,16 +19,16 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT atrb.*, mctg.mcatg_mname,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
+    const sql = `SELECT atrb.*,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmib_attrb atrb
-    LEFT JOIN tmib_mcatg mctg ON atrb.attrb_mcatg = mctg.id
-    LEFT JOIN tmnb_users csr ON atrb.attrb_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON atrb.attrb_upusr = usr.id
-    WHERE atrb.attrb_apusr = $1
-    ORDER BY atrb.attrb_aname ASC`;
+    LEFT JOIN tmhb_emply csr ON atrb.attrb_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON atrb.attrb_upusr = usr.id
+    WHERE atrb.attrb_users = $1
+    AND atrb.attrb_mcatg = $2
+    ORDER BY atrb.attrb_cname ASC`;
 
-    const params = [user_c];
+    const params = [user_c, attrb_mcatg];
     const rows = await dbGetAll(sql, params, `get attrb- ${user_c}`);
     res.json({
       success: true,
@@ -62,9 +62,9 @@ router.post("/get-all-active", async (req, res) => {
     //database action
     const sql = `SELECT atrb.*, 0 as edit_stop
     FROM tmib_attrb atrb
-    WHERE atrb.attrb_apusr = $1
+    WHERE atrb.attrb_users = $1
     AND atrb.attrb_actve = TRUE
-    ORDER BY atrb.attrb_aname ASC`;
+    ORDER BY atrb.attrb_cname ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get attrb- ${user_c}`);
@@ -87,11 +87,11 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      attrb_apusr,
+      attrb_users,
       attrb_bsins,
+      attrb_ccode,
       attrb_mcatg,
-      attrb_acode,
-      attrb_aname,
+      attrb_cname,
       attrb_dtype,
       attrb_dvalu,
       user_s,
@@ -102,7 +102,7 @@ const create = async (req, res) => {
     // Validate input
     if (
       !attrb_mcatg ||
-      !attrb_aname ||
+      !attrb_cname ||
       !attrb_dtype ||
       !user_s ||
       !user_c ||
@@ -118,7 +118,7 @@ const create = async (req, res) => {
     //database action
     const newCode = await GenNewCode(user_c, "tmib_attrb");
 
-    const sql = `INSERT INTO tmib_attrb(id, attrb_apusr, attrb_bsins, attrb_mcatg, attrb_acode, attrb_aname,
+    const sql = `INSERT INTO tmib_attrb(id, attrb_users, attrb_bsins,  attrb_ccode, attrb_mcatg, attrb_cname,
     attrb_dtype, attrb_dvalu, attrb_crusr, attrb_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
     $7, $8, $9, $10)`;
@@ -126,9 +126,9 @@ const create = async (req, res) => {
       uuidv4(),
       user_c,
       user_b,
-      attrb_mcatg,
       newCode,
-      attrb_aname,
+      attrb_mcatg,
+      attrb_cname,
       attrb_dtype,
       attrb_dvalu,
       user_s,
@@ -138,7 +138,7 @@ const create = async (req, res) => {
     await dbRun(sql, params, `create attrb- ${user_c}`);
     res.json({
       success: true,
-      message: `${attrb_aname} - Created successfully.`,
+      message: `${attrb_cname} - Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -156,11 +156,11 @@ const update = async (req, res) => {
    
     const {
       id,
-      attrb_apusr,
+      attrb_users,
       attrb_bsins,
+      attrb_ccode,
       attrb_mcatg,
-      attrb_acode,
-      attrb_aname,
+      attrb_cname,
       attrb_dtype,
       attrb_dvalu,
       user_s,
@@ -171,7 +171,7 @@ const update = async (req, res) => {
     // Validate input
     if (
       !attrb_mcatg ||
-      !attrb_aname ||
+      !attrb_cname ||
       !attrb_dtype ||
       !user_s ||
       !user_c ||
@@ -187,19 +187,19 @@ const update = async (req, res) => {
     //database action
     const sql = `UPDATE tmib_attrb
     SET attrb_mcatg = $1,
-    attrb_aname = $2,
+    attrb_cname = $2,
     attrb_dtype = $3,
     attrb_dvalu = $4,
     attrb_upusr = $5,
     attrb_updat = CURRENT_TIMESTAMP,
     attrb_rvnmr = attrb_rvnmr + 1
     WHERE id = $6`;
-    const params = [attrb_mcatg, attrb_aname, attrb_dtype, attrb_dvalu, user_s, id];
+    const params = [attrb_mcatg, attrb_cname, attrb_dtype, attrb_dvalu, user_s, id];
 
     await dbRun(sql, params, `update attrb- ${user_c}`);
     res.json({
       success: true,
-      message: `${attrb_aname} - Updated successfully.`,
+      message: `${attrb_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -231,10 +231,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, attrb_aname, attrb_actve, user_s, user_c, user_b } = req.body;
+    const { id, attrb_cname, attrb_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !attrb_aname || !user_s || !user_c || !user_b) {
+    if (!id || !attrb_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -254,7 +254,7 @@ router.post("/delete", async (req, res) => {
     await dbRun(sql, params, `delete attrb- ${user_c}`);
     res.json({
       success: true,
-      message: `${attrb_aname} - ${attrb_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${attrb_cname} - ${attrb_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {

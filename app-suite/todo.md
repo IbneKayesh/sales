@@ -1,4 +1,3 @@
-- useBOM.js > handleShowModal, handleHideModal
-- RMPMForm, FOHForm, SFGForm move to modal
-- example modal in ExamplesPage.jsx > import Modal, { ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@/components/Modal'
-add a single modal into BOMPage.jsx and render RMPMForm, FOHForm, SFGForm inside single modal
+1. add common icons into icons/index.jsx
+2. set an icon for ghost button attributes McatgList.jsx
+3. m01/ModulePage.jsx > modules : id: M00, Name: Recent, menus : clicked menus (distinct), NOTE: don't change  other menu/module id's

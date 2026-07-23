@@ -38,6 +38,10 @@ const m01Routes = require("./routes/M01");
 const m04Routes = require("./routes/M04");
 //M05 :: Manufacturing
 const m05Routes = require("./routes/M05");
+//M06 :: CRM
+const m06Routes = require("./routes/M06");
+//M08 :: Accounts
+const m08Routes = require("./routes/M08");
 
 const app = express();
 
@@ -92,6 +96,10 @@ app.use("/api/M01", m01Routes);
 app.use("/api/M04", m04Routes);
 //M05 :: Manufacturing
 app.use("/api/M05", m05Routes);
+//M06 :: CRM
+app.use("/api/M06", m06Routes);
+//M08 :: Accounts
+app.use("/api/M08", m08Routes);
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

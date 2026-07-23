@@ -3,6 +3,21 @@
     "type": "string",
     "label": "Id"
   },
+  "cntct_ctype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Enter contact type",
+    "required": true,
+    "default": "Customer"
+  },
+  "cntct_sorce": {
+    "type": "string",
+    "label": "Source",
+    "maxLength": 50,
+    "default": "Local",
+    "required": true
+  },
   "cntct_cname": {
     "type": "string",
     "label": "Name",
@@ -10,25 +25,6 @@
     "minLength": 3,
     "placeholder": "Enter contact name",
     "required": true
-  },
-  "cntct_ccode": {
-    "type": "string",
-    "label": "Code",
-    "maxLength": 50,
-    "placeholder": "Enter code"
-  },
-  "cntct_ctype": {
-    "type": "string",
-    "label": "Type",
-    "maxLength": 50,
-    "placeholder": "Enter contact type",
-    "required": true
-  },
-  "cntct_sorce": {
-    "type": "string",
-    "label": "Source",
-    "maxLength": 50,
-    "default": "Local"
   },
   "cntct_cntps": {
     "type": "string",

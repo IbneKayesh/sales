@@ -12,12 +12,10 @@ router.use("/stockreports", stockreportsRoutes);
 router.use("/products/formula", stockFormulaRoutes);
 
 
-const attributesV1Routes = require("./attributes.v1.routes");
 const mrrV1Routes = require("./mrr.v1.routes");
 const itemsvmartV1Routes = require("./items.vmart.v1.routes.js");
 
 
-router.use("/v1/attributes", attributesV1Routes);
 router.use("/v1/mrr", mrrV1Routes);
 router.use("/v1/items/vmart", itemsvmartV1Routes);
 

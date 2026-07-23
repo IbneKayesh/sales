@@ -8,7 +8,7 @@ const dataModel = generateDataModel(tmtb_chtac);
 const useChartOfAccounts = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M08-M01-M001");
+  const [pgId, setPgId] = useState("M08-M0001");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -22,6 +22,7 @@ const useChartOfAccounts = () => {
   const [listDataItem, setListDataItem] = useState([]);
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
+  const [chtac_chtac_Options, setChtac_chtac_Options] = useState([]);
 
   const getAllCoa = async () => {
     try {
@@ -29,6 +30,19 @@ const useChartOfAccounts = () => {
       const resp = await coaAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
+
+      //make this parent
+      const listActive = list.filter((item) => item.chtac_actve);
+      setChtac_chtac_Options(listActive);
+      // setChtac_chtac_Options([
+      //   {
+      //     key: "-",
+      //     label: "(No Parent)",
+      //     data: null,
+      //     selectable: true,
+      //     children: buildCoaTree(listActive, "-", false),
+      //   },
+      // ]);
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -147,6 +161,8 @@ const useChartOfAccounts = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    chtac_chtac_Options,
     //functions
     handleChange,
     handleEdit,
