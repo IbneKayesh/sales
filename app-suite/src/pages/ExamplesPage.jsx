@@ -41,7 +41,9 @@ import TreeDataTable from '@/components/TreeDataTable'
 import AccordionCard from '@/components/AccordionCard'
 import Breadcrumb from '@/components/Breadcrumb'
 import Drawer, { DrawerHeader, DrawerBody, DrawerGroup, DrawerItem, DrawerFooter } from '@/components/Drawer'
-import { IconUsers, IconDollar, IconBox, IconActivity, IconSave, IconCheck, IconClose, IconInfo, IconWarning, IconEdit, IconDelete, IconSearch, IconPhone, IconHome, IconChevronRight, IconChart, IconUser, IconTag, IconCalendar, IconSettings, IconShield, IconLock } from '@/icons'
+import Carousel from '@/components/Carousel'
+import ImageGallery from '@/components/ImageGallery'
+import { IconUsers, IconDollar, IconBox, IconActivity, IconSave, IconCheck, IconClose, IconInfo, IconWarning, IconEdit, IconDelete, IconSearch, IconPhone, IconHome, IconChevronRight, IconChart, IconUser, IconTag, IconCalendar, IconSettings, IconShield, IconLock, IconTrendingUp, IconStar } from '@/icons'
 
 const sampleColumns = [
   { key: 'name', header: 'Name', width: '160px' },
@@ -313,6 +315,8 @@ export default function ExamplesPage() {
       { id: 'tree-view', label: 'Tree View' },
       { id: 'tree-data-table', label: 'Tree Data Table' },
       { id: 'accordion-card', label: 'Accordion Card' },
+      { id: 'carousel', label: 'Carousel' },
+      { id: 'image-gallery', label: 'Image Gallery' },
     ]},
     { key: 'buttons', label: 'Buttons', items: [
       { id: 'buttons', label: 'Buttons' },
@@ -337,6 +341,7 @@ export default function ExamplesPage() {
     ]},
     { key: 'feedback', label: 'Feedback', items: [
       { id: 'error-boundary', label: 'Error Boundaries' },
+      { id: 'toast-box', label: 'Toast Notifications' },
     ]},
   ]
   const allCategoryKeys = categoryGroups.map((g) => g.key)
@@ -1213,6 +1218,161 @@ export default function ExamplesPage() {
         </PageCardBody>
       </PageCard>
 
+      {/* ── Section: Carousel ── */}
+      <PageCard data-section="carousel">
+        <PageCardHeader>
+          <PageCardTitle title="Carousel" subtitle="Auto-rotating slideshow with arrow navigation, dot indicators, and swipe/keyboard support" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+            <div>
+              <h4 className="h4" style={{ margin: '0 0 var(--sp-3)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Slide Transition</h4>
+              <Carousel
+                slides={[
+                  {
+                    content: (
+                      <div className="carousel-slide-card carousel-slide-card--primary">
+                        <span className="carousel-slide-card__icon"><IconChart size={24} /></span>
+                        <h3 className="carousel-slide-card__title">Revenue Analytics</h3>
+                        <p className="carousel-slide-card__desc">Real-time revenue tracking with interactive charts and forecasting tools.</p>
+                      </div>
+                    ),
+                    label: 'Revenue Analytics',
+                  },
+                  {
+                    content: (
+                      <div className="carousel-slide-card carousel-slide-card--success">
+                        <span className="carousel-slide-card__icon"><IconUser size={24} /></span>
+                        <h3 className="carousel-slide-card__title">User Management</h3>
+                        <p className="carousel-slide-card__desc">Manage team members, roles, permissions, and access controls from one place.</p>
+                      </div>
+                    ),
+                    label: 'User Management',
+                  },
+                  {
+                    content: (
+                      <div className="carousel-slide-card carousel-slide-card--warning">
+                        <span className="carousel-slide-card__icon"><IconBox size={24} /></span>
+                        <h3 className="carousel-slide-card__title">Inventory Overview</h3>
+                        <p className="carousel-slide-card__desc">Track stock levels, manage suppliers, and optimize your supply chain.</p>
+                      </div>
+                    ),
+                    label: 'Inventory Overview',
+                  },
+                  {
+                    content: (
+                      <div className="carousel-slide-card carousel-slide-card--danger">
+                        <span className="carousel-slide-card__icon"><IconActivity size={24} /></span>
+                        <h3 className="carousel-slide-card__title">System Health</h3>
+                        <p className="carousel-slide-card__desc">Monitor uptime, response times, and infrastructure performance metrics.</p>
+                      </div>
+                    ),
+                    label: 'System Health',
+                  },
+                ]}
+                autoPlay={4000}
+                transition="slide"
+              />
+            </div>
+            <div>
+              <h4 className="h4" style={{ margin: '0 0 var(--sp-3)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Fade Transition</h4>
+              <Carousel
+                slides={[
+                  {
+                    content: (
+                      <div className="carousel-slide-card carousel-slide-card--accent">
+                        <span className="carousel-slide-card__icon"><IconTrendingUp size={24} /></span>
+                        <h3 className="carousel-slide-card__title">Growth Trends</h3>
+                        <p className="carousel-slide-card__desc">Monthly growth analytics with year-over-year comparisons.</p>
+                      </div>
+                    ),
+                    label: 'Growth Trends',
+                  },
+                  {
+                    content: (
+                      <div className="carousel-slide-card carousel-slide-card--primary">
+                        <span className="carousel-slide-card__icon"><IconStar size={24} /></span>
+                        <h3 className="carousel-slide-card__title">Top Performers</h3>
+                        <p className="carousel-slide-card__desc">Highlight your best-selling products and top-performing teams.</p>
+                      </div>
+                    ),
+                    label: 'Top Performers',
+                  },
+                  {
+                    content: (
+                      <div className="carousel-slide-card carousel-slide-card--success">
+                        <span className="carousel-slide-card__icon"><IconCheck size={24} /></span>
+                        <h3 className="carousel-slide-card__title">Goals Achieved</h3>
+                        <p className="carousel-slide-card__desc">Track quarterly OKRs, milestones, and team accomplishments.</p>
+                      </div>
+                    ),
+                    label: 'Goals Achieved',
+                  },
+                ]}
+                autoPlay={6000}
+                transition="fade"
+              />
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Image Gallery ── */}
+      <PageCard data-section="image-gallery">
+        <PageCardHeader>
+          <PageCardTitle title="Image Gallery" subtitle="Responsive grid with lightbox preview — click any item to open full view with navigation" />
+        </PageCardHeader>
+        <PageCardBody>
+          <ImageGallery
+            columns={3}
+            items={[
+              {
+                icon: <span className="image-gallery__thumb-icon" style={{background:'var(--primary-bg)',color:'var(--primary)',fontSize:'24px'}}><IconChart size={24} /></span>,
+                label: 'Revenue Dashboard',
+                caption: 'Revenue Dashboard',
+                subtitle: 'Q2 2026 performance',
+                bg: 'linear-gradient(135deg, var(--primary-bg), var(--surface-alt))',
+              },
+              {
+                icon: <span className="image-gallery__thumb-icon" style={{background:'var(--success-bg)',color:'var(--success)',fontSize:'24px'}}><IconUser size={24} /></span>,
+                label: 'User Analytics',
+                caption: 'User Analytics',
+                subtitle: 'Active users & growth',
+                bg: 'linear-gradient(135deg, var(--success-bg), var(--surface-alt))',
+              },
+              {
+                icon: <span className="image-gallery__thumb-icon" style={{background:'var(--warning-bg)',color:'var(--warning)',fontSize:'24px'}}><IconBox size={24} /></span>,
+                label: 'Inventory Map',
+                caption: 'Inventory Map',
+                subtitle: 'Warehouse distribution',
+                bg: 'linear-gradient(135deg, var(--warning-bg), var(--surface-alt))',
+              },
+              {
+                icon: <span className="image-gallery__thumb-icon" style={{background:'var(--danger-bg)',color:'var(--danger)',fontSize:'24px'}}><IconActivity size={24} /></span>,
+                label: 'System Monitor',
+                caption: 'System Monitor',
+                subtitle: 'Real-time infrastructure',
+                bg: 'linear-gradient(135deg, var(--danger-bg), var(--surface-alt))',
+              },
+              {
+                icon: <span className="image-gallery__thumb-icon" style={{background:'var(--accent-bg)',color:'var(--accent)',fontSize:'24px'}}><IconStar size={24} /></span>,
+                label: 'Performance Metrics',
+                caption: 'Performance Metrics',
+                subtitle: 'KPI tracking dashboard',
+                bg: 'linear-gradient(135deg, var(--accent-bg), var(--surface-alt))',
+              },
+              {
+                icon: <span className="image-gallery__thumb-icon" style={{background:'var(--info-bg)',color:'var(--info)',fontSize:'24px'}}><IconSettings size={24} /></span>,
+                label: 'Settings Panel',
+                caption: 'Settings Panel',
+                subtitle: 'Configuration overview',
+                bg: 'linear-gradient(135deg, var(--info-bg), var(--surface-alt))',
+              },
+            ]}
+          />
+        </PageCardBody>
+      </PageCard>
+
       {/* ── Section: Accordion Card ── */}
       <PageCard data-section="accordion-card">
         <PageCardHeader>
@@ -1939,6 +2099,53 @@ export default function ExamplesPage() {
                   </span>
                 </DrawerFooter>
               </Drawer>
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Toast Notifications ── */}
+      <PageCard data-section="toast-box">
+        <PageCardHeader>
+          <PageCardTitle title="Toast Notifications" subtitle="Trigger toast messages — success, error, info, and warning variants with auto-dismiss" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-3" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Success</h4>
+              <Button variant="primary" size="sm" onClick={() => toast.success('Data saved successfully!')}>
+                Show Success
+              </Button>
+              <Button variant="primary" size="sm" onClick={() => toast.success('User account created. Welcome to the platform!', { duration: 5000 })}>
+                Long Success
+              </Button>
+            </div>
+            <div className="col-span-3" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Error</h4>
+              <Button variant="danger" size="sm" onClick={() => toast.error('Failed to save. Please try again.')}>
+                Show Error
+              </Button>
+              <Button variant="danger" size="sm" onClick={() => toast.error('Connection lost. Check your network and retry.', { duration: 6000 })}>
+                Long Error
+              </Button>
+            </div>
+            <div className="col-span-3" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Info</h4>
+              <Button variant="secondary" size="sm" onClick={() => toast.info('New updates are available.')}>
+                Show Info
+              </Button>
+              <Button variant="secondary" size="sm" onClick={() => toast.info('Your report has been generated and is ready for download.', { duration: 5000 })}>
+                Long Info
+              </Button>
+            </div>
+            <div className="col-span-3" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Warning</h4>
+              <Button variant="outline" size="sm" onClick={() => toast.warning('Your session is about to expire.')}>
+                Show Warning
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => toast.warning('Low disk space — only 2GB remaining. Please clean up old files.', { duration: 6000 })}>
+                Long Warning
+              </Button>
             </div>
           </div>
         </PageCardBody>
