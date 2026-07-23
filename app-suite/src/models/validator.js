@@ -1,4 +1,4 @@
-import { currentDate } from "@/utils/datetime";
+import { currentDate, getCurrentYear } from "@/utils/datetime";
 
 const validate = (data, schema) => {
   const errors = {};
@@ -155,6 +155,8 @@ export const generateDataModel = (schema, extraData = {}) => {
 
     if (def === "new Date() with local format") {
       acc[key] = currentDate();
+    } else if (def === "new Date().getFullYear()") {
+      acc[key] = getCurrentYear();
     } else if (def !== undefined) {
       // accept 0, false, "", numbers, strings
       acc[key] = def;

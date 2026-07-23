@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import PageCard, { PageCardHeader, PageCardTitle, PageCardActions, PageCardBody, PageCardFooter } from '@/components/PageCard'
 import Button from '@/components/Button'
 import InputText from '@/components/InputText'
@@ -25,7 +25,23 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 import ActionButton from '@/components/ActionButton'
 import AuditData from '@/components/AuditData'
 import StatListItem from '@/components/StatListItem'
-import { IconUsers, IconDollar, IconBox, IconActivity, IconSave, IconCheck, IconClose, IconInfo, IconWarning, IconEdit, IconDelete, IconSearch, IconPhone } from '@/icons'
+import NotificationBell from '@/components/NotificationBell'
+import KanbanBoard from '@/components/KanbanBoard'
+import TabPage from '@/components/TabPage'
+import StepPage from '@/components/StepPage'
+import Chip from '@/components/Chip'
+import InputTime from '@/components/InputTime'
+import InputSlider from '@/components/InputSlider'
+import InputRating from '@/components/InputRating'
+import InputTextArea from '@/components/InputTextArea'
+import InputColor from '@/components/InputColor'
+import InputSwitch from '@/components/InputSwitch'
+import TreeView from '@/components/TreeView'
+import TreeDataTable from '@/components/TreeDataTable'
+import AccordionCard from '@/components/AccordionCard'
+import Breadcrumb from '@/components/Breadcrumb'
+import Drawer, { DrawerHeader, DrawerBody, DrawerGroup, DrawerItem, DrawerFooter } from '@/components/Drawer'
+import { IconUsers, IconDollar, IconBox, IconActivity, IconSave, IconCheck, IconClose, IconInfo, IconWarning, IconEdit, IconDelete, IconSearch, IconPhone, IconHome, IconChevronRight, IconChart, IconUser, IconTag, IconCalendar, IconSettings, IconShield, IconLock } from '@/icons'
 
 const sampleColumns = [
   { key: 'name', header: 'Name', width: '160px' },
@@ -104,6 +120,130 @@ export default function ExamplesPage() {
     { label: 'Bounce Rate', value: '24.3%', sub: '-3.2% improvement', color: 'var(--warning)' },
     { label: 'Avg. Response', value: '1.2s', sub: '98th percentile', color: 'var(--accent)' },
   ])
+  const [kanbanColumns] = useState([
+    {
+      id: 'todo', title: 'To Do', cards: [
+        { id: 'k1', title: 'Design new dashboard layout', description: 'Create wireframes for the analytics dashboard with real-time widgets', labels: [{ text: 'Design', color: 'var(--primary)' }], assignees: [{ name: 'Alice' }, { name: 'Bob' }] },
+        { id: 'k2', title: 'Implement user authentication', description: 'Add OAuth2 support with Google and GitHub providers', labels: [{ text: 'Backend', color: 'var(--accent)' }], assignees: [{ name: 'Carol' }] },
+        { id: 'k3', title: 'Write API documentation', description: 'Document all REST endpoints with request/response examples', labels: [{ text: 'Docs', color: 'var(--info)' }], assignees: [{ name: 'Dave' }, { name: 'Eve' }] },
+      ],
+    },
+    {
+      id: 'in-progress', title: 'In Progress', cards: [
+        { id: 'k4', title: 'Refactor data layer', description: 'Migrate from class-based to functional data access patterns', labels: [{ text: 'Refactor', color: 'var(--warning)' }], assignees: [{ name: 'Frank' }, { name: 'Grace' }] },
+        { id: 'k5', title: 'Add dark mode support', description: 'Implement CSS custom properties for theme switching', labels: [{ text: 'UI', color: 'var(--primary)' }, { text: 'Enhancement', color: 'var(--success)' }], assignees: [{ name: 'Heidi' }] },
+      ],
+    },
+    {
+      id: 'review', title: 'Review', cards: [
+        { id: 'k6', title: 'Optimize database queries', description: 'Add indexes and query optimization for report generation', labels: [{ text: 'Performance', color: 'var(--danger)' }], assignees: [{ name: 'Ivan' }] },
+      ],
+    },
+    {
+      id: 'done', title: 'Done', cards: [
+        { id: 'k7', title: 'Set up CI/CD pipeline', description: 'Configure GitHub Actions for automated testing and deployment', labels: [{ text: 'DevOps', color: 'var(--accent)' }], assignees: [{ name: 'Judy' }] },
+        { id: 'k8', title: 'Create onboarding guide', description: 'Write a getting-started guide for new team members', labels: [{ text: 'Docs', color: 'var(--info)' }], assignees: [{ name: 'Mallory' }] },
+        { id: 'k9', title: 'Deploy staging environment', description: 'Set up staging server with production-like configuration', labels: [{ text: 'DevOps', color: 'var(--accent)' }], assignees: [{ name: 'Niaj' }] },
+      ],
+    },
+  ])
+
+  const [sliderVolume, setSliderVolume] = useState(65)
+  const [sliderPrice, setSliderPrice] = useState(50)
+  const [sliderDecimal, setSliderDecimal] = useState(3.5)
+  const [ratingSat, setRatingSat] = useState(3.5)
+  const [ratingNps, setRatingNps] = useState(7)
+  const [ratingService, setRatingService] = useState(4)
+  const [ratingCustom, setRatingCustom] = useState(5)
+  const [ratingMinimal, setRatingMinimal] = useState(2)
+  const [textareaVal, setTextareaVal] = useState('')
+  const [textareaDesc, setTextareaDesc] = useState('This is a read-only description with some pre-filled content for demonstration purposes.')
+  const [colorPrimary, setColorPrimary] = useState('#7c3aed')
+  const [colorAccent, setColorAccent] = useState('#10b981')
+  const [switchNotif, setSwitchNotif] = useState(true)
+  const [switchDark, setSwitchDark] = useState(false)
+  const [switchEmail, setSwitchEmail] = useState(true)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const [treeChecked, setTreeChecked] = useState([])
+  const treeData = [
+    {
+      id: 'cat-1', label: 'Electronics',
+      children: [
+        { id: 'sub-1', label: 'Laptops', children: [{ id: 'item-1', label: 'Gaming Laptop' }, { id: 'item-2', label: 'Ultrabook' }] },
+        { id: 'sub-2', label: 'Phones', children: [{ id: 'item-3', label: 'Smartphone' }, { id: 'item-4', label: 'Feature Phone' }] },
+      ],
+    },
+    {
+      id: 'cat-2', label: 'Furniture',
+      children: [
+        { id: 'sub-3', label: 'Chairs', children: [{ id: 'item-5', label: 'Office Chair' }, { id: 'item-6', label: 'Gaming Chair' }] },
+        { id: 'sub-4', label: 'Desks', children: [{ id: 'item-7', label: 'Standing Desk' }, { id: 'item-8', label: 'Corner Desk' }] },
+      ],
+    },
+  ]
+  const treeColumns = [
+    { key: 'name', header: 'Category / Item', width: '200px' },
+    { key: 'code', header: 'Code', width: '100px' },
+    { key: 'qty', header: 'Qty', width: '80px' },
+    {
+      key: 'status', header: 'Status', width: '100px',
+      render: (v) => <Badge variant={v === 'active' ? 'success' : v === 'pending' ? 'warning' : 'danger'} dot>{v ? v.charAt(0).toUpperCase() + v.slice(1) : '—'}</Badge>,
+    },
+  ]
+  const treeTableData = [
+    {
+      id: 't1', name: 'Warehouse A', code: 'WH-A', qty: 1200, status: 'active',
+      children: [
+        { id: 't1a', name: 'Electronics', code: 'WH-A-EL', qty: 450, status: 'active',
+          children: [
+            { id: 't1a1', name: 'Laptops', code: 'WH-A-EL-LP', qty: 120, status: 'active' },
+            { id: 't1a2', name: 'Phones', code: 'WH-A-EL-PH', qty: 330, status: 'active' },
+          ],
+        },
+        { id: 't1b', name: 'Furniture', code: 'WH-A-FR', qty: 750, status: 'pending',
+          children: [
+            { id: 't1b1', name: 'Chairs', code: 'WH-A-FR-CH', qty: 400, status: 'active' },
+            { id: 't1b2', name: 'Desks', code: 'WH-A-FR-DK', qty: 350, status: 'pending' },
+          ],
+        },
+      ],
+    },
+    {
+      id: 't2', name: 'Warehouse B', code: 'WH-B', qty: 890, status: 'active',
+      children: [
+        { id: 't2a', name: 'Accessories', code: 'WH-B-AC', qty: 890, status: 'active',
+          children: [
+            { id: 't2a1', name: 'Cables', code: 'WH-B-AC-CB', qty: 500, status: 'active' },
+            { id: 't2a2', name: 'Chargers', code: 'WH-B-AC-CG', qty: 390, status: 'active' },
+          ],
+        },
+      ],
+    },
+  ]
+
+  const [sampleNotifications] = useState([
+    { id: '1', title: 'New order received', description: 'Order #1024 from Acme Corp — $12,500', time: '2m ago', type: 'success', read: false },
+    { id: '2', title: 'Payment failed', description: 'Invoice #INV-2024-089 was declined by the bank', time: '15m ago', type: 'error', read: false },
+    { id: '3', title: 'Inventory low', description: 'SKU-ALUM-001 has only 12 units remaining', time: '1h ago', type: 'warning', read: false },
+    { id: '4', title: 'Shipment dispatched', description: 'Tracking #TRK-8842 — ETA 3 business days', time: '2h ago', type: 'info', read: true },
+    { id: '5', title: 'New user registered', description: 'john.doe@example.com joined your organization', time: '3h ago', type: 'info', read: true },
+  ])
+  const [notifications, setNotifications] = useState(sampleNotifications)
+
+  const handleMarkAllRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
+  }
+
+  const handleNotificationClick = (clicked) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === clicked.id ? { ...n, read: true } : n))
+    )
+  }
+
+  const handleResetNotifications = () => {
+    setNotifications(sampleNotifications.map((n) => ({ ...n })))
+  }
+
   const [actionRow] = useState({ prods_cname: 'Production Line A', prods_actve: true })
   const [inactiveRow] = useState({ prods_cname: 'Production Line B', prods_actve: false })
 
@@ -148,18 +288,263 @@ export default function ExamplesPage() {
     { value: 'option3', label: 'Option Three' },
   ]
 
-  return (
-    <div className="page-wrap">
-      {/* ── Section: Data Cards ── */}
-      <DataCardGrid cols={4}>
-        <DataCard variant="secondary" icon={<IconUsers size={22} />} value="1,284" label="Total Users" badge="+12.5%" trend="up" />
-        <DataCard variant="success" icon={<IconDollar size={22} />} value="$48,290" label="Revenue" badge="+8.2%" trend="up" />
-        <DataCard variant="warning" icon={<IconBox size={22} />} value="643" label="Orders" badge="-3.1%" trend="down" />
-        <DataCard variant="accent" icon={<IconActivity size={22} />} value="97.8%" label="Uptime" badge="+0.4%" trend="up" />
-      </DataCardGrid>
+  // ── Sidebar data ──
+  const categoryGroups = [
+    { key: 'input-forms', label: 'Input & Forms', items: [
+      { id: 'form-inputs', label: 'Form Inputs' },
+      { id: 'input-states', label: 'Input States' },
+      { id: 'file-upload', label: 'File Upload' },
+      { id: 'input-time', label: 'Input Time' },
+      { id: 'chip', label: 'Chip' },
+      { id: 'input-slider', label: 'Input Slider' },
+      { id: 'input-rating', label: 'Input Rating' },
+      { id: 'input-textarea', label: 'Text Area' },
+      { id: 'input-color', label: 'Color Picker' },
+      { id: 'input-switch', label: 'Switch' },
+    ]},
+    { key: 'data-display', label: 'Data Display', items: [
+      { id: 'data-cards', label: 'Data Cards' },
+      { id: 'datatable', label: 'Data Table' },
+      { id: 'badges', label: 'Badges' },
+      { id: 'progress', label: 'Progress' },
+      { id: 'stat-list', label: 'Stat Lists' },
+      { id: 'audit-data', label: 'Audit Data' },
+      { id: 'loadable-card', label: 'Loadable Card' },
+      { id: 'tree-view', label: 'Tree View' },
+      { id: 'tree-data-table', label: 'Tree Data Table' },
+      { id: 'accordion-card', label: 'Accordion Card' },
+    ]},
+    { key: 'buttons', label: 'Buttons', items: [
+      { id: 'buttons', label: 'Buttons' },
+      { id: 'action-buttons', label: 'Action Buttons' },
+    ]},
+    { key: 'nav-layout', label: 'Navigation & Layout', items: [
+      { id: 'pagecard-footer', label: 'PageCard Footer' },
+      { id: 'tab-page', label: 'TabPage' },
+      { id: 'step-page', label: 'StepPage' },
+      { id: 'breadcrumb', label: 'Breadcrumb' },
+    ]},
+    { key: 'overlays', label: 'Overlays & Dialogs', items: [
+      { id: 'overlays', label: 'Overlay Components' },
+      { id: 'modal', label: 'Modal' },
+      { id: 'sidepanel', label: 'SidePanel' },
+      { id: 'standalone-confirm-section', label: 'Standalone Confirm' },
+      { id: 'save-overlay', label: 'Save Overlay' },
+      { id: 'notification-bell', label: 'Notification Bell' },
+      { id: 'ui-controls', label: 'UI Controls' },
+      { id: 'kanban-board', label: 'Kanban Board' },
+      { id: 'drawer', label: 'Drawer' },
+    ]},
+    { key: 'feedback', label: 'Feedback', items: [
+      { id: 'error-boundary', label: 'Error Boundaries' },
+    ]},
+  ]
+  const allCategoryKeys = categoryGroups.map((g) => g.key)
+  const [expandedCategories, setExpandedCategories] = useState(allCategoryKeys)
+  const [activeSection, setActiveSection] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
 
+  const query = searchQuery.toLowerCase().trim()
+  const isFiltering = query.length > 0
+  const filteredItems = isFiltering
+    ? categoryGroups.flatMap((g) => g.items).filter((item) =>
+        item.label.toLowerCase().includes(query)
+      )
+    : []
+
+  const toggleCategory = useCallback((key) => {
+    setExpandedCategories((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+    )
+  }, [])
+
+  // Toggle all categories
+  const isAllExpanded = expandedCategories.length === allCategoryKeys.length
+  const toggleAll = useCallback(() => {
+    setExpandedCategories(isAllExpanded ? [] : [...allCategoryKeys])
+  }, [isAllExpanded])
+
+  const scrollToSection = useCallback((id) => {
+    const el = document.querySelector(`[data-section="${id}"]`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [])
+
+  // IntersectionObserver — highlight active section on scroll
+  useEffect(() => {
+    const allIds = []
+    categoryGroups.forEach((g) => g.items.forEach((item) => allIds.push(item.id)))
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting)
+        if (visible.length > 0) {
+          visible.sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+          setActiveSection(visible[0].target.getAttribute('data-section') || '')
+        }
+      },
+      { rootMargin: '-5% 0px -75% 0px', threshold: 0 }
+    )
+
+    allIds.forEach((id) => {
+      const el = document.querySelector(`[data-section="${id}"]`)
+      if (el) observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
+  // Auto-expand category when active section changes
+  useEffect(() => {
+    if (!activeSection) return
+    const group = categoryGroups.find((g) => g.items.some((item) => item.id === activeSection))
+    if (group && !expandedCategories.includes(group.key)) {
+      setExpandedCategories((prev) => [...prev, group.key])
+    }
+  }, [activeSection])
+
+  return (
+    <div className="examples-page">
+      <nav className="examples-page__nav">
+        <div className="examples-page__nav-header">
+          <span>Components</span>
+          <button
+            type="button"
+            className="examples-page__nav-toggle-all"
+            onClick={toggleAll}
+            title={isAllExpanded ? 'Collapse all' : 'Expand all'}
+            aria-label={isAllExpanded ? 'Collapse all categories' : 'Expand all categories'}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              {isAllExpanded ? (
+                <>
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <line x1="9" y1="12" x2="15" y2="12" />
+                </>
+              ) : (
+                <>
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                  <line x1="12" y1="8" x2="12" y2="16" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
+                </>
+              )}
+            </svg>
+          </button>
+        </div>
+        <div className="examples-page__nav-search">
+          <svg
+            className="examples-page__nav-search-icon"
+            viewBox="0 0 24 24"
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            className="examples-page__nav-search-input"
+            placeholder="Search components..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              className="examples-page__nav-search-clear"
+              onClick={() => setSearchQuery('')}
+              aria-label="Clear search"
+            >
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          )}
+        </div>
+        <ul className="examples-page__nav-list">
+          {isFiltering ? (
+            filteredItems.length > 0 ? (
+              filteredItems.map((item) => (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    className={`examples-page__nav-link examples-page__nav-link--search${activeSection === item.id ? ' examples-page__nav-link--active' : ''}`}
+                    onClick={() => scrollToSection(item.id)}
+                  >
+                    {item.label}
+                  </button>
+                </li>
+              ))
+            ) : (
+              <li className="examples-page__nav-empty">No matches</li>
+            )
+          ) : (
+            categoryGroups.map((group) => {
+              const isOpen = expandedCategories.includes(group.key)
+              return (
+                <li key={group.key} className="examples-page__nav-group">
+                  <button
+                    type="button"
+                    className="examples-page__nav-group-btn"
+                    onClick={() => toggleCategory(group.key)}
+                    aria-expanded={isOpen}
+                  >
+                    <svg
+                      className={`examples-page__nav-chevron${isOpen ? ' examples-page__nav-chevron--open' : ''}`}
+                      viewBox="0 0 16 16"
+                      width="12"
+                      height="12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="6 4 10 8 6 12" />
+                    </svg>
+                    {group.label}
+                  </button>
+                  {isOpen && (
+                    <ul className="examples-page__nav-sublist">
+                      {group.items.map((item) => (
+                        <li key={item.id}>
+                          <button
+                            type="button"
+                            className={`examples-page__nav-link examples-page__nav-link--sub${activeSection === item.id ? ' examples-page__nav-link--active' : ''}`}
+                            onClick={() => scrollToSection(item.id)}
+                          >
+                            {item.label}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              )
+            })
+          )}
+        </ul>
+      </nav>
+      <div className="examples-page__content">
+        <div className="page-wrap">
       {/* ── Section: Form Inputs & Controls ── */}
-      <PageCard>
+      <PageCard data-section="form-inputs">
         <PageCardHeader>
           <PageCardTitle title="Form Inputs & Controls" subtitle="All form input components in action" />
           <PageCardActions>
@@ -200,7 +585,7 @@ export default function ExamplesPage() {
       </PageCard>
 
       {/* ── Section: Input States (error, required, dense, disabled, icons) ── */}
-      <PageCard>
+      <PageCard data-section="input-states">
         <PageCardHeader>
           <PageCardTitle title="Input States & Variants" subtitle="Error, required, dense, disabled, readOnly, and icon variants for all form inputs" />
         </PageCardHeader>
@@ -263,72 +648,260 @@ export default function ExamplesPage() {
         </PageCardBody>
       </PageCard>
 
-      {/* ── Section: Buttons ── */}
-      <PageCard>
+      {/* ── Section: File Upload ── */}
+      <PageCard data-section="file-upload">
         <PageCardHeader>
-          <PageCardTitle title="Button Variants & Sizes" subtitle="All button variants and size options" />
+          <PageCardTitle title="File Upload" subtitle="Drag & drop or browse files with preview" />
         </PageCardHeader>
         <PageCardBody>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-3)', alignItems: 'center' }}>
-            <Button variant="primary" size="sm">Primary Sm</Button>
-            <Button variant="primary" size="md">Primary Md</Button>
-            <Button variant="primary" size="lg">Primary Lg</Button>
-            <Button variant="secondary" size="sm">Secondary</Button>
-            <Button variant="outline" size="sm">Outline</Button>
-            <Button variant="ghost" size="sm">Ghost</Button>
-            <Button variant="danger" size="sm">Danger</Button>
-            <Button variant="primary" size="sm" loading>Saving</Button>
-            <Button variant="primary" size="sm" disabled>Disabled</Button>
-            <Button variant="secondary" size="sm" onClick={() => toast.info('Info toast')}>Toast Info</Button>
-            <Button variant="secondary" size="sm" onClick={() => toast.success('Success toast')}>Toast Success</Button>
-            <Button variant="secondary" size="sm" onClick={() => toast.warning('Warning toast')}>Toast Warning</Button>
-            <Button variant="secondary" size="sm" onClick={() => toast.error('Error toast')}>Toast Error</Button>
+          <FileUpload
+            label="Upload Documents"
+            value={files}
+            onChange={setFiles}
+            multiple
+            accept="image/*,.pdf,.csv"
+            maxSize={5 * 1024 * 1024}
+            hint="Accepted: images, PDF, CSV — max 5MB"
+          />
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Input Time ── */}
+      <PageCard data-section="input-time">
+        <PageCardHeader>
+          <PageCardTitle title="Input Time" subtitle="Time picker with clock icon, error, required, dense, and disabled states" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <InputTime label="Start Time" placeholder="HH:MM" />
+              <InputTime label="End Time" required placeholder="HH:MM" />
+              <InputTime label="Break" dense placeholder="HH:MM" />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <InputTime label="Disabled" value="09:30" disabled />
+              <InputTime label="With Error" value="25:00" error="Invalid time format" />
+              <InputTime label="Compact" dense value="14:30" />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <InputTime label="Overtime Start" placeholder="HH:MM" />
+              <InputTime label="Overtime End" placeholder="HH:MM" />
+            </div>
           </div>
         </PageCardBody>
       </PageCard>
 
-      {/* ── Section: PageCard with Footer ── */}
-      <PageCard>
+      {/* ── Section: Chip ── */}
+      <PageCard data-section="chip">
         <PageCardHeader>
-          <PageCardTitle title="PageCard With Footer" subtitle="A complete PageCard with Header, Body, and Footer — footer typically holds actions" />
+          <PageCardTitle title="Chip" subtitle="Entities represented with icons, avatars, labels, and removable chips — multiple variants and sizes" />
         </PageCardHeader>
         <PageCardBody>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
-            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-              The <code>PageCardFooter</code> component provides a bottom section for action buttons, usually Cancel on the left and primary actions on the right.
-            </p>
-            <div className="grid" style={{ gap: 'var(--sp-3)' }}>
-              <div className="col-span-4">
-                <InputText label="Project Name" placeholder="Enter project name" />
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Variants</h4>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-2)' }}>
+                <Chip variant="default">Default</Chip>
+                <Chip variant="primary">Primary</Chip>
+                <Chip variant="success">Success</Chip>
+                <Chip variant="warning">Warning</Chip>
+                <Chip variant="danger">Danger</Chip>
               </div>
-              <div className="col-span-4">
-                <Dropdown
-                  label="Status"
-                  options={[
-                    { value: 'planning', label: 'Planning' },
-                    { value: 'active', label: 'Active' },
-                    { value: 'completed', label: 'Completed' },
-                  ]}
-                  placeholder="Select status..."
-                />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>With Icons &amp; Avatars</h4>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-2)', alignItems: 'center' }}>
+                <Chip variant="primary" icon={<IconUsers size={14} />}>Team</Chip>
+                <Chip variant="success" icon={<IconCheck size={14} />}>Verified</Chip>
+                <Chip variant="primary" avatar={<span style={{background:'var(--primary)',color:'var(--primary-on)',width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'10px',fontWeight:'bold'}}>JD</span>}>John Doe</Chip>
+                <Chip variant="warning" icon={<IconWarning size={14} />}>Pending</Chip>
               </div>
-              <div className="col-span-4" style={{ display: 'flex', alignItems: 'flex-end' }}>
-                <InputCalendar label="Due Date" dense placeholder="Pick a date" />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Removable &amp; Disabled</h4>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-2)' }}>
+                <Chip variant="primary" onRemove={() => {}}>Remove me</Chip>
+                <Chip variant="success" onRemove={() => {}} icon={<IconCheck size={14} />}>Completed</Chip>
+                <Chip variant="default" disabled>Disabled</Chip>
+                <Chip variant="danger" onRemove={() => {}}>Dismiss</Chip>
               </div>
             </div>
           </div>
         </PageCardBody>
-        <PageCardFooter>
-          <Button variant="secondary" size="sm" onClick={() => toast.info('Cancelled')}>Cancel</Button>
-          <Button variant="primary" size="sm" onClick={() => toast.success('Project saved!')}>
-            <IconSave size={14} className="icon-left" />
-            Save Project
-          </Button>
-        </PageCardFooter>
       </PageCard>
 
+      {/* ── Section: Input Slider ── */}
+      <PageCard data-section="input-slider">
+        <PageCardHeader>
+          <PageCardTitle title="Input Slider" subtitle="Range slider with value display, customizable min/max/step, and error/disabled states" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+              <InputSlider label="Volume" value={sliderVolume} onChange={(e) => setSliderVolume(Number(e.target.value))} min={0} max={100} step={1} />
+              <InputSlider label="Price Range" value={sliderPrice} onChange={(e) => setSliderPrice(Number(e.target.value))} min={0} max={500} step={5} />
+              <InputSlider label="With Error" value={120} min={0} max={100} error="Value exceeds maximum" />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+              <InputSlider label="Decimal Step" value={sliderDecimal} onChange={(e) => setSliderDecimal(Number(e.target.value))} min={0} max={10} step={0.5} />
+              <InputSlider label="Disabled" value={42} disabled />
+              <InputSlider label="No Value Display" value={75} showValue={false} />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+              <InputSlider label="Narrow Range" value={10} min={-20} max={20} />
+              <InputSlider label="Dense Variant" value={33} dense />
+              <InputSlider label="Full Range" value={100} min={0} max={100} />
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Input Rating ── */}
+      <PageCard data-section="input-rating">
+        <PageCardHeader>
+          <PageCardTitle title="Input Rating" subtitle="Star rating with half-star precision, customizable min/max range, and error/disabled states" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+              <InputRating
+                label="Satisfaction"
+                value={ratingSat}
+                onChange={(e) => setRatingSat(Number(e.target.value))}
+                min={0}
+                max={5}
+              />
+              <InputRating
+                label="NPS Score"
+                value={ratingNps}
+                onChange={(e) => setRatingNps(Number(e.target.value))}
+                min={0}
+                max={10}
+              />
+              <InputRating label="With Error" value={3} error="Please provide a rating" />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+              <InputRating
+                label="Service Quality"
+                value={ratingService}
+                onChange={(e) => setRatingService(Number(e.target.value))}
+                min={1}
+                max={5}
+              />
+              <InputRating
+                label="Custom Range (2-7)"
+                value={ratingCustom}
+                onChange={(e) => setRatingCustom(Number(e.target.value))}
+                min={2}
+                max={7}
+              />
+              <InputRating label="Disabled" value={4} disabled />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+              <InputRating
+                label="Minimal (0-3)"
+                value={ratingMinimal}
+                onChange={(e) => setRatingMinimal(Number(e.target.value))}
+                min={0}
+                max={3}
+              />
+              <InputRating label="Dense Variant" value={2.5} dense />
+              <InputRating label="Required" value={0} required />
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Text Area ── */}
+      <PageCard data-section="input-textarea">
+        <PageCardHeader>
+          <PageCardTitle title="Text Area" subtitle="Multi-line text input with rows, maxLength, error, disabled, readOnly, and dense states" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <InputTextArea label="Description" placeholder="Enter a description..." value={textareaVal} onChange={(e) => setTextareaVal(e.target.value)} />
+              <InputTextArea label="Read Only" value={textareaDesc} readOnly />
+              <InputTextArea label="With Max Length" maxLength={100} placeholder="Max 100 characters..." />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <InputTextArea label="With Error" value="Invalid content that exceeds the expected format" error="Please provide valid content" />
+              <InputTextArea label="Disabled" value="This field is locked" disabled />
+              <InputTextArea label="No Resize" resizable={false} placeholder="Fixed height textarea..." />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <InputTextArea label="Dense" dense placeholder="Compact variant" />
+              <InputTextArea label="Required" required placeholder="Required field" />
+              <InputTextArea label="5 Rows" rows={5} placeholder="Custom row count..." />
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Color Picker ── */}
+      <PageCard data-section="input-color">
+        <PageCardHeader>
+          <PageCardTitle title="Color Picker" subtitle="Native color input with swatch preview, hex display, error, and disabled states" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <InputColor label="Primary Color" value={colorPrimary} onChange={(e) => setColorPrimary(e.target.value)} />
+              <InputColor label="Custom Placeholder" placeholder="Pick a shade..." />
+              <InputColor label="With Error" value="#zzz" error="Invalid color code" />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <InputColor label="Accent Color" value={colorAccent} onChange={(e) => setColorAccent(e.target.value)} />
+              <InputColor label="Disabled" value="#6b7280" disabled />
+              <InputColor label="Required" required />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <InputColor label="Dense Variant" value="#f59e0b" dense />
+              <InputColor label="No Default" value="" placeholder="No color selected" />
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Switch ── */}
+      <PageCard data-section="input-switch">
+        <PageCardHeader>
+          <PageCardTitle title="Switch" subtitle="Toggle switches for boolean settings with label, disabled, and dense variants" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Interactive</h4>
+              <InputSwitch label="Enable Notifications" checked={switchNotif} onChange={(e) => setSwitchNotif(e.target.checked)} />
+              <InputSwitch label="Dark Mode" checked={switchDark} onChange={(e) => setSwitchDark(e.target.checked)} />
+              <InputSwitch label="Email Alerts" checked={switchEmail} onChange={(e) => setSwitchEmail(e.target.checked)} />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>States</h4>
+              <InputSwitch label="Checked Disabled" checked={true} disabled />
+              <InputSwitch label="Unchecked Disabled" checked={false} disabled />
+              <InputSwitch label="Required" required />
+            </div>
+            <div className="col-span-4" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Dense</h4>
+              <InputSwitch label="Compact Toggle" dense />
+              <InputSwitch label="Compact Checked" checked={true} dense />
+              <InputSwitch label="Compact Disabled" checked={true} dense disabled />
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Data Cards ── */}
+      <DataCardGrid data-section="data-cards" cols={4}>
+        <DataCard variant="secondary" icon={<IconUsers size={22} />} value="1,284" label="Total Users" badge="+12.5%" trend="up" />
+        <DataCard variant="success" icon={<IconDollar size={22} />} value="$48,290" label="Revenue" badge="+8.2%" trend="up" />
+        <DataCard variant="warning" icon={<IconBox size={22} />} value="643" label="Orders" badge="-3.1%" trend="down" />
+        <DataCard variant="accent" icon={<IconActivity size={22} />} value="97.8%" label="Uptime" badge="+0.4%" trend="up" />
+      </DataCardGrid>
+
       {/* ── Section: Data Table ── */}
-      <PageCard>
+      <PageCard data-section="datatable">
         <PageCardHeader>
           <PageCardTitle title="Data Table" subtitle="Searchable, sortable, exportable table with striped rows" />
         </PageCardHeader>
@@ -349,7 +922,7 @@ export default function ExamplesPage() {
       </PageCard>
 
       {/* ── Section: Badge Variants ── */}
-      <PageCard>
+      <PageCard data-section="badges">
         <PageCardHeader>
           <PageCardTitle title="Badge & Type-Badge Variants" subtitle="All badge variants — dots, icons, type badges, and edge cases" />
         </PageCardHeader>
@@ -448,7 +1021,7 @@ export default function ExamplesPage() {
       </PageCard>
 
       {/* ── Section: Progress Indicators ── */}
-      <PageCard>
+      <PageCard data-section="progress">
         <PageCardHeader>
           <PageCardTitle title="Progress Indicators" subtitle="Determinate and indeterminate progress bars for loading states and API calls" />
         </PageCardHeader>
@@ -489,8 +1062,620 @@ export default function ExamplesPage() {
         </PageCardBody>
       </PageCard>
 
+      {/* ── Section: Stat List Items ── */}
+      <PageCard data-section="stat-list">
+        <PageCardHeader>
+          <PageCardTitle title="Stat List Items" subtitle="Label, value, sub-text, and colored dot indicator" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Dashboard Stats</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+                {statItems.map((item, i) => (
+                  <StatListItem key={i} label={item.label} value={item.value} sub={item.sub} color={item.color} />
+                ))}
+              </div>
+            </div>
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Custom Colors</h4>
+              <StatListItem label="Server Uptime" value="99.97%" sub="Last 30 days" color="var(--success)" />
+              <StatListItem label="Error Rate" value="0.03%" sub="Within threshold" color="var(--danger)" />
+              <StatListItem label="Queue Depth" value="12" sub="2 pending, 10 processed" color="var(--info)" />
+              <StatListItem label="Cache Hit Rate" value="94.2%" sub="+2.1% from last week" color="var(--accent)" />
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Audit Data ── */}
+      <PageCard data-section="audit-data">
+        <PageCardHeader>
+          <PageCardTitle title="Audit Data" subtitle="Audit trail row showing active status, created by/date, updated by/date, and revision number" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+            <AuditData
+              actve={true}
+              cname="Admin User"
+              cdate="2026-01-15T08:30:00"
+              uname="Admin User"
+              udate="2026-07-19T14:22:00"
+              rvnmr={3}
+            />
+            <AuditData
+              actve={false}
+              cname="Jane Smith"
+              cdate="2026-03-22T10:15:00"
+              uname="Admin User"
+              udate="2026-06-10T09:45:00"
+              rvnmr={7}
+            />
+            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)', paddingLeft: 'var(--sp-2)' }}>
+              Columns: Status | Created By | Created Date | Updated By | Updated Date | Revision
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Loadable Card ── */}
+      <LoadableCard data-section="loadable-card"
+        title="Dashboard Overview"
+        subtitle={cardData ? `Last updated — ${new Date().toLocaleTimeString()}` : 'Click "Load Data" to fetch'}
+        loading={cardLoading}
+        error={cardError}
+        loaderLabel="Fetching dashboard data..."
+      >
+        {cardData ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+            <div className="grid" style={{ gap: 'var(--sp-3)' }}>
+              {cardData.map((item) => (
+                <div key={item.id} className="col-span-6" style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: 'var(--sp-3) var(--sp-4)',
+                  background: 'var(--surface-alt)',
+                  borderRadius: 'var(--radius-lg)',
+                }}>
+                  <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}>{item.metric}</span>
+                  <span style={{ fontSize: 'var(--fs-lg)', fontWeight: 'var(--fw-bold)', color: 'var(--text-primary)' }}>{item.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 'var(--sp-4)',
+            padding: 'var(--sp-8) 0',
+            color: 'var(--text-muted)',
+          }}>
+            <p style={{ margin: 0, fontSize: 'var(--fs-sm)' }}>No data loaded yet</p>
+            <div style={{ display: 'flex', gap: 'var(--sp-2)' }}>
+              <Button size="sm" variant="primary" onClick={simulateLoad}>
+                Load Data
+              </Button>
+              <Button size="sm" variant="outline" onClick={simulateError}>
+                Simulate Error
+              </Button>
+            </div>
+          </div>
+        )}
+      </LoadableCard>
+
+      {/* ── Section: Tree View ── */}
+      <PageCard data-section="tree-view">
+        <PageCardHeader>
+          <PageCardTitle title="Tree View" subtitle="Checkbox tree with expand/collapse, indeterminate parent states, and nested hierarchy" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-6">
+              <TreeView
+                data={treeData}
+                checked={treeChecked}
+                onCheckedChange={setTreeChecked}
+                label="Inventory Categories"
+              />
+            </div>
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Selected Items</h4>
+              <div style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                {treeChecked.length > 0 ? (
+                  <span>{treeChecked.length} item{treeChecked.length !== 1 ? 's' : ''} selected: <strong style={{ color: 'var(--text-primary)' }}>{treeChecked.join(', ')}</strong></span>
+                ) : (
+                  <span style={{ color: 'var(--text-muted)' }}>Click checkboxes above to select items</span>
+                )}
+              </div>
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Tree Data Table ── */}
+      <PageCard data-section="tree-data-table">
+        <PageCardHeader>
+          <PageCardTitle title="Tree Data Table" subtitle="Hierarchical data table with expandable rows, checkboxes, sorting, and status badges" />
+        </PageCardHeader>
+        <PageCardBody>
+          <TreeDataTable
+            columns={treeColumns}
+            data={treeTableData}
+            sortable
+            striped
+            hoverable
+            emptyMessage="No inventory data"
+          />
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Accordion Card ── */}
+      <PageCard data-section="accordion-card">
+        <PageCardHeader>
+          <PageCardTitle title="Accordion Card" subtitle="Collapsible sections with single/multi-expand, disabled items, and keep-mounted content" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-6">
+              <h4 className="h4" style={{ margin: '0 0 var(--sp-3)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Single Expand (default)</h4>
+              <AccordionCard
+                items={[
+                  {
+                    title: 'General Settings',
+                    content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Configure system preferences, language, and regional settings for your workspace.</div>,
+                  },
+                  {
+                    title: 'Notifications',
+                    content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Manage email, push, and in-app notification preferences per channel.</div>,
+                  },
+                  {
+                    title: 'Security',
+                    content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Update password, enable two-factor authentication, and review active sessions.</div>,
+                  },
+                  {
+                    title: 'Disabled Section',
+                    disabled: true,
+                    content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>This section is not available.</div>,
+                  },
+                ]}
+              />
+            </div>
+            <div className="col-span-6">
+              <h4 className="h4" style={{ margin: '0 0 var(--sp-3)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Multiple Expand (allowMultiple)</h4>
+              <AccordionCard
+                allowMultiple
+                items={[
+                  {
+                    title: 'FAQ: Getting Started',
+                    content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Sign up for an account, verify your email, and complete your profile to get started.</div>,
+                  },
+                  {
+                    title: 'FAQ: Billing',
+                    content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Billing cycles, invoicing, and payment methods — everything you need to manage subscriptions.</div>,
+                  },
+                  {
+                    title: 'FAQ: Integrations',
+                    content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Connect with third-party tools using our API and pre-built connectors.</div>,
+                  },
+                ]}
+              />
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Buttons ── */}
+      <PageCard data-section="buttons">
+        <PageCardHeader>
+          <PageCardTitle title="Button Variants & Sizes" subtitle="All button variants and size options" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-3)', alignItems: 'center' }}>
+            <Button variant="primary" size="sm">Primary Sm</Button>
+            <Button variant="primary" size="md">Primary Md</Button>
+            <Button variant="primary" size="lg">Primary Lg</Button>
+            <Button variant="secondary" size="sm">Secondary</Button>
+            <Button variant="outline" size="sm">Outline</Button>
+            <Button variant="ghost" size="sm">Ghost</Button>
+            <Button variant="danger" size="sm">Danger</Button>
+            <Button variant="primary" size="sm" loading>Saving</Button>
+            <Button variant="primary" size="sm" disabled>Disabled</Button>
+            <Button variant="secondary" size="sm" onClick={() => toast.info('Info toast')}>Toast Info</Button>
+            <Button variant="secondary" size="sm" onClick={() => toast.success('Success toast')}>Toast Success</Button>
+            <Button variant="secondary" size="sm" onClick={() => toast.warning('Warning toast')}>Toast Warning</Button>
+            <Button variant="secondary" size="sm" onClick={() => toast.error('Error toast')}>Toast Error</Button>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Action Buttons ── */}
+      <PageCard data-section="action-buttons">
+        <PageCardHeader>
+          <PageCardTitle title="Action Buttons" subtitle="Row action buttons for Edit, Activate, and Deactivate — shown conditionally based on active state" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>
+                Active Row — shows Deactivate button
+              </h4>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: 'var(--sp-3) var(--sp-4)',
+                background: 'var(--surface-alt)',
+                borderRadius: 'var(--radius-lg)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
+                  <Badge variant="success" dot>{actionRow.prods_cname}</Badge>
+                </div>
+                <ActionButton
+                  rowData={actionRow}
+                  actve={actionRow.prods_actve}
+                  onEdit={(row) => toast.info(`Editing ${row.prods_cname}`)}
+                  onDelete={(row) => toast.warning(`${row.prods_cname} deactivated`)}
+                />
+              </div>
+            </div>
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>
+                Inactive Row — shows Activate button
+              </h4>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: 'var(--sp-3) var(--sp-4)',
+                background: 'var(--surface-alt)',
+                borderRadius: 'var(--radius-lg)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
+                  <Badge variant="danger" dot>{inactiveRow.prods_cname}</Badge>
+                </div>
+                <ActionButton
+                  rowData={inactiveRow}
+                  actve={inactiveRow.prods_actve}
+                  onEdit={(row) => toast.info(`Editing ${row.prods_cname}`)}
+                  onDelete={(row) => toast.success(`${row.prods_cname} activated`)}
+                />
+              </div>
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: PageCard with Footer ── */}
+      <PageCard data-section="pagecard-footer">
+        <PageCardHeader>
+          <PageCardTitle title="PageCard With Footer" subtitle="A complete PageCard with Header, Body, and Footer — footer typically holds actions" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+              The <code>PageCardFooter</code> component provides a bottom section for action buttons, usually Cancel on the left and primary actions on the right.
+            </p>
+            <div className="grid" style={{ gap: 'var(--sp-3)' }}>
+              <div className="col-span-4">
+                <InputText label="Project Name" placeholder="Enter project name" />
+              </div>
+              <div className="col-span-4">
+                <Dropdown
+                  label="Status"
+                  options={[
+                    { value: 'planning', label: 'Planning' },
+                    { value: 'active', label: 'Active' },
+                    { value: 'completed', label: 'Completed' },
+                  ]}
+                  placeholder="Select status..."
+                />
+              </div>
+              <div className="col-span-4" style={{ display: 'flex', alignItems: 'flex-end' }}>
+                <InputCalendar label="Due Date" dense placeholder="Pick a date" />
+              </div>
+            </div>
+          </div>
+        </PageCardBody>
+        <PageCardFooter>
+          <Button variant="secondary" size="sm" onClick={() => toast.info('Cancelled')}>Cancel</Button>
+          <Button variant="primary" size="sm" onClick={() => toast.success('Project saved!')}>
+            <IconSave size={14} className="icon-left" />
+            Save Project
+          </Button>
+        </PageCardFooter>
+      </PageCard>
+
+      {/* ── Section: Tab Page ── */}
+      <PageCard data-section="tab-page">
+        <PageCardHeader>
+          <PageCardTitle title="Tab Page" subtitle="Underline, pills, and buttons variants with badges and icons" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+            <div>
+              <h4 className="h4" style={{ margin: '0 0 var(--sp-3)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Underline</h4>
+              <TabPage
+                variant="underline"
+                tabs={[
+                  { label: 'Overview', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Overview content — general account information and quick stats.</div> },
+                  { label: 'Settings', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Settings panel — configure preferences and notifications.</div> },
+                  { label: 'Billing', badge: 3, content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Billing section — invoices, payment methods, and plans.</div> },
+                  { label: 'Disabled', disabled: true, content: <div /> },
+                ]}
+              />
+            </div>
+            <div>
+              <h4 className="h4" style={{ margin: '0 0 var(--sp-3)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Pills</h4>
+              <TabPage
+                variant="pills"
+                tabs={[
+                  { icon: <IconUsers size={14} />, label: 'Users', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>User management — add, edit, and deactivate team members.</div> },
+                  { icon: <IconBox size={14} />, label: 'Products', badge: 12, content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Product catalog — manage inventory and pricing.</div> },
+                  { icon: <IconActivity size={14} />, label: 'Activity', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Activity log — track changes and user actions.</div> },
+                ]}
+              />
+            </div>
+            <div>
+              <h4 className="h4" style={{ margin: '0 0 var(--sp-3)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Buttons</h4>
+              <TabPage
+                variant="buttons"
+                tabs={[
+                  { label: 'Details', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Detailed view with comprehensive data and metadata.</div> },
+                  { label: 'History', badge: 7, content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Change history — full audit trail of modifications.</div> },
+                  { label: 'Attachments', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Attachments — uploaded files, documents, and images.</div> },
+                ]}
+              />
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Step Page ── */}
+      <PageCard data-section="step-page">
+        <PageCardHeader>
+          <PageCardTitle title="Step Page" subtitle="Horizontal and vertical step wizards with navigation controls and completion states" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+            <div>
+              <h4 className="h4" style={{ margin: '0 0 var(--sp-3)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Horizontal</h4>
+              <StepPage
+                orientation="horizontal"
+                steps={[
+                  { label: 'Account', description: 'Basic info', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Enter your email and create a password for your account.</div> },
+                  { label: 'Profile', description: 'Personal details', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Fill in your name, avatar, and contact information.</div> },
+                  { label: 'Preferences', description: 'Notifications & privacy', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Configure your notification preferences and privacy settings.</div> },
+                  { label: 'Confirm', description: 'Review & submit', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Review all information and submit your registration.</div> },
+                ]}
+              />
+            </div>
+            <div>
+              <h4 className="h4" style={{ margin: '0 0 var(--sp-3)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Vertical</h4>
+              <StepPage
+                orientation="vertical"
+                steps={[
+                  { label: 'Upload', description: 'Source files', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Upload your source code, images, and assets.</div> },
+                  { label: 'Configure', description: 'Build settings', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Select your build configuration, environment, and target platform.</div> },
+                  { label: 'Deploy', description: 'Release', content: <div style={{ padding: 'var(--sp-3)', color: 'var(--text-secondary)' }}>Deploy to production or staging environment.</div> },
+                ]}
+              />
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Breadcrumb ── */}
+      <PageCard data-section="breadcrumb">
+        <PageCardHeader>
+          <PageCardTitle title="Breadcrumb" subtitle="Navigation breadcrumbs with home icon, custom separators, and active page indicator" />
+        </PageCardHeader>
+        <PageCardBody>
+          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+              <div>
+                <h4 className="h4" style={{ margin: '0 0 var(--sp-2)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Standard</h4>
+                <Breadcrumb
+                  items={[
+                    { label: 'Dashboard', href: '#' },
+                    { label: 'Reports', href: '#' },
+                    { label: 'Sales Report' },
+                  ]}
+                />
+              </div>
+              <div>
+                <h4 className="h4" style={{ margin: '0 0 var(--sp-2)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>With Icons</h4>
+                <Breadcrumb
+                  items={[
+                    { label: 'Home', href: '#', icon: <IconHome size={14} /> },
+                    { label: 'Settings', href: '#', icon: <IconChevronRight size={14} /> },
+                    { label: 'Profile' },
+                  ]}
+                  homeIcon={false}
+                />
+              </div>
+            </div>
+            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+              <div>
+                <h4 className="h4" style={{ margin: '0 0 var(--sp-2)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Long Path</h4>
+                <Breadcrumb
+                  items={[
+                    { label: 'Organization' },
+                    { label: 'Engineering' },
+                    { label: 'Projects' },
+                    { label: 'Cloud Migration' },
+                    { label: 'Architecture' },
+                  ]}
+                />
+              </div>
+              <div>
+                <h4 className="h4" style={{ margin: '0 0 var(--sp-2)', color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>No Home Icon</h4>
+                <Breadcrumb
+                  homeIcon={false}
+                  items={[
+                    { label: 'Products' },
+                    { label: 'Categories' },
+                    { label: 'Electronics' },
+                    { label: 'Laptops' },
+                  ]}
+                />
+              </div>
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Section: Modal / SidePanel / Confirm ── */}
+      <PageCard data-section="overlays">
+        <PageCardHeader>
+          <PageCardTitle title="Overlay Components" subtitle="Modal, SidePanel, and Confirm dialogs" />
+          <PageCardActions>
+            <Button size="sm" variant="outline" onClick={() => { setPanelSide('left'); setPanelOpen(true) }}>
+              Open Left Panel
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => { setPanelSide('right'); setPanelOpen(true) }}>
+              Open Right Panel
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => setModalOpen(true)}>
+              Open Modal
+            </Button>
+            <Button size="sm" variant="danger" onClick={async () => {
+              const confirmed = await confirm({
+                title: 'Delete Item',
+                message: 'Are you sure you want to delete this item? This action cannot be undone.',
+                confirmText: 'Delete',
+                variant: 'danger',
+              })
+              if (confirmed) {
+                toast.error('Item deleted!')
+              }
+            }}>
+              Open Confirm
+            </Button>
+          </PageCardActions>
+        </PageCardHeader>
+        <PageCardBody>
+          <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            Click the buttons above to open each overlay component. The Modal slides in centered with a backdrop blur.
+            The SidePanel slides in from the left or right edge. The Confirm dialog is a compact action confirmation.
+          </p>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Modal ── */}
+      <Modal data-section="modal" open={modalOpen} onClose={() => setModalOpen(false)} size="lg">
+        <ModalHeader>
+          <ModalTitle
+            title="Example Modal"
+            subtitle="This modal demonstrates the Modal component with Header, Body, and Footer"
+            onClose={() => setModalOpen(false)}
+          />
+        </ModalHeader>
+        <ModalBody>
+          <div className="grid">
+            <div className="col-span-6">
+              <InputText label="First Name" placeholder="Enter first name" />
+            </div>
+            <div className="col-span-6">
+              <InputText label="Last Name" placeholder="Enter last name" />
+            </div>
+            <div className="col-span-6">
+              <InputText label="Email" placeholder="Enter email" type="email" />
+            </div>
+            <div className="col-span-6">
+              <Dropdown label="Role" options={ddOptions} placeholder="Select role..." />
+            </div>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button variant="secondary" size="sm" onClick={() => setModalOpen(false)}>Cancel</Button>
+          <Button variant="primary" size="sm" onClick={() => { toast.success('Saved!'); setModalOpen(false) }}>
+            <IconSave size={14} className="icon-left" />
+            Save
+          </Button>
+        </ModalFooter>
+      </Modal>
+
+      {/* ── SidePanel ── */}
+      <SidePanel data-section="sidepanel" open={panelOpen} onClose={() => setPanelOpen(false)} position={panelSide} size="md">
+        <SidePanelHeader>
+          <SidePanelTitle
+            title={`${panelSide === 'left' ? 'Left' : 'Right'} Panel`}
+            subtitle="SidePanel slides in from the edge with a full form layout"
+            onClose={() => setPanelOpen(false)}
+          />
+        </SidePanelHeader>
+        <SidePanelBody>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
+            <InputText label="Full Name" placeholder="Enter name" required />
+            <InputText label="Email" placeholder="Enter email" type="email" required />
+            <InputText label="Phone" placeholder="Enter phone" />
+            <Dropdown label="Department" options={ddOptions} placeholder="Select..." />
+            <InputNumber label="Age" placeholder="0" min={0} />
+            <InputCalendar label="Date of Birth" />
+          </div>
+        </SidePanelBody>
+        <SidePanelFooter>
+          <Button variant="secondary" size="sm" onClick={() => setPanelOpen(false)}>Cancel</Button>
+          <Button variant="primary" size="sm" onClick={() => { toast.success('Panel saved!'); setPanelOpen(false) }}>
+            <IconSave size={14} className="icon-left" />
+            Save
+          </Button>
+        </SidePanelFooter>
+      </SidePanel>
+
+      {/* ── Section: Standalone Confirm ── */}
+      <PageCard data-section="standalone-confirm-section">
+        <PageCardHeader>
+          <PageCardTitle title="Confirm (Standalone)" subtitle="Direct Confirm component with local state — onConfirm/onCancel callbacks" />
+          <PageCardActions>
+            <Button size="sm" variant="danger" onClick={() => { setConfirmOpen(true); setConfirmResult(null) }}>
+              Open Confirm
+            </Button>
+          </PageCardActions>
+        </PageCardHeader>
+        <PageCardBody>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+              Unlike the global confirm from <code>useUI()</code>, this uses the <code>Confirm</code> component directly with local <code>open</code> state and <code>onConfirm</code> / <code>onCancel</code> callbacks.
+            </p>
+            {confirmResult !== null && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', fontSize: 'var(--fs-sm)' }}>
+                <Badge variant={confirmResult ? 'success' : 'muted'} dot>
+                  {confirmResult ? 'Confirmed' : 'Cancelled'}
+                </Badge>
+                <span style={{ color: 'var(--text-muted)' }}>
+                  User {confirmResult ? 'accepted' : 'declined'} the action
+                </span>
+              </div>
+            )}
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+      {/* ── Standalone Confirm ── */}
+      <Confirm
+        open={confirmOpen}
+        title="Delete Record"
+        message="Are you sure you want to delete this record? This action cannot be undone."
+        confirmText="Delete"
+        variant="danger"
+        onConfirm={() => {
+          setConfirmOpen(false)
+          setConfirmResult(true)
+          toast.error('Record deleted!')
+        }}
+        onCancel={() => {
+          setConfirmOpen(false)
+          setConfirmResult(false)
+          toast.info('Delete cancelled')
+        }}
+      />
       {/* ── Section: Save with Overlay Modal ── */}
-      <PageCard>
+      <PageCard data-section="save-overlay">
         <PageCardHeader>
           <PageCardTitle title="Save with Overlay" subtitle="Click Save to see a full overlay popup — simulates a 2s API call" />
         </PageCardHeader>
@@ -530,8 +1715,37 @@ export default function ExamplesPage() {
         progressLabel="Saving project..."
       />
 
+      {/* ── Section: Notification Bell ── */}
+      <PageCard data-section="notification-bell">
+        <PageCardHeader>
+          <PageCardTitle title="Notification Bell" subtitle="Dropdown notification panel with unread badge, type icons, timestamps, and mark-all-read" />
+          <PageCardActions>
+            <Button size="sm" variant="outline" onClick={handleResetNotifications}>
+              Reset Notifications
+            </Button>
+          </PageCardActions>
+        </PageCardHeader>
+        <PageCardBody>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+              Click the bell icon to open the notification panel. Notifications with a blue dot are unread.
+              Click a notification to mark it as read. Use "Mark all as read" to clear all unread badges.
+              The bell shows an unread count badge — up to 99+.
+            </p>
+            <div className="notification-bell-demo-area">
+              <NotificationBell
+                notifications={notifications}
+                onMarkAllRead={handleMarkAllRead}
+                onNotificationClick={handleNotificationClick}
+              />
+            </div>
+          </div>
+        </PageCardBody>
+      </PageCard>
+
+
       {/* ── Section: Global UI Controls ── */}
-      <PageCard>
+      <PageCard data-section="ui-controls">
         <PageCardHeader>
           <PageCardTitle
             title="Global UI Controls"
@@ -659,75 +1873,79 @@ export default function ExamplesPage() {
         </PageCardBody>
       </PageCard>
 
-      {/* ── Section: File Upload ── */}
-      <PageCard>
+      {/* ── Section: Kanban Board ── */}
+      <PageCard data-section="kanban-board">
         <PageCardHeader>
-          <PageCardTitle title="File Upload" subtitle="Drag & drop or browse files with preview" />
+          <PageCardTitle title="Kanban Board" subtitle="Drag-and-drop task board with columns, cards, labels, assignee avatars, and animations" />
         </PageCardHeader>
         <PageCardBody>
-          <FileUpload
-            label="Upload Documents"
-            value={files}
-            onChange={setFiles}
-            multiple
-            accept="image/*,.pdf,.csv"
-            maxSize={5 * 1024 * 1024}
-            hint="Accepted: images, PDF, CSV — max 5MB"
-          />
+          <div className="kanban-board-demo">
+            <KanbanBoard
+              columns={kanbanColumns}
+              onCardClick={(card) => toast.info(`Card: ${card.title}`)}
+              onCardMove={(cardId, from, to) =>
+                toast.success(`Moved card from ${from} to ${to}`)
+              }
+            />
+          </div>
         </PageCardBody>
       </PageCard>
 
-      {/* ── Section: Loadable Card ── */}
-      <LoadableCard
-        title="Dashboard Overview"
-        subtitle={cardData ? `Last updated — ${new Date().toLocaleTimeString()}` : 'Click "Load Data" to fetch'}
-        loading={cardLoading}
-        error={cardError}
-        loaderLabel="Fetching dashboard data..."
-      >
-        {cardData ? (
+      {/* ── Section: Drawer ── */}
+      <PageCard data-section="drawer">
+        <PageCardHeader>
+          <PageCardTitle title="Drawer" subtitle="Slide-in navigation overlay with groups, items, badges, and active/disabled states" />
+          <PageCardActions>
+            <Button size="sm" variant="primary" onClick={() => setDrawerOpen(true)}>
+              Open Drawer
+            </Button>
+          </PageCardActions>
+        </PageCardHeader>
+        <PageCardBody>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
-            <div className="grid" style={{ gap: 'var(--sp-3)' }}>
-              {cardData.map((item) => (
-                <div key={item.id} className="col-span-6" style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: 'var(--sp-3) var(--sp-4)',
-                  background: 'var(--surface-alt)',
-                  borderRadius: 'var(--radius-lg)',
-                }}>
-                  <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-secondary)' }}>{item.metric}</span>
-                  <span style={{ fontSize: 'var(--fs-lg)', fontWeight: 'var(--fw-bold)', color: 'var(--text-primary)' }}>{item.value}</span>
-                </div>
-              ))}
+            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+              Click "Open Drawer" to see the slide-in navigation overlay. The drawer includes collapsible groups,
+              navigation items with icons, active page indicators, badges, and a close button. Press Escape or click
+              the backdrop to dismiss.
+            </p>
+            <div className="drawer-demo-area">
+              <Drawer
+                open={drawerOpen}
+                onClose={() => setDrawerOpen(false)}
+                position="left"
+                size="sm"
+              >
+                <DrawerHeader title="Navigation" onClose={() => setDrawerOpen(false)} />
+                <DrawerBody>
+                  <DrawerGroup label="Main" defaultOpen>
+                    <DrawerItem icon={<IconHome size={16} />} label="Dashboard" active onClick={() => {}} />
+                    <DrawerItem icon={<IconChart size={16} />} label="Analytics" onClick={() => {}} badge="New" />
+                    <DrawerItem icon={<IconUser size={16} />} label="Users" onClick={() => {}} badge="12" />
+                  </DrawerGroup>
+                  <DrawerGroup label="Workspace" defaultOpen={false}>
+                    <DrawerItem icon={<IconEdit size={16} />} label="Projects" onClick={() => {}} />
+                    <DrawerItem icon={<IconTag size={16} />} label="Tasks" onClick={() => {}} badge="3" />
+                    <DrawerItem icon={<IconCalendar size={16} />} label="Calendar" disabled />
+                  </DrawerGroup>
+                  <DrawerGroup label="System">
+                    <DrawerItem icon={<IconSettings size={16} />} label="Settings" onClick={() => {}} />
+                    <DrawerItem icon={<IconShield size={16} />} label="Security" onClick={() => {}} />
+                    <DrawerItem icon={<IconLock size={16} />} label="Permissions" disabled />
+                  </DrawerGroup>
+                </DrawerBody>
+                <DrawerFooter>
+                  <span style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)' }}>
+                    v2.4.1 • {drawerOpen ? 'Open' : 'Closed'}
+                  </span>
+                </DrawerFooter>
+              </Drawer>
             </div>
           </div>
-        ) : (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 'var(--sp-4)',
-            padding: 'var(--sp-8) 0',
-            color: 'var(--text-muted)',
-          }}>
-            <p style={{ margin: 0, fontSize: 'var(--fs-sm)' }}>No data loaded yet</p>
-            <div style={{ display: 'flex', gap: 'var(--sp-2)' }}>
-              <Button size="sm" variant="primary" onClick={simulateLoad}>
-                Load Data
-              </Button>
-              <Button size="sm" variant="outline" onClick={simulateError}>
-                Simulate Error
-              </Button>
-            </div>
-          </div>
-        )}
-      </LoadableCard>
+        </PageCardBody>
+      </PageCard>
 
       {/* ── Section: Error Boundary & Empty States ── */}
-      <PageCard>
+      <PageCard data-section="error-boundary">
         <PageCardHeader>
           <PageCardTitle title="Error Boundary & Empty States" subtitle="ErrorBoundary catches render errors; EmptyState shows contextual placeholder UI" />
         </PageCardHeader>
@@ -806,266 +2024,8 @@ export default function ExamplesPage() {
         </PageCardBody>
       </PageCard>
 
-      {/* ── Section: Stat List Items ── */}
-      <PageCard>
-        <PageCardHeader>
-          <PageCardTitle title="Stat List Items" subtitle="Label, value, sub-text, and colored dot indicator" />
-        </PageCardHeader>
-        <PageCardBody>
-          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
-            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
-              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Dashboard Stats</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
-                {statItems.map((item, i) => (
-                  <StatListItem key={i} label={item.label} value={item.value} sub={item.sub} color={item.color} />
-                ))}
-              </div>
-            </div>
-            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
-              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>Custom Colors</h4>
-              <StatListItem label="Server Uptime" value="99.97%" sub="Last 30 days" color="var(--success)" />
-              <StatListItem label="Error Rate" value="0.03%" sub="Within threshold" color="var(--danger)" />
-              <StatListItem label="Queue Depth" value="12" sub="2 pending, 10 processed" color="var(--info)" />
-              <StatListItem label="Cache Hit Rate" value="94.2%" sub="+2.1% from last week" color="var(--accent)" />
-            </div>
-          </div>
-        </PageCardBody>
-      </PageCard>
-
-      {/* ── Section: Audit Data ── */}
-      <PageCard>
-        <PageCardHeader>
-          <PageCardTitle title="Audit Data" subtitle="Audit trail row showing active status, created by/date, updated by/date, and revision number" />
-        </PageCardHeader>
-        <PageCardBody>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
-            <AuditData
-              actve={true}
-              cname="Admin User"
-              cdate="2026-01-15T08:30:00"
-              uname="Admin User"
-              udate="2026-07-19T14:22:00"
-              rvnmr={3}
-            />
-            <AuditData
-              actve={false}
-              cname="Jane Smith"
-              cdate="2026-03-22T10:15:00"
-              uname="Admin User"
-              udate="2026-06-10T09:45:00"
-              rvnmr={7}
-            />
-            <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-muted)', paddingLeft: 'var(--sp-2)' }}>
-              Columns: Status | Created By | Created Date | Updated By | Updated Date | Revision
-            </div>
-          </div>
-        </PageCardBody>
-      </PageCard>
-
-      {/* ── Section: Action Buttons ── */}
-      <PageCard>
-        <PageCardHeader>
-          <PageCardTitle title="Action Buttons" subtitle="Row action buttons for Edit, Activate, and Deactivate — shown conditionally based on active state" />
-        </PageCardHeader>
-        <PageCardBody>
-          <div className="grid" style={{ gap: 'var(--sp-5)' }}>
-            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
-              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>
-                Active Row — shows Deactivate button
-              </h4>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: 'var(--sp-3) var(--sp-4)',
-                background: 'var(--surface-alt)',
-                borderRadius: 'var(--radius-lg)',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
-                  <Badge variant="success" dot>{actionRow.prods_cname}</Badge>
-                </div>
-                <ActionButton
-                  rowData={actionRow}
-                  actve={actionRow.prods_actve}
-                  onEdit={(row) => toast.info(`Editing ${row.prods_cname}`)}
-                  onDelete={(row) => toast.warning(`${row.prods_cname} deactivated`)}
-                />
-              </div>
-            </div>
-            <div className="col-span-6" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
-              <h4 className="h4" style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 'var(--fs-sm)' }}>
-                Inactive Row — shows Activate button
-              </h4>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: 'var(--sp-3) var(--sp-4)',
-                background: 'var(--surface-alt)',
-                borderRadius: 'var(--radius-lg)',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
-                  <Badge variant="danger" dot>{inactiveRow.prods_cname}</Badge>
-                </div>
-                <ActionButton
-                  rowData={inactiveRow}
-                  actve={inactiveRow.prods_actve}
-                  onEdit={(row) => toast.info(`Editing ${row.prods_cname}`)}
-                  onDelete={(row) => toast.success(`${row.prods_cname} activated`)}
-                />
-              </div>
-            </div>
-          </div>
-        </PageCardBody>
-      </PageCard>
-
-      {/* ── Section: Modal / SidePanel / Confirm ── */}
-      <PageCard>
-        <PageCardHeader>
-          <PageCardTitle title="Overlay Components" subtitle="Modal, SidePanel, and Confirm dialogs" />
-          <PageCardActions>
-            <Button size="sm" variant="outline" onClick={() => { setPanelSide('left'); setPanelOpen(true) }}>
-              Open Left Panel
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => { setPanelSide('right'); setPanelOpen(true) }}>
-              Open Right Panel
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => setModalOpen(true)}>
-              Open Modal
-            </Button>
-            <Button size="sm" variant="danger" onClick={async () => {
-              const confirmed = await confirm({
-                title: 'Delete Item',
-                message: 'Are you sure you want to delete this item? This action cannot be undone.',
-                confirmText: 'Delete',
-                variant: 'danger',
-              })
-              if (confirmed) {
-                toast.error('Item deleted!')
-              }
-            }}>
-              Open Confirm
-            </Button>
-          </PageCardActions>
-        </PageCardHeader>
-        <PageCardBody>
-          <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-            Click the buttons above to open each overlay component. The Modal slides in centered with a backdrop blur.
-            The SidePanel slides in from the left or right edge. The Confirm dialog is a compact action confirmation.
-          </p>
-        </PageCardBody>
-      </PageCard>
-
-      {/* ── Section: Standalone Confirm ── */}
-      <PageCard>
-        <PageCardHeader>
-          <PageCardTitle title="Confirm (Standalone)" subtitle="Direct Confirm component with local state — onConfirm/onCancel callbacks" />
-          <PageCardActions>
-            <Button size="sm" variant="danger" onClick={() => { setConfirmOpen(true); setConfirmResult(null) }}>
-              Open Confirm
-            </Button>
-          </PageCardActions>
-        </PageCardHeader>
-        <PageCardBody>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
-            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-              Unlike the global confirm from <code>useUI()</code>, this uses the <code>Confirm</code> component directly with local <code>open</code> state and <code>onConfirm</code> / <code>onCancel</code> callbacks.
-            </p>
-            {confirmResult !== null && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', fontSize: 'var(--fs-sm)' }}>
-                <Badge variant={confirmResult ? 'success' : 'muted'} dot>
-                  {confirmResult ? 'Confirmed' : 'Cancelled'}
-                </Badge>
-                <span style={{ color: 'var(--text-muted)' }}>
-                  User {confirmResult ? 'accepted' : 'declined'} the action
-                </span>
-              </div>
-            )}
-          </div>
-        </PageCardBody>
-      </PageCard>
-
-      {/* ── Modal ── */}
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} size="lg">
-        <ModalHeader>
-          <ModalTitle
-            title="Example Modal"
-            subtitle="This modal demonstrates the Modal component with Header, Body, and Footer"
-            onClose={() => setModalOpen(false)}
-          />
-        </ModalHeader>
-        <ModalBody>
-          <div className="grid">
-            <div className="col-span-6">
-              <InputText label="First Name" placeholder="Enter first name" />
-            </div>
-            <div className="col-span-6">
-              <InputText label="Last Name" placeholder="Enter last name" />
-            </div>
-            <div className="col-span-6">
-              <InputText label="Email" placeholder="Enter email" type="email" />
-            </div>
-            <div className="col-span-6">
-              <Dropdown label="Role" options={ddOptions} placeholder="Select role..." />
-            </div>
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button variant="secondary" size="sm" onClick={() => setModalOpen(false)}>Cancel</Button>
-          <Button variant="primary" size="sm" onClick={() => { toast.success('Saved!'); setModalOpen(false) }}>
-            <IconSave size={14} className="icon-left" />
-            Save
-          </Button>
-        </ModalFooter>
-      </Modal>
-
-      {/* ── SidePanel ── */}
-      <SidePanel open={panelOpen} onClose={() => setPanelOpen(false)} position={panelSide} size="md">
-        <SidePanelHeader>
-          <SidePanelTitle
-            title={`${panelSide === 'left' ? 'Left' : 'Right'} Panel`}
-            subtitle="SidePanel slides in from the edge with a full form layout"
-            onClose={() => setPanelOpen(false)}
-          />
-        </SidePanelHeader>
-        <SidePanelBody>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)' }}>
-            <InputText label="Full Name" placeholder="Enter name" required />
-            <InputText label="Email" placeholder="Enter email" type="email" required />
-            <InputText label="Phone" placeholder="Enter phone" />
-            <Dropdown label="Department" options={ddOptions} placeholder="Select..." />
-            <InputNumber label="Age" placeholder="0" min={0} />
-            <InputCalendar label="Date of Birth" />
-          </div>
-        </SidePanelBody>
-        <SidePanelFooter>
-          <Button variant="secondary" size="sm" onClick={() => setPanelOpen(false)}>Cancel</Button>
-          <Button variant="primary" size="sm" onClick={() => { toast.success('Panel saved!'); setPanelOpen(false) }}>
-            <IconSave size={14} className="icon-left" />
-            Save
-          </Button>
-        </SidePanelFooter>
-      </SidePanel>
-
-      {/* ── Standalone Confirm ── */}
-      <Confirm
-        open={confirmOpen}
-        title="Delete Record"
-        message="Are you sure you want to delete this record? This action cannot be undone."
-        confirmText="Delete"
-        variant="danger"
-        onConfirm={() => {
-          setConfirmOpen(false)
-          setConfirmResult(true)
-          toast.error('Record deleted!')
-        }}
-        onCancel={() => {
-          setConfirmOpen(false)
-          setConfirmResult(false)
-          toast.info('Delete cancelled')
-        }}
-      />
-
+        </div>
+      </div>
     </div>
   )
 }

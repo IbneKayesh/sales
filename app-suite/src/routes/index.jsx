@@ -4,6 +4,7 @@ import M01Routes from "./M01Routes";
 import M04Routes from "./M04Routes";
 import M05Routes from "./M05Routes";
 import M06Routes from "./M06Routes";
+import M07Routes from "./M07Routes";
 import M08Routes from "./M08Routes";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -16,6 +17,7 @@ const routes = [
   ...M04Routes,
   ...M05Routes,
   ...M06Routes,
+  ...M07Routes,
   ...M08Routes,
 ];
 

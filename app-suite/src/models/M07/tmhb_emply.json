@@ -1,0 +1,56 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "emply_ccode": {
+    "type": "string",
+    "label": "Employee Code",
+    "maxLength": 50,
+    "minLength": 2,
+    "placeholder": "Enter employee code",
+    "required": true
+  },
+  "emply_cname": {
+    "type": "string",
+    "label": "Employee Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter employee name",
+    "required": true
+  },
+  "emply_cntno": {
+    "type": "string",
+    "label": "Contact No",
+    "maxLength": 50,
+    "minLength": 7,
+    "placeholder": "Enter contact number",
+    "required": true
+  },
+  "emply_email": {
+    "type": "email",
+    "label": "Email",
+    "maxLength": 50,
+    "placeholder": "email@example.com",
+    "required": true
+  },
+  "emply_urole": {
+    "type": "string",
+    "label": "User Role",
+    "maxLength": 50,
+    "default": "USER",
+    "placeholder": "Enter user role"
+  },
+  "emply_crdno": {
+    "type": "string",
+    "label": "Card No",
+    "maxLength": 50,
+    "placeholder": "Enter card number",
+    "required": true
+  },
+  "emply_isprm": {
+    "type": "boolean",
+    "label": "Is Permanent",
+    "default": false
+  }
+}

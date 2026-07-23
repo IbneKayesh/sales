@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { IconLogo, IconSpinner, IconCheck, IconClose } from "@/icons";
+import { IconLogo, IconUser, IconSpinner, IconCheck, IconClose } from "@/icons";
+import InputSwitch from "@/components/InputSwitch";
 import useLogin from "@/hooks/useLogin";
 import { healthCheck } from "@/utils/api";
 
@@ -8,20 +9,31 @@ export default function LoginPage() {
     isBusy,
     formData,
     formErrors,
+    savedLogin,
     //functions
     handleChange,
     handleSubmitClick,
+    handleSavedLoginChange,
+    handleTryDifferentUser,
   } = useLogin();
 
   const usernameRef = useRef(null);
+  const passwordRef = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
   const [backendStatus, setBackendStatus] = useState(null); // null | true | false
   const [checking, setChecking] = useState(false);
 
+  // Determine if we're in "saved login" mode (show username readonly, only password field)
+  const isSavedMode = savedLogin && !!formData.username;
+
   useEffect(() => {
-    usernameRef.current?.focus();
+    if (isSavedMode) {
+      passwordRef.current?.focus();
+    } else {
+      usernameRef.current?.focus();
+    }
     checkBackend();
-  }, []);
+  }, [isSavedMode]);
 
   const checkBackend = async () => {
     setChecking(true);
@@ -50,27 +62,53 @@ export default function LoginPage() {
 
         {/* Form */}
         <div className="login-page__form">
-          <div className="login-page__field">
-            <label className="login-page__label" htmlFor="username">
-              User Name
-            </label>
-            <div
-              className={`login-page__input-wrap${formErrors && !formData.username ? " login-page__input-wrap--error" : ""}`}
-            >
-              <input
-                ref={usernameRef}
-                id="username"
-                name="username"
-                type="text"
-                className="login-page__input"
-                placeholder="user@sgd.com"
-                value={formData.username}
-                onChange={(e) => handleChange("username", e.target.value)}
-                autoComplete="email"
+          {/* Username field — shown as readonly badge in saved mode, editable otherwise */}
+          {isSavedMode ? (
+            <div className="login-page__saved-profile">
+              <div className="login-page__saved-avatar">
+                <IconUser size={20} />
+              </div>
+              <div className="login-page__saved-info">
+                <span className="login-page__saved-name">
+                  {formData.username}
+                </span>
+                <span className="login-page__saved-hint">
+                  Saved user — enter password
+                </span>
+              </div>
+              <button
+                type="button"
+                className="login-page__different-user"
+                onClick={handleTryDifferentUser}
                 disabled={isBusy}
-              />
+                title="Try with a different user"
+              >
+                <span className="login-page__different-user-icon">⟳</span>
+              </button>
             </div>
-          </div>
+          ) : (
+            <div className="login-page__field">
+              <label className="login-page__label" htmlFor="username">
+                User Name
+              </label>
+              <div
+                className={`login-page__input-wrap${formErrors && !formData.username ? " login-page__input-wrap--error" : ""}`}
+              >
+                <input
+                  ref={usernameRef}
+                  id="username"
+                  name="username"
+                  type="text"
+                  className="login-page__input"
+                  placeholder="user@sgd.com"
+                  value={formData.username}
+                  onChange={(e) => handleChange("username", e.target.value)}
+                  autoComplete="email"
+                  disabled={isBusy}
+                />
+              </div>
+            </div>
+          )}
 
           <div className="login-page__field">
             <label className="login-page__label" htmlFor="password">
@@ -80,6 +118,7 @@ export default function LoginPage() {
               className={`login-page__input-wrap${formErrors && !formData?.password ? " login-page__input-wrap--error" : ""}`}
             >
               <input
+                ref={passwordRef}
                 id="password"
                 name="password"
                 type={showPassword ? "text" : "password"}
@@ -89,6 +128,11 @@ export default function LoginPage() {
                 onChange={(e) => handleChange("password", e.target.value)}
                 autoComplete="current-password"
                 disabled={isBusy}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !isBusy) {
+                    handleSubmitClick();
+                  }
+                }}
               />
               <button
                 type="button"
@@ -101,6 +145,18 @@ export default function LoginPage() {
               </button>
             </div>
           </div>
+
+          {/* Remember me switch — shown only when both username and password are entered */}
+          {formData.username && formData.password && (
+            <div className="login-page__saved-check">
+              <InputSwitch
+                label="Remember user"
+                checked={savedLogin}
+                onChange={(e) => handleSavedLoginChange(e.target.checked)}
+                disabled={isBusy}
+              />
+            </div>
+          )}
 
           {/* Error */}
           {formErrors && <div className="login-page__error">{formErrors}</div>}

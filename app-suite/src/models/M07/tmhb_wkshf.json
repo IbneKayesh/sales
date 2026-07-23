@@ -1,0 +1,75 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "wkshf_cname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter shift name",
+    "required": true
+  },
+  "wkshf_bbstr": {
+    "type": "integer",
+    "label": "Buffer Before Start (Min)",
+    "default": 0,
+    "required": true
+  },
+  "wkshf_satim": {
+    "type": "time",
+    "label": "Start Time",
+    "required": true
+  },
+  "wkshf_gsmin": {
+    "type": "integer",
+    "label": "Grace Start (Min)",
+    "default": 0,
+    "required": true
+  },
+  "wkshf_gemin": {
+    "type": "integer",
+    "label": "Grace End (Min)",
+    "default": 0,
+    "required": true
+  },
+  "wkshf_entim": {
+    "type": "time",
+    "label": "End Time",
+    "required": true
+  },
+  "wkshf_baend": {
+    "type": "integer",
+    "label": "Buffer After End (Min)",
+    "default": 0,
+    "required": true
+  },
+  "wkshf_wkhrs": {
+    "type": "integer",
+    "label": "Working Hours",
+    "default": 0,
+    "required": true
+  },
+  "wkshf_mnhrs": {
+    "type": "integer",
+    "label": "Minimum Hours",
+    "default": 0,
+    "required": true
+  },
+  "wkshf_crday": {
+    "type": "boolean",
+    "label": "Cross Day",
+    "default": false
+  },
+  "wkshf_sgpnc": {
+    "type": "boolean",
+    "label": "Single Punch",
+    "default": false
+  },
+  "wkshf_ovrtm": {
+    "type": "boolean",
+    "label": "Overtime",
+    "default": false
+  }
+}

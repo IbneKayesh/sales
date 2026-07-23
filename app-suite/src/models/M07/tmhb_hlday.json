@@ -1,0 +1,34 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "hlday_yerid": {
+    "type": "number",
+    "label": "Year",
+    "maxLength": 2050,
+    "minLength": 2025,
+    "default": "new Date().getFullYear()",
+    "required": true
+  },
+  "hlday_hldat": {
+    "type": "datetime",
+    "label": "Holiday Date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "hlday_hldnm": {
+    "type": "string",
+    "label": "Holiday Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter holiday name",
+    "required": true
+  },
+  "hlday_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes"
+  }
+}

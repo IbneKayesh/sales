@@ -1,0 +1,34 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "atnlg_ecode": {
+    "type": "string",
+    "label": "Employee Code",
+    "maxLength": 50,
+    "placeholder": "Enter employee code"
+  },
+  "atnlg_crdno": {
+    "type": "string",
+    "label": "Card No",
+    "maxLength": 50,
+    "placeholder": "Enter card number"
+  },
+  "atnlg_lgtim": {
+    "type": "datetime",
+    "label": "Log Time",
+    "required": true
+  },
+  "atnlg_trmnl": {
+    "type": "string",
+    "label": "Terminal",
+    "maxLength": 50,
+    "placeholder": "Enter terminal name"
+  },
+  "atnlg_ispst": {
+    "type": "boolean",
+    "label": "Is Posted",
+    "default": false
+  }
+}
