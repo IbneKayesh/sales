@@ -8,7 +8,7 @@ const dataModel = generateDataModel(tmib_brand);
 const useBrand = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M04-M02-M001");
+  const [pgId, setPgId] = useState("M04-M0005");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,

@@ -33,7 +33,7 @@ const SectionForm = ({
             optionLabel="dpart_cname"
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-5">
           <InputText
             label="Section Name"
             placeholder="Enter section name"
@@ -44,17 +44,7 @@ const SectionForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
-          <InputText
-            label="Code"
-            placeholder="Enter section code"
-            value={formData.sectn_ccode}
-            onChange={(e) => onChange("sectn_ccode", e.target.value)}
-            error={formErrors.sectn_ccode}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-2">
+        <div className="col-span-3">
           <InputNumber
             label="Employee Capacity"
             placeholder="Enter capacity"

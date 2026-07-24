@@ -16,8 +16,8 @@ import {
   IconBox,
   IconHR,
   IconClose,
+  IconSettings,
 } from "@/icons";
-
 
 const modules = [
   {
@@ -29,8 +29,8 @@ const modules = [
   },
   {
     id: "M01",
-    menus_mname: "Dashboard",
-    menus_micon: <IconHome />,
+    menus_mname: "Settings",
+    menus_micon: <IconSettings />,
     menus_color: "#7c3aed",
     menus_odrby: 1,
   },
@@ -89,21 +89,21 @@ const menus = [
     menus_menus: "M01",
   },
   {
-    id: "M01-M01-M002",
+    id: "M01-M0008",
     menus_mname: "Departments",
     menus_color: "#7c3aed",
     menus_micon: <IconHome />,
-    menus_odrby: 2,
-    menus_mlink: "/M01/departments",
+    menus_odrby: 8,
+    menus_mlink: "/settings/departments",
     menus_menus: "M01",
   },
   {
-    id: "M01-M01-M003",
+    id: "M01-M0009",
     menus_mname: "Sections",
     menus_color: "#7c3aed",
     menus_micon: <IconHome />,
-    menus_odrby: 3,
-    menus_mlink: "/M01/sections",
+    menus_odrby: 9,
+    menus_mlink: "/settings/sections",
     menus_menus: "M01",
   },
   {

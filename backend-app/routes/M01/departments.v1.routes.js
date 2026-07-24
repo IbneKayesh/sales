@@ -82,7 +82,6 @@ router.post("/get-all-active", async (req, res) => {
   }
 });
 
-
 const create = async (req, res) => {
   try {
     const {
@@ -91,6 +90,8 @@ const create = async (req, res) => {
       dpart_bsins,
       dpart_ccode,
       dpart_cname,
+      dpart_ofadr,
+      dpart_emcap,
       user_s,
       user_c,
       user_b,
@@ -108,14 +109,18 @@ const create = async (req, res) => {
     //database action
     const newCode = await GenNewCode(user_c, "tmsb_dpart");
 
-    const sql = `INSERT INTO tmsb_dpart(id, dpart_users, dpart_bsins, dpart_ccode, dpart_cname, dpart_crusr, dpart_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+    const sql = `INSERT INTO tmsb_dpart(id, dpart_users, dpart_bsins, dpart_ccode, dpart_cname, dpart_ofadr,
+    dpart_emcap, dpart_crusr, dpart_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6,
+    $7, $8, $9)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
       newCode,
       dpart_cname,
+      dpart_ofadr,
+      dpart_emcap,
       user_s,
       user_s,
     ];
@@ -124,7 +129,7 @@ const create = async (req, res) => {
     res.json({
       success: true,
       message: `${dpart_cname} - Created successfully.`,
-    data: {},
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
@@ -144,28 +149,31 @@ const update = async (req, res) => {
       dpart_bsins,
       dpart_ccode,
       dpart_cname,
+      dpart_ofadr,
+      dpart_emcap,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!id || !dpart_cname || !user_s || !user_c || !user_b) {
+    if (!dpart_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
         data: {},
       });
     }
-
     //database action
     const sql = `UPDATE tmsb_dpart
     SET dpart_cname = $1,
-    dpart_upusr = $2,
+    dpart_ofadr = $2,
+    dpart_emcap = $3,
+    dpart_upusr = $4,
     dpart_updat = CURRENT_TIMESTAMP,
     dpart_rvnmr = dpart_rvnmr + 1
-    WHERE id = $3`;
-    const params = [dpart_cname, user_s, id];
+    WHERE id = $5`;
+    const params = [dpart_cname, dpart_ofadr, dpart_emcap, user_s, id];
 
     await dbRun(sql, params, `update Department- ${user_c}`);
     res.json({
@@ -237,6 +245,5 @@ router.post("/delete", async (req, res) => {
     });
   }
 });
-
 
 module.exports = router;

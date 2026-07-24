@@ -17,7 +17,7 @@ const DepartmentForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-6">
+        <div className="col-span-3">
           <InputText
             label="Department Name"
             placeholder="Enter department name"
@@ -25,16 +25,6 @@ const DepartmentForm = ({
             onChange={(e) => onChange("dpart_cname", e.target.value)}
             error={formErrors.dpart_cname}
             required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputText
-            label="Code"
-            placeholder="Enter department code"
-            value={formData.dpart_ccode}
-            onChange={(e) => onChange("dpart_ccode", e.target.value)}
-            error={formErrors.dpart_ccode}
             disabled={readOnly}
           />
         </div>
@@ -49,7 +39,7 @@ const DepartmentForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-12">
+        <div className="col-span-6">
           <InputText
             label="Office Address"
             placeholder="Enter office address"

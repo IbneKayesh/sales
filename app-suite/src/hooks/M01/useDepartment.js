@@ -8,7 +8,7 @@ const dataModel = generateDataModel(tmsb_dpart);
 const useDepartment = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M01-M01-M002");
+  const [pgId, setPgId] = useState("M01-M0008");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,

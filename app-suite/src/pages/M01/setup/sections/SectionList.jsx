@@ -8,15 +8,15 @@ import {
 
 const SectionList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "sectn_cname", header: "Name", width: "180px" },
-    { key: "dpart_cname", header: "Department", width: "150px" },
-    { key: "sectn_ccode", header: "Code", width: "120px" },
-    { key: "sectn_ofadr", header: "Office Address", width: "200px" },
-    { key: "sectn_emcap", header: "Emp Capacity", width: "130px" },
+    { key: "sectn_ccode", header: "Code", width: "80px" },
+    { key: "sectn_cname", header: "Name", width: "80px" },
+    { key: "dpart_cname", header: "Department", width: "80px" },
+    { key: "sectn_ofadr", header: "Office Address", width: "80px" },
+    { key: "sectn_emcap", header: "Emp Capacity", width: "80px" },
     {
       key: "sectn_actve",
       header: "Status",
-      width: "120px",
+      width: "110px",
       render: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>

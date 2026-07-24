@@ -1,14 +1,11 @@
 --
--- Table structure for table `tmnb_sectn`
--- short table
+-- Table structure for table `tmsb_sectn`
 
-
-
-CREATE TABLE tmnb_sectn (
+CREATE TABLE tmsb_sectn (
       -- default 1
   id varchar(50) PRIMARY KEY,
 
-  sectn_apusr varchar(50) NOT NULL,
+  sectn_users varchar(50) NOT NULL,
   sectn_bsins varchar(50) NOT NULL,
   sectn_ccode varchar(50) NOT NULL,
   sectn_dpart varchar(50) NOT NULL,

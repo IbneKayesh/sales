@@ -9,7 +9,7 @@ import { departmentAPI } from "@/api/M01/departmentAPI.js";
 const useSection = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M01-M01-M003");
+  const [pgId, setPgId] = useState("M01-M0009");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,

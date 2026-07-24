@@ -4,8 +4,8 @@ import SectionPage from "@/pages/M01/setup/sections/SectionPage";
 
 const routes = [
   { path: "/M01/modules", element: <ModulePage /> },
-  { path: "/M01/departments", element: <DepartmentPage /> },
-  { path: "/M01/sections", element: <SectionPage /> },
+  { path: "/settings/departments", element: <DepartmentPage /> },
+  { path: "/settings/sections", element: <SectionPage /> },
 ];
 
 export default routes;

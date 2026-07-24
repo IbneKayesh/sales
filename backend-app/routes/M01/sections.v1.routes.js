@@ -19,15 +19,14 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT sectn.*,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop,
-    dpart.dpart_dname AS dpart_name
-    FROM tmnb_sectn sectn
-    LEFT JOIN tmnb_users csr ON sectn.sectn_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON sectn.sectn_upusr = usr.id
-    LEFT JOIN tmnb_dpart dpart ON sectn.sectn_dpart = dpart.id
-    WHERE sectn.sectn_apusr = $1
-    ORDER BY sectn.sectn_sname ASC`;
+    const sql = `SELECT sct.*, dpt.dpart_cname,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmsb_sectn sct
+    LEFT JOIN tmsb_dpart dpt ON sct.sectn_dpart = dpt.id
+    LEFT JOIN tmhb_emply csr ON sct.sectn_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON sct.sectn_upusr = usr.id
+    WHERE sct.sectn_users = $1
+    ORDER BY sct.sectn_cname ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get section- ${user_c}`);
@@ -61,11 +60,11 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT sectn.*, 0 as edit_stop
-    FROM tmnb_sectn sectn
-    WHERE sectn.sectn_apusr = $1
-    AND sectn.sectn_actve = TRUE
-    ORDER BY sectn.sectn_sname ASC`;
+    const sql = `SELECT sct.*, 0 as edit_stop
+    FROM tmsb_sectn sct
+    WHERE sct.sectn_users = $1
+    AND sct.sectn_actve = TRUE
+    ORDER BY sct.sectn_cname ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get section- ${user_c}`);
@@ -84,16 +83,15 @@ router.post("/get-all-active", async (req, res) => {
   }
 });
 
-
 const create = async (req, res) => {
   try {
     const {
       id,
-      sectn_apusr,
+      sectn_users,
       sectn_bsins,
+      sectn_ccode,
       sectn_dpart,
-      sectn_scode,
-      sectn_sname,
+      sectn_cname,
       sectn_ofadr,
       sectn_emcap,
       user_s,
@@ -102,7 +100,7 @@ const create = async (req, res) => {
     } = req.body;
 
     // Validate input
-    if (!sectn_sname || !sectn_dpart || !user_s || !user_c || !user_b) {
+    if (!sectn_dpart || !sectn_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -111,17 +109,17 @@ const create = async (req, res) => {
     }
 
     //database action
-    const newCode = await GenNewCode(user_c, "tmnb_sectn");
+    const newCode = await GenNewCode(user_c, "tmsb_sectn");
 
-    const sql = `INSERT INTO tmnb_sectn(id, sectn_apusr, sectn_bsins, sectn_dpart, sectn_scode, sectn_sname, sectn_ofadr, sectn_emcap, sectn_crusr, sectn_upusr)
+    const sql = `INSERT INTO tmsb_sectn(id, sectn_users, sectn_bsins, sectn_ccode, sectn_dpart, sectn_cname, sectn_ofadr, sectn_emcap, sectn_crusr, sectn_upusr)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
-      sectn_dpart,
       newCode,
-      sectn_sname,
+      sectn_dpart,
+      sectn_cname,
       sectn_ofadr || "",
       sectn_emcap || 1,
       user_s,
@@ -131,8 +129,8 @@ const create = async (req, res) => {
     await dbRun(sql, params, `create section- ${user_c}`);
     res.json({
       success: true,
-      message: `${sectn_sname} - Created successfully.`,
-    data: {},
+      message: `${sectn_cname} - Created successfully.`,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
@@ -148,11 +146,11 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      sectn_apusr,
+      sectn_users,
       sectn_bsins,
+      sectn_ccode,
       sectn_dpart,
-      sectn_scode,
-      sectn_sname,
+      sectn_cname,
       sectn_ofadr,
       sectn_emcap,
       user_s,
@@ -161,7 +159,7 @@ const update = async (req, res) => {
     } = req.body;
 
     // Validate input
-    if (!id || !sectn_sname || !sectn_dpart || !user_s || !user_c || !user_b) {
+    if (!sectn_dpart || !sectn_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -170,21 +168,26 @@ const update = async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmnb_sectn
-    SET sectn_sname = $1,
-    sectn_dpart = $2,
-    sectn_ofadr = $3,
-    sectn_emcap = $4,
-    sectn_upusr = $5,
+    const sql = `UPDATE tmsb_sectn
+    SET sectn_cname = $1,
+    sectn_ofadr = $2,
+    sectn_emcap = $3,
+    sectn_upusr = $4,
     sectn_updat = CURRENT_TIMESTAMP,
     sectn_rvnmr = sectn_rvnmr + 1
-    WHERE id = $6`;
-    const params = [sectn_sname, sectn_dpart, sectn_ofadr, sectn_emcap, user_s, id];
+    WHERE id = $5`;
+    const params = [
+      sectn_cname,
+      sectn_ofadr,
+      sectn_emcap,
+      user_s,
+      id,
+    ];
 
     await dbRun(sql, params, `update section- ${user_c}`);
     res.json({
       success: true,
-      message: `${sectn_sname} - Updated successfully.`,
+      message: `${sectn_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -216,10 +219,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, sectn_sname, sectn_actve, user_s, user_c, user_b } = req.body;
+    const { id, sectn_cname, sectn_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !sectn_sname || !user_s || !user_c || !user_b) {
+    if (!id || !sectn_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -228,7 +231,7 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmnb_sectn
+    const sql = `UPDATE tmsb_sectn
     SET sectn_actve = NOT sectn_actve,
     sectn_upusr = $1,
     sectn_updat = CURRENT_TIMESTAMP,
@@ -239,7 +242,7 @@ router.post("/delete", async (req, res) => {
     await dbRun(sql, params, `delete section- ${user_c}`);
     res.json({
       success: true,
-      message: `${sectn_sname} - ${sectn_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${sectn_cname} - ${sectn_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {
@@ -251,6 +254,5 @@ router.post("/delete", async (req, res) => {
     });
   }
 });
-
 
 module.exports = router;

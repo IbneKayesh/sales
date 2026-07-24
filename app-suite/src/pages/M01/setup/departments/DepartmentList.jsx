@@ -8,14 +8,14 @@ import {
 
 const DepartmentList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "dpart_cname", header: "Name", width: "180px" },
-    { key: "dpart_ccode", header: "Code", width: "120px" },
-    { key: "dpart_ofadr", header: "Office Address", width: "200px" },
-    { key: "dpart_emcap", header: "Emp Capacity", width: "130px" },
+    { key: "dpart_ccode", header: "Code", width: "80px" },
+    { key: "dpart_cname", header: "Name", width: "80px" },
+    { key: "dpart_ofadr", header: "Office Address", width: "80px" },
+    { key: "dpart_emcap", header: "Emp Capacity", width: "80px" },
     {
       key: "dpart_actve",
       header: "Status",
-      width: "120px",
+      width: "110px",
       render: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
