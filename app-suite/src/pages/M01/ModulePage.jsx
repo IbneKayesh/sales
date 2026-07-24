@@ -18,6 +18,7 @@ import {
   IconClose,
 } from "@/icons";
 
+
 const modules = [
   {
     id: "M00",
@@ -58,14 +59,14 @@ const modules = [
     id: "M07",
     menus_mname: "HRMS",
     menus_micon: <IconHR />,
-    menus_color: "#22c55e",
+    menus_color: "#ec4899",
     menus_odrby: 7,
   },
   {
     id: "M08",
     menus_mname: "Accounts",
     menus_micon: <IconAccounts />,
-    menus_color: "#22c55e",
+    menus_color: "#8b5cf6",
     menus_odrby: 8,
   },
   {
@@ -81,10 +82,28 @@ const menus = [
   {
     id: "M01-M01-M001",
     menus_mname: "Home",
-    menus_color: "#f59e0b",
+    menus_color: "#7c3aed",
     menus_micon: <IconHome />,
     menus_odrby: 1,
     menus_mlink: "/",
+    menus_menus: "M01",
+  },
+  {
+    id: "M01-M01-M002",
+    menus_mname: "Departments",
+    menus_color: "#7c3aed",
+    menus_micon: <IconHome />,
+    menus_odrby: 2,
+    menus_mlink: "/M01/departments",
+    menus_menus: "M01",
+  },
+  {
+    id: "M01-M01-M003",
+    menus_mname: "Sections",
+    menus_color: "#7c3aed",
+    menus_micon: <IconHome />,
+    menus_odrby: 3,
+    menus_mlink: "/M01/sections",
     menus_menus: "M01",
   },
   {
@@ -135,7 +154,7 @@ const menus = [
   {
     id: "M05-M01-M001",
     menus_mname: "Productions",
-    menus_color: "#f59e0b",
+    menus_color: "#22c55e",
     menus_micon: <IconManufacture />,
     menus_odrby: 1,
     menus_mlink: "/manufacturing/setup/productions",
@@ -144,7 +163,7 @@ const menus = [
   {
     id: "M05-M01-M002",
     menus_mname: "BOM",
-    menus_color: "#f59e0b",
+    menus_color: "#22c55e",
     menus_micon: <IconManufacture />,
     menus_odrby: 2,
     menus_mlink: "/manufacturing/setup/bom",
@@ -153,7 +172,7 @@ const menus = [
   {
     id: "M05-M02-M001",
     menus_mname: "Process",
-    menus_color: "#f59e0b",
+    menus_color: "#22c55e",
     menus_micon: <IconManufacture />,
     menus_odrby: 3,
     menus_mlink: "/manufacturing/process",
@@ -198,7 +217,7 @@ const menus = [
   {
     id: "M07-M0002",
     menus_mname: "Working Shift",
-    menus_color: "#3b82f6",
+    menus_color: "#ec4899",
     menus_micon: <IconHR />,
     menus_odrby: 2,
     menus_mlink: "/hrms/setup/work-shifts",
@@ -207,7 +226,7 @@ const menus = [
   {
     id: "M07-M0004",
     menus_mname: "Holidays",
-    menus_color: "#3b82f6",
+    menus_color: "#ec4899",
     menus_micon: <IconHR />,
     menus_odrby: 4,
     menus_mlink: "/hrms/setup/holidays",
@@ -216,7 +235,7 @@ const menus = [
   {
     id: "M08-M0001",
     menus_mname: "Chart of Accounts",
-    menus_color: "#f59e0b",
+    menus_color: "#8b5cf6",
     menus_micon: <IconAccounts />,
     menus_odrby: 1,
     menus_mlink: "/accounts/setup/chart-of-accounts",
@@ -225,7 +244,7 @@ const menus = [
   {
     id: "M08-M0006",
     menus_mname: "Fiscal Years",
-    menus_color: "#f59e0b",
+    menus_color: "#8b5cf6",
     menus_micon: <IconAccounts />,
     menus_odrby: 4,
     menus_mlink: "/accounts/setup/fiscal-years",
@@ -234,7 +253,7 @@ const menus = [
   {
     id: "M08-M0007",
     menus_mname: "Accounting Periods",
-    menus_color: "#f59e0b",
+    menus_color: "#8b5cf6",
     menus_micon: <IconAccounts />,
     menus_odrby: 2,
     menus_mlink: "/accounts/setup/accounting-periods",
@@ -243,7 +262,7 @@ const menus = [
   {
     id: "M08-M01-M002",
     menus_mname: "Party Accounts",
-    menus_color: "#f59e0b",
+    menus_color: "#8b5cf6",
     menus_micon: <IconUsers />,
     menus_odrby: 2,
     menus_mlink: "/M08/parties",

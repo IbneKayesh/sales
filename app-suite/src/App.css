@@ -2597,6 +2597,7 @@ code {
   display: flex;
   align-items: center;
   gap: var(--sp-2);
+  flex: 1;
 }
 
 .module-page__card-icon {

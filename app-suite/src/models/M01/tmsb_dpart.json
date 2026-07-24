@@ -1,0 +1,33 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "dpart_cname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 200,
+    "minLength": 3,
+    "placeholder": "Enter department name",
+    "required": true
+  },
+  "dpart_ofadr": {
+    "type": "string",
+    "label": "Office Address",
+    "maxLength": 300,
+    "placeholder": "Enter office address"
+  },
+  "dpart_emcap": {
+    "type": "number",
+    "label": "Employee Capacity",
+    "default": 1,
+    "minLength": 1,
+    "placeholder": "Enter employee capacity"
+  },
+  "dpart_ccode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "placeholder": "Enter department code"
+  }
+}
