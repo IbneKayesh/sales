@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { territoryAreaAPI } from "@/api/M06/territoryAreaAPI.js";
+import { thanaAreaAPI } from "@/api/M06/thanaAreaAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmcb_tarea from "@/models/M06/tmcb_tarea.json";
 const dataModel = generateDataModel(tmcb_tarea);
+import { districtZoneAPI } from "@/api/M06/districtZoneAPI.js";
 
-const useTerritoryArea = () => {
+const useThanaArea = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M06-M03-M001");
+  const [pgId, setPgId] = useState("M06-M0003");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -22,11 +23,13 @@ const useTerritoryArea = () => {
   const [listDataItem, setListDataItem] = useState([]);
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
+  //others
+  const [dzone_Options, setDzone_Options] = useState([]);
 
-  const getAllTerritoryArea = async () => {
+  const getAllThanaArea = async () => {
     try {
       setIsBusy(true);
-      const resp = await territoryAreaAPI.getAll({});
+      const resp = await thanaAreaAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -36,16 +39,30 @@ const useTerritoryArea = () => {
   };
 
   useEffect(() => {
-    getAllTerritoryArea();
+    getAllThanaArea();
   }, []);
+
+  const getAllDZones = async () => {
+    if (dzone_Options.length > 0) {
+      return;
+    }
+    try {
+      const resp = await districtZoneAPI.getAllActive({});
+      const list = resp.data || [];
+      setDzone_Options(list);
+    } catch (error) {}
+  };
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formData, [f]: v }, tmcb_tarea);
+    setFormErrors(newErrors);
   };
 
-  const handleEdit = (rowData) => {
+  const handleEdit = async (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
+    getAllDZones();
   };
 
   const handleDelete = async (rowData) => {
@@ -63,7 +80,7 @@ const useTerritoryArea = () => {
 
     try {
       setIsBusy(true);
-      const resp = await territoryAreaAPI.delete(rowData);
+      const resp = await thanaAreaAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -77,7 +94,7 @@ const useTerritoryArea = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllTerritoryArea();
+        getAllThanaArea();
       }
     } catch (error) {
     } finally {
@@ -86,13 +103,14 @@ const useTerritoryArea = () => {
   };
 
   const handleSearch = async () => {
-    getAllTerritoryArea();
+    getAllThanaArea();
   };
-  const handleAddNew = () => {
+  const handleAddNew = async () => {
     setPgView("SYS_VW_FRM_1");
     setFormData(dataModel);
     setReadOnly(false);
     setStopEdit(false);
+    getAllDZones();
   };
 
   const handleCancel = () => {
@@ -115,7 +133,7 @@ const useTerritoryArea = () => {
       };
       setIsBusy(true);
 
-      const resp = await territoryAreaAPI.upsert(reqBody);
+      const resp = await thanaAreaAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -125,7 +143,7 @@ const useTerritoryArea = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllTerritoryArea();
+        getAllThanaArea();
       }
     } catch (error) {
     } finally {
@@ -144,6 +162,8 @@ const useTerritoryArea = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    dzone_Options,
     //functions
     handleChange,
     handleEdit,
@@ -154,4 +174,4 @@ const useTerritoryArea = () => {
     handleSubmit,
   };
 };
-export default useTerritoryArea;
+export default useThanaArea;

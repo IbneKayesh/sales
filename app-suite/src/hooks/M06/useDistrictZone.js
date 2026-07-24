@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { deliveryZoneAPI } from "@/api/M06/deliveryZoneAPI.js";
+import { districtZoneAPI } from "@/api/M06/districtZoneAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmcb_dzone from "@/models/M06/tmcb_dzone.json";
 const dataModel = generateDataModel(tmcb_dzone);
 
-const useDeliveryZone = () => {
+const useDistrictZone = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
   const [pgId, setPgId] = useState("M06-M02-M001");
@@ -23,10 +23,10 @@ const useDeliveryZone = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
 
-  const getAllDeliveryZone = async () => {
+  const getAllDistrictZone = async () => {
     try {
       setIsBusy(true);
-      const resp = await deliveryZoneAPI.getAll({});
+      const resp = await districtZoneAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -36,11 +36,13 @@ const useDeliveryZone = () => {
   };
 
   useEffect(() => {
-    getAllDeliveryZone();
+    getAllDistrictZone();
   }, []);
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formData, [f]: v }, tmcb_dzone);
+    setFormErrors(newErrors);
   };
 
   const handleEdit = (rowData) => {
@@ -63,7 +65,7 @@ const useDeliveryZone = () => {
 
     try {
       setIsBusy(true);
-      const resp = await deliveryZoneAPI.delete(rowData);
+      const resp = await districtZoneAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -77,7 +79,7 @@ const useDeliveryZone = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllDeliveryZone();
+        getAllDistrictZone();
       }
     } catch (error) {
     } finally {
@@ -86,7 +88,7 @@ const useDeliveryZone = () => {
   };
 
   const handleSearch = async () => {
-    getAllDeliveryZone();
+    getAllDistrictZone();
   };
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
@@ -115,7 +117,7 @@ const useDeliveryZone = () => {
       };
       setIsBusy(true);
 
-      const resp = await deliveryZoneAPI.upsert(reqBody);
+      const resp = await districtZoneAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -125,7 +127,7 @@ const useDeliveryZone = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllDeliveryZone();
+        getAllDistrictZone();
       }
     } catch (error) {
     } finally {
@@ -154,4 +156,4 @@ const useDeliveryZone = () => {
     handleSubmit,
   };
 };
-export default useDeliveryZone;
+export default useDistrictZone;

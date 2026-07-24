@@ -1,12 +1,11 @@
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
+import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
-import {
-  IconClose,
-  IconSave,
-} from "@/icons";
+import { IconClose, IconSave } from "@/icons";
+import { cntry_Options } from "@/utils/vtable.js";
 
-const TerritoryAreaForm = ({
+const DistrictZoneForm = ({
   isBusy,
   readOnly,
   stopEdit,
@@ -20,23 +19,24 @@ const TerritoryAreaForm = ({
     <div className="form-wrap">
       <div className="grid">
         <div className="col-span-6">
-          <InputText
-            label="Area Name"
-            placeholder="Enter area name"
-            value={formData.tarea_cname}
-            onChange={(e) => onChange("tarea_cname", e.target.value)}
-            error={formErrors.tarea_cname}
+          <Dropdown
+            label="Country"
+            options={cntry_Options}
+            value={formData.dzone_cntry}
+            onChange={(e) => onChange("dzone_cntry", e.target.value)}
+            error={formErrors.dzone_cntry}
             required
+            placeholder="Select..."
             disabled={readOnly}
           />
         </div>
         <div className="col-span-6">
           <InputText
-            label="Delivery Zone"
-            placeholder="Enter delivery zone"
-            value={formData.tarea_dzone}
-            onChange={(e) => onChange("tarea_dzone", e.target.value)}
-            error={formErrors.tarea_dzone}
+            label="Zone Name"
+            placeholder="Enter zone name"
+            value={formData.dzone_cname}
+            onChange={(e) => onChange("dzone_cname", e.target.value)}
+            error={formErrors.dzone_cname}
             required
             disabled={readOnly}
           />
@@ -44,12 +44,12 @@ const TerritoryAreaForm = ({
       </div>
       {formData?.id && (
         <AuditData
-          actve={formData.tarea_actve}
+          actve={formData.dzone_actve}
           cname={formData.crusr_cname}
-          cdate={formData.tarea_crdat}
+          cdate={formData.dzone_crdat}
           uname={formData.upusr_cname}
-          udate={formData.tarea_updat}
-          rvnmr={formData.tarea_rvnmr}
+          udate={formData.dzone_updat}
+          rvnmr={formData.dzone_rvnmr}
         />
       )}
       <div className="form-actions">
@@ -65,4 +65,4 @@ const TerritoryAreaForm = ({
     </div>
   );
 };
-export default TerritoryAreaForm;
+export default DistrictZoneForm;

@@ -41,6 +41,8 @@ const useAttendLog = () => {
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formData, [f]: v }, tmhb_atnlg);
+    setFormErrors(newErrors);
   };
 
   const handleEdit = (rowData) => {

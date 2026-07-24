@@ -19,16 +19,18 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT zn.*,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
-    FROM tmcb_dzone zn
-    LEFT JOIN tmnb_users csr ON zn.dzone_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON zn.dzone_upusr = usr.id
-    WHERE zn.dzone_apusr = $1
-    ORDER BY zn.dzone_dname ASC`;
+    const sql = `SELECT try.*, ta.tarea_cname, dzn.id tarea_dzone, dzn.dzone_cname, 
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmcb_trtry try
+    LEFT JOIN tmcb_tarea ta ON try.trtry_tarea = ta.id
+    LEFT JOIN tmcb_dzone dzn ON ta.tarea_dzone = dzn.id
+    LEFT JOIN tmhb_emply csr ON try.trtry_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON try.trtry_upusr = usr.id
+    WHERE try.trtry_users = $1
+    ORDER BY try.trtry_cname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get dzone- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get territory- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -59,14 +61,14 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT zn.*, 0 as edit_stop
-    FROM tmcb_dzone zn
-    WHERE zn.dzone_apusr = $1
-    AND zn.dzone_actve = TRUE
-    ORDER BY zn.dzone_dname ASC`;
+    const sql = `SELECT ta.*, 0 as edit_stop
+    FROM tmcb_tarea ta
+    WHERE ta.tarea_apusr = $1
+    AND ta.tarea_actve = TRUE
+    ORDER BY ta.trtry_cname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get dzone- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get tarea- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -82,23 +84,22 @@ router.post("/get-all-active", async (req, res) => {
   }
 });
 
-
 const create = async (req, res) => {
   try {
     const {
       id,
-      dzone_apusr,
-      dzone_bsins,
-      dzone_cntry,
-      dzone_dcode,
-      dzone_dname,
+      trtry_users,
+      trtry_bsins,
+      trtry_ccode,
+      trtry_tarea,
+      trtry_cname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!dzone_cntry || !dzone_dname || !user_s || !user_c || !user_b) {
+    if (!trtry_tarea || !trtry_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -107,26 +108,26 @@ const create = async (req, res) => {
     }
 
     //database action
-    const newCode = await GenNewCode(user_c, "tmcb_dzone");
+    const newCode = await GenNewCode(user_c, "tmcb_trtry");
 
-    const sql = `INSERT INTO tmcb_dzone(id, dzone_apusr, dzone_bsins, dzone_cntry, dzone_dcode, dzone_dname, dzone_crusr, dzone_upusr)
+    const sql = `INSERT INTO tmcb_trtry(id, trtry_users, trtry_bsins, trtry_ccode, trtry_tarea, trtry_cname, trtry_crusr, trtry_upusr)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
-      dzone_cntry,
       newCode,
-      dzone_dname,
+      trtry_tarea,
+      trtry_cname,
       user_s,
       user_s,
     ];
 
-    await dbRun(sql, params, `create dzone- ${user_c}`);
+    await dbRun(sql, params, `create territory- ${user_c}`);
     res.json({
       success: true,
-      message: `${dzone_dname} - Created successfully.`,
-    data: {},
+      message: `${trtry_cname} - Created successfully.`,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);
@@ -142,18 +143,18 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      dzone_apusr,
-      dzone_bsins,
-      dzone_cntry,
-      dzone_dcode,
-      dzone_dname,
+      trtry_users,
+      trtry_bsins,
+      trtry_ccode,
+      trtry_tarea,
+      trtry_cname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!id || !dzone_cntry || !dzone_dname || !user_s || !user_c || !user_b) {
+    if (!trtry_tarea || !trtry_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -162,19 +163,19 @@ const update = async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmcb_dzone
-    SET dzone_cntry = $1,
-    dzone_dname = $2,
-    dzone_upusr = $3,
-    dzone_updat = CURRENT_TIMESTAMP,
-    dzone_rvnmr = dzone_rvnmr + 1
+    const sql = `UPDATE tmcb_trtry
+    SET trtry_tarea = $1,
+    trtry_cname = $2,
+    trtry_upusr = $3,
+    trtry_updat = CURRENT_TIMESTAMP,
+    trtry_rvnmr = trtry_rvnmr + 1
     WHERE id = $4`;
-    const params = [dzone_cntry, dzone_dname, user_s, id];
+    const params = [trtry_tarea, trtry_cname, user_s, id];
 
-    await dbRun(sql, params, `update dzone- ${user_c}`);
+    await dbRun(sql, params, `update territory- ${user_c}`);
     res.json({
       success: true,
-      message: `${dzone_dname} - Updated successfully.`,
+      message: `${trtry_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -206,10 +207,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, dzone_dname, dzone_actve, user_s, user_c, user_b } = req.body;
+    const { id, trtry_cname, tarea_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !dzone_dname || !user_s || !user_c || !user_b) {
+    if (!id || !trtry_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -218,18 +219,18 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmcb_dzone
-    SET dzone_actve = NOT dzone_actve,
-    dzone_upusr = $1,
-    dzone_updat = CURRENT_TIMESTAMP,
-    dzone_rvnmr = dzone_rvnmr + 1
+    const sql = `UPDATE tmcb_trtry
+    SET trtry_actve = NOT trtry_actve,
+    trtry_upusr = $1,
+    trtry_updat = CURRENT_TIMESTAMP,
+    trtry_rvnmr = trtry_rvnmr + 1
     WHERE id = $2`;
     const params = [user_s, id];
 
-    await dbRun(sql, params, `delete dzone- ${user_c}`);
+    await dbRun(sql, params, `delete territory- ${user_c}`);
     res.json({
       success: true,
-      message: `${dzone_dname} - ${dzone_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${trtry_cname} - ${tarea_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {
@@ -242,13 +243,13 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-// get by country
-router.post("/get-by-country", async (req, res) => {
+// get by tarea
+router.post("/get-by-tarea", async (req, res) => {
   try {
-    const { user_s, user_c, user_b , dzone_cntry } = req.body;
+    const { trtry_tarea, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!user_c || !dzone_cntry) {
+    if (!user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -257,15 +258,15 @@ router.post("/get-by-country", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT dzn.*, 0 as edit_stop
-    FROM tmcb_dzone dzn
-    WHERE dzn.dzone_cntry = $1
-    AND dzn.dzone_apusr = $2
-    AND dzn.dzone_actve = TRUE
-    ORDER BY dzn.dzone_dname`;
-    const params = [dzone_cntry, user_c];
+    const sql = `SELECT ta.*, 0 as edit_stop
+    FROM tmcb_trtry ta
+    WHERE ta.trtry_users = $1
+    AND ta.trtry_tarea = $2
+    AND ta.trtry_actve = TRUE
+    ORDER BY ta.trtry_cname ASC`;
 
-    const rows = await dbGetAll(sql, params, `Get zones for ${dzone_cntry}`);
+    const params = [user_c, trtry_tarea];
+    const rows = await dbGetAll(sql, params, `get territory- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -280,7 +281,5 @@ router.post("/get-by-country", async (req, res) => {
     });
   }
 });
-
-
 
 module.exports = router;

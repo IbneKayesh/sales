@@ -41,6 +41,8 @@ const useEmply = () => {
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formData, [f]: v }, tmhb_emply);
+    setFormErrors(newErrors);
   };
 
   const handleEdit = (rowData) => {

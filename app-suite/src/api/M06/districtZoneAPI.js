@@ -1,29 +1,29 @@
 import { apiRequest } from "@/utils/api.js";
 
-//hldayAPI
-export const hldayAPI = {
+//districtZoneAPI
+export const districtZoneAPI = {
   getAll: (data) =>
-    apiRequest("/M07/v1/holidays", {
+    apiRequest("/M06/v1/dzones", {
       body: data,
     }),
   upsert: (data) =>
-    apiRequest("/M07/v1/holidays/upsert", {
+    apiRequest("/M06/v1/dzones/upsert", {
       body: data,
     }),
   create: (data) =>
-    apiRequest("/M07/v1/holidays/create", {
+    apiRequest("/M06/v1/dzones/create", {
       body: data,
     }),
   update: (data) =>
-    apiRequest("/M07/v1/holidays/update", {
+    apiRequest("/M06/v1/dzones/update", {
       body: data,
     }),
   delete: (data) =>
-    apiRequest("/M07/v1/holidays/delete", {
+    apiRequest("/M06/v1/dzones/delete", {
       body: data,
     }),
   getAllActive: (data) =>
-    apiRequest("/M07/v1/holidays/get-all-active", {
+    apiRequest("/M06/v1/dzones/get-all-active", {
       body: data,
     }),
 };

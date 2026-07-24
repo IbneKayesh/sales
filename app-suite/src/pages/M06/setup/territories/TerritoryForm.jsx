@@ -1,10 +1,8 @@
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
+import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
-import {
-  IconClose,
-  IconSave,
-} from "@/icons";
+import { IconClose, IconSave } from "@/icons";
 
 const TerritoryForm = ({
   isBusy,
@@ -15,28 +13,47 @@ const TerritoryForm = ({
   onChange,
   onCancel,
   onSubmit,
+  dzone_Options,
+  tarea_Options,
 }) => {
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-6">
+        <div className="col-span-4">
+          <Dropdown
+            label="D/Zone"
+            options={dzone_Options}
+            value={formData.tarea_dzone}
+            onChange={(e) => onChange("tarea_dzone", e.target.value)}
+            error={formErrors.tarea_dzone}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="dzone_cname"
+          />
+        </div>
+        <div className="col-span-4">
+          <Dropdown
+            label="T/Area"
+            options={tarea_Options}
+            value={formData.trtry_tarea}
+            onChange={(e) => onChange("trtry_tarea", e.target.value)}
+            error={formErrors.trtry_tarea}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="tarea_cname"
+          />
+        </div>
+        <div className="col-span-4">
           <InputText
             label="Territory Name"
             placeholder="Enter territory name"
             value={formData.trtry_cname}
             onChange={(e) => onChange("trtry_cname", e.target.value)}
             error={formErrors.trtry_cname}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-6">
-          <InputText
-            label="Territory Area"
-            placeholder="Enter territory area"
-            value={formData.trtry_tarea}
-            onChange={(e) => onChange("trtry_tarea", e.target.value)}
-            error={formErrors.trtry_tarea}
             required
             disabled={readOnly}
           />

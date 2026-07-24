@@ -46,9 +46,9 @@ const HolidayForm = ({
           <InputText
             label="Holiday Name"
             placeholder="Enter holiday name"
-            value={formData.hlday_hldnm}
-            onChange={(e) => onChange("hlday_hldnm", e.target.value)}
-            error={formErrors.hlday_hldnm}
+            value={formData.hlday_cname}
+            onChange={(e) => onChange("hlday_cname", e.target.value)}
+            error={formErrors.hlday_cname}
             required
             disabled={readOnly}
           />

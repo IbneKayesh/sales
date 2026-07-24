@@ -1,22 +1,19 @@
---
--- Table structure for table `tmnb_dpart`
--- short table
 
+-- departments
 
-
-CREATE TABLE tmnb_dpart (
+CREATE TABLE tmsb_dpart (
+    -- default 1
   id varchar(50) PRIMARY KEY,
-
-  dpart_apusr varchar(50) NOT NULL,
+  dpart_users varchar(50) NOT NULL,
   dpart_bsins varchar(50) NOT NULL,
-  dpart_dcode varchar(50) NOT NULL,
-  dpart_dname varchar(50) NOT NULL,
-  dpart_ofadr varchar(100) NOT NULL,
+  dpart_ccode varchar(50) NOT NULL,
 
-  -- optional  
+-- custom
+  dpart_cname varchar(50) NOT NULL,
+  dpart_ofadr varchar(50),
   dpart_emcap integer NOT NULL DEFAULT 1,
 
-  -- default
+  -- default 2
   dpart_actve boolean NOT NULL DEFAULT true,
   dpart_crusr varchar(50) NOT NULL,
   dpart_crdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

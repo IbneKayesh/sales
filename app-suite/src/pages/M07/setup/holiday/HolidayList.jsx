@@ -1,21 +1,26 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import { IconClose, IconCheck } from "@/icons";
+import { formatDate } from "@/utils/datetime.js";
 
 const HolidayList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "hlday_yerid", header: "Year", width: "100px" },
-    { key: "hlday_hldat", header: "Holiday Date", width: "180px" },
-    { key: "hlday_hldnm", header: "Holiday Name", width: "250px" },
-    { key: "hlday_notes", header: "Notes", width: "200px" },
+    { key: "hlday_yerid", header: "Year", width: "80px" },
+    {
+      key: "hlday_hldat",
+      header: "Holiday Date",
+      width: "80px",
+      render: (v) => {
+        return formatDate(v);
+      },
+    },
+    { key: "hlday_cname", header: "Holiday Name", width: "80px" },
+    { key: "hlday_notes", header: "Notes", width: "80px" },
     {
       key: "hlday_actve",
       header: "Status",
-      width: "120px",
+      width: "110px",
       render: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>

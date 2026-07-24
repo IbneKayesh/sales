@@ -4,12 +4,7 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import {
-  IconSearch,
-  IconClose,
-  IconPlus,
-  IconSave,
-} from "@/icons";
+import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
 import useTerritory from "@/hooks/M06/useTerritory";
 import TerritoryList from "./TerritoryList";
@@ -27,6 +22,9 @@ const TerritoryPage = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    dzone_Options,
+    tarea_Options,
     //functions
     handleChange,
     handleEdit,
@@ -87,6 +85,8 @@ const TerritoryPage = () => {
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}
+              dzone_Options={dzone_Options}
+              tarea_Options={tarea_Options}
             />
           )}
         </PageCardBody>

@@ -1,19 +1,16 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import { IconClose, IconCheck } from "@/icons";
 
-const DeliveryZoneList = ({ listData, onEdit, onDelete }) => {
+const DistrictZoneList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "dzone_cname", header: "Zone Name", width: "200px" },
-    { key: "dzone_cntry", header: "Country", width: "180px" },
+    { key: "dzone_cname", header: "District / Zone", width: "80px" },
+    { key: "dzone_cntry", header: "Country", width: "80px" },
     {
       key: "dzone_actve",
       header: "Status",
-      width: "120px",
+      width: "110px",
       render: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
@@ -48,10 +45,10 @@ const DeliveryZoneList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="delivery-zones-export.csv"
+      exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No delivery zones found"
     />
   );
 };
-export default DeliveryZoneList;
+export default DistrictZoneList;

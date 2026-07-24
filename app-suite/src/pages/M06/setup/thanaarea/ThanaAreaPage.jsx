@@ -4,18 +4,13 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import {
-  IconSearch,
-  IconClose,
-  IconPlus,
-  IconSave,
-} from "@/icons";
+import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
-import useTerritoryArea from "@/hooks/M06/useTerritoryArea";
-import TerritoryAreaList from "./TerritoryAreaList";
-import TerritoryAreaForm from "./TerritoryAreaForm";
+import useThanaArea from "@/hooks/M06/useThanaArea";
+import ThanaAreaList from "./ThanaAreaList";
+import ThanaAreaForm from "./ThanaAreaForm";
 
-const TerritoryAreaPage = () => {
+const ThanaAreaPage = () => {
   const {
     isBusy,
     pgView,
@@ -27,6 +22,8 @@ const TerritoryAreaPage = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    dzone_Options,
     //functions
     handleChange,
     handleEdit,
@@ -35,13 +32,13 @@ const TerritoryAreaPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-  } = useTerritoryArea();
+  } = useThanaArea();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
-          <PageCardTitle title="Territory Areas" subtitle="All Territory Areas" />
+          <PageCardTitle title="Thana / Areas" subtitle="All Thana Areas" />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
               <Button variant="info" size="sm" onClick={handleSearch}>
@@ -71,14 +68,14 @@ const TerritoryAreaPage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <TerritoryAreaList
+            <ThanaAreaList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
-            <TerritoryAreaForm
+            <ThanaAreaForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
@@ -87,6 +84,7 @@ const TerritoryAreaPage = () => {
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}
+              dzone_Options={dzone_Options}
             />
           )}
         </PageCardBody>
@@ -94,4 +92,4 @@ const TerritoryAreaPage = () => {
     </div>
   );
 };
-export default TerritoryAreaPage;
+export default ThanaAreaPage;

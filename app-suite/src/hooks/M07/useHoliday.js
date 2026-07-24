@@ -41,6 +41,8 @@ const useHoliday = () => {
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formData, [f]: v }, tmhb_hlday);
+    setFormErrors(newErrors);
   };
 
   const handleEdit = (rowData) => {
@@ -50,7 +52,7 @@ const useHoliday = () => {
 
   const handleDelete = async (rowData) => {
     const isActive = rowData.hlday_actve;
-    const dataName = rowData.hlday_hldnm;
+    const dataName = rowData.hlday_cname;
     const confirmation = await confirmBox({
       title: isActive ? "Deactivate" : "Activate",
       message: `Are you sure you want to ${

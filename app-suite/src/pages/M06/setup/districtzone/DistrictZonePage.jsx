@@ -4,18 +4,13 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import {
-  IconSearch,
-  IconClose,
-  IconPlus,
-  IconSave,
-} from "@/icons";
+import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
-import useDeliveryZone from "@/hooks/M06/useDeliveryZone";
-import DeliveryZoneList from "./DeliveryZoneList";
-import DeliveryZoneForm from "./DeliveryZoneForm";
+import useDistrictZone from "@/hooks/M06/useDistrictZone";
+import DistrictZoneList from "./DistrictZoneList";
+import DistrictZoneForm from "./DistrictZoneForm";
 
-const DeliveryZonePage = () => {
+const DistrictZonePage = () => {
   const {
     isBusy,
     pgView,
@@ -35,13 +30,16 @@ const DeliveryZonePage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-  } = useDeliveryZone();
+  } = useDistrictZone();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
-          <PageCardTitle title="Delivery Zones" subtitle="All Delivery Zones" />
+          <PageCardTitle
+            title="District / Zone"
+            subtitle="All District / Zone"
+          />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
               <Button variant="info" size="sm" onClick={handleSearch}>
@@ -71,14 +69,14 @@ const DeliveryZonePage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <DeliveryZoneList
+            <DistrictZoneList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
-            <DeliveryZoneForm
+            <DistrictZoneForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
@@ -94,4 +92,4 @@ const DeliveryZonePage = () => {
     </div>
   );
 };
-export default DeliveryZonePage;
+export default DistrictZonePage;

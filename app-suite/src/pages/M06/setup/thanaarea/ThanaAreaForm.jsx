@@ -1,12 +1,10 @@
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
+import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
-import {
-  IconClose,
-  IconSave,
-} from "@/icons";
+import { IconClose, IconSave } from "@/icons";
 
-const DeliveryZoneForm = ({
+const ThanaAreaForm = ({
   isBusy,
   readOnly,
   stopEdit,
@@ -15,41 +13,45 @@ const DeliveryZoneForm = ({
   onChange,
   onCancel,
   onSubmit,
+  dzone_Options,
 }) => {
   return (
     <div className="form-wrap">
       <div className="grid">
         <div className="col-span-6">
           <InputText
-            label="Zone Name"
-            placeholder="Enter zone name"
-            value={formData.dzone_cname}
-            onChange={(e) => onChange("dzone_cname", e.target.value)}
-            error={formErrors.dzone_cname}
+            label="Area Name"
+            placeholder="Enter area name"
+            value={formData.tarea_cname}
+            onChange={(e) => onChange("tarea_cname", e.target.value)}
+            error={formErrors.tarea_cname}
             required
             disabled={readOnly}
           />
         </div>
         <div className="col-span-6">
-          <InputText
-            label="Country"
-            placeholder="Enter country"
-            value={formData.dzone_cntry}
-            onChange={(e) => onChange("dzone_cntry", e.target.value)}
-            error={formErrors.dzone_cntry}
+          <Dropdown
+            label="D/Zone"
+            options={dzone_Options}
+            value={formData.tarea_dzone}
+            onChange={(e) => onChange("tarea_dzone", e.target.value)}
+            error={formErrors.tarea_dzone}
             required
+            placeholder="Select..."
             disabled={readOnly}
+            optionValue="id"
+            optionLabel="dzone_cname"
           />
         </div>
       </div>
       {formData?.id && (
         <AuditData
-          actve={formData.dzone_actve}
+          actve={formData.tarea_actve}
           cname={formData.crusr_cname}
-          cdate={formData.dzone_crdat}
+          cdate={formData.tarea_crdat}
           uname={formData.upusr_cname}
-          udate={formData.dzone_updat}
-          rvnmr={formData.dzone_rvnmr}
+          udate={formData.tarea_updat}
+          rvnmr={formData.tarea_rvnmr}
         />
       )}
       <div className="form-actions">
@@ -65,4 +67,4 @@ const DeliveryZoneForm = ({
     </div>
   );
 };
-export default DeliveryZoneForm;
+export default ThanaAreaForm;

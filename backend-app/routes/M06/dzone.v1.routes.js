@@ -19,18 +19,16 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT try.*, ta.tarea_tname, dzn.dzone_dname, 
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
-    FROM tmcb_trtry try
-    LEFT JOIN tmcb_tarea ta ON try.trtry_tarea = ta.id
-    LEFT JOIN tmcb_dzone dzn ON ta.tarea_dzone = dzn.id
-    LEFT JOIN tmnb_users csr ON try.trtry_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON try.trtry_upusr = usr.id
-    WHERE try.trtry_apusr = $1
-    ORDER BY try.trtry_wname ASC`;
+    const sql = `SELECT zn.*,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmcb_dzone zn
+    LEFT JOIN tmhb_emply csr ON zn.dzone_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON zn.dzone_upusr = usr.id
+    WHERE zn.dzone_users = $1
+    ORDER BY zn.dzone_cname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get territory- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get dzone- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -61,14 +59,14 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT ta.*, 0 as edit_stop
-    FROM tmcb_tarea ta
-    WHERE ta.tarea_apusr = $1
-    AND ta.tarea_actve = TRUE
-    ORDER BY ta.tarea_tname ASC`;
+    const sql = `SELECT zn.*, 0 as edit_stop
+    FROM tmcb_dzone zn
+    WHERE zn.dzone_users = $1
+    AND zn.dzone_actve = TRUE
+    ORDER BY zn.dzone_cname ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get tarea- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get dzone- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -88,18 +86,18 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      trtry_apusr,
-      trtry_bsins,
-      trtry_tarea,
-      trtry_wcode,
-      trtry_wname,
+      dzone_users,
+      dzone_bsins,
+      dzone_ccode,
+      dzone_cntry,
+      dzone_cname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!trtry_tarea || !trtry_wname || !user_s || !user_c || !user_b) {
+    if (!dzone_cntry || !dzone_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -108,25 +106,25 @@ const create = async (req, res) => {
     }
 
     //database action
-    const newCode = await GenNewCode(user_c, "tmcb_trtry");
+    const newCode = await GenNewCode(user_c, "tmcb_dzone");
 
-    const sql = `INSERT INTO tmcb_trtry(id, trtry_apusr, trtry_bsins, trtry_tarea, trtry_wcode, trtry_wname, trtry_crusr, trtry_upusr)
+    const sql = `INSERT INTO tmcb_dzone(id, dzone_users, dzone_bsins, dzone_ccode, dzone_cntry, dzone_cname, dzone_crusr, dzone_upusr)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
-      trtry_tarea,
       newCode,
-      trtry_wname,
+      dzone_cntry,
+      dzone_cname,
       user_s,
       user_s,
     ];
 
-    await dbRun(sql, params, `create territory- ${user_c}`);
+    await dbRun(sql, params, `create dzone- ${user_c}`);
     res.json({
       success: true,
-      message: `${trtry_wname} - Created successfully.`,
+      message: `${dzone_cname} - Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -143,18 +141,18 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      trtry_apusr,
-      trtry_bsins,
-      trtry_tarea,
-      trtry_wcode,
-      trtry_wname,
+      dzone_users,
+      dzone_bsins,
+      dzone_ccode,
+      dzone_cntry,
+      dzone_cname,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!trtry_tarea || !trtry_wname || !user_s || !user_c || !user_b) {
+    if (!dzone_cntry || !dzone_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -163,19 +161,19 @@ const update = async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmcb_trtry
-    SET trtry_tarea = $1,
-    trtry_wname = $2,
-    trtry_upusr = $3,
-    trtry_updat = CURRENT_TIMESTAMP,
-    trtry_rvnmr = trtry_rvnmr + 1
+    const sql = `UPDATE tmcb_dzone
+    SET dzone_cntry = $1,
+    dzone_cname = $2,
+    dzone_upusr = $3,
+    dzone_updat = CURRENT_TIMESTAMP,
+    dzone_rvnmr = dzone_rvnmr + 1
     WHERE id = $4`;
-    const params = [trtry_tarea, trtry_wname, user_s, id];
+    const params = [dzone_cntry, dzone_cname, user_s, id];
 
-    await dbRun(sql, params, `update territory- ${user_c}`);
+    await dbRun(sql, params, `update dzone- ${user_c}`);
     res.json({
       success: true,
-      message: `${trtry_wname} - Updated successfully.`,
+      message: `${dzone_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -207,10 +205,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, tarea_tname, tarea_actve, user_s, user_c, user_b } = req.body;
+    const { id, dzone_cname, dzone_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !tarea_tname || !user_s || !user_c || !user_b) {
+    if (!id || !dzone_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -219,18 +217,18 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmcb_trtry
-    SET trtry_actve = NOT trtry_actve,
-    trtry_upusr = $1,
-    trtry_updat = CURRENT_TIMESTAMP,
-    trtry_rvnmr = trtry_rvnmr + 1
+    const sql = `UPDATE tmcb_dzone
+    SET dzone_actve = NOT dzone_actve,
+    dzone_upusr = $1,
+    dzone_updat = CURRENT_TIMESTAMP,
+    dzone_rvnmr = dzone_rvnmr + 1
     WHERE id = $2`;
     const params = [user_s, id];
 
-    await dbRun(sql, params, `delete territory- ${user_c}`);
+    await dbRun(sql, params, `delete dzone- ${user_c}`);
     res.json({
       success: true,
-      message: `${tarea_tname} - ${tarea_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${dzone_cname} - ${dzone_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {
@@ -239,45 +237,6 @@ router.post("/delete", async (req, res) => {
       success: false,
       message: error.message || "An error occurred during db action",
       data: {},
-    });
-  }
-});
-
-// get by tarea
-router.post("/get-by-tarea", async (req, res) => {
-  try {
-    const { trtry_tarea, user_s, user_c, user_b } = req.body;
-
-    // Validate input
-    if (!user_c) {
-      return res.json({
-        success: false,
-        message: "All fields in the request body are required.",
-        data: [],
-      });
-    }
-
-    //database action
-    const sql = `SELECT ta.*, 0 as edit_stop
-    FROM tmcb_trtry ta
-    WHERE ta.trtry_apusr = $1
-    AND ta.trtry_tarea = $2
-    AND ta.trtry_actve = TRUE
-    ORDER BY ta.trtry_wname ASC`;
-
-    const params = [user_c, trtry_tarea];
-    const rows = await dbGetAll(sql, params, `get territory- ${user_c}`);
-    res.json({
-      success: true,
-      message: "Query executed successfully.",
-      data: rows,
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: [],
     });
   }
 });

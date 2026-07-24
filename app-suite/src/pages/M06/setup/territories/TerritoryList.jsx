@@ -1,19 +1,17 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import { IconClose, IconCheck } from "@/icons";
 
 const TerritoryList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "trtry_cname", header: "Territory Name", width: "200px" },
-    { key: "trtry_tarea", header: "Territory Area", width: "180px" },
+    { key: "trtry_cname", header: "Territory Name", width: "80px" },
+    { key: "tarea_cname", header: "T/Area", width: "80px" },
+    { key: "dzone_cname", header: "D/Zone", width: "80px" },
     {
       key: "trtry_actve",
       header: "Status",
-      width: "120px",
+      width: "110px",
       render: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
@@ -48,7 +46,7 @@ const TerritoryList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="territories-export.csv"
+      exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No territories found"
     />

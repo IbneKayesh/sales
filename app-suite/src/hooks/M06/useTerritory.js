@@ -4,11 +4,13 @@ import { territoryAPI } from "@/api/M06/territoryAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmcb_trtry from "@/models/M06/tmcb_trtry.json";
 const dataModel = generateDataModel(tmcb_trtry);
+import { districtZoneAPI } from "@/api/M06/districtZoneAPI.js";
+import { thanaAreaAPI } from "@/api/M06/thanaAreaAPI.js";
 
 const useTerritory = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M06-M04-M001");
+  const [pgId, setPgId] = useState("M06-M0002");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -22,6 +24,9 @@ const useTerritory = () => {
   const [listDataItem, setListDataItem] = useState([]);
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
+  //others
+  const [dzone_Options, setDzone_Options] = useState([]);
+  const [tarea_Options, setTarea_Options] = useState([]);
 
   const getAllTerritory = async () => {
     try {
@@ -39,13 +44,37 @@ const useTerritory = () => {
     getAllTerritory();
   }, []);
 
-  const handleChange = (f, v) => {
+  const getAllDZones = async () => {
+    if (dzone_Options.length > 0) {
+      return;
+    }
+    try {
+      const resp = await districtZoneAPI.getAllActive({});
+      const list = resp.data || [];
+      setDzone_Options(list);
+    } catch (error) {}
+  };
+  const getAllTAreas = async (id) => {
+    try {
+      const resp = await thanaAreaAPI.getByZone({ tarea_dzone: id });
+      const list = resp.data || [];
+      setTarea_Options(list);
+    } catch (error) {}
+  };
+
+  const handleChange = async (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formData, [f]: v }, tmcb_trtry);
+    setFormErrors(newErrors);
+    if (f === "tarea_dzone") {
+      getAllTAreas(v);
+    }
   };
 
   const handleEdit = (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
+    getAllDZones();
   };
 
   const handleDelete = async (rowData) => {
@@ -93,6 +122,7 @@ const useTerritory = () => {
     setFormData(dataModel);
     setReadOnly(false);
     setStopEdit(false);
+    getAllDZones();
   };
 
   const handleCancel = () => {
@@ -144,6 +174,9 @@ const useTerritory = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    dzone_Options,
+    tarea_Options,
     //functions
     handleChange,
     handleEdit,

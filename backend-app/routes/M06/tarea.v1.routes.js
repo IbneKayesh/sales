@@ -1,0 +1,284 @@
+const express = require("express");
+const router = express.Router();
+const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
+const { v4: uuidv4 } = require("uuid");
+const { GenNewCode } = require("../../db/genHelper");
+
+// get all
+router.post("/", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT ta.*, dzn.dzone_cname, 
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmcb_tarea ta
+    LEFT JOIN tmcb_dzone dzn ON ta.tarea_dzone = dzn.id
+    LEFT JOIN tmhb_emply csr ON ta.tarea_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON ta.tarea_upusr = usr.id
+    WHERE ta.tarea_users = $1
+    ORDER BY ta.tarea_cname ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get tarea- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+// get-all-active
+router.post("/get-all-active", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT ta.*, 0 as edit_stop
+    FROM tmcb_tarea ta
+    WHERE ta.tarea_users = $1
+    AND ta.tarea_actve = TRUE
+    ORDER BY ta.tarea_cname ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get tarea- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+const create = async (req, res) => {
+  try {
+    const {
+      id,
+      tarea_users,
+      tarea_bsins,
+      tarea_ccode,
+      tarea_dzone,
+      tarea_cname,
+      user_s,
+      user_c,
+      user_b,
+    } = req.body;
+
+    // Validate input
+    if (!tarea_dzone || !tarea_cname || !user_s || !user_c || !user_b) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: {},
+      });
+    }
+
+    //database action
+    const newCode = await GenNewCode(user_c, "tmcb_tarea");
+
+    const sql = `INSERT INTO tmcb_tarea(id, tarea_users, tarea_bsins, tarea_ccode, tarea_dzone, tarea_cname, tarea_crusr, tarea_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
+    const params = [
+      uuidv4(),
+      user_c,
+      user_b,
+      newCode,
+      tarea_dzone,
+      tarea_cname,
+      user_s,
+      user_s,
+    ];
+
+    await dbRun(sql, params, `create tarea- ${user_c}`);
+    res.json({
+      success: true,
+      message: `${tarea_cname} - Created successfully.`,
+      data: {},
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: {},
+    });
+  }
+};
+
+const update = async (req, res) => {
+  try {
+    const {
+      id,
+      tarea_users,
+      tarea_bsins,
+      tarea_ccode,
+      tarea_dzone,
+      tarea_cname,
+      user_s,
+      user_c,
+      user_b,
+    } = req.body;
+
+    // Validate input
+    if (!tarea_dzone || !tarea_cname || !user_s || !user_c || !user_b) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: {},
+      });
+    }
+
+    //database action
+    const sql = `UPDATE tmcb_tarea
+    SET tarea_dzone = $1,
+    tarea_cname = $2,
+    tarea_upusr = $3,
+    tarea_updat = CURRENT_TIMESTAMP,
+    tarea_rvnmr = tarea_rvnmr + 1
+    WHERE id = $4`;
+    const params = [tarea_dzone, tarea_cname, user_s, id];
+
+    await dbRun(sql, params, `update tarea- ${user_c}`);
+    res.json({
+      success: true,
+      message: `${tarea_cname} - Updated successfully.`,
+      data: {},
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: {},
+    });
+  }
+};
+
+// upsert — dispatches to create or update based on presence of id
+router.post("/upsert", async (req, res) => {
+  const { id } = req.body;
+  if (id) {
+    return update(req, res);
+  } else {
+    return create(req, res);
+  }
+});
+
+// create
+router.post("/create", create);
+
+// update
+router.post("/update", update);
+
+// delete
+router.post("/delete", async (req, res) => {
+  try {
+    const { id, tarea_cname, tarea_actve, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!id || !tarea_cname || !user_s || !user_c || !user_b) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: {},
+      });
+    }
+
+    //database action
+    const sql = `UPDATE tmcb_tarea
+    SET tarea_actve = NOT tarea_actve,
+    tarea_upusr = $1,
+    tarea_updat = CURRENT_TIMESTAMP,
+    tarea_rvnmr = tarea_rvnmr + 1
+    WHERE id = $2`;
+    const params = [user_s, id];
+
+    await dbRun(sql, params, `delete dzone- ${user_c}`);
+    res.json({
+      success: true,
+      message: `${tarea_cname} - ${tarea_actve ? "Deactivate" : "Activate"} successfully.`,
+      data: {},
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: {},
+    });
+  }
+});
+
+// get by dzone
+router.post("/get-by-dzone", async (req, res) => {
+  try {
+    const { tarea_dzone, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT ta.*, 0 as edit_stop
+    FROM tmcb_tarea ta
+    WHERE ta.tarea_users = $1
+    AND ta.tarea_dzone = $2
+    AND ta.tarea_actve = TRUE
+    ORDER BY ta.tarea_cname ASC`;
+
+    const params = [user_c, tarea_dzone];
+    const rows = await dbGetAll(sql, params, `get tarea- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+module.exports = router;

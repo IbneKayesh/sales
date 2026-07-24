@@ -41,6 +41,8 @@ const useContact = () => {
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formData, [f]: v }, tmcb_cntct);
+    setFormErrors(newErrors);
   };
 
   const handleEdit = (rowData) => {
