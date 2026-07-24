@@ -21,7 +21,7 @@ const COAForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-4">
+        <div className="col-span-8">
           <Dropdown
             label="Parent Account"
             options={chtac_chtac_Options}
@@ -32,10 +32,10 @@ const COAForm = ({
             placeholder="Select..."
             disabled={readOnly}
             optionValue="id"
-            optionLabel="chtac_cname"
+            optionLabel="name"
           />
         </div>
-        <div className="col-span-8">
+        <div className="col-span-4">
           <InputText
             label="Account Name"
             placeholder="Enter account name"
@@ -55,7 +55,7 @@ const COAForm = ({
             error={formErrors.chtac_ctype}
             required
             placeholder="Select..."
-            disabled={readOnly}
+            disabled={readOnly || stopEdit}
           />
         </div>
         <div className="col-span-4">
@@ -73,9 +73,7 @@ const COAForm = ({
         <div
           className="col-span-4"
           style={{
-            display: "flex",
-            alignItems: "flex-end",
-            paddingBottom: "var(--sp-6)",
+            paddingTop: "var(--sp-6)",
           }}
         >
           <Checkbox

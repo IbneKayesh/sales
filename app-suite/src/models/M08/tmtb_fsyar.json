@@ -3,11 +3,19 @@
     "type": "string",
     "label": "Id"
   },
+  "fsyar_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter department",
+    "required": true
+  },
   "fsyar_cname": {
     "type": "string",
     "label": "Fiscal Year",
     "maxLength": 50,
-    "minLength": 3,
+    "minLength": 4,
     "placeholder": "Enter fiscal year",
     "required": true
   },
@@ -15,25 +23,28 @@
     "type": "date",
     "label": "Start Date",
     "placeholder": "Select start date",
-    "required": true
+    "required": true,
+    "default": "new Date() with local format"
   },
   "fsyar_endat": {
     "type": "date",
     "label": "End Date",
     "placeholder": "Select end date",
-    "required": true
+    "required": true,
+    "default": "new Date() with local format"
   },
   "fsyar_stats": {
     "type": "string",
     "label": "Status",
     "maxLength": 50,
     "placeholder": "Enter status",
-    "required": true
+    "required": true,
+    "default": "Open"
   },
   "fsyar_iscur": {
     "type": "boolean",
     "label": "Is Current",
-    "default": false
+    "default": true
   },
   "fsyar_opbal": {
     "type": "decimal",

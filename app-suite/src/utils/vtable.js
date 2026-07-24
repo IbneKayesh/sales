@@ -52,11 +52,6 @@ const acprd_stats_Options = [
   { label: "Locked", value: "Locked" },
 ];
 
-const fsyar_stats_Options = [
-  { label: "Open", value: "Open" },
-  { label: "Closed", value: "Closed" },
-];
-
 const party_ptype_Options = [
   { label: "Customer", value: "Customer" },
   { label: "Supplier", value: "Supplier" },
@@ -93,7 +88,6 @@ export {
   bool_Options,
   dtype_Options,
   acprd_stats_Options,
-  fsyar_stats_Options,
   party_ptype_Options,
   chtac_ntype_Options,
   ctype_Options,

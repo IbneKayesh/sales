@@ -41,6 +41,8 @@ const useWkshf = () => {
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formData, [f]: v }, tmhb_wkshf);
+    setFormErrors(newErrors);
   };
 
   const handleEdit = (rowData) => {

@@ -1,21 +1,34 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import { IconClose, IconCheck } from "@/icons";
+import { formatDate } from "@/utils/datetime.js";
 
 const FiscalYearList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "fsyar_cname", header: "Fiscal Year", width: "180px" },
-    { key: "fsyar_stdat", header: "Start Date", width: "140px" },
-    { key: "fsyar_endat", header: "End Date", width: "140px" },
-    { key: "fsyar_stats", header: "Status", width: "120px" },
+    { key: "dpart_cname", header: "Department", width: "120px" },
+    { key: "fsyar_cname", header: "Fiscal Year", width: "80px" },
+    {
+      key: "fsyar_stdat",
+      header: "Start Date",
+      width: "80px",
+      render: (v) => {
+        return formatDate(v);
+      },
+    },
+    {
+      key: "fsyar_endat",
+      header: "End Date",
+      width: "80px",
+      render: (v) => {
+        return formatDate(v);
+      },
+    },
+    { key: "fsyar_stats", header: "Status", width: "80px" },
     {
       key: "fsyar_iscur",
       header: "Current",
-      width: "100px",
+      width: "110px",
       render: (v) => (
         <Badge variant={v ? "success" : "muted"}>
           {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -26,7 +39,7 @@ const FiscalYearList = ({ listData, onEdit, onDelete }) => {
     {
       key: "fsyar_actve",
       header: "Status",
-      width: "100px",
+      width: "110px",
       render: (v) => (
         <Badge variant={v ? "success" : "danger"}>
           {v ? <IconCheck size={12} /> : <IconClose size={12} />}

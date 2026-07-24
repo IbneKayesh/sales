@@ -13,9 +13,17 @@ import {
   IconManufacture,
   IconCRM,
   IconBox,
+  IconHR
 } from "@/icons";
 
 const modules = [
+  {
+    id: "M00",
+    menus_mname: "Recent",
+    menus_micon: <IconHome />,
+    menus_color: "#7c3aed",
+    menus_odrby: 0,
+  },
   {
     id: "M01",
     menus_mname: "Dashboard",
@@ -43,6 +51,13 @@ const modules = [
     menus_micon: <IconCRM />,
     menus_color: "#3b82f6",
     menus_odrby: 6,
+  },
+  {
+    id: "M07",
+    menus_mname: "HRMS",
+    menus_micon: <IconHR />,
+    menus_color: "#22c55e",
+    menus_odrby: 7,
   },
   {
     id: "M08",
@@ -179,12 +194,48 @@ const menus = [
     menus_menus: "M06",
   },
   {
-    id: "M08-M01-M001",
+    id: "M07-M0002",
+    menus_mname: "Working Shift",
+    menus_color: "#3b82f6",
+    menus_micon: <IconHR />,
+    menus_odrby: 2,
+    menus_mlink: "/hrms/setup/work-shifts",
+    menus_menus: "M07",
+  },
+  {
+    id: "M07-M0004",
+    menus_mname: "Holidays",
+    menus_color: "#3b82f6",
+    menus_micon: <IconHR />,
+    menus_odrby: 4,
+    menus_mlink: "/hrms/setup/holidays",
+    menus_menus: "M07",
+  },
+  {
+    id: "M08-M0001",
     menus_mname: "Chart of Accounts",
     menus_color: "#f59e0b",
     menus_micon: <IconAccounts />,
     menus_odrby: 1,
-    menus_mlink: "/M08/chart-of-accounts",
+    menus_mlink: "/accounts/setup/chart-of-accounts",
+    menus_menus: "M08",
+  },
+  {
+    id: "M08-M0006",
+    menus_mname: "Fiscal Years",
+    menus_color: "#f59e0b",
+    menus_micon: <IconAccounts />,
+    menus_odrby: 4,
+    menus_mlink: "/accounts/setup/fiscal-years",
+    menus_menus: "M08",
+  },
+  {
+    id: "M08-M0007",
+    menus_mname: "Accounting Periods",
+    menus_color: "#f59e0b",
+    menus_micon: <IconAccounts />,
+    menus_odrby: 2,
+    menus_mlink: "/accounts/setup/accounting-periods",
     menus_menus: "M08",
   },
   {
@@ -194,24 +245,6 @@ const menus = [
     menus_micon: <IconUsers />,
     menus_odrby: 2,
     menus_mlink: "/M08/parties",
-    menus_menus: "M08",
-  },
-  {
-    id: "M08-M02-M001",
-    menus_mname: "Accounting Periods",
-    menus_color: "#f59e0b",
-    menus_micon: <IconAccounts />,
-    menus_odrby: 3,
-    menus_mlink: "/M08/accounting-periods",
-    menus_menus: "M08",
-  },
-  {
-    id: "M08-M02-M002",
-    menus_mname: "Fiscal Years",
-    menus_color: "#f59e0b",
-    menus_micon: <IconAccounts />,
-    menus_odrby: 4,
-    menus_mlink: "/M08/fiscal-years",
     menus_menus: "M08",
   },
   {

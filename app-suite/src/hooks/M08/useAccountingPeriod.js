@@ -4,11 +4,13 @@ import { acprdAPI } from "@/api/M08/acprdAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmtb_acprd from "@/models/M08/tmtb_acprd.json";
 const dataModel = generateDataModel(tmtb_acprd);
+import { departmentAPI } from "@/api/M01/departmentAPI.js";
+import { fsyarAPI } from "@/api/M08/fsyarAPI.js";
 
 const useAccountingPeriod = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M08-M02-M001");
+  const [pgId, setPgId] = useState("M08-M0007");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -22,6 +24,9 @@ const useAccountingPeriod = () => {
   const [listDataItem, setListDataItem] = useState([]);
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
+  //others
+  const [dpart_Options, setDpart_Options] = useState([]);
+  const [fsyar_Options, setFsyar_Options] = useState([]);
 
   const getAllAccountingPeriod = async () => {
     try {
@@ -39,15 +44,38 @@ const useAccountingPeriod = () => {
     getAllAccountingPeriod();
   }, []);
 
-  const handleChange = (f, v) => {
+  const getAllDepartments = async () => {
+    if (dpart_Options.length > 0) {
+      return;
+    }
+    try {
+      const resp = await departmentAPI.getAllActive({});
+      const list = resp.data || [];
+      setDpart_Options(list);
+    } catch (error) {}
+  };
+
+  const getFiscalYear = async (dpart) => {
+    try {
+      const resp = await fsyarAPI.getCurrentByDepartment({ fsyar_dpart: dpart });
+      const list = resp.data || [];
+      setFsyar_Options(list);
+    } catch (error) {}
+  };
+
+  const handleChange = async (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmtb_acprd);
     setFormErrors(newErrors);
+    if (f === "acprd_dpart") {
+      getFiscalYear(v);
+    }
   };
 
   const handleEdit = (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
+    getAllDepartments();
   };
 
   const handleDelete = async (rowData) => {
@@ -95,6 +123,7 @@ const useAccountingPeriod = () => {
     setFormData(dataModel);
     setReadOnly(false);
     setStopEdit(false);
+    getAllDepartments();
   };
 
   const handleCancel = () => {
@@ -146,6 +175,9 @@ const useAccountingPeriod = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    dpart_Options,
+    fsyar_Options,
     //functions
     handleChange,
     handleEdit,

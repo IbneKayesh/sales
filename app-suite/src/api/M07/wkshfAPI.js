@@ -3,27 +3,27 @@ import { apiRequest } from "@/utils/api.js";
 //wkshfAPI
 export const wkshfAPI = {
   getAll: (data) =>
-    apiRequest("/M07/v1/work-shift", {
+    apiRequest("/M07/v1/working-shift", {
       body: data,
     }),
   upsert: (data) =>
-    apiRequest("/M07/v1/work-shift/upsert", {
+    apiRequest("/M07/v1/working-shift/upsert", {
       body: data,
     }),
   create: (data) =>
-    apiRequest("/M07/v1/work-shift/create", {
+    apiRequest("/M07/v1/working-shift/create", {
       body: data,
     }),
   update: (data) =>
-    apiRequest("/M07/v1/work-shift/update", {
+    apiRequest("/M07/v1/working-shift/update", {
       body: data,
     }),
   delete: (data) =>
-    apiRequest("/M07/v1/work-shift/delete", {
+    apiRequest("/M07/v1/working-shift/delete", {
       body: data,
     }),
   getAllActive: (data) =>
-    apiRequest("/M07/v1/work-shift/get-all-active", {
+    apiRequest("/M07/v1/working-shift/get-all-active", {
       body: data,
     }),
 };

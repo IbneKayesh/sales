@@ -14,7 +14,7 @@ CREATE TABLE tmtb_fsyar (
   fsyar_iscur boolean NOT NULL DEFAULT false,
   fsyar_opbal decimal(18,6) DEFAULT 0,
   fsyar_clbal decimal(18,6) DEFAULT 0,
-
+  
   -- default 2
   fsyar_actve boolean NOT NULL DEFAULT true,
   fsyar_crusr varchar(50) NOT NULL,

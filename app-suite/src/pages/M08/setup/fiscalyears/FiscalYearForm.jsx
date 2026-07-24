@@ -1,12 +1,12 @@
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
-import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
 import Dropdown from "@/components/Dropdown";
 import Checkbox from "@/components/Checkbox";
+import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
-import { fsyar_stats_Options } from "@/utils/vtable.js";
+import { acprd_stats_Options } from "@/utils/vtable.js";
 
 const FiscalYearForm = ({
   isBusy,
@@ -17,11 +17,26 @@ const FiscalYearForm = ({
   onChange,
   onCancel,
   onSubmit,
+  dpart_Options,
 }) => {
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-6">
+        <div className="col-span-4">
+          <Dropdown
+            label="Department"
+            options={dpart_Options}
+            value={formData.fsyar_dpart}
+            onChange={(e) => onChange("fsyar_dpart", e.target.value)}
+            error={formErrors.fsyar_dpart}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="dpart_cname"
+          />
+        </div>
+        <div className="col-span-8">
           <InputText
             label="Fiscal Year"
             placeholder="Enter fiscal year (e.g. 2025-2026)"
@@ -32,19 +47,7 @@ const FiscalYearForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-6">
-          <Dropdown
-            label="Status"
-            options={fsyar_stats_Options}
-            value={formData.fsyar_stats}
-            onChange={(e) => onChange("fsyar_stats", e.target.value)}
-            error={formErrors.fsyar_stats}
-            required
-            placeholder="Select status..."
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputCalendar
             label="Start Date"
             placeholder="Select start date"
@@ -55,7 +58,7 @@ const FiscalYearForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputCalendar
             label="End Date"
             placeholder="Select end date"
@@ -66,37 +69,40 @@ const FiscalYearForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4" style={{ display: "flex", alignItems: "flex-end", paddingBottom: "var(--sp-2)" }}>
+        <div className="col-span-3">
+          <Dropdown
+            label="Status"
+            options={acprd_stats_Options}
+            value={formData.fsyar_stats}
+            onChange={(e) => onChange("fsyar_stats", e.target.value)}
+            error={formErrors.fsyar_stats}
+            required
+            placeholder="Select status..."
+            disabled={readOnly}
+          />
+        </div>
+        <div
+          className="col-span-3"
+          style={{
+            display: "flex",
+            alignItems: "flex-end",
+            paddingBottom: "var(--sp-6)",
+          }}
+        >
           <Checkbox
             label="Is Current Year"
-            checked={formData.fsyar_iscur === true || formData.fsyar_iscur === "true"}
+            checked={
+              formData.fsyar_iscur === true || formData.fsyar_iscur === "true"
+            }
             onChange={(e) => onChange("fsyar_iscur", e.target.checked)}
             disabled={readOnly}
           />
         </div>
         <div className="col-span-6">
-          <InputNumber
-            label="Opening Balance"
-            placeholder="Enter opening balance"
-            value={formData.fsyar_opbal}
-            onChange={(e) => onChange("fsyar_opbal", e.target.value)}
-            error={formErrors.fsyar_opbal}
-            step="0.01"
-            required
-            disabled={readOnly}
-          />
+          <InputLabel label="Opening Balance" value={formData.fsyar_opbal} />
         </div>
         <div className="col-span-6">
-          <InputNumber
-            label="Closing Balance"
-            placeholder="Enter closing balance"
-            value={formData.fsyar_clbal}
-            onChange={(e) => onChange("fsyar_clbal", e.target.value)}
-            error={formErrors.fsyar_clbal}
-            step="0.01"
-            required
-            disabled={readOnly}
-          />
+          <InputLabel label="Closing Balance" value={formData.fsyar_clbal} />
         </div>
       </div>
       {formData?.id && (

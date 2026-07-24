@@ -19,16 +19,18 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT coa.*,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
-    FROM tmtb_chtac coa
-    LEFT JOIN tmnb_users csr ON coa.chtac_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON coa.chtac_upusr = usr.id
-    WHERE coa.chtac_apusr = $1
-    ORDER BY coa.chtac_chtno ASC`;
+    const sql = `SELECT fsy.*,
+    dpt.dpart_cname,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmtb_fsyar fsy
+    LEFT JOIN tmsb_dpart dpt ON fsy.fsyar_dpart = dpt.id
+    LEFT JOIN tmhb_emply csr ON fsy.fsyar_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON fsy.fsyar_upusr = usr.id
+    WHERE fsy.fsyar_users = $1
+    ORDER BY fsy.fsyar_endat ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get account coa- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get account fsy- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -61,10 +63,10 @@ router.post("/get-all-active", async (req, res) => {
     //database action
     const sql = `SELECT fsy.*, 0 as edit_stop
     FROM tmtb_fsyar fsy
-    WHERE fsy.fsyar_apusr = $1
+    WHERE fsy.fsyar_users = $1
     AND fsy.fsyar_iscur = TRUE
     AND fsy.fsyar_actve = TRUE
-    ORDER BY fsy.fsyar_fname ASC`;
+    ORDER BY fsy.fsyar_cname ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get fiscal year- ${user_c}`);
@@ -87,16 +89,15 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      chtac_apusr,
-      chtac_bsins,
-      chtac_chtac,
-      chtac_ccode,
-      chtac_cname,
-      chtac_ctype,
-      chtac_chtno,
-      chtac_child,
-      chtac_alpst,
-      chtac_level,
+      fsyar_users,
+      fsyar_bsins,
+      fsyar_ccode,
+      fsyar_dpart,
+      fsyar_cname,
+      fsyar_stdat,
+      fsyar_endat,
+      fsyar_stats,
+      fsyar_iscur,
       user_s,
       user_c,
       user_b,
@@ -104,10 +105,11 @@ const create = async (req, res) => {
 
     // Validate input
     if (
-      !chtac_chtac ||
-      !chtac_cname ||
-      !chtac_ctype ||
-      !chtac_chtno ||
+      !fsyar_dpart ||
+      !fsyar_cname ||
+      !fsyar_stdat ||
+      !fsyar_endat ||
+      !fsyar_stats ||
       !user_s ||
       !user_c ||
       !user_b
@@ -120,63 +122,32 @@ const create = async (req, res) => {
     }
 
     //database action
-    const chtac_child_new = chtac_chtac === "-" ? false : true;
-    const chtac_level_new = chtac_chtac === "-" ? 0 : 1;
-    const newCode = await GenNewCode(user_c, "tmtb_chtac");
-
-    const sql_sequence = `SELECT shtbl_value FROM tmnb_shtbl WHERE shtbl_gname = $1 AND shtbl_dvalu = $2`;
-    const row_sequence = await dbGet(
-      sql_sequence,
-      [chtac_ctype, chtac_ctype],
-      `get account coa- ${user_c}`,
-    );
-
-    if (!row_sequence) {
-      return res.json({
-        success: false,
-        message: "No range setup for this account type.",
-        data: {},
-      });
-    }
-
-    const sql_sl = `SELECT COUNT(id) AS last_no FROM tmtb_chtac WHERE chtac_ctype = $1`;
-    const row_sl = await dbGet(
-      sql_sl,
-      [chtac_ctype],
-      `get account coa- ${user_c}`,
-    );
-
-    //console.log(row_sequence, row_sl);
-
-    const chtac_chtno_new =
-      Number(row_sequence.shtbl_value) + Number(row_sl?.last_no || 0);
-
-    const sql = `INSERT INTO tmtb_chtac(id, chtac_apusr, chtac_bsins, chtac_chtac, chtac_ccode, chtac_cname,
-    chtac_ctype, chtac_chtno, chtac_child, chtac_alpst, chtac_level, chtac_crusr, chtac_upusr)
+    const newCode = await GenNewCode(user_c, "tmtb_fsyar");
+    const sql = `INSERT INTO tmtb_fsyar(id, fsyar_users, fsyar_bsins, fsyar_ccode, fsyar_dpart, fsyar_cname,
+    fsyar_stdat, fsyar_endat, fsyar_stats, fsyar_iscur, fsyar_crusr, fsyar_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12, $13)`;
+    $7, $8, $9, $10, $11, $12)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
-      chtac_chtac,
       newCode,
-      chtac_cname,
-      chtac_ctype,
-      chtac_chtno_new,
-      chtac_child_new,
-      chtac_alpst,
-      chtac_level_new,
+      fsyar_dpart,
+      fsyar_cname,
+      fsyar_stdat,
+      fsyar_endat,
+      fsyar_stats,
+      fsyar_iscur,
       user_s,
       user_s,
     ];
 
     //console.log("params", params);
 
-    await dbRun(sql, params, `create account coa- ${user_c}`);
+    await dbRun(sql, params, `create fiscal year- ${user_c}`);
     res.json({
       success: true,
-      message: `${chtac_cname} - Created successfully.`,
+      message: `${fsyar_cname} - Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -191,18 +162,17 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-   const {
+    const {
       id,
-      chtac_apusr,
-      chtac_bsins,
-      chtac_chtac,
-      chtac_ccode,
-      chtac_cname,
-      chtac_ctype,
-      chtac_chtno,
-      chtac_child,
-      chtac_alpst,
-      chtac_level,
+      fsyar_users,
+      fsyar_bsins,
+      fsyar_ccode,
+      fsyar_dpart,
+      fsyar_cname,
+      fsyar_stdat,
+      fsyar_endat,
+      fsyar_stats,
+      fsyar_iscur,
       user_s,
       user_c,
       user_b,
@@ -210,10 +180,11 @@ const update = async (req, res) => {
 
     // Validate input
     if (
-      !chtac_chtac ||
-      !chtac_cname ||
-      !chtac_ctype ||
-      !chtac_chtno ||
+      !fsyar_dpart ||
+      !fsyar_cname ||
+      !fsyar_stdat ||
+      !fsyar_endat ||
+      !fsyar_stats ||
       !user_s ||
       !user_c ||
       !user_b
@@ -226,28 +197,30 @@ const update = async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmtb_chtac
-    SET chtac_chtac = $1,
-    chtac_cname = $2,
-    chtac_ctype = $3,
-    chtac_alpst = $4,
-    chtac_upusr = $5,
-    chtac_updat = CURRENT_TIMESTAMP,
-    chtac_rvnmr = chtac_rvnmr + 1
-    WHERE id = $6`;
+    const sql = `UPDATE tmtb_fsyar
+    SET fsyar_cname = $1,
+    fsyar_stdat = $2,
+    fsyar_endat = $3,
+    fsyar_stats = $4,
+    fsyar_iscur = $5,
+    fsyar_upusr = $6,
+    fsyar_updat = CURRENT_TIMESTAMP,
+    fsyar_rvnmr = fsyar_rvnmr + 1
+    WHERE id = $7`;
     const params = [
-      chtac_chtac,
-      chtac_cname,
-      chtac_ctype,
-      chtac_alpst,
+      fsyar_cname,
+      fsyar_stdat,
+      fsyar_endat,
+      fsyar_stats,
+      fsyar_iscur,
       user_s,
       id,
     ];
 
-    await dbRun(sql, params, `update account coa- ${user_c}`);
+    await dbRun(sql, params, `update fiscal year- ${user_c}`);
     res.json({
       success: true,
-      message: `${chtac_cname} - Updated successfully.`,
+      message: `${fsyar_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -279,10 +252,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, chtac_cname, chtac_actve, user_s, user_c, user_b } = req.body;
+    const { id, fsyar_cname, chtac_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !chtac_cname || !user_s || !user_c || !user_b) {
+    if (!id || !fsyar_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -291,18 +264,18 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmtb_chtac
-    SET chtac_actve = NOT chtac_actve,
-    chtac_upusr = $1,
-    dzone_updat = CURRENT_TIMESTAMP,
-    chtac_rvnmr = chtac_rvnmr + 1
+    const sql = `UPDATE tmtb_fsyar
+    SET fsyar_actve = NOT fsyar_actve,
+    fsyar_upusr = $1,
+    fsyar_updat = CURRENT_TIMESTAMP,
+    fsyar_rvnmr = fsyar_rvnmr + 1
     WHERE id = $2`;
     const params = [user_s, id];
 
-    await dbRun(sql, params, `delete account coa- ${user_c}`);
+    await dbRun(sql, params, `delete fiscal year- ${user_c}`);
     res.json({
       success: true,
-      message: `${chtac_cname} - ${chtac_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${fsyar_cname} - ${chtac_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {
@@ -315,54 +288,13 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-
-// get-coa-posting
-router.post("/get-coa-posting", async (req, res) => {
+// get-current-by-department
+router.post("/get-current-by-department", async (req, res) => {
   try {
-    const { user_s, user_c, user_b } = req.body;
+    const { fsyar_dpart, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!user_c) {
-      return res.json({
-        success: false,
-        message: "All fields in the request body are required.",
-        data: [],
-      });
-    }
-
-    //database action
-    const sql = `SELECT cht.*, 0 as edit_stop
-    FROM tmtb_chtac cht
-    WHERE cht.chtac_alpst = TRUE
-    AND cht.chtac_actve = TRUE
-    AND cht.chtac_apusr = $1
-    ORDER BY cht.chtac_ctype ASC, cht.chtac_chtac ASC, cht.chtac_chtno ASC`;
-
-    const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get account coa- ${user_c}`);
-    res.json({
-      success: true,
-      message: "Query executed successfully.",
-      data: rows,
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: [],
-    });
-  }
-});
-
-
-// get-all-year
-router.post("/get-all-year", async (req, res) => {
-  try {
-    const { user_s, user_c, user_b } = req.body;
-
-    // Validate input
-    if (!user_c) {
+    if (!fsyar_dpart || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -373,11 +305,13 @@ router.post("/get-all-year", async (req, res) => {
     //database action
     const sql = `SELECT fsy.*, 0 as edit_stop
     FROM tmtb_fsyar fsy
-    WHERE fsy.fsyar_apusr = $1
+    WHERE fsy.fsyar_users = $1
+    AND fsy.fsyar_iscur = TRUE
     AND fsy.fsyar_actve = TRUE
-    ORDER BY fsy.fsyar_fname DESC`;
+    AND fsy.fsyar_dpart = $2
+    ORDER BY fsy.fsyar_cname ASC`;
 
-    const params = [user_c];
+    const params = [user_c, fsyar_dpart];
     const rows = await dbGetAll(sql, params, `get fiscal year- ${user_c}`);
     res.json({
       success: true,

@@ -11,8 +11,8 @@ const useLogin = () => {
   const navigate = useNavigate();
   const [isBusy, setIsBusy] = useState(false);
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
+    username: "kayesh@sgd.com",
+    password: "01722688266",
   });
   const [formErrors, setFormErrors] = useState("");
   const [savedLogin, setSavedLogin] = useState(false);

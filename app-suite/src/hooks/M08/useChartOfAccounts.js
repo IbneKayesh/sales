@@ -4,6 +4,7 @@ import { coaAPI } from "@/api/M08/coaAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmtb_chtac from "@/models/M08/tmtb_chtac.json";
 const dataModel = generateDataModel(tmtb_chtac);
+import { buildPaths } from "@/utils/pathBuilder.js";
 
 const useChartOfAccounts = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -30,19 +31,23 @@ const useChartOfAccounts = () => {
       const resp = await coaAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
-
       //make this parent
-      const listActive = list.filter((item) => item.chtac_actve);
-      setChtac_chtac_Options(listActive);
-      // setChtac_chtac_Options([
-      //   {
-      //     key: "-",
-      //     label: "(No Parent)",
-      //     data: null,
-      //     selectable: true,
-      //     children: buildCoaTree(listActive, "-", false),
-      //   },
-      // ]);
+      const listActive = list
+        .filter((item) => item.chtac_actve)
+        .map((item) => ({
+          id: item.id,
+          name: item.chtac_cname,
+          parent_id: item.chtac_chtac,
+        }));
+
+      // setChtac_chtac_Options(
+      //   buildPaths([
+      //     { id: "-", name: "(No Parent)", parent_id: "-" },
+      //     ...listActive,
+      //   ]),
+      // );
+
+      setChtac_chtac_Options(buildPaths(listActive));
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -57,6 +62,19 @@ const useChartOfAccounts = () => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmtb_chtac);
     setFormErrors(newErrors);
+    if (f === "chtac_chtac" && v === "-") {
+      setStopEdit(false);
+    } else {
+      setStopEdit(true);
+
+      const chtac_ctype = listData.find((opt) => opt.id === v);
+      console.log(chtac_ctype);
+      setFormData((prev) => ({
+        ...prev,
+        chtac_ctype: chtac_ctype?.chtac_ctype,
+        chtac_ntype: chtac_ctype?.chtac_ntype,
+      }));
+    }
   };
 
   const handleEdit = (rowData) => {

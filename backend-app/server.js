@@ -40,6 +40,8 @@ const m04Routes = require("./routes/M04");
 const m05Routes = require("./routes/M05");
 //M06 :: CRM
 const m06Routes = require("./routes/M06");
+//M07 :: HRMS
+const m07Routes = require("./routes/M07");
 //M08 :: Accounts
 const m08Routes = require("./routes/M08");
 
@@ -55,8 +57,8 @@ app.use(cors({ origin: "*", methods: ["GET", "POST"] }));
 
 app.use(rateLimiter_mw);
 //stop massive JSON payload
-app.use(bodyParser.json({ limit: '100kb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '100kb' }));
+app.use(bodyParser.json({ limit: "100kb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "100kb" }));
 
 // 1. Multi-Tenant Database Context (scoped by x-tenant-id header)
 app.use(db_mw);
@@ -98,6 +100,8 @@ app.use("/api/M04", m04Routes);
 app.use("/api/M05", m05Routes);
 //M06 :: CRM
 app.use("/api/M06", m06Routes);
+//M07 :: HR
+app.use("/api/M07", m07Routes);
 //M08 :: Accounts
 app.use("/api/M08", m08Routes);
 
@@ -137,7 +141,7 @@ app.use((err, req, res, next) => {
 
 const server = app.listen(PORT, async () => {
   console.log(`🚀 Server is running on port ${PORT}`);
-  
+
   // Verify default DB connection on startup
   try {
     await connectDB();
@@ -151,18 +155,20 @@ process.on("SIGTERM", shutdown);
 process.on("SIGINT", shutdown);
 
 async function shutdown() {
-    console.log("🛑 Shutdown signal received. Closing server...");
-    server.close(async () => {
-        console.log("HTTP server closed.");
-        await closeAllPools();
-        process.exit(0);
-    });
-    
-    // Force shutdown after 10s if graceful fails
-    setTimeout(() => {
-        console.error("Could not close connections in time, forcefully shutting down");
-        process.exit(1);
-    }, 10000);
+  console.log("🛑 Shutdown signal received. Closing server...");
+  server.close(async () => {
+    console.log("HTTP server closed.");
+    await closeAllPools();
+    process.exit(0);
+  });
+
+  // Force shutdown after 10s if graceful fails
+  setTimeout(() => {
+    console.error(
+      "Could not close connections in time, forcefully shutting down",
+    );
+    process.exit(1);
+  }, 10000);
 }
 
 module.exports = app;

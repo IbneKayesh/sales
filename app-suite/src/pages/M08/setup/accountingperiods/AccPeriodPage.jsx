@@ -7,10 +7,10 @@ import PageCard, {
 import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
 import useAccountingPeriod from "@/hooks/M08/useAccountingPeriod";
-import AccountingPeriodList from "./AccountingPeriodList";
-import AccountingPeriodForm from "./AccountingPeriodForm";
+import AccPeriodList from "./AccPeriodList";
+import AccPeriodForm from "./AccPeriodForm";
 
-const AccountingPeriodPage = () => {
+const AccPeriodPage = () => {
   const {
     isBusy,
     pgView,
@@ -22,6 +22,9 @@ const AccountingPeriodPage = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    dpart_Options,
+    fsyar_Options,
     //functions
     handleChange,
     handleEdit,
@@ -69,14 +72,14 @@ const AccountingPeriodPage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <AccountingPeriodList
+            <AccPeriodList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
-            <AccountingPeriodForm
+            <AccPeriodForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
@@ -85,6 +88,8 @@ const AccountingPeriodPage = () => {
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}
+              dpart_Options={dpart_Options}
+              fsyar_Options={fsyar_Options}
             />
           )}
         </PageCardBody>
@@ -92,4 +97,4 @@ const AccountingPeriodPage = () => {
     </div>
   );
 };
-export default AccountingPeriodPage;
+export default AccPeriodPage;

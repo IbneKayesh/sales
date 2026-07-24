@@ -1,22 +1,36 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import { IconClose, IconCheck } from "@/icons";
+import { formatDate } from "@/utils/datetime.js";
 
-const AccountingPeriodList = ({ listData, onEdit, onDelete }) => {
+const AccPeriodList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "acprd_cname", header: "Period Name", width: "180px" },
-    { key: "acprd_trnno", header: "Transaction No", width: "150px" },
-    { key: "acprd_stdat", header: "Start Date", width: "140px" },
-    { key: "acprd_endat", header: "End Date", width: "140px" },
-    { key: "acprd_stats", header: "Status", width: "120px" },
+    { key: "dpart_cname", header: "Department", width: "80px" },
+    { key: "fsyar_cname", header: "Fiscal Year", width: "80px" },
+    { key: "acprd_cname", header: "Period Name", width: "80px" },
+    { key: "acprd_trnno", header: "Transaction No", width: "80px" },
+    {
+      key: "acprd_stdat",
+      header: "Start Date",
+      width: "80px",
+      render: (v) => {
+        return formatDate(v);
+      },
+    },
+    {
+      key: "acprd_endat",
+      header: "End Date",
+      width: "80px",
+      render: (v) => {
+        return formatDate(v);
+      },
+    },
+    { key: "acprd_stats", header: "Status", width: "80px" },
     {
       key: "acprd_iscur",
       header: "Current",
-      width: "100px",
+      width: "110px",
       render: (v) => (
         <Badge variant={v ? "success" : "muted"}>
           {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -27,7 +41,7 @@ const AccountingPeriodList = ({ listData, onEdit, onDelete }) => {
     {
       key: "acprd_actve",
       header: "Status",
-      width: "100px",
+      width: "110px",
       render: (v) => (
         <Badge variant={v ? "success" : "danger"}>
           {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -66,4 +80,4 @@ const AccountingPeriodList = ({ listData, onEdit, onDelete }) => {
     />
   );
 };
-export default AccountingPeriodList;
+export default AccPeriodList;

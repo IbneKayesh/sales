@@ -4,11 +4,12 @@ import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
 import Dropdown from "@/components/Dropdown";
 import Checkbox from "@/components/Checkbox";
+import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 import { acprd_stats_Options } from "@/utils/vtable.js";
 
-const AccountingPeriodForm = ({
+const AccPeriodForm = ({
   isBusy,
   readOnly,
   stopEdit,
@@ -17,10 +18,40 @@ const AccountingPeriodForm = ({
   onChange,
   onCancel,
   onSubmit,
+  dpart_Options,
+  fsyar_Options,
 }) => {
   return (
     <div className="form-wrap">
       <div className="grid">
+        <div className="col-span-4">
+          <Dropdown
+            label="Department"
+            options={dpart_Options}
+            value={formData.acprd_dpart}
+            onChange={(e) => onChange("acprd_dpart", e.target.value)}
+            error={formErrors.acprd_dpart}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="dpart_cname"
+          />
+        </div>
+        <div className="col-span-4">
+          <Dropdown
+            label="FY"
+            options={fsyar_Options}
+            value={formData.acprd_fsyar}
+            onChange={(e) => onChange("acprd_fsyar", e.target.value)}
+            error={formErrors.acprd_fsyar}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="fsyar_cname"
+          />
+        </div>
         <div className="col-span-4">
           <InputText
             label="Period Name"
@@ -32,10 +63,10 @@ const AccountingPeriodForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputText
-            label="Transaction No"
-            placeholder="Enter transaction number"
+            label="Period No"
+            placeholder="Enter period number"
             value={formData.acprd_trnno}
             onChange={(e) => onChange("acprd_trnno", e.target.value)}
             error={formErrors.acprd_trnno}
@@ -43,7 +74,29 @@ const AccountingPeriodForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
+          <InputCalendar
+            label="Start Date"
+            placeholder="Select start date"
+            value={formData.acprd_stdat}
+            onChange={(e) => onChange("acprd_stdat", e.target.value)}
+            error={formErrors.acprd_stdat}
+            required
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <InputCalendar
+            label="End Date"
+            placeholder="Select end date"
+            value={formData.acprd_endat}
+            onChange={(e) => onChange("acprd_endat", e.target.value)}
+            error={formErrors.acprd_endat}
+            required
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
           <Dropdown
             label="Status"
             options={acprd_stats_Options}
@@ -55,59 +108,28 @@ const AccountingPeriodForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
-          <InputCalendar
-            label="Start Date"
-            placeholder="Select start date"
-            value={formData.acprd_stdat}
-            onChange={(e) => onChange("acprd_stdat", e.target.value)}
-            error={formErrors.acprd_stdat}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputCalendar
-            label="End Date"
-            placeholder="Select end date"
-            value={formData.acprd_endat}
-            onChange={(e) => onChange("acprd_endat", e.target.value)}
-            error={formErrors.acprd_endat}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4" style={{ display: "flex", alignItems: "flex-end", paddingBottom: "var(--sp-2)" }}>
+        <div
+          className="col-span-4"
+          style={{
+            display: "flex",
+            alignItems: "flex-end",
+            paddingBottom: "var(--sp-1)",
+          }}
+        >
           <Checkbox
             label="Is Current Period"
-            checked={formData.acprd_iscur === true || formData.acprd_iscur === "true"}
+            checked={
+              formData.acprd_iscur === true || formData.acprd_iscur === "true"
+            }
             onChange={(e) => onChange("acprd_iscur", e.target.checked)}
             disabled={readOnly}
           />
         </div>
         <div className="col-span-4">
-          <InputNumber
-            label="Opening Balance"
-            placeholder="Enter opening balance"
-            value={formData.acprd_opbal}
-            onChange={(e) => onChange("acprd_opbal", e.target.value)}
-            error={formErrors.acprd_opbal}
-            step="0.01"
-            required
-            disabled={readOnly}
-          />
+          <InputLabel label="Opening Balance" value={formData.acprd_opbal} />
         </div>
         <div className="col-span-4">
-          <InputNumber
-            label="Closing Balance"
-            placeholder="Enter closing balance"
-            value={formData.acprd_clbal}
-            onChange={(e) => onChange("acprd_clbal", e.target.value)}
-            error={formErrors.acprd_clbal}
-            step="0.01"
-            required
-            disabled={readOnly}
-          />
+          <InputLabel label="Closing Balance" value={formData.acprd_clbal} />
         </div>
       </div>
       {formData?.id && (
@@ -133,4 +155,4 @@ const AccountingPeriodForm = ({
     </div>
   );
 };
-export default AccountingPeriodForm;
+export default AccPeriodForm;

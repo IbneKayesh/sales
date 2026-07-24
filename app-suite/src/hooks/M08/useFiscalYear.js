@@ -4,11 +4,12 @@ import { fsyarAPI } from "@/api/M08/fsyarAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmtb_fsyar from "@/models/M08/tmtb_fsyar.json";
 const dataModel = generateDataModel(tmtb_fsyar);
+import { departmentAPI } from "@/api/M01/departmentAPI.js";
 
 const useFiscalYear = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M08-M02-M002");
+  const [pgId, setPgId] = useState("M08-M0006");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -22,6 +23,8 @@ const useFiscalYear = () => {
   const [listDataItem, setListDataItem] = useState([]);
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
+  //others
+  const [dpart_Options, setDpart_Options] = useState([]);
 
   const getAllFiscalYear = async () => {
     try {
@@ -39,6 +42,17 @@ const useFiscalYear = () => {
     getAllFiscalYear();
   }, []);
 
+  const getAllDepartments = async () => {
+    if (dpart_Options.length > 0) {
+      return;
+    }
+    try {
+      const resp = await departmentAPI.getAllActive({});
+      const list = resp.data || [];
+      setDpart_Options(list);
+    } catch (error) {}
+  };
+
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmtb_fsyar);
@@ -48,6 +62,7 @@ const useFiscalYear = () => {
   const handleEdit = (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
+    getAllDepartments();
   };
 
   const handleDelete = async (rowData) => {
@@ -95,6 +110,7 @@ const useFiscalYear = () => {
     setFormData(dataModel);
     setReadOnly(false);
     setStopEdit(false);
+    getAllDepartments();
   };
 
   const handleCancel = () => {
@@ -146,6 +162,8 @@ const useFiscalYear = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    dpart_Options,
     //functions
     handleChange,
     handleEdit,

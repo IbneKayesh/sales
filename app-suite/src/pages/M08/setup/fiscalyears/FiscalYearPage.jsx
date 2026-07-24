@@ -22,6 +22,8 @@ const FiscalYearPage = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    dpart_Options,
     //functions
     handleChange,
     handleEdit,
@@ -85,6 +87,7 @@ const FiscalYearPage = () => {
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}
+              dpart_Options={dpart_Options}
             />
           )}
         </PageCardBody>
