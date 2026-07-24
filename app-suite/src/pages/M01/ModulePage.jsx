@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PageCard, {
   PageCardHeader,
@@ -13,7 +14,8 @@ import {
   IconManufacture,
   IconCRM,
   IconBox,
-  IconHR
+  IconHR,
+  IconClose,
 } from "@/icons";
 
 const modules = [
@@ -320,8 +322,89 @@ export const navItems = [
   { to: "/M01/modules", label: "Modules", icon: "⊞" },
 ];
 
+const RECENT_STORAGE_KEY = "bsuite_recent_menus";
+const MAX_RECENT = 20;
+
+const modulePageSearchStyles = {
+  wrap: {
+    display: "flex",
+    alignItems: "center",
+    position: "relative",
+    width: "100%",
+    maxWidth: 360,
+  },
+  input: {
+    width: "100%",
+    padding: "8px 32px 8px 12px",
+    borderRadius: 8,
+    border: "1px solid var(--border, #e0e0e0)",
+    background: "var(--surface, #fff)",
+    color: "var(--text, #111)",
+    fontSize: 14,
+    outline: "none",
+    transition: "border-color 0.2s, box-shadow 0.2s",
+  },
+  clear: {
+    position: "absolute",
+    right: 8,
+    top: "50%",
+    transform: "translateY(-50%)",
+    border: "none",
+    background: "none",
+    cursor: "pointer",
+    padding: 4,
+    color: "var(--text-muted, #888)",
+    fontSize: 14,
+    lineHeight: 1,
+  },
+};
+
 const ModulePage = () => {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [recentMenuIds, setRecentMenuIds] = useState([]);
+
+  // Load recent menu IDs from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(RECENT_STORAGE_KEY);
+      if (stored) {
+        const ids = JSON.parse(stored);
+        if (Array.isArray(ids)) {
+          setRecentMenuIds(ids);
+        }
+      }
+    } catch (e) {
+      // ignore parse errors
+    }
+  }, []);
+
+  const handleMenuClick = (menu) => {
+    navigate(menu.menus_mlink);
+    // Update recent list — distinct, most recent first
+    setRecentMenuIds((prev) => {
+      const filtered = prev.filter((id) => id !== menu.id);
+      const updated = [menu.id, ...filtered].slice(0, MAX_RECENT);
+      try {
+        localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(updated));
+      } catch (e) {
+        // ignore storage errors
+      }
+      return updated;
+    });
+  };
+
+  // Filter menus by search query
+  const filteredMenus = searchQuery
+    ? menus.filter((menu) =>
+        menu.menus_mname.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : menus;
+
+  // Recent menus that also match the current search/filter
+  const recentMenus = filteredMenus.filter((m) => recentMenuIds.includes(m.id));
+
+  const isSearching = searchQuery.trim().length > 0;
 
   return (
     <div className="page-wrap">
@@ -332,13 +415,129 @@ const ModulePage = () => {
             {modules.length} applications &middot; {menus.length} features
           </p>
         </div>
+        {/* Search input */}
+        <div style={modulePageSearchStyles.wrap}>
+          <input
+            type="text"
+            style={modulePageSearchStyles.input}
+            placeholder="Search menus…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={(e) => {
+              e.target.style.borderColor = "var(--primary, #7c3aed)";
+              e.target.style.boxShadow = "0 0 0 2px rgba(124, 58, 237, 0.15)";
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = "var(--border, #e0e0e0)";
+              e.target.style.boxShadow = "none";
+            }}
+            aria-label="Search menus"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              style={modulePageSearchStyles.clear}
+              onClick={() => setSearchQuery("")}
+              aria-label="Clear search"
+              title="Clear search"
+            >
+              <IconClose size={14} />
+            </button>
+          )}
+        </div>
       </div>
 
+      {/* No results state */}
+      {isSearching && filteredMenus.length === 0 && (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "48px 16px",
+            color: "var(--text-muted, #888)",
+          }}
+        >
+          <p style={{ fontSize: 16, margin: 0 }}>
+            No menus match &quot;{searchQuery}&quot;
+          </p>
+        </div>
+      )}
+
       <div className="module-page__list">
+        {/* Recent module — only when not searching OR recent menus match search */}
+        {recentMenus.length > 0 && (
+          <PageCard>
+            <PageCardHeader>
+              <div className="module-page__card-header">
+                <div
+                  className="module-page__card-icon"
+                  style={{ background: "#7c3aed18" }}
+                >
+                  <IconHome />
+                </div>
+                <PageCardTitle
+                  title="Recent (M00)"
+                  subtitle={`${recentMenus.length} feature${recentMenus.length === 1 ? "" : "s"}`}
+                />
+                {!isSearching && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRecentMenuIds([]);
+                      try {
+                        localStorage.removeItem(RECENT_STORAGE_KEY);
+                      } catch (e) {
+                        // ignore
+                      }
+                    }}
+                    style={{
+                      marginLeft: "auto",
+                      padding: "4px 10px",
+                      fontSize: 12,
+                      borderRadius: 6,
+                      border: "1px solid var(--border, #e0e0e0)",
+                      background: "var(--surface, #fff)",
+                      color: "var(--text-muted, #888)",
+                      cursor: "pointer",
+                      whiteSpace: "nowrap",
+                    }}
+                    title="Clear recent history"
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
+            </PageCardHeader>
+            <PageCardBody>
+              <div className="module-page__menu-grid">
+                {recentMenus.map((menu) => (
+                  <button
+                    key={menu.id}
+                    type="button"
+                    className="module-page__menu-item"
+                    onClick={() => handleMenuClick(menu)}
+                    title={menu.menus_mname}
+                  >
+                    <div
+                      className="module-page__menu-icon"
+                      style={{ background: `${menu.menus_color}18` }}
+                    >
+                      {menu.menus_micon}
+                    </div>
+                    <span className="module-page__menu-label">
+                      {menu.menus_mname}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </PageCardBody>
+          </PageCard>
+        )}
+
         {[...modules]
+          .filter((mod) => mod.id !== "M00") // Recent is rendered above separately
           .sort((a, b) => a.menus_odrby - b.menus_odrby)
           .map((module) => {
-            const modMenus = menus.filter(
+            const modMenus = filteredMenus.filter(
               (menu) => menu.menus_menus === module.id,
             );
             if (modMenus.length === 0) return null;
@@ -352,7 +551,6 @@ const ModulePage = () => {
                       style={{ background: `${module.menus_color}18` }}
                     >
                       {module.menus_micon}
-                      <i style={{ fontSize: 18, color: module.menus_color }} />
                     </div>
                     <PageCardTitle
                       title={`${module.menus_mname} (${module.id})`}
@@ -367,7 +565,7 @@ const ModulePage = () => {
                         key={menu.id}
                         type="button"
                         className="module-page__menu-item"
-                        onClick={() => navigate(menu.menus_mlink)}
+                        onClick={() => handleMenuClick(menu)}
                         title={menu.menus_mname}
                       >
                         <div
@@ -375,10 +573,6 @@ const ModulePage = () => {
                           style={{ background: `${menu.menus_color}18` }}
                         >
                           {menu.menus_micon}
-                          <i
-                            className={menu.menus_micon}
-                            style={{ fontSize: 20, color: menu.menus_color }}
-                          />
                         </div>
                         <span className="module-page__menu-label">
                           {menu.menus_mname}

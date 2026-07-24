@@ -146,8 +146,8 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Remember me switch — shown only when both username and password are entered */}
-          {formData.username && formData.password && (
+          {/* Remember me switch — hidden in saved mode; shown only when both username and password are entered */}
+          {!isSavedMode && formData.username && formData.password && (
             <div className="login-page__saved-check">
               <InputSwitch
                 label="Remember user"
