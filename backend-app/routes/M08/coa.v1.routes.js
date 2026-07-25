@@ -314,8 +314,8 @@ router.post("/delete", async (req, res) => {
 });
 
 
-// get-coa-posting
-router.post("/get-coa-posting", async (req, res) => {
+// get-coa-child-only
+router.post("/get-coa-child-only", async (req, res) => {
   try {
     const { user_s, user_c, user_b } = req.body;
 

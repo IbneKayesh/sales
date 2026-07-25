@@ -23,13 +23,15 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT jrn.*,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
-    FROM tmtb_mjrnl jrn
-    LEFT JOIN tmnb_users csr ON jrn.mjrnl_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON jrn.mjrnl_upusr = usr.id
-    WHERE jrn.mjrnl_apusr = $1
-    ORDER BY jrn.mjrnl_trtyp ASC`;
+    const sql = `SELECT jrn.*, fsy.fsyar_cname, acp.acprd_cname,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmtb_jrnlm jrn
+    LEFT JOIN tmtb_fsyar fsy ON jrn.jrnlm_fsyar = fsy.id
+    LEFT JOIN tmtb_acprd acp ON jrn.jrnlm_acprd = acp.id
+    LEFT JOIN tmhb_emply csr ON jrn.jrnlm_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON jrn.jrnlm_upusr = usr.id
+    WHERE jrn.jrnlm_users = $1
+    ORDER BY jrn.jrnlm_trtyp ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get journal- ${user_c}`);
@@ -90,42 +92,40 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      mjrnl_apusr,
-      mjrnl_bsins,
-      mjrnl_dpart,
-      mjrnl_crncy,
-      mjrnl_fsyar,
-      mjrnl_acprd,
-      mjrnl_trtyp,
-      mjrnl_trnno,
-      mjrnl_trdat,
-      mjrnl_refno,
-      mjrnl_narrt,
-      mjrnl_drval,
-      mjrnl_crval,
-      mjrnl_stats,
-      mjrnl_appid,
-      mjrnl_apdat,
-      tmtb_djrnl,
+      jrnlm_users,
+      jrnlm_bsins,
+      jrnlm_dpart,
+      jrnlm_fsyar,
+      jrnlm_acprd,
+      jrnlm_crncy,
+      jrnlm_trtyp,
+      jrnlm_trnno,
+      jrnlm_trdat,
+      jrnlm_refno,
+      jrnlm_narrt,
+      jrnlm_drval,
+      jrnlm_crval,
+      jrnlm_stats,
+      jrnlm_appid,
+      jrnlm_apdat,
+      tmtb_jrnlc,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
-    //console.log(" req.body;", req.body);
-
     // Validate input
     if (
-      !mjrnl_dpart ||
-      !mjrnl_crncy ||
-      // !mjrnl_fsyar ||
-      // !mjrnl_acprd ||
-      !mjrnl_trtyp ||
-      !mjrnl_trdat ||
-      !mjrnl_narrt ||
-      !mjrnl_stats ||
-      !tmtb_djrnl ||
-      tmtb_djrnl.length === 0 ||
+      !jrnlm_fsyar ||
+      !jrnlm_acprd ||
+      !jrnlm_crncy ||
+      !jrnlm_trtyp ||
+      !jrnlm_refno ||
+      !jrnlm_narrt ||
+      !jrnlm_drval ||
+      !jrnlm_crval ||
+      !tmtb_jrnlc ||
+      tmtb_jrnlc.length === 0 ||
       !user_s ||
       !user_c ||
       !user_b
@@ -138,37 +138,36 @@ const create = async (req, res) => {
     }
 
     //database action
-    //const newCode = await GenNewCode(user_c, "tmtb_mjrnl");
-    const fsyacp = await getFiscalYearPeriod(
-      user_c,
-      user_b,
-      mjrnl_dpart,
-      mjrnl_trdat,
-    );
-    if (!fsyacp) {
-      return res.json({
-        success: false,
-        message: "No active fiscal year or accounting period found",
-        data: {},
-      });
-    }
-    if (fsyacp.length > 1) {
-      return res.json({
-        success: false,
-        message: "Multiple active accounting periods found. Please select one.",
-        data: {},
-      });
-    }
+    //const newCode = await GenNewCode(user_c, "tmtb_jrnlm");
+    // const fsyacp = await getFiscalYearPeriod(
+    //   user_c,
+    //   user_b,
+    //   mjrnl_dpart,
+    //   mjrnl_trdat,
+    // );
+    // if (!fsyacp) {
+    //   return res.json({
+    //     success: false,
+    //     message: "No active fiscal year or accounting period found",
+    //     data: {},
+    //   });
+    // }
+    // if (fsyacp.length > 1) {
+    //   return res.json({
+    //     success: false,
+    //     message: "Multiple active accounting periods found. Please select one.",
+    //     data: {},
+    //   });
+    // }
     //console.log("fsyacp", fsyacp);
-
-    const { fsyar_id, acprd_id } = fsyacp[0];
+    //const { fsyar_id, acprd_id } = fsyacp[0];
 
     const newTrn = await GenNewTrn(
       user_c,
       user_b,
-      "tmtb_mjrnl",
-      mjrnl_trtyp,
-      mjrnl_dpart,
+      "tmtb_jrnlm",
+      jrnlm_trtyp,
+      jrnlm_dpart,
     );
 
     //build scripts
@@ -176,9 +175,9 @@ const create = async (req, res) => {
     const scripts = [];
 
     scripts.push({
-      sql: `INSERT INTO tmtb_mjrnl(id, mjrnl_apusr, mjrnl_bsins, mjrnl_dpart, mjrnl_crncy, mjrnl_fsyar,
-    mjrnl_acprd, mjrnl_trtyp, mjrnl_trnno, mjrnl_trdat, mjrnl_refno, mjrnl_narrt,
-    mjrnl_drval, mjrnl_crval, mjrnl_stats, mjrnl_appid, mjrnl_apdat, mjrnl_crusr, mjrnl_upusr)
+      sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
+    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
+    jrnlm_drval, jrnlm_crval, jrnlm_stats, jrnlm_appid, jrnlm_apdat, jrnlm_crusr, jrnlm_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
     $7, $8, $9, $10, $11, $12,
     $13, $14, $15, $16, $17, $18, $19)`,
@@ -186,31 +185,32 @@ const create = async (req, res) => {
         masterId,
         user_c,
         user_b,
-        mjrnl_dpart,
-        mjrnl_crncy,
-        fsyar_id,
-        acprd_id,
-        mjrnl_trtyp,
+        jrnlm_dpart,
+        jrnlm_fsyar,
+        jrnlm_acprd,
+        jrnlm_crncy,
+        jrnlm_trtyp,
         newTrn,
-        mjrnl_trdat,
-        mjrnl_refno,
-        mjrnl_narrt,
-        mjrnl_drval,
-        mjrnl_crval,
-        mjrnl_stats,
-        mjrnl_appid,
-        mjrnl_apdat,
+        jrnlm_trdat,
+        jrnlm_refno,
+        jrnlm_narrt,
+        jrnlm_drval,
+        jrnlm_crval,
+        jrnlm_stats,
+        jrnlm_appid,
+        jrnlm_apdat,
         user_s,
         user_s,
       ],
       label: `create journal- ${user_c}`,
     });
 
-    for (const det of tmtb_djrnl) {
+    let line = 1;
+    for (const det of tmtb_jrnlc) {
       scripts.push({
-        sql: `INSERT INTO tmtb_djrnl(id, djrnl_apusr, djrnl_bsins, djrnl_dpart, djrnl_mjrnl, djrnl_chtac,
-        djrnl_party, djrnl_drval, djrnl_crval, djrnl_descr, djrnl_rftyp, djrnl_refid,
-        djrnl_lneno, djrnl_crusr, djrnl_upusr)
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
         $13, $14, $15)`,
@@ -218,21 +218,22 @@ const create = async (req, res) => {
           uuidv4(),
           user_c,
           user_b,
-          mjrnl_dpart,
+          jrnlm_dpart,
           masterId,
-          det.djrnl_chtac,
-          det.djrnl_party,
-          det.djrnl_drval,
-          det.djrnl_crval,
-          det.djrnl_descr || "",
-          det.djrnl_rftyp || "",
-          det.djrnl_refid || "",
-          det.djrnl_lneno,
+          det.jrnlc_chtac,
+          det.jrnlc_party,
+          det.jrnlc_drval,
+          det.jrnlc_crval,
+          det.jrnlc_descr || "",
+          det.jrnlc_sorce || "",
+          det.jrnlc_refid || "",
+          line,
           user_s,
           user_s,
         ],
         label: `Created jouranl detail ${newTrn}`,
       });
+      line++;
     }
     //console.log("params", params);
 
@@ -254,24 +255,30 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
+    return res.json({
+      success: false,
+      message: `Update is not available.`,
+      data: {},
+    });
     const {
       id,
-      mjrnl_apusr,
-      mjrnl_bsins,
-      mjrnl_dpart,
-      mjrnl_crncy,
-      mjrnl_fsyar,
-      mjrnl_acprd,
-      mjrnl_trtyp,
-      mjrnl_trnno,
-      mjrnl_trdat,
-      mjrnl_refno,
-      mjrnl_narrt,
-      mjrnl_drval,
-      mjrnl_crval,
-      mjrnl_stats,
-      mjrnl_appid,
-      mjrnl_apdat,
+      jrnlm_users,
+      jrnlm_bsins,
+      jrnlm_dpart,
+      jrnlm_fsyar,
+      jrnlm_acprd,
+      jrnlm_crncy,
+      jrnlm_trtyp,
+      jrnlm_trnno,
+      jrnlm_trdat,
+      jrnlm_refno,
+      jrnlm_narrt,
+      jrnlm_drval,
+      jrnlm_crval,
+      jrnlm_stats,
+      jrnlm_appid,
+      jrnlm_apdat,
+      tmtb_jrnlc,
       user_s,
       user_c,
       user_b,
@@ -279,14 +286,16 @@ const update = async (req, res) => {
 
     // Validate input
     if (
-      !mjrnl_dpart ||
-      !mjrnl_crncy ||
-      !mjrnl_fsyar ||
-      !mjrnl_acprd ||
-      !mjrnl_trtyp ||
-      !mjrnl_trdat ||
-      !mjrnl_narrt ||
-      !mjrnl_stats ||
+      !jrnlm_fsyar ||
+      !jrnlm_acprd ||
+      !jrnlm_crncy ||
+      !jrnlm_trtyp ||
+      !jrnlm_refno ||
+      !jrnlm_narrt ||
+      !jrnlm_drval ||
+      !jrnlm_crval ||
+      !tmtb_jrnlc ||
+      tmtb_jrnlc.length === 0 ||
       !user_s ||
       !user_c ||
       !user_b
@@ -388,13 +397,13 @@ router.post("/delete", async (req, res) => {
   }
 });
 
-// get-detail
-router.post("/get-detail", async (req, res) => {
+// get-child
+router.post("/get-child", async (req, res) => {
   try {
-    const { djrnl_mjrnl, user_s, user_c, user_b } = req.body;
+    const { jrnlc_jrnlm, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!djrnl_mjrnl || !user_c) {
+    if (!jrnlc_jrnlm || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -404,18 +413,18 @@ router.post("/get-detail", async (req, res) => {
 
     //database action
     const sql = `select jrd.*,
-cht.chtac_cname, pty.party_pname  || ' | ' ||  pty.party_ptype  || ' | ' ||  pty.party_pcode AS party_pname, 0 as edit_stop
-FROM tmtb_djrnl jrd
-LEFT JOIN tmtb_chtac cht ON jrd.djrnl_chtac = cht.id
-LEFT JOIN tmtb_party pty ON jrd.djrnl_party = pty.id
-WHERE jrd.djrnl_mjrnl = $1
-ORDER BY jrd.djrnl_lneno ASC`;
+cht.chtac_cname, pty.party_cname  || ' | ' ||  pty.party_ptype  || ' | ' ||  pty.party_ccode AS party_cname, 0 as edit_stop
+FROM tmtb_jrnlc jrd
+LEFT JOIN tmtb_chtac cht ON jrd.jrnlc_chtac = cht.id
+LEFT JOIN tmtb_party pty ON jrd.jrnlc_party = pty.id
+WHERE jrd.jrnlc_jrnlm = $1
+ORDER BY jrd.jrnlc_lines ASC`;
 
-    const params = [djrnl_mjrnl];
+    const params = [jrnlc_jrnlm];
     const rows = await dbGetAll(
       sql,
       params,
-      `get detail journal- ${djrnl_mjrnl}`,
+      `get detail journal- ${jrnlc_jrnlm}`,
     );
     res.json({
       success: true,

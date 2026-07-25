@@ -133,7 +133,11 @@ const JournalForm = ({
         />
       )}
       <div className="form-actions">
-        <Button variant="outline" onClick={onShowAddToList} disabled={isBusy}>
+        <Button
+          variant="outline"
+          onClick={() => onShowAddToList("ITEM")}
+          disabled={isBusy || readOnly}
+        >
           <IconPlus size={16} className="icon-left" />
           Add Line
         </Button>

@@ -4,6 +4,8 @@ import { partyAPI } from "@/api/M08/partyAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmtb_party from "@/models/M08/tmtb_party.json";
 const dataModel = generateDataModel(tmtb_party);
+import { coaAPI } from "@/api/M08/coaAPI.js";
+import { buildPaths } from "@/utils/pathBuilder.js";
 
 const useParty = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -22,6 +24,8 @@ const useParty = () => {
   const [listDataItem, setListDataItem] = useState([]);
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
+  //others
+  const [chtac_Options, setChtac_Options] = useState([]);
 
   const getAllParty = async () => {
     try {
@@ -38,6 +42,27 @@ const useParty = () => {
   useEffect(() => {
     getAllParty();
   }, []);
+
+    const getCoaChildOnly = async () => {
+    if (chtac_Options.length > 0) return;
+    try {
+      const resp = await coaAPI.getAllActive({});
+      const list = resp.data || [];
+      //filter posted only
+      const listActive = list.map((item) => ({
+        id: item.id,
+        name: item.chtac_cname,
+        parent_id: item.chtac_chtac,
+        active: item.chtac_ispst,
+      }));
+      //build path for all
+      const buildPathsList = buildPaths(listActive);
+      //apply filter and set state
+      setChtac_Options(buildPathsList.filter((item) => item.active));
+    } catch (error) {}
+  };
+
+
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
@@ -94,7 +119,8 @@ const useParty = () => {
     setPgView("SYS_VW_FRM_1");
     setFormData(dataModel);
     setReadOnly(false);
-    setStopEdit(false);
+    setStopEdit(false);    
+    getCoaChildOnly();
   };
 
   const handleCancel = () => {
@@ -107,6 +133,7 @@ const useParty = () => {
   const handleSubmit = async () => {
     try {
       const newErrors = validate(formData, tmtb_party);
+      console.log("newErrors",newErrors)
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
@@ -146,6 +173,8 @@ const useParty = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    chtac_Options,
     //functions
     handleChange,
     handleEdit,

@@ -36,8 +36,7 @@
     "label": "Transaction Type",
     "maxLength": 50,
     "placeholder": "Enter transaction type",
-    "required": true,
-    "default": "JRV"
+    "required": true
   },
   "jrnlm_trdat": {
     "type": "date",

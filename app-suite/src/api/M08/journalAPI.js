@@ -26,8 +26,8 @@ export const journalAPI = {
     apiRequest("/M08/v1/journal/get-all-active", {
       body: data,
     }),
-  getDetail: (data) =>
-    apiRequest("/M08/v1/journal/get-detail", {
+  getChild: (data) =>
+    apiRequest("/M08/v1/journal/get-child", {
       body: data,
     }),
 };

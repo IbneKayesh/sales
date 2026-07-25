@@ -22,7 +22,7 @@
     "label": "Vendor",
     "maxLength": 50,
     "placeholder": "Select vendor",
-    "required": true
+    "required": false
   },
   "party_cname": {
     "type": "string",
@@ -37,6 +37,6 @@
     "label": "Opening Balance",
     "default": 0,
     "placeholder": "Enter opening balance",
-    "required": true
+    "required": false
   }
 }

@@ -26,8 +26,8 @@ export const coaAPI = {
     apiRequest("/M08/v1/coa/get-all-active", {
       body: data,
     }),
-  getCoaPosting: (data) =>
-    apiRequest("/M08/v1/coa/get-coa-posting", {
+  getCoaChildOnly: (data) =>
+    apiRequest("/M08/v1/coa/get-coa-child-only", {
       body: data,
     }),
   getWithPartyCount: (data) =>

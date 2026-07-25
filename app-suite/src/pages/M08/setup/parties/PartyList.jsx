@@ -8,14 +8,15 @@ import {
 
 const PartyList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "party_ptype", header: "Party Type", width: "140px" },
+    { key: "party_ptype", header: "Party Type", width: "80px" },
+    { key: "chtac_cname", header: "Ledger", width: "80px" },
     { key: "party_cname", header: "Party Name", width: "220px" },
-    { key: "party_vndor", header: "Vendor", width: "180px" },
-    { key: "party_chtac", header: "Account", width: "180px" },
+    { key: "vndor_cname", header: "Vendor Name", width: "220px" },
+    { key: "party_opbal", header: "Opening Balance", width: "80px" },
     {
       key: "party_actve",
       header: "Status",
-      width: "120px",
+      width: "110px",
       render: (v) => (
         <Badge variant={v ? "success" : "danger"}>
           {v ? <IconCheck size={12} /> : <IconClose size={12} />}

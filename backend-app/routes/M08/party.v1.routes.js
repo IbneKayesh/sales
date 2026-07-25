@@ -20,11 +20,11 @@ router.post("/", async (req, res) => {
 
     //database action
     const sql = `SELECT prty.*, cht.chtac_cname, cht.chtac_ctype,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmtb_party prty
-    LEFT JOIN tmnb_users csr ON prty.party_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON prty.party_upusr = usr.id
     JOIN tmtb_chtac cht ON prty.party_chtac = cht.id
+    LEFT JOIN tmhb_emply csr ON prty.party_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON prty.party_upusr = usr.id
     WHERE prty.party_users = $1
     ORDER BY prty.party_chtac ASC`;
 
@@ -104,7 +104,7 @@ const create = async (req, res) => {
     if (
       !party_ptype ||
       !party_chtac ||
-      !party_vndor ||
+      //!party_vndor ||
       !party_cname ||
       !user_s ||
       !user_c ||
@@ -122,42 +122,25 @@ const create = async (req, res) => {
     const scripts = [];
     const newCode = await GenNewCode(user_c, "tmtb_party");
     scripts.push({
-      sql: `INSERT INTO tmtb_party(id, party_users, party_bsins, party_ptype, party_vndor, party_ccode,
-      party_cname, party_chtac, party_opbal, party_crusr, party_upusr)
+      sql: `INSERT INTO tmtb_party(id, party_users, party_bsins, party_ccode, party_ptype, party_chtac,
+      party_vndor, party_cname, party_opbal, party_crusr, party_upusr)
       VALUES ($1, $2, $3, $4, $5, $6,
       $7, $8, $9, $10, $11)`,
       params: [
         masterId,
         user_c,
         user_b,
-        party_ptype,
-        party_vndor,
         newCode,
-        party_cname,
+        party_ptype,
         party_chtac,
+        party_vndor || '-',
+        party_cname,
         party_opbal,
         user_s,
         user_s,
       ],
       label: `create party accounts- ${user_c}`,
     });
-
-    if (party_ptype === "Inventory") {
-      scripts.push({
-        sql: `UPDATE tmib_sgrup
-        SET sgrup_chtac = $1,
-        sgrup_upusr = $2,
-        sgrup_updat = CURRENT_TIMESTAMP,
-        sgrup_rvnmr = sgrup_rvnmr + 1
-        WHERE id = $3`,
-        params: [
-          party_chtac,
-          user_s,
-          party_vndor,
-        ],
-        label: `update sub group- ${user_c}`,
-      });
-    }
 
     //console.log("params", params);
 

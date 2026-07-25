@@ -53,11 +53,12 @@ const acprd_stats_Options = [
 ];
 
 const party_ptype_Options = [
-  { label: "Customer", value: "Customer" },
-  { label: "Supplier", value: "Supplier" },
-  { label: "Bank", value: "Bank" },
-  { label: "Employee", value: "Employee" },
-  { label: "Others", value: "Others" },
+  { label: "Customer", value: "Customer", auto_create: true },
+  { label: "Supplier", value: "Supplier", auto_create: true },
+  { label: "Employee", value: "Employee", auto_create: true },
+  { label: "Investor", value: "Investor", auto_create: false },
+  { label: "Bank", value: "Bank", auto_create: false },
+  { label: "Cash", value: "Cash", auto_create: false },
 ];
 
 const chtac_ntype_Options = [
@@ -81,31 +82,31 @@ const chtac_ctype_Options = [
 const jrnlm_trtyp_Options = [
   {
     label: "Journal Voucher",
-    value: "JRV",
+    value: "Journal Voucher",
   },
   {
     label: "Contra Voucher",
-    value: "CTV",
+    value: "Contra Voucher",
   },
   {
-    label: "Purchase Voucher",
-    value: "PRV",
+    label: "Purchase Invoice",
+    value: "Purchase Invoice",
   },
   {
     label: "Payment Voucher",
-    value: "PYV",
+    value: "Payment Voucher",
   },
   {
-    label: "Sales Voucher",
-    value: "SLV",
+    label: "Sales Invoice",
+    value: "Sales Invoice",
   },
   {
     label: "Receipt Voucher",
-    value: "RCV",
+    value: "Receipt Voucher",
   },
   {
     label: "Adjustment Entry",
-    value: "ADJ",
+    value: "Adjustment Entry",
   },
 ];
 

@@ -11,10 +11,10 @@ CREATE TABLE tmtb_party (
   party_ccode varchar(50) NOT NULL,
 
   -- custom
-  party_ptype varchar(50) NOT NULL,
+  party_ptype varchar(50) NOT NULL, --items,banks,customer,supplier etc
   party_chtac varchar(50) NOT NULL,
-  party_vndor varchar(50) NOT NULL,
-  party_cname varchar(100) NOT NULL,
+  party_vndor varchar(50) NOT NULL, --items,banks,customer,supplier etc id
+  party_cname varchar(100) NOT NULL, -- --items,banks,customer,supplier etc name
   party_opbal decimal(18,6) NOT NULL DEFAULT 0,
   
   -- default

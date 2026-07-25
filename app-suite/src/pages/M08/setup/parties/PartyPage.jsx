@@ -22,6 +22,8 @@ const PartyPage = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    chtac_Options,
     //functions
     handleChange,
     handleEdit,
@@ -85,6 +87,7 @@ const PartyPage = () => {
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}
+              chtac_Options={chtac_Options}
             />
           )}
         </PageCardBody>

@@ -25,6 +25,7 @@ const buildPaths = (items) => {
   return items.map((item) => ({
     id: item.id,
     name: getPath(item.id),
+    active: item.active
   }));
 };
 export {  buildPaths };

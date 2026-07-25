@@ -11,6 +11,7 @@ import useJournal from "@/hooks/M08/useJournal";
 import JournalList from "./JournalList";
 import JournalForm from "./JournalForm";
 import ItemForm from "./ItemForm";
+import ItemsList from "./ItemsList";
 
 const JournalPage = () => {
   const {
@@ -28,6 +29,9 @@ const JournalPage = () => {
     dpart_Options,
     fsyar_Options,
     acprd_Options,
+    //lines
+    chtac_Options,
+    party_Options,
     //functions
     handleChange,
     handleEdit,
@@ -39,6 +43,8 @@ const JournalPage = () => {
     //journal lines
     handleChangeItem,
     handleAddToList,
+    handleEditItem,
+    handleDeleteItem,
     //modal
     showModal,
     modalTitle,
@@ -118,26 +124,17 @@ const JournalPage = () => {
             />
           )}
 
-          {/* {pgView === "SYS_VW_FRM_1" && (
-            <JournalItemsList
+          {pgView === "SYS_VW_FRM_1" && (
+            <ItemsList
               readOnly={readOnly}
-              listData={listDataItems}
-              formData={formDataItem}
-              formErrors={formErrorsItem}
-              onChange={handleChangeItem}
-              onAddToList={handleAddToListItems}
+              listData={listDataItem}
               onEdit={handleEditItem}
               onDelete={handleDeleteItem}
-              chtac_Options={chtac_Options}
-              party_Options={party_Options}
-              showModal={showModal}
-              onShowModal={handleShowModal}
-              onHideModal={handleHideModal}
             />
-          )} */}
+          )}
 
           {/* Single Modal for Journal Line forms */}
-          <Modal open={showModal.show} onClose={handleHideModal} size="lg">
+          <Modal open={showModal.show} onClose={handleHideModal} size="xl">
             <ModalHeader>
               <ModalTitle
                 title={modalTitle.title}
@@ -154,6 +151,8 @@ const JournalPage = () => {
                 formErrors={formErrors}
                 onChange={handleChangeItem}
                 onAddToList={handleAddToList}
+                chtac_Options={chtac_Options}
+                party_Options={party_Options}
               />
             </ModalBody>
           </Modal>

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
 import { journalAPI } from "@/api/M08/journalAPI.js";
-import { coaAPI } from "@/api/M08/coaAPI.js";
 import { partyAPI } from "@/api/M08/partyAPI.js";
 import { acprdAPI } from "@/api/M08/acprdAPI.js";
 import { fsyarAPI } from "@/api/M08/fsyarAPI.js";
@@ -11,6 +10,9 @@ import tmtb_jrnlm from "@/models/M08/tmtb_jrnlm.json";
 const dataModel = generateDataModel(tmtb_jrnlm);
 import tmtb_jrnlc from "@/models/M08/tmtb_jrnlc.json";
 const dataModelItem = generateDataModel(tmtb_jrnlc);
+import { coaAPI } from "@/api/M08/coaAPI.js";
+import { buildPaths } from "@/utils/pathBuilder.js";
+import { generateGuid } from "@/utils/guid.js";
 
 const useJournal = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -77,28 +79,6 @@ const useJournal = () => {
     } catch (error) {}
   };
 
-  // Dropdown options
-  const [chtac_Options, setChtac_Options] = useState([]);
-  const [party_Options, setParty_Options] = useState([]);
-
-  const getAllCoa = async () => {
-    if (chtac_Options.length > 0) return;
-    try {
-      const resp = await coaAPI.getAllActive({});
-      const list = resp.data || [];
-      setChtac_Options(list);
-    } catch (error) {}
-  };
-
-  const getAllParties = async () => {
-    if (party_Options.length > 0) return;
-    try {
-      const resp = await partyAPI.getAllActive({});
-      const list = resp.data || [];
-      setParty_Options(list);
-    } catch (error) {}
-  };
-
   const handleChange = async (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmtb_jrnlm);
@@ -116,15 +96,18 @@ const useJournal = () => {
     setPgView("SYS_VW_FRM_1");
     setReadOnly(true);
     setFormData(rowData);
+    setFsyar_Options([{ id: rowData.jrnlm_fsyar, fsyar_cname: rowData.fsyar_cname }]);
+    setAcprd_Options([{ id: rowData.jrnlm_acprd, acprd_cname: rowData.acprd_cname }]);
     loadJournalDetails(rowData.id);
     getAllDepartments();
   };
 
   const loadJournalDetails = async (id) => {
     try {
+      setListDataItem([]);
       setIsBusy(true);
-      const resp = await journalAPI.getDetail({ jrnlc_mjrnl: id });
-      setListDataItems(resp.data || []);
+      const resp = await journalAPI.getChild({ jrnlc_jrnlm: id });
+      setListDataItem(resp.data || []);
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -175,10 +158,13 @@ const useJournal = () => {
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
     //pass BDT from localstorage
-    setFormData({ ...dataModel, jrnlm_crncy: "BDT" });
+    setFormData({ ...dataModel, jrnlm_crncy: "BDT", jrnlm_stats: "Posted" });
     setReadOnly(false);
     setStopEdit(false);
     getAllDepartments();
+    //lines
+    getCoaChildOnly();
+    setListDataItem([]);
   };
 
   const handleCancel = () => {
@@ -195,17 +181,17 @@ const useJournal = () => {
       if (Object.keys(newErrors).length > 0) {
         return;
       }
-      if (listDataItems.length === 0) {
+      if (listDataItem.length === 0) {
         showToast("At least 1 journal line is required", { type: "warning" });
         return;
       }
 
       // Validate that total debit equals total credit
-      const totalDr = listDataItems.reduce(
+      const totalDr = listDataItem.reduce(
         (sum, item) => sum + (Number(item.jrnlc_drval) || 0),
         0,
       );
-      const totalCr = listDataItems.reduce(
+      const totalCr = listDataItem.reduce(
         (sum, item) => sum + (Number(item.jrnlc_crval) || 0),
         0,
       );
@@ -216,7 +202,7 @@ const useJournal = () => {
 
       const reqBody = {
         ...formData,
-        tmtb_jrnlc: listDataItems,
+        tmtb_jrnlc: listDataItem,
       };
 
       setIsBusy(true);
@@ -239,16 +225,69 @@ const useJournal = () => {
   };
 
   // ---------- Journal Items (lines) ----------
+  useEffect(() => {
+    const totalDr = listDataItem.reduce(
+      (sum, item) => sum + (Number(item.jrnlc_drval) || 0),
+      0,
+    );
+    const totalCr = listDataItem.reduce(
+      (sum, item) => sum + (Number(item.jrnlc_crval) || 0),
+      0,
+    );
 
-  const handleChangeItem = (f, v) => {
+    setFormData((prev) => ({
+      ...prev,
+      jrnlm_drval: totalDr,
+      jrnlm_crval: totalCr,
+    }));
+  }, [listDataItem]);
+
+  const [chtac_Options, setChtac_Options] = useState([]);
+  const [party_Options, setParty_Options] = useState([]);
+
+  const getCoaChildOnly = async () => {
+    if (chtac_Options.length > 0) return;
+    try {
+      const resp = await coaAPI.getAllActive({});
+      const list = resp.data || [];
+      //filter posted only
+      const listActive = list.map((item) => ({
+        id: item.id,
+        name: item.chtac_cname,
+        parent_id: item.chtac_chtac,
+        active: item.chtac_ispst,
+      }));
+      //build path for all
+      const buildPathsList = buildPaths(listActive);
+      //apply filter and set state
+      setChtac_Options(buildPathsList.filter((item) => item.active));
+    } catch (error) {}
+  };
+
+  const getPartyByCoa = async (id) => {
+    try {
+      const resp = await partyAPI.getByCoa({ party_chtac: id });
+      const list = resp.data || [];
+      const listActive = list.map((item) => ({
+        id: item.id,
+        name: item.party_ptype + " - " + item.party_cname,
+      }));
+      setParty_Options(listActive);
+    } catch (error) {}
+  };
+
+  const handleChangeItem = async (f, v) => {
     setFormDataItem((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formDataItem, [f]: v }, tmtb_jrnlc);
-    setFormErrorsItem(newErrors);
+    setFormErrors(newErrors);
+    if (f === "jrnlc_chtac") {
+      getPartyByCoa(v);
+    }
   };
 
   const handleAddToList = () => {
     const newErrors = validate(formDataItem, tmtb_jrnlc);
-    setFormErrorsItem(newErrors);
+    setFormErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       return;
     }
@@ -276,12 +315,16 @@ const useJournal = () => {
       (opt) => opt.id === formDataItem.jrnlc_party,
     );
 
-    setListDataItems((prev) => [
+    // console.log("chtac_cname",chtac_cname);
+    // console.log("party_cname",party_cname);
+
+    setListDataItem((prev) => [
       ...prev,
       {
         ...formDataItem,
-        chtac_cname: chtac_cname?.chtac_cname || "Invalid Account",
-        party_cname: party_cname?.party_cname || "",
+        id: generateGuid(),
+        chtac_cname: chtac_cname?.name || "Invalid GL",
+        party_cname: party_cname?.name || "Invalid SGL",
         jrnlc_actve: true,
       },
     ]);
@@ -291,7 +334,7 @@ const useJournal = () => {
 
   const handleEditItem = (rowData) => {
     setFormDataItem(rowData);
-    setShowModal(true);
+    handleShowModal("ITEMS");
   };
 
   const handleDeleteItem = async (rowData) => {
@@ -303,20 +346,22 @@ const useJournal = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataItems((prev) =>
-      prev.filter((item) => item.jrnlc_chtac !== rowData.jrnlc_chtac),
-    );
+    setListDataItem((prev) => prev.filter((item) => item.id !== rowData.id));
     showToast("Removed successfully", { type: "success" });
   };
 
   //modal
   const handleShowModal = (modal) => {
     setShowModal({ show: true, modal: modal });
-    setModalTitle({
-      title: "Add Journal Line",
-      subTitle: "Journal Entry",
-    });
+    if (modal === "ITEM") {
+      setFormDataItem(dataModelItem);
+      setModalTitle({
+        title: "Add Journal Line",
+        subTitle: "Journal Entry",
+      });
+    }
   };
+
   const handleHideModal = () => {
     setShowModal({ show: false, modal: "" });
     setModalTitle({ title: "", subTitle: "" });
@@ -337,6 +382,9 @@ const useJournal = () => {
     dpart_Options,
     fsyar_Options,
     acprd_Options,
+    //lines
+    chtac_Options,
+    party_Options,
     //functions
     handleChange,
     handleEdit,
@@ -348,6 +396,8 @@ const useJournal = () => {
     //journal lines
     handleChangeItem,
     handleAddToList,
+    handleEditItem,
+    handleDeleteItem,
     //modal
     showModal,
     modalTitle,

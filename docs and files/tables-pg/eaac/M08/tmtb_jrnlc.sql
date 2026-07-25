@@ -9,7 +9,7 @@ CREATE TABLE tmtb_jrnlc (
   jrnlc_users varchar(50) NOT NULL,
   jrnlc_bsins varchar(50) NOT NULL,
   jrnlc_dpart varchar(50) NOT NULL,
-  jrnlc_mjrnl varchar(50) NOT NULL,
+  jrnlc_jrnlm varchar(50) NOT NULL,
   jrnlc_chtac varchar(50) NOT NULL,
   jrnlc_party varchar(50) NOT NULL,
   jrnlc_drval decimal(18,6) NOT NULL DEFAULT 0,

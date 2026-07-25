@@ -6,26 +6,44 @@ import { getRelativeDays } from "@/utils/datetime.js";
 
 const JournalList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "jrnlm_trnno", header: "Trn No", width: "100px" },
+    { key: "jrnlm_trtyp", header: "Type", width: "80px" },
+    { key: "jrnlm_trnno", header: "Trn No", width: "80px" },
     {
       key: "jrnlm_trdat",
       header: "Date",
-      width: "100px",
+      width: "80px",
       render: (v) => getRelativeDays(v),
     },
-    { key: "jrnlm_narrt", header: "Narration", width: "250px" },
-    { key: "jrnlm_trtyp", header: "Type", width: "120px" },
     {
-      key: "jrnlm_drval",
-      header: "Debit",
-      width: "100px",
-      render: (v) => v?.toLocaleString?.() || v,
+      key: "jrnlm_narrt",
+      header: "Narration",
+      width: "150px",
+      render(_, rowData) {
+        return (
+          <>
+            <div className="mb-1">
+              <span className="text-xs">{rowData?.jrnlm_refno}</span>
+            </div>
+            <div>
+              <span className="text-xs">{rowData?.jrnlm_narrt}</span>
+            </div>
+          </>
+        );
+      },
     },
     {
-      key: "jrnlm_crval",
-      header: "Credit",
+      key: "jrnlm_drval",
+      header: "Amount",
       width: "100px",
-      render: (v) => v?.toLocaleString?.() || v,
+      render: (_, rowData) => {
+        const value =
+          Number(rowData.jrnlm_drval || 0) - Number(rowData.jrnlm_crval || 0);
+        if (value !== 0) {
+          return value.toLocaleString() + " (Unmatched)";
+        } else {
+          return "Matched";
+        }
+      },
     },
     {
       key: "jrnlm_stats",

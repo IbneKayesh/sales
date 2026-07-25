@@ -8,7 +8,7 @@
     "label": "Journal",
     "maxLength": 50,
     "placeholder": "Select journal",
-    "required": true
+    "required": false
   },
   "jrnlc_chtac": {
     "type": "string",
@@ -22,28 +22,28 @@
     "label": "Party",
     "maxLength": 50,
     "placeholder": "Select party",
-    "required": false
+    "required": true
   },
   "jrnlc_drval": {
     "type": "decimal",
     "label": "Debit Amount",
     "default": 0,
     "placeholder": "Enter debit amount",
-    "required": true
+    "required": false
   },
   "jrnlc_crval": {
     "type": "decimal",
     "label": "Credit Amount",
     "default": 0,
     "placeholder": "Enter credit amount",
-    "required": true
+    "required": false
   },
   "jrnlc_descr": {
     "type": "string",
     "label": "Description",
     "maxLength": 200,
     "placeholder": "Enter description",
-    "required": false
+    "required": true
   },
   "jrnlc_sorce": {
     "type": "string",
@@ -57,13 +57,6 @@
     "label": "Reference ID",
     "maxLength": 50,
     "placeholder": "Enter reference id",
-    "required": false
-  },
-  "jrnlc_lines": {
-    "type": "number",
-    "label": "Line No",
-    "default": 1,
-    "placeholder": "Line number",
     "required": false
   }
 }

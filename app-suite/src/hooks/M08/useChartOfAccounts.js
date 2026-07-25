@@ -38,6 +38,7 @@ const useChartOfAccounts = () => {
           id: item.id,
           name: item.chtac_cname,
           parent_id: item.chtac_chtac,
+          active: item.chtac_actve,
         }));
 
       // setChtac_chtac_Options(
