@@ -1,0 +1,87 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "jrnlm_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select department",
+    "required": true
+  },
+  "jrnlm_fsyar": {
+    "type": "string",
+    "label": "Fiscal Year",
+    "maxLength": 50,
+    "placeholder": "Select fiscal year",
+    "required": true
+  },
+  "jrnlm_acprd": {
+    "type": "string",
+    "label": "Accounting Period",
+    "maxLength": 50,
+    "placeholder": "Select accounting period",
+    "required": true
+  },
+  "jrnlm_crncy": {
+    "type": "string",
+    "label": "Currency",
+    "maxLength": 50,
+    "placeholder": "Select currency",
+    "required": true
+  },
+  "jrnlm_trtyp": {
+    "type": "string",
+    "label": "Transaction Type",
+    "maxLength": 50,
+    "placeholder": "Enter transaction type",
+    "required": true,
+    "default": "JRV"
+  },
+  "jrnlm_trdat": {
+    "type": "date",
+    "label": "Transaction Date",
+    "placeholder": "Select date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "jrnlm_refno": {
+    "type": "string",
+    "label": "Reference No",
+    "maxLength": 50,
+    "placeholder": "Enter reference number",
+    "required": true,
+    "default": "Ref#"
+  },
+  "jrnlm_narrt": {
+    "type": "string",
+    "label": "Narration",
+    "maxLength": 200,
+    "minLength": 3,
+    "placeholder": "Enter narration",
+    "required": true
+  },
+  "jrnlm_drval": {
+    "type": "decimal",
+    "label": "Total Debit",
+    "default": 0,
+    "placeholder": "Total debit amount",
+    "required": true
+  },
+  "jrnlm_crval": {
+    "type": "decimal",
+    "label": "Total Credit",
+    "default": 0,
+    "placeholder": "Total credit amount",
+    "required": true
+  },
+  "jrnlm_stats": {
+    "type": "string",
+    "label": "Status",
+    "maxLength": 50,
+    "placeholder": "Enter status",
+    "required": true,
+    "default": "Draft"
+  }
+}

@@ -26,4 +26,8 @@ export const acprdAPI = {
     apiRequest("/M08/v1/accounting-periods/get-all-active", {
       body: data,
     }),
+  getCurrentByFy: (data) =>
+    apiRequest("/M08/v1/accounting-periods/get-current-by-fy", {
+      body: data,
+    }),
 };

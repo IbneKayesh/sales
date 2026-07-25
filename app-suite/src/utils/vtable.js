@@ -78,6 +78,37 @@ const chtac_ctype_Options = [
   { label: "Expenses", value: "Expenses" },
 ];
 
+const jrnlm_trtyp_Options = [
+  {
+    label: "Journal Voucher",
+    value: "JRV",
+  },
+  {
+    label: "Contra Voucher",
+    value: "CTV",
+  },
+  {
+    label: "Purchase Voucher",
+    value: "PRV",
+  },
+  {
+    label: "Payment Voucher",
+    value: "PYV",
+  },
+  {
+    label: "Sales Voucher",
+    value: "SLV",
+  },
+  {
+    label: "Receipt Voucher",
+    value: "RCV",
+  },
+  {
+    label: "Adjustment Entry",
+    value: "ADJ",
+  },
+];
+
 export {
   cntry_Options,
   crncy_Options,
@@ -92,4 +123,5 @@ export {
   chtac_ntype_Options,
   ctype_Options,
   chtac_ctype_Options,
+  jrnlm_trtyp_Options,
 };
