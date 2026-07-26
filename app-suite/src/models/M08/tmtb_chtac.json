@@ -26,9 +26,9 @@
     "required": true
   },
   "chtac_chtno": {
-    "type": "number",
+    "type": "string",
     "label": "Chart Number",
-    "default": 0,
+    "default": "",
     "placeholder": "Enter chart number",
     "required": true
   },

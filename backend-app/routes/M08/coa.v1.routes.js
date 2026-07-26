@@ -19,13 +19,14 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT coa.*,
+    const sql = `SELECT coa.*, cob.chtac_cname AS parnt_cname,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmtb_chtac coa
+    LEFT JOIN tmtb_chtac cob ON coa.chtac_chtac = cob.id
     LEFT JOIN tmhb_emply csr ON coa.chtac_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON coa.chtac_upusr = usr.id
     WHERE coa.chtac_users = $1
-    ORDER BY coa.chtac_chtno ASC`;
+    ORDER BY coa.chtac_chtno DESC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get account coa- ${user_c}`);
@@ -84,6 +85,12 @@ router.post("/get-all-active", async (req, res) => {
 
 const create = async (req, res) => {
   try {
+    // return res.json({
+    //   success: false,
+    //   message: "Restricted.",
+    //   data: {},
+    // });
+
     const {
       id,
       chtac_users,
@@ -124,32 +131,32 @@ const create = async (req, res) => {
     const chtac_child_new = chtac_chtac === "-" ? false : true;
     const newCode = await GenNewCode(user_c, "tmtb_chtac");
 
-    const sql_sequence_no = `SELECT shtbl_value FROM tmsb_shtbl WHERE shtbl_gname = $1 AND shtbl_dvalu = $2 AND shtbl_users = $3`;
-    const row_sequence_no = await dbGet(
-      sql_sequence_no,
-      [chtac_ctype, chtac_ctype, user_c],
-      `get account coa- ${user_c}`,
-    );
+    // const sql_sequence_no = `SELECT shtbl_value FROM tmsb_shtbl WHERE shtbl_gname = $1 AND shtbl_dvalu = $2 AND shtbl_users = $3`;
+    // const row_sequence_no = await dbGet(
+    //   sql_sequence_no,
+    //   [chtac_ctype, chtac_ctype, user_c],
+    //   `get account coa- ${user_c}`,
+    // );
 
-    if (!row_sequence_no) {
-      return res.json({
-        success: false,
-        message: "No range setup for this account type.",
-        data: {},
-      });
-    }
+    // if (!row_sequence_no) {
+    //   return res.json({
+    //     success: false,
+    //     message: "No range setup for this account type.",
+    //     data: {},
+    //   });
+    // }
 
-    const sql_sl = `SELECT COUNT(id) AS last_no FROM tmtb_chtac WHERE chtac_ctype = $1 AND chtac_users = $2`;
-    const row_sl = await dbGet(
-      sql_sl,
-      [chtac_ctype, user_c],
-      `get account coa- ${user_c}`,
-    );
+    // const sql_sl = `SELECT COUNT(id) AS last_no FROM tmtb_chtac WHERE chtac_ctype = $1 AND chtac_users = $2`;
+    // const row_sl = await dbGet(
+    //   sql_sl,
+    //   [chtac_ctype, user_c],
+    //   `get account coa- ${user_c}`,
+    // );
 
     //console.log(row_sequence_no, row_sl);
 
-    const chtac_chtno_new =
-      Number(row_sequence_no.shtbl_value) + Number(row_sl?.last_no || 0);
+   // const chtac_chtno_new =
+    //  Number(row_sequence_no.shtbl_value) + Number(row_sl?.last_no || 0);
 
     const sql = `INSERT INTO tmtb_chtac(id, chtac_users, chtac_bsins, chtac_chtac, chtac_ccode, chtac_cname,
     chtac_ctype, chtac_chtno, chtac_ntype, chtac_child, chtac_ispst, chtac_crusr, chtac_upusr)
@@ -163,7 +170,7 @@ const create = async (req, res) => {
       newCode,
       chtac_cname,
       chtac_ctype,
-      chtac_chtno_new,
+      chtac_chtno,
       chtac_ntype,
       chtac_child_new,
       chtac_ispst,
@@ -191,7 +198,12 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-   const {
+    // return res.json({
+    //   success: false,
+    //   message: "Restricted.",
+    //   data: {},
+    // });
+    const {
       id,
       chtac_users,
       chtac_bsins,
@@ -229,14 +241,16 @@ const update = async (req, res) => {
     const sql = `UPDATE tmtb_chtac
     SET chtac_chtac = $1,
     chtac_cname = $2,
-    chtac_ispst = $3,
-    chtac_upusr = $4,
+    chtac_chtno = $3,
+    chtac_ispst = $4,
+    chtac_upusr = $5,
     chtac_updat = CURRENT_TIMESTAMP,
     chtac_rvnmr = chtac_rvnmr + 1
-    WHERE id = $5`;
+    WHERE id = $6`;
     const params = [
       chtac_chtac,
       chtac_cname,
+      chtac_chtno,
       chtac_ispst,
       user_s,
       id,
@@ -312,7 +326,6 @@ router.post("/delete", async (req, res) => {
     });
   }
 });
-
 
 // get-coa-child-only
 router.post("/get-coa-child-only", async (req, res) => {
@@ -398,6 +411,5 @@ router.post("/get-with-party-count", async (req, res) => {
     });
   }
 });
-
 
 module.exports = router;

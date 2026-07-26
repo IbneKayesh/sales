@@ -20,7 +20,7 @@ const PartyForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-4">
+        <div className="col-span-3">
           <Dropdown
             label="Party Type"
             options={party_ptype_Options.filter((p) => !p.auto_create)}
@@ -32,7 +32,7 @@ const PartyForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-9">
           <Dropdown
             label="Ledger"
             options={chtac_Options}
@@ -46,7 +46,7 @@ const PartyForm = ({
             optionLabel="name"
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-12">
           <InputText
             label="Party Name"
             placeholder="Enter party name"

@@ -46,7 +46,7 @@ const COAForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <Dropdown
             label="Account Type"
             options={chtac_ctype_Options}
@@ -58,7 +58,18 @@ const COAForm = ({
             disabled={readOnly || stopEdit}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
+          <InputText
+            label="Chart No"
+            placeholder="Enter chart no"
+            value={formData.chtac_chtno}
+            onChange={(e) => onChange("chtac_chtno", e.target.value)}
+            error={formErrors.chtac_chtno}
+            required
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
           <Dropdown
             label="Nature Type"
             options={chtac_ntype_Options}
@@ -66,12 +77,12 @@ const COAForm = ({
             onChange={(e) => onChange("chtac_ntype", e.target.value)}
             error={formErrors.chtac_ntype}
             required
-            placeholder="Dr/Cr"
+            placeholder="Select..."
             disabled={readOnly}
           />
         </div>
         <div
-          className="col-span-4"
+          className="col-span-3"
           style={{
             paddingTop: "var(--sp-6)",
           }}
@@ -82,7 +93,7 @@ const COAForm = ({
               formData.chtac_ispst === true || formData.chtac_ispst === "true"
             }
             onChange={(e) => onChange("chtac_ispst", e.target.checked)}
-            disabled={readOnly}
+            //disabled={readOnly}
           />
         </div>
       </div>

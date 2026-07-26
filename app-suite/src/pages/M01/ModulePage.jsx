@@ -265,7 +265,16 @@ const menus = [
     menus_color: "#8b5cf6",
     menus_micon: <IconUsers />,
     menus_odrby: 4,
-    menus_mlink: "/M08/parties",
+    menus_mlink: "/accounts/setup/parties",
+    menus_menus: "M08",
+  },
+  {
+    id: "M08-M0004-1",
+    menus_mname: "Party Accounts Auto",
+    menus_color: "#8b5cf6",
+    menus_micon: <IconUsers />,
+    menus_odrby: 4,
+    menus_mlink: "/accounts/setup/party-auto",
     menus_menus: "M08",
   },
   {

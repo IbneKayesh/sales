@@ -1,0 +1,35 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "prtya_sorce": {
+    "type": "string",
+    "label": "Source",
+    "maxLength": 50,
+    "placeholder": "Select source",
+    "required": true
+  },
+  "prtya_cname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "placeholder": "Select name",
+    "required": true
+  },
+  "prtya_chtac": {
+    "type": "string",
+    "label": "Ledger",
+    "maxLength": 50,
+    "placeholder": "Select ledger",
+    "required": true
+  },
+  "prtya_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

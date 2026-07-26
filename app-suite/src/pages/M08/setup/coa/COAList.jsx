@@ -5,6 +5,7 @@ import ActionButton from "@/components/ActionButton";
 
 const COAList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
+    { key: "parnt_cname", header: "Parent", width: "180px" },
     { key: "chtac_cname", header: "Name", width: "180px" },
     { key: "chtac_ctype", header: "Type", width: "180px" },
     { key: "chtac_chtno", header: "Chart No", width: "140px" },
@@ -65,7 +66,7 @@ const COAList = ({ listData, onEdit, onDelete }) => {
     <DataTable
       columns={dtColumns}
       data={listData}
-      pageSize={10}
+      pageSize={50}
       sortable
       searchable
       striped

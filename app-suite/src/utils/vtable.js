@@ -110,6 +110,27 @@ const jrnlm_trtyp_Options = [
   },
 ];
 
+const coa_party = [
+  {
+    label: "Customer Party",
+    account: "Assets",
+    value: "SYS_COA_PARTY_CUSTOMER",
+    key: "Customer",
+  },
+  {
+    label: "Customer Party",
+    account: "Liabilites",
+    value: "SYS_COA_PARTY_SUPPLIER",
+    key: "Supplier",
+  },
+  {
+    label: "Inventory Party",
+    account: "Assets > Inventory",
+    value: "SYS_COA_PARTY_PRODUCTS",
+    key: "Product",
+  },
+];
+
 export {
   cntry_Options,
   crncy_Options,

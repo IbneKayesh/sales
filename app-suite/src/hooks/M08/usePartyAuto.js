@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { coaAPI } from "@/api/M08/coaAPI.js";
+import { partyAutoAPI } from "@/api/M08/partyAutoAPI.js";
+import { partyAPI } from "@/api/M08/partyAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmtb_chtac from "@/models/M08/tmtb_chtac.json";
-const dataModel = generateDataModel(tmtb_chtac);
+import tmtb_party from "@/models/M08/tmtb_party.json";
+const dataModel = generateDataModel(tmtb_party);
+import { coaAPI } from "@/api/M08/coaAPI.js";
 import { buildPaths } from "@/utils/pathBuilder.js";
 
-const useChartOfAccounts = () => {
+const usePartyAuto = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M08-M0001");
+  const [pgId, setPgId] = useState("M08-M02-M003");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -23,32 +25,15 @@ const useChartOfAccounts = () => {
   const [listDataItem, setListDataItem] = useState([]);
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
-  const [chtac_chtac_Options, setChtac_chtac_Options] = useState([]);
+  //others
+  const [chtac_Options, setChtac_Options] = useState([]);
 
-  const getAllCoa = async () => {
+  const getAllPartyAuto = async () => {
     try {
       setIsBusy(true);
-      const resp = await coaAPI.getAll({});
+      const resp = await partyAutoAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
-      //make this parent
-      const listActive = list
-        .filter((item) => item.chtac_actve)
-        .map((item) => ({
-          id: item.id,
-          name: item.chtac_cname,
-          parent_id: item.chtac_chtac,
-          active: item.chtac_ispst,
-        }));
-
-      setChtac_chtac_Options(
-        buildPaths([
-          { id: "-", name: "(No Parent)", parent_id: "-" },
-          ...listActive.filter((f) => !f.active),
-        ]),
-      );
-
-      //setChtac_chtac_Options(buildPaths(listActive));
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -56,26 +41,34 @@ const useChartOfAccounts = () => {
   };
 
   useEffect(() => {
-    getAllCoa();
+    getAllPartyAuto();
   }, []);
+
+    const getCoaChildOnly = async () => {
+    if (chtac_Options.length > 0) return;
+    try {
+      const resp = await coaAPI.getAllActive({});
+      const list = resp.data || [];
+      //filter posted only
+      const listActive = list.map((item) => ({
+        id: item.id,
+        name: item.chtac_cname,
+        parent_id: item.chtac_chtac,
+        active: item.chtac_ispst,
+      }));
+      //build path for all
+      const buildPathsList = buildPaths(listActive);
+      //apply filter and set state
+      setChtac_Options(buildPathsList.filter((item) => item.active));
+    } catch (error) {}
+  };
+
+
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmtb_chtac);
+    const newErrors = validate({ ...formData, [f]: v }, tmtb_party);
     setFormErrors(newErrors);
-    if (f === "chtac_chtac" && v === "-") {
-      setStopEdit(false);
-    } else if (f === "chtac_chtac" && v !== "-") {
-      setStopEdit(true);
-
-      const chtac_ctype = listData.find((opt) => opt.id === v);
-      //console.log(chtac_ctype);
-      setFormData((prev) => ({
-        ...prev,
-        chtac_ctype: chtac_ctype?.chtac_ctype,
-        chtac_ntype: chtac_ctype?.chtac_ntype,
-      }));
-    }
   };
 
   const handleEdit = (rowData) => {
@@ -84,8 +77,8 @@ const useChartOfAccounts = () => {
   };
 
   const handleDelete = async (rowData) => {
-    const isActive = rowData.chtac_actve;
-    const dataName = rowData.chtac_cname;
+    const isActive = rowData.party_actve;
+    const dataName = rowData.party_cname;
     const confirmation = await confirmBox({
       title: isActive ? "Deactivate" : "Activate",
       message: `Are you sure you want to ${
@@ -98,7 +91,7 @@ const useChartOfAccounts = () => {
 
     try {
       setIsBusy(true);
-      const resp = await coaAPI.delete(rowData);
+      const resp = await partyAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -112,7 +105,7 @@ const useChartOfAccounts = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllCoa();
+        getAllParty();
       }
     } catch (error) {
     } finally {
@@ -121,14 +114,14 @@ const useChartOfAccounts = () => {
   };
 
   const handleSearch = async () => {
-    getAllCoa();
+    getAllParty();
   };
-
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
     setFormData(dataModel);
     setReadOnly(false);
-    setStopEdit(false);
+    setStopEdit(false);    
+    getCoaChildOnly();
   };
 
   const handleCancel = () => {
@@ -140,7 +133,8 @@ const useChartOfAccounts = () => {
 
   const handleSubmit = async () => {
     try {
-      const newErrors = validate(formData, tmtb_chtac);
+      const newErrors = validate(formData, tmtb_party);
+      console.log("newErrors",newErrors)
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
@@ -151,7 +145,7 @@ const useChartOfAccounts = () => {
       };
       setIsBusy(true);
 
-      const resp = await coaAPI.upsert(reqBody);
+      const resp = await partyAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -161,7 +155,7 @@ const useChartOfAccounts = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllCoa();
+        getAllParty();
       }
     } catch (error) {
     } finally {
@@ -181,7 +175,7 @@ const useChartOfAccounts = () => {
     formDataItem,
     formErrors,
     //others
-    chtac_chtac_Options,
+    chtac_Options,
     //functions
     handleChange,
     handleEdit,
@@ -192,4 +186,4 @@ const useChartOfAccounts = () => {
     handleSubmit,
   };
 };
-export default useChartOfAccounts;
+export default usePartyAuto;

@@ -9,7 +9,7 @@ CREATE TABLE tmtb_chtac (
   chtac_chtac varchar(50) NOT NULL DEFAULT '-',
   chtac_cname varchar(50) NOT NULL,
   chtac_ctype varchar(50) NOT NULL,
-  chtac_chtno integer NOT NULL DEFAULT 0,
+  chtac_chtno varchar(50) NOT NULL,
   chtac_ntype varchar(2) NOT NULL,
   chtac_child boolean NOT NULL DEFAULT false,
   chtac_ispst boolean NOT NULL DEFAULT false,
