@@ -11,6 +11,7 @@ import {
   sorce_Options,
   ctype_Options,
 } from "@/utils/vtable.js";
+import PartyView from "@/pages/M08/setup/parties/PartyView.jsx";
 
 const ContactForm = ({
   isBusy,
@@ -21,6 +22,7 @@ const ContactForm = ({
   onChange,
   onCancel,
   onSubmit,
+  partyData,
 }) => {
   return (
     <div className="form-wrap">
@@ -77,6 +79,7 @@ const ContactForm = ({
             value={formData.cntct_cntps}
             onChange={(e) => onChange("cntct_cntps", e.target.value)}
             error={formErrors.cntct_cntps}
+            required
             disabled={readOnly}
           />
         </div>
@@ -195,6 +198,7 @@ const ContactForm = ({
           rvnmr={formData.cntct_rvnmr}
         />
       )}
+      {formData?.id && <PartyView listData={partyData} />}
       <div className="form-actions">
         <Button variant="secondary" onClick={onCancel} disabled={isBusy}>
           <IconClose size={16} className="icon-left" />

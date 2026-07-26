@@ -4,12 +4,7 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import {
-  IconSearch,
-  IconClose,
-  IconPlus,
-  IconSave,
-} from "@/icons";
+import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
 import useContact from "@/hooks/M06/useContact";
 import ContactList from "./ContactList";
@@ -27,6 +22,8 @@ const ContactPage = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    partyData,
     //functions
     handleChange,
     handleEdit,
@@ -87,6 +84,7 @@ const ContactPage = () => {
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}
+              partyData={partyData}
             />
           )}
         </PageCardBody>

@@ -26,6 +26,7 @@ const useParty = () => {
   const [formErrors, setFormErrors] = useState({});
   //others
   const [chtac_Options, setChtac_Options] = useState([]);
+  const [vndor_Options, setVndor_Options] = useState([]);
 
   const getAllParty = async () => {
     try {
@@ -43,7 +44,7 @@ const useParty = () => {
     getAllParty();
   }, []);
 
-    const getCoaChildOnly = async () => {
+  const getCoaChildOnly = async () => {
     if (chtac_Options.length > 0) return;
     try {
       const resp = await coaAPI.getAllActive({});
@@ -62,12 +63,29 @@ const useParty = () => {
     } catch (error) {}
   };
 
-
+  const getVendorExtData = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await partyAPI.getVendorExt({
+        party_ptype: id,
+      });
+      const list = resp.data || [];
+      console.log(list);
+      setVndor_Options(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmtb_party);
     setFormErrors(newErrors);
+
+    if (f === "party_ptype" && pgView === "SYS_VW_FRM_2") {
+      getVendorExtData(v);
+    }
   };
 
   const handleEdit = (rowData) => {
@@ -115,11 +133,12 @@ const useParty = () => {
   const handleSearch = async () => {
     getAllParty();
   };
+
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
     setFormData(dataModel);
     setReadOnly(false);
-    setStopEdit(false);    
+    setStopEdit(false);
     getCoaChildOnly();
   };
 
@@ -133,7 +152,7 @@ const useParty = () => {
   const handleSubmit = async () => {
     try {
       const newErrors = validate(formData, tmtb_party);
-      console.log("newErrors",newErrors)
+      //console.log("newErrors", newErrors);
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
@@ -153,6 +172,53 @@ const useParty = () => {
       });
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
+        setFormData(dataModel);
+        getAllParty();
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  //existing
+  const handleAddNewExt = () => {
+    setPgView("SYS_VW_FRM_2");
+    setFormData(dataModel);
+    setReadOnly(false);
+    setStopEdit(false);
+  };
+
+  const handleSubmitExt = async () => {
+    try {
+      //const newErrors = validate(formData, tmtb_party);
+      //console.log("newErrors", newErrors);
+      const newErrors = {};
+      if (!formData.party_ptype) {
+        newErrors.party_ptype = "Type is required";
+      }
+      if (!formData.party_vndor) {
+        newErrors.party_vndor = "Vendor is required";
+      }
+      setFormErrors(newErrors);
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+
+      const reqBody = {
+        ...formData,
+      };
+      setIsBusy(true);
+
+      const resp = await partyAPI.createExt(reqBody);
+      alertBox({
+        title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        //setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
         getAllParty();
       }
@@ -183,6 +249,10 @@ const useParty = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //existing
+    handleAddNewExt,
+    handleSubmitExt,
+    vndor_Options,
   };
 };
 export default useParty;

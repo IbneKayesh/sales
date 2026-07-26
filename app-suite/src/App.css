@@ -216,7 +216,7 @@ code {
   gap: var(--btn-gap, var(--sp-2));
   padding: var(--btn-padding, var(--sp-3) var(--sp-5));
   font-size: var(--btn-font-size, var(--fs-base));
-  font-weight: var(--fw-medium);
+  font-weight: var(--fw-normal);
   line-height: 1;
   color: var(--btn-color, var(--primary-on));
   background: var(--btn-bg, var(--primary));
@@ -2610,69 +2610,7 @@ code {
   flex-shrink: 0;
 }
 
-/* Android-style app icon grid */
-.module-page__menu-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: var(--sp-2);
-}
-
-.module-page__menu-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-2) var(--sp-2);
-  border: none;
-  border-radius: var(--radius-xl);
-  background: transparent;
-  cursor: pointer;
-  font-family: var(--font-sans);
-  font-size: var(--fs-sm);
-  color: var(--text-secondary);
-  text-align: center;
-  outline: none;
-  transition: all var(--transition-fast);
-}
-
-.module-page__menu-item:hover {
-  background: var(--surface-alt);
-  color: var(--text-primary);
-  transform: translateY(-2px);
-}
-
-.module-page__menu-item:focus-visible {
-  box-shadow: 0 0 0 3px var(--primary-border);
-}
-
-.module-page__menu-item:active {
-  transform: scale(0.95);
-}
-
-.module-page__menu-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: var(--radius-2xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: transform var(--transition-fast);
-}
-
-.module-page__menu-item:hover .module-page__menu-icon {
-  transform: scale(1.1);
-}
-
-.module-page__menu-label {
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-medium);
-  line-height: 1.2;
-  max-width: 80px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+/* Menu cards — inline styles used in JSX */
 
 /* --------------------------------------------------------------------------
    18. 12-Column Grid System

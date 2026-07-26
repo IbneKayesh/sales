@@ -172,7 +172,7 @@ export default function UsersPage() {
               alignItems: 'center',
               gap: 5,
               padding: '2px 8px',
-              fontSize: '12px',
+              fontSize: 'var(--fs-xs)',
               fontWeight: 600,
               borderRadius: 'var(--radius-md)',
               background: role ? `${role.color}18` : 'var(--code-bg)',

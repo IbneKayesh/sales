@@ -54,10 +54,10 @@ const variants = {
 }
 
 const sizes = {
-  xs: { padding: '5px 10px', fontSize: '12px', gap: '4px' },
-  sm: { padding: '7px 12px', fontSize: '13px', gap: '4px' },
-  md: { padding: '8px 16px', fontSize: '15px', gap: '6px' },
-  lg: { padding: '10px 22px', fontSize: '17px', gap: '8px' },
+  xs: { padding: '4px 8px', fontSize: '15px', gap: '4px', iconSize: 26 },
+  sm: { padding: '6px 10px', fontSize: '16px', gap: '4px', iconSize: 28 },
+  md: { padding: '7px 14px', fontSize: '18px', gap: '6px', iconSize: 30 },
+  lg: { padding: '9px 18px', fontSize: '20px', gap: '8px', iconSize: 32 },
 }
 
 export default function Button({
@@ -99,10 +99,10 @@ export default function Button({
     >
       {loading ? (
         <span className="btn__spinner" aria-hidden="true">
-          <IconSpinner size={16} />
+          <IconSpinner size={s.iconSize} />
         </span>
       ) : icon ? (
-        <span className="btn__icon">{icon}</span>
+        <span className="btn__icon" style={{ fontSize: s.iconSize, display: "inline-flex" }}>{icon}</span>
       ) : null}
       {children && <span className="btn__text">{children}</span>}
     </button>

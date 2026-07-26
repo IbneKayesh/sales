@@ -255,6 +255,7 @@ const update = async (req, res) => {
     }
 
     //database action
+    //items_itype :: accounts party created - don't update
     const sql = `UPDATE tmib_items
     SET items_iname = $1,
     items_brcod = $2,
@@ -264,21 +265,20 @@ const update = async (req, res) => {
     items_pkqty = $6,
     items_punit = $7,
     items_sgrup = $8,
-    items_scatg = $9,
-    items_itype = $10,
-    items_brand = $11,
-    items_tstck = $12,
-    items_sdvat = $13,
-    items_smrgn = $14,
-    items_fxcst = $15,
-    items_image = $16,
-    items_stpur = $17,
-    items_stsal = $18,
-    items_stnsf = $19,
-    items_upusr = $20,
+    items_scatg = $9,    
+    items_brand = $10,
+    items_tstck = $11,
+    items_sdvat = $12,
+    items_smrgn = $13,
+    items_fxcst = $14,
+    items_image = $15,
+    items_stpur = $16,
+    items_stsal = $17,
+    items_stnsf = $18,
+    items_upusr = $19,
     items_updat = CURRENT_TIMESTAMP,
     items_rvnmr = items_rvnmr + 1
-    WHERE id = $21`;
+    WHERE id = $20`;
     const params = [
       items_iname,
       items_brcod,
@@ -289,7 +289,6 @@ const update = async (req, res) => {
       items_punit,
       items_sgrup,
       items_scatg,
-      items_itype,
       items_brand,
       items_tstck,
       items_sdvat,

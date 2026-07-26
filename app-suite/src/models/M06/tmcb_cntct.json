@@ -30,7 +30,8 @@
     "type": "string",
     "label": "Contact Person",
     "maxLength": 50,
-    "placeholder": "Enter person name"
+    "placeholder": "Enter person name",
+    "required": true
   },
   "cntct_cntno": {
     "type": "string",
@@ -65,11 +66,35 @@
     "label": "Factory Address",
     "maxLength": 300
   },
+  "cntct_trtry": {
+    "type": "string",
+    "label": "Territory",
+    "maxLength": 50,
+    "default": ""
+  },
+  "cntct_tarea": {
+    "type": "string",
+    "label": "Area",
+    "maxLength": 50,
+    "default": ""
+  },
+  "cntct_dzone": {
+    "type": "string",
+    "label": "Zone",
+    "maxLength": 50,
+    "default": ""
+  },
   "cntct_cntry": {
     "type": "string",
     "label": "Country",
     "maxLength": 50,
     "default": "Bangladesh"
+  },
+  "cntct_cntad": {
+    "type": "string",
+    "label": "Default Address",
+    "maxLength": 50,
+    "default": ""
   },
   "cntct_crncy": {
     "type": "string",

@@ -9,6 +9,7 @@ import Button from "@/components/Button";
 import useParty from "@/hooks/M08/useParty";
 import PartyList from "./PartyList";
 import PartyForm from "./PartyForm";
+import PartyExisting from "./PartyExisting";
 
 const PartyPage = () => {
   const {
@@ -32,6 +33,9 @@ const PartyPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //existing
+    handleAddNewExt,
+    handleSubmitExt,vndor_Options
   } = useParty();
 
   return (
@@ -47,6 +51,12 @@ const PartyPage = () => {
               <Button variant="info" size="sm" onClick={handleSearch}>
                 <IconSearch size={14} className="icon-left" />
                 Search
+              </Button>
+            )}
+            {pgView === "SYS_VW_LST_1" && (
+              <Button size="sm" onClick={handleAddNewExt}>
+                <IconPlus size={14} className="icon-left" />
+                Add Existing
               </Button>
             )}
             {pgView === "SYS_VW_LST_1" && (
@@ -88,6 +98,19 @@ const PartyPage = () => {
               onCancel={handleCancel}
               onSubmit={handleSubmit}
               chtac_Options={chtac_Options}
+            />
+          )}
+          {pgView === "SYS_VW_FRM_2" && (
+            <PartyExisting
+              isBusy={isBusy}
+              readOnly={readOnly}
+              stopEdit={stopEdit}
+              formData={formData}
+              formErrors={formErrors}
+              onChange={handleChange}
+              onCancel={handleCancel}
+              onSubmit={handleSubmitExt}
+              vndor_Options={vndor_Options}
             />
           )}
         </PageCardBody>

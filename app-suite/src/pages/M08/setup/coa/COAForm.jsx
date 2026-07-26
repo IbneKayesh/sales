@@ -6,6 +6,7 @@ import Checkbox from "@/components/Checkbox";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 import { chtac_ntype_Options, chtac_ctype_Options } from "@/utils/vtable.js";
+import PartyView from "@/pages/M08/setup/parties/PartyView.jsx";
 
 const COAForm = ({
   isBusy,
@@ -17,6 +18,7 @@ const COAForm = ({
   onCancel,
   onSubmit,
   chtac_chtac_Options,
+  partyData,
 }) => {
   return (
     <div className="form-wrap">
@@ -106,6 +108,9 @@ const COAForm = ({
           udate={formData.chtac_updat}
           rvnmr={formData.chtac_rvnmr}
         />
+      )}
+      {formData?.id && formData?.chtac_child && formData?.chtac_ispst && (
+        <PartyView listData={partyData} />
       )}
       <div className="form-actions">
         <Button variant="secondary" onClick={onCancel} disabled={isBusy}>

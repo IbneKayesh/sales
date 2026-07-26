@@ -4,6 +4,7 @@ import { contactAPI } from "@/api/M06/contactAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmcb_cntct from "@/models/M06/tmcb_cntct.json";
 const dataModel = generateDataModel(tmcb_cntct);
+import { partyAPI } from "@/api/M08/partyAPI.js";
 
 const useContact = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -22,6 +23,8 @@ const useContact = () => {
   const [listDataItem, setListDataItem] = useState([]);
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
+  //others
+  const [partyData, setPartyData] = useState([]);
 
   const getAllContact = async () => {
     try {
@@ -39,15 +42,28 @@ const useContact = () => {
     getAllContact();
   }, []);
 
+  const getPartyData = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await partyAPI.getByVendorId({ party_vndor: id });
+      const data = resp.data || {};
+      setPartyData(data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmcb_cntct);
     setFormErrors(newErrors);
   };
 
-  const handleEdit = (rowData) => {
+  const handleEdit = async (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
+    getPartyData(rowData.id);
   };
 
   const handleDelete = async (rowData) => {
@@ -146,6 +162,8 @@ const useContact = () => {
     listDataItem,
     formDataItem,
     formErrors,
+    //others
+    partyData,
     //functions
     handleChange,
     handleEdit,

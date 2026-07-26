@@ -133,7 +133,7 @@ const create = async (req, res) => {
         newCode,
         party_ptype,
         party_chtac,
-        party_vndor || '-',
+        party_vndor || "-",
         party_cname,
         party_opbal,
         user_s,
@@ -162,7 +162,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-       const {
+    const {
       id,
       party_users,
       party_bsins,
@@ -301,8 +301,9 @@ router.post("/get-by-coa", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT prty.*, 0 as edit_stop
+    const sql = `SELECT prty.*, cht.chtac_cname, cht.chtac_ctype, 0 as edit_stop
     FROM tmtb_party prty
+    LEFT JOIN tmtb_chtac cht ON prty.party_chtac = cht.id
     WHERE prty.party_users = $1
     AND prty.party_actve = TRUE
     AND prty.party_chtac = $2
@@ -325,8 +326,7 @@ router.post("/get-by-coa", async (req, res) => {
   }
 });
 
-
-// get-by-coa
+// get-by-contacts
 router.post("/get-by-contacts", async (req, res) => {
   try {
     const { party_vndor, user_s, user_c, user_b } = req.body;
@@ -356,6 +356,255 @@ router.post("/get-by-contacts", async (req, res) => {
       message: "Query executed successfully.",
       data: rows,
     });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+// get-by-vendor
+router.post("/get-by-vendor", async (req, res) => {
+  try {
+    const { party_vndor, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!party_vndor || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT prty.*, cht.chtac_cname, cht.chtac_ctype, 0 as edit_stop
+    FROM tmtb_party prty
+    LEFT JOIN tmtb_chtac cht ON prty.party_chtac = cht.id
+    WHERE prty.party_users = $1
+    AND prty.party_actve = TRUE
+    AND prty.party_vndor = $2
+    ORDER BY prty.party_chtac ASC`;
+
+    const params = [user_c, party_vndor];
+    const rows = await dbGetAll(sql, params, `get party accounts- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+//create-ext
+router.post("/create-ext", async (req, res) => {
+  try {
+    const { party_ptype, party_vndor, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!party_ptype || !party_vndor || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    //-----------------FIND VENDOR INFO-----------------
+    let vendorId = "";
+    let vendorName = "";
+    if (["Customer", "Supplier"].includes(party_ptype)) {
+      const sql_cntct = `SELECT id, cntct_cname
+      FROM tmcb_cntct
+      WHERE cntct_ccode = $1
+      AND cntct_users = $2
+      AND cntct_bsins = $3
+      AND cntct_ctype = $4
+      AND cntct_actve = TRUE`;
+      const row_cntct = await dbGet(
+        sql_cntct,
+        [party_vndor, user_c, user_b, party_ptype],
+        "",
+      );
+      //console.log("row_cntct", row_cntct);
+      if (!row_cntct) {
+        return res.json({
+          success: false,
+          message: "Contact is not found.",
+          data: [],
+        });
+      } else {
+        vendorId = row_cntct.id;
+        vendorName = row_cntct.cntct_cname;
+      }
+    } else if (["FG", "RM", "PM", "WIP", "FOH", "SVC"].includes(party_ptype)) {
+      const sql_cntct = `SELECT id, items_iname
+      FROM tmib_items
+      WHERE items_icode = $1
+      AND items_users = $2
+      AND items_bsins = $3
+      AND items_itype = $4
+      AND items_actve = TRUE`;
+      const row_cntct = await dbGet(
+        sql_cntct,
+        [party_vndor, user_c, user_b, party_ptype],
+        "",
+      );
+      //console.log("row_cntct", row_cntct);
+      if (!row_cntct) {
+        return res.json({
+          success: false,
+          message: "Product is not found.",
+          data: [],
+        });
+      } else {
+        vendorId = row_cntct.id;
+        vendorName = row_cntct.items_iname;
+      }
+    } else {
+      return res.json({
+        success: false,
+        message: "Vendor is not found.",
+        data: [],
+      });
+    }
+    //-----------------FIND VENDOR PARTY INFO-----------------
+    const sql_party = "SELECT * FROM tmtb_party WHERE party_vndor = $1";
+    const rows_party = await dbGetAll(sql_party, [vendorId], "");
+    //console.log("rows_party", rows_party);
+    if (rows_party.length > 0) {
+      return res.json({
+        success: false,
+        message: "Party already exists.",
+        data: [],
+      });
+    } else {
+      //-----------------FIND VENDOR PARTY CONFGURE-----------------
+      const sql_prtya = "SELECT * FROM tmtb_prtya WHERE prtya_sorce = $1";
+      const rows_prtya = await dbGetAll(sql_prtya, [party_ptype], "");
+      console.log("rows_prtya", rows_prtya);
+      if (rows_prtya.length > 0) {
+        for (const row of rows_prtya) {
+          //-----------------FIND COA INFO-----------------
+          const sql_chtac = "SELECT id FROM tmtb_chtac WHERE chtac_chtno = $1";
+          const row_chtac = await dbGet(sql_chtac, [row.prtya_chtac], "");
+          console.log("row_chtac", row_chtac);
+          if (!row_chtac) {
+            return res.json({
+              success: false,
+              message: "Chart of accounts is not found.",
+              data: [],
+            });
+          }
+          //-----------------CREATE VENDOR PARTY-----------------
+          const newCode = await GenNewCode(user_c, "tmtb_party");
+          const sql = `INSERT INTO tmtb_party(id, party_users, party_bsins, party_ccode, party_ptype, party_chtac,
+      party_vndor, party_cname, party_opbal, party_crusr, party_upusr)
+      VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11)`;
+          const params = [
+            uuidv4(),
+            user_c,
+            user_b,
+            newCode,
+            party_ptype,
+            row_chtac.id,
+            vendorId,
+            vendorName,
+            0,
+            user_s,
+            user_s,
+          ];
+          await dbRun(sql, params, `create party accounts- ${user_c}`);
+        }
+      } else {
+        return res.json({
+          success: false,
+          message: "Party configure is not found.",
+          data: [],
+        });
+      }
+    }
+    return res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: [],
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+//get-vendor-ext
+router.post("/get-vendor-ext", async (req, res) => {
+  try {
+    const { party_ptype, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!party_ptype || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    if (["Customer", "Supplier"].includes(party_ptype)) {
+      const sql_cntct = `SELECT cnt.cntct_ccode AS id, cnt.cntct_cname AS cname, pty.party_vndor
+      FROM tmcb_cntct cnt
+      LEFT JOIN tmtb_party pty ON cnt.id = pty.party_vndor
+      WHERE pty.party_vndor IS NULL
+      AND cnt.cntct_users = $1
+      AND cnt.cntct_bsins = $2
+      AND cnt.cntct_ctype = $3
+      AND cnt.cntct_actve = TRUE`;
+      const rows_cntct = await dbGetAll(sql_cntct, [user_c, user_b, party_ptype], "");
+      //console.log("row_cntct", row_cntct);
+      return res.json({
+        success: true,
+        message: "Query executed successfully.",
+        data: rows_cntct,
+      });
+    } else if (["FG", "RM", "PM", "WIP", "FOH", "SVC"].includes(party_ptype)) {
+      const sql_items = `SELECT itm.items_icode AS id, items_iname AS cname, pty.party_vndor
+      FROM tmib_items itm
+      LEFT JOIN tmtb_party pty ON itm.id = pty.party_vndor
+      WHERE pty.party_vndor IS NULL
+      AND itm.items_users = $1
+      AND itm.items_bsins = $2
+      AND itm.items_itype = $3
+      AND itm.items_actve = TRUE`;
+      const row_items = await dbGetAll(sql_items, [user_c, user_b, party_ptype], "");
+      //console.log("row_cntct", row_cntct);
+      return res.json({
+        success: true,
+        message: "Query executed successfully.",
+        data: row_items,
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: "Vendor is not found.",
+        data: [],
+      });
+    }
   } catch (error) {
     console.error("database action error:", error);
     return res.json({

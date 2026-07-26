@@ -5,6 +5,7 @@ import validate, { generateDataModel } from "@/models/validator";
 import tmtb_chtac from "@/models/M08/tmtb_chtac.json";
 const dataModel = generateDataModel(tmtb_chtac);
 import { buildPaths } from "@/utils/pathBuilder.js";
+import { partyAPI } from "@/api/M08/partyAPI.js";
 
 const useChartOfAccounts = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -24,6 +25,8 @@ const useChartOfAccounts = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
   const [chtac_chtac_Options, setChtac_chtac_Options] = useState([]);
+  //others
+  const [partyData, setPartyData] = useState([]);
 
   const getAllCoa = async () => {
     try {
@@ -59,6 +62,18 @@ const useChartOfAccounts = () => {
     getAllCoa();
   }, []);
 
+  const getPartyData = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await partyAPI.getByCoa({ party_chtac: id });
+      const data = resp.data || {};
+      setPartyData(data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmtb_chtac);
@@ -81,6 +96,9 @@ const useChartOfAccounts = () => {
   const handleEdit = (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
+    if (rowData.chtac_child && rowData.chtac_ispst) {
+      getPartyData(rowData.id);
+    }
   };
 
   const handleDelete = async (rowData) => {
@@ -182,6 +200,7 @@ const useChartOfAccounts = () => {
     formErrors,
     //others
     chtac_chtac_Options,
+    partyData,
     //functions
     handleChange,
     handleEdit,

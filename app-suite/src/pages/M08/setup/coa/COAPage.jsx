@@ -24,6 +24,7 @@ const COAPage = () => {
     formErrors,
     //others
     chtac_chtac_Options,
+    partyData,
     //functions
     handleChange,
     handleEdit,
@@ -88,6 +89,7 @@ const COAPage = () => {
               onCancel={handleCancel}
               onSubmit={handleSubmit}
               chtac_chtac_Options={chtac_chtac_Options}
+              partyData={partyData}
             />
           )}
         </PageCardBody>

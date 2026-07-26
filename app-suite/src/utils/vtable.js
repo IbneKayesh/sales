@@ -28,7 +28,7 @@ const inout_Options = [
 const itype_Options = [
   { label: "Raw Material (RM)", value: "RM" },
   { label: "Packing Material (PM)", value: "PM" },
-  { label: "Semi Finished (SFG)", value: "SFG" },
+  { label: "Work In Process (WIP)", value: "WIP" },
   { label: "Finished Goods (FG)", value: "FG" },
   { label: "Factory Overhead (FOH)", value: "FOH" },
   { label: "Service (SVC)", value: "SVC" },
@@ -59,6 +59,12 @@ const party_ptype_Options = [
   { label: "Investor", value: "Investor", auto_create: false },
   { label: "Bank", value: "Bank", auto_create: false },
   { label: "Cash", value: "Cash", auto_create: false },
+  { label: "Product-FG", value: "FG", auto_create: true },
+  { label: "Product-RM", value: "RM", auto_create: true },
+  { label: "Product-PM", value: "PM", auto_create: true },
+  { label: "Product-WIP", value: "WIP", auto_create: true },
+  { label: "Product-FOH", value: "FOH", auto_create: true },
+  { label: "Product-SVC", value: "SVC", auto_create: true },
 ];
 
 const chtac_ntype_Options = [
@@ -110,26 +116,6 @@ const jrnlm_trtyp_Options = [
   },
 ];
 
-const coa_party = [
-  {
-    label: "Customer Party",
-    account: "Assets",
-    value: "SYS_COA_PARTY_CUSTOMER",
-    key: "Customer",
-  },
-  {
-    label: "Customer Party",
-    account: "Liabilites",
-    value: "SYS_COA_PARTY_SUPPLIER",
-    key: "Supplier",
-  },
-  {
-    label: "Inventory Party",
-    account: "Assets > Inventory",
-    value: "SYS_COA_PARTY_PRODUCTS",
-    key: "Product",
-  },
-];
 
 export {
   cntry_Options,

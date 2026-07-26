@@ -17,332 +17,647 @@ import {
   IconHR,
   IconClose,
   IconSettings,
+  IconPurchase,
+  IconSales,
 } from "@/icons";
 
-const modules = [
+/* ─── Hierarchical App Data: Module > Groups > Menu ─────── */
+
+const iconMap = {
+  Home: IconHome,
+  Settings: IconSettings,
+  Box: IconBox,
+  Manufacture: IconManufacture,
+  CRM: IconCRM,
+  HR: IconHR,
+  Accounts: IconAccounts,
+  Activity: IconActivity,
+  File: IconFile,
+  Users: IconUsers,
+  Purchase: IconPurchase,
+  Sales: IconSales,
+};
+
+const resolveIcon = (name) => {
+  const Icon = iconMap[name];
+  return Icon ? <Icon /> : null;
+};
+
+/** Build a menu item object from a data entry */
+const toMenu = (m) => ({
+  id: m.id,
+  menus_mname: m.name,
+  menus_color: m.color,
+  menus_micon: resolveIcon(m.icon),
+  menus_odrby: m.order,
+  menus_mlink: m.link,
+  menus_mdesc: m.desc,
+});
+
+const appModules = [
   {
     id: "M00",
-    menus_mname: "Recent",
-    menus_micon: <IconHome />,
-    menus_color: "#7c3aed",
-    menus_odrby: 0,
+    name: "Recent",
+    icon: "Home",
+    color: "#7c3aed",
+    order: 0,
+    menus: [],
   },
   {
     id: "M01",
-    menus_mname: "Settings",
-    menus_micon: <IconSettings />,
-    menus_color: "#7c3aed",
-    menus_odrby: 1,
+    name: "Settings",
+    icon: "Settings",
+    color: "#7c3aed",
+    order: 1,
+    groups: [
+      {
+        id: "G01",
+        name: "General",
+        order: 1,
+        menus: [
+          {
+            id: "M01-G01-M001",
+            name: "Home",
+            color: "#7c3aed",
+            icon: "Home",
+            order: 1,
+            link: "/",
+            desc: "Return to dashboard overview",
+          },
+        ],
+      },
+      {
+        id: "G02",
+        name: "Setup",
+        order: 2,
+        menus: [
+          {
+            id: "M01-G02-M001",
+            name: "Departments",
+            color: "#7c3aed",
+            icon: "Home",
+            order: 8,
+            link: "/settings/departments",
+            desc: "Manage organizational departments",
+          },
+          {
+            id: "M01-G02-M002",
+            name: "Sections",
+            color: "#7c3aed",
+            icon: "Home",
+            order: 9,
+            link: "/settings/sections",
+            desc: "Configure department sections",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "M02",
+    name: "Purchase",
+    icon: "Purchase",
+    color: "#06b6d4",
+    order: 2,
+    groups: [
+      {
+        id: "G01",
+        name: "Setup",
+        order: 1,
+        menus: [
+          {
+            id: "M02-G01-M001",
+            name: "Suppliers",
+            color: "#06b6d4",
+            icon: "Purchase",
+            order: 1,
+            link: "/purchase/setup/suppliers",
+            desc: "Manage vendor and supplier profiles",
+          },
+          {
+            id: "M02-G01-M002",
+            name: "Purchase Categories",
+            color: "#06b6d4",
+            icon: "Purchase",
+            order: 2,
+            link: "/purchase/setup/categories",
+            desc: "Organize purchase item categories",
+          },
+        ],
+      },
+      {
+        id: "G02",
+        name: "Transactions",
+        order: 2,
+        menus: [
+          {
+            id: "M02-G02-M001",
+            name: "Purchase Orders",
+            color: "#06b6d4",
+            icon: "Purchase",
+            order: 1,
+            link: "/purchase/orders",
+            desc: "Create and track purchase orders",
+          },
+          {
+            id: "M02-G02-M002",
+            name: "Purchase Requisitions",
+            color: "#06b6d4",
+            icon: "Purchase",
+            order: 2,
+            link: "/purchase/requisitions",
+            desc: "Manage purchase requisition requests",
+          },
+          {
+            id: "M02-G02-M003",
+            name: "Goods Receipt",
+            color: "#06b6d4",
+            icon: "Purchase",
+            order: 3,
+            link: "/purchase/goods-receipt",
+            desc: "Record received goods and inspections",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "M03",
+    name: "Sales",
+    icon: "Sales",
+    color: "#eab308",
+    order: 3,
+    groups: [
+      {
+        id: "G01",
+        name: "Setup",
+        order: 1,
+        menus: [
+          {
+            id: "M03-G01-M001",
+            name: "Customers",
+            color: "#eab308",
+            icon: "Sales",
+            order: 1,
+            link: "/sales/setup/customers",
+            desc: "Manage customer account profiles",
+          },
+          {
+            id: "M03-G01-M002",
+            name: "Sales Teams",
+            color: "#eab308",
+            icon: "Sales",
+            order: 2,
+            link: "/sales/setup/teams",
+            desc: "Configure sales team structures",
+          },
+          {
+            id: "M03-G01-M003",
+            name: "Sales Targets",
+            color: "#eab308",
+            icon: "Sales",
+            order: 3,
+            link: "/sales/setup/targets",
+            desc: "Set revenue and volume targets",
+          },
+        ],
+      },
+      {
+        id: "G02",
+        name: "Transactions",
+        order: 2,
+        menus: [
+          {
+            id: "M03-G02-M001",
+            name: "Sales Orders",
+            color: "#eab308",
+            icon: "Sales",
+            order: 1,
+            link: "/sales/orders",
+            desc: "Process customer sales orders",
+          },
+          {
+            id: "M03-G02-M002",
+            name: "Deliveries",
+            color: "#eab308",
+            icon: "Sales",
+            order: 2,
+            link: "/sales/deliveries",
+            desc: "Manage delivery and dispatch records",
+          },
+          {
+            id: "M03-G02-M003",
+            name: "Sales Returns",
+            color: "#eab308",
+            icon: "Sales",
+            order: 3,
+            link: "/sales/returns",
+            desc: "Handle customer return requests",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "M04",
-    menus_mname: "Inventory",
-    menus_micon: <IconBox />,
-    menus_color: "#f97316",
-    menus_odrby: 4,
+    name: "Inventory",
+    icon: "Box",
+    color: "#f97316",
+    order: 4,
+    groups: [
+      {
+        id: "G01",
+        name: "Setup",
+        order: 1,
+        menus: [
+          {
+            id: "M04-G01-M001",
+            name: "Brands",
+            color: "#f97316",
+            icon: "Box",
+            order: 1,
+            link: "/inventory/setup/brands",
+            desc: "Manage product brand profiles",
+          },
+          {
+            id: "M04-G01-M002",
+            name: "Categories",
+            color: "#f97316",
+            icon: "Box",
+            order: 2,
+            link: "/inventory/setup/categories",
+            desc: "Organize product categories",
+          },
+          {
+            id: "M04-G01-M003",
+            name: "Groups",
+            color: "#f97316",
+            icon: "Box",
+            order: 3,
+            link: "/inventory/setup/groups",
+            desc: "Manage product group classifications",
+          },
+          {
+            id: "M04-G01-M004",
+            name: "Units",
+            color: "#f97316",
+            icon: "Box",
+            order: 7,
+            link: "/inventory/setup/units",
+            desc: "Configure measurement units",
+          },
+          {
+            id: "M04-G01-M005",
+            name: "Items",
+            color: "#f97316",
+            icon: "Box",
+            order: 7,
+            link: "/inventory/setup/items",
+            desc: "Manage inventory item records",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "M05",
-    menus_mname: "Manufacturing",
-    menus_micon: <IconManufacture />,
-    menus_color: "#22c55e",
-    menus_odrby: 5,
+    name: "Manufacturing",
+    icon: "Manufacture",
+    color: "#22c55e",
+    order: 5,
+    groups: [
+      {
+        id: "G01",
+        name: "Setup",
+        order: 1,
+        menus: [
+          {
+            id: "M05-G01-M001",
+            name: "Productions",
+            color: "#22c55e",
+            icon: "Manufacture",
+            order: 1,
+            link: "/manufacturing/setup/productions",
+            desc: "Track and manage manufacturing runs",
+          },
+          {
+            id: "M05-G01-M002",
+            name: "BOM",
+            color: "#22c55e",
+            icon: "Manufacture",
+            order: 2,
+            link: "/manufacturing/setup/bom",
+            desc: "Bill of Materials structure",
+          },
+        ],
+      },
+      {
+        id: "G02",
+        name: "Operations",
+        order: 2,
+        menus: [
+          {
+            id: "M05-G02-M001",
+            name: "Process",
+            color: "#22c55e",
+            icon: "Manufacture",
+            order: 3,
+            link: "/manufacturing/process",
+            desc: "Manage production process flows",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "M06",
-    menus_mname: "CRM",
-    menus_micon: <IconCRM />,
-    menus_color: "#3b82f6",
-    menus_odrby: 6,
+    name: "CRM",
+    icon: "CRM",
+    color: "#3b82f6",
+    order: 6,
+    groups: [
+      {
+        id: "G01",
+        name: "Contacts",
+        order: 1,
+        menus: [
+          {
+            id: "M06-G01-M001",
+            name: "Contacts",
+            color: "#3b82f6",
+            icon: "CRM",
+            order: 1,
+            link: "/M06/contacts",
+            desc: "Manage business contact records",
+          },
+        ],
+      },
+      {
+        id: "G02",
+        name: "Setup",
+        order: 2,
+        menus: [
+          {
+            id: "M06-G02-M001",
+            name: "Territories",
+            color: "#3b82f6",
+            icon: "CRM",
+            order: 2,
+            link: "/crm/setup/territories",
+            desc: "Define sales territory boundaries",
+          },
+          {
+            id: "M06-G02-M002",
+            name: "Thana / Area",
+            color: "#3b82f6",
+            icon: "CRM",
+            order: 3,
+            link: "/crm/setup/thana-areas",
+            desc: "Manage thana and area zones",
+          },
+          {
+            id: "M06-G02-M003",
+            name: "District / Zone",
+            color: "#3b82f6",
+            icon: "CRM",
+            order: 4,
+            link: "/crm/setup/district-zones",
+            desc: "Configure district and zone regions",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "M07",
-    menus_mname: "HRMS",
-    menus_micon: <IconHR />,
-    menus_color: "#ec4899",
-    menus_odrby: 7,
+    name: "HRMS",
+    icon: "HR",
+    color: "#ec4899",
+    order: 7,
+    groups: [
+      {
+        id: "G01",
+        name: "Setup",
+        order: 1,
+        menus: [
+          {
+            id: "M07-G01-M001",
+            name: "Working Shift",
+            color: "#ec4899",
+            icon: "HR",
+            order: 2,
+            link: "/hrms/setup/work-shifts",
+            desc: "Set employee work shift schedules",
+          },
+          {
+            id: "M07-G01-M002",
+            name: "Holidays",
+            color: "#ec4899",
+            icon: "HR",
+            order: 4,
+            link: "/hrms/setup/holidays",
+            desc: "Manage holiday calendar entries",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "M08",
-    menus_mname: "Accounts",
-    menus_micon: <IconAccounts />,
-    menus_color: "#8b5cf6",
-    menus_odrby: 8,
+    name: "Accounts",
+    icon: "Accounts",
+    color: "#8b5cf6",
+    order: 8,
+    groups: [
+      {
+        id: "G01",
+        name: "Setup",
+        order: 1,
+        menus: [
+          {
+            id: "M08-G01-M001",
+            name: "Chart of Accounts",
+            color: "#8b5cf6",
+            icon: "Accounts",
+            order: 1,
+            link: "/accounts/setup/chart-of-accounts",
+            desc: "Configure the chart of accounts",
+          },
+          {
+            id: "M08-G01-M002",
+            name: "Fiscal Years",
+            color: "#8b5cf6",
+            icon: "Accounts",
+            order: 2,
+            link: "/accounts/setup/fiscal-years",
+            desc: "Manage fiscal year periods",
+          },
+          {
+            id: "M08-G01-M003",
+            name: "Accounting Periods",
+            color: "#8b5cf6",
+            icon: "Accounts",
+            order: 3,
+            link: "/accounts/setup/accounting-periods",
+            desc: "Set accounting period date ranges",
+          },
+          {
+            id: "M08-G01-M004",
+            name: "Party Accounts",
+            color: "#8b5cf6",
+            icon: "Users",
+            order: 4,
+            link: "/accounts/setup/parties",
+            desc: "Manage party account profiles",
+          },
+          {
+            id: "M08-G01-M005",
+            name: "Party Accounts Auto",
+            color: "#8b5cf6",
+            icon: "Users",
+            order: 4,
+            link: "/accounts/setup/party-auto",
+            desc: "Auto-generate party accounts",
+          },
+        ],
+      },
+      {
+        id: "G02",
+        name: "Transactions",
+        order: 2,
+        menus: [
+          {
+            id: "M08-G02-M001",
+            name: "Journals",
+            color: "#8b5cf6",
+            icon: "Users",
+            order: 5,
+            link: "/accounts/journals",
+            desc: "Record financial journal entries",
+          },
+        ],
+      },
+    ],
   },
   {
     id: "M09",
-    menus_mname: "Examples",
-    menus_micon: <IconActivity />,
-    menus_color: "#f59e0b",
-    menus_odrby: 9,
+    name: "Examples",
+    icon: "Activity",
+    color: "#f59e0b",
+    order: 9,
+    groups: [
+      {
+        id: "G01",
+        name: "Reports",
+        order: 1,
+        menus: [
+          {
+            id: "M09-G01-M001",
+            name: "Reports",
+            color: "#f59e0b",
+            icon: "File",
+            order: 1,
+            link: "/reports",
+            desc: "View and generate system reports",
+          },
+        ],
+      },
+      {
+        id: "G02",
+        name: "Transactions",
+        order: 2,
+        menus: [
+          {
+            id: "M09-G02-M001",
+            name: "Transactions",
+            color: "#f59e0b",
+            icon: "File",
+            order: 1,
+            link: "/transactions",
+            desc: "Browse all system transactions",
+          },
+        ],
+      },
+      {
+        id: "G03",
+        name: "Admin",
+        order: 3,
+        menus: [
+          {
+            id: "M09-G03-M001",
+            name: "Users",
+            color: "#f59e0b",
+            icon: "File",
+            order: 1,
+            link: "/users",
+            desc: "Manage system user accounts",
+          },
+          {
+            id: "M09-G03-M002",
+            name: "Settings",
+            color: "#f59e0b",
+            icon: "File",
+            order: 1,
+            link: "/settings",
+            desc: "Configure system preferences",
+          },
+        ],
+      },
+      {
+        id: "G04",
+        name: "Examples",
+        order: 4,
+        menus: [
+          {
+            id: "M09-G04-M001",
+            name: "UI Examples",
+            color: "#f59e0b",
+            icon: "File",
+            order: 1,
+            link: "/examples",
+            desc: "Browse UI component examples",
+          },
+        ],
+      },
+      {
+        id: "G05",
+        name: "Navigation",
+        order: 5,
+        menus: [
+          {
+            id: "M09-G05-M001",
+            name: "Modules",
+            color: "#f59e0b",
+            icon: "File",
+            order: 1,
+            link: "/M01/modules",
+            desc: "Browse all application modules",
+          },
+        ],
+      },
+    ],
   },
 ];
 
-const menus = [
-  {
-    id: "M01-M01-M001",
-    menus_mname: "Home",
-    menus_color: "#7c3aed",
-    menus_micon: <IconHome />,
-    menus_odrby: 1,
-    menus_mlink: "/",
-    menus_menus: "M01",
-  },
-  {
-    id: "M01-M0008",
-    menus_mname: "Departments",
-    menus_color: "#7c3aed",
-    menus_micon: <IconHome />,
-    menus_odrby: 8,
-    menus_mlink: "/settings/departments",
-    menus_menus: "M01",
-  },
-  {
-    id: "M01-M0009",
-    menus_mname: "Sections",
-    menus_color: "#7c3aed",
-    menus_micon: <IconHome />,
-    menus_odrby: 9,
-    menus_mlink: "/settings/sections",
-    menus_menus: "M01",
-  },
-  {
-    id: "M04-M01-M001",
-    menus_mname: "Brands",
-    menus_color: "#f97316",
-    menus_micon: <IconBox />,
-    menus_odrby: 1,
-    menus_mlink: "/inventory/setup/brands",
-    menus_menus: "M04",
-  },
-  {
-    id: "M04-M02-M001",
-    menus_mname: "Categories",
-    menus_color: "#f97316",
-    menus_micon: <IconBox />,
-    menus_odrby: 2,
-    menus_mlink: "/inventory/setup/categories",
-    menus_menus: "M04",
-  },
-  {
-    id: "M04-M03-M001",
-    menus_mname: "Groups",
-    menus_color: "#f97316",
-    menus_micon: <IconBox />,
-    menus_odrby: 3,
-    menus_mlink: "/inventory/setup/groups",
-    menus_menus: "M04",
-  },
-  {
-    id: "M04-M07-M001",
-    menus_mname: "Units",
-    menus_color: "#f97316",
-    menus_micon: <IconBox />,
-    menus_odrby: 7,
-    menus_mlink: "/inventory/setup/units",
-    menus_menus: "M04",
-  },
-  {
-    id: "M04-M07-M002",
-    menus_mname: "Items",
-    menus_color: "#f97316",
-    menus_micon: <IconBox />,
-    menus_odrby: 7,
-    menus_mlink: "/inventory/setup/items",
-    menus_menus: "M04",
-  },
-  {
-    id: "M05-M01-M001",
-    menus_mname: "Productions",
-    menus_color: "#22c55e",
-    menus_micon: <IconManufacture />,
-    menus_odrby: 1,
-    menus_mlink: "/manufacturing/setup/productions",
-    menus_menus: "M05",
-  },
-  {
-    id: "M05-M01-M002",
-    menus_mname: "BOM",
-    menus_color: "#22c55e",
-    menus_micon: <IconManufacture />,
-    menus_odrby: 2,
-    menus_mlink: "/manufacturing/setup/bom",
-    menus_menus: "M05",
-  },
-  {
-    id: "M05-M02-M001",
-    menus_mname: "Process",
-    menus_color: "#22c55e",
-    menus_micon: <IconManufacture />,
-    menus_odrby: 3,
-    menus_mlink: "/manufacturing/process",
-    menus_menus: "M05",
-  },
-  {
-    id: "M06-M01-M001",
-    menus_mname: "Contacts",
-    menus_color: "#3b82f6",
-    menus_micon: <IconCRM />,
-    menus_odrby: 1,
-    menus_mlink: "/M06/contacts",
-    menus_menus: "M06",
-  },
-  {
-    id: "M06-M0002",
-    menus_mname: "Territories",
-    menus_color: "#3b82f6",
-    menus_micon: <IconCRM />,
-    menus_odrby: 2,
-    menus_mlink: "/crm/setup/territories",
-    menus_menus: "M06",
-  },
-  {
-    id: "M06-M0003",
-    menus_mname: "Thana / Area",
-    menus_color: "#3b82f6",
-    menus_micon: <IconCRM />,
-    menus_odrby: 3,
-    menus_mlink: "/crm/setup/thana-areas",
-    menus_menus: "M06",
-  },
-  {
-    id: "M06-M0004",
-    menus_mname: "District / Zone",
-    menus_color: "#3b82f6",
-    menus_micon: <IconCRM />,
-    menus_odrby: 4,
-    menus_mlink: "/crm/setup/district-zones",
-    menus_menus: "M06",
-  },
-  {
-    id: "M07-M0002",
-    menus_mname: "Working Shift",
-    menus_color: "#ec4899",
-    menus_micon: <IconHR />,
-    menus_odrby: 2,
-    menus_mlink: "/hrms/setup/work-shifts",
-    menus_menus: "M07",
-  },
-  {
-    id: "M07-M0004",
-    menus_mname: "Holidays",
-    menus_color: "#ec4899",
-    menus_micon: <IconHR />,
-    menus_odrby: 4,
-    menus_mlink: "/hrms/setup/holidays",
-    menus_menus: "M07",
-  },
-  {
-    id: "M08-M0001",
-    menus_mname: "Chart of Accounts",
-    menus_color: "#8b5cf6",
-    menus_micon: <IconAccounts />,
-    menus_odrby: 1,
-    menus_mlink: "/accounts/setup/chart-of-accounts",
-    menus_menus: "M08",
-  },
-  {
-    id: "M08-M0002",
-    menus_mname: "Fiscal Years",
-    menus_color: "#8b5cf6",
-    menus_micon: <IconAccounts />,
-    menus_odrby: 2,
-    menus_mlink: "/accounts/setup/fiscal-years",
-    menus_menus: "M08",
-  },
-  {
-    id: "M08-M0003",
-    menus_mname: "Accounting Periods",
-    menus_color: "#8b5cf6",
-    menus_micon: <IconAccounts />,
-    menus_odrby: 3,
-    menus_mlink: "/accounts/setup/accounting-periods",
-    menus_menus: "M08",
-  },
-  {
-    id: "M08-M0004",
-    menus_mname: "Party Accounts",
-    menus_color: "#8b5cf6",
-    menus_micon: <IconUsers />,
-    menus_odrby: 4,
-    menus_mlink: "/accounts/setup/parties",
-    menus_menus: "M08",
-  },
-  {
-    id: "M08-M0004-1",
-    menus_mname: "Party Accounts Auto",
-    menus_color: "#8b5cf6",
-    menus_micon: <IconUsers />,
-    menus_odrby: 4,
-    menus_mlink: "/accounts/setup/party-auto",
-    menus_menus: "M08",
-  },
-  {
-    id: "M08-M0005",
-    menus_mname: "Journals",
-    menus_color: "#8b5cf6",
-    menus_micon: <IconUsers />,
-    menus_odrby: 5,
-    menus_mlink: "/accounts/journals",
-    menus_menus: "M08",
-  },
-  {
-    id: "M09-M01-M001",
-    menus_mname: "Reports",
-    menus_color: "#f59e0b",
-    menus_micon: <IconFile />,
-    menus_odrby: 1,
-    menus_mlink: "/reports",
-    menus_menus: "M09",
-  },
-  {
-    id: "M09-M01-M002",
-    menus_mname: "Transactions",
-    menus_color: "#f59e0b",
-    menus_micon: <IconFile />,
-    menus_odrby: 1,
-    menus_mlink: "/transactions",
-    menus_menus: "M09",
-  },
-  {
-    id: "M09-M01-M004",
-    menus_mname: "Users",
-    menus_color: "#f59e0b",
-    menus_micon: <IconFile />,
-    menus_odrby: 1,
-    menus_mlink: "/users",
-    menus_menus: "M09",
-  },
-  {
-    id: "M09-M01-M005",
-    menus_mname: "Settings",
-    menus_color: "#f59e0b",
-    menus_micon: <IconFile />,
-    menus_odrby: 1,
-    menus_mlink: "/settings",
-    menus_menus: "M09",
-  },
-  {
-    id: "M09-M01-M006",
-    menus_mname: "UI Examples",
-    menus_color: "#f59e0b",
-    menus_micon: <IconFile />,
-    menus_odrby: 1,
-    menus_mlink: "/examples",
-    menus_menus: "M09",
-  },
-  {
-    id: "M09-M01-M007",
-    menus_mname: "Modules",
-    menus_color: "#f59e0b",
-    menus_micon: <IconFile />,
-    menus_odrby: 1,
-    menus_mlink: "/M01/modules",
-    menus_menus: "M09",
-  },
-];
+// Build the flat menus array used for search & recent menus
+const menus = appModules.flatMap((mod) => {
+  const items = [];
+  if (mod.groups) {
+    for (const g of mod.groups) {
+      for (const m of g.menus) {
+        items.push({
+          ...toMenu(m),
+          menus_mgrup: g.name,
+          menus_mgrup_id: g.id,
+          menus_mgrup_order: g.order,
+        });
+      }
+    }
+  }
+  return items;
+});
 
-// Topbar navigation items — sourced from here so ModulePage is the menu authority
+// Topbar navigation items
 export const navItems = [
   { to: "/", label: "Dashboard", icon: "◉" },
   { to: "/users", label: "Users", icon: "◐" },
@@ -401,47 +716,146 @@ const ModulePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [recentMenuIds, setRecentMenuIds] = useState([]);
 
-  // Load recent menu IDs from localStorage on mount
   useEffect(() => {
     try {
       const stored = localStorage.getItem(RECENT_STORAGE_KEY);
       if (stored) {
         const ids = JSON.parse(stored);
-        if (Array.isArray(ids)) {
-          setRecentMenuIds(ids);
-        }
+        if (Array.isArray(ids)) setRecentMenuIds(ids);
       }
     } catch (e) {
-      // ignore parse errors
+      /* ignore */
     }
   }, []);
 
   const handleMenuClick = (menu) => {
     navigate(menu.menus_mlink);
-    // Update recent list — distinct, most recent first
     setRecentMenuIds((prev) => {
       const filtered = prev.filter((id) => id !== menu.id);
       const updated = [menu.id, ...filtered].slice(0, MAX_RECENT);
       try {
         localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(updated));
       } catch (e) {
-        // ignore storage errors
+        /* ignore */
       }
       return updated;
     });
   };
 
-  // Filter menus by search query
+  const searchLC = searchQuery.toLowerCase();
   const filteredMenus = searchQuery
-    ? menus.filter((menu) =>
-        menu.menus_mname.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
+    ? menus.filter((m) => m.menus_mname.toLowerCase().includes(searchLC))
     : menus;
 
-  // Recent menus that also match the current search/filter
   const recentMenus = filteredMenus.filter((m) => recentMenuIds.includes(m.id));
-
   const isSearching = searchQuery.trim().length > 0;
+
+  const MenuCard = ({ menu, onClick }) => {
+    const [hovered, setHovered] = useState(false);
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        title={menu.menus_mname}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onFocus={() => setHovered(true)}
+        onBlur={() => setHovered(false)}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          padding: "4px 8px",
+          border: `1px solid ${hovered ? menu.menus_color + "40" : "var(--border)"}`,
+          borderRadius: "var(--radius-xl)",
+          background: hovered ? `${menu.menus_color}0d` : "var(--surface)",
+          cursor: "pointer",
+          fontFamily: "var(--font-sans)",
+          textAlign: "left",
+          outline: "none",
+          boxSizing: "border-box",
+          transition: "all 0.15s ease",
+          width: "auto",
+          flex: "0 1 auto",
+          boxShadow: hovered ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
+          transform: hovered ? "translateY(-1px)" : "none",
+        }}
+      >
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            borderRadius: "var(--radius-lg)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+            background: `${menu.menus_color}18`,
+            color: menu.menus_color,
+            fontSize: 18,
+          }}
+        >
+          {menu.menus_micon}
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          <span
+            style={{
+              fontSize: 14,
+              fontWeight: 600,
+              color: "var(--text-primary)",
+              lineHeight: 1.2,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {menu.menus_mname}
+          </span>
+          <span
+            style={{
+              fontSize: "var(--fs-xs)",
+              color: "var(--text-muted)",
+              lineHeight: 1.2,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {menu.menus_mdesc}
+          </span>
+        </div>
+      </button>
+    );
+  };
+
+  const renderGroup = (group) => (
+    <div key={group.id || group.name} style={{ marginBottom: 4 }}>
+      <div
+        style={{
+          fontSize: 11,
+          fontWeight: 700,
+          textTransform: "uppercase",
+          letterSpacing: 0.8,
+          color: "var(--text-muted)",
+          padding: "8px 0 2px",
+        }}
+      >
+        {group.id} · {group.name}
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 6,
+          alignItems: "stretch",
+        }}
+      >
+        {group.menus.map((m) => (
+          <MenuCard
+            key={m.id}
+            menu={toMenu(m)}
+            onClick={() => handleMenuClick(toMenu(m))}
+          />
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div className="page-wrap">
@@ -449,10 +863,9 @@ const ModulePage = () => {
         <div>
           <h2 className="module-page__title">Applications</h2>
           <p className="module-page__subtitle">
-            {modules.length} applications &middot; {menus.length} features
+            {appModules.length} applications &middot; {menus.length} features
           </p>
         </div>
-        {/* Search input */}
         <div style={modulePageSearchStyles.wrap}>
           <input
             type="text"
@@ -484,7 +897,6 @@ const ModulePage = () => {
         </div>
       </div>
 
-      {/* No results state */}
       {isSearching && filteredMenus.length === 0 && (
         <div
           style={{
@@ -500,7 +912,7 @@ const ModulePage = () => {
       )}
 
       <div className="module-page__list">
-        {/* Recent module — only when not searching OR recent menus match search */}
+        {/* Recent module */}
         {recentMenus.length > 0 && (
           <PageCard>
             <PageCardHeader>
@@ -523,7 +935,7 @@ const ModulePage = () => {
                       try {
                         localStorage.removeItem(RECENT_STORAGE_KEY);
                       } catch (e) {
-                        // ignore
+                        /* ignore */
                       }
                     }}
                     style={{
@@ -545,78 +957,75 @@ const ModulePage = () => {
               </div>
             </PageCardHeader>
             <PageCardBody>
-              <div className="module-page__menu-grid">
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 6,
+                  alignItems: "stretch",
+                }}
+              >
                 {recentMenus.map((menu) => (
-                  <button
+                  <MenuCard
                     key={menu.id}
-                    type="button"
-                    className="module-page__menu-item"
+                    menu={menu}
                     onClick={() => handleMenuClick(menu)}
-                    title={menu.menus_mname}
-                  >
-                    <div
-                      className="module-page__menu-icon"
-                      style={{ background: `${menu.menus_color}18` }}
-                    >
-                      {menu.menus_micon}
-                    </div>
-                    <span className="module-page__menu-label">
-                      {menu.menus_mname}
-                    </span>
-                  </button>
+                  />
                 ))}
               </div>
             </PageCardBody>
           </PageCard>
         )}
 
-        {[...modules]
-          .filter((mod) => mod.id !== "M00") // Recent is rendered above separately
-          .sort((a, b) => a.menus_odrby - b.menus_odrby)
-          .map((module) => {
-            const modMenus = filteredMenus.filter(
-              (menu) => menu.menus_menus === module.id,
-            );
-            if (modMenus.length === 0) return null;
+        {/* Module cards — iterate the tree directly */}
+        {appModules
+          .filter((mod) => mod.id !== "M00")
+          .sort((a, b) => a.order - b.order)
+          .map((mod) => {
+            const hasGroups = mod.groups && mod.groups.length > 0;
+
+            // Filter for search
+            let groups = hasGroups ? [...mod.groups] : null;
+            if (searchQuery) {
+              const q = searchQuery.toLowerCase();
+              if (groups) {
+                groups = groups
+                  .map((g) => ({
+                    ...g,
+                    menus: g.menus.filter((m) =>
+                      m.name.toLowerCase().includes(q),
+                    ),
+                  }))
+                  .filter((g) => g.menus.length > 0);
+              }
+              if (!groups || groups.length === 0) {
+                return null;
+              }
+            }
+
+            const totalCount =
+              groups?.reduce((s, g) => s + g.menus.length, 0) || 0;
+            if (totalCount === 0) return null;
 
             return (
-              <PageCard key={module.id}>
+              <PageCard key={mod.id}>
                 <PageCardHeader>
                   <div className="module-page__card-header">
                     <div
                       className="module-page__card-icon"
-                      style={{ background: `${module.menus_color}18` }}
+                      style={{ background: `${mod.color}18` }}
                     >
-                      {module.menus_micon}
+                      {resolveIcon(mod.icon)}
                     </div>
                     <PageCardTitle
-                      title={`${module.menus_mname} (${module.id})`}
-                      subtitle={`${modMenus.length} feature${modMenus.length === 1 ? "" : "s"}`}
+                      title={`${mod.name} (${mod.id})`}
+                      subtitle={`${totalCount} feature${totalCount === 1 ? "" : "s"}`}
                     />
                   </div>
                 </PageCardHeader>
                 <PageCardBody>
-                  <div className="module-page__menu-grid">
-                    {modMenus.map((menu) => (
-                      <button
-                        key={menu.id}
-                        type="button"
-                        className="module-page__menu-item"
-                        onClick={() => handleMenuClick(menu)}
-                        title={menu.menus_mname}
-                      >
-                        <div
-                          className="module-page__menu-icon"
-                          style={{ background: `${menu.menus_color}18` }}
-                        >
-                          {menu.menus_micon}
-                        </div>
-                        <span className="module-page__menu-label">
-                          {menu.menus_mname}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+                  {groups &&
+                    groups.sort((a, b) => a.order - b.order).map(renderGroup)}
                 </PageCardBody>
               </PageCard>
             );
