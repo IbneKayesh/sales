@@ -6,9 +6,8 @@ CREATE TABLE tmtb_prtya (
   prtya_ccode varchar(50) NOT NULL,
 
   -- custom
-  prtya_sorce varchar(50) NOT NULL,
-  prtya_cname varchar(50) NOT NULL,
-  prtya_chtac varchar(50) NOT NULL,
+  prtya_shtbl varchar(50) NOT NULL,
+  prtya_chtno varchar(50) NOT NULL,
   prtya_notes varchar(50),
   
   -- default 2

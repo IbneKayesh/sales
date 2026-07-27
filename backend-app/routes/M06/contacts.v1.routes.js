@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
     LEFT JOIN tmhb_emply usr ON cnt.cntct_upusr = usr.id
     WHERE cnt.cntct_users = $1
     ORDER BY cnt.cntct_cname ASC`;
-    
+
     //JOIN tmnb_shtbl ctr ON cnt.cntct_cntry = ctr.shtbl_value AND ctr.shtbl_gname = 'Country'
     //JOIN tmnb_shtbl crn ON cnt.cntct_crncy = crn.shtbl_value AND crn.shtbl_gname = 'Currency'
 
@@ -141,6 +141,27 @@ const create = async (req, res) => {
     }
 
     //database action
+
+    const sql_chtac = `SELECT cht.id AS chtac_id
+        FROM tmsb_shtbl sht
+        JOIN tmtb_prtya pty ON sht.id = pty.prtya_shtbl
+        JOIN tmtb_chtac cht ON pty.prtya_chtno = cht.chtac_chtno
+        WHERE sht.shtbl_value = $1
+        AND sht.shtbl_users =$2`;
+    const row_chtac = await dbGetAll(
+      sql_chtac,
+      [cntct_ctype, user_c],
+      `get account coa- ${user_c}`,
+    );
+
+    if (row_chtac.length === 0) {
+      return res.json({
+        success: false,
+        message: "No Chart of Account setup for this type.",
+        data: {},
+      });
+    }
+
     const masterId = uuidv4();
     const scripts = [];
     const newCode = await GenNewCode(user_c, "tmcb_cntct");
@@ -183,6 +204,29 @@ const create = async (req, res) => {
       label: `create contact- ${user_c}`,
     });
 
+    for (row of row_chtac) {
+      const newCodeParty = await GenNewCode(user_c, "tmtb_party");
+      scripts.push({
+        sql: `INSERT INTO tmtb_party(id, party_users, party_bsins, party_ccode, party_ptype, party_chtac,
+      party_vndor, party_cname, party_opbal, party_crusr, party_upusr)
+      VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          newCodeParty,
+          cntct_ctype,
+          row.chtac_id,
+          masterId,
+          cntct_cname,
+          0,
+          user_s,
+          user_s,
+        ],
+        label: `create party accounts- ${user_c}`,
+      });
+    }
     await dbRunAll(scripts);
     res.json({
       success: true,
@@ -201,7 +245,6 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    
     const {
       id,
       cntct_users,
@@ -251,10 +294,11 @@ const update = async (req, res) => {
       });
     }
 
-
     //database action
+    const scripts = [];
     //cntct_ctype :: accounts party created - don't update
-    const sql = `UPDATE tmcb_cntct
+    scripts.push({
+      sql: `UPDATE tmcb_cntct
     SET cntct_sorce = $1,
     cntct_cname = $2,
     cntct_cntps = $3,
@@ -275,30 +319,47 @@ const update = async (req, res) => {
     cntct_upusr = $18,
     cntct_updat = CURRENT_TIMESTAMP,
     cntct_rvnmr = cntct_rvnmr + 1
-    WHERE id = $19`;
-    const params = [
-      cntct_sorce,
-      cntct_cname,
-      cntct_cntps,
-      cntct_cntno,
-      cntct_email,
-      cntct_tinno,
-      cntct_trade,
-      cntct_ofadr,
-      cntct_fcadr,
-      cntct_trtry,
-      cntct_tarea,
-      cntct_dzone,
-      cntct_cntry,
-      cntct_cntad,
-      cntct_crncy,
-      cntct_dspct,
-      cntct_crlmt,
-      user_s,
-      id,
-    ];
+    WHERE id = $19`,
+      params: [
+        cntct_sorce,
+        cntct_cname,
+        cntct_cntps,
+        cntct_cntno,
+        cntct_email,
+        cntct_tinno,
+        cntct_trade,
+        cntct_ofadr,
+        cntct_fcadr,
+        cntct_trtry,
+        cntct_tarea,
+        cntct_dzone,
+        cntct_cntry,
+        cntct_cntad,
+        cntct_crncy,
+        cntct_dspct,
+        cntct_crlmt,
+        user_s,
+        id,
+      ],
+      label: `update contact- ${user_c}`,
+    });
 
-    await dbRun(sql, params, `update contact- ${user_c}`);
+     scripts.push({
+      sql: `UPDATE tmtb_party
+    SET party_cname = $1,
+    party_upusr = $2,
+    party_updat = CURRENT_TIMESTAMP,
+    party_rvnmr = party_rvnmr + 1
+    WHERE party_vndor = $3`,
+      params: [
+        cntct_cname,
+        user_s,
+        id,
+      ],
+      label: `update contact- ${user_c}`,
+    });
+
+    await dbRunAll(scripts);
     res.json({
       success: true,
       message: `${cntct_cname} - Updated successfully.`,

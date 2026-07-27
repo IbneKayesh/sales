@@ -85,12 +85,6 @@ router.post("/get-all-active", async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    // return res.json({
-    //   success: false,
-    //   message: "Restricted.",
-    //   data: {},
-    // });
-
     const {
       id,
       chtac_users,
@@ -130,33 +124,6 @@ const create = async (req, res) => {
     //Normal Balance Type (Dr/Cr) 'Dr' = Assets, Expenses 'Cr' = Liabilities, Equity, Income
     const chtac_child_new = chtac_chtac === "-" ? false : true;
     const newCode = await GenNewCode(user_c, "tmtb_chtac");
-
-    // const sql_sequence_no = `SELECT shtbl_value FROM tmsb_shtbl WHERE shtbl_gname = $1 AND shtbl_dvalu = $2 AND shtbl_users = $3`;
-    // const row_sequence_no = await dbGet(
-    //   sql_sequence_no,
-    //   [chtac_ctype, chtac_ctype, user_c],
-    //   `get account coa- ${user_c}`,
-    // );
-
-    // if (!row_sequence_no) {
-    //   return res.json({
-    //     success: false,
-    //     message: "No range setup for this account type.",
-    //     data: {},
-    //   });
-    // }
-
-    // const sql_sl = `SELECT COUNT(id) AS last_no FROM tmtb_chtac WHERE chtac_ctype = $1 AND chtac_users = $2`;
-    // const row_sl = await dbGet(
-    //   sql_sl,
-    //   [chtac_ctype, user_c],
-    //   `get account coa- ${user_c}`,
-    // );
-
-    //console.log(row_sequence_no, row_sl);
-
-   // const chtac_chtno_new =
-    //  Number(row_sequence_no.shtbl_value) + Number(row_sl?.last_no || 0);
 
     const sql = `INSERT INTO tmtb_chtac(id, chtac_users, chtac_bsins, chtac_chtac, chtac_ccode, chtac_cname,
     chtac_ctype, chtac_chtno, chtac_ntype, chtac_child, chtac_ispst, chtac_crusr, chtac_upusr)
