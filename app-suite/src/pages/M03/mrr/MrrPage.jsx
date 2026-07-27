@@ -9,21 +9,16 @@ import {
   IconClose,
   IconPlus,
   IconSave,
-  IconChevronLeft,
 } from "@/icons";
 import Button from "@/components/Button";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
-import useBOM from "@/hooks/M05/useBOM";
-import BOMList from "./BOMList";
+import useMRR from "@/hooks/M03/useMRR";
+import MrrList from "./MrrList";
 import BOMForm from "./BOMForm";
-import RMPMForm from "./RMPMForm";
-import RMPMList from "./RMPMList";
-import FOHForm from "./FOHForm";
-import FOHList from "./FOHList";
-import SFGForm from "./SFGForm";
-import SFGList from "./SFGList";
+import ItemForm from "./ItemForm";
+import ItemList from "./ItemList";
 
-const BOMPage = () => {
+const MrrPage = () => {
   const {
     isBusy,
     pgView,
@@ -36,16 +31,10 @@ const BOMPage = () => {
     formDataItem,
     formErrors,
     //others
-    listDataRMPM,
-    formDataRMPM,
-    listDataFOH,
-    formDataFOH,
-    listDataSFGFG,
-    formDataSFGFG,
     dpart_Options,
-    prods_Options,
-    units_Options,
+    contact_Options,
     items_Options,
+    units_Options,
     //functions
     handleChange,
     handleEdit,
@@ -54,38 +43,28 @@ const BOMPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-    //other
-    handleChangeRMPM,
-    handleAddToListRMPM,
-    handleEditRMPM,
-    handleDeleteRMPM,
-    //foh
-    handleChangeFOH,
-    handleAddToListFOH,
-    handleEditFOH,
-    handleDeleteFOH,
-    //sfg
-    handleChangeSFG,
-    handleAddToListSFG,
-    handleEditSFG,
-    handleDeleteSFG,
+    //item
+    handleChangeItem,
+    handleAddToListItem,
+    handleEditItem,
+    handleDeleteItem,
     //modal
     showModal,
     modalTitle,
     handleShowModal,
     handleHideModal,
-  } = useBOM();
+  } = useMRR();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
-            title={pgView === "SYS_VW_LST_1" ? "BOM" : "BOM Entry"}
+            title={pgView === "SYS_VW_LST_1" ? "MRR" : "MRR Entry"}
             subtitle={
               pgView === "SYS_VW_LST_1"
-                ? listData.length + " BOM"
-                : formData?.bommf_cname || "New BOM"
+                ? listData.length + " MRR"
+                : formData?.mrrdm_trnno || "New MRR"
             }
           />
           <PageCardActions>
@@ -103,17 +82,9 @@ const BOMPage = () => {
             )}
             {pgView === "SYS_VW_FRM_1" && !readOnly && (
               <>
-                <Button variant="outline" size="sm" onClick={() => handleShowModal("RMPM")}>
+                <Button variant="outline" size="sm" onClick={() => handleShowModal("ITEM")}>
                   <IconPlus size={14} className="icon-left" />
-                  Add RM/PM
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => handleShowModal("FOH")}>
-                  <IconPlus size={14} className="icon-left" />
-                  Add FOH
-                </Button>
-                <Button variant="outline" size="sm" onClick={() => handleShowModal("SFG")}>
-                  <IconPlus size={14} className="icon-left" />
-                  Add SFG/FG
+                  Add Item
                 </Button>
               </>
             )}
@@ -138,7 +109,7 @@ const BOMPage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <BOMList
+            <MrrList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
@@ -156,36 +127,20 @@ const BOMPage = () => {
               onCancel={handleCancel}
               onSubmit={handleSubmit}
               dpart_Options={dpart_Options}
-              prods_Options={prods_Options}
+              contact_Options={contact_Options}
               units_Options={units_Options}
             />
           )}
-          {pgView === "SYS_VW_FRM_1" && listDataRMPM.length > 0 && (
-            <RMPMList
+          {pgView === "SYS_VW_FRM_1" && listDataItem.length > 0 && (
+            <ItemList
               readOnly={readOnly}
-              listData={listDataRMPM}
-              onEdit={handleEditRMPM}
-              onDelete={handleDeleteRMPM}
-            />
-          )}
-          {pgView === "SYS_VW_FRM_1" && listDataFOH.length > 0 && (
-            <FOHList
-              readOnly={readOnly}
-              listData={listDataFOH}
-              onEdit={handleEditFOH}
-              onDelete={handleDeleteFOH}
-            />
-          )}
-          {pgView === "SYS_VW_FRM_1" && listDataSFGFG.length > 0 && (
-            <SFGList
-              readOnly={readOnly}
-              listData={listDataSFGFG}
-              onEdit={handleEditSFG}
-              onDelete={handleDeleteSFG}
+              listData={listDataItem}
+              onEdit={handleEditItem}
+              onDelete={handleDeleteItem}
             />
           )}
 
-          {/* Single Modal for RMPM / FOH / SFG forms */}
+          {/* Single Modal for Item form */}
           <Modal open={showModal.show} onClose={handleHideModal} size="lg">
             <ModalHeader>
               <ModalTitle
@@ -195,41 +150,15 @@ const BOMPage = () => {
               />
             </ModalHeader>
             <ModalBody>
-              {showModal.modal === "RMPM" && (
-                <RMPMForm
+              {showModal.modal === "ITEM" && (
+                <ItemForm
                   isBusy={isBusy}
                   readOnly={readOnly}
                   stopEdit={stopEdit}
-                  formData={formDataRMPM}
+                  formData={formDataItem}
                   formErrors={formErrors}
-                  onChange={handleChangeRMPM}
-                  onAddToList={handleAddToListRMPM}
-                  items_Options={items_Options}
-                  units_Options={units_Options}
-                />
-              )}
-              {showModal.modal === "FOH" && (
-                <FOHForm
-                  isBusy={isBusy}
-                  readOnly={readOnly}
-                  stopEdit={stopEdit}
-                  formData={formDataFOH}
-                  formErrors={formErrors}
-                  onChange={handleChangeFOH}
-                  onAddToList={handleAddToListFOH}
-                  items_Options={items_Options}
-                  units_Options={units_Options}
-                />
-              )}
-              {showModal.modal === "SFG" && (
-                <SFGForm
-                  isBusy={isBusy}
-                  readOnly={readOnly}
-                  stopEdit={stopEdit}
-                  formData={formDataSFGFG}
-                  formErrors={formErrors}
-                  onChange={handleChangeSFG}
-                  onAddToList={handleAddToListSFG}
+                  onChange={handleChangeItem}
+                  onAddToList={handleAddToListItem}
                   items_Options={items_Options}
                   units_Options={units_Options}
                 />
@@ -241,4 +170,4 @@ const BOMPage = () => {
     </div>
   );
 };
-export default BOMPage;
+export default MrrPage;

@@ -4,12 +4,6 @@ import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import { IconPlus } from "@/icons";
 
-const group_Options = [
-  { label: "Main", value: "MAIN" },
-  { label: "Co-Product (CO)", value: "CO" },
-  { label: "By-Product (BY)", value: "BY" },
-];
-
 const SFGForm = ({
   isBusy,
   readOnly,
@@ -26,38 +20,11 @@ const SFGForm = ({
       <div className="grid">
         <div className="col-span-4">
           <Dropdown
-            label="Group"
-            options={group_Options}
-            value={formData.bosfg_group}
-            onChange={(e) => onChange("bosfg_group", e.target.value)}
-            error={formErrors.bosfg_group}
-            required
-            placeholder="Select..."
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <Dropdown
-            label="Type"
-            options={[
-              { label: "FG", value: "FG" },
-              { label: "Semi-FG", value: "SFG" },
-            ]}
-            value={formData.bosfg_types}
-            onChange={(e) => onChange("bosfg_types", e.target.value)}
-            error={formErrors.bosfg_types}
-            required
-            placeholder="Select..."
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <Dropdown
             label="Item"
             options={items_Options}
-            value={formData.bosfg_items}
-            onChange={(e) => onChange("bosfg_items", e.target.value)}
-            error={formErrors.bosfg_items}
+            value={formData.mrrdc_items}
+            onChange={(e) => onChange("mrrdc_items", e.target.value)}
+            error={formErrors.mrrdc_items}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -67,58 +34,33 @@ const SFGForm = ({
         </div>
         <div className="col-span-4">
           <InputNumber
-            label="Quantity"
-            placeholder="Enter qty"
-            value={formData.bosfg_fgqty}
-            onChange={(e) => onChange("bosfg_fgqty", e.target.value)}
-            error={formErrors.bosfg_fgqty}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputNumber
-            label="Ratio"
-            placeholder="Enter ratio"
-            value={formData.bosfg_fgrto}
-            onChange={(e) => onChange("bosfg_fgrto", e.target.value)}
-            error={formErrors.bosfg_fgrto}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputNumber
             label="Rate"
-            placeholder="Enter rate"
-            value={formData.bosfg_fgrat}
-            onChange={(e) => onChange("bosfg_fgrat", e.target.value)}
-            error={formErrors.bosfg_fgrat}
+            placeholder="0.00"
+            value={formData.mrrdc_trate}
+            onChange={(e) => onChange("mrrdc_trate", e.target.value)}
+            error={formErrors.mrrdc_trate}
             step="0.01"
             disabled={readOnly}
           />
         </div>
         <div className="col-span-4">
-          <Dropdown
-            label="Unit"
-            options={units_Options}
-            value={formData.bosfg_units}
-            onChange={(e) => onChange("bosfg_units", e.target.value)}
-            error={formErrors.bosfg_units}
-            required
-            placeholder="Select..."
+          <InputNumber
+            label="Quantity"
+            placeholder="0"
+            value={formData.mrrdc_trqty}
+            onChange={(e) => onChange("mrrdc_trqty", e.target.value)}
+            error={formErrors.mrrdc_trqty}
+            step="0.01"
             disabled={readOnly}
-            optionValue="id"
-            optionLabel="units_cname"
           />
         </div>
-        <div className="col-span-8">
+        <div className="col-span-12">
           <InputText
             label="Notes"
             placeholder="Enter notes"
-            value={formData.bosfg_notes}
-            onChange={(e) => onChange("bosfg_notes", e.target.value)}
-            error={formErrors.bosfg_notes}
+            value={formData.mrrdc_notes}
+            onChange={(e) => onChange("mrrdc_notes", e.target.value)}
+            error={formErrors.mrrdc_notes}
             disabled={readOnly}
           />
         </div>

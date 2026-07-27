@@ -4,23 +4,32 @@ import ActionButton from "@/components/ActionButton";
 import { IconClose, IconCheck } from "@/icons";
 import { getRelativeDays } from "@/utils/datetime.js";
 
-const BOMList = ({ listData, onEdit, onDelete }) => {
+const MrrList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "bommf_trnno", header: "Trn No", width: "80px" },
+    { key: "mrrdm_trnno", header: "MRR No", width: "100px" },
     {
-      key: "bommf_trdat",
-      header: "Trn Date",
-      width: "80px",
+      key: "mrrdm_trdat",
+      header: "Date",
+      width: "90px",
       render: (v) => getRelativeDays(v),
     },
-    { key: "prods_cname", header: "Production", width: "200px" },
-    { key: "bommf_cname", header: "Process", width: "200px" },
-    { key: "bommf_prono", header: "Process No", width: "80px" },
-    { key: "bommf_inout", header: "Input/Output", width: "80px" },
-    { key: "bommf_bmqty", header: "Qty", width: "80px" },
-    { key: "bommf_estim", header: "Est Minutes", width: "80px" },
+    { key: "dpart_cname", header: "Department", width: "150px" },
+    { key: "cntct_cname", header: "Supplier", width: "180px" },
+    { key: "mrrdm_refno", header: "Ref No", width: "100px" },
+    { key: "mrrdm_tramt", header: "Amount", width: "100px" },
+    { key: "mrrdm_pyamt", header: "Payable", width: "100px" },
     {
-      key: "bommf_actve",
+      key: "mrrdm_ispst",
+      header: "Posted",
+      width: "80px",
+      render: (v) => (
+        <Badge variant={v ? "success" : "secondary"} size="sm">
+          {v ? "Yes" : "No"}
+        </Badge>
+      ),
+    },
+    {
+      key: "mrrdm_actve",
       header: "Status",
       width: "110px",
       render: (v) => {
@@ -40,7 +49,7 @@ const BOMList = ({ listData, onEdit, onDelete }) => {
       render: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.bommf_actve}
+          actve={row.mrrdm_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />
@@ -57,11 +66,11 @@ const BOMList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="data-export.csv"
+      exportFilename="mrr-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No BOM records found"
+      emptyMessage="No MRR records found"
       className="mt-2"
     />
   );
 };
-export default BOMList;
+export default MrrList;

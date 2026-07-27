@@ -1,0 +1,100 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "mrrdc_items": {
+    "type": "string",
+    "label": "Item",
+    "maxLength": 50,
+    "placeholder": "Select item",
+    "required": true
+  },
+  "mrrdc_price": {
+    "type": "string",
+    "label": "Price List",
+    "maxLength": 50,
+    "placeholder": "Select price list",
+    "required": true
+  },
+  "mrrdc_trate": {
+    "type": "decimal",
+    "label": "Rate",
+    "required": true,
+    "default": 0
+  },
+  "mrrdc_trqty": {
+    "type": "decimal",
+    "label": "Quantity",
+    "required": true,
+    "default": 1
+  },
+  "mrrdc_tramt": {
+    "type": "decimal",
+    "label": "Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_dspct": {
+    "type": "decimal",
+    "label": "Discount %",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_dsamt": {
+    "type": "decimal",
+    "label": "Discount Amt",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_sdvat": {
+    "type": "decimal",
+    "label": "VAT %",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_txpct": {
+    "type": "decimal",
+    "label": "TAX %",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_fxcst": {
+    "type": "decimal",
+    "label": "Fix Cost %",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_otcst": {
+    "type": "decimal",
+    "label": "Other Cost",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_ntamt": {
+    "type": "decimal",
+    "label": "Net Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "mrrdc_csrat": {
+    "type": "decimal",
+    "label": "Cost Rate",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_refid": {
+    "type": "string",
+    "label": "Ref Id",
+    "maxLength": 50,
+    "placeholder": "Enter reference id",
+    "required": false
+  }
+}

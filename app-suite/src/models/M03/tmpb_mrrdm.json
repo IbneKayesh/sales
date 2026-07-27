@@ -1,0 +1,131 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "mrrdm_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select department",
+    "required": true
+  },
+  "mrrdm_cntct": {
+    "type": "string",
+    "label": "Supplier",
+    "maxLength": 50,
+    "placeholder": "Select supplier",
+    "required": true
+  },
+  "mrrdm_trnno": {
+    "type": "string",
+    "label": "MRR No",
+    "maxLength": 50,
+    "placeholder": "Enter MRR/GRN no",
+    "required": true
+  },
+  "mrrdm_trdat": {
+    "type": "datetime",
+    "label": "Date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "mrrdm_refno": {
+    "type": "string",
+    "label": "Ref No",
+    "maxLength": 50,
+    "placeholder": "Enter reference no",
+    "required": false
+  },
+  "mrrdm_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "mrrdm_tramt": {
+    "type": "decimal",
+    "label": "Total Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdm_itmds": {
+    "type": "decimal",
+    "label": "Item Discount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdm_invds": {
+    "type": "decimal",
+    "label": "Invoice Discount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdm_vtamt": {
+    "type": "decimal",
+    "label": "VAT Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdm_txamt": {
+    "type": "decimal",
+    "label": "TAX Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdm_icamt": {
+    "type": "decimal",
+    "label": "Include Cost",
+    "required": false,
+    "default": 0
+  },
+  "mrrdm_ecamt": {
+    "type": "decimal",
+    "label": "Exclude Cost",
+    "required": false,
+    "default": 0
+  },
+  "mrrdm_pyamt": {
+    "type": "decimal",
+    "label": "Payable Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdm_pdamt": {
+    "type": "decimal",
+    "label": "Paid Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdm_duamt": {
+    "type": "decimal",
+    "label": "Due Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdm_ispst": {
+    "type": "boolean",
+    "label": "Is Posted",
+    "required": false,
+    "default": false
+  },
+  "mrrdm_ispad": {
+    "type": "boolean",
+    "label": "Is Paid",
+    "required": false,
+    "default": false
+  },
+  "mrrdm_isqcp": {
+    "type": "boolean",
+    "label": "Is QC Passed",
+    "required": false,
+    "default": false
+  },
+  "mrrdm_isapp": {
+    "type": "boolean",
+    "label": "Is Approved",
+    "required": false,
+    "default": false
+  }
+}

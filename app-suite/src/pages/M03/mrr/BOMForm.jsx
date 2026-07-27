@@ -5,7 +5,6 @@ import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
-import { inout_Options } from "@/utils/vtable.js";
 
 const BOMForm = ({
   isBusy,
@@ -17,7 +16,7 @@ const BOMForm = ({
   onCancel,
   onSubmit,
   dpart_Options,
-  prods_Options,
+  contact_Options,
   units_Options,
 }) => {
   return (
@@ -27,9 +26,9 @@ const BOMForm = ({
           <Dropdown
             label="Department"
             options={dpart_Options}
-            value={formData.bommf_dpart}
-            onChange={(e) => onChange("bommf_dpart", e.target.value)}
-            error={formErrors.bommf_dpart}
+            value={formData.mrrdm_dpart}
+            onChange={(e) => onChange("mrrdm_dpart", e.target.value)}
+            error={formErrors.mrrdm_dpart}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -39,152 +38,157 @@ const BOMForm = ({
         </div>
         <div className="col-span-3">
           <Dropdown
-            label="Production"
-            options={prods_Options}
-            value={formData.bommf_prods}
-            onChange={(e) => onChange("bommf_prods", e.target.value)}
-            error={formErrors.bommf_prods}
+            label="Supplier"
+            options={contact_Options}
+            value={formData.mrrdm_cntct}
+            onChange={(e) => onChange("mrrdm_cntct", e.target.value)}
+            error={formErrors.mrrdm_cntct}
             required
             placeholder="Select..."
             disabled={readOnly}
             optionValue="id"
-            optionLabel="prods_cname"
+            optionLabel="cntct_cname"
           />
         </div>
         <div className="col-span-3">
           <InputText
-            label="Process Name"
-            placeholder="Enter process name"
-            value={formData.bommf_cname}
-            onChange={(e) => onChange("bommf_cname", e.target.value)}
-            error={formErrors.bommf_cname}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputNumber
-            label="Process No"
-            placeholder="Enter Process No"
-            value={formData.bommf_prono}
-            onChange={(e) => onChange("bommf_prono", e.target.value)}
-            min={1}
-            max={50}
-            step={1}
-            error={formErrors.bommf_prono}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <Dropdown
-            label="Input/Output"
-            options={inout_Options}
-            value={formData.bommf_inout}
-            onChange={(e) => onChange("bommf_inout", e.target.value)}
-            error={formErrors.bommf_inout}
-            required
-            placeholder="Select..."
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <Dropdown
-            label="Unit"
-            options={units_Options}
-            value={formData.bommf_units}
-            onChange={(e) => onChange("bommf_units", e.target.value)}
-            error={formErrors.bommf_units}
-            required
-            placeholder="Select..."
-            disabled={readOnly}
-            optionValue="id"
-            optionLabel="units_cname"
-          />
-        </div>
-        <div className="col-span-3">
-          <InputNumber
-            label="Qty"
-            placeholder="Enter Qty"
-            value={formData.bommf_bmqty}
-            onChange={(e) => onChange("bommf_bmqty", e.target.value)}
-            min={1}
-            max={50}
-            step={1}
-            error={formErrors.bommf_bmqty}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputNumber
-            label="Value"
-            placeholder="Enter Value"
-            value={formData.bommf_bmval}
-            onChange={(e) => onChange("bommf_bmval", e.target.value)}
-            min={1}
-            max={50}
-            step={1}
-            error={formErrors.bommf_bmval}
+            label="MRR No / GRN No"
+            placeholder="Enter MRR/GRN no"
+            value={formData.mrrdm_trnno}
+            onChange={(e) => onChange("mrrdm_trnno", e.target.value)}
+            error={formErrors.mrrdm_trnno}
             required
             disabled={readOnly}
           />
         </div>
         <div className="col-span-3">
           <InputCalendar
-            label="From Date"
-            value={formData.bommf_frdat}
-            onChange={(e) => onChange("bommf_frdat", e.target.value)}
+            label="Date"
+            value={formData.mrrdm_trdat}
+            onChange={(e) => onChange("mrrdm_trdat", e.target.value)}
             placeholder="Select..."
-            error={formErrors.bommf_frdat}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputCalendar
-            label="To Date"
-            value={formData.bommf_todat}
-            onChange={(e) => onChange("bommf_todat", e.target.value)}
-            placeholder="Select..."
-            error={formErrors.bommf_todat}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputNumber
-            label="Est Minute"
-            placeholder="Enter Minute"
-            value={formData.bommf_estim}
-            onChange={(e) => onChange("bommf_estim", e.target.value)}
-            min={1}
-            max={4320}
-            step={1}
-            error={formErrors.bommf_estim}
+            error={formErrors.mrrdm_trdat}
             required
             disabled={readOnly}
           />
         </div>
         <div className="col-span-3">
           <InputText
-            label="Note"
-            placeholder="Enter note"
-            value={formData.bommf_notes}
-            onChange={(e) => onChange("bommf_notes", e.target.value)}
-            error={formErrors.bommf_notes}
+            label="Ref No"
+            placeholder="Enter reference no"
+            value={formData.mrrdm_refno}
+            onChange={(e) => onChange("mrrdm_refno", e.target.value)}
+            error={formErrors.mrrdm_refno}
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <InputNumber
+            label="Total Amount"
+            placeholder="0.00"
+            value={formData.mrrdm_tramt}
+            onChange={(e) => onChange("mrrdm_tramt", e.target.value)}
+            error={formErrors.mrrdm_tramt}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <InputNumber
+            label="Item Discount"
+            placeholder="0.00"
+            value={formData.mrrdm_itmds}
+            onChange={(e) => onChange("mrrdm_itmds", e.target.value)}
+            error={formErrors.mrrdm_itmds}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <InputNumber
+            label="Invoice Discount"
+            placeholder="0.00"
+            value={formData.mrrdm_invds}
+            onChange={(e) => onChange("mrrdm_invds", e.target.value)}
+            error={formErrors.mrrdm_invds}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <InputNumber
+            label="VAT Amount"
+            placeholder="0.00"
+            value={formData.mrrdm_vtamt}
+            onChange={(e) => onChange("mrrdm_vtamt", e.target.value)}
+            error={formErrors.mrrdm_vtamt}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <InputNumber
+            label="TAX Amount"
+            placeholder="0.00"
+            value={formData.mrrdm_txamt}
+            onChange={(e) => onChange("mrrdm_txamt", e.target.value)}
+            error={formErrors.mrrdm_txamt}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <InputNumber
+            label="Payable Amount"
+            placeholder="0.00"
+            value={formData.mrrdm_pyamt}
+            onChange={(e) => onChange("mrrdm_pyamt", e.target.value)}
+            error={formErrors.mrrdm_pyamt}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <InputNumber
+            label="Paid Amount"
+            placeholder="0.00"
+            value={formData.mrrdm_pdamt}
+            onChange={(e) => onChange("mrrdm_pdamt", e.target.value)}
+            error={formErrors.mrrdm_pdamt}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <InputNumber
+            label="Due Amount"
+            placeholder="0.00"
+            value={formData.mrrdm_duamt}
+            onChange={(e) => onChange("mrrdm_duamt", e.target.value)}
+            error={formErrors.mrrdm_duamt}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-12">
+          <InputText
+            label="Notes"
+            placeholder="Enter notes"
+            value={formData.mrrdm_notes}
+            onChange={(e) => onChange("mrrdm_notes", e.target.value)}
+            error={formErrors.mrrdm_notes}
             disabled={readOnly}
           />
         </div>
       </div>
       {formData?.id && (
         <AuditData
-          actve={formData.bommf_actve}
+          actve={formData.mrrdm_actve}
           cname={formData.crusr_cname}
-          cdate={formData.bommf_crdat}
+          cdate={formData.mrrdm_crdat}
           uname={formData.upusr_cname}
-          udate={formData.bommf_updat}
-          rvnmr={formData.bommf_rvnmr}
+          udate={formData.mrrdm_updat}
+          rvnmr={formData.mrrdm_rvnmr}
         />
       )}
       <div className="form-actions">

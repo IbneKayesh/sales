@@ -3,25 +3,11 @@ import ActionButton from "@/components/ActionButton";
 
 const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
   const dtColumns = [
-    { key: "bosfg_types", header: "Type", width: "100px" },
     { key: "items_iname", header: "Item", width: "200px" },
-    { key: "bosfg_group", header: "Group", width: "80px" },
-    {
-      key: "bosfg_fgqty",
-      header: "Quantity",
-      width: "80px",
-      render: (_, row) => {
-        return (
-          <span>
-            {row.bosfg_fgqty} {row.units_cname}
-          </span>
-        );
-      },
-    },
-    { key: "bosfg_fgrto", header: "Ratio", width: "80px" },
-    { key: "bosfg_fgrat", header: "Rate", width: "80px" },
-    { key: "bosfg_fgval", header: "Value", width: "80px" },
-    { key: "bosfg_notes", header: "Notes", width: "100px" },
+    { key: "mrrdc_trate", header: "Rate", width: "80px" },
+    { key: "mrrdc_trqty", header: "Qty", width: "80px" },
+    { key: "mrrdc_tramt", header: "Amount", width: "100px" },
+    { key: "mrrdc_notes", header: "Notes", width: "100px" },
     {
       key: "actions",
       header: "Actions",
@@ -30,7 +16,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
       render: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.bosfg_actve}
+          actve={row.mrrdc_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />
@@ -40,7 +26,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
   ];
   return (
     <>
-      <p>Output → SFG/FG</p>
+      <p>Output → Items</p>
       <DataTable
         columns={dtColumns}
         data={listData}
@@ -52,7 +38,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
         exportable={false}
         exportFilename="data-export.csv"
         onRowClick={(row) => onEdit(row)}
-        emptyMessage="No SFG/FG found"
+        emptyMessage="No items found"
         className="mt-2"
       />
     </>

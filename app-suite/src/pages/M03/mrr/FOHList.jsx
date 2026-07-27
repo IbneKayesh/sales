@@ -3,24 +3,11 @@ import ActionButton from "@/components/ActionButton";
 
 const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "bofoh_types", header: "Type", width: "80px" },
     { key: "items_iname", header: "Item", width: "200px" },
-    {
-      key: "bofoh_foqty",
-      header: "Quantity",
-      width: "80px",
-      render: (_, row) => {
-        return (
-          <span>
-            {row.bofoh_foqty} {row.units_cname}
-          </span>
-        );
-      },
-    },
-    { key: "bofoh_forto", header: "Ratio", width: "80px" },
-    { key: "bofoh_forat", header: "Rate", width: "80px" },
-    { key: "bofoh_foval", header: "Value", width: "80px" },
-    { key: "bofoh_notes", header: "Notes", width: "100px" },
+    { key: "mrrdc_trate", header: "Rate", width: "80px" },
+    { key: "mrrdc_trqty", header: "Qty", width: "80px" },
+    { key: "mrrdc_tramt", header: "Amount", width: "100px" },
+    { key: "mrrdc_notes", header: "Notes", width: "100px" },
     {
       key: "actions",
       header: "Actions",
@@ -29,7 +16,7 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
       render: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.bofoh_actve}
+          actve={row.mrrdc_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />
@@ -39,7 +26,7 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
   ];
   return (
     <>
-      <p>Input → FOH</p>
+      <p>Input → Items</p>
       <DataTable
         columns={dtColumns}
         data={listData}
@@ -51,7 +38,7 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
         exportable={false}
         exportFilename="data-export.csv"
         onRowClick={(row) => onEdit(row)}
-        emptyMessage="No factory overhead found"
+        emptyMessage="No items found"
         className="mt-2"
       />
     </>
