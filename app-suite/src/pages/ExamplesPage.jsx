@@ -353,6 +353,7 @@ export default function ExamplesPage() {
   const [switchEmail, setSwitchEmail] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [treeChecked, setTreeChecked] = useState([]);
+  const [treeCheckedItems, setTreeCheckedItems] = useState([]);
   const treeData = [
     {
       id: "cat-1",
@@ -575,6 +576,10 @@ export default function ExamplesPage() {
   const handleResetNotifications = () => {
     setNotifications(sampleNotifications.map((n) => ({ ...n })));
   };
+
+  const handleTreeRowClick = useCallback((row) => {
+    toast.info(`Selected: ${row.name} (${row.code})`);
+  }, []);
 
   const [actionRow] = useState({
     prods_cname: "Production Line A",
@@ -2658,14 +2663,41 @@ export default function ExamplesPage() {
             <PageCardHeader>
               <PageCardTitle
                 title="Tree Data Table"
-                subtitle="Hierarchical data table with expandable rows, checkboxes, sorting, and status badges"
+                subtitle="Full-featured demo with search, export, row click, connector lines, and checkbox selection"
               />
             </PageCardHeader>
             <PageCardBody>
+              <div style={{ marginBottom: "var(--sp-4)" }}>
+                <TreeDataTable
+                  columns={treeColumns}
+                  data={treeTableData}
+                  sortable
+                  striped
+                  hoverable
+                  searchable
+                  searchPlaceholder="Search inventory..."
+                  exportable
+                  exportFilename="inventory-export.csv"
+                  onRowClick={handleTreeRowClick}
+                  emptyMessage="No inventory data"
+                />
+              </div>
+              <hr style={{ border: "none", borderTop: "1px solid var(--border)", margin: "var(--sp-5) 0" }} />
+              <h4 className="h4" style={{ margin: "0 0 var(--sp-3)", color: "var(--text-secondary)", fontSize: "var(--fs-sm)" }}>
+                Checkable + Dense Variant
+              </h4>
+              <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)", marginBottom: "var(--sp-3)" }}>
+                <span style={{ fontSize: "var(--fs-sm)", color: "var(--text-secondary)" }}>
+                  {treeCheckedItems.length} item{treeCheckedItems.length !== 1 ? "s" : ""} selected
+                </span>
+              </div>
               <TreeDataTable
                 columns={treeColumns}
                 data={treeTableData}
-                sortable
+                dense
+                checkable
+                checked={treeCheckedItems}
+                onCheckedChange={setTreeCheckedItems}
                 striped
                 hoverable
                 emptyMessage="No inventory data"

@@ -141,7 +141,6 @@ const create = async (req, res) => {
     }
 
     //database action
-
     const sql_chtac = `SELECT cht.id AS chtac_id
         FROM tmsb_shtbl sht
         JOIN tmtb_prtya pty ON sht.id = pty.prtya_shtbl
@@ -151,13 +150,13 @@ const create = async (req, res) => {
     const row_chtac = await dbGetAll(
       sql_chtac,
       [cntct_ctype, user_c],
-      `get account coa- ${user_c}`,
+      `get account coa- ${cntct_ctype}`,
     );
 
     if (row_chtac.length === 0) {
       return res.json({
         success: false,
-        message: "No Chart of Account setup for this type.",
+        message: `No account party setup for ${cntct_ctype}`,
         data: {},
       });
     }
@@ -356,7 +355,7 @@ const update = async (req, res) => {
         user_s,
         id,
       ],
-      label: `update contact- ${user_c}`,
+      label: `update party accounts- ${user_c}`,
     });
 
     await dbRunAll(scripts);

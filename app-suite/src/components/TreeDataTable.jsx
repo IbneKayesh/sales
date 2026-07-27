@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react'
-import { IconChevronRight, IconCheckboxCheck, IconCheckboxIndeterminate, IconSort } from '@/icons'
+import { useState, useCallback, useMemo } from 'react'
+import { IconChevronRight, IconCheckboxCheck, IconCheckboxIndeterminate, IconSort, IconSearch, IconClose, IconDownload } from '@/icons'
 
 /* ─── Helpers ─── */
 
@@ -43,32 +43,98 @@ function computeParentState(children, checkedSet) {
   return 'unchecked'
 }
 
+/**
+ * Filter a tree to only keep nodes that match the query (case-insensitive)
+ * or have descendants that match. Matching nodes keep all their ancestors.
+ */
+function filterTree(nodes, query, columns) {
+  if (!query) return null // signal: no filtering needed
+
+  const q = query.toLowerCase()
+
+  function matches(node) {
+    return columns.some((col) => {
+      if (col.sortable === false) return false // skip action columns
+      const val = col.accessor ? node[col.accessor] : node[col.key]
+      return val != null && String(val).toLowerCase().includes(q)
+    })
+  }
+
+  function filter(list) {
+    const result = []
+    for (const node of list) {
+      const filteredChildren = node.children ? filter(node.children) : []
+      if (matches(node) || filteredChildren.length > 0) {
+        result.push({
+          ...node,
+          children: filteredChildren,
+        })
+      }
+    }
+    return result
+  }
+
+  return filter(nodes)
+}
+
+/**
+ * Collect IDs of all nodes that have children — used for auto-expand on search.
+ */
+function collectParentIds(nodes) {
+  const ids = new Set()
+  const walk = (list) => {
+    for (const n of list) {
+      if (n.children?.length) {
+        ids.add(n.id)
+        walk(n.children)
+      }
+    }
+  }
+  walk(nodes)
+  return ids
+}
+
 /* ─── Recursive Row ─── */
 function TreeDataRow({
   node,
   columns,
+  checkable,
   checkedSet,
   expandedSet,
   onToggleCheck,
   onToggleExpand,
+  onRowClick,
   depth,
   treeColIndex,
   striped,
   hoverable,
+  connectorState = [],
+  isLast = false,
 }) {
   const hasChildren = node.children?.length > 0
   const isExpanded = expandedSet.has(node.id)
 
-  const parentState = hasChildren
+  const parentState = hasChildren && checkable
     ? computeParentState(node.children, checkedSet)
     : null
-  const isChecked = checkedSet.has(node.id)
-  const isIndeterminate = parentState === 'indeterminate'
+  const isChecked = checkable && checkedSet.has(node.id)
+  const isIndeterminate = checkable && parentState === 'indeterminate'
+
+  const handleRowClick = (e) => {
+    // Don't trigger onRowClick when clicking interactive elements inside the row
+    if (
+      e.target.closest('.tree-dt__toggle') ||
+      e.target.closest('.tree-dt__checkbox') ||
+      e.target.closest('button')
+    ) return
+    onRowClick?.(node)
+  }
 
   return (
     <>
       <tr
-        className={`tree-dt__tr${striped ? ' tree-dt__tr--striped' : ''}${hoverable ? ' tree-dt__tr--hoverable' : ''}`}
+        className={`tree-dt__tr${striped ? ' tree-dt__tr--striped' : ''}${hoverable ? ' tree-dt__tr--hoverable' : ''}${onRowClick ? ' tree-dt__tr--clickable' : ''}`}
+        onClick={handleRowClick}
       >
         {columns.map((col, ci) => {
           const isTreeCol = ci === treeColIndex
@@ -83,11 +149,33 @@ function TreeDataRow({
                   className="tree-dt__cell"
                   style={{ paddingLeft: `${8 + depth * 24}px` }}
                 >
+                  {/* Connector lines */}
+                  {depth > 0 && (
+                    <span
+                      className="tree-dt__connectors"
+                      aria-hidden="true"
+                      style={{ width: `${8 + depth * 24}px` }}
+                    >
+                      {connectorState.map((showLine, i) => (
+                        <span
+                          key={i}
+                          className={`tree-dt__connector-line${showLine ? ' tree-dt__connector-line--vis' : ''}`}
+                        />
+                      ))}
+                      <span
+                        className={`tree-dt__connector-branch${isLast ? ' tree-dt__connector-branch--last' : ''}`}
+                      />
+                    </span>
+                  )}
+
                   {/* Expand toggle */}
                   <button
                     type="button"
                     className={`tree-dt__toggle${hasChildren ? '' : ' tree-dt__toggle--spacer'}`}
-                    onClick={() => hasChildren && onToggleExpand(node.id)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      hasChildren && onToggleExpand(node.id)
+                    }}
                     onKeyDown={(e) => {
                       if ((e.key === 'Enter' || e.key === ' ') && hasChildren) {
                         e.preventDefault()
@@ -105,28 +193,33 @@ function TreeDataRow({
                     )}
                   </button>
 
-                  {/* Checkbox */}
-                  <span
-                    className="tree-dt__checkbox"
-                    onClick={() => onToggleCheck(node)}
-                    role="checkbox"
-                    aria-checked={isChecked || (isIndeterminate ? 'mixed' : false)}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
+                  {/* Checkbox (only when checkable) */}
+                  {checkable && (
+                    <span
+                      className="tree-dt__checkbox"
+                      onClick={(e) => {
+                        e.stopPropagation()
                         onToggleCheck(node)
-                      }
-                    }}
-                  >
-                    <span className="tree-dt__check-visual">
-                      {isChecked ? (
-                        <IconCheckboxCheck size={10} />
-                      ) : isIndeterminate ? (
-                        <IconCheckboxIndeterminate size={10} />
-                      ) : null}
+                      }}
+                      role="checkbox"
+                      aria-checked={isChecked || (isIndeterminate ? 'mixed' : false)}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          onToggleCheck(node)
+                        }
+                      }}
+                    >
+                      <span className="tree-dt__check-visual">
+                        {isChecked ? (
+                          <IconCheckboxCheck size={10} />
+                        ) : isIndeterminate ? (
+                          <IconCheckboxIndeterminate size={10} />
+                        ) : null}
+                      </span>
                     </span>
-                  </span>
+                  )}
 
                   {/* Cell value */}
                   <span className="tree-dt__cell-text">
@@ -145,24 +238,61 @@ function TreeDataRow({
 
       {/* Children */}
       {hasChildren && isExpanded && (
-        node.children.map((child) => (
-          <TreeDataRow
-            key={child.id}
-            node={child}
-            columns={columns}
-            checkedSet={checkedSet}
-            expandedSet={expandedSet}
-            onToggleCheck={onToggleCheck}
-            onToggleExpand={onToggleExpand}
-            depth={depth + 1}
-            treeColIndex={treeColIndex}
-            striped={striped}
-            hoverable={hoverable}
-          />
-        ))
+        node.children.map((child, idx, arr) => {
+          const childIsLast = idx === arr.length - 1
+          const childConnectorState = [...connectorState, !childIsLast]
+          return (
+            <TreeDataRow
+              key={child.id}
+              node={child}
+              columns={columns}
+              checkable={checkable}
+              checkedSet={checkedSet}
+              expandedSet={expandedSet}
+              onToggleCheck={onToggleCheck}
+              onToggleExpand={onToggleExpand}
+              onRowClick={onRowClick}
+              depth={depth + 1}
+              treeColIndex={treeColIndex}
+              striped={striped}
+              hoverable={hoverable}
+              connectorState={childConnectorState}
+              isLast={childIsLast}
+            />
+          )
+        })
       )}
     </>
   )
+}
+
+/* ─── CSV Export helper ─── */
+function exportToCsv(data, columns, filename) {
+  if (!data.length) return
+
+  const dataCols = columns.filter((col) => col.sortable !== false && col.visible !== false)
+
+  const headers = dataCols.map((col) => {
+    const val = col.header || col.label || col.key || ''
+    return `"${String(val).replace(/"/g, '""')}"`
+  })
+
+  const rows = data.map((row) =>
+    dataCols.map((col) => {
+      const val = col.accessor ? row[col.accessor] : row[col.key]
+      const str = val != null ? String(val) : ''
+      return `"${str.replace(/"/g, '""')}"`
+    }),
+  )
+
+  const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename || 'export.csv'
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 /* ─── Top-level TreeDataTable ─── */
@@ -170,20 +300,28 @@ export default function TreeDataTable({
   columns = [],
   data = [],
   treeColumn = 0,
+  checkable = false,
   checked,
   onCheckedChange,
   expanded,
   onExpandedChange,
   sortable = true,
+  searchable = false,
+  searchPlaceholder = 'Search...',
+  exportable = false,
+  exportFilename,
   striped = true,
   hoverable = true,
   dense = false,
   className = '',
   emptyMessage = 'No data available',
+  onRowClick,
 }) {
   const [sortKey, setSortKey] = useState(null)
   const [sortDir, setSortDir] = useState('asc')
+  const [searchQuery, setSearchQuery] = useState('')
 
+  // Auto-expand all nodes on initial render
   const [localExpanded, setLocalExpanded] = useState(() => {
     const ids = new Set()
     const walk = (list) => {
@@ -200,7 +338,25 @@ export default function TreeDataTable({
   if (!visibleColumns.length) return null
 
   const checkedSet = new Set(checked || [])
-  const expandedSet = expanded ? new Set(expanded) : localExpanded
+
+  // ── Search filtering ──
+  const isSearching = searchable && searchQuery.length > 0
+  const filteredData = useMemo(
+    () => {
+      if (!isSearching) return data
+      const result = filterTree(data, searchQuery, visibleColumns)
+      return result || data
+    },
+    [data, searchQuery, visibleColumns, isSearching]
+  )
+
+  // When searching, auto-expand all parents in the filtered tree
+  const searchExpandedSet = useMemo(() => {
+    if (!isSearching) return null
+    return collectParentIds(filteredData)
+  }, [filteredData, isSearching])
+
+  const expandedSet = searchExpandedSet || (expanded ? new Set(expanded) : localExpanded)
 
   const handleSort = (key) => {
     if (!sortable) return
@@ -216,6 +372,7 @@ export default function TreeDataTable({
 
   const handleToggleCheck = useCallback(
     (node) => {
+      if (!checkable) return
       const ids = [node.id, ...collectDescendantIds(node.children || [])]
       const allChecked = ids.every((id) => checkedSet.has(id))
       const next = new Set(checkedSet)
@@ -223,11 +380,14 @@ export default function TreeDataTable({
       else ids.forEach((id) => next.add(id))
       onCheckedChange?.(Array.from(next))
     },
-    [checkedSet, onCheckedChange]
+    [checkable, checkedSet, onCheckedChange]
   )
 
   const handleToggleExpand = useCallback(
     (id) => {
+      // Don't allow collapse during search — auto-expand is enforced
+      if (isSearching) return
+
       if (onExpandedChange) {
         const next = new Set(expandedSet)
         if (next.has(id)) next.delete(id)
@@ -242,11 +402,19 @@ export default function TreeDataTable({
         })
       }
     },
-    [expandedSet, onExpandedChange]
+    [expandedSet, onExpandedChange, isSearching]
   )
 
-  // Sort flat list
-  const flat = flattenTree(data)
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value)
+  }
+
+  const handleSearchClear = () => {
+    setSearchQuery('')
+  }
+
+  // Sort flat list (use filtered data when searching)
+  const flat = flattenTree(isSearching ? filteredData : data)
   const sorted = sortKey
     ? [...flat].sort((a, b) => {
         const aVal = a[sortKey]
@@ -261,8 +429,59 @@ export default function TreeDataTable({
       })
     : flat
 
+  const displayData = isSearching ? filteredData : data
+  const flatDisplay = sortKey
+    ? sorted.filter((r) => r._depth === 0)
+    : displayData
+
+  const showToolbar = searchable || exportable
+
   return (
     <div className={`tree-dt${dense ? ' tree-dt--dense' : ''}${className ? ' ' + className : ''}`}>
+      {/* Toolbar */}
+      {showToolbar && (
+        <div className="tree-dt__toolbar">
+          {searchable && (
+            <div className="tree-dt__search">
+              <IconSearch size={16} className="tree-dt__search-icon" />
+              <input
+                type="text"
+                className="tree-dt__search-input"
+                placeholder={searchPlaceholder}
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  className="tree-dt__search-clear"
+                  onClick={handleSearchClear}
+                  aria-label="Clear search"
+                >
+                  <IconClose size={14} />
+                </button>
+              )}
+            </div>
+          )}
+          <div className="tree-dt__toolbar-right">
+            <span className="tree-dt__count">
+              {flat.length} records{isSearching ? ` (filtered)` : ''}
+            </span>
+            {exportable && (
+              <button
+                type="button"
+                className="tree-dt__export-btn"
+                onClick={() => exportToCsv(flat, visibleColumns, exportFilename)}
+                title="Export to CSV"
+              >
+                <IconDownload size={14} />
+                Export CSV
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="tree-dt__wrap">
         <table className="tree-dt__table">
           <thead>
@@ -290,17 +509,19 @@ export default function TreeDataTable({
             </tr>
           </thead>
           <tbody>
-            {sorted.length > 0 ? (
-              sorted.filter((r) => r._depth === 0).map((row) => (
+            {flatDisplay.length > 0 ? (
+              flatDisplay.map((row) => (
                 <TreeDataRow
                   key={row.id}
                   node={row}
                   columns={visibleColumns}
+                  checkable={checkable}
                   checkedSet={checkedSet}
                   expandedSet={expandedSet}
                   onToggleCheck={handleToggleCheck}
                   onToggleExpand={handleToggleExpand}
-                  depth={row._depth}
+                  onRowClick={onRowClick}
+                  depth={row._depth ?? 0}
                   treeColIndex={treeColumn}
                   striped={striped}
                   hoverable={hoverable}
@@ -309,7 +530,7 @@ export default function TreeDataTable({
             ) : (
               <tr>
                 <td colSpan={visibleColumns.length} className="tree-dt__empty">
-                  {emptyMessage}
+                  {isSearching ? `No results for "${searchQuery}"` : emptyMessage}
                 </td>
               </tr>
             )}

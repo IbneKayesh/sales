@@ -4,6 +4,7 @@ import FiscalYearPage from "@/pages/M08/setup/fiscalyears/FiscalYearPage";
 import PartyPage from "@/pages/M08/setup/parties/PartyPage";
 import PartyAutoPage from "@/pages/M08/setup/partyauto/PartyAutoPage";
 import JournalPage from "@/pages/M08/journals/JournalPage";
+import Fstatements from "@/pages/M08/reports/Fstatements";
 
 const routes = [
   { path: "/accounts/setup/chart-of-accounts", element: <COAPage /> },
@@ -12,6 +13,7 @@ const routes = [
   { path: "/accounts/setup/parties", element: <PartyPage /> },
   { path: "/accounts/setup/party-auto", element: <PartyAutoPage /> },
   { path: "/accounts/journals", element: <JournalPage /> },
+  { path: "/accounts/reports/fstatements", element: <Fstatements /> },
 ];
 
 export default routes;

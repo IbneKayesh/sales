@@ -25,6 +25,7 @@ const inout_Options = [
   { label: "Output", value: "Output" },
 ];
 
+//COA
 const itype_Options = [
   { label: "Raw Material (RM)", value: "RM" },
   { label: "Packing Material (PM)", value: "PM" },
@@ -53,12 +54,13 @@ const acprd_stats_Options = [
 ];
 
 const party_ptype_Options = [
-  { label: "Customer", value: "Customer", auto_create: true },
-  { label: "Supplier", value: "Supplier", auto_create: true },
-  { label: "Employee", value: "Employee", auto_create: true },
   { label: "Investor", value: "Investor", auto_create: false },
   { label: "Bank", value: "Bank", auto_create: false },
   { label: "Cash", value: "Cash", auto_create: false },
+  { label: "Inventory", value: "Inventory", auto_create: false },
+  { label: "Customer", value: "Customer", auto_create: true },
+  { label: "Supplier", value: "Supplier", auto_create: true },
+  { label: "Employee", value: "Employee", auto_create: true },
   { label: "Product-FG", value: "FG", auto_create: true },
   { label: "Product-RM", value: "RM", auto_create: true },
   { label: "Product-PM", value: "PM", auto_create: true },
@@ -72,6 +74,7 @@ const chtac_ntype_Options = [
   { label: "Cr", value: "Cr" },
 ];
 
+//COA
 const ctype_Options = [
   { label: "Customer", value: "Customer" },
   { label: "Supplier", value: "Supplier" },

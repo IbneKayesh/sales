@@ -4,6 +4,7 @@ import TransactionsPage from "../pages/TransactionsPage";
 import ReportsPage from "../pages/ReportsPage";
 import SettingsPage from "../pages/SettingsPage";
 import ExamplesPage from "../pages/ExamplesPage";
+import TreeViewExamplesPage from "../pages/TreeViewExamplesPage";
 import LoginPage from "../pages/auth/LoginPage";
 import NotificationPage from "../pages/NotificationPage";
 import NotFoundPage from "../pages/NotFoundPage";
@@ -16,6 +17,7 @@ const routes = [
   { path: "/reports", element: <ReportsPage /> },
   { path: "/settings", element: <SettingsPage /> },
   { path: "/examples", element: <ExamplesPage /> },
+  { path: "/examples/treeview", element: <TreeViewExamplesPage /> },
   { path: "/notifications", element: <NotificationPage /> },
   { path: "*", element: <NotFoundPage /> },
 ];

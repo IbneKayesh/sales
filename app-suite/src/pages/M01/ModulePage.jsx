@@ -537,6 +537,22 @@ const appModules = [
           },
         ],
       },
+      {
+        id: "G03",
+        name: "Reports",
+        order: 3,
+        menus: [
+          {
+            id: "M08-G03-M001",
+            name: "Financial Statements",
+            color: "#8b5cf6",
+            icon: "File",
+            order: 1,
+            link: "/accounts/reports/fstatements",
+            desc: "Financial Statements",
+          },
+        ],
+      },
     ],
   },
   {
@@ -616,6 +632,15 @@ const appModules = [
             order: 1,
             link: "/examples",
             desc: "Browse UI component examples",
+          },
+          {
+            id: "M09-G04-M002",
+            name: "TreeView Examples",
+            color: "#22c55e",
+            icon: "File",
+            order: 2,
+            link: "/examples/treeview",
+            desc: "Explore TreeView component demos",
           },
         ],
       },

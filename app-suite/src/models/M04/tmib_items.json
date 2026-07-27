@@ -84,7 +84,7 @@
   "items_tstck": {
     "type": "boolean",
     "label": "Track Stock",
-    "default": "true"
+    "default": true
   },
   "items_sdvat": {
     "type": "decimal",
@@ -122,16 +122,16 @@
   "items_stpur": {
     "type": "boolean",
     "label": "Stop Purchase",
-    "default": "false"
+    "default": false
   },
   "items_stsal": {
     "type": "boolean",
     "label": "Stop Sale",
-    "default": "false"
+    "default": false
   },
   "items_stnsf": {
     "type": "boolean",
     "label": "Stop Transfer",
-    "default": "false"
+    "default": false
   }
 }

@@ -1,0 +1,22 @@
+Financial Reports
+│
+├── Financial Statements (/Fstatements/(.jsx))
+│   ├── PnL (PnLReport.jsx)
+│   ├── Balance Sheet (BalanceSheetReport.jsx)
+│   ├── Cash Flow (CashFlowReport.jsx)
+│   └── Trial Balance (TBReport.jsx)
+│
+├── Ledger Reports (/Fstatements/(.jsx))
+│   ├── General Ledger (GLedgerReport.jsx)
+│   ├── Journal Register (JRegisterReport.jsx)
+│   ├── Account Ledger (ALedgerReport.jsx)
+│   └── Sub-ledgers (SLedgerReport.jsx)
+│
+├── Receivable & Payable (/Fstatements/(.jsx))
+│   ├── AR Aging (ARReport.jsx)
+│   ├── AP Aging (APReport.jsx)
+│   └── Outstanding (OutStandReport.jsx)
+│
+├── Banking & Cash (/Fstatements/(.jsx))
+    ├── Bank Reconciliation (BankRecReport.jsx)
+    └── Cash Book (CashBankReport.jsx)

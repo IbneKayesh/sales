@@ -146,46 +146,93 @@ const create = async (req, res) => {
     }
 
     //database action
-    const newCode = await GenNewCode(user_c, "tmib_items");
+    const sql_chtac = `SELECT cht.id AS chtac_id
+        FROM tmsb_shtbl sht
+        JOIN tmtb_prtya pty ON sht.id = pty.prtya_shtbl
+        JOIN tmtb_chtac cht ON pty.prtya_chtno = cht.chtac_chtno
+        WHERE sht.shtbl_value = $1
+        AND sht.shtbl_users =$2`;
+    const row_chtac = await dbGetAll(
+      sql_chtac,
+      [items_itype, user_c],
+      `get account coa- ${items_itype}`,
+    );
+    if (row_chtac.length === 0) {
+      return res.json({
+        success: false,
+        message: `No account party setup for ${items_itype}`,
+        data: {},
+      });
+    }
 
-    const sql = `INSERT INTO tmib_items(id, items_users, items_bsins, items_ccode, items_icode, items_iname, items_brcod,
+    const masterId = uuidv4();
+    const scripts = [];
+
+    const newCode = await GenNewCode(user_c, "tmib_items");
+    scripts.push({
+      sql: `INSERT INTO tmib_items(id, items_users, items_bsins, items_ccode, items_icode, items_iname, items_brcod,
     items_hscod, items_notes, items_runit, items_pkqty, items_punit, items_sgrup,
     items_scatg, items_itype, items_brand, items_tstck, items_sdvat, items_smrgn,
     items_fxcst, items_image, items_stpur, items_stsal, items_stnsf, items_crusr, items_upusr)
-	VALUES ($1, $2, $3, $4, $5, $6,
+	    VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
         $13, $14, $15, $16, $17, $18,
-        $19, $20, $21, $22, $23, $24, $25, $26)`;
-    const params = [
-      uuidv4(),
-      user_c,
-      user_b,
-      newCode,
-      items_icode || newCode,
-      items_iname,
-      items_brcod,
-      items_hscod,
-      items_notes,
-      items_runit,
-      items_pkqty,
-      items_punit,
-      items_sgrup,
-      items_scatg,
-      items_itype,
-      items_brand,
-      items_tstck,
-      items_sdvat,
-      items_smrgn,
-      items_fxcst,
-      items_image,
-      items_stpur,
-      items_stsal,
-      items_stnsf,
-      user_s,
-      user_s,
-    ];
+        $19, $20, $21, $22, $23, $24, $25, $26)`,
+      params: [
+        masterId,
+        user_c,
+        user_b,
+        newCode,
+        items_icode || newCode,
+        items_iname,
+        items_brcod,
+        items_hscod,
+        items_notes,
+        items_runit,
+        items_pkqty,
+        items_punit,
+        items_sgrup,
+        items_scatg,
+        items_itype,
+        items_brand,
+        items_tstck,
+        items_sdvat,
+        items_smrgn,
+        items_fxcst,
+        items_image,
+        items_stpur,
+        items_stsal,
+        items_stnsf,
+        user_s,
+        user_s,
+      ],
+      label: `create item- ${user_c}`,
+    });
 
-    await dbRun(sql, params, `create item- ${user_c}`);
+    for (row of row_chtac) {
+      const newCodeParty = await GenNewCode(user_c, "tmtb_party");
+      scripts.push({
+        sql: `INSERT INTO tmtb_party(id, party_users, party_bsins, party_ccode, party_ptype, party_chtac,
+      party_vndor, party_cname, party_opbal, party_crusr, party_upusr)
+      VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          newCodeParty,
+          items_itype,
+          row.chtac_id,
+          masterId,
+          items_iname,
+          0,
+          user_s,
+          user_s,
+        ],
+        label: `create party accounts- ${user_c}`,
+      });
+    }
+    await dbRunAll(scripts);
     res.json({
       success: true,
       message: `${items_iname} - Created successfully.`,
@@ -255,8 +302,10 @@ const update = async (req, res) => {
     }
 
     //database action
+    const scripts = [];
     //items_itype :: accounts party created - don't update
-    const sql = `UPDATE tmib_items
+    scripts.push({
+      sql: `UPDATE tmib_items
     SET items_iname = $1,
     items_brcod = $2,
     items_hscod = $3,
@@ -278,31 +327,44 @@ const update = async (req, res) => {
     items_upusr = $19,
     items_updat = CURRENT_TIMESTAMP,
     items_rvnmr = items_rvnmr + 1
-    WHERE id = $20`;
-    const params = [
-      items_iname,
-      items_brcod,
-      items_hscod,
-      items_notes,
-      items_runit,
-      items_pkqty,
-      items_punit,
-      items_sgrup,
-      items_scatg,
-      items_brand,
-      items_tstck,
-      items_sdvat,
-      items_smrgn,
-      items_fxcst,
-      items_image,
-      items_stpur,
-      items_stsal,
-      items_stnsf,
-      user_s,
-      id,
-    ];
+    WHERE id = $20`,
+      params: [
+        items_iname,
+        items_brcod,
+        items_hscod,
+        items_notes,
+        items_runit,
+        items_pkqty,
+        items_punit,
+        items_sgrup,
+        items_scatg,
+        items_brand,
+        items_tstck,
+        items_sdvat,
+        items_smrgn,
+        items_fxcst,
+        items_image,
+        items_stpur,
+        items_stsal,
+        items_stnsf,
+        user_s,
+        id,
+      ],
+      label: `update item- ${user_c}`,
+    });
 
-    await dbRun(sql, params, `update item- ${user_c}`);
+    scripts.push({
+      sql: `UPDATE tmtb_party
+    SET party_cname = $1,
+    party_upusr = $2,
+    party_updat = CURRENT_TIMESTAMP,
+    party_rvnmr = party_rvnmr + 1
+    WHERE party_vndor = $3`,
+      params: [items_iname, user_s, id],
+      label: `update party accounts- ${user_c}`,
+    });
+
+    await dbRunAll(scripts);
     res.json({
       success: true,
       message: `${items_iname} - Updated successfully.`,
