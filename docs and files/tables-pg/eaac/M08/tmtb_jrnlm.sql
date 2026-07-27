@@ -4,6 +4,8 @@
 --
 
 CREATE TABLE tmtb_jrnlm (
+  
+  -- default 1
   id varchar(50) PRIMARY KEY,
 
   jrnlm_users varchar(50) NOT NULL,
@@ -13,6 +15,8 @@ CREATE TABLE tmtb_jrnlm (
   jrnlm_acprd varchar(50) NOT NULL,
   jrnlm_crncy varchar(50) NOT NULL,
   jrnlm_trtyp varchar(50) NOT NULL,
+
+  -- custom
   jrnlm_trnno varchar(50) NOT NULL,
   jrnlm_trdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   jrnlm_refno varchar(50) NOT NULL,
@@ -20,8 +24,7 @@ CREATE TABLE tmtb_jrnlm (
   jrnlm_drval decimal(18,6) NOT NULL DEFAULT 0,
   jrnlm_crval decimal(18,6) NOT NULL DEFAULT 0,
   jrnlm_stats varchar(50) NOT NULL,
-  jrnlm_appid varchar(50) NULL,
-  jrnlm_apdat timestamp NULL,
+  jrnlm_isapp boolean NOT NULL DEFAULT false,
   
   -- default
   jrnlm_actve boolean NOT NULL DEFAULT true,

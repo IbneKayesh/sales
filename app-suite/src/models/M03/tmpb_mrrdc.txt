@@ -1,0 +1,20 @@
+		tmpb_mrrdc	10	mrr details
+	id	id	2	
+mrrdc_	users	mrrdc_users	11	Master Id
+mrrdc_	bsins	mrrdc_bsins	11	Business Id
+mrrdc_	mrrdm	mrrdc_mrrdm	11	Master Id
+mrrdc_	price	mrrdc_price	11	Item Price Id
+mrrdc_	items	mrrdc_items	11	Item Id
+mrrdc_	trate	mrrdc_trate	11	Rate
+mrrdc_	trqty	mrrdc_trqty	11	Qty
+mrrdc_	tramt	mrrdc_tramt	11	Amount
+mrrdc_	dspct	mrrdc_dspct	11	Disc %
+mrrdc_	dsamt	mrrdc_dsamt	11	Disc Amt
+mrrdc_	sdvat	mrrdc_sdvat	11	VAT %
+mrrdc_	txpct	mrrdc_txpct	11	TAX %
+mrrdc_	fxcst	mrrdc_fxcst	11	Fix Cost %
+mrrdc_	otcst	mrrdc_otcst	11	Other Cost
+mrrdc_	ntamt	mrrdc_ntamt	11	Net Amt
+mrrdc_	notes	mrrdc_notes	11	Item Note
+mrrdc_	csrat	mrrdc_csrat	11	Cost Rate
+mrrdc_	refid	mrrdc_refid	11	Ref Id

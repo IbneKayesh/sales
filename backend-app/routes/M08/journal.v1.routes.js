@@ -106,8 +106,7 @@ const create = async (req, res) => {
       jrnlm_drval,
       jrnlm_crval,
       jrnlm_stats,
-      jrnlm_appid,
-      jrnlm_apdat,
+      tmtb_jrnlm,
       tmtb_jrnlc,
       user_s,
       user_c,
@@ -177,10 +176,10 @@ const create = async (req, res) => {
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    jrnlm_drval, jrnlm_crval, jrnlm_stats, jrnlm_appid, jrnlm_apdat, jrnlm_crusr, jrnlm_upusr)
+    jrnlm_drval, jrnlm_crval, jrnlm_stats, tmtb_jrnlm, jrnlm_crusr, jrnlm_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
     $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17, $18, $19)`,
+    $13, $14, $15, $16, $17, $18)`,
       params: [
         masterId,
         user_c,
@@ -197,8 +196,7 @@ const create = async (req, res) => {
         jrnlm_drval,
         jrnlm_crval,
         jrnlm_stats,
-        jrnlm_appid,
-        jrnlm_apdat,
+        tmtb_jrnlm,
         user_s,
         user_s,
       ],
@@ -276,8 +274,7 @@ const update = async (req, res) => {
       jrnlm_drval,
       jrnlm_crval,
       jrnlm_stats,
-      jrnlm_appid,
-      jrnlm_apdat,
+      tmtb_jrnlm,
       tmtb_jrnlc,
       user_s,
       user_c,

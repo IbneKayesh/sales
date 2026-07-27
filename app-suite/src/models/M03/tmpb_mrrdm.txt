@@ -1,0 +1,24 @@
+		tmpb_mrrdm	10	mrr master
+	id	id	2	
+mrrdm_	users	mrrdm_users	11	Master Id
+mrrdm_	bsins	mrrdm_bsins	11	Business Id
+mrrdm_	dpart	mrrdm_dpart	11	Department Id
+mrrdm_	cntct	mrrdm_cntct	11	Supplier Contact Id
+mrrdm_	trnno	mrrdm_trnno	11	Trn No / GRN No
+mrrdm_	trdat	mrrdm_trdat	11	Trn Date
+mrrdm_	refno	mrrdm_refno	11	Ref No
+mrrdm_	notes	mrrdm_notes	11	Notes
+mrrdm_	tramt	mrrdm_tramt	11	Trn Amount
+mrrdm_	itmds	mrrdm_itmds	11	Item Discount
+mrrdm_	invds	mrrdm_invds	11	Invoice Discount
+mrrdm_	vtamt	mrrdm_vtamt	11	VAT Amount
+mrrdm_	txamt	mrrdm_txamt	11	TAX Amount
+mrrdm_	icamt	mrrdm_icamt	11	Include Cost
+mrrdm_	ecamt	mrrdm_ecamt	11	Exclude Cost
+mrrdm_	pyamt	mrrdm_pyamt	11	Payable Amount
+mrrdm_	pdamt	mrrdm_pdamt	11	Paid Amount
+mrrdm_	duamt	mrrdm_duamt	11	Due Amount
+mrrdm_	ispst	mrrdm_ispst	11	Is Posted
+mrrdm_	ispad	mrrdm_ispad	11	Is Paid
+mrrdm_	isqcp	mrrdm_isqcp	11	Is QC
+mrrdm_	isapp	mrrdm_isapp	11	Is Approved

@@ -1,1 +1,7 @@
-1. M01/ModulePage.jsx > menus Design will be smaller Card style, Left side full size icon, right Top Menu Name, right bottom Descriptions
+1. implement api/M03
+2. implement hooks/M03/useMRR.js
+3. implement models/M03/
+4. implement pages/M03/mrr
+
+as example of M05/setup/bom, maintain same UI and logic consistency for MRR
+do it
