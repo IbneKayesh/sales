@@ -56,15 +56,37 @@ const useMRR = () => {
   }, []);
 
   useEffect(() => {
-    //  formData.mrrdm_tramt =  listDataItem.mrrdc_itamt sum 
-    //  formData.mrrdm_itmds =  listDataItem.mrrdc_dsamt sum 
-    //  formData.mrrdm_ivtmt =  listDataItem.mrrdc_ivamt sum 
-    //  formData.mrrdm_vtamt =  listDataItem.mrrdc_vtamt sum 
-    //  formData.mrrdm_txamt =  listDataItem.mrrdc_txamt sum 
-    //  formData.mrrdm_pyamt =  formData.mrrdm_tramt  - formData.mrrdm_itmds + formData.mrrdm_icamt
-    //  formData.mrrdm_duamt =  formData.mrrdm_pyamt  - formData.mrrdm_pdamt
+    setFormData((prev) => {
+      // Single reduce pass: calculate all item totals at once
+      const totals = listDataItem.reduce(
+        (acc, item) => ({
+          tramt: acc.tramt + (Number(item.mrrdc_itamt) || 0),
+          itmds: acc.itmds + (Number(item.mrrdc_dsamt) || 0),
+          ivtmt: acc.ivtmt + (Number(item.mrrdc_ivamt) || 0),
+          vtamt: acc.vtamt + (Number(item.mrrdc_vtamt) || 0),
+          txamt: acc.txamt + (Number(item.mrrdc_txamt) || 0),
+        }),
+        { tramt: 0, itmds: 0, ivtmt: 0, vtamt: 0, txamt: 0 },
+      );
 
-  }, [listDataItem]);
+      const icamt = Number(prev.mrrdm_icamt) || 0;
+      const pdamt = Number(prev.mrrdm_pdamt) || 0;
+
+      const pyamt = totals.tramt - totals.itmds + icamt;
+      const duamt = pyamt - pdamt;
+
+      return {
+        ...prev,
+        mrrdm_tramt: Number(totals.tramt).toFixed(4),
+        mrrdm_itmds: Number(totals.itmds).toFixed(4),
+        mrrdm_ivtmt: Number(totals.ivtmt).toFixed(4),
+        mrrdm_vtamt: Number(totals.vtamt).toFixed(4),
+        mrrdm_txamt: Number(totals.txamt).toFixed(4),
+        mrrdm_pyamt: Number(pyamt).toFixed(4),
+        mrrdm_duamt: Number(duamt).toFixed(4),
+      };
+    });
+  }, [listDataItem, formData.mrrdm_icamt, formData.mrrdm_pdamt]);
 
   const getAllDepartments = async () => {
     if (dpart_Options.length > 0) {
