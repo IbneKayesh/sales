@@ -39,7 +39,7 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
   ];
   return (
     <>
-      <p>Input → RM/PM/SFG/FG</p>
+      <p>Input → RM/PM/WIP/FG</p>
       <DataTable
         columns={dtColumns}
         data={listData}

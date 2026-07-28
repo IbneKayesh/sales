@@ -3,10 +3,11 @@ import InputText from "@/components/InputText";
 import Dropdown from "@/components/Dropdown";
 import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
+import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 
-const BOMForm = ({
+const MrrForm = ({
   isBusy,
   readOnly,
   stopEdit,
@@ -16,8 +17,7 @@ const BOMForm = ({
   onCancel,
   onSubmit,
   dpart_Options,
-  contact_Options,
-  units_Options,
+  cntct_Options,
 }) => {
   return (
     <div className="form-wrap">
@@ -39,7 +39,7 @@ const BOMForm = ({
         <div className="col-span-3">
           <Dropdown
             label="Supplier"
-            options={contact_Options}
+            options={cntct_Options}
             value={formData.mrrdm_cntct}
             onChange={(e) => onChange("mrrdm_cntct", e.target.value)}
             error={formErrors.mrrdm_cntct}
@@ -48,17 +48,6 @@ const BOMForm = ({
             disabled={readOnly}
             optionValue="id"
             optionLabel="cntct_cname"
-          />
-        </div>
-        <div className="col-span-3">
-          <InputText
-            label="MRR No / GRN No"
-            placeholder="Enter MRR/GRN no"
-            value={formData.mrrdm_trnno}
-            onChange={(e) => onChange("mrrdm_trnno", e.target.value)}
-            error={formErrors.mrrdm_trnno}
-            required
-            disabled={readOnly}
           />
         </div>
         <div className="col-span-3">
@@ -83,26 +72,10 @@ const BOMForm = ({
           />
         </div>
         <div className="col-span-3">
-          <InputNumber
-            label="Total Amount"
-            placeholder="0.00"
-            value={formData.mrrdm_tramt}
-            onChange={(e) => onChange("mrrdm_tramt", e.target.value)}
-            error={formErrors.mrrdm_tramt}
-            step="0.01"
-            disabled={readOnly}
-          />
+          <InputLabel label="Total Amount" value={formData.mrrdm_tramt} />
         </div>
-        <div className="col-span-3">
-          <InputNumber
-            label="Item Discount"
-            placeholder="0.00"
-            value={formData.mrrdm_itmds}
-            onChange={(e) => onChange("mrrdm_itmds", e.target.value)}
-            error={formErrors.mrrdm_itmds}
-            step="0.01"
-            disabled={readOnly}
-          />
+        <div className="col-span-2">
+          <InputLabel label="Item Discount" value={formData.mrrdm_itmds} />
         </div>
         <div className="col-span-3">
           <InputNumber
@@ -115,62 +88,52 @@ const BOMForm = ({
             disabled={readOnly}
           />
         </div>
+        <div className="col-span-2">
+          <InputLabel label="iVAT Amount" value={formData.mrrdm_ivtmt} />
+        </div>
+        <div className="col-span-2">
+          <InputLabel label="VAT Amount" value={formData.mrrdm_vtamt} />
+        </div>
+        <div className="col-span-2">
+          <InputLabel label="TAX Amount" value={formData.mrrdm_txamt} />
+        </div>
+        <div className="col-span-2">
+          <InputLabel label="Include Cost" value={formData.mrrdm_icamt} />
+        </div>
+        <div className="col-span-2">
+          <InputLabel label="Exclude Cost" value={formData.mrrdm_ecamt} />
+        </div>
+        <div className="col-span-2">
+          <InputLabel label="Payable Amount" value={formData.mrrdm_pyamt} />
+        </div>
+        <div className="col-span-2">
+          <InputLabel label="Paid Amount" value={formData.mrrdm_pdamt} />
+        </div>
+        <div className="col-span-2">
+          <InputLabel label="Due Amount" value={formData.mrrdm_duamt} />
+        </div>
         <div className="col-span-3">
           <InputNumber
-            label="VAT Amount"
+            label="Exchange Rate"
             placeholder="0.00"
-            value={formData.mrrdm_vtamt}
-            onChange={(e) => onChange("mrrdm_vtamt", e.target.value)}
-            error={formErrors.mrrdm_vtamt}
+            value={formData.mrrdm_exrat}
+            onChange={(e) => onChange("mrrdm_exrat", e.target.value)}
+            error={formErrors.mrrdm_exrat}
             step="0.01"
             disabled={readOnly}
           />
         </div>
         <div className="col-span-3">
-          <InputNumber
-            label="TAX Amount"
-            placeholder="0.00"
-            value={formData.mrrdm_txamt}
-            onChange={(e) => onChange("mrrdm_txamt", e.target.value)}
-            error={formErrors.mrrdm_txamt}
-            step="0.01"
+          <InputText
+            label="Vehicle"
+            placeholder="Enter vehicle"
+            value={formData.mrrdm_vehid}
+            onChange={(e) => onChange("mrrdm_vehid", e.target.value)}
+            error={formErrors.mrrdm_vehid}
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
-          <InputNumber
-            label="Payable Amount"
-            placeholder="0.00"
-            value={formData.mrrdm_pyamt}
-            onChange={(e) => onChange("mrrdm_pyamt", e.target.value)}
-            error={formErrors.mrrdm_pyamt}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputNumber
-            label="Paid Amount"
-            placeholder="0.00"
-            value={formData.mrrdm_pdamt}
-            onChange={(e) => onChange("mrrdm_pdamt", e.target.value)}
-            error={formErrors.mrrdm_pdamt}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputNumber
-            label="Due Amount"
-            placeholder="0.00"
-            value={formData.mrrdm_duamt}
-            onChange={(e) => onChange("mrrdm_duamt", e.target.value)}
-            error={formErrors.mrrdm_duamt}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-12">
+        <div className="col-span-6">
           <InputText
             label="Notes"
             placeholder="Enter notes"
@@ -204,4 +167,4 @@ const BOMForm = ({
     </div>
   );
 };
-export default BOMForm;
+export default MrrForm;

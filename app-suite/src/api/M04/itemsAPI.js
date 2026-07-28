@@ -26,4 +26,8 @@ export const itemsAPI = {
     apiRequest("/M04/v1/items/get-all-active", {
       body: data,
     }),
+  getMrrItems: (data) =>
+    apiRequest("/M04/v1/items/get-mrr-items", {
+      body: data,
+    }),
 };

@@ -14,7 +14,7 @@ import Button from "@/components/Button";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
 import useMRR from "@/hooks/M03/useMRR";
 import MrrList from "./MrrList";
-import BOMForm from "./BOMForm";
+import MrrForm from "./MrrForm";
 import ItemForm from "./ItemForm";
 import ItemList from "./ItemList";
 
@@ -32,7 +32,7 @@ const MrrPage = () => {
     formErrors,
     //others
     dpart_Options,
-    contact_Options,
+    cntct_Options,
     items_Options,
     units_Options,
     //functions
@@ -117,7 +117,7 @@ const MrrPage = () => {
           )}
 
           {pgView === "SYS_VW_FRM_1" && (
-            <BOMForm
+            <MrrForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
@@ -127,8 +127,7 @@ const MrrPage = () => {
               onCancel={handleCancel}
               onSubmit={handleSubmit}
               dpart_Options={dpart_Options}
-              contact_Options={contact_Options}
-              units_Options={units_Options}
+              cntct_Options={cntct_Options}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && listDataItem.length > 0 && (
@@ -141,7 +140,7 @@ const MrrPage = () => {
           )}
 
           {/* Single Modal for Item form */}
-          <Modal open={showModal.show} onClose={handleHideModal} size="lg">
+          <Modal open={showModal.show} onClose={handleHideModal} size="xl">
             <ModalHeader>
               <ModalTitle
                 title={modalTitle.title}
@@ -160,7 +159,6 @@ const MrrPage = () => {
                   onChange={handleChangeItem}
                   onAddToList={handleAddToListItem}
                   items_Options={items_Options}
-                  units_Options={units_Options}
                 />
               )}
             </ModalBody>

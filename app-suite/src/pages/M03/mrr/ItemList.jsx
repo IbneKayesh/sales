@@ -5,26 +5,82 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "items_iname", header: "Item", width: "200px" },
     {
-      key: "mrrdc_trate",
-      header: "Rate",
+      key: "mrrdc_itrat",
+      header: "Rate * Qty",
       width: "80px",
+      render: (_, rowData) => {
+        return (
+          <>
+            {rowData.mrrdc_itrat} x {rowData.mrrdc_itqty} {rowData.runit_uname}{" "}
+            = {rowData.mrrdc_itamt}
+          </>
+        );
+      },
     },
     {
-      key: "mrrdc_trqty",
-      header: "Qty",
-      width: "80px",
-    },
-    {
-      key: "mrrdc_tramt",
-      header: "Amount",
+      key: "mrrdc_dsamt",
+      header: "Discount",
       width: "100px",
+      render: (_, rowData) => {
+        return (
+          <>
+            {rowData.mrrdc_dsamt} ({rowData.mrrdc_dspct}%)
+          </>
+        );
+      },
     },
-    { key: "mrrdc_dspct", header: "Disc %", width: "70px" },
-    { key: "mrrdc_dsamt", header: "Disc Amt", width: "100px" },
-    { key: "mrrdc_sdvat", header: "VAT %", width: "70px" },
-    { key: "mrrdc_txpct", header: "TAX %", width: "70px" },
-    { key: "mrrdc_ntamt", header: "Net Amt", width: "100px" },
+    {
+      key: "mrrdc_ivpct",
+      header: "iVAT",
+      width: "100px",
+      render: (_, rowData) => {
+        return (
+          <>
+            {rowData.mrrdc_ivamt} ({rowData.mrrdc_ivpct}%)
+          </>
+        );
+      },
+    },
+    {
+      key: "mrrdc_vtpct",
+      header: "VAT",
+      width: "100px",
+      render: (_, rowData) => {
+        return (
+          <>
+            {rowData.mrrdc_vtamt} ({rowData.mrrdc_vtpct}%)
+          </>
+        );
+      },
+    },
+    {
+      key: "mrrdc_txpct",
+      header: "TAX",
+      width: "100px",
+      render: (_, rowData) => {
+        return (
+          <>
+            {rowData.mrrdc_txamt} ({rowData.mrrdc_txpct}%)
+          </>
+        );
+      },
+    },
+    {
+      key: "mrrdc_fcpct",
+      header: "Fix Cost",
+      width: "100px",
+      render: (_, rowData) => {
+        return (
+          <>
+            {rowData.mrrdc_fcamt} ({rowData.mrrdc_fcpct}%)
+          </>
+        );
+      },
+    },
+    { key: "mrrdc_ocamt", header: "Other Cost", width: "80px" },
+    { key: "mrrdc_ntamt", header: "Sub Total", width: "80px" },
     { key: "mrrdc_notes", header: "Notes", width: "100px" },
+    { key: "mrrdc_csrat", header: "Unit Cost", width: "80px" },
     {
       key: "actions",
       header: "Actions",
@@ -43,7 +99,7 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
   ];
   return (
     <>
-      <p>Input → Item Details</p>
+      <p>(Items → RM/PM/FG)</p>
       <DataTable
         columns={dtColumns}
         data={listData}

@@ -10,6 +10,7 @@ import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
 import { unitsAPI } from "@/api/M04/unitsAPI.js";
+import { generateGuid } from "@/utils/guid.js";
 
 const useMRR = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -33,7 +34,7 @@ const useMRR = () => {
   const [modalTitle, setModalTitle] = useState({ title: "", subTitle: "" });
 
   const [dpart_Options, setDpart_Options] = useState([]);
-  const [contact_Options, setContact_Options] = useState([]);
+  const [cntct_Options, setCntct_Options] = useState([]);
   const [items_Options, setItems_Options] = useState([]);
   const [units_Options, setUnits_Options] = useState([]);
 
@@ -54,6 +55,17 @@ const useMRR = () => {
     getAllMRR();
   }, []);
 
+  useEffect(() => {
+    //  formData.mrrdm_tramt =  listDataItem.mrrdc_itamt sum 
+    //  formData.mrrdm_itmds =  listDataItem.mrrdc_dsamt sum 
+    //  formData.mrrdm_ivtmt =  listDataItem.mrrdc_ivamt sum 
+    //  formData.mrrdm_vtamt =  listDataItem.mrrdc_vtamt sum 
+    //  formData.mrrdm_txamt =  listDataItem.mrrdc_txamt sum 
+    //  formData.mrrdm_pyamt =  formData.mrrdm_tramt  - formData.mrrdm_itmds + formData.mrrdm_icamt
+    //  formData.mrrdm_duamt =  formData.mrrdm_pyamt  - formData.mrrdm_pdamt
+
+  }, [listDataItem]);
+
   const getAllDepartments = async () => {
     if (dpart_Options.length > 0) {
       return;
@@ -66,13 +78,13 @@ const useMRR = () => {
   };
 
   const getAllContacts = async () => {
-    if (contact_Options.length > 0) {
+    if (cntct_Options.length > 0) {
       return;
     }
     try {
-      const resp = await contactAPI.getAllActive({});
+      const resp = await contactAPI.getSuppliers({});
       const list = resp.data || [];
-      setContact_Options(list);
+      setCntct_Options(list);
     } catch (error) {}
   };
 
@@ -87,9 +99,9 @@ const useMRR = () => {
     } catch (error) {}
   };
 
-  const getAllItems = async () => {
+  const getMrrItems = async () => {
     try {
-      const resp = await itemsAPI.getAllActive();
+      const resp = await itemsAPI.getMrrItems();
       const list = resp.data || [];
       setItems_Options(list);
     } catch (error) {}
@@ -101,7 +113,7 @@ const useMRR = () => {
     setFormErrors(newErrors);
 
     if (f === "mrrdm_dpart") {
-      const dpart_cname = dpart_Options.find((opt) => opt.id === v);
+      //const dpart_cname = dpart_Options.find((opt) => opt.id === v);
       // could auto-fill dept name if needed
     }
   };
@@ -114,7 +126,7 @@ const useMRR = () => {
     getAllDepartments();
     getAllContacts();
     getAllUnits();
-    getAllItems();
+    getMrrItems();
   };
 
   const loadAllDetails = async (id) => {
@@ -171,14 +183,19 @@ const useMRR = () => {
 
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
-    setFormData(dataModel);
+    setFormData({
+      ...dataModel,
+      mrrdm_crncy: "BDT",
+      mrrdm_exrat: 1,
+    });
+
     setReadOnly(false);
     setStopEdit(false);
     setListDataItem([]);
     getAllDepartments();
     getAllContacts();
     getAllUnits();
-    getAllItems();
+    getMrrItems();
   };
 
   const handleCancel = () => {
@@ -195,6 +212,7 @@ const useMRR = () => {
       if (Object.keys(newErrors).length > 0) {
         return;
       }
+
       if (listDataItem.length === 0) {
         showToast("At least 1 item is required", { type: "warning" });
         return;
@@ -204,6 +222,9 @@ const useMRR = () => {
         ...formData,
         tmpb_mrrdc: listDataItem,
       };
+
+      //console.log(reqBody);
+      //return;
 
       setIsBusy(true);
       const resp = await mrrAPI.upsert(reqBody);
@@ -230,6 +251,16 @@ const useMRR = () => {
     setFormDataItem((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formDataItem, [f]: v }, tmpb_mrrdc);
     setFormErrors(newErrors);
+    if (f === "mrrdc_items") {
+      const price_id = items_Options.find((opt) => opt.id === v);
+      setFormDataItem((prev) => ({
+        ...prev,
+        mrrdc_price: price_id?.price_id,
+        mrrdc_units: price_id?.items_runit,
+        mrrdc_itrat: price_id?.price_lprat,
+        mrrdc_fcpct: price_id?.items_fxcst,
+      }));
+    }
   };
 
   const handleAddToListItem = () => {
@@ -238,9 +269,7 @@ const useMRR = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (
-      ["", 0, "0", null, undefined].includes(formDataItem.mrrdc_trqty)
-    ) {
+    if (["", 0, "0", null, undefined].includes(formDataItem.mrrdc_itqty)) {
       showToast("Quantity is required", { type: "warning" });
       return;
     }
@@ -250,29 +279,53 @@ const useMRR = () => {
     );
 
     // Calculate amount
-    const mrrdc_tramt =
-      (Number(formDataItem.mrrdc_trate) || 0) *
-      (Number(formDataItem.mrrdc_trqty) || 0);
+    const mrrdc_itamt =
+      (Number(formDataItem.mrrdc_itrat) || 0) *
+      (Number(formDataItem.mrrdc_itqty) || 0);
 
     // Calculate discount amount
     const mrrdc_dsamt =
-      (Number(formDataItem.mrrdc_tramt) || mrrdc_tramt) *
-      ((Number(formDataItem.mrrdc_dspct) || 0) / 100);
+      mrrdc_itamt * ((Number(formDataItem.mrrdc_dspct) || 0) / 100);
 
     // Calculate net amount
-    const afterDisc = (Number(formDataItem.mrrdc_tramt) || mrrdc_tramt) - (Number(formDataItem.mrrdc_dsamt) || mrrdc_dsamt);
-    const vatAmt = afterDisc * ((Number(formDataItem.mrrdc_sdvat) || 0) / 100);
-    const taxAmt = afterDisc * ((Number(formDataItem.mrrdc_txpct) || 0) / 100);
-    const mrrdc_ntamt = afterDisc + vatAmt + taxAmt + (Number(formDataItem.mrrdc_otcst) || 0);
+    const afterDisc = mrrdc_itamt - mrrdc_dsamt;
+
+    const mrrdc_ivamt =
+      afterDisc * ((Number(formDataItem.mrrdc_ivpct) || 0) / 100);
+    const mrrdc_vtamt =
+      afterDisc * ((Number(formDataItem.mrrdc_vtpct) || 0) / 100);
+    const mrrdc_txamt =
+      afterDisc * ((Number(formDataItem.mrrdc_txpct) || 0) / 100);
+    const mrrdc_fcamt =
+      afterDisc * ((Number(formDataItem.mrrdc_fcpct) || 0) / 100);
+
+    //pay to supplier is - mrrdc_ntamt : afterDisc
+    const mrrdc_ntamt = afterDisc;
+
+    //inventory rate is mrrdc_csrat = afterDisc + mrrdc_vtamt + mrrdc_txamt + mrrdc_fcamt + (Number(formDataItem.mrrdc_ocamt) || 0);
+    const subTotal =
+      afterDisc +
+      mrrdc_vtamt +
+      mrrdc_txamt +
+      mrrdc_fcamt +
+      (Number(formDataItem.mrrdc_ocamt) || 0);
+    const mrrdc_csrat = subTotal / (Number(formDataItem.mrrdc_itqty) || 0);
 
     setListDataItem((prev) => [
       ...prev,
       {
         ...formDataItem,
-        mrrdc_tramt: mrrdc_tramt || 0,
-        mrrdc_dsamt: mrrdc_dsamt || 0,
-        mrrdc_ntamt: mrrdc_ntamt || 0,
+        id: generateGuid(),
+        mrrdc_itamt: Number(mrrdc_itamt).toFixed(4) || 0,
+        mrrdc_dsamt: Number(mrrdc_dsamt).toFixed(4) || 0,
+        mrrdc_ivamt: Number(mrrdc_ivamt).toFixed(4) || 0,
+        mrrdc_vtamt: Number(mrrdc_vtamt).toFixed(4) || 0,
+        mrrdc_txamt: Number(mrrdc_txamt).toFixed(4) || 0,
+        mrrdc_fcamt: Number(mrrdc_fcamt).toFixed(4) || 0,
+        mrrdc_ntamt: Number(mrrdc_ntamt).toFixed(4) || 0,
+        mrrdc_csrat: Number(mrrdc_csrat).toFixed(4) || 0,
         items_iname: items_iname?.items_iname || "Invalid Item",
+        runit_uname: items_iname?.runit_uname || "Invalid Unit",
         mrrdc_actve: true,
       },
     ]);
@@ -294,9 +347,7 @@ const useMRR = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataItem((prev) =>
-      prev.filter((item) => item.mrrdc_items !== rowData.mrrdc_items),
-    );
+    setListDataItem((prev) => prev.filter((item) => item.id !== rowData.id));
     showToast("Removed successfully", { type: "success" });
   };
 
@@ -329,7 +380,7 @@ const useMRR = () => {
     formErrors,
     //others
     dpart_Options,
-    contact_Options,
+    cntct_Options,
     items_Options,
     units_Options,
     //functions

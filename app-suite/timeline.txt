@@ -1,2 +1,5 @@
 17-07-2026
 1. Frontend project started
+27-07-2026
+1. accounts engine done
+2. supply chain work started

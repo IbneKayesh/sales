@@ -13,12 +13,11 @@ const ItemForm = ({
   onChange,
   onAddToList,
   items_Options,
-  units_Options,
 }) => {
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-4">
+        <div className="col-span-12">
           <Dropdown
             label="Item"
             options={items_Options}
@@ -32,34 +31,24 @@ const ItemForm = ({
             optionLabel="items_iname"
           />
         </div>
-        <div className="col-span-4">
-          <InputText
-            label="Price List Id"
-            placeholder="Enter price list id"
-            value={formData.mrrdc_price}
-            onChange={(e) => onChange("mrrdc_price", e.target.value)}
-            error={formErrors.mrrdc_price}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-2">
+        <div className="col-span-3">
           <InputNumber
             label="Rate"
             placeholder="0.00"
-            value={formData.mrrdc_trate}
-            onChange={(e) => onChange("mrrdc_trate", e.target.value)}
-            error={formErrors.mrrdc_trate}
+            value={formData.mrrdc_itrat}
+            onChange={(e) => onChange("mrrdc_itrat", e.target.value)}
+            error={formErrors.mrrdc_itrat}
             step="0.01"
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3">
           <InputNumber
             label="Quantity"
             placeholder="0"
-            value={formData.mrrdc_trqty}
-            onChange={(e) => onChange("mrrdc_trqty", e.target.value)}
-            error={formErrors.mrrdc_trqty}
+            value={formData.mrrdc_itqty}
+            onChange={(e) => onChange("mrrdc_itqty", e.target.value)}
+            error={formErrors.mrrdc_itqty}
             step="0.01"
             disabled={readOnly}
           />
@@ -77,11 +66,22 @@ const ItemForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
+            label="iVAT %"
+            placeholder="0.00"
+            value={formData.mrrdc_ivpct}
+            onChange={(e) => onChange("mrrdc_ivpct", e.target.value)}
+            error={formErrors.mrrdc_ivpct}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-2">
+          <InputNumber
             label="VAT %"
             placeholder="0.00"
-            value={formData.mrrdc_sdvat}
-            onChange={(e) => onChange("mrrdc_sdvat", e.target.value)}
-            error={formErrors.mrrdc_sdvat}
+            value={formData.mrrdc_vtpct}
+            onChange={(e) => onChange("mrrdc_vtpct", e.target.value)}
+            error={formErrors.mrrdc_vtpct}
             step="0.01"
             disabled={readOnly}
           />
@@ -97,34 +97,13 @@ const ItemForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="Other Cost"
-            placeholder="0.00"
-            value={formData.mrrdc_otcst}
-            onChange={(e) => onChange("mrrdc_otcst", e.target.value)}
-            error={formErrors.mrrdc_otcst}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-8">
+        <div className="col-span-10">
           <InputText
             label="Notes"
             placeholder="Enter notes"
             value={formData.mrrdc_notes}
             onChange={(e) => onChange("mrrdc_notes", e.target.value)}
             error={formErrors.mrrdc_notes}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-4">
-          <InputText
-            label="Ref Id"
-            placeholder="Enter reference id"
-            value={formData.mrrdc_refid}
-            onChange={(e) => onChange("mrrdc_refid", e.target.value)}
-            error={formErrors.mrrdc_refid}
             disabled={readOnly}
           />
         </div>

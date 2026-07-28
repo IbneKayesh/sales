@@ -17,19 +17,26 @@
     "placeholder": "Select price list",
     "required": true
   },
-  "mrrdc_trate": {
+  "mrrdc_units": {
+    "type": "string",
+    "label": "Units",
+    "maxLength": 50,
+    "placeholder": "Select unit",
+    "required": true
+  },
+  "mrrdc_itrat": {
     "type": "decimal",
     "label": "Rate",
-    "required": true,
+    "required": false,
     "default": 0
   },
-  "mrrdc_trqty": {
+  "mrrdc_itqty": {
     "type": "decimal",
     "label": "Quantity",
     "required": true,
     "default": 1
   },
-  "mrrdc_tramt": {
+  "mrrdc_itamt": {
     "type": "decimal",
     "label": "Amount",
     "required": false,
@@ -47,9 +54,27 @@
     "required": false,
     "default": 0
   },
-  "mrrdc_sdvat": {
+  "mrrdc_ivpct": {
+    "type": "decimal",
+    "label": "iVAT %",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_ivamt": {
+    "type": "decimal",
+    "label": "iVAT Amt",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_vtpct": {
     "type": "decimal",
     "label": "VAT %",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_vtamt": {
+    "type": "decimal",
+    "label": "VAT Amt",
     "required": false,
     "default": 0
   },
@@ -59,13 +84,25 @@
     "required": false,
     "default": 0
   },
-  "mrrdc_fxcst": {
+  "mrrdc_txamt": {
+    "type": "decimal",
+    "label": "TAX Amt",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_fcpct": {
     "type": "decimal",
     "label": "Fix Cost %",
     "required": false,
     "default": 0
   },
-  "mrrdc_otcst": {
+  "mrrdc_fcamt": {
+    "type": "decimal",
+    "label": "Fix Cost Amt",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_ocamt": {
     "type": "decimal",
     "label": "Other Cost",
     "required": false,

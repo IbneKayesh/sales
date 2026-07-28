@@ -124,6 +124,7 @@ const create = async (req, res) => {
       tmmb_bosfg,
     } = req.body;
 
+    // Validate input
     if (
       !bommf_dpart ||
       !bommf_prods ||
@@ -145,6 +146,7 @@ const create = async (req, res) => {
       });
     }
 
+    //database action
     const newId = uuidv4();
     const newCode = await GenNewCode(user_c, "tmmb_bommf");
     const newTrnNo = await GenNewTrn(
@@ -299,6 +301,11 @@ const create = async (req, res) => {
 // =====================
 const update = async (req, res) => {
   try {
+    return res.json({
+      success: false,
+      message: "Work In Progress.",
+      data: {},
+    });
     const {
       id,
       bommf_users,
@@ -667,7 +674,6 @@ ORDER BY rpm.borpm_items ASC`;
   }
 });
 
-
 // =====================
 // Get get-foh-by-bom-fr-process
 // =====================
@@ -716,8 +722,6 @@ ORDER BY foh.bofoh_items ASC`;
   }
 });
 
-
-
 // =====================
 // Get get-sfg-by-bom-fr-process
 // =====================
@@ -765,6 +769,5 @@ ORDER BY sfg.bosfg_items ASC`;
     });
   }
 });
-
 
 module.exports = router;

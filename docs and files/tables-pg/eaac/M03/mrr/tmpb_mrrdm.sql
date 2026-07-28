@@ -10,6 +10,7 @@ CREATE TABLE tmpb_mrrdm (
   mrrdm_users VARCHAR(50) NOT NULL,
   mrrdm_bsins VARCHAR(50) NOT NULL,
   mrrdm_dpart VARCHAR(50) NOT NULL,
+  mrrdm_crncy VARCHAR(50) NOT NULL,
   mrrdm_cntct VARCHAR(50) NOT NULL,
 
   -- custom
@@ -20,6 +21,7 @@ CREATE TABLE tmpb_mrrdm (
   mrrdm_tramt decimal(18,6) DEFAULT 0.00,
   mrrdm_itmds decimal(18,6) DEFAULT 0.00,
   mrrdm_invds decimal(18,6) DEFAULT 0.00,
+  mrrdm_ivtmt decimal(18,6) DEFAULT 0.00,
   mrrdm_vtamt decimal(18,6) DEFAULT 0.00,
   mrrdm_txamt decimal(18,6) DEFAULT 0.00,
   mrrdm_icamt decimal(18,6) DEFAULT 0.00,
@@ -27,6 +29,8 @@ CREATE TABLE tmpb_mrrdm (
   mrrdm_pyamt decimal(18,6) DEFAULT 0.00,
   mrrdm_pdamt decimal(18,6) DEFAULT 0.00,
   mrrdm_duamt decimal(18,6) DEFAULT 0.00,
+  mrrdm_exrat decimal(18,6) DEFAULT 0.00,
+  mrrdm_vehid VARCHAR(50),
   mrrdm_ispst boolean NOT NULL DEFAULT false,
   mrrdm_ispad boolean NOT NULL DEFAULT false,
   mrrdm_isqcp boolean NOT NULL DEFAULT false,

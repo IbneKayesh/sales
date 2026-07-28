@@ -687,13 +687,10 @@ router.post("/get-suppliers", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT cnt.*, pty.id AS party_id, pty.party_pname, pty.party_chtac, 0 as edit_stop
+    const sql = `SELECT cnt.*, 0 as edit_stop
     FROM tmcb_cntct cnt
-    LEFT JOIN tmtb_party pty ON cnt.id = pty.party_vndor
-    AND pty.party_apusr = cnt.cntct_users
-    AND pty.party_bsins = cnt.cntct_bsins
     WHERE cnt.cntct_users = $1
-    AND cnt.cntct_ctype IN ('Supplier','Both')
+    AND cnt.cntct_ctype IN ('Supplier')
     AND cnt.cntct_actve = TRUE
     ORDER BY cnt.cntct_cname`;
 

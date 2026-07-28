@@ -10,6 +10,13 @@
     "placeholder": "Select department",
     "required": true
   },
+  "mrrdm_crncy": {
+    "type": "string",
+    "label": "Currency",
+    "maxLength": 50,
+    "placeholder": "Select Currency",
+    "required": true
+  },
   "mrrdm_cntct": {
     "type": "string",
     "label": "Supplier",
@@ -22,7 +29,7 @@
     "label": "MRR No",
     "maxLength": 50,
     "placeholder": "Enter MRR/GRN no",
-    "required": true
+    "required": false
   },
   "mrrdm_trdat": {
     "type": "datetime",
@@ -59,6 +66,12 @@
   "mrrdm_invds": {
     "type": "decimal",
     "label": "Invoice Discount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdm_ivtmt": {
+    "type": "decimal",
+    "label": "iVAT Amount",
     "required": false,
     "default": 0
   },
@@ -103,6 +116,19 @@
     "label": "Due Amount",
     "required": false,
     "default": 0
+  },
+  "mrrdm_exrat": {
+    "type": "decimal",
+    "label": "Exchange Rate",
+    "required": true,
+    "default": 1
+  },
+  "mrrdm_vehid": {
+    "type": "string",
+    "label": "Vehicle",
+    "maxLength": 50,
+    "placeholder": "Enter vehicle",
+    "required": false
   },
   "mrrdm_ispst": {
     "type": "boolean",

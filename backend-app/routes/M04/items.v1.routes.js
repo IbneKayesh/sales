@@ -475,8 +475,8 @@ router.post("/get-new-business-items", async (req, res) => {
   }
 });
 
-// get-new-mrr-items
-router.post("/get-new-mrr-items", async (req, res) => {
+// get-mrr-items
+router.post("/get-mrr-items", async (req, res) => {
   try {
     const { user_s, user_c, user_b } = req.body;
 
@@ -499,8 +499,7 @@ router.post("/get-new-mrr-items", async (req, res) => {
     punit.units_cname as punit_uname,
     sgrup.sgrup_cname as sgrup_cname,
     scatg.scatg_cname as scatg_cname,
-    brand.brand_cname as brand_cname,
-    pty.id AS party_id, pty.party_pname, pty.party_chtac
+    brand.brand_cname as brand_cname
     FROM tmib_items itm
     JOIN tmib_price prc ON itm.id = prc.price_items    
     JOIN tmib_units runit ON itm.items_runit = runit.id
@@ -508,8 +507,9 @@ router.post("/get-new-mrr-items", async (req, res) => {
     JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
     JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
     JOIN tmib_brand brand ON itm.items_brand = brand.id
-    LEFT JOIN tmtb_party pty ON sgrup.id = pty.party_vndor
     WHERE itm.items_stpur = false
+    AND itm.items_itype IN ('RM', 'PM', 'FG')
+    AND prc.price_actve = TRUE
     AND prc.price_users = $1
     AND prc.price_bsins = $2
     ORDER BY itm.items_iname ASC`;

@@ -26,4 +26,8 @@ export const contactAPI = {
     apiRequest("/M06/v1/contacts/get-all-active", {
       body: data,
     }),
+  getSuppliers: (data) =>
+    apiRequest("/M06/v1/contacts/get-suppliers", {
+      body: data,
+    }),
 };

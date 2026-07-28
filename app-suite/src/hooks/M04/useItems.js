@@ -271,7 +271,7 @@ const useItems = () => {
 
   const handleAddNewPrice = () => {
     setPgView("SYS_VW_FRM_2");
-    setFormDataItem({ ...dataModelItem, price_items: thisItem.id });
+    setFormDataItem({ ...dataModelItem, price_items: thisItem.id, price_cname: thisItem.items_iname});
     setReadOnly(false);
     setStopEdit(false);
   };

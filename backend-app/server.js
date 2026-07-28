@@ -34,6 +34,8 @@ const reportsRoutes = require("./routes/reports");
 const mobileRoutes = require("./routes/mobile");
 //M01 :: Setup
 const m01Routes = require("./routes/M01");
+//M03 :: Purchase
+const m03Routes = require("./routes/M03");
 //M04 :: Inventory
 const m04Routes = require("./routes/M04");
 //M05 :: Manufacturing
@@ -94,6 +96,8 @@ app.use("/api/reports", reportsRoutes);
 app.use("/api/mobile", mobileRoutes);
 //M01 :: Setup
 app.use("/api/M01", m01Routes);
+//M03 :: Purchase
+app.use("/api/M03", m03Routes);
 //M04 :: Inventory
 app.use("/api/M04", m04Routes);
 //M05 :: Manufacturing
