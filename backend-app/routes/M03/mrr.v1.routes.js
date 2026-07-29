@@ -19,9 +19,11 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT mrr.*,
+    const sql = `SELECT mrr.*, dpt.dpart_cname, cnt.cntct_cname,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmpb_mrrdm mrr
+    JOIN tmsb_dpart dpt ON mrr.mrrdm_dpart = dpt.id
+    JOIN tmcb_cntct cnt ON mrr.mrrdm_cntct = cnt.id
     LEFT JOIN tmhb_emply csr ON mrr.mrrdm_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON mrr.mrrdm_upusr = usr.id
     WHERE mrr.mrrdm_users = $1
@@ -94,6 +96,7 @@ const create = async (req, res) => {
       mrrdm_dpart,
       mrrdm_crncy,
       mrrdm_cntct,
+      mrrdm_ttype,
       mrrdm_trnno,
       mrrdm_trdat,
       mrrdm_refno,
@@ -126,6 +129,7 @@ const create = async (req, res) => {
       !mrrdm_dpart ||
       !mrrdm_crncy ||
       !mrrdm_cntct ||
+      !mrrdm_ttype ||
       !mrrdm_exrat ||
       !user_s ||
       !user_c ||
@@ -145,7 +149,7 @@ const create = async (req, res) => {
       user_c,
       user_b,
       "tmpb_mrrdm",
-      "Material Receipt Report",
+      mrrdm_ttype, //"Material Receipt Report",
       mrrdm_dpart,
     );
     //build scripts
@@ -195,8 +199,14 @@ const create = async (req, res) => {
       label: `Created MRR ${newTrnNo}`,
     });
 
-    //Insert MRR details
+    //JV - Master
+    const masterId = uuidv4();
+    const newTrn = "";
+
+    //Insert MRR details || JV - Details
+    let line = 1;
     for (const det of tmpb_mrrdc) {
+      //MRR
       scripts.push({
         sql: `INSERT INTO tmpb_mrrdc(id, mrrdc_users, mrrdc_bsins, mrrdc_mrrdm, mrrdc_price, mrrdc_items,
         mrrdc_units, mrrdc_itrat, mrrdc_itqty, mrrdc_itamt, mrrdc_dspct, mrrdc_dsamt,
@@ -239,7 +249,69 @@ const create = async (req, res) => {
         ],
         label: `Created MRR detail ${newTrnNo}`,
       });
+
+      //get journal inventory party
+      const sql_party_inv = "";
+
+      //JVD 1 - Inventory Cost
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          mrrdm_dpart,
+          masterId,
+          det.jrnlc_chtac,
+          det.jrnlc_party,
+          det.mrrdc_csrat,
+          0,
+          det.jrnlc_descr || "",
+          mrrdm_ttype,
+          "", //det.jrnlc_refid || "",
+          line,
+          user_s,
+          user_s,
+        ],
+        label: `Created jouranl detail inventory cost ${newTrn}`,
+      });
+      line++;
     }
+
+    //JVD 2 - Liabilites :: Supplier Accounts Payable
+    const sql_party_cust = "";
+    
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15)`,
+      params: [
+        uuidv4(),
+        user_c,
+        user_b,
+        mrrdm_dpart,
+        masterId,
+        det.jrnlc_chtac,
+        det.jrnlc_party,
+        det.mrrdc_csrat,
+        0,
+        det.jrnlc_descr || "",
+        mrrdm_ttype,
+        "", //det.jrnlc_refid || "",
+        line,
+        user_s,
+        user_s,
+      ],
+      label: `Created jouranl detail inventory cost ${newTrn}`,
+    });
 
     await dbRunAll(scripts);
 
@@ -362,6 +434,47 @@ router.post("/delete", async (req, res) => {
       success: false,
       message: error.message || "An error occurred during db action",
       data: {},
+    });
+  }
+});
+
+// get-details-by-master
+router.post("/get-details-by-master", async (req, res) => {
+  try {
+    const { mrrdc_mrrdm, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!mrrdc_mrrdm || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT mrd.*, itm.items_iname, unt.units_cname AS runit_uname,
+     0 as edit_stop
+    FROM tmpb_mrrdc mrd
+    LEFT JOIN tmib_items itm ON mrd.mrrdc_items = itm.id
+    LEFT JOIN tmib_units unt ON mrd.mrrdc_units = unt.id
+    WHERE mrd.mrrdc_users = $1
+    AND mrd.mrrdc_mrrdm = $2
+    ORDER BY mrd.mrrdc_items ASC`;
+
+    const params = [user_c, mrrdc_mrrdm];
+    const rows = await dbGetAll(sql, params, `get MRR Details- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
     });
   }
 });

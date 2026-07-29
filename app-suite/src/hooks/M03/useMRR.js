@@ -69,10 +69,12 @@ const useMRR = () => {
         { tramt: 0, itmds: 0, ivtmt: 0, vtamt: 0, txamt: 0 },
       );
 
+      const invds = Number(prev.mrrdm_invds) || 0;
       const icamt = Number(prev.mrrdm_icamt) || 0;
       const pdamt = Number(prev.mrrdm_pdamt) || 0;
 
-      const pyamt = totals.tramt - totals.itmds + icamt;
+      const pyamt =
+        totals.tramt + icamt - (totals.itmds + invds + totals.ivtmt);
       const duamt = pyamt - pdamt;
 
       return {
@@ -86,7 +88,7 @@ const useMRR = () => {
         mrrdm_duamt: Number(duamt).toFixed(4),
       };
     });
-  }, [listDataItem, formData.mrrdm_icamt, formData.mrrdm_pdamt]);
+  }, [listDataItem, formData.mrrdm_invds, formData.mrrdm_icamt, formData.mrrdm_pdamt]);
 
   const getAllDepartments = async () => {
     if (dpart_Options.length > 0) {
@@ -136,7 +138,7 @@ const useMRR = () => {
 
     if (f === "mrrdm_dpart") {
       //const dpart_cname = dpart_Options.find((opt) => opt.id === v);
-      // could auto-fill dept name if needed
+      //could auto-fill dept name if needed
     }
   };
 
