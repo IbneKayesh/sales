@@ -199,14 +199,8 @@ const create = async (req, res) => {
       label: `Created MRR ${newTrnNo}`,
     });
 
-    //JV - Master
-    const masterId = uuidv4();
-    const newTrn = "";
-
-    //Insert MRR details || JV - Details
-    let line = 1;
+    //Insert MRR details
     for (const det of tmpb_mrrdc) {
-      //MRR
       scripts.push({
         sql: `INSERT INTO tmpb_mrrdc(id, mrrdc_users, mrrdc_bsins, mrrdc_mrrdm, mrrdc_price, mrrdc_items,
         mrrdc_units, mrrdc_itrat, mrrdc_itqty, mrrdc_itamt, mrrdc_dspct, mrrdc_dsamt,
@@ -249,69 +243,7 @@ const create = async (req, res) => {
         ],
         label: `Created MRR detail ${newTrnNo}`,
       });
-
-      //get journal inventory party
-      const sql_party_inv = "";
-
-      //JVD 1 - Inventory Cost
-      scripts.push({
-        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          mrrdm_dpart,
-          masterId,
-          det.jrnlc_chtac,
-          det.jrnlc_party,
-          det.mrrdc_csrat,
-          0,
-          det.jrnlc_descr || "",
-          mrrdm_ttype,
-          "", //det.jrnlc_refid || "",
-          line,
-          user_s,
-          user_s,
-        ],
-        label: `Created jouranl detail inventory cost ${newTrn}`,
-      });
-      line++;
     }
-
-    //JVD 2 - Liabilites :: Supplier Accounts Payable
-    const sql_party_cust = "";
-    
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15)`,
-      params: [
-        uuidv4(),
-        user_c,
-        user_b,
-        mrrdm_dpart,
-        masterId,
-        det.jrnlc_chtac,
-        det.jrnlc_party,
-        det.mrrdc_csrat,
-        0,
-        det.jrnlc_descr || "",
-        mrrdm_ttype,
-        "", //det.jrnlc_refid || "",
-        line,
-        user_s,
-        user_s,
-      ],
-      label: `Created jouranl detail inventory cost ${newTrn}`,
-    });
 
     await dbRunAll(scripts);
 

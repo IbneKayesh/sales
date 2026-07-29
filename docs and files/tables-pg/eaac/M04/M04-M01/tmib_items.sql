@@ -18,6 +18,8 @@ CREATE TABLE tmib_items (
   items_runit VARCHAR(50),
   items_pkqty integer NOT NULL DEFAULT 1,
   items_punit VARCHAR(50),
+  items_szqty integer NOT NULL DEFAULT 1,
+  items_sunit VARCHAR(50),
   items_sgrup VARCHAR(50),
   items_scatg VARCHAR(50),
   items_itype VARCHAR(2) DEFAULT 'FG', --RM,PM,WIP,FG,FOH,SVC

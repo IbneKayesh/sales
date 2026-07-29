@@ -11,6 +11,7 @@ import { brandAPI } from "@/api/M04/brandAPI.js";
 import { subGroupsAPI } from "@/api/M04/subGroupsAPI.js";
 import { subCategoriesAPI } from "@/api/M04/subCategoriesAPI.js";
 import { unitsAPI } from "@/api/M04/unitsAPI.js";
+import { partyAPI } from "@/api/M08/partyAPI.js";
 
 const useItems = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -34,6 +35,7 @@ const useItems = () => {
   const [sgrup_Options, setSgrup_Options] = useState([]);
   const [scatg_Options, setScatg_Options] = useState([]);
   const [brand_Options, setBrand_Options] = useState([]);
+  const [partyData, setPartyData] = useState([]);
 
   const getAllItems = async () => {
     try {
@@ -51,6 +53,18 @@ const useItems = () => {
     getAllItems();
   }, []);
 
+  const getPartyData = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await partyAPI.getByVendorId({ party_vndor: id });
+      const data = resp.data || {};
+      setPartyData(data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmib_items);
@@ -64,6 +78,7 @@ const useItems = () => {
     getAllSubGroups();
     getAllSubCategories();
     getAllBrands();
+    getPartyData(rowData.id);
   };
 
   const handleDelete = async (rowData) => {
@@ -271,7 +286,11 @@ const useItems = () => {
 
   const handleAddNewPrice = () => {
     setPgView("SYS_VW_FRM_2");
-    setFormDataItem({ ...dataModelItem, price_items: thisItem.id, price_cname: thisItem.items_iname});
+    setFormDataItem({
+      ...dataModelItem,
+      price_items: thisItem.id,
+      price_cname: thisItem.items_iname,
+    });
     setReadOnly(false);
     setStopEdit(false);
   };
@@ -330,6 +349,7 @@ const useItems = () => {
     sgrup_Options,
     scatg_Options,
     brand_Options,
+    partyData,
     //functions
     handleChange,
     handleEdit,

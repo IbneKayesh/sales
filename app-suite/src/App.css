@@ -956,6 +956,7 @@ code {
   top: calc(100% + var(--sp-1));
   left: 0;
   right: 0;
+  min-width: 200px;
   z-index: var(--z-dropdown);
   background: var(--surface);
   border: 1px solid var(--border);

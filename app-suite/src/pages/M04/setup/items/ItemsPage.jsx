@@ -35,6 +35,7 @@ const ItemsPage = () => {
     sgrup_Options,
     scatg_Options,
     brand_Options,
+    partyData,
     //functions
     handleChange,
     handleEdit,
@@ -136,6 +137,7 @@ const ItemsPage = () => {
               sgrup_Options={sgrup_Options}
               scatg_Options={scatg_Options}
               brand_Options={brand_Options}
+              partyData={partyData}
             />
           )}
 

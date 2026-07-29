@@ -4,7 +4,8 @@ import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
-import { itype_Options, bool_Options} from "@/utils/vtable.js";
+import { itype_Options, bool_Options } from "@/utils/vtable.js";
+import PartyView from "@/pages/M08/setup/parties/PartyView.jsx";
 
 const ItemsForm = ({
   isBusy,
@@ -20,6 +21,7 @@ const ItemsForm = ({
   sgrup_Options,
   scatg_Options,
   brand_Options,
+  partyData
 }) => {
   return (
     <div className="form-wrap">
@@ -55,7 +57,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputText
             label="HS Code"
             placeholder="Enter HS code"
@@ -65,17 +67,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-9">
-          <InputText
-            label="Notes"
-            placeholder="Enter notes"
-            value={formData.items_notes}
-            onChange={(e) => onChange("items_notes", e.target.value)}
-            error={formErrors.items_notes}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Retail Unit"
             options={units_Options}
@@ -88,7 +80,7 @@ const ItemsForm = ({
             optionLabel="units_cname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Pack Qty"
             placeholder="Enter pack qty"
@@ -98,13 +90,36 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Packing Unit"
             options={units_Options}
             value={formData.items_punit}
             onChange={(e) => onChange("items_punit", e.target.value)}
             error={formErrors.items_punit}
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="units_cname"
+          />
+        </div>
+        <div className="col-span-2">
+          <InputNumber
+            label="Size Qty"
+            placeholder="Enter size qty"
+            value={formData.items_szqty}
+            onChange={(e) => onChange("items_szqty", e.target.value)}
+            error={formErrors.items_szqty}
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-2">
+          <Dropdown
+            label="Size Unit"
+            options={units_Options}
+            value={formData.items_sunit}
+            onChange={(e) => onChange("items_sunit", e.target.value)}
+            error={formErrors.items_sunit}
             placeholder="Select..."
             disabled={readOnly}
             optionValue="id"
@@ -137,7 +152,7 @@ const ItemsForm = ({
             optionLabel="scatg_cname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Item Type"
             options={itype_Options}
@@ -148,7 +163,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Brand"
             options={brand_Options}
@@ -161,7 +176,7 @@ const ItemsForm = ({
             optionLabel="brand_cname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Track Stock"
             options={bool_Options}
@@ -238,6 +253,16 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
+        <div className="col-span-12">
+          <InputText
+            label="Notes"
+            placeholder="Enter notes"
+            value={formData.items_notes}
+            onChange={(e) => onChange("items_notes", e.target.value)}
+            error={formErrors.items_notes}
+            disabled={readOnly}
+          />
+        </div>
       </div>
       {formData?.id && (
         <AuditData
@@ -249,6 +274,7 @@ const ItemsForm = ({
           rvnmr={formData.items_rvnmr}
         />
       )}
+      {formData?.id && <PartyView listData={partyData} />}
       <div className="form-actions">
         <Button variant="secondary" onClick={onCancel} disabled={isBusy}>
           <IconClose size={16} className="icon-left" />

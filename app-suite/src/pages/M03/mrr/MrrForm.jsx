@@ -5,7 +5,7 @@ import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
 import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
-import { IconClose, IconSave } from "@/icons";
+import { IconPlus, IconClose, IconSave } from "@/icons";
 
 const MrrForm = ({
   isBusy,
@@ -18,6 +18,8 @@ const MrrForm = ({
   onSubmit,
   dpart_Options,
   cntct_Options,
+  //modal
+  handleShowModal,
 }) => {
   return (
     <div className="form-wrap">
@@ -155,6 +157,34 @@ const MrrForm = ({
         />
       )}
       <div className="form-actions">
+        {!readOnly && (
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onCancel("PAYMENT")}
+            >
+              <IconPlus size={14} className="icon-left" />
+              Add Payment
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onCancel("COSTING")}
+            >
+              <IconPlus size={14} className="icon-left" />
+              Add Costing
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onCancel("ITEM")}
+            >
+              <IconPlus size={14} className="icon-left" />
+              Add Item
+            </Button>
+          </>
+        )}
         <Button variant="secondary" onClick={onCancel} disabled={isBusy}>
           <IconClose size={16} className="icon-left" />
           Cancel

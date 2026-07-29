@@ -40,9 +40,9 @@
   },
   "items_pkqty": {
     "type": "number",
-    "label": "Pack Quantity",
+    "label": "Pack Qty",
     "default": 1,
-    "placeholder": "Enter pack quantity",
+    "placeholder": "Enter pack qty",
     "required": true
   },
   "items_punit": {
@@ -50,6 +50,20 @@
     "label": "Packing Unit",
     "maxLength": 50,
     "placeholder": "Enter Packing unit",
+    "required": true
+  },
+  "items_szqty": {
+    "type": "number",
+    "label": "Size Qty",
+    "default": 1,
+    "placeholder": "Enter size qty",
+    "required": true
+  },
+  "items_sunit": {
+    "type": "string",
+    "label": "Size Unit",
+    "maxLength": 50,
+    "placeholder": "Enter size unit",
     "required": true
   },
   "items_sgrup": {

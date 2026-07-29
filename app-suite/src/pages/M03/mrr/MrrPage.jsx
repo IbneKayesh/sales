@@ -82,6 +82,14 @@ const MrrPage = () => {
             )}
             {pgView === "SYS_VW_FRM_1" && !readOnly && (
               <>
+                <Button variant="outline" size="sm" onClick={() => handleShowModal("PAYMENT")}>
+                  <IconPlus size={14} className="icon-left" />
+                  Add Payment
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => handleShowModal("COSTING")}>
+                  <IconPlus size={14} className="icon-left" />
+                  Add Costing
+                </Button>
                 <Button variant="outline" size="sm" onClick={() => handleShowModal("ITEM")}>
                   <IconPlus size={14} className="icon-left" />
                   Add Item
