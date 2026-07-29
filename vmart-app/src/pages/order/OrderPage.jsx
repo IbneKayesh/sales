@@ -13,7 +13,6 @@ import { formatDate, calcSubtotal } from "../../utils/helpers";
 import OrderTrackingTimeline from "./OrderTrackingTimeline";
 import OrderDetailView from "./OrderDetailView";
 import OrderFormModal from "./OrderFormModal";
-import "./OrderPage.css";
 
 const emptyCustomer = { name: "", contact: "", address: "" };
 const defaultProduct = { name: "", qty: 1, price: 0, discount: 0 };

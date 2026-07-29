@@ -1,6 +1,5 @@
 import { FiLogOut, FiMenu } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
-import "./Topbar.css";
 
 export default function Topbar({ onMenu }) {
   const { user, role, logout } = useAuth();

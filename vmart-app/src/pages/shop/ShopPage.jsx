@@ -3,7 +3,6 @@ import { FiGrid, FiTrash2, FiPlus, FiEdit2 } from "react-icons/fi";
 import { useUI } from "../context/UIContext";
 import { load, save, KEYS } from "../../utils/storage";
 import ShopFormModal from "./ShopFormModal";
-import "./ShopPage.css";
 
 export default function ShopPage() {
   const { showToast, showConfirm, setBusy, isBusy } = useUI();

@@ -17,7 +17,6 @@ import { useAuth } from "../context/AuthContext";
 import { useUI } from "../context/UIContext";
 import { load, save, KEYS } from "../../utils/storage";
 import PasswordChangeSection from "../../components/PasswordChangeSection";
-import "./ShopProfilePage.css";
 
 export default function ShopProfilePage() {
   const navigate = useNavigate();

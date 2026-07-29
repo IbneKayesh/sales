@@ -7,7 +7,6 @@ import { calcAvg } from "../../utils/helpers";
 import StarDisplay from "../../components/StarDisplay";
 import ProductDetailModal from "../../components/ProductDetailModal";
 import SearchInput from "../../components/ui/SearchInput";
-import "./ShoppingPage.css";
 import useShopping from "@/hooks/useShopping";
 
 export default function ShoppingPage() {

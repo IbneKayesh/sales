@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { FiPrinter, FiShare2, FiArrowLeft, FiCheck, FiCopy } from "react-icons/fi";
 import { load, KEYS } from "../../utils/storage";
 import { formatDate, calcSubtotal } from "../../utils/helpers";
-import "./InvoiceReceiptPage.css";
 
 export default function InvoiceReceiptPage() {
   const { invoiceNumber } = useParams();

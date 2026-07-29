@@ -3,7 +3,6 @@ import { FiHeart, FiTrash2, FiShoppingCart, FiArrowLeft } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useUI } from "../context/UIContext";
 import { load, save, KEYS } from "../../utils/storage";
-import "./FavoritesPage.css";
 
 export default function FavoritesPage() {
   const navigate = useNavigate();

@@ -14,7 +14,6 @@ import { load, save, KEYS } from "../../utils/storage";
 import SearchInput from "../../components/ui/SearchInput";
 import InvoiceDetailView from "./InvoiceDetailView";
 import InvoiceFormModal from "./InvoiceFormModal";
-import "./InvoicePage.css";
 
 const emptyCustomer = { name: "", contact: "", address: "" };
 const defaultProduct = { name: "", qty: 1, price: 0, discount: 0 };

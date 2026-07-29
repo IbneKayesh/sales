@@ -15,7 +15,6 @@ import {
   FiShoppingBag,
   FiLogOut,
 } from "react-icons/fi";
-import "./LeftFlyout.css";
 
 const customerItems = [
   { path: "/", icon: FiHome, label: "Home" },

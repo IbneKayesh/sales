@@ -3,7 +3,6 @@ import { FiUsers, FiTrash2, FiPlus, FiEdit2 } from "react-icons/fi";
 import { useUI } from "../context/UIContext";
 import { load, save, KEYS } from "../../utils/storage";
 import CustomerFormModal from "./CustomerFormModal";
-import "./CustomerPage.css";
 
 export default function CustomerPage() {
   const { showToast, showConfirm, setBusy, isBusy } = useUI();

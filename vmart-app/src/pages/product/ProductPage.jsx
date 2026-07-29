@@ -8,7 +8,6 @@ import {
 } from "react-icons/fi";
 import { useUI } from "../context/UIContext";
 import ProductFormModal from "./ProductFormModal";
-import "./ProductPage.css";
 import useProducts from "@/hooks/useProducts";
 
 export default function ProductPage() {

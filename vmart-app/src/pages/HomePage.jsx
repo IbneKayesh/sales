@@ -3,7 +3,6 @@ import { useAuth } from "./context/AuthContext";
 import { load, KEYS } from "../utils/storage";
 import ShopDashboard from "./home/ShopDashboard";
 import CustomerMarketplace from "./home/CustomerMarketplace";
-import "./HomePage.css";
 
 export default function HomePage() {
   const { user, isCustomer, isShop } = useAuth();

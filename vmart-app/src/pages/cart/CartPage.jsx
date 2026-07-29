@@ -7,7 +7,6 @@ import { calcSubtotal } from "../../utils/helpers";
 import { load, save, KEYS } from "../../utils/storage";
 import CartConfirmedView from "./CartConfirmedView";
 import CartShopGroup from "./CartShopGroup";
-import "./CartPage.css";
 import useCart from "@/hooks/useCart";
 
 export default function CartPage() {

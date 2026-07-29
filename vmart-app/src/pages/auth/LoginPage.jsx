@@ -7,7 +7,6 @@ import LoginForgotC from "./LoginForgotC";
 import LoginRegisterC from "./LoginRegisterC";
 import LogRoleC from "./LogRoleC";
 import LogPassC from "./LogPassC";
-import "./LoginPage.css";
 import useLogin from "@/hooks/useLogin";
 import FormField from "@/components/ui/FormField";
 import Input from "@/components/ui/Input";

@@ -5,7 +5,6 @@ import {
   FiAlertTriangle,
   FiLoader,
 } from "react-icons/fi";
-import "../context/UIContext.css";
 
 const UIContext = createContext(null);
 

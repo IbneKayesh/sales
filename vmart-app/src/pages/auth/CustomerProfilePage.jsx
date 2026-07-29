@@ -15,7 +15,6 @@ import { useUI } from "../context/UIContext";
 import { load, KEYS } from "../../utils/storage";
 import { formatDate } from "../../utils/helpers";
 import PasswordChangeSection from "../../components/PasswordChangeSection";
-import "./CustomerProfilePage.css";
 
 export default function CustomerProfilePage() {
   const navigate = useNavigate();

@@ -5,7 +5,6 @@ import { useAuth } from "../context/AuthContext";
 import { load, save, KEYS } from "../../utils/storage";
 import SearchInput from "../../components/ui/SearchInput";
 import InvoiceCollectionPayModal from "./InvoiceCollectionPayModal";
-import "./InvoiceCollectionPage.css";
 
 export default function InvoiceCollectionPage() {
   const { showToast, setBusy, isBusy } = useUI();
