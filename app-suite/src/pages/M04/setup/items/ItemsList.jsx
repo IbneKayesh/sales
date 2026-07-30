@@ -14,7 +14,8 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
       render: (_, row) => {
         return (
           <span>
-            {row.items_iname}, {row.items_itype}
+            {row.items_iname} - {row.items_szqty} {row.sunit_cname} (
+            {row.items_itype})
           </span>
         );
       },
@@ -80,7 +81,7 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
     <DataTable
       columns={dtColumns}
       data={listData}
-      pageSize={10}
+      pageSize={30}
       sortable
       searchable
       striped

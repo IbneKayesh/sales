@@ -22,6 +22,7 @@ router.post("/", async (req, res) => {
     const sql = `SELECT itm.*,
     runit.units_cname as runit_cname,
     punit.units_cname as punit_cname,
+    sunit.units_cname as sunit_cname,
     sgrup.sgrup_cname as sgrup_cname,
     scatg.scatg_cname as scatg_cname,
     brand.brand_cname as brand_cname,
@@ -29,6 +30,7 @@ router.post("/", async (req, res) => {
 FROM tmib_items itm
 LEFT JOIN tmib_units runit ON itm.items_runit = runit.id
 LEFT JOIN tmib_units punit ON itm.items_punit = punit.id
+LEFT JOIN tmib_units sunit ON itm.items_sunit = sunit.id
 LEFT JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
 LEFT JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
 LEFT JOIN tmib_brand brand ON itm.items_brand = brand.id
@@ -107,6 +109,8 @@ const create = async (req, res) => {
       items_runit,
       items_pkqty,
       items_punit,
+      items_szqty,
+      items_sunit,
       items_sgrup,
       items_scatg,
       items_itype,
@@ -130,6 +134,8 @@ const create = async (req, res) => {
       !items_runit ||
       !items_pkqty ||
       !items_punit ||
+      !items_szqty ||
+      !items_sunit ||
       !items_sgrup ||
       !items_scatg ||
       !items_itype ||
@@ -170,14 +176,16 @@ const create = async (req, res) => {
 
     const newCode = await GenNewCode(user_c, "tmib_items");
     scripts.push({
-      sql: `INSERT INTO tmib_items(id, items_users, items_bsins, items_ccode, items_icode, items_iname, items_brcod,
-    items_hscod, items_notes, items_runit, items_pkqty, items_punit, items_sgrup,
-    items_scatg, items_itype, items_brand, items_tstck, items_sdvat, items_smrgn,
-    items_fxcst, items_image, items_stpur, items_stsal, items_stnsf, items_crusr, items_upusr)
+      sql: `INSERT INTO tmib_items(id, items_users, items_bsins, items_ccode, items_icode, items_iname,
+      items_brcod, items_hscod, items_notes, items_runit, items_pkqty, items_punit,
+      items_szqty, items_sunit, items_sgrup, items_scatg, items_itype, items_brand,
+      items_tstck, items_sdvat, items_smrgn, items_fxcst, items_image, items_stpur,
+      items_stsal, items_stnsf, items_crusr, items_upusr)
 	    VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
         $13, $14, $15, $16, $17, $18,
-        $19, $20, $21, $22, $23, $24, $25, $26)`,
+        $19, $20, $21, $22, $23, $24,
+        $25, $26, $27, $28)`,
       params: [
         masterId,
         user_c,
@@ -191,6 +199,8 @@ const create = async (req, res) => {
         items_runit,
         items_pkqty,
         items_punit,
+        items_szqty,
+        items_sunit,
         items_sgrup,
         items_scatg,
         items_itype,
@@ -263,6 +273,8 @@ const update = async (req, res) => {
       items_runit,
       items_pkqty,
       items_punit,
+      items_szqty,
+      items_sunit,
       items_sgrup,
       items_scatg,
       items_itype,
@@ -286,6 +298,8 @@ const update = async (req, res) => {
       !items_runit ||
       !items_pkqty ||
       !items_punit ||
+      !items_szqty ||
+      !items_sunit ||
       !items_sgrup ||
       !items_scatg ||
       !items_itype ||
@@ -313,21 +327,23 @@ const update = async (req, res) => {
     items_runit = $5,
     items_pkqty = $6,
     items_punit = $7,
-    items_sgrup = $8,
-    items_scatg = $9,    
-    items_brand = $10,
-    items_tstck = $11,
-    items_sdvat = $12,
-    items_smrgn = $13,
-    items_fxcst = $14,
-    items_image = $15,
-    items_stpur = $16,
-    items_stsal = $17,
-    items_stnsf = $18,
-    items_upusr = $19,
+    items_szqty = $8,
+    items_sunit = $9,
+    items_sgrup = $10,
+    items_scatg = $11,    
+    items_brand = $12,
+    items_tstck = $13,
+    items_sdvat = $14,
+    items_smrgn = $15,
+    items_fxcst = $16,
+    items_image = $17,
+    items_stpur = $18,
+    items_stsal = $19,
+    items_stnsf = $20,
+    items_upusr = $21,
     items_updat = CURRENT_TIMESTAMP,
     items_rvnmr = items_rvnmr + 1
-    WHERE id = $20`,
+    WHERE id = $22`,
       params: [
         items_iname,
         items_brcod,
@@ -336,6 +352,8 @@ const update = async (req, res) => {
         items_runit,
         items_pkqty,
         items_punit,
+        items_szqty,
+        items_sunit,
         items_sgrup,
         items_scatg,
         items_brand,
@@ -497,6 +515,7 @@ router.post("/get-mrr-items", async (req, res) => {
     prc.price_sbqty,
     runit.units_cname as runit_uname,
     punit.units_cname as punit_uname,
+    sunit.units_cname as sunit_cname,
     sgrup.sgrup_cname as sgrup_cname,
     scatg.scatg_cname as scatg_cname,
     brand.brand_cname as brand_cname
@@ -504,6 +523,7 @@ router.post("/get-mrr-items", async (req, res) => {
     JOIN tmib_price prc ON itm.id = prc.price_items    
     JOIN tmib_units runit ON itm.items_runit = runit.id
     JOIN tmib_units punit ON itm.items_punit = punit.id
+    JOIN tmib_units sunit ON itm.items_sunit = sunit.id
     JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
     JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
     JOIN tmib_brand brand ON itm.items_brand = brand.id

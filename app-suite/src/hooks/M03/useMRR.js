@@ -65,17 +65,28 @@ const useMRR = () => {
           ivtmt: acc.ivtmt + (Number(item.mrrdc_ivamt) || 0),
           vtamt: acc.vtamt + (Number(item.mrrdc_vtamt) || 0),
           txamt: acc.txamt + (Number(item.mrrdc_txamt) || 0),
+          fcamt: acc.fcamt + (Number(item.mrrdc_fcamt) || 0),
+          ocamt: acc.ocamt + (Number(item.mrrdc_ocamt) || 0),
         }),
-        { tramt: 0, itmds: 0, ivtmt: 0, vtamt: 0, txamt: 0 },
+        {
+          tramt: 0,
+          itmds: 0,
+          ivtmt: 0,
+          vtamt: 0,
+          txamt: 0,
+          fcamt: 0,
+          ocamt: 0,
+        },
       );
 
       const invds = Number(prev.mrrdm_invds) || 0;
-      const icamt = Number(prev.mrrdm_icamt) || 0;
       const pdamt = Number(prev.mrrdm_pdamt) || 0;
 
-      const pyamt =
-        totals.tramt + icamt - (totals.itmds + invds + totals.ivtmt);
+      //total item amount - ( item discount + include vat / withhold vat + invoice discount)
+      const pyamt = totals.tramt - (totals.itmds + totals.ivtmt + invds);
       const duamt = pyamt - pdamt;
+      //item wise cost + other cost
+      const mrrdm_ecamt = totals.fcamt + totals.ocamt;
 
       return {
         ...prev,
@@ -84,11 +95,17 @@ const useMRR = () => {
         mrrdm_ivtmt: Number(totals.ivtmt).toFixed(4),
         mrrdm_vtamt: Number(totals.vtamt).toFixed(4),
         mrrdm_txamt: Number(totals.txamt).toFixed(4),
+        mrrdm_ecamt: Number(mrrdm_ecamt).toFixed(4),
         mrrdm_pyamt: Number(pyamt).toFixed(4),
         mrrdm_duamt: Number(duamt).toFixed(4),
       };
     });
-  }, [listDataItem, formData.mrrdm_invds, formData.mrrdm_icamt, formData.mrrdm_pdamt]);
+  }, [
+    listDataItem,
+    formData.mrrdm_invds,
+    formData.mrrdm_icamt,
+    formData.mrrdm_pdamt,
+  ]);
 
   const getAllDepartments = async () => {
     if (dpart_Options.length > 0) {
@@ -209,6 +226,7 @@ const useMRR = () => {
     setPgView("SYS_VW_FRM_1");
     setFormData({
       ...dataModel,
+      mrrdm_ttype: "Material Receipt Report",
       mrrdm_crncy: "BDT",
       mrrdm_exrat: 1,
     });
@@ -233,6 +251,8 @@ const useMRR = () => {
     try {
       const newErrors = validate(formData, tmpb_mrrdm);
       setFormErrors(newErrors);
+      console.log(formData)
+      console.log(newErrors)
       if (Object.keys(newErrors).length > 0) {
         return;
       }
@@ -350,6 +370,8 @@ const useMRR = () => {
         mrrdc_csrat: Number(mrrdc_csrat).toFixed(4) || 0,
         items_iname: items_iname?.items_iname || "Invalid Item",
         runit_uname: items_iname?.runit_uname || "Invalid Unit",
+        sunit_cname: items_iname?.sunit_cname || "Invalid Unit",
+        items_szqty: items_iname?.items_szqty || "0",
         mrrdc_actve: true,
       },
     ]);

@@ -176,10 +176,10 @@ const create = async (req, res) => {
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    jrnlm_drval, jrnlm_crval, jrnlm_stats, tmtb_jrnlm, jrnlm_crusr, jrnlm_upusr)
+    jrnlm_drval, jrnlm_crval, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
     $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17, $18)`,
+    $13, $14, $15, $16, $17)`,
       params: [
         masterId,
         user_c,
@@ -196,7 +196,6 @@ const create = async (req, res) => {
         jrnlm_drval,
         jrnlm_crval,
         jrnlm_stats,
-        tmtb_jrnlm,
         user_s,
         user_s,
       ],
@@ -427,6 +426,172 @@ ORDER BY jrd.jrnlc_lines ASC`;
       success: true,
       message: "Query executed successfully.",
       data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+// create-auto journal
+router.post("/create-auto-journal", async (req, res) => {
+  try {
+    const { jrnlm_dpart, jrnlm_trdat, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!jrnlm_dpart || !jrnlm_trdat || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql_data_m = `SELECT mrm.id, mrm.mrrdm_users, mrm.mrrdm_bsins, mrm.mrrdm_dpart, mrm.mrrdm_crncy, mrm.mrrdm_trnno, mrm.mrrdm_ttype
+          FROM tmpb_mrrdm mrm
+          LEFT JOIN tmtb_jrnlm jrm ON mrm.mrrdm_trnno = jrm.jrnlm_refno
+          WHERE jrm.jrnlm_refno IS NULL`;
+    const params_data_m = [];
+    const rows_data_m = await dbGetAll(
+      sql_data_m,
+      params_data_m,
+      `get pending master data- ${user_c}`,
+    );
+
+    if (rows_data_m.length === 0) {
+      return res.json({
+        success: false,
+        message: "No pending data found",
+        data: [],
+      });
+    }
+
+    const sql_acprd = `SELECT prd.id AS acprd_id, prd.acprd_fsyar AS fsyar_id
+          FROM tmtb_acprd prd
+          WHERE prd.acprd_dpart = $1
+          AND prd.acprd_bsins = $2
+          AND prd.acprd_users = $3
+          AND prd.acprd_stats = 'Open'
+          AND prd.acprd_iscur = TRUE
+          AND prd.acprd_actve = TRUE`;
+    const params_acprd = [jrnlm_dpart, user_b, user_c];
+    const row_acprd = await dbGet(
+      sql_acprd,
+      params_acprd,
+      "Get accounts period",
+    );
+    if (!row_acprd) {
+      return res.json({
+        success: false,
+        message: "No active fiscal year or accounting period found",
+        data: {},
+      });
+    }
+    if (row_acprd.length > 1) {
+      return res.json({
+        success: false,
+        message: "Multiple active accounting periods found. Please select one.",
+        data: {},
+      });
+    }
+
+    //create JV for each Master Data
+    for (row of rows_data_m) {
+      const newTrn = await GenNewTrn(
+        user_c,
+        user_b,
+        "tmtb_jrnlm",
+        "Purchase Voucher",
+        jrnlm_dpart,
+      );
+
+      //build scripts
+      const masterId = uuidv4();
+      const scripts = [];
+
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
+    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
+    jrnlm_drval, jrnlm_crval, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6,
+    $7, $8, $9, $10, $11, $12,
+    $13, $14, $15, $16, $17)`,
+        params: [
+          masterId,
+          user_c,
+          user_b,
+          jrnlm_dpart,
+          row_acprd.fsyar_id,
+          row_acprd.acprd_id,
+          row.mrrdm_crncy,
+          "Purchase Voucher",
+          newTrn,
+          jrnlm_trdat,
+          row.mrrdm_trnno,
+          row.mrrdm_ttype,
+          0,
+          0,
+          "Posted",
+          user_s,
+          user_s,
+        ],
+        label: `create journal- ${row.mrrdm_trnno}`,
+      });
+
+      const sql_data_c = `SELECT mrd.id, mrd.mrrdc_users, mrd.mrrdc_bsins, mrd.mrrdc_mrrdm,
+        mrd.mrrdc_items, mrd.mrrdc_itqty * mrd.mrrdc_csrat as dramt,
+        pty.party_chtac AS chtac_id, pty.id AS party_id
+        FROM tmpb_mrrdc mrd
+        JOIN tmtb_party pty ON mrd.mrrdc_items = pty.party_vndor
+      WHERE mrd.mrrdc_mrrdm = $1`;
+      const params_data_c = [rows_data_m.id];
+      const rows_data_c = await dbGetAll(
+        sql_data_c,
+        params_data_c,
+        `get pending detail data- ${user_c}`,
+      );
+
+      let line = 1;
+      for (rowc of rows_data_c) {
+        scripts.push({
+          sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15)`,
+          params: [
+            uuidv4(),
+            user_c,
+            user_b,
+            jrnlm_dpart,
+            masterId,
+            rowc.chtac_id,
+            rowc.party_id,
+            rowc.dramt,
+            0,
+            "",
+            "MRR",
+            rowc.id,
+            line,
+            user_s,
+            user_s,
+          ],
+          label: `Created jouranl detail ${newTrn}`,
+        });
+        line++;
+      }
+    }
+
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: [],
     });
   } catch (error) {
     console.error("database action error:", error);

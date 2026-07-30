@@ -12,6 +12,7 @@ CREATE TABLE tmpb_mrrdm (
   mrrdm_dpart VARCHAR(50) NOT NULL,
   mrrdm_crncy VARCHAR(50) NOT NULL,
   mrrdm_cntct VARCHAR(50) NOT NULL,
+  mrrdm_ttype VARCHAR(50) NOT NULL,
 
   -- custom
   mrrdm_trnno VARCHAR(50) NOT NULL,

@@ -3,7 +3,18 @@ import ActionButton from "@/components/ActionButton";
 
 const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "items_iname", header: "Item", width: "200px" },
+    {
+      key: "items_iname",
+      header: "Item",
+      width: "200px",
+      render: (_, row) => {
+        return (
+          <span>
+            {row.items_iname} - {row.items_szqty} {row.sunit_cname}
+          </span>
+        );
+      },
+    },
     {
       key: "mrrdc_itrat",
       header: "Rate * Qty",

@@ -119,6 +119,12 @@ const jrnlm_trtyp_Options = [
   },
 ];
 
+const trn_types = [
+  {
+    label: "Material Receipt Report",
+    value: "Material Receipt Report",
+  },
+];
 
 export {
   cntry_Options,

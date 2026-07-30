@@ -156,7 +156,7 @@ const create = async (req, res) => {
     const scripts = [];
     scripts.push({
       sql: `INSERT INTO tmpb_mrrdm(id, mrrdm_users, mrrdm_bsins, mrrdm_dpart, mrrdm_crncy, mrrdm_cntct,
-      mrrdm_trnno, mrrdm_trdat, mrrdm_refno, mrrdm_notes, mrrdm_tramt, mrrdm_itmds,
+      mrrdm_ttype, mrrdm_trnno, mrrdm_trdat, mrrdm_refno, mrrdm_notes, mrrdm_tramt, mrrdm_itmds,
       mrrdm_invds, mrrdm_ivtmt, mrrdm_vtamt, mrrdm_txamt, mrrdm_icamt, mrrdm_ecamt,
       mrrdm_pyamt, mrrdm_pdamt, mrrdm_duamt, mrrdm_exrat, mrrdm_vehid, mrrdm_ispst,
       mrrdm_ispad, mrrdm_isqcp, mrrdm_isapp, mrrdm_crusr, mrrdm_upusr)
@@ -164,7 +164,8 @@ const create = async (req, res) => {
     $7, $8, $9, $10, $11, $12,
       $13, $14, $15, $16, $17, $18,
       $19, $20, $21, $22, $23, $24,
-      $25, $26, $27, $28, $29)`,
+      $25, $26, $27, $28, $29,
+      $30)`,
       params: [
         newId,
         user_c,
@@ -172,6 +173,7 @@ const create = async (req, res) => {
         mrrdm_dpart,
         mrrdm_crncy,
         mrrdm_cntct,
+        mrrdm_ttype,
         newTrnNo,
         mrrdm_trdat,
         mrrdm_refno,
@@ -385,11 +387,13 @@ router.post("/get-details-by-master", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT mrd.*, itm.items_iname, unt.units_cname AS runit_uname,
+    const sql = `SELECT mrd.*,
+    itm.items_iname, itm.items_szqty, unt.units_cname AS runit_uname, sunit.units_cname as sunit_cname,
      0 as edit_stop
     FROM tmpb_mrrdc mrd
     LEFT JOIN tmib_items itm ON mrd.mrrdc_items = itm.id
     LEFT JOIN tmib_units unt ON mrd.mrrdc_units = unt.id
+    LEFT JOIN tmib_units sunit ON itm.items_sunit = sunit.id
     WHERE mrd.mrrdc_users = $1
     AND mrd.mrrdc_mrrdm = $2
     ORDER BY mrd.mrrdc_items ASC`;
