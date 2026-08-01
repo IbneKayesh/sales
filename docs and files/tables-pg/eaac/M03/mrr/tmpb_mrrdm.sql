@@ -19,18 +19,19 @@ CREATE TABLE tmpb_mrrdm (
   mrrdm_trdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   mrrdm_refno VARCHAR(50),
   mrrdm_notes VARCHAR(100),
-  mrrdm_tramt decimal(18,6) DEFAULT 0.00,
-  mrrdm_itmds decimal(18,6) DEFAULT 0.00,
-  mrrdm_invds decimal(18,6) DEFAULT 0.00,
-  mrrdm_ivtmt decimal(18,6) DEFAULT 0.00,
-  mrrdm_vtamt decimal(18,6) DEFAULT 0.00,
-  mrrdm_txamt decimal(18,6) DEFAULT 0.00,
-  mrrdm_icamt decimal(18,6) DEFAULT 0.00,
-  mrrdm_ecamt decimal(18,6) DEFAULT 0.00,
-  mrrdm_pyamt decimal(18,6) DEFAULT 0.00,
+  mrrdm_tramt decimal(18,6) DEFAULT 0.00, --qty x price
+  mrrdm_itmds decimal(18,6) DEFAULT 0.00, --item wise discount
+  mrrdm_invds decimal(18,6) DEFAULT 0.00, --extra invoice discount
+  mrrdm_ivtmt decimal(18,6) DEFAULT 0.00, --deduct from supplier, pay to govt
+  mrrdm_vtamt decimal(18,6) DEFAULT 0.00, --pay to govt
+  mrrdm_txamt decimal(18,6) DEFAULT 0.00, --pay to govt
+  mrrdm_fcamt decimal(18,6) DEFAULT 0.00, --depreciations cost //pay to expenses
+  mrrdm_icamt decimal(18,6) DEFAULT 0.00, --include cost to payable //paid to supplier
+  mrrdm_ecamt decimal(18,6) DEFAULT 0.00, --exclude cost //pay to local vendor
+  mrrdm_pyamt decimal(18,6) DEFAULT 0.00, --(mrrdm_tramt + mrrdm_icamt )- (mrrdm_itmds + mrrdm_invds + mrrdm_ivtmt)
   mrrdm_pdamt decimal(18,6) DEFAULT 0.00,
   mrrdm_duamt decimal(18,6) DEFAULT 0.00,
-  mrrdm_exrat decimal(18,6) DEFAULT 0.00,
+  mrrdm_exrat decimal(18,6) DEFAULT 0.00, --exchange rate
   mrrdm_vehid VARCHAR(50),
   mrrdm_ispst boolean NOT NULL DEFAULT false,
   mrrdm_ispad boolean NOT NULL DEFAULT false,

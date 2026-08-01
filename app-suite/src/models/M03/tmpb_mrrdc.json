@@ -50,7 +50,13 @@
   },
   "mrrdc_dsamt": {
     "type": "decimal",
-    "label": "Discount Amt",
+    "label": "Item Discount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_edamt": {
+    "type": "decimal",
+    "label": "Invoice Discount",
     "required": false,
     "default": 0
   },
@@ -102,9 +108,15 @@
     "required": false,
     "default": 0
   },
-  "mrrdc_ocamt": {
+  "mrrdc_icamt": {
     "type": "decimal",
-    "label": "Other Cost",
+    "label": "Include Cost",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_ecamt": {
+    "type": "decimal",
+    "label": "Exclude Cost",
     "required": false,
     "default": 0
   },

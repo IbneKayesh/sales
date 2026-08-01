@@ -4,12 +4,7 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import {
-  IconSearch,
-  IconClose,
-  IconPlus,
-  IconSave,
-} from "@/icons";
+import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
 import useMRR from "@/hooks/M03/useMRR";
@@ -17,6 +12,7 @@ import MrrList from "./MrrList";
 import MrrForm from "./MrrForm";
 import ItemForm from "./ItemForm";
 import ItemList from "./ItemList";
+import CostForm from "./CostForm";
 
 const MrrPage = () => {
   const {
@@ -35,6 +31,7 @@ const MrrPage = () => {
     cntct_Options,
     items_Options,
     units_Options,
+    party_Options,
     //functions
     handleChange,
     handleEdit,
@@ -48,6 +45,11 @@ const MrrPage = () => {
     handleAddToListItem,
     handleEditItem,
     handleDeleteItem,
+    //cost
+    handleChangeCost,
+    handleAddToListCost,
+    handleEditCost,
+    handleDeleteCost,
     //modal
     showModal,
     modalTitle,
@@ -82,15 +84,27 @@ const MrrPage = () => {
             )}
             {pgView === "SYS_VW_FRM_1" && !readOnly && (
               <>
-                <Button variant="outline" size="sm" onClick={() => handleShowModal("PAYMENT")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleShowModal("PAYMENT")}
+                >
                   <IconPlus size={14} className="icon-left" />
                   Add Payment
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => handleShowModal("COSTING")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleShowModal("COSTING")}
+                >
                   <IconPlus size={14} className="icon-left" />
                   Add Costing
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => handleShowModal("ITEM")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleShowModal("ITEM")}
+                >
                   <IconPlus size={14} className="icon-left" />
                   Add Item
                 </Button>
@@ -167,6 +181,18 @@ const MrrPage = () => {
                   onChange={handleChangeItem}
                   onAddToList={handleAddToListItem}
                   items_Options={items_Options}
+                />
+              )}
+              {showModal.modal === "COSTING" && (
+                <CostForm
+                  isBusy={isBusy}
+                  readOnly={readOnly}
+                  stopEdit={stopEdit}
+                  formData={formDataItem}
+                  formErrors={formErrors}
+                  onChange={handleChangeCost}
+                  onAddToList={handleAddToListCost}
+                  party_Options={party_Options}
                 />
               )}
             </ModalBody>

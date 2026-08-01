@@ -30,4 +30,8 @@ export const journalAPI = {
     apiRequest("/M08/v1/journal/get-child", {
       body: data,
     }),
+  createAutoJournal: (data) =>
+    apiRequest("/M08/v1/journal/create-auto-journal", {
+      body: data,
+    }),
 };

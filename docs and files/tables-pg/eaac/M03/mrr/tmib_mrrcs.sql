@@ -1,16 +1,16 @@
 --
--- Table structure for table tmib_mrrcs
+-- Table structure for table tmpb_mrrcs
 -- mrr costings
 
-CREATE TABLE tmib_mrrcs (
+CREATE TABLE tmpb_mrrcs (
   id varchar(50) PRIMARY KEY,
 
-  mrrcs_apusr VARCHAR(50) NOT NULL,
+  mrrcs_users VARCHAR(50) NOT NULL,
   mrrcs_bsins VARCHAR(50) NOT NULL,
   mrrcs_mrrmt VARCHAR(50) NOT NULL,
+  mrrcs_party VARCHAR(50) NOT NULL,
   mrrcs_csmod VARCHAR(50) NOT NULL,
   mrrcs_clmod VARCHAR(50) NOT NULL,
-  mrrcs_chead VARCHAR(50) NOT NULL,
   mrrcs_value decimal(18,6) DEFAULT 0.00,  
   mrrcs_notes VARCHAR(50),
 

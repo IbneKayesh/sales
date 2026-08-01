@@ -57,7 +57,7 @@ const party_ptype_Options = [
   { label: "Investor", value: "Investor", auto_create: false },
   { label: "Bank", value: "Bank", auto_create: false },
   { label: "Cash", value: "Cash", auto_create: false },
-  { label: "Inventory", value: "Inventory", auto_create: false },
+  { label: "Expenses", value: "Expenses", auto_create: false },
   { label: "Customer", value: "Customer", auto_create: true },
   { label: "Supplier", value: "Supplier", auto_create: true },
   { label: "Employee", value: "Employee", auto_create: true },
@@ -126,6 +126,32 @@ const trn_types = [
   },
 ];
 
+const csmod_Options = [
+  {
+    label: "Including (Pay to Supplier)",
+    value: "Include",
+  },
+  {
+    label: "Excluding (Pay to Local)",
+    value: "Exclude",
+  },
+];
+
+const clmod_Options = [
+  {
+    label: "By Amount",
+    value: "By Amount",
+  },
+  {
+    label: "By Qty",
+    value: "By Qty",
+  },
+  {
+    label: "By Line",
+    value: "By Line",
+  },
+];
+
 export {
   cntry_Options,
   crncy_Options,
@@ -141,4 +167,7 @@ export {
   ctype_Options,
   chtac_ctype_Options,
   jrnlm_trtyp_Options,
+  trn_types,
+  csmod_Options,
+  clmod_Options,
 };

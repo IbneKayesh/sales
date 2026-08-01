@@ -1,0 +1,40 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "mrrcs_party": {
+    "type": "string",
+    "label": "Accounts Head",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "mrrcs_csmod": {
+    "type": "string",
+    "label": "Cost Mode",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "mrrcs_clmod": {
+    "type": "string",
+    "label": "Calculation Mode",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "mrrcs_value": {
+    "type": "decimal",
+    "label": "Amount",
+    "required": true,
+    "default": 0
+  },
+  "mrrcs_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

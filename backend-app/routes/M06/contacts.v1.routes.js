@@ -146,7 +146,8 @@ const create = async (req, res) => {
         JOIN tmtb_prtya pty ON sht.id = pty.prtya_shtbl
         JOIN tmtb_chtac cht ON pty.prtya_chtno = cht.chtac_chtno
         WHERE sht.shtbl_value = $1
-        AND sht.shtbl_users =$2`;
+        AND sht.shtbl_users = $2
+        AND sht.shtbl_gname = 'SYS_CONTACT_TYPE'`;
     const row_chtac = await dbGetAll(
       sql_chtac,
       [cntct_ctype, user_c],

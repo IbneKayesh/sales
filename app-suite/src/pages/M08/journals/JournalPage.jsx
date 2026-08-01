@@ -45,6 +45,7 @@ const JournalPage = () => {
     handleAddToList,
     handleEditItem,
     handleDeleteItem,
+    handleAutoJournal,
     //modal
     showModal,
     modalTitle,
@@ -94,6 +95,12 @@ const JournalPage = () => {
               >
                 <IconSave size={14} className="icon-left" />
                 {formData?.id ? "Update" : "Create"}
+              </Button>
+            )}
+            {pgView === "SYS_VW_FRM_1" && (
+              <Button variant="info" size="sm" onClick={handleAutoJournal}>
+                <IconSearch size={14} className="icon-left" />
+                Auto Journal
               </Button>
             )}
           </PageCardActions>

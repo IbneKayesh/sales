@@ -452,7 +452,9 @@ router.post("/create-auto-journal", async (req, res) => {
     }
 
     //database action
-    const sql_data_m = `SELECT mrm.id, mrm.mrrdm_users, mrm.mrrdm_bsins, mrm.mrrdm_dpart, mrm.mrrdm_crncy, mrm.mrrdm_trnno, mrm.mrrdm_ttype
+    //pending master data
+    const sql_data_m = `SELECT mrm.id, mrm.mrrdm_users, mrm.mrrdm_bsins, mrm.mrrdm_dpart, mrm.mrrdm_crncy, mrm.mrrdm_cntct,
+          mrm.mrrdm_trnno, mrm.mrrdm_ttype, mrm.mrrdm_pyamt
           FROM tmpb_mrrdm mrm
           LEFT JOIN tmtb_jrnlm jrm ON mrm.mrrdm_trnno = jrm.jrnlm_refno
           WHERE jrm.jrnlm_refno IS NULL`;
@@ -471,6 +473,7 @@ router.post("/create-auto-journal", async (req, res) => {
       });
     }
 
+    //find active accounting period
     const sql_acprd = `SELECT prd.id AS acprd_id, prd.acprd_fsyar AS fsyar_id
           FROM tmtb_acprd prd
           WHERE prd.acprd_dpart = $1
@@ -500,6 +503,8 @@ router.post("/create-auto-journal", async (req, res) => {
       });
     }
 
+    //build scripts
+    const scripts = [];
     //create JV for each Master Data
     for (row of rows_data_m) {
       const newTrn = await GenNewTrn(
@@ -510,10 +515,9 @@ router.post("/create-auto-journal", async (req, res) => {
         jrnlm_dpart,
       );
 
-      //build scripts
       const masterId = uuidv4();
-      const scripts = [];
 
+      //insert JV master data
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
@@ -543,19 +547,21 @@ router.post("/create-auto-journal", async (req, res) => {
         label: `create journal- ${row.mrrdm_trnno}`,
       });
 
+      //pending detail data for each master data
       const sql_data_c = `SELECT mrd.id, mrd.mrrdc_users, mrd.mrrdc_bsins, mrd.mrrdc_mrrdm,
         mrd.mrrdc_items, mrd.mrrdc_itqty * mrd.mrrdc_csrat as dramt,
         pty.party_chtac AS chtac_id, pty.id AS party_id
         FROM tmpb_mrrdc mrd
         JOIN tmtb_party pty ON mrd.mrrdc_items = pty.party_vndor
       WHERE mrd.mrrdc_mrrdm = $1`;
-      const params_data_c = [rows_data_m.id];
+      const params_data_c = [row.id];
       const rows_data_c = await dbGetAll(
         sql_data_c,
         params_data_c,
         `get pending detail data- ${user_c}`,
       );
 
+      //insert inventory cost
       let line = 1;
       for (rowc of rows_data_c) {
         scripts.push({
@@ -576,7 +582,7 @@ router.post("/create-auto-journal", async (req, res) => {
             rowc.dramt,
             0,
             "",
-            "MRR",
+            "Material Receipt Report",
             rowc.id,
             line,
             user_s,
@@ -586,12 +592,64 @@ router.post("/create-auto-journal", async (req, res) => {
         });
         line++;
       }
+
+      //find supplier payable
+      const sql_sup_pybl = `SELECT pty.id AS party_id, pty.party_chtac AS chtac_id
+        FROM tmtb_party pty
+        JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+        JOIN tmtb_prtya pta ON cht.chtac_chtno = pta.prtya_chtno
+        JOIN tmsb_shtbl tbl ON pta.prtya_shtbl = tbl.id
+        WHERE pty.party_vndor = $1
+        AND tbl.shtbl_gname = 'SYS_MRR_DIRECT'`;
+      const params_sup_pybl = [row.mrrdm_cntct];
+      const row_sup_pybl = await dbGet(
+        sql_sup_pybl,
+        params_sup_pybl,
+        "Get supplier payable",
+      );
+      if (!row_sup_pybl) {
+        return res.json({
+          success: false,
+          message: "No active supplier payble account found",
+          data: {},
+        });
+      }
+
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          jrnlm_dpart,
+          masterId,
+          row_sup_pybl.chtac_id,
+          row_sup_pybl.party_id,
+          0,
+          row.mrrdm_pyamt,
+          "",
+          "Material Receipt Report",
+          masterId,
+          line,
+          user_s,
+          user_s,
+        ],
+        label: `Created jouranl detail ${newTrn}`,
+      });
+      line++;
     }
 
+    console.log("scripts",scripts)
+    await dbRunAll(scripts);
     res.json({
       success: true,
-      message: "Query executed successfully.",
-      data: [],
+      message: `Material Receipt Report - Created successfully.`,
+      data: {},
     });
   } catch (error) {
     console.error("database action error:", error);

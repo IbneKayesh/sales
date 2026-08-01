@@ -35,7 +35,8 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       render: (_, rowData) => {
         return (
           <>
-            {rowData.mrrdc_dsamt} ({rowData.mrrdc_dspct}%)
+            [{rowData.mrrdc_edamt}] {rowData.mrrdc_dsamt} ({rowData.mrrdc_dspct}
+            %)
           </>
         );
       },
@@ -88,7 +89,20 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
         );
       },
     },
-    { key: "mrrdc_ocamt", header: "Other Cost", width: "80px" },
+    {
+      key: "mrrdc_icamt",
+      header: "Other Cost",
+      width: "80px",
+      render: (_, rowData) => {
+        return (
+          <>
+            {Number(rowData.mrrdc_icamt) ||
+              0 + Number(rowData.mrrdc_ecamt) ||
+              0}
+          </>
+        );
+      },
+    },
     { key: "mrrdc_ntamt", header: "Sub Total", width: "80px" },
     { key: "mrrdc_notes", header: "Notes", width: "100px" },
     { key: "mrrdc_csrat", header: "Unit Cost", width: "80px" },

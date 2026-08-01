@@ -97,7 +97,32 @@ const ItemForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-10">
+        {Number(formData.mrrdc_fcpct) < 0.1 ? (
+          <div className="col-span-2">
+            <InputNumber
+              label="Fix Cost Amount"
+              placeholder="0.00"
+              value={formData.mrrdc_fcamt}
+              onChange={(e) => onChange("mrrdc_fcamt", e.target.value)}
+              error={formErrors.mrrdc_fcamt}
+              step="0.01"
+              disabled={readOnly}
+            />
+          </div>
+        ) : (
+          <div className="col-span-2">
+            <InputNumber
+              label="Fix Cost %"
+              placeholder="0.00"
+              value={formData.mrrdc_fcpct}
+              onChange={(e) => onChange("mrrdc_fcpct", e.target.value)}
+              error={formErrors.mrrdc_fcpct}
+              step="0.01"
+              disabled={true}
+            />
+          </div>
+        )}
+        <div className="col-span-8">
           <InputText
             label="Notes"
             placeholder="Enter notes"

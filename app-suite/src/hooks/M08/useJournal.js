@@ -96,8 +96,12 @@ const useJournal = () => {
     setPgView("SYS_VW_FRM_1");
     setReadOnly(true);
     setFormData(rowData);
-    setFsyar_Options([{ id: rowData.jrnlm_fsyar, fsyar_cname: rowData.fsyar_cname }]);
-    setAcprd_Options([{ id: rowData.jrnlm_acprd, acprd_cname: rowData.acprd_cname }]);
+    setFsyar_Options([
+      { id: rowData.jrnlm_fsyar, fsyar_cname: rowData.fsyar_cname },
+    ]);
+    setAcprd_Options([
+      { id: rowData.jrnlm_acprd, acprd_cname: rowData.acprd_cname },
+    ]);
     loadJournalDetails(rowData.id);
     getAllDepartments();
   };
@@ -367,6 +371,41 @@ const useJournal = () => {
     setModalTitle({ title: "", subTitle: "" });
   };
 
+  const handleAutoJournal = async () => {
+    try {
+      const newErrors = !formData.jrnlm_dpart
+        ? { jrnlm_dpart: "Department is required" }
+        : {};
+
+      setFormErrors(newErrors);
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+
+      const reqBody = {
+        ...formData,
+      };
+
+      setIsBusy(true);
+      const resp = await journalAPI.createAutoJournal(reqBody);
+      console.log("resp", resp);
+      alertBox({
+        title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        setPgView("SYS_VW_LST_1");
+        setFormData(dataModel);
+        getAllJournals();
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     isBusy,
     pgView,
@@ -398,6 +437,7 @@ const useJournal = () => {
     handleAddToList,
     handleEditItem,
     handleDeleteItem,
+    handleAutoJournal,
     //modal
     showModal,
     modalTitle,

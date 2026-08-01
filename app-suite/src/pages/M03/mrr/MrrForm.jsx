@@ -100,6 +100,9 @@ const MrrForm = ({
           <InputLabel label="TAX Amount" value={formData.mrrdm_txamt} />
         </div>
         <div className="col-span-2">
+          <InputLabel label="Fix Amount" value={formData.mrrdm_fcamt} />
+        </div>
+        <div className="col-span-2">
           <InputLabel label="Include Cost" value={formData.mrrdm_icamt} />
         </div>
         <div className="col-span-2">
@@ -114,7 +117,7 @@ const MrrForm = ({
         <div className="col-span-2">
           <InputLabel label="Due Amount" value={formData.mrrdm_duamt} />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Exchange Rate"
             placeholder="0.00"
@@ -135,7 +138,7 @@ const MrrForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-5">
           <InputText
             label="Notes"
             placeholder="Enter notes"

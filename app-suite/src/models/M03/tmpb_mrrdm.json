@@ -87,6 +87,12 @@
     "required": false,
     "default": 0
   },
+  "mrrdm_fcamt": {
+    "type": "decimal",
+    "label": "TAX Amount",
+    "required": false,
+    "default": 0
+  },
   "mrrdm_icamt": {
     "type": "decimal",
     "label": "Include Cost",
