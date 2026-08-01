@@ -80,7 +80,11 @@ const ItemForm = ({
         </div>
       </div>
       <div className="form-actions">
-        <Button variant="outline" onClick={onAddToList} disabled={isBusy}>
+        <Button variant="outline" onClick={() => onAddToList("NEXT")} disabled={isBusy}>
+          <IconPlus size={16} className="icon-left" />
+          Add and Next
+        </Button>
+        <Button variant="outline" onClick={() => onAddToList("CLOSE")} disabled={isBusy}>
           <IconPlus size={16} className="icon-left" />
           Add
         </Button>

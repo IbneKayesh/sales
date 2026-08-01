@@ -4,7 +4,7 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
+import { IconSearch, IconClose, IconPlus, IconSave, IconPrint } from "@/icons";
 import Button from "@/components/Button";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
 import useJournal from "@/hooks/M08/useJournal";
@@ -12,6 +12,8 @@ import JournalList from "./JournalList";
 import JournalForm from "./JournalForm";
 import ItemForm from "./ItemForm";
 import ItemsList from "./ItemsList";
+import JournalPrint from "./JournalPrint";
+import InvoicePrint from "./InvoicePrint";
 
 const JournalPage = () => {
   const {
@@ -51,6 +53,9 @@ const JournalPage = () => {
     modalTitle,
     handleShowModal,
     handleHideModal,
+    //print
+    handlePrintJournal,
+    handlePrintInvoice,
   } = useJournal();
 
   return (
@@ -103,6 +108,20 @@ const JournalPage = () => {
                 Auto Journal
               </Button>
             )}
+            {pgView === "SYS_VW_FRM_1" && (
+              <>
+                <Button variant="info" size="sm" onClick={handlePrintJournal}>
+                  <IconPrint size={14} className="icon-left" />
+                  Journal
+                </Button>
+                {(formData?.jrnlm_trtyp || "").includes("Invoice") && (
+                  <Button variant="info" size="sm" onClick={handlePrintInvoice}>
+                    <IconPrint size={14} className="icon-left" />
+                    Invoice
+                  </Button>
+                )}
+              </>
+            )}
           </PageCardActions>
         </PageCardHeader>
         <PageCardBody>
@@ -139,6 +158,27 @@ const JournalPage = () => {
               onDelete={handleDeleteItem}
             />
           )}
+
+          {/* Print-only journal voucher layout */}
+          {pgView === "SYS_VW_FRM_1" && (
+            <JournalPrint
+              formData={formData}
+              listDataItem={listDataItem}
+              dpart_Options={dpart_Options}
+              fsyar_Options={fsyar_Options}
+              acprd_Options={acprd_Options}
+            />
+          )}
+
+          {/* Invoice Print (client-facing, only for invoice-type journals) */}
+          {pgView === "SYS_VW_FRM_1" &&
+            (formData?.jrnlm_trtyp || "").includes("Invoice") && (
+              <InvoicePrint
+                formData={formData}
+                listDataItem={listDataItem}
+                dpart_Options={dpart_Options}
+              />
+            )}
 
           {/* Single Modal for Journal Line forms */}
           <Modal open={showModal.show} onClose={handleHideModal} size="xl">

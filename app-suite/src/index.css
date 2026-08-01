@@ -579,9 +579,16 @@ table {
 
 /* --------------------------------------------------------------------------
    9. Print Styles (for PDF export via window.print())
+   --------------------------------------------------------------------------
+   IMPORTANT: Section 9a (GENERIC) is shared and identical for ALL applications.
+   Add application/module-specific print rules ONLY in section 9b.
    -------------------------------------------------------------------------- */
 
 @media print {
+  /* ========================================================================
+     9a. GENERIC PRINT STYLES - SAME FOR ALL APPLICATIONS
+     ======================================================================== */
+
   /* Hide non-report elements */
   body * {
     visibility: hidden;
@@ -660,7 +667,7 @@ table {
     font-size: 10px;
   }
 
-  /* Page margins */
+  /* Page margins (default: A4 landscape) */
   @page {
     margin: 15mm;
     size: A4 landscape;
@@ -675,6 +682,70 @@ table {
   .report-print-area .page-break {
     page-break-before: always;
   }
+
+  /* ========================================================================
+     9b. APPLICATION-SPECIFIC PRINT STYLES
+     (Journal Voucher & Client Invoice - M08: A4 portrait via named page)
+     ======================================================================== */
+
+  /* Journal voucher: A4 portrait (scoped via named page) */
+  @page journal-voucher {
+    size: A4 portrait;
+    margin: 6mm;
+  }
+
+  /* Print-only journal voucher (hidden on screen, shown only when printing) */
+  .journal-print-area {
+    display: block !important;
+    page: journal-voucher;
+  }
+
+  /* Journal voucher has its own in-document title - suppress the ::before print header (paper saving) */
+  .journal-print-area::before {
+    display: none;
+  }
+
+  .journal-print-area table td,
+  .journal-print-area table th {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+
+  /* Client invoice: A4 portrait (scoped via named page) */
+  @page invoice {
+    size: A4 portrait;
+    margin: 6mm;
+  }
+
+  /* Print-only invoice (hidden on screen, shown only when printing) */
+  .invoice-print-area {
+    display: block !important;
+    page: invoice;
+  }
+
+  /* Invoice has its own in-document title - suppress the ::before print header (paper saving) */
+  .invoice-print-area::before {
+    display: none;
+  }
+
+  .invoice-print-area table td,
+  .invoice-print-area table th {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+
+  /* Print one document at a time: hide the other print area via body[data-print-target] */
+  body[data-print-target="journal"] .invoice-print-area,
+  body[data-print-target="invoice"] .journal-print-area {
+    display: none !important;
+  }
 }
+
+/* Journal voucher & invoice - hidden on screen, only rendered for print */
+.journal-print-area,
+.invoice-print-area {
+  display: none;
+}
+
 
 

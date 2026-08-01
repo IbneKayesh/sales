@@ -409,7 +409,7 @@ router.post("/get-child", async (req, res) => {
 
     //database action
     const sql = `select jrd.*,
-cht.chtac_cname, pty.party_cname  || ' | ' ||  pty.party_ptype  || ' | ' ||  pty.party_ccode AS party_cname, 0 as edit_stop
+cht.chtac_cname, pty.party_cname, pty.party_ptype,  pty.party_ccode, 0 as edit_stop
 FROM tmtb_jrnlc jrd
 LEFT JOIN tmtb_chtac cht ON jrd.jrnlc_chtac = cht.id
 LEFT JOIN tmtb_party pty ON jrd.jrnlc_party = pty.id

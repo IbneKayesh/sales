@@ -13,6 +13,7 @@ const dataModelItem = generateDataModel(tmtb_jrnlc);
 import { coaAPI } from "@/api/M08/coaAPI.js";
 import { buildPaths } from "@/utils/pathBuilder.js";
 import { generateGuid } from "@/utils/guid.js";
+import { printReport } from "@/utils/export.js";
 
 const useJournal = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -289,7 +290,7 @@ const useJournal = () => {
     }
   };
 
-  const handleAddToList = () => {
+  const handleAddToList = (value) => {
     const newErrors = validate(formDataItem, tmtb_jrnlc);
     setFormErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
@@ -333,7 +334,10 @@ const useJournal = () => {
       },
     ]);
     setFormDataItem(dataModelItem);
-    handleHideModal();
+
+    if (value === "CLOSE") {
+      handleHideModal();
+    }
   };
 
   const handleEditItem = (rowData) => {
@@ -406,6 +410,26 @@ const useJournal = () => {
     }
   };
 
+  const handlePrintJournal = () => {
+    if (!formData?.id) {
+      showToast("Save the journal before printing", { type: "warning" });
+      return;
+    }
+    const label =
+      formData.jrnlm_trnno || formData.jrnlm_refno || formData.jrnlm_narrt || "";
+    printReport(`Journal Voucher${label ? ` - ${label}` : ""}`, "journal");
+  };
+
+  const handlePrintInvoice = () => {
+    if (!formData?.id) {
+      showToast("Save the invoice before printing", { type: "warning" });
+      return;
+    }
+    const label =
+      formData.jrnlm_trnno || formData.jrnlm_refno || formData.jrnlm_narrt || "";
+    printReport(`${formData.jrnlm_trtyp || "Invoice"}${label ? ` - ${label}` : ""}`, "invoice");
+  };
+
   return {
     isBusy,
     pgView,
@@ -438,6 +462,8 @@ const useJournal = () => {
     handleEditItem,
     handleDeleteItem,
     handleAutoJournal,
+    handlePrintJournal,
+    handlePrintInvoice,
     //modal
     showModal,
     modalTitle,
