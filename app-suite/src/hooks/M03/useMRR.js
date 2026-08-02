@@ -525,8 +525,14 @@ const useMRR = () => {
   const loadAllDetails = async (id) => {
     try {
       setIsBusy(true);
-      const resp = await mrrAPI.getDetailsByMasterId({ mrrdc_mrrdm: id });
-      setListDataItem(resp.data || []);
+      const [dtResp, csResp, pyResp] = await Promise.all([
+        mrrAPI.getDetailsByMasterId({ mrrdc_mrrdm: id }),
+        mrrAPI.getCostsByMasterId({ mrrcs_mrrdm: id }),
+        mrrAPI.getPaymentsByMasterId({ mrrpy_mrrdm: id }),
+      ]);
+      setListDataItem(dtResp.data || []);
+      setListDataCost(csResp.data || []);
+      setListDataPayment(pyResp.data || []);
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -534,6 +540,12 @@ const useMRR = () => {
   };
 
   const handleDelete = async (rowData) => {
+    
+    if (rowData.mrrdm_ispst) {
+      showToast("MRR is posted. Cannot delete.", { type: "warning" });
+      return;
+    }
+    
     const isActive = rowData.mrrdm_actve;
     const dataName = rowData.mrrdm_trnno;
     const confirmation = await confirmBox({
@@ -586,6 +598,9 @@ const useMRR = () => {
     setReadOnly(false);
     setStopEdit(false);
     setListDataItem([]);
+    setListDataCost([]);
+    setListDataPayment([]);
+
     getAllDepartments();
     getAllContacts();
     getExpnPaym();
@@ -603,8 +618,8 @@ const useMRR = () => {
     try {
       const newErrors = validate(formData, tmpb_mrrdm);
       setFormErrors(newErrors);
-      console.log(formData);
-      console.log(newErrors);
+      //console.log(formData);
+      //console.log(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
       }
@@ -617,6 +632,8 @@ const useMRR = () => {
       const reqBody = {
         ...formData,
         tmpb_mrrdc: listDataItem,
+        tmpb_mrrcs: listDataCost,
+        tmpb_mrrpy: listDataPayment,
       };
 
       //console.log(reqBody);

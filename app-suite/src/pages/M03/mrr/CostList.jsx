@@ -26,7 +26,7 @@ const CostList = ({ readOnly, listData, onEdit, onDelete }) => {
   ];
   return (
     <>
-      <p>(Costing → Include/Exclude)</p>
+      <p className="mt-2">(Costing → Include/Exclude)</p>
       <DataTable
         columns={dtColumns}
         data={listData}

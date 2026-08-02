@@ -22,8 +22,9 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       render: (_, rowData) => {
         return (
           <>
-            {rowData.mrrdc_itrat} x {rowData.mrrdc_itqty} {rowData.runit_uname}{" "}
-            = {rowData.mrrdc_itamt}
+            {Number(rowData.mrrdc_itrat).toFixed(4)} x{" "}
+            {Number(rowData.mrrdc_itqty).toFixed(4)} {rowData.runit_uname} ={" "}
+            {Number(rowData.mrrdc_itamt).toFixed(4)}
           </>
         );
       },
@@ -35,8 +36,8 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       render: (_, rowData) => {
         return (
           <>
-            [{rowData.mrrdc_edamt}] {rowData.mrrdc_dsamt} ({rowData.mrrdc_dspct}
-            %)
+            [{rowData.mrrdc_edamt}] {Number(rowData.mrrdc_dsamt).toFixed(4)} (
+            {rowData.mrrdc_dspct}%)
           </>
         );
       },
@@ -96,16 +97,31 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       render: (_, rowData) => {
         return (
           <>
-            {Number(rowData.mrrdc_icamt) ||
-              0 + Number(rowData.mrrdc_ecamt) ||
-              0}
+            {(
+              Number(rowData.mrrdc_icamt || 0) +
+              Number(rowData.mrrdc_ecamt || 0)
+            ).toFixed(4)}
           </>
         );
       },
     },
-    { key: "mrrdc_ntamt", header: "Sub Total", width: "80px" },
+    {
+      key: "mrrdc_ntamt",
+      header: "Sub Total",
+      width: "80px",
+      render: (_, rowData) => {
+        return <>{(Number(rowData.mrrdc_ntamt) || 0).toFixed(4)}</>;
+      },
+    },
     { key: "mrrdc_notes", header: "Notes", width: "100px" },
-    { key: "mrrdc_csrat", header: "Unit Cost", width: "80px" },
+    {
+      key: "mrrdc_csrat",
+      header: "Unit Cost",
+      width: "80px",
+      render: (_, rowData) => {
+        return <>{(Number(rowData.mrrdc_csrat) || 0).toFixed(4)}</>;
+      },
+    },
     {
       key: "actions",
       header: "Actions",

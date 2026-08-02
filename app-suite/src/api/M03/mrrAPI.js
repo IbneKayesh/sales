@@ -30,6 +30,14 @@ export const mrrAPI = {
     apiRequest("/M03/v1/mrr/get-details-by-master", {
       body: data,
     }),
+  getCostsByMasterId: (data) =>
+    apiRequest("/M03/v1/mrr/get-costs-by-master", {
+      body: data,
+    }),
+  getPaymentsByMasterId: (data) =>
+    apiRequest("/M03/v1/mrr/get-payments-by-master", {
+      body: data,
+    }),
   getExpensesPaymentsHeads: (data) =>
     apiRequest("/M03/v1/mrr/get-expenses-payments-heads", {
       body: data,

@@ -120,6 +120,8 @@ const create = async (req, res) => {
       mrrdm_isqcp,
       mrrdm_isapp,
       tmpb_mrrdc,
+      tmpb_mrrcs,
+      tmpb_mrrpy,
       user_s,
       user_c,
       user_b,
@@ -247,6 +249,53 @@ const create = async (req, res) => {
           user_s,
         ],
         label: `Created MRR detail ${newTrnNo}`,
+      });
+    }
+
+    //Insert Costing details
+    for (const det of tmpb_mrrcs) {
+      scripts.push({
+        sql: `INSERT INTO tmpb_mrrcs(id, mrrcs_users, mrrcs_bsins, mrrcs_mrrdm, mrrcs_party, mrrcs_csmod, 
+        mrrcs_clmod, mrrcs_value, mrrcs_notes, mrrcs_crusr, mrrcs_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          newId,
+          det.mrrcs_party,
+          det.mrrcs_csmod,
+          det.mrrcs_clmod,
+          det.mrrcs_value || 0,
+          det.mrrcs_notes || "",
+          user_s,
+          user_s,
+        ],
+        label: `Created Costing detail ${newTrnNo}`,
+      });
+    }
+    
+    //Insert Payment details
+    for (const det of tmpb_mrrpy) {
+      scripts.push({
+        sql: `INSERT INTO tmpb_mrrpy(id, mrrpy_users, mrrpy_bsins, mrrpy_mrrdm, mrrpy_party, mrrpy_pdamt,
+        mrrpy_refno, mrrpy_notes, mrrpy_crusr, mrrpy_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          newId,
+          det.mrrpy_party,
+          det.mrrpy_pdamt || 0,
+          det.mrrpy_refno || "",
+          det.mrrpy_notes || "",
+          user_s,
+          user_s,
+        ],
+        label: `Created Payment detail ${newTrnNo}`,
       });
     }
 
@@ -417,6 +466,80 @@ router.post("/get-details-by-master", async (req, res) => {
     });
   }
 });
+// get-costs-by-master
+router.post("/get-costs-by-master", async (req, res) => {
+  try {
+    const { mrrcs_mrrdm, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!mrrcs_mrrdm || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT mrc.*, pty.party_cname
+        FROM tmpb_mrrcs mrc
+        JOIN tmtb_party pty ON mrc.mrrcs_party = pty.id
+        WHERE mrc.mrrcs_users = $1
+        AND mrc.mrrcs_mrrdm = $2`;
+
+    const params = [user_c, mrrcs_mrrdm];
+    const rows = await dbGetAll(sql, params, `get Cost Details- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+// get-payments-by-master
+router.post("/get-payments-by-master", async (req, res) => {
+  try {
+    const { mrrpy_mrrdm, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!mrrpy_mrrdm || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT mpy.*, pty.party_cname
+        FROM tmpb_mrrpy mpy
+        JOIN tmtb_party pty ON mpy.mrrpy_party = pty.id
+        WHERE mpy.mrrpy_users = $1
+        AND mpy.mrrpy_mrrdm = $2`;
+
+    const params = [user_c, mrrpy_mrrdm];
+    const rows = await dbGetAll(sql, params, `get Payment Details- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
 
 
 // get-expenses-payments-heads
@@ -445,7 +568,11 @@ router.post("/get-expenses-payments-heads", async (req, res) => {
       ORDER BY pty.party_ptype`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get expenses payments heads- ${user_c}`);
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get expenses payments heads- ${user_c}`,
+    );
     res.json({
       success: true,
       message: "Query executed successfully.",

@@ -7,7 +7,7 @@ CREATE TABLE tmpb_mrrcs (
 
   mrrcs_users VARCHAR(50) NOT NULL,
   mrrcs_bsins VARCHAR(50) NOT NULL,
-  mrrcs_mrrmt VARCHAR(50) NOT NULL,
+  mrrcs_mrrdm VARCHAR(50) NOT NULL,
   mrrcs_party VARCHAR(50) NOT NULL,
   mrrcs_csmod VARCHAR(50) NOT NULL,
   mrrcs_clmod VARCHAR(50) NOT NULL,

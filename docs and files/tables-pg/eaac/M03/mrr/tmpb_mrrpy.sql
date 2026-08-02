@@ -5,9 +5,9 @@
 CREATE TABLE tmpb_mrrpy (
   id varchar(50) PRIMARY KEY,
 
-  mrrpy_apusr VARCHAR(50) NOT NULL,
+  mrrpy_users VARCHAR(50) NOT NULL,
   mrrpy_bsins VARCHAR(50) NOT NULL,
-  mrrpy_mrrmt VARCHAR(50) NOT NULL,
+  mrrpy_mrrdm VARCHAR(50) NOT NULL,
   mrrpy_party VARCHAR(50) NOT NULL,
   mrrpy_pydat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   mrrpy_pdamt decimal(18,6) DEFAULT 0.00,

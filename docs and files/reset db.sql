@@ -4,4 +4,7 @@ delete from tmmb_bofoh;
 delete from tmmb_bommf;
 
 
-delete from 
+delete from tmpb_mrrdm;
+delete from tmpb_mrrdc;
+delete from tmpb_mrrcs;
+delete from tmpb_mrrpy;

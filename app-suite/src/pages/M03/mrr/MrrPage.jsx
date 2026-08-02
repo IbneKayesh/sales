@@ -19,7 +19,6 @@ import PaymentList from "./PaymentList";
 
 const MrrPage = () => {
   const {
-   
     isBusy,
     pgView,
     pageAuth,
@@ -189,7 +188,6 @@ const MrrPage = () => {
               onDelete={handleDeletePayment}
             />
           )}
-
           {/* Single Modal for Item form */}
           <Modal open={showModal.show} onClose={handleHideModal} size="xl">
             <ModalHeader>

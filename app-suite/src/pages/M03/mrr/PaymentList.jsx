@@ -25,7 +25,7 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
   ];
   return (
     <>
-      <p>(Payments → Cash/Bank)</p>
+      <p className="mt-2">(Payments → Cash/Bank)</p>
       <DataTable
         columns={dtColumns}
         data={listData}

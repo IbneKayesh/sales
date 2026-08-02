@@ -134,7 +134,7 @@ const ItemForm = ({
         </div>
       </div>
       <div className="form-actions">
-        <Button variant="outline" onClick={onAddToList} disabled={isBusy}>
+        <Button variant="outline" onClick={onAddToList} disabled={isBusy || readOnly}>
           <IconPlus size={16} className="icon-left" />
           Add
         </Button>
