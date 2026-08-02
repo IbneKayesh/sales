@@ -142,15 +142,14 @@ const create = async (req, res) => {
 
     //database action
     const sql_chtac = `SELECT cht.id AS chtac_id
-        FROM tmsb_shtbl sht
-        JOIN tmtb_prtya pty ON sht.id = pty.prtya_shtbl
-        JOIN tmtb_chtac cht ON pty.prtya_chtno = cht.chtac_chtno
-        WHERE sht.shtbl_value = $1
-        AND sht.shtbl_users = $2
-        AND sht.shtbl_gname = 'SYS_CONTACT_TYPE'`;
+      FROM tmtb_prtyn ptn
+      JOIN tmtb_chtac cht ON ptn.prtyn_chtno = cht.chtac_chtno
+      WHERE ptn.prtyn_cname = 'SYS_CONTACT_TYPE'
+      AND ptn.prtyn_users = $1
+      AND ptn.prtyn_ctype = $2`;
     const row_chtac = await dbGetAll(
       sql_chtac,
-      [cntct_ctype, user_c],
+      [user_c, cntct_ctype],
       `get account coa- ${cntct_ctype}`,
     );
 
@@ -344,18 +343,14 @@ const update = async (req, res) => {
       label: `update contact- ${user_c}`,
     });
 
-     scripts.push({
+    scripts.push({
       sql: `UPDATE tmtb_party
     SET party_cname = $1,
     party_upusr = $2,
     party_updat = CURRENT_TIMESTAMP,
     party_rvnmr = party_rvnmr + 1
     WHERE party_vndor = $3`,
-      params: [
-        cntct_cname,
-        user_s,
-        id,
-      ],
+      params: [cntct_cname, user_s, id],
       label: `update party accounts- ${user_c}`,
     });
 

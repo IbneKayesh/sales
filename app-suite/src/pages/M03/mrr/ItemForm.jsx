@@ -21,14 +21,14 @@ const ItemForm = ({
           <Dropdown
             label="Item"
             options={items_Options}
-            value={formData.mrrdc_items}
-            onChange={(e) => onChange("mrrdc_items", e.target.value)}
-            error={formErrors.mrrdc_items}
+            value={formData.mrrdc_price}
+            onChange={(e) => onChange("mrrdc_price", e.target.value)}
+            error={formErrors.mrrdc_price}
             required
             placeholder="Select..."
             disabled={readOnly}
-            optionValue="id"
-            optionLabel="items_iname"
+            optionValue="price_id"
+            optionLabel="price_cname"
           />
         </div>
         <div className="col-span-3">

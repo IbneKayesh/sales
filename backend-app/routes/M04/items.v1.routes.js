@@ -153,15 +153,14 @@ const create = async (req, res) => {
 
     //database action
     const sql_chtac = `SELECT cht.id AS chtac_id
-        FROM tmsb_shtbl sht
-        JOIN tmtb_prtya pty ON sht.id = pty.prtya_shtbl
-        JOIN tmtb_chtac cht ON pty.prtya_chtno = cht.chtac_chtno
-        WHERE sht.shtbl_value = $1
-        AND sht.shtbl_users = $2
-        AND sht.shtbl_gname = 'SYS_INVENTORY_PRODUCT_TYPE'`;
+      FROM tmtb_prtyn ptn
+      JOIN tmtb_chtac cht ON ptn.prtyn_chtno = cht.chtac_chtno
+      WHERE ptn.prtyn_cname = 'SYS_ITEMS_TYPE'
+      AND ptn.prtyn_users = $1
+      AND ptn.prtyn_ctype = $2`;
     const row_chtac = await dbGetAll(
       sql_chtac,
-      [items_itype, user_c],
+      [user_c, items_itype],
       `get account coa- ${items_itype}`,
     );
     if (row_chtac.length === 0) {
@@ -510,10 +509,10 @@ router.post("/get-mrr-items", async (req, res) => {
 
     //database action
     const sql = `SELECT itm.*,
-    prc.id AS price_id,
+    prc.id AS price_id, prc.price_cname,
     prc.price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat, prc.price_dspct,
     prc.price_gdstk, prc.price_bdstk, prc.price_mnqty, prc.price_mxqty, prc.price_pbqty,
-    prc.price_sbqty,
+    prc.price_sbqty, prc.price_notes, prc.price_jnote,
     runit.units_cname as runit_uname,
     punit.units_cname as punit_uname,
     sunit.units_cname as sunit_cname,
@@ -530,6 +529,7 @@ router.post("/get-mrr-items", async (req, res) => {
     JOIN tmib_brand brand ON itm.items_brand = brand.id
     WHERE itm.items_stpur = false
     AND itm.items_itype IN ('RM', 'PM', 'FG')
+    AND itm.items_actve = TRUE
     AND prc.price_actve = TRUE
     AND prc.price_users = $1
     AND prc.price_bsins = $2

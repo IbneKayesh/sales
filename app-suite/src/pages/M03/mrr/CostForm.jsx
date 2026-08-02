@@ -20,7 +20,7 @@ const CostForm = ({
       <div className="grid">
         <div className="col-span-8">
           <Dropdown
-            label="Cost Party"
+            label="Cost Name"
             options={party_Options}
             value={formData.mrrcs_party}
             onChange={(e) => onChange("mrrcs_party", e.target.value)}
@@ -29,7 +29,7 @@ const CostForm = ({
             placeholder="Select..."
             disabled={readOnly}
             optionValue="id"
-            optionLabel="items_iname"
+            optionLabel="party_cname"
           />
         </div>
         <div className="col-span-4">

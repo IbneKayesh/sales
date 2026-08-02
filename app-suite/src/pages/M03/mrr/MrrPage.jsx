@@ -13,9 +13,13 @@ import MrrForm from "./MrrForm";
 import ItemForm from "./ItemForm";
 import ItemList from "./ItemList";
 import CostForm from "./CostForm";
+import CostList from "./CostList";
+import PaymentForm from "./PaymentForm";
+import PaymentList from "./PaymentList";
 
 const MrrPage = () => {
   const {
+   
     isBusy,
     pgView,
     pageAuth,
@@ -30,8 +34,10 @@ const MrrPage = () => {
     dpart_Options,
     cntct_Options,
     items_Options,
-    units_Options,
-    party_Options,
+    mrrcs_Options,
+    listDataCost,
+    mrrpy_Options,
+    listDataPayment,
     //functions
     handleChange,
     handleEdit,
@@ -46,10 +52,17 @@ const MrrPage = () => {
     handleEditItem,
     handleDeleteItem,
     //cost
+    formDataCost,
     handleChangeCost,
     handleAddToListCost,
     handleEditCost,
     handleDeleteCost,
+    //payment
+    formDataPayment,
+    handleChangePayment,
+    handleAddToListPayment,
+    handleEditPayment,
+    handleDeletePayment,
     //modal
     showModal,
     modalTitle,
@@ -160,6 +173,22 @@ const MrrPage = () => {
               onDelete={handleDeleteItem}
             />
           )}
+          {pgView === "SYS_VW_FRM_1" && listDataCost.length > 0 && (
+            <CostList
+              readOnly={readOnly}
+              listData={listDataCost}
+              onEdit={handleEditCost}
+              onDelete={handleDeleteCost}
+            />
+          )}
+          {pgView === "SYS_VW_FRM_1" && listDataPayment.length > 0 && (
+            <PaymentList
+              readOnly={readOnly}
+              listData={listDataPayment}
+              onEdit={handleEditPayment}
+              onDelete={handleDeletePayment}
+            />
+          )}
 
           {/* Single Modal for Item form */}
           <Modal open={showModal.show} onClose={handleHideModal} size="xl">
@@ -188,11 +217,23 @@ const MrrPage = () => {
                   isBusy={isBusy}
                   readOnly={readOnly}
                   stopEdit={stopEdit}
-                  formData={formDataItem}
+                  formData={formDataCost}
                   formErrors={formErrors}
                   onChange={handleChangeCost}
                   onAddToList={handleAddToListCost}
-                  party_Options={party_Options}
+                  party_Options={mrrcs_Options}
+                />
+              )}
+              {showModal.modal === "PAYMENT" && (
+                <PaymentForm
+                  isBusy={isBusy}
+                  readOnly={readOnly}
+                  stopEdit={stopEdit}
+                  formData={formDataPayment}
+                  formErrors={formErrors}
+                  onChange={handleChangePayment}
+                  onAddToList={handleAddToListPayment}
+                  party_Options={mrrpy_Options}
                 />
               )}
             </ModalBody>

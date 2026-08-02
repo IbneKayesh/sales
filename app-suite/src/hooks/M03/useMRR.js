@@ -9,8 +9,9 @@ const dataModelItem = generateDataModel(tmpb_mrrdc);
 import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
-import { unitsAPI } from "@/api/M04/unitsAPI.js";
 import { generateGuid } from "@/utils/guid.js";
+import tmpb_mrrcs from "@/models/M03/tmpb_mrrcs.json";
+import tmpb_mrrpy from "@/models/M03/tmpb_mrrpy.json";
 
 const useMRR = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -36,12 +37,16 @@ const useMRR = () => {
   const [dpart_Options, setDpart_Options] = useState([]);
   const [cntct_Options, setCntct_Options] = useState([]);
   const [items_Options, setItems_Options] = useState([]);
-  const [units_Options, setUnits_Options] = useState([]);
 
   //costing
-  const [party_Options, setParty_Options] = useState([]);
+  const [mrrcs_Options, setMrrcs_Options] = useState([]);
   const [listDataCost, setListDataCost] = useState([]);
   const [formDataCost, setFormDataCost] = useState({});
+
+  //payment
+  const [mrrpy_Options, setMrrpy_Options] = useState([]);
+  const [listDataPayment, setListDataPayment] = useState([]);
+  const [formDataPayment, setFormDataPayment] = useState({});
 
   // ---------- MRR Master ----------
   const getAllMRR = async () => {
@@ -60,16 +65,50 @@ const useMRR = () => {
     getAllMRR();
   }, []);
 
-  function reCalculate(items, master) {
-    //clone items
+  function reCalculate1(items, master, costList, paymList) {
+    //clone costing, items
     let newItems = [...items];
-    //---------------------------------------------------
-    // 1. Split Invoice Discount
-    //---------------------------------------------------
+    let newCosting = [...costList];
+    setListDataCost(newCosting);
+
+    const totalAmount = newItems.reduce(
+      (sum, item) => sum + Number(item.mrrdc_itamt),
+      0,
+    );
+
     const totalQty = newItems.reduce(
       (sum, item) => sum + Number(item.mrrdc_itqty),
       0,
     );
+
+    const totalLine = newItems.length || 0;
+
+    const sumCost = (csmod, clmod) =>
+      costList
+        .filter(
+          (item) => item.mrrcs_csmod === csmod && item.mrrcs_clmod === clmod,
+        )
+        .reduce((sum, item) => sum + Number(item.mrrcs_value || 0), 0);
+
+    const incAmt = sumCost("Include", "By Amount");
+    const incQty = sumCost("Include", "By Qty");
+    const incLine = sumCost("Include", "By Line");
+
+    const excAmt = sumCost("Exclude", "By Amount");
+    const excQty = sumCost("Exclude", "By Qty");
+    const excLine = sumCost("Exclude", "By Line");
+
+    const incAmtRate = incAmt / totalAmount;
+    const incQtyRate = incQty / totalQty;
+    const incLineRate = incLine / totalLine;
+
+    const excAmtRate = excAmt / totalAmount;
+    const excQtyRate = excQty / totalQty;
+    const excLineRate = excLine / totalLine;
+
+    //---------------------------------------------------
+    // 1. Split Invoice Discount
+    //---------------------------------------------------
 
     newItems = newItems.map((item) => {
       const mrrdc_edamt = totalQty
@@ -113,8 +152,16 @@ const useMRR = () => {
           : 0;
       }
 
-      const mrrdc_icamt = 0;
-      const mrrdc_ecamt = 0;
+      const iAmt = mrrdc_itamt * incAmtRate;
+      const iQty = (Number(item.mrrdc_itqty) || 0) * incQtyRate;
+      const iLine = 1 * incLineRate;
+
+      const eAmt = mrrdc_itamt * excAmtRate;
+      const eQty = (Number(item.mrrdc_itqty) || 0) * excQtyRate;
+      const eLine = 1 * excLineRate;
+
+      const mrrdc_icamt = iAmt + iQty + iLine;
+      const mrrdc_ecamt = eAmt + eQty + eLine;
       const mrrdc_ntamt = afterDisc + mrrdc_vtamt + mrrdc_icamt - mrrdc_ivamt;
       const mrrdc_csrat =
         (afterDisc + mrrdc_fcamt + mrrdc_icamt + mrrdc_ecamt) /
@@ -162,10 +209,17 @@ const useMRR = () => {
       },
     );
 
+    //clone payments
+    let newPayments = [...paymList];
+    const totalPayment = newPayments.reduce(
+      (sum, item) => sum + Number(item.mrrpy_pdamt),
+      0,
+    );
+    setListDataPayment(newPayments);
+
     //clone master
     let newMaster = { ...master };
-    const pdamt = Number(newMaster.mrrdm_pdamt) || 0;
-    const duamt = totals.ntamt - pdamt;
+    const duamt = totals.ntamt - totalPayment;
 
     setFormData({
       ...newMaster,
@@ -178,7 +232,227 @@ const useMRR = () => {
       mrrdm_icamt: Number(totals.icamt).toFixed(4),
       mrrdm_ecamt: Number(totals.ecamt).toFixed(4),
       mrrdm_pyamt: Number(totals.ntamt).toFixed(4),
+      mrrdm_pdamt: Number(totalPayment).toFixed(4),
       mrrdm_duamt: Number(duamt).toFixed(4),
+    });
+  }
+
+  function reCalculate(items, master, costList, paymList) {
+    // Safe number conversion (handles null, undefined, NaN, "", etc.)
+    const num = (value) => {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : 0;
+    };
+
+    // Safe divide
+    const div = (a, b) => (num(b) === 0 ? 0 : num(a) / num(b));
+
+    // Clone
+    let newItems = [...(items || [])];
+    let newCosting = [...(costList || [])];
+    setListDataCost(newCosting);
+
+    //---------------------------------------------------
+    // Totals
+    //---------------------------------------------------
+
+    const totalAmount = newItems.reduce(
+      (sum, item) => sum + num(item.mrrdc_itamt),
+      0,
+    );
+
+    const totalQty = newItems.reduce(
+      (sum, item) => sum + num(item.mrrdc_itqty),
+      0,
+    );
+
+    const totalLine = newItems.length;
+
+    //---------------------------------------------------
+    // Cost Summary
+    //---------------------------------------------------
+
+    const sumCost = (csmod, clmod) =>
+      newCosting
+        .filter(
+          (item) => item.mrrcs_csmod === csmod && item.mrrcs_clmod === clmod,
+        )
+        .reduce((sum, item) => sum + num(item.mrrcs_value), 0);
+
+    const incAmt = sumCost("Include", "By Amount");
+    const incQty = sumCost("Include", "By Qty");
+    const incLine = sumCost("Include", "By Line");
+
+    const excAmt = sumCost("Exclude", "By Amount");
+    const excQty = sumCost("Exclude", "By Qty");
+    const excLine = sumCost("Exclude", "By Line");
+
+    const incAmtRate = div(incAmt, totalAmount);
+    const incQtyRate = div(incQty, totalQty);
+    const incLineRate = div(incLine, totalLine);
+
+    const excAmtRate = div(excAmt, totalAmount);
+    const excQtyRate = div(excQty, totalQty);
+    const excLineRate = div(excLine, totalLine);
+
+    //---------------------------------------------------
+    // 1. Split Invoice Discount
+    //---------------------------------------------------
+
+    newItems = newItems.map((item) => {
+      const mrrdc_edamt = div(
+        num(master?.mrrdm_invds) * num(item.mrrdc_itqty),
+        totalQty,
+      );
+
+      return {
+        ...item,
+        mrrdc_edamt,
+      };
+    });
+
+    //---------------------------------------------------
+    // 2. Calculate Item Values
+    //---------------------------------------------------
+
+    newItems = newItems.map((item) => {
+      const qty = num(item.mrrdc_itqty);
+      const rate = num(item.mrrdc_itrat);
+
+      const mrrdc_itamt = rate * qty;
+
+      const mrrdc_dsamt = mrrdc_itamt * (num(item.mrrdc_dspct) / 100);
+
+      const afterDisc = mrrdc_itamt - (mrrdc_dsamt + num(item.mrrdc_edamt));
+
+      const mrrdc_ivamt = afterDisc * (num(item.mrrdc_ivpct) / 100);
+
+      const mrrdc_vtamt = afterDisc * (num(item.mrrdc_vtpct) / 100);
+
+      const mrrdc_txamt = afterDisc * (num(item.mrrdc_txpct) / 100);
+
+      //---------------------------------------------------
+      // Freight
+      //---------------------------------------------------
+
+      let mrrdc_fcpct = num(item.mrrdc_fcpct);
+      let mrrdc_fcamt = num(item.mrrdc_fcamt);
+
+      if (mrrdc_fcpct > 0) {
+        mrrdc_fcamt = Number((afterDisc * (mrrdc_fcpct / 100)).toFixed(4));
+      } else if (mrrdc_fcamt > 0) {
+        mrrdc_fcpct = Number((div(mrrdc_fcamt, afterDisc) * 100).toFixed(4));
+      }
+
+      //---------------------------------------------------
+      // Including Cost
+      //---------------------------------------------------
+
+      const iAmt = mrrdc_itamt * incAmtRate;
+      const iQty = qty * incQtyRate;
+      const iLine = incLineRate;
+
+      //---------------------------------------------------
+      // Excluding Cost
+      //---------------------------------------------------
+
+      const eAmt = mrrdc_itamt * excAmtRate;
+      const eQty = qty * excQtyRate;
+      const eLine = excLineRate;
+
+      const mrrdc_icamt = iAmt + iQty + iLine;
+      const mrrdc_ecamt = eAmt + eQty + eLine;
+
+      //---------------------------------------------------
+      // Net Amount
+      //---------------------------------------------------
+
+      const mrrdc_ntamt = afterDisc + mrrdc_vtamt + mrrdc_icamt - mrrdc_ivamt;
+
+      const mrrdc_csrat = div(
+        afterDisc + mrrdc_fcamt + mrrdc_icamt + mrrdc_ecamt,
+        qty,
+      );
+
+      return {
+        ...item,
+        mrrdc_itamt,
+        mrrdc_dsamt,
+        mrrdc_ivamt,
+        mrrdc_vtamt,
+        mrrdc_txamt,
+        mrrdc_fcpct,
+        mrrdc_fcamt,
+        mrrdc_icamt,
+        mrrdc_ecamt,
+        mrrdc_ntamt,
+        mrrdc_csrat,
+      };
+    });
+
+    setListDataItem(newItems);
+
+    //---------------------------------------------------
+    // Totals
+    //---------------------------------------------------
+
+    const totals = newItems.reduce(
+      (acc, item) => ({
+        tramt: acc.tramt + num(item.mrrdc_itamt),
+        itmds: acc.itmds + num(item.mrrdc_dsamt),
+        ivtmt: acc.ivtmt + num(item.mrrdc_ivamt),
+        vtamt: acc.vtamt + num(item.mrrdc_vtamt),
+        txamt: acc.txamt + num(item.mrrdc_txamt),
+        fcamt: acc.fcamt + num(item.mrrdc_fcamt),
+        icamt: acc.icamt + num(item.mrrdc_icamt),
+        ecamt: acc.ecamt + num(item.mrrdc_ecamt),
+        ntamt: acc.ntamt + num(item.mrrdc_ntamt),
+      }),
+      {
+        tramt: 0,
+        itmds: 0,
+        ivtmt: 0,
+        vtamt: 0,
+        txamt: 0,
+        fcamt: 0,
+        icamt: 0,
+        ecamt: 0,
+        ntamt: 0,
+      },
+    );
+
+    //---------------------------------------------------
+    // Payments
+    //---------------------------------------------------
+
+    const newPayments = [...(paymList || [])];
+
+    const totalPayment = newPayments.reduce(
+      (sum, item) => sum + num(item.mrrpy_pdamt),
+      0,
+    );
+
+    setListDataPayment(newPayments);
+
+    //---------------------------------------------------
+    // Master
+    //---------------------------------------------------
+
+    const duamt = totals.ntamt - totalPayment;
+
+    setFormData({
+      ...master,
+      mrrdm_tramt: num(totals.tramt).toFixed(4),
+      mrrdm_itmds: num(totals.itmds).toFixed(4),
+      mrrdm_ivtmt: num(totals.ivtmt).toFixed(4),
+      mrrdm_vtamt: num(totals.vtamt).toFixed(4),
+      mrrdm_txamt: num(totals.txamt).toFixed(4),
+      mrrdm_fcamt: num(totals.fcamt).toFixed(4),
+      mrrdm_icamt: num(totals.icamt).toFixed(4),
+      mrrdm_ecamt: num(totals.ecamt).toFixed(4),
+      mrrdm_pyamt: num(totals.ntamt).toFixed(4),
+      mrrdm_pdamt: num(totalPayment).toFixed(4),
+      mrrdm_duamt: num(duamt).toFixed(4),
     });
   }
 
@@ -204,14 +478,17 @@ const useMRR = () => {
     } catch (error) {}
   };
 
-  const getAllUnits = async () => {
-    if (units_Options.length > 0) {
+  const getExpnPaym = async () => {
+    if (mrrcs_Options.length > 0) {
       return;
     }
     try {
-      const resp = await unitsAPI.getAllActive({});
+      const resp = await mrrAPI.getExpensesPaymentsHeads({});
       const list = resp.data || [];
-      setUnits_Options(list);
+      const mrrcs = list.filter((f) => f.prtyn_ctype === "EXPENSES");
+      const mrrpy = list.filter((f) => f.prtyn_ctype === "PAYMENTS");
+      setMrrcs_Options(mrrcs);
+      setMrrpy_Options(mrrpy);
     } catch (error) {}
   };
 
@@ -230,7 +507,7 @@ const useMRR = () => {
 
     if (f === "mrrdm_invds") {
       const newformData = { ...formData, [f]: v };
-      reCalculate(listDataItem, newformData);
+      reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
     }
   };
 
@@ -241,8 +518,8 @@ const useMRR = () => {
     loadAllDetails(rowData.id);
     getAllDepartments();
     getAllContacts();
-    //getAllUnits();
     getMrrItems();
+    getExpnPaym();
   };
 
   const loadAllDetails = async (id) => {
@@ -311,7 +588,7 @@ const useMRR = () => {
     setListDataItem([]);
     getAllDepartments();
     getAllContacts();
-    //getAllUnits();
+    getExpnPaym();
     getMrrItems();
   };
 
@@ -370,11 +647,12 @@ const useMRR = () => {
     setFormDataItem((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formDataItem, [f]: v }, tmpb_mrrdc);
     setFormErrors(newErrors);
-    if (f === "mrrdc_items") {
-      const price_id = items_Options.find((opt) => opt.id === v);
+    if (f === "mrrdc_price") {
+      const price_id = items_Options.find((opt) => opt.price_id === v);
       setFormDataItem((prev) => ({
         ...prev,
-        mrrdc_price: price_id?.price_id,
+        mrrdc_items: price_id?.id,
+        mrrdc_price: v,
         mrrdc_units: price_id?.items_runit,
         mrrdc_itrat: price_id?.price_lprat || 0,
         mrrdc_fcpct: price_id?.items_fxcst || 0,
@@ -394,21 +672,20 @@ const useMRR = () => {
     }
 
     const items_iname = items_Options.find(
-      (opt) => opt.id === formDataItem.mrrdc_items,
+      (opt) => opt.price_id === formDataItem.mrrdc_price,
     );
-
     //create new row
     const newItem = {
       ...formDataItem,
       id: generateGuid(),
-      items_iname: items_iname?.items_iname || "Invalid Item",
+      items_iname: items_iname?.price_cname || "Invalid Item",
       runit_uname: items_iname?.runit_uname || "Invalid Unit",
       sunit_cname: items_iname?.sunit_cname || "Invalid Unit",
       items_szqty: items_iname?.items_szqty || "0",
       mrrdc_actve: true,
     };
     const newItemList = [...listDataItem, newItem];
-    reCalculate(newItemList, formData);
+    reCalculate(newItemList, formData, listDataCost, listDataPayment);
     setFormDataItem({});
     handleHideModal();
   };
@@ -434,59 +711,54 @@ const useMRR = () => {
   // ---------- Costing Details ----------
 
   const handleChangeCost = (f, v) => {
-    setFormDataItem((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataItem, [f]: v }, tmpb_mrrdc);
+    setFormDataCost((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formDataCost, [f]: v }, tmpb_mrrcs);
     setFormErrors(newErrors);
-    if (f === "mrrdc_items") {
-      const price_id = items_Options.find((opt) => opt.id === v);
-      setFormDataItem((prev) => ({
+    //console.log(f, v);
+    if (f === "mrrcs_party") {
+      const mrrcs_id = mrrcs_Options.find((opt) => opt.id === v);
+      setFormDataCost((prev) => ({
         ...prev,
-        mrrdc_price: price_id?.price_id,
-        mrrdc_units: price_id?.items_runit,
-        mrrdc_itrat: price_id?.price_lprat || 0,
-        mrrdc_fcpct: price_id?.items_fxcst || 0,
+        party_cname: mrrcs_id?.party_cname,
       }));
     }
   };
 
   const handleAddToListCost = () => {
-    const newErrors = validate(formDataItem, tmpb_mrrdc);
+    const newErrors = validate(formDataCost, tmpb_mrrcs);
     setFormErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (["", 0, "0", null, undefined].includes(formDataItem.mrrdc_itqty)) {
-      showToast("Quantity is required", { type: "warning" });
+    if (["", 0, "0", null, undefined].includes(formDataCost.mrrcs_value)) {
+      showToast("Amount is required", { type: "warning" });
       return;
     }
 
-    const items_iname = items_Options.find(
-      (opt) => opt.id === formDataItem.mrrdc_items,
+    const party_cname = mrrcs_Options.find(
+      (opt) => opt.id === formDataCost.mrrcs_party,
     );
 
     //create new row
     const newItem = {
-      ...formDataItem,
+      ...formDataCost,
       id: generateGuid(),
-      items_iname: items_iname?.items_iname || "Invalid Item",
-      runit_uname: items_iname?.runit_uname || "Invalid Unit",
-      sunit_cname: items_iname?.sunit_cname || "Invalid Unit",
-      items_szqty: items_iname?.items_szqty || "0",
-      mrrdc_actve: true,
+      party_cname: party_cname?.party_cname || "Invalid Item",
+      mrrcs_actve: true,
     };
-    const newItemList = [...listDataItem, newItem];
-    reCalculate(newItemList, formData);
-    setFormDataItem({});
+    const newCostList = [...listDataCost, newItem];
+    reCalculate(listDataItem, formData, newCostList, listDataPayment);
+    setFormDataCost({});
     handleHideModal();
   };
 
   const handleEditCost = (rowData) => {
-    handleShowModal("ITEM");
-    setFormDataItem(rowData);
+    handleShowModal("COSTING");
+    setFormDataCost(rowData);
   };
 
   const handleDeleteCost = async (rowData) => {
-    const dataName = rowData.items_iname;
+    const dataName = rowData.party_cname;
     const confirmation = await confirmBox({
       title: "Remove",
       message: `Are you sure you want to remove "${dataName}"?`,
@@ -494,7 +766,68 @@ const useMRR = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataItem((prev) => prev.filter((item) => item.id !== rowData.id));
+    setListDataCost((prev) => prev.filter((item) => item.id !== rowData.id));
+    showToast("Removed successfully", { type: "success" });
+  };
+  // ---------- Payment Details ----------
+
+  const handleChangePayment = (f, v) => {
+    setFormDataPayment((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formDataPayment, [f]: v }, tmpb_mrrpy);
+    setFormErrors(newErrors);
+    if (f === "mrrcs_party") {
+      const mrrpy_id = mrrpy_Options.find((opt) => opt.id === v);
+      setFormDataPayment((prev) => ({
+        ...prev,
+        party_cname: mrrpy_id?.party_cname,
+      }));
+    }
+  };
+
+  const handleAddToListPayment = () => {
+    const newErrors = validate(formDataPayment, tmpb_mrrpy);
+    setFormErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      return;
+    }
+    if (["", 0, "0", null, undefined].includes(formDataPayment.mrrpy_pdamt)) {
+      showToast("Amount is required", { type: "warning" });
+      return;
+    }
+
+    const party_cname = mrrpy_Options.find(
+      (opt) => opt.id === formDataPayment.mrrpy_party,
+    );
+    //console.log("party_cname",formDataPayment)
+
+    //create new row
+    const newItem = {
+      ...formDataPayment,
+      id: generateGuid(),
+      party_cname: party_cname?.party_cname || "Invalid Item",
+      mrrpy_actve: true,
+    };
+    const newPaymentList = [...listDataPayment, newItem];
+    reCalculate(listDataItem, formData, listDataCost, newPaymentList);
+    setFormDataPayment({});
+    handleHideModal();
+  };
+
+  const handleEditPayment = (rowData) => {
+    handleShowModal("PAYMENT");
+    setFormDataPayment(rowData);
+  };
+
+  const handleDeletePayment = async (rowData) => {
+    const dataName = rowData.party_cname;
+    const confirmation = await confirmBox({
+      title: "Remove",
+      message: `Are you sure you want to remove "${dataName}"?`,
+      confirmText: "Remove",
+      variant: "danger",
+    });
+    if (!confirmation) return;
+    setListDataPayment((prev) => prev.filter((item) => item.id !== rowData.id));
     showToast("Removed successfully", { type: "success" });
   };
 
@@ -508,10 +841,17 @@ const useMRR = () => {
       });
     }
     if (modal === "COSTING") {
-      setFormDataItem(dataModelItem);
+      setFormDataCost(dataModelItem);
       setModalTitle({
         title: "Add Costing",
         subTitle: "MRR Costing Details",
+      });
+    }
+    if (modal === "PAYMENT") {
+      setFormDataPayment(dataModelItem);
+      setModalTitle({
+        title: "Add Payment",
+        subTitle: "MRR Payment Details",
       });
     }
 
@@ -537,8 +877,10 @@ const useMRR = () => {
     dpart_Options,
     cntct_Options,
     items_Options,
-    units_Options,
-    party_Options,
+    mrrcs_Options,
+    listDataCost,
+    mrrpy_Options,
+    listDataPayment,
     //functions
     handleChange,
     handleEdit,
@@ -553,10 +895,17 @@ const useMRR = () => {
     handleEditItem,
     handleDeleteItem,
     //cost
+    formDataCost,
     handleChangeCost,
     handleAddToListCost,
     handleEditCost,
     handleDeleteCost,
+    //payment
+    formDataPayment,
+    handleChangePayment,
+    handleAddToListPayment,
+    handleEditPayment,
+    handleDeletePayment,
     //modal
     showModal,
     modalTitle,
