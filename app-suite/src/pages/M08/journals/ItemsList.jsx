@@ -49,19 +49,22 @@ const ItemsList = ({ readOnly, listData, onEdit, onDelete }) => {
   ];
 
   return (
-    <DataTable
-      columns={dtColumns}
-      data={listData}
-      pageSize={15}
-      sortable
-      searchable={false}
-      striped
-      hoverable
-      exportable={false}
-      onRowClick={(row) => onEdit(row)}
-      emptyMessage="No journal lines added yet"
-      className="mt-2"
-    />
+    <>
+      <DataTable
+        columns={dtColumns}
+        data={listData}
+        pageSize={15}
+        sortable
+        searchable={false}
+        striped
+        hoverable
+        exportable={false}
+        onRowClick={(row) => onEdit(row)}
+        emptyMessage="No journal lines added yet"
+        className="mt-2"
+      />
+      <p>{listData.length} Lines</p>
+    </>
   );
 };
 export default ItemsList;

@@ -162,9 +162,9 @@ const useMRR = () => {
 
       const mrrdc_icamt = iAmt + iQty + iLine;
       const mrrdc_ecamt = eAmt + eQty + eLine;
-      const mrrdc_ntamt = afterDisc + mrrdc_vtamt + mrrdc_icamt - mrrdc_ivamt;
+      const mrrdc_ntamt = afterDisc + mrrdc_vtamt + mrrdc_icamt + mrrdc_ivamt;
       const mrrdc_csrat =
-        (afterDisc + mrrdc_fcamt + mrrdc_icamt + mrrdc_ecamt) /
+        (afterDisc + mrrdc_ivamt + mrrdc_fcamt + mrrdc_icamt + mrrdc_ecamt) /
         Number(item.mrrdc_itqty);
 
       return {
@@ -370,7 +370,7 @@ const useMRR = () => {
       const mrrdc_ntamt = afterDisc + mrrdc_vtamt + mrrdc_icamt - mrrdc_ivamt;
 
       const mrrdc_csrat = div(
-        afterDisc + mrrdc_fcamt + mrrdc_icamt + mrrdc_ecamt,
+        afterDisc + mrrdc_fcamt + mrrdc_icamt + mrrdc_ecamt - mrrdc_ivamt,
         qty,
       );
 
@@ -540,12 +540,11 @@ const useMRR = () => {
   };
 
   const handleDelete = async (rowData) => {
-    
     if (rowData.mrrdm_ispst) {
       showToast("MRR is posted. Cannot delete.", { type: "warning" });
       return;
     }
-    
+
     const isActive = rowData.mrrdm_actve;
     const dataName = rowData.mrrdm_trnno;
     const confirmation = await confirmBox({
@@ -677,7 +676,7 @@ const useMRR = () => {
     }
   };
 
-  const handleAddToListItem = () => {
+  const handleAddToListItem = (value) => {
     const newErrors = validate(formDataItem, tmpb_mrrdc);
     setFormErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
@@ -704,7 +703,9 @@ const useMRR = () => {
     const newItemList = [...listDataItem, newItem];
     reCalculate(newItemList, formData, listDataCost, listDataPayment);
     setFormDataItem({});
-    handleHideModal();
+    if (value === "CLOSE") {
+      handleHideModal();
+    }
   };
 
   const handleEditItem = (rowData) => {

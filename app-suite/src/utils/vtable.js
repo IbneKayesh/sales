@@ -58,6 +58,7 @@ const party_ptype_Options = [
   { label: "Bank", value: "Bank", auto_create: false },
   { label: "Cash", value: "Cash", auto_create: false },
   { label: "Expenses", value: "Expenses", auto_create: false },
+  { label: "Liabilities", value: "Liabilities", auto_create: false },
   { label: "Customer", value: "Customer", auto_create: true },
   { label: "Supplier", value: "Supplier", auto_create: true },
   { label: "Employee", value: "Employee", auto_create: true },
