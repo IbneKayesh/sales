@@ -19,10 +19,16 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT coa.*, cob.chtac_cname AS parnt_cname,
+    const sql = `SELECT coa.*, cob.chtac_cname AS parnt_cname, COALESCE(pty.party_id, 0) as party_count,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmtb_chtac coa
     LEFT JOIN tmtb_chtac cob ON coa.chtac_chtac = cob.id
+    LEFT JOIN (
+          SELECT count(id) as party_id, pty.party_chtac
+          FROM tmtb_party pty
+          WHERE pty.party_users = $1
+          GROUP BY pty.party_chtac
+        ) pty ON coa.id = pty.party_chtac
     LEFT JOIN tmhb_emply csr ON coa.chtac_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON coa.chtac_upusr = usr.id
     WHERE coa.chtac_users = $1

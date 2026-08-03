@@ -26,6 +26,7 @@ router.post("/", async (req, res) => {
     sgrup.sgrup_cname as sgrup_cname,
     scatg.scatg_cname as scatg_cname,
     brand.brand_cname as brand_cname,
+    COALESCE(prc.price_id, 0) as price_count,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
 FROM tmib_items itm
 LEFT JOIN tmib_units runit ON itm.items_runit = runit.id
@@ -34,6 +35,12 @@ LEFT JOIN tmib_units sunit ON itm.items_sunit = sunit.id
 LEFT JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
 LEFT JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
 LEFT JOIN tmib_brand brand ON itm.items_brand = brand.id
+LEFT JOIN (
+      SELECT COUNT(id) as price_id, prc.price_items
+      FROM tmib_price prc
+      WHERE prc.price_users = $1
+      GROUP BY prc.price_items
+  )prc ON itm.id = prc.price_items
 LEFT JOIN tmhb_emply csr ON itm.items_crusr = csr.id
 LEFT JOIN tmhb_emply usr ON itm.items_upusr = usr.id
 WHERE itm.items_users = $1

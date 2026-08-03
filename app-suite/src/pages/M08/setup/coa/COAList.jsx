@@ -92,6 +92,16 @@ const COAList = ({ listData, onEdit, onDelete }) => {
               }}
             >
               {v || "—"}
+              {row.party_count > 0 && " "}
+              {row.party_count > 0 && (
+                <Chip
+                  variant="primary"
+                  size="sm"
+                  style={{ marginLeft: "5px", fontWeight: 600 }}
+                >
+                  {row.party_count} Party
+                </Chip>
+              )}
             </span>
           </span>
         );

@@ -246,6 +246,7 @@ const useJournal = () => {
       jrnlm_crval: totalCr,
     }));
   }, [listDataItem]);
+  //convert this useEffect to store when adding item
 
   const [chtac_Options, setChtac_Options] = useState([]);
   const [party_Options, setParty_Options] = useState([]);

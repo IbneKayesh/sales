@@ -19,17 +19,18 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT ptya.*, cht.chtac_cname, cht.chtac_ctype, cht.chtac_chtno, cht.chtac_ntype,
-    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
-    FROM tmtb_prtya ptya
-    JOIN tmtb_chtac cht ON ptya.prtya_chtac = cht.chtac_chtno::text
-    LEFT JOIN tmhb_emply csr ON ptya.prtya_crusr = csr.id
-    LEFT JOIN tmhb_emply usr ON ptya.prtya_upusr = usr.id
-    WHERE ptya.prtya_users = $1
-    ORDER BY ptya.prtya_sorce ASC`;
+    const sql = `SELECT ptn.*, cht.chtac_cname, cht.chtac_ctype, cht.chtac_chtno, cht.chtac_ntype,
+    pty.party_cname, csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmtb_prtyn ptn
+    JOIN tmtb_chtac cht ON ptn.prtyn_chtno = cht.chtac_chtno
+    LEFT JOIN tmtb_party pty ON ptn.prtyn_party = pty.id
+    LEFT JOIN tmhb_emply csr ON ptn.prtyn_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON ptn.prtyn_upusr = usr.id
+    WHERE ptn.prtyn_users = $1
+    ORDER BY ptn.prtyn_cname, ptn.prtyn_ctype ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get party auto- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get party network- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",

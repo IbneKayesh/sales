@@ -2,6 +2,7 @@ import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
+import Chip from "@/components/Chip";
 import { IconClose, IconCheck, IconDollar } from "@/icons";
 
 const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
@@ -16,6 +17,16 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
           <span>
             {row.items_iname} - {row.items_szqty} {row.sunit_cname} (
             {row.items_itype})
+            {row.price_count > 0 && " "}
+            {row.price_count > 0 && (
+              <Chip
+                variant={row.price_count > 0 ? "primary" : "secondary"}
+                size="sm"
+                style={{ marginLeft: "5px", fontWeight: 600 }}
+              >
+                {row.price_count} Price
+              </Chip>
+            )}
           </span>
         );
       },
