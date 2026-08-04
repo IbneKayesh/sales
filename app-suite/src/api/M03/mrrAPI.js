@@ -42,4 +42,8 @@ export const mrrAPI = {
     apiRequest("/M03/v1/mrr/get-expenses-payments-heads", {
       body: data,
     }),
+  getAllDueMRR: (data) =>
+    apiRequest("/M03/v1/mrr/get-all-due-mrr", {
+      body: data,
+    }),
 };

@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
     pty.party_cname, csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmtb_prtyn ptn
     JOIN tmtb_chtac cht ON ptn.prtyn_chtno = cht.chtac_chtno
-    LEFT JOIN tmtb_party pty ON ptn.prtyn_party = pty.id
+    LEFT JOIN tmtb_party pty ON ptn.prtyn_party = pty.id AND cht.id = pty.party_chtac
     LEFT JOIN tmhb_emply csr ON ptn.prtyn_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON ptn.prtyn_upusr = usr.id
     WHERE ptn.prtyn_users = $1

@@ -11,7 +11,7 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
       width: "100px",
       render: (v) => formatDate(v),
     },
-    { key: "mrrpy_pdamt", header: "Amount", width: "80px" },
+    { key: "mrrpy_pdamt", header: "Amount", width: "100px" },
     { key: "mrrpy_refno", header: "Ref No", width: "100px" },
     { key: "mrrpy_notes", header: "Notes", width: "100px" },
     {
@@ -19,14 +19,18 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
-        <ActionButton
-          rowData={row}
-          actve={row.mrrpy_actve}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ),
+      render: (_, row) => {
+        if (row.mrrpy_mrrdm === "SYS_NEW") {
+          return (
+            <ActionButton
+              rowData={row}
+              actve={row.mrrpy_actve}
+              onEdit={onEdit}
+              onDelete={onDelete}
+            />
+          );
+        }
+      },
       visible: !readOnly,
     },
   ];

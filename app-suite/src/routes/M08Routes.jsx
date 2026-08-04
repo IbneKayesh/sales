@@ -5,6 +5,7 @@ import PartyPage from "@/pages/M08/setup/parties/PartyPage";
 import PartyNetworkPage from "@/pages/M08/setup/partynetwork/PartyNetworkPage";
 import JournalPage from "@/pages/M08/journals/JournalPage";
 import Fstatements from "@/pages/M08/reports/Fstatements";
+import MrrPage from "@/pages/M08/payments/mrr/MrrPage";
 
 const routes = [
   { path: "/accounts/setup/chart-of-accounts", element: <COAPage /> },
@@ -14,6 +15,7 @@ const routes = [
   { path: "/accounts/setup/party-network", element: <PartyNetworkPage /> },
   { path: "/accounts/journals", element: <JournalPage /> },
   { path: "/accounts/reports/fstatements", element: <Fstatements /> },
+  { path: "/accounts/mrr-payment", element: <MrrPage /> },
 ];
 
 export default routes;

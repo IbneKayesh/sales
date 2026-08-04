@@ -282,7 +282,7 @@ const create = async (req, res) => {
         sql: `INSERT INTO tmpb_mrrpy(id, mrrpy_users, mrrpy_bsins, mrrpy_mrrdm, mrrpy_party, mrrpy_pdamt,
         mrrpy_refno, mrrpy_notes, mrrpy_crusr, mrrpy_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10)`,
+        $7, $8, $9, $10)`,
         params: [
           uuidv4(),
           user_c,
@@ -587,4 +587,52 @@ router.post("/get-expenses-payments-heads", async (req, res) => {
     });
   }
 });
+
+
+// get-all-due-mrr
+router.post("/get-all-due-mrr", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT mrr.*,
+    dprt.dpart_cname, cntct.cntct_cname,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmpb_mrrdm mrr
+    JOIN tmsb_dpart dprt ON mrr.mrrdm_dpart = dprt.id
+    JOIN tmcb_cntct cntct ON mrr.mrrdm_cntct = cntct.id
+    LEFT JOIN tmhb_emply csr ON mrr.mrrdm_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON mrr.mrrdm_upusr = usr.id
+    WHERE mrr.mrrdm_users = $1
+    AND mrr.mrrdm_actve = TRUE
+    AND (mrr.mrrdm_pyamt - mrr.mrrdm_pdamt) > 0
+    ORDER BY mrr.mrrdm_trnno ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get Department- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+
 module.exports = router;
