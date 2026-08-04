@@ -26,60 +26,6 @@ const useFstatements = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
   //others
-  const reprt_Options = [
-    {
-      label: "Financial Statements > Trial Balance",
-      value: "SYS_RPT_FS_TB",
-    },
-    {
-      label: "Financial Statements > Balance Sheet",
-      value: "SYS_RPT_FS_BS",
-    },
-    {
-      label: "Financial Statements > Profit and Loss",
-      value: "SYS_RPT_FS_PNL",
-    },
-    {
-      label: "Financial Statements > Cash Flow",
-      value: "SYS_RPT_FS_CF",
-    },
-    {
-      label: "Ledger Reports > General Ledger",
-      value: "SYS_RPT_LR_GL",
-    },
-    {
-      label: "Ledger Reports > Journal Register",
-      value: "SYS_RPT_LR_GR",
-    },
-    {
-      label: "Ledger Reports > Account Ledger",
-      value: "SYS_RPT_LR_AL",
-    },
-    {
-      label: "Ledger Reports > Sub Ledger",
-      value: "SYS_RPT_LR_SL",
-    },
-    {
-      label: "Receivable & Payable > AR Aging",
-      value: "SYS_RPT_RP_ARA",
-    },
-    {
-      label: "Receivable & Payable > AP Aging",
-      value: "SYS_RPT_RP_APA",
-    },
-    {
-      label: "Receivable & Payable > Outstanding",
-      value: "SYS_RPT_RP_OST",
-    },
-    {
-      label: "Banking & Cash > Bank Reconciliation",
-      value: "SYS_RPT_BC_BR",
-    },
-    {
-      label: "Banking & Cash > Cash Book",
-      value: "SYS_RPT_BC_CB",
-    },
-  ];
   const [dpart_Options, setDpart_Options] = useState([]);
   const [fsyar_Options, setFsyar_Options] = useState([]);
   const [acprd_Options, setAcprd_Options] = useState([]);
@@ -164,7 +110,6 @@ const useFstatements = () => {
     formDataItem,
     formErrors,
     //others
-    reprt_Options,
     dpart_Options,
     fsyar_Options,
     acprd_Options,

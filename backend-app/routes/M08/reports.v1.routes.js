@@ -21,7 +21,7 @@ router.post("/get-journal-data", async (req, res) => {
     //database action
     const sql = `SELECT jnm.jrnlm_crncy, jnm.jrnlm_trtyp, jnm.jrnlm_trdat, jnm.jrnlm_refno, jnm.jrnlm_narrt, jnm.jrnlm_drval,
         jnm.jrnlm_crval, jnc.jrnlc_drval, jnc.jrnlc_crval, jnc.jrnlc_descr, jnc.jrnlc_sorce,
-        jnc.jrnlc_chtac, cht.chtac_cname, cht.chtac_ctype, cht.chtac_chtno,
+        jnc.jrnlc_chtac, cht.chtac_cname, cht.chtac_ctype, cht.chtac_chtno, cht.chtac_ntype,
         jnc.jrnlc_party, pty.party_ptype, pty.party_cname
         FROM tmtb_jrnlm jnm
         JOIN tmtb_jrnlc jnc ON jnm.id = jnc.jrnlc_jrnlm
