@@ -1,0 +1,31 @@
+{
+  "reprt_cname": {
+    "type": "string",
+    "label": "Source",
+    "maxLength": 50,
+    "placeholder": "Select report",
+    "required": true
+  },
+  "jrnlm_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select department",
+    "required": true
+  },
+  "jrnlm_fsyar": {
+    "type": "string",
+    "label": "Fiscal Year",
+    "maxLength": 50,
+    "placeholder": "Select FY",
+    "required": true
+  },
+  "jrnlm_acprd": {
+    "type": "string",
+    "label": "Period",
+    "maxLength": 50,
+    "minLength": 0,
+    "placeholder": "Enter period",
+    "required": true
+  }
+}

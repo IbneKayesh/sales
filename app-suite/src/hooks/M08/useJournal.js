@@ -87,7 +87,6 @@ const useJournal = () => {
     if (f === "jrnlm_dpart") {
       getAllFiscalYears(v);
     }
-    setFormErrors(newErrors);
     if (f === "jrnlm_fsyar") {
       getAllAcPeriods(v);
     }
