@@ -4,10 +4,16 @@ delete from tmmb_bofoh;
 delete from tmmb_bommf;
 
 
+--mrr
 delete from tmpb_mrrdm;
 delete from tmpb_mrrdc;
 delete from tmpb_mrrcs;
 delete from tmpb_mrrpy;
+
+--journal
+delete from tmtb_jrnlm;
+delete from tmtb_jrnlc;
+
 
 
 
@@ -21,9 +27,6 @@ CALL prc_jrnlm(
 select * from tmsb_dpart
 
 
-
-delete from tmtb_jrnlm;
-delete from tmtb_jrnlc;
 
 
 

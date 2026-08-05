@@ -722,7 +722,9 @@ const useMRR = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataItem((prev) => prev.filter((item) => item.id !== rowData.id));
+
+    const newItemList = listDataItem.filter((item) => item.id !== rowData.id);
+    reCalculate(newItemList, formData, listDataCost, listDataPayment);
     showToast("Removed successfully", { type: "success" });
   };
 

@@ -49,7 +49,7 @@ const ItemsList = ({ readOnly, listData, onEdit, onDelete }) => {
   ];
 
   return (
-    <>
+    <div className="mt-2">
       <DataTable
         columns={dtColumns}
         data={listData}
@@ -64,7 +64,7 @@ const ItemsList = ({ readOnly, listData, onEdit, onDelete }) => {
         className="mt-2"
       />
       <p>{listData.length} Lines</p>
-    </>
+    </div>
   );
 };
 export default ItemsList;
