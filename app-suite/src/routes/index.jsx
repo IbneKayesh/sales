@@ -1,6 +1,7 @@
 import { Route } from "react-router-dom";
 import mainRoutes from "./mainRoutes";
 import M01Routes from "./M01Routes";
+import M02Routes from "./M02Routes";
 import M03Routes from "./M03Routes";
 import M04Routes from "./M04Routes";
 import M05Routes from "./M05Routes";
@@ -15,6 +16,7 @@ const publicPaths = new Set(["/auth/login", "*"]);
 const routes = [
   ...mainRoutes,
   ...M01Routes,
+  ...M02Routes,
   ...M03Routes,
   ...M04Routes,
   ...M05Routes,

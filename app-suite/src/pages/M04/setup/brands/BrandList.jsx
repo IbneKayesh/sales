@@ -1,29 +1,37 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import { IconClose, IconCheck } from "@/icons";
 
 const BrandList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "brand_ccode", header: "Code", width: "80px" },
     { key: "brand_cntry", header: "Country", width: "80px" },
-    { key: "brand_cname", header: "Brand Name", width: "80px" },
     {
-      key: "brand_actve",
-      header: "Status",
-      width: "110px",
-      render: (v) => {
+      key: "brand_cname",
+      header: "Brand Name",
+      width: "80px",
+      render: (_, row) => {
         return (
-          <Badge variant={v ? "success" : "danger"}>
-            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
-          </Badge>
+          <span className={`${!row.brand_actve && "text-red-500"}`}>
+            {row.brand_cname}
+          </span>
         );
       },
     },
+    // {
+    //   key: "brand_actve",
+    //   header: "Status",
+    //   width: "110px",
+    //   render: (v) => {
+    //     return (
+    //       <Badge variant={v ? "success" : "danger"}>
+    //         {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+    //         {v ? "Active" : "Inactive"}
+    //       </Badge>
+    //     );
+    //   },
+    // },
     {
       key: "actions",
       header: "Actions",

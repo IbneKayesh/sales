@@ -238,12 +238,12 @@ const appModules = [
         menus: [
           {
             id: "M03-G02-M001",
-            name: "Sales Orders",
+            name: "Sales Invoice",
             color: "#eab308",
             icon: "Sales",
             order: 1,
-            link: "/sales/orders",
-            desc: "Process customer sales orders",
+            link: "/sales/invoice",
+            desc: "Process customer sales invoice",
           },
           {
             id: "M03-G02-M002",

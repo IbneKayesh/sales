@@ -14,10 +14,9 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
       width: "200px",
       render: (_, row) => {
         return (
-          <span>
+          <span className={`${!row.items_actve && "text-red-500"}`}>
             {row.items_iname} - {row.items_szqty} {row.sunit_cname} (
-            {row.items_itype})
-            {row.price_count > 0 && " "}
+            {row.items_itype}){row.price_count > 0 && " "}
             {row.price_count > 0 && (
               <Chip
                 variant={row.price_count > 0 ? "primary" : "secondary"}
@@ -47,19 +46,6 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
     { key: "sgrup_cname", header: "Group", width: "80px" },
     { key: "scatg_cname", header: "Category", width: "80px" },
     { key: "brand_cname", header: "Brand", width: "120px" },
-    {
-      key: "items_actve",
-      header: "Status",
-      width: "120px",
-      render: (v) => {
-        return (
-          <Badge variant={v ? "success" : "danger"}>
-            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
-          </Badge>
-        );
-      },
-    },
     {
       key: "actions",
       header: "Actions",
