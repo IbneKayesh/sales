@@ -185,6 +185,66 @@ const sampleData = [
   },
 ];
 
+// ── Color palette showcase (Tailwind-style text-*/bg-* utility classes) ──
+const paletteFamilies = [
+  "red",
+  "orange",
+  "amber",
+  "yellow",
+  "lime",
+  "green",
+  "emerald",
+  "teal",
+  "cyan",
+  "sky",
+  "blue",
+  "indigo",
+  "violet",
+  "purple",
+  "fuchsia",
+  "pink",
+  "rose",
+  "gray",
+];
+const paletteShades = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+
+// Pick a readable label color for a swatch based on its computed background luminance
+function getReadableTextColor(bgColor) {
+  const nums = String(bgColor).match(/\d+(\.\d+)?/g);
+  if (!nums || nums.length < 3) return "rgba(15, 17, 23, 0.78)";
+  const [r, g, b] = nums.slice(0, 3).map(Number);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.58
+    ? "rgba(15, 17, 23, 0.78)"
+    : "rgba(255, 255, 255, 0.92)";
+}
+
+// A single shade swatch — renders the bg-{color}-{shade} utility on the bar
+// and shows the shade number overlaid with an auto-contrast label (computed
+// once on mount via a ref callback that writes a CSS variable on the bar)
+function PaletteSwatch({ color, shade }) {
+  return (
+    <div
+      className="palette-swatch"
+      title={`bg-${color}-${shade} · text-${color}-${shade}`}
+    >
+      <div
+        ref={(el) => {
+          if (el) {
+            el.style.setProperty(
+              "--swatch-label-color",
+              getReadableTextColor(getComputedStyle(el).backgroundColor),
+            );
+          }
+        }}
+        className={`palette-swatch__bar bg-${color}-${shade}`}
+      >
+        <span className="palette-swatch__label">{shade}</span>
+      </div>
+    </div>
+  );
+}
+
 export default function ExamplesPage() {
   const [inputValue, setInputValue] = useState("");
   const [numValue, setNumValue] = useState("");
@@ -709,6 +769,11 @@ export default function ExamplesPage() {
         { id: "error-boundary", label: "Error Boundaries" },
         { id: "toast-box", label: "Toast Notifications" },
       ],
+    },
+    {
+      key: "utilities",
+      label: "Utilities",
+      items: [{ id: "color-palette", label: "Color Palette" }],
     },
   ];
   const allCategoryKeys = categoryGroups.map((g) => g.key);
@@ -5035,6 +5100,228 @@ export default function ExamplesPage() {
                       This content is wrapped with a custom fallback.
                     </div>
                   </ErrorBoundary>
+                </div>
+              </div>
+            </PageCardBody>
+          </PageCard>
+
+          {/* ── Section: Color Palette (text & bg color utilities) ── */}
+          <PageCard data-section="color-palette">
+            <PageCardHeader>
+              <PageCardTitle
+                title="Color Palette"
+                subtitle="Tailwind-style text-{color}-{shade} & bg-{color}-{shade} utility classes — 18 color families × 11 shades (50–950)"
+              />
+            </PageCardHeader>
+            <PageCardBody>
+              <div className="grid" style={{ gap: "var(--sp-4)" }}>
+                {paletteFamilies.map((color) => (
+                  <div key={color} className="col-span-6 palette-card">
+                    <div className="palette-card__header">
+                      <span className={`palette-card__name text-${color}-600`}>
+                        {color}
+                      </span>
+                      <div className="palette-card__usage">
+                        <code className={`bg-${color}-100 text-${color}-800`}>
+                          bg-{color}-100
+                        </code>
+                        <code className={`text-${color}-500`}>
+                          text-{color}-500
+                        </code>
+                      </div>
+                    </div>
+                    <div className="palette-card__bars">
+                      {paletteShades.map((shade) => (
+                        <PaletteSwatch
+                          key={shade}
+                          color={color}
+                          shade={shade}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <hr
+                style={{
+                  border: "none",
+                  borderTop: "1px solid var(--border)",
+                  margin: "var(--sp-5) 0",
+                }}
+              />
+
+              <div className="grid" style={{ gap: "var(--sp-5)" }}>
+                {/* Text color utilities */}
+                <div className="col-span-6">
+                  <h4
+                    className="h4"
+                    style={{
+                      margin: 0,
+                      color: "var(--text-secondary)",
+                      fontSize: "var(--fs-sm)",
+                    }}
+                  >
+                    Text colors —{" "}
+                    <code className="text-red-500">text-{'{color}-{shade}'}</code>
+                  </h4>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "var(--sp-2)",
+                      alignItems: "center",
+                    }}
+                  >
+                    {[
+                      "red-500",
+                      "orange-500",
+                      "amber-600",
+                      "yellow-600",
+                      "green-600",
+                      "emerald-600",
+                      "teal-600",
+                      "cyan-600",
+                      "sky-600",
+                      "blue-600",
+                      "indigo-500",
+                      "violet-500",
+                      "purple-600",
+                      "fuchsia-500",
+                      "pink-500",
+                      "rose-500",
+                      "gray-600",
+                    ].map((c) => (
+                      <code key={c} className={`text-${c}`}>
+                        text-{c}
+                      </code>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Background color utilities */}
+                <div className="col-span-6">
+                  <h4
+                    className="h4"
+                    style={{
+                      margin: 0,
+                      color: "var(--text-secondary)",
+                      fontSize: "var(--fs-sm)",
+                    }}
+                  >
+                    Background colors —{" "}
+                    <code className="bg-emerald-100 text-emerald-800">
+                      bg-{'{color}-{shade}'}
+                    </code>
+                  </h4>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "var(--sp-2)",
+                      alignItems: "center",
+                    }}
+                  >
+                    {[
+                      "red-100",
+                      "orange-100",
+                      "amber-100",
+                      "yellow-100",
+                      "lime-100",
+                      "green-100",
+                      "emerald-100",
+                      "teal-100",
+                      "cyan-100",
+                      "sky-100",
+                      "blue-100",
+                      "indigo-100",
+                      "violet-100",
+                      "purple-100",
+                      "fuchsia-100",
+                      "pink-100",
+                      "rose-100",
+                      "gray-100",
+                    ].map((c) => (
+                      <code key={c} className={`bg-${c} text-gray-800`}>
+                        bg-{c}
+                      </code>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Combined — status pills */}
+                <div className="col-span-6">
+                  <h4
+                    className="h4"
+                    style={{
+                      margin: 0,
+                      color: "var(--text-secondary)",
+                      fontSize: "var(--fs-sm)",
+                    }}
+                  >
+                    Combined — status pills
+                  </h4>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "var(--sp-2)",
+                    }}
+                  >
+                    <span className="bg-emerald-100 text-emerald-700 rounded-pill px-3 py-1 fw-semibold">
+                      Active
+                    </span>
+                    <span className="bg-sky-100 text-sky-700 rounded-pill px-3 py-1 fw-semibold">
+                      In Progress
+                    </span>
+                    <span className="bg-amber-100 text-amber-700 rounded-pill px-3 py-1 fw-semibold">
+                      Pending
+                    </span>
+                    <span className="bg-rose-100 text-rose-700 rounded-pill px-3 py-1 fw-semibold">
+                      Overdue
+                    </span>
+                    <span className="bg-violet-100 text-violet-700 rounded-pill px-3 py-1 fw-semibold">
+                      Beta
+                    </span>
+                    <span className="bg-gray-100 text-gray-700 rounded-pill px-3 py-1 fw-semibold">
+                      Archived
+                    </span>
+                  </div>
+                </div>
+
+                {/* Combined — callout card */}
+                <div className="col-span-6">
+                  <h4
+                    className="h4"
+                    style={{
+                      margin: 0,
+                      color: "var(--text-secondary)",
+                      fontSize: "var(--fs-sm)",
+                    }}
+                  >
+                    Combined — callout card
+                  </h4>
+                  <div
+                    className="bg-violet-50 rounded-xl p-4"
+                    style={{ border: "1px solid var(--violet-200)" }}
+                  >
+                    <h5
+                      className="h4 text-violet-700"
+                      style={{ margin: 0, marginBottom: "var(--sp-1)" }}
+                    >
+                      bg-violet-50 + text-violet-700
+                    </h5>
+                    <p
+                      className="text-gray-600"
+                      style={{ margin: 0, fontSize: "var(--fs-sm)" }}
+                    >
+                      Surface from{" "}
+                      <code className="text-violet-600">bg-violet-50</code>, heading
+                      from <code className="text-violet-600">text-violet-700</code>{" "}
+                      and body copy from{" "}
+                      <code className="text-violet-600">text-gray-600</code>.
+                    </p>
+                  </div>
                 </div>
               </div>
             </PageCardBody>

@@ -7783,3 +7783,86 @@ code {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
 }
+
+/* --------------------------------------------------------------------------
+   Color Palette — Examples page (text & bg color utility showcase)
+   -------------------------------------------------------------------------- */
+
+.palette-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+}
+
+.palette-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.palette-card__name {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+}
+
+.palette-card__usage {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sp-1);
+  flex-wrap: wrap;
+}
+
+.palette-card__usage code {
+  font-size: 10px;
+  font-weight: var(--fw-medium);
+  line-height: 18px;
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.palette-card__bars {
+  display: flex;
+  gap: 4px;
+}
+
+.palette-swatch {
+  flex: 1;
+  min-width: 0;
+}
+
+.palette-swatch__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(128, 128, 128, 0.25);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.palette-swatch:hover .palette-swatch__bar {
+  transform: scale(1.08);
+  box-shadow: var(--shadow-sm);
+}
+
+.palette-swatch__label {
+  font-size: 10px;
+  font-weight: var(--fw-semibold);
+  font-family: var(--font-mono);
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+  color: var(--swatch-label-color, #fff);
+}
