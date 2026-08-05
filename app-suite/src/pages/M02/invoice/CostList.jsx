@@ -4,10 +4,9 @@ import ActionButton from "@/components/ActionButton";
 const CostList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "party_cname", header: "Cost Name", width: "200px" },
-    { key: "mrrcs_csmod", header: "Cost Mode", width: "80px" },
-    { key: "mrrcs_clmod", header: "Calculation Mode", width: "100px" },
-    { key: "mrrcs_value", header: "Amount", width: "100px" },
-    { key: "mrrcs_notes", header: "Notes", width: "100px" },
+    { key: "invcs_csmod", header: "Cost Mode", width: "80px" },
+    { key: "invcs_value", header: "Amount", width: "100px" },
+    { key: "invcs_notes", header: "Notes", width: "100px" },
     {
       key: "actions",
       header: "Actions",
@@ -16,7 +15,7 @@ const CostList = ({ readOnly, listData, onEdit, onDelete }) => {
       render: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.mrrcs_actve}
+          actve={row.invcs_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />

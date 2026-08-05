@@ -7,7 +7,7 @@ CREATE TABLE tmob_invpy (
 
   invpy_users VARCHAR(50) NOT NULL,
   invpy_bsins VARCHAR(50) NOT NULL,
-  invpy_mrrdm VARCHAR(50) NOT NULL,
+  invpy_invcm VARCHAR(50) NOT NULL,
   invpy_party VARCHAR(50) NOT NULL,
   invpy_pydat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   invpy_pdamt decimal(18,6) DEFAULT 0.00,

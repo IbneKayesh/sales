@@ -1,0 +1,126 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "invcc_price": {
+    "type": "string",
+    "label": "Price List",
+    "maxLength": 50,
+    "placeholder": "Select price list",
+    "required": true
+  },
+  "invcc_items": {
+    "type": "string",
+    "label": "Item",
+    "maxLength": 50,
+    "placeholder": "Select item",
+    "required": true
+  },
+  "invcc_units": {
+    "type": "string",
+    "label": "Units",
+    "maxLength": 50,
+    "placeholder": "Select unit",
+    "required": true
+  },
+  "invcc_itrat": {
+    "type": "decimal",
+    "label": "Rate",
+    "required": false,
+    "default": 0
+  },
+  "invcc_itqty": {
+    "type": "decimal",
+    "label": "Quantity",
+    "required": true,
+    "default": 1
+  },
+  "invcc_itamt": {
+    "type": "decimal",
+    "label": "Amount",
+    "required": false,
+    "default": 0
+  },
+  "invcc_dspct": {
+    "type": "decimal",
+    "label": "Discount %",
+    "required": false,
+    "default": 0
+  },
+  "invcc_dsamt": {
+    "type": "decimal",
+    "label": "Item Discount",
+    "required": false,
+    "default": 0
+  },
+  "invcc_edamt": {
+    "type": "decimal",
+    "label": "Invoice Discount",
+    "required": false,
+    "default": 0
+  },
+  "invcc_vtpct": {
+    "type": "decimal",
+    "label": "VAT %",
+    "required": false,
+    "default": 0
+  },
+  "invcc_vtamt": {
+    "type": "decimal",
+    "label": "VAT Amt",
+    "required": false,
+    "default": 0
+  },
+  "invcc_fcamt": {
+    "type": "decimal",
+    "label": "Fix Cost Amt",
+    "required": false,
+    "default": 0
+  },
+  "invcc_icamt": {
+    "type": "decimal",
+    "label": "Include Cost",
+    "required": false,
+    "default": 0
+  },
+  "invcc_ecamt": {
+    "type": "decimal",
+    "label": "Exclude Cost",
+    "required": false,
+    "default": 0
+  },
+  "invcc_ntamt": {
+    "type": "decimal",
+    "label": "Net Amount",
+    "required": false,
+    "default": 0
+  },
+  "invcc_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "invcc_csrat": {
+    "type": "decimal",
+    "label": "Cost Rate",
+    "required": false,
+    "default": 0
+  },
+  "invcc_refid": {
+    "type": "string",
+    "label": "Ref Id",
+    "maxLength": 50,
+    "placeholder": "Enter reference id",
+    "required": false
+  },
+  "invcc_stock": {
+    "type": "string",
+    "label": "Stock",
+    "maxLength": 50,
+    "placeholder": "Select stock",
+    "required": false
+  }
+}

@@ -2,12 +2,12 @@ import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
+import InputCalendar from "@/components/InputCalendar";
 import { IconPlus } from "@/icons";
 
 const PaymentForm = ({
   isBusy,
   readOnly,
-  stopEdit,
   formData,
   formErrors,
   onChange,
@@ -21,9 +21,9 @@ const PaymentForm = ({
           <Dropdown
             label="Payment"
             options={party_Options}
-            value={formData.mrrpy_party}
-            onChange={(e) => onChange("mrrpy_party", e.target.value)}
-            error={formErrors.mrrpy_party}
+            value={formData.invpy_party}
+            onChange={(e) => onChange("invpy_party", e.target.value)}
+            error={formErrors.invpy_party}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -32,33 +32,44 @@ const PaymentForm = ({
           />
         </div>
         <div className="col-span-4">
+          <InputCalendar
+            label="Payment Date"
+            value={formData.invpy_pydat}
+            onChange={(e) => onChange("invpy_pydat", e.target.value)}
+            placeholder="Select..."
+            error={formErrors.invpy_pydat}
+            required
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-4">
           <InputNumber
             label="Amount"
             placeholder="0.00"
-            value={formData.mrrpy_pdamt}
-            onChange={(e) => onChange("mrrpy_pdamt", e.target.value)}
-            error={formErrors.mrrpy_pdamt}
+            value={formData.invpy_pdamt}
+            onChange={(e) => onChange("invpy_pdamt", e.target.value)}
+            error={formErrors.invpy_pdamt}
             step="0.01"
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-4">
           <InputText
             label="Ref No"
             placeholder="Enter ref no"
-            value={formData.mrrpy_refno}
-            onChange={(e) => onChange("mrrpy_refno", e.target.value)}
-            error={formErrors.mrrpy_refno}
+            value={formData.invpy_refno}
+            onChange={(e) => onChange("invpy_refno", e.target.value)}
+            error={formErrors.invpy_refno}
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-5">
+        <div className="col-span-12">
           <InputText
             label="Notes"
             placeholder="Enter notes"
-            value={formData.mrrpy_notes}
-            onChange={(e) => onChange("mrrpy_notes", e.target.value)}
-            error={formErrors.mrrpy_notes}
+            value={formData.invpy_notes}
+            onChange={(e) => onChange("invpy_notes", e.target.value)}
+            error={formErrors.invpy_notes}
             disabled={readOnly}
           />
         </div>

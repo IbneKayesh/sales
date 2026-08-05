@@ -7,7 +7,6 @@ import { IconPlus } from "@/icons";
 const ItemForm = ({
   isBusy,
   readOnly,
-  stopEdit,
   formData,
   formErrors,
   onChange,
@@ -21,9 +20,9 @@ const ItemForm = ({
           <Dropdown
             label="Item"
             options={items_Options}
-            value={formData.mrrdc_price}
-            onChange={(e) => onChange("mrrdc_price", e.target.value)}
-            error={formErrors.mrrdc_price}
+            value={formData.invcc_price}
+            onChange={(e) => onChange("invcc_price", e.target.value)}
+            error={formErrors.invcc_price}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -35,9 +34,9 @@ const ItemForm = ({
           <InputNumber
             label="Rate"
             placeholder="0.00"
-            value={formData.mrrdc_itrat}
-            onChange={(e) => onChange("mrrdc_itrat", e.target.value)}
-            error={formErrors.mrrdc_itrat}
+            value={formData.invcc_itrat}
+            onChange={(e) => onChange("invcc_itrat", e.target.value)}
+            error={formErrors.invcc_itrat}
             step="0.01"
             disabled={readOnly}
           />
@@ -46,9 +45,9 @@ const ItemForm = ({
           <InputNumber
             label="Quantity"
             placeholder="0"
-            value={formData.mrrdc_itqty}
-            onChange={(e) => onChange("mrrdc_itqty", e.target.value)}
-            error={formErrors.mrrdc_itqty}
+            value={formData.invcc_itqty}
+            onChange={(e) => onChange("invcc_itqty", e.target.value)}
+            error={formErrors.invcc_itqty}
             step="0.01"
             disabled={readOnly}
           />
@@ -57,20 +56,9 @@ const ItemForm = ({
           <InputNumber
             label="Disc %"
             placeholder="0.00"
-            value={formData.mrrdc_dspct}
-            onChange={(e) => onChange("mrrdc_dspct", e.target.value)}
-            error={formErrors.mrrdc_dspct}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="iVAT %"
-            placeholder="0.00"
-            value={formData.mrrdc_ivpct}
-            onChange={(e) => onChange("mrrdc_ivpct", e.target.value)}
-            error={formErrors.mrrdc_ivpct}
+            value={formData.invcc_dspct}
+            onChange={(e) => onChange("invcc_dspct", e.target.value)}
+            error={formErrors.invcc_dspct}
             step="0.01"
             disabled={readOnly}
           />
@@ -79,56 +67,31 @@ const ItemForm = ({
           <InputNumber
             label="VAT %"
             placeholder="0.00"
-            value={formData.mrrdc_vtpct}
-            onChange={(e) => onChange("mrrdc_vtpct", e.target.value)}
-            error={formErrors.mrrdc_vtpct}
+            value={formData.invcc_vtpct}
+            onChange={(e) => onChange("invcc_vtpct", e.target.value)}
+            error={formErrors.invcc_vtpct}
             step="0.01"
             disabled={readOnly}
           />
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="TAX %"
+            label="Fix Cost Amount"
             placeholder="0.00"
-            value={formData.mrrdc_txpct}
-            onChange={(e) => onChange("mrrdc_txpct", e.target.value)}
-            error={formErrors.mrrdc_txpct}
+            value={formData.invcc_fcamt}
+            onChange={(e) => onChange("invcc_fcamt", e.target.value)}
+            error={formErrors.invcc_fcamt}
             step="0.01"
             disabled={readOnly}
           />
         </div>
-        {Number(formData.mrrdc_fcpct) < 0.1 ? (
-          <div className="col-span-2">
-            <InputNumber
-              label="Fix Cost Amount"
-              placeholder="0.00"
-              value={formData.mrrdc_fcamt}
-              onChange={(e) => onChange("mrrdc_fcamt", e.target.value)}
-              error={formErrors.mrrdc_fcamt}
-              step="0.01"
-              disabled={readOnly}
-            />
-          </div>
-        ) : (
-          <div className="col-span-2">
-            <InputNumber
-              label="Fix Cost %"
-              placeholder="0.00"
-              value={formData.mrrdc_fcpct}
-              onChange={(e) => onChange("mrrdc_fcpct", e.target.value)}
-              error={formErrors.mrrdc_fcpct}
-              step="0.01"
-              disabled={true}
-            />
-          </div>
-        )}
         <div className="col-span-8">
           <InputText
             label="Notes"
             placeholder="Enter notes"
-            value={formData.mrrdc_notes}
-            onChange={(e) => onChange("mrrdc_notes", e.target.value)}
-            error={formErrors.mrrdc_notes}
+            value={formData.invcc_notes}
+            onChange={(e) => onChange("invcc_notes", e.target.value)}
+            error={formErrors.invcc_notes}
             disabled={readOnly}
           />
         </div>

@@ -1,0 +1,139 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "invcm_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select department",
+    "required": true
+  },
+  "invcm_crncy": {
+    "type": "string",
+    "label": "Currency",
+    "maxLength": 50,
+    "placeholder": "Select currency",
+    "required": true
+  },
+  "invcm_cntct": {
+    "type": "string",
+    "label": "Customer",
+    "maxLength": 50,
+    "placeholder": "Select customer",
+    "required": true
+  },
+  "invcm_ttype": {
+    "type": "string",
+    "label": "Transaction Type",
+    "maxLength": 50,
+    "placeholder": "Select transaction type",
+    "required": true
+  },
+  "invcm_trnno": {
+    "type": "string",
+    "label": "Invoice No",
+    "maxLength": 50,
+    "placeholder": "Enter invoice no",
+    "required": false
+  },
+  "invcm_trdat": {
+    "type": "datetime",
+    "label": "Date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "invcm_refno": {
+    "type": "string",
+    "label": "Ref No",
+    "maxLength": 50,
+    "placeholder": "Enter reference no",
+    "required": false
+  },
+  "invcm_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "invcm_tramt": {
+    "type": "decimal",
+    "label": "Total Amount",
+    "required": false,
+    "default": 0
+  },
+  "invcm_itmds": {
+    "type": "decimal",
+    "label": "Item Discount",
+    "required": false,
+    "default": 0
+  },
+  "invcm_invds": {
+    "type": "decimal",
+    "label": "Invoice Discount",
+    "required": false,
+    "default": 0
+  },
+  "invcm_vtamt": {
+    "type": "decimal",
+    "label": "VAT Amount",
+    "required": false,
+    "default": 0
+  },
+  "invcm_icamt": {
+    "type": "decimal",
+    "label": "Include Cost",
+    "required": false,
+    "default": 0
+  },
+  "invcm_ecamt": {
+    "type": "decimal",
+    "label": "Exclude Cost",
+    "required": false,
+    "default": 0
+  },
+  "invcm_pyamt": {
+    "type": "decimal",
+    "label": "Payable Amount",
+    "required": false,
+    "default": 0
+  },
+  "invcm_pdamt": {
+    "type": "decimal",
+    "label": "Paid Amount",
+    "required": false,
+    "default": 0
+  },
+  "invcm_duamt": {
+    "type": "decimal",
+    "label": "Due Amount",
+    "required": false,
+    "default": 0
+  },
+  "invcm_exrat": {
+    "type": "decimal",
+    "label": "Exchange Rate",
+    "required": true,
+    "default": 1
+  },
+  "invcm_ispst": {
+    "type": "boolean",
+    "label": "Is Posted",
+    "required": false,
+    "default": false
+  },
+  "invcm_ispad": {
+    "type": "boolean",
+    "label": "Is Paid",
+    "required": false,
+    "default": false
+  },
+  "invcm_isapp": {
+    "type": "boolean",
+    "label": "Is Approved",
+    "required": false,
+    "default": false
+  }
+}

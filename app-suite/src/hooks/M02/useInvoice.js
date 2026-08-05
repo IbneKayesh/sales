@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { mrrAPI } from "@/api/M03/mrrAPI.js";
+import { invoiceAPI } from "@/api/M02/invoiceAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmpb_mrrdm from "@/models/M03/tmpb_mrrdm.json";
-const dataModel = generateDataModel(tmpb_mrrdm);
-import tmpb_mrrdc from "@/models/M03/tmpb_mrrdc.json";
-const dataModelItem = generateDataModel(tmpb_mrrdc);
+import tmob_invcm from "@/models/M02/tmob_invcm.json";
+const dataModel = generateDataModel(tmob_invcm);
+import tmob_invcc from "@/models/M02/tmob_invcc.json";
+const dataModelItem = generateDataModel(tmob_invcc);
+import tmob_invcs from "@/models/M02/tmob_invcs.json";
+const dataModelCost = generateDataModel(tmob_invcs);
+import tmob_invpy from "@/models/M02/tmob_invpy.json";
+const dataModelPayment = generateDataModel(tmob_invpy);
 import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
 import { generateGuid } from "@/utils/guid.js";
-import tmpb_mrrcs from "@/models/M03/tmpb_mrrcs.json";
-import tmpb_mrrpy from "@/models/M03/tmpb_mrrpy.json";
 
 const useInvoice = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M03-M0001");
+  const [pgId, setPgId] = useState("M02-M0001");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -39,20 +41,20 @@ const useInvoice = () => {
   const [items_Options, setItems_Options] = useState([]);
 
   //costing
-  const [mrrcs_Options, setMrrcs_Options] = useState([]);
+  const [invcs_Options, setInvcs_Options] = useState([]);
   const [listDataCost, setListDataCost] = useState([]);
   const [formDataCost, setFormDataCost] = useState({});
 
   //payment
-  const [mrrpy_Options, setMrrpy_Options] = useState([]);
+  const [invpy_Options, setInvpy_Options] = useState([]);
   const [listDataPayment, setListDataPayment] = useState([]);
   const [formDataPayment, setFormDataPayment] = useState({});
 
-  // ---------- MRR Master ----------
-  const getAllMRR = async () => {
+  // ---------- Invoice Master ----------
+  const getAllInvoices = async () => {
     try {
       setIsBusy(true);
-      const resp = await mrrAPI.getAll({});
+      const resp = await invoiceAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -62,180 +64,8 @@ const useInvoice = () => {
   };
 
   useEffect(() => {
-    getAllMRR();
+    getAllInvoices();
   }, []);
-
-  function reCalculate1(items, master, costList, paymList) {
-    //clone costing, items
-    let newItems = [...items];
-    let newCosting = [...costList];
-    setListDataCost(newCosting);
-
-    const totalAmount = newItems.reduce(
-      (sum, item) => sum + Number(item.mrrdc_itamt),
-      0,
-    );
-
-    const totalQty = newItems.reduce(
-      (sum, item) => sum + Number(item.mrrdc_itqty),
-      0,
-    );
-
-    const totalLine = newItems.length || 0;
-
-    const sumCost = (csmod, clmod) =>
-      costList
-        .filter(
-          (item) => item.mrrcs_csmod === csmod && item.mrrcs_clmod === clmod,
-        )
-        .reduce((sum, item) => sum + Number(item.mrrcs_value || 0), 0);
-
-    const incAmt = sumCost("Include", "By Amount");
-    const incQty = sumCost("Include", "By Qty");
-    const incLine = sumCost("Include", "By Line");
-
-    const excAmt = sumCost("Exclude", "By Amount");
-    const excQty = sumCost("Exclude", "By Qty");
-    const excLine = sumCost("Exclude", "By Line");
-
-    const incAmtRate = incAmt / totalAmount;
-    const incQtyRate = incQty / totalQty;
-    const incLineRate = incLine / totalLine;
-
-    const excAmtRate = excAmt / totalAmount;
-    const excQtyRate = excQty / totalQty;
-    const excLineRate = excLine / totalLine;
-
-    //---------------------------------------------------
-    // 1. Split Invoice Discount
-    //---------------------------------------------------
-
-    newItems = newItems.map((item) => {
-      const mrrdc_edamt = totalQty
-        ? ((Number(master.mrrdm_invds) || 0) * Number(item.mrrdc_itqty)) /
-          totalQty
-        : 0;
-
-      return {
-        ...item,
-        mrrdc_edamt,
-      };
-    });
-
-    //---------------------------------------------------
-    // 2. Calculate item discount & VAT
-    //---------------------------------------------------
-
-    newItems = newItems.map((item) => {
-      // Calculate amount
-      const mrrdc_itamt =
-        (Number(item.mrrdc_itrat) || 0) * (Number(item.mrrdc_itqty) || 0);
-
-      // Calculate discount amount
-      const mrrdc_dsamt = mrrdc_itamt * ((Number(item.mrrdc_dspct) || 0) / 100);
-
-      // Calculate after discount
-      const afterDisc = mrrdc_itamt - (mrrdc_dsamt + item.mrrdc_edamt);
-      const mrrdc_ivamt = afterDisc * ((Number(item.mrrdc_ivpct) || 0) / 100);
-      const mrrdc_vtamt = afterDisc * ((Number(item.mrrdc_vtpct) || 0) / 100);
-      const mrrdc_txamt = afterDisc * ((Number(item.mrrdc_txpct) || 0) / 100);
-
-      let mrrdc_fcpct = Number(item.mrrdc_fcpct) || 0;
-      let mrrdc_fcamt = Number(item.mrrdc_fcamt) || 0;
-      if (mrrdc_fcpct > 0) {
-        // User entered percentage -> calculate amount
-        mrrdc_fcamt = Number((afterDisc * (mrrdc_fcpct / 100)).toFixed(4));
-      } else if (mrrdc_fcamt > 0) {
-        // User entered amount -> calculate percentage
-        mrrdc_fcpct = afterDisc
-          ? Number(((mrrdc_fcamt / afterDisc) * 100).toFixed(4))
-          : 0;
-      }
-
-      const iAmt = mrrdc_itamt * incAmtRate;
-      const iQty = (Number(item.mrrdc_itqty) || 0) * incQtyRate;
-      const iLine = 1 * incLineRate;
-
-      const eAmt = mrrdc_itamt * excAmtRate;
-      const eQty = (Number(item.mrrdc_itqty) || 0) * excQtyRate;
-      const eLine = 1 * excLineRate;
-
-      const mrrdc_icamt = iAmt + iQty + iLine;
-      const mrrdc_ecamt = eAmt + eQty + eLine;
-      const mrrdc_ntamt = afterDisc + mrrdc_vtamt + mrrdc_icamt + mrrdc_ivamt;
-      const mrrdc_csrat =
-        (afterDisc + mrrdc_ivamt + mrrdc_fcamt + mrrdc_icamt + mrrdc_ecamt) /
-        Number(item.mrrdc_itqty);
-
-      return {
-        ...item,
-        mrrdc_itamt,
-        mrrdc_dsamt,
-        mrrdc_ivamt,
-        mrrdc_vtamt,
-        mrrdc_txamt,
-        mrrdc_fcpct,
-        mrrdc_fcamt,
-        mrrdc_ntamt,
-        mrrdc_csrat,
-      };
-    });
-
-    setListDataItem(newItems);
-
-    // Single reduce pass: calculate all item totals at once
-    const totals = newItems.reduce(
-      (acc, item) => ({
-        tramt: acc.tramt + (Number(item.mrrdc_itamt) || 0),
-        itmds: acc.itmds + (Number(item.mrrdc_dsamt) || 0),
-        ivtmt: acc.ivtmt + (Number(item.mrrdc_ivamt) || 0),
-        vtamt: acc.vtamt + (Number(item.mrrdc_vtamt) || 0),
-        txamt: acc.txamt + (Number(item.mrrdc_txamt) || 0),
-        fcamt: acc.fcamt + (Number(item.mrrdc_fcamt) || 0),
-        icamt: acc.icamt + (Number(item.mrrdc_icamt) || 0),
-        ecamt: acc.ecamt + (Number(item.mrrdc_ecamt) || 0),
-        ntamt: acc.ntamt + (Number(item.mrrdc_ntamt) || 0),
-      }),
-      {
-        tramt: 0,
-        itmds: 0,
-        ivtmt: 0,
-        vtamt: 0,
-        txamt: 0,
-        fcamt: 0,
-        icamt: 0,
-        ecamt: 0,
-        ntamt: 0,
-      },
-    );
-
-    //clone payments
-    let newPayments = [...paymList];
-    const totalPayment = newPayments.reduce(
-      (sum, item) => sum + Number(item.mrrpy_pdamt),
-      0,
-    );
-    setListDataPayment(newPayments);
-
-    //clone master
-    let newMaster = { ...master };
-    const duamt = totals.ntamt - totalPayment;
-
-    setFormData({
-      ...newMaster,
-      mrrdm_tramt: Number(totals.tramt).toFixed(4),
-      mrrdm_itmds: Number(totals.itmds).toFixed(4),
-      mrrdm_ivtmt: Number(totals.ivtmt).toFixed(4),
-      mrrdm_vtamt: Number(totals.vtamt).toFixed(4),
-      mrrdm_txamt: Number(totals.txamt).toFixed(4),
-      mrrdm_fcamt: Number(totals.fcamt).toFixed(4),
-      mrrdm_icamt: Number(totals.icamt).toFixed(4),
-      mrrdm_ecamt: Number(totals.ecamt).toFixed(4),
-      mrrdm_pyamt: Number(totals.ntamt).toFixed(4),
-      mrrdm_pdamt: Number(totalPayment).toFixed(4),
-      mrrdm_duamt: Number(duamt).toFixed(4),
-    });
-  }
 
   function reCalculate(items, master, costList, paymList) {
     // Safe number conversion (handles null, undefined, NaN, "", etc.)
@@ -257,57 +87,43 @@ const useInvoice = () => {
     //---------------------------------------------------
 
     const totalAmount = newItems.reduce(
-      (sum, item) => sum + num(item.mrrdc_itamt),
+      (sum, item) => sum + num(item.invcc_itamt),
       0,
     );
 
     const totalQty = newItems.reduce(
-      (sum, item) => sum + num(item.mrrdc_itqty),
+      (sum, item) => sum + num(item.invcc_itqty),
       0,
     );
 
-    const totalLine = newItems.length;
-
     //---------------------------------------------------
-    // Cost Summary
+    // Cost Summary (Include / Exclude by Amount)
     //---------------------------------------------------
 
-    const sumCost = (csmod, clmod) =>
+    const sumCost = (csmod) =>
       newCosting
-        .filter(
-          (item) => item.mrrcs_csmod === csmod && item.mrrcs_clmod === clmod,
-        )
-        .reduce((sum, item) => sum + num(item.mrrcs_value), 0);
+        .filter((item) => item.invcs_csmod === csmod)
+        .reduce((sum, item) => sum + num(item.invcs_value), 0);
 
-    const incAmt = sumCost("Include", "By Amount");
-    const incQty = sumCost("Include", "By Qty");
-    const incLine = sumCost("Include", "By Line");
+    const incAmt = sumCost("Include");
+    const excAmt = sumCost("Exclude");
 
-    const excAmt = sumCost("Exclude", "By Amount");
-    const excQty = sumCost("Exclude", "By Qty");
-    const excLine = sumCost("Exclude", "By Line");
-
-    const incAmtRate = div(incAmt, totalAmount);
-    const incQtyRate = div(incQty, totalQty);
-    const incLineRate = div(incLine, totalLine);
-
-    const excAmtRate = div(excAmt, totalAmount);
-    const excQtyRate = div(excQty, totalQty);
-    const excLineRate = div(excLine, totalLine);
+    const incRate = div(incAmt, totalAmount);
+    const excRate = div(excAmt, totalAmount);
 
     //---------------------------------------------------
     // 1. Split Invoice Discount
     //---------------------------------------------------
 
     newItems = newItems.map((item) => {
-      const mrrdc_edamt = div(
-        num(master?.mrrdm_invds) * num(item.mrrdc_itqty),
+      const invcc_edamt = div(
+        num(master?.invcm_invds) * num(item.invcc_itqty),
         totalQty,
       );
 
       return {
         ...item,
-        mrrdc_edamt,
+        invcc_edamt,
       };
     });
 
@@ -316,77 +132,37 @@ const useInvoice = () => {
     //---------------------------------------------------
 
     newItems = newItems.map((item) => {
-      const qty = num(item.mrrdc_itqty);
-      const rate = num(item.mrrdc_itrat);
+      const qty = num(item.invcc_itqty);
+      const rate = num(item.invcc_itrat);
 
-      const mrrdc_itamt = rate * qty;
+      const invcc_itamt = rate * qty;
 
-      const mrrdc_dsamt = mrrdc_itamt * (num(item.mrrdc_dspct) / 100);
+      const invcc_dsamt = invcc_itamt * (num(item.invcc_dspct) / 100);
 
-      const afterDisc = mrrdc_itamt - (mrrdc_dsamt + num(item.mrrdc_edamt));
+      const afterDisc = invcc_itamt - (invcc_dsamt + num(item.invcc_edamt));
 
-      const mrrdc_ivamt = afterDisc * (num(item.mrrdc_ivpct) / 100);
+      const invcc_vtamt = afterDisc * (num(item.invcc_vtpct) / 100);
 
-      const mrrdc_vtamt = afterDisc * (num(item.mrrdc_vtpct) / 100);
+      const invcc_icamt = invcc_itamt * incRate;
 
-      const mrrdc_txamt = afterDisc * (num(item.mrrdc_txpct) / 100);
+      const invcc_ecamt = invcc_itamt * excRate;
 
-      //---------------------------------------------------
-      // Freight
-      //---------------------------------------------------
+      const invcc_ntamt = afterDisc + invcc_vtamt + invcc_icamt;
 
-      let mrrdc_fcpct = num(item.mrrdc_fcpct);
-      let mrrdc_fcamt = num(item.mrrdc_fcamt);
-
-      if (mrrdc_fcpct > 0) {
-        mrrdc_fcamt = Number((afterDisc * (mrrdc_fcpct / 100)).toFixed(4));
-      } else if (mrrdc_fcamt > 0) {
-        mrrdc_fcpct = Number((div(mrrdc_fcamt, afterDisc) * 100).toFixed(4));
-      }
-
-      //---------------------------------------------------
-      // Including Cost
-      //---------------------------------------------------
-
-      const iAmt = mrrdc_itamt * incAmtRate;
-      const iQty = qty * incQtyRate;
-      const iLine = incLineRate;
-
-      //---------------------------------------------------
-      // Excluding Cost
-      //---------------------------------------------------
-
-      const eAmt = mrrdc_itamt * excAmtRate;
-      const eQty = qty * excQtyRate;
-      const eLine = excLineRate;
-
-      const mrrdc_icamt = iAmt + iQty + iLine;
-      const mrrdc_ecamt = eAmt + eQty + eLine;
-
-      //---------------------------------------------------
-      // Net Amount
-      //---------------------------------------------------
-
-      const mrrdc_ntamt = afterDisc + mrrdc_vtamt + mrrdc_icamt - mrrdc_ivamt;
-
-      const mrrdc_csrat = div(
-        afterDisc + mrrdc_fcamt + mrrdc_icamt + mrrdc_ecamt - mrrdc_ivamt,
+      const invcc_csrat = div(
+        afterDisc + num(item.invcc_fcamt) + invcc_icamt + invcc_ecamt,
         qty,
       );
 
       return {
         ...item,
-        mrrdc_itamt,
-        mrrdc_dsamt,
-        mrrdc_ivamt,
-        mrrdc_vtamt,
-        mrrdc_txamt,
-        mrrdc_fcpct,
-        mrrdc_fcamt,
-        mrrdc_icamt,
-        mrrdc_ecamt,
-        mrrdc_ntamt,
-        mrrdc_csrat,
+        invcc_itamt,
+        invcc_dsamt,
+        invcc_vtamt,
+        invcc_icamt,
+        invcc_ecamt,
+        invcc_ntamt,
+        invcc_csrat,
       };
     });
 
@@ -398,23 +174,17 @@ const useInvoice = () => {
 
     const totals = newItems.reduce(
       (acc, item) => ({
-        tramt: acc.tramt + num(item.mrrdc_itamt),
-        itmds: acc.itmds + num(item.mrrdc_dsamt),
-        ivtmt: acc.ivtmt + num(item.mrrdc_ivamt),
-        vtamt: acc.vtamt + num(item.mrrdc_vtamt),
-        txamt: acc.txamt + num(item.mrrdc_txamt),
-        fcamt: acc.fcamt + num(item.mrrdc_fcamt),
-        icamt: acc.icamt + num(item.mrrdc_icamt),
-        ecamt: acc.ecamt + num(item.mrrdc_ecamt),
-        ntamt: acc.ntamt + num(item.mrrdc_ntamt),
+        tramt: acc.tramt + num(item.invcc_itamt),
+        itmds: acc.itmds + num(item.invcc_dsamt),
+        vtamt: acc.vtamt + num(item.invcc_vtamt),
+        icamt: acc.icamt + num(item.invcc_icamt),
+        ecamt: acc.ecamt + num(item.invcc_ecamt),
+        ntamt: acc.ntamt + num(item.invcc_ntamt),
       }),
       {
         tramt: 0,
         itmds: 0,
-        ivtmt: 0,
         vtamt: 0,
-        txamt: 0,
-        fcamt: 0,
         icamt: 0,
         ecamt: 0,
         ntamt: 0,
@@ -428,7 +198,7 @@ const useInvoice = () => {
     const newPayments = [...(paymList || [])];
 
     const totalPayment = newPayments.reduce(
-      (sum, item) => sum + num(item.mrrpy_pdamt),
+      (sum, item) => sum + num(item.invpy_pdamt),
       0,
     );
 
@@ -442,17 +212,14 @@ const useInvoice = () => {
 
     setFormData({
       ...master,
-      mrrdm_tramt: num(totals.tramt).toFixed(4),
-      mrrdm_itmds: num(totals.itmds).toFixed(4),
-      mrrdm_ivtmt: num(totals.ivtmt).toFixed(4),
-      mrrdm_vtamt: num(totals.vtamt).toFixed(4),
-      mrrdm_txamt: num(totals.txamt).toFixed(4),
-      mrrdm_fcamt: num(totals.fcamt).toFixed(4),
-      mrrdm_icamt: num(totals.icamt).toFixed(4),
-      mrrdm_ecamt: num(totals.ecamt).toFixed(4),
-      mrrdm_pyamt: num(totals.ntamt).toFixed(4),
-      mrrdm_pdamt: num(totalPayment).toFixed(4),
-      mrrdm_duamt: num(duamt).toFixed(4),
+      invcm_tramt: num(totals.tramt).toFixed(4),
+      invcm_itmds: num(totals.itmds).toFixed(4),
+      invcm_vtamt: num(totals.vtamt).toFixed(4),
+      invcm_icamt: num(totals.icamt).toFixed(4),
+      invcm_ecamt: num(totals.ecamt).toFixed(4),
+      invcm_pyamt: num(totals.ntamt).toFixed(4),
+      invcm_pdamt: num(totalPayment).toFixed(4),
+      invcm_duamt: num(duamt).toFixed(4),
     });
   }
 
@@ -472,27 +239,27 @@ const useInvoice = () => {
       return;
     }
     try {
-      const resp = await contactAPI.getSuppliers({});
+      const resp = await contactAPI.getCustomers({});
       const list = resp.data || [];
       setCntct_Options(list);
     } catch (error) {}
   };
 
   const getExpnPaym = async () => {
-    if (mrrcs_Options.length > 0) {
+    if (invcs_Options.length > 0) {
       return;
     }
     try {
-      const resp = await mrrAPI.getExpensesPaymentsHeads({});
+      const resp = await invoiceAPI.getExpensesPaymentsHeads({});
       const list = resp.data || [];
-      const mrrcs = list.filter((f) => f.prtyn_ctype === "EXPENSES");
-      const mrrpy = list.filter((f) => f.prtyn_ctype === "PAYMENTS");
-      setMrrcs_Options(mrrcs);
-      setMrrpy_Options(mrrpy);
+      const invcs = list.filter((f) => f.prtyn_ctype === "EXPENSES");
+      const invpy = list.filter((f) => f.prtyn_ctype === "PAYMENTS");
+      setInvcs_Options(invcs);
+      setInvpy_Options(invpy);
     } catch (error) {}
   };
 
-  const getMrrItems = async () => {
+  const getItems = async () => {
     try {
       const resp = await itemsAPI.getMrrItems();
       const list = resp.data || [];
@@ -502,10 +269,10 @@ const useInvoice = () => {
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmpb_mrrdm);
+    const newErrors = validate({ ...formData, [f]: v }, tmob_invcm);
     setFormErrors(newErrors);
 
-    if (f === "mrrdm_invds") {
+    if (f === "invcm_invds") {
       const newformData = { ...formData, [f]: v };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
     }
@@ -518,7 +285,7 @@ const useInvoice = () => {
     loadAllDetails(rowData.id);
     getAllDepartments();
     getAllContacts();
-    getMrrItems();
+    getItems();
     getExpnPaym();
   };
 
@@ -526,9 +293,9 @@ const useInvoice = () => {
     try {
       setIsBusy(true);
       const [dtResp, csResp, pyResp] = await Promise.all([
-        mrrAPI.getDetailsByMasterId({ mrrdc_mrrdm: id }),
-        mrrAPI.getCostsByMasterId({ mrrcs_mrrdm: id }),
-        mrrAPI.getPaymentsByMasterId({ mrrpy_mrrdm: id }),
+        invoiceAPI.getDetailsByMasterId({ invcc_invcm: id }),
+        invoiceAPI.getCostsByMasterId({ invcs_invcm: id }),
+        invoiceAPI.getPaymentsByMasterId({ invpy_invcm: id }),
       ]);
       setListDataItem(dtResp.data || []);
       setListDataCost(csResp.data || []);
@@ -540,13 +307,13 @@ const useInvoice = () => {
   };
 
   const handleDelete = async (rowData) => {
-    if (rowData.mrrdm_ispst) {
-      showToast("MRR is posted. Cannot delete.", { type: "warning" });
+    if (rowData.invcm_ispst) {
+      showToast("Invoice is posted. Cannot delete.", { type: "warning" });
       return;
     }
 
-    const isActive = rowData.mrrdm_actve;
-    const dataName = rowData.mrrdm_trnno;
+    const isActive = rowData.invcm_actve;
+    const dataName = rowData.invcm_trnno;
     const confirmation = await confirmBox({
       title: isActive ? "Deactivate" : "Activate",
       message: `Are you sure you want to ${
@@ -559,7 +326,7 @@ const useInvoice = () => {
 
     try {
       setIsBusy(true);
-      const resp = await mrrAPI.delete(rowData);
+      const resp = await invoiceAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -573,7 +340,7 @@ const useInvoice = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllMRR();
+        getAllInvoices();
       }
     } catch (error) {
     } finally {
@@ -582,16 +349,16 @@ const useInvoice = () => {
   };
 
   const handleSearch = async () => {
-    getAllMRR();
+    getAllInvoices();
   };
 
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
     setFormData({
       ...dataModel,
-      mrrdm_ttype: "Material Receipt Report",
-      mrrdm_crncy: "BDT",
-      mrrdm_exrat: 1,
+      invcm_ttype: "Sales Invoice",
+      invcm_crncy: "BDT",
+      invcm_exrat: 1,
     });
 
     setReadOnly(false);
@@ -603,7 +370,7 @@ const useInvoice = () => {
     getAllDepartments();
     getAllContacts();
     getExpnPaym();
-    getMrrItems();
+    getItems();
   };
 
   const handleCancel = () => {
@@ -615,10 +382,8 @@ const useInvoice = () => {
 
   const handleSubmit = async () => {
     try {
-      const newErrors = validate(formData, tmpb_mrrdm);
+      const newErrors = validate(formData, tmob_invcm);
       setFormErrors(newErrors);
-      //console.log(formData);
-      //console.log(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
       }
@@ -630,16 +395,13 @@ const useInvoice = () => {
 
       const reqBody = {
         ...formData,
-        tmpb_mrrdc: listDataItem,
-        tmpb_mrrcs: listDataCost,
-        tmpb_mrrpy: listDataPayment,
+        tmob_invcc: listDataItem,
+        tmob_invcs: listDataCost,
+        tmob_invpy: listDataPayment,
       };
 
-      //console.log(reqBody);
-      //return;
-
       setIsBusy(true);
-      const resp = await mrrAPI.upsert(reqBody);
+      const resp = await invoiceAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -649,7 +411,7 @@ const useInvoice = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllMRR();
+        getAllInvoices();
       }
     } catch (error) {
     } finally {
@@ -661,34 +423,33 @@ const useInvoice = () => {
 
   const handleChangeItem = (f, v) => {
     setFormDataItem((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataItem, [f]: v }, tmpb_mrrdc);
+    const newErrors = validate({ ...formDataItem, [f]: v }, tmob_invcc);
     setFormErrors(newErrors);
-    if (f === "mrrdc_price") {
+    if (f === "invcc_price") {
       const price_id = items_Options.find((opt) => opt.price_id === v);
       setFormDataItem((prev) => ({
         ...prev,
-        mrrdc_items: price_id?.id,
-        mrrdc_price: v,
-        mrrdc_units: price_id?.items_runit,
-        mrrdc_itrat: price_id?.price_lprat || 0,
-        mrrdc_fcpct: price_id?.items_fxcst || 0,
+        invcc_items: price_id?.id,
+        invcc_price: v,
+        invcc_units: price_id?.items_runit,
+        invcc_itrat: price_id?.price_lprat || 0,
       }));
     }
   };
 
   const handleAddToListItem = (value) => {
-    const newErrors = validate(formDataItem, tmpb_mrrdc);
+    const newErrors = validate(formDataItem, tmob_invcc);
     setFormErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (["", 0, "0", null, undefined].includes(formDataItem.mrrdc_itqty)) {
+    if (["", 0, "0", null, undefined].includes(formDataItem.invcc_itqty)) {
       showToast("Quantity is required", { type: "warning" });
       return;
     }
 
     const items_iname = items_Options.find(
-      (opt) => opt.price_id === formDataItem.mrrdc_price,
+      (opt) => opt.price_id === formDataItem.invcc_price,
     );
     //create new row
     const newItem = {
@@ -698,7 +459,7 @@ const useInvoice = () => {
       runit_uname: items_iname?.runit_uname || "Invalid Unit",
       sunit_cname: items_iname?.sunit_cname || "Invalid Unit",
       items_szqty: items_iname?.items_szqty || "0",
-      mrrdc_actve: true,
+      invcc_actve: true,
     };
     const newItemList = [...listDataItem, newItem];
     reCalculate(newItemList, formData, listDataCost, listDataPayment);
@@ -732,31 +493,30 @@ const useInvoice = () => {
 
   const handleChangeCost = (f, v) => {
     setFormDataCost((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataCost, [f]: v }, tmpb_mrrcs);
+    const newErrors = validate({ ...formDataCost, [f]: v }, tmob_invcs);
     setFormErrors(newErrors);
-    //console.log(f, v);
-    if (f === "mrrcs_party") {
-      const mrrcs_id = mrrcs_Options.find((opt) => opt.id === v);
+    if (f === "invcs_party") {
+      const invcs_id = invcs_Options.find((opt) => opt.id === v);
       setFormDataCost((prev) => ({
         ...prev,
-        party_cname: mrrcs_id?.party_cname,
+        party_cname: invcs_id?.party_cname,
       }));
     }
   };
 
   const handleAddToListCost = () => {
-    const newErrors = validate(formDataCost, tmpb_mrrcs);
+    const newErrors = validate(formDataCost, tmob_invcs);
     setFormErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (["", 0, "0", null, undefined].includes(formDataCost.mrrcs_value)) {
+    if (["", 0, "0", null, undefined].includes(formDataCost.invcs_value)) {
       showToast("Amount is required", { type: "warning" });
       return;
     }
 
-    const party_cname = mrrcs_Options.find(
-      (opt) => opt.id === formDataCost.mrrcs_party,
+    const party_cname = invcs_Options.find(
+      (opt) => opt.id === formDataCost.invcs_party,
     );
 
     //create new row
@@ -764,7 +524,7 @@ const useInvoice = () => {
       ...formDataCost,
       id: generateGuid(),
       party_cname: party_cname?.party_cname || "Invalid Item",
-      mrrcs_actve: true,
+      invcs_actve: true,
     };
     const newCostList = [...listDataCost, newItem];
     reCalculate(listDataItem, formData, newCostList, listDataPayment);
@@ -789,43 +549,43 @@ const useInvoice = () => {
     setListDataCost((prev) => prev.filter((item) => item.id !== rowData.id));
     showToast("Removed successfully", { type: "success" });
   };
+
   // ---------- Payment Details ----------
 
   const handleChangePayment = (f, v) => {
     setFormDataPayment((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataPayment, [f]: v }, tmpb_mrrpy);
+    const newErrors = validate({ ...formDataPayment, [f]: v }, tmob_invpy);
     setFormErrors(newErrors);
-    if (f === "mrrcs_party") {
-      const mrrpy_id = mrrpy_Options.find((opt) => opt.id === v);
+    if (f === "invpy_party") {
+      const invpy_id = invpy_Options.find((opt) => opt.id === v);
       setFormDataPayment((prev) => ({
         ...prev,
-        party_cname: mrrpy_id?.party_cname,
+        party_cname: invpy_id?.party_cname,
       }));
     }
   };
 
   const handleAddToListPayment = () => {
-    const newErrors = validate(formDataPayment, tmpb_mrrpy);
+    const newErrors = validate(formDataPayment, tmob_invpy);
     setFormErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (["", 0, "0", null, undefined].includes(formDataPayment.mrrpy_pdamt)) {
+    if (["", 0, "0", null, undefined].includes(formDataPayment.invpy_pdamt)) {
       showToast("Amount is required", { type: "warning" });
       return;
     }
 
-    const party_cname = mrrpy_Options.find(
-      (opt) => opt.id === formDataPayment.mrrpy_party,
+    const party_cname = invpy_Options.find(
+      (opt) => opt.id === formDataPayment.invpy_party,
     );
-    //console.log("party_cname",formDataPayment)
 
     //create new row
     const newItem = {
       ...formDataPayment,
       id: generateGuid(),
       party_cname: party_cname?.party_cname || "Invalid Item",
-      mrrpy_actve: true,
+      invpy_actve: true,
     };
     const newPaymentList = [...listDataPayment, newItem];
     reCalculate(listDataItem, formData, listDataCost, newPaymentList);
@@ -847,7 +607,9 @@ const useInvoice = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataPayment((prev) => prev.filter((item) => item.id !== rowData.id));
+    setListDataPayment((prev) =>
+      prev.filter((item) => item.id !== rowData.id),
+    );
     showToast("Removed successfully", { type: "success" });
   };
 
@@ -857,21 +619,21 @@ const useInvoice = () => {
       setFormDataItem(dataModelItem);
       setModalTitle({
         title: "Add Item",
-        subTitle: "MRR Item Details",
+        subTitle: "Invoice Item Details",
       });
     }
     if (modal === "COSTING") {
-      setFormDataCost(dataModelItem);
+      setFormDataCost(dataModelCost);
       setModalTitle({
         title: "Add Costing",
-        subTitle: "MRR Costing Details",
+        subTitle: "Invoice Costing Details",
       });
     }
     if (modal === "PAYMENT") {
-      setFormDataPayment(dataModelItem);
+      setFormDataPayment(dataModelPayment);
       setModalTitle({
         title: "Add Payment",
-        subTitle: "MRR Payment Details",
+        subTitle: "Invoice Payment Details",
       });
     }
 
@@ -897,9 +659,9 @@ const useInvoice = () => {
     dpart_Options,
     cntct_Options,
     items_Options,
-    mrrcs_Options,
+    invcs_Options,
     listDataCost,
-    mrrpy_Options,
+    invpy_Options,
     listDataPayment,
     //functions
     handleChange,

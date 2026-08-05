@@ -16,110 +16,82 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       },
     },
     {
-      key: "mrrdc_itrat",
+      key: "invcc_itrat",
       header: "Rate * Qty",
       width: "80px",
       render: (_, rowData) => {
         return (
           <>
-            {Number(rowData.mrrdc_itrat).toFixed(4)} x{" "}
-            {Number(rowData.mrrdc_itqty).toFixed(4)} {rowData.runit_uname} ={" "}
-            {Number(rowData.mrrdc_itamt).toFixed(4)}
+            {Number(rowData.invcc_itrat).toFixed(4)} x{" "}
+            {Number(rowData.invcc_itqty).toFixed(4)} {rowData.runit_uname} ={" "}
+            {Number(rowData.invcc_itamt).toFixed(4)}
           </>
         );
       },
     },
     {
-      key: "mrrdc_dsamt",
+      key: "invcc_dsamt",
       header: "Discount",
       width: "100px",
       render: (_, rowData) => {
         return (
           <>
-            [{rowData.mrrdc_edamt}] {Number(rowData.mrrdc_dsamt).toFixed(4)} (
-            {rowData.mrrdc_dspct}%)
+            [{rowData.invcc_edamt}] {Number(rowData.invcc_dsamt).toFixed(4)} (
+            {rowData.invcc_dspct}%)
           </>
         );
       },
     },
     {
-      key: "mrrdc_ivpct",
-      header: "iVAT",
-      width: "100px",
-      render: (_, rowData) => {
-        return (
-          <>
-            {rowData.mrrdc_ivamt} ({rowData.mrrdc_ivpct}%)
-          </>
-        );
-      },
-    },
-    {
-      key: "mrrdc_vtpct",
+      key: "invcc_vtpct",
       header: "VAT",
       width: "100px",
       render: (_, rowData) => {
         return (
           <>
-            {rowData.mrrdc_vtamt} ({rowData.mrrdc_vtpct}%)
+            {rowData.invcc_vtamt} ({rowData.invcc_vtpct}%)
           </>
         );
       },
     },
     {
-      key: "mrrdc_txpct",
-      header: "TAX",
-      width: "100px",
-      render: (_, rowData) => {
-        return (
-          <>
-            {rowData.mrrdc_txamt} ({rowData.mrrdc_txpct}%)
-          </>
-        );
-      },
-    },
-    {
-      key: "mrrdc_fcpct",
+      key: "invcc_fcamt",
       header: "Fix Cost",
       width: "100px",
       render: (_, rowData) => {
-        return (
-          <>
-            {rowData.mrrdc_fcamt} ({rowData.mrrdc_fcpct}%)
-          </>
-        );
+        return <>{Number(rowData.invcc_fcamt) || 0}</>;
       },
     },
     {
-      key: "mrrdc_icamt",
+      key: "invcc_icamt",
       header: "Other Cost",
       width: "80px",
       render: (_, rowData) => {
         return (
           <>
             {(
-              Number(rowData.mrrdc_icamt || 0) +
-              Number(rowData.mrrdc_ecamt || 0)
+              Number(rowData.invcc_icamt || 0) +
+              Number(rowData.invcc_ecamt || 0)
             ).toFixed(4)}
           </>
         );
       },
     },
     {
-      key: "mrrdc_ntamt",
+      key: "invcc_ntamt",
       header: "Sub Total",
       width: "80px",
       render: (_, rowData) => {
-        return <>{(Number(rowData.mrrdc_ntamt) || 0).toFixed(4)}</>;
+        return <>{(Number(rowData.invcc_ntamt) || 0).toFixed(4)}</>;
       },
     },
-    { key: "mrrdc_notes", header: "Notes", width: "100px" },
+    { key: "invcc_notes", header: "Notes", width: "100px" },
     {
-      key: "mrrdc_csrat",
+      key: "invcc_csrat",
       header: "Unit Cost",
       width: "80px",
       render: (_, rowData) => {
-        return <>{(Number(rowData.mrrdc_csrat) || 0).toFixed(4)}</>;
+        return <>{(Number(rowData.invcc_csrat) || 0).toFixed(4)}</>;
       },
     },
     {
@@ -130,7 +102,7 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       render: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.mrrdc_actve}
+          actve={row.invcc_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />

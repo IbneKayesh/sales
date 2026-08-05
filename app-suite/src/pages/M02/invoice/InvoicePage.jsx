@@ -21,9 +21,7 @@ const InvoicePage = () => {
   const {
     isBusy,
     pgView,
-    pageAuth,
     readOnly,
-    stopEdit,
     listData,
     formData,
     listDataItem,
@@ -33,9 +31,9 @@ const InvoicePage = () => {
     dpart_Options,
     cntct_Options,
     items_Options,
-    mrrcs_Options,
+    invcs_Options,
     listDataCost,
-    mrrpy_Options,
+    invpy_Options,
     listDataPayment,
     //functions
     handleChange,
@@ -78,7 +76,7 @@ const InvoicePage = () => {
             subtitle={
               pgView === "SYS_VW_LST_1"
                 ? listData.length + " Invoice"
-                : formData?.mrrdm_trnno || "New Invoice"
+                : formData?.invcm_trnno || "New Invoice"
             }
           />
           <PageCardActions>
@@ -154,7 +152,6 @@ const InvoicePage = () => {
             <InvoiceForm
               isBusy={isBusy}
               readOnly={readOnly}
-              stopEdit={stopEdit}
               formData={formData}
               formErrors={formErrors}
               onChange={handleChange}
@@ -202,7 +199,6 @@ const InvoicePage = () => {
                 <ItemForm
                   isBusy={isBusy}
                   readOnly={readOnly}
-                  stopEdit={stopEdit}
                   formData={formDataItem}
                   formErrors={formErrors}
                   onChange={handleChangeItem}
@@ -214,24 +210,22 @@ const InvoicePage = () => {
                 <CostForm
                   isBusy={isBusy}
                   readOnly={readOnly}
-                  stopEdit={stopEdit}
                   formData={formDataCost}
                   formErrors={formErrors}
                   onChange={handleChangeCost}
                   onAddToList={handleAddToListCost}
-                  party_Options={mrrcs_Options}
+                  party_Options={invcs_Options}
                 />
               )}
               {showModal.modal === "PAYMENT" && (
                 <PaymentForm
                   isBusy={isBusy}
                   readOnly={readOnly}
-                  stopEdit={stopEdit}
                   formData={formDataPayment}
                   formErrors={formErrors}
                   onChange={handleChangePayment}
                   onAddToList={handleAddToListPayment}
-                  party_Options={mrrpy_Options}
+                  party_Options={invpy_Options}
                 />
               )}
             </ModalBody>

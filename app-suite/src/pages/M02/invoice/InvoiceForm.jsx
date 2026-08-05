@@ -10,7 +10,6 @@ import { IconPlus, IconClose, IconSave } from "@/icons";
 const InvoiceForm = ({
   isBusy,
   readOnly,
-  stopEdit,
   formData,
   formErrors,
   onChange,
@@ -18,8 +17,6 @@ const InvoiceForm = ({
   onSubmit,
   dpart_Options,
   cntct_Options,
-  //modal
-  handleShowModal,
 }) => {
   return (
     <div className="form-wrap">
@@ -28,9 +25,9 @@ const InvoiceForm = ({
           <Dropdown
             label="Department"
             options={dpart_Options}
-            value={formData.mrrdm_dpart}
-            onChange={(e) => onChange("mrrdm_dpart", e.target.value)}
-            error={formErrors.mrrdm_dpart}
+            value={formData.invcm_dpart}
+            onChange={(e) => onChange("invcm_dpart", e.target.value)}
+            error={formErrors.invcm_dpart}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -40,11 +37,11 @@ const InvoiceForm = ({
         </div>
         <div className="col-span-3">
           <Dropdown
-            label="Supplier"
+            label="Customer"
             options={cntct_Options}
-            value={formData.mrrdm_cntct}
-            onChange={(e) => onChange("mrrdm_cntct", e.target.value)}
-            error={formErrors.mrrdm_cntct}
+            value={formData.invcm_cntct}
+            onChange={(e) => onChange("invcm_cntct", e.target.value)}
+            error={formErrors.invcm_cntct}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -55,11 +52,21 @@ const InvoiceForm = ({
         <div className="col-span-3">
           <InputCalendar
             label="Date"
-            value={formData.mrrdm_trdat}
-            onChange={(e) => onChange("mrrdm_trdat", e.target.value)}
+            value={formData.invcm_trdat}
+            onChange={(e) => onChange("invcm_trdat", e.target.value)}
             placeholder="Select..."
-            error={formErrors.mrrdm_trdat}
+            error={formErrors.invcm_trdat}
             required
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <InputText
+            label="Invoice No"
+            placeholder="Enter invoice no"
+            value={formData.invcm_trnno}
+            onChange={(e) => onChange("invcm_trnno", e.target.value)}
+            error={formErrors.invcm_trnno}
             disabled={readOnly}
           />
         </div>
@@ -67,74 +74,55 @@ const InvoiceForm = ({
           <InputText
             label="Ref No"
             placeholder="Enter reference no"
-            value={formData.mrrdm_refno}
-            onChange={(e) => onChange("mrrdm_refno", e.target.value)}
-            error={formErrors.mrrdm_refno}
+            value={formData.invcm_refno}
+            onChange={(e) => onChange("invcm_refno", e.target.value)}
+            error={formErrors.invcm_refno}
             disabled={readOnly}
           />
         </div>
         <div className="col-span-3">
-          <InputLabel label="Total Amount" value={formData.mrrdm_tramt} />
+          <InputLabel label="Total Amount" value={formData.invcm_tramt} />
         </div>
         <div className="col-span-2">
-          <InputLabel label="Item Discount" value={formData.mrrdm_itmds} />
+          <InputLabel label="Item Discount" value={formData.invcm_itmds} />
         </div>
         <div className="col-span-3">
           <InputNumber
             label="Invoice Discount"
             placeholder="0.00"
-            value={formData.mrrdm_invds}
-            onChange={(e) => onChange("mrrdm_invds", e.target.value)}
-            error={formErrors.mrrdm_invds}
+            value={formData.invcm_invds}
+            onChange={(e) => onChange("invcm_invds", e.target.value)}
+            error={formErrors.invcm_invds}
             step="0.01"
             disabled={readOnly}
           />
         </div>
         <div className="col-span-2">
-          <InputLabel label="iVAT Amount" value={formData.mrrdm_ivtmt} />
+          <InputLabel label="VAT Amount" value={formData.invcm_vtamt} />
         </div>
         <div className="col-span-2">
-          <InputLabel label="VAT Amount" value={formData.mrrdm_vtamt} />
+          <InputLabel label="Include Cost" value={formData.invcm_icamt} />
         </div>
         <div className="col-span-2">
-          <InputLabel label="TAX Amount" value={formData.mrrdm_txamt} />
+          <InputLabel label="Exclude Cost" value={formData.invcm_ecamt} />
         </div>
         <div className="col-span-2">
-          <InputLabel label="Fix Amount" value={formData.mrrdm_fcamt} />
+          <InputLabel label="Payable Amount" value={formData.invcm_pyamt} />
         </div>
         <div className="col-span-2">
-          <InputLabel label="Include Cost" value={formData.mrrdm_icamt} />
+          <InputLabel label="Paid Amount" value={formData.invcm_pdamt} />
         </div>
         <div className="col-span-2">
-          <InputLabel label="Exclude Cost" value={formData.mrrdm_ecamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Payable Amount" value={formData.mrrdm_pyamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Paid Amount" value={formData.mrrdm_pdamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Due Amount" value={formData.mrrdm_duamt} />
+          <InputLabel label="Due Amount" value={formData.invcm_duamt} />
         </div>
         <div className="col-span-2">
           <InputNumber
             label="Exchange Rate"
             placeholder="0.00"
-            value={formData.mrrdm_exrat}
-            onChange={(e) => onChange("mrrdm_exrat", e.target.value)}
-            error={formErrors.mrrdm_exrat}
+            value={formData.invcm_exrat}
+            onChange={(e) => onChange("invcm_exrat", e.target.value)}
+            error={formErrors.invcm_exrat}
             step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputText
-            label="Vehicle"
-            placeholder="Enter vehicle"
-            value={formData.mrrdm_vehid}
-            onChange={(e) => onChange("mrrdm_vehid", e.target.value)}
-            error={formErrors.mrrdm_vehid}
             disabled={readOnly}
           />
         </div>
@@ -142,21 +130,21 @@ const InvoiceForm = ({
           <InputText
             label="Notes"
             placeholder="Enter notes"
-            value={formData.mrrdm_notes}
-            onChange={(e) => onChange("mrrdm_notes", e.target.value)}
-            error={formErrors.mrrdm_notes}
+            value={formData.invcm_notes}
+            onChange={(e) => onChange("invcm_notes", e.target.value)}
+            error={formErrors.invcm_notes}
             disabled={readOnly}
           />
         </div>
       </div>
       {formData?.id && (
         <AuditData
-          actve={formData.mrrdm_actve}
+          actve={formData.invcm_actve}
           cname={formData.crusr_cname}
-          cdate={formData.mrrdm_crdat}
+          cdate={formData.invcm_crdat}
           uname={formData.upusr_cname}
-          udate={formData.mrrdm_updat}
-          rvnmr={formData.mrrdm_rvnmr}
+          udate={formData.invcm_updat}
+          rvnmr={formData.invcm_rvnmr}
         />
       )}
       <div className="form-actions">

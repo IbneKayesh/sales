@@ -1,0 +1,33 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "invcs_party": {
+    "type": "string",
+    "label": "Accounts Head",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "invcs_csmod": {
+    "type": "string",
+    "label": "Cost Mode",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "invcs_value": {
+    "type": "decimal",
+    "label": "Amount",
+    "required": true,
+    "default": 0
+  },
+  "invcs_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

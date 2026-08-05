@@ -6,14 +6,14 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "party_cname", header: "Payment", width: "200px" },
     {
-      key: "mrrpy_pydat",
+      key: "invpy_pydat",
       header: "Date",
       width: "100px",
       render: (v) => formatDate(v),
     },
-    { key: "mrrpy_pdamt", header: "Amount", width: "80px" },
-    { key: "mrrpy_refno", header: "Ref No", width: "100px" },
-    { key: "mrrpy_notes", header: "Notes", width: "100px" },
+    { key: "invpy_pdamt", header: "Amount", width: "80px" },
+    { key: "invpy_refno", header: "Ref No", width: "100px" },
+    { key: "invpy_notes", header: "Notes", width: "100px" },
     {
       key: "actions",
       header: "Actions",
@@ -22,7 +22,7 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
       render: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.mrrpy_actve}
+          actve={row.invpy_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />

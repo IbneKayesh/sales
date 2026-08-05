@@ -7,7 +7,7 @@ CREATE TABLE tmob_invcs (
 
   invcs_users VARCHAR(50) NOT NULL,
   invcs_bsins VARCHAR(50) NOT NULL,
-  invcs_mrrdm VARCHAR(50) NOT NULL,
+  invcs_invcm VARCHAR(50) NOT NULL,
   invcs_party VARCHAR(50) NOT NULL,
   invcs_csmod VARCHAR(50) NOT NULL,
   invcs_value decimal(18,6) DEFAULT 0.00,  

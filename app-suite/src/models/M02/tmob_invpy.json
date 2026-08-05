@@ -1,0 +1,39 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "invpy_party": {
+    "type": "string",
+    "label": "Accounts Head",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "invpy_pydat": {
+    "type": "datetime",
+    "label": "Payment Date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "invpy_pdamt": {
+    "type": "decimal",
+    "label": "Amount",
+    "required": true,
+    "default": 0
+  },
+  "invpy_refno": {
+    "type": "string",
+    "label": "Ref No",
+    "maxLength": 50,
+    "placeholder": "Enter ref no",
+    "required": false
+  },
+  "invpy_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

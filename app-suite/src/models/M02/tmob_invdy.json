@@ -1,0 +1,59 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "invdy_cntct": {
+    "type": "string",
+    "label": "Customer",
+    "maxLength": 50,
+    "placeholder": "Select customer",
+    "required": true
+  },
+  "invdy_dlvan": {
+    "type": "string",
+    "label": "Delivery Address",
+    "maxLength": 50,
+    "placeholder": "Enter delivery address",
+    "required": false
+  },
+  "invdy_spadr": {
+    "type": "string",
+    "label": "Shipping Address",
+    "maxLength": 50,
+    "placeholder": "Enter shipping address",
+    "required": false
+  },
+  "invdy_spdat": {
+    "type": "datetime",
+    "label": "Ship Date",
+    "required": false,
+    "default": "new Date() with local format"
+  },
+  "invdy_exdat": {
+    "type": "datetime",
+    "label": "Expiry Date",
+    "required": false,
+    "default": "new Date() with local format"
+  },
+  "invdy_dldat": {
+    "type": "datetime",
+    "label": "Delivery Date",
+    "required": false,
+    "default": "new Date() with local format"
+  },
+  "invdy_stats": {
+    "type": "string",
+    "label": "Status",
+    "maxLength": 50,
+    "placeholder": "Select status",
+    "required": false
+  },
+  "invdy_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}
