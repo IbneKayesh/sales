@@ -52,6 +52,7 @@ const BrandList = ({ listData, onEdit, onDelete }) => {
       exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No brands found"
+      autofit
     />
   );
 };

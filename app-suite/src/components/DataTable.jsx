@@ -40,6 +40,7 @@ export default function DataTable({
   striped = true,
   hoverable = true,
   dense = false,
+  autofit = false,
   className = '',
   onRowClick,
   emptyMessage = 'No data available',
@@ -102,7 +103,7 @@ export default function DataTable({
   const showToolbar = searchable || exportable || toolbarActions
 
   return (
-    <div className={`data-table${dense ? ' data-table--dense' : ''}${className ? ' ' + className : ''}`} {...rest}>
+    <div className={`data-table${dense ? ' data-table--dense' : ''}${autofit ? ' data-table--autofit' : ''}${className ? ' ' + className : ''}`} {...rest}>
       {showToolbar && (
         <div className="data-table__toolbar">
           <div className="data-table__toolbar-left">

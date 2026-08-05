@@ -101,6 +101,7 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
       exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No items found"
+      autofit
     />
   );
 };
