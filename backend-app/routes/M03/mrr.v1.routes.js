@@ -205,8 +205,9 @@ const create = async (req, res) => {
       label: `Created MRR ${newTrnNo}`,
     });
 
-    //Insert MRR details
+    //Insert MRR details, Stock Details
     for (const det of tmpb_mrrdc) {
+      const lineId = uuidv4();
       scripts.push({
         sql: `INSERT INTO tmpb_mrrdc(id, mrrdc_users, mrrdc_bsins, mrrdc_mrrdm, mrrdc_price, mrrdc_items,
         mrrdc_units, mrrdc_itrat, mrrdc_itqty, mrrdc_itamt, mrrdc_dspct, mrrdc_dsamt,
@@ -219,7 +220,7 @@ const create = async (req, res) => {
       $19, $20, $21, $22, $23, $24,
       $25, $26, $27, $28)`,
         params: [
-          uuidv4(),
+          lineId,
           user_c,
           user_b,
           newId,
@@ -250,6 +251,64 @@ const create = async (req, res) => {
         ],
         label: `Created MRR detail ${newTrnNo}`,
       });
+
+      //add condition if no tracking then off
+      scripts.push({
+        sql: `INSERT INTO tmib_stock(id, stock_users, stock_bsins, stock_dpart, stock_sorce, stock_trnno,
+        stock_refid, stock_items, stock_price, stock_brcod, stock_batch, stock_srial,
+        stock_wrdat, stock_fgdat, stock_exdat, stock_trqty, stock_ohqty, stock_cprat,
+        stock_lprat, stock_notes, stock_crusr, stock_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11, $12,
+      $13, $14, $15, $16, $17, $18,
+      $19, $20, $21, $22)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          mrrdm_dpart,
+          mrrdm_ttype,
+          newTrnNo,
+          lineId,
+          det.mrrdc_items,
+          det.mrrdc_price,
+          det.stock_brcod, //
+          det.stock_batch, //
+          det.stock_srial, //
+          det.stock_wrdat, //
+          det.stock_fgdat, //
+          det.stock_exdat, //
+          det.mrrdc_itqty || 0,
+          det.mrrdc_itqty || 0,
+          det.mrrdc_csrat || 0,
+          det.mrrdc_itrat || 0,
+          det.stock_notes || "",
+          user_s,
+          user_s,
+        ],
+        label: `Created MRR stock detail ${newTrnNo}`,
+      });
+      //update summary stock
+      scripts.push({
+        sql: `UPDATE tmib_price
+              SET price_lprat = $1,
+                  price_gdstk = price_gdstk + $2,
+                  price_upusr = $3,
+                  price_updat = CURRENT_TIMESTAMP,
+                  price_rvnmr = price_rvnmr + 1
+                  WHERE id = $4
+                  AND price_users = $5
+                  AND price_items = $6`,
+        params: [
+          det.mrrdc_itrat,
+          det.mrrdc_itqty || 0,
+          user_s,
+          det.mrrdc_price,
+          user_c,
+          det.mrrdc_items,
+        ],
+        label: `Update price stock detail ${newTrnNo}`,
+      });
     }
 
     //Insert Costing details
@@ -275,7 +334,7 @@ const create = async (req, res) => {
         label: `Created Costing detail ${newTrnNo}`,
       });
     }
-    
+
     //Insert Payment details
     for (const det of tmpb_mrrpy) {
       scripts.push({
@@ -321,6 +380,11 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
+    return res.json({
+      success: true,
+      message: `Update feature is unavailable.`,
+      data: {},
+    });
     const {
       id,
       dpart_users,
@@ -541,7 +605,6 @@ router.post("/get-payments-by-master", async (req, res) => {
   }
 });
 
-
 // get-expenses-payments-heads
 router.post("/get-expenses-payments-heads", async (req, res) => {
   try {
@@ -588,7 +651,6 @@ router.post("/get-expenses-payments-heads", async (req, res) => {
   }
 });
 
-
 // get-all-due-mrr
 router.post("/get-all-due-mrr", async (req, res) => {
   try {
@@ -633,6 +695,5 @@ router.post("/get-all-due-mrr", async (req, res) => {
     });
   }
 });
-
 
 module.exports = router;

@@ -261,20 +261,30 @@ const useInvoice = () => {
 
   const getItems = async () => {
     try {
-      const resp = await itemsAPI.getMrrItems();
+      const resp = await itemsAPI.getSalesInvoiceItems();
       const list = resp.data || [];
       setItems_Options(list);
     } catch (error) {}
   };
 
   const handleChange = (f, v) => {
-    setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmob_invcm);
-    setFormErrors(newErrors);
-
-    if (f === "invcm_invds") {
-      const newformData = { ...formData, [f]: v };
+    let updatedFormData = {
+      ...formData,
+      [f]: v,
+    };
+    if (f === "invcm_cntct") {
+      const contact = cntct_Options.find((opt) => opt.id === v);
+      if (contact) {
+        updatedFormData.invcm_invds = contact.cntct_dspct;
+      }
+    }
+    if (f === "invcm_invds" || f === "invcm_cntct") {
+      const newformData = { ...updatedFormData, [f]: v };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
+    } else {
+      setFormData((prev) => ({ ...prev, [f]: v }));
+      const newErrors = validate({ ...formData, [f]: v }, tmob_invcm);
+      setFormErrors(newErrors);
     }
   };
 
@@ -607,9 +617,7 @@ const useInvoice = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataPayment((prev) =>
-      prev.filter((item) => item.id !== rowData.id),
-    );
+    setListDataPayment((prev) => prev.filter((item) => item.id !== rowData.id));
     showToast("Removed successfully", { type: "success" });
   };
 

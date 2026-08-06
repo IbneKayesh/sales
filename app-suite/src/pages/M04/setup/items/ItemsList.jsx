@@ -47,6 +47,21 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
     { key: "scatg_cname", header: "Category", width: "80px" },
     { key: "brand_cname", header: "Brand", width: "120px" },
     {
+      key: "price_gdstk",
+      header: "Stock",
+      width: "80px",
+      render: (_, row) => {
+        const lineStock = row.price_gdstk || 0 + row.price_bdstk || 0;
+        return (
+          <span className={`${lineStock > 0 && "text-green-500"}`}>
+            {Number(row.price_gdstk).toFixed(2)} +{" "}
+            {Number(row.price_bdstk).toFixed(2)} ={" "}
+            {Number(lineStock).toFixed(2)}
+          </span>
+        );
+      },
+    },
+    {
       key: "actions",
       header: "Actions",
       width: "150px",

@@ -26,7 +26,7 @@ const useStock = () => {
   const getAllStock = async () => {
     try {
       setIsBusy(true);
-      const resp = await stockAPI.getAll({});
+      const resp = await stockAPI.getAvailable({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {

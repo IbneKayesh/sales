@@ -74,7 +74,7 @@ const useLogin = () => {
           saved_user: username,
         });
       }
-      navigate("/");
+      navigate("/bsuite/modules");
     } catch (err) {
     } finally {
       setIsBusy(false);

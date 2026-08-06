@@ -62,16 +62,6 @@ const InvoiceForm = ({
         </div>
         <div className="col-span-3">
           <InputText
-            label="Invoice No"
-            placeholder="Enter invoice no"
-            value={formData.invcm_trnno}
-            onChange={(e) => onChange("invcm_trnno", e.target.value)}
-            error={formErrors.invcm_trnno}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputText
             label="Ref No"
             placeholder="Enter reference no"
             value={formData.invcm_refno}
@@ -80,13 +70,13 @@ const InvoiceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputLabel label="Total Amount" value={formData.invcm_tramt} />
         </div>
         <div className="col-span-2">
           <InputLabel label="Item Discount" value={formData.invcm_itmds} />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Invoice Discount"
             placeholder="0.00"
@@ -116,17 +106,9 @@ const InvoiceForm = ({
           <InputLabel label="Due Amount" value={formData.invcm_duamt} />
         </div>
         <div className="col-span-2">
-          <InputNumber
-            label="Exchange Rate"
-            placeholder="0.00"
-            value={formData.invcm_exrat}
-            onChange={(e) => onChange("invcm_exrat", e.target.value)}
-            error={formErrors.invcm_exrat}
-            step="0.01"
-            disabled={readOnly}
-          />
+          <InputLabel label="Exchange Rate" value={formData.invcm_exrat} />
         </div>
-        <div className="col-span-5">
+        <div className="col-span-4">
           <InputText
             label="Notes"
             placeholder="Enter notes"

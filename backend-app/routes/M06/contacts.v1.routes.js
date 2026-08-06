@@ -719,4 +719,98 @@ router.post("/get-suppliers", async (req, res) => {
   }
 });
 
+
+// get-suppliers
+router.post("/get-suppliers", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    //20101010 :: Supplier Payable
+    const sql = `SELECT cnt.*, 0 as edit_stop
+    FROM tmcb_cntct cnt
+    JOIN tmtb_party pty ON cnt.id = pty.party_vndor
+    JOIN tmtb_chtac cht ON pty.party_chtac = cht.id AND cht.chtac_chtno = '20101010'
+    WHERE cnt.cntct_users = $1
+    AND cnt.cntct_ctype IN ('Supplier')
+    AND cnt.cntct_actve = TRUE
+    ORDER BY cnt.cntct_cname`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get contact suppliers- ${user_c}`,
+    );
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+// get-customers
+router.post("/get-customers", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    //10101110 :: Customer Receivable
+    const sql = `SELECT cnt.*, 0 as edit_stop
+    FROM tmcb_cntct cnt
+    JOIN tmtb_party pty ON cnt.id = pty.party_vndor
+    JOIN tmtb_chtac cht ON pty.party_chtac = cht.id AND cht.chtac_chtno = '10101110'
+    WHERE cnt.cntct_users = $1
+    AND cnt.cntct_ctype IN ('Customer')
+    AND cnt.cntct_actve = TRUE
+    ORDER BY cnt.cntct_cname`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get contact customer- ${user_c}`,
+    );
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+
 module.exports = router;

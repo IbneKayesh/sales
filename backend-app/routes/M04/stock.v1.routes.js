@@ -5,7 +5,7 @@ const { dbGetAll, dbRun } = require("../../db/sqlManagerpg");
 // =====================
 // Get All
 // =====================
-router.post("/", async (req, res) => {
+router.post("/available", async (req, res) => {
   try {
     const { user_s, user_c, user_b } = req.body;
 
@@ -19,10 +19,12 @@ router.post("/", async (req, res) => {
 
     const sql = `SELECT *
             FROM tmib_price prc
-            WHERE prc.price_gdstk > 0
-            OR prc.price_bdstk > 0`;
+            WHERE (prc.price_gdstk > 0
+            OR prc.price_bdstk > 0)
+            AND prc.price_users = $1`;
 
-    const rows = await dbGetAll(sql, [user_c], `Get stock - ${user_c}`);
+    const params = [user_c];
+    const rows = await dbGetAll(sql,params, `Get stock - ${user_c}`);
 
     res.json({
       success: true,

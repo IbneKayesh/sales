@@ -162,6 +162,8 @@ const MrrPage = () => {
               onSubmit={handleSubmit}
               dpart_Options={dpart_Options}
               cntct_Options={cntct_Options}
+              //modal
+              onShowModal={handleShowModal}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && listDataItem.length > 0 && (

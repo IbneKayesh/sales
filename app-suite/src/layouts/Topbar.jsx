@@ -121,12 +121,12 @@ export default function Topbar({ className = "", ...rest }) {
 
   return (
     <header className={`topbar${className ? " " + className : ""}`} {...rest}>
-      <NavLink to="/M01/modules" className="topbar__brand">
+      <NavLink to="/bsuite/modules" className="topbar__brand">
         <span className="topbar__logo">
           <IconBar size={24} />
         </span>
       </NavLink>
-      <NavLink to="/M01/modules" className="topbar__brand">
+      <NavLink to="/bsuite/modules" className="topbar__brand">
         <span className="topbar__logo">
           <IconLogo size={28} />
         </span>

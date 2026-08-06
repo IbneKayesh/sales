@@ -27,6 +27,8 @@ router.post("/", async (req, res) => {
     scatg.scatg_cname as scatg_cname,
     brand.brand_cname as brand_cname,
     COALESCE(prc.price_id, 0) as price_count,
+    COALESCE(prc.price_gdstk, 0) as price_gdstk,
+    COALESCE(prc.price_bdstk, 0) as price_bdstk,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
 FROM tmib_items itm
 LEFT JOIN tmib_units runit ON itm.items_runit = runit.id
@@ -36,7 +38,8 @@ LEFT JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
 LEFT JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
 LEFT JOIN tmib_brand brand ON itm.items_brand = brand.id
 LEFT JOIN (
-      SELECT COUNT(id) as price_id, prc.price_items
+      SELECT COUNT(id) as price_id, SUM(prc.price_gdstk) as price_gdstk, SUM(prc.price_bdstk) as price_bdstk,
+      prc.price_items
       FROM tmib_price prc
       WHERE prc.price_users = $1
       GROUP BY prc.price_items
@@ -558,5 +561,65 @@ router.post("/get-mrr-items", async (req, res) => {
     });
   }
 });
+
+//get-sales-invoice-items
+router.post("/get-sales-invoice-items", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT itm.*,
+    prc.id AS price_id, prc.price_cname,
+    prc.price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat, prc.price_dspct,
+    prc.price_gdstk, prc.price_bdstk, prc.price_mnqty, prc.price_mxqty, prc.price_pbqty,
+    prc.price_sbqty, prc.price_notes, prc.price_jnote,
+    runit.units_cname as runit_uname,
+    punit.units_cname as punit_uname,
+    sunit.units_cname as sunit_cname,
+    sgrup.sgrup_cname as sgrup_cname,
+    scatg.scatg_cname as scatg_cname,
+    brand.brand_cname as brand_cname
+    FROM tmib_items itm
+    JOIN tmib_price prc ON itm.id = prc.price_items    
+    JOIN tmib_units runit ON itm.items_runit = runit.id
+    JOIN tmib_units punit ON itm.items_punit = punit.id
+    JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+    JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+    JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
+    JOIN tmib_brand brand ON itm.items_brand = brand.id
+    WHERE itm.items_stpur = false
+    AND itm.items_itype IN ('RM', 'PM', 'FG')
+    AND itm.items_actve = TRUE
+    AND prc.price_actve = TRUE
+    AND prc.price_users = $1
+    AND prc.price_bsins = $2
+    ORDER BY itm.items_iname ASC`;
+
+    const params = [user_c, user_b];
+    const rows = await dbGetAll(sql, params, `get new mrr items- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 
 module.exports = router;

@@ -5,13 +5,13 @@
 CREATE TABLE tmib_stock (
   id varchar(50) PRIMARY KEY,
 
-  stock_apusr VARCHAR(50) NOT NULL,
+  stock_users VARCHAR(50) NOT NULL,
   stock_bsins VARCHAR(50) NOT NULL,
   stock_dpart VARCHAR(50) NOT NULL,
-  stock_refnm VARCHAR(50) NOT NULL,
-  stock_refid VARCHAR(50) NOT NULL,
+  stock_sorce VARCHAR(50) NOT NULL,
   stock_trnno VARCHAR(50) NOT NULL,
   stock_trdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  stock_refid VARCHAR(50) NOT NULL,
   stock_items VARCHAR(50) NOT NULL,
   stock_price VARCHAR(50) NOT NULL,
   stock_brcod VARCHAR(50),

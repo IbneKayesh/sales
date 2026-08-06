@@ -1,51 +1,34 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
+import NegativeValue from "@/components/common/NegativeValue";
 import { IconClose, IconCheck } from "@/icons";
 
 const StockList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "brand_ccode", header: "Code", width: "80px" },
-    { key: "brand_cntry", header: "Country", width: "80px" },
+    { key: "price_cname", header: "Name", width: "80px" },
     {
-      key: "brand_cname",
-      header: "Brand Name",
+      key: "price_lprat",
+      header: "LPR",
       width: "80px",
-      render: (_, row) => {
-        return (
-          <span className={`${!row.brand_actve && "text-red-500"}`}>
-            {row.brand_cname}
-          </span>
-        );
-      },
+      render: (_, row) => <NegativeValue value={row.price_lprat} />,
     },
-    // {
-    //   key: "brand_actve",
-    //   header: "Status",
-    //   width: "110px",
-    //   render: (v) => {
-    //     return (
-    //       <Badge variant={v ? "success" : "danger"}>
-    //         {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-    //         {v ? "Active" : "Inactive"}
-    //       </Badge>
-    //     );
-    //   },
-    // },
     {
-      key: "actions",
-      header: "Actions",
-      width: "110px",
-      sortable: false,
-      render: (_, row) => (
-        <ActionButton
-          rowData={row}
-          actve={row.brand_actve}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ),
+      key: "price_dprat",
+      header: "DPR",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.price_dprat} />,
     },
+    { key: "price_tprat", header: "TPR", width: "80px" },
+    { key: "price_mrrat", header: "MRP", width: "80px" },
+    { key: "price_dspct", header: "Discount", width: "80px" },
+    { key: "price_gdstk", header: "Good Stock", width: "80px" },
+    { key: "price_bdstk", header: "Bad Stock", width: "80px" },
+    { key: "price_mnqty", header: "Min Qty", width: "80px" },
+    { key: "price_mxqty", header: "Max Qty", width: "80px" },
+    { key: "price_pbqty", header: "Purchase Booking", width: "80px" },
+    { key: "price_sbqty", header: "Sales Booking", width: "80px" },
+    { key: "price_notes", header: "Notes", width: "80px" },
   ];
   return (
     <DataTable
@@ -59,7 +42,7 @@ const StockList = ({ listData, onEdit, onDelete }) => {
       exportable
       exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No brands found"
+      emptyMessage="No data found"
       autofit
     />
   );

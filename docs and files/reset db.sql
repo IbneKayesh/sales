@@ -9,6 +9,8 @@ delete from tmpb_mrrdm;
 delete from tmpb_mrrdc;
 delete from tmpb_mrrcs;
 delete from tmpb_mrrpy;
+--mrr stock
+delete from tmib_stock;
 
 --journal
 delete from tmtb_jrnlm;

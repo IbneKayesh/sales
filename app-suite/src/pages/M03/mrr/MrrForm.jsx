@@ -19,7 +19,7 @@ const MrrForm = ({
   dpart_Options,
   cntct_Options,
   //modal
-  handleShowModal,
+  onShowModal,
 }) => {
   return (
     <div className="form-wrap">
@@ -165,7 +165,7 @@ const MrrForm = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onCancel("PAYMENT")}
+              onClick={() => onShowModal("PAYMENT")}
             >
               <IconPlus size={14} className="icon-left" />
               Add Payment
@@ -173,7 +173,7 @@ const MrrForm = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onCancel("COSTING")}
+              onClick={() => onShowModal("COSTING")}
             >
               <IconPlus size={14} className="icon-left" />
               Add Costing
@@ -181,7 +181,7 @@ const MrrForm = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onCancel("ITEM")}
+              onClick={() => onShowModal("ITEM")}
             >
               <IconPlus size={14} className="icon-left" />
               Add Item
