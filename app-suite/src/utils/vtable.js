@@ -153,6 +153,21 @@ const clmod_Options = [
   },
 ];
 
+const cntad_ttype_Options = [
+  {
+    label: "Office",
+    value: "Office",
+  },
+  {
+    label: "Home",
+    value: "Home",
+  },
+  {
+    label: "Others",
+    value: "Others",
+  },
+];
+
 export {
   cntry_Options,
   crncy_Options,
@@ -171,4 +186,5 @@ export {
   trn_types,
   csmod_Options,
   clmod_Options,
+  cntad_ttype_Options
 };

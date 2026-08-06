@@ -1,0 +1,61 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "cntad_cntct": {
+    "type": "string",
+    "label": "Contact",
+    "maxLength": 50,
+    "placeholder": "Enter contact",
+    "required": true
+  },
+  "cntad_ttype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Enter contact type",
+    "required": true
+  },
+  "cntad_cntps": {
+    "type": "string",
+    "label": "Person",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter contact person",
+    "required": true
+  },
+  "cntad_cntno": {
+    "type": "string",
+    "label": "Contact No",
+    "maxLength": 50,
+    "placeholder": "Enter contact number",
+    "required": true
+  },
+  "cntad_email": {
+    "type": "email",
+    "label": "Email",
+    "maxLength": 50,
+    "placeholder": "email@example.com",
+    "required": false
+  },
+  "cntad_ofadr": {
+    "type": "string",
+    "label": "Office Address",
+    "maxLength": 300,
+    "placeholder": "Office address",
+    "required": true
+  },
+  "cntad_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 300,
+    "placeholder": "Notes"
+  },
+  "cntad_gmaps": {
+    "type": "string",
+    "label": "Google Maps",
+    "maxLength": 300,
+    "placeholder": "Google Maps"
+  }
+}

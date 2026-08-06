@@ -5,6 +5,11 @@ import validate, { generateDataModel } from "@/models/validator";
 import tmcb_cntct from "@/models/M06/tmcb_cntct.json";
 const dataModel = generateDataModel(tmcb_cntct);
 import { partyAPI } from "@/api/M08/partyAPI.js";
+import { districtZoneAPI } from "@/api/M06/districtZoneAPI.js";
+import { thanaAreaAPI } from "@/api/M06/thanaAreaAPI.js";
+import { territoryAPI } from "@/api/M06/territoryAPI.js";
+import tmcb_cntad from "@/models/M06/tmcb_cntad.json";
+const dataModelAddress = generateDataModel(tmcb_cntad);
 
 const useContact = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -25,6 +30,15 @@ const useContact = () => {
   const [formErrors, setFormErrors] = useState({});
   //others
   const [partyData, setPartyData] = useState([]);
+  const [dzone_Options, setDzone_Options] = useState([]);
+  const [tarea_Options, setTarea_Options] = useState([]);
+  const [trtry_Options, setTrtry_Options] = useState([]);
+
+  //address
+  const [showModal, setShowModal] = useState({ show: false, modal: "" });
+  const [modalTitle, setModalTitle] = useState({ title: "", subTitle: "" });
+  const [listDataAddress, setListDataAddress] = useState([]);
+  const [formDataAddress, setFormDataAddress] = useState(dataModelAddress);
 
   const getAllContact = async () => {
     try {
@@ -54,16 +68,75 @@ const useContact = () => {
     }
   };
 
+  const getAddress = async (id) => {
+    try {
+      setListDataAddress([]);
+      setIsBusy(true);
+      const resp = await contactAPI.getAddress({ cntad_cntct: id });
+      const data = resp.data || [];
+      setListDataAddress(data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const getAllDZone = async (value) => {
+    try {
+      setIsBusy(true);
+      const resp = await districtZoneAPI.getByCountry({ dzone_cntry: value });
+      const data = resp.data || [];
+      setDzone_Options(data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const getAllTArea = async (value) => {
+    try {
+      setIsBusy(true);
+      const resp = await thanaAreaAPI.getByZone({ tarea_dzone: value });
+      const data = resp.data || [];
+      setTarea_Options(data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const getAllTerritory = async (value) => {
+    try {
+      setIsBusy(true);
+      const resp = await territoryAPI.getByTArea({ trtry_tarea: value });
+      const data = resp.data || [];
+      setTrtry_Options(data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmcb_cntct);
     setFormErrors(newErrors);
+    if (f === "cntct_cntry") {
+      getAllDZone(v);
+    }
+    if (f === "cntct_dzone") {
+      getAllTArea(v);
+    }
+    if (f === "cntct_tarea") {
+      getAllTerritory(v);
+    }
   };
 
   const handleEdit = async (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
     getPartyData(rowData.id);
+    getAddress(rowData.id);
   };
 
   const handleDelete = async (rowData) => {
@@ -111,6 +184,9 @@ const useContact = () => {
     setFormData(dataModel);
     setReadOnly(false);
     setStopEdit(false);
+    if (!formData.cntct_cntry) {
+      getAllDZone(formData.cntct_cntry);
+    }
   };
 
   const handleCancel = () => {
@@ -151,6 +227,104 @@ const useContact = () => {
     }
   };
 
+  //address functions
+  const handleChangeAddress = (f, v) => {
+    setFormDataAddress((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...dataModelAddress, [f]: v }, tmcb_cntad);
+    setFormErrors(newErrors);
+  };
+
+  const handleSaveAddress = async (value) => {
+    try {
+      const newErrors = validate(formDataAddress, tmcb_cntad);
+      setFormErrors(newErrors);
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+      //create new for empty id
+      const reqBody = {
+        ...formDataAddress,
+        //don't create id, new for empty
+      };
+      //console.log("reqBody", reqBody);
+      setIsBusy(true);
+      const resp = await contactAPI.upsertAddress(reqBody);
+      alertBox({
+        title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        //setPgView("SYS_VW_LST_1");
+        setFormDataAddress(dataModelAddress);
+        getAddress(formData.id);
+        //fetch address
+        if (value === "CLOSE") {
+          handleHideModal();
+        }
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleEditAddress = (rowData) => {
+    handleShowModal("ADDRESS");
+    setFormDataAddress(rowData);
+  };
+
+  const handleDeleteAddress = async (rowData) => {
+    const dataName = rowData.cntad_cntps;
+    const confirmation = await confirmBox({
+      title: "Remove",
+      message: `Are you sure you want to remove "${dataName}"?`,
+      confirmText: "Remove",
+      variant: "danger",
+    });
+    if (!confirmation) return;
+    try {
+      setIsBusy(true);
+      const resp = await contactAPI.deleteAddress(rowData);
+      // console.log("resp", resp);
+      // console.log("rowData", rowData);
+      if (resp.success) {
+        getAddress(formData.id);
+      }
+      alertBox({
+        title: resp.success
+          ? isActive
+            ? "Deactivated"
+            : "Activated"
+          : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  //modal
+  const handleShowModal = (modal) => {
+    if (modal === "ADDRESS") {
+      setFormDataAddress({ ...dataModelAddress, cntad_cntct: formData.id });
+      setModalTitle({
+        title: "Add Address",
+        subTitle: "Contact Address",
+      });
+    }
+    setShowModal({ show: true, modal: modal });
+  };
+
+  const handleHideModal = () => {
+    setShowModal({ show: false, modal: "" });
+    setModalTitle({ title: "", subTitle: "" });
+  };
+
   return {
     isBusy,
     pgView,
@@ -164,6 +338,9 @@ const useContact = () => {
     formErrors,
     //others
     partyData,
+    dzone_Options,
+    tarea_Options,
+    trtry_Options,
     //functions
     handleChange,
     handleEdit,
@@ -172,6 +349,18 @@ const useContact = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //address
+    listDataAddress,
+    formDataAddress,
+    handleChangeAddress,
+    handleSaveAddress,
+    handleEditAddress,
+    handleDeleteAddress,
+    //modal
+    showModal,
+    modalTitle,
+    handleShowModal,
+    handleHideModal,
   };
 };
 export default useContact;

@@ -248,7 +248,7 @@ router.post("/get-by-dzone", async (req, res) => {
     const { tarea_dzone, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!user_c) {
+    if (!tarea_dzone || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",

@@ -445,7 +445,7 @@ router.post("/get-address", async (req, res) => {
     FROM tmcb_cntad tad
     LEFT JOIN tmhb_emply csr ON tad.cntad_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON tad.cntad_upusr = usr.id
-    WHERE tad.cntad_apusr = $1
+    WHERE tad.cntad_users = $1
     AND tad.cntad_cntct = $2
     ORDER BY tad.cntad_ofadr ASC`;
 
@@ -471,6 +471,7 @@ router.post("/upsert-address", async (req, res) => {
     const {
       id,
       cntad_cntct,
+      cntad_ttype,
       cntad_cntps,
       cntad_cntno,
       cntad_email,
@@ -486,9 +487,9 @@ router.post("/upsert-address", async (req, res) => {
       // Validate input
       if (
         !cntad_cntct ||
+        !cntad_ttype ||
         !cntad_cntps ||
         !cntad_cntno ||
-        !cntad_email ||
         !cntad_ofadr ||
         !user_s ||
         !user_c ||
@@ -502,17 +503,19 @@ router.post("/upsert-address", async (req, res) => {
       }
 
       const sql = `UPDATE tmcb_cntad
-      SET cntad_cntps = $1,
-      cntad_cntno = $2,
-      cntad_email = $3,
-      cntad_ofadr = $4,
-      cntad_notes = $5,
-      cntad_gmaps = $6,
-      cntad_upusr = $7,
+      SET cntad_ttype = $1,
+      cntad_cntps = $2,
+      cntad_cntno = $3,
+      cntad_email = $4,
+      cntad_ofadr = $5,
+      cntad_notes = $6,
+      cntad_gmaps = $7,
+      cntad_upusr = $8,
       cntad_updat = CURRENT_TIMESTAMP,
       cntad_rvnmr = cntad_rvnmr + 1
-      WHERE id = $8`;
+      WHERE id = $9`;
       const params = [
+        cntad_ttype,
         cntad_cntps,
         cntad_cntno,
         cntad_email,
@@ -533,9 +536,9 @@ router.post("/upsert-address", async (req, res) => {
       // Validate input
       if (
         !cntad_cntct ||
+        !cntad_ttype ||
         !cntad_cntps ||
         !cntad_cntno ||
-        !cntad_email ||
         !cntad_ofadr ||
         !user_s ||
         !user_c ||
@@ -549,15 +552,20 @@ router.post("/upsert-address", async (req, res) => {
       }
 
       //database action
-      const sql = `INSERT INTO tmcb_cntad(id, cntad_apusr, cntad_bsins, cntad_cntct, cntad_cntps, cntad_cntno,
-      cntad_email, cntad_ofadr, cntad_notes, cntad_gmaps, cntad_crusr, cntad_upusr)
+      const newCode = await GenNewCode(user_c, "tmcb_cntad");
+      const sql = `INSERT INTO tmcb_cntad(id, cntad_users, cntad_bsins, cntad_ccode, cntad_cntct, cntad_ttype,
+      cntad_cntps, cntad_cntno, cntad_email, cntad_ofadr, cntad_notes, cntad_gmaps, 
+      cntad_crusr, cntad_upusr)
       VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12)`;
+      $7, $8, $9, $10, $11, $12,
+      $13, $14)`;
       const params = [
         uuidv4(),
         user_c,
         user_b,
+        newCode,
         cntad_cntct,
+        cntad_ttype,
         cntad_cntps,
         cntad_cntno,
         cntad_email,

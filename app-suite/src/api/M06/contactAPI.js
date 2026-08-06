@@ -34,4 +34,16 @@ export const contactAPI = {
     apiRequest("/M06/v1/contacts/get-customers", {
       body: data,
     }),
+  upsertAddress: (data) =>
+    apiRequest("/M06/v1/contacts/upsert-address", {
+      body: data,
+    }),
+  getAddress: (data) =>
+    apiRequest("/M06/v1/contacts/get-address", {
+      body: data,
+    }),
+  deleteAddress: (data) =>
+    apiRequest("/M06/v1/contacts/delete-address", {
+      body: data,
+    }),
 };

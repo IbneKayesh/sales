@@ -23,6 +23,10 @@ const ContactForm = ({
   onCancel,
   onSubmit,
   partyData,
+  // options
+  dzone_Options,
+  tarea_Options,
+  trtry_Options,
 }) => {
   return (
     <div className="form-wrap">
@@ -134,7 +138,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-8">
+        <div className="col-span-7">
           <InputText
             label="Factory Address"
             placeholder="Enter factory address"
@@ -144,7 +148,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-2">
           <Dropdown
             label="Country"
             options={cntry_Options}
@@ -158,6 +162,48 @@ const ContactForm = ({
         </div>
         <div className="col-span-3">
           <Dropdown
+            label="District/Zone"
+            options={dzone_Options}
+            value={formData.cntct_dzone}
+            onChange={(e) => onChange("cntct_dzone", e.target.value)}
+            error={formErrors.cntct_dzone}
+            required={false}
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="dzone_cname"
+          />
+        </div>
+        <div className="col-span-2">
+          <Dropdown
+            label="Thana/Area"
+            options={tarea_Options}
+            value={formData.cntct_tarea}
+            onChange={(e) => onChange("cntct_tarea", e.target.value)}
+            error={formErrors.cntct_tarea}
+            required={false}
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="tarea_cname"
+          />
+        </div>
+        <div className="col-span-2">
+          <Dropdown
+            label="Territory"
+            options={trtry_Options}
+            value={formData.cntct_trtry}
+            onChange={(e) => onChange("cntct_trtry", e.target.value)}
+            error={formErrors.cntct_trtry}
+            required={false}
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="trtry_cname"
+          />
+        </div>
+        <div className="col-span-2">
+          <Dropdown
             label="Currency"
             options={crncy_Options}
             value={formData.cntct_crncy}
@@ -168,7 +214,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Discount %"
             placeholder="0"
@@ -181,10 +227,10 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputLabel label="Credit Limit" value={formData.cntct_crlmt} />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputLabel label="Credit Balance" value={formData.cntct_crbal} />
         </div>
       </div>

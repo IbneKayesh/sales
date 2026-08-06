@@ -1,0 +1,36 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "desig_cname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter designation name",
+    "required": true
+  },
+  "desig_level": {
+    "type": "integer",
+    "label": "Level",
+    "placeholder": "Enter level",
+    "default": 1,
+    "required": true
+  },
+  "desig_sname": {
+    "type": "string",
+    "label": "Short Name",
+    "maxLength": 10,
+    "minLength": 1,
+    "placeholder": "Enter short name",
+    "required": true
+  },
+  "desig_desig": {
+    "type": "string",
+    "label": "Parent Designation",
+    "placeholder": "Enter parent designation",
+    "default": "",
+    "required": false
+  }
+}

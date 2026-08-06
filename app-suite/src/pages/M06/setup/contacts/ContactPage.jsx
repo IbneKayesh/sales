@@ -9,6 +9,9 @@ import Button from "@/components/Button";
 import useContact from "@/hooks/M06/useContact";
 import ContactList from "./ContactList";
 import ContactForm from "./ContactForm";
+import AddressForm from "./AddressForm";
+import AddressList from "./AddressList";
+import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
 
 const ContactPage = () => {
   const {
@@ -24,6 +27,9 @@ const ContactPage = () => {
     formErrors,
     //others
     partyData,
+    dzone_Options,
+    tarea_Options,
+    trtry_Options,
     //functions
     handleChange,
     handleEdit,
@@ -32,6 +38,18 @@ const ContactPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
+    //address
+    listDataAddress,
+    formDataAddress,
+    handleChangeAddress,
+    handleSaveAddress,
+    handleEditAddress,
+    handleDeleteAddress,
+    //modal
+    showModal,
+    modalTitle,
+    handleShowModal,
+    handleHideModal,
   } = useContact();
 
   return (
@@ -50,6 +68,16 @@ const ContactPage = () => {
               <Button size="sm" onClick={handleAddNew}>
                 <IconPlus size={14} className="icon-left" />
                 Add
+              </Button>
+            )}
+            {pgView === "SYS_VW_FRM_1" && !readOnly && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleShowModal("ADDRESS")}
+              >
+                <IconPlus size={14} className="icon-left" />
+                Add Address
               </Button>
             )}
             {pgView === "SYS_VW_FRM_1" && (
@@ -85,8 +113,42 @@ const ContactPage = () => {
               onCancel={handleCancel}
               onSubmit={handleSubmit}
               partyData={partyData}
+              dzone_Options={dzone_Options}
+              tarea_Options={tarea_Options}
+              trtry_Options={trtry_Options}
             />
           )}
+          {pgView === "SYS_VW_FRM_1" && listDataAddress.length > 0 && (
+            <AddressList
+              readOnly={readOnly}
+              listData={listDataAddress}
+              onEdit={handleEditAddress}
+              onDelete={handleDeleteAddress}
+            />
+          )}
+          {/* Single Modal for Item form */}
+          <Modal open={showModal.show} onClose={handleHideModal} size="xl">
+            <ModalHeader>
+              <ModalTitle
+                title={modalTitle.title}
+                subtitle={modalTitle.subTitle}
+                onClose={handleHideModal}
+              />
+            </ModalHeader>
+            <ModalBody>
+              {showModal.modal === "ADDRESS" && (
+                <AddressForm
+                  isBusy={isBusy}
+                  readOnly={readOnly}
+                  stopEdit={stopEdit}
+                  formData={formDataAddress}
+                  formErrors={formErrors}
+                  onChange={handleChangeAddress}
+                  onSaveAddress={handleSaveAddress}
+                />
+              )}
+            </ModalBody>
+          </Modal>
         </PageCardBody>
       </PageCard>
     </div>

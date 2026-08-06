@@ -1,36 +1,20 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import { IconClose, IconCheck } from "@/icons";
+import {
+  IconClose,
+  IconCheck,
+} from "@/icons";
 
-const ContactList = ({ listData, onEdit, onDelete }) => {
+const DesignationsList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "cntct_cname", header: "Name", width: "180px" },
-    { key: "cntct_ccode", header: "Code", width: "120px" },
-    { key: "cntct_ctype", header: "Type", width: "120px" },
-    { key: "cntct_cntno", header: "Contact No", width: "140px" },
-    { key: "cntct_email", header: "Email", width: "180px" },
+    { key: "desig_ccode", header: "Code", width: "80px" },
+    { key: "desig_cname", header: "Name", width: "120px" },
+    { key: "desig_level", header: "Level", width: "80px" },
+    { key: "desig_sname", header: "Short Name", width: "80px" },
+    { key: "desig_pname", header: "Parent", width: "80px" },
     {
-      key: "cntct_cntry",
-      header: "Location",
-      width: "120px",
-      render(_, row) {
-        return (
-          <span>
-            {[
-              row.trtry_cname,
-              row.tarea_cname,
-              row.dzone_cname,
-              row.cntct_cntry,
-            ]
-              .filter(Boolean)
-              .join(", ")}
-          </span>
-        );
-      },
-    },
-    {
-      key: "cntct_actve",
+      key: "desig_actve",
       header: "Status",
       width: "120px",
       render: (v) => {
@@ -50,7 +34,7 @@ const ContactList = ({ listData, onEdit, onDelete }) => {
       render: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.cntct_actve}
+          actve={row.desig_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />
@@ -73,4 +57,4 @@ const ContactList = ({ listData, onEdit, onDelete }) => {
     />
   );
 };
-export default ContactList;
+export default DesignationsList;

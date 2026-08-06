@@ -5,16 +5,19 @@
 CREATE TABLE tmcb_cntad (
   id varchar(50) PRIMARY KEY,
 
-  cntad_apusr varchar(50) NOT NULL,
+  cntad_users varchar(50) NOT NULL,
   cntad_bsins varchar(50) NOT NULL,
+  cntad_ccode varchar(50) NOT NULL,
   cntad_cntct varchar(50) NOT NULL,
+  cntad_ttype varchar(50) NOT NULL,
+
   cntad_cntps varchar(50) NOT NULL,
   cntad_cntno varchar(50) NOT NULL,
   cntad_email varchar(50),
-  cntad_ofadr varchar(300) NOT NULL,
-  cntad_notes varchar(300),
   
   -- optional 
+  cntad_ofadr varchar(300) NOT NULL,
+  cntad_notes varchar(300),
   cntad_gmaps varchar(300),
 
   -- relations

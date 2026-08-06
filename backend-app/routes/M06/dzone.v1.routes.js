@@ -241,4 +241,43 @@ router.post("/delete", async (req, res) => {
   }
 });
 
+
+// get-by-country
+router.post("/get-by-country", async (req, res) => {
+  try {
+    const { dzone_cntry, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!dzone_cntry || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT zn.*, 0 as edit_stop
+    FROM tmcb_dzone zn
+    WHERE zn.dzone_users = $1
+    AND zn.dzone_cntry = $2
+    AND zn.dzone_actve = TRUE
+    ORDER BY zn.dzone_cname ASC`;
+
+    const params = [user_c, dzone_cntry];
+    const rows = await dbGetAll(sql, params, `get dzone- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
 module.exports = router;

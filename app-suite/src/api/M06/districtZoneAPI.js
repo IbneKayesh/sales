@@ -26,4 +26,8 @@ export const districtZoneAPI = {
     apiRequest("/M06/v1/dzones/get-all-active", {
       body: data,
     }),
+  getByCountry: (data) =>
+    apiRequest("/M06/v1/dzones/get-by-country", {
+      body: data,
+    }),
 };
