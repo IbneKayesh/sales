@@ -1,10 +1,7 @@
 import DataTable from "@/components/DataTable";
-import Badge from "@/components/Badge";
-import ActionButton from "@/components/ActionButton";
 import NegativeValue from "@/components/common/NegativeValue";
-import { IconClose, IconCheck } from "@/icons";
 
-const StockList = ({ listData, onEdit, onDelete }) => {
+const StockList = ({ listData, onEdit }) => {
   const dtColumns = [
     { key: "price_cname", header: "Name", width: "80px" },
     {
@@ -23,19 +20,19 @@ const StockList = ({ listData, onEdit, onDelete }) => {
       key: "price_tprat",
       header: "TPR",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.price_dprat} />,
+      render: (_, row) => <NegativeValue value={row.price_tprat} />,
     },
     {
       key: "price_mrrat",
       header: "MRP",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.price_dprat} />,
+      render: (_, row) => <NegativeValue value={row.price_mrrat} />,
     },
     {
       key: "price_dspct",
       header: "Discount",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.price_dprat} />,
+      render: (_, row) => <NegativeValue value={row.price_dspct} />,
     },
     { key: "price_gdstk", header: "Good Stock", width: "80px" },
     { key: "price_bdstk", header: "Bad Stock", width: "80px" },
