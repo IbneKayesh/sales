@@ -3,7 +3,7 @@ import { IconWarning } from "@/icons";
 
 const NegativeValue = ({ value }) => {
   const num = Number(value);
-  if (num < 0) {
+  if (num < 0.1) {
     return (
       <Badge variant="danger" icon={<IconWarning size={12} />}>
         {value}

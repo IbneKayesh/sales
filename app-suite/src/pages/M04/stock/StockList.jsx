@@ -34,13 +34,47 @@ const StockList = ({ listData, onEdit }) => {
       width: "80px",
       render: (_, row) => <NegativeValue value={row.price_dspct} />,
     },
-    { key: "price_gdstk", header: "Good Stock", width: "80px" },
-    { key: "price_bdstk", header: "Bad Stock", width: "80px" },
-    { key: "price_mnqty", header: "Min Qty", width: "80px" },
-    { key: "price_mxqty", header: "Max Qty", width: "80px" },
-    { key: "price_pbqty", header: "Purchase Booking", width: "80px" },
-    { key: "price_sbqty", header: "Sales Booking", width: "80px" },
-    { key: "price_notes", header: "Notes", width: "80px" },
+    {
+      key: "price_gdstk",
+      header: "Good Stock",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.price_gdstk} />,
+    },
+    {
+      key: "price_bdstk",
+      header: "Bad Stock",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.price_bdstk} />,
+    },
+    {
+      key: "price_mnqty",
+      header: "Min Qty",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.price_mnqty} />,
+    },
+    {
+      key: "price_mxqty",
+      header: "Max Qty",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.price_mxqty} />,
+    },
+    {
+      key: "price_pbqty",
+      header: "Purchase Booking",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.price_pbqty} />,
+    },
+    {
+      key: "price_sbqty",
+      header: "Sales Booking",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.price_sbqty} />,
+    },
+    {
+      key: "price_notes",
+      header: "Notes",
+      width: "80px",
+    },
   ];
   return (
     <DataTable

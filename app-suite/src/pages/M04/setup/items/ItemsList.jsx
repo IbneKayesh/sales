@@ -4,6 +4,7 @@ import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
 import { IconClose, IconCheck, IconDollar } from "@/icons";
+import NegativeValue from "@/components/common/NegativeValue";
 
 const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
   const dtColumns = [
@@ -15,8 +16,8 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
       render: (_, row) => {
         return (
           <span className={`${!row.items_actve && "text-red-500"}`}>
-            {row.items_iname} - {row.items_szqty} {row.sunit_cname} (
-            {row.items_itype}){row.price_count > 0 && " "}
+            {row.items_iname}, {row.items_szqty} {row.sunit_cname}
+            {row.price_count > 0 && " "}
             {row.price_count > 0 && (
               <Chip
                 variant={row.price_count > 0 ? "primary" : "secondary"}
@@ -43,7 +44,18 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
         );
       },
     },
-    { key: "sgrup_cname", header: "Group", width: "80px" },
+    {
+      key: "sgrup_cname",
+      header: "Group",
+      width: "80px",
+      render: (_, row) => {
+        return (
+          <span>
+            {row.sgrup_cname}, {row.items_itype}
+          </span>
+        );
+      },
+    },
     { key: "scatg_cname", header: "Category", width: "80px" },
     { key: "brand_cname", header: "Brand", width: "120px" },
     {
@@ -56,7 +68,7 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
           <span className={`${lineStock > 0 && "text-green-500"}`}>
             {Number(row.price_gdstk).toFixed(2)} +{" "}
             {Number(row.price_bdstk).toFixed(2)} ={" "}
-            {Number(lineStock).toFixed(2)}
+            <NegativeValue value={Number(lineStock).toFixed(2)} />
           </span>
         );
       },

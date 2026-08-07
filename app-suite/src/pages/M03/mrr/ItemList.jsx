@@ -1,7 +1,26 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
+import { getStorageLoginData, setStorageLoginData } from "@/utils/storage";
+import { useEffect } from "react";
 
 const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
+  //set and get storage key is: SYS_MRR_DIRECT_ITEMS (don't modify storage.js file)
+  //create a component in src/components/common/TableColumns.jsx (as popup)
+  //add property  to DataTable,allow columns settings true or false, if true then accept another property from cfColumns, not for all columns only DataTable can be visible or not visible based on cfColumns
+  //implement this ItemList.jsx only, page on load useEffect on load from storage if not found storage then default cfColumns value
+  //once set then save into storage, and from next use from useEffect
+  useEffect(() => {}, []);
+
+  const cfColumns = [
+    { label: "Discount", key: "mrrdc_dsamt", value: true },
+    { label: "iVAT", key: "mrrdc_ivpct", value: true },
+    { label: "VAT", key: "mrrdc_vtpct", value: true },
+    { label: "TAX", key: "mrrdc_txpct", value: true },
+    { label: "Fix Cost", key: "mrrdc_fcpct", value: true },
+    { label: "Other Cost", key: "mrrdc_icamt", value: true },
+    { label: "Unit Cost", key: "mrrdc_csrat", value: true },
+  ];
+
   const dtColumns = [
     {
       key: "items_iname",
