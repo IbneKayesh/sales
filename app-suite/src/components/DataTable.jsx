@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { IconSearch, IconClose, IconSort, IconChevronLeft, IconChevronRight, IconDownload } from '../icons'
+import { IconSearch, IconClose, IconSort, IconChevronLeft, IconChevronRight, IconDownload, IconSettings } from '../icons'
+import TableColumns from './common/TableColumns'
 
 function exportToCsv(data, columns, filename) {
   if (!data.length) return
@@ -48,20 +49,33 @@ export default function DataTable({
   exportable = false,
   exportFilename,
   stickyFirst = true,
+  columnsSettings = false,
+  cfColumns = [],
+  defaultCfColumns = [],
+  onColumnsChange,
   ...rest
 }) {
-  // Filter out columns marked as hidden
-  const visibleColumns = columns.filter((col) => col.visible !== false)
-
-  // If no columns are visible, render nothing
-  if (visibleColumns.length === 0) {
-    return null
-  }
+  // Filter out columns marked as hidden; when columnsSettings is on,
+  // columns listed in cfColumns can be toggled visible/hidden
+  const visibleColumns = columns.filter((col) => {
+    if (col.visible === false) return false
+    if (columnsSettings && cfColumns.length) {
+      const cfg = cfColumns.find((c) => c.key === (col.key || col.accessor))
+      if (cfg) return cfg.value !== false
+    }
+    return true
+  })
 
   const [sortKey, setSortKey] = useState(null)
   const [sortDir, setSortDir] = useState('asc')
   const [page, setPage] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
+  const [showColumns, setShowColumns] = useState(false)
+
+  // If no columns are visible, render nothing
+  if (visibleColumns.length === 0) {
+    return null
+  }
 
   const handleSort = (key) => {
     if (!sortable) return
@@ -100,7 +114,7 @@ export default function DataTable({
   const currentPage = Math.min(page, totalPages - 1)
   const paged = sorted.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
 
-  const showToolbar = searchable || exportable || toolbarActions
+  const showToolbar = searchable || exportable || toolbarActions || columnsSettings
 
   return (
     <div className={`data-table${dense ? ' data-table--dense' : ''}${autofit ? ' data-table--autofit' : ''}${className ? ' ' + className : ''}`} {...rest}>
@@ -135,11 +149,22 @@ export default function DataTable({
               <button
                 type="button"
                 className="data-table__export-btn"
-                onClick={() => exportToCsv(sorted, columns, exportFilename)}
+                onClick={() => exportToCsv(sorted, visibleColumns, exportFilename)}
                 title="Export to CSV"
               >
                 <IconDownload size={14} />
                 Export CSV
+              </button>
+            )}
+            {columnsSettings && (
+              <button
+                type="button"
+                className="data-table__export-btn"
+                onClick={() => setShowColumns(true)}
+                title="Column settings"
+              >
+                <IconSettings size={14} />
+                Columns
               </button>
             )}
             {toolbarActions}
@@ -250,6 +275,15 @@ export default function DataTable({
             <IconChevronRight size={14} />
           </button>
         </div>
+      )}
+      {columnsSettings && (
+        <TableColumns
+          open={showColumns}
+          onClose={() => setShowColumns(false)}
+          cfColumns={cfColumns}
+          defaultCfColumns={defaultCfColumns}
+          onChange={onColumnsChange}
+        />
       )}
     </div>
   )

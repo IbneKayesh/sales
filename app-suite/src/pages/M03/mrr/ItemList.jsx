@@ -1,25 +1,38 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
 import { getStorageLoginData, setStorageLoginData } from "@/utils/storage";
-import { useEffect } from "react";
+import { useState } from "react";
+
+const STORAGE_KEY = "SYS_MRR_DIRECT_ITEMS";
+
+// Default column visibility settings (used when nothing is saved in storage)
+const defaultCfColumns = [
+  { label: "Discount", key: "mrrdc_dsamt", value: true },
+  { label: "iVAT", key: "mrrdc_ivpct", value: true },
+  { label: "VAT", key: "mrrdc_vtpct", value: true },
+  { label: "TAX", key: "mrrdc_txpct", value: true },
+  { label: "Fix Cost", key: "mrrdc_fcpct", value: true },
+  { label: "Other Cost", key: "mrrdc_icamt", value: true },
+  { label: "Unit Cost", key: "mrrdc_csrat", value: true },
+];
 
 const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
   //set and get storage key is: SYS_MRR_DIRECT_ITEMS (don't modify storage.js file)
   //create a component in src/components/common/TableColumns.jsx (as popup)
-  //add property  to DataTable,allow columns settings true or false, if true then accept another property from cfColumns, not for all columns only DataTable can be visible or not visible based on cfColumns
-  //implement this ItemList.jsx only, page on load useEffect on load from storage if not found storage then default cfColumns value
-  //once set then save into storage, and from next use from useEffect
-  useEffect(() => {}, []);
+  //add property to DataTable: columnsSettings true/false, if true then accept cfColumns; only those columns can be visible/hidden
+  //on load: read from storage (key above); if not found, use default cfColumns; once changed, save back to storage
 
-  const cfColumns = [
-    { label: "Discount", key: "mrrdc_dsamt", value: true },
-    { label: "iVAT", key: "mrrdc_ivpct", value: true },
-    { label: "VAT", key: "mrrdc_vtpct", value: true },
-    { label: "TAX", key: "mrrdc_txpct", value: true },
-    { label: "Fix Cost", key: "mrrdc_fcpct", value: true },
-    { label: "Other Cost", key: "mrrdc_icamt", value: true },
-    { label: "Unit Cost", key: "mrrdc_csrat", value: true },
-  ];
+  // On load: read saved settings from storage; if not found, use default cfColumns
+  const [cfColumns, setCfColumns] = useState(() => {
+    const saved = getStorageLoginData()?.[STORAGE_KEY];
+    return Array.isArray(saved) && saved.length ? saved : defaultCfColumns;
+  });
+
+  // Persist settings whenever columns are toggled
+  const handleColumnsChange = (next) => {
+    setCfColumns(next);
+    setStorageLoginData({ [STORAGE_KEY]: next });
+  };
 
   const dtColumns = [
     {
@@ -173,6 +186,10 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
         onRowClick={(row) => onEdit(row)}
         emptyMessage="No items found"
         className="mt-2"
+        columnsSettings
+        cfColumns={cfColumns}
+        defaultCfColumns={defaultCfColumns}
+        onColumnsChange={handleColumnsChange}
       />
     </>
   );
