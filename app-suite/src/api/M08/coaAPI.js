@@ -34,4 +34,8 @@ export const coaAPI = {
     apiRequest("/M08/v1/coa/get-with-party-count", {
       body: data,
     }),
+  getJournalCoa: (data) =>
+    apiRequest("/M08/v1/coa/get-journal-coa", {
+      body: data,
+    }),
 };

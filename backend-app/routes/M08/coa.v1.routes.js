@@ -385,4 +385,51 @@ router.post("/get-with-party-count", async (req, res) => {
   }
 });
 
+
+// get-journal-coa
+router.post("/get-journal-coa", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    //dont make it left join, only with party will show for journal entries
+    const sql = `SELECT cht.*, COALESCE(pty.party_count, 0) as party_count, 0 as edit_stop
+    FROM tmtb_chtac cht
+    LEFT JOIN (
+      SELECT party_chtac, COUNT(*) AS party_count
+      FROM tmtb_party
+      GROUP BY party_chtac
+      ) pty ON cht.id = pty.party_chtac
+    WHERE cht.chtac_users = $1
+    AND cht.chtac_ptype IN ('Manual','Auto Manual')
+    AND cht.chtac_actve = TRUE
+    AND cht.chtac_child = TRUE
+    ORDER BY cht.chtac_chtno ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get account coa- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 module.exports = router;

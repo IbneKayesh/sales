@@ -22,6 +22,13 @@ const ntypeVariants = {
   Cr: "success",
 };
 
+const ptypeVariants = {
+  Unknown: "muted",
+  Auto: "info",
+  Manual: "success",
+  "Auto Manual": "danger",
+};
+
 /* ─── Build a nested tree from a flat list, sorted by ctypeOrder then chart no ─── */
 function sortTreeNodes(a, b) {
   const ai = ctypeOrder.indexOf(a.chtac_ctype);
@@ -125,7 +132,7 @@ const COAList = ({ listData, onEdit, onDelete }) => {
     },
     {
       key: "chtac_ctype",
-      header: "Type/Nature",
+      header: "Type/Nature/Posting",
       width: "110px",
       render: (_, row) => (
         <>
@@ -134,6 +141,9 @@ const COAList = ({ listData, onEdit, onDelete }) => {
           </Badge>
           <Chip variant={ntypeVariants[row.chtac_ntype] || "default"}>
             {row.chtac_ntype || "—"}
+          </Chip>
+          <Chip variant={ptypeVariants[row.chtac_ptype] || "Unknown"}>
+            {row.chtac_ptype || "—"}
           </Chip>
         </>
       ),

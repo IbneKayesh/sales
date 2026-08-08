@@ -253,7 +253,7 @@ const useJournal = () => {
   const getCoaChildOnly = async () => {
     if (chtac_Options.length > 0) return;
     try {
-      const resp = await coaAPI.getAllActive({});
+      const resp = await coaAPI.getJournalCoa({});
       const list = resp.data || [];
       //filter posted only
       const listActive = list.map((item) => ({
@@ -264,6 +264,7 @@ const useJournal = () => {
       }));
       //build path for all
       const buildPathsList = buildPaths(listActive);
+      console.log("buildPathsList", list);
       //apply filter and set state
       setChtac_Options(buildPathsList.filter((item) => item.active));
     } catch (error) {}
@@ -416,7 +417,10 @@ const useJournal = () => {
       return;
     }
     const label =
-      formData.jrnlm_trnno || formData.jrnlm_refno || formData.jrnlm_narrt || "";
+      formData.jrnlm_trnno ||
+      formData.jrnlm_refno ||
+      formData.jrnlm_narrt ||
+      "";
     printReport(`Journal Voucher${label ? ` - ${label}` : ""}`, "journal");
   };
 
@@ -426,8 +430,14 @@ const useJournal = () => {
       return;
     }
     const label =
-      formData.jrnlm_trnno || formData.jrnlm_refno || formData.jrnlm_narrt || "";
-    printReport(`${formData.jrnlm_trtyp || "Invoice"}${label ? ` - ${label}` : ""}`, "invoice");
+      formData.jrnlm_trnno ||
+      formData.jrnlm_refno ||
+      formData.jrnlm_narrt ||
+      "";
+    printReport(
+      `${formData.jrnlm_trtyp || "Invoice"}${label ? ` - ${label}` : ""}`,
+      "invoice",
+    );
   };
 
   return {

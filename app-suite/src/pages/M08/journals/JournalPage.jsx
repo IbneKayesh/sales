@@ -103,7 +103,7 @@ const JournalPage = () => {
               </Button>
             )}
             {pgView === "SYS_VW_FRM_1" && (
-              <Button variant="info" size="sm" onClick={handleAutoJournal}>
+              <Button variant="danger" size="sm" onClick={handleAutoJournal}>
                 <IconSearch size={14} className="icon-left" />
                 Auto Journal
               </Button>

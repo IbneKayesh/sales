@@ -1,0 +1,51 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "tabcl_emply": {
+    "type": "string",
+    "label": "Employee",
+    "maxLength": 50,
+    "minLength": 0,
+    "required": false
+  },
+  "tabcl_cname": {
+    "type": "string",
+    "label": "Page Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter page name",
+    "required": false
+  },
+  "tabcl_table": {
+    "type": "string",
+    "label": "Table Name",
+    "maxLength": 50,
+    "placeholder": "Enter table name",
+    "required": false
+  },
+  "tabcl_colmn": {
+    "type": "string",
+    "label": "Column Name",
+    "maxLength": 100,
+    "placeholder": "Enter column name",
+    "required": false
+  },
+  "tabcl_title": {
+    "type": "string",
+    "label": "Title",
+    "maxLength": 50,
+    "placeholder": "Enter title"
+  },
+  "tabcl_visbl": {
+    "type": "boolean",
+    "label": "Visible",
+    "default": true
+  },
+  "tabcl_visbu": {
+    "type": "boolean",
+    "label": "User Visible",
+    "default": true
+  }
+}
