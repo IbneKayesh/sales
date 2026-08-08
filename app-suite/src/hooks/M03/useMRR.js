@@ -12,6 +12,7 @@ import { itemsAPI } from "@/api/M04/itemsAPI.js";
 import { generateGuid } from "@/utils/guid.js";
 import tmpb_mrrcs from "@/models/M03/tmpb_mrrcs.json";
 import tmpb_mrrpy from "@/models/M03/tmpb_mrrpy.json";
+import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
 
 const useMRR = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -23,6 +24,7 @@ const useMRR = () => {
     edtpr: false,
     delpr: false,
   });
+  const [tcVisibleItem, setTcVisibleItem] = useState([]);
   const [readOnly, setReadOnly] = useState(false);
   const [stopEdit, setStopEdit] = useState(false);
   const [listData, setListData] = useState([]);
@@ -48,6 +50,22 @@ const useMRR = () => {
   const [listDataPayment, setListDataPayment] = useState([]);
   const [formDataPayment, setFormDataPayment] = useState({});
 
+  //Table Coluns
+  const getTabColumns = async () => {
+    try {
+      setIsBusy(true);
+      const resp = await tabColumnsAPI.getAll({
+        tabcl_cname: "SYS_MRR_DIRECT",
+      });
+      const list = resp.data || [];
+      console.log("list", list);
+      setTcVisibleItem(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   // ---------- MRR Master ----------
   const getAllMRR = async () => {
     try {
@@ -62,6 +80,7 @@ const useMRR = () => {
   };
 
   useEffect(() => {
+    getTabColumns();
     getAllMRR();
   }, []);
 
@@ -886,6 +905,7 @@ const useMRR = () => {
     isBusy,
     pgView,
     pageAuth,
+    tcVisibleItem,
     readOnly,
     stopEdit,
     listData,

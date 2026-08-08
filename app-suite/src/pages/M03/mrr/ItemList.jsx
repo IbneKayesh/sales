@@ -4,9 +4,7 @@ import { getStorageLoginData, setStorageLoginData } from "@/utils/storage";
 import { useState } from "react";
 
 const STORAGE_KEY = "SYS_MRR_DIRECT_ITEMS";
-
-// Default column visibility settings (used when nothing is saved in storage)
-const defaultCfColumns = [
+const defCfColumns = [
   { label: "Discount", key: "mrrdc_dsamt", value: true },
   { label: "iVAT", key: "mrrdc_ivpct", value: true },
   { label: "VAT", key: "mrrdc_vtpct", value: true },
@@ -16,19 +14,11 @@ const defaultCfColumns = [
   { label: "Unit Cost", key: "mrrdc_csrat", value: true },
 ];
 
-const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
-  //set and get storage key is: SYS_MRR_DIRECT_ITEMS (don't modify storage.js file)
-  //create a component in src/components/common/TableColumns.jsx (as popup)
-  //add property to DataTable: columnsSettings true/false, if true then accept cfColumns; only those columns can be visible/hidden
-  //on load: read from storage (key above); if not found, use default cfColumns; once changed, save back to storage
-
-  // On load: read saved settings from storage; if not found, use default cfColumns
+const ItemList = ({ cfColumns, readOnly, listData, onEdit, onDelete }) => {
   const [cfColumns, setCfColumns] = useState(() => {
     const saved = getStorageLoginData()?.[STORAGE_KEY];
-    return Array.isArray(saved) && saved.length ? saved : defaultCfColumns;
+    return Array.isArray(saved) && saved.length ? saved : defCfColumns;
   });
-
-  // Persist settings whenever columns are toggled
   const handleColumnsChange = (next) => {
     setCfColumns(next);
     setStorageLoginData({ [STORAGE_KEY]: next });
@@ -184,11 +174,11 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
         exportable={false}
         exportFilename="data-export.csv"
         onRowClick={(row) => onEdit(row)}
-        emptyMessage="No items found"
+        emptyMessage="No data found"
         className="mt-2"
         columnsSettings
         cfColumns={cfColumns}
-        defaultCfColumns={defaultCfColumns}
+        defaultCfColumns={defCfColumns}
         onColumnsChange={handleColumnsChange}
       />
     </>

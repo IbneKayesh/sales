@@ -22,6 +22,7 @@ const MrrPage = () => {
     isBusy,
     pgView,
     pageAuth,
+    tcVisibleItem,
     readOnly,
     stopEdit,
     listData,
@@ -168,6 +169,7 @@ const MrrPage = () => {
           )}
           {pgView === "SYS_VW_FRM_1" && listDataItem.length > 0 && (
             <ItemList
+              cfColumns={tcVisibleItem}
               readOnly={readOnly}
               listData={listDataItem}
               onEdit={handleEditItem}

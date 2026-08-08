@@ -164,7 +164,6 @@ export default function DataTable({
                 title="Column settings"
               >
                 <IconSettings size={14} />
-                Columns
               </button>
             )}
             {toolbarActions}
