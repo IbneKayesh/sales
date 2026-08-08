@@ -1,29 +1,9 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
-import { getStorageLoginData, setStorageLoginData } from "@/utils/storage";
-import { useState } from "react";
 
-const STORAGE_KEY = "SYS_MRR_DIRECT_ITEMS";
-const defCfColumns = [
-  { label: "Discount", key: "mrrdc_dsamt", value: true },
-  { label: "iVAT", key: "mrrdc_ivpct", value: true },
-  { label: "VAT", key: "mrrdc_vtpct", value: true },
-  { label: "TAX", key: "mrrdc_txpct", value: true },
-  { label: "Fix Cost", key: "mrrdc_fcpct", value: true },
-  { label: "Other Cost", key: "mrrdc_icamt", value: true },
-  { label: "Unit Cost", key: "mrrdc_csrat", value: true },
-];
-
-const ItemList = ({ cfColumns, readOnly, listData, onEdit, onDelete }) => {
-  const [cfColumns, setCfColumns] = useState(() => {
-    const saved = getStorageLoginData()?.[STORAGE_KEY];
-    return Array.isArray(saved) && saved.length ? saved : defCfColumns;
-  });
-  const handleColumnsChange = (next) => {
-    setCfColumns(next);
-    setStorageLoginData({ [STORAGE_KEY]: next });
-  };
-
+// Column visibility is configured in M01 SetupPage and passed in as params
+// (cfColumns). No storage read/write happens here.
+const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     {
       key: "items_iname",
@@ -176,10 +156,7 @@ const ItemList = ({ cfColumns, readOnly, listData, onEdit, onDelete }) => {
         onRowClick={(row) => onEdit(row)}
         emptyMessage="No data found"
         className="mt-2"
-        columnsSettings
         cfColumns={cfColumns}
-        defaultCfColumns={defCfColumns}
-        onColumnsChange={handleColumnsChange}
       />
     </>
   );

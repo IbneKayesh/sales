@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { IconSearch, IconClose, IconSort, IconChevronLeft, IconChevronRight, IconDownload, IconSettings } from '../icons'
-import TableColumns from './common/TableColumns'
+import { IconSearch, IconClose, IconSort, IconChevronLeft, IconChevronRight, IconDownload } from '../icons'
 
 function exportToCsv(data, columns, filename) {
   if (!data.length) return
@@ -49,12 +48,14 @@ export default function DataTable({
   exportable = false,
   exportFilename,
   stickyFirst = true,
-  columnsSettings = false,
   cfColumns = [],
-  defaultCfColumns = [],
-  onColumnsChange,
   ...rest
 }) {
+  // Column settings are enabled whenever a cfColumns config is supplied.
+  // The TableColumns popup itself is owned by the page (e.g. M01 SetupPage),
+  // so DataTable only needs the config to know which columns to show.
+  const columnsSettings = cfColumns.length > 0
+
   // Filter out columns marked as hidden; when columnsSettings is on,
   // columns listed in cfColumns can be toggled visible/hidden
   const visibleColumns = columns.filter((col) => {
@@ -70,7 +71,6 @@ export default function DataTable({
   const [sortDir, setSortDir] = useState('asc')
   const [page, setPage] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
-  const [showColumns, setShowColumns] = useState(false)
 
   // If no columns are visible, render nothing
   if (visibleColumns.length === 0) {
@@ -154,16 +154,6 @@ export default function DataTable({
               >
                 <IconDownload size={14} />
                 Export CSV
-              </button>
-            )}
-            {columnsSettings && (
-              <button
-                type="button"
-                className="data-table__export-btn"
-                onClick={() => setShowColumns(true)}
-                title="Column settings"
-              >
-                <IconSettings size={14} />
               </button>
             )}
             {toolbarActions}
@@ -274,15 +264,6 @@ export default function DataTable({
             <IconChevronRight size={14} />
           </button>
         </div>
-      )}
-      {columnsSettings && (
-        <TableColumns
-          open={showColumns}
-          onClose={() => setShowColumns(false)}
-          cfColumns={cfColumns}
-          defaultCfColumns={defaultCfColumns}
-          onChange={onColumnsChange}
-        />
       )}
     </div>
   )
