@@ -472,7 +472,10 @@ const useMRR = () => {
       ...master,
       mrrdm_tramt: num(totals.tramt).toFixed(4),
       mrrdm_itmds: num(totals.itmds).toFixed(4),
-      mrrdm_invds: num(invoice_discount_amount).toFixed(4),
+      mrrdm_invds:
+        invoice_discount_pct > 0
+          ? num(invoice_discount_amount).toFixed(4)
+          : master?.mrrdm_invds ?? 0,
       mrrdm_ivtmt: num(totals.ivtmt).toFixed(4),
       mrrdm_vtamt: num(totals.vtamt).toFixed(4),
       mrrdm_txamt: num(totals.txamt).toFixed(4),
