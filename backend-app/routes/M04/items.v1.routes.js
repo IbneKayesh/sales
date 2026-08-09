@@ -47,7 +47,7 @@ LEFT JOIN (
 LEFT JOIN tmhb_emply csr ON itm.items_crusr = csr.id
 LEFT JOIN tmhb_emply usr ON itm.items_upusr = usr.id
 WHERE itm.items_users = $1
-ORDER BY itm.items_iname`;
+ORDER BY prc.price_gdstk DESC, prc.price_bdstk DESC, itm.items_iname`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get items- ${user_c}`);
@@ -503,6 +503,7 @@ router.post("/get-new-business-items", async (req, res) => {
   }
 });
 
+
 // get-mrr-items
 router.post("/get-mrr-items", async (req, res) => {
   try {
@@ -597,7 +598,7 @@ router.post("/get-sales-invoice-items", async (req, res) => {
     JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
     JOIN tmib_brand brand ON itm.items_brand = brand.id
     WHERE itm.items_stpur = false
-    AND itm.items_itype IN ('RM', 'PM', 'FG')
+    AND itm.items_itype IN ('SVC', 'FG')
     AND itm.items_actve = TRUE
     AND prc.price_actve = TRUE
     AND prc.price_users = $1

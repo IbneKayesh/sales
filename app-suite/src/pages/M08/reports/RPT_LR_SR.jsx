@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Dropdown from "@/components/Dropdown";
 import DataTable from "@/components/DataTable";
 import { DataCard, DataCardGrid } from "@/components/DataCard";
-import ReportEmpty from "./ReportEmpty";
+import EmptyState from "@/components/EmptyState";
 import ReportFooter from "./ReportFooter";
 import { formatNumber } from "@/utils/misc";
 import { exportToCSV, buildColumns } from "@/utils/export";
@@ -123,7 +123,7 @@ const RPT_LR_SR = ({ listData, onRegisterExport }) => {
       </div>
 
       {!selectedParty ? (
-        <ReportEmpty
+        <EmptyState
           title="Select Party"
           message="Select a party to view their sub-ledger."
         />

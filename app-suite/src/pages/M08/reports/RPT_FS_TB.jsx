@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
-import ReportEmpty from "./ReportEmpty";
+import EmptyState from "@/components/EmptyState";
 import ReportFooter, { ReportStatus } from "./ReportFooter";
 import { formatNumber } from "@/utils/misc";
 import { exportToCSV, buildColumns } from "@/utils/export";
@@ -131,7 +131,7 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
   }, [onRegisterExport, listData]);
 
   if (!hasReportData) {
-    return <ReportEmpty message="No accounts found for the selected period." />;
+    return <EmptyState message="No accounts found for the selected period." />;
   }
 
   return (

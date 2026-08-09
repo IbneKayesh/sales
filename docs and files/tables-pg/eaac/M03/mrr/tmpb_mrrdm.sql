@@ -21,6 +21,7 @@ CREATE TABLE tmpb_mrrdm (
   mrrdm_notes VARCHAR(100),
   mrrdm_tramt decimal(18,6) DEFAULT 0.00, --qty x price
   mrrdm_itmds decimal(18,6) DEFAULT 0.00, --item wise discount
+  mrrdm_dspct decimal(18,6) DEFAULT 0.00, --extra invoice discount %
   mrrdm_invds decimal(18,6) DEFAULT 0.00, --extra invoice discount
   mrrdm_ivtmt decimal(18,6) DEFAULT 0.00, --deduct from supplier, pay to govt
   mrrdm_vtamt decimal(18,6) DEFAULT 0.00, --pay to govt

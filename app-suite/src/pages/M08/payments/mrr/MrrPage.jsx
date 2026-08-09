@@ -52,7 +52,7 @@ const MrrPage = () => {
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
-            title={pgView === "SYS_VW_LST_1" ? "MRR" : "MRR Payment"}
+            title={pgView === "SYS_VW_LST_1" ? "MRR Due" : "MRR Payment"}
             subtitle={
               pgView === "SYS_VW_LST_1"
                 ? listData.length + " MRR"

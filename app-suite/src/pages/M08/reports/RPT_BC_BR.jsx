@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import DataTable from "@/components/DataTable";
 import { DataCard, DataCardGrid } from "@/components/DataCard";
-import ReportEmpty from "./ReportEmpty";
+import EmptyState from "@/components/EmptyState";
 import ReportFooter from "./ReportFooter";
 import { formatNumber } from "@/utils/misc";
 import { exportToCSV, buildColumns } from "@/utils/export";
+import { IconPlus } from "@/icons/index"
 
 const RPT_BC_BR = ({ listData, onRegisterExport }) => {
   // Bank/cash accounts (asset, name contains cash/bank)
@@ -135,7 +136,7 @@ const RPT_BC_BR = ({ listData, onRegisterExport }) => {
 
   if (!hasReportData) {
     return (
-      <ReportEmpty message="No bank or cash accounts found for the selected period." />
+      <EmptyState message="No bank or cash accounts found for the selected period." />
     );
   }
 
@@ -144,6 +145,7 @@ const RPT_BC_BR = ({ listData, onRegisterExport }) => {
       <DataCardGrid cols={3} gap={8} style={{ marginBottom: 16 }}>
         <DataCard
           variant="accent"
+          icon={<IconPlus/>}
           value={String(accounts.length)}
           label="Bank/Cash Accounts"
         />

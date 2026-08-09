@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import TreeDataTable from "@/components/TreeDataTable";
 import InputText from "@/components/InputText";
 import Badge from "@/components/Badge";
-import ReportEmpty from "./ReportEmpty";
+import EmptyState from "@/components/EmptyState";
 import { formatNumber } from "@/utils/misc";
 import { exportToCSV, buildColumns } from "@/utils/export";
 
@@ -151,7 +151,7 @@ const RPT_LR_JR = ({ listData, onRegisterExport }) => {
   ];
 
   if (!hasReportData) {
-    return <ReportEmpty message="No journal entries found for the selected period." />;
+    return <EmptyState message="No journal entries found for the selected period." />;
   }
 
   return (

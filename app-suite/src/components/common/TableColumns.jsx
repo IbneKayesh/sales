@@ -8,7 +8,7 @@ import Modal, {
 } from "@/components/Modal";
 import { IconRefresh } from "@/icons";
 
-const TableColumns = ({ open, onClose, cfColumns = [], onChange }) => {
+const TableColumns = ({ title, open, onClose, cfColumns = [], onChange }) => {
   // User-defined visibility (falls back to default when not overridden)
   const isVisible = (col) => col.tabcl_visbu !== false;
   const isDefaultVisible = (col) => col.tabcl_visbl !== false;
@@ -45,7 +45,7 @@ const TableColumns = ({ open, onClose, cfColumns = [], onChange }) => {
     >
       <ModalHeader>
         <ModalTitle
-          title="Column Settings"
+          title={title || "Column Settings"}
           subtitle={`${visibleCount} of ${cfColumns.length} columns visible${isDefault ? "" : " · Modified"}`}
           onClose={onClose}
         />

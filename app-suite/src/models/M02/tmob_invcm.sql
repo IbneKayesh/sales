@@ -21,7 +21,6 @@ CREATE TABLE tmob_invcm (
   invcm_notes VARCHAR(100),
   invcm_tramt decimal(18,6) DEFAULT 0.00, --qty x price
   invcm_itmds decimal(18,6) DEFAULT 0.00, --item wise discount
-  invcm_dspct decimal(18,6) DEFAULT 0.00, --extra invoice discount %
   invcm_invds decimal(18,6) DEFAULT 0.00, --extra invoice discount
   invcm_lylds decimal(18,6) DEFAULT 0.00, --loyalty discount
   invcm_vtamt decimal(18,6) DEFAULT 0.00, --pay to govt

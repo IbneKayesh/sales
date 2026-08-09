@@ -11,11 +11,13 @@ delete from tmpb_mrrcs;
 delete from tmpb_mrrpy;
 --mrr stock
 delete from tmib_stock;
-
 --journal
 delete from tmtb_jrnlm;
 delete from tmtb_jrnlc;
-
+--price stock
+update tmib_price set price_gdstk = 0, price_bdstk = 0;
+--contact balance
+update tmcb_cntct set cntct_crbal = 0;
 
 
 

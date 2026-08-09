@@ -72,12 +72,6 @@
     "required": false,
     "default": 0
   },
-  "invcc_fcamt": {
-    "type": "decimal",
-    "label": "Fix Cost Amt",
-    "required": false,
-    "default": 0
-  },
   "invcc_icamt": {
     "type": "decimal",
     "label": "Include Cost",

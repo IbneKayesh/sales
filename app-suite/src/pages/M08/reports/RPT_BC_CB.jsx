@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Dropdown from "@/components/Dropdown";
 import DataTable from "@/components/DataTable";
 import { DataCard, DataCardGrid } from "@/components/DataCard";
-import ReportEmpty from "./ReportEmpty";
+import EmptyState from "@/components/EmptyState";
 import ReportFooter from "./ReportFooter";
 import { formatNumber } from "@/utils/misc";
 import { exportToCSV, buildColumns } from "@/utils/export";
@@ -138,7 +138,7 @@ const RPT_BC_CB = ({ listData, onRegisterExport }) => {
   ];
 
   if (!hasReportData) {
-    return <ReportEmpty message="No cash or bank transactions found for the selected period." />;
+    return <EmptyState message="No cash or bank transactions found for the selected period." />;
   }
 
   return (

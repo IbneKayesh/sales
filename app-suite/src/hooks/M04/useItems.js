@@ -12,6 +12,7 @@ import { subGroupsAPI } from "@/api/M04/subGroupsAPI.js";
 import { subCategoriesAPI } from "@/api/M04/subCategoriesAPI.js";
 import { unitsAPI } from "@/api/M04/unitsAPI.js";
 import { partyAPI } from "@/api/M08/partyAPI.js";
+import { stockAPI } from "@/api/M04/stockAPI.js";
 
 const useItems = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -79,6 +80,7 @@ const useItems = () => {
     getAllSubCategories();
     getAllBrands();
     getPartyData(rowData.id);
+    setlistDataLedger([]);
   };
 
   const handleDelete = async (rowData) => {
@@ -175,6 +177,7 @@ const useItems = () => {
     getAllSubGroups();
     getAllSubCategories();
     getAllBrands();
+    setlistDataLedger([]);
   };
 
   const handleCancel = () => {
@@ -182,6 +185,8 @@ const useItems = () => {
     setFormData(dataModel);
     setReadOnly(false);
     setStopEdit(false);
+    setlistDataLedger([]);
+    setSelectedItemPrice({});
   };
 
   const handleSubmit = async () => {
@@ -245,6 +250,8 @@ const useItems = () => {
   const handleEditPrice = (rowData) => {
     setPgView("SYS_VW_FRM_2");
     setFormDataItem(rowData);
+    setlistDataLedger([]);
+    setSelectedItemPrice({});
   };
 
   const handleDeletePrice = async (rowData) => {
@@ -293,6 +300,8 @@ const useItems = () => {
     });
     setReadOnly(false);
     setStopEdit(false);
+    setlistDataLedger([]);
+    setSelectedItemPrice({});
   };
 
   const handleCancelPrice = () => {
@@ -300,6 +309,8 @@ const useItems = () => {
     setFormDataItem(dataModelItem);
     setReadOnly(false);
     setStopEdit(false);
+    setlistDataLedger([]);
+    setSelectedItemPrice({});
   };
 
   const handleSubmitPrice = async () => {
@@ -333,6 +344,23 @@ const useItems = () => {
     }
   };
 
+  //ledger
+  const [selectedItemPrice, setSelectedItemPrice] = useState({});
+  const [listDataLedger, setlistDataLedger] = useState([]);
+  const handleLedger = async (rowData) => {
+    setSelectedItemPrice(rowData);
+    setlistDataLedger([]);
+    try {
+      setIsBusy(true);
+      const resp = await stockAPI.getPriceLedger({ price_id: rowData.id });
+      const list = resp.data || [];
+      setlistDataLedger(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     isBusy,
     pgView,
@@ -359,6 +387,7 @@ const useItems = () => {
     handleCancel,
     handleSubmit,
     //price
+    thisItem,
     handlePrice,
     handleChangePrice,
     handleEditPrice,
@@ -366,6 +395,10 @@ const useItems = () => {
     handleAddNewPrice,
     handleCancelPrice,
     handleSubmitPrice,
+    //ledger
+    selectedItemPrice,
+    listDataLedger,
+    handleLedger,
   };
 };
 export default useItems;

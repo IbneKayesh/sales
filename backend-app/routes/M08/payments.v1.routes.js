@@ -7,11 +7,19 @@ const { GenNewCode } = require("../../db/genHelper");
 //mrr-payment
 router.post("/mrr-payment", async (req, res) => {
   try {
-    const { id, mrrdm_pdamt, mrrdm_duamt, tmpb_mrrpy, user_s, user_c, user_b } =
-      req.body;
+    const {
+      id,
+      mrrdm_cntct,
+      mrrdm_pdamt,
+      mrrdm_duamt,
+      tmpb_mrrpy,
+      user_s,
+      user_c,
+      user_b,
+    } = req.body;
 
     // Validate input
-    if (!id || !tmpb_mrrpy || !user_c) {
+    if (!id || !mrrdm_cntct || !tmpb_mrrpy || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -19,6 +27,7 @@ router.post("/mrr-payment", async (req, res) => {
       });
     }
 
+    let new_payment = 0;
     //database action
     //build scripts
     const scripts = [];
@@ -46,6 +55,7 @@ router.post("/mrr-payment", async (req, res) => {
           label: `Created MRR payment ${id}`,
         });
       }
+      new_payment = new_payment + Number(det.mrrpy_pdamt || 0);
     }
     scripts.push({
       sql: `UPDATE tmpb_mrrdm
@@ -56,8 +66,22 @@ router.post("/mrr-payment", async (req, res) => {
         mrrdm_rvnmr = mrrdm_rvnmr + 1
         WHERE id = $4`,
       params: [mrrdm_pdamt, mrrdm_duamt, user_s, id],
-      label: `Created MRR master ${id}`,
+      label: `Update MRR master ${id}`,
     });
+
+    //Update supplier credit balance - decrease
+    scripts.push({
+      sql: `UPDATE tmcb_cntct
+      SET cntct_crbal = cntct_crbal - $1,      
+    cntct_upusr = $2,
+    cntct_updat = CURRENT_TIMESTAMP,
+    cntct_rvnmr = cntct_rvnmr + 1
+    WHERE id = $3
+      `,
+      params: [new_payment, user_s, mrrdm_cntct],
+      label: `Update supplier credit balance is now: ${mrrdm_duamt}`,
+    });
+
     await dbRunAll(scripts);
 
     res.json({
@@ -76,6 +100,5 @@ router.post("/mrr-payment", async (req, res) => {
     });
   }
 });
-
 
 module.exports = router;

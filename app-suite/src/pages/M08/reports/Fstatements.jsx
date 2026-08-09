@@ -81,12 +81,20 @@ const reportTitles = {
 const Fstatements = () => {
   const {
     isBusy,
+    pgView,
+    pageAuth,
+    readOnly,
+    stopEdit,
     listData,
     formData,
+    listDataItem,
+    formDataItem,
     formErrors,
+    //others
     dpart_Options,
     fsyar_Options,
     acprd_Options,
+    //functions
     handleChange,
     handleSubmit,
   } = useFstatements();

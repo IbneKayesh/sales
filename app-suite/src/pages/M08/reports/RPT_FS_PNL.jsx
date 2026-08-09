@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import TreeDataTable from "@/components/TreeDataTable";
-import ReportEmpty from "./ReportEmpty";
+import EmptyState from "@/components/EmptyState";
 import { formatNumber } from "@/utils/misc";
 import { exportToCSV, buildColumns } from "@/utils/export";
 
@@ -153,7 +153,7 @@ const RPT_FS_PNL = ({ listData, onRegisterExport }) => {
   }, [onRegisterExport, listData]);
 
   if (!hasReportData) {
-    return <ReportEmpty message="No transactions found for the selected period." />;
+    return <EmptyState message="No transactions found for the selected period." />;
   }
 
   return (

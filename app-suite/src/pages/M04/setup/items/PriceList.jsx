@@ -1,13 +1,25 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import { IconClose, IconCheck } from "@/icons";
+import Button from "@/components/Button";
+import { IconClose, IconCheck, IconActivity } from "@/icons";
 import NegativeValue from "@/components/common/NegativeValue";
+import PriceLedger from "./PriceLedger";
 
-const PriceList = ({ listData, onEdit, onDelete }) => {
+const PriceList = ({ listData, onEdit, onDelete, onLedger }) => {
   const dtColumns = [
-    { key: "items_iname", header: "Name", width: "200px" },
-    { key: "price_cname", header: "Price", width: "200px" },
+    {
+      key: "price_cname",
+      header: "Price",
+      width: "200px",
+      render: (_, row) => {
+        return (
+          <span className={`${!row.price_actve && "text-red-500"}`}>
+            {row.price_cname}
+          </span>
+        );
+      },
+    },
     {
       key: "price_lprat",
       header: "L.Purchase Rate",
@@ -74,31 +86,44 @@ const PriceList = ({ listData, onEdit, onDelete }) => {
       width: "80px",
       render: (_, row) => <NegativeValue value={row.price_sbqty} />,
     },
-    {
-      key: "price_actve",
-      header: "Status",
-      width: "120px",
-      render: (v) => {
-        return (
-          <Badge variant={v ? "success" : "danger"}>
-            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
-          </Badge>
-        );
-      },
-    },
+    // {
+    //   key: "price_actve",
+    //   header: "Status",
+    //   width: "120px",
+    //   render: (v) => {
+    //     return (
+    //       <Badge variant={v ? "success" : "danger"}>
+    //         {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+    //         {v ? "Active" : "Inactive"}
+    //       </Badge>
+    //     );
+    //   },
+    // },
     {
       key: "actions",
       header: "Actions",
       width: "150px",
       sortable: false,
       render: (_, row) => (
-        <ActionButton
-          rowData={row}
-          actve={row.price_actve}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        <>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onLedger(row);
+            }}
+            title="Ledger"
+          >
+            <IconActivity size={14} />
+          </Button>
+          <ActionButton
+            rowData={row}
+            actve={row.price_actve}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        </>
       ),
     },
   ];
@@ -114,7 +139,7 @@ const PriceList = ({ listData, onEdit, onDelete }) => {
       exportable
       exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No prices found"
+      emptyMessage="No data found"
     />
   );
 };

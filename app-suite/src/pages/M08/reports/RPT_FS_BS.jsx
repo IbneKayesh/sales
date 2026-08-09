@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import TreeDataTable from "@/components/TreeDataTable";
-import ReportEmpty from "./ReportEmpty";
+import EmptyState from "@/components/EmptyState";
 import { ReportStatus } from "./ReportFooter";
 import { formatNumber } from "@/utils/misc";
 import { exportToCSV, buildColumns } from "@/utils/export";
@@ -219,7 +219,7 @@ const RPT_FS_BS = ({ listData, onRegisterExport }) => {
 
   if (!hasReportData) {
     return (
-      <ReportEmpty message="No balance sheet data found for the selected period." />
+      <EmptyState message="No balance sheet data found for the selected period." />
     );
   }
 

@@ -10,20 +10,34 @@ import useSetup from "@/hooks/M01/useSetup";
 
 const SetupPage = () => {
   const {
-    listTablColumns,
+    isBusy,
+    pgView,
+    pageAuth,
+    readOnly,
+    stopEdit,
+    formData,
+    listDataItem,
+    formDataItem,
+    formErrors,
     //others
-    showModal,
+    listTablColumns,
     //functions
     handleChange,
-    handleOpenModal,
-    handleCloseModal,
+    //modal
+    showModal,
+    modalTitle,
+    handleShowModal,
+    handleHideModal,
   } = useSetup();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
-          <PageCardTitle title="Setup" subtitle="Configure table column visibility" />
+          <PageCardTitle
+            title="Setup"
+            subtitle="Configure table column visibility"
+          />
           <PageCardActions></PageCardActions>
         </PageCardHeader>
         <PageCardBody>
@@ -33,16 +47,22 @@ const SetupPage = () => {
               <Button
                 variant="info"
                 size="sm"
-                onClick={() => handleOpenModal("SYS_MRR_DIRECT_ITEMS")}
+                onClick={() =>
+                  handleShowModal(
+                    "SYS_MRR_DIRECT_ITEMS",
+                    "SYS_MRR_DIRECT_ITEMS",
+                  )
+                }
               >
                 Items Column Settings
               </Button>
             </div>
           </div>
-          {showModal && (
+          {showModal.modal === "SYS_MRR_DIRECT_ITEMS" && (
             <TableColumns
+              title={modalTitle.title}
               open={showModal}
-              onClose={handleCloseModal}
+              onClose={handleHideModal}
               cfColumns={listTablColumns}
               onChange={handleChange}
             />

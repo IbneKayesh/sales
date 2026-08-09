@@ -73,13 +73,16 @@ const MrrForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputLabel label="Total Amount" value={formData.mrrdm_tramt} />
         </div>
         <div className="col-span-2">
           <InputLabel label="Item Discount" value={formData.mrrdm_itmds} />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
+          <InputLabel label="Invoice Discount %" value={formData.mrrdm_dspct} />
+        </div>
+        <div className="col-span-2">
           <InputNumber
             label="Invoice Discount"
             placeholder="0.00"
@@ -87,7 +90,7 @@ const MrrForm = ({
             onChange={(e) => onChange("mrrdm_invds", e.target.value)}
             error={formErrors.mrrdm_invds}
             step="0.01"
-            disabled={readOnly}
+            disabled={readOnly || Number(formData.mrrdm_dspct) > 0}
           />
         </div>
         <div className="col-span-2">

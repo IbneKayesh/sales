@@ -24,23 +24,38 @@ const useSetup = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
   //others
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState({ show: false, modal: "" });
+  const [modalTitle, setModalTitle] = useState({ title: "", subTitle: "" });
   const [listTablColumns, setListTablColumns] = useState([]);
 
-  const handleChange = (f, v) => {
-    // Optimistically reflect the change in the open modal
-    setListTablColumns((prev) =>
-      prev.map((col) => (col.id === f ? { ...col, tabcl_visbu: v } : col)),
-    );
-    //call api tabColumnsAPI.update
-    //body id : f, :tabcl_visbu : v/true/false
-    tabColumnsAPI.update({ id: f, tabcl_visbu: v }).then((resp) => {
-      if (resp?.success === false) {
-        showToast(resp?.message || "Failed to update column settings", {
-          type: "error",
-        });
+  const handleChange = async (f, v) => {
+    try {
+      // Optimistically reflect the change in the open modal
+      setListTablColumns((prev) =>
+        prev.map((col) => (col.id === f ? { ...col, tabcl_visbu: v } : col)),
+      );
+
+      const reqBody = {
+        id: f,
+        tabcl_visbu: v,
+      };
+      setIsBusy(true);
+
+      const resp = await tabColumnsAPI.update(reqBody);
+      showToast(
+        resp.success
+          ? resp?.message || "Failed to update column settings"
+          : resp?.message,
+        {
+          type: resp.success ? "info" : "error",
+        },
+      );
+      if (resp.success) {
       }
-    });
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   const getTabColumns = async (value) => {
@@ -50,20 +65,28 @@ const useSetup = () => {
       const list = resp.data || [];
       setListTablColumns(list);
     } catch (error) {
+      console.log(error);
     } finally {
       setIsBusy(false);
     }
   };
 
-  const handleOpenModal = async (value) => {
-    if (value === "SYS_MRR_DIRECT_ITEMS") {
+  //modal
+  const handleShowModal = async (modal, value) => {
+    if (modal === "SYS_MRR_DIRECT_ITEMS") {
       await getTabColumns(value);
+      setModalTitle({
+        title: "MRR Items Column Settings",
+        subTitle: "MRR Columns Settings",
+      });
     }
-    setShowModal(true);
+    setShowModal({ show: true, modal: modal });
   };
-  const handleCloseModal = () => {
+
+  const handleHideModal = () => {
     setListTablColumns([]);
-    setShowModal(false);
+    setShowModal({ show: false, modal: "" });
+    setModalTitle({ title: "", subTitle: "" });
   };
 
   return {
@@ -72,17 +95,19 @@ const useSetup = () => {
     pageAuth,
     readOnly,
     stopEdit,
-    listTablColumns,
     formData,
     listDataItem,
     formDataItem,
     formErrors,
     //others
-    showModal,
+    listTablColumns,
     //functions
     handleChange,
-    handleOpenModal,
-    handleCloseModal,
+    //modal
+    showModal,
+    modalTitle,
+    handleShowModal,
+    handleHideModal,
   };
 };
 export default useSetup;

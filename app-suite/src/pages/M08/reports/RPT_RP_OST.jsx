@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import DataTable from "@/components/DataTable";
 import { DataCard, DataCardGrid } from "@/components/DataCard";
 import Badge from "@/components/Badge";
-import ReportEmpty from "./ReportEmpty";
+import EmptyState from "@/components/EmptyState";
 import ReportFooter from "./ReportFooter";
 import { formatNumber } from "@/utils/misc";
 import { exportToCSV, buildColumns } from "@/utils/export";
@@ -131,7 +131,7 @@ const RPT_RP_OST = ({ listData, onRegisterExport }) => {
   ];
 
   if (!hasReportData) {
-    return <ReportEmpty message="No outstanding parties found for the selected period." />;
+    return <EmptyState message="No outstanding parties found for the selected period." />;
   }
 
   return (

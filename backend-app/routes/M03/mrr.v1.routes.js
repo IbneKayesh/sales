@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
     LEFT JOIN tmhb_emply csr ON mrr.mrrdm_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON mrr.mrrdm_upusr = usr.id
     WHERE mrr.mrrdm_users = $1
-    ORDER BY mrr.mrrdm_trnno ASC`;
+    ORDER BY mrr.mrrdm_trdat DESC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get MRR- ${user_c}`);
@@ -103,6 +103,7 @@ const create = async (req, res) => {
       mrrdm_notes,
       mrrdm_tramt,
       mrrdm_itmds,
+      mrrdm_dspct,
       mrrdm_invds,
       mrrdm_ivtmt,
       mrrdm_vtamt,
@@ -160,7 +161,7 @@ const create = async (req, res) => {
     scripts.push({
       sql: `INSERT INTO tmpb_mrrdm(id, mrrdm_users, mrrdm_bsins, mrrdm_dpart, mrrdm_crncy, mrrdm_cntct,
       mrrdm_ttype, mrrdm_trnno, mrrdm_trdat, mrrdm_refno, mrrdm_notes, mrrdm_tramt, mrrdm_itmds,
-      mrrdm_invds, mrrdm_ivtmt, mrrdm_vtamt, mrrdm_txamt, mrrdm_fcamt, mrrdm_icamt, mrrdm_ecamt,
+      mrrdm_dspct, mrrdm_invds, mrrdm_ivtmt, mrrdm_vtamt, mrrdm_txamt, mrrdm_fcamt, mrrdm_icamt, mrrdm_ecamt,
       mrrdm_pyamt, mrrdm_pdamt, mrrdm_duamt, mrrdm_exrat, mrrdm_vehid, mrrdm_ispst,
       mrrdm_ispad, mrrdm_isqcp, mrrdm_isapp, mrrdm_crusr, mrrdm_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
@@ -168,7 +169,7 @@ const create = async (req, res) => {
       $13, $14, $15, $16, $17, $18,
       $19, $20, $21, $22, $23, $24,
       $25, $26, $27, $28, $29,
-      $30, $31)`,
+      $30, $31, $32)`,
       params: [
         newId,
         user_c,
@@ -183,6 +184,7 @@ const create = async (req, res) => {
         mrrdm_notes,
         mrrdm_tramt || 0,
         mrrdm_itmds || 0,
+        mrrdm_dspct || 0,
         mrrdm_invds || 0,
         mrrdm_ivtmt || 0,
         mrrdm_vtamt || 0,
@@ -357,6 +359,19 @@ const create = async (req, res) => {
         label: `Created Payment detail ${newTrnNo}`,
       });
     }
+
+    //Update supplier credit balance + increase
+    scripts.push({
+      sql: `UPDATE tmcb_cntct
+      SET cntct_crbal = cntct_crbal + $1,      
+    cntct_upusr = $2,
+    cntct_updat = CURRENT_TIMESTAMP,
+    cntct_rvnmr = cntct_rvnmr + 1
+    WHERE id = $3
+      `,
+      params: [mrrdm_duamt, user_s, mrrdm_cntct],
+      label: `Update supplier credit balance ${newTrnNo}`,
+    });
 
     await dbRunAll(scripts);
 
@@ -677,7 +692,7 @@ router.post("/get-all-due-mrr", async (req, res) => {
     WHERE mrr.mrrdm_users = $1
     AND mrr.mrrdm_actve = TRUE
     AND (mrr.mrrdm_pyamt - mrr.mrrdm_pdamt) > 0
-    ORDER BY mrr.mrrdm_trnno ASC`;
+    ORDER BY mrr.mrrdm_trdat DESC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get Department- ${user_c}`);

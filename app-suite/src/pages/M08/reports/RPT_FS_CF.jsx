@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import TreeDataTable from "@/components/TreeDataTable";
-import ReportEmpty from "./ReportEmpty";
+import EmptyState from "@/components/EmptyState";
 import ReportFooter from "./ReportFooter";
 import { formatNumber } from "@/utils/misc";
 import { exportToCSV, buildColumns } from "@/utils/export";
@@ -209,7 +209,7 @@ const RPT_FS_CF = ({ listData, onRegisterExport }) => {
 
   if (!hasReportData) {
     return (
-      <ReportEmpty message="No cash flow data found for the selected period." />
+      <EmptyState message="No cash flow data found for the selected period." />
     );
   }
 

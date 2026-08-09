@@ -12,11 +12,13 @@ import {
   IconChevronLeft,
 } from "@/icons";
 import Button from "@/components/Button";
+import EmptyState from "@/components/EmptyState";
 import useItems from "@/hooks/M04/useItems";
 import ItemsList from "./ItemsList";
 import ItemsForm from "./ItemsForm";
 import PriceList from "./PriceList";
 import PriceForm from "./PriceForm";
+import PriceLedger from "./PriceLedger";
 
 const ItemsPage = () => {
   const {
@@ -45,6 +47,7 @@ const ItemsPage = () => {
     handleCancel,
     handleSubmit,
     //price
+    thisItem,
     handlePrice,
     handleChangePrice,
     handleEditPrice,
@@ -52,6 +55,10 @@ const ItemsPage = () => {
     handleAddNewPrice,
     handleCancelPrice,
     handleSubmitPrice,
+    //ledger
+    selectedItemPrice,
+    listDataLedger,
+    handleLedger,
   } = useItems();
 
   return (
@@ -142,11 +149,33 @@ const ItemsPage = () => {
           )}
 
           {pgView === "SYS_VW_LST_2" && (
-            <PriceList
-              listData={listDataItem}
-              onEdit={handleEditPrice}
-              onDelete={handleDeletePrice}
-            />
+            <>
+              <p className="text-indigo-700 p-1">
+                Item: {thisItem.items_iname}
+              </p>
+              <PriceList
+                listData={listDataItem}
+                onEdit={handleEditPrice}
+                onDelete={handleDeletePrice}
+                onLedger={handleLedger}
+              />
+
+              {selectedItemPrice.price_cname && (
+                <div className="mt-2">
+                  <p className="text-indigo-700 p-2">
+                    Price: {selectedItemPrice.price_cname}
+                  </p>
+                  {listDataLedger.length > 0 ? (
+                    <PriceLedger listData={listDataLedger} />
+                  ) : (
+                    <EmptyState
+                      title="No price ledger data"
+                      message="No transaction found with this price item"
+                    />
+                  )}
+                </div>
+              )}
+            </>
           )}
           {pgView === "SYS_VW_FRM_2" && (
             <PriceForm

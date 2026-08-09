@@ -63,6 +63,12 @@
     "required": false,
     "default": 0
   },
+  "mrrdm_dspct": {
+    "type": "decimal",
+    "label": "Invoice Discount %",
+    "required": false,
+    "default": 0
+  },
   "mrrdm_invds": {
     "type": "decimal",
     "label": "Invoice Discount",

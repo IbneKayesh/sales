@@ -2,6 +2,7 @@ import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import { IconClose, IconCheck } from "@/icons";
+import NegativeValue from "@/components/common/NegativeValue";
 import { getRelativeDays } from "@/utils/datetime.js";
 
 const MrrList = ({ listData, onEdit, onDelete }) => {
@@ -27,8 +28,36 @@ const MrrList = ({ listData, onEdit, onDelete }) => {
     { key: "dpart_cname", header: "Department", width: "150px" },
     { key: "cntct_cname", header: "Supplier", width: "180px" },
     { key: "mrrdm_refno", header: "Ref No", width: "100px" },
-    { key: "mrrdm_tramt", header: "Amount", width: "100px" },
-    { key: "mrrdm_pyamt", header: "Payable", width: "100px" },
+    {
+      key: "mrrdm_tramt",
+      header: "Amount",
+      width: "80px",
+      render: (_, row) => (
+        <>
+          <NegativeValue value={row.mrrdm_tramt} />
+        </>
+      ),
+    },
+    {
+      key: "mrrdm_pyamt",
+      header: "Payable",
+      width: "80px",
+      render: (_, row) => (
+        <>
+          <NegativeValue value={row.mrrdm_pyamt} />
+        </>
+      ),
+    },
+    {
+      key: "mrrdm_duamt",
+      header: "Due",
+      width: "80px",
+      render: (_, row) => (
+        <>
+          <NegativeValue value={row.mrrdm_duamt} />
+        </>
+      ),
+    },
     {
       key: "mrrdm_ispst",
       header: "Posted",

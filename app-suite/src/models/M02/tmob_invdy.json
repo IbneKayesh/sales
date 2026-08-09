@@ -20,9 +20,9 @@
   "invdy_spadr": {
     "type": "string",
     "label": "Shipping Address",
-    "maxLength": 50,
+    "maxLength": 300,
     "placeholder": "Enter shipping address",
-    "required": false
+    "required": true
   },
   "invdy_spdat": {
     "type": "datetime",

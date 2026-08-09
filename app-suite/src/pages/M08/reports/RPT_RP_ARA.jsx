@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import DataTable from "@/components/DataTable";
 import { DataCard, DataCardGrid } from "@/components/DataCard";
 import Badge from "@/components/Badge";
-import ReportEmpty from "./ReportEmpty";
+import EmptyState from "@/components/EmptyState";
 import ReportFooter from "./ReportFooter";
 import { formatNumber } from "@/utils/misc";
 import { exportToCSV, buildColumns } from "@/utils/export";
@@ -109,7 +109,7 @@ const RPT_RP_ARA = ({ listData, onRegisterExport }) => {
   }, [onRegisterExport, items]);
 
   if (!hasReportData) {
-    return <ReportEmpty message="No customers found for the selected period." />;
+    return <EmptyState message="No customers found for the selected period." />;
   }
 
   const totalAR = items.reduce((s, c) => s + c.balance, 0);

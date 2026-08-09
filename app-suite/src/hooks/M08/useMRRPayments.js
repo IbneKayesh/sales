@@ -129,45 +129,7 @@ const useMRRPayments = () => {
   };
 
   const handleDelete = async (rowData) => {
-    if (rowData.mrrdm_ispst) {
-      showToast("MRR is posted. Cannot delete.", { type: "warning" });
-      return;
-    }
-
-    const isActive = rowData.mrrdm_actve;
-    const dataName = rowData.mrrdm_trnno;
-    const confirmation = await confirmBox({
-      title: isActive ? "Deactivate" : "Activate",
-      message: `Are you sure you want to ${
-        isActive ? "deactivate" : "activate"
-      } "${dataName}"?`,
-      confirmText: isActive ? "Deactivate" : "Activate",
-      variant: isActive ? "danger" : "success",
-    });
-    if (!confirmation) return;
-
-    try {
-      setIsBusy(true);
-      const resp = await mrrAPI.delete(rowData);
-      alertBox({
-        title: resp.success
-          ? isActive
-            ? "Deactivated"
-            : "Activated"
-          : "Error",
-        message: resp.message,
-        variant: resp.success ? "success" : "danger",
-        confirmText: resp.success ? "Done" : "Close",
-      });
-      if (resp.success) {
-        setPgView("SYS_VW_LST_1");
-        setFormData(dataModel);
-        getAllMRR();
-      }
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
+    
   };
 
   const handleSearch = async () => {

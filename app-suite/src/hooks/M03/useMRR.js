@@ -61,6 +61,7 @@ const useMRR = () => {
       //console.log("list", list);
       setTcVisibleItem(list);
     } catch (error) {
+      console.log(error);
     } finally {
       setIsBusy(false);
     }
@@ -74,6 +75,7 @@ const useMRR = () => {
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
+      console.log(error);
     } finally {
       setIsBusy(false);
     }
@@ -257,6 +259,8 @@ const useMRR = () => {
   }
 
   function reCalculate(items, master, costList, paymList) {
+    //console.log("items", items);
+
     // Safe number conversion (handles null, undefined, NaN, "", etc.)
     const num = (value) => {
       const n = Number(value);
@@ -274,9 +278,8 @@ const useMRR = () => {
     //---------------------------------------------------
     // Totals
     //---------------------------------------------------
-
     const totalAmount = newItems.reduce(
-      (sum, item) => sum + num(item.mrrdc_itamt),
+      (sum, item) => sum + num(item.mrrdc_itrat) * num(item.mrrdc_itqty),
       0,
     );
 
@@ -317,10 +320,16 @@ const useMRR = () => {
     //---------------------------------------------------
     // 1. Split Invoice Discount
     //---------------------------------------------------
+    //if already discount from handleChange/mrrdm_cntct, then find discount amount, else keep user entered master?.mrrdm_invds amount
+    const invoice_discount_pct = Number(master?.mrrdm_dspct || 0);
+    let invoice_discount_amount = master?.mrrdm_invds;
+    if (invoice_discount_pct > 0) {
+      invoice_discount_amount = (totalAmount * invoice_discount_pct) / 100;
+    }
 
     newItems = newItems.map((item) => {
       const mrrdc_edamt = div(
-        num(master?.mrrdm_invds) * num(item.mrrdc_itqty),
+        num(invoice_discount_amount) * num(item.mrrdc_itqty),
         totalQty,
       );
 
@@ -463,6 +472,7 @@ const useMRR = () => {
       ...master,
       mrrdm_tramt: num(totals.tramt).toFixed(4),
       mrrdm_itmds: num(totals.itmds).toFixed(4),
+      mrrdm_invds: num(invoice_discount_amount).toFixed(4),
       mrrdm_ivtmt: num(totals.ivtmt).toFixed(4),
       mrrdm_vtamt: num(totals.vtamt).toFixed(4),
       mrrdm_txamt: num(totals.txamt).toFixed(4),
@@ -524,7 +534,13 @@ const useMRR = () => {
     const newErrors = validate({ ...formData, [f]: v }, tmpb_mrrdm);
     setFormErrors(newErrors);
 
-    if (f === "mrrdm_invds") {
+    if (f === "mrrdm_cntct") {
+      const cntct_id = cntct_Options.find((opt) => opt.id === v);
+      const dspct = cntct_id?.cntct_dspct || 0;
+      const newformData = { ...formData, mrrdm_cntct: v, mrrdm_dspct: dspct };
+      reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
+    }
+    if (f === "mrrdm_invds" || f === "mrrdm_dspct") {
       const newformData = { ...formData, [f]: v };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
     }
