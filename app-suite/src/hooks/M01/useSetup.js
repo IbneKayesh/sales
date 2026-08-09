@@ -7,23 +7,25 @@ import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
 const dataModel = generateDataModel(tmsb_tabcl);
 
 const useSetup = () => {
-  const { showToast, isBusy, setIsBusy } = useUI();
-  const [pgView] = useState("SYS_VW_LST_1");
-  const [pageAuth] = useState({
+  const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
+  const [pgView, setPgView] = useState("SYS_VW_LST_1");
+  const [pgId, setPgId] = useState("M03-M0001");
+  const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
     edtpr: false,
     delpr: false,
   });
-  const [readOnly] = useState(false);
-  const [stopEdit] = useState(false);
-  const [listTablColumns, setListTablColumns] = useState([]);
-  const [formData] = useState(dataModel);
-  const [listDataItem] = useState([]);
-  const [formDataItem] = useState({});
-  const [formErrors] = useState({});
+  const [readOnly, setReadOnly] = useState(false);
+  const [stopEdit, setStopEdit] = useState(false);
+  const [listData, setListData] = useState([]);
+  const [formData, setFormData] = useState(dataModel);
+  const [listDataItem, setListDataItem] = useState([]);
+  const [formDataItem, setFormDataItem] = useState({});
+  const [formErrors, setFormErrors] = useState({});
   //others
   const [showModal, setShowModal] = useState(false);
+  const [listTablColumns, setListTablColumns] = useState([]);
 
   const handleChange = (f, v) => {
     // Optimistically reflect the change in the open modal
@@ -47,8 +49,7 @@ const useSetup = () => {
       const resp = await tabColumnsAPI.getByTable({ tabcl_table: value });
       const list = resp.data || [];
       setListTablColumns(list);
-    } catch {
-      /* ignore */
+    } catch (error) {
     } finally {
       setIsBusy(false);
     }
