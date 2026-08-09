@@ -1,4 +1,3 @@
-import { useState } from "react";
 import PageCard, {
   PageCardHeader,
   PageCardTitle,
@@ -7,27 +6,11 @@ import PageCard, {
 } from "@/components/PageCard";
 import Button from "@/components/Button";
 import TableColumns from "@/components/common/TableColumns";
-import {
-  IconBox,
-  IconPurchase,
-  IconSettings,
-  IconChevronRight,
-  IconClose,
-} from "@/icons";
 import useSetup from "@/hooks/M01/useSetup";
 
 const SetupPage = () => {
   const {
-    isBusy,
-    pgView,
-    pageAuth,
-    readOnly,
-    stopEdit,
     listTablColumns,
-    formData,
-    listDataItem,
-    formDataItem,
-    formErrors,
     //others
     showModal,
     //functions
@@ -40,7 +23,7 @@ const SetupPage = () => {
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
-          <PageCardTitle title="Setup" subtitle={`0 setup options`} />
+          <PageCardTitle title="Setup" subtitle="Configure table column visibility" />
           <PageCardActions></PageCardActions>
         </PageCardHeader>
         <PageCardBody>

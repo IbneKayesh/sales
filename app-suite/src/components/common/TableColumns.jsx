@@ -9,31 +9,32 @@ import Modal, {
 import { IconRefresh } from "@/icons";
 
 const TableColumns = ({ open, onClose, cfColumns = [], onChange }) => {
-  const handleToggle = (key) => {
-    const next = cfColumns.map((col) =>
-      col.id === key ? { ...col, value: !col.tabcl_visbu } : col,
-    );
-   console.log(next)
-    onChange?.(next);
+  // User-defined visibility (falls back to default when not overridden)
+  const isVisible = (col) => col.tabcl_visbu !== false;
+  const isDefaultVisible = (col) => col.tabcl_visbl !== false;
+
+  const handleToggle = (col) => {
+    onChange?.(col.id, !isVisible(col));
   };
 
-  // True when the current selection matches the default visibility
-  const isDefault = true;
-  // cfColumns.length === defaultCfColumns.length &&
-  // cfColumns.every(
-  //   (col, i) =>
-  //     col.key === defaultCfColumns[i]?.key &&
-  //     col.value === defaultCfColumns[i]?.value,
-  // );
-
+  // Restore every column to its default visibility (tabcl_visbl)
   const handleReset = () => {
-    onChange?.(defaultCfColumns.map((col) => ({ ...col })));
+    cfColumns.forEach((col) => {
+      if (isVisible(col) !== isDefaultVisible(col)) {
+        onChange?.(col.id, isDefaultVisible(col));
+      }
+    });
     onClose?.();
   };
 
-  const canReset = true; //defaultCfColumns.length > 0;
+  // True when every column still matches its default visibility
+  const isDefault = cfColumns.every(
+    (col) => isVisible(col) === isDefaultVisible(col),
+  );
 
-  const visibleCount = cfColumns.filter((col) => col.value).length;
+  const canReset = cfColumns.length > 0;
+
+  const visibleCount = cfColumns.filter(isVisible).length;
 
   return (
     <Modal
@@ -55,8 +56,8 @@ const TableColumns = ({ open, onClose, cfColumns = [], onChange }) => {
             <Checkbox
               key={col.id}
               label={col.tabcl_title}
-              checked={col.tabcl_visbu !== false}
-              onChange={() => handleToggle(col.id)}
+              checked={isVisible(col)}
+              onChange={() => handleToggle(col)}
             />
           ))}
         </div>
