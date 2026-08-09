@@ -26,17 +26,18 @@ const useSetup = () => {
   //others
   const [showModal, setShowModal] = useState(false);
 
-
   const handleChange = (f, v) => {
+    //call api tabColumnsAPI.update 
+    //body id : f, :tabcl_visbu : v/true/false
     // setFormData((prev) => ({ ...prev, [f]: v }));
     // const newErrors = validate({ ...formData, [f]: v }, tmsb_sectn);
     // setFormErrors(newErrors);
   };
 
-  const getTabColumns = async () => {
+  const getTabColumns = async (value) => {
     try {
       setIsBusy(true);
-      const resp = await tabColumnsAPI.getAll({});
+      const resp = await tabColumnsAPI.getByTable({ tabcl_table: value });
       const list = resp.data || [];
       setListTablColumns(list);
       console.log(list);
@@ -46,13 +47,14 @@ const useSetup = () => {
     }
   };
 
-  const handleOpenModal = (value) => {
+  const handleOpenModal = async (value) => {
     if (value === "SYS_MRR_DIRECT_ITEMS") {
-      getTabColumns();
+      await getTabColumns(value);
     }
     setShowModal(true);
   };
   const handleCloseModal = () => {
+    setListTablColumns([]);
     setShowModal(false);
   };
 

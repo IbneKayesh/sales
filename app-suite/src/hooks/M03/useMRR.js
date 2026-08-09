@@ -54,11 +54,11 @@ const useMRR = () => {
   const getTabColumns = async () => {
     try {
       setIsBusy(true);
-      const resp = await tabColumnsAPI.getAll({
+      const resp = await tabColumnsAPI.getByPage({
         tabcl_cname: "SYS_MRR_DIRECT",
       });
       const list = resp.data || [];
-      console.log("list", list);
+      //console.log("list", list);
       setTcVisibleItem(list);
     } catch (error) {
     } finally {

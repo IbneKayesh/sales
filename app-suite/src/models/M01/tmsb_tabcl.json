@@ -40,12 +40,12 @@
   },
   "tabcl_visbl": {
     "type": "boolean",
-    "label": "Visible",
+    "label": "Default Visible",
     "default": true
   },
   "tabcl_visbu": {
     "type": "boolean",
-    "label": "User Visible",
+    "label": "User Defined Visible",
     "default": true
   }
 }

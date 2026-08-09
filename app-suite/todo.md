@@ -1,2 +1,6 @@
-- [x] RPT_LR_AL uses className = `mb-3`, RPT_LR_GL / RPT_LR_JR use `d-flex align-center gap-2 mb-3`, RPT_LR_SR uses `mb-3`, RPT_BC_CB uses `d-flex align-end gap-3 mb-3` — checked App.css & index.css: `d-flex`, `align-center`, `align-end`, `gap-2`, `gap-3`, `gap-4` all exist in index.css; `mb-3` did NOT exist. FIXED: added `.mb-1` .. `.mb-5` helpers.
-- [x] Spacing helpers consolidated — all margin helpers (`mt-*`, `mb-*`, `mr-*`, `ml-*`, `ms-*`, `me-*`, 1..5) now live in index.css (Layout Utility Classes section, next to `gap-*`), removed from App.css. Also added padding helpers (`p-*`, `px-*`, `py-*`, 1..5) for consistency.
+read below files need to implement them
+
+src/models/M01/tmsb_tabcl.json
+src/pages/M01/setup/SetupPage.jsx (don't follow SetupPage_bk.jsx)
+src/components/common/TableColumns.jsx
+src/hooks/M01/useSetup.js/handleChange

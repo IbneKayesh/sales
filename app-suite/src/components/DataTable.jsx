@@ -51,18 +51,14 @@ export default function DataTable({
   cfColumns = [],
   ...rest
 }) {
-  // Column settings are enabled whenever a cfColumns config is supplied.
-  // The TableColumns popup itself is owned by the page (e.g. M01 SetupPage),
-  // so DataTable only needs the config to know which columns to show.
-  const columnsSettings = cfColumns.length > 0
-
   // Filter out columns marked as hidden; when columnsSettings is on,
   // columns listed in cfColumns can be toggled visible/hidden
   const visibleColumns = columns.filter((col) => {
     if (col.visible === false) return false
-    if (columnsSettings && cfColumns.length) {
-      const cfg = cfColumns.find((c) => c.key === (col.key || col.accessor))
-      if (cfg) return cfg.value !== false
+    if (cfColumns.length > 0) {
+      const cfg = cfColumns.find((c) => c.tabcl_colmn === (col.key || col.accessor))
+     //tabcl_visbl: default value, tabcl_visbu: user defined
+      if (cfg) return cfg.tabcl_visbu !== false
     }
     return true
   })
@@ -114,7 +110,7 @@ export default function DataTable({
   const currentPage = Math.min(page, totalPages - 1)
   const paged = sorted.slice(currentPage * pageSize, (currentPage + 1) * pageSize)
 
-  const showToolbar = searchable || exportable || toolbarActions || columnsSettings
+  const showToolbar = searchable || exportable || toolbarActions
 
   return (
     <div className={`data-table${dense ? ' data-table--dense' : ''}${autofit ? ' data-table--autofit' : ''}${className ? ' ' + className : ''}`} {...rest}>

@@ -8,35 +8,30 @@ import Modal, {
 } from "@/components/Modal";
 import { IconRefresh } from "@/icons";
 
-const TableColumns = ({
-  open,
-  onClose,
-  cfColumns = [],
-  defaultCfColumns = [],
-  onChange,
-}) => {
+const TableColumns = ({ open, onClose, cfColumns = [], onChange }) => {
   const handleToggle = (key) => {
     const next = cfColumns.map((col) =>
-      col.key === key ? { ...col, value: !col.value } : col,
+      col.id === key ? { ...col, value: !col.tabcl_visbu } : col,
     );
+   console.log(next)
     onChange?.(next);
   };
 
   // True when the current selection matches the default visibility
-  const isDefault =
-    cfColumns.length === defaultCfColumns.length &&
-    cfColumns.every(
-      (col, i) =>
-        col.key === defaultCfColumns[i]?.key &&
-        col.value === defaultCfColumns[i]?.value,
-    );
+  const isDefault = true;
+  // cfColumns.length === defaultCfColumns.length &&
+  // cfColumns.every(
+  //   (col, i) =>
+  //     col.key === defaultCfColumns[i]?.key &&
+  //     col.value === defaultCfColumns[i]?.value,
+  // );
 
   const handleReset = () => {
     onChange?.(defaultCfColumns.map((col) => ({ ...col })));
     onClose?.();
   };
 
-  const canReset = defaultCfColumns.length > 0;
+  const canReset = true; //defaultCfColumns.length > 0;
 
   const visibleCount = cfColumns.filter((col) => col.value).length;
 
@@ -58,10 +53,10 @@ const TableColumns = ({
         <div className="table-columns__list">
           {cfColumns.map((col) => (
             <Checkbox
-              key={col.key}
-              label={col.label}
-              checked={col.value !== false}
-              onChange={() => handleToggle(col.key)}
+              key={col.id}
+              label={col.tabcl_title}
+              checked={col.tabcl_visbu !== false}
+              onChange={() => handleToggle(col.id)}
             />
           ))}
         </div>
