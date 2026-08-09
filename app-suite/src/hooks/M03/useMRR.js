@@ -320,7 +320,16 @@ const useMRR = () => {
     //---------------------------------------------------
     // 1. Split Invoice Discount
     //---------------------------------------------------
-    //if already discount from handleChange/mrrdm_cntct, then find discount amount, else keep user entered master?.mrrdm_invds amount
+    // Invoice discount has two input modes:
+    //   A) Percentage mode (mrrdm_dspct > 0): the % is auto-filled from the supplier
+    //      (cntct_dspct) when mrrdm_cntct changes, or entered directly. The amount is
+    //      DERIVED from it: amount = totalAmount * pct / 100, and mrrdm_invds is a
+    //      read-only display value (the field is disabled in the form while pct > 0).
+    //   B) Amount mode (mrrdm_dspct === 0): the user types the discount amount directly
+    //      into mrrdm_invds. The value is used as-is (kept raw, never reformatted),
+    //      because re-formatting it to 4 decimals mid-typing would break the input.
+    // The effective amount computed here is then split proportionally across the item
+    // lines (mrrdc_edamt).
     const invoice_discount_pct = Number(master?.mrrdm_dspct || 0);
     let invoice_discount_amount = master?.mrrdm_invds;
     if (invoice_discount_pct > 0) {
@@ -472,6 +481,8 @@ const useMRR = () => {
       ...master,
       mrrdm_tramt: num(totals.tramt).toFixed(4),
       mrrdm_itmds: num(totals.itmds).toFixed(4),
+      // write the effective discount amount back: computed (formatted) in % mode,
+      // or the raw user-typed value (unformatted, so typing stays usable) in amount mode
       mrrdm_invds:
         invoice_discount_pct > 0
           ? num(invoice_discount_amount).toFixed(4)
@@ -540,11 +551,22 @@ const useMRR = () => {
     if (f === "mrrdm_cntct") {
       const cntct_id = cntct_Options.find((opt) => opt.id === v);
       const dspct = cntct_id?.cntct_dspct || 0;
-      const newformData = { ...formData, mrrdm_cntct: v, mrrdm_dspct: dspct };
+      const newformData = {
+        ...formData,
+        mrrdm_cntct: v,
+        mrrdm_dspct: dspct,
+        // new supplier has no discount % -> clear any stale computed amount
+        ...(dspct === 0 ? { mrrdm_invds: 0 } : {}),
+      };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
     }
     if (f === "mrrdm_invds" || f === "mrrdm_dspct") {
-      const newformData = { ...formData, [f]: v };
+      const newformData = {
+        ...formData,
+        [f]: v,
+        // % cleared -> also clear the derived/stale amount
+        ...(f === "mrrdm_dspct" && Number(v) === 0 ? { mrrdm_invds: 0 } : {}),
+      };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
     }
   };
