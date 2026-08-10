@@ -77,6 +77,9 @@ const InvoiceForm = ({
           <InputLabel label="Item Discount" value={formData.invcm_itmds} />
         </div>
         <div className="col-span-2">
+          <InputLabel label="Invoice Discount %" value={formData.invcm_dspct} />
+        </div>
+        <div className="col-span-2">
           <InputNumber
             label="Invoice Discount"
             placeholder="0.00"
@@ -84,8 +87,11 @@ const InvoiceForm = ({
             onChange={(e) => onChange("invcm_invds", e.target.value)}
             error={formErrors.invcm_invds}
             step="0.01"
-            disabled={readOnly}
+            disabled={readOnly || Number(formData.invcm_dspct) > 0}
           />
+        </div>
+        <div className="col-span-2">
+          <InputLabel label="Loyalty Discount" value={formData.invcm_lylds} />
         </div>
         <div className="col-span-2">
           <InputLabel label="VAT Amount" value={formData.invcm_vtamt} />
@@ -108,7 +114,7 @@ const InvoiceForm = ({
         <div className="col-span-2">
           <InputLabel label="Exchange Rate" value={formData.invcm_exrat} />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-12">
           <InputText
             label="Notes"
             placeholder="Enter notes"

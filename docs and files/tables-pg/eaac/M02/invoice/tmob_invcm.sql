@@ -33,7 +33,7 @@ CREATE TABLE tmob_invcm (
   invcm_exrat decimal(18,6) DEFAULT 0.00, --exchange rate
   invcm_ispst boolean NOT NULL DEFAULT false,
   invcm_ispad boolean NOT NULL DEFAULT false,
-  invcm_isapp boolean NOT NULL DEFAULT false,
+  invcm_isapp boolean NOT NULL DEFAULT false
   
   -- default 2
   invcm_actve boolean NOT NULL DEFAULT true,

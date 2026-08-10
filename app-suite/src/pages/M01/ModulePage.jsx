@@ -19,6 +19,7 @@ import {
   IconSettings,
   IconPurchase,
   IconSales,
+  IconBar,
 } from "@/icons";
 
 /* ─── Hierarchical App Data: Module > Groups > Menu ─────── */
@@ -36,6 +37,7 @@ const iconMap = {
   Users: IconUsers,
   Purchase: IconPurchase,
   Sales: IconSales,
+  Bar: IconBar,
 };
 
 const resolveIcon = (name) => {
@@ -111,11 +113,11 @@ const appModules = [
           },
           {
             id: "M01-G02-M003",
-            name: "Setup Options",
+            name: "Grid Options",
             color: "#7c3aed",
-            icon: "Settings",
+            icon: "Bar",
             order: 10,
-            link: "/settings/setup",
+            link: "/settings/grid-options",
             desc: "Configure module table column visibility",
           },
         ],

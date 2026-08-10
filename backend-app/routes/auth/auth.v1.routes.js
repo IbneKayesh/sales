@@ -74,28 +74,25 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    //   const sql_menus = `SELECT mnu.id, menus_pname, menus_aname, menus_mname, menus_color, menus_micon,
-    //   menus_odrby, menus_notes, menus_mlink, menus_menus, mnemp_extpr, mnemp_addpr,
-    //   mnemp_edtpr, mnemp_delpr
-    // FROM tmsb_menus mnu
-    // JOIN tmsb_mnemp emp ON mnu.id = emp.mnemp_menus
-    // WHERE mnu.menus_actve = TRUE
-    // AND emp.mnemp_actve = TRUE
-    // AND emp.mnemp_emply = $1
-    // ORDER BY mnu.menus_odrby`;
+    const sql_menus = `SELECT *
+                      FROM tmsb_menup mp
+                      WHERE mp.menup_actve = TRUE
+                      AND mp.menup_users = $1
+                      AND mp.menup_emply = $2`;
+    const params_menus = [users_id, row_emp.id];
+    const row_menus = await dbGetAll(
+      sql_menus,
+      params_menus,
+      `Get login menus`,
+    );
 
-    //   const row_menus = await dbGetAll(
-    //     sql_menus,
-    //     [row_emp.id],
-    //     `Get login menus`,
-    //   );
-    //   if (!row_menus || row_menus.length === 0) {
-    //     return res.json({
-    //       success: false,
-    //       message: "Menu is not defined",
-    //       data: [],
-    //     });
-    //   }
+    if (!row_menus || row_menus.length === 0) {
+      return res.json({
+        success: false,
+        message: "Menu is not defined",
+        data: [],
+      });
+    }
 
     // inside login route, after validating user
     const session = createSession(row_user);

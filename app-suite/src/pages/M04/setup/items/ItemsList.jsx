@@ -3,10 +3,10 @@ import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
-import { IconClose, IconCheck, IconDollar } from "@/icons";
+import { IconClose, IconCheck, IconActivity } from "@/icons";
 import NegativeValue from "@/components/common/NegativeValue";
 
-const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
+const ItemsList = ({ cfColumns = [], listData, onEdit, onDelete, onPrice }) => {
   const dtColumns = [
     { key: "items_icode", header: "Code", width: "120px" },
     {
@@ -16,7 +16,7 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
       render: (_, row) => {
         return (
           <span className={`${!row.items_actve && "text-red-500"}`}>
-            {row.items_iname}, {row.items_szqty} {row.sunit_cname}
+            {row.items_iname}
             {row.price_count > 0 && " "}
             {row.price_count > 0 && (
               <Chip
@@ -33,6 +33,18 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
     },
     { key: "items_brcod", header: "Barcode", width: "140px" },
     {
+      key: "items_szqty",
+      header: "Size Unit",
+      width: "200px",
+      render: (_, row) => {
+        return (
+          <span>
+            {row.items_szqty} x {row.sunit_cname}
+          </span>
+        );
+      },
+    },
+    {
       key: "runit_cname",
       header: "Unit",
       width: "200px",
@@ -44,18 +56,8 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
         );
       },
     },
-    {
-      key: "sgrup_cname",
-      header: "Group",
-      width: "80px",
-      render: (_, row) => {
-        return (
-          <span>
-            {row.sgrup_cname}, {row.items_itype}
-          </span>
-        );
-      },
-    },
+    { key: "sgrup_cname", header: "Group", width: "80px" },
+    { key: "items_itype", header: "Type", width: "80px" },
     { key: "scatg_cname", header: "Category", width: "80px" },
     { key: "brand_cname", header: "Brand", width: "120px" },
     {
@@ -87,9 +89,9 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
               e.stopPropagation();
               onPrice(row);
             }}
-            title="Prices"
+            title="Price, Stock, Ledger"
           >
-            <IconDollar size={14} />
+            <IconActivity size={14} />
           </Button>
           <ActionButton
             rowData={row}
@@ -115,6 +117,7 @@ const ItemsList = ({ listData, onEdit, onDelete, onPrice }) => {
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No data found"
       autofit
+      cfColumns={cfColumns}
     />
   );
 };

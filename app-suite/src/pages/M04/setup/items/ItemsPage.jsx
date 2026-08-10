@@ -25,6 +25,7 @@ const ItemsPage = () => {
     isBusy,
     pgView,
     pageAuth,
+    tcVisibleItem,
     readOnly,
     stopEdit,
     listData,
@@ -123,6 +124,9 @@ const ItemsPage = () => {
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
             <ItemsList
+              cfColumns={tcVisibleItem.filter(
+                (f) => f.tabcl_table === "SYS_INVENTORY_ITEMS_LIST",
+              )}
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
@@ -154,6 +158,9 @@ const ItemsPage = () => {
                 Item: {thisItem.items_iname}
               </p>
               <PriceList
+                cfColumns={tcVisibleItem.filter(
+                  (f) => f.tabcl_table === "SYS_INVENTORY_ITEMS_PRICE_LIST",
+                )}
                 listData={listDataItem}
                 onEdit={handleEditPrice}
                 onDelete={handleDeletePrice}

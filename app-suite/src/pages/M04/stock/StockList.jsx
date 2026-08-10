@@ -1,7 +1,7 @@
 import DataTable from "@/components/DataTable";
 import NegativeValue from "@/components/common/NegativeValue";
 
-const StockList = ({ listData, onEdit }) => {
+const StockList = ({ cfColumns = [], listData, onEdit }) => {
   const dtColumns = [
     { key: "price_cname", header: "Name", width: "80px" },
     {
@@ -90,6 +90,7 @@ const StockList = ({ listData, onEdit }) => {
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No data found"
       autofit
+      cfColumns={cfColumns}
     />
   );
 };

@@ -169,7 +169,9 @@ const MrrPage = () => {
           )}
           {pgView === "SYS_VW_FRM_1" && listDataItem.length > 0 && (
             <ItemList
-              cfColumns={tcVisibleItem}
+              cfColumns={tcVisibleItem.filter(
+                (f) => f.tabcl_table === "SYS_MRR_DIRECT_ITEMS",
+              )}
               readOnly={readOnly}
               listData={listDataItem}
               onEdit={handleEditItem}

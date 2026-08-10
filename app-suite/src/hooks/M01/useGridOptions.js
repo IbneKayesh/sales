@@ -6,7 +6,7 @@ import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
 
 const dataModel = generateDataModel(tmsb_tabcl);
 
-const useSetup = () => {
+const useGridOptions = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
   const [pgId, setPgId] = useState("M03-M0001");
@@ -73,13 +73,11 @@ const useSetup = () => {
 
   //modal
   const handleShowModal = async (modal, value) => {
-    if (modal === "SYS_MRR_DIRECT_ITEMS") {
-      await getTabColumns(value);
-      setModalTitle({
-        title: "MRR Items Column Settings",
-        subTitle: "MRR Columns Settings",
-      });
-    }
+    await getTabColumns(value);
+    // setModalTitle({
+    //   title: "MRR Items Column Settings",
+    //   subTitle: "MRR Columns Settings",
+    // });
     setShowModal({ show: true, modal: modal });
   };
 
@@ -110,4 +108,4 @@ const useSetup = () => {
     handleHideModal,
   };
 };
-export default useSetup;
+export default useGridOptions;

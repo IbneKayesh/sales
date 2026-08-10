@@ -6,7 +6,13 @@ import { IconClose, IconCheck, IconActivity } from "@/icons";
 import NegativeValue from "@/components/common/NegativeValue";
 import PriceLedger from "./PriceLedger";
 
-const PriceList = ({ listData, onEdit, onDelete, onLedger }) => {
+const PriceList = ({
+  cfColumns = [],
+  listData,
+  onEdit,
+  onDelete,
+  onLedger,
+}) => {
   const dtColumns = [
     {
       key: "price_cname",
@@ -140,6 +146,7 @@ const PriceList = ({ listData, onEdit, onDelete, onLedger }) => {
       exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No data found"
+      cfColumns={cfColumns}
     />
   );
 };

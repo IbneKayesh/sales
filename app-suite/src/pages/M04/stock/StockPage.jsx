@@ -14,6 +14,7 @@ const StockPage = () => {
     isBusy,
     pgView,
     pageAuth,
+    tcVisibleItem,
     readOnly,
     stopEdit,
     listData,
@@ -23,17 +24,14 @@ const StockPage = () => {
     formErrors,
     //functions
     handleSearch,
-    handleEdit
+    handleEdit,
   } = useStock();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
-          <PageCardTitle
-            title="Stock"
-            subtitle={`${listData.length} Stock`}
-          />
+          <PageCardTitle title="Stock" subtitle={`${listData.length} Stock`} />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
               <Button variant="info" size="sm" onClick={handleSearch}>
@@ -46,6 +44,9 @@ const StockPage = () => {
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
             <StockList
+              cfColumns={tcVisibleItem.filter(
+                (f) => f.tabcl_table === "SYS_INVENTORY_STOCK_ITEMS_LIST",
+              )}
               listData={listData}
               onEdit={handleEdit}
             />

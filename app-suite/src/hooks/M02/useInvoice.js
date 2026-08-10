@@ -157,7 +157,7 @@ const useInvoice = () => {
 
       return {
         ...item,
-        mrrdc_edamt,
+        mrrdc_edamt: Number(mrrdc_edamt).toFixed(4),
       };
     });
 

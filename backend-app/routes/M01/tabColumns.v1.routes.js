@@ -61,7 +61,8 @@ router.post("/get-by-page", async (req, res) => {
     FROM tmsb_tabcl
     WHERE tabcl_actve = TRUE
     AND tabcl_users = $1
-    AND tabcl_cname = $2`;
+    AND tabcl_cname = $2
+    ORDER BY tabcl_cname, tabcl_colmn`;
 
     const params = [user_c, tabcl_cname];
     const rows = await dbGetAll(sql, params, `get table columns- ${user_c}`);
@@ -99,7 +100,8 @@ router.post("/get-by-table", async (req, res) => {
     FROM tmsb_tabcl
     WHERE tabcl_actve = TRUE
     AND tabcl_users = $1
-    AND tabcl_table = $2`;
+    AND tabcl_table = $2
+    ORDER BY tabcl_table, tabcl_colmn`;
 
     const params = [user_c, tabcl_table];
     const rows = await dbGetAll(sql, params, `get table columns- ${user_c}`);

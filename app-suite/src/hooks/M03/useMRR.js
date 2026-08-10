@@ -50,7 +50,7 @@ const useMRR = () => {
   const [listDataPayment, setListDataPayment] = useState([]);
   const [formDataPayment, setFormDataPayment] = useState({});
 
-  //Table Coluns
+  //Table Columns
   const getTabColumns = async () => {
     try {
       setIsBusy(true);
@@ -348,7 +348,7 @@ const useMRR = () => {
 
       return {
         ...item,
-        mrrdc_edamt,
+        mrrdc_edamt: Number(mrrdc_edamt).toFixed(4),
       };
     });
 

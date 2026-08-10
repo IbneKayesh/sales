@@ -13,6 +13,7 @@ import { subCategoriesAPI } from "@/api/M04/subCategoriesAPI.js";
 import { unitsAPI } from "@/api/M04/unitsAPI.js";
 import { partyAPI } from "@/api/M08/partyAPI.js";
 import { stockAPI } from "@/api/M04/stockAPI.js";
+import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
 
 const useItems = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -24,6 +25,7 @@ const useItems = () => {
     edtpr: false,
     delpr: false,
   });
+  const [tcVisibleItem, setTcVisibleItem] = useState([]);
   const [readOnly, setReadOnly] = useState(false);
   const [stopEdit, setStopEdit] = useState(false);
   const [listData, setListData] = useState([]);
@@ -38,6 +40,23 @@ const useItems = () => {
   const [brand_Options, setBrand_Options] = useState([]);
   const [partyData, setPartyData] = useState([]);
 
+  //Table Columns
+  const getTabColumns = async () => {
+    try {
+      setIsBusy(true);
+      const resp = await tabColumnsAPI.getByPage({
+        tabcl_cname: "SYS_INVENTORY_ITEMS",
+      });
+      const list = resp.data || [];
+      //console.log("list", list);
+      setTcVisibleItem(list);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   const getAllItems = async () => {
     try {
       setIsBusy(true);
@@ -51,6 +70,7 @@ const useItems = () => {
   };
 
   useEffect(() => {
+    getTabColumns();
     getAllItems();
   }, []);
 
@@ -365,6 +385,7 @@ const useItems = () => {
     isBusy,
     pgView,
     pageAuth,
+    tcVisibleItem,
     readOnly,
     stopEdit,
     listData,
