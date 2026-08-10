@@ -330,10 +330,14 @@ const useMRR = () => {
     //      because re-formatting it to 4 decimals mid-typing would break the input.
     // The effective amount computed here is then split proportionally across the item
     // lines (mrrdc_edamt).
+    // write the effective discount amount back: computed (formatted) in % mode,
+    // or the raw user-typed value (unformatted, so typing stays usable) in amount mode
     const invoice_discount_pct = Number(master?.mrrdm_dspct || 0);
-    let invoice_discount_amount = master?.mrrdm_invds;
+    let invoice_discount_amount = 0;
     if (invoice_discount_pct > 0) {
       invoice_discount_amount = (totalAmount * invoice_discount_pct) / 100;
+    } else {
+      invoice_discount_amount = master?.mrrdm_invds;
     }
 
     newItems = newItems.map((item) => {
@@ -481,12 +485,7 @@ const useMRR = () => {
       ...master,
       mrrdm_tramt: num(totals.tramt).toFixed(4),
       mrrdm_itmds: num(totals.itmds).toFixed(4),
-      // write the effective discount amount back: computed (formatted) in % mode,
-      // or the raw user-typed value (unformatted, so typing stays usable) in amount mode
-      mrrdm_invds:
-        invoice_discount_pct > 0
-          ? num(invoice_discount_amount).toFixed(4)
-          : master?.mrrdm_invds ?? 0,
+      mrrdm_invds: invoice_discount_amount,
       mrrdm_ivtmt: num(totals.ivtmt).toFixed(4),
       mrrdm_vtamt: num(totals.vtamt).toFixed(4),
       mrrdm_txamt: num(totals.txamt).toFixed(4),

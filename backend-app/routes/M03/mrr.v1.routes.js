@@ -212,7 +212,7 @@ const create = async (req, res) => {
       const lineId = uuidv4();
       scripts.push({
         sql: `INSERT INTO tmpb_mrrdc(id, mrrdc_users, mrrdc_bsins, mrrdc_mrrdm, mrrdc_price, mrrdc_items,
-        mrrdc_units, mrrdc_itrat, mrrdc_itqty, mrrdc_itamt, mrrdc_dspct, mrrdc_dsamt,
+        mrrdc_units, mrrdc_itrat, mrrdc_itqty, mrrdc_itamt, mrrdc_dspct, mrrdc_dsamt, mrrdc_edamt,
         mrrdc_ivpct, mrrdc_ivamt, mrrdc_vtpct, mrrdc_vtamt, mrrdc_txpct, mrrdc_txamt,
         mrrdc_fcpct, mrrdc_fcamt, mrrdc_icamt, mrrdc_ecamt, mrrdc_ntamt, mrrdc_notes, mrrdc_csrat,
         mrrdc_refid, mrrdc_crusr, mrrdc_upusr)
@@ -220,7 +220,7 @@ const create = async (req, res) => {
       $7, $8, $9, $10, $11, $12,
       $13, $14, $15, $16, $17, $18,
       $19, $20, $21, $22, $23, $24,
-      $25, $26, $27, $28)`,
+      $25, $26, $27, $28, $29)`,
         params: [
           lineId,
           user_c,
@@ -234,6 +234,7 @@ const create = async (req, res) => {
           det.mrrdc_itamt || 0,
           det.mrrdc_dspct || 0,
           det.mrrdc_dsamt || 0,
+          det.mrrdc_edamt || 0,
           det.mrrdc_ivpct || 0,
           det.mrrdc_ivamt || 0,
           det.mrrdc_vtpct || 0,
