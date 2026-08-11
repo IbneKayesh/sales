@@ -74,9 +74,36 @@ const ItemsList = ({ cfColumns = [], listData, onEdit, onDelete, onPrice }) => {
         );
       },
     },
-    { key: "items_sdvat", header: "SD VAT %", width: "80px" },
-    { key: "items_smrgn", header: "Margin (%)", width: "80px" },
-    { key: "items_fxcst", header: "Fixed Cost", width: "80px" },
+    {
+      key: "items_pivat",
+      header: "Include Purchase VAT (%)",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.items_pivat} />,
+    },
+    {
+      key: "items_pdvat",
+      header: "Purchase VAT %",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.items_pdvat} />,
+    },
+    {
+      key: "items_sdvat",
+      header: "Sales VAT %",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.items_sdvat} />,
+    },
+    {
+      key: "items_smrgn",
+      header: "Margin (%)",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.items_smrgn} />,
+    },
+    {
+      key: "items_fxcst",
+      header: "Fixed Cost",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.items_fxcst} />,
+    },
     {
       key: "items_stpur",
       header: "Stop Purchase",
@@ -163,7 +190,7 @@ const ItemsList = ({ cfColumns = [], listData, onEdit, onDelete, onPrice }) => {
     <DataTable
       columns={dtColumns}
       data={listData}
-      pageSize={30}
+      pageSize={20}
       sortable
       searchable
       striped

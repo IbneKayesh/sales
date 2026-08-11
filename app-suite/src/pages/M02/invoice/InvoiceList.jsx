@@ -63,9 +63,9 @@ const InvoiceList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="invoice-export.csv"
+      exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No invoice records found"
+      emptyMessage="No data found"
       className="mt-2"
     />
   );

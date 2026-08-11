@@ -112,7 +112,7 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
   ];
   return (
     <>
-      <p>(Items → RM/PM/FG)</p>
+      <p>(Items → SVC/FG)</p>
       <DataTable
         columns={dtColumns}
         data={listData}

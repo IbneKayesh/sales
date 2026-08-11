@@ -738,6 +738,8 @@ const useMRR = () => {
         mrrdc_price: v,
         mrrdc_units: price_id?.items_runit,
         mrrdc_itrat: price_id?.price_lprat || 0,
+        mrrdc_ivpct: price_id?.items_pivat || 0,
+        mrrdc_vtpct: price_id?.items_pdvat || 0,
         mrrdc_fcpct: price_id?.items_fxcst || 0,
       }));
     }

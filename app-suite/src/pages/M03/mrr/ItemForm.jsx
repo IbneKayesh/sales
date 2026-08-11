@@ -29,6 +29,7 @@ const ItemForm = ({
             disabled={readOnly}
             optionValue="price_id"
             optionLabel="price_cname"
+            optionGrid="price_cname:Item, price_lprat:l.Purchase, price_dspct:Disc %, price_gdstk:g.Stock, items_itype:Type, items_pivat:Include VAT%, items_pdvat: VAT%"
           />
         </div>
         <div className="col-span-3">
@@ -72,7 +73,7 @@ const ItemForm = ({
             onChange={(e) => onChange("mrrdc_ivpct", e.target.value)}
             error={formErrors.mrrdc_ivpct}
             step="0.01"
-            disabled={readOnly}
+            disabled={readOnly || true}
           />
         </div>
         <div className="col-span-2">
@@ -83,7 +84,7 @@ const ItemForm = ({
             onChange={(e) => onChange("mrrdc_vtpct", e.target.value)}
             error={formErrors.mrrdc_vtpct}
             step="0.01"
-            disabled={readOnly}
+            disabled={readOnly || true}
           />
         </div>
         <div className="col-span-2">

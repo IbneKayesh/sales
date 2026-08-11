@@ -100,13 +100,31 @@
     "label": "Track Stock",
     "default": true
   },
-  "items_sdvat": {
+  "items_pivat": {
     "type": "decimal",
-    "label": "SD VAT (%)",
+    "label": "Include Purchase VAT (%)",
     "default": 0.00,
     "maxLength": 500,
     "minLength": 0,
-    "placeholder": "Enter SD VAT %",
+    "placeholder": "Enter iVAT %",
+    "required": true
+  },
+  "items_pdvat": {
+    "type": "decimal",
+    "label": "Purchase VAT (%)",
+    "default": 0.00,
+    "maxLength": 500,
+    "minLength": 0,
+    "placeholder": "Enter pVAT %",
+    "required": true
+  },
+  "items_sdvat": {
+    "type": "decimal",
+    "label": "Sales VAT (%)",
+    "default": 0.00,
+    "maxLength": 500,
+    "minLength": 0,
+    "placeholder": "Enter sVAT %",
     "required": true
   },
   "items_smrgn": {

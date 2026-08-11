@@ -152,7 +152,7 @@ const ItemsForm = ({
             optionLabel="scatg_cname"
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3">
           <Dropdown
             label="Item Type"
             options={itype_Options}
@@ -163,7 +163,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-3">
           <Dropdown
             label="Brand"
             options={brand_Options}
@@ -189,8 +189,30 @@ const ItemsForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="SD VAT (%)"
-            placeholder="Enter SD VAT %"
+            label="Include Purchase VAT (%)"
+            placeholder="Enter iVAT %"
+            value={formData.items_pivat}
+            onChange={(e) => onChange("items_pivat", e.target.value)}
+            error={formErrors.items_pivat}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-2">
+          <InputNumber
+            label="Purchase VAT (%)"
+            placeholder="Enter Purchase VAT %"
+            value={formData.items_pdvat}
+            onChange={(e) => onChange("items_pdvat", e.target.value)}
+            error={formErrors.items_pdvat}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-2">
+          <InputNumber
+            label="Sales VAT (%)"
+            placeholder="Enter Sales VAT %"
             value={formData.items_sdvat}
             onChange={(e) => onChange("items_sdvat", e.target.value)}
             error={formErrors.items_sdvat}
@@ -253,7 +275,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-12">
+        <div className="col-span-6">
           <InputText
             label="Notes"
             placeholder="Enter notes"

@@ -93,9 +93,9 @@ const MrrList = ({ listData, onEdit, onDelete }) => {
       striped
       hoverable
       exportable
-      exportFilename="mrr-export.csv"
+      exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No MRR records found"
+      emptyMessage="No data found"
       className="mt-2"
     />
   );

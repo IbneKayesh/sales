@@ -6,9 +6,6 @@ import InputCalendar from "@/components/InputCalendar";
 import AuditData from "@/components/AuditData";
 import { IconPlus, IconClose, IconSave } from "@/icons";
 
-// Invoice header form — invoice entry style.
-// Only the entry fields live here; the computed/split values are rendered
-// as the Bill Summary panel at the bottom of ItemList.
 const InvoiceForm = ({
   isBusy,
   readOnly,
@@ -52,6 +49,7 @@ const InvoiceForm = ({
             disabled={readOnly || stopEdit}
             optionValue="id"
             optionLabel="cntct_cname"
+            optionGrid = "cntct_cname:Name,cntct_cntps:Person,cntct_cntno:Contact,cntct_ofadr:Address,cntct_dspct:Discount%,cntct_crlmt:Credit,cntct_crbal:Balance"
           />
         </div>
         <div className="col-span-3">

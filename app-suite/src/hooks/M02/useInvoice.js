@@ -96,12 +96,12 @@ const useInvoice = () => {
     // Totals
     //---------------------------------------------------
     const totalAmount = newItems.reduce(
-      (sum, item) => sum + num(item.mrrdc_itrat) * num(item.mrrdc_itqty),
+      (sum, item) => sum + num(item.invcc_itrat) * num(item.invcc_itqty),
       0,
     );
 
     const totalQty = newItems.reduce(
-      (sum, item) => sum + num(item.mrrdc_itqty),
+      (sum, item) => sum + num(item.invcc_itqty),
       0,
     );
 
@@ -146,7 +146,7 @@ const useInvoice = () => {
     //      into invcm_invds. The value is used as-is (kept raw, never reformatted),
     //      because re-formatting it to 4 decimals mid-typing would break the input.
     // The effective amount computed here is then split proportionally across the item
-    // lines (mrrdc_edamt).
+    // lines (invcc_edamt).
     // write the effective discount amount back: computed (formatted) in % mode,
     // or the raw user-typed value (unformatted, so typing stays usable) in amount mode
     const invoice_discount_pct = Number(master?.invcm_dspct || 0);
@@ -158,14 +158,14 @@ const useInvoice = () => {
     }
 
     newItems = newItems.map((item) => {
-      const mrrdc_edamt = div(
-        num(invoice_discount_amount) * num(item.mrrdc_itqty),
+      const invcc_edamt = div(
+        num(invoice_discount_amount) * num(item.invcc_itqty),
         totalQty,
       );
 
       return {
         ...item,
-        mrrdc_edamt: Number(mrrdc_edamt).toFixed(4),
+        invcc_edamt: Number(invcc_edamt).toFixed(4),
       };
     });
 
@@ -174,39 +174,39 @@ const useInvoice = () => {
     //---------------------------------------------------
 
     newItems = newItems.map((item) => {
-      const qty = num(item.mrrdc_itqty);
-      const rate = num(item.mrrdc_itrat);
+      const qty = num(item.invcc_itqty);
+      const rate = num(item.invcc_itrat);
 
-      const mrrdc_itamt = rate * qty;
+      const invcc_itamt = rate * qty;
 
-      const mrrdc_dsamt = mrrdc_itamt * (num(item.mrrdc_dspct) / 100);
+      const invcc_dsamt = invcc_itamt * (num(item.invcc_dspct) / 100);
 
-      const afterDisc = mrrdc_itamt - (mrrdc_dsamt + num(item.mrrdc_edamt));
+      const afterDisc = invcc_itamt - (invcc_dsamt + num(item.invcc_edamt));
 
-      const mrrdc_ivamt = afterDisc * (num(item.mrrdc_ivpct) / 100);
+      const invcc_ivamt = afterDisc * (num(item.invcc_ivpct) / 100);
 
-      const mrrdc_vtamt = afterDisc * (num(item.mrrdc_vtpct) / 100);
+      const invcc_vtamt = afterDisc * (num(item.invcc_vtpct) / 100);
 
-      const mrrdc_txamt = afterDisc * (num(item.mrrdc_txpct) / 100);
+      const invcc_txamt = afterDisc * (num(item.invcc_txpct) / 100);
 
       //---------------------------------------------------
       // Freight
       //---------------------------------------------------
 
-      let mrrdc_fcpct = num(item.mrrdc_fcpct);
-      let mrrdc_fcamt = num(item.mrrdc_fcamt);
+      let invcc_fcpct = num(item.invcc_fcpct);
+      let invcc_fcamt = num(item.invcc_fcamt);
 
-      if (mrrdc_fcpct > 0) {
-        mrrdc_fcamt = Number((afterDisc * (mrrdc_fcpct / 100)).toFixed(4));
-      } else if (mrrdc_fcamt > 0) {
-        mrrdc_fcpct = Number((div(mrrdc_fcamt, afterDisc) * 100).toFixed(4));
+      if (invcc_fcpct > 0) {
+        invcc_fcamt = Number((afterDisc * (invcc_fcpct / 100)).toFixed(4));
+      } else if (invcc_fcamt > 0) {
+        invcc_fcpct = Number((div(invcc_fcamt, afterDisc) * 100).toFixed(4));
       }
 
       //---------------------------------------------------
       // Including Cost
       //---------------------------------------------------
 
-      const iAmt = mrrdc_itamt * incAmtRate;
+      const iAmt = invcc_itamt * incAmtRate;
       const iQty = qty * incQtyRate;
       const iLine = incLineRate;
 
@@ -214,37 +214,37 @@ const useInvoice = () => {
       // Excluding Cost
       //---------------------------------------------------
 
-      const eAmt = mrrdc_itamt * excAmtRate;
+      const eAmt = invcc_itamt * excAmtRate;
       const eQty = qty * excQtyRate;
       const eLine = excLineRate;
 
-      const mrrdc_icamt = iAmt + iQty + iLine;
-      const mrrdc_ecamt = eAmt + eQty + eLine;
+      const invcc_icamt = iAmt + iQty + iLine;
+      const invcc_ecamt = eAmt + eQty + eLine;
 
       //---------------------------------------------------
       // Net Amount
       //---------------------------------------------------
 
-      const mrrdc_ntamt = afterDisc + mrrdc_vtamt + mrrdc_icamt - mrrdc_ivamt;
+      const invcc_ntamt = afterDisc + invcc_vtamt + invcc_icamt - invcc_ivamt;
 
-      const mrrdc_csrat = div(
-        afterDisc + mrrdc_fcamt + mrrdc_icamt + mrrdc_ecamt - mrrdc_ivamt,
+      const invcc_csrat = div(
+        afterDisc + invcc_fcamt + invcc_icamt + invcc_ecamt - invcc_ivamt,
         qty,
       );
 
       return {
         ...item,
-        mrrdc_itamt,
-        mrrdc_dsamt,
-        mrrdc_ivamt,
-        mrrdc_vtamt,
-        mrrdc_txamt,
-        mrrdc_fcpct,
-        mrrdc_fcamt,
-        mrrdc_icamt,
-        mrrdc_ecamt,
-        mrrdc_ntamt,
-        mrrdc_csrat,
+        invcc_itamt,
+        invcc_dsamt,
+        invcc_ivamt,
+        invcc_vtamt,
+        invcc_txamt,
+        invcc_fcpct,
+        invcc_fcamt,
+        invcc_icamt,
+        invcc_ecamt,
+        invcc_ntamt,
+        invcc_csrat,
       };
     });
 
@@ -256,15 +256,15 @@ const useInvoice = () => {
 
     const totals = newItems.reduce(
       (acc, item) => ({
-        tramt: acc.tramt + num(item.mrrdc_itamt),
-        itmds: acc.itmds + num(item.mrrdc_dsamt),
-        ivtmt: acc.ivtmt + num(item.mrrdc_ivamt),
-        vtamt: acc.vtamt + num(item.mrrdc_vtamt),
-        txamt: acc.txamt + num(item.mrrdc_txamt),
-        fcamt: acc.fcamt + num(item.mrrdc_fcamt),
-        icamt: acc.icamt + num(item.mrrdc_icamt),
-        ecamt: acc.ecamt + num(item.mrrdc_ecamt),
-        ntamt: acc.ntamt + num(item.mrrdc_ntamt),
+        tramt: acc.tramt + num(item.invcc_itamt),
+        itmds: acc.itmds + num(item.invcc_dsamt),
+        ivtmt: acc.ivtmt + num(item.invcc_ivamt),
+        vtamt: acc.vtamt + num(item.invcc_vtamt),
+        txamt: acc.txamt + num(item.invcc_txamt),
+        fcamt: acc.fcamt + num(item.invcc_fcamt),
+        icamt: acc.icamt + num(item.invcc_icamt),
+        ecamt: acc.ecamt + num(item.invcc_ecamt),
+        ntamt: acc.ntamt + num(item.invcc_ntamt),
       }),
       {
         tramt: 0,
