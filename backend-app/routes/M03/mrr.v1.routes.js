@@ -71,7 +71,7 @@ router.post("/get-all-active", async (req, res) => {
     ORDER BY mrr.mrrdm_trnno ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get Department- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get MRR- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",

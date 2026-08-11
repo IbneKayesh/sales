@@ -19,18 +19,18 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT mrr.*, dpt.dpart_cname, cnt.cntct_cname,
+    const sql = `SELECT inv.*, dpt.dpart_cname, cnt.cntct_cname,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
-    FROM tmpb_mrrdm mrr
-    JOIN tmsb_dpart dpt ON mrr.mrrdm_dpart = dpt.id
-    JOIN tmcb_cntct cnt ON mrr.mrrdm_cntct = cnt.id
-    LEFT JOIN tmhb_emply csr ON mrr.mrrdm_crusr = csr.id
-    LEFT JOIN tmhb_emply usr ON mrr.mrrdm_upusr = usr.id
-    WHERE mrr.mrrdm_users = $1
-    ORDER BY mrr.mrrdm_trdat DESC`;
+    FROM tmob_invcm inv
+    JOIN tmsb_dpart dpt ON inv.invcm_dpart = dpt.id
+    JOIN tmcb_cntct cnt ON inv.invcm_cntct = cnt.id
+    LEFT JOIN tmhb_emply csr ON inv.invcm_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON inv.invcm_upusr = usr.id
+    WHERE inv.invcm_users = $1
+    ORDER BY inv.invcm_trdat DESC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get MRR- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get Invoice- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -61,17 +61,17 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT mrr.*,
+    const sql = `SELECT inv.*,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
-    FROM tmpb_mrrdm mrr
-    LEFT JOIN tmhb_emply csr ON mrr.mrrdm_crusr = csr.id
-    LEFT JOIN tmhb_emply usr ON mrr.mrrdm_upusr = usr.id
-    WHERE mrr.mrrdm_users = $1
-    AND mrr.mrrdm_actve = TRUE
-    ORDER BY mrr.mrrdm_trnno ASC`;
+    FROM tmob_invcm inv
+    LEFT JOIN tmhb_emply csr ON inv.invcm_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON inv.invcm_upusr = usr.id
+    WHERE inv.invcm_users = $1
+    AND inv.invcm_actve = TRUE
+    ORDER BY inv.invcm_trnno ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get Department- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get invoice- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
