@@ -3,10 +3,12 @@ import InputText from "@/components/InputText";
 import Dropdown from "@/components/Dropdown";
 import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
-import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
 import { IconPlus, IconClose, IconSave } from "@/icons";
 
+// Invoice header form — invoice entry style.
+// Only the entry fields live here; the computed/split values are rendered
+// as the Bill Summary panel at the bottom of ItemList.
 const InvoiceForm = ({
   isBusy,
   readOnly,
@@ -18,10 +20,11 @@ const InvoiceForm = ({
   onSubmit,
   dpart_Options,
   cntct_Options,
+  //modal
+  onShowModal,
 }) => {
   return (
     <div className="form-wrap">
-      adding items stop edit master invoice + mrr
       <div className="grid">
         <div className="col-span-3">
           <Dropdown
@@ -72,51 +75,18 @@ const InvoiceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
-          <InputLabel label="Total Amount" value={formData.invcm_tramt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Item Discount" value={formData.invcm_itmds} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Invoice Discount %" value={formData.invcm_dspct} />
-        </div>
-        <div className="col-span-2">
+        <div className="col-span-3">
           <InputNumber
-            label="Invoice Discount"
+            label="Exchange Rate"
             placeholder="0.00"
-            value={formData.invcm_invds}
-            onChange={(e) => onChange("invcm_invds", e.target.value)}
-            error={formErrors.invcm_invds}
+            value={formData.invcm_exrat}
+            onChange={(e) => onChange("invcm_exrat", e.target.value)}
+            error={formErrors.invcm_exrat}
             step="0.01"
-            disabled={readOnly || Number(formData.invcm_dspct) > 0}
+            disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
-          <InputLabel label="Loyalty Discount" value={formData.invcm_lylds} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="VAT Amount" value={formData.invcm_vtamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Include Cost" value={formData.invcm_icamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Exclude Cost" value={formData.invcm_ecamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Payable Amount" value={formData.invcm_pyamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Paid Amount" value={formData.invcm_pdamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Due Amount" value={formData.invcm_duamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Exchange Rate" value={formData.invcm_exrat} />
-        </div>
-        <div className="col-span-12">
+        <div className="col-span-9">
           <InputText
             label="Notes"
             placeholder="Enter notes"
@@ -143,7 +113,7 @@ const InvoiceForm = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onCancel("PAYMENT")}
+              onClick={() => onShowModal("PAYMENT")}
             >
               <IconPlus size={14} className="icon-left" />
               Add Payment
@@ -151,7 +121,7 @@ const InvoiceForm = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onCancel("COSTING")}
+              onClick={() => onShowModal("COSTING")}
             >
               <IconPlus size={14} className="icon-left" />
               Add Costing
@@ -159,7 +129,7 @@ const InvoiceForm = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onCancel("ITEM")}
+              onClick={() => onShowModal("ITEM")}
             >
               <IconPlus size={14} className="icon-left" />
               Add Item

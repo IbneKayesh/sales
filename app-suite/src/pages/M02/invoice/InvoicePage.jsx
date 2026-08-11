@@ -14,6 +14,7 @@ import ItemForm from "./ItemForm";
 import ItemList from "./ItemList";
 import CostForm from "./CostForm";
 import CostList from "./CostList";
+import BillSummary from "./BillSummary";
 import PaymentForm from "./PaymentForm";
 import PaymentList from "./PaymentList";
 
@@ -162,6 +163,8 @@ const InvoicePage = () => {
               onSubmit={handleSubmit}
               dpart_Options={dpart_Options}
               cntct_Options={cntct_Options}
+              //modal
+              onShowModal={handleShowModal}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && listDataItem.length > 0 && (
@@ -170,6 +173,13 @@ const InvoicePage = () => {
               listData={listDataItem}
               onEdit={handleEditItem}
               onDelete={handleDeleteItem}
+            />
+          )}
+          {pgView === "SYS_VW_FRM_1" && (
+            <BillSummary
+              formData={formData}
+              readOnly={readOnly}
+              onChange={handleChange}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && listDataCost.length > 0 && (

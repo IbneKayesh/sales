@@ -149,7 +149,7 @@ export default function DataTable({
                 title="Export to CSV"
               >
                 <IconDownload size={14} />
-                Export CSV
+                CSV
               </button>
             )}
             {toolbarActions}

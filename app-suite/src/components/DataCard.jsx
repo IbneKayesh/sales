@@ -17,7 +17,7 @@
 import { forwardRef } from 'react'
 
 /* ---------- Grid container ---------- */
-export function DataCardGrid({ children, cols = 4, gap = 16, className = '', style, ...rest }) {
+export function DataCardGrid({ children, cols = 4, gap = 12, className = '', style, ...rest }) {
   return (
     <div
       className={`datacard-grid${className ? ' ' + className : ''}`}

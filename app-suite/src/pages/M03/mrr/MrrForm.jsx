@@ -3,7 +3,6 @@ import InputText from "@/components/InputText";
 import Dropdown from "@/components/Dropdown";
 import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
-import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
 import { IconPlus, IconClose, IconSave } from "@/icons";
 
@@ -73,54 +72,7 @@ const MrrForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
-          <InputLabel label="Total Amount" value={formData.mrrdm_tramt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Item Discount" value={formData.mrrdm_itmds} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Invoice Discount %" value={formData.mrrdm_dspct} />
-        </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="Invoice Discount"
-            placeholder="0.00"
-            value={formData.mrrdm_invds}
-            onChange={(e) => onChange("mrrdm_invds", e.target.value)}
-            error={formErrors.mrrdm_invds}
-            step="0.01"
-            disabled={readOnly || Number(formData.mrrdm_dspct) > 0}
-          />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="iVAT Amount" value={formData.mrrdm_ivtmt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="VAT Amount" value={formData.mrrdm_vtamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="TAX Amount" value={formData.mrrdm_txamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Fix Amount" value={formData.mrrdm_fcamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Include Cost" value={formData.mrrdm_icamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Exclude Cost" value={formData.mrrdm_ecamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Payable Amount" value={formData.mrrdm_pyamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Paid Amount" value={formData.mrrdm_pdamt} />
-        </div>
-        <div className="col-span-2">
-          <InputLabel label="Due Amount" value={formData.mrrdm_duamt} />
-        </div>
-        <div className="col-span-2">
+        <div className="col-span-3">
           <InputNumber
             label="Exchange Rate"
             placeholder="0.00"
@@ -141,7 +93,7 @@ const MrrForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-5">
+        <div className="col-span-6">
           <InputText
             label="Notes"
             placeholder="Enter notes"

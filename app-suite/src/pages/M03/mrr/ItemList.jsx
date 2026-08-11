@@ -140,6 +140,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       visible: !readOnly,
     },
   ];
+
   return (
     <>
       <p>(Items → RM/PM/FG)</p>

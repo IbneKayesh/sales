@@ -25,12 +25,12 @@ export function PageCardTitle({ title, subtitle, className = '', ...rest }) {
 }
 
 export function PageCardActions({ children, className = '', ...rest }) {
-    return (
-      <div className={`page-card__actions${className ? ' ' + className : ''}`} {...rest}>
-        {children}
-      </div>
-    )
-  }
+  return (
+    <div className={`page-card__actions${className ? ' ' + className : ''}`} {...rest}>
+      {children}
+    </div>
+  )
+}
 
 export function PageCardBody({ children, className = '', ...rest }) {
   return (
