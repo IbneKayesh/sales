@@ -1,6 +1,7 @@
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
+import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 
@@ -29,15 +30,7 @@ const PriceForm = ({
           />
         </div>
         <div className="col-span-2">
-          <InputNumber
-            label="Last Purchase Rate"
-            placeholder="Enter last purchase rate"
-            value={formData.price_lprat}
-            onChange={(e) => onChange("price_lprat", e.target.value)}
-            error={formErrors.price_lprat}
-            step="0.01"
-            disabled={readOnly}
-          />
+          <InputLabel label="Last Purchase Rate" value={formData.price_lprat} />
         </div>
         <div className="col-span-2">
           <InputNumber
@@ -84,26 +77,10 @@ const PriceForm = ({
           />
         </div>
         <div className="col-span-2">
-          <InputNumber
-            label="Good Stock"
-            placeholder="Enter good stock"
-            value={formData.price_gdstk}
-            onChange={(e) => onChange("price_gdstk", e.target.value)}
-            error={formErrors.price_gdstk}
-            step="0.01"
-            disabled={readOnly}
-          />
+          <InputLabel label="Good Stock" value={formData.price_gdstk} />
         </div>
         <div className="col-span-2">
-          <InputNumber
-            label="Bad Stock"
-            placeholder="Enter bad stock"
-            value={formData.price_bdstk}
-            onChange={(e) => onChange("price_bdstk", e.target.value)}
-            error={formErrors.price_bdstk}
-            step="0.01"
-            disabled={readOnly}
-          />
+          <InputLabel label="Bad Stock" value={formData.price_bdstk} />
         </div>
         <div className="col-span-2">
           <InputNumber
@@ -128,26 +105,13 @@ const PriceForm = ({
           />
         </div>
         <div className="col-span-2">
-          <InputNumber
+          <InputLabel
             label="Purchase Booking Qty"
-            placeholder="Enter purchase booking qty"
             value={formData.price_pbqty}
-            onChange={(e) => onChange("price_pbqty", e.target.value)}
-            error={formErrors.price_pbqty}
-            step="0.01"
-            disabled={readOnly}
           />
         </div>
         <div className="col-span-2">
-          <InputNumber
-            label="Sales Booking Qty"
-            placeholder="Enter sales booking qty"
-            value={formData.price_sbqty}
-            onChange={(e) => onChange("price_sbqty", e.target.value)}
-            error={formErrors.price_sbqty}
-            step="0.01"
-            disabled={readOnly}
-          />
+          <InputLabel label="Sales Booking Qty" value={formData.price_sbqty} />
         </div>
         <div className="col-span-3">
           <InputText

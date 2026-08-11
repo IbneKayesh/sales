@@ -2,6 +2,7 @@ import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
+import InputLabel from "@/components/InputLabel";
 import { IconPlus } from "@/icons";
 
 const ItemForm = ({
@@ -30,7 +31,7 @@ const ItemForm = ({
             optionLabel="price_cname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-4">
           <InputNumber
             label="Rate"
             placeholder="0.00"
@@ -38,10 +39,10 @@ const ItemForm = ({
             onChange={(e) => onChange("invcc_itrat", e.target.value)}
             error={formErrors.invcc_itrat}
             step="0.01"
-            disabled={readOnly}
+            disabled={readOnly || true}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-4">
           <InputNumber
             label="Quantity"
             placeholder="0"
@@ -53,37 +54,10 @@ const ItemForm = ({
           />
         </div>
         <div className="col-span-2">
-          <InputNumber
-            label="Disc %"
-            placeholder="0.00"
-            value={formData.invcc_dspct}
-            onChange={(e) => onChange("invcc_dspct", e.target.value)}
-            error={formErrors.invcc_dspct}
-            step="0.01"
-            disabled={readOnly}
-          />
+          <InputLabel label="Disc %" value={formData.invcc_dspct} />
         </div>
         <div className="col-span-2">
-          <InputNumber
-            label="VAT %"
-            placeholder="0.00"
-            value={formData.invcc_vtpct}
-            onChange={(e) => onChange("invcc_vtpct", e.target.value)}
-            error={formErrors.invcc_vtpct}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="Fix Cost Amount"
-            placeholder="0.00"
-            value={formData.invcc_fcamt}
-            onChange={(e) => onChange("invcc_fcamt", e.target.value)}
-            error={formErrors.invcc_fcamt}
-            step="0.01"
-            disabled={readOnly}
-          />
+          <InputLabel label="VAT %" value={formData.invcc_vtpct} />
         </div>
         <div className="col-span-8">
           <InputText
@@ -94,6 +68,9 @@ const ItemForm = ({
             error={formErrors.invcc_notes}
             disabled={readOnly}
           />
+        </div>
+        <div className="col-span-4">
+          <InputLabel label="Stock" value={formData.stock_ohqty || 0} />
         </div>
       </div>
       <div className="form-actions">

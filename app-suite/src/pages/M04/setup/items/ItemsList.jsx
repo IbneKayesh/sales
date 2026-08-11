@@ -32,6 +32,7 @@ const ItemsList = ({ cfColumns = [], listData, onEdit, onDelete, onPrice }) => {
       },
     },
     { key: "items_brcod", header: "Barcode", width: "140px" },
+    { key: "items_hscod", header: "HS Code", width: "140px" },
     {
       key: "items_szqty",
       header: "Size Unit",
@@ -60,6 +61,61 @@ const ItemsList = ({ cfColumns = [], listData, onEdit, onDelete, onPrice }) => {
     { key: "items_itype", header: "Type", width: "80px" },
     { key: "scatg_cname", header: "Category", width: "80px" },
     { key: "brand_cname", header: "Brand", width: "120px" },
+    {
+      key: "items_tstck",
+      header: "Track Stock",
+      width: "80px",
+      render: (v) => {
+        return (
+          <Badge variant={v ? "success" : "danger"}>
+            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+            {v ? "Yes" : "No"}
+          </Badge>
+        );
+      },
+    },
+    { key: "items_sdvat", header: "SD VAT %", width: "80px" },
+    { key: "items_smrgn", header: "Margin (%)", width: "80px" },
+    { key: "items_fxcst", header: "Fixed Cost", width: "80px" },
+    {
+      key: "items_stpur",
+      header: "Stop Purchase",
+      width: "80px",
+      render: (v) => {
+        return (
+          <Badge variant={v ? "success" : "danger"}>
+            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+            {v ? "Yes" : "No"}
+          </Badge>
+        );
+      },
+    },
+    {
+      key: "items_stsal",
+      header: "Stop Sale",
+      width: "80px",
+      render: (v) => {
+        return (
+          <Badge variant={v ? "success" : "danger"}>
+            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+            {v ? "Yes" : "No"}
+          </Badge>
+        );
+      },
+    },
+    {
+      key: "items_stnsf",
+      header: "Stop Transfer",
+      width: "80px",
+      render: (v) => {
+        return (
+          <Badge variant={v ? "success" : "danger"}>
+            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+            {v ? "Yes" : "No"}
+          </Badge>
+        );
+      },
+    },
     {
       key: "price_gdstk",
       header: "Stock",

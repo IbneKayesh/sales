@@ -10,6 +10,7 @@ import { IconPlus, IconClose, IconSave } from "@/icons";
 const InvoiceForm = ({
   isBusy,
   readOnly,
+  stopEdit,
   formData,
   formErrors,
   onChange,
@@ -20,6 +21,7 @@ const InvoiceForm = ({
 }) => {
   return (
     <div className="form-wrap">
+      adding items stop edit master invoice + mrr
       <div className="grid">
         <div className="col-span-3">
           <Dropdown
@@ -30,7 +32,7 @@ const InvoiceForm = ({
             error={formErrors.invcm_dpart}
             required
             placeholder="Select..."
-            disabled={readOnly}
+            disabled={readOnly || stopEdit}
             optionValue="id"
             optionLabel="dpart_cname"
           />
@@ -44,7 +46,7 @@ const InvoiceForm = ({
             error={formErrors.invcm_cntct}
             required
             placeholder="Select..."
-            disabled={readOnly}
+            disabled={readOnly || stopEdit}
             optionValue="id"
             optionLabel="cntct_cname"
           />

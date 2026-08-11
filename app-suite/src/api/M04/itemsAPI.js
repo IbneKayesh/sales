@@ -30,8 +30,8 @@ export const itemsAPI = {
     apiRequest("/M04/v1/items/get-mrr-items", {
       body: data,
     }),
-  getSalesInvoiceItems: (data) =>
-    apiRequest("/M04/v1/items/get-sales-invoice-items", {
+  getSalesInvoiceItemsByDpart: (data) =>
+    apiRequest("/M04/v1/items/get-sales-invoice-items-by-dpart", {
       body: data,
     }),
 };

@@ -67,6 +67,14 @@ const useInvoice = () => {
     getAllInvoices();
   }, []);
 
+  useEffect(() => {
+    if (listDataItem.length > 0) {
+      setStopEdit(true);
+    } else {
+      setStopEdit(false);
+    }
+  }, [listDataItem]);
+
   function reCalculate(items, master, costList, paymList) {
     //console.log("items", items);
 
@@ -343,15 +351,17 @@ const useInvoice = () => {
     } catch (error) {}
   };
 
-  const getItems = async () => {
+  const getItemsByDepartment = async (id) => {
     try {
-      const resp = await itemsAPI.getSalesInvoiceItems();
+      const resp = await itemsAPI.getSalesInvoiceItemsByDpart({
+        dpart_id: id,
+      });
       const list = resp.data || [];
       setItems_Options(list);
     } catch (error) {}
   };
 
-  const handleChange = (f, v) => {
+  const handleChange = async (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmob_invcm);
     setFormErrors(newErrors);
@@ -377,6 +387,12 @@ const useInvoice = () => {
       };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
     }
+
+    if (f === "invcm_dpart") {
+      setListDataItem([]);
+      //if change department, then item list empty
+      await getItemsByDepartment(v);
+    }
   };
 
   const handleEdit = async (rowData) => {
@@ -386,8 +402,8 @@ const useInvoice = () => {
     loadAllDetails(rowData.id);
     getAllDepartments();
     getAllContacts();
-    getItems();
-    getExpnPaym();
+    //getExpnPaym();
+    //await getItemsByDepartment(rowData.invcm_dpart);
   };
 
   const loadAllDetails = async (id) => {
@@ -471,7 +487,6 @@ const useInvoice = () => {
     getAllDepartments();
     getAllContacts();
     getExpnPaym();
-    getItems();
   };
 
   const handleCancel = () => {
@@ -533,7 +548,13 @@ const useInvoice = () => {
         invcc_items: price_id?.id,
         invcc_price: v,
         invcc_units: price_id?.items_runit,
-        invcc_itrat: price_id?.price_lprat || 0,
+        invcc_itrat: price_id?.price_mrrat || 0,
+        invcc_dspct: price_id?.price_dspct || 0,
+        invcc_vtpct: price_id?.items_sdvat || 0,
+        invcc_csrat: price_id?.stock_cprat || 0,
+        invcc_refid: "",
+        invcc_stock: price_id?.stock_id,
+        stock_ohqty: price_id?.stock_ohqty,
       }));
     }
   };
@@ -544,10 +565,29 @@ const useInvoice = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (["", 0, "0", null, undefined].includes(formDataItem.invcc_itqty)) {
-      showToast("Quantity is required", { type: "warning" });
+
+    const price = Number(formDataItem.invcc_itrat);
+    if (!Number.isFinite(price) || price === 0) {
+      showToast("Price is required", { type: "warning" });
       return;
     }
+    const qty = Number(formDataItem.invcc_itqty);
+    if (!Number.isFinite(qty) || qty === 0) {
+      showToast("Qty is required", { type: "warning" });
+      return;
+    }
+
+    const ohqty = Number(formDataItem.stock_ohqty);
+    const stockDiff = ohqty - qty;
+    if (stockDiff < 0) {
+      showToast(`${stockDiff} Stock is not available`, { type: "warning" });
+      return;
+    }
+
+    // if (["", 0, "0", null, undefined].includes(formDataItem.invcc_itqty)) {
+    //   showToast("Quantity is required", { type: "warning" });
+    //   return;
+    // }
 
     const items_iname = items_Options.find(
       (opt) => opt.price_id === formDataItem.invcc_price,

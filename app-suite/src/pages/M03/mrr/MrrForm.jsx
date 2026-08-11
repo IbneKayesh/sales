@@ -33,7 +33,7 @@ const MrrForm = ({
             error={formErrors.mrrdm_dpart}
             required
             placeholder="Select..."
-            disabled={readOnly}
+            disabled={readOnly || stopEdit}
             optionValue="id"
             optionLabel="dpart_cname"
           />
@@ -47,7 +47,7 @@ const MrrForm = ({
             error={formErrors.mrrdm_cntct}
             required
             placeholder="Select..."
-            disabled={readOnly}
+            disabled={readOnly || stopEdit}
             optionValue="id"
             optionLabel="cntct_cname"
           />

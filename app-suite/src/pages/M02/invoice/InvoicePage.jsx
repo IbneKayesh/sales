@@ -21,7 +21,9 @@ const InvoicePage = () => {
   const {
     isBusy,
     pgView,
+    pageAuth,
     readOnly,
+    stopEdit,
     listData,
     formData,
     listDataItem,
@@ -152,6 +154,7 @@ const InvoicePage = () => {
             <InvoiceForm
               isBusy={isBusy}
               readOnly={readOnly}
+              stopEdit={stopEdit}
               formData={formData}
               formErrors={formErrors}
               onChange={handleChange}

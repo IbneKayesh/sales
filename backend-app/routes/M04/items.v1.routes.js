@@ -503,7 +503,6 @@ router.post("/get-new-business-items", async (req, res) => {
   }
 });
 
-
 // get-mrr-items
 router.post("/get-mrr-items", async (req, res) => {
   try {
@@ -563,13 +562,13 @@ router.post("/get-mrr-items", async (req, res) => {
   }
 });
 
-//get-sales-invoice-items
-router.post("/get-sales-invoice-items", async (req, res) => {
+// get-sales-invoice-items-by-dpart
+router.post("/get-sales-invoice-items-by-dpart", async (req, res) => {
   try {
-    const { user_s, user_c, user_b } = req.body;
+    const { dpart_id, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!user_c) {
+    if (!dpart_id || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -588,7 +587,8 @@ router.post("/get-sales-invoice-items", async (req, res) => {
     sunit.units_cname as sunit_cname,
     sgrup.sgrup_cname as sgrup_cname,
     scatg.scatg_cname as scatg_cname,
-    brand.brand_cname as brand_cname
+    brand.brand_cname as brand_cname,
+    stock.id stock_id, stock.stock_ohqty, stock.stock_cprat
     FROM tmib_items itm
     JOIN tmib_price prc ON itm.id = prc.price_items    
     JOIN tmib_units runit ON itm.items_runit = runit.id
@@ -597,15 +597,21 @@ router.post("/get-sales-invoice-items", async (req, res) => {
     JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
     JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
     JOIN tmib_brand brand ON itm.items_brand = brand.id
-    WHERE itm.items_stpur = false
+    JOIN tmib_stock stock ON itm.id = stock.stock_items
+                          AND prc.id = stock.stock_price
+                          AND itm.items_users = stock.stock_users
+                          AND itm.items_bsins = stock.stock_bsins
+                          AND stock.stock_ohqty > 0
+                          AND stock.stock_dpart = $1
+    WHERE itm.items_stsal = false
     AND itm.items_itype IN ('SVC', 'FG')
     AND itm.items_actve = TRUE
     AND prc.price_actve = TRUE
-    AND prc.price_users = $1
-    AND prc.price_bsins = $2
+    AND prc.price_users = $2
+    AND prc.price_bsins = $3
     ORDER BY itm.items_iname ASC`;
 
-    const params = [user_c, user_b];
+    const params = [dpart_id, user_c, user_b];
     const rows = await dbGetAll(sql, params, `get new mrr items- ${user_c}`);
     res.json({
       success: true,
@@ -621,6 +627,5 @@ router.post("/get-sales-invoice-items", async (req, res) => {
     });
   }
 });
-
 
 module.exports = router;

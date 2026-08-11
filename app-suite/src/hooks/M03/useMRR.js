@@ -86,6 +86,14 @@ const useMRR = () => {
     getAllMRR();
   }, []);
 
+  useEffect(() => {
+    if (listDataItem.length > 0) {
+      setStopEdit(true);
+    } else {
+      setStopEdit(false);
+    }
+  }, [listDataItem]);
+
   function reCalculate1(items, master, costList, paymList) {
     //clone costing, items
     let newItems = [...items];
