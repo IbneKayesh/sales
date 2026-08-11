@@ -320,7 +320,7 @@ const useInvoice = () => {
       return;
     }
     try {
-      const resp = await departmentAPI.getAllActive({});
+      const resp = await departmentAPI.getSales({});
       const list = resp.data || [];
       setDpart_Options(list);
     } catch (error) {}

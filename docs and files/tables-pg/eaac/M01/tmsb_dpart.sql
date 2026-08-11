@@ -12,6 +12,11 @@ CREATE TABLE tmsb_dpart (
   dpart_cname varchar(50) NOT NULL,
   dpart_ofadr varchar(50),
   dpart_emcap integer NOT NULL DEFAULT 1,
+  dpart_stdst boolean NOT NULL DEFAULT true,
+  dpart_stpur boolean NOT NULL DEFAULT true,
+  dpart_stsal boolean NOT NULL DEFAULT true,
+  dpart_stnsf boolean NOT NULL DEFAULT true,
+  dpart_stpro boolean NOT NULL DEFAULT true,
 
   -- default 2
   dpart_actve boolean NOT NULL DEFAULT true,

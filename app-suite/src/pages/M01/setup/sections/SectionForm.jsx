@@ -46,7 +46,7 @@ const SectionForm = ({
         </div>
         <div className="col-span-3">
           <InputNumber
-            label="Employee Capacity"
+            label="Employee Limit"
             placeholder="Enter capacity"
             value={formData.sectn_emcap}
             onChange={(e) => onChange("sectn_emcap", e.target.value)}

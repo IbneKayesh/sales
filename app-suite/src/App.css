@@ -106,7 +106,7 @@ code {
   align-items: center;
   justify-content: flex-end;
   gap: var(--sp-3);
-  padding-top: var(--sp-4);
+  padding-top: var(--sp-3);
   border-top: 1px solid var(--border);
 }
 
@@ -314,7 +314,7 @@ code {
 
 /* --- Column settings popup (TableColumns) --- */
 .table-columns-modal .modal__body {
-  padding: var(--sp-4) var(--sp-6);
+  padding: var(--sp-2) var(--sp-4);
 }
 
 .table-columns__list {
@@ -3388,7 +3388,7 @@ code {
   align-items: center;
   justify-content: space-between;
   gap: var(--sp-4);
-  padding: var(--sp-5) var(--sp-6);
+  padding: var(--sp-3) var(--sp-4);
   border-bottom: 1px solid var(--border);
 }
 
@@ -3444,7 +3444,7 @@ code {
 
 /* --- Body --- */
 .modal__body {
-  padding: var(--sp-6);
+  padding: var(--sp-2);
   overflow-y: auto;
   flex: 1;
   text-align: left;

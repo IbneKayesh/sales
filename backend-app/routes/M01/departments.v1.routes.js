@@ -92,6 +92,11 @@ const create = async (req, res) => {
       dpart_cname,
       dpart_ofadr,
       dpart_emcap,
+      dpart_stdst,
+      dpart_stpur,
+      dpart_stsal,
+      dpart_stnsf,
+      dpart_stpro,
       user_s,
       user_c,
       user_b,
@@ -110,9 +115,11 @@ const create = async (req, res) => {
     const newCode = await GenNewCode(user_c, "tmsb_dpart");
 
     const sql = `INSERT INTO tmsb_dpart(id, dpart_users, dpart_bsins, dpart_ccode, dpart_cname, dpart_ofadr,
-    dpart_emcap, dpart_crusr, dpart_upusr)
+    dpart_emcap, dpart_stdst, dpart_stpur, dpart_stsal, dpart_stnsf, dpart_stpro,
+    dpart_crusr, dpart_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9)`;
+    $7, $8, $9, $10, $11, $12,
+    $13, $14)`;
     const params = [
       uuidv4(),
       user_c,
@@ -121,6 +128,11 @@ const create = async (req, res) => {
       dpart_cname,
       dpart_ofadr,
       dpart_emcap,
+      dpart_stdst,
+      dpart_stpur,
+      dpart_stsal,
+      dpart_stnsf,
+      dpart_stpro,
       user_s,
       user_s,
     ];
@@ -151,6 +163,11 @@ const update = async (req, res) => {
       dpart_cname,
       dpart_ofadr,
       dpart_emcap,
+      dpart_stdst,
+      dpart_stpur,
+      dpart_stsal,
+      dpart_stnsf,
+      dpart_stpro,
       user_s,
       user_c,
       user_b,
@@ -169,11 +186,27 @@ const update = async (req, res) => {
     SET dpart_cname = $1,
     dpart_ofadr = $2,
     dpart_emcap = $3,
-    dpart_upusr = $4,
+    dpart_stdst = $4,
+    dpart_stpur = $5,
+    dpart_stsal = $6,
+    dpart_stnsf = $7,
+    dpart_stpro = $8,
+    dpart_upusr = $9,
     dpart_updat = CURRENT_TIMESTAMP,
     dpart_rvnmr = dpart_rvnmr + 1
-    WHERE id = $5`;
-    const params = [dpart_cname, dpart_ofadr, dpart_emcap, user_s, id];
+    WHERE id = $10`;
+    const params = [
+      dpart_cname,
+      dpart_ofadr,
+      dpart_emcap,
+      dpart_stdst,
+      dpart_stpur,
+      dpart_stsal,
+      dpart_stnsf,
+      dpart_stpro,
+      user_s,
+      id,
+    ];
 
     await dbRun(sql, params, `update Department- ${user_c}`);
     res.json({
@@ -242,6 +275,84 @@ router.post("/delete", async (req, res) => {
       success: false,
       message: error.message || "An error occurred during db action",
       data: {},
+    });
+  }
+});
+
+// get-purchase
+router.post("/get-purchase", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT dprt.*, 0 as edit_stop
+    FROM tmsb_dpart dprt
+    WHERE dprt.dpart_users = $1
+    AND dprt.dpart_stpur = FALSE
+    AND dprt.dpart_actve = TRUE
+    ORDER BY dprt.dpart_cname ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get Department- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+// get-sales
+router.post("/get-sales", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT dprt.*, 0 as edit_stop
+    FROM tmsb_dpart dprt
+    WHERE dprt.dpart_users = $1
+    AND dprt.dpart_stsal = FALSE
+    AND dprt.dpart_actve = TRUE
+    ORDER BY dprt.dpart_cname ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get Department- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
     });
   }
 });

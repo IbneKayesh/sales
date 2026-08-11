@@ -1,8 +1,11 @@
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
+import Dropdown from "@/components/Dropdown";
+import InputSwitch from "@/components/InputSwitch";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
+import { bool_Options } from "@/utils/vtable.js";
 
 const DepartmentForm = ({
   isBusy,
@@ -17,7 +20,7 @@ const DepartmentForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-4">
           <InputText
             label="Department Name"
             placeholder="Enter department name"
@@ -28,9 +31,9 @@ const DepartmentForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
-            label="Employee Capacity"
+            label="Employee Limit"
             placeholder="Enter capacity"
             value={formData.dpart_emcap}
             onChange={(e) => onChange("dpart_emcap", e.target.value)}
@@ -47,6 +50,51 @@ const DepartmentForm = ({
             onChange={(e) => onChange("dpart_ofadr", e.target.value)}
             error={formErrors.dpart_ofadr}
             disabled={readOnly}
+          />
+        </div>
+
+        <div className="col-span-2 p-3">
+          {/* <Dropdown
+            label="Stop Distributor"
+            options={bool_Options}
+            value={formData.dpart_stdst}
+            onChange={(e) => onChange("dpart_stdst", e.target.value)}
+            error={formErrors.dpart_stdst}
+            placeholder="Select..."
+            disabled={readOnly}
+          /> */}
+          <InputSwitch
+            label={`${formData.dpart_stdst ? "Distributor Disabled" : "Distributor Enabled"}`}
+            checked={formData.dpart_stdst}
+            onChange={(e) => onChange("dpart_stdst", e.target.checked)}
+          />
+        </div>
+        <div className="col-span-2 p-3">
+          <InputSwitch
+            label={`${formData.dpart_stpur ? "Purchase Disabled" : "Purchase Enabled"}`}
+            checked={formData.dpart_stpur}
+            onChange={(e) => onChange("dpart_stpur", e.target.checked)}
+          />
+        </div>
+        <div className="col-span-2 p-3">
+          <InputSwitch
+            label={`${formData.dpart_stsal ? "Sale Disabled" : "Sale Enabled"}`}
+            checked={formData.dpart_stsal}
+            onChange={(e) => onChange("dpart_stsal", e.target.checked)}
+          />
+        </div>
+        <div className="col-span-2 p-3">
+          <InputSwitch
+            label={`${formData.dpart_stnsf ? "Transfer Disabled" : "Transfer Enabled"}`}
+            checked={formData.dpart_stnsf}
+            onChange={(e) => onChange("dpart_stnsf", e.target.checked)}
+          />
+        </div>
+        <div className="col-span-2 p-3">
+          <InputSwitch
+            label={`${formData.dpart_stpro ? "Production Disabled" : "Production Enabled"}`}
+            checked={formData.dpart_stpro}
+            onChange={(e) => onChange("dpart_stpro", e.target.checked)}
           />
         </div>
       </div>

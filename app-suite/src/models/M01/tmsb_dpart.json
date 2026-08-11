@@ -23,5 +23,30 @@
     "default": 1,
     "minLength": 1,
     "placeholder": "Enter employee capacity"
+  },
+  "dpart_stdst": {
+    "type": "boolean",
+    "label": "Stop Distributor",
+    "default": true
+  },
+  "dpart_stpur": {
+    "type": "boolean",
+    "label": "Stop Purchase",
+    "default": true
+  },
+  "dpart_stsal": {
+    "type": "boolean",
+    "label": "Stop Sale",
+    "default": true
+  },
+  "dpart_stnsf": {
+    "type": "boolean",
+    "label": "Stop Transfer",
+    "default": true
+  },
+  "dpart_stpro": {
+    "type": "boolean",
+    "label": "Stop Production",
+    "default": true
   }
 }

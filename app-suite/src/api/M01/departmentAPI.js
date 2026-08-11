@@ -26,4 +26,12 @@ export const departmentAPI = {
     apiRequest("/M01/v1/departments/get-all-active", {
       body: data,
     }),
+  getPurchase: (data) =>
+    apiRequest("/M01/v1/departments/get-purchase", {
+      body: data,
+    }),
+  getSales: (data) =>
+    apiRequest("/M01/v1/departments/get-sales", {
+      body: data,
+    }),
 };

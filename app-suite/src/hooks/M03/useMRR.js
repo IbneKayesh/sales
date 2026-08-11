@@ -511,7 +511,7 @@ const useMRR = () => {
       return;
     }
     try {
-      const resp = await departmentAPI.getAllActive({});
+      const resp = await departmentAPI.getPurchase({});
       const list = resp.data || [];
       setDpart_Options(list);
     } catch (error) {}
