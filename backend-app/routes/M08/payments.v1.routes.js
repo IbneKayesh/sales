@@ -69,18 +69,19 @@ router.post("/mrr-payment", async (req, res) => {
       label: `Update MRR master ${id}`,
     });
 
-    //Update supplier credit balance - decrease
-    scripts.push({
-      sql: `UPDATE tmcb_cntct
-      SET cntct_crbal = cntct_crbal - $1,      
-    cntct_upusr = $2,
-    cntct_updat = CURRENT_TIMESTAMP,
-    cntct_rvnmr = cntct_rvnmr + 1
-    WHERE id = $3
-      `,
-      params: [new_payment, user_s, mrrdm_cntct],
-      label: `Update supplier credit balance is now: ${mrrdm_duamt}`,
-    });
+    //need to think again
+    // //Update supplier credit balance - decrease
+    // scripts.push({
+    //   sql: `UPDATE tmcb_cntct
+    //   SET cntct_crbal = cntct_crbal - $1,      
+    // cntct_upusr = $2,
+    // cntct_updat = CURRENT_TIMESTAMP,
+    // cntct_rvnmr = cntct_rvnmr + 1
+    // WHERE id = $3
+    //   `,
+    //   params: [new_payment, user_s, mrrdm_cntct],
+    //   label: `Update supplier credit balance is now: ${mrrdm_duamt}`,
+    // });
 
     await dbRunAll(scripts);
 

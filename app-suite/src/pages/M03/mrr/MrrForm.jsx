@@ -73,7 +73,7 @@ const MrrForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-1">
           <InputNumber
             label="Exchange Rate"
             placeholder="0.00"
@@ -81,7 +81,7 @@ const MrrForm = ({
             onChange={(e) => onChange("mrrdm_exrat", e.target.value)}
             error={formErrors.mrrdm_exrat}
             step="0.01"
-            disabled={readOnly}
+            disabled={readOnly || true}
           />
         </div>
         <div className="col-span-3">
@@ -94,7 +94,7 @@ const MrrForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-8">
           <InputText
             label="Notes"
             placeholder="Enter notes"

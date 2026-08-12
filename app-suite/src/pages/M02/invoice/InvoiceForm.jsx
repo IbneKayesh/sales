@@ -73,7 +73,7 @@ const InvoiceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-1">
           <InputNumber
             label="Exchange Rate"
             placeholder="0.00"
@@ -84,7 +84,7 @@ const InvoiceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-9">
+        <div className="col-span-11">
           <InputText
             label="Notes"
             placeholder="Enter notes"

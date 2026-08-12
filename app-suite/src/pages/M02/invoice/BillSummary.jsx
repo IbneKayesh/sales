@@ -5,17 +5,13 @@ import PageCard, {
   PageCardTitle,
   PageCardBody,
 } from "@/components/PageCard";
+import { formatNumber } from "@/utils/misc";
 
 // Bill summary — invoice split values rendered invoice-entry style at the
 // bottom of the invoice entry page. Read-only totals from the master record,
 // with the Invoice Discount amount kept editable (re-splits across item
 // lines). Styling reuses the shared utility classes and PageCard pieces.
 const BillSummary = ({ formData = {}, readOnly, onChange = () => {} }) => {
-  const fmt = (v) =>
-    (Number(v) || 0).toLocaleString("en-US", {
-      minimumFractionDigits: 4,
-      maximumFractionDigits: 4,
-    });
 
   const dueAmt = Number(formData.invcm_duamt) || 0;
 
@@ -72,7 +68,7 @@ const BillSummary = ({ formData = {}, readOnly, onChange = () => {} }) => {
             />
           </div>
         ) : (
-          <span className={`col-span-6 ${valueClass}`}>{fmt(row.value)}</span>
+          <span className={`col-span-6 ${valueClass}`}>{formatNumber(row.value, 4)}</span>
         )}
       </div>
     );

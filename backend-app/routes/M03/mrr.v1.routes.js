@@ -291,7 +291,8 @@ const create = async (req, res) => {
         ],
         label: `Created MRR stock detail ${newTrnNo}`,
       });
-      //update summary stock
+
+      //update summary stock, last price
       scripts.push({
         sql: `UPDATE tmib_price
               SET price_lprat = $1,
@@ -373,7 +374,7 @@ const create = async (req, res) => {
       params: [mrrdm_duamt, user_s, mrrdm_cntct],
       label: `Update supplier credit balance ${newTrnNo}`,
     });
-
+    
     await dbRunAll(scripts);
 
     res.json({

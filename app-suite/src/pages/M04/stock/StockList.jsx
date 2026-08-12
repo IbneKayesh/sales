@@ -80,7 +80,7 @@ const StockList = ({ cfColumns = [], listData, onEdit }) => {
     <DataTable
       columns={dtColumns}
       data={listData}
-      pageSize={10}
+      pageSize={25}
       sortable
       searchable
       striped

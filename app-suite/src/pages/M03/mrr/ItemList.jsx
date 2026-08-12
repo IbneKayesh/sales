@@ -147,7 +147,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       <DataTable
         columns={dtColumns}
         data={listData}
-        pageSize={10}
+        pageSize={50}
         sortable
         searchable={false}
         striped

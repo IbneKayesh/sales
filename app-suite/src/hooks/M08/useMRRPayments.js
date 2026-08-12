@@ -9,6 +9,7 @@ const dataModelItem = generateDataModel(tmpb_mrrdc);
 import { generateGuid } from "@/utils/guid.js";
 import tmpb_mrrpy from "@/models/M03/tmpb_mrrpy.json";
 import { paymentAPI } from "@/api/M08/paymentAPI.js";
+import { validNumber } from "@/utils/misc.js";
 
 const useMRRPayments = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -58,15 +59,6 @@ const useMRRPayments = () => {
   }, []);
 
   function reCalculate(master, paymList) {
-    // Safe number conversion (handles null, undefined, NaN, "", etc.)
-    const num = (value) => {
-      const n = Number(value);
-      return Number.isFinite(n) ? n : 0;
-    };
-
-    // Safe divide
-    const div = (a, b) => (num(b) === 0 ? 0 : num(a) / num(b));
-
     //---------------------------------------------------
     // Payments
     //---------------------------------------------------
@@ -74,7 +66,7 @@ const useMRRPayments = () => {
     const newPayments = [...(paymList || [])];
 
     const totalPayment = newPayments.reduce(
-      (sum, item) => sum + num(item.mrrpy_pdamt),
+      (sum, item) => sum + validNumber(item.mrrpy_pdamt),
       0,
     );
 
@@ -88,8 +80,8 @@ const useMRRPayments = () => {
 
     setFormData({
       ...master,
-      mrrdm_pdamt: num(totalPayment).toFixed(4),
-      mrrdm_duamt: num(duamt).toFixed(4),
+      mrrdm_pdamt: validNumber(totalPayment).toFixed(4),
+      mrrdm_duamt: validNumber(duamt).toFixed(4),
     });
   }
 
@@ -128,9 +120,7 @@ const useMRRPayments = () => {
     }
   };
 
-  const handleDelete = async (rowData) => {
-    
-  };
+  const handleDelete = async (rowData) => {};
 
   const handleSearch = async () => {
     getAllDueMRR();
@@ -153,11 +143,23 @@ const useMRRPayments = () => {
         return;
       }
 
-      if (listDataPayment.filter((f) => f.mrrpy_mrrdm ==="SYS_NEW").length === 0) {
+      if (
+        listDataPayment.filter((f) => f.mrrpy_mrrdm === "SYS_NEW").length === 0
+      ) {
         showToast("At least 1 payment is required", { type: "warning" });
         return;
       }
 
+      const totalPayment = listDataPayment.reduce(
+        (sum, item) => sum + validNumber(item.mrrpy_pdamt),
+        0,
+      );
+
+      const duamt = validNumber(formData.mrrdm_pyamt) - totalPayment;
+      if (duamt < 0) {
+        showToast(duamt + " Overpayment is not valid", { type: "warning" });
+        return;
+      }
       const reqBody = {
         ...formData,
         tmpb_mrrpy: listDataPayment,
@@ -245,7 +247,12 @@ const useMRRPayments = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataPayment((prev) => prev.filter((item) => item.id !== rowData.id));
+
+    const newPaymentList = listDataPayment.filter(
+      (item) => item.id !== rowData.id,
+    );
+    reCalculate(formData, newPaymentList);
+
     showToast("Removed successfully", { type: "success" });
   };
 

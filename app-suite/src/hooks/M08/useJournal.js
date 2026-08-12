@@ -14,6 +14,7 @@ import { coaAPI } from "@/api/M08/coaAPI.js";
 import { buildPaths } from "@/utils/pathBuilder.js";
 import { generateGuid } from "@/utils/guid.js";
 import { printReport } from "@/utils/export.js";
+import { validNumber } from "@/utils/misc.js";
 
 const useJournal = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -229,23 +230,35 @@ const useJournal = () => {
   };
 
   // ---------- Journal Items (lines) ----------
-  useEffect(() => {
-    const totalDr = listDataItem.reduce(
-      (sum, item) => sum + (Number(item.jrnlc_drval) || 0),
-      0,
-    );
-    const totalCr = listDataItem.reduce(
-      (sum, item) => sum + (Number(item.jrnlc_crval) || 0),
+  function reCalculate(items, master) {
+    //console.log("items", items);
+    // Clone
+    let newItems = [...(items || [])];
+    //---------------------------------------------------
+    // Totals
+    //---------------------------------------------------
+    const totalDr = newItems.reduce(
+      (sum, item) => sum + validNumber(item.jrnlc_drval),
       0,
     );
 
-    setFormData((prev) => ({
-      ...prev,
+    const totalCr = newItems.reduce(
+      (sum, item) => sum + validNumber(item.jrnlc_crval),
+      0,
+    );
+
+    setListDataItem(newItems);
+
+    //---------------------------------------------------
+    // Master
+    //---------------------------------------------------
+
+    setFormData({
+      ...master,
       jrnlm_drval: totalDr,
       jrnlm_crval: totalCr,
-    }));
-  }, [listDataItem]);
-  //convert this useEffect to store when adding item
+    });
+  }
 
   const [chtac_Options, setChtac_Options] = useState([]);
   const [party_Options, setParty_Options] = useState([]);
@@ -264,7 +277,7 @@ const useJournal = () => {
       }));
       //build path for all
       const buildPathsList = buildPaths(listActive);
-      console.log("buildPathsList", list);
+      //console.log("buildPathsList", list);
       //apply filter and set state
       setChtac_Options(buildPathsList.filter((item) => item.active));
     } catch (error) {}
@@ -324,17 +337,29 @@ const useJournal = () => {
     // console.log("chtac_cname",chtac_cname);
     // console.log("party_cname",party_cname);
 
-    setListDataItem((prev) => [
-      ...prev,
-      {
-        ...formDataItem,
-        id: generateGuid(),
-        chtac_cname: chtac_cname?.name || "Invalid GL",
-        party_cname: party_cname?.name || "Invalid SGL",
-        jrnlc_actve: true,
-      },
-    ]);
-    setFormDataItem(dataModelItem);
+    // setListDataItem((prev) => [
+    //   ...prev,
+    //   {
+    //     ...formDataItem,
+    //     id: generateGuid(),
+    //     chtac_cname: chtac_cname?.name || "Invalid GL",
+    //     party_cname: party_cname?.name || "Invalid SGL",
+    //     jrnlc_actve: true,
+    //   },
+    // ]);
+    // setFormDataItem(dataModelItem);
+
+    // console.log("s")
+    //create new row
+    const newItem = {
+      ...formDataItem,
+      id: generateGuid(),
+      chtac_cname: chtac_cname?.name || "Invalid GL",
+      party_cname: party_cname?.name || "Invalid SGL",
+      jrnlc_actve: true,
+    };
+    const newItemList = [...listDataItem, newItem];
+    reCalculate(newItemList, formData);
 
     if (value === "CLOSE") {
       handleHideModal();
@@ -355,7 +380,9 @@ const useJournal = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataItem((prev) => prev.filter((item) => item.id !== rowData.id));
+    //setListDataItem((prev) => prev.filter((item) => item.id !== rowData.id));
+    const newItemList = listDataItem.filter((item) => item.id !== rowData.id);
+    reCalculate(newItemList, formData);
     showToast("Removed successfully", { type: "success" });
   };
 

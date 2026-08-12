@@ -14,6 +14,7 @@ import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
 import { generateGuid } from "@/utils/guid.js";
+import { validNumber } from "@/utils/misc.js";
 
 const useInvoice = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -748,7 +749,13 @@ const useInvoice = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataPayment((prev) => prev.filter((item) => item.id !== rowData.id));
+    //setListDataPayment((prev) => prev.filter((item) => item.id !== rowData.id));
+
+    const newPaymentList = listDataPayment.filter(
+      (item) => item.id !== rowData.id,
+    );
+    reCalculate(listDataItem, formData, listDataCost, newPaymentList);
+
     showToast("Removed successfully", { type: "success" });
   };
 

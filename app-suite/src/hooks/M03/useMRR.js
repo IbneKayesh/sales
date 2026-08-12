@@ -13,6 +13,7 @@ import { generateGuid } from "@/utils/guid.js";
 import tmpb_mrrcs from "@/models/M03/tmpb_mrrcs.json";
 import tmpb_mrrpy from "@/models/M03/tmpb_mrrpy.json";
 import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
+import { validNumber } from "@/utils/misc.js";
 
 const useMRR = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -916,7 +917,10 @@ const useMRR = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataPayment((prev) => prev.filter((item) => item.id !== rowData.id));
+    
+    const newPaymentList = listDataPayment.filter((item) => item.id !== rowData.id);
+    reCalculate(listDataItem, formData, listDataCost, newPaymentList);
+
     showToast("Removed successfully", { type: "success" });
   };
 

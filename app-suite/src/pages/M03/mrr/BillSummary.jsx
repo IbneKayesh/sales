@@ -5,18 +5,13 @@ import PageCard, {
   PageCardTitle,
   PageCardBody,
 } from "@/components/PageCard";
+import { formatNumber } from "@/utils/misc";
 
 // Bill summary — MRR split values rendered invoice-entry style at the
 // bottom of the MRR entry page. Read-only totals from the master record,
 // with the Invoice Discount amount kept editable (re-splits across item
 // lines). Styling reuses the shared utility classes and PageCard pieces.
 const BillSummary = ({ formData = {}, readOnly, onChange = () => {} }) => {
-  const fmt = (v) =>
-    (Number(v) || 0).toLocaleString("en-US", {
-      minimumFractionDigits: 4,
-      maximumFractionDigits: 4,
-    });
-
   const dueAmt = Number(formData.mrrdm_duamt) || 0;
 
   const summaryRows = [
@@ -71,10 +66,13 @@ const BillSummary = ({ formData = {}, readOnly, onChange = () => {} }) => {
               onChange={(e) => onChange("mrrdm_invds", e.target.value)}
               step="0.01"
               disabled={readOnly || Number(formData.mrrdm_dspct) > 0}
+              al
             />
           </div>
         ) : (
-          <span className={`col-span-6 ${valueClass}`}>{fmt(row.value)}</span>
+          <span className={`col-span-6 ${valueClass}`}>
+            {formatNumber(row.value, 4)}
+          </span>
         )}
       </div>
     );
