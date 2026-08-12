@@ -73,7 +73,7 @@ const MrrForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-1">
+        {/* <div className="col-span-1">
           <InputNumber
             label="Exchange Rate"
             placeholder="0.00"
@@ -83,8 +83,8 @@ const MrrForm = ({
             step="0.01"
             disabled={readOnly || true}
           />
-        </div>
-        <div className="col-span-3">
+        </div> */}
+        <div className="col-span-4">
           <InputText
             label="Vehicle"
             placeholder="Enter vehicle"

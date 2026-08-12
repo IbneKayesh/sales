@@ -43,6 +43,7 @@ export default function InputNumber({
           disabled={disabled}
           required={required}
           name={name}
+          style={{ textAlign: 'right' }}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           {...rest}

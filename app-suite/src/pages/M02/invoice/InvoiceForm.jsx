@@ -73,18 +73,7 @@ const InvoiceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-1">
-          <InputNumber
-            label="Exchange Rate"
-            placeholder="0.00"
-            value={formData.invcm_exrat}
-            onChange={(e) => onChange("invcm_exrat", e.target.value)}
-            error={formErrors.invcm_exrat}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-11">
+        <div className="col-span-12">
           <InputText
             label="Notes"
             placeholder="Enter notes"

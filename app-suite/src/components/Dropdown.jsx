@@ -407,15 +407,18 @@ export default function Dropdown({
                     aria-selected={opt?.[optionValue] === value}
                     onClick={() => handleSelect(opt)}
                   >
+                    {opt?.[optionValue] === value && (
+                      <span
+                        className="dropdown__check"
+                        style={{ marginLeft: 0, flex: "0 0 auto" }}
+                      >
+                        <IconCheck size={14} />
+                      </span>
+                    )}
                     {opt?.icon && (
                       <span className="dropdown__option-icon">{opt.icon}</span>
                     )}
                     <span>{opt?.[optionLabel] ?? ""}</span>
-                    {opt?.[optionValue] === value && (
-                      <span className="dropdown__check">
-                        <IconCheck size={14} />
-                      </span>
-                    )}
                   </button>
                 ))
               ) : (

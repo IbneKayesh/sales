@@ -46,5 +46,86 @@ router.post("/", async (req, res) => {
   }
 });
 
+// sales-invoice
+router.post("/sales-invoice", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    //AND ptn.prtyn_ctype = 'PAYMENTS'
+    const sql = `SELECT pty.id, pty.party_cname, ptn.prtyn_ctype
+        FROM tmtb_prtyn ptn
+        JOIN tmtb_party pty ON ptn.prtyn_party = pty.id
+        WHERE ptn.prtyn_cname = 'SYS_SALES_INVOICE'
+        AND ptn.prtyn_users = $1
+        ORDER BY ptn.prtyn_cname, ptn.prtyn_ctype ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get party network sales invoice- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+// mrr
+router.post("/mrr", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    //AND ptn.prtyn_ctype = 'PAYMENTS'
+    const sql = `SELECT pty.id, pty.party_cname, ptn.prtyn_ctype
+        FROM tmtb_prtyn ptn
+        JOIN tmtb_party pty ON ptn.prtyn_party = pty.id
+        WHERE ptn.prtyn_cname = 'SYS_MRR_DIRECT'
+        AND ptn.prtyn_users = $1
+        ORDER BY ptn.prtyn_cname, ptn.prtyn_ctype ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get party network mrr- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+
 
 module.exports = router;

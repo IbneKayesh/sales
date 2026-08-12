@@ -5,7 +5,8 @@ import PartyPage from "@/pages/M08/setup/parties/PartyPage";
 import PartyNetworkPage from "@/pages/M08/setup/partynetwork/PartyNetworkPage";
 import JournalPage from "@/pages/M08/journals/JournalPage";
 import Fstatements from "@/pages/M08/reports/Fstatements";
-import MrrPage from "@/pages/M08/payments/mrr/MrrPage";
+import ReceivablesPage from "@/pages/M08/receivables/ReceivablesPage";
+import PayablesPage from "@/pages/M08/payables/PayablesPage";
 
 const routes = [
   { path: "/accounts/setup/chart-of-accounts", element: <COAPage /> },
@@ -15,7 +16,8 @@ const routes = [
   { path: "/accounts/setup/party-network", element: <PartyNetworkPage /> },
   { path: "/accounts/journals", element: <JournalPage /> },
   { path: "/accounts/reports/fstatements", element: <Fstatements /> },
-  { path: "/accounts/mrr-payment", element: <MrrPage /> },
+  { path: "/accounts/payables", element: <PayablesPage /> },
+  { path: "/accounts/receivables", element: <ReceivablesPage /> },
 ];
 
 export default routes;

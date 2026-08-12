@@ -79,14 +79,9 @@ const useInvoice = () => {
   function reCalculate(items, master, costList, paymList) {
     //console.log("items", items);
 
-    // Safe number conversion (handles null, undefined, NaN, "", etc.)
-    const num = (value) => {
-      const n = Number(value);
-      return Number.isFinite(n) ? n : 0;
-    };
-
     // Safe divide
-    const div = (a, b) => (num(b) === 0 ? 0 : num(a) / num(b));
+    const div = (a, b) =>
+      validNumber(b) === 0 ? 0 : validNumber(a) / validNumber(b);
 
     // Clone
     let newItems = [...(items || [])];
@@ -97,12 +92,13 @@ const useInvoice = () => {
     // Totals
     //---------------------------------------------------
     const totalAmount = newItems.reduce(
-      (sum, item) => sum + num(item.invcc_itrat) * num(item.invcc_itqty),
+      (sum, item) =>
+        sum + validNumber(item.invcc_itrat) * validNumber(item.invcc_itqty),
       0,
     );
 
     const totalQty = newItems.reduce(
-      (sum, item) => sum + num(item.invcc_itqty),
+      (sum, item) => sum + validNumber(item.invcc_itqty),
       0,
     );
 
@@ -117,7 +113,7 @@ const useInvoice = () => {
         .filter(
           (item) => item.mrrcs_csmod === csmod && item.mrrcs_clmod === clmod,
         )
-        .reduce((sum, item) => sum + num(item.mrrcs_value), 0);
+        .reduce((sum, item) => sum + validNumber(item.mrrcs_value), 0);
 
     const incAmt = sumCost("Include", "By Amount");
     const incQty = sumCost("Include", "By Qty");
@@ -160,7 +156,7 @@ const useInvoice = () => {
 
     newItems = newItems.map((item) => {
       const invcc_edamt = div(
-        num(invoice_discount_amount) * num(item.invcc_itqty),
+        validNumber(invoice_discount_amount) * validNumber(item.invcc_itqty),
         totalQty,
       );
 
@@ -175,32 +171,35 @@ const useInvoice = () => {
     //---------------------------------------------------
 
     newItems = newItems.map((item) => {
-      const qty = num(item.invcc_itqty);
-      const rate = num(item.invcc_itrat);
+      const qty = validNumber(item.invcc_itqty);
+      const rate = validNumber(item.invcc_itrat);
 
       const invcc_itamt = rate * qty;
 
-      const invcc_dsamt = invcc_itamt * (num(item.invcc_dspct) / 100);
+      const invcc_dsamt = invcc_itamt * (validNumber(item.invcc_dspct) / 100);
 
-      const afterDisc = invcc_itamt - (invcc_dsamt + num(item.invcc_edamt));
+      const afterDisc =
+        invcc_itamt - (invcc_dsamt + validNumber(item.invcc_edamt));
 
-      const invcc_ivamt = afterDisc * (num(item.invcc_ivpct) / 100);
+      const invcc_ivamt = afterDisc * (validNumber(item.invcc_ivpct) / 100);
 
-      const invcc_vtamt = afterDisc * (num(item.invcc_vtpct) / 100);
+      const invcc_vtamt = afterDisc * (validNumber(item.invcc_vtpct) / 100);
 
-      const invcc_txamt = afterDisc * (num(item.invcc_txpct) / 100);
+      const invcc_txamt = afterDisc * (validNumber(item.invcc_txpct) / 100);
 
       //---------------------------------------------------
       // Freight
       //---------------------------------------------------
 
-      let invcc_fcpct = num(item.invcc_fcpct);
-      let invcc_fcamt = num(item.invcc_fcamt);
+      let invcc_fcpct = validNumber(item.invcc_fcpct);
+      let invcc_fcamt = validNumber(item.invcc_fcamt);
 
       if (invcc_fcpct > 0) {
-        invcc_fcamt = Number((afterDisc * (invcc_fcpct / 100)).toFixed(4));
+        invcc_fcamt = validNumber((afterDisc * (invcc_fcpct / 100)).toFixed(4));
       } else if (invcc_fcamt > 0) {
-        invcc_fcpct = Number((div(invcc_fcamt, afterDisc) * 100).toFixed(4));
+        invcc_fcpct = validNumber(
+          (div(invcc_fcamt, afterDisc) * 100).toFixed(4),
+        );
       }
 
       //---------------------------------------------------
@@ -228,7 +227,7 @@ const useInvoice = () => {
 
       const invcc_ntamt = afterDisc + invcc_vtamt + invcc_icamt - invcc_ivamt;
 
-      const invcc_csrat = div(
+      const invcc_nsrat = div(
         afterDisc + invcc_fcamt + invcc_icamt + invcc_ecamt - invcc_ivamt,
         qty,
       );
@@ -245,7 +244,7 @@ const useInvoice = () => {
         invcc_icamt,
         invcc_ecamt,
         invcc_ntamt,
-        invcc_csrat,
+        invcc_nsrat,
       };
     });
 
@@ -257,15 +256,15 @@ const useInvoice = () => {
 
     const totals = newItems.reduce(
       (acc, item) => ({
-        tramt: acc.tramt + num(item.invcc_itamt),
-        itmds: acc.itmds + num(item.invcc_dsamt),
-        ivtmt: acc.ivtmt + num(item.invcc_ivamt),
-        vtamt: acc.vtamt + num(item.invcc_vtamt),
-        txamt: acc.txamt + num(item.invcc_txamt),
-        fcamt: acc.fcamt + num(item.invcc_fcamt),
-        icamt: acc.icamt + num(item.invcc_icamt),
-        ecamt: acc.ecamt + num(item.invcc_ecamt),
-        ntamt: acc.ntamt + num(item.invcc_ntamt),
+        tramt: acc.tramt + validNumber(item.invcc_itamt),
+        itmds: acc.itmds + validNumber(item.invcc_dsamt),
+        ivtmt: acc.ivtmt + validNumber(item.invcc_ivamt),
+        vtamt: acc.vtamt + validNumber(item.invcc_vtamt),
+        txamt: acc.txamt + validNumber(item.invcc_txamt),
+        fcamt: acc.fcamt + validNumber(item.invcc_fcamt),
+        icamt: acc.icamt + validNumber(item.invcc_icamt),
+        ecamt: acc.ecamt + validNumber(item.invcc_ecamt),
+        ntamt: acc.ntamt + validNumber(item.invcc_ntamt),
       }),
       {
         tramt: 0,
@@ -287,7 +286,7 @@ const useInvoice = () => {
     const newPayments = [...(paymList || [])];
 
     const totalPayment = newPayments.reduce(
-      (sum, item) => sum + num(item.mrrpy_pdamt),
+      (sum, item) => sum + validNumber(item.mrrpy_pdamt),
       0,
     );
 
@@ -301,18 +300,18 @@ const useInvoice = () => {
 
     setFormData({
       ...master,
-      invcm_tramt: num(totals.tramt).toFixed(4),
-      invcm_itmds: num(totals.itmds).toFixed(4),
+      invcm_tramt: validNumber(totals.tramt).toFixed(4),
+      invcm_itmds: validNumber(totals.itmds).toFixed(4),
       invcm_invds: invoice_discount_amount,
-      invcm_ivtmt: num(totals.ivtmt).toFixed(4),
-      invcm_vtamt: num(totals.vtamt).toFixed(4),
-      invcm_txamt: num(totals.txamt).toFixed(4),
-      invcm_fcamt: num(totals.fcamt).toFixed(4),
-      invcm_icamt: num(totals.icamt).toFixed(4),
-      invcm_ecamt: num(totals.ecamt).toFixed(4),
-      invcm_pyamt: num(totals.ntamt).toFixed(4),
-      invcm_pdamt: num(totalPayment).toFixed(4),
-      invcm_duamt: num(duamt).toFixed(4),
+      invcm_ivtmt: validNumber(totals.ivtmt).toFixed(4),
+      invcm_vtamt: validNumber(totals.vtamt).toFixed(4),
+      invcm_txamt: validNumber(totals.txamt).toFixed(4),
+      invcm_fcamt: validNumber(totals.fcamt).toFixed(4),
+      invcm_icamt: validNumber(totals.icamt).toFixed(4),
+      invcm_ecamt: validNumber(totals.ecamt).toFixed(4),
+      invcm_pyamt: validNumber(totals.ntamt).toFixed(4),
+      invcm_pdamt: validNumber(totalPayment).toFixed(4),
+      invcm_duamt: validNumber(duamt).toFixed(4),
     });
   }
 
@@ -517,6 +516,8 @@ const useInvoice = () => {
         tmob_invpy: listDataPayment,
       };
 
+      //console.log("reqBody", reqBody);
+     // return;
       setIsBusy(true);
       const resp = await invoiceAPI.upsert(reqBody);
       alertBox({

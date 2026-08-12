@@ -25,6 +25,7 @@ CREATE TABLE tmob_invcc (
   invcc_ntamt decimal(18,6) DEFAULT 0.00,
   invcc_notes VARCHAR(100),
   invcc_csrat decimal(18,6) DEFAULT 0.00,
+  invcc_nsrat decimal(18,6) DEFAULT 0.00,
   invcc_refid VARCHAR(50),
   invcc_stock VARCHAR(50),
   

@@ -103,6 +103,12 @@
     "required": false,
     "default": 0
   },
+  "invcc_nsrat": {
+    "type": "decimal",
+    "label": "New Cost Rate",
+    "required": false,
+    "default": 0
+  },
   "invcc_refid": {
     "type": "string",
     "label": "Ref Id",

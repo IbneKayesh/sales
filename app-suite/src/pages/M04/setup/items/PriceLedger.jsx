@@ -37,27 +37,46 @@ const PriceLedger = ({ listData }) => {
       key: "line_value",
       header: "Value",
       width: "80px",
-      render: (_, row) => (
-        <NegativeValue
-          value={Number(row.mrrdc_itqty || 0) * Number(row.mrrdc_csrat || 0)}
-        />
-      ),
+      render: (_, row) => <NegativeValue value={row.line_value} />,
     },
+    // {
+    //   key: "line_value",
+    //   header: "Value",
+    //   width: "80px",
+    //   render: (_, row) => (
+    //     <NegativeValue
+    //       value={Number(row.mrrdc_itqty || 0) * Number(row.mrrdc_csrat || 0)}
+    //     />
+    //   ),
+    // },
   ];
+
+  const totalQty = listData.reduce(
+    (acc, row) => acc + Number(row.mrrdc_itqty || 0),
+    0,
+  );
+  const totalValue = listData.reduce(
+    (acc, row) =>
+      acc + Number(row.mrrdc_itqty || 0) * Number(row.mrrdc_csrat || 0),
+    0,
+  );
   return (
-    <DataTable
-      columns={dtColumns}
-      data={listData}
-      pageSize={10}
-      sortable
-      searchable
-      striped
-      hoverable
-      exportable
-      exportFilename="data-export.csv"
-      //onRowClick={(row) => onEdit(row)}
-      emptyMessage="No data found"
-    />
+    <>
+      <DataTable
+        columns={dtColumns}
+        data={listData}
+        pageSize={10}
+        sortable
+        searchable
+        striped
+        hoverable
+        exportable
+        exportFilename="data-export.csv"
+        //onRowClick={(row) => onEdit(row)}
+        emptyMessage="No data found"
+      />
+      Qty: {totalQty} || Value: {totalValue}
+    </>
   );
 };
 export default PriceLedger;

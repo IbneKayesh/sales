@@ -13,7 +13,7 @@
   "invpy_pydat": {
     "type": "datetime",
     "label": "Payment Date",
-    "required": true,
+    "required": false,
     "default": "new Date() with local format"
   },
   "invpy_pdamt": {
@@ -27,13 +27,13 @@
     "label": "Ref No",
     "maxLength": 50,
     "placeholder": "Enter ref no",
-    "required": false
+    "required": true
   },
   "invpy_notes": {
     "type": "string",
     "label": "Notes",
     "maxLength": 50,
     "placeholder": "Enter notes",
-    "required": false
+    "required": true
   }
 }

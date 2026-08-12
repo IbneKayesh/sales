@@ -1,6 +1,7 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
+import NegativeValue from "@/components/common/NegativeValue";
 import { getRelativeDays } from "@/utils/datetime.js";
 
 const InvoiceList = ({ listData, onEdit, onDelete }) => {
@@ -28,6 +29,16 @@ const InvoiceList = ({ listData, onEdit, onDelete }) => {
     { key: "invcm_refno", header: "Ref No", width: "100px" },
     { key: "invcm_tramt", header: "Amount", width: "100px" },
     { key: "invcm_pyamt", header: "Payable", width: "100px" },
+    {
+      key: "invcm_duamt",
+      header: "Due",
+      width: "80px",
+      render: (_, row) => (
+        <>
+          <NegativeValue value={row.invcm_duamt} />
+        </>
+      ),
+    },
     {
       key: "invcm_ispst",
       header: "Posted",
