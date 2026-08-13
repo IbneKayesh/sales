@@ -8,7 +8,8 @@ const GenNewCode = async (user_c, tableName) => {
         AND ccode_cname = $2
         LIMIT 1`;
   const result = await dbGet(sql, [user_c, tableName]);
-  if (!result) throw new Error(`Code generation config is not found - ${tableName}`);
+  if (!result)
+    throw new Error(`Code generation config is not found - ${tableName}`);
 
   const prefix = result.ccode_prfix || "ERR"; // fallback
   const length = result.ccode_prlen || 8;
@@ -75,6 +76,20 @@ const getInitials = (text = "") => {
     .map((word) => word[0])
     .join("")
     .toUpperCase();
+};
+
+const getCurrentPeriod = async (user_c, user_b, user_d) => {
+  const sql = `SELECT prd.id acprd_id, prd.acprd_fsyar fsyar_id
+FROM tmtb_acprd prd
+WHERE prd.acprd_stats = 'Open'
+AND prd.acprd_iscur = TRUE
+AND prd.acprd_actve = TRUE
+AND prd.acprd_users = $1
+AND prd.acprd_bsins = $2
+AND prd.acprd_dpart = $3
+  `;
+  const result = await dbGetAll(sql, [user_c, user_b, user_d]);
+  return result;
 };
 
 const getFiscalYearPeriod = async (user_c, user_b, dept_id, trnDate) => {
@@ -217,4 +232,5 @@ module.exports = {
   GenNewTrn,
   getFiscalYearPeriod,
   getDefaultCOAforPartyId,
+  getCurrentPeriod,
 };

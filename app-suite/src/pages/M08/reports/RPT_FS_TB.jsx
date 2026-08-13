@@ -53,6 +53,14 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
       align: "right",
       render: (v) => (v > 0 ? formatNumber(v) : "—"),
     },
+    {
+      key: "subVal",
+      header: "Balance",
+      width: "140px",
+      align: "right",
+      //Dr - Cr
+      render: (v) => (v > 0 ? formatNumber(v) : "—"),
+    },
   ];
 
   const tb_data = Object.values(

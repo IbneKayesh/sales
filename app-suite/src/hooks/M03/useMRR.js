@@ -524,7 +524,7 @@ const useMRR = () => {
       return;
     }
     try {
-      const resp = await contactAPI.getSuppliers({});
+      const resp = await contactAPI.getSuppliersMrr({});
       const list = resp.data || [];
       setCntct_Options(list);
     } catch (error) {}
@@ -564,6 +564,8 @@ const useMRR = () => {
         ...formData,
         mrrdm_cntct: v,
         mrrdm_dspct: dspct,
+        party_id: cntct_id?.party_id,
+        chtac_id: cntct_id?.chtac_id,
         // new supplier has no discount % -> clear any stale computed amount
         ...(dspct === 0 ? { mrrdm_invds: 0 } : {}),
       };
@@ -743,6 +745,8 @@ const useMRR = () => {
         mrrdc_ivpct: price_id?.items_pivat || 0,
         mrrdc_vtpct: price_id?.items_pdvat || 0,
         mrrdc_fcpct: price_id?.items_fxcst || 0,
+        party_id: price_id?.party_id || "-",
+        chtac_id: price_id?.chtac_id || "-",
       }));
     }
   };
@@ -924,8 +928,10 @@ const useMRR = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    
-    const newPaymentList = listDataPayment.filter((item) => item.id !== rowData.id);
+
+    const newPaymentList = listDataPayment.filter(
+      (item) => item.id !== rowData.id,
+    );
     reCalculate(listDataItem, formData, listDataCost, newPaymentList);
 
     showToast("Removed successfully", { type: "success" });

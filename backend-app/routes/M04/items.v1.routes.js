@@ -538,7 +538,8 @@ router.post("/get-mrr-items", async (req, res) => {
     sunit.units_cname as sunit_cname,
     sgrup.sgrup_cname as sgrup_cname,
     scatg.scatg_cname as scatg_cname,
-    brand.brand_cname as brand_cname
+    brand.brand_cname as brand_cname,
+    pty.id party_id, pty.party_chtac chtac_id
     FROM tmib_items itm
     JOIN tmib_price prc ON itm.id = prc.price_items    
     JOIN tmib_units runit ON itm.items_runit = runit.id
@@ -547,6 +548,7 @@ router.post("/get-mrr-items", async (req, res) => {
     JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
     JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
     JOIN tmib_brand brand ON itm.items_brand = brand.id
+    JOIN tmtb_party pty ON itm.id = pty.party_vndor
     WHERE itm.items_stpur = false
     AND itm.items_itype IN ('RM', 'PM', 'FG')
     AND itm.items_actve = TRUE

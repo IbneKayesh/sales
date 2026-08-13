@@ -46,4 +46,8 @@ export const contactAPI = {
     apiRequest("/M06/v1/contacts/delete-address", {
       body: data,
     }),
+  getSuppliersMrr: (data) =>
+    apiRequest("/M06/v1/contacts/get-suppliers-mrr", {
+      body: data,
+    }),
 };
