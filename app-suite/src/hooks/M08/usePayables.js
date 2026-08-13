@@ -62,6 +62,17 @@ const usePayables = () => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmpb_mrrpy);
     setFormErrors(newErrors);
+    if (f === "mrrpy_party") {
+      const party_id = party_Options.find((opt) => opt.id === v);
+      //console.log(party_id);
+      const newformData = {
+        ...formData,
+        mrrpy_party: v,
+        party_id_pay: party_id?.id,
+        chtac_id_pay: party_id?.party_chtac,
+      };
+      setFormData(newformData);
+    }
   };
 
   const handleEdit = async (rowData) => {
@@ -70,14 +81,12 @@ const usePayables = () => {
     await getMRRParty();
   };
 
-  const handleDelete = async (rowData) => {
-  };
+  const handleDelete = async (rowData) => {};
 
   const handleSearch = async () => {
     getAllPayables();
   };
-  const handleAddNew = () => {
-  };
+  const handleAddNew = () => {};
 
   const handleCancel = () => {
     setPgView("SYS_VW_LST_1");
@@ -102,13 +111,16 @@ const usePayables = () => {
         return;
       }
 
+      if (validNumber(formData.mrrpy_pdamt) < 0.01) {
+        showToast(formData.mrrpy_pdamt + " Payment is not valid", { type: "warning" });
+        return;
+      }
       const reqBody = {
         ...formData,
       };
       setIsBusy(true);
       //console.log("reqBody", reqBody);
       //return;
-
       const resp = await payablesAPI.create(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",

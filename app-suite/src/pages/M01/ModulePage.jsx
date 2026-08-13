@@ -162,7 +162,7 @@ const appModules = [
             desc: "Record received goods and inspections",
           },
           {
-            id: "M02-G02-M001",
+            id: "M02-G02-M002",
             name: "Purchase Returns",
             color: "#06b6d4",
             icon: "Purchase",

@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-const { GenNewCode } = require("../../db/genHelper");
+const {
+  GenNewCode,
+  GenNewTrn,
+  getCurrentPeriod,
+} = require("../../db/genHelper");
 
 // =====================
 // Get All
@@ -22,14 +26,20 @@ router.post("/", async (req, res) => {
     const sql = `SELECT mrm.id mrrpy_mrrdm, '' mrrpy_party,
 mrm.mrrdm_pyamt - mrm.mrrdm_pdamt mrrpy_duamt, 0 mrrpy_pdamt,
 mrm.mrrdm_trnno mrrpy_refno, mrm.mrrdm_ttype || ' payments' mrrpy_notes,
-mrm.mrrdm_ttype, mrm.mrrdm_trnno, mrm.mrrdm_trdat, dpt.dpart_cname, cnt.cntct_cname
+mrm.mrrdm_ttype, mrm.mrrdm_trnno, mrm.mrrdm_trdat, mrm.mrrdm_crncy, mrm.mrrdm_dpart, dpt.dpart_cname, cnt.cntct_cname,
+pty.id party_id, pty.party_chtac chtac_id
 FROM tmpb_mrrdm mrm
 JOIN tmsb_dpart dpt ON mrm.mrrdm_dpart = dpt.id
 JOIN tmcb_cntct cnt ON mrm.mrrdm_cntct = cnt.id
+JOIN tmtb_party pty ON cnt.id = pty.party_vndor
+JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+JOIN tmtb_prtyn ptn ON cht.chtac_chtno = ptn.prtyn_chtno
 WHERE mrm.mrrdm_pyamt - mrm.mrrdm_pdamt > 0
 AND mrm.mrrdm_ttype = 'Material Receipt Report'
 AND mrm.mrrdm_users = $1
 AND mrm.mrrdm_bsins = $2
+AND ptn.prtyn_cname = 'SYS_MRR_DIRECT'
+AND ptn.prtyn_ctype = 'PAY_SUPPLIER'
 ORDER BY mrm.mrrdm_trdat DESC`;
 
     const rows = await dbGetAll(
@@ -59,21 +69,35 @@ ORDER BY mrm.mrrdm_trdat DESC`;
 router.post("/create", async (req, res) => {
   try {
     const {
+      mrrdm_dpart,
+      mrrdm_ttype,
+      mrrdm_crncy,
       mrrpy_mrrdm,
       mrrpy_party,
       mrrpy_pdamt,
       mrrpy_refno,
       mrrpy_notes,
+      party_id,
+      chtac_id,
+      party_id_pay,
+      chtac_id_pay,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     if (
+      !mrrdm_dpart ||
+      !mrrdm_ttype ||
+      !mrrdm_crncy ||
       !mrrpy_mrrdm ||
       !mrrpy_party ||
       !mrrpy_pdamt ||
       !mrrpy_refno ||
+      !party_id ||
+      !chtac_id ||
+      !party_id_pay ||
+      !chtac_id_pay ||
       !user_c
     ) {
       return res.json({
@@ -82,12 +106,38 @@ router.post("/create", async (req, res) => {
         data: [],
       });
     }
+    //database actions
+    const acprd = await getCurrentPeriod(user_c, user_b, mrrdm_dpart);
+    if (!acprd) {
+      return {
+        success: false,
+        message: "No active fiscal year or accounting period found",
+        data: {},
+      };
+    }
+    if (acprd.length > 1) {
+      return {
+        success: false,
+        message: "Multiple active accounting periods found. Please select one.",
+        data: {},
+      };
+    }
+    const { acprd_id, fsyar_id } = acprd[0];
+    const newId_JV = uuidv4();
+    const newTrnNo_JV = await GenNewTrn(
+      user_c,
+      user_b,
+      "tmtb_jrnlm",
+      "Purchase Voucher",
+      mrrdm_dpart,
+    );
+
     //build scripts
     const sql = `SELECT mrm.mrrdm_pyamt-(COALESCE(SUM(mrp.mrrpy_pdamt),0) + $1) mrrdm_duamt
-FROM tmpb_mrrdm mrm
-LEFT JOIN tmpb_mrrpy mrp ON mrm.id = mrp.mrrpy_mrrdm
-WHERE mrm.id = $2
-GROUP BY mrm.mrrdm_pyamt`;
+    FROM tmpb_mrrdm mrm
+    LEFT JOIN tmpb_mrrpy mrp ON mrm.id = mrp.mrrpy_mrrdm
+    WHERE mrm.id = $2
+    GROUP BY mrm.mrrdm_pyamt`;
     const params = [mrrpy_pdamt, mrrpy_mrrdm];
     const result = await dbGet(sql, params);
     if (Number(result.mrrdm_duamt) < 0) {
@@ -129,6 +179,90 @@ GROUP BY mrm.mrrdm_pyamt`;
         WHERE id = $4`,
       params: [mrrpy_pdamt, mrrpy_pdamt, user_s, mrrpy_mrrdm],
       label: `Update Sales Invoice master ${mrrpy_refno}`,
+    });
+
+    //create journal
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
+    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
+    jrnlm_drval, jrnlm_crval, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6,
+    $7, $8, $9, $10, $11, $12,
+    $13, $14, $15, $16, $17)`,
+      params: [
+        newId_JV,
+        user_c,
+        user_b,
+        mrrdm_dpart,
+        fsyar_id,
+        acprd_id,
+        mrrdm_crncy,
+        "Purchase Invoice",
+        newTrnNo_JV,
+        new Date(),
+        mrrpy_refno,
+        mrrdm_ttype,
+        0,
+        0,
+        "Posted",
+        user_s,
+        user_s,
+      ],
+      label: `create journal master- ${newTrnNo_JV}`,
+    });
+
+    //SYS_MRR_DIRECT.PAY_SUPPLIER > Liability / Supplier Payable - 20101010
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15)`,
+      params: [
+        uuidv4(),
+        user_c,
+        user_b,
+        mrrdm_dpart,
+        newId_JV,
+        chtac_id,
+        party_id,
+        mrrpy_pdamt || 0,
+        0,
+        "Clear Liability / Supplier Payable",
+        mrrdm_ttype,
+        "",
+        1,
+        user_s,
+        user_s,
+      ],
+      label: `Clear Liability / Supplier / Payable ${newTrnNo_JV}`,
+    });
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15)`,
+      params: [
+        uuidv4(),
+        user_c,
+        user_b,
+        mrrdm_dpart,
+        newId_JV,
+        chtac_id_pay,
+        party_id_pay,
+        0,
+        mrrpy_pdamt || 0,
+        "Payment Liability / Supplier Payable",
+        mrrdm_ttype,
+        "",
+        1,
+        user_s,
+        user_s,
+      ],
+      label: `Payment Liability / Supplier / Payable ${newTrnNo_JV}`,
     });
 
     await dbRunAll(scripts);

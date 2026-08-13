@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-const { GenNewCode, GenNewTrn } = require("../../db/genHelper");
+const {
+  GenNewCode,
+  GenNewTrn,
+  getCurrentPeriod,
+} = require("../../db/genHelper");
 
 // get all
 router.post("/", async (req, res) => {
@@ -120,6 +124,8 @@ const create = async (req, res) => {
       mrrdm_ispad,
       mrrdm_isqcp,
       mrrdm_isapp,
+      party_id,
+      chtac_id,
       tmpb_mrrdc,
       tmpb_mrrcs,
       tmpb_mrrpy,
@@ -135,6 +141,8 @@ const create = async (req, res) => {
       !mrrdm_cntct ||
       !mrrdm_ttype ||
       !mrrdm_exrat ||
+      !party_id ||
+      !chtac_id ||
       !user_s ||
       !user_c ||
       !user_b
@@ -147,6 +155,31 @@ const create = async (req, res) => {
     }
 
     //database action
+    const acprd = await getCurrentPeriod(user_c, user_b, mrrdm_dpart);
+    if (!acprd) {
+      return {
+        success: false,
+        message: "No active fiscal year or accounting period found",
+        data: {},
+      };
+    }
+    if (acprd.length > 1) {
+      return {
+        success: false,
+        message: "Multiple active accounting periods found. Please select one.",
+        data: {},
+      };
+    }
+    const { acprd_id, fsyar_id } = acprd[0];
+    const newId_JV = uuidv4();
+    const newTrnNo_JV = await GenNewTrn(
+      user_c,
+      user_b,
+      "tmtb_jrnlm",
+      "Purchase Invoice",
+      mrrdm_dpart,
+    );
+
     const newId = uuidv4();
     //const newCode = await GenNewCode(user_c, "tmpb_mrrdm");
     const newTrnNo = await GenNewTrn(
@@ -207,7 +240,38 @@ const create = async (req, res) => {
       label: `Created MRR ${newTrnNo}`,
     });
 
+    //create journal
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
+    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
+    jrnlm_drval, jrnlm_crval, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6,
+    $7, $8, $9, $10, $11, $12,
+    $13, $14, $15, $16, $17)`,
+      params: [
+        newId_JV,
+        user_c,
+        user_b,
+        mrrdm_dpart,
+        fsyar_id,
+        acprd_id,
+        mrrdm_crncy,
+        "Purchase Invoice",
+        newTrnNo_JV,
+        mrrdm_trdat,
+        newTrnNo,
+        mrrdm_ttype,
+        0,
+        0,
+        "Posted",
+        user_s,
+        user_s,
+      ],
+      label: `create journal master- ${newTrnNo_JV}`,
+    });
+
     //Insert MRR details, Stock Details
+    let line = 1;
     for (const det of tmpb_mrrdc) {
       const lineId = uuidv4();
       scripts.push({
@@ -313,7 +377,63 @@ const create = async (req, res) => {
         ],
         label: `Update price stock detail ${newTrnNo}`,
       });
+
+      //SYS_MRR_DIRECT.PAY_INVENTORY > Asset / Inventory Products - 10101212
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          mrrdm_dpart,
+          newId_JV,
+          det.chtac_id,
+          det.party_id,
+          Number(det.mrrdc_itqty || 0) * Number(det.mrrdc_csrat || 0),
+          0,
+          "To Asset / Inventory / Products",
+          mrrdm_ttype,
+          lineId,
+          line,
+          user_s,
+          user_s,
+        ],
+        label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
+      });
+      line++;
     }
+    //SYS_MRR_DIRECT.PAY_SUPPLIER > Liability / Supplier Payable - 20101010
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15)`,
+      params: [
+        uuidv4(),
+        user_c,
+        user_b,
+        mrrdm_dpart,
+        newId_JV,
+        chtac_id,
+        party_id,
+        0,
+        mrrdm_pyamt || 0,
+        "From Liability / Supplier Payable",
+        mrrdm_ttype,
+        newId,
+        line,
+        user_s,
+        user_s,
+      ],
+      label: `Create Liability / Supplier / Payable ${newTrnNo_JV}`,
+    });
 
     //Insert Costing details
     for (const det of tmpb_mrrcs) {
@@ -374,7 +494,7 @@ const create = async (req, res) => {
       params: [mrrdm_duamt, user_s, mrrdm_cntct],
       label: `Update supplier credit balance ${newTrnNo}`,
     });
-    
+
     await dbRunAll(scripts);
 
     res.json({

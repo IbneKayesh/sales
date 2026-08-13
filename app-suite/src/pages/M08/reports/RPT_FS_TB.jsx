@@ -58,7 +58,12 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
       header: "Balance",
       width: "140px",
       align: "right",
+<<<<<<< HEAD
       render: (v) => (v !== 0 ? formatNumber(v) : "—"),
+=======
+      //Dr - Cr
+      render: (v) => (v > 0 ? formatNumber(v) : "—"),
+>>>>>>> a7c7dee819330ff14784d57054145be286fc4ee3
     },
   ];
 
