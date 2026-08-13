@@ -53,6 +53,13 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
       align: "right",
       render: (v) => (v > 0 ? formatNumber(v) : "—"),
     },
+    {
+      key: "subVal",
+      header: "Balance",
+      width: "140px",
+      align: "right",
+      render: (v) => (v !== 0 ? formatNumber(v) : "—"),
+    },
   ];
 
   const tb_data = Object.values(
@@ -67,11 +74,13 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
           ntype: row.chtac_ntype,
           drVal: 0,
           crVal: 0,
+          subVal: 0,
         };
       }
 
       acc[key].drVal += Number(row.jrnlc_drval || 0);
       acc[key].crVal += Number(row.jrnlc_crval || 0);
+      acc[key].subVal += Number(row.jrnlc_drval || 0) - Number(row.jrnlc_crval || 0);
 
       return acc;
     }, {}),
@@ -83,12 +92,14 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
     (sum, row) => {
       sum.drVal += row.drVal;
       sum.crVal += row.crVal;
+      sum.subVal += row.subVal;
       return sum;
     },
     {
       name: "Total",
       drVal: 0,
       crVal: 0,
+      subVal: 0,
     },
   );
 
@@ -109,6 +120,7 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
         type: r.type,
         debit: r.drVal,
         credit: r.crVal,
+        balance: r.subVal,
       })),
       {
         account: "Total",
@@ -116,14 +128,15 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
         type: "",
         debit: tb_data_sum.drVal,
         credit: tb_data_sum.crVal,
+        balance: tb_data_sum.subVal,
       },
     ];
     onRegisterExport(() =>
       exportToCSV(
         rows,
         buildColumns(
-          ["account", "chartNo", "type", "debit", "credit"],
-          ["Account", "Chart No", "Type", "Debit", "Credit"],
+          ["account", "chartNo", "type", "debit", "credit", "balance"],
+          ["Account", "Chart No", "Type", "Debit", "Credit", "Balance"],
         ),
         "trial-balance.csv",
       ),
@@ -145,7 +158,10 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
         hoverable
         dense
       />
-      <ReportFooter label="Total" values={[tb_data_sum.drVal, tb_data_sum.crVal]} />
+      <ReportFooter
+        label="Total"
+        values={[tb_data_sum.drVal, tb_data_sum.crVal, tb_data_sum.subVal]}
+      />
 
       <ReportStatus
         text={
