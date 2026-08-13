@@ -18,6 +18,7 @@ import DataTable from "@/components/DataTable";
 import DataCard, { DataCardGrid } from "@/components/DataCard";
 import { useUI } from "@/context/AppUIContext";
 import FileUpload from "@/components/FileUpload";
+import FileUploadModal from "@/components/FileUploadModal";
 import Progress from "@/components/Progress";
 import LoadableCard from "@/components/LoadableCard";
 import Modal, {
@@ -90,6 +91,7 @@ import {
   IconLock,
   IconTrendingUp,
   IconStar,
+  IconUpload,
 } from "@/icons";
 
 const sampleColumns = [
@@ -254,6 +256,8 @@ export default function ExamplesPage() {
   const [checked1, setChecked1] = useState(false);
   const [checked2, setChecked2] = useState(false);
   const [files, setFiles] = useState([]);
+  const [fileModalOpen, setFileModalOpen] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
   const [panelSide, setPanelSide] = useState("right");
@@ -659,6 +663,16 @@ export default function ExamplesPage() {
     }, 2000);
   };
 
+  // Simulated upload for the FileUploadModal demo
+  const handleUploadFile = useCallback((file) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        toast.success(`"${file.name}" uploaded successfully!`);
+        resolve();
+      }, 1500);
+    });
+  }, []);
+
   const [cardLoading, setCardLoading] = useState(false);
   const [cardError, setCardError] = useState(null);
   const [cardData, setCardData] = useState(null);
@@ -702,6 +716,7 @@ export default function ExamplesPage() {
         { id: "form-inputs", label: "Form Inputs" },
         { id: "input-states", label: "Input States" },
         { id: "file-upload", label: "File Upload" },
+        { id: "file-upload-modal", label: "File Upload Modal" },
         { id: "input-time", label: "Input Time" },
         { id: "chip", label: "Chip" },
         { id: "input-slider", label: "Input Slider" },
@@ -1285,6 +1300,77 @@ export default function ExamplesPage() {
               />
             </PageCardBody>
           </PageCard>
+
+          {/* ── Section: File Upload Modal ── */}
+          <PageCard data-section="file-upload-modal">
+            <PageCardHeader>
+              <PageCardTitle
+                title="File Upload Modal"
+                subtitle="Small popup uploader — select, preview, upload, then manage the file"
+              />
+              <PageCardActions>
+                <Button
+                  size="sm"
+                  icon={<IconUpload size={14} />}
+                  onClick={() => setFileModalOpen(true)}
+                >
+                  {uploadedFile ? "Manage File" : "Upload File"}
+                </Button>
+              </PageCardActions>
+            </PageCardHeader>
+            <PageCardBody>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "var(--sp-3)",
+                }}
+              >
+                <p style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                  Click the button to open a small popup. Select a file, preview
+                  it, then click Upload. Once uploaded, click the file preview to
+                  reveal Download / Delete / Replace options — Delete asks for
+                  confirmation first.
+                </p>
+                {uploadedFile ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "var(--sp-2)",
+                      fontSize: "var(--fs-sm)",
+                    }}
+                  >
+                    <Badge variant="success" dot>
+                      Uploaded
+                    </Badge>
+                    <span style={{ color: "var(--text-muted)" }}>
+                      {uploadedFile.name} ({(uploadedFile.size / 1024).toFixed(1)} KB) —
+                      reopen the popup to download, delete, or replace it
+                    </span>
+                  </div>
+                ) : (
+                  <span className="file-upload__hint">
+                    No file uploaded yet — max 1 file, max 5MB
+                  </span>
+                )}
+              </div>
+            </PageCardBody>
+          </PageCard>
+
+          {/* ── FileUploadModal (modal + delete confirm) ── */}
+          <FileUploadModal
+            open={fileModalOpen}
+            onClose={() => setFileModalOpen(false)}
+            value={uploadedFile}
+            onChange={setUploadedFile}
+            onUpload={handleUploadFile}
+            accept="image/*,.pdf,.csv"
+            maxSize={5 * 1024 * 1024}
+            maxFiles={1}
+            title="Upload Attachment"
+            subtitle="Select a file, preview it, then upload"
+          />
 
           {/* ── Section: Input Time ── */}
           <PageCard data-section="input-time">
