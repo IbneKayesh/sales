@@ -10,8 +10,8 @@ export const partyNetworkAPI = {
     apiRequest("/M08/v1/party-network/sales-invoice", {
       body: data,
     }),
-  getMRR: (data) =>
-    apiRequest("/M08/v1/party-network/mrr", {
+  getMrrDirect: (data) =>
+    apiRequest("/M08/v1/party-network/mrr-direct", {
       body: data,
     }),
 };

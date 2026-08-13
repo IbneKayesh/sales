@@ -14,6 +14,7 @@ import tmpb_mrrcs from "@/models/M03/tmpb_mrrcs.json";
 import tmpb_mrrpy from "@/models/M03/tmpb_mrrpy.json";
 import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
 import { validNumber } from "@/utils/misc.js";
+import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
 
 const useMRR = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -534,10 +535,10 @@ const useMRR = () => {
       return;
     }
     try {
-      const resp = await mrrAPI.getExpensesPaymentsHeads({});
+      const resp = await partyNetworkAPI.getMrrDirect({});
       const list = resp.data || [];
-      const mrrcs = list.filter((f) => f.prtyn_ctype === "EXPENSES");
-      const mrrpy = list.filter((f) => f.prtyn_ctype === "PAYMENTS");
+      const mrrcs = list.filter((f) => f.prtyn_ctype === "PAY_VENDOR");
+      const mrrpy = list.filter((f) => f.prtyn_ctype === "PAY_CASH_BANK");
       setMrrcs_Options(mrrcs);
       setMrrpy_Options(mrrpy);
     } catch (error) {}
@@ -810,6 +811,9 @@ const useMRR = () => {
       setFormDataCost((prev) => ({
         ...prev,
         party_cname: mrrcs_id?.party_cname,
+        party_chtac: mrrcs_id?.party_chtac,
+        prtyn_ctype: mrrcs_id?.prtyn_ctype,
+        prtyn_chtno: mrrcs_id?.prtyn_chtno,
       }));
     }
   };
@@ -870,6 +874,9 @@ const useMRR = () => {
       setFormDataPayment((prev) => ({
         ...prev,
         party_cname: mrrpy_id?.party_cname,
+        party_chtac: mrrcs_id?.party_chtac,
+        prtyn_ctype: mrrcs_id?.prtyn_ctype,
+        prtyn_chtno: mrrcs_id?.prtyn_chtno,
       }));
     }
   };

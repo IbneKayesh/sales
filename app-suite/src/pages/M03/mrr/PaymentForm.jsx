@@ -29,6 +29,7 @@ const PaymentForm = ({
             disabled={readOnly}
             optionValue="id"
             optionLabel="party_cname"
+            optionGrid="party_cname:Name,prtyn_chtno:COA"
           />
         </div>
         <div className="col-span-4">

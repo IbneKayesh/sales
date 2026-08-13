@@ -12,7 +12,7 @@ CREATE TABLE tmtb_prtyn (
   prtyn_chtac varchar(50),
   prtyn_chtno varchar(50),
   prtyn_party varchar(50),
-  prtyn_notes varchar(50),
+  prtyn_notes varchar(100),
   
   -- default 2
   prtyn_actve boolean NOT NULL DEFAULT true,

@@ -622,52 +622,6 @@ router.post("/get-payments-by-master", async (req, res) => {
   }
 });
 
-// get-expenses-payments-heads
-router.post("/get-expenses-payments-heads", async (req, res) => {
-  try {
-    const { user_s, user_c, user_b } = req.body;
-
-    // Validate input
-    if (!user_c) {
-      return res.json({
-        success: false,
-        message: "All fields in the request body are required.",
-        data: [],
-      });
-    }
-
-    //database action
-    const sql = `SELECT pty.*, ptn.prtyn_ctype
-      FROM tmtb_party pty
-      JOIN tmtb_prtyn ptn ON pty.id = ptn.prtyn_party
-      WHERE ptn.prtyn_cname = 'SYS_MRR_DIRECT'
-      AND pty.party_users = ptn.prtyn_users
-      AND pty.party_users = $1
-      AND pty.party_actve = TRUE
-      AND ptn.prtyn_actve = TRUE
-      ORDER BY pty.party_ptype`;
-
-    const params = [user_c];
-    const rows = await dbGetAll(
-      sql,
-      params,
-      `get expenses payments heads- ${user_c}`,
-    );
-    res.json({
-      success: true,
-      message: "Query executed successfully.",
-      data: rows,
-    });
-  } catch (error) {
-    console.error("database action error:", error);
-    return res.json({
-      success: false,
-      message: error.message || "An error occurred during db action",
-      data: [],
-    });
-  }
-});
-
 // get-all-due-mrr
 router.post("/get-all-due-mrr", async (req, res) => {
   try {

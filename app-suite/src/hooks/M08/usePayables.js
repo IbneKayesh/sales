@@ -48,10 +48,9 @@ const usePayables = () => {
   const getMRRParty = async () => {
     try {
       setIsBusy(true);
-      //AND ptn.prtyn_ctype = 'PAYMENTS'
-      const resp = await partyNetworkAPI.getMRR({});
+      const resp = await partyNetworkAPI.getMrrDirect({});
       const list = resp.data || [];
-      const mrrpy = list.filter((f) => f.prtyn_ctype === "PAYMENTS");
+      const mrrpy = list.filter((f) => f.prtyn_ctype === "PAY_CASH_BANK");
       setPartyOptions(mrrpy);
     } catch (error) {
     } finally {

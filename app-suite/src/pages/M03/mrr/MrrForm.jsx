@@ -49,7 +49,7 @@ const MrrForm = ({
             disabled={readOnly || stopEdit}
             optionValue="id"
             optionLabel="cntct_cname"
-            optionGrid = "cntct_cname:Name,cntct_cntps:Person,cntct_cntno:Contact,cntct_ofadr:Address,cntct_dspct:Discount%,cntct_crlmt:Credit,cntct_crbal:Balance"
+            optionGrid="cntct_cname:Name,cntct_cntps:Person,cntct_cntno:Contact,cntct_ofadr:Address,cntct_dspct:Discount%,cntct_crlmt:Credit,cntct_crbal:Balance"
           />
         </div>
         <div className="col-span-3">
