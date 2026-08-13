@@ -35,7 +35,7 @@ const useFstatements = () => {
       return;
     }
     try {
-      const resp = await departmentAPI.getAllActive({});
+      const resp = await departmentAPI.getJournal({});
       const list = resp.data || [];
       setDpart_Options(list);
     } catch (error) {}

@@ -127,7 +127,7 @@ BEGIN
 					v_line, p_user_s, p_user_s);
 
     END LOOP;	
-    COMMIT;
+   -- COMMIT;
 END;
 $BODY$;
 ALTER PROCEDURE public.prc_jrnlm_mrr(text, text, text, text)

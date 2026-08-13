@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
     LEFT JOIN tmhb_emply csr ON jrn.jrnlm_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON jrn.jrnlm_upusr = usr.id
     WHERE jrn.jrnlm_users = $1
-    ORDER BY jrn.jrnlm_trtyp ASC`;
+    ORDER BY jrn.jrnlm_trdat DESC, jrn.jrnlm_trtyp ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get journal- ${user_c}`);
@@ -438,7 +438,6 @@ ORDER BY jrd.jrnlc_lines ASC`;
 });
 
 // create-auto journal
-
 router.post("/create-auto-journal", async (req, res) => {
   try {
     const { jrnlm_dpart, user_s, user_c, user_b } = req.body;
@@ -453,13 +452,39 @@ router.post("/create-auto-journal", async (req, res) => {
     }
 
     //database action
-    const sql = `CALL prc_jrnlm($1,$2,$3,$4)`;
+    //build scripts
     const params = [user_s, user_c, user_b, jrnlm_dpart];
+    const scripts = [];
+    scripts.push({
+      sql: `CALL prc_jrnlm_mrr($1,$2,$3,$4)`,
+      params: params,
+      label: `create MRR journal- ${user_c}`,
+    });
+    scripts.push({
+      sql: `CALL prc_jrnlm_mrr_pay($1,$2,$3,$4)`,
+      params: params,
+      label: `create MRR Payment journal- ${user_c}`,
+    });
+    scripts.push({
+      sql: `CALL prc_jrnlm_inv($1,$2,$3,$4)`,
+      params: params,
+      label: `create Sales Invoice journal- ${user_c}`,
+    });
+    scripts.push({
+      sql: `CALL prc_jrnlm_inv_pay($1,$2,$3,$4)`,
+      params: params,
+      label: `create Sales Invoice Payment journal- ${user_c}`,
+    });
+    scripts.push({
+      sql: `CALL prc_jrnlm_drcr($1,$2,$3,$4)`,
+      params: params,
+      label: `update DR/CR journal- ${user_c}`,
+    });
 
-    await dbRun(sql, params, `create MRR JV- ${user_c}`);
+    await dbRunAll(scripts);
     res.json({
       success: true,
-      message: `${jrnlm_dpart} - Created successfully.`,
+      message: `Journal created successfully.`,
       data: {},
     });
   } catch (error) {

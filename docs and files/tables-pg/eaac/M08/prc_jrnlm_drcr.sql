@@ -35,7 +35,7 @@ BEGIN
 		AND jrm.jrnlm_users = p_user_c
 		AND jrm.jrnlm_bsins = p_user_b
 		AND jrm.jrnlm_dpart = p_user_d;
-    COMMIT;
+  --  COMMIT;
 END;
 $BODY$;
 ALTER PROCEDURE public.prc_jrnlm_drcr(text, text, text, text)

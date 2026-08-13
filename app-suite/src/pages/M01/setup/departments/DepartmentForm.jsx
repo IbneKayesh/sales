@@ -97,6 +97,13 @@ const DepartmentForm = ({
             onChange={(e) => onChange("dpart_stpro", e.target.checked)}
           />
         </div>
+        <div className="col-span-2 p-3">
+          <InputSwitch
+            label={`${formData.dpart_stjrn ? "Journal Disabled" : "Journal Enabled"}`}
+            checked={formData.dpart_stjrn}
+            onChange={(e) => onChange("dpart_stjrn", e.target.checked)}
+          />
+        </div>
       </div>
       {formData?.id && (
         <AuditData

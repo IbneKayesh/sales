@@ -110,7 +110,7 @@ const usePayables = () => {
       //console.log("reqBody", reqBody);
       //return;
 
-      const resp = await receivablesAPI.create(reqBody);
+      const resp = await payablesAPI.create(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,

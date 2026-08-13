@@ -119,7 +119,7 @@ BEGIN
 
 		--3. LOOP ITEM OF SALES INVOICE ASSETS / CR
 		FOR rec_pen_inv_child IN
-			SELECT ivc.id invcc_id, ivc.invcc_csrat, pty.id party_id, pty.party_chtac chtac_id
+			SELECT ivc.id invcc_id, ivc.invcc_itqty * ivc.invcc_csrat csamt, pty.id party_id, pty.party_chtac chtac_id
 			FROM tmob_invcc ivc
 			JOIN tmtb_party pty ON ivc.invcc_items = pty.party_vndor
 			WHERE ivc.invcc_invcm = rec_pen_inv.id
@@ -128,7 +128,7 @@ BEGIN
 					jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
 					jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
 		VALUES (gen_random_uuid()::text, p_user_c, p_user_b, p_user_d, v_jv_id, rec_pen_inv_child.chtac_id,
-					rec_pen_inv_child.party_id, 0, rec_pen_inv_child.invcc_csrat, 'To Customer Sales Product Stock Reduce', rec_pen_inv.invcm_ttype, rec_pen_inv_child.invcc_id,
+					rec_pen_inv_child.party_id, 0, rec_pen_inv_child.csamt, 'To Customer Sales Product Stock Reduce', rec_pen_inv.invcm_ttype, rec_pen_inv_child.invcc_id,
 					v_line, p_user_s, p_user_s);
 		v_line := v_line + 1;
 		END LOOP;
@@ -140,7 +140,7 @@ BEGIN
 		WHERE ptn.prtyn_cname = 'SYS_SALES_INVOICE'
 		AND ptn.prtyn_ctype = 'COGS'
 		LIMIT 1;
-		SELECT SUM(ivc.invcc_csrat)
+		SELECT SUM(ivc.invcc_itqty * ivc.invcc_csrat)
 		INTO v_payable_value
 			FROM tmob_invcc ivc
 			JOIN tmtb_party pty ON ivc.invcc_items = pty.party_vndor
@@ -155,7 +155,7 @@ BEGIN
 		v_line := v_line + 1;
 
     END LOOP;	
-    COMMIT;
+  --  COMMIT;
 END;
 $BODY$;
 ALTER PROCEDURE public.prc_jrnlm_inv(text, text, text, text)

@@ -59,7 +59,7 @@ const useJournal = () => {
   const getAllDepartments = async () => {
     if (dpart_Options.length > 0) return;
     try {
-      const resp = await departmentAPI.getAllActive({});
+      const resp = await departmentAPI.getJournal({});
       const list = resp.data || [];
       setDpart_Options(list);
     } catch (error) {}

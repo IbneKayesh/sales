@@ -17,6 +17,7 @@ CREATE TABLE tmsb_dpart (
   dpart_stsal boolean NOT NULL DEFAULT true,
   dpart_stnsf boolean NOT NULL DEFAULT true,
   dpart_stpro boolean NOT NULL DEFAULT true,
+  dpart_stjrn boolean NOT NULL DEFAULT true,
 
   -- default 2
   dpart_actve boolean NOT NULL DEFAULT true,

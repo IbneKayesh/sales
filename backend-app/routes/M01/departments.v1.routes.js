@@ -97,6 +97,7 @@ const create = async (req, res) => {
       dpart_stsal,
       dpart_stnsf,
       dpart_stpro,
+      dpart_stjrn,
       user_s,
       user_c,
       user_b,
@@ -115,11 +116,11 @@ const create = async (req, res) => {
     const newCode = await GenNewCode(user_c, "tmsb_dpart");
 
     const sql = `INSERT INTO tmsb_dpart(id, dpart_users, dpart_bsins, dpart_ccode, dpart_cname, dpart_ofadr,
-    dpart_emcap, dpart_stdst, dpart_stpur, dpart_stsal, dpart_stnsf, dpart_stpro,
+    dpart_emcap, dpart_stdst, dpart_stpur, dpart_stsal, dpart_stnsf, dpart_stpro, dpart_stjrn,
     dpart_crusr, dpart_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
     $7, $8, $9, $10, $11, $12,
-    $13, $14)`;
+    $13, $14, $15)`;
     const params = [
       uuidv4(),
       user_c,
@@ -133,6 +134,7 @@ const create = async (req, res) => {
       dpart_stsal,
       dpart_stnsf,
       dpart_stpro,
+      dpart_stjrn,
       user_s,
       user_s,
     ];
@@ -168,6 +170,7 @@ const update = async (req, res) => {
       dpart_stsal,
       dpart_stnsf,
       dpart_stpro,
+      dpart_stjrn,
       user_s,
       user_c,
       user_b,
@@ -191,10 +194,11 @@ const update = async (req, res) => {
     dpart_stsal = $6,
     dpart_stnsf = $7,
     dpart_stpro = $8,
-    dpart_upusr = $9,
+    dpart_stjrn = $9,
+    dpart_upusr = $10,
     dpart_updat = CURRENT_TIMESTAMP,
     dpart_rvnmr = dpart_rvnmr + 1
-    WHERE id = $10`;
+    WHERE id = $11`;
     const params = [
       dpart_cname,
       dpart_ofadr,
@@ -204,6 +208,7 @@ const update = async (req, res) => {
       dpart_stsal,
       dpart_stnsf,
       dpart_stpro,
+      dpart_stjrn,
       user_s,
       id,
     ];
@@ -337,6 +342,47 @@ router.post("/get-sales", async (req, res) => {
     FROM tmsb_dpart dprt
     WHERE dprt.dpart_users = $1
     AND dprt.dpart_stsal = FALSE
+    AND dprt.dpart_actve = TRUE
+    ORDER BY dprt.dpart_cname ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get Department- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+
+
+// get-journal
+router.post("/get-journal", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT dprt.*, 0 as edit_stop
+    FROM tmsb_dpart dprt
+    WHERE dprt.dpart_users = $1
+    AND dprt.dpart_stjrn = FALSE
     AND dprt.dpart_actve = TRUE
     ORDER BY dprt.dpart_cname ASC`;
 

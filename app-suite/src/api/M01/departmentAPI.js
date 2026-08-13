@@ -34,4 +34,8 @@ export const departmentAPI = {
     apiRequest("/M01/v1/departments/get-sales", {
       body: data,
     }),
+  getJournal: (data) =>
+    apiRequest("/M01/v1/departments/get-journal", {
+      body: data,
+    }),
 };

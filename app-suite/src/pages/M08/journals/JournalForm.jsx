@@ -25,7 +25,7 @@ const JournalForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-5">
           <Dropdown
             label="Department"
             options={dpart_Options}
@@ -39,7 +39,7 @@ const JournalForm = ({
             optionLabel="dpart_cname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Fiscal Year"
             options={fsyar_Options}
@@ -53,7 +53,7 @@ const JournalForm = ({
             optionLabel="fsyar_cname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Period No"
             options={acprd_Options}
@@ -67,10 +67,32 @@ const JournalForm = ({
             optionLabel="acprd_cname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-1">
           <InputLabel label="Currency" value={formData.jrnlm_crncy} />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
+          <InputCalendar
+            label="Journal Date"
+            value={formData.jrnlm_trdat}
+            onChange={(e) => onChange("jrnlm_trdat", e.target.value)}
+            placeholder="Select..."
+            error={formErrors.jrnlm_trdat}
+            required
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-2">
+          <InputText
+            label="Reference No"
+            placeholder="Enter reference number"
+            value={formData.jrnlm_refno}
+            onChange={(e) => onChange("jrnlm_refno", e.target.value)}
+            error={formErrors.jrnlm_refno}
+            required={false}
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-2">
           <Dropdown
             label="Journal Type"
             options={jrnlm_trtyp_Options}
@@ -82,29 +104,7 @@ const JournalForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
-          <InputCalendar
-            label="Journal Date"
-            value={formData.jrnlm_trdat}
-            onChange={(e) => onChange("jrnlm_trdat", e.target.value)}
-            placeholder="Select..."
-            error={formErrors.jrnlm_trdat}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-6">
-          <InputText
-            label="Reference No"
-            placeholder="Enter reference number"
-            value={formData.jrnlm_refno}
-            onChange={(e) => onChange("jrnlm_refno", e.target.value)}
-            error={formErrors.jrnlm_refno}
-            required={false}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-6">
+        <div className="col-span-4">
           <InputText
             label="Narration"
             placeholder="Enter narration"
@@ -115,10 +115,10 @@ const JournalForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputLabel label="Debit Value" value={formData.jrnlm_drval} />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputLabel label="Credit Value" value={formData.jrnlm_crval} />
         </div>
       </div>

@@ -59,7 +59,7 @@ const EmployeeList = ({ listData, onEdit, onDelete }) => {
     <DataTable
       columns={dtColumns}
       data={listData}
-      pageSize={10}
+      pageSize={15}
       sortable
       searchable
       striped

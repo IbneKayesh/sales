@@ -86,6 +86,19 @@ const DepartmentList = ({ listData, onEdit, onDelete }) => {
       },
     },
     {
+      key: "dpart_stjrn",
+      header: "Stop Journal",
+      width: "80px",
+      render: (v) => {
+        return (
+          <Badge variant={v ? "success" : "danger"}>
+            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+            {v ? "Yes" : "No"}
+          </Badge>
+        );
+      },
+    },
+    {
       key: "actions",
       header: "Actions",
       width: "110px",
@@ -104,7 +117,7 @@ const DepartmentList = ({ listData, onEdit, onDelete }) => {
     <DataTable
       columns={dtColumns}
       data={listData}
-      pageSize={10}
+      pageSize={15}
       sortable
       searchable
       striped
