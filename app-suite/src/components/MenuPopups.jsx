@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Routes } from "react-router-dom";
 import Modal, { ModalBody, ModalHeader, ModalTitle } from "@/components/Modal";
-import { IconClose } from "@/icons";
+import { IconClose, IconChevronDown } from "@/icons";
 import getRoutes from "@/routes";
 import { useApp } from "@/context/AppContext";
 
@@ -30,20 +30,22 @@ const POPUP_SIZES = [
  * the X button or Escape.
  */
 export default function MenuPopups() {
-  const { popups, closePopup, bringPopupToFront } = useApp();
+  const { popups, closePopup, bringPopupToFront, hidePopup } = useApp();
 
   return popups.map((p, i) => (
     <MenuPopup
       key={p.key}
       menu={p.menu}
+      hidden={p.hidden}
       onClose={() => closePopup(p.key)}
+      onHide={() => hidePopup(p.key)}
       onActivate={() => bringPopupToFront(p.key)}
       offset={i * 24}
     />
   ));
 }
 
-function MenuPopup({ menu, onClose, onActivate, offset }) {
+function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset }) {
   const [pos, setPos] = useState(() => ({ x: offset, y: offset }));
   const [width, setWidth] = useState(POPUP_DEFAULT_WIDTH);
   const [height, setHeight] = useState(null);
@@ -214,6 +216,7 @@ function MenuPopup({ menu, onClose, onActivate, offset }) {
         borderRadius: fullscreen ? 0 : undefined,
       }}
       style={{
+        display: hidden ? "none" : undefined,
         background: "transparent",
         backdropFilter: "none",
         pointerEvents: "none",
@@ -262,6 +265,15 @@ function MenuPopup({ menu, onClose, onActivate, offset }) {
               </button>
             );
           })}
+          <button
+            type="button"
+            className="modal__close"
+            onClick={onHide}
+            aria-label="Minimize popup"
+            title="Minimize"
+          >
+            <IconChevronDown size={16} />
+          </button>
           <button
             type="button"
             className="modal__close"

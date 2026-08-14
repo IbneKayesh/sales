@@ -15,6 +15,7 @@ import {
   setStorageLoginData,
 } from "@/utils/storage";
 import { DEFAULT_THEME, isValidTheme, THEME_COLORS } from "@/utils/theme";
+import { resolveMenuIcon } from "@/utils/menuIcons";
 import { toast } from "@/components/ToastBox";
 
 const AppContext = createContext(null);
@@ -328,6 +329,55 @@ const categoryOptions = [
   { value: "misc", label: "Miscellaneous", type: "expense" },
 ];
 
+// Minimized (hidden) popups are persisted so they survive a page reload and
+// reappear in the taskbar strip. The menu icon is a React element, so only the
+// icon name is stored and re-resolved on restore.
+const POPUPS_STORAGE_KEY = "bsuite_minimized_popups";
+
+// New popups are keyed by an incrementing sequence; start high so fresh popups
+// never collide with the small sequence numbers of restored (persisted) popups.
+const START_POPUP_SEQ = 1_000_000_000;
+
+const serializePopup = (p) => ({
+  key: p.key,
+  hidden: true,
+  menu: {
+    id: p.menu.id,
+    menus_mname: p.menu.menus_mname,
+    menus_color: p.menu.menus_color,
+    menus_micon_name: p.menu.menus_micon_name,
+    menus_odrby: p.menu.menus_odrby,
+    menus_mlink: p.menu.menus_mlink,
+    menus_mdesc: p.menu.menus_mdesc,
+  },
+});
+
+const restoreMinimizedPopups = () => {
+  try {
+    const stored = localStorage.getItem(POPUPS_STORAGE_KEY);
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .filter((p) => p && p.menu && p.menu.menus_mlink)
+      .map((p) => ({
+        key: p.key,
+        hidden: true,
+        menu: {
+          id: p.menu.id,
+          menus_mname: p.menu.menus_mname,
+          menus_color: p.menu.menus_color,
+          menus_micon: resolveMenuIcon(p.menu.menus_micon_name),
+          menus_odrby: p.menu.menus_odrby,
+          menus_mlink: p.menu.menus_mlink,
+          menus_mdesc: p.menu.menus_mdesc,
+        },
+      }));
+  } catch (e) {
+    return [];
+  }
+};
+
 export function AppProvider({ children }) {
   const navigate = useNavigate();
   //auth guard or session holder
@@ -346,15 +396,17 @@ export function AppProvider({ children }) {
   const [transactions, setTransactions] = useState(initialTransactions);
 
   // Menu popups — routes rendered in modal popups at the app root (see
-  // components/MenuPopups). Multiple popups can be open at once.
-  const [popups, setPopups] = useState([]);
-  const popupSeqRef = useRef(0);
+  // components/MenuPopups). Multiple popups can be open at once. Popups are
+  // seeded from localStorage so minimized popups survive a page reload;
+  // popupSeqRef starts high to avoid key collisions with restored popups.
+  const [popups, setPopups] = useState(restoreMinimizedPopups);
+  const popupSeqRef = useRef(START_POPUP_SEQ);
 
   const openPopup = useCallback((menu) => {
     popupSeqRef.current += 1;
     setPopups((prev) => [
       ...prev,
-      { key: `${menu.id}-${popupSeqRef.current}`, menu },
+      { key: `${menu.id}-${popupSeqRef.current}`, menu, hidden: false },
     ]);
   }, []);
 
@@ -373,6 +425,56 @@ export function AppProvider({ children }) {
       return next;
     });
   }, []);
+
+  // Hide (minimize) a single popup without removing it from the stack.
+  const hidePopup = useCallback((key) => {
+    setPopups((prev) =>
+      prev.map((p) => (p.key === key ? { ...p, hidden: true } : p)),
+    );
+  }, []);
+
+  // Restore a minimized popup and bring it to the front.
+  const restorePopup = useCallback(
+    (key) => {
+      setPopups((prev) =>
+        prev.map((p) => (p.key === key ? { ...p, hidden: false } : p)),
+      );
+      bringPopupToFront(key);
+    },
+    [bringPopupToFront],
+  );
+
+  // Hide every open popup at once (they stay in the stack, minimized).
+  const hideAllPopups = useCallback(() => {
+    setPopups((prev) => prev.map((p) => ({ ...p, hidden: true })));
+  }, []);
+
+  // Restore every minimized popup at once (all become visible again).
+  const showAllPopups = useCallback(() => {
+    setPopups((prev) => prev.map((p) => ({ ...p, hidden: false })));
+  }, []);
+
+  // Close every open popup at once.
+  const closeAllPopups = useCallback(() => {
+    setPopups([]);
+  }, []);
+
+  // Persist minimized popups to localStorage whenever the popup stack changes.
+  useEffect(() => {
+    try {
+      const minimized = popups.filter((p) => p.hidden);
+      if (minimized.length === 0) {
+        localStorage.removeItem(POPUPS_STORAGE_KEY);
+      } else {
+        localStorage.setItem(
+          POPUPS_STORAGE_KEY,
+          JSON.stringify(minimized.map(serializePopup)),
+        );
+      }
+    } catch (e) {
+      /* ignore */
+    }
+  }, [popups]);
 
   // Apply the selected theme color onto the document root and keep it in sync.
   useEffect(() => {
@@ -516,6 +618,11 @@ export function AppProvider({ children }) {
         popups,
         openPopup,
         closePopup,
+        hidePopup,
+        restorePopup,
+        hideAllPopups,
+        showAllPopups,
+        closeAllPopups,
         bringPopupToFront,
         users,
         addUser,

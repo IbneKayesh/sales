@@ -7,53 +7,18 @@ import PageCard, {
 } from "@/components/PageCard";
 import Button from "@/components/Button";
 import { useApp } from "@/context/AppContext";
-import {
-  IconHome,
-  IconAccounts,
-  IconActivity,
-  IconFile,
-  IconUsers,
-  IconManufacture,
-  IconCRM,
-  IconBox,
-  IconHR,
-  IconClose,
-  IconPopup,
-  IconSettings,
-  IconPurchase,
-  IconSales,
-  IconBar,
-} from "@/icons";
+import { IconHome, IconClose, IconPopup, IconChevronDown } from "@/icons";
+import { resolveMenuIcon } from "@/utils/menuIcons";
 
 /* ─── Hierarchical App Data: Module > Groups > Menu ─────── */
-
-const iconMap = {
-  Home: IconHome,
-  Settings: IconSettings,
-  Box: IconBox,
-  Manufacture: IconManufacture,
-  CRM: IconCRM,
-  HR: IconHR,
-  Accounts: IconAccounts,
-  Activity: IconActivity,
-  File: IconFile,
-  Users: IconUsers,
-  Purchase: IconPurchase,
-  Sales: IconSales,
-  Bar: IconBar,
-};
-
-const resolveIcon = (name) => {
-  const Icon = iconMap[name];
-  return Icon ? <Icon /> : null;
-};
 
 /** Build a menu item object from a data entry */
 const toMenu = (m) => ({
   id: m.id,
   menus_mname: m.name,
   menus_color: m.color,
-  menus_micon: resolveIcon(m.icon),
+  menus_micon: resolveMenuIcon(m.icon),
+  menus_micon_name: m.icon,
   menus_odrby: m.order,
   menus_mlink: m.link,
   menus_mdesc: m.desc,
@@ -759,11 +724,120 @@ const modulePageSearchStyles = {
   },
 };
 
+const popupListStyles = {
+  wrap: {
+    display: "flex",
+    alignItems: "center",
+    gap: 6,
+    position: "relative",
+  },
+  trigger: {
+    position: "relative",
+    width: 36,
+    height: 36,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    borderRadius: 8,
+    border: "1px solid var(--border, #e0e0e0)",
+    background: "var(--surface, #fff)",
+    color: "var(--text-muted, #888)",
+    cursor: "pointer",
+    transition: "all 0.2s",
+  },
+  badge: {
+    position: "absolute",
+    top: -4,
+    right: -4,
+    minWidth: 16,
+    height: 16,
+    padding: "0 4px",
+    borderRadius: 8,
+    background: "var(--primary, #7c3aed)",
+    color: "var(--primary-on, #fff)",
+    fontSize: 10,
+    fontWeight: 700,
+    lineHeight: "16px",
+    textAlign: "center",
+  },
+  panel: {
+    position: "absolute",
+    top: "calc(100% + 6px)",
+    right: 0,
+    zIndex: 60,
+    minWidth: 280,
+    maxWidth: 360,
+    maxHeight: 320,
+    overflowY: "auto",
+    background: "var(--surface, #fff)",
+    border: "1px solid var(--border, #e0e0e0)",
+    borderRadius: "var(--radius-lg, 10px)",
+    boxShadow: "0 8px 24px rgba(0,0,0,0.14)",
+    padding: 8,
+  },
+  action: {
+    padding: "4px 8px",
+    fontSize: 11,
+    borderRadius: 6,
+    border: "1px solid var(--border, #e0e0e0)",
+    background: "var(--surface, #fff)",
+    color: "var(--text-muted, #888)",
+    cursor: "pointer",
+    whiteSpace: "nowrap",
+  },
+  row: {
+    display: "flex",
+    alignItems: "center",
+    gap: 4,
+    width: "100%",
+    padding: "4px 4px 4px 8px",
+    borderRadius: 8,
+  },
+  rowMain: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    flex: 1,
+    minWidth: 0,
+    border: "none",
+    background: "transparent",
+    cursor: "pointer",
+    textAlign: "left",
+    fontSize: 13,
+    color: "var(--text-primary, #111)",
+    padding: "2px 0",
+  },
+  rowAction: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+    width: 26,
+    height: 26,
+    borderRadius: 6,
+    border: "none",
+    background: "transparent",
+    color: "var(--text-muted, #888)",
+    cursor: "pointer",
+    padding: 0,
+  },
+};
+
 const ModulePage = () => {
   const navigate = useNavigate();
-  const { openPopup } = useApp();
+  const {
+    openPopup,
+    popups,
+    restorePopup,
+    hidePopup,
+    closePopup,
+    hideAllPopups,
+    closeAllPopups,
+  } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
   const [recentMenuIds, setRecentMenuIds] = useState([]);
+  const [popupListOpen, setPopupListOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -952,33 +1026,225 @@ const ModulePage = () => {
             {appModules.length} applications &middot; {menus.length} features
           </p>
         </div>
-        <div style={modulePageSearchStyles.wrap}>
-          <input
-            type="text"
-            style={modulePageSearchStyles.input}
-            placeholder="Search menus…"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={(e) => {
-              e.target.style.borderColor = "var(--primary, #7c3aed)";
-              e.target.style.boxShadow = "0 0 0 2px rgba(124, 58, 237, 0.15)";
+        <div style={popupListStyles.wrap}>
+          <div style={modulePageSearchStyles.wrap}>
+            <input
+              type="text"
+              style={modulePageSearchStyles.input}
+              placeholder="Search menus…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={(e) => {
+                e.target.style.borderColor = "var(--primary, #7c3aed)";
+                e.target.style.boxShadow = "0 0 0 2px rgba(124, 58, 237, 0.15)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "var(--border, #e0e0e0)";
+                e.target.style.boxShadow = "none";
+              }}
+              aria-label="Search menus"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                style={modulePageSearchStyles.clear}
+                onClick={() => setSearchQuery("")}
+                aria-label="Clear search"
+                title="Clear search"
+              >
+                <IconClose size={14} />
+              </button>
+            )}
+          </div>
+          <button
+            type="button"
+            style={{
+              ...popupListStyles.trigger,
+              background: popupListOpen
+                ? "var(--primary, #7c3aed)"
+                : "var(--surface, #fff)",
+              borderColor: popupListOpen
+                ? "var(--primary, #7c3aed)"
+                : "var(--border, #e0e0e0)",
+              color: popupListOpen
+                ? "var(--primary-on, #fff)"
+                : "var(--text-muted, #888)",
             }}
-            onBlur={(e) => {
-              e.target.style.borderColor = "var(--border, #e0e0e0)";
-              e.target.style.boxShadow = "none";
-            }}
-            aria-label="Search menus"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              style={modulePageSearchStyles.clear}
-              onClick={() => setSearchQuery("")}
-              aria-label="Clear search"
-              title="Clear search"
-            >
-              <IconClose size={14} />
-            </button>
+            onClick={() => setPopupListOpen((o) => !o)}
+            title={
+              popups.length
+                ? "Show open popups"
+                : "No open popups"
+            }
+            aria-label="Show open popups"
+            aria-expanded={popupListOpen}
+          >
+            <IconPopup size={18} />
+            {popups.length > 0 && (
+              <span style={popupListStyles.badge}>{popups.length}</span>
+            )}
+          </button>
+          {popupListOpen && (
+            <div style={popupListStyles.panel}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 4,
+                  marginBottom: 6,
+                  padding: "0 2px",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: 0.6,
+                    color: "var(--text-muted, #888)",
+                  }}
+                >
+                  Popups ({popups.length})
+                </span>
+                <div
+                  style={{
+                    marginLeft: "auto",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                  }}
+                >
+                  <button
+                    type="button"
+                    style={popupListStyles.action}
+                    onClick={hideAllPopups}
+                    title="Minimize all open popups"
+                  >
+                    Hide all
+                  </button>
+                  <button
+                    type="button"
+                    style={popupListStyles.action}
+                    onClick={closeAllPopups}
+                    title="Close all open popups"
+                  >
+                    Close all
+                  </button>
+                  <button
+                    type="button"
+                    style={{
+                      ...popupListStyles.action,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "4px",
+                    }}
+                    onClick={() => setPopupListOpen(false)}
+                    aria-label="Close popup list"
+                    title="Close list"
+                  >
+                    <IconClose size={14} />
+                  </button>
+                </div>
+              </div>
+              {popups.length === 0 ? (
+                <p
+                  style={{
+                    margin: 0,
+                    padding: "12px 8px",
+                    fontSize: 13,
+                    color: "var(--text-muted, #888)",
+                    textAlign: "center",
+                  }}
+                >
+                  No open popups
+                </p>
+              ) : (
+                popups.map((p) => (
+                  <div
+                    key={p.key}
+                    style={popupListStyles.row}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.background =
+                        "var(--surface-alt, #f1f3f5)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.background = "transparent")
+                    }
+                  >
+                    <button
+                      type="button"
+                      style={popupListStyles.rowMain}
+                      onClick={() => {
+                        restorePopup(p.key);
+                        setPopupListOpen(false);
+                      }}
+                      title={
+                        p.hidden
+                          ? `Open ${p.menu.menus_mname}`
+                          : `Bring ${p.menu.menus_mname} to front`
+                      }
+                    >
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          flexShrink: 0,
+                          color: p.menu.menus_color,
+                        }}
+                      >
+                        {p.menu.menus_micon}
+                      </span>
+                      <span
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          fontWeight: p.hidden ? 500 : 600,
+                        }}
+                      >
+                        {p.menu.menus_mname}
+                      </span>
+                      {p.hidden && (
+                        <span
+                          style={{
+                            fontSize: 10,
+                            padding: "1px 6px",
+                            borderRadius: 999,
+                            background: "var(--surface-alt, #f1f3f5)",
+                            color: "var(--text-muted, #888)",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          minimized
+                        </span>
+                      )}
+                    </button>
+                    {!p.hidden && (
+                      <button
+                        type="button"
+                        style={popupListStyles.rowAction}
+                        onClick={() => hidePopup(p.key)}
+                        title={`Minimize ${p.menu.menus_mname}`}
+                        aria-label={`Minimize ${p.menu.menus_mname}`}
+                      >
+                        <IconChevronDown size={14} />
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      style={popupListStyles.rowAction}
+                      onClick={() => closePopup(p.key)}
+                      title={`Close ${p.menu.menus_mname}`}
+                      aria-label={`Close ${p.menu.menus_mname}`}
+                    >
+                      <IconClose size={14} />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -1102,7 +1368,7 @@ const ModulePage = () => {
                       className="module-page__card-icon"
                       style={{ background: `${mod.color}18` }}
                     >
-                      {resolveIcon(mod.icon)}
+                      {resolveMenuIcon(mod.icon)}
                     </div>
                     <PageCardTitle
                       title={`${mod.name} (${mod.id})`}

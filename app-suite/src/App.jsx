@@ -6,6 +6,7 @@ import getRoutes from './routes'
 import LoginPage from './pages/auth/LoginPage'
 import ErrorBoundary from './components/ErrorBoundary'
 import MenuPopups from './components/MenuPopups'
+import PopupTaskbar from './components/PopupTaskbar'
 import './App.css'
 
 function AppContent() {
@@ -25,6 +26,8 @@ function AppContent() {
       {/* Menu popups render their routes outside the main <Routes> so each
           popup can use <Routes location={link}> for any path. */}
       <MenuPopups />
+      {/* Taskbar strip for minimized popups, pinned to the bottom of the screen */}
+      <PopupTaskbar />
     </Layout>
   )
 }

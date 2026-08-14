@@ -12,6 +12,8 @@ import {
   IconCheck,
   IconClose,
   IconCalculator,
+  IconExpand,
+  IconCollapse,
   IconDollar,
   IconBox,
   IconActivity,
@@ -26,6 +28,7 @@ export default function Topbar({ className = "", ...rest }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [calcOpen, setCalcOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const profileRef = useRef(null);
   const notifRef = useRef(null);
 
@@ -78,6 +81,25 @@ export default function Topbar({ className = "", ...rest }) {
   ];
 
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  // Track browser fullscreen state so the icon reflects the current mode,
+  // including when fullscreen is toggled externally (e.g. the F11 key).
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.().catch(() => {});
+    } else {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+    }
+  };
 
   // Close profile dropdown on outside click
   useEffect(() => {
@@ -140,6 +162,18 @@ export default function Topbar({ className = "", ...rest }) {
       <div className="topbar__nav" />
 
       <div className="topbar__right">
+        {/* Fullscreen — browser fullscreen like F11 */}
+        <button
+          type="button"
+          className={`topbar__icon-btn${isFullscreen ? " topbar__icon-btn--active" : ""}`}
+          onClick={toggleFullscreen}
+          aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+          aria-pressed={isFullscreen}
+          title={isFullscreen ? "Exit fullscreen (F11)" : "Enter fullscreen (F11)"}
+        >
+          {isFullscreen ? <IconCollapse size={20} /> : <IconExpand size={20} />}
+        </button>
+
         {/* Calculator — standalone draggable modal */}
         <button
           type="button"
