@@ -25,6 +25,22 @@ const format = (n) => {
   return String(parseFloat(n.toPrecision(12)));
 };
 
+// Map a physical keyboard key to the keypad label that should light up.
+const keyToLabel = (k) => {
+  if (/^[0-9]$/.test(k)) return k;
+  if (k === ".") return ".";
+  if (k === "Enter" || k === "=") return "=";
+  if (k === "+") return "+";
+  if (k === "-") return "−";
+  if (k === "*") return "×";
+  if (k === "/") return "÷";
+  if (k === "%") return "%";
+  if (k.toLowerCase() === "c") return "C";
+  if (k.toLowerCase() === "n" || k === "F9") return "±"; // toggle sign
+  if (k === "Backspace") return "⌫";
+  return null;
+};
+
 const keyStyles = {
   digit: {
     background: "var(--surface-alt)",
@@ -48,8 +64,9 @@ const keyStyles = {
   },
 };
 
-/* Keypad button with hover + pressed feedback (inline styles, no CSS). */
-const Key = ({ variant, label, onClick, span }) => {
+/* Keypad button with hover + pressed feedback (inline styles, no CSS).
+   `active` lights it up for keyboard input. */
+const Key = ({ variant, label, onClick, span, active, title }) => {
   const [hovered, setHovered] = useState(false);
   const [pressed, setPressed] = useState(false);
   const base = keyStyles[variant] || keyStyles.digit;
@@ -57,6 +74,7 @@ const Key = ({ variant, label, onClick, span }) => {
     <button
       type="button"
       onClick={onClick}
+      title={title}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onMouseDown={() => setPressed(true)}
@@ -80,7 +98,7 @@ const Key = ({ variant, label, onClick, span }) => {
         transition: "all 0.08s ease",
         ...base,
         ...(hovered ? { filter: "brightness(0.94)" } : {}),
-        ...(pressed
+        ...(pressed || active
           ? { transform: "scale(0.94)", filter: "brightness(0.85)" }
           : {}),
         ...(span ? { gridColumn: `span ${span}` } : {}),
@@ -104,12 +122,15 @@ export default function Calculator({ open, onClose }) {
   const [display, setDisplay] = useState("0");
   const [prev, setPrev] = useState(null);
   const [op, setOp] = useState(null);
+  const [eq, setEq] = useState(""); // full equation chain typed so far
   const [overwrite, setOverwrite] = useState(true);
   const [lastEq, setLastEq] = useState(null);
   const [history, setHistory] = useState([]);
   const [expanded, setExpanded] = useState(false);
+  const [activeKey, setActiveKey] = useState(null); // keypad button lit by keyboard
   const dragRef = useRef(null);
   const keyHandlerRef = useRef(null);
+  const keyTimerRef = useRef(null); // clears the keyboard blink
 
   const pushHistory = (expression, result) => {
     setHistory((h) =>
@@ -152,6 +173,7 @@ export default function Calculator({ open, onClose }) {
     setOp(null);
     setOverwrite(true);
     setLastEq(null);
+    setEq("");
   };
 
   const clearHistory = () => setHistory([]);
@@ -159,12 +181,19 @@ export default function Calculator({ open, onClose }) {
   const setOperator = (nextOp) => {
     const cur = parseFloat(display);
     if (op != null && prev != null && !overwrite) {
+      // Chaining: evaluate the pending pair, then keep typing.
       const result = format(compute(prev, cur, op));
       pushHistory(`${format(prev)} ${op} ${display}`, result);
       setDisplay(result);
-      setPrev(result);
+      setPrev(parseFloat(result)); // keep numeric so chained ops don't concat
+      setEq((e) => `${e}${display} ${nextOp} `);
+    } else if (op != null && overwrite) {
+      // Operator pressed twice in a row: just replace the pending one.
+      setEq((e) => `${e.slice(0, -2)} ${nextOp} `);
+      setPrev(cur);
     } else {
       setPrev(cur);
+      setEq((e) => `${e}${display} ${nextOp} `);
     }
     setLastEq(null);
     setOp(nextOp);
@@ -173,7 +202,7 @@ export default function Calculator({ open, onClose }) {
 
   const equals = () => {
     if (op == null || prev == null) return;
-    const expression = `${format(prev)} ${op} ${display}`;
+    const expression = `${eq}${display}`;
     const result = format(compute(prev, parseFloat(display), op));
     pushHistory(expression, result);
     setDisplay(result);
@@ -181,6 +210,7 @@ export default function Calculator({ open, onClose }) {
     setOp(null);
     setOverwrite(true);
     setLastEq(`${expression} =`);
+    setEq("");
   };
 
   const toggleSign = () => {
@@ -193,16 +223,14 @@ export default function Calculator({ open, onClose }) {
     setDisplay(format(parseFloat(display) / 100));
   };
 
-  // Equation shown above the result: the pending chain, or the last
+  // Equation shown above the result: the full pending chain, or the last
   // completed equation right after "=".
   const equationText =
     lastEq && op == null && prev == null && overwrite
       ? lastEq
-      : op != null && prev != null
-        ? overwrite
-          ? `${format(prev)} ${op}`
-          : `${format(prev)} ${op} ${display}`
-        : "";
+      : overwrite
+        ? eq
+        : `${eq}${display}`;
 
   // Select a history entry: reuse its result, reset the calculator to its
   // default (collapsed) size and close the history panel.
@@ -212,6 +240,7 @@ export default function Calculator({ open, onClose }) {
     setOp(null);
     setOverwrite(true);
     setLastEq(null);
+    setEq("");
     setExpanded(false);
   };
 
@@ -227,6 +256,13 @@ export default function Calculator({ open, onClose }) {
         return; // don't steal keys while the user types in a field
       }
       const k = e.key;
+      // Light up the matching keypad button for a moment.
+      const label = keyToLabel(k);
+      if (label) {
+        setActiveKey(label);
+        clearTimeout(keyTimerRef.current);
+        keyTimerRef.current = setTimeout(() => setActiveKey(null), 180);
+      }
       if (/^[0-9]$/.test(k)) {
         inputDigit(k);
         e.preventDefault();
@@ -247,6 +283,9 @@ export default function Calculator({ open, onClose }) {
         percent();
       } else if (k.toLowerCase() === "c") {
         clearAll();
+      } else if (k.toLowerCase() === "n" || k === "F9") {
+        toggleSign();
+        e.preventDefault();
       }
     };
   });
@@ -256,7 +295,11 @@ export default function Calculator({ open, onClose }) {
     if (!open) return;
     const handler = (e) => keyHandlerRef.current?.(e);
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    return () => {
+      window.removeEventListener("keydown", handler);
+      clearTimeout(keyTimerRef.current);
+      setActiveKey(null);
+    };
   }, [open]);
 
   // Drag the header to move the calculator around the screen.
@@ -389,11 +432,12 @@ export default function Calculator({ open, onClose }) {
               textAlign: "right",
               fontFamily: "var(--font-mono)",
               fontSize: 11,
+              lineHeight: 1.4,
               color: "var(--text-muted)",
-              minHeight: 14,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
+              minHeight: 15,
+              maxHeight: 44,
+              overflowY: "auto",
+              wordBreak: "break-all",
             }}
           >
             {equationText || "\u00A0"}
@@ -423,25 +467,101 @@ export default function Calculator({ open, onClose }) {
             gap: 6,
           }}
         >
-          <Key variant="fn" label="C" onClick={clearAll} />
-          <Key variant="fn" label="±" onClick={toggleSign} />
-          <Key variant="fn" label="%" onClick={percent} />
-          <Key variant="op" label="÷" onClick={() => setOperator("÷")} />
+          <Key
+            variant="fn"
+            label="C"
+            active={activeKey === "C"}
+            onClick={clearAll}
+          />
+          <Key
+            variant="fn"
+            label="±"
+            active={activeKey === "±"}
+            onClick={toggleSign}
+            title="Toggle sign (n or F9)"
+          />
+          <Key
+            variant="fn"
+            label="%"
+            active={activeKey === "%"}
+            onClick={percent}
+          />
+          <Key
+            variant="op"
+            label="÷"
+            active={activeKey === "÷"}
+            onClick={() => setOperator("÷")}
+          />
           {["7", "8", "9"].map((d) => (
-            <Key key={d} variant="digit" label={d} onClick={() => inputDigit(d)} />
+            <Key
+              key={d}
+              variant="digit"
+              label={d}
+              active={activeKey === d}
+              onClick={() => inputDigit(d)}
+            />
           ))}
-          <Key variant="op" label="×" onClick={() => setOperator("×")} />
+          <Key
+            variant="op"
+            label="×"
+            active={activeKey === "×"}
+            onClick={() => setOperator("×")}
+          />
           {["4", "5", "6"].map((d) => (
-            <Key key={d} variant="digit" label={d} onClick={() => inputDigit(d)} />
+            <Key
+              key={d}
+              variant="digit"
+              label={d}
+              active={activeKey === d}
+              onClick={() => inputDigit(d)}
+            />
           ))}
-          <Key variant="op" label="−" onClick={() => setOperator("−")} />
+          <Key
+            variant="op"
+            label="−"
+            active={activeKey === "−"}
+            onClick={() => setOperator("−")}
+          />
           {["1", "2", "3"].map((d) => (
-            <Key key={d} variant="digit" label={d} onClick={() => inputDigit(d)} />
+            <Key
+              key={d}
+              variant="digit"
+              label={d}
+              active={activeKey === d}
+              onClick={() => inputDigit(d)}
+            />
           ))}
-          <Key variant="op" label="+" onClick={() => setOperator("+")} />
-          <Key variant="digit" label="0" onClick={() => inputDigit("0")} span={2} />
-          <Key variant="digit" label="." onClick={inputDot} />
-          <Key variant="equals" label="=" onClick={equals} />
+          <Key
+            variant="op"
+            label="+"
+            active={activeKey === "+"}
+            onClick={() => setOperator("+")}
+          />
+          <Key
+            variant="fn"
+            label="⌫"
+            active={activeKey === "⌫"}
+            onClick={backspace}
+            title="Backspace"
+          />
+          <Key
+            variant="digit"
+            label="0"
+            active={activeKey === "0"}
+            onClick={() => inputDigit("0")}
+          />
+          <Key
+            variant="digit"
+            label="."
+            active={activeKey === "."}
+            onClick={inputDot}
+          />
+          <Key
+            variant="equals"
+            label="="
+            active={activeKey === "="}
+            onClick={equals}
+          />
         </div>
 
         {/* History — last 10 calculations (visible when expanded) */}
