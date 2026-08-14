@@ -15,7 +15,7 @@ const defaultData = {
 const confData = {
   saved_user: null,
   is_saved: false,
-  theme: "green",
+  theme: "violet",
   sidebar: "visible",
 };
 

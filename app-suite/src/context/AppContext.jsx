@@ -7,7 +7,13 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiLogin } from "@/utils/api";
-import { clearStorageData, getStorageData } from "@/utils/storage";
+import {
+  clearStorageData,
+  getStorageData,
+  getStorageLoginData,
+  setStorageLoginData,
+} from "@/utils/storage";
+import { DEFAULT_THEME, isValidTheme, THEME_COLORS } from "@/utils/theme";
 import { toast } from "@/components/ToastBox";
 
 const AppContext = createContext(null);
@@ -331,8 +337,29 @@ export function AppProvider({ children }) {
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [theme, setTheme] = useState("light");
+  const [themeColor, setThemeColorState] = useState(() => {
+    const stored = getStorageLoginData()?.theme;
+    return isValidTheme(stored) ? stored : DEFAULT_THEME;
+  });
   const [users, setUsers] = useState(initialUsers);
   const [transactions, setTransactions] = useState(initialTransactions);
+
+  // Apply the selected theme color onto the document root and keep it in sync.
+  useEffect(() => {
+    const themeDef =
+      THEME_COLORS.find((t) => t.id === themeColor) || THEME_COLORS[0];
+    const root = document.documentElement;
+    root.setAttribute("data-theme", themeDef.id);
+    Object.entries(themeDef.shades).forEach(([shade, value]) => {
+      root.style.setProperty(`--theme-${shade}`, value);
+    });
+  }, [themeColor]);
+
+  const setThemeColor = useCallback((color) => {
+    if (!isValidTheme(color)) return;
+    setThemeColorState(color);
+    setStorageLoginData({ theme: color });
+  }, []);
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
@@ -452,6 +479,8 @@ export function AppProvider({ children }) {
         toggleSidebar,
         theme,
         setTheme,
+        themeColor,
+        setThemeColor,
         users,
         addUser,
         updateUser,

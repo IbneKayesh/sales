@@ -528,6 +528,89 @@
 }
 
 /* --------------------------------------------------------------------------
+   2b. Theme Color Overrides
+   Applies the user-selected accent color (see /utils/theme.js). AppContext
+   sets `data-theme` and copies the chosen color's shades onto the --theme-*
+   custom properties on <html>. Violet is the base/default theme (see :root),
+   so no override block is needed for it.
+   -------------------------------------------------------------------------- */
+
+html[data-theme] {
+  --primary:              var(--theme-600);
+  --primary-hover:        var(--theme-700);
+  --primary-active:       var(--theme-800);
+  --primary-light:        var(--theme-400);
+  --primary-bg:           color-mix(in srgb, var(--theme-600) 10%, transparent);
+  --primary-border:       color-mix(in srgb, var(--theme-600) 50%, transparent);
+  --primary-on:           #ffffff;
+
+  --secondary:            var(--theme-500);
+  --secondary-hover:      var(--theme-600);
+  --secondary-active:     var(--theme-700);
+  --secondary-light:      var(--theme-400);
+  --secondary-bg:         color-mix(in srgb, var(--theme-500) 10%, transparent);
+  --secondary-on:         #ffffff;
+
+  --bg:                   var(--theme-100);
+  --surface:              var(--theme-50);
+  --surface-alt:          var(--theme-200);
+  --surface-hover:        var(--theme-200);
+
+  --sidebar-bg:           var(--theme-50);
+  --sidebar-hover:        var(--theme-200);
+  --sidebar-active:       color-mix(in srgb, var(--theme-600) 8%, transparent);
+
+  --header-bg:            var(--theme-50);
+  --footer-bg:            var(--theme-100);
+
+  --card-bg:              var(--theme-50);
+  --modal-bg:             var(--theme-50);
+
+  --table-header:         var(--theme-200);
+  --table-hover:          color-mix(in srgb, var(--theme-600) 4%, transparent);
+  --table-selected:       color-mix(in srgb, var(--theme-600) 8%, transparent);
+  --table-stripe:         color-mix(in srgb, var(--theme-50) 50%, transparent);
+
+  --social-bg:            color-mix(in srgb, var(--theme-50) 50%, transparent);
+
+  --link:                 var(--theme-600);
+  --link-hover:           var(--theme-700);
+
+  --border:               var(--theme-300);
+  --border-light:         var(--theme-200);
+
+  --shadow-color-xs:      color-mix(in srgb, var(--theme-600) 4%, transparent);
+  --shadow-color-sm:      color-mix(in srgb, var(--theme-600) 6%, transparent);
+  --shadow-color-md:      color-mix(in srgb, var(--theme-600) 8%, transparent);
+  --shadow-color-lg:      color-mix(in srgb, var(--theme-600) 10%, transparent);
+  --shadow-color-xl:      color-mix(in srgb, var(--theme-600) 15%, transparent);
+  --shadow-color:         var(--shadow-color-md);
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme] {
+    --primary:              var(--theme-400);
+    --primary-hover:        var(--theme-300);
+    --primary-active:       var(--theme-200);
+    --primary-light:        var(--theme-300);
+    --primary-bg:           color-mix(in srgb, var(--theme-400) 15%, transparent);
+    --primary-border:       color-mix(in srgb, var(--theme-400) 50%, transparent);
+
+    --secondary:            var(--theme-500);
+    --secondary-hover:      var(--theme-400);
+    --secondary-light:      var(--theme-300);
+    --secondary-bg:         color-mix(in srgb, var(--theme-500) 15%, transparent);
+
+    --link:                 var(--theme-400);
+    --link-hover:           var(--theme-300);
+
+    --sidebar-active:       color-mix(in srgb, var(--theme-400) 12%, transparent);
+    --table-hover:          color-mix(in srgb, var(--theme-400) 6%, transparent);
+    --table-selected:       color-mix(in srgb, var(--theme-400) 10%, transparent);
+  }
+}
+
+/* --------------------------------------------------------------------------
    3. Global Reset
    -------------------------------------------------------------------------- */
 

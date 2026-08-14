@@ -86,6 +86,15 @@ const appModules = [
             link: "/",
             desc: "Return to dashboard overview",
           },
+          {
+            id: "M01-G01-M002",
+            name: "General",
+            color: "#7c3aed",
+            icon: "Settings",
+            order: 2,
+            link: "/settings/general",
+            desc: "Application preferences and theme color",
+          },
         ],
       },
       {
