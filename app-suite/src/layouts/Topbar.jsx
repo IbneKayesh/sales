@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import {
   IconLogo,
@@ -19,12 +19,14 @@ import {
   IconActivity,
   IconBar,
 } from "../icons";
+import { modulesMenu } from "../utils/appModules";
 import { toast } from "../components/ToastBox";
 import Calculator from "../components/Calculator";
 
 export default function Topbar({ className = "", ...rest }) {
-  const { user, logout } = useApp();
+  const { user, logout, openPopup } = useApp();
   const navigate = useNavigate();
+  const location = useLocation();
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [calcOpen, setCalcOpen] = useState(false);
@@ -147,11 +149,21 @@ export default function Topbar({ className = "", ...rest }) {
 
   return (
     <header className={`topbar${className ? " " + className : ""}`} {...rest}>
-      <NavLink to="/bsuite/modules" className="topbar__brand">
-        <span className="topbar__logo">
+      {/* App launcher — opens the module page (all modules & menus) as a
+          popup; clicking a menu in it navigates to that menu's URL. Hidden
+          while the module page itself is open as the main page. */}
+      {location.pathname !== "/bsuite/modules" && (
+        <button
+          type="button"
+          className="topbar__icon-btn"
+          onClick={() => openPopup(modulesMenu)}
+          aria-label="Open modules"
+          aria-haspopup="dialog"
+          title="Open modules"
+        >
           <IconBar size={24} />
-        </span>
-      </NavLink>
+        </button>
+      )}
       <NavLink to="/bsuite/modules" className="topbar__brand">
         <span className="topbar__logo">
           <IconLogo size={28} />

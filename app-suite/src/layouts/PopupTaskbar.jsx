@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
-import { IconClose } from "@/icons";
+import { IconClose, IconChevronDown, IconEye, IconExpand, IconCollapse } from "@/icons";
 
 const actionStyle = {
-  padding: "4px 10px",
-  fontSize: 11,
-  fontWeight: 600,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: 26,
+  height: 26,
   borderRadius: 6,
   border: "1px solid var(--border, #e0e0e0)",
   background: "var(--surface, #fff)",
   color: "var(--text-muted, #888)",
   cursor: "pointer",
-  whiteSpace: "nowrap",
   flexShrink: 0,
 };
 
@@ -73,33 +74,68 @@ export default function PopupTaskbar() {
           paddingLeft: 8,
         }}
       >
+        <FullscreenButton />
         <button
           type="button"
           style={actionStyle}
           onClick={closeAllPopups}
           title="Close all open popups"
+          aria-label="Close all popups"
         >
-          Close all
+          <IconClose size={14} />
         </button>
         <button
           type="button"
           style={actionStyle}
           onClick={showAllPopups}
           title="Restore all minimized popups"
+          aria-label="Show all popups"
         >
-          Show all
+          <IconEye size={14} />
         </button>
         <button
           type="button"
           style={actionStyle}
           onClick={hideAllPopups}
           title="Minimize all open popups"
+          aria-label="Hide all popups"
         >
-          Hide all
+          <IconChevronDown size={14} />
         </button>
       </div>
       <TaskbarClock />
     </div>
+  );
+}
+
+/** Fullscreen toggle (like F11) pinned at the left of the taskbar. */
+function FullscreenButton() {
+  const [fullscreen, setFullscreen] = useState(!!document.fullscreenElement);
+
+  useEffect(() => {
+    const onChange = () => setFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.();
+    } else {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      style={actionStyle}
+      onClick={toggleFullscreen}
+      title={fullscreen ? "Exit fullscreen (F11)" : "Enter fullscreen (F11)"}
+      aria-label={fullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+    >
+      {fullscreen ? <IconCollapse size={14} /> : <IconExpand size={14} />}
+    </button>
   );
 }
 

@@ -77,22 +77,28 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset }) {
       const dx = ev.clientX - d.startX;
       const dy = ev.clientY - d.startY;
       if (d.mode === "move") {
-        // Keep the popup at least partially on screen.
-        const halfW = Math.max(0, (window.innerWidth - d.width) / 2);
-        const minX = 40 - halfW;
-        const maxX = halfW - 40;
-        const halfH = window.innerHeight / 2;
-        const minY = 60 - halfH;
-        const maxY = halfH - 80;
+        // The overlay is a flex container that centers the modal, so pos is
+        // an offset relative to the centered position — not an absolute
+        // screen coordinate. Clamp in real screen space using the popup's
+        // bounding rect captured at drag start, then convert back to pos.
+        const r = d.rect;
+        // Keep the popup fully on screen horizontally (10px margin) so it can
+        // be dragged all the way to the left or right edge.
+        const left = Math.min(
+          Math.max(r.left + dx, 10),
+          window.innerWidth - r.width - 10,
+        );
+        // Keep the header (and its close button) reachable vertically: never
+        // above the top edge, and never so far down the header goes below the
+        // viewport. No bottom boundary for the popup body — tall popups may
+        // extend below the screen.
+        const top = Math.min(
+          Math.max(r.top + dy, 10),
+          window.innerHeight - r.headerH - 10,
+        );
         setPos({
-          x:
-            maxX >= minX
-              ? Math.min(Math.max(d.startPos.x + dx, minX), maxX)
-              : 0,
-          y:
-            maxY >= minY
-              ? Math.min(Math.max(d.startPos.y + dy, minY), maxY)
-              : 0,
+          x: d.startPos.x + (left - r.left),
+          y: d.startPos.y + (top - r.top),
         });
       } else {
         if (d.mode === "resize-w" || d.mode === "resize-wh") {
@@ -121,12 +127,19 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset }) {
     if (fullscreen) return;
     if (e.target.closest("button")) return; // keep size/close buttons clickable
     e.preventDefault();
+    const rect = modalRef.current?.getBoundingClientRect();
     dragRef.current = {
       mode: "move",
       startX: e.clientX,
       startY: e.clientY,
       startPos: pos,
-      width,
+      rect: {
+        left: rect?.left ?? pos.x,
+        top: rect?.top ?? pos.y,
+        width: rect?.width ?? width,
+        headerH:
+          modalRef.current?.querySelector(".modal__header")?.offsetHeight ?? 64,
+      },
       cursor: "grabbing",
     };
     attachDrag();
@@ -230,6 +243,22 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset }) {
         onMouseDown={startMove}
         style={{ cursor: fullscreen ? undefined : "grab" }}
       >
+        <div
+          style={{
+            width: 34,
+            height: 34,
+            borderRadius: "var(--radius-lg)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+            background: `${menu.menus_color}18`,
+            color: menu.menus_color,
+            fontSize: 17,
+          }}
+        >
+          {menu.menus_micon}
+        </div>
         <ModalTitle title={menu.menus_mname} subtitle={menu.menus_mdesc} />
         <div
           style={{

@@ -13,6 +13,7 @@ import {
   IconSales,
   IconBar,
   IconInfo,
+  IconDashboard,
 } from "@/icons";
 
 const iconMap = {
@@ -30,6 +31,7 @@ const iconMap = {
   Sales: IconSales,
   Bar: IconBar,
   Info: IconInfo,
+  Dashboard: IconDashboard,
 };
 
 /** Resolve an icon component by its name (returns a rendered element). */

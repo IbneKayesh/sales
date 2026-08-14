@@ -5,8 +5,8 @@ import Layout from './layouts/Layout'
 import getRoutes from './routes'
 import LoginPage from './pages/auth/LoginPage'
 import ErrorBoundary from './components/ErrorBoundary'
-import MenuPopups from './components/MenuPopups'
-import PopupTaskbar from './components/PopupTaskbar'
+import MenuPopups from './layouts/MenuPopups'
+import PopupTaskbar from './layouts/PopupTaskbar'
 import './App.css'
 
 function AppContent() {

@@ -396,7 +396,7 @@ export function AppProvider({ children }) {
   const [transactions, setTransactions] = useState(initialTransactions);
 
   // Menu popups — routes rendered in modal popups at the app root (see
-  // components/MenuPopups). Multiple popups can be open at once. Popups are
+  // layouts/MenuPopups). Multiple popups can be open at once. Popups are
   // seeded from localStorage so minimized popups survive a page reload;
   // popupSeqRef starts high to avoid key collisions with restored popups.
   const [popups, setPopups] = useState(restoreMinimizedPopups);
