@@ -128,7 +128,7 @@ router.post("/create", async (req, res) => {
       user_c,
       user_b,
       "tmtb_jrnlm",
-      "Purchase Voucher",
+      "Payment Voucher",
       mrrdm_dpart,
     );
 
@@ -197,7 +197,7 @@ router.post("/create", async (req, res) => {
         fsyar_id,
         acprd_id,
         mrrdm_crncy,
-        "Purchase Invoice",
+        "Payment Voucher",
         newTrnNo_JV,
         new Date(),
         mrrpy_refno,
@@ -238,6 +238,7 @@ router.post("/create", async (req, res) => {
       ],
       label: `Clear Liability / Supplier / Payable ${newTrnNo_JV}`,
     });
+    //SYS_MRR_DIRECT.PAY_CASH_BANK	> Asset / Cash In Hand - 10101010
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,

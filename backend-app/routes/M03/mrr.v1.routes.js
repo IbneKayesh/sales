@@ -480,6 +480,61 @@ const create = async (req, res) => {
         ],
         label: `Created Payment detail ${newTrnNo}`,
       });
+
+      //SYS_MRR_DIRECT.PAY_SUPPLIER > Liability / Supplier Payable - 20101010
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          mrrdm_dpart,
+          newId_JV,
+          chtac_id,
+          party_id,
+          det.mrrpy_pdamt || 0,
+          0,
+          "Clear Liability / Supplier Payable",
+          mrrdm_ttype,
+          "",
+          1,
+          user_s,
+          user_s,
+        ],
+        label: `Clear Liability / Supplier / Payable ${newTrnNo_JV}`,
+      });
+      //SYS_MRR_DIRECT.PAY_CASH_BANK	> Asset / Cash In Hand - 10101010
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          mrrdm_dpart,
+          newId_JV,
+          det.chtac_id_pay,
+          det.party_id_pay,
+          0,
+          det.mrrpy_pdamt || 0,
+          "Payment Liability / Supplier Payable",
+          mrrdm_ttype,
+          "",
+          1,
+          user_s,
+          user_s,
+        ],
+        label: `Payment Liability / Supplier / Payable ${newTrnNo_JV}`,
+      });
     }
 
     //Update supplier credit balance + increase

@@ -455,26 +455,26 @@ router.post("/create-auto-journal", async (req, res) => {
     //build scripts
     const params = [user_s, user_c, user_b, jrnlm_dpart];
     const scripts = [];
-    scripts.push({
-      sql: `CALL prc_jrnlm_mrr($1,$2,$3,$4)`,
-      params: params,
-      label: `create MRR journal- ${user_c}`,
-    });
-    scripts.push({
-      sql: `CALL prc_jrnlm_mrr_pay($1,$2,$3,$4)`,
-      params: params,
-      label: `create MRR Payment journal- ${user_c}`,
-    });
-    scripts.push({
-      sql: `CALL prc_jrnlm_inv($1,$2,$3,$4)`,
-      params: params,
-      label: `create Sales Invoice journal- ${user_c}`,
-    });
-    scripts.push({
-      sql: `CALL prc_jrnlm_inv_pay($1,$2,$3,$4)`,
-      params: params,
-      label: `create Sales Invoice Payment journal- ${user_c}`,
-    });
+    // scripts.push({
+    //   sql: `CALL prc_jrnlm_mrr($1,$2,$3,$4)`,
+    //   params: params,
+    //   label: `create MRR journal- ${user_c}`,
+    // });
+    // scripts.push({
+    //   sql: `CALL prc_jrnlm_mrr_pay($1,$2,$3,$4)`,
+    //   params: params,
+    //   label: `create MRR Payment journal- ${user_c}`,
+    // });
+    // scripts.push({
+    //   sql: `CALL prc_jrnlm_inv($1,$2,$3,$4)`,
+    //   params: params,
+    //   label: `create Sales Invoice journal- ${user_c}`,
+    // });
+    // scripts.push({
+    //   sql: `CALL prc_jrnlm_inv_pay($1,$2,$3,$4)`,
+    //   params: params,
+    //   label: `create Sales Invoice Payment journal- ${user_c}`,
+    // });
     scripts.push({
       sql: `CALL prc_jrnlm_drcr($1,$2,$3,$4)`,
       params: params,

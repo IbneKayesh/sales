@@ -36,13 +36,19 @@ const JournalList = ({ listData, onEdit, onDelete }) => {
       header: "Amount",
       width: "100px",
       render: (_, rowData) => {
-        const value =
-          Number(rowData.jrnlm_drval || 0) - Number(rowData.jrnlm_crval || 0);
-        if (value !== 0) {
-          return value.toLocaleString() + " (Unmatched)";
-        } else {
-          return "Matched";
+        const drVal = Number(rowData.jrnlm_drval || 0);
+        const crVal = Number(rowData.jrnlm_crval || 0);
+        // If either side is zero
+        if (drVal === 0 || crVal === 0) {
+          return <Badge variant="warning">Pending</Badge>;
         }
+        const value = drVal - crVal;
+
+        if (value !== 0) {
+          <Badge variant="danger">{value.toLocaleString()} (Unmatched)</Badge>;
+        }
+
+        return <Badge variant="success">Matched</Badge>;
       },
     },
     {

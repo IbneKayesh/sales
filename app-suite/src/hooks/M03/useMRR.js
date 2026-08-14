@@ -873,14 +873,16 @@ const useMRR = () => {
     setFormDataPayment((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formDataPayment, [f]: v }, tmpb_mrrpy);
     setFormErrors(newErrors);
-    if (f === "mrrcs_party") {
+    if (f === "mrrpy_party") {
       const mrrpy_id = mrrpy_Options.find((opt) => opt.id === v);
       setFormDataPayment((prev) => ({
         ...prev,
         party_cname: mrrpy_id?.party_cname,
-        party_chtac: mrrcs_id?.party_chtac,
-        prtyn_ctype: mrrcs_id?.prtyn_ctype,
-        prtyn_chtno: mrrcs_id?.prtyn_chtno,
+        party_chtac: mrrpy_id?.party_chtac,
+        prtyn_ctype: mrrpy_id?.prtyn_ctype,
+        prtyn_chtno: mrrpy_id?.prtyn_chtno,
+        chtac_id_pay: mrrpy_id?.party_chtac,
+        party_id_pay: mrrpy_id?.id,
       }));
     }
   };
