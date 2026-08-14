@@ -26,7 +26,7 @@ const ActionButton = ({ rowData, actve, onEdit, onDelete }) => {
           }}
           title="Inactive"
         >
-          <IconClose size={14} />
+          <IconClose size={14} className="text-danger" />
         </Button>
       )}
       {!actve && (
@@ -40,7 +40,7 @@ const ActionButton = ({ rowData, actve, onEdit, onDelete }) => {
           }}
           title="Active"
         >
-          <IconCheck size={14} />
+          <IconCheck size={14} className="text-success" />
         </Button>
       )}
     </div>

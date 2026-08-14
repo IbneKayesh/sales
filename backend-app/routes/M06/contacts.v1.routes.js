@@ -816,4 +816,49 @@ router.post("/get-customers", async (req, res) => {
 });
 
 
+// get-avail-suppliers-item
+router.post("/get-avail-suppliers-item", async (req, res) => {
+  try {
+    const { itmct_items, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!itmct_items || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT cnt.*, 0 as edit_stop
+    FROM tmcb_cntct cnt
+    LEFT JOIN tmib_itmct itm ON cnt.id = itm.itmct_cntct AND itm.itmct_items = $1
+    WHERE cnt.cntct_users = $2
+    AND cnt.cntct_ctype IN ('Supplier')
+    AND cnt.cntct_actve = TRUE
+    AND itm.itmct_cntct IS NULL
+    ORDER BY cnt.cntct_cname`;
+
+    const params = [itmct_items, user_c];
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get contact suppliers- ${user_c}`,
+    );
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 module.exports = router;

@@ -524,7 +524,7 @@ const useMRR = () => {
       return;
     }
     try {
-      const resp = await contactAPI.getSuppliersMrr({});
+      const resp = await contactAPI.getSuppliersMrr();
       const list = resp.data || [];
       setCntct_Options(list);
     } catch (error) {}
@@ -544,15 +544,15 @@ const useMRR = () => {
     } catch (error) {}
   };
 
-  const getMrrItems = async () => {
+  const getMrrItems = async (id) => {
     try {
-      const resp = await itemsAPI.getMrrItems();
+      const resp = await itemsAPI.getMrrItems({ cntct_id: id });
       const list = resp.data || [];
       setItems_Options(list);
     } catch (error) {}
   };
 
-  const handleChange = (f, v) => {
+  const handleChange = async (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmpb_mrrdm);
     setFormErrors(newErrors);
@@ -570,6 +570,7 @@ const useMRR = () => {
         ...(dspct === 0 ? { mrrdm_invds: 0 } : {}),
       };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
+      await getMrrItems(v);
     }
     if (f === "mrrdm_invds" || f === "mrrdm_dspct") {
       const newformData = {
@@ -589,7 +590,7 @@ const useMRR = () => {
     loadAllDetails(rowData.id);
     getAllDepartments();
     getAllContacts();
-    getMrrItems();
+    getMrrItems(rowData.mrrdm_cntct);
     getExpnPaym();
   };
 
@@ -670,9 +671,8 @@ const useMRR = () => {
     setListDataItem([]);
     setListDataCost([]);
     setListDataPayment([]);
-
-    getAllDepartments();
     getAllContacts();
+    getAllDepartments();
     getExpnPaym();
     getMrrItems();
   };

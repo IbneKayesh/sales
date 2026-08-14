@@ -516,10 +516,10 @@ router.post("/get-new-business-items", async (req, res) => {
 // get-mrr-items
 router.post("/get-mrr-items", async (req, res) => {
   try {
-    const { user_s, user_c, user_b } = req.body;
+    const { cntct_id, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!user_c) {
+    if (!cntct_id || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -549,15 +549,17 @@ router.post("/get-mrr-items", async (req, res) => {
     JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
     JOIN tmib_brand brand ON itm.items_brand = brand.id
     JOIN tmtb_party pty ON itm.id = pty.party_vndor
+    JOIN tmib_itmct itc ON itm.id = itc.itmct_items
     WHERE itm.items_stpur = false
     AND itm.items_itype IN ('RM', 'PM', 'FG')
     AND itm.items_actve = TRUE
     AND prc.price_actve = TRUE
-    AND prc.price_users = $1
-    AND prc.price_bsins = $2
+    AND itc.itmct_cntct = $1
+    AND prc.price_users = $2
+    AND prc.price_bsins = $3
     ORDER BY itm.items_iname ASC`;
 
-    const params = [user_c, user_b];
+    const params = [cntct_id, user_c, user_b];
     const rows = await dbGetAll(sql, params, `get new mrr items- ${user_c}`);
     res.json({
       success: true,

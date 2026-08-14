@@ -9,9 +9,10 @@ import {
   IconClose,
   IconPlus,
   IconSave,
-  IconChevronLeft,
+  IconChevronLeft,IconUser
 } from "@/icons";
 import Button from "@/components/Button";
+import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
 import EmptyState from "@/components/EmptyState";
 import useItems from "@/hooks/M04/useItems";
 import ItemsList from "./ItemsList";
@@ -19,6 +20,7 @@ import ItemsForm from "./ItemsForm";
 import PriceList from "./PriceList";
 import PriceForm from "./PriceForm";
 import PriceLedger from "./PriceLedger";
+import ItemContactForm from "./ItemContactForm";
 
 const ItemsPage = () => {
   const {
@@ -60,6 +62,18 @@ const ItemsPage = () => {
     selectedItemPrice,
     listDataLedger,
     handleLedger,
+    //item contact
+    cntct_Options,
+    formDataCntct,
+    listDataCntct,
+    handleChangeCntct,
+    handleDeleteCntct,
+    handleSubmitCntct,
+    //modal
+    showModal,
+    modalTitle,
+    handleShowModal,
+    handleHideModal,
   } = useItems();
 
   return (
@@ -99,6 +113,16 @@ const ItemsPage = () => {
               <Button variant="secondary" size="sm" onClick={handleCancel}>
                 <IconClose size={14} className="icon-left" />
                 Cancel
+              </Button>
+            )}
+            {pgView === "SYS_VW_FRM_1" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleShowModal("SUPPLIER")}
+              >
+                <IconUser size={14} className="icon-left" />
+                Supplier
               </Button>
             )}
             {pgView === "SYS_VW_FRM_1" && (
@@ -149,6 +173,9 @@ const ItemsPage = () => {
               scatg_Options={scatg_Options}
               brand_Options={brand_Options}
               partyData={partyData}
+              //item contact
+              listDataCntct={listDataCntct}
+              onDeleteCntct={handleDeleteCntct}
             />
           )}
 
@@ -196,6 +223,32 @@ const ItemsPage = () => {
               onSubmit={handleSubmitPrice}
             />
           )}
+
+          
+          {/* Single Modal for Item form */}
+          <Modal open={showModal.show} onClose={handleHideModal} size="xl">
+            <ModalHeader>
+              <ModalTitle
+                title={modalTitle.title}
+                subtitle={modalTitle.subTitle}
+                onClose={handleHideModal}
+              />
+            </ModalHeader>
+            <ModalBody>
+              {showModal.modal === "SUPPLIER" && (
+                <ItemContactForm
+                  isBusy={isBusy}
+                  readOnly={readOnly}
+                  stopEdit={stopEdit}
+                  formData={formDataCntct}
+                  formErrors={formErrors}
+                  onChange={handleChangeCntct}
+                  onSubmit={handleSubmitCntct}
+                  cntct_Options={cntct_Options}
+                />
+              )}
+            </ModalBody>
+          </Modal>
         </PageCardBody>
       </PageCard>
     </div>

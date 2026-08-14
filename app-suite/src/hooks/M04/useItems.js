@@ -14,6 +14,9 @@ import { unitsAPI } from "@/api/M04/unitsAPI.js";
 import { partyAPI } from "@/api/M08/partyAPI.js";
 import { stockAPI } from "@/api/M04/stockAPI.js";
 import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
+import tmib_itmct from "@/models/M04/tmib_itmct.json";
+import { itemContactAPI } from "@/api/M04/itemContactAPI.js";
+import { contactAPI } from "@/api/M06/contactAPI.js";
 
 const useItems = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -34,6 +37,9 @@ const useItems = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
   //others
+  const [showModal, setShowModal] = useState({ show: false, modal: "" });
+  const [modalTitle, setModalTitle] = useState({ title: "", subTitle: "" });
+
   const [units_Options, setUnits_Options] = useState([]);
   const [sgrup_Options, setSgrup_Options] = useState([]);
   const [scatg_Options, setScatg_Options] = useState([]);
@@ -101,6 +107,7 @@ const useItems = () => {
     getAllBrands();
     getPartyData(rowData.id);
     setlistDataLedger([]);
+    getItemSupplier(rowData.id);
   };
 
   const handleDelete = async (rowData) => {
@@ -381,6 +388,133 @@ const useItems = () => {
     }
   };
 
+  //item contact
+  const [cntct_Options, setCntct_Options] = useState([]);
+  const [formDataCntct, setFormDataCntct] = useState({});
+  const [listDataCntct, setListDataCntct] = useState([]);
+
+  const getAvailItemSupplier = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await contactAPI.getAvailItemSupplier({ itmct_items: id });
+      const data = resp.data || {};
+      setCntct_Options(data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const getItemSupplier = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await itemContactAPI.getByItemId({ itmct_items: id });
+      const data = resp.data || {};
+      setListDataCntct(data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleChangeCntct = (f, v) => {
+    setFormDataCntct((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formDataCntct, [f]: v }, tmib_itmct);
+    setFormErrors(newErrors);
+  };
+
+  const handleDeleteCntct = async (rowData) => {
+    const isActive = rowData.itmct_actve;
+    const dataName = rowData.cntct_cname;
+    const confirmation = await confirmBox({
+      title: isActive ? "Deactivate" : "Activate",
+      message: `Are you sure you want to ${
+        isActive ? "deactivate" : "activate"
+      } "${dataName}"?`,
+      confirmText: isActive ? "Deactivate" : "Activate",
+      variant: isActive ? "danger" : "success",
+    });
+    if (!confirmation) return;
+
+    try {
+      setIsBusy(true);
+      const resp = await itemContactAPI.delete(rowData);
+      alertBox({
+        title: resp.success
+          ? isActive
+            ? "Deactivated"
+            : "Activated"
+          : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        handleHideModal();
+        setFormDataCntct({});
+        getItemSupplier(rowData.itmct_items);
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleSubmitCntct = async () => {
+    try {
+      const newErrors = validate(formDataCntct, tmib_itmct);
+      setFormErrors(newErrors);
+      //console.log("newErrors", newErrors);
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+      const cntct_id = cntct_Options.find(
+        (opt) => opt.id === formDataCntct.itmct_cntct,
+      );
+      const reqBody = {
+        ...formDataCntct,
+        cntct_cname: cntct_id.cntct_cname,
+      };
+      setIsBusy(true);
+
+      const resp = await itemContactAPI.create(reqBody);
+      alertBox({
+        title: resp.success
+          ? formDataCntct.id
+            ? "Updated"
+            : "Saved"
+          : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        handleHideModal();
+        getItemSupplier(formDataCntct.itmct_items);
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  //modal
+  const handleShowModal = (modal) => {
+    if (modal === "SUPPLIER") {
+      setFormDataCntct({ itmct_items: formData.id });
+      setModalTitle({
+        title: "Add Supplier",
+        subTitle: "Item supplier details",
+      });
+      getAvailItemSupplier({ itmct_items: formData.id });
+    }
+    setShowModal({ show: true, modal: modal });
+  };
+  const handleHideModal = () => {
+    setShowModal({ show: false, modal: "" });
+    setModalTitle({ title: "", subTitle: "" });
+  };
+
   return {
     isBusy,
     pgView,
@@ -420,6 +554,18 @@ const useItems = () => {
     selectedItemPrice,
     listDataLedger,
     handleLedger,
+    //item contact
+    cntct_Options,
+    formDataCntct,
+    listDataCntct,
+    handleChangeCntct,
+    handleDeleteCntct,
+    handleSubmitCntct,
+    //modal
+    showModal,
+    modalTitle,
+    handleShowModal,
+    handleHideModal,
   };
 };
 export default useItems;

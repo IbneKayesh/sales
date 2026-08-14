@@ -11,6 +11,7 @@ const itemsV1Routes = require("./items.v1.routes");
 const priceV1Routes = require("./price.v1.routes");
 const attributesV1Routes = require("./attributes.v1.routes");
 const stockV1Routes = require("./stock.v1.routes");
+const itemContactV1Routes = require("./itemContact.v1.routes");
 
 
 router.use("/v1/brands", brandsV1Routes);
@@ -23,4 +24,5 @@ router.use("/v1/items", itemsV1Routes);
 router.use("/v1/prices", priceV1Routes);
 router.use("/v1/attributes", attributesV1Routes);
 router.use("/v1/stock", stockV1Routes);
+router.use("/v1/item-contact", itemContactV1Routes);
 module.exports = router;

@@ -190,7 +190,7 @@ const ItemsList = ({ cfColumns = [], listData, onEdit, onDelete, onPrice }) => {
     <DataTable
       columns={dtColumns}
       data={listData}
-      pageSize={20}
+      pageSize={15}
       sortable
       searchable
       striped

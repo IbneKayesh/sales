@@ -46,6 +46,15 @@ const appModules = [
         order: 1,
         menus: [
           {
+            id: "M01-G01-M002",
+            name: "WorkSpace",
+            color: "#7c3aed",
+            icon: "Info",
+            order: 1,
+            link: "/bsuite/blank",
+            desc: "Blank Page",
+          },
+          {
             id: "M01-G01-M001",
             name: "Home",
             color: "#7c3aed",

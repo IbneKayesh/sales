@@ -6,6 +6,8 @@ import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 import { itype_Options, bool_Options } from "@/utils/vtable.js";
 import PartyView from "@/pages/M08/setup/parties/PartyView.jsx";
+import ItemContactForm from "./ItemContactForm";
+import ItemContactList from "./ItemContactList";
 
 const ItemsForm = ({
   isBusy,
@@ -21,7 +23,10 @@ const ItemsForm = ({
   sgrup_Options,
   scatg_Options,
   brand_Options,
-  partyData
+  partyData,
+  //item contact
+  listDataCntct,
+  onDeleteCntct,
 }) => {
   return (
     <div className="form-wrap">
@@ -233,7 +238,7 @@ const ItemsForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="Fixed Cost (Purchase)" 
+            label="Fixed Cost (Purchase)"
             placeholder="Enter fixed cost"
             value={formData.items_fxcst}
             onChange={(e) => onChange("items_fxcst", e.target.value)}
@@ -297,6 +302,13 @@ const ItemsForm = ({
         />
       )}
       {formData?.id && <PartyView listData={partyData} />}
+      {formData?.id && (
+        <ItemContactList
+          readOnly={readOnly}
+          listData={listDataCntct}
+          onDelete={onDeleteCntct}
+        />
+      )}
       <div className="form-actions">
         <Button variant="secondary" onClick={onCancel} disabled={isBusy}>
           <IconClose size={16} className="icon-left" />

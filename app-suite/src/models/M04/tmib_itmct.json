@@ -1,0 +1,21 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "itmct_items": {
+    "type": "string",
+    "label": "Item Name",
+    "maxLength": 50,
+    "minLength": 2,
+    "placeholder": "Enter item name",
+    "required": true
+  },
+  "itmct_cntct": {
+    "type": "string",
+    "label": "Contact",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter contact"
+  }
+}
