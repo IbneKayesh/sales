@@ -5,6 +5,8 @@ import PageCard, {
   PageCardTitle,
   PageCardBody,
 } from "@/components/PageCard";
+import Button from "@/components/Button";
+import { useApp } from "@/context/AppContext";
 import {
   IconHome,
   IconAccounts,
@@ -16,6 +18,7 @@ import {
   IconBox,
   IconHR,
   IconClose,
+  IconPopup,
   IconSettings,
   IconPurchase,
   IconSales,
@@ -758,6 +761,7 @@ const modulePageSearchStyles = {
 
 const ModulePage = () => {
   const navigate = useNavigate();
+  const { openPopup } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
   const [recentMenuIds, setRecentMenuIds] = useState([]);
 
@@ -795,29 +799,24 @@ const ModulePage = () => {
   const recentMenus = filteredMenus.filter((m) => recentMenuIds.includes(m.id));
   const isSearching = searchQuery.trim().length > 0;
 
-  const MenuCard = ({ menu, onClick }) => {
+  const MenuCard = ({ menu, onClick, onOpenPopup }) => {
     const [hovered, setHovered] = useState(false);
     return (
-      <button
-        type="button"
-        onClick={onClick}
+      <div
+        role="group"
+        aria-label={menu.menus_mname}
         title={menu.menus_mname}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        onFocus={() => setHovered(true)}
-        onBlur={() => setHovered(false)}
         style={{
           display: "inline-flex",
           alignItems: "center",
-          gap: 6,
-          padding: "4px 8px",
+          gap: 2,
+          padding: "4px 4px 4px 8px",
           border: `1px solid ${hovered ? menu.menus_color + "40" : "var(--border)"}`,
           borderRadius: "var(--radius-xl)",
           background: hovered ? `${menu.menus_color}0d` : "var(--surface)",
-          cursor: "pointer",
           fontFamily: "var(--font-sans)",
-          textAlign: "left",
-          outline: "none",
           boxSizing: "border-box",
           transition: "all 0.15s ease",
           width: "auto",
@@ -826,46 +825,87 @@ const ModulePage = () => {
           transform: hovered ? "translateY(-1px)" : "none",
         }}
       >
-        <div
+        <button
+          type="button"
+          onClick={onClick}
+          onFocus={() => setHovered(true)}
+          onBlur={() => setHovered(false)}
           style={{
-            width: 36,
-            height: 36,
-            borderRadius: "var(--radius-lg)",
-            display: "flex",
+            display: "inline-flex",
             alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            background: `${menu.menus_color}18`,
-            color: menu.menus_color,
-            fontSize: 18,
+            gap: 6,
+            flex: 1,
+            minWidth: 0,
+            background: "transparent",
+            border: "none",
+            padding: 0,
+            cursor: "pointer",
+            fontFamily: "var(--font-sans)",
+            textAlign: "left",
+            outline: "none",
           }}
         >
-          {menu.menus_micon}
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-          <span
+          <div
             style={{
-              fontSize: 14,
-              fontWeight: 600,
-              color: "var(--text-primary)",
-              lineHeight: 1.2,
-              whiteSpace: "nowrap",
+              width: 36,
+              height: 36,
+              borderRadius: "var(--radius-lg)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              background: `${menu.menus_color}18`,
+              color: menu.menus_color,
+              fontSize: 18,
             }}
           >
-            {menu.menus_mname}
-          </span>
-          <span
+            {menu.menus_micon}
+          </div>
+          <div
             style={{
-              fontSize: "var(--fs-xs)",
-              color: "var(--text-muted)",
-              lineHeight: 1.2,
-              whiteSpace: "nowrap",
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              minWidth: 0,
             }}
           >
-            {menu.menus_mdesc}
-          </span>
-        </div>
-      </button>
+            <span
+              style={{
+                fontSize: 14,
+                fontWeight: 600,
+                color: "var(--text-primary)",
+                lineHeight: 1.2,
+                whiteSpace: "nowrap",
+              }}
+            >
+              {menu.menus_mname}
+            </span>
+            <span
+              style={{
+                fontSize: "var(--fs-xs)",
+                color: "var(--text-muted)",
+                lineHeight: 1.2,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {menu.menus_mdesc}
+            </span>
+          </div>
+        </button>
+        <Button
+          variant="ghost"
+          size="sm"
+          icon={<IconPopup size={16} />}
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenPopup(menu);
+          }}
+          title={`Open ${menu.menus_mname} in popup`}
+          aria-label={`Open ${menu.menus_mname} in popup`}
+        />
+      </div>
     );
   };
 
@@ -896,6 +936,7 @@ const ModulePage = () => {
             key={m.id}
             menu={toMenu(m)}
             onClick={() => handleMenuClick(toMenu(m))}
+            onOpenPopup={openPopup}
           />
         ))}
       </div>
@@ -1015,6 +1056,7 @@ const ModulePage = () => {
                     key={menu.id}
                     menu={menu}
                     onClick={() => handleMenuClick(menu)}
+                    onOpenPopup={openPopup}
                   />
                 ))}
               </div>
@@ -1076,6 +1118,7 @@ const ModulePage = () => {
             );
           })}
       </div>
+
     </div>
   );
 };

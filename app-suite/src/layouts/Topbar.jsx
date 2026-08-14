@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 import {
@@ -10,18 +11,21 @@ import {
   IconInfo,
   IconCheck,
   IconClose,
+  IconCalculator,
   IconDollar,
   IconBox,
   IconActivity,
   IconBar,
 } from "../icons";
 import { toast } from "../components/ToastBox";
+import Calculator from "../components/Calculator";
 
 export default function Topbar({ className = "", ...rest }) {
   const { user, logout } = useApp();
   const navigate = useNavigate();
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [calcOpen, setCalcOpen] = useState(false);
   const profileRef = useRef(null);
   const notifRef = useRef(null);
 
@@ -136,6 +140,18 @@ export default function Topbar({ className = "", ...rest }) {
       <div className="topbar__nav" />
 
       <div className="topbar__right">
+        {/* Calculator — standalone draggable modal */}
+        <button
+          type="button"
+          className={`topbar__icon-btn${calcOpen ? " topbar__icon-btn--active" : ""}`}
+          onClick={() => setCalcOpen((v) => !v)}
+          aria-label="Calculator"
+          aria-expanded={calcOpen}
+          title="Calculator"
+        >
+          <IconCalculator size={20} />
+        </button>
+
         <div className="topbar__notif-wrap" ref={notifRef}>
           <button
             type="button"
@@ -296,6 +312,13 @@ export default function Topbar({ className = "", ...rest }) {
           )}
         </div>
       </div>
+
+      {/* Portal to body so the calculator's modal floats above the topbar
+          and other fixed overlays (menu popups). */}
+      {createPortal(
+        <Calculator open={calcOpen} onClose={() => setCalcOpen(false)} />,
+        document.body,
+      )}
     </header>
   );
 }

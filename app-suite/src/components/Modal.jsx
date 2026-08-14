@@ -29,8 +29,11 @@ export default function Modal({
   size = 'md',            // sm | md | lg | xl | full
   closeOnBackdrop = true,
   closeOnEscape = true,
+  blockScroll = true,
   children,
   className = '',
+  modalStyle,
+  modalRef,
   ...rest
 }) {
   const [closing, setClosing] = useState(false)
@@ -74,14 +77,18 @@ export default function Modal({
   useEffect(() => {
     if (!mounted) return
     document.addEventListener('keydown', handleKeyDown)
-    // Prevent body scroll while modal is open (but allow during close animation)
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.body.style.overflow = prev
+    // Prevent body scroll while modal is open (unless blockScroll is disabled,
+    // e.g. non-blocking popups), but allow during close animation
+    if (blockScroll) {
+      const prev = document.body.style.overflow
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown)
+        document.body.style.overflow = prev
+      }
     }
-  }, [mounted, handleKeyDown])
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [mounted, handleKeyDown, blockScroll])
 
   if (!mounted) return null
 
@@ -97,7 +104,7 @@ export default function Modal({
 
   return (
     <div className={overlayClass} onClick={handleBackdrop} role="dialog" aria-modal="true" {...rest}>
-      <div className={modalClass}>
+      <div className={modalClass} style={modalStyle} ref={modalRef}>
         {children}
       </div>
     </div>

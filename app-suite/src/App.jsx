@@ -5,6 +5,7 @@ import Layout from './layouts/Layout'
 import getRoutes from './routes'
 import LoginPage from './pages/auth/LoginPage'
 import ErrorBoundary from './components/ErrorBoundary'
+import MenuPopups from './components/MenuPopups'
 import './App.css'
 
 function AppContent() {
@@ -21,6 +22,9 @@ function AppContent() {
           {getRoutes()}
         </Routes>
       </ErrorBoundary>
+      {/* Menu popups render their routes outside the main <Routes> so each
+          popup can use <Routes location={link}> for any path. */}
+      <MenuPopups />
     </Layout>
   )
 }

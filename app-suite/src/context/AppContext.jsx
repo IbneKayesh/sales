@@ -4,6 +4,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useRef,
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiLogin } from "@/utils/api";
@@ -344,6 +345,35 @@ export function AppProvider({ children }) {
   const [users, setUsers] = useState(initialUsers);
   const [transactions, setTransactions] = useState(initialTransactions);
 
+  // Menu popups — routes rendered in modal popups at the app root (see
+  // components/MenuPopups). Multiple popups can be open at once.
+  const [popups, setPopups] = useState([]);
+  const popupSeqRef = useRef(0);
+
+  const openPopup = useCallback((menu) => {
+    popupSeqRef.current += 1;
+    setPopups((prev) => [
+      ...prev,
+      { key: `${menu.id}-${popupSeqRef.current}`, menu },
+    ]);
+  }, []);
+
+  const closePopup = useCallback((key) => {
+    setPopups((prev) => prev.filter((p) => p.key !== key));
+  }, []);
+
+  // Bring a popup to the front of the stack (rendered last = on top).
+  const bringPopupToFront = useCallback((key) => {
+    setPopups((prev) => {
+      const idx = prev.findIndex((p) => p.key === key);
+      if (idx < 0 || idx === prev.length - 1) return prev;
+      const next = [...prev];
+      const [popup] = next.splice(idx, 1);
+      next.push(popup);
+      return next;
+    });
+  }, []);
+
   // Apply the selected theme color onto the document root and keep it in sync.
   useEffect(() => {
     const themeDef =
@@ -373,6 +403,7 @@ export function AppProvider({ children }) {
       setEmply(null);
       setBusiness(null);
       setUserMenus([]);
+      setPopups([]);
       navigate("/auth/login");
     };
     window.addEventListener("auth:unauthorized", handleUnauthorized);
@@ -429,6 +460,7 @@ export function AppProvider({ children }) {
     setEmply(null);
     setBusiness(null);
     setUserMenus([]);
+    setPopups([]);
     navigate("/auth/login");
   }, []);
 
@@ -481,6 +513,10 @@ export function AppProvider({ children }) {
         setTheme,
         themeColor,
         setThemeColor,
+        popups,
+        openPopup,
+        closePopup,
+        bringPopupToFront,
         users,
         addUser,
         updateUser,
