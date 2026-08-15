@@ -119,7 +119,7 @@ const useItems = () => {
       setFormDataFilter((prev) => ({ ...prev, [f]: v }));
       await getAllItems({ items_mcatg: v });
     }
-    console.log("pgView", f);
+    //console.log("pgView", f);
   };
 
   const handleEdit = (rowData) => {

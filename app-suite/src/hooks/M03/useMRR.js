@@ -13,7 +13,7 @@ import { generateGuid } from "@/utils/guid.js";
 import tmpb_mrrcs from "@/models/M03/tmpb_mrrcs.json";
 import tmpb_mrrpy from "@/models/M03/tmpb_mrrpy.json";
 import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
-import { validNumber } from "@/utils/misc.js";
+import { validNumber, divNumber } from "@/utils/misc.js";
 import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
 
 const useMRR = () => {
@@ -271,15 +271,6 @@ const useMRR = () => {
   function reCalculate(items, master, costList, paymList) {
     //console.log("items", items);
 
-    // Safe number conversion (handles null, undefined, NaN, "", etc.)
-    const num = (value) => {
-      const n = Number(value);
-      return Number.isFinite(n) ? n : 0;
-    };
-
-    // Safe divide
-    const div = (a, b) => (num(b) === 0 ? 0 : num(a) / num(b));
-
     // Clone
     let newItems = [...(items || [])];
     let newCosting = [...(costList || [])];
@@ -289,12 +280,12 @@ const useMRR = () => {
     // Totals
     //---------------------------------------------------
     const totalAmount = newItems.reduce(
-      (sum, item) => sum + num(item.mrrdc_itrat) * num(item.mrrdc_itqty),
+      (sum, item) => sum + validNumber(item.mrrdc_itrat) * validNumber(item.mrrdc_itqty),
       0,
     );
 
     const totalQty = newItems.reduce(
-      (sum, item) => sum + num(item.mrrdc_itqty),
+      (sum, item) => sum + validNumber(item.mrrdc_itqty),
       0,
     );
 
@@ -309,7 +300,7 @@ const useMRR = () => {
         .filter(
           (item) => item.mrrcs_csmod === csmod && item.mrrcs_clmod === clmod,
         )
-        .reduce((sum, item) => sum + num(item.mrrcs_value), 0);
+        .reduce((sum, item) => sum + validNumber(item.mrrcs_value), 0);
 
     const incAmt = sumCost("Include", "By Amount");
     const incQty = sumCost("Include", "By Qty");
@@ -319,13 +310,13 @@ const useMRR = () => {
     const excQty = sumCost("Exclude", "By Qty");
     const excLine = sumCost("Exclude", "By Line");
 
-    const incAmtRate = div(incAmt, totalAmount);
-    const incQtyRate = div(incQty, totalQty);
-    const incLineRate = div(incLine, totalLine);
+    const incAmtRate = divNumber(incAmt, totalAmount);
+    const incQtyRate = divNumber(incQty, totalQty);
+    const incLineRate = divNumber(incLine, totalLine);
 
-    const excAmtRate = div(excAmt, totalAmount);
-    const excQtyRate = div(excQty, totalQty);
-    const excLineRate = div(excLine, totalLine);
+    const excAmtRate = divNumber(excAmt, totalAmount);
+    const excQtyRate = divNumber(excQty, totalQty);
+    const excLineRate = divNumber(excLine, totalLine);
 
     //---------------------------------------------------
     // 1. Split Invoice Discount
@@ -351,8 +342,8 @@ const useMRR = () => {
     }
 
     newItems = newItems.map((item) => {
-      const mrrdc_edamt = div(
-        num(invoice_discount_amount) * num(item.mrrdc_itqty),
+      const mrrdc_edamt = divNumber(
+        validNumber(invoice_discount_amount) * validNumber(item.mrrdc_itqty),
         totalQty,
       );
 
@@ -367,32 +358,32 @@ const useMRR = () => {
     //---------------------------------------------------
 
     newItems = newItems.map((item) => {
-      const qty = num(item.mrrdc_itqty);
-      const rate = num(item.mrrdc_itrat);
+      const qty = validNumber(item.mrrdc_itqty);
+      const rate = validNumber(item.mrrdc_itrat);
 
       const mrrdc_itamt = rate * qty;
 
-      const mrrdc_dsamt = mrrdc_itamt * (num(item.mrrdc_dspct) / 100);
+      const mrrdc_dsamt = mrrdc_itamt * (validNumber(item.mrrdc_dspct) / 100);
 
-      const afterDisc = mrrdc_itamt - (mrrdc_dsamt + num(item.mrrdc_edamt));
+      const afterDisc = mrrdc_itamt - (mrrdc_dsamt + validNumber(item.mrrdc_edamt));
 
-      const mrrdc_ivamt = afterDisc * (num(item.mrrdc_ivpct) / 100);
+      const mrrdc_ivamt = afterDisc * (validNumber(item.mrrdc_ivpct) / 100);
 
-      const mrrdc_vtamt = afterDisc * (num(item.mrrdc_vtpct) / 100);
+      const mrrdc_vtamt = afterDisc * (validNumber(item.mrrdc_vtpct) / 100);
 
-      const mrrdc_txamt = afterDisc * (num(item.mrrdc_txpct) / 100);
+      const mrrdc_txamt = afterDisc * (validNumber(item.mrrdc_txpct) / 100);
 
       //---------------------------------------------------
       // Freight
       //---------------------------------------------------
 
-      let mrrdc_fcpct = num(item.mrrdc_fcpct);
-      let mrrdc_fcamt = num(item.mrrdc_fcamt);
+      let mrrdc_fcpct = validNumber(item.mrrdc_fcpct);
+      let mrrdc_fcamt = validNumber(item.mrrdc_fcamt);
 
       if (mrrdc_fcpct > 0) {
         mrrdc_fcamt = Number((afterDisc * (mrrdc_fcpct / 100)).toFixed(4));
       } else if (mrrdc_fcamt > 0) {
-        mrrdc_fcpct = Number((div(mrrdc_fcamt, afterDisc) * 100).toFixed(4));
+        mrrdc_fcpct = Number((divNumber(mrrdc_fcamt, afterDisc) * 100).toFixed(4));
       }
 
       //---------------------------------------------------
@@ -420,7 +411,7 @@ const useMRR = () => {
 
       const mrrdc_ntamt = afterDisc + mrrdc_vtamt + mrrdc_icamt - mrrdc_ivamt;
 
-      const mrrdc_csrat = div(
+      const mrrdc_csrat = divNumber(
         afterDisc + mrrdc_fcamt + mrrdc_icamt + mrrdc_ecamt - mrrdc_ivamt,
         qty,
       );
@@ -449,15 +440,15 @@ const useMRR = () => {
 
     const totals = newItems.reduce(
       (acc, item) => ({
-        tramt: acc.tramt + num(item.mrrdc_itamt),
-        itmds: acc.itmds + num(item.mrrdc_dsamt),
-        ivtmt: acc.ivtmt + num(item.mrrdc_ivamt),
-        vtamt: acc.vtamt + num(item.mrrdc_vtamt),
-        txamt: acc.txamt + num(item.mrrdc_txamt),
-        fcamt: acc.fcamt + num(item.mrrdc_fcamt),
-        icamt: acc.icamt + num(item.mrrdc_icamt),
-        ecamt: acc.ecamt + num(item.mrrdc_ecamt),
-        ntamt: acc.ntamt + num(item.mrrdc_ntamt),
+        tramt: acc.tramt + validNumber(item.mrrdc_itamt),
+        itmds: acc.itmds + validNumber(item.mrrdc_dsamt),
+        ivtmt: acc.ivtmt + validNumber(item.mrrdc_ivamt),
+        vtamt: acc.vtamt + validNumber(item.mrrdc_vtamt),
+        txamt: acc.txamt + validNumber(item.mrrdc_txamt),
+        fcamt: acc.fcamt + validNumber(item.mrrdc_fcamt),
+        icamt: acc.icamt + validNumber(item.mrrdc_icamt),
+        ecamt: acc.ecamt + validNumber(item.mrrdc_ecamt),
+        ntamt: acc.ntamt + validNumber(item.mrrdc_ntamt),
       }),
       {
         tramt: 0,
@@ -479,7 +470,7 @@ const useMRR = () => {
     const newPayments = [...(paymList || [])];
 
     const totalPayment = newPayments.reduce(
-      (sum, item) => sum + num(item.mrrpy_pdamt),
+      (sum, item) => sum + validNumber(item.mrrpy_pdamt),
       0,
     );
 
@@ -493,18 +484,18 @@ const useMRR = () => {
 
     setFormData({
       ...master,
-      mrrdm_tramt: num(totals.tramt).toFixed(4),
-      mrrdm_itmds: num(totals.itmds).toFixed(4),
+      mrrdm_tramt: validNumber(totals.tramt).toFixed(4),
+      mrrdm_itmds: validNumber(totals.itmds).toFixed(4),
       mrrdm_invds: invoice_discount_amount,
-      mrrdm_ivtmt: num(totals.ivtmt).toFixed(4),
-      mrrdm_vtamt: num(totals.vtamt).toFixed(4),
-      mrrdm_txamt: num(totals.txamt).toFixed(4),
-      mrrdm_fcamt: num(totals.fcamt).toFixed(4),
-      mrrdm_icamt: num(totals.icamt).toFixed(4),
-      mrrdm_ecamt: num(totals.ecamt).toFixed(4),
-      mrrdm_pyamt: num(totals.ntamt).toFixed(4),
-      mrrdm_pdamt: num(totalPayment).toFixed(4),
-      mrrdm_duamt: num(duamt).toFixed(4),
+      mrrdm_ivtmt: validNumber(totals.ivtmt).toFixed(4),
+      mrrdm_vtamt: validNumber(totals.vtamt).toFixed(4),
+      mrrdm_txamt: validNumber(totals.txamt).toFixed(4),
+      mrrdm_fcamt: validNumber(totals.fcamt).toFixed(4),
+      mrrdm_icamt: validNumber(totals.icamt).toFixed(4),
+      mrrdm_ecamt: validNumber(totals.ecamt).toFixed(4),
+      mrrdm_pyamt: validNumber(totals.ntamt).toFixed(4),
+      mrrdm_pdamt: validNumber(totalPayment).toFixed(4),
+      mrrdm_duamt: validNumber(duamt).toFixed(4),
     });
   }
 

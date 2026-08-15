@@ -47,6 +47,12 @@ const StockList = ({ cfColumns = [], listData, onEdit }) => {
       render: (_, row) => <NegativeValue value={row.price_bdstk} />,
     },
     {
+      key: "stock_ohqty",
+      header: "OHQ",
+      width: "80px",
+      render: (_, row) => <NegativeValue value={row.stock_ohqty} />,
+    },
+    {
       key: "price_mnqty",
       header: "Min Qty",
       width: "80px",

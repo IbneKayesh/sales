@@ -382,10 +382,10 @@ const create = async (req, res) => {
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
-        $13, $14, $15)`,
+        $13, $14, $15, $16)`,
         params: [
           uuidv4(),
           user_c,
@@ -399,6 +399,7 @@ const create = async (req, res) => {
           "To Asset / Inventory / Products",
           mrrdm_ttype,
           lineId,
+          "CHILD",
           line,
           user_s,
           user_s,
@@ -411,10 +412,10 @@ const create = async (req, res) => {
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
-        $13, $14, $15)`,
+        $13, $14, $15, $16)`,
       params: [
         uuidv4(),
         user_c,
@@ -428,6 +429,7 @@ const create = async (req, res) => {
         "From Liability / Supplier Payable",
         mrrdm_ttype,
         newId,
+        "MASTER",
         line,
         user_s,
         user_s,
@@ -485,10 +487,10 @@ const create = async (req, res) => {
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
-        $13, $14, $15)`,
+        $13, $14, $15, $16)`,
         params: [
           uuidv4(),
           user_c,
@@ -501,8 +503,9 @@ const create = async (req, res) => {
           0,
           "Clear Liability / Supplier Payable",
           mrrdm_ttype,
-          "",
-          1,
+          newId,
+          "MASTER",
+          line,
           user_s,
           user_s,
         ],
@@ -512,10 +515,10 @@ const create = async (req, res) => {
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
-        $13, $14, $15)`,
+        $13, $14, $15, $16)`,
         params: [
           uuidv4(),
           user_c,
@@ -528,8 +531,9 @@ const create = async (req, res) => {
           det.mrrpy_pdamt || 0,
           "Payment Liability / Supplier Payable",
           mrrdm_ttype,
-          "",
-          1,
+          newId,
+          "MASTER",
+          line,
           user_s,
           user_s,
         ],

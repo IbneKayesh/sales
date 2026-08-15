@@ -21,15 +21,15 @@ const ItemForm = ({
           <Dropdown
             label="Item"
             options={items_Options}
-            value={formData.invcc_price}
-            onChange={(e) => onChange("invcc_price", e.target.value)}
-            error={formErrors.invcc_price}
+            value={formData.invcc_stock}
+            onChange={(e) => onChange("invcc_stock", e.target.value)}
+            error={formErrors.invcc_stock}
             required
             placeholder="Select..."
             disabled={readOnly}
-            optionValue="price_id"
+            optionValue="stock_id"
             optionLabel="price_cname"
-            optionGrid="price_cname:Item, runit_uname:Unit, price_lprat:l.Purchase, price_mrrat:MRP, price_dspct:Disc %, price_gdstk:g.Stock, items_itype:Type, stock_ohqty:Line Stock"
+            optionGrid="price_cname:Item, runit_uname:Unit, price_mrrat:MRP, price_dspct:Disc%, items_sdvat: VAT%, price_gdstk:g.Stock,stock_ohqty:Line Stock, items_icode:Code, stock_batch:Batch, stock_srial:Serial, stock_fgdat: MFG, "
           />
         </div>
         <div className="col-span-4">
@@ -55,10 +55,10 @@ const ItemForm = ({
           />
         </div>
         <div className="col-span-2">
-          <InputLabel label="Disc %" value={formData.invcc_dspct} />
+          <InputLabel label="Disc (%)" value={formData.invcc_dspct} />
         </div>
         <div className="col-span-2">
-          <InputLabel label="VAT %" value={formData.invcc_vtpct} />
+          <InputLabel label="VAT (%)" value={formData.invcc_vtpct} />
         </div>
         <div className="col-span-8">
           <InputText

@@ -591,7 +591,7 @@ router.post("/get-sales-invoice-items-by-dpart", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT itm.*,
+    const sql_v1 = `SELECT itm.*,
     prc.id AS price_id, prc.price_cname,
     prc.price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat, prc.price_dspct,
     prc.price_gdstk, prc.price_bdstk, prc.price_mnqty, prc.price_mxqty, prc.price_pbqty,
@@ -624,9 +624,33 @@ router.post("/get-sales-invoice-items-by-dpart", async (req, res) => {
     AND prc.price_users = $2
     AND prc.price_bsins = $3
     ORDER BY itm.items_iname ASC`;
+    
+    const sql = `SELECT stk.id stock_id, stk.stock_refid, stk.stock_brcod, stk.stock_batch, stk.stock_srial, stk.stock_wrdat, stk.stock_fgdat,
+stk.stock_exdat, stk.stock_ohqty, stk.stock_cprat,
+prc.id price_id, prc.price_cname, prc.price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat,
+prc.price_dspct, prc.price_gdstk, prc.price_bdstk,
+itm.id items_id, itm.items_icode, itm.items_brcod, itm.items_hscod, itm.items_runit, itm.items_pkqty, 
+itm.items_sdvat, runit.units_cname as runit_uname, itm.items_pkqty, sunit.units_cname as sunit_cname,
+itm.items_szqty
+FROM tmib_stock stk
+JOIN tmib_price prc ON stk.stock_price = prc.id
+					AND stk.stock_users = prc.price_users
+					AND stk.stock_bsins = prc.price_bsins
+JOIN tmib_items itm ON stk.stock_items = itm.id
+					AND stk.stock_users = itm.items_users
+					AND stk.stock_bsins = itm.items_bsins
+JOIN tmib_units runit ON itm.items_runit = runit.id
+JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+WHERE stk.stock_ohqty > 0
+AND stk.stock_users = $1
+AND stk.stock_bsins = $2
+AND stk.stock_dpart = $3
+AND itm.items_itype IN ('SVC', 'FG')
+AND itm.items_stsal = FALSE
+ORDER BY prc.price_cname, stk.stock_crdat`;
 
-    const params = [dpart_id, user_c, user_b];
-    const rows = await dbGetAll(sql, params, `get new mrr items- ${user_c}`);
+    const params = [user_c, user_b, dpart_id];
+    const rows = await dbGetAll(sql, params, `get new invoice items- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",

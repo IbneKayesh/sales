@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useApp } from "@/context/AppContext";
-import { IconClose, IconChevronDown, IconEye, IconExpand, IconCollapse } from "@/icons";
+import { IconClose, IconChevronDown, IconEye } from "@/icons";
+import FullscreenButton from "@/components/FullscreenButton";
 
 const actionStyle = {
   display: "inline-flex",
@@ -74,7 +75,7 @@ export default function PopupTaskbar() {
           paddingLeft: 8,
         }}
       >
-        <FullscreenButton />
+        <FullscreenButton style={actionStyle} iconSize={14} />
         <button
           type="button"
           style={actionStyle}
@@ -105,37 +106,6 @@ export default function PopupTaskbar() {
       </div>
       <TaskbarClock />
     </div>
-  );
-}
-
-/** Fullscreen toggle (like F11) pinned at the left of the taskbar. */
-function FullscreenButton() {
-  const [fullscreen, setFullscreen] = useState(!!document.fullscreenElement);
-
-  useEffect(() => {
-    const onChange = () => setFullscreen(!!document.fullscreenElement);
-    document.addEventListener("fullscreenchange", onChange);
-    return () => document.removeEventListener("fullscreenchange", onChange);
-  }, []);
-
-  const toggleFullscreen = () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen?.();
-    } else {
-      document.documentElement.requestFullscreen?.().catch(() => {});
-    }
-  };
-
-  return (
-    <button
-      type="button"
-      style={actionStyle}
-      onClick={toggleFullscreen}
-      title={fullscreen ? "Exit fullscreen (F11)" : "Enter fullscreen (F11)"}
-      aria-label={fullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-    >
-      {fullscreen ? <IconCollapse size={14} /> : <IconExpand size={14} />}
-    </button>
   );
 }
 

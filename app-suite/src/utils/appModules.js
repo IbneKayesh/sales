@@ -36,16 +36,16 @@ export const appModules = [
         order: 1,
         menus: [
           {
-            id: "M01-G01-M002",
-            name: "WorkSpace",
+            id: "M01-G01-M001",
+            name: "Work Space",
             color: "#7c3aed",
             icon: "Info",
             order: 1,
-            link: "/bsuite/blank",
-            desc: "Blank Page",
+            link: "/bsuite/workspace",
+            desc: "Work Space",
           },
           {
-            id: "M01-G01-M001",
+            id: "M01-G01-M002",
             name: "Home",
             color: "#7c3aed",
             icon: "Home",
@@ -54,7 +54,7 @@ export const appModules = [
             desc: "Return to dashboard overview",
           },
           {
-            id: "M01-G01-M002",
+            id: "M01-G01-M003",
             name: "General",
             color: "#7c3aed",
             icon: "Settings",

@@ -29,7 +29,7 @@ const ItemForm = ({
             disabled={readOnly}
             optionValue="price_id"
             optionLabel="price_cname"
-            optionGrid="price_cname:Item, runit_uname:Unit, price_lprat:l.Purchase, price_dspct:Disc %, price_gdstk:g.Stock, items_itype:Type, items_pivat:Include VAT%, items_pdvat: VAT%"
+            optionGrid="price_cname:Item, runit_uname:Unit, price_lprat:l.Purchase, price_gdstk:g.Stock, items_itype:Type, items_pivat:iVAT%, items_pdvat: VAT%, items_fxcst: Fix Cost (%)"
           />
         </div>
         <div className="col-span-3">
@@ -56,7 +56,7 @@ const ItemForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="Disc %"
+            label="Disc (%)"
             placeholder="0.00"
             value={formData.mrrdc_dspct}
             onChange={(e) => onChange("mrrdc_dspct", e.target.value)}
@@ -67,7 +67,7 @@ const ItemForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="iVAT %"
+            label="iVAT (%)"
             placeholder="0.00"
             value={formData.mrrdc_ivpct}
             onChange={(e) => onChange("mrrdc_ivpct", e.target.value)}
@@ -78,7 +78,7 @@ const ItemForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="VAT %"
+            label="VAT (%)"
             placeholder="0.00"
             value={formData.mrrdc_vtpct}
             onChange={(e) => onChange("mrrdc_vtpct", e.target.value)}
@@ -89,7 +89,7 @@ const ItemForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="TAX %"
+            label="TAX (%)"
             placeholder="0.00"
             value={formData.mrrdc_txpct}
             onChange={(e) => onChange("mrrdc_txpct", e.target.value)}
@@ -101,7 +101,7 @@ const ItemForm = ({
         {Number(formData.mrrdc_fcpct) < 0.1 ? (
           <div className="col-span-2">
             <InputNumber
-              label="Fix Cost Amount"
+              label="Fix Cost (%)"
               placeholder="0.00"
               value={formData.mrrdc_fcamt}
               onChange={(e) => onChange("mrrdc_fcamt", e.target.value)}

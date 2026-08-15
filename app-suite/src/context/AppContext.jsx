@@ -403,11 +403,21 @@ export function AppProvider({ children }) {
   const popupSeqRef = useRef(START_POPUP_SEQ);
 
   const openPopup = useCallback((menu) => {
-    popupSeqRef.current += 1;
-    setPopups((prev) => [
-      ...prev,
-      { key: `${menu.id}-${popupSeqRef.current}`, menu, hidden: false },
-    ]);
+    setPopups((prev) => {
+      // Only one popup per menu: re-opening a menu that is already open
+      // restores it (un-minimizes) and brings it to the front instead of
+      // stacking a duplicate.
+      const existing = prev.find((p) => p.menu?.id === menu.id);
+      if (existing) {
+        const rest = prev.filter((p) => p.key !== existing.key);
+        return [...rest, { ...existing, hidden: false }];
+      }
+      popupSeqRef.current += 1;
+      return [
+        ...prev,
+        { key: `${menu.id}-${popupSeqRef.current}`, menu, hidden: false },
+      ];
+    });
   }, []);
 
   const closePopup = useCallback((key) => {

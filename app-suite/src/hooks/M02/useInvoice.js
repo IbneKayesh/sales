@@ -543,20 +543,21 @@ const useInvoice = () => {
     setFormDataItem((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formDataItem, [f]: v }, tmob_invcc);
     setFormErrors(newErrors);
-    if (f === "invcc_price") {
-      const price_id = items_Options.find((opt) => opt.price_id === v);
+    if (f === "invcc_stock") {
+      const stock_id = items_Options.find((opt) => opt.stock_id === v);
+      //console.log('stock_id',stock_id)
       setFormDataItem((prev) => ({
         ...prev,
-        invcc_items: price_id?.id,
-        invcc_price: v,
-        invcc_units: price_id?.items_runit,
-        invcc_itrat: price_id?.price_mrrat || 0,
-        invcc_dspct: price_id?.price_dspct || 0,
-        invcc_vtpct: price_id?.items_sdvat || 0,
-        invcc_csrat: price_id?.stock_cprat || 0,
-        invcc_refid: "",
-        invcc_stock: price_id?.stock_id,
-        stock_ohqty: price_id?.stock_ohqty,
+        invcc_items: stock_id?.items_id,
+        invcc_price: stock_id?.price_id,
+        invcc_units: stock_id?.items_runit,
+        invcc_itrat: stock_id?.price_mrrat || 0,
+        invcc_dspct: stock_id?.price_dspct || 0,
+        invcc_vtpct: stock_id?.items_sdvat || 0,
+        invcc_csrat: stock_id?.stock_cprat || 0,
+        invcc_refid: stock_id?.stock_refid || 0,
+        invcc_stock: stock_id?.stock_id,
+        stock_ohqty: stock_id?.stock_ohqty,
       }));
     }
   };
@@ -592,7 +593,7 @@ const useInvoice = () => {
     // }
 
     const items_iname = items_Options.find(
-      (opt) => opt.price_id === formDataItem.invcc_price,
+      (opt) => opt.stock_id === formDataItem.invcc_stock,
     );
     //create new row
     const newItem = {

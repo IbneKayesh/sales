@@ -237,7 +237,7 @@ const ItemsForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="Fixed Cost (Purchase)"
+            label="Fixed Cost (%) (Purchase)"
             placeholder="Enter fixed cost"
             value={formData.items_fxcst}
             onChange={(e) => onChange("items_fxcst", e.target.value)}

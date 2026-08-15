@@ -17,6 +17,7 @@ CREATE TABLE tmtb_jrnlc (
   jrnlc_descr varchar(200) NULL,
   jrnlc_sorce varchar(50) NULL,
   jrnlc_refid varchar(50) NULL,
+  jrnlc_rtype varchar(50) NULL,
   jrnlc_lines integer NOT NULL DEFAULT 1,
   
   -- default
