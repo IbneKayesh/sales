@@ -67,6 +67,18 @@ const create = async (req, res) => {
     }
 
     //database action
+    const sql_1 =
+      "SELECT * FROM tmib_itmct WHERE itmct_items = $1 AND itmct_cntct = $2";
+    const params_1 = [itmct_items, itmct_cntct];
+    const rows_1 = await dbGetAll(sql_1, params_1, "Validate item contact");
+    if (rows_1.length > 0) {
+      return res.json({
+        success: false,
+        message: "Party already exists.",
+        data: [],
+      });
+    }
+
     const newCode = await GenNewCode(user_c, "tmib_itmct");
 
     const sql = `INSERT INTO tmib_itmct(id, itmct_users, itmct_bsins, itmct_ccode, itmct_items, itmct_cntct, itmct_crusr, itmct_upusr)

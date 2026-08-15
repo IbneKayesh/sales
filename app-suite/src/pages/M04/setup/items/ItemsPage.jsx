@@ -9,7 +9,8 @@ import {
   IconClose,
   IconPlus,
   IconSave,
-  IconChevronLeft,IconUser
+  IconChevronLeft,
+  IconUser,
 } from "@/icons";
 import Button from "@/components/Button";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
@@ -74,6 +75,9 @@ const ItemsPage = () => {
     modalTitle,
     handleShowModal,
     handleHideModal,
+    //filter
+    mcatg_Options,
+    formDataFilter,
   } = useItems();
 
   return (
@@ -155,6 +159,9 @@ const ItemsPage = () => {
               onEdit={handleEdit}
               onDelete={handleDelete}
               onPrice={handlePrice}
+              mcatg_Options={mcatg_Options}
+              formData={formDataFilter}
+              onChange={handleChange}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
@@ -224,7 +231,6 @@ const ItemsPage = () => {
             />
           )}
 
-          
           {/* Single Modal for Item form */}
           <Modal open={showModal.show} onClose={handleHideModal} size="xl">
             <ModalHeader>

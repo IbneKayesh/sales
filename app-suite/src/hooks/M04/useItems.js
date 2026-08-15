@@ -17,6 +17,7 @@ import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
 import tmib_itmct from "@/models/M04/tmib_itmct.json";
 import { itemContactAPI } from "@/api/M04/itemContactAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
+import { categoriesAPI } from "@/api/M04/categoriesAPI.js";
 
 const useItems = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -45,6 +46,9 @@ const useItems = () => {
   const [scatg_Options, setScatg_Options] = useState([]);
   const [brand_Options, setBrand_Options] = useState([]);
   const [partyData, setPartyData] = useState([]);
+  //filter
+  const [formDataFilter, setFormDataFilter] = useState({});
+  const [mcatg_Options, setMcatg_Options] = useState([]);
 
   //Table Columns
   const getTabColumns = async () => {
@@ -63,10 +67,10 @@ const useItems = () => {
     }
   };
 
-  const getAllItems = async () => {
+  const getAllItems = async (v) => {
     try {
       setIsBusy(true);
-      const resp = await itemsAPI.getAll({});
+      const resp = await itemsAPI.getByFilter(v);
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -75,9 +79,22 @@ const useItems = () => {
     }
   };
 
+  const getAllCategories = async () => {
+    try {
+      setIsBusy(true);
+      const resp = await categoriesAPI.getAllActive({});
+      const list = resp.data || [];
+      setMcatg_Options(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   useEffect(() => {
     getTabColumns();
-    getAllItems();
+    //getAllItems();
+    getAllCategories();
   }, []);
 
   const getPartyData = async (id) => {
@@ -92,10 +109,17 @@ const useItems = () => {
     }
   };
 
-  const handleChange = (f, v) => {
+  const handleChange = async (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmib_items);
     setFormErrors(newErrors);
+
+    //filters
+    if (pgView === "SYS_VW_LST_1" && f === "items_mcatg") {
+      setFormDataFilter((prev) => ({ ...prev, [f]: v }));
+      await getAllItems({ items_mcatg: v });
+    }
+    console.log("pgView", f);
   };
 
   const handleEdit = (rowData) => {
@@ -139,7 +163,7 @@ const useItems = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllItems();
+        getAllItems(formDataFilter);
       }
     } catch (error) {
     } finally {
@@ -148,7 +172,7 @@ const useItems = () => {
   };
 
   const handleSearch = async () => {
-    getAllItems();
+    getAllItems(formDataFilter);
   };
 
   const getAllUnits = async () => {
@@ -239,7 +263,7 @@ const useItems = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllItems();
+        getAllItems(formDataFilter);
       }
     } catch (error) {
     } finally {
@@ -478,16 +502,17 @@ const useItems = () => {
       setIsBusy(true);
 
       const resp = await itemContactAPI.create(reqBody);
-      alertBox({
-        title: resp.success
-          ? formDataCntct.id
-            ? "Updated"
-            : "Saved"
-          : "Error",
-        message: resp.message,
-        variant: resp.success ? "success" : "danger",
-        confirmText: resp.success ? "Done" : "Close",
-      });
+      // alertBox({
+      //   title: resp.success
+      //     ? formDataCntct.id
+      //       ? "Updated"
+      //       : "Saved"
+      //     : "Error",
+      //   message: resp.message,
+      //   variant: resp.success ? "success" : "danger",
+      //   confirmText: resp.success ? "Done" : "Close",
+      // });
+      showToast(resp.message, { type: resp.success ? "success" : "danger" });
       if (resp.success) {
         handleHideModal();
         getItemSupplier(formDataCntct.itmct_items);
@@ -566,6 +591,9 @@ const useItems = () => {
     modalTitle,
     handleShowModal,
     handleHideModal,
+    //filter
+    mcatg_Options,
+    formDataFilter,
   };
 };
 export default useItems;

@@ -4,9 +4,20 @@ import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
 import { IconClose, IconCheck, IconActivity } from "@/icons";
+import Dropdown from "@/components/Dropdown";
 import NegativeValue from "@/components/common/NegativeValue";
 
-const ItemsList = ({ cfColumns = [], listData, onEdit, onDelete, onPrice }) => {
+const ItemsList = ({
+  cfColumns = [],
+  listData,
+  onEdit,
+  onDelete,
+  onPrice,
+  //filter
+  mcatg_Options,
+  formData,
+  onChange,
+}) => {
   const dtColumns = [
     { key: "items_icode", header: "Code", width: "120px" },
     {
@@ -187,21 +198,38 @@ const ItemsList = ({ cfColumns = [], listData, onEdit, onDelete, onPrice }) => {
     },
   ];
   return (
-    <DataTable
-      columns={dtColumns}
-      data={listData}
-      pageSize={15}
-      sortable
-      searchable
-      striped
-      hoverable
-      exportable
-      exportFilename="data-export.csv"
-      onRowClick={(row) => onEdit(row)}
-      emptyMessage="No data found"
-      autofit
-      cfColumns={cfColumns}
-    />
+    <>
+      <div className="grid mb-2">
+        <div className="col-span-3">
+          <Dropdown
+            label="Category"
+            options={mcatg_Options}
+            value={formData.items_mcatg}
+            onChange={(e) => onChange("items_mcatg", e.target.value)}
+            //error={formErrors.items_scatg}
+            placeholder="Select..."
+            //disabled={readOnly}
+            optionValue="id"
+            optionLabel="mcatg_cname"
+          />
+        </div>
+      </div>
+      <DataTable
+        columns={dtColumns}
+        data={listData}
+        pageSize={15}
+        sortable
+        searchable
+        striped
+        hoverable
+        exportable
+        exportFilename="data-export.csv"
+        onRowClick={(row) => onEdit(row)}
+        emptyMessage="No data found"
+        autofit
+        cfColumns={cfColumns}
+      />
+    </>
   );
 };
 export default ItemsList;

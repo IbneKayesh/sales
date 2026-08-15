@@ -6,7 +6,6 @@ import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 import { itype_Options, bool_Options } from "@/utils/vtable.js";
 import PartyView from "@/pages/M08/setup/parties/PartyView.jsx";
-import ItemContactForm from "./ItemContactForm";
 import ItemContactList from "./ItemContactList";
 
 const ItemsForm = ({

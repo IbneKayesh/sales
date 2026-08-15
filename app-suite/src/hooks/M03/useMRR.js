@@ -867,6 +867,7 @@ const useMRR = () => {
     setListDataCost((prev) => prev.filter((item) => item.id !== rowData.id));
     showToast("Removed successfully", { type: "success" });
   };
+  
   // ---------- Payment Details ----------
 
   const handleChangePayment = (f, v) => {

@@ -34,6 +34,8 @@ const ItemContactForm = ({
           />
         </div>
         <div className="col-span-12 mt-5"></div>
+        <div className="col-span-12 mt-5"></div>
+        <div className="col-span-12 mt-5"></div>
       </div>
       <div className="form-actions">
         <Button

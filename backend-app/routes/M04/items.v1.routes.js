@@ -642,4 +642,69 @@ router.post("/get-sales-invoice-items-by-dpart", async (req, res) => {
   }
 });
 
+
+// get-by-filter
+router.post("/get-by-filter", async (req, res) => {
+  try {
+    const { items_mcatg, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT itm.*,
+    runit.units_cname as runit_cname,
+    punit.units_cname as punit_cname,
+    sunit.units_cname as sunit_cname,
+    sgrup.sgrup_cname as sgrup_cname,
+    scatg.scatg_cname as scatg_cname,
+    brand.brand_cname as brand_cname,
+    COALESCE(prc.price_id, 0) as price_count,
+    COALESCE(prc.price_gdstk, 0) as price_gdstk,
+    COALESCE(prc.price_bdstk, 0) as price_bdstk,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+FROM tmib_items itm
+LEFT JOIN tmib_units runit ON itm.items_runit = runit.id
+LEFT JOIN tmib_units punit ON itm.items_punit = punit.id
+LEFT JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+LEFT JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+LEFT JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
+LEFT JOIN tmib_brand brand ON itm.items_brand = brand.id
+LEFT JOIN (
+      SELECT COUNT(id) as price_id, SUM(prc.price_gdstk) as price_gdstk, SUM(prc.price_bdstk) as price_bdstk,
+      prc.price_items
+      FROM tmib_price prc
+      WHERE prc.price_users = $1
+      GROUP BY prc.price_items
+  )prc ON itm.id = prc.price_items
+LEFT JOIN tmhb_emply csr ON itm.items_crusr = csr.id
+LEFT JOIN tmhb_emply usr ON itm.items_upusr = usr.id
+WHERE itm.items_users = $1
+AND scatg.scatg_mcatg = $2
+ORDER BY prc.price_gdstk DESC, prc.price_bdstk DESC, itm.items_iname`;
+
+    const params = [user_c, items_mcatg];
+    const rows = await dbGetAll(sql, params, `get items- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+
 module.exports = router;

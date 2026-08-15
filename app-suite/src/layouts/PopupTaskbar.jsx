@@ -78,15 +78,6 @@ export default function PopupTaskbar() {
         <button
           type="button"
           style={actionStyle}
-          onClick={closeAllPopups}
-          title="Close all open popups"
-          aria-label="Close all popups"
-        >
-          <IconClose size={14} />
-        </button>
-        <button
-          type="button"
-          style={actionStyle}
           onClick={showAllPopups}
           title="Restore all minimized popups"
           aria-label="Show all popups"
@@ -101,6 +92,15 @@ export default function PopupTaskbar() {
           aria-label="Hide all popups"
         >
           <IconChevronDown size={14} />
+        </button>
+        <button
+          type="button"
+          style={actionStyle}
+          onClick={closeAllPopups}
+          title="Close all open popups"
+          aria-label="Close all popups"
+        >
+          <IconClose size={14} />
         </button>
       </div>
       <TaskbarClock />

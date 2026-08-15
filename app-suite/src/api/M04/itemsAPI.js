@@ -34,4 +34,8 @@ export const itemsAPI = {
     apiRequest("/M04/v1/items/get-sales-invoice-items-by-dpart", {
       body: data,
     }),
+  getByFilter: (data) =>
+    apiRequest("/M04/v1/items/get-by-filter", {
+      body: data,
+    }),
 };
