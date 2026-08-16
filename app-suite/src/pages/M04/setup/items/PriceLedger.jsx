@@ -75,7 +75,18 @@ const PriceLedger = ({ listData }) => {
         //onRowClick={(row) => onEdit(row)}
         emptyMessage="No data found"
       />
-      Qty: {totalQty} || Value: {totalValue}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          gap: "var(--sp-3)",
+          paddingTop: "var(--sp-3)",
+          borderTop: "1px solid var(--border)",
+        }}
+      >
+        Qty: {totalQty} || Value: {totalValue}
+      </div>
     </>
   );
 };

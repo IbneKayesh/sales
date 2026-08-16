@@ -374,7 +374,7 @@ const useMRR = () => {
       const mrrdc_txamt = afterDisc * (validNumber(item.mrrdc_txpct) / 100);
 
       //---------------------------------------------------
-      // Freight
+      // Fix Cost as Purchase Inventory Gain as Loss
       //---------------------------------------------------
 
       let mrrdc_fcpct = validNumber(item.mrrdc_fcpct);

@@ -55,14 +55,6 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       },
     },
     {
-      key: "invcc_fcamt",
-      header: "Fix Cost",
-      width: "100px",
-      render: (_, rowData) => {
-        return <>{Number(rowData.invcc_fcamt) || 0}</>;
-      },
-    },
-    {
       key: "invcc_icamt",
       header: "Other Cost",
       width: "80px",
@@ -92,6 +84,13 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       width: "80px",
       render: (_, rowData) => {
         return <>{(Number(rowData.invcc_csrat) || 0).toFixed(4)}</>;
+      },
+    },    {
+      key: "invcc_nsrat",
+      header: "Net Unit Cost",
+      width: "80px",
+      render: (_, rowData) => {
+        return <>{(Number(rowData.invcc_nsrat) || 0).toFixed(4)}</>;
       },
     },
     {

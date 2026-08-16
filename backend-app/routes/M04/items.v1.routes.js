@@ -631,7 +631,8 @@ prc.id price_id, prc.price_cname, prc.price_lprat, prc.price_dprat, prc.price_tp
 prc.price_dspct, prc.price_gdstk, prc.price_bdstk,
 itm.id items_id, itm.items_icode, itm.items_brcod, itm.items_hscod, itm.items_runit, itm.items_pkqty, 
 itm.items_sdvat, runit.units_cname as runit_uname, itm.items_pkqty, sunit.units_cname as sunit_cname,
-itm.items_szqty
+itm.items_szqty, brand.brand_cname as brand_cname,
+pty.id party_id, pty.party_chtac chtac_id
 FROM tmib_stock stk
 JOIN tmib_price prc ON stk.stock_price = prc.id
 					AND stk.stock_users = prc.price_users
@@ -641,6 +642,8 @@ JOIN tmib_items itm ON stk.stock_items = itm.id
 					AND stk.stock_bsins = itm.items_bsins
 JOIN tmib_units runit ON itm.items_runit = runit.id
 JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+JOIN tmib_brand brand ON itm.items_brand = brand.id
+JOIN tmtb_party pty ON itm.id = pty.party_vndor
 WHERE stk.stock_ohqty > 0
 AND stk.stock_users = $1
 AND stk.stock_bsins = $2

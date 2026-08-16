@@ -769,8 +769,8 @@ router.post("/get-suppliers-mrr", async (req, res) => {
   }
 });
 
-// get-customers
-router.post("/get-customers", async (req, res) => {
+// get-customers-sale-invoice
+router.post("/get-customers-sale-invoice", async (req, res) => {
   try {
     const { user_s, user_c, user_b } = req.body;
 
@@ -785,13 +785,16 @@ router.post("/get-customers", async (req, res) => {
 
     //database action
     //10101110 :: Customer Receivable
-    const sql = `SELECT cnt.*, 0 as edit_stop
+    const sql = `SELECT cnt.*, pty.id party_id, pty.party_chtac chtac_id
     FROM tmcb_cntct cnt
     JOIN tmtb_party pty ON cnt.id = pty.party_vndor
-    JOIN tmtb_chtac cht ON pty.party_chtac = cht.id AND cht.chtac_chtno = '10101110'
+    JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+    JOIN tmtb_prtyn ptn ON cht.chtac_chtno = ptn.prtyn_chtno
     WHERE cnt.cntct_users = $1
     AND cnt.cntct_ctype IN ('Customer')
     AND cnt.cntct_actve = TRUE
+	  AND ptn.prtyn_cname = 'SYS_SALES_INVOICE'
+	  AND ptn.prtyn_ctype = 'PAY_CUSTOMER'
     ORDER BY cnt.cntct_cname`;
 
     const params = [user_c];
@@ -814,7 +817,6 @@ router.post("/get-customers", async (req, res) => {
     });
   }
 });
-
 
 // get-avail-suppliers-item
 router.post("/get-avail-suppliers-item", async (req, res) => {

@@ -14,7 +14,8 @@ import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
 import { generateGuid } from "@/utils/guid.js";
-import { validNumber } from "@/utils/misc.js";
+import { validNumber, divNumber } from "@/utils/misc.js";
+import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
 
 const useInvoice = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -79,10 +80,6 @@ const useInvoice = () => {
   function reCalculate(items, master, costList, paymList) {
     //console.log("items", items);
 
-    // Safe divide
-    const div = (a, b) =>
-      validNumber(b) === 0 ? 0 : validNumber(a) / validNumber(b);
-
     // Clone
     let newItems = [...(items || [])];
     let newCosting = [...(costList || [])];
@@ -123,13 +120,13 @@ const useInvoice = () => {
     const excQty = sumCost("Exclude", "By Qty");
     const excLine = sumCost("Exclude", "By Line");
 
-    const incAmtRate = div(incAmt, totalAmount);
-    const incQtyRate = div(incQty, totalQty);
-    const incLineRate = div(incLine, totalLine);
+    const incAmtRate = divNumber(incAmt, totalAmount);
+    const incQtyRate = divNumber(incQty, totalQty);
+    const incLineRate = divNumber(incLine, totalLine);
 
-    const excAmtRate = div(excAmt, totalAmount);
-    const excQtyRate = div(excQty, totalQty);
-    const excLineRate = div(excLine, totalLine);
+    const excAmtRate = divNumber(excAmt, totalAmount);
+    const excQtyRate = divNumber(excQty, totalQty);
+    const excLineRate = divNumber(excLine, totalLine);
 
     //---------------------------------------------------
     // 1. Split Invoice Discount
@@ -155,7 +152,7 @@ const useInvoice = () => {
     }
 
     newItems = newItems.map((item) => {
-      const invcc_edamt = div(
+      const invcc_edamt = divNumber(
         validNumber(invoice_discount_amount) * validNumber(item.invcc_itqty),
         totalQty,
       );
@@ -181,32 +178,13 @@ const useInvoice = () => {
       const afterDisc =
         invcc_itamt - (invcc_dsamt + validNumber(item.invcc_edamt));
 
-      const invcc_ivamt = afterDisc * (validNumber(item.invcc_ivpct) / 100);
-
       const invcc_vtamt = afterDisc * (validNumber(item.invcc_vtpct) / 100);
-
-      const invcc_txamt = afterDisc * (validNumber(item.invcc_txpct) / 100);
-
-      //---------------------------------------------------
-      // Freight
-      //---------------------------------------------------
-
-      let invcc_fcpct = validNumber(item.invcc_fcpct);
-      let invcc_fcamt = validNumber(item.invcc_fcamt);
-
-      if (invcc_fcpct > 0) {
-        invcc_fcamt = validNumber((afterDisc * (invcc_fcpct / 100)).toFixed(4));
-      } else if (invcc_fcamt > 0) {
-        invcc_fcpct = validNumber(
-          (div(invcc_fcamt, afterDisc) * 100).toFixed(4),
-        );
-      }
 
       //---------------------------------------------------
       // Including Cost
       //---------------------------------------------------
 
-      const iAmt = invcc_itamt * incAmtRate;
+      const iAmtCust = invcc_itamt * incAmtRate;
       const iQty = qty * incQtyRate;
       const iLine = incLineRate;
 
@@ -214,33 +192,26 @@ const useInvoice = () => {
       // Excluding Cost
       //---------------------------------------------------
 
-      const eAmt = invcc_itamt * excAmtRate;
+      const eAmtCust = invcc_itamt * excAmtRate;
       const eQty = qty * excQtyRate;
       const eLine = excLineRate;
 
-      const invcc_icamt = iAmt + iQty + iLine;
-      const invcc_ecamt = eAmt + eQty + eLine;
+      const invcc_icamt = iAmtCust + iQty + iLine;
+      const invcc_ecamt = eAmtCust + eQty + eLine;
 
       //---------------------------------------------------
       // Net Amount
       //---------------------------------------------------
 
-      const invcc_ntamt = afterDisc + invcc_vtamt + invcc_icamt - invcc_ivamt;
+      const invcc_ntamt = afterDisc + invcc_vtamt + invcc_icamt;
 
-      const invcc_nsrat = div(
-        afterDisc + invcc_fcamt + invcc_icamt + invcc_ecamt - invcc_ivamt,
-        qty,
-      );
+      const invcc_nsrat = validNumber(item.invcc_csrat) + invcc_ecamt;
 
       return {
         ...item,
         invcc_itamt,
         invcc_dsamt,
-        invcc_ivamt,
         invcc_vtamt,
-        invcc_txamt,
-        invcc_fcpct,
-        invcc_fcamt,
         invcc_icamt,
         invcc_ecamt,
         invcc_ntamt,
@@ -258,10 +229,7 @@ const useInvoice = () => {
       (acc, item) => ({
         tramt: acc.tramt + validNumber(item.invcc_itamt),
         itmds: acc.itmds + validNumber(item.invcc_dsamt),
-        ivtmt: acc.ivtmt + validNumber(item.invcc_ivamt),
         vtamt: acc.vtamt + validNumber(item.invcc_vtamt),
-        txamt: acc.txamt + validNumber(item.invcc_txamt),
-        fcamt: acc.fcamt + validNumber(item.invcc_fcamt),
         icamt: acc.icamt + validNumber(item.invcc_icamt),
         ecamt: acc.ecamt + validNumber(item.invcc_ecamt),
         ntamt: acc.ntamt + validNumber(item.invcc_ntamt),
@@ -269,10 +237,7 @@ const useInvoice = () => {
       {
         tramt: 0,
         itmds: 0,
-        ivtmt: 0,
         vtamt: 0,
-        txamt: 0,
-        fcamt: 0,
         icamt: 0,
         ecamt: 0,
         ntamt: 0,
@@ -296,17 +261,15 @@ const useInvoice = () => {
     // Master
     //---------------------------------------------------
 
-    const duamt = totals.ntamt - totalPayment;
+    const duamt =
+      totals.ntamt - (totalPayment + Number(master?.invcm_lylds || 0));
 
     setFormData({
       ...master,
       invcm_tramt: validNumber(totals.tramt).toFixed(4),
       invcm_itmds: validNumber(totals.itmds).toFixed(4),
       invcm_invds: invoice_discount_amount,
-      invcm_ivtmt: validNumber(totals.ivtmt).toFixed(4),
       invcm_vtamt: validNumber(totals.vtamt).toFixed(4),
-      invcm_txamt: validNumber(totals.txamt).toFixed(4),
-      invcm_fcamt: validNumber(totals.fcamt).toFixed(4),
       invcm_icamt: validNumber(totals.icamt).toFixed(4),
       invcm_ecamt: validNumber(totals.ecamt).toFixed(4),
       invcm_pyamt: validNumber(totals.ntamt).toFixed(4),
@@ -331,7 +294,7 @@ const useInvoice = () => {
       return;
     }
     try {
-      const resp = await contactAPI.getCustomers({});
+      const resp = await contactAPI.getCustomersSaleInvoice({});
       const list = resp.data || [];
       setCntct_Options(list);
     } catch (error) {}
@@ -342,10 +305,10 @@ const useInvoice = () => {
       return;
     }
     try {
-      const resp = await invoiceAPI.getExpensesPaymentsHeads({});
+      const resp = await partyNetworkAPI.getSalesInvoice({});
       const list = resp.data || [];
-      const invcs = list.filter((f) => f.prtyn_ctype === "EXPENSES");
-      const invpy = list.filter((f) => f.prtyn_ctype === "PAYMENTS");
+      const invcs = list.filter((f) => f.prtyn_ctype === "PAY_VENDOR");
+      const invpy = list.filter((f) => f.prtyn_ctype === "PAY_CASH_BANK");
       setInvcs_Options(invcs);
       setInvpy_Options(invpy);
     } catch (error) {}
@@ -373,6 +336,8 @@ const useInvoice = () => {
         ...formData,
         invcm_cntct: v,
         invcm_dspct: dspct,
+        party_id: cntct_id?.party_id,
+        chtac_id: cntct_id?.chtac_id,
         // new supplier has no discount % -> clear any stale computed amount
         ...(dspct === 0 ? { invcm_invds: 0 } : {}),
       };
@@ -517,7 +482,7 @@ const useInvoice = () => {
       };
 
       //console.log("reqBody", reqBody);
-     // return;
+      // return;
       setIsBusy(true);
       const resp = await invoiceAPI.upsert(reqBody);
       alertBox({
@@ -558,6 +523,8 @@ const useInvoice = () => {
         invcc_refid: stock_id?.stock_refid || 0,
         invcc_stock: stock_id?.stock_id,
         stock_ohqty: stock_id?.stock_ohqty,
+        party_id: stock_id?.party_id || "-",
+        chtac_id: stock_id?.chtac_id || "-",
       }));
     }
   };
@@ -705,6 +672,11 @@ const useInvoice = () => {
       setFormDataPayment((prev) => ({
         ...prev,
         party_cname: invpy_id?.party_cname,
+        party_chtac: mrrpy_id?.party_chtac,
+        prtyn_ctype: mrrpy_id?.prtyn_ctype,
+        prtyn_chtno: mrrpy_id?.prtyn_chtno,
+        chtac_id_pay: mrrpy_id?.party_chtac,
+        party_id_pay: mrrpy_id?.id,
       }));
     }
   };

@@ -60,7 +60,7 @@ const MrrForm = ({
             placeholder="Select..."
             error={formErrors.mrrdm_trdat}
             required
-            disabled={readOnly}
+            disabled={readOnly || true}
           />
         </div>
         <div className="col-span-3">

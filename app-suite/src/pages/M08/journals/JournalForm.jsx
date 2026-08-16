@@ -78,7 +78,7 @@ const JournalForm = ({
             placeholder="Select..."
             error={formErrors.jrnlm_trdat}
             required
-            disabled={readOnly}
+            disabled={readOnly || true}
           />
         </div>
         <div className="col-span-2">

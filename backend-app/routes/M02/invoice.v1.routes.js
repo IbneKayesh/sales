@@ -116,6 +116,8 @@ const create = async (req, res) => {
       invcm_ispst,
       invcm_ispad,
       invcm_isapp,
+      party_id,
+      chtac_id,
       tmob_invcc,
       tmob_invcs,
       tmob_invpy,
@@ -131,6 +133,8 @@ const create = async (req, res) => {
       !invcm_cntct ||
       !invcm_ttype ||
       !invcm_exrat ||
+      !party_id ||
+      !chtac_id ||
       !user_s ||
       !user_c ||
       !user_b
@@ -143,6 +147,31 @@ const create = async (req, res) => {
     }
 
     //database action
+    const acprd = await getCurrentPeriod(user_c, user_b, invcm_dpart);
+    if (!acprd) {
+      return {
+        success: false,
+        message: "No active fiscal year or accounting period found",
+        data: {},
+      };
+    }
+    if (acprd.length > 1) {
+      return {
+        success: false,
+        message: "Multiple active accounting periods found. Please select one.",
+        data: {},
+      };
+    }
+    const { acprd_id, fsyar_id } = acprd[0];
+    const newId_JV = uuidv4();
+    const newTrnNo_JV = await GenNewTrn(
+      user_c,
+      user_b,
+      "tmtb_jrnlm",
+      "Sales Invoice",
+      invcm_dpart,
+    );
+
     const newId = uuidv4();
     //const newCode = await GenNewCode(user_c, "tmob_invcm");
     const newTrnNo = await GenNewTrn(
@@ -195,10 +224,41 @@ const create = async (req, res) => {
         user_s,
         user_s,
       ],
-      label: `Created MRR ${newTrnNo}`,
+      label: `Created Invoice ${newTrnNo}`,
+    });
+
+    //create journal
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
+    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
+    jrnlm_drval, jrnlm_crval, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6,
+    $7, $8, $9, $10, $11, $12,
+    $13, $14, $15, $16, $17)`,
+      params: [
+        newId_JV,
+        user_c,
+        user_b,
+        invcm_dpart,
+        fsyar_id,
+        acprd_id,
+        invcm_crncy,
+        "Sales Invoice",
+        newTrnNo_JV,
+        invcm_trdat,
+        newTrnNo,
+        invcm_ttype,
+        0,
+        0,
+        "Posted",
+        user_s,
+        user_s,
+      ],
+      label: `create journal master- ${newTrnNo_JV}`,
     });
 
     //Insert Sales details, Reduce Stock Details
+    let line = 1;
     for (const det of tmob_invcc) {
       const lineId = uuidv4();
       scripts.push({
@@ -284,12 +344,101 @@ const create = async (req, res) => {
         ],
         label: `Update price stock detail ${newTrnNo}`,
       });
+
+      //SYS_SALES_INVOICE.PAY_INVENTORY > Asset / Inventory Products - 10101212
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          invcm_dpart,
+          newId_JV,
+          det.chtac_id,
+          det.party_id,
+          det.invcc_csrat,
+          0,
+          "From Asset / Inventory / Products",
+          invcm_ttype,
+          lineId,
+          "CHILD",
+          line,
+          user_s,
+          user_s,
+        ],
+        label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
+      });
+      line++;
     }
+
+    //SYS_SALES_INVOICE.PAY_CUSTOMER > Asset / Customer Receivable -10101110
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+      params: [
+        uuidv4(),
+        user_c,
+        user_b,
+        invcm_dpart,
+        newId_JV,
+        chtac_id,
+        party_id,
+        0,
+        invcm_pyamt || 0,
+        "To Asset / Customer / Receivable",
+        invcm_ttype,
+        newId,
+        "MASTER",
+        line,
+        user_s,
+        user_s,
+      ],
+      label: `Create Asset / Customer / Receivable ${newTrnNo_JV}`,
+    });
+
+    
+    //SYS_SALES_INVOICE.PAY_INCOME_PRODUCT_SOLD > Income / Product Sales - 40101010
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+      params: [
+        uuidv4(),
+        user_c,
+        user_b,
+        invcm_dpart,
+        newId_JV,
+        chtac_id,
+        party_id,
+        0,
+        invcm_pyamt || 0,
+        "To Income / Product Sales",
+        invcm_ttype,
+        newId,
+        "MASTER",
+        line,
+        user_s,
+        user_s,
+      ],
+      label: `Create Income / Product Sales ${newTrnNo_JV}`,
+    });
 
     //Insert Costing details
     // for (const det of tmpb_mrrcs) {
     //   scripts.push({
-    //     sql: `INSERT INTO tmpb_mrrcs(id, mrrcs_users, mrrcs_bsins, mrrcs_mrrdm, mrrcs_party, mrrcs_csmod, 
+    //     sql: `INSERT INTO tmpb_mrrcs(id, mrrcs_users, mrrcs_bsins, mrrcs_mrrdm, mrrcs_party, mrrcs_csmod,
     //     mrrcs_clmod, mrrcs_value, mrrcs_notes, mrrcs_crusr, mrrcs_upusr)
     //     VALUES ($1, $2, $3, $4, $5, $6,
     //   $7, $8, $9, $10, $11)`,

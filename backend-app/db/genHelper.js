@@ -62,7 +62,7 @@ const GenNewTrn = async (user_c, user_b, tableName, trnName, dpart_id) => {
   const nextNo = (result?.total || 0) + 1;
 
   // Left padding
-  const seq = String(nextNo).padStart(6, "0");
+  const seq = String(nextNo).padStart(5, "0");
 
   // Final transaction no
   return `${prefix}-${datePart}-${seq}`;
