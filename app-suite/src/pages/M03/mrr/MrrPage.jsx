@@ -4,9 +4,17 @@ import PageCard, {
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
+import { useState } from "react";
+import {
+  IconSearch,
+  IconClose,
+  IconPlus,
+  IconSave,
+  IconPrint,
+} from "@/icons";
 import Button from "@/components/Button";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
+import PrintPreviewModal from "@/print/PrintPreviewModal";
 import useMRR from "@/hooks/M03/useMRR";
 import MrrList from "./MrrList";
 import MrrForm from "./MrrForm";
@@ -17,8 +25,10 @@ import CostList from "./CostList";
 import BillSummary from "./BillSummary";
 import PaymentForm from "./PaymentForm";
 import PaymentList from "./PaymentList";
+import PrintPage from "./PrintPage";
 
 const MrrPage = () => {
+  const [printOpen, setPrintOpen] = useState(false);
   const {
     isBusy,
     pgView,
@@ -124,6 +134,12 @@ const MrrPage = () => {
                 </Button>
               </>
             )}
+            {pgView === "SYS_VW_FRM_1" && formData?.id && (
+              <Button variant="info" size="sm" onClick={() => setPrintOpen(true)}>
+                <IconPrint size={14} className="icon-left" />
+                Print / Export
+              </Button>
+            )}
             {pgView === "SYS_VW_FRM_1" && (
               <Button variant="secondary" size="sm" onClick={handleCancel}>
                 <IconClose size={14} className="icon-left" />
@@ -201,6 +217,25 @@ const MrrPage = () => {
               onEdit={handleEditPayment}
               onDelete={handleDeletePayment}
             />
+          )}
+
+          {/* Print preview — one button, then choose Print or Export PDF */}
+          {pgView === "SYS_VW_FRM_1" && formData?.id && (
+            <PrintPreviewModal
+              open={printOpen}
+              onClose={() => setPrintOpen(false)}
+              title={`MRR - ${formData.mrrdm_trnno || formData.mrrdm_refno || ""}`}
+              printTarget="mrr"
+            >
+              <PrintPage
+                formData={formData}
+                listDataItem={listDataItem}
+                listDataCost={listDataCost}
+                listDataPayment={listDataPayment}
+                dpart_Options={dpart_Options}
+                cntct_Options={cntct_Options}
+              />
+            </PrintPreviewModal>
           )}
           {/* Single Modal for Item form */}
           <Modal open={showModal.show} onClose={handleHideModal} size="xl">

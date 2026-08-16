@@ -13,7 +13,7 @@ const dataModelItem = generateDataModel(tmtb_jrnlc);
 import { coaAPI } from "@/api/M08/coaAPI.js";
 import { buildPaths } from "@/utils/pathBuilder.js";
 import { generateGuid } from "@/utils/guid.js";
-import { printReport } from "@/utils/export.js";
+import { printReport } from "@/print/printReport";
 import { validNumber } from "@/utils/misc.js";
 
 const useJournal = () => {

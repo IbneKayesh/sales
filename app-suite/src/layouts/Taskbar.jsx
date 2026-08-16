@@ -6,7 +6,8 @@ import { IconClose, IconChevronDown, IconEye } from "@/icons";
 import FullscreenButton from "@/components/FullscreenButton";
 import Calendar from "@/components/Calendar";
 import getRoutes from "@/routes";
-import { moduleShade } from "@/utils/moduleColors";
+import { moduleShade } from "@/utils/theme";
+import { menus as allMenus } from "@/utils/appModules";
 
 const actionStyle = {
   display: "inline-flex",
@@ -24,12 +25,12 @@ const actionStyle = {
 
 /**
  * Taskbar strip pinned to the bottom of the viewport listing every open menu
- * popup — like a window taskbar. Click a popup to toggle it: a minimized one
+ * window — like a window taskbar. Click a window to toggle it: a minimized one
  * is restored (and brought to the front), a visible one is minimized. Bulk
  * actions on the right: Close all, Show all (restore minimized), Hide all
- * (minimize everything). Renders nothing while no popups are open.
+ * (minimize everything). Renders nothing while no windows are open.
  */
-export default function PopupTaskbar() {
+export default function Taskbar() {
   const {
     popups,
     restorePopup,
@@ -40,10 +41,15 @@ export default function PopupTaskbar() {
     hideAllPopups,
     user,
     business,
+    pinnedMenuIds,
   } = useApp();
   const navigate = useNavigate();
 
   const hasPopups = popups.length > 0;
+
+  // Pinned favorite menus — quick-launch shortcuts (same list as the Modules
+  // page Pinned section, shared via context so pinning in one updates both).
+  const pinnedMenus = allMenus.filter((m) => pinnedMenuIds.includes(m.id));
 
   // Avatar mirrors the topbar: initials chip, or the image when it's a URL.
   const initials = user?.name
@@ -72,14 +78,11 @@ export default function PopupTaskbar() {
         gap: 6,
         // Adaptive: a touch slimmer when only the status strip is showing.
         padding: hasPopups ? "4px 10px" : "3px 10px",
-        // background:
-        //   "linear-gradient(to top, var(--primary-bg, rgba(124, 58, 237, 0.10)) 0%, var(--primary-bg, rgba(124, 58, 237, 0.10)) 45%, var(--surface-alt, #f1f3f5) 100%)",
-        // boxShadow: "0 -2px 12px rgba(0,0,0,0.12)",
         background:
-          "linear-gradient(to bottom, var(--primary-bg, rgba(124, 58, 237, 0.10)) 0%, var(--primary-bg, rgba(124, 58, 237, 0.10)) 40%, color-mix(in srgb, var(--surface-alt, #f1f3f5) 60%, transparent) 100%)",
-        WebkitBackdropFilter: "blur(14px) saturate(150%)",
-        backdropFilter: "blur(14px) saturate(150%)",
-        boxShadow: "0 1px 10px rgba(0,0,0,0.08)",
+          "linear-gradient(to top, color-mix(in srgb, var(--surface, #ffffff) 92%, var(--primary, #7c3aed)) 0%, color-mix(in srgb, var(--surface, #ffffff) 97%, var(--primary, #7c3aed)) 100%)",
+        WebkitBackdropFilter: "blur(10px) saturate(140%)",
+        backdropFilter: "blur(10px) saturate(140%)",
+        boxShadow: "0 -2px 12px rgba(0,0,0,0.10)",
         borderTop: "1px solid var(--border, #e0e0e0)",
         fontFamily: "var(--font-sans)",
         fontSize: 11,
@@ -135,7 +138,51 @@ export default function PopupTaskbar() {
         <span style={{ flexShrink: 0 }}>{business.bsins_crncy}</span>
       )}
 
-      {/* Open popup windows (window-taskbar style) */}
+      {/* Pinned menu quick-launch shortcuts */}
+      {pinnedMenus.length > 0 && (
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 2,
+            marginLeft: 6,
+            paddingLeft: 8,
+            borderLeft: "1px solid var(--border, #e0e0e0)",
+          }}
+        >
+          {pinnedMenus.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => navigate(m.menus_mlink)}
+              title={m.menus_mname}
+              aria-label={`Open ${m.menus_mname}`}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 26,
+                height: 26,
+                padding: 0,
+                borderRadius: 6,
+                border: "none",
+                background: "transparent",
+                color: moduleShade(m.id),
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background = "var(--surface-alt, #f1f3f5)")
+              }
+              onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+            >
+              {m.menus_micon}
+            </button>
+          ))}
+        </span>
+      )}
+
+      {/* Open windows (window-taskbar style) */}
       {hasPopups && (
         <span
           style={{
@@ -177,8 +224,8 @@ export default function PopupTaskbar() {
               type="button"
               style={actionStyle}
               onClick={showAllPopups}
-              title="Restore all minimized popups"
-              aria-label="Show all popups"
+              title="Restore all minimized windows"
+              aria-label="Show all windows"
             >
               <IconEye size={14} />
             </button>
@@ -186,8 +233,8 @@ export default function PopupTaskbar() {
               type="button"
               style={actionStyle}
               onClick={hideAllPopups}
-              title="Minimize all open popups"
-              aria-label="Hide all popups"
+              title="Minimize all open windows"
+              aria-label="Hide all windows"
             >
               <IconChevronDown size={14} />
             </button>
@@ -195,8 +242,8 @@ export default function PopupTaskbar() {
               type="button"
               style={actionStyle}
               onClick={closeAllPopups}
-              title="Close all open popups"
-              aria-label="Close all popups"
+              title="Close all open windows"
+              aria-label="Close all windows"
             >
               <IconClose size={14} />
             </button>
@@ -379,7 +426,7 @@ function TaskbarClock() {
   );
 }
 
-// Taskbar hover preview — a live scaled thumbnail of the popup's content,
+// Taskbar hover preview — a live scaled thumbnail of the window's content,
 // like OS taskbar window previews. Portaled to <body> with fixed positioning
 // so the taskbar's overflow-x (which forces overflow-y to auto) cannot clip it.
 function TaskbarPreview({ popup, anchor }) {

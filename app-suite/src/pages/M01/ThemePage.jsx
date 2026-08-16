@@ -7,13 +7,26 @@ import PageCard, {
 } from "@/components/PageCard";
 import Badge from "@/components/Badge";
 import Button from "@/components/Button";
-import { IconCheck, IconInfo, IconRefresh, IconSettings } from "@/icons";
+import {
+  IconCheck,
+  IconInfo,
+  IconRefresh,
+  IconSettings,
+  IconSun,
+  IconMoon,
+} from "@/icons";
 import { useApp } from "@/context/AppContext";
 import { DEFAULT_THEME, THEME_COLORS } from "@/utils/theme";
 import { toast } from "@/components/ToastBox";
 
+const DARK_MODES = [
+  { id: "auto", label: "Auto", hint: "Follow the device setting" },
+  { id: "light", label: "Light", hint: "Always light" },
+  { id: "dark", label: "Dark", hint: "Always dark" },
+];
+
 const ThemePage = () => {
-  const { themeColor, setThemeColor } = useApp();
+  const { themeColor, setThemeColor, darkMode, setDarkMode } = useApp();
 
   const activeTheme =
     THEME_COLORS.find((t) => t.id === themeColor) || THEME_COLORS[0];
@@ -87,6 +100,61 @@ const ThemePage = () => {
                     <span className="general-page__swatch-name">
                       {theme.name}
                     </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="general-page__section">
+            <div className="general-page__section-head">
+              <Badge variant="info" icon={<IconMoon size={12} />}>
+                Appearance
+              </Badge>
+              <span className="general-page__section-note">
+                Current: {darkMode} · saved on this device
+              </span>
+            </div>
+            <div
+              style={{ display: "flex", gap: 8, flexWrap: "wrap" }}
+              role="radiogroup"
+              aria-label="Dark mode"
+            >
+              {DARK_MODES.map((mode) => {
+                const selected = mode.id === darkMode;
+                return (
+                  <button
+                    key={mode.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={() => {
+                      setDarkMode(mode.id);
+                      toast.success(`Appearance set to ${mode.label}`);
+                    }}
+                    title={mode.hint}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      padding: "7px 14px",
+                      borderRadius: "var(--radius-md)",
+                      border: `1px solid ${
+                        selected ? "var(--primary)" : "var(--border)"
+                      }`,
+                      background: selected ? "var(--primary-bg)" : "var(--surface)",
+                      color: selected ? "var(--primary)" : "var(--text-secondary)",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      transition: "var(--transition-fast)",
+                    }}
+                  >
+                    {mode.id === "dark" ? (
+                      <IconMoon size={14} />
+                    ) : mode.id === "light" ? (
+                      <IconSun size={14} />
+                    ) : null}
+                    {mode.label}
                   </button>
                 );
               })}

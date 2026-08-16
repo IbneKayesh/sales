@@ -5,8 +5,8 @@ import Layout from './layouts/Layout'
 import getRoutes from './routes'
 import LoginPage from './pages/auth/LoginPage'
 import ErrorBoundary from './components/ErrorBoundary'
-import MenuPopups from './layouts/MenuPopups'
-import PopupTaskbar from './layouts/PopupTaskbar'
+import Windows from './layouts/Window'
+import Taskbar from './layouts/Taskbar'
 import './App.css'
 
 function AppContent() {
@@ -23,11 +23,11 @@ function AppContent() {
           {getRoutes()}
         </Routes>
       </ErrorBoundary>
-      {/* Menu popups render their routes outside the main <Routes> so each
-          popup can use <Routes location={link}> for any path. */}
-      <MenuPopups />
-      {/* Taskbar strip for minimized popups, pinned to the bottom of the screen */}
-      <PopupTaskbar />
+      {/* Menu windows render their routes outside the main <Routes> so each
+          window can use <Routes location={link}> for any path. */}
+      <Windows />
+      {/* Taskbar strip for minimized windows, pinned to the bottom of the screen */}
+      <Taskbar />
     </Layout>
   )
 }

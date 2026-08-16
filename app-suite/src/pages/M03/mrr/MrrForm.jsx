@@ -4,7 +4,7 @@ import Dropdown from "@/components/Dropdown";
 import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
 import AuditData from "@/components/AuditData";
-import FormSection from "@/components/FormSection";
+import { PageSection } from "@/components/PageCard";
 import { IconPlus, IconClose, IconSave } from "@/icons";
 
 const MrrForm = ({
@@ -23,7 +23,7 @@ const MrrForm = ({
 }) => {
   return (
     <div className="form-wrap">
-      <FormSection title="General">
+      <PageSection title="General">
         <div className="grid">
           <div className="col-span-3">
             <Dropdown
@@ -87,8 +87,8 @@ const MrrForm = ({
             />
           </div> */}
         </div>
-      </FormSection>
-      <FormSection title="Delivery">
+      </PageSection>
+      <PageSection title="Delivery">
         <div className="grid">
           <div className="col-span-4">
             <InputText
@@ -101,8 +101,8 @@ const MrrForm = ({
             />
           </div>
         </div>
-      </FormSection>
-      <FormSection title="Remarks">
+      </PageSection>
+      <PageSection title="Remarks">
         <div className="grid">
           <div className="col-span-8">
             <InputText
@@ -115,7 +115,7 @@ const MrrForm = ({
             />
           </div>
         </div>
-      </FormSection>
+      </PageSection>
       {formData?.id && (
         <AuditData
           actve={formData.mrrdm_actve}

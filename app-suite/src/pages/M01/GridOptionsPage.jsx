@@ -305,7 +305,7 @@ const GridOptionsPage = () => {
             />
             {isSearching && (
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 icon={<IconClose size={14} />}
                 onClick={() => setSearchQuery("")}

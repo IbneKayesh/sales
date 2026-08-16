@@ -381,7 +381,7 @@ export default function FileUploadModal({
                       Delete
                     </Button>
                     <Button
-                      variant="secondary"
+                      variant="outline"
                       size="sm"
                       icon={<IconRefresh size={14} />}
                       onClick={handleReplace}

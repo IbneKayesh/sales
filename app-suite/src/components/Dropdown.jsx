@@ -237,6 +237,13 @@ export default function Dropdown({
             <div
               className="dropdown__grid-scroll"
               style={{ overflowX: "auto", overscrollBehavior: "contain" }}
+              // Keep the dropdown open while the user drags/clicks the
+              // horizontal scrollbar — a mousedown on the scrollbar bubbles
+              // to the document outside-click listener and would close it,
+              // and the resulting click could hit the row underneath the
+              // scrollbar (selecting it). Stop both.
+              onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               <div
                 className="dropdown__grid"
@@ -249,6 +256,9 @@ export default function Dropdown({
                   maxHeight: gridMaxHeight,
                   overflowY: "auto",
                 }}
+                // Same for the vertical scrollbar on the grid body.
+                onMouseDown={(e) => e.stopPropagation()}
+                onClick={(e) => e.stopPropagation()}
               >
                 {columns.map((c) => (
                   <div

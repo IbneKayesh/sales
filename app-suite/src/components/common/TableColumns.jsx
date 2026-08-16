@@ -65,7 +65,7 @@ const TableColumns = ({ title, open, onClose, cfColumns = [], onChange }) => {
       <ModalFooter>
         <div className="table-columns__footer">
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             disabled={!canReset || isDefault}
             icon={<IconRefresh size={14} />}

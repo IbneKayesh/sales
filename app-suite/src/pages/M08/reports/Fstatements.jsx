@@ -9,7 +9,7 @@ import Button from "@/components/Button";
 import Dropdown from "@/components/Dropdown";
 import EmptyState from "@/components/EmptyState";
 import { IconActivity, IconDownload, IconPrint } from "@/icons";
-import { printReport } from "@/utils/export";
+import { printReport } from "@/print/printReport";
 import useFstatements from "@/hooks/M08/useFstatements";
 
 // RPT_ report components (hold RPT_.jsx files only)

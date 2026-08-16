@@ -16,12 +16,15 @@ const variants = {
     hoverBg: 'var(--surface-alt)',
     hoverColor: 'var(--text-primary)',
   },
+  // Outline in the accent family — matches the theme accent (--info =
+  // theme-500) so outline buttons pair with solid `info` buttons and all
+  // secondary actions follow the selected template.
   outline: {
     bg: 'transparent',
-    color: 'var(--primary)',
-    border: 'var(--primary-border)',
-    hoverBg: 'var(--primary-bg)',
-    hoverColor: 'var(--primary)',
+    color: 'var(--info)',
+    border: 'color-mix(in srgb, var(--info) 50%, transparent)',
+    hoverBg: 'color-mix(in srgb, var(--info) 12%, transparent)',
+    hoverColor: 'var(--info-hover)',
   },
   ghost: {
     bg: 'transparent',
@@ -43,6 +46,13 @@ const variants = {
     border: 'var(--success)',
     hoverBg: 'var(--success-hover)',
     hoverColor: 'var(--success-on)',
+  },
+  warning: {
+    bg: 'var(--warning)',
+    color: 'var(--warning-on)',
+    border: 'var(--warning)',
+    hoverBg: 'var(--warning-hover)',
+    hoverColor: 'var(--warning-on)',
   },
   info: {
     bg: 'var(--info)',

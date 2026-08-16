@@ -291,7 +291,7 @@ export default function TransactionsPage() {
               onChange={(e) => setCategoryFilter(e.target.value === 'all' ? '' : e.target.value)}
               dense
             />
-            <Button variant="secondary" size="sm">
+            <Button variant="outline" size="sm">
               <IconDownload size={14} />
               Export
             </Button>

@@ -17,10 +17,11 @@ import {
   IconSun,
   IconSunset,
   IconMoon,
+  IconStar,
 } from "@/icons";
-import { resolveMenuIcon } from "@/utils/menuIcons";
+import { resolveMenuIcon } from "@/icons";
 import { appModules, menus, toMenu } from "@/utils/appModules";
-import { moduleShade } from "@/utils/moduleColors";
+import { moduleShade } from "@/utils/theme";
 
 const RECENT_STORAGE_KEY = "bsuite_recent_menus";
 const MAX_RECENT = 20;
@@ -165,7 +166,7 @@ const popupListStyles = {
 // Rendered at module scope so its identity stays stable across re-renders
 // (a component defined inside another component is remounted on every render,
 // which would reset hover state and discard DOM).
-const MenuCard = ({ menu, onClick, onOpenPopup }) => {
+const MenuCard = ({ menu, onClick, onOpenPopup, pinned = false, onTogglePin = () => {} }) => {
   const [hovered, setHovered] = useState(false);
   // Module-tinted theme shade — each module keeps its own shade of the
   // current template color.
@@ -184,20 +185,22 @@ const MenuCard = ({ menu, onClick, onOpenPopup }) => {
         padding: "4px 4px 4px 8px",
         border: `1px solid ${
           hovered
-            ? `color-mix(in srgb, ${shade} 28%, transparent)`
+            ? `color-mix(in srgb, ${shade} 42%, transparent)`
             : "var(--border)"
         }`,
         borderRadius: "var(--radius-xl)",
         background: hovered
-          ? `color-mix(in srgb, ${shade} 6%, transparent)`
+          ? `color-mix(in srgb, ${shade} 10%, transparent)`
           : "var(--surface)",
         fontFamily: "var(--font-sans)",
         boxSizing: "border-box",
         transition: "all 0.15s ease",
         width: "auto",
         flex: "0 1 auto",
-        boxShadow: hovered ? "0 2px 8px rgba(0,0,0,0.08)" : "none",
-        transform: hovered ? "translateY(-1px)" : "none",
+        boxShadow: hovered
+          ? `0 4px 12px color-mix(in srgb, ${shade} 20%, transparent)`
+          : "none",
+        transform: hovered ? "translateY(-2px)" : "none",
       }}
     >
       <button
@@ -222,16 +225,16 @@ const MenuCard = ({ menu, onClick, onOpenPopup }) => {
       >
         <div
           style={{
-            width: 36,
-            height: 36,
-            borderRadius: "var(--radius-lg)",
+            width: 30,
+            height: 30,
+            borderRadius: "var(--radius-md)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             flexShrink: 0,
-            background: `color-mix(in srgb, ${shade} 12%, transparent)`,
+            background: `color-mix(in srgb, ${shade} 10%, transparent)`,
             color: shade,
-            fontSize: 18,
+            fontSize: 16,
           }}
         >
           {menu.menus_micon}
@@ -269,6 +272,32 @@ const MenuCard = ({ menu, onClick, onOpenPopup }) => {
           </span>
         </div>
       </button>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onTogglePin(menu);
+        }}
+        title={pinned ? `Unpin ${menu.menus_mname}` : `Pin ${menu.menus_mname}`}
+        aria-label={pinned ? `Unpin ${menu.menus_mname}` : `Pin ${menu.menus_mname}`}
+        aria-pressed={pinned}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+          width: 26,
+          height: 26,
+          padding: 0,
+          borderRadius: 6,
+          border: "none",
+          background: "transparent",
+          color: pinned ? "var(--primary)" : "var(--text-muted)",
+          cursor: "pointer",
+        }}
+      >
+        <IconStar size={16} fill={pinned ? "currentColor" : "none"} />
+      </button>
       <Button
         variant="ghost"
         size="sm"
@@ -277,10 +306,60 @@ const MenuCard = ({ menu, onClick, onOpenPopup }) => {
           e.stopPropagation();
           onOpenPopup(menu);
         }}
-        title={`Open ${menu.menus_mname} in popup`}
-        aria-label={`Open ${menu.menus_mname} in popup`}
+        title={`Open ${menu.menus_mname} in window`}
+        aria-label={`Open ${menu.menus_mname} in window`}
       />
     </div>
+  );
+};
+
+// Module card with a focus effect: hovering the module name/header highlights
+// the whole card in the module's shade color.
+const ModuleCard = ({ mod, groups, totalCount, renderGroup }) => {
+  const [hovered, setHovered] = useState(false);
+  const shade = moduleShade(mod.id);
+  return (
+    <PageCard
+      style={{
+        borderColor: hovered
+          ? `color-mix(in srgb, ${shade} 30%, transparent)`
+          : undefined,
+        boxShadow: hovered
+          ? `0 6px 14px color-mix(in srgb, ${shade} 12%, transparent)`
+          : undefined,
+        transform: hovered ? "translateY(-1px)" : undefined,
+        transition:
+          "box-shadow var(--transition-normal), border-color var(--transition-fast), transform var(--transition-fast)",
+      }}
+    >
+      <PageCardHeader
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <div className="module-page__card-header">
+          <div
+            className="module-page__card-icon"
+            style={{
+              width: 46,
+              height: 46,
+              background: shade,
+              color: "#fff",
+              boxShadow: "0 4px 10px rgba(0,0,0,0.18)",
+            }}
+          >
+            {resolveMenuIcon(mod.icon, 28)}
+          </div>
+          <PageCardTitle
+            title={`${mod.name} (${mod.id})`}
+            titleStyle={{ color: shade, fontSize: 18 }}
+            subtitle={`${totalCount} feature${totalCount === 1 ? "" : "s"}`}
+          />
+        </div>
+      </PageCardHeader>
+      <PageCardBody>
+        {groups && groups.map((g) => renderGroup(g, shade))}
+      </PageCardBody>
+    </PageCard>
   );
 };
 
@@ -295,6 +374,8 @@ const ModulePage = () => {
     closePopup,
     hideAllPopups,
     closeAllPopups,
+    pinnedMenuIds,
+    togglePinMenu,
   } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
   const [recentMenuIds, setRecentMenuIds] = useState([]);
@@ -312,8 +393,8 @@ const ModulePage = () => {
     }
   }, []);
 
-  const handleMenuClick = (menu) => {
-    navigate(menu.menus_mlink);
+  // Remember a menu in the Recent list (localStorage, most-recent first).
+  const recordRecentMenu = (menu) => {
     setRecentMenuIds((prev) => {
       const filtered = prev.filter((id) => id !== menu.id);
       const updated = [menu.id, ...filtered].slice(0, MAX_RECENT);
@@ -326,12 +407,28 @@ const ModulePage = () => {
     });
   };
 
+  const handleMenuClick = (menu) => {
+    navigate(menu.menus_mlink);
+    recordRecentMenu(menu);
+  };
+
+  // Opening a menu as a floating window also lands it in the Recent list.
+  const handleOpenPopup = (menu) => {
+    recordRecentMenu(menu);
+    openPopup(menu);
+  };
+
+  // Pin/unpin a menu so it appears in the Pinned section + taskbar shortcuts.
+  // Backed by shared context state so the taskbar updates immediately.
+  const togglePin = (menu) => togglePinMenu(menu.id);
+
   const searchLC = searchQuery.toLowerCase();
   const filteredMenus = searchQuery
     ? menus.filter((m) => m.menus_mname.toLowerCase().includes(searchLC))
     : menus;
 
   const recentMenus = filteredMenus.filter((m) => recentMenuIds.includes(m.id));
+  const pinnedMenus = filteredMenus.filter((m) => pinnedMenuIds.includes(m.id));
   const isSearching = searchQuery.trim().length > 0;
 
   // Time-of-day greeting: pick a welcome message + colorful icon.
@@ -352,7 +449,7 @@ const ModulePage = () => {
   const greeting = getGreeting();
   const firstName = (user?.name || "").trim().split(/\s+/)[0];
 
-  const renderGroup = (group) => (
+  const renderGroup = (group, shade) => (
     <div key={group.id || group.name} style={{ marginBottom: 4 }}>
       <div
         style={{
@@ -360,7 +457,7 @@ const ModulePage = () => {
           fontWeight: 700,
           textTransform: "uppercase",
           letterSpacing: 0.8,
-          color: "var(--text-muted)",
+          color: shade || "var(--text-muted)",
           padding: "8px 0 2px",
         }}
       >
@@ -378,8 +475,10 @@ const ModulePage = () => {
           <MenuCard
             key={m.id}
             menu={toMenu(m)}
+            pinned={pinnedMenuIds.includes(m.id)}
             onClick={() => handleMenuClick(toMenu(m))}
-            onOpenPopup={openPopup}
+            onTogglePin={togglePin}
+            onOpenPopup={handleOpenPopup}
           />
         ))}
       </div>
@@ -463,10 +562,10 @@ const ModulePage = () => {
             onClick={() => setPopupListOpen((o) => !o)}
             title={
               popups.length
-                ? "Show open popups"
-                : "No open popups"
+                ? "Show open windows"
+                : "No open windows"
             }
-            aria-label="Show open popups"
+            aria-label="Show open windows"
             aria-expanded={popupListOpen}
           >
             <IconPopup size={18} />
@@ -494,7 +593,7 @@ const ModulePage = () => {
                     color: "var(--text-muted, #888)",
                   }}
                 >
-                  Popups ({popups.length})
+                  Windows ({popups.length})
                 </span>
                 <div
                   style={{
@@ -508,7 +607,7 @@ const ModulePage = () => {
                     type="button"
                     style={popupListStyles.action}
                     onClick={hideAllPopups}
-                    title="Minimize all open popups"
+                    title="Minimize all open windows"
                   >
                     <IconChevronDown size={12} />
                     Hide all
@@ -517,7 +616,7 @@ const ModulePage = () => {
                     type="button"
                     style={popupListStyles.action}
                     onClick={closeAllPopups}
-                    title="Close all open popups"
+                    title="Close all open windows"
                   >
                     <IconClose size={12} />
                     Close all
@@ -532,7 +631,7 @@ const ModulePage = () => {
                       padding: "4px",
                     }}
                     onClick={() => setPopupListOpen(false)}
-                    aria-label="Close popup list"
+                    aria-label="Close window list"
                     title="Close list"
                   >
                     <IconClose size={14} />
@@ -549,7 +648,7 @@ const ModulePage = () => {
                     textAlign: "center",
                   }}
                 >
-                  No open popups
+                  No open windows
                 </p>
               ) : (
                 popups.map((p) => (
@@ -656,6 +755,54 @@ const ModulePage = () => {
       )}
 
       <div className="module-page__list">
+        {/* Pinned menus — starred favorites pinned by the user */}
+        {pinnedMenus.length > 0 && (
+          <PageCard>
+            <PageCardHeader>
+              <div className="module-page__card-header">
+                <div
+                  className="module-page__card-icon"
+                  style={{
+                    width: 46,
+                    height: 46,
+                    background: "var(--primary)",
+                    color: "#fff",
+                    boxShadow: "0 4px 10px rgba(0,0,0,0.18)",
+                  }}
+                >
+                  <IconStar size={28} fill="currentColor" />
+                </div>
+                <PageCardTitle
+                  title="Pinned"
+                  titleStyle={{ color: "var(--primary)", fontSize: 18 }}
+                  subtitle={`${pinnedMenus.length} pinned`}
+                />
+              </div>
+            </PageCardHeader>
+            <PageCardBody>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 6,
+                  alignItems: "stretch",
+                }}
+              >
+                {pinnedMenus.map((menu) => (
+                  <MenuCard
+                    key={menu.id}
+                    menu={menu}
+                    pinned
+                    onClick={() => handleMenuClick(menu)}
+                    onTogglePin={togglePin}
+                    onOpenPopup={handleOpenPopup}
+                  />
+                ))}
+              </div>
+            </PageCardBody>
+          </PageCard>
+        )}
+
         {/* Recent module */}
         {recentMenus.length > 0 && (
           <PageCard>
@@ -664,15 +811,18 @@ const ModulePage = () => {
                 <div
                   className="module-page__card-icon"
                   style={{
-                    background:
-                      "color-mix(in srgb, var(--primary) 12%, transparent)",
-                    color: "var(--primary)",
+                    width: 46,
+                    height: 46,
+                    background: "var(--primary)",
+                    color: "#fff",
+                    boxShadow: "0 4px 10px rgba(0,0,0,0.18)",
                   }}
                 >
-                  <IconHome />
+                  <IconHome size={28} />
                 </div>
                 <PageCardTitle
                   title="Recent (M00)"
+                  titleStyle={{ color: "var(--primary)", fontSize: 18 }}
                   subtitle={`${recentMenus.length} feature${recentMenus.length === 1 ? "" : "s"}`}
                 />
                 {!isSearching && (
@@ -721,8 +871,10 @@ const ModulePage = () => {
                   <MenuCard
                     key={menu.id}
                     menu={menu}
+                    pinned={pinnedMenuIds.includes(menu.id)}
                     onClick={() => handleMenuClick(menu)}
-                    onOpenPopup={openPopup}
+                    onTogglePin={togglePin}
+                    onOpenPopup={handleOpenPopup}
                   />
                 ))}
               </div>
@@ -761,31 +913,15 @@ const ModulePage = () => {
             if (totalCount === 0) return null;
 
             return (
-              <PageCard key={mod.id}>
-                <PageCardHeader>
-                  <div className="module-page__card-header">
-                    <div
-                      className="module-page__card-icon"
-                      style={{
-                        background: `color-mix(in srgb, ${moduleShade(
-                          mod.id,
-                        )} 12%, transparent)`,
-                        color: moduleShade(mod.id),
-                      }}
-                    >
-                      {resolveMenuIcon(mod.icon)}
-                    </div>
-                    <PageCardTitle
-                      title={`${mod.name} (${mod.id})`}
-                      subtitle={`${totalCount} feature${totalCount === 1 ? "" : "s"}`}
-                    />
-                  </div>
-                </PageCardHeader>
-                <PageCardBody>
-                  {groups &&
-                    groups.sort((a, b) => a.order - b.order).map(renderGroup)}
-                </PageCardBody>
-              </PageCard>
+              <ModuleCard
+                key={mod.id}
+                mod={mod}
+                groups={
+                  groups ? [...groups].sort((a, b) => a.order - b.order) : null
+                }
+                totalCount={totalCount}
+                renderGroup={renderGroup}
+              />
             );
           })}
       </div>

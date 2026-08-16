@@ -1,12 +1,20 @@
+import { useState } from "react";
 import PageCard, {
   PageCardHeader,
   PageCardTitle,
   PageCardActions,
   PageCardBody,
 } from "@/components/PageCard";
-import { IconSearch, IconClose, IconPlus, IconSave, IconPrint } from "@/icons";
+import {
+  IconSearch,
+  IconClose,
+  IconPlus,
+  IconSave,
+  IconPrint,
+} from "@/icons";
 import Button from "@/components/Button";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
+import PrintPreviewModal from "@/print/PrintPreviewModal";
 import useJournal from "@/hooks/M08/useJournal";
 import JournalList from "./JournalList";
 import JournalForm from "./JournalForm";
@@ -16,6 +24,7 @@ import JournalPrint from "./JournalPrint";
 import InvoicePrint from "./InvoicePrint";
 
 const JournalPage = () => {
+  const [printDoc, setPrintDoc] = useState(null); // "journal" | "invoice"
   const {
     isBusy,
     pgView,
@@ -53,9 +62,6 @@ const JournalPage = () => {
     modalTitle,
     handleShowModal,
     handleHideModal,
-    //print
-    handlePrintJournal,
-    handlePrintInvoice,
   } = useJournal();
 
   return (
@@ -110,12 +116,12 @@ const JournalPage = () => {
             )}
             {pgView === "SYS_VW_FRM_1" && (
               <>
-                <Button variant="info" size="sm" onClick={handlePrintJournal}>
+                <Button variant="info" size="sm" onClick={() => setPrintDoc("journal")}>
                   <IconPrint size={14} className="icon-left" />
                   Journal
                 </Button>
                 {(formData?.jrnlm_trtyp || "").includes("Invoice") && (
-                  <Button variant="info" size="sm" onClick={handlePrintInvoice}>
+                  <Button variant="info" size="sm" onClick={() => setPrintDoc("invoice")}>
                     <IconPrint size={14} className="icon-left" />
                     Invoice
                   </Button>
@@ -159,25 +165,44 @@ const JournalPage = () => {
             />
           )}
 
-          {/* Print-only journal voucher layout */}
-          {pgView === "SYS_VW_FRM_1" && (
-            <JournalPrint
-              formData={formData}
-              listDataItem={listDataItem}
-              dpart_Options={dpart_Options}
-              fsyar_Options={fsyar_Options}
-              acprd_Options={acprd_Options}
-            />
+          {/* Print preview modal — Journal voucher or client Invoice */}
+          {pgView === "SYS_VW_FRM_1" && printDoc === "journal" && (
+            <PrintPreviewModal
+              open={!!printDoc}
+              onClose={() => setPrintDoc(null)}
+              title={`Journal Voucher - ${
+                formData.jrnlm_trnno || formData.jrnlm_refno || ""
+              }`}
+              printTarget="journal"
+            >
+              <JournalPrint
+                formData={formData}
+                listDataItem={listDataItem}
+                dpart_Options={dpart_Options}
+                fsyar_Options={fsyar_Options}
+                acprd_Options={acprd_Options}
+              />
+            </PrintPreviewModal>
           )}
 
           {/* Invoice Print (client-facing, only for invoice-type journals) */}
           {pgView === "SYS_VW_FRM_1" &&
+            printDoc === "invoice" &&
             (formData?.jrnlm_trtyp || "").includes("Invoice") && (
-              <InvoicePrint
-                formData={formData}
-                listDataItem={listDataItem}
-                dpart_Options={dpart_Options}
-              />
+              <PrintPreviewModal
+                open={!!printDoc}
+                onClose={() => setPrintDoc(null)}
+                title={`${
+                  formData.jrnlm_trtyp || "Invoice"
+                } - ${formData.jrnlm_trnno || formData.jrnlm_refno || ""}`}
+                printTarget="invoice"
+              >
+                <InvoicePrint
+                  formData={formData}
+                  listDataItem={listDataItem}
+                  dpart_Options={dpart_Options}
+                />
+              </PrintPreviewModal>
             )}
 
           {/* Single Modal for Journal Line forms */}

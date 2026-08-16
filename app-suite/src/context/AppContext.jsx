@@ -15,7 +15,7 @@ import {
   setStorageLoginData,
 } from "@/utils/storage";
 import { DEFAULT_THEME, isValidTheme, THEME_COLORS } from "@/utils/theme";
-import { resolveMenuIcon } from "@/utils/menuIcons";
+import { resolveMenuIcon } from "@/icons";
 import { toast } from "@/components/ToastBox";
 
 const AppContext = createContext(null);
@@ -329,13 +329,18 @@ const categoryOptions = [
   { value: "misc", label: "Miscellaneous", type: "expense" },
 ];
 
-// Minimized (hidden) popups are persisted so they survive a page reload and
+// Minimized (hidden) windows are persisted so they survive a page reload and
 // reappear in the taskbar strip. The menu icon is a React element, so only the
 // icon name is stored and re-resolved on restore.
 const POPUPS_STORAGE_KEY = "bsuite_minimized_popups";
 
-// New popups are keyed by an incrementing sequence; start high so fresh popups
-// never collide with the small sequence numbers of restored (persisted) popups.
+// Starred favorite menus — shared between the Modules page Pinned section and
+// the taskbar quick-launch shortcuts. Kept in context so pinning/unpinning in
+// one place updates the other immediately.
+const PINNED_MENUS_STORAGE_KEY = "bsuite_pinned_menus";
+
+// New windows are keyed by an incrementing sequence; start high so fresh windows
+// never collide with the small sequence numbers of restored (persisted) windows.
 const START_POPUP_SEQ = 1_000_000_000;
 
 const serializePopup = (p) => ({
@@ -392,19 +397,52 @@ export function AppProvider({ children }) {
     const stored = getStorageLoginData()?.theme;
     return isValidTheme(stored) ? stored : DEFAULT_THEME;
   });
+  // Dark mode: "auto" follows the OS preference, "dark"/"light" force it.
+  const [darkMode, setDarkModeState] = useState(() => {
+    const stored = getStorageLoginData()?.darkMode;
+    return stored === "dark" || stored === "light" || stored === "auto"
+      ? stored
+      : "auto";
+  });
   const [users, setUsers] = useState(initialUsers);
   const [transactions, setTransactions] = useState(initialTransactions);
 
-  // Menu popups — routes rendered in modal popups at the app root (see
-  // layouts/MenuPopups). Multiple popups can be open at once. Popups are
-  // seeded from localStorage so minimized popups survive a page reload;
-  // popupSeqRef starts high to avoid key collisions with restored popups.
+  // Menu windows — routes rendered in modal windows at the app root (see
+  // layouts/Window). Multiple windows can be open at once. Windows are
+  // seeded from localStorage so minimized windows survive a page reload;
+  // popupSeqRef starts high to avoid key collisions with restored windows.
   const [popups, setPopups] = useState(restoreMinimizedPopups);
   const popupSeqRef = useRef(START_POPUP_SEQ);
 
+  // Pinned favorite menus (ids). Seeded from localStorage; persisted on change
+  // so the Modules page and the taskbar stay in sync.
+  const [pinnedMenuIds, setPinnedMenuIds] = useState(() => {
+    try {
+      const stored = localStorage.getItem(PINNED_MENUS_STORAGE_KEY);
+      const ids = stored ? JSON.parse(stored) : [];
+      return Array.isArray(ids) ? ids : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const togglePinMenu = useCallback((menuId) => {
+    setPinnedMenuIds((prev) => {
+      const next = prev.includes(menuId)
+        ? prev.filter((id) => id !== menuId)
+        : [menuId, ...prev];
+      try {
+        localStorage.setItem(PINNED_MENUS_STORAGE_KEY, JSON.stringify(next));
+      } catch (e) {
+        /* ignore */
+      }
+      return next;
+    });
+  }, []);
+
   const openPopup = useCallback((menu) => {
     setPopups((prev) => {
-      // Only one popup per menu: re-opening a menu that is already open
+      // Only one window per menu: re-opening a menu that is already open
       // restores it (un-minimizes) and brings it to the front instead of
       // stacking a duplicate.
       const existing = prev.find((p) => p.menu?.id === menu.id);
@@ -424,7 +462,7 @@ export function AppProvider({ children }) {
     setPopups((prev) => prev.filter((p) => p.key !== key));
   }, []);
 
-  // Bring a popup to the front of the stack (rendered last = on top).
+  // Bring a window to the front of the stack (rendered last = on top).
   const bringPopupToFront = useCallback((key) => {
     setPopups((prev) => {
       const idx = prev.findIndex((p) => p.key === key);
@@ -436,14 +474,14 @@ export function AppProvider({ children }) {
     });
   }, []);
 
-  // Hide (minimize) a single popup without removing it from the stack.
+  // Hide (minimize) a single window without removing it from the stack.
   const hidePopup = useCallback((key) => {
     setPopups((prev) =>
       prev.map((p) => (p.key === key ? { ...p, hidden: true } : p)),
     );
   }, []);
 
-  // Restore a minimized popup and bring it to the front.
+  // Restore a minimized window and bring it to the front.
   const restorePopup = useCallback(
     (key) => {
       setPopups((prev) =>
@@ -454,22 +492,22 @@ export function AppProvider({ children }) {
     [bringPopupToFront],
   );
 
-  // Hide every open popup at once (they stay in the stack, minimized).
+  // Hide every open window at once (they stay in the stack, minimized).
   const hideAllPopups = useCallback(() => {
     setPopups((prev) => prev.map((p) => ({ ...p, hidden: true })));
   }, []);
 
-  // Restore every minimized popup at once (all become visible again).
+  // Restore every minimized window at once (all become visible again).
   const showAllPopups = useCallback(() => {
     setPopups((prev) => prev.map((p) => ({ ...p, hidden: false })));
   }, []);
 
-  // Close every open popup at once.
+  // Close every open window at once.
   const closeAllPopups = useCallback(() => {
     setPopups([]);
   }, []);
 
-  // Persist minimized popups to localStorage whenever the popup stack changes.
+  // Persist minimized windows to localStorage whenever the window stack changes.
   useEffect(() => {
     try {
       const minimized = popups.filter((p) => p.hidden);
@@ -501,6 +539,31 @@ export function AppProvider({ children }) {
     if (!isValidTheme(color)) return;
     setThemeColorState(color);
     setStorageLoginData({ theme: color });
+  }, []);
+
+  // Apply dark mode: "dark"/"light" force it, "auto" follows the OS and
+  // reacts live to preference changes.
+  useEffect(() => {
+    const root = document.documentElement;
+    const apply = () => {
+      const isDark =
+        darkMode === "dark" ||
+        (darkMode === "auto" &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
+      root.setAttribute("data-mode", isDark ? "dark" : "light");
+    };
+    apply();
+    if (darkMode === "auto") {
+      const mq = window.matchMedia("(prefers-color-scheme: dark)");
+      mq.addEventListener("change", apply);
+      return () => mq.removeEventListener("change", apply);
+    }
+  }, [darkMode]);
+
+  const setDarkMode = useCallback((mode) => {
+    if (!["light", "dark", "auto"].includes(mode)) return;
+    setDarkModeState(mode);
+    setStorageLoginData({ darkMode: mode });
   }, []);
 
   const toggleSidebar = useCallback(() => {
@@ -625,6 +688,8 @@ export function AppProvider({ children }) {
         setTheme,
         themeColor,
         setThemeColor,
+        darkMode,
+        setDarkMode,
         popups,
         openPopup,
         closePopup,
@@ -634,6 +699,8 @@ export function AppProvider({ children }) {
         showAllPopups,
         closeAllPopups,
         bringPopupToFront,
+        pinnedMenuIds,
+        togglePinMenu,
         users,
         addUser,
         updateUser,

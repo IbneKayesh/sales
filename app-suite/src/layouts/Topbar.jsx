@@ -157,7 +157,7 @@ export default function Topbar({ className = "", ...rest }) {
   const headerContent = (
     <>
       {/* App launcher — opens the module page (all modules & menus) as a
-          popup; clicking a menu in it navigates to that menu's URL. Hidden
+          window; clicking a menu in it navigates to that menu's URL. Hidden
           while the module page itself is open as the main page. */}
       {location.pathname !== "/bsuite/modules" && (
         <button
@@ -369,19 +369,19 @@ export default function Topbar({ className = "", ...rest }) {
         className={`topbar${className ? " " + className : ""}`}
         // Sticky smart bar: boxed to the app container width (matching
         // layout__main); slides away on scroll-down, slides back on scroll-up.
-        // Glassmorphism: frosted translucent bar in the same purple-tint
-        // family as the popup taskbar — content scrolling underneath shows
-        // through blurred.
+        // Frosted bar: near-opaque surface with a soft blur + a subtle theme
+        // tint so it stays clearly visible above scrolling content.
         style={{
           position: "sticky",
           top: 0,
           transform: hidden ? "translateY(-100%)" : "translateY(0)",
           transition: "transform var(--transition-normal)",
           background:
-            "linear-gradient(to bottom, var(--primary-bg, rgba(124, 58, 237, 0.10)) 0%, var(--primary-bg, rgba(124, 58, 237, 0.10)) 40%, color-mix(in srgb, var(--surface-alt, #f1f3f5) 60%, transparent) 100%)",
-          WebkitBackdropFilter: "blur(14px) saturate(150%)",
-          backdropFilter: "blur(14px) saturate(150%)",
-          boxShadow: "0 1px 10px rgba(0,0,0,0.08)",
+            "linear-gradient(to bottom, color-mix(in srgb, var(--surface, #ffffff) 92%, var(--primary, #7c3aed)) 0%, color-mix(in srgb, var(--surface, #ffffff) 97%, var(--primary, #7c3aed)) 100%)",
+          WebkitBackdropFilter: "blur(10px) saturate(140%)",
+          backdropFilter: "blur(10px) saturate(140%)",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.10)",
+          borderBottom: "1px solid var(--border)",
         }}
         {...rest}
       >
@@ -389,7 +389,7 @@ export default function Topbar({ className = "", ...rest }) {
       </header>
 
       {/* Portal to body so the calculator's modal floats above the topbar
-          and other fixed overlays (menu popups). */}
+          and other fixed overlays (menu windows). */}
       {createPortal(
         <Calculator open={calcOpen} onClose={() => setCalcOpen(false)} />,
         document.body,

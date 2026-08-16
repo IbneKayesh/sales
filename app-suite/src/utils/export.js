@@ -61,48 +61,6 @@ export function exportToCSV(data, columns, filename = "export.csv") {
 }
 
 /**
- * Print the report content using window.print()
- * Hides non-report elements during print via CSS class
- * @param {string} title - Report title for print header
- * @param {string} [target] - Optional print target: "journal" | "invoice" | "" (default: generic report)
- *   When set, only the matching document (e.g. .journal-print-area / .invoice-print-area)
- *   is printed and the others are hidden via the body[data-print-target] CSS rule.
- */
-export function printReport(title = "Financial Report", target = "") {
-  // Set the print title
-  document.title = title;
-
-  // Add title to the targeted print area for CSS to use
-  const printArea = document.querySelector(
-    target ? `.${target}-print-area` : ".report-print-area",
-  );
-  if (printArea) {
-    printArea.setAttribute("data-report-title", title);
-  }
-
-  // Scope the print to a specific document when a target is provided
-  const prevTarget = document.body.getAttribute("data-print-target");
-  if (target) {
-    document.body.setAttribute("data-print-target", target);
-  }
-
-  // Trigger print
-  window.print();
-
-  // Cleanup - remove the data attributes
-  if (printArea && printArea.hasAttribute("data-report-title")) {
-    printArea.removeAttribute("data-report-title");
-  }
-  if (target) {
-    if (prevTarget) {
-      document.body.setAttribute("data-print-target", prevTarget);
-    } else {
-      document.body.removeAttribute("data-print-target");
-    }
-  }
-}
-
-/**
  * Build column definitions for exporting table-like data
  * @param {Array<string>} keys - Object keys / column accessors
  * @param {Array<string>} labels - Display labels

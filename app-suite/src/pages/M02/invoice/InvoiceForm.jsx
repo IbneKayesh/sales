@@ -4,7 +4,7 @@ import Dropdown from "@/components/Dropdown";
 import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
 import AuditData from "@/components/AuditData";
-import FormSection from "@/components/FormSection";
+import { PageSection } from "@/components/PageCard";
 import { IconPlus, IconClose, IconSave } from "@/icons";
 
 const InvoiceForm = ({
@@ -23,7 +23,7 @@ const InvoiceForm = ({
 }) => {
   return (
     <div className="form-wrap">
-      <FormSection title="General">
+      <PageSection title="General">
         <div className="grid">
           <div className="col-span-3">
             <Dropdown
@@ -76,8 +76,8 @@ const InvoiceForm = ({
             />
           </div>
         </div>
-      </FormSection>
-      <FormSection title="Remarks">
+      </PageSection>
+      <PageSection title="Remarks">
         <div className="grid">
           <div className="col-span-12">
             <InputText
@@ -90,7 +90,7 @@ const InvoiceForm = ({
             />
           </div>
         </div>
-      </FormSection>
+      </PageSection>
       {formData?.id && (
         <AuditData
           actve={formData.invcm_actve}

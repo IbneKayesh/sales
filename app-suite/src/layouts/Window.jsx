@@ -11,14 +11,14 @@ import {
 } from "@/icons";
 import getRoutes from "@/routes";
 import { useApp } from "@/context/AppContext";
-import { moduleShade } from "@/utils/moduleColors";
+import { moduleShade } from "@/utils/theme";
 
 const POPUP_MIN_WIDTH = 480;
 const POPUP_MIN_HEIGHT = 200;
 const POPUP_DEFAULT_WIDTH = 860;
 
 // Preset sizes as a percentage of the viewport width.
-// "Default" uses the popup's standard width; "100%" is fullscreen.
+// "Default" uses the window's standard width; "100%" is fullscreen.
 const POPUP_SIZES = [
   { id: "default", label: "Default" },
   { id: "20", label: "20%" },
@@ -29,19 +29,19 @@ const POPUP_SIZES = [
 ];
 
 /**
- * Renders every open menu popup as a non-blocking floating window (no dimming
- * overlay, page stays clickable and scrollable behind them). Must be placed
- * OUTSIDE the app's main <Routes> (see App.jsx) so each popup can render its
- * own <Routes location={menuLink}> without the parent-match pathname
- * restriction. Drag the header to move a popup; drag the right edge, bottom
- * edge or bottom-right corner to resize (or use the size buttons); close via
- * the X button or Escape.
+ * Renders every open menu window as a non-blocking floating window (no
+ * dimming overlay, page stays clickable and scrollable behind them). Must be
+ * placed OUTSIDE the app's main <Routes> (see App.jsx) so each window can
+ * render its own <Routes location={menuLink}> without the parent-match
+ * pathname restriction. Drag the header to move a window; drag the right
+ * edge, bottom edge or bottom-right corner to resize (or use the size
+ * buttons); close via the X button or Escape.
  */
-export default function MenuPopups() {
+export default function Windows() {
   const { popups, closePopup, bringPopupToFront, hidePopup } = useApp();
 
   return popups.map((p, i) => (
-    <MenuPopup
+    <WindowItem
       key={p.key}
       menu={p.menu}
       hidden={p.hidden}
@@ -54,7 +54,7 @@ export default function MenuPopups() {
   ));
 }
 
-function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset, active }) {
+function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active }) {
   const [pos, setPos] = useState(() => ({ x: offset, y: offset }));
   const [width, setWidth] = useState(POPUP_DEFAULT_WIDTH);
   const [height, setHeight] = useState(null);
@@ -65,7 +65,7 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset, active }
   const modalRef = useRef(null);
   const sizeRef = useRef(null);
 
-  // Ctrl+M minimizes the active (topmost) popup.
+  // Ctrl+M minimizes the active (topmost) window.
   useEffect(() => {
     if (!active) return;
     const onKey = (e) => {
@@ -115,10 +115,10 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset, active }
       if (d.mode === "move") {
         // The overlay is a flex container that centers the modal, so pos is
         // an offset relative to the centered position — not an absolute
-        // screen coordinate. Clamp in real screen space using the popup's
+        // screen coordinate. Clamp in real screen space using the window's
         // bounding rect captured at drag start, then convert back to pos.
         const r = d.rect;
-        // Keep the popup fully on screen horizontally (10px margin) so it can
+        // Keep the window fully on screen horizontally (10px margin) so it can
         // be dragged all the way to the left or right edge.
         const left = Math.min(
           Math.max(r.left + dx, 10),
@@ -126,7 +126,7 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset, active }
         );
         // Keep the header (and its close button) reachable vertically: never
         // above the top edge, and never so far down the header goes below the
-        // viewport. No bottom boundary for the popup body — tall popups may
+        // viewport. No bottom boundary for the window body — tall windows may
         // extend below the screen.
         const top = Math.min(
           Math.max(r.top + dy, 10),
@@ -158,7 +158,7 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset, active }
     document.body.style.userSelect = "none";
   };
 
-  // Drag the header to move the popup around the screen.
+  // Drag the header to move the window around the screen.
   const startMove = (e) => {
     if (fullscreen) return;
     if (e.target.closest("button")) return; // keep size/close buttons clickable
@@ -297,18 +297,17 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset, active }
       >
         <div
           style={{
-            width: 30,
-            height: 30,
-            borderRadius: "var(--radius-lg)",
+            width: 32,
+            height: 32,
+            borderRadius: "var(--radius-md)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             flexShrink: 0,
-            background: `color-mix(in srgb, ${moduleShade(
-              menu.id,
-            )} 14%, transparent)`,
-            color: moduleShade(menu.id),
+            background: moduleShade(menu.id),
+            color: "#fff",
             fontSize: 16,
+            boxShadow: "0 2px 6px rgba(0,0,0,0.18)",
           }}
         >
           {menu.menus_micon}
@@ -406,11 +405,11 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset, active }
           <BarButton
             onClick={onHide}
             title="Minimize (Ctrl+M)"
-            aria-label="Minimize popup"
+            aria-label="Minimize window"
           >
             <IconChevronDown size={16} />
           </BarButton>
-          <BarButton onClick={onClose} title="Close" aria-label="Close popup">
+          <BarButton onClick={onClose} title="Close" aria-label="Close window">
             <IconClose size={16} />
           </BarButton>
         </div>
@@ -443,7 +442,7 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset, active }
   );
 }
 
-/** Small icon button for the popup title bar — sits on the deep primary
+/** Small icon button for the window title bar — sits on the deep primary
  * gradient bar, so icons are white with a translucent white hover. */
 function BarButton({ children, style, ...rest }) {
   const [hov, setHov] = useState(false);

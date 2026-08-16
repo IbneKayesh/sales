@@ -246,29 +246,30 @@
   --secondary-bg:         rgba(139, 92, 246, 0.10);
   --secondary-on:         #ffffff;
 
-  /* ---- Semantic Colors ---- */
-  --success:              #22c55e;
-  --success-hover:        #16a34a;
-  --success-light:        #86efac;
-  --success-bg:           rgba(34, 197, 94, 0.12);
-  --success-on:           #ffffff;
+  /* ---- Semantic Colors (follow the default violet theme's accent, shade 500;
+          the html[data-theme] blocks re-map these to the selected template) ---- */
+  --success:              #a78bfa;
+  --success-hover:        color-mix(in srgb, #a78bfa 85%, #000000);
+  --success-light:        #c4b5fd;
+  --success-bg:           rgba(167, 139, 250, 0.12);
+  --success-on:           #0f1117;
 
-  --warning:              #f59e0b;
-  --warning-hover:        #d97706;
-  --warning-light:        #fcd34d;
-  --warning-bg:           rgba(245, 158, 11, 0.12);
-  --warning-on:           #ffffff;
+  --warning:              #a78bfa;
+  --warning-hover:        color-mix(in srgb, #a78bfa 85%, #000000);
+  --warning-light:        #c4b5fd;
+  --warning-bg:           rgba(167, 139, 250, 0.12);
+  --warning-on:           #0f1117;
 
-  --danger:               #ef4444;
-  --danger-hover:         #dc2626;
-  --danger-light:         #fca5a5;
-  --danger-bg:            rgba(239, 68, 68, 0.12);
-  --danger-on:            #ffffff;
+  --danger:               #a78bfa;
+  --danger-hover:         color-mix(in srgb, #a78bfa 85%, #000000);
+  --danger-light:         #c4b5fd;
+  --danger-bg:            rgba(167, 139, 250, 0.12);
+  --danger-on:            #0f1117;
 
-  --info:                 #6366f1;
-  --info-hover:           #4f46e5;
-  --info-light:           #a5b4fc;
-  --info-bg:              rgba(99, 102, 241, 0.12);
+  --info:                 #8f5ef3;
+  --info-hover:           #7a50cf;
+  --info-light:           #c4b5fd;
+  --info-bg:              rgba(143, 94, 243, 0.12);
   --info-on:              #ffffff;
 
   /* ---- Muted / Neutral ---- */
@@ -435,7 +436,7 @@
    -------------------------------------------------------------------------- */
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-mode="light"]) {
     --gray-100:             #1e2030;
     --gray-200:             #252738;
     --gray-300:             #2e3040;
@@ -460,25 +461,26 @@
     --secondary-light:      #c4b5fd;
     --secondary-bg:         rgba(139, 92, 246, 0.15);
 
-    --success:              #4ade80;
-    --success-hover:        #86efac;
-    --success-light:        #bbf7d0;
-    --success-bg:           rgba(74, 222, 128, 0.15);
+    --success:              #a78bfa;
+    --success-hover:        #c4b5fd;
+    --success-light:        #ddd6fe;
+    --success-bg:           rgba(167, 139, 250, 0.15);
 
-    --warning:              #fbbf24;
-    --warning-hover:        #fcd34d;
-    --warning-light:        #fde68a;
-    --warning-bg:           rgba(251, 191, 36, 0.15);
+    --warning:              #a78bfa;
+    --warning-hover:        #c4b5fd;
+    --warning-light:        #ddd6fe;
+    --warning-bg:           rgba(167, 139, 250, 0.15);
 
-    --danger:               #f87171;
-    --danger-hover:         #fca5a5;
-    --danger-light:         #fecaca;
-    --danger-bg:            rgba(248, 113, 113, 0.15);
+    --danger:               #a78bfa;
+    --danger-hover:         #c4b5fd;
+    --danger-light:         #ddd6fe;
+    --danger-bg:            rgba(167, 139, 250, 0.15);
 
-    --info:                 #818cf8;
-    --info-hover:           #a5b4fc;
-    --info-light:           #c7d2fe;
-    --info-bg:              rgba(129, 140, 248, 0.15);
+    --info:                 #8f5ef3;
+    --info-hover:           #7a50cf;
+    --info-light:           #ddd6fe;
+    --info-bg:              rgba(143, 94, 243, 0.15);
+    --info-on:              #ffffff;
 
     --muted:                #6b7280;
     --muted-bg:             rgba(107, 114, 128, 0.20);
@@ -553,6 +555,30 @@ html[data-theme] {
   --secondary-bg:         color-mix(in srgb, var(--theme-500) 10%, transparent);
   --secondary-on:         #ffffff;
 
+  --info:                 color-mix(in srgb, var(--theme-500) 45%, var(--theme-600));
+  --info-hover:           color-mix(in srgb, var(--info) 88%, #000000);
+  --info-light:           var(--theme-400);
+  --info-bg:              color-mix(in srgb, var(--info) 12%, transparent);
+  --info-on:              #ffffff;
+
+  --success:              var(--theme-500);
+  --success-hover:        color-mix(in srgb, var(--theme-500) 85%, #000000);
+  --success-light:        var(--theme-400);
+  --success-bg:           color-mix(in srgb, var(--theme-500) 12%, transparent);
+  --success-on:           #0f1117;
+
+  --warning:              var(--theme-500);
+  --warning-hover:        color-mix(in srgb, var(--theme-500) 85%, #000000);
+  --warning-light:        var(--theme-400);
+  --warning-bg:           color-mix(in srgb, var(--theme-500) 12%, transparent);
+  --warning-on:           #0f1117;
+
+  --danger:               var(--theme-500);
+  --danger-hover:         color-mix(in srgb, var(--theme-500) 85%, #000000);
+  --danger-light:         var(--theme-400);
+  --danger-bg:            color-mix(in srgb, var(--theme-500) 12%, transparent);
+  --danger-on:            #0f1117;
+
   /* Soft theme wash: cards stay white; background, alt surfaces, table
       headers and borders get a light blend of the theme shade so switching
       themes is clearly visible without the deep saturated look. */
@@ -593,7 +619,7 @@ html[data-theme] {
 }
 
 @media (prefers-color-scheme: dark) {
-  html[data-theme] {
+  html[data-theme]:not([data-mode="light"]) {
     --primary:              var(--theme-400);
     --primary-hover:        var(--theme-300);
     --primary-active:       var(--theme-200);
@@ -605,6 +631,30 @@ html[data-theme] {
     --secondary-hover:      var(--theme-400);
     --secondary-light:      var(--theme-300);
     --secondary-bg:         color-mix(in srgb, var(--theme-500) 15%, transparent);
+
+    --info:                 color-mix(in srgb, var(--theme-500) 45%, var(--theme-600));
+    --info-hover:           color-mix(in srgb, var(--info) 88%, #000000);
+    --info-light:           var(--theme-300);
+    --info-bg:              color-mix(in srgb, var(--info) 15%, transparent);
+    --info-on:              #ffffff;
+
+    --success:              var(--theme-500);
+    --success-hover:        var(--theme-400);
+    --success-light:        var(--theme-300);
+    --success-bg:           color-mix(in srgb, var(--theme-500) 15%, transparent);
+    --success-on:           #0f1117;
+
+    --warning:              var(--theme-500);
+    --warning-hover:        var(--theme-400);
+    --warning-light:        var(--theme-300);
+    --warning-bg:           color-mix(in srgb, var(--theme-500) 15%, transparent);
+    --warning-on:           #0f1117;
+
+    --danger:               var(--theme-500);
+    --danger-hover:         var(--theme-400);
+    --danger-light:         var(--theme-300);
+    --danger-bg:            color-mix(in srgb, var(--theme-500) 15%, transparent);
+    --danger-on:            #0f1117;
 
     --link:                 var(--theme-400);
     --link-hover:           var(--theme-300);
@@ -638,6 +688,177 @@ html[data-theme] {
     --border:               #2e3040;
     --border-light:         #252738;
   }
+}
+
+/* --------------------------------------------------------------------------
+   2c. Manual / auto dark mode
+   AppContext sets `data-mode` on <html>: "light" or "dark" (the "auto"
+   setting resolves to one of these in JS by following the OS preference).
+   These blocks mirror the OS media-query palettes above so a manual toggle
+   works regardless of the OS color scheme.
+   -------------------------------------------------------------------------- */
+
+html[data-mode="dark"] {
+  --gray-100:             #1e2030;
+  --gray-200:             #252738;
+  --gray-300:             #2e3040;
+  --gray-400:             #4b4d5c;
+  --gray-500:             #6b6d7a;
+  --gray-600:             #9ca3af;
+  --gray-700:             #c4c9d0;
+  --gray-800:             #e2e5e8;
+  --gray-900:             #f1f3f5;
+  --gray-950:             #f8fafc;
+
+  --primary:              #a78bfa;
+  --primary-hover:        #c4b5fd;
+  --primary-active:       #ddd6fe;
+  --primary-light:        #c4b5fd;
+  --primary-bg:           rgba(167, 139, 250, 0.15);
+  --primary-border:       rgba(167, 139, 250, 0.50);
+  --primary-on:           #0f1117;
+
+  --secondary:            #8b5cf6;
+  --secondary-hover:      #a78bfa;
+  --secondary-light:      #c4b5fd;
+  --secondary-bg:         rgba(139, 92, 246, 0.15);
+
+  --success:              #a78bfa;
+  --success-hover:        #c4b5fd;
+  --success-light:        #ddd6fe;
+  --success-bg:           rgba(167, 139, 250, 0.15);
+
+  --warning:              #a78bfa;
+  --warning-hover:        #c4b5fd;
+  --warning-light:        #ddd6fe;
+  --warning-bg:           rgba(167, 139, 250, 0.15);
+
+  --danger:               #a78bfa;
+  --danger-hover:         #c4b5fd;
+  --danger-light:         #ddd6fe;
+  --danger-bg:            rgba(167, 139, 250, 0.15);
+
+  --info:                 #8f5ef3;
+  --info-hover:           #7a50cf;
+  --info-light:           #ddd6fe;
+  --info-bg:              rgba(143, 94, 243, 0.15);
+  --info-on:              #ffffff;
+
+  --muted:                #6b7280;
+  --muted-bg:             rgba(107, 114, 128, 0.20);
+
+  --bg:                   #0f1117;
+  --surface:              #171923;
+  --surface-alt:          #1e2030;
+  --surface-hover:        #252738;
+
+  --sidebar-bg:           #171923;
+  --sidebar-hover:        #1e2030;
+  --sidebar-active:       rgba(167, 139, 250, 0.12);
+
+  --header-bg:            #171923;
+  --footer-bg:            #171923;
+  --card-bg:              #171923;
+  --modal-bg:             #171923;
+
+  --table-header:         #1e2030;
+  --table-hover:          rgba(167, 139, 250, 0.06);
+  --table-selected:       rgba(167, 139, 250, 0.10);
+  --table-stripe:         rgba(30, 32, 48, 0.50);
+
+  --social-bg:            rgba(30, 32, 48, 0.50);
+
+  --text-primary:         #f1f3f5;
+  --text-secondary:       #c4c9d0;
+  --text-muted:           #9ca3af;
+  --text-disabled:        #4b4d5c;
+
+  --link:                 #a78bfa;
+  --link-hover:           #c4b5fd;
+
+  --icon:                 #c4c9d0;
+  --icon-muted:           #9ca3af;
+
+  --border:               #2e3040;
+  --border-light:         #252738;
+
+  --overlay-bg:           rgba(0, 0, 0, 0.60);
+
+  --shadow-color-xs:      rgba(0, 0, 0, 0.20);
+  --shadow-color-sm:      rgba(0, 0, 0, 0.25);
+  --shadow-color-md:      rgba(0, 0, 0, 0.30);
+  --shadow-color-lg:      rgba(0, 0, 0, 0.35);
+  --shadow-color-xl:      rgba(0, 0, 0, 0.40);
+  --shadow-color:         var(--shadow-color-md);
+}
+
+html[data-mode="dark"][data-theme] {
+  /* Keep dark neutral surfaces; the theme shows via the light accent shades. */
+  --primary:              var(--theme-400);
+  --primary-hover:        var(--theme-300);
+  --primary-active:       var(--theme-200);
+  --primary-light:        var(--theme-300);
+  --primary-bg:           color-mix(in srgb, var(--theme-400) 15%, transparent);
+  --primary-border:       color-mix(in srgb, var(--theme-400) 50%, transparent);
+  --primary-on:           #0f1117;
+
+  --secondary:            var(--theme-500);
+  --secondary-hover:      var(--theme-400);
+  --secondary-light:      var(--theme-300);
+  --secondary-bg:         color-mix(in srgb, var(--theme-500) 15%, transparent);
+  --secondary-on:         #0f1117;
+
+  --info:                 color-mix(in srgb, var(--theme-500) 45%, var(--theme-600));
+  --info-hover:           color-mix(in srgb, var(--info) 88%, #000000);
+  --info-light:           var(--theme-300);
+  --info-bg:              color-mix(in srgb, var(--info) 15%, transparent);
+  --info-on:              #ffffff;
+
+  --success:              var(--theme-500);
+  --success-hover:        var(--theme-400);
+  --success-light:        var(--theme-300);
+  --success-bg:           color-mix(in srgb, var(--theme-500) 15%, transparent);
+  --success-on:           #0f1117;
+
+  --warning:              var(--theme-500);
+  --warning-hover:        var(--theme-400);
+  --warning-light:        var(--theme-300);
+  --warning-bg:           color-mix(in srgb, var(--theme-500) 15%, transparent);
+  --warning-on:           #0f1117;
+
+  --danger:               var(--theme-500);
+  --danger-hover:         var(--theme-400);
+  --danger-light:         var(--theme-300);
+  --danger-bg:            color-mix(in srgb, var(--theme-500) 15%, transparent);
+  --danger-on:            #0f1117;
+
+  --link:                 var(--theme-400);
+  --link-hover:           var(--theme-300);
+
+  --sidebar-active:       color-mix(in srgb, var(--theme-400) 12%, transparent);
+  --table-hover:          color-mix(in srgb, var(--theme-400) 6%, transparent);
+  --table-selected:       color-mix(in srgb, var(--theme-400) 10%, transparent);
+
+  --bg:                   #0f1117;
+  --surface:              #171923;
+  --surface-alt:          #1e2030;
+  --surface-hover:        #252738;
+
+  --sidebar-bg:           #171923;
+  --sidebar-hover:        #1e2030;
+
+  --header-bg:            #171923;
+  --footer-bg:            #171923;
+  --card-bg:              #171923;
+  --modal-bg:             #171923;
+
+  --table-header:         #1e2030;
+  --table-stripe:         rgba(30, 32, 48, 0.50);
+
+  --social-bg:            rgba(30, 32, 48, 0.50);
+
+  --border:               #2e3040;
+  --border-light:         #252738;
 }
 
 /* --------------------------------------------------------------------------
@@ -1414,12 +1635,12 @@ table {
     visibility: hidden;
   }
 
-  .report-print-area,
-  .report-print-area * {
+  .report-print-area--print,
+  .report-print-area--print * {
     visibility: visible;
   }
 
-  .report-print-area {
+  .report-print-area--print {
     position: absolute;
     left: 0;
     top: 0;
@@ -1431,8 +1652,40 @@ table {
     display: none !important;
   }
 
+  /* Print preview modal: hide all modal chrome (overlay, dialog, toolbar,
+     preview pane) while printing — only the .report-print-area--print
+     document inside prints (the generic visibility rules already handle
+     this, this block just neutralizes the fixed/flex layout so pagination
+     stays clean). */
+  .print-preview {
+    position: static !important;
+    inset: auto !important;
+    padding: 0 !important;
+    display: block !important;
+    align-items: initial !important;
+    justify-content: initial !important;
+    backdrop-filter: none !important;
+    background: none !important;
+  }
+
+  .print-preview .print-preview__dialog {
+    position: static !important;
+    max-height: none !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .print-preview .print-preview__header,
+  .print-preview .print-preview__toolbar,
+  .print-preview .print-preview__body {
+    display: none !important;
+  }
+
   /* Hide scrollbar containers */
-  .report-print-area [style*="overflow"] {
+  .report-print-area--print [style*="overflow"] {
     overflow: visible !important;
     max-height: none !important;
   }
@@ -1444,7 +1697,7 @@ table {
   }
 
   /* Print header */
-  .report-print-area::before {
+  .report-print-area--print::before {
     content: attr(data-report-title);
     display: block;
     font-size: 18px;
@@ -1455,32 +1708,32 @@ table {
   }
 
   /* Remove background colors for print (except headers) */
-  .report-print-area * {
+  .report-print-area--print * {
     background: transparent !important;
     box-shadow: none !important;
   }
 
   /* Table styling */
-  .report-print-area table {
+  .report-print-area--print table {
     width: 100%;
     border-collapse: collapse;
     page-break-inside: auto;
   }
 
-  .report-print-area table tr {
+  .report-print-area--print table tr {
     page-break-inside: avoid;
     page-break-after: auto;
   }
 
-  .report-print-area table th {
+  .report-print-area--print table th {
     color: #000 !important;
     font-weight: 700;
     border-bottom: 2px solid #999;
     background-color: #e5e7eb !important;
   }
 
-  .report-print-area table td,
-  .report-print-area table th {
+  .report-print-area--print table td,
+  .report-print-area--print table th {
     padding: 4px 8px;
     border: 1px solid #ccc;
     color: #000 !important;
@@ -1494,12 +1747,12 @@ table {
   }
 
   /* Ensure text is black */
-  .report-print-area {
+  .report-print-area--print {
     color: #000 !important;
   }
 
   /* Page break helpers */
-  .report-print-area .page-break {
+  .report-print-area--print .page-break {
     page-break-before: always;
   }
 
@@ -1554,16 +1807,47 @@ table {
     font-size: 9px;
   }
 
-  /* Print one document at a time: hide the other print area via body[data-print-target] */
+  /* MRR (Material Receipt Report): A4 portrait (scoped via named page) */
+  @page mrr {
+    size: A4 portrait;
+    margin: 6mm;
+  }
+
+  /* Print-only MRR (hidden on screen, shown only when printing) */
+  .mrr-print-area {
+    display: block !important;
+    page: mrr;
+  }
+
+  /* MRR has its own in-document title - suppress the ::before print header (paper saving) */
+  .mrr-print-area::before {
+    display: none;
+  }
+
+  .mrr-print-area table td,
+  .mrr-print-area table th {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+
+  /* Print one document at a time: hide the other print areas via body[data-print-target] */
   body[data-print-target="journal"] .invoice-print-area,
-  body[data-print-target="invoice"] .journal-print-area {
+  body[data-print-target="invoice"] .journal-print-area,
+  body[data-print-target="mrr"] .journal-print-area,
+  body[data-print-target="mrr"] .invoice-print-area,
+  body[data-print-target="journal"] .mrr-print-area,
+  body[data-print-target="invoice"] .mrr-print-area {
     display: none !important;
   }
 }
 
-/* Journal voucher & invoice - hidden on screen, only rendered for print */
-.journal-print-area,
-.invoice-print-area {
+/* Print source copies (inside the print preview modal portal) are hidden on
+   screen and only rendered for print. The on-screen preview copy inside the
+   modal keeps the .*-print-area class too, so it is excluded via the
+   .report-print-area--print marker (only the print source has it). */
+.report-print-area--print.journal-print-area,
+.report-print-area--print.invoice-print-area,
+.report-print-area--print.mrr-print-area {
   display: none;
 }
 
