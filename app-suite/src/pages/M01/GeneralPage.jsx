@@ -76,7 +76,7 @@ const GeneralPage = () => {
                       selected ? " general-page__swatch-btn--selected" : ""
                     }`}
                     onClick={() => handleSelect(theme)}
-                    title={`${theme.name} theme`}
+                    title={`${theme.name}${theme.desc ? ` — ${theme.desc}` : ""}`}
                   >
                     <span
                       className="general-page__swatch"

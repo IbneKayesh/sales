@@ -53,11 +53,15 @@ const variants = {
   },
 }
 
+// Desktop ERP sizing: compact text (matches 15px input scale), md aligns to
+// the 30px input height; sm is tuned to the same height as md so page-header
+// actions and form-footer buttons look like one button system. The spinner
+// (iconSize) matches the button's font size.
 const sizes = {
-  xs: { padding: '4px 8px', fontSize: '15px', gap: '4px', iconSize: 26 },
-  sm: { padding: '6px 10px', fontSize: '16px', gap: '4px', iconSize: 28 },
-  md: { padding: '7px 14px', fontSize: '18px', gap: '6px', iconSize: 30 },
-  lg: { padding: '9px 18px', fontSize: '20px', gap: '8px', iconSize: 32 },
+  xs: { padding: '3px 8px', fontSize: '12px', gap: '4px', iconSize: 12 },
+  sm: { padding: '7px 12px', fontSize: '13px', gap: '5px', iconSize: 13 },
+  md: { padding: '7px 14px', fontSize: '14px', gap: '6px', iconSize: 14 },
+  lg: { padding: '9px 18px', fontSize: '16px', gap: '8px', iconSize: 16 },
 }
 
 export default function Button({

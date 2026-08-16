@@ -140,6 +140,7 @@ const PriceList = ({
       pageSize={15}
       sortable
       searchable
+      showTotals
       striped
       hoverable
       exportable

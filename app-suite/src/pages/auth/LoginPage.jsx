@@ -51,6 +51,9 @@ export default function LoginPage() {
       <div className="login-page__bg-shape login-page__bg-shape--3" />
 
       <div className="login-page__card">
+        {/* Theme accent strip along the top edge */}
+        <div className="login-page__accent" />
+
         {/* Brand */}
         <div className="login-page__brand">
           <span className="login-page__logo">

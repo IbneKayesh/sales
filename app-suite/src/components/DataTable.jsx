@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { IconSearch, IconClose, IconSort, IconChevronLeft, IconChevronRight, IconDownload } from '../icons'
+import { IconSearch, IconClose, IconSort, IconChevronLeft, IconChevronRight, IconDownload, IconBox, IconBar } from '../icons'
+import Skeleton from './Skeleton'
 
 function exportToCsv(data, columns, filename) {
   if (!data.length) return
@@ -49,6 +50,9 @@ export default function DataTable({
   exportFilename,
   stickyFirst = true,
   cfColumns = [],
+  loading = false,
+  loadingRows = 5,
+  showTotals = false,
   ...rest
 }) {
   // Filter out columns marked as hidden; when columnsSettings is on,
@@ -67,6 +71,8 @@ export default function DataTable({
   const [sortDir, setSortDir] = useState('asc')
   const [page, setPage] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
+  // Density toggle state — starts from the `dense` prop, switchable live.
+  const [denseState, setDenseState] = useState(dense)
 
   // If no columns are visible, render nothing
   if (visibleColumns.length === 0) {
@@ -112,8 +118,21 @@ export default function DataTable({
 
   const showToolbar = searchable || exportable || toolbarActions
 
+  // Totals footer — sums every column whose values are all numeric.
+  const totalsRow = showTotals
+    ? visibleColumns.map((col) => {
+        const key = col.accessor || col.key
+        if (col.totals === false) return null
+        const nums = filtered
+          .map((row) => row[key])
+          .filter((v) => v != null && Number.isFinite(Number(v)))
+        if (nums.length === 0 || nums.length !== filtered.length) return null
+        return nums.reduce((a, b) => a + Number(b), 0)
+      })
+    : null
+
   return (
-    <div className={`data-table${dense ? ' data-table--dense' : ''}${autofit ? ' data-table--autofit' : ''}${className ? ' ' + className : ''}`} {...rest}>
+    <div className={`data-table${denseState ? ' data-table--dense' : ''}${autofit ? ' data-table--autofit' : ''}${className ? ' ' + className : ''}`} {...rest}>
       {showToolbar && (
         <div className="data-table__toolbar">
           <div className="data-table__toolbar-left">
@@ -140,6 +159,16 @@ export default function DataTable({
             )}
           </div>
           <div className="data-table__toolbar-right">
+            <button
+              type="button"
+              className="data-table__page-btn"
+              onClick={() => setDenseState((v) => !v)}
+              title={denseState ? 'Switch to comfortable rows' : 'Switch to compact rows'}
+              aria-pressed={denseState}
+            >
+              <IconBar size={14} />
+              <span>{denseState ? 'Compact' : 'Comfortable'}</span>
+            </button>
             <span className="data-table__count">{sorted.length} records</span>
             {exportable && (
               <button
@@ -180,7 +209,22 @@ export default function DataTable({
             </tr>
           </thead>
           <tbody>
-            {paged.length > 0 ? (
+            {loading ? (
+              // Skeleton loading rows — shimmer placeholders while data loads.
+              Array.from({ length: loadingRows }, (_, ri) => (
+                <tr key={`skeleton-${ri}`} className="data-table__tr">
+                  {visibleColumns.map((col, ci) => (
+                    <td
+                      key={col.key || col.accessor}
+                      className={`data-table__td${stickyFirst && ci === 0 ? ' data-table__td--sticky' : ''}`}
+                      style={col.width ? { width: col.width } : {}}
+                    >
+                      <Skeleton width={col.width ? '90%' : `${55 + ((ri * 13 + ci * 29) % 40)}%`} height={12} />
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : paged.length > 0 ? (
               paged.map((row, i) => (
                 <tr
                   key={row.id ?? i}
@@ -200,11 +244,38 @@ export default function DataTable({
             ) : (
               <tr>
                 <td colSpan={visibleColumns.length} className="data-table__empty">
-                  {emptyMessage}
+                  <span className="data-table__empty-icon">
+                    <IconBox size={28} />
+                  </span>
+                  <div>{emptyMessage}</div>
                 </td>
               </tr>
             )}
           </tbody>
+          {totalsRow && (
+            <tfoot>
+              <tr className="data-table__tfoot">
+                {visibleColumns.map((col, ci) => {
+                  const v = totalsRow[ci]
+                  return (
+                    <td
+                      key={col.key || col.accessor}
+                      className={`data-table__tfoot-cell${stickyFirst && ci === 0 ? ' data-table__td--sticky' : ''}`}
+                      style={col.align ? { textAlign: col.align } : {}}
+                    >
+                      {v == null
+                        ? ci === 0
+                          ? 'Total'
+                          : ''
+                        : v.toLocaleString(undefined, {
+                            maximumFractionDigits: 2,
+                          })}
+                    </td>
+                  )
+                })}
+              </tr>
+            </tfoot>
+          )}
         </table>
       </div>
       {totalPages > 1 && (

@@ -30,7 +30,7 @@ export const IconPlus = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     {...props}
   >
@@ -44,7 +44,7 @@ export const IconClose = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     {...props}
   >
@@ -88,7 +88,7 @@ export const IconSave = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -104,7 +104,7 @@ export const IconSearch = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     {...props}
   >
@@ -134,7 +134,7 @@ export const IconChevronDown = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     {...props}
   >
@@ -147,7 +147,7 @@ export const IconChevronLeft = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     {...props}
   >
@@ -160,7 +160,7 @@ export const IconChevronRight = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     {...props}
   >
@@ -173,7 +173,7 @@ export const IconArrowRight = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -188,7 +188,7 @@ export const IconSort = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     {...props}
   >
@@ -220,7 +220,7 @@ export const IconSuccess = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -235,7 +235,7 @@ export const IconError = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     {...props}
   >
@@ -250,7 +250,7 @@ export const IconWarning = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     {...props}
   >
@@ -265,7 +265,7 @@ export const IconSpinner = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     {...props}
   >
@@ -467,7 +467,7 @@ export const IconDownload = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -483,7 +483,7 @@ export const IconUpload = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -499,7 +499,7 @@ export const IconFilter = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -529,7 +529,7 @@ export const IconCogs = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -563,7 +563,7 @@ export const IconHome = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -579,7 +579,7 @@ export const IconDashboard = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -596,7 +596,7 @@ export const IconSales = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -611,7 +611,7 @@ export const IconInventory = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -627,7 +627,7 @@ export const IconAccounts = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -644,7 +644,7 @@ export const IconPurchase = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -660,7 +660,7 @@ export const IconHR = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -675,7 +675,7 @@ export const IconUsers2 = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -692,7 +692,7 @@ export const IconCRM = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -708,7 +708,7 @@ export const IconManufacture = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -725,7 +725,7 @@ export const IconMenu = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -795,6 +795,37 @@ export const IconExpand = withDefaults((props) => (
     <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
     <path d="M3 16v3a2 2 0 0 0 2 2h3" />
     <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+  </svg>
+));
+
+export const IconRestore = withDefaults((props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <rect x="8" y="8" width="12" height="12" rx="2" />
+    <path d="M4 16V6a2 2 0 0 1 2-2h10" />
+  </svg>
+));
+
+export const IconColumns = withDefaults((props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <rect x="3" y="4" width="5.5" height="16" rx="1.5" />
+    <rect x="9.25" y="4" width="5.5" height="16" rx="1.5" />
+    <rect x="15.5" y="4" width="5.5" height="16" rx="1.5" />
   </svg>
 ));
 
@@ -1298,7 +1329,7 @@ export const IconBar = withDefaults((props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.5"
+    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
     {...props}
@@ -1306,5 +1337,119 @@ export const IconBar = withDefaults((props) => (
     <path d="M3 6h18" />
     <path d="M3 12h18" />
     <path d="M3 18h18" />
+  </svg>
+));
+
+// ─── Weather / Time-of-day (colorful) ─────
+
+export const IconSunrise = withDefaults((props) => (
+  <svg viewBox="0 0 24 24" fill="none" {...props}>
+    {/* Horizon line */}
+    <path
+      d="M2 20h20"
+      stroke="#FB923C"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    {/* Rising sun (half circle above horizon) */}
+    <path
+      d="M7 20a5 5 0 0 1 10 0"
+      fill="#FBBF24"
+      stroke="#F59E0B"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+    {/* Rays */}
+    <g stroke="#F59E0B" strokeWidth="2" strokeLinecap="round">
+      <path d="M12 3v3" />
+      <path d="M5.5 5.5l2 2" />
+      <path d="M18.5 5.5l-2 2" />
+    </g>
+    {/* Clouds */}
+    <path
+      d="M6 16.5h2.5a1.6 1.6 0 0 1 1.6 1.6v1.9"
+      stroke="#60A5FA"
+      strokeWidth="2"
+      strokeLinecap="round"
+      fill="none"
+    />
+    <path
+      d="M14 16.5h4a1.6 1.6 0 0 1 1.6 1.6v1.9"
+      stroke="#60A5FA"
+      strokeWidth="2"
+      strokeLinecap="round"
+      fill="none"
+    />
+  </svg>
+));
+
+export const IconSun = withDefaults((props) => (
+  <svg viewBox="0 0 24 24" fill="none" {...props}>
+    <circle cx="12" cy="12" r="5" fill="#FBBF24" stroke="#F59E0B" strokeWidth="1.5" />
+    <g stroke="#F59E0B" strokeWidth="2" strokeLinecap="round">
+      <path d="M12 2v2.5" />
+      <path d="M12 19.5V22" />
+      <path d="M2 12h2.5" />
+      <path d="M19.5 12H22" />
+      <path d="M4.9 4.9l1.8 1.8" />
+      <path d="M17.3 17.3l1.8 1.8" />
+      <path d="M4.9 19.1l1.8-1.8" />
+      <path d="M17.3 6.7l1.8-1.8" />
+    </g>
+  </svg>
+));
+
+export const IconSunset = withDefaults((props) => (
+  <svg viewBox="0 0 24 24" fill="none" {...props}>
+    {/* Horizon line */}
+    <path
+      d="M2 20h20"
+      stroke="#F87171"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    {/* Setting sun (half circle, lower) */}
+    <path
+      d="M8 20a4 4 0 0 1 8 0"
+      fill="#FB923C"
+      stroke="#EA580C"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+    {/* Warm rays */}
+    <g stroke="#F97316" strokeWidth="2" strokeLinecap="round">
+      <path d="M12 5v3" />
+      <path d="M6 7l1.7 1.7" />
+      <path d="M18 7l-1.7 1.7" />
+    </g>
+    {/* Birds */}
+    <g stroke="#64748B" strokeWidth="1.6" strokeLinecap="round">
+      <path d="M4 11l1.2 1.2L6.4 11" />
+      <path d="M17.6 11l1.2 1.2L20 11" />
+    </g>
+  </svg>
+));
+
+export const IconMoon = withDefaults((props) => (
+  <svg viewBox="0 0 24 24" fill="none" {...props}>
+    {/* Full moon */}
+    <circle cx="12" cy="12" r="8" fill="#C7D2FE" />
+    {/* Craters */}
+    <circle cx="9.5" cy="9.5" r="1.6" fill="#A5B4FC" />
+    <circle cx="14.5" cy="14" r="1.2" fill="#A5B4FC" />
+    <circle cx="13" cy="9" r="0.9" fill="#A5B4FC" />
+    {/* Glow ring */}
+    <circle
+      cx="12"
+      cy="12"
+      r="8"
+      stroke="#818CF8"
+      strokeWidth="1.2"
+      opacity="0.5"
+    />
+    {/* Stars */}
+    <path d="M4 5l.9 1.8L6.7 7.7l-1.8.9L4 10.4l-.9-1.8L1.3 7.7l1.8-.9z" fill="#FBBF24" />
+    <path d="M19 3l.6 1.2 1.2.6-1.2.6L19 6.6l-.6-1.2-1.2-.6 1.2-.6z" fill="#FBBF24" />
+    <path d="M20.5 15l.5 1 1 .5-1 .5-.5 1-.5-1-1-.5 1-.5z" fill="#FDE68A" />
   </svg>
 ));

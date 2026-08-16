@@ -71,6 +71,7 @@ const InvoiceList = ({ listData, onEdit, onDelete }) => {
       pageSize={15}
       sortable
       searchable
+      showTotals
       striped
       hoverable
       exportable

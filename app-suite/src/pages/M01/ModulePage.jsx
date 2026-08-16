@@ -7,9 +7,20 @@ import PageCard, {
 } from "@/components/PageCard";
 import Button from "@/components/Button";
 import { useApp } from "@/context/AppContext";
-import { IconHome, IconClose, IconDelete, IconPopup, IconChevronDown } from "@/icons";
+import {
+  IconHome,
+  IconClose,
+  IconDelete,
+  IconPopup,
+  IconChevronDown,
+  IconSunrise,
+  IconSun,
+  IconSunset,
+  IconMoon,
+} from "@/icons";
 import { resolveMenuIcon } from "@/utils/menuIcons";
 import { appModules, menus, toMenu } from "@/utils/appModules";
+import { moduleShade } from "@/utils/moduleColors";
 
 const RECENT_STORAGE_KEY = "bsuite_recent_menus";
 const MAX_RECENT = 20;
@@ -156,6 +167,9 @@ const popupListStyles = {
 // which would reset hover state and discard DOM).
 const MenuCard = ({ menu, onClick, onOpenPopup }) => {
   const [hovered, setHovered] = useState(false);
+  // Module-tinted theme shade — each module keeps its own shade of the
+  // current template color.
+  const shade = moduleShade(menu.id);
   return (
     <div
       role="group"
@@ -168,9 +182,15 @@ const MenuCard = ({ menu, onClick, onOpenPopup }) => {
         alignItems: "center",
         gap: 2,
         padding: "4px 4px 4px 8px",
-        border: `1px solid ${hovered ? menu.menus_color + "40" : "var(--border)"}`,
+        border: `1px solid ${
+          hovered
+            ? `color-mix(in srgb, ${shade} 28%, transparent)`
+            : "var(--border)"
+        }`,
         borderRadius: "var(--radius-xl)",
-        background: hovered ? `${menu.menus_color}0d` : "var(--surface)",
+        background: hovered
+          ? `color-mix(in srgb, ${shade} 6%, transparent)`
+          : "var(--surface)",
         fontFamily: "var(--font-sans)",
         boxSizing: "border-box",
         transition: "all 0.15s ease",
@@ -209,8 +229,8 @@ const MenuCard = ({ menu, onClick, onOpenPopup }) => {
             alignItems: "center",
             justifyContent: "center",
             flexShrink: 0,
-            background: `${menu.menus_color}18`,
-            color: menu.menus_color,
+            background: `color-mix(in srgb, ${shade} 12%, transparent)`,
+            color: shade,
             fontSize: 18,
           }}
         >
@@ -267,6 +287,7 @@ const MenuCard = ({ menu, onClick, onOpenPopup }) => {
 const ModulePage = () => {
   const navigate = useNavigate();
   const {
+    user,
     openPopup,
     popups,
     restorePopup,
@@ -313,6 +334,24 @@ const ModulePage = () => {
   const recentMenus = filteredMenus.filter((m) => recentMenuIds.includes(m.id));
   const isSearching = searchQuery.trim().length > 0;
 
+  // Time-of-day greeting: pick a welcome message + colorful icon.
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      return { text: "Good Morning", icon: <IconSunrise size={34} /> };
+    }
+    if (hour >= 12 && hour < 17) {
+      return { text: "Good Afternoon", icon: <IconSun size={34} /> };
+    }
+    if (hour >= 17 && hour < 21) {
+      return { text: "Good Evening", icon: <IconSunset size={34} /> };
+    }
+    return { text: "Good Night", icon: <IconMoon size={34} /> };
+  };
+
+  const greeting = getGreeting();
+  const firstName = (user?.name || "").trim().split(/\s+/)[0];
+
   const renderGroup = (group) => (
     <div key={group.id || group.name} style={{ marginBottom: 4 }}>
       <div
@@ -350,11 +389,32 @@ const ModulePage = () => {
   return (
     <div className="page-wrap">
       <div className="module-page__header">
-        <div>
-          <h2 className="module-page__title">Applications</h2>
-          <p className="module-page__subtitle">
-            {appModules.length} applications &middot; {menus.length} features
-          </p>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+          }}
+        >
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            {greeting.icon}
+          </span>
+          <div>
+            <h2 className="module-page__title">
+              {greeting.text}
+              {firstName ? `, ${firstName}` : ""}!
+            </h2>
+            <p className="module-page__subtitle">
+              {appModules.length} applications &middot; {menus.length} features
+            </p>
+          </div>
         </div>
         <div style={popupListStyles.wrap}>
           <div style={modulePageSearchStyles.wrap}>
@@ -521,7 +581,7 @@ const ModulePage = () => {
                         style={{
                           display: "inline-flex",
                           flexShrink: 0,
-                          color: p.menu.menus_color,
+                          color: moduleShade(p.menu.id),
                         }}
                       >
                         {p.menu.menus_micon}
@@ -603,7 +663,11 @@ const ModulePage = () => {
               <div className="module-page__card-header">
                 <div
                   className="module-page__card-icon"
-                  style={{ background: "#7c3aed18" }}
+                  style={{
+                    background:
+                      "color-mix(in srgb, var(--primary) 12%, transparent)",
+                    color: "var(--primary)",
+                  }}
                 >
                   <IconHome />
                 </div>
@@ -702,7 +766,12 @@ const ModulePage = () => {
                   <div className="module-page__card-header">
                     <div
                       className="module-page__card-icon"
-                      style={{ background: `${mod.color}18` }}
+                      style={{
+                        background: `color-mix(in srgb, ${moduleShade(
+                          mod.id,
+                        )} 12%, transparent)`,
+                        color: moduleShade(mod.id),
+                      }}
                     >
                       {resolveMenuIcon(mod.icon)}
                     </div>

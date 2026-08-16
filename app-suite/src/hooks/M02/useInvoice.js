@@ -672,11 +672,11 @@ const useInvoice = () => {
       setFormDataPayment((prev) => ({
         ...prev,
         party_cname: invpy_id?.party_cname,
-        party_chtac: mrrpy_id?.party_chtac,
-        prtyn_ctype: mrrpy_id?.prtyn_ctype,
-        prtyn_chtno: mrrpy_id?.prtyn_chtno,
-        chtac_id_pay: mrrpy_id?.party_chtac,
-        party_id_pay: mrrpy_id?.id,
+        party_chtac: invpy_id?.party_chtac,
+        prtyn_ctype: invpy_id?.prtyn_ctype,
+        prtyn_chtno: invpy_id?.prtyn_chtno,
+        chtac_id_pay: invpy_id?.party_chtac,
+        party_id_pay: invpy_id?.id,
       }));
     }
   };

@@ -29,8 +29,36 @@ export default function Topbar({ className = "", ...rest }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [calcOpen, setCalcOpen] = useState(false);
+
+  // Smart topbar: sticky at the top, it auto-hides when scrolling down and
+  // slides straight back in the moment you scroll up even a little — so the
+  // topbar is always reachable from anywhere on the page without having to
+  // scroll all the way back to the top.
+  const [hidden, setHidden] = useState(false);
+  const lastYRef = useRef(0);
+
   const profileRef = useRef(null);
   const notifRef = useRef(null);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY || 0;
+      const delta = y - lastYRef.current;
+      lastYRef.current = y;
+      if (y <= 0) {
+        // At the very top — always show.
+        setHidden(false);
+      } else if (delta > 2) {
+        // Scrolling down (past a small threshold) — tuck it away.
+        if (y > 64) setHidden(true);
+      } else if (delta < -2) {
+        // Scrolling up — reveal it immediately from anywhere.
+        setHidden(false);
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const notifications = [
     {
@@ -126,8 +154,8 @@ export default function Topbar({ className = "", ...rest }) {
     (user.avatar.startsWith("http") || user.avatar.startsWith("data:"))
   );
 
-  return (
-    <header className={`topbar${className ? " " + className : ""}`} {...rest}>
+  const headerContent = (
+    <>
       {/* App launcher — opens the module page (all modules & menus) as a
           popup; clicking a menu in it navigates to that menu's URL. Hidden
           while the module page itself is open as the main page. */}
@@ -332,6 +360,33 @@ export default function Topbar({ className = "", ...rest }) {
           )}
         </div>
       </div>
+    </>
+  );
+
+  return (
+    <>
+      <header
+        className={`topbar${className ? " " + className : ""}`}
+        // Sticky smart bar: boxed to the app container width (matching
+        // layout__main); slides away on scroll-down, slides back on scroll-up.
+        // Glassmorphism: frosted translucent bar in the same purple-tint
+        // family as the popup taskbar — content scrolling underneath shows
+        // through blurred.
+        style={{
+          position: "sticky",
+          top: 0,
+          transform: hidden ? "translateY(-100%)" : "translateY(0)",
+          transition: "transform var(--transition-normal)",
+          background:
+            "linear-gradient(to bottom, var(--primary-bg, rgba(124, 58, 237, 0.10)) 0%, var(--primary-bg, rgba(124, 58, 237, 0.10)) 40%, color-mix(in srgb, var(--surface-alt, #f1f3f5) 60%, transparent) 100%)",
+          WebkitBackdropFilter: "blur(14px) saturate(150%)",
+          backdropFilter: "blur(14px) saturate(150%)",
+          boxShadow: "0 1px 10px rgba(0,0,0,0.08)",
+        }}
+        {...rest}
+      >
+        {headerContent}
+      </header>
 
       {/* Portal to body so the calculator's modal floats above the topbar
           and other fixed overlays (menu popups). */}
@@ -339,6 +394,6 @@ export default function Topbar({ className = "", ...rest }) {
         <Calculator open={calcOpen} onClose={() => setCalcOpen(false)} />,
         document.body,
       )}
-    </header>
+    </>
   );
 }

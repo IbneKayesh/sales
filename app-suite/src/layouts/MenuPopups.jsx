@@ -1,9 +1,17 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Routes } from "react-router-dom";
-import Modal, { ModalBody, ModalHeader, ModalTitle } from "@/components/Modal";
-import { IconClose, IconChevronDown } from "@/icons";
+import Modal, { ModalBody, ModalHeader } from "@/components/Modal";
+import {
+  IconClose,
+  IconChevronDown,
+  IconExpand,
+  IconRestore,
+  IconColumns,
+  IconCheck,
+} from "@/icons";
 import getRoutes from "@/routes";
 import { useApp } from "@/context/AppContext";
+import { moduleShade } from "@/utils/moduleColors";
 
 const POPUP_MIN_WIDTH = 480;
 const POPUP_MIN_HEIGHT = 200;
@@ -37,6 +45,7 @@ export default function MenuPopups() {
       key={p.key}
       menu={p.menu}
       hidden={p.hidden}
+      active={i === popups.length - 1}
       onClose={() => closePopup(p.key)}
       onHide={() => hidePopup(p.key)}
       onActivate={() => bringPopupToFront(p.key)}
@@ -45,14 +54,41 @@ export default function MenuPopups() {
   ));
 }
 
-function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset }) {
+function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset, active }) {
   const [pos, setPos] = useState(() => ({ x: offset, y: offset }));
   const [width, setWidth] = useState(POPUP_DEFAULT_WIDTH);
   const [height, setHeight] = useState(null);
   const [size, setSize] = useState("default");
   const [fullscreen, setFullscreen] = useState(false);
+  const [sizeOpen, setSizeOpen] = useState(false);
   const dragRef = useRef(null);
   const modalRef = useRef(null);
+  const sizeRef = useRef(null);
+
+  // Ctrl+M minimizes the active (topmost) popup.
+  useEffect(() => {
+    if (!active) return;
+    const onKey = (e) => {
+      if (e.ctrlKey && e.key.toLowerCase() === "m") {
+        e.preventDefault();
+        onHide();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [active, onHide]);
+
+  // Close the size dropdown when clicking outside it.
+  useEffect(() => {
+    if (!sizeOpen) return;
+    const onDown = (e) => {
+      if (sizeRef.current && !sizeRef.current.contains(e.target)) {
+        setSizeOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [sizeOpen]);
 
   const clampWidth = (w) =>
     Math.min(Math.max(w, POPUP_MIN_WIDTH), window.innerWidth - 48);
@@ -241,26 +277,50 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset }) {
     >
       <ModalHeader
         onMouseDown={startMove}
-        style={{ cursor: fullscreen ? undefined : "grab" }}
+        onDoubleClick={(e) => {
+          // Double-click the title bar to toggle maximize (D12).
+          if (e.target.closest("button")) return;
+          if (fullscreen) resetSize();
+          else selectSize("100");
+        }}
+        style={{
+          cursor: fullscreen ? undefined : "grab",
+          // Compact title bar with the light accent tint (--primary-bg). The
+          // top corners follow the window frame's rounding so the tinted bar
+          // doesn't show square corners inside the rounded modal. Overrides
+          // the shared modal header padding for a slimmer window chrome.
+          padding: "6px 12px",
+          background: "var(--primary-bg)",
+          borderTopLeftRadius: fullscreen ? 0 : "var(--radius-lg)",
+          borderTopRightRadius: fullscreen ? 0 : "var(--radius-lg)",
+        }}
       >
         <div
           style={{
-            width: 34,
-            height: 34,
+            width: 30,
+            height: 30,
             borderRadius: "var(--radius-lg)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             flexShrink: 0,
-            background: `${menu.menus_color}18`,
-            color: menu.menus_color,
-            fontSize: 17,
+            background: `color-mix(in srgb, ${moduleShade(
+              menu.id,
+            )} 14%, transparent)`,
+            color: moduleShade(menu.id),
+            fontSize: 16,
           }}
         >
           {menu.menus_micon}
         </div>
-        <ModalTitle title={menu.menus_mname} subtitle={menu.menus_mdesc} />
+        <div className="modal__title-wrap">
+          <div className="modal__title-text">
+            <h3 className="modal__title">{menu.menus_mname}</h3>
+            <p className="modal__subtitle">{menu.menus_mdesc}</p>
+          </div>
+        </div>
         <div
+          ref={sizeRef}
           style={{
             display: "flex",
             alignItems: "center",
@@ -268,50 +328,91 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset }) {
             flexShrink: 0,
           }}
         >
-          {POPUP_SIZES.map((s) => {
-            const active = s.id === size;
-            return (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => selectSize(s.id)}
-                title={s.id === "100" ? "Fullscreen" : `${s.label} of screen width`}
-                aria-pressed={active}
+          {/* Window size dropdown */}
+          <div style={{ position: "relative" }}>
+            <BarButton
+              onClick={() => setSizeOpen((v) => !v)}
+              title="Window size"
+              aria-label="Window size"
+              aria-expanded={sizeOpen}
+            >
+              <IconColumns size={16} />
+            </BarButton>
+            {sizeOpen && (
+              <div
+                onMouseDown={(e) => e.stopPropagation()}
                 style={{
-                  minWidth: 26,
-                  padding: "3px 6px",
-                  fontSize: 10,
-                  fontWeight: 600,
-                  lineHeight: 1,
-                  borderRadius: 6,
-                  border: "1px solid var(--border-light)",
-                  background: active ? "var(--primary)" : "transparent",
-                  color: active ? "var(--primary-on)" : "var(--text-secondary)",
-                  cursor: "pointer",
+                  position: "absolute",
+                  right: 0,
+                  top: "calc(100% + 6px)",
+                  zIndex: 10,
+                  minWidth: 130,
+                  padding: 4,
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "var(--radius-lg)",
+                  boxShadow: "var(--shadow-lg)",
+                  animation: "fade-in-down var(--transition-fast)",
                 }}
               >
-                {s.label}
-              </button>
-            );
-          })}
-          <button
-            type="button"
-            className="modal__close"
+                {POPUP_SIZES.map((s) => {
+                  const activeSize = s.id === size;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => {
+                        selectSize(s.id);
+                        setSizeOpen(false);
+                      }}
+                      style={{
+                        display: "flex",
+                        width: "100%",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        gap: 8,
+                        padding: "6px 10px",
+                        fontSize: 12,
+                        borderRadius: 6,
+                        border: "none",
+                        background: activeSize ? "var(--primary)" : "transparent",
+                        color: activeSize
+                          ? "var(--primary-on)"
+                          : "var(--text-secondary)",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <span>{s.label}</span>
+                      {activeSize && <IconCheck size={12} />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+          {/* Maximize / restore toggle */}
+          <BarButton
+            onClick={() => (fullscreen ? resetSize() : selectSize("100"))}
+            title={
+              fullscreen
+                ? "Restore (or double-click title bar)"
+                : "Maximize (or double-click title bar)"
+            }
+            aria-label={fullscreen ? "Restore window" : "Maximize window"}
+            aria-pressed={fullscreen}
+          >
+            {fullscreen ? <IconRestore size={16} /> : <IconExpand size={16} />}
+          </BarButton>
+          <BarButton
             onClick={onHide}
+            title="Minimize (Ctrl+M)"
             aria-label="Minimize popup"
-            title="Minimize"
           >
             <IconChevronDown size={16} />
-          </button>
-          <button
-            type="button"
-            className="modal__close"
-            onClick={onClose}
-            aria-label="Close popup"
-            title="Close"
-          >
+          </BarButton>
+          <BarButton onClick={onClose} title="Close" aria-label="Close popup">
             <IconClose size={16} />
-          </button>
+          </BarButton>
         </div>
       </ModalHeader>
       <ModalBody>
@@ -339,5 +440,35 @@ function MenuPopup({ menu, onClose, onHide, onActivate, hidden, offset }) {
         style={{ ...handleStyle, zIndex: 2, right: -6, bottom: -6, width: 14, height: 14, cursor: "nwse-resize" }}
       />
     </Modal>
+  );
+}
+
+/** Small icon button for the popup title bar — sits on the deep primary
+ * gradient bar, so icons are white with a translucent white hover. */
+function BarButton({ children, style, ...rest }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <button
+      type="button"
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 28,
+        height: 28,
+        borderRadius: "var(--radius-md)",
+        border: "none",
+        background: hov ? "var(--surface-alt)" : "transparent",
+        color: hov ? "var(--text-primary)" : "var(--text-secondary)",
+        cursor: "pointer",
+        transition: "background var(--transition-fast)",
+        ...style,
+      }}
+      {...rest}
+    >
+      {children}
+    </button>
   );
 }

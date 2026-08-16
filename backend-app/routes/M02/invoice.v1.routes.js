@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-const { GenNewCode, GenNewTrn } = require("../../db/genHelper");
+const { GenNewCode, GenNewTrn, getCurrentPeriod } = require("../../db/genHelper");
 
 // get all
 router.post("/", async (req, res) => {
@@ -259,6 +259,7 @@ const create = async (req, res) => {
 
     //Insert Sales details, Reduce Stock Details
     let line = 1;
+    let lineAmt = 0;
     for (const det of tmob_invcc) {
       const lineId = uuidv4();
       scripts.push({
@@ -325,6 +326,7 @@ const create = async (req, res) => {
         ],
         label: `Update stock detail ${newTrnNo}`,
       });
+
       //update summary stock
       scripts.push({
         sql: `UPDATE tmib_price
@@ -345,7 +347,8 @@ const create = async (req, res) => {
         label: `Update price stock detail ${newTrnNo}`,
       });
 
-      //SYS_SALES_INVOICE.PAY_INVENTORY > Asset / Inventory Products - 10101212
+      //SYS_SALES_INVOICE.PAY_INVENTORY > Asset / Inventory Products - 10101212 >> CR (1.1)
+      let thisLineAmount = Number(det.invcc_csrat) * Number(det.invcc_itqty);
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -361,8 +364,8 @@ const create = async (req, res) => {
           newId_JV,
           det.chtac_id,
           det.party_id,
-          det.invcc_csrat,
           0,
+          thisLineAmount,
           "From Asset / Inventory / Products",
           invcm_ttype,
           lineId,
@@ -374,9 +377,40 @@ const create = async (req, res) => {
         label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
       });
       line++;
+      lineAmt += thisLineAmount;
     }
+    
+    //SYS_SALES_INVOICE.PAY_COGS > Expense / Product COGS - 50101013 >> DR (1.2)
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+      params: [
+        uuidv4(),
+        user_c,
+        user_b,
+        invcm_dpart,
+        newId_JV,
+        '8db9e8a9-9e12-4e64-a5f3-0ebb3fbd7a5b',
+        '68acd931-8073-4298-8dd8-a5d10031509d',
+        lineAmt,
+        0,
+        "To Expense / Product COGS",
+        invcm_ttype,
+        newId,
+        "MASTER",
+        line,
+        user_s,
+        user_s,
+      ],
+      label: `Create Expense / Product COGS ${newTrnNo_JV}`,
+    });
+    line++;
 
-    //SYS_SALES_INVOICE.PAY_CUSTOMER > Asset / Customer Receivable -10101110
+    //SYS_SALES_INVOICE.PAY_CUSTOMER > Asset / Customer Receivable - 10101110 >> DR (2.1)
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -392,8 +426,8 @@ const create = async (req, res) => {
         newId_JV,
         chtac_id,
         party_id,
-        0,
         invcm_pyamt || 0,
+        0,
         "To Asset / Customer / Receivable",
         invcm_ttype,
         newId,
@@ -404,9 +438,9 @@ const create = async (req, res) => {
       ],
       label: `Create Asset / Customer / Receivable ${newTrnNo_JV}`,
     });
+    line++;
 
-    
-    //SYS_SALES_INVOICE.PAY_INCOME_PRODUCT_SOLD > Income / Product Sales - 40101010
+    //SYS_SALES_INVOICE.PAY_INCOME_PRODUCT_SOLD > Income / Product Sales - 40101010 >> CR (2.2)
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -420,8 +454,8 @@ const create = async (req, res) => {
         user_b,
         invcm_dpart,
         newId_JV,
-        chtac_id,
-        party_id,
+        '13e44fc2-47b1-4d18-b61e-570778a7246b',
+        '721d916a-f76a-464a-975e-ad5c2fafb162',
         0,
         invcm_pyamt || 0,
         "To Income / Product Sales",

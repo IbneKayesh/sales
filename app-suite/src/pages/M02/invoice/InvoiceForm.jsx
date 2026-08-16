@@ -4,6 +4,7 @@ import Dropdown from "@/components/Dropdown";
 import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
 import AuditData from "@/components/AuditData";
+import FormSection from "@/components/FormSection";
 import { IconPlus, IconClose, IconSave } from "@/icons";
 
 const InvoiceForm = ({
@@ -22,68 +23,74 @@ const InvoiceForm = ({
 }) => {
   return (
     <div className="form-wrap">
-      <div className="grid">
-        <div className="col-span-3">
-          <Dropdown
-            label="Department"
-            options={dpart_Options}
-            value={formData.invcm_dpart}
-            onChange={(e) => onChange("invcm_dpart", e.target.value)}
-            error={formErrors.invcm_dpart}
-            required
-            placeholder="Select..."
-            disabled={readOnly || stopEdit}
-            optionValue="id"
-            optionLabel="dpart_cname"
-          />
+      <FormSection title="General">
+        <div className="grid">
+          <div className="col-span-3">
+            <Dropdown
+              label="Department"
+              options={dpart_Options}
+              value={formData.invcm_dpart}
+              onChange={(e) => onChange("invcm_dpart", e.target.value)}
+              error={formErrors.invcm_dpart}
+              required
+              placeholder="Select..."
+              disabled={readOnly || stopEdit}
+              optionValue="id"
+              optionLabel="dpart_cname"
+            />
+          </div>
+          <div className="col-span-4">
+            <Dropdown
+              label="Customer"
+              options={cntct_Options}
+              value={formData.invcm_cntct}
+              onChange={(e) => onChange("invcm_cntct", e.target.value)}
+              error={formErrors.invcm_cntct}
+              required
+              placeholder="Select..."
+              disabled={readOnly || stopEdit}
+              optionValue="id"
+              optionLabel="cntct_cname"
+              optionGrid = "cntct_cname:Name,cntct_cntps:Person,cntct_cntno:Contact,cntct_ofadr:Address,cntct_dspct:Discount%,cntct_crlmt:Credit,cntct_crbal:Balance"
+            />
+          </div>
+          <div className="col-span-2">
+            <InputCalendar
+              label="Date"
+              value={formData.invcm_trdat}
+              onChange={(e) => onChange("invcm_trdat", e.target.value)}
+              placeholder="Select..."
+              error={formErrors.invcm_trdat}
+              required
+              disabled={readOnly || true}
+            />
+          </div>
+          <div className="col-span-3">
+            <InputText
+              label="Ref No"
+              placeholder="Enter reference no"
+              value={formData.invcm_refno}
+              onChange={(e) => onChange("invcm_refno", e.target.value)}
+              error={formErrors.invcm_refno}
+              disabled={readOnly}
+            />
+          </div>
         </div>
-        <div className="col-span-3">
-          <Dropdown
-            label="Customer"
-            options={cntct_Options}
-            value={formData.invcm_cntct}
-            onChange={(e) => onChange("invcm_cntct", e.target.value)}
-            error={formErrors.invcm_cntct}
-            required
-            placeholder="Select..."
-            disabled={readOnly || stopEdit}
-            optionValue="id"
-            optionLabel="cntct_cname"
-            optionGrid = "cntct_cname:Name,cntct_cntps:Person,cntct_cntno:Contact,cntct_ofadr:Address,cntct_dspct:Discount%,cntct_crlmt:Credit,cntct_crbal:Balance"
-          />
+      </FormSection>
+      <FormSection title="Remarks">
+        <div className="grid">
+          <div className="col-span-12">
+            <InputText
+              label="Notes"
+              placeholder="Enter notes"
+              value={formData.invcm_notes}
+              onChange={(e) => onChange("invcm_notes", e.target.value)}
+              error={formErrors.invcm_notes}
+              disabled={readOnly}
+            />
+          </div>
         </div>
-        <div className="col-span-3">
-          <InputCalendar
-            label="Date"
-            value={formData.invcm_trdat}
-            onChange={(e) => onChange("invcm_trdat", e.target.value)}
-            placeholder="Select..."
-            error={formErrors.invcm_trdat}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputText
-            label="Ref No"
-            placeholder="Enter reference no"
-            value={formData.invcm_refno}
-            onChange={(e) => onChange("invcm_refno", e.target.value)}
-            error={formErrors.invcm_refno}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-12">
-          <InputText
-            label="Notes"
-            placeholder="Enter notes"
-            value={formData.invcm_notes}
-            onChange={(e) => onChange("invcm_notes", e.target.value)}
-            error={formErrors.invcm_notes}
-            disabled={readOnly}
-          />
-        </div>
-      </div>
+      </FormSection>
       {formData?.id && (
         <AuditData
           actve={formData.invcm_actve}

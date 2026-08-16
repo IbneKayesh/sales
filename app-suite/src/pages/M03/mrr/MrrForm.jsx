@@ -4,6 +4,7 @@ import Dropdown from "@/components/Dropdown";
 import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
 import AuditData from "@/components/AuditData";
+import FormSection from "@/components/FormSection";
 import { IconPlus, IconClose, IconSave } from "@/icons";
 
 const MrrForm = ({
@@ -22,89 +23,99 @@ const MrrForm = ({
 }) => {
   return (
     <div className="form-wrap">
-      <div className="grid">
-        <div className="col-span-3">
-          <Dropdown
-            label="Department"
-            options={dpart_Options}
-            value={formData.mrrdm_dpart}
-            onChange={(e) => onChange("mrrdm_dpart", e.target.value)}
-            error={formErrors.mrrdm_dpart}
-            required
-            placeholder="Select..."
-            disabled={readOnly || stopEdit}
-            optionValue="id"
-            optionLabel="dpart_cname"
-          />
+      <FormSection title="General">
+        <div className="grid">
+          <div className="col-span-3">
+            <Dropdown
+              label="Department"
+              options={dpart_Options}
+              value={formData.mrrdm_dpart}
+              onChange={(e) => onChange("mrrdm_dpart", e.target.value)}
+              error={formErrors.mrrdm_dpart}
+              required
+              placeholder="Select..."
+              disabled={readOnly || stopEdit}
+              optionValue="id"
+              optionLabel="dpart_cname"
+            />
+          </div>
+          <div className="col-span-4">
+            <Dropdown
+              label="Supplier"
+              options={cntct_Options}
+              value={formData.mrrdm_cntct}
+              onChange={(e) => onChange("mrrdm_cntct", e.target.value)}
+              error={formErrors.mrrdm_cntct}
+              required
+              placeholder="Select..."
+              disabled={readOnly || stopEdit}
+              optionValue="id"
+              optionLabel="cntct_cname"
+              optionGrid="cntct_cname:Name,cntct_cntps:Person,cntct_cntno:Contact,cntct_ofadr:Address,cntct_dspct:Discount%,cntct_crlmt:Credit,cntct_crbal:Balance"
+            />
+          </div>
+          <div className="col-span-2">
+            <InputCalendar
+              label="Date"
+              value={formData.mrrdm_trdat}
+              onChange={(e) => onChange("mrrdm_trdat", e.target.value)}
+              placeholder="Select..."
+              error={formErrors.mrrdm_trdat}
+              required
+              disabled={readOnly || true}
+            />
+          </div>
+          <div className="col-span-3">
+            <InputText
+              label="Ref No"
+              placeholder="Enter reference no"
+              value={formData.mrrdm_refno}
+              onChange={(e) => onChange("mrrdm_refno", e.target.value)}
+              error={formErrors.mrrdm_refno}
+              disabled={readOnly}
+            />
+          </div>
+          {/* <div className="col-span-1">
+            <InputNumber
+              label="Exchange Rate"
+              placeholder="0.00"
+              value={formData.mrrdm_exrat}
+              onChange={(e) => onChange("mrrdm_exrat", e.target.value)}
+              error={formErrors.mrrdm_exrat}
+              step="0.01"
+              disabled={readOnly || true}
+            />
+          </div> */}
         </div>
-        <div className="col-span-3">
-          <Dropdown
-            label="Supplier"
-            options={cntct_Options}
-            value={formData.mrrdm_cntct}
-            onChange={(e) => onChange("mrrdm_cntct", e.target.value)}
-            error={formErrors.mrrdm_cntct}
-            required
-            placeholder="Select..."
-            disabled={readOnly || stopEdit}
-            optionValue="id"
-            optionLabel="cntct_cname"
-            optionGrid="cntct_cname:Name,cntct_cntps:Person,cntct_cntno:Contact,cntct_ofadr:Address,cntct_dspct:Discount%,cntct_crlmt:Credit,cntct_crbal:Balance"
-          />
+      </FormSection>
+      <FormSection title="Delivery">
+        <div className="grid">
+          <div className="col-span-4">
+            <InputText
+              label="Vehicle"
+              placeholder="Enter vehicle"
+              value={formData.mrrdm_vehid}
+              onChange={(e) => onChange("mrrdm_vehid", e.target.value)}
+              error={formErrors.mrrdm_vehid}
+              disabled={readOnly}
+            />
+          </div>
         </div>
-        <div className="col-span-3">
-          <InputCalendar
-            label="Date"
-            value={formData.mrrdm_trdat}
-            onChange={(e) => onChange("mrrdm_trdat", e.target.value)}
-            placeholder="Select..."
-            error={formErrors.mrrdm_trdat}
-            required
-            disabled={readOnly || true}
-          />
+      </FormSection>
+      <FormSection title="Remarks">
+        <div className="grid">
+          <div className="col-span-8">
+            <InputText
+              label="Notes"
+              placeholder="Enter notes"
+              value={formData.mrrdm_notes}
+              onChange={(e) => onChange("mrrdm_notes", e.target.value)}
+              error={formErrors.mrrdm_notes}
+              disabled={readOnly}
+            />
+          </div>
         </div>
-        <div className="col-span-3">
-          <InputText
-            label="Ref No"
-            placeholder="Enter reference no"
-            value={formData.mrrdm_refno}
-            onChange={(e) => onChange("mrrdm_refno", e.target.value)}
-            error={formErrors.mrrdm_refno}
-            disabled={readOnly}
-          />
-        </div>
-        {/* <div className="col-span-1">
-          <InputNumber
-            label="Exchange Rate"
-            placeholder="0.00"
-            value={formData.mrrdm_exrat}
-            onChange={(e) => onChange("mrrdm_exrat", e.target.value)}
-            error={formErrors.mrrdm_exrat}
-            step="0.01"
-            disabled={readOnly || true}
-          />
-        </div> */}
-        <div className="col-span-4">
-          <InputText
-            label="Vehicle"
-            placeholder="Enter vehicle"
-            value={formData.mrrdm_vehid}
-            onChange={(e) => onChange("mrrdm_vehid", e.target.value)}
-            error={formErrors.mrrdm_vehid}
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-8">
-          <InputText
-            label="Notes"
-            placeholder="Enter notes"
-            value={formData.mrrdm_notes}
-            onChange={(e) => onChange("mrrdm_notes", e.target.value)}
-            error={formErrors.mrrdm_notes}
-            disabled={readOnly}
-          />
-        </div>
-      </div>
+      </FormSection>
       {formData?.id && (
         <AuditData
           actve={formData.mrrdm_actve}
