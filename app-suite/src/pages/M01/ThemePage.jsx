@@ -12,7 +12,7 @@ import { useApp } from "@/context/AppContext";
 import { DEFAULT_THEME, THEME_COLORS } from "@/utils/theme";
 import { toast } from "@/components/ToastBox";
 
-const GeneralPage = () => {
+const ThemePage = () => {
   const { themeColor, setThemeColor } = useApp();
 
   const activeTheme =
@@ -33,7 +33,7 @@ const GeneralPage = () => {
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
-            title="General"
+            title="Theme"
             subtitle="Application preferences — choose the theme color used across the app"
           />
           <PageCardActions>
@@ -129,4 +129,4 @@ const GeneralPage = () => {
   );
 };
 
-export default GeneralPage;
+export default ThemePage;

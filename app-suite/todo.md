@@ -29,4 +29,15 @@ E. feedback & focus
 
 done already (leave alone): soft theme wash + module shades, 30px inputs, page template, sticky table headers, skeletons, empty states, glass topbar/taskbar, popup windows
 
+phase 6:
+[] topbar glass effect or backdrop filter looks good, make same backdrop fitler effect for PopupTaskbar
+[] rename PopupTaskbar to Taskbar.jsx also update imports, also update css class names as taskbar instead of popuptaskbar
+[] rename MenuPopups to Window.jsx also update imports, also update css class names as window instead of menupopups
+[] check the utils/appModules.js > check the name with icon, if icon not matched with name, generate new icon
+[] utils/menuIcons.jsx merge into > icons/index.jsx, then remove menuIcons.jsx and fix all imports related to menuIcons.jsx
+[] utils/moduleColors.js merge into > theme.js then remove moduleColors.js and fix all imports related to moduleColors.js
+[] components/FormSection.jsx merge into > PageCard.jsx as PageSection, then remove FormSection.jsx and fix all importes related to FormSection.jsx use PageSection
+[] pages/WorkSpacePage.jsx as this is intentionally empty page, so that the text- bSuite Workspace make centered, large size, embosed text
+
+
 don't write extra css, unless required.

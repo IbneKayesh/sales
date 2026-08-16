@@ -2,11 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Routes, useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
-import {
-  IconClose,
-  IconChevronDown,
-  IconEye,
-} from "@/icons";
+import { IconClose, IconChevronDown, IconEye } from "@/icons";
 import FullscreenButton from "@/components/FullscreenButton";
 import Calendar from "@/components/Calendar";
 import getRoutes from "@/routes";
@@ -76,10 +72,15 @@ export default function PopupTaskbar() {
         gap: 6,
         // Adaptive: a touch slimmer when only the status strip is showing.
         padding: hasPopups ? "4px 10px" : "3px 10px",
+        // background:
+        //   "linear-gradient(to top, var(--primary-bg, rgba(124, 58, 237, 0.10)) 0%, var(--primary-bg, rgba(124, 58, 237, 0.10)) 45%, var(--surface-alt, #f1f3f5) 100%)",
+        // boxShadow: "0 -2px 12px rgba(0,0,0,0.12)",
         background:
-          "linear-gradient(to top, var(--primary-bg, rgba(124, 58, 237, 0.10)) 0%, var(--primary-bg, rgba(124, 58, 237, 0.10)) 45%, var(--surface-alt, #f1f3f5) 100%)",
+          "linear-gradient(to bottom, var(--primary-bg, rgba(124, 58, 237, 0.10)) 0%, var(--primary-bg, rgba(124, 58, 237, 0.10)) 40%, color-mix(in srgb, var(--surface-alt, #f1f3f5) 60%, transparent) 100%)",
+        WebkitBackdropFilter: "blur(14px) saturate(150%)",
+        backdropFilter: "blur(14px) saturate(150%)",
+        boxShadow: "0 1px 10px rgba(0,0,0,0.08)",
         borderTop: "1px solid var(--border, #e0e0e0)",
-        boxShadow: "0 -2px 12px rgba(0,0,0,0.12)",
         fontFamily: "var(--font-sans)",
         fontSize: 11,
         color: "var(--text-secondary, #4b5563)",
@@ -115,9 +116,7 @@ export default function PopupTaskbar() {
         onMouseEnter={(e) =>
           (e.currentTarget.style.background = "var(--surface-alt, #f1f3f5)")
         }
-        onMouseLeave={(e) =>
-          (e.currentTarget.style.background = "transparent")
-        }
+        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
       >
         <span
           style={{
@@ -152,7 +151,9 @@ export default function PopupTaskbar() {
             <TaskbarItem
               key={p.key}
               popup={p}
-              onToggle={() => (p.hidden ? restorePopup(p.key) : hidePopup(p.key))}
+              onToggle={() =>
+                p.hidden ? restorePopup(p.key) : hidePopup(p.key)
+              }
               onClose={() => closePopup(p.key)}
             />
           ))}
@@ -428,8 +429,22 @@ function TaskbarPreview({ popup, anchor }) {
         </span>
       </div>
       {/* Live scaled-down content — 1600x920 at scale(0.2) → 320x184 */}
-      <div style={{ width: W, height: 184, overflow: "hidden", position: "relative" }}>
-        <div style={{ width: 1600, height: 920, transform: "scale(0.2)", transformOrigin: "top left" }}>
+      <div
+        style={{
+          width: W,
+          height: 184,
+          overflow: "hidden",
+          position: "relative",
+        }}
+      >
+        <div
+          style={{
+            width: 1600,
+            height: 920,
+            transform: "scale(0.2)",
+            transformOrigin: "top left",
+          }}
+        >
           <Routes location={popup.menu.menus_mlink}>{getRoutes()}</Routes>
         </div>
       </div>
