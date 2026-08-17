@@ -76,7 +76,7 @@ const InvoiceList = ({ listData, onEdit, onDelete }) => {
       hoverable
       exportable
       exportFilename="data-export.csv"
-      columnSettingsKey="invoice-list"
+      columnSettingsKey="m02-invoice-list"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No data found"
       className="mt-2"

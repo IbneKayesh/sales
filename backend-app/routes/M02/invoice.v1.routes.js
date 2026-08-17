@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
-const { GenNewCode, GenNewTrn, getCurrentPeriod } = require("../../db/genHelper");
+const {
+  GenNewCode,
+  GenNewTrn,
+  getCurrentPeriod,
+} = require("../../db/genHelper");
 
 // get all
 router.post("/", async (req, res) => {
@@ -379,8 +383,31 @@ const create = async (req, res) => {
       line++;
       lineAmt += thisLineAmount;
     }
-    
+
+    //PAY_COGS, PAY_INCOME_PRODUCT_SOLD, PAY_VAT
+    const sql_prtyn = `SELECT ptn.prtyn_ctype, prtyn_chtac, prtyn_party
+FROM tmtb_prtyn ptn
+WHERE ptn.prtyn_cname = 'SYS_SALES_INVOICE'
+AND ptn.prtyn_ccode = 'SINGLE'
+AND ptn.prtyn_users = $1
+AND ptn.prtyn_bsins = $2
+ORDER BY prtyn_cname, prtyn_ccode`;
+    const params_prtyn = [user_c, user_b];
+    const rows_prtyn = await dbGetAll(
+      sql_prtyn,
+      params_prtyn,
+      "get party routes",
+    );
+    if (rows_prtyn.length !== 3) {
+      return res.json({
+        success: false,
+        message: `No account party setup for sales COGS, SOLD, VAT`,
+        data: {},
+      });
+    }
+
     //SYS_SALES_INVOICE.PAY_COGS > Expense / Product COGS - 50101013 >> DR (1.2)
+    const prtyn_cogs = rows_prtyn.find((row) => row.prtyn_ctype === "PAY_COGS");
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -394,8 +421,8 @@ const create = async (req, res) => {
         user_b,
         invcm_dpart,
         newId_JV,
-        '8db9e8a9-9e12-4e64-a5f3-0ebb3fbd7a5b',
-        '68acd931-8073-4298-8dd8-a5d10031509d',
+        prtyn_cogs?.prtyn_chtac || "",
+        prtyn_cogs?.prtyn_party || "",
         lineAmt,
         0,
         "To Expense / Product COGS",
@@ -454,8 +481,8 @@ const create = async (req, res) => {
         user_b,
         invcm_dpart,
         newId_JV,
-        '13e44fc2-47b1-4d18-b61e-570778a7246b',
-        '721d916a-f76a-464a-975e-ad5c2fafb162',
+        "13e44fc2-47b1-4d18-b61e-570778a7246b",
+        "721d916a-f76a-464a-975e-ad5c2fafb162",
         0,
         invcm_pyamt || 0,
         "To Income / Product Sales",
