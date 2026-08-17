@@ -1,4 +1,6 @@
 // Centralized localStorage utility for managing app data
+import defaultLogo from "@/assets/logo-bs.png";
+
 const STORAGE_KEY = "eaac02May2026user";
 const STORAGE_KEY_LOGIN = "eaac02May2026conf";
 
@@ -15,7 +17,39 @@ const defaultData = {
 const confData = {
   saved_user: null,
   is_saved: false,
-  theme: "violet",
+  theme: "emerald",
+  darkMode: "light",
+  font: "sfpro",
+  fontSize: 14,
+  density: 90,
+  compSize: 75,
+  radius: 12,
+  reduceMotion: false,
+  customColor: null,
+  // Aesthetic defaults: every background target (Workspace, Title bar, Page
+  // background, Top bar) is empty, so the theme colors / frosted surfaces
+  // show through. The bundled emerald monogram logo matches the default
+  // theme. Wallpapers are opt-in via the Theme page presets.
+  bgImage: null,
+  titlebarBgImage: null,
+  pageBgImage: null,
+  topbarBgImage: null,
+  bgColor: null,
+  pageBgColor: null,
+  titlebarBgColor: null,
+  topbarBgColor: null,
+  logoImage: defaultLogo,
+  layout: "boxed",
+  boxedGap: 30,
+  bgAnim: "rain",
+  bgAnimScope: "workspace",
+  bgAnimSettings: {
+    density: 85,
+    color: "",
+    opacity: 80,
+    size: 90,
+    speed: 90,
+  },
   sidebar: "visible",
 };
 

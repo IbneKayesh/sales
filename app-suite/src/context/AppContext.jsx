@@ -14,7 +14,19 @@ import {
   getStorageLoginData,
   setStorageLoginData,
 } from "@/utils/storage";
-import { DEFAULT_THEME, isValidTheme, THEME_COLORS } from "@/utils/theme";
+import {
+  DEFAULT_FONT,
+  DEFAULT_THEME,
+  generateThemeShades,
+  getRainColor,
+  isValidFont,
+  isValidHexColor,
+  isValidTheme,
+  THEME_COLORS,
+} from "@/utils/theme";
+// Built-in default Workspace wallpaper (bundled with the app). Used when the
+// user hasn't set a Workspace image or Page background image.
+import defaultWorkspaceBg from "@/assets/wallpaper-aurora.png";
 import { resolveMenuIcon } from "@/icons";
 import { toast } from "@/components/ToastBox";
 
@@ -395,6 +407,12 @@ export function AppProvider({ children }) {
   const [theme, setTheme] = useState("light");
   const [themeColor, setThemeColorState] = useState(() => {
     const stored = getStorageLoginData()?.theme;
+    if (
+      stored === "custom" &&
+      isValidHexColor(getStorageLoginData()?.customColor)
+    ) {
+      return "custom";
+    }
     return isValidTheme(stored) ? stored : DEFAULT_THEME;
   });
   // Dark mode: "auto" follows the OS preference, "dark"/"light" force it.
@@ -402,7 +420,158 @@ export function AppProvider({ children }) {
     const stored = getStorageLoginData()?.darkMode;
     return stored === "dark" || stored === "light" || stored === "auto"
       ? stored
-      : "auto";
+      : "light";
+  });
+  // Application-wide font: "inter" (default) or "sfpro".
+  const [font, setFontState] = useState(() => {
+    const stored = getStorageLoginData()?.font;
+    return isValidFont(stored) ? stored : DEFAULT_FONT;
+  });
+  // Base text-size scale in px (12–18, default 14). Applied as a multiplier
+  // over the whole type scale via the --fs-scale custom property.
+  const [fontSize, setFontSizeState] = useState(() => {
+    const stored = Number(getStorageLoginData()?.fontSize);
+    return Number.isFinite(stored) && stored >= 12 && stored <= 18
+      ? stored
+      : 14;
+  });
+  // Spacing density in percent (70–130, default 90 = airy). Applied as a
+  // multiplier over the --sp-* tokens via the --sp-scale custom property
+  // (lower = tighter/compact, higher = more spacious).
+  const [density, setDensityState] = useState(() => {
+    const stored = getStorageLoginData()?.density;
+    // Migrate the old preset strings: compact → 80%, comfortable → 100%.
+    if (stored === "compact") return 80;
+    if (stored === "comfortable") return 100;
+    const n = Number(stored);
+    return Number.isFinite(n) && n >= 70 && n <= 130 ? n : 90;
+  });
+  // Component size scale in percent (50–100, default 75). Multiplies the
+  // physical dimensions of controls (buttons, inputs, table rows) via the
+  // --comp-scale custom property — separate from spacing (density) and text
+  // size, so controls can be dense or large on their own.
+  const [compSize, setCompSizeState] = useState(() => {
+    const stored = Number(getStorageLoginData()?.compSize);
+    return Number.isFinite(stored) && stored >= 50 && stored <= 100
+      ? stored
+      : 75;
+  });
+  // Corner-radius base value in px (0–20, default 12). The --radius-* tokens
+  // are derived from it on <html> so the whole corner scale follows the slider.
+  const [radius, setRadiusState] = useState(() => {
+    const stored = getStorageLoginData()?.radius;
+    // Migrate the old preset strings: crisp → 4px, soft → 8px.
+    if (stored === "crisp") return 4;
+    if (stored === "soft") return 8;
+    const n = Number(stored);
+    return Number.isFinite(n) && n >= 0 && n <= 20 ? n : 12;
+  });
+  // Reduced motion: disables animations/transitions app-wide.
+  const [reduceMotion, setReduceMotionState] = useState(() => {
+    const stored = getStorageLoginData()?.reduceMotion;
+    return stored === "on";
+  });
+  // Custom accent color (hex); selecting one also switches themeColor to
+  // "custom". Null means no custom color is active.
+  const [customColor, setCustomColorState] = useState(() => {
+    const stored = getStorageLoginData()?.customColor;
+    return isValidHexColor(stored) ? stored : null;
+  });
+  // Background image (URL or data URL) shown on the Workspace page. Null = no
+  // image.
+  const [bgImage, setBgImageState] = useState(() => {
+    const stored = getStorageLoginData()?.bgImage;
+    return typeof stored === "string" && stored.trim() ? stored : null;
+  });
+  // Separate background image for the window title bars. Falls back to the
+  // Workspace image when unset, so a single image can cover both.
+  const [titlebarBgImage, setTitlebarBgImageState] = useState(() => {
+    const stored = getStorageLoginData()?.titlebarBgImage;
+    return typeof stored === "string" && stored.trim() ? stored : null;
+  });
+  // App-wide page background (wallpaper behind the content shell). When unset
+  // the layout keeps its default theme color.
+  const [pageBgImage, setPageBgImageState] = useState(() => {
+    const stored = getStorageLoginData()?.pageBgImage;
+    return typeof stored === "string" && stored.trim() ? stored : null;
+  });
+  // Background image for the top bar. When unset it keeps its default color.
+  const [topbarBgImage, setTopbarBgImageState] = useState(() => {
+    const stored = getStorageLoginData()?.topbarBgImage;
+    return typeof stored === "string" && stored.trim() ? stored : null;
+  });
+  // Custom app logo (URL or data URL) shown in the top bar instead of the
+  // default logo icon. Null = use the built-in logo.
+  const [logoImage, setLogoImageState] = useState(() => {
+    const stored = getStorageLoginData()?.logoImage;
+    return typeof stored === "string" && stored.trim() ? stored : null;
+  });
+  // Solid-color alternatives to the background images: each target can show a
+  // flat color instead of (or behind) its image. Null = no color override.
+  const [bgColor, setBgColorState] = useState(() => {
+    const stored = getStorageLoginData()?.bgColor;
+    return isValidHexColor(stored) ? stored : null;
+  });
+  const [pageBgColor, setPageBgColorState] = useState(() => {
+    const stored = getStorageLoginData()?.pageBgColor;
+    return isValidHexColor(stored) ? stored : null;
+  });
+  const [titlebarBgColor, setTitlebarBgColorState] = useState(() => {
+    const stored = getStorageLoginData()?.titlebarBgColor;
+    return isValidHexColor(stored) ? stored : null;
+  });
+  const [topbarBgColor, setTopbarBgColorState] = useState(() => {
+    const stored = getStorageLoginData()?.topbarBgColor;
+    return isValidHexColor(stored) ? stored : null;
+  });
+  // App width: "full" (edge-to-edge) or "boxed" (content constrained to a
+  // centered max-width, wallpaper stays full-bleed). Default is boxed.
+  const [layout, setLayoutState] = useState(() => {
+    const stored = getStorageLoginData()?.layout;
+    return stored === "full" ? "full" : "boxed";
+  });
+  // Boxed-layout side gap in px: the empty space left/right of the content
+  // column in boxed mode (20–400, default 30). Applied as --boxed-gap.
+  const [boxedGap, setBoxedGapState] = useState(() => {
+    const stored = Number(getStorageLoginData()?.boxedGap);
+    return Number.isFinite(stored) && stored >= 20 && stored <= 400
+      ? stored
+      : 30;
+  });
+  // Background animation for the Workspace page: "none" or "rain" (rain on
+  // glass). Decorative canvas overlay; independent of the reduceMotion toggle.
+  // Rain settings (density %, tint color, opacity %, drop size %) live in
+  // bgAnimSettings and only matter while bgAnim === "rain".
+  const [bgAnim, setBgAnimState] = useState(() => {
+    const stored = getStorageLoginData()?.bgAnim;
+    return stored === "none" ? "none" : "rain";
+  });
+  // Where the background animation applies: "workspace" (Workspace page only)
+  // or "app" (application-wide — the whole app shell including windows).
+  const [bgAnimScope, setBgAnimScopeState] = useState(() => {
+    const stored = getStorageLoginData()?.bgAnimScope;
+    return stored === "app" ? "app" : "workspace";
+  });
+  const [bgAnimSettings, setBgAnimSettingsState] = useState(() => {
+    const stored = getStorageLoginData()?.bgAnimSettings;
+    if (stored && typeof stored === "object") {
+      return {
+        density: Number(stored.density) || 85,
+        color: isValidHexColor(stored.color)
+          ? stored.color
+          : getRainColor(themeColor, customColor),
+        opacity: Number(stored.opacity) || 80,
+        size: Number(stored.size) || 90,
+        speed: Number(stored.speed) || 90,
+      };
+    }
+    return {
+      density: 85,
+      color: getRainColor(themeColor, customColor),
+      opacity: 80,
+      size: 90,
+      speed: 90,
+    };
   });
   const [users, setUsers] = useState(initialUsers);
   const [transactions, setTransactions] = useState(initialTransactions);
@@ -525,20 +694,178 @@ export function AppProvider({ children }) {
   }, [popups]);
 
   // Apply the selected theme color onto the document root and keep it in sync.
+  // A "custom" theme generates its 50–800 shades from the picked accent hex.
   useEffect(() => {
+    const root = document.documentElement;
     const themeDef =
       THEME_COLORS.find((t) => t.id === themeColor) || THEME_COLORS[0];
-    const root = document.documentElement;
+    const shades =
+      themeColor === "custom" && isValidHexColor(customColor)
+        ? generateThemeShades(customColor)
+        : themeDef.shades;
     root.setAttribute("data-theme", themeDef.id);
-    Object.entries(themeDef.shades).forEach(([shade, value]) => {
+    Object.entries(shades).forEach(([shade, value]) => {
       root.style.setProperty(`--theme-${shade}`, value);
     });
-  }, [themeColor]);
+  }, [themeColor, customColor]);
 
   const setThemeColor = useCallback((color) => {
-    if (!isValidTheme(color)) return;
+    if (!isValidTheme(color) && color !== "custom") return;
     setThemeColorState(color);
     setStorageLoginData({ theme: color });
+    // Rain follows the theme: re-tint the droplets to the new theme's light
+    // shade (or the custom-color tint when "custom" is active).
+    if (color !== "custom") {
+      setBgAnimSettingsState((prev) => ({ ...prev, color: getRainColor(color) }));
+    }
+  }, []);
+
+  // Pick a custom accent color: stores the hex and switches the theme to
+  // "custom". Passing null removes the custom color.
+  const setCustomColor = useCallback((hex) => {
+    const next = isValidHexColor(hex) ? hex : null;
+    setCustomColorState(next);
+    setStorageLoginData({ customColor: next });
+    // Rain follows the custom color too: light tint of the picked hex, or
+    // back to the theme's tint when the custom color is removed.
+    setBgAnimSettingsState((prev) => ({
+      ...prev,
+      color: next ? getRainColor("custom", next) : getRainColor(themeColor),
+    }));
+    if (next) setThemeColor("custom");
+  }, [themeColor, setThemeColor]);
+
+  const setFontSize = useCallback((size) => {
+    const n = Number(size);
+    if (!Number.isFinite(n) || n < 12 || n > 18) return;
+    setFontSizeState(n);
+    setStorageLoginData({ fontSize: n });
+  }, []);
+
+  const setDensity = useCallback((value) => {
+    const n = Number(value);
+    if (!Number.isFinite(n) || n < 70 || n > 130) return;
+    setDensityState(n);
+    setStorageLoginData({ density: n });
+  }, []);
+
+  const setCompSize = useCallback((value) => {
+    const n = Number(value);
+    if (!Number.isFinite(n) || n < 50 || n > 100) return;
+    setCompSizeState(n);
+    setStorageLoginData({ compSize: n });
+  }, []);
+
+  const setRadius = useCallback((value) => {
+    const n = Number(value);
+    if (!Number.isFinite(n) || n < 0 || n > 20) return;
+    setRadiusState(n);
+    setStorageLoginData({ radius: n });
+  }, []);
+
+  const setReduceMotion = useCallback((on) => {
+    setReduceMotionState(!!on);
+    setStorageLoginData({ reduceMotion: on ? "on" : "off" });
+  }, []);
+
+  // Set the background image (URL / data URL). Empty or non-string clears it.
+  const setBgImage = useCallback((value) => {
+    const next =
+      typeof value === "string" && value.trim() ? value.trim() : null;
+    setBgImageState(next);
+    setStorageLoginData({ bgImage: next });
+  }, []);
+
+  // Set the window title bar image. Empty or non-string clears it.
+  const setTitlebarBgImage = useCallback((value) => {
+    const next =
+      typeof value === "string" && value.trim() ? value.trim() : null;
+    setTitlebarBgImageState(next);
+    setStorageLoginData({ titlebarBgImage: next });
+  }, []);
+
+  // Set the app-wide page background image. Empty or non-string clears it.
+  const setPageBgImage = useCallback((value) => {
+    const next =
+      typeof value === "string" && value.trim() ? value.trim() : null;
+    setPageBgImageState(next);
+    setStorageLoginData({ pageBgImage: next });
+  }, []);
+
+  // Set the top bar background image. Empty or non-string clears it.
+  const setTopbarBgImage = useCallback((value) => {
+    const next =
+      typeof value === "string" && value.trim() ? value.trim() : null;
+    setTopbarBgImageState(next);
+    setStorageLoginData({ topbarBgImage: next });
+  }, []);
+
+  // Set the custom app logo. Empty or non-string clears it.
+  const setLogoImage = useCallback((value) => {
+    const next =
+      typeof value === "string" && value.trim() ? value.trim() : null;
+    setLogoImageState(next);
+    setStorageLoginData({ logoImage: next });
+  }, []);
+
+  // Solid color for a background target; invalid/empty clears it.
+  const setBgColor = useCallback((value) => {
+    const next = isValidHexColor(value) ? value.toLowerCase() : null;
+    setBgColorState(next);
+    setStorageLoginData({ bgColor: next });
+  }, []);
+  const setPageBgColor = useCallback((value) => {
+    const next = isValidHexColor(value) ? value.toLowerCase() : null;
+    setPageBgColorState(next);
+    setStorageLoginData({ pageBgColor: next });
+  }, []);
+  const setTitlebarBgColor = useCallback((value) => {
+    const next = isValidHexColor(value) ? value.toLowerCase() : null;
+    setTitlebarBgColorState(next);
+    setStorageLoginData({ titlebarBgColor: next });
+  }, []);
+  const setTopbarBgColor = useCallback((value) => {
+    const next = isValidHexColor(value) ? value.toLowerCase() : null;
+    setTopbarBgColorState(next);
+    setStorageLoginData({ topbarBgColor: next });
+  }, []);
+
+  // Set the app width: "full" or "boxed".
+  const setLayout = useCallback((value) => {
+    if (value !== "full" && value !== "boxed") return;
+    setLayoutState(value);
+    setStorageLoginData({ layout: value });
+  }, []);
+
+  // Set the boxed-layout side gap in px.
+  const setBoxedGap = useCallback((value) => {
+    const next = Math.min(Math.max(Number(value) || 80, 20), 400);
+    setBoxedGapState(next);
+    setStorageLoginData({ boxedGap: next });
+  }, []);
+
+  // Set the Workspace background animation: "none" or "rain".
+  const setBgAnim = useCallback((value) => {
+    if (value !== "none" && value !== "rain") return;
+    setBgAnimState(value);
+    setStorageLoginData({ bgAnim: value });
+  }, []);
+
+  // Set where the background animation applies: "workspace" or "app".
+  const setBgAnimScope = useCallback((value) => {
+    if (value !== "workspace" && value !== "app") return;
+    setBgAnimScopeState(value);
+    setStorageLoginData({ bgAnimScope: value });
+  }, []);
+
+  // Update one rain setting (density/color/opacity/size) and persist all of
+  // them together.
+  const setBgAnimSetting = useCallback((key, value) => {
+    setBgAnimSettingsState((prev) => {
+      const next = { ...prev, [key]: value };
+      setStorageLoginData({ bgAnimSettings: next });
+      return next;
+    });
   }, []);
 
   // Apply dark mode: "dark"/"light" force it, "auto" follows the OS and
@@ -565,6 +892,151 @@ export function AppProvider({ children }) {
     setDarkModeState(mode);
     setStorageLoginData({ darkMode: mode });
   }, []);
+
+  // Apply the selected font to the document root so the whole app re-renders
+  // with the new font family (see the html[data-font] rules in index.css).
+  useEffect(() => {
+    document.documentElement.setAttribute("data-font", font);
+  }, [font]);
+
+  const setFont = useCallback((id) => {
+    if (!isValidFont(id)) return;
+    setFontState(id);
+    setStorageLoginData({ font: id });
+  }, []);
+
+  // Scale the whole type scale relative to the 14px base.
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--fs-scale",
+      (fontSize / 14).toFixed(4),
+    );
+  }, [fontSize]);
+
+  // Spacing density: scale the --sp-* tokens (100 = default, 80 ≈ compact).
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--sp-scale",
+      (density / 100).toFixed(4),
+    );
+  }, [density]);
+
+  // Component size: scale physical control dimensions (see App.css overrides).
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--comp-scale",
+      (compSize / 100).toFixed(4),
+    );
+  }, [compSize]);
+
+  // Corner radius: derive the --radius-* token scale from the base px value so
+  // every corner style follows the slider (small surfaces stay tighter than
+  // large ones, preserving the visual hierarchy).
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty("--radius-sm", `${Math.max(0, radius - 2)}px`);
+    root.style.setProperty("--radius-md", `${radius}px`);
+    root.style.setProperty("--radius-lg", `${radius + 2}px`);
+    root.style.setProperty("--radius-xl", `${radius + 2}px`);
+    root.style.setProperty("--radius-2xl", `${radius + 4}px`);
+  }, [radius]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      "data-motion",
+      reduceMotion ? "reduced" : "normal",
+    );
+  }, [reduceMotion]);
+
+  // Backgrounds: each target can show a solid color (takes precedence over
+  // its image) or an image. Applied as CSS custom properties consumed by the
+  // Workspace page, the layout shell, window title bars and the top bar. The
+  // readability scrims are switched to transparent when a flat color is shown
+  // so the picked color isn't washed out.
+  useEffect(() => {
+    const root = document.documentElement;
+    // Workspace: own image, then the Page image; a Workspace color replaces
+    // the image entirely. Empty by default so the theme color shows through.
+    const img = bgColor ? null : bgImage || pageBgImage;
+    root.style.setProperty(
+      "--bg-image",
+      img ? `url("${img}")` : "none",
+    );
+    root.style.setProperty("--bg-color", bgColor || "");
+    if (bgColor && !bgImage) {
+      root.style.setProperty("--bg-scrim", "rgba(0,0,0,0)");
+    } else {
+      root.style.removeProperty("--bg-scrim");
+    }
+    // Vivid aurora chrome: while the top/title bars use the bundled aurora
+    // (and no solid color overrides it), flip them to a vibrant
+    // emerald→cyan→indigo gradient over the aurora with white content — the
+    // colorful default look. Any other image keeps the scrimmed treatment.
+    const topbarVivid = topbarBgImage === defaultWorkspaceBg && !topbarBgColor;
+    const titlebarVivid = titlebarBgImage === defaultWorkspaceBg && !titlebarBgColor;
+    root.toggleAttribute("data-topbar-vivid", topbarVivid);
+    root.toggleAttribute("data-titlebar-vivid", titlebarVivid);
+    // Window title bars: color takes precedence; otherwise the scrimmed image
+    // over the default primary tint.
+    const titleImg = titlebarBgColor ? null : titlebarBgImage;
+    root.style.setProperty(
+      "--titlebar-bg",
+      titlebarBgColor
+        ? titlebarBgColor
+        : titleImg
+          ? titlebarVivid
+            ? `linear-gradient(120deg, rgba(5,150,105,0.78), rgba(6,182,212,0.78), rgba(79,70,229,0.78)), url("${titleImg}") center / cover no-repeat`
+            : `linear-gradient(var(--titlebar-scrim, rgba(255,255,255,0.72)), var(--titlebar-scrim, rgba(255,255,255,0.72))), url("${titleImg}") center / cover no-repeat var(--primary-bg)`
+          : "var(--primary-bg)",
+    );
+    // App-wide page background (wallpaper) on the layout shell.
+    root.style.setProperty(
+      "--page-bg-image",
+      pageBgColor ? "none" : pageBgImage ? `url("${pageBgImage}")` : "none",
+    );
+    root.style.setProperty("--page-bg-color", pageBgColor || "");
+    if (pageBgColor) {
+      root.style.setProperty("--page-scrim", "rgba(0,0,0,0)");
+    } else {
+      root.style.removeProperty("--page-scrim");
+    }
+    // Top bar: color takes precedence; otherwise the scrimmed image, the
+    // vivid gradient (aurora default), or the frosted-glass default.
+    if (topbarBgColor) {
+      root.style.setProperty("--topbar-bg", topbarBgColor);
+    } else if (topbarBgImage) {
+      root.style.setProperty(
+        "--topbar-bg",
+        topbarVivid
+          ? `linear-gradient(120deg, rgba(5,150,105,0.78), rgba(6,182,212,0.78), rgba(79,70,229,0.78)), url("${topbarBgImage}") center / cover no-repeat`
+          : `linear-gradient(var(--titlebar-scrim, rgba(255,255,255,0.72)), var(--titlebar-scrim, rgba(255,255,255,0.72))), url("${topbarBgImage}") center / cover no-repeat var(--header-bg)`,
+      );
+    } else {
+      root.style.removeProperty("--topbar-bg");
+    }
+  }, [
+    bgColor,
+    bgImage,
+    pageBgColor,
+    pageBgImage,
+    titlebarBgColor,
+    titlebarBgImage,
+    topbarBgColor,
+    topbarBgImage,
+  ]);
+
+  // App width: "full" or "boxed" (see html[data-layout] rules in App.css).
+  useEffect(() => {
+    document.documentElement.setAttribute("data-layout", layout);
+  }, [layout]);
+
+  // Boxed-layout side gap drives --boxed-gap used by the boxed CSS rules.
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--boxed-gap",
+      `${boxedGap}px`,
+    );
+  }, [boxedGap]);
 
   const toggleSidebar = useCallback(() => {
     setSidebarOpen((prev) => !prev);
@@ -690,6 +1162,48 @@ export function AppProvider({ children }) {
         setThemeColor,
         darkMode,
         setDarkMode,
+        font,
+        setFont,
+        fontSize,
+        setFontSize,
+        density,
+        setDensity,
+        compSize,
+        setCompSize,
+        radius,
+        setRadius,
+        reduceMotion,
+        setReduceMotion,
+        customColor,
+        setCustomColor,
+        bgImage,
+        setBgImage,
+        titlebarBgImage,
+        setTitlebarBgImage,
+        pageBgImage,
+        setPageBgImage,
+        topbarBgImage,
+        setTopbarBgImage,
+        bgColor,
+        setBgColor,
+        pageBgColor,
+        setPageBgColor,
+        titlebarBgColor,
+        setTitlebarBgColor,
+        topbarBgColor,
+        setTopbarBgColor,
+        logoImage,
+        setLogoImage,
+        layout,
+        setLayout,
+        boxedGap,
+        setBoxedGap,
+        bgAnim,
+        setBgAnim,
+        bgAnimScope,
+        setBgAnimScope,
+        bgAnimSettings,
+        setBgAnimSetting,
         popups,
         openPopup,
         closePopup,

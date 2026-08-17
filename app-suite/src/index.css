@@ -336,19 +336,21 @@
      TYPOGRAPHY
      ======================================================================== */
 
-  --font-sans:            system-ui, "Segoe UI", Roboto, sans-serif;
-  --font-heading:         system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-sans:            "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-heading:         "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
   --font-mono:            ui-monospace, Consolas, "SF Mono", monospace;
 
-  --fs-xs:                12px;
-  --fs-sm:                13px;
-  --fs-base:              15px;
-  --fs-md:                15px;
-  --fs-lg:                18px;
-  --fs-xl:                22px;
-  --fs-2xl:               24px;
-  --fs-3xl:               36px;
-  --fs-4xl:               56px;
+  /* --fs-scale (set on <html> by AppContext from the Text Size preference)
+     multiplies the whole scale; defaults to 1 (14px base). */
+  --fs-xs:                calc(11px * var(--fs-scale, 1));
+  --fs-sm:                calc(12px * var(--fs-scale, 1));
+  --fs-base:              calc(14px * var(--fs-scale, 1));
+  --fs-md:                calc(14px * var(--fs-scale, 1));
+  --fs-lg:                calc(16px * var(--fs-scale, 1));
+  --fs-xl:                calc(20px * var(--fs-scale, 1));
+  --fs-2xl:               calc(22px * var(--fs-scale, 1));
+  --fs-3xl:               calc(32px * var(--fs-scale, 1));
+  --fs-4xl:               calc(48px * var(--fs-scale, 1));
 
   --lh-tight:             1.15;
   --lh-normal:            1.40;
@@ -363,16 +365,18 @@
      SPACING (8px base)
      ======================================================================== */
 
-  --sp-1:                 4px;
-  --sp-2:                 8px;
-  --sp-3:                 12px;
-  --sp-4:                 16px;
-  --sp-5:                 20px;
-  --sp-6:                 24px;
-  --sp-8:                 32px;
-  --sp-10:                40px;
-  --sp-12:                48px;
-  --sp-16:                64px;
+  /* --sp-scale (set on <html> by AppContext from the Density preference)
+     multiplies the whole spacing scale; defaults to 1 (100%). */
+  --sp-1:                 calc(4px * var(--sp-scale, 1));
+  --sp-2:                 calc(8px * var(--sp-scale, 1));
+  --sp-3:                 calc(12px * var(--sp-scale, 1));
+  --sp-4:                 calc(16px * var(--sp-scale, 1));
+  --sp-5:                 calc(20px * var(--sp-scale, 1));
+  --sp-6:                 calc(24px * var(--sp-scale, 1));
+  --sp-8:                 calc(32px * var(--sp-scale, 1));
+  --sp-10:                calc(40px * var(--sp-scale, 1));
+  --sp-12:                calc(48px * var(--sp-scale, 1));
+  --sp-16:                calc(64px * var(--sp-scale, 1));
 
   /* ========================================================================
      BORDER RADIUS
@@ -414,6 +418,35 @@
   --z-toast:              2000;
 
   /* ========================================================================
+     BACKGROUND IMAGE
+     Applied by AppContext from the Theme page. --bg-image feeds the Workspace
+     page; --titlebar-bg feeds the window title bars. The --*-scrim vars keep
+     text readable over the image and flip per color mode.
+     ======================================================================== */
+
+  --bg-image:             none;
+  --titlebar-bg:          var(--primary-bg);
+  /* Colorful default: lighter scrims let the bundled aurora's rich indigo /
+     green show through instead of washing it to pale pastel. The workspace
+     keeps a higher scrim (its heading sits on the backdrop); the app-shell
+     gutters and top/title bars show more color. */
+  --bg-scrim:             rgba(255, 255, 255, 0.35);
+  --titlebar-scrim:       rgba(255, 255, 255, 0.50);
+  --page-bg-image:        none;
+  --page-scrim:           rgba(255, 255, 255, 0.15);
+  /* Frosted-glass tint used by the top bar by default; AppContext overrides
+     it with a scrimmed background image when one is set. */
+  --topbar-bg:            linear-gradient(to bottom, color-mix(in srgb, var(--surface) 92%, var(--primary)) 0%, color-mix(in srgb, var(--surface) 97%, var(--primary)) 100%);
+  /* App width: boxed layout constrains content to this centered max-width
+     (see html[data-layout="boxed"] rules in App.css), and --boxed-gap sets
+     the empty space left/right of the content column (Theme page slider). */
+  --layout-max:           1440px;
+  --boxed-gap:            80px;
+  /* Boxed content column: capped at --layout-max but leaves at least
+     --boxed-gap on each side (so the left/right gap stays honored). */
+  --boxed-width:          min(var(--layout-max), calc(100vw - 2 * var(--boxed-gap)));
+
+  /* ========================================================================
      LEGACY ALIASES (backward compat)
      ======================================================================== */
 
@@ -429,6 +462,32 @@
   --heading:              var(--font-heading);
   --mono:                 var(--font-mono);
   --shadow:               var(--shadow-md);
+}
+
+/* --------------------------------------------------------------------------
+   1a. Application Font Override
+   The selected font (Theme page) is applied via the `data-font` attribute on
+   <html>, kept in sync by AppContext. Inter is the default (see --font-sans
+   above), so only non-default fonts need an override block.
+   -------------------------------------------------------------------------- */
+
+html[data-font="sfpro"] {
+  --font-sans:    -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+   1b. Motion Preference
+   Reduced motion is set via a data attribute on <html> by AppContext (see the
+   Theme page). Density and corner radius are applied directly as --sp-scale /
+   --radius-* custom properties, so no blocks are needed here.
+   -------------------------------------------------------------------------- */
+
+html[data-motion="reduced"] *,
+html[data-motion="reduced"] *::before,
+html[data-motion="reduced"] *::after {
+  animation-duration: 0.001s !important;
+  transition-duration: 0.001s !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -772,6 +831,10 @@ html[data-mode="dark"] {
   --text-secondary:       #c4c9d0;
   --text-muted:           #9ca3af;
   --text-disabled:        #4b4d5c;
+
+  --bg-scrim:             rgba(15, 17, 23, 0.70);
+  --titlebar-scrim:       rgba(15, 17, 23, 0.72);
+  --page-scrim:           rgba(15, 17, 23, 0.60);
 
   --link:                 #a78bfa;
   --link-hover:           #c4b5fd;
@@ -1807,6 +1870,36 @@ table {
     font-size: 9px;
   }
 
+  /* Invoice POS receipt: 80mm thermal roll (scoped via named page) */
+  @page invoice-pos {
+    size: 80mm auto;
+    margin: 0;
+  }
+
+  /* Print-only POS receipt (hidden on screen, shown only when printing) */
+  .invoice-pos-print-area {
+    display: block !important;
+    page: invoice-pos;
+    width: 80mm;
+  }
+
+  /* Receipt has its own in-document header - suppress the ::before print header */
+  .invoice-pos-print-area::before {
+    display: none;
+  }
+
+  /* Compact receipt tables/rows: no per-cell borders, tight padding */
+  .invoice-pos-print-area table td,
+  .invoice-pos-print-area table th {
+    padding: 1px 2px;
+    border: none;
+    font-size: 9px;
+  }
+
+  .invoice-pos-print-area table th {
+    border-bottom: 1px solid #000;
+  }
+
   /* MRR (Material Receipt Report): A4 portrait (scoped via named page) */
   @page mrr {
     size: A4 portrait;
@@ -1836,7 +1929,10 @@ table {
   body[data-print-target="mrr"] .journal-print-area,
   body[data-print-target="mrr"] .invoice-print-area,
   body[data-print-target="journal"] .mrr-print-area,
-  body[data-print-target="invoice"] .mrr-print-area {
+  body[data-print-target="invoice"] .mrr-print-area,
+  body[data-print-target="invoice-pos"] .invoice-print-area,
+  body[data-print-target="invoice-pos"] .journal-print-area,
+  body[data-print-target="invoice-pos"] .mrr-print-area {
     display: none !important;
   }
 }

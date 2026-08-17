@@ -7,7 +7,9 @@
    -------------------------------------------------------------------------- */
 
 :root {
-  font: 15px/145% var(--font-sans);
+  font-family: var(--font-sans);
+  font-size: calc(14px * var(--fs-scale, 1));
+  line-height: 145%;
   letter-spacing: 0;
   color-scheme: light dark;
   color: var(--text-secondary);
@@ -16,7 +18,7 @@
 
 :root {
   @media (max-width: 1024px) {
-    font-size: 14px;
+    font-size: calc(13px * var(--fs-scale, 1));
   }
 }
 
@@ -2556,10 +2558,48 @@ code {
   align-items: center;
   gap: var(--sp-2);
   padding: 0 var(--sp-1);
-  height: 48px;
+  height: 40px;
   border-bottom: 1px solid var(--border);
-  background: var(--header-bg);
+  /* Default header color, or the scrimmed background image / vivid gradient
+     from the Theme page (--topbar-bg). */
+  background: var(--topbar-bg);
   z-index: var(--z-sticky);
+}
+
+/* Vivid aurora chrome (Theme page > Images > aurora default): the top bar
+   sits on the emerald→cyan→indigo gradient, so flip its content to white and
+   use translucent-white hover states. The var overrides cascade into every
+   topbar child (title, subtitle, links, icon buttons). */
+html[data-topbar-vivid] .topbar {
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.92);
+  --text-muted: rgba(255, 255, 255, 0.72);
+  --surface-alt: rgba(255, 255, 255, 0.16);
+  --primary-bg: rgba(255, 255, 255, 0.2);
+  border-bottom-color: rgba(255, 255, 255, 0.25);
+}
+
+html[data-topbar-vivid] .topbar__logo {
+  color: #ffffff;
+}
+
+html[data-topbar-vivid] .topbar__link--active {
+  background: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+}
+
+html[data-topbar-vivid] .topbar__icon-btn--active {
+  background: rgba(255, 255, 255, 0.24);
+  color: #ffffff;
+}
+
+/* Vivid window title bars: same treatment inside the modal header. */
+html[data-titlebar-vivid] .modal__header {
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.92);
+  --text-muted: rgba(255, 255, 255, 0.72);
+  --surface-alt: rgba(255, 255, 255, 0.16);
+  border-bottom-color: rgba(255, 255, 255, 0.25);
 }
 
 .topbar__brand {
@@ -2576,11 +2616,25 @@ code {
   color: var(--primary);
 }
 
+.topbar__brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  line-height: 1.15;
+}
+
 .topbar__title {
   font-size: var(--fs-lg);
   font-weight: var(--fw-bold);
   color: var(--text-primary);
   letter-spacing: -0.3px;
+}
+
+.topbar__subtitle {
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .topbar__nav {
@@ -3144,7 +3198,19 @@ code {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: var(--bg);
+  /* Default color (--bg) when no page background is set; a solid color
+     (--page-bg-color) or a scrimmed wallpaper (--page-bg-image) from the
+     Theme page otherwise. */
+  background-color: var(--page-bg-color, var(--bg));
+  background-image: linear-gradient(
+      var(--page-scrim, rgba(255, 255, 255, 0.55)),
+      var(--page-scrim, rgba(255, 255, 255, 0.55))
+    ),
+    var(--page-bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .layout__main {
@@ -3159,6 +3225,24 @@ code {
   .layout__main {
     padding: var(--sp-2);
   }
+}
+
+/* --------------------------------------------------------------------------
+   App width (Theme page): boxed layout — content constrained to a centered
+   max-width (--layout-max) while the topbar and page wallpaper stay
+   full-bleed. Full screen (the default) leaves everything edge-to-edge.
+   -------------------------------------------------------------------------- */html[data-layout="boxed"] .topbar {
+  /* Topbar stays full-width (edge to edge); only its content is padded to
+     align with the boxed column (including the gap setting). */
+  padding-left: max(calc((100vw - var(--boxed-width)) / 2), var(--sp-1));
+  padding-right: max(calc((100vw - var(--boxed-width)) / 2), var(--sp-1));
+}
+html[data-layout="boxed"] .layout__main {
+  max-width: var(--boxed-width);
+  width: 100%;
+  margin: 0 auto;
+  padding-left: var(--sp-4);
+  padding-right: var(--sp-4);
 }
 
 /* --------------------------------------------------------------------------
@@ -3564,6 +3648,37 @@ code {
   display: inline-flex;
   align-items: center;
   gap: var(--sp-2);
+}
+
+.print-preview__format {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.print-preview__format button {
+  padding: 4px 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.print-preview__format button:hover {
+  color: var(--primary);
+}
+
+.print-preview__format button[aria-checked="true"] {
+  background: var(--primary);
+  color: var(--primary-on);
 }
 
 .print-preview__share {
@@ -8225,6 +8340,54 @@ code {
   border-bottom: none;
 }
 
+/* Each settings group on the Theme page is its own PageCard — the card
+   provides the surface, border and shadow, so strip the old section padding
+   and give the header/body their own comfortable spacing. */
+.general-page__grid .general-page__section-card {
+  padding: 0;
+  border-bottom: none;
+}
+
+.general-page__grid .general-page__section-card--full {
+  grid-column: 1 / -1;
+}
+
+.general-page__grid .general-page__section-card .page-card__header {
+  padding: var(--sp-2) var(--sp-4);
+}
+
+.general-page__grid .general-page__section-card .general-page__section-head {
+  margin-bottom: 0;
+}
+
+.general-page__grid .general-page__section-card .page-card__body {
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+}
+
+/* Two-column settings grid — pairs the narrow sections side by side so the
+   page doesn't waste horizontal space; wide sections span both columns. */
+.general-page__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sp-4) var(--sp-5);
+  align-items: start;
+}
+
+.general-page__grid .general-page__section {
+  padding: var(--sp-4) 0;
+  border-bottom: none;
+}
+
+.general-page__grid .general-page__section--full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+  .general-page__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .general-page__section-head {
   display: flex;
   align-items: center;
@@ -8316,4 +8479,60 @@ code {
   align-items: center;
   gap: var(--sp-3);
   flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   Component Size Scale
+   Global multiplier for the physical dimensions of controls (buttons, form
+   inputs, table rows, pagination). --comp-scale is set on <html> by
+   AppContext from the Theme page (80%–130%, default 100%). It is independent
+   from the density (spacing) and text-size scales, so controls can be made
+   denser or larger on their own. These rules live at the end of the file so
+   they win the cascade over the base component styles above.
+   ========================================================================== */
+
+:root {
+  --comp-scale: 1;
+}
+
+/* Shared form inputs: 30px → scaled */
+:where(
+  .input-text__input,
+  .input-number__input,
+  .input-calendar__input,
+  .dropdown__trigger
+) {
+  height: calc(30px * var(--comp-scale, 1));
+}
+
+/* Dense form inputs: min-height 24px → scaled */
+:where(
+  .input-text--dense .input-text__input,
+  .input-number--dense .input-number__input,
+  .input-calendar--dense .input-calendar__input,
+  .dropdown--dense .dropdown__trigger
+) {
+  min-height: calc(24px * var(--comp-scale, 1));
+}
+
+/* Buttons: scale the default padding (--btn-padding overrides still win) */
+.btn {
+  padding: calc(var(--sp-3) * var(--comp-scale, 1))
+    calc(var(--sp-5) * var(--comp-scale, 1));
+}
+
+/* DataTable: search box and pagination buttons */
+.data-table__search-input {
+  height: calc(24px * var(--comp-scale, 1));
+}
+
+.data-table__page-num {
+  min-width: calc(26px * var(--comp-scale, 1));
+  height: calc(26px * var(--comp-scale, 1));
+}
+
+/* DataTable cells: scale the hardcoded 2px vertical padding */
+.data-table__td {
+  padding-top: calc(2px * var(--comp-scale, 1));
+  padding-bottom: calc(2px * var(--comp-scale, 1));
 }

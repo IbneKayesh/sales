@@ -5,11 +5,176 @@ import PrintHeader from "@/print/PrintHeader";
 import PrintFooter from "@/print/PrintFooter";
 import PrintBody, { PrintSection, PrintTable } from "@/print/PrintBody";
 
+const receiptLine = {
+  display: "flex",
+  justifyContent: "space-between",
+  gap: 8,
+  fontSize: 9,
+  lineHeight: 1.5,
+};
+
+/**
+ * POS receipt variant — compact 80mm thermal-roll layout for the invoice.
+ * Omitted vs. the A4 version: costing/payment tables, signature grid and the
+ * full-width header; kept: company block, meta, two-line item rows, totals,
+ * amount in words and a thank-you footer.
+ */
+const PosReceipt = ({ business, formData, listDataItem, customer }) => {
+  const currency = formData.invcm_crncy || business?.bsins_crncy || "BDT";
+
+  const totals = [
+    { label: "Total Amount", value: fmt(formData.invcm_tramt) },
+    { label: "Item Discount", value: fmt(formData.invcm_itmds) },
+    ...(formData.invcm_invds
+      ? [{ label: "Invoice Discount", value: fmt(formData.invcm_invds) }]
+      : []),
+    ...(Number(formData.invcm_lylds)
+      ? [{ label: "Loyalty Discount", value: fmt(formData.invcm_lylds) }]
+      : []),
+    { label: "VAT", value: fmt(formData.invcm_vtamt) },
+    { label: "Payable", value: fmt(formData.invcm_pyamt), strong: true, top: true },
+    { label: "Paid", value: fmt(formData.invcm_pdamt) },
+    { label: "Due", value: fmt(formData.invcm_duamt), strong: true },
+  ];
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        fontFamily: "var(--font-sans)",
+        color: "#000",
+        fontSize: 10,
+        padding: "2px 4px",
+      }}
+    >
+      {/* Company block */}
+      <div style={{ textAlign: "center", marginBottom: 4 }}>
+        <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: "0.02em" }}>
+          {business?.bsins_cname || "AppSuite Inc."}
+        </div>
+        {(business?.bsins_ofadr || business?.bsins_addr) && (
+          <div style={{ fontSize: 8, color: "#333" }}>
+            {business.bsins_ofadr || business.bsins_addr}
+          </div>
+        )}
+        {business?.bsins_bin && (
+          <div style={{ fontSize: 8, color: "#555" }}>{business.bsins_bin}</div>
+        )}
+        <div style={{ borderTop: "1px dashed #000", margin: "4px 0" }} />
+        <div
+          style={{
+            fontSize: 12,
+            fontWeight: 800,
+            letterSpacing: "0.1em",
+          }}
+        >
+          {formData.invcm_ttype || "INVOICE"}
+        </div>
+      </div>
+
+      {/* Meta */}
+      <div style={{ marginBottom: 4 }}>
+        <div style={receiptLine}>
+          <span>Invoice No</span>
+          <strong>{formData.invcm_trnno || formData.invcm_refno || "—"}</strong>
+        </div>
+        <div style={receiptLine}>
+          <span>Date</span>
+          <strong>{formatDate(formData.invcm_trdat)}</strong>
+        </div>
+        <div style={receiptLine}>
+          <span>Customer</span>
+          <strong>{customer?.cntct_cname || formData.invcm_cntct || "—"}</strong>
+        </div>
+        {formData.invcm_refno && (
+          <div style={receiptLine}>
+            <span>Ref</span>
+            <strong>{formData.invcm_refno}</strong>
+          </div>
+        )}
+      </div>
+      <div style={{ borderTop: "1px dashed #000", marginBottom: 4 }} />
+
+      {/* Item rows — name line + "qty × rate = amount" line */}
+      {listDataItem.map((r, idx) => (
+        <div key={r.id || idx} style={{ marginBottom: 3 }}>
+          <div style={{ fontSize: 9, fontWeight: 600 }}>
+            {r.items_iname || "—"}
+          </div>
+          <div style={receiptLine}>
+            <span>
+              {fmt(r.invcc_itqty)} x {fmt(r.invcc_itrat)}
+            </span>
+            <span>{fmt(r.invcc_itamt)}</span>
+          </div>
+        </div>
+      ))}
+      <div style={{ borderTop: "1px dashed #000", margin: "4px 0" }} />
+
+      {/* Totals */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "1px 8px", fontSize: 9 }}>
+        {totals.map((row, idx) => (
+          <div
+            key={idx}
+            style={{
+              display: "contents",
+              fontWeight: row.strong ? 700 : undefined,
+            }}
+          >
+            <span
+              style={{
+                ...(row.top
+                  ? { borderTop: "1px solid #000", paddingTop: 2, marginTop: 2 }
+                  : {}),
+              }}
+            >
+              {row.label}
+            </span>
+            <strong
+              style={{
+                textAlign: "right",
+                fontWeight: row.strong ? 700 : undefined,
+                ...(row.top
+                  ? { borderTop: "1px solid #000", paddingTop: 2, marginTop: 2 }
+                  : {}),
+              }}
+            >
+              {row.value}
+            </strong>
+          </div>
+        ))}
+      </div>
+      <div style={{ borderTop: "2px solid #000", margin: "4px 0" }} />
+
+      {/* Amount in words + footer */}
+      <div style={{ fontSize: 8, fontWeight: 600, marginBottom: 4 }}>
+        In words: {amountInWords(formData.invcm_pyamt)}
+      </div>
+      <div style={{ fontSize: 8, color: "#555", marginBottom: 6 }}>
+        Amounts are in {currency}. Computer generated invoice.
+      </div>
+      <div
+        style={{
+          textAlign: "center",
+          fontSize: 9,
+          fontWeight: 700,
+          letterSpacing: "0.1em",
+        }}
+      >
+        *** THANK YOU ***
+      </div>
+    </div>
+  );
+};
+
 /**
  * Print-only invoice document (Sales Invoice - M02).
  * Rendered with .invoice-print-area which is hidden on screen and shown only
  * while printing (A4 portrait, see index.css print section). Company header
  * comes from live business data (AppContext).
+ *
+ * With `pos` set, renders the compact 80mm thermal receipt instead (the print
+ * source wrapper carries the .invoice-pos-print-area class, see the modal).
  */
 const PrintPage = ({
   formData,
@@ -18,6 +183,7 @@ const PrintPage = ({
   listDataPayment,
   dpart_Options,
   cntct_Options,
+  pos = false,
 }) => {
   const { business } = useApp();
 
@@ -28,6 +194,19 @@ const PrintPage = ({
 
   const customer =
     cntct_Options?.find((o) => o.id === formData.invcm_cntct) || null;
+
+  if (pos) {
+    return (
+      <div className="report-print-area">
+        <PosReceipt
+          business={business}
+          formData={formData}
+          listDataItem={listDataItem}
+          customer={customer}
+        />
+      </div>
+    );
+  }
 
   const totalQty = listDataItem.reduce(
     (s, i) => s + (Number(i.invcc_itqty) || 0),

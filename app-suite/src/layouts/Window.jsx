@@ -56,7 +56,12 @@ export default function Windows() {
 
 function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active }) {
   const [pos, setPos] = useState(() => ({ x: offset, y: offset }));
-  const [width, setWidth] = useState(POPUP_DEFAULT_WIDTH);
+  const [width, setWidth] = useState(() =>
+    Math.min(
+      POPUP_DEFAULT_WIDTH,
+      Math.max(POPUP_MIN_WIDTH, window.innerWidth - 48),
+    ),
+  );
   const [height, setHeight] = useState(null);
   const [size, setSize] = useState("default");
   const [fullscreen, setFullscreen] = useState(false);
@@ -90,10 +95,26 @@ function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active 
     return () => document.removeEventListener("mousedown", onDown);
   }, [sizeOpen]);
 
-  const clampWidth = (w) =>
-    Math.min(Math.max(w, POPUP_MIN_WIDTH), window.innerWidth - 48);
-  const clampHeight = (h) =>
-    Math.min(Math.max(h, POPUP_MIN_HEIGHT), window.innerHeight - 48);
+  // Size clamps keep the window's edges on screen. The overlay is a flex
+  // container that centers the modal and translates it by pos, so the modal
+  // center sits at (innerWidth/2 + pos.x, innerHeight/2 + pos.y). A size is
+  // only allowed when both edges stay inside the viewport with a 24px margin
+  // (matching the overlay padding). The Math.max(min, …) floor guarantees the
+  // clamp never inverts when the window sits near an edge.
+  const clampWidth = (w) => {
+    const maxW = window.innerWidth - 2 * Math.abs(pos.x) - 48;
+    return Math.min(
+      Math.max(w, POPUP_MIN_WIDTH),
+      Math.max(POPUP_MIN_WIDTH, maxW),
+    );
+  };
+  const clampHeight = (h) => {
+    const maxH = window.innerHeight - 2 * Math.abs(pos.y) - 48;
+    return Math.min(
+      Math.max(h, POPUP_MIN_HEIGHT),
+      Math.max(POPUP_MIN_HEIGHT, maxH),
+    );
+  };
 
   const selectSize = (id) => {
     if (!POPUP_SIZES.some((s) => s.id === id)) return;
@@ -102,7 +123,11 @@ function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active 
     setFullscreen(isFull);
     if (!isFull) {
       const pct = id === "default" ? null : parseInt(id, 10) / 100;
-      setWidth(pct ? Math.round(window.innerWidth * pct) : POPUP_DEFAULT_WIDTH);
+      setWidth(
+        clampWidth(
+          pct ? Math.round(window.innerWidth * pct) : POPUP_DEFAULT_WIDTH,
+        ),
+      );
     }
   };
 
@@ -238,7 +263,7 @@ function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active 
   const resetSize = () => {
     setFullscreen(false);
     setSize("default");
-    setWidth(POPUP_DEFAULT_WIDTH);
+    setWidth(clampWidth(POPUP_DEFAULT_WIDTH));
     setHeight(null);
   };
 
@@ -285,12 +310,14 @@ function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active 
         }}
         style={{
           cursor: fullscreen ? undefined : "grab",
-          // Compact title bar with the light accent tint (--primary-bg). The
-          // top corners follow the window frame's rounding so the tinted bar
-          // doesn't show square corners inside the rounded modal. Overrides
-          // the shared modal header padding for a slimmer window chrome.
+          // Compact title bar — default light accent tint (--primary-bg),
+          // or the optional background image from the Theme page layered
+          // under a readability scrim (--titlebar-bg). The top corners follow
+          // the window frame's rounding so the tinted bar doesn't show square
+          // corners inside the rounded modal. Overrides the shared modal
+          // header padding for a slimmer window chrome.
           padding: "6px 12px",
-          background: "var(--primary-bg)",
+          background: "var(--titlebar-bg)",
           borderTopLeftRadius: fullscreen ? 0 : "var(--radius-lg)",
           borderTopRightRadius: fullscreen ? 0 : "var(--radius-lg)",
         }}

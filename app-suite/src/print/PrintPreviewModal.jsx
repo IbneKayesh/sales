@@ -29,6 +29,8 @@ import { downloadPrintHtml, shareViaWhatsApp, shareViaEmail } from "./printFile"
  *   title                — document title used for the print header / file name
  *   printTarget          — "mrr" | "journal" | "invoice" (matches the CSS
  *                          .*-print-area class and printReport target)
+ *   posEnabled           — show the A4 / POS 80mm paper-size toggle
+ *   posChildren          — compact receipt variant rendered when POS is selected
  *   children             — the document component (e.g. <PrintPage ... />)
  */
 export default function PrintPreviewModal({
@@ -36,15 +38,24 @@ export default function PrintPreviewModal({
   onClose,
   title = "Print",
   printTarget = "",
+  posEnabled = false,
+  posChildren = null,
   children,
 }) {
   const printSourceRef = useRef(null);
   const [shareOpen, setShareOpen] = useState(false);
+  const [format, setFormat] = useState("a4");
 
   if (!open) return null;
 
+  const isPos = format === "pos" && posEnabled;
+  const content = isPos && posChildren ? posChildren : children;
+  // POS prints under a distinct target/class (e.g. "invoice-pos" →
+  // .invoice-pos-print-area) so it gets its own @page size.
+  const target = isPos ? `${printTarget}-pos` : printTarget;
+
   const handlePrint = () => {
-    printReport(title, printTarget);
+    printReport(title, target);
     onClose?.();
   };
 
@@ -90,6 +101,32 @@ export default function PrintPreviewModal({
             <span className="print-preview__hint">
               Review the document below, then choose an action.
             </span>
+            {posEnabled && (
+              <div
+                className="print-preview__format"
+                role="radiogroup"
+                aria-label="Paper size"
+              >
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={format === "a4"}
+                  onClick={() => setFormat("a4")}
+                  title="A4 portrait"
+                >
+                  A4
+                </button>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={format === "pos"}
+                  onClick={() => setFormat("pos")}
+                  title="80mm thermal receipt"
+                >
+                  POS 80mm
+                </button>
+              </div>
+            )}
             <div className="print-preview__actions">
               <Button
                 variant="info"
@@ -150,7 +187,16 @@ export default function PrintPreviewModal({
             </div>
           </div>
           <div className="modal__body print-preview__body">
-            <div className="print-preview__page">{children}</div>
+            <div
+              className="print-preview__page"
+              style={
+                isPos
+                  ? { maxWidth: "80mm", margin: "0 auto" }
+                  : undefined
+              }
+            >
+              {content}
+            </div>
           </div>
         </div>
       </div>
@@ -162,11 +208,11 @@ export default function PrintPreviewModal({
       <div
         ref={printSourceRef}
         className={`report-print-area report-print-area--print ${
-          printTarget ? `${printTarget}-print-area` : ""
+          target ? `${target}-print-area` : ""
         }`}
         aria-hidden="true"
       >
-        {children}
+        {content}
       </div>
     </>,
     document.body,

@@ -216,6 +216,18 @@ const InvoicePage = () => {
               onClose={() => setPrintOpen(false)}
               title={`Invoice - ${formData.invcm_trnno || formData.invcm_refno || ""}`}
               printTarget="invoice"
+              posEnabled
+              posChildren={
+                <PrintPage
+                  pos
+                  formData={formData}
+                  listDataItem={listDataItem}
+                  listDataCost={listDataCost}
+                  listDataPayment={listDataPayment}
+                  dpart_Options={dpart_Options}
+                  cntct_Options={cntct_Options}
+                />
+              }
             >
               <PrintPage
                 formData={formData}

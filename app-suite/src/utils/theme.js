@@ -8,7 +8,7 @@
 // properties on <html>, and index.css maps those onto the brand tokens.
 // All Primary / Accent / Light Surface values are unique across themes.
 
-export const DEFAULT_THEME = "violet";
+export const DEFAULT_THEME = "emerald";
 
 export const THEME_COLORS = [
   {
@@ -288,29 +288,96 @@ export const THEME_COLORS = [
 export const isValidTheme = (id) =>
   typeof id === "string" && THEME_COLORS.some((t) => t.id === id);
 
-// Module icon colors — each module gets its own shade of the current theme
-// primary, so modules stay visually distinct while the whole app follows the
-// active template/theme color.
-//
-// `moduleShade(id)` takes a menu or module id like "M01-G01-M001" (or "M01")
-// and returns a CSS color expression: the theme primary mixed with white at
-// that module's percentage (M01 = 100% → full primary, down to 50% for the
-// lightest module). Unmatched ids fall back to the plain theme primary.
-const MODULE_SHADE_PCT = {
-  M01: 100,
-  M02: 88,
-  M03: 76,
-  M04: 66,
-  M05: 58,
-  M06: 50,
-  M07: 62,
-  M08: 74,
-  M09: 84,
+// Default raindrop tint for a theme: the theme's light 200 shade (a pastel
+// that reads as water on any background). For the custom color, a white-mixed
+// light version of the picked hex. Falls back to a neutral light blue.
+export const getRainColor = (themeId, customColor) => {
+  const theme = THEME_COLORS.find((t) => t.id === themeId);
+  if (theme?.shades?.[200]) return theme.shades[200];
+  if (isValidHexColor(customColor)) {
+    const v = parseInt(customColor.replace("#", ""), 16);
+    const mix = (c) => Math.round(c * 0.42 + 255 * 0.58);
+    const r = mix((v >> 16) & 255);
+    const g = mix((v >> 8) & 255);
+    const b = mix(v & 255);
+    return `#${[r, g, b]
+      .map((c) => c.toString(16).padStart(2, "0"))
+      .join("")}`;
+  }
+  return "#dbeafe";
 };
 
-export const moduleShade = (id) => {
-  const mod = String(id || "").split("-")[0].toUpperCase();
-  const pct = MODULE_SHADE_PCT[mod];
-  if (!pct) return "var(--primary)";
-  return `color-mix(in srgb, var(--primary) ${pct}%, white)`;
+// Rain settings defaults derived from the theme: the drop color follows the
+// theme tint; density/opacity/size/speed are tuned to a refined, subtle rain
+// (lighter than max so the drops read as elegant glass water, not a storm).
+export const getRainDefaults = (themeId, customColor) => ({
+  color: getRainColor(themeId, customColor),
+  density: 85,
+  opacity: 80,
+  size: 90,
+  speed: 90,
+});
+
+// Application-wide font options (see the Theme page). The `stack` is applied
+// to --font-sans / --font-heading via the `data-font` attribute on <html>,
+// which AppContext keeps in sync with the saved preference.
+export const DEFAULT_FONT = "sfpro";
+
+export const FONTS = [
+  {
+    id: "inter",
+    name: "Inter",
+    desc: "Self-hosted · clean and neutral",
+    stack: '"Inter", system-ui, "Segoe UI", Roboto, sans-serif',
+  },
+  {
+    id: "sfpro",
+    name: "SF Pro Display / Text",
+    desc: "Apple system font · falls back to Segoe UI on Windows",
+    stack: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif',
+  },
+];
+
+export const isValidFont = (id) =>
+  typeof id === "string" && FONTS.some((f) => f.id === id);
+
+// True for "#rgb" / "#rrggbb" hex colors (case-insensitive).
+export const isValidHexColor = (hex) =>
+  typeof hex === "string" && /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(hex);
+
+const hexToRgb = (hex) => {
+  let h = hex.replace("#", "");
+  if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+  const n = parseInt(h, 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
 };
+
+const mixHex = (hex, target, weight) => {
+  const a = hexToRgb(hex);
+  const b = hexToRgb(target);
+  const mix = (x, y) => Math.round(x + (y - x) * weight);
+  const toHex = (v) => v.toString(16).padStart(2, "0");
+  return `#${toHex(mix(a.r, b.r, weight))}${toHex(mix(a.g, b.g, weight))}${toHex(
+    mix(a.b, b.b, weight),
+  )}`;
+};
+
+// Build a 50–800 shade scale from a single accent hex so users can pick a
+// fully custom theme color. 600 is the accent itself; lower shades lighten
+// toward white, higher shades darken toward black (mirrors the preset tables).
+export const generateThemeShades = (hex) => ({
+  50: mixHex(hex, "#ffffff", 0.9),
+  100: mixHex(hex, "#ffffff", 0.8),
+  200: mixHex(hex, "#ffffff", 0.65),
+  300: mixHex(hex, "#ffffff", 0.5),
+  400: mixHex(hex, "#ffffff", 0.3),
+  500: mixHex(hex, "#ffffff", 0.15),
+  600: hex,
+  700: mixHex(hex, "#000000", 0.12),
+  800: mixHex(hex, "#000000", 0.25),
+});
+
+// Module icon color — every module and menu uses the full theme primary so
+// all icons glow with the same intensity. Callers may pass a module id; it
+// no longer affects the color.
+export const moduleShade = () => "var(--primary)";

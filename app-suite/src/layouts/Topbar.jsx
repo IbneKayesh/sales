@@ -21,9 +21,23 @@ import { modulesMenu } from "../utils/appModules";
 import { toast } from "../components/ToastBox";
 import Calculator from "../components/Calculator";
 import FullscreenButton from "../components/FullscreenButton";
+import defaultWorkspaceBg from "../assets/wallpaper-aurora.png";
+import logoBsWhite from "../assets/logo-bs-white.png";
 
 export default function Topbar({ className = "", ...rest }) {
-  const { user, logout, openPopup } = useApp();
+  const {
+    user,
+    logout,
+    openPopup,
+    popups,
+    logoImage,
+    topbarBgImage,
+    topbarBgColor,
+  } = useApp();
+  // The colorful default puts the top bar on the emerald→cyan→indigo
+  // gradient (see data-topbar-vivid in AppContext); show the white monogram
+  // logo variant there so the green logo doesn't vanish on the green end.
+  const topbarVivid = topbarBgImage === defaultWorkspaceBg && !topbarBgColor;
   const navigate = useNavigate();
   const location = useLocation();
   const [profileOpen, setProfileOpen] = useState(false);
@@ -39,6 +53,11 @@ export default function Topbar({ className = "", ...rest }) {
 
   const profileRef = useRef(null);
   const notifRef = useRef(null);
+
+  // The modules window (opened via the menu button) is a popup, so highlight
+  // the button while that window is open — same pattern as the other topbar
+  // toggle buttons.
+  const modulesOpen = popups.some((p) => p.menu?.id === modulesMenu.id);
 
   useEffect(() => {
     const onScroll = () => {
@@ -162,20 +181,40 @@ export default function Topbar({ className = "", ...rest }) {
       {location.pathname !== "/bsuite/modules" && (
         <button
           type="button"
-          className="topbar__icon-btn"
+          className={`topbar__icon-btn${
+            modulesOpen ? " topbar__icon-btn--active" : ""
+          }`}
           onClick={() => openPopup(modulesMenu)}
           aria-label="Open modules"
           aria-haspopup="dialog"
-          title="Open modules"
+          aria-expanded={modulesOpen}
+          title={modulesOpen ? "Modules window is open" : "Open modules"}
         >
           <IconBar size={24} />
         </button>
       )}
       <NavLink to="/bsuite/modules" className="topbar__brand">
         <span className="topbar__logo">
-          <IconLogo size={28} />
+          {logoImage ? (
+            <img
+              src={topbarVivid ? logoBsWhite : logoImage}
+              alt="Logo"
+              style={{
+                height: 28,
+                width: "auto",
+                maxWidth: 140,
+                objectFit: "contain",
+                display: "block",
+              }}
+            />
+          ) : (
+            <IconLogo size={28} />
+          )}
         </span>
-        <span className="topbar__title">bSuite</span>
+        <span className="topbar__brand-text">
+          <span className="topbar__title">bSuite</span>
+          <span className="topbar__subtitle">Your Company Name</span>
+        </span>
       </NavLink>
 
       <div className="topbar__nav" />
@@ -376,8 +415,9 @@ export default function Topbar({ className = "", ...rest }) {
           top: 0,
           transform: hidden ? "translateY(-100%)" : "translateY(0)",
           transition: "transform var(--transition-normal)",
-          background:
-            "linear-gradient(to bottom, color-mix(in srgb, var(--surface, #ffffff) 92%, var(--primary, #7c3aed)) 0%, color-mix(in srgb, var(--surface, #ffffff) 97%, var(--primary, #7c3aed)) 100%)",
+          // Frosted-glass tint by default (see --topbar-bg in index.css); the
+          // Theme page can override it with a scrimmed background image.
+          background: "var(--topbar-bg)",
           WebkitBackdropFilter: "blur(10px) saturate(140%)",
           backdropFilter: "blur(10px) saturate(140%)",
           boxShadow: "0 2px 12px rgba(0,0,0,0.10)",

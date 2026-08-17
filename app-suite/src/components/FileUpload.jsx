@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo, useEffect } from 'react'
+import { useState, useRef, useCallback, useMemo, useEffect, useId } from 'react'
 import { IconUpload, IconClose, IconFile } from '../icons'
 
 /**
@@ -38,6 +38,7 @@ function fileTypeLabel(name) {
 }
 
 export default function FileUpload({
+  id,
   label,
   value = [],
   onChange,
@@ -49,7 +50,6 @@ export default function FileUpload({
   required = false,
   error,
   hint,
-  name,
   className = '',
   ...rest
 }) {
@@ -58,7 +58,10 @@ export default function FileUpload({
   const [dragOver, setDragOver] = useState(false)
   const [focused, setFocused] = useState(false)
   const [localErrors, setLocalErrors] = useState([])
-  const inputId = name || `fu-${Math.random().toString(36).slice(2, 8)}`
+  // Per-instance unique id so multiple uploads never share a label/dropzone id
+  // (an explicit `id` prop still wins for styling/tests).
+  const fallbackId = useId()
+  const inputId = id || fallbackId
 
   // Compute image preview URLs — runs at top level, not inside .map()
   // Revokes stale URLs for removed files, creates new ones for added files

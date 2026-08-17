@@ -7,10 +7,11 @@ import LoginPage from './pages/auth/LoginPage'
 import ErrorBoundary from './components/ErrorBoundary'
 import Windows from './layouts/Window'
 import Taskbar from './layouts/Taskbar'
+import RainGlass from './components/RainGlass'
 import './App.css'
 
 function AppContent() {
-  const { user, logout } = useApp()
+  const { user, logout, bgAnim, bgAnimScope, bgAnimSettings } = useApp()
 
   if (!user) {
     return <LoginPage />
@@ -28,6 +29,27 @@ function AppContent() {
       <Windows />
       {/* Taskbar strip for minimized windows, pinned to the bottom of the screen */}
       <Taskbar />
+      {/* Rain on glass — application-wide overlay (Theme page > Background
+          animation > Whole app). Fixed to the viewport so it covers the whole
+          app shell including open windows; purely decorative, never blocks
+          interaction. */}
+      {bgAnim === 'rain' && bgAnimScope === 'app' && (
+        <RainGlass
+          density={(bgAnimSettings?.density ?? 100) / 100}
+          color={bgAnimSettings?.color || '#dbeafe'}
+          opacity={(bgAnimSettings?.opacity ?? 100) / 100}
+          size={(bgAnimSettings?.size ?? 100) / 100}
+          speed={(bgAnimSettings?.speed ?? 100) / 100}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 9999,
+          }}
+        />
+      )}
     </Layout>
   )
 }
