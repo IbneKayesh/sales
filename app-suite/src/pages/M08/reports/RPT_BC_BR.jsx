@@ -87,7 +87,7 @@ const RPT_BC_BR = ({ listData, onRegisterExport }) => {
       key: "accountName",
       header: "Account",
       width: "180px",
-      render: (v) => <span style={{ fontWeight: 500 }}>{v}</span>,
+      body: (v) => <span style={{ fontWeight: 500 }}>{v}</span>,
     },
     { key: "chartNo", header: "Chart No", width: "120px" },
     {
@@ -95,21 +95,21 @@ const RPT_BC_BR = ({ listData, onRegisterExport }) => {
       header: "Total Debit",
       width: "120px",
       align: "right",
-      render: (v) => formatNumber(v),
+      body: (v) => formatNumber(v),
     },
     {
       key: "totalCr",
       header: "Total Credit",
       width: "120px",
       align: "right",
-      render: (v) => formatNumber(v),
+      body: (v) => formatNumber(v),
     },
     {
       key: "bookBalance",
       header: "Book Balance",
       width: "140px",
       align: "right",
-      render: (v) => (
+      body: (v) => (
         <span
           style={{
             fontWeight: 700,
@@ -130,7 +130,7 @@ const RPT_BC_BR = ({ listData, onRegisterExport }) => {
       key: "lastTransaction",
       header: "Last Activity",
       width: "120px",
-      render: (v) => (v ? v.split("T")[0] : "—"),
+      body: (v) => (v ? v.split("T")[0] : "—"),
     },
   ];
 

@@ -7,7 +7,7 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "items_iname",
       header: "Item",
       width: "200px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span>
             {row.items_iname} - {row.items_szqty} {row.sunit_cname}
@@ -19,7 +19,7 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "invcc_itrat",
       header: "Rate * Qty",
       width: "80px",
-      render: (_, rowData) => {
+      body: (_, rowData) => {
         return (
           <>
             {Number(rowData.invcc_itrat).toFixed(4)} x{" "}
@@ -33,7 +33,7 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "invcc_dsamt",
       header: "Discount",
       width: "100px",
-      render: (_, rowData) => {
+      body: (_, rowData) => {
         return (
           <>
             [{rowData.invcc_edamt}] {Number(rowData.invcc_dsamt).toFixed(4)} (
@@ -46,7 +46,7 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "invcc_vtpct",
       header: "VAT",
       width: "100px",
-      render: (_, rowData) => {
+      body: (_, rowData) => {
         return (
           <>
             {rowData.invcc_vtamt} ({rowData.invcc_vtpct}%)
@@ -58,7 +58,7 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "invcc_icamt",
       header: "Other Cost",
       width: "80px",
-      render: (_, rowData) => {
+      body: (_, rowData) => {
         return (
           <>
             {(
@@ -73,7 +73,7 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "invcc_ntamt",
       header: "Sub Total",
       width: "80px",
-      render: (_, rowData) => {
+      body: (_, rowData) => {
         return <>{(Number(rowData.invcc_ntamt) || 0).toFixed(4)}</>;
       },
     },
@@ -82,14 +82,14 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "invcc_csrat",
       header: "Unit Cost",
       width: "80px",
-      render: (_, rowData) => {
+      body: (_, rowData) => {
         return <>{(Number(rowData.invcc_csrat) || 0).toFixed(4)}</>;
       },
     },    {
       key: "invcc_nsrat",
       header: "Net Unit Cost",
       width: "80px",
-      render: (_, rowData) => {
+      body: (_, rowData) => {
         return <>{(Number(rowData.invcc_nsrat) || 0).toFixed(4)}</>;
       },
     },
@@ -98,7 +98,7 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.invcc_actve}

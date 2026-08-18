@@ -14,7 +14,7 @@ const PartyView = ({ listData }) => {
       key: "party_actve",
       header: "Status",
       width: "110px",
-      render: (v) => (
+      body: (v) => (
         <Badge variant={v ? "success" : "danger"}>
           {v ? <IconCheck size={12} /> : <IconClose size={12} />}
           {v ? "Active" : "Inactive"}

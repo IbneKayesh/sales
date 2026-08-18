@@ -11,7 +11,8 @@ const MrrList = ({ listData, onEdit, onDelete }) => {
       key: "mrrdm_trnno",
       header: "MRR No",
       width: "100px",
-      render: (_, row) => {
+      footer: () => <span className="font-semibold">Total</span>,
+      body: (_, row) => {
         return (
           <span className={`${!row.mrrdm_actve && "text-red-500"}`}>
             {row.mrrdm_trnno}
@@ -23,16 +24,19 @@ const MrrList = ({ listData, onEdit, onDelete }) => {
       key: "mrrdm_trdat",
       header: "Date",
       width: "90px",
-      render: (v) => getRelativeDays(v),
+      body: (v) => getRelativeDays(v),
     },
     { key: "dpart_cname", header: "Department", width: "150px" },
-    { key: "cntct_cname", header: "Supplier", width: "180px" },
+    { key: "cntct_cname", header: "Supplier", width: "180px", footer: "count" },
     { key: "mrrdm_refno", header: "Ref No", width: "100px" },
     {
       key: "mrrdm_tramt",
       header: "Amount",
       width: "80px",
-      render: (_, row) => (
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.mrrdm_tramt ?? 0), 0);
+      },
+      body: (_, row) => (
         <>
           <NegativeValue value={row.mrrdm_tramt} />
         </>
@@ -42,7 +46,10 @@ const MrrList = ({ listData, onEdit, onDelete }) => {
       key: "mrrdm_pyamt",
       header: "Payable",
       width: "80px",
-      render: (_, row) => (
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.mrrdm_pyamt ?? 0), 0);
+      },
+      body: (_, row) => (
         <>
           <NegativeValue value={row.mrrdm_pyamt} />
         </>
@@ -52,7 +59,10 @@ const MrrList = ({ listData, onEdit, onDelete }) => {
       key: "mrrdm_duamt",
       header: "Due",
       width: "80px",
-      render: (_, row) => (
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.mrrdm_duamt ?? 0), 0);
+      },
+      body: (_, row) => (
         <>
           <NegativeValue value={row.mrrdm_duamt} />
         </>
@@ -62,7 +72,7 @@ const MrrList = ({ listData, onEdit, onDelete }) => {
       key: "mrrdm_ispst",
       header: "Posted",
       width: "80px",
-      render: (v) => (
+      body: (v) => (
         <Badge variant={v ? "success" : "secondary"} size="sm">
           {v ? "Yes" : "No"}
         </Badge>
@@ -73,7 +83,7 @@ const MrrList = ({ listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.mrrdm_actve}
@@ -90,12 +100,11 @@ const MrrList = ({ listData, onEdit, onDelete }) => {
       pageSize={15}
       sortable
       searchable
-      showTotals
       striped
       hoverable
       exportable
       exportFilename="data-export.csv"
-      columnSettingsKey="mrr-list"
+      columnSettingsKey="m03-mrr-list"
       onRowClick={(row) => onEdit(row)}
       emptyMessage="No data found"
       className="mt-2"

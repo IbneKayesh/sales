@@ -163,7 +163,7 @@ export default function UsersPage() {
       key: 'role',
       header: 'Role',
       width: '130px',
-      render: (val) => {
+      body: (val) => {
         const role = roles.find((r) => r.value === val)
         return (
           <span
@@ -188,7 +188,7 @@ export default function UsersPage() {
       key: 'status',
       header: 'Status',
       width: '120px',
-      render: (val) => {
+      body: (val) => {
         const v = val || ''
         return <Badge variant={v === 'active' || v === 'completed' ? 'success' : v === 'pending' ? 'warning' : v === 'inactive' || v === 'failed' ? 'danger' : 'muted'} icon={v === 'active' || v === 'completed' ? <IconCheck size={12} /> : v === 'pending' ? <IconWarning size={12} /> : v === 'inactive' || v === 'failed' ? <IconClose size={12} /> : <IconInfo size={12} />}>{v.charAt(0).toUpperCase() + v.slice(1)}</Badge>
       },
@@ -197,7 +197,7 @@ export default function UsersPage() {
       key: 'department',
       header: 'Department',
       width: '150px',
-      render: (val) => {
+      body: (val) => {
         const dept = departmentOptions.find((d) => d.value === val)
         return <span className="small">{dept?.label || val || '—'}</span>
       },
@@ -207,7 +207,7 @@ export default function UsersPage() {
       header: 'Actions',
       width: '110px',
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <span className="d-inline-flex gap-1">
           <Button
             variant="ghost"

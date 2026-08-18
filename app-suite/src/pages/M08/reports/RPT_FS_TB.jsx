@@ -20,7 +20,7 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
       key: "name",
       header: "Account",
       width: "250px",
-      render: (v, row) => (
+      body: (v, row) => (
         <div>
           <div style={{ fontWeight: 500 }}>{v}</div>
           <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
@@ -33,7 +33,7 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
       key: "type",
       header: "Type",
       width: "140px",
-      render: (v, row) => (
+      body: (v, row) => (
         <Badge variant={typeBadgeVariant[row.type] || "muted"}>
           {row.type} ({row.ntype || "—"})
         </Badge>
@@ -44,21 +44,21 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
       header: "Debit (Dr)",
       width: "140px",
       align: "right",
-      render: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v) : "—"),
     },
     {
       key: "crVal",
       header: "Credit (Cr)",
       width: "140px",
       align: "right",
-      render: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v) : "—"),
     },
     {
       key: "subVal",
       header: "Balance",
       width: "140px",
       align: "right",
-      render: (v) => formatNumber(v),
+      body: (v) => formatNumber(v),
     },
   ];
 

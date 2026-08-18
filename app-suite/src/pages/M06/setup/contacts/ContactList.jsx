@@ -11,7 +11,7 @@ const ContactList = ({ listData, onEdit, onDelete }) => {
       key: "cntct_cname",
       header: "Name",
       width: "180px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span className={`${!row.cntct_actve && "text-red-500"}`}>
             {row.cntct_cname}, {row.cntct_cntno} ({row.cntct_ctype})
@@ -42,25 +42,25 @@ const ContactList = ({ listData, onEdit, onDelete }) => {
       key: "cntct_dspct",
       header: "Discount%",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.cntct_dspct} />,
+      body: (_, row) => <NegativeValue value={row.cntct_dspct} />,
     },
     {
       key: "cntct_crlmt",
       header: "Limit",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.cntct_crlmt} />,
+      body: (_, row) => <NegativeValue value={row.cntct_crlmt} />,
     },
     {
       key: "cntct_crbal",
       header: "Balance",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.cntct_crbal} />,
+      body: (_, row) => <NegativeValue value={row.cntct_crbal} />,
     },
     // {
     //   key: "cntct_actve",
     //   header: "Status",
     //   width: "120px",
-    //   render: (v) => {
+    //   body: (v) => {
     //     return (
     //       <Badge variant={v ? "success" : "danger"}>
     //         {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -74,7 +74,7 @@ const ContactList = ({ listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.cntct_actve}

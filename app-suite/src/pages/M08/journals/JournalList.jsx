@@ -12,7 +12,7 @@ const JournalList = ({ listData, onEdit, onDelete }) => {
       key: "jrnlm_trdat",
       header: "Date",
       width: "80px",
-      render: (v) => getRelativeDays(v),
+      body: (v) => getRelativeDays(v),
     },
     {
       key: "jrnlm_narrt",
@@ -35,7 +35,7 @@ const JournalList = ({ listData, onEdit, onDelete }) => {
       key: "jrnlm_drval",
       header: "Amount",
       width: "100px",
-      render: (_, rowData) => {
+      body: (_, rowData) => {
         const drVal = Number(rowData.jrnlm_drval || 0);
         const crVal = Number(rowData.jrnlm_crval || 0);
         // If either side is zero
@@ -55,7 +55,7 @@ const JournalList = ({ listData, onEdit, onDelete }) => {
       key: "jrnlm_stats",
       header: "Status",
       width: "100px",
-      render: (v) => {
+      body: (v) => {
         const isDraft = v === "Draft";
         return (
           <Badge variant={isDraft ? "warning" : "success"}>
@@ -69,7 +69,7 @@ const JournalList = ({ listData, onEdit, onDelete }) => {
       key: "jrnlm_actve",
       header: "Active",
       width: "80px",
-      render: (v) => (
+      body: (v) => (
         <Badge variant={v ? "success" : "danger"}>
           {v ? <IconCheck size={12} /> : <IconClose size={12} />}
           {v ? "Active" : "Inactive"}
@@ -81,7 +81,7 @@ const JournalList = ({ listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.jrnlm_actve}

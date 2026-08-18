@@ -11,7 +11,7 @@ const BatchList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "prbtc_gaqty",
       header: "Good A",
       width: "80px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span>
             {row.prbtc_gaqty} {row.units_cname}
@@ -23,7 +23,7 @@ const BatchList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "prbtc_gbqty",
       header: "Good B",
       width: "80px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span>
             {row.prbtc_gbqty} {row.units_cname}
@@ -40,7 +40,7 @@ const BatchList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.prbtc_actve}

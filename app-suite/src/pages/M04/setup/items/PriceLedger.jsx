@@ -13,7 +13,7 @@ const PriceLedger = ({ listData }) => {
       key: "mrrdm_trdat",
       header: "Date",
       width: "200px",
-      render: (_, row) => <>{formatDate(row.mrrdm_trdat)}</>,
+      body: (_, row) => <>{formatDate(row.mrrdm_trdat)}</>,
     },
     { key: "items_iname", header: "Item", width: "200px" },
     { key: "price_cname", header: "Price", width: "200px" },
@@ -21,7 +21,7 @@ const PriceLedger = ({ listData }) => {
       key: "mrrdc_itqty",
       header: "Qty",
       width: "80px",
-      render: (_, row) => (
+      body: (_, row) => (
         <>
           <NegativeValue value={row.mrrdc_itqty} /> {row.units_cname}
         </>
@@ -31,19 +31,19 @@ const PriceLedger = ({ listData }) => {
       key: "mrrdc_csrat",
       header: "Cost Price",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.mrrdc_csrat} />,
+      body: (_, row) => <NegativeValue value={row.mrrdc_csrat} />,
     },
     {
       key: "line_value",
       header: "Value",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.line_value} />,
+      body: (_, row) => <NegativeValue value={row.line_value} />,
     },
     // {
     //   key: "line_value",
     //   header: "Value",
     //   width: "80px",
-    //   render: (_, row) => (
+    //   body: (_, row) => (
     //     <NegativeValue
     //       value={Number(row.mrrdc_itqty || 0) * Number(row.mrrdc_csrat || 0)}
     //     />

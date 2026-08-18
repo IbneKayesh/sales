@@ -13,7 +13,7 @@ const CostList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.mrrcs_actve}

@@ -119,21 +119,21 @@ const RPT_BC_CB = ({ listData, onRegisterExport }) => {
       header: "Receipts (Dr)",
       width: "120px",
       align: "right",
-      render: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v) : "—"),
     },
     {
       key: "credit",
       header: "Payments (Cr)",
       width: "120px",
       align: "right",
-      render: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v) : "—"),
     },
     {
       key: "runningBalance",
       header: "Balance",
       width: "140px",
       align: "right",
-      render: (v) => <span className="fw-semibold">{formatNumber(v)}</span>,
+      body: (v) => <span className="fw-semibold">{formatNumber(v)}</span>,
     },
   ];
 

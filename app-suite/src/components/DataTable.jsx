@@ -5,13 +5,12 @@ import {
   IconSort,
   IconChevronLeft,
   IconChevronRight,
-  IconChevronUp,
-  IconChevronDown,
   IconDownload,
   IconBox,
   IconBar,
   IconColumns,
   IconPin,
+  IconUnpin,
   IconRefresh,
 } from '../icons'
 import Skeleton from './Skeleton'
@@ -107,14 +106,12 @@ export default function DataTable({
   className = '',
   onRowClick,
   emptyMessage = 'No data available',
-  toolbarActions,
   exportable = false,
   exportFilename,
   stickyFirst = true,
   cfColumns = [],
   loading = false,
   loadingRows = 5,
-  showTotals = false,
   // Built-in column settings (reorder / pin / visibility / density), persisted
   // per table via localStorage. When set, DataTable manages its own layout.
   columnSettingsKey,
@@ -237,20 +234,37 @@ export default function DataTable({
   const currentPage = Math.min(page, totalPages - 1)
   const paged = sorted.slice(currentPage * pageSizeState, (currentPage + 1) * pageSizeState)
 
-  const showToolbar = searchable || exportable || toolbarActions || columnSettingsKey
+  const showToolbar = searchable || exportable || columnSettingsKey
 
-  // Totals footer — sums every column whose values are all numeric.
-  const totalsRow = showTotals
-    ? visibleColumns.map((col) => {
-        const key = col.accessor || col.key
-        if (col.totals === false) return null
-        const nums = filtered
-          .map((row) => row[key])
-          .filter((v) => v != null && Number.isFinite(Number(v)))
-        if (nums.length === 0 || nums.length !== filtered.length) return null
-        return nums.reduce((a, b) => a + Number(b), 0)
-      })
-    : null
+  // Totals footer — driven by each column's `footer` option:
+  //   "count"   — number of rows that have a value in this column
+  //   "sum"     — sum of the numeric cell values in this column
+  //   function  — (values, rows) => node, fully custom footer content. `values`
+  //               are the non-empty raw values of this column across the
+  //               filtered rows; `rows` are the filtered row objects, so the
+  //               renderer can compute across other columns if needed.
+  //   none      — no footer cell for this column
+  // The footer row renders only when at least one column defines a footer.
+  const totalsRow = visibleColumns.map((col) => {
+    const key = col.accessor || col.key
+    const values = filtered
+      .map((row) => row[key])
+      .filter((v) => v != null && String(v).trim() !== '')
+    if (typeof col.footer === 'function') {
+      return col.footer(values, filtered)
+    }
+    if (col.footer === 'sum') {
+      const nums = values.filter((v) => Number.isFinite(Number(v)))
+      if (nums.length === 0) return null
+      return nums.reduce((a, b) => a + Number(b), 0)
+    }
+    if (col.footer === 'count') {
+      return values.length
+    }
+    return null
+  })
+
+  const hasFooterValues = totalsRow.some((v) => v != null)
 
   // Reset keyboard row focus when the visible page changes.
   useEffect(() => {
@@ -309,19 +323,6 @@ export default function DataTable({
     const pinned = layout ? [...layout.pinned] : []
     const hidden = layout ? [...layout.hidden] : []
     return { k, order, pinned, hidden }
-  }
-  const moveColumn = (col, dir) => {
-    const { k, order, pinned, hidden } = layoutFor(col)
-    if (order.length === 0) {
-      // Seed order from the current column definition order
-      settingsCols.forEach((c) => order.push(keyOf(c)))
-    }
-    const idx = order.indexOf(k)
-    const target = idx + dir
-    if (idx < 0 || target < 0 || target >= order.length) return
-    const [c] = order.splice(idx, 1)
-    order.splice(target, 0, c)
-    persistLayout({ order, pinned, hidden })
   }
   const togglePin = (col) => {
     const { k, order, pinned, hidden } = layoutFor(col)
@@ -405,32 +406,12 @@ export default function DataTable({
                         <div key={k} className="data-table__columns-row">
                           <button
                             type="button"
-                            className="data-table__columns-move"
-                            onClick={() => moveColumn(col, -1)}
-                            disabled={!layout?.order.includes(k)}
-                            title="Move left"
-                            aria-label={`Move ${col.header || col.label || k} left`}
-                          >
-                            <IconChevronUp size={12} />
-                          </button>
-                          <button
-                            type="button"
-                            className="data-table__columns-move"
-                            onClick={() => moveColumn(col, 1)}
-                            disabled={!layout?.order.includes(k)}
-                            title="Move right"
-                            aria-label={`Move ${col.header || col.label || k} right`}
-                          >
-                            <IconChevronDown size={12} />
-                          </button>
-                          <button
-                            type="button"
                             className={`data-table__columns-move${pinned ? ' data-table__columns-move--active' : ''}`}
                             onClick={() => togglePin(col)}
                             title={pinned ? 'Unpin' : 'Pin left'}
                             aria-pressed={pinned}
                           >
-                            <IconPin size={12} />
+                            {pinned ? <IconPin size={12} /> : <IconUnpin size={12} />}
                           </button>
                           <label className="data-table__columns-label">
                             <input
@@ -468,7 +449,6 @@ export default function DataTable({
                 CSV
               </button>
             )}
-            {toolbarActions}
           </div>
         </div>
       )}
@@ -532,7 +512,7 @@ export default function DataTable({
                     const val = col.accessor ? row[col.accessor] : row[col.key]
                     return (
                       <td key={keyOf(col)} className={`data-table__td${isSticky(col, ci) ? ' data-table__td--sticky' : ''}`} style={{ ...(col.width ? { width: col.width } : {}), ...(col.align ? { textAlign: col.align } : {}) }}>
-                        {col.render ? col.render(val, row) : (val ?? '—')}
+                        {col.body ? col.body(val, row) : (val ?? '—')}
                       </td>
                     )
                   })}
@@ -549,7 +529,7 @@ export default function DataTable({
               </tr>
             )}
           </tbody>
-          {totalsRow && (
+          {hasFooterValues && (
             <tfoot>
               <tr className="data-table__tfoot">
                 {visibleColumns.map((col, ci) => {
@@ -564,9 +544,9 @@ export default function DataTable({
                         ? ci === 0
                           ? 'Total'
                           : ''
-                        : v.toLocaleString(undefined, {
-                            maximumFractionDigits: 2,
-                          })}
+                        : typeof v === 'number'
+                          ? String(v)
+                          : v}
                     </td>
                   )
                 })}

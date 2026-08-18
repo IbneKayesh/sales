@@ -10,7 +10,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "prsfg_fgqty",
       header: "Quantity",
       width: "80px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span>
             {row.prsfg_fgqty} {row.units_cname}
@@ -29,7 +29,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.prsfg_actve}

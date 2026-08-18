@@ -22,13 +22,13 @@ const ItemsList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "jrnlc_drval",
       header: "Debit",
       width: "80px",
-      render: (v) => v?.toLocaleString?.() || "0",
+      body: (v) => v?.toLocaleString?.() || "0",
     },
     {
       key: "jrnlc_crval",
       header: "Credit",
       width: "80px",
-      render: (v) => v?.toLocaleString?.() || "0",
+      body: (v) => v?.toLocaleString?.() || "0",
     },
     { key: "jrnlc_descr", header: "Description", width: "200px" },
     {
@@ -36,7 +36,7 @@ const ItemsList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.jrnlc_actve}

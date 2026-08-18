@@ -129,32 +129,32 @@ const RPT_RP_APA = ({ listData, onRegisterExport }) => {
       key: "name",
       header: "Supplier",
       width: "200px",
-      render: (v) => <span style={{ fontWeight: 500 }}>{v}</span>,
+      body: (v) => <span style={{ fontWeight: 500 }}>{v}</span>,
     },
     {
       key: "lastTransaction",
       header: "Last Transaction",
       width: "140px",
-      render: (v) => (v ? v.split("T")[0] : "—"),
+      body: (v) => (v ? v.split("T")[0] : "—"),
     },
     {
       key: "daysOverdue",
       header: "Days",
       width: "80px",
-      render: (v) => (v > 0 ? `${v}d` : "—"),
+      body: (v) => (v > 0 ? `${v}d` : "—"),
     },
     {
       key: "bucket",
       header: "Bucket",
       width: "120px",
-      render: (v) => <Badge variant={bucketVariant[v] || "muted"}>{v}</Badge>,
+      body: (v) => <Badge variant={bucketVariant[v] || "muted"}>{v}</Badge>,
     },
     {
       key: "balance",
       header: "Balance",
       width: "140px",
       align: "right",
-      render: (v) => formatNumber(v),
+      body: (v) => formatNumber(v),
     },
   ];
 

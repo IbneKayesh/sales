@@ -18,7 +18,7 @@ const McatgList = ({
       key: "mcatg_actve",
       header: "Status",
       width: "120px",
-      render: (v) => {
+      body: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
             {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -32,7 +32,7 @@ const McatgList = ({
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <>
           <Button
             variant="ghost"

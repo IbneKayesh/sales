@@ -24,7 +24,7 @@ const ItemsList = ({
       key: "items_iname",
       header: "Item Name",
       width: "200px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span className={`${!row.items_actve && "text-red-500"}`}>
             {row.items_iname}
@@ -48,7 +48,7 @@ const ItemsList = ({
       key: "items_szqty",
       header: "Size Unit",
       width: "200px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span>
             {row.items_szqty} x {row.sunit_cname}
@@ -60,7 +60,7 @@ const ItemsList = ({
       key: "runit_cname",
       header: "Unit",
       width: "200px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span>
             {row.items_pkqty} x {row.runit_cname} = 1 {row.punit_cname}
@@ -76,7 +76,7 @@ const ItemsList = ({
       key: "items_tstck",
       header: "Track Stock",
       width: "80px",
-      render: (v) => {
+      body: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
             {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -89,37 +89,37 @@ const ItemsList = ({
       key: "items_pivat",
       header: "Include Purchase VAT (%)",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.items_pivat} />,
+      body: (_, row) => <NegativeValue value={row.items_pivat} />,
     },
     {
       key: "items_pdvat",
       header: "Purchase VAT %",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.items_pdvat} />,
+      body: (_, row) => <NegativeValue value={row.items_pdvat} />,
     },
     {
       key: "items_sdvat",
       header: "Sales VAT %",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.items_sdvat} />,
+      body: (_, row) => <NegativeValue value={row.items_sdvat} />,
     },
     {
       key: "items_smrgn",
       header: "Margin (%)",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.items_smrgn} />,
+      body: (_, row) => <NegativeValue value={row.items_smrgn} />,
     },
     {
       key: "items_fxcst",
       header: "Fixed Cost",
       width: "80px",
-      render: (_, row) => <NegativeValue value={row.items_fxcst} />,
+      body: (_, row) => <NegativeValue value={row.items_fxcst} />,
     },
     {
       key: "items_stpur",
       header: "Stop Purchase",
       width: "80px",
-      render: (v) => {
+      body: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
             {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -132,7 +132,7 @@ const ItemsList = ({
       key: "items_stsal",
       header: "Stop Sale",
       width: "80px",
-      render: (v) => {
+      body: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
             {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -145,7 +145,7 @@ const ItemsList = ({
       key: "items_stnsf",
       header: "Stop Transfer",
       width: "80px",
-      render: (v) => {
+      body: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
             {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -158,7 +158,7 @@ const ItemsList = ({
       key: "price_gdstk",
       header: "Stock",
       width: "80px",
-      render: (_, row) => {
+      body: (_, row) => {
         const lineStock = row.price_gdstk || 0 + row.price_bdstk || 0;
         return (
           <span className={`${lineStock > 0 && "text-green-500"}`}>
@@ -174,7 +174,7 @@ const ItemsList = ({
       header: "Actions",
       width: "150px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <>
           <Button
             variant="ghost"

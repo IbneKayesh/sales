@@ -97,14 +97,14 @@ const RPT_LR_SR = ({ listData, onRegisterExport }) => {
       header: "Debit",
       width: "120px",
       align: "right",
-      render: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v) : "—"),
     },
     {
       key: "credit",
       header: "Credit",
       width: "120px",
       align: "right",
-      render: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v) : "—"),
     },
   ];
 

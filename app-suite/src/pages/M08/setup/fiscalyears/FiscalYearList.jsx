@@ -12,7 +12,7 @@ const FiscalYearList = ({ listData, onEdit, onDelete }) => {
       key: "fsyar_stdat",
       header: "Start Date",
       width: "80px",
-      render: (v) => {
+      body: (v) => {
         return formatDate(v);
       },
     },
@@ -20,7 +20,7 @@ const FiscalYearList = ({ listData, onEdit, onDelete }) => {
       key: "fsyar_endat",
       header: "End Date",
       width: "80px",
-      render: (v) => {
+      body: (v) => {
         return formatDate(v);
       },
     },
@@ -29,7 +29,7 @@ const FiscalYearList = ({ listData, onEdit, onDelete }) => {
       key: "fsyar_iscur",
       header: "Current",
       width: "110px",
-      render: (v) => (
+      body: (v) => (
         <Badge variant={v ? "success" : "muted"}>
           {v ? <IconCheck size={12} /> : <IconClose size={12} />}
           {v ? "Yes" : "No"}
@@ -40,7 +40,7 @@ const FiscalYearList = ({ listData, onEdit, onDelete }) => {
       key: "fsyar_actve",
       header: "Status",
       width: "110px",
-      render: (v) => (
+      body: (v) => (
         <Badge variant={v ? "success" : "danger"}>
           {v ? <IconCheck size={12} /> : <IconClose size={12} />}
           {v ? "Active" : "Inactive"}
@@ -52,7 +52,7 @@ const FiscalYearList = ({ listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.fsyar_actve}

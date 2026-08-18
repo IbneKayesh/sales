@@ -102,7 +102,7 @@ const sampleColumns = [
     key: "status",
     header: "Status",
     width: "100px",
-    render: (v) => (
+    body: (v) => (
       <Badge
         variant={
           v === "active" ? "success" : v === "pending" ? "warning" : "danger"
@@ -126,7 +126,7 @@ const sampleColumns = [
     header: "Actions",
     width: "110px",
     sortable: false,
-    render: (_, row) => (
+    body: (_, row) => (
       <span style={{ display: "inline-flex", gap: "var(--sp-1)" }}>
         <Button
           variant="ghost"

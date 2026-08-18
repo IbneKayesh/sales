@@ -85,13 +85,13 @@ const RPT_RP_OST = ({ listData, onRegisterExport }) => {
       key: "name",
       header: "Party Name",
       width: "200px",
-      render: (v) => <span style={{ fontWeight: 500 }}>{v}</span>,
+      body: (v) => <span style={{ fontWeight: 500 }}>{v}</span>,
     },
     {
       key: "ptype",
       header: "Type",
       width: "100px",
-      render: (v) => (
+      body: (v) => (
         <Badge variant={v === "Customer" ? "success" : "warning"}>{v}</Badge>
       ),
     },
@@ -99,7 +99,7 @@ const RPT_RP_OST = ({ listData, onRegisterExport }) => {
       key: "accountNames",
       header: "Accounts",
       width: "180px",
-      render: (v) => (
+      body: (v) => (
         <span style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>
           {v || "—"}
         </span>
@@ -115,7 +115,7 @@ const RPT_RP_OST = ({ listData, onRegisterExport }) => {
       key: "balanceType",
       header: "Side",
       width: "100px",
-      render: (v) => (
+      body: (v) => (
         <Badge variant={v === "Dr" ? "success" : "danger"}>
           {v === "Dr" ? "Receivable" : "Payable"}
         </Badge>
@@ -126,7 +126,7 @@ const RPT_RP_OST = ({ listData, onRegisterExport }) => {
       header: "Balance",
       width: "140px",
       align: "right",
-      render: (v) => formatNumber(v),
+      body: (v) => formatNumber(v),
     },
   ];
 

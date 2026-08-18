@@ -10,7 +10,7 @@ const InvoiceList = ({ listData, onEdit, onDelete }) => {
       key: "invcm_trnno",
       header: "Invoice No",
       width: "100px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span className={`${!row.invcm_actve && "text-red-500"}`}>
             {row.invcm_trnno}
@@ -22,7 +22,7 @@ const InvoiceList = ({ listData, onEdit, onDelete }) => {
       key: "invcm_trdat",
       header: "Date",
       width: "90px",
-      render: (v) => getRelativeDays(v),
+      body: (v) => getRelativeDays(v),
     },
     { key: "dpart_cname", header: "Department", width: "150px" },
     { key: "cntct_cname", header: "Customer", width: "180px" },
@@ -33,7 +33,7 @@ const InvoiceList = ({ listData, onEdit, onDelete }) => {
       key: "invcm_duamt",
       header: "Due",
       width: "80px",
-      render: (_, row) => (
+      body: (_, row) => (
         <>
           <NegativeValue value={row.invcm_duamt} />
         </>
@@ -43,7 +43,7 @@ const InvoiceList = ({ listData, onEdit, onDelete }) => {
       key: "invcm_ispst",
       header: "Posted",
       width: "80px",
-      render: (v) => (
+      body: (v) => (
         <Badge variant={v ? "success" : "secondary"} size="sm">
           {v ? "Yes" : "No"}
         </Badge>
@@ -54,7 +54,7 @@ const InvoiceList = ({ listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.invcm_actve}
@@ -71,7 +71,6 @@ const InvoiceList = ({ listData, onEdit, onDelete }) => {
       pageSize={15}
       sortable
       searchable
-      showTotals
       striped
       hoverable
       exportable

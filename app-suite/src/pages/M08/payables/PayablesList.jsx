@@ -13,7 +13,7 @@ const PayablesList = ({ listData, onEdit, onDelete }) => {
       key: "mrrdm_trdat",
       header: "Due Date",
       width: "80px",
-      render: (v) => getRelativeDays(v),
+      body: (v) => getRelativeDays(v),
     },
     { key: "mrrpy_notes", header: "Notes", width: "80px" },
     { key: "mrrpy_duamt", header: "Amount", width: "80px" },
@@ -22,7 +22,7 @@ const PayablesList = ({ listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <Button
           variant="ghost"
           size="sm"

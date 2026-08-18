@@ -31,7 +31,7 @@ const reportColumns = [
     key: 'trend',
     header: 'Trend',
     width: '100px',
-    render: (v) => <Badge variant={v === 'up' ? 'success' : 'danger'} icon={v === 'up' ? <IconCheck size={12} /> : <IconClose size={12} />}>{v === 'up' ? 'Up' : 'Down'}</Badge>,
+    body: (v) => <Badge variant={v === 'up' ? 'success' : 'danger'} icon={v === 'up' ? <IconCheck size={12} /> : <IconClose size={12} />}>{v === 'up' ? 'Up' : 'Down'}</Badge>,
   },
 ]
 

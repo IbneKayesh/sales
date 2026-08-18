@@ -10,7 +10,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
       key: "bosfg_fgqty",
       header: "Quantity",
       width: "80px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span>
             {row.bosfg_fgqty} {row.units_cname}
@@ -27,7 +27,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.bosfg_actve}

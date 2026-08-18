@@ -225,25 +225,25 @@ function BarChart({ transactions, view }) {
 /* ---------- Column Definitions ---------- */
 
 const txnColumns = [
-  { key: 'date', header: 'Date', width: '110px', render: (v) => <span style={{ whiteSpace: 'nowrap' }}>{formatDate(v)}</span> },
+  { key: 'date', header: 'Date', width: '110px', body: (v) => <span style={{ whiteSpace: 'nowrap' }}>{formatDate(v)}</span> },
   { key: 'description', header: 'Description', width: 'auto' },
   { key: 'category', header: 'Category', width: '120px' },
   {
     key: 'amount',
     header: 'Amount',
     width: '100px',
-    render: (v, row) => (
+    body: (v, row) => (
       <span className={`text-mono text-mono--${row.type === 'income' ? 'success' : 'danger'}`}>
         {row.type === 'income' ? '+' : '–'}{formatCurrency(Math.abs(v), 2)}
       </span>
     ),
   },
-  { key: 'type', header: 'Type', width: '80px', render: (v) => <Badge type={v}>{v === 'income' ? 'Income' : 'Expense'}</Badge> },
+  { key: 'type', header: 'Type', width: '80px', body: (v) => <Badge type={v}>{v === 'income' ? 'Income' : 'Expense'}</Badge> },
   {
     key: 'status',
     header: 'Status',
     width: '110px',
-    render: (v) => <Badge variant={v === 'completed' ? 'success' : v === 'pending' ? 'warning' : v === 'failed' ? 'danger' : 'muted'} icon={v === 'completed' ? <IconCheck size={12} /> : v === 'pending' ? <IconWarning size={12} /> : v === 'failed' ? <IconClose size={12} /> : <IconInfo size={12} />}>{v.charAt(0).toUpperCase() + v.slice(1)}</Badge>,
+    body: (v) => <Badge variant={v === 'completed' ? 'success' : v === 'pending' ? 'warning' : v === 'failed' ? 'danger' : 'muted'} icon={v === 'completed' ? <IconCheck size={12} /> : v === 'pending' ? <IconWarning size={12} /> : v === 'failed' ? <IconClose size={12} /> : <IconInfo size={12} />}>{v.charAt(0).toUpperCase() + v.slice(1)}</Badge>,
   },
 ]
 

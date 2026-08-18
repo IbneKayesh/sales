@@ -9,7 +9,7 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "bofoh_foqty",
       header: "Quantity",
       width: "80px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span>
             {row.bofoh_foqty} {row.units_cname}
@@ -26,7 +26,7 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.bofoh_actve}

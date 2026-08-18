@@ -10,7 +10,7 @@ const DepartmentList = ({ listData, onEdit, onDelete }) => {
       key: "dpart_cname",
       header: "Name",
       width: "80px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span className={`${!row.dpart_actve && "text-red-500"}`}>
             {row.dpart_cname}
@@ -24,7 +24,7 @@ const DepartmentList = ({ listData, onEdit, onDelete }) => {
       key: "dpart_stdst",
       header: "Stop Distributor",
       width: "110px",
-      render: (v) => {
+      body: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
             {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -37,7 +37,7 @@ const DepartmentList = ({ listData, onEdit, onDelete }) => {
       key: "dpart_stpur",
       header: "Stop Purchase",
       width: "80px",
-      render: (v) => {
+      body: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
             {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -50,7 +50,7 @@ const DepartmentList = ({ listData, onEdit, onDelete }) => {
       key: "dpart_stsal",
       header: "Stop Sale",
       width: "80px",
-      render: (v) => {
+      body: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
             {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -63,7 +63,7 @@ const DepartmentList = ({ listData, onEdit, onDelete }) => {
       key: "dpart_stnsf",
       header: "Stop Transfer",
       width: "80px",
-      render: (v) => {
+      body: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
             {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -76,7 +76,7 @@ const DepartmentList = ({ listData, onEdit, onDelete }) => {
       key: "dpart_stpro",
       header: "Stop Production",
       width: "80px",
-      render: (v) => {
+      body: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
             {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -89,7 +89,7 @@ const DepartmentList = ({ listData, onEdit, onDelete }) => {
       key: "dpart_stjrn",
       header: "Stop Journal",
       width: "80px",
-      render: (v) => {
+      body: (v) => {
         return (
           <Badge variant={v ? "success" : "danger"}>
             {v ? <IconCheck size={12} /> : <IconClose size={12} />}
@@ -103,7 +103,7 @@ const DepartmentList = ({ listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.dpart_actve}

@@ -9,7 +9,7 @@ const ItemContactList = ({ readOnly, listData, onDelete }) => {
       key: "cntct_cname",
       header: "Supplier Name",
       width: "200px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span className={`${!row.itmct_actve && "text-red-500"}`}>
             {row.cntct_cname}
@@ -23,7 +23,7 @@ const ItemContactList = ({ readOnly, listData, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <Button
           variant="ghost"
           size="sm"

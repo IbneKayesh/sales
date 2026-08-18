@@ -9,7 +9,7 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "borpm_rmqty",
       header: "Quantity",
       width: "80px",
-      render: (_, row) => {
+      body: (_, row) => {
         return (
           <span>
             {row.borpm_rmqty} {row.units_cname}
@@ -26,7 +26,7 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.borpm_actve}

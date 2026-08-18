@@ -17,7 +17,7 @@ const PartyList = ({ listData, onEdit, onDelete }) => {
       key: "party_actve",
       header: "Status",
       width: "110px",
-      render: (v) => (
+      body: (v) => (
         <Badge variant={v ? "success" : "danger"}>
           {v ? <IconCheck size={12} /> : <IconClose size={12} />}
           {v ? "Active" : "Inactive"}
@@ -29,7 +29,7 @@ const PartyList = ({ listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.party_actve}

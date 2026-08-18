@@ -9,7 +9,7 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
       key: "invpy_pydat",
       header: "Date",
       width: "100px",
-      render: (v) => formatDate(v),
+      body: (v) => formatDate(v),
     },
     { key: "invpy_pdamt", header: "Amount", width: "80px" },
     { key: "invpy_refno", header: "Ref No", width: "100px" },
@@ -19,7 +19,7 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Actions",
       width: "110px",
       sortable: false,
-      render: (_, row) => (
+      body: (_, row) => (
         <ActionButton
           rowData={row}
           actve={row.invpy_actve}
