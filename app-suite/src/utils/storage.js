@@ -42,13 +42,15 @@ const confData = {
   layout: "boxed",
   boxedGap: 30,
   bgAnim: "rain",
-  bgAnimScope: "workspace",
+  bgAnimScope: "app",
+  bgAnimMode: "idle",
   bgAnimSettings: {
     density: 85,
     color: "",
     opacity: 80,
     size: 90,
     speed: 90,
+    idleMin: 1,
   },
   sidebar: "visible",
 };

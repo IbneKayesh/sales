@@ -17,25 +17,25 @@ const darken = (rgb, f) => ({
 const rgba = (rgb, a) => `rgba(${rgb.r},${rgb.g},${rgb.b},${a})`;
 
 /**
- * RainGlass — a decorative "rain on glass" canvas animation for backgrounds.
+ * RainGlass — a decorative "rain on glass + snowfall" canvas animation.
  *
- * Behaves like water on a window pane:
+ * Rain behaves like water on a window pane:
  *  - Surface tension: droplets are round and slowly grow by gathering mass.
  *  - Gravity: once a drop is heavy enough it starts sliding down; heavier
  *    drops fall faster.
- *  - Tracks: sliding drops absorb smaller drops they catch (growing larger
- *    and speeding up) and leave a faint streak behind.
- *  - Reflection/lens: each drop is drawn with a radial gradient body, a rim
- *    and a specular highlight so it reads like a tiny lens bending light.
+ *  - Tracks: sliding drops absorb smaller drops they catch and leave streaks.
+ *  - Reflection/lens: each drop is drawn with a radial gradient, rim and
+ *    specular highlight so it reads like a tiny lens bending light.
+ *
+ * Snowflakes are drawn as delicate 6-arm star crystals that drift and sway.
  *
  * Props:
- *   density   — 0–2 multiplier for the number of droplets (default 1)
- *   color     — drop tint as a hex color, e.g. "#dbeafe" (default light blue)
- *   opacity   — 0–1 overall drop strength (default 1)
- *   size      — 0.5–1.5 scale for droplet radii (default 1)
- *   speed     — 0.5–2 fall-speed multiplier; also adds a light wind drift
- *               sideways at higher speeds (default 1)
- *   className — extra classes for positioning (e.g. absolute overlay)
+ *   density   — 0–2 multiplier for the number of particles (default 1)
+ *   color     — drop/flake tint as a hex color (default light blue)
+ *   opacity   — 0–1 overall strength (default 1)
+ *   size      — 0.5–1.5 scale for droplet/flake radii (default 1)
+ *   speed     — 0.5–2 fall-speed multiplier (default 1)
+ *   snowRatio — 0–1 fraction of particles that are snowflakes (default 0.25)
  */
 export default function RainGlass({
   density = 1,
@@ -43,6 +43,7 @@ export default function RainGlass({
   opacity = 1,
   size = 1,
   speed = 1,
+  snowRatio = 0.25,
   className = "",
   ...rest
 }) {
@@ -54,22 +55,20 @@ export default function RainGlass({
     const ctx = canvas.getContext("2d");
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-    // Precompute color stops for the drop body (center = white glint, edge =
-    // darkened tint) so drawDrop stays fast.
+    // Precompute color stops for the drop body.
     const base = hexToRgb(color);
     const edge = darken(base, 0.55);
     const deep = darken(base, 0.35);
 
     let width = 0;
     let height = 0;
-    let drops = [];
+    let drops = [];   // rain drops
+    let flakes = [];  // snow flakes
     let rafId = 0;
     let lastTime = performance.now();
     let spawnAccum = 0;
 
     const resize = () => {
-      // A fixed-position overlay (app-wide rain) fills the whole viewport;
-      // otherwise fill the parent pane (e.g. the Workspace page area).
       if (getComputedStyle(canvas).position === "fixed") {
         width = window.innerWidth;
         height = window.innerHeight;
@@ -87,13 +86,12 @@ export default function RainGlass({
     resize();
     window.addEventListener("resize", resize);
 
-    // Spawn a fresh droplet at the top of the pane.
-    const spawn = () => {
+    // Spawn a rain drop at the top.
+    const spawnDrop = () => {
       drops.push({
         x: Math.random() * width,
         y: -6 - Math.random() * 24,
-        r: (0.5 + Math.random() * 1.4) * size, // small round seed
-        // size at which gravity wins over surface tension
+        r: (0.5 + Math.random() * 1.4) * size,
         maxR: (2.2 + Math.random() * 4.5) * size,
         vy: 0,
         sliding: false,
@@ -102,53 +100,71 @@ export default function RainGlass({
       });
     };
 
-    // How many droplets should be on screen (scaled by pane area + density).
+    // Spawn a snowflake at the top.
+    const spawnFlake = () => {
+      const r = (5.0 + Math.random() * 8.5) * size;
+      flakes.push({
+        x: Math.random() * width,
+        y: -r - Math.random() * 30,
+        r,
+        vy: (0.32 + Math.random() * 0.55) * speed,
+        vx: (Math.random() - 0.5) * 0.5 * speed,
+        angle: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.6,
+        wobble: Math.random() * Math.PI * 2,
+        alpha: 0,        // fade in
+        fadeIn: true,
+      });
+    };
+
+    // Total target particle count scaled by area + density.
     const targetCount = () =>
-      Math.min(220, Math.round(((width * height) / 26000) * density));
+      Math.min(240, Math.round(((width * height) / 26000) * density));
 
     const frame = (now) => {
       const dt = Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
       ctx.clearRect(0, 0, width, height);
 
-      // Keep the pane populated: spawn while under target.
+      // Spawn particles up to the target, respecting the snow ratio.
       spawnAccum += dt;
-      if (drops.length < targetCount() && spawnAccum > 0.06) {
-        spawn();
+      const total = drops.length + flakes.length;
+      if (total < targetCount() && spawnAccum > 0.055) {
+        if (flakes.length / Math.max(total + 1, 1) < snowRatio) {
+          spawnFlake();
+        } else {
+          spawnDrop();
+        }
         spawnAccum = 0;
       }
 
+      // --- Rain drops ---
       for (let i = drops.length - 1; i >= 0; i--) {
         const d = drops[i];
 
         if (!d.sliding) {
-          // Surface tension: round drop gathers mass, barely moving.
           d.r += dt * 0.55 * size;
           d.y += dt * 8 * speed;
           if (d.r >= d.maxR) {
             d.sliding = true;
-            d.vy = (0.5 + d.r * 0.18) * speed; // heavier drops start faster
+            d.vy = (0.5 + d.r * 0.18) * speed;
           }
         } else {
-          // Gravity: accelerate downward, capped by size (scaled by speed).
           d.vy = Math.min(
             d.vy + dt * 70 * speed,
             (1.2 + d.r * 1.35) * speed,
           );
           d.y += d.vy;
-          // Sideways drift: a light sway plus wind that grows with speed so
-          // faster rain is pushed more visibly across the pane.
           d.x += Math.sin(now * 0.0006 + d.wobble) * 0.12 * speed + (speed - 1) * 0.22;
           d.trail = Math.max(d.trail, d.vy * 0.5);
 
-          // Merge with any smaller drop we catch on the way down.
+          // Merge smaller drops caught on the way down.
           for (let j = drops.length - 1; j >= 0; j--) {
             if (j === i) continue;
             const o = drops[j];
             const dx = o.x - d.x;
             const dy = o.y - d.y;
             if (dx * dx + dy * dy < (d.r + o.r) * (d.r + o.r) * 0.55) {
-              // Conserve volume: r' = sqrt(r^2 + o^2), cap to keep drops tidy.
               d.r = Math.min(Math.sqrt(d.r * d.r + o.r * o.r), 9 * size);
               d.vy += o.vy * 0.15;
               drops.splice(j, 1);
@@ -157,13 +173,41 @@ export default function RainGlass({
           }
         }
 
-        // Remove drops that slid off the bottom of the pane.
         if (d.y - d.r > height + 12) {
           drops.splice(i, 1);
           continue;
         }
 
         drawDrop(ctx, d);
+      }
+
+      // --- Snowflakes ---
+      for (let i = flakes.length - 1; i >= 0; i--) {
+        const f = flakes[i];
+
+        // Gentle sway in X, slow drift down.
+        f.x += f.vx + Math.sin(now * 0.0004 + f.wobble) * 0.18 * speed;
+        f.y += f.vy;
+        f.angle += f.rotSpeed * dt;
+
+        // Fade in near the top.
+        if (f.fadeIn) {
+          f.alpha = Math.min(f.alpha + dt * 1.2, 1);
+          if (f.alpha >= 1) f.fadeIn = false;
+        }
+
+        // Fade out as it leaves the screen bottom.
+        const fadeStart = height * 0.85;
+        const fadeAlpha = f.y > fadeStart
+          ? Math.max(0, 1 - (f.y - fadeStart) / (height * 0.18))
+          : f.alpha;
+
+        if (f.y - f.r > height + 10) {
+          flakes.splice(i, 1);
+          continue;
+        }
+
+        drawFlake(ctx, f, fadeAlpha);
       }
 
       rafId = requestAnimationFrame(frame);
@@ -173,13 +217,11 @@ export default function RainGlass({
       const { x, y } = d;
       const r = d.r;
       const o = opacity;
-      // Sliding drops stretch into a teardrop-ish vertical ellipse.
       const stretch = d.sliding ? Math.min(1 + d.vy * 0.22, 1.6) : 1;
       const rx = r;
       const ry = r * stretch;
 
-      // --- Track left behind while sliding (tapered streak with a bright
-      //     core, like the cleared path of a sliding drop). ---
+      // Track left behind while sliding.
       if (d.sliding && d.trail > 0.4) {
         const len = Math.min(d.trail * 16, 64);
         const wTop = Math.max(rx * 0.16, 0.8);
@@ -195,7 +237,6 @@ export default function RainGlass({
         ctx.lineTo(x + wBot, y);
         ctx.closePath();
         ctx.fill();
-        // Bright waterline core along the track.
         ctx.beginPath();
         ctx.moveTo(x - wBot * 0.3, y);
         ctx.lineTo(x - wTop * 0.3, y - len * 0.92);
@@ -206,8 +247,7 @@ export default function RainGlass({
         ctx.fill();
       }
 
-      // --- Soft ground shadow / pool beneath the drop (water sits on the
-      //     glass and catches a little shadow at its base). ---
+      // Shadow pool.
       const pool = ctx.createRadialGradient(
         x, y + ry * 0.9, r * 0.2,
         x, y + ry * 1.15, r * 1.15,
@@ -220,15 +260,12 @@ export default function RainGlass({
       ctx.fillStyle = pool;
       ctx.fill();
 
-      // --- The drop itself: a tiny lens. Clip so all internal details stay
-      //     inside the droplet silhouette. ---
+      // Lens body.
       ctx.save();
       ctx.beginPath();
       ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
       ctx.clip();
 
-      // Water body — light bends through the lens: faint tint centre, a touch
-      // darker toward the rim where the curve refracts most.
       const g = ctx.createRadialGradient(
         x - rx * 0.3, y - ry * 0.35, rx * 0.08,
         x, y, Math.max(rx, ry),
@@ -242,8 +279,7 @@ export default function RainGlass({
       ctx.fillStyle = g;
       ctx.fill();
 
-      // Internal caustic — light focuses through the lens into a bright
-      // crescent near the base of the drop.
+      // Internal caustic.
       const cau = ctx.createRadialGradient(
         x, y + ry * 0.45, rx * 0.1,
         x, y + ry * 0.5, rx * 0.85,
@@ -256,39 +292,36 @@ export default function RainGlass({
       ctx.fillStyle = cau;
       ctx.fill();
 
-      // Dark contact rim — the bottom-right edge where the lens meets the
-      // glass reads slightly darker in macro rain shots.
+      // Dark contact rim.
       ctx.beginPath();
       ctx.ellipse(x, y, rx, ry, 0, Math.PI * 0.02, Math.PI * 0.62);
       ctx.strokeStyle = rgba(deep, 0.5 * o);
       ctx.lineWidth = Math.max(rx * 0.09, 0.7);
       ctx.stroke();
 
-      // Bright rim light — the lit top-left arc.
+      // Bright rim light.
       ctx.beginPath();
       ctx.ellipse(x, y, rx, ry, 0, Math.PI * 0.98, Math.PI * 1.62);
       ctx.strokeStyle = rgba({ r: 255, g: 255, b: 255 }, 0.42 * o);
       ctx.lineWidth = Math.max(rx * 0.12, 0.8);
       ctx.stroke();
-      // Crisp bright core line on the lit edge.
       ctx.beginPath();
       ctx.ellipse(x, y, rx * 0.96, ry * 0.96, 0, Math.PI * 1.02, Math.PI * 1.58);
       ctx.strokeStyle = rgba({ r: 255, g: 255, b: 255 }, 0.55 * o);
       ctx.lineWidth = Math.max(rx * 0.05, 0.5);
       ctx.stroke();
 
-      // Specular glint — the point reflection of the light source.
+      // Specular glint.
       ctx.beginPath();
       ctx.arc(x - rx * 0.32, y - ry * 0.42, rx * 0.14, 0, Math.PI * 2);
       ctx.fillStyle = rgba({ r: 255, g: 255, b: 255 }, 0.75 * o);
       ctx.fill();
-      // Soft halo around the glint so it reads as a glow, not a dot.
       ctx.beginPath();
       ctx.arc(x - rx * 0.32, y - ry * 0.42, rx * 0.24, 0, Math.PI * 2);
       ctx.fillStyle = rgba({ r: 255, g: 255, b: 255 }, 0.14 * o);
       ctx.fill();
 
-      // Window-frame reflection — the thin curved streak below the glint.
+      // Window-frame reflection streak.
       ctx.beginPath();
       ctx.arc(x - rx * 0.3, y + ry * 0.08, rx * 0.42, Math.PI * 0.35, Math.PI * 1.15);
       ctx.strokeStyle = rgba({ r: 255, g: 255, b: 255 }, 0.28 * o);
@@ -298,12 +331,91 @@ export default function RainGlass({
       ctx.restore();
     };
 
+    // Draw a 6-arm snowflake crystal at position (f.x, f.y).
+    const drawFlake = (ctx, f, alpha) => {
+      const { x, y, r, angle } = f;
+      const o = opacity * alpha;
+      if (o <= 0) return;
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+
+      // Subtle glow halo behind the crystal.
+      const glow = ctx.createRadialGradient(0, 0, r * 0.1, 0, 0, r * 1.8);
+      glow.addColorStop(0, rgba(base, 0.18 * o));
+      glow.addColorStop(1, rgba(base, 0));
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 1.8, 0, Math.PI * 2);
+      ctx.fillStyle = glow;
+      ctx.fill();
+
+      // 6 main arms.
+      const armColor = rgba({ r: 255, g: 255, b: 255 }, 0.88 * o);
+      const branchColor = rgba({ r: 255, g: 255, b: 255 }, 0.62 * o);
+      ctx.strokeStyle = armColor;
+      ctx.lineWidth = Math.max(r * 0.1, 0.9);
+      ctx.lineCap = "round";
+
+      for (let k = 0; k < 6; k++) {
+        ctx.save();
+        ctx.rotate((k * Math.PI) / 3);
+
+        // Main arm.
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, r);
+        ctx.stroke();
+
+        // Two symmetric branches per arm at 35% and 65% of the arm length.
+        const bLen = r * 0.38;
+        ctx.strokeStyle = branchColor;
+        ctx.lineWidth = Math.max(r * 0.075, 0.65);
+
+        [0.35, 0.65].forEach((t) => {
+          const by = r * t;
+          ctx.beginPath();
+          ctx.moveTo(0, by);
+          ctx.lineTo(-bLen, by + bLen * 0.55);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(0, by);
+          ctx.lineTo(bLen, by + bLen * 0.55);
+          ctx.stroke();
+        });
+
+        ctx.strokeStyle = armColor;
+        ctx.lineWidth = Math.max(r * 0.1, 0.9);
+        ctx.restore();
+      }
+
+      // Centre hexagonal plate — small filled hexagon.
+      ctx.beginPath();
+      for (let k = 0; k < 6; k++) {
+        const a = (k * Math.PI) / 3;
+        const px = Math.cos(a) * r * 0.22;
+        const py = Math.sin(a) * r * 0.22;
+        k === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fillStyle = rgba({ r: 255, g: 255, b: 255 }, 0.72 * o);
+      ctx.fill();
+
+      // Sparkle glint — a tiny bright dot at the centre.
+      ctx.beginPath();
+      ctx.arc(0, 0, Math.max(r * 0.1, 0.8), 0, Math.PI * 2);
+      ctx.fillStyle = rgba({ r: 255, g: 255, b: 255 }, 0.95 * o);
+      ctx.fill();
+
+      ctx.restore();
+    };
+
     rafId = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
     };
-  }, [density, color, opacity, size, speed]);
+  }, [density, color, opacity, size, speed, snowRatio]);
 
   return (
     <canvas

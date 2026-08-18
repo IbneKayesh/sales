@@ -542,15 +542,11 @@ export function AppProvider({ children }) {
   // glass). Decorative canvas overlay; independent of the reduceMotion toggle.
   // Rain settings (density %, tint color, opacity %, drop size %) live in
   // bgAnimSettings and only matter while bgAnim === "rain".
-  const [bgAnim, setBgAnimState] = useState(() => {
-    const stored = getStorageLoginData()?.bgAnim;
-    return stored === "none" ? "none" : "rain";
-  });
-  // Where the background animation applies: "workspace" (Workspace page only)
-  // or "app" (application-wide — the whole app shell including windows).
-  const [bgAnimScope, setBgAnimScopeState] = useState(() => {
-    const stored = getStorageLoginData()?.bgAnimScope;
-    return stored === "app" ? "app" : "workspace";
+  const [bgAnim, setBgAnimState] = useState("rain");
+  const [bgAnimScope, setBgAnimScopeState] = useState("app");
+  const [bgAnimMode, setBgAnimModeState] = useState(() => {
+    const stored = getStorageLoginData()?.bgAnimMode;
+    return stored === "always" ? "always" : "idle";
   });
   const [bgAnimSettings, setBgAnimSettingsState] = useState(() => {
     const stored = getStorageLoginData()?.bgAnimSettings;
@@ -563,6 +559,7 @@ export function AppProvider({ children }) {
         opacity: Number(stored.opacity) || 80,
         size: Number(stored.size) || 90,
         speed: Number(stored.speed) || 90,
+        idleMin: stored.idleMin !== undefined ? Number(stored.idleMin) : 1,
       };
     }
     return {
@@ -571,8 +568,73 @@ export function AppProvider({ children }) {
       opacity: 80,
       size: 90,
       speed: 90,
+      idleMin: 1,
     };
   });
+
+  const [isIdle, setIsIdle] = useState(false);
+  const isIdleRef = useRef(false);
+
+  useEffect(() => {
+    isIdleRef.current = isIdle;
+  }, [isIdle]);
+
+  useEffect(() => {
+    const idleMin = bgAnimSettings?.idleMin !== undefined ? bgAnimSettings.idleMin : 1;
+    if (idleMin === 0) {
+      setIsIdle(false);
+      return;
+    }
+    const timeoutMs = idleMin * 60 * 1000;
+    
+    let timerId = null;
+    let lastReset = 0;
+
+    const resetTimer = () => {
+      const now = Date.now();
+      
+      if (isIdleRef.current) {
+        setIsIdle(false);
+      }
+
+      if (!isIdleRef.current && now - lastReset < 200) {
+        return;
+      }
+      
+      lastReset = now;
+      if (timerId) clearTimeout(timerId);
+      timerId = setTimeout(() => {
+        setIsIdle(true);
+      }, timeoutMs);
+    };
+
+    resetTimer();
+
+    const activityEvents = [
+      "mousemove",
+      "keydown",
+      "mousedown",
+      "scroll",
+      "touchstart",
+    ];
+
+    activityEvents.forEach((event) => {
+      window.addEventListener(event, resetTimer, { passive: true });
+    });
+
+    return () => {
+      if (timerId) clearTimeout(timerId);
+      activityEvents.forEach((event) => {
+        window.removeEventListener(event, resetTimer);
+      });
+    };
+  }, [bgAnimSettings?.idleMin]);
+
+  // Derived: whether the rain/snow animation should actually render.
+  // "always" → always visible, user works through it non-blocking.
+  // "idle"   → only visible while the idle timer has fired.
+  const showRain = bgAnimMode === "always" || (bgAnimMode === "idle" && isIdle);
+
   const [users, setUsers] = useState(initialUsers);
   const [transactions, setTransactions] = useState(initialTransactions);
 
@@ -856,6 +918,14 @@ export function AppProvider({ children }) {
     if (value !== "workspace" && value !== "app") return;
     setBgAnimScopeState(value);
     setStorageLoginData({ bgAnimScope: value });
+  }, []);
+
+  // Set the animation trigger mode: "idle" (only when user is idle) or
+  // "always" (rains all the time, no blur, non-blocking).
+  const setBgAnimMode = useCallback((value) => {
+    if (value !== "idle" && value !== "always") return;
+    setBgAnimModeState(value);
+    setStorageLoginData({ bgAnimMode: value });
   }, []);
 
   // Update one rain setting (density/color/opacity/size) and persist all of
@@ -1152,6 +1222,7 @@ export function AppProvider({ children }) {
     <AppContext.Provider
       value={{
         user,
+        business,
         login,
         logout,
         sidebarOpen,
@@ -1202,8 +1273,12 @@ export function AppProvider({ children }) {
         setBgAnim,
         bgAnimScope,
         setBgAnimScope,
+        bgAnimMode,
+        setBgAnimMode,
         bgAnimSettings,
         setBgAnimSetting,
+        isIdle,
+        showRain,
         popups,
         openPopup,
         closePopup,

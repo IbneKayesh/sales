@@ -27,6 +27,7 @@ import logoBsWhite from "../assets/logo-bs-white.png";
 export default function Topbar({ className = "", ...rest }) {
   const {
     user,
+    business,
     logout,
     openPopup,
     popups,
@@ -213,7 +214,15 @@ export default function Topbar({ className = "", ...rest }) {
         </span>
         <span className="topbar__brand-text">
           <span className="topbar__title">bSuite</span>
-          <span className="topbar__subtitle">Your Company Name</span>
+          <span className="topbar__subtitle">
+            {business?.bsins_cname},
+            {business?.bsins_addrs && (
+              <span style={{ flexShrink: 0 }}> {business.bsins_addrs},</span>
+            )}
+            {business?.bsins_crncy && (
+              <span style={{ flexShrink: 0 }}> {business.bsins_crncy}</span>
+            )}
+          </span>
         </span>
       </NavLink>
 

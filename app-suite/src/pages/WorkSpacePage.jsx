@@ -1,16 +1,4 @@
-import { useApp } from "@/context/AppContext";
-import RainGlass from "@/components/RainGlass";
-
 const WorkSpacePage = () => {
-  const { bgAnim, bgAnimScope, bgAnimSettings } = useApp();
-  // Local overlay only when the animation is scoped to this page; the
-  // "app" scope renders a fixed full-viewport overlay from App.jsx instead.
-  const showRain = bgAnim === "rain" && bgAnimScope !== "app";
-  const rain =
-    bgAnimSettings && typeof bgAnimSettings === "object"
-      ? bgAnimSettings
-      : { density: 100, color: "#dbeafe", opacity: 100, size: 100 };
-
   return (
     <div
       style={{
@@ -31,24 +19,6 @@ const WorkSpacePage = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      {/* Rain on glass — decorative droplet animation layered over the
-          background but under the heading (Theme page > Background animation).
-          The canvas fills this pane and ignores pointer events. */}
-      {showRain && (
-        <RainGlass
-          density={rain.density / 100}
-          color={rain.color}
-          opacity={rain.opacity / 100}
-          size={rain.size / 100}
-          speed={rain.speed / 100}
-          style={{
-            position: "absolute",
-            inset: 0,
-            pointerEvents: "none",
-            zIndex: 1,
-          }}
-        />
-      )}
       <h1
         style={{
           position: "relative",

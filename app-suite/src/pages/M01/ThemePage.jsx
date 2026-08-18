@@ -62,6 +62,7 @@ const WALLPAPER_PRESETS = [
   { id: "boats", name: "Boats", desc: "Dark · sunset sails" },
   { id: "birds", name: "Birds", desc: "Light · dawn flight" },
   { id: "oceans", name: "Oceans", desc: "Light · turquoise sea" },
+  { id: "bluesky", name: "Blue Sky", desc: "Light · blue sky" },
 ];
 
 // Lazy loaders for the preset-card thumbnails (tiny, code-split by Vite).
@@ -86,6 +87,7 @@ const thumbLoaders = {
   boats: () => import("@/assets/wallpaper-boats-thumb.png"),
   birds: () => import("@/assets/wallpaper-birds-thumb.png"),
   oceans: () => import("@/assets/wallpaper-oceans-thumb.png"),
+  bluesky: () => import("@/assets/wallpaper-blue-sky.jpg"),
 };
 
 // Full-resolution loaders — fetched only when a preset is clicked.
@@ -110,6 +112,7 @@ const fullLoaders = {
   boats: () => import("@/assets/wallpaper-boats.png"),
   birds: () => import("@/assets/wallpaper-birds.png"),
   oceans: () => import("@/assets/wallpaper-oceans.png"),
+  bluesky: () => import("@/assets/wallpaper-blue-sky.jpg"),
 };
 
 const DARK_MODES = [
@@ -438,6 +441,8 @@ const ThemePage = () => {
     setBgAnim,
     bgAnimScope,
     setBgAnimScope,
+    bgAnimMode,
+    setBgAnimMode,
     bgAnimSettings,
     setBgAnimSetting,
   } = useApp();
@@ -537,12 +542,14 @@ const ThemePage = () => {
     setTopbarBgColor(null);
     setLogoImage(logoBs);
     setBgAnim("rain");
-    setBgAnimScope("workspace");
-    setBgAnimSetting("density", 85);
+    setBgAnimScope("app");
+    setBgAnimMode("idle");
+    setBgAnimSetting("idleMin", 5);
+    setBgAnimSetting("density", 95);
     setBgAnimSetting("color", getRainColor(DEFAULT_THEME, null));
     setBgAnimSetting("opacity", 80);
-    setBgAnimSetting("size", 90);
-    setBgAnimSetting("speed", 90);
+    setBgAnimSetting("size", 45);
+    setBgAnimSetting("speed", 10);
     toast.success("Preferences reset to default");
   };
 
@@ -568,12 +575,14 @@ const ThemePage = () => {
     !topbarBgColor &&
     logoImage === logoBs &&
     bgAnim === "rain" &&
-    bgAnimScope === "workspace" &&
-    bgAnimSettings?.density === 85 &&
+    bgAnimScope === "app" &&
+    bgAnimMode === "idle" &&
+    bgAnimSettings?.idleMin === 5 &&
+    bgAnimSettings?.density === 95 &&
     bgAnimSettings?.color === getRainColor(DEFAULT_THEME, null) &&
     bgAnimSettings?.opacity === 80 &&
-    bgAnimSettings?.size === 90 &&
-    bgAnimSettings?.speed === 90;
+    bgAnimSettings?.size === 45 &&
+    bgAnimSettings?.speed === 10;
 
   return (
     <div className="page-wrap">
@@ -1211,10 +1220,10 @@ const ThemePage = () => {
               aria-label="Preset target"
             >
               {[
+                { id: "topbar", label: "Top Bar" },
                 { id: "workspace", label: "Workspace" },
-                { id: "page", label: "Page background" },
-                { id: "topbar", label: "Top bar" },
-                { id: "titlebar", label: "Title bar" },
+                { id: "page", label: "Page Background" },
+                { id: "titlebar", label: "Page Title" },
               ].map((t) => (
                 <SettingButton
                   key={t.id}
@@ -1341,82 +1350,62 @@ const ThemePage = () => {
                 Background animation
               </Badge>
               <span className="general-page__section-note">
-                Decorative animation over the Workspace page or the whole app
+                {bgAnimMode === "always"
+                  ? "Rain & snow falls continuously — works alongside you"
+                  : "Rain & snow starts after the screen is idle"}
               </span>
             </div>
             </PageCardHeader>
             <PageCardBody>
-            <div
-              style={{ display: "flex", gap: 8, flexWrap: "wrap" }}
-              role="radiogroup"
-              aria-label="Background animation"
-            >
-              <SettingButton
-                selected={bgAnim === "none"}
-                onClick={() => setBgAnim("none")}
-                title="No background animation"
-              >
-                None
-              </SettingButton>
-              <SettingButton
-                selected={bgAnim === "rain"}
-                onClick={() => setBgAnim("rain")}
-                title="Rain on glass — droplets gather, slide and merge"
-              >
-                Rain on glass
-              </SettingButton>
-            </div>
-            {bgAnim === "rain" && (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  marginTop: 14,
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: "var(--fs-sm)",
-                    color: "var(--text-muted)",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  Applies to
-                </span>
-                <div
-                  style={{ display: "flex", gap: 8 }}
-                  role="radiogroup"
-                  aria-label="Rain animation scope"
-                >
-                  <SettingButton
-                    selected={bgAnimScope !== "app"}
-                    onClick={() => setBgAnimScope("workspace")}
-                    title="Show the animation only on the Workspace page"
-                  >
-                    Workspace page
-                  </SettingButton>
-                  <SettingButton
-                    selected={bgAnimScope === "app"}
-                    onClick={() => setBgAnimScope("app")}
-                    title="Show the animation across the whole app, including open windows"
-                  >
-                    Whole app
-                  </SettingButton>
-                </div>
-              </div>
-            )}
-            {bgAnim === "rain" && (
               <div
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  gap: 10,
-                  marginTop: 14,
+                  gap: 14,
                   maxWidth: 520,
                 }}
               >
+                {/* Mode: Idle vs Always */}
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <span
+                    style={{
+                      fontSize: "var(--fs-sm)",
+                      color: "var(--text-muted)",
+                      whiteSpace: "nowrap",
+                      minWidth: 70,
+                    }}
+                  >
+                    Mode
+                  </span>
+                  <div style={{ display: "flex", gap: 8 }} role="radiogroup" aria-label="Animation trigger mode">
+                    <SettingButton
+                      selected={bgAnimMode !== "always"}
+                      onClick={() => setBgAnimMode("idle")}
+                      title="Rain starts only when the screen has been idle for the set time"
+                    >
+                      Idle
+                    </SettingButton>
+                    <SettingButton
+                      selected={bgAnimMode === "always"}
+                      onClick={() => setBgAnimMode("always")}
+                      title="Rain falls continuously — non-blocking, you can work through it"
+                    >
+                      Always
+                    </SettingButton>
+                  </div>
+                </div>
+
+                {/* Sliders */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {[
+                  {
+                    key: "idleMin",
+                    label: "Idle time",
+                    min: 0,
+                    max: 10,
+                    step: 1,
+                    title: "Screen idle time threshold before the rain starts falling (0 = disabled)",
+                  },
                   {
                     key: "density",
                     label: "Density",
@@ -1438,7 +1427,7 @@ const ThemePage = () => {
                   {
                     key: "size",
                     label: "Drop size",
-                    min: 50,
+                    min: 20,
                     max: 150,
                     step: 5,
                     unit: "%",
@@ -1447,13 +1436,13 @@ const ThemePage = () => {
                   {
                     key: "speed",
                     label: "Speed / wind",
-                    min: 50,
-                    max: 200,
+                    min: 5,
+                    max: 100,
                     step: 5,
                     unit: "%",
                     title: "How fast drops fall — higher speeds also push them sideways with more wind",
                   },
-                ].map((s) => (
+                ].filter((s) => !(s.key === "idleMin" && bgAnimMode === "always")).map((s) => (
                   <div
                     key={s.key}
                     style={{
@@ -1477,7 +1466,7 @@ const ThemePage = () => {
                       min={s.min}
                       max={s.max}
                       step={s.step}
-                      value={bgAnimSettings?.[s.key] ?? 100}
+                      value={bgAnimSettings?.[s.key] ?? (s.key === "idleMin" ? 1 : 100)}
                       onChange={(e) =>
                         setBgAnimSetting(s.key, Number(e.target.value))
                       }
@@ -1496,13 +1485,19 @@ const ThemePage = () => {
                         color: "var(--text-secondary)",
                         minWidth: 44,
                         textAlign: "right",
+                        whiteSpace: "nowrap",
                       }}
                     >
-                      {bgAnimSettings?.[s.key] ?? 100}
-                      {s.unit}
+                      {s.key === "idleMin" ? (
+                        (bgAnimSettings?.idleMin ?? 1) === 0 ? "Off" : `${bgAnimSettings?.idleMin ?? 1} min`
+                      ) : (
+                        `${bgAnimSettings?.[s.key] ?? 100}${s.unit}`
+                      )}
                     </span>
                   </div>
                 ))}
+                </div>
+                {/* Drop color */}
                 <div
                   style={{
                     display: "flex",
@@ -1545,8 +1540,7 @@ const ThemePage = () => {
                   </span>
                 </div>
               </div>
-            )}
-          </PageCardBody>
+            </PageCardBody>
           </PageCard>
 
           <PageCard className="general-page__section-card general-page__section-card--full">

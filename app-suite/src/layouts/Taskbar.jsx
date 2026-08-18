@@ -134,9 +134,6 @@ export default function Taskbar() {
           {business?.bsins_cname || "bSuite"}
         </strong>
       </button>
-      {business?.bsins_crncy && (
-        <span style={{ flexShrink: 0 }}>{business.bsins_crncy}</span>
-      )}
 
       {/* Pinned menu quick-launch shortcuts */}
       {pinnedMenus.length > 0 && (

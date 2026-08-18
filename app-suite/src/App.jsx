@@ -7,11 +7,11 @@ import LoginPage from './pages/auth/LoginPage'
 import ErrorBoundary from './components/ErrorBoundary'
 import Windows from './layouts/Window'
 import Taskbar from './layouts/Taskbar'
-import RainGlass from './components/RainGlass'
+import RainOnGlass from './components/RainOnGlass/RainOnGlass'
 import './App.css'
 
 function AppContent() {
-  const { user, logout, bgAnim, bgAnimScope, bgAnimSettings } = useApp()
+  const { user, logout, bgAnimSettings, bgAnimMode, isIdle, showRain } = useApp()
 
   if (!user) {
     return <LoginPage />
@@ -29,17 +29,33 @@ function AppContent() {
       <Windows />
       {/* Taskbar strip for minimized windows, pinned to the bottom of the screen */}
       <Taskbar />
-      {/* Rain on glass — application-wide overlay (Theme page > Background
-          animation > Whole app). Fixed to the viewport so it covers the whole
-          app shell including open windows; purely decorative, never blocks
-          interaction. */}
-      {bgAnim === 'rain' && bgAnimScope === 'app' && (
-        <RainGlass
-          density={(bgAnimSettings?.density ?? 100) / 100}
+      {/* Idle-mode blur backdrop — a frosted glass veil that appears beneath
+          the rain when the user is idle and mode is "idle". Does not render in
+          "always" mode so the user can work through the rain unobstructed. */}
+      {bgAnimMode === 'idle' && isIdle && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backdropFilter: 'blur(0.7px) brightness(0.90)',
+            WebkitBackdropFilter: 'blur(0.7px) brightness(0.90)',
+            background: 'rgba(0,0,0,0.08)',
+            zIndex: 9998,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+      {/* Rain + snow animation. In "idle" mode it acts as a screen-saver
+          (zIndex above the blur). In "always" mode it falls in front of the
+          UI but pointer events pass through so the app stays usable. */}
+      {showRain && (
+        <RainOnGlass
+          density={(bgAnimSettings?.density ?? 85) / 100}
           color={bgAnimSettings?.color || '#dbeafe'}
-          opacity={(bgAnimSettings?.opacity ?? 100) / 100}
-          size={(bgAnimSettings?.size ?? 100) / 100}
-          speed={(bgAnimSettings?.speed ?? 100) / 100}
+          opacity={(bgAnimSettings?.opacity ?? 80) / 100}
+          size={(bgAnimSettings?.size ?? 90) / 100}
+          speed={(bgAnimSettings?.speed ?? 90) / 100}
           style={{
             position: 'fixed',
             inset: 0,
