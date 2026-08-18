@@ -538,12 +538,20 @@ export function AppProvider({ children }) {
       ? stored
       : 30;
   });
-  // Background animation for the Workspace page: "none" or "rain" (rain on
-  // glass). Decorative canvas overlay; independent of the reduceMotion toggle.
-  // Rain settings (density %, tint color, opacity %, drop size %) live in
-  // bgAnimSettings and only matter while bgAnim === "rain".
-  const [bgAnim, setBgAnimState] = useState("rain");
-  const [bgAnimScope, setBgAnimScopeState] = useState("app");
+  // Background animation for the Workspace page: "none", "rain" (rain on
+  // glass), "analog" (analog clock), or "digital" (digital clock). Decorative overlay; independent of the
+  // reduceMotion toggle. Rain settings (density %, tint color, opacity %,
+  // drop size %) live in bgAnimSettings and only matter while bgAnim === "rain".
+  const [bgAnim, setBgAnimState] = useState(() => {
+    const stored = getStorageLoginData()?.bgAnim;
+    return stored === "rain" || stored === "analog" || stored === "digital" || stored === "none"
+      ? stored
+      : "rain";
+  });
+  const [bgAnimScope, setBgAnimScopeState] = useState(() => {
+    const stored = getStorageLoginData()?.bgAnimScope;
+    return stored === "workspace" || stored === "app" ? stored : "app";
+  });
   const [bgAnimMode, setBgAnimModeState] = useState(() => {
     const stored = getStorageLoginData()?.bgAnimMode;
     return stored === "always" ? "always" : "idle";
@@ -560,6 +568,8 @@ export function AppProvider({ children }) {
         size: Number(stored.size) || 90,
         speed: Number(stored.speed) || 90,
         idleMin: stored.idleMin !== undefined ? Number(stored.idleMin) : 1,
+        wind: stored.wind !== undefined ? Number(stored.wind) : 60,
+        gustSpeed: stored.gustSpeed !== undefined ? Number(stored.gustSpeed) : 100,
       };
     }
     return {
@@ -569,6 +579,8 @@ export function AppProvider({ children }) {
       size: 90,
       speed: 90,
       idleMin: 1,
+      wind: 60,
+      gustSpeed: 100,
     };
   });
 
@@ -630,10 +642,12 @@ export function AppProvider({ children }) {
     };
   }, [bgAnimSettings?.idleMin]);
 
-  // Derived: whether the rain/snow animation should actually render.
+  // Derived: whether the background animation (rain, analog, or digital) should render.
   // "always" → always visible, user works through it non-blocking.
   // "idle"   → only visible while the idle timer has fired.
-  const showRain = bgAnimMode === "always" || (bgAnimMode === "idle" && isIdle);
+  const showBgAnim =
+    bgAnim !== "none" &&
+    (bgAnimMode === "always" || (bgAnimMode === "idle" && isIdle));
 
   const [users, setUsers] = useState(initialUsers);
   const [transactions, setTransactions] = useState(initialTransactions);
@@ -906,9 +920,9 @@ export function AppProvider({ children }) {
     setStorageLoginData({ boxedGap: next });
   }, []);
 
-  // Set the Workspace background animation: "none" or "rain".
+  // Set the Workspace background animation: "none", "rain", "analog", or "digital".
   const setBgAnim = useCallback((value) => {
-    if (value !== "none" && value !== "rain") return;
+    if (value !== "none" && value !== "rain" && value !== "analog" && value !== "digital") return;
     setBgAnimState(value);
     setStorageLoginData({ bgAnim: value });
   }, []);
@@ -1278,7 +1292,7 @@ export function AppProvider({ children }) {
         bgAnimSettings,
         setBgAnimSetting,
         isIdle,
-        showRain,
+        showBgAnim,
         popups,
         openPopup,
         closePopup,

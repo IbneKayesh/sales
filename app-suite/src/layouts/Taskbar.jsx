@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Routes, useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
-import { IconClose, IconChevronDown, IconEye } from "@/icons";
+import { IconClose, IconChevronDown, IconEye, IconPin, IconRestore } from "@/icons";
 import FullscreenButton from "@/components/FullscreenButton";
 import Calendar from "@/components/Calendar";
 import getRoutes from "@/routes";
@@ -42,6 +42,7 @@ export default function Taskbar() {
     user,
     business,
     pinnedMenuIds,
+    togglePinMenu,
   } = useApp();
   const navigate = useNavigate();
 
@@ -195,6 +196,8 @@ export default function Taskbar() {
             <TaskbarItem
               key={p.key}
               popup={p}
+              isPinned={pinnedMenuIds.includes(p.menu.id)}
+              onTogglePin={() => togglePinMenu(p.menu.id)}
               onToggle={() =>
                 p.hidden ? restorePopup(p.key) : hidePopup(p.key)
               }
@@ -497,13 +500,17 @@ function TaskbarPreview({ popup, anchor }) {
   );
 }
 
-function TaskbarItem({ popup, onToggle, onClose }) {
+function TaskbarItem({ popup, onToggle, onClose, isPinned, onTogglePin }) {
   const [hovered, setHovered] = useState(false);
   const [anchor, setAnchor] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuAnchor, setMenuAnchor] = useState(null);
   const wrapRef = useRef(null);
+  const menuRef = useRef(null);
   const hidden = popup.hidden;
 
   const showPreview = () => {
+    if (menuOpen) return;
     setHovered(true);
     const r = wrapRef.current?.getBoundingClientRect();
     if (r) setAnchor({ left: r.left, width: r.width });
@@ -512,6 +519,34 @@ function TaskbarItem({ popup, onToggle, onClose }) {
   const hidePreview = () => {
     setHovered(false);
     setAnchor(null);
+  };
+
+  // Close the right-click menu on outside click or Escape.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onDown = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [menuOpen]);
+
+  // Right-click a window button for its taskbar menu (close/minimize/pin).
+  const openMenu = (e) => {
+    e.preventDefault();
+    setHovered(false);
+    const r = wrapRef.current?.getBoundingClientRect();
+    if (r) setMenuAnchor({ left: r.left, width: r.width, top: r.top });
+    setMenuOpen(true);
   };
 
   return (
@@ -528,6 +563,7 @@ function TaskbarItem({ popup, onToggle, onClose }) {
       <button
         type="button"
         onClick={onToggle}
+        onContextMenu={openMenu}
         title={
           hidden
             ? `Open ${popup.menu.menus_mname}`
@@ -569,7 +605,7 @@ function TaskbarItem({ popup, onToggle, onClose }) {
           {popup.menu.menus_mname}
         </span>
       </button>
-      {hovered && (
+      {!menuOpen && hovered && (
         <button
           type="button"
           onClick={onClose}
@@ -596,8 +632,190 @@ function TaskbarItem({ popup, onToggle, onClose }) {
           <IconClose size={11} />
         </button>
       )}
-      {/* Live window preview on hover (OS taskbar style) */}
-      <TaskbarPreview popup={popup} anchor={anchor} />
+      {/* Live window preview on hover (OS taskbar style); hidden while the
+          context menu is open so they don't overlap. */}
+      {!menuOpen && <TaskbarPreview popup={popup} anchor={anchor} />}
+      {/* Right-click taskbar menu: restore/minimize, pin/unpin, close. */}
+      {menuOpen && menuAnchor && (
+        <TaskbarContextMenu
+          popup={popup}
+          hidden={hidden}
+          anchor={menuAnchor}
+          isPinned={isPinned}
+          onToggle={onToggle}
+          onClose={onClose}
+          onTogglePin={onTogglePin}
+          onDone={() => setMenuOpen(false)}
+          innerRef={menuRef}
+        />
+      )}
     </div>
+  );
+}
+
+/**
+ * Right-click context menu for a taskbar window button: restore/minimize,
+ * pin/unpin to the taskbar quick-launch, and close. Portaled to <body> (fixed
+ * positioning) so the taskbar's overflow-x cannot clip it; anchored just above
+ * the button, like the clock's calendar popup.
+ */
+function TaskbarContextMenu({
+  popup,
+  hidden,
+  anchor,
+  isPinned,
+  onToggle,
+  onClose,
+  onTogglePin,
+  onDone,
+  innerRef,
+}) {
+  const W = 200;
+  const left = Math.min(Math.max(anchor.left, 8), window.innerWidth - W - 8);
+  return createPortal(
+    <div
+      ref={innerRef}
+      role="menu"
+      style={{
+        position: "fixed",
+        left,
+        bottom: `${window.innerHeight - anchor.top + 8}px`,
+        width: W,
+        padding: 4,
+        background: "var(--surface, #fff)",
+        border: "1px solid var(--border, #e0e0e0)",
+        borderRadius: "var(--radius-lg)",
+        boxShadow: "var(--shadow-lg)",
+        animation: "fade-in-down var(--transition-fast)",
+        fontFamily: "var(--font-sans)",
+        fontSize: 12,
+        color: "var(--text-primary, #111)",
+        userSelect: "none",
+        zIndex: "var(--z-toast, 2000)",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          padding: "6px 10px 8px",
+          borderBottom: "1px solid var(--border, #e0e0e0)",
+          marginBottom: 4,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+        }}
+      >
+        <span
+          style={{
+            display: "inline-flex",
+            flexShrink: 0,
+            color: moduleShade(popup.menu.id),
+          }}
+        >
+          {popup.menu.menus_micon}
+        </span>
+        <span
+          style={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            fontWeight: 600,
+            color: "var(--text-primary, #111)",
+          }}
+        >
+          {popup.menu.menus_mname}
+        </span>
+      </div>
+      <TaskbarMenuItem
+        icon={
+          hidden ? <IconRestore size={14} /> : <IconChevronDown size={14} />
+        }
+        label={hidden ? "Restore" : "Minimize"}
+        onClick={() => {
+          onToggle();
+          onDone();
+        }}
+      />
+      <TaskbarMenuItem
+        icon={<IconPin size={14} />}
+        label={isPinned ? "Unpin from taskbar" : "Pin to taskbar"}
+        onClick={() => {
+          onTogglePin();
+          onDone();
+        }}
+      />
+      <div
+        style={{
+          height: 1,
+          background: "var(--border, #e0e0e0)",
+          margin: "4px 6px",
+        }}
+      />
+      <TaskbarMenuItem
+        icon={<IconClose size={14} />}
+        label="Close window"
+        danger
+        onClick={() => {
+          onClose();
+          onDone();
+        }}
+      />
+    </div>,
+    document.body,
+  );
+}
+
+/** Single action row inside the taskbar context menu. */
+function TaskbarMenuItem({ icon, label, onClick, danger }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <button
+      type="button"
+      role="menuitem"
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      onClick={onClick}
+      style={{
+        display: "flex",
+        width: "100%",
+        alignItems: "center",
+        gap: 8,
+        padding: "7px 10px",
+        fontSize: 12,
+        borderRadius: 6,
+        border: "none",
+        background: hov
+          ? danger
+            ? "var(--danger-bg, rgba(239,68,68,0.12))"
+            : "var(--surface-alt, #f1f3f5)"
+          : "transparent",
+        color:
+          hov && danger ? "var(--danger, #ef4444)" : "var(--text-primary, #111)",
+        cursor: "pointer",
+        textAlign: "left",
+      }}
+    >
+      <span
+        style={{
+          display: "inline-flex",
+          flexShrink: 0,
+          color:
+            hov && danger
+              ? "var(--danger, #ef4444)"
+              : "var(--text-secondary, #4b5563)",
+        }}
+      >
+        {icon}
+      </span>
+      <span
+        style={{
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {label}
+      </span>
+    </button>
   );
 }

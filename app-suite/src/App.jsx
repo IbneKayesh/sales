@@ -7,11 +7,13 @@ import LoginPage from './pages/auth/LoginPage'
 import ErrorBoundary from './components/ErrorBoundary'
 import Windows from './layouts/Window'
 import Taskbar from './layouts/Taskbar'
-import RainOnGlass from './components/RainOnGlass/RainOnGlass'
+import RainGlass from './components/RainGlass'
+import AnalogClock from './components/AnalogClock'
+import DigitalClock from './components/DigitalClock'
 import './App.css'
 
 function AppContent() {
-  const { user, logout, bgAnimSettings, bgAnimMode, isIdle, showRain } = useApp()
+  const { user, logout, bgAnim, bgAnimSettings, bgAnimMode, isIdle, showBgAnim } = useApp()
 
   if (!user) {
     return <LoginPage />
@@ -46,16 +48,20 @@ function AppContent() {
           }}
         />
       )}
-      {/* Rain + snow animation. In "idle" mode it acts as a screen-saver
-          (zIndex above the blur). In "always" mode it falls in front of the
-          UI but pointer events pass through so the app stays usable. */}
-      {showRain && (
-        <RainOnGlass
+      {/* Background animation overlay. In "idle" mode it acts as a
+          screen-saver (zIndex above the blur). In "always" mode it falls in
+          front of the UI but pointer events pass through so the app stays
+          usable. Rain = full-screen rain-on-glass; fire = a campfire scene
+          centered on screen. */}
+      {showBgAnim && bgAnim === 'rain' && (
+        <RainGlass
           density={(bgAnimSettings?.density ?? 85) / 100}
           color={bgAnimSettings?.color || '#dbeafe'}
           opacity={(bgAnimSettings?.opacity ?? 80) / 100}
           size={(bgAnimSettings?.size ?? 90) / 100}
           speed={(bgAnimSettings?.speed ?? 90) / 100}
+          wind={(bgAnimSettings?.wind ?? 60) / 100}
+          gustSpeed={(bgAnimSettings?.gustSpeed ?? 100) / 100}
           style={{
             position: 'fixed',
             inset: 0,
@@ -65,6 +71,38 @@ function AppContent() {
             zIndex: 9999,
           }}
         />
+      )}
+      {showBgAnim && bgAnim === 'analog' && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            zIndex: 9999,
+          }}
+        >
+          <AnalogClock noBackdrop={bgAnimMode === 'always'} />
+        </div>
+      )}
+      {showBgAnim && bgAnim === 'digital' && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            zIndex: 9999,
+          }}
+        >
+          <DigitalClock noBackdrop={bgAnimMode === 'always'} />
+        </div>
       )}
     </Layout>
   )

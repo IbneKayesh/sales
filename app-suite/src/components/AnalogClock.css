@@ -1,0 +1,242 @@
+/* --- ANALOG CLOCK STYLES --- */
+/* Prefix: ac- (Analog Clock) */
+
+.ac-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+  position: relative;
+  overflow: hidden;
+  min-height: 100%;
+  width: 100%;
+}
+
+.ac-ambient-light {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: 0;
+  animation: ac-float 15s infinite ease-in-out alternate;
+  opacity: 0.6;
+}
+
+.ac-light-1 {
+  width: 500px;
+  height: 500px;
+  background: var(--primary-glow);
+  top: -10%;
+  left: -10%;
+}
+
+.ac-light-2 {
+  width: 450px;
+  height: 450px;
+  background: var(--info-light);
+  bottom: -10%;
+  right: -10%;
+  animation-delay: -7s;
+}
+
+.ac-light-3 {
+  width: 400px;
+  height: 400px;
+  background: var(--danger-light);
+  top: 40%;
+  left: 60%;
+  animation-delay: -4s;
+}
+
+@keyframes ac-float {
+  0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+  50%  { transform: translate(60px, 40px) scale(1.1) rotate(10deg); }
+  100% { transform: translate(-20px, 80px) scale(0.9) rotate(-10deg); }
+}
+
+.ac-glass-card {
+  width: min(90%, 400px);
+  height: auto;
+  min-height: 480px;
+  border-radius: 40px;
+  background: rgba(var(--bg-card), 0.4);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--border-light);
+  box-shadow:
+    var(--shadow-lg),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  position: relative;
+  z-index: 1;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  transition: var(--transition);
+}
+
+/* Suppress backdrop-filter in always-on mode */
+.ac-glass-card--no-backdrop {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.ac-glass-card:hover {
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary-glow);
+}
+
+.ac-clock-face {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--surface-1) 0%, var(--surface-2) 100%);
+  box-shadow:
+    inset 0 15px 30px rgba(0, 0, 0, 0.05),
+    0 10px 25px rgba(0, 0, 0, 0.05),
+    0 0 0 8px var(--surface-2);
+  border: 1px solid var(--border-light);
+}
+
+.ac-hour-marker {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.ac-marker {
+  width: 2px;
+  height: 12px;
+  background: var(--text-soft);
+  margin: 0 auto;
+  border-radius: 4px;
+  opacity: 0.6;
+}
+
+.ac-hour-marker:nth-child(3n+1) .ac-marker {
+  background: var(--primary);
+  height: 18px;
+  width: 4px;
+  opacity: 1;
+  box-shadow: 0 0 8px var(--primary-glow);
+}
+
+.ac-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transform-origin: center;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ac-sec {
+  transition: transform 0.2s cubic-bezier(0.4, 2.08, 0.55, 0.44);
+}
+
+.ac-ring::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 10px;
+}
+
+.ac-sec::before {
+  width: 2px;
+  height: 150px;
+  background: var(--danger);
+  top: 15px;
+  box-shadow: 0 0 10px var(--danger);
+}
+
+.ac-min::before {
+  width: 5px;
+  height: 110px;
+  background: var(--primary);
+  top: 35px;
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
+.ac-hr::before {
+  width: 8px;
+  height: 80px;
+  background: var(--text-main);
+  top: 65px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.ac-center-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background: var(--text-main);
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  border: 3px solid var(--surface-1);
+}
+
+.ac-clock-info {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ac-digital-time {
+  font-size: 44px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ac-digital-date {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* Fullscreen standalone wrapper */
+.ac-fullscreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+@media (max-width: 480px) {
+  .ac-glass-card {
+    width: 90vw;
+    min-height: 420px;
+    padding: 30px 15px;
+  }
+
+  .ac-clock-face {
+    width: 220px;
+    height: 220px;
+  }
+
+  .ac-digital-time {
+    font-size: 36px;
+  }
+}

@@ -51,6 +51,8 @@ const confData = {
     size: 90,
     speed: 90,
     idleMin: 1,
+    wind: 60,
+    gustSpeed: 100,
   },
   sidebar: "visible",
 };

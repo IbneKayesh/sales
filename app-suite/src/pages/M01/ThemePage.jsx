@@ -1350,9 +1350,15 @@ const ThemePage = () => {
                 Background animation
               </Badge>
               <span className="general-page__section-note">
-                {bgAnimMode === "always"
-                  ? "Rain & snow falls continuously — works alongside you"
-                  : "Rain & snow starts after the screen is idle"}
+                {bgAnim === "rain"
+                  ? bgAnimMode === "always"
+                    ? "The background animation runs continuously — work right through it"
+                    : "The background animation starts after the screen is idle, over a frosted backdrop"
+                  : bgAnim === "analog"
+                  ? "The analog clock screensaver starts after the screen is idle, over a frosted backdrop"
+                  : bgAnim === "digital"
+                  ? "The digital clock screensaver starts after the screen is idle, over a frosted backdrop"
+                  : "Background animation settings"}
               </span>
             </div>
             </PageCardHeader>
@@ -1365,7 +1371,7 @@ const ThemePage = () => {
                   maxWidth: 520,
                 }}
               >
-                {/* Mode: Idle vs Always */}
+                {/* Animation type: Rain On Glass vs Clocks */}
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <span
                     style={{
@@ -1375,27 +1381,74 @@ const ThemePage = () => {
                       minWidth: 70,
                     }}
                   >
-                    Mode
+                    Animation
                   </span>
-                  <div style={{ display: "flex", gap: 8 }} role="radiogroup" aria-label="Animation trigger mode">
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }} role="radiogroup" aria-label="Background animation type">
                     <SettingButton
-                      selected={bgAnimMode !== "always"}
-                      onClick={() => setBgAnimMode("idle")}
-                      title="Rain starts only when the screen has been idle for the set time"
+                      selected={bgAnim === "rain"}
+                      onClick={() => setBgAnim("rain")}
+                      title="Rain and snow falling on a glass pane"
                     >
-                      Idle
+                      Rain On Glass
                     </SettingButton>
                     <SettingButton
-                      selected={bgAnimMode === "always"}
-                      onClick={() => setBgAnimMode("always")}
-                      title="Rain falls continuously — non-blocking, you can work through it"
+                      selected={bgAnim === "analog"}
+                      onClick={() => {
+                        setBgAnim("analog");
+                        if (bgAnimMode === "always") setBgAnimMode("idle");
+                      }}
+                      title="A beautiful analog clock centered on the screen"
                     >
-                      Always
+                      Analog Clock
+                    </SettingButton>
+                    <SettingButton
+                      selected={bgAnim === "digital"}
+                      onClick={() => {
+                        setBgAnim("digital");
+                        if (bgAnimMode === "always") setBgAnimMode("idle");
+                      }}
+                      title="A futuristic rotating digital clock"
+                    >
+                      Digital Clock
                     </SettingButton>
                   </div>
                 </div>
 
-                {/* Sliders */}
+                {/* Mode: Idle vs Always (applicable to Rain On Glass) */}
+                {bgAnim === "rain" && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <span
+                      style={{
+                        fontSize: "var(--fs-sm)",
+                        color: "var(--text-muted)",
+                        whiteSpace: "nowrap",
+                        minWidth: 70,
+                      }}
+                    >
+                      Mode
+                    </span>
+                    <div style={{ display: "flex", gap: 8 }} role="radiogroup" aria-label="Animation trigger mode">
+                      <SettingButton
+                        selected={bgAnimMode !== "always"}
+                        onClick={() => setBgAnimMode("idle")}
+                        title="The animation starts only when the screen has been idle for the set time"
+                      >
+                        Idle
+                      </SettingButton>
+                      <SettingButton
+                        selected={bgAnimMode === "always"}
+                        onClick={() => setBgAnimMode("always")}
+                        title="The animation runs continuously — non-blocking, you can work through it"
+                      >
+                        Always
+                      </SettingButton>
+                    </div>
+                  </div>
+                )}
+
+                {/* Settings according to Animation type */}
+                {bgAnim === "rain" ? (
+                  <>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {[
                   {
@@ -1404,7 +1457,7 @@ const ThemePage = () => {
                     min: 0,
                     max: 10,
                     step: 1,
-                    title: "Screen idle time threshold before the rain starts falling (0 = disabled)",
+                    title: "Screen idle time threshold before the background animation starts (0 = disabled)",
                   },
                   {
                     key: "density",
@@ -1435,12 +1488,30 @@ const ThemePage = () => {
                   },
                   {
                     key: "speed",
-                    label: "Speed / wind",
+                    label: "Speed",
                     min: 5,
                     max: 100,
                     step: 5,
                     unit: "%",
-                    title: "How fast drops fall — higher speeds also push them sideways with more wind",
+                    title: "How fast drops fall down the glass",
+                  },
+                  {
+                    key: "wind",
+                    label: "Wind strength",
+                    min: 0,
+                    max: 100,
+                    step: 5,
+                    unit: "%",
+                    title: "How strong the gusts blow — 0% means always calm",
+                  },
+                  {
+                    key: "gustSpeed",
+                    label: "Wind change",
+                    min: 20,
+                    max: 200,
+                    step: 10,
+                    unit: "%",
+                    title: "How often the wind builds up and switches direction",
                   },
                 ].filter((s) => !(s.key === "idleMin" && bgAnimMode === "always")).map((s) => (
                   <div
@@ -1539,6 +1610,61 @@ const ThemePage = () => {
                     {bgAnimSettings?.color ?? getRainColor(themeColor, customColor)}
                   </span>
                 </div>
+                  </>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {/* Idle time bar for Analog Clock & Digital Clock */}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 12,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "var(--fs-sm)",
+                          color: "var(--text-muted)",
+                          whiteSpace: "nowrap",
+                          minWidth: 70,
+                        }}
+                      >
+                        Idle time
+                      </span>
+                      <input
+                        type="range"
+                        min={0}
+                        max={10}
+                        step={1}
+                        value={bgAnimSettings?.idleMin ?? 1}
+                        onChange={(e) =>
+                          setBgAnimSetting("idleMin", Number(e.target.value))
+                        }
+                        aria-label="Idle time"
+                        title="Screen idle time threshold before the clock starts (0 = disabled)"
+                        style={{
+                          flex: 1,
+                          accentColor: "var(--primary)",
+                          cursor: "pointer",
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontSize: "var(--fs-sm)",
+                          fontWeight: 600,
+                          color: "var(--text-secondary)",
+                          minWidth: 44,
+                          textAlign: "right",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {(bgAnimSettings?.idleMin ?? 1) === 0
+                          ? "Off"
+                          : `${bgAnimSettings?.idleMin ?? 1} min`}
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </PageCardBody>
           </PageCard>

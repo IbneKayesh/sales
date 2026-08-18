@@ -1,4 +1,5 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Routes } from "react-router-dom";
 import Modal, { ModalBody, ModalHeader } from "@/components/Modal";
 import {
@@ -28,44 +29,222 @@ const POPUP_SIZES = [
   { id: "100", label: "100%" },
 ];
 
+// ── Window geometry persistence ──────────────────────────────────────────
+// Each user's window position/size is stored per menu id, so reopening a menu
+// restores exactly where the user left it (minimized windows restored from
+// localStorage keep their layout too). Stored as
+// { [userId]: { [menuId]: { x, y, width, height } } }.
+const GEOMETRY_KEY = "bsuite_window_geometry";
+
+const readGeometryMap = () => {
+  try {
+    const raw = localStorage.getItem(GEOMETRY_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+};
+
+const loadGeometry = (userId, menuId) => {
+  if (!userId || !menuId) return null;
+  const g = readGeometryMap()[userId]?.[menuId];
+  if (!g) return null;
+  return {
+    x: Number.isFinite(g.x) ? g.x : null,
+    y: Number.isFinite(g.y) ? g.y : null,
+    width: Number.isFinite(g.width) ? g.width : null,
+    height: Number.isFinite(g.height) ? g.height : null,
+  };
+};
+
+const saveGeometry = (userId, menuId, geom) => {
+  if (!userId || !menuId) return;
+  try {
+    const map = readGeometryMap();
+    map[userId] = { ...map[userId], [menuId]: geom };
+    localStorage.setItem(GEOMETRY_KEY, JSON.stringify(map));
+  } catch {
+    /* ignore */
+  }
+};
+
+// ── Cascade placement for new windows ────────────────────────────────────
+// Each new window opens 26px down-right of the previous one so stacked windows
+// fan out diagonally; the offset wraps once it would push a window off screen.
+const CASCADE_STEP = 26;
+const cascadeOffset = (i) => {
+  const maxX = Math.max(
+    CASCADE_STEP,
+    Math.floor((window.innerWidth - POPUP_DEFAULT_WIDTH) / 2) - 40,
+  );
+  const maxY = Math.max(
+    CASCADE_STEP,
+    Math.floor((window.innerHeight - 300) / 2) - 40,
+  );
+  return {
+    x: (i * CASCADE_STEP) % (maxX + CASCADE_STEP),
+    y: (i * CASCADE_STEP) % (maxY + CASCADE_STEP),
+  };
+};
+
+// Keep a restored position fully on screen. The overlay centers the modal and
+// translates it by pos, so clamp pos so the window's edges stay inside the
+// viewport with a small margin (in case the screen is smaller than when saved).
+const clampRestoredPos = (x, y, w) => {
+  const maxX = Math.max(0, (window.innerWidth - w) / 2 - 10);
+  const maxY = Math.max(0, (window.innerHeight - 260) / 2 - 10);
+  return {
+    x: Math.min(Math.max(x, -maxX), maxX),
+    y: Math.min(Math.max(y, -maxY), maxY),
+  };
+};
+
+// How close (px) a dragged window must be to a screen edge to trigger a snap.
+const SNAP_THRESHOLD = 12;
+
+// How close (px) a dragged window's edge must be to another window's facing
+// edge to snap to it (window-to-window snapping).
+const WINDOW_SNAP_THRESHOLD = 10;
+
+/**
+ * Find window-to-window snap targets while dragging: align the dragged
+ * window's facing edges with another open window's edges (dragged-left against
+ * other-right, dragged-right against other-left, and vertically the same).
+ * Returns { x, y } — the desired screen-space top-left for the dragged
+ * window, null per axis when nothing is near — or null when no edge matches.
+ */
+const detectWindowSnap = (left, top, w, h, others) => {
+  const right = left + w;
+  const bottom = top + h;
+  let sx = null;
+  let sxDist = Infinity;
+  let sy = null;
+  let syDist = Infinity;
+  for (const o of others) {
+    // Horizontal facing edges
+    const dL = Math.abs(left - o.right);
+    if (dL <= WINDOW_SNAP_THRESHOLD && dL < sxDist) {
+      sx = o.right;
+      sxDist = dL;
+    }
+    const dR = Math.abs(right - o.left);
+    if (dR <= WINDOW_SNAP_THRESHOLD && dR < sxDist) {
+      sx = o.left - w;
+      sxDist = dR;
+    }
+    // Vertical facing edges
+    const dT = Math.abs(top - o.bottom);
+    if (dT <= WINDOW_SNAP_THRESHOLD && dT < syDist) {
+      sy = o.bottom;
+      syDist = dT;
+    }
+    const dB = Math.abs(bottom - o.top);
+    if (dB <= WINDOW_SNAP_THRESHOLD && dB < syDist) {
+      sy = o.top - h;
+      syDist = dB;
+    }
+  }
+  return sx !== null || sy !== null ? { x: sx, y: sy } : null;
+};
+
 /**
  * Renders every open menu window as a non-blocking floating window (no
  * dimming overlay, page stays clickable and scrollable behind them). Must be
  * placed OUTSIDE the app's main <Routes> (see App.jsx) so each window can
  * render its own <Routes location={menuLink}> without the parent-match
- * pathname restriction. Drag the header to move a window; drag the right
- * edge, bottom edge or bottom-right corner to resize (or use the size
- * buttons); close via the X button or Escape.
+ * pathname restriction. Drag the header to move a window (snapping to screen
+ * edges and to other open windows); drag the right edge, bottom edge or
+ * bottom-right corner to resize (or use the size buttons); close via the X
+ * button or Escape.
  */
 export default function Windows() {
-  const { popups, closePopup, bringPopupToFront, hidePopup } = useApp();
+  const { popups, closePopup, bringPopupToFront, hidePopup, user } = useApp();
+
+  // Live screen rects of every open window, shared through a ref so a dragged
+  // window can snap to its siblings without re-rendering them. Each window
+  // reports its own rect via reportRect (or removes it when hidden/closed).
+  const rectsRef = useRef({});
+  const reportRect = useCallback((key, rect) => {
+    if (rect) rectsRef.current[key] = rect;
+    else delete rectsRef.current[key];
+  }, []);
+  const getRects = useCallback(() => rectsRef.current, []);
 
   return popups.map((p, i) => (
     <WindowItem
       key={p.key}
+      winKey={p.key}
       menu={p.menu}
       hidden={p.hidden}
       active={i === popups.length - 1}
+      userId={user?.id}
+      index={i}
+      reportRect={reportRect}
+      getRects={getRects}
       onClose={() => closePopup(p.key)}
       onHide={() => hidePopup(p.key)}
       onActivate={() => bringPopupToFront(p.key)}
-      offset={i * 24}
     />
   ));
 }
 
-function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active }) {
-  const [pos, setPos] = useState(() => ({ x: offset, y: offset }));
-  const [width, setWidth] = useState(() =>
-    Math.min(
+function WindowItem({
+  menu,
+  onClose,
+  onHide,
+  onActivate,
+  hidden,
+  index,
+  active,
+  userId,
+  winKey,
+  reportRect,
+  getRects,
+}) {
+  // Restore the user's saved geometry for this menu when reopening it;
+  // otherwise cascade the new window from its stack position.
+  const savedGeom = useMemo(() => loadGeometry(userId, menu.id), [userId, menu.id]);
+  const [pos, setPos] = useState(() =>
+    savedGeom && savedGeom.x != null && savedGeom.y != null
+      ? clampRestoredPos(
+          savedGeom.x,
+          savedGeom.y,
+          savedGeom.width ?? POPUP_DEFAULT_WIDTH,
+        )
+      : cascadeOffset(index),
+  );
+  const [width, setWidth] = useState(() => {
+    if (savedGeom && savedGeom.width != null) {
+      return Math.min(
+        Math.max(savedGeom.width, POPUP_MIN_WIDTH),
+        Math.max(POPUP_MIN_WIDTH, window.innerWidth - 48),
+      );
+    }
+    return Math.min(
       POPUP_DEFAULT_WIDTH,
       Math.max(POPUP_MIN_WIDTH, window.innerWidth - 48),
-    ),
+    );
+  });
+  const [height, setHeight] = useState(() => {
+    if (savedGeom && savedGeom.height != null) {
+      return Math.min(
+        Math.max(savedGeom.height, POPUP_MIN_HEIGHT),
+        window.innerHeight - 48,
+      );
+    }
+    return null;
+  });
+  // A restored custom width means the size dropdown has no preset selected.
+  const [size, setSize] = useState(() =>
+    savedGeom?.width != null ? null : "default",
   );
-  const [height, setHeight] = useState(null);
-  const [size, setSize] = useState("default");
   const [fullscreen, setFullscreen] = useState(false);
   const [sizeOpen, setSizeOpen] = useState(false);
+  // Active Aero-snap zone while dragging: "maximize" | "left" | "right" | null.
+  const [snapTarget, setSnapTarget] = useState(null);
+  // Active window-to-window snap target: { x, y } screen coords or null.
+  const [winSnapTarget, setWinSnapTarget] = useState(null);
   const dragRef = useRef(null);
   const modalRef = useRef(null);
   const sizeRef = useRef(null);
@@ -95,6 +274,26 @@ function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active 
     return () => document.removeEventListener("mousedown", onDown);
   }, [sizeOpen]);
 
+  // Report this window's live screen rect so other windows can snap to it.
+  // Hidden and fullscreen windows are not valid snap targets; the entry is
+  // removed on unmount. Runs whenever the window moves or resizes.
+  useEffect(() => {
+    if (hidden || fullscreen) {
+      reportRect(winKey, null);
+      return;
+    }
+    const el = modalRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    reportRect(winKey, {
+      left: r.left,
+      top: r.top,
+      right: r.right,
+      bottom: r.bottom,
+    });
+    return () => reportRect(winKey, null);
+  }, [winKey, hidden, fullscreen, pos, width, height, reportRect]);
+
   // Size clamps keep the window's edges on screen. The overlay is a flex
   // container that centers the modal and translates it by pos, so the modal
   // center sits at (innerWidth/2 + pos.x, innerHeight/2 + pos.y). A size is
@@ -123,11 +322,11 @@ function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active 
     setFullscreen(isFull);
     if (!isFull) {
       const pct = id === "default" ? null : parseInt(id, 10) / 100;
-      setWidth(
-        clampWidth(
-          pct ? Math.round(window.innerWidth * pct) : POPUP_DEFAULT_WIDTH,
-        ),
+      const w = clampWidth(
+        pct ? Math.round(window.innerWidth * pct) : POPUP_DEFAULT_WIDTH,
       );
+      setWidth(w);
+      saveGeometry(userId, menu.id, { x: pos.x, y: pos.y, width: w, height });
     }
   };
 
@@ -157,25 +356,112 @@ function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active 
           Math.max(r.top + dy, 10),
           window.innerHeight - r.headerH - 10,
         );
-        setPos({
+        const freePos = {
           x: d.startPos.x + (left - r.left),
           y: d.startPos.y + (top - r.top),
-        });
+        };
+
+        // Aero-snap: drag to the top edge to maximize, or to the left/right
+        // edges to snap into a half-screen layout. The live snap target is
+        // previewed while dragging and applied on release.
+        const snap =
+          top <= SNAP_THRESHOLD
+            ? "maximize"
+            : left <= SNAP_THRESHOLD
+              ? "left"
+              : left + r.width >= window.innerWidth - SNAP_THRESHOLD
+                ? "right"
+                : null;
+        d.snap = snap;
+        setSnapTarget(snap);
+
+        // Window-to-window snapping: when no screen zone applies, align the
+        // dragged window's facing edges with another open window's edges. The
+        // position locks live onto the target while it is held.
+        let winSnap = null;
+        if (!snap) {
+          const others = Object.entries(getRects())
+            .filter(([k]) => k !== winKey)
+            .map(([, v]) => v);
+          winSnap = detectWindowSnap(
+            left,
+            top,
+            r.width,
+            r.height || 200,
+            others,
+          );
+        }
+        d.winSnap = winSnap;
+        setWinSnapTarget(winSnap);
+
+        let nextPos = freePos;
+        if (winSnap) {
+          const sx =
+            winSnap.x != null
+              ? Math.min(
+                  Math.max(winSnap.x, 10),
+                  window.innerWidth - r.width - 10,
+                )
+              : left;
+          const sy =
+            winSnap.y != null
+              ? Math.min(
+                  Math.max(winSnap.y, 10),
+                  window.innerHeight - r.headerH - 10,
+                )
+              : top;
+          nextPos = {
+            x: sx - (window.innerWidth - r.width) / 2,
+            y: sy - (window.innerHeight - (r.height || 200)) / 2,
+          };
+        }
+        d.finalPos = nextPos;
+        setPos(nextPos);
       } else {
         if (d.mode === "resize-w" || d.mode === "resize-wh") {
-          setWidth(clampWidth(d.startW + dx));
+          const w = clampWidth(d.startW + dx);
+          d.finalW = w;
+          setWidth(w);
         }
         if (d.mode === "resize-h" || d.mode === "resize-wh") {
-          setHeight(clampHeight(d.startH + dy));
+          const h = clampHeight(d.startH + dy);
+          d.finalH = h;
+          setHeight(h);
         }
       }
     };
     const onUp = () => {
+      const d = dragRef.current;
       dragRef.current = null;
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
       document.body.style.cursor = "";
       document.body.style.userSelect = "";
+      setSnapTarget(null);
+      setWinSnapTarget(null);
+      if (!d) return;
+      if (d.mode === "move") {
+        if (d.snap) {
+          // Apply the snap; applySnap persists the resulting geometry.
+          applySnap(d.snap, d.finalPos?.y ?? pos.y);
+        } else {
+          // Persist the final dragged position for this user + menu.
+          saveGeometry(userId, menu.id, {
+            x: d.finalPos?.x ?? pos.x,
+            y: d.finalPos?.y ?? pos.y,
+            width,
+            height,
+          });
+        }
+      } else {
+        // Persist the final resized size (and current position).
+        saveGeometry(userId, menu.id, {
+          x: pos.x,
+          y: pos.y,
+          width: d.finalW ?? width,
+          height: d.finalH ?? height,
+        });
+      }
     };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
@@ -198,6 +484,7 @@ function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active 
         left: rect?.left ?? pos.x,
         top: rect?.top ?? pos.y,
         width: rect?.width ?? width,
+        height: rect?.height ?? 0,
         headerH:
           modalRef.current?.querySelector(".modal__header")?.offsetHeight ?? 64,
       },
@@ -263,8 +550,30 @@ function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active 
   const resetSize = () => {
     setFullscreen(false);
     setSize("default");
-    setWidth(clampWidth(POPUP_DEFAULT_WIDTH));
+    const w = clampWidth(POPUP_DEFAULT_WIDTH);
+    setWidth(w);
     setHeight(null);
+    saveGeometry(userId, menu.id, { x: pos.x, y: pos.y, width: w, height: null });
+  };
+
+  // Apply an Aero-snap target reached while dragging: "maximize" reuses the
+  // existing fullscreen state; "left"/"right" resize to half the viewport and
+  // flush the window against that edge, keeping the vertical position.
+  const applySnap = (snap, y) => {
+    if (snap === "maximize") {
+      selectSize("100");
+      return;
+    }
+    const half = Math.max(POPUP_MIN_WIDTH, Math.round(window.innerWidth / 2));
+    const x =
+      snap === "left"
+        ? -(window.innerWidth - half) / 2
+        : (window.innerWidth - half) / 2;
+    setFullscreen(false);
+    setSize(null);
+    setWidth(half);
+    setPos({ x, y });
+    saveGeometry(userId, menu.id, { x, y, width: half, height });
   };
 
   const handleStyle = {
@@ -274,8 +583,88 @@ function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active 
   };
 
   return (
-    <Modal
-      open
+    <>
+      {/* Snap previews, portaled to <body> so the modal's transform can't
+          offset them: the Aero-snap zone outline, plus thin edge highlights
+          for window-to-window snaps. */}
+      {(snapTarget || winSnapTarget) &&
+        createPortal(
+          <>
+            {snapTarget && (
+              <div
+                style={{
+                  position: "fixed",
+                  pointerEvents: "none",
+                  zIndex: 99999,
+                  background:
+                    "color-mix(in srgb, var(--primary, #7c3aed) 12%, transparent)",
+                  border: "2px solid var(--primary, #7c3aed)",
+                  transition: "all 0.1s ease-out",
+                  ...(snapTarget === "maximize"
+                    ? { inset: 0, borderRadius: 0 }
+                    : snapTarget === "left"
+                      ? {
+                          left: 0,
+                          top: 0,
+                          bottom: 0,
+                          width: Math.max(
+                            POPUP_MIN_WIDTH,
+                            Math.round(window.innerWidth / 2),
+                          ),
+                          borderRadius: 0,
+                          borderTopRightRadius: "var(--radius-lg)",
+                          borderBottomRightRadius: "var(--radius-lg)",
+                        }
+                      : {
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                          width: Math.max(
+                            POPUP_MIN_WIDTH,
+                            Math.round(window.innerWidth / 2),
+                          ),
+                          borderRadius: 0,
+                          borderTopLeftRadius: "var(--radius-lg)",
+                          borderBottomLeftRadius: "var(--radius-lg)",
+                        }),
+                }}
+              />
+            )}
+            {winSnapTarget?.x != null && (
+              <div
+                style={{
+                  position: "fixed",
+                  left: winSnapTarget.x - 1.5,
+                  top: 0,
+                  bottom: 0,
+                  width: 3,
+                  background: "var(--primary, #7c3aed)",
+                  opacity: 0.65,
+                  pointerEvents: "none",
+                  zIndex: 99999,
+                }}
+              />
+            )}
+            {winSnapTarget?.y != null && (
+              <div
+                style={{
+                  position: "fixed",
+                  top: winSnapTarget.y - 1.5,
+                  left: 0,
+                  right: 0,
+                  height: 3,
+                  background: "var(--primary, #7c3aed)",
+                  opacity: 0.65,
+                  pointerEvents: "none",
+                  zIndex: 99999,
+                }}
+              />
+            )}
+          </>,
+          document.body,
+        )}
+      <Modal
+        open
       size={fullscreen ? "full" : "xl"}
       onClose={onClose}
       onMouseDown={onActivate}
@@ -465,7 +854,8 @@ function WindowItem({ menu, onClose, onHide, onActivate, hidden, offset, active 
         aria-label="Resize width and height"
         style={{ ...handleStyle, zIndex: 2, right: -6, bottom: -6, width: 14, height: 14, cursor: "nwse-resize" }}
       />
-    </Modal>
+      </Modal>
+    </>
   );
 }
 

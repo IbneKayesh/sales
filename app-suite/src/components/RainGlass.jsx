@@ -27,15 +27,18 @@ const rgba = (rgb, a) => `rgba(${rgb.r},${rgb.g},${rgb.b},${a})`;
  *  - Reflection/lens: each drop is drawn with a radial gradient, rim and
  *    specular highlight so it reads like a tiny lens bending light.
  *
- * Snowflakes are drawn as delicate 6-arm star crystals that drift and sway.
+ * Snowflakes are drawn as delicate 6-arm star crystals that drift, sway and
+ * lean into the wind as gusts build and fade.
  *
  * Props:
- *   density   — 0–2 multiplier for the number of particles (default 1)
- *   color     — drop/flake tint as a hex color (default light blue)
- *   opacity   — 0–1 overall strength (default 1)
- *   size      — 0.5–1.5 scale for droplet/flake radii (default 1)
- *   speed     — 0.5–2 fall-speed multiplier (default 1)
- *   snowRatio — 0–1 fraction of particles that are snowflakes (default 0.25)
+ *   density    — 0–2 multiplier for the number of particles (default 1)
+ *   color      — drop/flake tint as a hex color (default light blue)
+ *   opacity    — 0–1 overall strength (default 1)
+ *   size       — 0.5–1.5 scale for droplet/flake radii (default 1)
+ *   speed      — 0.5–2 fall-speed multiplier (default 1)
+ *   snowRatio  — 0–1 fraction of particles that are snowflakes (default 0.25)
+ *   wind       — 0–1 gust strength; 0 means always calm (default 0.6)
+ *   gustSpeed  — 0.2–2 how often gusts build up and switch direction (default 1)
  */
 export default function RainGlass({
   density = 1,
@@ -44,6 +47,8 @@ export default function RainGlass({
   size = 1,
   speed = 1,
   snowRatio = 0.25,
+  wind = 0.6,
+  gustSpeed = 1,
   className = "",
   ...rest
 }) {
@@ -67,6 +72,14 @@ export default function RainGlass({
     let rafId = 0;
     let lastTime = performance.now();
     let spawnAccum = 0;
+
+    // Wind state: gusts swell up, peak, and fade in cycles (a gust envelope).
+    // The direction persists across several gusts and only flips occasionally,
+    // like real weather.
+    let windVel = 0;     // current horizontal wind speed (px/s), sign = direction
+    let gustPhase = 0;   // 0..1 progress through the current gust cycle
+    let gustCycle = 3.5; // seconds per full swell (build → fade)
+    let gustDir = 1;     // +1 blows right, -1 blows left
 
     const resize = () => {
       if (getComputedStyle(canvas).position === "fixed") {
@@ -109,8 +122,7 @@ export default function RainGlass({
         r,
         vy: (0.32 + Math.random() * 0.55) * speed,
         vx: (Math.random() - 0.5) * 0.5 * speed,
-        angle: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.6,
+        angle: (Math.random() - 0.5) * 0.5, // start near vertical
         wobble: Math.random() * Math.PI * 2,
         alpha: 0,        // fade in
         fadeIn: true,
@@ -125,6 +137,26 @@ export default function RainGlass({
       const dt = Math.min((now - lastTime) / 1000, 0.05);
       lastTime = now;
       ctx.clearRect(0, 0, width, height);
+
+      // Wind update — each cycle is a swell: it builds fast (first 30%),
+      // peaks, then fades slowly (remaining 70%). The cycle length is driven
+      // by gustSpeed (how often the wind changes); wind scales the peak force
+      // (0 = always calm). Direction flips only ~35% of the time so the wind
+      // has a prevailing sense, like real weather.
+      gustPhase += dt / gustCycle;
+      if (gustPhase >= 1) {
+        gustPhase -= 1;
+        if (Math.random() < 0.35) gustDir *= -1;
+        gustCycle =
+          ((3 + Math.random() * 2.5) / Math.max(gustSpeed, 0.05)) *
+          (0.75 + Math.random() * 0.5);
+      }
+      const t = gustPhase;
+      const gustEnv =
+        t < 0.3
+          ? Math.sin((t / 0.3) * (Math.PI / 2))          // fast build-up
+          : Math.cos(((t - 0.3) / 0.7) * (Math.PI / 2)); // slow fade-out
+      windVel = gustDir * wind * 130 * gustEnv;
 
       // Spawn particles up to the target, respecting the snow ratio.
       spawnAccum += dt;
@@ -145,6 +177,8 @@ export default function RainGlass({
         if (!d.sliding) {
           d.r += dt * 0.55 * size;
           d.y += dt * 8 * speed;
+          // Wind pressure nudges clinging drops a little before they let go.
+          d.x += windVel * 0.18 * dt;
           if (d.r >= d.maxR) {
             d.sliding = true;
             d.vy = (0.5 + d.r * 0.18) * speed;
@@ -155,7 +189,7 @@ export default function RainGlass({
             (1.2 + d.r * 1.35) * speed,
           );
           d.y += d.vy;
-          d.x += Math.sin(now * 0.0006 + d.wobble) * 0.12 * speed + (speed - 1) * 0.22;
+          d.x += Math.sin(now * 0.0006 + d.wobble) * 0.12 * speed + (speed - 1) * 0.22 + windVel * dt;
           d.trail = Math.max(d.trail, d.vy * 0.5);
 
           // Merge smaller drops caught on the way down.
@@ -185,10 +219,17 @@ export default function RainGlass({
       for (let i = flakes.length - 1; i >= 0; i--) {
         const f = flakes[i];
 
-        // Gentle sway in X, slow drift down.
-        f.x += f.vx + Math.sin(now * 0.0004 + f.wobble) * 0.18 * speed;
+        // Gentle sway in X, slow drift down — airborne flakes are pushed
+        // hardest by the wind. Each crystal tilts toward its fall direction
+        // (wind push vs. downward drift) so it leans into gusts and settles
+        // back to vertical in calm air, with a subtle flutter.
+        const sway = Math.sin(now * 0.0004 + f.wobble) * 0.18 * speed;
+        f.x += f.vx + sway + windVel * dt;
         f.y += f.vy;
-        f.angle += f.rotSpeed * dt;
+        const targetLean = Math.atan2(f.vx * 0.5 + windVel, f.vy);
+        let leanDiff = targetLean - f.angle;
+        leanDiff = Math.atan2(Math.sin(leanDiff), Math.cos(leanDiff)); // shortest way around
+        f.angle += leanDiff * Math.min(1, dt * 3) + (Math.random() - 0.5) * 0.04;
 
         // Fade in near the top.
         if (f.fadeIn) {
@@ -415,7 +456,7 @@ export default function RainGlass({
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
     };
-  }, [density, color, opacity, size, speed, snowRatio]);
+  }, [density, color, opacity, size, speed, snowRatio, wind, gustSpeed]);
 
   return (
     <canvas
