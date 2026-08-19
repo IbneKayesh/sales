@@ -86,24 +86,6 @@ const ItemsList = ({
       },
     },
     {
-      key: "items_pivat",
-      header: "Include Purchase VAT (%)",
-      width: "80px",
-      body: (_, row) => <NegativeValue value={row.items_pivat} />,
-    },
-    {
-      key: "items_pdvat",
-      header: "Purchase VAT %",
-      width: "80px",
-      body: (_, row) => <NegativeValue value={row.items_pdvat} />,
-    },
-    {
-      key: "items_sdvat",
-      header: "Sales VAT %",
-      width: "80px",
-      body: (_, row) => <NegativeValue value={row.items_sdvat} />,
-    },
-    {
       key: "items_smrgn",
       header: "Margin (%)",
       width: "80px",

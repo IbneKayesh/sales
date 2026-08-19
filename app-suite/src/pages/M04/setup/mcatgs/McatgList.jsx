@@ -78,7 +78,7 @@ const McatgList = ({
       exportable
       exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No main categories found"
+      emptyMessage="No data found"
     />
   );
 };

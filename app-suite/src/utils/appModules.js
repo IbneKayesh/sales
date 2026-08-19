@@ -268,10 +268,26 @@ export const appModules = [
           },
           {
             id: "M04-G01-M006",
-            name: "Stock",
+            name: "TAX",
             color: "#f97316",
             icon: "Box",
             order: 6,
+            link: "/inventory/setup/tax",
+            desc: "Manage tax",
+          },
+        ],
+      },
+      {
+        id: "G03",
+        name: "Report",
+        order: 3,
+        menus: [
+          {
+            id: "M04-G03-M001",
+            name: "Stock",
+            color: "#f97316",
+            icon: "Box",
+            order: 1,
             link: "/inventory/stock",
             desc: "Manage inventory item records",
           },

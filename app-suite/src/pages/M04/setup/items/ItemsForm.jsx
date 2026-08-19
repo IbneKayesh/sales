@@ -7,6 +7,7 @@ import { IconClose, IconSave } from "@/icons";
 import { itype_Options, bool_Options } from "@/utils/vtable.js";
 import PartyView from "@/pages/M08/setup/parties/PartyView.jsx";
 import ItemContactList from "./ItemContactList";
+import ItemTaxList from "./ItemTaxList";
 
 const ItemsForm = ({
   isBusy,
@@ -26,6 +27,9 @@ const ItemsForm = ({
   //item contact
   listDataCntct,
   onDeleteCntct,
+  //item tax
+  listDataTxcod,
+  onDeleteTxcod,
 }) => {
   return (
     <div className="form-wrap">
@@ -180,7 +184,7 @@ const ItemsForm = ({
             optionLabel="brand_cname"
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <Dropdown
             label="Track Stock"
             options={bool_Options}
@@ -188,39 +192,6 @@ const ItemsForm = ({
             onChange={(e) => onChange("items_tstck", e.target.value)}
             error={formErrors.items_tstck}
             placeholder="Select..."
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="Include Purchase VAT (%)"
-            placeholder="Enter iVAT %"
-            value={formData.items_pivat}
-            onChange={(e) => onChange("items_pivat", e.target.value)}
-            error={formErrors.items_pivat}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="Purchase VAT (%)"
-            placeholder="Enter Purchase VAT %"
-            value={formData.items_pdvat}
-            onChange={(e) => onChange("items_pdvat", e.target.value)}
-            error={formErrors.items_pdvat}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="Sales VAT (%)"
-            placeholder="Enter Sales VAT %"
-            value={formData.items_sdvat}
-            onChange={(e) => onChange("items_sdvat", e.target.value)}
-            error={formErrors.items_sdvat}
-            step="0.01"
             disabled={readOnly}
           />
         </div>
@@ -246,7 +217,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <Dropdown
             label="Stop Purchase"
             options={bool_Options}
@@ -257,7 +228,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <Dropdown
             label="Stop Sale"
             options={bool_Options}
@@ -268,7 +239,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <Dropdown
             label="Stop Transfer"
             options={bool_Options}
@@ -279,7 +250,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-4">
           <InputText
             label="Notes"
             placeholder="Enter notes"
@@ -306,6 +277,13 @@ const ItemsForm = ({
           readOnly={readOnly}
           listData={listDataCntct}
           onDelete={onDeleteCntct}
+        />
+      )}
+      {formData?.id && (
+        <ItemTaxList
+          readOnly={readOnly}
+          listData={listDataTxcod}
+          onDelete={onDeleteTxcod}
         />
       )}
       <div className="form-actions">

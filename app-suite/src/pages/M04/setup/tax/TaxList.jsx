@@ -3,35 +3,24 @@ import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import { IconClose, IconCheck } from "@/icons";
 
-const BrandList = ({ listData, onEdit, onDelete }) => {
+const TaxList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "brand_ccode", header: "Code", width: "80px" },
-    { key: "brand_cntry", header: "Country", width: "80px" },
+    { key: "txcod_ccode", header: "Code", width: "80px" },
     {
-      key: "brand_cname",
-      header: "Brand Name",
+      key: "txcod_txtyp",
+      header: "TAX Type",
       width: "80px",
       body: (_, row) => {
         return (
-          <span className={`${!row.brand_actve && "text-red-500"}`}>
-            {row.brand_cname}
+          <span className={`${!row.txcod_actve && "text-red-500"}`}>
+            {row.txcod_txtyp}
           </span>
         );
       },
     },
-    // {
-    //   key: "brand_actve",
-    //   header: "Status",
-    //   width: "110px",
-    //   body: (v) => {
-    //     return (
-    //       <Badge variant={v ? "success" : "danger"}>
-    //         {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-    //         {v ? "Active" : "Inactive"}
-    //       </Badge>
-    //     );
-    //   },
-    // },
+    { key: "txcod_txmod", header: "TAX Mode", width: "80px" },
+    { key: "txcod_txrat", header: "TAX Rate (%)", width: "80px" },
+    { key: "txcod_trcod", header: "Transaction", width: "80px" },
     {
       key: "actions",
       header: "Actions",
@@ -40,7 +29,7 @@ const BrandList = ({ listData, onEdit, onDelete }) => {
       body: (_, row) => (
         <ActionButton
           rowData={row}
-          actve={row.brand_actve}
+          actve={row.txcod_actve}
           onEdit={onEdit}
           onDelete={onDelete}
         />
@@ -64,4 +53,4 @@ const BrandList = ({ listData, onEdit, onDelete }) => {
     />
   );
 };
-export default BrandList;
+export default TaxList;

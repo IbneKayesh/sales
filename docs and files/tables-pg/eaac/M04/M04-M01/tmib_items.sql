@@ -25,9 +25,6 @@ CREATE TABLE tmib_items (
   items_itype VARCHAR(2) DEFAULT 'FG', --RM,PM,WIP,FG,FOH,SVC
   items_brand VARCHAR(50),
   items_tstck boolean DEFAULT true,
-  items_pivat decimal(4,2) DEFAULT 0.00,
-  items_pdvat decimal(4,2) DEFAULT 0.00,
-  items_sdvat decimal(4,2) DEFAULT 0.00,
   items_smrgn decimal(4,2) DEFAULT 0.00,
   items_fxcst decimal(4,2) DEFAULT 0.00,
   items_image VARCHAR(50),

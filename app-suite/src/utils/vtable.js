@@ -167,6 +167,56 @@ const cntad_ttype_Options = [
     value: "Others",
   },
 ];
+const txcod_txtyp_Options = [
+  {
+    label: "Value Added Tax (VAT)",
+    value: "VAT",
+  },
+  {
+    label: "Withholding Tax (WHT)",
+    value: "WHT",
+  },
+  {
+    label: "Advance Income Tax (AIT)",
+    value: "AIT",
+  },
+  {
+    label: "Duty",
+    value: "DUTY",
+  },
+  {
+    label: "Others",
+    value: "OTHERS",
+  },
+];
+const txcod_txmod_Options = [
+  {
+    label: "Include",
+    value: "Include",
+  },
+  {
+    label: "Exclude",
+    value: "Exclude",
+  },
+  {
+    label: "Exempt",
+    value: "Exempt",
+  },
+  {
+    label: "Zero",
+    value: "Zero",
+  },
+];
+const txcod_trcod_Options = [
+  {
+    label: "Sales",
+    value: "Sales",
+  },
+  {
+    label: "Purchase",
+    value: "Purchase",
+  },
+];
 
 export {
   cntry_Options,
@@ -186,5 +236,8 @@ export {
   trn_types,
   csmod_Options,
   clmod_Options,
-  cntad_ttype_Options
+  cntad_ttype_Options,
+  txcod_txtyp_Options,
+  txcod_txmod_Options,
+  txcod_trcod_Options,
 };

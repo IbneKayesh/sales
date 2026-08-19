@@ -11,6 +11,7 @@ import {
   IconSave,
   IconChevronLeft,
   IconUser,
+  IconDollar,
 } from "@/icons";
 import Button from "@/components/Button";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
@@ -22,6 +23,7 @@ import PriceList from "./PriceList";
 import PriceForm from "./PriceForm";
 import PriceLedger from "./PriceLedger";
 import ItemContactForm from "./ItemContactForm";
+import ItemTaxForm from "./ItemTaxForm";
 
 const ItemsPage = () => {
   const {
@@ -78,6 +80,14 @@ const ItemsPage = () => {
     //filter
     mcatg_Options,
     formDataFilter,
+    //item tax
+    txcod_Options,
+    formDataTxcod,
+    listDataTxcod,
+    handleChangeTxcod,
+    handleDeleteTxcod,
+    handleSubmitTxcod,
+    handleSubmitCategory
   } = useItems();
 
   return (
@@ -117,6 +127,16 @@ const ItemsPage = () => {
               <Button variant="secondary" size="sm" onClick={handleCancel}>
                 <IconClose size={14} className="icon-left" />
                 Cancel
+              </Button>
+            )}
+            {pgView === "SYS_VW_FRM_1" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleShowModal("TAX")}
+              >
+                <IconDollar size={14} className="icon-left" />
+                TAX
               </Button>
             )}
             {pgView === "SYS_VW_FRM_1" && (
@@ -183,6 +203,9 @@ const ItemsPage = () => {
               //item contact
               listDataCntct={listDataCntct}
               onDeleteCntct={handleDeleteCntct}
+              //item tax
+              listDataTxcod={listDataTxcod}
+              onDeleteTxcod={handleDeleteTxcod}
             />
           )}
 
@@ -251,6 +274,19 @@ const ItemsPage = () => {
                   onChange={handleChangeCntct}
                   onSubmit={handleSubmitCntct}
                   cntct_Options={cntct_Options}
+                />
+              )}
+              {showModal.modal === "TAX" && (
+                <ItemTaxForm
+                  isBusy={isBusy}
+                  readOnly={readOnly}
+                  stopEdit={stopEdit}
+                  formData={formDataTxcod}
+                  formErrors={formErrors}
+                  onChange={handleChangeTxcod}
+                  onSubmit={handleSubmitTxcod}
+                  txcod_Options={txcod_Options}
+                  onSubmitCategory={handleSubmitCategory}
                 />
               )}
             </ModalBody>

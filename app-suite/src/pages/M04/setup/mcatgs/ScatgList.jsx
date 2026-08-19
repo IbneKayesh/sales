@@ -50,7 +50,7 @@ const ScatgList = ({ listData, onEdit, onDelete }) => {
       exportable
       exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No sub categories found"
+      emptyMessage="No data found"
     />
   );
 };

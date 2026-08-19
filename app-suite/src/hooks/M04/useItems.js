@@ -18,6 +18,9 @@ import tmib_itmct from "@/models/M04/tmib_itmct.json";
 import { itemContactAPI } from "@/api/M04/itemContactAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
 import { categoriesAPI } from "@/api/M04/categoriesAPI.js";
+import { taxAPI } from "@/api/M04/taxAPI.js";
+import tmib_itmtx from "@/models/M04/tmib_itmtx.json";
+import { itemTaxAPI } from "@/api/M04/itemTaxAPI.js";
 
 const useItems = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -132,6 +135,7 @@ const useItems = () => {
     getPartyData(rowData.id);
     setlistDataLedger([]);
     getItemSupplier(rowData.id);
+    getItemTax(rowData.id);
   };
 
   const handleDelete = async (rowData) => {
@@ -523,6 +527,147 @@ const useItems = () => {
     }
   };
 
+  //item tax
+  const [txcod_Options, setTxcod_Options] = useState([]);
+  const [formDataTxcod, setFormDataTxcod] = useState({});
+  const [listDataTxcod, setListDataTxcod] = useState([]);
+
+  const getAvailItemTax = async () => {
+    try {
+      setIsBusy(true);
+      const resp = await taxAPI.getAllActive();
+      const data = resp.data || {};
+      setTxcod_Options(data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const getItemTax = async (id) => {
+    try {
+      setIsBusy(true);
+      const resp = await itemTaxAPI.getByItemId({ itmtx_items: id });
+      const data = resp.data || {};
+      setListDataTxcod(data);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleChangeTxcod = (f, v) => {
+    setFormDataTxcod((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formDataTxcod, [f]: v }, tmib_itmtx);
+    setFormErrors(newErrors);
+  };
+
+  const handleDeleteTxcod = async (rowData) => {
+    const isActive = rowData.itmtx_actve;
+    const dataName = rowData.txcod_txtyp;
+    const confirmation = await confirmBox({
+      title: isActive ? "Deactivate" : "Activate",
+      message: `Are you sure you want to ${
+        isActive ? "deactivate" : "activate"
+      } "${dataName}"?`,
+      confirmText: isActive ? "Deactivate" : "Activate",
+      variant: isActive ? "danger" : "success",
+    });
+    if (!confirmation) return;
+
+    try {
+      setIsBusy(true);
+      const resp = await itemTaxAPI.delete(rowData);
+      alertBox({
+        title: resp.success
+          ? isActive
+            ? "Deactivated"
+            : "Activated"
+          : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        handleHideModal();
+        setFormDataTxcod({});
+        getItemTax(rowData.itmtx_items);
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleSubmitTxcod = async () => {
+    try {
+      const newErrors = validate(formDataTxcod, tmib_itmtx);
+      setFormErrors(newErrors);
+      //console.log("newErrors", newErrors);
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+      const cntct_id = txcod_Options.find(
+        (opt) => opt.id === formDataTxcod.itmtx_txcod,
+      );
+      const reqBody = {
+        ...formDataTxcod,
+        txcod_txtyp: cntct_id.txcod_txtyp,
+      };
+      setIsBusy(true);
+
+      const resp = await itemTaxAPI.create(reqBody);
+      // alertBox({
+      //   title: resp.success
+      //     ? formDataCntct.id
+      //       ? "Updated"
+      //       : "Saved"
+      //     : "Error",
+      //   message: resp.message,
+      //   variant: resp.success ? "success" : "danger",
+      //   confirmText: resp.success ? "Done" : "Close",
+      // });
+      showToast(resp.message, { type: resp.success ? "success" : "danger" });
+      if (resp.success) {
+        handleHideModal();
+        getItemTax(formDataTxcod.itmtx_items);
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  
+  const handleSubmitCategory = async () => {
+    try {
+      const newErrors = validate(formDataTxcod, tmib_itmtx);
+      setFormErrors(newErrors);
+      //console.log("newErrors", newErrors);
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+      const cntct_id = txcod_Options.find(
+        (opt) => opt.id === formDataTxcod.itmtx_txcod,
+      );
+      const reqBody = {
+        ...formDataTxcod,
+        txcod_txtyp: cntct_id.txcod_txtyp,
+      };
+      setIsBusy(true);
+
+      const resp = await itemTaxAPI.createCategory(reqBody);
+      showToast(resp.message, { type: resp.success ? "success" : "danger" });
+      if (resp.success) {
+        handleHideModal();
+        getItemTax(formDataTxcod.itmtx_items);
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   //modal
   const handleShowModal = (modal) => {
     if (modal === "SUPPLIER") {
@@ -532,6 +677,14 @@ const useItems = () => {
         subTitle: "Item supplier details",
       });
       getAvailItemSupplier({ itmct_items: formData.id });
+    }
+    if (modal === "TAX") {
+      setFormDataTxcod({ itmtx_items: formData.id });
+      setModalTitle({
+        title: "Add Tax",
+        subTitle: "Item tax details",
+      });
+      getAvailItemTax();
     }
     setShowModal({ show: true, modal: modal });
   };
@@ -594,6 +747,14 @@ const useItems = () => {
     //filter
     mcatg_Options,
     formDataFilter,
+    //item tax
+    txcod_Options,
+    formDataTxcod,
+    listDataTxcod,
+    handleChangeTxcod,
+    handleDeleteTxcod,
+    handleSubmitTxcod,
+    handleSubmitCategory,
   };
 };
 export default useItems;
