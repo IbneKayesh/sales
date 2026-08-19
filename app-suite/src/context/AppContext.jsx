@@ -26,7 +26,7 @@ import {
 } from "@/utils/theme";
 // Built-in default Workspace wallpaper (bundled with the app). Used when the
 // user hasn't set a Workspace image or Page background image.
-import defaultWorkspaceBg from "@/assets/wallpaper-aurora.png";
+import defaultWorkspaceBg from "@/assets/wallpapers/aurora.png";
 import { resolveMenuIcon } from "@/icons";
 import { toast } from "@/components/ToastBox";
 

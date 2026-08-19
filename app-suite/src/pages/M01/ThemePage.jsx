@@ -37,82 +37,102 @@ import { toast } from "@/components/ToastBox";
 // this page renders (they'd otherwise bloat the initial bundle).
 // Card thumbnails are tiny 320×180 previews; the full-resolution images are
 // fetched only when a preset is actually clicked.
-import presetAurora from "@/assets/wallpaper-aurora.png";
+import presetAurora from "@/assets/wallpapers/aurora.png";
 import logoBs from "@/assets/logo-bs.png";
 
 const WALLPAPER_PRESETS = [
-  { id: "aurora", name: "Aurora", desc: "Dark · bundled with app" },
-  { id: "forest", name: "Forest", desc: "Dark · misty pines" },
-  { id: "night", name: "Night", desc: "Dark · starry sky" },
-  { id: "mountains", name: "Mountains", desc: "Dark · dusk peaks" },
-  { id: "ocean", name: "Ocean", desc: "Dark · moonlit sea" },
-  { id: "sunset", name: "Sunset", desc: "Dark · warm dusk" },
-  { id: "midnight", name: "Midnight", desc: "Dark · grid glow" },
-  { id: "sky", name: "Sky", desc: "Light · clear day" },
-  { id: "emerald", name: "Emerald", desc: "Light · fresh green" },
-  { id: "waves", name: "Waves", desc: "Light · calm blue" },
-  { id: "winter", name: "Winter", desc: "Light · snowy cabin" },
-  { id: "maple", name: "Maple", desc: "Light · autumn leaves" },
-  { id: "flowers", name: "Flowers", desc: "Light · flower meadow" },
-  { id: "roses", name: "Roses", desc: "Dark · red roses" },
-  { id: "redsun", name: "Red sun", desc: "Dark · dramatic dusk" },
-  { id: "moon", name: "Full moon", desc: "Dark · moonlit night" },
-  { id: "starnight", name: "Star night", desc: "Dark · milky way" },
-  { id: "ripple", name: "Ripple", desc: "Dusk · river ripples" },
-  { id: "boats", name: "Boats", desc: "Dark · sunset sails" },
-  { id: "birds", name: "Birds", desc: "Light · dawn flight" },
-  { id: "oceans", name: "Oceans", desc: "Light · turquoise sea" },
-  { id: "bluesky", name: "Blue Sky", desc: "Light · blue sky" },
+  { id: "aurora", name: "Aurora", desc: "Dark · northern lights" },
+  { id: "bird_yellow", name: "Yellow Bird", desc: "Warm · yellow bird" },
+  { id: "blue_color", name: "Blue Color", desc: "Abstract · blue gradient" },
+  { id: "blue_hill", name: "Blue Hill", desc: "Nature · blue hills" },
+  { id: "blue_night", name: "Blue Night", desc: "Dark · starry night" },
+  { id: "boundary_grill", name: "Boundary Grill", desc: "Urban · boundary pattern" },
+  { id: "bridge", name: "Bridge", desc: "Scenic · suspension bridge" },
+  { id: "butterfly", name: "Butterfly", desc: "Nature · vibrant butterfly" },
+  { id: "dolphin", name: "Dolphin", desc: "Ocean · leaping dolphin" },
+  { id: "eiffel_tower", name: "Eiffel Tower", desc: "City · Paris landmark" },
+  { id: "green_hill", name: "Green Hill", desc: "Nature · lush green hills" },
+  { id: "green_moon", name: "Green Moon", desc: "Fantasy · green moonlight" },
+  { id: "green_river", name: "Green River", desc: "Nature · peaceful river" },
+  { id: "hill_track", name: "Hill Track", desc: "Nature · winding hill track" },
+  { id: "house", name: "House", desc: "Cozy · countryside house" },
+  { id: "house_dark", name: "House Dark", desc: "Dark · atmospheric house" },
+  { id: "ice_hill", name: "Ice Hill", desc: "Cold · frozen mountain" },
+  { id: "light_house", name: "Lighthouse", desc: "Coastal · beacon of light" },
+  { id: "moon", name: "Full Moon", desc: "Dark · luminous moon" },
+  { id: "mount", name: "Mount", desc: "Nature · mountain peak" },
+  { id: "mountain", name: "Mountain", desc: "Scenic · grand mountains" },
+  { id: "night_road", name: "Night Road", desc: "Dark · quiet night road" },
+  { id: "palm_tree", name: "Palm Tree", desc: "Tropical · palm silhouette" },
+  { id: "red_moon", name: "Red Moon", desc: "Dramatic · blood moon" },
+  { id: "river", name: "River", desc: "Serene · flowing waters" },
+  { id: "road_light", name: "Road Light", desc: "Night · illuminated highway" },
+  { id: "sea_lighthouse", name: "Sea Lighthouse", desc: "Ocean · coastal lighthouse" },
+  { id: "yellow_morning", name: "Yellow Morning", desc: "Warm · morning sunrise" },
 ];
 
-// Lazy loaders for the preset-card thumbnails (tiny, code-split by Vite).
+// Lazy loaders for the preset-card thumbnails (code-split by Vite).
 const thumbLoaders = {
-  forest: () => import("@/assets/wallpaper-forest-thumb.png"),
-  sky: () => import("@/assets/wallpaper-sky-thumb.png"),
-  mountains: () => import("@/assets/wallpaper-mountains-thumb.png"),
-  ocean: () => import("@/assets/wallpaper-ocean-thumb.png"),
-  night: () => import("@/assets/wallpaper-night-thumb.png"),
-  sunset: () => import("@/assets/wallpaper-sunset-thumb.png"),
-  midnight: () => import("@/assets/wallpaper-midnight-thumb.png"),
-  emerald: () => import("@/assets/wallpaper-emerald-thumb.png"),
-  waves: () => import("@/assets/wallpaper-waves-thumb.png"),
-  winter: () => import("@/assets/wallpaper-winter-thumb.png"),
-  maple: () => import("@/assets/wallpaper-maple-thumb.png"),
-  flowers: () => import("@/assets/wallpaper-flowers-thumb.png"),
-  roses: () => import("@/assets/wallpaper-roses-thumb.png"),
-  redsun: () => import("@/assets/wallpaper-redsun-thumb.png"),
-  moon: () => import("@/assets/wallpaper-moon-thumb.png"),
-  starnight: () => import("@/assets/wallpaper-starnight-thumb.png"),
-  ripple: () => import("@/assets/wallpaper-ripple-thumb.png"),
-  boats: () => import("@/assets/wallpaper-boats-thumb.png"),
-  birds: () => import("@/assets/wallpaper-birds-thumb.png"),
-  oceans: () => import("@/assets/wallpaper-oceans-thumb.png"),
-  bluesky: () => import("@/assets/wallpaper-blue-sky.jpg"),
+  aurora: () => import("@/assets/wallpapers/aurora.png"),
+  bird_yellow: () => import("@/assets/wallpapers/bird yellow.png"),
+  blue_color: () => import("@/assets/wallpapers/blue color.png"),
+  blue_hill: () => import("@/assets/wallpapers/blue hill.png"),
+  blue_night: () => import("@/assets/wallpapers/blue night.png"),
+  boundary_grill: () => import("@/assets/wallpapers/boundary grill.png"),
+  bridge: () => import("@/assets/wallpapers/bridge.png"),
+  butterfly: () => import("@/assets/wallpapers/butter fly.png"),
+  dolphin: () => import("@/assets/wallpapers/dolphin.png"),
+  eiffel_tower: () => import("@/assets/wallpapers/Eiffel tower.png"),
+  green_hill: () => import("@/assets/wallpapers/green hill.png"),
+  green_moon: () => import("@/assets/wallpapers/green moon.png"),
+  green_river: () => import("@/assets/wallpapers/green river.png"),
+  hill_track: () => import("@/assets/wallpapers/hill track.png"),
+  house: () => import("@/assets/wallpapers/house.png"),
+  house_dark: () => import("@/assets/wallpapers/house dark.png"),
+  ice_hill: () => import("@/assets/wallpapers/ice hill.png"),
+  light_house: () => import("@/assets/wallpapers/light house.png"),
+  moon: () => import("@/assets/wallpapers/moon.png"),
+  mount: () => import("@/assets/wallpapers/mount.png"),
+  mountain: () => import("@/assets/wallpapers/mountain.png"),
+  night_road: () => import("@/assets/wallpapers/night road.png"),
+  palm_tree: () => import("@/assets/wallpapers/plam tree.png"),
+  red_moon: () => import("@/assets/wallpapers/red moon.png"),
+  river: () => import("@/assets/wallpapers/river.png"),
+  road_light: () => import("@/assets/wallpapers/road light.png"),
+  sea_lighthouse: () => import("@/assets/wallpapers/sea lighthouse.png"),
+  yellow_morning: () => import("@/assets/wallpapers/yellow morning.png"),
 };
 
 // Full-resolution loaders — fetched only when a preset is clicked.
 const fullLoaders = {
-  forest: () => import("@/assets/wallpaper-forest.png"),
-  sky: () => import("@/assets/wallpaper-sky.png"),
-  mountains: () => import("@/assets/wallpaper-mountains.png"),
-  ocean: () => import("@/assets/wallpaper-ocean.png"),
-  night: () => import("@/assets/wallpaper-night.png"),
-  sunset: () => import("@/assets/wallpaper-sunset.png"),
-  midnight: () => import("@/assets/wallpaper-midnight.png"),
-  emerald: () => import("@/assets/wallpaper-emerald.png"),
-  waves: () => import("@/assets/wallpaper-waves.png"),
-  winter: () => import("@/assets/wallpaper-winter.png"),
-  maple: () => import("@/assets/wallpaper-maple.png"),
-  flowers: () => import("@/assets/wallpaper-flowers.png"),
-  roses: () => import("@/assets/wallpaper-roses.png"),
-  redsun: () => import("@/assets/wallpaper-redsun.png"),
-  moon: () => import("@/assets/wallpaper-moon.png"),
-  starnight: () => import("@/assets/wallpaper-starnight.png"),
-  ripple: () => import("@/assets/wallpaper-ripple.png"),
-  boats: () => import("@/assets/wallpaper-boats.png"),
-  birds: () => import("@/assets/wallpaper-birds.png"),
-  oceans: () => import("@/assets/wallpaper-oceans.png"),
-  bluesky: () => import("@/assets/wallpaper-blue-sky.jpg"),
+  aurora: () => import("@/assets/wallpapers/aurora.png"),
+  bird_yellow: () => import("@/assets/wallpapers/bird yellow.png"),
+  blue_color: () => import("@/assets/wallpapers/blue color.png"),
+  blue_hill: () => import("@/assets/wallpapers/blue hill.png"),
+  blue_night: () => import("@/assets/wallpapers/blue night.png"),
+  boundary_grill: () => import("@/assets/wallpapers/boundary grill.png"),
+  bridge: () => import("@/assets/wallpapers/bridge.png"),
+  butterfly: () => import("@/assets/wallpapers/butter fly.png"),
+  dolphin: () => import("@/assets/wallpapers/dolphin.png"),
+  eiffel_tower: () => import("@/assets/wallpapers/Eiffel tower.png"),
+  green_hill: () => import("@/assets/wallpapers/green hill.png"),
+  green_moon: () => import("@/assets/wallpapers/green moon.png"),
+  green_river: () => import("@/assets/wallpapers/green river.png"),
+  hill_track: () => import("@/assets/wallpapers/hill track.png"),
+  house: () => import("@/assets/wallpapers/house.png"),
+  house_dark: () => import("@/assets/wallpapers/house dark.png"),
+  ice_hill: () => import("@/assets/wallpapers/ice hill.png"),
+  light_house: () => import("@/assets/wallpapers/light house.png"),
+  moon: () => import("@/assets/wallpapers/moon.png"),
+  mount: () => import("@/assets/wallpapers/mount.png"),
+  mountain: () => import("@/assets/wallpapers/mountain.png"),
+  night_road: () => import("@/assets/wallpapers/night road.png"),
+  palm_tree: () => import("@/assets/wallpapers/plam tree.png"),
+  red_moon: () => import("@/assets/wallpapers/red moon.png"),
+  river: () => import("@/assets/wallpapers/river.png"),
+  road_light: () => import("@/assets/wallpapers/road light.png"),
+  sea_lighthouse: () => import("@/assets/wallpapers/sea lighthouse.png"),
+  yellow_morning: () => import("@/assets/wallpapers/yellow morning.png"),
 };
 
 const DARK_MODES = [
@@ -525,11 +545,11 @@ const ThemePage = () => {
     setDarkMode("light");
     setFont(DEFAULT_FONT);
     setFontSize(14);
-    setDensity(90);
-    setCompSize(75);
-    setRadius(12);
+    setDensity(85);
+    setCompSize(95);
+    setRadius(6);
     setLayout("boxed");
-    setBoxedGap(30);
+    setBoxedGap(25);
     setReduceMotion(false);
     setCustomColor(null);
     setBgImage(null);
@@ -547,9 +567,9 @@ const ThemePage = () => {
     setBgAnimSetting("idleMin", 5);
     setBgAnimSetting("density", 95);
     setBgAnimSetting("color", getRainColor(DEFAULT_THEME, null));
-    setBgAnimSetting("opacity", 80);
-    setBgAnimSetting("size", 45);
-    setBgAnimSetting("speed", 10);
+    setBgAnimSetting("opacity", 75);
+    setBgAnimSetting("size", 70);
+    setBgAnimSetting("speed", 20);
     toast.success("Preferences reset to default");
   };
 
@@ -558,11 +578,11 @@ const ThemePage = () => {
     darkMode === "light" &&
     font === DEFAULT_FONT &&
     fontSize === 14 &&
-    density === 90 &&
-    compSize === 75 &&
-    radius === 12 &&
+    density === 85 &&
+    compSize === 95 &&
+    radius === 6 &&
     layout === "boxed" &&
-    boxedGap === 30 &&
+    boxedGap === 25 &&
     !reduceMotion &&
     !customColor &&
     !bgImage &&
@@ -580,9 +600,9 @@ const ThemePage = () => {
     bgAnimSettings?.idleMin === 5 &&
     bgAnimSettings?.density === 95 &&
     bgAnimSettings?.color === getRainColor(DEFAULT_THEME, null) &&
-    bgAnimSettings?.opacity === 80 &&
-    bgAnimSettings?.size === 45 &&
-    bgAnimSettings?.speed === 10;
+    bgAnimSettings?.opacity === 75 &&
+    bgAnimSettings?.size === 70 &&
+    bgAnimSettings?.speed === 20;
 
   return (
     <div className="page-wrap">
@@ -1047,9 +1067,9 @@ const ThemePage = () => {
                 </span>
                 <input
                   type="range"
-                  min={20}
+                  min={5}
                   max={400}
-                  step={10}
+                  step={5}
                   value={boxedGap}
                   onChange={(e) => setBoxedGap(Number(e.target.value))}
                   aria-label="Boxed gap"

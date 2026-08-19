@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { useApp } from "../context/AppContext";
+import { useApp } from "@/context/AppContext";
 import {
   IconLogo,
   IconBell,
@@ -17,12 +17,12 @@ import {
   IconActivity,
   IconBar,
 } from "../icons";
-import { modulesMenu } from "../utils/appModules";
-import { toast } from "../components/ToastBox";
-import Calculator from "../components/Calculator";
-import FullscreenButton from "../components/FullscreenButton";
-import defaultWorkspaceBg from "../assets/wallpaper-aurora.png";
-import logoBsWhite from "../assets/logo-bs-white.png";
+import { modulesMenu } from "@/utils/appModules";
+import { toast } from "@/components/ToastBox";
+import Calculator from "@/components/Calculator";
+import FullscreenButton from "@/components/FullscreenButton";
+import defaultWorkspaceBg from "@/assets/wallpapers/aurora.png";
+import logoBsWhite from "@/assets/logo-bs-white.png";
 
 export default function Topbar({ className = "", ...rest }) {
   const {

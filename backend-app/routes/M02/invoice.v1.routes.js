@@ -468,6 +468,9 @@ ORDER BY prtyn_cname, prtyn_ccode`;
     line++;
 
     //SYS_SALES_INVOICE.PAY_INCOME_PRODUCT_SOLD > Income / Product Sales - 40101010 >> CR (2.2)
+    const prtyn_sold = rows_prtyn.find(
+      (row) => row.prtyn_ctype === "PAY_INCOME_PRODUCT_SOLD",
+    );
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -481,8 +484,8 @@ ORDER BY prtyn_cname, prtyn_ccode`;
         user_b,
         invcm_dpart,
         newId_JV,
-        "13e44fc2-47b1-4d18-b61e-570778a7246b",
-        "721d916a-f76a-464a-975e-ad5c2fafb162",
+        prtyn_sold?.prtyn_chtac || "",
+        prtyn_sold?.prtyn_party || "",
         0,
         invcm_pyamt || 0,
         "To Income / Product Sales",
@@ -495,53 +498,112 @@ ORDER BY prtyn_cname, prtyn_ccode`;
       ],
       label: `Create Income / Product Sales ${newTrnNo_JV}`,
     });
+    line++;
 
     //Insert Costing details
-    // for (const det of tmpb_mrrcs) {
-    //   scripts.push({
-    //     sql: `INSERT INTO tmpb_mrrcs(id, mrrcs_users, mrrcs_bsins, mrrcs_mrrdm, mrrcs_party, mrrcs_csmod,
-    //     mrrcs_clmod, mrrcs_value, mrrcs_notes, mrrcs_crusr, mrrcs_upusr)
-    //     VALUES ($1, $2, $3, $4, $5, $6,
-    //   $7, $8, $9, $10, $11)`,
-    //     params: [
-    //       uuidv4(),
-    //       user_c,
-    //       user_b,
-    //       newId,
-    //       det.mrrcs_party,
-    //       det.mrrcs_csmod,
-    //       det.mrrcs_clmod,
-    //       det.mrrcs_value || 0,
-    //       det.mrrcs_notes || "",
-    //       user_s,
-    //       user_s,
-    //     ],
-    //     label: `Created Costing detail ${newTrnNo}`,
-    //   });
-    // }
+    for (const det of tmob_invcs) {
+      scripts.push({
+        sql: `INSERT INTO tmob_invcs(id, invcs_users, invcs_bsins, invcs_invcm, invcs_party, invcs_csmod,
+        invcs_clmod, invcs_value, invcs_notes, invcs_crusr, invcs_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          newId,
+          det.invcs_party,
+          det.invcs_csmod,
+          det.invcs_clmod,
+          det.invcs_value || 0,
+          det.invcs_notes || "",
+          user_s,
+          user_s,
+        ],
+        label: `Created Costing detail ${newTrnNo}`,
+      });
+    }
 
     //Insert Payment details
-    // for (const det of tmpb_mrrpy) {
-    //   scripts.push({
-    //     sql: `INSERT INTO tmpb_mrrpy(id, mrrpy_users, mrrpy_bsins, mrrpy_mrrdm, mrrpy_party, mrrpy_pdamt,
-    //     mrrpy_refno, mrrpy_notes, mrrpy_crusr, mrrpy_upusr)
-    //     VALUES ($1, $2, $3, $4, $5, $6,
-    //     $7, $8, $9, $10)`,
-    //     params: [
-    //       uuidv4(),
-    //       user_c,
-    //       user_b,
-    //       newId,
-    //       det.mrrpy_party,
-    //       det.mrrpy_pdamt || 0,
-    //       det.mrrpy_refno || "",
-    //       det.mrrpy_notes || "",
-    //       user_s,
-    //       user_s,
-    //     ],
-    //     label: `Created Payment detail ${newTrnNo}`,
-    //   });
-    // }
+    for (const det of tmob_invpy) {
+      scripts.push({
+        sql: `INSERT INTO tmob_invpy(id, invpy_users, invpy_bsins, invpy_invcm, invpy_party, invpy_pdamt,
+        invpy_refno, invpy_notes, invpy_crusr, invpy_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          newId,
+          det.invpy_party,
+          det.invpy_pdamt || 0,
+          det.invpy_refno || "",
+          det.invpy_notes || "",
+          user_s,
+          user_s,
+        ],
+        label: `Created Payment detail ${newTrnNo}`,
+      });
+
+      //SYS_SALES_INVOICE.PAY_CUSTOMER > Asset / Customer / Receivable -10101110
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          invcm_dpart,
+          newId_JV,
+          chtac_id,
+          party_id,
+          det.invpy_pdamt || 0,
+          0,
+          "Clear Assets / Customer / Receivable",
+          invcm_ttype,
+          newId,
+          "MASTER",
+          line,
+          user_s,
+          user_s,
+        ],
+        label: `Clear Assets / Customer / Receivable ${newTrnNo_JV}`,
+      });
+      //SYS_SALES_INVOICE.PAY_CASH_BANK	> Asset / Cash In Hand - 10101010
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          invcm_dpart,
+          newId_JV,
+          det.chtac_id_pay,
+          det.party_id_pay,
+          0,
+          det.invpy_pdamt || 0,
+          "Receive Assets / Customer Receivable",
+          invcm_ttype,
+          newId,
+          "MASTER",
+          line,
+          user_s,
+          user_s,
+        ],
+        label: `Receive Assets / Customer Receivable ${newTrnNo_JV}`,
+      });
+      line++;
+    }
 
     //Update supplier credit balance + increase
     scripts.push({
@@ -728,13 +790,14 @@ router.post("/get-details-by-master", async (req, res) => {
     });
   }
 });
+
 // get-costs-by-master
 router.post("/get-costs-by-master", async (req, res) => {
   try {
-    const { mrrcs_mrrdm, user_s, user_c, user_b } = req.body;
+    const { invcs_invcm, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!mrrcs_mrrdm || !user_c) {
+    if (!invcs_invcm || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -744,12 +807,12 @@ router.post("/get-costs-by-master", async (req, res) => {
 
     //database action
     const sql = `SELECT mrc.*, pty.party_cname
-        FROM tmpb_mrrcs mrc
-        JOIN tmtb_party pty ON mrc.mrrcs_party = pty.id
-        WHERE mrc.mrrcs_users = $1
-        AND mrc.mrrcs_mrrdm = $2`;
+        FROM tmob_invcs mrc
+        JOIN tmtb_party pty ON mrc.invcs_party = pty.id
+        WHERE mrc.invcs_users = $1
+        AND mrc.invcs_invcm = $2`;
 
-    const params = [user_c, mrrcs_mrrdm];
+    const params = [user_c, invcs_invcm];
     const rows = await dbGetAll(sql, params, `get Cost Details- ${user_c}`);
     res.json({
       success: true,
@@ -768,10 +831,10 @@ router.post("/get-costs-by-master", async (req, res) => {
 // get-payments-by-master
 router.post("/get-payments-by-master", async (req, res) => {
   try {
-    const { mrrpy_mrrdm, user_s, user_c, user_b } = req.body;
+    const { invpy_invcm, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!mrrpy_mrrdm || !user_c) {
+    if (!invpy_invcm || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -781,12 +844,12 @@ router.post("/get-payments-by-master", async (req, res) => {
 
     //database action
     const sql = `SELECT mpy.*, pty.party_cname
-        FROM tmpb_mrrpy mpy
-        JOIN tmtb_party pty ON mpy.mrrpy_party = pty.id
-        WHERE mpy.mrrpy_users = $1
-        AND mpy.mrrpy_mrrdm = $2`;
+        FROM tmob_invpy mpy
+        JOIN tmtb_party pty ON mpy.invpy_party = pty.id
+        WHERE mpy.invpy_users = $1
+        AND mpy.invpy_invcm = $2`;
 
-    const params = [user_c, mrrpy_mrrdm];
+    const params = [user_c, invpy_invcm];
     const rows = await dbGetAll(sql, params, `get Payment Details- ${user_c}`);
     res.json({
       success: true,
@@ -849,8 +912,8 @@ router.post("/get-expenses-payments-heads", async (req, res) => {
   }
 });
 
-// get-all-due-mrr
-router.post("/get-all-due-mrr", async (req, res) => {
+// get-all-due-invoice
+router.post("/get-all-due-invoice", async (req, res) => {
   try {
     const { user_s, user_c, user_b } = req.body;
 
@@ -867,15 +930,15 @@ router.post("/get-all-due-mrr", async (req, res) => {
     const sql = `SELECT mrr.*,
     dprt.dpart_cname, cntct.cntct_cname,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
-    FROM tmpb_mrrdm mrr
-    JOIN tmsb_dpart dprt ON mrr.mrrdm_dpart = dprt.id
-    JOIN tmcb_cntct cntct ON mrr.mrrdm_cntct = cntct.id
-    LEFT JOIN tmhb_emply csr ON mrr.mrrdm_crusr = csr.id
-    LEFT JOIN tmhb_emply usr ON mrr.mrrdm_upusr = usr.id
-    WHERE mrr.mrrdm_users = $1
-    AND mrr.mrrdm_actve = TRUE
-    AND (mrr.mrrdm_pyamt - mrr.mrrdm_pdamt) > 0
-    ORDER BY mrr.mrrdm_trdat DESC`;
+    FROM tmpb_invcm mrr
+    JOIN tmsb_dpart dprt ON mrr.invcm_dpart = dprt.id
+    JOIN tmcb_cntct cntct ON mrr.invcm_cntct = cntct.id
+    LEFT JOIN tmhb_emply csr ON mrr.invcm_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON mrr.invcm_upusr = usr.id
+    WHERE mrr.invcm_users = $1
+    AND mrr.invcm_actve = TRUE
+    AND (mrr.invcm_pyamt - mrr.invcm_pdamt) > 0
+    ORDER BY mrr.invcm_trdat DESC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get Department- ${user_c}`);
