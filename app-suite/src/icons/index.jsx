@@ -1718,6 +1718,7 @@ const iconMap = {
   Cogs: IconCogs,
   Columns: IconColumns,
   Wallet: IconWallet,
+  Calculator: IconCalculator,
 };
 
 /** Resolve an icon component by its name (returns a rendered element). */

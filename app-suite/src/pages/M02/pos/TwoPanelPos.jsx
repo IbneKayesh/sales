@@ -1,8 +1,7 @@
 import { useState, useMemo } from "react";
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
-import Badge from "@/components/Badge";
-import { IconSearch, IconPlus, IconClose, IconDelete, IconCheck } from "@/icons";
+import { IconSearch, IconClose, IconCheck } from "@/icons";
 import { PRODUCTS, CATEGORIES } from "./PosPage";
 
 /**
@@ -82,15 +81,13 @@ const TwoPanelPos = ({ cart, addToCart, updateQty, removeFromCart, clearCart, su
           <h3 className="pos-cart-title">Order</h3>
           {cart.length > 0 && (
             <Button variant="ghost" size="sm" onClick={clearCart}>
-              Clear
+              Clear all
             </Button>
           )}
         </div>
 
         <div className="pos-cart-items">
-          {cart.length === 0 && (
-            <div className="pos-empty">Click products to add</div>
-          )}
+          {cart.length === 0 && <div className="pos-empty">Tap products to add</div>}
           {cart.map((item) => (
             <div key={item.id} className="pos-cart-item">
               <div className="pos-cart-item-info">
@@ -133,7 +130,7 @@ const TwoPanelPos = ({ cart, addToCart, updateQty, removeFromCart, clearCart, su
 
         <Button variant="info" fullWidth onClick={() => alert(`Checkout: $${total.toFixed(2)}`)}>
           <IconCheck size={16} className="icon-left" />
-          Checkout
+          Checkout · ${total.toFixed(2)}
         </Button>
       </div>
     </div>

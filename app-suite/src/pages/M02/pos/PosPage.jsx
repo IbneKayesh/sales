@@ -5,7 +5,7 @@ import PageCard, {
   PageCardBody,
 } from "@/components/PageCard";
 import Badge from "@/components/Badge";
-import { IconBox } from "@/icons";
+import { IconBox, IconReceipt } from "@/icons";
 import TwoPanelPos from "./TwoPanelPos";
 import FullGridPos from "./FullGridPos";
 import TerminalPos from "./TerminalPos";
@@ -43,9 +43,9 @@ export const PRODUCTS = [
 export const CATEGORIES = ["All", "Coffee", "Drinks", "Bakery", "Food", "Dessert", "Sides"];
 
 const STYLES = [
-  { id: "two-panel", label: "Two Panel" },
-  { id: "full-grid", label: "Full Grid" },
-  { id: "terminal", label: "Terminal" },
+  { id: "two-panel", label: "Two Panel", icon: "⊞" },
+  { id: "full-grid", label: "Full Grid", icon: "◻" },
+  { id: "terminal", label: "Terminal", icon: "⊞" },
 ];
 
 const PosPage = () => {
@@ -57,9 +57,7 @@ const PosPage = () => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
         return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, qty: item.qty + 1 }
-            : item
+          item.id === product.id ? { ...item, qty: item.qty + 1 } : item
         );
       }
       return [...prev, { ...product, qty: 1 }];
@@ -93,19 +91,38 @@ const PosPage = () => {
     [cart]
   );
 
-  const cartState = { cart, addToCart, updateQty, removeFromCart, clearCart, subtotal, tax, total, itemCount };
+  const cartState = {
+    cart, addToCart, updateQty, removeFromCart, clearCart,
+    subtotal, tax, total, itemCount,
+  };
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
-            title="Point of Sale"
-            subtitle={`${itemCount} item${itemCount !== 1 ? "s" : ""} · $${total.toFixed(2)}`}
+            title={
+              <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <IconReceipt size={20} />
+                Point of Sale
+              </span>
+            }
+            subtitle={
+              <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                {itemCount > 0 && (
+                  <Badge variant="success" dot>
+                    {itemCount} item{itemCount !== 1 ? "s" : ""}
+                  </Badge>
+                )}
+                <span style={{ fontWeight: 700, color: "var(--primary)", fontSize: "var(--fs-lg)" }}>
+                  ${total.toFixed(2)}
+                </span>
+              </span>
+            }
           />
         </PageCardHeader>
         <PageCardBody>
-          {/* Style Switcher */}
+          {/* Modern Style Switcher */}
           <div className="pos-style-switcher">
             {STYLES.map((s) => (
               <button
@@ -114,7 +131,6 @@ const PosPage = () => {
                 className={`pos-style-btn${posStyle === s.id ? " pos-style-btn--active" : ""}`}
                 onClick={() => setPosStyle(s.id)}
               >
-                <IconBox size={14} />
                 {s.label}
               </button>
             ))}

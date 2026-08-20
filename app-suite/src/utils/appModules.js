@@ -190,11 +190,11 @@ export const appModules = [
           {
             id: "M03-G02-M000",
             name: "Point of Sale",
-            color: "#eab308",
+            color: "#f59e0b",
             icon: "Calculator",
-            order: 0,
+            order: 1,
             link: "/sales/pos",
-            desc: "POS terminal for quick sales",
+            desc: "Quick POS terminal with product grid and checkout",
           },
           {
             id: "M03-G02-M002",

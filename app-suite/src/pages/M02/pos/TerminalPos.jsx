@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import Badge from "@/components/Badge";
-import { IconSearch, IconPlus, IconClose, IconDelete, IconCheck, IconReceipt } from "@/icons";
+import { IconSearch, IconClose, IconCheck, IconReceipt } from "@/icons";
 import { PRODUCTS, CATEGORIES } from "./PosPage";
 
 /**
@@ -25,7 +25,6 @@ const TerminalPos = ({ cart, addToCart, updateQty, removeFromCart, clearCart, su
     });
   }, [search, activeCategory]);
 
-  // Number pad: type qty then press Enter or + to apply
   const handleNumPad = (digit) => {
     setNumPadValue((prev) => prev + digit);
   };
@@ -40,7 +39,6 @@ const TerminalPos = ({ cart, addToCart, updateQty, removeFromCart, clearCart, su
 
   const clearNumPad = () => setNumPadValue("");
 
-  // When clicking a product in terminal mode: add 1 or select for qty edit
   const handleProductClick = (product) => {
     addToCart(product);
     setSelectedItemId(product.id);
@@ -97,7 +95,7 @@ const TerminalPos = ({ cart, addToCart, updateQty, removeFromCart, clearCart, su
         </Button>
 
         {cart.length > 0 && (
-          <Button variant="ghost" size="sm" fullWidth onClick={clearCart} style={{ marginTop: 8 }}>
+          <Button variant="ghost" size="sm" fullWidth onClick={clearCart} style={{ marginTop: 4 }}>
             Clear Order
           </Button>
         )}

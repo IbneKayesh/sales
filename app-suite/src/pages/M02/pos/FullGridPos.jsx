@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import Badge from "@/components/Badge";
-import { IconSearch, IconPlus, IconClose, IconDelete, IconCheck } from "@/icons";
+import { IconSearch, IconClose, IconCheck } from "@/icons";
 import { PRODUCTS, CATEGORIES } from "./PosPage";
 
 /**
@@ -58,13 +58,20 @@ const FullGridPos = ({ cart, addToCart, updateQty, removeFromCart, clearCart, su
             </button>
           ))}
         </div>
-        {/* Cart toggle for small screens */}
-        {itemCount > 0 && (
-          <Button variant="info" size="sm" onClick={() => setShowCart(!showCart)} className="pos-cart-toggle">
-            <IconCheck size={14} className="icon-left" />
-            {itemCount} items · ${total.toFixed(2)}
-          </Button>
-        )}
+        {/* Cart toggle */}
+        <Button
+          variant={itemCount > 0 ? "info" : "outline"}
+          size="sm"
+          onClick={() => setShowCart(!showCart)}
+          className="pos-cart-toggle"
+        >
+          <IconCheck size={14} className="icon-left" />
+          {itemCount > 0 ? (
+            <>{itemCount} items · ${total.toFixed(2)}</>
+          ) : (
+            "Cart"
+          )}
+        </Button>
       </div>
 
       <div className="pos-full-grid-content">
@@ -164,7 +171,7 @@ const FullGridPos = ({ cart, addToCart, updateQty, removeFromCart, clearCart, su
 
           <Button variant="info" fullWidth onClick={() => alert(`Checkout: $${total.toFixed(2)}`)}>
             <IconCheck size={16} className="icon-left" />
-            Checkout
+            Checkout · ${total.toFixed(2)}
           </Button>
         </div>
       </div>
