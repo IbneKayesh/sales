@@ -188,6 +188,15 @@ export const appModules = [
             desc: "Process customer sales invoice",
           },
           {
+            id: "M03-G02-M000",
+            name: "Point of Sale",
+            color: "#eab308",
+            icon: "Calculator",
+            order: 0,
+            link: "/sales/pos",
+            desc: "POS terminal for quick sales",
+          },
+          {
             id: "M03-G02-M002",
             name: "Deliveries",
             color: "#eab308",

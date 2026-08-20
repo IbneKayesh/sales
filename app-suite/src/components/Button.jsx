@@ -68,10 +68,10 @@ const variants = {
 // actions and form-footer buttons look like one button system. The spinner
 // (iconSize) matches the button's font size.
 const sizes = {
-  xs: { padding: '3px 8px', fontSize: '12px', gap: '4px', iconSize: 12 },
-  sm: { padding: '7px 12px', fontSize: '13px', gap: '5px', iconSize: 13 },
-  md: { padding: '7px 14px', fontSize: '14px', gap: '6px', iconSize: 14 },
-  lg: { padding: '9px 18px', fontSize: '16px', gap: '8px', iconSize: 16 },
+  xs: { padding: 'calc(3px * var(--comp-scale, 1)) calc(8px * var(--comp-scale, 1))', fontSize: '12px', gap: '4px', iconSize: 12 },
+  sm: { padding: 'calc(7px * var(--comp-scale, 1)) calc(12px * var(--comp-scale, 1))', fontSize: '13px', gap: '5px', iconSize: 13 },
+  md: { padding: 'calc(7px * var(--comp-scale, 1)) calc(14px * var(--comp-scale, 1))', fontSize: '14px', gap: '6px', iconSize: 14 },
+  lg: { padding: 'calc(9px * var(--comp-scale, 1)) calc(18px * var(--comp-scale, 1))', fontSize: '16px', gap: '8px', iconSize: 16 },
 }
 
 export default function Button({
