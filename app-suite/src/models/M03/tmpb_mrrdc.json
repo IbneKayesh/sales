@@ -60,51 +60,9 @@
     "required": false,
     "default": 0
   },
-  "mrrdc_ivpct": {
-    "type": "decimal",
-    "label": "iVAT %",
-    "required": false,
-    "default": 0
-  },
-  "mrrdc_ivamt": {
-    "type": "decimal",
-    "label": "iVAT Amt",
-    "required": false,
-    "default": 0
-  },
-  "mrrdc_vtpct": {
-    "type": "decimal",
-    "label": "VAT %",
-    "required": false,
-    "default": 0
-  },
   "mrrdc_vtamt": {
     "type": "decimal",
-    "label": "VAT Amt",
-    "required": false,
-    "default": 0
-  },
-  "mrrdc_txpct": {
-    "type": "decimal",
-    "label": "TAX %",
-    "required": false,
-    "default": 0
-  },
-  "mrrdc_txamt": {
-    "type": "decimal",
-    "label": "TAX Amt",
-    "required": false,
-    "default": 0
-  },
-  "mrrdc_fcpct": {
-    "type": "decimal",
-    "label": "Fix Cost %",
-    "required": false,
-    "default": 0
-  },
-  "mrrdc_fcamt": {
-    "type": "decimal",
-    "label": "Fix Cost Amt",
+    "label": "VAT Amount",
     "required": false,
     "default": 0
   },

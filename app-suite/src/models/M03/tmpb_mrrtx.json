@@ -1,0 +1,58 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "mrrtx_txcod": {
+    "type": "string",
+    "label": "Tax Code",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "mrrtx_txtyp": {
+    "type": "string",
+    "label": "Tax Type",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "mrrtx_txmod": {
+    "type": "string",
+    "label": "Tax Mode",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "mrrtx_txrat": {
+    "type": "decimal",
+    "label": "Rate",
+    "required": true,
+    "default": 0
+  },
+  "mrrtx_txamt": {
+    "type": "decimal",
+    "label": "Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrtx_rcamt": {
+    "type": "decimal",
+    "label": "Recover Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrtx_nramt": {
+    "type": "decimal",
+    "label": "Non Recover Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrtx_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

@@ -75,27 +75,9 @@
     "required": false,
     "default": 0
   },
-  "mrrdm_ivtmt": {
-    "type": "decimal",
-    "label": "iVAT Amount",
-    "required": false,
-    "default": 0
-  },
-  "mrrdm_vtamt": {
+  "mrrdc_vtamt": {
     "type": "decimal",
     "label": "VAT Amount",
-    "required": false,
-    "default": 0
-  },
-  "mrrdm_txamt": {
-    "type": "decimal",
-    "label": "TAX Amount",
-    "required": false,
-    "default": 0
-  },
-  "mrrdm_fcamt": {
-    "type": "decimal",
-    "label": "TAX Amount",
     "required": false,
     "default": 0
   },

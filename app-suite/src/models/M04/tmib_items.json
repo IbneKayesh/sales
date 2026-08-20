@@ -109,15 +109,6 @@
     "placeholder": "Enter margin %",
     "required": true
   },
-  "items_fxcst": {
-    "type": "decimal",
-    "label": "Fixed Cost",
-    "default": 0.00,
-    "maxLength": 500,
-    "minLength": 0,
-    "placeholder": "Enter fixed cost",
-    "required": true
-  },
   "items_notes": {
     "type": "string",
     "label": "Notes",

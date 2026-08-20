@@ -26,7 +26,6 @@ CREATE TABLE tmib_items (
   items_brand VARCHAR(50),
   items_tstck boolean DEFAULT true,
   items_smrgn decimal(4,2) DEFAULT 0.00,
-  items_fxcst decimal(4,2) DEFAULT 0.00,
   items_image VARCHAR(50),
   items_stpur boolean NOT NULL DEFAULT true,
   items_stsal boolean NOT NULL DEFAULT true,

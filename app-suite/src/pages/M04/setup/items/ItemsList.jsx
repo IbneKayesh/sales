@@ -92,12 +92,6 @@ const ItemsList = ({
       body: (_, row) => <NegativeValue value={row.items_smrgn} />,
     },
     {
-      key: "items_fxcst",
-      header: "Fixed Cost",
-      width: "80px",
-      body: (_, row) => <NegativeValue value={row.items_fxcst} />,
-    },
-    {
       key: "items_stpur",
       header: "Stop Purchase",
       width: "80px",

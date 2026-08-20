@@ -34,7 +34,7 @@ const ItemsForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputText
             label="Item Code"
             placeholder="Enter item code"
@@ -55,7 +55,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputText
             label="Barcode"
             placeholder="Enter barcode"
@@ -75,7 +75,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <Dropdown
             label="Retail Unit"
             options={units_Options}
@@ -88,7 +88,7 @@ const ItemsForm = ({
             optionLabel="units_cname"
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <InputNumber
             label="Pack Qty"
             placeholder="Enter pack qty"
@@ -98,7 +98,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <Dropdown
             label="Packing Unit"
             options={units_Options}
@@ -111,7 +111,7 @@ const ItemsForm = ({
             optionLabel="units_cname"
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <InputNumber
             label="Size Qty"
             placeholder="Enter size qty"
@@ -134,7 +134,7 @@ const ItemsForm = ({
             optionLabel="units_cname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Sub Group"
             options={sgrup_Options}
@@ -147,7 +147,7 @@ const ItemsForm = ({
             optionLabel="sgrup_cname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Sub Category"
             options={scatg_Options}
@@ -160,7 +160,7 @@ const ItemsForm = ({
             optionLabel="scatg_cname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Item Type"
             options={itype_Options}
@@ -171,7 +171,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Brand"
             options={brand_Options}
@@ -184,7 +184,7 @@ const ItemsForm = ({
             optionLabel="brand_cname"
           />
         </div>
-        <div className="col-span-1">
+        <div className="col-span-2">
           <Dropdown
             label="Track Stock"
             options={bool_Options}
@@ -202,17 +202,6 @@ const ItemsForm = ({
             value={formData.items_smrgn}
             onChange={(e) => onChange("items_smrgn", e.target.value)}
             error={formErrors.items_smrgn}
-            step="0.01"
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="Fixed Cost (%) (Purchase)"
-            placeholder="Enter fixed cost"
-            value={formData.items_fxcst}
-            onChange={(e) => onChange("items_fxcst", e.target.value)}
-            error={formErrors.items_fxcst}
             step="0.01"
             disabled={readOnly}
           />
@@ -250,7 +239,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputText
             label="Notes"
             placeholder="Enter notes"
