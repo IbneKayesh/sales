@@ -4,10 +4,9 @@ import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
-import { itype_Options, bool_Options } from "@/utils/vtable.js";
+import { itype_Options, bool_Options, txmod_Options } from "@/utils/vtable.js";
 import PartyView from "@/pages/M08/setup/parties/PartyView.jsx";
 import ItemContactList from "./ItemContactList";
-import ItemTaxList from "./ItemTaxList";
 
 const ItemsForm = ({
   isBusy,
@@ -27,9 +26,6 @@ const ItemsForm = ({
   //item contact
   listDataCntct,
   onDeleteCntct,
-  //item tax
-  listDataTxcod,
-  onDeleteTxcod,
 }) => {
   return (
     <div className="form-wrap">
@@ -75,7 +71,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-1">
+        <div className="col-span-2">
           <Dropdown
             label="Retail Unit"
             options={units_Options}
@@ -98,7 +94,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-1">
+        <div className="col-span-2">
           <Dropdown
             label="Packing Unit"
             options={units_Options}
@@ -206,7 +202,51 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-1">
+        <div className="col-span-2">
+          <InputNumber
+            label="Purchase VAT (%)"
+            placeholder="Enter vat %"
+            value={formData.items_prvat}
+            onChange={(e) => onChange("items_prvat", e.target.value)}
+            error={formErrors.items_prvat}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-2">
+          <Dropdown
+            label="Purchase VAT Type"
+            options={txmod_Options}
+            value={formData.items_ptvat}
+            onChange={(e) => onChange("items_ptvat", e.target.value)}
+            error={formErrors.items_ptvat}
+            placeholder="Select..."
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-2">
+          <InputNumber
+            label="Sales VAT (%)"
+            placeholder="Enter vat %"
+            value={formData.items_slvat}
+            onChange={(e) => onChange("items_slvat", e.target.value)}
+            error={formErrors.items_slvat}
+            step="0.01"
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-2">
+          <Dropdown
+            label="Sales VAT Type"
+            options={txmod_Options}
+            value={formData.items_stvat}
+            onChange={(e) => onChange("items_stvat", e.target.value)}
+            error={formErrors.items_stvat}
+            placeholder="Select..."
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-2">
           <Dropdown
             label="Stop Purchase"
             options={bool_Options}
@@ -217,7 +257,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-1">
+        <div className="col-span-2">
           <Dropdown
             label="Stop Sale"
             options={bool_Options}
@@ -228,7 +268,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-1">
+        <div className="col-span-2">
           <Dropdown
             label="Stop Transfer"
             options={bool_Options}
@@ -239,7 +279,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-6">
           <InputText
             label="Notes"
             placeholder="Enter notes"
@@ -266,13 +306,6 @@ const ItemsForm = ({
           readOnly={readOnly}
           listData={listDataCntct}
           onDelete={onDeleteCntct}
-        />
-      )}
-      {formData?.id && (
-        <ItemTaxList
-          readOnly={readOnly}
-          listData={listDataTxcod}
-          onDelete={onDeleteTxcod}
         />
       )}
       <div className="form-actions">

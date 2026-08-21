@@ -105,9 +105,27 @@
     "label": "Margin (%)",
     "maxLength": 1000,
     "minLength": 0,
-    "default": 0.00,
+    "default": 0.0,
     "placeholder": "Enter margin %",
     "required": true
+  },
+  "items_prvat": {
+    "type": "decimal",
+    "label": "Purchase VAT (%)",
+    "maxLength": 1000,
+    "minLength": 0,
+    "default": 0.0,
+    "placeholder": "Enter vat %",
+    "required": false
+  },
+  "items_slvat": {
+    "type": "decimal",
+    "label": "Sales VAT (%)",
+    "maxLength": 1000,
+    "minLength": 0,
+    "default": 0.0,
+    "placeholder": "Enter vat %",
+    "required": false
   },
   "items_notes": {
     "type": "string",

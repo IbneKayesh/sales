@@ -60,11 +60,24 @@
     "required": false,
     "default": 0
   },
+  "mrrdc_vtpct": {
+    "type": "decimal",
+    "label": "VAT %",
+    "required": false,
+    "default": 0
+  },
   "mrrdc_vtamt": {
     "type": "decimal",
     "label": "VAT Amount",
     "required": false,
     "default": 0
+  },
+  "mrrdc_vtype": {
+    "type": "string",
+    "label": "VAT Type",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
   },
   "mrrdc_icamt": {
     "type": "decimal",
@@ -78,9 +91,15 @@
     "required": false,
     "default": 0
   },
-  "mrrdc_ntamt": {
+  "mrrdc_pyamt": {
     "type": "decimal",
-    "label": "Net Amount",
+    "label": "Payable Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdc_stamt": {
+    "type": "decimal",
+    "label": "Sub Total",
     "required": false,
     "default": 0
   },

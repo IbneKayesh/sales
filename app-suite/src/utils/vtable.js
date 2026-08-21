@@ -189,23 +189,23 @@ const txcod_txtyp_Options = [
     value: "OTHERS",
   },
 ];
-const txcod_txmod_Options = [
+const txmod_Options = [
   {
-    label: "Include",
-    value: "Include",
+    label: "INCLUSIVE",
+    value: "INCLUSIVE",
   },
   {
-    label: "Exclude",
-    value: "Exclude",
+    label: "EXCLUSIVE",
+    value: "EXCLUSIVE",
   },
   {
-    label: "Exempt",
-    value: "Exempt",
+    label: "EXEMPT",
+    value: "EXEMPT",
   },
-  {
-    label: "Zero",
-    value: "Zero",
-  },
+  // {
+  //   label: "Zero",
+  //   value: "Zero",
+  // },
 ];
 const txcod_trcod_Options = [
   {
@@ -238,6 +238,6 @@ export {
   clmod_Options,
   cntad_ttype_Options,
   txcod_txtyp_Options,
-  txcod_txmod_Options,
+  txmod_Options,
   txcod_trcod_Options,
 };

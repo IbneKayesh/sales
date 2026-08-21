@@ -3,6 +3,8 @@ import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import { IconPlus } from "@/icons";
+import Badge from "@/components/Badge";
+import { txmod_Options } from "@/utils/vtable.js";
 
 const ItemForm = ({
   isBusy,
@@ -13,6 +15,7 @@ const ItemForm = ({
   onChange,
   onAddToList,
   items_Options,
+  itemTaxList,
 }) => {
   return (
     <div className="form-wrap">
@@ -29,7 +32,7 @@ const ItemForm = ({
             disabled={readOnly}
             optionValue="price_id"
             optionLabel="price_cname"
-            optionGrid="price_cname:Item, runit_uname:Unit, price_lprat:l.Purchase, price_gdstk:g.Stock, items_itype:Type, items_pivat:iVAT%, items_pdvat: VAT%, items_fxcst: Fix Cost (%)"
+            optionGrid="price_cname:Item, runit_uname:Unit, price_lprat:l.Purchase, price_gdstk:g.Stock, items_itype:Type, items_prvat:VAT (%), items_ptvat:VAT Type"
           />
         </div>
         <div className="col-span-3">
@@ -43,7 +46,7 @@ const ItemForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Quantity"
             placeholder="0"
@@ -67,63 +70,28 @@ const ItemForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="iVAT (%)"
-            placeholder="0.00"
-            value={formData.mrrdc_ivpct}
-            onChange={(e) => onChange("mrrdc_ivpct", e.target.value)}
-            error={formErrors.mrrdc_ivpct}
-            step="0.01"
-            disabled={readOnly || true}
-          />
-        </div>
-        <div className="col-span-2">
-          <InputNumber
             label="VAT (%)"
             placeholder="0.00"
             value={formData.mrrdc_vtpct}
             onChange={(e) => onChange("mrrdc_vtpct", e.target.value)}
             error={formErrors.mrrdc_vtpct}
             step="0.01"
-            disabled={readOnly || true}
-          />
-        </div>
-        <div className="col-span-2">
-          <InputNumber
-            label="TAX (%)"
-            placeholder="0.00"
-            value={formData.mrrdc_txpct}
-            onChange={(e) => onChange("mrrdc_txpct", e.target.value)}
-            error={formErrors.mrrdc_txpct}
-            step="0.01"
             disabled={readOnly}
           />
         </div>
-        {Number(formData.mrrdc_fcpct) < 0.1 ? (
-          <div className="col-span-2">
-            <InputNumber
-              label="Fix Cost (%)"
-              placeholder="0.00"
-              value={formData.mrrdc_fcamt}
-              onChange={(e) => onChange("mrrdc_fcamt", e.target.value)}
-              error={formErrors.mrrdc_fcamt}
-              step="0.01"
-              disabled={readOnly}
-            />
-          </div>
-        ) : (
-          <div className="col-span-2">
-            <InputNumber
-              label="Fix Cost %"
-              placeholder="0.00"
-              value={formData.mrrdc_fcpct}
-              onChange={(e) => onChange("mrrdc_fcpct", e.target.value)}
-              error={formErrors.mrrdc_fcpct}
-              step="0.01"
-              disabled={true}
-            />
-          </div>
-        )}
-        <div className="col-span-8">
+        <div className="col-span-3">
+          <Dropdown
+            label="VAT Type"
+            options={txmod_Options}
+            value={formData.mrrdc_vtype}
+            onChange={(e) => onChange("mrrdc_vtype", e.target.value)}
+            error={formErrors.mrrdc_vtype}
+            placeholder="Select..."
+            disabled={readOnly}
+          />
+        </div>
+        
+        <div className="col-span-12">
           <InputText
             label="Notes"
             placeholder="Enter notes"

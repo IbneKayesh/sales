@@ -220,4 +220,48 @@ router.post("/create-category", async (req, res) => {
   }
 });
 
+// get-by-item-purchase
+router.post("/get-by-item-purchase", async (req, res) => {
+  try {
+    const { itmtx_items, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!itmtx_items || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT tax.*, itx.itmtx_items
+FROM tmib_txcod tax
+JOIN tmib_itmtx itx ON tax.id = itx.itmtx_txcod
+WHERE tax.txcod_actve = TRUE
+AND tax.txcod_trcod = 'Purchase'
+AND itx.itmtx_actve = TRUE
+AND itx.itmtx_users = tax.txcod_users
+AND itx.itmtx_bsins = tax.txcod_bsins
+AND itx.itmtx_items = $1
+AND itx.itmtx_users = $2
+AND itx.itmtx_bsins = $3`;
+
+    const params = [itmtx_items, user_c, user_b];
+    const rows = await dbGetAll(sql, params, `get itmtx- ${itmtx_items}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 module.exports = router;

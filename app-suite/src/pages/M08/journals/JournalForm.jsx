@@ -25,7 +25,7 @@ const JournalForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-5">
+        <div className="col-span-4">
           <Dropdown
             label="Department"
             options={dpart_Options}
@@ -69,6 +69,9 @@ const JournalForm = ({
         </div>
         <div className="col-span-1">
           <InputLabel label="Currency" value={formData.jrnlm_crncy} />
+        </div>
+        <div className="col-span-1">
+          <InputLabel label="Rate" value={formData.jrnlm_exrat} />
         </div>
         <div className="col-span-2">
           <InputCalendar

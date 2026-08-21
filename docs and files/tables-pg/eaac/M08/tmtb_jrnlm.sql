@@ -23,6 +23,7 @@ CREATE TABLE tmtb_jrnlm (
   jrnlm_narrt varchar(200) NOT NULL,
   jrnlm_drval decimal(18,6) NOT NULL DEFAULT 0,
   jrnlm_crval decimal(18,6) NOT NULL DEFAULT 0,
+  jrnlm_exrat decimal(18,6) NOT NULL DEFAULT 1,
   jrnlm_stats varchar(50) NOT NULL,
   jrnlm_isapp boolean NOT NULL DEFAULT false,
   

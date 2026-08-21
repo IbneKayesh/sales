@@ -15,16 +15,15 @@ const BillSummary = ({ formData = {}, readOnly, onChange = () => {} }) => {
   const dueAmt = Number(formData.mrrdm_duamt) || 0;
 
   const summaryRows = [
-    { label: "Total Amount", value: formData.mrrdm_tramt },
+    { label: "Item Amount", value: formData.mrrdm_tramt },
     { label: "Item Discount", value: formData.mrrdm_itmds },
     { label: "Invoice Discount %", value: formData.mrrdm_dspct },
     { label: "Invoice Discount", value: formData.mrrdm_invds, editable: true },
-    { label: "iVAT Amount", value: formData.mrrdm_ivtmt },
     { label: "VAT Amount", value: formData.mrrdm_vtamt },
-    { label: "TAX Amount", value: formData.mrrdm_txamt },
-    { label: "Fix Amount", value: formData.mrrdm_fcamt },
     { label: "Include Cost", value: formData.mrrdm_icamt },
     { label: "Exclude Cost", value: formData.mrrdm_ecamt },
+    { label: "Invoice Total", value: formData.mrrdm_stamt },
+    { label: "Inventory", value: formData.mrrdm_csamt },
   ];
 
   const keyRows = [

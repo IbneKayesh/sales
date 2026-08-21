@@ -1,0 +1,1132 @@
+SCENARIO 1 — PURCHASE VAT-INCLUSIVE / SALE VAT-EXCLUSIVE
+
+Purchase:
+- Supplier price (VAT inclusive): 100.00
+- Net purchase value: 86.96
+- Input VAT: 13.04
+- Total paid to supplier: 100.00
+
+Purchase Entry:
+DR  Inventory/Purchase       86.96
+DR  Input VAT                13.04
+CR  Supplier/Cash           100.00
+
+Sale:
+- Selling price (VAT exclusive): 150.00
+- Output VAT @ 15%: 22.50
+- Customer pays: 172.50
+
+Sale Entry:
+DR  Customer/Cash           172.50
+CR  Sales                   150.00
+CR  Output VAT               22.50
+
+VAT Settlement:
+- Output VAT: 22.50
+- Less Input VAT: 13.04
+- VAT payable to Government: 9.46
+
+Entry:
+DR  Output VAT               22.50
+CR  Input VAT                13.04
+CR  VAT Payable               9.46
+
+When Government is paid:
+DR  VAT Payable                9.46
+CR  Bank                       9.46
+
+
+SCENARIO 2 — PURCHASE VAT-EXCLUSIVE / SALE VAT-INCLUSIVE
+
+Purchase:
+- Supplier price (VAT exclusive): 100.00
+- Input VAT @ 15%: 15.00
+- Total paid to supplier: 115.00
+
+Purchase Entry:
+DR  Inventory/Purchase       100.00
+DR  Input VAT                15.00
+CR  Supplier/Cash           115.00
+
+Sale:
+- Selling price (VAT inclusive): 150.00
+- Net sales value: 130.43
+- Output VAT: 19.57
+- Customer pays: 150.00
+
+Sale Entry:
+DR  Customer/Cash           150.00
+CR  Sales                   130.43
+CR  Output VAT               19.57
+
+VAT Settlement:
+- Output VAT: 19.57
+- Less Input VAT: 15.00
+- VAT payable to Government: 4.57
+
+Entry:
+DR  Output VAT               19.57
+CR  Input VAT                15.00
+CR  VAT Payable                4.57
+
+When Government is paid:
+DR  VAT Payable                4.57
+CR  Bank                       4.57
+
+SCENARIO 3 — PURCHASE VAT-INCLUSIVE / SALE VAT-INCLUSIVE
+
+Purchase:
+- Purchase total: 100.00 VAT inclusive
+- Net purchase value: 86.96
+- Input VAT: 13.04
+- Paid to supplier: 100.00
+
+Purchase Entry:
+DR  Inventory/Purchase        86.96
+DR  Input VAT                 13.04
+CR  Supplier/Cash            100.00
+
+Sale:
+- Selling price: 150.00 VAT inclusive
+- Net sales value: 130.43
+- Output VAT: 19.57
+- Customer pays: 150.00
+
+Sale Entry:
+DR  Customer/Cash            150.00
+CR  Sales                    130.43
+CR  Output VAT                19.57
+
+VAT Settlement:
+- Output VAT: 19.57
+- Less Input VAT: 13.04
+- VAT payable: 6.53
+
+Entry:
+DR  Output VAT                19.57
+CR  Input VAT                 13.04
+CR  VAT Payable                6.53
+
+Government Payment:
+DR  VAT Payable                 6.53
+CR  Bank                        6.53
+
+
+
+SCENARIO 4 — PURCHASE VAT-EXCLUSIVE / SALE VAT-EXCLUSIVE
+
+Purchase:
+- Purchase price: 100.00
+- Input VAT @ 15%: 15.00
+- Total paid: 115.00
+
+Purchase Entry:
+DR  Inventory/Purchase       100.00
+DR  Input VAT                15.00
+CR  Supplier/Cash           115.00
+
+Sale:
+- Selling price: 150.00
+- Output VAT @ 15%: 22.50
+- Customer pays: 172.50
+
+Sale Entry:
+DR  Customer/Cash           172.50
+CR  Sales                   150.00
+CR  Output VAT               22.50
+
+VAT Settlement:
+- Output VAT: 22.50
+- Less Input VAT: 15.00
+- VAT payable: 7.50
+
+Entry:
+DR  Output VAT               22.50
+CR  Input VAT                15.00
+CR  VAT Payable               7.50
+
+Government Payment:
+DR  VAT Payable                7.50
+CR  Bank                       7.50
+
+
+SCENARIO 5 — PURCHASE VAT-EXEMPT / SALE VAT-INCLUSIVE @ 15%
+
+Purchase:
+- Purchase price: 100.00
+- VAT: 0.00
+- Total paid: 100.00
+
+Purchase Entry:
+DR  Inventory/Purchase       100.00
+CR  Supplier/Cash           100.00
+
+Sale:
+- Selling price: 150.00 VAT inclusive
+- Net sales value: 130.43
+- Output VAT: 19.57
+- Customer pays: 150.00
+
+Sale Entry:
+DR  Customer/Cash           150.00
+CR  Sales                   130.43
+CR  Output VAT               19.57
+
+VAT Settlement:
+- Output VAT: 19.57
+- Input VAT: 0.00
+- VAT payable: 19.57
+
+Government Payment:
+DR  VAT Payable              19.57
+CR  Bank                     19.57
+
+SCENARIO 6 — PURCHASE VAT-EXEMPT / SALE VAT-EXCLUSIVE @ 15%
+
+Purchase:
+- Purchase price: 100.00
+- VAT: 0.00
+- Total paid: 100.00
+
+Purchase Entry:
+DR  Inventory/Purchase       100.00
+CR  Supplier/Cash           100.00
+
+Sale:
+- Selling price: 150.00 VAT exclusive
+- Output VAT @ 15%: 22.50
+- Customer pays: 172.50
+
+Sale Entry:
+DR  Customer/Cash           172.50
+CR  Sales                   150.00
+CR  Output VAT               22.50
+
+VAT Settlement:
+- Output VAT: 22.50
+- Input VAT: 0.00
+- VAT payable: 22.50
+
+Government Payment:
+DR  VAT Payable              22.50
+CR  Bank                     22.50
+
+
+SCENARIO                         PURCHASE VAT       SALES VAT
+
+1. Buy Inclusive → Sell Exclusive
+                                 15% Inclusive      15% Exclusive
+
+2. Buy Exclusive → Sell Inclusive
+                                 15% Exclusive      15% Inclusive
+
+3. Buy Inclusive → Sell Inclusive
+                                 15% Inclusive      15% Inclusive
+
+4. Buy Exclusive → Sell Exclusive
+                                 15% Exclusive      15% Exclusive
+
+5. Buy Exempt → Sell Inclusive
+                                 Exempt             15% Inclusive
+
+6. Buy Exempt → Sell Exclusive
+                                 Exempt             15% Exclusive
+
+
+| Field           | Type    | Purpose                        |
+| --------------- | ------- | ------------------------------ |
+| ItemID          | PK      | Product ID                     |
+| ItemCode        | varchar | Product code                   |
+| ItemName        | varchar | Product name                   |
+| PurchaseVATRate | decimal | e.g. 15%                       |
+| PurchaseVATType | varchar | Inclusive / Exclusive / Exempt |
+| SalesVATRate    | decimal | e.g. 15%                       |
+| SalesVATType    | varchar | Inclusive / Exclusive / Exempt |
+| PurchasePrice   | decimal | Default purchase price         |
+| SalesPrice      | decimal | Default selling price          |
+| IsActive        | boolean | Active/inactive                |
+
+| ItemName  | PurchaseVAT   | SalesVAT      |
+| --------- | ------------- | ------------- |
+| Product A | 15% Inclusive | 15% Exclusive |
+| Product B | 15% Exclusive | 15% Inclusive |
+| Product C | Exempt        | 15% Inclusive |
+
+
+============================================================
+SIMPLE SHOP ACCOUNTING DATABASE STRUCTURE
+============================================================
+
+Purpose:
+A simple database structure for a shop covering:
+
+1. Item Master
+2. Purchase Master
+3. Purchase Details
+4. Sales Master
+5. Sales Details
+6. Journal Master
+7. Journal Details
+
+The system supports:
+- VAT Inclusive
+- VAT Exclusive
+- VAT Exempt
+- Input VAT
+- Output VAT
+- Purchase accounting
+- Sales accounting
+- CR/DR journal entries
+
+
+============================================================
+1. ITEM MASTER
+============================================================
+
+Table Name: ItemMaster
+
+Purpose:
+Stores the basic information and default VAT settings of each
+product/item.
+
+Columns:
+
+ItemID
+    Primary Key.
+    Unique ID for the item.
+
+ItemCode
+    Unique product/item code.
+
+ItemName
+    Name of the product.
+
+PurchasePrice
+    Default purchase price.
+
+PurchaseVATRate
+    VAT rate applicable when purchasing this item.
+    Example: 15.00
+
+PurchaseVATType
+    How the purchase price is treated:
+    - INCLUSIVE
+    - EXCLUSIVE
+    - EXEMPT
+
+SalesPrice
+    Default selling price.
+
+SalesVATRate
+    VAT rate applicable when selling this item.
+    Example: 15.00
+
+SalesVATType
+    How the selling price is treated:
+    - INCLUSIVE
+    - EXCLUSIVE
+    - EXEMPT
+
+IsActive
+    Indicates whether the item is currently active.
+
+
+Suggested Structure:
+
+ItemMaster
+------------------------------------------------------------
+ItemID              PK
+ItemCode
+ItemName
+PurchasePrice
+PurchaseVATRate
+PurchaseVATType
+SalesPrice
+SalesVATRate
+SalesVATType
+IsActive
+------------------------------------------------------------
+
+
+Example:
+
+ItemID:              1
+ItemCode:            P001
+ItemName:            Product A
+PurchasePrice:       100.00
+PurchaseVATRate:     15.00
+PurchaseVATType:     INCLUSIVE
+SalesPrice:          150.00
+SalesVATRate:        15.00
+SalesVATType:        EXCLUSIVE
+IsActive:            1
+
+
+IMPORTANT:
+ItemMaster contains DEFAULT settings.
+
+The actual VAT rate/type used in a transaction should also be
+saved in PurchaseDetails or SalesDetails so that old invoices
+do not change if the ItemMaster is changed later.
+
+
+============================================================
+2. PURCHASE MASTER
+============================================================
+
+Table Name: PurchaseMaster
+
+Purpose:
+Stores the header/general information of a purchase invoice.
+
+One PurchaseMaster record can have many PurchaseDetails records.
+
+Columns:
+
+PurchaseID
+    Primary Key.
+    Unique purchase transaction ID.
+
+PurchaseDate
+    Date of purchase.
+
+SupplierID
+    Supplier/vendor ID.
+
+InvoiceNo
+    Supplier invoice number.
+
+SubTotal
+    Total purchase value before VAT.
+
+VATAmount
+    Total input VAT on the purchase.
+
+GrandTotal
+    Total invoice amount including VAT.
+
+PaidAmount
+    Amount paid to supplier.
+
+Status
+    Example:
+    - DRAFT
+    - POSTED
+    - PARTIAL
+    - PAID
+    - CANCELLED
+
+
+Suggested Structure:
+
+PurchaseMaster
+------------------------------------------------------------
+PurchaseID          PK
+PurchaseDate
+SupplierID
+InvoiceNo
+SubTotal
+VATAmount
+GrandTotal
+PaidAmount
+Status
+------------------------------------------------------------
+
+
+Example:
+
+PurchaseID:          1001
+PurchaseDate:        2026-08-20
+SupplierID:          25
+InvoiceNo:           SUP-00125
+SubTotal:            86.96
+VATAmount:           13.04
+GrandTotal:          100.00
+PaidAmount:          100.00
+Status:              PAID
+
+
+============================================================
+3. PURCHASE DETAILS
+============================================================
+
+Table Name: PurchaseDetails
+
+Purpose:
+Stores the individual products purchased in a purchase invoice.
+
+One PurchaseMaster can contain many PurchaseDetails.
+
+Columns:
+
+PurchaseDetailID
+    Primary Key.
+
+PurchaseID
+    Foreign Key to PurchaseMaster.
+
+ItemID
+    Foreign Key to ItemMaster.
+
+Quantity
+    Quantity purchased.
+
+UnitPrice
+    Unit price used in this transaction.
+
+VATRate
+    Actual VAT rate used for this transaction.
+
+VATType
+    Actual VAT treatment used:
+    - INCLUSIVE
+    - EXCLUSIVE
+    - EXEMPT
+
+VATAmount
+    Actual input VAT amount for this line.
+
+LineTotal
+    Total amount for this line including VAT where applicable.
+
+
+Suggested Structure:
+
+PurchaseDetails
+------------------------------------------------------------
+PurchaseDetailID    PK
+PurchaseID          FK
+ItemID              FK
+Quantity
+UnitPrice
+VATRate
+VATType
+VATAmount
+LineTotal
+------------------------------------------------------------
+
+
+EXAMPLE 1:
+Purchase price = 100 VAT INCLUSIVE
+
+VAT = 100 × 15 / 115
+VAT = 13.04
+
+Net purchase = 86.96
+
+PurchaseDetails:
+
+PurchaseDetailID:   1
+PurchaseID:         1001
+ItemID:             1
+Quantity:            1
+UnitPrice:           100.00
+VATRate:             15.00
+VATType:             INCLUSIVE
+VATAmount:           13.04
+LineTotal:           100.00
+
+
+EXAMPLE 2:
+Purchase price = 100 VAT EXCLUSIVE
+
+VAT = 100 × 15%
+VAT = 15.00
+
+Total = 115.00
+
+PurchaseDetails:
+
+Quantity:            1
+UnitPrice:           100.00
+VATRate:             15.00
+VATType:             EXCLUSIVE
+VATAmount:           15.00
+LineTotal:           115.00
+
+
+EXAMPLE 3:
+VAT EXEMPT
+
+Quantity:            1
+UnitPrice:           100.00
+VATRate:              0.00
+VATType:             EXEMPT
+VATAmount:            0.00
+LineTotal:           100.00
+
+
+============================================================
+4. SALES MASTER
+============================================================
+
+Table Name: SalesMaster
+
+Purpose:
+Stores the header/general information of a sales invoice/bill.
+
+One SalesMaster record can have many SalesDetails records.
+
+Columns:
+
+SalesID
+    Primary Key.
+
+SalesDate
+    Date of sale.
+
+CustomerID
+    Customer ID.
+    Can be NULL for cash sales.
+
+InvoiceNo
+    Sales invoice/bill number.
+
+SubTotal
+    Total sales value before VAT.
+
+VATAmount
+    Total output VAT.
+
+GrandTotal
+    Total amount charged to customer.
+
+PaidAmount
+    Amount received from customer.
+
+Status
+    Example:
+    - DRAFT
+    - POSTED
+    - PARTIAL
+    - PAID
+    - CANCELLED
+
+
+Suggested Structure:
+
+SalesMaster
+------------------------------------------------------------
+SalesID             PK
+SalesDate
+CustomerID
+InvoiceNo
+SubTotal
+VATAmount
+GrandTotal
+PaidAmount
+Status
+------------------------------------------------------------
+
+
+Example:
+
+SalesID:             2001
+SalesDate:           2026-08-20
+CustomerID:          NULL
+InvoiceNo:            INV-0001
+SubTotal:            130.43
+VATAmount:            19.57
+GrandTotal:          150.00
+PaidAmount:          150.00
+Status:              PAID
+
+
+============================================================
+5. SALES DETAILS
+============================================================
+
+Table Name: SalesDetails
+
+Purpose:
+Stores the individual products sold in a sales invoice.
+
+One SalesMaster can contain many SalesDetails.
+
+Columns:
+
+SalesDetailID
+    Primary Key.
+
+SalesID
+    Foreign Key to SalesMaster.
+
+ItemID
+    Foreign Key to ItemMaster.
+
+Quantity
+    Quantity sold.
+
+UnitPrice
+    Selling price used in this transaction.
+
+VATRate
+    Actual VAT rate used for this transaction.
+
+VATType
+    Actual VAT treatment:
+    - INCLUSIVE
+    - EXCLUSIVE
+    - EXEMPT
+
+VATAmount
+    Actual output VAT amount for this line.
+
+LineTotal
+    Total amount for this line.
+
+
+Suggested Structure:
+
+SalesDetails
+------------------------------------------------------------
+SalesDetailID       PK
+SalesID             FK
+ItemID              FK
+Quantity
+UnitPrice
+VATRate
+VATType
+VATAmount
+LineTotal
+------------------------------------------------------------
+
+
+EXAMPLE 1:
+Selling price = 150 VAT INCLUSIVE
+
+VAT = 150 × 15 / 115
+VAT = 19.57
+
+Net sales = 130.43
+
+SalesDetails:
+
+SalesDetailID:      1
+SalesID:            2001
+ItemID:             1
+Quantity:            1
+UnitPrice:          150.00
+VATRate:             15.00
+VATType:             INCLUSIVE
+VATAmount:           19.57
+LineTotal:          150.00
+
+
+EXAMPLE 2:
+Selling price = 150 VAT EXCLUSIVE
+
+VAT = 150 × 15%
+VAT = 22.50
+
+Customer pays = 172.50
+
+SalesDetails:
+
+Quantity:            1
+UnitPrice:          150.00
+VATRate:             15.00
+VATType:             EXCLUSIVE
+VATAmount:           22.50
+LineTotal:          172.50
+
+
+============================================================
+6. JOURNAL MASTER
+============================================================
+
+Table Name: JournalMaster
+
+Purpose:
+Stores the header of an accounting journal.
+
+The actual Debit/Credit lines are stored in JournalDetails.
+
+A journal can be generated from:
+- Purchase
+- Sale
+- Supplier payment
+- Customer receipt
+- VAT settlement
+- Expense
+- Other accounting transactions
+
+
+Columns:
+
+JournalID
+    Primary Key.
+
+JournalDate
+    Date of accounting transaction.
+
+ReferenceType
+    Source transaction type.
+    Examples:
+    - PURCHASE
+    - SALE
+    - PAYMENT
+    - RECEIPT
+    - VAT
+    - EXPENSE
+
+ReferenceID
+    ID of the source transaction.
+
+Description
+    Description of the journal.
+
+
+Suggested Structure:
+
+JournalMaster
+------------------------------------------------------------
+JournalID           PK
+JournalDate
+ReferenceType
+ReferenceID
+Description
+------------------------------------------------------------
+
+
+Example:
+
+JournalID:           5001
+JournalDate:         2026-08-20
+ReferenceType:       PURCHASE
+ReferenceID:         1001
+Description:         Purchase from supplier
+
+
+============================================================
+7. JOURNAL DETAILS
+============================================================
+
+Table Name: JournalDetails
+
+Purpose:
+Stores the individual Debit and Credit entries.
+
+Every journal must satisfy:
+
+TOTAL DEBIT = TOTAL CREDIT
+
+
+Columns:
+
+JournalDetailID
+    Primary Key.
+
+JournalID
+    Foreign Key to JournalMaster.
+
+AccountID
+    Ledger/account ID.
+
+Debit
+    Debit amount.
+
+Credit
+    Credit amount.
+
+Description
+    Optional line description.
+
+
+Suggested Structure:
+
+JournalDetails
+------------------------------------------------------------
+JournalDetailID     PK
+JournalID           FK
+AccountID           FK
+Debit
+Credit
+Description
+------------------------------------------------------------
+
+
+============================================================
+JOURNAL EXAMPLE 1
+PURCHASE 100 VAT-INCLUSIVE
+============================================================
+
+Purchase:
+
+Product value = 86.96
+Input VAT     = 13.04
+Total         = 100.00
+
+
+JournalMaster:
+
+JournalID:       5001
+ReferenceType:   PURCHASE
+ReferenceID:     1001
+
+
+JournalDetails:
+
+Account                  Debit       Credit
+------------------------------------------------
+Inventory                86.96
+Input VAT                13.04
+Supplier Payable                     100.00
+------------------------------------------------
+TOTAL                    100.00      100.00
+
+
+============================================================
+JOURNAL EXAMPLE 2
+PURCHASE 100 + 15% VAT
+============================================================
+
+Product value = 100.00
+Input VAT     = 15.00
+Total         = 115.00
+
+
+JournalDetails:
+
+Account                  Debit       Credit
+------------------------------------------------
+Inventory               100.00
+Input VAT                15.00
+Supplier Payable                     115.00
+------------------------------------------------
+TOTAL                   115.00       115.00
+
+
+============================================================
+JOURNAL EXAMPLE 3
+SALE 150 VAT-INCLUSIVE
+============================================================
+
+Net sales     = 130.43
+Output VAT    = 19.57
+Customer pays = 150.00
+
+
+JournalDetails:
+
+Account                  Debit       Credit
+------------------------------------------------
+Cash/Customer           150.00
+Sales                                130.43
+Output VAT                            19.57
+------------------------------------------------
+TOTAL                   150.00       150.00
+
+
+============================================================
+JOURNAL EXAMPLE 4
+SALE 150 + 15% VAT
+============================================================
+
+Net sales     = 150.00
+Output VAT    = 22.50
+Customer pays = 172.50
+
+
+JournalDetails:
+
+Account                  Debit       Credit
+------------------------------------------------
+Cash/Customer           172.50
+Sales                                150.00
+Output VAT                            22.50
+------------------------------------------------
+TOTAL                   172.50       172.50
+
+
+============================================================
+VAT SETTLEMENT
+============================================================
+
+Example:
+
+Input VAT  = 15.00
+Output VAT = 19.57
+
+VAT payable = 19.57 - 15.00
+VAT payable = 4.57
+
+
+JournalDetails:
+
+Account                  Debit       Credit
+------------------------------------------------
+Output VAT               19.57
+Input VAT                             15.00
+VAT Payable                            4.57
+------------------------------------------------
+TOTAL                    19.57        19.57
+
+
+When VAT is paid to Government:
+
+JournalDetails:
+
+Account                  Debit       Credit
+------------------------------------------------
+VAT Payable               4.57
+Bank                                   4.57
+------------------------------------------------
+TOTAL                     4.57         4.57
+
+
+============================================================
+COMPLETE TABLE RELATIONSHIP
+============================================================
+
+ItemMaster
+    |
+    | ItemID
+    |
+    +--------------------+
+    |                    |
+    v                    v
+PurchaseDetails      SalesDetails
+    |                    |
+    | PurchaseID         | SalesID
+    v                    v
+PurchaseMaster        SalesMaster
+
+
+PurchaseMaster
+       |
+       | PurchaseID
+       v
+JournalMaster
+       |
+       | JournalID
+       v
+JournalDetails
+       |
+       | AccountID
+       v
+ChartOfAccounts
+
+
+SalesMaster
+       |
+       | SalesID
+       v
+JournalMaster
+       |
+       | JournalID
+       v
+JournalDetails
+       |
+       | AccountID
+       v
+ChartOfAccounts
+
+
+============================================================
+MINIMUM TABLES
+============================================================
+
+1. ItemMaster
+2. PurchaseMaster
+3. PurchaseDetails
+4. SalesMaster
+5. SalesDetails
+6. JournalMaster
+7. JournalDetails
+
+Additional required master tables in a real system:
+
+8. SupplierMaster
+9. CustomerMaster
+10. ChartOfAccounts
+
+
+============================================================
+IMPORTANT DESIGN RULES
+============================================================
+
+1. ItemMaster stores DEFAULT VAT settings.
+
+2. PurchaseDetails stores the ACTUAL VAT rate/type used on
+   the purchase.
+
+3. SalesDetails stores the ACTUAL VAT rate/type used on
+   the sale.
+
+4. Never recalculate old invoices using the current ItemMaster
+   VAT rate.
+
+5. Input VAT belongs to the purchase side.
+
+6. Output VAT belongs to the sales side.
+
+7. VAT payable is:
+
+   Output VAT - Eligible Input VAT
+
+8. Every JournalMaster must have one or more JournalDetails.
+
+9. Every journal must balance:
+
+   Total Debit = Total Credit
+
+10. VAT-inclusive calculation at 15%:
+
+   VAT = Total × 15 / 115
+
+11. VAT-exclusive calculation at 15%:
+
+   VAT = Net Amount × 15 / 100
+
+12. VAT-exempt:
+
+   VAT = 0
+
+
+============================================================
+SIMPLE DATA FLOW
+============================================================
+
+PURCHASE:
+
+Supplier
+   ↓
+PurchaseMaster
+   ↓
+PurchaseDetails
+   ↓
+Inventory + Input VAT
+   ↓
+JournalMaster
+   ↓
+JournalDetails
+
+
+SALE:
+
+Customer
+   ↓
+SalesMaster
+   ↓
+SalesDetails
+   ↓
+Sales + Output VAT
+   ↓
+JournalMaster
+   ↓
+JournalDetails
+
+
+VAT:
+
+Input VAT
+   +
+Output VAT
+   ↓
+VAT Calculation
+   ↓
+VAT Payable
+   ↓
+Government Payment
+

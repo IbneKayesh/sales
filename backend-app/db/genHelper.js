@@ -227,10 +227,31 @@ const getDefaultCOAforPartyId = async (user_c, user_b, src_id) => {
   return result.prtya_chtac;
 };
 
+const getCurrencyRate = async (user_c, user_b) => {
+  const sql = `SELECT crn.crncy_fcrnc, crn.crncy_exrat, crn.crncy_tcrnc
+FROM tmtb_crncy crn
+WHERE crn.crncy_users = $1
+AND crn.crncy_bsins = $2
+AND crn.crncy_actve = TRUE
+LIMIT 1`;
+  //console.log(user_c, user_b, dept_id);
+  const result = await dbGet(sql, [user_c, user_b]);
+
+ // console.log(result);
+  if (!result || result.length === 0) {
+    throw new Error(
+      `No default currency rate configured for this ${src_id}`,
+    );
+  }
+
+  return result;
+};
+
 module.exports = {
   GenNewCode,
   GenNewTrn,
   getFiscalYearPeriod,
   getDefaultCOAforPartyId,
   getCurrentPeriod,
+  getCurrencyRate
 };

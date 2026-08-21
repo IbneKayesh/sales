@@ -38,20 +38,8 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            [{rowData.mrrdc_edamt}] {Number(rowData.mrrdc_dsamt).toFixed(4)} (
-            {rowData.mrrdc_dspct}%)
-          </>
-        );
-      },
-    },
-    {
-      key: "mrrdc_ivpct",
-      header: "iVAT",
-      width: "100px",
-      body: (_, rowData) => {
-        return (
-          <>
-            {rowData.mrrdc_ivamt} ({rowData.mrrdc_ivpct}%)
+            {Number(rowData.mrrdc_dsamt).toFixed(4)} ({rowData.mrrdc_dspct}%)
+            [Other: {rowData.mrrdc_edamt}]
           </>
         );
       },
@@ -63,56 +51,41 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return (
           <>
-            {rowData.mrrdc_vtamt} ({rowData.mrrdc_vtpct}%)
-          </>
-        );
-      },
-    },
-    {
-      key: "mrrdc_txpct",
-      header: "TAX",
-      width: "100px",
-      body: (_, rowData) => {
-        return (
-          <>
-            {rowData.mrrdc_txamt} ({rowData.mrrdc_txpct}%)
-          </>
-        );
-      },
-    },
-    {
-      key: "mrrdc_fcpct",
-      header: "Fix Cost",
-      width: "100px",
-      body: (_, rowData) => {
-        return (
-          <>
-            {rowData.mrrdc_fcamt} ({rowData.mrrdc_fcpct}%)
+            {rowData.mrrdc_vtamt} ({rowData.mrrdc_vtpct}% {rowData.mrrdc_vtype})
           </>
         );
       },
     },
     {
       key: "mrrdc_icamt",
-      header: "Other Cost",
+      header: "In Cost",
       width: "80px",
       body: (_, rowData) => {
-        return (
-          <>
-            {(
-              Number(rowData.mrrdc_icamt || 0) +
-              Number(rowData.mrrdc_ecamt || 0)
-            ).toFixed(4)}
-          </>
-        );
+        return <>{rowData.mrrdc_icamt}</>;
       },
     },
     {
-      key: "mrrdc_ntamt",
+      key: "mrrdc_ecamt",
+      header: "Ex Cost",
+      width: "80px",
+      body: (_, rowData) => {
+        return <>{rowData.mrrdc_ecamt}</>;
+      },
+    },
+    {
+      key: "mrrdc_pyamt",
+      header: "Payable",
+      width: "80px",
+      body: (_, rowData) => {
+        return <>{(Number(rowData.mrrdc_pyamt) || 0).toFixed(4)}</>;
+      },
+    },
+    {
+      key: "mrrdc_stamt",
       header: "Sub Total",
       width: "80px",
       body: (_, rowData) => {
-        return <>{(Number(rowData.mrrdc_ntamt) || 0).toFixed(4)}</>;
+        return <>{(Number(rowData.mrrdc_stamt) || 0).toFixed(4)}</>;
       },
     },
     { key: "mrrdc_notes", header: "Notes", width: "100px" },

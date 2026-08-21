@@ -14,8 +14,8 @@ CREATE TABLE tmpb_mrrtx (
   mrrtx_txmod VARCHAR(50) NOT NULL,
   mrrtx_txrat decimal(18,6) DEFAULT 0.00,  
   mrrtx_txamt decimal(18,6) DEFAULT 0.00,  
-  mrrtx_rcamt decimal(18,6) DEFAULT 0.00,  
-  mrrtx_nramt decimal(18,6) DEFAULT 0.00,  
+  mrrtx_ictax decimal(18,6) DEFAULT 0.00,  
+  mrrtx_ectax decimal(18,6) DEFAULT 0.00,  
   mrrtx_notes VARCHAR(50),
 
   -- default

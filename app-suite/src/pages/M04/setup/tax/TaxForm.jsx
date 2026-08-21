@@ -5,7 +5,7 @@ import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 import {
   txcod_txtyp_Options,
-  txcod_txmod_Options,
+  txmod_Options,
   txcod_trcod_Options,
 } from "@/utils/vtable.js";
 
@@ -37,7 +37,7 @@ const TaxForm = ({
         <div className="col-span-3">
           <Dropdown
             label="Mode"
-            options={txcod_txmod_Options}
+            options={txmod_Options}
             value={formData.txcod_txmod}
             onChange={(e) => onChange("txcod_txmod", e.target.value)}
             error={formErrors.txcod_txmod}

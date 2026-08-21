@@ -127,6 +127,10 @@ const create = async (req, res) => {
       items_brand,
       items_tstck,
       items_smrgn,
+      items_prvat,
+      items_ptvat,
+      items_slvat,
+      items_stvat,
       items_image,
       items_stpur,
       items_stsal,
@@ -148,6 +152,8 @@ const create = async (req, res) => {
       !items_scatg ||
       !items_itype ||
       !items_brand ||
+      !items_ptvat ||
+      !items_stvat ||
       !user_s ||
       !user_c ||
       !user_b
@@ -187,13 +193,13 @@ const create = async (req, res) => {
       sql: `INSERT INTO tmib_items(id, items_users, items_bsins, items_ccode, items_icode, items_iname,
       items_brcod, items_hscod, items_notes, items_runit, items_pkqty, items_punit,
       items_szqty, items_sunit, items_sgrup, items_scatg, items_itype, items_brand,
-      items_tstck, items_smrgn,
+      items_tstck, items_smrgn, items_prvat, items_ptvat, items_slvat, items_stvat,
       items_image, items_stpur, items_stsal, items_stnsf, items_crusr, items_upusr)
 	    VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
         $13, $14, $15, $16, $17, $18,
         $19, $20, $21, $22, $23, $24,
-        $25, $26)`,
+        $25, $26, $27, $28, $29, $30)`,
       params: [
         masterId,
         user_c,
@@ -215,6 +221,10 @@ const create = async (req, res) => {
         items_brand,
         items_tstck,
         items_smrgn,
+        items_prvat,
+        items_ptvat,
+        items_slvat,
+        items_stvat,
         items_image,
         items_stpur,
         items_stsal,
@@ -287,6 +297,10 @@ const update = async (req, res) => {
       items_brand,
       items_tstck,
       items_smrgn,
+      items_prvat,
+      items_ptvat,
+      items_slvat,
+      items_stvat,
       items_image,
       items_stpur,
       items_stsal,
@@ -308,6 +322,8 @@ const update = async (req, res) => {
       !items_scatg ||
       !items_itype ||
       !items_brand ||
+      !items_ptvat ||
+      !items_stvat ||
       !user_s ||
       !user_c ||
       !user_b
@@ -338,14 +354,18 @@ const update = async (req, res) => {
     items_brand = $12,
     items_tstck = $13,
     items_smrgn = $14,
-    items_image = $15,
-    items_stpur = $16,
-    items_stsal = $17,
-    items_stnsf = $18,
-    items_upusr = $19,
+    items_prvat = $15,
+    items_ptvat = $16,
+    items_slvat = $17,
+    items_stvat = $18,
+    items_image = $19,
+    items_stpur = $20,
+    items_stsal = $21,
+    items_stnsf = $22,
+    items_upusr = $23,
     items_updat = CURRENT_TIMESTAMP,
     items_rvnmr = items_rvnmr + 1
-    WHERE id = $20`,
+    WHERE id = $24`,
       params: [
         items_iname,
         items_brcod,
@@ -361,6 +381,10 @@ const update = async (req, res) => {
         items_brand,
         items_tstck,
         items_smrgn,
+        items_prvat,
+        items_ptvat,
+        items_slvat,
+        items_stvat,
         items_image,
         items_stpur,
         items_stsal,
@@ -604,7 +628,7 @@ router.post("/get-sales-invoice-items-by-dpart", async (req, res) => {
     AND prc.price_users = $2
     AND prc.price_bsins = $3
     ORDER BY itm.items_iname ASC`;
-    
+
     const sql = `SELECT stk.id stock_id, stk.stock_refid, stk.stock_brcod, stk.stock_batch, stk.stock_srial, stk.stock_wrdat, stk.stock_fgdat,
 stk.stock_exdat, stk.stock_ohqty, stk.stock_cprat,
 prc.id price_id, prc.price_cname, prc.price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat,
@@ -633,7 +657,11 @@ AND itm.items_stsal = FALSE
 ORDER BY prc.price_cname, stk.stock_crdat`;
 
     const params = [user_c, user_b, dpart_id];
-    const rows = await dbGetAll(sql, params, `get new invoice items- ${user_c}`);
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get new invoice items- ${user_c}`,
+    );
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -648,7 +676,6 @@ ORDER BY prc.price_cname, stk.stock_crdat`;
     });
   }
 });
-
 
 // get-by-filter
 router.post("/get-by-filter", async (req, res) => {
@@ -712,6 +739,5 @@ ORDER BY prc.price_gdstk DESC, prc.price_bdstk DESC, itm.items_iname`;
     });
   }
 });
-
 
 module.exports = router;

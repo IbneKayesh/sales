@@ -6,6 +6,7 @@ const {
   GenNewCode,
   GenNewTrn,
   getCurrentPeriod,
+  getCurrencyRate 
 } = require("../../db/genHelper");
 
 // =====================
@@ -26,7 +27,7 @@ router.post("/", async (req, res) => {
     const sql = `SELECT mrm.id mrrpy_mrrdm, '' mrrpy_party,
 mrm.mrrdm_pyamt - mrm.mrrdm_pdamt mrrpy_duamt, 0 mrrpy_pdamt,
 mrm.mrrdm_trnno mrrpy_refno, mrm.mrrdm_ttype || ' payments' mrrpy_notes,
-mrm.mrrdm_ttype, mrm.mrrdm_trnno, mrm.mrrdm_trdat, mrm.mrrdm_crncy, mrm.mrrdm_dpart, dpt.dpart_cname, cnt.cntct_cname,
+mrm.mrrdm_ttype, mrm.mrrdm_trnno, mrm.mrrdm_trdat, mrm.mrrdm_dpart, dpt.dpart_cname, cnt.cntct_cname,
 pty.id party_id, pty.party_chtac chtac_id
 FROM tmpb_mrrdm mrm
 JOIN tmsb_dpart dpt ON mrm.mrrdm_dpart = dpt.id
@@ -71,7 +72,6 @@ router.post("/create", async (req, res) => {
     const {
       mrrdm_dpart,
       mrrdm_ttype,
-      mrrdm_crncy,
       mrrpy_mrrdm,
       mrrpy_party,
       mrrpy_pdamt,
@@ -89,7 +89,6 @@ router.post("/create", async (req, res) => {
     if (
       !mrrdm_dpart ||
       !mrrdm_ttype ||
-      !mrrdm_crncy ||
       !mrrpy_mrrdm ||
       !mrrpy_party ||
       !mrrpy_pdamt ||
@@ -131,6 +130,27 @@ router.post("/create", async (req, res) => {
       "Payment Voucher",
       mrrdm_dpart,
     );
+
+    console.log("p1");
+
+    //active currency rate
+    const crncy = await getCurrencyRate(user_c, user_b);
+    console.log("crncy",crncy);
+    if (!crncy) {
+      return {
+        success: false,
+        message: "No active currency rate found",
+        data: {},
+      };
+    }
+    if (crncy.length > 1) {
+      return {
+        success: false,
+        message: "Multiple active currency rate found. Please select one.",
+        data: {},
+      };
+    }
+console.log("p2");
 
     //build scripts
     const sql = `SELECT mrm.mrrdm_pyamt-(COALESCE(SUM(mrp.mrrpy_pdamt),0) + $1) mrrdm_duamt
@@ -185,10 +205,10 @@ router.post("/create", async (req, res) => {
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    jrnlm_drval, jrnlm_crval, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
+    jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
     $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17)`,
+    $13, $14, $15, $16, $17, $18)`,
       params: [
         newId_JV,
         user_c,
@@ -196,7 +216,7 @@ router.post("/create", async (req, res) => {
         mrrdm_dpart,
         fsyar_id,
         acprd_id,
-        mrrdm_crncy,
+        crncy.crncy_tcrnc,
         "Payment Voucher",
         newTrnNo_JV,
         new Date(),
@@ -204,6 +224,7 @@ router.post("/create", async (req, res) => {
         mrrdm_ttype,
         0,
         0,
+        crncy.crncy_exrat,
         "Posted",
         user_s,
         user_s,
@@ -211,7 +232,7 @@ router.post("/create", async (req, res) => {
       label: `create journal master- ${newTrnNo_JV}`,
     });
 
-    //SYS_MRR_DIRECT.PAY_SUPPLIER > Liability / Supplier Payable - 20101010
+    //SYS_MRR_DIRECT.PAY_SUPPLIER > Liability / Supplier Payable - 20101010 (DR)
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -239,7 +260,7 @@ router.post("/create", async (req, res) => {
       ],
       label: `Clear Liability / Supplier / Payable ${newTrnNo_JV}`,
     });
-    //SYS_MRR_DIRECT.PAY_CASH_BANK	> Asset / Cash In Hand - 10101010
+    //SYS_MRR_DIRECT.PAY_CASH_BANK	> Asset / Cash In Hand - 10101010 (CR)
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,

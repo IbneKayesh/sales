@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { receivablesAPI } from "@/api/M08/receivablesAPI.js";
 import { payablesAPI } from "@/api/M08/payablesAPI.js";
 import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
 import validate, { generateDataModel } from "@/models/validator";

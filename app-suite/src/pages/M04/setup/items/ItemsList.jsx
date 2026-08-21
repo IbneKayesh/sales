@@ -92,6 +92,20 @@ const ItemsList = ({
       body: (_, row) => <NegativeValue value={row.items_smrgn} />,
     },
     {
+      key: "items_prvat",
+      header: "Purchase VAT (%)",
+      width: "80px",
+      body: (_, row) => <NegativeValue value={row.items_prvat} />,
+    },
+    { key: "items_ptvat", header: "Purchase VAT Type", width: "80px" },
+    {
+      key: "items_slvat",
+      header: "Sales VAT (%)",
+      width: "80px",
+      body: (_, row) => <NegativeValue value={row.items_slvat} />,
+    },
+    { key: "items_stvat", header: "Sales VAT Type", width: "80px" },
+    {
       key: "items_stpur",
       header: "Stop Purchase",
       width: "80px",

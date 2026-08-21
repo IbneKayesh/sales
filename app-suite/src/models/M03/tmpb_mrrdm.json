@@ -10,13 +10,6 @@
     "placeholder": "Select department",
     "required": true
   },
-  "mrrdm_crncy": {
-    "type": "string",
-    "label": "Currency",
-    "maxLength": 50,
-    "placeholder": "Select Currency",
-    "required": true
-  },
   "mrrdm_cntct": {
     "type": "string",
     "label": "Supplier",
@@ -75,7 +68,7 @@
     "required": false,
     "default": 0
   },
-  "mrrdc_vtamt": {
+  "mrrdm_vtamt": {
     "type": "decimal",
     "label": "VAT Amount",
     "required": false,
@@ -111,11 +104,17 @@
     "required": false,
     "default": 0
   },
-  "mrrdm_exrat": {
+  "mrrdm_stamt": {
     "type": "decimal",
-    "label": "Exchange Rate",
-    "required": true,
-    "default": 1
+    "label": "Total Amount",
+    "required": false,
+    "default": 0
+  },
+  "mrrdm_csamt": {
+    "type": "decimal",
+    "label": "Cost Amount",
+    "required": false,
+    "default": 0
   },
   "mrrdm_vehid": {
     "type": "string",

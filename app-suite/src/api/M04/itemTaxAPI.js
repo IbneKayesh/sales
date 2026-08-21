@@ -18,4 +18,8 @@ export const itemTaxAPI = {
     apiRequest("/M04/v1/item-tax/create-category", {
       body: data,
     }),
+  getByItemIdPurchase: (data) =>
+    apiRequest("/M04/v1/item-tax/get-by-item-purchase", {
+      body: data,
+    }),
 };

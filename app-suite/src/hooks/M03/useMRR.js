@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { mrrAPI } from "@/api/M03/mrrAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmpb_mrrdm from "@/models/M03/tmpb_mrrdm.json";
-const dataModel = generateDataModel(tmpb_mrrdm);
-import tmpb_mrrdc from "@/models/M03/tmpb_mrrdc.json";
-const dataModelItem = generateDataModel(tmpb_mrrdc);
-import { departmentAPI } from "@/api/M01/departmentAPI.js";
-import { contactAPI } from "@/api/M06/contactAPI.js";
-import { itemsAPI } from "@/api/M04/itemsAPI.js";
 import { generateGuid } from "@/utils/guid.js";
+import { validNumber, divNumber } from "@/utils/misc.js";
+import tmpb_mrrdm from "@/models/M03/tmpb_mrrdm.json";
+import tmpb_mrrdc from "@/models/M03/tmpb_mrrdc.json";
 import tmpb_mrrcs from "@/models/M03/tmpb_mrrcs.json";
 import tmpb_mrrpy from "@/models/M03/tmpb_mrrpy.json";
+const dataModel = generateDataModel(tmpb_mrrdm);
+const dataModelItem = generateDataModel(tmpb_mrrdc);
 import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
-import { validNumber, divNumber } from "@/utils/misc.js";
+import { departmentAPI } from "@/api/M01/departmentAPI.js";
+import { mrrAPI } from "@/api/M03/mrrAPI.js";
+import { itemsAPI } from "@/api/M04/itemsAPI.js";
+import { contactAPI } from "@/api/M06/contactAPI.js";
 import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
 
 const useMRR = () => {
@@ -51,6 +51,10 @@ const useMRR = () => {
   const [mrrpy_Options, setMrrpy_Options] = useState([]);
   const [listDataPayment, setListDataPayment] = useState([]);
   const [formDataPayment, setFormDataPayment] = useState({});
+
+  //tax
+  const [itemTaxList, setItemTaxList] = useState([]);
+  const [listDataTax, setListDataTax] = useState([]);
 
   //Table Columns
   const getTabColumns = async () => {
@@ -280,7 +284,8 @@ const useMRR = () => {
     // Totals
     //---------------------------------------------------
     const totalAmount = newItems.reduce(
-      (sum, item) => sum + validNumber(item.mrrdc_itrat) * validNumber(item.mrrdc_itqty),
+      (sum, item) =>
+        sum + validNumber(item.mrrdc_itrat) * validNumber(item.mrrdc_itqty),
       0,
     );
 
@@ -365,32 +370,28 @@ const useMRR = () => {
 
       const mrrdc_dsamt = mrrdc_itamt * (validNumber(item.mrrdc_dspct) / 100);
 
-      const afterDisc = mrrdc_itamt - (mrrdc_dsamt + validNumber(item.mrrdc_edamt));
+      const afterDisc =
+        mrrdc_itamt - (mrrdc_dsamt + validNumber(item.mrrdc_edamt));
 
-      const mrrdc_ivamt = afterDisc * (validNumber(item.mrrdc_ivpct) / 100);
-
-      const mrrdc_vtamt = afterDisc * (validNumber(item.mrrdc_vtpct) / 100);
-
-      const mrrdc_txamt = afterDisc * (validNumber(item.mrrdc_txpct) / 100);
-
-      //---------------------------------------------------
-      // Fix Cost as Purchase Inventory Gain as Loss
-      //---------------------------------------------------
-
-      let mrrdc_fcpct = validNumber(item.mrrdc_fcpct);
-      let mrrdc_fcamt = validNumber(item.mrrdc_fcamt);
-
-      if (mrrdc_fcpct > 0) {
-        mrrdc_fcamt = Number((afterDisc * (mrrdc_fcpct / 100)).toFixed(4));
-      } else if (mrrdc_fcamt > 0) {
-        mrrdc_fcpct = Number((divNumber(mrrdc_fcamt, afterDisc) * 100).toFixed(4));
+      //AS BD NBR Rules
+      let inclusive_vat = 0;
+      let exclusive_vat = 0;
+      if (item.mrrdc_vtype === "INCLUSIVE") {
+        inclusive_vat = (afterDisc * validNumber(item.mrrdc_vtpct)) / 115;
       }
+
+      if (item.mrrdc_vtype === "EXCLUSIVE") {
+        exclusive_vat = (afterDisc * validNumber(item.mrrdc_vtpct)) / 100;
+      }
+      const mrrdc_vtamt = (
+        Number(inclusive_vat || 0) + Number(exclusive_vat || 0)
+      ).toFixed(4);
 
       //---------------------------------------------------
       // Including Cost
       //---------------------------------------------------
 
-      const iAmt = mrrdc_itamt * incAmtRate;
+      const iAmt = afterDisc * incAmtRate;
       const iQty = qty * incQtyRate;
       const iLine = incLineRate;
 
@@ -398,7 +399,7 @@ const useMRR = () => {
       // Excluding Cost
       //---------------------------------------------------
 
-      const eAmt = mrrdc_itamt * excAmtRate;
+      const eAmt = afterDisc * excAmtRate;
       const eQty = qty * excQtyRate;
       const eLine = excLineRate;
 
@@ -406,13 +407,14 @@ const useMRR = () => {
       const mrrdc_ecamt = eAmt + eQty + eLine;
 
       //---------------------------------------------------
-      // Net Amount
+      // Amount
       //---------------------------------------------------
 
-      const mrrdc_ntamt = afterDisc + mrrdc_vtamt + mrrdc_icamt - mrrdc_ivamt;
+      const mrrdc_pyamt = afterDisc + exclusive_vat + mrrdc_icamt;
+      const mrrdc_stamt = afterDisc + exclusive_vat + mrrdc_icamt + mrrdc_ecamt;
 
       const mrrdc_csrat = divNumber(
-        afterDisc + mrrdc_fcamt + mrrdc_icamt + mrrdc_ecamt - mrrdc_ivamt,
+        afterDisc - inclusive_vat + mrrdc_icamt + mrrdc_ecamt,
         qty,
       );
 
@@ -420,14 +422,11 @@ const useMRR = () => {
         ...item,
         mrrdc_itamt,
         mrrdc_dsamt,
-        mrrdc_ivamt,
         mrrdc_vtamt,
-        mrrdc_txamt,
-        mrrdc_fcpct,
-        mrrdc_fcamt,
         mrrdc_icamt,
         mrrdc_ecamt,
-        mrrdc_ntamt,
+        mrrdc_pyamt,
+        mrrdc_stamt,
         mrrdc_csrat,
       };
     });
@@ -435,31 +434,31 @@ const useMRR = () => {
     setListDataItem(newItems);
 
     //---------------------------------------------------
-    // Totals
+    // Totals Master
     //---------------------------------------------------
 
     const totals = newItems.reduce(
       (acc, item) => ({
         tramt: acc.tramt + validNumber(item.mrrdc_itamt),
         itmds: acc.itmds + validNumber(item.mrrdc_dsamt),
-        ivtmt: acc.ivtmt + validNumber(item.mrrdc_ivamt),
         vtamt: acc.vtamt + validNumber(item.mrrdc_vtamt),
-        txamt: acc.txamt + validNumber(item.mrrdc_txamt),
-        fcamt: acc.fcamt + validNumber(item.mrrdc_fcamt),
         icamt: acc.icamt + validNumber(item.mrrdc_icamt),
         ecamt: acc.ecamt + validNumber(item.mrrdc_ecamt),
-        ntamt: acc.ntamt + validNumber(item.mrrdc_ntamt),
+        pyamt: acc.pyamt + validNumber(item.mrrdc_pyamt),
+        stamt: acc.stamt + validNumber(item.mrrdc_stamt),
+        csamt:
+          acc.csamt +
+          validNumber(item.mrrdc_csrat) * validNumber(item.mrrdc_itqty),
       }),
       {
         tramt: 0,
         itmds: 0,
-        ivtmt: 0,
         vtamt: 0,
-        txamt: 0,
-        fcamt: 0,
         icamt: 0,
         ecamt: 0,
-        ntamt: 0,
+        pyamt: 0,
+        stamt: 0,
+        csamt: 0,
       },
     );
 
@@ -480,22 +479,21 @@ const useMRR = () => {
     // Master
     //---------------------------------------------------
 
-    const duamt = totals.ntamt - totalPayment;
+    const duamt = totals.pyamt - totalPayment;
 
     setFormData({
       ...master,
       mrrdm_tramt: validNumber(totals.tramt).toFixed(4),
       mrrdm_itmds: validNumber(totals.itmds).toFixed(4),
       mrrdm_invds: invoice_discount_amount,
-      mrrdm_ivtmt: validNumber(totals.ivtmt).toFixed(4),
       mrrdm_vtamt: validNumber(totals.vtamt).toFixed(4),
-      mrrdm_txamt: validNumber(totals.txamt).toFixed(4),
-      mrrdm_fcamt: validNumber(totals.fcamt).toFixed(4),
       mrrdm_icamt: validNumber(totals.icamt).toFixed(4),
       mrrdm_ecamt: validNumber(totals.ecamt).toFixed(4),
-      mrrdm_pyamt: validNumber(totals.ntamt).toFixed(4),
+      mrrdm_pyamt: validNumber(totals.pyamt).toFixed(4),
       mrrdm_pdamt: validNumber(totalPayment).toFixed(4),
       mrrdm_duamt: validNumber(duamt).toFixed(4),
+      mrrdm_stamt: validNumber(totals.stamt).toFixed(4),
+      mrrdm_csamt: validNumber(totals.csamt).toFixed(4),
     });
   }
 
@@ -653,8 +651,6 @@ const useMRR = () => {
     setFormData({
       ...dataModel,
       mrrdm_ttype: "Material Receipt Report",
-      mrrdm_crncy: "BDT",
-      mrrdm_exrat: 1,
     });
 
     setReadOnly(false);
@@ -721,7 +717,7 @@ const useMRR = () => {
 
   // ---------- Item Details ----------
 
-  const handleChangeItem = (f, v) => {
+  const handleChangeItem = async (f, v) => {
     setFormDataItem((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formDataItem, [f]: v }, tmpb_mrrdc);
     setFormErrors(newErrors);
@@ -733,9 +729,8 @@ const useMRR = () => {
         mrrdc_price: v,
         mrrdc_units: price_id?.items_runit,
         mrrdc_itrat: price_id?.price_lprat || 0,
-        mrrdc_ivpct: price_id?.items_pivat || 0,
-        mrrdc_vtpct: price_id?.items_pdvat || 0,
-        mrrdc_fcpct: price_id?.items_fxcst || 0,
+        mrrdc_vtpct: price_id?.items_prvat || 0,
+        mrrdc_vtype: price_id?.items_ptvat || "-",
         party_id: price_id?.party_id || "-",
         chtac_id: price_id?.chtac_id || "-",
       }));
@@ -752,6 +747,17 @@ const useMRR = () => {
       showToast("Quantity is required", { type: "warning" });
       return;
     }
+    if (formDataItem.mrrdc_vtype === "EXEMPT") {
+      if (Number(formDataItem.mrrdc_vtpct) !== 0) {
+        showToast("Purchase VAT % must be 0 for EXEMPT", { type: "danger" });
+        return;
+      }
+    } else {
+      if (Number(formDataItem.mrrdc_vtpct) === 0) {
+        showToast("Purchase VAT % must not be 0", { type: "danger" });
+        return;
+      }
+    }
 
     const items_iname = items_Options.find(
       (opt) => opt.price_id === formDataItem.mrrdc_price,
@@ -766,8 +772,15 @@ const useMRR = () => {
       items_szqty: items_iname?.items_szqty || "0",
       mrrdc_actve: true,
     };
+    const newTaxList = [...listDataTax, itemTaxList];
     const newItemList = [...listDataItem, newItem];
-    reCalculate(newItemList, formData, listDataCost, listDataPayment);
+    reCalculate(
+      newItemList,
+      formData,
+      listDataCost,
+      listDataPayment,
+      newTaxList,
+    );
     setFormDataItem({});
     if (value === "CLOSE") {
       handleHideModal();
@@ -809,6 +822,8 @@ const useMRR = () => {
         party_chtac: mrrcs_id?.party_chtac,
         prtyn_ctype: mrrcs_id?.prtyn_ctype,
         prtyn_chtno: mrrcs_id?.prtyn_chtno,
+        chtac_id: mrrcs_id?.party_chtac,
+        party_id: v,
       }));
     }
   };
@@ -858,7 +873,7 @@ const useMRR = () => {
     setListDataCost((prev) => prev.filter((item) => item.id !== rowData.id));
     showToast("Removed successfully", { type: "success" });
   };
-  
+
   // ---------- Payment Details ----------
 
   const handleChangePayment = (f, v) => {
@@ -991,6 +1006,7 @@ const useMRR = () => {
     handleCancel,
     handleSubmit,
     //item
+    itemTaxList,
     handleChangeItem,
     handleAddToListItem,
     handleEditItem,

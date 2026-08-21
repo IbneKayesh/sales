@@ -75,20 +75,9 @@ const MrrForm = ({
               disabled={readOnly}
             />
           </div>
-          {/* <div className="col-span-1">
-            <InputNumber
-              label="Exchange Rate"
-              placeholder="0.00"
-              value={formData.mrrdm_exrat}
-              onChange={(e) => onChange("mrrdm_exrat", e.target.value)}
-              error={formErrors.mrrdm_exrat}
-              step="0.01"
-              disabled={readOnly || true}
-            />
-          </div> */}
         </div>
       </PageSection>
-      <PageSection title="Delivery">
+      <PageSection title="Delivery and Remarks">
         <div className="grid">
           <div className="col-span-4">
             <InputText
@@ -99,11 +88,7 @@ const MrrForm = ({
               error={formErrors.mrrdm_vehid}
               disabled={readOnly}
             />
-          </div>
-        </div>
-      </PageSection>
-      <PageSection title="Remarks">
-        <div className="grid">
+          </div>{" "}
           <div className="col-span-8">
             <InputText
               label="Notes"
