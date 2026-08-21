@@ -507,6 +507,14 @@ const ThemePage = () => {
             prev,
           ),
         );
+        // Also populate full-resolution cache so checkmarks work after
+        // page reload (thumb and full use the same image imports).
+        setPresetFull((prev) =>
+          entries.reduce(
+            (acc, [id, url]) => ({ ...acc, [id]: url ?? prev[id] }),
+            prev,
+          ),
+        );
       }
     })();
     return () => {
@@ -545,11 +553,11 @@ const ThemePage = () => {
     setDarkMode("light");
     setFont(DEFAULT_FONT);
     setFontSize(14);
-    setDensity(85);
-    setCompSize(95);
+    setDensity(75);
+    setCompSize(100);
     setRadius(6);
     setLayout("boxed");
-    setBoxedGap(25);
+    setBoxedGap(15);
     setReduceMotion(false);
     setCustomColor(null);
     setBgImage(null);
@@ -578,11 +586,11 @@ const ThemePage = () => {
     darkMode === "light" &&
     font === DEFAULT_FONT &&
     fontSize === 14 &&
-    density === 85 &&
-    compSize === 95 &&
+    density === 75 &&
+    compSize === 100 &&
     radius === 6 &&
     layout === "boxed" &&
-    boxedGap === 25 &&
+    boxedGap === 15 &&
     !reduceMotion &&
     !customColor &&
     !bgImage &&
@@ -938,13 +946,13 @@ const ThemePage = () => {
               </span>
               <input
                 type="range"
-                min={70}
-                max={130}
+                min={50}
+                max={150}
                 step={5}
                 value={density}
                 onChange={(e) => setDensity(Number(e.target.value))}
                 aria-label="Spacing density"
-                title="Spacing scale in percent (70% = very compact, 80% = default, 130% = spacious)"
+                title="Spacing scale in percent (50% = very compact, 75% = default, 150% = spacious)"
                 style={{ flex: 1, accentColor: "var(--primary)", cursor: "pointer" }}
               />
               <span
@@ -983,12 +991,12 @@ const ThemePage = () => {
               <input
                 type="range"
                 min={50}
-                max={100}
+                max={150}
                 step={5}
                 value={compSize}
                 onChange={(e) => setCompSize(Number(e.target.value))}
                 aria-label="Component size"
-                title="Scales the physical size of buttons, inputs and table rows (50% = dense, 75% = default, 100% = large)"
+                title="Scales the physical size of buttons, inputs and table rows (50% = dense, 100% = default, 150% = large)"
                 style={{ flex: 1, accentColor: "var(--primary)", cursor: "pointer" }}
               />
               <span
@@ -1025,12 +1033,12 @@ const ThemePage = () => {
               <input
                 type="range"
                 min={0}
-                max={20}
+                max={50}
                 step={1}
                 value={radius}
                 onChange={(e) => setRadius(Number(e.target.value))}
                 aria-label="Corner radius"
-                title="Corner radius in pixels (0 = square, 20 = very rounded)"
+                title="Corner radius in pixels (0 = square, 50 = very rounded)"
                 style={{ flex: 1, accentColor: "var(--primary)", cursor: "pointer" }}
               />
               <span
@@ -1067,13 +1075,13 @@ const ThemePage = () => {
                 </span>
                 <input
                   type="range"
-                  min={5}
-                  max={400}
+                  min={10}
+                  max={50}
                   step={5}
                   value={boxedGap}
                   onChange={(e) => setBoxedGap(Number(e.target.value))}
                   aria-label="Boxed gap"
-                  title="Empty space left/right of the content in Boxed layout (20–400px)"
+                  title="Empty space left/right of the content in Boxed layout (10–50px)"
                   style={{ flex: 1, accentColor: "var(--primary)", cursor: "pointer" }}
                 />
                 <span

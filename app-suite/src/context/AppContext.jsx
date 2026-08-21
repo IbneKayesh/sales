@@ -435,7 +435,7 @@ export function AppProvider({ children }) {
       ? stored
       : 14;
   });
-  // Spacing density in percent (70–130, default 90 = airy). Applied as a
+  // Spacing density in percent (50–150, default 75). Applied as a
   // multiplier over the --sp-* tokens via the --sp-scale custom property
   // (lower = tighter/compact, higher = more spacious).
   const [density, setDensityState] = useState(() => {
@@ -444,7 +444,7 @@ export function AppProvider({ children }) {
     if (stored === "compact") return 80;
     if (stored === "comfortable") return 100;
     const n = Number(stored);
-    return Number.isFinite(n) && n >= 70 && n <= 130 ? n : 90;
+    return Number.isFinite(n) && n >= 50 && n <= 150 ? n : 75;
   });
   // Component size scale in percent (50–100, default 75). Multiplies the
   // physical dimensions of controls (buttons, inputs, table rows) via the
@@ -452,9 +452,9 @@ export function AppProvider({ children }) {
   // size, so controls can be dense or large on their own.
   const [compSize, setCompSizeState] = useState(() => {
     const stored = Number(getStorageLoginData()?.compSize);
-    return Number.isFinite(stored) && stored >= 50 && stored <= 100
+    return Number.isFinite(stored) && stored >= 50 && stored <= 150
       ? stored
-      : 75;
+      : 100;
   });
   // Corner-radius base value in px (0–20, default 12). The --radius-* tokens
   // are derived from it on <html> so the whole corner scale follows the slider.
@@ -464,7 +464,7 @@ export function AppProvider({ children }) {
     if (stored === "crisp") return 4;
     if (stored === "soft") return 8;
     const n = Number(stored);
-    return Number.isFinite(n) && n >= 0 && n <= 20 ? n : 12;
+    return Number.isFinite(n) && n >= 0 && n <= 50 ? n : 6;
   });
   // Reduced motion: disables animations/transitions app-wide.
   const [reduceMotion, setReduceMotionState] = useState(() => {
@@ -531,12 +531,12 @@ export function AppProvider({ children }) {
     return stored === "full" ? "full" : "boxed";
   });
   // Boxed-layout side gap in px: the empty space left/right of the content
-  // column in boxed mode (20–400, default 30). Applied as --boxed-gap.
+  // column in boxed mode (10–50, default 15). Applied as --boxed-gap.
   const [boxedGap, setBoxedGapState] = useState(() => {
     const stored = Number(getStorageLoginData()?.boxedGap);
-    return Number.isFinite(stored) && stored >= 20 && stored <= 400
+    return Number.isFinite(stored) && stored >= 10 && stored <= 50
       ? stored
-      : 30;
+      : 15;
   });
   // Background animation for the Workspace page: "none", "rain" (rain on
   // glass), "analog" (analog clock), or "digital" (digital clock). Decorative overlay; independent of the
