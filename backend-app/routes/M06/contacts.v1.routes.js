@@ -141,12 +141,18 @@ const create = async (req, res) => {
     }
 
     //database action
-    const sql_chtac = `SELECT cht.id AS chtac_id
+    const sql_chtac1 = `SELECT cht.id AS chtac_id
       FROM tmtb_prtyn ptn
       JOIN tmtb_chtac cht ON ptn.prtyn_chtno = cht.chtac_chtno
       WHERE ptn.prtyn_cname = 'SYS_CONTACT_TYPE'
       AND ptn.prtyn_users = $1
       AND ptn.prtyn_ctype = $2`;
+    const sql_chtac = `SELECT cht.id AS chtac_id
+      FROM tmtb_prtyr ptr
+      JOIN tmtb_chtac cht ON ptr.prtyr_chtno = cht.chtac_chtno
+      WHERE ptr.prtyr_mgrup = 'SYS_CONTACTS_TYPE'
+      AND ptr.prtyr_users = $1
+      AND ptr.prtyr_sgrup = $2`;
     const row_chtac = await dbGetAll(
       sql_chtac,
       [user_c, cntct_ctype],
@@ -719,7 +725,6 @@ router.post("/get-suppliers", async (req, res) => {
   }
 });
 
-
 // get-suppliers-mrr
 router.post("/get-suppliers-mrr", async (req, res) => {
   try {
@@ -736,16 +741,16 @@ router.post("/get-suppliers-mrr", async (req, res) => {
 
     //database action
     //20101010 :: Supplier Payable
-    const sql = `SELECT cnt.*, pty.id party_id, pty.party_chtac chtac_id
+    const sql = `SELECT cnt.*, pty.id party_id, pty.party_chtac chtac_id, pty.party_crbal
     FROM tmcb_cntct cnt
     JOIN tmtb_party pty ON cnt.id = pty.party_vndor
     JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-    JOIN tmtb_prtyn ptn ON cht.chtac_chtno = ptn.prtyn_chtno
+    JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
     WHERE cnt.cntct_users = $1
     AND cnt.cntct_ctype IN ('Supplier')
     AND cnt.cntct_actve = TRUE
-	  AND ptn.prtyn_cname = 'SYS_MRR_DIRECT'
-	  AND ptn.prtyn_ctype = 'PAY_SUPPLIER'
+	  AND ptr.prtyr_mgrup = 'SYS_MRR_DIRECT'
+	  AND ptr.prtyr_sgrup = 'SYS_LIB_SUPPLIER'
     ORDER BY cnt.cntct_cname`;
 
     const params = [user_c];
@@ -785,24 +790,20 @@ router.post("/get-customers-sale-invoice", async (req, res) => {
 
     //database action
     //10101110 :: Customer Receivable
-    const sql = `SELECT cnt.*, pty.id party_id, pty.party_chtac chtac_id
+    const sql = `SELECT cnt.*, pty.id party_id, pty.party_chtac chtac_id, pty.party_crbal
     FROM tmcb_cntct cnt
     JOIN tmtb_party pty ON cnt.id = pty.party_vndor
     JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-    JOIN tmtb_prtyn ptn ON cht.chtac_chtno = ptn.prtyn_chtno
+    JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
     WHERE cnt.cntct_users = $1
     AND cnt.cntct_ctype IN ('Customer')
     AND cnt.cntct_actve = TRUE
-	  AND ptn.prtyn_cname = 'SYS_SALES_INVOICE'
-	  AND ptn.prtyn_ctype = 'PAY_CUSTOMER'
+	  AND ptr.prtyr_mgrup = 'SYS_SALES_INVOICE'
+	  AND ptr.prtyr_sgrup = 'SYS_AST_CUSTOMER'
     ORDER BY cnt.cntct_cname`;
 
     const params = [user_c];
-    const rows = await dbGetAll(
-      sql,
-      params,
-      `get contact customer- ${user_c}`,
-    );
+    const rows = await dbGetAll(sql, params, `get contact customer- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",

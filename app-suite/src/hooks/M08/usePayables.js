@@ -49,7 +49,10 @@ const usePayables = () => {
       setIsBusy(true);
       const resp = await partyNetworkAPI.getMrrDirect({});
       const list = resp.data || [];
-      const mrrpy = list.filter((f) => f.prtyn_ctype === "PAY_CASH_BANK");
+      //const mrrpy = list.filter((f) => f.prtyn_ctype === "PAY_CASH_BANK");
+      const mrrpy = list.filter((f) =>
+        ["SYS_AST_PAY_CASH", "SYS_AST_PAY_BANK"].includes(f.prtyr_sgrup),
+      );
       setPartyOptions(mrrpy);
     } catch (error) {
     } finally {
@@ -111,7 +114,9 @@ const usePayables = () => {
       }
 
       if (validNumber(formData.mrrpy_pdamt) < 0.01) {
-        showToast(formData.mrrpy_pdamt + " Payment is not valid", { type: "warning" });
+        showToast(formData.mrrpy_pdamt + " Payment is not valid", {
+          type: "warning",
+        });
         return;
       }
       const reqBody = {

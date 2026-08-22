@@ -34,13 +34,13 @@ JOIN tmsb_dpart dpt ON mrm.mrrdm_dpart = dpt.id
 JOIN tmcb_cntct cnt ON mrm.mrrdm_cntct = cnt.id
 JOIN tmtb_party pty ON cnt.id = pty.party_vndor
 JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-JOIN tmtb_prtyn ptn ON cht.chtac_chtno = ptn.prtyn_chtno
+JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
 WHERE mrm.mrrdm_pyamt - mrm.mrrdm_pdamt > 0
 AND mrm.mrrdm_ttype = 'Material Receipt Report'
 AND mrm.mrrdm_users = $1
 AND mrm.mrrdm_bsins = $2
-AND ptn.prtyn_cname = 'SYS_MRR_DIRECT'
-AND ptn.prtyn_ctype = 'PAY_SUPPLIER'
+AND ptr.prtyr_mgrup = 'SYS_MRR_DIRECT'
+AND ptr.prtyr_sgrup = 'SYS_LIB_SUPPLIER'
 ORDER BY mrm.mrrdm_trdat DESC`;
 
     const rows = await dbGetAll(

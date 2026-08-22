@@ -167,11 +167,11 @@ const create = async (req, res) => {
 
     //database action
     const sql_chtac = `SELECT cht.id AS chtac_id
-      FROM tmtb_prtyn ptn
-      JOIN tmtb_chtac cht ON ptn.prtyn_chtno = cht.chtac_chtno
-      WHERE ptn.prtyn_cname = 'SYS_ITEMS_TYPE'
-      AND ptn.prtyn_users = $1
-      AND ptn.prtyn_ctype = $2`;
+      FROM tmtb_prtyr ptr
+      JOIN tmtb_chtac cht ON ptr.prtyr_chtno = cht.chtac_chtno
+      WHERE ptr.prtyr_mgrup = 'SYS_ITEM_MASTER_TYPE'
+      AND ptr.prtyr_users = $1
+      AND ptr.prtyr_sgrup = $2`;
     const row_chtac = await dbGetAll(
       sql_chtac,
       [user_c, items_itype],

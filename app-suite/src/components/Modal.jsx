@@ -26,7 +26,7 @@ export default function Modal({
   open = false,
   onClose,
   onBackdropClick,
-  size = 'md',            // sm | md | lg | xl | full
+  size = 'md',            // sm | md | lg | xl | xxl | xxxl |full
   closeOnBackdrop = true,
   closeOnEscape = true,
   blockScroll = true,

@@ -248,7 +248,7 @@ const InvoicePage = () => {
             </PrintPreviewModal>
           )}
           {/* Single Modal for Item form */}
-          <Modal open={showModal.show} onClose={handleHideModal} size="xl">
+          <Modal open={showModal.show} onClose={handleHideModal} size="xxl">
             <ModalHeader>
               <ModalTitle
                 title={modalTitle.title}

@@ -3775,6 +3775,12 @@ html[data-layout="boxed"] .layout__main {
 .modal--xl {
   max-width: 860px;
 }
+.modal--xxl {
+  max-width: 1020px;
+}
+.modal--xxxl {
+  max-width: 1200px;
+}
 .modal--full {
   max-width: 100%;
 }
@@ -3783,7 +3789,9 @@ html[data-layout="boxed"] .layout__main {
   .modal--sm,
   .modal--md,
   .modal--lg,
-  .modal--xl {
+  .modal--xl,
+  .modal--xxl,
+  .modal--xxxl {
     max-width: 100%;
   }
 }

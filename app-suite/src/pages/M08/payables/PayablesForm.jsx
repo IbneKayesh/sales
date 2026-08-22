@@ -62,6 +62,7 @@ const PayablesForm = ({
             disabled={readOnly}
             optionValue="id"
             optionLabel="party_cname"
+            optionGrid="party_cname:Name,chtac_chtno:COA,party_crbal:Balance"
           />
         </div>
         <div className="col-span-3">

@@ -522,8 +522,11 @@ const useMRR = () => {
     try {
       const resp = await partyNetworkAPI.getMrrDirect({});
       const list = resp.data || [];
-      const mrrcs = list.filter((f) => f.prtyn_ctype === "PAY_VENDOR");
-      const mrrpy = list.filter((f) => f.prtyn_ctype === "PAY_CASH_BANK");
+      const mrrcs = list.filter((f) => f.prtyr_sgrup === "SYS_LIB_LOCAL_VENDOR");
+      //const mrrpy = list.filter((f) => f.prtyr_sgrup === "SYS_PAY_CASH_BANK");
+      const mrrpy = list.filter((f) =>
+        ["SYS_AST_PAY_CASH", "SYS_AST_PAY_BANK"].includes(f.prtyr_sgrup),
+      );
       setMrrcs_Options(mrrcs);
       setMrrpy_Options(mrrpy);
     } catch (error) {}

@@ -180,7 +180,7 @@ const ItemsForm = ({
             optionLabel="brand_cname"
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <Dropdown
             label="Track Stock"
             options={bool_Options}
@@ -191,7 +191,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <InputNumber
             label="Margin (%)"
             placeholder="Enter margin %"
@@ -202,7 +202,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <InputNumber
             label="Purchase VAT (%)"
             placeholder="Enter vat %"
@@ -224,7 +224,7 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <InputNumber
             label="Sales VAT (%)"
             placeholder="Enter vat %"
