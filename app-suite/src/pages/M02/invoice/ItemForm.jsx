@@ -29,10 +29,10 @@ const ItemForm = ({
             disabled={readOnly}
             optionValue="stock_id"
             optionLabel="price_cname"
-            optionGrid="price_cname:Item, runit_uname:Unit, price_mrrat:MRP, price_dspct:Disc%, items_sdvat: VAT%, price_gdstk:g.Stock,stock_ohqty:Line Stock, items_icode:Code, stock_batch:Batch, stock_srial:Serial, stock_fgdat: MFG, "
+            optionGrid="price_cname:Item, runit_uname:Unit, price_mrrat:MRP, price_dspct:Disc%, items_slvat:VAT%, items_stvat:VAT Type, price_gdstk:g.Stock, stock_ohqty:Line Stock, items_icode:Code, stock_batch:Batch, stock_srial:Serial, stock_fgdat:MFG"
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputNumber
             label="Rate"
             placeholder="0.00"
@@ -43,7 +43,7 @@ const ItemForm = ({
             disabled={readOnly || true}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputNumber
             label="Quantity"
             placeholder="0"
@@ -59,6 +59,9 @@ const ItemForm = ({
         </div>
         <div className="col-span-2">
           <InputLabel label="VAT (%)" value={formData.invcc_vtpct} />
+        </div>
+        <div className="col-span-2">
+          <InputLabel label="VAT Type" value={formData.invcc_vtype} />
         </div>
         <div className="col-span-8">
           <InputText

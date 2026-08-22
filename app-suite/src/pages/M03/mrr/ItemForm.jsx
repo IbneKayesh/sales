@@ -3,7 +3,6 @@ import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import { IconPlus } from "@/icons";
-import Badge from "@/components/Badge";
 import { txmod_Options } from "@/utils/vtable.js";
 
 const ItemForm = ({
@@ -15,7 +14,6 @@ const ItemForm = ({
   onChange,
   onAddToList,
   items_Options,
-  itemTaxList,
 }) => {
   return (
     <div className="form-wrap">

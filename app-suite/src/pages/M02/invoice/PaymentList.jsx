@@ -44,7 +44,7 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
         exportable={false}
         exportFilename="data-export.csv"
         onRowClick={(row) => onEdit(row)}
-        emptyMessage="No items found"
+        emptyMessage="No data found"
         className="mt-2"
       />
     </>

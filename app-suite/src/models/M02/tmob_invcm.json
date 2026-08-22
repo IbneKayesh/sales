@@ -7,28 +7,21 @@
     "type": "string",
     "label": "Department",
     "maxLength": 50,
-    "placeholder": "Select department",
-    "required": true
-  },
-  "invcm_crncy": {
-    "type": "string",
-    "label": "Currency",
-    "maxLength": 50,
-    "placeholder": "Select currency",
+    "placeholder": "Select",
     "required": true
   },
   "invcm_cntct": {
     "type": "string",
     "label": "Customer",
     "maxLength": 50,
-    "placeholder": "Select customer",
+    "placeholder": "Select",
     "required": true
   },
   "invcm_ttype": {
     "type": "string",
-    "label": "Transaction Type",
+    "label": "Type",
     "maxLength": 50,
-    "placeholder": "Select transaction type",
+    "placeholder": "Select",
     "required": true
   },
   "invcm_trnno": {
@@ -124,11 +117,30 @@
     "required": false,
     "default": 0
   },
-  "invcm_exrat": {
+  "invcm_stamt": {
     "type": "decimal",
-    "label": "Exchange Rate",
-    "required": true,
-    "default": 1
+    "label": "Total Amount",
+    "required": false,
+    "default": 0
+  },
+  "invcm_csamt": {
+    "type": "decimal",
+    "label": "Cost Amount",
+    "required": false,
+    "default": 0
+  },
+  "invcm_nsamt": {
+    "type": "decimal",
+    "label": "Cost Amount",
+    "required": false,
+    "default": 0
+  },
+  "invcm_vehid": {
+    "type": "string",
+    "label": "Vehicle",
+    "maxLength": 50,
+    "placeholder": "Enter vehicle",
+    "required": false
   },
   "invcm_ispst": {
     "type": "boolean",

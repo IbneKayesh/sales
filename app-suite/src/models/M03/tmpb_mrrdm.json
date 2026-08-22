@@ -7,14 +7,21 @@
     "type": "string",
     "label": "Department",
     "maxLength": 50,
-    "placeholder": "Select department",
+    "placeholder": "Select",
     "required": true
   },
   "mrrdm_cntct": {
     "type": "string",
     "label": "Supplier",
     "maxLength": 50,
-    "placeholder": "Select supplier",
+    "placeholder": "Select",
+    "required": true
+  },
+  "mrrdm_ttype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Select",
     "required": true
   },
   "mrrdm_trnno": {

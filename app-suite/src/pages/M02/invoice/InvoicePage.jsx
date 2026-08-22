@@ -27,6 +27,7 @@ const InvoicePage = () => {
     isBusy,
     pgView,
     pageAuth,
+    tcVisibleItem,
     readOnly,
     stopEdit,
     listData,
@@ -128,7 +129,11 @@ const InvoicePage = () => {
               </>
             )}
             {pgView === "SYS_VW_FRM_1" && formData?.id && (
-              <Button variant="info" size="sm" onClick={() => setPrintOpen(true)}>
+              <Button
+                variant="info"
+                size="sm"
+                onClick={() => setPrintOpen(true)}
+              >
                 <IconPrint size={14} className="icon-left" />
                 Print / Export
               </Button>
@@ -179,6 +184,9 @@ const InvoicePage = () => {
           )}
           {pgView === "SYS_VW_FRM_1" && listDataItem.length > 0 && (
             <ItemList
+              cfColumns={tcVisibleItem.filter(
+                (f) => f.tabcl_table === "SYS_MRR_DIRECT_ITEMS",
+              )}
               readOnly={readOnly}
               listData={listDataItem}
               onEdit={handleEditItem}

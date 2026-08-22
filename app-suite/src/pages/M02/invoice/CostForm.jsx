@@ -3,7 +3,7 @@ import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import { IconPlus } from "@/icons";
-import { csmod_Options } from "@/utils/vtable";
+import { csmod_Options, clmod_Options } from "@/utils/vtable";
 
 const CostForm = ({
   isBusy,
@@ -17,7 +17,7 @@ const CostForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-6">
+        <div className="col-span-8">
           <Dropdown
             label="Cost Name"
             options={party_Options}
@@ -31,13 +31,25 @@ const CostForm = ({
             optionLabel="party_cname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-4">
           <Dropdown
             label="Cost Mode"
             options={csmod_Options}
             value={formData.invcs_csmod}
             onChange={(e) => onChange("invcs_csmod", e.target.value)}
             error={formErrors.invcs_csmod}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <Dropdown
+            label="Calculation Mode"
+            options={clmod_Options}
+            value={formData.invcs_clmod}
+            onChange={(e) => onChange("invcs_clmod", e.target.value)}
+            error={formErrors.invcs_clmod}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -54,7 +66,7 @@ const CostForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-12">
+        <div className="col-span-6">
           <InputText
             label="Notes"
             placeholder="Enter notes"

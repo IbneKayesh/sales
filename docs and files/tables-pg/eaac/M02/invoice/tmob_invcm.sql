@@ -10,7 +10,6 @@ CREATE TABLE tmob_invcm (
   invcm_users VARCHAR(50) NOT NULL,
   invcm_bsins VARCHAR(50) NOT NULL,
   invcm_dpart VARCHAR(50) NOT NULL,
-  invcm_crncy VARCHAR(50) NOT NULL,
   invcm_cntct VARCHAR(50) NOT NULL,
   invcm_ttype VARCHAR(50) NOT NULL,
 
@@ -30,10 +29,12 @@ CREATE TABLE tmob_invcm (
   invcm_pyamt decimal(18,6) DEFAULT 0.00, --(invcm_tramt + invcm_icamt )- (invcm_itmds + invcm_invds + invcm_ivtmt)
   invcm_pdamt decimal(18,6) DEFAULT 0.00,
   invcm_duamt decimal(18,6) DEFAULT 0.00,
-  invcm_exrat decimal(18,6) DEFAULT 0.00, --exchange rate
+  invcm_stamt decimal(18,6) DEFAULT 0.00, --exchange rate
+  invcm_csamt decimal(18,6) DEFAULT 0.00, --exchange rate
+  invcm_vehid VARCHAR(50),
   invcm_ispst boolean NOT NULL DEFAULT false,
   invcm_ispad boolean NOT NULL DEFAULT false,
-  invcm_isapp boolean NOT NULL DEFAULT false
+  invcm_isapp boolean NOT NULL DEFAULT false,
   
   -- default 2
   invcm_actve boolean NOT NULL DEFAULT true,

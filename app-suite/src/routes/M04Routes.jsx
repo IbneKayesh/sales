@@ -3,7 +3,6 @@ import McatgPage from "@/pages/M04/setup/mcatgs/McatgPage";
 import MgrupPage from "@/pages/M04/setup/mgrups/MgrupPage";
 import UnitsPage from "@/pages/M04/setup/units/UnitsPage";
 import ItemsPage from "@/pages/M04/setup/items/ItemsPage";
-import TaxPage from "@/pages/M04/setup/tax/TaxPage";
 import StockPage from "@/pages/M04/stock/StockPage";
 
 const routes = [
@@ -12,7 +11,6 @@ const routes = [
   { path: "/inventory/setup/groups", element: <MgrupPage /> },
   { path: "/inventory/setup/units", element: <UnitsPage /> },
   { path: "/inventory/setup/items", element: <ItemsPage /> },
-  { path: "/inventory/setup/tax", element: <TaxPage /> },
   { path: "/inventory/stock", element: <StockPage /> },
 ];
 

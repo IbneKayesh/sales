@@ -129,7 +129,7 @@ const trn_types = [
 
 const csmod_Options = [
   {
-    label: "Including (Pay to Supplier)",
+    label: "Including (with Bill)",
     value: "Include",
   },
   {

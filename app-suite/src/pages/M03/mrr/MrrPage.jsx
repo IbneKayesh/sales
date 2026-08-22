@@ -58,7 +58,6 @@ const MrrPage = () => {
     handleCancel,
     handleSubmit,
     //item
-    itemTaxList,
     handleChangeItem,
     handleAddToListItem,
     handleEditItem,
@@ -258,7 +257,6 @@ const MrrPage = () => {
                   onChange={handleChangeItem}
                   onAddToList={handleAddToListItem}
                   items_Options={items_Options}
-                  itemTaxList={itemTaxList}
                 />
               )}
               {showModal.modal === "COSTING" && (

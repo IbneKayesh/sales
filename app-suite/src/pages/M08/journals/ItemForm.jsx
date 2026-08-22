@@ -43,7 +43,8 @@ const ItemForm = ({
             placeholder="Select..."
             disabled={readOnly}
             optionValue="id"
-            optionLabel="name"
+            optionLabel="party_cname"
+            optionGrid="party_cname:Party,party_crbal:Balance,chtac_cname:Chart,party_ptype:Type"
           />
         </div>
         <div className="col-span-3">

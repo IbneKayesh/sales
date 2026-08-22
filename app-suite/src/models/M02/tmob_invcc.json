@@ -3,18 +3,18 @@
     "type": "string",
     "label": "Id"
   },
-  "invcc_price": {
-    "type": "string",
-    "label": "Price List",
-    "maxLength": 50,
-    "placeholder": "Select price list",
-    "required": true
-  },
   "invcc_items": {
     "type": "string",
     "label": "Item",
     "maxLength": 50,
     "placeholder": "Select item",
+    "required": true
+  },
+  "invcc_price": {
+    "type": "string",
+    "label": "Price List",
+    "maxLength": 50,
+    "placeholder": "Select price list",
     "required": true
   },
   "invcc_units": {
@@ -84,9 +84,15 @@
     "required": false,
     "default": 0
   },
-  "invcc_ntamt": {
+  "invcc_pyamt": {
     "type": "decimal",
-    "label": "Net Amount",
+    "label": "Payable Amount",
+    "required": false,
+    "default": 0
+  },
+  "invcc_stamt": {
+    "type": "decimal",
+    "label": "Sub Total",
     "required": false,
     "default": 0
   },

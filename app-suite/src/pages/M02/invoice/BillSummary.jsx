@@ -12,7 +12,6 @@ import { formatNumber } from "@/utils/misc";
 // with the Invoice Discount amount kept editable (re-splits across item
 // lines). Styling reuses the shared utility classes and PageCard pieces.
 const BillSummary = ({ formData = {}, readOnly, onChange = () => {} }) => {
-
   const dueAmt = Number(formData.invcm_duamt) || 0;
 
   const summaryRows = [
@@ -20,10 +19,13 @@ const BillSummary = ({ formData = {}, readOnly, onChange = () => {} }) => {
     { label: "Item Discount", value: formData.invcm_itmds },
     { label: "Invoice Discount %", value: formData.invcm_dspct },
     { label: "Invoice Discount", value: formData.invcm_invds, editable: true },
-    { label: "Loyalty Discount", value: formData.invcm_lylds },
+    { label: "Loyalty Discount", value: formData.invcm_lylds, editable: true },
     { label: "VAT Amount", value: formData.invcm_vtamt },
     { label: "Include Cost", value: formData.invcm_icamt },
     { label: "Exclude Cost", value: formData.invcm_ecamt },
+    { label: "Invoice Total", value: formData.invcm_stamt },
+    { label: "Inventory", value: formData.invcm_csamt },
+    { label: "Inventory (N/A)", value: formData.invcm_nsamt },
   ];
 
   const keyRows = [
@@ -68,7 +70,9 @@ const BillSummary = ({ formData = {}, readOnly, onChange = () => {} }) => {
             />
           </div>
         ) : (
-          <span className={`col-span-6 ${valueClass}`}>{formatNumber(row.value, 4)}</span>
+          <span className={`col-span-6 ${valueClass}`}>
+            {formatNumber(row.value, 4)}
+          </span>
         )}
       </div>
     );

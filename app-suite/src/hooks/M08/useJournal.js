@@ -287,11 +287,8 @@ const useJournal = () => {
     try {
       const resp = await partyAPI.getByCoa({ party_chtac: id });
       const list = resp.data || [];
-      const listActive = list.map((item) => ({
-        id: item.id,
-        name: item.party_ptype + " - " + item.party_cname,
-      }));
-      setParty_Options(listActive);
+      //console.log(list)
+      setParty_Options(list);
     } catch (error) {}
   };
 

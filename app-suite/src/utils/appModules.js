@@ -275,15 +275,6 @@ export const appModules = [
             link: "/inventory/setup/items",
             desc: "Manage inventory item records",
           },
-          {
-            id: "M04-G01-M006",
-            name: "TAX",
-            color: "#f97316",
-            icon: "Box",
-            order: 6,
-            link: "/inventory/setup/tax",
-            desc: "Manage tax",
-          },
         ],
       },
       {

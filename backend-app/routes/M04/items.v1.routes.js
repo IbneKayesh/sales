@@ -634,7 +634,7 @@ stk.stock_exdat, stk.stock_ohqty, stk.stock_cprat,
 prc.id price_id, prc.price_cname, prc.price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat,
 prc.price_dspct, prc.price_gdstk, prc.price_bdstk,
 itm.id items_id, itm.items_icode, itm.items_brcod, itm.items_hscod, itm.items_runit, itm.items_pkqty, 
-itm.items_sdvat, runit.units_cname as runit_uname, itm.items_pkqty, sunit.units_cname as sunit_cname,
+itm.items_slvat, itm.items_stvat, runit.units_cname as runit_uname, itm.items_pkqty, sunit.units_cname as sunit_cname,
 itm.items_szqty, brand.brand_cname as brand_cname,
 pty.id party_id, pty.party_chtac chtac_id
 FROM tmib_stock stk

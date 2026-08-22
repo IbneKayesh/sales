@@ -1,3 +1,4 @@
+--drop  table tmob_invpy;
 --
 -- Table structure for table tmob_invpy
 -- sales invoice payments

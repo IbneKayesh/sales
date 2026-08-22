@@ -52,10 +52,6 @@ const useMRR = () => {
   const [listDataPayment, setListDataPayment] = useState([]);
   const [formDataPayment, setFormDataPayment] = useState({});
 
-  //tax
-  const [itemTaxList, setItemTaxList] = useState([]);
-  const [listDataTax, setListDataTax] = useState([]);
-
   //Table Columns
   const getTabColumns = async () => {
     try {
@@ -579,7 +575,7 @@ const useMRR = () => {
     loadAllDetails(rowData.id);
     getAllDepartments();
     getAllContacts();
-    getMrrItems(rowData.mrrdm_cntct);
+    //getMrrItems(rowData.mrrdm_cntct);
     getExpnPaym();
   };
 
@@ -772,15 +768,9 @@ const useMRR = () => {
       items_szqty: items_iname?.items_szqty || "0",
       mrrdc_actve: true,
     };
-    const newTaxList = [...listDataTax, itemTaxList];
+
     const newItemList = [...listDataItem, newItem];
-    reCalculate(
-      newItemList,
-      formData,
-      listDataCost,
-      listDataPayment,
-      newTaxList,
-    );
+    reCalculate(newItemList, formData, listDataCost, listDataPayment);
     setFormDataItem({});
     if (value === "CLOSE") {
       handleHideModal();
@@ -942,7 +932,6 @@ const useMRR = () => {
       (item) => item.id !== rowData.id,
     );
     reCalculate(listDataItem, formData, listDataCost, newPaymentList);
-
     showToast("Removed successfully", { type: "success" });
   };
 
@@ -1006,7 +995,6 @@ const useMRR = () => {
     handleCancel,
     handleSubmit,
     //item
-    itemTaxList,
     handleChangeItem,
     handleAddToListItem,
     handleEditItem,

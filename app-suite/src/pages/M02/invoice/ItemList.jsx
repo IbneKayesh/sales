@@ -1,7 +1,7 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
 
-const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
+const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     {
       key: "items_iname",
@@ -32,12 +32,12 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
     {
       key: "invcc_dsamt",
       header: "Discount",
-      width: "100px",
+      width: "80px",
       body: (_, rowData) => {
         return (
           <>
-            [{rowData.invcc_edamt}] {Number(rowData.invcc_dsamt).toFixed(4)} (
-            {rowData.invcc_dspct}%)
+            {Number(rowData.invcc_dsamt).toFixed(4)} ({rowData.invcc_dspct}%)
+            [Other: {rowData.invcc_edamt}]
           </>
         );
       },
@@ -45,36 +45,39 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
     {
       key: "invcc_vtpct",
       header: "VAT",
-      width: "100px",
+      width: "80px",
       body: (_, rowData) => {
         return (
           <>
-            {rowData.invcc_vtamt} ({rowData.invcc_vtpct}%)
+            {rowData.invcc_vtamt} ({rowData.invcc_vtpct}% {rowData.invcc_vtype})
           </>
         );
       },
     },
     {
       key: "invcc_icamt",
-      header: "Other Cost",
+      header: "In Cost",
+      width: "80px",
+    },
+    {
+      key: "invcc_ecamt",
+      header: "Ex Cost",
+      width: "80px",
+    },
+    {
+      key: "invcc_pyamt",
+      header: "Payable",
       width: "80px",
       body: (_, rowData) => {
-        return (
-          <>
-            {(
-              Number(rowData.invcc_icamt || 0) +
-              Number(rowData.invcc_ecamt || 0)
-            ).toFixed(4)}
-          </>
-        );
+        return <>{(Number(rowData.invcc_pyamt) || 0).toFixed(4)}</>;
       },
     },
     {
-      key: "invcc_ntamt",
+      key: "invcc_stamt",
       header: "Sub Total",
       width: "80px",
       body: (_, rowData) => {
-        return <>{(Number(rowData.invcc_ntamt) || 0).toFixed(4)}</>;
+        return <>{(Number(rowData.invcc_stamt) || 0).toFixed(4)}</>;
       },
     },
     { key: "invcc_notes", header: "Notes", width: "100px" },
@@ -85,7 +88,8 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
       body: (_, rowData) => {
         return <>{(Number(rowData.invcc_csrat) || 0).toFixed(4)}</>;
       },
-    },    {
+    },
+    {
       key: "invcc_nsrat",
       header: "Net Unit Cost",
       width: "80px",
@@ -123,8 +127,9 @@ const ItemList = ({ readOnly, listData, onEdit, onDelete }) => {
         exportable={false}
         exportFilename="data-export.csv"
         onRowClick={(row) => onEdit(row)}
-        emptyMessage="No items found"
+        emptyMessage="No data found"
         className="mt-2"
+        cfColumns={cfColumns}
       />
     </>
   );

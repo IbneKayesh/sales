@@ -14,6 +14,8 @@ CREATE TABLE tmtb_chtac (
   chtac_child boolean NOT NULL DEFAULT false,
   chtac_ispst boolean NOT NULL DEFAULT false,
   chtac_ptype varchar(20) NOT NULL DEFAULT 'Manual',
+  chtac_pcrte varchar(20) NOT NULL DEFAULT 'SINGLE',
+  chtac_jvpst varchar(20) NOT NULL DEFAULT 'SINGLE',
   
   -- default 2
   chtac_actve boolean NOT NULL DEFAULT true,

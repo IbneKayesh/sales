@@ -2,7 +2,6 @@ import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
-import InputCalendar from "@/components/InputCalendar";
 import { IconPlus } from "@/icons";
 
 const PaymentForm = ({
@@ -29,17 +28,7 @@ const PaymentForm = ({
             disabled={readOnly}
             optionValue="id"
             optionLabel="party_cname"
-          />
-        </div>
-        <div className="col-span-4">
-          <InputCalendar
-            label="Payment Date"
-            value={formData.invpy_pydat}
-            onChange={(e) => onChange("invpy_pydat", e.target.value)}
-            placeholder="Select..."
-            error={formErrors.invpy_pydat}
-            required
-            disabled={readOnly}
+            optionGrid="party_cname:Name,prtyn_chtno:COA"
           />
         </div>
         <div className="col-span-4">
@@ -49,11 +38,12 @@ const PaymentForm = ({
             value={formData.invpy_pdamt}
             onChange={(e) => onChange("invpy_pdamt", e.target.value)}
             error={formErrors.invpy_pdamt}
+            required
             step="0.01"
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputText
             label="Ref No"
             placeholder="Enter ref no"
@@ -63,7 +53,7 @@ const PaymentForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-12">
+        <div className="col-span-5">
           <InputText
             label="Notes"
             placeholder="Enter notes"

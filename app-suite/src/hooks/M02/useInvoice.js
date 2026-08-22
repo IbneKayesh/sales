@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { invoiceAPI } from "@/api/M02/invoiceAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmob_invcm from "@/models/M02/tmob_invcm.json";
-const dataModel = generateDataModel(tmob_invcm);
-import tmob_invcc from "@/models/M02/tmob_invcc.json";
-const dataModelItem = generateDataModel(tmob_invcc);
-import tmob_invcs from "@/models/M02/tmob_invcs.json";
-const dataModelCost = generateDataModel(tmob_invcs);
-import tmob_invpy from "@/models/M02/tmob_invpy.json";
-const dataModelPayment = generateDataModel(tmob_invpy);
-import { departmentAPI } from "@/api/M01/departmentAPI.js";
-import { contactAPI } from "@/api/M06/contactAPI.js";
-import { itemsAPI } from "@/api/M04/itemsAPI.js";
 import { generateGuid } from "@/utils/guid.js";
 import { validNumber, divNumber } from "@/utils/misc.js";
+import tmob_invcm from "@/models/M02/tmob_invcm.json";
+import tmob_invcc from "@/models/M02/tmob_invcc.json";
+import tmob_invcs from "@/models/M02/tmob_invcs.json";
+import tmob_invpy from "@/models/M02/tmob_invpy.json";
+const dataModel = generateDataModel(tmob_invcm);
+const dataModelItem = generateDataModel(tmob_invcc);
+const dataModelCost = generateDataModel(tmob_invcs);
+const dataModelPayment = generateDataModel(tmob_invpy);
+import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
+import { departmentAPI } from "@/api/M01/departmentAPI.js";
+import { invoiceAPI } from "@/api/M02/invoiceAPI.js";
+import { itemsAPI } from "@/api/M04/itemsAPI.js";
+import { contactAPI } from "@/api/M06/contactAPI.js";
 import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
 
 const useInvoice = () => {
@@ -27,6 +28,7 @@ const useInvoice = () => {
     edtpr: false,
     delpr: false,
   });
+  const [tcVisibleItem, setTcVisibleItem] = useState([]);
   const [readOnly, setReadOnly] = useState(false);
   const [stopEdit, setStopEdit] = useState(false);
   const [listData, setListData] = useState([]);
@@ -52,6 +54,22 @@ const useInvoice = () => {
   const [listDataPayment, setListDataPayment] = useState([]);
   const [formDataPayment, setFormDataPayment] = useState({});
 
+  //Table Columns
+  const getTabColumns = async () => {
+    try {
+      setIsBusy(true);
+      const resp = await tabColumnsAPI.getByPage({
+        tabcl_cname: "SYS_SALES_INVOICE",
+      });
+      const list = resp.data || [];
+      //console.log("list", list);
+      setTcVisibleItem(list);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsBusy(false);
+    }
+  };
   // ---------- Invoice Master ----------
   const getAllInvoices = async () => {
     try {
@@ -66,6 +84,7 @@ const useInvoice = () => {
   };
 
   useEffect(() => {
+    getTabColumns();
     getAllInvoices();
   }, []);
 
@@ -178,13 +197,25 @@ const useInvoice = () => {
       const afterDisc =
         invcc_itamt - (invcc_dsamt + validNumber(item.invcc_edamt));
 
-      const invcc_vtamt = afterDisc * (validNumber(item.invcc_vtpct) / 100);
+      //AS BD NBR Rules
+      let inclusive_vat = 0;
+      let exclusive_vat = 0;
+      if (item.invcc_vtype === "INCLUSIVE") {
+        inclusive_vat = (afterDisc * validNumber(item.invcc_vtpct)) / 115;
+      }
+
+      if (item.invcc_vtype === "EXCLUSIVE") {
+        exclusive_vat = (afterDisc * validNumber(item.invcc_vtpct)) / 100;
+      }
+      const invcc_vtamt = (
+        Number(inclusive_vat || 0) + Number(exclusive_vat || 0)
+      ).toFixed(4);
 
       //---------------------------------------------------
       // Including Cost
       //---------------------------------------------------
 
-      const iAmtCust = invcc_itamt * incAmtRate;
+      const iAmtCust = afterDisc * incAmtRate;
       const iQty = qty * incQtyRate;
       const iLine = incLineRate;
 
@@ -192,7 +223,7 @@ const useInvoice = () => {
       // Excluding Cost
       //---------------------------------------------------
 
-      const eAmtCust = invcc_itamt * excAmtRate;
+      const eAmtCust = afterDisc * excAmtRate;
       const eQty = qty * excQtyRate;
       const eLine = excLineRate;
 
@@ -200,12 +231,13 @@ const useInvoice = () => {
       const invcc_ecamt = eAmtCust + eQty + eLine;
 
       //---------------------------------------------------
-      // Net Amount
+      // Amount
       //---------------------------------------------------
 
-      const invcc_ntamt = afterDisc + invcc_vtamt + invcc_icamt;
+      const invcc_pyamt = afterDisc + exclusive_vat + invcc_icamt;
+      const invcc_stamt = afterDisc + exclusive_vat + invcc_icamt + invcc_ecamt;
 
-      const invcc_nsrat = validNumber(item.invcc_csrat) + invcc_ecamt;
+      const invcc_nsrat = item.invcc_csrat + invcc_ecamt;
 
       return {
         ...item,
@@ -214,7 +246,8 @@ const useInvoice = () => {
         invcc_vtamt,
         invcc_icamt,
         invcc_ecamt,
-        invcc_ntamt,
+        invcc_pyamt,
+        invcc_stamt,
         invcc_nsrat,
       };
     });
@@ -222,7 +255,7 @@ const useInvoice = () => {
     setListDataItem(newItems);
 
     //---------------------------------------------------
-    // Totals
+    // Totals Master
     //---------------------------------------------------
 
     const totals = newItems.reduce(
@@ -232,7 +265,13 @@ const useInvoice = () => {
         vtamt: acc.vtamt + validNumber(item.invcc_vtamt),
         icamt: acc.icamt + validNumber(item.invcc_icamt),
         ecamt: acc.ecamt + validNumber(item.invcc_ecamt),
-        ntamt: acc.ntamt + validNumber(item.invcc_ntamt),
+        pyamt:
+          acc.pyamt +
+          validNumber(item.invcc_pyamt) +
+          Number(master?.invcm_lylds || 0),
+        stamt: acc.stamt + validNumber(item.invcc_stamt),
+        csamt: acc.csamt + validNumber(item.invcc_csamt),
+        nsamt: acc.nsamt + validNumber(item.invcc_nsamt),
       }),
       {
         tramt: 0,
@@ -240,7 +279,10 @@ const useInvoice = () => {
         vtamt: 0,
         icamt: 0,
         ecamt: 0,
-        ntamt: 0,
+        pyamt: 0,
+        stamt: 0,
+        csamt: 0,
+        nsamt: 0,
       },
     );
 
@@ -251,7 +293,7 @@ const useInvoice = () => {
     const newPayments = [...(paymList || [])];
 
     const totalPayment = newPayments.reduce(
-      (sum, item) => sum + validNumber(item.mrrpy_pdamt),
+      (sum, item) => sum + validNumber(item.invpy_pdamt),
       0,
     );
 
@@ -261,8 +303,7 @@ const useInvoice = () => {
     // Master
     //---------------------------------------------------
 
-    const duamt =
-      totals.ntamt - (totalPayment + Number(master?.invcm_lylds || 0));
+    const duamt = totals.pyamt - totalPayment;
 
     setFormData({
       ...master,
@@ -272,9 +313,12 @@ const useInvoice = () => {
       invcm_vtamt: validNumber(totals.vtamt).toFixed(4),
       invcm_icamt: validNumber(totals.icamt).toFixed(4),
       invcm_ecamt: validNumber(totals.ecamt).toFixed(4),
-      invcm_pyamt: validNumber(totals.ntamt).toFixed(4),
+      invcm_pyamt: validNumber(totals.pyamt).toFixed(4),
       invcm_pdamt: validNumber(totalPayment).toFixed(4),
       invcm_duamt: validNumber(duamt).toFixed(4),
+      invcm_stamt: validNumber(totals.stamt).toFixed(4),
+      invcm_csamt: validNumber(totals.csamt).toFixed(4),
+      invcm_nsamt: validNumber(totals.nsamt).toFixed(4),
     });
   }
 
@@ -367,7 +411,7 @@ const useInvoice = () => {
     loadAllDetails(rowData.id);
     getAllDepartments();
     getAllContacts();
-    //getExpnPaym();
+    getExpnPaym();
     //await getItemsByDepartment(rowData.invcm_dpart);
   };
 
@@ -439,8 +483,6 @@ const useInvoice = () => {
     setFormData({
       ...dataModel,
       invcm_ttype: "Sales Invoice",
-      invcm_crncy: "BDT",
-      invcm_exrat: 1,
     });
 
     setReadOnly(false);
@@ -448,9 +490,8 @@ const useInvoice = () => {
     setListDataItem([]);
     setListDataCost([]);
     setListDataPayment([]);
-
-    getAllDepartments();
     getAllContacts();
+    getAllDepartments();
     getExpnPaym();
   };
 
@@ -465,6 +506,8 @@ const useInvoice = () => {
     try {
       const newErrors = validate(formData, tmob_invcm);
       setFormErrors(newErrors);
+      //console.log(formData);
+      //console.log(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
       }
@@ -518,7 +561,8 @@ const useInvoice = () => {
         invcc_units: stock_id?.items_runit,
         invcc_itrat: stock_id?.price_mrrat || 0,
         invcc_dspct: stock_id?.price_dspct || 0,
-        invcc_vtpct: stock_id?.items_sdvat || 0,
+        invcc_vtpct: stock_id?.items_slvat || 0,
+        invcc_vtype: stock_id?.items_stvat || "-",
         invcc_csrat: stock_id?.stock_cprat || 0,
         invcc_refid: stock_id?.stock_refid || 0,
         invcc_stock: stock_id?.stock_id,
@@ -535,29 +579,29 @@ const useInvoice = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-
-    const price = Number(formDataItem.invcc_itrat);
-    if (!Number.isFinite(price) || price === 0) {
+    if (["", 0, "0", null, undefined].includes(formDataItem.invcc_itqty)) {
+      showToast("Quantity is required", { type: "warning" });
+      return;
+    }
+    if (["", 0, "0", null, undefined].includes(formDataItem.invcc_itrat)) {
       showToast("Price is required", { type: "warning" });
       return;
     }
-    const qty = Number(formDataItem.invcc_itqty);
-    if (!Number.isFinite(qty) || qty === 0) {
-      showToast("Qty is required", { type: "warning" });
+    const isExists = listDataItem.find(
+      (f) => f.invcc_stock === formDataItem.invcc_stock,
+    );
+    if (isExists) {
+      showToast("This stock is already added", { type: "warning" });
       return;
     }
 
+    const qty = Number(formDataItem.invcc_itqty);
     const ohqty = Number(formDataItem.stock_ohqty);
     const stockDiff = ohqty - qty;
     if (stockDiff < 0) {
       showToast(`${stockDiff} Stock is not available`, { type: "warning" });
       return;
     }
-
-    // if (["", 0, "0", null, undefined].includes(formDataItem.invcc_itqty)) {
-    //   showToast("Quantity is required", { type: "warning" });
-    //   return;
-    // }
 
     const items_iname = items_Options.find(
       (opt) => opt.stock_id === formDataItem.invcc_stock,
@@ -611,6 +655,11 @@ const useInvoice = () => {
       setFormDataCost((prev) => ({
         ...prev,
         party_cname: invcs_id?.party_cname,
+        party_chtac: invcs_id?.party_chtac,
+        prtyn_ctype: invcs_id?.prtyn_ctype,
+        prtyn_chtno: invcs_id?.prtyn_chtno,
+        chtac_id: invcs_id?.party_chtac,
+        party_id: v,
       }));
     }
   };
@@ -729,7 +778,6 @@ const useInvoice = () => {
       (item) => item.id !== rowData.id,
     );
     reCalculate(listDataItem, formData, listDataCost, newPaymentList);
-
     showToast("Removed successfully", { type: "success" });
   };
 
@@ -768,6 +816,7 @@ const useInvoice = () => {
     isBusy,
     pgView,
     pageAuth,
+    tcVisibleItem,
     readOnly,
     stopEdit,
     listData,

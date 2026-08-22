@@ -34,7 +34,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
     {
       key: "mrrdc_dsamt",
       header: "Discount",
-      width: "100px",
+      width: "80px",
       body: (_, rowData) => {
         return (
           <>
@@ -47,7 +47,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
     {
       key: "mrrdc_vtpct",
       header: "VAT",
-      width: "100px",
+      width: "80px",
       body: (_, rowData) => {
         return (
           <>
@@ -60,17 +60,11 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       key: "mrrdc_icamt",
       header: "In Cost",
       width: "80px",
-      body: (_, rowData) => {
-        return <>{rowData.mrrdc_icamt}</>;
-      },
     },
     {
       key: "mrrdc_ecamt",
       header: "Ex Cost",
       width: "80px",
-      body: (_, rowData) => {
-        return <>{rowData.mrrdc_ecamt}</>;
-      },
     },
     {
       key: "mrrdc_pyamt",

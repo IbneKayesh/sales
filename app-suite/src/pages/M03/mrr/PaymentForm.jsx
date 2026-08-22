@@ -39,6 +39,7 @@ const PaymentForm = ({
             value={formData.mrrpy_pdamt}
             onChange={(e) => onChange("mrrpy_pdamt", e.target.value)}
             error={formErrors.mrrpy_pdamt}
+            required
             step="0.01"
             disabled={readOnly}
           />
