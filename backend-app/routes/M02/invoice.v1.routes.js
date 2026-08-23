@@ -6,6 +6,8 @@ const {
   GenNewCode,
   GenNewTrn,
   getCurrentPeriod,
+  getCurrencyRate,
+  getCoaLibOutputVat,
 } = require("../../db/genHelper");
 
 // get all
@@ -98,7 +100,6 @@ const create = async (req, res) => {
       invcm_users,
       invcm_bsins,
       invcm_dpart,
-      invcm_crncy,
       invcm_cntct,
       invcm_ttype,
       invcm_trnno,
@@ -116,7 +117,10 @@ const create = async (req, res) => {
       invcm_pyamt,
       invcm_pdamt,
       invcm_duamt,
-      invcm_exrat,
+      invcm_stamt,
+      invcm_csamt,
+      invcm_nsamt,
+      invcm_vehid,
       invcm_ispst,
       invcm_ispad,
       invcm_isapp,
@@ -133,10 +137,9 @@ const create = async (req, res) => {
     // Validate input
     if (
       !invcm_dpart ||
-      !invcm_crncy ||
       !invcm_cntct ||
       !invcm_ttype ||
-      !invcm_exrat ||
+      !tmob_invcc ||
       !party_id ||
       !chtac_id ||
       !user_s ||
@@ -176,6 +179,23 @@ const create = async (req, res) => {
       invcm_dpart,
     );
 
+    //active currency rate
+    const crncy = await getCurrencyRate(user_c, user_b);
+    if (!crncy) {
+      return {
+        success: false,
+        message: "No active currency rate found",
+        data: {},
+      };
+    }
+    if (crncy.length > 1) {
+      return {
+        success: false,
+        message: "Multiple active currency rate found. Please select one.",
+        data: {},
+      };
+    }
+
     const newId = uuidv4();
     //const newCode = await GenNewCode(user_c, "tmob_invcm");
     const newTrnNo = await GenNewTrn(
@@ -185,25 +205,35 @@ const create = async (req, res) => {
       invcm_ttype, //"Material Receipt Report",
       invcm_dpart,
     );
+
+    //output vat (sales)
+    const outVat = await getCoaLibOutputVat(user_c, user_b);
+    if (!outVat) {
+      return {
+        success: false,
+        message: "Output VAT Account is not found",
+        data: {},
+      };
+    }
+
     //build scripts
     const scripts = [];
     scripts.push({
-      sql: `INSERT INTO tmob_invcm(id, invcm_users, invcm_bsins, invcm_dpart, invcm_crncy, invcm_cntct,
-      invcm_ttype, invcm_trnno, invcm_trdat, invcm_refno, invcm_notes, invcm_tramt,
-      invcm_itmds, invcm_dspct, invcm_invds, invcm_lylds, invcm_vtamt, invcm_icamt,
-      invcm_ecamt, invcm_pyamt, invcm_pdamt, invcm_duamt, invcm_exrat, invcm_ispst,
-      invcm_ispad, invcm_isapp, invcm_crusr, invcm_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12,
-      $13, $14, $15, $16, $17, $18,
-      $19, $20, $21, $22, $23, $24,
-      $25, $26, $27, $28)`,
+      sql: `INSERT INTO tmob_invcm(id, invcm_users, invcm_bsins, invcm_dpart, invcm_cntct, invcm_ttype,
+                        invcm_trnno, invcm_trdat, invcm_refno, invcm_notes, invcm_tramt, invcm_itmds,
+                        invcm_dspct, invcm_invds, invcm_lylds, invcm_vtamt, invcm_icamt, invcm_ecamt,
+                        invcm_pyamt, invcm_pdamt, invcm_duamt, invcm_stamt, invcm_csamt, invcm_nsamt,
+                        invcm_vehid, invcm_ispst, invcm_ispad, invcm_isapp, invcm_crusr, invcm_upusr)
+            VALUES ($1, $2, $3, $4, $5, $6,
+              $7, $8, $9, $10, $11, $12,
+              $13, $14, $15, $16, $17, $18,
+              $19, $20, $21, $22, $23, $24,
+              $25, $26, $27, $28, $29, $30)`,
       params: [
         newId,
         user_c,
         user_b,
         invcm_dpart,
-        invcm_crncy,
         invcm_cntct,
         invcm_ttype,
         newTrnNo,
@@ -221,7 +251,10 @@ const create = async (req, res) => {
         invcm_pyamt || 0,
         invcm_pdamt || 0,
         invcm_duamt || 0,
-        invcm_exrat || 1,
+        invcm_stamt || 0,
+        invcm_csamt || 0,
+        invcm_nsamt || 0,
+        invcm_vehid,
         true,
         invcm_ispad,
         true,
@@ -231,14 +264,14 @@ const create = async (req, res) => {
       label: `Created Invoice ${newTrnNo}`,
     });
 
-    //create journal
+    //SYS_SALES_INVOICE
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    jrnlm_drval, jrnlm_crval, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
+    jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
     $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17)`,
+    $13, $14, $15, $16, $17, $18)`,
       params: [
         newId_JV,
         user_c,
@@ -246,7 +279,7 @@ const create = async (req, res) => {
         invcm_dpart,
         fsyar_id,
         acprd_id,
-        invcm_crncy,
+        crncy.crncy_tcrnc,
         "Sales Invoice",
         newTrnNo_JV,
         invcm_trdat,
@@ -254,6 +287,7 @@ const create = async (req, res) => {
         invcm_ttype,
         0,
         0,
+        crncy.crncy_exrat,
         "Posted",
         user_s,
         user_s,
@@ -263,20 +297,19 @@ const create = async (req, res) => {
 
     //Insert Sales details, Reduce Stock Details
     let line = 1;
-    let lineAmt = 0;
     for (const det of tmob_invcc) {
       const lineId = uuidv4();
       scripts.push({
         sql: `INSERT INTO tmob_invcc(id, invcc_users, invcc_bsins, invcc_invcm, invcc_price, invcc_items,
-        invcc_units, invcc_itrat, invcc_itqty, invcc_itamt, invcc_dspct, invcc_dsamt,
-        invcc_edamt, invcc_vtpct, invcc_vtamt, invcc_icamt, invcc_ecamt, invcc_ntamt, 
-        invcc_notes, invcc_csrat, invcc_nsrat, invcc_refid, invcc_stock, invcc_crusr,
-        invcc_upusr)
+                          invcc_units, invcc_itrat, invcc_itqty, invcc_itamt, invcc_dspct, invcc_dsamt,
+                          invcc_edamt, invcc_vtpct, invcc_vtamt, invcc_vtype, invcc_icamt, invcc_ecamt,
+                          invcc_pyamt, invcc_stamt, invcc_notes, invcc_csrat, invcc_nsrat, invcc_refid,
+                          invcc_stock, invcc_crusr, invcc_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
       $7, $8, $9, $10, $11, $12,
       $13, $14, $15, $16, $17, $18,
       $19, $20, $21, $22, $23, $24,
-      $25)`,
+      $25, $26, $27)`,
         params: [
           lineId,
           user_c,
@@ -293,9 +326,11 @@ const create = async (req, res) => {
           det.invcc_edamt || 0,
           det.invcc_vtpct || 0,
           det.invcc_vtamt || 0,
+          det.invcc_vtype || "-",
           det.invcc_icamt || 0,
           det.invcc_ecamt || 0,
-          det.invcc_ntamt || 0,
+          det.invcc_pyamt || 0,
+          det.invcc_stamt || 0,
           det.invcc_notes || "",
           det.invcc_csrat || 0,
           det.invcc_nsrat || 0,
@@ -328,7 +363,7 @@ const create = async (req, res) => {
           user_b,
           invcm_dpart,
         ],
-        label: `Update stock detail ${newTrnNo}`,
+        label: `Update reduce stock detail ${newTrnNo}`,
       });
 
       //update summary stock
@@ -348,10 +383,10 @@ const create = async (req, res) => {
           user_c,
           det.invcc_items,
         ],
-        label: `Update price stock detail ${newTrnNo}`,
+        label: `Update reduce price stock detail ${newTrnNo}`,
       });
 
-      //SYS_SALES_INVOICE.PAY_INVENTORY > Asset / Inventory Products - 10101212 >> CR (1.1)
+      //SYS_SALES_INVOICE.SYS_AST_INVENTORY > Asset / Inventory Products - 10101212 >> CR (1.1)
       let thisLineAmount = Number(det.invcc_csrat) * Number(det.invcc_itqty);
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
@@ -381,8 +416,73 @@ const create = async (req, res) => {
         label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
       });
       line++;
-      lineAmt += thisLineAmount;
     }
+    
+
+    //SYS_SALES_INVOICE.SYS_AST_CUSTOMER > Asset / Customer Receivable - 10101110 >> DR (2.1)
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+      params: [
+        uuidv4(),
+        user_c,
+        user_b,
+        invcm_dpart,
+        newId_JV,
+        chtac_id,
+        party_id,
+        invcm_pyamt || 0,
+        0,
+        "To Asset / Customer / Receivable",
+        invcm_ttype,
+        newId,
+        "MASTER",
+        line,
+        user_s,
+        user_s,
+      ],
+      label: `Create Asset / Customer / Receivable ${newTrnNo_JV}`,
+    });
+    line++;
+
+    //SYS_SALES_INVOICE.SYS_LIB_OUT_VAT > To Liabilities / Current Liabilities / Taxes Payable / VAT Payable (Sales)
+    if (Number(invcm_vtamt) > 0) {
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          invcm_dpart,
+          newId_JV,
+          outVat.chtac_id,
+          outVat.party_id,
+          invcm_vtamt || 0,
+          0,
+          "To Liabilities / Current Liabilities / Taxes Payable / VAT Payable (Sales)",
+          invcm_ttype,
+          newId,
+          "MASTER",
+          line,
+          user_s,
+          user_s,
+        ],
+        label: `Create To Liabilities / Current Liabilities / Taxes Payable / VAT Payable (Sales) ${newTrnNo_JV}`,
+      });
+      line++;
+    }
+
+
+    ////DO Here..... goes for item type wise accounting
 
     //PAY_COGS, PAY_INCOME_PRODUCT_SOLD, PAY_VAT
     const sql_prtyn = `SELECT ptn.prtyn_ctype, prtyn_chtac, prtyn_party
@@ -434,36 +534,6 @@ ORDER BY prtyn_cname, prtyn_ccode`;
         user_s,
       ],
       label: `Create Expense / Product COGS ${newTrnNo_JV}`,
-    });
-    line++;
-
-    //SYS_SALES_INVOICE.PAY_CUSTOMER > Asset / Customer Receivable - 10101110 >> DR (2.1)
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-      params: [
-        uuidv4(),
-        user_c,
-        user_b,
-        invcm_dpart,
-        newId_JV,
-        chtac_id,
-        party_id,
-        invcm_pyamt || 0,
-        0,
-        "To Asset / Customer / Receivable",
-        invcm_ttype,
-        newId,
-        "MASTER",
-        line,
-        user_s,
-        user_s,
-      ],
-      label: `Create Asset / Customer / Receivable ${newTrnNo_JV}`,
     });
     line++;
 

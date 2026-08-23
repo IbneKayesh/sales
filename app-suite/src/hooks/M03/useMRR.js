@@ -883,6 +883,7 @@ const useMRR = () => {
         prtyn_chtno: mrrpy_id?.prtyn_chtno,
         chtac_id_pay: mrrpy_id?.party_chtac,
         party_id_pay: mrrpy_id?.id,
+        mrrpy_pdamt: formData.mrrdm_duamt //too optional
       }));
     }
   };

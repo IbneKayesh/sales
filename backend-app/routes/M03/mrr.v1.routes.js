@@ -7,7 +7,7 @@ const {
   GenNewTrn,
   getCurrentPeriod,
   getCurrencyRate,
-  getCoaAssetInputVat
+  getCoaAssetInputVat,
 } = require("../../db/genHelper");
 
 // get all
@@ -206,8 +206,8 @@ const create = async (req, res) => {
     );
 
     //input vat (purchase)
-    const inpVat = await getCoaAssetInputVat (user_c, user_b);
-    if(!inpVat){
+    const inpVat = await getCoaAssetInputVat(user_c, user_b);
+    if (!inpVat) {
       return {
         success: false,
         message: "Input VAT Account is not found",
@@ -298,13 +298,13 @@ const create = async (req, res) => {
       const lineId = uuidv4();
       scripts.push({
         sql: `INSERT INTO tmpb_mrrdc(id, mrrdc_users, mrrdc_bsins, mrrdc_mrrdm, mrrdc_price, mrrdc_items,
-        mrrdc_units, mrrdc_itrat, mrrdc_itqty, mrrdc_itamt, mrrdc_dspct, mrrdc_dsamt,
-        mrrdc_edamt, mrrdc_vtpct, mrrdc_vtamt, mrrdc_icamt, mrrdc_ecamt, mrrdc_pyamt,
-        mrrdc_stamt, mrrdc_notes, mrrdc_csrat, mrrdc_refid, mrrdc_crusr, mrrdc_upusr)
+                          mrrdc_units, mrrdc_itrat, mrrdc_itqty, mrrdc_itamt, mrrdc_dspct, mrrdc_dsamt,
+                          mrrdc_edamt, mrrdc_vtpct, mrrdc_vtamt, mrrdc_vtype, mrrdc_icamt, mrrdc_ecamt,
+                          mrrdc_pyamt, mrrdc_stamt, mrrdc_notes, mrrdc_csrat, mrrdc_refid, mrrdc_crusr, mrrdc_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
       $7, $8, $9, $10, $11, $12,
       $13, $14, $15, $16, $17, $18,
-      $19, $20, $21, $22, $23, $24)`,
+      $19, $20, $21, $22, $23, $24, $25)`,
         params: [
           lineId,
           user_c,
@@ -321,6 +321,7 @@ const create = async (req, res) => {
           det.mrrdc_edamt || 0,
           det.mrrdc_vtpct || 0,
           det.mrrdc_vtamt || 0,
+          det.mrrdc_vtype || "-",
           det.mrrdc_icamt || 0,
           det.mrrdc_ecamt || 0,
           det.mrrdc_pyamt || 0,
@@ -394,6 +395,8 @@ const create = async (req, res) => {
       });
 
       //SYS_MRR_DIRECT.SYS_AST_INVENTORY > Asset / Inventory Products - 10101212 (DR)
+      let thisLineAmount =
+        Number(det.mrrdc_itqty || 0) * Number(det.mrrdc_csrat || 0);
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -409,7 +412,7 @@ const create = async (req, res) => {
           newId_JV,
           det.chtac_id,
           det.party_id,
-          Number(det.mrrdc_itqty || 0) * Number(det.mrrdc_csrat || 0),
+          thisLineAmount,
           0,
           "To Asset / Inventory / Products",
           mrrdm_ttype,

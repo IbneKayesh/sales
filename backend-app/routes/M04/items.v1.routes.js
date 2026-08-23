@@ -553,6 +553,8 @@ router.post("/get-mrr-items", async (req, res) => {
     JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
     JOIN tmib_brand brand ON itm.items_brand = brand.id
     JOIN tmtb_party pty ON itm.id = pty.party_vndor
+    JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+    JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_party
     JOIN tmib_itmct itc ON itm.id = itc.itmct_items
     WHERE itm.items_stpur = false
     AND itm.items_itype IN ('RM', 'PM', 'FG')

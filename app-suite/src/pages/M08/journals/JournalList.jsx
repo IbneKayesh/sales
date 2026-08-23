@@ -6,7 +6,18 @@ import { getRelativeDays } from "@/utils/datetime.js";
 
 const JournalList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "jrnlm_trtyp", header: "Type", width: "80px" },
+    {
+      key: "jrnlm_trtyp",
+      header: "Type",
+      width: "80px",
+      body: (_, row) => {
+        return (
+          <span className={`${!row.jrnlm_actve && "text-red-500"}`}>
+            {row.jrnlm_trtyp}
+          </span>
+        );
+      },
+    },
     { key: "jrnlm_trnno", header: "Trn No", width: "80px" },
     {
       key: "jrnlm_trdat",
@@ -65,17 +76,17 @@ const JournalList = ({ listData, onEdit, onDelete }) => {
         );
       },
     },
-    {
-      key: "jrnlm_actve",
-      header: "Active",
-      width: "80px",
-      body: (v) => (
-        <Badge variant={v ? "success" : "danger"}>
-          {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-          {v ? "Active" : "Inactive"}
-        </Badge>
-      ),
-    },
+    // {
+    //   key: "jrnlm_actve",
+    //   header: "Active",
+    //   width: "80px",
+    //   body: (v) => (
+    //     <Badge variant={v ? "success" : "danger"}>
+    //       {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+    //       {v ? "Active" : "Inactive"}
+    //     </Badge>
+    //   ),
+    // },
     {
       key: "actions",
       header: "Actions",

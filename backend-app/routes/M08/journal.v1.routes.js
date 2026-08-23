@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
     LEFT JOIN tmhb_emply csr ON jrn.jrnlm_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON jrn.jrnlm_upusr = usr.id
     WHERE jrn.jrnlm_users = $1
-    ORDER BY jrn.jrnlm_trdat DESC, jrn.jrnlm_trtyp ASC`;
+    ORDER BY jrn.jrnlm_crdat DESC, jrn.jrnlm_trtyp ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get journal- ${user_c}`);

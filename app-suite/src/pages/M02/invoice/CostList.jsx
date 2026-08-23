@@ -5,6 +5,7 @@ const CostList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "party_cname", header: "Cost Name", width: "200px" },
     { key: "invcs_csmod", header: "Cost Mode", width: "80px" },
+    { key: "invcs_clmod", header: "Calculation Mode", width: "100px" },
     { key: "invcs_value", header: "Amount", width: "100px" },
     { key: "invcs_notes", header: "Notes", width: "100px" },
     {

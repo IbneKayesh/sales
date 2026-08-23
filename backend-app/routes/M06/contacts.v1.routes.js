@@ -800,6 +800,7 @@ router.post("/get-customers-sale-invoice", async (req, res) => {
     AND cnt.cntct_actve = TRUE
 	  AND ptr.prtyr_mgrup = 'SYS_SALES_INVOICE'
 	  AND ptr.prtyr_sgrup = 'SYS_AST_CUSTOMER'
+    AND ptr.prtyr_party = 'USER-CHOICE'
     ORDER BY cnt.cntct_cname`;
 
     const params = [user_c];

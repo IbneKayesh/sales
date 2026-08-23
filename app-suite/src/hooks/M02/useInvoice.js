@@ -127,9 +127,9 @@ const useInvoice = () => {
     const sumCost = (csmod, clmod) =>
       newCosting
         .filter(
-          (item) => item.mrrcs_csmod === csmod && item.mrrcs_clmod === clmod,
+          (item) => item.invcs_csmod === csmod && item.invcs_clmod === clmod,
         )
-        .reduce((sum, item) => sum + validNumber(item.mrrcs_value), 0);
+        .reduce((sum, item) => sum + validNumber(item.invcs_value), 0);
 
     const incAmt = sumCost("Include", "By Amount");
     const incQty = sumCost("Include", "By Qty");
@@ -234,10 +234,14 @@ const useInvoice = () => {
       // Amount
       //---------------------------------------------------
 
-      const invcc_pyamt = afterDisc + exclusive_vat + invcc_icamt;
+      const invcc_pyamt =
+        afterDisc +
+        exclusive_vat +
+        invcc_icamt -
+        Number(master?.invcm_lylds || 0);
       const invcc_stamt = afterDisc + exclusive_vat + invcc_icamt + invcc_ecamt;
 
-      const invcc_nsrat = item.invcc_csrat + invcc_ecamt;
+      const invcc_nsrat = Number(item.invcc_csrat || 0) + invcc_ecamt || 0;
 
       return {
         ...item,
@@ -265,13 +269,14 @@ const useInvoice = () => {
         vtamt: acc.vtamt + validNumber(item.invcc_vtamt),
         icamt: acc.icamt + validNumber(item.invcc_icamt),
         ecamt: acc.ecamt + validNumber(item.invcc_ecamt),
-        pyamt:
-          acc.pyamt +
-          validNumber(item.invcc_pyamt) +
-          Number(master?.invcm_lylds || 0),
+        pyamt: acc.pyamt + validNumber(item.invcc_pyamt),
         stamt: acc.stamt + validNumber(item.invcc_stamt),
-        csamt: acc.csamt + validNumber(item.invcc_csamt),
-        nsamt: acc.nsamt + validNumber(item.invcc_nsamt),
+        csamt:
+          acc.csamt +
+          validNumber(item.invcc_csrat) * validNumber(item.invcc_itqty),
+        nsamt:
+          acc.nsamt +
+          validNumber(item.invcc_nsrat) * validNumber(item.invcc_itqty),
       }),
       {
         tramt: 0,
@@ -286,6 +291,7 @@ const useInvoice = () => {
       },
     );
 
+    console.log("totals", totals);
     //---------------------------------------------------
     // Payments
     //---------------------------------------------------
@@ -351,8 +357,12 @@ const useInvoice = () => {
     try {
       const resp = await partyNetworkAPI.getSalesInvoice({});
       const list = resp.data || [];
-      const invcs = list.filter((f) => f.prtyn_ctype === "PAY_VENDOR");
-      const invpy = list.filter((f) => f.prtyn_ctype === "PAY_CASH_BANK");
+      const invcs = list.filter(
+        (f) => f.prtyr_sgrup === "SYS_LIB_LOCAL_VENDOR",
+      );
+      const invpy = list.filter((f) =>
+        ["SYS_AST_PAY_CASH", "SYS_AST_PAY_BANK"].includes(f.prtyr_sgrup),
+      );
       setInvcs_Options(invcs);
       setInvpy_Options(invpy);
     } catch (error) {}
@@ -726,6 +736,7 @@ const useInvoice = () => {
         prtyn_chtno: invpy_id?.prtyn_chtno,
         chtac_id_pay: invpy_id?.party_chtac,
         party_id_pay: invpy_id?.id,
+        invpy_pdamt: formData.invcm_duamt, //too optional
       }));
     }
   };

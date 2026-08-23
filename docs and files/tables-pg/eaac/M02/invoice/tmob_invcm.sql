@@ -29,8 +29,9 @@ CREATE TABLE tmob_invcm (
   invcm_pyamt decimal(18,6) DEFAULT 0.00, --(invcm_tramt + invcm_icamt )- (invcm_itmds + invcm_invds + invcm_ivtmt)
   invcm_pdamt decimal(18,6) DEFAULT 0.00,
   invcm_duamt decimal(18,6) DEFAULT 0.00,
-  invcm_stamt decimal(18,6) DEFAULT 0.00, --exchange rate
-  invcm_csamt decimal(18,6) DEFAULT 0.00, --exchange rate
+  invcm_stamt decimal(18,6) DEFAULT 0.00, --sub total
+  invcm_csamt decimal(18,6) DEFAULT 0.00, --cost amount
+  invcm_nsamt decimal(18,6) DEFAULT 0.00, --new cost amount
   invcm_vehid VARCHAR(50),
   invcm_ispst boolean NOT NULL DEFAULT false,
   invcm_ispad boolean NOT NULL DEFAULT false,
