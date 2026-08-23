@@ -395,8 +395,58 @@ const create = async (req, res) => {
       });
 
       //SYS_MRR_DIRECT.SYS_AST_INVENTORY > Asset / Inventory Products - 10101212 (DR)
-      let thisLineAmount =
-        Number(det.mrrdc_itqty || 0) * Number(det.mrrdc_csrat || 0);
+      // let thisLineAmount =
+      //   Number(det.mrrdc_itqty || 0) * Number(det.mrrdc_csrat || 0);
+      // scripts.push({
+      //   sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+      //   jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+      //   jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+      //   VALUES ($1, $2, $3, $4, $5, $6,
+      //   $7, $8, $9, $10, $11, $12,
+      //   $13, $14, $15, $16)`,
+      //   params: [
+      //     uuidv4(),
+      //     user_c,
+      //     user_b,
+      //     mrrdm_dpart,
+      //     newId_JV,
+      //     det.chtac_id,
+      //     det.party_id,
+      //     thisLineAmount,
+      //     0,
+      //     "To Asset / Inventory / Products",
+      //     mrrdm_ttype,
+      //     lineId,
+      //     "CHILD",
+      //     line,
+      //     user_s,
+      //     user_s,
+      //   ],
+      //   label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
+      // });
+      // line++;
+    }
+
+    const newGroupedProducts = Object.values(
+      tmpb_mrrdc.reduce((groups, det) => {
+        const key = `${det.chtac_id}_${det.party_id}`;
+
+        if (!groups[key]) {
+          groups[key] = {
+            chtac_id: det.chtac_id,
+            party_id: det.party_id,
+            item_amount: 0,
+          };
+        }
+
+        groups[key].item_amount +=
+          Number(det.mrrdc_itqty || 0) * Number(det.mrrdc_csrat || 0);
+
+        return groups;
+      }, {}),
+    );
+    //SYS_MRR_DIRECT.SYS_AST_INVENTORY > Asset / Inventory Products - 10101212 (DR)
+    for (const det of newGroupedProducts) {
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -412,12 +462,12 @@ const create = async (req, res) => {
           newId_JV,
           det.chtac_id,
           det.party_id,
-          thisLineAmount,
+          det.item_amount,
           0,
           "To Asset / Inventory / Products",
           mrrdm_ttype,
-          lineId,
-          "CHILD",
+          newId,
+          "MASTER",
           line,
           user_s,
           user_s,
@@ -426,6 +476,7 @@ const create = async (req, res) => {
       });
       line++;
     }
+
     //SYS_MRR_DIRECT.SYS_LIB_SUPPLIER > Liability / Supplier Payable - 20101010 (CR)
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,

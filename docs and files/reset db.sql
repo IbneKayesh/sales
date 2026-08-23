@@ -22,6 +22,8 @@ update tmcb_cntct set cntct_crbal = 0;
 delete from tmob_invcc;
 delete from tmob_invpy;
 delete from tmob_invcm;
+--update party balance
+update tmtb_party set party_crbal = 0;
 
 
 

@@ -722,6 +722,7 @@ const useMRR = () => {
     setFormErrors(newErrors);
     if (f === "mrrdc_price") {
       const price_id = items_Options.find((opt) => opt.price_id === v);
+      //console.log(price_id);
       setFormDataItem((prev) => ({
         ...prev,
         mrrdc_items: price_id?.id,

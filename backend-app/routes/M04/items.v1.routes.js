@@ -166,24 +166,24 @@ const create = async (req, res) => {
     }
 
     //database action
-    const sql_chtac = `SELECT cht.id AS chtac_id
-      FROM tmtb_prtyr ptr
-      JOIN tmtb_chtac cht ON ptr.prtyr_chtno = cht.chtac_chtno
-      WHERE ptr.prtyr_mgrup = 'SYS_ITEM_MASTER_TYPE'
-      AND ptr.prtyr_users = $1
-      AND ptr.prtyr_sgrup = $2`;
-    const row_chtac = await dbGetAll(
-      sql_chtac,
-      [user_c, items_itype],
-      `get account coa- ${items_itype}`,
-    );
-    if (row_chtac.length === 0) {
-      return res.json({
-        success: false,
-        message: `No account party setup for ${items_itype}`,
-        data: {},
-      });
-    }
+    // const sql_chtac = `SELECT cht.id AS chtac_id
+    //   FROM tmtb_prtyr ptr
+    //   JOIN tmtb_chtac cht ON ptr.prtyr_chtno = cht.chtac_chtno
+    //   WHERE ptr.prtyr_mgrup = 'SYS_ITEM_MASTER_TYPE'
+    //   AND ptr.prtyr_users = $1
+    //   AND ptr.prtyr_sgrup = $2`;
+    // const row_chtac = await dbGetAll(
+    //   sql_chtac,
+    //   [user_c, items_itype],
+    //   `get account coa- ${items_itype}`,
+    // );
+    // if (row_chtac.length === 0) {
+    //   return res.json({
+    //     success: false,
+    //     message: `No account party setup for ${items_itype}`,
+    //     data: {},
+    //   });
+    // }
 
     const masterId = uuidv4();
     const scripts = [];
@@ -235,29 +235,32 @@ const create = async (req, res) => {
       label: `create item- ${user_c}`,
     });
 
-    for (row of row_chtac) {
-      const newCodeParty = await GenNewCode(user_c, "tmtb_party");
-      scripts.push({
-        sql: `INSERT INTO tmtb_party(id, party_users, party_bsins, party_ccode, party_ptype, party_chtac,
-      party_vndor, party_cname, party_opbal, party_crusr, party_upusr)
-      VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          newCodeParty,
-          items_itype,
-          row.chtac_id,
-          masterId,
-          items_iname,
-          0,
-          user_s,
-          user_s,
-        ],
-        label: `create party accounts- ${user_c}`,
-      });
-    }
+    //
+    // for (row of row_chtac) {
+    //   const newCodeParty = await GenNewCode(user_c, "tmtb_party");
+    //   scripts.push({
+    //     sql: `INSERT INTO tmtb_party(id, party_users, party_bsins, party_ccode, party_ptype, party_chtac,
+    //   party_vndor, party_cname, party_opbal, party_crusr, party_upusr)
+    //   VALUES ($1, $2, $3, $4, $5, $6,
+    //   $7, $8, $9, $10, $11)`,
+    //     params: [
+    //       uuidv4(),
+    //       user_c,
+    //       user_b,
+    //       newCodeParty,
+    //       items_itype,
+    //       row.chtac_id,
+    //       masterId,
+    //       items_iname,
+    //       0,
+    //       user_s,
+    //       user_s,
+    //     ],
+    //     label: `create party accounts- ${user_c}`,
+    //   });
+    // }
+    //
+
     await dbRunAll(scripts);
     res.json({
       success: true,
@@ -395,16 +398,16 @@ const update = async (req, res) => {
       label: `update item- ${user_c}`,
     });
 
-    scripts.push({
-      sql: `UPDATE tmtb_party
-    SET party_cname = $1,
-    party_upusr = $2,
-    party_updat = CURRENT_TIMESTAMP,
-    party_rvnmr = party_rvnmr + 1
-    WHERE party_vndor = $3`,
-      params: [items_iname, user_s, id],
-      label: `update party accounts- ${user_c}`,
-    });
+    // scripts.push({
+    //   sql: `UPDATE tmtb_party
+    // SET party_cname = $1,
+    // party_upusr = $2,
+    // party_updat = CURRENT_TIMESTAMP,
+    // party_rvnmr = party_rvnmr + 1
+    // WHERE party_vndor = $3`,
+    //   params: [items_iname, user_s, id],
+    //   label: `update party accounts- ${user_c}`,
+    // });
 
     await dbRunAll(scripts);
     res.json({
@@ -552,18 +555,21 @@ router.post("/get-mrr-items", async (req, res) => {
     JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
     JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
     JOIN tmib_brand brand ON itm.items_brand = brand.id
-    JOIN tmtb_party pty ON itm.id = pty.party_vndor
+    JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
     JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-    JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_party
+    JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
+						AND ptr.prtyr_mgrup = 'SYS_MRR_DIRECT'
+						AND ptr.prtyr_sgrup = 'SYS_AST_INVENTORY'
+						AND ptr.prtyr_party = 'USER-CHOICE'
     JOIN tmib_itmct itc ON itm.id = itc.itmct_items
     WHERE itm.items_stpur = false
-    AND itm.items_itype IN ('RM', 'PM', 'FG')
     AND itm.items_actve = TRUE
     AND prc.price_actve = TRUE
     AND itc.itmct_cntct = $1
     AND prc.price_users = $2
     AND prc.price_bsins = $3
     ORDER BY itm.items_iname ASC`;
+    //AND itm.items_itype IN ('RM', 'PM', 'FG')
 
     const params = [cntct_id, user_c, user_b];
     const rows = await dbGetAll(sql, params, `get new mrr items- ${user_c}`);

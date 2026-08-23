@@ -222,6 +222,7 @@ const ItemsForm = ({
             error={formErrors.items_ptvat}
             placeholder="Select..."
             disabled={readOnly}
+            required
           />
         </div>
         <div className="col-span-1">
@@ -244,6 +245,7 @@ const ItemsForm = ({
             error={formErrors.items_stvat}
             placeholder="Select..."
             disabled={readOnly}
+            required
           />
         </div>
         <div className="col-span-2">

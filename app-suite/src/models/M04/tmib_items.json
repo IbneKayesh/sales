@@ -118,6 +118,13 @@
     "placeholder": "Enter vat %",
     "required": false
   },
+  "items_ptvat": {
+    "type": "string",
+    "label": "Purchase VAT Type",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
   "items_slvat": {
     "type": "decimal",
     "label": "Sales VAT (%)",
@@ -126,6 +133,13 @@
     "default": 0.0,
     "placeholder": "Enter vat %",
     "required": false
+  },
+  "items_stvat": {
+    "type": "string",
+    "label": "Sales VAT Type",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
   },
   "items_notes": {
     "type": "string",
