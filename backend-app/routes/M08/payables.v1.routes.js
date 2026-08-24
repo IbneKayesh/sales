@@ -41,6 +41,7 @@ AND mrm.mrrdm_users = $1
 AND mrm.mrrdm_bsins = $2
 AND ptr.prtyr_mgrup = 'SYS_MRR_DIRECT'
 AND ptr.prtyr_sgrup = 'SYS_LIB_SUPPLIER'
+AND ptr.prtyr_party = 'USER-CHOICE'
 ORDER BY mrm.mrrdm_trdat DESC`;
 
     const rows = await dbGetAll(

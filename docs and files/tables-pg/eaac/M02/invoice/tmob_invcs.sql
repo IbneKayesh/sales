@@ -14,6 +14,7 @@ CREATE TABLE tmob_invcs (
   invcs_clmod VARCHAR(50) NOT NULL,
   invcs_value decimal(18,6) DEFAULT 0.00,  
   invcs_notes VARCHAR(50),
+  invcs_jrnlm VARCHAR(50), -- When Posted
 
   -- default
   invcs_actve boolean NOT NULL DEFAULT true,

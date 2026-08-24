@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
+import validate, { generateDataModel } from "@/models/validator";
+import { generateGuid } from "@/utils/guid.js";
+import { validNumber } from "@/utils/misc.js";
+import { buildPaths } from "@/utils/pathBuilder.js";
+import { printReport } from "@/print/printReport";
+import tmtb_jrnlm from "@/models/M08/tmtb_jrnlm.json";
+import tmtb_jrnlc from "@/models/M08/tmtb_jrnlc.json";
+const dataModel = generateDataModel(tmtb_jrnlm);
+const dataModelItem = generateDataModel(tmtb_jrnlc);
+import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { journalAPI } from "@/api/M08/journalAPI.js";
 import { partyAPI } from "@/api/M08/partyAPI.js";
 import { acprdAPI } from "@/api/M08/acprdAPI.js";
 import { fsyarAPI } from "@/api/M08/fsyarAPI.js";
-import { departmentAPI } from "@/api/M01/departmentAPI.js";
-import validate, { generateDataModel } from "@/models/validator";
-import tmtb_jrnlm from "@/models/M08/tmtb_jrnlm.json";
-const dataModel = generateDataModel(tmtb_jrnlm);
-import tmtb_jrnlc from "@/models/M08/tmtb_jrnlc.json";
-const dataModelItem = generateDataModel(tmtb_jrnlc);
 import { coaAPI } from "@/api/M08/coaAPI.js";
-import { buildPaths } from "@/utils/pathBuilder.js";
-import { generateGuid } from "@/utils/guid.js";
-import { printReport } from "@/print/printReport";
-import { validNumber } from "@/utils/misc.js";
 
 const useJournal = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -163,7 +163,7 @@ const useJournal = () => {
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
     //pass BDT from localstorage
-    setFormData({ ...dataModel, jrnlm_crncy: "BDT", jrnlm_stats: "Posted" });
+    setFormData({ ...dataModel,  jrnlm_stats: "Posted" });
     setReadOnly(false);
     setStopEdit(false);
     getAllDepartments();
@@ -417,7 +417,7 @@ const useJournal = () => {
 
       setIsBusy(true);
       const resp = await journalAPI.createAutoJournal(reqBody);
-      console.log("resp", resp);
+      //console.log("resp", resp);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,

@@ -2,6 +2,7 @@ export default function InputLabel({
   label,
   value = '',
   icon,
+  error,
   dense = false,
   className = '',
   ...rest
@@ -10,7 +11,7 @@ export default function InputLabel({
 
   return (
     <div
-      className={`input-label${dense ? ' input-label--dense' : ''}${className ? ' ' + className : ''}`}
+      className={`input-label${dense ? ' input-label--dense' : ''}${error ? ' input-label--error' : ''}${className ? ' ' + className : ''}`}
     >
       {label && (
         <label className="input-label__label" htmlFor={inputId}>
@@ -21,6 +22,7 @@ export default function InputLabel({
         {icon && <span className="input-label__icon">{icon}</span>}
         <span className="input-label__text">{value}</span>
       </div>
+      {error && <span className="input-label__error">{error}</span>}
     </div>
   )
 }

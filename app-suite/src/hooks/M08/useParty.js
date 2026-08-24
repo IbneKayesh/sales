@@ -5,7 +5,7 @@ import validate, { generateDataModel } from "@/models/validator";
 import tmtb_party from "@/models/M08/tmtb_party.json";
 const dataModel = generateDataModel(tmtb_party);
 import { coaAPI } from "@/api/M08/coaAPI.js";
-import { buildPaths } from "@/utils/pathBuilder.js";
+import { buildPaths, buildPathsCOA } from "@/utils/pathBuilder.js";
 
 const useParty = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -47,19 +47,27 @@ const useParty = () => {
   const getCoaChildOnly = async () => {
     if (chtac_Options.length > 0) return;
     try {
-      const resp = await coaAPI.getAllActive({});
+      const resp = await coaAPI.getWithPartyCount({});
       const list = resp.data || [];
       //filter posted only
-      const listActive = list.map((item) => ({
-        id: item.id,
-        name: item.chtac_cname,
-        parent_id: item.chtac_chtac,
-        active: item.chtac_ispst,
-      }));
+      // const listActive = list.map((item) => ({
+      //   id: item.id,
+      //   name: item.chtac_cname,
+      //   parent_id: item.chtac_chtac,
+      //   active: item.chtac_ispst,
+      // }));
       //build path for all
-      const buildPathsList = buildPaths(listActive);
+      //const buildPathsList = buildPaths(listActive);
       //apply filter and set state
-      setChtac_Options(buildPathsList.filter((item) => item.active));
+      //setChtac_Options(buildPathsList.filter((item) => item.active));
+      const listPath = buildPathsCOA(list);
+      const listActive = listPath.filter(
+        (f) =>
+          f.chtac_sglmd === "SYS_MULTI_SGL" ||
+          (f.chtac_sglmd === "SYS_SINGLE_SGL" && f.party_count === 0),
+      );
+      //console.log(listActive);
+      setChtac_Options(listActive);
     } catch (error) {}
   };
 

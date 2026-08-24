@@ -29,7 +29,17 @@
     "label": "Currency",
     "maxLength": 50,
     "placeholder": "Select currency",
-    "required": true
+    "required": true,
+    "default": "BDT"
+  },
+  "jrnlm_exrat": {
+    "type": "number",
+    "label": "Exchange Rate",
+    "maxLength": 500,
+    "minLength": 1,
+    "placeholder": "Enter value",
+    "required": true,
+    "default": "1"
   },
   "jrnlm_trtyp": {
     "type": "string",

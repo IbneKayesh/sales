@@ -1,15 +1,15 @@
-SELECT 'Sales' as OrderType,
-CASE WHEN som.is_posted = 1 THEN 'Posted' ELSE 'Unposted' END as Posting,
-sum(som.order_amount)as order_amount, sum(som.discount_amount)as discount_amount, sum(som.vat_amount) as vat_amount, 
-sum(som.order_cost) as order_cost, sum(som.total_amount) as total_amount, sum(som.payable_amount) as payable_amount, 
-sum(som.paid_amount) as paid_amount, sum(som.due_amount) as due_amount, sum(som.other_cost) as other_cost
-FROM so_master som
-GROUP by som.is_posted
+SELECT mcs.id, mcs.mrrcs_users, mcs.mrrcs_bsins, mcs.mrrcs_mrrdm, mcs.mrrcs_party, mcs.mrrcs_csmod, mcs.mrrcs_value, mcs.mrrcs_notes,
+mrm.mrrdm_ttype, mrm.mrrdm_trnno, mrm.mrrdm_trdat, pty.party_cname
+FROM tmpb_mrrcs mcs
+JOIN tmpb_mrrdm mrm ON mcs.mrrcs_mrrdm = mrm.id
+JOIN tmtb_party pty ON mcs.mrrcs_party = pty.id
+WHERE mcs.mrrcs_csmod = 'Exclude'
+AND (mcs.mrrcs_jrnlm IS NULL OR TRIM(mcs.mrrcs_jrnlm) = '')
 UNION ALL
-SELECT 'Purchase' as OrderType,
-CASE WHEN pom.is_posted = 1 THEN 'Posted' ELSE 'Unposted' END as Posting,
-sum(pom.order_amount)as order_amount, sum(pom.discount_amount)as discount_amount, sum(pom.vat_amount) as vat_amount, 
-sum(pom.order_cost) as order_cost, sum(pom.total_amount) as total_amount, sum(pom.payable_amount) as payable_amount, 
-sum(pom.paid_amount) as paid_amount, sum(pom.due_amount) as due_amount, sum(pom.other_cost) as other_cost
-FROM po_master pom
-GROUP by pom.is_posted
+SELECT ics.id, ics.invcs_users, ics.invcs_bsins, ics.invcs_invcm, ics.invcs_party, ics.invcs_csmod, ics.invcs_value, ics.invcs_notes,
+ivm.invcm_ttype, ivm.invcm_trnno, ivm.invcm_trdat, pty.party_cname
+FROM tmob_invcs ics
+JOIN tmob_invcm ivm ON ics.invcs_invcm = ivm.id
+JOIN tmtb_party pty ON ics.invcs_party = pty.id
+WHERE ics.invcs_csmod = 'Exclude'
+AND (ics.invcs_jrnlm IS NULL OR TRIM(ics.invcs_jrnlm) = '')

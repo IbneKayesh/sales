@@ -354,10 +354,8 @@ router.post("/get-with-party-count", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT coa.id, coa.chtac_users, coa.chtac_bsins, coa.chtac_chtac, coa.chtac_ccode, coa.chtac_cname,
-    coa.chtac_ctype, coa.chtac_chtno, coa.chtac_ntype, coa.chtac_child, coa.chtac_ispst, coa.chtac_actve,
-    coa.chtac_crusr, coa.chtac_crdat, coa.chtac_upusr, coa.chtac_updat, coa.chtac_rvnmr, 
-    pty.party_count, 0 as edit_stop
+    const sql = `SELECT coa.*, 
+    COALESCE(pty.party_count,0) as party_count, 0 as edit_stop
     FROM tmtb_chtac coa
     LEFT JOIN (
       SELECT party_chtac, COUNT(*) AS party_count
@@ -385,7 +383,6 @@ router.post("/get-with-party-count", async (req, res) => {
   }
 });
 
-
 // get-journal-coa
 router.post("/get-journal-coa", async (req, res) => {
   try {
@@ -410,10 +407,11 @@ router.post("/get-journal-coa", async (req, res) => {
       GROUP BY party_chtac
       ) pty ON cht.id = pty.party_chtac
     WHERE cht.chtac_users = $1
-    AND cht.chtac_ptype IN ('Manual','Auto Manual')
+    AND cht.chtac_jvpst IN ('MULTIPLE','SINGLE')
     AND cht.chtac_actve = TRUE
     AND cht.chtac_child = TRUE
     ORDER BY cht.chtac_chtno ASC`;
+    // LINKED (auto), MULTIPLE (jv, auto), SINGLE (jv)
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get account coa- ${user_c}`);

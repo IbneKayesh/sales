@@ -13,6 +13,7 @@ CREATE TABLE tmpb_mrrcs (
   mrrcs_clmod VARCHAR(50) NOT NULL,
   mrrcs_value decimal(18,6) DEFAULT 0.00,  
   mrrcs_notes VARCHAR(50),
+  mrrcs_jrnlm VARCHAR(50), -- When Posted
 
   -- default
   mrrcs_actve boolean NOT NULL DEFAULT true,

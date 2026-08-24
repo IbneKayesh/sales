@@ -7,6 +7,7 @@ import JournalPage from "@/pages/M08/journals/JournalPage";
 import Fstatements from "@/pages/M08/reports/Fstatements";
 import ReceivablesPage from "@/pages/M08/receivables/ReceivablesPage";
 import PayablesPage from "@/pages/M08/payables/PayablesPage";
+import PayLocalPage from "@/pages/M08/paylocal/PayLocalPage";
 
 const routes = [
   { path: "/accounts/setup/chart-of-accounts", element: <COAPage /> },
@@ -18,6 +19,7 @@ const routes = [
   { path: "/accounts/reports/fstatements", element: <Fstatements /> },
   { path: "/accounts/payables", element: <PayablesPage /> },
   { path: "/accounts/receivables", element: <ReceivablesPage /> },
+  { path: "/accounts/payables-local", element: <PayLocalPage /> },
 ];
 
 export default routes;

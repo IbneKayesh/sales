@@ -538,6 +538,15 @@ export const appModules = [
             link: "/accounts/receivables",
             desc: "Record Receivables journal entries",
           },
+          {
+            id: "M08-G02-M004",
+            name: "Payables (Local)",
+            color: "#8b5cf6",
+            icon: "Activity",
+            order: 4,
+            link: "/accounts/payables-local",
+            desc: "Record Receivables journal entries",
+          },
         ],
       },
       {

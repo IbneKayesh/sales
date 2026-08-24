@@ -50,7 +50,9 @@ const useReceivables = () => {
       //AND ptn.prtyn_ctype = 'PAYMENTS'
       const resp = await partyNetworkAPI.getSalesInvoice({});
       const list = resp.data || [];
-      const invpy = list.filter((f) => f.prtyn_ctype === "PAYMENTS");
+      const invpy = list.filter((f) =>
+        ["SYS_AST_PAY_CASH", "SYS_AST_PAY_BANK"].includes(f.prtyr_sgrup),
+      );
       setPartyOptions(invpy);
     } catch (error) {
     } finally {
@@ -62,6 +64,17 @@ const useReceivables = () => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmob_invpy);
     setFormErrors(newErrors);
+    if (f === "invpy_party") {
+      const party_id = party_Options.find((opt) => opt.id === v);
+      //console.log(party_id);
+      const newformData = {
+        ...formData,
+        invpy_party: v,
+        party_id_pay: party_id?.id,
+        chtac_id_pay: party_id?.party_chtac,
+      };
+      setFormData(newformData);
+    }
   };
 
   const handleEdit = async (rowData) => {
@@ -70,14 +83,12 @@ const useReceivables = () => {
     await getSalesInvoiceParty();
   };
 
-  const handleDelete = async (rowData) => {
-  };
+  const handleDelete = async (rowData) => {};
 
   const handleSearch = async () => {
     getAllReceivables();
   };
-  const handleAddNew = () => {
-  };
+  const handleAddNew = () => {};
 
   const handleCancel = () => {
     setPgView("SYS_VW_LST_1");
@@ -99,6 +110,13 @@ const useReceivables = () => {
         validNumber(formData.invpy_duamt) - validNumber(formData.invpy_pdamt);
       if (duamt < 0) {
         showToast(duamt + " Overpayment is not valid", { type: "warning" });
+        return;
+      }
+
+      if (validNumber(formData.invpy_pdamt) < 0.01) {
+        showToast(formData.invpy_pdamt + " Payment is not valid", {
+          type: "warning",
+        });
         return;
       }
 

@@ -43,13 +43,14 @@ const PartyForm = ({
             placeholder="Select..."
             disabled={readOnly}
             optionValue="id"
-            optionLabel="name"
+            optionLabel="chtac_cname"
+            optionGrid = "chtac_cname:Name,chtac_chtno:COA,party_count:Sub Ledger"
           />
         </div>
         <div className="col-span-12">
           <InputText
-            label="Party Name"
-            placeholder="Enter party name"
+            label="Sub-Ledger Party Name"
+            placeholder="Enter sub-ledger party name"
             value={formData.party_cname}
             onChange={(e) => onChange("party_cname", e.target.value)}
             error={formErrors.party_cname}

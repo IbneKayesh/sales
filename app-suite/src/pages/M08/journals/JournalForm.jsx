@@ -68,10 +68,18 @@ const JournalForm = ({
           />
         </div>
         <div className="col-span-1">
-          <InputLabel label="Currency" value={formData.jrnlm_crncy} />
+          <InputLabel
+            label="Currency"
+            value={formData.jrnlm_crncy}
+            error={formErrors.jrnlm_crncy}
+          />
         </div>
         <div className="col-span-1">
-          <InputLabel label="Rate" value={formData.jrnlm_exrat} />
+          <InputLabel
+            label="Rate"
+            value={formData.jrnlm_exrat}
+            error={formErrors.jrnlm_exrat}
+          />
         </div>
         <div className="col-span-2">
           <InputCalendar
