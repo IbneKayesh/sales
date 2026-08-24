@@ -291,7 +291,7 @@ const useInvoice = () => {
       },
     );
 
-    console.log("totals", totals);
+    //console.log("totals", totals);
     //---------------------------------------------------
     // Payments
     //---------------------------------------------------
@@ -589,14 +589,15 @@ const useInvoice = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (["", 0, "0", null, undefined].includes(formDataItem.invcc_itqty)) {
+    if (validNumber(formDataItem.invcc_itqty) <= 0) {
       showToast("Quantity is required", { type: "warning" });
       return;
     }
-    if (["", 0, "0", null, undefined].includes(formDataItem.invcc_itrat)) {
+    if (validNumber(formDataItem.invcc_itrat) <= 0) {
       showToast("Price is required", { type: "warning" });
       return;
     }
+
     const isExists = listDataItem.find(
       (f) => f.invcc_stock === formDataItem.invcc_stock,
     );
@@ -604,9 +605,10 @@ const useInvoice = () => {
       showToast("This stock is already added", { type: "warning" });
       return;
     }
+    console.log("formDataItem", formDataItem);
 
-    const qty = Number(formDataItem.invcc_itqty);
-    const ohqty = Number(formDataItem.stock_ohqty);
+    const qty = validNumber(formDataItem.invcc_itqty);
+    const ohqty = validNumber(formDataItem.stock_ohqty);
     const stockDiff = ohqty - qty;
     if (stockDiff < 0) {
       showToast(`${stockDiff} Stock is not available`, { type: "warning" });

@@ -147,7 +147,7 @@
 
 .watch-active-hour {
   font-size: 56px;
-  fill: var(--text-strong);
+  fill: var(--secondary);
   opacity: 1;
   filter: drop-shadow(0 0 10px var(--primary-glow));
 }

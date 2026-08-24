@@ -522,7 +522,9 @@ const useMRR = () => {
     try {
       const resp = await partyNetworkAPI.getMrrDirect({});
       const list = resp.data || [];
-      const mrrcs = list.filter((f) => f.prtyr_sgrup === "SYS_LIB_LOCAL_VENDOR");
+      const mrrcs = list.filter(
+        (f) => f.prtyr_sgrup === "SYS_LIB_LOCAL_VENDOR",
+      );
       //const mrrpy = list.filter((f) => f.prtyr_sgrup === "SYS_PAY_CASH_BANK");
       const mrrpy = list.filter((f) =>
         ["SYS_AST_PAY_CASH", "SYS_AST_PAY_BANK"].includes(f.prtyr_sgrup),
@@ -743,17 +745,18 @@ const useMRR = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (["", 0, "0", null, undefined].includes(formDataItem.mrrdc_itqty)) {
+    if (validNumber(formDataItem.mrrdc_itqty) <= 0) {
       showToast("Quantity is required", { type: "warning" });
       return;
     }
+
     if (formDataItem.mrrdc_vtype === "EXEMPT") {
-      if (Number(formDataItem.mrrdc_vtpct) !== 0) {
+      if (validNumber(formDataItem.mrrdc_vtpct) !== 0) {
         showToast("Purchase VAT % must be 0 for EXEMPT", { type: "danger" });
         return;
       }
     } else {
-      if (Number(formDataItem.mrrdc_vtpct) === 0) {
+      if (validNumber(formDataItem.mrrdc_vtpct) === 0) {
         showToast("Purchase VAT % must not be 0", { type: "danger" });
         return;
       }
@@ -884,7 +887,7 @@ const useMRR = () => {
         prtyn_chtno: mrrpy_id?.prtyn_chtno,
         chtac_id_pay: mrrpy_id?.party_chtac,
         party_id_pay: mrrpy_id?.id,
-        mrrpy_pdamt: formData.mrrdm_duamt //too optional
+        mrrpy_pdamt: formData.mrrdm_duamt, //too optional
       }));
     }
   };

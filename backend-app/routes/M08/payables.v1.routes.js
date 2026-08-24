@@ -6,7 +6,7 @@ const {
   GenNewCode,
   GenNewTrn,
   getCurrentPeriod,
-  getCurrencyRate 
+  getCurrencyRate,
 } = require("../../db/genHelper");
 
 // =====================
@@ -65,7 +65,7 @@ ORDER BY mrm.mrrdm_trdat DESC`;
 });
 
 // =====================
-// create
+// create, same is MRR Direct Payment
 // =====================
 router.post("/create", async (req, res) => {
   try {
@@ -131,11 +131,11 @@ router.post("/create", async (req, res) => {
       mrrdm_dpart,
     );
 
-    console.log("p1");
+    //console.log("p1");
 
     //active currency rate
     const crncy = await getCurrencyRate(user_c, user_b);
-    console.log("crncy",crncy);
+    //console.log("crncy",crncy);
     if (!crncy) {
       return {
         success: false,
@@ -150,7 +150,7 @@ router.post("/create", async (req, res) => {
         data: {},
       };
     }
-console.log("p2");
+    //console.log("p2");
 
     //build scripts
     const sql = `SELECT mrm.mrrdm_pyamt-(COALESCE(SUM(mrp.mrrpy_pdamt),0) + $1) mrrdm_duamt
@@ -201,7 +201,7 @@ console.log("p2");
       label: `Update Sales Invoice master ${mrrpy_refno}`,
     });
 
-    //create journal
+    //SYS_MRR_DIRECT
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
@@ -232,7 +232,7 @@ console.log("p2");
       label: `create journal master- ${newTrnNo_JV}`,
     });
 
-    //SYS_MRR_DIRECT.PAY_SUPPLIER > Liability / Supplier Payable - 20101010 (DR)
+    //SYS_MRR_DIRECT.SYS_LIB_SUPPLIER > Liability / Supplier Payable - 20101010 (DR)
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -260,7 +260,7 @@ console.log("p2");
       ],
       label: `Clear Liability / Supplier / Payable ${newTrnNo_JV}`,
     });
-    //SYS_MRR_DIRECT.PAY_CASH_BANK	> Asset / Cash In Hand - 10101010 (CR)
+    //SYS_MRR_DIRECT.SYS_AST_PAY_CASH/SYS_AST_PAY_BANK	> Asset / Cash In Hand - 10101010 (CR)
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,

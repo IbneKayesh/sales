@@ -445,6 +445,7 @@ const create = async (req, res) => {
         return groups;
       }, {}),
     );
+
     //SYS_MRR_DIRECT.SYS_AST_INVENTORY > Asset / Inventory Products - 10101212 (DR)
     for (const det of newGroupedProducts) {
       scripts.push({
@@ -541,13 +542,14 @@ const create = async (req, res) => {
 
     //Insert Costing details
     for (const det of tmpb_mrrcs) {
+      const costId = uuidv4();
       scripts.push({
         sql: `INSERT INTO tmpb_mrrcs(id, mrrcs_users, mrrcs_bsins, mrrcs_mrrdm, mrrcs_party, mrrcs_csmod, 
         mrrcs_clmod, mrrcs_value, mrrcs_notes, mrrcs_crusr, mrrcs_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
       $7, $8, $9, $10, $11)`,
         params: [
-          uuidv4(),
+          costId,
           user_c,
           user_b,
           newId,
@@ -582,7 +584,7 @@ const create = async (req, res) => {
             det.mrrcs_value || 0,
             "From Liability / Local Vendor Payable",
             mrrdm_ttype,
-            newId,
+            costId,
             "CHILD",
             line,
             user_s,

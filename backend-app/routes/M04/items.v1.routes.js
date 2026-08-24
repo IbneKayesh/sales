@@ -655,14 +655,19 @@ JOIN tmib_items itm ON stk.stock_items = itm.id
 JOIN tmib_units runit ON itm.items_runit = runit.id
 JOIN tmib_units sunit ON itm.items_sunit = sunit.id
 JOIN tmib_brand brand ON itm.items_brand = brand.id
-JOIN tmtb_party pty ON itm.id = pty.party_vndor
+JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
+JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
+						AND ptr.prtyr_mgrup = 'SYS_SALES_INVOICE'
+						AND ptr.prtyr_sgrup = 'SYS_AST_INVENTORY'
+						AND ptr.prtyr_party = 'USER-CHOICE'
 WHERE stk.stock_ohqty > 0
 AND stk.stock_users = $1
 AND stk.stock_bsins = $2
 AND stk.stock_dpart = $3
-AND itm.items_itype IN ('SVC', 'FG')
 AND itm.items_stsal = FALSE
 ORDER BY prc.price_cname, stk.stock_crdat`;
+//AND itm.items_itype IN ('SVC', 'FG')
 
     const params = [user_c, user_b, dpart_id];
     const rows = await dbGetAll(

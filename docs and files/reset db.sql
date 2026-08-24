@@ -19,9 +19,10 @@ update tmib_price set price_gdstk = 0, price_bdstk = 0;
 --contact balance
 update tmcb_cntct set cntct_crbal = 0;
 --sale invoice
-delete from tmob_invcc;
-delete from tmob_invpy;
 delete from tmob_invcm;
+delete from tmob_invcc;
+delete from tmob_invcs;
+delete from tmob_invpy;
 --update party balance
 update tmtb_party set party_crbal = 0;
 

@@ -352,7 +352,7 @@ const useJournal = () => {
       ...formDataItem,
       id: generateGuid(),
       chtac_cname: chtac_cname?.name || "Invalid GL",
-      party_cname: party_cname?.name || "Invalid SGL",
+      party_cname: party_cname?.party_cname || "Invalid SGL",
       jrnlc_actve: true,
     };
     const newItemList = [...listDataItem, newItem];
