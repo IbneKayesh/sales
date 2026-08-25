@@ -689,6 +689,15 @@ const useInvoice = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
+
+    const isExists = listDataCost.find(
+      (f) => f.party_id === formDataCost.mrrcs_party,
+    );
+    if (isExists) {
+      showToast("This Cost is already added", { type: "warning" });
+      return;
+    }
+
     if (validNumber(formDataCost.invcs_value) < 0.01) {
       showToast("Amount is required", { type: "warning" });
       return;

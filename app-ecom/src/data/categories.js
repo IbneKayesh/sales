@@ -1,0 +1,31 @@
+export const categories = [
+  { id: "electronics", name: "Electronics", image: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=500", description: "Gadgets and tech" },
+  { id: "clothing", name: "Clothing", image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500", description: "Apparel for all" },
+  { id: "home", name: "Home & Kitchen", image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500", description: "Home essentials" },
+  { id: "sports", name: "Sports", image: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=500", description: "Fitness equipment" },
+  { id: "accessories", name: "Accessories", image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500", description: "Complete your look" },
+  { id: "food", name: "Food & Drinks", image: "https://images.unsplash.com/photo-1490818387583-1baba5e638af?w=500", description: "Quality food" },
+  { id: "beauty", name: "Beauty", image: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500", description: "Skincare & beauty" },
+  { id: "books", name: "Books", image: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500", description: "Books & media" },
+  { id: "toys", name: "Toys", image: "https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=500", description: "Fun for all" },
+  { id: "pet", name: "Pet Supplies", image: "https://images.unsplash.com/photo-1450778869180-e132f4e4ce2e?w=500", description: "For your pets" },
+  { id: "automotive", name: "Automotive", image: "https://images.unsplash.com/photo-1507136566006-cfc505b114fc?w=500", description: "Car accessories" },
+  { id: "garden", name: "Garden", image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=500", description: "Outdoor & garden" },
+  { id: "baby", name: "Baby & Kids", image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=500", description: "For little ones" },
+  { id: "health", name: "Health", image: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=500", description: "Wellness products" },
+  { id: "office", name: "Office", image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=500", description: "Office supplies" },
+  { id: "travel", name: "Travel", image: "https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=500", description: "Travel gear" },
+  { id: "jewelry", name: "Jewelry", image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=500", description: "Jewelry & watches" },
+  { id: "musical", name: "Music", image: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=500", description: "Instruments" },
+  { id: "furniture", name: "Furniture", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500", description: "Home furniture" },
+  { id: "art", name: "Art & Crafts", image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=500", description: "Craft supplies" },
+  { id: "shoes", name: "Shoes", image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500", description: "All footwear" },
+  { id: "watches", name: "Watches", image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=500", description: "Timepieces" },
+  { id: "cameras", name: "Cameras", image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=500", description: "Photography" },
+  { id: "phones", name: "Phones", image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500", description: "Smartphones" },
+  { id: "laptops", name: "Laptops", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500", description: "Computers" },
+  { id: "appliances", name: "Appliances", image: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=500", description: "Home appliances" },
+  { id: "outdoor", name: "Outdoor", image: "https://images.unsplash.com/photo-1510312305653-8ed496efae75?w=500", description: "Camping & hiking" }
+];
+
+export default categories;
