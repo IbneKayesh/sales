@@ -14,4 +14,8 @@ export const partyNetworkAPI = {
     apiRequest("/M08/v1/party-network/mrr-direct", {
       body: data,
     }),
+  getLocalPayment: (data) =>
+    apiRequest("/M08/v1/party-network/pay-local", {
+      body: data,
+    }),
 };

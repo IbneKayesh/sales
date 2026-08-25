@@ -29,7 +29,8 @@ const ItemForm = ({
             placeholder="Select..."
             disabled={readOnly}
             optionValue="id"
-            optionLabel="name"
+            optionLabel="chtac_cname"
+            optionGrid = "chtac_cname:Name,chtac_chtno:COA,party_count:Sub Ledger"
           />
         </div>
         <div className="col-span-6">

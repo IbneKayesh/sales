@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { partyAPI } from "@/api/M08/partyAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
+import { buildPaths, buildPathsCOA } from "@/utils/pathBuilder.js";
 import tmtb_party from "@/models/M08/tmtb_party.json";
 const dataModel = generateDataModel(tmtb_party);
+import { partyAPI } from "@/api/M08/partyAPI.js";
 import { coaAPI } from "@/api/M08/coaAPI.js";
-import { buildPaths, buildPathsCOA } from "@/utils/pathBuilder.js";
 
 const useParty = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();

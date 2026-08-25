@@ -325,6 +325,9 @@ router.post("/get-by-item", async (req, res) => {
 
     //database action
     const sql = `SELECT prce.*, itm.items_iname,
+    COALESCE((prce.price_mrrat - prce.price_lprat)
+        / NULLIF(prce.price_lprat, 0) * 100,
+        0) AS price_smrgn,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmib_price prce
     LEFT JOIN tmib_items itm ON prce.price_items = itm.id

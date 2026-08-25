@@ -92,6 +92,16 @@ const PriceList = ({
       width: "80px",
       body: (_, row) => <NegativeValue value={row.price_sbqty} />,
     },
+    {
+      key: "price_smrgn",
+      header: "LPR vs MRP",
+      width: "80px",
+      body: (_, row) => (
+        <>
+          <NegativeValue value={row.price_smrgn} /> %
+        </>
+      ),
+    },
     // {
     //   key: "price_actve",
     //   header: "Status",

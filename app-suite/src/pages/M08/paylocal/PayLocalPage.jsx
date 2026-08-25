@@ -6,9 +6,9 @@ import PageCard, {
 } from "@/components/PageCard";
 import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
-import usePayables from "@/hooks/M08/usePayables";
-import PayablesList from "./PayablesList";
-import PayablesForm from "./PayablesForm";
+import usePayLocal from "@/hooks/M08/usePayLocal";
+import PayLocalList from "./PayLocalList";
+import PayLocalForm from "./PayLocalForm";
 
 const PayLocalPage = () => {
   const {
@@ -32,7 +32,7 @@ const PayLocalPage = () => {
     handleAddNew,
     handleCancel,
     handleSubmit,
-  } = usePayables();
+  } = usePayLocal();
 
   return (
     <div className="page-wrap">
@@ -65,14 +65,14 @@ const PayLocalPage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <PayablesList
+            <PayLocalList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
-            <PayablesForm
+            <PayLocalForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}

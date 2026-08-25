@@ -3,7 +3,7 @@ import { useUI } from "@/context/AppUIContext.jsx";
 import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid.js";
 import { validNumber } from "@/utils/misc.js";
-import { buildPaths } from "@/utils/pathBuilder.js";
+import { buildPaths, buildPathsCOA } from "@/utils/pathBuilder.js";
 import { printReport } from "@/print/printReport";
 import tmtb_jrnlm from "@/models/M08/tmtb_jrnlm.json";
 import tmtb_jrnlc from "@/models/M08/tmtb_jrnlc.json";
@@ -163,7 +163,7 @@ const useJournal = () => {
   const handleAddNew = () => {
     setPgView("SYS_VW_FRM_1");
     //pass BDT from localstorage
-    setFormData({ ...dataModel,  jrnlm_stats: "Posted" });
+    setFormData({ ...dataModel, jrnlm_stats: "Posted" });
     setReadOnly(false);
     setStopEdit(false);
     getAllDepartments();
@@ -268,18 +268,22 @@ const useJournal = () => {
     try {
       const resp = await coaAPI.getJournalCoa({});
       const list = resp.data || [];
-      //filter posted only
-      const listActive = list.map((item) => ({
-        id: item.id,
-        name: item.chtac_cname,
-        parent_id: item.chtac_chtac,
-        active: item.chtac_ispst,
-      }));
-      //build path for all
-      const buildPathsList = buildPaths(listActive);
-      //console.log("buildPathsList", list);
-      //apply filter and set state
-      setChtac_Options(buildPathsList.filter((item) => item.active));
+      // console.log("list", list);
+      // //filter posted only
+      // const listActive = list.map((item) => ({
+      //   id: item.id,
+      //   name: item.chtac_cname,
+      //   parent_id: item.chtac_chtac,
+      //   active: item.chtac_ispst,
+      // }));
+      // //build path for all
+      // const buildPathsList = buildPaths(listActive);
+      // //apply filter and set state
+      // setChtac_Options(buildPathsList.filter((item) => item.active));
+      const listPath = buildPathsCOA(list);
+      const listActive = listPath.filter((f) => f.party_count > 0);
+      //console.log(listActive);
+      setChtac_Options(listActive);
     } catch (error) {}
   };
 
@@ -331,7 +335,7 @@ const useJournal = () => {
       (opt) => opt.id === formDataItem.jrnlc_party,
     );
 
-    // console.log("chtac_cname",chtac_cname);
+    //console.log("chtac_cname",chtac_cname);
     // console.log("party_cname",party_cname);
 
     // setListDataItem((prev) => [
@@ -351,7 +355,7 @@ const useJournal = () => {
     const newItem = {
       ...formDataItem,
       id: generateGuid(),
-      chtac_cname: chtac_cname?.name || "Invalid GL",
+      chtac_cname: chtac_cname?.chtac_cname || "Invalid GL",
       party_cname: party_cname?.party_cname || "Invalid SGL",
       jrnlc_actve: true,
     };

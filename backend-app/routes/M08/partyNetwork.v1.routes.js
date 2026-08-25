@@ -142,4 +142,51 @@ router.post("/mrr-direct", async (req, res) => {
   }
 });
 
+// pay-local
+router.post("/pay-local", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT pty.id, pty.party_cname, pty.party_chtac, pty.party_crbal, ptr.prtyr_sgrup, cht.chtac_chtno
+                FROM tmtb_party pty
+                JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+                          AND cht.chtac_jvpst = 'MULTIPLE'
+                          AND cht.chtac_actve = TRUE
+                JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
+                WHERE ptr.prtyr_mgrup = 'SYS_PAYMENT_LOCAL'
+                AND pty.party_actve = TRUE
+                AND ptr.prtyr_actve = TRUE
+                AND ptr.prtyr_users = $1                
+                ORDER BY cht.chtac_chtno, pty.party_cname, ptr.prtyr_sgrup`;
+    const params = [user_c];
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get party network pay local - ${user_c}`,
+    );
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 module.exports = router;

@@ -1,0 +1,33 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "dpart_id": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "party_id": {
+    "type": "string",
+    "label": "Sub Ledger",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "pay_value": {
+    "type": "decimal",
+    "label": "Amount",
+    "required": true,
+    "default": 0
+  },
+  "notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 100,
+    "placeholder": "Enter notes",
+    "required": false
+  }
+}

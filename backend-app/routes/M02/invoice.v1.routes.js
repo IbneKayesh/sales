@@ -614,7 +614,7 @@ const create = async (req, res) => {
           det.invcs_clmod,
           det.invcs_value || 0,
           det.invcs_notes || "",
-          det.invcs_csmod === "Exclude" ? "" : "NOT FOR PAYMENT",
+          det.invcs_csmod === "Exclude" ? "SYS_FOR_PAYMENT" : "SYS_NOT_FOR_PAYMENT",
           user_s,
           user_s,
         ],

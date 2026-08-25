@@ -407,11 +407,12 @@ router.post("/get-journal-coa", async (req, res) => {
       GROUP BY party_chtac
       ) pty ON cht.id = pty.party_chtac
     WHERE cht.chtac_users = $1
-    AND cht.chtac_jvpst IN ('MULTIPLE','SINGLE')
+    AND cht.chtac_pstmd IN ('SYS_LINKED_DIRECT','SYS_DIRECT','SYS_BLOCKED')
     AND cht.chtac_actve = TRUE
     AND cht.chtac_child = TRUE
     ORDER BY cht.chtac_chtno ASC`;
-    // LINKED (auto), MULTIPLE (jv, auto), SINGLE (jv)
+    // SYS_LINKED_DIRECT (auto), SYS_DIRECT (jv, auto), SYS_BLOCKED (parent)
+    // parent for parent COA
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get account coa- ${user_c}`);

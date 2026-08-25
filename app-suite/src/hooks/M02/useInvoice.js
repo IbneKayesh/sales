@@ -527,6 +527,13 @@ const useInvoice = () => {
         return;
       }
 
+      if (validNumber(formData.invcm_duamt) < 0) {
+        showToast(`${formData.invcm_duamt} Overpaid is not valid`, {
+          type: "warning",
+        });
+        return;
+      }
+
       const reqBody = {
         ...formData,
         tmob_invcc: listDataItem,
@@ -589,7 +596,7 @@ const useInvoice = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (validNumber(formDataItem.invcc_itqty) <= 0) {
+    if (validNumber(formDataItem.invcc_itqty) <= 0.01) {
       showToast("Quantity is required", { type: "warning" });
       return;
     }
@@ -605,7 +612,7 @@ const useInvoice = () => {
       showToast("This stock is already added", { type: "warning" });
       return;
     }
-    console.log("formDataItem", formDataItem);
+    //console.log("formDataItem", formDataItem);
 
     const qty = validNumber(formDataItem.invcc_itqty);
     const ohqty = validNumber(formDataItem.stock_ohqty);
@@ -682,7 +689,7 @@ const useInvoice = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (["", 0, "0", null, undefined].includes(formDataCost.invcs_value)) {
+    if (validNumber(formDataCost.invcs_value) < 0.01) {
       showToast("Amount is required", { type: "warning" });
       return;
     }
@@ -749,7 +756,15 @@ const useInvoice = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (["", 0, "0", null, undefined].includes(formDataPayment.invpy_pdamt)) {
+    const isExists = listDataPayment.find(
+      (f) => f.party_id_pay === formDataPayment.party_id_pay,
+    );
+    if (isExists) {
+      showToast("This payment is already added", { type: "warning" });
+      return;
+    }
+
+    if (validNumber(formDataPayment.invpy_pdamt) < 0.01) {
       showToast("Amount is required", { type: "warning" });
       return;
     }

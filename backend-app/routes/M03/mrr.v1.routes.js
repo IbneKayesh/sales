@@ -558,7 +558,7 @@ const create = async (req, res) => {
           det.mrrcs_clmod, //calculation mode
           det.mrrcs_value || 0,
           det.mrrcs_notes || "",
-          det.mrrcs_csmod === "Exclude" ? "" : "NOT FOR PAYMENT",
+          det.mrrcs_csmod === "Exclude" ? "SYS_FOR_PAYMENT" : "SYS_NOT_FOR_PAYMENT",
           user_s,
           user_s,
         ],

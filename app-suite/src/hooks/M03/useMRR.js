@@ -530,7 +530,8 @@ const useMRR = () => {
         ["SYS_AST_PAY_CASH", "SYS_AST_PAY_BANK"].includes(f.prtyr_sgrup),
       );
       setMrrcs_Options(mrrcs);
-      setMrrpy_Options(mrrpy);
+      const listActive = mrrpy.filter((f) => f.party_crbal > 0);
+      setMrrpy_Options(listActive);
     } catch (error) {}
   };
 
@@ -687,6 +688,13 @@ const useMRR = () => {
         return;
       }
 
+      if (validNumber(formData.mrrdm_duamt) < 0) {
+        showToast(`${formData.mrrdm_duamt} Overpaid is not valid`, {
+          type: "warning",
+        });
+        return;
+      }
+
       const reqBody = {
         ...formData,
         tmpb_mrrdc: listDataItem,
@@ -694,9 +702,9 @@ const useMRR = () => {
         tmpb_mrrpy: listDataPayment,
       };
 
-      //console.log(reqBody);
+      console.log(reqBody);
       //return;
-
+      return;
       setIsBusy(true);
       const resp = await mrrAPI.upsert(reqBody);
       alertBox({
@@ -745,7 +753,7 @@ const useMRR = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (validNumber(formDataItem.mrrdc_itqty) <= 0) {
+    if (validNumber(formDataItem.mrrdc_itqty) <= 0.1) {
       showToast("Quantity is required", { type: "warning" });
       return;
     }
@@ -831,7 +839,7 @@ const useMRR = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (["", 0, "0", null, undefined].includes(formDataCost.mrrcs_value)) {
+    if (validNumber(formDataCost.mrrcs_value) < 0.01) {
       showToast("Amount is required", { type: "warning" });
       return;
     }
@@ -879,6 +887,7 @@ const useMRR = () => {
     setFormErrors(newErrors);
     if (f === "mrrpy_party") {
       const mrrpy_id = mrrpy_Options.find((opt) => opt.id === v);
+     //console.log("mrrpy_id", mrrpy_id);
       setFormDataPayment((prev) => ({
         ...prev,
         party_cname: mrrpy_id?.party_cname,
@@ -887,6 +896,7 @@ const useMRR = () => {
         prtyn_chtno: mrrpy_id?.prtyn_chtno,
         chtac_id_pay: mrrpy_id?.party_chtac,
         party_id_pay: mrrpy_id?.id,
+        party_crbal: mrrpy_id?.party_crbal,
         mrrpy_pdamt: formData.mrrdm_duamt, //too optional
       }));
     }
@@ -898,15 +908,29 @@ const useMRR = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    if (["", 0, "0", null, undefined].includes(formDataPayment.mrrpy_pdamt)) {
+    const isExists = listDataPayment.find(
+      (f) => f.party_id_pay === formDataPayment.party_id_pay,
+    );
+    if (isExists) {
+      showToast("This payment is already added", { type: "warning" });
+      return;
+    }
+    if (validNumber(formDataPayment.mrrpy_pdamt) < 0.01) {
       showToast("Amount is required", { type: "warning" });
       return;
     }
-
     const party_cname = mrrpy_Options.find(
       (opt) => opt.id === formDataPayment.mrrpy_party,
     );
-    //console.log("party_cname",formDataPayment)
+    //console.log("party_cname", party_cname);
+
+    const overpaidAmount =
+      validNumber(formDataPayment.mrrpy_pdamt) -
+      validNumber(party_cname.party_crbal);
+    if (overpaidAmount > 0) {
+      showToast(`${overpaidAmount} Overpaid is not valid`, { type: "warning" });
+      return;
+    }
 
     //create new row
     const newItem = {

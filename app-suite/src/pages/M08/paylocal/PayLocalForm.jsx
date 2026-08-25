@@ -6,7 +6,7 @@ import InputLabel from "@/components/InputLabel";
 import InputNumber from "@/components/InputNumber";
 import { formatDate } from "@/utils/datetime.js";
 
-const PayablesForm = ({
+const PayLocalForm = ({
   isBusy,
   readOnly,
   stopEdit,
@@ -26,27 +26,27 @@ const PayablesForm = ({
           <InputLabel label="Department" value={formData.dpart_cname} />
         </div>
         <div className="col-span-3">
-          <InputLabel label="Type" value={formData.mrrdm_ttype} />
+          <InputLabel label="Type" value={formData.ttype} />
         </div>
         <div className="col-span-3">
-          <InputLabel label="Ref No" value={formData.mrrpy_refno} />
+          <InputLabel label="Ref No" value={formData.trnno} />
         </div>
         <div className="col-span-3">
           <InputLabel
             label="Due Date"
-            value={formatDate(formData.mrrdm_trdat)}
+            value={formatDate(formData.trdat)}
           />
         </div>
         <div className="col-span-5">
-          <InputLabel label="Name" value={formData.cntct_cname} />
+          <InputLabel label="Name" value={formData.party_cname} />
         </div>
         <div className="col-span-7">
           <InputText
             label="Notes"
             placeholder="Enter notes"
-            value={formData.mrrpy_notes}
-            onChange={(e) => onChange("mrrpy_notes", e.target.value)}
-            error={formErrors.mrrpy_notes}
+            value={formData.notes}
+            onChange={(e) => onChange("notes", e.target.value)}
+            error={formErrors.notes}
             disabled={readOnly}
           />
         </div>
@@ -54,9 +54,9 @@ const PayablesForm = ({
           <Dropdown
             label="Ledger"
             options={party_Options}
-            value={formData.mrrpy_party}
-            onChange={(e) => onChange("mrrpy_party", e.target.value)}
-            error={formErrors.mrrpy_party}
+            value={formData.party_id}
+            onChange={(e) => onChange("party_id", e.target.value)}
+            error={formErrors.party_id}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -66,15 +66,15 @@ const PayablesForm = ({
           />
         </div>
         <div className="col-span-3">
-          <InputLabel label="Due" value={formData.mrrpy_duamt} />
+          <InputLabel label="Due" value={formData.due_value} />
         </div>
         <div className="col-span-3">
           <InputNumber
             label="Amount"
             placeholder="0.00"
-            value={formData.mrrpy_pdamt}
-            onChange={(e) => onChange("mrrpy_pdamt", e.target.value)}
-            error={formErrors.mrrpy_pdamt}
+            value={formData.pay_value}
+            onChange={(e) => onChange("pay_value", e.target.value)}
+            error={formErrors.pay_value}
             step="0.01"
             disabled={readOnly}
           />
@@ -93,4 +93,4 @@ const PayablesForm = ({
     </div>
   );
 };
-export default PayablesForm;
+export default PayLocalForm;

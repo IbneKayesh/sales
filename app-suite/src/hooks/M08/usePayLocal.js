@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { payablesAPI } from "@/api/M08/payablesAPI.js";
+import { payLocalAPI } from "@/api/M08/payLocalAPI.js";
 import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmpb_mrrpy from "@/models/M03/tmpb_mrrpy.json";
-const dataModel = generateDataModel(tmpb_mrrpy);
+import local_pay from "@/models/M08/local_pay.json";
+const dataModel = generateDataModel(local_pay);
 import { validNumber } from "@/utils/misc.js";
 
-const usePayables = () => {
+const usePayLocal = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
   const [pgId, setPgId] = useState("M04-M0005");
@@ -31,7 +31,7 @@ const usePayables = () => {
   const getAllPayables = async () => {
     try {
       setIsBusy(true);
-      const resp = await payablesAPI.getAll({});
+      const resp = await payLocalAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -47,12 +47,13 @@ const usePayables = () => {
   const getMRRParty = async () => {
     try {
       setIsBusy(true);
-      const resp = await partyNetworkAPI.getMrrDirect({});
+      const resp = await partyNetworkAPI.getLocalPayment({});
       const list = resp.data || [];
       //const mrrpy = list.filter((f) => f.prtyn_ctype === "PAY_CASH_BANK");
       const mrrpy = list.filter((f) =>
         ["SYS_AST_PAY_CASH", "SYS_AST_PAY_BANK"].includes(f.prtyr_sgrup),
       );
+
       const listActive = mrrpy.filter((f) => f.party_crbal > 0);
       setPartyOptions(listActive);
     } catch (error) {
@@ -63,17 +64,17 @@ const usePayables = () => {
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmpb_mrrpy);
+    const newErrors = validate({ ...formData, [f]: v }, local_pay);
     setFormErrors(newErrors);
-    if (f === "mrrpy_party") {
+    if (f === "party_id") {
       const party_id = party_Options.find((opt) => opt.id === v);
       //console.log(party_id);
       const newformData = {
         ...formData,
-        mrrpy_party: v,
+        party_id: v,
         party_id_pay: party_id?.id,
         chtac_id_pay: party_id?.party_chtac,
-        mrrpy_pdamt: formData.mrrpy_duamt,
+        pay_value: formData.due_value,
         party_crbal: party_id?.party_crbal,
       };
       setFormData(newformData);
@@ -102,7 +103,7 @@ const usePayables = () => {
 
   const handleSubmit = async () => {
     try {
-      const newErrors = validate(formData, tmpb_mrrpy);
+      const newErrors = validate(formData, local_pay);
       setFormErrors(newErrors);
       //console.log("reqBody",newErrors)
       if (Object.keys(newErrors).length > 0) {
@@ -110,33 +111,29 @@ const usePayables = () => {
       }
 
       const duamt =
-        validNumber(formData.mrrpy_duamt) - validNumber(formData.mrrpy_pdamt);
-      if (duamt < 0) {
-        showToast(duamt + " Overpayment is not valid", { type: "warning" });
-        return;
-      }
-
-      if (validNumber(formData.mrrpy_pdamt) < 0.01) {
-        showToast(formData.mrrpy_pdamt + " Payment is not valid", {
+        validNumber(formData.due_value) - validNumber(formData.pay_value);
+      if (duamt !== 0) {
+        showToast(duamt + " Over/Due payment is not valid", {
           type: "warning",
         });
         return;
       }
 
-      if (validNumber(formData.mrrpy_pdamt) > validNumber(formData.party_crbal)) {
+      if (
+        validNumber(formData.pay_value) > validNumber(formData.party_crbal)
+      ) {
         showToast(formData.party_crbal + " Balance is not available", {
           type: "warning",
         });
         return;
       }
-
       const reqBody = {
         ...formData,
       };
       setIsBusy(true);
       //console.log("reqBody", reqBody);
       //return;
-      const resp = await payablesAPI.create(reqBody);
+      const resp = await payLocalAPI.create(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -177,4 +174,4 @@ const usePayables = () => {
     handleSubmit,
   };
 };
-export default usePayables;
+export default usePayLocal;
