@@ -9,6 +9,7 @@ CREATE TABLE tmhb_attnd (
   attnd_bsins VARCHAR(50) NOT NULL, --busines
   attnd_emply VARCHAR(50) NOT NULL, --employee
   attnd_wksft VARCHAR(50) NOT NULL, --working shift
+  attnd_ptype VARCHAR(50) NOT NULL, --Punch Type [Card / Id / Manual]
   attnd_atdat date NOT NULL DEFAULT CURRENT_TIMESTAMP, --date
   attnd_dname VARCHAR(20) NOT NULL, --day name
   attnd_intim time, --in time

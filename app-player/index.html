@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoVault — Player</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none">
+                    <rect x="2" y="3" width="20" height="14" rx="3" stroke="currentColor" stroke-width="1.8"/>
+                    <polygon points="10,7 16,10 10,13" fill="currentColor"/>
+                    <rect x="7" y="20" width="10" height="1.5" rx="0.75" fill="currentColor" opacity="0.5"/>
+                    <rect x="9" y="17" width="6" height="3" rx="1" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                </svg>
+                <div class="logo-text-group">
+                    <span class="logo-text">VideoVault</span>
+                    <span class="video-count" id="videoCount"></span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="dropdown" id="addDropdown">
+                    <button class="choose-btn dropdown-toggle" id="dropdownToggle" aria-label="Add videos">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        <span class="btn-label">Add Videos</span>
+                        <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="dropdown-menu hidden" id="dropdownMenu">
+                        <label class="dropdown-item" id="chooseBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Open Folder
+                            <input type="file" id="folderInput" webkitdirectory directory multiple accept="video/*">
+                        </label>
+                        <label class="dropdown-item" id="addMoreBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Add More
+                            <input type="file" id="addMoreInput" webkitdirectory directory multiple accept="video/*">
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Drop Zone Overlay -->
+    <div class="drop-overlay hidden" id="dropOverlay">
+        <div class="drop-zone">
+            <div class="drop-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+            </div>
+            <p class="drop-text">Drop video files here</p>
+            <p class="drop-sub">MP4, WebM, OGG and more</p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState">
+        <div class="empty-card">
+            <div class="empty-glow"></div>
+            <div class="empty-icon-wrap">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="3"/>
+                    <polygon points="10,7 16,10 10,13"/>
+                    <rect x="7" y="20" width="10" height="1.5" rx="0.75"/>
+                </svg>
+            </div>
+            <h2>Your video library awaits</h2>
+            <p>Select a local folder to load and play your videos instantly.</p>
+            <label class="choose-btn choose-btn-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                </svg>
+                Open Folder
+                <input type="file" webkitdirectory directory multiple accept="video/*">
+            </label>
+            <p class="empty-hint">Supports MP4, WebM, OGG, and other browser-compatible formats.</p>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state hidden" id="loadingState">
+        <div class="loading-ring">
+            <div class="ring-track"></div>
+            <div class="ring-fill" id="ringFill"></div>
+        </div>
+        <p class="loading-label" id="loadingLabel">Scanning folder for media…</p>
+        <div class="loading-progress-wrap">
+            <div class="loading-progress-bar">
+                <div class="loading-progress-fill" id="loadingProgressFill"></div>
+            </div>
+            <span class="progress-text" id="progressText">0 of 0</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main hidden" id="mainContent">
+
+        <!-- Player Section -->
+        <div class="player-section hidden" id="playerSection">
+            <div class="player-container" id="playerContainer">
+
+                <!-- Empty player state -->
+                <div class="player-empty" id="playerEmpty">
+                    <div class="player-empty-bg">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.15">
+                            <rect x="2" y="3" width="20" height="14" rx="3"/>
+                            <polygon points="10,7 16,10 10,13"/>
+                            <rect x="7" y="20" width="10" height="1.5" rx="0.75"/>
+                        </svg>
+                    </div>
+                    <div class="player-empty-play" id="playerEmptyPlay">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><polygon points="8,5 20,12 8,19"/></svg>
+                    </div>
+                    <p class="player-empty-text">Select a video to start watching</p>
+                </div>
+
+                <!-- Video -->
+                <video id="video" preload="metadata" crossorigin="anonymous"></video>
+
+                <!-- YouTube embed -->
+                <iframe id="youtubeFrame" class="youtube-frame hidden" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+                <!-- Big center play/pause feedback -->
+                <div class="center-feedback hidden" id="centerFeedback">
+                    <div class="center-feedback-icon" id="centerFeedbackIcon"></div>
+                </div>
+
+                <!-- Custom Controls -->
+                <div class="controls" id="controls">
+                    <!-- Progress -->
+                    <div class="progress-wrap" id="progressWrap">
+                        <div class="progress-bg"></div>
+                        <div class="progress-buffered" id="progressBuffered"></div>
+                        <div class="progress-played" id="progressPlayed">
+                            <div class="progress-handle" id="progressHandle"></div>
+                        </div>
+                        <div class="progress-tooltip" id="progressTooltip">0:00</div>
+                    </div>
+
+                    <div class="controls-row">
+                        <!-- Left -->
+                        <div class="controls-left">
+                            <button class="ctrl-btn" id="playPauseBtn" aria-label="Play/Pause" title="Play/Pause (Space)">
+                                <svg class="icon-play" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
+                                <svg class="icon-pause hidden" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="4" height="18" rx="1"/><rect x="15" y="3" width="4" height="18" rx="1"/></svg>
+                            </button>
+                            <button class="ctrl-btn" id="prevVidBtn" aria-label="Previous" title="Previous">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="19,20 9,12 19,4"/><rect x="5" y="4" width="2" height="16" rx="1"/></svg>
+                            </button>
+                            <button class="ctrl-btn" id="nextVidBtn" aria-label="Next" title="Next">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,4 15,12 5,20"/><rect x="17" y="4" width="2" height="16" rx="1"/></svg>
+                            </button>
+                            <div class="controls-sep"></div>
+                            <button class="ctrl-btn" id="backBtn" aria-label="Back 10s" title="Back 10s (←)">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="1 4 1 10 7 10"/>
+                                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                                    <text x="12" y="16" text-anchor="middle" font-size="7" fill="currentColor" stroke="none" font-weight="700">10</text>
+                                </svg>
+                            </button>
+                            <button class="ctrl-btn" id="fwdBtn" aria-label="Forward 10s" title="Forward 10s (→)">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="23 4 23 10 17 10"/>
+                                    <path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/>
+                                    <text x="12" y="16" text-anchor="middle" font-size="7" fill="currentColor" stroke="none" font-weight="700">10</text>
+                                </svg>
+                            </button>
+                            <div class="time-display">
+                                <span id="currentTime">0:00</span>
+                                <span class="time-sep">/</span>
+                                <span id="duration" class="time-dur">0:00</span>
+                            </div>
+                        </div>
+
+                        <!-- Right -->
+                        <div class="controls-right">
+                            <div class="volume-group" id="volumeGroup">
+                                <button class="ctrl-btn" id="muteBtn" aria-label="Mute" title="Mute (M)">
+                                    <svg class="icon-vol-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                                    </svg>
+                                    <svg class="icon-vol-off hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                                        <line x1="23" y1="9" x2="17" y2="15"/>
+                                        <line x1="17" y1="9" x2="23" y2="15"/>
+                                    </svg>
+                                </button>
+                                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.02" value="1" aria-label="Volume">
+                            </div>
+
+                            <button class="ctrl-btn" id="pipBtn" aria-label="Picture in Picture" title="Picture in Picture">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                    <rect x="12" y="9" width="8" height="6" rx="1" fill="currentColor" opacity="0.25"/>
+                                </svg>
+                            </button>
+                            <button class="ctrl-btn" id="loopBtn" aria-label="Loop" title="Loop (L)">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="17 1 21 5 17 9"/>
+                                    <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                                    <polyline points="7 23 3 19 7 15"/>
+                                    <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                                </svg>
+                            </button>
+                            <button class="ctrl-btn" id="fullscreenBtn" aria-label="Fullscreen" title="Fullscreen (F)">
+                                <svg class="icon-fs-enter" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="15 3 21 3 21 9"/>
+                                    <polyline points="9 21 3 21 3 15"/>
+                                    <line x1="21" y1="3" x2="14" y2="10"/>
+                                    <line x1="3" y1="21" x2="10" y2="14"/>
+                                </svg>
+                                <svg class="icon-fs-exit hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="4 14 10 14 10 20"/>
+                                    <polyline points="20 10 14 10 14 4"/>
+                                    <line x1="14" y1="10" x2="21" y2="3"/>
+                                    <line x1="3" y1="21" x2="10" y2="14"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nav arrows -->
+                <button class="nav-arrow nav-prev" id="navPrev" aria-label="Previous" title="Previous">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="15,4 5,12 15,20"/></svg>
+                </button>
+                <button class="nav-arrow nav-next" id="navNext" aria-label="Next" title="Next">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="9,4 19,12 9,20"/></svg>
+                </button>
+
+                <button class="close-player" id="closePlayer" aria-label="Close player" title="Close (Esc)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+
+            </div>
+
+            <!-- Video Info -->
+            <div class="video-info" id="videoInfo">
+                <div class="video-info-row">
+                    <div class="video-info-text">
+                        <h1 class="video-title" id="videoTitle">No video selected</h1>
+                        <div class="video-meta-row">
+                            <span class="video-meta" id="videoMeta"></span>
+                            <span class="player-watched-badge hidden" id="playerWatchedBadge" title="Watched">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                Watched
+                            </span>
+                        </div>
+                    </div>
+                    <button class="fav-btn fav-btn-player" id="playerFavBtn" title="Toggle favorite" aria-label="Toggle favorite">
+                        <svg class="fav-icon-empty" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        <svg class="fav-icon-filled hidden" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Gallery Controls -->
+        <div class="gallery-header">
+            <div class="gallery-title-area">
+                <h2 class="gallery-label">Gallery</h2>
+                <span class="gallery-count" id="galleryCount"></span>
+            </div>
+            <div class="gallery-tools">
+                <button class="fav-filter-btn" id="favFilterBtn" title="Show favorites only" aria-label="Show favorites only">
+                    <svg class="fav-filter-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <span class="fav-filter-count" id="favFilterCount">0</span>
+                </button>
+                <div class="search-wrap">
+                    <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Filter videos…" aria-label="Search videos">
+                </div>
+                <select class="sort-select" id="sortSelect" aria-label="Sort videos">
+                    <option value="az">Name A→Z</option>
+                    <option value="za">Name Z→A</option>
+                    <option value="newest">Newest first</option>
+                    <option value="oldest">Oldest first</option>
+                </select>
+                <button class="grid-toggle-btn" id="gridToggleBtn" title="Toggle grid size" aria-label="Toggle grid size">
+                    <svg class="icon-grid-large" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+                    </svg>
+                    <svg class="icon-grid-small hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="4" height="4"/><rect x="10" y="3" width="4" height="4"/><rect x="17" y="3" width="4" height="4"/>
+                        <rect x="3" y="10" width="4" height="4"/><rect x="10" y="10" width="4" height="4"/><rect x="17" y="10" width="4" height="4"/>
+                        <rect x="3" y="17" width="4" height="4"/><rect x="10" y="17" width="4" height="4"/><rect x="17" y="17" width="4" height="4"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="gallery" id="gallery"></div>
+
+        <!-- No results -->
+        <div class="no-results hidden" id="noResults">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <p>No videos match your search</p>
+        </div>
+
+    </main>
+
+    <!-- VideoVault modules -->
+    <script src="scripts/dom.js"></script>
+    <script src="scripts/state.js"></script>
+    <script src="scripts/storage.js"></script>
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/toast.js"></script>
+    <script src="scripts/youtube.js"></script>
+    <script src="scripts/thumbnail.js"></script>
+    <script src="scripts/gallery.js"></script>
+    <script src="scripts/player.js"></script>
+    <script src="scripts/keyboard.js"></script>
+    <script src="scripts/input.js"></script>
+    <script src="scripts/gallery-ui.js"></script>
+    <script src="scripts/init.js"></script>
+</body>
+</html>
