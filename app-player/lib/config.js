@@ -76,6 +76,7 @@ function watchConfig(onChange) {
                     if (parsed.rtsp?.length)     summary.push(parsed.rtsp.length + " RTSP(s)");
                     if (parsed.http?.length)     summary.push(parsed.http.length + " HTTP(s)");
                     if (parsed.links?.length)    summary.push(parsed.links.length + " link(s)");
+                    if (parsed.uploadPath)        summary.push("upload: " + parsed.uploadPath);
                     console.log("  ↻ config.json changed — " + (summary.join(", ") || "empty"));
                     if (onChange) onChange(parsed);
                 } catch (e) {

@@ -247,6 +247,13 @@ dropdownMenu.addEventListener("click", (e) => {
     e.stopPropagation();
 });
 
+// ── Upload Button ───────────────────────────
+uploadBtn.addEventListener("click", () => {
+    triggerUpload();
+    dropdownMenu.classList.add("hidden");
+    addDropdown.classList.remove("open");
+});
+
 // ── Add More Button ──────────────────────────
 addMoreInput.addEventListener("change", function () {
     const files = Array.from(this.files).filter((f) =>

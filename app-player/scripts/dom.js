@@ -69,3 +69,4 @@ const addMoreInput       = document.getElementById("addMoreInput");
 const favFilterBtn       = document.getElementById("favFilterBtn");
 const favFilterCount     = document.getElementById("favFilterCount");
 const gridToggleBtn      = document.getElementById("gridToggleBtn");
+const uploadBtn          = document.getElementById("uploadBtn");

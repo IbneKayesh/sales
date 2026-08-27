@@ -5,6 +5,7 @@ const { PORT, VIDEO_EXTS, loadConfig, watchConfig } = require("./lib/config");
 const { serveVideo } = require("./lib/video");
 const { handleProxy } = require("./lib/proxy");
 const { handleConfig, handleLibrary } = require("./lib/api");
+const { handleUpload } = require("./lib/upload");
 const { serveStatic } = require("./lib/static");
 
 http.createServer((req, res) => {
@@ -14,6 +15,7 @@ http.createServer((req, res) => {
     // ── API Routes ─────────────────────────────
     if (urlPath === "/api/config")  return handleConfig(req, res);
     if (urlPath === "/api/library") return handleLibrary(req, res);
+    if (urlPath === "/api/upload" && req.method === "POST") return handleUpload(req, res);
 
     // ── Serve individual file from config ──────
     if (urlPath === "/file") {
