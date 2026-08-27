@@ -205,9 +205,15 @@ function sortAndRender(forceRebuild) {
             const favGroup = document.createElement("div");
             favGroup.className = "folder-group fav-group";
 
+            const favCollapsed = isFolderCollapsed("Favorites");
+            if (favCollapsed) favGroup.classList.add("collapsed");
+
             const favHeader = document.createElement("div");
-            favHeader.className = "folder-header fav-header";
+            favHeader.className = "folder-header fav-header folder-header-collapsible";
             favHeader.innerHTML =
+                '<svg class="folder-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+                '<polyline points="9 18 15 12 9 6"/>' +
+                "</svg>" +
                 '<svg class="folder-icon fav-heart-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
                 '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>' +
                 "</svg>" +
@@ -217,6 +223,12 @@ function sortAndRender(forceRebuild) {
                 " video" +
                 (favEntries.length !== 1 ? "s" : "") +
                 "</span>";
+
+            favHeader.addEventListener("click", () => {
+                const isNowCollapsed = toggleFolderCollapsed("Favorites");
+                favGroup.classList.toggle("collapsed", isNowCollapsed);
+            });
+
             favGroup.appendChild(favHeader);
 
             const favCards = document.createElement("div");
@@ -248,9 +260,15 @@ function sortAndRender(forceRebuild) {
             const groupEl = document.createElement("div");
             groupEl.className = "folder-group";
 
+            const collapsed = isFolderCollapsed(folderName);
+            if (collapsed) groupEl.classList.add("collapsed");
+
             const header = document.createElement("div");
-            header.className = "folder-header";
+            header.className = "folder-header folder-header-collapsible";
             header.innerHTML =
+                '<svg class="folder-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+                '<polyline points="9 18 15 12 9 6"/>' +
+                "</svg>" +
                 '<svg class="folder-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
                 '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>' +
                 "</svg>" +
@@ -268,6 +286,12 @@ function sortAndRender(forceRebuild) {
                     entries[0].folderPath +
                     "</span>";
             }
+
+            header.addEventListener("click", () => {
+                const isNowCollapsed = toggleFolderCollapsed(folderName);
+                groupEl.classList.toggle("collapsed", isNowCollapsed);
+            });
+
             groupEl.appendChild(header);
 
             const cardsGrid = document.createElement("div");

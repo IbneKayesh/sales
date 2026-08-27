@@ -106,22 +106,44 @@ function handleLibrary(req, res) {
     folders.forEach((folderPath) => {
         totalSources++;
         pending++;
-        const folderName = require("path").basename(folderPath) || folderPath;
+        const folderName = path.basename(folderPath) || folderPath;
         findVideos(folderPath, (videos) => {
             if (videos.length > 0) {
-                library[folderName] = {
-                    path: folderPath,
-                    videos: videos.map((v) => ({
+                // Group videos by subdirectory relative to root folder
+                const groups = {};
+                const groupOrder = [];
+
+                videos.forEach((v) => {
+                    // relativePath is like "subfolder/video.mp4" or "video.mp4" for root
+                    const parts = v.relativePath.split("/");
+                    const subDir = parts.length > 1 ? parts.slice(0, -1).join("/") : "";
+                    const groupKey = subDir || folderName;
+
+                    if (!groups[groupKey]) {
+                        groups[groupKey] = [];
+                        groupOrder.push(groupKey);
+                    }
+                    groups[groupKey].push({
                         name: v.name,
                         path:
                             "/video?path=" +
-                            encodeURIComponent(v.name) +
-                            "&folder=" +
+                            encodeURIComponent(v.relativePath) +
+                            "&root=" +
                             encodeURIComponent(folderName),
                         size: v.size,
                         lastModified: v.lastModified,
-                    })),
-                };
+                    });
+                });
+
+                groupOrder.forEach((groupKey) => {
+                    const displayPath = groupKey === folderName
+                        ? folderPath
+                        : path.join(folderPath, groupKey);
+                    library[groupKey] = {
+                        path: displayPath,
+                        videos: groups[groupKey],
+                    };
+                });
             }
             if (--pending === 0) processSources();
         });

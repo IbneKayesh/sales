@@ -1019,6 +1019,51 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(192px, 1fr));
     gap: 12px;
+    transition: grid-template-rows 0.3s var(--ease), opacity 0.25s var(--ease);
+}
+
+/* ── Collapsible Folder Groups ──────────────── */
+.folder-header-collapsible {
+    cursor: pointer;
+    user-select: none;
+    border-radius: var(--radius-sm);
+    padding: 6px 10px 10px;
+    margin: -6px -10px 14px;
+    transition: background 0.15s var(--ease);
+}
+
+.folder-header-collapsible:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.folder-chevron {
+    color: var(--text-3);
+    flex-shrink: 0;
+    transition: transform 0.25s var(--ease);
+}
+
+.folder-header-collapsible:hover .folder-chevron {
+    color: var(--text-2);
+}
+
+.folder-group.collapsed .folder-cards {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    margin-top: -14px;
+}
+
+.folder-group.collapsed .folder-cards > * {
+    overflow: hidden;
+}
+
+.folder-group.collapsed .folder-chevron {
+    transform: rotate(0deg);
+}
+
+.folder-group:not(.collapsed) .folder-chevron {
+    transform: rotate(90deg);
 }
 
 /* ── Favorites ──────────────────────────────── */

@@ -44,17 +44,21 @@ http.createServer((req, res) => {
     if (urlPath === "/video") {
         try {
             const params = new URLSearchParams(rawUrl.split("?")[1] || "");
-            const fileName = params.get("path");
-            const folderName = params.get("folder");
-            if (!fileName || !folderName) { res.writeHead(400); res.end("Missing params"); return; }
+            const relativePath = params.get("path");
+            const rootName = params.get("root") || params.get("folder");
+            if (!relativePath || !rootName) { res.writeHead(400); res.end("Missing params"); return; }
 
             const config = loadConfig();
             const folder = config.folders.find(
-                (f) => path.basename(f) === folderName || f === folderName
+                (f) => path.basename(f) === rootName || f === rootName
             );
             if (!folder) { res.writeHead(404); res.end("Folder not found"); return; }
 
-            const filePath = path.join(folder, fileName);
+            const filePath = path.resolve(folder, relativePath);
+            // Security: ensure the resolved path is within the folder
+            if (!filePath.startsWith(path.resolve(folder))) {
+                res.writeHead(403); res.end("Forbidden"); return;
+            }
             if (!VIDEO_EXTS.has(path.extname(filePath).toLowerCase())) {
                 res.writeHead(403); res.end("Forbidden"); return;
             }

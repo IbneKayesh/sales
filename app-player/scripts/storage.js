@@ -2,10 +2,11 @@
    VideoVault — Storage
    ============================================ */
 
-const STORAGE_KEY  = "videovault";
-const FAV_KEY      = "videovault_favs";
-const WATCHED_KEY  = "videovault_watched";
-const GRID_KEY     = "videovault_grid";
+const STORAGE_KEY     = "videovault";
+const FAV_KEY         = "videovault_favs";
+const WATCHED_KEY     = "videovault_watched";
+const GRID_KEY        = "videovault_grid";
+const COLLAPSED_KEY   = "videovault_collapsed";
 
 // ── General Store ─────────────────────────────
 function getStore() {
@@ -109,4 +110,27 @@ function saveGridPreference() {
     try {
         localStorage.setItem(GRID_KEY, isCompact ? "compact" : "large");
     } catch (_) {}
+}
+
+// ── Collapsed Folder State ───────────────────
+function getCollapsedFolders() {
+    try { return JSON.parse(localStorage.getItem(COLLAPSED_KEY)) || []; }
+    catch (_) { return []; }
+}
+
+function isFolderCollapsed(name) {
+    return getCollapsedFolders().includes(name);
+}
+
+function toggleFolderCollapsed(name) {
+    let list = getCollapsedFolders();
+    const idx = list.indexOf(name);
+    if (idx >= 0) {
+        list.splice(idx, 1);
+    } else {
+        list.push(name);
+    }
+    try { localStorage.setItem(COLLAPSED_KEY, JSON.stringify(list)); }
+    catch (_) {}
+    return idx < 0;
 }
