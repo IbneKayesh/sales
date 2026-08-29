@@ -640,10 +640,13 @@ router.post("/get-rmpm-by-bom-fr-process", async (req, res) => {
       rpm.borpm_units prrpm_units, rpm.borpm_itype prrpm_itype, rpm.borpm_rmqty prrpm_boqty,
       rpm.borpm_rmrat prrpm_borat, rpm.borpm_rmqty prrpm_rmqty, rpm.borpm_rmrat prrpm_rmrat,
       rpm.borpm_rmval prrpm_rmval, '' prrpm_notes, '' prrpm_stock,
-      '' prrpm_jrnlm, prc.price_cname, unt.units_cname, TRUE prrpm_actve
+      '' prrpm_jrnlm, prc.price_cname, unt.units_cname, TRUE prrpm_actve,
+      pty.id party_id, pty.party_chtac chtac_id
       FROM tmmb_borpm rpm
       JOIN tmib_price prc ON rpm.borpm_price = prc.id
       JOIN tmib_units unt ON rpm.borpm_units = unt.id
+      JOIN tmib_items itm ON prc.price_items = itm.id
+      JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
       WHERE rpm.borpm_bommf = $1
       AND rpm.borpm_users = $2
       ORDER BY rpm.borpm_items ASC`;
@@ -684,16 +687,19 @@ router.post("/get-foh-by-bom-fr-process", async (req, res) => {
       });
     }
     const sql = `SELECT foh.id prfoh_bofoh, foh.bofoh_items prfoh_items, foh.bofoh_price prfoh_price,
-foh.bofoh_units prfoh_units, foh.bofoh_itype prfoh_itype, foh.bofoh_foqty prfoh_boqty,
-foh.bofoh_forat prfoh_borat, foh.bofoh_foqty prfoh_foqty, foh.bofoh_forat prfoh_forat,
-foh.bofoh_foval prfoh_foval, '' prfoh_notes, '' prfoh_stock,
-'' prfoh_jrnlm, prc.price_cname, unt.units_cname, TRUE prfoh_actve
-from tmmb_bofoh foh
-JOIN tmib_price prc ON foh.bofoh_price = prc.id
-JOIN tmib_units unt ON foh.bofoh_units = unt.id
-WHERE foh.bofoh_bommf = $1
-AND foh.bofoh_users = $2
-ORDER BY foh.bofoh_items ASC`;
+      foh.bofoh_units prfoh_units, foh.bofoh_itype prfoh_itype, foh.bofoh_foqty prfoh_boqty,
+      foh.bofoh_forat prfoh_borat, foh.bofoh_foqty prfoh_foqty, foh.bofoh_forat prfoh_forat,
+      foh.bofoh_foval prfoh_foval, '' prfoh_notes, '' prfoh_stock,
+      '' prfoh_jrnlm, prc.price_cname, unt.units_cname, TRUE prfoh_actve,
+      pty.id party_id, pty.party_chtac chtac_id
+      from tmmb_bofoh foh
+      JOIN tmib_price prc ON foh.bofoh_price = prc.id
+      JOIN tmib_units unt ON foh.bofoh_units = unt.id
+      JOIN tmib_items itm ON prc.price_items = itm.id
+      JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
+      WHERE foh.bofoh_bommf = $1
+      AND foh.bofoh_users = $2
+      ORDER BY foh.bofoh_items ASC`;
 
     const rows = await dbGetAll(
       sql,
@@ -731,17 +737,20 @@ router.post("/get-sfg-by-bom-fr-process", async (req, res) => {
       });
     }
     const sql = `SELECT sfg.id prsfg_bosfg, sfg.bosfg_items prsfg_items, sfg.bosfg_price prsfg_price,
-sfg.bosfg_units prsfg_units, sfg.bosfg_itype prsfg_itype, sfg.bosfg_group prsfg_group,
-sfg.bosfg_fgqty prsfg_boqty, sfg.bosfg_fgrat prsfg_borat, sfg.bosfg_rtrto prsfg_rtrto,
-sfg.bosfg_fgqty prsfg_fgqty, sfg.bosfg_fgrat prsfg_fgrat, sfg.bosfg_fgval prsfg_fgval, '' prsfg_notes,
-'' prsfg_stock, ''  prsfg_jrnlm, '' prsfg_refid,
-prc.price_cname, unt.units_cname, TRUE prsfg_actve
-FROM tmmb_bosfg sfg
-JOIN tmib_price prc ON sfg.bosfg_price = prc.id
-JOIN tmib_units unt ON sfg.bosfg_units = unt.id
-WHERE sfg.bosfg_bommf = $1
-AND sfg.bosfg_users = $2
-ORDER BY sfg.bosfg_items ASC`;
+      sfg.bosfg_units prsfg_units, sfg.bosfg_itype prsfg_itype, sfg.bosfg_group prsfg_group,
+      sfg.bosfg_fgqty prsfg_boqty, sfg.bosfg_fgrat prsfg_borat, sfg.bosfg_rtrto prsfg_rtrto,
+      sfg.bosfg_fgqty prsfg_fgqty, sfg.bosfg_fgrat prsfg_fgrat, sfg.bosfg_fgval prsfg_fgval, '' prsfg_notes,
+      '' prsfg_stock, ''  prsfg_jrnlm, '' prsfg_refid,
+      prc.price_cname, unt.units_cname, TRUE prsfg_actve,
+      pty.id party_id, pty.party_chtac chtac_id
+      FROM tmmb_bosfg sfg
+      JOIN tmib_price prc ON sfg.bosfg_price = prc.id
+      JOIN tmib_units unt ON sfg.bosfg_units = unt.id
+      JOIN tmib_items itm ON prc.price_items = itm.id
+      JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
+      WHERE sfg.bosfg_bommf = $1
+      AND sfg.bosfg_users = $2
+      ORDER BY sfg.bosfg_items ASC`;
 
     const rows = await dbGetAll(
       sql,

@@ -1,5 +1,5 @@
 -- feature list
--- drop table `tmsb_fetur`
+-- drop table tmsb_fetur;
 
 
 CREATE TABLE tmsb_fetur (
@@ -15,10 +15,10 @@ CREATE TABLE tmsb_fetur (
   fetur_stats boolean NOT NULL DEFAULT false,
 
   -- default 2
-  cfetur_actve boolean NOT NULL DEFAULT true,
-  cfetur_crusr varchar(50) NOT NULL,
-  cfetur_crdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  cfetur_upusr varchar(50) NOT NULL,
-  cfetur_updat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  cfetur_rvnmr integer NOT NULL DEFAULT 1
+  fetur_actve boolean NOT NULL DEFAULT true,
+  fetur_crusr varchar(50) NOT NULL,
+  fetur_crdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  fetur_upusr varchar(50) NOT NULL,
+  fetur_updat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  fetur_rvnmr integer NOT NULL DEFAULT 1
 );

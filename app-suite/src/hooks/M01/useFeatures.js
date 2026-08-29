@@ -1,15 +1,33 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
-import { sectionAPI } from "@/api/M01/sectionAPI.js";
+import { featuresAPI } from "@/api/M01/featuresAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmsb_sectn from "@/models/M01/tmsb_sectn.json";
-const dataModel = generateDataModel(tmsb_sectn);
-import { departmentAPI } from "@/api/M01/departmentAPI.js";
+import tmsb_fetur from "@/models/M01/tmsb_fetur.json";
+const dataModel = generateDataModel(tmsb_fetur);
+
+/** Build a tree from a flat list. Nodes with empty/self-referencing fetur_fetur are roots. */
+function buildTree(list) {
+  const map = {};
+  const roots = [];
+  for (const item of list) {
+    map[item.id] = { ...item, children: [] };
+  }
+  for (const item of list) {
+    const node = map[item.id];
+    const parentId = item.fetur_fetur;
+    if (parentId && map[parentId] && parentId !== item.id) {
+      map[parentId].children.push(node);
+    } else {
+      roots.push(node);
+    }
+  }
+  return roots;
+}
 
 const useFeatures = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
-  const [pgId, setPgId] = useState("M01-M0009");
+  const [pgId, setPgId] = useState("M01-M0010");
   const [pageAuth, setPageAuth] = useState({
     extpr: false,
     addpr: false,
@@ -24,12 +42,14 @@ const useFeatures = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
   //others
-  const [dpart_Options, setDpart_Options] = useState([]);
+  // Flat data for dropdowns, tree data for the list
+  const treeData = useMemo(() => buildTree(listData), [listData]);
+  const fetur_Options = listData;
 
-  const getAllSection = async () => {
+  const getAllFeature = async () => {
     try {
       setIsBusy(true);
-      const resp = await sectionAPI.getAll({});
+      const resp = await featuresAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {
@@ -39,35 +59,24 @@ const useFeatures = () => {
   };
 
   useEffect(() => {
-    getAllSection();
+    getAllFeature();
   }, []);
 
-  const getAllDepartments = async () => {
-    if (dpart_Options.length > 0) {
-      return;
-    }
-    try {
-      const resp = await departmentAPI.getAllActive({});
-      const list = resp.data || [];
-      setDpart_Options(list);
-    } catch (error) {}
-  };
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formData, [f]: v }, tmsb_sectn);
+    const newErrors = validate({ ...formData, [f]: v }, tmsb_fetur);
     setFormErrors(newErrors);
   };
 
   const handleEdit = async (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
-    getAllDepartments();
   };
 
   const handleDelete = async (rowData) => {
-    const isActive = rowData.sectn_actve;
-    const dataName = rowData.sectn_cname;
+    const isActive = rowData.fetur_actve;
+    const dataName = rowData.fetur_cname;
     const confirmation = await confirmBox({
       title: isActive ? "Deactivate" : "Activate",
       message: `Are you sure you want to ${
@@ -80,7 +89,7 @@ const useFeatures = () => {
 
     try {
       setIsBusy(true);
-      const resp = await sectionAPI.delete(rowData);
+      const resp = await featuresAPI.delete(rowData);
       alertBox({
         title: resp.success
           ? isActive
@@ -94,7 +103,7 @@ const useFeatures = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllSection();
+        getAllFeature();
       }
     } catch (error) {
     } finally {
@@ -103,14 +112,20 @@ const useFeatures = () => {
   };
 
   const handleSearch = async () => {
-    getAllSection();
+    getAllFeature();
   };
   const handleAddNew = async () => {
     setPgView("SYS_VW_FRM_1");
     setFormData(dataModel);
     setReadOnly(false);
     setStopEdit(false);
-    getAllDepartments();
+  };
+
+  const handleAddChild = (rowData) => {
+    setPgView("SYS_VW_FRM_1");
+    setFormData({ ...dataModel, fetur_fetur: rowData.id });
+    setReadOnly(false);
+    setStopEdit(false);
   };
 
   const handleCancel = () => {
@@ -122,7 +137,7 @@ const useFeatures = () => {
 
   const handleSubmit = async () => {
     try {
-      const newErrors = validate(formData, tmsb_sectn);
+      const newErrors = validate(formData, tmsb_fetur);
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
@@ -133,7 +148,7 @@ const useFeatures = () => {
       };
       setIsBusy(true);
 
-      const resp = await sectionAPI.upsert(reqBody);
+      const resp = await featuresAPI.upsert(reqBody);
       alertBox({
         title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
         message: resp.message,
@@ -143,7 +158,7 @@ const useFeatures = () => {
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
-        getAllSection();
+        getAllFeature();
       }
     } catch (error) {
     } finally {
@@ -157,19 +172,21 @@ const useFeatures = () => {
     pageAuth,
     readOnly,
     stopEdit,
+    treeData,
     listData,
     formData,
     listDataItem,
     formDataItem,
     formErrors,
     //others
-    dpart_Options,
+    fetur_Options,
     //functions
     handleChange,
     handleEdit,
     handleDelete,
     handleSearch,
     handleAddNew,
+    handleAddChild,
     handleCancel,
     handleSubmit,
   };

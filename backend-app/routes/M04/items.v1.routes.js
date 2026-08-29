@@ -770,19 +770,19 @@ router.post("/bom-items-get-by-type", async (req, res) => {
 
     //database action
     const sql = `SELECT prc.id price_id, prc.price_cname, prc.price_lprat, prc.price_mrrat,
-itm.id items_id, itm.items_icode, itm.items_runit, itm.items_itype,
-runit.units_cname as runit_uname
-FROM tmib_price prc
-JOIN tmib_items itm ON prc.price_items = itm.id
-                  AND prc.price_users = itm.items_users
-                  AND prc.price_bsins = itm.items_bsins
-JOIN tmib_units runit ON itm.items_runit = runit.id
-WHERE prc.price_actve = TRUE
-AND itm.items_itype = $1
-AND prc.price_users = $2
-AND prc.price_bsins = $3
-AND itm.items_actve = TRUE
-ORDER BY prc.price_cname`;
+          itm.id items_id, itm.items_icode, itm.items_runit, itm.items_itype,
+          runit.units_cname as runit_uname
+          FROM tmib_price prc
+          JOIN tmib_items itm ON prc.price_items = itm.id
+                            AND prc.price_users = itm.items_users
+                            AND prc.price_bsins = itm.items_bsins
+          JOIN tmib_units runit ON itm.items_runit = runit.id
+          WHERE prc.price_actve = TRUE
+          AND itm.items_itype = $1
+          AND prc.price_users = $2
+          AND prc.price_bsins = $3
+          AND itm.items_actve = TRUE
+          ORDER BY prc.price_cname`;
 
     const params = [items_itype, user_c, user_b];
     const rows = await dbGetAll(sql, params, `get for bom items - ${user_c}`);

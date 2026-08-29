@@ -6,9 +6,9 @@ import PageCard, {
 } from "@/components/PageCard";
 import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
-import useSection from "@/hooks/M01/useSection";
-import SectionList from "./SectionList";
-import SectionForm from "./SectionForm";
+import useFeatures from "@/hooks/M01/useFeatures";
+import FeatureList from "./FeatureList";
+import FeatureForm from "./FeatureForm";
 
 const FeaturePage = () => {
   const {
@@ -18,27 +18,29 @@ const FeaturePage = () => {
     readOnly,
     stopEdit,
     listData,
+    treeData,
     formData,
     listDataItem,
     formDataItem,
     formErrors,
     //others
-    dpart_Options,
+    fetur_Options,
     //functions
     handleChange,
     handleEdit,
     handleDelete,
     handleSearch,
     handleAddNew,
+    handleAddChild,
     handleCancel,
     handleSubmit,
-  } = useSection();
+  } = useFeatures();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
-          <PageCardTitle title="Sections" subtitle={`${listData.length} Sections`} />
+          <PageCardTitle title="Features" subtitle={`${listData.length} Features`} />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
               <Button variant="info" size="sm" onClick={handleSearch}>
@@ -68,14 +70,15 @@ const FeaturePage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <SectionList
-              listData={listData}
+            <FeatureList
+              treeData={treeData}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onAddChild={handleAddChild}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
-            <SectionForm
+            <FeatureForm
               isBusy={isBusy}
               readOnly={readOnly}
               stopEdit={stopEdit}
@@ -84,7 +87,7 @@ const FeaturePage = () => {
               onChange={handleChange}
               onCancel={handleCancel}
               onSubmit={handleSubmit}
-              dpart_Options={dpart_Options}
+              fetur_Options={fetur_Options}
             />
           )}
         </PageCardBody>

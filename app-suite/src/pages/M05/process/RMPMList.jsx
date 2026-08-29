@@ -23,6 +23,8 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
     { key: "prrpm_notes", header: "Notes", width: "80px" },
     // { key: "prrpm_stock", header: "Stock", width: "80px" },
     { key: "stock_ohqty", header: "Stock", width: "80px" },
+    { key: "party_id", header: "party_id", width: "80px" },
+    { key: "chtac_id", header: "chtac_id", width: "80px" },
     {
       key: "actions",
       header: "Actions",

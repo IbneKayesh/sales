@@ -19,17 +19,15 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT sct.*, dpt.dpart_cname,
+    const sql = `SELECT ftr.*,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
-    FROM tmsb_sectn sct
-    LEFT JOIN tmsb_dpart dpt ON sct.sectn_dpart = dpt.id
-    LEFT JOIN tmhb_emply csr ON sct.sectn_crusr = csr.id
-    LEFT JOIN tmhb_emply usr ON sct.sectn_upusr = usr.id
-    WHERE sct.sectn_users = $1
-    ORDER BY sct.sectn_cname ASC`;
+    FROM tmsb_fetur ftr
+    LEFT JOIN tmhb_emply csr ON ftr.fetur_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON ftr.fetur_upusr = usr.id
+    ORDER BY ftr.fetur_srial ASC`;
 
-    const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get section- ${user_c}`);
+    const params = [];
+    const rows = await dbGetAll(sql, params, `get feature- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -60,14 +58,13 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT sct.*, 0 as edit_stop
-    FROM tmsb_sectn sct
-    WHERE sct.sectn_users = $1
-    AND sct.sectn_actve = TRUE
-    ORDER BY sct.sectn_cname ASC`;
+    const sql = `SELECT ftr.*, 0 as edit_stop
+    FROM tmsb_fetur ftr
+    WHERE ftr.fetur_actve = TRUE
+    ORDER BY ftr.fetur_srial ASC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get section- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get feature- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -87,20 +84,26 @@ const create = async (req, res) => {
   try {
     const {
       id,
-      sectn_users,
-      sectn_bsins,
-      sectn_ccode,
-      sectn_dpart,
-      sectn_cname,
-      sectn_ofadr,
-      sectn_emcap,
+      fetur_srial,
+      fetur_fetur,
+      fetur_cname,
+      fetur_descr,
+      fetur_notes,
+      fetur_stats,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!sectn_dpart || !sectn_cname || !user_s || !user_c || !user_b) {
+    if (
+      !fetur_srial ||
+      !fetur_fetur ||
+      !fetur_cname ||
+      !user_s ||
+      !user_c ||
+      !user_b
+    ) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -109,27 +112,26 @@ const create = async (req, res) => {
     }
 
     //database action
-    const newCode = await GenNewCode(user_c, "tmsb_sectn");
 
-    const sql = `INSERT INTO tmsb_sectn(id, sectn_users, sectn_bsins, sectn_ccode, sectn_dpart, sectn_cname, sectn_ofadr, sectn_emcap, sectn_crusr, sectn_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`;
+    const sql = `INSERT INTO tmsb_fetur(id, fetur_srial, fetur_fetur, fetur_cname, fetur_descr, fetur_notes,
+    fetur_crusr, fetur_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6,
+    $7, $8)`;
     const params = [
       uuidv4(),
-      user_c,
-      user_b,
-      newCode,
-      sectn_dpart,
-      sectn_cname,
-      sectn_ofadr || "",
-      sectn_emcap || 1,
+      fetur_srial,
+      fetur_fetur,
+      fetur_cname,
+      fetur_descr,
+      fetur_notes,
       user_s,
       user_s,
     ];
 
-    await dbRun(sql, params, `create section- ${user_c}`);
+    await dbRun(sql, params, `create feature- ${fetur_cname}`);
     res.json({
       success: true,
-      message: `${sectn_cname} - Created successfully.`,
+      message: `${fetur_cname} - Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -146,20 +148,26 @@ const update = async (req, res) => {
   try {
     const {
       id,
-      sectn_users,
-      sectn_bsins,
-      sectn_ccode,
-      sectn_dpart,
-      sectn_cname,
-      sectn_ofadr,
-      sectn_emcap,
+      fetur_srial,
+      fetur_fetur,
+      fetur_cname,
+      fetur_descr,
+      fetur_notes,
+      fetur_stats,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
     // Validate input
-    if (!sectn_dpart || !sectn_cname || !user_s || !user_c || !user_b) {
+    if (
+      !fetur_srial ||
+      !fetur_fetur ||
+      !fetur_cname ||
+      !user_s ||
+      !user_c ||
+      !user_b
+    ) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -168,26 +176,32 @@ const update = async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmsb_sectn
-    SET sectn_cname = $1,
-    sectn_ofadr = $2,
-    sectn_emcap = $3,
-    sectn_upusr = $4,
-    sectn_updat = CURRENT_TIMESTAMP,
-    sectn_rvnmr = sectn_rvnmr + 1
-    WHERE id = $5`;
+    const sql = `UPDATE tmsb_fetur
+    SET fetur_srial = $1,
+    fetur_fetur = $2,
+    fetur_cname = $3,
+    fetur_descr = $4,
+    fetur_notes = $5,
+    fetur_stats = $6,
+    fetur_upusr = $7,
+    fetur_updat = CURRENT_TIMESTAMP,
+    fetur_rvnmr = fetur_rvnmr + 1
+    WHERE id = $8`;
     const params = [
-      sectn_cname,
-      sectn_ofadr,
-      sectn_emcap,
+      fetur_srial,
+      fetur_fetur,
+      fetur_cname,
+      fetur_descr,
+      fetur_notes,
+      fetur_stats,
       user_s,
       id,
     ];
 
-    await dbRun(sql, params, `update section- ${user_c}`);
+    await dbRun(sql, params, `update feature- ${fetur_cname}`);
     res.json({
       success: true,
-      message: `${sectn_cname} - Updated successfully.`,
+      message: `${fetur_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {
@@ -219,10 +233,10 @@ router.post("/update", update);
 // delete
 router.post("/delete", async (req, res) => {
   try {
-    const { id, sectn_cname, sectn_actve, user_s, user_c, user_b } = req.body;
+    const { id, fetur_cname, fetur_actve, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!id || !sectn_cname || !user_s || !user_c || !user_b) {
+    if (!id || !fetur_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -231,18 +245,18 @@ router.post("/delete", async (req, res) => {
     }
 
     //database action
-    const sql = `UPDATE tmsb_sectn
-    SET sectn_actve = NOT sectn_actve,
-    sectn_upusr = $1,
-    sectn_updat = CURRENT_TIMESTAMP,
-    sectn_rvnmr = sectn_rvnmr + 1
+    const sql = `UPDATE tmsb_fetur
+    SET fetur_actve = NOT fetur_actve,
+    fetur_upusr = $1,
+    fetur_updat = CURRENT_TIMESTAMP,
+    fetur_rvnmr = fetur_rvnmr + 1
     WHERE id = $2`;
     const params = [user_s, id];
 
-    await dbRun(sql, params, `delete section- ${user_c}`);
+    await dbRun(sql, params, `delete feature- ${fetur_cname}`);
     res.json({
       success: true,
-      message: `${sectn_cname} - ${sectn_actve ? "Deactivate" : "Activate"} successfully.`,
+      message: `${fetur_cname} - ${fetur_actve ? "Deactivate" : "Activate"} successfully.`,
       data: {},
     });
   } catch (error) {

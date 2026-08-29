@@ -45,6 +45,8 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
     { key: "prsfg_notes", header: "Notes", width: "80px" },
     // { key: "prsfg_stock", header: "Stock", width: "80px" },
     { key: "avail_fgqty", header: "Completed", width: "80px" },
+    { key: "party_id", header: "party_id", width: "80px" },
+    { key: "chtac_id", header: "chtac_id", width: "80px" },
     {
       key: "actions",
       header: "Actions",

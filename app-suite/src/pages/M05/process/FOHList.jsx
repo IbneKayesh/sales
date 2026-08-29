@@ -22,6 +22,8 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
     { key: "prfoh_foval", header: "Value", width: "80px" },
     { key: "prfoh_notes", header: "Notes", width: "80px" },
     { key: "prfoh_stock", header: "Stock", width: "80px" },
+    { key: "party_id", header: "party_id", width: "80px" },
+    { key: "chtac_id", header: "chtac_id", width: "80px" },
     {
       key: "actions",
       header: "Actions",

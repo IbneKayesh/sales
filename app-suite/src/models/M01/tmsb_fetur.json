@@ -1,0 +1,48 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "fetur_srial": {
+    "type": "string",
+    "label": "Serial",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter serial",
+    "required": true
+  },
+  "fetur_fetur": {
+    "type": "string",
+    "label": "Parent",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter parent",
+    "required": true
+  },
+  "fetur_cname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter name",
+    "required": true
+  },
+  "fetur_descr": {
+    "type": "string",
+    "label": "Description",
+    "maxLength": 100,
+    "placeholder": "Enter description"
+  },
+  "fetur_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes"
+  },
+  "fetur_stats": {
+    "type": "boolean",
+    "label": "Status",
+    "default": false,
+    "placeholder": "Select"
+  }
+}
