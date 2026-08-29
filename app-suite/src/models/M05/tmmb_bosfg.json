@@ -7,17 +7,24 @@
     "type": "string",
     "label": "Item",
     "maxLength": 50,
-    "placeholder": "Select item",
+    "placeholder": "Select",
+    "required": true
+  },
+  "bosfg_price": {
+    "type": "string",
+    "label": "Price Item",
+    "maxLength": 50,
+    "placeholder": "Select",
     "required": true
   },
   "bosfg_units": {
     "type": "string",
     "label": "Unit",
     "maxLength": 50,
-    "placeholder": "Select unit",
+    "placeholder": "Select",
     "required": true
   },
-  "bosfg_types": {
+  "bosfg_itype": {
     "type": "string",
     "label": "Type",
     "maxLength": 50,
@@ -34,7 +41,7 @@
   "bosfg_fgqty": {
     "type": "decimal",
     "label": "Quantity",
-    "required": false
+    "required": true
   },
   "bosfg_fgrto": {
     "type": "decimal",
@@ -44,12 +51,21 @@
   "bosfg_fgrat": {
     "type": "decimal",
     "label": "Rate",
-    "required": true
+    "required": true,
+    "default": 0
   },
   "bosfg_fgval": {
     "type": "decimal",
     "label": "Value",
-    "required": false
+    "required": false,
+    "default": 0
+  },
+  "bosfg_rtrto": {
+    "type": "decimal",
+    "label": "Rate Ratio",
+    "required": true,
+    "maxLength": 100,
+    "minLength": 0.1
   },
   "bosfg_notes": {
     "type": "string",

@@ -7,17 +7,24 @@
     "type": "string",
     "label": "Item",
     "maxLength": 50,
-    "placeholder": "Select item",
+    "placeholder": "Select",
+    "required": true
+  },
+  "bofoh_price": {
+    "type": "string",
+    "label": "Price Item",
+    "maxLength": 50,
+    "placeholder": "Select",
     "required": true
   },
   "bofoh_units": {
     "type": "string",
     "label": "Unit",
     "maxLength": 50,
-    "placeholder": "Select unit",
+    "placeholder": "Select",
     "required": true
   },
-  "bofoh_types": {
+  "bofoh_itype": {
     "type": "string",
     "label": "Type",
     "maxLength": 50,
@@ -25,22 +32,22 @@
     "required": true
   },
   "bofoh_foqty": {
-    "type": "number",
+    "type": "decimal",
     "label": "Quantity",
-    "required": false
+    "required": true
   },
   "bofoh_forto": {
-    "type": "number",
+    "type": "decimal",
     "label": "Ratio",
     "required": false
   },
   "bofoh_forat": {
-    "type": "number",
+    "type": "decimal",
     "label": "Rate",
     "required": true
   },
   "bofoh_foval": {
-    "type": "number",
+    "type": "decimal",
     "label": "Value",
     "required": false
   },

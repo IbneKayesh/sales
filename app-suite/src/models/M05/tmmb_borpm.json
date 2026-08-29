@@ -7,17 +7,24 @@
     "type": "string",
     "label": "Item",
     "maxLength": 50,
-    "placeholder": "Select item",
+    "placeholder": "Select",
+    "required": true
+  },
+  "borpm_price": {
+    "type": "string",
+    "label": "Price Item",
+    "maxLength": 50,
+    "placeholder": "Select",
     "required": true
   },
   "borpm_units": {
     "type": "string",
     "label": "Unit",
     "maxLength": 50,
-    "placeholder": "Select unit",
+    "placeholder": "Select",
     "required": true
   },
-  "borpm_types": {
+  "borpm_itype": {
     "type": "string",
     "label": "Type",
     "maxLength": 50,
@@ -25,22 +32,22 @@
     "required": true
   },
   "borpm_rmqty": {
-    "type": "number",
+    "type": "decimal",
     "label": "Quantity",
     "required": false
   },
   "borpm_rmrto": {
-    "type": "number",
+    "type": "decimal",
     "label": "Ratio",
     "required": false
   },
   "borpm_rmrat": {
-    "type": "number",
+    "type": "decimal",
     "label": "Rate",
     "required": true
   },
   "borpm_rmval": {
-    "type": "number",
+    "type": "decimal",
     "label": "Value",
     "required": false
   },

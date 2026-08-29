@@ -52,7 +52,7 @@ echo  ---- Web + Mobile + API Running ----
 goto MENU
 
 :W
-start cmd /k "cd frontend-app && npm run dev"
+start cmd /k "cd app-player && node index.js"
 echo  ---- Web Running ----
 goto MENU
 

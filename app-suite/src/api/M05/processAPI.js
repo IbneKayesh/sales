@@ -42,4 +42,8 @@ export const processAPI = {
     apiRequest("/M05/v1/process/get-batch-by-process", {
       body: data,
     }),
+  insertBatch: (data) =>
+    apiRequest("/M05/v1/process/create-batch", {
+      body: data,
+    }),
 };

@@ -2,7 +2,9 @@ import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
-import { IconPlus, } from "@/icons";
+import InputLabel from "@/components/InputLabel";
+import { IconPlus } from "@/icons";
+import { itype_Options } from "@/utils/vtable.js";
 
 const RMPMForm = ({
   isBusy,
@@ -13,7 +15,6 @@ const RMPMForm = ({
   onChange,
   onAddToList,
   items_Options,
-  units_Options,
 }) => {
   return (
     <div className="form-wrap">
@@ -21,35 +22,31 @@ const RMPMForm = ({
         <div className="col-span-4">
           <Dropdown
             label="Type"
-            options={[
-              { label: "Raw Material (RM)", value: "RM" },
-              { label: "Packing Material (PM)", value: "PM" },
-              { label: "Semi-FG", value: "SFG" },
-              { label: "FG", value: "FG" },
-            ]}
-            value={formData.borpm_types}
-            onChange={(e) => onChange("borpm_types", e.target.value)}
-            error={formErrors.borpm_types}
+            options={itype_Options.filter((x) => x.input)}
+            value={formData.borpm_itype}
+            onChange={(e) => onChange("borpm_itype", e.target.value)}
+            error={formErrors.borpm_itype}
             required
             placeholder="Select..."
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-8">
           <Dropdown
             label="Item"
             options={items_Options}
-            value={formData.borpm_items}
-            onChange={(e) => onChange("borpm_items", e.target.value)}
-            error={formErrors.borpm_items}
+            value={formData.borpm_price}
+            onChange={(e) => onChange("borpm_price", e.target.value)}
+            error={formErrors.borpm_price}
             required
             placeholder="Select..."
             disabled={readOnly}
-            optionValue="id"
-            optionLabel="items_iname"
+            optionValue="price_id"
+            optionLabel="price_cname"
+            optionGrid="price_cname:Name,runit_uname:Unit,items_itype:Type,price_mrrat:MRP,items_icode:Code"
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputNumber
             label="Quantity"
             placeholder="Enter qty"
@@ -60,7 +57,7 @@ const RMPMForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputNumber
             label="Ratio"
             placeholder="Enter ratio"
@@ -68,10 +65,10 @@ const RMPMForm = ({
             onChange={(e) => onChange("borpm_rmrto", e.target.value)}
             error={formErrors.borpm_rmrto}
             step="0.01"
-            disabled={readOnly}
+            disabled={readOnly || true}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputNumber
             label="Rate"
             placeholder="Enter rate"
@@ -82,19 +79,8 @@ const RMPMForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
-          <Dropdown
-            label="Unit"
-            options={units_Options}
-            value={formData.borpm_units}
-            onChange={(e) => onChange("borpm_units", e.target.value)}
-            error={formErrors.borpm_units}
-            required
-            placeholder="Select..."
-            disabled={readOnly}
-            optionValue="id"
-            optionLabel="units_cname"
-          />
+        <div className="col-span-3">
+          <InputLabel label="Unit" value={formData.runit_uname} />
         </div>
         <div className="col-span-12">
           <InputText

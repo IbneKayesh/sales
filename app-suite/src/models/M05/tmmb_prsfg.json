@@ -1,0 +1,127 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "prsfg_users": {
+    "type": "string",
+    "label": "User",
+    "maxLength": 50,
+    "placeholder": "Select user",
+    "required": true
+  },
+  "prsfg_bsins": {
+    "type": "string",
+    "label": "Business Instance",
+    "maxLength": 50,
+    "placeholder": "Select business",
+    "required": true
+  },
+  "prsfg_promf": {
+    "type": "string",
+    "label": "Process",
+    "maxLength": 50,
+    "placeholder": "Select process",
+    "required": true
+  },
+  "prsfg_bosfg": {
+    "type": "string",
+    "label": "BOM SFG/FG",
+    "maxLength": 50,
+    "placeholder": "Select BOM SFG/FG",
+    "required": true
+  },
+  "prsfg_items": {
+    "type": "string",
+    "label": "Item",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "prsfg_price": {
+    "type": "string",
+    "label": "Price Item",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "prsfg_units": {
+    "type": "string",
+    "label": "Unit",
+    "maxLength": 50,
+    "placeholder": "Select unit",
+    "required": true
+  },
+  "prsfg_itype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "placeholder": "Enter type (SFG/FG)",
+    "required": true
+  },
+  "prsfg_group": {
+    "type": "string",
+    "label": "Group",
+    "maxLength": 50,
+    "placeholder": "Select group (MAIN/CO/BY)",
+    "required": true
+  },
+  "prsfg_boqty": {
+    "type": "decimal",
+    "label": "BOM Quantity",
+    "required": true
+  },
+  "prsfg_borat": {
+    "type": "decimal",
+    "label": "BOM Rate",
+    "required": false
+  },
+  "prsfg_rtrto": {
+    "type": "decimal",
+    "label": "Cost Ratio",
+    "required": true
+  },  
+  "prsfg_fgqty": {
+    "type": "decimal",
+    "label": "FG Qty",
+    "required": true
+  },
+  "prsfg_fgrat": {
+    "type": "decimal",
+    "label": "FG Rate",
+    "required": false
+  },
+  "prsfg_fgval": {
+    "type": "decimal",
+    "label": "FG Value",
+    "required": false
+  },
+  "prsfg_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "prsfg_stock": {
+    "type": "string",
+    "label": "Stock",
+    "maxLength": 50,
+    "placeholder": "Enter stock",
+    "required": false
+  },
+  "prsfg_jrnlm": {
+    "type": "string",
+    "label": "Journal",
+    "maxLength": 50,
+    "placeholder": "Enter journal",
+    "required": false
+  },
+  "prsfg_refid": {
+    "type": "string",
+    "label": "Ref Id",
+    "maxLength": 50,
+    "placeholder": "Enter ref",
+    "required": false
+  }
+}

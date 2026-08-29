@@ -25,7 +25,17 @@ delete from tmob_invcs;
 delete from tmob_invpy;
 --update party balance
 update tmtb_party set party_crbal = 0;
-
+--production process
+delete from tmmb_prsfg;
+delete from tmmb_prfoh;
+delete from tmmb_prrpm;
+delete from tmmb_promf;
+delete from tmmb_prbtc;
+--production bom
+delete from tmmb_bommf;
+delete from tmmb_borpm;
+delete from tmmb_bofoh;
+delete from tmmb_bosfg;
 
 
 CALL prc_jrnlm_mrr(

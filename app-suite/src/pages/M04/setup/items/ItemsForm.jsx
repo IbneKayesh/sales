@@ -141,6 +141,7 @@ const ItemsForm = ({
             disabled={readOnly}
             optionValue="id"
             optionLabel="sgrup_cname"
+            optionGrid="sgrup_cname:Name,mgrup_cname:Group"
           />
         </div>
         <div className="col-span-2">
@@ -154,6 +155,7 @@ const ItemsForm = ({
             disabled={readOnly}
             optionValue="id"
             optionLabel="scatg_cname"
+            optionGrid="scatg_cname:Name,mcatg_cname:Category"
           />
         </div>
         <div className="col-span-2">
@@ -164,6 +166,7 @@ const ItemsForm = ({
             onChange={(e) => onChange("items_itype", e.target.value)}
             error={formErrors.items_itype}
             placeholder="Select..."
+            required
             disabled={readOnly}
           />
         </div>
@@ -175,6 +178,7 @@ const ItemsForm = ({
             onChange={(e) => onChange("items_brand", e.target.value)}
             error={formErrors.items_brand}
             placeholder="Select..."
+            required
             disabled={readOnly}
             optionValue="id"
             optionLabel="brand_cname"

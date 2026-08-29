@@ -2,6 +2,7 @@ import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
+import InactiveText from "@/components/InactiveText";
 import { IconClose, IconCheck, IconBar, IconMenu } from "@/icons";
 
 const McatgList = ({
@@ -13,18 +14,12 @@ const McatgList = ({
 }) => {
   const dtColumns = [
     { key: "mcatg_ccode", header: "Code", width: "180px" },
-    { key: "mcatg_cname", header: "Category Name", width: "200px" },
     {
-      key: "mcatg_actve",
-      header: "Status",
-      width: "120px",
-      body: (v) => {
-        return (
-          <Badge variant={v ? "success" : "danger"}>
-            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
-          </Badge>
-        );
+      key: "mcatg_cname",
+      header: "Category",
+      width: "200px",
+      body: (_, row) => {
+        return <InactiveText text={row.mcatg_cname} active={row.mcatg_actve} />;
       },
     },
     {

@@ -2,20 +2,23 @@ import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
 import { processAPI } from "@/api/M05/processAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
-import tmmb_promf from "@/models/M05/M05M01/tmmb_promf.json";
+import tmmb_promf from "@/models/M05/tmmb_promf.json";
 const dataModel = generateDataModel(tmmb_promf);
-import tmmb_prrpm from "@/models/M05/M05M01/tmmb_prrpm.json";
+import tmmb_prrpm from "@/models/M05/tmmb_prrpm.json";
 const dataModelRM = generateDataModel(tmmb_prrpm);
-import tmmb_prfoh from "@/models/M05/M05M01/tmmb_prfoh.json";
+import tmmb_prfoh from "@/models/M05/tmmb_prfoh.json";
 const dataModelFOH = generateDataModel(tmmb_prfoh);
-import tmmb_prsfg from "@/models/M05/M05M01/tmmb_prsfg.json";
+import tmmb_prsfg from "@/models/M05/tmmb_prsfg.json";
 const dataModelSFG = generateDataModel(tmmb_prsfg);
-import tmmb_prbtc from "@/models/M05/M05M01/tmmb_prbtc.json";
+import tmmb_prbtc from "@/models/M05/tmmb_prbtc.json";
 const dataModelBatch = generateDataModel(tmmb_prbtc);
 import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { bomAPI } from "@/api/M05/bomAPI.js";
 import { unitsAPI } from "@/api/M04/unitsAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
+import { validNumber, divNumber } from "@/utils/misc.js";
+import { generateGuid } from "@/utils/guid.js";
+import { stockAPI } from "@/api/M04/stockAPI.js";
 
 const useProcess = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -55,6 +58,7 @@ const useProcess = () => {
   const [units_Options, setUnits_Options] = useState([]);
   const [items_Options, setItems_Options] = useState([]);
   const [items_store_Options, setItems_store_Options] = useState([]);
+  const [stock_Options, setStock_Options] = useState([]);
 
   // ---------- Process Master ----------
   const getAllProcess = async () => {
@@ -78,7 +82,7 @@ const useProcess = () => {
       return;
     }
     try {
-      const resp = await departmentAPI.getAllActive({});
+      const resp = await departmentAPI.getProduction({});
       const list = resp.data || [];
       setDpart_Options(list);
     } catch (error) {}
@@ -134,70 +138,167 @@ const useProcess = () => {
     setFormErrors(newErrors);
 
     if (f === "promf_dpart") {
-      getAllBOMByDepartment(v);
+      await getAllBOMByDepartment(v);
     }
 
     if (f === "promf_bommf") {
       const bom = bom_Options.find((opt) => opt.id === v);
-      const bmqty = Number(bom?.bommf_bmqty) || 0;
       setFormData((prev) => ({
         ...prev,
         promf_cname: bom?.bommf_cname || "Process 1",
         promf_prono: bom?.bommf_prono || 1,
-        promf_units: bom?.bommf_units || "",
-        units_cname: bom?.units_cname || "",
-        promf_bmqty: bmqty,
-        promf_bmval: bom.bommf_bmval || 0,
-        promf_prqty: bmqty,
       }));
       await loadAllDetailsBOM(v);
-      if (bmqty) recalcProcessQtys(bmqty, bmqty);
-    }
-    if (f === "promf_prqty" || f === "promf_bmqty") {
-      const bmqty = f === "promf_bmqty" ? v : formData.promf_bmqty;
-      const prqty = f === "promf_prqty" ? v : formData.promf_prqty;
-      recalcProcessQtys(bmqty, prqty);
     }
   };
 
   const round2 = (n) => Math.round(Number(n) * 100) / 100;
 
-  const recalcProcessQtys = (bmqty, prqty) => {
-    if (!bmqty || !prqty) return;
+  const recalcProcessQty_v1 = (prqty) => {
+    if (!prqty) return;
 
     //RM/PM
     setListDataRMPM((prev) => {
       return prev.map((item) => {
-        let reqQty = (Number(item.prrpm_rmqty) * Number(prqty)) / Number(bmqty);
+        let reqQty = validNumber(item.prrpm_boqty) * validNumber(prqty);
         return {
           ...item,
-          prrpm_prqty: round2(reqQty || 0),
-          prrpm_prval: round2((reqQty || 0) * (Number(item.prrpm_rmrat) || 0)),
+          prrpm_rmqty: validNumber(reqQty),
+          prrpm_rmval: validNumber(reqQty) * validNumber(item.prrpm_rmrat),
         };
       });
     });
     //FOH
     setListDataFOH((prev) => {
       return prev.map((item) => {
-        let reqQty = (Number(item.prfoh_foqty) * Number(prqty)) / Number(bmqty);
+        let reqQty = validNumber(item.prfoh_boqty) * validNumber(prqty);
         return {
           ...item,
-          prfoh_prqty: round2(reqQty || 0),
-          prfoh_prval: round2((reqQty || 0) * (Number(item.prfoh_forat) || 0)),
+          prfoh_foqty: validNumber(reqQty),
+          prfoh_foval: validNumber(reqQty) * validNumber(item.prfoh_forat),
         };
       });
     });
     //SFG
     setListDataSFGFG((prev) => {
       return prev.map((item) => {
-        let reqQty = (Number(item.prsfg_fgqty) * Number(prqty)) / Number(bmqty);
+        //console.log(item)
+        const reqQty =
+          item.prsfg_group === "MAIN"
+            ? validNumber(prqty)
+            : validNumber(item.prsfg_boqty) * validNumber(prqty);
+
         return {
           ...item,
-          prsfg_prqty: round2(reqQty || 0),
-          prsfg_prval: round2((reqQty || 0) * (Number(item.prsfg_fgrat) || 0)),
+          prsfg_fgqty: validNumber(reqQty),
+          prsfg_fgval: validNumber(reqQty) * validNumber(item.prsfg_fgrat),
         };
       });
     });
+  };
+
+  const recalcOutputCost_v1 = () => {
+    let newItems = [...(listDataSFGFG || [])];
+
+    const totalRMPM = listDataRMPM.reduce(
+      (sum, item) => sum + validNumber(item.prrpm_rmval),
+      0,
+    );
+    const totalFOH = listDataFOH.reduce(
+      (sum, item) => sum + validNumber(item.prfoh_foval),
+      0,
+    );
+    const totalRMPMFOH = totalRMPM + totalFOH;
+
+    newItems = newItems.map((item) => {
+      const prsfg_rtrto = validNumber(item.prsfg_rtrto);
+      return {
+        ...item,
+        prsfg_fgrat: (validNumber(totalRMPMFOH) * prsfg_rtrto) / 100,
+      };
+    });
+
+    setListDataSFGFG(newItems);
+  };
+
+  const recalcProcessQty = (prqty) => {
+    if (!prqty) return;
+
+    // RM/PM
+    setListDataRMPM((prevRMPM) => {
+      const updatedRMPM = prevRMPM.map((item) => {
+        const reqQty = validNumber(item.prrpm_boqty) * validNumber(prqty);
+
+        return {
+          ...item,
+          prrpm_rmqty: reqQty.toFixed(4),
+          prrpm_rmval: (reqQty * validNumber(item.prrpm_rmrat)).toFixed(4),
+        };
+      });
+
+      // FOH
+      setListDataFOH((prevFOH) => {
+        const updatedFOH = prevFOH.map((item) => {
+          const reqQty = validNumber(item.prfoh_boqty) * validNumber(prqty);
+
+          return {
+            ...item,
+            prfoh_foqty: reqQty.toFixed(4),
+            prfoh_foval: (reqQty * validNumber(item.prfoh_forat)).toFixed(4),
+          };
+        });
+
+        // Calculate total RM/PM + FOH from the UPDATED values
+        const totalRMPM = updatedRMPM.reduce(
+          (sum, item) => sum + validNumber(item.prrpm_rmval),
+          0,
+        );
+
+        const totalFOH = updatedFOH.reduce(
+          (sum, item) => sum + validNumber(item.prfoh_foval),
+          0,
+        );
+
+        const totalRMPMFOH = totalRMPM + totalFOH;
+
+        // SFG / FG
+        setListDataSFGFG((prevSFGFG) => {
+          return prevSFGFG.map((item) => {
+            const reqQty =
+              item.prsfg_group === "MAIN"
+                ? validNumber(prqty)
+                : validNumber(item.prsfg_boqty) * validNumber(prqty);
+
+            const prsfg_rtrto = validNumber(item.prsfg_rtrto);
+            const prsfg_fgrat = (totalRMPMFOH * prsfg_rtrto) / 100 / reqQty;
+
+            return {
+              ...item,
+              prsfg_fgqty: reqQty,
+              // Recalculated output rate/value
+              prsfg_fgrat: prsfg_fgrat.toFixed(4),
+              prsfg_fgval: (reqQty * prsfg_fgrat).toFixed(4),
+            };
+          });
+        });
+
+        return updatedFOH;
+      });
+
+      return updatedRMPM;
+    });
+  };
+
+  const getConsumptionStock = async (price_id) => {
+    try {
+      const resp = await stockAPI.getPriceStockForProcess({
+        stock_dpart: formData.promf_dpart,
+        stock_price: price_id,
+      });
+      const list = resp.data || [];
+      setStock_Options(list);
+      //console.log("list", list);
+    } catch (error) {}
   };
 
   const handleEdit = async (rowData) => {
@@ -206,7 +307,6 @@ const useProcess = () => {
     setFormData(rowData);
     loadAllDetails(rowData.id);
     getAllDepartments();
-    getAllBOMs();
     getAllUnits();
   };
 
@@ -280,7 +380,6 @@ const useProcess = () => {
     setListDataSFGFG([]);
     setListDataBatch([]);
     getAllDepartments();
-    //getAllBOMs();
     getAllUnits();
     getAllItems();
   };
@@ -295,6 +394,7 @@ const useProcess = () => {
   const handleSubmit = async () => {
     try {
       const newErrors = validate(formData, tmmb_promf);
+      //console.log("newErrors",newErrors)
       setFormErrors(newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
@@ -311,6 +411,34 @@ const useProcess = () => {
       }
       if (listDataSFGFG.length === 0) {
         showToast("At least 1 SFG/FG is required", { type: "warning" });
+        return;
+      }
+
+      const isNullEmpty = listDataRMPM.find(
+        (f) => !f.prrpm_stock || String(f.prrpm_stock).trim() === "",
+      );
+
+      if (isNullEmpty) {
+        showToast("RM/PM Stock is required", { type: "warning" });
+        return;
+      }
+
+      const isShortStock = listDataRMPM.find(
+        (f) => Number(f.stock_ohqty || 0) < Number(f.prrpm_rmqty || 0),
+      );
+
+      if (isShortStock) {
+        showToast("RM/PM Stock is short", { type: "warning" });
+        return;
+      }
+
+      const isSfgFgValue = listDataSFGFG.find(
+        (f) => validNumber(f.prsfg_fgval) < 0.1,
+      );
+      if (isSfgFgValue) {
+        showToast("Output value is underflow", {
+          type: "warning",
+        });
         return;
       }
 
@@ -378,7 +506,7 @@ const useProcess = () => {
 
     const prrpm_rmval = round2(
       (Number(formDataRMPM.prrpm_rmqty) || 0) *
-      (Number(formDataRMPM.prrpm_rmrat) || 0)
+        (Number(formDataRMPM.prrpm_rmrat) || 0),
     );
 
     setListDataRMPM((prev) => [
@@ -394,10 +522,12 @@ const useProcess = () => {
     setFormDataRMPM({});
     handleHideModal();
   };
-
-  const handleEditRMPM = (rowData) => {
-    handleShowModal("RMPM");
+  //mapping stock
+  const handleEditRMPM = async (rowData) => {
+    handleShowModal("RMPM_STOCK");
     setFormDataRMPM(rowData);
+    //console.log(formData);
+    await getConsumptionStock(rowData.prrpm_price);
   };
 
   const handleDeleteRMPM = async (rowData) => {
@@ -452,7 +582,7 @@ const useProcess = () => {
 
     const prfoh_foval = round2(
       (Number(formDataFOH.prfoh_foqty) || 0) *
-      (Number(formDataFOH.prfoh_forat) || 0)
+        (Number(formDataFOH.prfoh_forat) || 0),
     );
 
     setListDataFOH((prev) => [
@@ -526,7 +656,7 @@ const useProcess = () => {
 
     const prsfg_fgval = round2(
       (Number(formDataSFGFG.prsfg_fgqty) || 0) *
-      (Number(formDataSFGFG.prsfg_fgrat) || 0)
+        (Number(formDataSFGFG.prsfg_fgrat) || 0),
     );
 
     setListDataSFGFG((prev) => [
@@ -563,61 +693,147 @@ const useProcess = () => {
     showToast("Removed successfully", { type: "success" });
   };
 
+  const handleChangeSFGRow = (f, v, id) => {
+    // console.log(f);
+    // console.log(v);
+    // console.log(id);
+    setListDataSFGFG((prev) =>
+      prev.map((row) => (row.prsfg_price === id ? { ...row, [f]: v } : row)),
+    );
+    recalcProcessQty(v);
+  };
   // ---------- BATCH ----------
 
-  const handleChangeBatch = (f, v) => {
-    setFormDataBatch((prev) => ({ ...prev, [f]: v }));
-    const newErrors = validate({ ...formDataBatch, [f]: v }, tmmb_prbtc);
-    setFormErrors(newErrors);
-    if (f === "prbtc_types") {
-      const current_items = items_store_Options.filter(
-        (item) => item.items_itype === v,
-      );
-      setItems_Options(current_items);
-    }
+  const handleChangeBatch = (f, v, id) => {
+    // console.log(f);
+    // console.log(v);
+    // console.log(id);
+    // setFormDataBatch((prev) =>
+    //   prev.map((row) => (row.id === id ? { ...row, [f]: v } : row)),
+    // );
+    // setFormDataBatch((prev) => ({ ...prev, [f]: v }));
+    // const newErrors = validate({ ...formDataBatch, [f]: v }, tmmb_prbtc);
+    // setFormErrors(newErrors);
+    // if (f === "prbtc_types") {
+    //   const current_items = items_store_Options.filter(
+    //     (item) => item.items_itype === v,
+    //   );
+    //   setItems_Options(current_items);
+    // }
+    setFormDataBatch((prev) =>
+      prev.map((row) => {
+        if (row.id !== id) return row;
+
+        const updatedRow = {
+          ...row,
+          [f]: v,
+        };
+
+        if (f === "prbtc_gdstk" || f === "prbtc_bdstk") {
+          const qty =
+            validNumber(updatedRow.prbtc_gdstk) +
+            validNumber(updatedRow.prbtc_bdstk);
+
+          updatedRow.prbtc_fgval = qty * validNumber(updatedRow.prbtc_fgrat);
+        }
+
+        return updatedRow;
+      }),
+    );
   };
 
-  const handleAddToListBatch = () => {
-    const newErrors = validate(formDataBatch, tmmb_prbtc);
-    setFormErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) {
-      return;
-    }
-    if (
-      ["", 0, "0", null, undefined].includes(formDataBatch.prbtc_gaqty) &&
-      ["", 0, "0", null, undefined].includes(formDataBatch.prbtc_gbqty)
-    ) {
-      showToast("At least one Good Quantity is required", {
-        type: "warning",
+  const handleAddToListBatch = async () => {
+    // const newErrors = validate(formDataBatch, tmmb_prbtc);
+    // setFormErrors(newErrors);
+    // if (Object.keys(newErrors).length > 0) {
+    //   return;
+    // }
+    // if (
+    //   ["", 0, "0", null, undefined].includes(formDataBatch.prbtc_gaqty) &&
+    //   ["", 0, "0", null, undefined].includes(formDataBatch.prbtc_gbqty)
+    // ) {
+    //   showToast("At least one Good Quantity is required", {
+    //     type: "warning",
+    //   });
+    //   return;
+    // }
+    // const items_iname = items_store_Options.find(
+    //   (opt) => opt.id === formDataBatch.prbtc_items,
+    // );
+
+    // const units_cname = units_Options.find(
+    //   (opt) => opt.id === formDataBatch.prbtc_units,
+    // );
+
+    // const prbtc_pbval = round2(
+    //   ((Number(formDataBatch.prbtc_gaqty) || 0) +
+    //     (Number(formDataBatch.prbtc_gbqty) || 0)) *
+    //     (Number(formDataBatch.prbtc_pbrat) || 0),
+    // );
+
+    // setListDataBatch((prev) => [
+    //   ...prev,
+    //   {
+    //     ...formDataBatch,
+    //     prbtc_pbval: prbtc_pbval,
+    //     items_iname: items_iname?.items_iname || "Invalid Item",
+    //     units_cname: units_cname?.units_cname || "Invalid Unit",
+    //     prbtc_actve: true,
+    //   },
+    // ]);
+    // setFormDataBatch({});
+    // handleHideModal();
+    try {
+      const newErrors = validate(formData, tmmb_promf);
+      //console.log("newErrors",newErrors)
+      setFormErrors(newErrors);
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+
+      const isShortStock = formDataBatch.find(
+        (f) =>
+          validNumber(f.prbtc_gdstk) + validNumber(f.prbtc_bdstk) >
+          validNumber(f.avail_fgqty),
+      );
+      if (isShortStock) {
+        const gdQty = validNumber(isShortStock.prbtc_gdstk);
+        const bdQty = validNumber(isShortStock.prbtc_bdstk);
+        const availableQty = validNumber(isShortStock.avail_fgqty);
+        const overflowQty = availableQty - (gdQty + bdQty);
+        showToast(overflowQty + " complete Qty is overflow", {
+          type: "warning",
+        });
+        return;
+      }
+
+      const reqBody = {
+        ...formData,
+        tmmb_prbtc: formDataBatch,
+      };
+
+      //console.log(reqBody);
+      //return;
+
+      setIsBusy(true);
+      const resp = await processAPI.insertBatch(reqBody);
+      alertBox({
+        title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
       });
-      return;
+      if (resp.success) {
+        //setPgView("SYS_VW_LST_1");
+        //setFormData(dataModel);
+        //getAllProcess();
+        loadAllDetailsBOM(formData.id);
+        handleHideModal();
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
     }
-    const items_iname = items_store_Options.find(
-      (opt) => opt.id === formDataBatch.prbtc_items,
-    );
-
-    const units_cname = units_Options.find(
-      (opt) => opt.id === formDataBatch.prbtc_units,
-    );
-
-    const prbtc_pbval = round2(
-      ((Number(formDataBatch.prbtc_gaqty) || 0) +
-        (Number(formDataBatch.prbtc_gbqty) || 0)) *
-      (Number(formDataBatch.prbtc_pbrat) || 0)
-    );
-
-    setListDataBatch((prev) => [
-      ...prev,
-      {
-        ...formDataBatch,
-        prbtc_pbval: prbtc_pbval,
-        items_iname: items_iname?.items_iname || "Invalid Item",
-        units_cname: units_cname?.units_cname || "Invalid Unit",
-        prbtc_actve: true,
-      },
-    ]);
-    setFormDataBatch({});
-    handleHideModal();
   };
 
   const handleEditBatch = (rowData) => {
@@ -634,7 +850,33 @@ const useProcess = () => {
     } else if (modal === "SFG") {
       setFormDataSFGFG(dataModelSFG);
     } else if (modal === "Batch") {
-      setFormDataBatch(dataModelBatch);
+      const list = listDataSFGFG.map((item) => ({
+        id: generateGuid(),
+        prbtc_bosfg: item.prsfg_bosfg,
+        prbtc_prsfg: item.id,
+        prbtc_items: item.prsfg_items,
+        prbtc_price: item.prsfg_price,
+        prbtc_units: item.prsfg_units,
+        prbtc_itype: item.prsfg_itype,
+        prbtc_group: item.prsfg_group,
+        prbtc_brcod: "",
+        prbtc_batch: "",
+        prbtc_srial: "",
+        prbtc_gdstk: 0,
+        prbtc_bdstk: 0,
+        prbtc_fgrat: item.prsfg_fgrat,
+        prbtc_fgval: 0,
+        prbtc_dpart: formData.promf_dpart,
+        prbtc_wkshf: "work-shift",
+        prbtc_emply: "emply",
+        avail_fgqty:
+          validNumber(item.prsfg_fgqty) - validNumber(item.avail_fgqty), //avail qty
+        price_cname: item.price_cname,
+        units_cname: item.units_cname,
+      }));
+      setFormDataBatch(list);
+    } else if (modal === "RMPM_STOCK") {
+      //setFormDataBatch(dataModelBatch);
     }
 
     setShowModal({ show: true, modal: modal });
@@ -663,6 +905,12 @@ const useProcess = () => {
           subTitle: "Batch Output Entry",
         });
         break;
+      case "RMPM_STOCK":
+        setModalTitle({
+          title: "Add RM/PM Stock",
+          subTitle: "RM/PM Stock Entry",
+        });
+        break;
       default:
         setModalTitle({ title: "", subTitle: "" });
     }
@@ -685,6 +933,46 @@ const useProcess = () => {
       prev.filter((item) => item.prbtc_items !== rowData.prbtc_items),
     );
     showToast("Removed successfully", { type: "success" });
+  };
+
+  //stock
+  const handleChangeStock = (f, v) => {
+    // console.log("f", f);
+    //console.log("v", v);
+    const stock = stock_Options.find((opt) => opt.stock_id === v);
+    // console.log("stock_Options", stock_Options);
+    // console.log("stock", stock);
+
+    setFormDataRMPM((prev) => ({ ...prev, stock_id: v }));
+
+    // setFormDataRMPM((prev) => ({
+    //   ...prev,
+    //   prrpm_stock: stock?.stock_id || "",
+    //   stock_ohqty: stock?.stock_ohqty || 0,
+    // }));
+
+    // Update matching item in the list
+    //in a Single BOM, a price  item can be only onece
+    setListDataRMPM((prev) =>
+      prev.map((item) =>
+        item.prrpm_price === stock?.price_id || ""
+          ? {
+              ...item,
+              prrpm_stock: v,
+              prrpm_rmrat: validNumber(stock?.stock_cprat),
+              prrpm_rmval:
+                validNumber(stock?.stock_cprat) * validNumber(item.prrpm_rmqty),
+              stock_id: v,
+              stock_ohqty: stock?.stock_ohqty || 0,
+            }
+          : item,
+      ),
+    );
+  };
+
+  const handleAddToListStock = () => {
+    handleHideModal();
+    //recalcOutputCost();
   };
 
   return {
@@ -739,6 +1027,11 @@ const useProcess = () => {
     handleAddToListSFG,
     handleEditSFG,
     handleDeleteSFG,
+    handleChangeSFGRow,
+    //stock
+    stock_Options,
+    handleChangeStock,
+    handleAddToListStock,
     //batch
     handleChangeBatch,
     handleAddToListBatch,

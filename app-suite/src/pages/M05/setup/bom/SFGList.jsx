@@ -3,8 +3,8 @@ import ActionButton from "@/components/ActionButton";
 
 const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
   const dtColumns = [
-    { key: "bosfg_types", header: "Type", width: "100px" },
-    { key: "items_iname", header: "Item", width: "200px" },
+    { key: "bosfg_itype", header: "Type", width: "100px" },
+    { key: "price_cname", header: "Item", width: "200px" },
     { key: "bosfg_group", header: "Group", width: "80px" },
     {
       key: "bosfg_fgqty",
@@ -18,9 +18,10 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
         );
       },
     },
-    { key: "bosfg_fgrto", header: "Ratio", width: "80px" },
+    { key: "bosfg_fgrto", header: "Qty Ratio", width: "80px" },
     { key: "bosfg_fgrat", header: "Rate", width: "80px" },
     { key: "bosfg_fgval", header: "Value", width: "80px" },
+    { key: "bosfg_rtrto", header: "Cost Ratio", width: "80px" },
     { key: "bosfg_notes", header: "Notes", width: "100px" },
     {
       key: "actions",
@@ -52,7 +53,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
         exportable={false}
         exportFilename="data-export.csv"
         onRowClick={(row) => onEdit(row)}
-        emptyMessage="No SFG/FG found"
+        emptyMessage="No data found"
         className="mt-2"
       />
     </>

@@ -157,7 +157,6 @@ const BOMPage = () => {
               onSubmit={handleSubmit}
               dpart_Options={dpart_Options}
               prods_Options={prods_Options}
-              units_Options={units_Options}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && listDataRMPM.length > 0 && (
@@ -186,7 +185,7 @@ const BOMPage = () => {
           )}
 
           {/* Single Modal for RMPM / FOH / SFG forms */}
-          <Modal open={showModal.show} onClose={handleHideModal} size="lg">
+          <Modal open={showModal.show} onClose={handleHideModal} size="xl">
             <ModalHeader>
               <ModalTitle
                 title={modalTitle.title}

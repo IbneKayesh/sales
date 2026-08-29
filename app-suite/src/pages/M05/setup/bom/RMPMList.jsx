@@ -3,8 +3,8 @@ import ActionButton from "@/components/ActionButton";
 
 const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "borpm_types", header: "Type", width: "80px" },
-    { key: "items_iname", header: "Item", width: "200px" },
+    { key: "borpm_itype", header: "Type", width: "80px" },
+    { key: "price_cname", header: "Item", width: "200px" },
     {
       key: "borpm_rmqty",
       header: "Quantity",
@@ -51,7 +51,7 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
         exportable={false}
         exportFilename="data-export.csv"
         onRowClick={(row) => onEdit(row)}
-        emptyMessage="No raw materials found"
+        emptyMessage="No data found"
         className="mt-2"
       />
     </>

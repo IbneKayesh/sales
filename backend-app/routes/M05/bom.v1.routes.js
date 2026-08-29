@@ -19,18 +19,17 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const sql = `SELECT bm.*, dpt.dpart_cname, pdt.prods_cname, unt.units_cname,
+    const sql = `SELECT bm.*, dpt.dpart_cname, pdt.prods_cname,
              csr.emply_cname AS crusr_cname,
              usr.emply_cname AS upusr_cname,
              0 AS edit_stop
       FROM tmmb_bommf bm
 	    JOIN tmsb_dpart dpt ON bm.bommf_dpart = dpt.id
 	    JOIN tmmb_prods pdt ON bm.bommf_prods = pdt.id
-      JOIN tmib_units unt ON bm.bommf_units = unt.id
       LEFT JOIN tmhb_emply csr ON bm.bommf_crusr = csr.id
       LEFT JOIN tmhb_emply usr ON bm.bommf_upusr = usr.id
       WHERE bm.bommf_users = $1
-      ORDER BY pdt.prods_cname, bm.bommf_cname;`;
+      ORDER BY pdt.prods_cname, bm.bommf_cname`;
 
     const rows = await dbGetAll(sql, [user_c], `Get BOM - ${user_c}`);
 
@@ -108,10 +107,6 @@ const create = async (req, res) => {
       bommf_trdat,
       bommf_cname,
       bommf_prono,
-      bommf_inout,
-      bommf_units,
-      bommf_bmqty,
-      bommf_bmval,
       bommf_frdat,
       bommf_todat,
       bommf_estim,
@@ -130,9 +125,6 @@ const create = async (req, res) => {
       !bommf_prods ||
       !bommf_cname ||
       !bommf_prono ||
-      !bommf_inout ||
-      !bommf_units ||
-      !bommf_bmqty ||
       !bommf_frdat ||
       !bommf_todat ||
       !user_s ||
@@ -153,20 +145,18 @@ const create = async (req, res) => {
       user_c,
       user_b,
       "tmmb_bommf",
-      "BOM",
+      "Bill Of Materials",
       bommf_dpart,
     );
     //build scripts
     const scripts = [];
     scripts.push({
       sql: `INSERT INTO tmmb_bommf(id, bommf_users, bommf_bsins, bommf_ccode, bommf_dpart, bommf_prods,
-    bommf_trnno, bommf_cname, bommf_prono, bommf_inout, bommf_units, 
-    bommf_bmqty, bommf_bmval, bommf_frdat, bommf_todat, bommf_estim, bommf_notes, 
-    bommf_crusr, bommf_upusr)
-      VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12,
-      $13, $14, $15, $16, $17, $18,
-      $19)`,
+                        bommf_trnno, bommf_cname, bommf_prono, bommf_frdat, bommf_todat, bommf_estim,
+                        bommf_notes, bommf_crusr, bommf_upusr)
+            VALUES ($1, $2, $3, $4, $5, $6,
+            $7, $8, $9, $10, $11, $12,
+            $13, $14, $15)`,
       params: [
         newId,
         user_c,
@@ -177,10 +167,6 @@ const create = async (req, res) => {
         newTrnNo,
         bommf_cname,
         bommf_prono,
-        bommf_inout,
-        bommf_units,
-        bommf_bmqty,
-        bommf_bmval,
         bommf_frdat,
         bommf_todat,
         bommf_estim,
@@ -193,20 +179,21 @@ const create = async (req, res) => {
     //Insert RM PM details
     for (const det of tmmb_borpm) {
       scripts.push({
-        sql: `INSERT INTO tmmb_borpm(id, borpm_users, borpm_bsins, borpm_bommf, borpm_items, borpm_units,
-        borpm_types, borpm_rmqty, borpm_rmrto, borpm_rmrat, borpm_rmval, borpm_notes,
-        borpm_crusr, borpm_upusr)
+        sql: `INSERT INTO tmmb_borpm(id, borpm_users, borpm_bsins, borpm_bommf, borpm_items, borpm_price,
+                          borpm_units, borpm_itype, borpm_rmqty, borpm_rmrto, borpm_rmrat, borpm_rmval,
+                          borpm_notes, borpm_crusr, borpm_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
-        $13, $14)`,
+        $13, $14, $15)`,
         params: [
           uuidv4(),
           user_c,
           user_b,
           newId,
           det.borpm_items,
+          det.borpm_price,
           det.borpm_units,
-          det.borpm_types,
+          det.borpm_itype,
           det.borpm_rmqty || 0,
           det.borpm_rmrto || 0,
           det.borpm_rmrat || 0,
@@ -221,20 +208,21 @@ const create = async (req, res) => {
     //Insert FOH details
     for (const det of tmmb_bofoh) {
       scripts.push({
-        sql: `INSERT INTO tmmb_bofoh(id, bofoh_users, bofoh_bsins, bofoh_bommf, bofoh_items, bofoh_units, 
-        bofoh_types, bofoh_foqty, bofoh_forto, bofoh_forat, bofoh_foval, bofoh_notes, 
-        bofoh_crusr, bofoh_upusr)
+        sql: `INSERT INTO tmmb_bofoh(id, bofoh_users, bofoh_bsins, bofoh_bommf, bofoh_items, bofoh_price,
+                      bofoh_units, bofoh_itype, bofoh_foqty, bofoh_forto, bofoh_forat, bofoh_foval,
+                      bofoh_notes, bofoh_crusr, bofoh_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
-        $13, $14)`,
+        $13, $14, $15)`,
         params: [
           uuidv4(),
           user_c,
           user_b,
           newId,
           det.bofoh_items,
+          det.bofoh_price,
           det.bofoh_units,
-          det.bofoh_types,
+          det.bofoh_itype,
           det.bofoh_foqty || 0,
           det.bofoh_forto || 0,
           det.bofoh_forat || 0,
@@ -249,25 +237,27 @@ const create = async (req, res) => {
     //Insert SFG/FG details
     for (const det of tmmb_bosfg) {
       scripts.push({
-        sql: `INSERT INTO tmmb_bosfg(id, bosfg_users, bosfg_bsins, bosfg_bommf, bosfg_items, bosfg_units, 
-        bosfg_types, bosfg_group, bosfg_fgqty, bosfg_fgrto, bosfg_fgrat, bosfg_fgval, 
-        bosfg_notes, bosfg_crusr, bosfg_upusr)
+        sql: `INSERT INTO tmmb_bosfg(id, bosfg_users, bosfg_bsins, bosfg_bommf, bosfg_items, bosfg_price,
+                          bosfg_units, bosfg_itype, bosfg_group, bosfg_fgqty, bosfg_fgrto, bosfg_fgrat,
+                          bosfg_fgval, bosfg_rtrto, bosfg_notes, bosfg_crusr, bosfg_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
-        $13, $14, $15)`,
+        $13, $14, $15, $16, $17)`,
         params: [
           uuidv4(),
           user_c,
           user_b,
           newId,
           det.bosfg_items,
+          det.bosfg_price,
           det.bosfg_units,
-          det.bosfg_types,
+          det.bosfg_itype,
           det.bosfg_group,
           det.bosfg_fgqty || 0,
           det.bosfg_fgrto || 0,
           det.bosfg_fgrat || 0,
           det.bosfg_fgval || 0,
+          det.bosfg_rtrto || 0,
           det.bosfg_notes || "",
           user_s,
           user_s,
@@ -462,9 +452,9 @@ router.post("/get-rmpm-by-bom", async (req, res) => {
     }
 
     const sql = `SELECT rpm.*,
-  itm.items_iname, unt.units_cname
+  prc.price_cname, unt.units_cname
   FROM tmmb_borpm rpm
-  JOIN tmib_items itm ON rpm.borpm_items = itm.id
+  JOIN tmib_price prc ON rpm.borpm_price = prc.id
   JOIN tmib_units unt ON rpm.borpm_units = unt.id
   WHERE rpm.borpm_bommf = $1
   AND rpm.borpm_users = $2
@@ -507,9 +497,9 @@ router.post("/get-foh-by-bom", async (req, res) => {
     }
 
     const sql = `SELECT foh.*,
-itm.items_iname, unt.units_cname
+prc.price_cname, unt.units_cname
 FROM tmmb_bofoh foh
-JOIN tmib_items itm ON foh.bofoh_items = itm.id
+JOIN tmib_price prc ON foh.bofoh_price = prc.id
 JOIN tmib_units unt ON foh.bofoh_units = unt.id
   WHERE foh.bofoh_bommf = $1
   AND foh.bofoh_users = $2
@@ -552,9 +542,9 @@ router.post("/get-sfg-by-bom", async (req, res) => {
     }
 
     const sql = `SELECT sfg.*,
-itm.items_iname, unt.units_cname
+prc.price_cname, unt.units_cname
 FROM tmmb_bosfg sfg
-JOIN tmib_items itm ON sfg.bosfg_items = itm.id
+JOIN tmib_price prc ON sfg.bosfg_price = prc.id
 JOIN tmib_units unt ON sfg.bosfg_units = unt.id
   WHERE sfg.bosfg_bommf = $1
   AND sfg.bosfg_users = $2
@@ -596,7 +586,7 @@ router.post("/get-by-department", async (req, res) => {
       });
     }
 
-    const sql = `
+    const sql1 = `
       SELECT bm.*, unt.units_cname, 0 AS edit_stop
       FROM tmmb_bommf bm
       JOIN tmib_units unt ON bm.bommf_units = unt.id
@@ -604,6 +594,12 @@ router.post("/get-by-department", async (req, res) => {
       AND bm.bommf_dpart = $2
       AND bm.bommf_actve = TRUE
       ORDER BY bm.bommf_cname ASC`;
+    const sql = `SELECT bmf.*, 0 AS edit_stop
+      FROM tmmb_bommf bmf
+      WHERE bmf.bommf_actve = TRUE
+      AND bmf.bommf_users = $1
+      AND bmf.bommf_dpart = $2
+      ORDER BY bmf.bommf_cname`;
 
     const rows = await dbGetAll(
       sql,
@@ -640,18 +636,17 @@ router.post("/get-rmpm-by-bom-fr-process", async (req, res) => {
         data: [],
       });
     }
-    const sql = `SELECT '' AS id, rpm.borpm_users AS prrpm_users, rpm.borpm_bsins AS prrpm_bsins, '' AS prrpm_promf,
-rpm.id AS prrpm_borpm, rpm.borpm_items AS prrpm_items, rpm.borpm_units AS prrpm_units,
-rpm.borpm_types AS prrpm_types, rpm.borpm_rmqty AS prrpm_rmqty, rpm.borpm_rmrto AS prrpm_rmrto,
-rpm.borpm_rmrat AS prrpm_rmrat, rpm.borpm_rmval AS prrpm_rmval, rpm.borpm_rmqty AS prrpm_prqty,
-rpm.borpm_rmrto AS prrpm_prrto, rpm.borpm_rmrat AS prrpm_prrat, rpm.borpm_rmval AS prrpm_prval,
-false AS prrpm_ispst, '' AS prrpm_dpart, '' AS prrpm_notes, itm.items_iname, unt.units_cname
-FROM tmmb_borpm rpm
-JOIN tmib_items itm ON rpm.borpm_items = itm.id
-JOIN tmib_units unt ON rpm.borpm_units = unt.id
-WHERE rpm.borpm_bommf = $1
-AND rpm.borpm_users = $2
-ORDER BY rpm.borpm_items ASC`;
+    const sql = `SELECT rpm.id prrpm_borpm, rpm.borpm_items prrpm_items, rpm.borpm_price prrpm_price,
+      rpm.borpm_units prrpm_units, rpm.borpm_itype prrpm_itype, rpm.borpm_rmqty prrpm_boqty,
+      rpm.borpm_rmrat prrpm_borat, rpm.borpm_rmqty prrpm_rmqty, rpm.borpm_rmrat prrpm_rmrat,
+      rpm.borpm_rmval prrpm_rmval, '' prrpm_notes, '' prrpm_stock,
+      '' prrpm_jrnlm, prc.price_cname, unt.units_cname, TRUE prrpm_actve
+      FROM tmmb_borpm rpm
+      JOIN tmib_price prc ON rpm.borpm_price = prc.id
+      JOIN tmib_units unt ON rpm.borpm_units = unt.id
+      WHERE rpm.borpm_bommf = $1
+      AND rpm.borpm_users = $2
+      ORDER BY rpm.borpm_items ASC`;
 
     const rows = await dbGetAll(
       sql,
@@ -688,14 +683,13 @@ router.post("/get-foh-by-bom-fr-process", async (req, res) => {
         data: [],
       });
     }
-    const sql = `SELECT '' AS id,foh.bofoh_users AS prfoh_users, foh.bofoh_bsins AS prfoh_bsins, '' AS prfoh_promf,
-foh.id AS prfoh_bofoh, foh.bofoh_items AS prfoh_items, foh.bofoh_units AS prfoh_units,
-foh.bofoh_types AS prfoh_types, foh.bofoh_foqty AS prfoh_foqty, foh.bofoh_forto AS prfoh_forto,
-foh.bofoh_forat AS prfoh_forat, foh.bofoh_foval AS prfoh_foval, foh.bofoh_foqty AS prfoh_prqty, 
-foh.bofoh_forto AS prfoh_prrto, foh.bofoh_forat AS prfoh_prrat, foh.bofoh_foval AS prfoh_prval,
-false AS prfoh_ispst, '' AS prfoh_dpart,'' AS prfoh_notes, itm.items_iname, unt.units_cname
-FROM tmmb_bofoh foh
-JOIN tmib_items itm ON foh.bofoh_items = itm.id
+    const sql = `SELECT foh.id prfoh_bofoh, foh.bofoh_items prfoh_items, foh.bofoh_price prfoh_price,
+foh.bofoh_units prfoh_units, foh.bofoh_itype prfoh_itype, foh.bofoh_foqty prfoh_boqty,
+foh.bofoh_forat prfoh_borat, foh.bofoh_foqty prfoh_foqty, foh.bofoh_forat prfoh_forat,
+foh.bofoh_foval prfoh_foval, '' prfoh_notes, '' prfoh_stock,
+'' prfoh_jrnlm, prc.price_cname, unt.units_cname, TRUE prfoh_actve
+from tmmb_bofoh foh
+JOIN tmib_price prc ON foh.bofoh_price = prc.id
 JOIN tmib_units unt ON foh.bofoh_units = unt.id
 WHERE foh.bofoh_bommf = $1
 AND foh.bofoh_users = $2
@@ -736,14 +730,14 @@ router.post("/get-sfg-by-bom-fr-process", async (req, res) => {
         data: [],
       });
     }
-    const sql = `SELECT '' AS id, sfg.bosfg_users AS prsfg_users, sfg.bosfg_bsins AS prsfg_bsins, '' AS prsfg_promf,
-sfg.id AS prsfg_bosfg, sfg.bosfg_items AS prsfg_items, sfg.bosfg_units AS prsfg_units,
-sfg.bosfg_types AS prsfg_types, sfg.bosfg_group AS prsfg_group, sfg.bosfg_fgqty AS prsfg_fgqty,
-sfg.bosfg_fgrto AS prsfg_fgrto, sfg.bosfg_fgrat AS prsfg_fgrat, sfg.bosfg_fgval AS prsfg_fgval,
-sfg.bosfg_fgqty AS prsfg_prqty, sfg.bosfg_fgrto AS prsfg_prrto, sfg.bosfg_fgrat AS prsfg_prrat,
-sfg.bosfg_fgval AS prsfg_prval, 'false' AS prsfg_ispst, '' AS prsfg_dpart, '' AS prsfg_notes, itm.items_iname, unt.units_cname
+    const sql = `SELECT sfg.id prsfg_bosfg, sfg.bosfg_items prsfg_items, sfg.bosfg_price prsfg_price,
+sfg.bosfg_units prsfg_units, sfg.bosfg_itype prsfg_itype, sfg.bosfg_group prsfg_group,
+sfg.bosfg_fgqty prsfg_boqty, sfg.bosfg_fgrat prsfg_borat, sfg.bosfg_rtrto prsfg_rtrto,
+sfg.bosfg_fgqty prsfg_fgqty, sfg.bosfg_fgrat prsfg_fgrat, sfg.bosfg_fgval prsfg_fgval, '' prsfg_notes,
+'' prsfg_stock, ''  prsfg_jrnlm, '' prsfg_refid,
+prc.price_cname, unt.units_cname, TRUE prsfg_actve
 FROM tmmb_bosfg sfg
-JOIN tmib_items itm ON sfg.bosfg_items = itm.id
+JOIN tmib_price prc ON sfg.bosfg_price = prc.id
 JOIN tmib_units unt ON sfg.bosfg_units = unt.id
 WHERE sfg.bosfg_bommf = $1
 AND sfg.bosfg_users = $2

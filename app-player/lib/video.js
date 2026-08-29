@@ -16,6 +16,14 @@ function serveVideo(filePath, req, res) {
             const [a, b] = req.headers.range.replace("bytes=", "").split("-");
             const start = +a;
             const end = b ? +b : s.size - 1;
+
+            if (start >= s.size || end < 0) {
+                res.writeHead(416, {
+                    "Content-Range": `bytes */${s.size}`
+                });
+                return res.end();
+            }
+
             res.writeHead(206, {
                 "Content-Range": `bytes ${start}-${end}/${s.size}`,
                 "Accept-Ranges": "bytes",

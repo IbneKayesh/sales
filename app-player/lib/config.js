@@ -5,7 +5,7 @@ const PORT = 3000;
 
 const VIDEO_EXTS = new Set([
     ".mp4", ".webm", ".ogg", ".ogv", ".mov", ".avi",
-    ".mkv", ".m4v", ".flv", ".wmv",
+    ".mkv", ".m4v", ".flv", ".wmv", ".ts",
 ]);
 
 const MIME = {
@@ -23,6 +23,7 @@ const MIME = {
     ".m4v": "video/x-m4v",
     ".flv": "video/x-flv",
     ".wmv": "video/x-ms-wmv",
+    ".ts": "video/mp2t",
 };
 
 function loadConfig() {

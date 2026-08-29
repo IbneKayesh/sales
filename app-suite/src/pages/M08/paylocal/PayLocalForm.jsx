@@ -52,11 +52,11 @@ const PayLocalForm = ({
         </div>
         <div className="col-span-6">
           <Dropdown
-            label="Ledger"
+            label="Sub-Ledger"
             options={party_Options}
-            value={formData.party_id}
-            onChange={(e) => onChange("party_id", e.target.value)}
-            error={formErrors.party_id}
+            value={formData.party_id_pay}
+            onChange={(e) => onChange("party_id_pay", e.target.value)}
+            error={formErrors.party_id_pay}
             required
             placeholder="Select..."
             disabled={readOnly}
@@ -76,7 +76,7 @@ const PayLocalForm = ({
             onChange={(e) => onChange("pay_value", e.target.value)}
             error={formErrors.pay_value}
             step="0.01"
-            disabled={readOnly}
+            disabled={readOnly || true}
           />
         </div>
       </div>

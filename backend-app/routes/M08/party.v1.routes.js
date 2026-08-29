@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT prty.*, cht.chtac_cname, cht.chtac_ctype,
+    const sql = `SELECT prty.*, cht.chtac_cname, cht.chtac_ctype, cht.chtac_chtno,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmtb_party prty
     JOIN tmtb_chtac cht ON prty.party_chtac = cht.id

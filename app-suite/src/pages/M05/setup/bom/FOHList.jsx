@@ -3,8 +3,8 @@ import ActionButton from "@/components/ActionButton";
 
 const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "bofoh_types", header: "Type", width: "80px" },
-    { key: "items_iname", header: "Item", width: "200px" },
+    { key: "bofoh_itype", header: "Type", width: "80px" },
+    { key: "price_cname", header: "Item", width: "200px" },
     {
       key: "bofoh_foqty",
       header: "Quantity",
@@ -51,7 +51,7 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
         exportable={false}
         exportFilename="data-export.csv"
         onRowClick={(row) => onEdit(row)}
-        emptyMessage="No factory overhead found"
+        emptyMessage="No data found"
         className="mt-2"
       />
     </>

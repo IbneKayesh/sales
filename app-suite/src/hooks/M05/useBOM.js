@@ -14,6 +14,8 @@ import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { productionAPI } from "@/api/M05/productionAPI.js";
 import { unitsAPI } from "@/api/M04/unitsAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
+import { validNumber } from "@/utils/misc.js";
+import { generateGuid } from "@/utils/guid.js";
 
 const useBOM = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -73,7 +75,7 @@ const useBOM = () => {
       return;
     }
     try {
-      const resp = await departmentAPI.getAllActive({});
+      const resp = await departmentAPI.getProduction({});
       const list = resp.data || [];
       setDpart_Options(list);
     } catch (error) {}
@@ -101,11 +103,11 @@ const useBOM = () => {
     } catch (error) {}
   };
 
-  const getAllItems = async () => {
+  const getItemsByType = async (id) => {
     try {
-      const resp = await itemsAPI.getAllActive();
+      const resp = await itemsAPI.getByType({ items_itype: id });
       const list = resp.data || [];
-      setItems_store_Options(list);
+      setItems_Options(list);
     } catch (error) {}
   };
 
@@ -228,7 +230,7 @@ const useBOM = () => {
     getAllDepartments();
     getAllProductions();
     getAllUnits();
-    getAllItems();
+    //getAllItems();
   };
 
   const handleCancel = () => {
@@ -290,15 +292,25 @@ const useBOM = () => {
 
   // ---------- RM / PM ----------
 
-  const handleChangeRMPM = (f, v) => {
+  const handleChangeRMPM = async (f, v) => {
     setFormDataRMPM((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formDataRMPM, [f]: v }, tmmb_borpm);
     setFormErrors(newErrors);
-    if (f === "borpm_types") {
-      const current_items = items_store_Options.filter(
-        (item) => item.items_itype === v,
-      );
-      setItems_Options(current_items);
+    if (f === "borpm_itype") {
+      await getItemsByType(v);
+    }
+    if (f === "borpm_price") {
+      const price_id = items_Options.find((opt) => opt.price_id === v);
+      //console.log(price_id);
+      setFormDataRMPM((prev) => ({
+        ...prev,
+        borpm_items: price_id?.items_id,
+        borpm_price: price_id?.price_id,
+        borpm_units: price_id?.items_runit,
+        runit_uname: price_id?.runit_uname,
+        price_id: v,
+        price_cname: price_id?.price_cname,
+      }));
     }
   };
 
@@ -309,19 +321,19 @@ const useBOM = () => {
       return;
     }
     if (
-      ["", 0, "0", null, undefined].includes(formDataRMPM.borpm_rmqty) &&
-      ["", 0, "0", null, undefined].includes(formDataRMPM.borpm_rmrto)
+      validNumber(formDataRMPM.borpm_rmqty) < 0.1 &&
+      validNumber(formDataRMPM.borpm_rmrto) < 0.1
     ) {
       showToast("Qty or Ratio both are Empty", { type: "warning" });
       return;
     }
-    const items_iname = items_Options.find(
-      (opt) => opt.id === formDataRMPM.borpm_items,
-    );
+    // const price_cname = items_Options.find(
+    //   (opt) => opt.id === formDataRMPM.borpm_price,
+    // );
 
-    const units_cname = units_Options.find(
-      (opt) => opt.id === formDataRMPM.borpm_units,
-    );
+    // const units_cname = units_Options.find(
+    //   (opt) => opt.id === formDataRMPM.borpm_units,
+    // );
 
     const borpm_rmval =
       (Number(formDataRMPM.borpm_rmqty) || 0) *
@@ -331,9 +343,11 @@ const useBOM = () => {
       ...prev,
       {
         ...formDataRMPM,
+        id: generateGuid(),
+        borpm_rmrto: formDataRMPM.borpm_rmrto || 0,
         borpm_rmval: borpm_rmval || 0,
-        items_iname: items_iname?.items_iname || "Invalid Item",
-        units_cname: units_cname?.units_cname || "Invalid Unit",
+        // price_cname: price_cname?.price_cname || "Invalid Item",
+        // units_cname: units_cname?.units_cname || "Invalid Unit",
         borpm_actve: true,
       },
     ]);
@@ -347,7 +361,7 @@ const useBOM = () => {
   };
 
   const handleDeleteRMPM = async (rowData) => {
-    const dataName = rowData.items_iname;
+    const dataName = rowData.price_cname;
     const confirmation = await confirmBox({
       title: "Remove",
       message: `Are you sure you want to remove "${dataName}"?`,
@@ -363,15 +377,25 @@ const useBOM = () => {
 
   // ---------- FACTORY OVERHEAD ----------
 
-  const handleChangeFOH = (f, v) => {
+  const handleChangeFOH = async (f, v) => {
     setFormDataFOH((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formDataFOH, [f]: v }, tmmb_bofoh);
     setFormErrors(newErrors);
-    if (f === "bofoh_types") {
-      const current_items = items_store_Options.filter(
-        (item) => item.items_itype === v,
-      );
-      setItems_Options(current_items);
+    if (f === "bofoh_itype") {
+      await getItemsByType(v);
+    }
+    if (f === "bofoh_price") {
+      const price_id = items_Options.find((opt) => opt.price_id === v);
+      //console.log(price_id);
+      setFormDataFOH((prev) => ({
+        ...prev,
+        bofoh_items: price_id?.items_id,
+        bofoh_price: price_id?.price_id,
+        bofoh_units: price_id?.items_runit,
+        runit_uname: price_id?.runit_uname,
+        price_id: v,
+        price_cname: price_id?.price_cname,
+      }));
     }
   };
 
@@ -382,19 +406,19 @@ const useBOM = () => {
       return;
     }
     if (
-      ["", 0, "0", null, undefined].includes(formDataFOH.bofoh_foqty) &&
-      ["", 0, "0", null, undefined].includes(formDataFOH.bofoh_forto)
+      validNumber(formDataFOH.bofoh_foqty) < 0.1 &&
+      validNumber(formDataFOH.bofoh_forto) < 0.1
     ) {
       showToast("Qty or Ratio both are Empty", { type: "warning" });
       return;
     }
-    const items_iname = items_store_Options.find(
-      (opt) => opt.id === formDataFOH.bofoh_items,
-    );
+    // const items_iname = items_store_Options.find(
+    //   (opt) => opt.id === formDataFOH.bofoh_items,
+    // );
 
-    const units_cname = units_Options.find(
-      (opt) => opt.id === formDataFOH.bofoh_units,
-    );
+    // const units_cname = units_Options.find(
+    //   (opt) => opt.id === formDataFOH.bofoh_units,
+    // );
 
     const bofoh_foval =
       (Number(formDataFOH.bofoh_foqty) || 0) *
@@ -404,9 +428,11 @@ const useBOM = () => {
       ...prev,
       {
         ...formDataFOH,
+        id: generateGuid(),
+        bofoh_forto: formDataRMPM.bofoh_forto || 0,
         bofoh_foval: bofoh_foval || 0,
-        items_iname: items_iname?.items_iname || "Invalid Item",
-        units_cname: units_cname?.units_cname || "Invalid Unit",
+        // items_iname: items_iname?.items_iname || "Invalid Item",
+        // units_cname: units_cname?.units_cname || "Invalid Unit",
         bofoh_actve: true,
       },
     ]);
@@ -420,7 +446,7 @@ const useBOM = () => {
   };
 
   const handleDeleteFOH = async (rowData) => {
-    const dataName = rowData.items_iname;
+    const dataName = rowData.price_cname;
     const confirmation = await confirmBox({
       title: "Remove",
       message: `Are you sure you want to remove "${dataName}"?`,
@@ -436,15 +462,25 @@ const useBOM = () => {
 
   // ---------- SFG /FG ----------
 
-  const handleChangeSFG = (f, v) => {
+  const handleChangeSFG = async (f, v) => {
     setFormDataSFGFG((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formDataSFGFG, [f]: v }, tmmb_bosfg);
     setFormErrors(newErrors);
-    if (f === "bosfg_types") {
-      const current_items = items_store_Options.filter(
-        (item) => item.items_itype === v,
-      );
-      setItems_Options(current_items);
+    if (f === "bosfg_itype") {
+      await getItemsByType(v);
+    }
+    if (f === "bosfg_price") {
+      const price_id = items_Options.find((opt) => opt.price_id === v);
+      //console.log(price_id);
+      setFormDataSFGFG((prev) => ({
+        ...prev,
+        bosfg_items: price_id?.items_id,
+        bosfg_price: price_id?.price_id,
+        bosfg_units: price_id?.items_runit,
+        runit_uname: price_id?.runit_uname,
+        price_id: v,
+        price_cname: price_id?.price_cname,
+      }));
     }
   };
 
@@ -455,31 +491,34 @@ const useBOM = () => {
       return;
     }
     if (
-      ["", 0, "0", null, undefined].includes(formDataSFGFG.bosfg_fgqty) &&
-      ["", 0, "0", null, undefined].includes(formDataSFGFG.bosfg_fgrto)
+      validNumber(formDataSFGFG.bosfg_fgqty) < 0.1 &&
+      validNumber(formDataSFGFG.bosfg_fgrto) < 0.1
     ) {
       showToast("Qty or Ratio both are Empty", { type: "warning" });
       return;
     }
-    const items_iname = items_store_Options.find(
-      (opt) => opt.id === formDataSFGFG.bosfg_items,
-    );
+    // const items_iname = items_store_Options.find(
+    //   (opt) => opt.id === formDataSFGFG.bosfg_items,
+    // );
 
-    const units_cname = units_Options.find(
-      (opt) => opt.id === formDataSFGFG.bosfg_units,
-    );
+    // const units_cname = units_Options.find(
+    //   (opt) => opt.id === formDataSFGFG.bosfg_units,
+    // );
 
     const bosfg_fgval =
-      (Number(formDataSFGFG.bosfg_fgqty) || 0) *
-      (Number(formDataSFGFG.bosfg_fgrat) || 0);
+      validNumber(formDataSFGFG.bosfg_fgqty) *
+      validNumber(formDataSFGFG.bosfg_fgrat);
 
     setListDataSFGFG((prev) => [
       ...prev,
       {
         ...formDataSFGFG,
+
+        id: generateGuid(),
+        bosfg_fgrto: formDataRMPM.bosfg_fgrto || 0,
         bosfg_fgval: bosfg_fgval || 0,
-        items_iname: items_iname?.items_iname || "Invalid Item",
-        units_cname: units_cname?.units_cname || "Invalid Unit",
+        // items_iname: items_iname?.items_iname || "Invalid Item",
+        // units_cname: units_cname?.units_cname || "Invalid Unit",
         bosfg_actve: true,
       },
     ]);
@@ -493,7 +532,7 @@ const useBOM = () => {
   };
 
   const handleDeleteSFG = async (rowData) => {
-    const dataName = rowData.items_iname;
+    const dataName = rowData.price_cname;
     const confirmation = await confirmBox({
       title: "Remove",
       message: `Are you sure you want to remove "${dataName}"?`,

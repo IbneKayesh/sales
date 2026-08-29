@@ -62,6 +62,15 @@ export const appModules = [
             link: "/bsuite/theme",
             desc: "Application preferences and theme color",
           },
+          {
+            id: "M01-G01-M004",
+            name: "Features",
+            color: "#7c3aed",
+            icon: "Palette",
+            order: 2,
+            link: "/bsuite/features",
+            desc: "Application feature list",
+          },
         ],
       },
       {
@@ -114,12 +123,12 @@ export const appModules = [
         menus: [
           {
             id: "M02-G01-M001",
-            name: "Purchase Bunldes",
+            name: "Purchase Bundles",
             color: "#06b6d4",
             icon: "Truck",
             order: 1,
-            link: "/purchase/setup/suppliers",
-            desc: "Manage vendor and supplier profiles",
+            link: "/purchase/setup/purchase-bundles",
+            desc: "Manage bundle purchase",
           },
         ],
       },
@@ -164,12 +173,12 @@ export const appModules = [
         menus: [
           {
             id: "M03-G01-M001",
-            name: "Sales Targets",
+            name: "Sales Bundles",
             color: "#eab308",
             icon: "Target",
             order: 1,
-            link: "/sales/setup/targets",
-            desc: "Set revenue and volume targets",
+            link: "/sales/setup/sales-bundles",
+            desc: "Manage bundle sales",
           },
         ],
       },

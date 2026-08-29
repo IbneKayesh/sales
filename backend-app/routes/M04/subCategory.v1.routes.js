@@ -60,11 +60,12 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT sctg.*, 0 as edit_stop
+    const sql = `SELECT sctg.*, mctg.mcatg_cname, 0 as edit_stop
     FROM tmib_scatg sctg
+    LEFT JOIN tmib_mcatg mctg ON sctg.scatg_mcatg = mctg.id
     WHERE sctg.scatg_users = $1
     AND sctg.scatg_actve = TRUE
-    ORDER BY sctg.scatg_cname ASC`;
+    ORDER BY sctg.scatg_mcatg, sctg.scatg_cname ASC`;
 
     const params = [user_c];
     const rows = await dbGetAll(sql, params, `get sub catgeory- ${user_c}`);

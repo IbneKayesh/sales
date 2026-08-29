@@ -83,7 +83,7 @@
   "items_itype": {
     "type": "string",
     "label": "Item Type",
-    "default": "FG",
+    "default": "",
     "maxLength": 5,
     "placeholder": "Select item type",
     "required": true

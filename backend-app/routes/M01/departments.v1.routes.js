@@ -403,4 +403,43 @@ router.post("/get-journal", async (req, res) => {
   }
 });
 
+// get-production
+router.post("/get-production", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT dprt.*, 0 as edit_stop
+    FROM tmsb_dpart dprt
+    WHERE dprt.dpart_users = $1
+    AND dprt.dpart_stpro = FALSE
+    AND dprt.dpart_actve = TRUE
+    ORDER BY dprt.dpart_cname ASC`;
+
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get Department- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 module.exports = router;

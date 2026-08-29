@@ -702,9 +702,8 @@ const useMRR = () => {
         tmpb_mrrpy: listDataPayment,
       };
 
-      console.log(reqBody);
+      //console.log(reqBody);
       //return;
-      return;
       setIsBusy(true);
       const resp = await mrrAPI.upsert(reqBody);
       alertBox({

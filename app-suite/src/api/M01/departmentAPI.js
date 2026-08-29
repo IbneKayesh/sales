@@ -38,4 +38,8 @@ export const departmentAPI = {
     apiRequest("/M01/v1/departments/get-journal", {
       body: data,
     }),
+  getProduction: (data) =>
+    apiRequest("/M01/v1/departments/get-production", {
+      body: data,
+    }),
 };

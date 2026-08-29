@@ -60,8 +60,9 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT sgrp.*, 0 as edit_stop
+    const sql = `SELECT sgrp.*, mgrp.mgrup_cname, 0 as edit_stop
     FROM tmib_sgrup sgrp
+    LEFT JOIN tmib_mgrup mgrp ON sgrp.sgrup_mgrup = mgrp.id
     WHERE sgrp.sgrup_users = $1
     AND sgrp.sgrup_actve = TRUE
     ORDER BY sgrp.sgrup_cname ASC`;

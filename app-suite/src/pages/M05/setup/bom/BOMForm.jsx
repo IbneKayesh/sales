@@ -5,7 +5,6 @@ import InputNumber from "@/components/InputNumber";
 import InputCalendar from "@/components/InputCalendar";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
-import { inout_Options } from "@/utils/vtable.js";
 
 const BOMForm = ({
   isBusy,
@@ -18,7 +17,6 @@ const BOMForm = ({
   onSubmit,
   dpart_Options,
   prods_Options,
-  units_Options,
 }) => {
   return (
     <div className="form-wrap">
@@ -51,7 +49,7 @@ const BOMForm = ({
             optionLabel="prods_cname"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-6">
           <InputText
             label="Process Name"
             placeholder="Enter process name"
@@ -62,7 +60,7 @@ const BOMForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Process No"
             placeholder="Enter Process No"
@@ -76,61 +74,7 @@ const BOMForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
-          <Dropdown
-            label="Input/Output"
-            options={inout_Options}
-            value={formData.bommf_inout}
-            onChange={(e) => onChange("bommf_inout", e.target.value)}
-            error={formErrors.bommf_inout}
-            required
-            placeholder="Select..."
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <Dropdown
-            label="Unit"
-            options={units_Options}
-            value={formData.bommf_units}
-            onChange={(e) => onChange("bommf_units", e.target.value)}
-            error={formErrors.bommf_units}
-            required
-            placeholder="Select..."
-            disabled={readOnly}
-            optionValue="id"
-            optionLabel="units_cname"
-          />
-        </div>
-        <div className="col-span-3">
-          <InputNumber
-            label="Qty"
-            placeholder="Enter Qty"
-            value={formData.bommf_bmqty}
-            onChange={(e) => onChange("bommf_bmqty", e.target.value)}
-            min={1}
-            max={50}
-            step={1}
-            error={formErrors.bommf_bmqty}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
-          <InputNumber
-            label="Value"
-            placeholder="Enter Value"
-            value={formData.bommf_bmval}
-            onChange={(e) => onChange("bommf_bmval", e.target.value)}
-            min={1}
-            max={50}
-            step={1}
-            error={formErrors.bommf_bmval}
-            required
-            disabled={readOnly}
-          />
-        </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputCalendar
             label="From Date"
             value={formData.bommf_frdat}
@@ -141,7 +85,7 @@ const BOMForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputCalendar
             label="To Date"
             value={formData.bommf_todat}
@@ -152,7 +96,7 @@ const BOMForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Est Minute"
             placeholder="Enter Minute"
@@ -166,7 +110,7 @@ const BOMForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-4">
           <InputText
             label="Note"
             placeholder="Enter note"

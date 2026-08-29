@@ -52,7 +52,7 @@ const PayablesForm = ({
         </div>
         <div className="col-span-6">
           <Dropdown
-            label="Ledger"
+            label="Sub-Ledger"
             options={party_Options}
             value={formData.mrrpy_party}
             onChange={(e) => onChange("mrrpy_party", e.target.value)}

@@ -16,22 +16,32 @@ import {
 const ProductionList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "prods_ccode", header: "Code", width: "180px" },
-    { key: "prods_cname", header: "Name", width: "180px" },
-    { key: "prods_prono", header: "No of Process", width: "180px" },
-    { key: "bommf_count", header: "No of BOM", width: "80px" },
     {
-      key: "prods_actve",
-      header: "Status",
-      width: "120px",
-      body: (v) => {
+      key: "prods_cname",
+      header: "Name",
+      width: "80px",
+      body: (_, row) => {
         return (
-          <Badge variant={v ? "success" : "danger"}>
-            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
-          </Badge>
+          <span className={`${!row.prods_actve && "text-red-500"}`}>
+            {row.prods_cname}
+          </span>
         );
       },
     },
+    { key: "bommf_count", header: "No of BOM", width: "80px" },
+    // {
+    //   key: "prods_actve",
+    //   header: "Status",
+    //   width: "120px",
+    //   body: (v) => {
+    //     return (
+    //       <Badge variant={v ? "success" : "danger"}>
+    //         {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+    //         {v ? "Active" : "Inactive"}
+    //       </Badge>
+    //     );
+    //   },
+    // },
     {
       key: "actions",
       header: "Actions",

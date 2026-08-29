@@ -5,7 +5,8 @@ import { IconClose, IconCheck } from "@/icons";
 
 const PartyList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
-    { key: "party_ptype", header: "Party Type", width: "80px" },
+    { key: "party_ptype", header: "Category", width: "80px" },
+    { key: "chtac_ctype", header: "Ledger Type", width: "80px" },
     { key: "chtac_cname", header: "Ledger", width: "80px" },
     {
       key: "party_cname",
@@ -19,6 +20,7 @@ const PartyList = ({ listData, onEdit, onDelete }) => {
         );
       },
     },
+    { key: "chtac_chtno", header: "COA No", width: "80px" },
     { key: "vndor_cname", header: "Vendor Name", width: "220px" },
     { key: "party_opbal", header: "Opening", width: "80px" },
     { key: "party_crbal", header: "Balance", width: "80px" },
@@ -49,6 +51,8 @@ const PartyList = ({ listData, onEdit, onDelete }) => {
     },
   ];
   return (
+    <>
+    {/* {JSON.stringify(listData[0])} */}
     <DataTable
       columns={dtColumns}
       data={listData}
@@ -60,8 +64,8 @@ const PartyList = ({ listData, onEdit, onDelete }) => {
       exportable
       exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No parties found"
-    />
+      emptyMessage="No data found"
+    /></>
   );
 };
 export default PartyList;

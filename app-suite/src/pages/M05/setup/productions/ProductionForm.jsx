@@ -39,20 +39,6 @@ const ProductionForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-6">
-          <InputNumber
-            label="No of Process"
-            placeholder="Enter No of Process"
-            value={formData.prods_prono}
-            onChange={(e) => onChange("prods_prono", e.target.value)}
-            min={1}
-            max={50}
-            step={1}
-            error={formErrors.prods_prono}
-            required
-            disabled={readOnly}
-          />
-        </div>
       </div>
       {formData?.id && (
         <AuditData

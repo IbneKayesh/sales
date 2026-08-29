@@ -52,7 +52,7 @@ const ReceivablesForm = ({
         </div>
         <div className="col-span-6">
           <Dropdown
-            label="Ledger"
+            label="Sub-Ledger"
             options={party_Options}
             value={formData.invpy_party}
             onChange={(e) => onChange("invpy_party", e.target.value)}
@@ -62,6 +62,7 @@ const ReceivablesForm = ({
             disabled={readOnly}
             optionValue="id"
             optionLabel="party_cname"
+            optionGrid="party_cname:Name,chtac_chtno:COA,party_crbal:Balance"
           />
         </div>
         <div className="col-span-3">

@@ -66,12 +66,13 @@ const usePayLocal = () => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, local_pay);
     setFormErrors(newErrors);
-    if (f === "party_id") {
+     //party_id, chtac_id are used for vendor
+    if (f === "party_id_pay") {
       const party_id = party_Options.find((opt) => opt.id === v);
       //console.log(party_id);
+      //party_id_pay, chtac_id_pay, for payment
       const newformData = {
         ...formData,
-        party_id: v,
         party_id_pay: party_id?.id,
         chtac_id_pay: party_id?.party_chtac,
         pay_value: formData.due_value,

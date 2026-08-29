@@ -27,12 +27,48 @@ const inout_Options = [
 
 //COA
 const itype_Options = [
-  { label: "Raw Material (RM)", value: "RM" },
-  { label: "Packing Material (PM)", value: "PM" },
-  { label: "Work In Process (WIP)", value: "WIP" },
-  { label: "Finished Goods (FG)", value: "FG" },
-  { label: "Factory Overhead (FOH)", value: "FOH" },
-  { label: "Service (SVC)", value: "SVC" },
+  {
+    label: "Raw Material (RM)",
+    value: "RM",
+    input: true,
+    output: false,
+    nostock: false,
+  },
+  {
+    label: "Packing Material (PM)",
+    value: "PM",
+    input: true,
+    output: false,
+    nostock: false,
+  },
+  {
+    label: "Work In Process (WIP)",
+    value: "WIP",
+    input: true,
+    output: true,
+    nostock: false,
+  },
+  {
+    label: "Finished Goods (FG)",
+    value: "FG",
+    input: true,
+    output: true,
+    nostock: false,
+  },
+  {
+    label: "Factory Overhead (FOH)",
+    value: "FOH",
+    input: true,
+    output: false,
+    nostock: true,
+  },
+  {
+    label: "Service (SVC)",
+    value: "SVC",
+    input: true,
+    output: false,
+    nostock: true,
+  },
 ];
 
 const bool_Options = [

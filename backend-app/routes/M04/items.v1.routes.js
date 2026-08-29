@@ -753,4 +753,52 @@ ORDER BY prc.price_gdstk DESC, prc.price_bdstk DESC, itm.items_iname`;
   }
 });
 
+
+// bom-items-get-by-type
+router.post("/bom-items-get-by-type", async (req, res) => {
+  try {
+    const { items_itype, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT prc.id price_id, prc.price_cname, prc.price_lprat, prc.price_mrrat,
+itm.id items_id, itm.items_icode, itm.items_runit, itm.items_itype,
+runit.units_cname as runit_uname
+FROM tmib_price prc
+JOIN tmib_items itm ON prc.price_items = itm.id
+                  AND prc.price_users = itm.items_users
+                  AND prc.price_bsins = itm.items_bsins
+JOIN tmib_units runit ON itm.items_runit = runit.id
+WHERE prc.price_actve = TRUE
+AND itm.items_itype = $1
+AND prc.price_users = $2
+AND prc.price_bsins = $3
+AND itm.items_actve = TRUE
+ORDER BY prc.price_cname`;
+
+    const params = [items_itype, user_c, user_b];
+    const rows = await dbGetAll(sql, params, `get for bom items - ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 module.exports = router;

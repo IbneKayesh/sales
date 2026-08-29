@@ -2,7 +2,9 @@ import Button from "@/components/Button";
 import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
+import InputLabel from "@/components/InputLabel";
 import { IconPlus } from "@/icons";
+import { itype_Options } from "@/utils/vtable.js";
 
 const group_Options = [
   { label: "Main", value: "MAIN" },
@@ -19,12 +21,11 @@ const SFGForm = ({
   onChange,
   onAddToList,
   items_Options,
-  units_Options,
 }) => {
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-4">
+        <div className="col-span-3">
           <Dropdown
             label="Group"
             options={group_Options}
@@ -36,36 +37,34 @@ const SFGForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <Dropdown
             label="Type"
-            options={[
-              { label: "FG", value: "FG" },
-              { label: "Semi-FG", value: "SFG" },
-            ]}
-            value={formData.bosfg_types}
-            onChange={(e) => onChange("bosfg_types", e.target.value)}
-            error={formErrors.bosfg_types}
+            options={itype_Options.filter((x) => x.output)}
+            value={formData.bosfg_itype}
+            onChange={(e) => onChange("bosfg_itype", e.target.value)}
+            error={formErrors.bosfg_itype}
             required
             placeholder="Select..."
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-6">
           <Dropdown
             label="Item"
             options={items_Options}
-            value={formData.bosfg_items}
-            onChange={(e) => onChange("bosfg_items", e.target.value)}
-            error={formErrors.bosfg_items}
+            value={formData.bosfg_price}
+            onChange={(e) => onChange("bosfg_price", e.target.value)}
+            error={formErrors.bosfg_price}
             required
             placeholder="Select..."
             disabled={readOnly}
-            optionValue="id"
-            optionLabel="items_iname"
+            optionValue="price_id"
+            optionLabel="price_cname"
+            optionGrid="price_cname:Name,runit_uname:Unit,items_itype:Type,price_mrrat:MRP,items_icode:Code"
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputNumber
             label="Quantity"
             placeholder="Enter qty"
@@ -76,7 +75,7 @@ const SFGForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-2">
           <InputNumber
             label="Ratio"
             placeholder="Enter ratio"
@@ -84,10 +83,10 @@ const SFGForm = ({
             onChange={(e) => onChange("bosfg_fgrto", e.target.value)}
             error={formErrors.bosfg_fgrto}
             step="0.01"
-            disabled={readOnly}
+            disabled={readOnly || true}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-3">
           <InputNumber
             label="Rate"
             placeholder="Enter rate"
@@ -98,21 +97,21 @@ const SFGForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
-          <Dropdown
-            label="Unit"
-            options={units_Options}
-            value={formData.bosfg_units}
-            onChange={(e) => onChange("bosfg_units", e.target.value)}
-            error={formErrors.bosfg_units}
-            required
-            placeholder="Select..."
+        <div className="col-span-2">
+          <InputLabel label="Unit" value={formData.runit_uname} />
+        </div>
+        <div className="col-span-2">
+          <InputNumber
+            label="Cost Ratio"
+            placeholder="Enter ratio"
+            value={formData.bosfg_rtrto}
+            onChange={(e) => onChange("bosfg_rtrto", e.target.value)}
+            error={formErrors.bosfg_rtrto}
+            step="0.01"
             disabled={readOnly}
-            optionValue="id"
-            optionLabel="units_cname"
           />
         </div>
-        <div className="col-span-8">
+        <div className="col-span-12">
           <InputText
             label="Notes"
             placeholder="Enter notes"

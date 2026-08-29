@@ -42,12 +42,13 @@ const ItemsList = ({
         );
       },
     },
-    { key: "items_brcod", header: "Barcode", width: "140px" },
-    { key: "items_hscod", header: "HS Code", width: "140px" },
+    { key: "items_brcod", header: "Barcode", width: "80px" },
+    { key: "items_hscod", header: "HS Code", width: "80px" },
+    { key: "items_notes", header: "Notes", width: "80px" },
     {
       key: "items_szqty",
       header: "Size Unit",
-      width: "200px",
+      width: "80px",
       body: (_, row) => {
         return (
           <span>
@@ -59,7 +60,7 @@ const ItemsList = ({
     {
       key: "runit_cname",
       header: "Unit",
-      width: "200px",
+      width: "80px",
       body: (_, row) => {
         return (
           <span>
@@ -71,7 +72,7 @@ const ItemsList = ({
     { key: "sgrup_cname", header: "Group", width: "80px" },
     { key: "items_itype", header: "Type", width: "80px" },
     { key: "scatg_cname", header: "Category", width: "80px" },
-    { key: "brand_cname", header: "Brand", width: "120px" },
+    { key: "brand_cname", header: "Brand", width: "80px" },
     {
       key: "items_tstck",
       header: "Track Stock",

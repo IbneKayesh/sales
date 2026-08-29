@@ -1,28 +1,33 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import {
-  IconClose,
-  IconCheck,
-} from "@/icons";
+import { IconClose, IconCheck } from "@/icons";
+import InactiveText from "@/components/InactiveText";
 
 const ScatgList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "scatg_ccode", header: "Code", width: "120px" },
-    { key: "scatg_cname", header: "Sub Category Name", width: "200px" },
     {
-      key: "scatg_actve",
-      header: "Status",
-      width: "120px",
-      body: (v) => {
-        return (
-          <Badge variant={v ? "success" : "danger"}>
-            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
-          </Badge>
-        );
+      key: "scatg_cname",
+      header: "Sub Category",
+      width: "200px",
+      body: (_, row) => {
+        return <InactiveText text={row.scatg_cname} active={row.scatg_actve} />;
       },
     },
+    // {
+    //   key: "scatg_actve",
+    //   header: "Status",
+    //   width: "120px",
+    //   body: (v) => {
+    //     return (
+    //       <Badge variant={v ? "success" : "danger"}>
+    //         {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+    //         {v ? "Active" : "Inactive"}
+    //       </Badge>
+    //     );
+    //   },
+    // },
     {
       key: "actions",
       header: "Actions",

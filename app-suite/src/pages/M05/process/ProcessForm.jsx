@@ -1,0 +1,134 @@
+import Button from "@/components/Button";
+import InputText from "@/components/InputText";
+import Dropdown from "@/components/Dropdown";
+import InputNumber from "@/components/InputNumber";
+import InputCalendar from "@/components/InputCalendar";
+import InputLabel from "@/components/InputLabel";
+import AuditData from "@/components/AuditData";
+import { IconClose, IconSave } from "@/icons";
+import { inout_Options } from "@/utils/vtable.js";
+
+const bkngm_Options = [{ label: "No Order", value: "" }];
+const ProcessForm = ({
+  isBusy,
+  readOnly,
+  stopEdit,
+  formData,
+  formErrors,
+  onChange,
+  onCancel,
+  onSubmit,
+  dpart_Options,
+  bom_Options,
+}) => {
+  return (
+    <div className="form-wrap">
+      <div className="grid">
+        <div className="col-span-3">
+          <Dropdown
+            label="Department"
+            options={dpart_Options}
+            value={formData.promf_dpart}
+            onChange={(e) => onChange("promf_dpart", e.target.value)}
+            error={formErrors.promf_dpart}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="dpart_cname"
+          />
+        </div>
+        <div className="col-span-3">
+          <Dropdown
+            label="BOM"
+            options={bom_Options}
+            value={formData.promf_bommf}
+            onChange={(e) => onChange("promf_bommf", e.target.value)}
+            error={formErrors.promf_bommf}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="bommf_cname"
+            optionGrid="bommf_cname:Name,bommf_trnno:Trn No,bommf_prono:Process"
+          />
+        </div>
+        <div className="col-span-3">
+          <Dropdown
+            label="Work Order"
+            options={bkngm_Options}
+            value={formData.promf_bkngm}
+            onChange={(e) => onChange("promf_bkngm", e.target.value)}
+            error={formErrors.promf_bkngm}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+          />
+        </div>
+
+        <div className="col-span-3">
+          <InputLabel label="Process Name" value={formData.promf_cname} />
+        </div>
+        <div className="col-span-1">
+          <InputLabel label="Process Sl No" value={formData.promf_prono} />
+        </div>
+        <div className="col-span-2">
+          <InputCalendar
+            label="From Date"
+            value={formData.promf_frdat}
+            onChange={(e) => onChange("promf_frdat", e.target.value)}
+            placeholder="Select..."
+            error={formErrors.promf_frdat}
+            required
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-2">
+          <InputCalendar
+            label="To Date"
+            value={formData.promf_todat}
+            onChange={(e) => onChange("promf_todat", e.target.value)}
+            placeholder="Select..."
+            error={formErrors.promf_todat}
+            required
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-1">
+          <InputLabel label="Process Time (Min)" value={formData.promf_prtim} />
+        </div>
+        <div className="col-span-6">
+          <InputText
+            label="Note"
+            placeholder="Enter note"
+            value={formData.promf_notes}
+            onChange={(e) => onChange("promf_notes", e.target.value)}
+            error={formErrors.promf_notes}
+            disabled={readOnly}
+          />
+        </div>
+      </div>
+      {formData?.id && (
+        <AuditData
+          actve={formData.promf_actve}
+          cname={formData.crusr_cname}
+          cdate={formData.promf_crdat}
+          uname={formData.upusr_cname}
+          udate={formData.promf_updat}
+          rvnmr={formData.promf_rvnmr}
+        />
+      )}
+      <div className="form-actions">
+        <Button variant="secondary" onClick={onCancel} disabled={isBusy}>
+          <IconClose size={16} className="icon-left" />
+          Cancel
+        </Button>
+        <Button variant="info" onClick={onSubmit} disabled={isBusy || readOnly}>
+          <IconSave size={16} className="icon-left" />
+          {formData?.id ? "Update" : "Create"}
+        </Button>
+      </div>
+    </div>
+  );
+};
+export default ProcessForm;

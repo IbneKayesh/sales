@@ -2,6 +2,7 @@ import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import { IconClose, IconCheck } from "@/icons";
+import InactiveText from "@/components/InactiveText";
 
 const BrandList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
@@ -12,11 +13,7 @@ const BrandList = ({ listData, onEdit, onDelete }) => {
       header: "Brand Name",
       width: "80px",
       body: (_, row) => {
-        return (
-          <span className={`${!row.brand_actve && "text-red-500"}`}>
-            {row.brand_cname}
-          </span>
-        );
+        return <InactiveText text={row.brand_cname} active={row.brand_actve} />;
       },
     },
     // {

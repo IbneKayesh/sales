@@ -37,12 +37,12 @@ router.post("/", async (req, res) => {
       FROM tmmb_prods pd
       LEFT JOIN tmhb_emply csr ON pd.prods_crusr = csr.id
       LEFT JOIN tmhb_emply usr ON pd.prods_upusr = usr.id
-	  LEFT JOIN ( 	SELECT bommf_prods, COUNT(*) AS bommf_count
+	    LEFT JOIN ( SELECT bommf_prods, COUNT(*) AS bommf_count
     				FROM tmmb_bommf
     				GROUP BY bommf_prods
 		) bm ON bm.bommf_prods = pd.id
       WHERE pd.prods_users = $1
-      ORDER BY pd.prods_prono, pd.prods_cname`;
+      ORDER BY pd.prods_cname`;
 
     const rows = await dbGetAll(sql, [user_c], `Get Production - ${user_c}`);
 
@@ -115,13 +115,12 @@ const create = async (req, res) => {
       prods_bsins,
       prods_ccode,
       prods_cname,
-      prods_prono,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
-    if (!prods_cname || !prods_prono || !user_s || !user_c || !user_b) {
+    if (!prods_cname ||  !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -131,9 +130,9 @@ const create = async (req, res) => {
 
     const newCode = await GenNewCode(user_c, "tmmb_prods");
 
-    const sql = `INSERT INTO tmmb_prods ( id, prods_users, prods_bsins, prods_ccode, prods_cname, prods_prono,
+    const sql = `INSERT INTO tmmb_prods ( id, prods_users, prods_bsins, prods_ccode, prods_cname,
     prods_crusr, prods_upusr )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
+      VALUES ($1, $2, $3, $4, $5, $6, $7)`;
 
     const params = [
       uuidv4(),
@@ -141,7 +140,6 @@ const create = async (req, res) => {
       user_b,
       newCode,
       prods_cname,
-      prods_prono,
       user_s,
       user_s,
     ];
@@ -174,13 +172,12 @@ const update = async (req, res) => {
       prods_bsins,
       prods_ccode,
       prods_cname,
-      prods_prono,
       user_s,
       user_c,
       user_b,
     } = req.body;
 
-    if (!prods_cname || !prods_prono || !user_s || !user_c || !user_b) {
+    if (!prods_cname || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -190,15 +187,13 @@ const update = async (req, res) => {
 
     const sql = `
       UPDATE tmmb_prods
-      SET
-        prods_cname = $1,
-        prods_prono = $2,
-        prods_upusr = $3,
+      SET prods_cname = $1,
+        prods_upusr = $2,
         prods_updat = CURRENT_TIMESTAMP,
         prods_rvnmr = prods_rvnmr + 1
-      WHERE id = $4`;
+      WHERE id = $3`;
 
-    const params = [prods_cname, prods_prono, user_s, id];
+    const params = [prods_cname, user_s, id];
 
     await dbRun(sql, params, `Update Production - ${user_c}`);
 

@@ -14,24 +14,33 @@ const BOMList = ({ listData, onEdit, onDelete }) => {
       body: (v) => getRelativeDays(v),
     },
     { key: "prods_cname", header: "Production", width: "200px" },
-    { key: "bommf_cname", header: "Process", width: "200px" },
-    { key: "bommf_prono", header: "Process No", width: "80px" },
-    { key: "bommf_inout", header: "Input/Output", width: "80px" },
-    { key: "bommf_bmqty", header: "Qty", width: "80px" },
-    { key: "bommf_estim", header: "Est Minutes", width: "80px" },
     {
-      key: "bommf_actve",
-      header: "Status",
-      width: "110px",
-      body: (v) => {
+      key: "bommf_cname",
+      header: "Process",
+      width: "80px",
+      body: (_, row) => {
         return (
-          <Badge variant={v ? "success" : "danger"}>
-            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
-            {v ? "Active" : "Inactive"}
-          </Badge>
+          <span className={`${!row.bommf_actve && "text-red-500"}`}>
+            {row.bommf_cname}
+          </span>
         );
       },
     },
+    { key: "bommf_prono", header: "Process No", width: "80px" },
+    { key: "bommf_estim", header: "Est Minutes", width: "80px" },
+    // {
+    //   key: "bommf_actve",
+    //   header: "Status",
+    //   width: "110px",
+    //   body: (v) => {
+    //     return (
+    //       <Badge variant={v ? "success" : "danger"}>
+    //         {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+    //         {v ? "Active" : "Inactive"}
+    //       </Badge>
+    //     );
+    //   },
+    // },
     {
       key: "actions",
       header: "Actions",
@@ -59,7 +68,7 @@ const BOMList = ({ listData, onEdit, onDelete }) => {
       exportable
       exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No BOM records found"
+      emptyMessage="No data found"
       className="mt-2"
     />
   );
