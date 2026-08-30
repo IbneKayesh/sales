@@ -19,6 +19,8 @@ import ScatgList from "./ScatgList";
 import ScatgForm from "./ScatgForm";
 import AttrbList from "./AttrbList";
 import AttrbForm from "./AttrbForm";
+import CostingList from "./CostingList";
+import CostingForm from "./CostingForm";
 
 const McatgPage = () => {
   const {
@@ -58,6 +60,16 @@ const McatgPage = () => {
     handleAddNewAttrb,
     handleCancelAttrb,
     handleSubmitAttrb,
+    //costing
+    listDataCosting,
+    formDataCosting,
+    handleCosting,
+    handleChangeCosting,
+    handleEditCosting,
+    handleDeleteCosting,
+    handleAddNewCosting,
+    handleCancelCosting,
+    handleSubmitCosting,
   } = useCategories();
 
   return (
@@ -71,10 +83,18 @@ const McatgPage = () => {
               )
                 ? "Categories"
                 : ["SYS_VW_LST_2", "SYS_VW_FRM_2"].some((view) =>
-                    pgView.includes(view),
-                  )
-                ? "Sub Categories"
-                : "Attributes"
+                      pgView.includes(view),
+                    )
+                  ? "Sub Categories"
+                  : ["SYS_VW_LST_3", "SYS_VW_FRM_3"].some((view) =>
+                        pgView.includes(view),
+                      )
+                    ? "Attributes"
+                    : ["SYS_VW_LST_4", "SYS_VW_FRM_4"].some((view) =>
+                          pgView.includes(view),
+                        )
+                      ? "Costing"
+                      : ""
             }
             subtitle={
               ["SYS_VW_LST_1", "SYS_VW_FRM_1"].some((view) =>
@@ -82,10 +102,18 @@ const McatgPage = () => {
               )
                 ? listData.length + " Categories"
                 : ["SYS_VW_LST_2", "SYS_VW_FRM_2"].some((view) =>
-                    pgView.includes(view),
-                  )
-                ? listDataItem.length + " Sub Categories"
-                : listDataAttrb.length + " Attributes"
+                      pgView.includes(view),
+                    )
+                  ? listDataItem.length + " Sub Categories"
+                  : ["SYS_VW_LST_3", "SYS_VW_FRM_3"].some((view) =>
+                        pgView.includes(view),
+                      )
+                    ? listDataAttrb.length + " Attributes"
+                    : ["SYS_VW_LST_4", "SYS_VW_FRM_4"].some((view) =>
+                          pgView.includes(view),
+                        )
+                      ? listDataCosting.length + " Costing"
+                      : ""
             }
           />
           <PageCardActions>
@@ -113,6 +141,7 @@ const McatgPage = () => {
                 {formData?.id ? "Update" : "Create"}
               </Button>
             )}
+
             {pgView === "SYS_VW_LST_2" && (
               <Button variant="secondary" size="sm" onClick={handleCancel}>
                 <IconChevronLeft size={14} className="icon-left" />
@@ -125,6 +154,7 @@ const McatgPage = () => {
                 Add
               </Button>
             )}
+
             {pgView === "SYS_VW_LST_3" && (
               <Button variant="secondary" size="sm" onClick={handleCancel}>
                 <IconChevronLeft size={14} className="icon-left" />
@@ -149,6 +179,31 @@ const McatgPage = () => {
                 {formDataAttrb?.id ? "Update" : "Create"}
               </Button>
             )}
+
+            {pgView === "SYS_VW_LST_4" && (
+              <Button variant="secondary" size="sm" onClick={handleCancel}>
+                <IconChevronLeft size={14} className="icon-left" />
+                Category
+              </Button>
+            )}
+            {pgView === "SYS_VW_LST_4" && (
+              <Button size="sm" onClick={handleAddNewCosting}>
+                <IconPlus size={14} className="icon-left" />
+                Add
+              </Button>
+            )}
+            {pgView === "SYS_VW_FRM_4" && (
+              <Button variant="secondary" size="sm" onClick={handleCancelCosting}>
+                <IconClose size={14} className="icon-left" />
+                Cancel
+              </Button>
+            )}
+            {pgView === "SYS_VW_FRM_4" && (
+              <Button variant="info" size="sm" onClick={handleSubmitCosting}>
+                <IconSave size={14} className="icon-left" />
+                {formDataCosting?.id ? "Update" : "Create"}
+              </Button>
+            )}
           </PageCardActions>
         </PageCardHeader>
         <PageCardBody>
@@ -159,6 +214,7 @@ const McatgPage = () => {
               onDelete={handleDelete}
               onSubCategory={handleSubCategory}
               onAttributes={handleAttributes}
+              onCosting={handleCosting}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
@@ -214,6 +270,26 @@ const McatgPage = () => {
             />
           )}
 
+          {pgView === "SYS_VW_LST_4" && (
+            <CostingList
+              listData={listDataCosting}
+              onEdit={handleEditCosting}
+              onDelete={handleDeleteCosting}
+            />
+          )}
+
+          {pgView === "SYS_VW_FRM_4" && (
+            <CostingForm
+              isBusy={isBusy}
+              readOnly={readOnly}
+              stopEdit={stopEdit}
+              formData={formDataCosting}
+              formErrors={formErrors}
+              onChange={handleChangeCosting}
+              onCancel={handleCancelCosting}
+              onSubmit={handleSubmitCosting}
+            />
+          )}
         </PageCardBody>
       </PageCard>
     </div>

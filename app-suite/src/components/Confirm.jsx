@@ -74,7 +74,7 @@ export default function Confirm({
           </div>
         </div>
         <h3 id="confirm-title" className="confirm__title">{title}</h3>
-        <p className="confirm__message">{message}</p>
+        <p className="confirm__message" style={{ whiteSpace: "pre-line" }}>{message}</p>
         <div className="confirm__actions">
           {!confirmOnly && (
             <Button key="cancel" variant="secondary" size="md" onClick={onCancel} disabled={confirming}>

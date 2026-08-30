@@ -79,6 +79,8 @@ const ItemsPage = () => {
     //filter
     mcatg_Options,
     formDataFilter,
+    //price checker
+    handlePriceCheck
   } = useItems();
 
   return (
@@ -229,6 +231,7 @@ const ItemsPage = () => {
               onCancel={handleCancelPrice}
               onSubmit={handleSubmitPrice}
               dpart_Options={dpart_Options}
+              onPriceCheck={handlePriceCheck}
             />
           )}
 

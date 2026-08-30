@@ -3,7 +3,7 @@ import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
-import { IconClose, IconSave } from "@/icons";
+import { IconClose, IconSave, IconInfo } from "@/icons";
 import Dropdown from "@/components/Dropdown";
 
 const PriceForm = ({
@@ -16,6 +16,7 @@ const PriceForm = ({
   onCancel,
   onSubmit,
   dpart_Options,
+  onPriceCheck,
 }) => {
   return (
     <div className="form-wrap">
@@ -163,6 +164,10 @@ const PriceForm = ({
         <Button variant="secondary" onClick={onCancel} disabled={isBusy}>
           <IconClose size={16} className="icon-left" />
           Cancel
+        </Button>
+        <Button variant="help" onClick={onPriceCheck} disabled={isBusy}>
+          <IconInfo size={16} className="icon-left" />
+          Price Check
         </Button>
         <Button variant="info" onClick={onSubmit} disabled={isBusy}>
           <IconSave size={16} className="icon-left" />

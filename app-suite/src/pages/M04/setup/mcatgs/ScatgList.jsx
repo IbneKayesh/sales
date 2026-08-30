@@ -1,7 +1,5 @@
 import DataTable from "@/components/DataTable";
-import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import { IconClose, IconCheck } from "@/icons";
 import InactiveText from "@/components/InactiveText";
 
 const ScatgList = ({ listData, onEdit, onDelete }) => {

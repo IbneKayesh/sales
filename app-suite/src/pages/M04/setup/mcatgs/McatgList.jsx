@@ -1,9 +1,8 @@
 import DataTable from "@/components/DataTable";
-import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
 import InactiveText from "@/components/InactiveText";
-import { IconClose, IconCheck, IconBar, IconMenu } from "@/icons";
+import { IconChevronDown, IconFile, IconDollar, IconMenu } from "@/icons";
 
 const McatgList = ({
   listData,
@@ -11,6 +10,7 @@ const McatgList = ({
   onDelete,
   onSubCategory,
   onAttributes,
+  onCosting,
 }) => {
   const dtColumns = [
     { key: "mcatg_ccode", header: "Code", width: "180px" },
@@ -38,7 +38,7 @@ const McatgList = ({
             }}
             title="Sub Categories"
           >
-            <IconBar size={14} />
+            <IconChevronDown size={14} />
           </Button>
           <Button
             variant="ghost"
@@ -49,7 +49,18 @@ const McatgList = ({
             }}
             title="Attributes"
           >
-            <IconMenu size={14} />
+            <IconFile size={14} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onCosting(row);
+            }}
+            title="Costing"
+          >
+            <IconDollar size={14} />
           </Button>
           <ActionButton
             rowData={row}

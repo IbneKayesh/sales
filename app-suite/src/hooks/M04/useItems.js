@@ -18,6 +18,7 @@ import tmib_itmct from "@/models/M04/tmib_itmct.json";
 import { itemContactAPI } from "@/api/M04/itemContactAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
 import { categoriesAPI } from "@/api/M04/categoriesAPI.js";
+import { costingAPI } from "@/api/M04/costingAPI.js";
 
 const useItems = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -547,6 +548,53 @@ const useItems = () => {
     }
   };
 
+  //price checker
+  const formatPriceCheck = (items = []) => {
+    const mrrat = Number(formDataItem.price_mrrat);
+
+    const total = items.reduce(
+      (sum, item) => sum + Number(item.pcost_csamt || 0),
+      0,
+    );
+
+    const rows = items.map((item, index) => {
+      const name = item.pcost_party || "";
+      const amount = Number(item.pcost_csamt || 0).toFixed(2);
+
+      return `${index + 1}. ${name} ${amount}`;
+    });
+
+    const diff = total - mrrat;
+
+    return [
+      ...rows,
+      "==========",
+      `𝗘𝘀𝘁 𝗠𝗥𝗣: ${total.toFixed(2)}`,
+      `𝗖𝘂𝗿𝗿𝗲𝗻𝘁 𝗠𝗥𝗣: ${mrrat.toFixed(2)}`,
+      `𝗗𝗶𝗳𝗳: ${diff.toFixed(2)}`,
+    ].join("\n");
+  };
+
+  const handlePriceCheck = async () => {
+    //console.log("thisItem", formDataItem);
+    const dataName = formDataItem.price_cname
+    try {
+      setIsBusy(true);
+      const resp = await costingAPI.getPrice({ price_id: formDataItem.id });
+      alertBox({
+        title: resp.success ? dataName : "Error",
+        message: resp.success
+          ? formatPriceCheck(resp.data)
+          : resp.message || "Unable to get price information.",
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   //modal
   const handleShowModal = (modal) => {
     if (modal === "SUPPLIER") {
@@ -618,6 +666,9 @@ const useItems = () => {
     //filter
     mcatg_Options,
     formDataFilter,
+    //price checker
+    handlePriceCheck,
   };
 };
 export default useItems;
+

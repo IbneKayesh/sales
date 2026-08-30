@@ -51,7 +51,7 @@ const AttrbList = ({ listData, onEdit, onDelete }) => {
       exportable
       exportFilename="data-export.csv"
       onRowClick={(row) => onEdit(row)}
-      emptyMessage="No attributes found"
+      emptyMessage="No data found"
     />
   );
 };
