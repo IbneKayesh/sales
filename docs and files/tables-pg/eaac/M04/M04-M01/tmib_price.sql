@@ -9,6 +9,7 @@ CREATE TABLE tmib_price (
   price_users VARCHAR(50) NOT NULL,
   price_bsins VARCHAR(50) NOT NULL,
   price_ccode VARCHAR(50) NOT NULL,
+  price_dpart VARCHAR(50) NOT NULL,
   price_items VARCHAR(50) NOT NULL,
   price_cname VARCHAR(50) NOT NULL,
 

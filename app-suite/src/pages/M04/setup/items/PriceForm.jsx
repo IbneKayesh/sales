@@ -4,6 +4,7 @@ import InputNumber from "@/components/InputNumber";
 import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
+import Dropdown from "@/components/Dropdown";
 
 const PriceForm = ({
   isBusy,
@@ -14,6 +15,7 @@ const PriceForm = ({
   onChange,
   onCancel,
   onSubmit,
+  dpart_Options,
 }) => {
   return (
     <div className="form-wrap">
@@ -27,6 +29,19 @@ const PriceForm = ({
             error={formErrors.price_cname}
             required
             disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-6">
+          <Dropdown
+            label="Department"
+            options={dpart_Options}
+            value={formData.price_dpart}
+            onChange={(e) => onChange("price_dpart", e.target.value)}
+            error={formErrors.price_dpart}
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="id"
+            optionLabel="dpart_cname"
           />
         </div>
         <div className="col-span-2">
@@ -113,7 +128,7 @@ const PriceForm = ({
         <div className="col-span-2">
           <InputLabel label="Sales Booking Qty" value={formData.price_sbqty} />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputText
             label="Notes"
             placeholder="Enter notes"
@@ -123,7 +138,7 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-5">
+        <div className="col-span-12">
           <InputText
             label="JSON Note"
             placeholder="Enter json note"

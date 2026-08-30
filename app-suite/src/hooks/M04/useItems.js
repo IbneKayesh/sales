@@ -11,7 +11,7 @@ import { brandAPI } from "@/api/M04/brandAPI.js";
 import { subGroupsAPI } from "@/api/M04/subGroupsAPI.js";
 import { subCategoriesAPI } from "@/api/M04/subCategoriesAPI.js";
 import { unitsAPI } from "@/api/M04/unitsAPI.js";
-import { partyAPI } from "@/api/M08/partyAPI.js";
+import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { stockAPI } from "@/api/M04/stockAPI.js";
 import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
 import tmib_itmct from "@/models/M04/tmib_itmct.json";
@@ -45,7 +45,7 @@ const useItems = () => {
   const [sgrup_Options, setSgrup_Options] = useState([]);
   const [scatg_Options, setScatg_Options] = useState([]);
   const [brand_Options, setBrand_Options] = useState([]);
-  const [partyData, setPartyData] = useState([]);
+  const [dpart_Options, setDpart_Options] = useState([]);
   //filter
   const [formDataFilter, setFormDataFilter] = useState({});
   const [mcatg_Options, setMcatg_Options] = useState([]);
@@ -97,18 +97,6 @@ const useItems = () => {
     getAllCategories();
   }, []);
 
-  const getPartyData = async (id) => {
-    try {
-      setIsBusy(true);
-      const resp = await partyAPI.getByVendorId({ party_vndor: id });
-      const data = resp.data || {};
-      setPartyData(data);
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
-  };
-
   const handleChange = async (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmib_items);
@@ -129,7 +117,6 @@ const useItems = () => {
     getAllSubGroups();
     getAllSubCategories();
     getAllBrands();
-    getPartyData(rowData.id);
     setlistDataLedger([]);
     getItemSupplier(rowData.id);
   };
@@ -299,6 +286,17 @@ const useItems = () => {
   //price (sub items)
   const [thisItem, setThisItem] = useState("");
 
+  const getAllDepartments = async () => {
+    if (dpart_Options.length > 0) {
+      return;
+    }
+    try {
+      const resp = await departmentAPI.getAllActive({});
+      const list = resp.data || [];
+      setDpart_Options(list);
+    } catch (error) {}
+  };
+
   const getAllPrices = async (id) => {
     try {
       setIsBusy(true);
@@ -315,6 +313,7 @@ const useItems = () => {
     setThisItem(rowData);
     setPgView("SYS_VW_LST_2");
     getAllPrices(rowData.id);
+    getAllDepartments();
   };
 
   const handleChangePrice = (f, v) => {
@@ -582,7 +581,7 @@ const useItems = () => {
     sgrup_Options,
     scatg_Options,
     brand_Options,
-    partyData,
+    dpart_Options,
     //functions
     handleChange,
     handleEdit,

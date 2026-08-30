@@ -56,6 +56,7 @@ router.post("/get-price-ledger", async (req, res) => {
       });
     }
 
+    //mrr (+), sales (-), production (-), batch (+)
     const sql = `SELECT stk.*, stk.mrrdc_itqty * stk.mrrdc_csrat line_value,
     COALESCE(cnt.cntct_cname, stk.mrrdm_cntct) as cntct_cname, itm.items_iname, prc.price_cname, unt.units_cname
     FROM(
@@ -74,7 +75,7 @@ router.post("/get-price-ledger", async (req, res) => {
       AND ivm.invcm_users = $2
       UNION ALL
       SELECT prm.promf_trnno, prm.promf_trdat, prm.promf_cname,
-      rpm.prrpm_price, rpm.prrpm_items, rpm.prrpm_units, rpm.prrpm_rmqty, rpm.prrpm_rmrat
+      rpm.prrpm_price, rpm.prrpm_items, rpm.prrpm_units, 0 - rpm.prrpm_rmqty, rpm.prrpm_rmrat
       FROM tmmb_prrpm rpm
       JOIN tmmb_promf prm ON rpm.prrpm_promf = prm.id
       WHERE rpm.prrpm_price = $1

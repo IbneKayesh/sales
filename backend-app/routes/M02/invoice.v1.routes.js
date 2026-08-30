@@ -375,13 +375,15 @@ const create = async (req, res) => {
                   price_rvnmr = price_rvnmr + 1
                   WHERE id = $3
                   AND price_users = $4
-                  AND price_items = $5`,
+                  AND price_items = $5
+                  AND price_dpart = $6`,
         params: [
           det.invcc_itqty || 0,
           user_s,
           det.invcc_price,
           user_c,
           det.invcc_items,
+          invcm_dpart
         ],
         label: `Update reduce price stock detail ${newTrnNo}`,
       });

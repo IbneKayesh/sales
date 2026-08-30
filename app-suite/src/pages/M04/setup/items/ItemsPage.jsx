@@ -42,7 +42,7 @@ const ItemsPage = () => {
     sgrup_Options,
     scatg_Options,
     brand_Options,
-    partyData,
+    dpart_Options,
     //functions
     handleChange,
     handleEdit,
@@ -180,7 +180,6 @@ const ItemsPage = () => {
               sgrup_Options={sgrup_Options}
               scatg_Options={scatg_Options}
               brand_Options={brand_Options}
-              partyData={partyData}
               //item contact
               listDataCntct={listDataCntct}
               onDeleteCntct={handleDeleteCntct}
@@ -229,6 +228,7 @@ const ItemsPage = () => {
               onChange={handleChangePrice}
               onCancel={handleCancelPrice}
               onSubmit={handleSubmitPrice}
+              dpart_Options={dpart_Options}
             />
           )}
 

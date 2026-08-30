@@ -19,13 +19,14 @@ router.post("/", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT prce.*, itm.items_iname,
-    csr.users_uname AS crusr_cname, usr.users_uname AS upusr_cname, 0 as edit_stop
-    FROM tmib_price prce
-    LEFT JOIN tmib_items itm ON prce.price_items = itm.id
-    LEFT JOIN tmnb_users csr ON prce.price_crusr = csr.id
-    LEFT JOIN tmnb_users usr ON prce.price_upusr = usr.id
-    WHERE prce.price_users = $1
+    const sql = `SELECT prc.*, itm.items_iname, dpt.dpart_cname,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmib_price prc
+    LEFT JOIN tmib_items itm ON prc.price_items = itm.id
+    LEFT JOIN tmsb_dpart dpt ON prc.price_dpart = dpt.id
+    LEFT JOIN tmhb_emply csr ON itm.items_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON itm.items_upusr = usr.id
+    WHERE prc.price_users = $1
     ORDER BY itm.items_iname ASC`;
 
     const params = [user_c];
@@ -60,11 +61,12 @@ router.post("/get-all-active", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT prce.*, itm.items_iname, 0 as edit_stop
-    FROM tmib_price prce
-    LEFT JOIN tmib_items itm ON prce.price_items = itm.id
-    WHERE prce.price_users = $1
-    AND prce.price_actve = TRUE
+    const sql = `SELECT prc.*, itm.items_iname, dpt.dpart_cname, 0 as edit_stop
+    FROM tmib_price prc
+    LEFT JOIN tmib_items itm ON prc.price_items = itm.id
+    LEFT JOIN tmsb_dpart dpt ON prc.price_dpart = dpt.id
+    WHERE prc.price_users = $1
+    AND prc.price_actve = TRUE
     ORDER BY itm.items_iname ASC`;
 
     const params = [user_c];
@@ -91,6 +93,7 @@ const create = async (req, res) => {
       price_users,
       price_bsins,
       price_ccode,
+      price_dpart,
       price_items,
       price_cname,
       price_lprat,
@@ -112,7 +115,7 @@ const create = async (req, res) => {
     } = req.body;
 
     // Validate input
-    if (!price_items || !user_s || !user_c || !user_b) {
+    if (!price_dpart || !price_items || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -123,14 +126,14 @@ const create = async (req, res) => {
     //database action
     const newCode = await GenNewCode(user_c, "tmib_price");
 
-    const sql = `INSERT INTO tmib_price(
-      id, price_users, price_bsins, price_ccode, price_items, price_cname,
-      price_lprat, price_dprat, price_tprat, price_mrrat, price_dspct, 
-      price_gdstk, price_bdstk, price_mnqty, price_mxqty, price_pbqty, 
-      price_sbqty, price_notes, price_jnote, 
-      price_crusr, price_upusr
-    )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)`;
+    const sql = `INSERT INTO tmib_price(id, price_users, price_bsins, price_ccode, price_dpart, price_items,
+                              price_cname, price_lprat, price_dprat, price_tprat, price_mrrat, price_dspct, 
+                              price_gdstk, price_bdstk, price_mnqty, price_mxqty, price_pbqty, price_sbqty,
+                              price_notes, price_jnote, price_crusr, price_upusr)
+                VALUES ($1, $2, $3, $4, $5, $6,
+                $7, $8, $9, $10, $11, $12,
+                $13, $14, $15, $16, $17, $18,
+                $19, $20, $21, $22)`;
 
     const params = [
       uuidv4(),
@@ -138,6 +141,7 @@ const create = async (req, res) => {
       user_b,
       newCode,
       price_items,
+      price_dpart,
       price_cname,
       price_lprat || 0,
       price_dprat || 0,
@@ -174,11 +178,12 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const {
+     const {
       id,
       price_users,
       price_bsins,
       price_ccode,
+      price_dpart,
       price_items,
       price_cname,
       price_lprat,
@@ -200,7 +205,7 @@ const update = async (req, res) => {
     } = req.body;
 
     // Validate input
-    if (!price_items || !user_s || !user_c || !user_b) {
+    if (!price_dpart || !price_items || !user_s || !user_c || !user_b) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -210,21 +215,23 @@ const update = async (req, res) => {
 
     //database action
     const sql = `UPDATE tmib_price
-    SET price_cname = $1,
-    price_dprat = $2,
-    price_tprat = $3,
-    price_mrrat = $4,
-    price_dspct = $5,
-    price_mnqty = $6,
-    price_mxqty = $7,
-    price_notes = $8,
-    price_jnote = $9,
-    price_upusr = $10,
+    SET price_dpart = $1,
+    price_cname = $2,
+    price_dprat = $3,
+    price_tprat = $4,
+    price_mrrat = $5,
+    price_dspct = $6,
+    price_mnqty = $7,
+    price_mxqty = $8,
+    price_notes = $9,
+    price_jnote = $10,
+    price_upusr = $11,
     price_updat = CURRENT_TIMESTAMP,
     price_rvnmr = price_rvnmr + 1
-    WHERE id = $11`;
+    WHERE id = $12`;
 
     const params = [
+      price_dpart,
       price_cname,
       price_dprat || 0,
       price_tprat || 0,
@@ -324,18 +331,19 @@ router.post("/get-by-item", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT prce.*, itm.items_iname,
-    COALESCE((prce.price_mrrat - prce.price_lprat)
-        / NULLIF(prce.price_lprat, 0) * 100,
+    const sql = `SELECT prc.*, itm.items_iname, dpt.dpart_cname,
+    COALESCE((prc.price_mrrat - prc.price_lprat)
+        / NULLIF(prc.price_lprat, 0) * 100,
         0) AS price_smrgn,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
-    FROM tmib_price prce
-    LEFT JOIN tmib_items itm ON prce.price_items = itm.id
-    LEFT JOIN tmhb_emply csr ON prce.price_crusr = csr.id
-    LEFT JOIN tmhb_emply usr ON prce.price_upusr = usr.id
-    WHERE prce.price_users = $1
-    AND prce.price_items = $2
-    ORDER BY itm.items_iname ASC`;
+    FROM tmib_price prc
+    LEFT JOIN tmib_items itm ON prc.price_items = itm.id
+    LEFT JOIN tmsb_dpart dpt ON prc.price_dpart = dpt.id
+    LEFT JOIN tmhb_emply csr ON prc.price_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON prc.price_upusr = usr.id
+    WHERE prc.price_users = $1
+    AND prc.price_items = $2
+    ORDER BY itm.items_iname, dpt.dpart_cname ASC`;
 
     const params = [user_c, price_items];
     const rows = await dbGetAll(sql, params, `get price- ${user_c}`);

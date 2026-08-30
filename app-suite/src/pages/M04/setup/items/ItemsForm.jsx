@@ -5,7 +5,6 @@ import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 import { itype_Options, bool_Options, txmod_Options } from "@/utils/vtable.js";
-import PartyView from "@/pages/M08/setup/parties/PartyView.jsx";
 import ItemContactList from "./ItemContactList";
 
 const ItemsForm = ({
@@ -22,7 +21,6 @@ const ItemsForm = ({
   sgrup_Options,
   scatg_Options,
   brand_Options,
-  partyData,
   //item contact
   listDataCntct,
   onDeleteCntct,
@@ -306,7 +304,6 @@ const ItemsForm = ({
           rvnmr={formData.items_rvnmr}
         />
       )}
-      {formData?.id && <PartyView listData={partyData} />}
       {formData?.id && (
         <ItemContactList
           readOnly={readOnly}

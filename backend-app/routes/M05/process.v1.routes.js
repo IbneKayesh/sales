@@ -8,6 +8,7 @@ const {
   getCurrentPeriod,
   getCurrencyRate,
   getCoaPartyAssetsWIP,
+  getCoaPartyExpFoh,
 } = require("../../db/genHelper");
 
 // =====================
@@ -450,6 +451,7 @@ const create = async (req, res) => {
 
         if (!groups[key]) {
           groups[key] = {
+            type: det.type,
             chtac_id: det.chtac_id,
             party_id: det.party_id,
             item_amount: 0,
@@ -461,6 +463,7 @@ const create = async (req, res) => {
         return groups;
       }, {}),
     );
+    let totalFohSvc = 0;
     for (const det of newGroupedProducts) {
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
@@ -490,9 +493,81 @@ const create = async (req, res) => {
         label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
       });
       line++;
+      //FOH + SVC clearing from Asset Credit as Debit
+      if (det.type === "FOH" || det.type === "SVC") {
+        scripts.push({
+          sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+          params: [
+            uuidv4(),
+            user_c,
+            user_b,
+            promf_dpart,
+            newId_JV,
+            det.chtac_id,
+            det.party_id,
+            det.item_amount,
+            0,
+            "Asset / Inventory / Products / FOH-SVC - Clearing",
+            "Production Process",
+            newId,
+            "MASTER",
+            line,
+            user_s,
+            user_s,
+          ],
+          label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
+        });
+        totalFohSvc = totalFohSvc + +Number(det.item_amount);
+        line++;
+      }
       totalWIP = totalWIP + Number(det.item_amount);
     }
 
+    if (totalFohSvc > 0) {
+      //SYS_PRODUCTION_PROCESS.SYS_EXP_FOH > Expenses / Factory Overhead - 50101012
+      const expFOH = await getCoaPartyExpFoh(user_c, user_b);
+      if (!expFOH) {
+        return {
+          success: false,
+          message: "No account party setup for Expense FOH",
+          data: {},
+        };
+      }
+
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          promf_dpart,
+          newId_JV,
+          expFOH.chtac_id,
+          expFOH.party_id,
+          0,
+          totalFohSvc,
+          "To Asset / Inventory / Products / WIP - Absorbed Clearing",
+          "Production Process",
+          newId,
+          "MASTER",
+          line,
+          user_s,
+          user_s,
+        ],
+        label: `Create Asset / Inventory / Products / WIP ${newTrnNo_JV}`,
+      });
+      line++;
+    }
     //SYS_PRODUCTION_PROCESS.SYS_AST_INVENTORY_WIP > Assets / Inventory / Products / WIP - 10101211
     const astWIP = await getCoaPartyAssetsWIP(user_c, user_b);
     if (!astWIP) {
@@ -861,15 +936,19 @@ router.post("/get-sfg-by-process", async (req, res) => {
               AND sfg.prsfg_users = $2
               ORDER BY sfg.prsfg_items`;
     const sql = `SELECT sfg.*, prc.price_cname, unt.units_cname,
+                pty.id party_id, pty.party_chtac chtac_id,
                 COALESCE(SUM(btc.prbtc_gdstk), 0) +
-                COALESCE(SUM(btc.prbtc_bdstk), 0) AS avail_fgqty
+                COALESCE(SUM(btc.prbtc_bdstk), 0) AS avail_fgqty                
               FROM tmmb_prsfg sfg
               JOIN tmib_price prc ON sfg.prsfg_price = prc.id
               JOIN tmib_units unt ON sfg.prsfg_units = unt.id
               LEFT JOIN tmmb_prbtc btc ON sfg.id = btc.prbtc_prsfg
+              JOIN tmib_items itm ON prc.price_items = itm.id
+              JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
               WHERE sfg.prsfg_promf = $1
                 AND sfg.prsfg_users = $2
-              GROUP BY sfg.id, prc.price_cname, unt.units_cname
+              GROUP BY sfg.id, prc.price_cname, unt.units_cname,
+              pty.id, pty.party_chtac
               ORDER BY sfg.prsfg_items`;
 
     const rows = await dbGetAll(
@@ -1150,7 +1229,7 @@ router.post("/create-batch", async (req, res) => {
           newId_JV,
           det.chtac_id,
           det.party_id,
-          det.item_amount,
+          det.prbtc_fgval,
           0,
           "To Asset / Inventory / Products / WIP",
           "Production Batch",
@@ -1163,7 +1242,7 @@ router.post("/create-batch", async (req, res) => {
         label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
       });
       line++;
-      totalWIP = totalWIP + Number(det.item_amount);
+      totalWIP = totalWIP + Number(det.prbtc_fgval);
     }
 
     //SYS_PRODUCTION_PROCESS.SYS_AST_INVENTORY_WIP > Assets / Inventory / Products / WIP - 10101211
@@ -1203,6 +1282,8 @@ router.post("/create-batch", async (req, res) => {
       ],
       label: `Create Asset / Inventory / Products / WIP ${newTrnNo_JV}`,
     });
+
+    //console.log(scripts);
 
     await dbRunAll(scripts);
 

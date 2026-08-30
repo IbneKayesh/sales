@@ -27,6 +27,11 @@ const PriceList = ({
       },
     },
     {
+      key: "dpart_cname",
+      header: "Department",
+      width: "80px",
+    },
+    {
       key: "price_lprat",
       header: "L.Purchase Rate",
       width: "80px",

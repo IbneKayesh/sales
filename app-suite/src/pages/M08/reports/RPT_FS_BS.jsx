@@ -29,9 +29,11 @@ const RPT_FS_BS = ({ listData, onRegisterExport }) => {
 
   // Debit/credit nature comes from chtac_ntype (fallback to ctype heuristics)
   const balanceOf = (a) =>
-    (a.ntype
-      ? a.ntype === "Dr"
-      : a.ctype === "Assets" || a.ctype === "Expenses")
+    (
+      a.ntype
+        ? a.ntype === "Dr"
+        : a.ctype === "Assets" || a.ctype === "Expenses"
+    )
       ? a.drVal - a.crVal
       : a.crVal - a.drVal;
 
@@ -39,6 +41,12 @@ const RPT_FS_BS = ({ listData, onRegisterExport }) => {
     accounts
       .filter((a) => a.ctype === ctype)
       .map((a) => ({ ...a, balance: Math.abs(balanceOf(a)) }))
+      .filter((a) => a.balance !== 0);
+
+  const signedSection = (ctype) =>
+    accounts
+      .filter((a) => a.ctype === ctype)
+      .map((a) => ({ ...a, balance: balanceOf(a) }))
       .filter((a) => a.balance !== 0);
 
   const assetItems = section("Assets");
@@ -49,10 +57,18 @@ const RPT_FS_BS = ({ listData, onRegisterExport }) => {
   const totalLiabilities = liabilityItems.reduce((s, i) => s + i.balance, 0);
   const totalEquity = equityItems.reduce((s, i) => s + i.balance, 0);
 
-  // Net profit = income - expenses
-  const totalIncome = section("Income").reduce((s, i) => s + i.balance, 0);
-  const totalExpenses = section("Expenses").reduce((s, i) => s + i.balance, 0);
+  // Net profit = income - expenses (v1)
+  // const totalIncome = section("Income").reduce((s, i) => s + i.balance, 0);
+  // const totalExpenses = section("Expenses").reduce((s, i) => s + i.balance, 0);
+  // const netProfit = totalIncome - totalExpenses;
+
+  // Net profit = income - expenses, preserving debit/credit signs (v2)
+  const incomeItems = signedSection("Income");
+  const expenseItems = signedSection("Expenses");
+  const totalIncome = incomeItems.reduce((s, i) => s + i.balance, 0);
+  const totalExpenses = expenseItems.reduce((s, i) => s + i.balance, 0);
   const netProfit = totalIncome - totalExpenses;
+
   const hasReportData =
     !!assetItems.length ||
     !!liabilityItems.length ||

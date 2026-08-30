@@ -295,7 +295,7 @@ const getCoaLibOutputVat = async (user_c, user_b) => {
   return result;
 };
 
-
+//production process
 const getCoaPartyAssetsWIP = async (user_c, user_b) => {
   const sql = `SELECT ptr.id party_id, ptr.party_chtac chtac_id
                       FROM tmtb_party ptr
@@ -318,6 +318,29 @@ const getCoaPartyAssetsWIP = async (user_c, user_b) => {
   return result;
 };
 
+//production process
+const getCoaPartyExpFoh = async (user_c, user_b) => {
+  const sql = `SELECT ptr.id party_id, ptr.party_chtac chtac_id
+                      FROM tmtb_party ptr
+                      JOIN tmtb_chtac cht ON ptr.party_chtac = cht.id
+                      JOIN tmtb_prtyr pty ON cht.chtac_chtno = pty.prtyr_chtno
+                      WHERE pty.prtyr_mgrup = 'SYS_PRODUCTION_PROCESS'
+                      AND pty.prtyr_sgrup = 'SYS_EXP_FOH'
+                      AND pty.prtyr_party = 'SYS_SINGLE_SGL'
+                      AND ptr.party_users = $1
+                      AND ptr.party_bsins = $2
+                      LIMIT 1`;
+  //console.log(user_c, user_b, dept_id);
+  const result = await dbGet(sql, [user_c, user_b]);
+
+  // console.log(result);
+  if (!result || result.length === 0) {
+    throw new Error(`No default Exp FOH configured`);
+  }
+
+  return result;
+};
+
 module.exports = {
   GenNewCode,
   GenNewTrn,
@@ -328,4 +351,5 @@ module.exports = {
   getCoaAssetInputVat,
   getCoaLibOutputVat,
   getCoaPartyAssetsWIP,
+  getCoaPartyExpFoh
 };

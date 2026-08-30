@@ -96,178 +96,6 @@ const useMRR = () => {
     }
   }, [listDataItem]);
 
-  function reCalculate1(items, master, costList, paymList) {
-    //clone costing, items
-    let newItems = [...items];
-    let newCosting = [...costList];
-    setListDataCost(newCosting);
-
-    const totalAmount = newItems.reduce(
-      (sum, item) => sum + Number(item.mrrdc_itamt),
-      0,
-    );
-
-    const totalQty = newItems.reduce(
-      (sum, item) => sum + Number(item.mrrdc_itqty),
-      0,
-    );
-
-    const totalLine = newItems.length || 0;
-
-    const sumCost = (csmod, clmod) =>
-      costList
-        .filter(
-          (item) => item.mrrcs_csmod === csmod && item.mrrcs_clmod === clmod,
-        )
-        .reduce((sum, item) => sum + Number(item.mrrcs_value || 0), 0);
-
-    const incAmt = sumCost("Include", "By Amount");
-    const incQty = sumCost("Include", "By Qty");
-    const incLine = sumCost("Include", "By Line");
-
-    const excAmt = sumCost("Exclude", "By Amount");
-    const excQty = sumCost("Exclude", "By Qty");
-    const excLine = sumCost("Exclude", "By Line");
-
-    const incAmtRate = incAmt / totalAmount;
-    const incQtyRate = incQty / totalQty;
-    const incLineRate = incLine / totalLine;
-
-    const excAmtRate = excAmt / totalAmount;
-    const excQtyRate = excQty / totalQty;
-    const excLineRate = excLine / totalLine;
-
-    //---------------------------------------------------
-    // 1. Split Invoice Discount
-    //---------------------------------------------------
-
-    newItems = newItems.map((item) => {
-      const mrrdc_edamt = totalQty
-        ? ((Number(master.mrrdm_invds) || 0) * Number(item.mrrdc_itqty)) /
-          totalQty
-        : 0;
-
-      return {
-        ...item,
-        mrrdc_edamt,
-      };
-    });
-
-    //---------------------------------------------------
-    // 2. Calculate item discount & VAT
-    //---------------------------------------------------
-
-    newItems = newItems.map((item) => {
-      // Calculate amount
-      const mrrdc_itamt =
-        (Number(item.mrrdc_itrat) || 0) * (Number(item.mrrdc_itqty) || 0);
-
-      // Calculate discount amount
-      const mrrdc_dsamt = mrrdc_itamt * ((Number(item.mrrdc_dspct) || 0) / 100);
-
-      // Calculate after discount
-      const afterDisc = mrrdc_itamt - (mrrdc_dsamt + item.mrrdc_edamt);
-      const mrrdc_ivamt = afterDisc * ((Number(item.mrrdc_ivpct) || 0) / 100);
-      const mrrdc_vtamt = afterDisc * ((Number(item.mrrdc_vtpct) || 0) / 100);
-      const mrrdc_txamt = afterDisc * ((Number(item.mrrdc_txpct) || 0) / 100);
-
-      let mrrdc_fcpct = Number(item.mrrdc_fcpct) || 0;
-      let mrrdc_fcamt = Number(item.mrrdc_fcamt) || 0;
-      if (mrrdc_fcpct > 0) {
-        // User entered percentage -> calculate amount
-        mrrdc_fcamt = Number((afterDisc * (mrrdc_fcpct / 100)).toFixed(4));
-      } else if (mrrdc_fcamt > 0) {
-        // User entered amount -> calculate percentage
-        mrrdc_fcpct = afterDisc
-          ? Number(((mrrdc_fcamt / afterDisc) * 100).toFixed(4))
-          : 0;
-      }
-
-      const iAmt = mrrdc_itamt * incAmtRate;
-      const iQty = (Number(item.mrrdc_itqty) || 0) * incQtyRate;
-      const iLine = 1 * incLineRate;
-
-      const eAmt = mrrdc_itamt * excAmtRate;
-      const eQty = (Number(item.mrrdc_itqty) || 0) * excQtyRate;
-      const eLine = 1 * excLineRate;
-
-      const mrrdc_icamt = iAmt + iQty + iLine;
-      const mrrdc_ecamt = eAmt + eQty + eLine;
-      const mrrdc_ntamt = afterDisc + mrrdc_vtamt + mrrdc_icamt + mrrdc_ivamt;
-      const mrrdc_csrat =
-        (afterDisc + mrrdc_ivamt + mrrdc_fcamt + mrrdc_icamt + mrrdc_ecamt) /
-        Number(item.mrrdc_itqty);
-
-      return {
-        ...item,
-        mrrdc_itamt,
-        mrrdc_dsamt,
-        mrrdc_ivamt,
-        mrrdc_vtamt,
-        mrrdc_txamt,
-        mrrdc_fcpct,
-        mrrdc_fcamt,
-        mrrdc_ntamt,
-        mrrdc_csrat,
-      };
-    });
-
-    setListDataItem(newItems);
-
-    // Single reduce pass: calculate all item totals at once
-    const totals = newItems.reduce(
-      (acc, item) => ({
-        tramt: acc.tramt + (Number(item.mrrdc_itamt) || 0),
-        itmds: acc.itmds + (Number(item.mrrdc_dsamt) || 0),
-        ivtmt: acc.ivtmt + (Number(item.mrrdc_ivamt) || 0),
-        vtamt: acc.vtamt + (Number(item.mrrdc_vtamt) || 0),
-        txamt: acc.txamt + (Number(item.mrrdc_txamt) || 0),
-        fcamt: acc.fcamt + (Number(item.mrrdc_fcamt) || 0),
-        icamt: acc.icamt + (Number(item.mrrdc_icamt) || 0),
-        ecamt: acc.ecamt + (Number(item.mrrdc_ecamt) || 0),
-        ntamt: acc.ntamt + (Number(item.mrrdc_ntamt) || 0),
-      }),
-      {
-        tramt: 0,
-        itmds: 0,
-        ivtmt: 0,
-        vtamt: 0,
-        txamt: 0,
-        fcamt: 0,
-        icamt: 0,
-        ecamt: 0,
-        ntamt: 0,
-      },
-    );
-
-    //clone payments
-    let newPayments = [...paymList];
-    const totalPayment = newPayments.reduce(
-      (sum, item) => sum + Number(item.mrrpy_pdamt),
-      0,
-    );
-    setListDataPayment(newPayments);
-
-    //clone master
-    let newMaster = { ...master };
-    const duamt = totals.ntamt - totalPayment;
-
-    setFormData({
-      ...newMaster,
-      mrrdm_tramt: Number(totals.tramt).toFixed(4),
-      mrrdm_itmds: Number(totals.itmds).toFixed(4),
-      mrrdm_ivtmt: Number(totals.ivtmt).toFixed(4),
-      mrrdm_vtamt: Number(totals.vtamt).toFixed(4),
-      mrrdm_txamt: Number(totals.txamt).toFixed(4),
-      mrrdm_fcamt: Number(totals.fcamt).toFixed(4),
-      mrrdm_icamt: Number(totals.icamt).toFixed(4),
-      mrrdm_ecamt: Number(totals.ecamt).toFixed(4),
-      mrrdm_pyamt: Number(totals.ntamt).toFixed(4),
-      mrrdm_pdamt: Number(totalPayment).toFixed(4),
-      mrrdm_duamt: Number(duamt).toFixed(4),
-    });
-  }
-
   function reCalculate(items, master, costList, paymList) {
     //console.log("items", items);
 
@@ -535,9 +363,9 @@ const useMRR = () => {
     } catch (error) {}
   };
 
-  const getMrrItems = async (id) => {
+  const getMrrItems = async (id, dpart_id) => {
     try {
-      const resp = await itemsAPI.getMrrItems({ cntct_id: id });
+      const resp = await itemsAPI.getMrrItems({ cntct_id: id, price_dpart: dpart_id });
       const list = resp.data || [];
       setItems_Options(list);
     } catch (error) {}
@@ -561,7 +389,7 @@ const useMRR = () => {
         ...(dspct === 0 ? { mrrdm_invds: 0 } : {}),
       };
       reCalculate(listDataItem, newformData, listDataCost, listDataPayment);
-      await getMrrItems(v);
+      await getMrrItems(v, formData.mrrdm_dpart);
     }
     if (f === "mrrdm_invds" || f === "mrrdm_dspct") {
       const newformData = {
@@ -581,7 +409,6 @@ const useMRR = () => {
     loadAllDetails(rowData.id);
     getAllDepartments();
     getAllContacts();
-    //getMrrItems(rowData.mrrdm_cntct);
     getExpnPaym();
   };
 
@@ -663,7 +490,7 @@ const useMRR = () => {
     getAllContacts();
     getAllDepartments();
     getExpnPaym();
-    getMrrItems();
+    //getMrrItems();
   };
 
   const handleCancel = () => {

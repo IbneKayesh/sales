@@ -523,10 +523,10 @@ router.post("/get-new-business-items", async (req, res) => {
 // get-mrr-items
 router.post("/get-mrr-items", async (req, res) => {
   try {
-    const { cntct_id, user_s, user_c, user_b } = req.body;
+    const { cntct_id, price_dpart, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!cntct_id || !user_c) {
+    if (!cntct_id || !price_dpart || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -568,10 +568,11 @@ router.post("/get-mrr-items", async (req, res) => {
     AND itc.itmct_cntct = $1
     AND prc.price_users = $2
     AND prc.price_bsins = $3
+    AND prc.price_dpart = $4
     ORDER BY itm.items_iname ASC`;
     //AND itm.items_itype IN ('RM', 'PM', 'FG')
 
-    const params = [cntct_id, user_c, user_b];
+    const params = [cntct_id, user_c, user_b, price_dpart];
     const rows = await dbGetAll(sql, params, `get new mrr items- ${user_c}`);
     res.json({
       success: true,
@@ -649,6 +650,7 @@ FROM tmib_stock stk
 JOIN tmib_price prc ON stk.stock_price = prc.id
 					AND stk.stock_users = prc.price_users
 					AND stk.stock_bsins = prc.price_bsins
+          AND stk.stock_dpart = prc.price_dpart
 JOIN tmib_items itm ON stk.stock_items = itm.id
 					AND stk.stock_users = itm.items_users
 					AND stk.stock_bsins = itm.items_bsins

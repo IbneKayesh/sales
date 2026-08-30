@@ -850,6 +850,7 @@ const useProcess = () => {
     } else if (modal === "SFG") {
       setFormDataSFGFG(dataModelSFG);
     } else if (modal === "Batch") {
+      //console.log("listDataSFGFG",listDataSFGFG)
       const list = listDataSFGFG.map((item) => ({
         id: generateGuid(),
         prbtc_bosfg: item.prsfg_bosfg,
@@ -873,6 +874,8 @@ const useProcess = () => {
           validNumber(item.prsfg_fgqty) - validNumber(item.avail_fgqty), //avail qty
         price_cname: item.price_cname,
         units_cname: item.units_cname,
+        party_id: item.party_id,
+        chtac_id: item.chtac_id
       }));
       setFormDataBatch(list);
     } else if (modal === "RMPM_STOCK") {

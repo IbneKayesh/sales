@@ -64,9 +64,9 @@ const useParty = () => {
       const listActive = listPath.filter(
         (f) =>
           f.chtac_sglmd === "SYS_MULTI_SGL" ||
-          (f.chtac_sglmd === "SYS_SINGLE_SGL" && f.party_count === 0),
+          (f.chtac_sglmd === "SYS_SINGLE_SGL" && Number(f.party_count) === 0),
       );
-      //console.log(listActive);
+      //console.log(listPath);
       setChtac_Options(listActive);
     } catch (error) {}
   };
