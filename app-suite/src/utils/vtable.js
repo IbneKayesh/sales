@@ -243,14 +243,14 @@ const txmod_Options = [
   //   value: "Zero",
   // },
 ];
-const txcod_trcod_Options = [
+const bndle_Options = [
   {
     label: "Sales",
-    value: "Sales",
+    value: "SALES",
   },
   {
     label: "Purchase",
-    value: "Purchase",
+    value: "PURCHASE",
   },
 ];
 
@@ -275,5 +275,5 @@ export {
   cntad_ttype_Options,
   txcod_txtyp_Options,
   txmod_Options,
-  txcod_trcod_Options,
+  bndle_Options,
 };

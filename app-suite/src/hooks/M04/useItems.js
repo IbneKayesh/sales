@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useUI } from "@/context/AppUIContext.jsx";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
@@ -21,6 +22,8 @@ import { categoriesAPI } from "@/api/M04/categoriesAPI.js";
 import { costingAPI } from "@/api/M04/costingAPI.js";
 
 const useItems = () => {
+  const navigate = useNavigate();
+
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
   const [pgId, setPgId] = useState("M04-M01-M001");
@@ -577,7 +580,7 @@ const useItems = () => {
 
   const handlePriceCheck = async () => {
     //console.log("thisItem", formDataItem);
-    const dataName = formDataItem.price_cname
+    const dataName = formDataItem.price_cname;
     try {
       setIsBusy(true);
       const resp = await costingAPI.getPrice({ price_id: formDataItem.id });
@@ -610,6 +613,22 @@ const useItems = () => {
   const handleHideModal = () => {
     setShowModal({ show: false, modal: "" });
     setModalTitle({ title: "", subTitle: "" });
+  };
+
+  //item price bundle
+  const handleItemPriceBundle = async (rowData) => {
+    //console.log("rowData", rowData)
+    const confirmation = await confirmBox({
+      title: "Redirect",
+      message: `Are you sure you want to go Bundle Page?`,
+      confirmText: "Go",
+      variant: "success",
+    });
+    if (!confirmation) return;
+
+    navigate("/inventory/setup/items-price-bundle", {
+      state: { rowData },
+    });
   };
 
   return {
@@ -668,7 +687,8 @@ const useItems = () => {
     formDataFilter,
     //price checker
     handlePriceCheck,
+    //item price bundle
+    handleItemPriceBundle,
   };
 };
 export default useItems;
-

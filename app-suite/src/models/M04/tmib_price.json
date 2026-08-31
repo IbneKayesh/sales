@@ -3,11 +3,18 @@
     "type": "string",
     "label": "Id"
   },
+  "price_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
   "price_items": {
     "type": "string",
     "label": "Item",
     "maxLength": 50,
-    "placeholder": "Select item",
+    "placeholder": "Select",
     "required": true
   },
   "price_cname": {

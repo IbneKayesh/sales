@@ -38,7 +38,7 @@ const apiRequest = async (endpoint, options = {}) => {
     headers: {
       "Content-Type": "application/json",
       "sgd-ua-node": import.meta.env.VITE_APP_API_KEY,
-      "x-tenant-id": storedUser.users_aplnk || 'default', //this Database Id
+      "x-tenant-id": storedUser.users_aplnk || "default", //this Database Id
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
@@ -63,7 +63,8 @@ const apiRequest = async (endpoint, options = {}) => {
       if (response.status === 502) {
         return {
           success: false,
-          message: "Unable to connect. Please check your internet and try again.",
+          message:
+            "Unable to connect. Please check your internet and try again.",
           data: [],
         };
       }
@@ -75,6 +76,7 @@ const apiRequest = async (endpoint, options = {}) => {
       };
     }
 
+    console.log(endpoint, data);
     return data;
   } catch (error) {
     console.error(`API request failed: ${endpoint}`, error);

@@ -33,7 +33,7 @@ const ItemContactForm = ({
             optionGrid="cntct_cname:Name,cntct_cntps:Person,cntct_cntno:Contact,cntct_ofadr:Address"
           />
         </div>
-        <div className="col-span-12 mt-5"></div>
+        <div className="col-span-12 mt-5 text-red-500">{formErrors.itmct_items}</div>
         <div className="col-span-12 mt-5"></div>
         <div className="col-span-12 mt-5"></div>
       </div>

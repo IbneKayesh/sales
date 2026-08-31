@@ -80,7 +80,9 @@ const ItemsPage = () => {
     mcatg_Options,
     formDataFilter,
     //price checker
-    handlePriceCheck
+    handlePriceCheck,
+    //item price bundle
+    handleItemPriceBundle,
   } = useItems();
 
   return (
@@ -201,6 +203,7 @@ const ItemsPage = () => {
                 onEdit={handleEditPrice}
                 onDelete={handleDeletePrice}
                 onLedger={handleLedger}
+                onItemPriceBundle={handleItemPriceBundle}
               />
 
               {selectedItemPrice.price_cname && (

@@ -1,0 +1,59 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "bndlm_dpart": {
+    "type": "string",
+    "label": "Department",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "bndlm_cname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Enter name",
+    "required": true
+  },
+  "bndlm_itype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 10,
+    "minLength": 3,
+    "placeholder": "Select",
+    "required": true
+  },
+  "bndlm_items": {
+    "type": "string",
+    "label": "Item",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "bndlm_price": {
+    "type": "string",
+    "label": "Item Price",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "bndlm_itqty": {
+    "type": "number",
+    "label": "Qty",
+    "maxLength": 99999999,
+    "minLength": 1,
+    "placeholder": "Enter qty",
+    "required": true
+  },
+  "bndlm_itrat": {
+    "type": "number",
+    "label": "Rate",
+    "maxLength": 99999999,
+    "minLength": 1,
+    "placeholder": "Enter qty",
+    "required": true
+  }
+}

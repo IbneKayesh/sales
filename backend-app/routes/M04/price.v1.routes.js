@@ -362,4 +362,52 @@ router.post("/get-by-item", async (req, res) => {
   }
 });
 
+
+// get by department bundle item
+router.post("/get-by-department-bundle-item", async (req, res) => {
+  try {
+    const { price_dpart, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!price_dpart || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT prc.*, itm.items_icode, itm.items_iname, dpt.dpart_cname,
+    runit.units_cname as runit_cname,
+    csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
+    FROM tmib_price prc
+    LEFT JOIN tmib_items itm ON prc.price_items = itm.id
+    LEFT JOIN tmsb_dpart dpt ON prc.price_dpart = dpt.id
+    LEFT JOIN tmib_units runit ON itm.items_runit = runit.id
+    LEFT JOIN tmhb_emply csr ON prc.price_crusr = csr.id
+    LEFT JOIN tmhb_emply usr ON prc.price_upusr = usr.id
+    WHERE prc.price_users = $1
+    AND prc.price_dpart = $2
+    AND itm.items_itype IN ('FG','SVC')
+    AND itm.items_stsal = FALSE
+    ORDER BY itm.items_iname, dpt.dpart_cname ASC`;
+
+    const params = [user_c, price_dpart];
+    const rows = await dbGetAll(sql, params, `get price- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 module.exports = router;

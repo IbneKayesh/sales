@@ -30,4 +30,8 @@ export const priceAPI = {
     apiRequest("/M04/v1/prices/get-by-item", {
       body: data,
     }),
+  getByDepartmentBundleItem: (data) =>
+    apiRequest("/M04/v1/prices/get-by-department-bundle-item", {
+      body: data,
+    }),
 };

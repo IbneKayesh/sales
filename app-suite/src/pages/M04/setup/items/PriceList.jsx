@@ -2,9 +2,8 @@ import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
-import { IconClose, IconCheck, IconActivity } from "@/icons";
+import { IconClose, IconPackage, IconActivity } from "@/icons";
 import NegativeValue from "@/components/common/NegativeValue";
-import PriceLedger from "./PriceLedger";
 
 const PriceList = ({
   cfColumns = [],
@@ -12,6 +11,7 @@ const PriceList = ({
   onEdit,
   onDelete,
   onLedger,
+  onItemPriceBundle,
 }) => {
   const dtColumns = [
     {
@@ -137,6 +137,17 @@ const PriceList = ({
             title="Ledger"
           >
             <IconActivity size={14} />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onItemPriceBundle(row);
+            }}
+            title="Item Price Bundle"
+          >
+            <IconPackage size={14} />
           </Button>
           <ActionButton
             rowData={row}
