@@ -40,8 +40,8 @@ const CostingForm = ({
         </div>
         <div className="col-span-2">
           <InputText
-            label="Cost Ratio"
-            placeholder="Enter cost ratio"
+            label="Cost Ratio %"
+            placeholder="Enter cost ratio %"
             value={formData.pcost_csrto}
             onChange={(e) => onChange("pcost_csrto", e.target.value)}
             error={formErrors.pcost_csrto}

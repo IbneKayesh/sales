@@ -3,7 +3,7 @@ import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
 import Chip from "@/components/Chip";
-import { IconClose, IconCheck, IconActivity } from "@/icons";
+import { IconClose, IconCheck, IconActivity, IconChevronDown } from "@/icons";
 import Dropdown from "@/components/Dropdown";
 import NegativeValue from "@/components/common/NegativeValue";
 
@@ -36,6 +36,16 @@ const ItemsList = ({
                 style={{ marginLeft: "5px", fontWeight: 600 }}
               >
                 {row.price_count} Price
+              </Chip>
+            )}
+            {row.cntct_count > 0 && " "}
+            {row.cntct_count > 0 && (
+              <Chip
+                variant={row.cntct_count > 0 ? "success" : "secondary"}
+                size="sm"
+                style={{ marginLeft: "5px", fontWeight: 600 }}
+              >
+                {row.cntct_count} Supplier
               </Chip>
             )}
           </span>
@@ -176,7 +186,7 @@ const ItemsList = ({
             }}
             title="Price, Stock, Ledger"
           >
-            <IconActivity size={14} />
+            <IconChevronDown size={14} />
           </Button>
           <ActionButton
             rowData={row}

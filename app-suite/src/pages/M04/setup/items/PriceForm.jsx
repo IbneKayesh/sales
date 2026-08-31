@@ -165,7 +165,11 @@ const PriceForm = ({
           <IconClose size={16} className="icon-left" />
           Cancel
         </Button>
-        <Button variant="help" onClick={onPriceCheck} disabled={isBusy}>
+        <Button
+          variant="help"
+          onClick={onPriceCheck}
+          disabled={isBusy || !formData.id}
+        >
           <IconInfo size={16} className="icon-left" />
           Price Check
         </Button>

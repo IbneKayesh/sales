@@ -101,6 +101,19 @@ const useItems = () => {
     getAllCategories();
   }, []);
 
+  const handleCopyProduct = () => {
+    setFormData((prev) => ({
+      ...prev,
+      id: "",
+      items_icode: "",
+      items_brcod: "",
+      items_hscod: "",
+      items_notes: "",
+      items_image: "",
+    }));
+    showToast("Information copied for New Entry", { type: "success" });
+  };
+
   const handleChange = async (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmib_items);
@@ -649,6 +662,7 @@ const useItems = () => {
     scatg_Options,
     brand_Options,
     dpart_Options,
+    handleCopyProduct,
     //functions
     handleChange,
     handleEdit,

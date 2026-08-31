@@ -43,6 +43,7 @@ const ItemsPage = () => {
     scatg_Options,
     brand_Options,
     dpart_Options,
+    handleCopyProduct,
     //functions
     handleChange,
     handleEdit,
@@ -129,6 +130,7 @@ const ItemsPage = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => handleShowModal("SUPPLIER")}
+                 disabled={isBusy || !formData.id}
               >
                 <IconUser size={14} className="icon-left" />
                 Supplier
@@ -184,6 +186,7 @@ const ItemsPage = () => {
               sgrup_Options={sgrup_Options}
               scatg_Options={scatg_Options}
               brand_Options={brand_Options}
+              onCopyProduct={handleCopyProduct}
               //item contact
               listDataCntct={listDataCntct}
               onDeleteCntct={handleDeleteCntct}

@@ -3,7 +3,7 @@ import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
-import { IconClose, IconSave } from "@/icons";
+import { IconClose, IconSave, IconCopy } from "@/icons";
 import { itype_Options, bool_Options, txmod_Options } from "@/utils/vtable.js";
 import ItemContactList from "./ItemContactList";
 
@@ -21,6 +21,7 @@ const ItemsForm = ({
   sgrup_Options,
   scatg_Options,
   brand_Options,
+  onCopyProduct,
   //item contact
   listDataCntct,
   onDeleteCntct,
@@ -315,6 +316,14 @@ const ItemsForm = ({
         <Button variant="secondary" onClick={onCancel} disabled={isBusy}>
           <IconClose size={16} className="icon-left" />
           Cancel
+        </Button>
+        <Button
+          variant="help"
+          onClick={onCopyProduct}
+          disabled={isBusy || !formData.id}
+        >
+          <IconCopy size={16} className="icon-left" />
+          Copy
         </Button>
         <Button variant="info" onClick={onSubmit} disabled={isBusy}>
           <IconSave size={16} className="icon-left" />

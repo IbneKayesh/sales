@@ -29,6 +29,7 @@ router.post("/", async (req, res) => {
     COALESCE(prc.price_id, 0) as price_count,
     COALESCE(prc.price_gdstk, 0) as price_gdstk,
     COALESCE(prc.price_bdstk, 0) as price_bdstk,
+    COALESCE(ict.cntct_id, 0) as cntct_count,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
 FROM tmib_items itm
 LEFT JOIN tmib_units runit ON itm.items_runit = runit.id
@@ -44,6 +45,12 @@ LEFT JOIN (
       WHERE prc.price_users = $1
       GROUP BY prc.price_items
   )prc ON itm.id = prc.price_items
+LEFT JOIN (
+      SELECT COUNT(id) as cntct_id, itmct_items
+      FROM tmib_itmct ict
+      WHERE ict.itmct_users = $1
+      GROUP BY ict.itmct_items
+  ) ict ON itm.id = ict.itmct_items
 LEFT JOIN tmhb_emply csr ON itm.items_crusr = csr.id
 LEFT JOIN tmhb_emply usr ON itm.items_upusr = usr.id
 WHERE itm.items_users = $1
@@ -717,6 +724,7 @@ router.post("/get-by-filter", async (req, res) => {
     COALESCE(prc.price_id, 0) as price_count,
     COALESCE(prc.price_gdstk, 0) as price_gdstk,
     COALESCE(prc.price_bdstk, 0) as price_bdstk,
+    COALESCE(ict.cntct_id, 0) as cntct_count,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
 FROM tmib_items itm
 LEFT JOIN tmib_units runit ON itm.items_runit = runit.id
@@ -732,6 +740,12 @@ LEFT JOIN (
       WHERE prc.price_users = $1
       GROUP BY prc.price_items
   )prc ON itm.id = prc.price_items
+LEFT JOIN (
+      SELECT COUNT(id) as cntct_id, itmct_items
+      FROM tmib_itmct ict
+      WHERE ict.itmct_users = $1
+      GROUP BY ict.itmct_items
+  ) ict ON itm.id = ict.itmct_items
 LEFT JOIN tmhb_emply csr ON itm.items_crusr = csr.id
 LEFT JOIN tmhb_emply usr ON itm.items_upusr = usr.id
 WHERE itm.items_users = $1

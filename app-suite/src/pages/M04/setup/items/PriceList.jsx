@@ -2,7 +2,7 @@ import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
 import Button from "@/components/Button";
-import { IconClose, IconPackage, IconActivity } from "@/icons";
+import { IconChevronDown, IconPackage, IconActivity } from "@/icons";
 import NegativeValue from "@/components/common/NegativeValue";
 
 const PriceList = ({
@@ -136,7 +136,7 @@ const PriceList = ({
             }}
             title="Ledger"
           >
-            <IconActivity size={14} />
+            <IconChevronDown size={14} />
           </Button>
           <Button
             variant="ghost"
