@@ -6,6 +6,21 @@ import NegativeValue from "@/components/common/NegativeValue";
 import { formatDate } from "@/utils/datetime.js";
 
 const PriceLedger = ({ listData }) => {
+  // Calculate running / accumulated quantity
+  const dataWithRunningQty = listData.reduce((acc, row) => {
+    const previousQty =
+      acc.length > 0 ? Number(acc[acc.length - 1].running_qty || 0) : 0;
+
+    const currentQty = Number(row.mrrdc_itqty || 0);
+
+    acc.push({
+      ...row,
+      running_qty: previousQty + currentQty,
+    });
+
+    return acc;
+  }, []);
+
   const dtColumns = [
     { key: "cntct_cname", header: "Contact", width: "200px" },
     { key: "mrrdm_trnno", header: "Trn", width: "200px" },
@@ -24,6 +39,17 @@ const PriceLedger = ({ listData }) => {
       body: (_, row) => (
         <>
           <NegativeValue value={row.mrrdc_itqty} /> {row.units_cname}
+        </>
+      ),
+    },
+
+    {
+      key: "running_qty",
+      header: "Balance Qty",
+      width: "100px",
+      body: (_, row) => (
+        <>
+          <NegativeValue value={row.running_qty} /> {row.units_cname}
         </>
       ),
     },
@@ -55,17 +81,19 @@ const PriceLedger = ({ listData }) => {
     (acc, row) => acc + Number(row.mrrdc_itqty || 0),
     0,
   );
+
   const totalValue = listData.reduce(
     (acc, row) =>
       acc + Number(row.mrrdc_itqty || 0) * Number(row.mrrdc_csrat || 0),
     0,
   );
+  
   return (
     <>
       <DataTable
         columns={dtColumns}
-        data={listData}
-        pageSize={15}
+        data={dataWithRunningQty}
+        pageSize={50}
         sortable
         searchable
         striped

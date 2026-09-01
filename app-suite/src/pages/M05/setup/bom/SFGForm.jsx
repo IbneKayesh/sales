@@ -77,7 +77,7 @@ const SFGForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="Ratio"
+            label="Qty Ratio(%)"
             placeholder="Enter ratio"
             value={formData.bosfg_fgrto}
             onChange={(e) => onChange("bosfg_fgrto", e.target.value)}
@@ -102,7 +102,7 @@ const SFGForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="Cost Ratio"
+            label="Cost Ratio (%)"
             placeholder="Enter ratio"
             value={formData.bosfg_rtrto}
             onChange={(e) => onChange("bosfg_rtrto", e.target.value)}

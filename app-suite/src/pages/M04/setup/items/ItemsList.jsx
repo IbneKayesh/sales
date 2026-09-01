@@ -156,6 +156,19 @@ const ItemsList = ({
       },
     },
     {
+      key: "items_stprc",
+      header: "Stop Process",
+      width: "80px",
+      body: (v) => {
+        return (
+          <Badge variant={v ? "success" : "danger"}>
+            {v ? <IconCheck size={12} /> : <IconClose size={12} />}
+            {v ? "Yes" : "No"}
+          </Badge>
+        );
+      },
+    },
+    {
       key: "price_gdstk",
       header: "Stock",
       width: "80px",

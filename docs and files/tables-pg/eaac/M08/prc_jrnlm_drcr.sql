@@ -3,10 +3,6 @@
 -- DROP PROCEDURE IF EXISTS public.prc_jrnlm_drcr(text, text, text, text);
 
 CALL prc_jrnlm_drcr(
-    '6a45d609-f616-4cf8-97a9-8577ff39f753',
-    '7d0a6d8b-efae-48a0-a595-15706cf41d2f',
-    '4dee378c-acc5-49eb-ab9e-a4e85e1e1903',
-    '7d0a6d8b-efae-48a1-a595-15706cf41d2f'
 );
 
 

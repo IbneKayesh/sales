@@ -34,6 +34,7 @@ CREATE TABLE tmib_items (
   items_stpur boolean NOT NULL DEFAULT true,
   items_stsal boolean NOT NULL DEFAULT true,
   items_stnsf boolean NOT NULL DEFAULT true,
+  items_stprc boolean NOT NULL DEFAULT true,
   
   -- default 2
   items_actve boolean NOT NULL DEFAULT true,

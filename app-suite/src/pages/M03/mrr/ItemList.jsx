@@ -7,15 +7,20 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     {
       key: "items_iname",
-      header: "Item",
+      header: "Name",
       width: "200px",
       body: (_, row) => {
         return (
           <span>
-            {row.items_iname} - {row.items_szqty} {row.sunit_cname}
+            {row.price_cname} - {row.items_szqty} {row.sunit_cname}
           </span>
         );
       },
+    },
+    {
+      key: "items_iname",
+      header: "Item Name",
+      width: "80px",
     },
     {
       key: "mrrdc_itrat",

@@ -25,6 +25,13 @@
     "placeholder": "Enter price name",
     "required": true
   },
+  "price_avrat": {
+    "type": "decimal",
+    "label": "Average Rate",
+    "default": 0.00,
+    "placeholder": "Enter average rate",
+    "required": true
+  },
   "price_lprat": {
     "type": "decimal",
     "label": "Last Purchase Rate",

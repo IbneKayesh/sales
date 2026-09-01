@@ -365,7 +365,10 @@ const useMRR = () => {
 
   const getMrrItems = async (id, dpart_id) => {
     try {
-      const resp = await itemsAPI.getMrrItems({ cntct_id: id, price_dpart: dpart_id });
+      const resp = await itemsAPI.getMrrItems({
+        cntct_id: id,
+        price_dpart: dpart_id,
+      });
       const list = resp.data || [];
       setItems_Options(list);
     } catch (error) {}
@@ -583,6 +586,10 @@ const useMRR = () => {
       showToast("Quantity is required", { type: "warning" });
       return;
     }
+    if (validNumber(formDataItem.mrrdc_itrat) <= 0) {
+      showToast("Price is required", { type: "warning" });
+      return;
+    }
 
     if (formDataItem.mrrdc_vtype === "EXEMPT") {
       if (validNumber(formDataItem.mrrdc_vtpct) !== 0) {
@@ -722,7 +729,7 @@ const useMRR = () => {
     setFormErrors(newErrors);
     if (f === "mrrpy_party") {
       const mrrpy_id = mrrpy_Options.find((opt) => opt.id === v);
-     //console.log("mrrpy_id", mrrpy_id);
+      //console.log("mrrpy_id", mrrpy_id);
       setFormDataPayment((prev) => ({
         ...prev,
         party_cname: mrrpy_id?.party_cname,

@@ -105,7 +105,10 @@ const useBOM = () => {
 
   const getItemsByType = async (id) => {
     try {
-      const resp = await itemsAPI.getByType({ items_itype: id });
+      const resp = await itemsAPI.getByType({
+        items_itype: id,
+        price_dpart: formData.bommf_dpart,
+      });
       const list = resp.data || [];
       setItems_Options(list);
     } catch (error) {}

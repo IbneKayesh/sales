@@ -142,6 +142,7 @@ const create = async (req, res) => {
       items_stpur,
       items_stsal,
       items_stnsf,
+      items_stprc,
       user_s,
       user_c,
       user_b,
@@ -201,12 +202,14 @@ const create = async (req, res) => {
       items_brcod, items_hscod, items_notes, items_runit, items_pkqty, items_punit,
       items_szqty, items_sunit, items_sgrup, items_scatg, items_itype, items_brand,
       items_tstck, items_smrgn, items_prvat, items_ptvat, items_slvat, items_stvat,
-      items_image, items_stpur, items_stsal, items_stnsf, items_crusr, items_upusr)
+      items_image, items_stpur, items_stsal, items_stnsf, items_stprc, items_crusr,
+      items_upusr)
 	    VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
         $13, $14, $15, $16, $17, $18,
         $19, $20, $21, $22, $23, $24,
-        $25, $26, $27, $28, $29, $30)`,
+        $25, $26, $27, $28, $29, $30,
+        $31)`,
       params: [
         masterId,
         user_c,
@@ -236,6 +239,7 @@ const create = async (req, res) => {
         items_stpur,
         items_stsal,
         items_stnsf,
+        items_stprc,
         user_s,
         user_s,
       ],
@@ -315,6 +319,7 @@ const update = async (req, res) => {
       items_stpur,
       items_stsal,
       items_stnsf,
+      items_stprc,
       user_s,
       user_c,
       user_b,
@@ -372,10 +377,11 @@ const update = async (req, res) => {
     items_stpur = $20,
     items_stsal = $21,
     items_stnsf = $22,
-    items_upusr = $23,
+    items_stprc = $23,
+    items_upusr = $24,
     items_updat = CURRENT_TIMESTAMP,
     items_rvnmr = items_rvnmr + 1
-    WHERE id = $24`,
+    WHERE id = $25`,
       params: [
         items_iname,
         items_brcod,
@@ -399,6 +405,7 @@ const update = async (req, res) => {
         items_stpur,
         items_stsal,
         items_stnsf,
+        items_stprc,
         user_s,
         id,
       ],
@@ -676,7 +683,7 @@ AND stk.stock_bsins = $2
 AND stk.stock_dpart = $3
 AND itm.items_stsal = FALSE
 ORDER BY prc.price_cname, stk.stock_crdat`;
-//AND itm.items_itype IN ('SVC', 'FG')
+    //AND itm.items_itype IN ('SVC', 'FG')
 
     const params = [user_c, user_b, dpart_id];
     const rows = await dbGetAll(
@@ -769,14 +776,13 @@ ORDER BY prc.price_gdstk DESC, prc.price_bdstk DESC, itm.items_iname`;
   }
 });
 
-
 // bom-items-get-by-type
 router.post("/bom-items-get-by-type", async (req, res) => {
   try {
-    const { items_itype, user_s, user_c, user_b } = req.body;
+    const { items_itype, price_dpart, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!user_c) {
+    if (!user_c || !items_itype || !price_dpart) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -797,10 +803,12 @@ router.post("/bom-items-get-by-type", async (req, res) => {
           AND itm.items_itype = $1
           AND prc.price_users = $2
           AND prc.price_bsins = $3
+          AND prc.price_dpart = $4
+          AND itm.items_stprc = FALSE
           AND itm.items_actve = TRUE
           ORDER BY prc.price_cname`;
 
-    const params = [items_itype, user_c, user_b];
+    const params = [items_itype, user_c, user_b, price_dpart];
     const rows = await dbGetAll(sql, params, `get for bom items - ${user_c}`);
     res.json({
       success: true,

@@ -842,10 +842,12 @@ router.post("/get-details-by-master", async (req, res) => {
 
     //database action
     const sql = `SELECT mrd.*,
-    itm.items_iname, itm.items_szqty, unt.units_cname AS runit_uname, sunit.units_cname as sunit_cname,
+    itm.items_iname, itm.items_szqty, unt.units_cname AS runit_uname, sunit.units_cname as sunit_cname, prc.price_cname,
      0 as edit_stop
     FROM tmpb_mrrdc mrd
     LEFT JOIN tmib_items itm ON mrd.mrrdc_items = itm.id
+    LEFT JOIN tmib_price prc ON mrd.mrrdc_price = prc.id
+                            AND itm.id = prc.price_items
     LEFT JOIN tmib_units unt ON mrd.mrrdc_units = unt.id
     LEFT JOIN tmib_units sunit ON itm.items_sunit = sunit.id
     WHERE mrd.mrrdc_users = $1

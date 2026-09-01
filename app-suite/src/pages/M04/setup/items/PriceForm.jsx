@@ -46,6 +46,9 @@ const PriceForm = ({
           />
         </div>
         <div className="col-span-2">
+          <InputLabel label="Average Rate" value={formData.price_avrat} />
+        </div>
+        <div className="col-span-2">
           <InputLabel label="Last Purchase Rate" value={formData.price_lprat} />
         </div>
         <div className="col-span-2">
@@ -139,7 +142,7 @@ const PriceForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-12">
+        <div className="col-span-10">
           <InputText
             label="JSON Note"
             placeholder="Enter json note"

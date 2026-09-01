@@ -32,6 +32,12 @@ const PriceList = ({
       width: "80px",
     },
     {
+      key: "price_avrat",
+      header: "Average Rate",
+      width: "80px",
+      body: (_, row) => <NegativeValue value={row.price_avrat} />,
+    },
+    {
       key: "price_lprat",
       header: "L.Purchase Rate",
       width: "80px",

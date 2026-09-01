@@ -14,6 +14,7 @@ CREATE TABLE tmib_price (
   price_cname VARCHAR(50) NOT NULL,
 
   -- custom
+  price_avrat decimal(18,6) DEFAULT 0.00,
   price_lprat decimal(18,6) DEFAULT 0.00,
   price_dprat decimal(18,6) DEFAULT 0.00,
   price_tprat decimal(18,6) DEFAULT 0.00,

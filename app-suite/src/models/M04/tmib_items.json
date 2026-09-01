@@ -161,5 +161,10 @@
     "type": "boolean",
     "label": "Stop Transfer",
     "default": false
+  },
+  "items_stprc": {
+    "type": "boolean",
+    "label": "Stop Process",
+    "default": false
   }
 }

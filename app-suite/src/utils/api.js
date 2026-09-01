@@ -76,7 +76,13 @@ const apiRequest = async (endpoint, options = {}) => {
       };
     }
 
-    console.log(endpoint, data);
+    const conObj = {
+      api: endpoint,
+      payload: finalBody,
+      data: data,
+    };
+
+    console.log(conObj);
     return data;
   } catch (error) {
     console.error(`API request failed: ${endpoint}`, error);
