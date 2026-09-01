@@ -6,7 +6,7 @@ const AuditData = ({ actve, cname, cdate, uname, udate, rvnmr }) => {
   return (
     <div
       className="grid text-muted rounded-lg badge--primary"
-      style={{ padding: "10px", fontSize: "var(--fs-xs)" }}
+      style={{ padding: "5px", fontSize: "var(--fs-xs)" }}
     >
       <div className="col-span-2">
         {

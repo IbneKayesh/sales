@@ -1,5 +1,7 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
+import Button from "@/components/Button";
+import { IconClose } from "@/icons";
 
 const ItemsList = ({ readOnly, listData, onEdit, onDelete }) => {
   const totalDr = listData.reduce(
@@ -23,27 +25,44 @@ const ItemsList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Debit",
       width: "80px",
       body: (v) => v?.toLocaleString?.() || "0",
+      footer: (_) => totalDr?.toLocaleString?.() || "0",
     },
     {
       key: "jrnlc_crval",
       header: "Credit",
       width: "80px",
       body: (v) => v?.toLocaleString?.() || "0",
+      footer: (_) => totalCr?.toLocaleString?.() || "0",
     },
     { key: "jrnlc_descr", header: "Description", width: "200px" },
     {
       key: "actions",
       header: "Actions",
-      width: "110px",
+      width: "50px",
       sortable: false,
       body: (_, row) => (
-        <ActionButton
-          rowData={row}
-          actve={row.jrnlc_actve}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        // <ActionButton
+        //   rowData={row}
+        //   actve={row.jrnlc_actve}
+        //   onEdit={onEdit}
+        //   onDelete={onDelete}
+        // />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="btn--icon-danger"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(row);
+          }}
+          title="Remove Line"
+        >
+          <IconClose size={14} className="text-danger" />
+        </Button>
       ),
+      footer: (_) => {
+        return <>{listData.length} Lines</>;
+      },
       visible: !readOnly,
     },
   ];
@@ -53,17 +72,16 @@ const ItemsList = ({ readOnly, listData, onEdit, onDelete }) => {
       <DataTable
         columns={dtColumns}
         data={listData}
-        pageSize={15}
+        pageSize={30}
         sortable
         searchable={false}
         striped
         hoverable
         exportable={false}
-        onRowClick={(row) => onEdit(row)}
+        //onRowClick={(row) => onEdit(row)}
         emptyMessage="No journal lines added yet"
         className="mt-2"
       />
-      <p>{listData.length} Lines</p>
     </div>
   );
 };

@@ -6,7 +6,7 @@ import ActionButton from "@/components/ActionButton";
 const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     {
-      key: "items_iname",
+      key: "price_cname",
       header: "Name",
       width: "200px",
       body: (_, row) => {

@@ -2030,6 +2030,36 @@ code {
   font-size: var(--fs-xs);
 }
 
+.tree-dt__expand-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.tree-dt__expand-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-size: var(--fs-xs);
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.tree-dt__expand-btn:hover {
+  background: var(--surface-alt);
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+}
+
 .tree-dt__count {
   font-size: var(--fs-xs);
   color: var(--text-secondary);

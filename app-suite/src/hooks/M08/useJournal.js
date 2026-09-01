@@ -312,6 +312,16 @@ const useJournal = () => {
       return;
     }
 
+    const duplicateParty = listDataItem.some(
+      (item) => item.jrnlc_party === formDataItem.jrnlc_party,
+    );
+    if (duplicateParty) {
+      showToast("This Party already exists in the journal.", {
+        type: "warning",
+      });
+      return;
+    }
+
     // Must have either debit or credit
     const drVal = Number(formDataItem.jrnlc_drval) || 0;
     const crVal = Number(formDataItem.jrnlc_crval) || 0;

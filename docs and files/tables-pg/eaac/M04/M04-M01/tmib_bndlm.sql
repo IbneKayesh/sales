@@ -20,6 +20,9 @@ CREATE TABLE tmib_bndlm (
   bndlm_itype VARCHAR(50) NOT NULL, ---SALES/PURCHASE
   bndlm_items VARCHAR(50) NOT NULL,
   bndlm_price VARCHAR(50) NOT NULL,
+  bndlm_units VARCHAR(50) NOT NULL,
+  bndlm_frdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  bndlm_todat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   bndlm_itqty decimal(18,6) DEFAULT 1,
   bndlm_itrat decimal(18,6) DEFAULT 1,
   

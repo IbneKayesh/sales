@@ -163,7 +163,7 @@ const setupGroups = [
               },
               {
                 id: "SYS_INVENTORY_ITEMS_PRICE_LIST",
-                name: "Price Grid",
+                name: "Item Grid > Price Grid",
                 desc: "Configure visible columns in the Item price list",
                 modal: "SYS_INVENTORY_ITEMS",
                 table: "SYS_INVENTORY_ITEMS_PRICE_LIST",

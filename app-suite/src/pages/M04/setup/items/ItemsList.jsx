@@ -6,6 +6,7 @@ import Chip from "@/components/Chip";
 import { IconClose, IconCheck, IconActivity, IconChevronDown } from "@/icons";
 import Dropdown from "@/components/Dropdown";
 import NegativeValue from "@/components/common/NegativeValue";
+import ConvertUOM from "@/components/common/ConvertUOM";
 
 const ItemsList = ({
   cfColumns = [],
@@ -178,7 +179,13 @@ const ItemsList = ({
           <span className={`${lineStock > 0 && "text-green-500"}`}>
             {Number(row.price_gdstk).toFixed(2)} +{" "}
             {Number(row.price_bdstk).toFixed(2)} ={" "}
-            <NegativeValue value={Number(lineStock).toFixed(2)} />
+            {/* <NegativeValue value={Number(lineStock).toFixed(2)} /> */}
+            <ConvertUOM
+              qty={lineStock}
+              dfQty={row.items_pkqty}
+              pname={row.runit_cname}
+              sname={row.punit_cname}
+            />
           </span>
         );
       },

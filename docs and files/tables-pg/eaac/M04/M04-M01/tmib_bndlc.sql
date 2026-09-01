@@ -16,6 +16,7 @@ CREATE TABLE tmib_bndlc (
   -- custom
   bndlc_items VARCHAR(50) NOT NULL,
   bndlc_price VARCHAR(50) NOT NULL,
+  bndlc_units VARCHAR(50) NOT NULL,
   bndlc_itqty decimal(18,6) DEFAULT 1,
   bndlc_itrat decimal(18,6) DEFAULT 1,
   

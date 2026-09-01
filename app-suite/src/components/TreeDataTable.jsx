@@ -1,5 +1,5 @@
-import { useState, useCallback, useMemo } from 'react'
-import { IconChevronRight, IconCheckboxCheck, IconCheckboxIndeterminate, IconSort, IconSearch, IconClose, IconDownload } from '@/icons'
+import { useState, useCallback, useMemo, useEffect } from 'react'
+import { IconChevronRight, IconCheckboxCheck, IconCheckboxIndeterminate, IconSort, IconSearch, IconClose, IconDownload, IconExpand, IconCollapse } from '@/icons'
 
 /* ─── Helpers ─── */
 
@@ -310,6 +310,8 @@ export default function TreeDataTable({
   searchPlaceholder = 'Search...',
   exportable = false,
   exportFilename,
+  expandable = false,
+  storageKey,
   striped = true,
   hoverable = true,
   dense = false,
@@ -321,8 +323,8 @@ export default function TreeDataTable({
   const [sortDir, setSortDir] = useState('asc')
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Auto-expand all nodes on initial render
-  const [localExpanded, setLocalExpanded] = useState(() => {
+  // Helper: collect all parent IDs from tree data
+  const getAllParentIds = useCallback((treeData) => {
     const ids = new Set()
     const walk = (list) => {
       for (const n of list) {
@@ -330,9 +332,29 @@ export default function TreeDataTable({
         if (n.children?.length) walk(n.children)
       }
     }
-    walk(data)
+    walk(treeData)
     return ids
+  }, [])
+
+  // Load expanded state from localStorage or expand all by default
+  const [localExpanded, setLocalExpanded] = useState(() => {
+    if (storageKey) {
+      try {
+        const stored = localStorage.getItem(storageKey)
+        if (stored) return new Set(JSON.parse(stored))
+      } catch {}
+    }
+    return getAllParentIds(data)
   })
+
+  // Persist expanded state to localStorage
+  useEffect(() => {
+    if (storageKey) {
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(Array.from(localExpanded)))
+      } catch {}
+    }
+  }, [storageKey, localExpanded])
 
   const visibleColumns = columns.filter((col) => col.visible !== false)
   if (!visibleColumns.length) return null
@@ -405,6 +427,14 @@ export default function TreeDataTable({
     [expandedSet, onExpandedChange, isSearching]
   )
 
+  const handleExpandAll = useCallback(() => {
+    setLocalExpanded(getAllParentIds(data))
+  }, [data, getAllParentIds])
+
+  const handleCollapseAll = useCallback(() => {
+    setLocalExpanded(new Set())
+  }, [])
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value)
   }
@@ -434,7 +464,7 @@ export default function TreeDataTable({
     ? sorted.filter((r) => r._depth === 0)
     : displayData
 
-  const showToolbar = searchable || exportable
+  const showToolbar = searchable || exportable || expandable
 
   return (
     <div className={`tree-dt${dense ? ' tree-dt--dense' : ''}${className ? ' ' + className : ''}`}>
@@ -464,6 +494,26 @@ export default function TreeDataTable({
             </div>
           )}
           <div className="tree-dt__toolbar-right">
+            {expandable && !isSearching && (
+              <div className="tree-dt__expand-group">
+                <button
+                  type="button"
+                  className="tree-dt__expand-btn"
+                  onClick={handleExpandAll}
+                  title="Expand All"
+                >
+                  <IconExpand size={14} />
+                </button>
+                <button
+                  type="button"
+                  className="tree-dt__expand-btn"
+                  onClick={handleCollapseAll}
+                  title="Collapse All"
+                >
+                  <IconCollapse size={14} />
+                </button>
+              </div>
+            )}
             <span className="tree-dt__count">
               {flat.length} records{isSearching ? ` (filtered)` : ''}
             </span>

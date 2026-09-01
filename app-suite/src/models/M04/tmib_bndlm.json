@@ -40,6 +40,25 @@
     "placeholder": "Select",
     "required": true
   },
+  "bndlm_units": {
+    "type": "string",
+    "label": "Units",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true
+  },
+  "bndlm_frdat": {
+    "type": "date",
+    "label": "From Date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
+  "bndlm_todat": {
+    "type": "date",
+    "label": "To Date",
+    "required": true,
+    "default": "new Date() with local format"
+  },
   "bndlm_itqty": {
     "type": "number",
     "label": "Qty",

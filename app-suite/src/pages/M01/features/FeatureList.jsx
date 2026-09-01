@@ -59,6 +59,8 @@ const FeatureList = ({ treeData, onEdit, onDelete, onAddChild }) => {
       data={treeData}
       treeColumn={0}
       searchable
+      expandable
+      storageKey="M01-features-expanded"
       exportable
       exportFilename="data-export.csv"
       striped
