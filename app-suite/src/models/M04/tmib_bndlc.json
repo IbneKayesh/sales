@@ -33,10 +33,10 @@
     "required": true
   },
   "bndlc_itrat": {
-    "type": "number",
+    "type": "decimal",
     "label": "Rate",
     "maxLength": 99999999,
-    "minLength": 1,
+    "minLength": 0,
     "placeholder": "Enter qty",
     "required": true
   }

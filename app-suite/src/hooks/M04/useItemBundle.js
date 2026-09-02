@@ -56,15 +56,22 @@ const useItemBundle = () => {
       const newData = {
         bndlm_dpart: selectedItemPrice.price_dpart,
         bndlm_items: selectedItemPrice.price_items,
+        bndlm_units: selectedItemPrice.items_runit,
         bndlm_price: selectedItemPrice.id,
         bndlm_itqty: 1,
         bndlm_itrat: selectedItemPrice.price_mrrat,
         dpart_cname: selectedItemPrice.dpart_cname,
         price_cname: selectedItemPrice.price_cname,
+        runit_cname: selectedItemPrice.runit_cname,
       };
-      setFormData(newData);
+      setFormData({
+        ...dataModel,
+        ...newData,
+      });
       setPgView("SYS_VW_FRM_1");
       getItemsByDepartment(selectedItemPrice.price_dpart);
+    } else {
+      setPgView("SYS_VW_LST_1");
     }
     getAllBundle();
   }, [selectedItemPrice]);
@@ -79,6 +86,20 @@ const useItemBundle = () => {
     } catch (error) {}
   };
 
+  
+  const loadAllDetails = async (id) => {
+    try {
+      setIsBusy(true);
+      const [dtResp] = await Promise.all([
+        bundleAPI.getDetailsByMasterId({ bndlc_bndlm: id })
+      ]);
+      setListDataItem(dtResp.data || []);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
     const newErrors = validate({ ...formData, [f]: v }, tmib_bndlm);
@@ -88,6 +109,7 @@ const useItemBundle = () => {
   const handleEdit = (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
+    loadAllDetails(rowData.id);
   };
 
   const handleDelete = async (rowData) => {
@@ -148,6 +170,7 @@ const useItemBundle = () => {
     try {
       const newErrors = validate(formData, tmib_bndlm);
       setFormErrors(newErrors);
+      console.log("newErrors", newErrors);
       if (Object.keys(newErrors).length > 0) {
         return;
       }
@@ -186,10 +209,11 @@ const useItemBundle = () => {
     setFormErrors(newErrors);
     if (f === "bndlc_price") {
       const price_id = items_Options.find((opt) => opt.id === v);
-      //console.log('stock_id',stock_id)
+      //console.log("price_id", price_id);
       setFormDataItem((prev) => ({
         ...prev,
         bndlc_items: price_id?.price_items,
+        bndlc_units: price_id?.items_runit,
         bndlc_price: price_id?.id,
         bndlc_itrat: price_id?.price_mrrat,
         price_cname: price_id?.price_cname,
@@ -211,7 +235,7 @@ const useItemBundle = () => {
       showToast("Quantity is required", { type: "warning" });
       return;
     }
-    if (validNumber(formDataItem.bndlc_itrat) <= 0) {
+    if (validNumber(formDataItem.bndlc_itrat) < 0) {
       showToast("Price is required", { type: "warning" });
       return;
     }
@@ -257,8 +281,7 @@ const useItemBundle = () => {
     });
     if (!confirmation) return;
 
-    const newItemList = listDataItem.filter((item) => item.id !== rowData.id);
-    reCalculate(newItemList, formData, listDataCost, listDataPayment);
+    setListDataItem((prev) => prev.filter((item) => item.id !== rowData.id));
     showToast("Removed successfully", { type: "success" });
   };
 
@@ -271,7 +294,6 @@ const useItemBundle = () => {
         subTitle: "Bundle Item Details",
       });
     }
-
     setShowModal({ show: true, modal: modal });
   };
   const handleHideModal = () => {

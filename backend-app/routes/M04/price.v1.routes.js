@@ -178,7 +178,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-     const {
+    const {
       id,
       price_users,
       price_bsins,
@@ -331,13 +331,14 @@ router.post("/get-by-item", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT prc.*, itm.items_iname, dpt.dpart_cname,
+    const sql = `SELECT prc.*, itm.items_iname, itm.items_runit, rnt.units_cname as runit_cname, dpt.dpart_cname,
     COALESCE((prc.price_mrrat - prc.price_lprat)
         / NULLIF(prc.price_lprat, 0) * 100,
         0) AS price_smrgn,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmib_price prc
     LEFT JOIN tmib_items itm ON prc.price_items = itm.id
+    LEFT JOIN tmib_units rnt ON itm.items_runit = rnt.id
     LEFT JOIN tmsb_dpart dpt ON prc.price_dpart = dpt.id
     LEFT JOIN tmhb_emply csr ON prc.price_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON prc.price_upusr = usr.id
@@ -362,7 +363,6 @@ router.post("/get-by-item", async (req, res) => {
   }
 });
 
-
 // get by department bundle item
 router.post("/get-by-department-bundle-item", async (req, res) => {
   try {
@@ -378,8 +378,8 @@ router.post("/get-by-department-bundle-item", async (req, res) => {
     }
 
     //database action
-    const sql = `SELECT prc.*, itm.items_icode, itm.items_iname, dpt.dpart_cname,
-    runit.units_cname as runit_cname,
+    const sql = `SELECT prc.*, itm.items_icode, itm.items_iname, itm.items_runit, 
+    dpt.dpart_cname, runit.units_cname as runit_cname,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmib_price prc
     LEFT JOIN tmib_items itm ON prc.price_items = itm.id
@@ -389,10 +389,12 @@ router.post("/get-by-department-bundle-item", async (req, res) => {
     LEFT JOIN tmhb_emply usr ON prc.price_upusr = usr.id
     WHERE prc.price_users = $1
     AND prc.price_dpart = $2
-    AND itm.items_itype IN ('FG','SVC')
+    AND prc.price_actve = TRUE
     AND itm.items_stsal = FALSE
+    AND itm.items_stpur = FALSE
+    AND itm.items_actve = TRUE
     ORDER BY itm.items_iname, dpt.dpart_cname ASC`;
-
+    //AND itm.items_itype IN ('FG','SVC')
     const params = [user_c, price_dpart];
     const rows = await dbGetAll(sql, params, `get price- ${user_c}`);
     res.json({

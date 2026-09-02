@@ -149,7 +149,7 @@ export const generateDataModel_v1 = (schema, extraData = {}) => {
   }, extraData);
 };
 
-export const generateDataModel = (schema, extraData = {}) => {
+export const generateDataModel_v2 = (schema, extraData = {}) => {
   return Object.keys(schema).reduce((acc, key) => {
     const def = schema[key].default;
 
@@ -160,6 +160,46 @@ export const generateDataModel = (schema, extraData = {}) => {
     } else if (def !== undefined) {
       // accept 0, false, "", numbers, strings
       acc[key] = def;
+    } else {
+      acc[key] = "";
+    }
+
+    return acc;
+  }, extraData);
+};
+
+export const generateDataModel = (schema, extraData = {}) => {
+  return Object.keys(schema).reduce((acc, key) => {
+    const def = schema[key].default;
+
+    // Current date
+    if (def === "new Date() with local format") {
+      acc[key] = currentDate();
+
+      // Current date +/- N days
+    } else if (
+      typeof def === "string" &&
+      /^new Date\(\) with local format\s*[+-]\s*\d+$/.test(def)
+    ) {
+      const match = def.match(/([+-])\s*(\d+)$/);
+
+      const sign = match[1] === "+" ? 1 : -1;
+      const days = Number(match[2]);
+
+      const date = new Date();
+      date.setDate(date.getDate() + sign * days);
+
+      acc[key] = date.toLocaleDateString("en-CA");
+
+      // Current year
+    } else if (def === "new Date().getFullYear()") {
+      acc[key] = getCurrentYear();
+
+      // Any other default value
+    } else if (def !== undefined) {
+      acc[key] = def;
+
+      // No default
     } else {
       acc[key] = "";
     }

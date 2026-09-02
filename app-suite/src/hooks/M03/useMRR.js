@@ -96,6 +96,41 @@ const useMRR = () => {
     }
   }, [listDataItem]);
 
+  const getBundleItem = async (items) => {
+    const itemPrices = items.reduce((acc, item) => {
+      const itemId = item.mrrdc_items;
+      const priceId = item.mrrdc_price;
+      const qty = Number(item.mrrdc_itqty || 0);
+
+      if (!acc[itemId]) {
+        acc[itemId] = {};
+      }
+
+      if (!acc[itemId][priceId]) {
+        acc[itemId][priceId] = {
+          mrrdc_items: itemId,
+          mrrdc_price: priceId,
+          mrrdc_itqty: 0,
+        };
+      }
+
+      acc[itemId][priceId].mrrdc_itqty += qty;
+
+      return acc;
+    }, {});
+
+    console.log ("itemPrices",itemPrices)
+
+    const retResp = Object.values(itemPrices).flatMap((prices) => Object.values(prices));
+    
+    console.log ("retResp",retResp);
+    //call api
+    //calculate free items
+    //make a new list of free items
+    //same them into mrr child and jv
+    return retResp;
+  };
+
   function reCalculate(items, master, costList, paymList) {
     //console.log("items", items);
 
@@ -319,6 +354,9 @@ const useMRR = () => {
       mrrdm_stamt: validNumber(totals.stamt).toFixed(4),
       mrrdm_csamt: validNumber(totals.csamt).toFixed(4),
     });
+
+    //find bundle items
+    getBundleItem(newItems);
   }
 
   const getAllDepartments = async () => {

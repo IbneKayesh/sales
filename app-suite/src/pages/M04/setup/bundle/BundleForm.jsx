@@ -5,6 +5,7 @@ import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 import { bndle_Options } from "@/utils/vtable.js";
 import InputLabel from "@/components/InputLabel";
+import InputCalendar from "@/components/InputCalendar";
 
 const BundleForm = ({
   isBusy,
@@ -19,7 +20,7 @@ const BundleForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-3">
+        <div className="col-span-4">
           <InputLabel label="Department" value={formData.dpart_cname} />
         </div>
         <div className="col-span-2">
@@ -34,7 +35,7 @@ const BundleForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-7">
+        <div className="col-span-6">
           <InputText
             label="Bundle Name"
             placeholder="Enter bundle name"
@@ -45,7 +46,7 @@ const BundleForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-8">
           <InputLabel label="Name" value={formData.price_cname} />
         </div>
         <div className="col-span-2">
@@ -60,7 +61,14 @@ const BundleForm = ({
           />
         </div>
         <div className="col-span-2">
-          <InputLabel label="Rate" value={formData.bndlm_itrat} />
+          <InputLabel label="Unit" value={formData.runit_cname} />
+        </div>
+        <div className="col-span-2">
+          <InputLabel
+            label="Rate"
+            value={formData.bndlm_itrat}
+            error={formErrors.bndlm_itrat}
+          />
         </div>
         <div className="col-span-2">
           <InputLabel
@@ -70,6 +78,28 @@ const BundleForm = ({
         </div>
         <div className="col-span-2">
           <InputLabel label="Bundle" value={formData.bndlm_value || 0} />
+        </div>
+        <div className="col-span-3">
+          <InputCalendar
+            label="From Date"
+            value={formData.bndlm_frdat}
+            onChange={(e) => onChange("bndlm_frdat", e.target.value)}
+            placeholder="Select..."
+            error={formErrors.bndlm_frdat}
+            required
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <InputCalendar
+            label="To Date"
+            value={formData.bndlm_todat}
+            onChange={(e) => onChange("bndlm_todat", e.target.value)}
+            placeholder="Select..."
+            error={formErrors.bndlm_todat}
+            required
+            disabled={readOnly}
+          />
         </div>
       </div>
       {formData?.id && (

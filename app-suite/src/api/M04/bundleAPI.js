@@ -26,4 +26,12 @@ export const bundleAPI = {
     apiRequest("/M04/v1/bundle/get-all-active", {
       body: data,
     }),
+  getDetailsByMasterId: (data) =>
+    apiRequest("/M04/v1/bundle/get-details-by-master", {
+      body: data,
+    }),
+  getBundleByItemId: (data) =>
+    apiRequest("/M04/v1/bundle/get-bundle-by-item", {
+      body: data,
+    }),
 };

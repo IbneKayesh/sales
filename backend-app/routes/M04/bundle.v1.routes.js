@@ -20,10 +20,13 @@ router.post("/", async (req, res) => {
 
     //database action
     const sql = `SELECT bdm.*, dpt.dpart_cname, prc.price_cname,
+    unt.units_cname AS runit_cname,
     csr.emply_cname AS crusr_cname, usr.emply_cname AS upusr_cname, 0 as edit_stop
     FROM tmib_bndlm bdm
-    JOIN tmsb_dpart dpt ON bdm.bndlm_dpart = dpt.id
+    JOIN tmsb_dpart dpt ON bdm.bndlm_dpart = dpt.id  
+    JOIN tmib_items itm ON bdm.bndlm_items = itm.id
     JOIN tmib_price prc ON bdm.bndlm_price = prc.id
+    JOIN tmib_units unt ON bdm.bndlm_units = unt.id
     LEFT JOIN tmhb_emply csr ON bdm.bndlm_crusr = csr.id
     LEFT JOIN tmhb_emply usr ON bdm.bndlm_upusr = usr.id
     WHERE bdm.bndlm_users = $1
@@ -96,6 +99,9 @@ const create = async (req, res) => {
       bndlm_itype,
       bndlm_items,
       bndlm_price,
+      bndlm_units,
+      bndlm_frdat,
+      bndlm_todat,
       bndlm_itqty,
       bndlm_itrat,
       tmib_bndlc,
@@ -111,6 +117,9 @@ const create = async (req, res) => {
       !bndlm_itype ||
       !bndlm_items ||
       !bndlm_price ||
+      !bndlm_units ||
+      !bndlm_frdat ||
+      !bndlm_todat ||
       !bndlm_itqty ||
       !tmib_bndlc ||
       !user_s ||
@@ -132,11 +141,12 @@ const create = async (req, res) => {
     const scripts = [];
     scripts.push({
       sql: `INSERT INTO tmib_bndlm(id, bndlm_users, bndlm_bsins, bndlm_ccode, bndlm_dpart, bndlm_cname,
-                              bndlm_itype, bndlm_items, bndlm_price, bndlm_itqty, bndlm_itrat, bndlm_crusr,
-                              bndlm_upusr)
+                              bndlm_itype, bndlm_items, bndlm_price, bndlm_units, bndlm_frdat, bndlm_todat,
+                              bndlm_itqty, bndlm_itrat, bndlm_crusr, bndlm_upusr
+                              )
     VALUES ($1, $2, $3, $4, $5, $6,
           $7, $8, $9, $10, $11, $12,
-          $13)`,
+          $13, $14, $15, $16)`,
       params: [
         newId,
         user_c,
@@ -147,6 +157,9 @@ const create = async (req, res) => {
         bndlm_itype,
         bndlm_items,
         bndlm_price,
+        bndlm_units,
+        bndlm_frdat,
+        bndlm_todat,
         bndlm_itqty,
         bndlm_itrat,
         user_s,
@@ -159,9 +172,9 @@ const create = async (req, res) => {
       const lineId = uuidv4();
       scripts.push({
         sql: `INSERT INTO tmib_bndlc(id, bndlc_users, bndlc_bsins, bndlc_bndlm, bndlc_items, bndlc_price,
-                          bndlc_itqty, bndlc_itrat, bndlc_crusr, bndlc_upusr)
+                          bndlc_units, bndlc_itqty, bndlc_itrat, bndlc_crusr, bndlc_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10)`,
+      $7, $8, $9, $10, $11)`,
         params: [
           lineId,
           user_c,
@@ -169,6 +182,7 @@ const create = async (req, res) => {
           newId,
           det.bndlc_items,
           det.bndlc_price,
+          det.bndlc_units,
           det.bndlc_itqty || 0,
           det.bndlc_itrat || 0,
           user_s,
@@ -321,6 +335,122 @@ router.post("/delete", async (req, res) => {
       success: false,
       message: error.message || "An error occurred during db action",
       data: {},
+    });
+  }
+});
+
+// get-details-by-master
+router.post("/get-details-by-master", async (req, res) => {
+  try {
+    const { bndlc_bndlm, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!bndlc_bndlm || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT bnc.*, bnc.bndlc_itrat * bnc.bndlc_itqty AS bndlc_itamt,
+    itm.items_icode, itm.items_iname, prc.price_ccode, prc.price_cname, unt.units_cname AS runit_cname,
+     0 as edit_stop
+    FROM tmib_bndlc bnc
+    LEFT JOIN tmib_items itm ON bnc.bndlc_items = itm.id
+    LEFT JOIN tmib_price prc ON bnc.bndlc_price = prc.id
+    LEFT JOIN tmib_units unt ON bnc.bndlc_units = unt.id
+    WHERE bnc.bndlc_users = $1
+    AND bnc.bndlc_bndlm = $2
+    ORDER BY bnc.bndlc_price ASC`;
+
+    const params = [user_c, bndlc_bndlm];
+    const rows = await dbGetAll(sql, params, `get bundle details- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+// get-bundle-by-item
+router.post("/get-bundle-by-item", async (req, res) => {
+  try {
+    const {
+      bndlm_dpart,
+      bndlm_itype,
+      bndlc_items,
+      user_s,
+      user_c,
+      user_b,
+    } = req.body;
+
+    // Validate input
+    if (
+      !bndlm_dpart ||
+      !bndlm_itype ||
+      !bndlc_items ||
+      !user_c
+    ) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT bnm.id, bnm.bndlm_cname, bnm.bndlm_itqty, bnc.bndlc_itqty, 
+      CASE
+        WHEN bnc.bndlc_itrat > 0 THEN prc.price_mrrat
+        ELSE bnc.bndlc_itrat
+      END bndlc_itrat,
+      itm.items_icode, itm.items_iname, prc.price_ccode, prc.price_cname,
+      unt.units_cname AS runit_cname
+      FROM tmib_bndlm bnm
+      JOIN tmib_bndlc bnc ON bnc.bndlc_bndlm = bnm.id
+      LEFT JOIN tmib_items itm ON bnc.bndlc_items = itm.id
+      LEFT JOIN tmib_price prc ON bnc.bndlc_price = prc.id
+                              AND itm.id = prc.price_items
+      LEFT JOIN tmib_units unt ON bnc.bndlc_units = unt.id
+      WHERE bnm.bndlm_actve = TRUE
+      AND bnm.bndlm_users = $1
+      AND bnm.bndlm_bsins = $2
+      AND bnm.bndlm_dpart = $3
+      AND bnm.bndlm_itype = $4
+      --AND bnm.bndlm_items = $5
+      AND bnm.bndlm_price = $6
+      AND bnc.bndlc_actve = TRUE`;
+
+    const params = [
+      user_c,
+      user_b,
+      bndlm_dpart,
+      bndlm_itype,
+      bndlc_items,
+      bndlc_items,
+    ];
+    const rows = await dbGetAll(sql, params, `get bundle details- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
     });
   }
 });

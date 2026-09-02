@@ -17,7 +17,7 @@ const ItemForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-12">
+        <div className="col-span-6">
           <Dropdown
             label="Item"
             options={items_Options}
@@ -32,7 +32,7 @@ const ItemForm = ({
             optionGrid="price_cname:Item,price_ccode:Price Code,runit_cname:Unit,price_mrrat:MRP,items_icode:Item Code"
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-2">
           <InputNumber
             label="Quantity"
             placeholder="0"
@@ -43,7 +43,10 @@ const ItemForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-2">
+          <InputLabel label="Unit" value={formData.runit_cname} />
+        </div>
+        <div className="col-span-2">
           <InputNumber
             label="Rate"
             placeholder="0.00"
@@ -51,7 +54,7 @@ const ItemForm = ({
             onChange={(e) => onChange("bndlc_itrat", e.target.value)}
             error={formErrors.bndlc_itrat}
             step="0.01"
-            disabled={readOnly || true}
+            disabled={readOnly}
           />
         </div>
         <div className="col-span-12 mt-5"></div>

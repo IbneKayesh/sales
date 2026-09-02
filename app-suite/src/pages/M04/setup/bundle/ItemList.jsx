@@ -1,7 +1,15 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
+import Button from "@/components/Button";
+import Badge from "@/components/Badge";
+import { IconClose } from "@/icons";
 
 const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
+  const totalAmt = listData.reduce(
+    (sum, item) => sum + (Number(item.bndlc_itamt) || 0),
+    0,
+  );
+
   const dtColumns = [
     {
       key: "price_cname",
@@ -21,6 +29,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
           </>
         );
       },
+      footer: (_) => totalAmt?.toLocaleString?.() || "0",
     },
     {
       key: "price_ccode",
@@ -38,12 +47,24 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       width: "110px",
       sortable: false,
       body: (_, row) => (
-        <ActionButton
-          rowData={row}
-          actve={row.bndlc_actve}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        // <ActionButton
+        //   rowData={row}
+        //   actve={row.bndlc_actve}
+        //   onEdit={onEdit}
+        //   onDelete={onDelete}
+        // />
+        <Button
+          variant="ghost"
+          size="sm"
+          className="btn--icon-danger"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(row);
+          }}
+          title="Remove Line"
+        >
+          <IconClose size={14} className="text-danger" />
+        </Button>
       ),
       visible: !readOnly,
     },
@@ -66,6 +87,13 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
         className="mt-2"
         cfColumns={cfColumns}
       />
+      <Badge variant="danger" dot="true" className="mt-2">
+        Current rate will not be applied; the actual rate will be used for
+        transactions.
+      </Badge>
+      <Badge variant="danger" dot="true" className="mt-2">
+        Items with 0 rate are treated as free.
+      </Badge>
     </>
   );
 };

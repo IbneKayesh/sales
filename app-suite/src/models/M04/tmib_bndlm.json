@@ -57,7 +57,7 @@
     "type": "date",
     "label": "To Date",
     "required": true,
-    "default": "new Date() with local format"
+    "default": "new Date() with local format + 3"
   },
   "bndlm_itqty": {
     "type": "number",
@@ -68,7 +68,7 @@
     "required": true
   },
   "bndlm_itrat": {
-    "type": "number",
+    "type": "decimal",
     "label": "Rate",
     "maxLength": 99999999,
     "minLength": 1,

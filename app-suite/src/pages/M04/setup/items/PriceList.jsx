@@ -71,13 +71,25 @@ const PriceList = ({
       key: "price_gdstk",
       header: "Good Stock",
       width: "80px",
-      body: (_, row) => <NegativeValue value={row.price_gdstk} />,
+      body: (_, row) => {
+        return (
+          <>
+            <NegativeValue value={row.price_gdstk} /> {row.runit_cname}
+          </>
+        );
+      },
     },
     {
       key: "price_bdstk",
       header: "Bad Stock",
       width: "80px",
-      body: (_, row) => <NegativeValue value={row.price_bdstk} />,
+      body: (_, row) => {
+        return (
+          <>
+            <NegativeValue value={row.price_bdstk} /> {row.runit_cname}
+          </>
+        );
+      },
     },
     {
       key: "price_mnqty",
