@@ -13,6 +13,7 @@ import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
 import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { mrrAPI } from "@/api/M03/mrrAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
+import { bundleAPI } from "@/api/M04/bundleAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
 import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
 
@@ -51,6 +52,9 @@ const useMRR = () => {
   const [mrrpy_Options, setMrrpy_Options] = useState([]);
   const [listDataPayment, setListDataPayment] = useState([]);
   const [formDataPayment, setFormDataPayment] = useState({});
+
+  //bundle
+  const [listDataBundle, setListDataBundle] = useState([]);
 
   //Table Columns
   const getTabColumns = async () => {
@@ -97,38 +101,91 @@ const useMRR = () => {
   }, [listDataItem]);
 
   const getBundleItem = async (items) => {
-    const itemPrices = items.reduce((acc, item) => {
-      const itemId = item.mrrdc_items;
-      const priceId = item.mrrdc_price;
-      const qty = Number(item.mrrdc_itqty || 0);
+    try {
+      // 1. Accumulate quantity by item + price
+      const grouped = new Map();
+      for (const item of items) {
+        const key = `${item.mrrdc_items}_${item.mrrdc_price}`;
 
-      if (!acc[itemId]) {
-        acc[itemId] = {};
+        if (!grouped.has(key)) {
+          grouped.set(key, {
+            items_id: item.mrrdc_items,
+            price_id: item.mrrdc_price,
+            itqty: 0,
+          });
+        }
+
+        grouped.get(key).itqty += Number(item.mrrdc_itqty || 0);
       }
 
-      if (!acc[itemId][priceId]) {
-        acc[itemId][priceId] = {
-          mrrdc_items: itemId,
-          mrrdc_price: priceId,
-          mrrdc_itqty: 0,
-        };
-      }
+      const retResp = [...grouped.values()];
+      //console.log("retResp", retResp);
 
-      acc[itemId][priceId].mrrdc_itqty += qty;
+      // 2. Call API
+      const resp = await bundleAPI.getBundleByItemId({
+        bndlm_dpart: formData.mrrdm_dpart,
+        bndlc_items: retResp,
+      });
+      const list = resp.data || [];
+      //console.log("bundle definitions", list);
+      //apply bundle logic is here
 
-      return acc;
-    }, {});
+      // 3. Apply bundle logic
+      const bundleList = list
+        .map((bundle) => {
+          // Find accumulated cart quantity for this bundle
+          const cartItem = retResp.find(
+            (item) =>
+              item.items_id === bundle.bndlm_items &&
+              item.price_id === bundle.bndlm_price,
+          );
+          //console.log("cartItem", cartItem);
+          //console.log("bundle", bundle);
 
-    console.log ("itemPrices",itemPrices)
+          if (!cartItem) {
+            return null;
+          }
 
-    const retResp = Object.values(itemPrices).flatMap((prices) => Object.values(prices));
-    
-    console.log ("retResp",retResp);
-    //call api
-    //calculate free items
-    //make a new list of free items
-    //same them into mrr child and jv
-    return retResp;
+          const purchasedQty = Number(cartItem.itqty || 0);
+          const requiredQty = Number(bundle.bndlm_itqty || 0);
+          const freeQtyPerBundle = Number(bundle.bndlc_itqty || 0);
+
+          // Prevent division by zero
+          if (requiredQty <= 0 || freeQtyPerBundle <= 0) {
+            return null;
+          }
+
+          // How many times the customer qualifies
+          const offerCount = Math.floor(purchasedQty / requiredQty);
+
+          // Customer doesn't qualify
+          if (offerCount <= 0) {
+            return null;
+          }
+
+          // Total free quantity
+          const offerPackQty = offerCount * freeQtyPerBundle;
+
+          return {
+            ...bundle,
+
+            // Cart quantity accumulated for this item/variant
+            purchased_qty: purchasedQty,
+
+            // Example: buy 2, customer buys 5 => 2 offer groups
+            offer_count: offerCount,
+
+            // Example: 2 groups × 1 free = 2 free
+            offer_pack_qty: offerPackQty,
+          };
+        })
+        .filter(Boolean);
+      //console.log("bundleList", bundleList);
+      setListDataBundle(bundleList);
+    } catch (error) {
+      console.error("getBundleItem error:", error);
+      setListDataBundle([]);
+    }
   };
 
   function reCalculate(items, master, costList, paymList) {
@@ -923,6 +980,8 @@ const useMRR = () => {
     handleAddToListPayment,
     handleEditPayment,
     handleDeletePayment,
+    //bundle
+    listDataBundle,
     //modal
     showModal,
     modalTitle,

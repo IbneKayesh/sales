@@ -42,7 +42,8 @@
   "bommf_todat": {
     "type": "datetime",
     "label": "To Date",
-    "required": true
+    "required": true,
+    "default": "new Date() with local format + 15"
   },
   "bommf_estim": {
     "type": "number",
