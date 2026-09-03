@@ -42,4 +42,8 @@ export const itemsAPI = {
     apiRequest("/M04/v1/items/bom-items-get-by-type", {
       body: data,
     }),
+  getAdjustmentInOutItems: (data) =>
+    apiRequest("/M04/v1/items/adjustment-in-out-items", {
+      body: data,
+    }),
 };

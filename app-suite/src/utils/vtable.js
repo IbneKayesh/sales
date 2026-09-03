@@ -254,6 +254,17 @@ const bndle_Options = [
   },
 ];
 
+const adjsm_ttype_Options = [
+  {
+    label: "Adjustment In",
+    value: "Adjustment In",
+  },
+  {
+    label: "Adjustment Out",
+    value: "Adjustment Out",
+  },
+];
+
 export {
   cntry_Options,
   crncy_Options,
@@ -276,4 +287,5 @@ export {
   txcod_txtyp_Options,
   txmod_Options,
   bndle_Options,
+  adjsm_ttype_Options,
 };

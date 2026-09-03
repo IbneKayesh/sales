@@ -56,7 +56,7 @@ router.post("/get-price-ledger", async (req, res) => {
       });
     }
 
-    //mrr (+), sales (-), production (-), batch (+)
+    //mrr (+), sales (-), production (-), batch (+), adjustment (+)
     const sql = `SELECT stk.*, stk.mrrdc_itqty * stk.mrrdc_csrat line_value,
     COALESCE(cnt.cntct_cname, stk.mrrdm_cntct) as cntct_cname, itm.items_iname, prc.price_cname, unt.units_cname
     FROM(
@@ -87,6 +87,22 @@ router.post("/get-price-ledger", async (req, res) => {
       JOIN tmmb_promf prm ON btc.prbtc_promf = prm.id
       WHERE btc.prbtc_price = $1
       AND btc.prbtc_users = $2
+      UNION ALL
+      SELECT ajm.adjsm_trnno, ajm.adjsm_trdat, ajm.adjsm_ttype,
+      ajc.adjsc_price, ajc.adjsc_items, ajc.adjsc_units, 0 - ajc.adjsc_itqty, ajc.adjsc_itrat
+      FROM tmib_adjsc ajc
+      JOIN tmib_adjsm ajm ON ajc.adjsc_adjsm = ajm.id
+      WHERE ajm.adjsm_ttype = 'Adjustment Out'
+      AND ajc.adjsc_price = $1
+      AND ajm.adjsm_users = $2
+      UNION ALL
+      SELECT ajm.adjsm_trnno, ajm.adjsm_trdat, ajm.adjsm_ttype,
+      ajc.adjsc_price, ajc.adjsc_items, ajc.adjsc_units, ajc.adjsc_itqty, ajc.adjsc_itrat
+      FROM tmib_adjsc ajc
+      JOIN tmib_adjsm ajm ON ajc.adjsc_adjsm = ajm.id
+      WHERE ajm.adjsm_ttype = 'Adjustment In'
+      AND ajc.adjsc_price = $1
+      AND ajm.adjsm_users = $2
     )stk
     LEFT JOIN tmcb_cntct cnt ON stk.mrrdm_cntct = cnt.id
     JOIN tmib_items itm ON stk.mrrdc_items = itm.id

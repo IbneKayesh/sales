@@ -296,6 +296,22 @@ export const appModules = [
         ],
       },
       {
+        id: "G02",
+        name: "Transactions",
+        order: 2,
+        menus: [
+          {
+            id: "M01-G02-M001",
+            name: "Inventory Stock Adjustment",
+            color: "#f97316",
+            icon: "Package",
+            order: 1,
+            link: "/inventory/adjustment-stock",
+            desc: "Manage inventory stock adjustment records",
+          },
+        ],
+      },
+      {
         id: "G03",
         name: "Report",
         order: 3,

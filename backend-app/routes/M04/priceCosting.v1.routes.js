@@ -58,6 +58,7 @@ ORDER BY cst.pcost_csamt DESC
     });
   }
 });
+
 // get-all-active
 router.post("/get-all-active", async (req, res) => {
   try {
@@ -361,4 +362,5 @@ AND prc.id = $2`;
     });
   }
 });
+
 module.exports = router;

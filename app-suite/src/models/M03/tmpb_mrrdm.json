@@ -41,7 +41,7 @@
     "type": "string",
     "label": "Ref No",
     "maxLength": 50,
-    "placeholder": "Enter reference no",
+    "placeholder": "Enter ref no",
     "required": false
   },
   "mrrdm_notes": {

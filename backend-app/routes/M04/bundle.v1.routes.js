@@ -447,7 +447,6 @@ router.post("/get-bundle-purchase-by-item", async (req, res) => {
   }
 });
 
-
 // get-bundle-sales-by-item
 router.post("/get-bundle-sales-by-item", async (req, res) => {
   try {
@@ -522,6 +521,5 @@ router.post("/get-bundle-sales-by-item", async (req, res) => {
     });
   }
 });
-
 
 module.exports = router;

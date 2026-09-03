@@ -825,4 +825,80 @@ router.post("/bom-items-get-by-type", async (req, res) => {
   }
 });
 
+// adjustment-in-out-items
+router.post("/adjustment-in-out-items", async (req, res) => {
+  try {
+    const { dpart_id, ttype_id, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c || !dpart_id || !ttype_id) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    let sql = "";
+    if (ttype_id === "Adjustment Out") {
+      sql = `SELECT stk.id stock_id, stk.stock_sorce, stk.stock_trnno, stk.stock_trdat, stk.stock_items, stk.stock_price,
+          stk.stock_brcod, stk.stock_batch, stk.stock_srial, stk.stock_wrdat, stk.stock_fgdat, stk.stock_exdat,
+          stk.stock_trqty, stk.stock_ohqty, stk.stock_cprat, itm.items_iname, prc.price_cname, itm.items_runit,
+          unt.units_cname, pty.id party_id, pty.party_chtac chtac_id
+          FROM tmib_stock stk
+          JOIN tmib_items itm ON stk.stock_items = itm.id
+          JOIN tmib_price prc ON stk.stock_price = prc.id
+          JOIN tmib_units unt ON itm.items_runit = unt.id
+          JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
+          WHERE stk.stock_users = $1
+          AND stk.stock_bsins = $2
+          AND stk.stock_dpart = $3
+          AND stk.stock_actve = TRUE
+          AND stk.stock_ohqty > 0
+          ORDER BY prc.price_cname`;
+    } else if (ttype_id === "Adjustment In") {
+      //set as prtyr for adjustment inventory in, set rate edit for adjustment entry
+      sql = `SELECT prc.id stock_id, '-' stock_sorce, '-' stock_trnno, null stock_trdat, prc.price_items stock_items,
+          prc.id stock_price, '' stock_brcod, '' stock_batch, '' stock_srial, null stock_wrdat, null stock_fgdat,
+          null stock_exdat, 9999999 stock_trqty, 9999999 stock_ohqty, -0.1 stock_cprat, itm.items_iname, prc.price_cname, itm.items_runit,
+          unt.units_cname, pty.id party_id, pty.party_chtac chtac_id
+          FROM tmib_price prc
+          JOIN tmib_items itm ON prc.price_items = itm.id
+          JOIN tmib_units unt ON itm.items_runit = unt.id
+          JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
+          WHERE itm.items_users = $1
+          AND itm.items_bsins = $2
+          AND prc.price_dpart = $3
+          AND prc.price_actve = TRUE
+          ORDER BY prc.price_cname`;
+    } else {
+      return res.json({
+        success: false,
+        message: "Invalid type.",
+        data: [],
+      });
+    }
+
+    const params = [user_c, user_b, dpart_id];
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get for adjustment out items - ${user_c}`,
+    );
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 module.exports = router;

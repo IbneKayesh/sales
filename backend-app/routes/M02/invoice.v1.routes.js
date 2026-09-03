@@ -603,9 +603,9 @@ const create = async (req, res) => {
       const costId = uuidv4();
       scripts.push({
         sql: `INSERT INTO tmob_invcs(id, invcs_users, invcs_bsins, invcs_invcm, invcs_party, invcs_csmod,
-        invcs_clmod, invcs_value, invcs_notes, invcs_crusr, invcs_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11)`,
+                          invcs_clmod, invcs_value, invcs_notes, invcs_jrnlm, invcs_crusr, invcs_upusr)
+              VALUES ($1, $2, $3, $4, $5, $6,
+                      $7, $8, $9, $10, $11, $12)`,
         params: [
           costId,
           user_c,
