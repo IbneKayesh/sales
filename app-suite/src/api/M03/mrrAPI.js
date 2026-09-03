@@ -38,6 +38,10 @@ export const mrrAPI = {
     apiRequest("/M03/v1/mrr/get-payments-by-master", {
       body: data,
     }),
+  getBundlesByMasterId: (data) =>
+    apiRequest("/M03/v1/mrr/get-bundles-by-master", {
+      body: data,
+    }),
   getAllDueMRR: (data) =>
     apiRequest("/M03/v1/mrr/get-all-due-mrr", {
       body: data,

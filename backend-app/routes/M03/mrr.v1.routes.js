@@ -128,6 +128,7 @@ const create = async (req, res) => {
       tmpb_mrrdc,
       tmpb_mrrcs,
       tmpb_mrrpy,
+      tmpb_mrrdf,
       user_s,
       user_c,
       user_b,
@@ -391,7 +392,7 @@ const create = async (req, res) => {
           det.mrrdc_price,
           user_c,
           det.mrrdc_items,
-          mrrdm_dpart
+          mrrdm_dpart,
         ],
         label: `Update price stock detail ${newTrnNo}`,
       });
@@ -560,7 +561,9 @@ const create = async (req, res) => {
           det.mrrcs_clmod, //calculation mode
           det.mrrcs_value || 0,
           det.mrrcs_notes || "",
-          det.mrrcs_csmod === "Exclude" ? "SYS_FOR_PAYMENT" : "SYS_NOT_FOR_PAYMENT",
+          det.mrrcs_csmod === "Exclude"
+            ? "SYS_FOR_PAYMENT"
+            : "SYS_NOT_FOR_PAYMENT",
           user_s,
           user_s,
         ],
@@ -696,6 +699,104 @@ const create = async (req, res) => {
       label: `Update supplier credit balance ${newTrnNo}`,
     });
 
+    //offer pack
+    for (const det of tmpb_mrrdf) {
+      const lineId = uuidv4();
+      scripts.push({
+        sql: `INSERT INTO tmpb_mrrdf(id, mrrdf_users, mrrdf_bsins, mrrdf_mrrdm, mrrdf_bndlm, mrrdf_pricm,
+                          mrrdf_itemm, mrrdf_unitm, mrrdf_bnqty, mrrdf_bndlc, mrrdf_pricc, mrrdf_itemc,
+                          mrrdf_unitc, mrrdf_pkqty, mrrdf_trqty, mrrdf_ofcnt, mrrdf_ofqty, mrrdf_notes,
+                          mrrdf_csrat, mrrdf_refid, mrrdf_crusr, mrrdf_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11, $12,
+      $13, $14, $15, $16, $17, $18,
+      $19, $20, $21, $22)`,
+        params: [
+          lineId,
+          user_c,
+          user_b,
+          newId,
+          det.mrrdf_bndlm,
+          det.mrrdf_pricm,
+          det.mrrdf_itemm,
+          det.mrrdf_unitm,
+          det.mrrdf_bnqty || 1,
+          det.mrrdf_bndlc,
+          det.mrrdf_pricc,
+          det.mrrdf_itemc,
+          det.mrrdf_unitc,
+          det.mrrdf_pkqty || 1,
+          det.mrrdf_trqty || 1,
+          det.mrrdf_ofcnt || 1,
+          det.mrrdf_ofqty || 1,
+          det.mrrdf_notes || "",
+          det.mrrdf_csrat || 0,
+          det.mrrdf_refid || "",
+          user_s,
+          user_s,
+        ],
+        label: `Created MRR offer detail ${newTrnNo}`,
+      });
+
+      //add condition if no tracking then off
+      scripts.push({
+        sql: `INSERT INTO tmib_stock(id, stock_users, stock_bsins, stock_dpart, stock_sorce, stock_trnno,
+        stock_refid, stock_items, stock_price, stock_brcod, stock_batch, stock_srial,
+        stock_wrdat, stock_fgdat, stock_exdat, stock_trqty, stock_ohqty, stock_cprat,
+        stock_lprat, stock_notes, stock_crusr, stock_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11, $12,
+      $13, $14, $15, $16, $17, $18,
+      $19, $20, $21, $22)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          mrrdm_dpart,
+          mrrdm_ttype,
+          newTrnNo,
+          lineId,
+          det.mrrdf_itemc,
+          det.mrrdf_pricc,
+          "", //det.stock_brcod,
+          "", //det.stock_batch,
+          "", //det.stock_srial,
+          null, //det.stock_wrdat,
+          null, //det.stock_fgdat,
+          null, //det.stock_exdat,
+          det.mrrdf_ofqty || 0,
+          det.mrrdf_ofqty || 0,
+          0, //det.mrrdc_csrat ||
+          0, //det.mrrdc_itrat ||
+          "", //det.stock_notes ||
+          user_s,
+          user_s,
+        ],
+        label: `Created MRR offer stock detail ${newTrnNo}`,
+      });
+
+      //update summary stock, but not update last price
+      scripts.push({
+        sql: `UPDATE tmib_price
+              SET price_gdstk = price_gdstk + $1,
+                  price_upusr = $2,
+                  price_updat = CURRENT_TIMESTAMP,
+                  price_rvnmr = price_rvnmr + 1
+                  WHERE id = $3
+                  AND price_users = $4
+                  AND price_items = $5
+                  AND price_dpart = $6`,
+        params: [
+          det.mrrdf_ofqty || 0,
+          user_s,
+          det.mrrdf_pricc,
+          user_c,
+          det.mrrdf_itemc,
+          mrrdm_dpart,
+        ],
+        label: `Update price offer stock detail ${newTrnNo}`,
+      });
+    }
     await dbRunAll(scripts);
 
     res.json({
@@ -930,6 +1031,49 @@ router.post("/get-payments-by-master", async (req, res) => {
 
     const params = [user_c, mrrpy_mrrdm];
     const rows = await dbGetAll(sql, params, `get Payment Details- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+// get-bundles-by-master
+router.post("/get-bundles-by-master", async (req, res) => {
+  try {
+    const { mrrdf_mrrdm, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!mrrdf_mrrdm || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT mrb.*, prcm.price_cname as bndlm_price_cname,
+        untm.units_cname as bndlm_units_cname, prc.price_cname, unt.units_cname,
+        bnm.bndlm_ccode, bnm.bndlm_cname, bnm.bndlm_itype
+        FROM tmpb_mrrdf mrb
+        JOIN tmib_price prcm ON mrb.mrrdf_pricm = prcm.id
+        JOIN tmib_units untm ON mrb.mrrdf_unitm = untm.id
+        JOIN tmib_price prc ON mrb.mrrdf_pricc = prc.id
+        JOIN tmib_units unt ON mrb.mrrdf_unitc = unt.id
+        JOIN tmib_bndlm bnm ON mrb.mrrdf_bndlm = bnm.id
+        WHERE mrb.mrrdf_users = $1
+        AND mrb.mrrdf_mrrdm = $2`;
+
+    const params = [user_c, mrrdf_mrrdm];
+    const rows = await dbGetAll(sql, params, `get Bundle Details- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",

@@ -30,8 +30,12 @@ export const bundleAPI = {
     apiRequest("/M04/v1/bundle/get-details-by-master", {
       body: data,
     }),
-  getBundleByItemId: (data) =>
-    apiRequest("/M04/v1/bundle/get-bundle-by-item", {
+  getBundlePurchaseByItemId: (data) =>
+    apiRequest("/M04/v1/bundle/get-bundle-purchase-by-item", {
+      body: data,
+    }),
+  getBundleSalesByItemId: (data) =>
+    apiRequest("/M04/v1/bundle/get-bundle-sales-by-item", {
       body: data,
     }),
 };

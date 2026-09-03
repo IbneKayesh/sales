@@ -4,6 +4,7 @@ import ActionButton from "@/components/ActionButton";
 import { IconClose, IconCheck } from "@/icons";
 import NegativeValue from "@/components/common/NegativeValue";
 import { formatDate } from "@/utils/datetime.js";
+import Chip from "@/components/Chip";
 
 const PriceLedger = ({ listData }) => {
   // Calculate running / accumulated quantity
@@ -87,7 +88,7 @@ const PriceLedger = ({ listData }) => {
       acc + Number(row.mrrdc_itqty || 0) * Number(row.mrrdc_csrat || 0),
     0,
   );
-  
+
   return (
     <>
       <DataTable
@@ -113,7 +114,10 @@ const PriceLedger = ({ listData }) => {
           borderTop: "1px solid var(--border)",
         }}
       >
-        Qty: {totalQty} || Value: {totalValue}
+        <Badge variant="primary" size="sm">
+          Qty: {totalQty}
+        </Badge>
+        <Badge variant="primary">Value: {totalValue}</Badge>
       </div>
     </>
   );

@@ -15,12 +15,12 @@ const ItemBundleList = ({ readOnly, listData, onDelete }) => {
       width: "80px",
     },
     {
-      key: "mrrdf_bnqty",
+      key: "invcf_bnqty",
       header: "Bundle Qty",
       width: "80px",
       align: "right",
       body: (_, row) => {
-        return <span>{validNumber(row.mrrdf_bnqty)}</span>;
+        return <span>{validNumber(row.invcf_bnqty)}</span>;
       },
     },
     {
@@ -34,12 +34,12 @@ const ItemBundleList = ({ readOnly, listData, onDelete }) => {
       width: "80px",
     },
     {
-      key: "mrrdf_pkqty",
+      key: "invcf_pkqty",
       header: "Package Qty",
       width: "80px",
       align: "right",
       body: (_, row) => {
-        return <span>{validNumber(row.mrrdf_pkqty)}</span>;
+        return <span>{validNumber(row.invcf_pkqty)}</span>;
       },
     },
     {
@@ -62,18 +62,23 @@ const ItemBundleList = ({ readOnly, listData, onDelete }) => {
       width: "80px",
     },
     {
-      key: "mrrdf_trqty",
+      key: "invcf_trqty",
       header: "Purchase Qty",
       width: "80px",
     },
     {
-      key: "mrrdf_ofcnt",
+      key: "invcf_ofcnt",
       header: "Offer Qty",
       width: "80px",
     },
     {
-      key: "mrrdf_ofqty",
+      key: "invcf_ofqty",
       header: "Package Qty",
+      width: "80px",
+    },
+    {
+      key: "stock_ohqty",
+      header: "Stock Qty",
       width: "80px",
     },
   ];

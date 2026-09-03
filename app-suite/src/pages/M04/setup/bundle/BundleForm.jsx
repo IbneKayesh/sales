@@ -68,6 +68,7 @@ const BundleForm = ({
             label="Rate"
             value={formData.bndlm_itrat}
             error={formErrors.bndlm_itrat}
+            disabled={true}
           />
         </div>
         <div className="col-span-2">

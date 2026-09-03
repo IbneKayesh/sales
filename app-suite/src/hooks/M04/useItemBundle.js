@@ -86,12 +86,11 @@ const useItemBundle = () => {
     } catch (error) {}
   };
 
-  
   const loadAllDetails = async (id) => {
     try {
       setIsBusy(true);
       const [dtResp] = await Promise.all([
-        bundleAPI.getDetailsByMasterId({ bndlc_bndlm: id })
+        bundleAPI.getDetailsByMasterId({ bndlc_bndlm: id }),
       ]);
       setListDataItem(dtResp.data || []);
     } catch (error) {
@@ -168,6 +167,7 @@ const useItemBundle = () => {
 
   const handleSubmit = async () => {
     try {
+      //all the rates are currently DEMO mode, no finanical impact
       const newErrors = validate(formData, tmib_bndlm);
       setFormErrors(newErrors);
       console.log("newErrors", newErrors);

@@ -1,0 +1,131 @@
+.mrr-feed-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--sp-4) 0;
+}
+
+.mrr-post-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  display: flex;
+  flex-direction: column;
+}
+
+.mrr-post-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.mrr-post-header {
+  padding: var(--sp-4) var(--sp-5);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.mrr-post-user-info {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+}
+
+.mrr-post-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary-bg);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-xl);
+  flex-shrink: 0;
+}
+
+.mrr-post-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.mrr-post-supplier {
+  font-weight: var(--fw-bold);
+  color: var(--text-primary);
+  font-size: var(--fs-lg);
+  line-height: var(--lh-tight);
+}
+
+.mrr-post-dept {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  margin-top: var(--sp-1);
+}
+
+.mrr-post-date {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.mrr-post-body {
+  padding: var(--sp-4) var(--sp-5);
+  color: var(--text-secondary);
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+}
+
+.mrr-post-ref {
+  margin-bottom: var(--sp-3);
+  font-size: var(--fs-sm);
+}
+
+.mrr-post-stats {
+  display: flex;
+  gap: var(--sp-4);
+  background: var(--surface-alt);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+}
+
+.mrr-post-stat-item {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.mrr-post-stat-label {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.mrr-post-stat-val {
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+  font-size: var(--fs-md);
+}
+
+.mrr-post-footer {
+  padding: var(--sp-3) var(--sp-5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-light);
+  background: var(--surface-alt);
+}
+
+.mrr-post-actions {
+  display: flex;
+  gap: var(--sp-2);
+}

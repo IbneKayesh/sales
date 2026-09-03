@@ -382,8 +382,8 @@ router.post("/get-details-by-master", async (req, res) => {
   }
 });
 
-// get-bundle-by-item-purchase
-router.post("/get-bundle-by-item", async (req, res) => {
+// get-bundle-purchase-by-item
+router.post("/get-bundle-purchase-by-item", async (req, res) => {
   try {
     const { bndlm_dpart, bndlc_items, user_s, user_c, user_b } =
       req.body;
@@ -402,132 +402,36 @@ router.post("/get-bundle-by-item", async (req, res) => {
     const priceIds = bndlc_items.map((item) => item.price_id);
 
     //database action
-    const sql1 = `SELECT bnm.id, bnm.bndlm_cname, prcm.price_cname as bndlm_price_cname,
-    untm.units_cname as bndlm_units_cname, bnm.bndlm_itqty, bnm.bndlm_itrat, bnm.bndlm_itqty * bnm.bndlm_itrat as bndlm_itamt,
-    prc.price_ccode, prc.price_cname, unt.units_cname AS runit_cname, bnc.bndlc_itqty,
-    CASE
-      WHEN bnc.bndlc_itrat > 0 THEN prc.price_mrrat
-      ELSE bnc.bndlc_itrat
-    END bndlc_itrat,
-    COALESCE(stk.stock_ohqty,0) stock_ohqty
-      FROM tmib_bndlm bnm      
-      JOIN tmib_price prcm ON bnm.bndlm_price = prcm.id
-                          AND bnm.bndlm_items = prcm.price_items
-      JOIN tmib_units untm ON bnm.bndlm_units = untm.id
-      JOIN tmib_bndlc bnc ON bnc.bndlc_bndlm = bnm.id
-      JOIN tmib_price prc ON bnc.bndlc_price = prc.id
-                         AND bnc.bndlc_items = prc.price_items
-      JOIN tmib_units unt ON bnc.bndlc_units = unt.id
-      LEFT JOIN tmib_stock stk ON bnm.bndlm_users = stk.stock_users
-                         AND bnm.bndlm_bsins = stk.stock_bsins
-                         AND bnm.bndlm_dpart = stk.stock_dpart
-                         AND bnc.bndlc_items = stk.stock_items
-                         AND bnc.bndlc_price = stk.stock_price
-                         AND stk.stock_ohqty >= bnc.bndlc_itqty
-      WHERE bnm.bndlm_actve = TRUE
-      AND bnm.bndlm_users = $1
-      AND bnm.bndlm_bsins = $2
-      AND bnm.bndlm_dpart = $3
-      AND bnm.bndlm_itype = $4
-      AND bnc.bndlc_items = ANY($5)
-      AND bnc.bndlc_price = ANY($6)
-      AND bnc.bndlc_actve = TRUE`;
-
-    const sql2 = `SELECT bnm.id bndlm_id, bnm.bndlm_ccode, bnm.bndlm_cname, bnm.bndlm_itype, bnm.bndlm_items,
-bnm.bndlm_price, prcm.price_cname bndlm_price_cname, bnm.bndlm_units, untm.units_cname as bndlm_units_cname,
-bnm.bndlm_frdat, bnm.bndlm_todat, bnm.bndlm_itqty, bnm.bndlm_itrat,
-bnc.id bndlc_id, bnc.bndlc_items, bnc.bndlc_price, prc.price_cname, bnc.bndlc_units, unt.units_cname,
-bnc.bndlc_itqty,
-CASE
-  WHEN bnc.bndlc_itrat > 0 THEN prc.price_mrrat
-  ELSE bnc.bndlc_itrat
-END bndlc_itrat, COALESCE(stk.stock_ohqty,0) stock_ohqty
-FROM tmib_bndlm bnm
-JOIN tmib_price prcm ON bnm.bndlm_price = prcm.id
-JOIN tmib_units untm ON bnm.bndlm_units = untm.id
-JOIN tmib_bndlc bnc ON  bnm.id = bnc.bndlc_bndlm
-JOIN tmib_price prc ON bnc.bndlc_price = prc.id
-JOIN tmib_units unt ON bnc.bndlc_units = unt.id
-LEFT JOIN tmib_stock stk ON bnm.bndlm_users = stk.stock_users
-                         AND bnm.bndlm_bsins = stk.stock_bsins
-                         AND bnm.bndlm_dpart = stk.stock_dpart
-                         AND bnc.bndlc_items = stk.stock_items
-                         AND bnc.bndlc_price = stk.stock_price
-                         AND stk.stock_ohqty >= bnc.bndlc_itqty
-WHERE bnm.bndlm_users = '7d0a6d8b-efae-48a0-a595-15706cf41d2f'
-AND bnm.bndlm_bsins = '4dee378c-acc5-49eb-ab9e-a4e85e1e1903'
-AND bnm.bndlm_dpart = '7d0a6d8b-efae-48a1-a595-15706cf41d2f'
-AND bnm.bndlm_items = '6835f831-2b2e-4afb-980b-145001e789b5'
-AND bnm.bndlm_price = '423f30c5-5a76-4e5c-b6f9-9b5a70877665'
-AND bnm.bndlm_actve = TRUE
-AND bnc.bndlc_users = bnm.bndlm_users
-AND bnc.bndlc_bsins = bnm.bndlm_bsins
-AND bnc.bndlc_actve = TRUE`;
-
-    const sql3 = `SELECT bnm.id bndlm_id, bnm.bndlm_ccode, bnm.bndlm_cname, bnm.bndlm_itype, bnm.bndlm_items,
-bnm.bndlm_price, prcm.price_cname bndlm_price_cname, bnm.bndlm_units, untm.units_cname as bndlm_units_cname,
-bnm.bndlm_frdat, bnm.bndlm_todat, bnm.bndlm_itqty, bnm.bndlm_itrat,
-bnc.id bndlc_id, bnc.bndlc_items, bnc.bndlc_price, prc.price_ccode, prc.price_cname,
-bnc.bndlc_units, unt.units_cname, bnc.bndlc_itqty,
-CASE
-  WHEN bnc.bndlc_itrat > 0 THEN prc.price_mrrat
-  ELSE bnc.bndlc_itrat
-END bndlc_itrat, COALESCE(stk.stock_ohqty,0) stock_ohqty
-FROM tmib_bndlm bnm
-JOIN tmib_price prcm ON bnm.bndlm_price = prcm.id
-JOIN tmib_units untm ON bnm.bndlm_units = untm.id
-JOIN tmib_bndlc bnc ON  bnm.id = bnc.bndlc_bndlm
-JOIN tmib_price prc ON bnc.bndlc_price = prc.id
-JOIN tmib_units unt ON bnc.bndlc_units = unt.id
-LEFT JOIN (
-    SELECT stock_users, stock_bsins, stock_dpart, stock_items, stock_price, SUM(stock_ohqty) AS stock_ohqty
-    FROM tmib_stock
-    GROUP BY stock_users,stock_bsins,stock_dpart,stock_items,stock_price
-) stk
-    ON bnm.bndlm_users = stk.stock_users
-    AND bnm.bndlm_bsins = stk.stock_bsins
-    AND bnm.bndlm_dpart = stk.stock_dpart
-    AND bnc.bndlc_items = stk.stock_items
-    AND bnc.bndlc_price = stk.stock_price						 
-WHERE bnm.bndlm_users =  $1
-AND bnm.bndlm_bsins = $2
-AND bnm.bndlm_dpart = $3
-AND bnm.bndlm_items = ANY($4)
-AND bnm.bndlm_price = ANY($5)
-AND bnm.bndlm_itype = 'PURCHASE'
-AND bnm.bndlm_actve = TRUE
-AND bnc.bndlc_users = bnm.bndlm_users
-AND bnc.bndlc_bsins = bnm.bndlm_bsins
-AND bnc.bndlc_actve = TRUE`;
-
-    const sql = `SELECT bnm.id bndlm_id, bnm.bndlm_ccode, bnm.bndlm_cname, bnm.bndlm_itype, bnm.bndlm_items,
-bnm.bndlm_price, prcm.price_cname bndlm_price_cname, bnm.bndlm_units, untm.units_cname as bndlm_units_cname,
-bnm.bndlm_frdat, bnm.bndlm_todat, bnm.bndlm_itqty, bnm.bndlm_itrat,
-bnc.id bndlc_id, bnc.bndlc_items, bnc.bndlc_price, prc.price_ccode, prc.price_cname,
-bnc.bndlc_units, unt.units_cname, bnc.bndlc_itqty,
-CASE
-  WHEN bnc.bndlc_itrat > 0 THEN prc.price_mrrat
-  ELSE bnc.bndlc_itrat
-END bndlc_itrat
-FROM tmib_bndlm bnm
-JOIN tmib_price prcm ON bnm.bndlm_price = prcm.id
-JOIN tmib_units untm ON bnm.bndlm_units = untm.id
-JOIN tmib_bndlc bnc ON  bnm.id = bnc.bndlc_bndlm
-JOIN tmib_price prc ON bnc.bndlc_price = prc.id
-JOIN tmib_units unt ON bnc.bndlc_units = unt.id 
-WHERE bnm.bndlm_users =  $1
-AND bnm.bndlm_bsins = $2
-AND bnm.bndlm_dpart = $3
-AND bnm.bndlm_items = ANY($4)
-AND bnm.bndlm_price = ANY($5)
-AND bnm.bndlm_itype = 'PURCHASE'
-AND bnm.bndlm_actve = TRUE
-AND bnc.bndlc_users = bnm.bndlm_users
-AND bnc.bndlc_bsins = bnm.bndlm_bsins
-AND bnc.bndlc_actve = TRUE`;
+    const sql = `SELECT bnm.id as mrrdf_bndlm, bnm.bndlm_price as mrrdf_pricm, bnm.bndlm_items as mrrdf_itemm,
+    bnm.bndlm_units as mrrdf_unitm, bnm.bndlm_itqty as mrrdf_bnqty, bnc.id as mrrdf_bndlc, bnc.bndlc_price as mrrdf_pricc,
+    bnc.bndlc_items as mrrdf_itemc, bnc.bndlc_units as mrrdf_unitc, bnc.bndlc_itqty as mrrdf_pkqty, 0 as mrrdf_trqty,
+    0 as mrrdf_ofcnt, 0 as mrrdf_ofqty, '' as mrrdf_notes, 0 as mrrdf_csrat, '' as mrrdf_refid,
+    bnm.bndlm_ccode, bnm.bndlm_cname, bnm.bndlm_itype, prcm.price_cname as bndlm_price_cname,
+    untm.units_cname as bndlm_units_cname, bnm.bndlm_frdat, bnm.bndlm_todat, bnm.bndlm_itrat,
+    prc.price_ccode, prc.price_cname, unt.units_cname,
+      CASE
+        WHEN bnc.bndlc_itrat > 0 THEN prc.price_mrrat
+        ELSE bnc.bndlc_itrat
+      END bndlc_itrat
+    FROM tmib_bndlm bnm
+    JOIN tmib_price prcm ON bnm.bndlm_price = prcm.id
+    JOIN tmib_units untm ON bnm.bndlm_units = untm.id
+    JOIN tmib_bndlc bnc ON  bnm.id = bnc.bndlc_bndlm
+    JOIN tmib_price prc ON bnc.bndlc_price = prc.id
+    JOIN tmib_units unt ON bnc.bndlc_units = unt.id 
+    WHERE bnm.bndlm_users = $1
+    AND bnm.bndlm_bsins = $2
+    AND bnm.bndlm_dpart = $3
+    AND bnm.bndlm_items = ANY($4)
+    AND bnm.bndlm_price = ANY($5)
+    AND bnm.bndlm_itype = 'PURCHASE'
+    AND bnm.bndlm_actve = TRUE
+    AND bnc.bndlc_users = bnm.bndlm_users
+    AND bnc.bndlc_bsins = bnm.bndlm_bsins
+    AND bnc.bndlc_actve = TRUE`;
 
     const params = [user_c, user_b, bndlm_dpart, itemIds, priceIds];
-    const rows = await dbGetAll(sql, params, `get bundle details- ${user_c}`);
+    const rows = await dbGetAll(sql, params, `get bundle purchase details- ${user_c}`);
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -542,5 +446,82 @@ AND bnc.bndlc_actve = TRUE`;
     });
   }
 });
+
+
+// get-bundle-sales-by-item
+router.post("/get-bundle-sales-by-item", async (req, res) => {
+  try {
+    const { bndlm_dpart, bndlc_items, user_s, user_c, user_b } =
+      req.body;
+
+    // Validate input
+    if (!bndlm_dpart || !bndlc_items || !user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    // Extract item IDs from bndlc_items array
+    const itemIds = bndlc_items.map((item) => item.items_id);
+    const priceIds = bndlc_items.map((item) => item.price_id);
+
+    //database action
+    const sql = `SELECT bnm.id as invcf_bndlm, bnm.bndlm_price as invcf_pricm, bnm.bndlm_items as invcf_itemm,
+    bnm.bndlm_units as invcf_unitm, bnm.bndlm_itqty as invcf_bnqty, bnc.id as invcf_bndlc, bnc.bndlc_price as invcf_pricc,
+    bnc.bndlc_items as invcf_itemc, bnc.bndlc_units as invcf_unitc, bnc.bndlc_itqty as invcf_pkqty, 0 as invcf_trqty,
+    0 as invcf_ofcnt, 0 as invcf_ofqty, '' as invcf_notes, 0 as invcf_csrat, '' as invcf_refid,
+    bnm.bndlm_ccode, bnm.bndlm_cname, bnm.bndlm_itype, prcm.price_cname as bndlm_price_cname,
+    untm.units_cname as bndlm_units_cname, bnm.bndlm_frdat, bnm.bndlm_todat, bnm.bndlm_itrat,
+    prc.price_ccode, prc.price_cname, unt.units_cname,
+      CASE
+        WHEN bnc.bndlc_itrat > 0 THEN prc.price_mrrat
+        ELSE bnc.bndlc_itrat
+      END bndlc_itrat, stk.stock_ohqty
+    FROM tmib_bndlm bnm
+    JOIN tmib_price prcm ON bnm.bndlm_price = prcm.id
+    JOIN tmib_units untm ON bnm.bndlm_units = untm.id
+    JOIN tmib_bndlc bnc ON  bnm.id = bnc.bndlc_bndlm
+    JOIN tmib_price prc ON bnc.bndlc_price = prc.id
+    JOIN tmib_units unt ON bnc.bndlc_units = unt.id
+    LEFT JOIN (
+    SELECT stock_users, stock_bsins, stock_dpart, stock_items, stock_price, SUM(stock_ohqty) AS stock_ohqty
+    FROM tmib_stock
+    GROUP BY stock_users,stock_bsins,stock_dpart,stock_items,stock_price
+    ) stk
+    ON bnm.bndlm_users = stk.stock_users
+    AND bnm.bndlm_bsins = stk.stock_bsins
+    AND bnm.bndlm_dpart = stk.stock_dpart
+    AND bnc.bndlc_items = stk.stock_items
+    AND bnc.bndlc_price = stk.stock_price
+    WHERE bnm.bndlm_users = $1
+    AND bnm.bndlm_bsins = $2
+    AND bnm.bndlm_dpart = $3
+    AND bnm.bndlm_items = ANY($4)
+    AND bnm.bndlm_price = ANY($5)
+    AND bnm.bndlm_itype = 'SALES'
+    AND bnm.bndlm_actve = TRUE
+    AND bnc.bndlc_users = bnm.bndlm_users
+    AND bnc.bndlc_bsins = bnm.bndlm_bsins
+    AND bnc.bndlc_actve = TRUE`;
+
+    const params = [user_c, user_b, bndlm_dpart, itemIds, priceIds];
+    const rows = await dbGetAll(sql, params, `get bundle sales details- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 
 module.exports = router;

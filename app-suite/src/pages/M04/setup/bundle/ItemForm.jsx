@@ -54,7 +54,7 @@ const ItemForm = ({
             onChange={(e) => onChange("bndlc_itrat", e.target.value)}
             error={formErrors.bndlc_itrat}
             step="0.01"
-            disabled={readOnly}
+            disabled={readOnly || true}
           />
         </div>
         <div className="col-span-12 mt-5"></div>

@@ -19,6 +19,7 @@ import CostList from "./CostList";
 import BillSummary from "./BillSummary";
 import PaymentForm from "./PaymentForm";
 import PaymentList from "./PaymentList";
+import ItemBundleList from "./ItemBundleList";
 import PrintPage from "./PrintPage";
 
 const InvoicePage = () => {
@@ -68,6 +69,8 @@ const InvoicePage = () => {
     handleAddToListPayment,
     handleEditPayment,
     handleDeletePayment,
+    //bundle
+    listDataBundle,
     //modal
     showModal,
     modalTitle,
@@ -193,6 +196,15 @@ const InvoicePage = () => {
               onDelete={handleDeleteItem}
             />
           )}
+
+          {pgView === "SYS_VW_FRM_1" && listDataBundle.length > 0 && (
+            <ItemBundleList
+              readOnly={readOnly}
+              listData={listDataBundle}
+              //onDelete={handleDeleteBundle}
+            />
+          )}
+          
           {pgView === "SYS_VW_FRM_1" && (
             <BillSummary
               formData={formData}

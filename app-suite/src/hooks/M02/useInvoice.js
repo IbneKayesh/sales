@@ -15,6 +15,7 @@ import { tabColumnsAPI } from "@/api/M01/tabColumnsAPI.js";
 import { departmentAPI } from "@/api/M01/departmentAPI.js";
 import { invoiceAPI } from "@/api/M02/invoiceAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
+import { bundleAPI } from "@/api/M04/bundleAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
 import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
 
@@ -54,6 +55,9 @@ const useInvoice = () => {
   const [listDataPayment, setListDataPayment] = useState([]);
   const [formDataPayment, setFormDataPayment] = useState({});
 
+  //bundle
+  const [listDataBundle, setListDataBundle] = useState([]);
+
   //Table Columns
   const getTabColumns = async () => {
     try {
@@ -70,6 +74,7 @@ const useInvoice = () => {
       setIsBusy(false);
     }
   };
+
   // ---------- Invoice Master ----------
   const getAllInvoices = async () => {
     try {
@@ -95,6 +100,95 @@ const useInvoice = () => {
       setStopEdit(false);
     }
   }, [listDataItem]);
+
+  const getBundleItem = async (items) => {
+    try {
+      // 1. Accumulate quantity by item + price
+      const grouped = new Map();
+      for (const item of items) {
+        const key = `${item.invcc_items}_${item.invcc_price}`;
+
+        if (!grouped.has(key)) {
+          grouped.set(key, {
+            items_id: item.invcc_items,
+            price_id: item.invcc_price,
+            order_itqty: 0,
+          });
+        }
+
+        grouped.get(key).order_itqty += Number(item.invcc_itqty || 0);
+      }
+
+      const retResp = [...grouped.values()];
+      //console.log("retResp", retResp);
+      //return;
+
+      // 2. Call API
+      const resp = await bundleAPI.getBundleSalesByItemId({
+        bndlm_dpart: formData.invcm_dpart,
+        bndlc_items: retResp,
+      });
+      const list = resp.data || [];
+      //console.log("bundle definitions", list);
+      //return;
+      // 3. Apply bundle logic
+      const bundleList = list
+        .map((bundle) => {
+          // Find accumulated cart quantity for this bundle
+          const cartItem = retResp.find(
+            (item) =>
+              item.items_id === bundle.invcf_itemm &&
+              item.price_id === bundle.invcf_pricm,
+          );
+          //console.log("cartItem", cartItem);
+          //console.log("bundle", bundle);
+
+          if (!cartItem) {
+            return null;
+          }
+
+          const purchasedQty = Number(cartItem.order_itqty || 0);
+          const requiredQty = Number(bundle.invcf_bnqty || 0);
+          const freeQtyPerBundle = Number(bundle.invcf_pkqty || 0);
+
+          // Prevent division by zero
+          if (requiredQty <= 0 || freeQtyPerBundle <= 0) {
+            return null;
+          }
+
+          // How many times the customer qualifies
+          const offerCount = Math.floor(purchasedQty / requiredQty);
+
+          // Customer doesn't qualify
+          if (offerCount <= 0) {
+            return null;
+          }
+
+          // Total free quantity
+          const offerPackQty = offerCount * freeQtyPerBundle;
+
+          return {
+            ...bundle,
+
+            // Cart quantity accumulated for this item/variant
+            //purchased_qty: purchasedQty,
+            invcf_trqty: purchasedQty,
+
+            // Example: buy 2, customer buys 5 => 2 offer groups
+            invcf_ofcnt: offerCount,
+
+            // Example: 2 groups × 1 free = 2 free
+            invcf_ofqty: offerPackQty,
+          };
+        })
+        .filter(Boolean);
+      //console.log("bundleList", bundleList);
+      setListDataBundle(bundleList);
+    } catch (error) {
+      console.error("getBundleItem error:", error);
+      setListDataBundle([]);
+    }
+  };
 
   function reCalculate(items, master, costList, paymList) {
     //console.log("items", items);
@@ -326,6 +420,9 @@ const useInvoice = () => {
       invcm_csamt: validNumber(totals.csamt).toFixed(4),
       invcm_nsamt: validNumber(totals.nsamt).toFixed(4),
     });
+
+    //find bundle items
+    getBundleItem(newItems);
   }
 
   const getAllDepartments = async () => {
@@ -500,6 +597,7 @@ const useInvoice = () => {
     setListDataItem([]);
     setListDataCost([]);
     setListDataPayment([]);
+    setListDataBundle([]);
     getAllContacts();
     getAllDepartments();
     getExpnPaym();
@@ -534,11 +632,25 @@ const useInvoice = () => {
         return;
       }
 
+      const stockShortage = listDataBundle.find(
+        (f) => validNumber(f.invcf_ofqty) > validNumber(f.stock_ohqty),
+      );
+      if (stockShortage) {
+        showToast(
+          `${stockShortage.bndlm_cname} > ${stockShortage.price_cname} > Stock shortage ${validNumber(stockShortage.invcf_ofqty) - validNumber(stockShortage.stock_ohqty)} ${stockShortage.units_cname}`,
+          { type: "warning" },
+        );
+        return;
+      }
+
+      //return;
+
       const reqBody = {
         ...formData,
         tmob_invcc: listDataItem,
         tmob_invcs: listDataCost,
         tmob_invpy: listDataPayment,
+        tmob_invcf: listDataBundle,
       };
 
       //console.log("reqBody", reqBody);
@@ -894,6 +1006,8 @@ const useInvoice = () => {
     handleAddToListPayment,
     handleEditPayment,
     handleDeletePayment,
+    //bundle
+    listDataBundle,
     //modal
     showModal,
     modalTitle,

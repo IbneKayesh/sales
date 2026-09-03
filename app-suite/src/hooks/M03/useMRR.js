@@ -111,24 +111,24 @@ const useMRR = () => {
           grouped.set(key, {
             items_id: item.mrrdc_items,
             price_id: item.mrrdc_price,
-            itqty: 0,
+            order_itqty: 0,
           });
         }
 
-        grouped.get(key).itqty += Number(item.mrrdc_itqty || 0);
+        grouped.get(key).order_itqty += Number(item.mrrdc_itqty || 0);
       }
 
       const retResp = [...grouped.values()];
       //console.log("retResp", retResp);
+      //return;
 
       // 2. Call API
-      const resp = await bundleAPI.getBundleByItemId({
+      const resp = await bundleAPI.getBundlePurchaseByItemId({
         bndlm_dpart: formData.mrrdm_dpart,
         bndlc_items: retResp,
       });
       const list = resp.data || [];
       //console.log("bundle definitions", list);
-      //apply bundle logic is here
 
       // 3. Apply bundle logic
       const bundleList = list
@@ -136,8 +136,8 @@ const useMRR = () => {
           // Find accumulated cart quantity for this bundle
           const cartItem = retResp.find(
             (item) =>
-              item.items_id === bundle.bndlm_items &&
-              item.price_id === bundle.bndlm_price,
+              item.items_id === bundle.mrrdf_itemm &&
+              item.price_id === bundle.mrrdf_pricm,
           );
           //console.log("cartItem", cartItem);
           //console.log("bundle", bundle);
@@ -146,9 +146,9 @@ const useMRR = () => {
             return null;
           }
 
-          const purchasedQty = Number(cartItem.itqty || 0);
-          const requiredQty = Number(bundle.bndlm_itqty || 0);
-          const freeQtyPerBundle = Number(bundle.bndlc_itqty || 0);
+          const purchasedQty = Number(cartItem.order_itqty || 0);
+          const requiredQty = Number(bundle.mrrdf_bnqty || 0);
+          const freeQtyPerBundle = Number(bundle.mrrdf_pkqty || 0);
 
           // Prevent division by zero
           if (requiredQty <= 0 || freeQtyPerBundle <= 0) {
@@ -170,13 +170,14 @@ const useMRR = () => {
             ...bundle,
 
             // Cart quantity accumulated for this item/variant
-            purchased_qty: purchasedQty,
+            //purchased_qty: purchasedQty,
+            mrrdf_trqty: purchasedQty,
 
             // Example: buy 2, customer buys 5 => 2 offer groups
-            offer_count: offerCount,
+            mrrdf_ofcnt: offerCount,
 
             // Example: 2 groups × 1 free = 2 free
-            offer_pack_qty: offerPackQty,
+            mrrdf_ofqty: offerPackQty,
           };
         })
         .filter(Boolean);
@@ -513,14 +514,16 @@ const useMRR = () => {
   const loadAllDetails = async (id) => {
     try {
       setIsBusy(true);
-      const [dtResp, csResp, pyResp] = await Promise.all([
+      const [dtResp, csResp, pyResp, dtOfr] = await Promise.all([
         mrrAPI.getDetailsByMasterId({ mrrdc_mrrdm: id }),
         mrrAPI.getCostsByMasterId({ mrrcs_mrrdm: id }),
         mrrAPI.getPaymentsByMasterId({ mrrpy_mrrdm: id }),
+        mrrAPI.getBundlesByMasterId({ mrrdf_mrrdm: id }),
       ]);
       setListDataItem(dtResp.data || []);
       setListDataCost(csResp.data || []);
       setListDataPayment(pyResp.data || []);
+      setListDataBundle(dtOfr.data || []);
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -585,6 +588,7 @@ const useMRR = () => {
     setListDataItem([]);
     setListDataCost([]);
     setListDataPayment([]);
+    setListDataBundle([]);
     getAllContacts();
     getAllDepartments();
     getExpnPaym();
@@ -625,6 +629,7 @@ const useMRR = () => {
         tmpb_mrrdc: listDataItem,
         tmpb_mrrcs: listDataCost,
         tmpb_mrrpy: listDataPayment,
+        tmpb_mrrdf: listDataBundle,
       };
 
       //console.log(reqBody);
