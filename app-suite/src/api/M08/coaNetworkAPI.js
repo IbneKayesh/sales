@@ -38,4 +38,8 @@ export const coaNetworkAPI = {
     apiRequest("/M08/v1/coa-network/get-local-paym", {
       body: data,
     }),
+  getSalesInvoiceExpPaym: (data) =>
+    apiRequest("/M08/v1/coa-network/get-sales-invoice-exp-paym", {
+      body: data,
+    }),
 };

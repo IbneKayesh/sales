@@ -1836,6 +1836,7 @@ code {
 }
 
 .data-table__page-size select,
+.data-table__page-size input,
 .data-table__jump input {
   padding: 3px 6px;
   font-size: var(--fs-xs);
@@ -1848,6 +1849,11 @@ code {
 
 .data-table__page-size select {
   width: auto;
+}
+
+.data-table__page-size input {
+  width: 64px;
+  text-align: center;
 }
 
 .data-table__jump input {
@@ -8726,6 +8732,7 @@ html[data-layout="boxed"] .layout__main {
   padding-bottom: calc(2px * var(--comp-scale, 1));
 }
 .data-table__page-size select,
+.data-table__page-size input,
 .data-table__jump input {
   padding: calc(3px * var(--comp-scale, 1)) calc(6px * var(--comp-scale, 1));
 }

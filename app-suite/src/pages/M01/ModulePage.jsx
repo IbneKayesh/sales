@@ -166,8 +166,20 @@ const popupListStyles = {
 // Rendered at module scope so its identity stays stable across re-renders
 // (a component defined inside another component is remounted on every render,
 // which would reset hover state and discard DOM).
-const MenuCard = ({ menu, onClick, onOpenPopup, pinned = false, onTogglePin = () => {} }) => {
+const MenuCard = ({
+  menu,
+  onClick,
+  onOpenPopup,
+  pinned = false,
+  onTogglePin = () => {},
+  openMode = "both",
+}) => {
   const [hovered, setHovered] = useState(false);
+  // Theme preference: "link" opens only as the linked page, "window" opens
+  // only as a floating window, "both" offers the page click plus the window
+  // button.
+  const canOpenLink = openMode === "link" || openMode === "both";
+  const canOpenWindow = openMode === "window" || openMode === "both";
   // Module-tinted theme shade — each module keeps its own shade of the
   // current template color.
   const shade = moduleShade(menu.id);
@@ -205,7 +217,12 @@ const MenuCard = ({ menu, onClick, onOpenPopup, pinned = false, onTogglePin = ()
     >
       <button
         type="button"
-        onClick={onClick}
+        onClick={() => {
+          // "Link" (or "Both") follows the menu's page link; "Window"-only
+          // makes the card click open the floating window instead.
+          if (canOpenLink) onClick(menu);
+          else onOpenPopup(menu);
+        }}
         onFocus={() => setHovered(true)}
         onBlur={() => setHovered(false)}
         style={{
@@ -298,17 +315,19 @@ const MenuCard = ({ menu, onClick, onOpenPopup, pinned = false, onTogglePin = ()
       >
         <IconStar size={16} fill={pinned ? "currentColor" : "none"} />
       </button>
-      <Button
-        variant="ghost"
-        size="sm"
-        icon={<IconPopup size={16} />}
-        onClick={(e) => {
-          e.stopPropagation();
-          onOpenPopup(menu);
-        }}
-        title={`Open ${menu.menus_mname} in window`}
-        aria-label={`Open ${menu.menus_mname} in window`}
-      />
+      {canOpenWindow && (
+        <Button
+          variant="ghost"
+          size="sm"
+          icon={<IconPopup size={16} />}
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpenPopup(menu);
+          }}
+          title={`Open ${menu.menus_mname} in window`}
+          aria-label={`Open ${menu.menus_mname} in window`}
+        />
+      )}
     </div>
   );
 };
@@ -376,6 +395,7 @@ const ModulePage = () => {
     closeAllPopups,
     pinnedMenuIds,
     togglePinMenu,
+    menuOpenMode,
   } = useApp();
   const [searchQuery, setSearchQuery] = useState("");
   const [recentMenuIds, setRecentMenuIds] = useState([]);
@@ -479,6 +499,7 @@ const ModulePage = () => {
             onClick={() => handleMenuClick(toMenu(m))}
             onTogglePin={togglePin}
             onOpenPopup={handleOpenPopup}
+            openMode={menuOpenMode}
           />
         ))}
       </div>
@@ -796,6 +817,7 @@ const ModulePage = () => {
                     onClick={() => handleMenuClick(menu)}
                     onTogglePin={togglePin}
                     onOpenPopup={handleOpenPopup}
+                    openMode={menuOpenMode}
                   />
                 ))}
               </div>
@@ -875,6 +897,7 @@ const ModulePage = () => {
                     onClick={() => handleMenuClick(menu)}
                     onTogglePin={togglePin}
                     onOpenPopup={handleOpenPopup}
+                    openMode={menuOpenMode}
                   />
                 ))}
               </div>

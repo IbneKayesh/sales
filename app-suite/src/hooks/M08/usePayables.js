@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
 import { payablesAPI } from "@/api/M08/payablesAPI.js";
-import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmpb_mrrpy from "@/models/M03/tmpb_mrrpy.json";
 const dataModel = generateDataModel(tmpb_mrrpy);
 import { validNumber } from "@/utils/misc.js";
+import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
 
 const usePayables = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -47,11 +47,10 @@ const usePayables = () => {
   const getMRRParty = async () => {
     try {
       setIsBusy(true);
-      const resp = await partyNetworkAPI.getMrrDirect({});
+      const resp = await coaNetworkAPI.getMrrDirectExpPaym({});
       const list = resp.data || [];
-      //const mrrpy = list.filter((f) => f.prtyn_ctype === "PAY_CASH_BANK");
       const mrrpy = list.filter((f) =>
-        ["SYS_AST_PAY_CASH", "SYS_AST_PAY_BANK"].includes(f.prtyr_sgrup),
+        ["SYS_AST_PAYMENT", "SYS_NONE"].includes(f.chtrt_grpid),
       );
       const listActive = mrrpy.filter((f) => f.party_crbal > 0);
       setPartyOptions(listActive);

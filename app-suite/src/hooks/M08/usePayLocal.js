@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
 import { payLocalAPI } from "@/api/M08/payLocalAPI.js";
-import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import local_pay from "@/models/M08/local_pay.json";
 const dataModel = generateDataModel(local_pay);

@@ -238,7 +238,7 @@ const ItemsList = ({
       <DataTable
         columns={dtColumns}
         data={listData}
-        pageSize={15}
+        pageSize={20}
         sortable
         searchable
         striped

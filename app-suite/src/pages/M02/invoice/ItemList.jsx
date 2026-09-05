@@ -16,6 +16,11 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       },
     },
     {
+      key: "items_iname",
+      header: "Item",
+      width: "80px",
+    },
+    {
       key: "invcc_itrat",
       header: "Rate * Qty",
       width: "80px",
@@ -106,7 +111,8 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
         <ActionButton
           rowData={row}
           actve={row.invcc_actve}
-          onEdit={onEdit}
+          //onEdit={onEdit}
+          onCopy={onEdit}
           onDelete={onDelete}
         />
       ),

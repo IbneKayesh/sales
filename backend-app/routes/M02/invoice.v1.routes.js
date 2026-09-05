@@ -170,6 +170,7 @@ const create = async (req, res) => {
       };
     }
     const { acprd_id, fsyar_id } = acprd[0];
+
     const newId_JV = uuidv4();
     const newTrnNo_JV = await GenNewTrn(
       user_c,
@@ -207,13 +208,26 @@ const create = async (req, res) => {
     );
 
     //output vat (sales)
-    const outVat = await getCoaLibOutputVat(user_c, user_b);
-    if (!outVat) {
-      return {
+    const sql_outvat = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
+      FROM tmtb_party pty
+      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+      JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+      WHERE crt.chtrt_trnid = 'SYS_SALES'
+      AND crt.chtrt_pegid = 'SYS_SALES_INVOICE'
+      AND crt.chtrt_grpid IN ('SYS_LIB_OUT_VAT','SYS_NONE')
+      AND pty.party_actve = TRUE
+      AND cht.chtac_actve = TRUE
+      AND crt.chtrt_actve = TRUE
+      AND cht.chtac_users = $1
+      AND cht.chtac_bsins = $2`;
+    const result_outvat = await dbGet(sql_outvat, [user_c, user_b]);
+    // console.log(result);
+    if (!result_outvat || result_outvat.length === 0) {
+      return res.json({
         success: false,
-        message: "Output VAT Account is not found",
+        message: `No default output vat configured for Sales Invoice`,
         data: {},
-      };
+      });
     }
 
     //build scripts
@@ -264,7 +278,7 @@ const create = async (req, res) => {
       label: `Created Invoice ${newTrnNo}`,
     });
 
-    //SYS_SALES_INVOICE
+    //SYS_SALES.SYS_SALES_INVOICE
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
@@ -383,7 +397,7 @@ const create = async (req, res) => {
           det.invcc_price,
           user_c,
           det.invcc_items,
-          invcm_dpart
+          invcm_dpart,
         ],
         label: `Update reduce price stock detail ${newTrnNo}`,
       });
@@ -408,7 +422,7 @@ const create = async (req, res) => {
       }, {}),
     );
 
-    //SYS_SALES_INVOICE.SYS_AST_INVENTORY > Asset / Inventory Products - 10101212 >> CR (1.1)
+    //SYS_SALES.SYS_SALES_INVOICE.SYS_AST_INVENTORY
     let totalCOGS = 0;
     for (const det of newGroupedProducts) {
       scripts.push({
@@ -442,7 +456,7 @@ const create = async (req, res) => {
       totalCOGS = totalCOGS + Number(det.item_amount);
     }
 
-    //SYS_SALES_INVOICE.SYS_AST_CUSTOMER > Asset / Customer Receivable - 10101110 >> DR (2.1)
+    //SYS_SALES.SYS_SALES_INVOICE.SYS_AST_CUSTOMER
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -472,7 +486,7 @@ const create = async (req, res) => {
     });
     line++;
 
-    //SYS_SALES_INVOICE.SYS_LIB_OUT_VAT > To Liabilities / Current Liabilities / Taxes Payable / VAT Payable (Sales)
+    //SYS_SALES.SYS_SALES_INVOICE.SYS_LIB_OUT_VAT
     if (Number(invcm_vtamt) > 0) {
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
@@ -503,27 +517,31 @@ const create = async (req, res) => {
       });
       line++;
     }
-    //SYS_EXP_COGS, PAY_INCOME_PRODUCT_SOLD, PAY_VAT
-    const sql_prtyr = `SELECT pty.id party_id, pty.party_chtac chtac_id, ptr.prtyr_sgrup
-                FROM tmtb_party pty
-                JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-                          AND cht.chtac_jvpst = 'MULTIPLE'
-                          AND cht.chtac_actve = TRUE
-                JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
-                WHERE ptr.prtyr_mgrup = 'SYS_SALES_INVOICE'
-                AND pty.party_actve = TRUE
-                AND ptr.prtyr_actve = TRUE
-                AND ptr.prtyr_users = $1
-                AND ptr.prtyr_bsins = $2
-				        AND ptr.prtyr_party = 'DIRECT'`;
 
-    const params_prtyr = [user_c, user_b];
-    const rows_prtyr = await dbGetAll(
-      sql_prtyr,
-      params_prtyr,
+    //SYS_EXP_COGS, PAY_INCOME_PRODUCT_SOLD, PAY_VAT
+    //SYS_SALES.SYS_SALES_INVOICE.SYS_INC_PRODUCT_SALES
+    //SYS_SALES.SYS_SALES_INVOICE.SYS_EXP_COGS
+    //SYS_SALES.SYS_SALES_INVOICE.SYS_EXP_LOCAL_VENDOR
+    const sql_chtrt = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
+      FROM tmtb_party pty
+      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+      JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+      WHERE crt.chtrt_trnid = 'SYS_SALES'
+      AND crt.chtrt_pegid = 'SYS_SALES_INVOICE'
+      AND crt.chtrt_grpid IN ('SYS_INC_PRODUCT_SALES','SYS_EXP_COGS','SYS_EXP_LOCAL_VENDOR')
+      AND pty.party_actve = TRUE
+      AND cht.chtac_actve = TRUE
+      AND crt.chtrt_actve = TRUE
+      AND cht.chtac_users = $1
+      AND cht.chtac_bsins = $2`;
+
+    const params_chtrt = [user_c, user_b];
+    const rows_chtrt = await dbGetAll(
+      sql_chtrt,
+      params_chtrt,
       "get party routes",
     );
-    if (!rows_prtyr.length > 2) {
+    if (!rows_chtrt.length > 2) {
       return res.json({
         success: false,
         message: `No account party setup for sales COGS, SOLD`,
@@ -531,9 +549,9 @@ const create = async (req, res) => {
       });
     }
 
-    //SYS_SALES_INVOICE.SYS_EXP_COGS > Expense / Product COGS - 50101013 >> DR (1.2)
-    const prtyn_cogs = rows_prtyr.find(
-      (row) => row.prtyr_sgrup === "SYS_EXP_COGS",
+    //SYS_SALES.SYS_SALES_INVOICE.SYS_EXP_COGS
+    const prtyn_cogs = rows_chtrt.find(
+      (row) => row.chtrt_grpid === "SYS_EXP_COGS",
     );
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
@@ -564,9 +582,9 @@ const create = async (req, res) => {
     });
     line++;
 
-    //SYS_SALES_INVOICE.SYS_INC_PRODUCT > Income / Product Sales - 40101010 >> CR (2.2)
-    const prtyn_sold = rows_prtyr.find(
-      (row) => row.prtyr_sgrup === "SYS_INC_PRODUCT",
+    //SYS_SALES.SYS_SALES_INVOICE.SYS_INC_PRODUCT_SALES
+    const prtyn_sold = rows_chtrt.find(
+      (row) => row.chtrt_grpid === "SYS_INC_PRODUCT_SALES",
     );
     let totalINCOME = Number(invcm_pyamt || 0) - Number(invcm_vtamt);
     scripts.push({
@@ -616,14 +634,16 @@ const create = async (req, res) => {
           det.invcs_clmod,
           det.invcs_value || 0,
           det.invcs_notes || "",
-          det.invcs_csmod === "Exclude" ? "SYS_FOR_PAYMENT" : "SYS_NOT_FOR_PAYMENT",
+          det.invcs_csmod === "Exclude"
+            ? "SYS_FOR_PAYMENT"
+            : "SYS_NOT_FOR_PAYMENT",
           user_s,
           user_s,
         ],
         label: `Created Costing detail ${newTrnNo}`,
       });
 
-      //SYS_MRR_DIRECT.SYS_LIB_LOCAL_VENDOR > Liability / Local Vendor/Contractor/Labor - 20101011 (CR)
+      //SYS_SALES.SYS_SALES_INVOICE.SYS_LIB_LOCAL_VENDOR
       if (det.invcs_csmod === "Exclude") {
         scripts.push({
           sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
@@ -656,10 +676,10 @@ const create = async (req, res) => {
       }
     }
 
-    //SYS_SALES_INVOICE.SYS_EXP_LOCAL_VENDOR > Expense / Direct Cost >> DR
+    //SYS_SALES.SYS_SALES_INVOICE.SYS_EXP_LOCAL_VENDOR
     if (Number(invcm_ecamt) > 0) {
-      const prtyr_exp = rows_prtyr.find(
-        (row) => row.prtyr_sgrup === "SYS_EXP_LOCAL_VENDOR",
+      const prtyr_exp = rows_chtrt.find(
+        (row) => row.chtrt_grpid === "SYS_EXP_LOCAL_VENDOR",
       );
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
@@ -714,7 +734,7 @@ const create = async (req, res) => {
         label: `Created Payment detail ${newTrnNo}`,
       });
 
-      //SYS_SALES_INVOICE.SYS_AST_CUSTOMER > Asset / Customer / Receivable -10101110 Clear (CR)
+      //SYS_SALES.SYS_SALES_INVOICE.SYS_AST_CUSTOMER
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -742,9 +762,9 @@ const create = async (req, res) => {
         ],
         label: `Clear Assets / Customer / Receivable ${newTrnNo_JV}`,
       });
-
       line++;
-      //SYS_SALES_INVOICE.SYS_AST_PAY_CASH / bank	> Asset / Cash In Hand - 10101010 (DR)
+
+      //SYS_SALES.SYS_SALES_INVOICE.SYS_AST_PAYMENT
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -758,8 +778,8 @@ const create = async (req, res) => {
           user_b,
           invcm_dpart,
           newId_JV,
-          det.chtac_id_pay,
-          det.party_id_pay,
+          det.chtac_id,
+          det.party_id,
           det.invpy_pdamt || 0,
           0,
           "Receive Assets / Customer Receivable",
@@ -778,7 +798,7 @@ const create = async (req, res) => {
     //Update supplier credit balance + increase
     // scripts.push({
     //   sql: `UPDATE tmcb_cntct
-    //   SET cntct_crbal = cntct_crbal + $1,      
+    //   SET cntct_crbal = cntct_crbal + $1,
     // cntct_upusr = $2,
     // cntct_updat = CURRENT_TIMESTAMP,
     // cntct_rvnmr = cntct_rvnmr + 1
@@ -794,7 +814,7 @@ const create = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Sales Invoice created successfully",
+      message: `${newTrnNo} - Sales Invoice created successfully`,
       data: {
         ...req.body,
         invcm_trnno: newTrnNo,

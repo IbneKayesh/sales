@@ -223,14 +223,21 @@ export default function Calculator({ open, onClose }) {
     setDisplay(format(parseFloat(display) / 100));
   };
 
-  // Equation shown above the result: the full pending chain, or the last
+  // Expression shown above the result: the full pending chain, or the last
   // completed equation right after "=".
-  const equationText =
+  const expressionText =
     lastEq && op == null && prev == null && overwrite
-      ? lastEq
+      ? `${lastEq} ${display}` // finished: e.g. "5 + 3 = 8"
       : overwrite
         ? eq
         : `${eq}${display}`;
+
+  // Always append the live result of the pending equation (e.g. typing "7"
+  // after "5 + 3" shows "5 + 3 = 8" immediately, updating each keystroke).
+  const liveOperand = op != null && prev != null && !overwrite;
+  const equationText = liveOperand
+    ? `${expressionText} = ${format(compute(prev, parseFloat(display), op))}`
+    : expressionText;
 
   // Select a history entry: reuse its result, reset the calculator to its
   // default (collapsed) size and close the history panel.

@@ -588,7 +588,6 @@ router.post("/get-mrr-items", async (req, res) => {
     AND prc.price_bsins = $3
     AND prc.price_dpart = $4
     ORDER BY itm.items_iname ASC`;
-    //AND itm.items_itype IN ('RM', 'PM', 'FG')
 
     const params = [cntct_id, user_c, user_b, price_dpart];
     const rows = await dbGetAll(sql, params, `get new mrr items- ${user_c}`);
@@ -607,8 +606,8 @@ router.post("/get-mrr-items", async (req, res) => {
   }
 });
 
-// get-sales-invoice-items-by-dpart
-router.post("/get-sales-invoice-items-by-dpart", async (req, res) => {
+// get-sales-invoice-items
+router.post("/get-sales-invoice-items", async (req, res) => {
   try {
     const { dpart_id, user_s, user_c, user_b } = req.body;
 
@@ -656,14 +655,16 @@ router.post("/get-sales-invoice-items-by-dpart", async (req, res) => {
     AND prc.price_bsins = $3
     ORDER BY itm.items_iname ASC`;
 
-    const sql = `SELECT stk.id stock_id, stk.stock_refid, stk.stock_brcod, stk.stock_batch, stk.stock_srial, stk.stock_wrdat, stk.stock_fgdat,
-stk.stock_exdat, stk.stock_ohqty, stk.stock_cprat,
-prc.id price_id, prc.price_cname, prc.price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat,
-prc.price_dspct, prc.price_gdstk, prc.price_bdstk,
-itm.id items_id, itm.items_icode, itm.items_brcod, itm.items_hscod, itm.items_runit, itm.items_pkqty, 
-itm.items_slvat, itm.items_stvat, runit.units_cname as runit_uname, itm.items_pkqty, sunit.units_cname as sunit_cname,
-itm.items_szqty, brand.brand_cname as brand_cname,
-pty.id party_id, pty.party_chtac chtac_id
+    const sql = `SELECT stk.id stock_id, stk.stock_refid, stk.stock_brcod, stk.stock_batch, stk.stock_srial, stk.stock_wrdat,
+    stk.stock_fgdat, stk.stock_exdat, stk.stock_ohqty, stk.stock_cprat,
+    prc.id price_id, prc.price_cname, prc.price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat,
+    prc.price_dspct, prc.price_gdstk, prc.price_bdstk,
+    itm.id items_id, itm.items_icode, itm.items_iname, itm.items_brcod, itm.items_hscod, itm.items_runit,
+    itm.items_pkqty, itm.items_slvat, itm.items_stvat, itm.items_pkqty, itm.items_szqty,
+    runit.units_cname as runit_uname, 
+    sunit.units_cname as sunit_cname,
+    brand.brand_cname as brand_cname,
+    pty.id party_id, pty.party_chtac chtac_id
 FROM tmib_stock stk
 JOIN tmib_price prc ON stk.stock_price = prc.id
 					AND stk.stock_users = prc.price_users
@@ -677,17 +678,22 @@ JOIN tmib_units sunit ON itm.items_sunit = sunit.id
 JOIN tmib_brand brand ON itm.items_brand = brand.id
 JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
 JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
-						AND ptr.prtyr_mgrup = 'SYS_SALES_INVOICE'
-						AND ptr.prtyr_sgrup = 'SYS_AST_INVENTORY'
-						AND ptr.prtyr_party = 'USER-CHOICE'
+JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+                    AND crt.chtrt_trnid = 'SYS_SALES'
+                    AND crt.chtrt_pegid = 'SYS_SALES_INVOICE'
+                    AND crt.chtrt_grpid = 'SYS_AST_INVENTORY'
+                    AND crt.chtrt_route = itm.items_itype
 WHERE stk.stock_ohqty > 0
 AND stk.stock_users = $1
 AND stk.stock_bsins = $2
 AND stk.stock_dpart = $3
 AND itm.items_stsal = FALSE
+AND itm.items_actve = TRUE
+AND prc.price_actve = TRUE
+AND pty.party_actve = TRUE
+AND cht.chtac_actve = TRUE
+AND crt.chtrt_actve = TRUE
 ORDER BY prc.price_cname, stk.stock_crdat`;
-    //AND itm.items_itype IN ('SVC', 'FG')
 
     const params = [user_c, user_b, dpart_id];
     const rows = await dbGetAll(

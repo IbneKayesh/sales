@@ -3,7 +3,7 @@ import { useUI } from "@/context/AppUIContext.jsx";
 import validate, { generateDataModel } from "@/models/validator";
 import tmtb_party from "@/models/M08/tmtb_party.json";
 const dataModel = generateDataModel(tmtb_party);
-import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
+import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
 
 const usePartyNetwork = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -27,7 +27,7 @@ const usePartyNetwork = () => {
   const getAllPartyNetwork = async () => {
     try {
       setIsBusy(true);
-      const resp = await partyNetworkAPI.getAll({});
+      const resp = await coaNetworkAPI.getAll({});
       const list = resp.data || [];
       setListData(list);
     } catch (error) {

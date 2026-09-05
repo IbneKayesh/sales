@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { Routes, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import { IconClose, IconChevronDown, IconEye, IconPin, IconRestore } from "@/icons";
 import FullscreenButton from "@/components/FullscreenButton";
 import Calendar from "@/components/Calendar";
-import getRoutes from "@/routes";
 import { moduleShade } from "@/utils/theme";
 import { menus as allMenus } from "@/utils/appModules";
 
@@ -426,16 +425,49 @@ function TaskbarClock() {
   );
 }
 
-// Taskbar hover preview — a live scaled thumbnail of the window's content,
-// like OS taskbar window previews. Portaled to <body> with fixed positioning
-// so the taskbar's overflow-x (which forces overflow-y to auto) cannot clip it.
+// Taskbar hover preview — a scaled thumbnail of the window's REAL content,
+// like OS taskbar window previews. The content is not re-mounted (which would
+// fire every page's useEffects/API calls on hover); instead the already
+// rendered DOM of the open window (layouts/Window.jsx tags its body with
+// data-win-body) is cloned and scaled into the preview. Restoring / opening
+// the window keeps running its normal effects on the real instance.
+// Portaled to <body> with fixed positioning so the taskbar's overflow-x
+// (which forces overflow-y to auto) cannot clip it.
 function TaskbarPreview({ popup, anchor }) {
-  if (!anchor) return null;
+  const [shot, setShot] = useState(null); // { node, width } cloned window body
+
+  // Take the snapshot only while hovered: clone the live window body DOM (no
+  // React remount → no effects/API calls), sized with the window's real width.
+  useEffect(() => {
+    if (!anchor) {
+      setShot(null);
+      return;
+    }
+    const raf = requestAnimationFrame(() => {
+      const src = document.querySelector(
+        `[data-win-body="${popup.key}"]`,
+      );
+      if (!src) {
+        setShot(null);
+        return;
+      }
+      const w = Number(src.getAttribute("data-win-w")) || 860;
+      setShot({ node: src.cloneNode(true), width: w });
+    });
+    return () => {
+      cancelAnimationFrame(raf);
+      setShot(null);
+    };
+  }, [anchor, popup.key]);
+
   const W = 320; // preview window width
-  const left = Math.min(
-    Math.max(anchor.left + anchor.width / 2 - W / 2, 8),
-    window.innerWidth - W - 8,
-  );
+  const left = anchor
+    ? Math.min(
+        Math.max(anchor.left + anchor.width / 2 - W / 2, 8),
+        window.innerWidth - W - 8,
+      )
+    : 0;
+  if (!anchor) return null;
   return createPortal(
     <div
       style={{
@@ -475,28 +507,63 @@ function TaskbarPreview({ popup, anchor }) {
           {popup.menu.menus_mname}
         </span>
       </div>
-      {/* Live scaled-down content — 1600x920 at scale(0.2) → 320x184 */}
+      {/* Scaled snapshot of the real window body — scale window-width → 320px,
+          cropped to the top 184px like a peeking thumbnail. */}
       <div
         style={{
           width: W,
           height: 184,
           overflow: "hidden",
           position: "relative",
+          background: "var(--surface-alt, #f1f3f5)",
         }}
       >
-        <div
-          style={{
-            width: 1600,
-            height: 920,
-            transform: "scale(0.2)",
-            transformOrigin: "top left",
-          }}
-        >
-          <Routes location={popup.menu.menus_mlink}>{getRoutes()}</Routes>
-        </div>
+        {shot ? (
+          <WindowBodyShot node={shot.node} width={shot.width} />
+        ) : (
+          <div
+            style={{
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 11,
+              color: "var(--text-muted, #888)",
+            }}
+          >
+            Preview unavailable
+          </div>
+        )}
       </div>
     </div>,
     document.body,
+  );
+}
+
+/** Render a cloned DOM node scaled down: the node keeps the width it had in
+ * the live window and is shrunk by transform so the final box is 320px wide.
+ * No React is involved, so no effects or data fetching fire for the preview.
+ */
+function WindowBodyShot({ node, width }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.innerHTML = "";
+    el.appendChild(node);
+  }, [node]);
+  const scale = width > 0 ? 320 / width : 1;
+  return (
+    <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
+      <div
+        ref={ref}
+        style={{
+          width,
+          transform: `scale(${scale})`,
+          transformOrigin: "top left",
+        }}
+      />
+    </div>
   );
 }
 

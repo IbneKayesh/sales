@@ -21,6 +21,8 @@ import {
   IconSun,
   IconMoon,
   IconUpload,
+  IconArrowRight,
+  IconPopup,
 } from "@/icons";
 import { useApp } from "@/context/AppContext";
 import {
@@ -139,6 +141,14 @@ const DARK_MODES = [
   { id: "auto", label: "Auto", hint: "Follow the device setting" },
   { id: "light", label: "Light", hint: "Always light" },
   { id: "dark", label: "Dark", hint: "Always dark" },
+];
+
+// How module menus on the Modules page can be opened: as an in-page link,
+// as a floating window, or both (the user picks each time).
+const MENU_OPEN_MODES = [
+  { id: "link", label: "Link", hint: "Clicking a menu opens the linked page in the app" },
+  { id: "window", label: "Window", hint: "Clicking a menu opens it as a floating window" },
+  { id: "both", label: "Link and Window", hint: "Show both — menus open in the page and offer a window button" },
 ];
 
 // Reusable background row: preview + URL input + upload + remove, plus an
@@ -433,6 +443,8 @@ const ThemePage = () => {
     setRadius,
     boxedGap,
     setBoxedGap,
+    menuOpenMode,
+    setMenuOpenMode,
     reduceMotion,
     setReduceMotion,
     customColor,
@@ -558,6 +570,7 @@ const ThemePage = () => {
     setRadius(6);
     setLayout("boxed");
     setBoxedGap(15);
+    setMenuOpenMode("both");
     setReduceMotion(false);
     setCustomColor(null);
     setBgImage(null);
@@ -591,6 +604,7 @@ const ThemePage = () => {
     radius === 6 &&
     layout === "boxed" &&
     boxedGap === 15 &&
+    menuOpenMode === "both" &&
     !reduceMotion &&
     !customColor &&
     !bgImage &&
@@ -778,6 +792,92 @@ const ThemePage = () => {
                 );
               })}
             </div>
+          </PageCardBody>
+          </PageCard>
+
+          <PageCard className="general-page__section-card">
+            <PageCardHeader>
+            <div className="general-page__section-head">
+              <Badge variant="info" icon={<IconArrowRight size={12} />}>
+                Module Menus
+              </Badge>
+              <span className="general-page__section-note">
+                Current:{" "}
+                {MENU_OPEN_MODES.find((m) => m.id === menuOpenMode)?.label ||
+                  "Both"}{" "}
+                · saved on this device
+              </span>
+            </div>
+            </PageCardHeader>
+            <PageCardBody>
+            <div
+              style={{ display: "flex", gap: 8, flexWrap: "wrap" }}
+              role="radiogroup"
+              aria-label="How module menus open"
+            >
+              {MENU_OPEN_MODES.map((mode) => {
+                const selected = mode.id === menuOpenMode;
+                return (
+                  <button
+                    key={mode.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={selected}
+                    onClick={() => {
+                      setMenuOpenMode(mode.id);
+                      toast.success(`Module menus open as ${mode.label}`);
+                    }}
+                    title={mode.hint}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      padding: "7px 14px",
+                      borderRadius: "var(--radius-md)",
+                      border: `1px solid ${
+                        selected ? "var(--primary)" : "var(--border)"
+                      }`,
+                      background: selected
+                        ? "var(--primary-bg)"
+                        : "var(--surface)",
+                      color: selected
+                        ? "var(--primary)"
+                        : "var(--text-secondary)",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      transition: "var(--transition-fast)",
+                    }}
+                  >
+                    {mode.id === "both" ? (
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 2,
+                        }}
+                      >
+                        <IconArrowRight size={12} />
+                        <IconPopup size={12} />
+                      </span>
+                    ) : mode.id === "window" ? (
+                      <IconPopup size={14} />
+                    ) : (
+                      <IconArrowRight size={14} />
+                    )}
+                    {mode.label}
+                  </button>
+                );
+              })}
+            </div>
+            <p
+              style={{
+                margin: "8px 0 0",
+                fontSize: "var(--fs-xs)",
+                color: "var(--text-muted)",
+              }}
+            >
+              {"Choose how a module menu opens when you click it on the Modules page."}
+            </p>
           </PageCardBody>
           </PageCard>
 

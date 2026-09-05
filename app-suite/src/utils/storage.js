@@ -41,6 +41,9 @@ const confData = {
   logoImage: defaultLogo,
   layout: "boxed",
   boxedGap: 15,
+  // How module menus on the Modules page open when clicked: "link" (in-page
+  // navigation), "window" (floating window), or "both" (user picks each time).
+  menuOpenMode: "both",
   bgAnim: "rain",
   bgAnimScope: "app",
   bgAnimMode: "idle",

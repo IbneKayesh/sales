@@ -245,56 +245,6 @@ LIMIT 1`;
   return result;
 };
 
-const getCoaAssetInputVat = async (user_c, user_b) => {
-  const sql = `SELECT pty.id party_id, pty.party_chtac chtac_id
-                FROM tmtb_party pty
-                JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-                          AND cht.chtac_jvpst = 'MULTIPLE'
-                          AND cht.chtac_actve = TRUE
-                JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
-									AND ptr.prtyr_sgrup = 'SYS_AST_INP_VAT'
-                WHERE ptr.prtyr_mgrup = 'SYS_MRR_DIRECT'
-                AND pty.party_actve = TRUE
-                AND ptr.prtyr_actve = TRUE
-                AND ptr.prtyr_users = $1
-                AND ptr.prtyr_bsins = $2
-                LIMIT 1`;
-  //console.log(user_c, user_b, dept_id);
-  const result = await dbGet(sql, [user_c, user_b]);
-
-  // console.log(result);
-  if (!result || result.length === 0) {
-    throw new Error(`No default input vat configured for this ${src_id}`);
-  }
-
-  return result;
-};
-
-const getCoaLibOutputVat = async (user_c, user_b) => {
-  const sql = `SELECT pty.id party_id, pty.party_chtac chtac_id
-                FROM tmtb_party pty
-                JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-                          AND cht.chtac_jvpst = 'MULTIPLE'
-                          AND cht.chtac_actve = TRUE
-                JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
-									AND ptr.prtyr_sgrup = 'SYS_LIB_OUT_VAT'
-                WHERE ptr.prtyr_mgrup = 'SYS_SALES_INVOICE'
-                AND pty.party_actve = TRUE
-                AND ptr.prtyr_actve = TRUE
-                AND ptr.prtyr_users = $1
-                AND ptr.prtyr_bsins = $2
-                LIMIT 1`;
-  //console.log(user_c, user_b, dept_id);
-  const result = await dbGet(sql, [user_c, user_b]);
-
-  // console.log(result);
-  if (!result || result.length === 0) {
-    throw new Error(`No default output vat configured for this ${src_id}`);
-  }
-
-  return result;
-};
-
 //production process
 const getCoaPartyAssetsWIP = async (user_c, user_b) => {
   const sql = `SELECT ptr.id party_id, ptr.party_chtac chtac_id
@@ -348,8 +298,6 @@ module.exports = {
   getDefaultCOAforPartyId,
   getCurrentPeriod,
   getCurrencyRate,
-  getCoaAssetInputVat,
-  getCoaLibOutputVat,
   getCoaPartyAssetsWIP,
   getCoaPartyExpFoh
 };

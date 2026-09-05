@@ -538,6 +538,15 @@ export function AppProvider({ children }) {
       ? stored
       : 15;
   });
+  // How module menus open when clicked on the Modules page: "link" (navigate
+  // in-page), "window" (floating window), or "both" (offer both). Persisted
+  // with the other appearance preferences.
+  const [menuOpenMode, setMenuOpenModeState] = useState(() => {
+    const stored = getStorageLoginData()?.menuOpenMode;
+    return stored === "link" || stored === "window" || stored === "both"
+      ? stored
+      : "both";
+  });
   // Background animation for the Workspace page: "none", "rain" (rain on
   // glass), "analog" (analog clock), or "digital" (digital clock). Decorative overlay; independent of the
   // reduceMotion toggle. Rain settings (density %, tint color, opacity %,
@@ -920,6 +929,13 @@ export function AppProvider({ children }) {
     setStorageLoginData({ boxedGap: next });
   }, []);
 
+  // Set how module menus open when clicked on the Modules page.
+  const setMenuOpenMode = useCallback((mode) => {
+    if (!["link", "window", "both"].includes(mode)) return;
+    setMenuOpenModeState(mode);
+    setStorageLoginData({ menuOpenMode: mode });
+  }, []);
+
   // Set the Workspace background animation: "none", "rain", "analog", or "digital".
   const setBgAnim = useCallback((value) => {
     if (value !== "none" && value !== "rain" && value !== "analog" && value !== "digital") return;
@@ -1283,6 +1299,8 @@ export function AppProvider({ children }) {
         setLayout,
         boxedGap,
         setBoxedGap,
+        menuOpenMode,
+        setMenuOpenMode,
         bgAnim,
         setBgAnim,
         bgAnimScope,

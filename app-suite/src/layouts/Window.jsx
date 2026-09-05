@@ -830,7 +830,10 @@ function WindowItem({
           </BarButton>
         </div>
       </ModalHeader>
-      <ModalBody>
+      {/* data-win-body / data-win-w let the taskbar hover preview snapshot
+          this already-mounted window's content (no second page mount = no
+          duplicate API calls) and know its live width to scale it. */}
+      <ModalBody data-win-body={winKey} data-win-w={Math.round(fullscreen ? window.innerWidth : width)}>
         <Routes location={menu.menus_mlink}>{getRoutes()}</Routes>
       </ModalBody>
       {/* Resize handles: right edge (width), bottom edge (height), corner (both) */}

@@ -706,11 +706,13 @@ const useMRR = () => {
     const items_iname = items_Options.find(
       (opt) => opt.price_id === formDataItem.mrrdc_price,
     );
+    //console.log("items_iname", items_iname);
     //create new row
     const newItem = {
       ...formDataItem,
       id: generateGuid(),
-      items_iname: items_iname?.price_cname || "Invalid Item",
+      items_iname: items_iname?.items_iname || "Invalid Item",
+      price_cname: items_iname?.price_cname || "Invalid Item",
       runit_uname: items_iname?.runit_uname || "Invalid Unit",
       sunit_cname: items_iname?.sunit_cname || "Invalid Unit",
       items_szqty: items_iname?.items_szqty || "0",

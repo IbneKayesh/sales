@@ -24,6 +24,8 @@ router.post("/", async (req, res) => {
       });
     }
 
+    //MRR + Sales Invoice
+
     const sql = `SELECT mcs.id, mcs.mrrcs_users users_id, mcs.mrrcs_bsins bsins_id,
     mrm.mrrdm_dpart dpart_id, mcs.mrrcs_mrrdm trn_id, mcs.mrrcs_party party_id,
     mcs.mrrcs_csmod csmod, mcs.mrrcs_value due_value, mcs.mrrcs_notes notes,
@@ -181,7 +183,7 @@ router.post("/create", async (req, res) => {
       });
     }
 
-    //SYS_PAYMENT_LOCAL
+    //SYS_PAYMENT
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
@@ -202,8 +204,8 @@ router.post("/create", async (req, res) => {
         new Date(),
         trnno,
         ttype,
-        0,
-        0,
+        pay_value,
+        pay_value,
         crncy.crncy_exrat,
         "Posted",
         user_s,
@@ -212,7 +214,8 @@ router.post("/create", async (req, res) => {
       label: `create journal master- ${newTrnNo_JV}`,
     });
 
-    //SYS_PAYMENT_LOCAL.SYS_LIB_SUPPLIER > Liability / Supplier Payable - 20101010 (DR)
+    //SYS_MRR.SYS_MRR_DIRECT.SYS_LIB_LOCAL_VENDOR
+    //SYS_SALES.SYS_SALES_INVOICE.SYS_LIB_LOCAL_VENDOR
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -240,7 +243,7 @@ router.post("/create", async (req, res) => {
       ],
       label: `Clear Liability / Supplier / Payable ${newTrnNo_JV}`,
     });
-    //SYS_MRR_DIRECT.SYS_AST_PAY_CASH/SYS_AST_PAY_BANK	> Asset / Cash In Hand - 10101010 (CR)
+    //SYS_PAYMENT.SYS_PAYMENT_LOCAL.SYS_AST_PAYMENT
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,

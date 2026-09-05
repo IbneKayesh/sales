@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
 import { receivablesAPI } from "@/api/M08/receivablesAPI.js";
-import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
 import tmob_invpy from "@/models/M02/tmob_invpy.json";
 const dataModel = generateDataModel(tmob_invpy);

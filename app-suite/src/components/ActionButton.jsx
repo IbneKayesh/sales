@@ -1,20 +1,35 @@
-import { IconEdit, IconClose, IconCheck } from "@/icons";
+import { IconCopy, IconEdit, IconClose, IconCheck } from "@/icons";
 import Button from "@/components/Button";
 
-const ActionButton = ({ rowData, actve, onEdit, onDelete }) => {
+const ActionButton = ({ rowData, actve, onEdit, onCopy, onDelete }) => {
   return (
     <div className="d-inline-flex gap-1">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={(e) => {
-          e.stopPropagation();
-          onEdit(rowData);
-        }}
-        title="Edit"
-      >
-        <IconEdit size={14} />
-      </Button>
+      {onCopy && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onCopy(rowData);
+          }}
+          title="Copy"
+        >
+          <IconCopy size={14} />
+        </Button>
+      )}
+      {onEdit && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit(rowData);
+          }}
+          title="Edit"
+        >
+          <IconEdit size={14} />
+        </Button>
+      )}
       {actve && (
         <Button
           variant="ghost"

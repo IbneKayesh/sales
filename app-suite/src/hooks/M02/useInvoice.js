@@ -17,7 +17,7 @@ import { invoiceAPI } from "@/api/M02/invoiceAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
 import { bundleAPI } from "@/api/M04/bundleAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
-import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
+import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
 
 const useInvoice = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -441,7 +441,7 @@ const useInvoice = () => {
       return;
     }
     try {
-      const resp = await contactAPI.getCustomersSaleInvoice({});
+      const resp = await contactAPI.getCustomersSalesInvoice({});
       const list = resp.data || [];
       setCntct_Options(list);
     } catch (error) {}
@@ -452,13 +452,13 @@ const useInvoice = () => {
       return;
     }
     try {
-      const resp = await partyNetworkAPI.getSalesInvoice({});
+      const resp = await coaNetworkAPI.getSalesInvoiceExpPaym({});
       const list = resp.data || [];
       const invcs = list.filter(
-        (f) => f.prtyr_sgrup === "SYS_LIB_LOCAL_VENDOR",
+        (f) => f.chtrt_grpid === "SYS_LIB_LOCAL_VENDOR",
       );
       const invpy = list.filter((f) =>
-        ["SYS_AST_PAY_CASH", "SYS_AST_PAY_BANK"].includes(f.prtyr_sgrup),
+        ["SYS_AST_PAYMENT", "SYS_NONE"].includes(f.chtrt_grpid),
       );
       setInvcs_Options(invcs);
       setInvpy_Options(invpy);
@@ -467,7 +467,7 @@ const useInvoice = () => {
 
   const getItemsByDepartment = async (id) => {
     try {
-      const resp = await itemsAPI.getSalesInvoiceItemsByDpart({
+      const resp = await itemsAPI.getSalesInvoiceItems({
         dpart_id: id,
       });
       const list = resp.data || [];
@@ -741,7 +741,8 @@ const useInvoice = () => {
     const newItem = {
       ...formDataItem,
       id: generateGuid(),
-      items_iname: items_iname?.price_cname || "Invalid Item",
+      items_iname: items_iname?.items_iname || "Invalid Item",
+      price_cname: items_iname?.price_cname || "Invalid Item",
       runit_uname: items_iname?.runit_uname || "Invalid Unit",
       sunit_cname: items_iname?.sunit_cname || "Invalid Unit",
       items_szqty: items_iname?.items_szqty || "0",
@@ -786,11 +787,13 @@ const useInvoice = () => {
       setFormDataCost((prev) => ({
         ...prev,
         party_cname: invcs_id?.party_cname,
-        party_chtac: invcs_id?.party_chtac,
-        prtyn_ctype: invcs_id?.prtyn_ctype,
-        prtyn_chtno: invcs_id?.prtyn_chtno,
+        invcs_party: v,
+        chtac_chtno: invcs_id?.chtac_chtno,
         chtac_id: invcs_id?.party_chtac,
         party_id: v,
+        // party_chtac: invcs_id?.party_chtac,
+        // prtyn_ctype: invcs_id?.prtyn_ctype,
+        // prtyn_chtno: invcs_id?.prtyn_chtno,
       }));
     }
   };
@@ -861,12 +864,18 @@ const useInvoice = () => {
       setFormDataPayment((prev) => ({
         ...prev,
         party_cname: invpy_id?.party_cname,
-        party_chtac: invpy_id?.party_chtac,
-        prtyn_ctype: invpy_id?.prtyn_ctype,
-        prtyn_chtno: invpy_id?.prtyn_chtno,
-        chtac_id_pay: invpy_id?.party_chtac,
-        party_id_pay: invpy_id?.id,
+        party_crbal: invpy_id?.party_crbal,
         invpy_pdamt: formData.invcm_duamt, //too optional
+        invpy_party: v,
+        chtac_chtno: invpy_id?.chtac_chtno,
+        chtac_id: invpy_id?.party_chtac,
+        party_id: v,
+
+        // party_chtac: invpy_id?.party_chtac,
+        // prtyn_ctype: invpy_id?.prtyn_ctype,
+        // prtyn_chtno: invpy_id?.prtyn_chtno,
+        // chtac_id_pay: invpy_id?.party_chtac,
+        // party_id_pay: invpy_id?.id,
       }));
     }
   };

@@ -23,7 +23,8 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
         <ActionButton
           rowData={row}
           actve={row.mrrpy_actve}
-          onEdit={onEdit}
+          //onEdit={onEdit}
+          onCopy={onEdit}
           onDelete={onDelete}
         />
       ),

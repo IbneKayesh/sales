@@ -224,8 +224,11 @@ const create = async (req, res) => {
     const result_inpvat = await dbGet(sql_inpvat, [user_c, user_b]);
     // console.log(result);
     if (!result_inpvat || result_inpvat.length === 0) {
-      throw new Error(`No default input vat configured for MRR Direct`);
-      return;
+      return res.json({
+        success: false,
+        message: `No default input vat configured for MRR Direct`,
+        data: {},
+      });
     }
 
     //build scripts
@@ -781,7 +784,7 @@ const create = async (req, res) => {
 
     res.json({
       success: true,
-      message: "MRR created successfully",
+      message: `${newTrnNo} - MRR created successfully`,
       data: {
         ...req.body,
         mrrdm_trnno: newTrnNo,

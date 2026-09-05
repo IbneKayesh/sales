@@ -773,8 +773,8 @@ router.post("/get-suppliers-mrr", async (req, res) => {
   }
 });
 
-// get-customers-sale-invoice
-router.post("/get-customers-sale-invoice", async (req, res) => {
+// get-customers-sales-invoice
+router.post("/get-customers-sales-invoice", async (req, res) => {
   try {
     const { user_s, user_c, user_b } = req.body;
 
@@ -793,13 +793,15 @@ router.post("/get-customers-sale-invoice", async (req, res) => {
     FROM tmcb_cntct cnt
     JOIN tmtb_party pty ON cnt.id = pty.party_vndor
     JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-    JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
+    JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
     WHERE cnt.cntct_users = $1
-    AND cnt.cntct_ctype IN ('Customer')
     AND cnt.cntct_actve = TRUE
-	  AND ptr.prtyr_mgrup = 'SYS_SALES_INVOICE'
-	  AND ptr.prtyr_sgrup = 'SYS_AST_CUSTOMER'
-    AND ptr.prtyr_party = 'USER-CHOICE'
+    AND crt.chtrt_trnid = 'SYS_SALES'
+	  AND crt.chtrt_pegid = 'SYS_SALES_INVOICE'
+    AND crt.chtrt_grpid ='SYS_AST_CUSTOMER'
+    AND pty.party_actve = TRUE
+    AND cht.chtac_actve = TRUE
+    AND crt.chtrt_actve = TRUE
     ORDER BY cnt.cntct_cname`;
 
     const params = [user_c];

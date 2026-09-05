@@ -74,7 +74,6 @@ function useOutsideClose(open, onClose) {
 }
 
 const DENSITY_KEY = 'bsuite_table_density'
-const PAGE_SIZE_KEY = 'bsuite_table_pagesize'
 
 const readStored = (key, fallback) => {
   try {
@@ -121,13 +120,11 @@ export default function DataTable({
 
   // Density — starts from the `dense` prop, then a persisted global preference.
   const [denseState, setDenseState] = useState(() =>
-    readStored(DENSITY_KEY, dense),
-  )
+    readStored(DENSITY_KEY, dense),  )
 
-  // Page size — starts from the `pageSize` prop, then a persisted preference.
-  const [pageSizeState, setPageSizeState] = useState(() =>
-    readStored(PAGE_SIZE_KEY, pageSize),
-  )
+  // Page size — local state initialised from the `pageSize` prop.
+  // No localStorage persistence; resets when the prop changes.
+  const [pageSizeState, setPageSizeState] = useState(pageSize)
 
   // Per-table layout: { order: [keys], pinned: [keys], hidden: [keys] }
   const layoutKey = columnSettingsKey ? `bsuite_table_layout_${columnSettingsKey}` : null
@@ -160,9 +157,13 @@ export default function DataTable({
     const size = Number(n)
     if (!Number.isFinite(size) || size <= 0) return
     setPageSizeState(size)
-    writeStored(PAGE_SIZE_KEY, size)
     setPage(0)
   }
+
+  // Sync local state when the prop changes (e.g. parent re-renders with a new default).
+  useEffect(() => {
+    setPageSizeState(pageSize)
+  }, [pageSize])
 
   // Apply cfColumns visibility + persisted layout (order / pin / hidden)
   let baseColumns = columns.filter((col) => {
@@ -555,22 +556,19 @@ export default function DataTable({
           )}
         </table>
       </div>
-      {totalPages > 1 && (
+      {sorted.length > 0 && (
         <div className="data-table__pagination">
           <span className="data-table__page-size">
             Rows
-            <select
+            <input
+              type="number"
+              min={1}
               value={pageSizeState}
               onChange={(e) => setPageSize(e.target.value)}
               aria-label="Rows per page"
-            >
-              {[5, 10, 15, 25, 50, 100].map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
+            />
           </span>
+          {totalPages > 1 && (<>
           <button
             type="button"
             className="data-table__page-btn"
@@ -637,6 +635,7 @@ export default function DataTable({
               aria-label="Jump to page"
             />
           </span>
+          </>)}
         </div>
       )}
     </div>

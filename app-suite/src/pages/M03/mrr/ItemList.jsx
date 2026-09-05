@@ -19,7 +19,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
     },
     {
       key: "items_iname",
-      header: "Item Name",
+      header: "Item",
       width: "80px",
     },
     {
@@ -105,7 +105,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
         <ActionButton
           rowData={row}
           actve={row.mrrdc_actve}
-          onEdit={onEdit}
+          onCopy={onEdit}
           onDelete={onDelete}
         />
       ),
