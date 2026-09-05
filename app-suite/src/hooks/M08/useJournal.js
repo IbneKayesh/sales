@@ -15,6 +15,8 @@ import { partyAPI } from "@/api/M08/partyAPI.js";
 import { acprdAPI } from "@/api/M08/acprdAPI.js";
 import { fsyarAPI } from "@/api/M08/fsyarAPI.js";
 import { coaAPI } from "@/api/M08/coaAPI.js";
+import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
+
 
 const useJournal = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -168,7 +170,7 @@ const useJournal = () => {
     setStopEdit(false);
     getAllDepartments();
     //lines
-    getCoaChildOnly();
+    getChartOfAccounts();
     setListDataItem([]);
   };
 
@@ -263,25 +265,20 @@ const useJournal = () => {
   const [chtac_Options, setChtac_Options] = useState([]);
   const [party_Options, setParty_Options] = useState([]);
 
-  const getCoaChildOnly = async () => {
-    if (chtac_Options.length > 0) return;
+  const getChartOfAccounts = async () => {
+    //if (chtac_Options.length > 0) return;
     try {
-      const resp = await coaAPI.getJournalCoa({});
+      const resp = await coaNetworkAPI.getByTrnPageId({
+        chtrt_trnid: "SYS_JOURNAL_VOUCHER",
+        chtrt_pegid: "SYS_JV",
+      });
       const list = resp.data || [];
-      // console.log("list", list);
-      // //filter posted only
-      // const listActive = list.map((item) => ({
-      //   id: item.id,
-      //   name: item.chtac_cname,
-      //   parent_id: item.chtac_chtac,
-      //   active: item.chtac_ispst,
-      // }));
-      // //build path for all
-      // const buildPathsList = buildPaths(listActive);
-      // //apply filter and set state
-      // setChtac_Options(buildPathsList.filter((item) => item.active));
+      //console.log("list", list);
       const listPath = buildPathsCOA(list);
-      const listActive = listPath.filter((f) => f.party_count > 0);
+      const listActive = listPath.filter(
+        (f) => f.party_count > 0 ,
+      );
+      //&& f.chtrt_route === "Journal Voucher"
       //console.log(listActive);
       setChtac_Options(listActive);
     } catch (error) {}

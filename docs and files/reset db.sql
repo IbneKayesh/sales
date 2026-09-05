@@ -36,6 +36,10 @@ delete from tmmb_bommf;
 delete from tmmb_borpm;
 delete from tmmb_bofoh;
 delete from tmmb_bosfg;
+--adjustment
+delete from tmib_adjsc;
+delete from tmib_adjsm;
+
 
 
 CALL prc_jrnlm_mrr(

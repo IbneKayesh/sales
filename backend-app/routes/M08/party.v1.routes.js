@@ -303,7 +303,7 @@ router.post("/get-by-coa", async (req, res) => {
     //database action
     const sql = `SELECT prty.*, cht.chtac_cname, cht.chtac_ctype, 0 as edit_stop
     FROM tmtb_party prty
-    LEFT JOIN tmtb_chtac cht ON prty.party_chtac = cht.id
+    JOIN tmtb_chtac cht ON prty.party_chtac = cht.id
     WHERE prty.party_users = $1
     AND prty.party_actve = TRUE
     AND prty.party_chtac = $2

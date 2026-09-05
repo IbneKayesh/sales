@@ -141,21 +141,18 @@ const create = async (req, res) => {
     }
 
     //database action
-    const sql_chtac1 = `SELECT cht.id AS chtac_id
-      FROM tmtb_prtyn ptn
-      JOIN tmtb_chtac cht ON ptn.prtyn_chtno = cht.chtac_chtno
-      WHERE ptn.prtyn_cname = 'SYS_CONTACT_TYPE'
-      AND ptn.prtyn_users = $1
-      AND ptn.prtyn_ctype = $2`;
     const sql_chtac = `SELECT cht.id AS chtac_id
-      FROM tmtb_prtyr ptr
-      JOIN tmtb_chtac cht ON ptr.prtyr_chtno = cht.chtac_chtno
-      WHERE ptr.prtyr_mgrup = 'SYS_CONTACTS_TYPE'
-      AND ptr.prtyr_users = $1
-      AND ptr.prtyr_sgrup = $2`;
+    FROM tmtb_chtac cht
+    JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+    WHERE cht.chtac_users = $1
+    AND cht.chtac_bsins = $2
+    AND crt.chtrt_trnid = 'SYS_SUB_LEDGER_PARTY'
+    AND crt.chtrt_pegid = 'SYS_CONTACTS_CREATE'
+    AND crt.chtrt_grpid = 'SYS_PARTY_SINGLE'
+    AND crt.chtrt_route = $3`;
     const row_chtac = await dbGetAll(
       sql_chtac,
-      [user_c, cntct_ctype],
+      [user_c, user_b, cntct_ctype],
       `get account coa- ${cntct_ctype}`,
     );
 
@@ -740,19 +737,21 @@ router.post("/get-suppliers-mrr", async (req, res) => {
     }
 
     //database action
-    //20101010 :: Supplier Payable
     const sql = `SELECT cnt.*, pty.id party_id, pty.party_chtac chtac_id, pty.party_crbal
     FROM tmcb_cntct cnt
     JOIN tmtb_party pty ON cnt.id = pty.party_vndor
     JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-    JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
+    JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
     WHERE cnt.cntct_users = $1
-    AND cnt.cntct_ctype IN ('Supplier')
     AND cnt.cntct_actve = TRUE
-	  AND ptr.prtyr_mgrup = 'SYS_MRR_DIRECT'
-	  AND ptr.prtyr_sgrup = 'SYS_LIB_SUPPLIER'
+	  AND crt.chtrt_trnid = 'SYS_MRR'
+	  AND crt.chtrt_pegid = 'SYS_MRR_DIRECT'
+    AND crt.chtrt_grpid ='SYS_LIB_SUPPLIER'
+    AND pty.party_actve = TRUE
+    AND cht.chtac_actve = TRUE
+    AND crt.chtrt_actve = TRUE
     ORDER BY cnt.cntct_cname`;
-
+    //AND cnt.cntct_ctype IN ('Supplier')
     const params = [user_c];
     const rows = await dbGetAll(
       sql,

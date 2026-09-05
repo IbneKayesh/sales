@@ -6,6 +6,8 @@ import validate, { generateDataModel } from "@/models/validator";
 import local_pay from "@/models/M08/local_pay.json";
 const dataModel = generateDataModel(local_pay);
 import { validNumber } from "@/utils/misc.js";
+import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
+
 
 const usePayLocal = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -47,11 +49,11 @@ const usePayLocal = () => {
   const getMRRParty = async () => {
     try {
       setIsBusy(true);
-      const resp = await partyNetworkAPI.getLocalPayment({});
+      const resp = await coaNetworkAPI.getLocalPayment({});
       const list = resp.data || [];
       //const mrrpy = list.filter((f) => f.prtyn_ctype === "PAY_CASH_BANK");
       const mrrpy = list.filter((f) =>
-        ["SYS_AST_PAY_CASH", "SYS_AST_PAY_BANK"].includes(f.prtyr_sgrup),
+        ["SYS_AST_PAYMENT", "SYS_NONE"].includes(f.chtrt_grpid),
       );
 
       const listActive = mrrpy.filter((f) => f.party_crbal > 0);

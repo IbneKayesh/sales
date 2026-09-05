@@ -15,7 +15,7 @@ import { mrrAPI } from "@/api/M03/mrrAPI.js";
 import { itemsAPI } from "@/api/M04/itemsAPI.js";
 import { bundleAPI } from "@/api/M04/bundleAPI.js";
 import { contactAPI } from "@/api/M06/contactAPI.js";
-import { partyNetworkAPI } from "@/api/M08/partyNetworkAPI.js";
+import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
 
 const useMRR = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -444,17 +444,17 @@ const useMRR = () => {
       return;
     }
     try {
-      const resp = await partyNetworkAPI.getMrrDirect({});
+      const resp = await coaNetworkAPI.getMrrDirectExpPaym({});
       const list = resp.data || [];
       const mrrcs = list.filter(
-        (f) => f.prtyr_sgrup === "SYS_LIB_LOCAL_VENDOR",
+        (f) => f.chtrt_grpid === "SYS_LIB_LOCAL_VENDOR",
       );
-      //const mrrpy = list.filter((f) => f.prtyr_sgrup === "SYS_PAY_CASH_BANK");
       const mrrpy = list.filter((f) =>
-        ["SYS_AST_PAY_CASH", "SYS_AST_PAY_BANK"].includes(f.prtyr_sgrup),
+        ["SYS_AST_PAYMENT", "SYS_NONE"].includes(f.chtrt_grpid),
       );
+      //console.log("list",list)
       setMrrcs_Options(mrrcs);
-      const listActive = mrrpy.filter((f) => f.party_crbal > 0);
+      const listActive = mrrpy.filter((f) => validNumber(f.party_crbal) > 0);
       setMrrpy_Options(listActive);
     } catch (error) {}
   };
@@ -661,7 +661,7 @@ const useMRR = () => {
     setFormErrors(newErrors);
     if (f === "mrrdc_price") {
       const price_id = items_Options.find((opt) => opt.price_id === v);
-      //console.log(price_id);
+      //console.log("mrrdc_price", price_id);
       setFormDataItem((prev) => ({
         ...prev,
         mrrdc_items: price_id?.id,
@@ -754,12 +754,12 @@ const useMRR = () => {
     //console.log(f, v);
     if (f === "mrrcs_party") {
       const mrrcs_id = mrrcs_Options.find((opt) => opt.id === v);
+      //console.log("mrrcs_id", mrrcs_id);
       setFormDataCost((prev) => ({
         ...prev,
         party_cname: mrrcs_id?.party_cname,
-        party_chtac: mrrcs_id?.party_chtac,
-        prtyn_ctype: mrrcs_id?.prtyn_ctype,
-        prtyn_chtno: mrrcs_id?.prtyn_chtno,
+        mrrcs_party: v,
+        chtac_chtno: mrrcs_id?.chtac_chtno,
         chtac_id: mrrcs_id?.party_chtac,
         party_id: v,
       }));
@@ -833,13 +833,12 @@ const useMRR = () => {
       setFormDataPayment((prev) => ({
         ...prev,
         party_cname: mrrpy_id?.party_cname,
-        party_chtac: mrrpy_id?.party_chtac,
-        prtyn_ctype: mrrpy_id?.prtyn_ctype,
-        prtyn_chtno: mrrpy_id?.prtyn_chtno,
-        chtac_id_pay: mrrpy_id?.party_chtac,
-        party_id_pay: mrrpy_id?.id,
         party_crbal: mrrpy_id?.party_crbal,
         mrrpy_pdamt: formData.mrrdm_duamt, //too optional
+        mrrpy_party: v,
+        chtac_chtno: mrrpy_id?.chtac_chtno,
+        chtac_id: mrrpy_id?.party_chtac,
+        party_id: v,
       }));
     }
   };

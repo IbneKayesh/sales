@@ -58,8 +58,14 @@ function buildPathsCOA(list) {
       chtac_cname: path.join(" > "),
       chtac_chtno: row.chtac_chtno,
       chtac_ntype: row.chtac_ntype,
-      chtac_sglmd: row.chtac_sglmd,
-      chtac_pstmd: row.chtac_pstmd,
+
+      chtrt_trnid: row.chtrt_trnid,
+      chtrt_pegid: row.chtrt_pegid,
+      chtrt_grpid: row.chtrt_grpid,
+      chtrt_route: row.chtrt_route,
+
+      chtrt_chtno: row.chtac_chtno,
+      chtrt_cname: row.chtac_cname,
       party_count: row.party_count
     };
   });

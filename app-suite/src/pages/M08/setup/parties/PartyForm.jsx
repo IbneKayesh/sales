@@ -3,6 +3,7 @@ import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
+import Badge from "@/components/Badge";
 import { IconClose, IconSave } from "@/icons";
 import { party_ptype_Options } from "@/utils/vtable.js";
 
@@ -44,10 +45,10 @@ const PartyForm = ({
             disabled={readOnly}
             optionValue="id"
             optionLabel="chtac_cname"
-            optionGrid = "chtac_cname:Name,chtac_chtno:COA,party_count:Sub Ledger"
+            optionGrid="chtac_cname:Name,chtac_chtno:COA,party_count:Sub Ledger"
           />
         </div>
-        <div className="col-span-12">
+        <div className="col-span-9">
           <InputText
             label="Sub-Ledger Party Name"
             placeholder="Enter sub-ledger party name"
@@ -56,6 +57,17 @@ const PartyForm = ({
             error={formErrors.party_cname}
             required
             disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-3">
+          <InputText
+            label="Vendor Id"
+            placeholder="Enter vendor ID"
+            value={formData.party_vndor}
+            onChange={(e) => onChange("party_vndor", e.target.value)}
+            error={formErrors.party_vndor}
+            required
+            disabled={readOnly || formData.party_vndor !== "-"}
           />
         </div>
       </div>
@@ -79,6 +91,10 @@ const PartyForm = ({
           {formData?.id ? "Update" : "Create"}
         </Button>
       </div>
+
+      <Badge variant="danger" dot="true" className="mt-2">
+        Mention Vendor Id: RM/PM/WIP/FG/SVC/FOH for Products
+      </Badge>
     </div>
   );
 };

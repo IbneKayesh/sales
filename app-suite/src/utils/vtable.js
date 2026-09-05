@@ -98,12 +98,7 @@ const party_ptype_Options = [
   { label: "Customer", value: "Customer", auto_create: true },
   { label: "Supplier", value: "Supplier", auto_create: true },
   { label: "Employee", value: "Employee", auto_create: true },
-  { label: "Product-FG", value: "FG", auto_create: true },
-  { label: "Product-RM", value: "RM", auto_create: true },
-  { label: "Product-PM", value: "PM", auto_create: true },
-  { label: "Product-WIP", value: "WIP", auto_create: true },
-  { label: "Product-FOH", value: "FOH", auto_create: true },
-  { label: "Product-SVC", value: "SVC", auto_create: true },
+  { label: "Products", value: "Products", auto_create: false },
 ];
 
 const chtac_ntype_Options = [

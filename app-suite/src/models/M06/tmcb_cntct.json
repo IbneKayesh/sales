@@ -8,8 +8,7 @@
     "label": "Type",
     "maxLength": 50,
     "placeholder": "Enter contact type",
-    "required": true,
-    "default": "Customer"
+    "required": true
   },
   "cntct_sorce": {
     "type": "string",

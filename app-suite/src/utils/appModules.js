@@ -301,7 +301,7 @@ export const appModules = [
         order: 2,
         menus: [
           {
-            id: "M01-G02-M001",
+            id: "M04-G02-M001",
             name: "Inventory Stock Adjustment",
             color: "#f97316",
             icon: "Package",

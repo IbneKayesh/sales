@@ -5,6 +5,7 @@ import Badge from "@/components/Badge";
 import Chip from "@/components/Chip";
 import ActionButton from "@/components/ActionButton";
 import EmptyState from "@/components/EmptyState";
+import InactiveText from "@/components/InactiveText";
 
 /* ─── Colour variants ─── */
 const ctypeVariants = {
@@ -20,13 +21,6 @@ const ctypeOrder = ["Assets", "Liabilities", "Equity", "Income", "Expenses"];
 const ntypeVariants = {
   Dr: "danger",
   Cr: "success",
-};
-
-const ptypeVariants = {
-  Unknown: "muted",
-  Auto: "info",
-  Manual: "success",
-  "Auto Manual": "danger",
 };
 
 /* ─── Build a nested tree from a flat list, sorted by ctypeOrder then chart no ─── */
@@ -94,11 +88,15 @@ const COAList = ({ listData, onEdit, onDelete }) => {
           <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <span
               style={{
-                fontWeight: hasChildren ? 600 : 400,
+                fontWeight: hasChildren ? 800 : 400,
                 color: hasChildren ? "var(--text-primary)" : "inherit",
               }}
             >
-              {v || "—"}
+              <InactiveText
+                text={`${row.chtac_chtno}-${v}` || "—"}
+                active={row.chtac_actve}
+              />
+
               {row.party_count > 0 && " "}
               {row.party_count > 0 && (
                 <Chip
@@ -119,20 +117,11 @@ const COAList = ({ listData, onEdit, onDelete }) => {
       header: "Chart No",
       width: "110px",
       align: "right",
-      render: (v) => (
-        <span
-          style={{
-            fontFamily: "var(--font-mono, monospace)",
-            fontSize: "var(--fs-xs)",
-          }}
-        >
-          {v || "—"}
-        </span>
-      ),
+      render: (v) => <span className="text-sm">{v || "—"}</span>,
     },
     {
       key: "chtac_ctype",
-      header: "Type/Nature/Posting",
+      header: "Type/Nature/Control",
       width: "110px",
       render: (_, row) => (
         <>
@@ -142,56 +131,19 @@ const COAList = ({ listData, onEdit, onDelete }) => {
           <Chip variant={ntypeVariants[row.chtac_ntype] || "default"}>
             {row.chtac_ntype || "—"}
           </Chip>
-          <Chip variant={ptypeVariants[row.chtac_ptype] || "Unknown"}>
-            {row.chtac_ptype || "—"}
-          </Chip>
-        </>
-      ),
-    },
-    {
-      key: "chtac_child",
-      header: "Class/Control",
-      width: "120px",
-      render: (_, row) => (
-        <>
           <Badge
-            variant={row.chtac_child ? "success" : "muted"}
-            icon={
-              row.chtac_child ? (
-                <IconCheck size={12} />
-              ) : (
-                <IconClose size={12} />
-              )
-            }
-          >
-            {row.chtac_child ? "Yes" : "No"}
-          </Badge>
-          <Badge
-            variant={row.chtac_ispst ? "success" : "danger"}
+            variant={row.chtac_ispst ? "danger" : "success"}
             icon={
               row.chtac_ispst ? (
-                <IconCheck size={12} />
-              ) : (
                 <IconClose size={12} />
+              ) : (
+                <IconCheck size={12} />
               )
             }
           >
-            {row.chtac_ispst ? "Yes" : "No"}
+            {row.chtac_ispst ? "No" : "Yes"}
           </Badge>
         </>
-      ),
-    },
-    {
-      key: "chtac_actve",
-      header: "Status",
-      width: "90px",
-      render: (v) => (
-        <Badge
-          variant={v ? "success" : "danger"}
-          icon={v ? <IconCheck size={12} /> : <IconClose size={12} />}
-        >
-          {v ? "Active" : "Inactive"}
-        </Badge>
       ),
     },
     {
@@ -257,8 +209,8 @@ const COAList = ({ listData, onEdit, onDelete }) => {
         })}
         <span
           style={{
-            fontSize: "var(--fs-xs)",
-            color: "var(--text-muted)",
+            fontSize: "var(--fs-sm)",
+            color: "var(--text-danger)",
             marginLeft: "auto",
           }}
         >

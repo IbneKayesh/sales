@@ -40,11 +40,6 @@
     "placeholder": "Dr/Cr",
     "required": true
   },
-  "chtac_child": {
-    "type": "boolean",
-    "label": "Is Child",
-    "default": false
-  },
   "chtac_ispst": {
     "type": "boolean",
     "label": "Is Postable",

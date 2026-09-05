@@ -6,6 +6,7 @@ import tmtb_party from "@/models/M08/tmtb_party.json";
 const dataModel = generateDataModel(tmtb_party);
 import { partyAPI } from "@/api/M08/partyAPI.js";
 import { coaAPI } from "@/api/M08/coaAPI.js";
+import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
 
 const useParty = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -44,27 +45,20 @@ const useParty = () => {
     getAllParty();
   }, []);
 
-  const getCoaChildOnly = async () => {
-    if (chtac_Options.length > 0) return;
+  const getChartOfAccounts = async () => {
+    //if (chtac_Options.length > 0) return;
     try {
-      const resp = await coaAPI.getWithPartyCount({});
+      const resp = await coaNetworkAPI.getByTrnPageId({
+        chtrt_trnid: "SYS_SUB_LEDGER_PARTY",
+        chtrt_pegid: "SYS_PARTY_CREATE",
+      });
       const list = resp.data || [];
-      //filter posted only
-      // const listActive = list.map((item) => ({
-      //   id: item.id,
-      //   name: item.chtac_cname,
-      //   parent_id: item.chtac_chtac,
-      //   active: item.chtac_ispst,
-      // }));
-      //build path for all
-      //const buildPathsList = buildPaths(listActive);
-      //apply filter and set state
-      //setChtac_Options(buildPathsList.filter((item) => item.active));
+      //console.log(list);
       const listPath = buildPathsCOA(list);
       const listActive = listPath.filter(
         (f) =>
-          f.chtac_sglmd === "SYS_MULTI_SGL" ||
-          (f.chtac_sglmd === "SYS_SINGLE_SGL" && Number(f.party_count) === 0),
+          f.chtrt_grpid === "SYS_PARTY_MULTIPLE" ||
+          (f.chtrt_grpid === "SYS_PARTY_SINGLE" && Number(f.party_count) === 0),
       );
       //console.log(listPath);
       setChtac_Options(listActive);
@@ -93,6 +87,17 @@ const useParty = () => {
 
     if (f === "party_ptype" && pgView === "SYS_VW_FRM_2") {
       getVendorExtData(v);
+    }
+    if (f === "party_chtac") {
+      const chtac_id = chtac_Options.find(
+        (opt) =>
+          opt.id === v && opt.chtrt_grpid === "SYS_PARTY_SINGLE",
+      );
+      //console.log("chtac_id", chtac_id);
+      setFormData((prev) => ({
+        ...prev,
+        party_cname: (chtac_id?.chtrt_cname || "Enter party name") + " - Party",
+      }));
     }
   };
 
@@ -147,7 +152,8 @@ const useParty = () => {
     setFormData(dataModel);
     setReadOnly(false);
     setStopEdit(false);
-    getCoaChildOnly();
+    //getCoaChildOnly();
+    getChartOfAccounts();
   };
 
   const handleCancel = () => {
@@ -182,6 +188,8 @@ const useParty = () => {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
         getAllParty();
+        //reload all COA
+        getChartOfAccounts();
       }
     } catch (error) {
     } finally {

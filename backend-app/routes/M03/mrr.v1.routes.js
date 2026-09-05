@@ -170,6 +170,7 @@ const create = async (req, res) => {
       };
     }
     const { acprd_id, fsyar_id } = acprd[0];
+    
     const newId_JV = uuidv4();
     const newTrnNo_JV = await GenNewTrn(
       user_c,
@@ -196,6 +197,7 @@ const create = async (req, res) => {
       };
     }
 
+    
     const newId = uuidv4();
     //const newCode = await GenNewCode(user_c, "tmpb_mrrdm");
     const newTrnNo = await GenNewTrn(
@@ -207,14 +209,25 @@ const create = async (req, res) => {
     );
 
     //input vat (purchase)
-    const inpVat = await getCoaAssetInputVat(user_c, user_b);
-    if (!inpVat) {
-      return {
-        success: false,
-        message: "Input VAT Account is not found",
-        data: {},
-      };
+    const sql_inpvat = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
+      FROM tmtb_party pty
+      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+      JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+      WHERE crt.chtrt_trnid = 'SYS_MRR'
+      AND crt.chtrt_pegid = 'SYS_MRR_DIRECT'
+      AND crt.chtrt_grpid IN ('SYS_AST_INP_VAT','SYS_NONE')
+      AND pty.party_actve = TRUE
+      AND cht.chtac_actve = TRUE
+      AND crt.chtrt_actve = TRUE
+      AND cht.chtac_users = $1
+      AND cht.chtac_bsins = $2`;
+    const result_inpvat = await dbGet(sql_inpvat, [user_c, user_b]);
+    // console.log(result);
+    if (!result_inpvat || result_inpvat.length === 0) {
+      throw new Error(`No default input vat configured for MRR Direct`);
+      return;
     }
+
     //build scripts
     const scripts = [];
     scripts.push({
@@ -262,7 +275,7 @@ const create = async (req, res) => {
       label: `Created MRR ${newTrnNo}`,
     });
 
-    //SYS_MRR_DIRECT
+    //SYS_MRR.SYS_MRR_DIRECT
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
@@ -396,38 +409,6 @@ const create = async (req, res) => {
         ],
         label: `Update price stock detail ${newTrnNo}`,
       });
-
-      //SYS_MRR_DIRECT.SYS_AST_INVENTORY > Asset / Inventory Products - 10101212 (DR)
-      // let thisLineAmount =
-      //   Number(det.mrrdc_itqty || 0) * Number(det.mrrdc_csrat || 0);
-      // scripts.push({
-      //   sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-      //   jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-      //   jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-      //   VALUES ($1, $2, $3, $4, $5, $6,
-      //   $7, $8, $9, $10, $11, $12,
-      //   $13, $14, $15, $16)`,
-      //   params: [
-      //     uuidv4(),
-      //     user_c,
-      //     user_b,
-      //     mrrdm_dpart,
-      //     newId_JV,
-      //     det.chtac_id,
-      //     det.party_id,
-      //     thisLineAmount,
-      //     0,
-      //     "To Asset / Inventory / Products",
-      //     mrrdm_ttype,
-      //     newId,
-      //     "MASTER",
-      //     line,
-      //     user_s,
-      //     user_s,
-      //   ],
-      //   label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
-      // });
-      // line++;
     }
 
     const newGroupedProducts = Object.values(
@@ -449,7 +430,7 @@ const create = async (req, res) => {
       }, {}),
     );
 
-    //SYS_MRR_DIRECT.SYS_AST_INVENTORY > Asset / Inventory Products - 10101212 (DR)
+    //SYS_MRR.SYS_MRR_DIRECT.SYS_AST_INVENTORY
     for (const det of newGroupedProducts) {
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
@@ -481,7 +462,7 @@ const create = async (req, res) => {
       line++;
     }
 
-    //SYS_MRR_DIRECT.SYS_LIB_SUPPLIER > Liability / Supplier Payable - 20101010 (CR)
+    //SYS_MRR.SYS_MRR_DIRECT.SYS_LIB_SUPPLIER
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -511,7 +492,7 @@ const create = async (req, res) => {
     });
     line++;
 
-    //SYS_MRR_DIRECT.SYS_AST_INP_VAT > Assets / Current Assets / VAT & Tax Receivable / Input VAT (Purchase VAT) - 10101411 (DR)
+    //SYS_MRR.SYS_MRR_DIRECT.SYS_AST_INP_VAT
     if (Number(mrrdm_vtamt) > 0) {
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
@@ -526,8 +507,8 @@ const create = async (req, res) => {
           user_b,
           mrrdm_dpart,
           newId_JV,
-          inpVat.chtac_id,
-          inpVat.party_id,
+          result_inpvat.chtac_id,
+          result_inpvat.party_id,
           mrrdm_vtamt || 0,
           0,
           "To Assets / Current Assets / VAT & Tax Receivable / Input VAT (Purchase VAT)",
@@ -556,7 +537,7 @@ const create = async (req, res) => {
           user_c,
           user_b,
           newId,
-          det.mrrcs_party, //party name
+          det.mrrcs_party, //party id
           det.mrrcs_csmod, //costing mode
           det.mrrcs_clmod, //calculation mode
           det.mrrcs_value || 0,
@@ -569,7 +550,7 @@ const create = async (req, res) => {
         ],
         label: `Created Costing detail ${newTrnNo}`,
       });
-      //SYS_MRR_DIRECT.SYS_LIB_LOCAL_VENDOR > Liability / Local Vendor/Contractor/Labor - 20101011 (CR)
+      //SYS_MRR.SYS_MRR_DIRECT.SYS_LIB_LOCAL_VENDOR
       if (det.mrrcs_csmod === "Exclude") {
         scripts.push({
           sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
@@ -624,7 +605,7 @@ const create = async (req, res) => {
         label: `Created Payment detail ${newTrnNo}`,
       });
 
-      //SYS_MRR_DIRECT.SYS_LIB_SUPPLIER > Liability / Supplier Payable - 20101010 (DR)
+      //SYS_MRR.SYS_MRR_DIRECT.SYS_LIB_SUPPLIER
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -652,9 +633,9 @@ const create = async (req, res) => {
         ],
         label: `Clear Liability / Supplier / Payable ${newTrnNo_JV}`,
       });
-
       line++;
-      //SYS_MRR_DIRECT.SYS_AST_PAY_CASH/SYS_AST_PAY_BANK	> Asset / Cash In Hand - 10101010 (CR)
+
+      //SYS_MRR.SYS_MRR_DIRECT.SYS_AST_PAYMENT
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -668,8 +649,8 @@ const create = async (req, res) => {
           user_b,
           mrrdm_dpart,
           newId_JV,
-          det.chtac_id_pay,
-          det.party_id_pay,
+          det.chtac_id,
+          det.party_id,
           0,
           det.mrrpy_pdamt || 0,
           "Payment Liability / Supplier Payable",
@@ -682,7 +663,6 @@ const create = async (req, res) => {
         ],
         label: `Payment Liability / Supplier / Payable ${newTrnNo_JV}`,
       });
-
       line++;
     }
 

@@ -95,13 +95,12 @@ const create = async (req, res) => {
       id,
       chtac_users,
       chtac_bsins,
-      chtac_chtac,
       chtac_ccode,
+      chtac_chtac,
       chtac_cname,
       chtac_ctype,
       chtac_chtno,
       chtac_ntype,
-      chtac_child,
       chtac_ispst,
       user_s,
       user_c,
@@ -114,6 +113,7 @@ const create = async (req, res) => {
       !chtac_cname ||
       !chtac_ctype ||
       !chtac_chtno ||
+      !chtac_ntype ||
       !user_s ||
       !user_c ||
       !user_b
@@ -126,26 +126,40 @@ const create = async (req, res) => {
     }
 
     //database action
+    const sql_chtno = `SELECT *
+      FROM tmtb_chtac cht
+      WHERE cht.chtac_users = $1
+      AND cht.chtac_bsins = $2
+      AND cht.chtac_chtno = $3`;
+    const rows_chtno = await dbGetAll(sql_chtno, [user_c, user_b, chtac_chtno]);
+    //console.log("rows_prtyr",rows_prtyr);
+    if (rows_chtno.length > 0) {
+      return res.json({
+        success: false,
+        message: `${chtac_chtno} - is already configured`,
+        data: {},
+      });
+    }
+
     //const chtac_ntype_new = chtac_ctype === "Asset" || chtac_ctype === "Expense" ? "Dr" : "Cr";
     //Normal Balance Type (Dr/Cr) 'Dr' = Assets, Expenses 'Cr' = Liabilities, Equity, Income
     const chtac_child_new = chtac_chtac === "-" ? false : true;
     const newCode = await GenNewCode(user_c, "tmtb_chtac");
 
-    const sql = `INSERT INTO tmtb_chtac(id, chtac_users, chtac_bsins, chtac_chtac, chtac_ccode, chtac_cname,
-    chtac_ctype, chtac_chtno, chtac_ntype, chtac_child, chtac_ispst, chtac_crusr, chtac_upusr)
+    const sql = `INSERT INTO tmtb_chtac(id, chtac_users, chtac_bsins, chtac_ccode, chtac_chtac, chtac_cname,
+                              chtac_ctype, chtac_chtno, chtac_ntype, chtac_ispst, chtac_crusr, chtac_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12, $13)`;
+    $7, $8, $9, $10, $11, $12)`;
     const params = [
       uuidv4(),
       user_c,
       user_b,
-      chtac_chtac,
       newCode,
+      chtac_chtac,
       chtac_cname,
       chtac_ctype,
       chtac_chtno,
       chtac_ntype,
-      chtac_child_new,
       chtac_ispst,
       user_s,
       user_s,
@@ -156,7 +170,7 @@ const create = async (req, res) => {
     await dbRun(sql, params, `create account coa- ${user_c}`);
     res.json({
       success: true,
-      message: `${chtac_cname} - Created successfully.`,
+      message: `${chtac_chtno} - ${chtac_cname} - Created successfully.`,
       data: {},
     });
   } catch (error) {
@@ -180,13 +194,12 @@ const update = async (req, res) => {
       id,
       chtac_users,
       chtac_bsins,
-      chtac_chtac,
       chtac_ccode,
+      chtac_chtac,
       chtac_cname,
       chtac_ctype,
       chtac_chtno,
       chtac_ntype,
-      chtac_child,
       chtac_ispst,
       user_s,
       user_c,
@@ -199,6 +212,7 @@ const update = async (req, res) => {
       !chtac_cname ||
       !chtac_ctype ||
       !chtac_chtno ||
+      !chtac_ntype ||
       !user_s ||
       !user_c ||
       !user_b
@@ -211,6 +225,20 @@ const update = async (req, res) => {
     }
 
     //database action
+    const sql_chtno = `SELECT *
+      FROM tmtb_chtac cht
+      WHERE cht.chtac_users = $1
+      AND cht.chtac_bsins = $2
+      AND cht.chtac_chtno = $3`;
+    const rows_chtno = await dbGetAll(sql_chtno, [user_c, user_b, chtac_chtno]);
+    if (rows_chtno.length > 0) {
+      return res.json({
+        success: false,
+        message: `${chtac_chtno} - is already configured`,
+        data: {},
+      });
+    }
+
     const sql = `UPDATE tmtb_chtac
     SET chtac_chtac = $1,
     chtac_cname = $2,
@@ -232,7 +260,7 @@ const update = async (req, res) => {
     await dbRun(sql, params, `update account coa- ${user_c}`);
     res.json({
       success: true,
-      message: `${chtac_cname} - Updated successfully.`,
+      message: `${chtac_chtno} - ${chtac_cname} - Updated successfully.`,
       data: {},
     });
   } catch (error) {

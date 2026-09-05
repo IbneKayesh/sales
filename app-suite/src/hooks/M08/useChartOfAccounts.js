@@ -50,7 +50,6 @@ const useChartOfAccounts = () => {
           ...listActive.filter((f) => !f.active),
         ]),
       );
-
       //setChtac_chtac_Options(buildPaths(listActive));
     } catch (error) {
     } finally {

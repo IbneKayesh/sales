@@ -23,7 +23,7 @@ const COAForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-8">
+        <div className="col-span-12">
           <Dropdown
             label="Parent Account"
             options={chtac_chtac_Options}
@@ -37,9 +37,9 @@ const COAForm = ({
             optionLabel="name"
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-5">
           <InputText
-            label="Account Name"
+            label="Name"
             placeholder="Enter account name"
             value={formData.chtac_cname}
             onChange={(e) => onChange("chtac_cname", e.target.value)}
@@ -48,9 +48,9 @@ const COAForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
-            label="Account Type"
+            label="Type"
             options={chtac_ctype_Options}
             value={formData.chtac_ctype}
             onChange={(e) => onChange("chtac_ctype", e.target.value)}
@@ -60,7 +60,7 @@ const COAForm = ({
             disabled={readOnly || stopEdit}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputText
             label="Chart No"
             placeholder="Enter chart no"
@@ -71,9 +71,9 @@ const COAForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-1">
           <Dropdown
-            label="Nature Type"
+            label="Nature"
             options={chtac_ntype_Options}
             value={formData.chtac_ntype}
             onChange={(e) => onChange("chtac_ntype", e.target.value)}
@@ -84,13 +84,13 @@ const COAForm = ({
           />
         </div>
         <div
-          className="col-span-3"
+          className="col-span-1"
           style={{
             paddingTop: "var(--sp-6)",
           }}
         >
           <Checkbox
-            label="Is Postable"
+            label="Is Posting"
             checked={
               formData.chtac_ispst === true || formData.chtac_ispst === "true"
             }

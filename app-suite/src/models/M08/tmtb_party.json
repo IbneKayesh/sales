@@ -7,22 +7,23 @@
     "type": "string",
     "label": "Party Type",
     "maxLength": 50,
-    "placeholder": "Select party type",
+    "placeholder": "Select",
     "required": true
   },
   "party_chtac": {
     "type": "string",
     "label": "Account",
     "maxLength": 50,
-    "placeholder": "Select account",
+    "placeholder": "Select",
     "required": true
   },
   "party_vndor": {
     "type": "string",
     "label": "Vendor",
     "maxLength": 50,
-    "placeholder": "Select vendor",
-    "required": false
+    "placeholder": "Select",
+    "required": true,
+    "default": "-"
   },
   "party_cname": {
     "type": "string",
