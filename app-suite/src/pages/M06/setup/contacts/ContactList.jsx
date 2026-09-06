@@ -1,10 +1,11 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import { IconClose, IconCheck } from "@/icons";
+import { IconClose, IconCheck, IconWallet } from "@/icons";
 import NegativeValue from "@/components/common/NegativeValue";
+import Button from "@/components/Button";
 
-const ContactList = ({ listData, onEdit, onDelete }) => {
+const ContactList = ({ listData, onEdit, onDelete, onStatement }) => {
   const dtColumns = [
     { key: "cntct_ccode", header: "Code", width: "120px" },
     {
@@ -75,12 +76,26 @@ const ContactList = ({ listData, onEdit, onDelete }) => {
       width: "110px",
       sortable: false,
       body: (_, row) => (
-        <ActionButton
-          rowData={row}
-          actve={row.cntct_actve}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        <>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="btn--icon-info"
+            onClick={(e) => {
+              e.stopPropagation();
+              onStatement(row);
+            }}
+            title="Statement"
+          >
+            <IconWallet size={14} className="text-info" />
+          </Button>
+          <ActionButton
+            rowData={row}
+            actve={row.cntct_actve}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        </>
       ),
     },
   ];

@@ -850,9 +850,10 @@ router.post("/adjustment-in-out-items", async (req, res) => {
     }
 
     //database action
+    //set as chtrt for adjustment inventory in and out item types
     let sql = "";
     if (ttype_id === "Adjustment Out") {
-      sql = `SELECT stk.id stock_id, stk.stock_sorce, stk.stock_trnno, stk.stock_trdat, stk.stock_items, stk.stock_price,
+      sql = `SELECT stk.id stock_id, stk.stock_sorce, stk.stock_trnno, TO_CHAR(stk.stock_trdat, 'YYYY-MM-DD') as stock_trdat, stk.stock_items, stk.stock_price,
           stk.stock_brcod, stk.stock_batch, stk.stock_srial, stk.stock_wrdat, stk.stock_fgdat, stk.stock_exdat,
           stk.stock_trqty, stk.stock_ohqty, stk.stock_cprat, itm.items_iname, prc.price_cname, itm.items_runit,
           unt.units_cname, pty.id party_id, pty.party_chtac chtac_id
@@ -868,10 +869,9 @@ router.post("/adjustment-in-out-items", async (req, res) => {
           AND stk.stock_ohqty > 0
           ORDER BY prc.price_cname`;
     } else if (ttype_id === "Adjustment In") {
-      //set as prtyr for adjustment inventory in, set rate edit for adjustment entry
-      sql = `SELECT prc.id stock_id, '-' stock_sorce, '-' stock_trnno, null stock_trdat, prc.price_items stock_items,
-          prc.id stock_price, '' stock_brcod, '' stock_batch, '' stock_srial, null stock_wrdat, null stock_fgdat,
-          null stock_exdat, 9999999 stock_trqty, 9999999 stock_ohqty, -0.1 stock_cprat, itm.items_iname, prc.price_cname, itm.items_runit,
+      sql = `SELECT prc.id stock_id, '-' stock_sorce, '-' stock_trnno, null stock_trdat, prc.price_items stock_items, prc.id stock_price,
+          '' stock_brcod, '' stock_batch, '' stock_srial, null stock_wrdat, null stock_fgdat, null stock_exdat,
+          0 stock_trqty, 0 stock_ohqty, 0 stock_cprat, itm.items_iname, prc.price_cname, itm.items_runit,
           unt.units_cname, pty.id party_id, pty.party_chtac chtac_id
           FROM tmib_price prc
           JOIN tmib_items itm ON prc.price_items = itm.id

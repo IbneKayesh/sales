@@ -14,6 +14,7 @@ const ItemForm = ({
   onChange,
   onAddToList,
   items_Options,
+  rateEdit,
 }) => {
   return (
     <div className="form-wrap">
@@ -41,7 +42,7 @@ const ItemForm = ({
             onChange={(e) => onChange("adjsc_itrat", e.target.value)}
             error={formErrors.adjsc_itrat}
             step="0.01"
-            disabled={readOnly || validNumber(formData.adjsc_itrat) > 0}
+            disabled={readOnly || rateEdit}
           />
         </div>
         <div className="col-span-3">

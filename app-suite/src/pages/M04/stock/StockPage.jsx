@@ -7,7 +7,6 @@ import PageCard, {
 import { IconSearch, IconClose, IconPlus, IconSave, IconCheck } from "@/icons";
 import Button from "@/components/Button";
 import Dropdown from "@/components/Dropdown";
-import Badge from "@/components/Badge";
 import Chip from "@/components/Chip";
 import useStock from "@/hooks/M04/useStock";
 import StockList from "./StockList";
@@ -74,7 +73,7 @@ const StockPage = () => {
                     options={dpart_Options}
                     value={formData.dpart_id}
                     onChange={(e) => handleChange("dpart_id", e.target.value)}
-                    //error={formErrors.items_scatg}
+                    error={formErrors.dpart_id}
                     placeholder="Select..."
                     //disabled={readOnly}
                     optionValue="id"

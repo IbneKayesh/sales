@@ -8,25 +8,10 @@ import PageCard, {
 } from "@/components/PageCard";
 import DataCard, { DataCardGrid } from "@/components/DataCard";
 import Badge from "@/components/Badge";
-import Chip from "@/components/Chip";
 import Button from "@/components/Button";
-import InputText from "@/components/InputText";
-import EmptyState from "@/components/EmptyState";
-import TableColumns from "@/components/common/TableColumns";
-import {
-  IconBox,
-  IconChart,
-  IconClose,
-  IconDollar,
-  IconEdit,
-  IconFile,
-  IconInfo,
-  IconMenu,
-  IconPurchase,
-  IconSearch,
-  IconSettings,
-} from "@/icons";
-import useGridOptions from "@/hooks/M01/useGridOptions";
+import { IconInfo, IconPurchase } from "@/icons";
+import Dropdown from "@/components/Dropdown";
+import usePendingProcess from "@/hooks/M01/usePendingProcess";
 
 const setupGroups = [
   {
@@ -80,18 +65,22 @@ const PendingProcessPage = () => {
     isBusy,
     pgView,
     pageAuth,
+    tcVisibleItem,
     readOnly,
     stopEdit,
+    listData,
     formData,
     listDataItem,
     formDataItem,
     formErrors,
     //others
+    dpart_Options,
     //functions
     handleChange,
+    handleEdit,
+    handleCancel,
     handleSubmit,
-    //modal
-  } = useGridOptions();
+  } = usePendingProcess();
 
   return (
     <div className="page-wrap">
@@ -101,7 +90,21 @@ const PendingProcessPage = () => {
             title="Pending Process"
             subtitle={`Some data are still unmergerd · need your quick actions · execute them`}
           />
-          <PageCardActions></PageCardActions>
+          <PageCardActions>
+           <div className="col-span-12">
+                <Dropdown
+                  label="Department"
+                  options={dpart_Options}
+                  value={formData.dpart_id}
+                  onChange={(e) => handleChange("dpart_id", e.target.value)}
+                  error={formErrors.dpart_id}
+                  placeholder="Select..."
+                  //disabled={readOnly}
+                  optionValue="id"
+                  optionLabel="dpart_cname"
+                />
+              </div>
+          </PageCardActions>
         </PageCardHeader>
         <PageCardBody>
           <div className="module-page__list">

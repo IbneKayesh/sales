@@ -157,6 +157,7 @@ const useAdjustment = () => {
 
   const getItemsByDepartment = async (v1, v2) => {
     try {
+      //console.log(v1, v2);
       const resp = await itemsAPI.getAdjustmentInOutItems({
         dpart_id: v1,
         ttype_id: v2,
@@ -365,6 +366,7 @@ const useAdjustment = () => {
       showToast("Quantity is required", { type: "warning" });
       return;
     }
+
     if (validNumber(formDataItem.adjsc_itrat) <= 0) {
       showToast("Price is required", { type: "warning" });
       return;
@@ -381,7 +383,7 @@ const useAdjustment = () => {
     const qty = validNumber(formDataItem.adjsc_itqty);
     const ohqty = validNumber(formDataItem.stock_ohqty);
     const stockDiff = ohqty - qty;
-    if (stockDiff < 0) {
+    if (stockDiff < 0 && formData.adjsm_ttype === "Adjustment Out") {
       showToast(`${stockDiff} Stock is not available`, { type: "warning" });
       return;
     }

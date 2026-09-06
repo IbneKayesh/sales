@@ -14,7 +14,6 @@ import { journalAPI } from "@/api/M08/journalAPI.js";
 import { partyAPI } from "@/api/M08/partyAPI.js";
 import { acprdAPI } from "@/api/M08/acprdAPI.js";
 import { fsyarAPI } from "@/api/M08/fsyarAPI.js";
-import { coaAPI } from "@/api/M08/coaAPI.js";
 import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
 
 
@@ -411,41 +410,6 @@ const useJournal = () => {
     setModalTitle({ title: "", subTitle: "" });
   };
 
-  const handleAutoJournal = async () => {
-    try {
-      const newErrors = !formData.jrnlm_dpart
-        ? { jrnlm_dpart: "Department is required" }
-        : {};
-
-      setFormErrors(newErrors);
-      if (Object.keys(newErrors).length > 0) {
-        return;
-      }
-
-      const reqBody = {
-        ...formData,
-      };
-
-      setIsBusy(true);
-      const resp = await journalAPI.createAutoJournal(reqBody);
-      //console.log("resp", resp);
-      alertBox({
-        title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
-        message: resp.message,
-        variant: resp.success ? "success" : "danger",
-        confirmText: resp.success ? "Done" : "Close",
-      });
-      if (resp.success) {
-        setPgView("SYS_VW_LST_1");
-        setFormData(dataModel);
-        getAllJournals();
-      }
-    } catch (error) {
-    } finally {
-      setIsBusy(false);
-    }
-  };
-
   const handlePrintJournal = () => {
     if (!formData?.id) {
       showToast("Save the journal before printing", { type: "warning" });
@@ -506,7 +470,6 @@ const useJournal = () => {
     handleAddToList,
     handleEditItem,
     handleDeleteItem,
-    handleAutoJournal,
     handlePrintJournal,
     handlePrintInvoice,
     //modal

@@ -5,7 +5,7 @@ import tmtb_party from "@/models/M08/tmtb_party.json";
 const dataModel = generateDataModel(tmtb_party);
 import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
 
-const usePartyNetwork = () => {
+const useCoaNetwork = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
   const [pgId, setPgId] = useState("M08-M02-M003");
@@ -24,7 +24,7 @@ const usePartyNetwork = () => {
   const [formErrors, setFormErrors] = useState({});
   //others
 
-  const getAllPartyNetwork = async () => {
+  const getAllCoaNetwork = async () => {
     try {
       setIsBusy(true);
       const resp = await coaNetworkAPI.getAll({});
@@ -37,7 +37,7 @@ const usePartyNetwork = () => {
   };
 
   useEffect(() => {
-    getAllPartyNetwork();
+    getAllCoaNetwork();
   }, []);
 
   const handleEdit = (rowData) => {};
@@ -45,7 +45,7 @@ const usePartyNetwork = () => {
   const handleDelete = async (rowData) => {};
 
   const handleSearch = async () => {
-    getAllPartyNetwork();
+    getAllCoaNetwork();
   };
 
   return {
@@ -59,4 +59,4 @@ const usePartyNetwork = () => {
     handleSearch,
   };
 };
-export default usePartyNetwork;
+export default useCoaNetwork;

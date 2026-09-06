@@ -34,14 +34,14 @@ JOIN tmsb_dpart dpt ON ivm.invcm_dpart = dpt.id
 JOIN tmcb_cntct cnt ON ivm.invcm_cntct = cnt.id
 JOIN tmtb_party pty ON cnt.id = pty.party_vndor
 JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-JOIN tmtb_prtyr ptr ON cht.chtac_chtno = ptr.prtyr_chtno
+JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
 WHERE ivm.invcm_pyamt - ivm.invcm_pdamt > 0
 AND ivm.invcm_ttype = 'Sales Invoice'
 AND ivm.invcm_users = $1
 AND ivm.invcm_bsins = $2
-AND ptr.prtyr_mgrup = 'SYS_SALES_INVOICE'
-AND ptr.prtyr_sgrup = 'SYS_AST_CUSTOMER'
-AND ptr.prtyr_party = 'USER-CHOICE'
+AND crt.chtrt_trnid = 'SYS_SALES'
+AND crt.chtrt_pegid = 'SYS_SALES_INVOICE'
+AND crt.chtrt_grpid = 'SYS_AST_CUSTOMER'
 ORDER BY ivm.invcm_trdat DESC`;
 
     const rows = await dbGetAll(
@@ -291,7 +291,7 @@ GROUP BY ivm.invcm_pyamt`;
 
     res.json({
       success: true,
-      message: "Payment created successfully",
+      message: `${newTrnNo_JV} - Payment created successfully`,
       data: {
         ...req.body,
         invpy_refno: invpy_refno,

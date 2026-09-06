@@ -96,6 +96,10 @@ export default function DataTable({
   columns = [],
   data = [],
   pageSize = 10,
+  showPageSize = true,
+  showRows,
+  showRowsPerPage,
+  pagination = true,
   sortable = true,
   searchable = false,
   striped = true,
@@ -116,6 +120,7 @@ export default function DataTable({
   columnSettingsKey,
   ...rest
 }) {
+  const isPageSizeVisible = showRows !== undefined ? showRows : (showRowsPerPage !== undefined ? showRowsPerPage : showPageSize)
   const keyOf = (col) => col.key || col.accessor
 
   // Density — starts from the `dense` prop, then a persisted global preference.
@@ -231,9 +236,11 @@ export default function DataTable({
       })
     : filtered
 
-  const totalPages = Math.max(1, Math.ceil(sorted.length / pageSizeState))
+  const totalPages = pagination ? Math.max(1, Math.ceil(sorted.length / pageSizeState)) : 1
   const currentPage = Math.min(page, totalPages - 1)
-  const paged = sorted.slice(currentPage * pageSizeState, (currentPage + 1) * pageSizeState)
+  const paged = pagination
+    ? sorted.slice(currentPage * pageSizeState, (currentPage + 1) * pageSizeState)
+    : sorted
 
   const showToolbar = searchable || exportable || columnSettingsKey
 
@@ -556,18 +563,20 @@ export default function DataTable({
           )}
         </table>
       </div>
-      {sorted.length > 0 && (
+      {pagination && sorted.length > 0 && (isPageSizeVisible || totalPages > 1) && (
         <div className="data-table__pagination">
-          <span className="data-table__page-size">
-            Rows
-            <input
-              type="number"
-              min={1}
-              value={pageSizeState}
-              onChange={(e) => setPageSize(e.target.value)}
-              aria-label="Rows per page"
-            />
-          </span>
+          {isPageSizeVisible && (
+            <span className="data-table__page-size">
+              Rows
+              <input
+                type="number"
+                min={1}
+                value={pageSizeState}
+                onChange={(e) => setPageSize(e.target.value)}
+                aria-label="Rows per page"
+              />
+            </span>
+          )}
           {totalPages > 1 && (<>
           <button
             type="button"

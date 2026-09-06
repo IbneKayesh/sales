@@ -5,6 +5,7 @@ import validate, { generateDataModel } from "@/models/validator";
 import tmob_invpy from "@/models/M02/tmob_invpy.json";
 const dataModel = generateDataModel(tmob_invpy);
 import { validNumber } from "@/utils/misc.js";
+import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
 
 const useReceivables = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -46,11 +47,10 @@ const useReceivables = () => {
   const getSalesInvoiceParty = async () => {
     try {
       setIsBusy(true);
-      //AND ptn.prtyn_ctype = 'PAYMENTS'
-      const resp = await partyNetworkAPI.getSalesInvoice({});
+      const resp = await coaNetworkAPI.getSalesInvoiceExpPaym({});
       const list = resp.data || [];
       const invpy = list.filter((f) =>
-        ["SYS_AST_PAY_CASH", "SYS_AST_PAY_BANK"].includes(f.prtyr_sgrup),
+        ["SYS_AST_PAYMENT", "SYS_NONE"].includes(f.chtrt_grpid),
       );
       setPartyOptions(invpy);
     } catch (error) {

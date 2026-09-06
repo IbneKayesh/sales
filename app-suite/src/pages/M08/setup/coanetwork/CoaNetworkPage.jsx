@@ -6,10 +6,10 @@ import PageCard, {
 } from "@/components/PageCard";
 import { IconSearch, IconClose, IconPlus, IconSave } from "@/icons";
 import Button from "@/components/Button";
-import usePartyNetwork from "@/hooks/M08/usePartyNetwork";
-import PartyNetworkList from "./PartyNetworkList";
+import useCoaNetwork from "@/hooks/M08/useCoaNetwork";
+import CoaNetworkList from "./CoaNetworkList";
 
-const PartyNetworkPage = () => {
+const CoaNetworkPage = () => {
   const {
     isBusy,
     pgView,
@@ -19,14 +19,14 @@ const PartyNetworkPage = () => {
     handleEdit,
     handleDelete,
     handleSearch,
-  } = usePartyNetwork();
+  } = useCoaNetwork();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
           <PageCardTitle
-            title="Party Network"
+            title="COA Network"
             subtitle={`${listData.length} Configurations`}
           />
           <PageCardActions>
@@ -40,7 +40,7 @@ const PartyNetworkPage = () => {
         </PageCardHeader>
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
-            <PartyNetworkList
+            <CoaNetworkList
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
@@ -51,4 +51,4 @@ const PartyNetworkPage = () => {
     </div>
   );
 };
-export default PartyNetworkPage;
+export default CoaNetworkPage;

@@ -4,6 +4,44 @@ const { dbGet, dbGetAll, dbRun, dbRunAll } = require("../../db/sqlManagerpg");
 const { v4: uuidv4 } = require("uuid");
 const { GenNewCode } = require("../../db/genHelper");
 
+// get all
+router.post("/", async (req, res) => {
+  try {
+    const { user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!user_c) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT *
+    FROM tmtb_chtrt crt
+    WHERE crt.chtrt_users = $1
+    ORDER BY crt.chtrt_trnid, crt.chtrt_pegid, crt.chtrt_grpid,crt.chtrt_chtno,crt.chtrt_route`;
+    const params = [user_c];
+    const rows = await dbGetAll(sql, params, `get account coa- ${user_c}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
+
+
 // get-by-trn-page-id
 router.post("/get-by-trn-page-id", async (req, res) => {
   try {

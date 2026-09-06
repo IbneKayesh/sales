@@ -100,6 +100,7 @@ const ContactPage = () => {
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onStatement={handleDelete}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (

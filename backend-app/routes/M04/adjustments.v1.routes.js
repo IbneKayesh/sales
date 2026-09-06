@@ -35,7 +35,11 @@ router.post("/", async (req, res) => {
     ORDER BY ajm.adjsm_trdat DESC`;
 
     const params = [user_c];
-    const rows = await dbGetAll(sql, params, `get Inventory Adjustments- ${user_c}`);
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get Inventory Adjustments- ${user_c}`,
+    );
     res.json({
       success: true,
       message: "Query executed successfully.",
@@ -212,7 +216,8 @@ const create = async (req, res) => {
       label: `Created inventory adjustment ${newTrnNo}`,
     });
 
-    //SYS_INVENTORY_ADJUSTMENT
+    //SYS_ADJUSTMENT.SYS_ADJUSTMENT_IN
+    //SYS_ADJUSTMENT.SYS_ADJUSTMENT_OUT
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
@@ -228,7 +233,7 @@ const create = async (req, res) => {
         fsyar_id,
         acprd_id,
         crncy.crncy_tcrnc,
-        adjsm_ttype, //"Purchase Invoice",
+        adjsm_ttype, //"Adjustment In / Adjustment Out",
         newTrnNo_JV,
         adjsm_trdat,
         newTrnNo,
@@ -243,7 +248,7 @@ const create = async (req, res) => {
       label: `create journal master- ${newTrnNo_JV}`,
     });
 
-    //Insert MRR details, Stock Details
+    //Insert Adjustment In/Out details, Stock +/- Details
     let line = 1;
     for (const det of tmib_adjsc) {
       const lineId = uuidv4();
@@ -273,9 +278,75 @@ const create = async (req, res) => {
         label: `Created inventory adjustment detail ${newTrnNo}`,
       });
 
-      //add condition if no tracking then off
-      scripts.push({
-        sql: `UPDATE tmib_stock
+      //Adjustment In (+ stock)
+      if (adjsm_ttype === "Adjustment In") {
+        scripts.push({
+          sql: `INSERT INTO tmib_stock(id, stock_users, stock_bsins, stock_dpart, stock_sorce, stock_trnno,
+        stock_refid, stock_items, stock_price, stock_brcod, stock_batch, stock_srial,
+        stock_wrdat, stock_fgdat, stock_exdat, stock_trqty, stock_ohqty, stock_cprat,
+        stock_lprat, stock_notes, stock_crusr, stock_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+      $7, $8, $9, $10, $11, $12,
+      $13, $14, $15, $16, $17, $18,
+      $19, $20, $21, $22)`,
+          params: [
+            uuidv4(),
+            user_c,
+            user_b,
+            adjsm_dpart,
+            adjsm_ttype,
+            newTrnNo,
+            lineId,
+            det.adjsc_items,
+            det.adjsc_price,
+            "", //det.stock_brcod,
+            "", //det.stock_batch,
+            "", //det.stock_srial,
+            null, //det.stock_wrdat,
+            null, //det.stock_fgdat,
+            null, //det.stock_exdat,
+            det.adjsc_itqty || 0,
+            det.adjsc_itqty || 0,
+            det.adjsc_itrat || 0,
+            det.adjsc_itrat || 0,
+            det.adjsc_notes || "",
+            user_s,
+            user_s,
+          ],
+          label: `Created Adjustment In stock detail ${newTrnNo}`,
+        });
+
+        //update summary stock, last price
+        scripts.push({
+          sql: `UPDATE tmib_price
+              SET price_lprat = $1,
+                  price_gdstk = price_gdstk + $2,
+                  price_upusr = $3,
+                  price_updat = CURRENT_TIMESTAMP,
+                  price_rvnmr = price_rvnmr + 1
+                  WHERE id = $4
+                  AND price_users = $5
+                  AND price_items = $6
+                  AND price_dpart = $7`,
+          params: [
+            det.adjsc_itrat,
+            det.adjsc_itqty || 0,
+            user_s,
+            det.adjsc_price,
+            user_c,
+            det.adjsc_items,
+            adjsm_dpart,
+          ],
+          label: `Update price stock detail ${newTrnNo}`,
+        });
+      }
+
+      //Adjustment Out (- stock)
+
+      if (adjsm_ttype === "Adjustment Out") {
+        //add condition if no tracking then off
+        scripts.push({
+          sql: `UPDATE tmib_stock
         SET stock_aoqty = stock_aoqty + $1,
             stock_ohqty = stock_ohqty - $2,
             stock_upusr = $3,
@@ -285,21 +356,21 @@ const create = async (req, res) => {
         AND stock_users = $5
         AND stock_bsins = $6
         AND stock_dpart = $7`,
-        params: [
-          det.adjsc_itqty || 0,
-          det.adjsc_itqty || 0,
-          user_s,
-          det.adjsc_refid || "",
-          user_c,
-          user_b,
-          adjsm_dpart,
-        ],
-        label: `Update reduce stock detail ${newTrnNo}`,
-      });
+          params: [
+            det.adjsc_itqty || 0,
+            det.adjsc_itqty || 0,
+            user_s,
+            det.adjsc_refid || "",
+            user_c,
+            user_b,
+            adjsm_dpart,
+          ],
+          label: `Update reduce stock detail ${newTrnNo}`,
+        });
 
-      //update summary stock
-      scripts.push({
-        sql: `UPDATE tmib_price
+        //update summary stock
+        scripts.push({
+          sql: `UPDATE tmib_price
               SET price_gdstk = price_gdstk - $1,
                   price_upusr = $2,
                   price_updat = CURRENT_TIMESTAMP,
@@ -308,108 +379,17 @@ const create = async (req, res) => {
                   AND price_users = $4
                   AND price_items = $5
                   AND price_dpart = $6`,
-        params: [
-          det.adjsc_itqty || 0,
-          user_s,
-          det.adjsc_price,
-          user_c,
-          det.adjsc_items,
-          adjsm_dpart,
-        ],
-        label: `Update reduce price stock detail ${newTrnNo}`,
-      });
-
-      // scripts.push({
-      //   sql: `INSERT INTO tmib_stock(id, stock_users, stock_bsins, stock_dpart, stock_sorce, stock_trnno,
-      //   stock_refid, stock_items, stock_price, stock_brcod, stock_batch, stock_srial,
-      //   stock_wrdat, stock_fgdat, stock_exdat, stock_trqty, stock_ohqty, stock_cprat,
-      //   stock_lprat, stock_notes, stock_crusr, stock_upusr)
-      //   VALUES ($1, $2, $3, $4, $5, $6,
-      // $7, $8, $9, $10, $11, $12,
-      // $13, $14, $15, $16, $17, $18,
-      // $19, $20, $21, $22)`,
-      //   params: [
-      //     uuidv4(),
-      //     user_c,
-      //     user_b,
-      //     mrrdm_dpart,
-      //     mrrdm_ttype,
-      //     newTrnNo,
-      //     lineId,
-      //     det.mrrdc_items,
-      //     det.mrrdc_price,
-      //     det.stock_brcod, //
-      //     det.stock_batch, //
-      //     det.stock_srial, //
-      //     det.stock_wrdat, //
-      //     det.stock_fgdat, //
-      //     det.stock_exdat, //
-      //     det.mrrdc_itqty || 0,
-      //     det.mrrdc_itqty || 0,
-      //     det.mrrdc_csrat || 0,
-      //     det.mrrdc_itrat || 0,
-      //     det.stock_notes || "",
-      //     user_s,
-      //     user_s,
-      //   ],
-      //   label: `Created MRR stock detail ${newTrnNo}`,
-      // });
-
-      //update summary stock, last price
-      // scripts.push({
-      //   sql: `UPDATE tmib_price
-      //         SET price_lprat = $1,
-      //             price_gdstk = price_gdstk + $2,
-      //             price_upusr = $3,
-      //             price_updat = CURRENT_TIMESTAMP,
-      //             price_rvnmr = price_rvnmr + 1
-      //             WHERE id = $4
-      //             AND price_users = $5
-      //             AND price_items = $6
-      //             AND price_dpart = $7`,
-      //   params: [
-      //     det.mrrdc_itrat,
-      //     det.mrrdc_itqty || 0,
-      //     user_s,
-      //     det.mrrdc_price,
-      //     user_c,
-      //     det.mrrdc_items,
-      //     mrrdm_dpart,
-      //   ],
-      //   label: `Update price stock detail ${newTrnNo}`,
-      // });
-
-      //SYS_MRR_DIRECT.SYS_AST_INVENTORY > Asset / Inventory Products - 10101212 (DR)
-      // let thisLineAmount =
-      //   Number(det.mrrdc_itqty || 0) * Number(det.mrrdc_csrat || 0);
-      // scripts.push({
-      //   sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-      //   jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-      //   jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-      //   VALUES ($1, $2, $3, $4, $5, $6,
-      //   $7, $8, $9, $10, $11, $12,
-      //   $13, $14, $15, $16)`,
-      //   params: [
-      //     uuidv4(),
-      //     user_c,
-      //     user_b,
-      //     mrrdm_dpart,
-      //     newId_JV,
-      //     det.chtac_id,
-      //     det.party_id,
-      //     thisLineAmount,
-      //     0,
-      //     "To Asset / Inventory / Products",
-      //     mrrdm_ttype,
-      //     newId,
-      //     "MASTER",
-      //     line,
-      //     user_s,
-      //     user_s,
-      //   ],
-      //   label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
-      // });
-      // line++;
+          params: [
+            det.adjsc_itqty || 0,
+            user_s,
+            det.adjsc_price,
+            user_c,
+            det.adjsc_items,
+            adjsm_dpart,
+          ],
+          label: `Update reduce price stock detail ${newTrnNo}`,
+        });
+      }
     }
 
     const newGroupedProducts = Object.values(
@@ -431,7 +411,7 @@ const create = async (req, res) => {
       }, {}),
     );
 
-    //SYS_INVENTORY_ADJUSTMENT.SYS_AST_INVENTORY > Asset / Inventory Products - 10101212 (CR)
+    //SYS_ADJUSTMENT.SYS_ADJUSTMENT_IN.SYS_AST_INVENTORY
     for (const det of newGroupedProducts) {
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
@@ -448,8 +428,8 @@ const create = async (req, res) => {
           newId_JV,
           det.chtac_id,
           det.party_id,
-          0,
-          det.item_amount,
+          adjsm_ttype === "Adjustment Out" ? 0 : det.item_amount,
+          adjsm_ttype === "Adjustment Out" ? det.item_amount : 0,
           "From Assets / Current Assets / Inventory",
           adjsm_ttype,
           newId,
@@ -460,24 +440,29 @@ const create = async (req, res) => {
         ],
         label: `Create Assets / Current Assets / Inventory ${newTrnNo_JV}`,
       });
+
       line++;
     }
 
-    //SYS_INVENTORY_ADJUSTMENT.SYS_EXP_INV_ADJ_LOSS > Expenses / Operating Expenses / Other Expenses - 50111613 (DR)
-    const sql_prtyr = `SELECT ptr.id party_id, ptr.party_chtac chtac_id, pty.prtyr_sgrup
-                      FROM tmtb_party ptr
-                      JOIN tmtb_chtac cht ON ptr.party_chtac = cht.id
-                      JOIN tmtb_prtyr pty ON cht.chtac_chtno = pty.prtyr_chtno
-                      WHERE pty.prtyr_mgrup = 'SYS_INVENTORY_ADJUSTMENT'
-                      AND pty.prtyr_party = 'SYS_LINKED'
-                      AND ptr.party_users = $1
-                      AND ptr.party_bsins = $2
-                      LIMIT 2`;
-    //AND pty.prtyr_sgrup = 'SYS_EXP_INV_ADJ_LOSS'
+    //SYS_ADJUSTMENT.SYS_ADJUSTMENT_IN.SYS_EXP_INV_ADJ_GAIN
+    //SYS_ADJUSTMENT.SYS_ADJUSTMENT_OUT.SYS_EXP_INV_ADJ_LOSS
+    const sql_inout = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
+      FROM tmtb_party pty
+      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+      JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+      WHERE crt.chtrt_trnid = 'SYS_ADJUSTMENT'
+      AND crt.chtrt_pegid IN ('SYS_ADJUSTMENT_IN','SYS_ADJUSTMENT_OUT')
+      AND crt.chtrt_grpid IN ('SYS_EXP_INV_ADJ_GAIN','SYS_EXP_INV_ADJ_LOSS')
+      AND pty.party_actve = TRUE
+      AND cht.chtac_actve = TRUE
+      AND crt.chtrt_actve = TRUE
+      AND cht.chtac_users = $1
+      AND cht.chtac_bsins = $2
+      LIMIT 2`;
     //console.log(user_c, user_b, dept_id);
-    const rows_prtyr = await dbGetAll(sql_prtyr, [user_c, user_b]);
-    //console.log("rows_prtyr",rows_prtyr);
-    if (!rows_prtyr.length === 2) {
+    const rows_inout = await dbGetAll(sql_inout, [user_c, user_b]);
+    //console.log("rows_inout",rows_inout);
+    if (!rows_inout.length === 2) {
       return res.json({
         success: false,
         message: `No default Inventory Adjustment In/Out configured`,
@@ -485,38 +470,72 @@ const create = async (req, res) => {
       });
     }
 
-    const prtyn_loss = rows_prtyr.find(
-      (row) => row.prtyr_sgrup === "SYS_EXP_INV_ADJ_LOSS",
-    );
-
-    //SYS_INVENTORY_ADJUSTMENT.SYS_EXP_INV_ADJ_GAIN > Expenses / Operating Expenses / Other Expenses - 50111612 (DR)
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+    if (adjsm_ttype === "Adjustment In") {
+      const prtyn_gain = rows_inout.find(
+        (row) => row.chtrt_grpid === "SYS_EXP_INV_ADJ_GAIN",
+      );
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
         jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
         $13, $14, $15, $16)`,
-      params: [
-        uuidv4(),
-        user_c,
-        user_b,
-        adjsm_dpart,
-        newId_JV,
-        prtyn_loss.chtac_id,
-        prtyn_loss.party_id,
-        adjsm_tramt || 0,
-        0,
-        "To Expenses / Operating Expenses / Other Expenses",
-        adjsm_ttype,
-        newId,
-        "MASTER",
-        line,
-        user_s,
-        user_s,
-      ],
-      label: `Create Inventory Adjustment ${newTrnNo_JV}`,
-    });
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          adjsm_dpart,
+          newId_JV,
+          prtyn_gain.chtac_id,
+          prtyn_gain.party_id,
+          0,
+          adjsm_tramt || 0,
+          "Gain on Inventory Adjustment",
+          adjsm_ttype,
+          newId,
+          "MASTER",
+          line,
+          user_s,
+          user_s,
+        ],
+        label: `Create Inventory Adjustment ${newTrnNo_JV}`,
+      });
+    }
+
+    if (adjsm_ttype === "Adjustment Out") {
+      const prtyn_loss = rows_inout.find(
+        (row) => row.chtrt_grpid === "SYS_EXP_INV_ADJ_LOSS",
+      );
+
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+        params: [
+          uuidv4(),
+          user_c,
+          user_b,
+          adjsm_dpart,
+          newId_JV,
+          prtyn_loss.chtac_id,
+          prtyn_loss.party_id,
+          adjsm_tramt || 0,
+          0,
+          "Loss on Inventory Adjustment",
+          adjsm_ttype,
+          newId,
+          "MASTER",
+          line,
+          user_s,
+          user_s,
+        ],
+        label: `Create Inventory Adjustment ${newTrnNo_JV}`,
+      });
+    }
     line++;
 
     //console.log(scripts);
@@ -525,7 +544,7 @@ const create = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Adjustment created successfully",
+      message: `${newTrnNo} - Adjustment created successfully`,
       data: {
         ...req.body,
         mrrdm_trnno: newTrnNo,
@@ -680,7 +699,11 @@ router.post("/get-details-by-master", async (req, res) => {
     ORDER BY ajc.adjsc_items ASC`;
 
     const params = [user_c, adjsc_adjsm];
-    const rows = await dbGetAll(sql, params, `get Adjustment Details- ${user_c}`);
+    const rows = await dbGetAll(
+      sql,
+      params,
+      `get Adjustment Details- ${user_c}`,
+    );
     res.json({
       success: true,
       message: "Query executed successfully.",
