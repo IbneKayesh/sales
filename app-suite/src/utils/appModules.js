@@ -98,6 +98,15 @@ export const appModules = [
           },
           {
             id: "M01-G02-M003",
+            name: "Pending Process",
+            color: "#7c3aed",
+            icon: "Target",
+            order: 10,
+            link: "/settings/pending-process",
+            desc: "Pending process",
+          },
+          {
+            id: "M01-G02-M004",
             name: "Grid Options",
             color: "#7c3aed",
             icon: "Columns",

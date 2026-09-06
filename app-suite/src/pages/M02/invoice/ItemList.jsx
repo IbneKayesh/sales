@@ -4,13 +4,13 @@ import ActionButton from "@/components/ActionButton";
 const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     {
-      key: "items_iname",
-      header: "Item",
+      key: "price_cname",
+      header: "Name",
       width: "200px",
       body: (_, row) => {
         return (
           <span>
-            {row.items_iname} - {row.items_szqty} {row.sunit_cname}
+            {row.price_cname} - {row.items_szqty} {row.sunit_cname}
           </span>
         );
       },
@@ -19,6 +19,9 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       key: "items_iname",
       header: "Item",
       width: "80px",
+      footer: (_, row) => {
+        return listData.length + " lines";
+      },
     },
     {
       key: "invcc_itrat",
@@ -31,6 +34,13 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
             {Number(rowData.invcc_itqty).toFixed(4)} {rowData.runit_uname} ={" "}
             {Number(rowData.invcc_itamt).toFixed(4)}
           </>
+        );
+      },
+      footer: (_, row) => {
+        return (
+          row.reduce((sum, row) => sum + Number(row.invcc_itqty ?? 0), 0) +
+          " = " +
+          row.reduce((sum, row) => sum + Number(row.invcc_itamt ?? 0), 0)
         );
       },
     },

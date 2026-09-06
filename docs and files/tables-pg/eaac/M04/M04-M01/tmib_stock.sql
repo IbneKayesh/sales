@@ -26,10 +26,10 @@ CREATE TABLE tmib_stock (
   stock_isqty decimal(18,6) DEFAULT 0.00,
   stock_rcqty decimal(18,6) DEFAULT 0.00,
   stock_cnqty decimal(18,6) DEFAULT 0.00,
-  stock_dmqty decimal(18,6) DEFAULT 0.00,
+  stock_dmqty decimal(18,6) DEFAULT 0.00, --DAMAGE OHQ
   stock_aiqty decimal(18,6) DEFAULT 0.00,
-  stock_aoqty decimal(18,6) DEFAULT 0.00,
-  stock_ohqty decimal(18,6) DEFAULT 0.00,
+  stock_aoqty decimal(18,6) DEFAULT 0.00, --ADJUST OUT + MERGE OUT
+  stock_ohqty decimal(18,6) DEFAULT 0.00, --GOOD OHQ
   stock_cprat decimal(18,6) DEFAULT 0.00,
   stock_dprat decimal(18,6) DEFAULT 0.00,
   stock_tprat decimal(18,6) DEFAULT 0.00,

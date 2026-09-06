@@ -21,6 +21,9 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       key: "items_iname",
       header: "Item",
       width: "80px",
+      footer: (_, row) => {
+        return listData.length + " lines";
+      },
     },
     {
       key: "mrrdc_itrat",
@@ -33,6 +36,13 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
             {Number(rowData.mrrdc_itqty).toFixed(4)} {rowData.runit_uname} ={" "}
             {Number(rowData.mrrdc_itamt).toFixed(4)}
           </>
+        );
+      },
+      footer: (_, row) => {
+        return (
+          row.reduce((sum, row) => sum + Number(row.mrrdc_itqty ?? 0), 0) +
+          " = " +
+          row.reduce((sum, row) => sum + Number(row.mrrdc_itamt ?? 0), 0)
         );
       },
     },

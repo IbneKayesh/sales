@@ -13,7 +13,9 @@ const FeatureList = ({ treeData, onEdit, onDelete, onAddChild }) => {
       render: (_, row) => {
         return (
           <>
-            {row.fetur_srial} ~ {row.fetur_cname}
+            <span className={`${!row.fetur_actve && "text-red-500"}`}>
+              {row.fetur_srial} ~ {row.fetur_cname}
+            </span>
             {row.fetur_stats && (
               <Badge variant="success" className="ms-2">
                 Done
