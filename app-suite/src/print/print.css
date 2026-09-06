@@ -1,0 +1,314 @@
+/* ==========================================================================
+   Print Component Styles
+   Extracted from inline styles in PrintHeader, PrintFooter, PrintTable,
+   PrintModal, and format.jsx — single source of truth for print layout.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   PrintHeader — A4 mode
+   -------------------------------------------------------------------------- */
+.print-hdr {
+  width: 100%;
+  margin-bottom: 6px;
+}
+.print-hdr__company {
+  text-align: center;
+  margin-bottom: 4px;
+}
+.print-hdr__company-name {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+.print-hdr__company-detail {
+  font-size: 8px;
+  color: #333;
+  margin-top: 1px;
+}
+.print-hdr__company-tax {
+  font-size: 8px;
+  color: #555;
+  margin-top: 1px;
+}
+.print-hdr__meta-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 2px solid #000;
+  padding-bottom: 3px;
+}
+.print-hdr__title {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.print-hdr__subtitle {
+  font-size: 9px;
+  color: #333;
+  margin-top: 1px;
+}
+.print-hdr__info {
+  text-align: right;
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+/* --------------------------------------------------------------------------
+   PrintHeader — 80mm POS mode
+   -------------------------------------------------------------------------- */
+.print-hdr-80 {
+  text-align: center;
+  margin-bottom: 6px;
+  width: 100%;
+}
+.print-hdr-80__company-name {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.print-hdr-80__divider {
+  border-top: 1px dashed #000;
+  margin: 4px 0;
+}
+.print-hdr-80__title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+.print-hdr-80__subtitle {
+  font-size: 8px;
+  color: #444;
+}
+.print-hdr-80__meta {
+  margin-top: 4px;
+  text-align: left;
+  font-size: 9px;
+}
+.print-hdr-80__row {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* --------------------------------------------------------------------------
+   PrintFooter — A4 mode
+   -------------------------------------------------------------------------- */
+.print-ftr {
+  width: 100%;
+  margin-top: 8px;
+}
+.print-ftr__words {
+  font-size: 9px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.print-ftr__note {
+  font-size: 8px;
+  color: #555;
+  margin-bottom: 16px;
+}
+.print-ftr__signatures {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+.print-ftr__sig-col {
+  text-align: center;
+  font-size: 9px;
+}
+.print-ftr__sig-line {
+  border-top: 1px solid #000;
+  padding-top: 3px;
+  font-weight: 500;
+}
+.print-ftr__sig-name {
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   PrintFooter — 80mm POS mode
+   -------------------------------------------------------------------------- */
+.print-ftr-80 {
+  margin-top: 6px;
+  font-size: 8px;
+  width: 100%;
+}
+.print-ftr-80__words {
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+.print-ftr-80__note {
+  color: #555;
+  margin-bottom: 6px;
+}
+.print-ftr-80__thankyou {
+  text-align: center;
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  border-top: 1px dashed #000;
+  padding-top: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   PrintTable — generic data table
+   -------------------------------------------------------------------------- */
+.print-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9px;
+}
+
+/* --------------------------------------------------------------------------
+   PrintSection — titled sub-section
+   -------------------------------------------------------------------------- */
+.print-section__title {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #000;
+  padding-bottom: 2px;
+  margin-bottom: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   MetaGrid — label/value cells
+   -------------------------------------------------------------------------- */
+.print-metagrid {
+  display: grid;
+  gap: 4px 12px;
+  padding: 3px 8px;
+}
+
+/* --------------------------------------------------------------------------
+   MetaItem — single label/value cell
+   -------------------------------------------------------------------------- */
+.print-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  line-height: 1.25;
+  min-width: 0;
+}
+.print-meta-item__label {
+  font-size: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #555;
+}
+.print-meta-item__value {
+  font-size: 10px;
+  font-weight: 600;
+  color: #000;
+}
+
+/* --------------------------------------------------------------------------
+   Summary — right-aligned totals grid
+   -------------------------------------------------------------------------- */
+.print-summary {
+  margin-top: 10px;
+  margin-left: auto;
+  width: 52%;
+  font-size: 10px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 12px;
+  align-items: center;
+}
+.print-summary__value {
+  text-align: right;
+}
+.print-summary__row--strong {
+  font-weight: 700;
+}
+.print-summary__row--divider {
+  border-top: 1px solid #000;
+  padding-top: 3px;
+  margin-top: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   PrintModal — document wrapper
+   -------------------------------------------------------------------------- */
+.print-doc {
+  font-family: var(--font-sans, system-ui, sans-serif);
+  color: #000;
+  background-color: #fff;
+}
+.print-sheet {
+  width: 100%;
+  border-collapse: collapse;
+}
+.print-sheet td {
+  padding: 0;
+  border: none;
+}
+.print-sheet__header {
+  margin-bottom: 4px;
+}
+.print-sheet__footer {
+  margin-top: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   POS receipt helpers (shared by all 80mm receipt variants)
+   -------------------------------------------------------------------------- */
+.pos-receipt {
+  width: 100%;
+  font-family: var(--font-sans);
+  color: #000;
+  font-size: 10px;
+  padding: 2px 4px;
+}
+.pos-receipt__line {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 9px;
+  line-height: 1.5;
+}
+.pos-receipt__divider {
+  border-top: 1px dashed #000;
+  margin: 4px 0;
+}
+.pos-receipt__totals {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1px 8px;
+  font-size: 9px;
+}
+.pos-receipt__total-row {
+  display: contents;
+}
+.pos-receipt__total-divider {
+  border-top: 2px solid #000;
+  margin: 4px 0;
+}
+
+/* --------------------------------------------------------------------------
+   Contact / party block (shared by invoice, MRR, etc.)
+   -------------------------------------------------------------------------- */
+.print-party-block {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 3px 8px;
+  margin-bottom: 4px;
+}
+.print-party-detail {
+  font-size: 8px;
+  color: #333;
+  margin-top: 1px;
+}
+.print-remarks {
+  font-size: 9px;
+  padding: 0 2px 4px;
+}
+.print-table-footer {
+  border-top: 2px solid #000;
+  font-weight: 700;
+}
+.print-table-footer td {
+  text-align: right;
+  padding: 2px 6px;
+}

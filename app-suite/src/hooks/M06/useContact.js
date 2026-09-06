@@ -10,6 +10,7 @@ import { thanaAreaAPI } from "@/api/M06/thanaAreaAPI.js";
 import { territoryAPI } from "@/api/M06/territoryAPI.js";
 import tmcb_cntad from "@/models/M06/tmcb_cntad.json";
 const dataModelAddress = generateDataModel(tmcb_cntad);
+import { reportsAPI } from "@/api/M08/reportsAPI.js";
 
 const useContact = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -325,6 +326,22 @@ const useContact = () => {
     setModalTitle({ title: "", subTitle: "" });
   };
 
+  //print
+  const [listDataPrint, setListDataPrint] = useState([]);
+  const handleStatement = async (rowData) => {
+    console.log("rowData", rowData);
+    try {
+      setIsBusy(true);
+      const resp = await reportsAPI.getContactsLedger({ cntct_id: rowData.id });
+      const list = resp.data || [];
+      console.log("list", list);
+      setListDataPrint(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     isBusy,
     pgView,
@@ -361,6 +378,9 @@ const useContact = () => {
     modalTitle,
     handleShowModal,
     handleHideModal,
+    //print
+    handleStatement,
+    listDataPrint,
   };
 };
 export default useContact;

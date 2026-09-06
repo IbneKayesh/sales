@@ -1,11 +1,23 @@
 import { formatDate } from "@/utils/datetime.js";
 import { useApp } from "@/context/AppContext";
-import { fmt, MetaItem, amountInWords, DEFAULT_SIGNER_NAME } from "@/print";
-import PrintHeader from "@/print/PrintHeader";
-import PrintFooter from "@/print/PrintFooter";
-import PrintBody from "@/print/PrintBody";
+import {
+  fmt,
+  MetaItem,
+  amountInWords,
+  DEFAULT_SIGNER_NAME,
+  PrintModal,
+  PrintHeader,
+  PrintFooter,
+  PrintTable,
+  MetaGrid,
+} from "@/print";
 
-const InvoicePrint = ({ formData, listDataItem, dpart_Options }) => {
+/**
+ * Client invoice print (from journal) — thin wrapper around the generic
+ * PrintModal. Bill To / meta go to the header area, invoice lines to the
+ * body table, and the amount note + signatures to the footer.
+ */
+const InvoicePrint = ({ open, onClose, formData, listDataItem, dpart_Options }) => {
   const { business } = useApp();
 
   const totalDr = listDataItem.reduce(
@@ -34,28 +46,28 @@ const InvoicePrint = ({ formData, listDataItem, dpart_Options }) => {
     : "";
 
   return (
-    <div
-      className="report-print-area invoice-print-area"
-      style={{
-        fontFamily: "var(--font-sans)",
-        color: "#000",
-        maxWidth: "100%",
-      }}
-    >
-      {/* Company / seller header + invoice title row */}
-      <PrintHeader
-        companyName={business?.bsins_cname}
-        title={formData.jrnlm_trtyp || "INVOICE"}
-        subtitle={deptName || business?.bsins_cname || ""}
-        docNoLabel="Invoice No"
-        docNo={formData.jrnlm_trnno || formData.jrnlm_refno}
-        date={formatDate(formData.jrnlm_trdat)}
-      />
-
-      {/* Bill To + meta block + lines table */}
-      <PrintBody
-        metaChildren={
-          <>
+    <PrintModal
+      open={open}
+      onClose={onClose}
+      title={`${
+        formData.jrnlm_trtyp || "Invoice"
+      } - ${formData.jrnlm_trnno || formData.jrnlm_refno || ""}`}
+      mode="a4"
+      repeatHeader
+      repeatFooter
+      header={
+        <PrintHeader
+          company={{ name: business?.bsins_cname }}
+          title={formData.jrnlm_trtyp || "INVOICE"}
+          subtitle={deptName || business?.bsins_cname || ""}
+          docNoLabel="Invoice No"
+          docNo={formData.jrnlm_trnno || formData.jrnlm_refno}
+          date={formatDate(formData.jrnlm_trdat)}
+        />
+      }
+      body={
+        <>
+          <div className="print-party-block" style={{ padding: 0 }}>
             <div
               style={{
                 display: "flex",
@@ -68,56 +80,54 @@ const InvoicePrint = ({ formData, listDataItem, dpart_Options }) => {
               <MetaItem label="Bill To" value={billTo || "—"} />
               <MetaItem label="Transaction Type" value={formData.jrnlm_trtyp} />
             </div>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(5, 1fr)",
-                gap: "4px 12px",
-                padding: "3px 8px",
-              }}
-            >
-              <MetaItem label="Department" value={deptName} />
-              <MetaItem label="Currency" value={formData.jrnlm_crncy} />
-              <MetaItem label="Reference No" value={formData.jrnlm_refno} />
-              <MetaItem
-                label="Transaction Date"
-                value={formatDate(formData.jrnlm_trdat)}
-              />
-              <MetaItem label="Status" value={formData.jrnlm_stats} />
+            <MetaGrid
+              columns="repeat(5, 1fr)"
+              items={[
+                { label: "Department", value: deptName },
+                { label: "Currency", value: formData.jrnlm_crncy },
+                { label: "Reference No", value: formData.jrnlm_refno },
+                { label: "Transaction Date", value: formatDate(formData.jrnlm_trdat) },
+                { label: "Status", value: formData.jrnlm_stats },
+              ]}
+            />
+          </div>
+          {formData.jrnlm_narrt && (
+            <div className="print-remarks">
+              <strong>Narration: </strong>
+              {formData.jrnlm_narrt}
             </div>
-          </>
-        }
-        note={formData.jrnlm_narrt}
-        noteLabel="Narration"
-        columns={[
-          { key: "#", header: "#", width: 24, align: "right", render: (_, idx) => idx + 1 },
-          { key: "party_cname", header: "Products" },
-          { key: "jrnlc_descr", header: "Description" },
-          { key: "jrnlc_drval", header: "Debit", width: 90, align: "right", render: (r) => (Number(r.jrnlc_drval) ? fmt(r.jrnlc_drval) : "") },
-          { key: "jrnlc_crval", header: "Credit", width: 90, align: "right", render: (r) => (Number(r.jrnlc_crval) ? fmt(r.jrnlc_crval) : "") },
-        ]}
-        rows={listDataItem}
-        emptyText="No invoice lines"
-        footer={
-          <tr style={{ borderTop: "2px solid #000", fontWeight: 700 }}>
-            <td colSpan={3} style={{ textAlign: "right", padding: "2px 6px" }}>
-              Total
-            </td>
-            <td style={{ textAlign: "right", padding: "2px 6px" }}>{fmt(totalDr)}</td>
-            <td style={{ textAlign: "right", padding: "2px 6px" }}>{fmt(totalCr)}</td>
-          </tr>
-        }
-      />
+          )}
 
-      {/* Amount in words + note + signatures */}
-      <PrintFooter
-        currency={formData.jrnlm_crncy || "BDT"}
-        docName="invoice"
-        amountInWordsText={amountInWords(totalDr || totalCr)}
-        signerName={formData.crusr_cname || DEFAULT_SIGNER_NAME}
-        roles={["Prepared By", "Authorized"]}
-      />
-    </div>
+          <PrintTable
+            columns={[
+              { key: "#", header: "#", width: 24, align: "right", render: (_, idx) => idx + 1 },
+              { key: "party_cname", header: "Products" },
+              { key: "jrnlc_descr", header: "Description" },
+              { key: "jrnlc_drval", header: "Debit", width: 90, align: "right", render: (r) => (Number(r.jrnlc_drval) ? fmt(r.jrnlc_drval) : "") },
+              { key: "jrnlc_crval", header: "Credit", width: 90, align: "right", render: (r) => (Number(r.jrnlc_crval) ? fmt(r.jrnlc_crval) : "") },
+            ]}
+            rows={listDataItem}
+            emptyText="No invoice lines"
+            footer={
+              <tr className="print-table-footer">
+                <td colSpan={3}>Total</td>
+                <td>{fmt(totalDr)}</td>
+                <td>{fmt(totalCr)}</td>
+              </tr>
+            }
+          />
+        </>
+      }
+      footer={
+        <PrintFooter
+          currency={formData.jrnlm_crncy || "BDT"}
+          docName="invoice"
+          amountInWordsText={amountInWords(totalDr || totalCr)}
+          signerName={formData.crusr_cname || DEFAULT_SIGNER_NAME}
+          roles={["Prepared By", "Authorized"]}
+        />
+      }
+    />
   );
 };
 

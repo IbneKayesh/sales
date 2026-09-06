@@ -1,4 +1,3 @@
-import { useState } from "react";
 import PageCard, {
   PageCardHeader,
   PageCardTitle,
@@ -14,8 +13,8 @@ import {
 } from "@/icons";
 import Button from "@/components/Button";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
-import PrintPreviewModal from "@/print/PrintPreviewModal";
 import useJournal from "@/hooks/M08/useJournal";
+import usePrint from "@/hooks/usePrint";
 import JournalList from "./JournalList";
 import JournalForm from "./JournalForm";
 import ItemForm from "./ItemForm";
@@ -24,7 +23,7 @@ import JournalPrint from "./JournalPrint";
 import InvoicePrint from "./InvoicePrint";
 
 const JournalPage = () => {
-  const [printDoc, setPrintDoc] = useState(null); // "journal" | "invoice"
+  const print = usePrint(); // active: "journal" | "invoice" | null
   const {
     isBusy,
     pgView,
@@ -109,12 +108,12 @@ const JournalPage = () => {
             )}
             {pgView === "SYS_VW_FRM_1" && (
               <>
-                <Button variant="info" size="sm" onClick={() => setPrintDoc("journal")}>
+                <Button variant="info" size="sm" onClick={() => print.show("journal")}>
                   <IconPrint size={14} className="icon-left" />
                   Journal
                 </Button>
                 {(formData?.jrnlm_trtyp || "").includes("Invoice") && (
-                  <Button variant="info" size="sm" onClick={() => setPrintDoc("invoice")}>
+                  <Button variant="info" size="sm" onClick={() => print.show("invoice")}>
                     <IconPrint size={14} className="icon-left" />
                     Invoice
                   </Button>
@@ -159,43 +158,29 @@ const JournalPage = () => {
           )}
 
           {/* Print preview modal — Journal voucher or client Invoice */}
-          {pgView === "SYS_VW_FRM_1" && printDoc === "journal" && (
-            <PrintPreviewModal
-              open={!!printDoc}
-              onClose={() => setPrintDoc(null)}
-              title={`Journal Voucher - ${
-                formData.jrnlm_trnno || formData.jrnlm_refno || ""
-              }`}
-              printTarget="journal"
-            >
-              <JournalPrint
-                formData={formData}
-                listDataItem={listDataItem}
-                dpart_Options={dpart_Options}
-                fsyar_Options={fsyar_Options}
-                acprd_Options={acprd_Options}
-              />
-            </PrintPreviewModal>
+          {pgView === "SYS_VW_FRM_1" && print.active === "journal" && (
+            <JournalPrint
+              open={print.open}
+              onClose={print.hide}
+              formData={formData}
+              listDataItem={listDataItem}
+              dpart_Options={dpart_Options}
+              fsyar_Options={fsyar_Options}
+              acprd_Options={acprd_Options}
+            />
           )}
 
           {/* Invoice Print (client-facing, only for invoice-type journals) */}
           {pgView === "SYS_VW_FRM_1" &&
-            printDoc === "invoice" &&
+            print.active === "invoice" &&
             (formData?.jrnlm_trtyp || "").includes("Invoice") && (
-              <PrintPreviewModal
-                open={!!printDoc}
-                onClose={() => setPrintDoc(null)}
-                title={`${
-                  formData.jrnlm_trtyp || "Invoice"
-                } - ${formData.jrnlm_trnno || formData.jrnlm_refno || ""}`}
-                printTarget="invoice"
-              >
-                <InvoicePrint
-                  formData={formData}
-                  listDataItem={listDataItem}
-                  dpart_Options={dpart_Options}
-                />
-              </PrintPreviewModal>
+              <InvoicePrint
+                open={print.open}
+                onClose={print.hide}
+                formData={formData}
+                listDataItem={listDataItem}
+                dpart_Options={dpart_Options}
+              />
             )}
 
           {/* Single Modal for Journal Line forms */}

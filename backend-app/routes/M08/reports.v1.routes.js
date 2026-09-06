@@ -51,4 +51,47 @@ router.post("/get-journal-data", async (req, res) => {
   }
 });
 
+// get-contacts-ledger
+router.post("/get-contacts-ledger", async (req, res) => {
+  try {
+    const { cntct_id, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!cntct_id || !user_c || !user_b) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+    const sql = `SELECT cnt.cntct_ccode, cnt.cntct_ctype, cnt.cntct_cname, cnt.cntct_cntps, cnt.cntct_cntno, cnt.cntct_email,
+cnt.cntct_ofadr, cnt.cntct_cntry, pty.party_ccode, jnc.jrnlc_drval, jnc.jrnlc_crval, jnc.jrnlc_descr,
+jnc.jrnlc_sorce, TO_CHAR(jnm.jrnlm_trdat, 'YYYY-MM-DD') jrnlm_trdat, jnm.jrnlm_refno
+FROM tmtb_jrnlc jnc
+JOIN tmtb_party pty ON jnc.jrnlc_party = pty.id
+JOIN tmcb_cntct cnt ON pty.party_vndor = cnt.id
+JOIN tmtb_jrnlm jnm ON jnc.jrnlc_jrnlm = jnm.id
+WHERE cnt.id = $1
+AND cnt.cntct_users = $2
+ORDER BY jnm.jrnlm_trdat`;
+
+    const params = [cntct_id, user_c];
+    const rows = await dbGetAll(sql, params, `get journal data- ${cntct_id}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 module.exports = router;

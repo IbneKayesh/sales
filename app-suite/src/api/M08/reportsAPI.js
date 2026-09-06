@@ -6,4 +6,8 @@ export const reportsAPI = {
     apiRequest("/M08/v1/reports/get-journal-data", {
       body: data,
     }),
+  getContactsLedger: (data) =>
+    apiRequest("/M08/v1/reports/get-contacts-ledger", {
+      body: data,
+    }),
 };

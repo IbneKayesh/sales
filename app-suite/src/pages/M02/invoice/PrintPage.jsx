@@ -1,17 +1,18 @@
 import { useApp } from "@/context/AppContext";
 import { formatDate } from "@/utils/datetime";
-import { fmt, amountInWords, DEFAULT_SIGNER_NAME } from "@/print";
-import PrintHeader from "@/print/PrintHeader";
-import PrintFooter from "@/print/PrintFooter";
-import PrintBody, { PrintSection, PrintTable } from "@/print/PrintBody";
+import {
+  fmt,
+  amountInWords,
+  DEFAULT_SIGNER_NAME,
+  PrintModal,
+  PrintHeader,
+  PrintFooter,
+  PrintTable,
+  PrintSection,
+  Summary,
+  MetaItem,
+} from "@/print";
 
-const receiptLine = {
-  display: "flex",
-  justifyContent: "space-between",
-  gap: 8,
-  fontSize: 9,
-  lineHeight: 1.5,
-};
 
 /**
  * POS receipt variant — compact 80mm thermal-roll layout for the invoice.
@@ -38,62 +39,48 @@ const PosReceipt = ({ business, formData, listDataItem, customer }) => {
   ];
 
   return (
-    <div
-      style={{
-        width: "100%",
-        fontFamily: "var(--font-sans)",
-        color: "#000",
-        fontSize: 10,
-        padding: "2px 4px",
-      }}
-    >
+    <div className="pos-receipt">
       {/* Company block */}
-      <div style={{ textAlign: "center", marginBottom: 4 }}>
-        <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: "0.02em" }}>
+      <div className="print-hdr__company">
+        <div className="print-hdr-80__company-name">
           {business?.bsins_cname || "AppSuite Inc."}
         </div>
         {(business?.bsins_ofadr || business?.bsins_addr) && (
-          <div style={{ fontSize: 8, color: "#333" }}>
+          <div className="print-hdr__company-detail">
             {business.bsins_ofadr || business.bsins_addr}
           </div>
         )}
         {business?.bsins_bin && (
-          <div style={{ fontSize: 8, color: "#555" }}>{business.bsins_bin}</div>
+          <div className="print-hdr__company-tax">{business.bsins_bin}</div>
         )}
-        <div style={{ borderTop: "1px dashed #000", margin: "4px 0" }} />
-        <div
-          style={{
-            fontSize: 12,
-            fontWeight: 800,
-            letterSpacing: "0.1em",
-          }}
-        >
+        <div className="pos-receipt__divider" />
+        <div className="print-hdr-80__title">
           {formData.invcm_ttype || "INVOICE"}
         </div>
       </div>
 
       {/* Meta */}
       <div style={{ marginBottom: 4 }}>
-        <div style={receiptLine}>
+        <div className="pos-receipt__line">
           <span>Invoice No</span>
           <strong>{formData.invcm_trnno || formData.invcm_refno || "—"}</strong>
         </div>
-        <div style={receiptLine}>
+        <div className="pos-receipt__line">
           <span>Date</span>
           <strong>{formatDate(formData.invcm_trdat)}</strong>
         </div>
-        <div style={receiptLine}>
+        <div className="pos-receipt__line">
           <span>Customer</span>
           <strong>{customer?.cntct_cname || formData.invcm_cntct || "—"}</strong>
         </div>
         {formData.invcm_refno && (
-          <div style={receiptLine}>
+          <div className="pos-receipt__line">
             <span>Ref</span>
             <strong>{formData.invcm_refno}</strong>
           </div>
         )}
       </div>
-      <div style={{ borderTop: "1px dashed #000", marginBottom: 4 }} />
+      <div className="pos-receipt__divider" />
 
       {/* Item rows — name line + "qty × rate = amount" line */}
       {listDataItem.map((r, idx) => (
@@ -101,7 +88,7 @@ const PosReceipt = ({ business, formData, listDataItem, customer }) => {
           <div style={{ fontSize: 9, fontWeight: 600 }}>
             {r.items_iname || "—"}
           </div>
-          <div style={receiptLine}>
+          <div className="pos-receipt__line">
             <span>
               {fmt(r.invcc_itqty)} x {fmt(r.invcc_itrat)}
             </span>
@@ -109,58 +96,42 @@ const PosReceipt = ({ business, formData, listDataItem, customer }) => {
           </div>
         </div>
       ))}
-      <div style={{ borderTop: "1px dashed #000", margin: "4px 0" }} />
+      <div className="pos-receipt__divider" />
 
       {/* Totals */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: "1px 8px", fontSize: 9 }}>
+      <div className="pos-receipt__totals">
         {totals.map((row, idx) => (
           <div
             key={idx}
-            style={{
-              display: "contents",
-              fontWeight: row.strong ? 700 : undefined,
-            }}
+            className={`pos-receipt__total-row ${row.strong ? "print-summary__row--strong" : ""}`}
           >
-            <span
-              style={{
-                ...(row.top
-                  ? { borderTop: "1px solid #000", paddingTop: 2, marginTop: 2 }
-                  : {}),
-              }}
-            >
+            <span className={row.top ? "print-summary__row--divider" : ""}>
               {row.label}
             </span>
             <strong
-              style={{
-                textAlign: "right",
-                fontWeight: row.strong ? 700 : undefined,
-                ...(row.top
-                  ? { borderTop: "1px solid #000", paddingTop: 2, marginTop: 2 }
-                  : {}),
-              }}
+              className={[
+                "print-summary__value",
+                row.strong ? "print-summary__row--strong" : "",
+                row.top ? "print-summary__row--divider" : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
             >
               {row.value}
             </strong>
           </div>
         ))}
       </div>
-      <div style={{ borderTop: "2px solid #000", margin: "4px 0" }} />
+      <div className="pos-receipt__total-divider" />
 
       {/* Amount in words + footer */}
-      <div style={{ fontSize: 8, fontWeight: 600, marginBottom: 4 }}>
+      <div className="print-ftr-80__words">
         In words: {amountInWords(formData.invcm_pyamt)}
       </div>
-      <div style={{ fontSize: 8, color: "#555", marginBottom: 6 }}>
+      <div className="print-ftr-80__note">
         Amounts are in {currency}. Computer generated invoice.
       </div>
-      <div
-        style={{
-          textAlign: "center",
-          fontSize: 9,
-          fontWeight: 700,
-          letterSpacing: "0.1em",
-        }}
-      >
+      <div className="print-ftr-80__thankyou">
         *** THANK YOU ***
       </div>
     </div>
@@ -168,22 +139,21 @@ const PosReceipt = ({ business, formData, listDataItem, customer }) => {
 };
 
 /**
- * Print-only invoice document (Sales Invoice - M02).
- * Rendered with .invoice-print-area which is hidden on screen and shown only
- * while printing (A4 portrait, see index.css print section). Company header
- * comes from live business data (AppContext).
- *
- * With `pos` set, renders the compact 80mm thermal receipt instead (the print
- * source wrapper carries the .invoice-pos-print-area class, see the modal).
+ * Invoice print (Sales Invoice - M02) — thin wrapper around the generic
+ * PrintModal. Company + title data go to the header, customer block / items /
+ * summary / costing / payments to the body JSX, and the amount note +
+ * signatures to the footer. A POS receipt variant is available via the
+ * A4 / POS toggle in the modal toolbar.
  */
 const PrintPage = ({
+  open,
+  onClose,
   formData,
   listDataItem,
   listDataCost,
   listDataPayment,
   dpart_Options,
   cntct_Options,
-  pos = false,
 }) => {
   const { business } = useApp();
 
@@ -195,177 +165,164 @@ const PrintPage = ({
   const customer =
     cntct_Options?.find((o) => o.id === formData.invcm_cntct) || null;
 
-  if (pos) {
-    return (
-      <div className="report-print-area">
-        <PosReceipt
-          business={business}
-          formData={formData}
-          listDataItem={listDataItem}
-          customer={customer}
-        />
-      </div>
-    );
-  }
-
   const totalQty = listDataItem.reduce(
     (s, i) => s + (Number(i.invcc_itqty) || 0),
     0,
   );
 
   return (
-    <div
-      className="report-print-area invoice-print-area"
-      style={{ fontFamily: "var(--font-sans)", color: "#000", maxWidth: "100%" }}
-    >
-      {/* Company header + invoice title row */}
-      <PrintHeader
-        companyName={business?.bsins_cname}
-        companyAddress={business?.bsins_ofadr || business?.bsins_addr}
-        companyTaxId={business?.bsins_bin}
-        title={formData.invcm_ttype || "INVOICE"}
-        subtitle={deptName || business?.bsins_cname || ""}
-        docNoLabel="Invoice No"
-        docNo={formData.invcm_trnno || formData.invcm_refno}
-        date={formatDate(formData.invcm_trdat)}
-        extra={[
-          { label: "Ref No", value: formData.invcm_refno },
-          { label: "Currency", value: formData.invcm_crncy || business?.bsins_crncy || "BDT" },
-        ]}
-        titleMarginTop={6}
-        titleMarginBottom={6}
-      />
-
-      {/* Customer block + lines table + summary + sections */}
-      <PrintBody
-        metaChildren={
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-end",
-              padding: "3px 8px",
-            }}
-          >
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: 0, lineHeight: 1.25 }}
-            >
-              <span
-                style={{
-                  fontSize: 7,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.06em",
-                  color: "#555",
-                }}
-              >
-                Customer
-              </span>
-              <span style={{ fontSize: 10, fontWeight: 600, color: "#000" }}>
-                {customer?.cntct_cname || formData.invcm_cntct || "—"}
-              </span>
-              {customer?.cntct_ofadr && (
-                <span style={{ fontSize: 8, color: "#333" }}>
-                  {customer.cntct_ofadr}
-                </span>
-              )}
-              {customer?.cntct_cntno && (
-                <span style={{ fontSize: 8, color: "#333" }}>
-                  {customer.cntct_cntps || "Contact"}: {customer.cntct_cntno}
-                </span>
-              )}
-            </div>
+    <PrintModal
+      open={open}
+      onClose={onClose}
+      title={`Invoice - ${formData.invcm_trnno || formData.invcm_refno || ""}`}
+      mode="a4"
+      repeatHeader
+      repeatFooter
+      posBody={
+        <PosReceipt
+          business={business}
+          formData={formData}
+          listDataItem={listDataItem}
+          customer={customer}
+        />
+      }
+      header={
+        <PrintHeader
+          company={{
+            name: business?.bsins_cname,
+            address: business?.bsins_ofadr || business?.bsins_addr,
+            taxId: business?.bsins_bin,
+          }}
+          title={formData.invcm_ttype || "INVOICE"}
+          subtitle={deptName || business?.bsins_cname || ""}
+          docNoLabel="Invoice No"
+          docNo={formData.invcm_trnno || formData.invcm_refno}
+          date={formatDate(formData.invcm_trdat)}
+          extra={[
+            { label: "Ref No", value: formData.invcm_refno },
+            { label: "Currency", value: formData.invcm_crncy || business?.bsins_crncy || "BDT" },
+          ]}
+        />
+      }
+      body={
+        <>
+          {/* Customer block */}
+          <div className="print-party-block">
+            <MetaItem
+              label="Customer"
+              value={customer?.cntct_cname || formData.invcm_cntct || "—"}
+            />
+            {customer?.cntct_ofadr && (
+              <div className="print-party-detail">
+                {customer.cntct_ofadr}
+              </div>
+            )}
+            {customer?.cntct_cntno && (
+              <div className="print-party-detail">
+                {customer.cntct_cntps || "Contact"}: {customer.cntct_cntno}
+              </div>
+            )}
           </div>
-        }
-        note={formData.invcm_notes}
-        noteLabel="Remarks"
-        columns={[
-          { key: "#", header: "#", width: 24, align: "right", render: (_, idx) => idx + 1 },
-          { key: "items_iname", header: "Item" },
-          { key: "runit_uname", header: "Unit" },
-          { key: "invcc_itqty", header: "Qty", width: 55, align: "right", render: (r) => fmt(r.invcc_itqty) },
-          { key: "invcc_itrat", header: "Rate", width: 70, align: "right", render: (r) => fmt(r.invcc_itrat) },
-          { key: "invcc_itamt", header: "Amount", width: 70, align: "right", render: (r) => fmt(r.invcc_itamt) },
-          { key: "invcc_dspct", header: "Disc %", width: 55, align: "right", render: (r) => (r.invcc_dspct ? Number(r.invcc_dspct) + "%" : "—") },
-          { key: "invcc_dsamt", header: "Disc Amt", width: 70, align: "right", render: (r) => fmt(r.invcc_dsamt) },
-          { key: "invcc_vtamt", header: "VAT", width: 70, align: "right", render: (r) => fmt(r.invcc_vtamt) },
-          { key: "invcc_ntamt", header: "Net", width: 70, align: "right", render: (r) => fmt(r.invcc_ntamt) },
-        ]}
-        rows={listDataItem}
-        emptyText="No items"
-        footer={
-          <tr style={{ borderTop: "2px solid #000", fontWeight: 700 }}>
-            <td colSpan={3} style={{ textAlign: "right", padding: "2px 6px" }}>
-              Total ({listDataItem.length} lines)
-            </td>
-            <td style={{ textAlign: "right", padding: "2px 6px" }}>{fmt(totalQty)}</td>
-            <td style={{ textAlign: "right", padding: "2px 6px" }} />
-            <td style={{ textAlign: "right", padding: "2px 6px" }}>{fmt(formData.invcm_tramt)}</td>
-            <td style={{ textAlign: "right", padding: "2px 6px" }} />
-            <td style={{ textAlign: "right", padding: "2px 6px" }}>{fmt(formData.invcm_itmds)}</td>
-            <td style={{ textAlign: "right", padding: "2px 6px" }}>{fmt(formData.invcm_vtamt)}</td>
-            <td style={{ textAlign: "right", padding: "2px 6px" }}>{fmt(formData.invcm_pyamt)}</td>
-          </tr>
-        }
-        summary={[
-          { label: "Total Amount", value: fmt(formData.invcm_tramt) },
-          { label: "Item Discount", value: fmt(formData.invcm_itmds) },
-          ...(formData.invcm_invds
-            ? [{ label: "Invoice Discount", value: fmt(formData.invcm_invds) }]
-            : []),
-          ...(Number(formData.invcm_lylds)
-            ? [{ label: "Loyalty Discount", value: fmt(formData.invcm_lylds) }]
-            : []),
-          { label: "VAT Amount", value: fmt(formData.invcm_vtamt) },
-          { label: "Include Cost", value: fmt(formData.invcm_icamt) },
-          { label: "Exclude Cost", value: fmt(formData.invcm_ecamt) },
-          { label: "Payable Amount", value: fmt(formData.invcm_pyamt), strong: true, divider: true },
-          { label: "Paid Amount", value: fmt(formData.invcm_pdamt) },
-          { label: "Due Amount", value: fmt(formData.invcm_duamt), strong: true },
-        ]}
-      >
-        {/* Costing summary */}
-        {listDataCost?.length > 0 && (
-          <PrintSection title="Costing Details">
-            <PrintTable
-              columns={[
-                { key: "party_cname", header: "Cost Name" },
-                { key: "invcs_csmod", header: "Mode" },
-                { key: "invcs_value", header: "Amount", width: 90, align: "right", render: (r) => fmt(r.invcs_value) },
-                { key: "invcs_notes", header: "Notes" },
-              ]}
-              rows={listDataCost}
-            />
-          </PrintSection>
-        )}
+          {formData.invcm_notes && (
+            <div className="print-remarks">
+              <strong>Remarks: </strong>
+              {formData.invcm_notes}
+            </div>
+          )}
 
-        {/* Payments */}
-        {listDataPayment?.length > 0 && (
-          <PrintSection title="Payment Details">
-            <PrintTable
-              columns={[
-                { key: "party_cname", header: "Payment" },
-                { key: "invpy_pydat", header: "Date", render: (r) => formatDate(r.invpy_pydat) },
-                { key: "invpy_refno", header: "Ref No" },
-                { key: "invpy_pdamt", header: "Amount", width: 90, align: "right", render: (r) => fmt(r.invpy_pdamt) },
-                { key: "invpy_notes", header: "Notes" },
-              ]}
-              rows={listDataPayment}
-            />
-          </PrintSection>
-        )}
-      </PrintBody>
+          {/* Items table */}
+          <PrintTable
+            columns={[
+              { key: "#", header: "#", width: 24, align: "right", render: (_, idx) => idx + 1 },
+              { key: "items_iname", header: "Item" },
+              { key: "runit_uname", header: "Unit" },
+              { key: "invcc_itqty", header: "Qty", width: 55, align: "right", render: (r) => fmt(r.invcc_itqty) },
+              { key: "invcc_itrat", header: "Rate", width: 70, align: "right", render: (r) => fmt(r.invcc_itrat) },
+              { key: "invcc_itamt", header: "Amount", width: 70, align: "right", render: (r) => fmt(r.invcc_itamt) },
+              { key: "invcc_dspct", header: "Disc %", width: 55, align: "right", render: (r) => (r.invcc_dspct ? Number(r.invcc_dspct) + "%" : "—") },
+              { key: "invcc_dsamt", header: "Disc Amt", width: 70, align: "right", render: (r) => fmt(r.invcc_dsamt) },
+              { key: "invcc_vtamt", header: "VAT", width: 70, align: "right", render: (r) => fmt(r.invcc_vtamt) },
+              { key: "invcc_ntamt", header: "Net", width: 70, align: "right", render: (r) => fmt(r.invcc_ntamt) },
+            ]}
+            rows={listDataItem}
+            emptyText="No items"
+            footer={
+              <tr className="print-table-footer">
+                <td colSpan={3}>Total ({listDataItem.length} lines)</td>
+                <td>{fmt(totalQty)}</td>
+                <td />
+                <td>{fmt(formData.invcm_tramt)}</td>
+                <td />
+                <td>{fmt(formData.invcm_itmds)}</td>
+                <td>{fmt(formData.invcm_vtamt)}</td>
+                <td>{fmt(formData.invcm_pyamt)}</td>
+              </tr>
+            }
+          />
 
-      {/* Amount in words + note + signatures */}
-      <PrintFooter
-        currency={formData.invcm_crncy || "BDT"}
-        docName="invoice"
-        amountInWordsText={amountInWords(formData.invcm_pyamt)}
-        signerName={formData.crusr_cname || DEFAULT_SIGNER_NAME}
-        roles={["Prepared By", "Authorized"]}
-        marginTop={20}
-      />
-    </div>
+          {/* Summary */}
+          <Summary
+            rows={[
+              { label: "Total Amount", value: fmt(formData.invcm_tramt) },
+              { label: "Item Discount", value: fmt(formData.invcm_itmds) },
+              ...(formData.invcm_invds
+                ? [{ label: "Invoice Discount", value: fmt(formData.invcm_invds) }]
+                : []),
+              ...(Number(formData.invcm_lylds)
+                ? [{ label: "Loyalty Discount", value: fmt(formData.invcm_lylds) }]
+                : []),
+              { label: "VAT Amount", value: fmt(formData.invcm_vtamt) },
+              { label: "Include Cost", value: fmt(formData.invcm_icamt) },
+              { label: "Exclude Cost", value: fmt(formData.invcm_ecamt) },
+              { label: "Payable Amount", value: fmt(formData.invcm_pyamt), strong: true, divider: true },
+              { label: "Paid Amount", value: fmt(formData.invcm_pdamt) },
+              { label: "Due Amount", value: fmt(formData.invcm_duamt), strong: true },
+            ]}
+          />
+
+          {/* Costing summary */}
+          {listDataCost?.length > 0 && (
+            <PrintSection title="Costing Details">
+              <PrintTable
+                columns={[
+                  { key: "party_cname", header: "Cost Name" },
+                  { key: "invcs_csmod", header: "Mode" },
+                  { key: "invcs_value", header: "Amount", width: 90, align: "right", render: (r) => fmt(r.invcs_value) },
+                  { key: "invcs_notes", header: "Notes" },
+                ]}
+                rows={listDataCost}
+              />
+            </PrintSection>
+          )}
+
+          {/* Payments */}
+          {listDataPayment?.length > 0 && (
+            <PrintSection title="Payment Details">
+              <PrintTable
+                columns={[
+                  { key: "party_cname", header: "Payment" },
+                  { key: "invpy_pydat", header: "Date", render: (r) => formatDate(r.invpy_pydat) },
+                  { key: "invpy_refno", header: "Ref No" },
+                  { key: "invpy_pdamt", header: "Amount", width: 90, align: "right", render: (r) => fmt(r.invpy_pdamt) },
+                  { key: "invpy_notes", header: "Notes" },
+                ]}
+                rows={listDataPayment}
+              />
+            </PrintSection>
+          )}
+        </>
+      }
+      footer={
+        <PrintFooter
+          currency={formData.invcm_crncy || "BDT"}
+          docName="invoice"
+          amountInWordsText={amountInWords(formData.invcm_pyamt)}
+          signerName={formData.crusr_cname || DEFAULT_SIGNER_NAME}
+          roles={["Prepared By", "Authorized"]}
+        />
+      }
+    />
   );
 };
 
-export default PrintPage;
+export default PrintPage;

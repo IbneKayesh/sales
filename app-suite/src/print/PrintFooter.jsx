@@ -1,65 +1,71 @@
 /* ==========================================================================
-   PrintFooter — shared footer for printed documents (MRR, Journal, Invoice)
-   Renders the optional "Amount in words" line, the computer-generated
-   disclaimer note, and the signature grid.
-
-   Parameters:
-     currency        — currency shown in the note (defaults to "BDT")
-     docName         — document name used in the note ("MRR" / "voucher" /
-                       "invoice"); defaults to "document"
-     note            — optional custom note text (overrides the default note)
-     amountInWords   — optional amount-in-words string to show above the note
-     signerName      — name printed under "Prepared By"
-     roles           — signature role labels, e.g. ["Prepared By","Authorized"];
-                       defaults to a single "Authorized" column
-     marginTop       — spacing above the signature grid (default 16)
+   PrintFooter — clean, data-driven footer for PrintModal.
+   Renders amount in words, computer-generated disclaimer note,
+   and signature block. Adapts to A4 and 80MM modes.
    ========================================================================== */
 
-const PrintFooter = ({
+/**
+ * @param {string} currency          — Currency shown in note (default: "BDT")
+ * @param {string} docName           — Document name used in note (default: "document")
+ * @param {string} note              — Custom disclaimer note
+ * @param {string} amountInWords     — Amount in words string
+ * @param {string} amountInWordsText — Alias for amountInWords
+ * @param {string} signerName        — Name under "Prepared By"
+ * @param {Array}  roles             — Signature role columns (default: ["Prepared By", "Authorized"])
+ * @param {string} mode              — "a4" | "80mm"
+ */
+export default function PrintFooter({
   currency = "BDT",
   docName = "document",
   note,
+  amountInWords,
   amountInWordsText,
   signerName,
-  roles = ["Authorized"],
-  marginTop = 16,
-}) => (
-  <>
-    {amountInWordsText && (
-      <div style={{ fontSize: 9, margin: "6px 2px 4px", fontWeight: 600 }}>
-        Amount in words: {amountInWordsText}
-      </div>
-    )}
+  roles = ["Prepared By", "Authorized"],
+  mode = "a4",
+}) {
+  const wordsText = amountInWords || amountInWordsText;
+  const is80mm = mode === "80mm" || mode === "pos80";
 
-    {/* Footer note */}
-    <div style={{ fontSize: 8, color: "#555", margin: "2px 2px" }}>
-      {note ||
-        `Amounts are in ${currency}. This is a computer generated ${docName} and does not require a signature when printed from the system.`}
-    </div>
-
-    {/* Signatures */}
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: `repeat(${roles.length}, 1fr)`,
-        gap: 12,
-        marginTop,
-      }}
-    >
-      {roles.map((role) => (
-        <div key={role} style={{ textAlign: "center", fontSize: 9 }}>
-          <div
-            style={{ marginTop: 18, borderTop: "1px solid #000", paddingTop: 2 }}
-          >
-            {role}
-          </div>
-          {role === "Prepared By" && signerName && (
-            <div style={{ marginTop: 2, fontWeight: 600 }}>{signerName}</div>
-          )}
+  if (is80mm) {
+    return (
+      <div className="print-ftr-80">
+        {wordsText && <div className="print-ftr-80__words">In words: {wordsText}</div>}
+        <div className="print-ftr-80__note">
+          {note || `Amounts in ${currency}. Computer generated ${docName}.`}
         </div>
-      ))}
-    </div>
-  </>
-);
+        <div className="print-ftr-80__thankyou">*** THANK YOU ***</div>
+      </div>
+    );
+  }
 
-export default PrintFooter;
+  return (
+    <div className="print-ftr">
+      {/* Amount in words */}
+      {wordsText && <div className="print-ftr__words">Amount in words: {wordsText}</div>}
+
+      {/* Note */}
+      <div className="print-ftr__note">
+        {note ||
+          `Amounts are in ${currency}. This is a computer generated ${docName} and does not require a signature when printed from the system.`}
+      </div>
+
+      {/* Signatures */}
+      {roles && roles.length > 0 && (
+        <div
+          className="print-ftr__signatures"
+          style={{ gridTemplateColumns: `repeat(${roles.length}, 1fr)` }}
+        >
+          {roles.map((role) => (
+            <div key={role} className="print-ftr__sig-col">
+              <div className="print-ftr__sig-line">{role}</div>
+              {role === "Prepared By" && signerName && (
+                <div className="print-ftr__sig-name">{signerName}</div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

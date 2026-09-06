@@ -1,139 +1,107 @@
 /* ==========================================================================
-   PrintHeader — shared header for printed documents (MRR, Journal, Invoice)
-   Renders the centered company block (name / address / BIN) on top, then the
-   document title row (title + subtitle on the left, doc no / date / extra
-   meta on the right) separated by a solid rule.
-
-   All values are optional — anything not passed falls back to the demo
-   company defaults below (until business data is wired to Settings).
+   PrintHeader — clean, data-driven document header for PrintModal.
+   Supports company block + document meta info (title, doc no, date, extra).
+   Adapts cleanly to A4 and 80MM roll modes.
    ========================================================================== */
 
-const COMPANY_DEFAULTS = {
+const DEFAULT_COMPANY = {
   name: "AppSuite Inc.",
   address: "House 12, Road 5, Gulshan-1, Dhaka 1212, Bangladesh",
-  taxId: "BIN: 001234567-0101 | TIN: 123-456-789",
+  taxId: "BIN: 001234567-0101",
 };
 
-const row = { display: "flex", flexDirection: "column", gap: 0, lineHeight: 1.25 };
-const labelStyle = {
-  fontSize: 7,
-  textTransform: "uppercase",
-  letterSpacing: "0.06em",
-  color: "#555",
-};
-const valueStyle = { fontSize: 10, fontWeight: 600, color: "#000" };
-
-/* ---- Company / seller block (centered) -------------------------------- */
-
-export const CompanyHeader = ({ name, address, taxId, marginBottom = 4 }) => {
-  const company = {
-    name: name ?? COMPANY_DEFAULTS.name,
-    address: address ?? COMPANY_DEFAULTS.address,
-    taxId: taxId ?? COMPANY_DEFAULTS.taxId,
-  };
-  return (
-    <div style={{ textAlign: "center", marginBottom }}>
-      <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: "0.04em" }}>
-        {company.name}
-      </div>
-      <div style={{ fontSize: 8, color: "#333", marginTop: 1 }}>
-        {company.address}
-      </div>
-      {company.taxId && (
-        <div style={{ fontSize: 8, color: "#555", marginTop: 1 }}>
-          {company.taxId}
-        </div>
-      )}
-    </div>
-  );
-};
-
-/* ---- Document title row ----------------------------------------------- */
-
-export const DocTitleRow = ({
-  title,
+/**
+ * @param {object} company  — { name, address, taxId, phone, email }
+ * @param {string} title    — Document title (e.g. "INVOICE", "MATERIAL RECEIPT REPORT")
+ * @param {string} subtitle — Subtitle (e.g. department / branch name)
+ * @param {string} docNo    — Document number
+ * @param {string} docNoLabel — Label for doc no (default: "Doc No")
+ * @param {string} date     — Document date
+ * @param {string} dateLabel — Label for date (default: "Date")
+ * @param {Array}  extra    — Array of [{ label, value }]
+ * @param {string} mode     — "a4" | "80mm"
+ */
+export default function PrintHeader({
+  company = {},
+  title = "Document",
   subtitle,
-  docNoLabel = "Document No",
   docNo,
-  date,
-  dateLabel = "Date",
-  extra = [], // [{ label, value }] rendered after the date
-  marginTop = 0,
-  marginBottom = 4,
-}) => (
-  <div
-    style={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "flex-end",
-      borderBottom: "2px solid #000",
-      paddingBottom: 3,
-      marginTop,
-      marginBottom,
-    }}
-  >
-    <div>
-      <div style={{ fontSize: 16, fontWeight: 800, letterSpacing: "0.02em" }}>
-        {title}
-      </div>
-      {subtitle && (
-        <div style={{ fontSize: 9, color: "#333", marginTop: 1 }}>
-          {subtitle}
-        </div>
-      )}
-    </div>
-    <div style={{ textAlign: "right", fontSize: 10 }}>
-      <div>
-        {docNoLabel}: <strong>{docNo || "—"}</strong>
-      </div>
-      <div>
-        {dateLabel}: <strong>{date || "—"}</strong>
-      </div>
-      {extra.map((item, idx) => (
-        <div key={idx}>
-          {item.label}: <strong>{item.value || "—"}</strong>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-/* ---- Combined header ---------------------------------------------------- */
-
-const PrintHeader = ({
-  companyName,
-  companyAddress,
-  companyTaxId,
-  companyMarginBottom = 4,
-  title,
-  subtitle,
-  docNoLabel = "Document No",
-  docNo,
+  docNoLabel = "Doc No",
   date,
   dateLabel = "Date",
   extra = [],
-  titleMarginTop = 0,
-  titleMarginBottom = 4,
-}) => (
-  <>
-    <CompanyHeader
-      name={companyName}
-      address={companyAddress}
-      taxId={companyTaxId}
-      marginBottom={companyMarginBottom}
-    />
-    <DocTitleRow
-      title={title}
-      subtitle={subtitle}
-      docNoLabel={docNoLabel}
-      docNo={docNo}
-      date={date}
-      dateLabel={dateLabel}
-      extra={extra}
-      marginTop={titleMarginTop}
-      marginBottom={titleMarginBottom}
-    />
-  </>
-);
+  mode = "a4",
+}) {
+  const comp = { ...DEFAULT_COMPANY, ...company };
+  const is80mm = mode === "80mm" || mode === "pos80";
 
-export default PrintHeader;
+  if (is80mm) {
+    return (
+      <div className="print-hdr-80">
+        {comp.name && <div className="print-hdr-80__company-name">{comp.name}</div>}
+        {comp.address && <div className="print-hdr__company-detail">{comp.address}</div>}
+        {comp.taxId && <div className="print-hdr__company-tax">{comp.taxId}</div>}
+        <div className="print-hdr-80__divider" />
+        <div className="print-hdr-80__title">{title}</div>
+        {subtitle && <div className="print-hdr-80__subtitle">{subtitle}</div>}
+        <div className="print-hdr-80__meta">
+          {docNo && (
+            <div className="print-hdr-80__row">
+              <span>{docNoLabel}:</span>
+              <strong>{docNo}</strong>
+            </div>
+          )}
+          {date && (
+            <div className="print-hdr-80__row">
+              <span>{dateLabel}:</span>
+              <strong>{date}</strong>
+            </div>
+          )}
+          {extra.map((item, idx) => (
+            <div key={idx} className="print-hdr-80__row">
+              <span>{item.label}:</span>
+              <strong>{item.value || "—"}</strong>
+            </div>
+          ))}
+        </div>
+        <div className="print-hdr-80__divider" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="print-hdr">
+      {/* Company Block (Top Centered) */}
+      <div className="print-hdr__company">
+        <div className="print-hdr__company-name">{comp.name}</div>
+        {comp.address && <div className="print-hdr__company-detail">{comp.address}</div>}
+        {comp.taxId && <div className="print-hdr__company-tax">{comp.taxId}</div>}
+      </div>
+
+      {/* Document Title & Meta Bar */}
+      <div className="print-hdr__meta-bar">
+        <div>
+          <div className="print-hdr__title">{title}</div>
+          {subtitle && <div className="print-hdr__subtitle">{subtitle}</div>}
+        </div>
+        <div className="print-hdr__info">
+          {docNo && (
+            <div>
+              {docNoLabel}: <strong>{docNo}</strong>
+            </div>
+          )}
+          {date && (
+            <div>
+              {dateLabel}: <strong>{date}</strong>
+            </div>
+          )}
+          {extra.map((item, idx) => (
+            <div key={idx}>
+              {item.label}: <strong>{item.value || "—"}</strong>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

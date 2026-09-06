@@ -1,3 +1,4 @@
+import { useState } from "react";
 import PageCard, {
   PageCardHeader,
   PageCardTitle,
@@ -12,8 +13,11 @@ import ContactForm from "./ContactForm";
 import AddressForm from "./AddressForm";
 import AddressList from "./AddressList";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
+import LedgerPrint from "./LedgerPrint";
+import usePrint from "@/hooks/usePrint";
 
 const ContactPage = () => {
+  const print = usePrint();
   const {
     isBusy,
     pgView,
@@ -50,8 +54,15 @@ const ContactPage = () => {
     modalTitle,
     handleShowModal,
     handleHideModal,
+    //print
+    handleStatement,
+    listDataPrint,
   } = useContact();
 
+  const handleShowPrint = (rowData) => {
+    handleStatement(rowData);
+    print.show();
+  };
   return (
     <div className="page-wrap">
       <PageCard>
@@ -100,7 +111,7 @@ const ContactPage = () => {
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              onStatement={handleDelete}
+              onStatement={handleShowPrint}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
@@ -150,6 +161,14 @@ const ContactPage = () => {
               )}
             </ModalBody>
           </Modal>
+
+          {/*Print preview*/}
+          <LedgerPrint
+            open={print.open}
+            onClose={print.hide}
+            formData={formData}
+            listDataItem={listDataPrint}
+          />
         </PageCardBody>
       </PageCard>
     </div>

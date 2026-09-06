@@ -11,28 +11,9 @@ export const fmt = (v) =>
 
 /** Small label/value cell used inside print info blocks. */
 export const MetaItem = ({ label, value }) => (
-  <div
-    style={{
-      display: "flex",
-      flexDirection: "column",
-      gap: 0,
-      lineHeight: 1.25,
-      minWidth: 0,
-    }}
-  >
-    <span
-      style={{
-        fontSize: 7,
-        textTransform: "uppercase",
-        letterSpacing: "0.06em",
-        color: "#555",
-      }}
-    >
-      {label}
-    </span>
-    <span style={{ fontSize: 10, fontWeight: 600, color: "#000" }}>
-      {value || "—"}
-    </span>
+  <div className="print-meta-item">
+    <span className="print-meta-item__label">{label}</span>
+    <span className="print-meta-item__value">{value || "—"}</span>
   </div>
 );
 

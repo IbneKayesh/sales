@@ -1684,8 +1684,14 @@ table {
 /* --------------------------------------------------------------------------
    9. Print Styles (for PDF export via window.print())
    --------------------------------------------------------------------------
-   IMPORTANT: Section 9a (GENERIC) is shared and identical for ALL applications.
-   Add application/module-specific print rules ONLY in section 9b.
+   Generic print pipeline for PrintModal (src/print):
+     .report-print-area--print  — the print source (hidden on screen)
+     .print-sheet               — table wrapper; its thead / tfoot repeat at
+                                  the top / bottom of every printed page
+                                  (repeatHeader / repeatFooter on PrintModal)
+     .print-mode-a4             — A4 portrait
+     .print-mode-pos80          — 80mm thermal receipt
+   Only these two paper modes exist; customize sizes / margins below.
    -------------------------------------------------------------------------- */
 
 @media print {
@@ -1708,6 +1714,12 @@ table {
     left: 0;
     top: 0;
     width: 100%;
+  }
+
+  /* Print one document at a time: hide any print source that is not the one
+     currently being printed (printReport marks it with data-print-active). */
+  .report-print-area--print:not([data-print-active]) {
+    display: none !important;
   }
 
   /* Hide the export bar itself during print */
@@ -1759,17 +1771,6 @@ table {
     border: none !important;
   }
 
-  /* Print header */
-  .report-print-area--print::before {
-    content: attr(data-report-title);
-    display: block;
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #000;
-  }
-
   /* Remove background colors for print (except headers) */
   .report-print-area--print * {
     background: transparent !important;
@@ -1783,20 +1784,20 @@ table {
     page-break-inside: auto;
   }
 
-  .report-print-area--print table tr {
+  .report-print-area--print table:not(.print-sheet) tr {
     page-break-inside: avoid;
     page-break-after: auto;
   }
 
-  .report-print-area--print table th {
+  .report-print-area--print table:not(.print-sheet) th {
     color: #000 !important;
     font-weight: 700;
     border-bottom: 2px solid #999;
     background-color: #e5e7eb !important;
   }
 
-  .report-print-area--print table td,
-  .report-print-area--print table th {
+  .report-print-area--print table:not(.print-sheet) td,
+  .report-print-area--print table:not(.print-sheet) th {
     padding: 4px 8px;
     border: 1px solid #ccc;
     color: #000 !important;
@@ -1820,130 +1821,87 @@ table {
   }
 
   /* ========================================================================
-     9b. APPLICATION-SPECIFIC PRINT STYLES
-     (Journal Voucher & Client Invoice - M08: A4 portrait via named page)
+     9b. PRINT SHEET — repeat header / footer on every page
+     PrintModal wraps the document in a table; the header goes in <thead>
+     and the footer in <tfoot>, which browsers repeat at the top / bottom of
+     every printed page. When repeatHeader / repeatFooter are off, the
+     header / footer render in the normal flow instead (inside the body).
      ======================================================================== */
 
-  /* Journal voucher: A4 portrait (scoped via named page) */
-  @page journal-voucher {
+  .print-sheet {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .print-sheet thead,
+  .print-sheet tfoot {
+    display: table-header-group;
+  }
+
+  .print-sheet tfoot {
+    display: table-footer-group;
+  }
+
+  .print-sheet td {
+    padding: 0;
+    border: none;
+  }
+
+  /* Let long bodies break across pages */
+  .print-sheet tbody tr,
+  .print-sheet tbody td {
+    page-break-inside: auto;
+  }
+
+  /* ========================================================================
+     9c. PAPER MODES — A4 portrait and 80mm receipt only
+     ======================================================================== */
+
+  /* A4 portrait (standard business documents) */
+  @page print-mode-a4 {
     size: A4 portrait;
-    margin: 6mm;
+    margin: 8mm;
   }
 
-  /* Print-only journal voucher (hidden on screen, shown only when printing) */
-  .journal-print-area {
+  .print-mode-a4 {
     display: block !important;
-    page: journal-voucher;
+    page: print-mode-a4;
   }
 
-  /* Journal voucher has its own in-document title - suppress the ::before print header (paper saving) */
-  .journal-print-area::before {
-    display: none;
-  }
-
-  .journal-print-area table td,
-  .journal-print-area table th {
-    padding: 2px 6px;
-    font-size: 9px;
-  }
-
-  /* Client invoice: A4 portrait (scoped via named page) */
-  @page invoice {
-    size: A4 portrait;
-    margin: 6mm;
-  }
-
-  /* Print-only invoice (hidden on screen, shown only when printing) */
-  .invoice-print-area {
-    display: block !important;
-    page: invoice;
-  }
-
-  /* Invoice has its own in-document title - suppress the ::before print header (paper saving) */
-  .invoice-print-area::before {
-    display: none;
-  }
-
-  .invoice-print-area table td,
-  .invoice-print-area table th {
-    padding: 2px 6px;
-    font-size: 9px;
-  }
-
-  /* Invoice POS receipt: 80mm thermal roll (scoped via named page) */
-  @page invoice-pos {
+  /* 80mm thermal receipt */
+  @page print-mode-pos80 {
     size: 80mm auto;
     margin: 0;
   }
 
-  /* Print-only POS receipt (hidden on screen, shown only when printing) */
-  .invoice-pos-print-area {
+  .print-mode-pos80,
+  .print-mode-80mm {
     display: block !important;
-    page: invoice-pos;
+    page: print-mode-pos80;
     width: 80mm;
   }
 
-  /* Receipt has its own in-document header - suppress the ::before print header */
-  .invoice-pos-print-area::before {
-    display: none;
-  }
-
-  /* Compact receipt tables/rows: no per-cell borders, tight padding */
-  .invoice-pos-print-area table td,
-  .invoice-pos-print-area table th {
+  /* Compact receipt tables: no per-cell borders, tight padding */
+  .print-mode-pos80 table td,
+  .print-mode-pos80 table th,
+  .print-mode-80mm table td,
+  .print-mode-80mm table th {
     padding: 1px 2px;
     border: none;
     font-size: 9px;
   }
 
-  .invoice-pos-print-area table th {
+  .print-mode-pos80 table th,
+  .print-mode-80mm table th {
     border-bottom: 1px solid #000;
-  }
-
-  /* MRR (Material Receipt Report): A4 portrait (scoped via named page) */
-  @page mrr {
-    size: A4 portrait;
-    margin: 6mm;
-  }
-
-  /* Print-only MRR (hidden on screen, shown only when printing) */
-  .mrr-print-area {
-    display: block !important;
-    page: mrr;
-  }
-
-  /* MRR has its own in-document title - suppress the ::before print header (paper saving) */
-  .mrr-print-area::before {
-    display: none;
-  }
-
-  .mrr-print-area table td,
-  .mrr-print-area table th {
-    padding: 2px 6px;
-    font-size: 9px;
-  }
-
-  /* Print one document at a time: hide the other print areas via body[data-print-target] */
-  body[data-print-target="journal"] .invoice-print-area,
-  body[data-print-target="invoice"] .journal-print-area,
-  body[data-print-target="mrr"] .journal-print-area,
-  body[data-print-target="mrr"] .invoice-print-area,
-  body[data-print-target="journal"] .mrr-print-area,
-  body[data-print-target="invoice"] .mrr-print-area,
-  body[data-print-target="invoice-pos"] .invoice-print-area,
-  body[data-print-target="invoice-pos"] .journal-print-area,
-  body[data-print-target="invoice-pos"] .mrr-print-area {
-    display: none !important;
   }
 }
 
 /* Print source copies (inside the print preview modal portal) are hidden on
-   screen and only rendered for print. The on-screen preview copy inside the
-   modal keeps the .*-print-area class too, so it is excluded via the
+   screen and only rendered for print. The on-screen preview copy keeps the
+   .report-print-area class too, so it is excluded via the
    .report-print-area--print marker (only the print source has it). */
-.report-print-area--print.journal-print-area,
-.report-print-area--print.invoice-print-area,
-.report-print-area--print.mrr-print-area {
+.report-print-area--print {
   display: none;
 }
 

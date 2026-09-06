@@ -1,48 +1,49 @@
 /**
- * Print the report content using window.print().
- * Hides non-report elements during print via CSS class.
+ * Generic print utility for any document or element.
+ * Triggers native window.print() while scoping print styles to the active element.
  *
- * NEVER touches document.title — the browser tab keeps its own title while
- * the print dialog is open.
- *
- * @param {string} title - Report title for the print header (rendered via the
- *   data-report-title attribute + CSS ::before, not the tab title)
- * @param {string} [target] - Optional print target: "journal" | "invoice" | "mrr" | "" (default: generic report)
- *   When set, only the matching document (e.g. .invoice-print-area) is printed
- *   and the others are hidden via the body[data-print-target] CSS rule.
+ * @param {string} title - Document title
+ * @param {HTMLElement|string} [target] - Target element, ref, or selector to print
  */
-export function printReport(title = "Financial Report", target = "") {
-  // Add title to the targeted print area for CSS to use
-  const printArea = document.querySelector(
-    target ? `.${target}-print-area` : ".report-print-area",
-  );
-  if (printArea) {
-    printArea.setAttribute("data-report-title", title);
+export function printDocument(title = "Document", target = null) {
+  let printArea = null;
+
+  if (target && typeof target === "object" && target.nodeType === 1) {
+    printArea = target;
+  } else if (target && typeof target === "object" && target.current) {
+    printArea = target.current;
+  } else if (typeof target === "string" && target) {
+    printArea =
+      document.querySelector(`.${target}-print-area.report-print-area--print`) ||
+      document.querySelector(target) ||
+      document.querySelector(`.${target}-print-area`);
   }
 
-  // Scope the print to a specific document when a target is provided
-  const prevTarget = document.body.getAttribute("data-print-target");
-  if (target) {
-    document.body.setAttribute("data-print-target", target);
+  if (!printArea) {
+    printArea =
+      document.querySelector(".report-print-area--print") ||
+      document.querySelector(".report-print-area");
   }
+
+  if (!printArea) {
+    window.print();
+    return;
+  }
+
+  // Set active print attributes
+  printArea.setAttribute("data-report-title", title);
+  printArea.setAttribute("data-print-active", "true");
 
   try {
-    // Trigger print (synchronous in most browsers — the dialog shows while
-    // this blocks, and cleanup runs as soon as it closes).
     window.print();
   } finally {
-    // Cleanup - remove the data attributes
-    if (printArea && printArea.hasAttribute("data-report-title")) {
-      printArea.removeAttribute("data-report-title");
-    }
-    if (target) {
-      if (prevTarget) {
-        document.body.setAttribute("data-print-target", prevTarget);
-      } else {
-        document.body.removeAttribute("data-print-target");
-      }
-    }
+    printArea.removeAttribute("data-report-title");
+    printArea.removeAttribute("data-print-active");
   }
 }
 
-export default printReport;
+/** Alias for printDocument */
+export const printReport = printDocument;
+export const printElement = printDocument;
+
+export default printDocument;

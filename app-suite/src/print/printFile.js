@@ -15,6 +15,8 @@ const DOWNLOAD_CSS = `
   .report-print-area table th { color: #000; font-weight: 700; border-bottom: 2px solid #999; background-color: #e5e7eb; }
   .report-print-area table td, .report-print-area table th { padding: 4px 8px; border: 1px solid #ccc; color: #000; font-size: 10px; }
   .report-print-area .page-break { page-break-before: always; }
+  .report-print-area .print-sheet { width: 100%; border-collapse: collapse; }
+  .report-print-area .print-sheet td { padding: 0; border: none; }
   @media print { .no-print { display: none !important; } }
 `;
 

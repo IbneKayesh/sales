@@ -1,4 +1,3 @@
-import { useState } from "react";
 import PageCard, {
   PageCardHeader,
   PageCardTitle,
@@ -8,8 +7,8 @@ import PageCard, {
 import { IconSearch, IconClose, IconPlus, IconSave, IconPrint } from "@/icons";
 import Button from "@/components/Button";
 import Modal, { ModalHeader, ModalTitle, ModalBody } from "@/components/Modal";
-import PrintPreviewModal from "@/print/PrintPreviewModal";
 import useInvoice from "@/hooks/M02/useInvoice";
+import usePrint from "@/hooks/usePrint";
 import InvoiceList from "./InvoiceList";
 import InvoiceForm from "./InvoiceForm";
 import ItemForm from "./ItemForm";
@@ -23,7 +22,7 @@ import ItemBundleList from "./ItemBundleList";
 import PrintPage from "./PrintPage";
 
 const InvoicePage = () => {
-  const [printOpen, setPrintOpen] = useState(false);
+  const print = usePrint();
   const {
     isBusy,
     pgView,
@@ -135,7 +134,7 @@ const InvoicePage = () => {
               <Button
                 variant="info"
                 size="sm"
-                onClick={() => setPrintOpen(true)}
+                onClick={print.show}
               >
                 <IconPrint size={14} className="icon-left" />
                 Print / Export
@@ -231,33 +230,16 @@ const InvoicePage = () => {
 
           {/* Print preview — one button, then choose Print or Export PDF */}
           {pgView === "SYS_VW_FRM_1" && formData?.id && (
-            <PrintPreviewModal
-              open={printOpen}
-              onClose={() => setPrintOpen(false)}
-              title={`Invoice - ${formData.invcm_trnno || formData.invcm_refno || ""}`}
-              printTarget="invoice"
-              posEnabled
-              posChildren={
-                <PrintPage
-                  pos
-                  formData={formData}
-                  listDataItem={listDataItem}
-                  listDataCost={listDataCost}
-                  listDataPayment={listDataPayment}
-                  dpart_Options={dpart_Options}
-                  cntct_Options={cntct_Options}
-                />
-              }
-            >
-              <PrintPage
-                formData={formData}
-                listDataItem={listDataItem}
-                listDataCost={listDataCost}
-                listDataPayment={listDataPayment}
-                dpart_Options={dpart_Options}
-                cntct_Options={cntct_Options}
-              />
-            </PrintPreviewModal>
+            <PrintPage
+              open={print.open}
+              onClose={print.hide}
+              formData={formData}
+              listDataItem={listDataItem}
+              listDataCost={listDataCost}
+              listDataPayment={listDataPayment}
+              dpart_Options={dpart_Options}
+              cntct_Options={cntct_Options}
+            />
           )}
           {/* Single Modal for Item form */}
           <Modal open={showModal.show} onClose={handleHideModal} size="xxl">

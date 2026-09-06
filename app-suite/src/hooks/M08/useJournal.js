@@ -4,7 +4,6 @@ import validate, { generateDataModel } from "@/models/validator";
 import { generateGuid } from "@/utils/guid.js";
 import { validNumber } from "@/utils/misc.js";
 import { buildPaths, buildPathsCOA } from "@/utils/pathBuilder.js";
-import { printReport } from "@/print/printReport";
 import tmtb_jrnlm from "@/models/M08/tmtb_jrnlm.json";
 import tmtb_jrnlc from "@/models/M08/tmtb_jrnlc.json";
 const dataModel = generateDataModel(tmtb_jrnlm);
@@ -410,35 +409,6 @@ const useJournal = () => {
     setModalTitle({ title: "", subTitle: "" });
   };
 
-  const handlePrintJournal = () => {
-    if (!formData?.id) {
-      showToast("Save the journal before printing", { type: "warning" });
-      return;
-    }
-    const label =
-      formData.jrnlm_trnno ||
-      formData.jrnlm_refno ||
-      formData.jrnlm_narrt ||
-      "";
-    printReport(`Journal Voucher${label ? ` - ${label}` : ""}`, "journal");
-  };
-
-  const handlePrintInvoice = () => {
-    if (!formData?.id) {
-      showToast("Save the invoice before printing", { type: "warning" });
-      return;
-    }
-    const label =
-      formData.jrnlm_trnno ||
-      formData.jrnlm_refno ||
-      formData.jrnlm_narrt ||
-      "";
-    printReport(
-      `${formData.jrnlm_trtyp || "Invoice"}${label ? ` - ${label}` : ""}`,
-      "invoice",
-    );
-  };
-
   return {
     isBusy,
     pgView,
@@ -470,8 +440,6 @@ const useJournal = () => {
     handleAddToList,
     handleEditItem,
     handleDeleteItem,
-    handlePrintJournal,
-    handlePrintInvoice,
     //modal
     showModal,
     modalTitle,

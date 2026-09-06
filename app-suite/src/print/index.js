@@ -1,15 +1,25 @@
 /* ==========================================================================
-   Print library — self-contained printing for documents (MRR / Journal /
-   Invoice / reports). No third-party print dependencies: printing goes
-   through the browser's native print dialog (Save-as-PDF included).
+   Print library — self-contained, generic printing for any document.
+   No third-party print dependencies: printing goes through the browser's
+   native print dialog (Save-as-PDF included).
 
-     printReport(title, target)   — trigger the print dialog for a document
-     PrintHeader / PrintBody /
-     PrintFooter / PrintPreviewModal — shared document layout components
-     format.js helpers            — fmt, MetaItem, amountInWords, ...
+     PrintModal   — the one print entry point (preview + print/download/share)
+                    with header / body / footer and per-page repetition
+     PrintHeader / PrintFooter / PrintTable / PrintSection / MetaGrid /
+     Summary      — small data-driven building blocks for the header, body
+                    and footer JSX
+     format.js    — fmt, MetaItem, amountInWords, ...
+     printReport  — trigger the print dialog for a print source element
    ========================================================================== */
 
-export { printReport, default as printReportDefault } from "./printReport";
+import "./print.css";
+
+export {
+  printDocument,
+  printReport,
+  printElement,
+  default as printReportDefault,
+} from "./printReport";
 
 export {
   buildPrintHtml,
@@ -20,21 +30,18 @@ export {
   shareMessage,
 } from "./printFile";
 
-export {
-  fmt,
-  MetaItem,
-  amountInWords,
-  DEFAULT_SIGNER_NAME,
-} from "./format.jsx";
+export { fmt, MetaItem, amountInWords, DEFAULT_SIGNER_NAME } from "./format.jsx";
 
-export { default as PrintHeader, CompanyHeader, DocTitleRow } from "./PrintHeader";
-
-export {
-  default as PrintBody,
-  PrintTable,
-  PrintSection,
-  MetaItem as BodyMetaItem,
-} from "./PrintBody";
-
+export { default as PrintHeader } from "./PrintHeader";
 export { default as PrintFooter } from "./PrintFooter";
-export { default as PrintPreviewModal } from "./PrintPreviewModal";
+
+export {
+  default as PrintTable,
+  PrintSection,
+  MetaGrid,
+  Summary,
+} from "./PrintTable";
+
+export { default as PrintModal } from "./PrintModal";
+
+export { default as usePrint } from "@/hooks/usePrint";

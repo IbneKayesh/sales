@@ -3655,7 +3655,7 @@ html[data-layout="boxed"] .layout__main {
   animation: fade-in var(--transition-fast);
 }
 
-/* Print preview modal (see components/PrintPreviewModal) */
+/* Print preview modal (see src/print/PrintModal) */
 .print-preview .print-preview__dialog {
   display: flex;
   flex-direction: column;
@@ -3667,54 +3667,74 @@ html[data-layout="boxed"] .layout__main {
 .print-preview__toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
   gap: var(--sp-3);
   padding: var(--sp-2) var(--sp-4);
   border-bottom: 1px solid var(--border);
   background: var(--surface-alt);
   flex-shrink: 0;
+  overflow-x: auto;
 }
 
-.print-preview__hint {
-  font-size: var(--fs-sm);
-  color: var(--text-muted);
-}
-
-.print-preview__actions {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sp-2);
-}
-
-.print-preview__format {
+.print-preview__btn-group {
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  padding: 3px;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  background: var(--surface);
+  padding: 3px;
+  box-shadow: var(--shadow-xs);
+  flex-shrink: 0;
 }
 
-.print-preview__format button {
-  padding: 4px 12px;
+.print-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-secondary);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
+  white-space: nowrap;
   transition: var(--transition-fast);
+  line-height: 1.35;
 }
 
-.print-preview__format button:hover {
-  color: var(--primary);
+.print-toolbar-btn:hover {
+  background: var(--surface-alt);
+  color: var(--text);
 }
 
-.print-preview__format button[aria-checked="true"] {
+.print-toolbar-btn.active,
+.print-toolbar-btn[aria-checked="true"] {
   background: var(--primary);
   color: var(--primary-on);
+  font-weight: 600;
+}
+
+.print-toolbar-btn--primary {
+  background: var(--info, #0284c7);
+  color: #fff;
+  font-weight: 600;
+}
+
+.print-toolbar-btn--primary:hover {
+  filter: brightness(1.1);
+  color: #fff;
+}
+
+.print-toolbar-divider {
+  display: inline-block;
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+  margin: 0 3px;
 }
 
 .print-preview__share {
@@ -3759,18 +3779,73 @@ html[data-layout="boxed"] .layout__main {
 .print-preview__body {
   overflow: auto;
   background: var(--bg);
+  flex: 1;
+  padding: var(--sp-4);
 }
 
-/* Paper-like preview page (A4 aspect, readable on screen) */
+/* Paper-like preview page */
 .print-preview__page {
-  width: 794px;
-  min-height: 900px;
-  margin: 0 auto;
-  padding: 24px 28px;
+  margin: 16px auto;
   background: #fff;
   color: #000;
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+  transition: width var(--transition-fast), max-width var(--transition-fast);
+}
+
+.print-preview__page--a4 {
+  width: 794px;
+  max-width: 100%;
+  min-height: 900px;
+  padding: 24px 28px;
+}
+
+.print-preview__page--80mm {
+  width: 80mm;
+  max-width: 80mm;
+  min-height: 120mm;
+  padding: 8px 10px;
+  font-size: 10px;
+  box-sizing: border-box;
+}
+
+.print-preview__page--80mm *,
+.print-preview__page--80mm *::before,
+.print-preview__page--80mm *::after {
+  box-sizing: border-box;
+}
+
+.print-preview__page--80mm .report-print-area {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+.print-preview__page--80mm table {
+  width: 100% !important;
+  max-width: 100% !important;
+  table-layout: auto !important;
+  font-size: 8px !important;
+  word-break: break-word !important;
+}
+
+.print-preview__page--80mm table th,
+.print-preview__page--80mm table td {
+  padding: 2px 2px !important;
+  font-size: 8px !important;
+  width: auto !important;
+}
+
+.print-preview__page--80mm .print-summary,
+.print-preview__page--80mm div[style*="width: 52%"] {
+  width: 100% !important;
+  margin-left: 0 !important;
+  font-size: 8.5px !important;
+}
+
+.print-preview__page--80mm .print-metagrid {
+  grid-template-columns: repeat(2, 1fr) !important;
+  padding: 2px 4px !important;
 }
 
 /* Save overlay — renders above regular modals while a save is in progress */
