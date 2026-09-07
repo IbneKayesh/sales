@@ -329,12 +329,12 @@ const useContact = () => {
   //print
   const [listDataPrint, setListDataPrint] = useState([]);
   const handleStatement = async (rowData) => {
-    console.log("rowData", rowData);
+    //console.log("rowData", rowData);
     try {
       setIsBusy(true);
       const resp = await reportsAPI.getContactsLedger({ cntct_id: rowData.id });
       const list = resp.data || [];
-      console.log("list", list);
+      //console.log("list", list);
       setListDataPrint(list);
     } catch (error) {
     } finally {

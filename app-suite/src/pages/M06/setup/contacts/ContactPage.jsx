@@ -166,7 +166,6 @@ const ContactPage = () => {
           <LedgerPrint
             open={print.open}
             onClose={print.hide}
-            formData={formData}
             listDataItem={listDataPrint}
           />
         </PageCardBody>

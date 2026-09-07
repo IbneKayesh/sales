@@ -1722,6 +1722,31 @@ table {
     display: none !important;
   }
 
+  .report-print-area--print[data-print-active] {
+    display: block !important;
+  }
+
+  .print-page-info {
+    position: fixed;
+    bottom: 5px;
+    left: 15px;
+    font-size: 8px;
+    color: #555;
+  }
+
+  .print-page-info__page {
+    display: none;
+  }
+
+  @page {
+    @bottom-right {
+      content: "Page " counter(page) " of " counter(pages);
+      font-family: var(--font-sans, system-ui, sans-serif);
+      font-size: 8px;
+      color: #555;
+    }
+  }
+
   /* Hide the export bar itself during print */
   .report-export-bar {
     display: none !important;
@@ -1798,10 +1823,12 @@ table {
 
   .report-print-area--print table:not(.print-sheet) td,
   .report-print-area--print table:not(.print-sheet) th {
-    padding: 4px 8px;
+    padding: 2px 4px;
     border: 1px solid #ccc;
     color: #000 !important;
     font-size: 10px;
+    line-height: 1.1;
+    word-break: break-word;
   }
 
   /* Page margins (default: A4 landscape) */

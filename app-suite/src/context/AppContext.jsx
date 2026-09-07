@@ -11,9 +11,11 @@ import { apiLogin } from "@/utils/api";
 import {
   clearStorageData,
   getStorageData,
+  setStorageData,
   getStorageLoginData,
   setStorageLoginData,
 } from "@/utils/storage";
+import { updateAppModules } from "@/utils/appModules";
 import {
   DEFAULT_FONT,
   DEFAULT_THEME,
@@ -401,7 +403,19 @@ export function AppProvider({ children }) {
   const [emply, setEmply] = useState(null);
   const [user, setUser] = useState(null);
   const [business, setBusiness] = useState(null);
-  const [userMenus, setUserMenus] = useState([]);
+  // Lazy-initialise from localStorage so menus survive a page refresh
+  const [userMenus, setUserMenusState] = useState(() => {
+    const stored = getStorageData()?.menus;
+    return Array.isArray(stored) ? stored : [];
+  });
+
+  // Update userMenus state, persist to localStorage, and sync appModules in-place
+  const setUserMenus = useCallback((menus) => {
+    const next = Array.isArray(menus) ? menus : [];
+    setUserMenusState(next);
+    setStorageData({ menus: next });
+    updateAppModules(next);
+  }, []);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [theme, setTheme] = useState("light");
@@ -1149,7 +1163,8 @@ export function AppProvider({ children }) {
       setUser(null);
       setEmply(null);
       setBusiness(null);
-      setUserMenus([]);
+      setUserMenusState([]);
+      updateAppModules(null);
       setPopups([]);
       navigate("/auth/login");
     };
@@ -1173,8 +1188,10 @@ export function AppProvider({ children }) {
     }
 
     const storedMenus = getStorageData()?.menus;
-    if (storedMenus) {
-      setUserMenus(storedMenus);
+    if (Array.isArray(storedMenus) && storedMenus.length > 0) {
+      // Use setUserMenusState here to avoid re-writing what we just read from storage
+      setUserMenusState(storedMenus);
+      updateAppModules(storedMenus);
     }
   }, []);
 
@@ -1192,6 +1209,13 @@ export function AppProvider({ children }) {
         setEmply(resp.data.emply);
         setUser(resp.data.users);
         setBusiness(resp.data.bsins);
+        // Persist all user session data to localStorage in one write
+        setStorageData({
+          emply: resp.data.emply,
+          users: resp.data.users,
+          bsins: resp.data.bsins,
+        });
+        // setUserMenus persists menus and syncs appModules
         setUserMenus(resp.data.menus);
       }
       return resp;
@@ -1206,7 +1230,8 @@ export function AppProvider({ children }) {
     setUser(null);
     setEmply(null);
     setBusiness(null);
-    setUserMenus([]);
+    setUserMenusState([]);
+    updateAppModules(null);
     setPopups([]);
     navigate("/auth/login");
   }, []);
@@ -1253,6 +1278,7 @@ export function AppProvider({ children }) {
       value={{
         user,
         business,
+        userMenus,
         login,
         logout,
         sidebarOpen,

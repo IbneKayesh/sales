@@ -74,7 +74,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const sql_menus = `SELECT *
+    const sql_menus = `SELECT mp.menup_menus, mp.menup_extpr, mp.menup_addpr, mp.menup_edtpr, mp.menup_delpr
                       FROM tmsb_menup mp
                       WHERE mp.menup_actve = TRUE
                       AND mp.menup_users = $1
@@ -109,7 +109,7 @@ router.post("/login", async (req, res) => {
       { expiresIn: "24h" },
     );
 
-    //console.log("data", data);
+    //console.log("data", row_menus);
 
     res.json({
       success: true,
@@ -118,8 +118,7 @@ router.post("/login", async (req, res) => {
         emply: row_emp,
         bsins: row_bsn,
         users: row_user,
-        // menus: row_menus,
-        menus: [],
+        menus: row_menus,
         token,
       },
     });

@@ -1,4 +1,5 @@
 import { resolveMenuIcon } from "@/icons";
+import { getStorageData } from "@/utils/storage";
 
 /* ─── Hierarchical App Data: Module > Groups > Menu ─────── */
 
@@ -14,7 +15,7 @@ export const toMenu = (m) => ({
   menus_mdesc: m.desc,
 });
 
-export const appModules = [
+export const rawAppModules = [
   {
     id: "M00",
     name: "Recent",
@@ -37,15 +38,6 @@ export const appModules = [
         menus: [
           {
             id: "M01-G01-M001",
-            name: "Work Space",
-            color: "#7c3aed",
-            icon: "Monitor",
-            order: 1,
-            link: "/bsuite/workspace",
-            desc: "Work Space",
-          },
-          {
-            id: "M01-G01-M002",
             name: "Home",
             color: "#7c3aed",
             icon: "Home",
@@ -54,22 +46,31 @@ export const appModules = [
             desc: "Return to dashboard overview",
           },
           {
-            id: "M01-G01-M003",
-            name: "Theme",
+            id: "M01-G01-M002",
+            name: "Work Space",
             color: "#7c3aed",
-            icon: "Palette",
+            icon: "Monitor",
             order: 2,
-            link: "/bsuite/theme",
-            desc: "Application preferences and theme color",
+            link: "/bsuite/workspace",
+            desc: "Work Space",
           },
           {
-            id: "M01-G01-M004",
+            id: "M01-G01-M003",
             name: "Features",
             color: "#7c3aed",
             icon: "Palette",
-            order: 2,
+            order: 3,
             link: "/bsuite/features",
             desc: "Application feature list",
+          },
+          {
+            id: "M01-G01-M004",
+            name: "Theme",
+            color: "#7c3aed",
+            icon: "Palette",
+            order: 4,
+            link: "/bsuite/theme",
+            desc: "Application preferences and theme color",
           },
         ],
       },
@@ -83,7 +84,7 @@ export const appModules = [
             name: "Departments",
             color: "#7c3aed",
             icon: "Building",
-            order: 8,
+            order: 1,
             link: "/settings/departments",
             desc: "Manage organizational departments",
           },
@@ -92,27 +93,27 @@ export const appModules = [
             name: "Sections",
             color: "#7c3aed",
             icon: "Layers",
-            order: 9,
+            order: 2,
             link: "/settings/sections",
             desc: "Configure department sections",
           },
           {
             id: "M01-G02-M003",
-            name: "Pending Process",
-            color: "#7c3aed",
-            icon: "Target",
-            order: 10,
-            link: "/settings/pending-process",
-            desc: "Pending process",
-          },
-          {
-            id: "M01-G02-M004",
             name: "Grid Options",
             color: "#7c3aed",
             icon: "Columns",
-            order: 10,
+            order: 3,
             link: "/settings/grid-options",
             desc: "Configure module table column visibility",
+          },
+          {
+            id: "M01-G02-M004",
+            name: "Pending Process",
+            color: "#7c3aed",
+            icon: "Target",
+            order: 4,
+            link: "/settings/pending-process",
+            desc: "Pending process",
           },
         ],
       },
@@ -120,9 +121,9 @@ export const appModules = [
   },
   {
     id: "M02",
-    name: "Purchase",
-    icon: "Purchase",
-    color: "#06b6d4",
+    name: "Sales",
+    icon: "Sales",
+    color: "#eab308",
     order: 2,
     groups: [
       {
@@ -132,56 +133,6 @@ export const appModules = [
         menus: [
           {
             id: "M02-G01-M001",
-            name: "Purchase Bundles",
-            color: "#06b6d4",
-            icon: "Truck",
-            order: 1,
-            link: "/purchase/setup/purchase-bundles",
-            desc: "Manage bundle purchase",
-          },
-        ],
-      },
-      {
-        id: "G02",
-        name: "Transactions",
-        order: 2,
-        menus: [
-          {
-            id: "M02-G02-M001",
-            name: "MRR (Direct)",
-            color: "#06b6d4",
-            icon: "Package",
-            order: 1,
-            link: "/purchase/mrr-direct",
-            desc: "Record received goods and inspections",
-          },
-          {
-            id: "M02-G02-M002",
-            name: "Purchase Returns",
-            color: "#06b6d4",
-            icon: "Refresh",
-            order: 3,
-            link: "/purchase/returns",
-            desc: "Handle suppliers return requests",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "M03",
-    name: "Sales",
-    icon: "Sales",
-    color: "#eab308",
-    order: 3,
-    groups: [
-      {
-        id: "G01",
-        name: "Setup",
-        order: 1,
-        menus: [
-          {
-            id: "M03-G01-M001",
             name: "Sales Bundles",
             color: "#eab308",
             icon: "Target",
@@ -197,16 +148,7 @@ export const appModules = [
         order: 2,
         menus: [
           {
-            id: "M03-G02-M001",
-            name: "Sales Invoice",
-            color: "#eab308",
-            icon: "Receipt",
-            order: 1,
-            link: "/sales/invoice",
-            desc: "Process customer sales invoice",
-          },
-          {
-            id: "M03-G02-M000",
+            id: "M02-G02-M001",
             name: "Point of Sale",
             color: "#f59e0b",
             icon: "Calculator",
@@ -215,22 +157,81 @@ export const appModules = [
             desc: "Quick POS terminal with product grid and checkout",
           },
           {
-            id: "M03-G02-M002",
+            id: "M02-G02-M002",
+            name: "Sales Invoice",
+            color: "#eab308",
+            icon: "Receipt",
+            order: 2,
+            link: "/sales/invoice",
+            desc: "Process customer sales invoice",
+          },
+          {
+            id: "M02-G02-M003",
             name: "Deliveries",
             color: "#eab308",
             icon: "Truck",
-            order: 2,
+            order: 3,
             link: "/sales/deliveries",
             desc: "Manage delivery and dispatch records",
           },
           {
-            id: "M03-G02-M003",
+            id: "M02-G02-M004",
             name: "Sales Returns",
             color: "#eab308",
             icon: "Refresh",
-            order: 3,
+            order: 4,
             link: "/sales/returns",
             desc: "Handle customer return requests",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "M03",
+    name: "Purchase",
+    icon: "Purchase",
+    color: "#06b6d4",
+    order: 3,
+    groups: [
+      {
+        id: "G01",
+        name: "Setup",
+        order: 1,
+        menus: [
+          {
+            id: "M03-G01-M001",
+            name: "Purchase Bundles",
+            color: "#06b6d4",
+            icon: "Truck",
+            order: 1,
+            link: "/purchase/setup/purchase-bundles",
+            desc: "Manage bundle purchase",
+          },
+        ],
+      },
+      {
+        id: "G02",
+        name: "Transactions",
+        order: 2,
+        menus: [
+          {
+            id: "M03-G02-M001",
+            name: "MRR (Direct)",
+            color: "#06b6d4",
+            icon: "Package",
+            order: 1,
+            link: "/purchase/mrr-direct",
+            desc: "Record received goods and inspections",
+          },
+          {
+            id: "M03-G02-M002",
+            name: "Purchase Returns",
+            color: "#06b6d4",
+            icon: "Refresh",
+            order: 2,
+            link: "/purchase/returns",
+            desc: "Handle suppliers return requests",
           },
         ],
       },
@@ -250,57 +251,57 @@ export const appModules = [
         menus: [
           {
             id: "M04-G01-M001",
-            name: "Brands",
-            color: "#f97316",
-            icon: "Box",
-            order: 1,
-            link: "/inventory/setup/brands",
-            desc: "Manage product brand profiles",
-          },
-          {
-            id: "M04-G01-M002",
-            name: "Categories",
-            color: "#f97316",
-            icon: "Box",
-            order: 2,
-            link: "/inventory/setup/categories",
-            desc: "Organize product categories",
-          },
-          {
-            id: "M04-G01-M003",
-            name: "Groups",
-            color: "#f97316",
-            icon: "Box",
-            order: 3,
-            link: "/inventory/setup/groups",
-            desc: "Manage product group classifications",
-          },
-          {
-            id: "M04-G01-M004",
-            name: "Units",
-            color: "#f97316",
-            icon: "Box",
-            order: 4,
-            link: "/inventory/setup/units",
-            desc: "Configure measurement units",
-          },
-          {
-            id: "M04-G01-M005",
             name: "Items",
             color: "#f97316",
             icon: "Box",
-            order: 5,
+            order: 1,
             link: "/inventory/setup/items",
             desc: "Manage inventory item records",
           },
           {
-            id: "M04-G01-M006",
+            id: "M04-G01-M002",
             name: "Item Bundles",
             color: "#f97316",
             icon: "Box",
-            order: 6,
+            order: 2,
             link: "/inventory/setup/items-price-bundle",
             desc: "Manage inventory item price bundles records",
+          },
+          {
+            id: "M04-G01-M003",
+            name: "Categories",
+            color: "#f97316",
+            icon: "Box",
+            order: 3,
+            link: "/inventory/setup/categories",
+            desc: "Organize product categories",
+          },
+          {
+            id: "M04-G01-M004",
+            name: "Brands",
+            color: "#f97316",
+            icon: "Box",
+            order: 4,
+            link: "/inventory/setup/brands",
+            desc: "Manage product brand profiles",
+          },
+          {
+            id: "M04-G01-M005",
+            name: "Groups",
+            color: "#f97316",
+            icon: "Box",
+            order: 5,
+            link: "/inventory/setup/groups",
+            desc: "Manage product group classifications",
+          },
+          {
+            id: "M04-G01-M006",
+            name: "Units",
+            color: "#f97316",
+            icon: "Box",
+            order: 6,
+            link: "/inventory/setup/units",
+            desc: "Configure measurement units",
           },
         ],
       },
@@ -322,7 +323,7 @@ export const appModules = [
       },
       {
         id: "G03",
-        name: "Report",
+        name: "Reports",
         order: 3,
         menus: [
           {
@@ -352,21 +353,21 @@ export const appModules = [
         menus: [
           {
             id: "M05-G01-M001",
-            name: "Productions",
-            color: "#22c55e",
-            icon: "Manufacture",
-            order: 1,
-            link: "/manufacturing/setup/productions",
-            desc: "Track and manage manufacturing runs",
-          },
-          {
-            id: "M05-G01-M002",
             name: "BOM",
             color: "#22c55e",
             icon: "Manufacture",
-            order: 2,
+            order: 1,
             link: "/manufacturing/setup/bom",
             desc: "Bill of Materials structure",
+          },
+          {
+            id: "M05-G01-M002",
+            name: "Productions",
+            color: "#22c55e",
+            icon: "Manufacture",
+            order: 2,
+            link: "/manufacturing/setup/productions",
+            desc: "Track and manage manufacturing runs",
           },
         ],
       },
@@ -380,7 +381,7 @@ export const appModules = [
             name: "Process",
             color: "#22c55e",
             icon: "Manufacture",
-            order: 3,
+            order: 1,
             link: "/manufacturing/process",
             desc: "Manage production process flows",
           },
@@ -397,51 +398,51 @@ export const appModules = [
     groups: [
       {
         id: "G01",
-        name: "Contacts",
+        name: "Setup",
         order: 1,
         menus: [
           {
             id: "M06-G01-M001",
+            name: "District / Zone",
+            color: "#3b82f6",
+            icon: "Map",
+            order: 1,
+            link: "/crm/setup/district-zones",
+            desc: "Configure district and zone regions",
+          },
+          {
+            id: "M06-G01-M002",
+            name: "Thana / Area",
+            color: "#3b82f6",
+            icon: "Location",
+            order: 2,
+            link: "/crm/setup/thana-areas",
+            desc: "Manage thana and area zones",
+          },
+          {
+            id: "M06-G01-M003",
+            name: "Territories",
+            color: "#3b82f6",
+            icon: "Location",
+            order: 3,
+            link: "/crm/setup/territories",
+            desc: "Define sales territory boundaries",
+          },
+        ],
+      },
+      {
+        id: "G02",
+        name: "Contacts",
+        order: 2,
+        menus: [
+          {
+            id: "M06-G02-M001",
             name: "Contacts",
             color: "#3b82f6",
             icon: "Users",
             order: 1,
             link: "/M06/contacts",
             desc: "Manage business contact records",
-          },
-        ],
-      },
-      {
-        id: "G02",
-        name: "Setup",
-        order: 2,
-        menus: [
-          {
-            id: "M06-G02-M001",
-            name: "Territories",
-            color: "#3b82f6",
-            icon: "Location",
-            order: 2,
-            link: "/crm/setup/territories",
-            desc: "Define sales territory boundaries",
-          },
-          {
-            id: "M06-G02-M002",
-            name: "Thana / Area",
-            color: "#3b82f6",
-            icon: "Location",
-            order: 3,
-            link: "/crm/setup/thana-areas",
-            desc: "Manage thana and area zones",
-          },
-          {
-            id: "M06-G02-M003",
-            name: "District / Zone",
-            color: "#3b82f6",
-            icon: "Map",
-            order: 4,
-            link: "/crm/setup/district-zones",
-            desc: "Configure district and zone regions",
           },
         ],
       },
@@ -470,21 +471,46 @@ export const appModules = [
           },
           {
             id: "M07-G01-M002",
+            name: "Designations",
+            color: "#ec4899",
+            icon: "User",
+            order: 2,
+            link: "/hrms/setup/designations",
+            desc: "Manage designations",
+          },
+          {
+            id: "M07-G01-M003",
             name: "Holidays",
             color: "#ec4899",
             icon: "Calendar",
-            order: 2,
+            order: 3,
             link: "/hrms/setup/holidays",
             desc: "Manage holiday calendar entries",
           },
           {
-            id: "M07-G01-M003",
-            name: "Designations",
+            id: "M07-G01-M004",
+            name: "Employees",
             color: "#ec4899",
-            icon: "User",
-            order: 3,
-            link: "/hrms/setup/designations",
-            desc: "Manage designations",
+            icon: "Users",
+            order: 4,
+            link: "/M07/employees",
+            desc: "Manage employees",
+          },
+        ],
+      },
+      {
+        id: "G02",
+        name: "Operations",
+        order: 2,
+        menus: [
+          {
+            id: "M07-G02-M001",
+            name: "Attend Logs",
+            color: "#ec4899",
+            icon: "Clock",
+            order: 1,
+            link: "/M07/attend-logs",
+            desc: "View employee attendance logs",
           },
         ],
       },
@@ -513,12 +539,12 @@ export const appModules = [
           },
           {
             id: "M08-G01-M002",
-            name: "Fiscal Years",
+            name: "Party Accounts",
             color: "#8b5cf6",
-            icon: "Calendar",
+            icon: "Users",
             order: 2,
-            link: "/accounts/setup/fiscal-years",
-            desc: "Manage fiscal year periods",
+            link: "/accounts/setup/parties",
+            desc: "Manage party account profiles",
           },
           {
             id: "M08-G01-M003",
@@ -531,12 +557,12 @@ export const appModules = [
           },
           {
             id: "M08-G01-M004",
-            name: "Party Accounts",
+            name: "Fiscal Years",
             color: "#8b5cf6",
-            icon: "Users",
+            icon: "Calendar",
             order: 4,
-            link: "/accounts/setup/parties",
-            desc: "Manage party account profiles",
+            link: "/accounts/setup/fiscal-years",
+            desc: "Manage fiscal year periods",
           },
           {
             id: "M08-G01-M005",
@@ -565,21 +591,21 @@ export const appModules = [
           },
           {
             id: "M08-G02-M002",
-            name: "Payables",
-            color: "#8b5cf6",
-            icon: "Activity",
-            order: 2,
-            link: "/accounts/payables",
-            desc: "Record Payables journal entries",
-          },
-          {
-            id: "M08-G02-M003",
             name: "Receivables",
             color: "#8b5cf6",
             icon: "Activity",
-            order: 3,
+            order: 2,
             link: "/accounts/receivables",
             desc: "Record Receivables journal entries",
+          },
+          {
+            id: "M08-G02-M003",
+            name: "Payables",
+            color: "#8b5cf6",
+            icon: "Activity",
+            order: 3,
+            link: "/accounts/payables",
+            desc: "Record Payables journal entries",
           },
           {
             id: "M08-G02-M004",
@@ -619,17 +645,26 @@ export const appModules = [
     groups: [
       {
         id: "G01",
-        name: "Reports",
+        name: "Setup",
         order: 1,
         menus: [
           {
             id: "M09-G01-M001",
-            name: "Reports",
+            name: "Users",
             color: "#f59e0b",
-            icon: "Chart",
+            icon: "Users",
             order: 1,
-            link: "/reports",
-            desc: "View and generate system reports",
+            link: "/users",
+            desc: "Manage system user accounts",
+          },
+          {
+            id: "M09-G01-M002",
+            name: "Settings",
+            color: "#f59e0b",
+            icon: "Settings",
+            order: 2,
+            link: "/settings",
+            desc: "Configure system preferences",
           },
         ],
       },
@@ -651,26 +686,17 @@ export const appModules = [
       },
       {
         id: "G03",
-        name: "Admin",
+        name: "Reports",
         order: 3,
         menus: [
           {
             id: "M09-G03-M001",
-            name: "Users",
+            name: "Reports",
             color: "#f59e0b",
-            icon: "Users",
+            icon: "Chart",
             order: 1,
-            link: "/users",
-            desc: "Manage system user accounts",
-          },
-          {
-            id: "M09-G03-M002",
-            name: "Settings",
-            color: "#f59e0b",
-            icon: "Settings",
-            order: 1,
-            link: "/settings",
-            desc: "Configure system preferences",
+            link: "/reports",
+            desc: "View and generate system reports",
           },
         ],
       },
@@ -710,7 +736,7 @@ export const appModules = [
             color: "#f59e0b",
             icon: "Dashboard",
             order: 1,
-            link: "/M01/modules",
+            link: "/bsuite/modules",
             desc: "Browse all application modules",
           },
         ],
@@ -719,23 +745,128 @@ export const appModules = [
   },
 ];
 
-// Build the flat menus array used for search & recent menus
-export const menus = appModules.flatMap((mod) => {
-  const items = [];
-  if (mod.groups) {
+/* ─── Permission-based filtering ────────────────────────────────────────────
+ *
+ * userMenusList is the API array, e.g.
+ *   [{ menup_menus: "M01-G02-M001", menup_extpr: false, ... }, ...]
+ *
+ * When the list is null/undefined/empty all menus are shown (dev fallback).
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Filter a module list down to only the menus the user is permitted to see.
+ * Permission flags are merged onto each returned menu object.
+ * Groups with no visible menus and modules with no visible groups are omitted.
+ *
+ * @param {Array} modulesList - Source module array (usually rawAppModules)
+ * @param {Array|null} userMenusList - Permissions from API / localStorage
+ * @returns {Array} Filtered module array (new objects, rawAppModules not mutated)
+ */
+export const filterAppModules = (modulesList, userMenusList) => {
+  // No permissions list → return all modules unfiltered (dev / unauthenticated)
+  if (!Array.isArray(userMenusList) || userMenusList.length === 0) {
+    return modulesList;
+  }
+
+  // Build a quick look-up: menuId → permission object
+  const permMap = {};
+  for (const p of userMenusList) {
+    if (p?.menup_menus) permMap[p.menup_menus] = p;
+  }
+
+  const filtered = [];
+  for (const mod of modulesList) {
+    // M00 (Recent) has no groups – always keep it
+    if (!mod.groups) {
+      filtered.push({ ...mod });
+      continue;
+    }
+
+    const filteredGroups = [];
     for (const g of mod.groups) {
-      for (const m of g.menus) {
-        items.push({
-          ...toMenu(m),
-          menus_mgrup: g.name,
-          menus_mgrup_id: g.id,
-          menus_mgrup_order: g.order,
-        });
+      const filteredMenus = g.menus
+        .filter((m) => permMap[m.id] !== undefined)
+        .map((m) => ({
+          ...m,
+          // Attach permission flags directly onto the menu object
+          menup_extpr: permMap[m.id].menup_extpr,
+          menup_addpr: permMap[m.id].menup_addpr,
+          menup_edtpr: permMap[m.id].menup_edtpr,
+          menup_delpr: permMap[m.id].menup_delpr,
+        }));
+
+      if (filteredMenus.length > 0) {
+        filteredGroups.push({ ...g, menus: filteredMenus });
       }
     }
+
+    if (filteredGroups.length > 0) {
+      filtered.push({ ...mod, groups: filteredGroups });
+    }
   }
-  return items;
-});
+
+  return filtered;
+};
+
+/**
+ * Build the flat menus array used for search & recent menus.
+ * Accepts any filtered (or unfiltered) module list.
+ *
+ * @param {Array} modulesList
+ * @returns {Array} Flat array of menu items
+ */
+export const buildFlatMenus = (modulesList) =>
+  modulesList.flatMap((mod) => {
+    const items = [];
+    if (mod.groups) {
+      for (const g of mod.groups) {
+        for (const m of g.menus) {
+          items.push({
+            ...toMenu(m),
+            // Carry permission flags through to the flat list
+            menup_extpr: m.menup_extpr,
+            menup_addpr: m.menup_addpr,
+            menup_edtpr: m.menup_edtpr,
+            menup_delpr: m.menup_delpr,
+            menus_mgrup: g.name,
+            menus_mgrup_id: g.id,
+            menus_mgrup_order: g.order,
+          });
+        }
+      }
+    }
+    return items;
+  });
+
+/* ─── Live mutable exports ───────────────────────────────────────────────────
+ *
+ * Components that import `appModules` or `menus` directly get these arrays.
+ * `updateAppModules` splices them in-place so existing imports stay in sync
+ * without a page reload when the user logs in / out.
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+// Initialise from localStorage so a page refresh keeps the filtered view
+const _storedMenus = getStorageData()?.menus;
+const _initialModules = filterAppModules(rawAppModules, _storedMenus);
+
+export const appModules = _initialModules;
+export const menus = buildFlatMenus(_initialModules);
+
+/**
+ * Call this whenever userMenus changes (login / logout / session restore) to
+ * update the mutable `appModules` and `menus` exports in-place.
+ *
+ * @param {Array|null} userMenusList - New permissions array (null = show all)
+ */
+export const updateAppModules = (userMenusList) => {
+  const filtered = filterAppModules(rawAppModules, userMenusList);
+  const flat = buildFlatMenus(filtered);
+
+  // Replace `appModules` array contents in-place
+  appModules.splice(0, appModules.length, ...filtered);
+  // Replace `menus` array contents in-place
+  menus.splice(0, menus.length, ...flat);
+};
 
 // Topbar navigation items
 export const navItems = [
@@ -751,7 +882,7 @@ export const navItems = [
   { to: "/M08/accounting-periods", label: "Periods", icon: "◈" },
   { to: "/M08/fiscal-years", label: "Fiscal Yr", icon: "▣" },
   { to: "/M08/parties", label: "Parties", icon: "⊕" },
-  { to: "/M01/modules", label: "Modules", icon: "⊞" },
+  { to: "/bsuite/modules", label: "Modules", icon: "⊞" },
 ];
 
 // Menu entry used by the topbar launcher to open the module page (/bsuite/modules)

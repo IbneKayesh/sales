@@ -102,4 +102,4 @@ export const amountInWords = (amount) => {
 /* --------------------------------------------------------------------------
    Default signer name used on printed documents (until wired to Settings).
    -------------------------------------------------------------------------- */
-export const DEFAULT_SIGNER_NAME = "Ibne Kayesh";
+export const DEFAULT_SIGNER_NAME = "iKayesh";

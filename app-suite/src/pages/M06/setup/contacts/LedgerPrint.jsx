@@ -15,20 +15,20 @@ import {
 /**
  * Contact Ledger Statement Print component (A4).
  */
-const LedgerPrint = ({ open, onClose, formData = {}, listDataItem = [] }) => {
-  const { business } = useApp();
+const LedgerPrint = ({ open, onClose, listDataItem = [] }) => {
+  const { user, business } = useApp();
 
   const firstRow = listDataItem[0] || {};
   const contact = {
-    cntct_cname: formData.cntct_cname || firstRow.cntct_cname || "",
-    cntct_ccode: formData.cntct_ccode || firstRow.cntct_ccode || "",
-    cntct_ctype: formData.cntct_ctype || firstRow.cntct_ctype || "",
-    cntct_cntps: formData.cntct_cntps || firstRow.cntct_cntps || "",
-    cntct_cntno: formData.cntct_cntno || firstRow.cntct_cntno || "",
-    cntct_email: formData.cntct_email || firstRow.cntct_email || "",
-    cntct_ofadr: formData.cntct_ofadr || firstRow.cntct_ofadr || "",
-    cntct_cntry: formData.cntct_cntry || firstRow.cntct_cntry || "",
-    party_ccode: formData.party_ccode || firstRow.party_ccode || "",
+    cntct_ccode: firstRow.cntct_ccode || "",
+    cntct_ctype: firstRow.cntct_ctype || "",
+    cntct_cname: firstRow.cntct_cname || "",
+    cntct_cntps: firstRow.cntct_cntps || "",
+    cntct_cntno: firstRow.cntct_cntno || "",
+    cntct_email: firstRow.cntct_email || "",
+    cntct_ofadr: firstRow.cntct_ofadr || "",
+    cntct_cntry: firstRow.cntct_cntry || "",
+    party_ccode: firstRow.party_ccode || "",
   };
 
   // Compute running balance
@@ -61,7 +61,7 @@ const LedgerPrint = ({ open, onClose, formData = {}, listDataItem = [] }) => {
     <PrintModal
       open={open}
       onClose={onClose}
-      title={`Ledger - ${contact.cntct_cname || contact.cntct_ccode || "Statement"}`}
+      title={`Ledger - ${contact.cntct_ccode} ~ ${contact.cntct_cname || "Statement"}`}
       mode="a4"
       repeatHeader
       repeatFooter
@@ -69,19 +69,17 @@ const LedgerPrint = ({ open, onClose, formData = {}, listDataItem = [] }) => {
         <PrintHeader
           company={{
             name: business?.bsins_cname,
-            address: business?.bsins_ofadr || business?.bsins_addr,
-            taxId: business?.bsins_bin,
+            contact: business?.bsins_cntct + ", " + business?.bsins_email,
+            address: business?.bsins_addrs + ", " + business?.bsins_timzn,
+            taxId: business?.bsins_binno,
           }}
           title={statementTitle}
           subtitle={contact.cntct_cname || ""}
-          docNoLabel="Contact Code"
-          docNo={contact.cntct_ccode || "—"}
+          docNoLabel="Code"
+          docNo={contact.cntct_ccode}
           dateLabel="Date"
           date={formatDate(new Date())}
           extra={[
-            ...(contact.party_ccode
-              ? [{ label: "Sub Ledger", value: contact.party_ccode }]
-              : []),
             ...(contact.cntct_cntno
               ? [{ label: "Phone", value: contact.cntct_cntno }]
               : []),
@@ -102,7 +100,8 @@ const LedgerPrint = ({ open, onClose, formData = {}, listDataItem = [] }) => {
                 { label: "Address", value: contact.cntct_ofadr },
                 { label: "Country", value: contact.cntct_cntry },
                 { label: "Category", value: contact.cntct_ctype },
-                { label: "Sub Ledger Code", value: contact.party_ccode },
+                { label: "Ledger Code", value: contact.party_ccode },
+                { label: "Closing Balance", value: balanceText },
               ].filter((i) => i.value)}
             />
           </div>
@@ -113,26 +112,22 @@ const LedgerPrint = ({ open, onClose, formData = {}, listDataItem = [] }) => {
               {
                 key: "_idx",
                 header: "#",
-                width: 24,
-                align: "right",
-                render: (r) => r._idx,
+                align: "left",
+                render: (r) => r._idx + ".",
               },
               {
                 key: "jrnlm_trdat",
                 header: "Date",
-                width: 75,
                 render: (r) => formatDate(r.jrnlm_trdat),
               },
               {
                 key: "jrnlm_refno",
                 header: "Ref No",
-                width: 90,
                 render: (r) => r.jrnlm_refno || "—",
               },
               {
                 key: "jrnlc_sorce",
                 header: "Source",
-                width: 70,
                 render: (r) => r.jrnlc_sorce || "—",
               },
               {
@@ -143,21 +138,18 @@ const LedgerPrint = ({ open, onClose, formData = {}, listDataItem = [] }) => {
               {
                 key: "jrnlc_drval",
                 header: "Debit",
-                width: 85,
                 align: "right",
                 render: (r) => (r._dr ? fmt(r._dr) : "—"),
               },
               {
                 key: "jrnlc_crval",
                 header: "Credit",
-                width: 85,
                 align: "right",
                 render: (r) => (r._cr ? fmt(r._cr) : "—"),
               },
               {
                 key: "_balance",
                 header: "Balance",
-                width: 95,
                 align: "right",
                 render: (r) =>
                   `${fmt(Math.abs(r._balance))} ${r._balance >= 0 ? "Dr" : "Cr"}`,
@@ -195,7 +187,7 @@ const LedgerPrint = ({ open, onClose, formData = {}, listDataItem = [] }) => {
           currency={business?.bsins_crncy || "BDT"}
           docName="ledger statement"
           amountInWordsText={amountInWords(Math.abs(closingBalance))}
-          signerName={DEFAULT_SIGNER_NAME}
+          signerName={user?.users_cname || DEFAULT_SIGNER_NAME}
           roles={["Prepared By", "Checked By", "Authorized"]}
         />
       }

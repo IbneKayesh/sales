@@ -139,6 +139,7 @@ const apiLogin = async (options) => {
     //create storage
     if (data.success) {
       const { emply, bsins, users, menus, token } = data.data;
+      console.log(data.data)
       setStorageData({ emply: emply });
       setStorageData({ bsins: bsins });
       setStorageData({ users: users });

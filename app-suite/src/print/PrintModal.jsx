@@ -152,6 +152,14 @@ export default function PrintModal({
           </tfoot>
         )}
       </table>
+      {isPrintSource && !is80mm && (
+        <div className="print-page-info">
+          <span className="print-page-info__date">
+            Printed: {new Date().toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true })}
+          </span>
+          <span className="print-page-info__page"></span>
+        </div>
+      )}
     </div>
   );
 
@@ -326,9 +334,7 @@ export default function PrintModal({
       </div>
 
       {/* Hidden Print Source (triggered by window.print()) */}
-      <div aria-hidden="true" style={{ display: "none" }}>
-        {renderDocument(true)}
-      </div>
+      {renderDocument(true)}
     </>,
     document.body,
   );

@@ -75,7 +75,7 @@ JOIN tmcb_cntct cnt ON pty.party_vndor = cnt.id
 JOIN tmtb_jrnlm jnm ON jnc.jrnlc_jrnlm = jnm.id
 WHERE cnt.id = $1
 AND cnt.cntct_users = $2
-ORDER BY jnm.jrnlm_trdat`;
+ORDER BY TO_CHAR(jnm.jrnlm_trdat, 'YYYY-MM-DD'), jnm.jrnlm_refno`;
 
     const params = [cntct_id, user_c];
     const rows = await dbGetAll(sql, params, `get journal data- ${cntct_id}`);
