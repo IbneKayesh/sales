@@ -1,0 +1,42 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "menup_emply": {
+    "type": "string",
+    "label": "Employee",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Select",
+    "required": true
+  },
+  "menup_menus": {
+    "type": "string",
+    "label": "Menu",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Select",
+    "required": true
+  },
+  "menup_extpr": {
+    "type": "boolean",
+    "label": "Export",
+    "default": false
+  },
+  "menup_addpr": {
+    "type": "boolean",
+    "label": "Add",
+    "default": true
+  },
+  "menup_edtpr": {
+    "type": "boolean",
+    "label": "Edit",
+    "default": true
+  },
+  "menup_delpr": {
+    "type": "boolean",
+    "label": "Delete",
+    "default": true
+  }
+}

@@ -94,4 +94,54 @@ ORDER BY TO_CHAR(jnm.jrnlm_trdat, 'YYYY-MM-DD'), jnm.jrnlm_refno`;
   }
 });
 
+// get-party-ledger
+router.post("/get-party-ledger", async (req, res) => {
+  try {
+    const { party_id, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!party_id || !user_c || !user_b) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: [],
+      });
+    }
+
+    //database action
+const sql = `SELECT
+COALESCE(cnt.cntct_ccode, pty.party_ccode) cntct_ccode, 
+COALESCE(cnt.cntct_ctype, cht.chtac_ctype) cntct_ctype,
+COALESCE(cnt.cntct_cname, pty.party_cname) cntct_cname,
+cnt.cntct_cntps, cnt.cntct_cntno, cnt.cntct_email, cnt.cntct_ofadr, 
+COALESCE(cnt.cntct_cntry, jnm.jrnlm_crncy) cntct_cntry,
+pty.party_ccode, jnc.jrnlc_drval, jnc.jrnlc_crval, jnc.jrnlc_descr,
+COALESCE(NULLIF(jnc.jrnlc_sorce, ''), jnm.jrnlm_trtyp) AS jrnlc_sorce,
+TO_CHAR(jnm.jrnlm_trdat, 'YYYY-MM-DD') jrnlm_trdat, jnm.jrnlm_refno
+FROM tmtb_jrnlc jnc
+JOIN tmtb_party pty ON jnc.jrnlc_party = pty.id
+LEFT JOIN tmcb_cntct cnt ON pty.party_vndor = cnt.id
+JOIN tmtb_jrnlm jnm ON jnc.jrnlc_jrnlm = jnm.id
+JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+WHERE pty.id = $1
+AND pty.party_users = $2
+ORDER BY TO_CHAR(jnm.jrnlm_trdat, 'YYYY-MM-DD'), jnm.jrnlm_refno`;
+
+    const params = [party_id, user_c];
+    const rows = await dbGetAll(sql, params, `get journal data- ${party_id}`);
+    res.json({
+      success: true,
+      message: "Query executed successfully.",
+      data: rows,
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: [],
+    });
+  }
+});
+
 module.exports = router;

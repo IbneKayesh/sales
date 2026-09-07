@@ -109,7 +109,7 @@ const COAForm = ({
           rvnmr={formData.chtac_rvnmr}
         />
       )}
-      {formData?.id && formData?.chtac_child && formData?.chtac_ispst && (
+      {formData?.id && formData?.chtac_ispst && (
         <PartyView listData={partyData} />
       )}
       <div className="form-actions">

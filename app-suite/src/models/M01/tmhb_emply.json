@@ -1,0 +1,42 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "emply_ccode": {
+    "type": "string",
+    "label": "Code",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter code",
+    "required": true
+  },
+  "emply_cname": {
+    "type": "string",
+    "label": "Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter name",
+    "required": true
+  },
+  "emply_pswrd": {
+    "type": "string",
+    "label": "Password",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter password",
+    "required": true
+  },
+  "emply_islgn": {
+    "type": "boolean",
+    "label": "Allow Login",
+    "default": true
+  },
+  "emply_urole": {
+    "type": "string",
+    "label": "Role",
+    "enum": ["USER", "ADMIN", "SADMIN"],
+    "default": "USER",
+    "required": true
+  }
+}

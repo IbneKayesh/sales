@@ -260,6 +260,21 @@ const adjsm_ttype_Options = [
   },
 ];
 
+const ledger_types_Options = [
+  {
+    label: "Capital / Investment",
+    value: "SYS_JV_CAPITAL",
+  },
+  {
+    label: "Daily Expense",
+    value: "SYS_JV_DAY_EXP",
+  },
+  {
+    label: "Govt VAT Tax",
+    value: "SYS_JV_GOV_VAT_TAX",
+  },
+];
+
 export {
   cntry_Options,
   crncy_Options,
@@ -283,4 +298,5 @@ export {
   txmod_Options,
   bndle_Options,
   adjsm_ttype_Options,
+  ledger_types_Options,
 };

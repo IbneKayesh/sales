@@ -1,9 +1,10 @@
 import DataTable from "@/components/DataTable";
 import Badge from "@/components/Badge";
 import ActionButton from "@/components/ActionButton";
-import { IconClose, IconCheck } from "@/icons";
+import { IconClose, IconCheck, IconWallet } from "@/icons";
+import Button from "@/components/Button";
 
-const PartyList = ({ listData, onEdit, onDelete }) => {
+const PartyList = ({ listData, onEdit, onDelete, onStatement }) => {
   const dtColumns = [
     { key: "party_ptype", header: "Category", width: "80px" },
     { key: "chtac_ctype", header: "Ledger Type", width: "80px" },
@@ -41,31 +42,46 @@ const PartyList = ({ listData, onEdit, onDelete }) => {
       width: "110px",
       sortable: false,
       body: (_, row) => (
-        <ActionButton
-          rowData={row}
-          actve={row.party_actve}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        <>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="btn--icon-info"
+            onClick={(e) => {
+              e.stopPropagation();
+              onStatement(row);
+            }}
+            title="Statement"
+          >
+            <IconWallet size={14} className="text-info" />
+          </Button>
+          <ActionButton
+            rowData={row}
+            actve={row.party_actve}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        </>
       ),
     },
   ];
   return (
     <>
-    {/* {JSON.stringify(listData[0])} */}
-    <DataTable
-      columns={dtColumns}
-      data={listData}
-      pageSize={15}
-      sortable
-      searchable
-      striped
-      hoverable
-      exportable
-      exportFilename="data-export.csv"
-      onRowClick={(row) => onEdit(row)}
-      emptyMessage="No data found"
-    /></>
+      {/* {JSON.stringify(listData[0])} */}
+      <DataTable
+        columns={dtColumns}
+        data={listData}
+        pageSize={15}
+        sortable
+        searchable
+        striped
+        hoverable
+        exportable
+        exportFilename="data-export.csv"
+        onRowClick={(row) => onEdit(row)}
+        emptyMessage="No data found"
+      />
+    </>
   );
 };
 export default PartyList;

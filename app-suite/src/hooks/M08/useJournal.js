@@ -15,7 +15,6 @@ import { acprdAPI } from "@/api/M08/acprdAPI.js";
 import { fsyarAPI } from "@/api/M08/fsyarAPI.js";
 import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
 
-
 const useJournal = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
@@ -168,7 +167,6 @@ const useJournal = () => {
     setStopEdit(false);
     getAllDepartments();
     //lines
-    getChartOfAccounts();
     setListDataItem([]);
   };
 
@@ -263,19 +261,18 @@ const useJournal = () => {
   const [chtac_Options, setChtac_Options] = useState([]);
   const [party_Options, setParty_Options] = useState([]);
 
-  const getChartOfAccounts = async () => {
+  const getChartOfAccounts = async (id) => {
     //if (chtac_Options.length > 0) return;
     try {
       const resp = await coaNetworkAPI.getByTrnPageId({
         chtrt_trnid: "SYS_JOURNAL_VOUCHER",
-        chtrt_pegid: "SYS_JV",
+        chtrt_pegid: id,
       });
+      //"SYS_JV"
       const list = resp.data || [];
       //console.log("list", list);
       const listPath = buildPathsCOA(list);
-      const listActive = listPath.filter(
-        (f) => f.party_count > 0 ,
-      );
+      const listActive = listPath.filter((f) => f.party_count > 0);
       //&& f.chtrt_route === "Journal Voucher"
       //console.log(listActive);
       setChtac_Options(listActive);
@@ -297,6 +294,9 @@ const useJournal = () => {
     setFormErrors(newErrors);
     if (f === "jrnlc_chtac") {
       getPartyByCoa(v);
+    }
+    if (f === "ledger_types") {
+      getChartOfAccounts(v);
     }
   };
 

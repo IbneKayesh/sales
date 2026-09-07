@@ -45,7 +45,7 @@ const PartyForm = ({
             disabled={readOnly}
             optionValue="id"
             optionLabel="chtac_cname"
-            optionGrid="chtac_cname:Name,chtac_chtno:COA,party_count:Sub Ledger"
+            optionGrid="chtac_cname:Name,chtac_chtno:COA,party_count:Sub Ledger,grpid_cname:No of Party"
           />
         </div>
         <div className="col-span-9">

@@ -54,8 +54,8 @@ const LedgerPrint = ({ open, onClose, listDataItem = [] }) => {
   const closingBalance = cumulative;
   const balanceText = `${fmt(Math.abs(closingBalance))} ${closingBalance >= 0 ? "Dr" : "Cr"}`;
   const statementTitle = contact.cntct_ctype
-    ? `${contact.cntct_ctype.toUpperCase()} LEDGER STATEMENT`
-    : "CONTACT LEDGER STATEMENT";
+    ? `${contact.cntct_ctype.toUpperCase()} ~ LEDGER STATEMENT`
+    : "PARTY ~ LEDGER STATEMENT";
 
   return (
     <PrintModal

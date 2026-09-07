@@ -3332,6 +3332,179 @@ html[data-layout="boxed"] .layout__main {
 /* Menu cards — inline styles used in JSX */
 
 /* --------------------------------------------------------------------------
+   17b. User Menu Permissions
+   -------------------------------------------------------------------------- */
+
+.menu-permissions__search {
+  max-width: 360px;
+  margin-bottom: var(--sp-3);
+}
+
+.menu-permissions__modules {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.menu-permissions__module {
+  overflow: hidden;
+}
+
+.menu-permissions__module-header {
+  align-items: center;
+  padding: 0.6rem 0.85rem;
+  background-color: var(--header-bg, #f1f5f9);
+  cursor: pointer;
+  user-select: none;
+}
+
+.menu-permissions__module-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.menu-permissions__module-title .page-card__title-wrap {
+  gap: 0;
+}
+
+.menu-permissions__module-title .page-card__title {
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-permissions__module-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.menu-permissions__chevron {
+  font-size: 0.85rem;
+  user-select: none;
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.menu-permissions__chevron--open {
+  transform: rotate(90deg);
+}
+
+.menu-permissions__dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.menu-permissions__module-body {
+  padding: 0.5rem 0.85rem;
+}
+
+.menu-permissions__group {
+  margin: 0.5rem 0;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 4px;
+  background-color: #ffffff;
+}
+
+.menu-permissions__group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background-color: var(--group-header-bg, #f8fafc);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.menu-permissions__group-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.menu-permissions__table-wrap {
+  overflow-x: auto;
+}
+
+.menu-permissions__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.menu-permissions__table thead tr {
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-muted, #64748b);
+  text-align: left;
+  background-color: #fdfdfd;
+}
+
+.menu-permissions__th {
+  padding: 0.4rem 0.75rem;
+  font-weight: 600;
+}
+
+.menu-permissions__th--menu {
+  min-width: 220px;
+}
+
+.menu-permissions__th--perm {
+  width: 90px;
+  text-align: center;
+  padding: 0.4rem 0.5rem;
+}
+
+.menu-permissions__row {
+  border-bottom: 1px solid var(--border-color, #f1f5f9);
+  opacity: 0.65;
+  transition: background-color 0.15s ease;
+}
+
+.menu-permissions__row--assigned {
+  background-color: rgba(59, 130, 246, 0.02);
+  opacity: 1;
+}
+
+.menu-permissions__td {
+  padding: 0.45rem 0.5rem;
+}
+
+.menu-permissions__td--menu {
+  padding: 0.45rem 0.75rem;
+}
+
+.menu-permissions__td--perm {
+  text-align: center;
+}
+
+.menu-permissions__cell-center {
+  display: flex;
+  justify-content: center;
+}
+
+.menu-permissions__menu-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.menu-permissions__menu-meta {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  padding-left: 1.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted, #64748b);
+}
+
+/* --------------------------------------------------------------------------
    18. 12-Column Grid System
    -------------------------------------------------------------------------- */
 

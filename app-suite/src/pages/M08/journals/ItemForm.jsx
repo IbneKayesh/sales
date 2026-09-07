@@ -3,6 +3,7 @@ import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import { IconPlus } from "@/icons";
+import { ledger_types_Options } from "@/utils/vtable";
 
 const ItemForm = ({
   isBusy,
@@ -18,7 +19,21 @@ const ItemForm = ({
   return (
     <div className="form-wrap">
       <div className="grid">
-        <div className="col-span-12">
+        <div className="col-span-3">
+          <Dropdown
+            label="Ledger Type"
+            options={ledger_types_Options}
+            value={formData.ledger_types}
+            onChange={(e) => onChange("ledger_types", e.target.value)}
+            error={formErrors.ledger_types}
+            required
+            placeholder="Select..."
+            disabled={readOnly}
+            optionValue="value"
+            optionLabel="label"
+          />
+        </div>
+        <div className="col-span-9">
           <Dropdown
             label="Ledger"
             options={chtac_Options}
@@ -30,10 +45,10 @@ const ItemForm = ({
             disabled={readOnly}
             optionValue="id"
             optionLabel="chtac_cname"
-            optionGrid = "chtac_cname:Name,chtac_chtno:COA,party_count:Sub Ledger"
+            optionGrid="chtac_cname:Name,chtac_chtno:COA,party_count:Sub Ledger"
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-8">
           <Dropdown
             label="Sub Ledger"
             options={party_Options}
@@ -48,7 +63,7 @@ const ItemForm = ({
             optionGrid="party_cname:Party,party_crbal:Balance,chtac_cname:Chart,party_ptype:Type"
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Dr"
             placeholder="Enter Dr"
@@ -59,7 +74,7 @@ const ItemForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputNumber
             label="Cr"
             placeholder="Enter Cr"

@@ -1,5 +1,4 @@
 import HomePage from "../pages/HomePage";
-import UsersPage from "../pages/UsersPage";
 import TransactionsPage from "../pages/TransactionsPage";
 import ReportsPage from "../pages/ReportsPage";
 import SettingsPage from "../pages/SettingsPage";
@@ -12,7 +11,6 @@ import NotFoundPage from "../pages/NotFoundPage";
 const routes = [
   { path: "/", element: <HomePage /> },
   { path: "/auth/login", element: <LoginPage /> },
-  { path: "/users", element: <UsersPage /> },
   { path: "/transactions", element: <TransactionsPage /> },
   { path: "/reports", element: <ReportsPage /> },
   { path: "/settings", element: <SettingsPage /> },

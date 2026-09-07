@@ -27,6 +27,7 @@ router.post("/login", async (req, res) => {
                       emply_email, emply_lstgn, emply_lstpd, emply_isprm, emply_urole, emply_crdno
                       FROM tmhb_emply emp
                       WHERE emp.emply_actve = TRUE
+                      AND emp.emply_islgn = TRUE
                       AND emp.emply_email = $1
                       AND emp.emply_pswrd = $2`;
     const params_emp = [users_email, users_pswrd];

@@ -66,6 +66,7 @@ const useChartOfAccounts = () => {
       setIsBusy(true);
       const resp = await partyAPI.getByCoa({ party_chtac: id });
       const data = resp.data || {};
+      //console.log(data);
       setPartyData(data);
     } catch (error) {
     } finally {
@@ -92,11 +93,11 @@ const useChartOfAccounts = () => {
     }
   };
 
-  const handleEdit = (rowData) => {
+  const handleEdit = async (rowData) => {
     setPgView("SYS_VW_FRM_1");
     setFormData(rowData);
-    if (rowData.chtac_child && rowData.chtac_ispst) {
-      getPartyData(rowData.id);
+    if (rowData.chtac_ispst) {
+      await getPartyData(rowData.id);
     }
   };
 

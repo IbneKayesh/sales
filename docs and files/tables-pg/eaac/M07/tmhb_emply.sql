@@ -16,6 +16,7 @@ CREATE TABLE tmhb_emply (
   emply_ltokn varchar(50) NOT NULL,
   emply_lstgn timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   emply_lstpd timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  emply_islgn boolean NOT NULL DEFAULT false,
   emply_isprm boolean NOT NULL DEFAULT false,
   emply_urole varchar(50) NOT NULL DEFAULT 'USER',
   -- add more columns for employees

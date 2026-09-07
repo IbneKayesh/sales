@@ -179,8 +179,8 @@ async function dbRunAll(scripts = []) {
       await client.query(sql, params);
 
       const duration = getDurationMs(start).toFixed(2);
-      console.log(`${label} - ${new Date().toLocaleString()} - ${duration} ms`);
-      logIfSlow(start, label, sql);
+      console.log(`${label || "Batch SQL"} - ${new Date().toLocaleString()} - ${duration} ms`);
+      logIfSlow(start, label || "Batch SQL", sql);
     }
 
     await client.query("COMMIT");

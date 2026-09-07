@@ -10,8 +10,11 @@ import useParty from "@/hooks/M08/useParty";
 import PartyList from "./PartyList";
 import PartyForm from "./PartyForm";
 import PartyExisting from "./PartyExisting";
+import LedgerPrint from "@/pages/M06/setup/contacts/LedgerPrint";
+import usePrint from "@/hooks/usePrint";
 
 const PartyPage = () => {
+  const print = usePrint();
   const {
     isBusy,
     pgView,
@@ -35,8 +38,17 @@ const PartyPage = () => {
     handleSubmit,
     //existing
     handleAddNewExt,
-    handleSubmitExt,vndor_Options
+    handleSubmitExt,
+    vndor_Options,
+    //print
+    handleStatement,
+    listDataPrint,
   } = useParty();
+
+  const handleShowPrint = (rowData) => {
+    handleStatement(rowData);
+    print.show();
+  };
 
   return (
     <div className="page-wrap">
@@ -85,6 +97,7 @@ const PartyPage = () => {
               listData={listData}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onStatement={handleShowPrint}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
@@ -113,6 +126,12 @@ const PartyPage = () => {
               vndor_Options={vndor_Options}
             />
           )}
+          {/*Print preview*/}
+          <LedgerPrint
+            open={print.open}
+            onClose={print.hide}
+            listDataItem={listDataPrint}
+          />
         </PageCardBody>
       </PageCard>
     </div>

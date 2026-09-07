@@ -5,8 +5,8 @@ import { buildPaths, buildPathsCOA } from "@/utils/pathBuilder.js";
 import tmtb_party from "@/models/M08/tmtb_party.json";
 const dataModel = generateDataModel(tmtb_party);
 import { partyAPI } from "@/api/M08/partyAPI.js";
-import { coaAPI } from "@/api/M08/coaAPI.js";
 import { coaNetworkAPI } from "@/api/M08/coaNetworkAPI.js";
+import { reportsAPI } from "@/api/M08/reportsAPI.js";
 
 const useParty = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -60,8 +60,16 @@ const useParty = () => {
           f.chtrt_grpid === "SYS_PARTY_MULTIPLE" ||
           (f.chtrt_grpid === "SYS_PARTY_SINGLE" && Number(f.party_count) === 0),
       );
-      //console.log(listPath);
-      setChtac_Options(listActive);
+      //console.log(listActive);
+      //modify listActive SYS_PARTY_MULTIPLE to "Multiple parties", SYS_PARTY_SINGLE to "Single Party"
+      const listModified = listActive.map((item) => ({
+        ...item,
+        grpid_cname:
+          item.chtrt_grpid === "SYS_PARTY_MULTIPLE"
+            ? "Multiple Parties"
+            : "Single Party",
+      }));
+      setChtac_Options(listModified);
     } catch (error) {}
   };
 
@@ -90,8 +98,7 @@ const useParty = () => {
     }
     if (f === "party_chtac") {
       const chtac_id = chtac_Options.find(
-        (opt) =>
-          opt.id === v && opt.chtrt_grpid === "SYS_PARTY_SINGLE",
+        (opt) => opt.id === v && opt.chtrt_grpid === "SYS_PARTY_SINGLE",
       );
       //console.log("chtac_id", chtac_id);
       setFormData((prev) => ({
@@ -244,6 +251,22 @@ const useParty = () => {
     }
   };
 
+  //print
+  const [listDataPrint, setListDataPrint] = useState([]);
+  const handleStatement = async (rowData) => {
+    //console.log("rowData", rowData);
+    try {
+      setIsBusy(true);
+      const resp = await reportsAPI.getPartyLedger({ party_id: rowData.id });
+      const list = resp.data || [];
+      //console.log("list", list);
+      setListDataPrint(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     isBusy,
     pgView,
@@ -269,6 +292,9 @@ const useParty = () => {
     handleAddNewExt,
     handleSubmitExt,
     vndor_Options,
+    //print
+    handleStatement,
+    listDataPrint,
   };
 };
 export default useParty;
