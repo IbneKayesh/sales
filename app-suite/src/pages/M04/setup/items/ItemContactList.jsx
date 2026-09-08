@@ -48,6 +48,7 @@ const ItemContactList = ({ readOnly, listData, onDelete }) => {
       columns={dtColumns}
       data={listData}
       pageSize={15}
+      showRows={false}
       sortable
       searchable={false}
       striped

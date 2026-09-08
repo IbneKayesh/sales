@@ -42,7 +42,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputText
             label="Code"
             placeholder="Enter code"
@@ -52,7 +52,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Type"
             options={ctype_Options}
@@ -61,10 +61,10 @@ const ContactForm = ({
             error={formErrors.cntct_ctype}
             required
             placeholder="Select..."
-            disabled={readOnly}
+            disabled={readOnly || formData.id}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="Source"
             options={sorce_Options}
@@ -87,7 +87,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <InputText
             label="Contact No"
             placeholder="Enter contact number"
@@ -118,7 +118,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-4">
+        <div className="col-span-2">
           <InputText
             label="Trade"
             placeholder="Enter trade"
@@ -128,7 +128,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-4">
           <InputText
             label="Office Address"
             placeholder="Enter office address"
@@ -138,7 +138,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-7">
+        <div className="col-span-4">
           <InputText
             label="Factory Address"
             placeholder="Enter factory address"
@@ -160,7 +160,7 @@ const ContactForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-3">
+        <div className="col-span-2">
           <Dropdown
             label="District/Zone"
             options={dzone_Options}

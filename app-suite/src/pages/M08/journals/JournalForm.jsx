@@ -7,6 +7,8 @@ import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave, IconPlus } from "@/icons";
 import { jrnlm_trtyp_Options } from "@/utils/vtable.js";
+import { amountInWords } from "@/utils/ntw.js";
+import { validNumber } from "@/utils/misc.js";
 
 const JournalForm = ({
   isBusy,
@@ -131,6 +133,17 @@ const JournalForm = ({
         </div>
         <div className="col-span-2">
           <InputLabel label="Credit Value" value={formData.jrnlm_crval} />
+        </div>
+        <div className="col-span-12">
+          <InputLabel
+            label="Inwards"
+            value={amountInWords(
+              validNumber(formData.jrnlm_drval) >
+                validNumber(formData.jrnlm_crval)
+                ? formData.jrnlm_drval
+                : formData.jrnlm_crval,
+            )}
+          />
         </div>
       </div>
       {formData?.id && (

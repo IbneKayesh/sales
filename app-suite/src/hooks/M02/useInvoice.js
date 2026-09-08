@@ -448,9 +448,10 @@ const useInvoice = () => {
   };
 
   const getExpnPaym = async () => {
-    if (invcs_Options.length > 0) {
-      return;
-    }
+    // if (invcs_Options.length > 0) {
+    //   return;
+    // updated balance
+    // }
     try {
       const resp = await coaNetworkAPI.getSalesInvoiceExpPaym({});
       const list = resp.data || [];

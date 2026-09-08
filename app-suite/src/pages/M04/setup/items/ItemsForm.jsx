@@ -166,7 +166,7 @@ const ItemsForm = ({
             error={formErrors.items_itype}
             placeholder="Select..."
             required
-            disabled={readOnly}
+            disabled={readOnly || formData.id}
           />
         </div>
         <div className="col-span-2">

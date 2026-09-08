@@ -2,7 +2,7 @@ import ModulePage from "@/pages/M01/ModulePage";
 import DepartmentPage from "@/pages/M01/setup/departments/DepartmentPage";
 import SectionPage from "@/pages/M01/setup/sections/SectionPage";
 import GridOptionsPage from "@/pages/M01/GridOptionsPage";
-import PendingProcessPage from "@/pages/M01/PendingProcessPage";
+import DataProcessPage from "@/pages/M01/DataProcessPage";
 import ThemePage from "@/pages/M01/ThemePage";
 import WorkSpacePage from "@/pages/WorkSpacePage";
 import FeaturePage from "@/pages/M01/features/FeaturePage";
@@ -14,7 +14,7 @@ const routes = [
   { path: "/bsuite/theme", element: <ThemePage /> },
   { path: "/bsuite/features", element: <FeaturePage /> },
   { path: "/settings/grid-options", element: <GridOptionsPage /> },
-  { path: "/settings/pending-process", element: <PendingProcessPage /> },
+  { path: "/settings/data-process", element: <DataProcessPage /> },
   { path: "/settings/departments", element: <DepartmentPage /> },
   { path: "/settings/sections", element: <SectionPage /> },
   { path: "/settings/users", element: <UsersPage /> },

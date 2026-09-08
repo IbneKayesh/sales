@@ -926,14 +926,25 @@ router.post("/get-details-by-master", async (req, res) => {
 
     //database action
     const sql = `SELECT mrd.*,
-    itm.items_iname, itm.items_szqty, unt.units_cname AS runit_uname, sunit.units_cname as sunit_cname, prc.price_cname,
+    itm.items_iname, itm.items_pkqty, itm.items_szqty,
+    prc.price_cname,
+    runit.units_cname as runit_cname,
+    punit.units_cname as punit_cname,
+    sunit.units_cname as sunit_cname,
+    sgrup.sgrup_cname as sgrup_cname,
+    scatg.scatg_cname as scatg_cname,
+    brand.brand_cname as brand_cname,  
      0 as edit_stop
     FROM tmpb_mrrdc mrd
-    LEFT JOIN tmib_items itm ON mrd.mrrdc_items = itm.id
-    LEFT JOIN tmib_price prc ON mrd.mrrdc_price = prc.id
+    JOIN tmib_items itm ON mrd.mrrdc_items = itm.id
+    JOIN tmib_price prc ON mrd.mrrdc_price = prc.id
                             AND itm.id = prc.price_items
-    LEFT JOIN tmib_units unt ON mrd.mrrdc_units = unt.id
-    LEFT JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+    JOIN tmib_units runit ON mrd.mrrdc_units = runit.id
+    JOIN tmib_units punit ON itm.items_punit = punit.id
+    JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+    JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+    JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
+    JOIN tmib_brand brand ON itm.items_brand = brand.id
     WHERE mrd.mrrdc_users = $1
     AND mrd.mrrdc_mrrdm = $2
     ORDER BY mrd.mrrdc_items ASC`;

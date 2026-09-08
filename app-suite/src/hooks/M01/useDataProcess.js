@@ -4,9 +4,9 @@ import validate, { generateDataModel } from "@/models/validator";
 import tmib_brand from "@/models/M04/tmib_brand.json";
 const dataModel = generateDataModel(tmib_brand);
 import { departmentAPI } from "@/api/M01/departmentAPI.js";
-import { pendingProcessAPI } from "@/api/M01/pendingProcessAPI.js";
+import { dataProcessAPI } from "@/api/M01/dataProcessAPI.js";
 
-const usePendingProcess = () => {
+const useDataProcess = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
   const [pgView, setPgView] = useState("SYS_VW_LST_1");
   const [pgId, setPgId] = useState("M04-M0005");
@@ -76,10 +76,10 @@ const usePendingProcess = () => {
       let resp = { success: false, message: "Data not found" };
       switch (rowData) {
         case "PRODUCT_AVG_COST":
-          resp = await pendingProcessAPI.avgProductCost(reqBody);
+          resp = await dataProcessAPI.avgProductCost(reqBody);
           break;
         case "SUB_LEDGER_CURRENT_BALANCE":
-          resp = await pendingProcessAPI.subLedgerCurrentBalance(reqBody);
+          resp = await dataProcessAPI.subLedgerCurrentBalance(reqBody);
           break;
         default:
           break;
@@ -124,4 +124,4 @@ const usePendingProcess = () => {
     handleSubmit,
   };
 };
-export default usePendingProcess;
+export default useDataProcess;

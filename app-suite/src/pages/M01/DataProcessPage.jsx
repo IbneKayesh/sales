@@ -11,7 +11,7 @@ import Badge from "@/components/Badge";
 import Button from "@/components/Button";
 import { IconInfo, IconPurchase } from "@/icons";
 import Dropdown from "@/components/Dropdown";
-import usePendingProcess from "@/hooks/M01/usePendingProcess";
+import useDataProcess from "@/hooks/M01/useDataProcess";
 
 const setupGroups = [
   {
@@ -60,7 +60,7 @@ const setupGroups = [
   },
 ];
 
-const PendingProcessPage = () => {
+const DataProcessPage = () => {
   const {
     isBusy,
     pgView,
@@ -80,7 +80,7 @@ const PendingProcessPage = () => {
     handleEdit,
     handleCancel,
     handleSubmit,
-  } = usePendingProcess();
+  } = useDataProcess();
 
   return (
     <div className="page-wrap">
@@ -154,4 +154,4 @@ const PendingProcessPage = () => {
   );
 };
 
-export default PendingProcessPage;
+export default DataProcessPage;

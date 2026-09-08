@@ -233,7 +233,7 @@ router.post("/create", async (req, res) => {
         party_id,
         pay_value || 0,
         0,
-        "Clear Liability / Supplier Payable",
+        "Clear Liability / Local Vendor Payable",
         ttype,
         trn_id,
         "MASTER",
@@ -241,7 +241,7 @@ router.post("/create", async (req, res) => {
         user_s,
         user_s,
       ],
-      label: `Clear Liability / Supplier / Payable ${newTrnNo_JV}`,
+      label: `Clear Liability / Local Vendor / Payable ${newTrnNo_JV}`,
     });
     //SYS_PAYMENT.SYS_PAYMENT_LOCAL.SYS_AST_PAYMENT
     scripts.push({
@@ -261,7 +261,7 @@ router.post("/create", async (req, res) => {
         party_id_pay,
         0,
         pay_value || 0,
-        "Payment Liability / Supplier Payable",
+        "Payment Liability / Local Vendor Payable",
         ttype,
         trn_id,
         "MASTER",
@@ -269,7 +269,7 @@ router.post("/create", async (req, res) => {
         user_s,
         user_s,
       ],
-      label: `Payment Liability / Supplier / Payable ${newTrnNo_JV}`,
+      label: `Payment Liability / Local Vendor / Payable ${newTrnNo_JV}`,
     });
 
     await dbRunAll(scripts);

@@ -1,5 +1,6 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
+import ConvertUOM from "@/components/common/ConvertUOM";
 
 // Column visibility is configured in M01 SetupPage and passed in as params
 // (cfColumns). No storage read/write happens here.
@@ -33,7 +34,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
         return (
           <>
             {Number(rowData.mrrdc_itrat).toFixed(4)} x{" "}
-            {Number(rowData.mrrdc_itqty).toFixed(4)} {rowData.runit_uname} ={" "}
+            {Number(rowData.mrrdc_itqty).toFixed(4)} {rowData.runit_cname} ={" "}
             {Number(rowData.mrrdc_itamt).toFixed(4)}
           </>
         );
@@ -107,6 +108,43 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
       },
     },
     {
+      key: "punit_cname",
+      header: "Pack",
+      width: "80px",
+      body: (_, rowData) => {
+        return (
+          <>
+            <ConvertUOM
+              qty={rowData.mrrdc_itqty}
+              dfQty={rowData.items_pkqty}
+              runit={rowData.runit_cname}
+              punit={rowData.punit_cname}
+            />
+          </>
+        );
+      },
+    },
+    {
+      key: "sunit_cname",
+      header: "Size",
+      width: "80px",
+      body: (_, rowData) => {
+        return (
+          <>
+            <ConvertUOM
+              qty={rowData.mrrdc_itqty}
+              dfQty={rowData.items_szqty}
+              runit={rowData.runit_cname}
+              punit={rowData.sunit_cname}
+            />
+          </>
+        );
+      },
+    },
+    { key: "sgrup_cname", header: "sGroup", width: "80px" },
+    { key: "scatg_cname", header: "sCategory", width: "80px" },
+    { key: "brand_cname", header: "Brand", width: "80px" },
+    {
       key: "actions",
       header: "Actions",
       width: "110px",
@@ -130,6 +168,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
         columns={dtColumns}
         data={listData}
         pageSize={50}
+        showRows={false}
         sortable
         searchable={false}
         striped

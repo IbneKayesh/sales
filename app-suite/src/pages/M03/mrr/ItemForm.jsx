@@ -30,7 +30,7 @@ const ItemForm = ({
             disabled={readOnly}
             optionValue="price_id"
             optionLabel="price_cname"
-            optionGrid="price_cname:Item, runit_uname:Unit, price_lprat:l.Purchase, price_gdstk:g.Stock, items_itype:Type, items_prvat:VAT (%), items_ptvat:VAT Type"
+            optionGrid="price_cname:Item, runit_cname:Unit, price_lprat:l.Purchase, price_gdstk:g.Stock, items_itype:Type, items_prvat:VAT (%), items_ptvat:VAT Type"
           />
         </div>
         <div className="col-span-3">
