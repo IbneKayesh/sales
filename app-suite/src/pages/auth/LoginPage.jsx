@@ -186,7 +186,7 @@ export default function LoginPage() {
 
         {/* Demo hint */}
         <p className="login-page__hint">
-          bSuite©{new Date().getFullYear()}
+          bSuite © {new Date().getFullYear()} - Crafting Digital Excellence
         </p>
 
         {/* Backend status */}

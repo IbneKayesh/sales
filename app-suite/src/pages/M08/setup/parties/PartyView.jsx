@@ -20,7 +20,8 @@ const PartyView = ({ listData }) => {
     },
     { key: "party_cname", header: "Party Name", width: "220px" },
     { key: "vndor_cname", header: "Vendor Name", width: "220px" },
-    { key: "party_opbal", header: "Opening Balance", width: "80px" },
+    { key: "party_opbal", header: "Opening", width: "80px" },
+    { key: "party_crbal", header: "Balance", width: "80px" },
   ];
   return (
     <DataTable

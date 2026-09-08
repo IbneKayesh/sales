@@ -166,5 +166,10 @@
     "type": "boolean",
     "label": "Stop Process",
     "default": false
+  },
+  "items_stadj": {
+    "type": "boolean",
+    "label": "Stop Adjustment",
+    "default": false
   }
 }

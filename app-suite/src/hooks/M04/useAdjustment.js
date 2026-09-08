@@ -337,7 +337,7 @@ const useAdjustment = () => {
     setFormErrors(newErrors);
     if (f === "adjsc_refid") {
       const stock_id = items_Options.find((opt) => opt.stock_id === v);
-      console.log("stock_id", stock_id);
+      //console.log("stock_id", stock_id);
       setFormDataItem((prev) => ({
         ...prev,
         adjsc_price: stock_id?.stock_price,
@@ -348,8 +348,8 @@ const useAdjustment = () => {
         adjsc_itamt: stock_id?.stock_cprat || 0 * 1,
         adjsc_refid: stock_id?.stock_id || 0,
         stock_ohqty: stock_id?.stock_ohqty,
-        party_id: stock_id?.party_id,
-        chtac_id: stock_id?.chtac_id,
+        party_id: stock_id?.party_id || "-",
+        chtac_id: stock_id?.chtac_id || "-",
       }));
     }
   };
@@ -357,7 +357,7 @@ const useAdjustment = () => {
   const handleAddToListItem = (value) => {
     const newErrors = validate(formDataItem, tmib_adjsc);
     setFormErrors(newErrors);
-    console.log("newErrors", newErrors);
+    //console.log("newErrors", newErrors);
     if (Object.keys(newErrors).length > 0) {
       return;
     }
@@ -396,8 +396,15 @@ const useAdjustment = () => {
       ...formDataItem,
       id: generateGuid(),
       items_iname: items_iname?.items_iname || "Invalid Item",
-      price_cname: items_iname?.price_cname || "Invalid Unit",
-      units_cname: items_iname?.units_cname || "Invalid Unit",
+      price_cname: items_iname?.price_cname || "Invalid Item",
+      runit_cname: items_iname?.runit_cname || "Invalid Retail Unit",
+      items_pkqty: items_iname?.items_pkqty || 1,
+      punit_cname: items_iname?.punit_cname || "Invalid Pack Unit",
+      items_szqty: items_iname?.items_szqty || 1,
+      sunit_cname: items_iname?.sunit_cname || "Invalid Size Unit",
+      sgrup_cname: items_iname?.sgrup_cname || "Invalid Sub Group",
+      scatg_cname: items_iname?.scatg_cname || "Invalid Sub Category",
+      brand_cname: items_iname?.brand_cname || "Invalid Brand",
       adjsc_actve: true,
     };
     const newItemList = [...listDataItem, newItem];

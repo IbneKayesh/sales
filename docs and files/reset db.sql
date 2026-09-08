@@ -33,3 +33,5 @@ delete from tmmb_bosfg;
 --adjustment
 delete from tmib_adjsc;
 delete from tmib_adjsm;
+--stock merge trnsactions
+delete from tmib_stkmg;

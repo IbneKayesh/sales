@@ -3,6 +3,8 @@ import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import { IconPlus } from "@/icons";
+import InputLabel from "@/components/InputLabel";
+import { amountInWords } from "@/utils/ntw.js";
 
 const PaymentForm = ({
   isBusy,
@@ -64,9 +66,19 @@ const PaymentForm = ({
             disabled={readOnly}
           />
         </div>
+        <div className="col-span-12">
+          <InputLabel
+            label="Amount in words"
+            value={amountInWords(formData.mrrpy_pdamt)}
+          />
+        </div>
       </div>
       <div className="form-actions">
-        <Button variant="outline" onClick={onAddToList} disabled={isBusy || readOnly}>
+        <Button
+          variant="outline"
+          onClick={onAddToList}
+          disabled={isBusy || readOnly}
+        >
           <IconPlus size={16} className="icon-left" />
           Add
         </Button>

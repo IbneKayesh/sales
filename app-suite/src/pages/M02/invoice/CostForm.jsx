@@ -4,6 +4,8 @@ import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import { IconPlus } from "@/icons";
 import { csmod_Options, clmod_Options } from "@/utils/vtable";
+import InputLabel from "@/components/InputLabel";
+import { amountInWords } from "@/utils/ntw.js";
 
 const CostForm = ({
   isBusy,
@@ -75,6 +77,12 @@ const CostForm = ({
             onChange={(e) => onChange("invcs_notes", e.target.value)}
             error={formErrors.invcs_notes}
             disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-12">
+          <InputLabel
+            label="Amount in words"
+            value={amountInWords(formData.invcs_value)}
           />
         </div>
       </div>

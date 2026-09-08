@@ -744,9 +744,14 @@ const useInvoice = () => {
       id: generateGuid(),
       items_iname: items_iname?.items_iname || "Invalid Item",
       price_cname: items_iname?.price_cname || "Invalid Item",
-      runit_uname: items_iname?.runit_uname || "Invalid Unit",
-      sunit_cname: items_iname?.sunit_cname || "Invalid Unit",
-      items_szqty: items_iname?.items_szqty || "0",
+      runit_cname: items_iname?.runit_cname || "Invalid Retail Unit",
+      items_pkqty: items_iname?.items_pkqty || 1,
+      punit_cname: items_iname?.punit_cname || "Invalid Pack Unit",
+      items_szqty: items_iname?.items_szqty || 1,
+      sunit_cname: items_iname?.sunit_cname || "Invalid Size Unit",
+      sgrup_cname: items_iname?.sgrup_cname || "Invalid Sub Group",
+      scatg_cname: items_iname?.scatg_cname || "Invalid Sub Category",
+      brand_cname: items_iname?.brand_cname || "Invalid Brand",
       invcc_actve: true,
     };
     const newItemList = [...listDataItem, newItem];

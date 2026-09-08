@@ -476,11 +476,24 @@ router.post("/get-stock-line", async (req, res) => {
       });
     }
 
-    const sql = `SELECT stk.*, prc.price_cname, itm.items_iname, unt.units_cname
-         FROM tmib_stock stk
-         JOIN tmib_price prc ON stk.stock_price = prc.id
-         JOIN tmib_items itm ON stk.stock_items = itm.id
-         JOIN tmib_units unt ON itm.items_runit = unt.id
+    const sql = `SELECT stk.*, 
+    itm.items_iname, itm.items_pkqty, itm.items_szqty,
+    prc.price_cname,    
+    runit.units_cname as runit_cname,
+    punit.units_cname as punit_cname,
+    sunit.units_cname as sunit_cname,
+    sgrup.sgrup_cname as sgrup_cname,
+    scatg.scatg_cname as scatg_cname,
+    brand.brand_cname as brand_cname
+        FROM tmib_stock stk
+        JOIN tmib_price prc ON stk.stock_price = prc.id
+        JOIN tmib_items itm ON stk.stock_items = itm.id
+        LEFT JOIN tmib_units runit ON itm.items_runit = runit.id
+        LEFT JOIN tmib_units punit ON itm.items_punit = punit.id
+        LEFT JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+        LEFT JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+        LEFT JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
+        LEFT JOIN tmib_brand brand ON itm.items_brand = brand.id
          WHERE stk.stock_ohqty > 0
          AND stk.stock_dpart = $1
          AND stk.stock_users = $2

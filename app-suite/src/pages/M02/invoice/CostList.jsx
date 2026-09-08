@@ -1,13 +1,30 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
+import { amountInWords } from "@/utils/ntw.js";
 
 const CostList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "party_cname", header: "Cost Name", width: "200px" },
     { key: "invcs_csmod", header: "Cost Mode", width: "80px" },
     { key: "invcs_clmod", header: "Calculation Mode", width: "100px" },
-    { key: "invcs_value", header: "Amount", width: "100px" },
-    { key: "invcs_notes", header: "Notes", width: "100px" },
+    {
+      key: "invcs_value",
+      header: "Amount",
+      width: "100px",
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.invcs_value ?? 0), 0);
+      },
+    },
+    {
+      key: "invcs_notes",
+      header: "Notes",
+      width: "100px",
+      footer: (_, row) => {
+        return amountInWords(
+          row.reduce((sum, row) => sum + Number(row.invcs_value ?? 0), 0),
+        );
+      },
+    },
     {
       key: "actions",
       header: "Actions",
@@ -17,7 +34,8 @@ const CostList = ({ readOnly, listData, onEdit, onDelete }) => {
         <ActionButton
           rowData={row}
           actve={row.invcs_actve}
-          onEdit={onEdit}
+          //onEdit={onEdit}
+          onCopy={onEdit}
           onDelete={onDelete}
         />
       ),
@@ -31,6 +49,7 @@ const CostList = ({ readOnly, listData, onEdit, onDelete }) => {
         columns={dtColumns}
         data={listData}
         pageSize={15}
+        showRows={false}
         sortable
         searchable={false}
         striped

@@ -3,6 +3,9 @@ import InputText from "@/components/InputText";
 import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import { IconPlus } from "@/icons";
+import InputLabel from "@/components/InputLabel";
+import { amountInWords } from "@/utils/ntw.js";
+
 
 const PaymentForm = ({
   isBusy,
@@ -61,6 +64,12 @@ const PaymentForm = ({
             onChange={(e) => onChange("invpy_notes", e.target.value)}
             error={formErrors.invpy_notes}
             disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-12">
+          <InputLabel
+            label="Amount in words"
+            value={amountInWords(formData.invpy_pdamt)}
           />
         </div>
       </div>

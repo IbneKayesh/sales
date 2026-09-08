@@ -7,7 +7,6 @@ const {
   GenNewTrn,
   getCurrentPeriod,
   getCurrencyRate,
-  getCoaAssetInputVat,
 } = require("../../db/genHelper");
 
 // get all
@@ -686,14 +685,25 @@ router.post("/get-details-by-master", async (req, res) => {
 
     //database action
     const sql = `SELECT ajc.*,
-    itm.items_iname, itm.items_szqty, unt.units_cname AS runit_uname, sunit.units_cname as sunit_cname, prc.price_cname,
+    itm.items_iname, itm.items_pkqty, itm.items_szqty,
+    prc.price_cname,
+    runit.units_cname as runit_cname,
+    punit.units_cname as punit_cname,
+    sunit.units_cname as sunit_cname,
+    sgrup.sgrup_cname as sgrup_cname,
+    scatg.scatg_cname as scatg_cname,
+    brand.brand_cname as brand_cname,
     0 stock_ohqty, 0 as edit_stop
     FROM tmib_adjsc ajc
-    LEFT JOIN tmib_items itm ON ajc.adjsc_items = itm.id
-    LEFT JOIN tmib_price prc ON ajc.adjsc_price = prc.id
+    JOIN tmib_items itm ON ajc.adjsc_items = itm.id
+    JOIN tmib_price prc ON ajc.adjsc_price = prc.id
                             AND itm.id = prc.price_items
-    LEFT JOIN tmib_units unt ON ajc.adjsc_units = unt.id
-    LEFT JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+    JOIN tmib_units runit ON ajc.adjsc_units = runit.id
+    JOIN tmib_units punit ON itm.items_punit = punit.id
+    JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+    JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+    JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
+    JOIN tmib_brand brand ON itm.items_brand = brand.id
     WHERE ajc.adjsc_users = $1
     AND ajc.adjsc_adjsm = $2
     ORDER BY ajc.adjsc_items ASC`;

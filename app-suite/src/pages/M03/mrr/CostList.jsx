@@ -1,13 +1,30 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
+import { amountInWords } from "@/utils/ntw.js";
 
 const CostList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "party_cname", header: "Cost Name", width: "200px" },
     { key: "mrrcs_csmod", header: "Cost Mode", width: "80px" },
     { key: "mrrcs_clmod", header: "Calculation Mode", width: "100px" },
-    { key: "mrrcs_value", header: "Amount", width: "100px" },
-    { key: "mrrcs_notes", header: "Notes", width: "100px" },
+    {
+      key: "mrrcs_value",
+      header: "Amount",
+      width: "100px",
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.mrrcs_value ?? 0), 0);
+      },
+    },
+    {
+      key: "mrrcs_notes",
+      header: "Notes",
+      width: "100px",
+      footer: (_, row) => {
+        return amountInWords(
+          row.reduce((sum, row) => sum + Number(row.mrrcs_value ?? 0), 0),
+        );
+      },
+    },
     {
       key: "actions",
       header: "Actions",
@@ -32,6 +49,7 @@ const CostList = ({ readOnly, listData, onEdit, onDelete }) => {
         columns={dtColumns}
         data={listData}
         pageSize={15}
+        showPageSize={false}
         sortable
         searchable={false}
         striped

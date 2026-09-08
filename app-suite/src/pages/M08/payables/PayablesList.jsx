@@ -2,11 +2,19 @@ import DataTable from "@/components/DataTable";
 import { IconDollar } from "@/icons";
 import Button from "@/components/Button";
 import { getRelativeDays } from "@/utils/datetime.js";
+import { amountInWords } from "@/utils/ntw.js";
 
 const PayablesList = ({ listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "dpart_cname", header: "Department", width: "80px" },
-    { key: "cntct_cname", header: "Name", width: "80px" },
+    {
+      key: "cntct_cname",
+      header: "Name",
+      width: "80px",
+      footer: (_, row) => {
+        return listData.length + " lines";
+      },
+    },
     { key: "mrrdm_ttype", header: "Type", width: "80px" },
     { key: "mrrpy_refno", header: "Ref No", width: "80px" },
     {
@@ -15,8 +23,24 @@ const PayablesList = ({ listData, onEdit, onDelete }) => {
       width: "80px",
       body: (v) => getRelativeDays(v),
     },
-    { key: "mrrpy_notes", header: "Notes", width: "80px" },
-    { key: "mrrpy_duamt", header: "Amount", width: "80px" },
+    {
+      key: "mrrpy_notes",
+      header: "Notes",
+      width: "80px",
+      footer: (_, row) => {
+        return amountInWords(
+          row.reduce((sum, row) => sum + Number(row.mrrpy_duamt ?? 0), 0),
+        );
+      },
+    },
+    {
+      key: "mrrpy_duamt",
+      header: "Amount",
+      width: "80px",
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.mrrpy_duamt ?? 0), 0);
+      },
+    },
     {
       key: "actions",
       header: "Actions",

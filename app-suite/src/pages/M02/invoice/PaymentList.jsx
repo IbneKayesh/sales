@@ -1,6 +1,7 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
 import { formatDate } from "@/utils/datetime";
+import { amountInWords } from "@/utils/ntw.js";
 
 const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
@@ -11,8 +12,24 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
       width: "100px",
       body: (v) => formatDate(v),
     },
-    { key: "invpy_pdamt", header: "Amount", width: "80px" },
-    { key: "invpy_refno", header: "Ref No", width: "100px" },
+    {
+      key: "invpy_pdamt",
+      header: "Amount",
+      width: "80px",
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.invpy_pdamt ?? 0), 0);
+      },
+    },
+    {
+      key: "invpy_refno",
+      header: "Ref No",
+      width: "100px",
+      footer: (_, row) => {
+        return amountInWords(
+          row.reduce((sum, row) => sum + Number(row.invpy_pdamt ?? 0), 0),
+        );
+      },
+    },
     { key: "invpy_notes", header: "Notes", width: "100px" },
     {
       key: "actions",
@@ -23,7 +40,8 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
         <ActionButton
           rowData={row}
           actve={row.invpy_actve}
-          onEdit={onEdit}
+          //onEdit={onEdit}
+          onCopy={onEdit}
           onDelete={onDelete}
         />
       ),
@@ -37,6 +55,7 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
         columns={dtColumns}
         data={listData}
         pageSize={15}
+        showRows={false}
         sortable
         searchable={false}
         striped

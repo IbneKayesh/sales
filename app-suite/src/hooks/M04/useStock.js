@@ -99,7 +99,7 @@ const useStock = () => {
     if (listDataItem?.length > 0) {
       const isSimilar = listDataItem.find(
         (opt) => opt.stock_price === row.stock_price,
-      );
+      );      
       if (!isSimilar) {
         showToast(`Select similar > ${listDataItem[0]?.price_cname}`, {
           type: "warning",
@@ -107,7 +107,6 @@ const useStock = () => {
         return;
       }
     }
-
     const newItemList = [...(listDataItem || []), row];
     setListDataItem(newItemList);
   };

@@ -73,6 +73,7 @@ const ItemsList = ({ readOnly, listData, onEdit, onDelete }) => {
         columns={dtColumns}
         data={listData}
         pageSize={30}
+        showPageSize={false}
         sortable
         searchable={false}
         striped

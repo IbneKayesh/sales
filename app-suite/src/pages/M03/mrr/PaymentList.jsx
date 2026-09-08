@@ -55,6 +55,7 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
         columns={dtColumns}
         data={listData}
         pageSize={15}
+        showPageSize={false}
         sortable
         searchable={false}
         striped

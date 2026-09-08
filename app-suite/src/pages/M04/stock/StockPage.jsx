@@ -82,16 +82,18 @@ const StockPage = () => {
                 </div>
                 {listDataItem?.map((item) => (
                   <div key={item.id} className="col-span-12">
-                    <Chip variant="success" icon={<IconCheck size={12} />}>
-                      {item.price_cname}: {item.stock_ohqty} {item.units_cname}
+                    <Chip variant="info" icon={<IconCheck size={12} />}>
+                      {item.stock_trnno} - {item.price_cname}:{" "}
+                      {item.stock_ohqty} {item.runit_cname}
                     </Chip>
                   </div>
                 ))}
 
                 {listDataItem?.length > 0 && (
                   <div className="col-span-12">
-                    <Chip variant="danger" icon={<IconPlus size={12} />}>
-                      Total: {listDataItem[0]?.price_cname}{", Total = "}
+                    <Chip variant="success" icon={<IconPlus size={12} />}>
+                      Total: {listDataItem[0]?.price_cname}
+                      {", Total = "}
                       {listDataItem.reduce(
                         (total, item) => total + Number(item.stock_ohqty || 0),
                         0,

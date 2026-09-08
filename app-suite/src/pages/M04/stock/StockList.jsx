@@ -1,12 +1,14 @@
 import DataTable from "@/components/DataTable";
 import NegativeValue from "@/components/common/NegativeValue";
 import { getRelativeDays, formatDate } from "@/utils/datetime.js";
+import ConvertUOM from "@/components/common/ConvertUOM";
+import Badge from "@/components/Badge";
 
 const StockList = ({ cfColumns = [], listData, onEdit }) => {
   const dtColumns = [
     { key: "price_cname", header: "Name", width: "80px" },
     { key: "items_iname", header: "Item", width: "80px" },
-    { key: "units_cname", header: "Unit", width: "80px" },
+    { key: "runit_cname", header: "Unit", width: "80px" },
     { key: "stock_sorce", header: "Source", width: "80px" },
     { key: "stock_trnno", header: "Trn", width: "80px" },
     {
@@ -94,7 +96,46 @@ const StockList = ({ cfColumns = [], listData, onEdit }) => {
       key: "stock_ohqty",
       header: "OHQ",
       width: "80px",
-      body: (_, row) => <NegativeValue value={row.stock_ohqty} />,
+      body: (_, row) => (
+        <>
+          <NegativeValue value={row.stock_ohqty} /> {row.units_cname}
+        </>
+      ),
+    },
+
+    {
+      key: "punit_cname",
+      header: "Pack",
+      width: "80px",
+      body: (_, row) => {
+        return (
+          <>
+            <ConvertUOM
+              qty={row.stock_ohqty}
+              dfQty={row.items_pkqty}
+              runit={row.runit_cname}
+              punit={row.punit_cname}
+            />
+          </>
+        );
+      },
+    },
+    {
+      key: "sunit_cname",
+      header: "Size",
+      width: "80px",
+      body: (_, row) => {
+        return (
+          <>
+            <ConvertUOM
+              qty={row.stock_ohqty}
+              dfQty={row.items_szqty}
+              runit={row.runit_cname}
+              punit={row.sunit_cname}
+            />
+          </>
+        );
+      },
     },
     {
       key: "stock_cprat",
@@ -131,10 +172,12 @@ const StockList = ({ cfColumns = [], listData, onEdit }) => {
       header: "Notes",
       width: "80px",
     },
+    { key: "sgrup_cname", header: "sGroup", width: "80px" },
+    { key: "scatg_cname", header: "sCategory", width: "80px" },
+    { key: "brand_cname", header: "Brand", width: "80px" },
   ];
   return (
     <>
-
       <DataTable
         columns={dtColumns}
         data={listData}
@@ -150,6 +193,10 @@ const StockList = ({ cfColumns = [], listData, onEdit }) => {
         autofit
         cfColumns={cfColumns}
       />
+
+      <Badge variant="info" dot="true" className="mt-2">
+        Click to select line stock: Merge multiple stock lines of the same item into a single line stock.
+      </Badge>
     </>
   );
 };

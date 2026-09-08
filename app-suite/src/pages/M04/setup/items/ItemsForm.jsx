@@ -284,13 +284,24 @@ const ItemsForm = ({
             disabled={readOnly}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1">
           <Dropdown
             label="Stop Process"
             options={bool_Options}
             value={formData.items_stprc}
             onChange={(e) => onChange("items_stprc", e.target.value)}
             error={formErrors.items_stprc}
+            placeholder="Select..."
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-1">
+          <Dropdown
+            label="Stop Adjustment"
+            options={bool_Options}
+            value={formData.items_stadj}
+            onChange={(e) => onChange("items_stadj", e.target.value)}
+            error={formErrors.items_stadj}
             placeholder="Select..."
             disabled={readOnly}
           />

@@ -276,7 +276,7 @@ router.post("/create", async (req, res) => {
 
     res.json({
       success: true,
-      message: "Payment created successfully",
+      message: `${newTrnNo_JV} - Payment created successfully`,
       data: {
         ...req.body,
         jrnlm_trnno: newTrnNo_JV,

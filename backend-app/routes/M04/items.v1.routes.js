@@ -143,6 +143,7 @@ const create = async (req, res) => {
       items_stsal,
       items_stnsf,
       items_stprc,
+      items_stadj,
       user_s,
       user_c,
       user_b,
@@ -202,14 +203,14 @@ const create = async (req, res) => {
       items_brcod, items_hscod, items_notes, items_runit, items_pkqty, items_punit,
       items_szqty, items_sunit, items_sgrup, items_scatg, items_itype, items_brand,
       items_tstck, items_smrgn, items_prvat, items_ptvat, items_slvat, items_stvat,
-      items_image, items_stpur, items_stsal, items_stnsf, items_stprc, items_crusr,
-      items_upusr)
+      items_image, items_stpur, items_stsal, items_stnsf, items_stprc, items_stadj,
+      items_crusr, items_upusr)
 	    VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
         $13, $14, $15, $16, $17, $18,
         $19, $20, $21, $22, $23, $24,
         $25, $26, $27, $28, $29, $30,
-        $31)`,
+        $31, $32)`,
       params: [
         masterId,
         user_c,
@@ -240,6 +241,7 @@ const create = async (req, res) => {
         items_stsal,
         items_stnsf,
         items_stprc,
+        items_stadj,
         user_s,
         user_s,
       ],
@@ -320,6 +322,7 @@ const update = async (req, res) => {
       items_stsal,
       items_stnsf,
       items_stprc,
+      items_stadj,
       user_s,
       user_c,
       user_b,
@@ -378,10 +381,11 @@ const update = async (req, res) => {
     items_stsal = $21,
     items_stnsf = $22,
     items_stprc = $23,
-    items_upusr = $24,
+    items_stadj = $24,
+    items_upusr = $25,
     items_updat = CURRENT_TIMESTAMP,
     items_rvnmr = items_rvnmr + 1
-    WHERE id = $25`,
+    WHERE id = $26`,
       params: [
         items_iname,
         items_brcod,
@@ -406,6 +410,7 @@ const update = async (req, res) => {
         items_stsal,
         items_stnsf,
         items_stprc,
+        items_stadj,
         user_s,
         id,
       ],
@@ -655,14 +660,17 @@ router.post("/get-sales-invoice-items", async (req, res) => {
     AND prc.price_bsins = $3
     ORDER BY itm.items_iname ASC`;
 
-    const sql = `SELECT stk.id stock_id, stk.stock_refid, stk.stock_brcod, stk.stock_batch, stk.stock_srial, stk.stock_wrdat,
-    stk.stock_fgdat, stk.stock_exdat, stk.stock_ohqty, stk.stock_cprat,
-    prc.id price_id, prc.price_cname, prc.price_lprat, prc.price_dprat, prc.price_tprat, prc.price_mrrat,
-    prc.price_dspct, prc.price_gdstk, prc.price_bdstk,
+    const sql = `SELECT stk.id stock_id, stk.stock_sorce, stk.stock_trnno, TO_CHAR(stk.stock_trdat, 'YYYY-MM-DD') as stock_trdat, stk.stock_items, stk.stock_price,
+    stk.stock_refid, stk.stock_brcod, stk.stock_batch, stk.stock_srial, stk.stock_wrdat, stk.stock_fgdat,
+    stk.stock_exdat, stk.stock_ohqty, stk.stock_cprat, prc.id price_id, prc.price_cname, prc.price_lprat,
+    prc.price_dprat, prc.price_tprat, prc.price_mrrat, prc.price_dspct, prc.price_gdstk, prc.price_bdstk,
     itm.id items_id, itm.items_icode, itm.items_iname, itm.items_brcod, itm.items_hscod, itm.items_runit,
-    itm.items_pkqty, itm.items_slvat, itm.items_stvat, itm.items_pkqty, itm.items_szqty,
-    runit.units_cname as runit_uname, 
+    itm.items_pkqty, itm.items_slvat, itm.items_stvat, itm.items_szqty,
+    runit.units_cname as runit_cname,
+    punit.units_cname as punit_cname,
     sunit.units_cname as sunit_cname,
+    sgrup.sgrup_cname as sgrup_cname,
+    scatg.scatg_cname as scatg_cname,
     brand.brand_cname as brand_cname,
     pty.id party_id, pty.party_chtac chtac_id
 FROM tmib_stock stk
@@ -672,9 +680,12 @@ JOIN tmib_price prc ON stk.stock_price = prc.id
           AND stk.stock_dpart = prc.price_dpart
 JOIN tmib_items itm ON stk.stock_items = itm.id
 					AND stk.stock_users = itm.items_users
-					AND stk.stock_bsins = itm.items_bsins
+					AND stk.stock_bsins = itm.items_bsins 
 JOIN tmib_units runit ON itm.items_runit = runit.id
+JOIN tmib_units punit ON itm.items_punit = punit.id
 JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
 JOIN tmib_brand brand ON itm.items_brand = brand.id
 JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
 JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
@@ -854,21 +865,53 @@ router.post("/adjustment-in-out-items", async (req, res) => {
     let sql = "";
     if (ttype_id === "Adjustment Out") {
       sql = `SELECT stk.id stock_id, stk.stock_sorce, stk.stock_trnno, TO_CHAR(stk.stock_trdat, 'YYYY-MM-DD') as stock_trdat, stk.stock_items, stk.stock_price,
-          stk.stock_brcod, stk.stock_batch, stk.stock_srial, stk.stock_wrdat, stk.stock_fgdat, stk.stock_exdat,
-          stk.stock_trqty, stk.stock_ohqty, stk.stock_cprat, itm.items_iname, prc.price_cname, itm.items_runit,
-          unt.units_cname, pty.id party_id, pty.party_chtac chtac_id
-          FROM tmib_stock stk
-          JOIN tmib_items itm ON stk.stock_items = itm.id
-          JOIN tmib_price prc ON stk.stock_price = prc.id
-          JOIN tmib_units unt ON itm.items_runit = unt.id
-          JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
-          WHERE stk.stock_users = $1
-          AND stk.stock_bsins = $2
-          AND stk.stock_dpart = $3
-          AND stk.stock_actve = TRUE
-          AND stk.stock_ohqty > 0
-          ORDER BY prc.price_cname`;
+      stk.stock_refid, stk.stock_brcod, stk.stock_batch, stk.stock_srial, stk.stock_wrdat, stk.stock_fgdat, 
+      stk.stock_exdat, stk.stock_ohqty, stk.stock_cprat,
+      prc.id price_id, prc.price_cname, prc.price_lprat,
+      prc.price_dprat, prc.price_tprat, prc.price_mrrat, prc.price_dspct, prc.price_gdstk, prc.price_bdstk,
+      itm.id items_id, itm.items_icode, itm.items_iname, itm.items_brcod, itm.items_hscod, itm.items_runit,
+      itm.items_pkqty, itm.items_slvat, itm.items_stvat, itm.items_szqty,
+      runit.units_cname as runit_cname,
+      punit.units_cname as punit_cname,
+      sunit.units_cname as sunit_cname,
+      sgrup.sgrup_cname as sgrup_cname,
+      scatg.scatg_cname as scatg_cname,
+      brand.brand_cname as brand_cname,
+      pty.id party_id, pty.party_chtac chtac_id
+FROM tmib_stock stk
+JOIN tmib_price prc ON stk.stock_price = prc.id
+					AND stk.stock_users = prc.price_users
+					AND stk.stock_bsins = prc.price_bsins
+          AND stk.stock_dpart = prc.price_dpart
+JOIN tmib_items itm ON stk.stock_items = itm.id
+					AND stk.stock_users = itm.items_users
+					AND stk.stock_bsins = itm.items_bsins 
+JOIN tmib_units runit ON itm.items_runit = runit.id
+JOIN tmib_units punit ON itm.items_punit = punit.id
+JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
+JOIN tmib_brand brand ON itm.items_brand = brand.id
+JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
+JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+                    AND crt.chtrt_trnid = 'SYS_ADJUSTMENT'
+                    AND crt.chtrt_pegid = 'SYS_ADJUSTMENT_OUT'
+                    AND crt.chtrt_grpid = 'SYS_AST_INVENTORY'
+                    AND crt.chtrt_route = itm.items_itype
+WHERE stk.stock_ohqty > 0
+AND stk.stock_users = $1
+AND stk.stock_bsins = $2
+AND stk.stock_dpart = $3
+AND itm.items_stadj = FALSE
+AND itm.items_actve = TRUE
+AND prc.price_actve = TRUE
+AND pty.party_actve = TRUE
+AND cht.chtac_actve = TRUE
+AND crt.chtrt_actve = TRUE
+ORDER BY prc.price_cname, stk.stock_crdat`;
     } else if (ttype_id === "Adjustment In") {
+      //aplly same as adjust out
       sql = `SELECT prc.id stock_id, '-' stock_sorce, '-' stock_trnno, null stock_trdat, prc.price_items stock_items, prc.id stock_price,
           '' stock_brcod, '' stock_batch, '' stock_srial, null stock_wrdat, null stock_fgdat, null stock_exdat,
           0 stock_trqty, 0 stock_ohqty, 0 stock_cprat, itm.items_iname, prc.price_cname, itm.items_runit,
@@ -882,6 +925,48 @@ router.post("/adjustment-in-out-items", async (req, res) => {
           AND prc.price_dpart = $3
           AND prc.price_actve = TRUE
           ORDER BY prc.price_cname`;
+
+             sql = `SELECT prc.id stock_id, '-' stock_sorce, '-' stock_trnno, TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD') as stock_trdat, prc.price_items stock_items, prc.id stock_price,
+      prc.id stock_refid, '-' stock_brcod, '-' stock_batch, '-' stock_srial, null stock_wrdat, null stock_fgdat, 
+      null stock_exdat, prc.price_gdstk stock_ohqty, COALESCE(NULLIF(prc.price_avrat, 0), NULLIF(prc.price_lprat, 0)) stock_cprat,
+      prc.id price_id, prc.price_cname, prc.price_lprat,
+      prc.price_dprat, prc.price_tprat, prc.price_mrrat, prc.price_dspct, prc.price_gdstk, prc.price_bdstk,
+      itm.id items_id, itm.items_icode, itm.items_iname, itm.items_brcod, itm.items_hscod, itm.items_runit,
+      itm.items_pkqty, itm.items_slvat, itm.items_stvat, itm.items_szqty,
+      runit.units_cname as runit_cname,
+      punit.units_cname as punit_cname,
+      sunit.units_cname as sunit_cname,
+      sgrup.sgrup_cname as sgrup_cname,
+      scatg.scatg_cname as scatg_cname,
+      brand.brand_cname as brand_cname,
+      pty.id party_id, pty.party_chtac chtac_id
+FROM tmib_price prc
+JOIN tmib_items itm ON prc.price_items = itm.id
+					AND prc.price_users = itm.items_users
+					AND prc.price_bsins = itm.items_bsins 
+JOIN tmib_units runit ON itm.items_runit = runit.id
+JOIN tmib_units punit ON itm.items_punit = punit.id
+JOIN tmib_units sunit ON itm.items_sunit = sunit.id
+JOIN tmib_sgrup sgrup ON itm.items_sgrup = sgrup.id
+JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
+JOIN tmib_brand brand ON itm.items_brand = brand.id
+JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
+JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+                    AND crt.chtrt_trnid = 'SYS_ADJUSTMENT'
+                    AND crt.chtrt_pegid = 'SYS_ADJUSTMENT_IN'
+                    AND crt.chtrt_grpid = 'SYS_AST_INVENTORY'
+                    AND crt.chtrt_route = itm.items_itype
+WHERE prc.price_users = $1
+AND prc.price_bsins = $2
+AND prc.price_dpart = $3
+AND itm.items_stadj = FALSE
+AND itm.items_actve = TRUE
+AND prc.price_actve = TRUE
+AND pty.party_actve = TRUE
+AND cht.chtac_actve = TRUE
+AND crt.chtrt_actve = TRUE
+ORDER BY prc.price_cname`;
     } else {
       return res.json({
         success: false,

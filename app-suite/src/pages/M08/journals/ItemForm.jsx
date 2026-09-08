@@ -4,6 +4,8 @@ import InputNumber from "@/components/InputNumber";
 import Dropdown from "@/components/Dropdown";
 import { IconPlus } from "@/icons";
 import { ledger_types_Options } from "@/utils/vtable";
+import InputLabel from "@/components/InputLabel";
+import { amountInWords } from "@/utils/ntw.js";
 
 const ItemForm = ({
   isBusy,
@@ -93,6 +95,16 @@ const ItemForm = ({
             onChange={(e) => onChange("jrnlc_descr", e.target.value)}
             error={formErrors.jrnlc_descr}
             disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-12">
+          <InputLabel
+            label="Amount in words"
+            value={amountInWords(
+              Number(formData.jrnlc_drval) > 0
+                ? formData.jrnlc_drval
+                : formData.jrnlc_crval,
+            )}
           />
         </div>
       </div>

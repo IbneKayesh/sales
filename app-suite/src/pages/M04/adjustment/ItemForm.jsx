@@ -31,7 +31,7 @@ const ItemForm = ({
             disabled={readOnly}
             optionValue="stock_id"
             optionLabel="price_cname"
-            optionGrid="items_iname:Item, price_cname:Name, stock_cprat:Rate, units_cname:Unit, stock_ohqty:Stock, stock_trqty:Trn Qty, stock_sorce:Source, stock_trnno:Trn No, stock_trdat:Trn Date, stock_brcod:Barcode, stock_batch:Batch, stock_srial:Serial, stock_wrdat:Warranty, stock_fgdat:MFG, stock_exdat:Expiry"
+            optionGrid="items_iname:Item, price_cname:Name, stock_cprat:Rate, runit_cname:Unit, stock_ohqty:Stock, stock_sorce:Source, stock_trnno:Trn No, stock_trdat:Trn Date, stock_brcod:Barcode, stock_batch:Batch, stock_srial:Serial, stock_wrdat:Warranty, stock_fgdat:MFG, stock_exdat:Expiry"
           />
         </div>
         <div className="col-span-3">
