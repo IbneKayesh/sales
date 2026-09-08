@@ -193,7 +193,7 @@ const useAdjustment = () => {
   const loadAllDetails = async (id) => {
     try {
       setIsBusy(true);
-      const [dtResp, csResp, pyResp] = await Promise.all([
+      const [dtResp] = await Promise.all([
         adjustmentsAPI.getDetailsByMasterId({ adjsc_adjsm: id }),
       ]);
       setListDataItem(dtResp.data || []);
@@ -208,7 +208,6 @@ const useAdjustment = () => {
       showToast("Invoice is posted. Cannot delete.", { type: "warning" });
       return;
     }
-
     const isActive = rowData.invcm_actve;
     const dataName = rowData.invcm_trnno;
     const confirmation = await confirmBox({

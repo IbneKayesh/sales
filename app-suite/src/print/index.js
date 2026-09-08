@@ -3,7 +3,7 @@
    No third-party print dependencies: printing goes through the browser's
    native print dialog (Save-as-PDF included).
 
-     PrintModal   — the one print entry point (preview + print/download/share)
+     PrintModal   — the one print entry point (preview + print/download)
                     with header / body / footer and per-page repetition
      PrintHeader / PrintFooter / PrintTable / PrintSection / MetaGrid /
      Summary      — small data-driven building blocks for the header, body
@@ -21,14 +21,7 @@ export {
   default as printReportDefault,
 } from "./printReport";
 
-export {
-  buildPrintHtml,
-  downloadPrintHtml,
-  shareDocument,
-  shareViaWhatsApp,
-  shareViaEmail,
-  shareMessage,
-} from "./printFile";
+export { buildPrintHtml, downloadPrintHtml } from "./printFile";
 
 export { fmt, MetaItem, amountInWords, DEFAULT_SIGNER_NAME } from "./format.jsx";
 

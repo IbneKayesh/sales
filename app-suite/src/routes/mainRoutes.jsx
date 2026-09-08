@@ -1,4 +1,4 @@
-import HomePage from "../pages/HomePage";
+import HomePage from "../pages/home/HomePage";
 import TransactionsPage from "../pages/TransactionsPage";
 import ReportsPage from "../pages/ReportsPage";
 import SettingsPage from "../pages/SettingsPage";

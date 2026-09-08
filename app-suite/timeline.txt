@@ -1,13 +1,16 @@
 17-07-2026
 1. Frontend project started
+
 27-07-2026
 1. accounts engine done
 2. supply chain work started
+
 08-09-2026
-1. MRR, Sales, Accounts, Adjustment In/Out, Production works done 
+1. MRR, Sales, Accounts, Adjustment In/Out, Production works done
 
+>> SCM
+Production process
+internal transfer wh to wh
+bundle items
 
-
-after merge stock line page is not clear
-modify sales entry form
-modify Adjustment entry form
+>> HRMS

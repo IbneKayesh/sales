@@ -1,18 +1,10 @@
 import { useRef, useState, isValidElement, cloneElement } from "react";
 import { createPortal } from "react-dom";
-import {
-  IconClose,
-  IconPrint,
-  IconDownload,
-  IconShare,
-  IconWhatsApp,
-  IconEmail,
-} from "@/icons";
-import Button from "@/components/Button";
+import { IconClose, IconPrint, IconDownload } from "@/icons";
 import PrintHeader from "./PrintHeader";
 import PrintFooter from "./PrintFooter";
 import { printReport } from "./printReport";
-import { downloadPrintHtml, shareViaWhatsApp, shareViaEmail } from "./printFile";
+import { downloadPrintHtml } from "./printFile";
 
 /**
  * PrintModal — Simple, generic print modal for any document.
@@ -47,7 +39,6 @@ export default function PrintModal({
   className = "",
 }) {
   const printSourceRef = useRef(null);
-  const [shareOpen, setShareOpen] = useState(false);
   
   const has80mmSupport = enable80mm || !!body80 || !!posBody || initialMode === "80mm" || initialMode === "pos80";
 
@@ -168,13 +159,7 @@ export default function PrintModal({
   };
 
   const handleDownload = () => {
-    downloadPrintHtml(printSourceRef.current, `${title.replace(/\s+/g, "_")}.html`);
-  };
-
-  const handleShare = (channel) => {
-    setShareOpen(false);
-    if (channel === "whatsapp") shareViaWhatsApp(title);
-    else if (channel === "email") shareViaEmail(title);
+    downloadPrintHtml(printSourceRef.current, `${title.replace(/\s+/g, "_")}.html`, title);
   };
 
   return createPortal(
@@ -284,39 +269,6 @@ export default function PrintModal({
                 <IconDownload size={14} />
                 <span>Download</span>
               </button>
-              <div className="print-preview__share">
-                <button
-                  type="button"
-                  className={`print-toolbar-btn ${shareOpen ? "active" : ""}`}
-                  onClick={() => setShareOpen((v) => !v)}
-                  aria-expanded={shareOpen}
-                  aria-haspopup="menu"
-                  title="Share document"
-                >
-                  <IconShare size={14} />
-                  <span>Share</span>
-                </button>
-                {shareOpen && (
-                  <div className="print-preview__share-menu" role="menu">
-                    <button
-                      type="button"
-                      role="menuitem"
-                      onClick={() => handleShare("whatsapp")}
-                    >
-                      <IconWhatsApp size={16} />
-                      WhatsApp
-                    </button>
-                    <button
-                      type="button"
-                      role="menuitem"
-                      onClick={() => handleShare("email")}
-                    >
-                      <IconEmail size={16} />
-                      Email
-                    </button>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
 

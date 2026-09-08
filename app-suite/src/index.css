@@ -1726,6 +1726,14 @@ table {
     display: block !important;
   }
 
+  /* Everything behind the portal is only visibility:hidden for printing, so
+     it still occupies flow space — a page taller than the document shows up
+     as trailing blank pages in the print dialog. Drop all non-print content
+     out of the flow entirely. */
+  body > *:not(.report-print-area--print) {
+    display: none !important;
+  }
+
   .print-page-info {
     position: fixed;
     bottom: 5px;
@@ -1752,35 +1760,12 @@ table {
     display: none !important;
   }
 
-  /* Print preview modal: hide all modal chrome (overlay, dialog, toolbar,
-     preview pane) while printing — only the .report-print-area--print
-     document inside prints (the generic visibility rules already handle
-     this, this block just neutralizes the fixed/flex layout so pagination
-     stays clean). */
+  /* Print preview modal: hide the whole overlay while printing. The modal
+     chrome and the print source are siblings (both portal children of
+     <body>), so the overlay can be removed from the layout entirely — its
+     fixed heights (e.g. the 92vh preview dialog) would otherwise add extra
+     blank pages to the print output. */
   .print-preview {
-    position: static !important;
-    inset: auto !important;
-    padding: 0 !important;
-    display: block !important;
-    align-items: initial !important;
-    justify-content: initial !important;
-    backdrop-filter: none !important;
-    background: none !important;
-  }
-
-  .print-preview .print-preview__dialog {
-    position: static !important;
-    max-height: none !important;
-    width: auto !important;
-    max-width: none !important;
-    margin: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-
-  .print-preview .print-preview__header,
-  .print-preview .print-preview__toolbar,
-  .print-preview .print-preview__body {
     display: none !important;
   }
 

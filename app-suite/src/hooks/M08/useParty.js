@@ -61,7 +61,7 @@ const useParty = () => {
           (f.chtrt_grpid === "SYS_PARTY_SINGLE" && Number(f.party_count) === 0),
       );
       //console.log(listActive);
-      //modify listActive SYS_PARTY_MULTIPLE to "Multiple parties", SYS_PARTY_SINGLE to "Single Party"
+      //modify listActive SYS_PARTY_MULTIPLE to "Multiple Parties", SYS_PARTY_SINGLE to "Single Party"
       const listModified = listActive.map((item) => ({
         ...item,
         grpid_cname:
@@ -80,7 +80,7 @@ const useParty = () => {
         party_ptype: id,
       });
       const list = resp.data || [];
-      console.log(list);
+      //console.log(list);
       setVndor_Options(list);
     } catch (error) {
     } finally {
@@ -103,7 +103,7 @@ const useParty = () => {
       //console.log("chtac_id", chtac_id);
       setFormData((prev) => ({
         ...prev,
-        party_cname: (chtac_id?.chtrt_cname || "Enter party name") + " - Party",
+        party_cname: (chtac_id?.chtrt_cname || "Enter Your Party Name") + " - Party",
       }));
     }
   };

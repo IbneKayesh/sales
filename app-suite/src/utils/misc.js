@@ -16,4 +16,13 @@ const validNumber = (value) => {
 const divNumber = (a, b) =>
   validNumber(b) === 0 ? 0 : validNumber(a) / validNumber(b);
 
-export { formatNumber, validNumber, divNumber };
+// Currency formatting (USD)
+const formatCurrency = (n, fractionDigits = 0) =>
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  }).format(n);
+
+export { formatNumber, validNumber, divNumber, formatCurrency };
