@@ -8,9 +8,12 @@
 08-09-2026
 1. MRR, Sales, Accounts, Adjustment In/Out, Production works done
 
->> SCM
-Production process
-internal transfer wh to wh
-bundle items
 
->> HRMS
+
+[P1] Test Production BOM, Process, Batch Output
+[P2] Test Bundle Items Sales, Purchase
+[P3] Purchase Order
+[P3] Sales Order
+[-] Internal transfer wh to wh
+[-] HRMS
+[-] Bulk Item update

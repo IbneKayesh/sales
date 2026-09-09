@@ -31,7 +31,7 @@ const itype_Options = [
     label: "Raw Material (RM)",
     value: "RM",
     input: true,
-    output: false,
+    output: true,
     nostock: false,
   },
   {

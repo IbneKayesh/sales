@@ -12,9 +12,12 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.bofoh_foqty} {row.units_cname}
+            {row.bofoh_foqty} {row.runit_cname}
           </span>
         );
+      },
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.bofoh_foqty ?? 0), 0);
       },
     },
     { key: "bofoh_forto", header: "Ratio", width: "80px" },
@@ -30,7 +33,8 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
         <ActionButton
           rowData={row}
           actve={row.bofoh_actve}
-          onEdit={onEdit}
+          //onEdit={onEdit}
+          onCopy={onEdit}
           onDelete={onDelete}
         />
       ),
@@ -43,7 +47,8 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
       <DataTable
         columns={dtColumns}
         data={listData}
-        pageSize={15}
+        pageSize={25}
+        showPageSize={false}
         sortable
         searchable={false}
         striped

@@ -105,15 +105,15 @@ const BOMPage = () => {
               <>
                 <Button variant="outline" size="sm" onClick={() => handleShowModal("RMPM")}>
                   <IconPlus size={14} className="icon-left" />
-                  Add RM/PM
+                  Add Input
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => handleShowModal("FOH")}>
                   <IconPlus size={14} className="icon-left" />
-                  Add FOH
+                  Add Input FOH
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => handleShowModal("SFG")}>
                   <IconPlus size={14} className="icon-left" />
-                  Add SFG/FG
+                  Add Output
                 </Button>
               </>
             )}

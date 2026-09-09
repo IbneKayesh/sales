@@ -18,6 +18,22 @@ const ItemForm = ({
   chtac_Options,
   party_Options,
 }) => {
+  //Account Type	Normal Balance	+ Increase	− Decrease
+  // ASSETS	Debit (Dr)	Debit (+)	Credit (−)
+  // LIABILITIES	Credit (Cr)	Credit (+)	Debit (−)
+  // EQUITY	Credit (Cr)	Credit (+)	Debit (−)
+  // REVENUE	Credit (Cr)	Credit (+)	Debit (−)
+  // EXPENSES	Debit (Dr)	Debit (+)	Credit (−)
+
+  const isDebitNormal = formData.chtac_ntype === "Dr";
+  const isCreditNormal = formData.chtac_ntype === "Cr";
+
+  const drSign = isDebitNormal ? "+" : "-";
+  const crSign = isCreditNormal ? "+" : "-";
+
+  const drColor = isDebitNormal ? "text-green-600" : "text-red-500";
+  const crColor = isCreditNormal ? "text-green-600" : "text-red-500";
+
   return (
     <div className="form-wrap">
       <div className="grid">
@@ -67,7 +83,7 @@ const ItemForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="Dr"
+            label={<span className={drColor}>Dr ({drSign})</span>}
             placeholder="Enter Dr"
             value={formData.jrnlc_drval}
             onChange={(e) => onChange("jrnlc_drval", e.target.value)}
@@ -78,7 +94,7 @@ const ItemForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="Cr"
+            label={<span className={crColor}>Cr ({crSign})</span>}
             placeholder="Enter Cr"
             value={formData.jrnlc_crval}
             onChange={(e) => onChange("jrnlc_crval", e.target.value)}

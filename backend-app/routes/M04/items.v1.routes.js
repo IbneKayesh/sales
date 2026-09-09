@@ -814,7 +814,7 @@ router.post("/bom-items-get-by-type", async (req, res) => {
     //database action
     const sql = `SELECT prc.id price_id, prc.price_cname, prc.price_lprat, prc.price_mrrat,
           itm.id items_id, itm.items_icode, itm.items_runit, itm.items_itype,
-          runit.units_cname as runit_uname
+          runit.units_cname as runit_cname
           FROM tmib_price prc
           JOIN tmib_items itm ON prc.price_items = itm.id
                             AND prc.price_users = itm.items_users

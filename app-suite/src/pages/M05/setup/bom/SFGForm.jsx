@@ -61,12 +61,12 @@ const SFGForm = ({
             disabled={readOnly}
             optionValue="price_id"
             optionLabel="price_cname"
-            optionGrid="price_cname:Name,runit_uname:Unit,items_itype:Type,price_mrrat:MRP,items_icode:Code"
+            optionGrid="price_cname:Name,runit_cname:Unit,items_itype:Type,price_mrrat:MRP,items_icode:Code"
           />
         </div>
         <div className="col-span-3">
           <InputNumber
-            label="Quantity"
+            label="Yield Quantity"
             placeholder="Enter qty"
             value={formData.bosfg_fgqty}
             onChange={(e) => onChange("bosfg_fgqty", e.target.value)}
@@ -77,7 +77,7 @@ const SFGForm = ({
         </div>
         <div className="col-span-2">
           <InputNumber
-            label="Qty Ratio(%)"
+            label="Yield Ratio(%)"
             placeholder="Enter ratio"
             value={formData.bosfg_fgrto}
             onChange={(e) => onChange("bosfg_fgrto", e.target.value)}

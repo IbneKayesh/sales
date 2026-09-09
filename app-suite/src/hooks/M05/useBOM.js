@@ -51,7 +51,6 @@ const useBOM = () => {
   const [prods_Options, setProds_Options] = useState([]);
   const [units_Options, setUnits_Options] = useState([]);
   const [items_Options, setItems_Options] = useState([]);
-  const [items_store_Options, setItems_store_Options] = useState([]);
 
   // ---------- BOM Master ----------
   const getAllBOM = async () => {
@@ -105,7 +104,7 @@ const useBOM = () => {
 
   const getItemsByType = async (id) => {
     try {
-      const resp = await itemsAPI.getByType({
+      const resp = await itemsAPI.getBOMItemsByType({
         items_itype: id,
         price_dpart: formData.bommf_dpart,
       });
@@ -310,7 +309,7 @@ const useBOM = () => {
         borpm_items: price_id?.items_id,
         borpm_price: price_id?.price_id,
         borpm_units: price_id?.items_runit,
-        runit_uname: price_id?.runit_uname,
+        runit_cname: price_id?.runit_cname,
         price_id: v,
         price_cname: price_id?.price_cname,
       }));
@@ -323,6 +322,15 @@ const useBOM = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
+    
+    const isExists = listDataRMPM.find(
+      (f) => f.borpm_price === formDataRMPM.borpm_price,
+    );
+    if (isExists) {
+      showToast("This item is already added", { type: "warning" });
+      return;
+    }
+
     if (
       validNumber(formDataRMPM.borpm_rmqty) < 0.1 &&
       validNumber(formDataRMPM.borpm_rmrto) < 0.1
@@ -373,7 +381,7 @@ const useBOM = () => {
     });
     if (!confirmation) return;
     setListDataRMPM((prev) =>
-      prev.filter((item) => item.borpm_items !== rowData.borpm_items),
+      prev.filter((item) => item.id !== rowData.id),
     );
     showToast("Removed successfully", { type: "success" });
   };
@@ -395,7 +403,7 @@ const useBOM = () => {
         bofoh_items: price_id?.items_id,
         bofoh_price: price_id?.price_id,
         bofoh_units: price_id?.items_runit,
-        runit_uname: price_id?.runit_uname,
+        runit_cname: price_id?.runit_cname,
         price_id: v,
         price_cname: price_id?.price_cname,
       }));
@@ -480,7 +488,7 @@ const useBOM = () => {
         bosfg_items: price_id?.items_id,
         bosfg_price: price_id?.price_id,
         bosfg_units: price_id?.items_runit,
-        runit_uname: price_id?.runit_uname,
+        runit_cname: price_id?.runit_cname,
         price_id: v,
         price_cname: price_id?.price_cname,
       }));

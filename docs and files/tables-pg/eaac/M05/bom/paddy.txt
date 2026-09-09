@@ -1,0 +1,30 @@
+
+Item	Output	% of Input
+Input: Boiled Raw Paddy	1,000 KG	100.00%
+Rice	650 KG	65.00%
+Broken Rice	100 KG	10.00%
+Bran	80 KG	8.00%
+Husk	160 KG	16.00%
+Process/Moisture Loss	10 KG	1.00%
+Total Output	1,000 KG	100.00%
+
+
+So the standard recipe/BOM could be:
+
+RM: 1,000 KG Boiled Raw Paddy
+→ SFG/FG Rice: 650 KG
+→ Broken Rice: 100 KG
+→ Bran: 80 KG
+→ Husk: 160 KG
+→ Loss: 10 KG
+
+Yield
+Rice yield: 65%
+Broken rice yield: 10%
+Bran yield: 8%
+Husk yield: 16%
+Process loss: 1%
+Total: 100%
+
+CO - same value of main
+BY - not same value of main

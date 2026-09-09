@@ -54,7 +54,7 @@ const PaymentList = ({ readOnly, listData, onEdit, onDelete }) => {
       <DataTable
         columns={dtColumns}
         data={listData}
-        pageSize={15}
+        pageSize={25}
         showPageSize={false}
         sortable
         searchable={false}

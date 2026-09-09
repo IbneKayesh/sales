@@ -12,9 +12,12 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.borpm_rmqty} {row.units_cname}
+            {row.borpm_rmqty} {row.runit_cname}
           </span>
         );
+      },
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.borpm_rmqty ?? 0), 0);
       },
     },
     { key: "borpm_rmrto", header: "Ratio", width: "80px" },
@@ -30,7 +33,8 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
         <ActionButton
           rowData={row}
           actve={row.borpm_actve}
-          onEdit={onEdit}
+          //onEdit={onEdit}
+          onCopy={onEdit}
           onDelete={onDelete}
         />
       ),
@@ -43,7 +47,8 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
       <DataTable
         columns={dtColumns}
         data={listData}
-        pageSize={15}
+        pageSize={25}
+        showPageSize={false}
         sortable
         searchable={false}
         striped

@@ -38,7 +38,7 @@ export const itemsAPI = {
     apiRequest("/M04/v1/items/get-by-filter", {
       body: data,
     }),
-  getByType: (data) =>
+  getBOMItemsByType: (data) =>
     apiRequest("/M04/v1/items/bom-items-get-by-type", {
       body: data,
     }),

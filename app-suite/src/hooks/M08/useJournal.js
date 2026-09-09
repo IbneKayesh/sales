@@ -294,6 +294,12 @@ const useJournal = () => {
     setFormErrors(newErrors);
     if (f === "jrnlc_chtac") {
       getPartyByCoa(v);
+
+      const chtac_id = chtac_Options.find((opt) => opt.id === v);
+      setFormDataItem((prev) => ({
+        ...prev,
+        chtac_ntype: chtac_id?.chtac_ntype,
+      }));
     }
     if (f === "ledger_types") {
       getChartOfAccounts(v);

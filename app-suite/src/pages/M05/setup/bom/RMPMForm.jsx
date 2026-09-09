@@ -43,7 +43,7 @@ const RMPMForm = ({
             disabled={readOnly}
             optionValue="price_id"
             optionLabel="price_cname"
-            optionGrid="price_cname:Name,runit_uname:Unit,items_itype:Type,price_mrrat:MRP,items_icode:Code"
+            optionGrid="price_cname:Name,runit_cname:Unit,items_itype:Type,price_mrrat:MRP,items_icode:Code"
           />
         </div>
         <div className="col-span-3">

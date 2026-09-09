@@ -8,20 +8,32 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
     { key: "bosfg_group", header: "Group", width: "80px" },
     {
       key: "bosfg_fgqty",
-      header: "Quantity",
+      header: "Yield Quantity",
       width: "80px",
       body: (_, row) => {
         return (
           <span>
-            {row.bosfg_fgqty} {row.units_cname}
+            {row.bosfg_fgqty} {row.runit_cname}
           </span>
         );
       },
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.bosfg_fgqty ?? 0), 0);
+      },
     },
-    { key: "bosfg_fgrto", header: "Qty Ratio", width: "80px" },
+    { key: "bosfg_fgrto", header: "Yield Ratio", width: "80px" },
     { key: "bosfg_fgrat", header: "Rate", width: "80px" },
     { key: "bosfg_fgval", header: "Value", width: "80px" },
-    { key: "bosfg_rtrto", header: "Cost Ratio", width: "80px" },
+    {
+      key: "bosfg_rtrto",
+      header: "Cost Ratio (%)",
+      width: "80px",
+      footer: (_, row) => {
+        return (
+          row.reduce((sum, row) => sum + Number(row.bosfg_rtrto ?? 0), 0) + " %"
+        );
+      },
+    },
     { key: "bosfg_notes", header: "Notes", width: "100px" },
     {
       key: "actions",
@@ -32,7 +44,8 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
         <ActionButton
           rowData={row}
           actve={row.bosfg_actve}
-          onEdit={onEdit}
+          //onEdit={onEdit}
+          onCopy={onEdit}
           onDelete={onDelete}
         />
       ),
@@ -45,7 +58,8 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
       <DataTable
         columns={dtColumns}
         data={listData}
-        pageSize={15}
+        pageSize={25}
+        showPageSize={false}
         sortable
         searchable={false}
         striped
