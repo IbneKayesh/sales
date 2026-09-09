@@ -1,5 +1,6 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
+import { formatNumber } from "@/utils/misc";
 
 const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
@@ -12,7 +13,7 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.borpm_rmqty} {row.runit_cname}
+            {formatNumber(row.borpm_rmqty)} {row.runit_cname}
           </span>
         );
       },

@@ -154,19 +154,19 @@ const RPT_RP_APA = ({ listData, onRegisterExport }) => {
       header: "Balance",
       width: "140px",
       align: "right",
-      body: (v) => formatNumber(v),
+      body: (v) => formatNumber(v, true),
     },
   ];
 
   return (
     <div>
       <DataCardGrid cols={5} gap={8} style={{ marginBottom: 16 }}>
-        <DataCard variant="accent" value={formatNumber(totalAP)} label="Total AP" />
+        <DataCard variant="accent" value={formatNumber(totalAP, true)} label="Total AP" />
         {Object.entries(buckets).map(([bucket, amount]) => (
           <DataCard
             key={bucket}
             variant={amount > 0 ? "warning" : "accent"}
-            value={formatNumber(amount)}
+            value={formatNumber(amount, true)}
             label={bucket}
           />
         ))}

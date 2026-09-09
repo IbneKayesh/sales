@@ -222,11 +222,11 @@ const RPT_FS_BS = ({ listData, onRegisterExport }) => {
       align: "right",
       render: (v, node) => {
         if (node.isFooter)
-          return <span className="fw-bold">{formatNumber(node.balance)}</span>;
+          return <span className="fw-bold">{formatNumber(node.balance, true)}</span>;
         if (node.isRoot) return null;
         return (
           <span className={node.isSubtotal ? "fw-semibold" : ""}>
-            {formatNumber(node.balance)}
+            {formatNumber(node.balance, true)}
           </span>
         );
       },
@@ -246,7 +246,7 @@ const RPT_FS_BS = ({ listData, onRegisterExport }) => {
         text={
           isBalanced
             ? "✓ Balance Sheet is Balanced"
-            : `✗ Difference: ${formatNumber(diffVal)}`
+            : `✗ Difference: ${formatNumber(diffVal, true)}`
         }
         tone={isBalanced ? "success" : "danger"}
       />

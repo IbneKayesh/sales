@@ -50,7 +50,7 @@ const RPT_FS_CF = ({ listData, onRegisterExport }) => {
 
   // Format negative amounts in parentheses like the old report
   const fmtAmt = (v) =>
-    v < 0 ? `(${formatNumber(Math.abs(v))})` : formatNumber(v);
+    v < 0 ? `(${formatNumber(Math.abs(v), true)})` : formatNumber(v, true);
 
   const treeData = [
     {

@@ -126,7 +126,7 @@ const RPT_RP_OST = ({ listData, onRegisterExport }) => {
       header: "Balance",
       width: "140px",
       align: "right",
-      body: (v) => formatNumber(v),
+      body: (v) => formatNumber(v, true),
     },
   ];
 
@@ -139,17 +139,17 @@ const RPT_RP_OST = ({ listData, onRegisterExport }) => {
       <DataCardGrid cols={4} gap={8} style={{ marginBottom: 16 }}>
         <DataCard
           variant="success"
-          value={formatNumber(totalDr)}
+          value={formatNumber(totalDr, true)}
           label="Total Receivable (Dr)"
         />
         <DataCard
           variant="danger"
-          value={formatNumber(totalCr)}
+          value={formatNumber(totalCr, true)}
           label="Total Payable (Cr)"
         />
         <DataCard
           variant="accent"
-          value={formatNumber(totalDr + totalCr)}
+          value={formatNumber(totalDr + totalCr, true)}
           label="Net Outstanding"
         />
         <DataCard variant="accent" value={String(items.length)} label="Parties" />

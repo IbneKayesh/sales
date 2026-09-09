@@ -123,6 +123,7 @@ const useProcess = () => {
         bomAPI.getFOHbyBOMForProcess({ bofoh_bommf: id }),
         bomAPI.getSFGFGbyBOMForProcess({ bosfg_bommf: id }),
       ]);
+
       setListDataRMPM(rmResp.data || []);
       setListDataFOH(fohResp.data || []);
       setListDataSFGFG(sfgResp.data || []);
@@ -221,30 +222,32 @@ const useProcess = () => {
     setListDataSFGFG(newItems);
   };
 
-  const recalcProcessQty = (prqty) => {
-    if (!prqty) return;
+  const recalcProcessQty_v2 = (prqty, boqty) => {
+    if (!prqty || !boqty) return;
+
+    const productionRatio = validNumber(prqty) / validNumber(boqty);
 
     // RM/PM
     setListDataRMPM((prevRMPM) => {
       const updatedRMPM = prevRMPM.map((item) => {
-        const reqQty = validNumber(item.prrpm_boqty) * validNumber(prqty);
+        const reqQty = productionRatio * validNumber(item.prrpm_boqty);
 
         return {
           ...item,
-          prrpm_rmqty: reqQty.toFixed(4),
-          prrpm_rmval: (reqQty * validNumber(item.prrpm_rmrat)).toFixed(4),
+          prrpm_rmqty: reqQty,
+          prrpm_rmval: reqQty * validNumber(item.prrpm_rmrat),
         };
       });
 
       // FOH
       setListDataFOH((prevFOH) => {
         const updatedFOH = prevFOH.map((item) => {
-          const reqQty = validNumber(item.prfoh_boqty) * validNumber(prqty);
+          const reqQty = productionRatio * validNumber(item.prfoh_boqty);
 
           return {
             ...item,
-            prfoh_foqty: reqQty.toFixed(4),
-            prfoh_foval: (reqQty * validNumber(item.prfoh_forat)).toFixed(4),
+            prfoh_foqty: reqQty,
+            prfoh_foval: reqQty * validNumber(item.prfoh_forat),
           };
         });
 
@@ -267,26 +270,125 @@ const useProcess = () => {
             const reqQty =
               item.prsfg_group === "MAIN"
                 ? validNumber(prqty)
-                : validNumber(item.prsfg_boqty) * validNumber(prqty);
+                : productionRatio * validNumber(item.prsfg_boqty);
 
-            const prsfg_rtrto = validNumber(item.prsfg_rtrto);
-            const prsfg_fgrat = (totalRMPMFOH * prsfg_rtrto) / 100 / reqQty;
+            const returnPercent = validNumber(item.prsfg_rtrto);
+            const fgValue = (totalRMPMFOH * returnPercent) / 100;
+            const fgRate = reqQty > 0 ? fgValue / reqQty : 0;
 
             return {
               ...item,
               prsfg_fgqty: reqQty,
               // Recalculated output rate/value
-              prsfg_fgrat: prsfg_fgrat.toFixed(4),
-              prsfg_fgval: (reqQty * prsfg_fgrat).toFixed(4),
+              prsfg_fgrat: fgRate,
+              prsfg_fgval: fgValue,
             };
           });
         });
+
+        //old code replaced with new, kept as backup
+        // setListDataSFGFG((prevSFGFG) => {
+        //   return prevSFGFG.map((item) => {
+        //     const reqQty =
+        //       item.prsfg_group === "MAIN"
+        //         ? validNumber(prqty)
+        //         : validNumber(item.prsfg_boqty) * validNumber(prqty);
+
+        //     const prsfg_rtrto = validNumber(item.prsfg_rtrto);
+        //     const prsfg_fgrat = (totalRMPMFOH * prsfg_rtrto) / 100 / reqQty;
+
+        //     return {
+        //       ...item,
+        //       prsfg_fgqty: reqQty,
+        //       // Recalculated output rate/value
+        //       prsfg_fgrat: prsfg_fgrat,
+        //       prsfg_fgval: reqQty * prsfg_fgrat,
+        //     };
+        //   });
+        // });
 
         return updatedFOH;
       });
 
       return updatedRMPM;
     });
+  };
+
+  const recalcProcessQty = (prqty, boqty) => {
+    if (!prqty || !boqty) return;
+
+    const productionRatio = validNumber(prqty) / validNumber(boqty);
+
+    // =========================
+    // RM / PM
+    // =========================
+    const updatedRMPM = listDataRMPM.map((item) => {
+      const reqQty = productionRatio * validNumber(item.prrpm_boqty);
+
+      return {
+        ...item,
+        prrpm_rmqty: reqQty,
+        prrpm_rmval: reqQty * validNumber(item.prrpm_rmrat),
+      };
+    });
+
+    // =========================
+    // FOH
+    // =========================
+    const updatedFOH = listDataFOH.map((item) => {
+      const reqQty = productionRatio * validNumber(item.prfoh_boqty);
+
+      return {
+        ...item,
+        prfoh_foqty: reqQty,
+        prfoh_foval: reqQty * validNumber(item.prfoh_forat),
+      };
+    });
+
+    // =========================
+    // Total RM/PM + FOH
+    // =========================
+    const totalRMPM = updatedRMPM.reduce(
+      (sum, item) => sum + validNumber(item.prrpm_rmval),
+      0,
+    );
+
+    const totalFOH = updatedFOH.reduce(
+      (sum, item) => sum + validNumber(item.prfoh_foval),
+      0,
+    );
+
+    const totalRMPMFOH = totalRMPM + totalFOH;
+
+    // =========================
+    // SFG / FG
+    // =========================
+    const updatedSFGFG = listDataSFGFG.map((item) => {
+      const reqQty =
+        item.prsfg_group === "MAIN"
+          ? validNumber(prqty)
+          : productionRatio * validNumber(item.prsfg_boqty);
+
+      const returnPercent = validNumber(item.prsfg_rtrto);
+
+      const fgValue = (totalRMPMFOH * returnPercent) / 100;
+
+      const fgRate = reqQty > 0 ? fgValue / reqQty : 0;
+
+      return {
+        ...item,
+        prsfg_fgqty: reqQty,
+        prsfg_fgrat: fgRate,
+        prsfg_fgval: fgValue,
+      };
+    });
+
+    // =========================
+    // Update state
+    // =========================
+    setListDataRMPM(updatedRMPM);
+    setListDataFOH(updatedFOH);
+    setListDataSFGFG(updatedSFGFG);
   };
 
   const getConsumptionStock = async (price_id) => {
@@ -693,14 +795,14 @@ const useProcess = () => {
     showToast("Removed successfully", { type: "success" });
   };
 
-  const handleChangeSFGRow = (f, v, id) => {
+  const handleChangeSFGRow = (f, v, id, b) => {
     // console.log(f);
     // console.log(v);
     // console.log(id);
     setListDataSFGFG((prev) =>
       prev.map((row) => (row.prsfg_price === id ? { ...row, [f]: v } : row)),
     );
-    recalcProcessQty(v);
+    recalcProcessQty(v, b);
   };
   // ---------- BATCH ----------
 
@@ -875,7 +977,7 @@ const useProcess = () => {
         price_cname: item.price_cname,
         units_cname: item.units_cname,
         party_id: item.party_id,
-        chtac_id: item.chtac_id
+        chtac_id: item.chtac_id,
       }));
       setFormDataBatch(list);
     } else if (modal === "RMPM_STOCK") {

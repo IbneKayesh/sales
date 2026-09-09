@@ -71,7 +71,7 @@ const BillSummary = ({ formData = {}, readOnly, onChange = () => {} }) => {
           </div>
         ) : (
           <span className={`col-span-6 ${valueClass}`}>
-            {formatNumber(row.value, 4)}
+            {formatNumber(row.value, true)}
           </span>
         )}
       </div>

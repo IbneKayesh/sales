@@ -20,13 +20,13 @@ const ReportFooter = ({ label = "Total", values = [] }) => {
                 fontVariantNumeric: "tabular-nums",
               }}
             >
-              {formatNumber(v)}
+              {formatNumber(v, true)}
             </span>
           ))}
         </div>
       ) : (
         <span className="fw-bold" style={{ fontVariantNumeric: "tabular-nums" }}>
-          {formatNumber(values[0])}
+          {formatNumber(values[0], true)}
         </span>
       )}
     </PageCardFooter>

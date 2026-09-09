@@ -95,14 +95,14 @@ const RPT_BC_BR = ({ listData, onRegisterExport }) => {
       header: "Total Debit",
       width: "120px",
       align: "right",
-      body: (v) => formatNumber(v),
+      body: (v) => formatNumber(v, true),
     },
     {
       key: "totalCr",
       header: "Total Credit",
       width: "120px",
       align: "right",
-      body: (v) => formatNumber(v),
+      body: (v) => formatNumber(v, true),
     },
     {
       key: "bookBalance",
@@ -116,7 +116,7 @@ const RPT_BC_BR = ({ listData, onRegisterExport }) => {
             color: v >= 0 ? "var(--success, #16a34a)" : "var(--danger, #dc2626)",
           }}
         >
-          {formatNumber(v)}
+          {formatNumber(v, true)}
         </span>
       ),
     },
@@ -151,7 +151,7 @@ const RPT_BC_BR = ({ listData, onRegisterExport }) => {
         />
         <DataCard
           variant={totalBalance >= 0 ? "success" : "danger"}
-          value={formatNumber(totalBalance)}
+          value={formatNumber(totalBalance, true)}
           label="Total Book Balance"
         />
         <DataCard

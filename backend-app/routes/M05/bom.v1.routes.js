@@ -176,6 +176,7 @@ const create = async (req, res) => {
       ],
       label: `Created BOM ${newTrnNo}`,
     });
+    
     //Insert RM PM details
     for (const det of tmmb_borpm) {
       scripts.push({
@@ -452,7 +453,7 @@ router.post("/get-rmpm-by-bom", async (req, res) => {
     }
 
     const sql = `SELECT rpm.*,
-  prc.price_cname, unt.units_cname
+  prc.price_cname, unt.units_cname runit_cname
   FROM tmmb_borpm rpm
   JOIN tmib_price prc ON rpm.borpm_price = prc.id
   JOIN tmib_units unt ON rpm.borpm_units = unt.id
@@ -497,7 +498,7 @@ router.post("/get-foh-by-bom", async (req, res) => {
     }
 
     const sql = `SELECT foh.*,
-prc.price_cname, unt.units_cname
+prc.price_cname, unt.units_cname runit_cname
 FROM tmmb_bofoh foh
 JOIN tmib_price prc ON foh.bofoh_price = prc.id
 JOIN tmib_units unt ON foh.bofoh_units = unt.id
@@ -542,7 +543,7 @@ router.post("/get-sfg-by-bom", async (req, res) => {
     }
 
     const sql = `SELECT sfg.*,
-prc.price_cname, unt.units_cname
+prc.price_cname, unt.units_cname runit_cname
 FROM tmmb_bosfg sfg
 JOIN tmib_price prc ON sfg.bosfg_price = prc.id
 JOIN tmib_units unt ON sfg.bosfg_units = unt.id
@@ -640,7 +641,7 @@ router.post("/get-rmpm-by-bom-fr-process", async (req, res) => {
       rpm.borpm_units prrpm_units, rpm.borpm_itype prrpm_itype, rpm.borpm_rmqty prrpm_boqty,
       rpm.borpm_rmrat prrpm_borat, rpm.borpm_rmqty prrpm_rmqty, rpm.borpm_rmrat prrpm_rmrat,
       rpm.borpm_rmval prrpm_rmval, '' prrpm_notes, '' prrpm_stock,
-      '' prrpm_jrnlm, prc.price_cname, unt.units_cname, TRUE prrpm_actve,
+      '' prrpm_jrnlm, prc.price_cname, unt.units_cname runit_cname, TRUE prrpm_actve,
       pty.id party_id, pty.party_chtac chtac_id
       FROM tmmb_borpm rpm
       JOIN tmib_price prc ON rpm.borpm_price = prc.id
@@ -649,7 +650,7 @@ router.post("/get-rmpm-by-bom-fr-process", async (req, res) => {
       JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
       WHERE rpm.borpm_bommf = $1
       AND rpm.borpm_users = $2
-      ORDER BY rpm.borpm_items ASC`;
+      ORDER BY rpm.borpm_itype, rpm.borpm_items ASC`;
 
     const rows = await dbGetAll(
       sql,
@@ -699,7 +700,7 @@ router.post("/get-foh-by-bom-fr-process", async (req, res) => {
       JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
       WHERE foh.bofoh_bommf = $1
       AND foh.bofoh_users = $2
-      ORDER BY foh.bofoh_items ASC`;
+      ORDER BY foh.bofoh_itype, foh.bofoh_items ASC`;
 
     const rows = await dbGetAll(
       sql,
@@ -750,7 +751,7 @@ router.post("/get-sfg-by-bom-fr-process", async (req, res) => {
       JOIN tmtb_party pty ON itm.items_itype = pty.party_vndor
       WHERE sfg.bosfg_bommf = $1
       AND sfg.bosfg_users = $2
-      ORDER BY sfg.bosfg_items ASC`;
+      ORDER BY sfg.bosfg_itype, sfg.bosfg_group, sfg.bosfg_items ASC`;
 
     const rows = await dbGetAll(
       sql,

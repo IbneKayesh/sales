@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
-import { IconClose, IconChevronDown, IconEye, IconPin, IconRestore } from "@/icons";
+import { IconClose, IconChevronDown, IconEye, IconPin, IconRestore, IconMore } from "@/icons";
 import FullscreenButton from "@/components/FullscreenButton";
 import Calendar from "@/components/Calendar";
+import PopupList from "@/components/PopupList";
 import { moduleShade } from "@/utils/theme";
 import { menus as allMenus } from "@/utils/appModules";
 
@@ -67,6 +68,7 @@ export default function Taskbar() {
 
   return (
     <div
+      className="taskbar-root"
       style={{
         position: "fixed",
         left: 0,
@@ -179,34 +181,22 @@ export default function Taskbar() {
         </span>
       )}
 
-      {/* Open windows (window-taskbar style) */}
+      {/* Open windows (window-taskbar style) with overflow grouping */}
       {hasPopups && (
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            paddingLeft: 8,
-            marginLeft: 4,
-            borderLeft: "1px solid var(--border, #e0e0e0)",
-          }}
-        >
-          {popups.map((p) => (
-            <TaskbarItem
-              key={p.key}
-              popup={p}
-              isPinned={pinnedMenuIds.includes(p.menu.id)}
-              onTogglePin={() => togglePinMenu(p.menu.id)}
-              onToggle={() =>
-                p.hidden ? restorePopup(p.key) : hidePopup(p.key)
-              }
-              onClose={() => closePopup(p.key)}
-            />
-          ))}
-        </span>
+        <TaskbarOverflowGroup
+          popups={popups}
+          pinnedMenuIds={pinnedMenuIds}
+          togglePinMenu={togglePinMenu}
+          restorePopup={restorePopup}
+          hidePopup={hidePopup}
+          closePopup={closePopup}
+          hideAllPopups={hideAllPopups}
+          closeAllPopups={closeAllPopups}
+        />
       )}
 
       <div
+        className="taskbar-right"
         style={{
           marginLeft: "auto",
           display: "flex",
@@ -564,6 +554,254 @@ function WindowBodyShot({ node, width }) {
         }}
       />
     </div>
+  );
+}
+
+/**
+ * Measures the right side of the taskbar (action buttons + clock) and the
+ * available width, then splits popup items into visible (shown inline) and
+ * overflow (hidden in a dropdown). When the visible items + overflow button
+ * still exceed the available width, more items are pushed into overflow.
+ */
+function TaskbarOverflowGroup({
+  popups,
+  pinnedMenuIds,
+  togglePinMenu,
+  restorePopup,
+  hidePopup,
+  closePopup,
+  hideAllPopups,
+  closeAllPopups,
+}) {
+  const [overflowOpen, setOverflowOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(popups.length);
+  const [btnAnchor, setBtnAnchor] = useState(null);
+  const overflowRef = useRef(null);
+  const btnRef = useRef(null);
+  const panelRef = useRef(null);
+  const measureStripRef = useRef(null);
+
+  // Measure available space and determine how many items fit.
+  // Uses a hidden measurement strip rendered in the same flex row to get
+  // accurate widths for each popup item, and queries the actual taskbar
+  // right-side DOM for the right width.
+  const recalc = useCallback(() => {
+    const taskbar = document.querySelector('.taskbar-root');
+    const right = document.querySelector('.taskbar-right');
+    const strip = measureStripRef.current;
+    if (!taskbar || !right || !strip) return;
+
+    const taskbarWidth = taskbar.offsetWidth;
+    const rightWidth = right.offsetWidth;
+    // Left side: status button (~90px) + pinned section (~40px max) + borders
+    const leftWidth = 170;
+    const available = taskbarWidth - rightWidth - leftWidth;
+
+    // Measure each popup item width from the hidden strip
+    const widths = Array.from(strip.children).map((el) => el.offsetWidth + 6);
+    const overflowBtnWidth = 36; // approximate overflow button width
+
+    // Greedily fit items from left to right
+    let count = 0;
+    let used = 0;
+    for (let i = 0; i < widths.length; i++) {
+      const needed = used + widths[i] + (i < widths.length - 1 ? overflowBtnWidth : 0);
+      if (needed <= available) {
+        count++;
+        used += widths[i];
+      } else {
+        break;
+      }
+    }
+    setVisibleCount(Math.max(count, 0));
+  }, [popups.length]);
+
+  useEffect(() => {
+    // Defer measurement to after layout
+    const raf = requestAnimationFrame(() => {
+      recalc();
+      const tid = setTimeout(recalc, 150);
+      return () => clearTimeout(tid);
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [popups.length, recalc]);
+
+  // ResizeObserver on the taskbar root to recalc on window resize
+  useEffect(() => {
+    const el = document.querySelector('.taskbar-root');
+    if (!el) return;
+    const ro = new ResizeObserver(recalc);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [recalc]);
+
+  const overflowItems = popups.slice(visibleCount);
+  const hasOverflow = overflowItems.length > 0;
+
+  // Close overflow on outside click (panel is portaled, so check both refs)
+  useEffect(() => {
+    if (!overflowOpen) return;
+    const onDown = (e) => {
+      const inTrigger = overflowRef.current && overflowRef.current.contains(e.target);
+      const inPanel = panelRef.current && panelRef.current.contains(e.target);
+      if (!inTrigger && !inPanel) {
+        setOverflowOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [overflowOpen]);
+
+  return (
+    <>
+      {/* Hidden measurement strip — renders all items invisibly in the same
+          flex row so their widths match the real layout. */}
+      <div
+        ref={measureStripRef}
+        style={{
+          position: "absolute",
+          visibility: "hidden",
+          pointerEvents: "none",
+          display: "inline-flex",
+          gap: 6,
+          zIndex: -1,
+        }}
+      >
+        {popups.map((p) => (
+          <div
+            key={`m-${p.key}`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              maxWidth: 220,
+              padding: "4px 8px",
+              borderRadius: 8,
+              border: "1px solid var(--border, #e0e0e0)",
+              fontSize: 13,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+            }}
+          >
+            <span>{p.menu.menus_micon}</span>
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {p.menu.menus_mname}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* Visible items */}
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          paddingLeft: 8,
+          marginLeft: 4,
+          borderLeft: "1px solid var(--border, #e0e0e0)",
+          minWidth: 0,
+          overflow: "hidden",
+        }}
+      >
+        {popups.slice(0, visibleCount).map((p) => (
+          <TaskbarItem
+            key={p.key}
+            popup={p}
+            isPinned={pinnedMenuIds.includes(p.menu.id)}
+            onTogglePin={() => togglePinMenu(p.menu.id)}
+            onToggle={() =>
+              p.hidden ? restorePopup(p.key) : hidePopup(p.key)
+            }
+            onClose={() => closePopup(p.key)}
+          />
+        ))}
+      </span>
+      {/* Overflow dropdown button + panel (portaled to body to escape overflow) */}
+      {hasOverflow && (
+        <div ref={overflowRef} style={{ position: "relative", flexShrink: 0 }}>
+          <button
+            ref={btnRef}
+            type="button"
+            onClick={() => {
+              if (!overflowOpen) {
+                const r = btnRef.current?.getBoundingClientRect();
+                if (r) setBtnAnchor({ left: r.left, top: r.top, width: r.width });
+              }
+              setOverflowOpen((o) => !o);
+            }}
+            title={`${overflowItems.length} more open window${overflowItems.length > 1 ? "s" : ""}`}
+            aria-label="Show more open windows"
+            aria-expanded={overflowOpen}
+            style={{
+              position: "relative",
+              width: 36,
+              height: 36,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              borderRadius: 8,
+              border: "1px solid var(--border, #e0e0e0)",
+              background: overflowOpen
+                ? "var(--primary, #7c3aed)"
+                : "var(--surface, #fff)",
+              color: overflowOpen
+                ? "var(--primary-on, #fff)"
+                : "var(--text-muted, #888)",
+              cursor: "pointer",
+              transition: "all 0.15s",
+            }}
+          >
+            <IconMore size={16} />
+            <span
+              style={{
+                position: "absolute",
+                top: -4,
+                right: -4,
+                minWidth: 16,
+                height: 16,
+                padding: "0 4px",
+                borderRadius: 8,
+                background: "var(--primary, #7c3aed)",
+                color: "var(--primary-on, #fff)",
+                fontSize: 10,
+                fontWeight: 700,
+                lineHeight: "16px",
+                textAlign: "center",
+              }}
+            >
+              {overflowItems.length}
+            </span>
+          </button>
+          {overflowOpen && btnAnchor && createPortal(
+            <div ref={panelRef} style={{
+              position: "fixed",
+              bottom: `${window.innerHeight - btnAnchor.top + 6}px`,
+              right: `${window.innerWidth - btnAnchor.left - btnAnchor.width}px`,
+              zIndex: "var(--z-toast, 2000)",
+            }}>
+              <PopupList
+                popups={overflowItems}
+                open
+                title="More Windows"
+                panelClassName="popup-list__panel--taskbar"
+                onToggle={() => setOverflowOpen(false)}
+                onRestore={(key) => {
+                  restorePopup(key);
+                  setOverflowOpen(false);
+                }}
+                onHide={hidePopup}
+                onClose={closePopup}
+                onHideAll={hideAllPopups}
+                onCloseAll={closeAllPopups}
+              />
+            </div>,
+            document.body,
+          )}
+        </div>
+      )}
+    </>
   );
 }
 

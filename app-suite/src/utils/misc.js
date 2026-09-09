@@ -1,13 +1,30 @@
-const formatNumber = (val, dec = 2) => {
-  const num = Number(val) || 0;
-  return num.toLocaleString("en-US", {
-    minimumFractionDigits: dec,
-    maximumFractionDigits: dec,
+import { getStorageData } from "./storage";
+
+const formatNumber = (val, comma = false) => {
+  const n = Number(val);
+
+  if (!Number.isFinite(n)) return "0.00";
+
+  const bsins = getStorageData()?.bsins;
+  const dcpnt = Number(bsins?.bsins_dcpnt) || 2;
+
+  return n.toLocaleString("en-US", {
+    useGrouping: comma,
+    minimumFractionDigits: dcpnt,
+    maximumFractionDigits: dcpnt,
   });
 };
 
 // Safe number conversion (handles null, undefined, NaN, "", etc.)
 const validNumber = (value) => {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  const bsins = getStorageData()?.bsins;
+  const dcpnt = bsins?.bsins_dcpnt || 2;
+  return Number(n.toFixed(Number(dcpnt) || 0));
+};
+
+const validNumber_v1 = (value) => {
   const n = Number(value);
   return Number.isFinite(n) ? n : 0;
 };

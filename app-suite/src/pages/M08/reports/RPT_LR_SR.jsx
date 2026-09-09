@@ -97,14 +97,14 @@ const RPT_LR_SR = ({ listData, onRegisterExport }) => {
       header: "Debit",
       width: "120px",
       align: "right",
-      body: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v, true) : "—"),
     },
     {
       key: "credit",
       header: "Credit",
       width: "120px",
       align: "right",
-      body: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v, true) : "—"),
     },
   ];
 
@@ -138,7 +138,7 @@ const RPT_LR_SR = ({ listData, onRegisterExport }) => {
             />
             <DataCard
               variant={balance >= 0 ? "success" : "danger"}
-              value={`${formatNumber(Math.abs(balance))} ${
+              value={`${formatNumber(Math.abs(balance), true)} ${
                 balance >= 0 ? "Dr" : "Cr"
               }`}
               label="Net Balance"

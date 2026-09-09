@@ -108,12 +108,12 @@ const RPT_FS_PNL = ({ listData, onRegisterExport }) => {
                 netProfit >= 0 ? "text-success" : "text-danger"
               }`}
             >
-              {formatNumber(node.balance)}
+              {formatNumber(node.balance, true)}
             </span>
           );
         if (node.isRoot)
-          return <span className="fw-bold">{formatNumber(node.balance)}</span>;
-        return formatNumber(Math.abs(node.balance));
+          return <span className="fw-bold">{formatNumber(node.balance, true)}</span>;
+        return formatNumber(Math.abs(node.balance), true);
       },
     },
   ];

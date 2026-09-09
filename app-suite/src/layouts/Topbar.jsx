@@ -21,6 +21,7 @@ import { modulesMenu } from "@/utils/appModules";
 import { toast } from "@/components/ToastBox";
 import Calculator from "@/components/Calculator";
 import FullscreenButton from "@/components/FullscreenButton";
+import ActiveWindowIndicator from "@/components/ActiveWindowIndicator";
 import defaultWorkspaceBg from "@/assets/wallpapers/aurora.png";
 import logoBsWhite from "@/assets/logo-bs-white.png";
 
@@ -225,6 +226,8 @@ export default function Topbar({ className = "", ...rest }) {
           </span>
         </span>
       </NavLink>
+
+      <ActiveWindowIndicator />
 
       <div className="topbar__nav" />
 

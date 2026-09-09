@@ -1210,6 +1210,29 @@ export const IconReceipt = withDefaults((props) => (
   </svg>
 ));
 
+export const IconReceiptPlus = withDefaults((props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    {/* Receipt */}
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8" />
+    <polyline points="13 2 13 8 19 8" />
+    <line x1="16" y1="12" x2="8" y2="12" />
+    <line x1="14" y1="16" x2="8" y2="16" />
+
+    {/* Large, clear plus */}
+    <line x1="19" y1="14" x2="19" y2="22" strokeWidth="2.5" />
+    <line x1="15" y1="18" x2="23" y2="18" strokeWidth="2.5" />
+  </svg>
+));
+
+
 // ─── Logistics ─────────────────────────────
 
 export const IconTruck = withDefaults((props) => (

@@ -108,21 +108,21 @@ const RPT_LR_AL = ({ listData, onRegisterExport }) => {
       header: "Debit",
       width: "120px",
       align: "right",
-      body: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v, true) : "—"),
     },
     {
       key: "credit",
       header: "Credit",
       width: "120px",
       align: "right",
-      body: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v, true) : "—"),
     },
     {
       key: "runningBalance",
       header: "Balance",
       width: "140px",
       align: "right",
-      body: (v) => <span className="fw-semibold">{formatNumber(v)}</span>,
+      body: (v) => <span className="fw-semibold">{formatNumber(v, true)}</span>,
     },
   ];
 
@@ -157,7 +157,7 @@ const RPT_LR_AL = ({ listData, onRegisterExport }) => {
             />
             <DataCard
               variant={closingBalance >= 0 ? "success" : "danger"}
-              value={formatNumber(closingBalance)}
+              value={formatNumber(closingBalance, true)}
               label="Closing Balance"
             />
           </DataCardGrid>

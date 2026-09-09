@@ -50,7 +50,7 @@ const ProcessForm = ({
             disabled={readOnly}
             optionValue="id"
             optionLabel="bommf_cname"
-            optionGrid="bommf_cname:Name,bommf_trnno:Trn No,bommf_prono:Process"
+            optionGrid="bommf_cname:Name,bommf_trnno:Trn No,bommf_prono:Process No"
           />
         </div>
         <div className="col-span-3">

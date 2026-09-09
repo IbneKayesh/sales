@@ -1,0 +1,414 @@
+/* ==========================================================================
+   Module Page — extracted from ModulePage.jsx inline styles
+   ========================================================================== */
+
+/* ─── Search Input ──────────────────────────────────────────────────────── */
+
+.module-page__search-wrap {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+}
+
+.module-page__search-input {
+  width: 100%;
+  padding: 8px 32px 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #e0e0e0);
+  background: var(--surface, #fff);
+  color: var(--text, #111);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.module-page__search-input:focus {
+  border-color: var(--primary, #7c3aed);
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15);
+}
+
+.module-page__search-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 4px;
+  color: var(--text-muted, #888);
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* ─── Popup List Trigger ────────────────────────────────────────────────── */
+
+.module-page__popup-trigger-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.module-page__popup-trigger {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1px solid var(--border, #e0e0e0);
+  background: var(--surface, #fff);
+  color: var(--text-muted, #888);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.module-page__popup-trigger--active {
+  background: var(--primary, #7c3aed);
+  border-color: var(--primary, #7c3aed);
+  color: var(--primary-on, #fff);
+}
+
+.module-page__popup-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--primary, #7c3aed);
+  color: var(--primary-on, #fff);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+/* ─── Menu Card ─────────────────────────────────────────────────────────── */
+
+.menu-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 4px 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  font-family: var(--font-sans);
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+  width: auto;
+  flex: 0 1 auto;
+}
+
+.menu-card--hovered {
+  border-color: var(--menu-shade-border);
+  background: var(--menu-shade-bg);
+  box-shadow: var(--menu-shade-shadow);
+  transform: translateY(-2px);
+}
+
+.menu-card__main {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  text-align: left;
+  outline: none;
+}
+
+.menu-card__icon {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--menu-shade-bg);
+  color: var(--menu-shade);
+  font-size: 16px;
+}
+
+.menu-card__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.menu-card__name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.menu-card__desc {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-card__pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.menu-card__pin--active {
+  color: var(--primary);
+}
+
+/* ─── Module Card ───────────────────────────────────────────────────────── */
+
+.module-card__group-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 8px 0 2px;
+  margin-bottom: 4px;
+}
+
+.module-card__menu-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: stretch;
+}
+
+/* ─── Empty Search ──────────────────────────────────────────────────────── */
+
+.module-page__empty {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--text-muted, #888);
+}
+
+.module-page__empty p {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* ─── Popup List (shared component styles) ──────────────────────────────── */
+
+.popup-list__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 60;
+  min-width: 280px;
+  max-width: 360px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e0e0e0);
+  border-radius: var(--radius-lg, 10px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  padding: 8px;
+}
+
+/* Taskbar overflow panel — override absolute positioning since the wrapper
+   is already fixed-positioned at the bottom of the screen. */
+.popup-list__panel--taskbar {
+  position: static;
+  top: auto;
+  min-width: 260px;
+}
+
+.popup-list__header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+  padding: 0 2px;
+}
+
+.popup-list__title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted, #888);
+}
+
+.popup-list__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.popup-list__action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 6px;
+  border: 1px solid var(--border, #e0e0e0);
+  background: var(--surface, #fff);
+  color: var(--text-muted, #888);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.popup-list__action-btn:hover {
+  background: var(--surface-alt, #f1f3f5);
+  color: var(--text-primary, #111);
+  border-color: var(--primary, #7c3aed);
+}
+
+.popup-list__action-btn--icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.popup-list__action-btn--icon:hover {
+  background: var(--danger-bg, rgba(239, 68, 68, 0.12));
+  color: var(--danger, #ef4444);
+  border-color: var(--danger, #ef4444);
+}
+
+.popup-list__empty {
+  margin: 0;
+  padding: 12px 8px;
+  font-size: 13px;
+  color: var(--text-muted, #888);
+  text-align: center;
+}
+
+.popup-list__row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 4px 4px 4px 8px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.popup-list__row:hover {
+  background: var(--surface-alt, #f1f3f5);
+}
+
+.popup-list__row-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-size: 13px;
+  color: var(--text-primary, #111);
+  padding: 2px 0;
+  transition: color 0.15s;
+}
+
+.popup-list__row-main:hover {
+  color: var(--primary, #7c3aed);
+}
+
+.popup-list__row-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.popup-list__row-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.popup-list__row-name--dimmed {
+  font-weight: 500;
+}
+
+.popup-list__badge {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--surface-alt, #f1f3f5);
+  color: var(--text-muted, #888);
+  white-space: nowrap;
+}
+
+.popup-list__row-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted, #888);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.popup-list__row-action:hover {
+  background: var(--surface-alt, #f1f3f5);
+  color: var(--text-primary, #111);
+}
+
+/* ─── Card Header (clear all button) ────────────────────────────────────── */
+
+.module-page__clear-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border, #e0e0e0);
+  background: var(--surface, #fff);
+  color: var(--text-muted, #888);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.module-page__clear-btn:hover {
+  background: var(--danger-bg, rgba(239, 68, 68, 0.12));
+  color: var(--danger, #ef4444);
+  border-color: var(--danger, #ef4444);
+}

@@ -44,7 +44,7 @@ router.post("/login", async (req, res) => {
     const bsins_id = row_emp.emply_bsins;
     const sql_bsn = `SELECT id, bsins_cntry, bsins_crncy, bsins_bstyp, bsins_ccode,
                     bsins_cname, bsins_addrs, bsins_email, bsins_cntct, bsins_image, bsins_binno,
-                    bsins_stdat, bsins_notes, bsins_timzn
+                    bsins_stdat, bsins_notes, bsins_timzn, bsins_dcpnt
                     FROM tmsb_bsins bsn
                     WHERE bsn.bsins_actve = TRUE
                     AND bsn.bsins_users = $1

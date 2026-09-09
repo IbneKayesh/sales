@@ -1,5 +1,6 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
+import { formatNumber } from "@/utils/misc";
 
 const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
   const dtColumns = [
@@ -13,7 +14,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.bosfg_fgqty} {row.runit_cname}
+            {formatNumber(row.bosfg_fgqty)} {row.runit_cname}
           </span>
         );
       },
@@ -28,6 +29,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
       key: "bosfg_rtrto",
       header: "Cost Ratio (%)",
       width: "80px",
+      body: (v) => formatNumber(v, true) + " %",
       footer: (_, row) => {
         return (
           row.reduce((sum, row) => sum + Number(row.bosfg_rtrto ?? 0), 0) + " %"

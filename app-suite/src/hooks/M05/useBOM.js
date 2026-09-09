@@ -249,6 +249,7 @@ const useBOM = () => {
       if (Object.keys(newErrors).length > 0) {
         return;
       }
+      
       if (listDataRMPM.length === 0) {
         showToast("At least 1 Raw Material is required", { type: "warning" });
         return;
@@ -261,6 +262,13 @@ const useBOM = () => {
       }
       if (listDataSFGFG.length === 0) {
         showToast("At least 1 SFG/FG is required", { type: "warning" });
+        return;
+      }
+
+      //strict with single main Item
+      const mainFG = listDataSFGFG.filter((item) => item.prsfg_group === "MAIN");
+      if (mainFG.length !== 1) {
+        showToast("Only 1 MAIN Output is allowed", { type: "warning" });
         return;
       }
 
@@ -322,7 +330,7 @@ const useBOM = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
-    
+
     const isExists = listDataRMPM.find(
       (f) => f.borpm_price === formDataRMPM.borpm_price,
     );
@@ -380,9 +388,7 @@ const useBOM = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataRMPM((prev) =>
-      prev.filter((item) => item.id !== rowData.id),
-    );
+    setListDataRMPM((prev) => prev.filter((item) => item.id !== rowData.id));
     showToast("Removed successfully", { type: "success" });
   };
 
@@ -416,6 +422,15 @@ const useBOM = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
+
+    const isExists = listDataFOH.find(
+      (f) => f.bofoh_price === formDataFOH.bofoh_price,
+    );
+    if (isExists) {
+      showToast("This item is already added", { type: "warning" });
+      return;
+    }
+
     if (
       validNumber(formDataFOH.bofoh_foqty) < 0.1 &&
       validNumber(formDataFOH.bofoh_forto) < 0.1
@@ -465,9 +480,7 @@ const useBOM = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataFOH((prev) =>
-      prev.filter((item) => item.bofoh_items !== rowData.bofoh_items),
-    );
+    setListDataFOH((prev) => prev.filter((item) => item.id !== rowData.id));
     showToast("Removed successfully", { type: "success" });
   };
 
@@ -501,6 +514,15 @@ const useBOM = () => {
     if (Object.keys(newErrors).length > 0) {
       return;
     }
+
+    const isExists = listDataSFGFG.find(
+      (f) => f.bosfg_price === formDataSFGFG.bosfg_price,
+    );
+    if (isExists) {
+      showToast("This item is already added", { type: "warning" });
+      return;
+    }
+
     if (
       validNumber(formDataSFGFG.bosfg_fgqty) < 0.1 &&
       validNumber(formDataSFGFG.bosfg_fgrto) < 0.1
@@ -551,9 +573,7 @@ const useBOM = () => {
       variant: "danger",
     });
     if (!confirmation) return;
-    setListDataSFGFG((prev) =>
-      prev.filter((item) => item.bosfg_items !== rowData.bosfg_items),
-    );
+    setListDataSFGFG((prev) => prev.filter((item) => item.id !== rowData.id));
     showToast("Removed successfully", { type: "success" });
   };
 

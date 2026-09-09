@@ -1,5 +1,6 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
+import { formatNumber } from "@/utils/misc";
 
 const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
@@ -12,7 +13,7 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.bofoh_foqty} {row.runit_cname}
+            {formatNumber(row.bofoh_foqty)} {row.runit_cname}
           </span>
         );
       },

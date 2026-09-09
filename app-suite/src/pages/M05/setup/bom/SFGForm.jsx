@@ -98,7 +98,7 @@ const SFGForm = ({
           />
         </div>
         <div className="col-span-2">
-          <InputLabel label="Unit" value={formData.runit_uname} />
+          <InputLabel label="Unit" value={formData.runit_cname} />
         </div>
         <div className="col-span-2">
           <InputNumber

@@ -2742,6 +2742,59 @@ html[data-titlebar-vivid] .modal__header {
   color: var(--primary);
 }
 
+/* ── Active Window Indicator ── */
+
+.topbar__active-window {
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  padding: 2px 4px;
+  margin: -2px -4px;
+  transition: background var(--transition-fast);
+}
+
+.topbar__active-window:hover {
+  background: var(--surface-alt);
+}
+
+.topbar__active-window:hover .topbar__active-window-title {
+  color: var(--primary);
+}
+
+/* Fade+slide animation when the active window changes. The key is set on
+   the JSX container so each change triggers a fresh animation. */
+.topbar__active-window--animating {
+  animation: topbar-active-fade-slide 0.28s ease-out;
+}
+
+@keyframes topbar-active-fade-slide {
+  0% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Open-windows count badge — small pill next to the title. */
+.topbar__active-window-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--radius-pill);
+  background: var(--primary-bg);
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ── Notification Panel ── */
 
 .topbar__notif-panel {
@@ -3329,7 +3382,48 @@ html[data-layout="boxed"] .layout__main {
   flex-shrink: 0;
 }
 
-/* Menu cards — inline styles used in JSX */
+/* Greeting Header — shared component */
+
+.greeting-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+}
+
+.greeting-header__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.greeting-header__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.greeting-header__title {
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-bold);
+  color: var(--accent-light);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.greeting-header__subtitle {
+  font-size: var(--fs-sm);
+  color: var(--accent-light);
+  margin: var(--sp-1) 0 0;
+}
+
+.greeting-header__actions {
+  display: flex;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+}
 
 /* --------------------------------------------------------------------------
    17b. User Menu Permissions

@@ -128,9 +128,9 @@ const RPT_LR_JR = ({ listData, onRegisterExport }) => {
       align: "right",
       render: (v, node) =>
         node.isRoot ? (
-          <span className="fw-semibold">{formatNumber(node.totalDr)}</span>
+          <span className="fw-semibold">{formatNumber(node.totalDr, true)}</span>
         ) : v > 0 ? (
-          formatNumber(v)
+          formatNumber(v, true)
         ) : (
           "—"
         ),
@@ -141,9 +141,9 @@ const RPT_LR_JR = ({ listData, onRegisterExport }) => {
       align: "right",
       render: (v, node) =>
         node.isRoot ? (
-          <span className="fw-semibold">{formatNumber(node.totalCr)}</span>
+          <span className="fw-semibold">{formatNumber(node.totalCr, true)}</span>
         ) : v > 0 ? (
-          formatNumber(v)
+          formatNumber(v, true)
         ) : (
           "—"
         ),

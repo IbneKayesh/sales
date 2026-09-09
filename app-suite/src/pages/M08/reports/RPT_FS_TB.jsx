@@ -44,21 +44,21 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
       header: "Debit (Dr)",
       width: "140px",
       align: "right",
-      body: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v, true) : "—"),
     },
     {
       key: "crVal",
       header: "Credit (Cr)",
       width: "140px",
       align: "right",
-      body: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v, true) : "—"),
     },
     {
       key: "subVal",
       header: "Balance",
       width: "140px",
       align: "right",
-      body: (v) => formatNumber(v),
+      body: (v) => formatNumber(v, true),
     },
   ];
 
@@ -168,7 +168,7 @@ const RPT_FS_TB = ({ listData, onRegisterExport }) => {
         text={
           isBalanced
             ? "✓ Trial Balance is Balanced"
-            : `✗ Difference: ${formatNumber(diffVal)}`
+            : `✗ Difference: ${formatNumber(diffVal, true)}`
         }
         tone={isBalanced ? "success" : "danger"}
       />

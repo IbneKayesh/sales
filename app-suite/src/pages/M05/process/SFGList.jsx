@@ -1,6 +1,9 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
 import InputNumber from "@/components/InputNumber";
+import { IconReceiptPlus } from "@/icons";
+import Button from "@/components/Button";
+import { formatNumber } from "@/utils/misc";
 
 const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
   const dtColumns = [
@@ -14,7 +17,8 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.prsfg_boqty} x {row.prsfg_borat} {row.units_cname}
+            {formatNumber(row.prsfg_boqty)} x {formatNumber(row.prsfg_borat)}{" "}
+            {row.units_cname}
           </span>
         );
       },
@@ -24,24 +28,58 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
       header: "Process Qty",
       width: "80px",
       body: (_, row) => {
-        return (
+        return row.prsfg_group === "MAIN" ? (
           <InputNumber
             label=""
             placeholder="Enter Qty"
             value={row.prsfg_fgqty}
             onChange={(e) =>
-              onChange("prsfg_fgqty", e.target.value, row.prsfg_price)
+              onChange(
+                "prsfg_fgqty",
+                e.target.value,
+                row.prsfg_price,
+                row.prsfg_boqty,
+              )
             }
             //error={formErrors.prsfg_fgrto}
             step="0.01"
             disabled={readOnly}
           />
+        ) : (
+          formatNumber(row.prsfg_fgqty)
+        );
+      },
+      footer: (_, row) => {
+        return formatNumber(
+          row.reduce((sum, row) => sum + Number(row.prsfg_fgqty ?? 0), 0),
         );
       },
     },
-    { key: "prsfg_fgrat", header: "Rate", width: "80px" },
-    { key: "prsfg_fgval", header: "Value", width: "80px" },
-    { key: "prsfg_rtrto", header: "Cost Ratio", width: "80px" },
+    {
+      key: "prsfg_fgrat",
+      header: "Rate",
+      width: "80px",
+      body: (v) => formatNumber(v, true),
+    },
+    {
+      key: "prsfg_fgval",
+      header: "Value",
+      width: "80px",
+      body: (v) => formatNumber(v, true),
+    },
+    {
+      key: "prsfg_rtrto",
+      header: "Cost Ratio",
+      width: "80px",
+      body: (v) => formatNumber(v, true) + " %",
+      footer: (_, row) => {
+        return (
+          formatNumber(
+            row.reduce((sum, row) => sum + Number(row.prsfg_rtrto ?? 0), 0),
+          ) + " %"
+        );
+      },
+    },
     { key: "prsfg_notes", header: "Notes", width: "80px" },
     // { key: "prsfg_stock", header: "Stock", width: "80px" },
     { key: "avail_fgqty", header: "Completed", width: "80px" },
@@ -53,12 +91,26 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
       width: "110px",
       sortable: false,
       body: (_, row) => (
-        <ActionButton
-          rowData={row}
-          actve={row.prsfg_actve}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        // <ActionButton
+        //   rowData={row}
+        //   actve={row.prsfg_actve}
+        //   onEdit={onEdit}
+        //   onDelete={onDelete}
+        // />
+        <>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="btn--icon-success"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(row);
+            }}
+            title="Add Stock"
+          >
+            <IconReceiptPlus size={14} className="text-success" />
+          </Button>
+        </>
       ),
       visible: !readOnly,
     },
@@ -69,7 +121,8 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
       <DataTable
         columns={dtColumns}
         data={listData}
-        pageSize={15}
+        pageSize={25}
+        showPageSize={false}
         sortable
         searchable={false}
         striped

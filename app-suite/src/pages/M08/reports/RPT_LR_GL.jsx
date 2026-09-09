@@ -154,14 +154,14 @@ const RPT_LR_GL = ({ listData, onRegisterExport }) => {
       header: "Debit",
       align: "right",
       render: (v, node) =>
-        node.isRoot ? "" : v > 0 ? formatNumber(v) : "—",
+        node.isRoot ? "" : v > 0 ? formatNumber(v, true) : "—",
     },
     {
       key: "credit",
       header: "Credit",
       align: "right",
       render: (v, node) =>
-        node.isRoot ? "" : v > 0 ? formatNumber(v) : "—",
+        node.isRoot ? "" : v > 0 ? formatNumber(v, true) : "—",
     },
     {
       key: "runningBalance",
@@ -169,9 +169,9 @@ const RPT_LR_GL = ({ listData, onRegisterExport }) => {
       align: "right",
       render: (v, node) =>
         node.isRoot ? (
-          <span className="fw-semibold">{formatNumber(node.closingBalance)}</span>
+          <span className="fw-semibold">{formatNumber(node.closingBalance, true)}</span>
         ) : (
-          formatNumber(v)
+          formatNumber(v, true)
         ),
     },
   ];

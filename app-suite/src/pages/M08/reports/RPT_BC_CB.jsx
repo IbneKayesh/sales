@@ -119,21 +119,21 @@ const RPT_BC_CB = ({ listData, onRegisterExport }) => {
       header: "Receipts (Dr)",
       width: "120px",
       align: "right",
-      body: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v, true) : "—"),
     },
     {
       key: "credit",
       header: "Payments (Cr)",
       width: "120px",
       align: "right",
-      body: (v) => (v > 0 ? formatNumber(v) : "—"),
+      body: (v) => (v > 0 ? formatNumber(v, true) : "—"),
     },
     {
       key: "runningBalance",
       header: "Balance",
       width: "140px",
       align: "right",
-      body: (v) => <span className="fw-semibold">{formatNumber(v)}</span>,
+      body: (v) => <span className="fw-semibold">{formatNumber(v, true)}</span>,
     },
   ];
 
@@ -160,17 +160,17 @@ const RPT_BC_CB = ({ listData, onRegisterExport }) => {
       <DataCardGrid cols={4} gap={8} style={{ marginBottom: 16 }}>
         <DataCard
           variant="success"
-          value={formatNumber(totalDr)}
+          value={formatNumber(totalDr, true)}
           label="Total Receipts (Dr)"
         />
         <DataCard
           variant="danger"
-          value={formatNumber(totalCr)}
+          value={formatNumber(totalCr, true)}
           label="Total Payments (Cr)"
         />
         <DataCard
           variant={closingBalance >= 0 ? "success" : "danger"}
-          value={formatNumber(closingBalance)}
+          value={formatNumber(closingBalance, true)}
           label="Closing Balance"
         />
         <DataCard

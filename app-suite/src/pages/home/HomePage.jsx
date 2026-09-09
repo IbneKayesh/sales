@@ -1,5 +1,8 @@
 import useDashboard from "@/hooks/useDashboard";
-import WelcomeHeader from "./WelcomeHeader";
+import GreetingHeader from "@/components/GreetingHeader";
+import Button from "@/components/Button";
+import { toast } from "@/components/ToastBox";
+import { IconActivity, IconArrowRight } from "@/icons";
 import StatCards from "./StatCards";
 import RevenueChart from "./RevenueChart";
 import RecentTransactions from "./RecentTransactions";
@@ -18,10 +21,26 @@ export default function HomePage() {
   return (
     <div className="page-wrap">
       {/* Welcome Section */}
-      <WelcomeHeader
+      <GreetingHeader
         userName={user?.name}
-        onRefresh={refresh}
-        isLoading={isLoading}
+        subtitle={`${new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })} \u00b7 ERP Dashboard`}
+        actions={
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => { refresh?.(); toast.info("Dashboard refreshed"); }}
+              disabled={isLoading}
+            >
+              <IconActivity size={14} />
+              {isLoading ? "Refreshing..." : "Refresh"}
+            </Button>
+            <Button variant="primary" size="sm" onClick={() => toast.success("Report exported")}>
+              <IconArrowRight size={14} />
+              Export Report
+            </Button>
+          </>
+        }
       />
 
       {/* Stat Cards */}

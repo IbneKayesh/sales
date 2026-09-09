@@ -22,6 +22,7 @@ CREATE TABLE tmsb_bsins (
   bsins_stdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   bsins_notes varchar(255),
   bsins_timzn varchar(50) NOT NULL,
+  bsins_dcpnt integer NOT NULL DEFAULT 2,
 
   -- default 2
   bsins_actve boolean NOT NULL DEFAULT true,
