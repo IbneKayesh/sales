@@ -271,7 +271,7 @@ const create = async (req, res) => {
 
     res.json({
       success: true,
-      message: "BOM created successfully",
+      message: `${newTrnNo} - BOM created successfully`,
       data: {
         ...req.body,
         bommf_trnno: newTrnNo,
@@ -691,7 +691,7 @@ router.post("/get-foh-by-bom-fr-process", async (req, res) => {
       foh.bofoh_units prfoh_units, foh.bofoh_itype prfoh_itype, foh.bofoh_foqty prfoh_boqty,
       foh.bofoh_forat prfoh_borat, foh.bofoh_foqty prfoh_foqty, foh.bofoh_forat prfoh_forat,
       foh.bofoh_foval prfoh_foval, '' prfoh_notes, '' prfoh_stock,
-      '' prfoh_jrnlm, prc.price_cname, unt.units_cname, TRUE prfoh_actve,
+      '' prfoh_jrnlm, prc.price_cname, unt.units_cname runit_cname, TRUE prfoh_actve,
       pty.id party_id, pty.party_chtac chtac_id
       from tmmb_bofoh foh
       JOIN tmib_price prc ON foh.bofoh_price = prc.id
@@ -742,7 +742,7 @@ router.post("/get-sfg-by-bom-fr-process", async (req, res) => {
       sfg.bosfg_fgqty prsfg_boqty, sfg.bosfg_fgrat prsfg_borat, sfg.bosfg_rtrto prsfg_rtrto,
       sfg.bosfg_fgqty prsfg_fgqty, sfg.bosfg_fgrat prsfg_fgrat, sfg.bosfg_fgval prsfg_fgval, '' prsfg_notes,
       '' prsfg_stock, ''  prsfg_jrnlm, '' prsfg_refid,
-      prc.price_cname, unt.units_cname, TRUE prsfg_actve,
+      prc.price_cname, unt.units_cname runit_cname, TRUE prsfg_actve,
       pty.id party_id, pty.party_chtac chtac_id
       FROM tmmb_bosfg sfg
       JOIN tmib_price prc ON sfg.bosfg_price = prc.id

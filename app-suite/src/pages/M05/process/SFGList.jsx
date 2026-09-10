@@ -7,12 +7,12 @@ import { formatNumber } from "@/utils/misc";
 
 const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
   const dtColumns = [
-    { key: "prsfg_itype", header: "Type", width: "100px" },
-    { key: "price_cname", header: "Item", width: "200px" },
+    { key: "prsfg_itype", header: "Type", width: "80px" },
     { key: "prsfg_group", header: "Group", width: "80px" },
+    { key: "price_cname", header: "Item", width: "200px" },
     {
       key: "prsfg_boqty",
-      header: "BOM Qty",
+      header: "BOQ",
       width: "80px",
       body: (_, row) => {
         return (
@@ -25,51 +25,55 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
     },
     {
       key: "prsfg_fgqty",
-      header: "Process Qty",
+      header: "Yield",
       width: "80px",
       body: (_, row) => {
-        return row.prsfg_group === "MAIN" ? (
-          <InputNumber
-            label=""
-            placeholder="Enter Qty"
-            value={row.prsfg_fgqty}
-            onChange={(e) =>
-              onChange(
-                "prsfg_fgqty",
-                e.target.value,
-                row.prsfg_price,
-                row.prsfg_boqty,
-              )
-            }
-            //error={formErrors.prsfg_fgrto}
-            step="0.01"
-            disabled={readOnly}
-          />
-        ) : (
-          formatNumber(row.prsfg_fgqty)
+        return (
+          <div className="d-flex align-center gap-1">
+            {row.prsfg_group === "MAIN" ? (
+              <InputNumber
+                label=""
+                placeholder="Enter Qty"
+                value={row.prsfg_fgqty}
+                onChange={(e) =>
+                  onChange(
+                    "prsfg_fgqty",
+                    e.target.value,
+                    row.prsfg_price,
+                    row.prsfg_boqty,
+                  )
+                }
+                step="0.01"
+                disabled={readOnly}
+              />
+            ) : (
+              formatNumber(row.prsfg_fgqty)
+            )}
+            {" x "}
+            {formatNumber(row.prsfg_fgrat)}
+            {" = "}
+            {formatNumber(row.prsfg_fgval)}
+          </div>
         );
       },
+
       footer: (_, row) => {
-        return formatNumber(
-          row.reduce((sum, row) => sum + Number(row.prsfg_fgqty ?? 0), 0),
+        const qtySum = row.reduce(
+          (sum, item) => sum + Number(item.prsfg_fgqty ?? 0),
+          0,
         );
+
+        const valueSum = row.reduce(
+          (sum, item) => sum + Number(item.prsfg_fgval ?? 0),
+          0,
+        );
+
+        return `${formatNumber(qtySum)} || ${formatNumber(valueSum)}`;
       },
-    },
-    {
-      key: "prsfg_fgrat",
-      header: "Rate",
-      width: "80px",
-      body: (v) => formatNumber(v, true),
-    },
-    {
-      key: "prsfg_fgval",
-      header: "Value",
-      width: "80px",
-      body: (v) => formatNumber(v, true),
     },
     {
       key: "prsfg_rtrto",
-      header: "Cost Ratio",
+      header: "Yield Cost Ratio",
       width: "80px",
       body: (v) => formatNumber(v, true) + " %",
       footer: (_, row) => {
@@ -83,8 +87,8 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
     { key: "prsfg_notes", header: "Notes", width: "80px" },
     // { key: "prsfg_stock", header: "Stock", width: "80px" },
     { key: "avail_fgqty", header: "Completed", width: "80px" },
-    { key: "party_id", header: "party_id", width: "80px" },
-    { key: "chtac_id", header: "chtac_id", width: "80px" },
+    { key: "party_id", header: "party_id", width: "80px", visible: false },
+    { key: "chtac_id", header: "chtac_id", width: "80px", visible: false },
     {
       key: "actions",
       header: "Actions",
@@ -107,6 +111,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
               onEdit(row);
             }}
             title="Add Stock"
+            disabled={true}
           >
             <IconReceiptPlus size={14} className="text-success" />
           </Button>

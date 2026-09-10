@@ -25,11 +25,11 @@ function AppContent() {
   } = useApp();
 
   // Block the browser's default right-click context menu app-wide.
-  useEffect(() => {
-    const handler = (e) => e.preventDefault();
-    document.addEventListener("contextmenu", handler);
-    return () => document.removeEventListener("contextmenu", handler);
-  }, []);
+  // useEffect(() => {
+  //   const handler = (e) => e.preventDefault();
+  //   document.addEventListener("contextmenu", handler);
+  //   return () => document.removeEventListener("contextmenu", handler);
+  // }, []);
 
 
   if (!user) {

@@ -231,7 +231,7 @@ const create = async (req, res) => {
       label: `Created PP ${newTrnNo}`,
     });
 
-    //SYS_PRODUCTION_PROCESS
+    //SYS_PRODUCTION.SYS_PROCESS
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
@@ -433,6 +433,7 @@ const create = async (req, res) => {
         label: `Created SFG/FG detail ${newTrnNo}`,
       });
 
+      //NOT REQUIRED! LATER BATCH WILL MANAGE JV
       // //moved to jv items
       // jv_items.push({
       //   type: det.prsfg_itype,
@@ -442,7 +443,7 @@ const create = async (req, res) => {
       // });
     }
 
-    //SYS_PRODUCTION_PROCESS.SYS_AST_INVENTORY > Assets / Inventory / Products - 101012
+    //SYS_PRODUCTION.SYS_PROCESS.SYS_AST_INVENTORY
     let line = 1;
     let totalWIP = 0;
     const newGroupedProducts = Object.values(
@@ -463,8 +464,10 @@ const create = async (req, res) => {
         return groups;
       }, {}),
     );
+
     let totalFohSvc = 0;
     for (const det of newGroupedProducts) {
+      //Input 1 + Input 2 reduce
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -494,6 +497,7 @@ const create = async (req, res) => {
       });
       line++;
       //FOH + SVC clearing from Asset Credit as Debit
+      //as no stock of 2 type items its need to move expenses again
       if (det.type === "FOH" || det.type === "SVC") {
         scripts.push({
           sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
@@ -522,22 +526,44 @@ const create = async (req, res) => {
           ],
           label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
         });
-        totalFohSvc = totalFohSvc + +Number(det.item_amount);
+        totalFohSvc = totalFohSvc + Number(det.item_amount);
         line++;
       }
       totalWIP = totalWIP + Number(det.item_amount);
     }
 
     if (totalFohSvc > 0) {
-      //SYS_PRODUCTION_PROCESS.SYS_EXP_FOH > Expenses / Factory Overhead - 50101012
-      const expFOH = await getCoaPartyExpFoh(user_c, user_b);
-      if (!expFOH) {
-        return {
+      //SYS_PRODUCTION.SYS_PROCESS.SYS_EXP_FOH_MFG
+      const sql_inpfoh = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
+      FROM tmtb_party pty
+      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+      JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+      WHERE crt.chtrt_trnid = 'SYS_PRODUCTION'
+      AND crt.chtrt_pegid = 'SYS_PROCESS'
+      AND crt.chtrt_grpid IN ('SYS_EXP_FOH_MFG','SYS_NONE')
+      AND pty.party_actve = TRUE
+      AND cht.chtac_actve = TRUE
+      AND crt.chtrt_actve = TRUE
+      AND cht.chtac_users = $1
+      AND cht.chtac_bsins = $2`;
+      const result_inpfoh = await dbGet(sql_inpfoh, [user_c, user_b]);
+      // console.log(result);
+      if (!result_inpfoh || result_inpfoh.length === 0) {
+        return res.json({
           success: false,
-          message: "No account party setup for Expense FOH",
+          message: `No default input FOH configured for Production Process`,
           data: {},
-        };
+        });
       }
+
+      // const expFOH = await getCoaPartyExpFoh(user_c, user_b);
+      // if (!expFOH) {
+      //   return {
+      //     success: false,
+      //     message: "No account party setup for Expense FOH",
+      //     data: {},
+      //   };
+      // }
 
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
@@ -552,8 +578,8 @@ const create = async (req, res) => {
           user_b,
           promf_dpart,
           newId_JV,
-          expFOH.chtac_id,
-          expFOH.party_id,
+          result_inpfoh.chtac_id,
+          result_inpfoh.party_id,
           0,
           totalFohSvc,
           "To Asset / Inventory / Products / WIP - Absorbed Clearing",
@@ -568,14 +594,37 @@ const create = async (req, res) => {
       });
       line++;
     }
-    //SYS_PRODUCTION_PROCESS.SYS_AST_INVENTORY_WIP > Assets / Inventory / Products / WIP - 10101211
-    const astWIP = await getCoaPartyAssetsWIP(user_c, user_b);
-    if (!astWIP) {
-      return {
+    
+    //SYS_PRODUCTION.SYS_PROCESS.SYS_AST_INVENTORY.WIP
+    // const astWIP = await getCoaPartyAssetsWIP(user_c, user_b);
+    // if (!astWIP) {
+    //   return {
+    //     success: false,
+    //     message: "No account party setup for Inventory WIP",
+    //     data: {},
+    //   };
+    // }
+    const sql_yield = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
+      FROM tmtb_party pty
+      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+      JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+      WHERE crt.chtrt_trnid = 'SYS_PRODUCTION'
+      AND crt.chtrt_pegid = 'SYS_PROCESS'
+      AND crt.chtrt_grpid IN ('SYS_AST_INVENTORY','SYS_NONE')
+      AND crt.chtrt_route IN ('WIP')
+      AND pty.party_actve = TRUE
+      AND cht.chtac_actve = TRUE
+      AND crt.chtrt_actve = TRUE
+      AND cht.chtac_users = $1
+      AND cht.chtac_bsins = $2`;
+    const result_yield = await dbGet(sql_yield, [user_c, user_b]);
+    // console.log(result);
+    if (!result_yield || result_yield.length === 0) {
+      return res.json({
         success: false,
-        message: "No account party setup for Inventory WIP",
+        message: `No default input FOH configured for Production Process`,
         data: {},
-      };
+      });
     }
 
     scripts.push({
@@ -591,8 +640,8 @@ const create = async (req, res) => {
         user_b,
         promf_dpart,
         newId_JV,
-        astWIP.chtac_id,
-        astWIP.party_id,
+        result_yield.chtac_id,
+        result_yield.party_id,
         totalWIP,
         0,
         "To Asset / Inventory / Products / WIP",
@@ -609,10 +658,10 @@ const create = async (req, res) => {
 
     res.json({
       success: true,
-      message: "Process created successfully",
+      message: `${newTrnNo} - Process created successfully`,
       data: {
         ...req.body,
-        promf_bkngm: newTrnNo,
+        promf_trnno: newTrnNo,
       },
     });
   } catch (error) {

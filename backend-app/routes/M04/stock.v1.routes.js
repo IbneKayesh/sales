@@ -19,8 +19,7 @@ router.post("/get-all-active", async (req, res) => {
       });
     }
 
-    const sql = `
-      SELECT brnd.*,0 AS edit_stop
+    const sql = `SELECT brnd.*,0 AS edit_stop
       FROM tmib_brand brnd
       WHERE brnd.brand_users = $1
       AND brnd.brand_actve = TRUE
@@ -430,8 +429,8 @@ router.post("/get-item-price-stock-fr-process", async (req, res) => {
       });
     }
 
-    const sql = `SELECT stk.id stock_id, stk.stock_batch, stk.stock_cprat, stk.stock_ohqty,
-prc.id price_id, prc.price_cname, itm.id items_id, itm.items_runit, unt.units_cname
+    const sql = `SELECT stk.id stock_id, stk.stock_trnno, stk.stock_batch, stk.stock_cprat, stk.stock_ohqty,
+prc.id price_id, prc.price_cname, itm.id items_id, itm.items_runit, unt.units_cname runit_cname
 FROM tmib_stock stk
 JOIN tmib_price prc ON stk.stock_price = prc.id
 JOIN tmib_items itm ON stk.stock_items = itm.id

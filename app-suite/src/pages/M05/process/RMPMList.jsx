@@ -10,43 +10,38 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
     { key: "price_cname", header: "Item", width: "200px" },
     {
       key: "prrpm_boqty",
-      header: "BOM Qty",
+      header: "BOQ",
       width: "80px",
-      body: (_, row) => {
-        return (
-          <span>
-            {formatNumber(row.prrpm_boqty)} x {formatNumber(row.prrpm_borat)}{" "}
-            {row.units_cname}
-          </span>
-        );
-      },
+      body: (_, row) => (
+        <span>
+          {formatNumber(row.prrpm_boqty)} {row.runit_cname} ×{" "}
+          {formatNumber(row.prrpm_borat)} ={" "}
+          {formatNumber(row.prrpm_boqty * row.prrpm_borat)}
+        </span>
+      ),
     },
     {
       key: "prrpm_rmqty",
-      header: "Qty",
+      header: "Consumption",
       width: "80px",
-      body: (v) => formatNumber(v, true),
+      //body: (v) => formatNumber(v, true),
+      body: (_, row) => {
+        return (
+          <span>
+            {formatNumber(row.prrpm_rmqty)} {row.runit_cname} x{" "}
+            {formatNumber(row.prrpm_rmrat)} = {formatNumber(row.prrpm_rmval)}
+          </span>
+        );
+      },
       footer: (_, row) => {
         return row.reduce((sum, row) => sum + Number(row.prrpm_rmqty ?? 0), 0);
       },
     },
-    {
-      key: "prrpm_rmrat",
-      header: "Rate",
-      width: "80px",
-      body: (v) => formatNumber(v, true),
-    },
-    {
-      key: "prrpm_rmval",
-      header: "Value",
-      width: "80px",
-      body: (v) => formatNumber(v, true),
-    },
     { key: "prrpm_notes", header: "Notes", width: "80px" },
     // { key: "prrpm_stock", header: "Stock", width: "80px" },
     { key: "stock_ohqty", header: "Stock", width: "80px" },
-    { key: "party_id", header: "party_id", width: "80px" },
-    { key: "chtac_id", header: "chtac_id", width: "80px" },
+    { key: "party_id", header: "party_id", width: "80px", visible: false },
+    { key: "chtac_id", header: "chtac_id", width: "80px", visible: false },
     {
       key: "actions",
       header: "Actions",

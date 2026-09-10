@@ -10,42 +10,39 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
     { key: "price_cname", header: "Item", width: "200px" },
     {
       key: "prfoh_boqty",
-      header: "BOM Qty",
+      header: "BOQ",
       width: "80px",
       body: (_, row) => {
         return (
           <span>
-            {formatNumber(row.prfoh_boqty)} x {formatNumber(row.prfoh_borat)}{" "}
-            {row.units_cname}
+            {formatNumber(row.prfoh_boqty)} {row.runit_cname} ×{" "}
+            {formatNumber(row.prfoh_borat)} ={" "}
+            {formatNumber(row.prfoh_boqty * row.prfoh_borat)}
           </span>
         );
       },
     },
     {
       key: "prfoh_foqty",
-      header: "Qty",
+      header: "Consumption",
       width: "80px",
-      body: (v) => formatNumber(v, true),
+      //body: (v) => formatNumber(v, true),
+      body: (_, row) => {
+        return (
+          <span>
+            {formatNumber(row.prfoh_foqty)} {row.runit_cname} x{" "}
+            {formatNumber(row.prfoh_forat)} = {formatNumber(row.prfoh_foval)}
+          </span>
+        );
+      },
       footer: (_, row) => {
         return row.reduce((sum, row) => sum + Number(row.prfoh_foqty ?? 0), 0);
       },
     },
-    {
-      key: "prfoh_forat",
-      header: "Rate",
-      width: "80px",
-      body: (v) => formatNumber(v, true),
-    },
-    {
-      key: "prfoh_foval",
-      header: "Value",
-      width: "80px",
-      body: (v) => formatNumber(v, true),
-    },
     { key: "prfoh_notes", header: "Notes", width: "80px" },
-    { key: "prfoh_stock", header: "Stock", width: "80px" },
-    { key: "party_id", header: "party_id", width: "80px" },
-    { key: "chtac_id", header: "chtac_id", width: "80px" },
+    { key: "prfoh_stock", header: "Stock", width: "80px", visible: false },
+    { key: "party_id", header: "party_id", width: "80px", visible: false },
+    { key: "chtac_id", header: "chtac_id", width: "80px", visible: false },
     {
       key: "actions",
       header: "Actions",
@@ -68,6 +65,7 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
               onEdit(row);
             }}
             title="Add Stock"
+            disabled={true}
           >
             <IconReceiptPlus size={14} className="text-success" />
           </Button>

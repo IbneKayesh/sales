@@ -122,6 +122,7 @@ const ProcessPage = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => handleShowModal("RMPM")}
+                  disabled={true}
                 >
                   <IconPlus size={14} className="icon-left" />
                   Add RM/PM
@@ -130,6 +131,7 @@ const ProcessPage = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => handleShowModal("FOH")}
+                  disabled={true}
                 >
                   <IconPlus size={14} className="icon-left" />
                   Add FOH
@@ -138,6 +140,7 @@ const ProcessPage = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => handleShowModal("SFG")}
+                  disabled={true}
                 >
                   <IconPlus size={14} className="icon-left" />
                   Add SFG/FG
@@ -281,7 +284,7 @@ const ProcessPage = () => {
                   units_Options={units_Options}
                 />
               )}
-              {showModal.modal === "Batch" && (
+              {showModal.modal === "BATCH" && (
                 <BatchForm
                   isBusy={isBusy}
                   readOnly={readOnly}

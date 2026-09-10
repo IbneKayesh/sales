@@ -314,21 +314,32 @@ const useProcess = () => {
     });
   };
 
+  //Yield, BOQ
   const recalcProcessQty = (prqty, boqty) => {
-    if (!prqty || !boqty) return;
+    const productionQty = validNumber(prqty);
+    const boqQty = validNumber(boqty);
 
-    const productionRatio = validNumber(prqty) / validNumber(boqty);
+    if (productionQty <= 0 || boqQty <= 0) {
+      return;
+    }
+    // =========================================================
+    // Production Ratio
+    // =========================================================
+    const productionRatio = productionQty / boqQty;
 
     // =========================
     // RM / PM
     // =========================
     const updatedRMPM = listDataRMPM.map((item) => {
-      const reqQty = productionRatio * validNumber(item.prrpm_boqty);
+      const boqQty = validNumber(item.prrpm_boqty);
+      const rmRate = validNumber(item.prrpm_rmrat);
+      const reqQty = productionRatio * boqQty;
+      const rmValue = reqQty * rmRate;
 
       return {
         ...item,
         prrpm_rmqty: reqQty,
-        prrpm_rmval: reqQty * validNumber(item.prrpm_rmrat),
+        prrpm_rmval: rmValue,
       };
     });
 
@@ -336,32 +347,44 @@ const useProcess = () => {
     // FOH
     // =========================
     const updatedFOH = listDataFOH.map((item) => {
-      const reqQty = productionRatio * validNumber(item.prfoh_boqty);
+      const boqQty = validNumber(item.prfoh_boqty);
+      const fohRate = validNumber(item.prfoh_forat);
+      const reqQty = productionRatio * boqQty;
+      const fohValue = reqQty * fohRate;
 
       return {
         ...item,
         prfoh_foqty: reqQty,
-        prfoh_foval: reqQty * validNumber(item.prfoh_forat),
+        prfoh_foval: fohValue,
       };
     });
 
     // =========================
-    // Total RM/PM + FOH
+    // Total RM/PM
     // =========================
     const totalRMPM = updatedRMPM.reduce(
       (sum, item) => sum + validNumber(item.prrpm_rmval),
       0,
     );
-
+    // =========================
+    // Total FOH
+    // =========================
     const totalFOH = updatedFOH.reduce(
       (sum, item) => sum + validNumber(item.prfoh_foval),
       0,
     );
 
+    // =========================
+    // Total Production Cost
+    // =========================
     const totalRMPMFOH = totalRMPM + totalFOH;
 
     // =========================
     // SFG / FG
+    //
+    // prsfg_rtrto is used for:
+    // 1. Yield %
+    // 2. Cost distribution %
     // =========================
     const updatedSFGFG = listDataSFGFG.map((item) => {
       const reqQty =
@@ -377,9 +400,9 @@ const useProcess = () => {
 
       return {
         ...item,
-        prsfg_fgqty: reqQty,
-        prsfg_fgrat: fgRate,
-        prsfg_fgval: fgValue,
+        prsfg_fgqty: reqQty, // Yield quantity
+        prsfg_fgrat: fgRate, // Distributed cost rate
+        prsfg_fgval: fgValue, // Distributed cost value
       };
     });
 
@@ -624,6 +647,7 @@ const useProcess = () => {
     setFormDataRMPM({});
     handleHideModal();
   };
+
   //mapping stock
   const handleEditRMPM = async (rowData) => {
     handleShowModal("RMPM_STOCK");
@@ -939,7 +963,7 @@ const useProcess = () => {
   };
 
   const handleEditBatch = (rowData) => {
-    handleShowModal("Batch");
+    handleShowModal("BATCH");
     setFormDataBatch(rowData);
   };
 
@@ -951,7 +975,7 @@ const useProcess = () => {
       setFormDataFOH(dataModelFOH);
     } else if (modal === "SFG") {
       setFormDataSFGFG(dataModelSFG);
-    } else if (modal === "Batch") {
+    } else if (modal === "BATCH") {
       //console.log("listDataSFGFG",listDataSFGFG)
       const list = listDataSFGFG.map((item) => ({
         id: generateGuid(),
@@ -983,7 +1007,6 @@ const useProcess = () => {
     } else if (modal === "RMPM_STOCK") {
       //setFormDataBatch(dataModelBatch);
     }
-
     setShowModal({ show: true, modal: modal });
     switch (modal) {
       case "RMPM":
@@ -1048,16 +1071,11 @@ const useProcess = () => {
     // console.log("stock_Options", stock_Options);
     // console.log("stock", stock);
 
+    //set for to show in Form Window
     setFormDataRMPM((prev) => ({ ...prev, stock_id: v }));
 
-    // setFormDataRMPM((prev) => ({
-    //   ...prev,
-    //   prrpm_stock: stock?.stock_id || "",
-    //   stock_ohqty: stock?.stock_ohqty || 0,
-    // }));
-
     // Update matching item in the list
-    //in a Single BOM, a price  item can be only onece
+    // in a Single BOM, a price item can be only once, So map them using price_id instead of stock_id
     setListDataRMPM((prev) =>
       prev.map((item) =>
         item.prrpm_price === stock?.price_id || ""
@@ -1078,6 +1096,7 @@ const useProcess = () => {
   const handleAddToListStock = () => {
     handleHideModal();
     //recalcOutputCost();
+    //handleChangeStock done all things
   };
 
   return {

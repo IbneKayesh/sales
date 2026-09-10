@@ -29,7 +29,7 @@ const RMPMSTOCKForm = ({
             disabled={readOnly}
             optionValue="stock_id"
             optionLabel="price_cname"
-            optionGrid="price_cname:Name,units_cname:Unit,stock_cprat:Cost Price,stock_ohqty:Current Stock,stock_batch:Batch"
+            optionGrid="price_cname:Name,runit_cname:Unit,stock_cprat:Cost Price,stock_ohqty:Current Stock,stock_batch:Batch,stock_trnno:Trn No"
           />
         </div>
         <div className="col-span-12 mt-5"></div>

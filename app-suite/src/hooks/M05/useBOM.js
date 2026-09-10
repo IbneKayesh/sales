@@ -249,7 +249,7 @@ const useBOM = () => {
       if (Object.keys(newErrors).length > 0) {
         return;
       }
-      
+
       if (listDataRMPM.length === 0) {
         showToast("At least 1 Raw Material is required", { type: "warning" });
         return;
@@ -266,7 +266,10 @@ const useBOM = () => {
       }
 
       //strict with single main Item
-      const mainFG = listDataSFGFG.filter((item) => item.prsfg_group === "MAIN");
+      const mainFG = listDataSFGFG.filter(
+        (item) => item.bosfg_group === "MAIN",
+      );
+      //console.log("mainFG",listDataSFGFG)
       if (mainFG.length !== 1) {
         showToast("Only 1 MAIN Output is allowed", { type: "warning" });
         return;

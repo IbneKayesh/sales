@@ -4,9 +4,9 @@ import { formatNumber } from "@/utils/misc";
 
 const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
   const dtColumns = [
-    { key: "bosfg_itype", header: "Type", width: "100px" },
-    { key: "price_cname", header: "Item", width: "200px" },
+    { key: "bosfg_itype", header: "Type", width: "80px" },
     { key: "bosfg_group", header: "Group", width: "80px" },
+    { key: "price_cname", header: "Item", width: "200px" },
     {
       key: "bosfg_fgqty",
       header: "Yield Quantity",
