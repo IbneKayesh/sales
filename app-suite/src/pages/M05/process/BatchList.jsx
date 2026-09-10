@@ -1,11 +1,14 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
+import { PageSection } from "@/components/PageCard";
 import { getRelativeDays, formatDate } from "@/utils/datetime.js";
+import { formatNumber } from "@/utils/misc";
 
 const BatchList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
     { key: "prbtc_itype", header: "Type", width: "80px" },
     { key: "prbtc_group", header: "Group", width: "80px" },
+    { key: "price_cname", header: "Name", width: "80px" },
     { key: "prbtc_brcod", header: "Barcode", width: "80px" },
     { key: "prbtc_batch", header: "Batch", width: "80px" },
     { key: "prbtc_srial", header: "Serial", width: "80px" },
@@ -16,7 +19,7 @@ const BatchList = ({ readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.prbtc_gdstk} {row.units_cname}
+            {formatNumber(row.prbtc_gdstk)} {row.runit_cname}
           </span>
         );
       },
@@ -28,13 +31,23 @@ const BatchList = ({ readOnly, listData, onEdit, onDelete }) => {
       body: (_, row) => {
         return (
           <span>
-            {row.prbtc_bdstk} {row.units_cname}
+            {formatNumber(row.prbtc_bdstk)} {row.runit_cname}
           </span>
         );
       },
     },
-    { key: "prbtc_fgrat", header: "Cost Rate", width: "80px" },
-    { key: "prbtc_fgval", header: "Value", width: "80px" },
+    {
+      key: "prbtc_fgrat",
+      header: "Cost Rate",
+      width: "80px",
+      body: (v) => formatNumber(v),
+    },
+    {
+      key: "prbtc_fgval",
+      header: "Value",
+      width: "80px",
+      body: (v) => formatNumber(v),
+    },
     { key: "dpart_cname", header: "Department", width: "80px" },
     { key: "prbtc_wkshf", header: "Shift", width: "80px" },
     { key: "prbtc_emply", header: "Manager", width: "80px" },
@@ -62,23 +75,22 @@ const BatchList = ({ readOnly, listData, onEdit, onDelete }) => {
     },
   ];
   return (
-    <>
-      <p>Output → Batch Complete</p>
+    <PageSection title="Output / Batch Complete">
       <DataTable
         columns={dtColumns}
         data={listData}
-        pageSize={15}
+        pageSize={1000}
         sortable
         searchable={false}
         striped
         hoverable
         exportable={false}
         exportFilename="data-export.csv"
-        onRowClick={(row) => onEdit(row)}
+        //onRowClick={(row) => onEdit(row)}
         emptyMessage="No batch records found"
         className="mt-2"
       />
-    </>
+    </PageSection>
   );
 };
 export default BatchList;

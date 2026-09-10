@@ -158,7 +158,8 @@ const ProcessPage = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleShowModal("Batch")}
+                  onClick={() => handleShowModal("BATCH")}
+                  disabled={!formData.id}
                 >
                   <IconPlus size={14} className="icon-left" />
                   Add Batch

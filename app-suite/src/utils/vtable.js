@@ -273,6 +273,10 @@ const ledger_types_Options = [
     label: "Govt VAT Tax",
     value: "SYS_JV_GOV_VAT_TAX",
   },
+  {
+    label: "Balance Transfer",
+    value: "SYS_JV_TRANSFER",
+  },
 ];
 
 export {

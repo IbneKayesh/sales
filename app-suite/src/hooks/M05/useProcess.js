@@ -155,165 +155,6 @@ const useProcess = () => {
 
   const round2 = (n) => Math.round(Number(n) * 100) / 100;
 
-  const recalcProcessQty_v1 = (prqty) => {
-    if (!prqty) return;
-
-    //RM/PM
-    setListDataRMPM((prev) => {
-      return prev.map((item) => {
-        let reqQty = validNumber(item.prrpm_boqty) * validNumber(prqty);
-        return {
-          ...item,
-          prrpm_rmqty: validNumber(reqQty),
-          prrpm_rmval: validNumber(reqQty) * validNumber(item.prrpm_rmrat),
-        };
-      });
-    });
-    //FOH
-    setListDataFOH((prev) => {
-      return prev.map((item) => {
-        let reqQty = validNumber(item.prfoh_boqty) * validNumber(prqty);
-        return {
-          ...item,
-          prfoh_foqty: validNumber(reqQty),
-          prfoh_foval: validNumber(reqQty) * validNumber(item.prfoh_forat),
-        };
-      });
-    });
-    //SFG
-    setListDataSFGFG((prev) => {
-      return prev.map((item) => {
-        //console.log(item)
-        const reqQty =
-          item.prsfg_group === "MAIN"
-            ? validNumber(prqty)
-            : validNumber(item.prsfg_boqty) * validNumber(prqty);
-
-        return {
-          ...item,
-          prsfg_fgqty: validNumber(reqQty),
-          prsfg_fgval: validNumber(reqQty) * validNumber(item.prsfg_fgrat),
-        };
-      });
-    });
-  };
-
-  const recalcOutputCost_v1 = () => {
-    let newItems = [...(listDataSFGFG || [])];
-
-    const totalRMPM = listDataRMPM.reduce(
-      (sum, item) => sum + validNumber(item.prrpm_rmval),
-      0,
-    );
-    const totalFOH = listDataFOH.reduce(
-      (sum, item) => sum + validNumber(item.prfoh_foval),
-      0,
-    );
-    const totalRMPMFOH = totalRMPM + totalFOH;
-
-    newItems = newItems.map((item) => {
-      const prsfg_rtrto = validNumber(item.prsfg_rtrto);
-      return {
-        ...item,
-        prsfg_fgrat: (validNumber(totalRMPMFOH) * prsfg_rtrto) / 100,
-      };
-    });
-
-    setListDataSFGFG(newItems);
-  };
-
-  const recalcProcessQty_v2 = (prqty, boqty) => {
-    if (!prqty || !boqty) return;
-
-    const productionRatio = validNumber(prqty) / validNumber(boqty);
-
-    // RM/PM
-    setListDataRMPM((prevRMPM) => {
-      const updatedRMPM = prevRMPM.map((item) => {
-        const reqQty = productionRatio * validNumber(item.prrpm_boqty);
-
-        return {
-          ...item,
-          prrpm_rmqty: reqQty,
-          prrpm_rmval: reqQty * validNumber(item.prrpm_rmrat),
-        };
-      });
-
-      // FOH
-      setListDataFOH((prevFOH) => {
-        const updatedFOH = prevFOH.map((item) => {
-          const reqQty = productionRatio * validNumber(item.prfoh_boqty);
-
-          return {
-            ...item,
-            prfoh_foqty: reqQty,
-            prfoh_foval: reqQty * validNumber(item.prfoh_forat),
-          };
-        });
-
-        // Calculate total RM/PM + FOH from the UPDATED values
-        const totalRMPM = updatedRMPM.reduce(
-          (sum, item) => sum + validNumber(item.prrpm_rmval),
-          0,
-        );
-
-        const totalFOH = updatedFOH.reduce(
-          (sum, item) => sum + validNumber(item.prfoh_foval),
-          0,
-        );
-
-        const totalRMPMFOH = totalRMPM + totalFOH;
-
-        // SFG / FG
-        setListDataSFGFG((prevSFGFG) => {
-          return prevSFGFG.map((item) => {
-            const reqQty =
-              item.prsfg_group === "MAIN"
-                ? validNumber(prqty)
-                : productionRatio * validNumber(item.prsfg_boqty);
-
-            const returnPercent = validNumber(item.prsfg_rtrto);
-            const fgValue = (totalRMPMFOH * returnPercent) / 100;
-            const fgRate = reqQty > 0 ? fgValue / reqQty : 0;
-
-            return {
-              ...item,
-              prsfg_fgqty: reqQty,
-              // Recalculated output rate/value
-              prsfg_fgrat: fgRate,
-              prsfg_fgval: fgValue,
-            };
-          });
-        });
-
-        //old code replaced with new, kept as backup
-        // setListDataSFGFG((prevSFGFG) => {
-        //   return prevSFGFG.map((item) => {
-        //     const reqQty =
-        //       item.prsfg_group === "MAIN"
-        //         ? validNumber(prqty)
-        //         : validNumber(item.prsfg_boqty) * validNumber(prqty);
-
-        //     const prsfg_rtrto = validNumber(item.prsfg_rtrto);
-        //     const prsfg_fgrat = (totalRMPMFOH * prsfg_rtrto) / 100 / reqQty;
-
-        //     return {
-        //       ...item,
-        //       prsfg_fgqty: reqQty,
-        //       // Recalculated output rate/value
-        //       prsfg_fgrat: prsfg_fgrat,
-        //       prsfg_fgval: reqQty * prsfg_fgrat,
-        //     };
-        //   });
-        // });
-
-        return updatedFOH;
-      });
-
-      return updatedRMPM;
-    });
-  };
-
   //Yield, BOQ
   const recalcProcessQty = (prqty, boqty) => {
     const productionQty = validNumber(prqty);
@@ -823,6 +664,16 @@ const useProcess = () => {
     // console.log(f);
     // console.log(v);
     // console.log(id);
+    //ensure cost rate calculations, select valid stock first
+    const isNullEmpty = listDataRMPM.find(
+      (f) => !f.prrpm_stock || String(f.prrpm_stock).trim() === "",
+    );
+
+    if (isNullEmpty) {
+      showToast("RM/PM Stock is required", { type: "warning" });
+      return;
+    }
+
     setListDataSFGFG((prev) =>
       prev.map((row) => (row.prsfg_price === id ? { ...row, [f]: v } : row)),
     );
@@ -874,40 +725,6 @@ const useProcess = () => {
     // if (Object.keys(newErrors).length > 0) {
     //   return;
     // }
-    // if (
-    //   ["", 0, "0", null, undefined].includes(formDataBatch.prbtc_gaqty) &&
-    //   ["", 0, "0", null, undefined].includes(formDataBatch.prbtc_gbqty)
-    // ) {
-    //   showToast("At least one Good Quantity is required", {
-    //     type: "warning",
-    //   });
-    //   return;
-    // }
-    // const items_iname = items_store_Options.find(
-    //   (opt) => opt.id === formDataBatch.prbtc_items,
-    // );
-
-    // const units_cname = units_Options.find(
-    //   (opt) => opt.id === formDataBatch.prbtc_units,
-    // );
-
-    // const prbtc_pbval = round2(
-    //   ((Number(formDataBatch.prbtc_gaqty) || 0) +
-    //     (Number(formDataBatch.prbtc_gbqty) || 0)) *
-    //     (Number(formDataBatch.prbtc_pbrat) || 0),
-    // );
-
-    // setListDataBatch((prev) => [
-    //   ...prev,
-    //   {
-    //     ...formDataBatch,
-    //     prbtc_pbval: prbtc_pbval,
-    //     items_iname: items_iname?.items_iname || "Invalid Item",
-    //     units_cname: units_cname?.units_cname || "Invalid Unit",
-    //     prbtc_actve: true,
-    //   },
-    // ]);
-    // setFormDataBatch({});
     // handleHideModal();
     try {
       const newErrors = validate(formData, tmmb_promf);
@@ -922,20 +739,33 @@ const useProcess = () => {
           validNumber(f.prbtc_gdstk) + validNumber(f.prbtc_bdstk) >
           validNumber(f.avail_fgqty),
       );
+      //console.log("isShortStock", isShortStock);
       if (isShortStock) {
         const gdQty = validNumber(isShortStock.prbtc_gdstk);
         const bdQty = validNumber(isShortStock.prbtc_bdstk);
         const availableQty = validNumber(isShortStock.avail_fgqty);
         const overflowQty = availableQty - (gdQty + bdQty);
-        showToast(overflowQty + " complete Qty is overflow", {
-          type: "warning",
-        });
+        showToast(
+          isShortStock.price_cname +
+            " (" +
+            overflowQty +
+            ") complete Qty is overflow",
+          {
+            type: "warning",
+          },
+        );
         return;
       }
 
+      const newFormDataList = formDataBatch.filter(
+        (item) =>
+          validNumber(item.prbtc_gdstk) > 0 ||
+          validNumber(item.prbtc_bdstk) > 0,
+      );
+
       const reqBody = {
         ...formData,
-        tmmb_prbtc: formDataBatch,
+        tmmb_prbtc: newFormDataList,
       };
 
       //console.log(reqBody);
@@ -953,7 +783,7 @@ const useProcess = () => {
         //setPgView("SYS_VW_LST_1");
         //setFormData(dataModel);
         //getAllProcess();
-        loadAllDetailsBOM(formData.id);
+        loadAllDetails(formData.id);
         handleHideModal();
       }
     } catch (error) {

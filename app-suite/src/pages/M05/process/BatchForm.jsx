@@ -287,6 +287,7 @@ const BatchForm = ({
         columns={dtColumns}
         data={formData}
         pageSize={100}
+        showPageSize={false}
         sortable
         searchable={false}
         striped

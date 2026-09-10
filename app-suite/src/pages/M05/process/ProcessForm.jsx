@@ -67,7 +67,15 @@ const ProcessForm = ({
         </div>
 
         <div className="col-span-3">
-          <InputLabel label="Process Name" value={formData.promf_cname} />
+          {/* <InputLabel label="Process Name" value={formData.promf_cname} /> */}
+          <InputText
+            label="Process Name"
+            placeholder="Enter notes"
+            value={formData.promf_cname}
+            onChange={(e) => onChange("promf_cname", e.target.value)}
+            error={formErrors.promf_cname}
+            disabled={readOnly}
+          />
         </div>
         <div className="col-span-1">
           <InputLabel label="Process Sl No" value={formData.promf_prono} />

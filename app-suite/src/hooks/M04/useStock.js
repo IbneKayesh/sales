@@ -132,8 +132,9 @@ const useStock = () => {
       setIsBusy(true);
 
       const resp = await stockAPI.upsert(reqBody);
+      //console.log("resp",resp)
       alertBox({
-        title: resp.success ? Saved : "Error",
+        title: resp.success ? "Saved" : "Error",
         message: resp.message,
         variant: resp.success ? "success" : "danger",
         confirmText: resp.success ? "Done" : "Close",

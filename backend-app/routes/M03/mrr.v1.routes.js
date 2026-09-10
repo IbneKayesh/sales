@@ -7,7 +7,6 @@ const {
   GenNewTrn,
   getCurrentPeriod,
   getCurrencyRate,
-  getCoaAssetInputVat,
 } = require("../../db/genHelper");
 
 // get all

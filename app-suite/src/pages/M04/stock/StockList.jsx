@@ -102,7 +102,6 @@ const StockList = ({ cfColumns = [], listData, onEdit }) => {
         </>
       ),
     },
-
     {
       key: "punit_cname",
       header: "Pack",
@@ -168,6 +167,18 @@ const StockList = ({ cfColumns = [], listData, onEdit }) => {
       body: (_, row) => <NegativeValue value={row.stock_lprat} />,
     },
     {
+      key: "stock_value",
+      header: "Value",
+      width: "80px",
+      body: (_, row) => {
+        return (
+          <>
+            <NegativeValue value={row.stock_ohqty * row.stock_cprat} />
+          </>
+        );
+      },
+    },
+    {
       key: "stock_notes",
       header: "Notes",
       width: "80px",
@@ -195,7 +206,8 @@ const StockList = ({ cfColumns = [], listData, onEdit }) => {
       />
 
       <Badge variant="info" dot="true" className="mt-2">
-        Click to select line stock: Merge multiple stock lines of the same item into a single line stock.
+        Click to select line stock: Merge multiple stock lines of the same item
+        into a single line stock.
       </Badge>
     </>
   );

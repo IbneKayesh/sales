@@ -1,5 +1,6 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
+import { PageSection } from "@/components/PageCard";
 import { formatNumber } from "@/utils/misc";
 
 const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
@@ -55,8 +56,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
     },
   ];
   return (
-    <>
-      <p>Output → SFG/FG</p>
+    <PageSection title="Output / SFG/FG">
       <DataTable
         columns={dtColumns}
         data={listData}
@@ -72,7 +72,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onAdd }) => {
         emptyMessage="No data found"
         className="mt-2"
       />
-    </>
+    </PageSection>
   );
 };
 export default SFGList;

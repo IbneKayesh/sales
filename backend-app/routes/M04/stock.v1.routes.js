@@ -156,7 +156,7 @@ const create = async (req, res) => {
     await dbRunAll(scripts);
     res.json({
       success: true,
-      message: `New Stock Line - Created successfully.`,
+      message: `${newCode} - merged ${stock_lines.length} lines successfully`,
       data: {},
     });
   } catch (error) {

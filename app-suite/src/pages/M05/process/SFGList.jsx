@@ -1,9 +1,9 @@
 import DataTable from "@/components/DataTable";
-import ActionButton from "@/components/ActionButton";
 import InputNumber from "@/components/InputNumber";
 import { IconReceiptPlus } from "@/icons";
 import Button from "@/components/Button";
-import { formatNumber } from "@/utils/misc";
+import { PageSection } from "@/components/PageCard";
+import { formatNumber, validNumber } from "@/utils/misc";
 
 const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
   const dtColumns = [
@@ -86,7 +86,24 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
     },
     { key: "prsfg_notes", header: "Notes", width: "80px" },
     // { key: "prsfg_stock", header: "Stock", width: "80px" },
-    { key: "avail_fgqty", header: "Completed", width: "80px" },
+    {
+      key: "pending_fgqty",
+      header: "Pending",
+      width: "80px",
+      body: (_, row) => {
+        return (
+          <span>
+            {validNumber(row.prsfg_fgqty) - validNumber(row.avail_fgqty)}
+          </span>
+        );
+      },
+    },
+    {
+      key: "avail_fgqty",
+      header: "Completed",
+      width: "80px",
+      body: (v) => formatNumber(v),
+    },
     { key: "party_id", header: "party_id", width: "80px", visible: false },
     { key: "chtac_id", header: "chtac_id", width: "80px", visible: false },
     {
@@ -121,8 +138,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
     },
   ];
   return (
-    <>
-      <p>Output → SFG/FG</p>
+    <PageSection title="Output / SFG/FG">
       <DataTable
         columns={dtColumns}
         data={listData}
@@ -138,7 +154,7 @@ const SFGList = ({ readOnly, listData, onEdit, onDelete, onChange }) => {
         emptyMessage="No SFG/FG found"
         className="mt-2"
       />
-    </>
+    </PageSection>
   );
 };
 export default SFGList;

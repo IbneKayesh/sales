@@ -594,7 +594,7 @@ const create = async (req, res) => {
       });
       line++;
     }
-    
+
     //SYS_PRODUCTION.SYS_PROCESS.SYS_AST_INVENTORY.WIP
     // const astWIP = await getCoaPartyAssetsWIP(user_c, user_b);
     // if (!astWIP) {
@@ -622,7 +622,7 @@ const create = async (req, res) => {
     if (!result_yield || result_yield.length === 0) {
       return res.json({
         success: false,
-        message: `No default input FOH configured for Production Process`,
+        message: `No default input WIP configured for Production Process`,
         data: {},
       });
     }
@@ -1113,6 +1113,23 @@ router.post("/create-batch", async (req, res) => {
       };
     }
 
+    const sql_batch = `SELECT COALESCE(COUNT(btc.id),0) + 1 last_no
+        FROM tmmb_prbtc btc
+        WHERE btc.prbtc_group = 'MAIN'
+        AND btc.prbtc_promf = $1
+        AND btc.prbtc_users = $2
+        AND btc.prbtc_bsins = $3
+        AND btc.prbtc_dpart = $4`;
+    const result_batch = await dbGet(sql_batch, [
+      id,
+      user_c,
+      user_b,
+      promf_dpart,
+    ]);
+    const newBatchNo = promf_trnno
+      ? `${promf_trnno}-${result_batch.last_no || 1}`
+      : `bSuite Batch-${result_batch.last_no || 1}`;
+
     //const newId = uuidv4();
     // const newCode = await GenNewCode(user_c, "tmmb_promf");
     // const newTrnNo = await GenNewTrn(
@@ -1124,7 +1141,8 @@ router.post("/create-batch", async (req, res) => {
     // );
     //build scripts
     const scripts = [];
-    //SYS_PRODUCTION_PROCESS
+
+    //SYS_PRODUCTION.SYS_BATCH
     scripts.push({
       sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
     jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
@@ -1184,7 +1202,7 @@ router.post("/create-batch", async (req, res) => {
           det.prbtc_itype,
           det.prbtc_group,
           det.prbtc_brcod,
-          det.prbtc_batch,
+          det.prbtc_batch || newBatchNo,
           det.prbtc_srial,
           det.prbtc_gdstk || 0,
           det.prbtc_bdstk || 0,
@@ -1223,11 +1241,11 @@ router.post("/create-batch", async (req, res) => {
           det.prbtc_items,
           det.prbtc_price,
           det.prbtc_brcod, //
-          det.prbtc_batch, //
+          det.prbtc_batch || newBatchNo,
           det.prbtc_srial, //
+          null, //
           new Date(), //
-          new Date(), //
-          new Date(), //
+          null, //
           det.prbtc_gdstk || 0,
           det.prbtc_bdstk || 0,
           det.prbtc_gdstk || 0,
@@ -1262,7 +1280,8 @@ router.post("/create-batch", async (req, res) => {
         label: `Update price stock detail ${det.prbtc_gdstk}`,
       });
 
-      //SYS_PRODUCTION_PROCESS.SYS_AST_INVENTORY > Assets / Inventory / Products - 101012
+      //SYS_PRODUCTION.SYS_BATCH.SYS_AST_INVENTORY (actual) but will use same as process
+      //SYS_PRODUCTION.SYS_PROCESS.SYS_AST_INVENTORY
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -1280,7 +1299,7 @@ router.post("/create-batch", async (req, res) => {
           det.party_id,
           det.prbtc_fgval,
           0,
-          "To Asset / Inventory / Products / WIP",
+          "To Asset / Inventory / Products / Output",
           "Production Batch",
           id,
           "MASTER",
@@ -1294,14 +1313,37 @@ router.post("/create-batch", async (req, res) => {
       totalWIP = totalWIP + Number(det.prbtc_fgval);
     }
 
-    //SYS_PRODUCTION_PROCESS.SYS_AST_INVENTORY_WIP > Assets / Inventory / Products / WIP - 10101211
-    const astWIP = await getCoaPartyAssetsWIP(user_c, user_b);
-    if (!astWIP) {
-      return {
+    //SYS_PRODUCTION.SYS_BATCH.SYS_AST_INVENTORY (actual) but will use same as process
+    //SYS_PRODUCTION.SYS_PROCESS.SYS_AST_INVENTORY.WIP
+    // const astWIP = await getCoaPartyAssetsWIP(user_c, user_b);
+    // if (!astWIP) {
+    //   return {
+    //     success: false,
+    //     message: "No account party setup for Inventory WIP",
+    //     data: {},
+    //   };
+    // }
+    const sql_yield = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
+      FROM tmtb_party pty
+      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+      JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+      WHERE crt.chtrt_trnid = 'SYS_PRODUCTION'
+      AND crt.chtrt_pegid = 'SYS_PROCESS'
+      AND crt.chtrt_grpid IN ('SYS_AST_INVENTORY','SYS_NONE')
+      AND crt.chtrt_route IN ('WIP')
+      AND pty.party_actve = TRUE
+      AND cht.chtac_actve = TRUE
+      AND crt.chtrt_actve = TRUE
+      AND cht.chtac_users = $1
+      AND cht.chtac_bsins = $2`;
+    const result_yield = await dbGet(sql_yield, [user_c, user_b]);
+    // console.log(result);
+    if (!result_yield || result_yield.length === 0) {
+      return res.json({
         success: false,
-        message: "No account party setup for Inventory WIP",
+        message: `No default input WIP configured for Production Process`,
         data: {},
-      };
+      });
     }
 
     scripts.push({
@@ -1317,8 +1359,8 @@ router.post("/create-batch", async (req, res) => {
         user_b,
         promf_dpart,
         newId_JV,
-        astWIP.chtac_id,
-        astWIP.party_id,
+        result_yield.chtac_id,
+        result_yield.party_id,
         0,
         totalWIP,
         "From Asset / Inventory / Products / WIP",
@@ -1338,7 +1380,7 @@ router.post("/create-batch", async (req, res) => {
 
     res.json({
       success: true,
-      message: "Batch created successfully",
+      message: `${newBatchNo} - Batch created successfully`,
       data: {
         ...req.body,
         promf_trnno: promf_trnno,
@@ -1368,7 +1410,7 @@ router.post("/get-batch-by-process", async (req, res) => {
         data: [],
       });
     }
-    const sql = `SELECT btc.*, prc.price_cname, unt.units_cname, dpt.dpart_cname
+    const sql = `SELECT btc.*, prc.price_cname, unt.units_cname runit_cname, dpt.dpart_cname
               FROM tmmb_prbtc btc
               JOIN tmib_price prc ON btc.prbtc_price = prc.id
               JOIN tmib_units unt ON btc.prbtc_units = unt.id

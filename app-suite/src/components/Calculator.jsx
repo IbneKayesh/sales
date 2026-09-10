@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { amountInWords } from "@/utils/ntw";
 import Modal, { ModalHeader } from "@/components/Modal";
 import { IconClose, IconCollapse, IconExpand } from "@/icons";
 
@@ -429,7 +430,7 @@ export default function Calculator({ open, onClose }) {
             flexDirection: "column",
             gap: 2,
             padding: "10px 12px",
-            background: "var(--surface-alt)",
+            background: "var(--surface-hover)",
             border: "1px solid var(--border-light)",
             borderRadius: "var(--radius-lg)",
           }}
@@ -453,17 +454,34 @@ export default function Calculator({ open, onClose }) {
             style={{
               textAlign: "right",
               fontFamily: "var(--font-mono)",
-              fontSize: 22,
-              fontWeight: 600,
+              fontSize: 32,
+              fontWeight: 700,
               color: "var(--text-primary)",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
-              minHeight: 30,
+              minHeight: 40,
+              lineHeight: 1.15,
             }}
           >
             {display}
           </div>
+          {display !== "0" && display !== "Error" && (
+            <div
+              style={{
+                textAlign: "right",
+                fontFamily: "var(--font-sans)",
+                fontSize: 10,
+                lineHeight: 1.15,
+                color: "var(--text-muted)",
+                minHeight: 0,
+                wordBreak: "break-all",
+                marginTop: -4,
+              }}
+            >
+              {amountInWords(parseFloat(display))}
+            </div>
+          )}
         </div>
 
         {/* Keypad */}

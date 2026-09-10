@@ -313,10 +313,10 @@ const useJournal = () => {
       return;
     }
 
-    const duplicateParty = listDataItem.some(
+    const isExists = listDataItem.some(
       (item) => item.jrnlc_party === formDataItem.jrnlc_party,
     );
-    if (duplicateParty) {
+    if (isExists) {
       showToast("This Party already exists in the journal.", {
         type: "warning",
       });
@@ -346,8 +346,13 @@ const useJournal = () => {
       (opt) => opt.id === formDataItem.jrnlc_party,
     );
 
+    //check balance
+    if (crVal > 0 && Number(party_cname.party_crbal) < crVal) {
+      showToast("Insufficient Balance", { type: "error" });
+      return;
+    }
+    //console.log("party_cname", party_cname);
     //console.log("chtac_cname",chtac_cname);
-    // console.log("party_cname",party_cname);
 
     // setListDataItem((prev) => [
     //   ...prev,

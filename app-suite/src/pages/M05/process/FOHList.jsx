@@ -1,7 +1,7 @@
 import DataTable from "@/components/DataTable";
-import ActionButton from "@/components/ActionButton";
 import { IconReceiptPlus } from "@/icons";
 import Button from "@/components/Button";
+import { PageSection } from "@/components/PageCard";
 import { formatNumber } from "@/utils/misc";
 
 const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
@@ -75,8 +75,7 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
     },
   ];
   return (
-    <>
-      <p>Input → FOH</p>
+    <PageSection title="Input / FOH">
       <DataTable
         columns={dtColumns}
         data={listData}
@@ -88,11 +87,11 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
         hoverable
         exportable={false}
         exportFilename="data-export.csv"
-        onRowClick={(row) => onEdit(row)}
+        //onRowClick={(row) => onEdit(row)}
         emptyMessage="No factory overhead found"
         className="mt-2"
       />
-    </>
+    </PageSection>
   );
 };
 export default FOHList;

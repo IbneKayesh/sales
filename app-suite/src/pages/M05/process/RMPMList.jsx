@@ -1,7 +1,7 @@
 import DataTable from "@/components/DataTable";
-import ActionButton from "@/components/ActionButton";
 import { IconReceiptPlus } from "@/icons";
 import Button from "@/components/Button";
+import { PageSection } from "@/components/PageCard";
 import { formatNumber } from "@/utils/misc";
 
 const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
@@ -73,8 +73,7 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
     },
   ];
   return (
-    <>
-      <p>Input → RM/PM/SFG/FG</p>
+    <PageSection title="Input / RM/PM/SFG/FG">
       <DataTable
         columns={dtColumns}
         data={listData}
@@ -90,7 +89,7 @@ const RMPMList = ({ readOnly, listData, onEdit, onDelete }) => {
         emptyMessage="No data found"
         className="mt-2"
       />
-    </>
+    </PageSection>
   );
 };
 export default RMPMList;

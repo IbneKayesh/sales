@@ -269,9 +269,16 @@ const useBOM = () => {
       const mainFG = listDataSFGFG.filter(
         (item) => item.bosfg_group === "MAIN",
       );
-      //console.log("mainFG",listDataSFGFG)
       if (mainFG.length !== 1) {
         showToast("Only 1 MAIN Output is allowed", { type: "warning" });
+        return;
+      }
+      const totalCostRatio = listDataSFGFG.reduce(
+        (sum, item) => sum + item.prsfg_rtrto,
+        0,
+      );
+      if (totalCostRatio !== 100) {
+        showToast("Total Cost Ratio must be 100", { type: "warning" });
         return;
       }
 

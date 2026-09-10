@@ -1,5 +1,6 @@
 import DataTable from "@/components/DataTable";
 import ActionButton from "@/components/ActionButton";
+import { PageSection } from "@/components/PageCard";
 import { formatNumber } from "@/utils/misc";
 
 const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
@@ -43,8 +44,7 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
     },
   ];
   return (
-    <>
-      <p>Input → FOH</p>
+    <PageSection title="Input / FOH">
       <DataTable
         columns={dtColumns}
         data={listData}
@@ -60,7 +60,7 @@ const FOHList = ({ readOnly, listData, onEdit, onDelete }) => {
         emptyMessage="No data found"
         className="mt-2"
       />
-    </>
+    </PageSection>
   );
 };
 export default FOHList;
