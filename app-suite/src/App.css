@@ -4980,6 +4980,39 @@ html[data-layout="boxed"] .layout__main {
   border: 1px solid var(--primary-border);
 }
 
+/* Compact brand wordmark inside the login card — small logo + name, so the
+   right-hand panel also carries the product identity. */
+.login-page__brand {
+  margin-bottom: var(--sp-4);
+}
+
+/* Card-specific logo — smaller and softer than the brand-panel logo so the
+   card header stays compact. */
+.login-page__logo--card {
+  width: 40px;
+  height: 40px;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  border-color: var(--primary-border);
+}
+
+.login-page__brand-name {
+  display: inline-block;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.login-page__brand-creator {
+  display: block;
+  width: 100%;
+  margin-top: var(--sp-1);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+  text-align: center;
+}
+
 .login-page__title {
   font-size: var(--fs-2xl);
   font-weight: var(--fw-bold);
@@ -4994,11 +5027,165 @@ html[data-layout="boxed"] .layout__main {
   margin: 0;
 }
 
+/* Text-only card header — used when the brand is shown elsewhere on screen */
+.login-page__card-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-6);
+  text-align: left;
+}
+
+/* Short gradient rule above the card title — ties the plain card to the theme
+   without repeating the logo from the brand panel. */
+.login-page__card-deco {
+  display: block;
+  width: 40px;
+  height: 4px;
+  margin-bottom: var(--sp-2);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+.login-page__card-head-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+}
+
+.login-page__card-head .login-page__subtitle {
+  margin: 0;
+  min-width: 0;
+  line-height: var(--lh-normal);
+}
+
+/* Inline "forgot password" affordance — reveals reset instructions */
+.login-page__forgot {
+  flex-shrink: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  color: var(--link);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--transition-fast);
+}
+
+.login-page__forgot:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+.login-page__forgot:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.login-page__forgot-hint {
+  margin: var(--sp-2) 0 0;
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-normal);
+  color: var(--text-secondary);
+  background: var(--primary-bg);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-sm);
+}
+
 .login-page__form {
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
   text-align: left;
+}
+
+/* Locked out — the server that answers the login endpoint is unreachable */
+.login-page__form--offline {
+  opacity: 0.45;
+  filter: grayscale(0.4);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Offline notice sits above the dimmed form and stays interactive so the
+   Retry button is still reachable. */
+.login-page__offline {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
+  padding: var(--sp-3);
+  color: var(--danger);
+  background: var(--danger-bg);
+  border: 1px solid color-mix(in srgb, var(--danger) 32%, transparent);
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+
+/* Retry budget spent — the notice is now the final word on the outage */
+.login-page__offline--stopped {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 16%, transparent);
+}
+
+.login-page__offline > svg {
+  flex-shrink: 0;
+}
+
+.login-page__offline-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-xs);
+  line-height: var(--lh-normal);
+  color: var(--text-secondary);
+}
+
+.login-page__offline-text strong {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--danger);
+}
+
+/* Why the sign-in attempt failed, carried over from the request itself */
+.login-page__offline-reason {
+  font-weight: var(--fw-medium);
+  color: var(--text-primary);
+}
+
+.login-page__offline-retry {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 4px var(--sp-3);
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--danger-on);
+  background: var(--danger);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.login-page__offline-retry:hover:not(:disabled) {
+  background: var(--danger-hover);
+  border-color: var(--danger-hover);
+}
+
+.login-page__offline-retry:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .login-page__field {
@@ -5037,8 +5224,28 @@ html[data-layout="boxed"] .layout__main {
   box-shadow: 0 0 0 3px var(--danger-bg);
 }
 
+/* Leading icon inside the input capsule (user / lock) */
+.login-page__input-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: var(--sp-3);
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: color var(--transition-fast);
+}
+
+.login-page__input-wrap:focus-within .login-page__input-icon {
+  color: var(--primary);
+}
+
+.login-page__input-wrap--icon .login-page__input {
+  padding-left: var(--sp-2);
+}
+
 .login-page__input {
   flex: 1;
+  min-width: 0;
   width: 100%;
   padding: var(--sp-3) var(--sp-3);
   font-size: var(--fs-base);
@@ -5052,9 +5259,9 @@ html[data-layout="boxed"] .layout__main {
 
 .login-page__toggle-pw {
   flex-shrink: 0;
-  padding: 0 var(--sp-3);
-  font-size: var(--fs-xs);
-  font-weight: var(--fw-medium);
+  align-self: stretch;
+  width: 40px;
+  padding: 0;
   color: var(--text-muted);
   background: transparent;
   border: none;
@@ -5066,12 +5273,42 @@ html[data-layout="boxed"] .layout__main {
 }
 
 .login-page__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
   padding: var(--sp-3);
   font-size: var(--fs-sm);
   color: var(--danger);
   background: var(--danger-bg);
+  border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent);
   border-radius: var(--radius-lg);
   line-height: var(--lh-normal);
+}
+
+.login-page__error svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Caps Lock hint under the field being typed in */
+.login-page__caps {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  width: fit-content;
+  margin: 0;
+  padding: 2px var(--sp-2);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  color: var(--warning);
+  background: var(--warning-bg);
+  border: 1px solid color-mix(in srgb, var(--warning) 28%, transparent);
+  border-radius: var(--radius-sm);
+  animation: scale-in var(--transition-fast);
+}
+
+.login-page__caps svg {
+  flex-shrink: 0;
 }
 
 .login-page__submit {
@@ -5117,7 +5354,7 @@ html[data-layout="boxed"] .layout__main {
   margin: var(--sp-5) 0 0;
   font-size: var(--fs-xs);
   color: var(--text-muted);
-  text-align: center;
+  text-align: left;
   line-height: var(--lh-normal);
 }
 
@@ -5127,6 +5364,7 @@ html[data-layout="boxed"] .layout__main {
 
 /* ── Backend Status Indicator ── */
 .login-page__backend {
+  position: relative;
   margin-top: var(--sp-4);
   padding-top: var(--sp-3);
   border-top: 1px solid var(--border);
@@ -5159,6 +5397,7 @@ html[data-layout="boxed"] .layout__main {
 }
 
 .login-page__backend-btn--online {
+  --status-light: var(--success);
   color: var(--success);
   border-color: var(--success-border, var(--success));
 }
@@ -5169,6 +5408,7 @@ html[data-layout="boxed"] .layout__main {
 }
 
 .login-page__backend-btn--offline {
+  --status-light: var(--danger);
   color: var(--danger);
   border-color: var(--danger-border, var(--danger));
 }
@@ -5179,8 +5419,151 @@ html[data-layout="boxed"] .layout__main {
 }
 
 .login-page__backend-btn--checking {
+  --status-light: var(--text-muted);
   color: var(--text-muted);
   border-color: var(--border);
+}
+
+/* ── Dot variant: a status light instead of a glyph ── */
+.login-page__backend-btn--dot {
+  padding: 4px var(--sp-3);
+}
+
+.login-page__backend-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--status-light, currentColor);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--status-light, currentColor) 28%, transparent);
+}
+
+/* Live halo while connected */
+.login-page__backend-btn--online .login-page__backend-dot {
+  animation: status-pulse 2.4s ease-out infinite;
+}
+
+/* Soft blink while a health check is in flight */
+.login-page__backend-btn--checking .login-page__backend-dot {
+  animation: status-blink 1.2s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0% {
+    box-shadow: 0 0 0 0
+      color-mix(in srgb, var(--status-light, currentColor) 60%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 7px
+      color-mix(in srgb, var(--status-light, currentColor) 0%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0
+      color-mix(in srgb, var(--status-light, currentColor) 0%, transparent);
+  }
+}
+
+@keyframes status-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-page__backend-dot {
+    animation: none !important;
+  }
+}
+
+/* ── Hover card: last-checked details ── */
+.login-page__status-card {
+  position: absolute;
+  top: calc(100% + var(--sp-2));
+  right: 0;
+  z-index: 30;
+  min-width: 210px;
+  padding: var(--sp-3);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  text-align: left;
+  animation: scale-in var(--transition-fast);
+}
+
+.login-page__status-card-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+
+/* The light sits on a light surface inside the card */
+.login-page__status-card--online {
+  --status-light: var(--success);
+}
+
+.login-page__status-card--offline {
+  --status-light: var(--danger);
+}
+
+.login-page__status-card--checking {
+  --status-light: var(--text-muted);
+}
+
+.login-page__status-card-state {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+
+/* Login-card status pill — centered, shown only on mobile.
+   On the split (desktop) layout the pill lives in the brand panel corner, so
+   the right-hand card hides its own copy to avoid doubling it up. */
+.login-page__backend--card {
+  display: block;
+  margin: 0 auto var(--sp-5);
+  max-width: fit-content;
+}
+
+.login-page__backend--card .login-page__status-card {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+@media (min-width: 761px) {
+  .login-page__backend--mobile-only {
+    display: none !important;
+  }
+}
+
+.login-page__status-card-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.login-page__status-card-time {
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.login-page__status-card-hint {
+  margin-top: var(--sp-2);
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--border);
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
 }
 
 /* --------------------------------------------------------------------------
@@ -5345,6 +5728,400 @@ html[data-layout="boxed"] .layout__main {
 .login-page__different-user-icon {
   font-size: 16px;
   line-height: 1;
+}
+
+/* ==========================================================================
+   Login layout variants — Split screen / Centered card / ERP bar
+   ========================================================================== */
+
+/* ── Split screen ───────────────────────────────────────────────────────── */
+.login-page--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: stretch;
+  justify-content: stretch;
+  /* Fixed viewport height so each panel can scroll independently */
+  height: 100vh;
+  /* Brand panel fits flush against the window on top/left/bottom;
+     only the right edge is inset so the login card keeps a page margin. */
+  padding: 0 0 0 var(--sp-4);
+  gap: var(--sp-4);
+}
+
+.login-split__brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--sp-8);
+  /* No top/left/bottom padding — panel fits flush against the window.
+     Right padding keeps a gap between the brand panel and the login card. */
+  padding: 0 var(--sp-10);
+  overflow: hidden;
+  color: #ffffff;
+  /* Offline scrim lives on the box-shadow so it sits above the gradient but
+     below the panel's content — transparent until the server drops. */
+  box-shadow: inset 0 0 0 2000px transparent, var(--shadow-md);
+  transition: box-shadow var(--transition-slow);
+  /* Rounded only on the right side — the left edge sits flush against the
+     page inset so the panel reads as anchored to the left of the split. */
+  border-radius: 0 20px 20px 0;
+  /* Single-color brand panel with a subtle top-to-bottom gradient for depth.
+     Override `--brand-panel-color` (or the env VITE_BRAND_PANEL_COLOR) to
+     switch the hue per deployment without touching this stylesheet. The gradient
+     lightens toward the top and deepens toward the bottom, both derived from the
+     same base hue so the panel still reads as one color. */
+  --brand-panel-color: var(--primary);
+  --brand-panel-top: color-mix(in srgb, var(--brand-panel-color) 96%, var(--info) 4%);
+  --brand-panel-bottom: color-mix(in srgb, var(--brand-panel-color) 88%, var(--info) 12%);
+  background:
+    linear-gradient(180deg, var(--brand-panel-top) 0%, var(--brand-panel-bottom) 100%),
+    var(--brand-panel-top);
+  background-attachment: fixed, scroll;
+}
+
+/* Server unreachable — fade the brand panel's colour back */
+.login-split__brand--offline {
+  box-shadow:
+    inset 0 0 0 2000px color-mix(in srgb, var(--muted) 55%, transparent),
+    var(--shadow-md);
+}
+
+/* ── Watermarks — layered decorative shapes behind the panel content ── */
+.login-split__watermarks {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.login-split__wm {
+  position: absolute;
+  display: block;
+}
+
+/* Ring, top right */
+.login-split__wm--1 {
+  width: 340px;
+  height: 340px;
+  top: -120px;
+  right: -80px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 70px rgba(255, 255, 255, 0.07);
+}
+
+/* Second, offset ring */
+.login-split__wm--2 {
+  width: 200px;
+  height: 200px;
+  top: -30px;
+  right: 70px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Blue glow, bottom left */
+.login-split__wm--3 {
+  width: 440px;
+  height: 440px;
+  bottom: -190px;
+  left: -150px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--info) 60%, transparent) 0%,
+    transparent 70%
+  );
+}
+
+/* Soft white orb, mid right */
+.login-split__wm--4 {
+  width: 280px;
+  height: 280px;
+  top: 34%;
+  right: -110px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.16) 0%,
+    transparent 70%
+  );
+}
+
+/* Rotated square frame, lower middle */
+.login-split__wm--5 {
+  width: 220px;
+  height: 220px;
+  bottom: 14%;
+  left: 8%;
+  border-radius: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transform: rotate(20deg);
+}
+
+/* Faint diagonal streak */
+.login-split__wm--6 {
+  width: 140%;
+  height: 190px;
+  top: 42%;
+  left: -20%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.07) 45%,
+    transparent 100%
+  );
+  transform: rotate(-14deg);
+}
+
+/* Faint blueprint grid over the brand gradient */
+.login-split__brand::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(120% 90% at 25% 15%, #000 0%, transparent 75%);
+  mask-image: radial-gradient(120% 90% at 25% 15%, #000 0%, transparent 75%);
+}
+
+.login-split__brand-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  padding: var(--sp-4) 0 0 0;
+}
+
+.login-split__logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  backdrop-filter: blur(4px);
+  flex-shrink: 0;
+}
+
+.login-split__wordmark-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.login-split__wordmark {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.4px;
+  line-height: 1.05;
+}
+
+.login-split__wordmark-sub {
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  opacity: 0.72;
+}
+
+.login-split__brand-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  width: 100%;
+}
+
+.login-split__headline,
+.login-split__tagline {
+  max-width: 460px;
+}
+
+.login-split__headline {
+  margin: 0;
+  font-size: clamp(24px, 2.4vw, 34px);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.6px;
+}
+
+.login-split__tagline {
+  margin: 0;
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.login-split__features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-2);
+  margin: var(--sp-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* On mid-size screens the brand panel narrows enough that 3 columns make
+   labels wrap. Drop to 2 columns to keep each label on one line. */
+@media (max-width: 1100px) {
+  .login-split__features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.login-split__feature {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: rgba(255, 255, 255, 0.92);
+  line-height: var(--lh-normal);
+}
+
+.login-split__feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+}
+
+.login-split__feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+}
+
+.login-split__brand-foot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-top: var(--sp-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: var(--fs-xs);
+  color: rgba(255, 255, 255, 0.68);
+}
+
+/* ── Server status on the brand panel — frosted pill, top right ── */
+.login-split__brand .login-split__status {
+  margin: 0 0 0 auto;
+  padding: 0;
+  border-top: none;
+}
+
+.login-split__brand .login-split__status .login-page__backend-btn {
+  padding: 4px var(--sp-3);
+  color: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: var(--radius-pill);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.login-split__brand .login-split__status .login-page__backend-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.44);
+}
+
+.login-split__brand .login-split__status .login-page__backend-btn:disabled {
+  opacity: 0.75;
+}
+
+/* Brighter lights so they read against the themed gradient */
+.login-split__brand
+  .login-split__status
+  .login-page__backend-btn--online {
+  --status-light: var(--success-light);
+}
+
+.login-split__brand
+  .login-split__status
+  .login-page__backend-btn--offline {
+  --status-light: #fca5a5;
+}
+
+.login-split__brand
+  .login-split__status
+  .login-page__backend-btn--checking {
+  --status-light: rgba(255, 255, 255, 0.75);
+}
+
+/* The right side stays transparent so the login card reads as a card on the
+   page, not a card inside a card. */
+.login-split__panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-8);
+  background: transparent;
+  overflow-y: auto;
+}
+
+/* ── Login layout: responsive ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .login-split__brand {
+    padding: var(--sp-8) var(--sp-6);
+  }
+
+  .login-split__panel {
+    padding: var(--sp-6);
+  }
+}
+
+@media (max-width: 760px) {
+  .login-page--split {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    padding: var(--sp-3);
+    gap: var(--sp-3);
+    overflow-y: auto;
+  }
+
+  /* Collapse the brand panel to a slim banner above the form */
+  .login-split__brand {
+    gap: 0;
+    padding: var(--sp-4) var(--sp-5);
+    /* Let the status hover card escape the short banner */
+    overflow: visible;
+  }
+
+  .login-split__brand-body,
+  .login-split__brand-foot,
+  .login-split__watermarks {
+    display: none;
+  }
+
+  /* Below the two-column threshold, the feature list goes back to a single
+     column so each label gets a full row in the slim banner. */
+  .login-split__features {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* --------------------------------------------------------------------------

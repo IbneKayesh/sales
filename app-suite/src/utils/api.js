@@ -132,9 +132,12 @@ const apiLogin = async (options) => {
       data = null;
     }
 
-    // Handle HTTP errors
+    // Handle HTTP errors. The server answered, so this is a rejection — not a
+    // connectivity failure; callers use this to tell the two apart.
     if (!response.ok) {
-      throw new Error(data?.message || "Request failed");
+      const httpError = new Error(data?.message || "Request failed");
+      httpError.hasResponse = true;
+      throw httpError;
     }
     //create storage
     if (data.success) {

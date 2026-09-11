@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/context/AppContext";
 import {
@@ -6,25 +6,40 @@ import {
   setStorageLoginData,
 } from "@/utils/storage";
 
-const useLogin = () => {
+// ── Shared login-page constants (formerly loginConfig.js) ──────────────────
+// Overridable per deployment via VITE_APP_NAME / VITE_APP_VERSION /
+// VITE_APP_CREATOR / VITE_BRAND_PANEL_COLOR.
+export const APP_NAME = import.meta.env.VITE_APP_NAME || "bSuite";
+export const APP_VERSION = import.meta.env.VITE_APP_VERSION || "1.0";
+export const APP_CREATOR = import.meta.env.VITE_APP_CREATOR || "Built by bSuite";
+export const BRAND_PANEL_COLOR = import.meta.env.VITE_BRAND_PANEL_COLOR || "#7c3aed";
+
+// Keep the "Signing in…" state on screen for at least this long so a fast
+// round-trip doesn't flash the spinner for a single frame.
+const MIN_BUSY_MS = 800;
+
+const useLogin = ({ onNetworkError } = {}) => {
   const { login } = useApp();
   const navigate = useNavigate();
   const [isBusy, setIsBusy] = useState(false);
-  const [formData, setFormData] = useState({
-    username: "kayesh@sgd.com",
-    password: "01722688266",
+  // Hydrate the saved user straight from storage on first render, so no
+  // post-mount effect is needed to pre-fill the form.
+  const [formData, setFormData] = useState(() => {
+    const stored = getStorageLoginData();
+    const savedUser = stored?.is_saved ? stored.saved_user : null;
+    return {
+      username: savedUser || "kayesh@sgd.com",
+      password: "01722688266",
+    };
   });
   const [formErrors, setFormErrors] = useState("");
-  const [savedLogin, setSavedLogin] = useState(false);
-
-  // Load saved login data on mount
-  useEffect(() => {
+  // Separate from formErrors: this one survives into the offline notice, which
+  // renders outside the dimmed form.
+  const [networkError, setNetworkError] = useState("");
+  const [savedLogin, setSavedLogin] = useState(() => {
     const stored = getStorageLoginData();
-    if (stored?.is_saved && stored?.saved_user) {
-      setSavedLogin(true);
-      setFormData((prev) => ({ ...prev, username: stored.saved_user }));
-    }
-  }, []);
+    return Boolean(stored?.is_saved && stored?.saved_user);
+  });
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
@@ -47,8 +62,11 @@ const useLogin = () => {
     }
   };
 
+  const clearNetworkError = useCallback(() => setNetworkError(""), []);
+
   const handleSubmitClick = async () => {
     setFormErrors("");
+    setNetworkError("");
     const username = formData.username.trim();
     const password = formData.password.trim();
 
@@ -62,9 +80,21 @@ const useLogin = () => {
     }
     try {
       setIsBusy(true);
+      const startedAt = Date.now();
       const resp = await login(formData);
-      if (!resp.success) {
-        setFormErrors(resp.message);
+      if (!resp?.success) {
+        // No HTTP response at all — the login server itself is unreachable, so
+        // hand off to the page's offline state rather than showing a raw
+        // network error text.
+        if (resp?.offline) {
+          setFormErrors("");
+          setNetworkError(
+            "Your sign-in could not be completed — the server stopped responding.",
+          );
+          onNetworkError?.();
+        } else {
+          setFormErrors(resp?.message || "Sign in failed. Please try again.");
+        }
         return;
       }
       // On successful login, save credentials if checkbox is checked
@@ -74,8 +104,14 @@ const useLogin = () => {
           saved_user: username,
         });
       }
+      // Hold the busy state briefly before navigating.
+      const elapsed = Date.now() - startedAt;
+      if (elapsed < MIN_BUSY_MS) {
+        await new Promise((resolve) => setTimeout(resolve, MIN_BUSY_MS - elapsed));
+      }
       navigate("/bsuite/modules");
-    } catch (err) {
+    } catch {
+      // The failure has already been surfaced through formErrors.
     } finally {
       setIsBusy(false);
     }
@@ -85,12 +121,14 @@ const useLogin = () => {
     isBusy,
     formData,
     formErrors,
+    networkError,
     savedLogin,
     //functions
     handleChange,
     handleSubmitClick,
     handleSavedLoginChange,
     handleTryDifferentUser,
+    clearNetworkError,
   };
 };
 export default useLogin;

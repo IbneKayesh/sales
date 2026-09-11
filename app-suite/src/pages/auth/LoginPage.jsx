@@ -1,226 +1,250 @@
-import { useState, useRef, useEffect } from "react";
-import { IconLogo, IconUser, IconSpinner, IconCheck, IconClose } from "@/icons";
-import InputSwitch from "@/components/InputSwitch";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useLogin from "@/hooks/useLogin";
 import { healthCheck } from "@/utils/api";
+import {
+  IconAccounts,
+  IconCalculator,
+  IconChart,
+  IconCogs,
+  IconCRM,
+  IconHR,
+  IconInventory,
+  IconLogo,
+  IconManufacture,
+  IconSales,
+} from "@/icons";
+import { APP_NAME, APP_VERSION, BRAND_PANEL_COLOR } from "@/hooks/useLogin";
+import LoginCard from "./login/LoginCard";
+import LoginStatus from "./login/LoginStatus";
 
+// While the server is unreachable we keep probing it automatically, but only
+// this many times before handing control back to the user.
+const MAX_AUTO_RETRIES = 3;
+const AUTO_RETRY_DELAY_MS = 5000;
+
+const MODULES = [
+  { label: "Inventory & Warehouse Stock", Icon: IconInventory },
+  { label: "Sales & Purchase", Icon: IconSales },
+  { label: "Manufacturing & Raw Materials", Icon: IconManufacture },
+  { label: "HR and Payrolls", Icon: IconHR },
+  { label: "CRM", Icon: IconCRM },
+  { label: "Accounts & Ledger", Icon: IconAccounts },
+  { label: "Reports & Analytics", Icon: IconChart },
+  { label: "Expense & Budget Control", Icon: IconCalculator },
+  { label: "Project & Task Management", Icon: IconCogs },
+];
+
+/**
+ * The login layout — a themed brand panel on the left and the sign-in card on
+ * the right. The brand panel is a rounded card carrying the module list, with
+ * layered watermarks behind it.
+ */
+function SplitLayout({ formProps, statusProps }) {
+  return (
+    <div className="login-page login-page--split">
+      {/* Brand panel — the background fades out while the server is offline */}
+      <aside
+        className={`login-split__brand${
+          formProps.isOffline ? " login-split__brand--offline" : ""
+        }`}
+      >
+        {/* Decorative watermark layers */}
+        <div className="login-split__watermarks" aria-hidden="true">
+          <span className="login-split__wm login-split__wm--1" />
+          <span className="login-split__wm login-split__wm--2" />
+          <span className="login-split__wm login-split__wm--3" />
+          <span className="login-split__wm login-split__wm--4" />
+          <span className="login-split__wm login-split__wm--5" />
+          <span className="login-split__wm login-split__wm--6" />
+        </div>
+
+        <div className="login-split__brand-head">
+          <span className="login-split__logo">
+            <IconLogo size={26} />
+          </span>
+          <div className="login-split__wordmark-group">
+            <span className="login-split__wordmark">{APP_NAME}</span>
+            <span className="login-split__wordmark-sub">
+              Crafting Digital Excellence
+            </span>
+          </div>
+
+          {/* Server status — pushed to the top-right of the brand panel */}
+          <LoginStatus
+            {...statusProps}
+            variant="dot"
+            className="login-split__status"
+          />
+        </div>
+
+        <div className="login-split__brand-body">
+          <p className="login-split__headline">
+            Run your entire business from one system
+          </p>
+          <p className="login-split__tagline">
+            Everything your team needs, unified in a single ERP workspace.
+          </p>
+          <ul className="login-split__features">
+            {MODULES.map(({ label, Icon }) => (
+              <li className="login-split__feature" key={label}>
+                <span className="login-split__feature-icon">
+                  <Icon size={13} />
+                </span>
+                {label}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="login-split__brand-foot">
+          <span>Version {APP_VERSION}</span>
+          <span>{APP_NAME} © {new Date().getFullYear()}</span>
+        </div>
+      </aside>
+
+      {/* Form panel — the login card with a text-only header, since the brand
+          is already shown on the panel to the left. */}
+      <main className="login-split__panel">
+        <LoginCard formProps={formProps} statusProps={statusProps} />
+      </main>
+    </div>
+  );
+}
+
+/**
+ * Login controller. Owns focus, password visibility, the backend health check
+ * and the offline/retry flow; SplitLayout is purely presentational.
+ */
 export default function LoginPage() {
-  const {
-    isBusy,
-    formData,
-    formErrors,
-    savedLogin,
-    //functions
-    handleChange,
-    handleSubmitClick,
-    handleSavedLoginChange,
-    handleTryDifferentUser,
-  } = useLogin();
-
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
   const [backendStatus, setBackendStatus] = useState(null); // null | true | false
+  const [lastCheckedAt, setLastCheckedAt] = useState(null);
+  const [autoRetries, setAutoRetries] = useState(0);
   const [checking, setChecking] = useState(false);
-  
-  //determine caps lock state and show to user
-  const [capsLock, setCapsLock] = useState(false);
 
+  // A sign-in attempt that never reached the server is proof enough that it's
+  // down, even though the mount-time health check said otherwise. Drop the
+  // status to offline so the form dims, and let the auto-retry effect below
+  // start probing again.
+  const handleServerDown = useCallback(() => {
+    setAutoRetries(0);
+    setBackendStatus(false);
+    setLastCheckedAt(new Date());
+  }, []);
 
-  // Determine if we're in "saved login" mode (show username readonly, only password field)
-  const isSavedMode = savedLogin && !!formData.username;
+  const login = useLogin({ onNetworkError: handleServerDown });
+  const { formData, isBusy, clearNetworkError } = login;
 
+  // Saved-login mode shows a read-only profile badge instead of the username field
+  const isSavedMode = login.savedLogin && !!formData.username;
+
+  const checkBackend = useCallback(async () => {
+    setChecking(true);
+    const result = await healthCheck();
+    setBackendStatus(result.online);
+    setLastCheckedAt(new Date());
+    if (result.online) {
+      // Back online — refill the retry budget and drop any stale sign-in
+      // failure reason from the previous outage.
+      setAutoRetries(0);
+      clearNetworkError();
+    }
+    setChecking(false);
+  }, [clearNetworkError]);
+
+  // Apply the deployable brand-panel color as a CSS variable on :root so the
+  // single-color background in App.css picks it up. Re-run when the value
+  // changes so hot-reloads and env switches are reflected without a full reload.
+  useEffect(() => {
+    const root = document.documentElement;
+    const prev = root.style.getPropertyValue("--brand-panel-color");
+    if (prev !== BRAND_PANEL_COLOR) {
+      root.style.setProperty("--brand-panel-color", BRAND_PANEL_COLOR);
+    }
+    return () => {
+      if (root.style.getPropertyValue("--brand-panel-color") === BRAND_PANEL_COLOR) {
+        root.style.removeProperty("--brand-panel-color");
+      }
+    };
+  }, [BRAND_PANEL_COLOR]);
+
+  // Focus the first field the user actually has to fill in.
   useEffect(() => {
     if (isSavedMode) {
       passwordRef.current?.focus();
     } else {
       usernameRef.current?.focus();
     }
-    checkBackend();
   }, [isSavedMode]);
 
-  const checkBackend = async () => {
-    setChecking(true);
-    const result = await healthCheck();
-    setBackendStatus(result.online);
-    setChecking(false);
+  // Probe the backend once on mount. Deferred a tick so the check doesn't
+  // trigger a synchronous cascading render.
+  useEffect(() => {
+    const timer = setTimeout(() => checkBackend(), 0);
+    return () => clearTimeout(timer);
+  }, [checkBackend]);
+
+  // Auto-retry while the server is down, up to MAX_AUTO_RETRIES. Skipped while
+  // a check is already in flight so requests can never overlap, and it stops
+  // for good once the budget is spent — the user retries manually from there.
+  useEffect(() => {
+    if (checking) return undefined;
+    if (backendStatus !== false) return undefined;
+    if (autoRetries >= MAX_AUTO_RETRIES) return undefined;
+
+    const timer = setTimeout(() => {
+      setAutoRetries((n) => n + 1);
+      checkBackend();
+    }, AUTO_RETRY_DELAY_MS);
+
+    return () => clearTimeout(timer);
+  }, [checking, backendStatus, autoRetries, checkBackend]);
+
+  // A manual re-check also restarts the automatic retry budget.
+  const handleManualCheck = useCallback(() => {
+    setAutoRetries(0);
+    checkBackend();
+  }, [checkBackend]);
+
+  const autoRetryStopped =
+    backendStatus === false && autoRetries >= MAX_AUTO_RETRIES;
+
+  // 1-based number of the attempt that is running (or next in line).
+  const retryAttempt = Math.min(
+    MAX_AUTO_RETRIES,
+    Math.max(1, checking ? autoRetries : autoRetries + 1),
+  );
+
+  const formProps = {
+    formData,
+    formErrors: login.formErrors,
+    isBusy,
+    // No point letting anyone sign in while the login server is unreachable
+    isOffline: backendStatus === false,
+    networkError: login.networkError,
+    isSavedMode,
+    savedLogin: login.savedLogin,
+    onFieldChange: login.handleChange,
+    onSubmit: login.handleSubmitClick,
+    onSavedLoginChange: login.handleSavedLoginChange,
+    onTryDifferentUser: login.handleTryDifferentUser,
+    usernameRef,
+    passwordRef,
+    showPassword,
+    onToggleShowPassword: () => setShowPassword((v) => !v),
   };
 
+  const statusProps = {
+    status: backendStatus,
+    checking,
+    lastCheckedAt,
+    onRecheck: handleManualCheck,
+    retryAttempt,
+    maxRetryAttempts: MAX_AUTO_RETRIES,
+    autoRetryStopped,
+  };
 
-  return (
-    <div className="login-page">
-      {/* Decorative background shapes */}
-      <div className="login-page__bg-shape login-page__bg-shape--1" />
-      <div className="login-page__bg-shape login-page__bg-shape--2" />
-      <div className="login-page__bg-shape login-page__bg-shape--3" />
-
-      <div className="login-page__card">
-        {/* Theme accent strip along the top edge */}
-        <div className="login-page__accent" />
-
-        {/* Brand */}
-        <div className="login-page__brand">
-          <span className="login-page__logo">
-            <IconLogo size={40} />
-          </span>
-          <h1 className="login-page__title">bSuite</h1>
-          <p className="login-page__subtitle">Sign in to your account</p>
-        </div>
-
-        {/* Form */}
-        <div className="login-page__form">
-          {/* Username field — shown as readonly badge in saved mode, editable otherwise */}
-          {isSavedMode ? (
-            <div className="login-page__saved-profile">
-              <div className="login-page__saved-avatar">
-                <IconUser size={20} />
-              </div>
-              <div className="login-page__saved-info">
-                <span className="login-page__saved-name">
-                  {formData.username}
-                </span>
-                <span className="login-page__saved-hint">
-                  Saved user — enter password
-                </span>
-              </div>
-              <button
-                type="button"
-                className="login-page__different-user"
-                onClick={handleTryDifferentUser}
-                disabled={isBusy}
-                title="Try with a different user"
-              >
-                <span className="login-page__different-user-icon">⟳</span>
-              </button>
-            </div>
-          ) : (
-            <div className="login-page__field">
-              <label className="login-page__label" htmlFor="username">
-                User Name
-              </label>
-              <div
-                className={`login-page__input-wrap${formErrors && !formData.username ? " login-page__input-wrap--error" : ""}`}
-              >
-                <input
-                  ref={usernameRef}
-                  id="username"
-                  name="username"
-                  type="text"
-                  className="login-page__input"
-                  placeholder="user@sgd.com"
-                  value={formData.username}
-                  onChange={(e) => handleChange("username", e.target.value)}
-                  autoComplete="email"
-                  disabled={isBusy}
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="login-page__field">
-            <label className="login-page__label" htmlFor="password">
-              Password
-            </label>
-            <div
-              className={`login-page__input-wrap${formErrors && !formData?.password ? " login-page__input-wrap--error" : ""}`}
-            >
-              <input
-                ref={passwordRef}
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                className="login-page__input"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={(e) => handleChange("password", e.target.value)}
-                autoComplete="current-password"
-                disabled={isBusy}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !isBusy) {
-                    handleSubmitClick();
-                  }
-                }}
-              />
-              <button
-                type="button"
-                className="login-page__toggle-pw"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex={-1}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? "Hide" : "Show"}
-              </button>
-            </div>
-          </div>
-
-          {/* Remember me switch — hidden in saved mode; shown only when both username and password are entered */}
-          {!isSavedMode && formData.username && formData.password && (
-            <div className="login-page__saved-check">
-              <InputSwitch
-                label="Remember user"
-                checked={savedLogin}
-                onChange={(e) => handleSavedLoginChange(e.target.checked)}
-                disabled={isBusy}
-              />
-            </div>
-          )}
-
-          {/* Error */}
-          {formErrors && <div className="login-page__error">{formErrors}</div>}
-
-          {/* Submit */}
-          <button
-            type="button"
-            className="login-page__submit"
-            onClick={handleSubmitClick}
-            disabled={isBusy}
-          >
-            {isBusy ? (
-              <>
-                <span className="login-page__spinner">
-                  <IconSpinner size={18} />
-                </span>
-                Signing in…
-              </>
-            ) : (
-              "Sign in"
-            )}
-          </button>
-        </div>
-
-        {/* Demo hint */}
-        <p className="login-page__hint">
-          bSuite © {new Date().getFullYear()} - Crafting Digital Excellence
-        </p>
-
-        {/* Backend status */}
-        <div className="login-page__backend">
-          <button
-            type="button"
-            className={`login-page__backend-btn login-page__backend-btn--${backendStatus === null ? "checking" : backendStatus ? "online" : "offline"}`}
-            onClick={checkBackend}
-            disabled={checking}
-            title={backendStatus === null ? "Checking backend…" : backendStatus ? "Backend connected" : "Backend unreachable — click to retry"}
-          >
-            {checking ? (
-              <IconSpinner size={12} />
-            ) : backendStatus ? (
-              <IconCheck size={12} />
-            ) : (
-              <IconClose size={12} />
-            )}
-            <span>
-              {checking
-                ? "Checking…"
-                : backendStatus === null
-                  ? "Connecting…"
-                  : backendStatus
-                    ? "Server connected"
-                    : "Server offline"}
-            </span>
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+  return <SplitLayout formProps={formProps} statusProps={statusProps} />;
 }

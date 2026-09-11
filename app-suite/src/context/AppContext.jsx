@@ -1221,7 +1221,13 @@ export function AppProvider({ children }) {
       return resp;
     } catch (error) {
       console.log("error", error);
-      return error;
+      // Keep the same shape as a rejected login so callers can always read
+      // `success`. No HTTP response at all means the server is unreachable.
+      return {
+        success: false,
+        message: error?.message || "Network error",
+        offline: !error?.hasResponse,
+      };
     }
   };
 
