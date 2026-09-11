@@ -3,6 +3,7 @@ import ActionButton from "@/components/ActionButton";
 import { PageSection } from "@/components/PageCard";
 import { getRelativeDays, formatDate } from "@/utils/datetime.js";
 import { formatNumber } from "@/utils/misc";
+import Badge from "@/components/Badge";
 
 const BatchList = ({ readOnly, listData, onEdit, onDelete }) => {
   const dtColumns = [
@@ -47,6 +48,11 @@ const BatchList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Value",
       width: "80px",
       body: (v) => formatNumber(v),
+      footer: (_, row) => {
+        return formatNumber(
+          row.reduce((sum, row) => sum + Number(row.prbtc_fgval ?? 0), 0),
+        );
+      },
     },
     { key: "dpart_cname", header: "Department", width: "80px" },
     { key: "prbtc_wkshf", header: "Shift", width: "80px" },
@@ -57,6 +63,20 @@ const BatchList = ({ readOnly, listData, onEdit, onDelete }) => {
       header: "Date",
       width: "80px",
       body: (v) => formatDate(v),
+    },
+    {
+      key: "prbtc_stats",
+      header: "Status",
+      width: "80px",
+      body: (v) => (
+        <Badge
+          variant={
+            v === "Closed" ? "danger" : v === "Completed" ? "primary" : "success"
+          }
+        >
+          {v}
+        </Badge>
+      ),
     },
     {
       key: "actions",

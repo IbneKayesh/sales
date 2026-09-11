@@ -157,5 +157,13 @@
     "maxLength": 50,
     "placeholder": "Enter journal",
     "required": false
+  },
+  "prbtc_stats": {
+    "type": "string",
+    "label": "Status",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true,
+    "default": "Open"
   }
 }

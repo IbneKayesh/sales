@@ -7,8 +7,6 @@ const {
   GenNewTrn,
   getCurrentPeriod,
   getCurrencyRate,
-  getCoaPartyAssetsWIP,
-  getCoaPartyExpFoh,
 } = require("../../db/genHelper");
 
 // =====================
@@ -116,6 +114,7 @@ const create = async (req, res) => {
       promf_todat,
       promf_prtim,
       promf_notes,
+      promf_stats,
       user_s,
       user_c,
       user_b,
@@ -134,6 +133,7 @@ const create = async (req, res) => {
       !promf_prono ||
       !promf_frdat ||
       !promf_todat ||
+      !promf_stats ||
       !user_s ||
       !user_c ||
       !user_b ||
@@ -205,10 +205,10 @@ const create = async (req, res) => {
     scripts.push({
       sql: `INSERT INTO tmmb_promf(id, promf_users, promf_bsins, promf_ccode, promf_dpart, promf_bommf,
                         promf_bkngm, promf_trnno, promf_trdat, promf_cname, promf_prono, promf_frdat,
-                        promf_todat, promf_prtim, promf_notes, promf_crusr, promf_upusr)
+                        promf_todat, promf_prtim, promf_notes, promf_stats, promf_crusr, promf_upusr)
             VALUES ($1, $2, $3, $4, $5, $6,
             $7, $8, $9, $10, $11, $12,
-            $13, $14, $15, $16, $17)`,
+            $13, $14, $15, $16, $17, $18)`,
       params: [
         newId,
         user_c,
@@ -225,6 +225,7 @@ const create = async (req, res) => {
         promf_todat,
         promf_prtim,
         promf_notes,
+        promf_stats,
         user_s,
         user_s,
       ],
@@ -1130,6 +1131,8 @@ router.post("/create-batch", async (req, res) => {
       ? `${promf_trnno}-${result_batch.last_no || 1}`
       : `bSuite Batch-${result_batch.last_no || 1}`;
 
+    const lineStatus = tmmb_prbtc[0].prbtc_stats || "Running";
+
     //const newId = uuidv4();
     // const newCode = await GenNewCode(user_c, "tmmb_promf");
     // const newTrnNo = await GenNewTrn(
@@ -1160,7 +1163,7 @@ router.post("/create-batch", async (req, res) => {
         crncy.crncy_tcrnc,
         "Production Batch",
         newTrnNo_JV,
-        promf_trdat,
+        new Date(),
         promf_trnno,
         "Production Batch",
         0,
@@ -1183,12 +1186,12 @@ router.post("/create-batch", async (req, res) => {
                         prbtc_items, prbtc_price, prbtc_units, prbtc_itype, prbtc_group, prbtc_brcod,
                         prbtc_batch, prbtc_srial, prbtc_gdstk, prbtc_bdstk, prbtc_fgrat, prbtc_fgval,
                         prbtc_dpart, prbtc_wkshf, prbtc_emply, prbtc_notes, prbtc_stock, prbtc_jrnlm,
-                        prbtc_crusr, prbtc_upusr)
+                        prbtc_stats, prbtc_crusr, prbtc_upusr)
             VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10, $11, $12,
         $13, $14, $15, $16, $17, $18,
         $19, $20, $21, $22, $23, $24,
-        $25, $26)`,
+        $25, $26, $27)`,
         params: [
           lineId,
           user_c,
@@ -1214,6 +1217,7 @@ router.post("/create-batch", async (req, res) => {
           det.prbtc_notes || "",
           det.prbtc_stock || "",
           det.prbtc_jrnlm || "",
+          lineStatus,
           user_s,
           user_s,
         ],
@@ -1373,8 +1377,21 @@ router.post("/create-batch", async (req, res) => {
       ],
       label: `Create Asset / Inventory / Products / WIP ${newTrnNo_JV}`,
     });
+    line++;
 
-    //console.log(scripts);
+    //Process master status update
+    scripts.push({
+      sql: `UPDATE tmmb_promf
+      SET
+        promf_stats = $1,
+        promf_upusr = $2,
+        promf_updat = CURRENT_TIMESTAMP,
+        promf_rvnmr = promf_rvnmr + 1
+      WHERE id = $3
+      AND promf_users = $4`,
+      params: [lineStatus, user_s, id, user_c],
+      label: `Update process status ${newTrnNo_JV}`,
+    });
 
     await dbRunAll(scripts);
 
@@ -1436,6 +1453,297 @@ router.post("/get-batch-by-process", async (req, res) => {
       success: false,
       message: error.message || "An error occurred during db action",
       data: [],
+    });
+  }
+});
+
+// =====================
+// close-batch
+// =====================
+router.post("/close-batch", async (req, res) => {
+  try {
+    const { id, promf_dpart, promf_trnno, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!id || !promf_dpart || !promf_trnno || !user_s || !user_c || !user_b) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: {},
+      });
+    }
+
+    //database action
+    const acprd = await getCurrentPeriod(user_c, user_b, promf_dpart);
+    if (!acprd) {
+      return {
+        success: false,
+        message: "No active fiscal year or accounting period found",
+        data: {},
+      };
+    }
+    if (acprd.length > 1) {
+      return {
+        success: false,
+        message: "Multiple active accounting periods found. Please select one.",
+        data: {},
+      };
+    }
+    const { acprd_id, fsyar_id } = acprd[0];
+    const newId_JV = uuidv4();
+    const newTrnNo_JV = await GenNewTrn(
+      user_c,
+      user_b,
+      "tmtb_jrnlm",
+      "Production Batch Close",
+      promf_dpart,
+    );
+
+    //active currency rate
+    const crncy = await getCurrencyRate(user_c, user_b);
+    if (!crncy) {
+      return {
+        success: false,
+        message: "No active currency rate found",
+        data: {},
+      };
+    }
+    if (crncy.length > 1) {
+      return {
+        success: false,
+        message: "Multiple active currency rate found. Please select one.",
+        data: {},
+      };
+    }
+
+    //const newId = uuidv4();
+    const scripts = [];
+
+    //Adjustment Journal
+    const sql_yield_GL = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
+      FROM tmtb_party pty
+      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+      JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+      WHERE crt.chtrt_trnid = 'SYS_PRODUCTION'
+      AND crt.chtrt_pegid = 'SYS_PROCESS'
+      AND crt.chtrt_grpid IN ('SYS_EXP_YIELD_GAIN','SYS_EXP_YIELD_LOSS')
+      AND crt.chtrt_route IN ('SYS_EMPTY')
+      AND pty.party_actve = TRUE
+      AND cht.chtac_actve = TRUE
+      AND crt.chtrt_actve = TRUE
+      AND cht.chtac_users = $1
+      AND cht.chtac_bsins = $2`;
+    const result_yield_GL = await dbGetAll(sql_yield_GL, [user_c, user_b]);
+    if (!result_yield_GL || result_yield_GL.length === 0) {
+      return res.json({
+        success: false,
+        message: `No default Yield Gain/Loss GL configured for Batch Closing`,
+        data: {},
+      });
+    }
+
+    const sql_process_WIP = `SELECT SUM(jnc.jrnlc_drval) jrnlc_drval
+        FROM tmtb_jrnlc jnc
+        JOIN tmtb_chtac cht ON jnc.jrnlc_chtac = cht.id
+        JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+        WHERE jnc.jrnlc_refid = $1
+        AND jnc.jrnlc_sorce = 'Production Process'
+        AND crt.chtrt_trnid = 'SYS_PRODUCTION'
+        AND crt.chtrt_pegid = 'SYS_PROCESS'
+        AND crt.chtrt_grpid = 'SYS_AST_INVENTORY'
+        AND crt.chtrt_route = 'WIP'
+        AND jnc.jrnlc_users = $2
+        AND jnc.jrnlc_bsins = $3`;
+    const result_process_WIP = await dbGet(sql_process_WIP, [
+      id,
+      user_c,
+      user_b,
+    ]);
+
+    const sql_batch_WIP = `SELECT SUM(jnc.jrnlc_crval) jrnlc_crval
+            FROM tmtb_jrnlc jnc
+            WHERE jnc.jrnlc_refid = $1
+            AND jnc.jrnlc_sorce = 'Production Batch'            
+            AND jnc.jrnlc_users = $2
+            AND jnc.jrnlc_bsins = $3`;
+
+    const result_batch_WIP = await dbGet(sql_batch_WIP, [id, user_c, user_b]);
+
+    //new value WIP + saved value WIP = total value WIP
+    const total_Diff_value =
+      Number(result_process_WIP?.jrnlc_drval || 0) -
+      Number(result_batch_WIP?.jrnlc_crval || 0);
+
+    //SYS_PRODUCTION.SYS_BATCH
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
+    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
+    jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6,
+    $7, $8, $9, $10, $11, $12,
+    $13, $14, $15, $16, $17, $18)`,
+      params: [
+        newId_JV,
+        user_c,
+        user_b,
+        promf_dpart,
+        fsyar_id,
+        acprd_id,
+        crncy.crncy_tcrnc,
+        "Production Batch Close",
+        newTrnNo_JV,
+        new Date(),
+        promf_trnno,
+        "Production Batch Close",
+        total_Diff_value,
+        total_Diff_value,
+        crncy.crncy_exrat,
+        "Posted",
+        user_s,
+        user_s,
+      ],
+      label: `create journal master- ${newTrnNo_JV}`,
+    });
+
+    //Insert BATCH details
+    let line = 1;
+
+    //SYS_PRODUCTION.SYS_BATCH.SYS_AST_INVENTORY (actual) but will use same as process
+    //SYS_PRODUCTION.SYS_PROCESS.SYS_AST_INVENTORY.WIP
+    const sql_yield = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
+      FROM tmtb_party pty
+      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
+      JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
+      WHERE crt.chtrt_trnid = 'SYS_PRODUCTION'
+      AND crt.chtrt_pegid = 'SYS_PROCESS'
+      AND crt.chtrt_grpid IN ('SYS_AST_INVENTORY','SYS_NONE')
+      AND crt.chtrt_route IN ('WIP')
+      AND pty.party_actve = TRUE
+      AND cht.chtac_actve = TRUE
+      AND crt.chtrt_actve = TRUE
+      AND cht.chtac_users = $1
+      AND cht.chtac_bsins = $2`;
+    const result_yield = await dbGet(sql_yield, [user_c, user_b]);
+    // console.log(result);
+    if (!result_yield || result_yield.length === 0) {
+      return res.json({
+        success: false,
+        message: `No default input WIP configured for Production Process`,
+        data: {},
+      });
+    }
+
+    const DrOrCr = total_Diff_value > 0 ? "From" : "To";
+
+    const gainORloss =
+      total_Diff_value > 0
+        ? "To Manufacturing Yield Loss"
+        : "From Manufacturing Yield Gain";
+
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+      params: [
+        uuidv4(),
+        user_c,
+        user_b,
+        promf_dpart,
+        newId_JV,
+        result_yield.chtac_id,
+        result_yield.party_id,
+        total_Diff_value > 0 ? 0 : Math.abs(total_Diff_value || 0),
+        total_Diff_value > 0 ? Math.abs(total_Diff_value || 0) : 0,
+        DrOrCr + " Asset / Inventory / Products / WIP",
+        "Production Batch Close",
+        id,
+        "MASTER",
+        line,
+        user_s,
+        user_s,
+      ],
+      label: `Create Asset / Inventory / Products / WIP ${newTrnNo_JV}`,
+    });
+    line++;
+
+    //SYS_PRODUCTION.SYS_PROCESS.SYS_EXP_YIELD_GAIN.SYS_EMPTY
+    //SYS_PRODUCTION.SYS_PROCESS.SYS_EXP_YIELD_LOSS.SYS_EMPTY
+    // (+) for Loss
+    const prtyn_loss = result_yield_GL.find(
+      (row) => row.chtrt_grpid === "SYS_EXP_YIELD_LOSS",
+    );
+    // (-) for Gain
+    const prtyn_gain = result_yield_GL.find(
+      (row) => row.chtrt_grpid === "SYS_EXP_YIELD_GAIN",
+    );
+
+    scripts.push({
+      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+        VALUES ($1, $2, $3, $4, $5, $6,
+        $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16)`,
+      params: [
+        uuidv4(),
+        user_c,
+        user_b,
+        promf_dpart,
+        newId_JV,
+        total_Diff_value > 0 ? prtyn_loss.chtac_id : prtyn_gain.chtac_id,
+        total_Diff_value > 0 ? prtyn_loss.party_id : prtyn_gain.party_id,
+        total_Diff_value > 0 ? Math.abs(total_Diff_value || 0) : 0,
+        total_Diff_value > 0 ? 0 : Math.abs(total_Diff_value || 0),
+        gainORloss,
+        "Production Batch Close",
+        id,
+        "MASTER",
+        line,
+        user_s,
+        user_s,
+      ],
+      label: `Create ${gainORloss} ${newTrnNo_JV}`,
+    });
+
+    //console.log("total_Diff_value", total_Diff_value);
+    //console.log("gainORloss", gainORloss);
+    //console.log("scripts", scripts);
+    //return;
+
+    //Process master status update
+    scripts.push({
+      sql: `UPDATE tmmb_promf
+      SET
+        promf_stats = $1,
+        promf_upusr = $2,
+        promf_updat = CURRENT_TIMESTAMP,
+        promf_rvnmr = promf_rvnmr + 1
+      WHERE id = $3
+      AND promf_users = $4`,
+      params: ["Closed", user_s, id, user_c],
+      label: `Update process status ${newTrnNo_JV}`,
+    });
+
+    //console.log("lineStatus", lineStatus);
+    //console.log(scripts);
+    await dbRunAll(scripts);
+    res.json({
+      success: true,
+      message: `${promf_trnno} - Batch closed successfully`,
+      data: {
+        ...req.body,
+        promf_trnno: promf_trnno,
+      },
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: null,
     });
   }
 });

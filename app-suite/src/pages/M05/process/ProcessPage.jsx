@@ -25,6 +25,7 @@ import SFGList from "./SFGList";
 import BatchForm from "./BatchForm";
 import BatchList from "./BatchList";
 import RMPMSTOCKForm from "./RMPMSTOCKForm";
+import BatchClosedForm from "./BatchClosedForm";
 
 const ProcessPage = () => {
   const {
@@ -80,10 +81,12 @@ const ProcessPage = () => {
     handleAddToListBatch,
     handleEditBatch,
     handleDeleteBatch,
-    //stock
+    //show input stock
     stock_Options,
     handleChangeStock,
     handleAddToListStock,
+    //batch closed
+    handleBatchClosed,
     //modal
     showModal,
     modalTitle,
@@ -159,10 +162,25 @@ const ProcessPage = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => handleShowModal("BATCH")}
-                  disabled={!formData.id}
+                  disabled={
+                    !formData.id ||
+                    !["Running", "Open"].includes(formData.promf_stats)
+                  }
                 >
                   <IconPlus size={14} className="icon-left" />
                   Add Batch
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleShowModal("BATCH_CLOSED")}
+                  disabled={
+                    !formData.id ||
+                    !["Running", "Completed"].includes(formData.promf_stats)
+                  }
+                >
+                  <IconClose size={14} className="icon-left" />
+                  Close Batch
                 </Button>
                 <Button
                   variant="info"
@@ -308,6 +326,16 @@ const ProcessPage = () => {
                   onChange={handleChangeStock}
                   onAddToList={handleAddToListStock}
                   items_Options={stock_Options}
+                />
+              )}
+              {showModal.modal === "BATCH_CLOSED" && (
+                <BatchClosedForm
+                  isBusy={isBusy}
+                  readOnly={readOnly}
+                  stopEdit={stopEdit}
+                  formData={formData}
+                  formErrors={formErrors}
+                  onBatchClosed={handleBatchClosed}
                 />
               )}
             </ModalBody>

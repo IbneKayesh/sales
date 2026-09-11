@@ -711,12 +711,22 @@ const useProcess = () => {
             validNumber(updatedRow.prbtc_gdstk) +
             validNumber(updatedRow.prbtc_bdstk);
 
+          //don't format
           updatedRow.prbtc_fgval = qty * validNumber(updatedRow.prbtc_fgrat);
         }
 
         return updatedRow;
       }),
     );
+    //update all rows at once for update status on changes Running ? Closed
+    if (f === "prbtc_stats") {
+      setFormDataBatch((prev) =>
+        prev.map((row) => ({
+          ...row,
+          prbtc_stats: v,
+        })),
+      );
+    }
   };
 
   const handleAddToListBatch = async () => {
@@ -739,8 +749,9 @@ const useProcess = () => {
           validNumber(f.prbtc_gdstk) + validNumber(f.prbtc_bdstk) >
           validNumber(f.avail_fgqty),
       );
-      //console.log("isShortStock", isShortStock);
-      if (isShortStock) {
+      //console.log("isShortStock", formDataBatch);
+      const current_status = formDataBatch[0].prbtc_stats !== "Completed";
+      if (isShortStock && current_status) {
         const gdQty = validNumber(isShortStock.prbtc_gdstk);
         const bdQty = validNumber(isShortStock.prbtc_bdstk);
         const availableQty = validNumber(isShortStock.avail_fgqty);
@@ -754,6 +765,16 @@ const useProcess = () => {
             type: "warning",
           },
         );
+        return;
+      }
+
+      const totalQty = formDataBatch.reduce(
+        (sum, item) => sum + (item.prbtc_gdstk || 0) + (item.prbtc_bdstk || 0),
+        0,
+      );
+
+      if (totalQty < 0.1) {
+        showToast("At least 1 item qty is required", { type: "warning" });
         return;
       }
 
@@ -785,6 +806,8 @@ const useProcess = () => {
         //getAllProcess();
         loadAllDetails(formData.id);
         handleHideModal();
+        //update formdata status, instead of calling API
+        setFormData((prev) => ({ ...prev, promf_stats: current_status }));
       }
     } catch (error) {
     } finally {
@@ -828,6 +851,7 @@ const useProcess = () => {
         prbtc_emply: "emply",
         avail_fgqty:
           validNumber(item.prsfg_fgqty) - validNumber(item.avail_fgqty), //avail qty
+        prbtc_stats: "Running",
         price_cname: item.price_cname,
         units_cname: item.units_cname,
         party_id: item.party_id,
@@ -836,6 +860,26 @@ const useProcess = () => {
       setFormDataBatch(list);
     } else if (modal === "RMPM_STOCK") {
       //setFormDataBatch(dataModelBatch);
+    } else if (modal === "BATCH_CLOSED") {
+      const outputSum = listDataSFGFG.reduce(
+        (sum, row) => sum + Number(row.prsfg_fgval ?? 0),
+        0,
+      );
+      const batchSum = listDataBatch.reduce(
+        (sum, row) => sum + Number(row.prbtc_fgval ?? 0),
+        0,
+      );
+      const variance_value = outputSum - batchSum;
+      // console.log("outputSum", outputSum);
+      // console.log("batchSum", batchSum);
+      // console.log("variance_value", variance_value);
+
+      setFormData((prev) => ({
+        ...prev,
+        outputSum: outputSum,
+        batchSum: batchSum,
+        variance_value: variance_value,
+      }));
     }
     setShowModal({ show: true, modal: modal });
     switch (modal) {
@@ -857,7 +901,7 @@ const useProcess = () => {
           subTitle: "Semi-Finished / Finished Goods",
         });
         break;
-      case "Batch":
+      case "BATCH":
         setModalTitle({
           title: "Add Batch Output",
           subTitle: "Batch Output Entry",
@@ -867,6 +911,12 @@ const useProcess = () => {
         setModalTitle({
           title: "Add RM/PM Stock",
           subTitle: "RM/PM Stock Entry",
+        });
+        break;
+      case "BATCH_CLOSED":
+        setModalTitle({
+          title: "Close this Batch",
+          subTitle: "Batch variance Entry",
         });
         break;
       default:
@@ -893,7 +943,7 @@ const useProcess = () => {
     showToast("Removed successfully", { type: "success" });
   };
 
-  //stock
+  //show input stock
   const handleChangeStock = (f, v) => {
     // console.log("f", f);
     //console.log("v", v);
@@ -929,6 +979,41 @@ const useProcess = () => {
     //handleChangeStock done all things
   };
 
+  //batch closed
+  const handleBatchClosed = async () => {
+    //console.log("formData", formData);
+    const dataName = formData.promf_trnno + " ~ " + formData.variance_value;
+    const confirmation = await confirmBox({
+      title: "Close Batch",
+      message: `Are you sure you want to close "${dataName}"?`,
+      confirmText: "Close Now",
+      variant: "danger",
+    });
+    if (!confirmation) return;
+
+    try {
+      const reqBody = {
+        ...formData,
+      };
+      setIsBusy(true);
+      const resp = await processAPI.closeBatch(reqBody);
+      alertBox({
+        title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        setPgView("SYS_VW_LST_1");
+        handleHideModal();
+        await getAllProcess();
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     isBusy,
     pgView,
@@ -953,11 +1038,6 @@ const useProcess = () => {
     bom_Options,
     units_Options,
     items_Options,
-    //modal
-    showModal,
-    modalTitle,
-    handleShowModal,
-    handleHideModal,
     //functions
     handleChange,
     handleEdit,
@@ -982,15 +1062,22 @@ const useProcess = () => {
     handleEditSFG,
     handleDeleteSFG,
     handleChangeSFGRow,
-    //stock
-    stock_Options,
-    handleChangeStock,
-    handleAddToListStock,
     //batch
     handleChangeBatch,
     handleAddToListBatch,
     handleEditBatch,
     handleDeleteBatch,
+    //show input stock
+    stock_Options,
+    handleChangeStock,
+    handleAddToListStock,
+    //batch closed
+    handleBatchClosed,
+    //modal
+    showModal,
+    modalTitle,
+    handleShowModal,
+    handleHideModal,
   };
 };
 export default useProcess;

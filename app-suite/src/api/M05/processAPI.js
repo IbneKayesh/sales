@@ -46,4 +46,8 @@ export const processAPI = {
     apiRequest("/M05/v1/process/create-batch", {
       body: data,
     }),
+  closeBatch: (data) =>
+    apiRequest("/M05/v1/process/close-batch", {
+      body: data,
+    }),
 };

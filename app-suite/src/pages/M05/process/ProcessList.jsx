@@ -29,6 +29,20 @@ const ProcessList = ({ listData, onEdit, onDelete }) => {
     },
     { key: "promf_prtim", header: "Time (Min)", width: "80px" },
     {
+      key: "promf_stats",
+      header: "Status",
+      width: "80px",
+      body: (v) => (
+        <Badge
+          variant={
+            v === "Closed" ? "danger" : v === "Completed" ? "primary" : "success"
+          }
+        >
+          {v}
+        </Badge>
+      ),
+    },
+    {
       key: "actions",
       header: "Actions",
       width: "110px",

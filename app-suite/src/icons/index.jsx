@@ -961,7 +961,7 @@ export const IconImport = withDefaults((props) => (
 
 // ─── Navigation & View ─────────────────────
 
-export const IconEye = withDefaults((props) => (
+export const IconEye1 = withDefaults((props) => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -976,7 +976,7 @@ export const IconEye = withDefaults((props) => (
   </svg>
 ));
 
-export const IconEyeOff = withDefaults((props) => (
+export const IconEyeOff1 = withDefaults((props) => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
@@ -1743,6 +1743,112 @@ const iconMap = {
   Wallet: IconWallet,
   Calculator: IconCalculator,
 };
+
+// ─── Login / Security ──────────────────────
+
+/** Server rack with connection lines — used for "server connected" status */
+export const IconServer = withDefaults((props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <rect x="2" y="2" width="20" height="8" rx="2" ry="2" />
+    <rect x="2" y="14" width="20" height="8" rx="2" ry="2" />
+    <line x1="6" y1="6" x2="6.01" y2="6" />
+    <line x1="6" y1="18" x2="6.01" y2="18" />
+  </svg>
+));
+
+/** Server with an X / slash — used for "server offline" status */
+export const IconServerOff = withDefaults((props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M7 2h13a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H7" />
+    <path d="M10 6h.01" />
+    <path d="M14 10v4" />
+    <path d="M2 2l20 20" />
+    <path d="M22 17.3A2 2 0 0 1 22 18a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h12.3" />
+    <path d="M6 18h.01" />
+  </svg>
+));
+
+/** Eye — show password */
+export const IconEye = withDefaults((props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+));
+
+/** Eye with slash — hide password */
+export const IconEyeOff = withDefaults((props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+    <line x1="1" y1="1" x2="23" y2="23" />
+  </svg>
+));
+
+/** Shield with lock — security / ERP branding icon */
+export const IconShieldLock = withDefaults((props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <rect x="9" y="11" width="6" height="5" rx="1" />
+    <path d="M10 11V9a2 2 0 1 1 4 0v2" />
+  </svg>
+));
+
+/** Refresh / retry clockwise arrow */
+export const IconRefreshCw = withDefaults((props) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <polyline points="23 4 23 10 17 10" />
+    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+  </svg>
+));
 
 /** Resolve an icon component by its name (returns a rendered element). */
 export const resolveMenuIcon = (name, size) => {

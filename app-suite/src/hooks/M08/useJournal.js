@@ -347,10 +347,10 @@ const useJournal = () => {
     );
 
     //check balance
-    if (crVal > 0 && Number(party_cname.party_crbal) < crVal) {
-      showToast("Insufficient Balance", { type: "error" });
-      return;
-    }
+    // if (crVal > 0 && Number(party_cname.party_crbal) < crVal) {
+    //   showToast("Insufficient Balance", { type: "error" });
+    //   return;
+    // }
     //console.log("party_cname", party_cname);
     //console.log("chtac_cname",chtac_cname);
 

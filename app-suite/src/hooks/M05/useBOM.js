@@ -274,9 +274,11 @@ const useBOM = () => {
         return;
       }
       const totalCostRatio = listDataSFGFG.reduce(
-        (sum, item) => sum + item.prsfg_rtrto,
+        (sum, item) => sum + validNumber(item.bosfg_rtrto),
         0,
       );
+      //console.log("totalCostRatio", listDataSFGFG);
+
       if (totalCostRatio !== 100) {
         showToast("Total Cost Ratio must be 100", { type: "warning" });
         return;

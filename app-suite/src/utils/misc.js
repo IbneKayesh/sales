@@ -1,5 +1,6 @@
 import { getStorageData } from "./storage";
 
+// USE FOR REPORTING, DON'T USE CALCULATIONS
 const formatNumber = (val, comma = false) => {
   const n = Number(val);
 
@@ -15,13 +16,13 @@ const formatNumber = (val, comma = false) => {
   });
 };
 
+// USE FOR CALCULATIONS, DON'T FORMAT THIS
 // Safe number conversion (handles null, undefined, NaN, "", etc.)
 const validNumber = (value) => {
+  
   const n = Number(value);
   if (!Number.isFinite(n)) return 0;
-  const bsins = getStorageData()?.bsins;
-  const dcpnt = bsins?.bsins_dcpnt || 2;
-  return Number(n.toFixed(Number(dcpnt) || 0));
+  return n;
 };
 
 const validNumber_v1 = (value) => {

@@ -77,5 +77,13 @@
     "maxLength": 50,
     "placeholder": "Enter notes",
     "required": false
+  },
+  "promf_stats": {
+    "type": "string",
+    "label": "Status",
+    "maxLength": 50,
+    "placeholder": "Select",
+    "required": true,
+    "default": "Open"
   }
 }

@@ -112,7 +112,14 @@ const BatchForm = ({
       },
     },
     { key: "prbtc_fgrat", header: "Rate", width: "80px" },
-    { key: "prbtc_fgval", header: "Value", width: "80px" },
+    {
+      key: "prbtc_fgval",
+      header: "Value",
+      width: "80px",
+      footer: (_, row) => {
+        return row.reduce((sum, row) => sum + Number(row.prbtc_fgval ?? 0), 0);
+      },
+    },
     { key: "prbtc_wkshf", header: "Shift", width: "80px" },
     { key: "prbtc_emply", header: "Manager", width: "80px" },
     {
@@ -134,7 +141,26 @@ const BatchForm = ({
   ];
   return (
     <div className="form-wrap">
-      <h4>Batch Output</h4>
+      <div className="grid">
+        <div className="col-span-6">
+          <h4>Batch Output</h4>
+        </div>
+        <div className="col-span-6">
+          <Dropdown
+            label="Status"
+            options={[
+              { label: "Running", value: "Running" },
+              { label: "Completed", value: "Completed" },
+            ]}
+            value={formData[0].prbtc_stats}
+            onChange={(e) => onChange("prbtc_stats", e.target.value)}
+            error={formErrors.prbtc_stats}
+            required
+            placeholder="Select..."
+            //disabled={readOnly}
+          />
+        </div>
+      </div>
       {/* <div className="grid">
         <div className="col-span-3">
           <Dropdown

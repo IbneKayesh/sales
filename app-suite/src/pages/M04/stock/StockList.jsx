@@ -98,7 +98,7 @@ const StockList = ({ cfColumns = [], listData, onEdit }) => {
       width: "80px",
       body: (_, row) => (
         <>
-          <NegativeValue value={row.stock_ohqty} /> {row.units_cname}
+          <NegativeValue value={row.stock_ohqty} /> {row.runit_cname}
         </>
       ),
     },
@@ -175,6 +175,13 @@ const StockList = ({ cfColumns = [], listData, onEdit }) => {
           <>
             <NegativeValue value={row.stock_ohqty * row.stock_cprat} />
           </>
+        );
+      },
+      footer: (_, row) => {
+        return row.reduce(
+          (sum, row) =>
+            sum + Number(row.stock_ohqty ?? 0) * Number(row.stock_cprat ?? 0),
+          0,
         );
       },
     },

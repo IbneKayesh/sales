@@ -76,6 +76,7 @@ const ItemList = ({ cfColumns = [], readOnly, listData, onEdit, onDelete }) => {
         columns={dtColumns}
         data={listData}
         pageSize={50}
+        showRows={false}
         sortable
         searchable={false}
         striped

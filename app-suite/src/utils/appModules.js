@@ -387,7 +387,7 @@ export const rawAppModules = [
         menus: [
           {
             id: "M05-G02-M001",
-            name: "Process",
+            name: "Manufacturing Process",
             color: "#22c55e",
             icon: "Manufacture",
             order: 1,

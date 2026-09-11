@@ -18,6 +18,7 @@ CREATE TABLE tmmb_promf (
   promf_todat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   promf_prtim decimal(18,6) DEFAULT 1,
   promf_notes VARCHAR(50),
+  promf_stats varchar(50) NOT NULL,
   
   -- default 2
   promf_actve boolean NOT NULL DEFAULT true,

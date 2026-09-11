@@ -7,6 +7,7 @@ import InputLabel from "@/components/InputLabel";
 import AuditData from "@/components/AuditData";
 import { IconClose, IconSave } from "@/icons";
 import { inout_Options } from "@/utils/vtable.js";
+import Badge from "@/components/Badge";
 
 const bkngm_Options = [{ label: "No Order", value: "" }];
 const ProcessForm = ({
@@ -105,7 +106,7 @@ const ProcessForm = ({
         <div className="col-span-1">
           <InputLabel label="Process Time (Min)" value={formData.promf_prtim} />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-5">
           <InputText
             label="Note"
             placeholder="Enter note"
@@ -114,6 +115,20 @@ const ProcessForm = ({
             error={formErrors.promf_notes}
             disabled={readOnly}
           />
+        </div>
+        <div className="col-span-1 p-2">
+          <Badge
+            variant={
+              formData.promf_stats === "Closed"
+                ? "danger"
+                : formData.promf_stats === "Completed"
+                  ? "primary"
+                  : "success"
+            }
+            className="mt-5"
+          >
+            {formData.promf_stats}
+          </Badge>
         </div>
       </div>
       {formData?.id && (

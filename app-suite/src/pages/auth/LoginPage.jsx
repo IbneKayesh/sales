@@ -22,6 +22,10 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [backendStatus, setBackendStatus] = useState(null); // null | true | false
   const [checking, setChecking] = useState(false);
+  
+  //determine caps lock state and show to user
+  const [capsLock, setCapsLock] = useState(false);
+
 
   // Determine if we're in "saved login" mode (show username readonly, only password field)
   const isSavedMode = savedLogin && !!formData.username;

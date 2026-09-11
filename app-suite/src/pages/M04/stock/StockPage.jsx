@@ -75,6 +75,7 @@ const StockPage = () => {
                     onChange={(e) => handleChange("dpart_id", e.target.value)}
                     error={formErrors.dpart_id}
                     placeholder="Select..."
+                    required={true}
                     //disabled={readOnly}
                     optionValue="id"
                     optionLabel="dpart_cname"

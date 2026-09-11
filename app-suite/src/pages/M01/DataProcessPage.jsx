@@ -91,19 +91,20 @@ const DataProcessPage = () => {
             subtitle={`Some data are still unmergerd · need your quick actions · execute them`}
           />
           <PageCardActions>
-           <div className="col-span-12">
-                <Dropdown
-                  label="Department"
-                  options={dpart_Options}
-                  value={formData.dpart_id}
-                  onChange={(e) => handleChange("dpart_id", e.target.value)}
-                  error={formErrors.dpart_id}
-                  placeholder="Select..."
-                  //disabled={readOnly}
-                  optionValue="id"
-                  optionLabel="dpart_cname"
-                />
-              </div>
+            <div className="col-span-12">
+              <Dropdown
+                label="Department"
+                options={dpart_Options}
+                value={formData.dpart_id}
+                onChange={(e) => handleChange("dpart_id", e.target.value)}
+                error={formErrors.dpart_id}
+                placeholder="Select..."
+                required={true}
+                //disabled={readOnly}
+                optionValue="id"
+                optionLabel="dpart_cname"
+              />
+            </div>
           </PageCardActions>
         </PageCardHeader>
         <PageCardBody>

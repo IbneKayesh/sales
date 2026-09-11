@@ -28,6 +28,7 @@ CREATE TABLE tmmb_prbtc (
   prbtc_notes VARCHAR(50),
   prbtc_stock VARCHAR(50),
   prbtc_jrnlm VARCHAR(50),
+  prbtc_stats varchar(50) NOT NULL,
   
   -- default 2
   prbtc_actve boolean NOT NULL DEFAULT true,
