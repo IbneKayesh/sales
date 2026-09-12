@@ -1,0 +1,154 @@
+import { useEffect, useState } from "react";
+import { useUI } from "@/context/AppUIContext.jsx";
+import validate, { generateDataModel } from "@/models/validator";
+import tmtb_exams from "@/models/M09/tmtb_exams.json";
+const dataModel = generateDataModel(tmtb_exams);
+import { examAPI } from "@/api/M09/examAPI.js";
+
+const useExam = () => {
+  const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
+  const [pgView, setPgView] = useState("SYS_VW_LST_1");
+  const [pgId, setPgId] = useState("M09-M02-M001");
+  const [pageAuth, setPageAuth] = useState({
+    extpr: false,
+    addpr: false,
+    edtpr: false,
+    delpr: false,
+  });
+  const [readOnly, setReadOnly] = useState(false);
+  const [stopEdit, setStopEdit] = useState(false);
+  const [listData, setListData] = useState([]);
+  const [formData, setFormData] = useState(dataModel);
+  const [formErrors, setFormErrors] = useState({});
+
+  const getAllExams = async () => {
+    try {
+      setIsBusy(true);
+      const resp = await examAPI.getAll({});
+      const list = resp.data || [];
+      setListData(list);
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  useEffect(() => {
+    getAllExams();
+  }, []);
+
+  const handleChange = (f, v) => {
+    setFormData((prev) => ({ ...prev, [f]: v }));
+    const newErrors = validate({ ...formData, [f]: v }, tmtb_exams);
+    setFormErrors(newErrors);
+  };
+
+  const handleEdit = (rowData) => {
+    setPgView("SYS_VW_FRM_1");
+    setFormData(rowData);
+  };
+
+  const handleDelete = async (rowData) => {
+    const isActive = rowData.exams_actve;
+    const dataName = rowData.exams_cname || rowData.exams_srial;
+    const confirmation = await confirmBox({
+      title: isActive ? "Deactivate" : "Activate",
+      message: `Are you sure you want to ${isActive ? "deactivate" : "activate"} "${dataName}"?`,
+      confirmText: isActive ? "Deactivate" : "Activate",
+      variant: isActive ? "danger" : "success",
+    });
+    if (!confirmation) return;
+
+    try {
+      setIsBusy(true);
+      const resp = await examAPI.delete(rowData);
+      alertBox({
+        title: resp.success
+          ? isActive
+            ? "Deactivated"
+            : "Activated"
+          : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        setPgView("SYS_VW_LST_1");
+        setFormData(dataModel);
+        getAllExams();
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleSearch = async () => {
+    getAllExams();
+  };
+
+  const handleAddNew = () => {
+    setPgView("SYS_VW_FRM_1");
+    setFormData(dataModel);
+    setReadOnly(false);
+    setStopEdit(false);
+  };
+
+  const handleCancel = () => {
+    setPgView("SYS_VW_LST_1");
+    setFormData(dataModel);
+    setReadOnly(false);
+    setStopEdit(false);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const newErrors = validate(formData, tmtb_exams);
+      setFormErrors(newErrors);
+      if (Object.keys(newErrors).length > 0) {
+        return;
+      }
+
+      const reqBody = {
+        ...formData,
+      };
+      setIsBusy(true);
+
+      const resp = await examAPI.upsert(reqBody);
+      alertBox({
+        title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
+        message: resp.message,
+        variant: resp.success ? "success" : "danger",
+        confirmText: resp.success ? "Done" : "Close",
+      });
+      if (resp.success) {
+        setPgView("SYS_VW_LST_1");
+        setFormData(dataModel);
+        getAllExams();
+      }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  return {
+    isBusy,
+    pgView,
+    pageAuth,
+    readOnly,
+    stopEdit,
+    listData,
+    formData,
+    formErrors,
+    handleChange,
+    handleEdit,
+    handleDelete,
+    handleSearch,
+    handleAddNew,
+    handleCancel,
+    handleSubmit,
+  };
+};
+
+export default useExam;

@@ -1,0 +1,83 @@
+{
+  "id": {
+    "type": "string",
+    "label": "Id"
+  },
+  "exams_srial": {
+    "type": "string",
+    "label": "Serial",
+    "maxLength": 50,
+    "placeholder": "Enter serial",
+    "required": true
+  },
+  "exams_teach": {
+    "type": "string",
+    "label": "Teaching",
+    "maxLength": 50,
+    "placeholder": "Select teaching",
+    "required": true
+  },
+  "exams_cname": {
+    "type": "string",
+    "label": "Question Name",
+    "maxLength": 50,
+    "minLength": 3,
+    "placeholder": "Enter question name",
+    "required": true
+  },
+  "exams_answr": {
+    "type": "string",
+    "label": "Answer",
+    "maxLength": 500,
+    "placeholder": "Enter answer",
+    "required": false
+  },
+  "exams_notes": {
+    "type": "string",
+    "label": "Notes",
+    "maxLength": 50,
+    "placeholder": "Enter notes",
+    "required": false
+  },
+  "exams_marks": {
+    "type": "number",
+    "label": "Marks",
+    "default": 1,
+    "placeholder": "Enter marks",
+    "required": true
+  },
+  "exams_stats": {
+    "type": "boolean",
+    "label": "Pass/Fail",
+    "default": false,
+    "placeholder": "Select result",
+    "required": false
+  },
+  "exams_actve": {
+    "type": "boolean",
+    "label": "Active",
+    "default": true,
+    "required": false
+  },
+  "exams_crusr": {
+    "type": "string",
+    "label": "Created By"
+  },
+  "exams_crdat": {
+    "type": "string",
+    "label": "Created Date"
+  },
+  "exams_upusr": {
+    "type": "string",
+    "label": "Updated By"
+  },
+  "exams_updat": {
+    "type": "string",
+    "label": "Updated Date"
+  },
+  "exams_rvnmr": {
+    "type": "number",
+    "label": "Rev Number",
+    "default": 1
+  }
+}
