@@ -8,7 +8,7 @@ CREATE TABLE tmpb_prodc (
 
   prodc_users VARCHAR(50) NOT NULL,
   prodc_bsins VARCHAR(50) NOT NULL,
-  prodc_mrrdm VARCHAR(50) NOT NULL,
+  prodc_prodm VARCHAR(50) NOT NULL,
   prodc_price VARCHAR(50) NOT NULL,
   prodc_items VARCHAR(50) NOT NULL,
   prodc_units VARCHAR(50) NOT NULL,

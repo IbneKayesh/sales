@@ -7,7 +7,7 @@ CREATE TABLE tmpb_propy (
 
   propy_users VARCHAR(50) NOT NULL,
   propy_bsins VARCHAR(50) NOT NULL,
-  propy_mrrdm VARCHAR(50) NOT NULL,
+  propy_prodm VARCHAR(50) NOT NULL,
   propy_party VARCHAR(50) NOT NULL,
   propy_pydat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   propy_pdamt decimal(18,6) DEFAULT 0.00,

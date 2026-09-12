@@ -82,6 +82,9 @@ function SplitLayout({ formProps, statusProps }) {
             Run your entire business from one system
           </p>
           <p className="login-split__tagline">
+            Enterprise.Automation.Analytics.Control.
+          </p>
+          <p className="login-split__tagline">
             Everything your team needs, unified in a single ERP workspace.
           </p>
           <ul className="login-split__features">
@@ -98,7 +101,9 @@ function SplitLayout({ formProps, statusProps }) {
 
         <div className="login-split__brand-foot">
           <span>Version {APP_VERSION}</span>
-          <span>{APP_NAME} © {new Date().getFullYear()}</span>
+          <span>
+            {APP_NAME} © {new Date().getFullYear()}
+          </span>
         </div>
       </aside>
 
@@ -164,7 +169,9 @@ export default function LoginPage() {
       root.style.setProperty("--brand-panel-color", BRAND_PANEL_COLOR);
     }
     return () => {
-      if (root.style.getPropertyValue("--brand-panel-color") === BRAND_PANEL_COLOR) {
+      if (
+        root.style.getPropertyValue("--brand-panel-color") === BRAND_PANEL_COLOR
+      ) {
         root.style.removeProperty("--brand-panel-color");
       }
     };

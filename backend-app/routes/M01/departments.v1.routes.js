@@ -362,8 +362,6 @@ router.post("/get-sales", async (req, res) => {
   }
 });
 
-
-
 // get-journal
 router.post("/get-journal", async (req, res) => {
   try {
