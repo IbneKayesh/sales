@@ -13,6 +13,7 @@ CREATE TABLE tmsb_teach (
   teach_notes varchar(50), --notes
   teach_ttype varchar(50), --subject name
   teach_tagno varchar(100), --tag no
+  teach_reads integer NOT NULL DEFAULT 0, --total reads
   teach_marks integer NOT NULL DEFAULT 1, --total marks
   teach_stats boolean NOT NULL DEFAULT false, --on / off
 
@@ -24,3 +25,19 @@ CREATE TABLE tmsb_teach (
   teach_updat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   teach_rvnmr integer NOT NULL DEFAULT 1
 );
+
+-keep the UI consistency
+-don't write any new CSS
+-write smiliar code patterns of other folders
+-use existing components, src/components/*.*
+build
+-pages/M09/Teach/TeachPage.jsx
+-pages/M09/Exam/ExamPage.jsx
+-hooks/M09/useTeach.js
+-hooks/M09/useExam.js
+-models/M09/teachAPI.js
+-models/M09/examAPI.js
+
+
+its will for kids learning purpose, preset learning (teaching) materials, they will study and and every week will held exam
+all the data manually entry

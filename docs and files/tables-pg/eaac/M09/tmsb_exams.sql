@@ -5,6 +5,8 @@ CREATE TABLE tmsb_exams (
   -- default 1
   id varchar(50) PRIMARY KEY,
   exams_srial varchar(50) NOT NULL,
+  exams_ccode varchar(50) NOT NULL, --auto generate exam code
+  exams_trdat timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, --exam date
   exams_teach varchar(50) NOT NULL, --tech id
 
   -- custom
