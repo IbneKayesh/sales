@@ -260,6 +260,48 @@ const adjsm_ttype_Options = [
   },
 ];
 
+const fetur_ttype_Options = [
+  {
+    label: "Developed",
+    value: "Developed",
+  },
+  {
+    label: "Pending",
+    value: "Pending",
+  },
+  {
+    label: "Live",
+    value: "Live",
+  },
+  {
+    label: "On Test",
+    value: "On Test",
+  },
+  {
+    label: "Hold",
+    value: "Hold",
+  },
+];
+
+const fetur_tagno_Options = [
+  {
+    label: "General",
+    value: "General",
+  },
+  {
+    label: "Accounts",
+    value: "Accounts",
+  },
+  {
+    label: "Garments",
+    value: "Garments",
+  },
+  {
+    label: "FMCG",
+    value: "FMCG",
+  },
+];
+
 const ledger_types_Options = [
   {
     label: "Capital / Investment",
@@ -302,5 +344,7 @@ export {
   txmod_Options,
   bndle_Options,
   adjsm_ttype_Options,
+  fetur_ttype_Options,
+  fetur_tagno_Options,
   ledger_types_Options,
 };

@@ -25,6 +25,10 @@ const FeaturePage = () => {
     formErrors,
     //others
     fetur_Options,
+    //filters
+    filterData,
+    filteredCount,
+    isFiltered,
     //functions
     handleChange,
     handleEdit,
@@ -34,13 +38,22 @@ const FeaturePage = () => {
     handleAddChild,
     handleCancel,
     handleSubmit,
+    handleStatus,
+    handleFilterChange,
   } = useFeatures();
 
   return (
     <div className="page-wrap">
       <PageCard>
         <PageCardHeader>
-          <PageCardTitle title="Features" subtitle={`${listData.length} Features`} />
+          <PageCardTitle
+            title="Features"
+            subtitle={
+              isFiltered
+                ? `${filteredCount} of ${listData.length} Features`
+                : `${listData.length} Features`
+            }
+          />
           <PageCardActions>
             {pgView === "SYS_VW_LST_1" && (
               <Button variant="info" size="sm" onClick={handleSearch}>
@@ -75,6 +88,9 @@ const FeaturePage = () => {
               onEdit={handleEdit}
               onDelete={handleDelete}
               onAddChild={handleAddChild}
+              onStatus={handleStatus}
+              filterData={filterData}
+              onFilterChange={handleFilterChange}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (

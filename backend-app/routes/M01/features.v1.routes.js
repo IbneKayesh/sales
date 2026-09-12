@@ -87,8 +87,11 @@ const create = async (req, res) => {
       fetur_srial,
       fetur_fetur,
       fetur_cname,
+      fetur_ttype,
+      fetur_tagno,
       fetur_descr,
       fetur_notes,
+      fetur_table,
       fetur_stats,
       user_s,
       user_c,
@@ -113,17 +116,21 @@ const create = async (req, res) => {
 
     //database action
 
-    const sql = `INSERT INTO tmsb_fetur(id, fetur_srial, fetur_fetur, fetur_cname, fetur_descr, fetur_notes,
-    fetur_crusr, fetur_upusr)
+    const sql = `INSERT INTO tmsb_fetur(id, fetur_srial, fetur_fetur, fetur_cname, fetur_ttype, fetur_tagno, fetur_descr, fetur_notes,
+    fetur_table, fetur_stats, fetur_crusr, fetur_upusr)
     VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8)`;
+    $7, $8, $9, $10, $11, $12)`;
     const params = [
       uuidv4(),
       fetur_srial,
       fetur_fetur,
       fetur_cname,
+      fetur_ttype,
+      fetur_tagno,
       fetur_descr,
       fetur_notes,
+      fetur_table,
+      fetur_stats,
       user_s,
       user_s,
     ];
@@ -151,8 +158,11 @@ const update = async (req, res) => {
       fetur_srial,
       fetur_fetur,
       fetur_cname,
+      fetur_ttype,
+      fetur_tagno,
       fetur_descr,
       fetur_notes,
+      fetur_table,
       fetur_stats,
       user_s,
       user_c,
@@ -180,19 +190,25 @@ const update = async (req, res) => {
     SET fetur_srial = $1,
     fetur_fetur = $2,
     fetur_cname = $3,
-    fetur_descr = $4,
-    fetur_notes = $5,
-    fetur_stats = $6,
-    fetur_upusr = $7,
+    fetur_ttype = $4,
+    fetur_tagno = $5,
+    fetur_descr = $6,
+    fetur_notes = $7,
+    fetur_table = $8,
+    fetur_stats = $9,
+    fetur_upusr = $10,
     fetur_updat = CURRENT_TIMESTAMP,
     fetur_rvnmr = fetur_rvnmr + 1
-    WHERE id = $8`;
+    WHERE id = $11`;
     const params = [
       fetur_srial,
       fetur_fetur,
       fetur_cname,
+      fetur_ttype,
+      fetur_tagno,
       fetur_descr,
       fetur_notes,
+      fetur_table,
       fetur_stats,
       user_s,
       id,
@@ -257,6 +273,45 @@ router.post("/delete", async (req, res) => {
     res.json({
       success: true,
       message: `${fetur_cname} - ${fetur_actve ? "Deactivate" : "Activate"} successfully.`,
+      data: {},
+    });
+  } catch (error) {
+    console.error("database action error:", error);
+    return res.json({
+      success: false,
+      message: error.message || "An error occurred during db action",
+      data: {},
+    });
+  }
+});
+
+// update-status
+router.post("/update-status", async (req, res) => {
+  try {
+    const { id, fetur_cname, fetur_stats, user_s, user_c, user_b } = req.body;
+
+    // Validate input
+    if (!id || !fetur_cname || !user_s || !user_c || !user_b) {
+      return res.json({
+        success: false,
+        message: "All fields in the request body are required.",
+        data: {},
+      });
+    }
+
+    //database action
+    const sql = `UPDATE tmsb_fetur
+    SET fetur_stats = NOT fetur_stats,
+    fetur_upusr = $1,
+    fetur_updat = CURRENT_TIMESTAMP,
+    fetur_rvnmr = fetur_rvnmr + 1
+    WHERE id = $2`;
+    const params = [user_s, id];
+
+    await dbRun(sql, params, `done feature- ${fetur_cname}`);
+    res.json({
+      success: true,
+      message: `${fetur_cname} - ${fetur_stats ? "Undo" : "Done"} successfully.`,
       data: {},
     });
   } catch (error) {

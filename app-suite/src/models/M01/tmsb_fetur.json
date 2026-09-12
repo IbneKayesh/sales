@@ -27,10 +27,25 @@
     "placeholder": "Enter name",
     "required": true
   },
+  "fetur_ttype": {
+    "type": "string",
+    "label": "Type",
+    "maxLength": 50,
+    "minLength": 1,
+    "placeholder": "Select type",
+    "required": false
+  },
+  "fetur_tagno": {
+    "type": "string",
+    "label": "Tags",
+    "maxLength": 100,
+    "placeholder": "Select tags",
+    "required": false
+  },
   "fetur_descr": {
     "type": "string",
     "label": "Description",
-    "maxLength": 100,
+    "maxLength": 500,
     "placeholder": "Enter description"
   },
   "fetur_notes": {
@@ -38,6 +53,12 @@
     "label": "Notes",
     "maxLength": 50,
     "placeholder": "Enter notes"
+  },
+  "fetur_table": {
+    "type": "string",
+    "label": "Table",
+    "maxLength": 50,
+    "placeholder": "Enter table"
   },
   "fetur_stats": {
     "type": "boolean",

@@ -26,4 +26,8 @@ export const featuresAPI = {
     apiRequest("/M01/v1/features/get-all-active", {
       body: data,
     }),
+  updateStatus: (data) =>
+    apiRequest("/M01/v1/features/update-status", {
+      body: data,
+    }),
 };

@@ -4,6 +4,8 @@ import Dropdown from "@/components/Dropdown";
 import AuditData from "@/components/AuditData";
 import Button from "@/components/Button";
 import { IconClose, IconSave } from "@/icons";
+import MultiSelect from "@/components/MultiSelect";
+import { fetur_ttype_Options, fetur_tagno_Options } from "@/utils/vtable";
 
 const FeatureForm = ({
   isBusy,
@@ -76,11 +78,49 @@ const FeatureForm = ({
           />
         </div>
         <div className="col-span-2">
+          <InputText
+            label="Table"
+            placeholder="Enter table"
+            value={formData.fetur_table}
+            onChange={(e) => onChange("fetur_table", e.target.value)}
+            error={formErrors.fetur_table}
+            disabled={readOnly}
+          />
+        </div>
+        <div className="col-span-4">
+          <Dropdown
+            label="Type"
+            options={fetur_ttype_Options}
+            value={formData.fetur_ttype}
+            onChange={(e) => onChange("fetur_ttype", e.target.value)}
+            error={formErrors.fetur_ttype}
+            required
+            placeholder="Select type..."
+            disabled={readOnly}
+            optionValue="value"
+            optionLabel="label"
+          />
+        </div>
+        <div className="col-span-2 p-2">
           <InputSwitch
             label="Status"
             checked={formData.fetur_stats}
             onChange={(e) => onChange("fetur_stats", e.target.checked)}
             disabled={readOnly}
+            className="mt-5"
+          />
+        </div>
+        <div className="col-span-6">
+          <MultiSelect
+            label="Tags"
+            options={fetur_tagno_Options}
+            value={formData.fetur_tagno}
+            onChange={(e) => onChange("fetur_tagno", e.target.value)}
+            error={formErrors.fetur_tagno}
+            placeholder="Select tags..."
+            disabled={readOnly}
+            optionValue="value"
+            optionLabel="label"
           />
         </div>
       </div>

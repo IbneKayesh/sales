@@ -43,4 +43,11 @@ const formatCurrency = (n, fractionDigits = 0) =>
     maximumFractionDigits: fractionDigits,
   }).format(n);
 
-export { formatNumber, validNumber, divNumber, formatCurrency };
+// Split a comma separated multi-value string ("General,Accounts") into trimmed parts
+const splitList = (value) =>
+  String(value ?? "")
+    .split(",")
+    .map((v) => v.trim())
+    .filter(Boolean);
+
+export { formatNumber, validNumber, divNumber, formatCurrency, splitList };

@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
 import { featuresAPI } from "@/api/M01/featuresAPI.js";
 import validate, { generateDataModel } from "@/models/validator";
+import { splitList } from "@/utils/misc";
 import tmsb_fetur from "@/models/M01/tmsb_fetur.json";
 const dataModel = generateDataModel(tmsb_fetur);
 
@@ -42,9 +43,41 @@ const useFeatures = () => {
   const [formDataItem, setFormDataItem] = useState({});
   const [formErrors, setFormErrors] = useState({});
   //others
+  //filters
+  const [filterData, setFilterData] = useState({
+    fetur_ttype: "",
+    fetur_tagno: "",
+  });
+  // The list is narrowed by the filters; listData itself stays complete so the
+  // parent dropdown in the form still offers every feature.
+  // Type is an exact match, tags match any of the selected ones.
+  const filteredList = useMemo(() => {
+    const tagFilter = splitList(filterData.fetur_tagno);
+    if (!filterData.fetur_ttype && tagFilter.length === 0) return listData;
+    return listData.filter((item) => {
+      if (filterData.fetur_ttype && item.fetur_ttype !== filterData.fetur_ttype) {
+        return false;
+      }
+      if (tagFilter.length > 0) {
+        const itemTags = splitList(item.fetur_tagno);
+        if (!tagFilter.some((tag) => itemTags.includes(tag))) return false;
+      }
+      return true;
+    });
+  }, [listData, filterData]);
   // Flat data for dropdowns, tree data for the list
-  const treeData = useMemo(() => buildTree(listData), [listData]);
-  const fetur_Options = listData;
+  const treeData = useMemo(() => buildTree(filteredList), [filteredList]);
+  const filteredCount = filteredList.length;
+  const isFiltered =
+    Boolean(filterData.fetur_ttype) || splitList(filterData.fetur_tagno).length > 0;
+  //const fetur_Options = listData;
+  const fetur_Options = [
+    {
+      fetur_cname: "Root",
+      id: "root",
+    },
+    ...listData,
+  ];
 
   const getAllFeature = async () => {
     try {
@@ -61,7 +94,6 @@ const useFeatures = () => {
   useEffect(() => {
     getAllFeature();
   }, []);
-
 
   const handleChange = (f, v) => {
     setFormData((prev) => ({ ...prev, [f]: v }));
@@ -114,6 +146,12 @@ const useFeatures = () => {
   const handleSearch = async () => {
     getAllFeature();
   };
+
+  //filters
+  const handleFilterChange = (f, v) => {
+    setFilterData((prev) => ({ ...prev, [f]: v }));
+  };
+
   const handleAddNew = async () => {
     setPgView("SYS_VW_FRM_1");
     setFormData(dataModel);
@@ -121,9 +159,23 @@ const useFeatures = () => {
     setStopEdit(false);
   };
 
+  /** Serial of a new child = highest numeric serial among its siblings + 1. */
+  const getNextSiblingSerial = (parentId) => {
+    const serials = listData
+      .filter((item) => item.fetur_fetur === parentId)
+      .map((item) => Number(item.fetur_srial))
+      .filter((num) => !Number.isNaN(num));
+    const next = serials.length ? Math.max(...serials) + 1 : 1;
+    return String(next);
+  };
+
   const handleAddChild = (rowData) => {
     setPgView("SYS_VW_FRM_1");
-    setFormData({ ...dataModel, fetur_fetur: rowData.id });
+    setFormData({
+      ...dataModel,
+      fetur_fetur: rowData.id,
+      fetur_srial: getNextSiblingSerial(rowData.id),
+    });
     setReadOnly(false);
     setStopEdit(false);
   };
@@ -149,17 +201,34 @@ const useFeatures = () => {
       setIsBusy(true);
 
       const resp = await featuresAPI.upsert(reqBody);
-      alertBox({
-        title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
-        message: resp.message,
-        variant: resp.success ? "success" : "danger",
-        confirmText: resp.success ? "Done" : "Close",
+      // alertBox({
+      //   title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
+      //   message: resp.message,
+      //   variant: resp.success ? "success" : "danger",
+      //   confirmText: resp.success ? "Done" : "Close",
+      // });
+      showToast(resp.message, {
+        type: resp.success ? "success" : "error",
       });
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
         setFormData(dataModel);
         getAllFeature();
       }
+    } catch (error) {
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
+  const handleStatus = async (rowData) => {
+    try {
+      setIsBusy(true);
+      const resp = await featuresAPI.updateStatus(rowData);
+      showToast(resp.message, {
+        type: resp.success ? "success" : "error",
+      });
+      getAllFeature();
     } catch (error) {
     } finally {
       setIsBusy(false);
@@ -180,6 +249,10 @@ const useFeatures = () => {
     formErrors,
     //others
     fetur_Options,
+    //filters
+    filterData,
+    filteredCount,
+    isFiltered,
     //functions
     handleChange,
     handleEdit,
@@ -189,6 +262,8 @@ const useFeatures = () => {
     handleAddChild,
     handleCancel,
     handleSubmit,
+    handleStatus,
+    handleFilterChange,
   };
 };
 export default useFeatures;
