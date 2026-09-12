@@ -11,7 +11,7 @@ import {
 // VITE_APP_CREATOR / VITE_BRAND_PANEL_COLOR.
 export const APP_NAME = import.meta.env.VITE_APP_NAME || "bSuite";
 export const APP_VERSION = import.meta.env.VITE_APP_VERSION || "1.0";
-export const APP_CREATOR = import.meta.env.VITE_APP_CREATOR || "Built by bSuite";
+export const APP_CREATOR = import.meta.env.VITE_APP_CREATOR || "Crafting Digital Excellence";
 export const BRAND_PANEL_COLOR = import.meta.env.VITE_BRAND_PANEL_COLOR || "#7c3aed";
 
 // Keep the "Signing in…" state on screen for at least this long so a fast

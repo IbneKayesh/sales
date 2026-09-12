@@ -17,3 +17,21 @@
 [-] Internal transfer wh to wh
 [-] HRMS
 [-] Bulk Item update
+
+✅ Sales Management
+✅ Purchase Management
+✅ Inventory Management
+✅ Smart POS
+✅ Wholesale & Retail
+✅ Production Management
+✅ Supply-chain Management
+✅ Export & Import Management (LC)
+✅ Accounts Management
+✅ Project Approval Management
+✅ Distribution Management
+✅ Dealer Management
+✅ SR Management
+✅ HR Management
+✅ CRM Management
+✅ eCommerce Management
+✅ Powerful Reporting

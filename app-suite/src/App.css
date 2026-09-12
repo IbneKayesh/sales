@@ -4886,7 +4886,7 @@ html[data-layout="boxed"] .layout__main {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: var(--sp-6);
+  /* padding: var(--sp-1); */
   position: relative;
   overflow: hidden;
   background: var(--bg);
@@ -5744,7 +5744,7 @@ html[data-layout="boxed"] .layout__main {
   height: 100vh;
   /* Brand panel fits flush against the window on top/left/bottom;
      only the right edge is inset so the login card keeps a page margin. */
-  padding: 0 0 0 var(--sp-4);
+  /* padding: 0 0 0 var(--sp-4); */
   gap: var(--sp-4);
 }
 
