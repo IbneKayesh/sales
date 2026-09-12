@@ -16,7 +16,7 @@ export const BRAND_PANEL_COLOR = import.meta.env.VITE_BRAND_PANEL_COLOR || "#7c3
 
 // Keep the "Signing in…" state on screen for at least this long so a fast
 // round-trip doesn't flash the spinner for a single frame.
-const MIN_BUSY_MS = 800;
+const MIN_BUSY_MS = 1000;
 
 const useLogin = ({ onNetworkError } = {}) => {
   const { login } = useApp();
