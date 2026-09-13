@@ -1,0 +1,54 @@
+============================================================
+04. BIOMETRIC DEVICE / RAW ATTENDANCE
+============================================================
+
+18. attendance_devices
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+location_id         FK NULL
+device_code         UNIQUE
+device_name
+device_type
+ip_address
+api_endpoint
+api_identifier
+active
+last_sync_at
+created_at
+updated_at
+
+
+19. attendance_device_employees
+------------------------------------------------------------
+id                  PK
+device_id           FK
+employee_id         FK
+device_employee_code
+active
+created_at
+updated_at
+
+UNIQUE:
+(device_id, device_employee_code)
+
+
+20. attendance_logs
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+employee_id         FK
+device_id           FK
+device_employee_code
+punch_datetime
+received_at
+source_reference
+raw_data
+created_at
+
+INDEX:
+(employee_id, punch_datetime)
+
+IMPORTANT:
+No IN/OUT field.
+The biometric machine only provides a punch.

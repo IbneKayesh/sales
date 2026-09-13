@@ -1,0 +1,49 @@
+============================================================
+06. ATTENDANCE EXCEPTIONS
+============================================================
+
+23. attendance_exceptions
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+attendance_sheet_id FK
+exception_type
+exception_date
+description
+status
+resolved_by NULL
+resolved_at NULL
+resolution_note NULL
+created_at
+updated_at
+
+
+24. attendance_correction_requests
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+request_date
+attendance_date
+request_type
+requested_in_datetime NULL
+requested_out_datetime NULL
+reason
+remarks
+status
+returned_reason NULL
+submitted_at
+approved_at NULL
+created_at
+updated_at
+
+
+25. attendance_correction_monthly_limits
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+limit_count
+effective_from
+effective_to NULL
+active
+created_at
+updated_at

@@ -1,0 +1,57 @@
+============================================================
+03. ROSTER / DUTY SCHEDULE
+============================================================
+
+14. roster_patterns
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+roster_code         UNIQUE
+roster_name
+description
+cycle_days
+active
+created_at
+updated_at
+
+
+15. roster_pattern_days
+------------------------------------------------------------
+id                  PK
+roster_pattern_id   FK
+sequence_no
+day_type             -- WORK / OFF
+shift_id             FK NULL
+working_minutes
+created_at
+updated_at
+
+
+16. employee_rosters
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+roster_pattern_id   FK
+effective_from
+effective_to NULL
+active
+created_at
+updated_at
+
+
+17. employee_duty_roster
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+duty_date
+shift_id             FK NULL
+duty_type             -- WORK / OFF / GENERAL
+source_type           -- ROSTER / DEFAULT_SHIFT / MANUAL
+source_id             NULL
+published
+published_at NULL
+created_at
+updated_at
+
+UNIQUE:
+(employee_id, duty_date)

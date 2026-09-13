@@ -1,0 +1,45 @@
+============================================================
+09. LEAVE MASTER
+============================================================
+
+32. leave_types
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+leave_code          UNIQUE
+leave_name
+leave_category
+paid
+requires_attachment
+requires_reason
+allow_half_day
+allow_carry_forward
+allow_encashment
+gender_rule
+lifetime_based
+active
+created_at
+updated_at
+
+
+33. leave_groups
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+group_code          UNIQUE
+group_name
+description
+active
+created_at
+updated_at
+
+
+34. leave_group_assignments
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+leave_group_id      FK
+effective_from
+effective_to NULL
+created_at
+updated_at

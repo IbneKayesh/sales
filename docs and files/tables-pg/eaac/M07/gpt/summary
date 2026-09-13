@@ -1,0 +1,232 @@
+============================================================
+HR + ATTENDANCE + LEAVE + PAYROLL DATABASE
+============================================================
+
+1. EMPLOYEE / MASTER
+------------------------------------------------------------
+organizations
+locations
+departments
+designations
+employment_types
+employee_statuses
+employees
+employee_documents
+employee_history
+
+
+2. SHIFT / ATTENDANCE CONFIGURATION
+------------------------------------------------------------
+shifts
+attendance_policies
+employee_attendance_policies
+employee_default_shifts
+
+- Working hours fully configurable
+- Different shifts can have different hours
+- Grace IN/OUT configurable
+- Actual late/early minutes preserved
+- Cross-midnight supported
+
+
+3. ROSTER
+------------------------------------------------------------
+roster_patterns
+roster_pattern_days
+employee_rosters
+employee_duty_roster
+
+- Roster optional
+- General/fixed duty supported
+- Rotating roster supported
+- Employee-specific roster supported
+- One roster can serve multiple employees
+- Published roster cannot be changed
+
+
+4. BIOMETRIC ATTENDANCE
+------------------------------------------------------------
+attendance_devices
+attendance_device_employees
+attendance_logs
+
+- Machine sends only employee + punch datetime
+- No IN/OUT type stored
+- System determines IN/OUT from duty/shift
+- Raw logs cannot be manually edited
+
+
+5. PROCESSED ATTENDANCE
+------------------------------------------------------------
+attendance_processing_runs
+attendance_sheets
+attendance_exceptions
+attendance_correction_requests
+attendance_correction_monthly_limits
+
+- One processed attendance record per employee/duty date
+- Late / Early Out / Absent / Present etc.
+- Missing punch handled through correction request
+- Maximum 5 correction requests/month
+- Attendance sheet cannot be manually edited
+
+
+6. WEEKLY OFF / HOLIDAY
+------------------------------------------------------------
+weekly_off_policies
+weekly_off_policy_days
+employee_weekly_off
+holiday_calendars
+holidays
+employee_holiday_calendars
+
+- Any day can be weekly off
+- Employee-specific or roster-based
+- Holidays configurable for any date
+- Working on holiday = overtime
+
+
+7. LEAVE
+------------------------------------------------------------
+leave_types
+leave_groups
+leave_group_assignments
+leave_policies
+employee_leave_entitlements
+leave_balance_transactions
+leave_applications
+leave_application_days
+leave_application_approval
+
+- Leave groups configurable
+- Entitlement configurable by year/policy
+- Casual carry-forward supported
+- Sick leave configurable
+- Maternity: current rule 180 lifetime days
+- Paternity: current rule 90 lifetime days
+- Paid/unpaid configurable
+- Leave balance transaction history maintained
+
+
+8. WORKFLOW
+------------------------------------------------------------
+application_statuses
+application_workflows
+application_workflow_steps
+
+Employee
+   ↓
+Submit
+   ↓
+Supervisor / Manager
+   ↓
+Approve / Reject / Return
+   ↓
+Employee can edit and resubmit if returned
+
+- HR cannot bypass
+- Approved leave cannot be cancelled by employee
+- Attendance correction uses same workflow concept
+
+
+9. PAYROLL
+------------------------------------------------------------
+payroll_cycles
+employee_payroll_cycles
+payroll_periods
+payroll_runs
+employee_payroll
+employee_payroll_components
+payroll_adjustments
+
+- Any payroll period supported
+- Weekly / 15-day / monthly / custom
+- Start/end dates configurable
+- One cycle can serve many employees
+- Employee can be individually assigned to a cycle
+- Absent days are non-payable
+- Payroll locks after approval
+
+
+10. SALARY
+------------------------------------------------------------
+pay_components
+salary_structures
+salary_structure_components
+employee_salary
+
+- Salary structure configurable
+- Earnings/deductions configurable
+- Salary history maintained using effective dates
+
+
+11. PAYSLIP
+------------------------------------------------------------
+payslips
+
+- Generated after payroll processing
+- Based on finalized payroll
+- Attendance + payable days + earnings + deductions
+- Historical result preserved
+
+
+12. SECURITY / AUDIT
+------------------------------------------------------------
+application_users
+user_roles
+user_role_assignments
+audit_logs
+system_settings
+
+- Data-driven configuration
+- Important changes audited
+- Historical records preserved
+
+
+============================================================
+CORE PROCESS
+============================================================
+
+BIOMETRIC MACHINE
+       ↓
+RAW ATTENDANCE LOG
+       ↓
+EMPLOYEE + DUTY ROSTER
+       ↓
+SHIFT / ATTENDANCE POLICY
+       ↓
+ATTENDANCE PROCESSING
+       ↓
+ATTENDANCE SHEET
+       ↓
+LEAVE + HOLIDAY + WEEKLY OFF
+       ↓
+PAYABLE DAY CALCULATION
+       ↓
+PAYROLL
+       ↓
+APPROVAL
+       ↓
+LOCK / FINALIZE
+       ↓
+PAYSLIP
+
+
+============================================================
+KEY PRINCIPLES
+============================================================
+
+- Everything is data-driven.
+- Roster is optional.
+- General duty is supported.
+- Rotating/cross-midnight shifts are supported.
+- Biometric logs have no IN/OUT classification.
+- Attendance cannot be directly edited.
+- Corrections happen through employee applications.
+- Leave balances are transaction-based and auditable.
+- Leave year and payroll period are independent.
+- Payroll cycles are fully configurable.
+- Absent days are not payable.
+- Approved payroll is locked.
+- Historical salary, attendance, leave and payroll data is preserved.
+- Audit trail is maintained for important changes.

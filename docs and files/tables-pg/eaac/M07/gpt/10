@@ -1,0 +1,45 @@
+============================================================
+10. LEAVE POLICY / ENTITLEMENT
+============================================================
+
+35. leave_policies
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+leave_group_id      FK
+leave_type_id       FK
+policy_year
+entitlement_days
+accrual_method
+accrual_frequency
+carry_forward_allowed
+carry_forward_limit
+expiry_rule
+maximum_consecutive_days
+minimum_service_days
+lifetime_limit_days NULL
+active
+created_at
+updated_at
+
+UNIQUE:
+(leave_group_id, leave_type_id, policy_year)
+
+
+36. employee_leave_entitlements
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+leave_type_id       FK
+policy_id            FK NULL
+leave_year
+opening_balance
+entitlement_days
+carry_forward_days
+adjustment_days
+total_available_days
+used_days
+pending_days
+remaining_days
+created_at
+updated_at

@@ -1,0 +1,33 @@
+============================================================
+07. WEEKLY OFF / WEEKEND
+============================================================
+
+26. weekly_off_policies
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+policy_code         UNIQUE
+policy_name
+active
+created_at
+updated_at
+
+
+27. weekly_off_policy_days
+------------------------------------------------------------
+id                  PK
+weekly_off_policy_id FK
+day_of_week
+active
+created_at
+
+
+28. employee_weekly_off
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+weekly_off_policy_id FK
+effective_from
+effective_to NULL
+created_at
+updated_at

@@ -1,0 +1,14 @@
+============================================================
+16. PAYSLIP
+============================================================
+
+55. payslips
+------------------------------------------------------------
+id                  PK
+employee_payroll_id FK
+employee_id         FK
+payroll_period_id   FK
+payslip_number      UNIQUE
+generated_at
+file_reference NULL
+created_at

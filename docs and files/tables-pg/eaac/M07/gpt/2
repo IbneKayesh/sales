@@ -1,0 +1,62 @@
+============================================================
+02. ATTENDANCE / SHIFT CONFIGURATION
+============================================================
+
+10. shifts
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+shift_code          UNIQUE
+shift_name
+start_time
+end_time
+working_minutes
+cross_midnight
+grace_in_minutes
+grace_out_minutes
+minimum_full_day_minutes
+minimum_half_day_minutes
+overtime_allowed
+active
+created_at
+updated_at
+
+
+11. attendance_policies
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+policy_code         UNIQUE
+policy_name
+late_enabled
+early_out_enabled
+missing_punch_enabled
+minimum_full_day_minutes
+minimum_half_day_minutes
+rounding_rule
+overtime_rule
+active
+created_at
+updated_at
+
+
+12. employee_attendance_policies
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+attendance_policy_id FK
+effective_from
+effective_to NULL
+created_at
+updated_at
+
+
+13. employee_default_shifts
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+shift_id            FK
+effective_from
+effective_to NULL
+created_at
+updated_at

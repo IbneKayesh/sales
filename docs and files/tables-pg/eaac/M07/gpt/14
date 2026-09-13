@@ -1,0 +1,55 @@
+============================================================
+14. SALARY / PAY COMPONENTS
+============================================================
+
+47. pay_components
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+component_code      UNIQUE
+component_name
+component_type
+calculation_type
+taxable
+active
+created_at
+updated_at
+
+
+48. salary_structures
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+structure_code      UNIQUE
+structure_name
+active
+created_at
+updated_at
+
+
+49. salary_structure_components
+------------------------------------------------------------
+id                  PK
+salary_structure_id FK
+pay_component_id    FK
+calculation_type
+value
+percentage
+sequence_no
+active
+created_at
+updated_at
+
+
+50. employee_salary
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+salary_structure_id FK
+effective_from
+effective_to NULL
+basic_salary
+gross_salary NULL
+currency_code
+created_at
+updated_at

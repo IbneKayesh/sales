@@ -1,0 +1,64 @@
+============================================================
+17. AUDIT / SYSTEM
+============================================================
+
+56. audit_logs
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+user_id             FK NULL
+entity_type
+entity_id
+action
+old_values
+new_values
+ip_address
+user_agent
+created_at
+
+
+57. system_settings
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+setting_key
+setting_value
+data_type
+description
+active
+created_at
+updated_at
+
+UNIQUE:
+(organization_id, setting_key)
+
+
+58. application_users
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+employee_id         FK NULL
+username            UNIQUE
+password_reference
+active
+last_login_at
+created_at
+updated_at
+
+
+59. user_roles
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+role_code           UNIQUE
+role_name
+active
+created_at
+
+
+60. user_role_assignments
+------------------------------------------------------------
+id                  PK
+user_id             FK
+role_id             FK
+created_at

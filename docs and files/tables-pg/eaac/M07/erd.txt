@@ -1,0 +1,357 @@
+====================================================================================================
+                        HR & PAYROLL SYSTEM - ENTITY RELATIONSHIP DIAGRAM (ERD)
+                                  Module: M07 (HR, Attendance, Leave, Payroll)
+====================================================================================================
+
+====================================================================================================
+1. HIGH-LEVEL DOMAIN ARCHITECTURE & RELATIONSHIP MAP
+====================================================================================================
+
+   +-----------------------------------------------------------------------------------------------+
+   |                                      ORGANIZATION / TENANT                                    |
+   |                                 (_users, _bsins, _ccode)                                      |
+   +-----------------------------------------------------------------------------------------------+
+                                                  |
+           +--------------------------------------+--------------------------------------+
+           |                                      |                                      |
+           v                                      v                                      v
+   +---------------+                      +---------------+                      +---------------+
+   |  DEPARTMENTS  |                      |  DESIGNATIONS |                      |  EMPLOYMENT   |
+   |  (tmhb_dpart) |                      |  (tmhb_desig) |                      |  TYPES/STATUS |
+   +---------------+                      +---------------+                      |  (tmhb_emptp) |
+           |                                      |                              |  (tmhb_empst) |
+           +--------------------+-----------------+                              +---------------+
+                                |                                                        |
+                                v                                                        |
+                     +---------------------+ <-------------------------------------------+
+                     |   EMPLOYEE MASTER   |
+                     |    (tmhb_emply)     | <----+ (Self-referencing Manager/Supervisor: emply_mngid)
+                     +---------------------+
+                                |
+     +--------------------------+--------------------------+--------------------------+
+     |                          |                          |                          |
+     v                          v                          v                          v
++------------------+   +------------------+   +------------------+   +------------------+
+|  SHIFT & ROSTER  |   |   ATTENDANCE &   |   |  LEAVE ENGINE    |   |  PAYROLL ENGINE  |
+|      DOMAIN      |   |    BIOMETRIC     |   |      DOMAIN      |   |      DOMAIN      |
++------------------+   +------------------+   +------------------+   +------------------+
+| tmhb_wkshf       |   | tmhb_devce       |   | tmhb_lvtyp       |   | tmhb_pycyc       |
+| tmhb_atnpl       |   | tmhb_devep       |   | tmhb_lvgrp       |   | tmhb_emppc       |
+| tmhb_empat       |   | tmhb_atnlg       |   | tmhb_emplg       |   | tmhb_pyprd       |
+| tmhb_empdf       |   | tmhb_atprc       |   | tmhb_lvplc       |   | tmhb_pycmp       |
+| tmhb_rstpt       |   | tmhb_attnd       |   | tmhb_lvbal       |   | tmhb_slstr       |
+| tmhb_rstpd       |   | tmhb_atnxc       |   | tmhb_lvtxn       |   | tmhb_slscf       |
+| tmhb_emprs       |   | tmhb_atcrq       |   | tmhb_lvapp       |   | tmhb_empsl       |
+| tmhb_emprd       |   | tmhb_atclm       |   | tmhb_lvdys       |   | tmhb_pyrun       |
++------------------+   +------------------+   | tmhb_lvapr       |   | tmhb_empyr       |
+                                              +------------------+   | tmhb_pyrcm       |
+     +--------------------------+                                    | tmhb_pyadj       |
+     |                          |                                    | tmhb_pslip       |
+     v                          v                                    +------------------+
++------------------+   +------------------+
+| CALENDAR DOMAIN  |   | WORKFLOW DOMAIN  |
++------------------+   +------------------+
+| tmhb_wkoff       |   | tmhb_wflow       |
+| tmhb_wkofd       |   | tmhb_wfstp       |
+| tmhb_empwo       |   | tmhb_apvst       |
+| tmhb_hlcal       |   +------------------+
+| tmhb_hlday       |
+| tmhb_emphc       |
++------------------+
+
+
+====================================================================================================
+2. DETAILED DOMAIN ENTITY RELATIONSHIP DIAGRAMS
+====================================================================================================
+
+----------------------------------------------------------------------------------------------------
+2.1 MASTER & EMPLOYEE DOMAIN
+----------------------------------------------------------------------------------------------------
+
+ [tmhb_dpart] (Departments)
+       |
+       | 1:N
+       v
+ [tmhb_emply] (Employees) <---------------+ (Self 1:N reporting manager: emply_mngid)
+       |  ^                               |
+       |  | 1:N                           |
+       |  +------------- [tmhb_desig] (Designations)
+       |
+       +--- 1:N ---> [tmhb_empdc] (Employee Documents)
+       |
+       +--- 1:N ---> [tmhb_emphs] (Employee Job History / Timeline)
+       |
+       +--- N:1 ---> [tmhb_emptp] (Employment Types: Permanent, Contract, Casual...)
+       |
+       +--- N:1 ---> [tmhb_empst] (Employee Statuses: Active, Resigned, Terminated...)
+
+
+----------------------------------------------------------------------------------------------------
+2.2 SHIFT & ROSTER DOMAIN
+----------------------------------------------------------------------------------------------------
+
+ [tmhb_emply]
+       |
+       +--- 1:N ---> [tmhb_empdf] (Default Shift Assignment) ---- N:1 ----> [tmhb_wkshf] (Shifts)
+       |                                                                        ^
+       +--- 1:N ---> [tmhb_empat] (Attendance Policy Assignment)                |
+       |                   |                                                    |
+       |                   +--- N:1 ---> [tmhb_atnpl] (Attendance Policies)     |
+       |                                                                        |
+       +--- 1:N ---> [tmhb_emprs] (Employee Rosters)                            |
+       |                   |                                                    |
+       |                   +--- N:1 ---> [tmhb_rstpt] (Roster Patterns)         |
+       |                                       |                                |
+       |                                       +--- 1:N ---> [tmhb_rstpd] ------+
+       |                                                     (Pattern Days)
+       |
+       +--- 1:N ---> [tmhb_emprd] (Daily Duty Schedule) ------------------------+
+                     (employee_id + duty_date UNIQUE)
+
+
+----------------------------------------------------------------------------------------------------
+2.3 BIOMETRIC DEVICE & ATTENDANCE DOMAIN
+----------------------------------------------------------------------------------------------------
+
+ [tmhb_devce] (Biometric Devices)
+       |
+       +--- 1:N ---> [tmhb_devep] (Device Employee Map) <--- N:1 --- [tmhb_emply]
+       |
+       +--- 1:N ---> [tmhb_atnlg] (Raw Logs: punch_datetime) <--- N:1 --- [tmhb_emply]
+                           |
+                           | (Batch Processing Engine)
+                           v
+                     [tmhb_atprc] (Processing Runs)
+                           |
+                           v
+ [tmhb_emply] -----> [tmhb_attnd] (Processed Attendance Sheet) <--- N:1 --- [tmhb_wkshf]
+                           |       (employee_id + duty_date UNIQUE)
+                           |
+                           +--- 1:N ---> [tmhb_atnxc] (Attendance Exceptions)
+                           |
+                           +--- 1:N ---> [tmhb_atcrq] (Correction Requests)
+                                               ^
+                                               | (Limit Rule 5/mo)
+                                         [tmhb_atclm] (Monthly Limits)
+
+
+----------------------------------------------------------------------------------------------------
+2.4 CALENDAR DOMAIN (WEEKLY OFF & HOLIDAYS)
+----------------------------------------------------------------------------------------------------
+
+ [tmhb_wkoff] (Weekly Off Policies)
+       |
+       +--- 1:N ---> [tmhb_wkofd] (Weekly Off Policy Days: Day 1..7)
+       |
+       +--- 1:N ---> [tmhb_empwo] (Employee Weekly Offs) <--- N:1 --- [tmhb_emply]
+
+ [tmhb_hlcal] (Holiday Calendars)
+       |
+       +--- 1:N ---> [tmhb_hlday] (Holiday List: date, is_paid, ot_if_worked)
+       |
+       +--- 1:N ---> [tmhb_emphc] (Employee Holiday Calendars) <--- N:1 --- [tmhb_emply]
+
+
+----------------------------------------------------------------------------------------------------
+2.5 LEAVE DOMAIN
+----------------------------------------------------------------------------------------------------
+
+ [tmhb_lvgrp] (Leave Groups)
+       |
+       +--- 1:N ---> [tmhb_emplg] (Employee Leave Group) <--- N:1 --- [tmhb_emply]
+       |
+       +--- 1:N ---> [tmhb_lvplc] (Leave Policies) <--- N:1 --- [tmhb_lvtyp] (Leave Types)
+                           |                                           |
+                           v                                           |
+ [tmhb_emply] -----> [tmhb_lvbal] (Employee Leave Balances) <----------+
+                           |
+                           +--- 1:N ---> [tmhb_lvtxn] (Balance Audit Transactions)
+                                               ^
+                                               |
+ [tmhb_emply] -----> [tmhb_lvapp] (Leave Applications) <--- N:1 --- [tmhb_lvtyp]
+                           |
+                           +--- 1:N ---> [tmhb_lvdys] (Application Days Breakdown)
+                           |
+                           +--- 1:N ---> [tmhb_lvapr] (Approval Audit Trail)
+
+
+----------------------------------------------------------------------------------------------------
+2.6 PAYROLL & SALARY DOMAIN
+----------------------------------------------------------------------------------------------------
+
+ [tmhb_pycyc] (Payroll Cycles)
+       |
+       +--- 1:N ---> [tmhb_emppc] (Employee Payroll Cycles) <--- N:1 --- [tmhb_emply]
+       |
+       +--- 1:N ---> [tmhb_pyprd] (Payroll Periods)
+                           |
+                           +--- 1:N ---> [tmhb_pyrun] (Payroll Runs)
+                                               |
+                                               v
+ [tmhb_emply] -------------------------> [tmhb_empyr] (Employee Payroll Summary)
+       |                                       |
+       |                                       +--- 1:N ---> [tmhb_pyrcm] (Component Breakdown)
+       |                                       |                   ^
+       |                                       |                   |
+       |                                       |             [tmhb_pycmp] (Pay Components)
+       |                                       |                   ^
+       |                                       +--- 1:N ---> [tmhb_pyadj] (Adjustments)
+       |                                       |
+       |                                       +--- 1:1 ---> [tmhb_pslip] (Payslip)
+       |
+       +--- 1:N ---> [tmhb_empsl] (Employee Salary)
+                           |
+                           +--- N:1 ---> [tmhb_slstr] (Salary Structures)
+                                               |
+                                               +--- 1:N ---> [tmhb_slscf] (Structure Components)
+                                                                   |
+                                                                   +--- N:1 ---> [tmhb_pycmp]
+
+
+----------------------------------------------------------------------------------------------------
+2.7 WORKFLOW & APPROVAL DOMAIN
+----------------------------------------------------------------------------------------------------
+
+ [tmhb_wflow] (Workflows: Leave, Attendance Correction, Payroll)
+       |
+       +--- 1:N ---> [tmhb_wfstp] (Workflow Steps: Sequence, Approver Role)
+
+ [tmhb_apvst] (Application Statuses: Draft, Submitted, Approved, Rejected, Returned)
+
+
+====================================================================================================
+3. CORE ENGINE LIFECYCLES & PROCESSING PIPELINES
+====================================================================================================
+
+----------------------------------------------------------------------------------------------------
+3.1 ATTENDANCE PROCESSING PIPELINE
+----------------------------------------------------------------------------------------------------
+
+  Biometric Device Punch
+            |
+            v
+   [tmhb_atnlg] (Raw Logs - punch_datetime only, no IN/OUT)
+            |
+            v
+   Find Employee Duty Schedule [tmhb_emprd] / Default Shift [tmhb_empdf]
+            |
+            v
+   Load Applicable Shift [tmhb_wkshf] (Start, End, Grace In/Out, Cross Midnight)
+            |
+            v
+   Determine Duty Date & Pair First Punch (IN) / Last Punch (OUT)
+            |
+            v
+   Calculate Worked Mins, Late Mins, Early Out Mins, Overtime Mins
+            |
+            v
+   Check Leaves [tmhb_lvapp], Holidays [tmhb_hlday], Weekly Offs [tmhb_wkofd]
+            |
+            v
+   Generate Processed Daily Attendance [tmhb_attnd]
+            |
+            +---> If Missing / Anomalous Punch ---> [tmhb_atnxc] (Exception)
+            |                                             |
+            |                                             v
+            |                                   [tmhb_atcrq] (Correction Request)
+            |                                             |
+            +---------------------------------------------+
+
+----------------------------------------------------------------------------------------------------
+3.2 LEAVE PROCESSING & ENTITLEMENT LIFECYCLE
+----------------------------------------------------------------------------------------------------
+
+  1. Employee submits Leave Application [tmhb_lvapp] for Date Range
+  2. System breaks down dates into [tmhb_lvdys], checking Weekly Off / Holidays
+  3. System reserves days in [tmhb_lvbal] (pending_days += days, remaining_days -= days)
+  4. Routing through Workflow Steps [tmhb_wfstp] -> Supervisor Approval [tmhb_lvapr]
+  5. If Approved:
+     - status = 'APPROVED'
+     - [tmhb_lvbal]: used_days += days, pending_days -= days
+     - [tmhb_lvtxn]: Creates audit entry (ttype='USED', reference='LEAVE_APPLICATION')
+     - Automatically updates Attendance Sheet [tmhb_attnd] (is_leave=true, payable=true/false)
+  6. If Returned:
+     - status = 'RETURNED'
+     - Employee can edit dates/reason and resubmit
+  7. If Rejected:
+     - status = 'REJECTED'
+     - [tmhb_lvbal]: pending_days -= days, remaining_days += days
+
+----------------------------------------------------------------------------------------------------
+3.3 PAYROLL PROCESSING & FINALIZATION LIFECYCLE
+----------------------------------------------------------------------------------------------------
+
+  1. Open Payroll Period [tmhb_pyprd] for Cycle [tmhb_pycyc] (e.g. 1st - 30th)
+  2. Run Payroll Batch [tmhb_pyrun]:
+     - Aggregate Attendance from [tmhb_attnd] (Scheduled, Present, Leave, Holiday, Off, Absent)
+     - Calculate Total Payable Days & Overtime Minutes
+     - Fetch Employee Base Salary [tmhb_empsl] & Structure [tmhb_slstr] / [tmhb_slscf]
+     - Compute Earnings Components (Basic, Allowances, Overtime Pay)
+     - Compute Deductions Components (Absent Deductions, Tax, Advances)
+     - Apply Approved Adjustments [tmhb_pyadj] (Arrears, Bonuses, Penalties)
+     - Write Summary to [tmhb_empyr] and Breakdown to [tmhb_pyrcm]
+  3. Review & Approval -> Status changed to 'APPROVED'
+  4. Finalization & Lock -> Status changed to 'FINALIZED' / 'LOCKED' (Data becomes Immutable)
+  5. Generate Employee Payslips [tmhb_pslip]
+
+
+====================================================================================================
+4. COMPLETE TABLE DICTIONARY & FOREIGN KEY MATRIX
+====================================================================================================
+
+#   Table Name     Folder        Primary Key   Foreign Keys & References
+----------------------------------------------------------------------------------------------------
+1   tmhb_emply     master        id            dpart (tmhb_dpart), desig (tmhb_desig), emptp, empst, mngid (tmhb_emply)
+2   tmhb_desig     master        id            -
+3   tmhb_dpart     master        id            prntd (tmhb_dpart), headm (tmhb_emply)
+4   tmhb_emptp     master        id            -
+5   tmhb_empst     master        id            -
+6   tmhb_empdc     master        id            emply (tmhb_emply)
+7   tmhb_emphs     master        id            emply (tmhb_emply), dpart, desig, emptp, empst, mngid
+8   tmhb_wkshf     shift         id            -
+9   tmhb_atnpl     shift         id            -
+10  tmhb_empat     shift         id            emply (tmhb_emply), atnpl (tmhb_atnpl)
+11  tmhb_empdf     shift         id            emply (tmhb_emply), wkshf (tmhb_wkshf)
+12  tmhb_rstpt     shift         id            -
+13  tmhb_rstpd     shift         id            rstpt (tmhb_rstpt), wkshf (tmhb_wkshf)
+14  tmhb_emprs     shift         id            emply (tmhb_emply), rstpt (tmhb_rstpt)
+15  tmhb_emprd     shift         id            emply (tmhb_emply), wkshf (tmhb_wkshf)
+16  tmhb_devce     attendance    id            -
+17  tmhb_devep     attendance    id            devce (tmhb_devce), emply (tmhb_emply)
+18  tmhb_atnlg     attendance    id            emply (tmhb_emply), devce (tmhb_devce)
+19  tmhb_atprc     attendance    id            -
+20  tmhb_attnd     attendance    id            emply (tmhb_emply), wkshf (tmhb_wkshf), emprd, lvapp, atprc
+21  tmhb_atnxc     attendance    id            emply (tmhb_emply), attnd (tmhb_attnd)
+22  tmhb_atcrq     attendance    id            emply (tmhb_emply), aprby (tmhb_emply)
+23  tmhb_atclm     attendance    id            -
+24  tmhb_wkoff     calendar      id            -
+25  tmhb_wkofd     calendar      id            wkoff (tmhb_wkoff)
+26  tmhb_empwo     calendar      id            emply (tmhb_emply), wkoff (tmhb_wkoff)
+27  tmhb_hlcal     calendar      id            -
+28  tmhb_hlday     calendar      id            hlcal (tmhb_hlcal)
+29  tmhb_emphc     calendar      id            emply (tmhb_emply), hlcal (tmhb_hlcal)
+30  tmhb_lvtyp     leave         id            -
+31  tmhb_lvgrp     leave         id            -
+32  tmhb_emplg     leave         id            emply (tmhb_emply), lvgrp (tmhb_lvgrp)
+33  tmhb_lvplc     leave         id            lvgrp (tmhb_lvgrp), lvtyp (tmhb_lvtyp)
+34  tmhb_lvbal     leave         id            emply (tmhb_emply), lvtyp (tmhb_lvtyp), lvplc (tmhb_lvplc)
+35  tmhb_lvtxn     leave         id            emply (tmhb_emply), lvtyp (tmhb_lvtyp)
+36  tmhb_lvapp     leave         id            emply (tmhb_emply), lvtyp (tmhb_lvtyp), aprby, rejby
+37  tmhb_lvdys     leave         id            lvapp (tmhb_lvapp)
+38  tmhb_lvapr     leave         id            lvapp (tmhb_lvapp), aprby (tmhb_emply)
+39  tmhb_pycyc     payroll       id            -
+40  tmhb_emppc     payroll       id            emply (tmhb_emply), pycyc (tmhb_pycyc)
+41  tmhb_pyprd     payroll       id            pycyc (tmhb_pycyc)
+42  tmhb_pycmp     payroll       id            -
+43  tmhb_slstr     payroll       id            -
+44  tmhb_slscf     payroll       id            slstr (tmhb_slstr), pycmp (tmhb_pycmp)
+45  tmhb_empsl     payroll       id            emply (tmhb_emply), slstr (tmhb_slstr)
+46  tmhb_pyrun     payroll       id            pyprd (tmhb_pyprd)
+47  tmhb_empyr     payroll       id            pyrun (tmhb_pyrun), pyprd (tmhb_pyprd), emply (tmhb_emply)
+48  tmhb_pyrcm     payroll       id            empyr (tmhb_empyr), pycmp (tmhb_pycmp)
+49  tmhb_pyadj     payroll       id            empyr (tmhb_empyr), emply (tmhb_emply), pyprd, pycmp
+50  tmhb_pslip     payroll       id            empyr (tmhb_empyr), emply (tmhb_emply), pyprd
+51  tmhb_wflow     workflow      id            -
+52  tmhb_wfstp     workflow      id            wflow (tmhb_wflow)
+53  tmhb_apvst     workflow      id            -
+====================================================================================================

@@ -1,0 +1,138 @@
+============================================================
+01. ORGANIZATION / EMPLOYEE MASTER
+============================================================
+
+1. organizations
+------------------------------------------------------------
+id                  PK
+organization_code   UNIQUE
+organization_name
+short_name
+address
+country
+timezone
+currency_code
+active
+created_at
+updated_at
+
+
+2. locations
+------------------------------------------------------------
+id                  PK
+organization_id     FK -> organizations.id
+location_code       UNIQUE
+location_name
+address
+active
+created_at
+updated_at
+
+
+3. departments
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+department_code     UNIQUE
+department_name
+parent_department_id FK -> departments.id NULL
+active
+created_at
+updated_at
+
+
+4. designations
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+designation_code    UNIQUE
+designation_name
+active
+created_at
+updated_at
+
+
+5. employment_types
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+type_code           UNIQUE
+type_name
+active
+created_at
+updated_at
+
+
+6. employee_statuses
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+status_code         UNIQUE
+status_name
+active
+created_at
+updated_at
+
+
+7. employees
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+employee_code       UNIQUE
+attendance_code
+first_name
+middle_name
+last_name
+full_name
+gender
+date_of_birth
+national_id
+passport_no
+personal_email
+work_email
+mobile_no
+emergency_contact_name
+emergency_contact_phone
+joining_date
+confirmation_date
+termination_date
+employment_type_id  FK
+employee_status_id  FK
+department_id       FK
+designation_id      FK
+location_id         FK
+manager_employee_id FK -> employees.id NULL
+photo
+active
+created_at
+updated_at
+
+
+8. employee_documents
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+document_type
+document_number
+issue_date
+expiry_date
+file_reference
+remarks
+created_at
+updated_at
+
+
+9. employee_history
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+effective_date
+department_id       FK NULL
+designation_id      FK NULL
+location_id         FK NULL
+manager_employee_id FK NULL
+employment_type_id  FK NULL
+status_id           FK NULL
+remarks
+created_at
+created_by

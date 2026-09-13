@@ -1,0 +1,64 @@
+============================================================
+11. LEAVE TRANSACTIONS
+============================================================
+
+37. leave_balance_transactions
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+leave_type_id       FK
+leave_year
+transaction_type
+transaction_date
+days
+reference_type
+reference_id
+remarks
+created_at
+created_by
+
+
+38. leave_applications
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+leave_type_id       FK
+application_no      UNIQUE
+from_date
+to_date
+total_days
+half_day_type NULL
+reason
+attachment_reference NULL
+status
+submitted_at
+approved_at NULL
+rejected_at NULL
+returned_at NULL
+created_at
+updated_at
+
+
+39. leave_application_days
+------------------------------------------------------------
+id                  PK
+leave_application_id FK
+leave_date
+day_type
+leave_days
+is_weekly_off
+is_holiday
+is_payable
+created_at
+
+
+40. leave_application_approval
+------------------------------------------------------------
+id                  PK
+leave_application_id FK
+approver_employee_id FK
+approval_level
+action
+action_date
+remarks
+created_at

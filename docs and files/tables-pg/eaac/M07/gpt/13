@@ -1,0 +1,46 @@
+============================================================
+13. PAYROLL
+============================================================
+
+44. payroll_cycles
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+cycle_code          UNIQUE
+cycle_name
+frequency
+period_start_rule
+period_end_rule
+active
+created_at
+updated_at
+
+
+45. employee_payroll_cycles
+------------------------------------------------------------
+id                  PK
+employee_id         FK
+payroll_cycle_id    FK
+effective_from
+effective_to NULL
+created_at
+updated_at
+
+
+46. payroll_periods
+------------------------------------------------------------
+id                  PK
+payroll_cycle_id    FK
+period_start
+period_end
+payment_date NULL
+status
+calculated_at NULL
+approved_at NULL
+finalized_at NULL
+approved_by NULL
+created_at
+updated_at
+
+UNIQUE:
+(payroll_cycle_id, period_start, period_end)

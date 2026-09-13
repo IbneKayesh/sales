@@ -1,0 +1,521 @@
+1. Organization & Employee Management
+2. Employee Employment Information
+3. Employee Attendance Configuration
+4. Shift Management
+5. Shift Policy / Grace Configuration
+6. Roster Management
+7. Roster Pattern / Preset Duty Roster
+8. Employee-Specific Duty Assignment
+9. Biometric Device Integration
+10. Raw Attendance Log
+11. Attendance Processing
+12. Attendance Sheet
+13. Attendance Exception Management
+14. Attendance Correction Request
+15. Weekend / Weekly-Off Configuration
+16. Holiday Management
+17. Leave Type Management
+18. Leave Group / Leave Policy
+19. Employee Leave Balance
+20. Leave Application
+21. Leave Approval
+22. Leave Cancellation / Restriction
+23. Payroll Cycle Management
+24. Employee Payroll Assignment
+25. Salary Structure
+26. Payroll Processing
+27. Payroll Approval
+28. Payroll Lock / Finalization
+29. Payslip Generation
+30. Payroll Adjustment
+31. Attendance Reports
+32. Leave Reports
+33. Payroll Reports
+34. Employee Reports
+35. Audit Trail
+36. System Configuration
+37. API / Biometric Integration
+
+Shift Design
+Shift
+- Shift Code
+- Shift Name
+- Start Time
+- End Time
+- Working Hours
+- Grace In Minutes
+- Grace Out Minutes
+- Cross Midnight
+- Minimum Full-Day Hours
+- Minimum Half-Day Hours
+- Overtime Eligible
+- Active / Inactive
+
+Rules
+- Working hours are configurable.
+- 6 hours, 8 hours, 10 hours, etc. are all possible.
+- Different shifts may have different working hours.
+- Break/lunch is considered part of the configured working period.
+- No separate lunch-break configuration is required.
+- Flexible employee start/end time is not required.
+- Grace is configurable per shift.
+- Grace may be 5, 10, 15 minutes, or another configured value if required.
+- Actual late minutes are preserved.
+- Grace only determines whether the employee is considered late/early.
+- Grace does not subtract the grace period from the actual attendance duration.
+
+Example
+Shift: 08:00 - 16:00
+Grace In: 10 minutes
+
+Actual IN: 08:12
+
+Late Minutes = 12
+Late Status = Yes
+
+NOT:
+Late Minutes = 2
+
+Similarly:
+Shift: 08:00 - 16:00
+Grace Out: 10 minutes
+
+Actual OUT: 15:48
+
+Early Out Minutes = 12
+Early Out Status = Yes
+
+Roster is not mandatory.
+Roster can be fixed or rotating.
+Roster can be employee-specific.
+One roster pattern can be used by multiple employees.
+Supervisor cannot modify a published roster.
+
+Roster Pattern
+        ↓
+Roster Assignment
+        ↓
+Employee Duty Schedule
+
+
+Attendance Processing Logic
+
+Raw Machine Punch
+        ↓
+Employee Identification
+        ↓
+Find Employee Duty
+        ↓
+Find Applicable Shift
+        ↓
+Determine Duty Date
+        ↓
+Determine IN
+        ↓
+Determine OUT
+        ↓
+Calculate Working Duration
+        ↓
+Calculate Late
+        ↓
+Calculate Early Out
+        ↓
+Determine Attendance Status
+        ↓
+Attendance Sheet
+
+
+For a cross-midnight shift:
+Duty Date: Sep 15
+
+Shift:
+22:00 Sep 15
+to
+06:00 Sep 16
+
+IN:
+21:56 Sep 15
+
+OUT:
+06:03 Sep 16
+One Attendance Pair Per Day
+One employee
++
+One duty date
+=
+One attendance result
+
+Attendance Status Model
+Present
+Late
+Early Out
+Late + Early Out
+Absent
+Half Day
+Leave
+Holiday
+Weekend / Weekly Off
+Roster Off
+Missing Punch
+Official Duty
+Business Duty
+Training
+Overtime
+
+
+
+Casual Leave
+- Annual entitlement configurable
+- Carry-forward allowed
+
+Sick Leave
+- Annual entitlement configurable
+- Carry-forward rule configurable
+
+Year Close
+- Rules to be finalized later
+
+Maternity Leave
+- 180 days over employee job life
+
+Paternity Leave
+- 90 days over employee job life
+
+
+Employee: E001
+Leave Type: Casual
+
+Entitlement       10
+Carry Forward      3
+Adjustment         1
+Used               4
+Pending             1
+Available           9
+
+Opening
+Accrual
+Carry Forward
+Leave Used
+Leave Cancellation
+Adjustment
+Expiry
+
+Payroll Calculation
+
+Calendar Days
+Scheduled Working Days
+Present Days
+Paid Leave
+Unpaid Leave
+Absent Days
+Weekly Off
+Holiday
+Holiday Worked
+Overtime
+Payable Days
+
+Payroll Period = 16 Sep → 15 Oct
+
+Scheduled Working Days = 26
+Present = 22
+Paid Leave = 2
+Holiday = 1
+Weekly Off = 4
+Absent = 2
+
+Payable Days =
+Present + Paid Leave + Other Payable Days
+
+
+19. Payroll Processing
+Open Payroll Period
+        ↓
+Collect Attendance
+        ↓
+Process Attendance
+        ↓
+Process Leave
+        ↓
+Process Holiday
+        ↓
+Process Weekly Off
+        ↓
+Calculate Payable Days
+        ↓
+Calculate Salary
+        ↓
+Calculate Overtime
+        ↓
+Calculate Allowances
+        ↓
+Calculate Deductions
+        ↓
+Generate Payroll
+        ↓
+Review
+        ↓
+Approve
+        ↓
+Lock / Finalize
+        ↓
+Generate Payslip
+
+21. Payslip
+
+Employee Information
+
+Payroll Period
+
+Attendance Summary
+- Scheduled Days
+- Present Days
+- Paid Leave
+- Unpaid Leave
+- Absent Days
+- Weekly Off
+- Holidays
+- Payable Days
+
+Earnings
+- Basic Salary
+- Allowances
+- Overtime
+- Holiday Overtime
+- Other Earnings
+
+Deductions
+- Absence Deduction
+- Leave Deduction
+- Tax
+- Loan
+- Other Deductions
+
+Gross Salary
+Total Deduction
+Net Pay
+
+
+Data-Driven Configuration
+Working hours
+Shift times
+Grace periods
+Roster patterns
+Weekly offs
+Holiday dates
+Leave entitlement
+Carry-forward
+Leave duration
+Payroll periods
+Salary calculation
+Overtime
+Attendance rules
+Approval rules
+Correction limits
+
+Reports — Single-Click Copyable List
+1. Employee Master Report
+2. Employee Active/Inactive Report
+3. Employee Joining Report
+4. Employee Department Report
+5. Employee Designation Report
+6. Employee Shift Assignment Report
+7. Employee Roster Report
+8. Daily Attendance Report
+9. Monthly Attendance Report
+10. Employee Attendance Sheet
+11. Department Attendance Summary
+12. Shift-wise Attendance Report
+13. Roster-wise Attendance Report
+14. Present Employee Report
+15. Absent Employee Report
+16. Late Employee Report
+17. Early Out Employee Report
+18. Late and Early Out Combined Report
+19. Missing Punch Report
+20. Attendance Exception Report
+21. Attendance Correction Request Report
+22. Attendance Correction Usage Report
+23. Overtime Report
+24. Holiday Work Report
+25. Weekly Off Work Report
+26. Employee Leave Balance Report
+27. Leave Application Report
+28. Pending Leave Approval Report
+29. Approved Leave Report
+30. Rejected Leave Report
+31. Returned Leave Application Report
+32. Employee Leave History Report
+33. Leave Type Usage Report
+34. Leave Group Summary Report
+35. Leave Entitlement Report
+36. Leave Carry Forward Report
+37. Leave Expiry Report
+38. Casual Leave Report
+39. Sick Leave Report
+40. Maternity Leave Report
+41. Paternity Leave Report
+42. Year Close Leave Report
+43. Payroll Cycle Report
+44. Payroll Register
+45. Payroll Summary Report
+46. Employee Payroll Report
+47. Department Payroll Report
+48. Payable Days Report
+49. Absent Deduction Report
+50. Paid Leave Payroll Report
+51. Unpaid Leave Payroll Report
+52. Overtime Payroll Report
+53. Holiday Overtime Payroll Report
+54. Salary Allowance Report
+55. Salary Deduction Report
+56. Gross Salary Report
+57. Net Salary Report
+58. Payslip Report
+59. Payroll Approval Report
+60. Payroll Finalization Report
+61. Payroll Adjustment Report
+62. Payroll Audit Report
+63. Holiday Calendar Report
+64. Weekly Off Configuration Report
+65. Shift Master Report
+66. Shift Grace Policy Report
+67. Roster Pattern Report
+68. Duty Roster Report
+69. Biometric Device Report
+70. Raw Attendance Log Report
+71. Attendance Processing Report
+72. Attendance Processing Error Report
+73. Employee Leave Balance Statement
+74. Employee Attendance Statement
+75. Employee Payroll Statement
+76. Employee Complete HR Statement
+77. Daily Factory Workforce Report
+78. Department Workforce Report
+79. Shift Workforce Report
+80. Missing Attendance Action Report
+81. Pending Employee Action Report
+82. Pending Manager Approval Report
+83. Payroll Pending Action Report
+84. Attendance Exception Dashboard
+85. Leave Dashboard
+86. Payroll Dashboard
+87. Workforce Dashboard
+88. Monthly HR Summary
+89. Monthly Attendance Summary
+90. Monthly Leave Summary
+91. Monthly Payroll Summary
+92. Yearly Attendance Summary
+93. Yearly Leave Summary
+94. Yearly Payroll Summary
+95. Employee Attendance/Leave/Payroll Combined Report
+
+Updated High-Level Architecture
+                         ORGANIZATION
+                              |
+                              |
+                         EMPLOYEE MASTER
+                              |
+          +-------------------+-------------------+
+          |                   |                   |
+          ↓                   ↓                   ↓
+     SHIFT POLICY        LEAVE POLICY        PAYROLL POLICY
+          |                   |                   |
+          ↓                   ↓                   ↓
+      SHIFT MASTER       LEAVE GROUP         PAYROLL CYCLE
+          |                   |                   |
+          ↓                   ↓                   ↓
+    ROSTER PATTERN       LEAVE BALANCE       EMPLOYEE PAYROLL
+          |
+          ↓
+    DUTY ROSTER
+          |
+          |
+          +-----------------------------+
+                                        |
+                                        ↓
+                              ATTENDANCE ENGINE
+                                        ↑
+                                        |
+                              BIOMETRIC MACHINE
+                                        |
+                                        ↓
+                              RAW ATTENDANCE LOG
+                                        |
+                                        ↓
+                              ATTENDANCE PROCESSING
+                                        |
+                    +-------------------+------------------+
+                    |                   |                  |
+                    ↓                   ↓                  ↓
+                 IN/OUT              LATE/OUT          OVERTIME
+                    |                   |                  |
+                    +-------------------+------------------+
+                                        |
+                                        ↓
+                                ATTENDANCE SHEET
+                                        |
+                    +-------------------+------------------+
+                    |                   |                  |
+                    ↓                   ↓                  ↓
+                  LEAVE              HOLIDAY           WEEKEND
+                    |                   |                  |
+                    +-------------------+------------------+
+                                        |
+                                        ↓
+                              PAYABLE DAY ENGINE
+                                        |
+                                        ↓
+                              PAYROLL CALCULATION
+                                        |
+                                        ↓
+                              PAYROLL APPROVAL
+                                        |
+                                        ↓
+                              PAYROLL FINALIZATION
+                                        |
+                                        ↓
+                                   PAYSLIP
+
+
+1. Everything is configurable/data-driven.
+2. Shift duration is configurable.
+3. Different shifts can have different working hours.
+4. Break/lunch is included in working hours.
+5. Shift grace-in and grace-out are configurable.
+6. Actual late/early minutes are preserved; grace only affects status.
+7. Roster is optional.
+8. Employees can have general/fixed duty without a roster.
+9. Employees can have individual rotating rosters.
+10. A roster pattern can be assigned to multiple employees.
+11. Published rosters cannot be changed by supervisors.
+12. Biometric machines provide punches without IN/OUT type.
+13. System determines IN/OUT based on duty and shift time.
+14. Cross-midnight shifts are supported.
+15. One processed attendance result per employee per duty date.
+16. Attendance cannot be manually edited.
+17. Missing punches use an employee correction application.
+18. Attendance correction is limited to 5 requests per employee per month.
+19. Weekend can be any day.
+20. Weekend can be employee-specific or roster-based.
+21. Holidays can be configured for any date.
+22. Holiday work is treated as overtime.
+23. Leave groups are configurable.
+24. Leave entitlement is configurable by year/policy.
+25. Casual leave can carry forward.
+26. Maternity leave currently supports 180 lifetime days.
+27. Paternity leave currently supports 90 lifetime days.
+28. Leave year and payroll period are independent.
+29. Payroll cycle can have arbitrary start/end periods.
+30. Payroll cycle can be used by multiple employees.
+31. Employees can have individual payroll-cycle assignments.
+32. Absent days are non-payable.
+33. Leave may be paid or unpaid according to policy.
+34. Leave approval is employee submission → manager approval.
+35. Manager can return an application for editing.
+36. Employee can edit and resubmit returned applications.
+37. HR cannot bypass approval.
+38. Approved leave cannot be cancelled by employee.
+39. Payroll locks after approval/finalization.
+40. Payslip is generated from finalized payroll.
+41. Historical payroll must remain auditable.
+42. Reports should cover employee, attendance, roster, leave and payroll.

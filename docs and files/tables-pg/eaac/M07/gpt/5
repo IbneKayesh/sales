@@ -1,0 +1,57 @@
+============================================================
+05. ATTENDANCE PROCESSING
+============================================================
+
+21. attendance_processing_runs
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+process_date
+period_from
+period_to
+status
+started_at
+completed_at
+processed_by
+error_count
+created_at
+
+
+22. attendance_sheets
+------------------------------------------------------------
+id                  PK
+organization_id     FK
+employee_id         FK
+duty_date
+shift_id             FK NULL
+duty_roster_id       FK NULL
+
+scheduled_start_datetime
+scheduled_end_datetime
+actual_in_datetime NULL
+actual_out_datetime NULL
+
+scheduled_minutes
+worked_minutes
+
+late_minutes
+early_out_minutes
+overtime_minutes
+
+attendance_status
+attendance_result
+is_present
+is_absent
+is_leave
+is_holiday
+is_weekly_off
+
+leave_application_id FK NULL
+
+processing_run_id    FK NULL
+
+created_at
+updated_at
+
+UNIQUE:
+(employee_id, duty_date)
