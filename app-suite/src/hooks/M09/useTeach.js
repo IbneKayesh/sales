@@ -1,9 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useUI } from "@/context/AppUIContext.jsx";
 import validate, { generateDataModel } from "@/models/validator";
 import tmtb_teach from "@/models/M09/tmtb_teach.json";
 const dataModel = generateDataModel(tmtb_teach);
 import { teachAPI } from "@/api/M09/teachAPI.js";
+
+/** A lesson is a root when its parent is empty or points at itself. */
+const isRootNode = (item) => !item.teach_teach || item.teach_teach === item.id;
+
+/** Build a tree from a flat list. Nodes with empty/self-referencing teach_teach are roots. */
+function buildTree(list) {
+  const map = {};
+  const roots = [];
+  for (const item of list) {
+    map[item.id] = { ...item, children: [] };
+  }
+  for (const item of list) {
+    const node = map[item.id];
+    const parentId = item.teach_teach;
+    if (!isRootNode(item) && map[parentId]) {
+      map[parentId].children.push(node);
+    } else {
+      roots.push(node);
+    }
+  }
+  return roots;
+}
 
 const useTeach = () => {
   const { showToast, confirmBox, alertBox, isBusy, setIsBusy } = useUI();
@@ -20,6 +42,8 @@ const useTeach = () => {
   const [listData, setListData] = useState([]);
   const [formData, setFormData] = useState(dataModel);
   const [formErrors, setFormErrors] = useState({});
+  // Tree for the list; listData stays flat for the parent dropdown
+  const treeData = useMemo(() => buildTree(listData), [listData]);
 
   const getAllTeach = async () => {
     try {
@@ -87,12 +111,38 @@ const useTeach = () => {
     getAllTeach();
   };
 
+  /** Serial of a new lesson = highest numeric serial among its siblings + 1. */
+  const getNextSiblingSerial = (parentId) => {
+    const serials = listData
+      .filter((item) =>
+        parentId ? item.teach_teach === parentId : isRootNode(item),
+      )
+      .map((item) => Number(item.teach_srial))
+      .filter((num) => !Number.isNaN(num));
+    const next = serials.length ? Math.max(...serials) + 1 : 1;
+    return String(next);
+  };
+
   const handleAddNew = () => {
-    const nextSerial = String(listData.length + 1).padStart(2, "0");
     setPgView("SYS_VW_FRM_1");
     setFormData({
       ...dataModel,
-      teach_srial: nextSerial,
+      teach_srial: getNextSiblingSerial(""),
+      teach_reads: 1,
+      teach_marks: 1,
+      teach_actve: true,
+    });
+    setFormErrors({});
+    setReadOnly(false);
+    setStopEdit(false);
+  };
+
+  const handleAddChild = (rowData) => {
+    setPgView("SYS_VW_FRM_1");
+    setFormData({
+      ...dataModel,
+      teach_teach: rowData.id,
+      teach_srial: getNextSiblingSerial(rowData.id),
       teach_reads: 1,
       teach_marks: 1,
       teach_actve: true,
@@ -125,11 +175,14 @@ const useTeach = () => {
       setIsBusy(true);
 
       const resp = await teachAPI.upsert(reqBody);
-      alertBox({
-        title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
-        message: resp.message,
-        variant: resp.success ? "success" : "danger",
-        confirmText: resp.success ? "Done" : "Close",
+      // alertBox({
+      //   title: resp.success ? (formData.id ? "Updated" : "Saved") : "Error",
+      //   message: resp.message,
+      //   variant: resp.success ? "success" : "danger",
+      //   confirmText: resp.success ? "Done" : "Close",
+      // });
+      showToast(resp.message, {
+        type: resp.success ? "success" : "error",
       });
       if (resp.success) {
         setPgView("SYS_VW_LST_1");
@@ -142,11 +195,29 @@ const useTeach = () => {
     }
   };
 
+  /** All descendants of a lesson — excludes them from the parent list to prevent cycles. */
+  const getDescendantIds = (id) => {
+    const ids = new Set();
+    const walk = (parentId) => {
+      for (const item of listData) {
+        if (item.teach_teach === parentId && !ids.has(item.id)) {
+          ids.add(item.id);
+          walk(item.id);
+        }
+      }
+    };
+    walk(id);
+    return ids;
+  };
+
+  // A lesson can't be its own parent, nor sit under one of its descendants
+  const excludedIds = formData?.id ? getDescendantIds(formData.id) : new Set();
+
   const parentOptions = listData
-    .filter((item) => !formData?.id || item.id !== formData.id)
+    .filter((item) => item.id !== formData?.id && !excludedIds.has(item.id))
     .map((item) => ({
       value: item.id,
-      label: `[${item.teach_ttype || "General"}] ${item.teach_cname}`,
+      label: `${item.teach_srial ? `${item.teach_srial} ~ ` : ""}${item.teach_cname}`,
     }));
 
   return {
@@ -156,6 +227,7 @@ const useTeach = () => {
     readOnly,
     stopEdit,
     listData,
+    treeData,
     formData,
     formErrors,
     parentOptions,
@@ -164,6 +236,7 @@ const useTeach = () => {
     handleDelete,
     handleSearch,
     handleAddNew,
+    handleAddChild,
     handleCancel,
     handleSubmit,
   };

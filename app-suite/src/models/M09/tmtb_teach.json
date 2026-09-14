@@ -19,7 +19,7 @@
   "teach_cname": {
     "type": "string",
     "label": "Lesson Title",
-    "maxLength": 50,
+    "maxLength": 100,
     "minLength": 2,
     "placeholder": "Enter lesson title",
     "required": true

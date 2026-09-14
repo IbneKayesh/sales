@@ -210,129 +210,10 @@ const create = async (req, res) => {
       label: `Created PO ${newTrnNo}`,
     });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    const acprd = await getCurrentPeriod(user_c, user_b, pordm_dpart);
-    if (!acprd) {
-      return {
-        success: false,
-        message: "No active fiscal year or accounting period found",
-        data: {},
-      };
-    }
-    if (acprd.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active accounting periods found. Please select one.",
-        data: {},
-      };
-    }
-    const { acprd_id, fsyar_id } = acprd[0];
-
-    const newId_JV = uuidv4();
-    const newTrnNo_JV = await GenNewTrn(
-      user_c,
-      user_b,
-      "tmtb_jrnlm",
-      "Purchase Invoice",
-      pordm_dpart,
-    );
-
-    //active currency rate
-    const crncy = await getCurrencyRate(user_c, user_b);
-    if (!crncy) {
-      return {
-        success: false,
-        message: "No active currency rate found",
-        data: {},
-      };
-    }
-    if (crncy.length > 1) {
-      return {
-        success: false,
-        message: "Multiple active currency rate found. Please select one.",
-        data: {},
-      };
-    }
-
-    //input vat (purchase)
-    const sql_inpvat = `SELECT pty.id party_id, cht.id chtac_id, crt.chtrt_grpid
-      FROM tmtb_party pty
-      JOIN tmtb_chtac cht ON pty.party_chtac = cht.id
-      JOIN tmtb_chtrt crt ON cht.chtac_chtno = crt.chtrt_chtno
-      WHERE crt.chtrt_trnid = 'SYS_MRR'
-      AND crt.chtrt_pegid = 'SYS_MRR_DIRECT'
-      AND crt.chtrt_grpid IN ('SYS_AST_INP_VAT','SYS_NONE')
-      AND pty.party_actve = TRUE
-      AND cht.chtac_actve = TRUE
-      AND crt.chtrt_actve = TRUE
-      AND cht.chtac_users = $1
-      AND cht.chtac_bsins = $2`;
-    const result_inpvat = await dbGet(sql_inpvat, [user_c, user_b]);
-    // console.log(result);
-    if (!result_inpvat || result_inpvat.length === 0) {
-      return res.json({
-        success: false,
-        message: `No default input vat configured for MRR Direct`,
-        data: {},
-      });
-    }
-
-    
-
-    //SYS_MRR.SYS_MRR_DIRECT
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
-    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
-    jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
-    VALUES ($1, $2, $3, $4, $5, $6,
-    $7, $8, $9, $10, $11, $12,
-    $13, $14, $15, $16, $17, $18)`,
-      params: [
-        newId_JV,
-        user_c,
-        user_b,
-        pordm_dpart,
-        fsyar_id,
-        acprd_id,
-        crncy.crncy_tcrnc,
-        "Purchase Invoice",
-        newTrnNo_JV,
-        pordm_trdat,
-        newTrnNo,
-        pordm_ttype,
-        0,
-        0,
-        crncy.crncy_exrat,
-        "Posted",
-        user_s,
-        user_s,
-      ],
-      label: `create journal master- ${newTrnNo_JV}`,
-    });
-
-    //Insert MRR details, Stock Details
-    let line = 1;
     for (const det of tmpb_pordc) {
       const lineId = uuidv4();
       scripts.push({
-        sql: `INSERT INTO tmpb_pordc(id, pordc_users, pordc_bsins, pordc_mrrdm, pordc_price, pordc_items,
+        sql: `INSERT INTO tmpb_pordc(id, pordc_users, pordc_bsins, pordc_pordm, pordc_price, pordc_items,
                           pordc_units, pordc_itrat, pordc_itqty, pordc_itamt, pordc_dspct, pordc_dsamt,
                           pordc_edamt, pordc_vtpct, pordc_vtamt, pordc_vtype, pordc_icamt, pordc_ecamt,
                           pordc_pyamt, pordc_stamt, pordc_notes, pordc_csrat, pordc_refid, pordc_crusr, pordc_upusr)
@@ -370,57 +251,18 @@ const create = async (req, res) => {
         label: `Created MRR detail ${newTrnNo}`,
       });
 
-      //add condition if no tracking then off
-      scripts.push({
-        sql: `INSERT INTO tmib_stock(id, stock_users, stock_bsins, stock_dpart, stock_sorce, stock_trnno,
-        stock_refid, stock_items, stock_price, stock_brcod, stock_batch, stock_srial,
-        stock_wrdat, stock_fgdat, stock_exdat, stock_trqty, stock_ohqty, stock_cprat,
-        stock_lprat, stock_notes, stock_crusr, stock_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12,
-      $13, $14, $15, $16, $17, $18,
-      $19, $20, $21, $22)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          pordm_dpart,
-          pordm_ttype,
-          newTrnNo,
-          lineId,
-          det.pordc_items,
-          det.pordc_price,
-          det.stock_brcod, //
-          det.stock_batch, //
-          det.stock_srial, //
-          det.stock_wrdat, //
-          det.stock_fgdat, //
-          det.stock_exdat, //
-          det.pordc_itqty || 0,
-          det.pordc_itqty || 0,
-          det.pordc_csrat || 0,
-          det.pordc_itrat || 0,
-          det.stock_notes || "",
-          user_s,
-          user_s,
-        ],
-        label: `Created MRR stock detail ${newTrnNo}`,
-      });
-
       //update summary stock, last price
       scripts.push({
         sql: `UPDATE tmib_price
-              SET price_lprat = $1,
-                  price_gdstk = price_gdstk + $2,
-                  price_upusr = $3,
+              SET price_pbqty = price_pbqty + $1,
+                  price_upusr = $2,
                   price_updat = CURRENT_TIMESTAMP,
                   price_rvnmr = price_rvnmr + 1
-                  WHERE id = $4
-                  AND price_users = $5
-                  AND price_items = $6
-                  AND price_dpart = $7`,
+                  WHERE id = $3
+                  AND price_users = $4
+                  AND price_items = $5
+                  AND price_dpart = $6`,
         params: [
-          det.pordc_itrat,
           det.pordc_itqty || 0,
           user_s,
           det.pordc_price,
@@ -428,128 +270,15 @@ const create = async (req, res) => {
           det.pordc_items,
           pordm_dpart,
         ],
-        label: `Update price stock detail ${newTrnNo}`,
+        label: `Update price purchase order detail ${newTrnNo}`,
       });
-    }
-
-    const newGroupedProducts = Object.values(
-      tmpb_pordc.reduce((groups, det) => {
-        const key = `${det.chtac_id}_${det.party_id}`;
-
-        if (!groups[key]) {
-          groups[key] = {
-            chtac_id: det.chtac_id,
-            party_id: det.party_id,
-            item_amount: 0,
-          };
-        }
-
-        groups[key].item_amount +=
-          Number(det.pordc_itqty || 0) * Number(det.pordc_csrat || 0);
-
-        return groups;
-      }, {}),
-    );
-
-    //SYS_MRR.SYS_MRR_DIRECT.SYS_AST_INVENTORY
-    for (const det of newGroupedProducts) {
-      scripts.push({
-        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          pordm_dpart,
-          newId_JV,
-          det.chtac_id,
-          det.party_id,
-          det.item_amount,
-          0,
-          "To Asset / Inventory / Products",
-          pordm_ttype,
-          newId,
-          "MASTER",
-          line,
-          user_s,
-          user_s,
-        ],
-        label: `Create Asset / Inventory / Products ${newTrnNo_JV}`,
-      });
-      line++;
-    }
-
-    //SYS_MRR.SYS_MRR_DIRECT.SYS_LIB_SUPPLIER
-    scripts.push({
-      sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-      params: [
-        uuidv4(),
-        user_c,
-        user_b,
-        pordm_dpart,
-        newId_JV,
-        chtac_id,
-        party_id,
-        0,
-        pordm_pyamt || 0,
-        "From Liability / Supplier Payable",
-        pordm_ttype,
-        newId,
-        "MASTER",
-        line,
-        user_s,
-        user_s,
-      ],
-      label: `Create Liability / Supplier / Payable ${newTrnNo_JV}`,
-    });
-    line++;
-
-    //SYS_MRR.SYS_MRR_DIRECT.SYS_AST_INP_VAT
-    if (Number(pordm_vtamt) > 0) {
-      scripts.push({
-        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          pordm_dpart,
-          newId_JV,
-          result_inpvat.chtac_id,
-          result_inpvat.party_id,
-          pordm_vtamt || 0,
-          0,
-          "To Assets / Current Assets / VAT & Tax Receivable / Input VAT (Purchase VAT)",
-          pordm_ttype,
-          newId,
-          "MASTER",
-          line,
-          user_s,
-          user_s,
-        ],
-        label: `Create Assets / Current Assets / VAT & Tax Receivable / Input VAT (Purchase VAT) ${newTrnNo_JV}`,
-      });
-      line++;
     }
 
     //Insert Costing details
     for (const det of tmpb_porcs) {
       const costId = uuidv4();
       scripts.push({
-        sql: `INSERT INTO tmpb_porcs(id, porcs_users, porcs_bsins, porcs_mrrdm, porcs_party, porcs_csmod, 
+        sql: `INSERT INTO tmpb_porcs(id, porcs_users, porcs_bsins, porcs_pordm, porcs_party, porcs_csmod, 
         porcs_clmod, porcs_value, porcs_notes, porcs_jrnlm, porcs_crusr, porcs_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
       $7, $8, $9, $10, $11, $12)`,
@@ -569,45 +298,14 @@ const create = async (req, res) => {
           user_s,
           user_s,
         ],
-        label: `Created Costing detail ${newTrnNo}`,
+        label: `Created PO Costing detail ${newTrnNo}`,
       });
-      //SYS_MRR.SYS_MRR_DIRECT.SYS_LIB_LOCAL_VENDOR
-      if (det.porcs_csmod === "Exclude") {
-        scripts.push({
-          sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-          params: [
-            uuidv4(),
-            user_c,
-            user_b,
-            pordm_dpart,
-            newId_JV,
-            det.chtac_id,
-            det.party_id,
-            0,
-            det.porcs_value || 0,
-            "From Liability / Local Vendor Payable",
-            pordm_ttype,
-            newId,
-            "MASTER",
-            line,
-            user_s,
-            user_s,
-          ],
-          label: `Create Liability / Local Vendor / Payable ${newTrnNo_JV}`,
-        });
-        line++;
-      }
     }
 
     //Insert Payment details
     for (const det of tmpb_porpy) {
       scripts.push({
-        sql: `INSERT INTO tmpb_porpy(id, porpy_users, porpy_bsins, porpy_mrrdm, porpy_party, porpy_pdamt,
+        sql: `INSERT INTO tmpb_porpy(id, porpy_users, porpy_bsins, porpy_pordm, porpy_party, porpy_pdamt,
         porpy_refno, porpy_notes, porpy_crusr, porpy_upusr)
         VALUES ($1, $2, $3, $4, $5, $6,
         $7, $8, $9, $10)`,
@@ -625,8 +323,119 @@ const create = async (req, res) => {
         ],
         label: `Created Payment detail ${newTrnNo}`,
       });
+    }
 
-      //SYS_MRR.SYS_MRR_DIRECT.SYS_LIB_SUPPLIER
+    //SYS_PO.SYS_PURCHASE_ORDER.SYS_AST_SUPPLIER.SYS_EMPTY
+    if (Number(pordm_pdamt) > 0) {
+      const acprd = await getCurrentPeriod(user_c, user_b, pordm_dpart);
+      if (!acprd) {
+        return {
+          success: false,
+          message: "No active fiscal year or accounting period found",
+          data: {},
+        };
+      }
+      if (acprd.length > 1) {
+        return {
+          success: false,
+          message:
+            "Multiple active accounting periods found. Please select one.",
+          data: {},
+        };
+      }
+      const { acprd_id, fsyar_id } = acprd[0];
+
+      const newId_JV = uuidv4();
+      const newTrnNo_JV = await GenNewTrn(
+        user_c,
+        user_b,
+        "tmtb_jrnlm",
+        "Purchase Order",
+        pordm_dpart,
+      );
+
+      //active currency rate
+      const crncy = await getCurrencyRate(user_c, user_b);
+      if (!crncy) {
+        return {
+          success: false,
+          message: "No active currency rate found",
+          data: {},
+        };
+      }
+      if (crncy.length > 1) {
+        return {
+          success: false,
+          message: "Multiple active currency rate found. Please select one.",
+          data: {},
+        };
+      }
+
+      //SYS_PO.SYS_PURCHASE_ORDER
+      scripts.push({
+        sql: `INSERT INTO tmtb_jrnlm(id, jrnlm_users, jrnlm_bsins, jrnlm_dpart, jrnlm_fsyar, jrnlm_acprd,
+    jrnlm_crncy, jrnlm_trtyp, jrnlm_trnno, jrnlm_trdat, jrnlm_refno, jrnlm_narrt,
+    jrnlm_drval, jrnlm_crval, jrnlm_exrat, jrnlm_stats, jrnlm_crusr, jrnlm_upusr)
+    VALUES ($1, $2, $3, $4, $5, $6,
+    $7, $8, $9, $10, $11, $12,
+    $13, $14, $15, $16, $17, $18)`,
+        params: [
+          newId_JV,
+          user_c,
+          user_b,
+          pordm_dpart,
+          fsyar_id,
+          acprd_id,
+          crncy.crncy_tcrnc,
+          "Purchase Order",
+          newTrnNo_JV,
+          pordm_trdat,
+          newTrnNo,
+          pordm_ttype,
+          0,
+          0,
+          crncy.crncy_exrat,
+          "Posted",
+          user_s,
+          user_s,
+        ],
+        label: `create journal master- ${newTrnNo_JV}`,
+      });
+
+      let line = 1;
+      //SYS_PO.SYS_PURCHASE_ORDER.SYS_AST_PAYMENT.SYS_EMPTY
+      for (const det of tmpb_porpy) {
+        scripts.push({
+          sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
+            jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
+            jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
+            VALUES ($1, $2, $3, $4, $5, $6,
+            $7, $8, $9, $10, $11, $12,
+            $13, $14, $15, $16)`,
+          params: [
+            uuidv4(),
+            user_c,
+            user_b,
+            pordm_dpart,
+            newId_JV,
+            chtac_id,
+            party_id,
+            det.porpy_pdamt || 0,
+            0,
+            "Assets / Supplier / Advance",
+            pordm_ttype,
+            newId,
+            "MASTER",
+            line,
+            user_s,
+            user_s,
+          ],
+          label: `Assets / Supplier / Advance ${newTrnNo_JV}`,
+        });
+        line++;
+      }
+
+      //SYS_PO.SYS_PURCHASE_ORDER.SYS_AST_SUPPLIER
       scripts.push({
         sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
         jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
@@ -642,9 +451,9 @@ const create = async (req, res) => {
           newId_JV,
           chtac_id,
           party_id,
-          det.porpy_pdamt || 0,
           0,
-          "Clear Liability / Supplier Payable",
+          pordm_pyamt || 0,
+          "From Assets / Cash Bank",
           pordm_ttype,
           newId,
           "MASTER",
@@ -652,59 +461,27 @@ const create = async (req, res) => {
           user_s,
           user_s,
         ],
-        label: `Clear Liability / Supplier / Payable ${newTrnNo_JV}`,
+        label: `Create From Assets / Cash Bank ${newTrnNo_JV}`,
       });
       line++;
 
-      //SYS_MRR.SYS_MRR_DIRECT.SYS_AST_PAYMENT
+      //Update supplier credit balance - decrease
       scripts.push({
-        sql: `INSERT INTO tmtb_jrnlc(id, jrnlc_users, jrnlc_bsins, jrnlc_dpart, jrnlc_jrnlm, jrnlc_chtac,
-        jrnlc_party, jrnlc_drval, jrnlc_crval, jrnlc_descr, jrnlc_sorce, jrnlc_refid,
-        jrnlc_rtype, jrnlc_lines, jrnlc_crusr, jrnlc_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-        $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          pordm_dpart,
-          newId_JV,
-          det.chtac_id,
-          det.party_id,
-          0,
-          det.porpy_pdamt || 0,
-          "Payment Liability / Supplier Payable",
-          pordm_ttype,
-          newId,
-          "MASTER",
-          line,
-          user_s,
-          user_s,
-        ],
-        label: `Payment Liability / Supplier / Payable ${newTrnNo_JV}`,
+        sql: `UPDATE tmcb_cntct
+          SET cntct_crbal = cntct_crbal - $1,      
+          cntct_upusr = $2,
+          cntct_updat = CURRENT_TIMESTAMP,
+          cntct_rvnmr = cntct_rvnmr + 1
+          WHERE id = $3`,
+        params: [pordm_pyamt, user_s, pordm_cntct],
+        label: `Update supplier credit balance ${newTrnNo}`,
       });
-      line++;
     }
-
-    //Update supplier credit balance + increase
-    scripts.push({
-      sql: `UPDATE tmcb_cntct
-      SET cntct_crbal = cntct_crbal + $1,      
-    cntct_upusr = $2,
-    cntct_updat = CURRENT_TIMESTAMP,
-    cntct_rvnmr = cntct_rvnmr + 1
-    WHERE id = $3
-      `,
-      params: [pordm_duamt, user_s, pordm_cntct],
-      label: `Update supplier credit balance ${newTrnNo}`,
-    });
-
     //offer pack
     for (const det of tmpb_pordf) {
       const lineId = uuidv4();
       scripts.push({
-        sql: `INSERT INTO tmpb_pordf(id, pordf_users, pordf_bsins, pordf_mrrdm, pordf_bndlm, pordf_pricm,
+        sql: `INSERT INTO tmpb_pordf(id, pordf_users, pordf_bsins, pordf_pordm, pordf_bndlm, pordf_pricm,
                           pordf_itemm, pordf_unitm, pordf_bnqty, pordf_bndlc, pordf_pricc, pordf_itemc,
                           pordf_unitc, pordf_pkqty, pordf_trqty, pordf_ofcnt, pordf_ofqty, pordf_notes,
                           pordf_csrat, pordf_refid, pordf_crusr, pordf_upusr)
@@ -738,66 +515,9 @@ const create = async (req, res) => {
         ],
         label: `Created MRR offer detail ${newTrnNo}`,
       });
-
-      //add condition if no tracking then off
-      scripts.push({
-        sql: `INSERT INTO tmib_stock(id, stock_users, stock_bsins, stock_dpart, stock_sorce, stock_trnno,
-        stock_refid, stock_items, stock_price, stock_brcod, stock_batch, stock_srial,
-        stock_wrdat, stock_fgdat, stock_exdat, stock_trqty, stock_ohqty, stock_cprat,
-        stock_lprat, stock_notes, stock_crusr, stock_upusr)
-        VALUES ($1, $2, $3, $4, $5, $6,
-      $7, $8, $9, $10, $11, $12,
-      $13, $14, $15, $16, $17, $18,
-      $19, $20, $21, $22)`,
-        params: [
-          uuidv4(),
-          user_c,
-          user_b,
-          pordm_dpart,
-          pordm_ttype,
-          newTrnNo,
-          lineId,
-          det.pordf_itemc,
-          det.pordf_pricc,
-          "", //det.stock_brcod,
-          "", //det.stock_batch,
-          "", //det.stock_srial,
-          null, //det.stock_wrdat,
-          null, //det.stock_fgdat,
-          null, //det.stock_exdat,
-          det.pordf_ofqty || 0,
-          det.pordf_ofqty || 0,
-          0, //det.pordc_csrat ||
-          0, //det.pordc_itrat ||
-          "", //det.stock_notes ||
-          user_s,
-          user_s,
-        ],
-        label: `Created MRR offer stock detail ${newTrnNo}`,
-      });
-
-      //update summary stock, but not update last price
-      scripts.push({
-        sql: `UPDATE tmib_price
-              SET price_gdstk = price_gdstk + $1,
-                  price_upusr = $2,
-                  price_updat = CURRENT_TIMESTAMP,
-                  price_rvnmr = price_rvnmr + 1
-                  WHERE id = $3
-                  AND price_users = $4
-                  AND price_items = $5
-                  AND price_dpart = $6`,
-        params: [
-          det.pordf_ofqty || 0,
-          user_s,
-          det.pordf_pricc,
-          user_c,
-          det.pordf_itemc,
-          pordm_dpart,
-        ],
-        label: `Update price offer stock detail ${newTrnNo}`,
-      });
     }
+
+    console.log(scripts);
     await dbRunAll(scripts);
 
     res.json({
@@ -931,10 +651,10 @@ router.post("/delete", async (req, res) => {
 // get-details-by-master
 router.post("/get-details-by-master", async (req, res) => {
   try {
-    const { pordc_mrrdm, user_s, user_c, user_b } = req.body;
+    const { pordc_pordm, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!pordc_mrrdm || !user_c) {
+    if (!pordc_pordm || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -964,10 +684,10 @@ router.post("/get-details-by-master", async (req, res) => {
     JOIN tmib_scatg scatg ON itm.items_scatg = scatg.id
     JOIN tmib_brand brand ON itm.items_brand = brand.id
     WHERE mrd.pordc_users = $1
-    AND mrd.pordc_mrrdm = $2
+    AND mrd.pordc_pordm = $2
     ORDER BY mrd.pordc_items ASC`;
 
-    const params = [user_c, pordc_mrrdm];
+    const params = [user_c, pordc_pordm];
     const rows = await dbGetAll(sql, params, `get MRR Details- ${user_c}`);
     res.json({
       success: true,
@@ -986,10 +706,10 @@ router.post("/get-details-by-master", async (req, res) => {
 // get-costs-by-master
 router.post("/get-costs-by-master", async (req, res) => {
   try {
-    const { porcs_mrrdm, user_s, user_c, user_b } = req.body;
+    const { porcs_pordm, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!porcs_mrrdm || !user_c) {
+    if (!porcs_pordm || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -1002,9 +722,9 @@ router.post("/get-costs-by-master", async (req, res) => {
         FROM tmpb_porcs mrc
         JOIN tmtb_party pty ON mrc.porcs_party = pty.id
         WHERE mrc.porcs_users = $1
-        AND mrc.porcs_mrrdm = $2`;
+        AND mrc.porcs_pordm = $2`;
 
-    const params = [user_c, porcs_mrrdm];
+    const params = [user_c, porcs_pordm];
     const rows = await dbGetAll(sql, params, `get Cost Details- ${user_c}`);
     res.json({
       success: true,
@@ -1023,10 +743,10 @@ router.post("/get-costs-by-master", async (req, res) => {
 // get-payments-by-master
 router.post("/get-payments-by-master", async (req, res) => {
   try {
-    const { porpy_mrrdm, user_s, user_c, user_b } = req.body;
+    const { porpy_pordm, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!porpy_mrrdm || !user_c) {
+    if (!porpy_pordm || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -1039,9 +759,9 @@ router.post("/get-payments-by-master", async (req, res) => {
         FROM tmpb_porpy mpy
         JOIN tmtb_party pty ON mpy.porpy_party = pty.id
         WHERE mpy.porpy_users = $1
-        AND mpy.porpy_mrrdm = $2`;
+        AND mpy.porpy_pordm = $2`;
 
-    const params = [user_c, porpy_mrrdm];
+    const params = [user_c, porpy_pordm];
     const rows = await dbGetAll(sql, params, `get Payment Details- ${user_c}`);
     res.json({
       success: true,
@@ -1060,10 +780,10 @@ router.post("/get-payments-by-master", async (req, res) => {
 // get-bundles-by-master
 router.post("/get-bundles-by-master", async (req, res) => {
   try {
-    const { pordf_mrrdm, user_s, user_c, user_b } = req.body;
+    const { pordf_pordm, user_s, user_c, user_b } = req.body;
 
     // Validate input
-    if (!pordf_mrrdm || !user_c) {
+    if (!pordf_pordm || !user_c) {
       return res.json({
         success: false,
         message: "All fields in the request body are required.",
@@ -1082,9 +802,9 @@ router.post("/get-bundles-by-master", async (req, res) => {
         JOIN tmib_units unt ON mrb.pordf_unitc = unt.id
         JOIN tmib_bndlm bnm ON mrb.pordf_bndlm = bnm.id
         WHERE mrb.pordf_users = $1
-        AND mrb.pordf_mrrdm = $2`;
+        AND mrb.pordf_pordm = $2`;
 
-    const params = [user_c, pordf_mrrdm];
+    const params = [user_c, pordf_pordm];
     const rows = await dbGetAll(sql, params, `get Bundle Details- ${user_c}`);
     res.json({
       success: true,

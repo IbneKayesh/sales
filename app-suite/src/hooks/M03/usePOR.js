@@ -136,8 +136,8 @@ const usePOR = () => {
           // Find accumulated cart quantity for this bundle
           const cartItem = retResp.find(
             (item) =>
-              item.items_id === bundle.mrrdf_itemm &&
-              item.price_id === bundle.mrrdf_pricm,
+              item.items_id === bundle.pordf_itemm &&
+              item.price_id === bundle.pordf_pricm,
           );
           //console.log("cartItem", cartItem);
           //console.log("bundle", bundle);
@@ -147,8 +147,8 @@ const usePOR = () => {
           }
 
           const purchasedQty = Number(cartItem.order_itqty || 0);
-          const requiredQty = Number(bundle.mrrdf_bnqty || 0);
-          const freeQtyPerBundle = Number(bundle.mrrdf_pkqty || 0);
+          const requiredQty = Number(bundle.pordf_bnqty || 0);
+          const freeQtyPerBundle = Number(bundle.pordf_pkqty || 0);
 
           // Prevent division by zero
           if (requiredQty <= 0 || freeQtyPerBundle <= 0) {
@@ -171,13 +171,13 @@ const usePOR = () => {
 
             // Cart quantity accumulated for this item/variant
             //purchased_qty: purchasedQty,
-            mrrdf_trqty: purchasedQty,
+            pordf_trqty: purchasedQty,
 
             // Example: buy 2, customer buys 5 => 2 offer groups
-            mrrdf_ofcnt: offerCount,
+            pordf_ofcnt: offerCount,
 
             // Example: 2 groups × 1 free = 2 free
-            mrrdf_ofqty: offerPackQty,
+            pordf_ofqty: offerPackQty,
           };
         })
         .filter(Boolean);
@@ -581,7 +581,7 @@ const usePOR = () => {
     setPgView("SYS_VW_FRM_1");
     setFormData({
       ...dataModel,
-      pordm_ttype: "Material Receipt Report",
+      pordm_ttype: "Purchase Order",
     });
 
     setReadOnly(false);
@@ -634,7 +634,7 @@ const usePOR = () => {
       };
 
       console.log(reqBody);
-      return;
+      //return;
       setIsBusy(true);
       const resp = await porAPI.upsert(reqBody);
       alertBox({
@@ -644,9 +644,9 @@ const usePOR = () => {
         confirmText: resp.success ? "Done" : "Close",
       });
       if (resp.success) {
-        setPgView("SYS_VW_LST_1");
-        setFormData(dataModel);
-        getAllPO();
+        //setPgView("SYS_VW_LST_1");
+        //setFormData(dataModel);
+        //getAllPO();
       }
     } catch (error) {
     } finally {

@@ -18,6 +18,7 @@ const TeachPage = () => {
     readOnly,
     stopEdit,
     listData,
+    treeData,
     formData,
     formErrors,
     parentOptions,
@@ -26,6 +27,7 @@ const TeachPage = () => {
     handleDelete,
     handleSearch,
     handleAddNew,
+    handleAddChild,
     handleCancel,
     handleSubmit,
   } = useTeach();
@@ -68,9 +70,10 @@ const TeachPage = () => {
         <PageCardBody>
           {pgView === "SYS_VW_LST_1" && (
             <TeachList
-              listData={listData}
+              treeData={treeData}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onAddChild={handleAddChild}
             />
           )}
           {pgView === "SYS_VW_FRM_1" && (
